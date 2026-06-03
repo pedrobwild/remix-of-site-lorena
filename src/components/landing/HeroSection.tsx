@@ -75,19 +75,25 @@ export default function HeroSection() {
           const isNext = index === (activeSlide + 1) % HERO_SLIDES.length;
           const shouldEagerLoad = isLCP || index === activeSlide || isNext;
           return (
-            <img
-              key={slide.src}
-              src={slide.src}
-              alt=""
-              aria-hidden="true"
-              draggable={false}
-              decoding="async"
-              loading={shouldEagerLoad ? "eager" : "lazy"}
-              fetchPriority={isLCP ? "high" : "low"}
-              sizes="100vw"
-              className="absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-[1600ms] ease-in-out motion-reduce:transition-none"
-              style={{ opacity: activeSlide === index ? 1 : 0 }}
-            />
+            <picture key={slide.stem}>
+              <source type="image/avif" srcSet={buildSrcSet(slide.stem, "avif")} sizes={SLIDE_SIZES} />
+              <source type="image/webp" srcSet={buildSrcSet(slide.stem, "webp")} sizes={SLIDE_SIZES} />
+              <img
+                src={slideUrl(slide.stem, "md", "jpg")}
+                srcSet={buildSrcSet(slide.stem, "jpg")}
+                sizes={SLIDE_SIZES}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                decoding="async"
+                loading={shouldEagerLoad ? "eager" : "lazy"}
+                fetchPriority={isLCP ? "high" : "low"}
+                width={1920}
+                height={1080}
+                className="absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-[1600ms] ease-in-out motion-reduce:transition-none"
+                style={{ opacity: activeSlide === index ? 1 : 0 }}
+              />
+            </picture>
           );
         })}
         {/* Base darkening for legibility on every image */}
