@@ -87,7 +87,7 @@ export const HERO = {
     },
     {
       title: "Turn-key",
-      text: "Você entrega a chave. A bewild integra o resto.",
+      text: "\n",
       icon: KeyRound,
     },
   ],
