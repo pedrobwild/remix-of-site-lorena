@@ -107,6 +107,11 @@ export function useHashRoute(): Route {
     // re-deriva a rota para refletir o pathname novo (no caso geral
     // é equivalente, mas o re-parse mantém o estado autoconsistente).
     migrateLegacyHashIfNeeded();
+    // Redireciona /admin → /admin/dashboard (canonical)
+    if (window.location.pathname === "/admin") {
+      window.history.replaceState({}, "", "/admin/dashboard");
+      window.dispatchEvent(new Event("lovable:navigate"));
+    }
     setRoute(parseLocation());
 
     const onChange = () => setRoute(parseLocation());
