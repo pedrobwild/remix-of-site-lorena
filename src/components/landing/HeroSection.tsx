@@ -1,28 +1,30 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight, Images, Pause, Play } from "lucide-react";
-import erik0381 from "@/assets/hero-slides/erik-03-8-1.png.asset.json";
-import erik0311 from "@/assets/hero-slides/erik-03-11.png.asset.json";
-import marcos104 from "@/assets/hero-slides/marcos-10-4.png.asset.json";
-import marcos62 from "@/assets/hero-slides/marcos-6-2.png.asset.json";
-import premium112 from "@/assets/hero-slides/premium-11-2.png.asset.json";
-import premium74 from "@/assets/hero-slides/premium-7-4.png.asset.json";
-import rodrigo11 from "@/assets/hero-slides/rodrigo-1-1.png.asset.json";
-import rodrigo151 from "@/assets/hero-slides/rodrigo-15-1.png.asset.json";
-import rodrigo8 from "@/assets/hero-slides/rodrigo-8.png.asset.json";
 import { Container, Chip, CTAButton } from "./primitives";
 import { HERO } from "./content";
 
-const HERO_SLIDES = [
-  { src: erik0381.url, label: "Studio reformado por Erik" },
-  { src: erik0311.url, label: "Detalhe de marcenaria em studio Erik" },
-  { src: premium112.url, label: "Acabamento premium em sala integrada" },
-  { src: premium74.url, label: "Cozinha premium com marcenaria sob medida" },
-  { src: rodrigo151.url, label: "Sala de studio Rodrigo" },
-  { src: rodrigo8.url, label: "Ambiente integrado studio Rodrigo" },
-  { src: rodrigo11.url, label: "Detalhe de iluminação studio Rodrigo" },
-  { src: marcos62.url, label: "Ambiente studio Marcos" },
-  { src: marcos104.url, label: "Cozinha studio Marcos" },
+// Variantes geradas em /public/images/hero-slides/<stem>-{sm,md,lg}.{avif,webp,jpg}
+// sm=640w, md=1280w, lg=1920w. Browser escolhe a melhor pelo srcset+sizes.
+const SLIDE_SIZES = "(max-width: 640px) 100vw, (max-width: 1280px) 100vw, 1920px";
+
+type HeroSlide = { stem: string; label: string };
+
+const HERO_SLIDES: HeroSlide[] = [
+  { stem: "erik-03-8-1", label: "Studio reformado por Erik" },
+  { stem: "erik-03-11", label: "Detalhe de marcenaria em studio Erik" },
+  { stem: "premium-11-2", label: "Acabamento premium em sala integrada" },
+  { stem: "premium-7-4", label: "Cozinha premium com marcenaria sob medida" },
+  { stem: "rodrigo-15-1", label: "Sala de studio Rodrigo" },
+  { stem: "rodrigo-8", label: "Ambiente integrado studio Rodrigo" },
+  { stem: "rodrigo-1-1", label: "Detalhe de iluminação studio Rodrigo" },
+  { stem: "marcos-6-2", label: "Ambiente studio Marcos" },
+  { stem: "marcos-10-4", label: "Cozinha studio Marcos" },
 ];
+
+const slideUrl = (stem: string, size: "sm" | "md" | "lg", ext: "avif" | "webp" | "jpg") =>
+  `/images/hero-slides/${stem}-${size}.${ext}`;
+const buildSrcSet = (stem: string, ext: "avif" | "webp" | "jpg") =>
+  `${slideUrl(stem, "sm", ext)} 640w, ${slideUrl(stem, "md", ext)} 1280w, ${slideUrl(stem, "lg", ext)} 1920w`;
 
 const SLIDE_INTERVAL = 5500;
 
