@@ -66,16 +66,28 @@ export default function HeroSection() {
       className="relative overflow-hidden bg-bewild-ink pt-28 pb-16 sm:pt-32 md:pb-24"
     >
       <div className="absolute inset-0" aria-hidden="true">
-        {HERO_SLIDES.map((slide, index) => (
-          <div
-            key={slide.src}
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-[1600ms] ease-in-out motion-reduce:transition-none"
-            style={{
-              backgroundImage: `url(${slide.src})`,
-              opacity: activeSlide === index ? 1 : 0,
-            }}
-          />
-        ))}
+        {HERO_SLIDES.map((slide, index) => {
+          // Eager-load only the first slide (LCP). Preload the next one to keep
+          // transitions smooth; defer the rest with native lazy loading.
+          const isLCP = index === 0;
+          const isNext = index === (activeSlide + 1) % HERO_SLIDES.length;
+          const shouldEagerLoad = isLCP || index === activeSlide || isNext;
+          return (
+            <img
+              key={slide.src}
+              src={slide.src}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+              decoding="async"
+              loading={shouldEagerLoad ? "eager" : "lazy"}
+              fetchPriority={isLCP ? "high" : "low"}
+              sizes="100vw"
+              className="absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-[1600ms] ease-in-out motion-reduce:transition-none"
+              style={{ opacity: activeSlide === index ? 1 : 0 }}
+            />
+          );
+        })}
         {/* Base darkening for legibility on every image */}
         <div className="absolute inset-0 bg-bewild-ink/70 sm:bg-bewild-ink/60" />
         {/* Left-side gradient ensuring text contrast */}
