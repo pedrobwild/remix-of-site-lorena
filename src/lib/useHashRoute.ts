@@ -49,7 +49,7 @@ function parsePath(rawPath: string): Route {
 
   // Admin
   if (path === "/admin/login") return { name: "admin-login" };
-  if (path === "/admin") return { name: "admin-dashboard" };
+  if (path === "/admin/dashboard") return { name: "admin-dashboard" };
   if (path === "/admin/analytics") return { name: "admin-analytics" };
   if (path === "/admin/seo") return { name: "admin-seo" };
   if (path === "/admin/seo/404") return { name: "admin-seo-404" };
