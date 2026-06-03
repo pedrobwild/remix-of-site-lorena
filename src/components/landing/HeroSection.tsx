@@ -97,7 +97,7 @@ export default function HeroSection() {
           );
         })}
         {/* Base darkening for legibility on every image */}
-        <div className="absolute inset-0 bg-bewild-ink/70 sm:bg-bewild-ink/60" />
+        <div className="absolute inset-0 bg-bewild-ink/45 sm:bg-bewild-ink/35" />
         {/* Left-side gradient ensuring text contrast */}
         <div
           className="absolute inset-0"
