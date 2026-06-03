@@ -31,9 +31,7 @@ export default function HeroSection() {
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
           {/* Copy */}
           <div className="flex flex-col gap-7">
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-bewild-blue-400">
-              {"\n"}
-            </span>
+            {"\n"}
 
             <h1 className="font-display text-[2.1rem] font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl md:text-[3.4rem]">
               Reformas turn-key para transformar studios em{" "}
