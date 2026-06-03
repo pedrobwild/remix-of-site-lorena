@@ -136,7 +136,7 @@ export const routes = {
   blogTag: (slug: string) => `/blog/tag/${slug}`,
   blogPost: (slug: string) => `/blog/${slug}`,
   adminLogin: "/admin/login",
-  adminDashboard: "/admin",
+  adminDashboard: "/admin/dashboard",
   adminAnalytics: "/admin/analytics",
   adminSeo: "/admin/seo",
   adminSeo404: "/admin/seo/404",
