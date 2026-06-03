@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { fetchSiteSettings, invalidateSiteSettings, type SiteSettings } from "./useSiteSettings";
 import { isConsentAccepted, onConsentChange } from "./cookieConsent";
-import { SUPABASE_URL } from "@/integrations/supabase/client";
 
 export const SEO_REFRESH_EVENT = "seo:refresh";
 
