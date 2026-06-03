@@ -210,7 +210,7 @@ export default function HeroSection() {
                 const active = activeSlide === index;
                 return (
                   <button
-                    key={slide.src}
+                    key={slide.stem}
                     type="button"
                     role="tab"
                     aria-selected={active}
