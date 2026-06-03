@@ -67,13 +67,7 @@ export const NAV_LINKS: { label: string; href: string }[] = [
 ];
 
 export const HERO = {
-  chips: [
-    "Projeto personalizado",
-    "Gestão ponta-a-ponta",
-    "Portal de acompanhamento",
-    "Studios e short-stay",
-    "Obra + mobiliário + entrega",
-  ],
+  chips: [],
   floatingCards: [
     {
       title: "Obra acompanhada por portal",
