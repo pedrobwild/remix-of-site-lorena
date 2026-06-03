@@ -37,7 +37,7 @@ import {
   Plane,
   Briefcase,
   Building,
-  KeyRound,
+  
   Handshake,
 } from "lucide-react";
 
@@ -68,23 +68,7 @@ export const NAV_LINKS: { label: string; href: string }[] = [
 
 export const HERO = {
   chips: [],
-  floatingCards: [
-    {
-      title: "Obra acompanhada por portal",
-      text: "Fotos, etapas e evolução em um só lugar.",
-      icon: MonitorCheck,
-    },
-    {
-      title: "Projeto pensado para performance",
-      text: "Layout, marcenaria e acabamentos para uso real, foto e operação.",
-      icon: Target,
-    },
-    {
-      title: "Turn-key",
-      text: "\n",
-      icon: KeyRound,
-    },
-  ],
+  floatingCards: [],
 };
 
 export const PROBLEM_BULLETS: string[] = [
