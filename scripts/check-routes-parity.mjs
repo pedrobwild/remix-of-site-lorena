@@ -50,7 +50,7 @@ const EDGE_FN_FILE = resolve(
 
 const SPA_ONLY_ALLOWED = new Set([
   // Bloco admin: tratado como reason="admin_route" via prefixo /admin/*.
-  "/admin",
+  "/admin/dashboard",
   "/admin/login",
   "/admin/analytics",
   "/admin/seo",

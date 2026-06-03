@@ -49,7 +49,7 @@ function parsePath(rawPath: string): Route {
 
   // Admin
   if (path === "/admin/login") return { name: "admin-login" };
-  if (path === "/admin") return { name: "admin-dashboard" };
+  if (path === "/admin/dashboard") return { name: "admin-dashboard" };
   if (path === "/admin/analytics") return { name: "admin-analytics" };
   if (path === "/admin/seo") return { name: "admin-seo" };
   if (path === "/admin/seo/404") return { name: "admin-seo-404" };
@@ -107,6 +107,11 @@ export function useHashRoute(): Route {
     // re-deriva a rota para refletir o pathname novo (no caso geral
     // é equivalente, mas o re-parse mantém o estado autoconsistente).
     migrateLegacyHashIfNeeded();
+    // Redireciona /admin → /admin/dashboard (canonical)
+    if (window.location.pathname === "/admin") {
+      window.history.replaceState({}, "", "/admin/dashboard");
+      window.dispatchEvent(new Event("lovable:navigate"));
+    }
     setRoute(parseLocation());
 
     const onChange = () => setRoute(parseLocation());
@@ -136,7 +141,7 @@ export const routes = {
   blogTag: (slug: string) => `/blog/tag/${slug}`,
   blogPost: (slug: string) => `/blog/${slug}`,
   adminLogin: "/admin/login",
-  adminDashboard: "/admin",
+  adminDashboard: "/admin/dashboard",
   adminAnalytics: "/admin/analytics",
   adminSeo: "/admin/seo",
   adminSeo404: "/admin/seo/404",
