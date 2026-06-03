@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { fetchSiteSettings, invalidateSiteSettings, type SiteSettings } from "./useSiteSettings";
 import { isConsentAccepted, onConsentChange } from "./cookieConsent";
-import { SUPABASE_URL } from "@/integrations/supabase/client";
 
 export const SEO_REFRESH_EVENT = "seo:refresh";
 
@@ -375,7 +374,7 @@ export async function refreshSeoEverywhere(opts?: { pingSearchEngines?: boolean 
   if (!opts?.pingSearchEngines) return { ok: true };
 
   try {
-    const url = `${SUPABASE_URL}/functions/v1/ping-sitemap`;
+    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ping-sitemap`;
     const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

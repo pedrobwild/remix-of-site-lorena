@@ -14,7 +14,6 @@
  * - Resiliência: nunca lança exceção
  */
 import { isConsentAccepted, onConsentChange } from "@/lib/cookieConsent";
-import { SUPABASE_URL } from "@/integrations/supabase/client";
 
 type EventType =
   | "pageview"
@@ -354,7 +353,7 @@ function buildRow(eventType: EventType, payload?: TrackPayload) {
 }
 
 function sendEvent(row: Record<string, unknown>, preferBeacon: boolean) {
-  const url = `${SUPABASE_URL}/functions/v1/track`;
+  const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/track`;
   const json = JSON.stringify(row);
 
   // Beacon path (somente para unload / página fechando). Usa text/plain pra
