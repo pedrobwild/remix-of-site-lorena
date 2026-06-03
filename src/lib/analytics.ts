@@ -14,7 +14,6 @@
  * - Resiliência: nunca lança exceção
  */
 import { isConsentAccepted, onConsentChange } from "@/lib/cookieConsent";
-import { SUPABASE_URL } from "@/integrations/supabase/client";
 
 type EventType =
   | "pageview"
