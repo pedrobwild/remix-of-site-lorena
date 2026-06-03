@@ -1,5 +1,5 @@
 import { ArrowRight, Images } from "lucide-react";
-import { Container, Chip, CTAButton, LandingImage } from "./primitives";
+import { Container, Chip, CTAButton } from "./primitives";
 import { HERO } from "./content";
 
 export default function HeroSection() {
@@ -28,35 +28,32 @@ export default function HeroSection() {
       />
 
       <Container className="relative">
-        <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
-          {/* Copy */}
-          <div className="flex flex-col gap-7">
-            
+        <div className="flex flex-col gap-7">
+          <h1 className="font-display text-[2.1rem] font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl md:text-[3.4rem]">
+            Reformas turn-key para transformar studios em{" "}
+            <span className="text-bewild-blue-400">imóveis prontos para rentabilizar.</span>
+          </h1>
 
-            <h1 className="font-display text-[2.1rem] font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl md:text-[3.4rem]">
-              Reformas turn-key para transformar studios em{" "}
-              <span className="text-bewild-blue-400">imóveis prontos para rentabilizar.</span>
-            </h1>
+          <p className="max-w-xl text-base leading-relaxed text-white/75 sm:text-lg">
+            Projeto de arquitetura personalizado, obra, marcenaria, mobiliário e tecnologia de
+            acompanhamento em um processo único — para você não precisar virar gerente da própria
+            reforma.
+          </p>
 
-            <p className="max-w-xl text-base leading-relaxed text-white/75 sm:text-lg">
-              Projeto de arquitetura personalizado, obra, marcenaria, mobiliário e tecnologia de
-              acompanhamento em um processo único — para você não precisar virar gerente da própria
-              reforma.
-            </p>
+          <p className="max-w-xl text-sm font-medium text-white/55">
+            Da entrega das chaves ao imóvel pronto para foto, anúncio e operação.
+          </p>
 
-            <p className="max-w-xl text-sm font-medium text-white/55">
-              Da entrega das chaves ao imóvel pronto para foto, anúncio e operação.
-            </p>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <CTAButton href="#diagnostico" variant="primary">
+              Solicitar diagnóstico do imóvel <ArrowRight className="h-4 w-4" />
+            </CTAButton>
+            <CTAButton href="#cases" variant="ghost">
+              <Images className="h-4 w-4" /> Ver reformas entregues
+            </CTAButton>
+          </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <CTAButton href="#diagnostico" variant="primary">
-                Solicitar diagnóstico do imóvel <ArrowRight className="h-4 w-4" />
-              </CTAButton>
-              <CTAButton href="#cases" variant="ghost">
-                <Images className="h-4 w-4" /> Ver reformas entregues
-              </CTAButton>
-            </div>
-
+          {HERO.chips.length > 0 && (
             <ul className="flex flex-wrap gap-2 pt-1">
               {HERO.chips.map((chip) => (
                 <li key={chip}>
@@ -64,32 +61,10 @@ export default function HeroSection() {
                 </li>
               ))}
             </ul>
-          </div>
-
-          {/* Visual */}
-          <div className="relative">
-            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[1.5rem] border border-white/10 shadow-bewild-float sm:aspect-[3/4]">
-              {/* 👉 Trocar por foto real de studio pronto em
-                  /public/images/reformas/hero-studio-bewild.jpg */}
-              <LandingImage
-                src="/images/reformas/hero-studio-bewild.jpg"
-                alt="Studio compacto reformado e mobiliado pela bewild, pronto para operar"
-                rounded="rounded-[1.5rem]"
-                loading="eager"
-              />
-              <div
-                className="pointer-events-none absolute inset-0 rounded-[1.5rem]"
-                style={{
-                  background: "linear-gradient(180deg, transparent 55%, rgba(10,17,30,0.55) 100%)",
-                }}
-                aria-hidden="true"
-              />
-            </div>
-
-
-          </div>
+          )}
         </div>
       </Container>
     </section>
   );
 }
+
