@@ -32,7 +32,7 @@ export default function HeroSection() {
           {/* Copy */}
           <div className="flex flex-col gap-7">
             <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-bewild-blue-400">
-              Reformas turn-key · studios · short-stay
+              {"\n"}
             </span>
 
             <h1 className="font-display text-[2.1rem] font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl md:text-[3.4rem]">
