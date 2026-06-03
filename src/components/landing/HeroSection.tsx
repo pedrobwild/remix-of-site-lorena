@@ -86,23 +86,6 @@ export default function HeroSection() {
               />
             </div>
 
-            {/* Cards flutuantes */}
-            <div className="mt-4 grid gap-3 sm:absolute sm:-bottom-6 sm:-left-6 sm:mt-0 sm:w-[60%] sm:gap-2.5">
-              {HERO.floatingCards.slice(0, 2).map((card) => (
-                <div
-                  key={card.title}
-                  className="flex items-start gap-3 rounded-2xl border border-white/10 bg-bewild-night/80 p-3.5 backdrop-blur-xl"
-                >
-                  <span className="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-bewild-blue/20 text-bewild-blue-400">
-                    <card.icon className="h-5 w-5" aria-hidden="true" />
-                  </span>
-                  <div>
-                    <p className="text-sm font-semibold text-white">{card.title}</p>
-                    <p className="text-xs leading-snug text-white/65">{card.text}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
 
           </div>
         </div>
