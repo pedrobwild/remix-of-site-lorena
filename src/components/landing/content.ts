@@ -37,7 +37,7 @@ import {
   Plane,
   Briefcase,
   Building,
-  KeyRound,
+  
   Handshake,
 } from "lucide-react";
 
