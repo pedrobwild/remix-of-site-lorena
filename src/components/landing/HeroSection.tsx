@@ -104,21 +104,6 @@ export default function HeroSection() {
               ))}
             </div>
 
-            {/* Terceiro card — topo direito no desktop */}
-            <div className="hidden sm:absolute sm:-right-4 sm:top-8 sm:block sm:w-[55%]">
-              <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-bewild-night/80 p-3.5 backdrop-blur-xl">
-                <span className="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-bewild-blue/20 text-bewild-blue-400">
-                  {(() => {
-                    const Icon = HERO.floatingCards[2].icon;
-                    return <Icon className="h-5 w-5" aria-hidden="true" />;
-                  })()}
-                </span>
-                <div>
-                  <p className="text-sm font-semibold text-white">{HERO.floatingCards[2].title}</p>
-                  <p className="text-xs leading-snug text-white/65">{HERO.floatingCards[2].text}</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </Container>
