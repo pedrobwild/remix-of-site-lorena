@@ -81,6 +81,17 @@
       rel="stylesheet"
     />
 
+    <!-- Preload do primeiro slide da hero (LCP) para eliminar o flash escuro inicial -->
+    <link
+      rel="preload"
+      as="image"
+      href="/images/hero-slides/erik-03-8-1-md.avif"
+      type="image/avif"
+      imagesrcset="/images/hero-slides/erik-03-8-1-sm.avif 640w, /images/hero-slides/erik-03-8-1-md.avif 1280w, /images/hero-slides/erik-03-8-1-lg.avif 1920w"
+      imagesizes="(max-width: 640px) 100vw, (max-width: 1280px) 100vw, 1920px"
+      fetchpriority="high"
+    />
+
     <!-- =========================================================
      JSON-LD — Organization + WebSite + Service (bewild)
      Inline para garantir indexação mesmo sem execução de JS.
