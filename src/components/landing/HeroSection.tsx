@@ -96,22 +96,22 @@ export default function HeroSection() {
             </picture>
           );
         })}
-        {/* Base darkening for legibility on every image */}
-        <div className="absolute inset-0 bg-bewild-ink/45 sm:bg-bewild-ink/35" />
-        {/* Left-side gradient ensuring text contrast */}
+        {/* Base darkening minimal, applied uniformly so todas as fotos permanecem nítidas */}
+        <div className="absolute inset-0 bg-bewild-ink/20 sm:bg-bewild-ink/15" />
+        {/* Left-side gradient apenas onde o texto fica, liberando o restante da imagem */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(90deg, rgba(10,17,30,0.92) 0%, rgba(10,17,30,0.78) 45%, rgba(10,17,30,0.55) 75%, rgba(10,17,30,0.7) 100%)",
+              "linear-gradient(90deg, rgba(10,17,30,0.72) 0%, rgba(10,17,30,0.45) 35%, rgba(10,17,30,0.15) 60%, rgba(10,17,30,0) 100%)",
           }}
         />
-        {/* Bottom vignette for indicators/controls */}
+        {/* Bottom vignette sutil para indicadores/controles */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(180deg, transparent 55%, rgba(10,17,30,0.55) 100%), radial-gradient(900px 520px at 78% 0%, rgba(30,91,184,0.12), transparent 60%)",
+              "linear-gradient(180deg, transparent 65%, rgba(10,17,30,0.4) 100%), radial-gradient(900px 520px at 78% 0%, rgba(30,91,184,0.06), transparent 60%)",
           }}
         />
       </div>
