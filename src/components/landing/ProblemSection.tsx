@@ -12,7 +12,7 @@ export default function ProblemSection() {
               eyebrow="O problema"
               title={
                 <>
-                  Reformar um studio para renda não deveria virar uma{" "}
+                  Reformar um studio para renda não precisa ser sua{" "}
                   <span className="text-bewild-blue">segunda profissão.</span>
                 </>
               }
