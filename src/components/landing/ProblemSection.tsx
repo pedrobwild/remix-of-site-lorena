@@ -18,10 +18,10 @@ export default function ProblemSection() {
               }
             />
             <p className="max-w-xl text-base leading-relaxed text-bewild-steel">
-              O investidor normalmente precisa coordenar arquiteto, empreiteiro, marceneiro,
-              fornecedor de eletros, compras, condomínio, montagem, limpeza e entrega. Quando cada
-              parte trabalha separada, o risco aparece em forma de atraso, aditivo, retrabalho e
-              imóvel parado.
+              A Bwild desenvolve soluções que integram arquitetura, engenharia, tecnologia e inteligência de mercado em uma só plataforma, para gerar o máximo de valor para quem precisa reformar, e não quer passar pelo pesadelo de cuidar de uma obra sozinho, muitas vezes à distância.
+              <br />
+              <br />
+              E além disso, busca desfrutar de uma excelente experiência durante todo o processo, tendo no final um imóvel com alta qualidade e potencial de rendimento.
             </p>
             <div className="mt-2 flex items-start gap-3 rounded-2xl border border-bewild-blue/15 bg-white p-5 shadow-bewild-card">
               <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-bewild-blue/10 text-bewild-blue">
