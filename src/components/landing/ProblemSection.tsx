@@ -1,4 +1,4 @@
-import { AlertTriangle, Check } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { Container, SectionHeading } from "./primitives";
 import { PROBLEM_BULLETS } from "./content";
 
