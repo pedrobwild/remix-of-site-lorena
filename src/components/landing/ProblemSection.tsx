@@ -23,14 +23,6 @@ export default function ProblemSection() {
               <br />
               E além disso, busca desfrutar de uma excelente experiência durante todo o processo, tendo no final um imóvel com alta qualidade e potencial de rendimento.
             </p>
-            <div className="mt-2 flex items-start gap-3 rounded-2xl border border-bewild-blue/15 bg-white p-5 shadow-bewild-card">
-              <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-bewild-blue/10 text-bewild-blue">
-                <Check className="h-5 w-5" aria-hidden="true" />
-              </span>
-              <p className="text-sm font-medium leading-relaxed text-bewild-ink">
-                {" "}
-              </p>
-            </div>
           </div>
 
           <ul className="grid gap-3 self-center">
