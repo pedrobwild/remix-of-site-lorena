@@ -28,8 +28,7 @@ export default function ProblemSection() {
                 <Check className="h-5 w-5" aria-hidden="true" />
               </span>
               <p className="text-sm font-medium leading-relaxed text-bewild-ink">
-                A bewild existe para integrar essas etapas em um processo claro, técnico e
-                acompanhável.
+                {" "}
               </p>
             </div>
           </div>
