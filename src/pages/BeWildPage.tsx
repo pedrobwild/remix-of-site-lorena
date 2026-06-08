@@ -9,6 +9,7 @@ import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton
 import { navigate } from "../lib/useHashRoute";
 import JornadaBeWild from "../components/landing/JornadaBeWild";
 import { whatsappHref } from "../components/landing/content";
+import { ImagePlaceholder } from "../components/landing/ImagePlaceholder";
 import { MaterialBoard } from "../components/landing/MaterialBoard";
 import { MobileBottomCTA } from "../components/landing/MobileBottomCTA";
 import { StickyDiagnosticPanel } from "../components/landing/StickyDiagnosticPanel";
@@ -245,6 +246,23 @@ export default function BeWildPage() {
         <section className="border-t border-white/10 py-16 sm:py-20">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <MaterialBoard />
+          </div>
+        </section>
+
+        {/* Galeria de detalhe — Be Wild Reformas */}
+        <section className="border-t border-white/10 py-16 sm:py-20">
+          <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
+            <div className="mb-8">
+              <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold">Acabamento</p>
+              <h3 className="text-xl font-bold text-white sm:text-2xl">
+                Detalhes que fazem diferença na foto e na operação.
+              </h3>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <ImagePlaceholder assetId="bewild-detalhe-1" className="w-full" showReveal={true} />
+              <ImagePlaceholder assetId="bewild-detalhe-2" className="w-full" showReveal={true} revealDelay={80} />
+              <ImagePlaceholder assetId="bewild-obra" className="w-full" showReveal={true} revealDelay={160} />
+            </div>
           </div>
         </section>
 

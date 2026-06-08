@@ -19,6 +19,7 @@ import JornadaBeWild from "./components/landing/JornadaBeWild";
 import Header from "./components/landing/Header";
 import { MobileBottomCTA } from "./components/landing/MobileBottomCTA";
 import { useHeroReveal } from "./lib/useBwMotion";
+import { ImagePlaceholder } from "./components/landing/ImagePlaceholder";
 import { StickyDiagnosticPanel } from "./components/landing/StickyDiagnosticPanel";
 import Footer from "./components/landing/Footer";
 import FloatingWhatsAppButton from "./components/landing/FloatingWhatsAppButton";
@@ -179,10 +180,19 @@ export default function App() {
 
               {/* Coluna direita — composição de mini-cards operacionais */}
               <div className="relative flex flex-col gap-3 lg:pl-8">
-                {/* Card topo — visual de imóvel pronto */}
-                <div className="rounded-2xl border border-white/10 bg-white/[0.04] overflow-hidden">
-                  <div className="h-40 sm:h-48 bg-gradient-to-br from-bewild-blue/15 via-white/[0.03] to-transparent flex items-end p-5">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/15 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-sm">
+                {/* Foto hero — studio pronto (P0) */}
+                <div className="relative rounded-2xl overflow-hidden">
+                  <ImagePlaceholder
+                    assetId="hero-studio"
+                    className="w-full"
+                    showReveal={true}
+                    revealDelay={360}
+                    overlay={true}
+                    overlayStrength="bg-bewild-ink/30"
+                  />
+                  {/* Badge flutuante sobre a imagem */}
+                  <div className="absolute bottom-4 left-4">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-bewild-ink/80 border border-white/15 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                       Imóvel pronto para hospedar
                     </span>

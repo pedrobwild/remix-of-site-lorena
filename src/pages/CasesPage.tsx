@@ -13,6 +13,7 @@ import { AssetStatusTag } from "../components/landing/AssetStatusTag";
 import { navigate } from "../lib/useHashRoute";
 import { whatsappHref } from "../components/landing/content";
 import { ArrowRight, MapPin, CheckCircle, BarChart3, Quote } from "lucide-react";
+import { ImagePlaceholder } from "../components/landing/ImagePlaceholder";
 import { Reveal } from "../components/landing/MotionPrimitives";
 
 /* ─── Dados dos cases ────────────────────────────────────────────────────────── */
@@ -21,6 +22,11 @@ interface Case {
   bairro: string;
   tipo: string;
   tags: string[];
+  photoIds?: {
+    antes?: string;
+    pronto?: string;
+    operando?: string;
+  };
   antes: {
     titulo: string;
     descricao: string;
@@ -44,6 +50,7 @@ const CASES: Case[] = [
     bairro: "Pinheiros, São Paulo",
     tipo: "Studio 28m²",
     tags: ["Be Wild Reformas", "BeWild Host Care", "Jornada completa"],
+    photoIds: { antes: "pinheiros-antes", pronto: "pinheiros-pronto", operando: "pinheiros-operando" },
     antes: {
       titulo: "Imóvel entregue pela construtora",
       descricao: "Recém-entregue, sem mobília, sem personalização. Proprietário sem tempo para gerenciar obra e fornecedores. Imóvel parado perdendo para a inflação.",
@@ -79,6 +86,7 @@ const CASES: Case[] = [
     bairro: "Vila Madalena, São Paulo",
     tipo: "Apartamento 1 dorm 42m²",
     tags: ["Be Wild Reformas", "BeWild Host Care", "Imóvel antigo"],
+    photoIds: { antes: "vilamadalena-antes", pronto: "vilamadalena-pronto", operando: "vilamadalena-operando" },
     antes: {
       titulo: "Imóvel reformado para moradia há 8 anos",
       descricao: "Proprietário queria aproveitar o ativo para gerar renda mas não sabia por onde começar. Imóvel com bom estado mas inadequado para short stay.",
@@ -114,6 +122,7 @@ const CASES: Case[] = [
     bairro: "Consolação, São Paulo",
     tipo: "Studio 22m²",
     tags: ["BeWild Host Care", "Diagnóstico", "Otimização sem obra completa"],
+    photoIds: { antes: "consolacao-antes", pronto: "consolacao-pronto" },
     antes: {
       titulo: "Imóvel mobiliado com performance baixa",
       descricao: "Já mobiliado mas sem identidade visual, fotos ruins e anúncio com baixa ocupação há meses. Proprietário cansado de operar sozinho.",
@@ -170,6 +179,15 @@ function TriptychCard({ c }: { c: Case }) {
       <div className="grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/8">
         {/* Coluna 1 — Antes */}
         <div className="p-5">
+          {c.photoIds?.antes && (
+            <div className="mb-4 -mx-5 -mt-5 overflow-hidden rounded-t-none">
+              <ImagePlaceholder
+                assetId={c.photoIds.antes as any}
+                className="w-full"
+                showReveal={false}
+              />
+            </div>
+          )}
           <div className="mb-3">
             <AssetStatusTag status={c.antes.status} size="sm" />
           </div>
@@ -180,6 +198,15 @@ function TriptychCard({ c }: { c: Case }) {
 
         {/* Coluna 2 — Pronto */}
         <div className="p-5 bg-white/[0.015]">
+          {c.photoIds?.pronto && (
+            <div className="mb-4 -mx-5 -mt-5 overflow-hidden">
+              <ImagePlaceholder
+                assetId={c.photoIds.pronto as any}
+                className="w-full"
+                showReveal={false}
+              />
+            </div>
+          )}
           <div className="mb-3">
             <AssetStatusTag status="pronto" size="sm" />
           </div>
@@ -197,6 +224,15 @@ function TriptychCard({ c }: { c: Case }) {
 
         {/* Coluna 3 — Operando */}
         <div className="p-5">
+          {c.photoIds?.operando && (
+            <div className="mb-4 -mx-5 -mt-5 overflow-hidden">
+              <ImagePlaceholder
+                assetId={c.photoIds.operando as any}
+                className="w-full"
+                showReveal={false}
+              />
+            </div>
+          )}
           <div className="mb-3">
             <AssetStatusTag status="operando" size="sm" />
           </div>

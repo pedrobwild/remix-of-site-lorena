@@ -8,6 +8,7 @@ import Footer from "../components/landing/Footer";
 import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton";
 import { navigate } from "../lib/useHashRoute";
 import { whatsappHref } from "../components/landing/content";
+import { ImagePlaceholder } from "../components/landing/ImagePlaceholder";
 import { HostCareDashboard } from "../components/landing/HostCareDashboard";
 import { MobileBottomCTA } from "../components/landing/MobileBottomCTA";
 import { StickyDiagnosticPanel } from "../components/landing/StickyDiagnosticPanel";
@@ -218,6 +219,46 @@ export default function BewildHostCarePage() {
               </p>
             </div>
             <HostCareDashboard />
+          </div>
+        </section>
+
+        {/* Foto editorial — operação invisível */}
+        <section className="border-t border-white/10 py-16 sm:py-20">
+          <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div>
+                <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold">Studio em operação</p>
+                <p className="mb-4 text-lg font-bold text-white">
+                  O imóvel trabalha.<br/>O proprietário descansa.
+                </p>
+                <ImagePlaceholder
+                  assetId="hostcare-studio"
+                  className="w-full"
+                  showReveal={true}
+                  overlay={true}
+                />
+              </div>
+              <div className="flex flex-col gap-4">
+                <div>
+                  <p className="mb-2 font-mono text-xs uppercase tracking-widest text-white/30">Operação entre reservas</p>
+                  <ImagePlaceholder
+                    assetId="hostcare-limpeza"
+                    className="w-full"
+                    showReveal={true}
+                    revealDelay={120}
+                  />
+                </div>
+                <div>
+                  <p className="mb-2 font-mono text-xs uppercase tracking-widest text-white/30">Transparência financeira</p>
+                  <ImagePlaceholder
+                    assetId="hostcare-relatorio"
+                    className="w-full"
+                    showReveal={true}
+                    revealDelay={200}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
