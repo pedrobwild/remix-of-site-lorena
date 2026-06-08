@@ -234,7 +234,7 @@ export default function BewildHostCarePage() {
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {SERVICOS.map((s) => (
-                <div key={s.title} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+                <div key={s.title} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-bewild-premium">
                   <s.icon className="mb-4 h-7 w-7 text-bewild-blue-400" />
                   <p className="mb-2 font-semibold text-white">{s.title}</p>
                   <p className="text-sm text-white/55 leading-relaxed">{s.text}</p>
@@ -303,7 +303,7 @@ export default function BewildHostCarePage() {
             </div>
             <div className="grid gap-6 lg:grid-cols-2">
               {FAQS.map((f) => (
-                <div key={f.q} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+                <div key={f.q} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-bewild-premium">
                   <p className="mb-3 font-semibold text-white">{f.q}</p>
                   <p className="text-sm text-white/60 leading-relaxed">{f.a}</p>
                 </div>

@@ -6,6 +6,7 @@
  * Uso: <MaterialBoard />
  */
 
+import { Reveal } from "./MotionPrimitives";
 import { Layers, Lightbulb, Droplets, Plug, Wind, DoorOpen } from "lucide-react";
 
 interface Material {
@@ -84,7 +85,8 @@ export function MaterialBoard() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {MATERIAIS.map((m) => (
+        {MATERIAIS.map((m, i) => (
+          <Reveal key={m.nome} delay={i * 60} threshold={0.1}>
           <div
             key={m.nome}
             className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-white/20 transition-colors"
@@ -106,6 +108,7 @@ export function MaterialBoard() {
             {/* Por quê */}
             <p className="text-xs text-white/45 leading-relaxed">{m.porque}</p>
           </div>
+          </Reveal>
         ))}
       </div>
     </div>

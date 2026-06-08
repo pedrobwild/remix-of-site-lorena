@@ -13,6 +13,7 @@ import { AssetStatusTag } from "../components/landing/AssetStatusTag";
 import { navigate } from "../lib/useHashRoute";
 import { whatsappHref } from "../components/landing/content";
 import { ArrowRight, MapPin, CheckCircle, BarChart3, Quote } from "lucide-react";
+import { Reveal } from "../components/landing/MotionPrimitives";
 
 /* ─── Dados dos cases ────────────────────────────────────────────────────────── */
 interface Case {
@@ -143,7 +144,7 @@ const CASES: Case[] = [
 /* ─── Triptych Case Card ─────────────────────────────────────────────────────── */
 function TriptychCard({ c }: { c: Case }) {
   return (
-    <article className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
+    <article className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-bewild-premium">
       {/* Header do case */}
       <div className="px-6 py-5 border-b border-white/8 flex flex-wrap items-start justify-between gap-3">
         <div>
@@ -285,8 +286,10 @@ export default function CasesPage() {
         <section className="border-t border-white/10 py-16 sm:py-20">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="space-y-8">
-              {CASES.map((c) => (
-                <TriptychCard key={c.id} c={c} />
+              {CASES.map((caseItem, i) => (
+                <Reveal key={caseItem.id} delay={i * 100} threshold={0.05}>
+                  <TriptychCard c={caseItem} />
+                </Reveal>
               ))}
             </div>
           </div>

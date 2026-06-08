@@ -18,6 +18,7 @@ import { navigate } from "./lib/useHashRoute";
 import JornadaBeWild from "./components/landing/JornadaBeWild";
 import Header from "./components/landing/Header";
 import { MobileBottomCTA } from "./components/landing/MobileBottomCTA";
+import { useHeroReveal } from "./lib/useBwMotion";
 import { StickyDiagnosticPanel } from "./components/landing/StickyDiagnosticPanel";
 import Footer from "./components/landing/Footer";
 import FloatingWhatsAppButton from "./components/landing/FloatingWhatsAppButton";
@@ -130,6 +131,8 @@ export default function App() {
     return () => { document.documentElement.style.scrollBehavior = prev; };
   }, []);
 
+  const hero = useHeroReveal();
+
   return (
     <div className="bewild min-h-screen bg-bewild-ink font-body text-bewild-ink antialiased">
       <Header />
@@ -144,13 +147,13 @@ export default function App() {
 
               {/* Coluna esquerda — copy */}
               <div className="max-w-xl">
-                <p className="mb-5 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+                <p className={`mb-5 font-mono text-xs uppercase tracking-widest text-bewild-blue-400 ${hero.eyebrow}`}>
                   Be Wild · São Paulo
                 </p>
-                <h1 className="mb-6 text-4xl font-bold leading-[1.1] text-white sm:text-5xl lg:text-[3.25rem]">
+                <h1 className={`mb-6 text-4xl font-bold leading-[1.1] text-white sm:text-5xl lg:text-[3.25rem] ${hero.h1}`}>
                   Seu imóvel no short stay,&nbsp;da reforma à gestão.
                 </h1>
-                <p className="mb-4 text-lg leading-relaxed text-white/65 sm:text-xl">
+                <p className={`mb-4 text-lg leading-relaxed text-white/65 sm:text-xl ${hero.body}`}>
                   A Be Wild reforma, equipa, publica e gerencia seu imóvel no Airbnb e Booking —
                   para que ele opere sem você tocar obra, hóspedes, limpeza ou manutenção.
                 </p>
@@ -158,7 +161,7 @@ export default function App() {
                   Be Wild Reformas prepara o ativo. BeWild Host Care opera o ativo.
                   A Be Wild conecta os dois para o investidor não virar gestor de obra nem anfitrião.
                 </p>
-                <div className="flex flex-wrap gap-3">
+                <div className={`flex flex-wrap gap-3 ${hero.cta}`}>
                   <button
                     onClick={() => navigate("/diagnostico")}
                     className="inline-flex items-center gap-2 rounded-full bg-bewild-gold px-7 py-3.5 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-gold-600 hover:-translate-y-0.5 shadow-bewild-gold"
@@ -237,7 +240,7 @@ export default function App() {
                 { value: "Mensal", label: "Relatório + repasse", note: "Transparência total" },
               ].map((m) => (
                 <div key={m.label} className="text-center sm:text-left">
-                  <p className="text-xl font-bold text-bewild-gold sm:text-2xl font-mono">{m.value}</p>
+                  <p className="text-xl font-bold text-bewild-gold sm:text-2xl font-mono tabular-nums">{m.value}</p>
                   <p className="text-xs font-medium text-white/50 mt-0.5">{m.label}</p>
                   <p className="text-[0.6rem] text-white/30 mt-0.5">{m.note}</p>
                 </div>
@@ -554,7 +557,7 @@ export default function App() {
                     <button
                       key={opt}
                       onClick={() => navigate("/diagnostico")}
-                      className="w-full text-left rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 text-sm text-white/70 hover:border-bewild-blue/40 hover:bg-bewild-blue/5 hover:text-white transition-all"
+                      className="w-full text-left rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 text-sm text-white/70 hover:border-bewild-gold/30 hover:bg-bewild-gold/5 hover:text-white hover:-translate-y-0.5 transition-all duration-200"
                     >
                       {opt}
                     </button>

@@ -6,6 +6,7 @@
 import { useState } from "react";
 import { useSeo } from "../lib/useSeo";
 import Header from "../components/landing/Header";
+import { Reveal } from "../components/landing/MotionPrimitives";
 import { MobileBottomCTA } from "../components/landing/MobileBottomCTA";
 import { StickyDiagnosticPanel } from "../components/landing/StickyDiagnosticPanel";
 import Footer from "../components/landing/Footer";
@@ -405,7 +406,7 @@ function ArtigoCard({ artigo }: { artigo: Artigo }) {
   const [aberto, setAberto] = useState(false);
 
   return (
-    <article className="rounded-2xl border border-white/10 bg-white/[0.03] flex flex-col overflow-hidden transition-colors hover:border-white/20">
+    <article className="rounded-2xl border border-white/10 bg-white/[0.03] flex flex-col overflow-hidden transition-all duration-300 hover:border-white/20 hover:-translate-y-1 hover:shadow-bewild-premium">
       <div className="p-6 flex flex-col flex-1">
         {/* Categoria */}
         <span
@@ -532,8 +533,10 @@ export default function ConteudosPage() {
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {ARTIGOS.map((artigo) => (
-                <ArtigoCard key={artigo.id} artigo={artigo} />
+              {ARTIGOS.map((artigo, i) => (
+                <Reveal key={artigo.id} delay={i * 60} threshold={0.05}>
+                  <ArtigoCard artigo={artigo} />
+                </Reveal>
               ))}
             </div>
           </div>

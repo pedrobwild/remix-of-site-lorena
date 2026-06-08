@@ -62,6 +62,40 @@
   }
 }
 
+
+/* ─── Card hover — Be Wild Design System ─── */
+.bw-card-hover {
+  transition: transform 240ms cubic-bezier(0.22,1,0.36,1),
+              border-color 240ms ease,
+              box-shadow 240ms ease;
+}
+.bw-card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(17,16,14,0.10);
+}
+
+/* Zoom de imagem dentro do card no hover */
+.bw-card-hover .bw-img-zoom {
+  transition: transform 300ms cubic-bezier(0.22,1,0.36,1);
+}
+.bw-card-hover:hover .bw-img-zoom {
+  transform: scale(1.03);
+}
+
+/* ─── Scrollbar none (para tabs) ─── */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─── Tabular nums utilitário ─── */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
 /* =========================================================
    LORENA ALVES ARQUITETURA — PREMIUM
    Design system · Editorial · Brasilidade contemporânea
