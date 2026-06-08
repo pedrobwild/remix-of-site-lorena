@@ -28,6 +28,9 @@ import {
   BarChart3,
   CheckCircle,
   MapPin,
+  CalendarCheck,
+  ReceiptText,
+  Wifi,
 } from "lucide-react";
 
 const SITE_URL = "https://bwild.com.br"; // TODO: confirmar domínio oficial
@@ -109,9 +112,9 @@ const DIAGNOSTICO_OPTIONS = [
 
 export default function App() {
   useSeo({
-    title: "Bwild — Da obra à diária: preparação e gestão de imóveis para short stay",
+    title: "Be Wild — Seu imóvel no short stay, da reforma à gestão | São Paulo",
     description:
-      "Com Be Wild, a Bwild projeta, reforma, mobilia e prepara seu imóvel. Com BeWild Host Care, cuidamos do anúncio, preço, hóspedes, limpeza, manutenção, relatórios e repasse. Avalie seu imóvel.",
+      "A Be Wild reforma, equipa, publica e gerencia seu imóvel para o Airbnb e Booking em São Paulo. Be Wild Reformas prepara o ativo. BeWild Host Care opera. Diagnostique seu imóvel gratuitamente.",
     canonicalPath: "/",
     ogType: "website",
     jsonLd: [
@@ -150,98 +153,227 @@ export default function App() {
       <Header />
       <main>
 
-        {/* ── Bloco 1: Hero ───────────────────────────────────────── */}
+        {/* ── Bloco 1: Hero — split layout ─────────────────────────────── */}
         <section id="topo" className="relative overflow-hidden pt-28 pb-24 sm:pt-40 sm:pb-32">
-          <div className="absolute inset-0 bg-gradient-to-br from-bewild-blue/10 via-transparent to-transparent pointer-events-none" />
+          {/* gradiente ambiente */}
+          <div className="absolute inset-0 bg-gradient-to-br from-bewild-blue/8 via-transparent to-bewild-blue/3 pointer-events-none" />
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
-            <div className="max-w-4xl">
-              <p className="mb-5 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
-                Bwild · Be Wild · BeWild Host Care
-              </p>
-              <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl xl:text-7xl">
-                Da obra à diária: a Bwild prepara e opera seu imóvel para o short stay.
-              </h1>
-              <p className="mb-8 max-w-2xl text-lg leading-relaxed text-white/70 sm:text-xl">
-                Com Be Wild, projetamos, reformamos, mobiliamos e preparamos seu imóvel para operar.
-                Com BeWild Host Care, cuidamos do anúncio, preço, hóspedes, limpeza, manutenção, relatórios e repasse.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <button
-                  onClick={() => navigate("/diagnostico")}
-                  className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
-                >
-                  Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => navigate("/metodo-bwild")}
-                  className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 text-sm font-semibold text-white transition-all hover:border-white/40"
-                >
-                  Ver a jornada completa
-                </button>
+            <div className="grid gap-16 lg:grid-cols-2 lg:gap-12 lg:items-center">
+
+              {/* Coluna esquerda — copy */}
+              <div className="max-w-xl">
+                <p className="mb-5 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+                  Be Wild · São Paulo
+                </p>
+                <h1 className="mb-6 text-4xl font-bold leading-[1.1] text-white sm:text-5xl lg:text-[3.25rem]">
+                  Seu imóvel no short stay,&nbsp;da reforma à gestão.
+                </h1>
+                <p className="mb-4 text-lg leading-relaxed text-white/65 sm:text-xl">
+                  A Be Wild reforma, equipa, publica e gerencia seu imóvel no Airbnb e Booking —
+                  para que ele opere sem você tocar obra, hóspedes, limpeza ou manutenção.
+                </p>
+                <p className="mb-8 text-sm text-white/40 leading-relaxed">
+                  Be Wild Reformas prepara o ativo. BeWild Host Care opera o ativo.
+                  A Be Wild conecta os dois para o investidor não virar gestor de obra nem anfitrião.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={() => navigate("/diagnostico")}
+                    className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5 shadow-lg shadow-bewild-blue/20"
+                  >
+                    Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => navigate("/metodo-bwild")}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 text-sm font-semibold text-white transition-all hover:border-white/40 hover:bg-white/5"
+                  >
+                    Ver a jornada completa
+                  </button>
+                </div>
               </div>
+
+              {/* Coluna direita — composição de mini-cards operacionais */}
+              <div className="relative flex flex-col gap-3 lg:pl-8">
+                {/* Card topo — visual de imóvel pronto */}
+                <div className="rounded-2xl border border-white/10 bg-white/[0.04] overflow-hidden">
+                  <div className="h-40 sm:h-48 bg-gradient-to-br from-bewild-blue/15 via-white/[0.03] to-transparent flex items-end p-5">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/15 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-sm">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Imóvel pronto para hospedar
+                    </span>
+                  </div>
+                </div>
+
+                {/* Mini-cards de status operacional */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4 flex flex-col gap-2">
+                    <Wifi className="h-4 w-4 text-bewild-blue-400" />
+                    <p className="text-[0.65rem] font-mono uppercase tracking-wider text-white/35">Anúncio</p>
+                    <p className="text-xs font-semibold text-emerald-400">No ar</p>
+                  </div>
+                  <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4 flex flex-col gap-2">
+                    <CalendarCheck className="h-4 w-4 text-bewild-blue-400" />
+                    <p className="text-[0.65rem] font-mono uppercase tracking-wider text-white/35">Reserva</p>
+                    <p className="text-xs font-semibold text-white">Confirmada</p>
+                  </div>
+                  <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4 flex flex-col gap-2">
+                    <ReceiptText className="h-4 w-4 text-bewild-blue-400" />
+                    <p className="text-[0.65rem] font-mono uppercase tracking-wider text-white/35">Repasse</p>
+                    <p className="text-xs font-semibold text-white">Este mês</p>
+                  </div>
+                </div>
+
+                {/* Card de jornada resumida */}
+                <div className="rounded-xl border border-bewild-blue/20 bg-bewild-blue/5 p-4">
+                  <p className="mb-2 text-[0.6rem] font-mono uppercase tracking-wider text-bewild-blue-400">Jornada Be Wild</p>
+                  <div className="flex items-center gap-1 flex-wrap text-[0.65rem]">
+                    <span className="text-white/65">Diagnóstico</span>
+                    <span className="text-bewild-blue/50">→</span>
+                    <span className="text-white/65">Reformas</span>
+                    <span className="text-bewild-blue/50">→</span>
+                    <span className="text-white/65">Lançamento</span>
+                    <span className="text-bewild-blue/50">→</span>
+                    <span className="text-white/65">Host Care</span>
+                    <span className="text-bewild-blue/50">→</span>
+                    <span className="text-white/65">Relatórios</span>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </section>
 
-        {/* ── Bloco 2: Problema ───────────────────────────────────── */}
+        {/* ── Bloco 1b: Proof Bar ──────────────────────────────────────────── */}
+        <div className="border-t border-white/8 bg-white/[0.015]">
+          <div className="mx-auto w-full max-w-wrap px-5 sm:px-8 py-7">
+            <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
+              {[
+                { value: "São Paulo", label: "Cidade de operação", note: "Bairros premium SP" },
+                { value: "2 em 1", label: "Reforma + gestão", note: "Jornada integrada" },
+                { value: "24h", label: "Suporte ao hóspede", note: "Sem fidelidade" },
+                { value: "Mensal", label: "Relatório + repasse", note: "Transparência total" },
+              ].map((m) => (
+                <div key={m.label} className="text-center sm:text-left">
+                  <p className="text-xl font-bold text-white sm:text-2xl">{m.value}</p>
+                  <p className="text-xs font-medium text-white/50 mt-0.5">{m.label}</p>
+                  <p className="text-[0.6rem] text-white/30 mt-0.5">{m.note}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Bloco 2: Problema — tensão da desconexão ─────────────────── */}
         <section id="problema" className="border-t border-white/10 py-20 sm:py-28">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="grid gap-14 lg:grid-cols-2 lg:gap-20 lg:items-start">
               <div className="max-w-xl">
                 <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
-                  O problema real
+                  O problema não é só reformar
                 </p>
                 <h2 className="mb-5 text-3xl font-bold text-white sm:text-4xl">
-                  Comprar ou ter um imóvel é só o começo.
+                  Reformar é só o começo.
                 </h2>
+                <p className="mb-5 text-white/65 leading-relaxed">
+                  A maior lacuna do mercado não é falta de reforma. Também não é falta de gestoras
+                  de Airbnb. A lacuna é a desconexão entre quem prepara o imóvel e quem opera o imóvel.
+                </p>
                 <p className="text-white/65 leading-relaxed">
-                  Para virar renda no short stay, o imóvel precisa ser preparado, fotografado,
-                  anunciado, precificado, limpo, mantido e acompanhado. Quando essas etapas ficam
-                  soltas, o investidor vira o ponto de integração — e a renda passiva vira trabalho ativo.
+                  Arquiteto entrega beleza. Reformeiro entrega obra. Gestora entrega operação.
+                  A Be Wild entrega a travessia completa: imóvel preparado, anunciado, hospedando,
+                  mantido e reportado — sem o investidor virar o ponto de integração de tudo isso.
                 </p>
               </div>
-              <ul className="space-y-4">
-                {PROBLEMA_BULLETS.map((b) => (
-                  <li key={b} className="flex gap-3 text-white/65">
-                    <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-bewild-blue" />
-                    <span>{b}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-7">
+                <p className="mb-5 text-sm font-semibold text-white">
+                  O que acontece quando reforma e gestão não conversam:
+                </p>
+                <ul className="space-y-3.5">
+                  {[
+                    "Imóvel bonito que não fotografa bem perde competitividade nas plataformas.",
+                    "Layout sem visão de limpeza e manutenção aumenta custo operacional.",
+                    "Reforma sem critério de hospedagem vira retrabalho na hora de anunciar.",
+                    "Gestora que entra depois herda problemas que não ajudou a evitar.",
+                    "Investidor que contrata tudo separado vira gerente do próprio investimento.",
+                    "Capital parado entre a entrega da chave e a primeira reserva.",
+                  ].map((b) => (
+                    <li key={b} className="flex gap-3 text-sm text-white/60">
+                      <span className="mt-1.5 h-1 w-4 shrink-0 rounded-full bg-bewild-blue/50" />
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* ── Bloco 3: Jornada Bwild ──────────────────────────────── */}
+        {/* ── Bloco 3: Jornada Be Wild — timeline proprietária ─────────── */}
         <section id="jornada" className="border-t border-white/10 py-20 sm:py-28 bg-white/[0.02]">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
               <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
-                Jornada Bwild
+                Jornada Be Wild
               </p>
-              <h2 className="text-3xl font-bold text-white sm:text-4xl">
-                Be Wild Reformas prepara. BeWild Host Care opera. A Be Wild conecta o ciclo inteiro.
+              <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+                Do diagnóstico à gestão. Em uma única jornada.
               </h2>
+              <p className="text-white/55 leading-relaxed">
+                A Be Wild conecta as duas fases para o investidor não precisar coordenar reforma,
+                fotografia, anúncio, operação e manutenção com fornecedores diferentes.
+              </p>
             </div>
-            <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
-              {JORNADA.map((etapa) => (
-                <div
-                  key={etapa.n}
-                  className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
-                >
-                  <p className="mb-3 font-mono text-2xl font-bold text-bewild-blue/40">{etapa.n}</p>
-                  <etapa.icon className="mb-3 h-5 w-5 text-bewild-blue-400" />
-                  <p className="mb-1.5 font-semibold text-white text-sm">{etapa.title}</p>
-                  <p className="text-xs text-white/50 leading-relaxed">{etapa.text}</p>
-                </div>
-              ))}
+
+            {/* Timeline com conector visual */}
+            <div className="relative">
+              {/* Linha conectora — desktop */}
+              <div className="hidden lg:block absolute top-8 left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-bewild-blue/30 to-transparent" />
+
+              <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
+                {JORNADA.map((etapa, i) => {
+                  const isBewild = etapa.title === "Be Wild Reformas";
+                  const isHostCare = etapa.title === "BeWild Host Care";
+                  return (
+                    <div
+                      key={etapa.n}
+                      className={`relative rounded-2xl border p-5 transition-all ${
+                        isBewild
+                          ? "border-bewild-blue/30 bg-bewild-blue/5"
+                          : isHostCare
+                          ? "border-bewild-blue/20 bg-bewild-blue/3"
+                          : "border-white/10 bg-white/[0.03]"
+                      }`}
+                    >
+                      <p className="mb-3 font-mono text-2xl font-bold text-bewild-blue/30">{etapa.n}</p>
+                      <etapa.icon className={`mb-3 h-5 w-5 ${isBewild || isHostCare ? "text-bewild-blue-400" : "text-white/30"}`} />
+                      <p className={`mb-1.5 font-semibold text-sm ${isBewild || isHostCare ? "text-white" : "text-white/70"}`}>
+                        {etapa.title}
+                      </p>
+                      <p className="text-xs text-white/45 leading-relaxed">{etapa.text}</p>
+                      {(isBewild || isHostCare) && (
+                        <span className="mt-3 inline-block text-[0.55rem] font-mono uppercase tracking-widest text-bewild-blue-400 border border-bewild-blue/20 rounded-full px-2 py-0.5">
+                          {isBewild ? "Fase 1" : "Fase 2"}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-            <div className="mt-8">
+
+            <div className="mt-8 flex flex-wrap items-center gap-6">
               <button
                 onClick={() => navigate("/metodo-bwild")}
                 className="inline-flex items-center gap-1.5 text-sm text-bewild-blue-400 hover:text-white transition-colors"
               >
-                Conhecer o método completo <ArrowRight className="h-4 w-4" />
+                Ver o método completo <ArrowRight className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => navigate("/diagnostico")}
+                className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white transition-colors"
+              >
+                Iniciar meu diagnóstico <ArrowRight className="h-4 w-4" />
               </button>
             </div>
           </div>
