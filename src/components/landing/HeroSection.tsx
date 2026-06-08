@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight, Images, Pause, Play } from "lucide-react";
-import { Container, Chip, CTAButton } from "./primitives";
-import { HERO } from "./content";
+import { Container, CTAButton } from "./primitives";
 
 // Variantes geradas em /public/images/hero-slides/<stem>-{sm,md,lg}.{avif,webp,jpg}
 // sm=640w, md=1280w, lg=1920w. Browser escolhe a melhor pelo srcset+sizes.
