@@ -1,20 +1,11 @@
 import { Mail, MessageCircle } from "lucide-react";
 import { BewildLogo } from "./primitives";
-import { CONTACT, NAV_LINKS, whatsappHref } from "./content";
+import { CONTACT, whatsappHref } from "./content";
+import { navigate } from "../../lib/useHashRoute";
 
-/* Ícones de marca não disponíveis no lucide-react instalado — SVGs inline. */
 function Instagram({ className = "h-4 w-4" }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <rect x="2" y="2" width="20" height="20" rx="5" />
       <circle cx="12" cy="12" r="4" />
       <circle cx="17.5" cy="6.5" r="0.75" fill="currentColor" />
@@ -23,22 +14,22 @@ function Instagram({ className = "h-4 w-4" }: { className?: string }) {
 }
 function Linkedin({ className = "h-4 w-4" }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" />
       <rect x="2" y="9" width="4" height="12" />
       <circle cx="4" cy="4" r="2" />
     </svg>
   );
 }
+
+const JORNADA_LINKS = [
+  { label: "Jornada Bwild", href: "/metodo-bwild" },
+  { label: "Be Wild — Preparação do ativo", href: "/be-wild" },
+  { label: "Be Stay — Gestão de temporada", href: "/be-stay" },
+  { label: "Cases", href: "/cases" },
+  { label: "Conteúdos", href: "/conteudos" },
+  { label: "Diagnóstico do imóvel", href: "/diagnostico" },
+];
 
 export default function Footer() {
   return (
@@ -48,24 +39,26 @@ export default function Footer() {
           <div className="flex flex-col gap-4">
             <BewildLogo heightClass="h-7" />
             <p className="max-w-sm text-sm leading-relaxed text-white/60">
-              Reformas, interiores e tecnologia para imóveis compactos que precisam performar.
+              Preparação e gestão de imóveis para short stay em São Paulo.
+              Be Wild prepara o ativo. Be Stay opera o ativo.
+              A Bwild conecta o ciclo inteiro.
             </p>
             <p className="text-sm text-white/45">{CONTACT.city}</p>
           </div>
 
-          <nav aria-label="Rodapé — navegação">
+          <nav aria-label="Rodapé — Jornada Bwild">
             <p className="mb-3 font-mono text-[0.65rem] uppercase tracking-wider text-bewild-blue-400">
-              Navegação
+              Jornada Bwild
             </p>
             <ul className="flex flex-col gap-2">
-              {NAV_LINKS.map((link) => (
+              {JORNADA_LINKS.map((link) => (
                 <li key={link.href}>
-                  <a
-                    href={link.href}
-                    className="text-sm text-white/65 transition-colors hover:text-white"
+                  <button
+                    onClick={() => navigate(link.href)}
+                    className="text-sm text-white/65 transition-colors hover:text-white text-left"
                   >
                     {link.label}
-                  </a>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -115,12 +108,12 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a
-                  href="/privacidade"
+                <button
+                  onClick={() => navigate("/privacidade")}
                   className="text-sm text-white/65 transition-colors hover:text-white"
                 >
                   Política de privacidade
-                </a>
+                </button>
               </li>
             </ul>
           </div>
@@ -128,10 +121,10 @@ export default function Footer() {
 
         <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-white/45">
-            bewild. Projeto, obra e operação em um processo mais claro.
+            Bwild — Da obra à diária: preparação e gestão de imóveis para short stay.
           </p>
           <p className="text-xs text-white/35">
-            © {new Date().getFullYear()} bewild — evolução da BWild. Todos os direitos reservados.
+            © {new Date().getFullYear()} Bwild. Be Wild prepara. Be Stay opera. Todos os direitos reservados.
           </p>
         </div>
       </div>

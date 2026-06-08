@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Menu, X, MessageCircle } from "lucide-react";
 import { BewildLogo } from "./primitives";
 import { NAV_LINKS, whatsappHref } from "./content";
+import { navigate } from "../../lib/useHashRoute";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -22,6 +23,20 @@ export default function Header() {
     };
   }, [open]);
 
+  function handleNavClick(
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+    isPage?: boolean,
+  ) {
+    if (isPage) {
+      e.preventDefault();
+      setOpen(false);
+      navigate(href);
+    } else {
+      setOpen(false);
+    }
+  }
+
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
@@ -31,7 +46,12 @@ export default function Header() {
       }`}
     >
       <div className="mx-auto flex h-16 w-full max-w-wrap items-center justify-between px-5 sm:h-[4.5rem] sm:px-8">
-        <a href="#topo" className="flex items-center gap-2" aria-label="bewild — início">
+        <a
+          href="/"
+          onClick={(e) => { e.preventDefault(); navigate("/"); }}
+          className="flex items-center gap-2"
+          aria-label="Bwild — início"
+        >
           <BewildLogo heightClass="h-6 sm:h-7" />
         </a>
 
@@ -40,6 +60,7 @@ export default function Header() {
             <a
               key={link.href}
               href={link.href}
+              onClick={(e) => handleNavClick(e, link.href, link.isPage)}
               className="text-sm font-medium text-white/75 transition-colors hover:text-white"
             >
               {link.label}
@@ -58,10 +79,11 @@ export default function Header() {
             <MessageCircle className="inline h-4 w-4" aria-hidden="true" /> WhatsApp
           </a>
           <a
-            href="#diagnostico"
+            href="/diagnostico"
+            onClick={(e) => { e.preventDefault(); navigate("/diagnostico"); }}
             className="inline-flex items-center justify-center rounded-full bg-bewild-blue px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
           >
-            Solicitar diagnóstico
+            Avaliar meu imóvel
           </a>
         </div>
 
@@ -87,7 +109,7 @@ export default function Header() {
               <a
                 key={link.href}
                 href={link.href}
-                onClick={() => setOpen(false)}
+                onClick={(e) => handleNavClick(e, link.href, link.isPage)}
                 className="rounded-xl px-3 py-3 text-base font-medium text-white/85 transition-colors hover:bg-white/5 hover:text-white"
               >
                 {link.label}
@@ -95,11 +117,11 @@ export default function Header() {
             ))}
             <div className="mt-3 flex flex-col gap-2">
               <a
-                href="#diagnostico"
-                onClick={() => setOpen(false)}
+                href="/diagnostico"
+                onClick={(e) => { e.preventDefault(); setOpen(false); navigate("/diagnostico"); }}
                 className="inline-flex items-center justify-center rounded-full bg-bewild-blue px-5 py-3 text-sm font-semibold text-white"
               >
-                Solicitar diagnóstico
+                Avaliar meu imóvel
               </a>
               <a
                 href={whatsappHref()}

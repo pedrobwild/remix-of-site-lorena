@@ -53,6 +53,12 @@ const corsHeaders = {
  */
 export const STATIC_ROUTES: ReadonlyArray<string> = [
   "/",
+  "/be-wild",
+  "/be-stay",
+  "/cases",
+  "/metodo-bwild",
+  "/diagnostico",
+  "/conteudos",
   "/sobre",
   "/portfolio",
   "/faq",

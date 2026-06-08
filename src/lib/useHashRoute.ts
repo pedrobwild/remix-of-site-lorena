@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 
 export type Route =
   | { name: "home"; anchor?: string }
+  | { name: "be-wild" }
+  | { name: "be-stay" }
+  | { name: "cases" }
+  | { name: "metodo-bwild" }
+  | { name: "diagnostico" }
+  | { name: "conteudos" }
   | { name: "portfolio" }
   | { name: "faq" }
   | { name: "sobre" }
@@ -31,6 +37,12 @@ function parsePath(rawPath: string): Route {
   const path = (rawPath.split("?")[0] || "").replace(/\/+$/, "") || "/";
 
   if (path === "/" || path === "") return { name: "home" };
+  if (path === "/be-wild") return { name: "be-wild" };
+  if (path === "/be-stay") return { name: "be-stay" };
+  if (path === "/cases") return { name: "cases" };
+  if (path === "/metodo-bwild") return { name: "metodo-bwild" };
+  if (path === "/diagnostico") return { name: "diagnostico" };
+  if (path === "/conteudos") return { name: "conteudos" };
   if (path === "/portfolio") return { name: "portfolio" };
   if (path === "/faq") return { name: "faq" };
   if (path === "/sobre") return { name: "sobre" };
@@ -131,6 +143,12 @@ export function useHashRoute(): Route {
 // Helper para construir links de forma consistente — agora URLs limpas.
 export const routes = {
   home: "/",
+  beWild: "/be-wild",
+  beStay: "/be-stay",
+  cases: "/cases",
+  metodoBwild: "/metodo-bwild",
+  diagnostico: "/diagnostico",
+  conteudos: "/conteudos",
   portfolio: "/portfolio",
   faq: "/faq",
   sobre: "/sobre",

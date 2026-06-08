@@ -56,14 +56,13 @@ export function whatsappHref(text: string = CONTACT.whatsappText): string {
   return `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(text)}`;
 }
 
-export const NAV_LINKS: { label: string; href: string }[] = [
-  { label: "O que fazemos", href: "#o-que-fazemos" },
-  { label: "Como funciona", href: "#como-funciona" },
-  { label: "Projeto personalizado", href: "#arquitetura" },
-  { label: "Diferenciais", href: "#diferenciais" },
-  { label: "Cases", href: "#cases" },
-  { label: "Tecnologia", href: "#tecnologia" },
-  { label: "FAQ", href: "#faq" },
+// Navegação principal — arquitetura Bwild / Be Wild / Be Stay
+export const NAV_LINKS: { label: string; href: string; isPage?: boolean }[] = [
+  { label: "Jornada Bwild", href: "/metodo-bwild", isPage: true },
+  { label: "Be Wild", href: "/be-wild", isPage: true },
+  { label: "Be Stay", href: "/be-stay", isPage: true },
+  { label: "Cases", href: "/cases", isPage: true },
+  { label: "Conteúdos", href: "/conteudos", isPage: true },
 ];
 
 export const HERO = {

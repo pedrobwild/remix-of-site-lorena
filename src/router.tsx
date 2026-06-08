@@ -12,6 +12,12 @@
  * de ponta a ponta.
  */
 import App from "./App";
+import BeWildPage from "./pages/BeWildPage";
+import BeStayPage from "./pages/BeStayPage";
+import CasesPage from "./pages/CasesPage";
+import MetodoBwildPage from "./pages/MetodoBwildPage";
+import DiagnosticoPage from "./pages/DiagnosticoPage";
+import ConteudosPage from "./pages/ConteudosPage";
 import PortfolioPage from "./pages/PortfolioPage";
 import ProjectPage from "./pages/ProjectPage";
 import FaqPage from "./pages/FaqPage";
@@ -41,6 +47,12 @@ export function renderRoute(route: Route) {
   if (route.name === "portfolio") return <PortfolioPage />;
   if (route.name === "project") return <ProjectPage slug={route.slug} />;
   if (route.name === "faq") return <FaqPage />;
+  if (route.name === "be-wild") return <BeWildPage />;
+  if (route.name === "be-stay") return <BeStayPage />;
+  if (route.name === "cases") return <CasesPage />;
+  if (route.name === "metodo-bwild") return <MetodoBwildPage />;
+  if (route.name === "diagnostico") return <DiagnosticoPage />;
+  if (route.name === "conteudos") return <ConteudosPage />;
   if (route.name === "sobre") return <SobrePage />;
   if (route.name === "privacidade") return <PrivacidadePage />;
   if (route.name === "blog") return <BlogPage />;
