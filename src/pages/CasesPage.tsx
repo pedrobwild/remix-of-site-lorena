@@ -30,9 +30,9 @@ const CASES: Array<{
       "Materiais de alta durabilidade para uso intensivo",
       "Setup completo: enxoval, eletros, decoração e fechadura digital",
     ],
-    entrada: "Imóvel entrou no Be Stay 8 dias após a entrega da obra, com anúncio ativo no Airbnb e Booking.",
+    entrada: "Imóvel entrou no BeWild Host Care 8 dias após a entrega da obra, com anúncio ativo no Airbnb e Booking.",
     depoimento: "Não precisei me preocupar com nada. Recebi a chave da construtora, passei para a Bwild e em dois meses já tinha o imóvel gerando reservas.",
-    tags: ["Be Wild", "Be Stay", "Jornada completa"],
+    tags: ["Be Wild", "BeWild Host Care", "Jornada completa"],
   },
   {
     bairro: "Vila Madalena, São Paulo",
@@ -44,9 +44,9 @@ const CASES: Array<{
       "Iluminação replanejada para valorizar o ambiente na foto",
       "Curadoria de mobiliário e itens operacionais",
     ],
-    entrada: "Após a entrega do Be Wild, o imóvel entrou no Be Stay com ocupação inicial acima da média do bairro no primeiro mês.",
+    entrada: "Após a entrega do Be Wild, o imóvel entrou no BeWild Host Care com ocupação inicial acima da média do bairro no primeiro mês.",
     depoimento: "Sempre achei que reformar ia ser uma dor de cabeça. A Bwild fez tudo e ainda explicou cada decisão. O imóvel ficou bem melhor do que eu esperava.",
-    tags: ["Be Wild", "Be Stay", "Imóvel antigo"],
+    tags: ["Be Wild", "BeWild Host Care", "Imóvel antigo"],
   },
   {
     bairro: "Consolação, São Paulo",
@@ -56,10 +56,10 @@ const CASES: Array<{
       "Diagnóstico de performance: identificação dos gargalos operacionais",
       "Ajustes de layout e decoração sem obra completa",
       "Refot para anúncio com iluminação e composição profissional",
-      "Transferência da operação para o Be Stay",
+      "Transferência da operação para o BeWild Host Care",
     ],
-    entrada: "Sem necessidade de obra completa. O imóvel foi otimizado e entrou na operação Be Stay com novo anúncio em menos de 15 dias.",
-    tags: ["Be Stay", "Diagnóstico", "Otimização"],
+    entrada: "Sem necessidade de obra completa. O imóvel foi otimizado e entrou na operação BeWild Host Care com novo anúncio em menos de 15 dias.",
+    tags: ["BeWild Host Care", "Diagnóstico", "Otimização"],
   },
 ];
 
@@ -89,7 +89,7 @@ export default function CasesPage() {
               </h1>
               <p className="mb-8 text-lg leading-relaxed text-white/70">
                 Cada case mostra a jornada real: a situação inicial, as decisões do Be Wild, a entrega
-                e a entrada em operação com o Be Stay. Prova de jornada, não portfólio bonito.
+                e a entrada em operação com o BeWild Host Care. Prova de jornada, não portfólio bonito.
               </p>
             </div>
           </div>
@@ -147,7 +147,7 @@ export default function CasesPage() {
                     </div>
                     <div className="p-6 sm:p-8">
                       <p className="mb-3 font-mono text-xs font-bold uppercase tracking-widest text-emerald-400">
-                        Operando · Be Stay
+                        Operando · BeWild Host Care
                       </p>
                       <p className="text-sm text-white/65 leading-relaxed mb-4">{c.entrada}</p>
                       {c.depoimento && (
@@ -191,7 +191,7 @@ export default function CasesPage() {
                 {[
                   { label: "Antes", desc: "Situação real do imóvel antes da Bwild entrar." },
                   { label: "Pronto", desc: "Decisões do Be Wild que prepararam o ativo para operar." },
-                  { label: "Operando", desc: "Como o Be Stay colocou o imóvel no mercado e os primeiros resultados." },
+                  { label: "Operando", desc: "Como o BeWild Host Care colocou o imóvel no mercado e os primeiros resultados." },
                 ].map((item) => (
                   <div key={item.label} className="rounded-xl border border-white/10 bg-white/5 p-4">
                     <p className="mb-1.5 font-semibold text-white">{item.label}</p>
@@ -217,7 +217,7 @@ export default function CasesPage() {
                 onClick={() => navigate("/diagnostico")}
                 className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
               >
-                Avaliar meu imóvel <ArrowRight className="h-4 w-4" />
+                Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
               </button>
               <a
                 href={whatsappHref("Olá, vi os cases da Bwild e quero entender o que é possível com meu imóvel.")}

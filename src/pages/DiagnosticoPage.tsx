@@ -48,8 +48,8 @@ function buildWhatsappMessage(data: FormData): string {
   };
   const objMap: Record<Objetivo, string> = {
     preparar: "preparar o imóvel com Be Wild",
-    operar: "colocar para operar com Be Stay",
-    "jornada-completa": "fazer a jornada completa (Be Wild + Be Stay)",
+    operar: "colocar para operar com BeWild Host Care",
+    "jornada-completa": "fazer a jornada completa (Be Wild Reformas + BeWild Host Care)",
     "entender-potencial": "entender o potencial do imóvel para short stay",
     "": "",
   };
@@ -62,7 +62,7 @@ Situação:
 • Objetivo: ${objMap[data.objetivo] || "—"}
 • Quando quer começar: ${data.timing || "—"}
 
-Aguardo orientação sobre o melhor caminho: Be Wild, Be Stay ou jornada completa.`;
+Aguardo orientação sobre o melhor caminho: Be Wild Reformas, BeWild Host Care ou jornada completa.`;
 }
 
 export default function DiagnosticoPage() {
@@ -72,7 +72,7 @@ export default function DiagnosticoPage() {
   useSeo({
     title: "Diagnóstico Bwild — Avalie seu imóvel para short stay",
     description:
-      "Conte em que estágio está seu imóvel. A Bwild indica o caminho certo: preparar com Be Wild, operar com Be Stay ou fazer a jornada completa.",
+      "Conte em que estágio está seu imóvel. A Bwild indica o caminho certo: preparar com Be Wild, operar com BeWild Host Care ou fazer a jornada completa.",
     canonicalPath: "/diagnostico",
     ogType: "website",
   });
@@ -112,13 +112,13 @@ export default function DiagnosticoPage() {
                 </h1>
                 <p className="mb-8 text-lg text-white/65 leading-relaxed">
                   Não sabe se precisa reformar, ajustar ou colocar para operar? Conte o estágio
-                  do seu imóvel. A Bwild te orienta: Be Wild, Be Stay ou jornada completa.
+                  do seu imóvel. A Bwild te orienta: Be Wild Reformas, BeWild Host Care ou jornada completa.
                 </p>
 
                 <div className="space-y-4">
                   {[
                     { label: "Be Wild", desc: "Imóvel cru, vazio, recém-entregue ou mal aproveitado. Precisa de projeto, obra e setup para operar." },
-                    { label: "Be Stay", desc: "Imóvel pronto ou quase pronto. Precisa de gestão profissional: anúncio, hóspedes, limpeza e repasse." },
+                    { label: "BeWild Host Care", desc: "Imóvel pronto ou quase pronto. Precisa de gestão profissional: anúncio, hóspedes, limpeza e repasse." },
                     { label: "Jornada completa", desc: "Imóvel que precisa de preparação E operação. A Bwild cuida do ciclo inteiro." },
                   ].map((item) => (
                     <div key={item.label} className="flex gap-3">

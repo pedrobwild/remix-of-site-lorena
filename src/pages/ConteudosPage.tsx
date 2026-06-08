@@ -203,7 +203,7 @@ export default function ConteudosPage() {
               onClick={() => navigate("/diagnostico")}
               className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
             >
-              Avaliar meu imóvel <ArrowRight className="h-4 w-4" />
+              Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
             </button>
           </div>
         </section>

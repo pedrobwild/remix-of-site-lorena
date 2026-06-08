@@ -7,7 +7,7 @@
  * 3. Jornada Bwild — 5 etapas
  * 4. Be Wild — Preparação do ativo
  * 5. Ponte — O fim da obra é o início da operação
- * 6. Be Stay — Gestão profissional
+ * 6. BeWild Host Care — Gestão profissional
  * 7. Prova — Cases Antes → Pronto → Operando
  * 8. Comparativo — Por que os dois juntos são mais fortes
  * 9. Diagnóstico — CTA de conversão qualificada
@@ -44,9 +44,9 @@ const PROBLEMA_BULLETS = [
 
 const JORNADA = [
   { n: "01", title: "Diagnóstico", text: "Entendemos imóvel, bairro, estágio, potencial e objetivo.", icon: Search },
-  { n: "02", title: "Be Wild", text: "Preparamos o ativo: projeto, obra, mobiliário e setup.", icon: PencilRuler },
+  { n: "02", title: "Be Wild Reformas", text: "Preparamos o ativo: projeto, obra, mobiliário e setup.", icon: PencilRuler },
   { n: "03", title: "Lançamento", text: "Fotos, anúncio, canais e precificação inicial.", icon: Megaphone },
-  { n: "04", title: "Be Stay", text: "Operamos hóspedes, limpeza, manutenção, relatórios e repasse.", icon: Settings2 },
+  { n: "04", title: "BeWild Host Care", text: "Operamos hóspedes, limpeza, manutenção, relatórios e repasse.", icon: Settings2 },
   { n: "05", title: "Aprendizado", text: "Acompanhamos dados, avarias, feedbacks e oportunidades.", icon: BarChart3 },
 ];
 
@@ -73,29 +73,29 @@ const CASES_PREVIEW = [
     bairro: "Pinheiros, SP",
     tipo: "Studio 28m²",
     antes: "Recém-entregue pela construtora, sem mobília ou personalização.",
-    depois: "Projeto, reforma e setup. Imóvel em operação no Be Stay 8 dias após a entrega.",
-    tags: ["Be Wild", "Be Stay"],
+    depois: "Projeto, reforma e setup. Imóvel em operação no BeWild Host Care 8 dias após a entrega.",
+    tags: ["Be Wild", "BeWild Host Care"],
   },
   {
     bairro: "Vila Madalena, SP",
     tipo: "Apartamento 1 dorm 42m²",
     antes: "Imóvel antigo reformado para moradia. Proprietário queria gerar renda.",
-    depois: "Readequação para short stay. Operação Be Stay com ocupação acima da média do bairro.",
-    tags: ["Be Wild", "Be Stay"],
+    depois: "Readequação para short stay. Operação BeWild Host Care com ocupação acima da média do bairro.",
+    tags: ["Be Wild", "BeWild Host Care"],
   },
   {
     bairro: "Consolação, SP",
     tipo: "Studio 22m²",
     antes: "Já mobiliado, fotos ruins, anúncio parado há meses. Proprietário cansado de operar.",
-    depois: "Ajustes, nova foto e transferência da operação para o Be Stay. Ativo em 15 dias.",
-    tags: ["Be Stay", "Otimização"],
+    depois: "Ajustes, nova foto e transferência da operação para o BeWild Host Care. Ativo em 15 dias.",
+    tags: ["BeWild Host Care", "Otimização"],
   },
 ];
 
 const COMPARATIVO = [
   { caminho: "Arquiteto + reformeiro + gestora", risco: "Muitas interfaces, retrabalho, decisões de projeto sem visão de operação.", narrativa: "Quando preparação e operação não conversam, o investidor vira integrador." },
   { caminho: "Gestora sem preparo do imóvel", risco: "O imóvel entra nas plataformas com limitações de foto, uso e manutenção.", narrativa: "Gestão boa não salva produto ruim." },
-  { caminho: "Be Wild + Be Stay (Bwild)", risco: "Menos interfaces, continuidade entre projeto, entrega e operação.", narrativa: "A Bwild prepara o ativo já pensando em como ele será operado.", highlight: true },
+  { caminho: "Be Wild Reformas + BeWild Host Care", risco: "Menos interfaces, continuidade entre projeto, entrega e operação.", narrativa: "A Bwild prepara o ativo já pensando em como ele será operado.", highlight: true },
 ];
 
 const DIAGNOSTICO_OPTIONS = [
@@ -111,7 +111,7 @@ export default function App() {
   useSeo({
     title: "Bwild — Da obra à diária: preparação e gestão de imóveis para short stay",
     description:
-      "Com Be Wild, a Bwild projeta, reforma, mobilia e prepara seu imóvel. Com Be Stay, cuidamos do anúncio, preço, hóspedes, limpeza, manutenção, relatórios e repasse. Avalie seu imóvel.",
+      "Com Be Wild, a Bwild projeta, reforma, mobilia e prepara seu imóvel. Com BeWild Host Care, cuidamos do anúncio, preço, hóspedes, limpeza, manutenção, relatórios e repasse. Avalie seu imóvel.",
     canonicalPath: "/",
     ogType: "website",
     jsonLd: [
@@ -119,10 +119,10 @@ export default function App() {
         "@context": "https://schema.org",
         "@type": "Organization",
         name: "Bwild",
-        alternateName: ["BWild", "Be Wild", "Be Stay"],
+        alternateName: ["BWild", "Be Wild", "BeWild Host Care"],
         url: SITE_URL,
         description:
-          "Preparação e gestão de imóveis para short stay em São Paulo. Be Wild: projeto, obra e setup. Be Stay: anúncio, hóspedes, limpeza, manutenção e repasse.",
+          "Preparação e gestão de imóveis para short stay em São Paulo. Be Wild: projeto, obra e setup. BeWild Host Care: anúncio, hóspedes, limpeza, manutenção e repasse.",
         areaServed: "São Paulo, Brasil",
       },
       {
@@ -156,21 +156,21 @@ export default function App() {
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-4xl">
               <p className="mb-5 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
-                Bwild · Be Wild · Be Stay
+                Bwild · Be Wild · BeWild Host Care
               </p>
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl xl:text-7xl">
                 Da obra à diária: a Bwild prepara e opera seu imóvel para o short stay.
               </h1>
               <p className="mb-8 max-w-2xl text-lg leading-relaxed text-white/70 sm:text-xl">
                 Com Be Wild, projetamos, reformamos, mobiliamos e preparamos seu imóvel para operar.
-                Com Be Stay, cuidamos do anúncio, preço, hóspedes, limpeza, manutenção, relatórios e repasse.
+                Com BeWild Host Care, cuidamos do anúncio, preço, hóspedes, limpeza, manutenção, relatórios e repasse.
               </p>
               <div className="flex flex-wrap gap-3">
                 <button
                   onClick={() => navigate("/diagnostico")}
                   className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
                 >
-                  Avaliar meu imóvel <ArrowRight className="h-4 w-4" />
+                  Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => navigate("/metodo-bwild")}
@@ -220,7 +220,7 @@ export default function App() {
                 Jornada Bwild
               </p>
               <h2 className="text-3xl font-bold text-white sm:text-4xl">
-                Be Wild prepara. Be Stay opera. A Bwild conecta o ciclo inteiro.
+                Be Wild Reformas prepara. BeWild Host Care opera. A Be Wild conecta o ciclo inteiro.
               </h2>
             </div>
             <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
@@ -253,13 +253,13 @@ export default function App() {
             <div className="grid gap-14 lg:grid-cols-2 lg:gap-20 lg:items-center">
               <div>
                 <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
-                  Be Wild · Etapa 1
+                  Be Wild Reformas · Etapa 1
                 </p>
                 <h2 className="mb-5 text-3xl font-bold text-white sm:text-4xl">
                   Prepare o imóvel antes de colocar para render.
                 </h2>
                 <p className="mb-6 text-white/65 leading-relaxed">
-                  O Be Wild transforma studios e apartamentos em espaços prontos para competir no
+                  O Be Wild Reformas transforma studios e apartamentos em espaços prontos para competir no
                   short stay. Projeto, obra, marcenaria, mobiliário, decoração e setup em um fluxo
                   integrado, com decisões pensadas para foto, uso, limpeza e experiência do hóspede.
                 </p>
@@ -309,15 +309,15 @@ export default function App() {
               </p>
               <p className="text-white/55 leading-relaxed">
                 Cada decisão do Be Wild considera a operação que vem depois: foto, diária, limpeza,
-                manutenção, check-in e experiência do hóspede. Quando a reforma acaba, o Be Stay
+                manutenção, check-in e experiência do hóspede. Quando a reforma acaba, o BeWild Host Care
                 já sabe como colocar o ativo para rodar.
               </p>
             </div>
           </div>
         </section>
 
-        {/* ── Bloco 6: Be Stay ────────────────────────────────────── */}
-        <section id="be-stay" className="border-t border-white/10 py-20 sm:py-28">
+        {/* ── Bloco 6: BeWild Host Care ───────────────────────────── */}
+        <section id="bewild-host-care" className="border-t border-white/10 py-20 sm:py-28">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="grid gap-14 lg:grid-cols-2 lg:gap-20 lg:items-center">
               <div className="order-2 lg:order-1 rounded-2xl border border-white/10 bg-white/[0.03] p-8">
@@ -341,18 +341,18 @@ export default function App() {
               </div>
               <div className="order-1 lg:order-2">
                 <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
-                  Be Stay · Etapa 2
+                  BeWild Host Care · Etapa 2
                 </p>
                 <h2 className="mb-5 text-3xl font-bold text-white sm:text-4xl">
                   Depois de pronto, o imóvel precisa rodar.
                 </h2>
                 <p className="mb-8 text-white/65 leading-relaxed">
-                  O Be Stay cuida da gestão profissional de locação por temporada. Você acompanha
+                  O BeWild Host Care cuida da gestão profissional de locação por temporada. Você acompanha
                   a performance com relatório mensal enquanto a Bwild cuida da rotina que faz o
                   short stay acontecer.
                 </p>
                 <button
-                  onClick={() => navigate("/be-stay")}
+                  onClick={() => navigate("/bewild-host-care")}
                   className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
                 >
                   Operar meu imóvel <ArrowRight className="h-4 w-4" />
@@ -467,14 +467,14 @@ export default function App() {
                 </h2>
                 <p className="mb-8 text-white/65 leading-relaxed">
                   Conte para a Bwild em que estágio está seu imóvel. A gente te mostra qual caminho
-                  faz sentido: Be Wild, Be Stay ou jornada completa.
+                  faz sentido: Be Wild Reformas, BeWild Host Care ou jornada completa.
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <button
                     onClick={() => navigate("/diagnostico")}
                     className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
                   >
-                    Avaliar meu imóvel <ArrowRight className="h-4 w-4" />
+                    Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
                   </button>
                   <a
                     href={whatsappHref()}

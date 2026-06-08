@@ -1,5 +1,5 @@
 /**
- * BeStayPage — /be-stay
+ * BewildHostCarePage — /bewild-host-care
  * Gestão profissional de locação por temporada.
  */
 import { useSeo } from "../lib/useSeo";
@@ -97,17 +97,17 @@ const FAQS = [
     a: "Não garantimos faturamento mínimo. Short stay tem sazonalidade e variáveis de mercado. Nossa promessa é gestão profissional, operação transparente e dados reais — não número fictício.",
   },
   {
-    q: "Meu imóvel precisa ter sido reformado pela Bwild para entrar no Be Stay?",
-    a: "Não necessariamente. Fazemos uma vistoria para avaliar se o imóvel está pronto para operar. Se precisar de ajustes, indicamos o Be Wild. Se já estiver pronto, podemos começar diretamente.",
+    q: "Meu imóvel precisa ter sido reformado pela Bwild para entrar no BeWild Host Care?",
+    a: "Não necessariamente. Fazemos uma vistoria para avaliar se o imóvel está pronto para operar. Se precisar de ajustes, indicamos o Be Wild Reformas. Se já estiver pronto, podemos começar diretamente.",
   },
 ];
 
-export default function BeStayPage() {
+export default function BewildHostCarePage() {
   useSeo({
-    title: "Be Stay — Gestão profissional de locação por temporada | Bwild",
+    title: "BeWild Host Care — Gestão profissional de locação por temporada | Be Wild",
     description:
       "Anúncio, precificação, hóspedes, limpeza, manutenção, relatórios e repasse. Gestão profissional de short stay sem você virar anfitrião. Sem fidelidade, com suporte 24h.",
-    canonicalPath: "/be-stay",
+    canonicalPath: "/bewild-host-care",
     ogType: "website",
   });
 
@@ -121,7 +121,7 @@ export default function BeStayPage() {
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-3xl">
               <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
-                Be Stay · Gestão de Temporada
+                BeWild Host Care · Gestão de Temporada
               </p>
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
                 Seu imóvel em operação, sem você virar anfitrião.
@@ -148,7 +148,7 @@ export default function BeStayPage() {
                   Operar meu imóvel <ArrowRight className="h-4 w-4" />
                 </button>
                 <a
-                  href={whatsappHref("Olá, tenho um imóvel pronto e quero entender como funciona o Be Stay.")}
+                  href={whatsappHref("Olá, tenho um imóvel pronto e quero entender como funciona o BeWild Host Care.")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-all hover:border-white/40"
@@ -174,7 +174,7 @@ export default function BeStayPage() {
                 <p className="text-white/65 leading-relaxed">
                   Anúncio, precificação, resposta a hóspedes, limpeza, lavanderia, manutenção,
                   vistoria, repasse, plataformas, avaliações... O que parece renda passiva vira
-                  operação ativa quando o proprietário assume tudo. O Be Stay existe para eliminar
+                  operação ativa quando o proprietário assume tudo. O BeWild Host Care existe para eliminar
                   essa fricção.
                 </p>
               </div>
@@ -228,7 +228,7 @@ export default function BeStayPage() {
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
               <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
-                Por que o Be Stay é diferente
+                Por que o BeWild Host Care é diferente
               </p>
               <h2 className="text-3xl font-bold text-white sm:text-4xl">
                 Sem amarras. Com resultado verificável.
@@ -258,14 +258,14 @@ export default function BeStayPage() {
               </h2>
               <p className="mb-8 text-white/65 leading-relaxed">
                 Se o imóvel ainda não está preparado para competir no short stay — foto, funcionalidade,
-                manutenção, setup — a gestão começa em desvantagem. O Be Wild prepara o ativo para o
-                Be Stay poder operar no nível certo.
+                manutenção, setup — a gestão começa em desvantagem. O Be Wild Reformas prepara o ativo para o
+                BeWild Host Care poder operar no nível certo.
               </p>
               <button
                 onClick={() => navigate("/be-wild")}
                 className="inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white/10"
               >
-                Conhecer o Be Wild <ArrowRight className="h-4 w-4" />
+                Conhecer o Be Wild Reformas <ArrowRight className="h-4 w-4" />
               </button>
             </div>
           </div>
@@ -278,7 +278,7 @@ export default function BeStayPage() {
               <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
                 Perguntas frequentes
               </p>
-              <h2 className="text-3xl font-bold text-white sm:text-4xl">FAQ Be Stay</h2>
+              <h2 className="text-3xl font-bold text-white sm:text-4xl">FAQ BeWild Host Care</h2>
             </div>
             <div className="grid gap-6 lg:grid-cols-2">
               {FAQS.map((f) => (
@@ -298,17 +298,17 @@ export default function BeStayPage() {
               Coloque seu imóvel para rodar.
             </h2>
             <p className="mb-8 text-white/65 max-w-xl mx-auto">
-              Conte em que estágio está seu imóvel. A gente indica o caminho: Be Wild, Be Stay ou jornada completa.
+              Conte em que estágio está seu imóvel. A gente indica o caminho: Be Wild Reformas, BeWild Host Care ou jornada completa.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
               <button
                 onClick={() => navigate("/diagnostico")}
                 className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
               >
-                Avaliar meu imóvel <ArrowRight className="h-4 w-4" />
+                Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
               </button>
               <a
-                href={whatsappHref("Olá, tenho um imóvel e quero entender como o Be Stay funciona.")}
+                href={whatsappHref("Olá, tenho um imóvel e quero entender como o BeWild Host Care funciona.")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 text-sm font-semibold text-white transition-all hover:border-white/40"

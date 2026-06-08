@@ -91,8 +91,8 @@ const FAQS = [
     a: "Depende do estado atual e da metragem do imóvel. Em média, studios compactos ficam prontos em 45 a 90 dias. Detalhamos o cronograma no diagnóstico.",
   },
   {
-    q: "O imóvel já sai pronto para entrar no Be Stay?",
-    a: "Sim. Cada decisão do Be Wild considera a operação que vem depois: foto, anúncio, limpeza, manutenção e experiência do hóspede. Quando a obra acaba, o Be Stay já pode colocar o ativo para rodar.",
+    q: "O imóvel já sai pronto para entrar no BeWild Host Care?",
+    a: "Sim. Cada decisão do Be Wild considera a operação que vem depois: foto, anúncio, limpeza, manutenção e experiência do hóspede. Quando a obra acaba, o BeWild Host Care já pode colocar o ativo para rodar.",
   },
   {
     q: "Como funciona o acompanhamento durante a obra?",
@@ -106,7 +106,7 @@ const FAQS = [
 
 export default function BeWildPage() {
   useSeo({
-    title: "Be Wild — Preparação do ativo para short stay | Bwild",
+    title: "Be Wild Reformas — Preparação do ativo para short stay | Bwild",
     description:
       "Projeto, obra, mobiliário e setup integrados para transformar seu imóvel em um espaço pronto para competir no short stay. Cada decisão pensada para foto, uso, limpeza e operação.",
     canonicalPath: "/be-wild",
@@ -123,7 +123,7 @@ export default function BeWildPage() {
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-3xl">
               <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
-                Be Wild · Preparação do Ativo
+                Be Wild Reformas · Preparação do Ativo
               </p>
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
                 Prepare seu imóvel para competir no short stay.
@@ -237,7 +237,7 @@ export default function BeWildPage() {
           </div>
         </section>
 
-        {/* Ponte Be Stay */}
+        {/* Ponte BeWild Host Care */}
         <section className="border-t border-white/10 py-20 sm:py-24 bg-bewild-blue/5">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-2xl mx-auto text-center">
@@ -251,13 +251,13 @@ export default function BeWildPage() {
                 A maioria das obras termina na entrega das chaves. A nossa termina com o imóvel pronto
                 para entrar no mercado. Por isso, cada decisão do Be Wild considera a operação que vem
                 depois — foto, diária, limpeza, manutenção, check-in e experiência do hóspede. Quando
-                a reforma acaba, o Be Stay já sabe como colocar o ativo para rodar.
+                a reforma acaba, o BeWild Host Care já sabe como colocar o ativo para rodar.
               </p>
               <button
-                onClick={() => navigate("/be-stay")}
+                onClick={() => navigate("/bewild-host-care")}
                 className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white/20 border border-white/20"
               >
-                Conhecer o Be Stay <ArrowRight className="h-4 w-4" />
+                Conhecer o BeWild Host Care <ArrowRight className="h-4 w-4" />
               </button>
             </div>
           </div>
@@ -297,7 +297,7 @@ export default function BeWildPage() {
                 onClick={() => navigate("/diagnostico")}
                 className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
               >
-                Avaliar meu imóvel <ArrowRight className="h-4 w-4" />
+                Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
               </button>
               <a
                 href={whatsappHref("Olá, quero um diagnóstico Be Wild para meu imóvel.")}

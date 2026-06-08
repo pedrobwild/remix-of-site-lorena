@@ -21,12 +21,12 @@ const ETAPAS = [
       "Avaliação de metragem, localização e padrão do imóvel",
       "Identificação do estágio atual: cru, em reforma, pronto ou já alugando",
       "Objetivo do proprietário: preparar, operar ou jornada completa",
-      "Indicação do caminho: Be Wild, Be Stay ou os dois",
+      "Indicação do caminho: Be Wild Reformas, BeWild Host Care ou os dois",
     ],
   },
   {
     n: "02",
-    title: "Be Wild — Preparação do ativo",
+    title: "Be Wild Reformas — Preparação do ativo",
     icon: PencilRuler,
     descricao:
       "Projeto, obra, marcenaria, mobiliário, compras, decoração e setup em um fluxo único. Cada decisão é pensada para o uso real de temporada: foto, diária, limpeza e manutenção.",
@@ -53,7 +53,7 @@ const ETAPAS = [
   },
   {
     n: "04",
-    title: "Be Stay — Operação contínua",
+    title: "BeWild Host Care — Operação contínua",
     icon: Settings2,
     descricao:
       "Gestão da operação do dia a dia: hóspedes, limpeza, manutenção, canais e repasse. O proprietário acompanha via relatório — sem precisar operar.",
@@ -84,7 +84,7 @@ export default function MetodoBwildPage() {
   useSeo({
     title: "Método Bwild — Do diagnóstico ao repasse | Bwild",
     description:
-      "Conheça o método Bwild: diagnóstico, preparação do ativo com Be Wild, lançamento, operação com Be Stay e aprendizado contínuo. Uma jornada completa para o investidor que não quer operar sozinho.",
+      "Conheça o método Bwild: diagnóstico, preparação do ativo com Be Wild, lançamento, operação com BeWild Host Care e aprendizado contínuo. Uma jornada completa para o investidor que não quer operar sozinho.",
     canonicalPath: "/metodo-bwild",
     ogType: "website",
   });
@@ -185,8 +185,8 @@ export default function MetodoBwildPage() {
                 ajustes, anúncios e hóspedes.
               </p>
               <p className="text-white/65 leading-relaxed">
-                A Bwild foi criada para reduzir essa fragmentação: o Be Wild prepara o imóvel
-                pensando na operação; o Be Stay assume a rotina sem o proprietário precisar integrar nada.
+                A Bwild foi criada para reduzir essa fragmentação: o Be Wild Reformas prepara o imóvel
+                pensando na operação; o BeWild Host Care assume a rotina sem o proprietário precisar integrar nada.
               </p>
             </div>
           </div>
@@ -199,14 +199,14 @@ export default function MetodoBwildPage() {
               Descubra em qual etapa seu imóvel está.
             </h2>
             <p className="mb-8 text-white/65 max-w-xl mx-auto">
-              O diagnóstico Bwild identifica o estágio do seu imóvel e indica o caminho certo: Be Wild, Be Stay ou jornada completa.
+              O diagnóstico Bwild identifica o estágio do seu imóvel e indica o caminho certo: Be Wild Reformas, BeWild Host Care ou jornada completa.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
               <button
                 onClick={() => navigate("/diagnostico")}
                 className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
               >
-                Avaliar meu imóvel <ArrowRight className="h-4 w-4" />
+                Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
               </button>
               <a
                 href={whatsappHref("Olá, quero entender como o método Bwild funciona para o meu imóvel.")}

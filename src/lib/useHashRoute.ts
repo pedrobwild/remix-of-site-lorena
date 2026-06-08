@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 export type Route =
   | { name: "home"; anchor?: string }
   | { name: "be-wild" }
-  | { name: "be-stay" }
+  | { name: "bewild-host-care" }
   | { name: "cases" }
   | { name: "metodo-bwild" }
   | { name: "diagnostico" }
@@ -38,7 +38,8 @@ function parsePath(rawPath: string): Route {
 
   if (path === "/" || path === "") return { name: "home" };
   if (path === "/be-wild") return { name: "be-wild" };
-  if (path === "/be-stay") return { name: "be-stay" };
+  if (path === "/be-stay") return { name: "bewild-host-care" }; // redirect legado
+  if (path === "/bewild-host-care") return { name: "bewild-host-care" };
   if (path === "/cases") return { name: "cases" };
   if (path === "/metodo-bwild") return { name: "metodo-bwild" };
   if (path === "/diagnostico") return { name: "diagnostico" };
@@ -144,7 +145,7 @@ export function useHashRoute(): Route {
 export const routes = {
   home: "/",
   beWild: "/be-wild",
-  beStay: "/be-stay",
+  hostCare: "/bewild-host-care",
   cases: "/cases",
   metodoBwild: "/metodo-bwild",
   diagnostico: "/diagnostico",

@@ -13,7 +13,7 @@
  */
 import App from "./App";
 import BeWildPage from "./pages/BeWildPage";
-import BeStayPage from "./pages/BeStayPage";
+import BewildHostCarePage from "./pages/BewildHostCarePage";
 import CasesPage from "./pages/CasesPage";
 import MetodoBwildPage from "./pages/MetodoBwildPage";
 import DiagnosticoPage from "./pages/DiagnosticoPage";
@@ -48,7 +48,7 @@ export function renderRoute(route: Route) {
   if (route.name === "project") return <ProjectPage slug={route.slug} />;
   if (route.name === "faq") return <FaqPage />;
   if (route.name === "be-wild") return <BeWildPage />;
-  if (route.name === "be-stay") return <BeStayPage />;
+  if (route.name === "bewild-host-care") return <BewildHostCarePage />;
   if (route.name === "cases") return <CasesPage />;
   if (route.name === "metodo-bwild") return <MetodoBwildPage />;
   if (route.name === "diagnostico") return <DiagnosticoPage />;

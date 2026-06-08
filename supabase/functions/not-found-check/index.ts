@@ -54,7 +54,8 @@ const corsHeaders = {
 export const STATIC_ROUTES: ReadonlyArray<string> = [
   "/",
   "/be-wild",
-  "/be-stay",
+  "/be-stay", // legado — redireciona para /bewild-host-care
+  "/bewild-host-care",
   "/cases",
   "/metodo-bwild",
   "/diagnostico",
