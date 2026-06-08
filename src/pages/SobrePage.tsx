@@ -1,461 +1,323 @@
-import { routes } from "../lib/useHashRoute";
-import { useSeo, breadcrumbJsonLd } from "../lib/useSeo";
-import { useSiteSettings } from "../lib/useSiteSettings";
-import { track } from "../lib/analytics";
-import InternalNav from "../components/InternalNav";
-import Picture from "../components/Picture";
-
 /**
- * Página /sobre — Sobre a Lorena e o estúdio.
- * - Formação acadêmica, especialidades, ferramentas e serviços.
- * - Conteúdo otimizado para SEO local (Uberlândia/MG e Triângulo Mineiro).
- * - Layout `pf-page` consistente com FAQ e Privacidade.
+ * SobrePage — /sobre
+ * Humaniza a marca Be Wild: tese, equipe, bastidores e autoridade.
+ * Seguindo o BrandSystem v2.0: confiança técnica + hospitalidade premium + operação transparente.
  */
+import { useSeo } from "../lib/useSeo";
+import Header from "../components/landing/Header";
+import Footer from "../components/landing/Footer";
+import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton";
+import { navigate } from "../lib/useHashRoute";
+import { whatsappHref } from "../components/landing/content";
+import JornadaBeWild from "../components/landing/JornadaBeWild";
+import {
+  ArrowRight,
+  Lightbulb,
+  ShieldCheck,
+  Users,
+  BarChart3,
+  Hammer,
+  CalendarCheck,
+} from "lucide-react";
 
-const FORMACOES = [
+const VALORES = [
   {
-    curso: "Arquitetura e Urbanismo",
-    instituicao: "Universidade Federal de Uberlândia",
-    sigla: "UFU",
+    icon: Lightbulb,
+    title: "Clareza antes da venda",
+    text: "O diagnóstico é consultivo. Não recomendamos preparação ou gestão sem entender se faz sentido para o seu caso específico.",
   },
   {
-    curso: "Design de Interiores",
-    instituicao: "Instituto de Pós-Graduação",
-    sigla: "IPOG",
+    icon: ShieldCheck,
+    title: "Sem promessas de renda",
+    text: "Short stay tem sazonalidade e variáveis de mercado. Prometemos gestão profissional, operação transparente e dados reais — não número fictício.",
   },
   {
-    curso: "Lighting Design",
-    instituicao: "Instituto de Pós-Graduação",
-    sigla: "IPOG",
+    icon: Users,
+    title: "Continuidade entre fases",
+    text: "Quem prepara o imóvel conhece cada detalhe da obra. Quem opera já sabe como o espaço foi pensado. Essa continuidade reduz fricção e retrabalho.",
   },
   {
-    curso: "Gestão Empresarial",
-    instituicao: "Universidade de São Paulo",
-    sigla: "USP",
+    icon: BarChart3,
+    title: "Transparência total",
+    text: "Relatório mensal com reservas, receita, ocupação, custos e repasse. O proprietário acompanha sem precisar perguntar.",
+  },
+  {
+    icon: Hammer,
+    title: "Reforma pensada para operar",
+    text: "Cada escolha de material, layout e mobiliário considera foto, diária, limpeza e manutenção. Não reformamos para portfólio — reformamos para operação.",
+  },
+  {
+    icon: CalendarCheck,
+    title: "Sem fidelidade forçada",
+    text: "A continuidade da parceria deve vir do resultado, não de cláusula contratual. Saída com aviso de 30 dias, sem multa.",
   },
 ];
 
-const ESPECIALIDADES = [
-  {
-    titulo: "Arquitetura Residencial",
-    desc: "Casas, apartamentos e refúgios de alto padrão — projetos autorais que traduzem rotina, afeto e memória em espaço.",
-  },
-  {
-    titulo: "Arquitetura Comercial",
-    desc: "Lojas, restaurantes e espaços que precisam convencer em segundos — identidade visual, fluxo e experiência desenhados com precisão.",
-  },
-  {
-    titulo: "Arquitetura Corporativa",
-    desc: "Escritórios e sedes que comunicam cultura, sustentam produtividade e refletem o posicionamento da marca.",
-  },
-  {
-    titulo: "Clínicas e Hospitais",
-    desc: "Ambientes de saúde com desempenho técnico, humanização e conformidade regulatória — onde projeto e protocolo andam juntos.",
-  },
-  {
-    titulo: "Design de Interiores",
-    desc: "Atmosferas construídas a partir de paleta, textura e proporção — do layout de base ao último detalhe de acabamento.",
-  },
-  {
-    titulo: "Iluminação",
-    desc: "Projeto luminotécnico autoral — cenas, temperatura de cor e controle que revelam a arquitetura ao anoitecer.",
-  },
+const NUMEROS = [
+  { valor: "SP", label: "Cidade de operação", detalhe: "Foco em bairros premium de São Paulo" },
+  { valor: "2", label: "Produtos integrados", detalhe: "Be Wild Reformas + BeWild Host Care" },
+  { valor: "24h", label: "Suporte ao hóspede", detalhe: "Check-in, suporte e check-out" },
+  { valor: "100%", label: "Relatórios mensais", detalhe: "Dados reais, sem arredondamento" },
 ];
 
-const SOFTWARES = [
-  "SketchUp",
-  "ZWCAD",
-  "V-Ray",
-  "Adobe Creative Suite",
-];
-
-const REGIOES = [
+const PERGUNTAS_FREQUENTES = [
   {
-    cidade: "Uberlândia",
-    uf: "MG",
-    destaque: "Sede do estúdio",
-    desc: "Base de operações da Lorena Alves Arquitetura. Atendimento presencial completo em toda a cidade — regiões centrais, zona sul e condomínios fechados — com acompanhamento de obra frequente e reuniões de projeto no estúdio.",
+    q: "A Be Wild atende qualquer bairro de São Paulo?",
+    a: "Nosso foco atual é em bairros com histórico de demanda para short stay em São Paulo: Pinheiros, Itaim Bibi, Vila Olímpia, Brooklin, Vila Madalena, Consolação, Bela Vista e Vila Mariana. Se seu imóvel está em outro bairro, o diagnóstico avalia a viabilidade.",
   },
   {
-    cidade: "Uberaba",
-    uf: "MG",
-    destaque: "Atendimento recorrente",
-    desc: "Projetos residenciais e comerciais com atendimento em regiões centrais, bairros consolidados e condomínios. Visitas técnicas periódicas ao canteiro e reuniões presenciais com clientes da cidade.",
+    q: "Posso contratar só a reforma ou só a gestão?",
+    a: "Sim. O Be Wild Reformas e o BeWild Host Care podem ser contratados separadamente. Mas quando contratados juntos, a continuidade entre quem prepara e quem opera reduz fricção, retrabalho e tempo até a primeira reserva.",
   },
   {
-    cidade: "Araguari",
-    uf: "MG",
-    destaque: "Triângulo Mineiro",
-    desc: "Atendimento em áreas centrais e loteamentos em expansão. A proximidade com Uberlândia permite visitas frequentes ao canteiro e resposta rápida em imprevistos de obra.",
+    q: "A Be Wild garante rentabilidade?",
+    a: "Não. Short stay tem sazonalidade e variáveis de mercado que nenhuma gestora controla completamente. Prometemos gestão profissional, operação transparente e dados reais. Quem promete número garantido está vendendo expectativa, não serviço.",
   },
   {
-    cidade: "Patos de Minas",
-    uf: "MG",
-    destaque: "Alto Paranaíba",
-    desc: "Atendimento em áreas centrais e bairros em desenvolvimento. Roteiro de visitas técnicas estruturado para garantir presença regular no canteiro ao longo de toda a obra.",
-  },
-];
-
-const REGIOES_EXTRA = [
-  "Monte Carmelo",
-  "Tupaciguara",
-  "Itumbiara",
-  "Ituiutaba",
-  "Coromandel",
-  "Prata",
-  "Três Ranchos",
-  "Indianópolis",
-];
-
-const SERVICOS = [
-  {
-    titulo: "Projeto arquitetônico completo",
-    desc: "Do programa de necessidades ao executivo, passando por volumetria, plantas, cortes, fachadas e compatibilização com engenharia.",
+    q: "Como funciona o início?",
+    a: "Começa pelo diagnóstico: uma conversa consultiva sobre imóvel, bairro, estágio e objetivo. Indicamos o caminho — Be Wild Reformas, BeWild Host Care ou os dois — e apresentamos proposta detalhada. Sem compromisso no diagnóstico.",
   },
   {
-    titulo: "Design de interiores",
-    desc: "Layout, paginação, marcenaria sob medida, curadoria de mobiliário, revestimentos e objetos que constroem a atmosfera de cada ambiente.",
-  },
-  {
-    titulo: "Projeto de iluminação",
-    desc: "Cálculo luminotécnico, escolha de luminárias, cenas de iluminação e dimerização — luz como material de projeto, não como detalhe final.",
-  },
-  {
-    titulo: "Paisagismo integrado",
-    desc: "Jardins internos e externos pensados junto com a arquitetura — vegetação, pisos, percursos e micro-climas que prolongam os espaços da casa.",
-  },
-  {
-    titulo: "Decoração e curadoria",
-    desc: "Seleção de peças, arte, têxteis e objetos que dão alma ao projeto — com foco em durabilidade, conforto e significado.",
-  },
-  {
-    titulo: "Escolha de materiais e acabamentos",
-    desc: "Aconselhamento técnico e estético sobre revestimentos, metais, louças, madeiras e pedras — equilibrando performance, orçamento e estética.",
-  },
-  {
-    titulo: "Acompanhamento e supervisão de obra",
-    desc: "Visitas periódicas ao canteiro, compatibilização com a equipe executora, verificação de medidas e padrões — projeto e obra caminhando juntos.",
-  },
-  {
-    titulo: "Suporte contínuo durante a execução",
-    desc: "Resolução de imprevistos, ajustes de projeto, interlocução com fornecedores e apoio em decisões críticas ao longo de toda a obra.",
+    q: "Quanto tempo leva para o imóvel estar operando?",
+    a: "Depende do estágio. Imóvel pronto para fotografar pode entrar na operação em poucos dias após o onboarding do Host Care. Imóvel que precisa de reforma: prazo definido no escopo, com entregáveis por fase. O diagnóstico clarifica o caminho.",
   },
 ];
 
 export default function SobrePage() {
-  const { settings } = useSiteSettings();
-  const contactEmail = settings?.contact_email || "contato@lorenaalvesarq.com";
-
   useSeo({
-    title: "Sobre — Lorena Alves, arquiteta em Uberlândia | Lorena Alves Arquitetura",
+    title: "Sobre a Be Wild — Preparação e gestão de imóveis para short stay em São Paulo",
     description:
-      "Conheça a Lorena Alves, arquiteta formada pela UFU com pós-graduações em Design de Interiores, Lighting Design (IPOG) e Gestão Empresarial (USP). Atua em arquitetura residencial, comercial, corporativa, clínicas, interiores e iluminação em Uberlândia, Uberaba, Araguari, Patos de Minas e todo o Triângulo Mineiro e Alto Paranaíba.",
+      "Conheça a Be Wild: a empresa que integra Be Wild Reformas e BeWild Host Care para investidores que querem renda imobiliária sem virar operadores. São Paulo.",
     canonicalPath: "/sobre",
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Sobre", path: "/sobre" },
-          ]),
-          {
-            "@context": "https://schema.org",
-            "@type": "Person",
-            name: "Lorena Alves",
-            jobTitle: "Arquiteta e Urbanista",
-            email: contactEmail,
-            image: `${(settings.seo_canonical_base || "https://lorenaalvesarq.com").replace(/\/$/, "")}/images/lorena-alves-retrato-v2.jpg`,
-            url: `${(settings.seo_canonical_base || "https://lorenaalvesarq.com").replace(/\/$/, "")}/sobre`,
-            alumniOf: [
-              {
-                "@type": "CollegeOrUniversity",
-                name: "Universidade Federal de Uberlândia",
-              },
-              {
-                "@type": "CollegeOrUniversity",
-                name: "Instituto de Pós-Graduação de Goiânia (IPOG)",
-              },
-              {
-                "@type": "CollegeOrUniversity",
-                name: "Universidade de São Paulo (USP)",
-              },
-            ],
-            knowsAbout: [
-              "Arquitetura Residencial",
-              "Arquitetura Comercial",
-              "Arquitetura Corporativa",
-              "Arquitetura Hospitalar",
-              "Design de Interiores",
-              "Lighting Design",
-              "Paisagismo",
-            ],
-            worksFor: {
-              "@type": "Organization",
-              name: "Lorena Alves Arquitetura",
-            },
-            areaServed: [
-              {
-                "@type": "City",
-                name: "Uberlândia",
-                containedInPlace: { "@type": "State", name: "Minas Gerais" },
-              },
-              {
-                "@type": "City",
-                name: "Uberaba",
-                containedInPlace: { "@type": "State", name: "Minas Gerais" },
-              },
-              {
-                "@type": "City",
-                name: "Araguari",
-                containedInPlace: { "@type": "State", name: "Minas Gerais" },
-              },
-              {
-                "@type": "City",
-                name: "Patos de Minas",
-                containedInPlace: { "@type": "State", name: "Minas Gerais" },
-              },
-              { "@type": "Place", name: "Triângulo Mineiro" },
-              { "@type": "Place", name: "Alto Paranaíba" },
-            ],
-          },
-        ]
-      : undefined,
   });
 
   return (
-    <main id="main" tabIndex={-1} className="pf-page sobre-page">
-      {/* Top nav */}
-      <InternalNav active="sobre" backLabel="voltar ao início" />
+    <div className="bewild min-h-screen bg-bewild-ink font-body text-bewild-ink antialiased">
+      <Header />
+      <main>
 
-      {/* Header */}
-      <header className="pf-head">
-        <p className="pf-head__eyebrow mono">Sobre · Lorena Alves Arquitetura</p>
-        <h1 className="pf-head__title">
-          Arquitetura como <em>agente</em> de transformação.
-        </h1>
-        <p className="pf-head__lede">
-          Lorena Alves é arquiteta e urbanista, fundadora do estúdio sediado em
-          Uberlândia/MG, com atuação em Uberaba, Araguari, Patos de Minas e
-          demais cidades do Triângulo Mineiro e Alto Paranaíba. O trabalho une
-          rigor técnico, sensibilidade de projeto e uma visão autoral da
-          brasilidade contemporânea — pensada para permanecer.
-        </p>
-      </header>
+        {/* Hero */}
+        <section className="relative overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28">
+          <div className="absolute inset-0 bg-gradient-to-br from-bewild-blue/8 via-transparent to-transparent pointer-events-none" />
+          <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
+            <div className="max-w-3xl">
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+                Sobre a Be Wild
+              </p>
+              <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
+                A empresa que integra reforma e gestão para o investidor não virar operador.
+              </h1>
+              <p className="mb-8 text-lg leading-relaxed text-white/65 sm:text-xl">
+                A Be Wild nasceu de uma lacuna clara: o mercado tinha reformas de um lado e
+                gestoras de Airbnb do outro — mas ninguém era dono do ciclo inteiro. O resultado
+                era o investidor costurando fornecedores, prazos, compras, anúncios e hóspedes.
+              </p>
+              <button
+                onClick={() => navigate("/diagnostico")}
+                className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
+              >
+                Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </section>
 
-      {/* Retrato + bio */}
-      <section className="sobre-page__intro" aria-label="Retrato e biografia">
-        <div className="sobre-page__portrait">
-          <Picture
-            src="/images/lorena-alves-retrato-v2.jpg"
-            alt="Retrato de Lorena Alves, arquiteta e urbanista fundadora do estúdio de arquitetura em Uberlândia/MG, com pós-graduações em Design de Interiores, Lighting Design (IPOG) e Gestão Empresarial (USP)"
-            width={900}
-            height={1200}
-            sizes="(max-width: 900px) 90vw, 480px"
-          />
-        </div>
-        <div className="sobre-page__bio">
-          <h2 className="sobre-page__bio-title">
-            Lorena <em>Alves</em>, arquiteta fundadora.
-          </h2>
-          <p>
-            Enxergo arquitetura e design como agentes transformadores — capazes
-            de influenciar positivamente a vida das pessoas, dos negócios e das
-            cidades. Cada projeto nasce de uma escuta cuidadosa: rotina, memória,
-            aspiração. E se traduz em espaço preciso, material honesto e luz
-            trabalhada como elemento de projeto.
-          </p>
-          <p>
-            Tomo cada obra como minha. Porque, sonhando junto com quem contrata,
-            transformamos intenções em espaços prontos para serem experimentados
-            — e que ganham beleza com o tempo.
-          </p>
-        </div>
-      </section>
-
-      {/* Formação */}
-      <section className="sobre-page__section" aria-label="Formação acadêmica">
-        <div className="sobre-page__section-head">
-          <p className="sobre-page__eyebrow mono">01 · Formação</p>
-          <h2 className="sobre-page__section-title">
-            Base técnica em <em>quatro</em> escolas.
-          </h2>
-          <p className="sobre-page__section-lede">
-            Formação continuada em arquitetura, interiores, iluminação e gestão
-            — repertório que sustenta projetos complexos, do conceito à entrega.
-          </p>
-        </div>
-        <ul className="sobre-page__formacao">
-          {FORMACOES.map((f, i) => (
-            <li className="sobre-page__formacao-item text-slate-100 shadow-md bg-slate-950/[0.21]" key={f.curso}>
-              <div className="sobre-page__formacao-num mono text-slate-50">
-                {String(i + 1).padStart(2, "0")}
-              </div>
-              <div className="sobre-page__formacao-body">
-                <h3 className="sobre-page__formacao-curso text-slate-950 font-bold">{f.curso}</h3>
-                <p className="sobre-page__formacao-inst text-slate-950">
-                  {f.instituicao}
-                  {f.sigla ? <span className="mono text-slate-950"> · {f.sigla}</span> : null}
+        {/* Tese */}
+        <section className="border-t border-white/10 py-20 sm:py-24">
+          <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
+            <div className="grid gap-14 lg:grid-cols-2 lg:gap-20 lg:items-center">
+              <div>
+                <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+                  A tese
+                </p>
+                <h2 className="mb-6 text-3xl font-bold text-white sm:text-4xl">
+                  O fim da reforma é o início da gestão.
+                </h2>
+                <p className="mb-5 text-white/65 leading-relaxed">
+                  Um imóvel de short stay não deveria ser pensado em duas partes. A reforma precisa
+                  nascer para a operação. E a gestão precisa conhecer o ativo desde a obra.
+                </p>
+                <p className="mb-5 text-white/65 leading-relaxed">
+                  Quando preparação e operação são desconectadas, o investidor vira o ponto de
+                  integração de tudo. A Be Wild assume esse ciclo inteiro — da obra à diária —
+                  para que o proprietário acompanhe sem precisar operar.
+                </p>
+                <p className="text-white/65 leading-relaxed">
+                  Não somos uma construtora. Não somos uma gestora comum de Airbnb. Somos uma
+                  operadora integrada de ativo para short stay — uma categoria que o mercado
+                  brasileiro ainda está aprendendo a nomear.
                 </p>
               </div>
-            </li>
-          ))}
-        </ul>
-      </section>
 
-      {/* Especialidades */}
-      <section className="sobre-page__section" aria-label="Especialidades">
-        <div className="sobre-page__section-head">
-          <p className="sobre-page__eyebrow mono">02 · Especialidades</p>
-          <h2 className="sobre-page__section-title">
-            Seis frentes de <em>atuação</em>.
-          </h2>
-          <p className="sobre-page__section-lede">
-            Projetos autorais em escalas diversas — da residência ao ambiente
-            clínico — sempre com o mesmo rigor de método e curadoria.
-          </p>
-        </div>
-        <div className="sobre-page__especialidades">
-          {ESPECIALIDADES.map((e) => (
-            <article className="sobre-page__esp-card border-slate-50 text-slate-100 my-0 shadow-2xl rounded-none border-solid bg-slate-950/[0.21]" key={e.titulo}>
-              <h3 className="sobre-page__esp-titulo font-semibold text-slate-900">{e.titulo}</h3>
-              <p className="sobre-page__esp-desc font-medium my-0 py-0 border-dashed text-slate-900">{e.desc}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      {/* O que se espera de um arquiteto */}
-      <section className="sobre-page__section" aria-label="Serviços do estúdio">
-        <div className="sobre-page__section-head">
-          <p className="sobre-page__eyebrow mono">03 · O que fazemos por você</p>
-          <h2 className="sobre-page__section-title">
-            Muito além da <em>planta</em>.
-          </h2>
-          <p className="sobre-page__section-lede">
-            Contratar um arquiteto é contratar método, curadoria e presença. Quem
-            chega ao estúdio normalmente busca mais do que um projeto — quer
-            alguém que antecipe problemas, proteja orçamento e leve a obra ao
-            padrão prometido. É nesse terreno que o estúdio atua.
-          </p>
-        </div>
-        <div className="sobre-page__servicos">
-          {SERVICOS.map((s, i) => (
-            <article className="sobre-page__servico" key={s.titulo}>
-              <div className="sobre-page__servico-num mono">
-                {String(i + 1).padStart(2, "0")}
+              {/* Números */}
+              <div className="grid grid-cols-2 gap-4">
+                {NUMEROS.map((n) => (
+                  <div
+                    key={n.label}
+                    className="rounded-2xl border border-white/10 bg-white/[0.03] p-6"
+                  >
+                    <p className="mb-1 text-3xl font-bold text-white">{n.valor}</p>
+                    <p className="mb-1 text-sm font-semibold text-white/70">{n.label}</p>
+                    <p className="text-xs text-white/35 leading-relaxed">{n.detalhe}</p>
+                  </div>
+                ))}
               </div>
-              <div className="sobre-page__servico-body">
-                <h3 className="sobre-page__servico-titulo opacity-100 bg-slate-50 text-slate-950 font-extrabold">{s.titulo}</h3>
-                <p className="sobre-page__servico-desc">{s.desc}</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Jornada Be Wild — contexto de método */}
+        <section className="border-t border-white/10 py-20 sm:py-24 bg-white/[0.02]">
+          <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
+            <div className="mb-12 max-w-2xl">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+                Como operamos
+              </p>
+              <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+                Uma jornada. Dois produtos. Zero fragmentação.
+              </h2>
+              <p className="text-white/50 leading-relaxed">
+                Be Wild Reformas prepara o ativo. BeWild Host Care opera o ativo.
+                A Be Wild conecta os dois — e o investidor não precisa coordenar nada entre eles.
+              </p>
+            </div>
+            <JornadaBeWild variant="home" showCtas={false} />
+            <div className="mt-8">
+              <button
+                onClick={() => navigate("/metodo-bwild")}
+                className="inline-flex items-center gap-1.5 text-sm text-bewild-blue-400 hover:text-white transition-colors"
+              >
+                Ver o método completo <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Valores / princípios */}
+        <section className="border-t border-white/10 py-20 sm:py-24">
+          <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
+            <div className="mb-14 max-w-2xl">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+                Como a Be Wild pensa
+              </p>
+              <h2 className="text-3xl font-bold text-white sm:text-4xl">
+                Princípios que guiam cada decisão.
+              </h2>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {VALORES.map((v) => (
+                <div
+                  key={v.title}
+                  className="rounded-2xl border border-white/10 bg-white/[0.03] p-6"
+                >
+                  <v.icon className="mb-4 h-6 w-6 text-bewild-blue-400" />
+                  <p className="mb-2 font-semibold text-white">{v.title}</p>
+                  <p className="text-sm text-white/55 leading-relaxed">{v.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Onde atuamos */}
+        <section className="border-t border-white/10 py-20 sm:py-24 bg-bewild-blue/5">
+          <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
+            <div className="grid gap-12 lg:grid-cols-2 lg:gap-20 lg:items-center">
+              <div>
+                <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+                  Onde atuamos
+                </p>
+                <h2 className="mb-5 text-3xl font-bold text-white sm:text-4xl">
+                  São Paulo — com especialização em bairros de alta demanda.
+                </h2>
+                <p className="mb-6 text-white/65 leading-relaxed">
+                  Nossa operação é focada em São Paulo, com profundo conhecimento dos bairros
+                  que concentram demanda qualificada para short stay. Conhecemos a dinâmica de
+                  cada região: sazonalidade, perfil de hóspede, concorrência e potencial de diária.
+                </p>
               </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      {/* Softwares */}
-      <section className="sobre-page__section" aria-label="Softwares e ferramentas">
-        <div className="sobre-page__section-head">
-          <p className="sobre-page__eyebrow mono">04 · Ferramentas</p>
-          <h2 className="sobre-page__section-title">
-            Softwares de <em>projeto</em>.
-          </h2>
-          <p className="sobre-page__section-lede">
-            Ferramentas escolhidas para entregar precisão técnica, imagens
-            realistas e comunicação clara com clientes, engenharias e obra.
-          </p>
-        </div>
-        <ul className="sobre-page__softwares">
-          {SOFTWARES.map((s) => (
-            <li className="sobre-page__soft bg-slate-900" key={s}>
-              <span className="mono sobre-page__soft-tag">SW</span>
-              <span className="sobre-page__soft-nome text-slate-50">{s}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* Atendimento por região */}
-      <section
-        className="sobre-page__section"
-        aria-label="Atendimento por região"
-      >
-        <div className="sobre-page__section-head">
-          <p className="sobre-page__eyebrow mono">05 · Atendimento</p>
-          <h2 className="sobre-page__section-title">
-            Onde <em>atendemos</em>.
-          </h2>
-          <p className="sobre-page__section-lede">
-            O estúdio fica sediado em Uberlândia e atende clientes em todo o
-            Triângulo Mineiro e Alto Paranaíba — com visitas técnicas ao canteiro
-            e reuniões presenciais sempre que o projeto pede. Para cidades fora
-            desse raio, trabalhamos com acompanhamento híbrido (presencial em
-            marcos críticos da obra e digital para decisões do dia a dia).
-          </p>
-        </div>
-
-        <div className="sobre-page__regioes">
-          {REGIOES.map((r) => (
-            <article className="sobre-page__regiao" key={r.cidade}>
-              <div className="sobre-page__regiao-head">
-                <h3 className="sobre-page__regiao-cidade">
-                  {r.cidade}
-                  <span className="sobre-page__regiao-uf mono">/{r.uf}</span>
-                </h3>
-                <span className="sobre-page__regiao-tag mono">
-                  {r.destaque}
-                </span>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-7">
+                <p className="mb-5 text-sm font-semibold text-white">Bairros com atuação:</p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    "Pinheiros", "Itaim Bibi", "Vila Olímpia", "Brooklin",
+                    "Vila Madalena", "Consolação", "Bela Vista", "Vila Mariana",
+                    "Jardins", "Moema", "Perdizes", "Butantã",
+                  ].map((b) => (
+                    <span
+                      key={b}
+                      className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/60"
+                    >
+                      {b}
+                    </span>
+                  ))}
+                </div>
+                <p className="mt-5 text-xs text-white/35 leading-relaxed">
+                  Outros bairros são avaliados caso a caso no diagnóstico.
+                </p>
               </div>
-              <p className="sobre-page__regiao-desc">{r.desc}</p>
-            </article>
-          ))}
-        </div>
+            </div>
+          </div>
+        </section>
 
-        <div className="sobre-page__regioes-extra">
-          <p className="sobre-page__regioes-extra-label mono">
-            Também atendemos
-          </p>
-          <ul className="sobre-page__regioes-extra-list">
-            {REGIOES_EXTRA.map((c) => (
-              <li className="sobre-page__regiao-chip" key={c}>
-                {c}
-              </li>
-            ))}
-            <li className="sobre-page__regiao-chip sobre-page__regiao-chip--more">
-              + Triângulo Mineiro e Alto Paranaíba
-            </li>
-          </ul>
-          <p className="sobre-page__regioes-note">
-            Não encontrou sua cidade?{" "}
-            <a href={`${routes.home}#contato`} data-cursor="hover">
-              Fale com o estúdio
-            </a>{" "}
-            — avaliamos cada projeto caso a caso.
-          </p>
-        </div>
-      </section>
+        {/* FAQ Sobre */}
+        <section className="border-t border-white/10 py-20 sm:py-24">
+          <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
+            <div className="mb-14 max-w-2xl">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+                Perguntas frequentes
+              </p>
+              <h2 className="text-3xl font-bold text-white sm:text-4xl">
+                Sobre a Be Wild e como trabalhamos.
+              </h2>
+            </div>
+            <div className="grid gap-5 lg:grid-cols-2">
+              {PERGUNTAS_FREQUENTES.map((f) => (
+                <div
+                  key={f.q}
+                  className="rounded-2xl border border-white/10 bg-white/[0.03] p-6"
+                >
+                  <p className="mb-3 font-semibold text-white">{f.q}</p>
+                  <p className="text-sm text-white/55 leading-relaxed">{f.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      {/* CTA final */}
-      <footer className="pf-foot">
-        <div>
-          <p className="pf-foot__quote">
-            Pronto para começar seu <em>projeto?</em>
-          </p>
-        </div>
-        <a
-          className="pf-foot__cta"
-          href={`${routes.home}#contato`}
-          data-cursor="hover"
-          onClick={() =>
-            track("click_cta", {
-              value: { label: "contato", from: "sobre-page" },
-            })
-          }
-        >
-          <span>FALAR COM O ESTÚDIO</span>
-          <span className="btn-big__arrow" />
-        </a>
-      </footer>
-    </main>
+        {/* CTA Final */}
+        <section className="border-t border-white/10 py-20 sm:py-28">
+          <div className="mx-auto w-full max-w-wrap px-5 sm:px-8 text-center">
+            <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+              Comece pelo diagnóstico.
+            </h2>
+            <p className="mb-8 text-white/60 max-w-xl mx-auto leading-relaxed">
+              Uma conversa consultiva, sem compromisso. Entendemos o estágio do seu imóvel
+              e indicamos o caminho certo — sem tentar vender antes de entender se faz sentido.
+            </p>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <button
+                onClick={() => navigate("/diagnostico")}
+                className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
+              >
+                Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
+              </button>
+              <a
+                href={whatsappHref("Olá, quero saber mais sobre a Be Wild e como vocês trabalham.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 text-sm font-semibold text-white transition-all hover:border-white/40"
+              >
+                Falar com especialista
+              </a>
+            </div>
+          </div>
+        </section>
+
+      </main>
+      <Footer />
+      <FloatingWhatsAppButton />
+    </div>
   );
 }

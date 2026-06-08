@@ -60,6 +60,7 @@ export const STATIC_ROUTES: ReadonlyArray<string> = [
   "/metodo-bwild",
   "/diagnostico",
   "/conteudos",
+  "/simulador",
   "/sobre",
   "/portfolio",
   "/faq",

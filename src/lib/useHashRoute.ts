@@ -8,6 +8,7 @@ export type Route =
   | { name: "metodo-bwild" }
   | { name: "diagnostico" }
   | { name: "conteudos" }
+  | { name: "simulador" }
   | { name: "portfolio" }
   | { name: "faq" }
   | { name: "sobre" }
@@ -44,6 +45,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/metodo-bwild") return { name: "metodo-bwild" };
   if (path === "/diagnostico") return { name: "diagnostico" };
   if (path === "/conteudos") return { name: "conteudos" };
+  if (path === "/simulador") return { name: "simulador" };
   if (path === "/portfolio") return { name: "portfolio" };
   if (path === "/faq") return { name: "faq" };
   if (path === "/sobre") return { name: "sobre" };
@@ -150,6 +152,7 @@ export const routes = {
   metodoBwild: "/metodo-bwild",
   diagnostico: "/diagnostico",
   conteudos: "/conteudos",
+  simulador: "/simulador",
   portfolio: "/portfolio",
   faq: "/faq",
   sobre: "/sobre",

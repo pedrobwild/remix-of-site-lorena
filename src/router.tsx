@@ -18,6 +18,7 @@ import CasesPage from "./pages/CasesPage";
 import MetodoBwildPage from "./pages/MetodoBwildPage";
 import DiagnosticoPage from "./pages/DiagnosticoPage";
 import ConteudosPage from "./pages/ConteudosPage";
+import SimuladorPage from "./pages/SimuladorPage";
 import PortfolioPage from "./pages/PortfolioPage";
 import ProjectPage from "./pages/ProjectPage";
 import FaqPage from "./pages/FaqPage";
@@ -53,6 +54,7 @@ export function renderRoute(route: Route) {
   if (route.name === "metodo-bwild") return <MetodoBwildPage />;
   if (route.name === "diagnostico") return <DiagnosticoPage />;
   if (route.name === "conteudos") return <ConteudosPage />;
+  if (route.name === "simulador") return <SimuladorPage />;
   if (route.name === "sobre") return <SobrePage />;
   if (route.name === "privacidade") return <PrivacidadePage />;
   if (route.name === "blog") return <BlogPage />;

@@ -537,14 +537,12 @@ export default function App() {
                   >
                     Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
                   </button>
-                  <a
-                    href={whatsappHref()}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 text-sm font-semibold text-white transition-all hover:border-white/40"
+                  <button
+                    onClick={() => navigate("/simulador")}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 text-sm font-semibold text-white transition-all hover:border-white/40 hover:bg-white/5"
                   >
-                    Falar pelo WhatsApp
-                  </a>
+                    Simular potencial do imóvel
+                  </button>
                 </div>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">

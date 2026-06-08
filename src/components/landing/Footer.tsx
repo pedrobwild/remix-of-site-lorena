@@ -26,6 +26,8 @@ const JORNADA_LINKS = [
   { label: "Jornada Bwild", href: "/metodo-bwild" },
   { label: "Be Wild — Preparação do ativo", href: "/be-wild" },
   { label: "BeWild Host Care — Gestão de temporada", href: "/bewild-host-care" },
+  { label: "Simulador de potencial", href: "/simulador" },
+  { label: "Sobre a Be Wild", href: "/sobre" },
   { label: "Cases", href: "/cases" },
   { label: "Conteúdos", href: "/conteudos" },
   { label: "Diagnóstico do imóvel", href: "/diagnostico" },
