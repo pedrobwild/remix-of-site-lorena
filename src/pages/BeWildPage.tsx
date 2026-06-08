@@ -7,6 +7,7 @@ import Header from "../components/landing/Header";
 import Footer from "../components/landing/Footer";
 import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton";
 import { navigate } from "../lib/useHashRoute";
+import JornadaBeWild from "../components/landing/JornadaBeWild";
 import { whatsappHref } from "../components/landing/content";
 import {
   PencilRuler,
@@ -253,6 +254,9 @@ export default function BeWildPage() {
                 depois — foto, diária, limpeza, manutenção, check-in e experiência do hóspede. Quando
                 a reforma acaba, o BeWild Host Care já sabe como colocar o ativo para rodar.
               </p>
+              <div className="mb-7">
+                <JornadaBeWild variant="mini" />
+              </div>
               <button
                 onClick={() => navigate("/bewild-host-care")}
                 className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white/20 border border-white/20"

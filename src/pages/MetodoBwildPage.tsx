@@ -8,77 +8,8 @@ import Footer from "../components/landing/Footer";
 import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton";
 import { navigate } from "../lib/useHashRoute";
 import { whatsappHref } from "../components/landing/content";
-import { Search, PencilRuler, Megaphone, Settings2, BarChart3, ArrowRight } from "lucide-react";
-
-const ETAPAS = [
-  {
-    n: "01",
-    title: "Diagnóstico",
-    icon: Search,
-    descricao:
-      "Entendemos imóvel, bairro, estágio, potencial e objetivo. A conversa é consultiva: não tentamos vender antes de entender se a Bwild faz sentido para o seu caso.",
-    detalhe: [
-      "Avaliação de metragem, localização e padrão do imóvel",
-      "Identificação do estágio atual: cru, em reforma, pronto ou já alugando",
-      "Objetivo do proprietário: preparar, operar ou jornada completa",
-      "Indicação do caminho: Be Wild Reformas, BeWild Host Care ou os dois",
-    ],
-  },
-  {
-    n: "02",
-    title: "Be Wild Reformas — Preparação do ativo",
-    icon: PencilRuler,
-    descricao:
-      "Projeto, obra, marcenaria, mobiliário, compras, decoração e setup em um fluxo único. Cada decisão é pensada para o uso real de temporada: foto, diária, limpeza e manutenção.",
-    detalhe: [
-      "Projeto de arquitetura personalizado para short stay",
-      "Execução da obra com gestão técnica e relatórios",
-      "Marcenaria, mobiliário, decoração e curadoria de itens",
-      "Setup operacional: enxoval, fechadura digital e compatibilidade com check-in remoto",
-      "Entrega com documentação de escopo",
-    ],
-  },
-  {
-    n: "03",
-    title: "Lançamento",
-    icon: Megaphone,
-    descricao:
-      "Fotos profissionais, criação dos anúncios, cadastro nas plataformas e precificação inicial. O imóvel entra no mercado posicionado, não improvisado.",
-    detalhe: [
-      "Fotos profissionais pensadas para conversão no anúncio",
-      "Criação e otimização do perfil no Airbnb, Booking e demais canais",
-      "Definição de precificação inicial com base em mercado e sazonalidade",
-      "30 dias de tráfego pago para ajudar na tração inicial",
-    ],
-  },
-  {
-    n: "04",
-    title: "BeWild Host Care — Operação contínua",
-    icon: Settings2,
-    descricao:
-      "Gestão da operação do dia a dia: hóspedes, limpeza, manutenção, canais e repasse. O proprietário acompanha via relatório — sem precisar operar.",
-    detalhe: [
-      "Atendimento 24h ao hóspede: check-in, suporte e check-out",
-      "Limpeza profissional e troca de enxoval entre reservas",
-      "Manutenção preventiva e emergencial",
-      "Ajuste dinâmico de preços e canais",
-      "Repasse mensal com demonstrativo",
-    ],
-  },
-  {
-    n: "05",
-    title: "Aprendizado contínuo",
-    icon: BarChart3,
-    descricao:
-      "Acompanhamos dados, avaliações de hóspedes, feedbacks e oportunidades de melhoria. O ativo melhora com o tempo — não fica estático após o lançamento.",
-    detalhe: [
-      "Relatório mensal com ocupação, receita e avaliações",
-      "Identificação de oportunidades de ajuste de preço ou produto",
-      "Feedbacks de hóspedes incorporados à operação",
-      "Revisão periódica de performance do ativo",
-    ],
-  },
-];
+import { ArrowRight } from "lucide-react";
+import JornadaBeWild, { ETAPAS_JORNADA } from "../components/landing/JornadaBeWild";
 
 export default function MetodoBwildPage() {
   useSeo({
@@ -99,14 +30,14 @@ export default function MetodoBwildPage() {
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-3xl">
               <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
-                Jornada Bwild
+                Jornada Be Wild
               </p>
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
-                Da obra à diária: o método Bwild.
+                Do diagnóstico à gestão: o método Be Wild.
               </h1>
               <p className="mb-8 text-lg leading-relaxed text-white/70 sm:text-xl">
                 O imóvel não vira renda quando a escritura sai. Ele vira renda quando está preparado,
-                anunciado, precificado, limpo, mantido e operado. A Bwild cuida de todo esse ciclo.
+                anunciado, precificado, limpo, mantido e operado. A Be Wild cuida de todo esse ciclo.
               </p>
               <button
                 onClick={() => navigate("/diagnostico")}
@@ -118,53 +49,22 @@ export default function MetodoBwildPage() {
           </div>
         </section>
 
-        {/* Etapas */}
+        {/* Etapas — componente proprietário JornadaBeWild */}
         <section className="border-t border-white/10 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
-            <div className="mb-16 max-w-2xl">
+            <div className="mb-14 max-w-2xl">
               <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
                 As 5 etapas
               </p>
-              <h2 className="text-3xl font-bold text-white sm:text-4xl">
+              <h2 className="mb-3 text-3xl font-bold text-white sm:text-4xl">
                 Cada etapa conecta com a próxima.
               </h2>
+              <p className="text-white/50 leading-relaxed">
+                Be Wild Reformas e BeWild Host Care são fases de uma mesma jornada —
+                não serviços independentes que podem ser contratados de qualquer fornecedor.
+              </p>
             </div>
-
-            <div className="space-y-8">
-              {ETAPAS.map((etapa, i) => (
-                <div
-                  key={etapa.n}
-                  className="grid gap-8 lg:grid-cols-[auto_1fr_1fr] lg:gap-12 rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8"
-                >
-                  {/* Número e ícone */}
-                  <div className="flex lg:flex-col items-center lg:items-start gap-4">
-                    <p className="font-mono text-4xl font-bold text-bewild-blue/40">{etapa.n}</p>
-                    <etapa.icon className="h-8 w-8 text-bewild-blue-400" />
-                  </div>
-
-                  {/* Título e descrição */}
-                  <div>
-                    <h3 className="mb-3 text-xl font-bold text-white">{etapa.title}</h3>
-                    <p className="text-white/65 leading-relaxed">{etapa.descricao}</p>
-                    {i < ETAPAS.length - 1 && (
-                      <div className="mt-4 inline-flex items-center gap-1.5 text-xs text-bewild-blue-400">
-                        <span>Próximo →</span>
-                        <span className="font-medium">{ETAPAS[i + 1].title}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Detalhe */}
-                  <ul className="space-y-2.5">
-                    {etapa.detalhe.map((d) => (
-                      <li key={d} className="flex gap-2 text-sm text-white/60">
-                        <span className="text-bewild-blue mt-0.5 shrink-0">→</span>{d}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
+            <JornadaBeWild variant="metodo" etapas={ETAPAS_JORNADA} />
           </div>
         </section>
 

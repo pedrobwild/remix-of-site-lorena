@@ -15,17 +15,13 @@
 import { useEffect } from "react";
 import { useSeo } from "./lib/useSeo";
 import { navigate } from "./lib/useHashRoute";
+import JornadaBeWild from "./components/landing/JornadaBeWild";
 import Header from "./components/landing/Header";
 import Footer from "./components/landing/Footer";
 import FloatingWhatsAppButton from "./components/landing/FloatingWhatsAppButton";
 import { whatsappHref, FAQS } from "./components/landing/content";
 import {
   ArrowRight,
-  Search,
-  PencilRuler,
-  Megaphone,
-  Settings2,
-  BarChart3,
   CheckCircle,
   MapPin,
   CalendarCheck,
@@ -36,14 +32,6 @@ import {
 const SITE_URL = "https://bwild.com.br"; // TODO: confirmar domínio oficial
 
 // ─── Dados inline da home ───────────────────────────────────────────────────
-
-const JORNADA = [
-  { n: "01", title: "Diagnóstico", text: "Entendemos imóvel, bairro, estágio, potencial e objetivo.", icon: Search },
-  { n: "02", title: "Be Wild Reformas", text: "Preparamos o ativo: projeto, obra, mobiliário e setup.", icon: PencilRuler },
-  { n: "03", title: "Lançamento", text: "Fotos, anúncio, canais e precificação inicial.", icon: Megaphone },
-  { n: "04", title: "BeWild Host Care", text: "Operamos hóspedes, limpeza, manutenção, relatórios e repasse.", icon: Settings2 },
-  { n: "05", title: "Aprendizado", text: "Acompanhamos dados, avarias, feedbacks e oportunidades.", icon: BarChart3 },
-];
 
 const BEWILD_BULLETS = [
   "Projeto pensado para diária, foto, limpeza, manutenção e experiência do hóspede.",
@@ -301,7 +289,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* ── Bloco 3: Jornada Be Wild — timeline proprietária ─────────── */}
+        {/* ── Bloco 3: Jornada Be Wild — componente proprietário ──────────── */}
         <section id="jornada" className="border-t border-white/10 py-20 sm:py-28 bg-white/[0.02]">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
@@ -316,58 +304,7 @@ export default function App() {
                 fotografia, anúncio, operação e manutenção com fornecedores diferentes.
               </p>
             </div>
-
-            {/* Timeline com conector visual */}
-            <div className="relative">
-              {/* Linha conectora — desktop */}
-              <div className="hidden lg:block absolute top-8 left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-bewild-blue/30 to-transparent" />
-
-              <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
-                {JORNADA.map((etapa, _i) => {
-                  const isBewild = etapa.title === "Be Wild Reformas";
-                  const isHostCare = etapa.title === "BeWild Host Care";
-                  return (
-                    <div
-                      key={etapa.n}
-                      className={`relative rounded-2xl border p-5 transition-all ${
-                        isBewild
-                          ? "border-bewild-blue/30 bg-bewild-blue/5"
-                          : isHostCare
-                          ? "border-bewild-blue/20 bg-bewild-blue/3"
-                          : "border-white/10 bg-white/[0.03]"
-                      }`}
-                    >
-                      <p className="mb-3 font-mono text-2xl font-bold text-bewild-blue/30">{etapa.n}</p>
-                      <etapa.icon className={`mb-3 h-5 w-5 ${isBewild || isHostCare ? "text-bewild-blue-400" : "text-white/30"}`} />
-                      <p className={`mb-1.5 font-semibold text-sm ${isBewild || isHostCare ? "text-white" : "text-white/70"}`}>
-                        {etapa.title}
-                      </p>
-                      <p className="text-xs text-white/45 leading-relaxed">{etapa.text}</p>
-                      {(isBewild || isHostCare) && (
-                        <span className="mt-3 inline-block text-[0.55rem] font-mono uppercase tracking-widest text-bewild-blue-400 border border-bewild-blue/20 rounded-full px-2 py-0.5">
-                          {isBewild ? "Fase 1" : "Fase 2"}
-                        </span>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="mt-8 flex flex-wrap items-center gap-6">
-              <button
-                onClick={() => navigate("/metodo-bwild")}
-                className="inline-flex items-center gap-1.5 text-sm text-bewild-blue-400 hover:text-white transition-colors"
-              >
-                Ver o método completo <ArrowRight className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => navigate("/diagnostico")}
-                className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white transition-colors"
-              >
-                Iniciar meu diagnóstico <ArrowRight className="h-4 w-4" />
-              </button>
-            </div>
+            <JornadaBeWild variant="home" showCtas />
           </div>
         </section>
 

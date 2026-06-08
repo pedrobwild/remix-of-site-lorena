@@ -9,6 +9,7 @@ import Footer from "../components/landing/Footer";
 import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton";
 import { whatsappHref } from "../components/landing/content";
 import { ArrowRight, CheckCircle } from "lucide-react";
+import JornadaBeWild from "../components/landing/JornadaBeWild";
 
 type Estagio = "cru" | "reformando" | "pronto" | "ja-alugando" | "nao-sei" | "";
 type Objetivo = "preparar" | "operar" | "jornada-completa" | "entender-potencial" | "";
@@ -98,7 +99,19 @@ export default function DiagnosticoPage() {
     <div className="bewild min-h-screen bg-bewild-ink font-body text-bewild-ink antialiased">
       <Header />
       <main>
-        <section className="relative overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28">
+        {/* Jornada Be Wild — contexto antes do formulário */}
+        <section className="border-b border-white/8 bg-white/[0.015] py-5">
+          <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
+            <div className="flex flex-wrap items-center gap-3">
+              <p className="font-mono text-[0.6rem] uppercase tracking-widest text-bewild-blue-400 shrink-0">
+                Jornada Be Wild
+              </p>
+              <JornadaBeWild variant="compacta" />
+            </div>
+          </div>
+        </section>
+
+        <section className="relative overflow-hidden pt-20 pb-20 sm:pt-28 sm:pb-28">
           <div className="absolute inset-0 bg-gradient-to-br from-bewild-blue/10 via-transparent to-transparent" />
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="grid gap-16 lg:grid-cols-2 lg:gap-20 lg:items-start">
