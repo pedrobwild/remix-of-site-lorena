@@ -312,7 +312,7 @@ export default function SimuladorPage() {
                   <button
                     onClick={handleCalcular}
                     disabled={!podeCalcular}
-                    className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-bewild-blue px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-bewild-gold px-6 py-3.5 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-gold-600 hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                   >
                     <TrendingUp className="h-4 w-4" />
                     Estimar potencial
@@ -414,7 +414,7 @@ export default function SimuladorPage() {
                       <div className="flex flex-wrap gap-3">
                         <button
                           onClick={() => navigate("/diagnostico")}
-                          className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
+                          className="inline-flex items-center gap-2 rounded-full bg-bewild-gold px-5 py-2.5 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-gold-600 hover:-translate-y-0.5"
                         >
                           Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
                         </button>
@@ -487,7 +487,7 @@ export default function SimuladorPage() {
             </p>
             <button
               onClick={() => navigate("/diagnostico")}
-              className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 rounded-full bg-bewild-gold px-7 py-3.5 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-gold-600 hover:-translate-y-0.5"
             >
               Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
             </button>

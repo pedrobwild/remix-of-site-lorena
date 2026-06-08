@@ -166,10 +166,10 @@ export function CTAButton({
   ariaLabel,
 }: BtnProps) {
   const base =
-    "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold tracking-tight transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bewild-blue-400";
+    "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold tracking-tight transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bewild-gold-400";
   const styles: Record<string, string> = {
     primary:
-      "bg-bewild-blue text-white shadow-bewild-card hover:bg-bewild-blue-600 hover:-translate-y-0.5",
+      "bg-bewild-gold text-bewild-ink shadow-bewild-gold hover:bg-bewild-gold-600 hover:-translate-y-0.5",
     secondary:
       "border border-bewild-ink/15 bg-white text-bewild-ink hover:border-bewild-blue/40 hover:text-bewild-blue",
     ghost: "border border-white/25 text-white hover:border-white/60 hover:bg-white/5",

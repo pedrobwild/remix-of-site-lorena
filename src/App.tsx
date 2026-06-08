@@ -159,7 +159,7 @@ export default function App() {
                 <div className="flex flex-wrap gap-3">
                   <button
                     onClick={() => navigate("/diagnostico")}
-                    className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5 shadow-lg shadow-bewild-blue/20"
+                    className="inline-flex items-center gap-2 rounded-full bg-bewild-gold px-7 py-3.5 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-gold-600 hover:-translate-y-0.5 shadow-bewild-gold"
                   >
                     Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
                   </button>
@@ -235,7 +235,7 @@ export default function App() {
                 { value: "Mensal", label: "Relatório + repasse", note: "Transparência total" },
               ].map((m) => (
                 <div key={m.label} className="text-center sm:text-left">
-                  <p className="text-xl font-bold text-white sm:text-2xl">{m.value}</p>
+                  <p className="text-xl font-bold text-bewild-gold sm:text-2xl font-mono">{m.value}</p>
                   <p className="text-xs font-medium text-white/50 mt-0.5">{m.label}</p>
                   <p className="text-[0.6rem] text-white/30 mt-0.5">{m.note}</p>
                 </div>
@@ -334,7 +334,7 @@ export default function App() {
                 </ul>
                 <button
                   onClick={() => navigate("/be-wild")}
-                  className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 rounded-full bg-bewild-gold px-6 py-3 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-gold-600 hover:-translate-y-0.5"
                 >
                   Preparar meu imóvel <ArrowRight className="h-4 w-4" />
                 </button>
@@ -414,7 +414,7 @@ export default function App() {
                 </p>
                 <button
                   onClick={() => navigate("/bewild-host-care")}
-                  className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 rounded-full bg-bewild-gold px-6 py-3 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-gold-600 hover:-translate-y-0.5"
                 >
                   Operar meu imóvel <ArrowRight className="h-4 w-4" />
                 </button>
@@ -533,7 +533,7 @@ export default function App() {
                 <div className="flex flex-wrap gap-3">
                   <button
                     onClick={() => navigate("/diagnostico")}
-                    className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
+                    className="inline-flex items-center gap-2 rounded-full bg-bewild-gold px-7 py-3.5 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-gold-600 hover:-translate-y-0.5"
                   >
                     Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
                   </button>

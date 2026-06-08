@@ -24,6 +24,9 @@ export default {
           line: "#E4E6EA", // borda sutil em fundo claro
           bone: "#F6F5F2", // off-white
           paper: "#FFFFFF",
+          gold: "#D6A64B",         // Signal Gold — CTA, selos, prova de valor
+          "gold-600": "#B8882C",   // hover do gold
+          "gold-400": "#E8BB6A",  // tint claro do gold
         },
       },
       fontFamily: {
@@ -40,6 +43,8 @@ export default {
       boxShadow: {
         "bewild-card": "0 1px 2px rgba(16,42,79,0.04), 0 12px 40px -12px rgba(16,42,79,0.18)",
         "bewild-float": "0 24px 60px -20px rgba(10,17,30,0.45)",
+        "bewild-premium": "0 12px 40px rgba(17,16,14,0.10)",
+        "bewild-gold": "0 8px 24px rgba(214,166,75,0.25)",
       },
       keyframes: {
         "bewild-marquee": {

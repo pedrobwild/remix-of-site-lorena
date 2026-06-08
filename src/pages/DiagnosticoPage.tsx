@@ -328,7 +328,7 @@ export default function DiagnosticoPage() {
                     <button
                       type="submit"
                       disabled={!canSubmit}
-                      className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-bewild-blue px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0"
+                      className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-bewild-gold px-6 py-3.5 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-gold-600 hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0"
                     >
                       Receber diagnóstico Bwild <ArrowRight className="h-4 w-4" />
                     </button>
