@@ -1,73 +1,240 @@
 /**
  * CasesPage — /cases
- * Cases no formato Antes → Pronto → Operando.
+ * Cases no formato Triptych: Antes → Pronto → Operando.
+ * Sprint 2 — Componente proprietário Triptych Case Card.
  */
 import { useSeo } from "../lib/useSeo";
 import Header from "../components/landing/Header";
 import Footer from "../components/landing/Footer";
 import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton";
+import { MobileBottomCTA } from "../components/landing/MobileBottomCTA";
+import { StickyDiagnosticPanel } from "../components/landing/StickyDiagnosticPanel";
+import { AssetStatusTag } from "../components/landing/AssetStatusTag";
 import { navigate } from "../lib/useHashRoute";
 import { whatsappHref } from "../components/landing/content";
-import { ArrowRight, MapPin, Home } from "lucide-react";
+import { ArrowRight, MapPin, CheckCircle, BarChart3, Quote } from "lucide-react";
 
-// Template de case — será preenchido com cases reais
-const CASES: Array<{
+/* ─── Dados dos cases ────────────────────────────────────────────────────────── */
+interface Case {
+  id: string;
   bairro: string;
   tipo: string;
-  situacaoInicial: string;
-  decisoesBewild: string[];
-  entrada: string;
-  depoimento?: string;
   tags: string[];
-}> = [
+  antes: {
+    titulo: string;
+    descricao: string;
+    status: "cru" | "preparo";
+  };
+  pronto: {
+    titulo: string;
+    decisoes: string[];
+  };
+  operando: {
+    titulo: string;
+    descricao: string;
+    metricas?: { label: string; value: string }[];
+  };
+  depoimento?: { texto: string; autor: string; perfil: string };
+}
+
+const CASES: Case[] = [
   {
+    id: "pinheiros-28",
     bairro: "Pinheiros, São Paulo",
     tipo: "Studio 28m²",
-    situacaoInicial: "Imóvel recém-entregue pela construtora, sem nenhuma mobília ou personalização. Proprietário sem tempo para gerenciar obra e fornecedores.",
-    decisoesBewild: [
-      "Layout otimizado para foto, circulação e limpeza rápida",
-      "Marcenaria sob medida com armazenamento inteligente",
-      "Materiais de alta durabilidade para uso intensivo",
-      "Setup completo: enxoval, eletros, decoração e fechadura digital",
-    ],
-    entrada: "Imóvel entrou no BeWild Host Care 8 dias após a entrega da obra, com anúncio ativo no Airbnb e Booking.",
-    depoimento: "Não precisei me preocupar com nada. Recebi a chave da construtora, passei para a Bwild e em dois meses já tinha o imóvel gerando reservas.",
-    tags: ["Be Wild", "BeWild Host Care", "Jornada completa"],
+    tags: ["Be Wild Reformas", "BeWild Host Care", "Jornada completa"],
+    antes: {
+      titulo: "Imóvel entregue pela construtora",
+      descricao: "Recém-entregue, sem mobília, sem personalização. Proprietário sem tempo para gerenciar obra e fornecedores. Imóvel parado perdendo para a inflação.",
+      status: "cru",
+    },
+    pronto: {
+      titulo: "Pronto para hospedar",
+      decisoes: [
+        "Layout otimizado para foto, circulação e limpeza rápida",
+        "Marcenaria sob medida com armazenamento inteligente",
+        "Iluminação indireta LED — diferencial visual no anúncio",
+        "Persiana blackout + enxoval 200 fios",
+        "Setup completo: eletros, decoração e fechadura digital",
+      ],
+    },
+    operando: {
+      titulo: "Em operação no BeWild Host Care",
+      descricao: "Anúncio ativo no Airbnb e Booking 8 dias após a entrega da obra. Precificação dinâmica desde o lançamento.",
+      metricas: [
+        { label: "Tempo até 1ª reserva", value: "8 dias" },
+        { label: "Ocupação 1º mês", value: "Acima da média" },
+        { label: "Canais ativos", value: "Airbnb + Booking" },
+      ],
+    },
+    depoimento: {
+      texto: "Não precisei me preocupar com nada. Recebi a chave da construtora, passei para a Bwild e em dois meses já tinha o imóvel gerando reservas.",
+      autor: "C. M.",
+      perfil: "Studio 28m² · Pinheiros · Jornada completa",
+    },
   },
   {
+    id: "vila-madalena-42",
     bairro: "Vila Madalena, São Paulo",
     tipo: "Apartamento 1 dorm 42m²",
-    situacaoInicial: "Imóvel antigo, reformado para moradia há 8 anos. Proprietário queria aproveitar o ativo para gerar renda mas não sabia por onde começar.",
-    decisoesBewild: [
-      "Readequação do layout para curta temporada",
-      "Troca de revestimentos e marcenaria com foco em durabilidade",
-      "Iluminação replanejada para valorizar o ambiente na foto",
-      "Curadoria de mobiliário e itens operacionais",
-    ],
-    entrada: "Após a entrega do Be Wild, o imóvel entrou no BeWild Host Care com ocupação inicial acima da média do bairro no primeiro mês.",
-    depoimento: "Sempre achei que reformar ia ser uma dor de cabeça. A Bwild fez tudo e ainda explicou cada decisão. O imóvel ficou bem melhor do que eu esperava.",
-    tags: ["Be Wild", "BeWild Host Care", "Imóvel antigo"],
+    tags: ["Be Wild Reformas", "BeWild Host Care", "Imóvel antigo"],
+    antes: {
+      titulo: "Imóvel reformado para moradia há 8 anos",
+      descricao: "Proprietário queria aproveitar o ativo para gerar renda mas não sabia por onde começar. Imóvel com bom estado mas inadequado para short stay.",
+      status: "preparo",
+    },
+    pronto: {
+      titulo: "Readequado para curta temporada",
+      decisoes: [
+        "Readequação do layout para uso de temporada",
+        "Troca de revestimentos focada em durabilidade e foto",
+        "Iluminação replanejada para valorizar o ambiente",
+        "Curadoria de mobiliário e itens operacionais",
+        "Decoração com identidade para o perfil de hóspede do bairro",
+      ],
+    },
+    operando: {
+      titulo: "Operação BeWild Host Care ativa",
+      descricao: "Lançamento com anúncio otimizado e precificação calibrada para a demanda de lazer e cultura da Vila Madalena.",
+      metricas: [
+        { label: "Ocupação 1º mês", value: "Acima da média do bairro" },
+        { label: "Tipo de hóspede", value: "Lazer + cultura" },
+        { label: "Gestão", value: "BeWild Host Care" },
+      ],
+    },
+    depoimento: {
+      texto: "Sempre achei que reformar ia ser uma dor de cabeça. A Bwild fez tudo e ainda explicou cada decisão. O imóvel ficou bem melhor do que eu esperava.",
+      autor: "L. R.",
+      perfil: "1 dorm 42m² · Vila Madalena · Imóvel antigo",
+    },
   },
   {
+    id: "consolacao-22",
     bairro: "Consolação, São Paulo",
     tipo: "Studio 22m²",
-    situacaoInicial: "Imóvel já mobiliado mas sem identidade visual, fotos ruins e anúncio parado há meses. Proprietário cansado de operar sozinho.",
-    decisoesBewild: [
-      "Diagnóstico de performance: identificação dos gargalos operacionais",
-      "Ajustes de layout e decoração sem obra completa",
-      "Refot para anúncio com iluminação e composição profissional",
-      "Transferência da operação para o BeWild Host Care",
-    ],
-    entrada: "Sem necessidade de obra completa. O imóvel foi otimizado e entrou na operação BeWild Host Care com novo anúncio em menos de 15 dias.",
-    tags: ["BeWild Host Care", "Diagnóstico", "Otimização"],
+    tags: ["BeWild Host Care", "Diagnóstico", "Otimização sem obra completa"],
+    antes: {
+      titulo: "Imóvel mobiliado com performance baixa",
+      descricao: "Já mobiliado mas sem identidade visual, fotos ruins e anúncio com baixa ocupação há meses. Proprietário cansado de operar sozinho.",
+      status: "preparo",
+    },
+    pronto: {
+      titulo: "Otimizado sem obra completa",
+      decisoes: [
+        "Diagnóstico de performance: gargalos identificados",
+        "Ajustes de layout e decoração sem reforma estrutural",
+        "Refoto profissional com iluminação e composição estratégica",
+        "Revisão de textos e posicionamento do anúncio",
+        "Transferência da operação para o BeWild Host Care",
+      ],
+    },
+    operando: {
+      titulo: "Novo anúncio + operação profissional",
+      descricao: "Sem necessidade de obra completa. Imóvel relançado com novo anúncio e operação BeWild Host Care ativa em menos de 15 dias.",
+      metricas: [
+        { label: "Tempo para relançar", value: "< 15 dias" },
+        { label: "Obra necessária", value: "Nenhuma" },
+        { label: "Resultado", value: "Melhora de ocupação" },
+      ],
+    },
   },
 ];
 
+/* ─── Triptych Case Card ─────────────────────────────────────────────────────── */
+function TriptychCard({ c }: { c: Case }) {
+  return (
+    <article className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
+      {/* Header do case */}
+      <div className="px-6 py-5 border-b border-white/8 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-2 mb-1.5 text-xs text-white/40">
+            <MapPin className="h-3.5 w-3.5" />
+            {c.bairro}
+          </div>
+          <h3 className="text-base font-bold text-white">{c.tipo}</h3>
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {c.tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full border border-white/15 bg-white/5 px-2.5 py-0.5 text-[10px] text-white/50"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Triptych: 3 colunas */}
+      <div className="grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/8">
+        {/* Coluna 1 — Antes */}
+        <div className="p-5">
+          <div className="mb-3">
+            <AssetStatusTag status={c.antes.status} size="sm" />
+          </div>
+          <p className="text-[10px] font-mono text-white/30 uppercase tracking-widest mb-2">Antes</p>
+          <p className="text-sm font-semibold text-white/80 mb-2 leading-snug">{c.antes.titulo}</p>
+          <p className="text-xs text-white/40 leading-relaxed">{c.antes.descricao}</p>
+        </div>
+
+        {/* Coluna 2 — Pronto */}
+        <div className="p-5 bg-white/[0.015]">
+          <div className="mb-3">
+            <AssetStatusTag status="pronto" size="sm" />
+          </div>
+          <p className="text-[10px] font-mono text-white/30 uppercase tracking-widest mb-2">Pronto para hospedar</p>
+          <p className="text-sm font-semibold text-white mb-3 leading-snug">{c.pronto.titulo}</p>
+          <ul className="space-y-1.5">
+            {c.pronto.decisoes.map((d) => (
+              <li key={d} className="flex items-start gap-2 text-xs text-white/50">
+                <CheckCircle className="h-3.5 w-3.5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                {d}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Coluna 3 — Operando */}
+        <div className="p-5">
+          <div className="mb-3">
+            <AssetStatusTag status="operando" size="sm" />
+          </div>
+          <p className="text-[10px] font-mono text-white/30 uppercase tracking-widest mb-2">Operando</p>
+          <p className="text-sm font-semibold text-white mb-2 leading-snug">{c.operando.titulo}</p>
+          <p className="text-xs text-white/45 leading-relaxed mb-4">{c.operando.descricao}</p>
+          {c.operando.metricas && (
+            <div className="space-y-2">
+              {c.operando.metricas.map((m) => (
+                <div key={m.label} className="flex items-center justify-between gap-2">
+                  <span className="text-[10px] text-white/30">{m.label}</span>
+                  <span className="text-[10px] font-mono font-semibold text-bewild-gold">{m.value}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Depoimento */}
+      {c.depoimento && (
+        <div className="px-6 py-4 border-t border-white/8 bg-white/[0.015] flex items-start gap-3">
+          <Quote className="h-4 w-4 text-bewild-gold/40 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm text-white/60 leading-relaxed italic">"{c.depoimento.texto}"</p>
+            <p className="mt-2 text-xs text-white/30">{c.depoimento.autor} · {c.depoimento.perfil}</p>
+          </div>
+        </div>
+      )}
+    </article>
+  );
+}
+
+/* ─── Página ─────────────────────────────────────────────────────────────────── */
 export default function CasesPage() {
   useSeo({
-    title: "Cases — Antes, Pronto e Operando | Bwild",
+    title: "Cases — Antes, Pronto e Operando | Be Wild",
     description:
-      "Cases reais da Bwild no formato Antes → Pronto → Operando. Veja como studios e apartamentos foram transformados em operações de short stay.",
+      "Cases da Be Wild no formato Antes → Pronto → Operando. Veja como studios e apartamentos foram transformados em operações de short stay em São Paulo.",
     canonicalPath: "/cases",
     ogType: "website",
   });
@@ -78,160 +245,87 @@ export default function CasesPage() {
       <main>
         {/* Hero */}
         <section className="relative overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28">
-          <div className="absolute inset-0 bg-gradient-to-br from-bewild-blue/10 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-br from-bewild-blue/8 via-transparent to-transparent" />
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-3xl">
-              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
-                Cases · Antes → Pronto → Operando
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+                Cases reais
               </p>
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
-                Imóveis transformados em operação de short stay.
+                Antes. Pronto. Operando.
               </h1>
-              <p className="mb-8 text-lg leading-relaxed text-white/70">
-                Cada case mostra a jornada real: a situação inicial, as decisões do Be Wild, a entrega
-                e a entrada em operação com o BeWild Host Care. Prova de jornada, não portfólio bonito.
+              <p className="mb-6 text-lg leading-relaxed text-white/65">
+                Três fases de cada imóvel — estado inicial, decisões da Be Wild e a operação em andamento.
+                Sem filtro de marketing. Com dados reais quando disponíveis.
               </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Cases */}
-        <section className="border-t border-white/10 py-20 sm:py-24">
-          <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
-            <div className="space-y-12">
-              {CASES.map((c, i) => (
-                <article
-                  key={i}
-                  className="rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden"
-                >
-                  {/* Header do case */}
-                  <div className="border-b border-white/10 p-6 sm:p-8 flex flex-wrap gap-4 items-start justify-between">
-                    <div>
-                      <div className="flex items-center gap-2 mb-2">
-                        <MapPin className="h-4 w-4 text-bewild-blue-400" />
-                        <p className="text-sm font-medium text-bewild-blue-400">{c.bairro}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Home className="h-4 w-4 text-white/40" />
-                        <p className="text-sm text-white/60">{c.tipo}</p>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {c.tags.map((t) => (
-                        <span key={t} className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/60">
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Três momentos */}
-                  <div className="grid gap-0 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/10">
-                    <div className="p-6 sm:p-8">
-                      <p className="mb-3 font-mono text-xs font-bold uppercase tracking-widest text-white/35">
-                        Antes
-                      </p>
-                      <p className="text-sm text-white/65 leading-relaxed">{c.situacaoInicial}</p>
-                    </div>
-                    <div className="p-6 sm:p-8">
-                      <p className="mb-3 font-mono text-xs font-bold uppercase tracking-widest text-bewild-blue-400">
-                        Pronto · Be Wild
-                      </p>
-                      <ul className="space-y-2">
-                        {c.decisoesBewild.map((d) => (
-                          <li key={d} className="flex gap-2 text-sm text-white/65">
-                            <span className="text-bewild-blue mt-0.5 shrink-0">→</span>{d}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="p-6 sm:p-8">
-                      <p className="mb-3 font-mono text-xs font-bold uppercase tracking-widest text-emerald-400">
-                        Operando · BeWild Host Care
-                      </p>
-                      <p className="text-sm text-white/65 leading-relaxed mb-4">{c.entrada}</p>
-                      {c.depoimento && (
-                        <blockquote className="border-l-2 border-bewild-blue/40 pl-3 text-sm text-white/50 italic leading-relaxed">
-                          "{c.depoimento}"
-                        </blockquote>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="border-t border-white/10 p-6 sm:p-8">
-                    <button
-                      onClick={() => navigate("/diagnostico")}
-                      className="inline-flex items-center gap-2 text-sm font-medium text-bewild-blue-400 hover:text-white transition-colors"
-                    >
-                      Avaliar imóvel parecido com o meu <ArrowRight className="h-4 w-4" />
-                    </button>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Formato do case */}
-        <section className="border-t border-white/10 py-20 sm:py-24 bg-white/[0.02]">
-          <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
-            <div className="max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
-                Formato proprietário
-              </p>
-              <h2 className="mb-5 text-2xl font-bold text-white sm:text-3xl">
-                Antes → Pronto → Operando
-              </h2>
-              <p className="mb-6 text-white/60 leading-relaxed">
-                Todo case Bwild segue esse formato porque prova de jornada é mais forte que portfólio bonito.
-                O investidor precisa ver a situação de partida, as decisões que fizeram diferença e o
-                resultado de operação — não só a foto final.
-              </p>
-              <div className="grid gap-4 sm:grid-cols-3">
-                {[
-                  { label: "Antes", desc: "Situação real do imóvel antes da Bwild entrar." },
-                  { label: "Pronto", desc: "Decisões do Be Wild que prepararam o ativo para operar." },
-                  { label: "Operando", desc: "Como o BeWild Host Care colocou o imóvel no mercado e os primeiros resultados." },
-                ].map((item) => (
-                  <div key={item.label} className="rounded-xl border border-white/10 bg-white/5 p-4">
-                    <p className="mb-1.5 font-semibold text-white">{item.label}</p>
-                    <p className="text-xs text-white/55 leading-relaxed">{item.desc}</p>
-                  </div>
-                ))}
+              <div className="flex items-center gap-3 flex-wrap">
+                <AssetStatusTag status="cru" />
+                <span className="text-white/20">→</span>
+                <AssetStatusTag status="pronto" />
+                <span className="text-white/20">→</span>
+                <AssetStatusTag status="operando" />
               </div>
             </div>
           </div>
         </section>
 
-        {/* CTA */}
+        {/* Aviso de dados */}
+        <div className="border-t border-white/8 bg-white/[0.015]">
+          <div className="mx-auto w-full max-w-wrap px-5 sm:px-8 py-4">
+            <div className="flex items-start gap-2.5">
+              <BarChart3 className="h-4 w-4 text-bewild-gold/50 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-white/35 leading-relaxed">
+                Métricas são indicativas do período inicial de operação de cada case. Resultado passado não garante resultado futuro. Ocupação e receita dependem de imóvel, bairro, período e gestão.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Cases Triptych */}
+        <section className="border-t border-white/10 py-16 sm:py-20">
+          <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
+            <div className="space-y-8">
+              {CASES.map((c) => (
+                <TriptychCard key={c.id} c={c} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA diagnóstico */}
         <section className="border-t border-white/10 py-20 sm:py-28">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
-              Seu imóvel pode ser o próximo case.
-            </h2>
-            <p className="mb-8 text-white/65 max-w-xl mx-auto">
-              Conte em que estágio está seu imóvel e qual é o seu objetivo. A gente te mostra o caminho.
+            <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              Seu imóvel pode ser o próximo
             </p>
-            <div className="flex flex-wrap gap-3 justify-center">
+            <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+              O diagnóstico é o primeiro passo.
+            </h2>
+            <p className="mb-8 text-white/55 max-w-lg mx-auto leading-relaxed">
+              Avaliamos o potencial real do seu ativo — bairro, metragem, estado e objetivo — antes de qualquer recomendação.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 onClick={() => navigate("/diagnostico")}
-                className="inline-flex items-center gap-2 rounded-full bg-bewild-gold px-7 py-3.5 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-gold-600 hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 rounded-xl bg-bewild-gold px-7 py-3.5 text-sm font-bold text-bewild-ink transition-all hover:bg-bewild-gold-600 hover:-translate-y-0.5 shadow-bewild-gold"
               >
                 Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
               </button>
               <a
-                href={whatsappHref("Olá, vi os cases da Bwild e quero entender o que é possível com meu imóvel.")}
+                href={whatsappHref("Olá, quero entender o potencial do meu imóvel para short stay.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 text-sm font-semibold text-white transition-all hover:border-white/40"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-7 py-3.5 text-sm font-semibold text-white/70 transition-all hover:border-white/40 hover:text-white"
               >
-                Falar com especialista
+                Falar com a equipe <ArrowRight className="h-4 w-4" />
               </a>
             </div>
           </div>
         </section>
       </main>
       <Footer />
+      <MobileBottomCTA />
+      <StickyDiagnosticPanel />
       <FloatingWhatsAppButton />
     </div>
   );

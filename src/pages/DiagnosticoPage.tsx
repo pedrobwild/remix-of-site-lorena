@@ -5,6 +5,8 @@
 import { useState } from "react";
 import { useSeo } from "../lib/useSeo";
 import Header from "../components/landing/Header";
+import { MobileBottomCTA } from "../components/landing/MobileBottomCTA";
+import { StickyDiagnosticPanel } from "../components/landing/StickyDiagnosticPanel";
 import Footer from "../components/landing/Footer";
 import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton";
 import { whatsappHref } from "../components/landing/content";
@@ -343,6 +345,8 @@ export default function DiagnosticoPage() {
           </div>
         </section>
       </main>
+      <MobileBottomCTA />
+      <StickyDiagnosticPanel />
       <Footer />
       <FloatingWhatsAppButton />
     </div>

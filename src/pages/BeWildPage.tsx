@@ -9,6 +9,9 @@ import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton
 import { navigate } from "../lib/useHashRoute";
 import JornadaBeWild from "../components/landing/JornadaBeWild";
 import { whatsappHref } from "../components/landing/content";
+import { MaterialBoard } from "../components/landing/MaterialBoard";
+import { MobileBottomCTA } from "../components/landing/MobileBottomCTA";
+import { StickyDiagnosticPanel } from "../components/landing/StickyDiagnosticPanel";
 import {
   PencilRuler,
   Hammer,
@@ -238,6 +241,13 @@ export default function BeWildPage() {
           </div>
         </section>
 
+        {/* Material Board */}
+        <section className="border-t border-white/10 py-16 sm:py-20">
+          <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
+            <MaterialBoard />
+          </div>
+        </section>
+
         {/* Ponte BeWild Host Care */}
         <section className="border-t border-white/10 py-20 sm:py-24 bg-bewild-blue/5">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
@@ -315,6 +325,8 @@ export default function BeWildPage() {
           </div>
         </section>
       </main>
+      <MobileBottomCTA />
+      <StickyDiagnosticPanel />
       <Footer />
       <FloatingWhatsAppButton />
     </div>

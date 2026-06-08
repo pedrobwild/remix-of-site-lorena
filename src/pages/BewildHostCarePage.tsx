@@ -8,6 +8,9 @@ import Footer from "../components/landing/Footer";
 import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton";
 import { navigate } from "../lib/useHashRoute";
 import { whatsappHref } from "../components/landing/content";
+import { HostCareDashboard } from "../components/landing/HostCareDashboard";
+import { MobileBottomCTA } from "../components/landing/MobileBottomCTA";
+import { StickyDiagnosticPanel } from "../components/landing/StickyDiagnosticPanel";
 import {
   Megaphone,
   SlidersHorizontal,
@@ -200,6 +203,24 @@ export default function BewildHostCarePage() {
           </div>
         </section>
 
+        {/* Dashboard mock */}
+        <section className="border-t border-white/10 py-16 sm:py-20">
+          <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
+            <div className="mb-10 max-w-2xl">
+              <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+                Painel do proprietário
+              </p>
+              <h2 className="text-2xl font-bold text-white sm:text-3xl">
+                Você acompanha tudo — sem precisar gerenciar nada.
+              </h2>
+              <p className="mt-3 text-white/55 text-sm leading-relaxed">
+                Reservas, limpeza, manutenção e repasse em um painel claro. Dados ilustrativos — resultado real varia por imóvel e período.
+              </p>
+            </div>
+            <HostCareDashboard />
+          </div>
+        </section>
+
         {/* Serviços */}
         <section className="border-t border-white/10 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
@@ -319,6 +340,8 @@ export default function BewildHostCarePage() {
           </div>
         </section>
       </main>
+      <MobileBottomCTA />
+      <StickyDiagnosticPanel />
       <Footer />
       <FloatingWhatsAppButton />
     </div>

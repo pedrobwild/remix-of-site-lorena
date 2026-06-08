@@ -4,6 +4,8 @@
  */
 import { useSeo } from "../lib/useSeo";
 import Header from "../components/landing/Header";
+import { MobileBottomCTA } from "../components/landing/MobileBottomCTA";
+import { StickyDiagnosticPanel } from "../components/landing/StickyDiagnosticPanel";
 import Footer from "../components/landing/Footer";
 import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton";
 import { navigate } from "../lib/useHashRoute";
@@ -120,6 +122,8 @@ export default function MetodoBwildPage() {
           </div>
         </section>
       </main>
+      <MobileBottomCTA />
+      <StickyDiagnosticPanel />
       <Footer />
       <FloatingWhatsAppButton />
     </div>

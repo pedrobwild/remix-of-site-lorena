@@ -15,6 +15,7 @@
  *   <JornadaBeWild variant="compacta" />
  */
 
+import { useEffect, useRef, useState } from "react";
 import { navigate } from "../../lib/useHashRoute";
 import { ArrowRight, Search, PencilRuler, Megaphone, Settings2, BarChart3, CheckCircle } from "lucide-react";
 
@@ -117,39 +118,88 @@ function JornadaCompacta() {
 // ─── Variante: home ───────────────────────────────────────────────────────────
 
 function JornadaHome({ showCtas = true }: { showCtas?: boolean }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
+  const [activeIdx, setActiveIdx] = useState(-1);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const line = lineRef.current;
+    if (!container || !line) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Anima a linha gradualmente ao entrar na viewport
+            let progress = 0;
+            const tick = () => {
+              progress = Math.min(progress + 2, 100);
+              line.style.width = `${progress}%`;
+              if (progress < 100) requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+
+            // Ativa os cards em sequência
+            ETAPAS_JORNADA.forEach((_, i) => {
+              setTimeout(() => setActiveIdx(i), i * 140);
+            });
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div>
-      {/* Linha conectora desktop */}
+    <div ref={containerRef}>
+      {/* Linha conectora desktop animada */}
       <div className="relative">
-        <div className="hidden lg:block absolute top-8 left-[8%] right-[8%] h-px bg-gradient-to-r from-transparent via-bewild-blue/25 to-transparent pointer-events-none" />
+        <div className="hidden lg:block absolute top-8 left-[8%] right-[8%] h-px bg-white/5 pointer-events-none overflow-hidden rounded-full">
+          <div
+            ref={lineRef}
+            className="h-full w-0 bg-gradient-to-r from-bewild-blue/20 via-bewild-gold/40 to-bewild-blue/20 transition-none rounded-full"
+          />
+        </div>
 
         <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
-          {ETAPAS_JORNADA.map((etapa) => {
+          {ETAPAS_JORNADA.map((etapa, idx) => {
             const isPhase1 = etapa.fase === "1";
             const isPhase2 = etapa.fase === "2";
             const isHighlight = isPhase1 || isPhase2;
+            const isActive = idx <= activeIdx;
             return (
               <div
                 key={etapa.n}
-                className={`relative rounded-2xl border p-5 transition-all ${
+                className={`relative rounded-2xl border p-5 transition-all duration-500 ${
+                  isActive ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+                } ${
                   isPhase1
-                    ? "border-bewild-blue/35 bg-bewild-blue/6"
+                    ? "border-bewild-gold/30 bg-bewild-gold/5"
                     : isPhase2
                     ? "border-bewild-blue/20 bg-bewild-blue/4"
                     : "border-white/10 bg-white/[0.03]"
                 }`}
               >
-                <p className="mb-3 font-mono text-2xl font-bold text-bewild-blue/25">{etapa.n}</p>
+                <p className={`mb-3 font-mono text-2xl font-bold ${isHighlight ? "text-bewild-gold/30" : "text-bewild-blue/20"}`}>{etapa.n}</p>
                 <etapa.icon
-                  className={`mb-3 h-5 w-5 ${isHighlight ? "text-bewild-blue-400" : "text-white/30"}`}
+                  className={`mb-3 h-5 w-5 ${isPhase1 ? "text-bewild-gold" : isPhase2 ? "text-bewild-blue-400" : "text-white/30"}`}
                 />
                 <p className={`mb-1.5 text-sm font-semibold ${isHighlight ? "text-white" : "text-white/65"}`}>
                   {etapa.title}
                 </p>
                 <p className="text-xs text-white/40 leading-relaxed line-clamp-3">{etapa.descricao}</p>
-                {isHighlight && (
+                {isPhase1 && (
+                  <span className="mt-3 inline-block text-[0.55rem] font-mono uppercase tracking-widest text-bewild-gold border border-bewild-gold/25 rounded-full px-2 py-0.5">
+                    Fase 1
+                  </span>
+                )}
+                {isPhase2 && (
                   <span className="mt-3 inline-block text-[0.55rem] font-mono uppercase tracking-widest text-bewild-blue-400 border border-bewild-blue/20 rounded-full px-2 py-0.5">
-                    Fase {etapa.fase}
+                    Fase 2
                   </span>
                 )}
               </div>
@@ -162,7 +212,7 @@ function JornadaHome({ showCtas = true }: { showCtas?: boolean }) {
         <div className="mt-8 flex flex-wrap items-center gap-6">
           <button
             onClick={() => navigate("/metodo-bwild")}
-            className="inline-flex items-center gap-1.5 text-sm text-bewild-blue-400 hover:text-white transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm text-bewild-gold/70 hover:text-bewild-gold transition-colors"
           >
             Ver o método completo <ArrowRight className="h-4 w-4" />
           </button>
