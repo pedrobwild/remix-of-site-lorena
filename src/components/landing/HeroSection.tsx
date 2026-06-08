@@ -156,15 +156,6 @@ export default function HeroSection() {
             </CTAButton>
           </div>
 
-          {HERO.chips.length > 0 && (
-            <ul className="flex flex-wrap gap-2 pt-1">
-              {HERO.chips.map((chip) => (
-                <li key={chip}>
-                  <Chip>{chip}</Chip>
-                </li>
-              ))}
-            </ul>
-          )}
 
           {/* Slideshow controls */}
           <div
