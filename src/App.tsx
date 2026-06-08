@@ -19,7 +19,7 @@ import JornadaBeWild from "./components/landing/JornadaBeWild";
 import Header from "./components/landing/Header";
 import Footer from "./components/landing/Footer";
 import FloatingWhatsAppButton from "./components/landing/FloatingWhatsAppButton";
-import { whatsappHref, FAQS } from "./components/landing/content";
+import { FAQS } from "./components/landing/content";
 import {
   ArrowRight,
   CheckCircle,

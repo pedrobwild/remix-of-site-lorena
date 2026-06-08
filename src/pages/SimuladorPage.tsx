@@ -175,7 +175,7 @@ export default function SimuladorPage() {
 
   const bairroConfig = BAIRROS[bairro];
   const tipoConfig = TIPOS[tipo];
-  const estadoConfig = ESTADOS_IMOVEL[estado];
+  const _estadoConfig = ESTADOS_IMOVEL[estado]; // reservado para uso futuro
 
   const handleCalcular = () => {
     if (podeCalcular) setCalculado(true);
