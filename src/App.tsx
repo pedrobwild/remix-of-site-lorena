@@ -37,14 +37,6 @@ const SITE_URL = "https://bwild.com.br"; // TODO: confirmar domínio oficial
 
 // ─── Dados inline da home ───────────────────────────────────────────────────
 
-const PROBLEMA_BULLETS = [
-  "Obra atrasando, fornecedores dispersos e compras sem coordenação.",
-  "Imóvel bonito, mas funcional para diária? Nem sempre.",
-  "Anúncio fraco, precificação improvisada, reservas abaixo do potencial.",
-  "Hóspedes, limpeza e manutenção virando rotina do proprietário.",
-  "Capital parado entre a entrega da chave e a primeira reserva.",
-];
-
 const JORNADA = [
   { n: "01", title: "Diagnóstico", text: "Entendemos imóvel, bairro, estágio, potencial e objetivo.", icon: Search },
   { n: "02", title: "Be Wild Reformas", text: "Preparamos o ativo: projeto, obra, mobiliário e setup.", icon: PencilRuler },
@@ -331,7 +323,7 @@ export default function App() {
               <div className="hidden lg:block absolute top-8 left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-bewild-blue/30 to-transparent" />
 
               <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
-                {JORNADA.map((etapa, i) => {
+                {JORNADA.map((etapa, _i) => {
                   const isBewild = etapa.title === "Be Wild Reformas";
                   const isHostCare = etapa.title === "BeWild Host Care";
                   return (
