@@ -116,21 +116,21 @@ export default function BewildHostCarePage() {
   });
 
   return (
-    <div className="bewild min-h-screen bg-bewild-ink font-body text-bewild-ink antialiased">
+    <div className="bwild-light min-h-screen bg-bewild-cream font-body text-bewild-text-body antialiased">
       <Header />
       <main>
         {/* Hero */}
-        <section className="relative overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28">
-          <div className="absolute inset-0 bg-gradient-to-br from-bewild-blue/10 via-transparent to-transparent" />
+        <section className="relative overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28 bg-bewild-ink">
+          <div className="absolute inset-0 bg-gradient-to-br from-bewild-gold/5 via-transparent to-transparent" />
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-3xl">
-              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 BeWild Host Care · Gestão de Temporada
               </p>
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
                 Seu imóvel em operação, sem você virar anfitrião.
               </h1>
-              <p className="mb-8 text-lg leading-relaxed text-white/70 sm:text-xl">
+              <p className="mb-8 text-lg leading-relaxed text-bewild-text-muted sm:text-xl">
                 Cuidamos do anúncio, canais, precificação, atendimento 24h ao hóspede, limpeza,
                 enxoval, manutenção, relatórios e repasse. Você acompanha a performance sem
                 precisar operar o dia a dia.
@@ -138,7 +138,7 @@ export default function BewildHostCarePage() {
               <div className="flex flex-wrap gap-3">
                 <div className="flex flex-wrap gap-3 mb-6">
                   {["Sem fidelidade", "Suporte 24h", "30 dias de tráfego grátis"].map((tag) => (
-                    <span key={tag} className="inline-flex items-center gap-1.5 rounded-full border border-bewild-blue/40 bg-bewild-blue/10 px-3 py-1 text-xs font-medium text-bewild-blue-400">
+                    <span key={tag} className="inline-flex items-center gap-1.5 rounded-full border border-bewild-blue/40 bg-bewild-gold/10 px-3 py-1 text-xs font-medium text-bewild-gold">
                       <CheckCircle className="h-3.5 w-3.5" /> {tag}
                     </span>
                   ))}
@@ -155,7 +155,7 @@ export default function BewildHostCarePage() {
                   href={whatsappHref("Olá, tenho um imóvel pronto e quero entender como funciona o BeWild Host Care.")}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-all hover:border-white/40"
+                  className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-6 py-3 text-sm font-semibold text-white transition-all hover:border-white/40"
                 >
                   Receber análise de gestão
                 </a>
@@ -165,26 +165,26 @@ export default function BewildHostCarePage() {
         </section>
 
         {/* O problema */}
-        <section className="py-20 sm:py-24 border-t border-white/10">
+        <section className="py-20 sm:py-24 border-t border-bewild-cream-200">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="grid gap-12 lg:grid-cols-2 lg:gap-20 lg:items-center">
               <div>
-                <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+                <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                   O problema invisível
                 </p>
                 <h2 className="mb-5 text-3xl font-bold text-white sm:text-4xl">
                   Short stay exige operação diária — e você não deveria fazer isso sozinho.
                 </h2>
-                <p className="text-white/65 leading-relaxed">
+                <p className="text-bewild-text-muted leading-relaxed">
                   Anúncio, precificação, resposta a hóspedes, limpeza, lavanderia, manutenção,
                   vistoria, repasse, plataformas, avaliações... O que parece renda passiva vira
                   operação ativa quando o proprietário assume tudo. O BeWild Host Care existe para eliminar
                   essa fricção.
                 </p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-8">
-                <p className="mb-4 text-sm font-semibold text-white">Tarefas invisíveis do short stay:</p>
-                <ul className="space-y-2.5 text-sm text-white/65">
+              <div className="rounded-2xl border border-bewild-cream-200 bg-white/5 p-8">
+                <p className="mb-4 text-sm font-semibold text-bewild-ink">Tarefas invisíveis do short stay:</p>
+                <ul className="space-y-2.5 text-sm text-bewild-text-muted">
                   {[
                     "Atualizar disponibilidade e preços nas plataformas",
                     "Responder dúvidas de hóspedes antes e durante a estadia",
@@ -205,7 +205,7 @@ export default function BewildHostCarePage() {
         </section>
 
         {/* Dashboard mock */}
-        <section className="border-t border-white/10 py-16 sm:py-20">
+        <section className="border-t border-bewild-cream-200 py-16 sm:py-20">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-10 max-w-2xl">
               <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold">
@@ -223,12 +223,12 @@ export default function BewildHostCarePage() {
         </section>
 
         {/* Foto editorial — operação invisível */}
-        <section className="border-t border-white/10 py-16 sm:py-20">
+        <section className="border-t border-bewild-cream-200 py-16 sm:py-20">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="grid gap-6 sm:grid-cols-2">
               <div>
                 <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold">Studio em operação</p>
-                <p className="mb-4 text-lg font-bold text-white">
+                <p className="mb-4 text-lg font-bold text-bewild-ink">
                   O imóvel trabalha.<br/>O proprietário descansa.
                 </p>
                 <ImagePlaceholder
@@ -263,10 +263,10 @@ export default function BewildHostCarePage() {
         </section>
 
         {/* Serviços */}
-        <section className="border-t border-white/10 py-20 sm:py-24">
+        <section className="border-t border-bewild-cream-200 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 O que está incluso
               </p>
               <h2 className="text-3xl font-bold text-white sm:text-4xl">
@@ -275,9 +275,9 @@ export default function BewildHostCarePage() {
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {SERVICOS.map((s) => (
-                <div key={s.title} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-bewild-premium">
-                  <s.icon className="mb-4 h-7 w-7 text-bewild-blue-400" />
-                  <p className="mb-2 font-semibold text-white">{s.title}</p>
+                <div key={s.title} className="rounded-2xl border border-bewild-cream-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-bewild-cream-200 hover:shadow-bewild-card">
+                  <s.icon className="mb-4 h-7 w-7 text-bewild-gold" />
+                  <p className="mb-2 font-semibold text-bewild-ink">{s.title}</p>
                   <p className="text-sm text-white/55 leading-relaxed">{s.text}</p>
                 </div>
               ))}
@@ -286,10 +286,10 @@ export default function BewildHostCarePage() {
         </section>
 
         {/* Diferenciais */}
-        <section className="border-t border-white/10 py-20 sm:py-24 bg-bewild-blue/5">
+        <section className="border-t border-bewild-cream-200 py-20 sm:py-24 bg-bewild-parchment">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 Por que o BeWild Host Care é diferente
               </p>
               <h2 className="text-3xl font-bold text-white sm:text-4xl">
@@ -298,10 +298,10 @@ export default function BewildHostCarePage() {
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {DIFERENCIAIS.map((d) => (
-                <div key={d.title} className="rounded-2xl border border-bewild-blue/20 bg-bewild-blue/5 p-6">
-                  <d.icon className="mb-4 h-7 w-7 text-bewild-blue-400" />
-                  <p className="mb-2 font-semibold text-white">{d.title}</p>
-                  <p className="text-sm text-white/60 leading-relaxed">{d.text}</p>
+                <div key={d.title} className="rounded-2xl border border-bewild-blue/20 bg-bewild-parchment p-6">
+                  <d.icon className="mb-4 h-7 w-7 text-bewild-gold" />
+                  <p className="mb-2 font-semibold text-bewild-ink">{d.title}</p>
+                  <p className="text-sm text-bewild-text-muted leading-relaxed">{d.text}</p>
                 </div>
               ))}
             </div>
@@ -309,23 +309,23 @@ export default function BewildHostCarePage() {
         </section>
 
         {/* Ponte Be Wild */}
-        <section className="border-t border-white/10 py-20 sm:py-24">
+        <section className="border-t border-bewild-cream-200 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-2xl mx-auto text-center">
-              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 Imóvel ainda não está pronto?
               </p>
               <h2 className="mb-5 text-3xl font-bold text-white sm:text-4xl">
                 Gestão boa não salva produto ruim.
               </h2>
-              <p className="mb-8 text-white/65 leading-relaxed">
+              <p className="mb-8 text-bewild-text-muted leading-relaxed">
                 Se o imóvel ainda não está preparado para competir no short stay — foto, funcionalidade,
                 manutenção, setup — a gestão começa em desvantagem. O Be Wild Reformas prepara o ativo para o
                 BeWild Host Care poder operar no nível certo.
               </p>
               <button
                 onClick={() => navigate("/be-wild")}
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white/10"
+                className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white/10"
               >
                 Conhecer o Be Wild Reformas <ArrowRight className="h-4 w-4" />
               </button>
@@ -334,19 +334,19 @@ export default function BewildHostCarePage() {
         </section>
 
         {/* FAQ */}
-        <section className="border-t border-white/10 py-20 sm:py-24">
+        <section className="border-t border-bewild-cream-200 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 Perguntas frequentes
               </p>
               <h2 className="text-3xl font-bold text-white sm:text-4xl">FAQ BeWild Host Care</h2>
             </div>
             <div className="grid gap-6 lg:grid-cols-2">
               {FAQS.map((f) => (
-                <div key={f.q} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-bewild-premium">
-                  <p className="mb-3 font-semibold text-white">{f.q}</p>
-                  <p className="text-sm text-white/60 leading-relaxed">{f.a}</p>
+                <div key={f.q} className="rounded-2xl border border-bewild-cream-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-bewild-cream-200 hover:shadow-bewild-card">
+                  <p className="mb-3 font-semibold text-bewild-ink">{f.q}</p>
+                  <p className="text-sm text-bewild-text-muted leading-relaxed">{f.a}</p>
                 </div>
               ))}
             </div>
@@ -354,12 +354,12 @@ export default function BewildHostCarePage() {
         </section>
 
         {/* CTA Final */}
-        <section className="border-t border-white/10 py-20 sm:py-28">
+        <section className="border-t border-bewild-cream-200 py-20 sm:py-28">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8 text-center">
             <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
               Coloque seu imóvel para rodar.
             </h2>
-            <p className="mb-8 text-white/65 max-w-xl mx-auto">
+            <p className="mb-8 text-bewild-text-muted max-w-xl mx-auto">
               Conte em que estágio está seu imóvel. A gente indica o caminho: Be Wild Reformas, BeWild Host Care ou jornada completa.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
@@ -373,7 +373,7 @@ export default function BewildHostCarePage() {
                 href={whatsappHref("Olá, tenho um imóvel e quero entender como o BeWild Host Care funciona.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 text-sm font-semibold text-white transition-all hover:border-white/40"
+                className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-7 py-3.5 text-sm font-semibold text-white transition-all hover:border-white/40"
               >
                 Falar com especialista
               </a>

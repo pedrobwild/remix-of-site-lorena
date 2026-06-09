@@ -119,21 +119,21 @@ export default function BeWildPage() {
   });
 
   return (
-    <div className="bewild min-h-screen bg-bewild-ink font-body text-bewild-ink antialiased">
+    <div className="bwild-light min-h-screen bg-bewild-cream font-body text-bewild-text-body antialiased">
       <Header />
       <main>
         {/* Hero */}
-        <section className="relative overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28">
-          <div className="absolute inset-0 bg-gradient-to-br from-bewild-blue/10 via-transparent to-transparent" />
+        <section className="relative overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28 bg-bewild-ink">
+          <div className="absolute inset-0 bg-gradient-to-br from-bewild-gold/5 via-transparent to-transparent" />
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-3xl">
-              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 Be Wild Reformas · Preparação do Ativo
               </p>
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
                 Prepare seu imóvel para competir no short stay.
               </h1>
-              <p className="mb-8 text-lg leading-relaxed text-white/70 sm:text-xl">
+              <p className="mb-8 text-lg leading-relaxed text-bewild-text-muted sm:text-xl">
                 Projeto, obra, marcenaria, mobiliário, compras, decoração e setup em um fluxo
                 único. Cada decisão pensada para foto, uso, limpeza, manutenção e experiência do
                 hóspede — não apenas para a entrega.
@@ -149,7 +149,7 @@ export default function BeWildPage() {
                   href={whatsappHref("Olá, quero saber mais sobre o Be Wild para preparar meu imóvel para short stay.")}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-all hover:border-white/40"
+                  className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-6 py-3 text-sm font-semibold text-white transition-all hover:border-white/40"
                 >
                   Falar com especialista
                 </a>
@@ -163,24 +163,24 @@ export default function BeWildPage() {
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="grid gap-12 lg:grid-cols-2 lg:gap-20 lg:items-center">
               <div>
-                <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+                <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                   O problema
                 </p>
                 <h2 className="mb-5 text-3xl font-bold text-white sm:text-4xl">
                   Reformar para morar é diferente de preparar para a diária.
                 </h2>
-                <p className="text-white/65 leading-relaxed">
+                <p className="text-bewild-text-muted leading-relaxed">
                   Uma obra comum prioriza o gosto do proprietário. A preparação de um ativo para
                   short stay exige decisões diferentes desde o projeto: materiais para uso intenso,
                   layout que facilita limpeza, iluminação fotografável e setup compatível com operação
                   remota. Sem essa visão, o imóvel fica bonito — mas pouco competitivo.
                 </p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-8">
-                <p className="mb-4 text-sm font-semibold text-bewild-blue-400">
+              <div className="rounded-2xl border border-bewild-cream-200 bg-white/5 p-8">
+                <p className="mb-4 text-sm font-semibold text-bewild-gold">
                   Não é sobre deixar bonito. É sobre preparar o ativo para operar melhor.
                 </p>
-                <ul className="space-y-3 text-sm text-white/65">
+                <ul className="space-y-3 text-sm text-bewild-text-muted">
                   <li className="flex gap-2"><span className="text-bewild-blue mt-0.5">→</span>Projeto pensado para diária, foto, limpeza e manutenção</li>
                   <li className="flex gap-2"><span className="text-bewild-blue mt-0.5">→</span>Obra, marcenaria, mobiliário e compras integradas</li>
                   <li className="flex gap-2"><span className="text-bewild-blue mt-0.5">→</span>Materiais para uso intensivo, não apenas estética</li>
@@ -193,10 +193,10 @@ export default function BeWildPage() {
         </section>
 
         {/* Método */}
-        <section className="border-t border-white/10 py-20 sm:py-24">
+        <section className="border-t border-bewild-cream-200 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 Método Be Wild
               </p>
               <h2 className="text-3xl font-bold text-white sm:text-4xl">
@@ -207,11 +207,11 @@ export default function BeWildPage() {
               {METODO.map((step) => (
                 <div
                   key={step.n}
-                  className="rounded-2xl border border-white/10 bg-white/[0.03] p-6"
+                  className="rounded-2xl border border-bewild-cream-200 bg-white p-6"
                 >
                   <p className="mb-3 font-mono text-2xl font-bold text-bewild-blue/50">{step.n}</p>
-                  <step.icon className="mb-3 h-6 w-6 text-bewild-blue-400" />
-                  <p className="mb-2 font-semibold text-white">{step.title}</p>
+                  <step.icon className="mb-3 h-6 w-6 text-bewild-gold" />
+                  <p className="mb-2 font-semibold text-bewild-ink">{step.title}</p>
                   <p className="text-sm text-white/55 leading-relaxed">{step.text}</p>
                 </div>
               ))}
@@ -220,10 +220,10 @@ export default function BeWildPage() {
         </section>
 
         {/* Decisões operacionais */}
-        <section className="border-t border-white/10 py-20 sm:py-24">
+        <section className="border-t border-bewild-cream-200 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 Decisões que vendem operação depois
               </p>
               <h2 className="text-3xl font-bold text-white sm:text-4xl">
@@ -232,9 +232,9 @@ export default function BeWildPage() {
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {DECISOES.map((d) => (
-                <div key={d.title} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-                  <d.icon className="mb-4 h-7 w-7 text-bewild-blue-400" />
-                  <p className="mb-2 font-semibold text-white">{d.title}</p>
+                <div key={d.title} className="rounded-2xl border border-bewild-cream-200 bg-white p-6">
+                  <d.icon className="mb-4 h-7 w-7 text-bewild-gold" />
+                  <p className="mb-2 font-semibold text-bewild-ink">{d.title}</p>
                   <p className="text-sm text-white/55 leading-relaxed">{d.text}</p>
                 </div>
               ))}
@@ -243,14 +243,14 @@ export default function BeWildPage() {
         </section>
 
         {/* Material Board */}
-        <section className="border-t border-white/10 py-16 sm:py-20">
+        <section className="border-t border-bewild-cream-200 py-16 sm:py-20">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <MaterialBoard />
           </div>
         </section>
 
         {/* Galeria de detalhe — Be Wild Reformas */}
-        <section className="border-t border-white/10 py-16 sm:py-20">
+        <section className="border-t border-bewild-cream-200 py-16 sm:py-20">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-8">
               <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold">Acabamento</p>
@@ -267,16 +267,16 @@ export default function BeWildPage() {
         </section>
 
         {/* Ponte BeWild Host Care */}
-        <section className="border-t border-white/10 py-20 sm:py-24 bg-bewild-blue/5">
+        <section className="border-t border-bewild-cream-200 py-20 sm:py-24 bg-bewild-parchment">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-2xl mx-auto text-center">
-              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 A jornada continua
               </p>
               <h2 className="mb-5 text-3xl font-bold text-white sm:text-4xl">
                 A entrega da obra não é o fim. É o início da operação.
               </h2>
-              <p className="mb-8 text-white/65 leading-relaxed">
+              <p className="mb-8 text-bewild-text-muted leading-relaxed">
                 A maioria das obras termina na entrega das chaves. A nossa termina com o imóvel pronto
                 para entrar no mercado. Por isso, cada decisão do Be Wild considera a operação que vem
                 depois — foto, diária, limpeza, manutenção, check-in e experiência do hóspede. Quando
@@ -287,7 +287,7 @@ export default function BeWildPage() {
               </div>
               <button
                 onClick={() => navigate("/bewild-host-care")}
-                className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white/20 border border-white/20"
+                className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white/20 border border-bewild-cream-200"
               >
                 Conhecer o BeWild Host Care <ArrowRight className="h-4 w-4" />
               </button>
@@ -296,19 +296,19 @@ export default function BeWildPage() {
         </section>
 
         {/* FAQ */}
-        <section className="border-t border-white/10 py-20 sm:py-24">
+        <section className="border-t border-bewild-cream-200 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 Perguntas frequentes
               </p>
               <h2 className="text-3xl font-bold text-white sm:text-4xl">FAQ Be Wild</h2>
             </div>
             <div className="grid gap-6 lg:grid-cols-2">
               {FAQS.map((f) => (
-                <div key={f.q} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-                  <p className="mb-3 font-semibold text-white">{f.q}</p>
-                  <p className="text-sm text-white/60 leading-relaxed">{f.a}</p>
+                <div key={f.q} className="rounded-2xl border border-bewild-cream-200 bg-white p-6">
+                  <p className="mb-3 font-semibold text-bewild-ink">{f.q}</p>
+                  <p className="text-sm text-bewild-text-muted leading-relaxed">{f.a}</p>
                 </div>
               ))}
             </div>
@@ -316,12 +316,12 @@ export default function BeWildPage() {
         </section>
 
         {/* CTA Final */}
-        <section className="border-t border-white/10 py-20 sm:py-28">
+        <section className="border-t border-bewild-cream-200 py-20 sm:py-28">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8 text-center">
             <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
               Pronto para preparar seu imóvel?
             </h2>
-            <p className="mb-8 text-white/65 max-w-xl mx-auto">
+            <p className="mb-8 text-bewild-text-muted max-w-xl mx-auto">
               Conte para a Bwild em que estágio está seu imóvel. A gente mostra qual caminho faz sentido.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
@@ -335,7 +335,7 @@ export default function BeWildPage() {
                 href={whatsappHref("Olá, quero um diagnóstico Be Wild para meu imóvel.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 text-sm font-semibold text-white transition-all hover:border-white/40"
+                className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-7 py-3.5 text-sm font-semibold text-white transition-all hover:border-white/40"
               >
                 Receber diagnóstico Be Wild
               </a>

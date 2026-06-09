@@ -190,22 +190,22 @@ export default function SimuladorPage() {
   };
 
   return (
-    <div className="bewild min-h-screen bg-bewild-ink font-body text-bewild-ink antialiased">
+    <div className="bwild-light min-h-screen bg-bewild-cream font-body text-bewild-text-body antialiased">
       <Header />
       <main>
 
         {/* Hero */}
         <section className="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-20">
-          <div className="absolute inset-0 bg-gradient-to-br from-bewild-blue/8 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-bewild-gold/4 via-transparent to-transparent pointer-events-none" />
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-2xl">
-              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 Simulador de Potencial · São Paulo
               </p>
               <h1 className="mb-5 text-4xl font-bold leading-tight text-white sm:text-5xl">
                 Quanto pode render seu imóvel no short stay?
               </h1>
-              <p className="mb-5 text-lg text-white/65 leading-relaxed">
+              <p className="mb-5 text-lg text-bewild-text-muted leading-relaxed">
                 Uma estimativa de referência baseada em dados reais de mercado para São Paulo.
                 Preencha os campos abaixo e veja a faixa de potencial para o seu imóvel.
               </p>
@@ -223,27 +223,27 @@ export default function SimuladorPage() {
         </section>
 
         {/* Calculadora */}
-        <section className="border-t border-white/10 py-16 sm:py-20">
+        <section className="border-t border-bewild-cream-200 py-16 sm:py-20">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16 lg:items-start">
 
               {/* Formulário */}
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">
+              <div className="rounded-2xl border border-bewild-cream-200 bg-white p-6 sm:p-8">
                 <div className="flex items-center gap-2 mb-8">
-                  <Calculator className="h-5 w-5 text-bewild-blue-400" />
-                  <p className="font-semibold text-white">Dados do imóvel</p>
+                  <Calculator className="h-5 w-5 text-bewild-gold" />
+                  <p className="font-semibold text-bewild-ink">Dados do imóvel</p>
                 </div>
 
                 <div className="space-y-6">
                   {/* Bairro */}
                   <div>
-                    <label className="block mb-2 text-sm font-medium text-white/70">
+                    <label className="block mb-2 text-sm font-medium text-bewild-text-muted">
                       Bairro / região
                     </label>
                     <select
                       value={bairro}
                       onChange={(e) => { setBairro(e.target.value); setCalculado(false); }}
-                      className="w-full rounded-xl border border-white/15 bg-white/[0.06] px-4 py-3 text-sm text-white placeholder-white/30 focus:border-bewild-blue/50 focus:outline-none focus:ring-1 focus:ring-bewild-blue/30 transition-all"
+                      className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted focus:border-bewild-gold/50 focus:outline-none focus:ring-1 focus:ring-bewild-gold/30 transition-all"
                     >
                       <option value="" disabled className="bg-gray-900">Selecione o bairro</option>
                       {Object.entries(BAIRROS).map(([k, v]) => (
@@ -251,7 +251,7 @@ export default function SimuladorPage() {
                       ))}
                     </select>
                     {bairroConfig && (
-                      <p className="mt-1.5 text-xs text-white/35 flex gap-1.5 items-start">
+                      <p className="mt-1.5 text-xs text-bewild-text-muted flex gap-1.5 items-start">
                         <Info className="h-3 w-3 shrink-0 mt-0.5" />{bairroConfig.nota}
                       </p>
                     )}
@@ -259,13 +259,13 @@ export default function SimuladorPage() {
 
                   {/* Tipo */}
                   <div>
-                    <label className="block mb-2 text-sm font-medium text-white/70">
+                    <label className="block mb-2 text-sm font-medium text-bewild-text-muted">
                       Tipo / metragem
                     </label>
                     <select
                       value={tipo}
                       onChange={(e) => { setTipo(e.target.value); setCalculado(false); }}
-                      className="w-full rounded-xl border border-white/15 bg-white/[0.06] px-4 py-3 text-sm text-white placeholder-white/30 focus:border-bewild-blue/50 focus:outline-none focus:ring-1 focus:ring-bewild-blue/30 transition-all"
+                      className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted focus:border-bewild-gold/50 focus:outline-none focus:ring-1 focus:ring-bewild-gold/30 transition-all"
                     >
                       <option value="" disabled className="bg-gray-900">Selecione o tipo</option>
                       {Object.entries(TIPOS).map(([k, v]) => (
@@ -273,7 +273,7 @@ export default function SimuladorPage() {
                       ))}
                     </select>
                     {tipoConfig && (
-                      <p className="mt-1.5 text-xs text-white/35 flex gap-1.5 items-start">
+                      <p className="mt-1.5 text-xs text-bewild-text-muted flex gap-1.5 items-start">
                         <Info className="h-3 w-3 shrink-0 mt-0.5" />{tipoConfig.nota}
                       </p>
                     )}
@@ -281,7 +281,7 @@ export default function SimuladorPage() {
 
                   {/* Estado atual */}
                   <div>
-                    <label className="block mb-2 text-sm font-medium text-white/70">
+                    <label className="block mb-2 text-sm font-medium text-bewild-text-muted">
                       Estado atual do imóvel
                     </label>
                     <div className="space-y-2.5">
@@ -291,7 +291,7 @@ export default function SimuladorPage() {
                           className={`flex items-start gap-3 cursor-pointer rounded-xl border p-3.5 transition-all ${
                             estado === k
                               ? "border-bewild-blue/40 bg-bewild-blue/6"
-                              : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                              : "border-bewild-cream-200 bg-white hover:border-bewild-cream-200"
                           }`}
                         >
                           <input
@@ -303,8 +303,8 @@ export default function SimuladorPage() {
                             className="mt-0.5 accent-bewild-blue shrink-0"
                           />
                           <div>
-                            <p className="text-sm font-medium text-white/80">{v.label}</p>
-                            <p className="text-xs text-white/35 mt-0.5">{v.nota}</p>
+                            <p className="text-sm font-medium text-bewild-text-body">{v.label}</p>
+                            <p className="text-xs text-bewild-text-muted mt-0.5">{v.nota}</p>
                           </div>
                         </label>
                       ))}
@@ -325,9 +325,9 @@ export default function SimuladorPage() {
               {/* Resultado */}
               <div>
                 {!calculado && (
-                  <div className="rounded-2xl border border-white/8 bg-white/[0.02] p-8 text-center">
-                    <Calculator className="h-10 w-10 text-white/15 mx-auto mb-4" />
-                    <p className="text-white/40 text-sm leading-relaxed">
+                  <div className="rounded-2xl border border-bewild-cream-200 bg-white p-8 text-center">
+                    <Calculator className="h-10 w-10 text-bewild-cream-200 mx-auto mb-4" />
+                    <p className="text-bewild-text-muted text-sm leading-relaxed">
                       Preencha os campos ao lado para ver a estimativa de potencial do seu imóvel
                       para short stay em São Paulo.
                     </p>
@@ -337,49 +337,49 @@ export default function SimuladorPage() {
                 {calculado && resultado && (
                   <div className="space-y-5">
                     {/* Card principal */}
-                    <div className="rounded-2xl border border-bewild-blue/30 bg-bewild-blue/5 p-6 sm:p-8">
-                      <p className="mb-1 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+                    <div className="rounded-2xl border border-bewild-gold/30 bg-bewild-parchment p-6 sm:p-8">
+                      <p className="mb-1 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                         Estimativa de referência · São Paulo
                       </p>
-                      <p className="mb-6 text-sm text-white/50">
+                      <p className="mb-6 text-sm text-bewild-text-muted">
                         {bairroConfig?.label} · {tipoConfig?.label}
                       </p>
 
                       <div className="grid grid-cols-2 gap-4 mb-6">
                         <div>
-                          <p className="text-[0.65rem] font-mono uppercase tracking-wider text-white/35 mb-1">
+                          <p className="text-[0.65rem] font-mono uppercase tracking-wider text-bewild-text-muted mb-1">
                             Potencial mensal
                           </p>
-                          <p className="text-2xl font-bold text-white">
+                          <p className="text-2xl font-bold text-bewild-ink">
                             {formatBRL(resultado.minMes)}
                           </p>
-                          <p className="text-sm text-white/45">até {formatBRL(resultado.maxMes)}</p>
+                          <p className="text-sm text-bewild-text-muted">até {formatBRL(resultado.maxMes)}</p>
                         </div>
                         <div>
-                          <p className="text-[0.65rem] font-mono uppercase tracking-wider text-white/35 mb-1">
+                          <p className="text-[0.65rem] font-mono uppercase tracking-wider text-bewild-text-muted mb-1">
                             Potencial anual
                           </p>
-                          <p className="text-2xl font-bold text-white">
+                          <p className="text-2xl font-bold text-bewild-ink">
                             {formatBRL(resultado.minAnual)}
                           </p>
-                          <p className="text-sm text-white/45">até {formatBRL(resultado.maxAnual)}</p>
+                          <p className="text-sm text-bewild-text-muted">até {formatBRL(resultado.maxAnual)}</p>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4 pt-5 border-t border-white/10">
+                      <div className="grid grid-cols-2 gap-4 pt-5 border-t border-bewild-cream-200">
                         <div>
-                          <p className="text-[0.65rem] font-mono uppercase tracking-wider text-white/30 mb-1">
+                          <p className="text-[0.65rem] font-mono uppercase tracking-wider text-bewild-text-muted mb-1">
                             Noites/mês estimadas
                           </p>
-                          <p className="text-lg font-semibold text-white/70">
+                          <p className="text-lg font-semibold text-bewild-text-muted">
                             {resultado.diasMedMin}–{resultado.diasMedMax} noites
                           </p>
                         </div>
                         <div>
-                          <p className="text-[0.65rem] font-mono uppercase tracking-wider text-white/30 mb-1">
+                          <p className="text-[0.65rem] font-mono uppercase tracking-wider text-bewild-text-muted mb-1">
                             Ocupação de referência
                           </p>
-                          <p className="text-lg font-semibold text-white/70">
+                          <p className="text-lg font-semibold text-bewild-text-muted">
                             {bairroConfig?.occ_min}–{bairroConfig?.occ_max}%
                           </p>
                         </div>
@@ -387,9 +387,9 @@ export default function SimuladorPage() {
                     </div>
 
                     {/* Disclaimer */}
-                    <div className="flex gap-3 rounded-xl border border-white/8 bg-white/[0.02] p-4">
+                    <div className="flex gap-3 rounded-xl border border-bewild-cream-200 bg-white p-4">
                       <AlertTriangle className="h-4 w-4 text-amber-400/70 shrink-0 mt-0.5" />
-                      <p className="text-xs text-white/35 leading-relaxed">
+                      <p className="text-xs text-bewild-text-muted leading-relaxed">
                         Estimativa baseada em dados de mercado de São Paulo (2025/2026).
                         Valores brutos antes de taxas das plataformas e custos operacionais.
                         Resultados reais variam conforme qualidade do anúncio, gestão, sazonalidade
@@ -398,15 +398,15 @@ export default function SimuladorPage() {
                     </div>
 
                     {/* CTA contextual por estado */}
-                    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-                      <p className="mb-2 font-semibold text-white text-sm">
+                    <div className="rounded-2xl border border-bewild-cream-200 bg-white p-6">
+                      <p className="mb-2 font-semibold text-bewild-ink text-sm">
                         {estado === "pronto"
                           ? "Seu imóvel pode começar a operar rapidamente."
                           : estado === "bom_estado"
                           ? "Com pequenos ajustes, seu imóvel está próximo de operar."
                           : "Seu imóvel precisa de preparação antes de operar."}
                       </p>
-                      <p className="mb-5 text-sm text-white/50 leading-relaxed">
+                      <p className="mb-5 text-sm text-bewild-text-muted leading-relaxed">
                         {estado === "pronto"
                           ? "O BeWild Host Care pode assumir a gestão e colocar o imóvel no mercado. O diagnóstico define o cronograma."
                           : estado === "bom_estado"
@@ -424,7 +424,7 @@ export default function SimuladorPage() {
                           href={whatsappHref("Olá, usei o simulador da Be Wild e quero entender melhor o potencial do meu imóvel.")}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:border-white/40"
+                          className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-5 py-2.5 text-sm font-semibold text-bewild-ink transition-all hover:border-bewild-ink/40"
                         >
                           Falar com especialista
                         </a>
@@ -433,7 +433,7 @@ export default function SimuladorPage() {
 
                     <button
                       onClick={handleReset}
-                      className="text-xs text-white/30 hover:text-white/60 transition-colors"
+                      className="text-xs text-bewild-text-muted hover:text-bewild-ink transition-colors"
                     >
                       ← Fazer nova simulação
                     </button>
@@ -446,13 +446,13 @@ export default function SimuladorPage() {
         </section>
 
         {/* Contexto: o que impacta o resultado */}
-        <section className="border-t border-white/10 py-16 sm:py-20 bg-white/[0.02]">
+        <section className="border-t border-bewild-cream-200 py-16 sm:py-20 bg-white">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-10 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 O que determina o resultado real
               </p>
-              <h2 className="text-2xl font-bold text-white sm:text-3xl">
+              <h2 className="text-2xl font-bold text-bewild-ink sm:text-3xl">
                 A estimativa é o teto. A gestão define se você chega lá.
               </h2>
             </div>
@@ -463,14 +463,14 @@ export default function SimuladorPage() {
                 { fator: "Preparação do imóvel", impacto: "Médio-alto", desc: "Imóvel sem mobília adequada, fotos ruins ou problemas de manutenção reduzem ocupação e diária." },
                 { fator: "Gestão de avaliações", impacto: "Médio", desc: "Imóveis com média alta nas plataformas têm prioridade no algoritmo e convertem mais." },
               ].map((item) => (
-                <div key={item.fator} className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+                <div key={item.fator} className="rounded-xl border border-bewild-cream-200 bg-white p-5">
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-semibold text-white">{item.fator}</p>
-                    <span className="text-[0.6rem] font-mono uppercase tracking-wider text-bewild-blue-400 border border-bewild-blue/20 rounded-full px-2 py-0.5">
+                    <p className="text-sm font-semibold text-bewild-ink">{item.fator}</p>
+                    <span className="text-[0.6rem] font-mono uppercase tracking-wider text-bewild-gold border border-bewild-blue/20 rounded-full px-2 py-0.5">
                       {item.impacto}
                     </span>
                   </div>
-                  <p className="text-xs text-white/45 leading-relaxed">{item.desc}</p>
+                  <p className="text-xs text-bewild-text-muted leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -478,12 +478,12 @@ export default function SimuladorPage() {
         </section>
 
         {/* CTA final */}
-        <section className="border-t border-white/10 py-20 sm:py-28">
+        <section className="border-t border-bewild-cream-200 py-20 sm:py-28">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+            <h2 className="mb-4 text-3xl font-bold text-bewild-ink sm:text-4xl">
               A estimativa é só o começo.
             </h2>
-            <p className="mb-8 text-white/55 max-w-xl mx-auto leading-relaxed">
+            <p className="mb-8 text-bewild-text-muted max-w-xl mx-auto leading-relaxed">
               O diagnóstico da Be Wild avalia bairro, imóvel, estágio e objetivo — e indica
               qual caminho faz sentido para transformar potencial em resultado real.
             </p>

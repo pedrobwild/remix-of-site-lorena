@@ -153,11 +153,11 @@ const CASES: Case[] = [
 /* ─── Triptych Case Card ─────────────────────────────────────────────────────── */
 function TriptychCard({ c }: { c: Case }) {
   return (
-    <article className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-bewild-premium">
+    <article className="rounded-2xl border border-white/10 bg-bewild-ink overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-bewild-premium">
       {/* Header do case */}
-      <div className="px-6 py-5 border-b border-white/8 flex flex-wrap items-start justify-between gap-3">
+      <div className="px-6 py-5 border-b border-bewild-cream-200 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2 mb-1.5 text-xs text-white/40">
+          <div className="flex items-center gap-2 mb-1.5 text-xs text-bewild-text-muted">
             <MapPin className="h-3.5 w-3.5" />
             {c.bairro}
           </div>
@@ -176,7 +176,7 @@ function TriptychCard({ c }: { c: Case }) {
       </div>
 
       {/* Triptych: 3 colunas */}
-      <div className="grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/8">
+      <div className="grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-bewild-cream-200">
         {/* Coluna 1 — Antes */}
         <div className="p-5">
           {c.photoIds?.antes && (
@@ -192,8 +192,8 @@ function TriptychCard({ c }: { c: Case }) {
             <AssetStatusTag status={c.antes.status} size="sm" />
           </div>
           <p className="text-[10px] font-mono text-white/30 uppercase tracking-widest mb-2">Antes</p>
-          <p className="text-sm font-semibold text-white/80 mb-2 leading-snug">{c.antes.titulo}</p>
-          <p className="text-xs text-white/40 leading-relaxed">{c.antes.descricao}</p>
+          <p className="text-sm font-semibold text-bewild-text-body mb-2 leading-snug">{c.antes.titulo}</p>
+          <p className="text-xs text-bewild-text-muted leading-relaxed">{c.antes.descricao}</p>
         </div>
 
         {/* Coluna 2 — Pronto */}
@@ -238,7 +238,7 @@ function TriptychCard({ c }: { c: Case }) {
           </div>
           <p className="text-[10px] font-mono text-white/30 uppercase tracking-widest mb-2">Operando</p>
           <p className="text-sm font-semibold text-white mb-2 leading-snug">{c.operando.titulo}</p>
-          <p className="text-xs text-white/45 leading-relaxed mb-4">{c.operando.descricao}</p>
+          <p className="text-xs text-bewild-text-muted leading-relaxed mb-4">{c.operando.descricao}</p>
           {c.operando.metricas && (
             <div className="space-y-2">
               {c.operando.metricas.map((m) => (
@@ -254,10 +254,10 @@ function TriptychCard({ c }: { c: Case }) {
 
       {/* Depoimento */}
       {c.depoimento && (
-        <div className="px-6 py-4 border-t border-white/8 bg-white/[0.015] flex items-start gap-3">
+        <div className="px-6 py-4 border-t border-bewild-cream-200 bg-white/[0.015] flex items-start gap-3">
           <Quote className="h-4 w-4 text-bewild-gold/40 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm text-white/60 leading-relaxed italic">"{c.depoimento.texto}"</p>
+            <p className="text-sm text-bewild-text-muted leading-relaxed italic">"{c.depoimento.texto}"</p>
             <p className="mt-2 text-xs text-white/30">{c.depoimento.autor} · {c.depoimento.perfil}</p>
           </div>
         </div>
@@ -277,11 +277,11 @@ export default function CasesPage() {
   });
 
   return (
-    <div className="bewild min-h-screen bg-bewild-ink font-body text-bewild-ink antialiased">
+    <div className="bwild-light min-h-screen bg-bewild-cream font-body text-bewild-text-body antialiased">
       <Header />
       <main>
         {/* Hero */}
-        <section className="relative overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28">
+        <section className="relative overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28 bg-bewild-ink">
           <div className="absolute inset-0 bg-gradient-to-br from-bewild-blue/8 via-transparent to-transparent" />
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-3xl">
@@ -291,7 +291,7 @@ export default function CasesPage() {
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
                 Antes. Pronto. Operando.
               </h1>
-              <p className="mb-6 text-lg leading-relaxed text-white/65">
+              <p className="mb-6 text-lg leading-relaxed text-bewild-text-muted">
                 Três fases de cada imóvel — estado inicial, decisões da Be Wild e a operação em andamento.
                 Sem filtro de marketing. Com dados reais quando disponíveis.
               </p>
@@ -307,11 +307,11 @@ export default function CasesPage() {
         </section>
 
         {/* Aviso de dados */}
-        <div className="border-t border-white/8 bg-white/[0.015]">
+        <div className="border-t border-bewild-cream-200 bg-white/[0.015]">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8 py-4">
             <div className="flex items-start gap-2.5">
               <BarChart3 className="h-4 w-4 text-bewild-gold/50 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-white/35 leading-relaxed">
+              <p className="text-xs text-bewild-text-muted leading-relaxed">
                 Métricas são indicativas do período inicial de operação de cada case. Resultado passado não garante resultado futuro. Ocupação e receita dependem de imóvel, bairro, período e gestão.
               </p>
             </div>
@@ -319,7 +319,7 @@ export default function CasesPage() {
         </div>
 
         {/* Cases Triptych */}
-        <section className="border-t border-white/10 py-16 sm:py-20">
+        <section className="border-t border-bewild-cream-200 py-16 sm:py-20">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="space-y-8">
               {CASES.map((caseItem, i) => (
@@ -332,7 +332,7 @@ export default function CasesPage() {
         </section>
 
         {/* CTA diagnóstico */}
-        <section className="border-t border-white/10 py-20 sm:py-28">
+        <section className="border-t border-bewild-cream-200 py-20 sm:py-28">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8 text-center">
             <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
               Seu imóvel pode ser o próximo
@@ -354,7 +354,7 @@ export default function CasesPage() {
                 href={whatsappHref("Olá, quero entender o potencial do meu imóvel para short stay.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-7 py-3.5 text-sm font-semibold text-white/70 transition-all hover:border-white/40 hover:text-white"
+                className="inline-flex items-center gap-2 rounded-xl border border-bewild-cream-200 px-7 py-3.5 text-sm font-semibold text-bewild-text-muted transition-all hover:border-white/40 hover:text-bewild-ink"
               >
                 Falar com a equipe <ArrowRight className="h-4 w-4" />
               </a>

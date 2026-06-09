@@ -23,21 +23,21 @@ export default function MetodoBwildPage() {
   });
 
   return (
-    <div className="bewild min-h-screen bg-bewild-ink font-body text-bewild-ink antialiased">
+    <div className="bwild-light min-h-screen bg-bewild-cream font-body text-bewild-text-body antialiased">
       <Header />
       <main>
         {/* Hero */}
-        <section className="relative overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28">
-          <div className="absolute inset-0 bg-gradient-to-br from-bewild-blue/10 via-transparent to-transparent" />
+        <section className="relative overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28 bg-bewild-ink">
+          <div className="absolute inset-0 bg-gradient-to-br from-bewild-gold/5 via-transparent to-transparent" />
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-3xl">
-              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 Jornada Be Wild
               </p>
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
                 Do diagnóstico à gestão: o método Be Wild.
               </h1>
-              <p className="mb-8 text-lg leading-relaxed text-white/70 sm:text-xl">
+              <p className="mb-8 text-lg leading-relaxed text-bewild-text-muted sm:text-xl">
                 O imóvel não vira renda quando a escritura sai. Ele vira renda quando está preparado,
                 anunciado, precificado, limpo, mantido e operado. A Be Wild cuida de todo esse ciclo.
               </p>
@@ -52,16 +52,16 @@ export default function MetodoBwildPage() {
         </section>
 
         {/* Etapas — componente proprietário JornadaBeWild */}
-        <section className="border-t border-white/10 py-20 sm:py-24">
+        <section className="border-t border-bewild-cream-200 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 As 5 etapas
               </p>
               <h2 className="mb-3 text-3xl font-bold text-white sm:text-4xl">
                 Cada etapa conecta com a próxima.
               </h2>
-              <p className="text-white/50 leading-relaxed">
+              <p className="text-bewild-text-muted leading-relaxed">
                 Be Wild Reformas e BeWild Host Care são fases de uma mesma jornada —
                 não serviços independentes que podem ser contratados de qualquer fornecedor.
               </p>
@@ -71,22 +71,22 @@ export default function MetodoBwildPage() {
         </section>
 
         {/* Por que o ciclo inteiro */}
-        <section className="border-t border-white/10 py-20 sm:py-24 bg-bewild-blue/5">
+        <section className="border-t border-bewild-cream-200 py-20 sm:py-24 bg-bewild-parchment">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-2xl mx-auto text-center">
-              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 Por que o ciclo inteiro importa
               </p>
               <h2 className="mb-5 text-3xl font-bold text-white sm:text-4xl">
                 Não é reforma + gestão. É continuidade entre criação e operação do ativo.
               </h2>
-              <p className="mb-8 text-white/65 leading-relaxed">
+              <p className="mb-8 text-bewild-text-muted leading-relaxed">
                 O problema de contratar tudo separado é que ninguém é dono do ciclo inteiro.
                 O arquiteto entrega o projeto. O reformeiro entrega a obra. A gestora tenta operar
                 o que recebeu. E o investidor fica no meio, costurando decisões, prazos, compras,
                 ajustes, anúncios e hóspedes.
               </p>
-              <p className="text-white/65 leading-relaxed">
+              <p className="text-bewild-text-muted leading-relaxed">
                 A Bwild foi criada para reduzir essa fragmentação: o Be Wild Reformas prepara o imóvel
                 pensando na operação; o BeWild Host Care assume a rotina sem o proprietário precisar integrar nada.
               </p>
@@ -95,12 +95,12 @@ export default function MetodoBwildPage() {
         </section>
 
         {/* CTA */}
-        <section className="border-t border-white/10 py-20 sm:py-28">
+        <section className="border-t border-bewild-cream-200 py-20 sm:py-28">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8 text-center">
             <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
               Descubra em qual etapa seu imóvel está.
             </h2>
-            <p className="mb-8 text-white/65 max-w-xl mx-auto">
+            <p className="mb-8 text-bewild-text-muted max-w-xl mx-auto">
               O diagnóstico Bwild identifica o estágio do seu imóvel e indica o caminho certo: Be Wild Reformas, BeWild Host Care ou jornada completa.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
@@ -114,7 +114,7 @@ export default function MetodoBwildPage() {
                 href={whatsappHref("Olá, quero entender como o método Bwild funciona para o meu imóvel.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 text-sm font-semibold text-white transition-all hover:border-white/40"
+                className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-7 py-3.5 text-sm font-semibold text-white transition-all hover:border-white/40"
               >
                 Falar com especialista
               </a>

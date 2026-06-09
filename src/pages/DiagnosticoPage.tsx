@@ -98,14 +98,14 @@ export default function DiagnosticoPage() {
   };
 
   return (
-    <div className="bewild min-h-screen bg-bewild-ink font-body text-bewild-ink antialiased">
+    <div className="bwild-light min-h-screen bg-bewild-cream font-body text-bewild-text-body antialiased">
       <Header />
       <main>
         {/* Jornada Be Wild — contexto antes do formulário */}
-        <section className="border-b border-white/8 bg-white/[0.015] py-5">
+        <section className="border-b border-bewild-cream-200 bg-bewild-parchment py-5">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="flex flex-wrap items-center gap-3">
-              <p className="font-mono text-[0.6rem] uppercase tracking-widest text-bewild-blue-400 shrink-0">
+              <p className="font-mono text-[0.6rem] uppercase tracking-widest text-bewild-gold shrink-0">
                 Jornada Be Wild
               </p>
               <JornadaBeWild variant="compacta" />
@@ -113,19 +113,19 @@ export default function DiagnosticoPage() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden pt-20 pb-20 sm:pt-28 sm:pb-28">
-          <div className="absolute inset-0 bg-gradient-to-br from-bewild-blue/10 via-transparent to-transparent" />
+        <section className="relative overflow-hidden pt-20 pb-20 sm:pt-28 sm:pb-28 bg-bewild-ink">
+          <div className="absolute inset-0 bg-gradient-to-br from-bewild-gold/5 via-transparent to-transparent" />
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="grid gap-16 lg:grid-cols-2 lg:gap-20 lg:items-start">
               {/* Texto lateral */}
               <div className="max-w-lg">
-                <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-blue-400">
+                <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                   Diagnóstico Bwild do Ativo
                 </p>
                 <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl">
                   Descubra qual caminho faz sentido para o seu imóvel.
                 </h1>
-                <p className="mb-8 text-lg text-white/65 leading-relaxed">
+                <p className="mb-8 text-lg text-bewild-text-muted leading-relaxed">
                   Não sabe se precisa reformar, ajustar ou colocar para operar? Conte o estágio
                   do seu imóvel. A Bwild te orienta: Be Wild Reformas, BeWild Host Care ou jornada completa.
                 </p>
@@ -137,7 +137,7 @@ export default function DiagnosticoPage() {
                     { label: "Jornada completa", desc: "Imóvel que precisa de preparação E operação. A Bwild cuida do ciclo inteiro." },
                   ].map((item) => (
                     <div key={item.label} className="flex gap-3">
-                      <CheckCircle className="h-5 w-5 text-bewild-blue-400 shrink-0 mt-0.5" />
+                      <CheckCircle className="h-5 w-5 text-bewild-gold shrink-0 mt-0.5" />
                       <div>
                         <p className="font-semibold text-white text-sm">{item.label}</p>
                         <p className="text-sm text-white/55 leading-relaxed">{item.desc}</p>
@@ -148,12 +148,12 @@ export default function DiagnosticoPage() {
               </div>
 
               {/* Formulário */}
-              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 sm:p-8">
+              <div className="rounded-2xl border border-bewild-cream-200 bg-white p-6 sm:p-8">
                 {enviado ? (
                   <div className="text-center py-8">
-                    <CheckCircle className="h-12 w-12 text-bewild-blue-400 mx-auto mb-4" />
+                    <CheckCircle className="h-12 w-12 text-bewild-gold mx-auto mb-4" />
                     <h2 className="text-xl font-bold text-white mb-3">Diagnóstico enviado!</h2>
-                    <p className="text-white/65 text-sm leading-relaxed">
+                    <p className="text-bewild-text-muted text-sm leading-relaxed">
                       Você será redirecionado para o WhatsApp com suas informações preenchidas.
                       Nossa equipe entrará em contato para orientar o próximo passo.
                     </p>
@@ -161,7 +161,7 @@ export default function DiagnosticoPage() {
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
-                      <label className="mb-1.5 block text-sm font-medium text-white/80">
+                      <label className="mb-1.5 block text-sm font-medium text-bewild-text-body">
                         Nome *
                       </label>
                       <input
@@ -175,7 +175,7 @@ export default function DiagnosticoPage() {
                     </div>
 
                     <div>
-                      <label className="mb-1.5 block text-sm font-medium text-white/80">
+                      <label className="mb-1.5 block text-sm font-medium text-bewild-text-body">
                         WhatsApp *
                       </label>
                       <input
@@ -189,7 +189,7 @@ export default function DiagnosticoPage() {
                     </div>
 
                     <div>
-                      <label className="mb-1.5 block text-sm font-medium text-white/80">
+                      <label className="mb-1.5 block text-sm font-medium text-bewild-text-body">
                         Você já tem o imóvel?
                       </label>
                       <div className="grid gap-2 sm:grid-cols-3">
@@ -204,8 +204,8 @@ export default function DiagnosticoPage() {
                             onClick={() => update("temImovel", opt.val)}
                             className={`rounded-xl border px-3 py-2.5 text-sm font-medium transition-all ${
                               form.temImovel === opt.val
-                                ? "border-bewild-blue bg-bewild-blue/20 text-white"
-                                : "border-white/15 bg-white/5 text-white/60 hover:border-white/30 hover:text-white"
+                                ? "border-bewild-gold bg-bewild-gold/15 text-bewild-ink"
+                                : "border-white/15 bg-white/5 text-bewild-text-muted hover:border-white/30 hover:text-bewild-ink"
                             }`}
                           >
                             {opt.label}
@@ -215,7 +215,7 @@ export default function DiagnosticoPage() {
                     </div>
 
                     <div>
-                      <label className="mb-1.5 block text-sm font-medium text-white/80">
+                      <label className="mb-1.5 block text-sm font-medium text-bewild-text-body">
                         Estágio do imóvel *
                       </label>
                       <div className="grid gap-2 sm:grid-cols-2">
@@ -232,8 +232,8 @@ export default function DiagnosticoPage() {
                             onClick={() => update("estagio", opt.val as Estagio)}
                             className={`rounded-xl border px-3 py-2.5 text-sm font-medium text-left transition-all ${
                               form.estagio === opt.val
-                                ? "border-bewild-blue bg-bewild-blue/20 text-white"
-                                : "border-white/15 bg-white/5 text-white/60 hover:border-white/30 hover:text-white"
+                                ? "border-bewild-gold bg-bewild-gold/15 text-bewild-ink"
+                                : "border-white/15 bg-white/5 text-bewild-text-muted hover:border-white/30 hover:text-bewild-ink"
                             }`}
                           >
                             {opt.label}
@@ -244,7 +244,7 @@ export default function DiagnosticoPage() {
 
                     <div className="grid gap-4 sm:grid-cols-2">
                       <div>
-                        <label className="mb-1.5 block text-sm font-medium text-white/80">
+                        <label className="mb-1.5 block text-sm font-medium text-bewild-text-body">
                           Bairro / região
                         </label>
                         <input
@@ -256,13 +256,13 @@ export default function DiagnosticoPage() {
                         />
                       </div>
                       <div>
-                        <label className="mb-1.5 block text-sm font-medium text-white/80">
+                        <label className="mb-1.5 block text-sm font-medium text-bewild-text-body">
                           Tipo do imóvel
                         </label>
                         <select
                           value={form.tipo}
                           onChange={(e) => update("tipo", e.target.value)}
-                          className="w-full rounded-xl border border-white/15 bg-bewild-ink px-4 py-3 text-sm text-white/80 outline-none focus:border-bewild-blue/60 focus:ring-1 focus:ring-bewild-blue/30 transition-colors"
+                          className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body outline-none focus:border-bewild-gold/60 focus:ring-1 focus:ring-bewild-gold/30 transition-colors"
                         >
                           <option value="">Selecione</option>
                           <option value="Studio">Studio</option>
@@ -274,7 +274,7 @@ export default function DiagnosticoPage() {
                     </div>
 
                     <div>
-                      <label className="mb-1.5 block text-sm font-medium text-white/80">
+                      <label className="mb-1.5 block text-sm font-medium text-bewild-text-body">
                         Objetivo *
                       </label>
                       <div className="grid gap-2 sm:grid-cols-2">
@@ -290,8 +290,8 @@ export default function DiagnosticoPage() {
                             onClick={() => update("objetivo", opt.val as Objetivo)}
                             className={`rounded-xl border px-3 py-2.5 text-sm font-medium text-left transition-all ${
                               form.objetivo === opt.val
-                                ? "border-bewild-blue bg-bewild-blue/20 text-white"
-                                : "border-white/15 bg-white/5 text-white/60 hover:border-white/30 hover:text-white"
+                                ? "border-bewild-gold bg-bewild-gold/15 text-bewild-ink"
+                                : "border-white/15 bg-white/5 text-bewild-text-muted hover:border-white/30 hover:text-bewild-ink"
                             }`}
                           >
                             {opt.label}
@@ -301,7 +301,7 @@ export default function DiagnosticoPage() {
                     </div>
 
                     <div>
-                      <label className="mb-1.5 block text-sm font-medium text-white/80">
+                      <label className="mb-1.5 block text-sm font-medium text-bewild-text-body">
                         Quando quer começar?
                       </label>
                       <div className="grid gap-2 sm:grid-cols-2">
@@ -317,8 +317,8 @@ export default function DiagnosticoPage() {
                             onClick={() => update("timing", opt.val as Timing)}
                             className={`rounded-xl border px-3 py-2.5 text-sm font-medium transition-all ${
                               form.timing === opt.val
-                                ? "border-bewild-blue bg-bewild-blue/20 text-white"
-                                : "border-white/15 bg-white/5 text-white/60 hover:border-white/30 hover:text-white"
+                                ? "border-bewild-gold bg-bewild-gold/15 text-bewild-ink"
+                                : "border-white/15 bg-white/5 text-bewild-text-muted hover:border-white/30 hover:text-bewild-ink"
                             }`}
                           >
                             {opt.label}
@@ -335,7 +335,7 @@ export default function DiagnosticoPage() {
                       Receber diagnóstico Bwild <ArrowRight className="h-4 w-4" />
                     </button>
 
-                    <p className="text-center text-xs text-white/35">
+                    <p className="text-center text-xs text-bewild-text-muted">
                       Você será direcionado ao WhatsApp com suas informações. Não enviamos spam.
                     </p>
                   </form>
