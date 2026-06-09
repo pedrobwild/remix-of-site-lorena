@@ -9,6 +9,7 @@
  *   <SectionReveal>  — wrapper de seção com reveal automático
  */
 
+import { useRef, useEffect } from "react";
 import { useInView } from "../../lib/useBwMotion";
 
 const prefersReduced = () =>
@@ -168,6 +169,111 @@ export function SectionReveal({
         transition: reduced
           ? "none"
           : `opacity 600ms cubic-bezier(0.22,1,0.36,1) ${delay}ms, transform 600ms cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ─── ParallaxImage ──────────────────────────────────────────── */
+interface ParallaxImageProps {
+  children: React.ReactNode;
+  speed?: number;
+  className?: string;
+}
+
+/**
+ * Wrapper com parallax sutil: a imagem sobe lentamente ao scroll.
+ * Usa GSAP ScrollTrigger importado dinamicamente (tree-shaking safe).
+ * Parent deve ter overflow-hidden e height definida.
+ *
+ * Exemplo:
+ *   <div className="overflow-hidden h-[480px]">
+ *     <ParallaxImage speed={0.15} className="w-full h-[120%]">
+ *       <img src="..." className="w-full h-full object-cover" />
+ *     </ParallaxImage>
+ *   </div>
+ */
+export function ParallaxImage({
+  children,
+  speed = 0.15,
+  className = "",
+}: ParallaxImageProps) {
+  const ref = useRef<HTMLDivElement>(null!);
+
+  useEffect(() => {
+    if (prefersReduced()) return;
+    const el = ref.current;
+    if (!el) return;
+
+    let cleanup: (() => void) | null = null;
+
+    import("../../lib/gsap").then(({ gsap }) => {
+      const tween = gsap.to(el, {
+        yPercent: -(speed * 30),
+        ease: "none",
+        scrollTrigger: {
+          trigger: el.closest("[data-hero-section]") || el.parentElement?.parentElement,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1.2,
+        },
+      });
+      cleanup = () => {
+        tween.scrollTrigger?.kill();
+        tween.kill();
+      };
+    });
+
+    return () => { cleanup?.(); };
+  }, [speed]);
+
+  return (
+    <div
+      ref={ref}
+      className={`bw-hero-parallax ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ─── RevealX ──────────────────────────────────────────────── */
+interface RevealXProps {
+  children: React.ReactNode;
+  direction?: "left" | "right";
+  delay?: number;
+  className?: string;
+  threshold?: number;
+}
+
+/**
+ * Slide-in horizontal ao entrar na viewport (Guesty-style).
+ * direction="left" → entra da esquerda; direction="right" → da direita.
+ */
+export function RevealX({
+  children,
+  direction = "left",
+  delay = 0,
+  className = "",
+  threshold = 0.2,
+}: RevealXProps) {
+  const [ref, inView] = useInView<HTMLDivElement>(threshold);
+  const reduced = prefersReduced();
+
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: inView || reduced ? 1 : 0,
+        transform: inView || reduced
+          ? "translateX(0)"
+          : `translateX(${direction === "left" ? "-50px" : "50px"})`,
+        transition: reduced
+          ? "none"
+          : `opacity 0.7s cubic-bezier(0.22,1,0.36,1) ${delay}ms, transform 0.7s cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
       }}
     >
       {children}

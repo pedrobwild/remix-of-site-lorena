@@ -7,6 +7,7 @@ import { useHashRoute, installLinkInterceptor, type Route } from "./lib/useHashR
 import { initAnalytics } from "./lib/analytics";
 import { installCrashRecovery, markHealthy } from "./lib/crashRecovery";
 import { renderRoute } from "./router";
+import { useBwRevealObserver } from "./lib/useBwMotion";
 import "./index.css"
 import "./bwild-design.css";
 
@@ -32,6 +33,15 @@ function Root() {
   const route = useHashRoute();
   const isAdmin = route.name.startsWith("admin");
   useCustomCursor(!isAdmin);
+
+  // Cursor Be Wild gold em light mode
+  useEffect(() => {
+    document.body.classList.add("bwild-light-cursor");
+    return () => document.body.classList.remove("bwild-light-cursor");
+  }, []);
+
+  // Scroll reveal observer global ([data-bw-reveal] → .bw-in)
+  useBwRevealObserver();
 
   // Inicializa analytics uma vez no mount
   useEffect(() => {

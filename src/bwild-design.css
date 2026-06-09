@@ -474,3 +474,157 @@
   }
   .bw-marquee-track { animation: none; }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   SPRINT A4 — Efeitos premium
+   Parallax, cursor Be Wild, hover image zoom aprimorado, scroll reveal
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Cursor Be Wild (light mode) ──────────────────────────────── */
+/* Sobrescreve o cursor dark do sistema antigo quando em .bwild-light */
+.bwild-light .cursor,
+body.bwild-light-cursor .cursor {
+  background: var(--bw-gold);
+  mix-blend-mode: normal;
+  box-shadow:
+    0 0 0 1.5px rgba(214, 166, 75, 0.4),
+    0 4px 16px rgba(214, 166, 75, 0.3);
+  transition:
+    width 0.26s var(--bw-ease-out),
+    height 0.26s var(--bw-ease-out),
+    background 0.26s var(--bw-ease-out),
+    box-shadow 0.26s var(--bw-ease-out);
+}
+.bwild-light .cursor--hover,
+body.bwild-light-cursor .cursor--hover {
+  width: 48px;
+  height: 48px;
+  background: var(--bw-gold);
+  opacity: 0.85;
+}
+.bwild-light .cursor--zoom,
+body.bwild-light-cursor .cursor--zoom {
+  width: 88px;
+  height: 88px;
+  background: var(--bw-gold);
+  mix-blend-mode: normal;
+  opacity: 0.9;
+  box-shadow:
+    0 0 0 2px rgba(214, 166, 75, 0.5),
+    0 16px 40px rgba(214, 166, 75, 0.35);
+}
+.bwild-light .cursor__label,
+body.bwild-light-cursor .cursor__label {
+  color: var(--bw-ink);
+  font-family: var(--bw-font-body);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+/* ─── Hover image zoom — aprimorado (Tabas pattern) ─────────────── */
+.bw-img-container {
+  overflow: hidden;
+  position: relative;
+  border-radius: inherit;
+}
+.bw-img-container img,
+.bw-img-container .bw-img-inner {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1);
+  transition: transform 0.6s var(--bw-ease-out);
+  will-change: transform;
+}
+.bw-img-container:hover img,
+.bw-img-container:hover .bw-img-inner {
+  transform: scale(1.04);
+}
+/* Variante lenta (hero panels, case covers) */
+.bw-img-container--slow:hover img,
+.bw-img-container--slow:hover .bw-img-inner {
+  transform: scale(1.06);
+  transition-duration: 1.2s;
+}
+/* Overlay escuro suave ao hover (cards de case) */
+.bw-img-container--overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 17, 30, 0);
+  transition: background 0.4s var(--bw-ease-out);
+  border-radius: inherit;
+}
+.bw-img-container--overlay:hover::after {
+  background: rgba(10, 17, 30, 0.15);
+}
+
+/* ─── Parallax hero — camada de imagem (JS controla transform) ──── */
+.bw-hero-parallax {
+  will-change: transform;
+  transform: translateY(0);
+}
+
+/* ─── Scroll reveal — variante X (Guesty slideIn) ───────────────── */
+.bw-reveal-x-left {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition:
+    opacity 0.7s var(--bw-ease-out),
+    transform 0.7s var(--bw-ease-out);
+}
+.bw-reveal-x-left.bw-revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+.bw-reveal-x-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition:
+    opacity 0.7s var(--bw-ease-out),
+    transform 0.7s var(--bw-ease-out);
+}
+.bw-reveal-x-right.bw-revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ─── Card tilt / lift hover (Mynd cards) ───────────────────────── */
+.bw-card-lift {
+  transition:
+    transform 0.3s var(--bw-ease-out),
+    box-shadow 0.3s var(--bw-ease-out);
+}
+.bw-card-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--bw-shadow-float);
+}
+
+/* ─── Section divider cream fade ────────────────────────────────── */
+.bw-divider-fade {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--bw-cream-border) 20%,
+    var(--bw-cream-border) 80%,
+    transparent
+  );
+  border: none;
+  margin: 0;
+}
+
+/* ─── Stagger reveal utilitário (JS add class .bw-in via IO) ─────── */
+[data-bw-reveal] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.55s var(--bw-ease-out),
+    transform 0.55s var(--bw-ease-out);
+}
+[data-bw-reveal].bw-in {
+  opacity: 1;
+  transform: translateY(0);
+}

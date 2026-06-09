@@ -165,3 +165,114 @@ export function useHeroReveal(): {
     card:    `${base} duration-[600ms] delay-[480ms] ${mounted ? show : hidden}`,
   };
 }
+
+
+/* ─── useParallaxHero ───────────────────────────────────────── */
+/**
+ * Parallax sutil na imagem do hero via GSAP ScrollTrigger.
+ * A imagem sobe lentamente enquanto o usuário faz scroll.
+ * speed: 0.1–0.3 (recomendado 0.15 para sutil)
+ */
+export function useParallaxHero<T extends HTMLElement>(
+  speed = 0.15
+): React.RefObject<T> {
+  const ref = useRef<T>(null!);
+
+  useEffect(() => {
+    if (prefersReducedMotion()) return;
+    const el = ref.current;
+    if (!el) return;
+
+    let gsap: typeof import("gsap").gsap | null = null;
+    let st: { kill(): void } | null | undefined = null;
+
+    import("../lib/gsap").then((mod) => {
+      gsap = mod.gsap;
+      if (!gsap) return;
+
+      const tween = gsap.to(el, {
+        yPercent: -(speed * 100),
+        ease: "none",
+        scrollTrigger: {
+          trigger: el.closest("[data-hero]") || el.parentElement,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+      st = tween.scrollTrigger ?? null;
+    });
+
+    return () => {
+      st?.kill();
+    };
+  }, [speed]);
+
+  return ref;
+}
+
+/* ─── useRevealX ────────────────────────────────────────────── */
+/**
+ * Adiciona classe .bw-revealed ao elemento quando entra na viewport.
+ * Usar com .bw-reveal-x-left / .bw-reveal-x-right no CSS.
+ */
+export function useRevealX<T extends HTMLElement>(
+  direction: "left" | "right" = "left",
+  threshold = 0.2
+): [React.RefObject<T>, boolean] {
+  const [ref, inView] = useInView<T>(threshold);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (inView) {
+      el.classList.add("bw-revealed");
+    }
+  }, [inView, ref]);
+
+  // Adiciona classe inicial de direção
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.classList.add(direction === "left" ? "bw-reveal-x-left" : "bw-reveal-x-right");
+  }, [direction, ref]);
+
+  return [ref, inView];
+}
+
+/* ─── useBwRevealObserver ──────────────────────────────────── */
+/**
+ * Observa todos os [data-bw-reveal] dentro de um container e adiciona
+ * .bw-in quando entram na viewport, com stagger controlado por
+ * data-bw-delay="100" (ms).
+ * Chamar uma vez no root do layout.
+ */
+export function useBwRevealObserver() {
+  useEffect(() => {
+    if (prefersReducedMotion()) {
+      document.querySelectorAll<HTMLElement>("[data-bw-reveal]").forEach(el => {
+        el.classList.add("bw-in");
+      });
+      return;
+    }
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            const delay = parseInt(el.dataset.bwDelay ?? "0", 10);
+            setTimeout(() => el.classList.add("bw-in"), delay);
+            obs.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    const elements = document.querySelectorAll<HTMLElement>("[data-bw-reveal]");
+    elements.forEach((el) => obs.observe(el));
+
+    return () => obs.disconnect();
+  }, []);
+}
