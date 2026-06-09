@@ -6,7 +6,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { ArrowRight, CheckCircle, MapPin, BarChart3, Wrench, Star } from "lucide-react";
+import { ArrowRight, MapPin, Star } from "lucide-react";
 import Header from "./components/landing/Header";
 import Footer from "./components/landing/Footer";
 import FloatingWhatsAppButton from "./components/landing/FloatingWhatsAppButton";
@@ -16,6 +16,10 @@ import JornadaBeWild from "./components/landing/JornadaBeWild";
 import { ImagePlaceholder } from "./components/landing/ImagePlaceholder";
 import { navigate } from "./lib/useHashRoute";
 import { useInView } from "./lib/useBwMotion";
+import StackingSections from "./components/landing/StackingSections";
+import FeatureTabSwitcher from "./components/landing/FeatureTabSwitcher";
+import HoverImageCards from "./components/landing/HoverImageCards";
+import BewildChatWidget from "./components/landing/BewildChatWidget";
 
 /* ─── Proof bar — métricas de credibilidade ─────────────── */
 const METRICAS = [
@@ -269,83 +273,14 @@ export default function App() {
           </div>
         </section>
 
-        {/* ── PRODUTOS — cards brancos flutuantes ─────────────── */}
-        <section className="py-20 sm:py-28 bg-white border-t border-bewild-cream-200">
-          <div className="mx-auto max-w-[76rem] px-5 sm:px-8">
-            <Reveal className="text-center mb-14">
-              <p className="bw-eyebrow mb-3">O que fazemos</p>
-              <h2 className="text-3xl sm:text-4xl font-bold text-bewild-ink" style={{ letterSpacing: "-0.02em" }}>
-                Dois produtos. Um ciclo completo.
-              </h2>
-            </Reveal>
+        {/* ── STACKING SECTIONS — B1 (Guesty pattern) ────────────── */}
+        <StackingSections />
 
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Produto 1 — Be Wild Reformas */}
-              <Reveal>
-                <div className="bw-card p-8 h-full flex flex-col">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="h-10 w-10 rounded-xl bg-bewild-gold/10 flex items-center justify-center">
-                      <Wrench className="h-5 w-5 text-bewild-gold" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-bewild-text-muted font-mono uppercase tracking-widest">Fase 1</p>
-                      <p className="font-bold text-bewild-ink">Be Wild Reformas</p>
-                    </div>
-                  </div>
-                  <p className="text-bewild-text-body leading-relaxed mb-6 flex-1">
-                    Reforma, design, obra, mobiliário, decoração e setup completo para short stay. Cada decisão pensada para foto, operação e manutenção.
-                  </p>
-                  <ul className="space-y-2 mb-8">
-                    {["Projeto voltado para short stay", "Material com durabilidade operacional", "Enxoval, eletros e fechadura digital", "Entrega pronta para hospedar"].map(item => (
-                      <li key={item} className="flex items-center gap-2 text-sm text-bewild-text-body">
-                        <CheckCircle className="h-4 w-4 text-bewild-gold flex-shrink-0" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                  <button
-                    onClick={() => navigate("/be-wild")}
-                    className="bw-link-arrow mt-auto"
-                  >
-                    Conhecer o processo <ArrowRight className="arrow h-4 w-4" />
-                  </button>
-                </div>
-              </Reveal>
+        {/* ── HOVER IMAGE CARDS — B3 (Tabas pattern) ──────────────── */}
+        <HoverImageCards />
 
-              {/* Produto 2 — BeWild Host Care */}
-              <Reveal delay={80}>
-                <div className="bw-card p-8 h-full flex flex-col" style={{ background: "var(--bw-ink)" }}>
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="h-10 w-10 rounded-xl bg-bewild-gold/20 flex items-center justify-center">
-                      <BarChart3 className="h-5 w-5 text-bewild-gold" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-white/40 font-mono uppercase tracking-widest">Fase 2</p>
-                      <p className="font-bold text-white">BeWild Host Care</p>
-                    </div>
-                  </div>
-                  <p className="text-white/65 leading-relaxed mb-6 flex-1">
-                    Gestão profissional completa: anúncio, precificação dinâmica, atendimento 24h, check-in/out, limpeza, manutenção e repasse mensal.
-                  </p>
-                  <ul className="space-y-2 mb-8">
-                    {["Airbnb + Booking com calendário sincronizado", "Precificação dinâmica diária", "Operação 24h — você não precisa fazer nada", "Relatório e repasse até dia 10"].map(item => (
-                      <li key={item} className="flex items-center gap-2 text-sm text-white/65">
-                        <CheckCircle className="h-4 w-4 text-bewild-gold flex-shrink-0" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                  <button
-                    onClick={() => navigate("/bewild-host-care")}
-                    className="bw-link-arrow !text-bewild-gold mt-auto"
-                  >
-                    Ver a operação <ArrowRight className="arrow h-4 w-4" />
-                  </button>
-                </div>
-              </Reveal>
-            </div>
-          </div>
-        </section>
+        {/* ── FEATURE TAB SWITCHER — B2 (Guesty tabs) ─────────────── */}
+        <FeatureTabSwitcher />
 
         {/* ── JORNADA ─────────────────────────────────────────── */}
         <section className="py-20 sm:py-28 border-t border-bewild-cream-200" style={{ backgroundColor: "var(--bw-cream)" }}>
@@ -443,6 +378,8 @@ export default function App() {
       <MobileBottomCTA />
       <StickyDiagnosticPanel />
       <FloatingWhatsAppButton />
+      {/* ── CHAT WIDGET — B4 (Be Wild FAQ + plataformas) ─────────── */}
+      <BewildChatWidget />
     </div>
   );
 }
