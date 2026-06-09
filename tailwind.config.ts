@@ -27,11 +27,21 @@ export default {
           gold: "#D6A64B",         // Signal Gold — CTA, selos, prova de valor
           "gold-600": "#B8882C",   // hover do gold
           "gold-400": "#E8BB6A",  // tint claro do gold
+
+          // ── Light mode tokens ────────────────────────
+          cream:   "#F7F4EF",      // fundo principal editorial
+          "cream-100": "#F2EFE8",  // cream levemente mais escuro
+          "cream-200": "#E9E2D5",  // separadores, bordas creme
+          parchment: "#EDE9E0",    // cards elevados sobre cream
+          "text-primary": "#0A1628",  // texto principal
+          "text-body": "#3D3D3D",     // parágrafos
+          "text-muted": "#747474",    // textos secundários (Guesty)
+          "text-label": "#6B6B6B",    // labels uppercase
         },
       },
       fontFamily: {
-        display: ["Manrope", "Inter", "system-ui", "sans-serif"],
-        body: ["Inter", "Manrope", "system-ui", "sans-serif"],
+        display: ["'Playfair Display'", "Georgia", "serif"],  // títulos editoriais — serif
+        body: ["Poppins", "system-ui", "sans-serif"],         // corpo — sans geométrica
         mono: ["'JetBrains Mono'", "ui-monospace", "monospace"],
       },
       maxWidth: {
@@ -41,10 +51,13 @@ export default {
         xl2: "1.25rem",
       },
       boxShadow: {
-        "bewild-card": "0 1px 2px rgba(16,42,79,0.04), 0 12px 40px -12px rgba(16,42,79,0.18)",
-        "bewild-float": "0 24px 60px -20px rgba(10,17,30,0.45)",
-        "bewild-premium": "0 12px 40px rgba(17,16,14,0.10)",
-        "bewild-gold": "0 8px 24px rgba(214,166,75,0.25)",
+        // Light mode — inspirado em Tabas e Guesty
+        "bewild-card":    "0px 1px 2px rgba(96,97,112,0.16), 0px 4px 16px rgba(96,97,112,0.08)",
+        "bewild-card-hover": "0px 4px 20px rgba(96,97,112,0.22), 0px 12px 40px rgba(96,97,112,0.12)",
+        "bewild-float":   "0 24px 60px -20px rgba(10,30,60,0.18)",
+        "bewild-premium": "0 48px 100px 0 rgba(17,12,46,0.10)",  // Guesty modal shadow
+        "bewild-gold":    "0 8px 24px rgba(214,166,75,0.25)",
+        "bewild-section": "0 2px 2px 0 rgba(0,0,0,0.06)",        // Guesty dropdown shadow
       },
       keyframes: {
         "bewild-marquee": {

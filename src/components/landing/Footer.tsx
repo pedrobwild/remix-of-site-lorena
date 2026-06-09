@@ -49,7 +49,7 @@ export default function Footer() {
           </div>
 
           <nav aria-label="Rodapé — Jornada Bwild">
-            <p className="mb-3 font-mono text-[0.65rem] uppercase tracking-wider text-bewild-blue-400">
+            <p className="mb-3 font-mono text-[0.65rem] uppercase tracking-wider text-bewild-gold">
               Jornada Bwild
             </p>
             <ul className="flex flex-col gap-2">
@@ -67,7 +67,7 @@ export default function Footer() {
           </nav>
 
           <div>
-            <p className="mb-3 font-mono text-[0.65rem] uppercase tracking-wider text-bewild-blue-400">
+            <p className="mb-3 font-mono text-[0.65rem] uppercase tracking-wider text-bewild-gold">
               Contato
             </p>
             <ul className="flex flex-col gap-2.5">

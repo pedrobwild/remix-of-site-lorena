@@ -7,7 +7,8 @@ import { useHashRoute, installLinkInterceptor, type Route } from "./lib/useHashR
 import { initAnalytics } from "./lib/analytics";
 import { installCrashRecovery, markHealthy } from "./lib/crashRecovery";
 import { renderRoute } from "./router";
-import "./index.css";
+import "./index.css"
+import "./bwild-design.css";
 
 installCrashRecovery();
 installLinkInterceptor();
