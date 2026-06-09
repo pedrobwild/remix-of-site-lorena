@@ -194,7 +194,7 @@ export default function HoverImageCards({
           <div>
             <p
               className="font-mono text-xs uppercase tracking-[0.14em] mb-3"
-              style={{ color: "var(--bw-gold)" }}
+              style={{ color: "var(--bw-gold-accessible)" }}
             >
               {eyebrow}
             </p>

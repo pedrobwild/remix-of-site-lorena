@@ -105,7 +105,7 @@ export default function DiagnosticoPage() {
         <section className="border-b border-bewild-cream-200 bg-bewild-parchment py-5">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="flex flex-wrap items-center gap-3">
-              <p className="font-mono text-[0.6rem] uppercase tracking-widest text-bewild-gold shrink-0">
+              <p className="font-mono text-[0.6rem] uppercase tracking-widest text-bewild-gold-accessible shrink-0">
                 Jornada Be Wild
               </p>
               <JornadaBeWild variant="compacta" />
@@ -125,7 +125,7 @@ export default function DiagnosticoPage() {
                 <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl">
                   Descubra qual caminho faz sentido para o seu imóvel.
                 </h1>
-                <p className="mb-8 text-lg text-bewild-text-muted leading-relaxed">
+                <p className="mb-8 text-lg text-white/60 leading-relaxed">
                   Não sabe se precisa reformar, ajustar ou colocar para operar? Conte o estágio
                   do seu imóvel. A Bwild te orienta: Be Wild Reformas, BeWild Host Care ou jornada completa.
                 </p>
@@ -140,7 +140,7 @@ export default function DiagnosticoPage() {
                       <CheckCircle className="h-5 w-5 text-bewild-gold shrink-0 mt-0.5" />
                       <div>
                         <p className="font-semibold text-bewild-ink text-sm">{item.label}</p>
-                        <p className="text-sm text-bewild-text-muted leading-relaxed">{item.desc}</p>
+                        <p className="text-sm text-white/60 leading-relaxed">{item.desc}</p>
                       </div>
                     </div>
                   ))}

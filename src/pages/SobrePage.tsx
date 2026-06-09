@@ -110,7 +110,7 @@ export default function SobrePage() {
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
                 A empresa que integra reforma e gestão para o investidor não virar operador.
               </h1>
-              <p className="mb-8 text-lg leading-relaxed text-bewild-text-muted sm:text-xl">
+              <p className="mb-8 text-lg leading-relaxed text-white/60 sm:text-xl">
                 A Be Wild nasceu de uma lacuna clara: o mercado tinha reformas de um lado e
                 gestoras de Airbnb do outro — mas ninguém era dono do ciclo inteiro. O resultado
                 era o investidor costurando fornecedores, prazos, compras, anúncios e hóspedes.
@@ -130,17 +130,17 @@ export default function SobrePage() {
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="grid gap-14 lg:grid-cols-2 lg:gap-20 lg:items-center">
               <div>
-                <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+                <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                   A tese
                 </p>
                 <h2 className="mb-6 text-3xl font-bold text-bewild-ink sm:text-4xl">
                   O fim da reforma é o início da gestão.
                 </h2>
-                <p className="mb-5 text-bewild-text-muted leading-relaxed">
+                <p className="mb-5 text-white/60 leading-relaxed">
                   Um imóvel de short stay não deveria ser pensado em duas partes. A reforma precisa
                   nascer para a operação. E a gestão precisa conhecer o ativo desde a obra.
                 </p>
-                <p className="mb-5 text-bewild-text-muted leading-relaxed">
+                <p className="mb-5 text-white/60 leading-relaxed">
                   Quando preparação e operação são desconectadas, o investidor vira o ponto de
                   integração de tudo. A Be Wild assume esse ciclo inteiro — da obra à diária —
                   para que o proprietário acompanhe sem precisar operar.
@@ -173,7 +173,7 @@ export default function SobrePage() {
         <section className="border-t border-bewild-cream-200 py-20 sm:py-24 bg-white">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-12 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 Como operamos
               </p>
               <h2 className="mb-4 text-3xl font-bold text-bewild-ink sm:text-4xl">
@@ -200,7 +200,7 @@ export default function SobrePage() {
         <section className="border-t border-bewild-cream-200 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 Como a Be Wild pensa
               </p>
               <h2 className="text-3xl font-bold text-bewild-ink sm:text-4xl">
@@ -227,7 +227,7 @@ export default function SobrePage() {
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="grid gap-12 lg:grid-cols-2 lg:gap-20 lg:items-center">
               <div>
-                <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+                <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                   Onde atuamos
                 </p>
                 <h2 className="mb-5 text-3xl font-bold text-bewild-ink sm:text-4xl">
@@ -267,7 +267,7 @@ export default function SobrePage() {
         <section className="border-t border-bewild-cream-200 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 Perguntas frequentes
               </p>
               <h2 className="text-3xl font-bold text-bewild-ink sm:text-4xl">

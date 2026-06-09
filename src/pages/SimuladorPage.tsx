@@ -199,7 +199,7 @@ export default function SimuladorPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-bewild-gold/4 via-transparent to-transparent pointer-events-none" />
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-2xl">
-              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 Simulador de Potencial · São Paulo
               </p>
               <h1 className="mb-5 text-4xl font-bold leading-tight text-white sm:text-5xl">
@@ -338,7 +338,7 @@ export default function SimuladorPage() {
                   <div className="space-y-5">
                     {/* Card principal */}
                     <div className="rounded-2xl border border-bewild-gold/30 bg-bewild-parchment p-6 sm:p-8">
-                      <p className="mb-1 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+                      <p className="mb-1 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                         Estimativa de referência · São Paulo
                       </p>
                       <p className="mb-6 text-sm text-bewild-text-muted">
@@ -449,7 +449,7 @@ export default function SimuladorPage() {
         <section className="border-t border-bewild-cream-200 py-16 sm:py-20 bg-white">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-10 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 O que determina o resultado real
               </p>
               <h2 className="text-2xl font-bold text-bewild-ink sm:text-3xl">
@@ -466,7 +466,7 @@ export default function SimuladorPage() {
                 <div key={item.fator} className="rounded-xl border border-bewild-cream-200 bg-white p-5">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-sm font-semibold text-bewild-ink">{item.fator}</p>
-                    <span className="text-[0.6rem] font-mono uppercase tracking-wider text-bewild-gold border border-bewild-blue/20 rounded-full px-2 py-0.5">
+                    <span className="text-[0.6rem] font-mono uppercase tracking-wider text-bewild-gold-accessible border border-bewild-blue/20 rounded-full px-2 py-0.5">
                       {item.impacto}
                     </span>
                   </div>

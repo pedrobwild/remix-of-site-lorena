@@ -212,7 +212,7 @@ export default function ConteudoPostPage({ slug }: Props) {
               <div className="flex-1">
                 <p
                   className="font-mono text-xs uppercase tracking-[0.14em] mb-2"
-                  style={{ color: "var(--bw-gold)" }}
+                  style={{ color: "var(--bw-gold-accessible)" }}
                 >
                   Próximo passo
                 </p>
@@ -255,7 +255,7 @@ export default function ConteudoPostPage({ slug }: Props) {
             <div className="mx-auto max-w-[76rem] px-5 sm:px-8">
               <p
                 className="font-mono text-xs uppercase tracking-[0.14em] mb-2"
-                style={{ color: "var(--bw-gold)" }}
+                style={{ color: "var(--bw-gold-accessible)" }}
               >
                 Continue lendo
               </p>

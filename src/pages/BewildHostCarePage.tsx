@@ -130,7 +130,7 @@ export default function BewildHostCarePage() {
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
                 Seu imóvel em operação, sem você virar anfitrião.
               </h1>
-              <p className="mb-8 text-lg leading-relaxed text-bewild-text-muted sm:text-xl">
+              <p className="mb-8 text-lg leading-relaxed text-white/60 sm:text-xl">
                 Cuidamos do anúncio, canais, precificação, atendimento 24h ao hóspede, limpeza,
                 enxoval, manutenção, relatórios e repasse. Você acompanha a performance sem
                 precisar operar o dia a dia.
@@ -169,7 +169,7 @@ export default function BewildHostCarePage() {
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="grid gap-12 lg:grid-cols-2 lg:gap-20 lg:items-center">
               <div>
-                <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+                <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                   O problema invisível
                 </p>
                 <h2 className="mb-5 text-3xl font-bold text-bewild-ink sm:text-4xl">
@@ -208,7 +208,7 @@ export default function BewildHostCarePage() {
         <section className="border-t border-bewild-cream-200 py-16 sm:py-20">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-10 max-w-2xl">
-              <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 Painel do proprietário
               </p>
               <h2 className="text-2xl font-bold text-bewild-ink sm:text-3xl">
@@ -227,7 +227,7 @@ export default function BewildHostCarePage() {
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="grid gap-6 sm:grid-cols-2">
               <div>
-                <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold">Studio em operação</p>
+                <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">Studio em operação</p>
                 <p className="mb-4 text-lg font-bold text-bewild-ink">
                   O imóvel trabalha.<br/>O proprietário descansa.
                 </p>
@@ -240,7 +240,7 @@ export default function BewildHostCarePage() {
               </div>
               <div className="flex flex-col gap-4">
                 <div>
-                  <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold">Operação entre reservas</p>
+                  <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">Operação entre reservas</p>
                   <ImagePlaceholder
                     assetId="hostcare-limpeza"
                     className="w-full"
@@ -249,7 +249,7 @@ export default function BewildHostCarePage() {
                   />
                 </div>
                 <div>
-                  <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold">Transparência financeira</p>
+                  <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">Transparência financeira</p>
                   <ImagePlaceholder
                     assetId="hostcare-relatorio"
                     className="w-full"
@@ -266,7 +266,7 @@ export default function BewildHostCarePage() {
         <section className="border-t border-bewild-cream-200 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 O que está incluso
               </p>
               <h2 className="text-3xl font-bold text-bewild-ink sm:text-4xl">
@@ -289,7 +289,7 @@ export default function BewildHostCarePage() {
         <section className="border-t border-bewild-cream-200 py-20 sm:py-24 bg-bewild-parchment">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 Por que o BeWild Host Care é diferente
               </p>
               <h2 className="text-3xl font-bold text-bewild-ink sm:text-4xl">
@@ -312,7 +312,7 @@ export default function BewildHostCarePage() {
         <section className="border-t border-bewild-cream-200 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-2xl mx-auto text-center">
-              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 Imóvel ainda não está pronto?
               </p>
               <h2 className="mb-5 text-3xl font-bold text-bewild-ink sm:text-4xl">
@@ -337,7 +337,7 @@ export default function BewildHostCarePage() {
         <section className="border-t border-bewild-cream-200 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 Perguntas frequentes
               </p>
               <h2 className="text-3xl font-bold text-bewild-ink sm:text-4xl">FAQ BeWild Host Care</h2>

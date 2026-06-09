@@ -37,7 +37,7 @@ export default function MetodoBwildPage() {
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
                 Do diagnóstico à gestão: o método Be Wild.
               </h1>
-              <p className="mb-8 text-lg leading-relaxed text-bewild-text-muted sm:text-xl">
+              <p className="mb-8 text-lg leading-relaxed text-white/60 sm:text-xl">
                 O imóvel não vira renda quando a escritura sai. Ele vira renda quando está preparado,
                 anunciado, precificado, limpo, mantido e operado. A Be Wild cuida de todo esse ciclo.
               </p>
@@ -55,13 +55,13 @@ export default function MetodoBwildPage() {
         <section className="border-t border-bewild-cream-200 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 As 5 etapas
               </p>
               <h2 className="mb-3 text-3xl font-bold text-bewild-ink sm:text-4xl">
                 Cada etapa conecta com a próxima.
               </h2>
-              <p className="text-bewild-text-muted leading-relaxed">
+              <p className="text-white/60 leading-relaxed">
                 Be Wild Reformas e BeWild Host Care são fases de uma mesma jornada —
                 não serviços independentes que podem ser contratados de qualquer fornecedor.
               </p>
@@ -74,7 +74,7 @@ export default function MetodoBwildPage() {
         <section className="border-t border-bewild-cream-200 py-20 sm:py-24 bg-bewild-parchment">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-2xl mx-auto text-center">
-              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 Por que o ciclo inteiro importa
               </p>
               <h2 className="mb-5 text-3xl font-bold text-bewild-ink sm:text-4xl">

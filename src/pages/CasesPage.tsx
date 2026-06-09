@@ -157,7 +157,7 @@ function TriptychCard({ c }: { c: Case }) {
       {/* Header do case */}
       <div className="px-6 py-5 border-b border-bewild-cream-200 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2 mb-1.5 text-xs text-bewild-text-muted">
+          <div className="flex items-center gap-2 mb-1.5 text-xs text-white/60">
             <MapPin className="h-3.5 w-3.5" />
             {c.bairro}
           </div>
@@ -291,7 +291,7 @@ export default function CasesPage() {
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
                 Antes. Pronto. Operando.
               </h1>
-              <p className="mb-6 text-lg leading-relaxed text-bewild-text-muted">
+              <p className="mb-6 text-lg leading-relaxed text-white/60">
                 Três fases de cada imóvel — estado inicial, decisões da Be Wild e a operação em andamento.
                 Sem filtro de marketing. Com dados reais quando disponíveis.
               </p>
@@ -334,7 +334,7 @@ export default function CasesPage() {
         {/* CTA diagnóstico */}
         <section className="border-t border-bewild-cream-200 py-20 sm:py-28">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8 text-center">
-            <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+            <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
               Seu imóvel pode ser o próximo
             </p>
             <h2 className="mb-4 text-3xl font-bold text-bewild-ink sm:text-4xl">

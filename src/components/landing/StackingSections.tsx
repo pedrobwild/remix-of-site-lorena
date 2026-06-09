@@ -34,7 +34,7 @@ const SECTIONS = [
     textClass: "text-bewild-ink",
     mutedClass: "text-bewild-text-muted",
     bodyClass: "text-bewild-text-body",
-    eyebrowClass: "text-bewild-gold",
+    eyebrowClass: "text-bewild-gold-accessible",
     // Imagem / placeholder
     image: "/images/cases/studio-compacto-pronto-01.jpg",
     imageFallbackGradient: "linear-gradient(135deg,#e9e2d5 0%,#d6c5a8 100%)",
@@ -139,7 +139,7 @@ function StackCard({
         <div className="py-12 md:py-0">
           <p
             className="font-mono text-xs uppercase tracking-[0.14em] mb-3"
-            style={{ color: "var(--bw-gold)" }}
+            style={{ color: "var(--bw-gold-accessible)" }}
           >
             {sec.eyebrow}
           </p>

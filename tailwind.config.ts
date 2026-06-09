@@ -27,6 +27,7 @@ export default {
           gold: "#D6A64B",         // Signal Gold — CTA, selos, prova de valor
           "gold-600": "#B8882C",   // hover do gold
           "gold-400": "#E8BB6A",  // tint claro do gold
+          "gold-accessible": "#7A5C1E", // gold para eyebrows em fundo claro — ratio ≥5.7:1
 
           // ── Light mode tokens ────────────────────────
           cream:   "#F7F4EF",      // fundo principal editorial
@@ -35,7 +36,7 @@ export default {
           parchment: "#EDE9E0",    // cards elevados sobre cream
           "text-primary": "#0A1628",  // texto principal
           "text-body": "#3D3D3D",     // parágrafos
-          "text-muted": "#747474",    // textos secundários (Guesty)
+          "text-muted": "#5C5C5C",    // textos secundários — ratio ≥7:1 em cream
           "text-label": "#6B6B6B",    // labels uppercase
         },
       },

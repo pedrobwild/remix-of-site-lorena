@@ -193,7 +193,7 @@ function JornadaHome({ showCtas = true }: { showCtas?: boolean }) {
                 </p>
                 <p className="text-xs text-white/40 leading-relaxed line-clamp-3">{etapa.descricao}</p>
                 {isPhase1 && (
-                  <span className="mt-3 inline-block text-[0.55rem] font-mono uppercase tracking-widest text-bewild-gold border border-bewild-gold/25 rounded-full px-2 py-0.5">
+                  <span className="mt-3 inline-block text-[0.55rem] font-mono uppercase tracking-widest text-bewild-gold-accessible border border-bewild-gold/25 rounded-full px-2 py-0.5">
                     Fase 1
                   </span>
                 )}

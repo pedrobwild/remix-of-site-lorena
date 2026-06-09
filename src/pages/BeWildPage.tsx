@@ -133,7 +133,7 @@ export default function BeWildPage() {
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
                 Prepare seu imóvel para competir no short stay.
               </h1>
-              <p className="mb-8 text-lg leading-relaxed text-bewild-text-muted sm:text-xl">
+              <p className="mb-8 text-lg leading-relaxed text-white/60 sm:text-xl">
                 Projeto, obra, marcenaria, mobiliário, compras, decoração e setup em um fluxo
                 único. Cada decisão pensada para foto, uso, limpeza, manutenção e experiência do
                 hóspede — não apenas para a entrega.
@@ -163,7 +163,7 @@ export default function BeWildPage() {
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="grid gap-12 lg:grid-cols-2 lg:gap-20 lg:items-center">
               <div>
-                <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+                <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                   O problema
                 </p>
                 <h2 className="mb-5 text-3xl font-bold text-bewild-ink sm:text-4xl">
@@ -196,7 +196,7 @@ export default function BeWildPage() {
         <section className="border-t border-bewild-cream-200 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 Método Be Wild
               </p>
               <h2 className="text-3xl font-bold text-bewild-ink sm:text-4xl">
@@ -223,7 +223,7 @@ export default function BeWildPage() {
         <section className="border-t border-bewild-cream-200 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 Decisões que vendem operação depois
               </p>
               <h2 className="text-3xl font-bold text-bewild-ink sm:text-4xl">
@@ -253,7 +253,7 @@ export default function BeWildPage() {
         <section className="border-t border-bewild-cream-200 py-16 sm:py-20">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-8">
-              <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold">Acabamento</p>
+              <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">Acabamento</p>
               <h3 className="text-xl font-bold text-bewild-ink sm:text-2xl">
                 Detalhes que fazem diferença na foto e na operação.
               </h3>
@@ -270,7 +270,7 @@ export default function BeWildPage() {
         <section className="border-t border-bewild-cream-200 py-20 sm:py-24 bg-bewild-parchment">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-2xl mx-auto text-center">
-              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 A jornada continua
               </p>
               <h2 className="mb-5 text-3xl font-bold text-bewild-ink sm:text-4xl">
@@ -299,7 +299,7 @@ export default function BeWildPage() {
         <section className="border-t border-bewild-cream-200 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
-              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 Perguntas frequentes
               </p>
               <h2 className="text-3xl font-bold text-bewild-ink sm:text-4xl">FAQ Be Wild</h2>

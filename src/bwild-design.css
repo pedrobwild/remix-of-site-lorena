@@ -18,11 +18,13 @@
   --bw-ink:          #0A1628;
   --bw-text:         #1A1A1A;
   --bw-text-body:    #3D3D3D;
-  --bw-text-muted:   #747474;
-  --bw-text-label:   #6B6B6B;
+  --bw-text-muted:   #5C5C5C;
+  --bw-text-label:   #505050;
   --bw-gold:         #D6A64B;
   --bw-gold-hover:   #B8882C;
   --bw-gold-tint:    rgba(214, 166, 75, 0.12);
+  /* Gold acessível para uso em fundo claro (cream/white). Ratio ≥ 5.7:1 */
+  --bw-gold-accessible: #7A5C1E;
 
   /* Dark surface (header/footer) */
   --bw-dark:         #0A111E;

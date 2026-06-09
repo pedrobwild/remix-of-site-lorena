@@ -186,7 +186,7 @@ export default function FeatureTabSwitcher({
         <div className="mb-12">
           <p
             className="font-mono text-xs uppercase tracking-[0.14em] mb-3"
-            style={{ color: "var(--bw-gold)" }}
+            style={{ color: "var(--bw-gold-accessible)" }}
           >
             {eyebrow}
           </p>
@@ -210,7 +210,7 @@ export default function FeatureTabSwitcher({
                 className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 flex-shrink-0"
                 style={{
                   background: isActive ? "var(--bw-ink)" : "var(--bw-cream-100, #f2efe8)",
-                  color: isActive ? "#fff" : "var(--bw-text-muted, #747474)",
+                  color: isActive ? "#fff" : "var(--bw-text-body, #3d3d3d)",
                   border: isActive ? "1.5px solid var(--bw-ink)" : "1.5px solid var(--bw-cream-200, #e9e2d5)",
                   boxShadow: isActive ? "0 4px 16px rgba(10,17,30,0.15)" : "none",
                 }}

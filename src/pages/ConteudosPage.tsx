@@ -132,7 +132,7 @@ export default function ConteudosPage() {
         <section className="border-t border-bewild-cream-200 py-16 sm:py-24" style={{ background: "var(--bw-cream)" }}>
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-12">
-              <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 {artigos.length} artigos publicados
               </p>
               <h2 className="text-2xl font-bold text-bewild-ink sm:text-3xl" style={{ letterSpacing: "-0.02em" }}>
@@ -207,7 +207,7 @@ export default function ConteudosPage() {
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="rounded-2xl border border-bewild-cream-200 bg-bewild-cream p-8 sm:p-12 flex flex-col sm:flex-row items-start sm:items-center gap-8">
               <div className="flex-1">
-                <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+                <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                   Novos conteúdos
                 </p>
                 <h3 className="text-xl font-bold text-bewild-ink sm:text-2xl mb-3">
