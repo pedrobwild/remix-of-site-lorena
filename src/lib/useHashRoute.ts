@@ -8,6 +8,7 @@ export type Route =
   | { name: "metodo-bwild" }
   | { name: "diagnostico" }
   | { name: "conteudos" }
+  | { name: "conteudo-post"; slug: string }
   | { name: "simulador" }
   | { name: "portfolio" }
   | { name: "faq" }
@@ -45,6 +46,8 @@ function parsePath(rawPath: string): Route {
   if (path === "/metodo-bwild") return { name: "metodo-bwild" };
   if (path === "/diagnostico") return { name: "diagnostico" };
   if (path === "/conteudos") return { name: "conteudos" };
+  const conteudoMatch = path.match(/^\/conteudos\/([a-z0-9-]+)$/);
+  if (conteudoMatch) return { name: "conteudo-post", slug: conteudoMatch[1] };
   if (path === "/simulador") return { name: "simulador" };
   if (path === "/portfolio") return { name: "portfolio" };
   if (path === "/faq") return { name: "faq" };
@@ -152,6 +155,7 @@ export const routes = {
   metodoBwild: "/metodo-bwild",
   diagnostico: "/diagnostico",
   conteudos: "/conteudos",
+  conteudoPost: (slug: string) => `/conteudos/${slug}`,
   simulador: "/simulador",
   portfolio: "/portfolio",
   faq: "/faq",
