@@ -139,8 +139,8 @@ export default function DiagnosticoPage() {
                     <div key={item.label} className="flex gap-3">
                       <CheckCircle className="h-5 w-5 text-bewild-gold shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-semibold text-white text-sm">{item.label}</p>
-                        <p className="text-sm text-white/55 leading-relaxed">{item.desc}</p>
+                        <p className="font-semibold text-bewild-ink text-sm">{item.label}</p>
+                        <p className="text-sm text-bewild-text-muted leading-relaxed">{item.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -152,7 +152,7 @@ export default function DiagnosticoPage() {
                 {enviado ? (
                   <div className="text-center py-8">
                     <CheckCircle className="h-12 w-12 text-bewild-gold mx-auto mb-4" />
-                    <h2 className="text-xl font-bold text-white mb-3">Diagnóstico enviado!</h2>
+                    <h2 className="text-xl font-bold text-bewild-ink mb-3">Diagnóstico enviado!</h2>
                     <p className="text-bewild-text-muted text-sm leading-relaxed">
                       Você será redirecionado para o WhatsApp com suas informações preenchidas.
                       Nossa equipe entrará em contato para orientar o próximo passo.
@@ -169,7 +169,7 @@ export default function DiagnosticoPage() {
                         value={form.nome}
                         onChange={(e) => update("nome", e.target.value)}
                         placeholder="Seu nome"
-                        className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/30 outline-none focus:border-bewild-blue/60 focus:ring-1 focus:ring-bewild-blue/30 transition-colors"
+                        className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted outline-none focus:border-bewild-gold/60 focus:ring-1 focus:ring-bewild-gold/30 transition-colors"
                         required
                       />
                     </div>
@@ -183,7 +183,7 @@ export default function DiagnosticoPage() {
                         value={form.whatsapp}
                         onChange={(e) => update("whatsapp", e.target.value)}
                         placeholder="(11) 99999-9999"
-                        className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/30 outline-none focus:border-bewild-blue/60 focus:ring-1 focus:ring-bewild-blue/30 transition-colors"
+                        className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted outline-none focus:border-bewild-gold/60 focus:ring-1 focus:ring-bewild-gold/30 transition-colors"
                         required
                       />
                     </div>
@@ -252,7 +252,7 @@ export default function DiagnosticoPage() {
                           value={form.bairro}
                           onChange={(e) => update("bairro", e.target.value)}
                           placeholder="Ex: Pinheiros, SP"
-                          className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/30 outline-none focus:border-bewild-blue/60 focus:ring-1 focus:ring-bewild-blue/30 transition-colors"
+                          className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted outline-none focus:border-bewild-gold/60 focus:ring-1 focus:ring-bewild-gold/30 transition-colors"
                         />
                       </div>
                       <div>

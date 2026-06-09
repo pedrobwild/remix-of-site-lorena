@@ -58,7 +58,7 @@ export default function MetodoBwildPage() {
               <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 As 5 etapas
               </p>
-              <h2 className="mb-3 text-3xl font-bold text-white sm:text-4xl">
+              <h2 className="mb-3 text-3xl font-bold text-bewild-ink sm:text-4xl">
                 Cada etapa conecta com a próxima.
               </h2>
               <p className="text-bewild-text-muted leading-relaxed">
@@ -77,7 +77,7 @@ export default function MetodoBwildPage() {
               <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 Por que o ciclo inteiro importa
               </p>
-              <h2 className="mb-5 text-3xl font-bold text-white sm:text-4xl">
+              <h2 className="mb-5 text-3xl font-bold text-bewild-ink sm:text-4xl">
                 Não é reforma + gestão. É continuidade entre criação e operação do ativo.
               </h2>
               <p className="mb-8 text-bewild-text-muted leading-relaxed">
@@ -97,7 +97,7 @@ export default function MetodoBwildPage() {
         {/* CTA */}
         <section className="border-t border-bewild-cream-200 py-20 sm:py-28">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+            <h2 className="mb-4 text-3xl font-bold text-bewild-ink sm:text-4xl">
               Descubra em qual etapa seu imóvel está.
             </h2>
             <p className="mb-8 text-bewild-text-muted max-w-xl mx-auto">
@@ -114,7 +114,7 @@ export default function MetodoBwildPage() {
                 href={whatsappHref("Olá, quero entender como o método Bwild funciona para o meu imóvel.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-7 py-3.5 text-sm font-semibold text-white transition-all hover:border-white/40"
+                className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-7 py-3.5 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-parchment hover:border-bewild-cream-200"
               >
                 Falar com especialista
               </a>

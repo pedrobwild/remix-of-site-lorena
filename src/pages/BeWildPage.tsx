@@ -149,7 +149,7 @@ export default function BeWildPage() {
                   href={whatsappHref("Olá, quero saber mais sobre o Be Wild para preparar meu imóvel para short stay.")}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-6 py-3 text-sm font-semibold text-white transition-all hover:border-white/40"
+                  className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-6 py-3 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-parchment hover:border-bewild-cream-200"
                 >
                   Falar com especialista
                 </a>
@@ -166,7 +166,7 @@ export default function BeWildPage() {
                 <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                   O problema
                 </p>
-                <h2 className="mb-5 text-3xl font-bold text-white sm:text-4xl">
+                <h2 className="mb-5 text-3xl font-bold text-bewild-ink sm:text-4xl">
                   Reformar para morar é diferente de preparar para a diária.
                 </h2>
                 <p className="text-bewild-text-muted leading-relaxed">
@@ -199,7 +199,7 @@ export default function BeWildPage() {
               <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 Método Be Wild
               </p>
-              <h2 className="text-3xl font-bold text-white sm:text-4xl">
+              <h2 className="text-3xl font-bold text-bewild-ink sm:text-4xl">
                 Do diagnóstico à entrega pronta para operar.
               </h2>
             </div>
@@ -212,7 +212,7 @@ export default function BeWildPage() {
                   <p className="mb-3 font-mono text-2xl font-bold text-bewild-blue/50">{step.n}</p>
                   <step.icon className="mb-3 h-6 w-6 text-bewild-gold" />
                   <p className="mb-2 font-semibold text-bewild-ink">{step.title}</p>
-                  <p className="text-sm text-white/55 leading-relaxed">{step.text}</p>
+                  <p className="text-sm text-bewild-text-muted leading-relaxed">{step.text}</p>
                 </div>
               ))}
             </div>
@@ -226,7 +226,7 @@ export default function BeWildPage() {
               <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 Decisões que vendem operação depois
               </p>
-              <h2 className="text-3xl font-bold text-white sm:text-4xl">
+              <h2 className="text-3xl font-bold text-bewild-ink sm:text-4xl">
                 Cada escolha de projeto pensa na gestão que vem depois.
               </h2>
             </div>
@@ -235,7 +235,7 @@ export default function BeWildPage() {
                 <div key={d.title} className="rounded-2xl border border-bewild-cream-200 bg-white p-6">
                   <d.icon className="mb-4 h-7 w-7 text-bewild-gold" />
                   <p className="mb-2 font-semibold text-bewild-ink">{d.title}</p>
-                  <p className="text-sm text-white/55 leading-relaxed">{d.text}</p>
+                  <p className="text-sm text-bewild-text-muted leading-relaxed">{d.text}</p>
                 </div>
               ))}
             </div>
@@ -254,7 +254,7 @@ export default function BeWildPage() {
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-8">
               <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold">Acabamento</p>
-              <h3 className="text-xl font-bold text-white sm:text-2xl">
+              <h3 className="text-xl font-bold text-bewild-ink sm:text-2xl">
                 Detalhes que fazem diferença na foto e na operação.
               </h3>
             </div>
@@ -273,7 +273,7 @@ export default function BeWildPage() {
               <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 A jornada continua
               </p>
-              <h2 className="mb-5 text-3xl font-bold text-white sm:text-4xl">
+              <h2 className="mb-5 text-3xl font-bold text-bewild-ink sm:text-4xl">
                 A entrega da obra não é o fim. É o início da operação.
               </h2>
               <p className="mb-8 text-bewild-text-muted leading-relaxed">
@@ -287,7 +287,7 @@ export default function BeWildPage() {
               </div>
               <button
                 onClick={() => navigate("/bewild-host-care")}
-                className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white/20 border border-bewild-cream-200"
+                className="inline-flex items-center gap-2 rounded-full bg-transparent px-6 py-3 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-parchment border border-bewild-cream-200"
               >
                 Conhecer o BeWild Host Care <ArrowRight className="h-4 w-4" />
               </button>
@@ -302,7 +302,7 @@ export default function BeWildPage() {
               <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 Perguntas frequentes
               </p>
-              <h2 className="text-3xl font-bold text-white sm:text-4xl">FAQ Be Wild</h2>
+              <h2 className="text-3xl font-bold text-bewild-ink sm:text-4xl">FAQ Be Wild</h2>
             </div>
             <div className="grid gap-6 lg:grid-cols-2">
               {FAQS.map((f) => (
@@ -318,7 +318,7 @@ export default function BeWildPage() {
         {/* CTA Final */}
         <section className="border-t border-bewild-cream-200 py-20 sm:py-28">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+            <h2 className="mb-4 text-3xl font-bold text-bewild-ink sm:text-4xl">
               Pronto para preparar seu imóvel?
             </h2>
             <p className="mb-8 text-bewild-text-muted max-w-xl mx-auto">
@@ -335,7 +335,7 @@ export default function BeWildPage() {
                 href={whatsappHref("Olá, quero um diagnóstico Be Wild para meu imóvel.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-7 py-3.5 text-sm font-semibold text-white transition-all hover:border-white/40"
+                className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-7 py-3.5 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-parchment hover:border-bewild-cream-200"
               >
                 Receber diagnóstico Be Wild
               </a>

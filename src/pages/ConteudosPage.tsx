@@ -511,8 +511,8 @@ export default function ConteudosPage() {
                   className="rounded-2xl border border-bewild-cream-200 bg-white p-5"
                 >
                   <cat.icon className="mb-3 h-6 w-6 text-bewild-gold" />
-                  <p className="mb-1.5 font-semibold text-white text-sm">{cat.label}</p>
-                  <p className="text-xs text-white/50 leading-relaxed">{cat.desc}</p>
+                  <p className="mb-1.5 font-semibold text-bewild-ink text-sm">{cat.label}</p>
+                  <p className="text-xs text-bewild-text-muted leading-relaxed">{cat.desc}</p>
                 </div>
               ))}
             </div>
@@ -526,8 +526,8 @@ export default function ConteudosPage() {
               <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 {ARTIGOS.length} artigos publicados
               </p>
-              <h2 className="text-2xl font-bold text-white sm:text-3xl">Guias e análises</h2>
-              <p className="mt-3 text-white/50 text-sm max-w-xl">
+              <h2 className="text-2xl font-bold text-bewild-ink sm:text-3xl">Guias e análises</h2>
+              <p className="mt-3 text-bewild-text-muted text-sm max-w-xl">
                 Clique em qualquer card para ler o artigo completo. Conteúdo baseado em dados de mercado — sem promessa de resultado garantido.
               </p>
             </div>
@@ -550,10 +550,10 @@ export default function ConteudosPage() {
                 <p className="mb-2 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                   Novos conteúdos
                 </p>
-                <h3 className="text-xl font-bold text-white sm:text-2xl">
+                <h3 className="text-xl font-bold text-bewild-ink sm:text-2xl">
                   Receba análises direto no WhatsApp.
                 </h3>
-                <p className="mt-3 text-white/55 text-sm leading-relaxed max-w-md">
+                <p className="mt-3 text-bewild-text-muted text-sm leading-relaxed max-w-md">
                   Quando publicamos novos guias ou análises de mercado, enviamos um resumo no WhatsApp. Sem spam, sem lista de e-mail.
                 </p>
               </div>
@@ -572,7 +572,7 @@ export default function ConteudosPage() {
         {/* CTA diagnóstico */}
         <section className="border-t border-bewild-cream-200 py-20 sm:py-28">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+            <h2 className="mb-4 text-3xl font-bold text-bewild-ink sm:text-4xl">
               Prefere uma conversa direta?
             </h2>
             <p className="mb-8 text-bewild-text-muted max-w-xl mx-auto">

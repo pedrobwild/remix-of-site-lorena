@@ -161,7 +161,7 @@ function TriptychCard({ c }: { c: Case }) {
             <MapPin className="h-3.5 w-3.5" />
             {c.bairro}
           </div>
-          <h3 className="text-base font-bold text-white">{c.tipo}</h3>
+          <h3 className="text-base font-bold text-bewild-ink">{c.tipo}</h3>
         </div>
         <div className="flex flex-wrap gap-1.5">
           {c.tags.map((tag) => (
@@ -337,10 +337,10 @@ export default function CasesPage() {
             <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
               Seu imóvel pode ser o próximo
             </p>
-            <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+            <h2 className="mb-4 text-3xl font-bold text-bewild-ink sm:text-4xl">
               O diagnóstico é o primeiro passo.
             </h2>
-            <p className="mb-8 text-white/55 max-w-lg mx-auto leading-relaxed">
+            <p className="mb-8 text-bewild-text-muted max-w-lg mx-auto leading-relaxed">
               Avaliamos o potencial real do seu ativo — bairro, metragem, estado e objetivo — antes de qualquer recomendação.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

@@ -133,7 +133,7 @@ export default function SobrePage() {
                 <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                   A tese
                 </p>
-                <h2 className="mb-6 text-3xl font-bold text-white sm:text-4xl">
+                <h2 className="mb-6 text-3xl font-bold text-bewild-ink sm:text-4xl">
                   O fim da reforma é o início da gestão.
                 </h2>
                 <p className="mb-5 text-bewild-text-muted leading-relaxed">
@@ -176,7 +176,7 @@ export default function SobrePage() {
               <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 Como operamos
               </p>
-              <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+              <h2 className="mb-4 text-3xl font-bold text-bewild-ink sm:text-4xl">
                 Uma jornada. Dois produtos. Zero fragmentação.
               </h2>
               <p className="text-bewild-text-muted leading-relaxed">
@@ -203,7 +203,7 @@ export default function SobrePage() {
               <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 Como a Be Wild pensa
               </p>
-              <h2 className="text-3xl font-bold text-white sm:text-4xl">
+              <h2 className="text-3xl font-bold text-bewild-ink sm:text-4xl">
                 Princípios que guiam cada decisão.
               </h2>
             </div>
@@ -215,7 +215,7 @@ export default function SobrePage() {
                 >
                   <v.icon className="mb-4 h-6 w-6 text-bewild-gold" />
                   <p className="mb-2 font-semibold text-bewild-ink">{v.title}</p>
-                  <p className="text-sm text-white/55 leading-relaxed">{v.text}</p>
+                  <p className="text-sm text-bewild-text-muted leading-relaxed">{v.text}</p>
                 </div>
               ))}
             </div>
@@ -230,7 +230,7 @@ export default function SobrePage() {
                 <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                   Onde atuamos
                 </p>
-                <h2 className="mb-5 text-3xl font-bold text-white sm:text-4xl">
+                <h2 className="mb-5 text-3xl font-bold text-bewild-ink sm:text-4xl">
                   São Paulo — com especialização em bairros de alta demanda.
                 </h2>
                 <p className="mb-6 text-bewild-text-muted leading-relaxed">
@@ -270,7 +270,7 @@ export default function SobrePage() {
               <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold">
                 Perguntas frequentes
               </p>
-              <h2 className="text-3xl font-bold text-white sm:text-4xl">
+              <h2 className="text-3xl font-bold text-bewild-ink sm:text-4xl">
                 Sobre a Be Wild e como trabalhamos.
               </h2>
             </div>
@@ -281,7 +281,7 @@ export default function SobrePage() {
                   className="rounded-2xl border border-bewild-cream-200 bg-white p-6"
                 >
                   <p className="mb-3 font-semibold text-bewild-ink">{f.q}</p>
-                  <p className="text-sm text-white/55 leading-relaxed">{f.a}</p>
+                  <p className="text-sm text-bewild-text-muted leading-relaxed">{f.a}</p>
                 </div>
               ))}
             </div>
@@ -291,7 +291,7 @@ export default function SobrePage() {
         {/* CTA Final */}
         <section className="border-t border-bewild-cream-200 py-20 sm:py-28">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+            <h2 className="mb-4 text-3xl font-bold text-bewild-ink sm:text-4xl">
               Comece pelo diagnóstico.
             </h2>
             <p className="mb-8 text-bewild-text-muted max-w-xl mx-auto leading-relaxed">
@@ -309,7 +309,7 @@ export default function SobrePage() {
                 href={whatsappHref("Olá, quero saber mais sobre a Be Wild e como vocês trabalham.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-7 py-3.5 text-sm font-semibold text-white transition-all hover:border-white/40"
+                className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-7 py-3.5 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-parchment hover:border-bewild-cream-200"
               >
                 Falar com especialista
               </a>
