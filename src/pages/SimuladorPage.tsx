@@ -191,7 +191,7 @@ export default function SimuladorPage() {
 
   return (
     <div className="bwild-light min-h-screen bg-bewild-cream font-body text-bewild-text-body antialiased">
-      <Header />
+      <Header forceSolid />
       <main>
 
         {/* Hero */}
