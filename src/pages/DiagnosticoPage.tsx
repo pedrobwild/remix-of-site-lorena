@@ -1,17 +1,16 @@
 /**
  * DiagnosticoPage — /diagnostico
- * Formulário de qualificação de lead com roteamento por estágio do imóvel.
+ * Re-skin: hero escuro por foto + card de formulário branco flutuante.
+ * Estrutura mantida: hero com formulário + footer.
+ * Toda a lógica de envio ao WhatsApp e os campos atuais permanecem idênticos.
  */
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSeo } from "../lib/useSeo";
 import Header from "../components/landing/Header";
-import { MobileBottomCTA } from "../components/landing/MobileBottomCTA";
-import { StickyDiagnosticPanel } from "../components/landing/StickyDiagnosticPanel";
 import Footer from "../components/landing/Footer";
-import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton";
 import { whatsappHref } from "../components/landing/content";
-import { ArrowRight, CheckCircle } from "lucide-react";
-import JornadaBeWild from "../components/landing/JornadaBeWild";
+import { ImagePlaceholder } from "../components/landing/ImagePlaceholder";
+import "../styles/diagnostico.css";
 
 type Estagio = "cru" | "reformando" | "pronto" | "ja-alugando" | "nao-sei" | "";
 type Objetivo = "preparar" | "operar" | "jornada-completa" | "entender-potencial" | "";
@@ -29,17 +28,11 @@ interface FormData {
 }
 
 const INITIAL: FormData = {
-  nome: "",
-  whatsapp: "",
-  temImovel: "",
-  estagio: "",
-  bairro: "",
-  tipo: "",
-  objetivo: "",
-  timing: "",
+  nome: "", whatsapp: "", temImovel: "",
+  estagio: "", bairro: "", tipo: "",
+  objetivo: "", timing: "",
 };
 
-// Roteamento de mensagem WhatsApp por estágio
 function buildWhatsappMessage(data: FormData): string {
   const estagioMap: Record<Estagio, string> = {
     cru: "cru ou recém-entregue pela construtora",
@@ -50,14 +43,14 @@ function buildWhatsappMessage(data: FormData): string {
     "": "",
   };
   const objMap: Record<Objetivo, string> = {
-    preparar: "preparar o imóvel com BeWild",
+    preparar: "preparar o imóvel com Be Wild Reformas",
     operar: "colocar para operar com BeWild Host Care",
-    "jornada-completa": "fazer a jornada completa (BeWild Reformas + BeWild Host Care)",
+    "jornada-completa": "fazer a jornada completa (Be Wild Reformas + BeWild Host Care)",
     "entender-potencial": "entender o potencial do imóvel para short stay",
     "": "",
   };
 
-  return `Olá! Me chamo ${data.nome || "..."} e quero um diagnóstico Bwild para meu imóvel.
+  return `Olá! Me chamo ${data.nome || "..."} e quero um diagnóstico Be Wild para meu imóvel.
 
 Situação:
 • Imóvel: ${data.tipo || "—"} em ${data.bairro || "—"}
@@ -65,29 +58,82 @@ Situação:
 • Objetivo: ${objMap[data.objetivo] || "—"}
 • Quando quer começar: ${data.timing || "—"}
 
-Aguardo orientação sobre o melhor caminho: BeWild Reformas, BeWild Host Care ou jornada completa.`;
+Aguardo orientação sobre o melhor caminho: Be Wild Reformas, BeWild Host Care ou jornada completa.`;
 }
 
+/* ─── Radio-chip group acessível ────────────────────────── */
+interface ChipsProps<T extends string> {
+  name: string;
+  value: T;
+  options: { val: T; label: string }[];
+  onChange: (v: T) => void;
+}
+function ChipGroup<T extends string>({ name, value, options, onChange }: ChipsProps<T>) {
+  function onKey(e: React.KeyboardEvent, i: number) {
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      e.preventDefault();
+      const next = (i + 1) % options.length;
+      onChange(options[next].val);
+      (e.currentTarget.parentElement?.children[next] as HTMLElement)?.focus();
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      e.preventDefault();
+      const prev = (i - 1 + options.length) % options.length;
+      onChange(options[prev].val);
+      (e.currentTarget.parentElement?.children[prev] as HTMLElement)?.focus();
+    }
+  }
+  return (
+    <div className="chips" role="radiogroup" aria-label={name}>
+      {options.map((o, i) => (
+        <button
+          key={o.val}
+          type="button"
+          role="radio"
+          aria-checked={value === o.val}
+          tabIndex={value === o.val || (!value && i === 0) ? 0 : -1}
+          className={`chip ${value === o.val ? "is-selected" : ""}`}
+          onClick={() => onChange(o.val)}
+          onKeyDown={(e) => onKey(e, i)}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* ─── Página ─────────────────────────────────────────────── */
 export default function DiagnosticoPage() {
   const [form, setForm] = useState<FormData>(INITIAL);
   const [enviado, setEnviado] = useState(false);
+  const [touched, setTouched] = useState<Partial<Record<keyof FormData, boolean>>>({});
+  const heroRef = useRef<HTMLElement>(null);
 
   useSeo({
-    title: "Diagnóstico Bwild — Avalie seu imóvel para short stay",
+    title: "Diagnóstico Be Wild — Avalie seu imóvel para short stay",
     description:
-      "Conte em que estágio está seu imóvel. A Bwild indica o caminho certo: preparar com BeWild, operar com BeWild Host Care ou fazer a jornada completa.",
+      "Conte em que estágio está seu imóvel. A Be Wild indica o caminho certo: Be Wild Reformas, BeWild Host Care ou jornada completa.",
     canonicalPath: "/diagnostico",
     ogType: "website",
   });
+
+  useEffect(() => {
+    const t = setTimeout(() => heroRef.current?.classList.add("is-ready"), 80);
+    return () => clearTimeout(t);
+  }, []);
 
   const update = (field: keyof FormData, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
   const canSubmit =
-    form.nome.trim() &&
-    form.whatsapp.trim() &&
-    form.estagio &&
-    form.objetivo;
+    !!form.nome.trim() &&
+    !!form.whatsapp.trim() &&
+    !!form.estagio &&
+    !!form.objetivo;
+
+  const errors: Partial<Record<keyof FormData, string>> = {};
+  if (touched.nome && !form.nome.trim()) errors.nome = "Informe seu nome.";
+  if (touched.whatsapp && !form.whatsapp.trim()) errors.whatsapp = "Informe seu WhatsApp.";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,172 +143,129 @@ export default function DiagnosticoPage() {
     setEnviado(true);
   };
 
+  const orientacoes = [
+    { titulo: "Be Wild Reformas", desc: "Imóvel cru, vazio, recém-entregue ou mal aproveitado. Precisa de projeto, obra e setup para operar." },
+    { titulo: "BeWild Host Care", desc: "Imóvel pronto ou quase pronto. Precisa de gestão profissional: anúncio, hóspedes, limpeza e repasse." },
+    { titulo: "Jornada completa", desc: "Imóvel que precisa de preparação E operação. A Be Wild cuida do ciclo inteiro." },
+  ];
+
   return (
-    <div className="bwild-light min-h-screen bg-bewild-cream font-body text-bewild-text-body antialiased">
+    <div className="bewild-diagnostico min-h-screen antialiased">
       <Header />
       <main>
-        {/* Jornada Be Wild — contexto antes do formulário */}
-        <section className="border-b border-bewild-cream-200 bg-bewild-parchment py-5">
-          <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
-            <div className="flex flex-wrap items-center gap-3">
-              <p className="font-mono text-[0.6rem] uppercase tracking-widest text-bewild-gold-accessible shrink-0">
-                Jornada Be Wild
-              </p>
-              <JornadaBeWild variant="compacta" />
-            </div>
+        <section ref={heroRef} className="hero">
+          <div className="hero__media">
+            <ImagePlaceholder assetId="hero-studio" showReveal={false} className="w-full h-full" />
           </div>
-        </section>
+          <div className="hero__overlay" />
+          <div className="hero__grain" />
 
-        <section className="relative overflow-hidden pt-20 pb-20 sm:pt-28 sm:pb-28 bg-bewild-ink">
-          <div className="absolute inset-0 bg-gradient-to-br from-bewild-gold/5 via-transparent to-transparent" />
-          <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
-            <div className="grid gap-16 lg:grid-cols-2 lg:gap-20 lg:items-start">
-              {/* Texto lateral */}
-              <div className="max-w-lg">
-                <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold-400">
-                  Diagnóstico Bwild do Ativo
-                </p>
-                <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl">
-                  Descubra qual caminho faz sentido para o seu imóvel.
+          <div className="container">
+            <div className="grid">
+              {/* Esquerda — orientação */}
+              <div className="side">
+                <p className="eyebrow">Diagnóstico Be Wild do ativo</p>
+                <h1>
+                  <span className="hero__line"><span>Descubra qual caminho</span></span>
+                  <span className="hero__line"><span className="italic">faz sentido para o seu imóvel.</span></span>
                 </h1>
-                <p className="mb-8 text-lg text-white/60 leading-relaxed">
+                <p className="side__lead">
                   Não sabe se precisa reformar, ajustar ou colocar para operar? Conte o estágio
-                  do seu imóvel. A Bwild te orienta: BeWild Reformas, BeWild Host Care ou jornada completa.
+                  do seu imóvel. A Be Wild te orienta: Be Wild Reformas, BeWild Host Care ou jornada completa.
                 </p>
 
-                <div className="space-y-4">
-                  {[
-                    { label: "BeWild", desc: "Imóvel cru, vazio, recém-entregue ou mal aproveitado. Precisa de projeto, obra e setup para operar." },
-                    { label: "BeWild Host Care", desc: "Imóvel pronto ou quase pronto. Precisa de gestão profissional: anúncio, hóspedes, limpeza e repasse." },
-                    { label: "Jornada completa", desc: "Imóvel que precisa de preparação E operação. A Bwild cuida do ciclo inteiro." },
-                  ].map((item) => (
-                    <div key={item.label} className="flex gap-3">
-                      <CheckCircle className="h-5 w-5 text-bewild-gold-400 shrink-0 mt-0.5" />
+                <div className="orient">
+                  {orientacoes.map((o) => (
+                    <div key={o.titulo} className="orient__item">
+                      <span className="orient__check" aria-hidden>✓</span>
                       <div>
-                        <p className="font-semibold text-white text-sm">{item.label}</p>
-                        <p className="text-sm text-white/70 leading-relaxed">{item.desc}</p>
+                        <p className="orient__title">{o.titulo}</p>
+                        <p className="orient__desc">{o.desc}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Formulário */}
-              <div className="rounded-2xl border border-bewild-cream-200 bg-white p-6 sm:p-8">
+              {/* Direita — formulário */}
+              <div className="form-card">
                 {enviado ? (
-                  <div className="text-center py-8">
-                    <CheckCircle className="h-12 w-12 text-bewild-gold mx-auto mb-4" />
-                    <h2 className="text-xl font-bold text-bewild-ink mb-3">Diagnóstico enviado!</h2>
-                    <p className="text-bewild-text-muted text-sm leading-relaxed">
+                  <div className="success">
+                    <p className="eyebrow" style={{ color: "var(--petroleo)" }}>Pedido enviado</p>
+                    <h2>Diagnóstico enviado!</h2>
+                    <p>
                       Você será redirecionado para o WhatsApp com suas informações preenchidas.
                       Nossa equipe entrará em contato para orientar o próximo passo.
                     </p>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-5">
-                    <div>
-                      <label className="mb-1.5 block text-sm font-medium text-bewild-text-body">
-                        Nome *
-                      </label>
+                  <form className="form" onSubmit={handleSubmit} noValidate>
+                    <div className={`field ${errors.nome ? "field--error" : ""}`}>
+                      <label htmlFor="nome">Nome <span className="req">*</span></label>
                       <input
-                        type="text"
-                        value={form.nome}
+                        id="nome" type="text" value={form.nome}
                         onChange={(e) => update("nome", e.target.value)}
-                        placeholder="Seu nome"
-                        className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted outline-none focus:border-bewild-blue/60 focus:ring-1 focus:ring-bewild-blue/30 transition-colors"
-                        required
+                        onBlur={() => setTouched((t) => ({ ...t, nome: true }))}
+                        placeholder="Seu nome" required
                       />
+                      {errors.nome && <p className="field__err">{errors.nome}</p>}
                     </div>
 
-                    <div>
-                      <label className="mb-1.5 block text-sm font-medium text-bewild-text-body">
-                        WhatsApp *
-                      </label>
+                    <div className={`field ${errors.whatsapp ? "field--error" : ""}`}>
+                      <label htmlFor="wa">WhatsApp <span className="req">*</span></label>
                       <input
-                        type="tel"
-                        value={form.whatsapp}
+                        id="wa" type="tel" value={form.whatsapp}
                         onChange={(e) => update("whatsapp", e.target.value)}
-                        placeholder="(11) 99999-9999"
-                        className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted outline-none focus:border-bewild-blue/60 focus:ring-1 focus:ring-bewild-blue/30 transition-colors"
-                        required
+                        onBlur={() => setTouched((t) => ({ ...t, whatsapp: true }))}
+                        placeholder="(11) 99999-9999" required
                       />
+                      {errors.whatsapp && <p className="field__err">{errors.whatsapp}</p>}
                     </div>
 
-                    <div>
-                      <label className="mb-1.5 block text-sm font-medium text-bewild-text-body">
-                        Você já tem o imóvel?
-                      </label>
-                      <div className="grid gap-2 sm:grid-cols-3">
-                        {[
+                    <div className="field">
+                      <label>Você já tem o imóvel?</label>
+                      <ChipGroup
+                        name="Você já tem o imóvel?"
+                        value={form.temImovel}
+                        onChange={(v) => update("temImovel", v)}
+                        options={[
                           { val: "sim", label: "Sim, tenho" },
                           { val: "comprando", label: "Estou comprando" },
                           { val: "pesquisando", label: "Ainda pesquisando" },
-                        ].map((opt) => (
-                          <button
-                            key={opt.val}
-                            type="button"
-                            onClick={() => update("temImovel", opt.val)}
-                            className={`rounded-xl border px-3 py-2.5 text-sm font-medium transition-all ${
-                              form.temImovel === opt.val
-                                ? "border-bewild-gold bg-bewild-gold/15 text-bewild-ink"
-                                : "border-white/15 bg-white/5 text-bewild-text-muted hover:border-white/30 hover:text-bewild-ink"
-                            }`}
-                          >
-                            {opt.label}
-                          </button>
-                        ))}
-                      </div>
+                        ]}
+                      />
                     </div>
 
-                    <div>
-                      <label className="mb-1.5 block text-sm font-medium text-bewild-text-body">
-                        Estágio do imóvel *
-                      </label>
-                      <div className="grid gap-2 sm:grid-cols-2">
-                        {[
+                    <div className="field">
+                      <label>Estágio do imóvel <span className="req">*</span></label>
+                      <ChipGroup<Estagio>
+                        name="Estágio do imóvel"
+                        value={form.estagio}
+                        onChange={(v) => update("estagio", v)}
+                        options={[
                           { val: "cru", label: "Cru / recém-entregue" },
                           { val: "reformando", label: "Em reforma" },
                           { val: "pronto", label: "Pronto, mas não opera" },
                           { val: "ja-alugando", label: "Já alugo por temporada" },
                           { val: "nao-sei", label: "Não sei avaliar" },
-                        ].map((opt) => (
-                          <button
-                            key={opt.val}
-                            type="button"
-                            onClick={() => update("estagio", opt.val as Estagio)}
-                            className={`rounded-xl border px-3 py-2.5 text-sm font-medium text-left transition-all ${
-                              form.estagio === opt.val
-                                ? "border-bewild-gold bg-bewild-gold/15 text-bewild-ink"
-                                : "border-white/15 bg-white/5 text-bewild-text-muted hover:border-white/30 hover:text-bewild-ink"
-                            }`}
-                          >
-                            {opt.label}
-                          </button>
-                        ))}
-                      </div>
+                        ]}
+                      />
                     </div>
 
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <div>
-                        <label className="mb-1.5 block text-sm font-medium text-bewild-text-body">
-                          Bairro / região
-                        </label>
+                    <div className="row-2">
+                      <div className="field">
+                        <label htmlFor="bairro">Bairro / região</label>
                         <input
-                          type="text"
-                          value={form.bairro}
+                          id="bairro" type="text" value={form.bairro}
                           onChange={(e) => update("bairro", e.target.value)}
                           placeholder="Ex: Pinheiros, SP"
-                          className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted outline-none focus:border-bewild-blue/60 focus:ring-1 focus:ring-bewild-blue/30 transition-colors"
                         />
                       </div>
-                      <div>
-                        <label className="mb-1.5 block text-sm font-medium text-bewild-text-body">
-                          Tipo do imóvel
-                        </label>
+                      <div className="field">
+                        <label htmlFor="tipo">Tipo do imóvel</label>
                         <select
-                          value={form.tipo}
+                          id="tipo" value={form.tipo}
                           onChange={(e) => update("tipo", e.target.value)}
-                          className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body outline-none focus:border-bewild-blue/60 focus:ring-1 focus:ring-bewild-blue/30 transition-colors"
                         >
                           <option value="">Selecione</option>
                           <option value="Studio">Studio</option>
@@ -273,69 +276,41 @@ export default function DiagnosticoPage() {
                       </div>
                     </div>
 
-                    <div>
-                      <label className="mb-1.5 block text-sm font-medium text-bewild-text-body">
-                        Objetivo *
-                      </label>
-                      <div className="grid gap-2 sm:grid-cols-2">
-                        {[
+                    <div className="field">
+                      <label>Objetivo <span className="req">*</span></label>
+                      <ChipGroup<Objetivo>
+                        name="Objetivo"
+                        value={form.objetivo}
+                        onChange={(v) => update("objetivo", v)}
+                        options={[
                           { val: "preparar", label: "Preparar meu imóvel" },
                           { val: "operar", label: "Colocar para operar" },
                           { val: "jornada-completa", label: "Jornada completa" },
                           { val: "entender-potencial", label: "Entender o potencial" },
-                        ].map((opt) => (
-                          <button
-                            key={opt.val}
-                            type="button"
-                            onClick={() => update("objetivo", opt.val as Objetivo)}
-                            className={`rounded-xl border px-3 py-2.5 text-sm font-medium text-left transition-all ${
-                              form.objetivo === opt.val
-                                ? "border-bewild-gold bg-bewild-gold/15 text-bewild-ink"
-                                : "border-white/15 bg-white/5 text-bewild-text-muted hover:border-white/30 hover:text-bewild-ink"
-                            }`}
-                          >
-                            {opt.label}
-                          </button>
-                        ))}
-                      </div>
+                        ]}
+                      />
                     </div>
 
-                    <div>
-                      <label className="mb-1.5 block text-sm font-medium text-bewild-text-body">
-                        Quando quer começar?
-                      </label>
-                      <div className="grid gap-2 sm:grid-cols-2">
-                        {[
+                    <div className="field">
+                      <label>Quando quer começar?</label>
+                      <ChipGroup<Timing>
+                        name="Quando quer começar?"
+                        value={form.timing}
+                        onChange={(v) => update("timing", v)}
+                        options={[
                           { val: "agora", label: "Agora" },
                           { val: "30-dias", label: "Em 30 dias" },
                           { val: "60-90-dias", label: "Em 60–90 dias" },
                           { val: "sem-prazo", label: "Sem prazo definido" },
-                        ].map((opt) => (
-                          <button
-                            key={opt.val}
-                            type="button"
-                            onClick={() => update("timing", opt.val as Timing)}
-                            className={`rounded-xl border px-3 py-2.5 text-sm font-medium transition-all ${
-                              form.timing === opt.val
-                                ? "border-bewild-gold bg-bewild-gold/15 text-bewild-ink"
-                                : "border-white/15 bg-white/5 text-bewild-text-muted hover:border-white/30 hover:text-bewild-ink"
-                            }`}
-                          >
-                            {opt.label}
-                          </button>
-                        ))}
-                      </div>
+                        ]}
+                      />
                     </div>
 
-                    <button
-                      type="submit"
-                      aria-disabled={!canSubmit}
-                      className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-bewild-blue px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
-                    >
-                      Receber diagnóstico Bwild <ArrowRight className="h-4 w-4" />
+                    <button type="submit" className="submit" disabled={!canSubmit}>
+                      Receber diagnóstico Be Wild <span className="arr">→</span>
                     </button>
 
-                    <p className="text-center text-xs text-bewild-text-muted">
+                    <p className="micro">
                       Você será direcionado ao WhatsApp com suas informações. Não enviamos spam.
                     </p>
                   </form>
@@ -345,10 +320,8 @@ export default function DiagnosticoPage() {
           </div>
         </section>
       </main>
-      <MobileBottomCTA />
-      <StickyDiagnosticPanel />
       <Footer />
-      <FloatingWhatsAppButton />
+      {/* FloatingCTA, MobileBottomCTA e StickyDiagnosticPanel ocultos por design nesta página */}
     </div>
   );
 }
