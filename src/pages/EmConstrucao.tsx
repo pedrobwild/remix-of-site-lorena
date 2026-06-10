@@ -149,7 +149,7 @@ export default function EmConstrucao() {
             </div>
             <div className="video-moldura">
               <video
-                src="/videos/arquiteta-medicao.mp4"
+                src={videoUrls.arquiteta}
                 muted
                 loop
                 autoPlay
