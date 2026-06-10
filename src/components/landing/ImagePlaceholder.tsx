@@ -109,6 +109,14 @@ export const BEWILD_ASSETS: Record<string, AssetEntry> = {
     instrucao: "Mesmo ângulo. Novo arranjo, nova iluminação. Foto profissional de lançamento.",
     ratio: "4/3",
   },
+  "consolacao-operando": {
+    id: "consolacao-operando",
+    src: null,
+    alt: "Studio Consolação 22m² — novo anúncio em operação",
+    priority: "P1",
+    instrucao: "Screenshot do novo anúncio com dados redigidos ou calendário de reservas.",
+    ratio: "4/3",
+  },
 
   /* ── BeWild Reformas ─────────────────────────────────── */
   "bewild-detalhe-1": {
