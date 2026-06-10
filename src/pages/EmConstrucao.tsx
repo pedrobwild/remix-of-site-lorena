@@ -180,9 +180,9 @@ export default function EmConstrucao() {
             A gente só <em>devolve ela</em> pra você.
           </h2>
           <p className="p">
-            Ninguém investe sonhando em virar gerente de obra. A Be Wild existe para que o seu
-            dinheiro trabalhe do jeito que você imaginou quando decidiu investir:{' '}
-            <strong>rendendo, sem te prender</strong>.
+            Ninguém investe sonhando em virar gerente de obra. A Be Wild cuida da preparação e
+            da operação do seu imóvel para que o seu dinheiro renda do jeito que você imaginou
+            quando decidiu investir.
           </p>
         </div>
       </section>
