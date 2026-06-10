@@ -163,7 +163,7 @@ export default function EmConstrucao() {
           <div className="video-bloco invertido">
             <div className="video-moldura">
               <video
-                src="/videos/time-obra.mp4"
+                src={videoUrls.time}
                 muted
                 loop
                 autoPlay
