@@ -313,8 +313,8 @@ export default function SimuladorPage() {
 
                   <button
                     onClick={handleCalcular}
-                    disabled={!podeCalcular}
-                    className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-bewild-blue px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                    aria-disabled={!podeCalcular}
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-bewild-blue px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
                   >
                     <TrendingUp className="h-4 w-4" />
                     Estimar potencial
