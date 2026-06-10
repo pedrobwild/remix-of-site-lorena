@@ -120,16 +120,18 @@ function StackCard({
   total: number;
 }) {
   const { Icon } = sec;
-  // Radius cresce a partir do 2º card para criar efeito de sobreposição
   const topRadius = index > 0 ? "1.5rem" : "0";
-  // z-index crescente: 10, 20, 30…
   const zIndex = (index + 1) * 10;
-  // top em pixels: 0, 8, 16… (leve offset para ver o card anterior)
   const topOffset = index * 8;
-  // Cor do título: sobrescreve a regra global `.bwild-light h2 { color: var(--bw-ink) }`
-  // que tem specificity maior que `text-white`. Sem isso, cards de fundo escuro
-  // renderiam o título em preto invisível.
-  const titleColor = sec.textClass === "text-white" ? "#ffffff" : "var(--bw-ink)";
+  const isDark = sec.textClass === "text-white";
+  const titleColor = isDark ? "#ffffff" : "var(--bw-ink)";
+  const isTese = sec.id === "ciclo";
+
+  // Cores semânticas: petróleo em cards claros, gold no card escuro (Tese)
+  const accent = isDark ? "var(--bw-gold)" : "#004C7F";
+  const accentBg = isDark ? "rgba(201,162,75,0.15)" : "rgba(0,76,127,0.10)";
+  const eyebrowColor = isDark ? "var(--bw-gold)" : "#004C7F";
+  const subtitleColor = isDark ? "rgba(255,255,255,0.65)" : "var(--bw-ink)";
 
   return (
     <div
@@ -142,13 +144,12 @@ function StackCard({
         boxShadow: index > 0 ? "0 -8px 40px rgba(0,0,0,0.18)" : "none",
       }}
     >
-      {/* Layout split: texto esq + imagem dir */}
       <div className="mx-auto w-full max-w-[76rem] px-5 sm:px-8 grid md:grid-cols-2 gap-12 items-center">
         {/* Texto */}
         <div className="py-16 md:py-0">
           <p
-            className="font-mono text-xs uppercase tracking-[0.14em] mb-3"
-            style={{ color: "var(--bw-gold-accessible)" }}
+            className="font-mono text-xs uppercase tracking-[0.28em] mb-3"
+            style={{ color: eyebrowColor }}
           >
             {sec.eyebrow}
           </p>
@@ -156,26 +157,45 @@ function StackCard({
           <div className="flex items-center gap-3 mb-4">
             <div
               className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: "rgba(214,166,75,0.15)" }}
+              style={{ background: accentBg }}
             >
-              <Icon className="h-5 w-5" style={{ color: "var(--bw-gold)" }} />
+              <Icon className="h-5 w-5" style={{ color: accent }} />
             </div>
             <h2
               className="text-3xl sm:text-4xl font-bold leading-tight"
-              style={{ letterSpacing: "-0.02em", color: titleColor }}
+              style={{
+                letterSpacing: "-0.02em",
+                color: titleColor,
+                fontFamily: "var(--bw-font-display)",
+                fontWeight: 600,
+              }}
             >
-              {sec.title}
+              {isTese ? (
+                <>
+                  O fim da reforma é{" "}
+                  <em
+                    style={{
+                      fontStyle: "italic",
+                      color: "var(--bw-gold)",
+                      fontWeight: 600,
+                    }}
+                  >
+                    o início da gestão.
+                  </em>
+                </>
+              ) : (
+                sec.title
+              )}
             </h2>
           </div>
 
-
           <p
-            className="text-lg mb-3 font-medium"
+            className="text-lg mb-3"
             style={{
               fontFamily: "var(--bw-font-display)",
               fontStyle: "italic",
               fontWeight: 400,
-              color: index === 0 ? "var(--bw-ink)" : "rgba(255,255,255,0.55)",
+              color: subtitleColor,
             }}
           >
             {sec.subtitle}
@@ -183,7 +203,7 @@ function StackCard({
 
           <p className={`leading-relaxed mb-7 ${sec.bodyClass}`}>{sec.body}</p>
 
-          <ul className="space-y-2 mb-9">
+          <ul className="space-y-2 mb-7">
             {sec.bullets.map((b) => (
               <li
                 key={b}
@@ -191,22 +211,65 @@ function StackCard({
               >
                 <CheckCircle
                   className="h-4 w-4 flex-shrink-0"
-                  style={{ color: "var(--bw-gold)" }}
+                  style={{ color: accent }}
                 />
                 {b}
               </li>
             ))}
           </ul>
 
-          <button
-            onClick={() => navigate(sec.href)}
-            className="inline-flex items-center gap-2 font-semibold text-sm transition-all duration-200 hover:gap-3"
-            style={{ color: "var(--bw-gold)" }}
-          >
-            {sec.cta}
-            <ArrowRight className="h-4 w-4" />
-          </button>
+          {/* Extras exclusivos da Tese */}
+          {isTese && (
+            <>
+              <p
+                className="font-mono text-[11px] uppercase tracking-[0.28em] mb-7"
+                style={{ color: "rgba(201,162,75,0.85)" }}
+              >
+                Sem ocupação garantida no papel: dado real, relatório mensal e repasse até o dia 10.
+              </p>
+
+              <figure
+                className="mb-8 pl-4 border-l-2"
+                style={{ borderColor: "var(--bw-gold)" }}
+              >
+                <blockquote
+                  className="text-lg leading-snug text-white/90"
+                  style={{
+                    fontFamily: "var(--bw-font-display)",
+                    fontStyle: "italic",
+                    fontWeight: 400,
+                  }}
+                >
+                  “Recebi a chave da construtora, passei para a Be Wild e em dois meses já tinha o imóvel gerando reservas.”
+                </blockquote>
+                <figcaption className="mt-3 font-mono text-[11px] uppercase tracking-[0.22em] text-white/55">
+                  C. M. · Studio 28m² · Pinheiros
+                </figcaption>
+              </figure>
+            </>
+          )}
+
+          {isTese ? (
+            <button
+              onClick={() => navigate(sec.href)}
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg text-sm font-semibold transition-all duration-200 hover:gap-3"
+              style={{ backgroundColor: "#004C7F", color: "#ffffff" }}
+            >
+              {sec.cta}
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate(sec.href)}
+              className="inline-flex items-center gap-2 font-semibold text-sm transition-all duration-200 hover:gap-3"
+              style={{ color: accent }}
+            >
+              {sec.cta}
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          )}
         </div>
+
 
         {/* Imagem */}
         <div
