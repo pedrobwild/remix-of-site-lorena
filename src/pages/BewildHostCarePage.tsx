@@ -155,7 +155,7 @@ export default function BewildHostCarePage() {
                   href={whatsappHref("Olá, tenho um imóvel pronto e quero entender como funciona o BeWild Host Care.")}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-6 py-3 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-parchment hover:border-bewild-cream-200"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3 text-sm font-semibold text-white transition-all hover:border-white/60 hover:bg-white/5"
                 >
                   Receber análise de gestão
                 </a>
