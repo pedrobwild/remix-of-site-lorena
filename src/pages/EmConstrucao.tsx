@@ -61,12 +61,12 @@ export default function EmConstrucao() {
             Investir não deveria virar uma <em>coleira</em>.
           </h2>
           <p className="p">
-            Comprar imóvel para ter renda virou sinônimo de obra, planilha, fornecedor sumido e
-            hóspede mandando mensagem às duas da manhã. O contrário de liberdade.
+            Comprar imóvel para ter renda costuma virar obra, planilha, fornecedor sumido e
+            hóspede mandando mensagem às duas da manhã. O contrário do que você imaginou.
           </p>
           <p className="p">
-            Ser <strong>Wild</strong> é ter o ativo sem ser domesticado por ele. É renda que corre
-            sozinha — enquanto você faz outra coisa da sua vida.
+            Ser <strong>Wild</strong> é ter o ativo sem ser dominado por ele. Sua renda corre
+            sozinha enquanto você cuida da sua vida.
           </p>
         </div>
       </section>
