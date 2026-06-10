@@ -97,8 +97,10 @@ body.bw-menu-open{overflow:hidden}
 .bw-home-page .nav.scrolled .logo-img--dark{opacity:0}
 .bw-home-page .nav.scrolled .logo-img--white{opacity:1}
 .bw-home-page .nav-links{display:flex;gap:1.7rem;align-items:center}
-.bw-home-page .nav-links a{font-size:.82rem;color:rgba(255,255,255,.78);transition:color .25s}
-.bw-home-page .nav-links a:hover{color:#fff}
+.bw-home-page .nav-links a{font-size:.82rem;color:rgba(10,37,64,.78);transition:color .25s}
+.bw-home-page .nav-links a:hover{color:var(--petroleo, #004C7F)}
+.bw-home-page .nav.scrolled .nav-links a{color:rgba(255,255,255,.78)}
+.bw-home-page .nav.scrolled .nav-links a:hover{color:#fff}
 .bw-home-page .nav .btn{padding:.62rem 1.25rem;font-size:.8rem}
 
 .bw-home-page .burger{
