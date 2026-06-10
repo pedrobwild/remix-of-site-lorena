@@ -255,7 +255,7 @@ export default function HomeBw() {
         <div className="hero-dim" id="bwHeroDim"></div>
 
         <div className="hero-inner" id="bwHeroInner">
-          <span className="eyebrow">São Paulo · Short Stay</span>
+          
           <h1>
             <span className="h-line"><span>Seu imóvel no short stay,</span></span>
             <span className="h-line"><span><em className="g">da reforma à gestão.</em></span></span>
