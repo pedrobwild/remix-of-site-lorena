@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import './EmConstrucao.css';
 
 const WA_HREF =
-  'https://wa.me/5511999999999?text=' +
+  'https://wa.me/5511911906183?text=' +
   encodeURIComponent('Oi, vim do site em construção da Be Wild. Quero saber mais.');
 const IG_HREF = 'https://instagram.com/bewild.oficial';
 const MAIL_HREF = 'mailto:contato@bewild.com.br';
