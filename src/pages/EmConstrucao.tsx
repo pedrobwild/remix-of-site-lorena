@@ -9,6 +9,22 @@ const IG_HREF = 'https://instagram.com/bewild.oficial';
 const MAIL_HREF = 'mailto:contato@bewild.com.br';
 
 export default function EmConstrucao() {
+  const [videoUrls, setVideoUrls] = useState<{ arquiteta?: string; time?: string }>({});
+
+  useEffect(() => {
+    (async () => {
+      const files = ['arquiteta-medicao.mp4', 'time-obra.mp4'];
+      const { data, error } = await supabase.storage
+        .from('videos')
+        .createSignedUrls(files, 60 * 60 * 24 * 7);
+      if (error || !data) return;
+      setVideoUrls({
+        arquiteta: data[0]?.signedUrl,
+        time: data[1]?.signedUrl,
+      });
+    })();
+  }, []);
+
   useEffect(() => {
     document.title = 'Be Wild — uma nova marca está nascendo';
 
