@@ -8,8 +8,13 @@ import { initAnalytics } from "./lib/analytics";
 import { installCrashRecovery, markHealthy } from "./lib/crashRecovery";
 import { renderRoute } from "./router";
 import { useBwRevealObserver } from "./lib/useBwMotion";
+import EmConstrucao from "./pages/EmConstrucao";
 import "./index.css"
 import "./bwild-design.css";
+
+// Modo construção: quando true, qualquer rota cai em /emconstrucao.
+// Vire para false quando o novo site estiver pronto.
+const MODO_CONSTRUCAO = true;
 
 installCrashRecovery();
 installLinkInterceptor();
@@ -31,6 +36,20 @@ function routeKeyOf(route: Route) {
 
 function Root() {
   const route = useHashRoute();
+
+  // Modo construção: redireciona qualquer rota para /emconstrucao e
+  // renderiza a página isolada, sem Header/Footer/widgets do site.
+  useEffect(() => {
+    if (!MODO_CONSTRUCAO) return;
+    if (window.location.pathname !== "/emconstrucao") {
+      window.history.replaceState({}, "", "/emconstrucao");
+      window.dispatchEvent(new Event("lovable:navigate"));
+    }
+  }, [route]);
+  if (MODO_CONSTRUCAO) {
+    return <EmConstrucao />;
+  }
+
   const isAdmin = route.name.startsWith("admin");
   useCustomCursor(!isAdmin);
 
