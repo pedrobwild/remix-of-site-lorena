@@ -16,7 +16,7 @@ import { navigate } from "../../lib/useHashRoute";
 const SECTIONS = [
   {
     id: "reformas",
-    eyebrow: "Fase 1",
+    eyebrow: "FASE 1",
     title: "Be Wild Reformas",
     subtitle: "Da planta crua ao studio pronto para hospedar.",
     body: "Projeto de arquitetura personalizado, obra turn-key, marcenaria, mobiliário e setup completo. Cada decisão pensada para foto, operação e manutenção.",
@@ -29,43 +29,42 @@ const SECTIONS = [
     cta: "Conhecer o processo",
     href: "/be-wild",
     Icon: Wrench,
-    // Fundo claro (cream) — texto escuro
-    bg: "var(--bw-cream)",
+    // Fase 1 — fundo areia (CLARO)
+    bg: "#F2EEE5",
     textClass: "text-bewild-ink",
     mutedClass: "text-bewild-text-muted",
     bodyClass: "text-bewild-text-body",
     eyebrowClass: "text-bewild-gold-accessible",
-    // Imagem / placeholder
     image: "/images/cases/studio-compacto-pronto-01.jpg",
     imageFallbackGradient: "linear-gradient(135deg,#e9e2d5 0%,#d6c5a8 100%)",
   },
   {
     id: "hostcare",
-    eyebrow: "Fase 2",
+    eyebrow: "FASE 2",
     title: "BeWild Host Care",
     subtitle: "Seu imóvel operando. Você não precisa fazer nada.",
-    body: "Gestão profissional completa: anúncio, precificação dinâmica, atendimento 24h, check-in/out, limpeza, manutenção e repasse mensal.",
+    body: "Gestão profissional completa: anúncio, precificação dinâmica, atendimento 24h, check-in e check-out, limpeza, manutenção e repasse mensal.",
     bullets: [
       "Airbnb + Booking com calendário sincronizado",
       "Precificação dinâmica diária",
-      "Operação 24h — total tranquilidade",
+      "Operação 24h, total tranquilidade",
       "Relatório e repasse até dia 10",
     ],
     cta: "Ver a operação",
     href: "/bewild-host-care",
     Icon: BarChart3,
-    // Fundo escuro (ink)
-    bg: "var(--bw-ink)",
-    textClass: "text-white",
-    mutedClass: "text-white/60",
-    bodyClass: "text-white/65",
-    eyebrowClass: "text-bewild-gold",
+    // Fase 2 — fundo WHITE com detalhes petróleo (CLARO)
+    bg: "#FFFFFF",
+    textClass: "text-bewild-ink",
+    mutedClass: "text-bewild-text-muted",
+    bodyClass: "text-bewild-text-body",
+    eyebrowClass: "text-bewild-blue",
     image: "/images/cases/bastidor-obra-01.jpg",
-    imageFallbackGradient: "linear-gradient(135deg,#0e1b30 0%,#102a4f 100%)",
+    imageFallbackGradient: "linear-gradient(135deg,#e8eef4 0%,#cdd9e6 100%)",
   },
   {
     id: "ciclo",
-    eyebrow: "A tese",
+    eyebrow: "A TESE",
     title: "O fim da reforma é o início da gestão.",
     subtitle: "Um ciclo completo. Um só parceiro.",
     body: "Da decisão de reformar até o repasse mensal: a Be Wild é o único parceiro que cobre os dois lados do investimento em short stay.",
@@ -78,17 +77,17 @@ const SECTIONS = [
     cta: "Diagnosticar meu imóvel",
     href: "/diagnostico",
     Icon: CheckCircle,
-    // Fundo gold escuro
-    // Fundo petróleo profundo (era marrom #1a1108, resíduo da paleta gold antiga)
-    bg: "#061a30",
+    // Tese — ÚNICA seção escura do miolo
+    bg: "#0A2540",
     textClass: "text-white",
     mutedClass: "text-white/60",
     bodyClass: "text-white/70",
     eyebrowClass: "text-bewild-gold",
     image: "/images/cases/antes-depois-studio-01-depois.jpg",
-    imageFallbackGradient: "linear-gradient(135deg,#061a30 0%,#0A2540 100%)",
+    imageFallbackGradient: "linear-gradient(135deg,#0A2540 0%,#004C7F 100%)",
   },
 ];
+
 
 /* ─── Componente ─────────────────────────────────────────── */
 export default function StackingSections() {
