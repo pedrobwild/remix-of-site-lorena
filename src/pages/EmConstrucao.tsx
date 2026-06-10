@@ -197,8 +197,8 @@ export default function EmConstrucao() {
             Enquanto isso, <em>vem com a gente</em>.
           </h2>
           <p className="p" style={{ margin: '0 auto' }}>
-            Estamos no meio de uma transformação — nome, marca, experiência. Até o novo site nascer,
-            o melhor lugar para falar com a gente é aqui:
+            Estamos mudando o nome, a marca e a experiência. Até o novo site ficar pronto,
+            fale com a gente por aqui:
           </p>
 
           <div className="cta-row">
