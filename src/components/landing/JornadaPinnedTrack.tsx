@@ -4,7 +4,7 @@
  * Mobile (≤900px) ou prefers-reduced-motion: lista vertical com linha gold por scroll.
  */
 import { useEffect, useRef, useState } from "react";
-import { gsap, ScrollTrigger } from "../../lib/gsap";
+import { gsap } from "../../lib/gsap";
 
 export interface EtapaItem {
   n: string;
