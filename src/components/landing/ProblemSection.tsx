@@ -4,7 +4,7 @@ import { PROBLEM_BULLETS } from "./content";
 
 export default function ProblemSection() {
   return (
-    <section className="bg-bewild-bone py-20 sm:py-28">
+    <section className="bg-bewild-cream py-20 sm:py-28">
       <Container>
         <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
           <div className="flex flex-col gap-6">

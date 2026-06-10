@@ -228,7 +228,7 @@ export default function FinalCTA() {
 
             <button
               type="submit"
-              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-bewild-gold px-6 py-3.5 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-gold-600 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bewild-gold-400"
+              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-bewild-blue px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bewild-blue-400"
             >
               Solicitar diagnóstico <ArrowRight className="h-4 w-4" />
             </button>

@@ -58,7 +58,7 @@ export function StickyDiagnosticPanel() {
         {/* CTA */}
         <button
           onClick={() => navigate("/diagnostico")}
-          className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-bewild-gold px-3 py-2.5 text-xs font-bold text-bewild-ink transition-all hover:bg-bewild-gold-600"
+          className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-bewild-blue px-3 py-2.5 text-xs font-bold text-white transition-all hover:bg-bewild-blue-600"
         >
           Diagnosticar <ArrowRight className="h-3.5 w-3.5" />
         </button>

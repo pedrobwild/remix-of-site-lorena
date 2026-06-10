@@ -46,7 +46,7 @@ export function BewildMark({ className = "h-9 w-9" }: { className?: string }) {
     <svg viewBox="0 0 48 48" className={className} aria-hidden="true" fill="none">
       <defs>
         <linearGradient id="bw-mark" x1="6" y1="6" x2="42" y2="42">
-          <stop offset="0" stopColor="#3B82C4" />
+          <stop offset="0" stopColor="#006AA8" />
           <stop offset="1" stopColor="#102A4F" />
         </linearGradient>
       </defs>
@@ -166,13 +166,15 @@ export function CTAButton({
   ariaLabel,
 }: BtnProps) {
   const base =
-    "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold tracking-tight transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bewild-gold-400";
+    "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold tracking-tight transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bewild-blue-400";
   const styles: Record<string, string> = {
     primary:
-      "bg-bewild-gold text-bewild-ink shadow-bewild-gold hover:bg-bewild-gold-600 hover:-translate-y-0.5",
+      // era: bg-bewild-gold text-bewild-ink shadow-bewild-gold
+      "bg-bewild-blue text-white shadow-[0_8px_24px_rgba(0,76,127,0.22)] hover:bg-bewild-blue-600 hover:-translate-y-0.5",
     secondary:
-      "border border-bewild-ink/15 bg-white text-bewild-ink hover:border-bewild-blue/40 hover:text-bewild-blue",
-    ghost: "border border-white/25 text-white hover:border-white/60 hover:bg-white/5",
+      "border border-bewild-ink/15 bg-white text-bewild-ink hover:border-bewild-blue/50 hover:text-bewild-blue",
+    ghost:
+      "border border-white/25 text-white hover:border-white/60 hover:bg-white/5",
   };
   return (
     <a

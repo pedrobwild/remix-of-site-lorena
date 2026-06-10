@@ -226,7 +226,7 @@ export default function ConteudoPostPage({ slug }: Props) {
               <div className="flex flex-col gap-3 flex-shrink-0">
                 <button
                   onClick={() => navigate("/diagnostico")}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm transition-all hover:shadow-bewild-gold hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm transition-all hover:shadow-[0_8px_24px_rgba(0,76,127,0.18)] hover:-translate-y-0.5"
                   style={{ background: "var(--bw-ink)", color: "#fff" }}
                 >
                   Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />

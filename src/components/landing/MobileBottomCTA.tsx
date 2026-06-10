@@ -33,7 +33,7 @@ export function MobileBottomCTA() {
       <div className="border-t border-white/10 bg-bewild-ink/95 backdrop-blur-md px-4 py-3">
         <button
           onClick={() => navigate("/diagnostico")}
-          className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-bewild-gold px-5 py-3.5 text-sm font-bold text-bewild-ink transition-all active:scale-[0.98]"
+          className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-bewild-blue px-5 py-3.5 text-sm font-bold text-white transition-all active:scale-[0.98]"
         >
           Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
         </button>

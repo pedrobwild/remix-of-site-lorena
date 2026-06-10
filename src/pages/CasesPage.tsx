@@ -346,7 +346,7 @@ export default function CasesPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 onClick={() => navigate("/diagnostico")}
-                className="inline-flex items-center gap-2 rounded-xl bg-bewild-gold px-7 py-3.5 text-sm font-bold text-bewild-ink transition-all hover:bg-bewild-gold-600 hover:-translate-y-0.5 shadow-bewild-gold"
+                className="inline-flex items-center gap-2 rounded-xl bg-bewild-blue px-7 py-3.5 text-sm font-bold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5 shadow-[0_8px_24px_rgba(0,76,127,0.18)]"
               >
                 Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
               </button>

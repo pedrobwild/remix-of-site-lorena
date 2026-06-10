@@ -335,7 +335,7 @@ export default function FeatureTabSwitcher({
 
             <button
               onClick={() => navigate(ctaHref)}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-sm transition-all duration-200 hover:shadow-bewild-gold hover:scale-[1.02]"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-sm transition-all duration-200 hover:shadow-[0_8px_24px_rgba(0,76,127,0.18)] hover:scale-[1.02]"
               style={{
                 background: "var(--bw-ink)",
                 color: "#fff",

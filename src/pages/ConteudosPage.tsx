@@ -102,7 +102,7 @@ export default function ConteudosPage() {
                 href={whatsappHref("Olá, quero receber os materiais da Be Wild sobre short stay.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-bewild-gold px-6 py-3 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-gold-600 hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
               >
                 Receber materiais <ArrowRight className="h-4 w-4" />
               </a>
@@ -221,7 +221,7 @@ export default function ConteudosPage() {
                 href={whatsappHref("Olá, quero receber análises e conteúdos da Be Wild sobre short stay em SP.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-shrink-0 inline-flex items-center gap-2 rounded-full bg-bewild-gold px-6 py-3 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-gold-600 hover:-translate-y-0.5"
+                className="flex-shrink-0 inline-flex items-center gap-2 rounded-full bg-bewild-blue px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
               >
                 Entrar na lista <ArrowRight className="h-4 w-4" />
               </a>
@@ -247,7 +247,7 @@ export default function ConteudosPage() {
               </p>
               <button
                 onClick={() => navigate("/diagnostico")}
-                className="inline-flex items-center gap-2 rounded-full bg-bewild-gold px-7 py-3.5 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-gold-600 hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
               >
                 Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
               </button>
