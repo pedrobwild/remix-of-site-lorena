@@ -194,7 +194,9 @@ export default function HomeBw() {
       {/* ===== NAV ===== */}
       <nav className={`nav${scrolled ? " scrolled" : ""}`}>
         <div className="nav-inner">
-          <a className="logo" href="/" onClick={(e) => go("/", e)}>Be <em>Wild</em></a>
+          <a className="logo" href="/" onClick={(e) => go("/", e)} aria-label="BeWild — início">
+            <img src="/brand/bewild-logo.png" alt="BeWild" className="logo-img" />
+          </a>
           <div className="nav-links">
             {NAV_LINKS.map((l) => (
               <a key={l.href} href={l.href} onClick={(e) => go(l.href, e)}>{l.label}</a>
@@ -564,7 +566,9 @@ export default function HomeBw() {
         <div className="wrap">
           <div className="foot-grid">
             <div>
-              <a className="logo" href="/" onClick={(e) => go("/", e)}>Be <em>Wild</em></a>
+              <a className="logo" href="/" onClick={(e) => go("/", e)} aria-label="BeWild — início">
+                <img src="/brand/bewild-logo-branca.png" alt="BeWild" className="logo-img logo-img--light" />
+              </a>
               <p style={{ marginTop: "1rem" }}>
                 Preparação e gestão de imóveis para short stay em São Paulo. BeWild Reformas prepara o ativo. BeWild Host Care opera o ativo. A BeWild conecta o ciclo inteiro.
               </p>
