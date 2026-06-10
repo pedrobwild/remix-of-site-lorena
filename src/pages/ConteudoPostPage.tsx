@@ -92,7 +92,7 @@ export default function ConteudoPostPage({ slug }: Props) {
   if (!artigo) {
     return (
       <div className="bwild-light min-h-screen bg-bewild-cream font-body antialiased">
-        <Header />
+        <Header forceSolid />
         <main className="pt-36 pb-24 px-5 text-center">
           <p className="text-bewild-text-muted mb-4">Artigo não encontrado.</p>
           <button
