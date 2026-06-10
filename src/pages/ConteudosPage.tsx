@@ -11,7 +11,7 @@ import { MobileBottomCTA } from "../components/landing/MobileBottomCTA";
 import { StickyDiagnosticPanel } from "../components/landing/StickyDiagnosticPanel";
 import { navigate } from "../lib/useHashRoute";
 import { whatsappHref } from "../components/landing/content";
-import { listConteudos, type Conteudo } from "../lib/conteudoData";
+import { listConteudos } from "../lib/conteudoData";
 import { ImagePlaceholder } from "../components/landing/ImagePlaceholder";
 import "../styles/conteudos.css";
 
