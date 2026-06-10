@@ -115,6 +115,61 @@ export default function EmConstrucao() {
         </div>
       </section>
 
+      {/* VÍDEOS — prova visual (dark) */}
+      <section className="section sec-dark">
+        <div className="inner reveal">
+          <div className="video-bloco">
+            <div className="video-texto">
+              <div className="vt-tag">antes de qualquer parede</div>
+              <h2 className="vt-h">
+                Quem projeta o seu studio <em>mede ele pessoalmente</em>.
+              </h2>
+              <p className="vt-p">
+                A arquiteta vai até o imóvel e decide, ali, o que muda na diária:
+                circulação, ponto de luz, onde a cama rende foto. Cada milímetro pensado
+                para o studio operar bem, não só para ficar bonito.
+              </p>
+            </div>
+            <div className="video-moldura">
+              <video
+                src="/videos/arquiteta-medicao.mp4"
+                muted
+                loop
+                autoPlay
+                playsInline
+                preload="metadata"
+                aria-label="Arquiteta da Be Wild fazendo a medição do imóvel"
+              />
+            </div>
+          </div>
+
+          <div className="video-bloco invertido">
+            <div className="video-moldura">
+              <video
+                src="/videos/time-obra.mp4"
+                muted
+                loop
+                autoPlay
+                playsInline
+                preload="metadata"
+                aria-label="Time de obra da Be Wild indo para a reforma"
+              />
+            </div>
+            <div className="video-texto">
+              <div className="vt-tag">e quem executa tem rosto</div>
+              <h2 className="vt-h">
+                A obra que você não toca <em>tem time próprio</em>.
+              </h2>
+              <p className="vt-p">
+                Quem reforma o seu studio trabalha na Be Wild, não é um terceiro que
+                aparece e some. Você acompanha o andamento à distância e recebe o imóvel
+                pronto para operar.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* PROPÓSITO — light */}
       <section className="section sec-light proposito">
         <div className="inner reveal">
