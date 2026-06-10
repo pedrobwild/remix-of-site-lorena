@@ -22,7 +22,7 @@
    ========================================================= */
 
 :root {
-  /* Motion — Be Wild */
+  /* Motion — BeWild */
   --bw-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --bw-dur-fast: 0.22s;
   --bw-dur-base: 0.48s;
@@ -63,7 +63,7 @@
 }
 
 
-/* ─── Card hover — Be Wild Design System ─── */
+/* ─── Card hover — BeWild Design System ─── */
 .bw-card-hover {
   transition: transform 240ms cubic-bezier(0.22,1,0.36,1),
               border-color 240ms ease,

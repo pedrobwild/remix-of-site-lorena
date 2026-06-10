@@ -118,17 +118,17 @@ export const ETAPAS_JORNADA: EtapaDetalhe[] = [
     n: "01",
     title: "Diagnóstico",
     icon: Search,
-    descricao: "Entendemos imóvel, bairro, estágio, potencial e objetivo. A conversa é consultiva: não tentamos vender antes de entender se a Be Wild faz sentido para o seu caso.",
+    descricao: "Entendemos imóvel, bairro, estágio, potencial e objetivo. A conversa é consultiva: não tentamos vender antes de entender se a BeWild faz sentido para o seu caso.",
     detalhe: [
       "Avaliação de metragem, localização e padrão do imóvel",
       "Identificação do estágio atual: cru, em reforma, pronto ou já alugando",
       "Objetivo do proprietário: preparar, operar ou jornada completa",
-      "Indicação do caminho: Be Wild Reformas, BeWild Host Care ou os dois",
+      "Indicação do caminho: BeWild Reformas, BeWild Host Care ou os dois",
     ],
   },
   {
     n: "02",
-    title: "Be Wild Reformas",
+    title: "BeWild Reformas",
     fase: "1",
     icon: PencilRuler,
     descricao: "Projeto, obra, marcenaria, mobiliário, compras, decoração e setup em um fluxo único. Cada decisão é pensada para o uso real de temporada: foto, diária, limpeza e manutenção.",
@@ -184,7 +184,7 @@ export const ETAPAS_JORNADA: EtapaDetalhe[] = [
 
 function JornadaCompacta() {
   const t = useTone();
-  const passos = ["Diagnóstico", "Be Wild Reformas", "Lançamento", "BeWild Host Care", "Relatórios"];
+  const passos = ["Diagnóstico", "BeWild Reformas", "Lançamento", "BeWild Host Care", "Relatórios"];
   return (
     <div className="flex items-center gap-1.5 flex-wrap">
       {passos.map((p, i) => (
@@ -373,7 +373,7 @@ function JornadaMini() {
     <div className="grid grid-cols-3 gap-3">
       {[
         { label: "Diagnóstico", sub: "Avaliação gratuita", icon: Search },
-        { label: "Be Wild Reformas", sub: "Preparação do ativo", icon: PencilRuler },
+        { label: "BeWild Reformas", sub: "Preparação do ativo", icon: PencilRuler },
         { label: "BeWild Host Care", sub: "Operação contínua", icon: Settings2 },
       ].map((item, i, arr) => (
         <div key={item.label} className="relative">

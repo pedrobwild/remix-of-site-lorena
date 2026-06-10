@@ -1,6 +1,6 @@
 /**
  * ConteudosPage — /conteudos
- * Hub de conteúdos Be Wild.
+ * Hub de conteúdos BeWild.
  * Cards que navegam para páginas individuais (/conteudos/[slug]).
  * SEO: JSON-LD ItemList para Google Discover + GEO 2026.
  */
@@ -60,7 +60,7 @@ export default function ConteudosPage() {
   const artigos = listConteudos();
 
   useSeo({
-    title: "Conteúdos — Short stay, preparação de ativo e gestão | Be Wild",
+    title: "Conteúdos — Short stay, preparação de ativo e gestão | BeWild",
     description:
       "Guias, análises e comparativos sobre short stay, reforma para locação por temporada e gestão profissional de imóveis em São Paulo. Conteúdo sem promessa de renda garantida.",
     canonicalPath: "/conteudos",
@@ -68,7 +68,7 @@ export default function ConteudosPage() {
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "ItemList",
-      name: "Conteúdos Be Wild — Short stay e gestão de imóveis",
+      name: "Conteúdos BeWild — Short stay e gestão de imóveis",
       url: "https://bwild.com.br/conteudos",
       numberOfItems: artigos.length,
       itemListElement: artigos.map((a, i) => ({
@@ -90,7 +90,7 @@ export default function ConteudosPage() {
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-3xl">
               <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
-                Conteúdos Be Wild
+                Conteúdos BeWild
               </p>
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl" style={{ letterSpacing: "-0.025em" }}>
                 Guias e análises sobre short stay — sem promessa de renda garantida.
@@ -99,7 +99,7 @@ export default function ConteudosPage() {
                 Conteúdo baseado em dados de mercado para quem quer entender o ciclo completo de reforma, preparação e gestão de imóveis em São Paulo.
               </p>
               <a
-                href={whatsappHref("Olá, quero receber os materiais da Be Wild sobre short stay.")}
+                href={whatsappHref("Olá, quero receber os materiais da BeWild sobre short stay.")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full bg-bewild-blue px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
@@ -218,7 +218,7 @@ export default function ConteudosPage() {
                 </p>
               </div>
               <a
-                href={whatsappHref("Olá, quero receber análises e conteúdos da Be Wild sobre short stay em SP.")}
+                href={whatsappHref("Olá, quero receber análises e conteúdos da BeWild sobre short stay em SP.")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-shrink-0 inline-flex items-center gap-2 rounded-full bg-bewild-blue px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
@@ -243,7 +243,7 @@ export default function ConteudosPage() {
                 Prefere uma conversa direta?
               </h2>
               <p className="text-white/55 mb-10 max-w-md mx-auto leading-relaxed">
-                O diagnóstico Be Wild avalia o potencial do seu imóvel específico — não uma média de bairro.
+                O diagnóstico BeWild avalia o potencial do seu imóvel específico — não uma média de bairro.
               </p>
               <button
                 onClick={() => navigate("/diagnostico")}

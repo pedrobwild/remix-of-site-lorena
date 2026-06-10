@@ -118,8 +118,8 @@ interface EstadoConfig {
 const ESTADOS_IMOVEL: Record<string, EstadoConfig> = {
   pronto: { label: "Pronto e mobiliado para short stay", fator: 1.0, nota: "Pode iniciar operação rapidamente." },
   bom_estado: { label: "Bom estado, precisaria de ajustes menores", fator: 0.85, nota: "Pequenos ajustes antes de anunciar." },
-  precisa_reforma: { label: "Precisa de reforma ou readequação", fator: 0.7, nota: "Be Wild Reformas recomendado antes de operar." },
-  cru: { label: "Imóvel cru / vazio / recém-entregue", fator: 0.55, nota: "Jornada completa: Be Wild Reformas + BeWild Host Care." },
+  precisa_reforma: { label: "Precisa de reforma ou readequação", fator: 0.7, nota: "BeWild Reformas recomendado antes de operar." },
+  cru: { label: "Imóvel cru / vazio / recém-entregue", fator: 0.55, nota: "Jornada completa: BeWild Reformas + BeWild Host Care." },
 };
 
 // ─── Calculadora ─────────────────────────────────────────────────────────────
@@ -160,7 +160,7 @@ function formatBRL(v: number) {
 
 export default function SimuladorPage() {
   useSeo({
-    title: "Simulador de potencial short stay SP — Be Wild",
+    title: "Simulador de potencial short stay SP — BeWild",
     description:
       "Estime o potencial de renda do seu imóvel para short stay em São Paulo. Estimativas de referência baseadas em dados de mercado — sem promessa de rentabilidade.",
     canonicalPath: "/simulador",
@@ -411,7 +411,7 @@ export default function SimuladorPage() {
                           ? "O BeWild Host Care pode assumir a gestão e colocar o imóvel no mercado. O diagnóstico define o cronograma."
                           : estado === "bom_estado"
                           ? "Um diagnóstico define quais ajustes fazem sentido antes do lançamento no Airbnb/Booking."
-                          : "O Be Wild Reformas prepara o ativo para competir no short stay. A seguir, o BeWild Host Care opera."}
+                          : "O BeWild Reformas prepara o ativo para competir no short stay. A seguir, o BeWild Host Care opera."}
                       </p>
                       <div className="flex flex-wrap gap-3">
                         <button
@@ -421,7 +421,7 @@ export default function SimuladorPage() {
                           Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
                         </button>
                         <a
-                          href={whatsappHref("Olá, usei o simulador da Be Wild e quero entender melhor o potencial do meu imóvel.")}
+                          href={whatsappHref("Olá, usei o simulador da BeWild e quero entender melhor o potencial do meu imóvel.")}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-5 py-2.5 text-sm font-semibold text-bewild-ink transition-all hover:border-bewild-ink/40"
@@ -484,7 +484,7 @@ export default function SimuladorPage() {
               A estimativa é só o começo.
             </h2>
             <p className="mb-8 text-bewild-text-muted max-w-xl mx-auto leading-relaxed">
-              O diagnóstico da Be Wild avalia bairro, imóvel, estágio e objetivo — e indica
+              O diagnóstico da BeWild avalia bairro, imóvel, estágio e objetivo — e indica
               qual caminho faz sentido para transformar potencial em resultado real.
             </p>
             <button

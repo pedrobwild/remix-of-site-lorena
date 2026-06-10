@@ -1,6 +1,6 @@
 /**
  * ConteudoPostPage — /conteudos/[slug]
- * Página individual de artigo do hub de conteúdo Be Wild.
+ * Página individual de artigo do hub de conteúdo BeWild.
  *
  * SEO 2026:
  * - JSON-LD Article (Google/GEO)
@@ -52,7 +52,7 @@ export default function ConteudoPostPage({ slug }: Props) {
 
   /* ── SEO ──────────────────────────────────────────────── */
   useSeo({
-    title: artigo?.seo.title ?? "Conteúdos Be Wild",
+    title: artigo?.seo.title ?? "Conteúdos BeWild",
     description: artigo?.seo.description ?? "Guias e análises sobre short stay em São Paulo.",
     canonicalPath: artigo ? `/conteudos/${artigo.slug}` : "/conteudos",
     ogType: "article",
@@ -66,12 +66,12 @@ export default function ConteudoPostPage({ slug }: Props) {
           datePublished: artigo.dataIso,
           author: {
             "@type": "Organization",
-            name: "Be Wild",
+            name: "BeWild",
             url: "https://bwild.com.br",
           },
           publisher: {
             "@type": "Organization",
-            name: "Be Wild",
+            name: "BeWild",
             url: "https://bwild.com.br",
             logo: {
               "@type": "ImageObject",
@@ -188,7 +188,7 @@ export default function ConteudoPostPage({ slug }: Props) {
               </span>
               <span className="flex items-center gap-1.5">
                 <BookOpen className="h-3.5 w-3.5" />
-                Be Wild
+                BeWild
               </span>
             </div>
           </div>
@@ -260,7 +260,7 @@ export default function ConteudoPostPage({ slug }: Props) {
                 Continue lendo
               </p>
               <h2 className="text-2xl font-bold text-bewild-ink mb-8" style={{ letterSpacing: "-0.02em" }}>
-                Mais conteúdos Be Wild
+                Mais conteúdos BeWild
               </h2>
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">

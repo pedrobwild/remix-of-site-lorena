@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 const WA_HREF =
   'https://wa.me/5511911906183?text=' +
-  encodeURIComponent('Oi, vim do site em construção da Be Wild. Quero saber mais.');
+  encodeURIComponent('Oi, vim do site em construção da BeWild. Quero saber mais.');
 const IG_HREF = 'https://instagram.com/bewild.oficial';
 const MAIL_HREF = 'mailto:contato@bewild.com.br';
 
@@ -26,7 +26,7 @@ export default function EmConstrucao() {
   }, []);
 
   useEffect(() => {
-    document.title = 'Be Wild — uma nova marca está nascendo';
+    document.title = 'BeWild — uma nova marca está nascendo';
 
     const io = new IntersectionObserver(
       (entries) => {
@@ -57,7 +57,7 @@ export default function EmConstrucao() {
           <span className="pre">Você nunca leu</span>
           <span className="build">Build.</span>
           <span className="bewild">
-            Você leu <em>Be Wild</em>.
+            Você leu <em>BeWild</em>.
           </span>
         </h1>
         <p className="lede">
@@ -155,7 +155,7 @@ export default function EmConstrucao() {
                 autoPlay
                 playsInline
                 preload="metadata"
-                aria-label="Arquiteta da Be Wild fazendo a medição do imóvel"
+                aria-label="Arquiteta da BeWild fazendo a medição do imóvel"
               />
             </div>
           </div>
@@ -169,7 +169,7 @@ export default function EmConstrucao() {
                 autoPlay
                 playsInline
                 preload="metadata"
-                aria-label="Time de obra da Be Wild indo para a reforma"
+                aria-label="Time de obra da BeWild indo para a reforma"
               />
             </div>
             <div className="video-texto">
@@ -178,7 +178,7 @@ export default function EmConstrucao() {
                 A obra que você não toca <em>tem time próprio</em>.
               </h2>
               <p className="vt-p">
-                Quem reforma o seu studio trabalha na Be Wild, não é um terceiro que
+                Quem reforma o seu studio trabalha na BeWild, não é um terceiro que
                 aparece e some. Você acompanha o andamento à distância e recebe o imóvel
                 pronto para operar.
               </p>
@@ -197,7 +197,7 @@ export default function EmConstrucao() {
             A gente só <em>devolve ela</em> pra você.
           </h2>
           <p className="p">
-            Ninguém investe sonhando em virar gerente de obra. A Be Wild cuida da preparação e
+            Ninguém investe sonhando em virar gerente de obra. A BeWild cuida da preparação e
             da operação do seu imóvel para que o seu dinheiro renda do jeito que você imaginou
             quando decidiu investir.
           </p>
@@ -285,7 +285,7 @@ export default function EmConstrucao() {
           </div>
 
           <div className="foot-legal">
-            <span>© 2026 Be Wild · São Paulo, Brasil</span>
+            <span>© 2026 BeWild · São Paulo, Brasil</span>
             <span>Preparação e gestão de imóveis para short stay</span>
           </div>
         </div>

@@ -86,7 +86,7 @@ function Root() {
   const isAdmin = route.name.startsWith("admin");
   useCustomCursor(!isAdmin);
 
-  // Cursor Be Wild gold em light mode
+  // Cursor BeWild gold em light mode
   useEffect(() => {
     document.body.classList.add("bwild-light-cursor");
     return () => document.body.classList.remove("bwild-light-cursor");

@@ -49,7 +49,7 @@ const CASES: Case[] = [
     id: "pinheiros-28",
     bairro: "Pinheiros, São Paulo",
     tipo: "Studio 28m²",
-    tags: ["Be Wild Reformas", "BeWild Host Care", "Jornada completa"],
+    tags: ["BeWild Reformas", "BeWild Host Care", "Jornada completa"],
     photoIds: { antes: "pinheiros-antes", pronto: "pinheiros-pronto", operando: "pinheiros-operando" },
     antes: {
       titulo: "Imóvel entregue pela construtora",
@@ -85,7 +85,7 @@ const CASES: Case[] = [
     id: "vila-madalena-42",
     bairro: "Vila Madalena, São Paulo",
     tipo: "Apartamento 1 dorm 42m²",
-    tags: ["Be Wild Reformas", "BeWild Host Care", "Imóvel antigo"],
+    tags: ["BeWild Reformas", "BeWild Host Care", "Imóvel antigo"],
     photoIds: { antes: "vilamadalena-antes", pronto: "vilamadalena-pronto", operando: "vilamadalena-operando" },
     antes: {
       titulo: "Imóvel reformado para moradia há 8 anos",
@@ -269,9 +269,9 @@ function TriptychCard({ c }: { c: Case }) {
 /* ─── Página ─────────────────────────────────────────────────────────────────── */
 export default function CasesPage() {
   useSeo({
-    title: "Cases — Antes, Pronto e Operando | Be Wild",
+    title: "Cases — Antes, Pronto e Operando | BeWild",
     description:
-      "Cases da Be Wild no formato Antes → Pronto → Operando. Veja como studios e apartamentos foram transformados em operações de short stay em São Paulo.",
+      "Cases da BeWild no formato Antes → Pronto → Operando. Veja como studios e apartamentos foram transformados em operações de short stay em São Paulo.",
     canonicalPath: "/cases",
     ogType: "website",
   });
@@ -292,7 +292,7 @@ export default function CasesPage() {
                 Antes. Pronto. Operando.
               </h1>
               <p className="mb-6 text-lg leading-relaxed text-white/60">
-                Três fases de cada imóvel — estado inicial, decisões da Be Wild e a operação em andamento.
+                Três fases de cada imóvel — estado inicial, decisões da BeWild e a operação em andamento.
                 Sem filtro de marketing. Com dados reais quando disponíveis.
               </p>
               <div className="flex items-center gap-3 flex-wrap">

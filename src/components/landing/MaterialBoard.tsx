@@ -80,7 +80,7 @@ export function MaterialBoard() {
           Decisões de projeto com justificativa comercial.
         </h3>
         <p className="mt-3 text-sm text-white/50 max-w-xl leading-relaxed">
-          Cada decisão de material tem um motivo operacional. A Be Wild não escolhe o que fica bonito — escolhe o que performa.
+          Cada decisão de material tem um motivo operacional. A BeWild não escolhe o que fica bonito — escolhe o que performa.
         </p>
       </div>
 

@@ -1,5 +1,5 @@
 /**
- * ImagePlaceholder — sistema de imagens da Be Wild.
+ * ImagePlaceholder — sistema de imagens da BeWild.
  * Sprint 4 — Slots de prova visual.
  *
  * Funciona em dois modos:
@@ -34,7 +34,7 @@ export const BEWILD_ASSETS: Record<string, AssetEntry> = {
   "hero-studio": {
     id: "hero-studio",
     src: null,
-    alt: "Studio Be Wild pronto para hospedar — Pinheiros, São Paulo",
+    alt: "Studio BeWild pronto para hospedar — Pinheiros, São Paulo",
     priority: "P0",
     instrucao: "Studio entregue. Luz natural, ângulo amplo, cama + mesa + cozinha visíveis. Sem pessoa posada. 16:9 desktop / 4:5 mobile.",
     ratio: "16/9",
@@ -44,7 +44,7 @@ export const BEWILD_ASSETS: Record<string, AssetEntry> = {
   "pinheiros-antes": {
     id: "pinheiros-antes",
     src: null,
-    alt: "Studio Pinheiros 28m² — estado inicial antes da Be Wild",
+    alt: "Studio Pinheiros 28m² — estado inicial antes da BeWild",
     priority: "P0",
     instrucao: "Mesmo ângulo que a foto 'pronto'. Estado inicial: sem mobília, entregue pela construtora.",
     ratio: "4/3",
@@ -52,7 +52,7 @@ export const BEWILD_ASSETS: Record<string, AssetEntry> = {
   "pinheiros-pronto": {
     id: "pinheiros-pronto",
     src: null,
-    alt: "Studio Pinheiros 28m² — pronto para hospedar após Be Wild Reformas",
+    alt: "Studio Pinheiros 28m² — pronto para hospedar após BeWild Reformas",
     priority: "P0",
     instrucao: "Ângulo idêntico ao 'antes'. Studio entregue, cama + cozinha + iluminação visíveis. Luz natural.",
     ratio: "4/3",
@@ -70,7 +70,7 @@ export const BEWILD_ASSETS: Record<string, AssetEntry> = {
   "vilamadalena-antes": {
     id: "vilamadalena-antes",
     src: null,
-    alt: "Apartamento Vila Madalena 42m² — antes da readequação Be Wild",
+    alt: "Apartamento Vila Madalena 42m² — antes da readequação BeWild",
     priority: "P0",
     instrucao: "Mesmo ângulo da foto pronto. Estado antes: mobília antiga, sem identidade de short stay.",
     ratio: "4/3",
@@ -110,11 +110,11 @@ export const BEWILD_ASSETS: Record<string, AssetEntry> = {
     ratio: "4/3",
   },
 
-  /* ── Be Wild Reformas ─────────────────────────────────── */
+  /* ── BeWild Reformas ─────────────────────────────────── */
   "bewild-detalhe-1": {
     id: "bewild-detalhe-1",
     src: null,
-    alt: "Detalhe de acabamento Be Wild Reformas — marcenaria e iluminação",
+    alt: "Detalhe de acabamento BeWild Reformas — marcenaria e iluminação",
     priority: "P0",
     instrucao: "Close de marcenaria, iluminação embutida ou bancada. Temperatura quente, sombras preservadas. Macro.",
     ratio: "1/1",
@@ -122,7 +122,7 @@ export const BEWILD_ASSETS: Record<string, AssetEntry> = {
   "bewild-detalhe-2": {
     id: "bewild-detalhe-2",
     src: null,
-    alt: "Detalhe de acabamento Be Wild Reformas — enxoval e cama",
+    alt: "Detalhe de acabamento BeWild Reformas — enxoval e cama",
     priority: "P1",
     instrucao: "Cama arrumada com enxoval 200 fios. Close de textura. Temperatura quente.",
     ratio: "1/1",
@@ -130,7 +130,7 @@ export const BEWILD_ASSETS: Record<string, AssetEntry> = {
   "bewild-obra": {
     id: "bewild-obra",
     src: null,
-    alt: "Obra Be Wild — equipe em execução com método e organização",
+    alt: "Obra BeWild — equipe em execução com método e organização",
     priority: "P1",
     instrucao: "Equipe em vistoria, medição ou montagem. Obra organizada, com proteção. Não mostrar bagunça.",
     ratio: "16/9",

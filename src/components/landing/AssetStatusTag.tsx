@@ -1,5 +1,5 @@
 /**
- * AssetStatusTag — pílulas de status proprietárias da Be Wild.
+ * AssetStatusTag — pílulas de status proprietárias da BeWild.
  * Sprint 1 Design System — linguagem visual de operação e progresso.
  *
  * Uso:
