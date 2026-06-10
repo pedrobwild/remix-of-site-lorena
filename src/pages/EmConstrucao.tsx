@@ -44,8 +44,8 @@ export default function EmConstrucao() {
           </span>
         </h1>
         <p className="lede">
-          E talvez seu instinto estivesse certo. Estamos construindo uma marca nova para um{' '}
-          <em>jeito novo de investir em imóvel</em> — livre.
+          Talvez seu instinto estivesse certo. Estamos construindo uma marca nova para um{' '}
+          <em>jeito de investir em imóvel que devolve o seu tempo</em>.
         </p>
         <div className="scroll-hint">
           <span>role devagar</span>
