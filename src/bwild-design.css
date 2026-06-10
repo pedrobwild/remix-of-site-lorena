@@ -82,7 +82,7 @@
    (apenas a .bwild-light), de modo que qualquer utilitário Tailwind
    de cor (text-white, text-bewild-ink, etc.) vença. Sem isso, h1/h2
    em hero/cards com fundo escuro ficam invisíveis (ink sobre ink). */
-.bwild-light :where(h1, h2) {
+:where(.bwild-light h1, .bwild-light h2) {
   font-family: var(--bw-font-display);
   font-weight: 600;
   color: var(--bw-ink);
