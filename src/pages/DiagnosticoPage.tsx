@@ -119,7 +119,7 @@ export default function DiagnosticoPage() {
             <div className="grid gap-16 lg:grid-cols-2 lg:gap-20 lg:items-start">
               {/* Texto lateral */}
               <div className="max-w-lg">
-                <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
+                <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold-400">
                   Diagnóstico Bwild do Ativo
                 </p>
                 <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl">
