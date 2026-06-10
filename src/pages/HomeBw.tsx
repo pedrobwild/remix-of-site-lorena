@@ -195,7 +195,8 @@ export default function HomeBw() {
       <nav className={`nav${scrolled ? " scrolled" : ""}`}>
         <div className="nav-inner">
           <a className="logo" href="/" onClick={(e) => go("/", e)} aria-label="BeWild — início">
-            <img src="/brand/bewild-logo.png" alt="BeWild" className="logo-img" />
+            <img src="/brand/bewild-logo.png" alt="BeWild" className="logo-img logo-img--dark" />
+            <img src="/brand/bewild-logo-branca.png" alt="" aria-hidden="true" className="logo-img logo-img--white" />
           </a>
           <div className="nav-links">
             {NAV_LINKS.map((l) => (
