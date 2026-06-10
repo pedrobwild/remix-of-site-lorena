@@ -19,8 +19,8 @@ export default function EmConstrucao() {
         .createSignedUrls(files, 60 * 60 * 24 * 7);
       if (error || !data) return;
       setVideoUrls({
-        arquiteta: data[0]?.signedUrl,
-        time: data[1]?.signedUrl,
+        arquiteta: data[0]?.signedUrl ?? undefined,
+        time: data[1]?.signedUrl ?? undefined,
       });
     })();
   }, []);
