@@ -94,6 +94,7 @@ const PROBLEMAS = [
   "Gestora cobra caro e some quando há problema",
 ];
 
+
 /* ─── Home ──────────────────────────────────────────────── */
 export default function App() {
   // Hero reveal — slideIn estilo Guesty
@@ -163,7 +164,7 @@ export default function App() {
                   transform: heroReady ? "none" : "translateY(16px)",
                 }}
               >
-                Você entra com o imóvel. A Be Wild entrega a operação pronta — reforma, lançamento, gestão e repasse.
+                Você entra com o imóvel. A Be Wild entrega a operação pronta: reforma, lançamento, gestão e repasse.
               </p>
 
               {/* CTAs */}
@@ -343,29 +344,33 @@ export default function App() {
           </section>
         </Reveal>
 
-        {/* ── DIAGNÓSTICO FINAL CTA ───────────────────────────── */}
-        <section className="py-24 sm:py-32" style={{ backgroundColor: "var(--bw-ink)" }}>
+        {/* ── DIAGNÓSTICO FINAL CTA — fundo areia (CLARO) ─────── */}
+        <section className="py-24 sm:py-32" style={{ backgroundColor: "#F2EEE5" }}>
           <div className="mx-auto max-w-[76rem] px-5 sm:px-8 text-center">
             <Reveal>
-              <p className="text-xs font-mono uppercase tracking-[0.14em] text-bewild-gold mb-5">
+              <p className="bw-eyebrow mb-5" style={{ color: "#004C7F" }}>
                 Próximo passo
               </p>
               <h2
-                className="text-white font-bold mb-5"
-                style={{ fontSize: "clamp(2rem, 4vw, 3rem)", letterSpacing: "-0.02em", lineHeight: 1.1 }}
+                className="text-bewild-ink font-bold mb-5"
+                style={{
+                  fontFamily: "var(--bw-font-display)",
+                  fontStyle: "italic",
+                  fontWeight: 600,
+                  fontSize: "clamp(2.25rem, 4.5vw, 3.25rem)",
+                  letterSpacing: "-0.02em",
+                  lineHeight: 1.1,
+                }}
               >
-                Seu imóvel tem potencial?<br />
-                <span className="bw-serif" style={{ fontFamily: "var(--bw-font-display)", fontStyle: "italic", fontWeight: 400, color: "rgba(247,244,239,0.7)" }}>
-                  Vamos descobrir juntos.
-                </span>
+                Vamos descobrir juntos.
               </h2>
-              <p className="text-white/55 mb-10 max-w-md mx-auto leading-relaxed">
+              <p className="text-bewild-text-body mb-10 max-w-md mx-auto leading-relaxed">
                 Diagnóstico gratuito. Sem compromisso. Avaliamos o seu ativo antes de qualquer recomendação.
               </p>
               <button
                 onClick={() => navigate("/diagnostico")}
-                className="bw-btn-dark inline-flex items-center gap-2"
-                style={{ fontSize: "1rem", padding: "16px 36px" }}
+                className="bw-btn-primary inline-flex items-center gap-2"
+                style={{ fontSize: "1rem", padding: "16px 36px", backgroundColor: "#004C7F" }}
               >
                 Diagnosticar meu imóvel <ArrowRight className="h-5 w-5" />
               </button>
