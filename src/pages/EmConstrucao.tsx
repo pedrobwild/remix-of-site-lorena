@@ -44,8 +44,8 @@ export default function EmConstrucao() {
           </span>
         </h1>
         <p className="lede">
-          E talvez seu instinto estivesse certo. Estamos construindo uma marca nova para um{' '}
-          <em>jeito novo de investir em imóvel</em> — livre.
+          Talvez seu instinto estivesse certo. Estamos construindo uma marca nova para um{' '}
+          <em>jeito de investir em imóvel que devolve o seu tempo</em>.
         </p>
         <div className="scroll-hint">
           <span>role devagar</span>
@@ -61,12 +61,12 @@ export default function EmConstrucao() {
             Investir não deveria virar uma <em>coleira</em>.
           </h2>
           <p className="p">
-            Comprar imóvel para ter renda virou sinônimo de obra, planilha, fornecedor sumido e
-            hóspede mandando mensagem às duas da manhã. O contrário de liberdade.
+            Comprar imóvel para ter renda costuma virar obra, planilha, fornecedor sumido e
+            hóspede mandando mensagem às duas da manhã. O contrário do que você imaginou.
           </p>
           <p className="p">
-            Ser <strong>Wild</strong> é ter o ativo sem ser domesticado por ele. É renda que corre
-            sozinha — enquanto você faz outra coisa da sua vida.
+            Ser <strong>Wild</strong> é ter o ativo sem ser dominado por ele. Sua renda corre
+            sozinha enquanto você cuida da sua vida.
           </p>
         </div>
       </section>
@@ -115,6 +115,61 @@ export default function EmConstrucao() {
         </div>
       </section>
 
+      {/* VÍDEOS — prova visual (dark) */}
+      <section className="section sec-dark">
+        <div className="inner reveal">
+          <div className="video-bloco">
+            <div className="video-texto">
+              <div className="vt-tag">antes de qualquer parede</div>
+              <h2 className="vt-h">
+                Quem projeta o seu studio <em>mede ele pessoalmente</em>.
+              </h2>
+              <p className="vt-p">
+                A arquiteta vai até o imóvel e decide, ali, o que muda na diária:
+                circulação, ponto de luz, onde a cama rende foto. Cada milímetro pensado
+                para o studio operar bem, não só para ficar bonito.
+              </p>
+            </div>
+            <div className="video-moldura">
+              <video
+                src="/videos/arquiteta-medicao.mp4"
+                muted
+                loop
+                autoPlay
+                playsInline
+                preload="metadata"
+                aria-label="Arquiteta da Be Wild fazendo a medição do imóvel"
+              />
+            </div>
+          </div>
+
+          <div className="video-bloco invertido">
+            <div className="video-moldura">
+              <video
+                src="/videos/time-obra.mp4"
+                muted
+                loop
+                autoPlay
+                playsInline
+                preload="metadata"
+                aria-label="Time de obra da Be Wild indo para a reforma"
+              />
+            </div>
+            <div className="video-texto">
+              <div className="vt-tag">e quem executa tem rosto</div>
+              <h2 className="vt-h">
+                A obra que você não toca <em>tem time próprio</em>.
+              </h2>
+              <p className="vt-p">
+                Quem reforma o seu studio trabalha na Be Wild, não é um terceiro que
+                aparece e some. Você acompanha o andamento à distância e recebe o imóvel
+                pronto para operar.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* PROPÓSITO — light */}
       <section className="section sec-light proposito">
         <div className="inner reveal">
@@ -125,9 +180,9 @@ export default function EmConstrucao() {
             A gente só <em>devolve ela</em> pra você.
           </h2>
           <p className="p">
-            Ninguém investe sonhando em virar gerente de obra. A Be Wild existe para que o seu
-            dinheiro trabalhe do jeito que você imaginou quando decidiu investir:{' '}
-            <strong>rendendo, sem te prender</strong>.
+            Ninguém investe sonhando em virar gerente de obra. A Be Wild cuida da preparação e
+            da operação do seu imóvel para que o seu dinheiro renda do jeito que você imaginou
+            quando decidiu investir.
           </p>
         </div>
       </section>
@@ -142,8 +197,8 @@ export default function EmConstrucao() {
             Enquanto isso, <em>vem com a gente</em>.
           </h2>
           <p className="p" style={{ margin: '0 auto' }}>
-            Estamos no meio de uma transformação — nome, marca, experiência. Até o novo site nascer,
-            o melhor lugar para falar com a gente é aqui:
+            Estamos mudando o nome, a marca e a experiência. Até o novo site ficar pronto,
+            fale com a gente por aqui:
           </p>
 
           <div className="cta-row">
