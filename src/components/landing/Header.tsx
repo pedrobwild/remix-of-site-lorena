@@ -138,10 +138,11 @@ function ConteudosDropdown({
 }
 
 /* ─── Header principal ────────────────────────────────────── */
-export default function Header() {
+export default function Header({ forceSolid = false }: { forceSolid?: boolean } = {}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileConteudosOpen, setMobileConteudosOpen] = useState(false);
-  const { scrolled } = useNavbarScroll(60);
+  const { scrolled: scrolledRaw } = useNavbarScroll(60);
+  const scrolled = forceSolid || scrolledRaw;
 
   const handleNav = (href: string) => {
     const path = href.replace(/^#/, "");

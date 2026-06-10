@@ -119,7 +119,7 @@ export default function DiagnosticoPage() {
             <div className="grid gap-16 lg:grid-cols-2 lg:gap-20 lg:items-start">
               {/* Texto lateral */}
               <div className="max-w-lg">
-                <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
+                <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold-400">
                   Diagnóstico Bwild do Ativo
                 </p>
                 <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl">
@@ -137,10 +137,10 @@ export default function DiagnosticoPage() {
                     { label: "Jornada completa", desc: "Imóvel que precisa de preparação E operação. A Bwild cuida do ciclo inteiro." },
                   ].map((item) => (
                     <div key={item.label} className="flex gap-3">
-                      <CheckCircle className="h-5 w-5 text-bewild-gold shrink-0 mt-0.5" />
+                      <CheckCircle className="h-5 w-5 text-bewild-gold-400 shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-semibold text-bewild-ink text-sm">{item.label}</p>
-                        <p className="text-sm text-white/60 leading-relaxed">{item.desc}</p>
+                        <p className="font-semibold text-white text-sm">{item.label}</p>
+                        <p className="text-sm text-white/70 leading-relaxed">{item.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -329,8 +329,8 @@ export default function DiagnosticoPage() {
 
                     <button
                       type="submit"
-                      disabled={!canSubmit}
-                      className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-bewild-blue px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0"
+                      aria-disabled={!canSubmit}
+                      className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-bewild-blue px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
                     >
                       Receber diagnóstico Bwild <ArrowRight className="h-4 w-4" />
                     </button>

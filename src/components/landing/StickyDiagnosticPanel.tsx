@@ -24,6 +24,13 @@ export function StickyDiagnosticPanel() {
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
+  // Não renderiza em páginas de formulário onde já existe CTA principal
+  // (evita cobrir o card do formulário no /diagnostico e /simulador).
+  if (typeof window !== "undefined") {
+    const path = window.location.hash.replace(/^#/, "") || window.location.pathname;
+    if (path === "/diagnostico" || path === "/simulador") return null;
+  }
+
   if (dismissed) return null;
 
   return (

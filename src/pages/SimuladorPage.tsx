@@ -191,7 +191,7 @@ export default function SimuladorPage() {
 
   return (
     <div className="bwild-light min-h-screen bg-bewild-cream font-body text-bewild-text-body antialiased">
-      <Header />
+      <Header forceSolid />
       <main>
 
         {/* Hero */}
@@ -202,17 +202,17 @@ export default function SimuladorPage() {
               <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 Simulador de Potencial · São Paulo
               </p>
-              <h1 className="mb-5 text-4xl font-bold leading-tight text-white sm:text-5xl">
+              <h1 className="mb-5 text-4xl font-bold leading-tight text-bewild-ink sm:text-5xl">
                 Quanto pode render seu imóvel no short stay?
               </h1>
-              <p className="mb-5 text-lg text-bewild-text-muted leading-relaxed">
+              <p className="mb-5 text-lg text-bewild-text-body leading-relaxed">
                 Uma estimativa de referência baseada em dados reais de mercado para São Paulo.
                 Preencha os campos abaixo e veja a faixa de potencial para o seu imóvel.
               </p>
               {/* Disclaimer ético — antes da calculadora */}
-              <div className="flex gap-3 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
-                <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
-                <p className="text-xs text-amber-300/80 leading-relaxed">
+              <div className="flex gap-3 rounded-xl border border-amber-500/40 bg-amber-50 p-4">
+                <AlertTriangle className="h-4 w-4 text-amber-700 shrink-0 mt-0.5" />
+                <p className="text-xs text-amber-900 leading-relaxed">
                   Estimativas de referência. Resultados reais dependem de sazonalidade,
                   qualidade do anúncio, precificação, concorrência e gestão.
                   Não constituem garantia ou promessa de rentabilidade.
@@ -313,8 +313,8 @@ export default function SimuladorPage() {
 
                   <button
                     onClick={handleCalcular}
-                    disabled={!podeCalcular}
-                    className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-bewild-blue px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                    aria-disabled={!podeCalcular}
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-bewild-blue px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-bewild-blue-600 hover:-translate-y-0.5"
                   >
                     <TrendingUp className="h-4 w-4" />
                     Estimar potencial
