@@ -93,8 +93,14 @@ const SECTIONS = [
 export default function StackingSections() {
   return (
     <section className="relative" aria-label="Produtos Be Wild">
-      {/* Altura total do container para scroll */}
-      <div style={{ height: `${SECTIONS.length * 100}vh` }} className="relative">
+      {/*
+        Mobile: cards empilham naturalmente (height: auto), sem sticky.
+        Desktop (md+): wrapper alto = N * 100vh para gerar scroll com sticky.
+      */}
+      <div
+        className="relative md:[height:var(--stack-h)]"
+        style={{ ["--stack-h" as never]: `${SECTIONS.length * 100}vh` }}
+      >
         {SECTIONS.map((sec, i) => (
           <StackCard key={sec.id} sec={sec} index={i} total={SECTIONS.length} />
         ))}
@@ -120,14 +126,17 @@ function StackCard({
   const zIndex = (index + 1) * 10;
   // top em pixels: 0, 8, 16… (leve offset para ver o card anterior)
   const topOffset = index * 8;
+  // Cor do título: sobrescreve a regra global `.bwild-light h2 { color: var(--bw-ink) }`
+  // que tem specificity maior que `text-white`. Sem isso, cards de fundo escuro
+  // renderiam o título em preto invisível.
+  const titleColor = sec.textClass === "text-white" ? "#ffffff" : "var(--bw-ink)";
 
   return (
     <div
-      className="sticky flex items-center overflow-hidden"
+      className="relative md:sticky flex items-center overflow-hidden min-h-screen md:min-h-0 md:h-screen"
       style={{
         top: `${topOffset}px`,
         zIndex,
-        height: "100vh",
         borderRadius: `${topRadius} ${topRadius} 0 0`,
         background: sec.bg,
         boxShadow: index > 0 ? "0 -8px 40px rgba(0,0,0,0.18)" : "none",
@@ -136,7 +145,7 @@ function StackCard({
       {/* Layout split: texto esq + imagem dir */}
       <div className="mx-auto w-full max-w-[76rem] px-5 sm:px-8 grid md:grid-cols-2 gap-12 items-center">
         {/* Texto */}
-        <div className="py-12 md:py-0">
+        <div className="py-16 md:py-0">
           <p
             className="font-mono text-xs uppercase tracking-[0.14em] mb-3"
             style={{ color: "var(--bw-gold-accessible)" }}
@@ -152,12 +161,13 @@ function StackCard({
               <Icon className="h-5 w-5" style={{ color: "var(--bw-gold)" }} />
             </div>
             <h2
-              className={`text-3xl sm:text-4xl font-bold leading-tight ${sec.textClass}`}
-              style={{ letterSpacing: "-0.02em" }}
+              className="text-3xl sm:text-4xl font-bold leading-tight"
+              style={{ letterSpacing: "-0.02em", color: titleColor }}
             >
               {sec.title}
             </h2>
           </div>
+
 
           <p
             className="text-lg mb-3 font-medium"

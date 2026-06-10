@@ -36,16 +36,11 @@ export function useInView<T extends HTMLElement>(
     if (!el) return;
     if (prefersReducedMotion()) { setInView(true); return; }
 
-    // Fallback de segurança: se o observer não disparar em 1.2s (ex: elemento
-    // já visível no carregamento), força inView para evitar conteúdo invisivel.
-    const safetyTimer = setTimeout(() => setInView(true), 1200);
-
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
           if (e.isIntersecting) {
             setInView(true);
-            clearTimeout(safetyTimer);
             if (once) obs.disconnect();
           } else if (!once) {
             setInView(false);
@@ -57,7 +52,6 @@ export function useInView<T extends HTMLElement>(
     obs.observe(el);
     return () => {
       obs.disconnect();
-      clearTimeout(safetyTimer);
     };
   }, [threshold, once]);
 

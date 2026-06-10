@@ -123,7 +123,7 @@ function HoverCard({ card }: { card: (typeof CARDS)[0] }) {
 
       {/* Overlay escurecido — sempre presente, mais intenso no hover */}
       <div
-        className="absolute inset-0 transition-all duration-400"
+        className="absolute inset-0 transition-all duration-300 ease-out"
         style={{
           background: hovered
             ? "linear-gradient(to top, rgba(10,17,30,0.88) 0%, rgba(10,17,30,0.55) 60%, rgba(10,17,30,0.25) 100%)"

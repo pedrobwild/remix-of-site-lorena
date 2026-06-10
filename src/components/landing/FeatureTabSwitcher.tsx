@@ -162,14 +162,16 @@ export default function FeatureTabSwitcher({
     }, 180);
   }
 
-  // Auto-avança a cada 5s
+  // Auto-avança a cada ~5s reaproveitando a mesma transição do clique manual
+  // para evitar piscada/snap entre abas.
   useEffect(() => {
     const interval = setInterval(() => {
-      setActive((prev) => {
-        const next = (prev + 1) % TABS.length;
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setActive((prev) => (prev + 1) % TABS.length);
         setAnimKey((k) => k + 1);
-        return next;
-      });
+        setIsTransitioning(false);
+      }, 180);
     }, 5200);
     return () => clearInterval(interval);
   }, []);
