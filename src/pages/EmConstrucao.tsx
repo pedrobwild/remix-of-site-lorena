@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './EmConstrucao.css';
+import { supabase } from '@/integrations/supabase/client';
 
 const WA_HREF =
   'https://wa.me/5511911906183?text=' +
@@ -8,6 +9,22 @@ const IG_HREF = 'https://instagram.com/bewild.oficial';
 const MAIL_HREF = 'mailto:contato@bewild.com.br';
 
 export default function EmConstrucao() {
+  const [videoUrls, setVideoUrls] = useState<{ arquiteta?: string; time?: string }>({});
+
+  useEffect(() => {
+    (async () => {
+      const files = ['arquiteta-medicao.mp4', 'time-obra.mp4'];
+      const { data, error } = await supabase.storage
+        .from('videos')
+        .createSignedUrls(files, 60 * 60 * 24 * 7);
+      if (error || !data) return;
+      setVideoUrls({
+        arquiteta: data[0]?.signedUrl ?? undefined,
+        time: data[1]?.signedUrl ?? undefined,
+      });
+    })();
+  }, []);
+
   useEffect(() => {
     document.title = 'Be Wild — uma nova marca está nascendo';
 
@@ -132,7 +149,7 @@ export default function EmConstrucao() {
             </div>
             <div className="video-moldura">
               <video
-                src="/videos/arquiteta-medicao.mp4"
+                src={videoUrls.arquiteta}
                 muted
                 loop
                 autoPlay
@@ -146,7 +163,7 @@ export default function EmConstrucao() {
           <div className="video-bloco invertido">
             <div className="video-moldura">
               <video
-                src="/videos/time-obra.mp4"
+                src={videoUrls.time}
                 muted
                 loop
                 autoPlay
