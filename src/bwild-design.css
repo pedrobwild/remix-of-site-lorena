@@ -77,13 +77,16 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Títulos editoriais — Playfair Display (como Taviraj no Mynd) */
-.bwild-light h1,
-.bwild-light h2 {
-  font-family: var(--bw-font-display);  /* ✅ Playfair assume os títulos (bug corrigido) */
-  font-weight: 600;                      /* serif pesa demais em 700 */
+/* Títulos editoriais — Playfair Display (como Taviraj no Mynd)
+   IMPORTANTE: usamos :where(h1, h2) para manter especificidade 0,1,0
+   (apenas a .bwild-light), de modo que qualquer utilitário Tailwind
+   de cor (text-white, text-bewild-ink, etc.) vença. Sem isso, h1/h2
+   em hero/cards com fundo escuro ficam invisíveis (ink sobre ink). */
+:where(.bwild-light h1, .bwild-light h2) {
+  font-family: var(--bw-font-display);
+  font-weight: 600;
   color: var(--bw-ink);
-  letter-spacing: -0.005em;              /* serif pede tracking solto */
+  letter-spacing: -0.005em;
   line-height: 1.12;
 }
 

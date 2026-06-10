@@ -79,13 +79,14 @@ const SECTIONS = [
     href: "/diagnostico",
     Icon: CheckCircle,
     // Fundo gold escuro
-    bg: "#1a1108",
+    // Fundo petróleo profundo (era marrom #1a1108, resíduo da paleta gold antiga)
+    bg: "#061a30",
     textClass: "text-white",
     mutedClass: "text-white/60",
-    bodyClass: "text-white/65",
+    bodyClass: "text-white/70",
     eyebrowClass: "text-bewild-gold",
     image: "/images/cases/antes-depois-studio-01-depois.jpg",
-    imageFallbackGradient: "linear-gradient(135deg,#1a1108 0%,#2d1d07 100%)",
+    imageFallbackGradient: "linear-gradient(135deg,#061a30 0%,#0A2540 100%)",
   },
 ];
 

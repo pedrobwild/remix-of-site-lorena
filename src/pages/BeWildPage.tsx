@@ -242,8 +242,8 @@ export default function BeWildPage() {
           </div>
         </section>
 
-        {/* Material Board */}
-        <section className="border-t border-bewild-cream-200 py-16 sm:py-20">
+        {/* Material Board — fundo escuro intencional (componente desenhado white-on-ink) */}
+        <section className="border-t border-bewild-ink/10 bg-bewild-ink py-16 sm:py-20">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <MaterialBoard />
           </div>
