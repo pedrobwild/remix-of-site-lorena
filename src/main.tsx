@@ -16,6 +16,28 @@ import "./bwild-design.css";
 // Vire para false quando o novo site estiver pronto.
 const MODO_CONSTRUCAO = true;
 
+// Bypass do modo construção para desenvolvimento:
+// - Sempre liberado no preview do Lovable (id-preview--*.lovable.app) e localhost
+// - Liberado em qualquer host via ?bypass=1 (persiste em localStorage)
+// - Para sair do bypass: ?bypass=0
+function devBypassConstrucao(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const url = new URL(window.location.href);
+    const q = url.searchParams.get("bypass");
+    if (q === "1") localStorage.setItem("bw-bypass-construcao", "1");
+    if (q === "0") localStorage.removeItem("bw-bypass-construcao");
+    const host = window.location.hostname;
+    const isLovablePreview = host.startsWith("id-preview--") || host.endsWith(".lovableproject.com");
+    const isLocal = host === "localhost" || host === "127.0.0.1";
+    if (isLovablePreview || isLocal) return true;
+    return localStorage.getItem("bw-bypass-construcao") === "1";
+  } catch {
+    return false;
+  }
+}
+const BYPASS_CONSTRUCAO = devBypassConstrucao();
+
 installCrashRecovery();
 installLinkInterceptor();
 
@@ -40,13 +62,13 @@ function Root() {
   // Modo construção: redireciona qualquer rota para /emconstrucao e
   // renderiza a página isolada, sem Header/Footer/widgets do site.
   useEffect(() => {
-    if (!MODO_CONSTRUCAO) return;
+    if (!MODO_CONSTRUCAO || BYPASS_CONSTRUCAO) return;
     if (window.location.pathname !== "/emconstrucao") {
       window.history.replaceState({}, "", "/emconstrucao");
       window.dispatchEvent(new Event("lovable:navigate"));
     }
   }, [route]);
-  if (MODO_CONSTRUCAO) {
+  if (MODO_CONSTRUCAO && !BYPASS_CONSTRUCAO) {
     return <EmConstrucao />;
   }
 
