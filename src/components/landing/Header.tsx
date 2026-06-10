@@ -13,7 +13,7 @@ import { useNavbarScroll } from "../../lib/useNavbarScroll";
 import { listConteudos } from "../../lib/conteudoData";
 
 /* ─── Postagens para o dropdown (3 mais recentes) ─────────── */
-const DROPDOWN_POSTS = listConteudos().slice(0, 3);
+const DROPDOWN_POSTS = listConteudos().slice(0, 4);
 
 /* ─── Dropdown de Conteúdos ───────────────────────────────── */
 function ConteudosDropdown({
