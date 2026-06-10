@@ -161,8 +161,8 @@ body.bw-menu-open{overflow:hidden}
 }
 .bw-home-page .hero .eyebrow{color:var(--gold-400);margin-bottom:1.1rem}
 .bw-home-page .hero h1{font-size:clamp(2.7rem,6.4vw,5.4rem);max-width:13em;text-shadow:0 2px 30px rgba(4,14,25,.4)}
-.bw-home-page .h-line{display:block;overflow:hidden}
-.bw-home-page .h-line>span{display:block;will-change:transform}
+.bw-home-page .h-line{display:block;overflow:hidden;padding-bottom:.18em;margin-bottom:-.18em}
+.bw-home-page .h-line>span{display:block;will-change:transform;padding-bottom:.04em}
 .bw-home-page .hero p.lead{margin-top:1.4rem;color:rgba(255,255,255,.85)}
 .bw-home-page .hero-ctas{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem}
 .bw-home-page .hero-proof{
