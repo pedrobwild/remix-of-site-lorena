@@ -33,12 +33,14 @@ export type Route =
   | { name: "admin-blog-new" }
   | { name: "admin-blog-edit"; slug: string }
   | { name: "admin-typography" }
+  | { name: "emconstrucao" }
   | { name: "not-found" };
 
 function parsePath(rawPath: string): Route {
   const path = (rawPath.split("?")[0] || "").replace(/\/+$/, "") || "/";
 
   if (path === "/" || path === "") return { name: "home" };
+  if (path === "/emconstrucao") return { name: "emconstrucao" };
   if (path === "/be-wild") return { name: "be-wild" };
   if (path === "/be-stay") return { name: "bewild-host-care" }; // redirect legado
   if (path === "/bewild-host-care") return { name: "bewild-host-care" };

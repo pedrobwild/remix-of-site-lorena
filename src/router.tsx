@@ -20,6 +20,7 @@ import DiagnosticoPage from "./pages/DiagnosticoPage";
 import ConteudosPage from "./pages/ConteudosPage";
 import ConteudoPostPage from "./pages/ConteudoPostPage";
 import SimuladorPage from "./pages/SimuladorPage";
+import EmConstrucao from "./pages/EmConstrucao";
 import PortfolioPage from "./pages/PortfolioPage";
 import ProjectPage from "./pages/ProjectPage";
 import FaqPage from "./pages/FaqPage";
@@ -46,6 +47,7 @@ import ProtectedRoute from "./components/admin/ProtectedRoute";
 import type { Route } from "./lib/useHashRoute";
 
 export function renderRoute(route: Route) {
+  if (route.name === "emconstrucao") return <EmConstrucao />;
   if (route.name === "portfolio") return <PortfolioPage />;
   if (route.name === "project") return <ProjectPage slug={route.slug} />;
   if (route.name === "faq") return <FaqPage />;
