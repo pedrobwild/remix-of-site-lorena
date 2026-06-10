@@ -17,7 +17,7 @@ const SECTIONS = [
   {
     id: "reformas",
     eyebrow: "FASE 1",
-    title: "Be Wild Reformas",
+    title: "BeWild Reformas",
     subtitle: "Da planta crua ao studio pronto para hospedar.",
     body: "Projeto de arquitetura personalizado, obra turn-key, marcenaria, mobiliário e setup completo. Cada decisão pensada para foto, operação e manutenção.",
     bullets: [
@@ -67,7 +67,7 @@ const SECTIONS = [
     eyebrow: "A TESE",
     title: "O fim da reforma é o início da gestão.",
     subtitle: "Um ciclo completo. Um só parceiro.",
-    body: "Da decisão de reformar até o repasse mensal: a Be Wild é o único parceiro que cobre os dois lados do investimento em short stay.",
+    body: "Da decisão de reformar até o repasse mensal: a BeWild é o único parceiro que cobre os dois lados do investimento em short stay.",
     bullets: [
       "Continuidade entre reforma e operação",
       "Menos interlocutores, mais clareza",
@@ -92,7 +92,7 @@ const SECTIONS = [
 /* ─── Componente ─────────────────────────────────────────── */
 export default function StackingSections() {
   return (
-    <section className="relative" aria-label="Produtos Be Wild">
+    <section className="relative" aria-label="Produtos BeWild">
       {/*
         Mobile: cards empilham naturalmente (height: auto), sem sticky.
         Desktop (md+): wrapper alto = N * 100vh para gerar scroll com sticky.
@@ -240,7 +240,7 @@ function StackCard({
                     fontWeight: 400,
                   }}
                 >
-                  “Recebi a chave da construtora, passei para a Be Wild e em dois meses já tinha o imóvel gerando reservas.”
+                  “Recebi a chave da construtora, passei para a BeWild e em dois meses já tinha o imóvel gerando reservas.”
                 </blockquote>
                 <figcaption className="mt-3 font-mono text-[11px] uppercase tracking-[0.22em] text-white/55">
                   C. M. · Studio 28m² · Pinheiros

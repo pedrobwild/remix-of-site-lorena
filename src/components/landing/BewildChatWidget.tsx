@@ -62,7 +62,7 @@ const QUICK_CHIPS = [
     label: "Airbnb",
     Icon: AirbnbLogo,
     answer:
-      "No Airbnb, a Be Wild cuida do anúncio completo: fotos profissionais, descrição otimizada, precificação dinâmica, resposta a hóspedes e gestão de avaliações. Seu imóvel aparece nos primeiros resultados.",
+      "No Airbnb, a BeWild cuida do anúncio completo: fotos profissionais, descrição otimizada, precificação dinâmica, resposta a hóspedes e gestão de avaliações. Seu imóvel aparece nos primeiros resultados.",
   },
   {
     id: "booking",
@@ -95,7 +95,7 @@ export default function BewildChatWidget() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "bot",
-      text: "Olá! Sou a assistente da Be Wild. Escolha um tópico abaixo ou pergunte diretamente.",
+      text: "Olá! Sou a assistente da BeWild. Escolha um tópico abaixo ou pergunte diretamente.",
     },
   ]);
   const [inputValue, setInputValue] = useState("");
@@ -162,7 +162,7 @@ export default function BewildChatWidget() {
     setMessages([
       {
         role: "bot",
-        text: "Olá! Sou a assistente da Be Wild. Escolha um tópico abaixo ou pergunte diretamente.",
+        text: "Olá! Sou a assistente da BeWild. Escolha um tópico abaixo ou pergunte diretamente.",
       },
     ]);
   }
@@ -186,7 +186,7 @@ export default function BewildChatWidget() {
           justifyContent: "center",
           border: "2px solid var(--bw-gold)",
         }}
-        aria-label={open ? "Fechar chat" : "Abrir chat Be Wild"}
+        aria-label={open ? "Fechar chat" : "Abrir chat BeWild"}
       >
         {open ? (
           <X className="h-5 w-5 text-white" />
@@ -233,7 +233,7 @@ export default function BewildChatWidget() {
             </span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-white font-semibold text-sm leading-none">Be Wild</p>
+            <p className="text-white font-semibold text-sm leading-none">BeWild</p>
             <p className="text-white/50 text-xs mt-0.5">Responde em instantes</p>
           </div>
           {phase === "chat" && (

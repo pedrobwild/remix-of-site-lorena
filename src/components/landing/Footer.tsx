@@ -24,10 +24,10 @@ function Linkedin({ className = "h-4 w-4" }: { className?: string }) {
 
 const JORNADA_LINKS = [
   { label: "Jornada Bwild", href: "/metodo-bwild" },
-  { label: "Be Wild — Preparação do ativo", href: "/be-wild" },
+  { label: "BeWild — Preparação do ativo", href: "/be-wild" },
   { label: "BeWild Host Care — Gestão de temporada", href: "/bewild-host-care" },
   { label: "Simulador de potencial", href: "/simulador" },
-  { label: "Sobre a Be Wild", href: "/sobre" },
+  { label: "Sobre a BeWild", href: "/sobre" },
   { label: "Cases", href: "/cases" },
   { label: "Conteúdos", href: "/conteudos" },
   { label: "Diagnóstico do imóvel", href: "/diagnostico" },
@@ -42,7 +42,7 @@ export default function Footer() {
             <BewildLogo heightClass="h-7" />
             <p className="max-w-sm text-sm leading-relaxed text-white/60">
               Preparação e gestão de imóveis para short stay em São Paulo.
-              Be Wild Reformas prepara o ativo. BeWild Host Care opera o ativo.
+              BeWild Reformas prepara o ativo. BeWild Host Care opera o ativo.
               A Bwild conecta o ciclo inteiro.
             </p>
             <p className="text-sm text-white/65">{CONTACT.city}</p>
@@ -126,7 +126,7 @@ export default function Footer() {
             Bwild — Da obra à diária: preparação e gestão de imóveis para short stay.
           </p>
           <p className="text-xs text-white/60">
-            © {new Date().getFullYear()} Bwild. Be Wild Reformas prepara. BeWild Host Care opera. Todos os direitos reservados.
+            © {new Date().getFullYear()} Bwild. BeWild Reformas prepara. BeWild Host Care opera. Todos os direitos reservados.
           </p>
         </div>
       </div>

@@ -88,7 +88,7 @@ const FAQS = [
     a: "Uma reforma para moradia prioriza o gosto do proprietário. A preparação para short stay considera foto, diária, experiência do hóspede, limpeza rápida, manutenção preventiva e durabilidade de uso intenso. São decisões de projeto diferentes desde o início.",
   },
   {
-    q: "O que está incluso no Be Wild?",
+    q: "O que está incluso no BeWild?",
     a: "Projeto de arquitetura, obra civil, marcenaria sob medida, compra de mobiliário, decoração, enxoval e setup operacional. Tudo coordenado em um único processo.",
   },
   {
@@ -97,7 +97,7 @@ const FAQS = [
   },
   {
     q: "O imóvel já sai pronto para entrar no BeWild Host Care?",
-    a: "Sim. Cada decisão do Be Wild considera a operação que vem depois: foto, anúncio, limpeza, manutenção e experiência do hóspede. Quando a obra acaba, o BeWild Host Care já pode colocar o ativo para rodar.",
+    a: "Sim. Cada decisão do BeWild considera a operação que vem depois: foto, anúncio, limpeza, manutenção e experiência do hóspede. Quando a obra acaba, o BeWild Host Care já pode colocar o ativo para rodar.",
   },
   {
     q: "Como funciona o acompanhamento durante a obra?",
@@ -111,7 +111,7 @@ const FAQS = [
 
 export default function BeWildPage() {
   useSeo({
-    title: "Be Wild Reformas — Preparação do ativo para short stay | Bwild",
+    title: "BeWild Reformas — Preparação do ativo para short stay | Bwild",
     description:
       "Projeto, obra, mobiliário e setup integrados para transformar seu imóvel em um espaço pronto para competir no short stay. Cada decisão pensada para foto, uso, limpeza e operação.",
     canonicalPath: "/be-wild",
@@ -128,7 +128,7 @@ export default function BeWildPage() {
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-3xl">
               <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold-400">
-                Be Wild Reformas · Preparação do Ativo
+                BeWild Reformas · Preparação do Ativo
               </p>
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
                 Prepare seu imóvel para competir no short stay.
@@ -146,7 +146,7 @@ export default function BeWildPage() {
                   Preparar meu imóvel <ArrowRight className="h-4 w-4" />
                 </button>
                 <a
-                  href={whatsappHref("Olá, quero saber mais sobre o Be Wild para preparar meu imóvel para short stay.")}
+                  href={whatsappHref("Olá, quero saber mais sobre o BeWild para preparar meu imóvel para short stay.")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3 text-sm font-semibold text-white transition-all hover:border-white/60 hover:bg-white/5"
@@ -249,7 +249,7 @@ export default function BeWildPage() {
           </div>
         </section>
 
-        {/* Galeria de detalhe — Be Wild Reformas */}
+        {/* Galeria de detalhe — BeWild Reformas */}
         <section className="border-t border-bewild-cream-200 py-16 sm:py-20">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-8">
@@ -278,7 +278,7 @@ export default function BeWildPage() {
               </h2>
               <p className="mb-8 text-bewild-text-muted leading-relaxed">
                 A maioria das obras termina na entrega das chaves. A nossa termina com o imóvel pronto
-                para entrar no mercado. Por isso, cada decisão do Be Wild considera a operação que vem
+                para entrar no mercado. Por isso, cada decisão do BeWild considera a operação que vem
                 depois — foto, diária, limpeza, manutenção, check-in e experiência do hóspede. Quando
                 a reforma acaba, o BeWild Host Care já sabe como colocar o ativo para rodar.
               </p>
@@ -302,7 +302,7 @@ export default function BeWildPage() {
               <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 Perguntas frequentes
               </p>
-              <h2 className="text-3xl font-bold text-bewild-ink sm:text-4xl">FAQ Be Wild</h2>
+              <h2 className="text-3xl font-bold text-bewild-ink sm:text-4xl">FAQ BeWild</h2>
             </div>
             <div className="grid gap-6 lg:grid-cols-2">
               {FAQS.map((f) => (
@@ -332,12 +332,12 @@ export default function BeWildPage() {
                 Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
               </button>
               <a
-                href={whatsappHref("Olá, quero um diagnóstico Be Wild para meu imóvel.")}
+                href={whatsappHref("Olá, quero um diagnóstico BeWild para meu imóvel.")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-7 py-3.5 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-parchment hover:border-bewild-cream-200"
               >
-                Receber diagnóstico Be Wild
+                Receber diagnóstico BeWild
               </a>
             </div>
           </div>

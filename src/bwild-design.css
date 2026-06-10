@@ -1,5 +1,5 @@
 /**
- * Be Wild Design System — Light Mode Editorial
+ * BeWild Design System — Light Mode Editorial
  * Inspirado em: Tabas (foto full-bleed, tipografia limpa),
  *               Guesty (animações, efeitos, paleta creme),
  *               Mynd (combinação serif + sans, credibilidade)
@@ -490,10 +490,10 @@
 
 /* ═══════════════════════════════════════════════════════════════════
    SPRINT A4 — Efeitos premium
-   Parallax, cursor Be Wild, hover image zoom aprimorado, scroll reveal
+   Parallax, cursor BeWild, hover image zoom aprimorado, scroll reveal
    ═══════════════════════════════════════════════════════════════════ */
 
-/* ─── Cursor Be Wild (light mode) ──────────────────────────────── */
+/* ─── Cursor BeWild (light mode) ──────────────────────────────── */
 /* Sobrescreve o cursor dark do sistema antigo quando em .bwild-light */
 .bwild-light .cursor,
 body.bwild-light-cursor .cursor {

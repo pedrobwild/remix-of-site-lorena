@@ -1,6 +1,6 @@
 /**
  * MotionPrimitives — componentes de motion reutilizáveis.
- * Sprint 3 — Be Wild Design System.
+ * Sprint 3 — BeWild Design System.
  *
  * Componentes:
  *   <Reveal>         — fade-up ao entrar na viewport

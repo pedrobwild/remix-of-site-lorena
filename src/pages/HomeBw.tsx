@@ -1,5 +1,5 @@
 /**
- * HomeBw — Home Be Wild (reference 1:1).
+ * HomeBw — Home BeWild (reference 1:1).
  * Porting do HTML/CSS de referência. Inclui nav + footer próprios.
  */
 import { useEffect, useRef, useState } from "react";
@@ -9,7 +9,7 @@ import "../styles/bw-home.css";
 
 const NAV_LINKS = [
   { label: "Jornada Be Wild", href: "/metodo-bwild" },
-  { label: "Be Wild Reformas", href: "/be-wild" },
+  { label: "BeWild Reformas", href: "/be-wild" },
   { label: "BeWild Host Care", href: "/bewild-host-care" },
   { label: "Cases", href: "/cases" },
   { label: "Conteúdos", href: "/conteudos" },
@@ -17,7 +17,7 @@ const NAV_LINKS = [
 
 const MENU_ITEMS = [
   { idx: "01", label: "Jornada Be Wild", href: "/metodo-bwild" },
-  { idx: "02", label: "Be Wild Reformas", href: "/be-wild" },
+  { idx: "02", label: "BeWild Reformas", href: "/be-wild" },
   { idx: "03", label: "BeWild Host Care", href: "/bewild-host-care" },
   { idx: "04", label: "Cases", href: "/cases" },
   { idx: "05", label: "Conteúdos", href: "/conteudos" },
@@ -25,7 +25,7 @@ const MENU_ITEMS = [
 ];
 
 const SLATS = [
-  { id: "s1", tag: "Be Wild Reformas", name: "Reforma turn-key para short stay", desc: "Projeto, obra, marcenaria, mobiliário, compras, decoração e setup em um fluxo único, com entrega pronta para anunciar.", img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1400&auto=format&fit=crop" },
+  { id: "s1", tag: "BeWild Reformas", name: "Reforma turn-key para short stay", desc: "Projeto, obra, marcenaria, mobiliário, compras, decoração e setup em um fluxo único, com entrega pronta para anunciar.", img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1400&auto=format&fit=crop" },
   { id: "s2", tag: "Especialidade", name: "Studios compactos", desc: "Foco em studios de 25–45m² nos bairros de maior demanda de SP, onde cada metro quadrado precisa performar.", img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=1400&auto=format&fit=crop" },
   { id: "s3", tag: "Detalhes", name: "Marcenaria sob medida", desc: "Armazenamento inteligente e acabamento que aparece na foto e resiste ao uso intenso da temporada.", img: "https://images.unsplash.com/photo-1556912173-3bb406ef7e77?q=80&w=1400&auto=format&fit=crop" },
   { id: "s4", tag: "Setup", name: "Mobiliário, eletros e enxoval", desc: "Curadoria de móveis, eletros, enxoval e itens operacionais para o imóvel sair pronto para anúncio e operação.", img: "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?q=80&w=1400&auto=format&fit=crop" },
@@ -260,7 +260,7 @@ export default function HomeBw() {
             <span className="h-line"><span>Seu imóvel no short stay,</span></span>
             <span className="h-line"><span><em className="g">da reforma à gestão.</em></span></span>
           </h1>
-          <p className="lead">Você entra com o imóvel. A Be Wild entrega a operação pronta: reforma, lançamento, gestão e repasse.</p>
+          <p className="lead">Você entra com o imóvel. A BeWild entrega a operação pronta: reforma, lançamento, gestão e repasse.</p>
           <div className="hero-ctas">
             <a href="/diagnostico" onClick={(e) => go("/diagnostico", e)} className="btn btn-primary">
               Diagnosticar meu imóvel <span className="arrow">→</span>
@@ -306,7 +306,7 @@ export default function HomeBw() {
             </p>
             <p style={{ marginTop: "1.6rem" }} className="rv rv-d3">
               <a href="/diagnostico" onClick={(e) => go("/diagnostico", e)} className="link-arrow">
-                Ver como a Be Wild resolve <span className="arrow">→</span>
+                Ver como a BeWild resolve <span className="arrow">→</span>
               </a>
             </p>
           </div>
@@ -333,7 +333,7 @@ export default function HomeBw() {
             <div className="wrap split">
               <div>
                 <span className="selo">Fase 1</span>
-                <h2 style={{ marginTop: "1rem" }}>Be Wild Reformas</h2>
+                <h2 style={{ marginTop: "1rem" }}>BeWild Reformas</h2>
                 <span className="sub-it" style={{ display: "block", marginTop: ".6rem" }}>Da planta crua ao studio pronto para hospedar.</span>
                 <p className="lead" style={{ marginTop: "1.2rem" }}>
                   Projeto de arquitetura personalizado, obra turn-key, marcenaria, mobiliário e setup completo. Cada decisão pensada para foto, operação e manutenção.
@@ -403,7 +403,7 @@ export default function HomeBw() {
               <h2>O fim da reforma é <em className="g">o início da gestão.</em></h2>
               <span className="sub-it">Um ciclo completo. Um só parceiro.</span>
               <p className="lead">
-                Da decisão de reformar até o repasse mensal: a Be Wild é o único parceiro que cobre os dois lados do investimento em short stay.
+                Da decisão de reformar até o repasse mensal: a BeWild é o único parceiro que cobre os dois lados do investimento em short stay.
               </p>
               <ul className="check-list">
                 <li><span className="tick">✓</span> Continuidade entre reforma e operação</li>
@@ -508,7 +508,7 @@ export default function HomeBw() {
           <div className="tl">
             <div className="tl-fill" id="bwTlFill"></div>
             <div className="tl-step rv"><span className="n">01</span><h4>Diagnóstico</h4><p>Bairro, metragem, estado e objetivo do ativo antes de qualquer recomendação.</p></div>
-            <div className="tl-step rv rv-d1"><span className="n">02</span><h4>Be Wild Reformas <span className="selo">Fase 1</span></h4><p>Projeto, obra, marcenaria, mobiliário e setup em um fluxo único.</p></div>
+            <div className="tl-step rv rv-d1"><span className="n">02</span><h4>BeWild Reformas <span className="selo">Fase 1</span></h4><p>Projeto, obra, marcenaria, mobiliário e setup em um fluxo único.</p></div>
             <div className="tl-step rv rv-d2"><span className="n">03</span><h4>Lançamento</h4><p>Anúncio otimizado, foto profissional e precificação calibrada.</p></div>
             <div className="tl-step rv rv-d3"><span className="n">04</span><h4>BeWild Host Care <span className="selo">Fase 2</span></h4><p>Hóspede, limpeza, manutenção e plataformas sem você integrar nada.</p></div>
             <div className="tl-step rv rv-d4"><span className="n">05</span><h4>Acompanhamento</h4><p>Relatório mensal com dados reais e repasse líquido até o dia 10.</p></div>
@@ -566,7 +566,7 @@ export default function HomeBw() {
             <div>
               <a className="logo" href="/" onClick={(e) => go("/", e)}>Be <em>Wild</em></a>
               <p style={{ marginTop: "1rem" }}>
-                Preparação e gestão de imóveis para short stay em São Paulo. Be Wild Reformas prepara o ativo. BeWild Host Care opera o ativo. A Be Wild conecta o ciclo inteiro.
+                Preparação e gestão de imóveis para short stay em São Paulo. BeWild Reformas prepara o ativo. BeWild Host Care opera o ativo. A BeWild conecta o ciclo inteiro.
               </p>
               <p style={{ marginTop: ".8rem" }}>São Paulo, Brasil</p>
             </div>
@@ -574,10 +574,10 @@ export default function HomeBw() {
               <h5>Jornada Be Wild</h5>
               <ul>
                 <li><a href="/metodo-bwild" onClick={(e) => go("/metodo-bwild", e)}>Jornada Be Wild</a></li>
-                <li><a href="/be-wild" onClick={(e) => go("/be-wild", e)}>Be Wild — Preparação do ativo</a></li>
+                <li><a href="/be-wild" onClick={(e) => go("/be-wild", e)}>BeWild — Preparação do ativo</a></li>
                 <li><a href="/bewild-host-care" onClick={(e) => go("/bewild-host-care", e)}>BeWild Host Care — Gestão de temporada</a></li>
                 <li><a href="/simulador" onClick={(e) => go("/simulador", e)}>Simulador de potencial</a></li>
-                <li><a href="/sobre" onClick={(e) => go("/sobre", e)}>Sobre a Be Wild</a></li>
+                <li><a href="/sobre" onClick={(e) => go("/sobre", e)}>Sobre a BeWild</a></li>
                 <li><a href="/cases" onClick={(e) => go("/cases", e)}>Cases</a></li>
                 <li><a href="/conteudos" onClick={(e) => go("/conteudos", e)}>Conteúdos</a></li>
                 <li><a href="/diagnostico" onClick={(e) => go("/diagnostico", e)}>Diagnóstico do imóvel</a></li>
@@ -595,8 +595,8 @@ export default function HomeBw() {
             </div>
           </div>
           <div className="foot-bar">
-            <span>Be Wild — Da obra à diária: preparação e gestão de imóveis para short stay.</span>
-            <span>© 2026 Be Wild. Be Wild Reformas prepara. BeWild Host Care opera. Todos os direitos reservados.</span>
+            <span>BeWild — Da obra à diária: preparação e gestão de imóveis para short stay.</span>
+            <span>© 2026 BeWild. BeWild Reformas prepara. BeWild Host Care opera. Todos os direitos reservados.</span>
           </div>
         </div>
         <div className="foot-name">Be <em>Wild</em></div>

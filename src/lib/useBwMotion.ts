@@ -1,5 +1,5 @@
 /**
- * useBwMotion — hooks de motion da Be Wild.
+ * useBwMotion — hooks de motion da BeWild.
  * Sprint 3 — Motion e microinterações.
  *
  * Princípios (do documento de design):

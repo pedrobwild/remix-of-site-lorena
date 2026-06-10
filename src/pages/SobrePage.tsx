@@ -1,6 +1,6 @@
 /**
  * SobrePage — /sobre
- * Humaniza a marca Be Wild: tese, equipe, bastidores e autoridade.
+ * Humaniza a marca BeWild: tese, equipe, bastidores e autoridade.
  * Seguindo o BrandSystem v2.0: confiança técnica + hospitalidade premium + operação transparente.
  */
 import { useSeo } from "../lib/useSeo";
@@ -57,27 +57,27 @@ const VALORES = [
 
 const NUMEROS = [
   { valor: "SP", label: "Cidade de operação", detalhe: "Foco em bairros premium de São Paulo" },
-  { valor: "2", label: "Produtos integrados", detalhe: "Be Wild Reformas + BeWild Host Care" },
+  { valor: "2", label: "Produtos integrados", detalhe: "BeWild Reformas + BeWild Host Care" },
   { valor: "24h", label: "Suporte ao hóspede", detalhe: "Check-in, suporte e check-out" },
   { valor: "100%", label: "Relatórios mensais", detalhe: "Dados reais, sem arredondamento" },
 ];
 
 const PERGUNTAS_FREQUENTES = [
   {
-    q: "A Be Wild atende qualquer bairro de São Paulo?",
+    q: "A BeWild atende qualquer bairro de São Paulo?",
     a: "Nosso foco atual é em bairros com histórico de demanda para short stay em São Paulo: Pinheiros, Itaim Bibi, Vila Olímpia, Brooklin, Vila Madalena, Consolação, Bela Vista e Vila Mariana. Se seu imóvel está em outro bairro, o diagnóstico avalia a viabilidade.",
   },
   {
     q: "Posso contratar só a reforma ou só a gestão?",
-    a: "Sim. O Be Wild Reformas e o BeWild Host Care podem ser contratados separadamente. Mas quando contratados juntos, a continuidade entre quem prepara e quem opera reduz fricção, retrabalho e tempo até a primeira reserva.",
+    a: "Sim. O BeWild Reformas e o BeWild Host Care podem ser contratados separadamente. Mas quando contratados juntos, a continuidade entre quem prepara e quem opera reduz fricção, retrabalho e tempo até a primeira reserva.",
   },
   {
-    q: "A Be Wild garante rentabilidade?",
+    q: "A BeWild garante rentabilidade?",
     a: "Não. Short stay tem sazonalidade e variáveis de mercado que nenhuma gestora controla completamente. Prometemos gestão profissional, operação transparente e dados reais. Quem promete número garantido está vendendo expectativa, não serviço.",
   },
   {
     q: "Como funciona o início?",
-    a: "Começa pelo diagnóstico: uma conversa consultiva sobre imóvel, bairro, estágio e objetivo. Indicamos o caminho — Be Wild Reformas, BeWild Host Care ou os dois — e apresentamos proposta detalhada. Sem compromisso no diagnóstico.",
+    a: "Começa pelo diagnóstico: uma conversa consultiva sobre imóvel, bairro, estágio e objetivo. Indicamos o caminho — BeWild Reformas, BeWild Host Care ou os dois — e apresentamos proposta detalhada. Sem compromisso no diagnóstico.",
   },
   {
     q: "Quanto tempo leva para o imóvel estar operando?",
@@ -87,9 +87,9 @@ const PERGUNTAS_FREQUENTES = [
 
 export default function SobrePage() {
   useSeo({
-    title: "Sobre a Be Wild — Preparação e gestão de imóveis para short stay em São Paulo",
+    title: "Sobre a BeWild — Preparação e gestão de imóveis para short stay em São Paulo",
     description:
-      "Conheça a Be Wild: a empresa que integra Be Wild Reformas e BeWild Host Care para investidores que querem renda imobiliária sem virar operadores. São Paulo.",
+      "Conheça a BeWild: a empresa que integra BeWild Reformas e BeWild Host Care para investidores que querem renda imobiliária sem virar operadores. São Paulo.",
     canonicalPath: "/sobre",
     ogType: "website",
   });
@@ -105,13 +105,13 @@ export default function SobrePage() {
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-3xl">
               <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
-                Sobre a Be Wild
+                Sobre a BeWild
               </p>
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
                 A empresa que integra reforma e gestão para o investidor não virar operador.
               </h1>
               <p className="mb-8 text-lg leading-relaxed text-white/60 sm:text-xl">
-                A Be Wild nasceu de uma lacuna clara: o mercado tinha reformas de um lado e
+                A BeWild nasceu de uma lacuna clara: o mercado tinha reformas de um lado e
                 gestoras de Airbnb do outro — mas ninguém era dono do ciclo inteiro. O resultado
                 era o investidor costurando fornecedores, prazos, compras, anúncios e hóspedes.
               </p>
@@ -142,7 +142,7 @@ export default function SobrePage() {
                 </p>
                 <p className="mb-5 text-white/60 leading-relaxed">
                   Quando preparação e operação são desconectadas, o investidor vira o ponto de
-                  integração de tudo. A Be Wild assume esse ciclo inteiro — da obra à diária —
+                  integração de tudo. A BeWild assume esse ciclo inteiro — da obra à diária —
                   para que o proprietário acompanhe sem precisar operar.
                 </p>
                 <p className="text-bewild-text-muted leading-relaxed">
@@ -180,8 +180,8 @@ export default function SobrePage() {
                 Uma jornada. Dois produtos. Zero fragmentação.
               </h2>
               <p className="text-bewild-text-muted leading-relaxed">
-                Be Wild Reformas prepara o ativo. BeWild Host Care opera o ativo.
-                A Be Wild conecta os dois — e o investidor não precisa coordenar nada entre eles.
+                BeWild Reformas prepara o ativo. BeWild Host Care opera o ativo.
+                A BeWild conecta os dois — e o investidor não precisa coordenar nada entre eles.
               </p>
             </div>
             <JornadaBeWild variant="home" showCtas={false} />
@@ -201,7 +201,7 @@ export default function SobrePage() {
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="mb-14 max-w-2xl">
               <p className="mb-3 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
-                Como a Be Wild pensa
+                Como a BeWild pensa
               </p>
               <h2 className="text-3xl font-bold text-bewild-ink sm:text-4xl">
                 Princípios que guiam cada decisão.
@@ -271,7 +271,7 @@ export default function SobrePage() {
                 Perguntas frequentes
               </p>
               <h2 className="text-3xl font-bold text-bewild-ink sm:text-4xl">
-                Sobre a Be Wild e como trabalhamos.
+                Sobre a BeWild e como trabalhamos.
               </h2>
             </div>
             <div className="grid gap-5 lg:grid-cols-2">
@@ -306,7 +306,7 @@ export default function SobrePage() {
                 Diagnosticar meu imóvel <ArrowRight className="h-4 w-4" />
               </button>
               <a
-                href={whatsappHref("Olá, quero saber mais sobre a Be Wild e como vocês trabalham.")}
+                href={whatsappHref("Olá, quero saber mais sobre a BeWild e como vocês trabalham.")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-7 py-3.5 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-parchment hover:border-bewild-cream-200"

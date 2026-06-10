@@ -96,7 +96,7 @@ export function Eyebrow({
   children: ReactNode;
   tone?: "blue" | "light";
 }) {
-  // Padrão Be Wild: gold em fundos escuros, gold-accessible em fundos claros.
+  // Padrão BeWild: gold em fundos escuros, gold-accessible em fundos claros.
   const color = tone === "light" ? "text-bewild-gold" : "text-bewild-gold-accessible";
   return (
     <span

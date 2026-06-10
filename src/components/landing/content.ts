@@ -56,10 +56,10 @@ export function whatsappHref(text: string = CONTACT.whatsappText): string {
   return `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(text)}`;
 }
 
-// Navegação principal — arquitetura Be Wild / Be Wild Reformas / BeWild Host Care
+// Navegação principal — arquitetura BeWild / BeWild Reformas / BeWild Host Care
 export const NAV_LINKS: { label: string; href: string; isPage?: boolean }[] = [
   { label: "Jornada Be Wild", href: "/metodo-bwild", isPage: true },
-  { label: "Be Wild Reformas", href: "/be-wild", isPage: true },
+  { label: "BeWild Reformas", href: "/be-wild", isPage: true },
   { label: "BeWild Host Care", href: "/bewild-host-care", isPage: true },
   { label: "Cases", href: "/cases", isPage: true },
   { label: "Conteúdos", href: "/conteudos", isPage: true },

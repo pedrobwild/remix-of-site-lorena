@@ -158,7 +158,7 @@ function TabReservas() {
 function TabLimpeza() {
   return (
     <div className="space-y-3">
-      <p className="text-[10px] text-white/60 font-mono uppercase tracking-widest">Junho 2026 · Protocolo Be Wild</p>
+      <p className="text-[10px] text-white/60 font-mono uppercase tracking-widest">Junho 2026 · Protocolo BeWild</p>
       {LIMPEZAS_MOCK.map((l) => (
         <div key={l.data} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 flex items-center gap-4">
           <div className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center ${

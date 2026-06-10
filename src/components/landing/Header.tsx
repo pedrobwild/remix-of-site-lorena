@@ -1,5 +1,5 @@
 /**
- * Header — Be Wild
+ * Header — BeWild
  * Light mode editorial + navbar scroll (transparente → cream).
  * Padrão: Guesty (backdrop-blur transparente) + Mynd (solid ao scroll)
  * Sprint B — adicionado dropdown "Conteúdos" com postagens recentes
@@ -166,7 +166,7 @@ export default function Header({ forceSolid = false }: { forceSolid?: boolean } 
           <button
             onClick={() => navigate("/")}
             className="flex items-center gap-2 flex-shrink-0"
-            aria-label="Be Wild — página inicial"
+            aria-label="BeWild — página inicial"
           >
             <span
               className={`text-lg font-bold tracking-tight transition-colors duration-[260ms] ${
@@ -174,7 +174,7 @@ export default function Header({ forceSolid = false }: { forceSolid?: boolean } 
               }`}
               style={{ fontFamily: "'Poppins', sans-serif" }}
             >
-              Be Wild
+              BeWild
             </span>
           </button>
 

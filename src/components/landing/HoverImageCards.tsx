@@ -14,7 +14,7 @@ import { navigate } from "../../lib/useHashRoute";
 const CARDS = [
   {
     id: "reforma",
-    tag: "Be Wild Reformas",
+    tag: "BeWild Reformas",
     title: "Reforma turn-key para short stay",
     body: "Projeto, obra, marcenaria, mobiliário e setup. Pronto para hospedar.",
     Icon: Wrench,

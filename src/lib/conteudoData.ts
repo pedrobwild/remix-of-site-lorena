@@ -1,5 +1,5 @@
 /**
- * conteudoData.ts — Fonte estática dos artigos do hub de conteúdo Be Wild.
+ * conteudoData.ts — Fonte estática dos artigos do hub de conteúdo BeWild.
  *
  * Cada artigo tem:
  * - slug único → rota /conteudos/[slug]
@@ -44,7 +44,7 @@ export const CONTEUDOS: Conteudo[] = [
     dataIso: "2026-06-01",
     cta: "Ler guia",
     seo: {
-      title: "Como preparar um studio para short stay | Be Wild",
+      title: "Como preparar um studio para short stay | BeWild",
       description:
         "Guia completo sobre preparação de studio para Airbnb e short stay: materiais, layout, iluminação, pontos de energia e o que realmente impacta a performance operacional.",
       keywords: "studio short stay, reforma airbnb, preparação imóvel aluguel temporada, reforma studio sp",
@@ -69,10 +69,10 @@ export const CONTEUDOS: Conteudo[] = [
 <h2>O que pode ser simplificado</h2>
 <p>Marmorizado no banheiro, bancada de porcelanito, acabamento de luxo na área de serviço — são investimentos que raramente aparecem nas avaliações de hóspedes. Hóspedes de short stay avaliam: espaço percebido, limpeza, conforto da cama e velocidade do Wi-Fi. Acabamentos premium em áreas de pouca foto têm ROI baixo.</p>
 
-<h2>A diferença que a Be Wild faz</h2>
-<p>A Be Wild projeta para o short stay desde a prancha — não adapta projetos residenciais. Isso significa que cada decisão de material, layout e instalação considera os critérios de performance operacional e fotográfica desde o início. O resultado é um imóvel que fotografa melhor, é mais fácil de operar e tem custo de manutenção previsível.</p>
+<h2>A diferença que a BeWild faz</h2>
+<p>A BeWild projeta para o short stay desde a prancha — não adapta projetos residenciais. Isso significa que cada decisão de material, layout e instalação considera os critérios de performance operacional e fotográfica desde o início. O resultado é um imóvel que fotografa melhor, é mais fácil de operar e tem custo de manutenção previsível.</p>
 
-<p class="disclaimer">Este conteúdo é informativo. Cada imóvel tem suas especificidades — o diagnóstico Be Wild considera as características do seu ativo antes de qualquer recomendação.</p>
+<p class="disclaimer">Este conteúdo é informativo. Cada imóvel tem suas especificidades — o diagnóstico BeWild considera as características do seu ativo antes de qualquer recomendação.</p>
     `.trim(),
   },
   {
@@ -87,7 +87,7 @@ export const CONTEUDOS: Conteudo[] = [
     dataIso: "2026-06-01",
     cta: "Ler análise",
     seo: {
-      title: "Short stay ainda vale a pena em SP? Análise 2026 | Be Wild",
+      title: "Short stay ainda vale a pena em SP? Análise 2026 | BeWild",
       description:
         "Análise realista sobre o mercado de short stay em São Paulo em 2026: ocupação média, receita por bairro, saturação e quando não faz sentido — sem promessa de renda garantida.",
       keywords: "short stay são paulo 2026, airbnb sp vale pena, mercado short stay sp, ocupação airbnb são paulo",
@@ -127,7 +127,7 @@ export const CONTEUDOS: Conteudo[] = [
     dataIso: "2026-06-01",
     cta: "Ler guia",
     seo: {
-      title: "Airbnb vs Booking.com para short stay em SP | Be Wild",
+      title: "Airbnb vs Booking.com para short stay em SP | BeWild",
       description:
         "Comparativo completo entre Airbnb e Booking.com para curta temporada em São Paulo: taxas, perfil de hóspede, algoritmo e por que a distribuição multicanal é a estratégia correta.",
       keywords: "airbnb vs booking, distribuição multicanal short stay, taxa airbnb host, booking comissão hospedagem",
@@ -165,7 +165,7 @@ export const CONTEUDOS: Conteudo[] = [
     dataIso: "2026-06-01",
     cta: "Ver comparativo",
     seo: {
-      title: "Gestão própria vs. gestora profissional de short stay | Be Wild",
+      title: "Gestão própria vs. gestora profissional de short stay | BeWild",
       description:
         "Comparativo detalhado entre gerenciar o próprio Airbnb e contratar uma gestora profissional: custos reais, precificação dinâmica, tempo e impacto no ranqueamento.",
       keywords: "gestão própria airbnb, gestora curta temporada sp, vale pena gestora airbnb, custo gestão short stay",
@@ -221,13 +221,13 @@ export const CONTEUDOS: Conteudo[] = [
     dataIso: "2026-06-01",
     cta: "Ler guia",
     seo: {
-      title: "7 erros de quem prepara imóvel para short stay | Be Wild",
+      title: "7 erros de quem prepara imóvel para short stay | BeWild",
       description:
         "Os 7 erros mais comuns na preparação de imóveis para Airbnb: cama fora de posição fotográfica, cortinas de tecido, Wi-Fi mal posicionado, enxoval inadequado e mais.",
       keywords: "erros airbnb, preparação imóvel short stay, reforma studio airbnb, short stay erros comuns",
     },
     corpoHtml: `
-<p>Estes erros aparecem repetidamente em imóveis que chegam ao diagnóstico Be Wild já em operação — ou que precisam de reforma antes de começar.</p>
+<p>Estes erros aparecem repetidamente em imóveis que chegam ao diagnóstico BeWild já em operação — ou que precisam de reforma antes de começar.</p>
 
 <ul class="erros-list">
   <li>
@@ -260,7 +260,7 @@ export const CONTEUDOS: Conteudo[] = [
   </li>
 </ul>
 
-<p class="disclaimer">Levantamento baseado em visitas técnicas e diagnósticos realizados pela equipe Be Wild. Cada imóvel é avaliado individualmente.</p>
+<p class="disclaimer">Levantamento baseado em visitas técnicas e diagnósticos realizados pela equipe BeWild. Cada imóvel é avaliado individualmente.</p>
     `.trim(),
   },
   {
@@ -275,7 +275,7 @@ export const CONTEUDOS: Conteudo[] = [
     dataIso: "2026-06-01",
     cta: "Ver análise",
     seo: {
-      title: "Short stay em Pinheiros, Vila Madalena e Consolação | Be Wild",
+      title: "Short stay em Pinheiros, Vila Madalena e Consolação | BeWild",
       description:
         "Análise de potencial para short stay nos principais bairros de São Paulo: Pinheiros, Vila Madalena, Consolação, Itaim Bibi, Brooklin. Dados de ocupação, ADR e perfil de hóspede.",
       keywords: "short stay pinheiros sp, airbnb vila madalena, consolação aluguel temporada, bairros sp short stay potencial",
@@ -297,7 +297,7 @@ export const CONTEUDOS: Conteudo[] = [
 
 <h2>Qual tem mais potencial?</h2>
 <p>Depende do imóvel e do objetivo do proprietário. Para maximizar receita bruta em imóvel já preparado: Pinheiros e Itaim Bibi. Para melhor relação investimento/retorno com imóvel a preparar: Consolação e Vila Mariana. Para demanda de negócios com alta ocupação de semana: Vila Olímpia e Brooklin.</p>
-<p>O diagnóstico Be Wild avalia o potencial específico do seu ativo considerando bairro, metragem, estado atual e perfil de imóvel — sem generalizar por bairro.</p>
+<p>O diagnóstico BeWild avalia o potencial específico do seu ativo considerando bairro, metragem, estado atual e perfil de imóvel — sem generalizar por bairro.</p>
 
 <p class="disclaimer">Dados de referência baseados em <a href="https://airbtics.com/annual-airbnb-revenue-in-sao-paulo-brazil-pt" target="_blank" rel="noopener noreferrer">Airbtics (2025)</a> e <a href="https://thelatinvestor.com/blogs/news/sao-paulo-airbnb" target="_blank" rel="noopener noreferrer">TheLatinvestor (2026)</a>. Resultado passado não garante resultado futuro.</p>
     `.trim(),

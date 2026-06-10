@@ -102,13 +102,13 @@ const FAQS = [
   },
   {
     q: "Meu imóvel precisa ter sido reformado pela Bwild para entrar no BeWild Host Care?",
-    a: "Não necessariamente. Fazemos uma vistoria para avaliar se o imóvel está pronto para operar. Se precisar de ajustes, indicamos o Be Wild Reformas. Se já estiver pronto, podemos começar diretamente.",
+    a: "Não necessariamente. Fazemos uma vistoria para avaliar se o imóvel está pronto para operar. Se precisar de ajustes, indicamos o BeWild Reformas. Se já estiver pronto, podemos começar diretamente.",
   },
 ];
 
 export default function BewildHostCarePage() {
   useSeo({
-    title: "BeWild Host Care — Gestão profissional de locação por temporada | Be Wild",
+    title: "BeWild Host Care — Gestão profissional de locação por temporada | BeWild",
     description:
       "Anúncio, precificação, hóspedes, limpeza, manutenção, relatórios e repasse. Gestão profissional de short stay sem você virar anfitrião. Sem fidelidade, com suporte 24h.",
     canonicalPath: "/bewild-host-care",
@@ -308,7 +308,7 @@ export default function BewildHostCarePage() {
           </div>
         </section>
 
-        {/* Ponte Be Wild */}
+        {/* Ponte BeWild */}
         <section className="border-t border-bewild-cream-200 py-20 sm:py-24">
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-2xl mx-auto text-center">
@@ -320,14 +320,14 @@ export default function BewildHostCarePage() {
               </h2>
               <p className="mb-8 text-bewild-text-muted leading-relaxed">
                 Se o imóvel ainda não está preparado para competir no short stay — foto, funcionalidade,
-                manutenção, setup — a gestão começa em desvantagem. O Be Wild Reformas prepara o ativo para o
+                manutenção, setup — a gestão começa em desvantagem. O BeWild Reformas prepara o ativo para o
                 BeWild Host Care poder operar no nível certo.
               </p>
               <button
                 onClick={() => navigate("/be-wild")}
                 className="inline-flex items-center gap-2 rounded-full border border-bewild-cream-200 px-6 py-3 text-sm font-semibold text-bewild-ink transition-all hover:bg-bewild-parchment"
               >
-                Conhecer o Be Wild Reformas <ArrowRight className="h-4 w-4" />
+                Conhecer o BeWild Reformas <ArrowRight className="h-4 w-4" />
               </button>
             </div>
           </div>
@@ -360,7 +360,7 @@ export default function BewildHostCarePage() {
               Coloque seu imóvel para rodar.
             </h2>
             <p className="mb-8 text-bewild-text-muted max-w-xl mx-auto">
-              Conte em que estágio está seu imóvel. A gente indica o caminho: Be Wild Reformas, BeWild Host Care ou jornada completa.
+              Conte em que estágio está seu imóvel. A gente indica o caminho: BeWild Reformas, BeWild Host Care ou jornada completa.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
               <button
