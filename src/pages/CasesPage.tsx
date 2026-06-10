@@ -191,7 +191,7 @@ function TriptychCard({ c }: { c: Case }) {
           <div className="mb-3">
             <AssetStatusTag status={c.antes.status} size="sm" />
           </div>
-          <p className="text-[10px] font-mono text-white/30 uppercase tracking-widest mb-2">Antes</p>
+          <p className="text-[10px] font-mono text-white/55 uppercase tracking-widest mb-2">Antes</p>
           <p className="text-sm font-semibold text-bewild-text-body mb-2 leading-snug">{c.antes.titulo}</p>
           <p className="text-xs text-bewild-text-muted leading-relaxed">{c.antes.descricao}</p>
         </div>
@@ -210,7 +210,7 @@ function TriptychCard({ c }: { c: Case }) {
           <div className="mb-3">
             <AssetStatusTag status="pronto" size="sm" />
           </div>
-          <p className="text-[10px] font-mono text-white/30 uppercase tracking-widest mb-2">Pronto para hospedar</p>
+          <p className="text-[10px] font-mono text-white/55 uppercase tracking-widest mb-2">Pronto para hospedar</p>
           <p className="text-sm font-semibold text-white mb-3 leading-snug">{c.pronto.titulo}</p>
           <ul className="space-y-1.5">
             {c.pronto.decisoes.map((d) => (
@@ -236,14 +236,14 @@ function TriptychCard({ c }: { c: Case }) {
           <div className="mb-3">
             <AssetStatusTag status="operando" size="sm" />
           </div>
-          <p className="text-[10px] font-mono text-white/30 uppercase tracking-widest mb-2">Operando</p>
+          <p className="text-[10px] font-mono text-white/55 uppercase tracking-widest mb-2">Operando</p>
           <p className="text-sm font-semibold text-white mb-2 leading-snug">{c.operando.titulo}</p>
           <p className="text-xs text-bewild-text-muted leading-relaxed mb-4">{c.operando.descricao}</p>
           {c.operando.metricas && (
             <div className="space-y-2">
               {c.operando.metricas.map((m) => (
                 <div key={m.label} className="flex items-center justify-between gap-2">
-                  <span className="text-[10px] text-white/30">{m.label}</span>
+                  <span className="text-[10px] text-white/55">{m.label}</span>
                   <span className="text-[10px] font-mono font-semibold text-bewild-gold">{m.value}</span>
                 </div>
               ))}
@@ -258,7 +258,7 @@ function TriptychCard({ c }: { c: Case }) {
           <Quote className="h-4 w-4 text-bewild-gold/40 flex-shrink-0 mt-0.5" />
           <div>
             <p className="text-sm text-bewild-text-muted leading-relaxed italic">"{c.depoimento.texto}"</p>
-            <p className="mt-2 text-xs text-white/30">{c.depoimento.autor} · {c.depoimento.perfil}</p>
+            <p className="mt-2 text-xs text-white/55">{c.depoimento.autor} · {c.depoimento.perfil}</p>
           </div>
         </div>
       )}
@@ -285,7 +285,7 @@ export default function CasesPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-bewild-blue/8 via-transparent to-transparent" />
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-3xl">
-              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 Cases reais
               </p>
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
@@ -297,9 +297,9 @@ export default function CasesPage() {
               </p>
               <div className="flex items-center gap-3 flex-wrap">
                 <AssetStatusTag status="cru" />
-                <span className="text-white/20">→</span>
+                <span className="text-white/40">→</span>
                 <AssetStatusTag status="pronto" />
-                <span className="text-white/20">→</span>
+                <span className="text-white/40">→</span>
                 <AssetStatusTag status="operando" />
               </div>
             </div>

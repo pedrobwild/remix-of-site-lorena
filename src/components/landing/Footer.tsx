@@ -45,7 +45,7 @@ export default function Footer() {
               Be Wild Reformas prepara o ativo. BeWild Host Care opera o ativo.
               A Bwild conecta o ciclo inteiro.
             </p>
-            <p className="text-sm text-white/45">{CONTACT.city}</p>
+            <p className="text-sm text-white/65">{CONTACT.city}</p>
           </div>
 
           <nav aria-label="Rodapé — Jornada Bwild">
@@ -122,10 +122,10 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-white/45">
+          <p className="text-xs text-white/60">
             Bwild — Da obra à diária: preparação e gestão de imóveis para short stay.
           </p>
-          <p className="text-xs text-white/35">
+          <p className="text-xs text-white/60">
             © {new Date().getFullYear()} Bwild. Be Wild Reformas prepara. BeWild Host Care opera. Todos os direitos reservados.
           </p>
         </div>

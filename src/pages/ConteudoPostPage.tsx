@@ -97,7 +97,7 @@ export default function ConteudoPostPage({ slug }: Props) {
           <p className="text-bewild-text-muted mb-4">Artigo não encontrado.</p>
           <button
             onClick={() => navigate("/conteudos")}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-bewild-gold"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-bewild-gold-accessible"
           >
             <ArrowLeft className="h-4 w-4" /> Ver todos os conteúdos
           </button>
@@ -131,14 +131,14 @@ export default function ConteudoPostPage({ slug }: Props) {
             <nav className="flex items-center gap-2 text-xs text-bewild-text-muted mb-8">
               <button
                 onClick={() => navigate("/")}
-                className="hover:text-bewild-gold transition-colors"
+                className="hover:text-bewild-gold-accessible transition-colors"
               >
                 Início
               </button>
               <span>/</span>
               <button
                 onClick={() => navigate("/conteudos")}
-                className="hover:text-bewild-gold transition-colors"
+                className="hover:text-bewild-gold-accessible transition-colors"
               >
                 Conteúdos
               </button>
@@ -285,7 +285,7 @@ export default function ConteudoPostPage({ slug }: Props) {
                       <p className="text-xs text-bewild-text-muted leading-relaxed mb-4 line-clamp-2">
                         {rel.resumo}
                       </p>
-                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-bewild-gold">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-bewild-gold-accessible">
                         {rel.cta} <ArrowRight className="h-3.5 w-3.5" />
                       </span>
                     </button>

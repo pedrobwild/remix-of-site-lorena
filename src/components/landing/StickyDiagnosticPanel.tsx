@@ -51,7 +51,7 @@ export function StickyDiagnosticPanel() {
         <p className="text-xs font-semibold text-white leading-snug mb-1">
           Seu imóvel tem potencial para short stay?
         </p>
-        <p className="text-[11px] text-white/45 leading-relaxed mb-4">
+        <p className="text-[11px] text-white/65 leading-relaxed mb-4">
           Diagnóstico gratuito. Sem compromisso.
         </p>
 
@@ -64,7 +64,7 @@ export function StickyDiagnosticPanel() {
         </button>
 
         {/* Prova micro */}
-        <p className="mt-3 text-center text-[9px] text-white/25 leading-tight">
+        <p className="mt-3 text-center text-[9px] text-white/50 leading-tight">
           Consultivo · Sem promessa de resultado
         </p>
       </div>

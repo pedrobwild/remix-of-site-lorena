@@ -11,7 +11,7 @@
    ========================================================= */
 :root {
   /* Paleta — fundo branco + petróleo */
-  --bw-cream:        #F5F7F9;   /* respiro frio (era #F7F4EF creme) */
+  --bw-cream:        #F5F7F9;   /* respiro frio, off-white frio */
   --bw-cream-100:    #EEF2F5;
   --bw-cream-200:    #E4E7EB;
   --bw-parchment:    #FFFFFF;   /* cards = branco puro */
@@ -724,7 +724,7 @@ body.bwild-light-cursor .cursor__label {
   border: 1px solid var(--bw-cream-200, #E9E2D5);
 }
 .conteudo-prose thead tr {
-  background: var(--bw-cream, #F7F4EF);
+  background: var(--bw-cream, #F5F7F9);
 }
 .conteudo-prose th {
   text-align: left;

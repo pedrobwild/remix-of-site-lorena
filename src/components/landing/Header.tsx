@@ -76,7 +76,7 @@ function ConteudosDropdown({
         {/* Header do dropdown */}
         <div
           className="px-4 py-3 border-b"
-          style={{ borderColor: "var(--bw-cream-200, #E9E2D5)", background: "var(--bw-cream, #F7F4EF)" }}
+          style={{ borderColor: "var(--bw-cream-200, #E9E2D5)", background: "var(--bw-cream, #F5F7F9)" }}
         >
           <p className="text-xs font-mono uppercase tracking-[0.12em] text-bewild-text-muted">
             Últimas publicações
@@ -94,7 +94,7 @@ function ConteudosDropdown({
               }}
               className="w-full text-left px-4 py-3.5 hover:bg-bewild-cream transition-colors duration-150 group"
             >
-              <p className="text-sm font-medium text-bewild-ink leading-snug mb-1.5 group-hover:text-bewild-gold transition-colors line-clamp-2">
+              <p className="text-sm font-medium text-bewild-ink leading-snug mb-1.5 group-hover:text-bewild-gold-accessible transition-colors line-clamp-2">
                 {post.titulo}
               </p>
               <div className="flex items-center gap-3 text-xs text-bewild-text-muted">
@@ -123,7 +123,7 @@ function ConteudosDropdown({
               setOpen(false);
               onNavigate("/conteudos");
             }}
-            className="w-full flex items-center justify-between text-sm font-semibold text-bewild-gold hover:text-bewild-ink transition-colors group"
+            className="w-full flex items-center justify-between text-sm font-semibold text-bewild-gold-accessible hover:text-bewild-ink transition-colors group"
           >
             <span className="flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
@@ -303,7 +303,7 @@ export default function Header() {
                   ))}
                   <button
                     onClick={() => handleNav("/conteudos")}
-                    className="w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold text-bewild-gold hover:bg-bewild-parchment transition-colors duration-[160ms] flex items-center gap-1.5"
+                    className="w-full text-left px-4 py-2.5 rounded-xl text-xs font-semibold text-bewild-gold-accessible hover:bg-bewild-parchment transition-colors duration-[160ms] flex items-center gap-1.5"
                   >
                     Ver todos <ArrowRight className="h-3 w-3" />
                   </button>

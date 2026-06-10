@@ -93,13 +93,15 @@ export default function HeroSection() {
             </picture>
           );
         })}
-        <div className="absolute inset-0 bg-bewild-ink/25 sm:bg-bewild-ink/20" />
+        {/* Scrim base — reforçado para slides claros (premium-11-2, premium-7-4) */}
+        <div className="absolute inset-0 bg-bewild-ink/35 sm:bg-bewild-ink/30" />
         {/* Gradiente petróleo do lado do texto (era genérico #0A111E) */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(90deg, rgba(10,37,64,0.78) 0%, rgba(10,37,64,0.5) 38%, rgba(10,37,64,0.15) 62%, rgba(10,37,64,0) 100%)",
+              /* Stop inicial 0.78→0.92 para garantir contraste no pior slide claro */
+              "linear-gradient(90deg, rgba(10,37,64,0.92) 0%, rgba(10,37,64,0.64) 38%, rgba(10,37,64,0.18) 62%, rgba(10,37,64,0) 100%)",
           }}
         />
         <div

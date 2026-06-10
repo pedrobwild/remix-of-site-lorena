@@ -31,7 +31,7 @@ export default function MetodoBwildPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-bewild-gold/5 via-transparent to-transparent" />
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-3xl">
-              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 Jornada Be Wild
               </p>
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">

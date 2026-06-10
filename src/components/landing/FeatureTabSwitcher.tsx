@@ -179,7 +179,7 @@ export default function FeatureTabSwitcher({
   return (
     <section
       className="py-24 sm:py-32 border-t border-bewild-cream-200"
-      style={{ backgroundColor: "var(--bw-cream)" }}
+      style={{ backgroundColor: "#ffffff" }}
     >
       <div className="mx-auto max-w-[76rem] px-5 sm:px-8">
         {/* Header */}

@@ -4,7 +4,7 @@ import { Container, SectionHeading } from "./primitives";
 import { OBJETIVO_OPTIONS, whatsappHref } from "./content";
 
 const FIELD =
-  "w-full rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-sm text-white placeholder:text-white/35 outline-none transition-colors focus:border-bewild-blue-400 focus:bg-white/[0.07]";
+  "w-full rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-sm text-white placeholder:text-white/55 outline-none transition-colors focus:border-bewild-blue-400 focus:bg-white/[0.07]";
 const LABEL = "mb-1.5 block text-xs font-medium text-white/65";
 
 export default function FinalCTA() {
@@ -232,7 +232,7 @@ export default function FinalCTA() {
             >
               Solicitar diagnóstico <ArrowRight className="h-4 w-4" />
             </button>
-            <p className="mt-3 text-center text-xs text-white/45">
+            <p className="mt-3 text-center text-xs text-white/65">
               Ao enviar, abrimos uma conversa no WhatsApp com seus dados preenchidos.
             </p>
           </form>

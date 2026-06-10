@@ -230,7 +230,7 @@ export default function SimuladorPage() {
               {/* Formulário */}
               <div className="rounded-2xl border border-bewild-cream-200 bg-white p-6 sm:p-8">
                 <div className="flex items-center gap-2 mb-8">
-                  <Calculator className="h-5 w-5 text-bewild-gold" />
+                  <Calculator className="h-5 w-5 text-bewild-gold-accessible" />
                   <p className="font-semibold text-bewild-ink">Dados do imóvel</p>
                 </div>
 
@@ -243,7 +243,7 @@ export default function SimuladorPage() {
                     <select
                       value={bairro}
                       onChange={(e) => { setBairro(e.target.value); setCalculado(false); }}
-                      className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted focus:border-bewild-gold/50 focus:outline-none focus:ring-1 focus:ring-bewild-gold/30 transition-all"
+                      className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted focus:border-bewild-blue/50 focus:outline-none focus:ring-1 focus:ring-bewild-blue/30 transition-all"
                     >
                       <option value="" disabled className="bg-gray-900">Selecione o bairro</option>
                       {Object.entries(BAIRROS).map(([k, v]) => (
@@ -265,7 +265,7 @@ export default function SimuladorPage() {
                     <select
                       value={tipo}
                       onChange={(e) => { setTipo(e.target.value); setCalculado(false); }}
-                      className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted focus:border-bewild-gold/50 focus:outline-none focus:ring-1 focus:ring-bewild-gold/30 transition-all"
+                      className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted focus:border-bewild-blue/50 focus:outline-none focus:ring-1 focus:ring-bewild-blue/30 transition-all"
                     >
                       <option value="" disabled className="bg-gray-900">Selecione o tipo</option>
                       {Object.entries(TIPOS).map(([k, v]) => (

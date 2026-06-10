@@ -177,7 +177,7 @@ export default function BeWildPage() {
                 </p>
               </div>
               <div className="rounded-2xl border border-bewild-cream-200 bg-white/5 p-8">
-                <p className="mb-4 text-sm font-semibold text-bewild-gold">
+                <p className="mb-4 text-sm font-semibold text-bewild-gold-accessible">
                   Não é sobre deixar bonito. É sobre preparar o ativo para operar melhor.
                 </p>
                 <ul className="space-y-3 text-sm text-bewild-text-muted">

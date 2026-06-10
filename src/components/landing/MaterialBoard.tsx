@@ -106,7 +106,7 @@ export function MaterialBoard() {
             <p className="text-xs text-bewild-gold/70 mb-3 font-medium">{m.decisao}</p>
 
             {/* Por quê */}
-            <p className="text-xs text-white/45 leading-relaxed">{m.porque}</p>
+            <p className="text-xs text-white/65 leading-relaxed">{m.porque}</p>
           </div>
           </Reveal>
         ))}

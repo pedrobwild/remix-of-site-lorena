@@ -119,7 +119,7 @@ export default function DiagnosticoPage() {
             <div className="grid gap-16 lg:grid-cols-2 lg:gap-20 lg:items-start">
               {/* Texto lateral */}
               <div className="max-w-lg">
-                <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+                <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                   Diagnóstico Bwild do Ativo
                 </p>
                 <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl">
@@ -169,7 +169,7 @@ export default function DiagnosticoPage() {
                         value={form.nome}
                         onChange={(e) => update("nome", e.target.value)}
                         placeholder="Seu nome"
-                        className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted outline-none focus:border-bewild-gold/60 focus:ring-1 focus:ring-bewild-gold/30 transition-colors"
+                        className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted outline-none focus:border-bewild-blue/60 focus:ring-1 focus:ring-bewild-blue/30 transition-colors"
                         required
                       />
                     </div>
@@ -183,7 +183,7 @@ export default function DiagnosticoPage() {
                         value={form.whatsapp}
                         onChange={(e) => update("whatsapp", e.target.value)}
                         placeholder="(11) 99999-9999"
-                        className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted outline-none focus:border-bewild-gold/60 focus:ring-1 focus:ring-bewild-gold/30 transition-colors"
+                        className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted outline-none focus:border-bewild-blue/60 focus:ring-1 focus:ring-bewild-blue/30 transition-colors"
                         required
                       />
                     </div>
@@ -252,7 +252,7 @@ export default function DiagnosticoPage() {
                           value={form.bairro}
                           onChange={(e) => update("bairro", e.target.value)}
                           placeholder="Ex: Pinheiros, SP"
-                          className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted outline-none focus:border-bewild-gold/60 focus:ring-1 focus:ring-bewild-gold/30 transition-colors"
+                          className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body placeholder-bewild-text-muted outline-none focus:border-bewild-blue/60 focus:ring-1 focus:ring-bewild-blue/30 transition-colors"
                         />
                       </div>
                       <div>
@@ -262,7 +262,7 @@ export default function DiagnosticoPage() {
                         <select
                           value={form.tipo}
                           onChange={(e) => update("tipo", e.target.value)}
-                          className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body outline-none focus:border-bewild-gold/60 focus:ring-1 focus:ring-bewild-gold/30 transition-colors"
+                          className="w-full rounded-xl border border-bewild-cream-200 bg-white px-4 py-3 text-sm text-bewild-text-body outline-none focus:border-bewild-blue/60 focus:ring-1 focus:ring-bewild-blue/30 transition-colors"
                         >
                           <option value="">Selecione</option>
                           <option value="Studio">Studio</option>

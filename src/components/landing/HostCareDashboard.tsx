@@ -69,8 +69,8 @@ function TabGeral() {
           <div key={m.label} className="rounded-xl border border-white/10 bg-white/[0.04] p-3.5">
             <m.icon className="h-4 w-4 text-bewild-gold mb-2 opacity-80" />
             <p className="text-lg font-bold text-white font-mono leading-none">{m.value}</p>
-            <p className="text-[10px] text-white/40 mt-1 leading-tight">{m.label}</p>
-            <p className={`text-[10px] mt-1 font-medium ${m.up ? "text-emerald-400" : "text-white/30"}`}>{m.sub}</p>
+            <p className="text-[10px] text-white/60 mt-1 leading-tight">{m.label}</p>
+            <p className={`text-[10px] mt-1 font-medium ${m.up ? "text-emerald-400" : "text-white/55"}`}>{m.sub}</p>
           </div>
         ))}
       </div>
@@ -92,7 +92,7 @@ function TabGeral() {
                     ? "bg-bewild-gold text-bewild-ink font-bold"
                     : ocupado
                     ? "bg-bewild-blue/60 text-white/80"
-                    : "bg-white/5 text-white/20"
+                    : "bg-white/5 text-white/35"
                 }`}
               >
                 {day}
@@ -100,7 +100,7 @@ function TabGeral() {
             );
           })}
         </div>
-        <div className="flex gap-4 mt-3 text-[10px] text-white/35">
+        <div className="flex gap-4 mt-3 text-[10px] text-white/60">
           <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-bewild-blue/60 inline-block"/>Ocupado</span>
           <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-bewild-gold inline-block"/>Hoje</span>
           <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-white/5 inline-block"/>Disponível</span>
@@ -112,7 +112,7 @@ function TabGeral() {
         <div>
           <p className="text-[10px] text-bewild-gold/70 font-mono uppercase tracking-widest mb-1">Próxima reserva</p>
           <p className="text-sm font-semibold text-white">M. Ferreira · 12–15 jun · Airbnb</p>
-          <p className="text-xs text-white/40 mt-0.5">4 noites · R$1.160 receita bruta</p>
+          <p className="text-xs text-white/65 mt-0.5">4 noites · R$1.160 receita bruta</p>
         </div>
         <CheckCircle className="h-5 w-5 text-bewild-gold flex-shrink-0" />
       </div>
@@ -124,7 +124,7 @@ function TabGeral() {
 function TabReservas() {
   return (
     <div className="space-y-3">
-      <p className="text-[10px] text-white/35 font-mono uppercase tracking-widest">Junho 2026 · 4 reservas · 13 noites</p>
+      <p className="text-[10px] text-white/60 font-mono uppercase tracking-widest">Junho 2026 · 4 reservas · 13 noites</p>
       {RESERVAS_MOCK.map((r) => (
         <div key={r.hóspede} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 flex items-center justify-between gap-3">
           <div className="flex-1 min-w-0">
@@ -145,9 +145,9 @@ function TabReservas() {
               </span>
             </div>
             <p className="text-sm font-semibold text-white">{r.hóspede}</p>
-            <p className="text-xs text-white/40">{r.datas}</p>
+            <p className="text-xs text-white/65">{r.datas}</p>
           </div>
-          <p className="text-sm font-bold text-bewild-gold font-mono flex-shrink-0">{r.diaria}<span className="text-white/25 font-normal">/noite</span></p>
+          <p className="text-sm font-bold text-bewild-gold font-mono flex-shrink-0">{r.diaria}<span className="text-white/50 font-normal">/noite</span></p>
         </div>
       ))}
     </div>
@@ -158,7 +158,7 @@ function TabReservas() {
 function TabLimpeza() {
   return (
     <div className="space-y-3">
-      <p className="text-[10px] text-white/35 font-mono uppercase tracking-widest">Junho 2026 · Protocolo Be Wild</p>
+      <p className="text-[10px] text-white/60 font-mono uppercase tracking-widest">Junho 2026 · Protocolo Be Wild</p>
       {LIMPEZAS_MOCK.map((l) => (
         <div key={l.data} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 flex items-center gap-4">
           <div className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center ${
@@ -173,7 +173,7 @@ function TabLimpeza() {
           </div>
           <div className="flex-1">
             <p className="text-sm font-medium text-white">{l.tipo}</p>
-            <p className="text-xs text-white/40">{l.data}</p>
+            <p className="text-xs text-white/65">{l.data}</p>
           </div>
           <span className={`text-[10px] font-mono rounded-full px-2 py-0.5 border ${
             l.status === "concluída"
@@ -184,7 +184,7 @@ function TabLimpeza() {
           </span>
         </div>
       ))}
-      <div className="rounded-xl border border-white/8 bg-white/[0.02] p-3 text-xs text-white/35 leading-relaxed">
+      <div className="rounded-xl border border-white/8 bg-white/[0.02] p-3 text-xs text-white/60 leading-relaxed">
         Vistoria de condição incluída em toda limpeza de saída. Registro fotográfico enviado ao proprietário.
       </div>
     </div>
@@ -195,7 +195,7 @@ function TabLimpeza() {
 function TabManutencao() {
   return (
     <div className="space-y-3">
-      <p className="text-[10px] text-white/35 font-mono uppercase tracking-widest">Manutenção preventiva e emergencial</p>
+      <p className="text-[10px] text-white/60 font-mono uppercase tracking-widest">Manutenção preventiva e emergencial</p>
       {MANUTENCAO_MOCK.map((m) => (
         <div key={m.item} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 flex items-start gap-4">
           <div className={`flex-shrink-0 mt-0.5 h-7 w-7 rounded-full flex items-center justify-center ${
@@ -211,7 +211,7 @@ function TabManutencao() {
           <div className="flex-1">
             <p className="text-sm font-semibold text-white">{m.item}</p>
             <p className="text-xs text-white/50">{m.acao}</p>
-            <p className="text-[10px] text-white/30 mt-0.5">{m.data}</p>
+            <p className="text-[10px] text-white/60 mt-0.5">{m.data}</p>
           </div>
           <span className={`text-[10px] font-mono rounded-full px-2 py-0.5 border flex-shrink-0 ${
             m.status === "concluída"
@@ -222,7 +222,7 @@ function TabManutencao() {
           </span>
         </div>
       ))}
-      <p className="text-[10px] text-white/30 leading-relaxed px-1">
+      <p className="text-[10px] text-white/60 leading-relaxed px-1">
         Proprietário acionado apenas para aprovação de reparos acima de R$300. Abaixo disso, a BeWild Host Care resolve.
       </p>
     </div>
@@ -233,7 +233,7 @@ function TabManutencao() {
 function TabRepasse() {
   return (
     <div className="space-y-4">
-      <p className="text-[10px] text-white/35 font-mono uppercase tracking-widest">Demonstrativo maio 2026</p>
+      <p className="text-[10px] text-white/60 font-mono uppercase tracking-widest">Demonstrativo maio 2026</p>
 
       {/* Extrato */}
       <div className="rounded-xl border border-white/10 bg-white/[0.03] overflow-hidden">
@@ -251,7 +251,7 @@ function TabRepasse() {
           >
             <span className="text-white/55">{row.label}</span>
             <span className={`font-mono font-medium ${row.color}`}>
-              <span className="text-white/30 mr-1">{row.sign}</span>{row.value}
+              <span className="text-white/55 mr-1">{row.sign}</span>{row.value}
             </span>
           </div>
         ))}
@@ -262,7 +262,7 @@ function TabRepasse() {
         </div>
       </div>
 
-      <p className="text-[10px] text-white/30 leading-relaxed">
+      <p className="text-[10px] text-white/60 leading-relaxed">
         Repasse via Pix até o dia 10 do mês seguinte. Demonstrativo completo enviado por e-mail com nota fiscal.
       </p>
     </div>
@@ -292,7 +292,7 @@ export function HostCareDashboard() {
             <span className="h-2.5 w-2.5 rounded-full bg-white/10" />
             <span className="h-2.5 w-2.5 rounded-full bg-white/8" />
           </div>
-          <span className="text-[11px] text-white/35 font-mono">Painel do Proprietário · BeWild Host Care</span>
+          <span className="text-[11px] text-white/60 font-mono">Painel do Proprietário · BeWild Host Care</span>
         </div>
         <span className="flex items-center gap-1.5 text-[10px] text-emerald-400 font-mono">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -309,7 +309,7 @@ export function HostCareDashboard() {
             className={`flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
               activeTab === tab.id
                 ? "text-bewild-gold border-b-2 border-bewild-gold bg-bewild-gold/5"
-                : "text-white/40 hover:text-white/70 border-b-2 border-transparent"
+                : "text-white/60 hover:text-white/80 border-b-2 border-transparent"
             }`}
           >
             <tab.icon className="h-3.5 w-3.5" />
@@ -325,7 +325,7 @@ export function HostCareDashboard() {
 
       {/* Footer disclaimer */}
       <div className="px-4 py-2.5 border-t border-white/5 bg-white/[0.01]">
-        <p className="text-[9px] text-white/20 font-mono">
+        <p className="text-[9px] text-white/40 font-mono">
           Dados ilustrativos · Resultado real varia por imóvel, bairro e período · Resultado passado não garante resultado futuro
         </p>
       </div>

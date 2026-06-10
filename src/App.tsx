@@ -148,7 +148,7 @@ export default function App() {
                 Seu imóvel no short stay,<br />
                 <em
                   className="not-italic"
-                  style={{ fontFamily: "var(--bw-font-display)", fontStyle: "italic", fontWeight: 400, color: "#F7F4EF" }}
+                  style={{ fontFamily: "var(--bw-font-display)", fontStyle: "italic", fontWeight: 400, color: "#F5F7F9" }}
                 >
                   da reforma à gestão.
                 </em>

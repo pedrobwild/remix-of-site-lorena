@@ -89,7 +89,7 @@ export default function ConteudosPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-bewild-gold/5 via-transparent to-transparent" />
           <div className="relative mx-auto w-full max-w-wrap px-5 sm:px-8">
             <div className="max-w-3xl">
-              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold">
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-bewild-gold-accessible">
                 Conteúdos Be Wild
               </p>
               <h1 className="mb-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl" style={{ letterSpacing: "-0.025em" }}>
@@ -188,7 +188,7 @@ export default function ConteudosPage() {
                         </div>
 
                         {/* CTA link */}
-                        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-bewild-gold group-hover:gap-2.5 transition-all duration-200">
+                        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-bewild-gold-accessible group-hover:gap-2.5 transition-all duration-200">
                           <BookOpen className="h-4 w-4" />
                           {artigo.cta}
                           <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
@@ -233,7 +233,7 @@ export default function ConteudosPage() {
         <section className="border-t border-bewild-cream-200 py-20 sm:py-28" style={{ background: "var(--bw-ink)" }}>
           <div className="mx-auto w-full max-w-wrap px-5 sm:px-8 text-center">
             <Reveal>
-              <p className="font-mono text-xs uppercase tracking-[0.14em] text-bewild-gold mb-5">
+              <p className="font-mono text-xs uppercase tracking-[0.14em] text-bewild-gold-accessible mb-5">
                 Próximo passo
               </p>
               <h2

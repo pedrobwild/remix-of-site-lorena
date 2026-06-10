@@ -191,7 +191,7 @@ function JornadaHome({ showCtas = true }: { showCtas?: boolean }) {
                 <p className={`mb-1.5 text-sm font-semibold ${isHighlight ? "text-white" : "text-white/65"}`}>
                   {etapa.title}
                 </p>
-                <p className="text-xs text-white/40 leading-relaxed line-clamp-3">{etapa.descricao}</p>
+                <p className="text-xs text-white/65 leading-relaxed line-clamp-3">{etapa.descricao}</p>
                 {isPhase1 && (
                   <span className="mt-3 inline-block text-[0.55rem] font-mono uppercase tracking-widest text-bewild-gold-accessible border border-bewild-gold/25 rounded-full px-2 py-0.5">
                     Fase 1
@@ -218,7 +218,7 @@ function JornadaHome({ showCtas = true }: { showCtas?: boolean }) {
           </button>
           <button
             onClick={() => navigate("/diagnostico")}
-            className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm text-white/60 hover:text-white transition-colors"
           >
             Iniciar meu diagnóstico <ArrowRight className="h-4 w-4" />
           </button>
@@ -252,7 +252,7 @@ function JornadaMetodo({ etapas }: { etapas?: EtapaDetalhe[] }) {
                 <span className="font-mono text-3xl font-bold text-bewild-blue/25">{etapa.n}</span>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <etapa.icon className={`h-4 w-4 ${isHighlight ? "text-bewild-blue-400" : "text-white/35"}`} />
+                    <etapa.icon className={`h-4 w-4 ${isHighlight ? "text-bewild-blue-400" : "text-white/55"}`} />
                     <p className={`font-semibold ${isHighlight ? "text-white" : "text-white/80"}`}>
                       {etapa.title}
                     </p>
@@ -298,7 +298,7 @@ function JornadaMini() {
           <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-center">
             <item.icon className="h-5 w-5 text-bewild-blue-400 mx-auto mb-2" />
             <p className="text-xs font-semibold text-white">{item.label}</p>
-            <p className="text-[0.6rem] text-white/40 mt-0.5">{item.sub}</p>
+            <p className="text-[0.6rem] text-white/60 mt-0.5">{item.sub}</p>
           </div>
           {i < arr.length - 1 && (
             <span className="hidden sm:block absolute -right-1.5 top-1/2 -translate-y-1/2 text-bewild-blue/40 text-xs z-10">

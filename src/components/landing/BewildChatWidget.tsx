@@ -239,7 +239,7 @@ export default function BewildChatWidget() {
           {phase === "chat" && (
             <button
               onClick={handleReset}
-              className="text-white/40 hover:text-white transition-colors"
+              className="text-white/60 hover:text-white transition-colors"
               aria-label="Reiniciar conversa"
             >
               <RotateCcw className="h-4 w-4" />
@@ -263,7 +263,7 @@ export default function BewildChatWidget() {
                   background:
                     msg.role === "user"
                       ? "var(--bw-ink)"
-                      : "var(--bw-cream, #F7F4EF)",
+                      : "var(--bw-cream, #F5F7F9)",
                   color: msg.role === "user" ? "#fff" : "var(--bw-text-body, #3d3d3d)",
                   borderRadius:
                     msg.role === "user"

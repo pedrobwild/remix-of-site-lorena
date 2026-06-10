@@ -57,7 +57,7 @@ const SECTIONS = [
     // Fundo escuro (ink)
     bg: "var(--bw-ink)",
     textClass: "text-white",
-    mutedClass: "text-white/40",
+    mutedClass: "text-white/60",
     bodyClass: "text-white/65",
     eyebrowClass: "text-bewild-gold",
     image: "/images/cases/bastidor-obra-01.jpg",
@@ -81,7 +81,7 @@ const SECTIONS = [
     // Fundo gold escuro
     bg: "#1a1108",
     textClass: "text-white",
-    mutedClass: "text-white/40",
+    mutedClass: "text-white/60",
     bodyClass: "text-white/65",
     eyebrowClass: "text-bewild-gold",
     image: "/images/cases/antes-depois-studio-01-depois.jpg",
