@@ -57,7 +57,18 @@ function routeKeyOf(route: Route) {
 }
 
 function Root() {
-  const route = useHashRoute();
+  const currentRoute = useHashRoute();
+  const route: Route = BYPASS_CONSTRUCAO && currentRoute.name === "emconstrucao"
+    ? { name: "home" }
+    : currentRoute;
+
+  // No preview/editor, /emconstrucao é só a tela pública externa.
+  // Se o editor estiver preso nela, volta imediatamente para o site real.
+  useEffect(() => {
+    if (!BYPASS_CONSTRUCAO || currentRoute.name !== "emconstrucao") return;
+    window.history.replaceState({}, "", "/");
+    window.dispatchEvent(new Event("lovable:navigate"));
+  }, [currentRoute.name]);
 
   // Modo construção: redireciona qualquer rota para /emconstrucao e
   // renderiza a página isolada, sem Header/Footer/widgets do site.
