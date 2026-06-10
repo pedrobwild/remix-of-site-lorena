@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './EmConstrucao.css';
+import { supabase } from '@/integrations/supabase/client';
 
 const WA_HREF =
   'https://wa.me/5511911906183?text=' +
