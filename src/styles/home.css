@@ -90,7 +90,6 @@
   .bw-home .nav-links{display:none}
   .bw-home .burger{display:flex}
 }
-}
 .menu{position:fixed;inset:0;z-index:120;background:var(--ink);color:#fff;display:flex;flex-direction:column;justify-content:center;padding:0 8vw;clip-path:circle(0 at calc(100% - 56px) 44px);transition:clip-path .8s var(--ease);visibility:hidden}
 .menu.open{clip-path:circle(150% at calc(100% - 56px) 44px);visibility:visible}
 .menu a.big{font-family:var(--serif);font-weight:600;font-size:clamp(1.7rem,6vw,2.6rem);padding:.3rem 0;display:flex;gap:1rem;align-items:baseline;opacity:0;transform:translateY(22px);transition:opacity .6s var(--ease),transform .6s var(--ease),color .3s}
