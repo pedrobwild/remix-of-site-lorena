@@ -487,7 +487,7 @@ export default function ProjectFormPage({ slug }: Props) {
       </div>
 
       <div className="admin-tabs">
-        {(["geral", "ficha", "midia", "seo"] as const).map((t) => (
+        {(["geral", "ficha", "portfolio", "midia", "seo"] as const).map((t) => (
           <button
             key={t}
             type="button"
@@ -498,6 +498,8 @@ export default function ProjectFormPage({ slug }: Props) {
               ? "Geral"
               : t === "ficha"
               ? "Ficha técnica"
+              : t === "portfolio"
+              ? "Portfólio (case)"
               : t === "midia"
               ? "Mídia"
               : "SEO"}
