@@ -41,7 +41,15 @@ function parsePath(rawPath: string): Route {
   const projMatch = path.match(/^\/projeto\/([a-z0-9-]+)$/);
   if (projMatch) return { name: "project", slug: projMatch[1] };
 
-  // Blog (público)
+  // Conteúdos (público) — canônico
+  if (path === "/conteudos") return { name: "blog" };
+  if (path === "/conteudos/tags") return { name: "blog-tags" };
+  const conteudosTagMatch = path.match(/^\/conteudos\/tag\/([a-z0-9-]+)$/);
+  if (conteudosTagMatch) return { name: "blog-tag", slug: conteudosTagMatch[1] };
+  const conteudosMatch = path.match(/^\/conteudos\/([a-z0-9-]+)$/);
+  if (conteudosMatch) return { name: "blog-post", slug: conteudosMatch[1] };
+
+  // Blog (legado — redirecionado para /conteudos no mount)
   if (path === "/blog") return { name: "blog" };
   if (path === "/blog/tags") return { name: "blog-tags" };
   const blogTagMatch = path.match(/^\/blog\/tag\/([a-z0-9-]+)$/);
@@ -114,6 +122,12 @@ export function useHashRoute(): Route {
       window.history.replaceState({}, "", "/admin/dashboard");
       window.dispatchEvent(new Event("lovable:navigate"));
     }
+    // 301 client-side: /blog* → /conteudos* (URL canônica)
+    const p = window.location.pathname;
+    if (p === "/blog" || p === "/blog/" || p.startsWith("/blog/")) {
+      const newPath = "/conteudos" + p.slice(5);
+      window.history.replaceState({}, "", newPath + window.location.search);
+    }
     setRoute(parseLocation());
 
     const onChange = () => setRoute(parseLocation());
@@ -139,10 +153,12 @@ export const routes = {
   sobre: "/sobre",
   privacidade: "/privacidade",
   project: (slug: string) => `/projeto/${slug}`,
-  blog: "/blog",
-  blogTags: "/blog/tags",
-  blogTag: (slug: string) => `/blog/tag/${slug}`,
-  blogPost: (slug: string) => `/blog/${slug}`,
+  blog: "/conteudos",
+  blogTags: "/conteudos/tags",
+  blogTag: (slug: string) => `/conteudos/tag/${slug}`,
+  blogPost: (slug: string) => `/conteudos/${slug}`,
+  conteudos: "/conteudos",
+  conteudosPost: (slug: string) => `/conteudos/${slug}`,
   adminLogin: "/admin/login",
   adminDashboard: "/admin/dashboard",
   adminAnalytics: "/admin/analytics",

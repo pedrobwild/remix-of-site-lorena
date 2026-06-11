@@ -59,7 +59,7 @@ export const NAV_LINKS: { label: string; href: string }[] = [
   { label: "O que fazemos", href: "/#o-que-fazemos" },
   { label: "Como funciona", href: "/#como-funciona" },
   { label: "Portfólio", href: "/portfolio" },
-  { label: "Conteúdos", href: "/blog" },
+  { label: "Conteúdos", href: "/conteudos" },
 ];
 
 export const HERO = {

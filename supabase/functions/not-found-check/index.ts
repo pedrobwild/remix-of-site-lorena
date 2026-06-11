@@ -58,6 +58,8 @@ export const STATIC_ROUTES: ReadonlyArray<string> = [
   "/diagnostico",
   "/faq",
   "/privacidade",
+  "/conteudos",
+  "/conteudos/tags",
   "/blog",
   "/blog/tags",
   "/404",
@@ -68,7 +70,9 @@ const STATIC_ROUTES_SET = new Set<string>(STATIC_ROUTES);
 /** Prefixos dinâmicos cuja existência precisa ser checada no banco. */
 const DYNAMIC_PREFIXES: Array<{ prefix: string; table: string; column: string }> = [
   { prefix: "/projeto/", table: "projects", column: "slug" },
-  { prefix: "/blog/tag/", table: "blog_posts", column: "tags" }, // tratado abaixo (array)
+  { prefix: "/conteudos/tag/", table: "blog_posts", column: "tags" },
+  { prefix: "/conteudos/", table: "blog_posts", column: "slug" },
+  { prefix: "/blog/tag/", table: "blog_posts", column: "tags" },
   { prefix: "/blog/", table: "blog_posts", column: "slug" },
 ];
 

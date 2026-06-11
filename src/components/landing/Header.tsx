@@ -4,10 +4,12 @@ import { BewildLogo } from "./primitives";
 import { NAV_LINKS, whatsappHref } from "./content";
 import { supabase } from "@/integrations/supabase/client";
 
-const CONTENT_DROPDOWN = [
-  { label: "Todos os artigos", href: "/blog" },
-  { label: "Tags", href: "/blog/tags" },
-];
+type TopPost = {
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  category: string | null;
+};
 
 type FeaturedCase = {
   slug: string;
@@ -23,6 +25,7 @@ export default function Header() {
   const [contentOpen, setContentOpen] = useState(false);
   const [portfolioOpen, setPortfolioOpen] = useState(false);
   const [featured, setFeatured] = useState<FeaturedCase[]>([]);
+  const [topPosts, setTopPosts] = useState<TopPost[]>([]);
   const [pathname, setPathname] = useState<string>(() =>
     typeof window === "undefined" ? "/" : window.location.pathname,
   );
@@ -51,6 +54,16 @@ export default function Header() {
         .order("featured_order", { ascending: true })
         .limit(4);
       setFeatured((data ?? []) as FeaturedCase[]);
+    })();
+    (async () => {
+      const { data } = await supabase
+        .from("blog_posts")
+        .select("slug, title, excerpt, category")
+        .eq("visible", true)
+        .not("published_at", "is", null)
+        .order("order_index", { ascending: true })
+        .limit(4);
+      setTopPosts((data ?? []) as TopPost[]);
     })();
   }, []);
 
@@ -102,15 +115,30 @@ export default function Header() {
                   {link.label} <ChevronDown className="h-3.5 w-3.5" />
                 </a>
                 {contentOpen && (
-                  <div className="absolute left-0 top-full pt-2">
-                    <div className="min-w-[180px] rounded-xl border border-bewild-ink/10 bg-white p-2 shadow-[0_24px_60px_-24px_rgba(10,37,64,0.18)]">
-                      {CONTENT_DROPDOWN.map((d) => (
+                  <div className="absolute left-0 top-full pt-3">
+                    <div className="w-[min(92vw,420px)] rounded-2xl border border-bewild-ink/10 bg-white p-3 shadow-[0_30px_80px_-24px_rgba(10,37,64,0.22)]">
+                      <div className="mb-2 flex items-baseline justify-between px-2">
+                        <span className="font-mono text-[0.6rem] uppercase tracking-[0.24em] text-[#C9A24B]">
+                          Mais acessados
+                        </span>
+                        <a href="/conteudos" className="text-xs font-medium text-bewild-blue hover:underline">
+                          Ver todos →
+                        </a>
+                      </div>
+                      {topPosts.map((p) => (
                         <a
-                          key={d.href}
-                          href={d.href}
-                          className="block rounded-lg px-3 py-2 text-sm text-bewild-ink/80 hover:bg-bewild-bone hover:text-bewild-blue"
+                          key={p.slug}
+                          href={`/conteudos/${p.slug}`}
+                          className="block rounded-lg px-3 py-2 transition-colors hover:bg-bewild-bone"
                         >
-                          {d.label}
+                          {p.category && (
+                            <span className="block font-mono text-[0.58rem] uppercase tracking-[0.2em] text-[#C9A24B]">
+                              {p.category}
+                            </span>
+                          )}
+                          <p className="mt-0.5 text-sm font-medium text-bewild-ink hover:text-bewild-blue">
+                            {p.title}
+                          </p>
                         </a>
                       ))}
                     </div>
