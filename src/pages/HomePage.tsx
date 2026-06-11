@@ -347,6 +347,47 @@ export default function HomePage() {
       return () => cleanups.forEach((c) => c());
     }
 
+    /* ---- Parallax nativo: independente do ScrollTrigger para não falhar em áreas sticky ---- */
+    let raf = 0;
+    const clamp = (value: number) => Math.min(1, Math.max(0, value));
+    const updateParallax = () => {
+      raf = 0;
+      const vh = window.innerHeight || 1;
+      const hero = root.querySelector<HTMLElement>("#hero");
+      const heroMedia = root.querySelector<HTMLElement>("#heroMedia");
+      const heroVeil = root.querySelector<HTMLElement>(".hero-veil");
+      if (hero && heroMedia) {
+        const rect = hero.getBoundingClientRect();
+        const progress = clamp(-rect.top / Math.max(1, rect.height));
+        heroMedia.style.transform = `translate3d(0, ${progress * 6}%, 0) scale(${1 + progress * 0.08})`;
+        if (heroVeil) heroVeil.style.opacity = String(progress * 0.45);
+      }
+      root.querySelectorAll<HTMLElement>("[data-par]").forEach((frame) => {
+        const media = frame.querySelector<HTMLElement>("img") ?? frame;
+        const rect = frame.getBoundingClientRect();
+        const progress = clamp((vh - rect.top) / Math.max(1, vh + rect.height));
+        media.style.transform = `translate3d(0, ${-5 + progress * 10}%, 0)`;
+      });
+      const dvImg = root.querySelector<HTMLElement>(".dv img");
+      const dv = root.querySelector<HTMLElement>(".dv");
+      if (dv && dvImg) {
+        const rect = dv.getBoundingClientRect();
+        const progress = clamp((vh - rect.top) / Math.max(1, vh + rect.height));
+        dvImg.style.transform = `translate3d(0, ${-5 + progress * 10}%, 0)`;
+      }
+    };
+    const requestParallax = () => {
+      if (!raf) raf = window.requestAnimationFrame(updateParallax);
+    };
+    window.addEventListener("scroll", requestParallax, { passive: true });
+    window.addEventListener("resize", requestParallax);
+    updateParallax();
+    cleanups.push(() => {
+      if (raf) window.cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", requestParallax);
+      window.removeEventListener("resize", requestParallax);
+    });
+
     const ctx = gsap.context(() => {
       /* HERO — entrada cinematográfica */
       gsap.set(".hl>span", { yPercent: 110 });
@@ -360,27 +401,6 @@ export default function HomePage() {
         .to("#hMicro", { y: 0, opacity: 1, duration: 0.9 }, 1.05)
         .to("#hCtas", { y: 0, opacity: 1, duration: 0.9 }, 1.2)
         .to("#hCue", { y: 0, opacity: 1, duration: 0.9 }, 1.35);
-
-      /* HERO — parallax leve (sem pin), mantém texto visível ao voltar */
-      ScrollTrigger.matchMedia({
-        "(min-width: 768px)": () => {
-          gsap.fromTo(
-            "#heroMedia",
-            { scale: 1, yPercent: 0 },
-            {
-              scale: 1.08,
-              yPercent: 6,
-              ease: "none",
-              scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: 0.6 },
-            },
-          );
-          gsap.to(".hero-veil", {
-            opacity: 0.45,
-            ease: "none",
-            scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: 0.6 },
-          });
-        },
-      });
 
       /* COMO FUNCIONA — progresso vertical mobile */
       ScrollTrigger.matchMedia({
@@ -422,36 +442,6 @@ export default function HomePage() {
         { width: "52%", duration: 1.2, ease: "power2.out", scrollTrigger: { trigger: "#portal", start: "top 60%" } },
       );
 
-      /* Parallax leve no vcard — move a imagem dentro do frame. */
-      root.querySelectorAll<HTMLElement>("[data-par]").forEach((frame) => {
-        const media = frame.querySelector<HTMLElement>("img") ?? frame;
-        const trigger = frame.closest<HTMLElement>(".stack-card") ?? frame;
-        gsap.fromTo(
-          media,
-          { yPercent: -5 },
-          {
-            yPercent: 5,
-            ease: "none",
-            scrollTrigger: {
-              trigger,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 0.8,
-              invalidateOnRefresh: true,
-            },
-          },
-        );
-      });
-
-      /* Parallax no poster do depoimento */
-      const dvImg = root.querySelector<HTMLElement>(".dv img");
-      if (dvImg) {
-        gsap.fromTo(
-          dvImg,
-          { yPercent: -5 },
-          { yPercent: 5, ease: "none", scrollTrigger: { trigger: ".dv", start: "top bottom", end: "bottom top", scrub: 1 } },
-        );
-      }
     }, root);
 
     const refreshId = window.setTimeout(() => ScrollTrigger.refresh(), 150);
