@@ -1,75 +1,54 @@
 /**
- * primitives.tsx — blocos reutilizáveis da landing **bewild**.
- * Mantém o restante dos componentes enxutos e consistentes.
+ * primitives.tsx — blocos reutilizáveis da landing **BeWild**.
  */
 import { useState, type ReactNode } from "react";
 import { ImageIcon } from "lucide-react";
 
 /* ----------------------------------------------------------------
- * Logo bewild
- * Usa a logo oficial (PNG branco) em /public/brand/bewild-logo.png.
- * 👉 Para trocar pela logo definitiva, substitua esse arquivo
- *    (ou aponte `src` abaixo). Há fallback textual "bewild".
+ * Wordmark BeWild — `Be` + `Wild` itálico, sem espaço.
+ * Tone:
+ *  - "light" (sobre escuro): "Wild" em gold-400
+ *  - "dark"  (sobre claro): "Wild" em petróleo
  * -------------------------------------------------------------- */
 export function BewildLogo({
   className = "",
   heightClass = "h-7",
+  tone = "light",
 }: {
   className?: string;
   heightClass?: string;
+  tone?: "light" | "dark";
 }) {
-  const [failed, setFailed] = useState(false);
-  if (failed) {
-    return (
-      <span
-        className={`font-display text-xl font-semibold tracking-tight text-white ${className}`}
-        aria-label="bewild"
-      >
-        be<span className="text-bewild-blue-400">wild</span>
-      </span>
-    );
-  }
+  // Mapeia heightClass → tamanho de fonte aproximado para casar com a barra.
+  const sizeMap: Record<string, string> = {
+    "h-6": "text-[1.35rem]",
+    "h-6 sm:h-7": "text-[1.35rem] sm:text-[1.6rem]",
+    "h-7": "text-[1.6rem]",
+    "h-8": "text-[1.85rem]",
+    "h-9": "text-[2.1rem]",
+  };
+  const sizeClass = sizeMap[heightClass] ?? "text-[1.6rem]";
+  const beColor = tone === "light" ? "text-white" : "text-bewild-ink";
+  const wildColor = tone === "light" ? "text-bewild-blue-400" : "text-bewild-blue";
   return (
-    <img
-      src="/brand/bewild-logo.png"
-      alt="bewild — reformas turn-key"
-      className={`${heightClass} w-auto select-none ${className}`}
-      draggable={false}
-      onError={() => setFailed(true)}
-    />
+    <span
+      aria-label="BeWild"
+      className={`inline-flex items-baseline font-display font-semibold leading-none tracking-tight ${sizeClass} ${className}`}
+    >
+      <span className={beColor}>Be</span>
+      <span className={`italic ${wildColor}`}>Wild</span>
+    </span>
   );
 }
 
-/** Mark geométrico (SVG) inspirado no nó da marca — uso decorativo/acento. */
+/** Mark geométrico legado (mantido para compatibilidade). */
 export function BewildMark({ className = "h-9 w-9" }: { className?: string }) {
   return (
     <svg viewBox="0 0 48 48" className={className} aria-hidden="true" fill="none">
-      <defs>
-        <linearGradient id="bw-mark" x1="6" y1="6" x2="42" y2="42">
-          <stop offset="0" stopColor="#3B82C4" />
-          <stop offset="1" stopColor="#102A4F" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M24 5c5 0 7.5 3.4 11.8 6 4.6 2.8 7.2 3.9 7.2 9.2 0 4.7-3.1 6.6-5 11.4-1.9 4.9-2.2 8.4-7.3 9.6-4.7 1.1-7-1.8-12.4-1.8s-7.7 2.9-12.4 1.8c-5.1-1.2-5.4-4.7-7.3-9.6"
-        stroke="url(#bw-mark)"
-        strokeWidth="4.5"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-        opacity="0"
-      />
       <path
         d="M24 7.5c4.3 2.6 8.7 2.9 11.6 6.6 2.9 3.7 1.6 7.9.9 12.4-.7 4.5-1.9 8.6-6.2 10.3-4.3 1.7-8.4-1.1-12.6-1.1s-8.3 2.8-12.6 1.1"
-        stroke="url(#bw-mark)"
-        strokeWidth="4"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <path
-        d="M11.8 38c-3.3-2.6-4.6-6.4-3.9-10.9.7-4.5 3.8-7.9 6.7-11.6C17.5 11.8 19.7 7.5 24 7.5"
-        stroke="url(#bw-mark)"
-        strokeWidth="4"
+        stroke="currentColor"
+        strokeWidth="3.5"
         strokeLinejoin="round"
         strokeLinecap="round"
         fill="none"
@@ -94,14 +73,19 @@ export function Eyebrow({
   tone = "blue",
 }: {
   children: ReactNode;
-  tone?: "blue" | "light";
+  tone?: "blue" | "light" | "gold";
 }) {
-  const color = tone === "light" ? "text-bewild-blue-400" : "text-bewild-blue-600";
+  const color =
+    tone === "light"
+      ? "text-bewild-blue-400"
+      : tone === "gold"
+        ? "text-[#C9A24B]"
+        : "text-bewild-blue-600";
   return (
     <span
-      className={`inline-flex items-center gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.22em] ${color}`}
+      className={`inline-flex items-center gap-2 font-mono text-[0.68rem] font-medium uppercase tracking-[0.28em] ${color}`}
     >
-      <span className="inline-block h-px w-6 bg-current opacity-50" />
+      <span className="inline-block h-px w-6 bg-current opacity-60" />
       {children}
     </span>
   );
@@ -114,6 +98,7 @@ export function SectionHeading({
   tone = "dark",
   align = "left",
   className = "",
+  eyebrowTone,
 }: {
   eyebrow?: string;
   title: ReactNode;
@@ -121,6 +106,7 @@ export function SectionHeading({
   tone?: "dark" | "light";
   align?: "left" | "center";
   className?: string;
+  eyebrowTone?: "blue" | "light" | "gold";
 }) {
   const titleColor = tone === "light" ? "text-white" : "text-bewild-ink";
   const subColor = tone === "light" ? "text-white/70" : "text-bewild-steel";
@@ -128,9 +114,11 @@ export function SectionHeading({
     align === "center" ? "mx-auto max-w-3xl text-center items-center" : "max-w-3xl";
   return (
     <div className={`flex flex-col gap-4 ${alignClass} ${className}`}>
-      {eyebrow && <Eyebrow tone={tone === "light" ? "light" : "blue"}>{eyebrow}</Eyebrow>}
+      {eyebrow && (
+        <Eyebrow tone={eyebrowTone ?? (tone === "light" ? "gold" : "blue")}>{eyebrow}</Eyebrow>
+      )}
       <h2
-        className={`font-display text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl md:text-[2.75rem] ${titleColor}`}
+        className={`font-display text-3xl font-semibold leading-[1.08] tracking-tight sm:text-4xl md:text-[2.75rem] ${titleColor}`}
       >
         {title}
       </h2>
@@ -139,22 +127,15 @@ export function SectionHeading({
   );
 }
 
-export function Chip({ children }: { children: ReactNode }) {
-  return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-sm font-medium text-white/85 backdrop-blur">
-      {children}
-    </span>
-  );
-}
-
 /* --------------------------- Buttons --------------------------- */
 type BtnProps = {
   href: string;
   children: ReactNode;
-  variant?: "primary" | "secondary" | "ghost";
+  variant?: "primary" | "secondary" | "ghost" | "ghost-ink";
   className?: string;
   external?: boolean;
   ariaLabel?: string;
+  onClick?: () => void;
 };
 
 export function CTAButton({
@@ -164,20 +145,24 @@ export function CTAButton({
   className = "",
   external = false,
   ariaLabel,
+  onClick,
 }: BtnProps) {
   const base =
-    "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold tracking-tight transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bewild-blue-400";
+    "inline-flex items-center justify-center gap-2 rounded-full px-[1.7rem] py-3 text-[0.95rem] font-semibold tracking-tight transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bewild-blue-400";
   const styles: Record<string, string> = {
     primary:
-      "bg-bewild-blue text-white shadow-bewild-card hover:bg-bewild-blue-600 hover:-translate-y-0.5",
+      "bg-bewild-blue text-white shadow-[0_14px_34px_-14px_rgba(0,76,127,0.55)] hover:bg-[#005C99] hover:-translate-y-0.5",
     secondary:
       "border border-bewild-ink/15 bg-white text-bewild-ink hover:border-bewild-blue/40 hover:text-bewild-blue",
-    ghost: "border border-white/25 text-white hover:border-white/60 hover:bg-white/5",
+    ghost: "border border-white/30 text-white hover:border-white/70 hover:bg-white/5",
+    "ghost-ink":
+      "border border-bewild-ink/20 text-bewild-ink hover:border-bewild-blue/60 hover:text-bewild-blue",
   };
   return (
     <a
       href={href}
       aria-label={ariaLabel}
+      onClick={onClick}
       className={`${base} ${styles[variant]} ${className}`}
       {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
     >
@@ -186,13 +171,31 @@ export function CTAButton({
   );
 }
 
+/** Pill mono "selo" — borda gold, texto gold caps. */
+export function Selo({ children, tone = "gold" }: { children: ReactNode; tone?: "gold" | "blue" }) {
+  const cls =
+    tone === "gold"
+      ? "border-[rgba(201,162,75,0.45)] text-[#C9A24B]"
+      : "border-bewild-blue-400/40 text-bewild-blue-400";
+  return (
+    <span
+      className={`inline-flex items-center rounded-full border px-2.5 py-1 font-mono text-[0.58rem] uppercase tracking-[0.28em] ${cls}`}
+    >
+      {children}
+    </span>
+  );
+}
+
+/* Mantém compat com componente legado Chip. */
+export function Chip({ children }: { children: ReactNode }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-sm font-medium text-white/85 backdrop-blur">
+      {children}
+    </span>
+  );
+}
+
 /* --------------------------- Imagem ---------------------------- */
-/**
- * LandingImage — renderiza a foto real se existir; caso contrário, mostra
- * um placeholder neutro (gradiente concreto) com o nome do arquivo esperado.
- * Garante estado vazio elegante enquanto as imagens reais do Drive não
- * forem adicionadas em /public/images/.
- */
 export function LandingImage({
   src,
   alt,
@@ -220,7 +223,6 @@ export function LandingImage({
         role="img"
         aria-label={alt}
       >
-        {/* Grade técnica sutil para sensação arquitetônica */}
         <div
           className="absolute inset-0 opacity-[0.35]"
           style={{
