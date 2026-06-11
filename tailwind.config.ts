@@ -27,8 +27,12 @@ export default {
         },
       },
       fontFamily: {
-        display: ["Manrope", "Inter", "system-ui", "sans-serif"],
-        body: ["Inter", "Manrope", "system-ui", "sans-serif"],
+        // BeWild brand: Playfair (serif) para títulos, Poppins (sans light) para corpo.
+        display: ["'Playfair Display'", "Georgia", "serif"],
+        body: ["Poppins", "Inter", "system-ui", "sans-serif"],
+        // Compat com páginas legadas (Lorena Alves) que ainda chamam font-sans/Manrope.
+        sans: ["Poppins", "Inter", "system-ui", "sans-serif"],
+        manrope: ["Manrope", "Inter", "system-ui", "sans-serif"],
         mono: ["'JetBrains Mono'", "ui-monospace", "monospace"],
       },
       maxWidth: {
