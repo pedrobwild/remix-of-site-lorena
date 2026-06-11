@@ -40,6 +40,7 @@ import type { Route } from "./lib/useHashRoute";
 
 export function renderRoute(route: Route) {
   if (route.name === "portfolio") return <PortfolioPage />;
+  if (route.name === "diagnostico") return <DiagnosticoPage />;
   if (route.name === "project") return <ProjectPage slug={route.slug} />;
   if (route.name === "faq") return <FaqPage />;
   if (route.name === "sobre") return <SobrePage />;
