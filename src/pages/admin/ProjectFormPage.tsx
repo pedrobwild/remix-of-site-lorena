@@ -124,7 +124,7 @@ export default function ProjectFormPage({ slug }: Props) {
   const isNew = !slug;
   const [form, setForm] = useState<Form>(EMPTY);
   const [gallery, setGallery] = useState<GalleryRow[]>([]);
-  const [tab, setTab] = useState<"geral" | "ficha" | "midia" | "seo">("geral");
+  const [tab, setTab] = useState<"geral" | "ficha" | "portfolio" | "midia" | "seo">("geral");
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
