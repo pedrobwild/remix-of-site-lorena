@@ -21,6 +21,8 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [contentOpen, setContentOpen] = useState(false);
+  const [portfolioOpen, setPortfolioOpen] = useState(false);
+  const [featured, setFeatured] = useState<FeaturedCase[]>([]);
   const [pathname, setPathname] = useState<string>(() =>
     typeof window === "undefined" ? "/" : window.location.pathname,
   );
@@ -37,6 +39,19 @@ export default function Header() {
       window.removeEventListener("popstate", onNav);
       window.removeEventListener("hashchange", onNav);
     };
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("projects")
+        .select("slug, title, cover_url, result_text, portfolio_tags")
+        .eq("visible", true)
+        .eq("featured", true)
+        .order("featured_order", { ascending: true })
+        .limit(4);
+      setFeatured((data ?? []) as FeaturedCase[]);
+    })();
   }, []);
 
   const isActive = (href: string) => {
