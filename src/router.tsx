@@ -35,6 +35,7 @@ import FaqAdminPage from "./pages/admin/FaqAdminPage";
 import BlogListPage from "./pages/admin/BlogListPage";
 import BlogFormPage from "./pages/admin/BlogFormPage";
 import TypographyPage from "./pages/admin/TypographyPage";
+import LeadsPage from "./pages/admin/LeadsPage";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import type { Route } from "./lib/useHashRoute";
 
@@ -126,6 +127,12 @@ export function renderRoute(route: Route) {
     return (
       <ProtectedRoute>
         <TypographyPage />
+      </ProtectedRoute>
+    );
+  if (route.name === "admin-leads")
+    return (
+      <ProtectedRoute>
+        <LeadsPage />
       </ProtectedRoute>
     );
   // Home (com ou sem âncora) — única rota que renderiza o App principal
