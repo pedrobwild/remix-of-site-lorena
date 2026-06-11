@@ -7209,3 +7209,83 @@ textarea.admin-field__input {
   font-size: var(--admin-body-sm-size);
   line-height: var(--admin-body-sm-lh);
 }
+
+/* ============================================================
+ * BeWild · Conteúdo do post (.bw-post-content)
+ * Reset tipográfico para o HTML injetado dos artigos.
+ * ============================================================ */
+.bw-post-content > * + * { margin-top: 1.1em; }
+.bw-post-content h2 {
+  font-family: var(--font-display, "Playfair Display"), serif;
+  font-weight: 600;
+  font-size: clamp(1.6rem, 2.4vw, 2rem);
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  margin-top: 2.4em;
+  color: #0A2540;
+}
+.bw-post-content h3 {
+  font-family: var(--font-display, "Playfair Display"), serif;
+  font-weight: 600;
+  font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+  line-height: 1.25;
+  margin-top: 2em;
+  color: #0A2540;
+}
+.bw-post-content h2 em, .bw-post-content h3 em { font-style: italic; color: #004C7F; }
+.bw-post-content p { font-weight: 300; }
+.bw-post-content a {
+  color: #004C7F;
+  text-decoration: underline;
+  text-decoration-color: rgba(0,76,127,0.35);
+  text-underline-offset: 3px;
+  transition: text-decoration-color .2s;
+}
+.bw-post-content a:hover { text-decoration-color: #004C7F; }
+.bw-post-content strong { font-weight: 600; color: #0A2540; }
+.bw-post-content em { font-style: italic; }
+.bw-post-content ul, .bw-post-content ol { padding-left: 1.4em; }
+.bw-post-content ul { list-style: disc; }
+.bw-post-content ol { list-style: decimal; }
+.bw-post-content li + li { margin-top: 0.5em; }
+.bw-post-content li::marker { color: #004C7F; }
+.bw-post-content blockquote {
+  border-left: 3px solid #004C7F;
+  padding: 0.4em 1.2em;
+  margin: 1.8em 0;
+  font-family: var(--font-display, "Playfair Display"), serif;
+  font-style: italic;
+  font-size: 1.2em;
+  color: #0A2540;
+  background: #FBFAF8;
+}
+.bw-post-content blockquote p { font-weight: 400; }
+.bw-post-content figure, .bw-post-content picture, .bw-post-content img {
+  display: block;
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+}
+.bw-post-content figure { margin: 2em 0; }
+.bw-post-content figcaption {
+  margin-top: 0.6em;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(10,37,64,0.55);
+  text-align: center;
+}
+.bw-post-content hr {
+  border: 0;
+  border-top: 1px solid rgba(10,37,64,0.12);
+  margin: 2.4em auto;
+  width: 60px;
+}
+.bw-post-content code {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.88em;
+  background: #F2EEE5;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}

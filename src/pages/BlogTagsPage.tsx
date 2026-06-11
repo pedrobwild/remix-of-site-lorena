@@ -1,6 +1,9 @@
 import { useEffect } from "react";
-import { gsap } from "gsap";
-import InternalNav from "../components/InternalNav";
+import { ArrowRight } from "lucide-react";
+import Header from "../components/landing/Header";
+import Footer from "../components/landing/Footer";
+import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton";
+import { Container, CTAButton } from "../components/landing/primitives";
 import { useBlogTags } from "../lib/useBlog";
 import { useSiteSettings } from "../lib/useSiteSettings";
 import { useSeo, breadcrumbJsonLd, organizationJsonLd } from "../lib/useSeo";
@@ -10,37 +13,31 @@ import { track } from "../lib/analytics";
 export default function BlogTagsPage() {
   const { tags, loading, error } = useBlogTags();
   const { settings } = useSiteSettings();
-  const base = (settings?.seo_canonical_base || "https://lorenaalvesarq.com").replace(
-    /\/$/,
-    ""
-  );
+  const base = (settings?.seo_canonical_base || "https://bewild.com.br").replace(/\/$/, "");
 
   useSeo({
-    title:
-      "Tags do Blog · Arquitetura, Construção e Interiores em Uberlândia | Lorena Alves Arquitetura",
+    title: "Tags · Conteúdos BeWild — Reforma turn-key de studios em SP",
     description:
-      "Explore os artigos do blog Lorena Alves organizados por assunto: como construir sua casa, projeto autoral, reforma, arquitetura residencial, materiais e interiores. Conteúdo prático para quem vai projetar em Uberlândia, MG.",
-    canonicalPath: "/blog/tags",
+      "Explore os conteúdos BeWild organizados por assunto: reforma turn-key, studios, short stay, marcenaria, prazo de obra, orçamento e processo.",
+    canonicalPath: "/conteudos/tags",
     ogType: "website",
     jsonLd: settings
       ? [
           organizationJsonLd(settings),
           breadcrumbJsonLd(settings, [
             { name: "Início", path: "/" },
-            { name: "Blog", path: "/blog" },
-            { name: "Tags", path: "/blog/tags" },
+            { name: "Conteúdos", path: "/conteudos" },
+            { name: "Tags", path: "/conteudos/tags" },
           ]),
           {
             "@context": "https://schema.org",
             "@type": "CollectionPage",
-            name: "Tags do Blog · Lorena Alves Arquitetura",
-            url: `${base}/blog/tags`,
-            description:
-              "Índice de tags dos artigos do blog do estúdio Lorena Alves Arquitetura.",
+            name: "Tags · Conteúdos BeWild",
+            url: `${base}/conteudos/tags`,
             hasPart: tags.map((t) => ({
               "@type": "DefinedTerm",
               name: t.label,
-              url: `${base}/blog/tag/${t.slug}`,
+              url: `${base}/conteudos/tag/${t.slug}`,
             })),
           },
         ]
@@ -49,182 +46,178 @@ export default function BlogTagsPage() {
 
   useEffect(() => {
     track("blog_tags_view");
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".blog-tags__chip",
-        { opacity: 0, y: 16 },
-        { opacity: 1, y: 0, duration: 0.5, stagger: 0.03, ease: "power2.out" }
-      );
-    });
-    return () => ctx.revert();
-  }, [tags.length]);
+  }, []);
 
   return (
-    <main id="main" tabIndex={-1} className="pf-page blog-page">
-      <InternalNav active="blog" backHref={routes.blog} backLabel="voltar ao blog" />
-
-      <header className="pf-head">
-        <p className="pf-head__eyebrow mono">Blog · Tags</p>
-        <h1 className="pf-head__title">
-          Encontre artigos por <em>assunto</em>.
-        </h1>
-        <p className="pf-head__lede">
-          Um índice vivo dos temas que atravessam o blog do estúdio — de quem
-          vai erguer a <strong>primeira casa</strong> a quem busca repertório
-          sobre <strong>arquitetura residencial</strong>, <strong>reforma</strong>,{" "}
-          <strong>projeto autoral</strong> e os bastidores do nosso trabalho em{" "}
-          <strong>Uberlândia, MG</strong>.
-        </p>
-        <p className="pf-head__lede" style={{ marginTop: "1rem" }}>
-          Cada tag agrupa textos escritos com cuidado para orientar decisões
-          reais: como escolher um terreno, quanto custa contratar um arquiteto,
-          quais materiais envelhecem bem no clima do cerrado, como funciona o
-          acompanhamento de obra e por que vale projetar antes de construir.
-          Use os atalhos abaixo para começar pelo assunto que mais te interessa
-          — ou volte para o{" "}
-          <a
-            href={routes.blog}
-            data-cursor="hover"
-            style={{
-              color: "var(--clay-deep)",
-              borderBottom: "1px solid rgba(143, 84, 51, 0.35)",
-              textDecoration: "none",
-            }}
-          >
-            índice cronológico do blog
-          </a>
-          .
-        </p>
-      </header>
-
-      <section className="blog-tags" aria-label="Lista de tags do blog">
-        {loading && (
-          <p className="mono" style={{ opacity: 0.5 }}>
-            carregando…
-          </p>
-        )}
-
-        {!loading && error && (
-          <p className="mono" role="alert" style={{ opacity: 0.7 }}>
-            Não foi possível carregar as tags agora.{" "}
-            <button
-              type="button"
-              className="blog-retry"
-              onClick={() => window.location.reload()}
-              data-cursor="hover"
-            >
-              Tentar novamente →
-            </button>
-          </p>
-        )}
-
-        {!loading && !error && tags.length === 0 && (
-          <p className="mono" style={{ opacity: 0.6 }}>
-            Em breve, novos artigos com novos temas.
-          </p>
-        )}
-
-        <ul className="blog-tags__list">
-          {tags.map((t) => (
-            <li key={t.slug}>
+    <>
+      <Header />
+      <main id="main" tabIndex={-1} className="bg-[#FBFAF8] text-bewild-ink">
+        <section className="border-b border-bewild-ink/10 bg-white">
+          <Container className="pb-14 pt-32 sm:pb-20 sm:pt-40">
+            <p className="font-mono text-[0.68rem] font-medium uppercase tracking-[0.28em] text-bewild-blue-600">
+              <span className="mr-2 inline-block h-px w-6 align-middle bg-bewild-blue-600 opacity-60" />
+              Conteúdos · Tags
+            </p>
+            <h1 className="mt-5 max-w-[16em] font-display text-[clamp(2.1rem,4.5vw,3.6rem)] font-semibold leading-[1.08] tracking-tight">
+              Encontre conteúdos por <em className="italic text-bewild-blue">assunto</em>.
+            </h1>
+            <p className="mt-6 max-w-2xl text-base leading-relaxed text-bewild-steel sm:text-lg">
+              Um índice vivo dos temas que atravessam os conteúdos BeWild — de quem está
+              avaliando um imóvel para short stay a quem quer entender o passo a passo da obra
+              turn-key, prazos, orçamento, marcenaria e operação.
+            </p>
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-bewild-steel/85">
+              Use os atalhos abaixo para começar pelo assunto que mais te interessa — ou volte
+              para o{" "}
               <a
-                href={routes.blogTag(t.slug)}
-                className="blog-tags__chip"
-                data-cursor="hover"
-                aria-label={`Ver artigos com a tag ${t.label} (${t.count})`}
-                onClick={() =>
-                  track("blog_tag_click", {
-                    value: { from: "tags-index", tag: t.slug },
-                  })
-                }
+                href={routes.conteudos}
+                className="text-bewild-blue underline decoration-bewild-blue/40 underline-offset-4 hover:decoration-bewild-blue"
               >
-                <span className="blog-tags__chip-label">#{t.label}</span>
-                <span className="blog-tags__chip-count mono">{t.count}</span>
+                índice cronológico
               </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {!loading && tags.length > 0 && (
-        <section
-          className="blog-tags__guide"
-          aria-labelledby="blog-tags-guide-title"
-        >
-          <h2 id="blog-tags-guide-title" className="blog-tags__guide-title">
-            Como navegar pelo blog
-          </h2>
-          <p className="blog-tags__guide-lede">
-            Três caminhos comuns para começar — escolha o que mais se aproxima
-            do seu momento.
-          </p>
-          <ul className="blog-tags__guide-list">
-            <li>
-              <strong>Vai construir agora?</strong> Comece pelas tags{" "}
-              <a href={routes.blogTag("primeira-casa")} data-cursor="hover">
-                #primeira-casa
-              </a>{" "}
-              e{" "}
-              <a href={routes.blogTag("construcao")} data-cursor="hover">
-                #construcao
-              </a>{" "}
-              para entender o passo a passo, do terreno à entrega das chaves.
-            </li>
-            <li>
-              <strong>Está pesquisando referências?</strong> Os textos em{" "}
-              <a
-                href={routes.blogTag("arquitetura-residencial")}
-                data-cursor="hover"
-              >
-                #arquitetura-residencial
-              </a>{" "}
-              e{" "}
-              <a href={routes.blogTag("projeto-autoral")} data-cursor="hover">
-                #projeto-autoral
-              </a>{" "}
-              mostram como pensamos repertório, materialidade e autoria.
-            </li>
-            <li>
-              <strong>Pensa em renovar o que já existe?</strong> Acompanhe a
-              tag{" "}
-              <a href={routes.blogTag("reforma")} data-cursor="hover">
-                #reforma
-              </a>{" "}
-              — atualizamos com cuidados, prazos e o que considerar antes de
-              quebrar a primeira parede.
-            </li>
-          </ul>
-          <p className="blog-tags__guide-foot mono">
-            Os artigos são atualizados periodicamente. Se houver um tema que
-            você gostaria de ver por aqui,{" "}
-            <a href={`${routes.home}#contato`} data-cursor="hover">
-              escreva para o estúdio
-            </a>
-            .
-          </p>
+              .
+            </p>
+          </Container>
         </section>
-      )}
 
-      <footer className="pf-foot">
-        <div>
-          <p className="pf-foot__quote">
-            Procurando algo específico? <em>Conversemos.</em>
-          </p>
-        </div>
-        <a
-          className="pf-foot__cta"
-          href={`${routes.home}#contato`}
-          data-cursor="hover"
-          onClick={() =>
-            track("click_cta", {
-              value: { label: "contato", from: "blog-tags" },
-            })
-          }
-        >
-          <span>FALAR COM O ESTÚDIO</span>
-          <span className="btn-big__arrow" />
-        </a>
-      </footer>
-    </main>
+        <section aria-label="Tags" className="py-[clamp(3rem,7vh,4.5rem)]">
+          <Container>
+            {loading && (
+              <p className="font-mono text-xs uppercase tracking-[0.2em] text-bewild-ink/45">
+                carregando…
+              </p>
+            )}
+
+            {!loading && error && (
+              <p role="alert" className="font-mono text-xs uppercase tracking-[0.2em] text-bewild-ink/70">
+                Não foi possível carregar as tags agora.{" "}
+                <button
+                  type="button"
+                  className="underline decoration-bewild-blue/40 underline-offset-4 hover:text-bewild-blue"
+                  onClick={() => window.location.reload()}
+                >
+                  Tentar novamente →
+                </button>
+              </p>
+            )}
+
+            {!loading && !error && tags.length === 0 && (
+              <p className="font-mono text-xs uppercase tracking-[0.2em] text-bewild-ink/55">
+                Em breve, novos artigos com novos temas.
+              </p>
+            )}
+
+            <ul className="flex flex-wrap gap-3">
+              {tags.map((t) => (
+                <li key={t.slug}>
+                  <a
+                    href={routes.blogTag(t.slug)}
+                    aria-label={`Ver artigos com a tag ${t.label} (${t.count})`}
+                    onClick={() =>
+                      track("blog_tag_click", { value: { from: "tags-index", tag: t.slug } })
+                    }
+                    className="group inline-flex items-center gap-3 rounded-full border border-bewild-ink/15 bg-white px-5 py-2.5 transition-all hover:-translate-y-0.5 hover:border-bewild-blue/60 hover:shadow-[0_14px_30px_-18px_rgba(0,76,127,0.4)]"
+                  >
+                    <span className="font-display text-base font-medium text-bewild-ink group-hover:text-bewild-blue">
+                      #{t.label}
+                    </span>
+                    <span className="rounded-full bg-[#F2EEE5] px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.18em] text-bewild-ink/60">
+                      {t.count}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </Container>
+        </section>
+
+        {!loading && tags.length > 0 && (
+          <section className="border-y border-bewild-ink/10 bg-white py-[clamp(3rem,7vh,4.5rem)]">
+            <Container>
+              <h2 className="font-display text-2xl font-semibold leading-tight sm:text-3xl">
+                Como navegar pelos conteúdos
+              </h2>
+              <p className="mt-3 max-w-2xl text-bewild-steel">
+                Três caminhos comuns para começar — escolha o que mais se aproxima do seu momento.
+              </p>
+              <div className="mt-8 grid gap-6 md:grid-cols-3">
+                <GuideCard
+                  title="Vai investir em short stay?"
+                  body={
+                    <>
+                      Comece pelas tags{" "}
+                      <TagLink slug="short-stay" label="short-stay" /> e{" "}
+                      <TagLink slug="rentabilidade" label="rentabilidade" /> para entender
+                      como decisões de projeto impactam diária e ocupação.
+                    </>
+                  }
+                />
+                <GuideCard
+                  title="Está pesquisando processo?"
+                  body={
+                    <>
+                      Os textos em <TagLink slug="turn-key" label="turn-key" /> e{" "}
+                      <TagLink slug="obra" label="obra" /> mostram prazos, escopo e como
+                      funciona o portal de acompanhamento.
+                    </>
+                  }
+                />
+                <GuideCard
+                  title="Quer entender orçamento?"
+                  body={
+                    <>
+                      Acompanhe <TagLink slug="orcamento" label="orcamento" /> e{" "}
+                      <TagLink slug="marcenaria" label="marcenaria" /> — onde o custo
+                      realmente mora numa reforma de studio.
+                    </>
+                  }
+                />
+              </div>
+              <p className="mt-8 font-mono text-[0.62rem] uppercase tracking-[0.22em] text-bewild-ink/55">
+                Tem um tema que gostaria de ver?{" "}
+                <a href={routes.diagnostico} className="text-bewild-blue underline underline-offset-4">
+                  Escreva pra gente
+                </a>
+                .
+              </p>
+            </Container>
+          </section>
+        )}
+
+        <section className="bg-bewild-ink py-[clamp(3.5rem,8vh,5.5rem)] text-white">
+          <Container className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-xl font-display text-2xl font-semibold leading-tight sm:text-3xl">
+              Procurando algo específico?{" "}
+              <em className="italic text-bewild-blue-400">Conversemos.</em>
+            </p>
+            <CTAButton href={routes.diagnostico} variant="primary">
+              Solicitar diagnóstico <ArrowRight className="h-4 w-4" />
+            </CTAButton>
+          </Container>
+        </section>
+      </main>
+      <Footer />
+      <FloatingWhatsAppButton />
+    </>
+  );
+}
+
+function GuideCard({ title, body }: { title: string; body: React.ReactNode }) {
+  return (
+    <div className="rounded-2xl border border-bewild-ink/10 bg-[#FBFAF8] p-6">
+      <h3 className="font-display text-lg font-semibold leading-snug">{title}</h3>
+      <p className="mt-3 text-sm leading-relaxed text-bewild-steel">{body}</p>
+    </div>
+  );
+}
+
+function TagLink({ slug, label }: { slug: string; label: string }) {
+  return (
+    <a
+      href={routes.blogTag(slug)}
+      className="font-mono text-[0.78em] uppercase tracking-[0.12em] text-bewild-blue underline decoration-bewild-blue/40 underline-offset-2 hover:decoration-bewild-blue"
+    >
+      #{label}
+    </a>
   );
 }
