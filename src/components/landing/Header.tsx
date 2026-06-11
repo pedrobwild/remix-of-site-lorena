@@ -55,6 +55,16 @@ export default function Header() {
         .limit(4);
       setFeatured((data ?? []) as FeaturedCase[]);
     })();
+    (async () => {
+      const { data } = await supabase
+        .from("blog_posts")
+        .select("slug, title, excerpt, category")
+        .eq("visible", true)
+        .not("published_at", "is", null)
+        .order("order_index", { ascending: true })
+        .limit(4);
+      setTopPosts((data ?? []) as TopPost[]);
+    })();
   }, []);
 
   const isActive = (href: string) => {
