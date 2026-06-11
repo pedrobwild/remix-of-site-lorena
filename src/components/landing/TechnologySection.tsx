@@ -1,6 +1,8 @@
+import { useEffect, useRef, useState } from "react";
 import { Check, Circle, Camera, FileText, CalendarClock } from "lucide-react";
 import { Container, SectionHeading } from "./primitives";
 import { TECH_BULLETS } from "./content";
+
 
 const MOCK_STAGES = [
   { name: "Demolição e remoção", done: true },
@@ -50,8 +52,38 @@ export default function TechnologySection() {
 }
 
 function PortalMockup() {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof window === "undefined") return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      setProgress(52);
+      return;
+    }
+    const onScroll = () => {
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const start = vh * 0.95;
+      const end = vh * 0.35;
+      const raw = (start - rect.top) / (start - end);
+      const clamped = Math.max(0, Math.min(1, raw));
+      setProgress(clamped * 52);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
   return (
     <div
+      ref={ref}
       className="rounded-2xl border p-5 shadow-[0_40px_90px_-30px_rgba(4,18,33,0.55)]"
       style={{
         background: "linear-gradient(180deg, #0F3154, #0B2746)",
@@ -60,6 +92,7 @@ function PortalMockup() {
       aria-label="Exemplo ilustrativo do portal de acompanhamento BeWild"
       role="img"
     >
+
       <div className="flex items-center justify-between border-b border-white/10 pb-4">
         <div>
           <p className="font-mono text-[0.6rem] uppercase tracking-[0.28em] text-[#DCBE7A]">
@@ -79,14 +112,15 @@ function PortalMockup() {
           <span className="inline-flex items-center gap-1.5">
             <CalendarClock className="h-3.5 w-3.5" /> Cronograma
           </span>
-          <span className="font-medium text-white">52% concluído</span>
+          <span className="font-medium text-white">{Math.round(progress)}% concluído</span>
         </div>
         <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-white/10">
           <div
-            className="h-full rounded-full"
-            style={{ width: "52%", background: "linear-gradient(90deg, #004C7F, #3B82C4)" }}
+            className="h-full rounded-full transition-[width] duration-200 ease-out"
+            style={{ width: `${progress}%`, background: "linear-gradient(90deg, #004C7F, #3B82C4)" }}
           />
         </div>
+
       </div>
 
       <ul className="mt-4 space-y-2">
