@@ -3,36 +3,47 @@ import { STEPS } from "./content";
 
 export default function ProcessTimeline() {
   return (
-    <section id="como-funciona" className="scroll-mt-20 bg-bewild-night py-20 sm:py-28">
+    <section id="como-funciona" className="scroll-mt-20 bg-[#F2EEE5] py-20 sm:py-28">
       <Container>
         <SectionHeading
           eyebrow="Como funciona"
-          title="Um processo claro, do diagnóstico à entrega."
-          tone="light"
+          title={
+            <>
+              Um processo claro,{" "}
+              <span className="italic text-bewild-blue">do diagnóstico à entrega.</span>
+            </>
+          }
         />
 
-        <ol className="mt-12 grid gap-x-8 gap-y-4 md:grid-cols-2">
-          {STEPS.map((step, i) => (
+        <ol className="relative mt-14 grid gap-5">
+          <span
+            aria-hidden="true"
+            className="absolute left-4 top-0 hidden h-full w-px bg-[rgba(201,162,75,0.25)] md:block"
+          />
+          {STEPS.map((step) => (
             <li
               key={step.n}
-              className="relative flex gap-5 rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-bewild-blue/40 hover:bg-white/[0.06]"
+              className="relative grid gap-4 rounded-2xl border border-bewild-line bg-white p-6 shadow-[0_24px_60px_-24px_rgba(10,37,64,0.14)] md:ml-12 md:p-7"
             >
-              <div className="flex flex-col items-center">
-                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-bewild-blue/15 text-bewild-blue-400">
-                  <step.icon className="h-5 w-5" aria-hidden="true" />
+              <span
+                aria-hidden="true"
+                className="absolute -left-12 top-7 hidden h-2 w-2 rounded-full bg-[#C9A24B] md:block"
+              />
+              <div className="flex items-center justify-between gap-4">
+                <span className="font-mono text-[0.65rem] uppercase tracking-[0.28em] text-[#C9A24B]">
+                  {step.n} / 07
                 </span>
-                {i < STEPS.length - 1 && (
-                  <span className="mt-2 hidden w-px flex-1 bg-gradient-to-b from-white/15 to-transparent md:block" />
-                )}
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <span className="font-mono text-xs font-medium tracking-widest text-bewild-blue-400">
+                <span className="font-display text-[5rem] font-semibold leading-none text-bewild-ink/[0.05] md:text-[6rem]">
                   {step.n}
                 </span>
-                <h3 className="font-display text-lg font-semibold tracking-tight text-white">
+              </div>
+              <div>
+                <h3 className="font-display text-xl font-semibold tracking-tight text-bewild-ink md:text-2xl">
                   {step.title}
                 </h3>
-                <p className="text-sm leading-relaxed text-white/65">{step.text}</p>
+                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-bewild-steel md:text-base">
+                  {step.text}
+                </p>
               </div>
             </li>
           ))}
