@@ -216,6 +216,14 @@ export default function ProjectFormPage({ slug }: Props) {
         seo_title: data.seo_title ?? "",
         seo_description: data.seo_description ?? "",
         og_image_url: data.og_image_url ?? "",
+        portfolio_tags: (data.portfolio_tags ?? []).join(", "),
+        before_text: data.before_text ?? "",
+        before_image_url: data.before_image_url ?? "",
+        ready_image_url: data.ready_image_url ?? "",
+        ready_items: (data.ready_items ?? []).join("\n"),
+        result_text: data.result_text ?? "",
+        featured: !!data.featured,
+        featured_order: String(data.featured_order ?? 0),
       });
       type DbImg = {
         id: string;
