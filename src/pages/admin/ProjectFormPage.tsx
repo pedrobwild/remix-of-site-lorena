@@ -648,6 +648,81 @@ export default function ProjectFormPage({ slug }: Props) {
         </div>
       )}
 
+      {tab === "portfolio" && (
+        <div className="admin-grid-2">
+          <Field label="Tags do case (separadas por vírgula)" full>
+            <input
+              className="admin-field__input"
+              value={form.portfolio_tags}
+              onChange={(e) => set("portfolio_tags", e.target.value)}
+              placeholder="Short stay, Studio compacto"
+            />
+          </Field>
+          <Field label='Texto "Antes" (desafio inicial)' full>
+            <textarea
+              className="admin-field__input"
+              rows={4}
+              value={form.before_text}
+              onChange={(e) => set("before_text", e.target.value)}
+              placeholder="Descreva o estado inicial e o desafio."
+            />
+          </Field>
+          <Field label='Foto "Antes" (URL)' full>
+            <input
+              className="admin-field__input"
+              value={form.before_image_url}
+              onChange={(e) => set("before_image_url", e.target.value)}
+              placeholder="https://…"
+            />
+          </Field>
+          <Field label='Foto "Pronto para operar" (URL)' full>
+            <input
+              className="admin-field__input"
+              value={form.ready_image_url}
+              onChange={(e) => set("ready_image_url", e.target.value)}
+              placeholder="se vazio, usa a capa"
+            />
+          </Field>
+          <Field label="Itens entregues (um por linha)" full>
+            <textarea
+              className="admin-field__input"
+              rows={6}
+              value={form.ready_items}
+              onChange={(e) => set("ready_items", e.target.value)}
+              placeholder={"Marcenaria inteligente\nBancada compacta\nIluminação estratégica"}
+            />
+          </Field>
+          <Field label="Resultado (frase destacada)" full>
+            <textarea
+              className="admin-field__input"
+              rows={2}
+              value={form.result_text}
+              onChange={(e) => set("result_text", e.target.value)}
+              placeholder="Unidade pronta para fotos, anúncio e operação."
+            />
+          </Field>
+          <Field label="Destacar no menu Portfólio (mega-menu)">
+            <label className="admin-inline">
+              <input
+                type="checkbox"
+                checked={form.featured}
+                onChange={(e) => set("featured", e.target.checked)}
+              />
+              <span className="mono">{form.featured ? "em destaque" : "não destacado"}</span>
+            </label>
+          </Field>
+          <Field label="Ordem no mega-menu (menor = primeiro)">
+            <input
+              className="admin-field__input"
+              type="number"
+              value={form.featured_order}
+              onChange={(e) => set("featured_order", e.target.value)}
+            />
+          </Field>
+        </div>
+      )}
+
+
       {tab === "midia" && (
         <>
           <section className="admin-section">
