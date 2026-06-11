@@ -12,13 +12,30 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [contentOpen, setContentOpen] = useState(false);
+  const [pathname, setPathname] = useState<string>(() =>
+    typeof window === "undefined" ? "/" : window.location.pathname,
+  );
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const onNav = () => setPathname(window.location.pathname);
+    window.addEventListener("popstate", onNav);
+    window.addEventListener("hashchange", onNav);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("popstate", onNav);
+      window.removeEventListener("hashchange", onNav);
+    };
   }, []);
+
+  const isActive = (href: string) => {
+    const base = href.split("#")[0] || "/";
+    if (base === "/") return pathname === "/";
+    return pathname === base || pathname.startsWith(base + "/");
+  };
+
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
