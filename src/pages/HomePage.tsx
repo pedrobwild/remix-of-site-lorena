@@ -349,18 +349,21 @@ export default function HomePage() {
       ScrollTrigger.matchMedia({
         "(min-width: 901px)": () => {
           const track = root.querySelector<HTMLElement>("#htrack");
-          if (!track) return;
-          const dist = () => track.scrollWidth - window.innerWidth;
+          const section = root.querySelector<HTMLElement>("#como-funciona");
+          if (!track || !section) return;
+          const dist = () => Math.max(0, track.scrollWidth - window.innerWidth);
           const tween = gsap.to(track, {
             x: () => -dist(),
             ease: "none",
             scrollTrigger: {
-              trigger: "#hwrap",
+              trigger: section,
               start: "top top",
               end: () => "+=" + dist(),
-              pin: "#como-funciona",
+              pin: true,
+              pinSpacing: true,
               scrub: 0.8,
               invalidateOnRefresh: true,
+              anticipatePin: 1,
               onUpdate(self) {
                 const fill = root.querySelector<HTMLElement>("#hfill");
                 if (fill) fill.style.width = self.progress * 100 + "%";
