@@ -444,10 +444,10 @@ function DiagnosticoForm() {
 
       <button
         type="submit"
-        disabled={!canSubmit}
+        disabled={!canSubmit || submitting}
         className="group mt-2 inline-flex w-full items-center justify-center gap-[0.6rem] rounded-full bg-bewild-blue px-[1.7rem] py-[0.95rem] text-[0.95rem] font-semibold text-white shadow-[0_14px_34px_-14px_rgba(0,76,127,0.55)] transition-all hover:-translate-y-0.5 hover:bg-[#005C99] disabled:pointer-events-none disabled:opacity-45"
       >
-        Solicitar diagnóstico
+        {submitting ? "Enviando…" : "Solicitar diagnóstico"}
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
       </button>
       <p className="mt-[0.8rem] text-center font-mono text-[0.55rem] uppercase leading-[1.8] tracking-[0.16em] text-bewild-ink/55">
