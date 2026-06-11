@@ -112,14 +112,15 @@ function PortalMockup() {
           <span className="inline-flex items-center gap-1.5">
             <CalendarClock className="h-3.5 w-3.5" /> Cronograma
           </span>
-          <span className="font-medium text-white">52% concluído</span>
+          <span className="font-medium text-white">{Math.round(progress)}% concluído</span>
         </div>
         <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-white/10">
           <div
-            className="h-full rounded-full"
-            style={{ width: "52%", background: "linear-gradient(90deg, #004C7F, #3B82C4)" }}
+            className="h-full rounded-full transition-[width] duration-200 ease-out"
+            style={{ width: `${progress}%`, background: "linear-gradient(90deg, #004C7F, #3B82C4)" }}
           />
         </div>
+
       </div>
 
       <ul className="mt-4 space-y-2">
