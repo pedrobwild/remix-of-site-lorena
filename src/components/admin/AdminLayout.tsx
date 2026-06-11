@@ -13,6 +13,7 @@ import {
   HelpCircle,
   Newspaper,
   Type,
+  Inbox,
 } from "lucide-react";
 import { useAuth } from "@/lib/useAuth";
 import { navigate, routes } from "@/lib/useHashRoute";
@@ -21,6 +22,7 @@ type ActiveKey =
   | "dashboard"
   | "projects"
   | "blog"
+  | "leads"
   | "analytics"
   | "seo"
   | "seo-404"
@@ -42,6 +44,7 @@ type Props = {
 const NAV: { key: ActiveKey; label: string; href: string; icon: typeof LayoutDashboard }[] = [
   { key: "dashboard", label: "Dashboard", href: routes.adminDashboard, icon: LayoutDashboard },
   { key: "analytics", label: "Analytics", href: routes.adminAnalytics, icon: BarChart3 },
+  { key: "leads", label: "Leads", href: routes.adminLeads, icon: Inbox },
   { key: "projects", label: "Projetos", href: routes.adminProjects, icon: FolderKanban },
   { key: "blog", label: "Blog", href: routes.adminBlog, icon: Newspaper },
   { key: "faq", label: "FAQ", href: routes.adminFaq, icon: HelpCircle },

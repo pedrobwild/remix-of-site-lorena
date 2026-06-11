@@ -6,6 +6,7 @@ import Header from "../components/landing/Header";
 import Footer from "../components/landing/Footer";
 import { Container, CTAButton } from "../components/landing/primitives";
 import { CONTACT } from "../components/landing/content";
+import { supabase } from "@/integrations/supabase/client";
 
 /* ============================================================
  * DiagnosticoPage — /diagnostico
@@ -280,14 +281,50 @@ function DiagnosticoForm() {
     return lines.join("\n");
   }, [f]);
 
-  function onSubmit(e: React.FormEvent) {
+  const [submitting, setSubmitting] = useState(false);
+
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!canSubmit) {
+    if (!canSubmit || submitting) {
       setTouched({ nome: true, whats: true });
       return;
     }
+    setSubmitting(true);
+
+    // Captura UTM/contexto
+    const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+    const scope: string[] = [];
+    if (f.objetivo) scope.push(`objetivo:${f.objetivo}`);
+    if (f.chaves) scope.push(`chaves:${f.chaves}`);
+    if (f.planta) scope.push(`planta:${f.planta}`);
+
+    try {
+      await supabase.from("diagnostic_leads").insert({
+        name: f.nome.trim(),
+        whatsapp: digits(f.whats),
+        email: f.email.trim() || null,
+        neighborhood: f.local.trim() || null,
+        square_meters: f.metragem ? Number(digits(f.metragem)) || null : null,
+        property_type: f.objetivo || null,
+        timeframe: f.chaves || null,
+        budget_range: null,
+        scope,
+        message: f.mensagem.trim() || null,
+        utm_source: params?.get("utm_source") ?? null,
+        utm_medium: params?.get("utm_medium") ?? null,
+        utm_campaign: params?.get("utm_campaign") ?? null,
+        referrer: typeof document !== "undefined" ? document.referrer || null : null,
+        landing_path: typeof window !== "undefined" ? window.location.pathname : null,
+        user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+      });
+    } catch (err) {
+      // Não bloqueia o usuário se a gravação falhar — segue para o WhatsApp.
+      console.error("[diagnostic_leads] insert failed", err);
+    }
+
     const url = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(messageText)}`;
     window.open(url, "_blank", "noopener,noreferrer");
+    setSubmitting(false);
   }
 
   return (
@@ -407,10 +444,10 @@ function DiagnosticoForm() {
 
       <button
         type="submit"
-        disabled={!canSubmit}
+        disabled={!canSubmit || submitting}
         className="group mt-2 inline-flex w-full items-center justify-center gap-[0.6rem] rounded-full bg-bewild-blue px-[1.7rem] py-[0.95rem] text-[0.95rem] font-semibold text-white shadow-[0_14px_34px_-14px_rgba(0,76,127,0.55)] transition-all hover:-translate-y-0.5 hover:bg-[#005C99] disabled:pointer-events-none disabled:opacity-45"
       >
-        Solicitar diagnóstico
+        {submitting ? "Enviando…" : "Solicitar diagnóstico"}
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
       </button>
       <p className="mt-[0.8rem] text-center font-mono text-[0.55rem] uppercase leading-[1.8] tracking-[0.16em] text-bewild-ink/55">

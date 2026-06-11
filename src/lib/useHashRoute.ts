@@ -26,6 +26,7 @@ export type Route =
   | { name: "admin-blog-new" }
   | { name: "admin-blog-edit"; slug: string }
   | { name: "admin-typography" }
+  | { name: "admin-leads" }
   | { name: "not-found" };
 
 function parsePath(rawPath: string): Route {
@@ -74,6 +75,7 @@ function parsePath(rawPath: string): Route {
   const adminBlogEdit = path.match(/^\/admin\/blog\/([a-z0-9-]+)$/);
   if (adminBlogEdit) return { name: "admin-blog-edit", slug: adminBlogEdit[1] };
   if (path === "/admin/typography") return { name: "admin-typography" };
+  if (path === "/admin/leads") return { name: "admin-leads" };
 
   return { name: "not-found" };
 }
@@ -173,6 +175,7 @@ export const routes = {
   adminBlogNew: "/admin/blog/new",
   adminBlogEdit: (slug: string) => `/admin/blog/${slug}`,
   adminTypography: "/admin/typography",
+  adminLeads: "/admin/leads",
 };
 
 // Navega programaticamente sem recarregar a página.
