@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 export type Route =
   | { name: "home"; anchor?: string }
   | { name: "portfolio" }
+  | { name: "diagnostico" }
   | { name: "faq" }
   | { name: "sobre" }
   | { name: "privacidade" }
