@@ -81,7 +81,8 @@ export default function Header() {
     };
   }, [open]);
 
-  const isLight = scrolled || open;
+  const isLightPage = pathname !== "/";
+  const isLight = scrolled || open || isLightPage;
   const tone = isLight ? "dark" : "light";
 
   return (
