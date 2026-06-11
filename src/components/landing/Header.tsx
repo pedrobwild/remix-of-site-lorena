@@ -2,11 +2,20 @@ import { useEffect, useState } from "react";
 import { Menu, X, MessageCircle, ChevronDown, ArrowRight } from "lucide-react";
 import { BewildLogo } from "./primitives";
 import { NAV_LINKS, whatsappHref } from "./content";
+import { supabase } from "@/integrations/supabase/client";
 
 const CONTENT_DROPDOWN = [
   { label: "Todos os artigos", href: "/blog" },
   { label: "Tags", href: "/blog/tags" },
 ];
+
+type FeaturedCase = {
+  slug: string;
+  title: string;
+  cover_url: string | null;
+  result_text: string | null;
+  portfolio_tags: string[] | null;
+};
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
