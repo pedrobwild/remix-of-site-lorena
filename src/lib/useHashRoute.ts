@@ -122,6 +122,12 @@ export function useHashRoute(): Route {
       window.history.replaceState({}, "", "/admin/dashboard");
       window.dispatchEvent(new Event("lovable:navigate"));
     }
+    // 301 client-side: /blog* → /conteudos* (URL canônica)
+    const p = window.location.pathname;
+    if (p === "/blog" || p === "/blog/" || p.startsWith("/blog/")) {
+      const newPath = "/conteudos" + p.slice(5);
+      window.history.replaceState({}, "", newPath + window.location.search);
+    }
     setRoute(parseLocation());
 
     const onChange = () => setRoute(parseLocation());
