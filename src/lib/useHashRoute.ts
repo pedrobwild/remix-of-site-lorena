@@ -22,9 +22,9 @@ export type Route =
   | { name: "admin-project-new" }
   | { name: "admin-project-edit"; slug: string }
   | { name: "admin-faq" }
-  | "admin-blog"
-  | "admin-blog-new"
-  | "admin-blog-edit"; slug: string }
+  | { name: "admin-blog" }
+  | { name: "admin-blog-new" }
+  | { name: "admin-blog-edit"; slug: string }
   | { name: "admin-typography" }
   | { name: "admin-leads" }
   | { name: "not-found" };
