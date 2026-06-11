@@ -251,6 +251,78 @@ export type Database = {
         }
         Relationships: []
       }
+      diagnostic_leads: {
+        Row: {
+          budget_range: string | null
+          created_at: string
+          email: string | null
+          id: string
+          internal_notes: string | null
+          landing_path: string | null
+          message: string | null
+          name: string
+          neighborhood: string | null
+          property_type: string | null
+          referrer: string | null
+          scope: string[] | null
+          square_meters: number | null
+          status: string
+          timeframe: string | null
+          updated_at: string
+          user_agent: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          whatsapp: string
+        }
+        Insert: {
+          budget_range?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          internal_notes?: string | null
+          landing_path?: string | null
+          message?: string | null
+          name: string
+          neighborhood?: string | null
+          property_type?: string | null
+          referrer?: string | null
+          scope?: string[] | null
+          square_meters?: number | null
+          status?: string
+          timeframe?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          whatsapp: string
+        }
+        Update: {
+          budget_range?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          internal_notes?: string | null
+          landing_path?: string | null
+          message?: string | null
+          name?: string
+          neighborhood?: string | null
+          property_type?: string | null
+          referrer?: string | null
+          scope?: string[] | null
+          square_meters?: number | null
+          status?: string
+          timeframe?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          whatsapp?: string
+        }
+        Relationships: []
+      }
       faq_items: {
         Row: {
           answer: string
