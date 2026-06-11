@@ -300,13 +300,13 @@
 }
 
 /* ============ FAQ ============ */
-.faq{max-width:880px;margin:2.4rem auto 0}
-.qa{background:#fff;border-radius:var(--r-sm);box-shadow:var(--sh);margin-bottom:.7rem;overflow:hidden}
-.qa-q{width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1.05rem 1.3rem;font-weight:500;font-size:.93rem;color:var(--ink)}
-.qa-q .pl{color:var(--blue);font-size:1.05rem;transition:transform .35s var(--ease);flex:none}
-.qa.open .qa-q .pl{transform:rotate(45deg)}
-.qa-a{max-height:0;overflow:hidden;transition:max-height .45s var(--ease)}
-.qa-a p{padding:0 1.3rem 1.1rem;font-size:.86rem;color:rgba(10,37,64,.72)}
+.bw-home .faq{max-width:880px;margin:2.4rem auto 0;background:transparent;color:inherit;border-top:0;padding-block:0}
+.bw-home .qa{background:#fff;border-radius:var(--r-sm);box-shadow:var(--sh);margin-bottom:.7rem;overflow:hidden}
+.bw-home .qa-q{width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1.05rem 1.3rem;font-weight:500;font-size:.93rem;color:var(--ink)}
+.bw-home .qa-q .pl{color:var(--blue);font-size:1.05rem;transition:transform .35s var(--ease);flex:none}
+.bw-home .qa.open .qa-q .pl{transform:rotate(45deg)}
+.bw-home .qa-a{max-height:0;overflow:hidden;transition:max-height .45s var(--ease)}
+.bw-home .qa-a p{padding:0 1.3rem 1.1rem;font-size:.86rem;color:rgba(10,37,64,.72)}
 
 /* ============ CTA FINAL / FOOTER ============ */
 .cta-fim{text-align:center}
