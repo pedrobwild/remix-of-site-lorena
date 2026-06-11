@@ -49,6 +49,15 @@ type Form = {
   seo_title: string;
   seo_description: string;
   og_image_url: string;
+  // Portfólio (case antes/depois)
+  portfolio_tags: string; // comma-separated
+  before_text: string;
+  before_image_url: string;
+  ready_image_url: string;
+  ready_items: string; // one per line
+  result_text: string;
+  featured: boolean;
+  featured_order: string;
 };
 
 type GalleryRow = {
@@ -90,6 +99,14 @@ const EMPTY: Form = {
   seo_title: "",
   seo_description: "",
   og_image_url: "",
+  portfolio_tags: "",
+  before_text: "",
+  before_image_url: "",
+  ready_image_url: "",
+  ready_items: "",
+  result_text: "",
+  featured: false,
+  featured_order: "0",
 };
 
 function slugify(s: string) {
