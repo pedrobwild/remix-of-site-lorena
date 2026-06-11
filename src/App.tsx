@@ -86,11 +86,11 @@ export default function App() {
         <ProblemSection />
         <ServicesSection />
         <ProcessTimeline />
-        <ArchitectureSection />
-        <DifferentialsSection />
-        <CredibilitySection />
+        <StackedShowcase />
         <CasesGallery />
+        <TestimonialSection />
         <TechnologySection />
+
         <ComparisonSection />
         <AudienceSection />
         <FAQSection />
