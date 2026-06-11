@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Container, SectionHeading } from "./primitives";
 import { STEPS } from "./content";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { gsap } from "@/lib/gsap";
 
 export default function ProcessTimeline() {
   const sectionRef = useRef<HTMLElement | null>(null);
