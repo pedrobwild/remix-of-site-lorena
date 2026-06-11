@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 export type Route =
   | { name: "home"; anchor?: string }
   | { name: "portfolio" }
+  | { name: "diagnostico" }
   | { name: "faq" }
   | { name: "sobre" }
   | { name: "privacidade" }
@@ -32,6 +33,7 @@ function parsePath(rawPath: string): Route {
 
   if (path === "/" || path === "") return { name: "home" };
   if (path === "/portfolio") return { name: "portfolio" };
+  if (path === "/diagnostico") return { name: "diagnostico" };
   if (path === "/faq") return { name: "faq" };
   if (path === "/sobre") return { name: "sobre" };
   if (path === "/privacidade") return { name: "privacidade" };
@@ -132,6 +134,7 @@ export function useHashRoute(): Route {
 export const routes = {
   home: "/",
   portfolio: "/portfolio",
+  diagnostico: "/diagnostico",
   faq: "/faq",
   sobre: "/sobre",
   privacidade: "/privacidade",
