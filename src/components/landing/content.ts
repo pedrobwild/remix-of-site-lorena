@@ -56,13 +56,14 @@ export function whatsappHref(text: string = CONTACT.whatsappText): string {
   return `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(text)}`;
 }
 
-// Navegação principal — arquitetura BeWild / BeWild Reformas / BeWild Host Care
-export const NAV_LINKS: { label: string; href: string; isPage?: boolean }[] = [
-  { label: "Jornada Be Wild", href: "/metodo-bwild", isPage: true },
-  { label: "BeWild Reformas", href: "/be-wild", isPage: true },
-  { label: "BeWild Host Care", href: "/bewild-host-care", isPage: true },
-  { label: "Cases", href: "/cases", isPage: true },
-  { label: "Conteúdos", href: "/conteudos", isPage: true },
+export const NAV_LINKS: { label: string; href: string }[] = [
+  { label: "O que fazemos", href: "#o-que-fazemos" },
+  { label: "Como funciona", href: "#como-funciona" },
+  { label: "Projeto personalizado", href: "#arquitetura" },
+  { label: "Diferenciais", href: "#diferenciais" },
+  { label: "Cases", href: "#cases" },
+  { label: "Tecnologia", href: "#tecnologia" },
+  { label: "FAQ", href: "#faq" },
 ];
 
 export const HERO = {

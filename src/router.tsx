@@ -12,15 +12,6 @@
  * de ponta a ponta.
  */
 import App from "./App";
-import BeWildPage from "./pages/BeWildPage";
-import BewildHostCarePage from "./pages/BewildHostCarePage";
-import CasesPage from "./pages/CasesPage";
-import MetodoBwildPage from "./pages/MetodoBwildPage";
-import DiagnosticoPage from "./pages/DiagnosticoPage";
-import ConteudosPage from "./pages/ConteudosPage";
-import ConteudoPostPage from "./pages/ConteudoPostPage";
-import SimuladorPage from "./pages/SimuladorPage";
-import EmConstrucao from "./pages/EmConstrucao";
 import PortfolioPage from "./pages/PortfolioPage";
 import ProjectPage from "./pages/ProjectPage";
 import FaqPage from "./pages/FaqPage";
@@ -47,18 +38,9 @@ import ProtectedRoute from "./components/admin/ProtectedRoute";
 import type { Route } from "./lib/useHashRoute";
 
 export function renderRoute(route: Route) {
-  if (route.name === "emconstrucao") return <EmConstrucao />;
   if (route.name === "portfolio") return <PortfolioPage />;
   if (route.name === "project") return <ProjectPage slug={route.slug} />;
   if (route.name === "faq") return <FaqPage />;
-  if (route.name === "be-wild") return <BeWildPage />;
-  if (route.name === "bewild-host-care") return <BewildHostCarePage />;
-  if (route.name === "cases") return <CasesPage />;
-  if (route.name === "metodo-bwild") return <MetodoBwildPage />;
-  if (route.name === "diagnostico") return <DiagnosticoPage />;
-  if (route.name === "conteudos") return <ConteudosPage />;
-  if (route.name === "conteudo-post") return <ConteudoPostPage slug={route.slug} />;
-  if (route.name === "simulador") return <SimuladorPage />;
   if (route.name === "sobre") return <SobrePage />;
   if (route.name === "privacidade") return <PrivacidadePage />;
   if (route.name === "blog") return <BlogPage />;

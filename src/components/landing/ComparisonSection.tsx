@@ -4,7 +4,7 @@ import { COMPARISON } from "./content";
 
 export default function ComparisonSection() {
   return (
-    <section className="bg-bewild-cream py-20 sm:py-28">
+    <section className="bg-bewild-bone py-20 sm:py-28">
       <Container>
         <SectionHeading
           eyebrow="Comparativo"
@@ -30,7 +30,7 @@ export default function ComparisonSection() {
               key={row.label}
               className="grid grid-cols-1 border-b border-bewild-line last:border-0 sm:grid-cols-[1fr_1.4fr_1.4fr]"
             >
-              <div className="bg-bewild-cream/60 px-5 py-4 sm:flex sm:items-center">
+              <div className="bg-bewild-bone/60 px-5 py-4 sm:flex sm:items-center">
                 <p className="font-display text-sm font-semibold tracking-tight text-bewild-ink">
                   {row.label}
                 </p>

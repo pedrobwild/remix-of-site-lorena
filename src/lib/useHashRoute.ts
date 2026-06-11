@@ -2,14 +2,6 @@ import { useEffect, useState } from "react";
 
 export type Route =
   | { name: "home"; anchor?: string }
-  | { name: "be-wild" }
-  | { name: "bewild-host-care" }
-  | { name: "cases" }
-  | { name: "metodo-bwild" }
-  | { name: "diagnostico" }
-  | { name: "conteudos" }
-  | { name: "conteudo-post"; slug: string }
-  | { name: "simulador" }
   | { name: "portfolio" }
   | { name: "faq" }
   | { name: "sobre" }
@@ -33,24 +25,12 @@ export type Route =
   | { name: "admin-blog-new" }
   | { name: "admin-blog-edit"; slug: string }
   | { name: "admin-typography" }
-  | { name: "emconstrucao" }
   | { name: "not-found" };
 
 function parsePath(rawPath: string): Route {
   const path = (rawPath.split("?")[0] || "").replace(/\/+$/, "") || "/";
 
   if (path === "/" || path === "") return { name: "home" };
-  if (path === "/emconstrucao") return { name: "emconstrucao" };
-  if (path === "/be-wild") return { name: "be-wild" };
-  if (path === "/be-stay") return { name: "bewild-host-care" }; // redirect legado
-  if (path === "/bewild-host-care") return { name: "bewild-host-care" };
-  if (path === "/cases") return { name: "cases" };
-  if (path === "/metodo-bwild") return { name: "metodo-bwild" };
-  if (path === "/diagnostico") return { name: "diagnostico" };
-  if (path === "/conteudos") return { name: "conteudos" };
-  const conteudoMatch = path.match(/^\/conteudos\/([a-z0-9-]+)$/);
-  if (conteudoMatch) return { name: "conteudo-post", slug: conteudoMatch[1] };
-  if (path === "/simulador") return { name: "simulador" };
   if (path === "/portfolio") return { name: "portfolio" };
   if (path === "/faq") return { name: "faq" };
   if (path === "/sobre") return { name: "sobre" };
@@ -151,14 +131,6 @@ export function useHashRoute(): Route {
 // Helper para construir links de forma consistente — agora URLs limpas.
 export const routes = {
   home: "/",
-  beWild: "/be-wild",
-  hostCare: "/bewild-host-care",
-  cases: "/cases",
-  metodoBwild: "/metodo-bwild",
-  diagnostico: "/diagnostico",
-  conteudos: "/conteudos",
-  conteudoPost: (slug: string) => `/conteudos/${slug}`,
-  simulador: "/simulador",
   portfolio: "/portfolio",
   faq: "/faq",
   sobre: "/sobre",

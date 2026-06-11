@@ -4,7 +4,7 @@ import { ARCH_BLOCKS } from "./content";
 
 export default function ArchitectureSection() {
   return (
-    <section id="arquitetura" className="scroll-mt-20 bg-bewild-cream py-20 sm:py-28">
+    <section id="arquitetura" className="scroll-mt-20 bg-bewild-bone py-20 sm:py-28">
       <Container>
         <SectionHeading
           eyebrow="Projeto personalizado"

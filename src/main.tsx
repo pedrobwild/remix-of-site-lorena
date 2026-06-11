@@ -7,36 +7,7 @@ import { useHashRoute, installLinkInterceptor, type Route } from "./lib/useHashR
 import { initAnalytics } from "./lib/analytics";
 import { installCrashRecovery, markHealthy } from "./lib/crashRecovery";
 import { renderRoute } from "./router";
-import { useBwRevealObserver } from "./lib/useBwMotion";
-import EmConstrucao from "./pages/EmConstrucao";
-import "./index.css"
-import "./bwild-design.css";
-
-// Modo construção: quando true, qualquer rota cai em /emconstrucao.
-// Vire para false quando o novo site estiver pronto.
-const MODO_CONSTRUCAO = true;
-
-// Bypass do modo construção para desenvolvimento:
-// - Sempre liberado no preview do Lovable (id-preview--*.lovable.app) e localhost
-// - Liberado em qualquer host via ?bypass=1 (persiste em localStorage)
-// - Para sair do bypass: ?bypass=0
-function devBypassConstrucao(): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    const url = new URL(window.location.href);
-    const q = url.searchParams.get("bypass");
-    if (q === "1") localStorage.setItem("bw-bypass-construcao", "1");
-    if (q === "0") localStorage.removeItem("bw-bypass-construcao");
-    const host = window.location.hostname;
-    const isLovablePreview = host.startsWith("id-preview--") || host.endsWith(".lovableproject.com");
-    const isLocal = host === "localhost" || host === "127.0.0.1";
-    if (isLovablePreview || isLocal) return true;
-    return localStorage.getItem("bw-bypass-construcao") === "1";
-  } catch {
-    return false;
-  }
-}
-const BYPASS_CONSTRUCAO = devBypassConstrucao();
+import "./index.css";
 
 installCrashRecovery();
 installLinkInterceptor();
@@ -57,43 +28,9 @@ function routeKeyOf(route: Route) {
 }
 
 function Root() {
-  const currentRoute = useHashRoute();
-  const route: Route = BYPASS_CONSTRUCAO && currentRoute.name === "emconstrucao"
-    ? { name: "home" }
-    : currentRoute;
-
-  // No preview/editor, /emconstrucao é só a tela pública externa.
-  // Se o editor estiver preso nela, volta imediatamente para o site real.
-  useEffect(() => {
-    if (!BYPASS_CONSTRUCAO || currentRoute.name !== "emconstrucao") return;
-    window.history.replaceState({}, "", "/");
-    window.dispatchEvent(new Event("lovable:navigate"));
-  }, [currentRoute.name]);
-
-  // Modo construção: redireciona qualquer rota para /emconstrucao e
-  // renderiza a página isolada, sem Header/Footer/widgets do site.
-  useEffect(() => {
-    if (!MODO_CONSTRUCAO || BYPASS_CONSTRUCAO) return;
-    if (window.location.pathname !== "/emconstrucao") {
-      window.history.replaceState({}, "", "/emconstrucao");
-      window.dispatchEvent(new Event("lovable:navigate"));
-    }
-  }, [route]);
-  if (MODO_CONSTRUCAO && !BYPASS_CONSTRUCAO) {
-    return <EmConstrucao />;
-  }
-
+  const route = useHashRoute();
   const isAdmin = route.name.startsWith("admin");
   useCustomCursor(!isAdmin);
-
-  // Cursor BeWild gold em light mode
-  useEffect(() => {
-    document.body.classList.add("bwild-light-cursor");
-    return () => document.body.classList.remove("bwild-light-cursor");
-  }, []);
-
-  // Scroll reveal observer global ([data-bw-reveal] → .bw-in)
-  useBwRevealObserver();
 
   // Inicializa analytics uma vez no mount
   useEffect(() => {

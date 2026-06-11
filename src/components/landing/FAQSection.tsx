@@ -7,7 +7,7 @@ export default function FAQSection() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="scroll-mt-20 bg-bewild-cream py-20 sm:py-28">
+    <section id="faq" className="scroll-mt-20 bg-bewild-bone py-20 sm:py-28">
       <Container className="max-w-3xl">
         <SectionHeading eyebrow="FAQ" title="Perguntas frequentes" align="center" />
 
