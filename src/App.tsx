@@ -13,16 +13,16 @@ import HeroSection from "./components/landing/HeroSection";
 import ProblemSection from "./components/landing/ProblemSection";
 import ServicesSection from "./components/landing/ServicesSection";
 import ProcessTimeline from "./components/landing/ProcessTimeline";
-import ArchitectureSection from "./components/landing/ArchitectureSection";
-import DifferentialsSection from "./components/landing/DifferentialsSection";
-import CredibilitySection from "./components/landing/CredibilitySection";
+import StackedShowcase from "./components/landing/StackedShowcase";
 import CasesGallery from "./components/landing/CasesGallery";
+import TestimonialSection from "./components/landing/TestimonialSection";
 import TechnologySection from "./components/landing/TechnologySection";
 import ComparisonSection from "./components/landing/ComparisonSection";
 import AudienceSection from "./components/landing/AudienceSection";
 import FAQSection from "./components/landing/FAQSection";
 import FinalCTA from "./components/landing/FinalCTA";
 import Footer from "./components/landing/Footer";
+
 import FloatingWhatsAppButton from "./components/landing/FloatingWhatsAppButton";
 import { FAQS } from "./components/landing/content";
 
