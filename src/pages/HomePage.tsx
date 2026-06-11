@@ -324,20 +324,24 @@ export default function HomePage() {
         .to("#hCtas", { y: 0, opacity: 1, duration: 0.9 }, 1.2)
         .to("#hCue", { y: 0, opacity: 1, duration: 0.9 }, 1.35);
 
-      /* HERO — saída coreografada (pin ≥768px) */
+      /* HERO — parallax leve (sem pin), mantém texto visível ao voltar */
       ScrollTrigger.matchMedia({
         "(min-width: 768px)": () => {
-          const hp = gsap.timeline({
-            scrollTrigger: { trigger: "#hero", start: "top top", end: "+=90%", pin: true, scrub: 0.8 },
+          gsap.fromTo(
+            "#heroMedia",
+            { scale: 1, yPercent: 0 },
+            {
+              scale: 1.08,
+              yPercent: 6,
+              ease: "none",
+              scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: 0.6 },
+            },
+          );
+          gsap.to(".hero-veil", {
+            opacity: 0.45,
+            ease: "none",
+            scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: 0.6 },
           });
-          hp.fromTo("#heroMedia", { scale: 1 }, { scale: 1.12, yPercent: 6, ease: "none", immediateRender: false }, 0)
-            .to(".hero-veil", { opacity: 0.55, ease: "none" }, 0)
-            .to("#hCue", { opacity: 0, y: 10, ease: "none" }, 0)
-            .fromTo("#hCtas", { y: 0, opacity: 1 }, { y: -34, opacity: 0, ease: "none", immediateRender: false }, 0)
-            .fromTo("#hMicro", { y: 0, opacity: 1 }, { y: -44, opacity: 0, ease: "none", immediateRender: false }, 0.04)
-            .fromTo("#hLead", { y: 0, opacity: 1 }, { y: -54, opacity: 0, ease: "none", immediateRender: false }, 0.08)
-            .fromTo(".hl>span", { yPercent: 0 }, { yPercent: -115, ease: "none", stagger: 0.07, immediateRender: false }, 0.1)
-            .fromTo("#hEye", { y: 0, opacity: 1 }, { y: -50, opacity: 0, ease: "none", immediateRender: false }, 0.14);
         },
       });
 
@@ -345,18 +349,21 @@ export default function HomePage() {
       ScrollTrigger.matchMedia({
         "(min-width: 901px)": () => {
           const track = root.querySelector<HTMLElement>("#htrack");
-          if (!track) return;
-          const dist = () => track.scrollWidth - window.innerWidth;
+          const section = root.querySelector<HTMLElement>("#como-funciona");
+          if (!track || !section) return;
+          const dist = () => Math.max(0, track.scrollWidth - window.innerWidth);
           const tween = gsap.to(track, {
             x: () => -dist(),
             ease: "none",
             scrollTrigger: {
-              trigger: "#hwrap",
+              trigger: section,
               start: "top top",
               end: () => "+=" + dist(),
-              pin: "#como-funciona",
+              pin: true,
+              pinSpacing: true,
               scrub: 0.8,
               invalidateOnRefresh: true,
+              anticipatePin: 1,
               onUpdate(self) {
                 const fill = root.querySelector<HTMLElement>("#hfill");
                 if (fill) fill.style.width = self.progress * 100 + "%";
