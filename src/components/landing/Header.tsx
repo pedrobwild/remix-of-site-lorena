@@ -97,13 +97,20 @@ export default function Header() {
               <a
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors ${
-                  isLight ? "text-bewild-ink/80 hover:text-bewild-blue" : "text-white/80 hover:text-white"
+                aria-current={isActive(link.href) ? "page" : undefined}
+                className={`text-sm transition-colors ${
+                  isActive(link.href)
+                    ? isLight
+                      ? "font-semibold text-bewild-ink"
+                      : "font-semibold text-white"
+                    : "font-medium " +
+                      (isLight ? "text-bewild-ink/80 hover:text-bewild-blue" : "text-white/80 hover:text-white")
                 }`}
               >
                 {link.label}
               </a>
             )
+
           )}
         </nav>
 
