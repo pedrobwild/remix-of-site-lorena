@@ -432,13 +432,24 @@ export default function HomePage() {
         { width: "52%", duration: 1.2, ease: "power2.out", scrollTrigger: { trigger: "#portal", start: "top 60%" } },
       );
 
-      /* Parallax leve no vcard */
+      /* Parallax leve no vcard — usa o próprio stack-card sticky como trigger
+         pra que o movimento aconteça enquanto o cartão está pinado. */
       root.querySelectorAll<HTMLElement>("[data-par]").forEach((el) => {
-        gsap.to(el, {
-          y: -22,
-          ease: "none",
-          scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: 1.2 },
-        });
+        const stickyParent = el.closest<HTMLElement>(".stack-card") ?? el;
+        gsap.fromTo(
+          el,
+          { yPercent: 6 },
+          {
+            yPercent: -6,
+            ease: "none",
+            scrollTrigger: {
+              trigger: stickyParent,
+              start: "top top",
+              end: "bottom top",
+              scrub: 0.8,
+            },
+          },
+        );
       });
 
       /* Parallax no poster do depoimento */
