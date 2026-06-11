@@ -25,6 +25,7 @@ export default function Header() {
   const [contentOpen, setContentOpen] = useState(false);
   const [portfolioOpen, setPortfolioOpen] = useState(false);
   const [featured, setFeatured] = useState<FeaturedCase[]>([]);
+  const [topPosts, setTopPosts] = useState<TopPost[]>([]);
   const [pathname, setPathname] = useState<string>(() =>
     typeof window === "undefined" ? "/" : window.location.pathname,
   );
