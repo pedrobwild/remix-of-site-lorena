@@ -304,6 +304,7 @@ function CaseGallery({ data }: { data: CaseItem }) {
         onActivate={() => setActive(0)}
         onEnter={() => onEnter(0)}
         label={data.before.label}
+        image={data.before.image}
       >
         <p className="max-w-[32rem] text-[0.86rem] leading-relaxed text-white/85">
           {data.before.text}
@@ -316,6 +317,7 @@ function CaseGallery({ data }: { data: CaseItem }) {
         onActivate={() => setActive(1)}
         onEnter={() => onEnter(1)}
         label={data.ready.label}
+        image={data.ready.image}
       >
         <ul className="grid max-w-[34rem] grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
           {data.ready.items.map((item) => (
