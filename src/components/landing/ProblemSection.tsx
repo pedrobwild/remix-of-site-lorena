@@ -1,27 +1,25 @@
-import { AlertTriangle } from "lucide-react";
 import { Container, SectionHeading } from "./primitives";
 import { PROBLEM_BULLETS } from "./content";
 
 export default function ProblemSection() {
   return (
-    <section className="bg-bewild-bone py-20 sm:py-28">
+    <section className="bg-[#F5F7F9] py-20 sm:py-28">
       <Container>
-        <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
+        <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
           <div className="flex flex-col gap-6">
             <SectionHeading
               eyebrow="O problema"
               title={
                 <>
-                  Reformar um studio para renda não precisa ser sua{" "}
-                  <span className="text-bewild-blue">segunda profissão.</span>
+                  Reformar um studio para renda{" "}
+                  <span className="italic text-bewild-blue">não precisa ser sua segunda profissão.</span>
                 </>
               }
             />
             <p className="max-w-xl text-base leading-relaxed text-bewild-steel">
-              A Bwild desenvolve soluções que integram arquitetura, engenharia, tecnologia e inteligência de mercado em uma só plataforma, para gerar o máximo de valor para quem precisa reformar, e não quer passar pelo pesadelo de cuidar de uma obra sozinho, muitas vezes à distância.
-              <br />
-              <br />
-              E além disso, busca desfrutar de uma excelente experiência durante todo o processo, tendo no final um imóvel com alta qualidade e potencial de rendimento.
+              A BeWild integra arquitetura, engenharia, obra e inteligência de mercado em um único
+              processo, para quem precisa reformar e não quer carregar o pesadelo de cuidar de uma
+              obra sozinho, muitas vezes à distância. Você acompanha. A gente executa.
             </p>
           </div>
 
@@ -29,10 +27,10 @@ export default function ProblemSection() {
             {PROBLEM_BULLETS.map((bullet) => (
               <li
                 key={bullet}
-                className="flex items-start gap-3 rounded-xl border border-bewild-line bg-white px-4 py-3.5"
+                className="flex items-start gap-3 rounded-xl border border-bewild-line bg-white px-4 py-3.5 shadow-[0_8px_24px_-16px_rgba(10,37,64,0.12)]"
               >
-                <AlertTriangle
-                  className="mt-0.5 h-4 w-4 shrink-0 text-bewild-blue/70"
+                <span
+                  className="mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full bg-[#C9A24B]"
                   aria-hidden="true"
                 />
                 <span className="text-sm leading-snug text-bewild-ink/80">{bullet}</span>

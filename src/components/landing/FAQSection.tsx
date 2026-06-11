@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Minus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Container, SectionHeading } from "./primitives";
 import { FAQS } from "./content";
 
@@ -7,8 +7,8 @@ export default function FAQSection() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="scroll-mt-20 bg-bewild-bone py-20 sm:py-28">
-      <Container className="max-w-3xl">
+    <section id="faq" className="scroll-mt-20 bg-[#FBFAF8] py-20 sm:py-28">
+      <Container className="max-w-[880px]">
         <SectionHeading eyebrow="FAQ" title="Perguntas frequentes" align="center" />
 
         <ul className="mt-12 flex flex-col gap-3">
@@ -17,7 +17,7 @@ export default function FAQSection() {
             return (
               <li
                 key={item.q}
-                className="overflow-hidden rounded-2xl border border-bewild-line bg-white"
+                className="overflow-hidden rounded-xl border border-bewild-line bg-white"
               >
                 <button
                   type="button"
@@ -29,15 +29,12 @@ export default function FAQSection() {
                     {item.q}
                   </span>
                   <span
-                    className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-colors ${
-                      isOpen ? "bg-bewild-blue text-white" : "bg-bewild-blue/10 text-bewild-blue"
+                    aria-hidden="true"
+                    className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-bewild-blue/10 text-bewild-blue transition-transform duration-300 ${
+                      isOpen ? "rotate-45" : ""
                     }`}
                   >
-                    {isOpen ? (
-                      <Minus className="h-4 w-4" aria-hidden="true" />
-                    ) : (
-                      <Plus className="h-4 w-4" aria-hidden="true" />
-                    )}
+                    <Plus className="h-4 w-4" />
                   </span>
                 </button>
                 <div

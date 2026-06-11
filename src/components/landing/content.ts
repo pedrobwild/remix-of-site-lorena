@@ -43,12 +43,11 @@ import {
 
 /** Contato — editar com os dados oficiais antes de publicar. */
 export const CONTACT = {
-  // TODO: substituir pelo número oficial de WhatsApp da bewild.
   whatsappNumber: "5500000000000",
-  whatsappText: "Olá, quero um diagnóstico para meu imóvel",
-  email: "contato@bewild.com.br", // TODO: validar e-mail oficial
-  instagram: "https://instagram.com/", // TODO: perfil oficial
-  linkedin: "https://www.linkedin.com/", // TODO: perfil oficial
+  whatsappText: "Olá, quero um diagnóstico para meu studio",
+  email: "contato@bewild.com.br",
+  instagram: "https://instagram.com/",
+  linkedin: "https://www.linkedin.com/",
   city: "São Paulo, Brasil",
 };
 
@@ -57,13 +56,10 @@ export function whatsappHref(text: string = CONTACT.whatsappText): string {
 }
 
 export const NAV_LINKS: { label: string; href: string }[] = [
-  { label: "O que fazemos", href: "#o-que-fazemos" },
-  { label: "Como funciona", href: "#como-funciona" },
-  { label: "Projeto personalizado", href: "#arquitetura" },
-  { label: "Diferenciais", href: "#diferenciais" },
-  { label: "Cases", href: "#cases" },
-  { label: "Tecnologia", href: "#tecnologia" },
-  { label: "FAQ", href: "#faq" },
+  { label: "O que fazemos", href: "/#o-que-fazemos" },
+  { label: "Como funciona", href: "/#como-funciona" },
+  { label: "Portfólio", href: "/portfolio" },
+  { label: "Conteúdos", href: "/blog" },
 ];
 
 export const HERO = {
@@ -438,8 +434,8 @@ export interface FaqItem {
 
 export const FAQS: FaqItem[] = [
   {
-    q: "A bewild faz só projeto ou também executa a obra?",
-    a: "A bewild atua no modelo turn-key: projeto de arquitetura personalizado, planejamento, execução, compras, marcenaria, mobiliário e entrega final, conforme o escopo contratado.",
+    q: "A BeWild faz só projeto ou também executa a obra?",
+    a: "A BeWild atua no modelo turn-key: projeto de arquitetura personalizado, planejamento, execução, compras, marcenaria, mobiliário e entrega final, conforme o escopo contratado.",
   },
   {
     q: "O projeto de arquitetura é personalizado?",
@@ -447,19 +443,19 @@ export const FAQS: FaqItem[] = [
   },
   {
     q: "Vocês trabalham com studios pequenos?",
-    a: "Sim. Studios compactos são uma das especialidades da bewild. O projeto é pensado para aproveitar melhor cada metro quadrado, sem comprometer circulação, estética e funcionalidade.",
+    a: "Sim. Studios compactos são uma das especialidades da BeWild. O projeto é pensado para aproveitar melhor cada metro quadrado, sem comprometer circulação, estética e funcionalidade.",
   },
   {
     q: "Consigo acompanhar a obra à distância?",
-    a: "Sim. O processo inclui acompanhamento com fotos, relatórios, cronograma e comunicação organizada. Isso é especialmente importante para investidores que não moram perto do imóvel.",
+    a: "Sim. O processo inclui acompanhamento com fotos, relatórios, cronograma e comunicação organizada — especialmente importante para investidores que não moram perto do imóvel.",
   },
   {
     q: "Vocês ajudam com móveis, eletros e enxoval?",
     a: "Sim, quando incluído no escopo. A proposta pode contemplar mobiliário, eletrodomésticos, marcenaria, itens de acabamento e preparação para uso ou locação.",
   },
   {
-    q: "A bewild atende imóveis para Airbnb?",
-    a: "Sim. A bewild desenvolve reformas para short-stay, long stay e uso misto, considerando estética, manutenção, limpeza, resistência e experiência do hóspede.",
+    q: "A BeWild atende imóveis para Airbnb?",
+    a: "Sim. A BeWild desenvolve reformas para short stay, long stay e uso misto, considerando estética, manutenção, limpeza, resistência e experiência do hóspede.",
   },
   {
     q: "O orçamento é fechado?",
@@ -467,7 +463,7 @@ export const FAQS: FaqItem[] = [
   },
   {
     q: "Posso ver exemplos antes de fechar?",
-    a: "Sim. A bewild apresenta galeria de reformas entregues, imagens reais e, quando disponível, tours, antes/depois e projetos semelhantes por metragem.",
+    a: "Sim. A BeWild apresenta galeria de reformas entregues, imagens reais e, quando disponível, tours, antes/depois e projetos semelhantes por metragem.",
   },
   {
     q: "Vocês atendem fora de São Paulo?",
