@@ -6,8 +6,8 @@ export default function ArchitectureSection() {
   return (
     <section id="arquitetura" className="scroll-mt-20 bg-white py-20 sm:py-28">
       <Container>
-        <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-14">
-          <div className="flex flex-col gap-4">
+        <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-14">
+          <div className="flex flex-col gap-4 lg:sticky lg:top-28 lg:self-start">
             <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-bewild-line shadow-[0_24px_60px_-24px_rgba(10,37,64,0.14)]">
               <LandingImage
                 src="/images/reformas/projeto-arquitetura-3d-01.jpg"
@@ -25,6 +25,7 @@ export default function ArchitectureSection() {
               armazenamento, eletros, pontos técnicos, estética e objetivo de uso.
             </p>
           </div>
+
 
           <div className="flex flex-col gap-5">
             <SectionHeading
