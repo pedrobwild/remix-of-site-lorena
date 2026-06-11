@@ -6,6 +6,7 @@ import Header from "../components/landing/Header";
 import Footer from "../components/landing/Footer";
 import { Container, CTAButton } from "../components/landing/primitives";
 import { CONTACT } from "../components/landing/content";
+import { supabase } from "@/integrations/supabase/client";
 
 /* ============================================================
  * DiagnosticoPage — /diagnostico
