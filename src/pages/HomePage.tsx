@@ -302,6 +302,43 @@ export default function HomePage() {
     });
     cleanups.push(() => qaHandlers.forEach(([q, h]) => q.removeEventListener("click", h)));
 
+    /* ---- Como funciona: rolagem horizontal nativa no desktop ---- */
+    const hwrap = root.querySelector<HTMLElement>("#hwrap");
+    const htrack = root.querySelector<HTMLElement>("#htrack");
+    if (hwrap && htrack) {
+      const fill = root.querySelector<HTMLElement>("#hfill");
+      const now = root.querySelector<HTMLElement>("#hnow");
+      const isDesktop = () => window.matchMedia("(min-width: 901px)").matches;
+      const maxScroll = () => Math.max(0, hwrap.scrollWidth - hwrap.clientWidth);
+      const updateProgress = () => {
+        const max = maxScroll();
+        const progress = max ? hwrap.scrollLeft / max : 0;
+        if (fill) fill.style.width = progress * 100 + "%";
+        if (now) now.textContent = String(Math.min(7, Math.max(1, Math.round(progress * 6) + 1))).padStart(2, "0");
+      };
+      const onWheel = (event: WheelEvent) => {
+        if (!isDesktop()) return;
+        const max = maxScroll();
+        if (!max) return;
+        const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+        const next = Math.max(0, Math.min(max, hwrap.scrollLeft + delta));
+        if (next !== hwrap.scrollLeft) {
+          event.preventDefault();
+          hwrap.scrollLeft = next;
+          updateProgress();
+        }
+      };
+      hwrap.addEventListener("scroll", updateProgress, { passive: true });
+      hwrap.addEventListener("wheel", onWheel, { passive: false });
+      window.addEventListener("resize", updateProgress);
+      updateProgress();
+      cleanups.push(() => {
+        hwrap.removeEventListener("scroll", updateProgress);
+        hwrap.removeEventListener("wheel", onWheel);
+        window.removeEventListener("resize", updateProgress);
+      });
+    }
+
     /* =====================================================
        GSAP — só roda fora de prefers-reduced-motion.
        ===================================================== */
@@ -309,6 +346,47 @@ export default function HomePage() {
       root.querySelectorAll<HTMLElement>(".hl>span").forEach((s) => (s.style.transform = "none"));
       return () => cleanups.forEach((c) => c());
     }
+
+    /* ---- Parallax nativo: independente do ScrollTrigger para não falhar em áreas sticky ---- */
+    let raf = 0;
+    const clamp = (value: number) => Math.min(1, Math.max(0, value));
+    const updateParallax = () => {
+      raf = 0;
+      const vh = window.innerHeight || 1;
+      const hero = root.querySelector<HTMLElement>("#hero");
+      const heroMedia = root.querySelector<HTMLElement>("#heroMedia");
+      const heroVeil = root.querySelector<HTMLElement>(".hero-veil");
+      if (hero && heroMedia) {
+        const rect = hero.getBoundingClientRect();
+        const progress = clamp(-rect.top / Math.max(1, rect.height));
+        heroMedia.style.transform = `translate3d(0, ${progress * 6}%, 0) scale(${1 + progress * 0.08})`;
+        if (heroVeil) heroVeil.style.opacity = String(progress * 0.45);
+      }
+      root.querySelectorAll<HTMLElement>("[data-par]").forEach((frame) => {
+        const media = frame.querySelector<HTMLElement>("img") ?? frame;
+        const rect = frame.getBoundingClientRect();
+        const progress = clamp((vh - rect.top) / Math.max(1, vh + rect.height));
+        media.style.transform = `translate3d(0, ${-5 + progress * 10}%, 0)`;
+      });
+      const dvImg = root.querySelector<HTMLElement>(".dv img");
+      const dv = root.querySelector<HTMLElement>(".dv");
+      if (dv && dvImg) {
+        const rect = dv.getBoundingClientRect();
+        const progress = clamp((vh - rect.top) / Math.max(1, vh + rect.height));
+        dvImg.style.transform = `translate3d(0, ${-5 + progress * 10}%, 0)`;
+      }
+    };
+    const requestParallax = () => {
+      if (!raf) raf = window.requestAnimationFrame(updateParallax);
+    };
+    window.addEventListener("scroll", requestParallax, { passive: true });
+    window.addEventListener("resize", requestParallax);
+    updateParallax();
+    cleanups.push(() => {
+      if (raf) window.cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", requestParallax);
+      window.removeEventListener("resize", requestParallax);
+    });
 
     const ctx = gsap.context(() => {
       /* HERO — entrada cinematográfica */
@@ -324,81 +402,20 @@ export default function HomePage() {
         .to("#hCtas", { y: 0, opacity: 1, duration: 0.9 }, 1.2)
         .to("#hCue", { y: 0, opacity: 1, duration: 0.9 }, 1.35);
 
-      /* HERO — parallax leve (sem pin), mantém texto visível ao voltar */
+      /* COMO FUNCIONA — progresso vertical mobile */
       ScrollTrigger.matchMedia({
-        "(min-width: 768px)": () => {
-          gsap.fromTo(
-            "#heroMedia",
-            { scale: 1, yPercent: 0 },
-            {
-              scale: 1.08,
-              yPercent: 6,
-              ease: "none",
-              scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: 0.6 },
-            },
-          );
-          gsap.to(".hero-veil", {
-            opacity: 0.45,
+        "(max-width: 900px)": () => {
+          gsap.to("#vfill", {
+            height: "100%",
             ease: "none",
-            scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: 0.6 },
+            scrollTrigger: { trigger: ".vlist", start: "top 75%", end: "bottom 60%", scrub: 0.6 },
           });
         },
       });
 
-      /* COMO FUNCIONA — horizontal pinned ≥901px */
+      /* STACK — cartão anterior recua e escurece */
       ScrollTrigger.matchMedia({
         "(min-width: 901px)": () => {
-          const track = root.querySelector<HTMLElement>("#htrack");
-          const section = root.querySelector<HTMLElement>("#como-funciona");
-          if (!track || !section) return;
-          const dist = () => Math.max(0, track.scrollWidth - window.innerWidth);
-          const tween = gsap.to(track, {
-            x: () => -dist(),
-            ease: "none",
-            scrollTrigger: {
-              trigger: section,
-              start: "top top",
-              end: () => "+=" + dist(),
-              pin: true,
-              pinSpacing: true,
-              scrub: 0.8,
-              invalidateOnRefresh: true,
-              anticipatePin: 1,
-              onUpdate(self) {
-                const fill = root.querySelector<HTMLElement>("#hfill");
-                if (fill) fill.style.width = self.progress * 100 + "%";
-                const n = Math.min(7, Math.max(1, Math.round(self.progress * 6) + 1));
-                const now = root.querySelector<HTMLElement>("#hnow");
-                if (now) now.textContent = String(n).padStart(2, "0");
-              },
-            },
-          });
-          gsap.utils.toArray<HTMLElement>(".hcard").forEach((c) => {
-            gsap.fromTo(
-              c,
-              { opacity: 0.45, scale: 0.96 },
-              {
-                opacity: 1,
-                scale: 1,
-                ease: "none",
-                scrollTrigger: { trigger: c, containerAnimation: tween, start: "left 80%", end: "left 45%", scrub: true },
-              },
-            );
-          });
-          gsap.utils.toArray<HTMLElement>(".hnum-big").forEach((nb) => {
-            const parent = nb.parentElement!;
-            gsap.fromTo(
-              nb,
-              { x: 70 },
-              {
-                x: -70,
-                ease: "none",
-                scrollTrigger: { trigger: parent, containerAnimation: tween, start: "left right", end: "right left", scrub: true },
-              },
-            );
-          });
-
-          /* STACK — cartão anterior recua e escurece */
           const cards = gsap.utils.toArray<HTMLElement>(".stack-card");
           cards.forEach((card, i) => {
             if (i === cards.length - 1) return;
@@ -406,13 +423,6 @@ export default function HomePage() {
             gsap.to(card, { scale: 0.94, y: -14, ease: "none", scrollTrigger: st });
             const dim = card.querySelector<HTMLElement>(".card-dim");
             if (dim) gsap.to(dim, { opacity: 0.45, ease: "none", scrollTrigger: st });
-          });
-        },
-        "(max-width: 900px)": () => {
-          gsap.to("#vfill", {
-            height: "100%",
-            ease: "none",
-            scrollTrigger: { trigger: ".vlist", start: "top 75%", end: "bottom 60%", scrub: 0.6 },
           });
         },
       });
@@ -432,36 +442,15 @@ export default function HomePage() {
         { width: "52%", duration: 1.2, ease: "power2.out", scrollTrigger: { trigger: "#portal", start: "top 60%" } },
       );
 
-      /* Parallax leve no vcard — usa o próprio stack-card sticky como trigger
-         pra que o movimento aconteça enquanto o cartão está pinado. */
-      root.querySelectorAll<HTMLElement>("[data-par]").forEach((el) => {
-        const stickyParent = el.closest<HTMLElement>(".stack-card") ?? el;
-        gsap.fromTo(
-          el,
-          { yPercent: 6 },
-          {
-            yPercent: -6,
-            ease: "none",
-            scrollTrigger: {
-              trigger: stickyParent,
-              start: "top top",
-              end: "bottom top",
-              scrub: 0.8,
-            },
-          },
-        );
-      });
-
-      /* Parallax no poster do depoimento */
-      const dvImg = root.querySelector<HTMLElement>(".dv img");
-      if (dvImg) {
-        gsap.fromTo(
-          dvImg,
-          { yPercent: -5 },
-          { yPercent: 5, ease: "none", scrollTrigger: { trigger: ".dv", start: "top bottom", end: "bottom top", scrub: 1 } },
-        );
-      }
     }, root);
+
+    const refreshId = window.setTimeout(() => ScrollTrigger.refresh(), 150);
+    const refreshOnLoad = () => ScrollTrigger.refresh();
+    window.addEventListener("load", refreshOnLoad);
+    cleanups.push(() => {
+      window.clearTimeout(refreshId);
+      window.removeEventListener("load", refreshOnLoad);
+    });
 
     cleanups.push(() => ctx.revert());
     return () => cleanups.forEach((c) => c());

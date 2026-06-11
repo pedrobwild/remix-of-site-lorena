@@ -186,8 +186,11 @@
 
 /* ============ COMO FUNCIONA — horizontal pinned ============ */
 .hsec{overflow:hidden}
-.hwrap{position:relative}
-.htrack{display:flex;gap:1.4rem;padding:2.6rem 6vw 1.6rem;will-change:transform;width:max-content}
+.hwrap{position:relative;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:var(--gold) rgba(10,37,64,.1)}
+.hwrap::-webkit-scrollbar{height:8px}
+.hwrap::-webkit-scrollbar-track{background:rgba(10,37,64,.08)}
+.hwrap::-webkit-scrollbar-thumb{background:var(--gold);border-radius:999px}
+.htrack{display:flex;gap:1.4rem;padding:2.6rem 6vw 1.6rem;width:max-content}
 .hcard{position:relative;width:480px;flex:none;background:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:2.2rem;overflow:hidden}
 .hnum-big{position:absolute;top:-1.4rem;right:.4rem;font-family:var(--mono);font-size:8rem;line-height:1;color:rgba(10,37,64,.06);pointer-events:none}
 .hnum{font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;color:var(--gold)}
@@ -355,6 +358,7 @@ footer{background:var(--ink);color:#fff;padding:4.5rem 0 0;overflow:hidden}
 .proj{align-items:stretch}
 .proj-l{display:flex;flex-direction:column}
 .proj-l .vcard{flex:1;aspect-ratio:auto;min-height:380px}
+.proj-l .vcard img{height:110%;margin-top:-5%;will-change:transform}
 .proj .pitem{padding:.85rem 1.1rem}
 .proj .pitem p{font-size:.78rem}
 /* ============ ÍCONES SVG (linha fina) ============ */
