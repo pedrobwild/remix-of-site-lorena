@@ -49,6 +49,15 @@ type Form = {
   seo_title: string;
   seo_description: string;
   og_image_url: string;
+  // Portfólio (case antes/depois)
+  portfolio_tags: string; // comma-separated
+  before_text: string;
+  before_image_url: string;
+  ready_image_url: string;
+  ready_items: string; // one per line
+  result_text: string;
+  featured: boolean;
+  featured_order: string;
 };
 
 type GalleryRow = {
@@ -90,6 +99,14 @@ const EMPTY: Form = {
   seo_title: "",
   seo_description: "",
   og_image_url: "",
+  portfolio_tags: "",
+  before_text: "",
+  before_image_url: "",
+  ready_image_url: "",
+  ready_items: "",
+  result_text: "",
+  featured: false,
+  featured_order: "0",
 };
 
 function slugify(s: string) {
@@ -107,7 +124,7 @@ export default function ProjectFormPage({ slug }: Props) {
   const isNew = !slug;
   const [form, setForm] = useState<Form>(EMPTY);
   const [gallery, setGallery] = useState<GalleryRow[]>([]);
-  const [tab, setTab] = useState<"geral" | "ficha" | "midia" | "seo">("geral");
+  const [tab, setTab] = useState<"geral" | "ficha" | "portfolio" | "midia" | "seo">("geral");
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
@@ -199,6 +216,14 @@ export default function ProjectFormPage({ slug }: Props) {
         seo_title: data.seo_title ?? "",
         seo_description: data.seo_description ?? "",
         og_image_url: data.og_image_url ?? "",
+        portfolio_tags: (data.portfolio_tags ?? []).join(", "),
+        before_text: data.before_text ?? "",
+        before_image_url: data.before_image_url ?? "",
+        ready_image_url: data.ready_image_url ?? "",
+        ready_items: (data.ready_items ?? []).join("\n"),
+        result_text: data.result_text ?? "",
+        featured: !!data.featured,
+        featured_order: String(data.featured_order ?? 0),
       });
       type DbImg = {
         id: string;
@@ -316,6 +341,24 @@ export default function ProjectFormPage({ slug }: Props) {
     [form.materials]
   );
 
+  const portfolioTagsArr = useMemo(
+    () =>
+      form.portfolio_tags
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
+    [form.portfolio_tags]
+  );
+
+  const readyItemsArr = useMemo(
+    () =>
+      form.ready_items
+        .split("\n")
+        .map((s) => s.trim())
+        .filter(Boolean),
+    [form.ready_items]
+  );
+
   async function save() {
     setSaving(true);
     setMsg(null);
@@ -349,6 +392,14 @@ export default function ProjectFormPage({ slug }: Props) {
         seo_title: form.seo_title || null,
         seo_description: form.seo_description || null,
         og_image_url: form.og_image_url || null,
+        portfolio_tags: portfolioTagsArr,
+        before_text: form.before_text || null,
+        before_image_url: form.before_image_url || null,
+        ready_image_url: form.ready_image_url || null,
+        ready_items: readyItemsArr,
+        result_text: form.result_text || null,
+        featured: form.featured,
+        featured_order: Number(form.featured_order) || 0,
       };
 
       let projectId = form.id;
@@ -436,7 +487,7 @@ export default function ProjectFormPage({ slug }: Props) {
       </div>
 
       <div className="admin-tabs">
-        {(["geral", "ficha", "midia", "seo"] as const).map((t) => (
+        {(["geral", "ficha", "portfolio", "midia", "seo"] as const).map((t) => (
           <button
             key={t}
             type="button"
@@ -447,6 +498,8 @@ export default function ProjectFormPage({ slug }: Props) {
               ? "Geral"
               : t === "ficha"
               ? "Ficha técnica"
+              : t === "portfolio"
+              ? "Portfólio (case)"
               : t === "midia"
               ? "Mídia"
               : "SEO"}
@@ -594,6 +647,81 @@ export default function ProjectFormPage({ slug }: Props) {
           </Field>
         </div>
       )}
+
+      {tab === "portfolio" && (
+        <div className="admin-grid-2">
+          <Field label="Tags do case (separadas por vírgula)" full>
+            <input
+              className="admin-field__input"
+              value={form.portfolio_tags}
+              onChange={(e) => set("portfolio_tags", e.target.value)}
+              placeholder="Short stay, Studio compacto"
+            />
+          </Field>
+          <Field label='Texto "Antes" (desafio inicial)' full>
+            <textarea
+              className="admin-field__input"
+              rows={4}
+              value={form.before_text}
+              onChange={(e) => set("before_text", e.target.value)}
+              placeholder="Descreva o estado inicial e o desafio."
+            />
+          </Field>
+          <Field label='Foto "Antes" (URL)' full>
+            <input
+              className="admin-field__input"
+              value={form.before_image_url}
+              onChange={(e) => set("before_image_url", e.target.value)}
+              placeholder="https://…"
+            />
+          </Field>
+          <Field label='Foto "Pronto para operar" (URL)' full>
+            <input
+              className="admin-field__input"
+              value={form.ready_image_url}
+              onChange={(e) => set("ready_image_url", e.target.value)}
+              placeholder="se vazio, usa a capa"
+            />
+          </Field>
+          <Field label="Itens entregues (um por linha)" full>
+            <textarea
+              className="admin-field__input"
+              rows={6}
+              value={form.ready_items}
+              onChange={(e) => set("ready_items", e.target.value)}
+              placeholder={"Marcenaria inteligente\nBancada compacta\nIluminação estratégica"}
+            />
+          </Field>
+          <Field label="Resultado (frase destacada)" full>
+            <textarea
+              className="admin-field__input"
+              rows={2}
+              value={form.result_text}
+              onChange={(e) => set("result_text", e.target.value)}
+              placeholder="Unidade pronta para fotos, anúncio e operação."
+            />
+          </Field>
+          <Field label="Destacar no menu Portfólio (mega-menu)">
+            <label className="admin-inline">
+              <input
+                type="checkbox"
+                checked={form.featured}
+                onChange={(e) => set("featured", e.target.checked)}
+              />
+              <span className="mono">{form.featured ? "em destaque" : "não destacado"}</span>
+            </label>
+          </Field>
+          <Field label="Ordem no mega-menu (menor = primeiro)">
+            <input
+              className="admin-field__input"
+              type="number"
+              value={form.featured_order}
+              onChange={(e) => set("featured_order", e.target.value)}
+            />
+          </Field>
+        </div>
+      )}
+
 
       {tab === "midia" && (
         <>

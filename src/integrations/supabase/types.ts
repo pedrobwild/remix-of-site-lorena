@@ -334,6 +334,8 @@ export type Database = {
       projects: {
         Row: {
           area: string | null
+          before_image_url: string | null
+          before_text: string | null
           cover_alt: string | null
           cover_blur_data_url: string | null
           cover_url: string | null
@@ -341,6 +343,8 @@ export type Database = {
           cover_url_sm: string | null
           created_at: string | null
           em: string | null
+          featured: boolean
+          featured_order: number
           id: string
           intro: string | null
           location: string | null
@@ -349,7 +353,11 @@ export type Database = {
           og_image_url: string | null
           order_index: number | null
           photographer: string | null
+          portfolio_tags: string[]
           program: string | null
+          ready_image_url: string | null
+          ready_items: string[]
+          result_text: string | null
           seo_description: string | null
           seo_title: string | null
           slug: string
@@ -364,6 +372,8 @@ export type Database = {
         }
         Insert: {
           area?: string | null
+          before_image_url?: string | null
+          before_text?: string | null
           cover_alt?: string | null
           cover_blur_data_url?: string | null
           cover_url?: string | null
@@ -371,6 +381,8 @@ export type Database = {
           cover_url_sm?: string | null
           created_at?: string | null
           em?: string | null
+          featured?: boolean
+          featured_order?: number
           id?: string
           intro?: string | null
           location?: string | null
@@ -379,7 +391,11 @@ export type Database = {
           og_image_url?: string | null
           order_index?: number | null
           photographer?: string | null
+          portfolio_tags?: string[]
           program?: string | null
+          ready_image_url?: string | null
+          ready_items?: string[]
+          result_text?: string | null
           seo_description?: string | null
           seo_title?: string | null
           slug: string
@@ -394,6 +410,8 @@ export type Database = {
         }
         Update: {
           area?: string | null
+          before_image_url?: string | null
+          before_text?: string | null
           cover_alt?: string | null
           cover_blur_data_url?: string | null
           cover_url?: string | null
@@ -401,6 +419,8 @@ export type Database = {
           cover_url_sm?: string | null
           created_at?: string | null
           em?: string | null
+          featured?: boolean
+          featured_order?: number
           id?: string
           intro?: string | null
           location?: string | null
@@ -409,7 +429,11 @@ export type Database = {
           og_image_url?: string | null
           order_index?: number | null
           photographer?: string | null
+          portfolio_tags?: string[]
           program?: string | null
+          ready_image_url?: string | null
+          ready_items?: string[]
+          result_text?: string | null
           seo_description?: string | null
           seo_title?: string | null
           slug?: string

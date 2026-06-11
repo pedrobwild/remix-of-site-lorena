@@ -7,103 +7,74 @@ import Footer from "../components/landing/Footer";
 import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton";
 import { Container, CTAButton, Selo } from "../components/landing/primitives";
 import { whatsappHref } from "../components/landing/content";
+import { supabase } from "@/integrations/supabase/client";
 
 /* ============================================================
  * PortfolioPage — Reformas reais, do cru ao pronto para operar
- * Porte fiel do código de referência aprovado.
+ * Dados gerenciados via /admin/projects (tabela `projects`).
  * ============================================================ */
 
 interface CaseItem {
   n: string;
+  slug: string;
   title: string;
   tags: string[];
-  before: { label: string; text: string };
-  ready: { label: string; items: string[] };
+  before: { label: string; text: string; image?: string | null };
+  ready: { label: string; items: string[]; image?: string | null };
   result: string;
 }
 
-const CASES: CaseItem[] = [
-  {
-    n: "01",
-    title: "Studio compacto para short stay",
-    tags: ["Short stay", "Studio compacto"],
+type ProjectRow = {
+  slug: string;
+  number: string | null;
+  title: string;
+  portfolio_tags: string[] | null;
+  before_text: string | null;
+  before_image_url: string | null;
+  ready_image_url: string | null;
+  ready_items: string[] | null;
+  result_text: string | null;
+  cover_url: string | null;
+};
+
+function rowToCase(row: ProjectRow, idx: number): CaseItem {
+  const num = (row.number && row.number.trim()) || String(idx + 1).padStart(2, "0");
+  return {
+    n: num,
+    slug: row.slug,
+    title: row.title,
+    tags: row.portfolio_tags ?? [],
     before: {
       label: "Slot · foto real do estado inicial",
-      text: "Planta pequena, sem mobília adequada e difícil de operar. O desafio: transformar o espaço em um imóvel funcional, bonito e fácil de operar.",
+      text: row.before_text ?? "",
+      image: row.before_image_url,
     },
     ready: {
       label: "Slot · mesmo ângulo, entregue",
-      items: [
-        "Marcenaria inteligente",
-        "Bancada compacta",
-        "Iluminação estratégica",
-        "Eletros adequados",
-        "Acabamento resistente",
-      ],
+      items: row.ready_items ?? [],
+      image: row.ready_image_url ?? row.cover_url,
     },
-    result: "Unidade pronta para fotos, anúncio e operação.",
-  },
-  {
-    n: "02",
-    title: "Studio recém-entregue na planta",
-    tags: ["Turn-key", "Direto da construtora"],
-    before: {
-      label: "Slot · apartamento cru",
-      text: "Apartamento cru, direto da construtora. O desafio: chegar a uma unidade mobiliada sem o cliente precisar coordenar múltiplos fornecedores.",
-    },
-    ready: {
-      label: "Slot · mesmo ângulo, entregue",
-      items: [
-        "Projeto personalizado",
-        "Obra turn-key",
-        "Compras planejadas",
-        "Montagem final",
-      ],
-    },
-    result: "Imóvel entregue com visual consistente, layout otimizado e pronto para uso.",
-  },
-  {
-    n: "03",
-    title: "Imóvel para investidor remoto",
-    tags: ["Investidor remoto", "Portal"],
-    before: {
-      label: "Slot · bastidor da obra",
-      text: "Cliente fora da cidade precisava acompanhar a obra sem visitas constantes.",
-    },
-    ready: {
-      label: "Slot · entrega final",
-      items: [
-        "Portal de acompanhamento",
-        "Fotos e relatórios",
-        "Cronograma atualizado",
-        "Comunicação centralizada",
-      ],
-    },
-    result: "Obra acompanhada à distância com mais clareza e menos ansiedade.",
-  },
-  {
-    n: "04",
-    title: "Studio com foco em percepção de valor",
-    tags: ["Percepção de valor", "Foto e anúncio"],
-    before: {
-      label: "Slot · estado inicial",
-      text: "Imóvel em região com alta concorrência de anúncios. O desafio: destacar a unidade.",
-    },
-    ready: {
-      label: "Slot · composição final para foto",
-      items: [
-        "Iluminação",
-        "Marcenaria e painel",
-        "Enxoval",
-        "Composição visual para foto",
-      ],
-    },
-    result: "Unidade mais competitiva visualmente para plataformas de locação.",
-  },
-];
+    result: row.result_text ?? "",
+  };
+}
 
 export default function PortfolioPage() {
   const { settings } = useSiteSettings();
+  const [cases, setCases] = useState<CaseItem[] | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("projects")
+        .select(
+          "slug, number, title, portfolio_tags, before_text, before_image_url, ready_image_url, ready_items, result_text, cover_url"
+        )
+        .eq("visible", true)
+        .order("order_index", { ascending: true });
+      const rows = (data ?? []) as ProjectRow[];
+      setCases(rows.map(rowToCase));
+    })();
+  }, []);
 
   useSeo({
     title: "Portfólio — BeWild · Reformas reais, do cru ao pronto para operar",
@@ -122,15 +93,26 @@ export default function PortfolioPage() {
       : undefined,
   });
 
+  const list = cases ?? [];
+
   return (
     <>
       <Header />
       <main id="main" className="bg-[#FBFAF8] text-bewild-ink">
         <PortfolioHero />
         <Disclaimer />
-        {CASES.map((c, i) => (
-          <CaseBlock key={c.n} data={c} bg={i % 2 === 0 ? "#FBFAF8" : "#F5F7F9"} />
+        {list.map((c, i) => (
+          <CaseBlock key={c.slug} data={c} bg={i % 2 === 0 ? "#FBFAF8" : "#F5F7F9"} />
         ))}
+        {cases !== null && list.length === 0 && (
+          <section className="py-24 text-center">
+            <Container>
+              <p className="font-mono text-xs uppercase tracking-[0.2em] text-bewild-ink/55">
+                Em breve novos cases. Volte logo.
+              </p>
+            </Container>
+          </section>
+        )}
         <PortfolioFinalCTA />
       </main>
       <Footer />
@@ -322,6 +304,7 @@ function CaseGallery({ data }: { data: CaseItem }) {
         onActivate={() => setActive(0)}
         onEnter={() => onEnter(0)}
         label={data.before.label}
+        image={data.before.image}
       >
         <p className="max-w-[32rem] text-[0.86rem] leading-relaxed text-white/85">
           {data.before.text}
@@ -334,6 +317,7 @@ function CaseGallery({ data }: { data: CaseItem }) {
         onActivate={() => setActive(1)}
         onEnter={() => onEnter(1)}
         label={data.ready.label}
+        image={data.ready.image}
       >
         <ul className="grid max-w-[34rem] grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
           {data.ready.items.map((item) => (
@@ -360,6 +344,7 @@ function CaseSlat({
   onActivate,
   onEnter,
   label,
+  image,
   children,
 }: {
   kind: "before" | "ready";
@@ -367,6 +352,7 @@ function CaseSlat({
   onActivate: () => void;
   onEnter: () => void;
   label: string;
+  image?: string | null;
   children: React.ReactNode;
 }) {
   const isReady = kind === "ready";
@@ -386,9 +372,11 @@ function CaseSlat({
       {/* Background */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 transition-transform duration-[1300ms] ease-out"
+        className="absolute inset-0 transition-transform duration-[1300ms] ease-out bg-cover bg-center"
         style={{
-          background: "linear-gradient(160deg,#13406B,#0A2540)",
+          backgroundImage: image
+            ? `url("${image}")`
+            : "linear-gradient(160deg,#13406B,#0A2540)",
           transform: open ? "scale(1)" : "scale(1.08)",
         }}
       />

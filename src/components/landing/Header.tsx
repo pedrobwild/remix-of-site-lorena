@@ -2,16 +2,27 @@ import { useEffect, useState } from "react";
 import { Menu, X, MessageCircle, ChevronDown, ArrowRight } from "lucide-react";
 import { BewildLogo } from "./primitives";
 import { NAV_LINKS, whatsappHref } from "./content";
+import { supabase } from "@/integrations/supabase/client";
 
 const CONTENT_DROPDOWN = [
   { label: "Todos os artigos", href: "/blog" },
   { label: "Tags", href: "/blog/tags" },
 ];
 
+type FeaturedCase = {
+  slug: string;
+  title: string;
+  cover_url: string | null;
+  result_text: string | null;
+  portfolio_tags: string[] | null;
+};
+
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [contentOpen, setContentOpen] = useState(false);
+  const [portfolioOpen, setPortfolioOpen] = useState(false);
+  const [featured, setFeatured] = useState<FeaturedCase[]>([]);
   const [pathname, setPathname] = useState<string>(() =>
     typeof window === "undefined" ? "/" : window.location.pathname,
   );
@@ -28,6 +39,19 @@ export default function Header() {
       window.removeEventListener("popstate", onNav);
       window.removeEventListener("hashchange", onNav);
     };
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("projects")
+        .select("slug, title, cover_url, result_text, portfolio_tags")
+        .eq("visible", true)
+        .eq("featured", true)
+        .order("featured_order", { ascending: true })
+        .limit(4);
+      setFeatured((data ?? []) as FeaturedCase[]);
+    })();
   }, []);
 
   const isActive = (href: string) => {
@@ -89,6 +113,84 @@ export default function Header() {
                           {d.label}
                         </a>
                       ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : link.label === "Portfólio" && featured.length > 0 ? (
+              <div
+                key={link.href}
+                className="relative"
+                onMouseEnter={() => setPortfolioOpen(true)}
+                onMouseLeave={() => setPortfolioOpen(false)}
+              >
+                <a
+                  href={link.href}
+                  aria-current={isActive(link.href) ? "page" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={portfolioOpen}
+                  className={`inline-flex items-center gap-1 text-sm transition-colors ${
+                    isActive(link.href)
+                      ? isLight
+                        ? "font-semibold text-bewild-ink"
+                        : "font-semibold text-white"
+                      : "font-medium " +
+                        (isLight ? "text-bewild-ink/80 hover:text-bewild-blue" : "text-white/80 hover:text-white")
+                  }`}
+                >
+                  {link.label} <ChevronDown className="h-3.5 w-3.5" />
+                </a>
+                {portfolioOpen && (
+                  <div className="absolute left-1/2 top-full -translate-x-1/2 pt-3">
+                    <div className="w-[min(92vw,720px)] rounded-2xl border border-bewild-ink/10 bg-white p-5 shadow-[0_30px_80px_-24px_rgba(10,37,64,0.22)]">
+                      <div className="mb-3 flex items-baseline justify-between">
+                        <span className="font-mono text-[0.6rem] uppercase tracking-[0.24em] text-[#C9A24B]">
+                          Cases em destaque
+                        </span>
+                        <a
+                          href="/portfolio"
+                          className="text-xs font-medium text-bewild-blue hover:underline"
+                        >
+                          Ver todos →
+                        </a>
+                      </div>
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        {featured.map((c) => (
+                          <a
+                            key={c.slug}
+                            href={`/portfolio#${c.slug}`}
+                            className="group flex gap-3 rounded-xl p-2 transition-colors hover:bg-bewild-bone"
+                          >
+                            <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-lg bg-bewild-ink/10">
+                              {c.cover_url ? (
+                                <img
+                                  src={c.cover_url}
+                                  alt=""
+                                  loading="lazy"
+                                  className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                                />
+                              ) : (
+                                <div className="absolute inset-0 bg-gradient-to-br from-bewild-blue/40 to-bewild-ink" />
+                              )}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate font-display text-sm font-semibold text-bewild-ink group-hover:text-bewild-blue">
+                                {c.title}
+                              </p>
+                              {c.portfolio_tags && c.portfolio_tags.length > 0 && (
+                                <p className="mt-0.5 truncate font-mono text-[0.6rem] uppercase tracking-[0.16em] text-bewild-ink/55">
+                                  {c.portfolio_tags.slice(0, 2).join(" · ")}
+                                </p>
+                              )}
+                              {c.result_text && (
+                                <p className="mt-1 line-clamp-2 text-xs leading-snug text-bewild-ink/70">
+                                  {c.result_text}
+                                </p>
+                              )}
+                            </div>
+                          </a>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
