@@ -1,6 +1,8 @@
+import { useEffect, useRef, useState } from "react";
 import { Check, Circle, Camera, FileText, CalendarClock } from "lucide-react";
 import { Container, SectionHeading } from "./primitives";
 import { TECH_BULLETS } from "./content";
+
 
 const MOCK_STAGES = [
   { name: "Demolição e remoção", done: true },
