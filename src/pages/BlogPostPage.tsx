@@ -1,8 +1,12 @@
 import { useEffect, useMemo } from "react";
+import { ArrowRight } from "lucide-react";
 import { gsap, ScrollTrigger } from "../lib/gsap";
-import InternalNav from "../components/InternalNav";
+import Header from "../components/landing/Header";
+import Footer from "../components/landing/Footer";
+import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton";
+import { Container, CTAButton } from "../components/landing/primitives";
 import { useBlogPost } from "../lib/useBlog";
-import { useSiteSettings, whatsappUrl } from "../lib/useSiteSettings";
+import { useSiteSettings } from "../lib/useSiteSettings";
 import { useSeo, breadcrumbJsonLd, organizationJsonLd } from "../lib/useSeo";
 import { routes, navigate } from "../lib/useHashRoute";
 import { track } from "../lib/analytics";
@@ -28,15 +32,10 @@ type Props = { slug: string };
 export default function BlogPostPage({ slug }: Props) {
   const { post, loading, notFound } = useBlogPost(slug);
   const { settings } = useSiteSettings();
-  const base = (settings?.seo_canonical_base || "https://lorenaalvesarq.com").replace(
-    /\/$/,
-    ""
-  );
+  const base = (settings?.seo_canonical_base || "https://bewild.com.br").replace(/\/$/, "");
 
-  const ogImage =
-    post?.og_image_url || post?.cover_url || `${base}/images/og-lorena-alves-arquitetura-uberlandia-mg.jpg`;
+  const ogImage = post?.og_image_url || post?.cover_url || `${base}/images/og-bewild.jpg`;
 
-  // Absolutiza URLs relativas — Rich Results Test exige URLs absolutas em ImageObject.
   const absUrl = (u: string | null | undefined): string | undefined => {
     if (!u) return undefined;
     if (/^https?:\/\//i.test(u)) return u;
@@ -48,16 +47,16 @@ export default function BlogPostPage({ slug }: Props) {
       ? post.title.slice(0, 107) + "…"
       : post.title
     : "";
-  const articleUrl = post ? `${base}/blog/${post.slug}` : `${base}/blog`;
+  const articleUrl = post ? `${base}/conteudos/${post.slug}` : `${base}/conteudos`;
   const publisherLogo = absUrl(settings?.seo_og_image || settings?.default_og_image);
 
   useSeo({
     title:
       post?.seo_title ||
-      (post ? `${post.title} | Blog · Lorena Alves Arquitetura` : "Blog · Lorena Alves Arquitetura"),
+      (post ? `${post.title} | Conteúdos · BeWild` : "Conteúdos · BeWild"),
     description:
-      post?.seo_description || post?.excerpt || "Artigo do blog Lorena Alves Arquitetura.",
-    canonicalPath: post ? `/blog/${post.slug}` : "/blog",
+      post?.seo_description || post?.excerpt || "Conteúdo BeWild sobre reforma turn-key de studios.",
+    canonicalPath: post ? `/conteudos/${post.slug}` : "/conteudos",
     ogType: "article",
     ogImage: absUrl(ogImage),
     jsonLd:
@@ -66,8 +65,8 @@ export default function BlogPostPage({ slug }: Props) {
             organizationJsonLd(settings),
             breadcrumbJsonLd(settings, [
               { name: "Início", path: "/" },
-              { name: "Blog", path: "/blog" },
-              { name: post.title, path: `/blog/${post.slug}` },
+              { name: "Conteúdos", path: "/conteudos" },
+              { name: post.title, path: `/conteudos/${post.slug}` },
             ]),
             {
               "@context": "https://schema.org",
@@ -76,50 +75,35 @@ export default function BlogPostPage({ slug }: Props) {
               headline,
               name: post.title,
               description:
-                post.excerpt || post.seo_description || `${post.title} — Blog Lorena Alves Arquitetura.`,
+                post.excerpt || post.seo_description || `${post.title} — Conteúdos BeWild.`,
               image: absUrl(ogImage)
-                ? [
-                    {
-                      "@type": "ImageObject",
-                      url: absUrl(ogImage)!,
-                      width: 1200,
-                      height: 630,
-                    },
-                  ]
+                ? [{ "@type": "ImageObject", url: absUrl(ogImage)!, width: 1200, height: 630 }]
                 : undefined,
               url: articleUrl,
               datePublished: post.published_at ?? post.created_at,
               dateModified: post.updated_at || post.published_at || post.created_at,
               author: {
-                "@type": "Person",
-                name: post.author_name || "Lorena Alves",
+                "@type": post.author_name === "BeWild" ? "Organization" : "Person",
+                name: post.author_name || "BeWild",
                 url: base,
-                jobTitle: post.author_role || "Arquiteta e Urbanista",
+                jobTitle: post.author_role || undefined,
               },
               publisher: {
                 "@type": "Organization",
                 "@id": `${base}/#organization`,
-                name: settings.site_title || "Lorena Alves Arquitetura",
+                name: settings.site_title || "BeWild",
                 logo: publisherLogo
-                  ? {
-                      "@type": "ImageObject",
-                      url: publisherLogo,
-                      width: 1200,
-                      height: 630,
-                    }
+                  ? { "@type": "ImageObject", url: publisherLogo, width: 1200, height: 630 }
                   : undefined,
               },
-              mainEntityOfPage: {
-                "@type": "WebPage",
-                "@id": articleUrl,
-              },
+              mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
               isPartOf: {
                 "@type": "Blog",
-                "@id": `${base}/blog#blog`,
-                name: "Blog · Lorena Alves Arquitetura",
-                url: `${base}/blog`,
+                "@id": `${base}/conteudos#blog`,
+                name: "Conteúdos · BeWild",
+                url: `${base}/conteudos`,
               },
-              articleSection: post.category || "Arquitetura",
+              articleSection: post.category || "Reforma turn-key",
               keywords: post.seo_keywords || (post.tags ?? []).join(", ") || undefined,
               inLanguage: "pt-BR",
               wordCount: post.content_html.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length,
@@ -128,26 +112,12 @@ export default function BlogPostPage({ slug }: Props) {
         : undefined,
   });
 
-  /**
-   * Pós-processa o `content_html` antes de injetar no DOM:
-   *  - Garante `loading="lazy"` + `decoding="async"` + `fetchpriority="low"` em
-   *    toda <img> que esteja fora de uma <picture>.
-   *  - Quando a URL da <img> segue a convenção `-{sm|md|lg}.{ext}` do pipeline,
-   *    envolve-a numa <picture> com sources AVIF + WebP + JPEG, fazendo upgrade
-   *    automático mesmo em posts antigos seedados sem `<picture>`.
-   *
-   * Roda uma única vez por mudança de post (useMemo) — sem custo na rolagem.
-   */
+  // Pós-processa o `content_html` antes de injetar no DOM (rebaixa h1→h2,
+  // normaliza pulos de heading, otimiza <img> e gera <picture>). Mantido
+  // igual à versão anterior — apenas a pele mudou.
   const enhancedHtml = useMemo(() => {
     if (!post?.content_html) return "";
-    // Sem `window` (SSR/SSG/Node) não há `DOMParser` para as transformações de
-    // DOM abaixo, mas o HTML ainda vai para `dangerouslySetInnerHTML` — então
-    // sanitiza sempre, mesmo neste ramo, para não vazar XSS armazenado.
     if (typeof window === "undefined") return sanitizeBlogHtml(post.content_html);
-    // Sanitiza ANTES de qualquer transformação: protege contra `<script>`,
-    // handlers on*= e javascript: URLs que possam ter sido salvos por um
-    // admin comprometido ou por conteúdo legado anterior à sanitização no
-    // formulário. É a última linha de defesa antes do dangerouslySetInnerHTML.
     const safeHtml = sanitizeBlogHtml(post.content_html);
     try {
       const doc = new DOMParser().parseFromString(
@@ -157,14 +127,6 @@ export default function BlogPostPage({ slug }: Props) {
       const root = doc.getElementById("root");
       if (!root) return safeHtml;
 
-      // ============================================================
-      // Hierarquia de headings — garante H1 único na página
-      // ------------------------------------------------------------
-      // O <h1> da página é o título do post. Qualquer <h1> dentro
-      // do conteúdo é rebaixado para <h2>. Em seguida, normaliza
-      // pulos de nível (ex.: h2 → h4 vira h2 → h3) — mantendo a
-      // ordem semântica esperada por leitores de tela e crawlers.
-      // ============================================================
       const renameHeading = (el: Element, newTag: string) => {
         const next = doc.createElement(newTag);
         for (const a of Array.from(el.attributes)) next.setAttribute(a.name, a.value);
@@ -173,12 +135,9 @@ export default function BlogPostPage({ slug }: Props) {
         return next;
       };
 
-      // 1) Rebaixa qualquer h1 do conteúdo para h2
       Array.from(root.querySelectorAll("h1")).forEach((h) => renameHeading(h, "h2"));
 
-      // 2) Normaliza pulos: nível atual nunca pode aumentar mais de 1
-      //    em relação ao último heading visto. Início mínimo = h2 (h1 é o título).
-      let prevLevel = 1; // h1 da página
+      let prevLevel = 1;
       const headings = Array.from(root.querySelectorAll("h2, h3, h4, h5, h6"));
       for (const h of headings) {
         const current = parseInt(h.tagName.charAt(1), 10);
@@ -193,34 +152,17 @@ export default function BlogPostPage({ slug }: Props) {
 
       const imgs = Array.from(root.querySelectorAll("img"));
       imgs.forEach((img, idx) => {
-        // A primeira <img> do conteúdo é (estatisticamente) above-the-fold
-        // em posts longos. Aplicar `loading="lazy"` + `fetchpriority="low"`
-        // aqui derruba o LCP — o browser adia a request da imagem que o
-        // usuário vê primeiro. Trate a primeira como hero do artigo:
-        // eager + high-priority + decoding sync. Demais imagens seguem
-        // o lazy default abaixo. (M5)
         const isAboveFold = idx === 0;
-        if (!img.hasAttribute("loading")) {
-          img.setAttribute("loading", isAboveFold ? "eager" : "lazy");
-        }
-        if (!img.hasAttribute("decoding")) {
-          img.setAttribute("decoding", isAboveFold ? "sync" : "async");
-        }
-        if (!img.hasAttribute("fetchpriority")) {
-          img.setAttribute("fetchpriority", isAboveFold ? "high" : "low");
-        }
+        if (!img.hasAttribute("loading")) img.setAttribute("loading", isAboveFold ? "eager" : "lazy");
+        if (!img.hasAttribute("decoding")) img.setAttribute("decoding", isAboveFold ? "sync" : "async");
+        if (!img.hasAttribute("fetchpriority")) img.setAttribute("fetchpriority", isAboveFold ? "high" : "low");
 
-        // 2) Se já está dentro de <picture>, deixa quieto (autor já configurou).
         const inPicture = img.parentElement?.tagName.toLowerCase() === "picture";
         if (inPicture) return;
-
-        // 3) Tenta derivar AVIF/WebP/JPEG da URL — só upgrade se for URL do pipeline.
         const src = img.getAttribute("src") || "";
         const derived = derivePictureSources(src);
         if (!derived) return;
-
         const sizes = img.getAttribute("sizes") || "(max-width: 900px) 100vw, 900px";
-
         const picture = doc.createElement("picture");
         const mkSource = (type: string, set: { sm: string; md: string; lg: string }) => {
           const s = doc.createElement("source");
@@ -232,19 +174,14 @@ export default function BlogPostPage({ slug }: Props) {
         picture.appendChild(mkSource("image/avif", derived.avif));
         picture.appendChild(mkSource("image/webp", derived.webp));
         picture.appendChild(mkSource("image/jpeg", derived.jpeg));
-
-        // Atualiza a <img> para apontar ao JPEG fallback (universal).
         img.setAttribute("src", derived.fallbackSrc);
         img.setAttribute("srcset", setToSrcset(derived.jpeg));
         img.setAttribute("sizes", sizes);
-
         img.parentNode?.insertBefore(picture, img);
         picture.appendChild(img);
       });
       return root.innerHTML;
     } catch {
-      // Em qualquer falha, devolve o HTML sanitizado (sem as melhorias de
-      // imagem) — nunca quebra o render e nunca regride para conteúdo cru.
       return safeHtml;
     }
   }, [post?.content_html]);
@@ -254,11 +191,11 @@ export default function BlogPostPage({ slug }: Props) {
     track("blog_post_view", { value: { slug: post.slug } });
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        ".blog-post__hero > *",
+        ".bw-post-hero > *",
         { opacity: 0, y: 24 },
         { opacity: 1, y: 0, duration: 0.9, stagger: 0.06, ease: "power3.out" }
       );
-      gsap.utils.toArray<HTMLElement>(".blog-post__content > *").forEach((el) => {
+      gsap.utils.toArray<HTMLElement>(".bw-post-content > *").forEach((el) => {
         gsap.fromTo(
           el,
           { opacity: 0, y: 20 },
@@ -271,9 +208,6 @@ export default function BlogPostPage({ slug }: Props) {
               trigger: el,
               start: "top 95%",
               once: true,
-              // Failsafe: se ao registrar o trigger ele já passou da posição,
-              // dispara imediatamente — evita conteúdo invisível por race condition
-              // entre dangerouslySetInnerHTML e ScrollTrigger.
               onRefresh: (self) => {
                 if (self.progress > 0) gsap.set(el, { opacity: 1, y: 0 });
               },
@@ -281,7 +215,6 @@ export default function BlogPostPage({ slug }: Props) {
           }
         );
       });
-      // Recalcula triggers após o DOM injetado pelo dangerouslySetInnerHTML estar estável.
       requestAnimationFrame(() => ScrollTrigger.refresh());
     });
     return () => ctx.revert();
@@ -289,217 +222,239 @@ export default function BlogPostPage({ slug }: Props) {
 
   if (loading) {
     return (
-      <main id="main" tabIndex={-1} className="pf-page blog-page">
-        <InternalNav active="blog" backHref={routes.blog} backLabel="voltar ao blog" />
-        <div className="pf-head">
-          <p className="mono" style={{ opacity: 0.5 }} role="status" aria-live="polite">
-            carregando…
-          </p>
-        </div>
-      </main>
+      <>
+        <Header />
+        <main id="main" tabIndex={-1} className="bg-[#FBFAF8] text-bewild-ink">
+          <Container className="py-32">
+            <p className="font-mono text-xs uppercase tracking-[0.2em] text-bewild-ink/45" role="status" aria-live="polite">
+              carregando…
+            </p>
+          </Container>
+        </main>
+        <Footer />
+      </>
     );
   }
 
   if (notFound || !post) {
     return (
-      <main id="main" tabIndex={-1} className="pf-page blog-page">
-        <InternalNav active="blog" backHref={routes.blog} backLabel="voltar ao blog" />
-        <header className="pf-head">
-          <p className="pf-head__eyebrow mono">404 · Artigo não encontrado</p>
-          <h1 className="pf-head__title">
-            Esse texto <em>não existe (ainda)</em>.
-          </h1>
-          <p className="pf-head__lede">
-            O artigo que você procura pode ter sido movido ou removido.
-          </p>
-          <button
-            type="button"
-            className="hero__cta"
-            style={{ marginTop: "2rem" }}
-            onClick={() => navigate(routes.blog)}
-          >
-            <span className="hero__cta-label">Ver todos os artigos</span>
-            <span className="hero__cta-arrow" aria-hidden>
-              →
-            </span>
-          </button>
-        </header>
-      </main>
+      <>
+        <Header />
+        <main id="main" tabIndex={-1} className="bg-[#FBFAF8] text-bewild-ink">
+          <Container className="py-32">
+            <p className="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-bewild-blue-600">
+              404 · Artigo não encontrado
+            </p>
+            <h1 className="mt-5 font-display text-4xl font-semibold leading-tight">
+              Esse texto <em className="italic text-bewild-blue">não existe (ainda)</em>.
+            </h1>
+            <p className="mt-4 max-w-xl text-bewild-steel">
+              O artigo que você procura pode ter sido movido ou removido.
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate(routes.conteudos)}
+              className="mt-8 inline-flex items-center gap-2 rounded-full bg-bewild-blue px-6 py-3 text-sm font-semibold text-white hover:bg-[#005C99]"
+            >
+              Ver todos os conteúdos <ArrowRight className="h-4 w-4" />
+            </button>
+          </Container>
+        </main>
+        <Footer />
+      </>
     );
   }
 
   return (
-    <main id="main" tabIndex={-1} className="pf-page blog-page">
-      <InternalNav active="blog" backHref={routes.blog} backLabel="voltar ao blog" />
+    <>
+      <Header />
+      <main id="main" tabIndex={-1} className="bg-[#FBFAF8] text-bewild-ink">
+        <article>
+          {/* HERO */}
+          <header className="bw-post-hero border-b border-bewild-ink/10 bg-white">
+            <Container className="pb-12 pt-32 sm:pb-16 sm:pt-40">
+              <nav aria-label="Trilha" className="flex flex-wrap items-center gap-2 font-mono text-[0.6rem] uppercase tracking-[0.22em] text-bewild-ink/55">
+                <a href={routes.conteudos} className="hover:text-bewild-blue">Conteúdos</a>
+                {post.category && (
+                  <>
+                    <span aria-hidden>·</span>
+                    <span className="text-bewild-blue">{post.category}</span>
+                  </>
+                )}
+                {post.published_at && (
+                  <>
+                    <span aria-hidden>·</span>
+                    <time dateTime={post.published_at}>{formatDate(post.published_at)}</time>
+                  </>
+                )}
+                {post.reading_minutes && (
+                  <>
+                    <span aria-hidden>·</span>
+                    <span>{post.reading_minutes} min</span>
+                  </>
+                )}
+              </nav>
 
-      <article className="blog-post">
-        <header className="blog-post__hero">
-          <div className="blog-post__crumb mono">
-            <a href={routes.blog}>Blog</a>
-            {post.category && (
-              <>
-                <span aria-hidden> · </span>
-                <span>{post.category}</span>
-              </>
-            )}
-            {post.published_at && (
-              <>
-                <span aria-hidden> · </span>
-                <time dateTime={post.published_at}>
-                  {formatDate(post.published_at)}
-                </time>
-              </>
-            )}
-            {post.reading_minutes && (
-              <>
-                <span aria-hidden> · </span>
-                <span>{post.reading_minutes} min</span>
-              </>
-            )}
-          </div>
-          <h1 className="blog-post__title">
-            {post.title}
-            {post.subtitle && (
-              <>
-                <br />
-                <em className="text-3xl">{post.subtitle}</em>
-              </>
-            )}
-          </h1>
-          {post.excerpt && <p className="blog-post__lede">{post.excerpt}</p>}
+              <h1 className="mt-6 max-w-[18ch] font-display text-[clamp(2.2rem,4.5vw,3.8rem)] font-semibold leading-[1.06] tracking-tight">
+                {post.title}
+                {post.subtitle && (
+                  <>
+                    <br />
+                    <em className="italic text-bewild-blue text-[0.7em] font-normal">
+                      {post.subtitle}
+                    </em>
+                  </>
+                )}
+              </h1>
 
-          {(post.author_name || post.author_role) && (
-            <div className="blog-post__author mono">
-              {post.author_name}
-              {post.author_role && (
-                <>
-                  <span aria-hidden> · </span>
-                  <span>{post.author_role}</span>
-                </>
+              {post.excerpt && (
+                <p className="mt-6 max-w-2xl text-lg leading-relaxed text-bewild-steel">
+                  {post.excerpt}
+                </p>
               )}
-            </div>
-          )}
-        </header>
 
-        {post.cover_url && (() => {
-          const cover = derivePictureSources(post.cover_url);
-          const sizes = "(max-width: 1100px) 100vw, 1100px";
-          if (cover) {
+              {(post.author_name || post.author_role) && (
+                <p className="mt-8 font-mono text-[0.62rem] uppercase tracking-[0.22em] text-bewild-ink/55">
+                  {post.author_name}
+                  {post.author_role && (
+                    <>
+                      <span aria-hidden> · </span>
+                      <span>{post.author_role}</span>
+                    </>
+                  )}
+                </p>
+              )}
+            </Container>
+          </header>
+
+          {/* COVER */}
+          {post.cover_url && (() => {
+            const cover = derivePictureSources(post.cover_url);
+            const sizes = "(max-width: 1100px) 100vw, 1100px";
             return (
-              <figure className="blog-post__cover">
-                <picture>
-                  <source type="image/avif" srcSet={setToSrcset(cover.avif)} sizes={sizes} />
-                  <source type="image/webp" srcSet={setToSrcset(cover.webp)} sizes={sizes} />
-                  <source type="image/jpeg" srcSet={setToSrcset(cover.jpeg)} sizes={sizes} />
-                  <img
-                    src={cover.fallbackSrc}
-                    srcSet={setToSrcset(cover.jpeg)}
-                    sizes={sizes}
-                    alt={post.cover_alt || post.title}
-                    width={1920}
-                    height={1080}
-                    loading="eager"
-                    decoding="sync"
-                    {...({ fetchpriority: "high" } as { fetchpriority: string })}
-                  />
-                </picture>
-              </figure>
+              <Container className="-mt-4 sm:-mt-6">
+                <figure className="overflow-hidden rounded-3xl shadow-[0_40px_80px_-40px_rgba(10,37,64,0.45)]">
+                  {cover ? (
+                    <picture>
+                      <source type="image/avif" srcSet={setToSrcset(cover.avif)} sizes={sizes} />
+                      <source type="image/webp" srcSet={setToSrcset(cover.webp)} sizes={sizes} />
+                      <source type="image/jpeg" srcSet={setToSrcset(cover.jpeg)} sizes={sizes} />
+                      <img
+                        src={cover.fallbackSrc}
+                        srcSet={setToSrcset(cover.jpeg)}
+                        sizes={sizes}
+                        alt={post.cover_alt || post.title}
+                        width={1920}
+                        height={1080}
+                        loading="eager"
+                        decoding="sync"
+                        className="block h-full w-full object-cover"
+                        {...({ fetchpriority: "high" } as { fetchpriority: string })}
+                      />
+                    </picture>
+                  ) : (
+                    <img
+                      src={post.cover_url_md || post.cover_url}
+                      srcSet={
+                        post.cover_url_sm && post.cover_url_md && post.cover_url
+                          ? `${post.cover_url_sm} 640w, ${post.cover_url_md} 1280w, ${post.cover_url} 1920w`
+                          : undefined
+                      }
+                      sizes={sizes}
+                      alt={post.cover_alt || post.title}
+                      width={1920}
+                      height={1080}
+                      loading="eager"
+                      decoding="sync"
+                      className="block h-full w-full object-cover"
+                      {...({ fetchpriority: "high" } as { fetchpriority: string })}
+                    />
+                  )}
+                </figure>
+              </Container>
             );
-          }
-          // Fallback: imagens legadas que não seguem a convenção -sm/-md/-lg
-          return (
-            <figure className="blog-post__cover">
-              <img
-                src={post.cover_url_md || post.cover_url}
-                srcSet={
-                  post.cover_url_sm && post.cover_url_md && post.cover_url
-                    ? `${post.cover_url_sm} 640w, ${post.cover_url_md} 1280w, ${post.cover_url} 1920w`
-                    : undefined
-                }
-                sizes={sizes}
-                alt={post.cover_alt || post.title}
-                width={1920}
-                height={1080}
-                loading="eager"
-                decoding="sync"
-                {...({ fetchpriority: "high" } as { fetchpriority: string })}
+          })()}
+
+          {/* CONTENT */}
+          <section className="py-[clamp(3rem,8vh,5rem)]">
+            <Container>
+              <div
+                className="bw-post-content prose-bewild mx-auto max-w-[68ch] font-body text-[1.02rem] leading-[1.75] text-bewild-ink/90"
+                dangerouslySetInnerHTML={{ __html: enhancedHtml }}
               />
-            </figure>
-          );
-        })()}
 
-        <div
-          className="blog-post__content"
-          // `enhancedHtml` é sempre passado por sanitizeBlogHtml (DOMPurify)
-          // antes de qualquer transformação — `<script>`, handlers on*= e
-          // URLs `javascript:` são removidos. Defesa em profundidade junto
-          // com a sanitização no save em BlogFormPage.
-          dangerouslySetInnerHTML={{ __html: enhancedHtml }}
-        />
-
-        {post.tags && post.tags.length > 0 && (
-          <nav className="blog-post__tags" aria-label="Tags do artigo">
-            {post.tags.map((t) => {
-              const tagSlug = t
-                .toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/[^a-z0-9\s-]/g, "")
-                .trim()
-                .replace(/\s+/g, "-");
-              return (
-                <a
-                  key={t}
-                  href={routes.blogTag(tagSlug)}
-                  className="blog-post__tag mono"
-                  data-cursor="hover"
-                  onClick={() =>
-                    track("blog_tag_click", {
-                      value: { from: "post", tag: tagSlug, slug: post.slug },
-                    })
-                  }
+              {/* TAGS */}
+              {post.tags && post.tags.length > 0 && (
+                <nav
+                  aria-label="Tags do artigo"
+                  className="mx-auto mt-12 flex max-w-[68ch] flex-wrap items-center gap-2"
                 >
-                  #{t}
-                </a>
-              );
-            })}
-            <a
-              href={routes.blogTags}
-              className="blog-post__tag blog-post__tag--all mono"
-              data-cursor="hover"
-            >
-              ver todas as tags →
-            </a>
-          </nav>
-        )}
+                  {post.tags.map((t) => {
+                    const tagSlug = t
+                      .toLowerCase()
+                      .normalize("NFD")
+                      .replace(/[\u0300-\u036f]/g, "")
+                      .replace(/[^a-z0-9\s-]/g, "")
+                      .trim()
+                      .replace(/\s+/g, "-");
+                    return (
+                      <a
+                        key={t}
+                        href={routes.blogTag(tagSlug)}
+                        className="rounded-full border border-bewild-ink/15 bg-white px-3 py-1 font-mono text-[0.58rem] uppercase tracking-[0.22em] text-bewild-ink/70 hover:border-bewild-blue/50 hover:text-bewild-blue"
+                        onClick={() =>
+                          track("blog_tag_click", {
+                            value: { from: "post", tag: tagSlug, slug: post.slug },
+                          })
+                        }
+                      >
+                        #{t}
+                      </a>
+                    );
+                  })}
+                  <a
+                    href={routes.blogTags}
+                    className="rounded-full px-3 py-1 font-mono text-[0.58rem] uppercase tracking-[0.22em] text-bewild-blue underline underline-offset-4"
+                  >
+                    ver todas as tags →
+                  </a>
+                </nav>
+              )}
+            </Container>
+          </section>
 
-        <RelatedPosts currentPost={post} />
+          {/* RELACIONADOS */}
+          <Container>
+            <RelatedPosts currentPost={post} />
+          </Container>
 
-        <footer className="blog-post__footer">
-          <div className="blog-post__cta-block">
-            <p className="blog-post__cta-quote">
-              Esse artigo te fez pensar no seu próximo projeto? <br />
-              <em>Vamos projetar o seu modo de viver.</em>
-            </p>
-            <a
-              className="hero__cta"
-              href={whatsappUrl(settings)}
-              target="_blank"
-              rel="noopener noreferrer external"
-              onClick={() =>
-                track("click_contact", {
-                  value: { kind: "whatsapp", from: "blog-post", slug: post.slug },
-                })
-              }
-            >
-              <span className="hero__cta-label">Falar com a Lorena</span>
-              <span className="hero__cta-arrow" aria-hidden>
-                →
-              </span>
-            </a>
-          </div>
-        </footer>
-      </article>
-    </main>
+          {/* CTA FINAL */}
+          <section className="mt-12 bg-bewild-ink py-[clamp(3.5rem,8vh,5.5rem)] text-white">
+            <Container className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="max-w-xl">
+                <p className="font-mono text-[0.62rem] uppercase tracking-[0.28em] text-bewild-blue-400">
+                  Próximo passo
+                </p>
+                <p className="mt-3 font-display text-2xl font-semibold leading-tight sm:text-3xl">
+                  Esse conteúdo te fez pensar no seu imóvel?{" "}
+                  <em className="italic text-bewild-blue-400">Vamos diagnosticar.</em>
+                </p>
+              </div>
+              <CTAButton
+                href={routes.diagnostico}
+                variant="primary"
+                onClick={() =>
+                  track("click_cta", { value: { label: "diagnostico", from: "blog-post", slug: post.slug } })
+                }
+              >
+                Solicitar diagnóstico <ArrowRight className="h-4 w-4" />
+              </CTAButton>
+            </Container>
+          </section>
+        </article>
+      </main>
+      <Footer />
+      <FloatingWhatsAppButton />
+    </>
   );
 }
