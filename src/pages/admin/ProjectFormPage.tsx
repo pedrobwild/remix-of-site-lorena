@@ -341,6 +341,24 @@ export default function ProjectFormPage({ slug }: Props) {
     [form.materials]
   );
 
+  const portfolioTagsArr = useMemo(
+    () =>
+      form.portfolio_tags
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
+    [form.portfolio_tags]
+  );
+
+  const readyItemsArr = useMemo(
+    () =>
+      form.ready_items
+        .split("\n")
+        .map((s) => s.trim())
+        .filter(Boolean),
+    [form.ready_items]
+  );
+
   async function save() {
     setSaving(true);
     setMsg(null);
@@ -374,6 +392,14 @@ export default function ProjectFormPage({ slug }: Props) {
         seo_title: form.seo_title || null,
         seo_description: form.seo_description || null,
         og_image_url: form.og_image_url || null,
+        portfolio_tags: portfolioTagsArr,
+        before_text: form.before_text || null,
+        before_image_url: form.before_image_url || null,
+        ready_image_url: form.ready_image_url || null,
+        ready_items: readyItemsArr,
+        result_text: form.result_text || null,
+        featured: form.featured,
+        featured_order: Number(form.featured_order) || 0,
       };
 
       let projectId = form.id;
