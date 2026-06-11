@@ -4,10 +4,12 @@ import { BewildLogo } from "./primitives";
 import { NAV_LINKS, whatsappHref } from "./content";
 import { supabase } from "@/integrations/supabase/client";
 
-const CONTENT_DROPDOWN = [
-  { label: "Todos os artigos", href: "/blog" },
-  { label: "Tags", href: "/blog/tags" },
-];
+type TopPost = {
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  category: string | null;
+};
 
 type FeaturedCase = {
   slug: string;
