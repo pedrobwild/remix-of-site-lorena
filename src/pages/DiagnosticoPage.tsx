@@ -241,7 +241,7 @@ function DiagnosticoAside() {
         href={`https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
           "Olá, prefiro falar com um especialista sobre o diagnóstico."
         )}`}
-        variant="ghost-light"
+        variant="ghost"
         external
         className="mt-6"
       >
