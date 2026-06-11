@@ -41,7 +41,15 @@ function parsePath(rawPath: string): Route {
   const projMatch = path.match(/^\/projeto\/([a-z0-9-]+)$/);
   if (projMatch) return { name: "project", slug: projMatch[1] };
 
-  // Blog (público)
+  // Conteúdos (público) — canônico
+  if (path === "/conteudos") return { name: "blog" };
+  if (path === "/conteudos/tags") return { name: "blog-tags" };
+  const conteudosTagMatch = path.match(/^\/conteudos\/tag\/([a-z0-9-]+)$/);
+  if (conteudosTagMatch) return { name: "blog-tag", slug: conteudosTagMatch[1] };
+  const conteudosMatch = path.match(/^\/conteudos\/([a-z0-9-]+)$/);
+  if (conteudosMatch) return { name: "blog-post", slug: conteudosMatch[1] };
+
+  // Blog (legado — redirecionado para /conteudos no mount)
   if (path === "/blog") return { name: "blog" };
   if (path === "/blog/tags") return { name: "blog-tags" };
   const blogTagMatch = path.match(/^\/blog\/tag\/([a-z0-9-]+)$/);
