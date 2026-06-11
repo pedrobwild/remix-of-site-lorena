@@ -1,7 +1,7 @@
 /* AUTO-GENERATED from BeWild Home mock — DO NOT EDIT BY HAND. */
 /* All selectors are scoped under .bw-home so the mock CSS does not leak. */
 
-.bw-home, :root{
+.bw-home{
   --ink:#0A2540; --ink-2:#0E2C4A; --dim:#04101C;
   --blue:#004C7F; --blue-h:#005C99; --blue-400:#3D8FC4;
   --gold:#C9A24B; --gold-400:#DCBE7A;
