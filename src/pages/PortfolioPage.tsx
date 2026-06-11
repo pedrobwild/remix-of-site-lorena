@@ -344,6 +344,7 @@ function CaseSlat({
   onActivate,
   onEnter,
   label,
+  image,
   children,
 }: {
   kind: "before" | "ready";
@@ -351,6 +352,7 @@ function CaseSlat({
   onActivate: () => void;
   onEnter: () => void;
   label: string;
+  image?: string | null;
   children: React.ReactNode;
 }) {
   const isReady = kind === "ready";
@@ -370,9 +372,11 @@ function CaseSlat({
       {/* Background */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 transition-transform duration-[1300ms] ease-out"
+        className="absolute inset-0 transition-transform duration-[1300ms] ease-out bg-cover bg-center"
         style={{
-          background: "linear-gradient(160deg,#13406B,#0A2540)",
+          backgroundImage: image
+            ? `url("${image}")`
+            : "linear-gradient(160deg,#13406B,#0A2540)",
           transform: open ? "scale(1)" : "scale(1.08)",
         }}
       />
