@@ -12,13 +12,30 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [contentOpen, setContentOpen] = useState(false);
+  const [pathname, setPathname] = useState<string>(() =>
+    typeof window === "undefined" ? "/" : window.location.pathname,
+  );
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const onNav = () => setPathname(window.location.pathname);
+    window.addEventListener("popstate", onNav);
+    window.addEventListener("hashchange", onNav);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("popstate", onNav);
+      window.removeEventListener("hashchange", onNav);
+    };
   }, []);
+
+  const isActive = (href: string) => {
+    const base = href.split("#")[0] || "/";
+    if (base === "/") return pathname === "/";
+    return pathname === base || pathname.startsWith(base + "/");
+  };
+
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -80,13 +97,20 @@ export default function Header() {
               <a
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors ${
-                  isLight ? "text-bewild-ink/80 hover:text-bewild-blue" : "text-white/80 hover:text-white"
+                aria-current={isActive(link.href) ? "page" : undefined}
+                className={`text-sm transition-colors ${
+                  isActive(link.href)
+                    ? isLight
+                      ? "font-semibold text-bewild-ink"
+                      : "font-semibold text-white"
+                    : "font-medium " +
+                      (isLight ? "text-bewild-ink/80 hover:text-bewild-blue" : "text-white/80 hover:text-white")
                 }`}
               >
                 {link.label}
               </a>
             )
+
           )}
         </nav>
 
