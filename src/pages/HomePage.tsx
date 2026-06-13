@@ -1,780 +1,559 @@
 /**
- * HomePage — Nova Home BeWild (porte fiel do mock aprovado).
+ * HomePage — Nova Home Bewild (spec v4).
  *
- * O CSS vive em src/styles/home.css com TODOS os seletores prefixados
- * por `.bw-home` para não vazar para outras páginas. As únicas peças
- * GLOBAIS são o Header (transparente sobre hero escuro, sólido ao rolar
- * em rotas internas via correção em Header.tsx), o Footer (já enxuto) e
- * o FloatingCTA (renderizado no fim deste componente — fixed-position).
+ * Página totalmente autocontida: nav + 14 seções + footer, fiéis ao HTML
+ * de referência. Todo o CSS vive em `src/styles/home.css` prefixado por
+ * `.bw-home` para não vazar para outras páginas.
  *
- * Animações GSAP rodam dentro de um único useEffect com cleanup, e são
- * desligadas em `prefers-reduced-motion`.
+ * Interações:
+ * - Hero parallax suave (translate Y do background) via scroll listener,
+ *   desligado em `prefers-reduced-motion`.
+ * - Scroll-reveal via IntersectionObserver — adiciona `.in` aos filhos
+ *   diretos de `.container` ao entrar na viewport.
+ * - "O que fazemos": accordion horizontal — hover no desktop, click no
+ *   touch; primeiro painel ativo por padrão; vira pilha vertical ≤760px.
+ * - FAQ: `<details>/<summary>` nativo com primeiro item aberto.
  */
-import { useEffect, useRef } from "react";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { useEffect, useRef, useState } from "react";
 import { useSeo } from "@/lib/useSeo";
-import { FAQS, whatsappHref } from "@/components/landing/content";
+import { CONTACT, whatsappHref } from "@/components/landing/content";
 import "@/styles/home.css";
 
-const SITE_URL = "https://bewild.com.br";
+/* ---------------- data ---------------- */
 
-/* ------- helpers ------- */
-const HERO_IMG =
-  "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2400&auto=format&fit=crop";
-
-const SLATS = [
+const SERVICES = [
   {
-    tag: "O núcleo",
-    name: "Reforma turn-key",
-    desc: "Projeto, obra, compras, fornecedores, marcenaria, mobiliário e acabamento final coordenados em um único processo.",
-    img: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1400&auto=format&fit=crop",
-    note: "Slot · foto real de obra em andamento",
+    slot: "Foto · obra",
+    title: "Reforma turn-key",
+    desc: "Projeto, obra, marcenaria, mobiliário e entrega em um único processo, sob um único responsável.",
   },
   {
-    tag: "Projeto",
-    name: "Arquitetura personalizada",
+    slot: "Foto · studio",
+    title: "Studios para short stay",
+    desc: "Imóveis pensados desde o projeto para diária, ocupação, foto e operação no Airbnb e na Booking.",
+  },
+  {
+    slot: "Foto · marcenaria",
+    title: "Marcenaria inteligente",
+    desc: "Armazenamento, painéis e bancadas sob medida para ganhar espaço, durabilidade e percepção de valor.",
+  },
+  {
+    slot: "Foto · interiores",
+    title: "Mobiliário, eletros e enxoval",
+    desc: "Imóvel entregue completo, pronto para receber o primeiro hóspede.",
+  },
+  {
+    slot: "Foto · portal",
+    title: "Acompanhamento sem caixa-preta",
+    desc: "Cronograma, fotos e decisões registradas no portal. Você vê a obra andar.",
+  },
+  {
+    slot: "Slot · prancha / estudo real Bewild",
+    title: "Arquitetura personalizada",
     desc: "Cada imóvel recebe um estudo próprio de layout, circulação, marcenaria, iluminação, acabamentos e uso. Nada de copiar e colar projeto genérico.",
-    img: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1400&auto=format&fit=crop",
-    note: "Slot · prancha/estudo real BeWild",
   },
-  {
-    tag: "Especialidade",
-    name: "Studios para short stay",
-    desc: "Soluções pensadas para foto, diária, experiência do hóspede, limpeza rápida, resistência e manutenção simples.",
-    img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=1400&auto=format&fit=crop",
-    note: "Slot · studio compacto entregue",
-  },
-  {
-    tag: "Interiores",
-    name: "Marcenaria inteligente",
-    desc: "Aproveitamento de cada centímetro com armários, bancadas, painéis, iluminação e móveis sob medida para studios compactos.",
-    img: "https://images.unsplash.com/photo-1556912173-3bb406ef7e77?q=80&w=1400&auto=format&fit=crop",
-    note: "Slot · close de marcenaria BeWild",
-  },
-  {
-    tag: "Setup",
-    name: "Mobiliário, eletros e enxoval",
-    desc: "Curadoria de itens essenciais para o imóvel sair pronto para uso, anúncio e operação.",
-    img: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1400&auto=format&fit=crop",
-    note: "Slot · cama feita + eletros",
-  },
-  {
-    tag: "Tecnologia",
-    name: "Acompanhamento sem caixa-preta",
-    desc: "Portal, cronograma, fotos, relatórios e registros para reduzir incerteza e dar visibilidade total ao cliente.",
-    img: "",
-    note: "Slot · screenshot do portal (exemplo)",
-  },
+];
+
+const PROBLEMS = [
+  "Orçamentos que começam baixos e crescem no meio da obra.",
+  "Fornecedores que não conversam entre si.",
+  "Projeto bonito, mas difícil de executar.",
+  "Studio pronto visualmente, mas ruim de operar.",
+  "Cliente acompanhando tudo por WhatsApp, sem rastreabilidade.",
+  "Imóvel parado enquanto deveria estar gerando receita.",
 ];
 
 const STEPS = [
-  { n: "01", h: "Diagnóstico do imóvel", p: "Analisamos metragem, planta, padrão do prédio, objetivo de uso, região, restrições e potencial do imóvel." },
-  { n: "02", h: "Briefing e estratégia", p: "Entendemos se o imóvel será usado para short stay, long stay, uso misto ou moradia. A estratégia define o nível de investimento e as escolhas do projeto." },
-  { n: "03", h: "Projeto de arquitetura personalizado", p: "Desenvolvemos layout, conceito, marcenaria, iluminação, acabamentos e soluções para o imóvel performar melhor no uso e na foto." },
-  { n: "04", h: "Orçamento e escopo", p: "Organizamos o que está incluso, o que é opcional, quais itens impactam operação e quais escolhas afetam prazo, custo e percepção de valor." },
-  { n: "05", h: "Planejamento da obra", p: "Cronograma, compras críticas, fornecedores, condomínio, lead times, marcenaria e sequência de execução." },
-  { n: "06", h: "Execução e acompanhamento", p: "A obra avança com gestão técnica, fotos, relatórios, controle de etapas e comunicação centralizada." },
-  { n: "07", h: "Entrega pronta para operar", p: "Finalização, limpeza, montagem, ajustes finais, fotos e imóvel pronto para uso, locação ou anúncio." },
+  { n: "01", title: "Diagnóstico do imóvel", text: "Analisamos metragem, planta, padrão do prédio, objetivo de uso, região, restrições e potencial do imóvel." },
+  { n: "02", title: "Briefing e estratégia", text: "Entendemos se o imóvel será usado para short stay, long stay, uso misto ou moradia. A estratégia define o nível de investimento e as escolhas do projeto." },
+  { n: "03", title: "Projeto de arquitetura personalizado", text: "Desenvolvemos layout, conceito, marcenaria, iluminação, acabamentos e soluções para performar melhor no uso e na foto." },
+  { n: "04", title: "Orçamento e escopo", text: "Escopo fechado e itens organizados por etapa, para você saber o que está incluso antes de a obra começar." },
+  { n: "05", title: "Compras e fornecedores", text: "Compras críticas planejadas e fornecedores coordenados pela Bewild, dentro do cronograma." },
+  { n: "06", title: "Obra e marcenaria", text: "Execução acompanhada, com gestão técnica e registro de cada decisão no portal." },
+  { n: "07", title: "Entrega e checklist", text: "Montagem, enxoval e checklist final. Imóvel pronto para foto, anúncio e operação." },
 ];
 
-const PROJ_ITEMS = [
-  { n: "01", h: "Layout inteligente", p: "Cama, bancada, cozinha, armários, TV, circulação e apoio de malas para o espaço parecer maior e funcionar melhor." },
-  { n: "02", h: "Marcenaria sob medida", p: "Armazenamento, painéis, bancadas e nichos que aumentam a percepção de qualidade e reduzem improvisos." },
-  { n: "03", h: "Iluminação e percepção de valor", p: "A luz certa melhora a foto, a experiência do hóspede e a sensação de cuidado no imóvel." },
-  { n: "04", h: "Materiais para uso real", p: "A escolha não é só estética. Consideramos limpeza, manutenção, resistência, reposição e custo total." },
-  { n: "05", h: "Personalização sem perder eficiência", p: "O projeto respeita o imóvel e o perfil do investidor, sem escolhas que encarecem, atrasam ou prejudicam a operação." },
+const ARCH = [
+  { idx: "01", title: "Layout inteligente", text: "Cama, bancada, cozinha, armários, TV, circulação e apoio de malas para o espaço parecer maior e funcionar melhor." },
+  { idx: "02", title: "Marcenaria sob medida", text: "Armazenamento, painéis, bancadas e nichos que aumentam a percepção de qualidade e reduzem improvisos." },
+  { idx: "03", title: "Iluminação e percepção de valor", text: "A luz certa melhora a foto, a experiência do hóspede e a sensação de cuidado no imóvel." },
+  { idx: "04", title: "Materiais para uso real", text: "A escolha não é só estética. Consideramos limpeza, manutenção, resistência, reposição e custo total." },
+  { idx: "05", title: "Personalização sem perder eficiência", text: "O projeto respeita o imóvel e o perfil do investidor, sem escolhas que encarecem, atrasam ou prejudicam a operação." },
 ];
 
 const DIFFS = [
-  { icon: <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.4"/><circle cx="19" cy="12" r="2.4"/><rect x="10" y="10" width="4" height="4" rx="1.2"/><path d="M7.4 12H10M14 12h2.6"/></svg>, h: "Operação ponta a ponta", p: "Um único time integra arquitetura, obra, compras, fornecedores, marcenaria, mobiliário e entrega." },
-  { icon: <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 12h8M12 4v8M12 12v8"/></svg>, h: "Especialização em studios compactos", p: "Conhecemos as decisões críticas de imóveis pequenos: layout, armazenamento, eletros, circulação, iluminação e operação." },
-  { icon: <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2"/></svg>, h: "Foco em investidor", p: "Cada escolha considera prazo, custo, percepção de valor, manutenção e potencial de rentabilização." },
-  { icon: <svg viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M9 8.5h6M9 12h6M9 15.5h4"/></svg>, h: "Transparência de escopo", p: "O cliente entende o que está incluso, o que é opcional e quais escolhas impactam preço ou prazo." },
-  { icon: <svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="11" rx="2"/><path d="M9 19.5h6M12 16.2v3.3"/></svg>, h: "Portal de acompanhamento", p: "Fotos, relatórios, cronograma e atualizações para acompanhar a obra sem depender de mensagens soltas." },
-  { icon: <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/><path d="M12 3.2v2.6M12 18.2v2.6M3.2 12h2.6M18.2 12h2.6M5.9 5.9l1.9 1.9M16.2 16.2l1.9 1.9M18.1 5.9l-1.9 1.9M7.8 16.2l-1.9 1.9"/></svg>, h: "Gestão técnica", p: "Cronograma, compras, lead times, fornecedores e execução tratados como partes do mesmo sistema." },
-  { icon: <svg viewBox="0 0 24 24"><path d="M11 4.5l1.6 4.1 4.1 1.6-4.1 1.6L11 15.9l-1.6-4.1-4.1-1.6 4.1-1.6z"/><path d="M18 15.5v4M16 17.5h4"/></svg>, h: "Acabamentos pensados para operação", p: "Bonito na foto, resistente no uso, simples de limpar e mais fácil de manter." },
-  { icon: <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.8"/><path d="M4.2 12h15.6M12 4.2c2.7 2.3 2.7 13.3 0 15.6M12 4.2c-2.7 2.3-2.7 13.3 0 15.6"/></svg>, h: "Experiência remota", p: "Ideal para quem comprou imóvel em São Paulo, mas mora em outra cidade, estado ou país." },
+  { ic: "◇", title: "Operação ponta a ponta", text: "Um único time integra arquitetura, obra, compras, fornecedores, marcenaria e entrega." },
+  { ic: "▣", title: "Especialização em studios compactos", text: "Conhecemos as decisões críticas de imóveis pequenos: layout, armazenamento, eletros, circulação, iluminação e operação." },
+  { ic: "◎", title: "Foco em investidor", text: "Cada escolha considera prazo, custo, percepção de valor, manutenção e potencial de rentabilização." },
+  { ic: "▤", title: "Transparência de escopo", text: "O cliente entende o que está incluso, o que é opcional e quais escolhas impactam preço ou prazo." },
+  { ic: "▢", title: "Portal de acompanhamento", text: "Fotos, relatórios, cronograma e atualizações para acompanhar a obra sem depender de mensagens soltas." },
+  { ic: "⚙", title: "Gestão técnica", text: "Cronograma, compras, lead times, fornecedores e execução tratados como partes do mesmo sistema." },
+  { ic: "✦", title: "Acabamentos pensados para operação", text: "Bonito na foto, resistente no uso, simples de limpar e mais fácil de manter." },
+  { ic: "◉", title: "Experiência remota", text: "Ideal para quem comprou imóvel em São Paulo, mas mora em outra cidade, estado ou país." },
 ];
 
-const AUDIENCE = [
-  { icon: <svg viewBox="0 0 24 24"><path d="M3.5 18.5v-8h17v8M3.5 13.5h17M3.5 10.5V6"/><path d="M6.5 10.5V8.8h5v1.7"/></svg>, h: "Investidor de short stay", p: "Para quem quer preparar o imóvel para Airbnb, Booking ou locação por temporada." },
-  { icon: <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.8"/><path d="M14.9 9.1l-1.7 4.1-4.1 1.7 1.7-4.1z"/></svg>, h: "Investidor iniciante", p: "Para quem comprou o primeiro studio e quer fazer certo desde o começo." },
-  { icon: <svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.4" height="6.4" rx="1.4"/><rect x="13.6" y="4" width="6.4" height="6.4" rx="1.4"/><rect x="4" y="13.6" width="6.4" height="6.4" rx="1.4"/><rect x="13.6" y="13.6" width="6.4" height="6.4" rx="1.4"/></svg>, h: "Investidor de portfólio", p: "Para quem tem múltiplas unidades e precisa de padrão, processo e escala." },
-  { icon: <svg viewBox="0 0 24 24"><path d="M10.6 13.4L4.2 11 20 4.5 13.6 19.8l-3-6.4z"/><path d="M10.6 13.4l3.6-3.6"/></svg>, h: "Cliente remoto", p: "Para quem mora fora de São Paulo, em outro estado ou fora do Brasil." },
-  { icon: <svg viewBox="0 0 24 24"><path d="M4 11l8-6.5L20 11M6 10v9h12v-9"/><circle cx="12" cy="14.4" r="2.5"/><path d="M12 13.2v1.4l1 .7"/></svg>, h: "Proprietário de uso misto", p: "Para quem quer usar o imóvel em parte do ano e rentabilizar no restante." },
-  { icon: <svg viewBox="0 0 24 24"><circle cx="7" cy="8" r="2.4"/><circle cx="17" cy="8" r="2.4"/><circle cx="12" cy="16.8" r="2.4"/><path d="M9.4 8h5.2M8.2 10l2.6 4.6M15.8 10l-2.6 4.6"/></svg>, h: "Parceiros imobiliários", p: "Para corretores e incorporadoras que querem entregar uma solução mais completa ao comprador." },
+const COMPARE = [
+  { label: "Arquitetura", trad: "Projeto isolado, nem sempre conectado à obra.", bw: "Projeto personalizado já pensado para execução, uso e operação." },
+  { label: "Orçamento", trad: "Múltiplos fornecedores e risco de lacunas.", bw: "Escopo centralizado e itens organizados por etapa." },
+  { label: "Obra", trad: "Cliente cobra e coordena.", bw: "Gestão técnica e acompanhamento estruturado." },
+  { label: "Marcenaria", trad: "Fornecedor separado.", bw: "Integrada ao projeto e à sequência da obra." },
+  { label: "Comunicação", trad: "Mensagens soltas.", bw: "Portal, registros e atualizações." },
+  { label: "Entrega", trad: "Imóvel reformado, mas nem sempre pronto para operar.", bw: "Imóvel pensado para uso, foto, anúncio e operação." },
 ];
 
-const COMPARE_ROWS: Array<[string, string, string]> = [
-  ["Arquitetura", "Projeto isolado, nem sempre conectado à obra.", "Projeto personalizado já pensado para execução, uso e operação."],
-  ["Orçamento", "Múltiplos fornecedores e risco de lacunas.", "Escopo centralizado e itens organizados por etapa."],
-  ["Obra", "Cliente cobra e coordena.", "Gestão técnica e acompanhamento estruturado."],
-  ["Marcenaria", "Fornecedor separado.", "Integrada ao projeto e à sequência da obra."],
-  ["Comunicação", "Mensagens soltas.", "Portal, registros e atualizações."],
-  ["Entrega", "Imóvel reformado, mas nem sempre pronto para operar.", "Imóvel pensado para uso, foto, anúncio e operação."],
+const WHO = [
+  { ic: "⌂", title: "Investidor de short stay", text: "Para quem quer preparar o imóvel para Airbnb, Booking ou locação por temporada." },
+  { ic: "◔", title: "Investidor iniciante", text: "Para quem comprou o primeiro studio e quer fazer certo desde o começo." },
+  { ic: "▦", title: "Investidor de portfólio", text: "Para quem tem múltiplas unidades e precisa de padrão, processo e escala." },
+  { ic: "➤", title: "Cliente remoto", text: "Para quem mora fora de São Paulo, em outro estado ou fora do Brasil." },
+  { ic: "⌗", title: "Proprietário de uso misto", text: "Para quem quer usar o imóvel em parte do ano e rentabilizar no restante." },
+  { ic: "⚑", title: "Parceiros imobiliários", text: "Para corretores e incorporadoras que querem entregar uma solução mais completa ao comprador." },
 ];
+
+const FAQS_HOME = [
+  { q: "A Bewild faz só projeto ou também executa a obra?", a: "A Bewild atua no modelo turn-key: projeto de arquitetura personalizado, planejamento, execução, compras, marcenaria, mobiliário e entrega final, conforme o escopo contratado." },
+  { q: "O projeto de arquitetura é personalizado?", a: "Sim. Cada imóvel recebe um estudo próprio de layout, circulação, marcenaria, iluminação e acabamentos. Nada de copiar e colar projeto genérico." },
+  { q: "Vocês trabalham com studios pequenos?", a: "É a nossa especialidade. Studios compactos de 19, 22 ou 28 m² exigem decisões precisas, e é exatamente nesse tipo de imóvel que a Bewild se concentra." },
+  { q: "Consigo acompanhar a obra à distância?", a: "Sim. Pelo portal de acompanhamento você vê cronograma, fotos de evolução, relatórios e decisões, sem depender de mensagens soltas no WhatsApp." },
+  { q: "Vocês ajudam com móveis, eletros e enxoval?", a: "Sim. A entrega turn-key inclui mobiliário, eletros e enxoval, conforme o escopo. O imóvel sai pronto para receber o primeiro hóspede." },
+  { q: "A Bewild atende imóveis para Airbnb?", a: "Sim. O projeto é pensado para short stay: diária, ocupação, foto e operação. O imóvel sai pronto para anunciar." },
+  { q: "O orçamento é fechado?", a: "O escopo é definido e organizado por etapa antes de a obra começar, para evitar surpresas no meio do caminho." },
+  { q: "Posso ver exemplos antes de fechar?", a: "Sim. Apresentamos cases de reformas entregues e o detalhamento do processo no diagnóstico inicial." },
+  { q: "Vocês atendem fora de São Paulo?", a: "O foco hoje é São Paulo, onde está a operação. Para imóveis em SP de clientes que moram em outra cidade, estado ou país, o acompanhamento remoto pelo portal foi feito sob medida." },
+  { q: "Como começo?", a: "Solicite o diagnóstico. Você envia os dados do imóvel e recebe uma análise inicial de escopo, projeto e próximos passos, sem compromisso." },
+];
+
+/* ---------------- component ---------------- */
+
+function BrandLockup() {
+  return (
+    <span className="brand" aria-label="Bewild · Grupo Bwild">
+      <span className="be">Be</span>
+      <span className="wild">wild</span>
+      <span className="sub">Grupo Bwild</span>
+    </span>
+  );
+}
 
 export default function HomePage() {
-  const rootRef = useRef<HTMLDivElement>(null);
-
   useSeo({
-    title: "BeWild — Reforma turn-key de studios em São Paulo",
+    title: "Bewild — Reforma turn-key de studios em São Paulo",
     description:
-      "Projeto, obra, marcenaria, mobiliário e tecnologia de acompanhamento em um processo único. A BeWild prepara studios para short stay, long stay e investidor remoto, do cru ao pronto para rentabilizar.",
+      "Projeto, obra, marcenaria, mobiliário e tecnologia de acompanhamento em um processo único. Studios prontos para foto, anúncio e operação em São Paulo.",
     canonicalPath: "/",
     ogType: "website",
-    jsonLd: [
-      {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        name: "BeWild",
-        url: SITE_URL,
-        description:
-          "Reforma turn-key de studios em São Paulo: arquitetura personalizada, obra, marcenaria, mobiliário e portal de acompanhamento em um único processo.",
-        areaServed: "São Paulo, Brasil",
-      },
-    ],
   });
 
-  /* ============================================================
-     COMPORTAMENTOS — porte da IIFE do mock para um useEffect único.
-     ============================================================ */
+  const [activePanel, setActivePanel] = useState(0);
+  const heroBgRef = useRef<HTMLDivElement | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  // Marca html.js (alguns seletores do spec dependem disso, mas o CSS aqui
+  // não usa — mantido por compatibilidade).
   useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const cleanups: Array<() => void> = [];
-
-    /* ---- Floating CTA: aparece após ~90% da primeira dobra ---- */
-    const fcta = root.querySelector<HTMLElement>("#fcta");
-    if (fcta) {
-      if (sessionStorage.getItem("fctaOff")) {
-        fcta.classList.remove("show");
-      } else {
-        const onS = () => {
-          if (window.scrollY > window.innerHeight * 0.9) {
-            fcta.classList.add("show");
-            window.removeEventListener("scroll", onS);
-          }
-        };
-        window.addEventListener("scroll", onS, { passive: true });
-        cleanups.push(() => window.removeEventListener("scroll", onS));
-      }
-      const x = root.querySelector<HTMLElement>("#fctaX");
-      const onX = () => {
-        fcta.classList.remove("show");
-        sessionStorage.setItem("fctaOff", "1");
-      };
-      x?.addEventListener("click", onX);
-      cleanups.push(() => x?.removeEventListener("click", onX));
-
-      const diag = root.querySelector<HTMLElement>("#diagnostico");
-      if (diag) {
-        const io = new IntersectionObserver(
-          (entries) =>
-            entries.forEach((e) => {
-              fcta.style.opacity = e.isIntersecting ? "0" : "";
-              fcta.style.pointerEvents = e.isIntersecting ? "none" : "";
-            }),
-          { threshold: 0.2 },
-        );
-        io.observe(diag);
-        cleanups.push(() => io.disconnect());
-      }
-    }
-
-    /* ---- Reveals ---- */
-    const ro = new IntersectionObserver(
-      (es) =>
-        es.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("in");
-            ro.unobserve(e.target);
-          }
-        }),
-      { threshold: 0.16, rootMargin: "0px 0px -6% 0px" },
-    );
-    root.querySelectorAll(".rv").forEach((el) => ro.observe(el));
-    cleanups.push(() => ro.disconnect());
-
-    /* ---- Contadores de credibilidade ---- */
-    const count = (el: HTMLElement) => {
-      const t = +(el.dataset.count || "0");
-      const t0 = performance.now();
-      const dur = 1300;
-      const tick = (n: number) => {
-        const p = Math.min((n - t0) / dur, 1);
-        const e = 1 - Math.pow(1 - p, 3);
-        el.textContent = String(Math.round(t * e));
-        if (p < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    };
-    const seen = new WeakSet<Element>();
-    const co = new IntersectionObserver(
-      (es) =>
-        es.forEach((e) => {
-          if (e.isIntersecting && !seen.has(e.target)) {
-            seen.add(e.target);
-            const el = e.target as HTMLElement;
-            if (reduce) el.textContent = el.dataset.count || "";
-            else count(el);
-          }
-        }),
-      { threshold: 0.6 },
-    );
-    root.querySelectorAll<HTMLElement>("[data-count]").forEach((el) => co.observe(el));
-    cleanups.push(() => co.disconnect());
-
-    /* ---- Lâminas ---- */
-    const slats = Array.from(root.querySelectorAll<HTMLElement>(".slat"));
-    const dotsBox = root.querySelector<HTMLElement>("#gDots");
-    if (dotsBox && slats.length) {
-      dotsBox.innerHTML = "";
-      slats.forEach((_, i) => {
-        const d = document.createElement("span");
-        d.className = "gal-dot" + (i === 0 ? " on" : "");
-        dotsBox.appendChild(d);
-      });
-      const ds = Array.from(dotsBox.children);
-      let gi = 0;
-      let auto: ReturnType<typeof setInterval> | null = null;
-      const go = (i: number) => {
-        gi = (i + slats.length) % slats.length;
-        slats.forEach((s, j) => s.classList.toggle("on", j === gi));
-        ds.forEach((d, j) => d.classList.toggle("on", j === gi));
-      };
-      const stop = () => {
-        if (auto) {
-          clearInterval(auto);
-          auto = null;
-        }
-      };
-      const prev = root.querySelector<HTMLButtonElement>("#gPrev");
-      const next = root.querySelector<HTMLButtonElement>("#gNext");
-      const onNext = () => { stop(); go(gi + 1); };
-      const onPrev = () => { stop(); go(gi - 1); };
-      next?.addEventListener("click", onNext);
-      prev?.addEventListener("click", onPrev);
-      const canHover = window.matchMedia("(hover: hover)").matches;
-      const slatHandlers: Array<[HTMLElement, () => void, (() => void) | null]> = [];
-      slats.forEach((s, i) => {
-        const onClick = () => { stop(); go(i); };
-        const onEnter = canHover ? () => { stop(); go(i); } : null;
-        s.addEventListener("click", onClick);
-        if (onEnter) s.addEventListener("mouseenter", onEnter);
-        slatHandlers.push([s, onClick, onEnter]);
-      });
-      if (!reduce) auto = setInterval(() => go(gi + 1), 4800);
-      cleanups.push(() => {
-        stop();
-        next?.removeEventListener("click", onNext);
-        prev?.removeEventListener("click", onPrev);
-        slatHandlers.forEach(([s, c, e]) => {
-          s.removeEventListener("click", c);
-          if (e) s.removeEventListener("mouseenter", e);
-        });
-      });
-    }
-
-    /* ---- FAQ acordeão ---- */
-    const qas = Array.from(root.querySelectorAll<HTMLElement>(".qa"));
-    const qaHandlers: Array<[HTMLElement, () => void]> = [];
-    qas.forEach((qa) => {
-      const q = qa.querySelector<HTMLButtonElement>(".qa-q");
-      const a = qa.querySelector<HTMLElement>(".qa-a");
-      if (!q || !a) return;
-      if (qa.classList.contains("open")) a.style.maxHeight = a.scrollHeight + "px";
-      const handler = () => {
-        const isOpen = qa.classList.contains("open");
-        root.querySelectorAll<HTMLElement>(".qa.open").forEach((o) => {
-          o.classList.remove("open");
-          const aa = o.querySelector<HTMLElement>(".qa-a");
-          if (aa) aa.style.maxHeight = "0px";
-        });
-        if (!isOpen) {
-          qa.classList.add("open");
-          a.style.maxHeight = a.scrollHeight + "px";
-        }
-      };
-      q.addEventListener("click", handler);
-      qaHandlers.push([q, handler]);
-    });
-    cleanups.push(() => qaHandlers.forEach(([q, h]) => q.removeEventListener("click", h)));
-
-    /* ---- Como funciona: rolagem horizontal nativa no desktop ---- */
-    const hwrap = root.querySelector<HTMLElement>("#hwrap");
-    const htrack = root.querySelector<HTMLElement>("#htrack");
-    if (hwrap && htrack) {
-      const fill = root.querySelector<HTMLElement>("#hfill");
-      const now = root.querySelector<HTMLElement>("#hnow");
-      const isDesktop = () => window.matchMedia("(min-width: 901px)").matches;
-      const maxScroll = () => Math.max(0, hwrap.scrollWidth - hwrap.clientWidth);
-      const updateProgress = () => {
-        const max = maxScroll();
-        const progress = max ? hwrap.scrollLeft / max : 0;
-        if (fill) fill.style.width = progress * 100 + "%";
-        if (now) now.textContent = String(Math.min(7, Math.max(1, Math.round(progress * 6) + 1))).padStart(2, "0");
-      };
-      const onWheel = (event: WheelEvent) => {
-        if (!isDesktop()) return;
-        const max = maxScroll();
-        if (!max) return;
-        const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-        const next = Math.max(0, Math.min(max, hwrap.scrollLeft + delta));
-        if (next !== hwrap.scrollLeft) {
-          event.preventDefault();
-          hwrap.scrollLeft = next;
-          updateProgress();
-        }
-      };
-      hwrap.addEventListener("scroll", updateProgress, { passive: true });
-      hwrap.addEventListener("wheel", onWheel, { passive: false });
-      window.addEventListener("resize", updateProgress);
-      updateProgress();
-      cleanups.push(() => {
-        hwrap.removeEventListener("scroll", updateProgress);
-        hwrap.removeEventListener("wheel", onWheel);
-        window.removeEventListener("resize", updateProgress);
-      });
-    }
-
-    /* =====================================================
-       GSAP — só roda fora de prefers-reduced-motion.
-       ===================================================== */
-    if (reduce) {
-      root.querySelectorAll<HTMLElement>(".hl>span").forEach((s) => (s.style.transform = "none"));
-      return () => cleanups.forEach((c) => c());
-    }
-
-    /* ---- Parallax nativo: independente do ScrollTrigger para não falhar em áreas sticky ---- */
-    let raf = 0;
-    const clamp = (value: number) => Math.min(1, Math.max(0, value));
-    const updateParallax = () => {
-      raf = 0;
-      const vh = window.innerHeight || 1;
-      const hero = root.querySelector<HTMLElement>("#hero");
-      const heroMedia = root.querySelector<HTMLElement>("#heroMedia");
-      const heroVeil = root.querySelector<HTMLElement>(".hero-veil");
-      if (hero && heroMedia) {
-        const rect = hero.getBoundingClientRect();
-        const progress = clamp(-rect.top / Math.max(1, rect.height));
-        heroMedia.style.transform = `translate3d(0, ${progress * 6}%, 0) scale(${1 + progress * 0.08})`;
-        if (heroVeil) heroVeil.style.opacity = String(progress * 0.45);
-      }
-      root.querySelectorAll<HTMLElement>("[data-par]").forEach((frame) => {
-        const media = frame.querySelector<HTMLElement>("img") ?? frame;
-        const rect = frame.getBoundingClientRect();
-        const progress = clamp((vh - rect.top) / Math.max(1, vh + rect.height));
-        media.style.transform = `translate3d(0, ${-5 + progress * 10}%, 0)`;
-      });
-      const dvImg = root.querySelector<HTMLElement>(".dv img");
-      const dv = root.querySelector<HTMLElement>(".dv");
-      if (dv && dvImg) {
-        const rect = dv.getBoundingClientRect();
-        const progress = clamp((vh - rect.top) / Math.max(1, vh + rect.height));
-        dvImg.style.transform = `translate3d(0, ${-5 + progress * 10}%, 0)`;
-      }
-    };
-    const requestParallax = () => {
-      if (!raf) raf = window.requestAnimationFrame(updateParallax);
-    };
-    window.addEventListener("scroll", requestParallax, { passive: true });
-    window.addEventListener("resize", requestParallax);
-    updateParallax();
-    cleanups.push(() => {
-      if (raf) window.cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", requestParallax);
-      window.removeEventListener("resize", requestParallax);
-    });
-
-    const ctx = gsap.context(() => {
-      /* HERO — entrada cinematográfica */
-      gsap.set(".hl>span", { yPercent: 110 });
-      gsap.set("#hEye,#hLead,#hMicro,#hCtas,#hCue", { y: 24, opacity: 0 });
-      gsap.set("#heroMedia", { scale: 1.08 });
-      gsap.timeline({ defaults: { ease: "power3.out" } })
-        .to("#heroMedia", { scale: 1, duration: 1.8, ease: "power2.out" }, 0)
-        .to("#hEye", { y: 0, opacity: 1, duration: 0.8 }, 0.3)
-        .to(".hl>span", { yPercent: 0, duration: 1.1, stagger: 0.14, ease: "power4.out" }, 0.4)
-        .to("#hLead", { y: 0, opacity: 1, duration: 0.9 }, 0.95)
-        .to("#hMicro", { y: 0, opacity: 1, duration: 0.9 }, 1.05)
-        .to("#hCtas", { y: 0, opacity: 1, duration: 0.9 }, 1.2)
-        .to("#hCue", { y: 0, opacity: 1, duration: 0.9 }, 1.35);
-
-      /* COMO FUNCIONA — progresso vertical mobile */
-      ScrollTrigger.matchMedia({
-        "(max-width: 900px)": () => {
-          gsap.to("#vfill", {
-            height: "100%",
-            ease: "none",
-            scrollTrigger: { trigger: ".vlist", start: "top 75%", end: "bottom 60%", scrub: 0.6 },
-          });
-        },
-      });
-
-      /* STACK — cartão anterior recua e escurece */
-      ScrollTrigger.matchMedia({
-        "(min-width: 901px)": () => {
-          const cards = gsap.utils.toArray<HTMLElement>(".stack-card");
-          cards.forEach((card, i) => {
-            if (i === cards.length - 1) return;
-            const st = { trigger: cards[i + 1], start: "top bottom", end: "top top", scrub: true } as const;
-            gsap.to(card, { scale: 0.94, y: -14, ease: "none", scrollTrigger: st });
-            const dim = card.querySelector<HTMLElement>(".card-dim");
-            if (dim) gsap.to(dim, { opacity: 0.45, ease: "none", scrollTrigger: st });
-          });
-        },
-      });
-
-      /* Portal — elevação + barra */
-      gsap.fromTo(
-        "#portal",
-        { opacity: 0, y: 80, scale: 0.94 },
-        {
-          opacity: 1, y: 0, scale: 1, ease: "none",
-          scrollTrigger: { trigger: "#portal", start: "top 88%", end: "top 48%", scrub: 0.6 },
-        },
-      );
-      gsap.fromTo(
-        "#ptBar",
-        { width: 0 },
-        { width: "52%", duration: 1.2, ease: "power2.out", scrollTrigger: { trigger: "#portal", start: "top 60%" } },
-      );
-
-    }, root);
-
-    const refreshId = window.setTimeout(() => ScrollTrigger.refresh(), 150);
-    const refreshOnLoad = () => ScrollTrigger.refresh();
-    window.addEventListener("load", refreshOnLoad);
-    cleanups.push(() => {
-      window.clearTimeout(refreshId);
-      window.removeEventListener("load", refreshOnLoad);
-    });
-
-    cleanups.push(() => ctx.revert());
-    return () => cleanups.forEach((c) => c());
+    document.documentElement.classList.add("js");
   }, []);
 
+  // Hero parallax + scroll reveal
+  useEffect(() => {
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const heroBg = heroBgRef.current;
+    let raf = 0;
+    const onScroll = () => {
+      if (reduce || !heroBg) return;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const y = window.scrollY;
+        heroBg.style.transform = `translate3d(0, ${y * 0.35}px, 0)`;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    // Scroll reveal
+    const root = rootRef.current;
+    const targets: HTMLElement[] = root
+      ? Array.from(root.querySelectorAll(".section > .container > *"))
+      : [];
+
+    if (reduce) {
+      targets.forEach((el) => el.classList.add("in"));
+    } else if (typeof IntersectionObserver !== "undefined") {
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add("in");
+              io.unobserve(e.target);
+            }
+          }
+        },
+        { rootMargin: "0px 0px -10% 0px", threshold: 0.05 },
+      );
+      targets.forEach((el) => io.observe(el));
+      return () => {
+        window.removeEventListener("scroll", onScroll);
+        cancelAnimationFrame(raf);
+        io.disconnect();
+      };
+    } else {
+      targets.forEach((el) => el.classList.add("in"));
+    }
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  const isTouch =
+    typeof window !== "undefined" && window.matchMedia("(hover: none)").matches;
+
   return (
-    <div ref={rootRef} className="bw-home">
-      {/* ============ HERO ============ */}
-      <section className="hero on-dark" id="hero">
-        <div className="hero-media" id="heroMedia">
-          <img src={HERO_IMG} alt="" />
-        </div>
-        <div className="hero-ovl" />
-        <div className="grain" />
-        <div className="hero-veil" />
-        <div className="hero-in">
-          <span className="eyebrow" id="hEye">
-            BeWild · Reforma turn-key de studios · São Paulo
-          </span>
-          <h1 style={{ marginTop: "1rem" }}>
-            <span className="hl"><span>Reforma turn-key de studios,</span></span>
-            <span className="hl"><span className="it it-g">do cru ao pronto para rentabilizar.</span></span>
-          </h1>
-          <p className="lead" id="hLead">
-            Projeto de arquitetura, obra, marcenaria, mobiliário e tecnologia de acompanhamento em um processo único, para você não precisar virar gerente da própria reforma.
-          </p>
-          <p className="hero-micro" id="hMicro">
-            Da entrega das chaves ao imóvel pronto para foto, anúncio e operação
-          </p>
-          <div className="hero-ctas" id="hCtas">
-            <a href="/diagnostico" className="btn btn-p">Solicitar diagnóstico <span className="ar">→</span></a>
-            <a href="/portfolio" className="btn btn-g" style={{ color: "#fff" }}>Ver reformas entregues</a>
+    <div className="bw-home" ref={rootRef}>
+      {/* NAV */}
+      <header className="nav">
+        <div className="nav-inner">
+          <a href="#top" aria-label="Bewild — início">
+            <BrandLockup />
+          </a>
+          <nav className="nav-links" aria-label="Navegação principal">
+            <a href="#fazemos">O que fazemos</a>
+            <a href="#processo">Como funciona</a>
+            <a href="#portfolio">Portfólio</a>
+            <a href="#diferenciais">Diferenciais</a>
+            <a href="#faq">FAQ</a>
+          </nav>
+          <div className="nav-cta">
+            <a href="/diagnostico" className="btn btn-primary">
+              Solicitar diagnóstico <span className="arrow">→</span>
+            </a>
           </div>
         </div>
-        <div className="cue" id="hCue">Role para descer</div>
-      </section>
+      </header>
 
-      {/* ============ O PROBLEMA ============ */}
-      <section className="bg-frio pad">
-        <div className="wrap split">
-          <div>
-            <span className="eyebrow rv">O problema</span>
-            <h2 className="rv d1" style={{ marginTop: "1rem" }}>
-              Reformar um studio para renda <span className="it it-b">não precisa ser sua segunda profissão.</span>
-            </h2>
-            <p className="lead rv d2" style={{ marginTop: "1.3rem" }}>
-              A BeWild integra arquitetura, engenharia, obra e inteligência de mercado em um único processo, para quem precisa reformar e não quer carregar o pesadelo de cuidar de uma obra sozinho, muitas vezes à distância. Você acompanha. A gente executa.
+      {/* HERO */}
+      <section className="hero" id="top" aria-label="Bewild — reforma turn-key de studios">
+        <div className="hero-bg" ref={heroBgRef} />
+        <div className="hero-shade" />
+        <div className="container">
+          <div className="hero-text">
+            <div className="eyebrow" style={{ color: "var(--sky)" }}>
+              Bewild · Reforma turn-key de studios · São Paulo
+            </div>
+            <h1>
+              Reforma turn-key de studios,{" "}
+              <span className="accent">do projeto ao pronto para rentabilizar.</span>
+            </h1>
+            <p className="sub">
+              Projeto de arquitetura, obra, marcenaria, mobiliário e tecnologia de
+              acompanhamento em um processo único, para você não precisar virar gerente da
+              própria reforma.
             </p>
+            <p className="micro">
+              Da entrega das chaves ao imóvel pronto para foto, anúncio e operação
+            </p>
+            <div className="hero-cta">
+              <a href="/diagnostico" className="btn btn-cyan">
+                Solicitar diagnóstico <span className="arrow">→</span>
+              </a>
+              <a href="#portfolio" className="btn btn-ghost-light">
+                Ver reformas entregues
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PROBLEMA */}
+      <section className="section" id="problema">
+        <div className="container split">
+          <div>
+            <div className="eyebrow">O problema</div>
+            <h2>
+              Reformar um studio para renda{" "}
+              <span className="accent">não precisa ser sua segunda profissão.</span>
+            </h2>
+            <p className="lead">
+              A Bewild integra arquitetura, engenharia, obra e inteligência de mercado em
+              um único processo, para quem precisa reformar e não quer carregar o pesadelo
+              de cuidar de uma obra sozinho, muitas vezes à distância.
+            </p>
+            <p className="stmt">Você acompanha. A gente executa.</p>
+          </div>
+          <div className="prob-list">
+            {PROBLEMS.map((p) => (
+              <div key={p} className="prob-item">
+                <span className="dot" />
+                <p>{p}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* O QUE FAZEMOS */}
+      <section className="section" id="fazemos" style={{ background: "var(--paper)" }}>
+        <div className="container">
+          <div className="eyebrow">O que fazemos</div>
+          <h2>
+            Mais que uma reforma. <span className="accent">Um imóvel pronto para operar.</span>
+          </h2>
+          <p className="lead">
+            Arquitetura, obra, interiores, tecnologia e inteligência de investimento em
+            uma entrega única.
+          </p>
+          <div className="fz-acc" role="tablist" aria-label="Serviços Bewild">
+            {SERVICES.map((s, i) => (
+              <button
+                type="button"
+                key={s.title}
+                className={`fz-panel ${activePanel === i ? "active" : ""}`}
+                role="tab"
+                aria-selected={activePanel === i}
+                aria-label={s.title}
+                onMouseEnter={() => !isTouch && setActivePanel(i)}
+                onFocus={() => setActivePanel(i)}
+                onClick={() => setActivePanel(i)}
+              >
+                <span className="slot-mini">{s.slot}</span>
+                <span className="vlabel">{s.title}</span>
+                <div className="content">
+                  <h3>{s.title}</h3>
+                  <p>{s.desc}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+          <p className="fz-hint">
+            Passe o mouse ou toque para abrir cada serviço. As fotos reais das obras
+            entram em cada card.
+          </p>
+        </div>
+      </section>
+
+      {/* COMO FUNCIONA */}
+      <section className="section" id="processo" style={{ background: "var(--sand)" }}>
+        <div className="container">
+          <div className="eyebrow">Como funciona</div>
+          <h2>
+            Um processo claro, <span className="accent">do diagnóstico à entrega.</span>
+          </h2>
+          <p className="lead">
+            Cada etapa tem começo, meio e fim. A obra anda sem você precisar empurrar.
+          </p>
+          <div className="psteps">
+            {STEPS.map((s) => (
+              <div key={s.n} className="pstep">
+                <span className="ghost">{s.n}</span>
+                <span className="pnum">{s.n}</span>
+                <h3>{s.title}</h3>
+                <p>{s.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ARQUITETURA */}
+      <section className="section" id="arquitetura" style={{ background: "var(--paper)" }}>
+        <div className="container split">
+          <div>
+            <div className="arch-media slot">
+              <span className="tag">Slot · planta humanizada / estudo Bewild</span>
+            </div>
+            <p className="arch-quote">
+              Um studio de 19, 22 ou 28 m² não permite decisões aleatórias. Cada
+              centímetro precisa justificar sua existência. Por isso, a Bewild desenvolve
+              projeto de arquitetura personalizado para cada imóvel: layout, circulação,
+              iluminação, marcenaria, armazenamento, eletros, pontos técnicos, estética e
+              objetivo de uso.
+            </p>
+            <div className="arch-cta">
+              <a href="/diagnostico" className="btn btn-primary">
+                Quero um projeto para meu studio <span className="arrow">→</span>
+              </a>
+            </div>
           </div>
           <div>
-            {[
-              "Orçamentos que começam baixos e crescem no meio da obra.",
-              "Fornecedores que não conversam entre si.",
-              "Projeto bonito, mas difícil de executar.",
-              "Studio pronto visualmente, mas ruim de operar.",
-              "Cliente acompanhando tudo por WhatsApp, sem rastreabilidade.",
-              "Imóvel parado enquanto deveria estar gerando receita.",
-            ].map((t, i) => (
-              <div key={i} className={`risk rv${i ? " d" + Math.min(3, Math.floor(i / 2) + 1) : ""}`}><i />{t}</div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============ O QUE FAZEMOS ============ */}
-      <section className="bg-home pad" id="o-que-fazemos">
-        <div className="wrap">
-          <div className="gal-head">
-            <div>
-              <span className="eyebrow rv">O que fazemos</span>
-              <h2 className="rv d1" style={{ marginTop: "1rem" }}>
-                Mais que uma reforma. <span className="it it-b">Um imóvel pronto para operar.</span>
-              </h2>
-              <p className="lead rv d2" style={{ marginTop: ".7rem" }}>
-                Arquitetura, obra, interiores, tecnologia e inteligência de investimento em uma entrega única.
-              </p>
-            </div>
-            <div className="gal-nav rv d2">
-              <button className="gal-btn" id="gPrev" aria-label="Anterior">←</button>
-              <button className="gal-btn" id="gNext" aria-label="Próximo">→</button>
-            </div>
-          </div>
-
-          <div className="gal" id="gal">
-            {SLATS.map((s, i) => (
-              <article key={i} className={"slat" + (i === 0 ? " on" : "")}>
-                <div className="slat-bg">{s.img && <img src={s.img} alt="" />}</div>
-                <div className="slat-sh" />
-                <span className="slat-tag"><span className="selo">{s.tag}</span></span>
-                <span className="slot-note">{s.note}</span>
-                <p className="slat-desc">{s.desc}</p>
-                <h3 className="slat-name">{s.name}</h3>
-              </article>
-            ))}
-          </div>
-          <div className="gal-dots" id="gDots" />
-        </div>
-      </section>
-
-      {/* ============ COMO FUNCIONA ============ */}
-      <section className="bg-areia hsec" id="como-funciona">
-        <div className="wrap" style={{ paddingTop: "clamp(5rem,11vh,7.5rem)" }}>
-          <span className="eyebrow rv">Como funciona</span>
-          <h2 className="rv d1" style={{ marginTop: "1rem" }}>
-            Um processo claro, <span className="it it-b">do diagnóstico à entrega.</span>
-          </h2>
-        </div>
-
-        <div className="hwrap" id="hwrap">
-          <div className="htrack" id="htrack">
-            {STEPS.map((s) => (
-              <article key={s.n} className="hcard">
-                <span className="hnum-big">{s.n}</span>
-                <span className="hnum">{s.n}</span>
-                <h3>{s.h}</h3>
-                <p>{s.p}</p>
-              </article>
-            ))}
-          </div>
-          <div className="hprog">
-            <div className="hbar"><div className="hfill" id="hfill" /></div>
-            <span className="hcount"><b id="hnow">01</b> / 07</span>
-          </div>
-
-          <div className="vlist wrap">
-            <div className="vline" />
-            <div className="vfill" id="vfill" />
-            {STEPS.map((s) => (
-              <div key={s.n} className="vitem">
-                <span className="hnum">{s.n}</span>
-                <h3>{s.h}</h3>
-                <p>{s.p}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div style={{ height: "clamp(3rem,8vh,5rem)" }} />
-      </section>
-
-      {/* ============ STACK ============ */}
-      <section className="stack-zone" id="diferenciais">
-        <div className="stack">
-          {/* CARTÃO 1 — PROJETO PERSONALIZADO */}
-          <article className="stack-card sc-white">
-            <div className="card-dim" />
-            <div className="wrap proj">
-              <div className="proj-l">
-                <div className="vcard" data-par>
-                  <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1400&auto=format&fit=crop" alt="" />
-                  <span className="slot-note">Slot · planta humanizada / estudo BeWild</span>
+            <div className="eyebrow">Projeto personalizado</div>
+            <h2>
+              Arquitetura para cada metro quadrado{" "}
+              <span className="accent">trabalhar melhor.</span>
+            </h2>
+            <p className="lead" style={{ marginBottom: 20 }}>
+              Em studios compactos, projeto não é decoração. É estratégia de uso, operação
+              e rentabilidade.
+            </p>
+            <div className="arch-list">
+              {ARCH.map((a) => (
+                <div key={a.idx} className="arch-item">
+                  <div className="h">
+                    <span className="idx">{a.idx}</span>
+                    <h3>{a.title}</h3>
+                  </div>
+                  <p>{a.text}</p>
                 </div>
-                <p className="vcap" style={{ fontSize: ".8rem" }}>
-                  Um studio de 19, 22 ou 28 m² não permite decisões aleatórias. Cada centímetro precisa justificar sua existência. Por isso, a BeWild desenvolve projeto de arquitetura personalizado para cada imóvel: layout, circulação, iluminação, marcenaria, armazenamento, eletros, pontos técnicos, estética e objetivo de uso.
-                </p>
-              </div>
-              <div>
-                <span className="eyebrow">Projeto personalizado</span>
-                <h2 style={{ marginTop: ".8rem", fontSize: "clamp(1.8rem,3vw,2.5rem)" }}>
-                  Arquitetura para cada metro quadrado <span className="it it-b">trabalhar melhor.</span>
-                </h2>
-                <p className="lead" style={{ margin: ".7rem 0 1.2rem", fontSize: ".95rem" }}>
-                  Em studios compactos, projeto não é decoração. É estratégia de uso, operação e rentabilidade.
-                </p>
-                {PROJ_ITEMS.map((it) => (
-                  <div key={it.n} className="pitem">
-                    <span className="n">{it.n}</span>
-                    <div>
-                      <h4>{it.h}</h4>
-                      <p>{it.p}</p>
-                    </div>
-                  </div>
-                ))}
-                <p style={{ marginTop: "1.3rem" }}>
-                  <a href="/diagnostico" className="btn btn-p">
-                    Quero um projeto para meu studio <span className="ar">→</span>
-                  </a>
-                </p>
-              </div>
+              ))}
             </div>
-            <div className="card-dots"><span className="on" /><span /><span /></div>
-          </article>
-
-          {/* CARTÃO 2 — DIFERENCIAIS */}
-          <article className="stack-card sc-ink on-dark">
-            <div className="card-dim" />
-            <div className="wrap">
-              <span className="eyebrow">Diferenciais</span>
-              <h2 style={{ marginTop: ".8rem" }}>
-                Por que a BeWild <span className="it it-g">é diferente.</span>
-              </h2>
-              <p className="lead" style={{ marginTop: ".7rem" }}>
-                O trabalho não termina no desenho bonito. Ele precisa fechar tecnicamente, caber no orçamento, andar na obra e funcionar depois da entrega.
-              </p>
-              <div className="grid g4" style={{ marginTop: "2rem" }}>
-                {DIFFS.map((d) => (
-                  <div key={d.h} className="card">
-                    <span className="ic">{d.icon}</span>
-                    <h4>{d.h}</h4>
-                    <p>{d.p}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="card-dots"><span /><span className="on" /><span /></div>
-          </article>
-
-          {/* CARTÃO 3 — CREDIBILIDADE */}
-          <article className="stack-card sc-tese on-dark">
-            <div className="card-dim" />
-            <div className="wrap" style={{ textAlign: "center" }}>
-              <span className="eyebrow">Credibilidade</span>
-              <h2 style={{ marginTop: ".8rem" }}>
-                Credibilidade não é promessa. <span className="it it-g">É processo visível.</span>
-              </h2>
-              <div className="cred" style={{ textAlign: "left" }}>
-                <div className="cstat"><span className="num" data-count="55">0</span><span className="suf">dias úteis</span><small>referência de prazo para obras padrão, sujeito ao escopo</small></div>
-                <div className="cstat"><span className="num" data-count="5">0</span><span className="suf">anos</span><small>garantia de mão de obra geral, quando aplicável ao contrato</small></div>
-                <div className="cstat"><span className="num" data-count="10">0</span><span className="num">+</span><span className="suf">anos</span><small>garantia em marcenaria selecionada, conforme fornecedor/escopo</small></div>
-                <div className="cstat"><span className="num" data-count="100">0</span><span className="num">%</span><span className="suf">turn-key</span><small>projeto, obra, mobiliário e entrega coordenados</small></div>
-              </div>
-              <ul className="cchecks" style={{ textAlign: "left" }}>
-                {[
-                  "Contrato e escopo claros.",
-                  "Fotos e relatórios de acompanhamento.",
-                  "Projeto aprovado antes da execução.",
-                  "Compras críticas planejadas.",
-                  "Gestão de fornecedores.",
-                  "Entrega com checklist final.",
-                ].map((t) => (
-                  <li key={t}><span className="tk">✓</span>{t}</li>
-                ))}
-              </ul>
-            </div>
-            <div className="card-dots"><span /><span /><span className="on" /></div>
-          </article>
+          </div>
         </div>
       </section>
 
-      {/* ============ PORTFÓLIO PREVIEW ============ */}
-      <section className="bg-white pad" id="portfolio">
-        <div className="wrap">
-          <span className="eyebrow rv">Portfólio</span>
-          <h2 className="rv d1" style={{ marginTop: "1rem" }}>
-            Reformas reais para imóveis <span className="it it-b">que precisam performar.</span>
+      {/* DIFERENCIAIS */}
+      <section className="section dark" id="diferenciais">
+        <div className="container">
+          <div className="eyebrow">Diferenciais</div>
+          <h2>
+            Por que a Bewild <span className="accent">é diferente.</span>
           </h2>
-          <div className="grid g2" style={{ marginTop: "2.6rem" }}>
-            <article className="card pcase rv">
-              <div className="ph">
-                <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=1600&auto=format&fit=crop" alt="" />
-                <span className="slot-note">Slot · foto real do studio entregue</span>
+          <p className="lead">
+            O trabalho não termina no desenho bonito. Ele precisa fechar tecnicamente,
+            caber no orçamento, andar na obra e funcionar depois da entrega.
+          </p>
+          <div className="diff-grid">
+            {DIFFS.map((d) => (
+              <div key={d.title} className="diff">
+                <div className="ic" aria-hidden="true">
+                  {d.ic}
+                </div>
+                <h3>{d.title}</h3>
+                <p>{d.text}</p>
               </div>
-              <div className="bd">
-                <span className="selo">Short stay</span>
-                <h3>Studio compacto para short stay</h3>
-                <div className="kv"><b>Desafio</b><span>Transformar uma planta pequena em um imóvel funcional, bonito e fácil de operar.</span></div>
-                <div className="kv"><b>Solução</b><span>Marcenaria inteligente, bancada compacta, iluminação estratégica, eletros adequados e acabamento resistente.</span></div>
-                <div className="kv res"><b>Resultado</b><span>Unidade pronta para fotos, anúncio e operação.</span></div>
-              </div>
-            </article>
-            <article className="card pcase rv d1">
-              <div className="ph">
-                <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=1600&auto=format&fit=crop" alt="" />
-                <span className="slot-note">Slot · antes/depois mesmo ângulo</span>
-              </div>
-              <div className="bd">
-                <span className="selo">Turn-key</span>
-                <h3>Studio recém-entregue na planta</h3>
-                <div className="kv"><b>Desafio</b><span>Sair do apartamento cru para uma unidade mobiliada sem o cliente precisar coordenar múltiplos fornecedores.</span></div>
-                <div className="kv"><b>Solução</b><span>Projeto personalizado, obra turn-key, compras planejadas e montagem final.</span></div>
-                <div className="kv res"><b>Resultado</b><span>Imóvel entregue com visual consistente, layout otimizado e pronto para uso.</span></div>
-              </div>
-            </article>
+            ))}
           </div>
-          <p className="mono-note rv" style={{ textAlign: "center", marginTop: "1.8rem" }}>
+        </div>
+      </section>
+
+      {/* CREDIBILIDADE */}
+      <section className="section cred" id="credibilidade">
+        <div className="container">
+          <div className="eyebrow">Credibilidade</div>
+          <h2>
+            Credibilidade não é promessa. <span className="accent">É processo visível.</span>
+          </h2>
+          <div className="stats">
+            <div className="stat">
+              <b>+150</b>
+              <div className="u">studios entregues</div>
+              <p>Experiência real em reforma de studios compactos.</p>
+            </div>
+            <div className="stat">
+              <b>55</b>
+              <div className="u">dias úteis</div>
+              <p>Prazo de entrega de uma reforma completa.</p>
+            </div>
+            <div className="stat">
+              <b>5 anos</b>
+              <div className="u">de garantia</div>
+              <p>Garantia Bewild sobre a reforma entregue.</p>
+            </div>
+          </div>
+          <div className="checks">
+            {[
+              "Contrato e escopo claros",
+              "Compras críticas planejadas",
+              "Fotos e relatórios de acompanhamento",
+              "Gestão de fornecedores",
+              "Projeto aprovado antes da execução",
+              "Entrega com checklist final",
+            ].map((t) => (
+              <div key={t} className="chk">
+                <span className="tick">✓</span>
+                {t}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PORTFÓLIO */}
+      <section className="section" id="portfolio" style={{ background: "var(--paper)" }}>
+        <div className="container">
+          <div className="eyebrow">Portfólio</div>
+          <h2>
+            Reformas reais para imóveis{" "}
+            <span className="accent">que precisam performar.</span>
+          </h2>
+          <div className="grid" style={{ gridTemplateColumns: "1fr 1fr", marginTop: 30 }}>
+            <div className="case">
+              <div className="ph slot">
+                <span className="tag">Slot · foto real do studio entregue</span>
+              </div>
+              <div className="body">
+                <span className="pill">Short stay</span>
+                <h3>Studio compacto para short stay</h3>
+                <dl>
+                  <dt>Desafio</dt>
+                  <dd>Transformar uma planta pequena em um imóvel funcional, bonito e fácil de operar.</dd>
+                  <dt>Solução</dt>
+                  <dd>Marcenaria inteligente, bancada compacta, iluminação estratégica, eletros adequados e acabamento resistente.</dd>
+                  <dt>Resultado</dt>
+                  <dd>Unidade pronta para fotos, anúncio e operação.</dd>
+                </dl>
+              </div>
+            </div>
+            <div className="case">
+              <div className="ph slot">
+                <span className="tag">Slot · antes / depois mesmo ângulo</span>
+              </div>
+              <div className="body">
+                <span className="pill">Turn-key</span>
+                <h3>Studio recém-entregue na planta</h3>
+                <dl>
+                  <dt>Desafio</dt>
+                  <dd>Sair do apartamento cru para uma unidade mobiliada sem o cliente precisar coordenar múltiplos fornecedores.</dd>
+                  <dt>Solução</dt>
+                  <dd>Projeto personalizado, obra turn-key, compras planejadas e montagem final.</dd>
+                  <dt>Resultado</dt>
+                  <dd>Imóvel entregue com visual consistente, layout otimizado e pronto para uso.</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+          <p className="illus-note">
             Cases ilustrativos até a publicação das fotos reais das reformas entregues
           </p>
-          <p className="rv d1" style={{ textAlign: "center", marginTop: "1.4rem" }}>
-            <a href="/portfolio" className="btn btn-g" style={{ color: "var(--ink)" }}>
-              Ver portfólio completo <span className="ar">→</span>
-            </a>
-          </p>
         </div>
       </section>
 
-      {/* ============ DEPOIMENTO ============ */}
-      <section className="bg-frio pad">
-        <div className="wrap depo">
-          <div className="rv">
-            <div className="dv">
-              <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=1600&auto=format&fit=crop" alt="" />
-              <button className="dplay" aria-label="Assistir depoimento">
-                <svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" /></svg>
-              </button>
-              <span className="slot-note">Slot · vídeo do depoimento da cliente · legendado</span>
-            </div>
+      {/* DEPOIMENTO */}
+      <section className="section" id="depoimento" style={{ background: "var(--sand)" }}>
+        <div className="container testi">
+          <div className="video slot">
+            <div className="play" aria-hidden="true">▶</div>
+            <span className="tag">Slot · vídeo do depoimento da cliente · legendado</span>
           </div>
           <div>
-            <span className="eyebrow rv">Depoimento</span>
-            <h2 className="rv d1" style={{ marginTop: "1rem" }}>
-              Quem já passou pela obra <span className="it it-b">conta melhor do que a gente.</span>
+            <div className="eyebrow">Depoimento</div>
+            <h2>
+              Quem já passou pela obra{" "}
+              <span className="accent">conta melhor do que a gente.</span>
             </h2>
-            <blockquote className="dq rv d2" style={{ marginTop: "1.4rem" }}>
-              [Transcrever aqui a frase mais forte do depoimento em vídeo da cliente.]
+            <blockquote className="ph-quote">
+              [ Transcrever aqui a frase mais forte do depoimento em vídeo da cliente. ]
             </blockquote>
-            <span className="dby rv d3">Cliente BeWild · Studio reformado em São Paulo</span>
-            <p className="mono-note rv d3" style={{ marginTop: "1rem", display: "block" }}>
-              Depoimento real · vídeo na íntegra ao lado
-            </p>
+            <p className="src">Depoimento real · vídeo na íntegra ao lado</p>
           </div>
         </div>
       </section>
 
-      {/* ============ TECNOLOGIA · PORTAL ============ */}
-      <section className="bg-home pad">
-        <div className="wrap split" style={{ alignItems: "center" }}>
+      {/* PORTAL */}
+      <section className="section" id="portal" style={{ background: "var(--paper)" }}>
+        <div className="container split">
           <div>
-            <span className="eyebrow rv">Tecnologia · Portal</span>
-            <h2 className="rv d1" style={{ marginTop: "1rem" }}>
-              Obra com visibilidade. <span className="it it-b">Gestão sem caixa-preta.</span>
+            <div className="eyebrow">Tecnologia · Portal</div>
+            <h2>
+              Obra com visibilidade. <span className="accent">Gestão sem caixa-preta.</span>
             </h2>
-            <p className="lead rv d2" style={{ marginTop: "1.2rem" }}>
-              Acompanhamento por WhatsApp ajuda, mas não pode ser o único banco de dados da obra. Por isso, a BeWild trabalha com portal, registros, fotos, cronograma e informações organizadas para dar mais previsibilidade ao cliente e mais controle para a operação.
+            <p className="lead" style={{ marginBottom: 18 }}>
+              Cronograma, decisões e compras organizados para dar mais previsibilidade ao
+              cliente e mais controle para a operação.
             </p>
-            <ul className="chk2 rv d3">
+            <div className="checks" style={{ gridTemplateColumns: "1fr 1fr" }}>
               {[
                 "Cronograma por etapa",
                 "Fotos de evolução",
@@ -784,138 +563,164 @@ export default function HomePage() {
                 "Compras e fornecedores",
                 "Visão clara do que está em andamento",
               ].map((t) => (
-                <li key={t}><span className="tk">✓</span>{t}</li>
+                <div key={t} className="chk">
+                  <span className="tick">✓</span>
+                  {t}
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
-          <div className="portal" id="portal">
-            <div className="pt-bar">
-              <span className="lbl">Portal BeWild · Exemplo</span>
-              <span className="pt-chip">Em obra</span>
+          <div className="portal-card">
+            <div className="portal-head">
+              <b>Studio Urban Flex · 22 m²</b>
+              <span className="badge">Em obra</span>
             </div>
-            <p className="pt-title">Studio Urban Flex · 22 m²</p>
-            <div className="pt-cron"><span>Cronograma</span><b>52% concluído</b></div>
-            <div className="pt-track"><div className="pt-fillbar" id="ptBar" /></div>
-            <div className="pt-step done">
-              <span style={{ display: "flex", gap: ".7rem", alignItems: "center" }}>
-                <span className="tk" style={{ color: "var(--gold-400)" }}>✓</span>Demolição e remoção
-              </span>
+            <div className="pline"><span className="pt done">✓</span>Demolição e remoção</div>
+            <div className="pline"><span className="pt done">✓</span>Elétrica e hidráulica</div>
+            <div className="pline"><span className="pt now">●</span>Marcenaria sob medida</div>
+            <div className="pline"><span className="pt todo">○</span>Montagem e enxoval</div>
+            <div className="pbar"><i /></div>
+            <div className="pmeta">
+              52% concluído · Relatório semanal #6: marcenaria instalada, elétrica revisada.
             </div>
-            <div className="pt-step done">
-              <span style={{ display: "flex", gap: ".7rem", alignItems: "center" }}>
-                <span className="tk" style={{ color: "var(--gold-400)" }}>✓</span>Elétrica e hidráulica
-              </span>
-            </div>
-            <div className="pt-step">
-              <span style={{ display: "flex", gap: ".7rem", alignItems: "center" }}>
-                <span className="o" />Marcenaria sob medida
-              </span>
-              <span className="pt-now">Em andamento</span>
-            </div>
-            <div className="pt-step">
-              <span style={{ display: "flex", gap: ".7rem", alignItems: "center" }}>
-                <span className="o" />Acabamentos e pintura
-              </span>
-            </div>
-            <div className="pt-step">
-              <span style={{ display: "flex", gap: ".7rem", alignItems: "center" }}>
-                <span className="o" />Montagem e enxoval
-              </span>
-            </div>
-            <div className="pt-thumbs"><div>◉</div><div>◉</div><div>◉</div></div>
-            <div className="pt-rep">Relatório semanal #6: marcenaria instalada, elétrica revisada.</div>
-            <div className="pt-foot">Interface ilustrativa do portal de acompanhamento</div>
           </div>
         </div>
+        <p className="illus-note" style={{ maxWidth: "var(--maxw)", marginLeft: "auto", marginRight: "auto" }}>
+          Interface ilustrativa do portal de acompanhamento
+        </p>
       </section>
 
-      {/* ============ COMPARATIVO ============ */}
-      <section className="bg-frio pad">
-        <div className="wrap">
-          <span className="eyebrow rv">Comparativo</span>
-          <h2 className="rv d1" style={{ marginTop: "1rem" }}>
-            O custo invisível de <span className="it it-b">coordenar tudo sozinho.</span>
+      {/* COMPARATIVO */}
+      <section className="section" id="comparativo" style={{ background: "var(--sand)" }}>
+        <div className="container">
+          <div className="eyebrow">Comparativo</div>
+          <h2>
+            Reforma tradicional <span className="accent">× Bewild turn-key.</span>
           </h2>
-          <div className="tbl rv d2">
-            <div className="trow thead">
-              <div />
-              <div>Reforma tradicional</div>
-              <div className="bw">BeWild turn-key</div>
+          <div className="compare" style={{ marginTop: 28 }}>
+            <div className="chead">
+              <div>&nbsp;</div>
+              <div className="trad">Reforma tradicional</div>
+              <div className="bw">Bewild turn-key</div>
             </div>
-            {COMPARE_ROWS.map(([label, bad, good]) => (
-              <div key={label} className="trow">
-                <div className="tlabel">{label}</div>
-                <div className="tx"><i>✗</i>{bad}</div>
-                <div className="tv"><i>✓</i>{good}</div>
+            {COMPARE.map((r) => (
+              <div className="crow" key={r.label}>
+                <div className="rh">{r.label}</div>
+                <div className="trad"><span className="xmark">✕</span>{r.trad}</div>
+                <div className="bw"><span className="vmark">✓</span>{r.bw}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ============ PARA QUEM É ============ */}
-      <section className="bg-white pad">
-        <div className="wrap">
-          <span className="eyebrow rv">Para quem é</span>
-          <h2 className="rv d1" style={{ marginTop: "1rem" }}>
-            Para quem quer reformar <span className="it it-b">sem virar gerente de obra.</span>
+      {/* PARA QUEM */}
+      <section className="section" id="paraquem" style={{ background: "var(--paper)" }}>
+        <div className="container">
+          <div className="eyebrow">Para quem é</div>
+          <h2>
+            Para quem quer reformar{" "}
+            <span className="accent">sem virar gerente de obra.</span>
           </h2>
-          <div className="grid g3" style={{ marginTop: "2.6rem" }}>
-            {AUDIENCE.map((a, i) => (
-              <div key={a.h} className={`card rv${i ? " d" + Math.min(2, i) : ""}`}>
-                <span className="ic">{a.icon}</span>
-                <h4>{a.h}</h4>
-                <p>{a.p}</p>
+          <div className="grid g3" style={{ marginTop: 30 }}>
+            {WHO.map((w) => (
+              <div key={w.title} className="who-card">
+                <div className="ic" aria-hidden="true">{w.ic}</div>
+                <h3>{w.title}</h3>
+                <p>{w.text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ============ FAQ ============ */}
-      <section className="bg-home pad">
-        <div className="wrap">
-          <div style={{ textAlign: "center" }}>
-            <span className="eyebrow rv">FAQ</span>
-            <h2 className="rv d1" style={{ marginTop: "1rem" }}>Perguntas frequentes</h2>
-          </div>
-          <div className="faq rv d2">
-            {FAQS.map((f, i) => (
-              <div key={f.q} className={"qa" + (i === 0 ? " open" : "")}>
-                <button className="qa-q">{f.q}<span className="pl">+</span></button>
-                <div className="qa-a"><p>{f.a}</p></div>
-              </div>
+      {/* FAQ */}
+      <section className="section" id="faq" style={{ background: "var(--sand)" }}>
+        <div className="container">
+          <div className="eyebrow" style={{ textAlign: "center" }}>FAQ</div>
+          <h2 style={{ textAlign: "center", marginBottom: 34 }}>Perguntas frequentes</h2>
+          <div className="faq">
+            {FAQS_HOME.map((f, i) => (
+              <details key={f.q} open={i === 0}>
+                <summary>
+                  {f.q} <span className="pm">+</span>
+                </summary>
+                <div className="ans">{f.a}</div>
+              </details>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ============ CTA FINAL ============ */}
-      <section className="bg-areia pad cta-fim" id="diagnostico">
-        <div className="wrap">
-          <span className="eyebrow rv">Diagnóstico</span>
-          <h2 className="rv d1">
-            Quer transformar seu studio em <span className="it it-b">um ativo pronto para operar?</span>
+      {/* CTA FINAL */}
+      <section className="section cta" id="cta">
+        <div className="container">
+          <div className="eyebrow" style={{ color: "var(--sky)", textAlign: "center" }}>
+            Diagnóstico
+          </div>
+          <h2>
+            Quer transformar seu studio{" "}
+            <span className="accent">em um ativo pronto para operar?</span>
           </h2>
-          <p className="lead rv d2" style={{ margin: "0 auto 2rem" }}>
-            Envie os dados do seu imóvel e receba uma análise inicial de escopo, projeto e próximos passos. Sem compromisso.
+          <p>
+            Envie os dados do seu imóvel e receba uma análise inicial de escopo, projeto e
+            próximos passos. Sem compromisso.
           </p>
-          <div className="rv d3" style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-            <a href="/diagnostico" className="btn btn-p">Solicitar diagnóstico <span className="ar">→</span></a>
-            <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="btn btn-g" style={{ color: "var(--ink)" }}>
+          <div className="cta-btns">
+            <a href="/diagnostico" className="btn btn-cyan">
+              Solicitar diagnóstico <span className="arrow">→</span>
+            </a>
+            <a
+              href={whatsappHref()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-ghost-light"
+            >
               Falar no WhatsApp
             </a>
           </div>
         </div>
       </section>
 
-      {/* ============ FLOATING CTA ============ */}
-      <aside className="fcta" id="fcta">
-        <button className="x" id="fctaX" aria-label="Fechar">✕</button>
-        <h5>Quer um diagnóstico do seu studio?</h5>
-        <a href="/diagnostico" className="btn btn-p">Solicitar <span className="ar">→</span></a>
-        <span className="mono-note">Consultivo · sem compromisso</span>
-      </aside>
+      {/* FOOTER */}
+      <footer className="foot">
+        <div className="foot-grid">
+          <div>
+            <a href="#top">
+              <BrandLockup />
+            </a>
+            <p style={{ marginTop: 14 }}>
+              Reforma turn-key de studios em São Paulo. Projeto, obra, marcenaria,
+              mobiliário e entrega em um processo único.
+            </p>
+            <p style={{ marginTop: 10 }}>{CONTACT.city}</p>
+          </div>
+          <nav aria-label="Rodapé — navegação">
+            <h3 className="foot-col">Navegação</h3>
+            <ul>
+              <li><a href="#fazemos">O que fazemos</a></li>
+              <li><a href="#processo">Como funciona</a></li>
+              <li><a href="#portfolio">Portfólio</a></li>
+              <li><a href="/conteudos">Conteúdos</a></li>
+              <li><a href="/diagnostico">Diagnóstico</a></li>
+            </ul>
+          </nav>
+          <div>
+            <h3 className="foot-col">Contato</h3>
+            <ul>
+              <li><a href={whatsappHref()} target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+              <li><a href={CONTACT.instagram} target="_blank" rel="noopener noreferrer">Instagram</a></li>
+              <li><a href={CONTACT.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+              <li><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></li>
+              <li><a href="/privacidade">Política de privacidade</a></li>
+            </ul>
+          </div>
+        </div>
+        <div className="foot-bottom">
+          <p>Bewild · Reforma turn-key de studios em São Paulo</p>
+          <p>© {new Date().getFullYear()} Bewild · Grupo Bwild</p>
+        </div>
+      </footer>
     </div>
   );
 }
