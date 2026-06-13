@@ -142,7 +142,7 @@ export default function HomePage() {
     title: "Bewild — Reforma turn-key de studios em São Paulo",
     description:
       "Projeto, obra, marcenaria, mobiliário e tecnologia de acompanhamento em um processo único. Studios prontos para foto, anúncio e operação em São Paulo.",
-    canonical: SITE_URL + "/",
+    canonicalPath: "/",
     ogType: "website",
   });
 
