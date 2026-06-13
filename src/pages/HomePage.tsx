@@ -19,8 +19,6 @@ import { useSeo } from "@/lib/useSeo";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import "@/styles/home.css";
 
-const SITE_URL = "https://bewild.com.br";
-
 /* ---------------- data ---------------- */
 
 const SERVICES = [
