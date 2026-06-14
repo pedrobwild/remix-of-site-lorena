@@ -802,7 +802,7 @@
 .bw-home .who-card p { font-size: 13px; color: var(--muted-cool); margin: 0; }
 
 /* FAQ */
-.bw-home .faq { max-width: 760px; margin: 0 auto; }
+.bw-home .faq-list { max-width: 760px; margin: 0 auto; }
 .bw-home details {
   background: var(--card);
   border: 1px solid var(--line-cool);
