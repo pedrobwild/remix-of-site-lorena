@@ -639,7 +639,7 @@ export default function HomePage() {
         <div className="container">
           <div className="eyebrow" style={{ textAlign: "center" }}>FAQ</div>
           <h2 style={{ textAlign: "center", marginBottom: 34 }}>Perguntas frequentes</h2>
-          <div className="faq">
+          <div className="faq-list">
             {FAQS_HOME.map((f, i) => (
               <details key={f.q} open={i === 0}>
                 <summary>
