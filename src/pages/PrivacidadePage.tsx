@@ -119,7 +119,7 @@ export default function PrivacidadePage() {
               </li>
               <li>
                 Cumprir obrigações legais, regulatórias e fiscais aplicáveis
-                ao exercício profissional em arquitetura.
+                à atividade da empresa.
               </li>
             </ul>
           </div>
