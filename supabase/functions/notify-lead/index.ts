@@ -39,9 +39,7 @@ type StepResult = {
   error?: string;
 };
 
-type CrmResult =
-  | { status: "sent" | "skipped" }
-  | { status: "error"; http_status?: number; body?: string; error?: string };
+type CrmResult = Outcome;
 
 function fmtDateBR(d: Date): string {
   try {
