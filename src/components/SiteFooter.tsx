@@ -36,6 +36,9 @@ export default function SiteFooter() {
             mobiliário e entrega em um processo único.
           </p>
           <p style={{ marginTop: 10 }}>{CONTACT.city}</p>
+          <p style={{ marginTop: 10, fontSize: "0.85em", opacity: 0.75 }}>
+            CNPJ 47.350.338/0001-37
+          </p>
         </div>
 
         <nav aria-label="Rodapé — navegação">
