@@ -9,6 +9,7 @@
  */
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useSeo } from "@/lib/useSeo";
+import BewildSiteNav from "@/components/BewildSiteNav";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import { useBewildProject } from "@/lib/useBewildProject";
 import { bewildTypeLabel } from "@/lib/useBewildProjects";
@@ -156,13 +157,7 @@ export default function BewildProjectPage({ slug }: Props) {
   if (loading) {
     return (
       <div className="bw-home bw-detail">
-        <header className="nav">
-          <div className="nav-inner">
-            <a href="/" aria-label="Bewild — início">
-              <BrandLockup />
-            </a>
-          </div>
-        </header>
+        <BewildSiteNav />
         <div className="container">
           <div className="pd-skeleton" aria-busy="true" aria-live="polite" />
         </div>
@@ -175,11 +170,7 @@ export default function BewildProjectPage({ slug }: Props) {
   if (error || !project) {
     return (
       <div className="bw-home bw-detail">
-        <header className="nav">
-          <div className="nav-inner">
-            <a href="/"><BrandLockup /></a>
-          </div>
-        </header>
+        <BewildSiteNav />
         <div className="container" style={{ padding: "160px 28px", textAlign: "center" }}>
           <p>Não conseguimos carregar este projeto agora. <a href="/portfolio">Voltar ao portfólio</a>.</p>
         </div>
@@ -193,25 +184,7 @@ export default function BewildProjectPage({ slug }: Props) {
   return (
     <div className="bw-home bw-detail">
       {/* NAV */}
-      <header className="nav">
-        <div className="nav-inner">
-          <a href="/" aria-label="Bewild — início">
-            <BrandLockup />
-          </a>
-          <nav className="nav-links" aria-label="Navegação principal">
-            <a href="/#fazemos">O que fazemos</a>
-            <a href="/#processo">Como funciona</a>
-            <a href="/portfolio" aria-current="page">Portfólio</a>
-            <a href="/#diferenciais">Diferenciais</a>
-            <a href="/#faq">FAQ</a>
-          </nav>
-          <div className="nav-cta">
-            <a href="/diagnostico" className="btn btn-primary">
-              Solicitar diagnóstico <span className="arrow">→</span>
-            </a>
-          </div>
-        </div>
-      </header>
+      <BewildSiteNav />
 
       {/* HEADER */}
       <section className="pd-head">

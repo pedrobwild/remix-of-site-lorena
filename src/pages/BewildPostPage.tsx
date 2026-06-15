@@ -9,6 +9,7 @@
 import { useMemo } from "react";
 import { marked } from "marked";
 import { useSeo } from "@/lib/useSeo";
+import BewildSiteNav from "@/components/BewildSiteNav";
 import { sanitizeBlogHtml } from "@/lib/sanitizeHtml";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import {
@@ -143,16 +144,7 @@ export default function BewildPostPage({ slug }: Props) {
   if (notFound) {
     return (
       <div className="bw-home bw-post">
-        <header className="nav">
-          <div className="nav-inner">
-            <a href="/" aria-label="Bewild — início"><BrandLockup /></a>
-            <div className="nav-cta">
-              <a href="/conteudos" className="btn btn-primary">
-                Ver conteúdos <span className="arrow">→</span>
-              </a>
-            </div>
-          </div>
-        </header>
+        <BewildSiteNav />
         <section className="pt-hero">
           <div className="container">
             <div className="pt-cat">404</div>
@@ -177,23 +169,7 @@ export default function BewildPostPage({ slug }: Props) {
   if (loading || !post) {
     return (
       <div className="bw-home bw-post">
-        <header className="nav">
-          <div className="nav-inner">
-            <a href="/" aria-label="Bewild — início"><BrandLockup /></a>
-            <nav className="nav-links" aria-label="Navegação principal">
-              <a href="/#fazemos">O que fazemos</a>
-              <a href="/#processo">Como funciona</a>
-              <a href="/portfolio">Portfólio</a>
-              <a href="/conteudos" aria-current="page">Conteúdos</a>
-              <a href="/#faq">FAQ</a>
-            </nav>
-            <div className="nav-cta">
-              <a href="/diagnostico" className="btn btn-primary">
-                Solicitar diagnóstico <span className="arrow">→</span>
-              </a>
-            </div>
-          </div>
-        </header>
+        <BewildSiteNav />
         <section className="pt-hero" aria-busy="true" aria-live="polite">
           <div className="container">
             <div className="pt-cat">Carregando…</div>
@@ -207,23 +183,7 @@ export default function BewildPostPage({ slug }: Props) {
   return (
     <div className="bw-home bw-post">
       {/* NAV */}
-      <header className="nav">
-        <div className="nav-inner">
-          <a href="/" aria-label="Bewild — início"><BrandLockup /></a>
-          <nav className="nav-links" aria-label="Navegação principal">
-            <a href="/#fazemos">O que fazemos</a>
-            <a href="/#processo">Como funciona</a>
-            <a href="/portfolio">Portfólio</a>
-            <a href="/conteudos" aria-current="page">Conteúdos</a>
-            <a href="/#faq">FAQ</a>
-          </nav>
-          <div className="nav-cta">
-            <a href="/diagnostico" className="btn btn-primary">
-              Solicitar diagnóstico <span className="arrow">→</span>
-            </a>
-          </div>
-        </div>
-      </header>
+      <BewildSiteNav />
 
       <article>
         {/* HERO */}
