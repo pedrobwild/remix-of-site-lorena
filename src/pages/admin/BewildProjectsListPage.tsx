@@ -152,7 +152,7 @@ export default function BewildProjectsListPage() {
                   </button>
                 </td>
                 <td style={{ textAlign: "right" }}>
-                  <a className="admin-link" href={`/admin/bewild/${r.slug}`}>
+                  <a className="admin-link" href={`/admin/projetos/${r.slug}`}>
                     editar
                   </a>
                   {"  ·  "}
@@ -176,6 +176,6 @@ export default function BewildProjectsListPage() {
           </tbody>
         </table>
       </div>
-    </AdminLayout>
+    </BewildAdminShell>
   );
 }
