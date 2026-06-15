@@ -36,6 +36,8 @@ export type Route =
   | { name: "admin-blog-edit"; slug: string }
   | { name: "admin-typography" }
   | { name: "admin-leads" }
+  | { name: "admin-projetos" }
+  | { name: "admin-conteudos" }
   | { name: "not-found" };
 
 function parsePath(rawPath: string): Route {
@@ -95,6 +97,8 @@ function parsePath(rawPath: string): Route {
   if (adminBlogEdit) return { name: "admin-blog-edit", slug: adminBlogEdit[1] };
   if (path === "/admin/typography") return { name: "admin-typography" };
   if (path === "/admin/leads") return { name: "admin-leads" };
+  if (path === "/admin/projetos") return { name: "admin-projetos" };
+  if (path === "/admin/conteudos") return { name: "admin-conteudos" };
 
   return { name: "not-found" };
 }

@@ -65,6 +65,8 @@ const SPA_ONLY_ALLOWED = new Set([
   "/admin/blog/new",
   "/admin/typography",
   "/admin/leads",
+  "/admin/projetos",
+  "/admin/conteudos",
 ]);
 
 /** Rotas que existem na edge function mas não na SPA por design. */
