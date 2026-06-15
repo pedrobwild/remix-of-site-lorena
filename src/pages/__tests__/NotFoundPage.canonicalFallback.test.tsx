@@ -14,7 +14,7 @@ import {
  * --------------------
  * `applySeo` em `src/lib/useSeo.ts` faz:
  *
- *   const base = (settings.seo_canonical_base || "https://lorenaalvesarq.com")
+ *   const base = (settings.seo_canonical_base || "https://bewild.com.br")
  *     .replace(/\/$/, "");
  *
  * Esse fallback existe porque `site_settings` é um registro único editado
@@ -26,7 +26,7 @@ import {
  * Estes testes "envenenam" o mock de `fetchSiteSettings` com cada
  * representação plausível de "ausente" (`null`, `undefined`, `""`)
  * e exigem que o canonical resultante continue sendo a URL absoluta
- * de produção (`https://lorenaalvesarq.com/404`).
+ * de produção (`https://bewild.com.br/404`).
  *
  * O teste roda parametrizado via `it.each` para deixar explícito no log
  * de CI qual variante quebrou.
@@ -76,7 +76,7 @@ afterEach(() => {
   cleanup();
 });
 
-const FALLBACK_BASE = "https://lorenaalvesarq.com";
+const FALLBACK_BASE = "https://bewild.com.br";
 const EXPECTED_CANONICAL = `${FALLBACK_BASE}/404`;
 
 describe("NotFoundPage — canonical sobrevive a seo_canonical_base ausente", () => {
@@ -97,8 +97,8 @@ describe("NotFoundPage — canonical sobrevive a seo_canonical_base ausente", ()
     "quando seo_canonical_base é $label, canonical cai no fallback de produção",
     async ({ value }) => {
       fetchSiteSettingsMock.mockResolvedValue({
-        site_title: "Lorena Alves Arquitetura",
-        site_description: "Estúdio de arquitetura em Uberlândia/MG",
+        site_title: "Bewild",
+        site_description: "Bewild prepara studios para short stay",
         // Valor sob teste — pode ser null, undefined, vazio ou whitespace.
         seo_canonical_base: value as string | null | undefined,
         seo_robots: "index, follow",
@@ -128,8 +128,8 @@ describe("NotFoundPage — canonical sobrevive a seo_canonical_base ausente", ()
     // Caso mais comum em produção (coluna nullable no Postgres devolve null).
     // Asserção estrita para travar o valor exato esperado pelo Search Console.
     fetchSiteSettingsMock.mockResolvedValue({
-      site_title: "Lorena Alves Arquitetura",
-      site_description: "Estúdio de arquitetura em Uberlândia/MG",
+      site_title: "Bewild",
+      site_description: "Bewild prepara studios para short stay",
       seo_canonical_base: null,
       seo_robots: "index, follow",
     });
@@ -159,7 +159,7 @@ describe("NotFoundPage — canonical sobrevive a seo_canonical_base ausente", ()
     // O regex `.replace(/\/$/, "")` em useSeo.ts cuida disso — este teste
     // garante que a normalização não regrida.
     fetchSiteSettingsMock.mockResolvedValue({
-      seo_canonical_base: "https://lorenaalvesarq.com/",
+      seo_canonical_base: "https://bewild.com.br/",
     });
 
     render(<NotFoundPage />);
@@ -196,15 +196,15 @@ describe("NotFoundPage — canonical sobrevive a seo_canonical_base ausente", ()
   // ---------------------------------------------------------------------------
   describe("canonical sempre usa https:// (nunca http://)", () => {
     it.each([
-      { label: "http minúsculo", value: "http://lorenaalvesarq.com" },
-      { label: "HTTP maiúsculo", value: "HTTP://lorenaalvesarq.com" },
-      { label: "http com barra final", value: "http://lorenaalvesarq.com/" },
-      { label: "http em domínio alternativo", value: "http://www.lorenaalvesarq.com" },
+      { label: "http minúsculo", value: "http://bewild.com.br" },
+      { label: "HTTP maiúsculo", value: "HTTP://bewild.com.br" },
+      { label: "http com barra final", value: "http://bewild.com.br/" },
+      { label: "http em domínio alternativo", value: "http://www.bewild.com.br" },
     ])(
       "quando seo_canonical_base começa com $label, canonical é promovido para https://",
       async ({ value }) => {
         fetchSiteSettingsMock.mockResolvedValue({
-          site_title: "Lorena Alves Arquitetura",
+          site_title: "Bewild",
           seo_canonical_base: value,
           seo_robots: "index, follow",
         });
@@ -227,7 +227,7 @@ describe("NotFoundPage — canonical sobrevive a seo_canonical_base ausente", ()
       // Defesa contra regressão: se alguém substituir o regex por algo
       // mais agressivo (ex.: replace("http", "https")), https vira httpss.
       fetchSiteSettingsMock.mockResolvedValue({
-        seo_canonical_base: "https://lorenaalvesarq.com",
+        seo_canonical_base: "https://bewild.com.br",
       });
 
       render(<NotFoundPage />);
@@ -244,7 +244,7 @@ describe("NotFoundPage — canonical sobrevive a seo_canonical_base ausente", ()
       // Caso composto: protocolo errado E barra final. Os dois passos
       // de normalização devem operar em conjunto e produzir a URL canônica.
       fetchSiteSettingsMock.mockResolvedValue({
-        seo_canonical_base: "http://lorenaalvesarq.com/",
+        seo_canonical_base: "http://bewild.com.br/",
       });
 
       render(<NotFoundPage />);
@@ -333,12 +333,12 @@ describe("NotFoundPage — canonical sobrevive a seo_canonical_base ausente", ()
   // --------------------
   // `seo_canonical_base` deve conter SOMENTE o origin (protocolo + host),
   // mas o admin é livre — alguém pode colar uma URL completa copiada do
-  // navegador (ex.: "https://lorenaalvesarq.com/portfolio?utm=x") e a base
+  // navegador (ex.: "https://bewild.com.br/portfolio?utm=x") e a base
   // sairia poluída. O resultado seriam canônicos catastróficos:
   //
-  //   base = "https://lorenaalvesarq.com/404"
+  //   base = "https://bewild.com.br/404"
   //   path = "/404"
-  //   canonical = "https://lorenaalvesarq.com/404/404"  ← URL inexistente
+  //   canonical = "https://bewild.com.br/404/404"  ← URL inexistente
   //
   // O Googlebot trataria isso como nova soft-404 e o ciclo se realimentaria.
   //
@@ -349,41 +349,41 @@ describe("NotFoundPage — canonical sobrevive a seo_canonical_base ausente", ()
     it.each([
       {
         label: "base já termina em /404 (auto-referência acidental)",
-        value: "https://lorenaalvesarq.com/404",
+        value: "https://bewild.com.br/404",
       },
       {
         label: "base termina em /portfolio (usuário colou URL de página interna)",
-        value: "https://lorenaalvesarq.com/portfolio",
+        value: "https://bewild.com.br/portfolio",
       },
       {
         label: "base com path multinível",
-        value: "https://lorenaalvesarq.com/blog/posts/algum-slug",
+        value: "https://bewild.com.br/blog/posts/algum-slug",
       },
       {
         label: "base com path e barra final",
-        value: "https://lorenaalvesarq.com/sobre/",
+        value: "https://bewild.com.br/sobre/",
       },
       {
         label: "base com querystring (UTMs colados sem querer)",
-        value: "https://lorenaalvesarq.com/?utm_source=admin&utm_medium=copy",
+        value: "https://bewild.com.br/?utm_source=admin&utm_medium=copy",
       },
       {
         label: "base com hash de âncora",
-        value: "https://lorenaalvesarq.com/#contato",
+        value: "https://bewild.com.br/#contato",
       },
       {
         label: "base com path + query + hash combinados",
-        value: "https://lorenaalvesarq.com/blog?ref=x#topo",
+        value: "https://bewild.com.br/blog?ref=x#topo",
       },
       {
         label: "base com path E protocolo http (combina upgrade + strip de path)",
-        value: "http://lorenaalvesarq.com/404",
+        value: "http://bewild.com.br/404",
       },
     ])(
       "quando seo_canonical_base = $label, canonical é exatamente origin + /404",
       async ({ value }) => {
         fetchSiteSettingsMock.mockResolvedValue({
-          site_title: "Lorena Alves Arquitetura",
+          site_title: "Bewild",
           seo_canonical_base: value,
           seo_robots: "index, follow",
         });
@@ -421,11 +421,11 @@ describe("NotFoundPage — canonical sobrevive a seo_canonical_base ausente", ()
     });
 
     it("base completamente inválida (sem protocolo) cai no fallback de produção", async () => {
-      // `new URL("lorenaalvesarq.com")` lança — useSeo deve cair no catch
+      // `new URL("bewild.com.br")` lança — useSeo deve cair no catch
       // e usar o fallback. Sem isso, o canonical sairia como
       // "lorenaalvesarq.com/404" (URL relativa, inválida para canonical).
       fetchSiteSettingsMock.mockResolvedValue({
-        seo_canonical_base: "lorenaalvesarq.com",
+        seo_canonical_base: "bewild.com.br",
       });
 
       render(<NotFoundPage />);

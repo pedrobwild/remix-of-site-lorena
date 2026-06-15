@@ -59,9 +59,9 @@ vi.mock("@/lib/useSiteSettings", async () => {
   return {
     ...actual,
     fetchSiteSettings: vi.fn().mockResolvedValue({
-      site_title: "Lorena Alves Arquitetura",
-      site_description: "Estúdio de arquitetura em Uberlândia/MG",
-      seo_canonical_base: "https://lorenaalvesarq.com",
+      site_title: "Bewild",
+      site_description: "Bewild prepara studios para short stay",
+      seo_canonical_base: "https://bewild.com.br",
       seo_robots: "index, follow",
     }),
     invalidateSiteSettings: vi.fn(),
@@ -123,14 +123,14 @@ describe("NotFoundPage — proteção contra soft-404", () => {
 
   it("injeta <link rel=\"canonical\"> apontando para base + /404", async () => {
     // useSeo é chamado com canonicalPath: "/404" e o mock de site_settings
-    // devolve seo_canonical_base = "https://lorenaalvesarq.com".
-    // O canonical resultante DEVE ser exatamente "https://lorenaalvesarq.com/404"
+    // devolve seo_canonical_base = "https://bewild.com.br".
+    // O canonical resultante DEVE ser exatamente "https://bewild.com.br/404"
     // — isso impede que o Google trate múltiplas URLs inexistentes como
     // duplicatas distintas (todas apontam para o mesmo canonical de 404).
     render(<NotFoundPage />);
 
     await waitFor(() => {
-      expect(getCanonicalHref()).toBe("https://lorenaalvesarq.com/404");
+      expect(getCanonicalHref()).toBe("https://bewild.com.br/404");
     });
   });
 
@@ -199,7 +199,7 @@ describe("NotFoundPage — proteção contra soft-404", () => {
     it("og:url aponta para o canonical da 404 (consolida sinais sociais)", async () => {
       render(<NotFoundPage />);
       await waitFor(() => {
-        expect(getOgUrl()).toBe("https://lorenaalvesarq.com/404");
+        expect(getOgUrl()).toBe("https://bewild.com.br/404");
       });
     });
 

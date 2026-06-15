@@ -49,9 +49,9 @@ vi.mock("@/lib/useSiteSettings", async () => {
   return {
     ...actual,
     fetchSiteSettings: vi.fn().mockResolvedValue({
-      site_title: "Lorena Alves Arquitetura",
-      site_description: "Estúdio de arquitetura em Uberlândia/MG",
-      seo_canonical_base: "https://lorenaalvesarq.com",
+      site_title: "Bewild",
+      site_description: "Bewild prepara studios para short stay",
+      seo_canonical_base: "https://bewild.com.br",
       seo_robots: "index, follow",
     }),
     invalidateSiteSettings: vi.fn(),
