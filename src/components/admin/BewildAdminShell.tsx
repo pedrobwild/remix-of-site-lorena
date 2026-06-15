@@ -4,7 +4,7 @@
  * - Branding "Bewild · Painel" à esquerda.
  * - 4 abas: Visão geral · Leads · Projetos · Conteúdos.
  * - Botão Sair à direita (encerra sessão Supabase).
- * - Sem sidebar. Independente do AdminLayout antigo (Lorena/Be Wild).
+ * - Sem sidebar. Independente do AdminLayout antigo (legado).
  *
  * Os ícones são SVGs do lucide-react (que já é usado no projeto), conforme
  * o guardrail "ícones em SVG, nunca emoji".

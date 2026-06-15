@@ -5,7 +5,7 @@
  * Visual reusa o sistema da home (.bw-home) e adiciona seções específicas
  * em src/styles/portfolio.css prefixadas por .bw-portfolio.
  *
- * Portfólio antigo Lorena segue funcionando intacto em /portfolio-lorena.
+ * Portfólio legado foi descontinuado.
  */
 import { useMemo, useState } from "react";
 import { useSeo } from "@/lib/useSeo";

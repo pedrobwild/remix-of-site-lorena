@@ -151,7 +151,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
       setError("Slug inválido. Use só letras minúsculas, números e hífens.");
       return;
     }
-    // Tag (Lorena) é NOT NULL com CHECK — preenchemos um valor padrão para
+    // Tag (legado) é NOT NULL com CHECK — preenchemos um valor padrão para
     // projetos Bewild novos, já que esta área não usa o campo "tag" antigo.
     const TAG_FALLBACK = "Interiores";
 
