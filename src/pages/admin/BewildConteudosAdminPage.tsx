@@ -66,7 +66,7 @@ export default function BewildConteudosAdminPage() {
     const next = !r.published;
     const patch: Record<string, unknown> = { published: next };
     if (next && !r.published_at) patch.published_at = new Date().toISOString();
-    await supabase.from("bewild_posts" as never).update(patch).eq("id", r.id);
+    await supabase.from("bewild_posts" as never).update(patch as never).eq("id", r.id);
     setBusy(null);
     load();
   }
@@ -75,8 +75,9 @@ export default function BewildConteudosAdminPage() {
     setBusy(r.id);
     await supabase
       .from("bewild_posts" as never)
-      .update({ featured: !r.featured })
+      .update({ featured: !r.featured } as never)
       .eq("id", r.id);
+
     setBusy(null);
     load();
   }

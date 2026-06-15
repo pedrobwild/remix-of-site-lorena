@@ -168,7 +168,7 @@ export default function BewildOverviewPage() {
 
       if (cancelled) return;
 
-      const kpi = Array.isArray(kpiRes.data) ? kpiRes.data[0] : null;
+      const kpi = (Array.isArray(kpiRes.data) ? kpiRes.data[0] : null) as Record<string, number | string | null> | null;
       setKpis(
         kpi
           ? {
@@ -183,6 +183,7 @@ export default function BewildOverviewPage() {
             }
           : null
       );
+
 
       const paths = (pathsRes.data ?? []) as TopPath[];
       setTopPaths(paths);

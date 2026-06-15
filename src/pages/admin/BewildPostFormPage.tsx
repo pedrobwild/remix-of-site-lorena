@@ -155,15 +155,16 @@ export default function BewildPostFormPage({ slug }: Props) {
 
     let result;
     if (isNew) {
-      result = await supabase.from("bewild_posts" as never).insert(payload).select("slug").single();
+      result = await supabase.from("bewild_posts" as never).insert(payload as never).select("slug").single();
     } else if (postId) {
       result = await supabase
         .from("bewild_posts" as never)
-        .update(payload)
+        .update(payload as never)
         .eq("id", postId)
         .select("slug")
         .single();
     }
+
     setSaving(false);
     if (result?.error) {
       setError(result.error.message);
