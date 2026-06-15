@@ -236,46 +236,41 @@ function DiagnosticoForm() {
     if (f.chaves) scope.push(`chaves:${f.chaves}`);
     if (f.planta) scope.push(`planta:${f.planta}`);
 
-    try {
-      const areaDigits = f.metragem ? digits(f.metragem) : "";
-      const areaNum = areaDigits ? Number(areaDigits) : null;
-      const leadPayload = {
-        name: f.nome.trim(),
-        whatsapp: digits(f.whats),
-        email: f.email.trim() || null,
-        location: f.local.trim() || null,
-        area_m2: Number.isFinite(areaNum as number) ? (areaNum as number) : null,
-        objetivo: f.objetivo || null,
-        chaves: f.chaves || null,
-        planta: f.planta || null,
-        message: f.mensagem.trim() || null,
-        utm_source: params?.get("utm_source") ?? null,
-        utm_medium: params?.get("utm_medium") ?? null,
-        utm_campaign: params?.get("utm_campaign") ?? null,
-        referrer: typeof document !== "undefined" ? document.referrer || null : null,
-        landing_path: typeof window !== "undefined" ? window.location.pathname : null,
-        user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
-      };
-      const { error } = await supabase.from("leads").insert(leadPayload);
-      if (error) throw error;
+    const areaDigits = f.metragem ? digits(f.metragem) : "";
+    const areaNum = areaDigits ? Number(areaDigits) : null;
+    const leadPayload = {
+      name: f.nome.trim(),
+      whatsapp: digits(f.whats),
+      email: f.email.trim() || null,
+      location: f.local.trim() || null,
+      area_m2: Number.isFinite(areaNum as number) ? (areaNum as number) : null,
+      objetivo: f.objetivo || null,
+      chaves: f.chaves || null,
+      planta: f.planta || null,
+      message: f.mensagem.trim() || null,
+      utm_source: params?.get("utm_source") ?? null,
+      utm_medium: params?.get("utm_medium") ?? null,
+      utm_campaign: params?.get("utm_campaign") ?? null,
+      referrer: typeof document !== "undefined" ? document.referrer || null : null,
+      landing_path: typeof window !== "undefined" ? window.location.pathname : null,
+      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+    };
 
-      // Fire-and-forget: notify Slack via edge function. Do NOT await,
-      // so the WhatsApp window opens immediately. We don't need the DB id
-      // here because the `leads` table is not readable by anon (RLS).
-      void supabase.functions
-        .invoke("notify-lead", { body: leadPayload })
-        .catch((err) => {
-          console.error("[notify-lead] invoke failed", err);
-        });
-    } catch (err) {
-      console.error("[leads] insert failed", err);
-    }
+    // Fire-and-forget: the edge function owns the database write, Slack and CRM.
+    // We do not await it, so the WhatsApp handoff stays immediate.
+    void supabase.functions
+      .invoke("notify-lead", { body: leadPayload })
+      .catch((err) => {
+        console.error("[notify-lead] invoke failed", err);
+      });
     // unused; kept to avoid breaking previous closure scope
     void scope;
 
 
     const url = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(messageText)}`;
     window.open(url, "_blank", "noopener,noreferrer");
+    setF(EMPTY_FORM);
+    setTouched({});
     setSuccess(true);
     setSubmitting(false);
   }
