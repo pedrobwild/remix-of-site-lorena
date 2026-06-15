@@ -17,9 +17,9 @@ export default function FaqPage() {
 
   useSeo({
     title:
-      "Perguntas Frequentes — Arquiteta em Uberlândia | Lorena Alves Arquitetura",
+      "Perguntas frequentes sobre reforma turn-key de studios | Bewild",
     description:
-      "Tire suas dúvidas sobre projetos de arquitetura e interiores: prazos, valores, atendimento em Uberlândia/MG e Triângulo Mineiro, processo de obra e contratação.",
+      "Tire suas dúvidas sobre a reforma turn-key de studios para short stay em São Paulo: prazos, garantias, como funciona o processo do projeto à entrega pronta para rentabilizar, e contratação.",
     canonicalPath: "/faq",
     ogType: "website",
     jsonLd:
@@ -41,14 +41,14 @@ export default function FaqPage() {
 
       {/* Header — H1 da página */}
       <header className="pf-head">
-        <p className="pf-head__eyebrow mono">FAQ · Lorena Alves Arquitetura</p>
+        <p className="pf-head__eyebrow mono">FAQ · Bewild</p>
         <h1 className="pf-head__title">
           Perguntas <em>frequentes</em>.
         </h1>
         <p className="pf-head__lede">
-          Reunimos abaixo as dúvidas mais comuns sobre o trabalho do estúdio —
-          de atendimento em Uberlândia e no Triângulo Mineiro a prazos, valores
-          e como funciona o processo, da escuta à entrega.
+          Reunimos abaixo as dúvidas mais comuns sobre a reforma turn-key de
+          studios da Bewild: do projeto à entrega pronta para anunciar, prazos,
+          garantias e como funciona o processo, da obra à operação.
         </p>
       </header>
 
