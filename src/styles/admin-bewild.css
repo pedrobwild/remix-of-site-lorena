@@ -1,0 +1,254 @@
+/**
+ * BewildAdminShell — topbar + 4 abas. Escopado em `.bw-admin`.
+ * Independente do AdminLayout antigo (sidebar Lorena/Be Wild).
+ *
+ * Paleta: navy #11355B, cyan #2F86B8, sand #F2ECE1, paper #FAFAF7.
+ * Tipografia: Poppins (display/headings), Inter (UI/body).
+ */
+
+.bw-admin {
+  --bw-navy: #11355B;
+  --bw-cyan: #2F86B8;
+  --bw-sand: #F2ECE1;
+  --bw-paper: #FAFAF7;
+  --bw-ink: #0E1B2C;
+  --bw-muted: #5A6A7D;
+  --bw-line: #E6E1D6;
+  --bw-line-strong: #D8D2C4;
+
+  min-height: 100vh;
+  background: var(--bw-paper);
+  color: var(--bw-ink);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Topbar ---------- */
+.bw-admin__topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: #fff;
+  border-bottom: 1px solid var(--bw-line);
+}
+
+.bw-admin__topbar-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 14px 28px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Brand "Bewild · Painel" */
+.bw-admin__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--bw-navy);
+  font-family: "Poppins", "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.bw-admin__brand b { font-weight: 700; }
+.bw-admin__brand-dot {
+  color: var(--bw-cyan);
+  font-weight: 700;
+  padding: 0 2px;
+}
+.bw-admin__brand-sub {
+  color: var(--bw-muted);
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Abas */
+.bw-admin__tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.bw-admin__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  text-decoration: none;
+  color: var(--bw-muted);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+  white-space: nowrap;
+}
+
+.bw-admin__tab:hover {
+  color: var(--bw-navy);
+  background: var(--bw-sand);
+}
+
+.bw-admin__tab.is-active {
+  color: var(--bw-navy);
+  background: var(--bw-sand);
+  border-color: var(--bw-line-strong);
+  font-weight: 600;
+}
+
+.bw-admin__tab svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* Direita: e-mail + Sair */
+.bw-admin__right {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.bw-admin__user {
+  color: var(--bw-muted);
+  font-size: 13px;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bw-admin__signout {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--bw-line-strong);
+  background: #fff;
+  color: var(--bw-navy);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.bw-admin__signout:hover {
+  background: var(--bw-sand);
+  border-color: var(--bw-navy);
+}
+
+.bw-admin__signout svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* Mobile menu toggle */
+.bw-admin__menu-btn {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--bw-line-strong);
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  color: var(--bw-navy);
+}
+
+.bw-admin__menu-btn svg { width: 18px; height: 18px; }
+
+/* ---------- Conteúdo ---------- */
+.bw-admin__content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 28px 80px;
+}
+
+.bw-admin__page-head {
+  margin-bottom: 28px;
+}
+
+.bw-admin__eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bw-cyan);
+  margin-bottom: 10px;
+}
+
+.bw-admin__page-title {
+  font-family: "Poppins", "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--bw-navy);
+  margin: 0 0 6px;
+}
+
+.bw-admin__page-desc {
+  color: var(--bw-muted);
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 60ch;
+}
+
+/* Placeholder/empty state */
+.bw-admin__placeholder {
+  margin-top: 24px;
+  padding: 48px 32px;
+  background: #fff;
+  border: 1px dashed var(--bw-line-strong);
+  border-radius: 14px;
+  text-align: center;
+  color: var(--bw-muted);
+  font-size: 14px;
+}
+
+.bw-admin__placeholder strong {
+  display: block;
+  color: var(--bw-navy);
+  font-family: "Poppins", "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 880px) {
+  .bw-admin__topbar-inner {
+    grid-template-columns: auto auto;
+    padding: 12px 18px;
+  }
+  .bw-admin__tabs {
+    display: none;
+    grid-column: 1 / -1;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding-top: 10px;
+    border-top: 1px solid var(--bw-line);
+    margin-top: 10px;
+  }
+  .bw-admin--mobile-open .bw-admin__tabs {
+    display: flex;
+  }
+  .bw-admin__tab {
+    justify-content: flex-start;
+  }
+  .bw-admin__menu-btn { display: inline-flex; }
+  .bw-admin__user { display: none; }
+  .bw-admin__content { padding: 24px 18px 64px; }
+  .bw-admin__page-title { font-size: 24px; }
+}

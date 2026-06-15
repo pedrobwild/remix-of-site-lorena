@@ -30,7 +30,11 @@ import BlogTagsPage from "./pages/BlogTagsPage";
 import BlogTagPage from "./pages/BlogTagPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import LoginPage from "./pages/admin/LoginPage";
-import DashboardPage from "./pages/admin/DashboardPage";
+
+import BewildOverviewPage from "./pages/admin/BewildOverviewPage";
+import BewildLeadsAdminPage from "./pages/admin/BewildLeadsAdminPage";
+import BewildProjetosAdminPage from "./pages/admin/BewildProjetosAdminPage";
+import BewildConteudosAdminPage from "./pages/admin/BewildConteudosAdminPage";
 import AnalyticsPage from "./pages/admin/AnalyticsPage";
 import SeoPage from "./pages/admin/SeoPage";
 import Seo404Page from "./pages/admin/Seo404Page";
@@ -43,7 +47,7 @@ import FaqAdminPage from "./pages/admin/FaqAdminPage";
 import BlogListPage from "./pages/admin/BlogListPage";
 import BlogFormPage from "./pages/admin/BlogFormPage";
 import TypographyPage from "./pages/admin/TypographyPage";
-import LeadsPage from "./pages/admin/LeadsPage";
+
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import type { Route } from "./lib/useHashRoute";
 
@@ -68,7 +72,7 @@ export function renderRoute(route: Route) {
   if (route.name === "admin-dashboard")
     return (
       <ProtectedRoute>
-        <DashboardPage />
+        <BewildOverviewPage />
       </ProtectedRoute>
     );
   if (route.name === "admin-analytics")
@@ -164,7 +168,19 @@ export function renderRoute(route: Route) {
   if (route.name === "admin-leads")
     return (
       <ProtectedRoute>
-        <LeadsPage />
+        <BewildLeadsAdminPage />
+      </ProtectedRoute>
+    );
+  if (route.name === "admin-projetos")
+    return (
+      <ProtectedRoute>
+        <BewildProjetosAdminPage />
+      </ProtectedRoute>
+    );
+  if (route.name === "admin-conteudos")
+    return (
+      <ProtectedRoute>
+        <BewildConteudosAdminPage />
       </ProtectedRoute>
     );
   // Home (com ou sem âncora) — única rota que renderiza o App principal
