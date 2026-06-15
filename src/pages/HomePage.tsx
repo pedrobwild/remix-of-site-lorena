@@ -167,7 +167,9 @@ export default function HomePage() {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
         const y = window.scrollY;
-        heroBg.style.transform = `translate3d(0, ${y * 0.35}px, 0)`;
+        if (y < window.innerHeight) {
+          heroBg.style.transform = `translate3d(0, ${y * 0.35}px, 0)`;
+        }
       });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -696,7 +698,7 @@ export default function HomePage() {
             <p style={{ marginTop: 10 }}>{CONTACT.city}</p>
           </div>
           <nav aria-label="Rodapé — navegação">
-            <h3 className="foot-col">Navegação</h3>
+            <h4 className="foot-col">Navegação</h4>
             <ul>
               <li><a href="#fazemos">O que fazemos</a></li>
               <li><a href="#processo">Como funciona</a></li>
@@ -706,7 +708,7 @@ export default function HomePage() {
             </ul>
           </nav>
           <div>
-            <h3 className="foot-col">Contato</h3>
+            <h4 className="foot-col">Contato</h4>
             <ul>
               <li><a href={whatsappHref()} target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
               <li><a href={CONTACT.instagram} target="_blank" rel="noopener noreferrer">Instagram</a></li>
