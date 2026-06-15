@@ -151,7 +151,7 @@ describe("NotFoundPage — proteção contra soft-404", () => {
   // Quando alguém compartilha uma URL inválida no WhatsApp / X / LinkedIn /
   // Facebook, o crawler dessas redes lê as meta tags `og:*` e `twitter:*` e
   // monta um preview. Se a 404 reaproveitar o OG genérico do site, o preview
-  // mostra "Lorena Alves Arquitetura — Estúdio de arquitetura..." como se
+  // mostra "Bewild — Estúdio de arquitetura..." como se
   // fosse uma página real — confundindo o usuário.
   //
   // Estes testes garantem que:

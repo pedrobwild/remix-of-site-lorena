@@ -178,7 +178,7 @@ describe("NotFoundPage — canonical sobrevive a seo_canonical_base ausente", ()
   //
   // Por que isso importa
   // --------------------
-  // O domínio lorenaalvesarq.com serve HTTPS com HSTS. Se o canonical sair
+  // O domínio bewild.com.br serve HTTPS com HSTS. Se o canonical sair
   // como `http://...`, o Googlebot vai:
   //   1. Seguir o canonical e bater em http://
   //   2. Receber 301 do servidor para https://
@@ -410,20 +410,20 @@ describe("NotFoundPage — canonical sobrevive a seo_canonical_base ausente", ()
       // Caso de migração: admin testando em subdomain. Devemos respeitar o
       // host configurado, mas descartar o path indevido.
       fetchSiteSettingsMock.mockResolvedValue({
-        seo_canonical_base: "https://staging.lorenaalvesarq.com/qualquer-coisa",
+        seo_canonical_base: "https://staging.bewild.com.br/qualquer-coisa",
       });
 
       render(<NotFoundPage />);
 
       await waitFor(() => {
-        expect(getCanonicalHref()).toBe("https://staging.lorenaalvesarq.com/404");
+        expect(getCanonicalHref()).toBe("https://staging.bewild.com.br/404");
       });
     });
 
     it("base completamente inválida (sem protocolo) cai no fallback de produção", async () => {
       // `new URL("bewild.com.br")` lança — useSeo deve cair no catch
       // e usar o fallback. Sem isso, o canonical sairia como
-      // "lorenaalvesarq.com/404" (URL relativa, inválida para canonical).
+      // "bewild.com.br/404" (URL relativa, inválida para canonical).
       fetchSiteSettingsMock.mockResolvedValue({
         seo_canonical_base: "bewild.com.br",
       });
