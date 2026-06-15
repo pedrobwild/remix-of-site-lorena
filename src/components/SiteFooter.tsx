@@ -39,6 +39,9 @@ export default function SiteFooter() {
           <p style={{ marginTop: 10, fontSize: "0.85em", opacity: 0.75 }}>
             CNPJ 47.350.338/0001-37
           </p>
+          <p style={{ marginTop: 4, fontSize: "0.85em", opacity: 0.75 }}>
+            Responsável técnico: Thiago Dantas do Amor · CAU A162437-7
+          </p>
         </div>
 
         <nav aria-label="Rodapé — navegação">
