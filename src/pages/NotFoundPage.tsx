@@ -21,9 +21,9 @@ export default function NotFoundPage() {
   const [redirecting, setRedirecting] = useState(false);
 
   useSeo({
-    title: "404 · Página não encontrada — Lorena Alves Arquitetura",
+    title: "404 · Página não encontrada · Bewild",
     description:
-      "A página solicitada não existe ou foi movida. Conheça o portfólio, blog e o estúdio Lorena Alves Arquitetura, em Uberlândia/MG.",
+      "A página solicitada não existe ou foi movida. Conheça o portfólio de reformas turn-key da Bewild para studios em São Paulo.",
     canonicalPath: "/404",
     ogType: "website",
     noindex: true,
