@@ -72,7 +72,7 @@ export default function CookieBanner() {
     >
       <div className="cookie-banner__inner">
         <div className="cookie-banner__text">
-          <p id="cookie-banner-title" className="cookie-banner__title mono">
+          <p id="cookie-banner-title" className="cookie-banner__title">
             Cookies e privacidade
           </p>
           <p className="cookie-banner__desc">
