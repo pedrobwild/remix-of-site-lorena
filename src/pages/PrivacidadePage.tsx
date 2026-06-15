@@ -13,14 +13,14 @@ import BewildSiteNav from "@/components/BewildSiteNav";
 export default function PrivacidadePage() {
   const { settings } = useSiteSettings();
 
-  const contactEmail = settings?.contact_email || "contato@lorenaalvesarq.com";
+  const contactEmail = settings?.contact_email || "contato@bewild.com.br";
   const lastUpdated = "21 de abril de 2026";
 
   useSeo({
     title:
-      "Política de Privacidade — Lorena Alves Arquitetura",
+      "Política de Privacidade · Bewild",
     description:
-      "Política de Privacidade e tratamento de dados pessoais do site Lorena Alves Arquitetura, em conformidade com a LGPD (Lei nº 13.709/2018).",
+      "Política de Privacidade e tratamento de dados pessoais do site da Bewild, em conformidade com a LGPD (Lei nº 13.709/2018).",
     canonicalPath: "/privacidade",
     ogType: "website",
     jsonLd: settings
@@ -41,16 +41,15 @@ export default function PrivacidadePage() {
       {/* Header — H1 */}
       <header className="pf-head">
         <p className="pf-head__eyebrow mono">
-          Política · Lorena Alves Arquitetura
+          Política · Bewild
         </p>
         <h1 className="pf-head__title">
           Política de <em>privacidade</em>.
         </h1>
         <p className="pf-head__lede">
-          O estúdio Lorena Alves Arquitetura respeita sua privacidade e está
-          comprometido com a transparência no tratamento de dados pessoais, em
-          conformidade com a Lei Geral de Proteção de Dados (Lei nº
-          13.709/2018).
+          A Bewild respeita sua privacidade e está comprometida com a
+          transparência no tratamento de dados pessoais, em conformidade com a
+          Lei Geral de Proteção de Dados (Lei nº 13.709/2018).
         </p>
         <p className="pf-head__meta mono">Última atualização: {lastUpdated}</p>
       </header>
@@ -65,10 +64,8 @@ export default function PrivacidadePage() {
           <h2 className="privacidade-page__q">Quem é o controlador dos dados</h2>
           <div className="privacidade-page__a">
             <p>
-              <strong>Lorena Alves Arquitetura</strong>, estabelecida em
-              Uberlândia/MG
-              {settings?.cnpj && <>, inscrita no CNPJ {settings.cnpj}</>}
-              {settings?.cau && <> e registrada no CAU sob o número {settings.cau}</>},
+              <strong>Bewild</strong> (Grupo Bwild), estabelecida em São Paulo/SP
+              {settings?.cnpj && <>, inscrita no CNPJ {settings.cnpj}</>},
               é a controladora dos dados pessoais tratados por meio deste site,
               sendo responsável pelas decisões sobre o tratamento desses dados.
             </p>
