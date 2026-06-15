@@ -498,7 +498,7 @@ export function professionalServiceJsonLd(s: SiteSettings) {
     priceRange: s.business_price_range || undefined,
     foundingDate: s.business_founding_year || undefined,
     openingHours: s.business_opening_hours || undefined,
-    areaServed: s.seo_geo_placename || "Uberlândia, Minas Gerais",
+    areaServed: s.seo_geo_placename || "São Paulo, SP",
     hasMap: s.google_maps_url || undefined,
     address,
     geo,
@@ -660,25 +660,6 @@ export function organizationJsonLd(s: SiteSettings) {
     email: s.contact_email || undefined,
     telephone: s.contact_phone || undefined,
     foundingDate: s.business_founding_year || undefined,
-    founder: {
-      "@type": "Person",
-      name: "Lorena Alves",
-      jobTitle: "Arquiteta e Urbanista",
-      hasCredential: s.cau
-        ? {
-            "@type": "EducationalOccupationalCredential",
-            name: "Registro Profissional CAU",
-            credentialCategory: "Professional Registration",
-            identifier: s.cau,
-            recognizedBy: {
-              "@type": "Organization",
-              name: "Conselho de Arquitetura e Urbanismo do Brasil",
-              alternateName: "CAU/BR",
-              url: "https://www.caubr.gov.br",
-            },
-          }
-        : undefined,
-    },
     taxID: s.cnpj || undefined,
     vatID: s.cnpj || undefined,
     iso6523Code: s.cnpj ? `0007:${s.cnpj.replace(/\D/g, "")}` : undefined,
