@@ -9,6 +9,7 @@ export type Route =
   | { name: "sobre" }
   | { name: "privacidade" }
   | { name: "project"; slug: string }
+  | { name: "bewild-project"; slug: string }
   | { name: "blog" }
 
   | { name: "blog-tags" }
@@ -45,6 +46,9 @@ function parsePath(rawPath: string): Route {
 
   const projMatch = path.match(/^\/projeto\/([a-z0-9-]+)$/);
   if (projMatch) return { name: "project", slug: projMatch[1] };
+
+  const bewildProjMatch = path.match(/^\/portfolio\/([a-z0-9-]+)$/);
+  if (bewildProjMatch) return { name: "bewild-project", slug: bewildProjMatch[1] };
 
   // Conteúdos (público) — canônico
   if (path === "/conteudos") return { name: "blog" };
@@ -161,6 +165,7 @@ export const routes = {
   sobre: "/sobre",
   privacidade: "/privacidade",
   project: (slug: string) => `/projeto/${slug}`,
+  bewildProject: (slug: string) => `/portfolio/${slug}`,
   blog: "/conteudos",
   blogTags: "/conteudos/tags",
   blogTag: (slug: string) => `/conteudos/tag/${slug}`,
