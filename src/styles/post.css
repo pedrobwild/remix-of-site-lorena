@@ -1,0 +1,203 @@
+/**
+ * post.css — estilos exclusivos da página /conteudos/:slug Bewild.
+ * Convive com home.css (wrapper .bw-home) e usa tokens definidos lá.
+ * Tudo prefixado por .bw-post.
+ */
+
+.bw-home.bw-post { background: var(--paper); }
+
+/* HERO */
+.bw-post .pt-hero {
+  padding: 120px 0 28px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+.bw-post .pt-breadcrumb {
+  font-size: 12px;
+  color: var(--muted, #5E6E7C);
+  margin-bottom: 14px;
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+}
+.bw-post .pt-breadcrumb a { color: var(--muted, #5E6E7C); text-decoration: none; }
+.bw-post .pt-breadcrumb a:hover { color: var(--navy); }
+.bw-post .pt-breadcrumb span[aria-hidden="true"] { color: var(--line, #DCE6EE); }
+.bw-post .pt-breadcrumb .pt-current { color: var(--navy); font-weight: 600; }
+
+.bw-post .pt-cat {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--cyan); margin-bottom: 10px;
+}
+.bw-post .pt-title {
+  font-family: var(--display, "Poppins", sans-serif);
+  font-weight: 800;
+  font-size: clamp(30px, 5vw, 52px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--navy);
+  max-width: 22ch;
+  margin: 0 0 18px;
+}
+.bw-post .pt-excerpt {
+  font-size: clamp(16px, 1.6vw, 18px);
+  line-height: 1.55;
+  color: var(--muted, #4f5b66);
+  max-width: 56ch;
+  margin: 0 0 22px;
+}
+.bw-post .pt-meta {
+  font-size: 12.5px;
+  color: var(--muted, #6B6A64);
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.bw-post .pt-meta .pt-dot { color: var(--line, #DCE6EE); }
+
+/* COVER */
+.bw-post .pt-cover-section { padding: 24px 0 0; }
+.bw-post .pt-cover {
+  border-radius: 18px;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(150deg, #1B4470 0%, #0E2C49 100%);
+  box-shadow: 0 30px 60px -36px rgba(11, 35, 66, 0.5);
+}
+.bw-post .pt-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* BODY (markdown sanitizado) */
+.bw-post .pt-body-section { padding: 56px 0 24px; }
+.bw-post .pt-body {
+  max-width: 68ch;
+  margin: 0 auto;
+  font-family: var(--body, "Inter", system-ui, sans-serif);
+  color: #2A3440;
+  font-size: 17px;
+  line-height: 1.72;
+}
+.bw-post .pt-body > * + * { margin-top: 1em; }
+.bw-post .pt-body h2 {
+  font-family: var(--display, "Poppins", sans-serif);
+  font-size: clamp(22px, 2.6vw, 28px);
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.015em;
+  margin-top: 2em;
+  line-height: 1.2;
+}
+.bw-post .pt-body h3 {
+  font-family: var(--display, "Poppins", sans-serif);
+  font-size: clamp(18px, 2.1vw, 22px);
+  font-weight: 700;
+  color: var(--navy);
+  margin-top: 1.6em;
+  line-height: 1.25;
+}
+.bw-post .pt-body h4 {
+  font-family: var(--display, "Poppins", sans-serif);
+  font-size: 17px; font-weight: 700; color: var(--navy);
+  margin-top: 1.4em;
+}
+.bw-post .pt-body a {
+  color: var(--cyan);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+.bw-post .pt-body a:hover { color: var(--navy); }
+.bw-post .pt-body strong { color: var(--navy); font-weight: 700; }
+.bw-post .pt-body ul, .bw-post .pt-body ol { padding-left: 1.4em; }
+.bw-post .pt-body li + li { margin-top: 0.4em; }
+.bw-post .pt-body blockquote {
+  border-left: 3px solid var(--cyan);
+  padding: 4px 0 4px 18px;
+  margin-left: 0; font-style: italic; color: #44525e;
+}
+.bw-post .pt-body img, .bw-post .pt-body picture {
+  display: block; max-width: 100%; height: auto;
+  border-radius: 12px; margin: 1.4em auto;
+}
+.bw-post .pt-body code {
+  background: #f1efe7; padding: 2px 6px; border-radius: 4px;
+  font-size: 0.92em;
+}
+.bw-post .pt-body hr {
+  border: 0; border-top: 1px solid var(--line);
+  margin: 2.2em 0;
+}
+
+/* FAQ */
+.bw-post .pt-faq { padding: 24px 0 40px; }
+.bw-post .pt-faq__inner { max-width: 68ch; margin: 0 auto; }
+.bw-post .pt-faq h2 {
+  font-family: var(--display, "Poppins", sans-serif);
+  font-weight: 800; font-size: clamp(22px, 2.6vw, 28px);
+  color: var(--navy); margin-bottom: 16px; letter-spacing: -0.015em;
+}
+.bw-post .pt-faq details {
+  border-top: 1px solid var(--line);
+  padding: 14px 0;
+}
+.bw-post .pt-faq details:last-of-type { border-bottom: 1px solid var(--line); }
+.bw-post .pt-faq summary {
+  cursor: pointer; list-style: none;
+  font-weight: 700; color: var(--navy);
+  font-family: var(--display, "Poppins", sans-serif);
+  font-size: 16px;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+}
+.bw-post .pt-faq summary::-webkit-details-marker { display: none; }
+.bw-post .pt-faq summary::after {
+  content: "+"; color: var(--cyan); font-weight: 700; font-size: 22px;
+  line-height: 1; transition: transform 0.2s ease;
+}
+.bw-post .pt-faq details[open] summary::after { content: "−"; }
+.bw-post .pt-faq details > p,
+.bw-post .pt-faq details > div {
+  margin-top: 10px;
+  color: #44525e; font-size: 15px; line-height: 1.6;
+}
+
+/* RELATED */
+.bw-post .pt-related { padding: 56px 0 16px; border-top: 1px solid var(--line); margin-top: 24px; }
+.bw-post .pt-related h2 {
+  font-family: var(--display, "Poppins", sans-serif);
+  font-weight: 800; font-size: clamp(22px, 2.6vw, 28px);
+  color: var(--navy); letter-spacing: -0.015em;
+  margin-bottom: 22px;
+}
+.bw-post .pt-related__grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+}
+@media (max-width: 900px) {
+  .bw-post .pt-related__grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .bw-post .pt-related__grid { grid-template-columns: 1fr; }
+}
+
+/* CTA + foot reusam .ct-cta e .foot já existentes via home.css/conteudos.css */
+.bw-post .ct-cta {
+  background: linear-gradient(160deg, #0E2C49, #0B2342);
+  color: #fff; text-align: center; padding: 80px 0;
+}
+.bw-post .ct-cta h2 {
+  color: #fff; max-width: 22ch; margin: 0 auto 14px;
+  font-size: clamp(24px, 3.4vw, 34px);
+}
+.bw-post .ct-cta p {
+  color: rgba(255, 255, 255, 0.82); max-width: 54ch;
+  margin: 0 auto 26px; font-size: 16px;
+}
+.bw-post .ct-cta__btns {
+  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+}
+.bw-post .ct-cta .btn-ghost-light {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+}
+.bw-post .ct-cta .btn-ghost-light:hover { background: rgba(255, 255, 255, 0.14); }
+
+@media (max-width: 760px) {
+  .bw-post .pt-hero { padding-top: 100px; }
+  .bw-post .pt-cover { aspect-ratio: 4 / 3; border-radius: 14px; }
+  .bw-post .pt-body { font-size: 16.5px; }
+}
