@@ -154,7 +154,7 @@ export default function HomePage() {
   useSeo({
     title: "Bewild | Studios prontos para Airbnb e short stay",
     description:
-      "Design, obra, mobiliário e setup para transformar studios em imóveis prontos para short stay em SP — sem você virar gerente de obra.",
+      "Design, obra, mobiliário e setup para transformar studios em imóveis prontos para short stay em SP, sem você virar gerente de obra.",
     canonicalPath: "/",
     ogType: "website",
   });
