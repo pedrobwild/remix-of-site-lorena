@@ -34,6 +34,8 @@ import Seo404Page from "./pages/admin/Seo404Page";
 import SettingsPage from "./pages/admin/SettingsPage";
 import ProjectsListPage from "./pages/admin/ProjectsListPage";
 import ProjectFormPage from "./pages/admin/ProjectFormPage";
+import BewildProjectsListPage from "./pages/admin/BewildProjectsListPage";
+import BewildProjectFormPage from "./pages/admin/BewildProjectFormPage";
 import FaqAdminPage from "./pages/admin/FaqAdminPage";
 import BlogListPage from "./pages/admin/BlogListPage";
 import BlogFormPage from "./pages/admin/BlogFormPage";
