@@ -49,6 +49,13 @@ export default function BewildAdminShell({
     setMobileOpen(false);
   }, [active]);
 
+  // Título da aba do navegador no painel: "Bewild | Painel Admin · {título}".
+  useEffect(() => {
+    document.title = title
+      ? `Bewild | Painel Admin · ${title}`
+      : "Bewild | Painel Admin";
+  }, [title]);
+
   async function handleSignOut() {
     await signOut();
     navigate(routes.adminLogin);

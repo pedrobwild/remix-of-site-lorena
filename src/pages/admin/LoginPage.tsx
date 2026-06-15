@@ -11,6 +11,10 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    document.title = "Bewild | Painel Admin";
+  }, []);
+
+  useEffect(() => {
     if (!loading && user && isAdmin) {
       navigate(routes.adminDashboard);
     }
