@@ -36,7 +36,7 @@ export default function LoginPage() {
   return (
     <div className="bw-login">
       <aside className="bw-login__brandside" aria-hidden="true">
-        <a href={routes.home} className="bw-login__brand" aria-label="Bewild — início">
+        <a href={routes.home} className="bw-login__brand" aria-label="Bewild, início">
           <img src="/brand/bewild-logo-branca.png" alt="" />
         </a>
         <div className="bw-login__pitch">
@@ -53,7 +53,7 @@ export default function LoginPage() {
 
       <main className="bw-login__formside">
         <div className="bw-login__card">
-          <a href={routes.home} className="bw-login__card-brand" aria-label="Bewild — início">
+          <a href={routes.home} className="bw-login__card-brand" aria-label="Bewild, início">
             <img src="/brand/bewild-logo-cropped.png" alt="Bewild" />
           </a>
 
