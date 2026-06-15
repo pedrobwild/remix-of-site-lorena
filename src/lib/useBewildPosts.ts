@@ -9,6 +9,8 @@ export type BewildPostCategory =
   | "operacao"
   | "fiscal";
 
+export type BewildFaqItem = { question: string; answer: string };
+
 export type BewildPost = {
   id: string;
   slug: string;
@@ -19,7 +21,7 @@ export type BewildPost = {
   excerpt: string | null;
   cover_image: string | null;
   body: string;
-  faq: Array<{ question: string; answer: string }> | null;
+  faq: BewildFaqItem[] | null;
   reading_time: number | null;
   author: string | null;
   featured: boolean;
@@ -27,6 +29,38 @@ export type BewildPost = {
   published_at: string | null;
   created_at: string;
 };
+
+/**
+ * Normaliza o campo `faq` vindo do banco. O JSONB pode chegar como:
+ *  - array de objetos `{q, a}` (formato historicamente gravado pelo editor)
+ *  - array de objetos `{question, answer}` (formato esperado pelo render)
+ *  - string JSON, ou null
+ * Sempre devolve `Array<{question, answer}>` (vazio se inválido). Resiliente
+ * a chaves alternativas (pergunta/resposta) e ignora itens malformados.
+ */
+export function normalizeBewildFaq(raw: unknown): BewildFaqItem[] {
+  let data: unknown = raw;
+  if (typeof data === "string") {
+    try { data = JSON.parse(data); } catch { return []; }
+  }
+  if (!Array.isArray(data)) return [];
+  const out: BewildFaqItem[] = [];
+  for (const item of data) {
+    if (!item || typeof item !== "object") continue;
+    const r = item as Record<string, unknown>;
+    const question = (r.question ?? r.q ?? r.pergunta ?? "") as string;
+    const answer = (r.answer ?? r.a ?? r.resposta ?? "") as string;
+    if (typeof question === "string" && typeof answer === "string" && question.trim() && answer.trim()) {
+      out.push({ question: question.trim(), answer: answer.trim() });
+    }
+  }
+  return out;
+}
+
+/** Aplica `normalizeBewildFaq` a um post bruto vindo do Supabase. */
+export function normalizeBewildPost<T extends { faq?: unknown }>(row: T): T & { faq: BewildFaqItem[] } {
+  return { ...row, faq: normalizeBewildFaq(row?.faq) };
+}
 
 const CATEGORY_LABEL: Record<BewildPostCategory, string> = {
   mercado: "Mercado",
@@ -77,7 +111,8 @@ export function useBewildPosts() {
           setLoading(false);
           return;
         }
-        setPosts((data ?? []) as unknown as BewildPost[]);
+        const rows = (data ?? []) as unknown as BewildPost[];
+        setPosts(rows.map(normalizeBewildPost) as BewildPost[]);
         setLoading(false);
       });
     return () => {

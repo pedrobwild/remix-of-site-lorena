@@ -94,10 +94,11 @@ describe("NotFoundPage — proteção contra soft-404", () => {
     expect(h1.textContent || "").toMatch(/404/);
   });
 
-  it("o cabeçalho da página também menciona '404' (defesa em profundidade)", () => {
+  it("o conteúdo principal da página também menciona '404' (defesa em profundidade)", () => {
     const { container } = render(<NotFoundPage />);
-    const headerText = container.querySelector("header")?.textContent || "";
-    expect(headerText).toMatch(/404/);
+    // Procura no <main> (o <header> de primeiro nível agora é o do nav global).
+    const mainText = container.querySelector("main")?.textContent || "";
+    expect(mainText).toMatch(/404/);
   });
 
   it("define document.title começando com '404'", async () => {
