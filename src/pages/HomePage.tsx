@@ -385,8 +385,8 @@ export default function HomePage() {
               <span className="accent">trabalhar melhor.</span>
             </h2>
             <p className="lead" style={{ marginBottom: 20 }}>
-              Em studios compactos, projeto não é decoração. É estratégia de uso, operação
-              e rentabilidade.
+              Em studios compactos, o projeto é estratégia de uso, operação e
+              rentabilidade.
             </p>
             <div className="arch-list">
               {ARCH.map((a) => (
