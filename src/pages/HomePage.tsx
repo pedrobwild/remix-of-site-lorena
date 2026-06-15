@@ -698,7 +698,7 @@ export default function HomePage() {
             <p style={{ marginTop: 10 }}>{CONTACT.city}</p>
           </div>
           <nav aria-label="Rodapé — navegação">
-            <h3 className="foot-col">Navegação</h3>
+            <h4 className="foot-col">Navegação</h4>
             <ul>
               <li><a href="#fazemos">O que fazemos</a></li>
               <li><a href="#processo">Como funciona</a></li>
