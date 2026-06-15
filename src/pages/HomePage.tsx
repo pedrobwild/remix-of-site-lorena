@@ -708,7 +708,7 @@ export default function HomePage() {
             </ul>
           </nav>
           <div>
-            <h3 className="foot-col">Contato</h3>
+            <h4 className="foot-col">Contato</h4>
             <ul>
               <li><a href={whatsappHref()} target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
               <li><a href={CONTACT.instagram} target="_blank" rel="noopener noreferrer">Instagram</a></li>
