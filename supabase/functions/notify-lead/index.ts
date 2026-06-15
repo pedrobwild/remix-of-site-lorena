@@ -271,7 +271,7 @@ async function createCrmCard(lead: Lead): Promise<CrmResult> {
     console.warn(
       "[notify-lead] BWILD_ENGINE_INTEGRATION_KEY is not set; skipping CRM",
     );
-    return { status: "skipped" };
+    return "skipped";
   }
   try {
     const res = await fetch(BWILD_ENGINE_WEBHOOK_URL, {
@@ -285,13 +285,12 @@ async function createCrmCard(lead: Lead): Promise<CrmResult> {
     if (!res.ok) {
       const body = (await res.text().catch(() => "")).slice(0, 200);
       console.error("[notify-lead] crm hook non-2xx", res.status, body);
-      return { status: "error", http_status: res.status, body };
+      return "error";
     }
-    return { status: "sent" };
+    return "sent";
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
     console.error("[notify-lead] crm hook failed", err);
-    return { status: "error", error: message };
+    return "error";
   }
 }
 
