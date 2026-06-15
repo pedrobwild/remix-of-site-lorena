@@ -3,12 +3,14 @@ import { useEffect, useState } from "react";
 export type Route =
   | { name: "home"; anchor?: string }
   | { name: "portfolio" }
+  | { name: "portfolio-lorena" }
   | { name: "diagnostico" }
   | { name: "faq" }
   | { name: "sobre" }
   | { name: "privacidade" }
   | { name: "project"; slug: string }
   | { name: "blog" }
+
   | { name: "blog-tags" }
   | { name: "blog-tag"; slug: string }
   | { name: "blog-post"; slug: string }
