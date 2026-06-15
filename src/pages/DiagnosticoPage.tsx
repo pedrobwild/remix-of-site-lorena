@@ -237,16 +237,17 @@ function DiagnosticoForm() {
     if (f.planta) scope.push(`planta:${f.planta}`);
 
     try {
-      await supabase.from("diagnostic_leads").insert({
+      const areaDigits = f.metragem ? digits(f.metragem) : "";
+      const areaNum = areaDigits ? Number(areaDigits) : null;
+      const { error } = await supabase.from("leads").insert({
         name: f.nome.trim(),
         whatsapp: digits(f.whats),
         email: f.email.trim() || null,
-        neighborhood: f.local.trim() || null,
-        square_meters: f.metragem ? Number(digits(f.metragem)) || null : null,
-        property_type: f.objetivo || null,
-        timeframe: f.chaves || null,
-        budget_range: null,
-        scope,
+        location: f.local.trim() || null,
+        area_m2: Number.isFinite(areaNum as number) ? (areaNum as number) : null,
+        objetivo: f.objetivo || null,
+        chaves: f.chaves || null,
+        planta: f.planta || null,
         message: f.mensagem.trim() || null,
         utm_source: params?.get("utm_source") ?? null,
         utm_medium: params?.get("utm_medium") ?? null,
@@ -255,9 +256,12 @@ function DiagnosticoForm() {
         landing_path: typeof window !== "undefined" ? window.location.pathname : null,
         user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
       });
+      if (error) throw error;
     } catch (err) {
-      console.error("[diagnostic_leads] insert failed", err);
+      console.error("[leads] insert failed", err);
     }
+    // unused; kept to avoid breaking previous closure scope
+    void scope;
 
     const url = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(messageText)}`;
     window.open(url, "_blank", "noopener,noreferrer");
