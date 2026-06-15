@@ -122,6 +122,66 @@ export type Database = {
         }
         Relationships: []
       }
+      bewild_posts: {
+        Row: {
+          author: string
+          body: string
+          category: string | null
+          cover_image: string | null
+          created_at: string
+          excerpt: string | null
+          faq: Json
+          featured: boolean
+          id: string
+          meta_description: string | null
+          meta_title: string | null
+          published: boolean
+          published_at: string | null
+          reading_time: number
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author?: string
+          body?: string
+          category?: string | null
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          faq?: Json
+          featured?: boolean
+          id?: string
+          meta_description?: string | null
+          meta_title?: string | null
+          published?: boolean
+          published_at?: string | null
+          reading_time?: number
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string
+          body?: string
+          category?: string | null
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          faq?: Json
+          featured?: boolean
+          id?: string
+          meta_description?: string | null
+          meta_title?: string | null
+          published?: boolean
+          published_at?: string | null
+          reading_time?: number
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           author_name: string | null
