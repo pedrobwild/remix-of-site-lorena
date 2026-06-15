@@ -1,71 +1,91 @@
-## FASE 3 — `/portfolio/:slug` (detalhe do projeto)
+## FASE 4 — CMS Bewild em `/admin/bewild`
 
-Página de detalhe do Anexo B. Foto é o destaque. Tudo é condicional: projeto em obra (sem "depois", sem depoimento, sem galeria) ainda renderiza coerente.
+O `/admin/projects` atual gerencia a mesma tabela `projects` mas com o esquema **Lorena** (tag, em, number, year, materials, ready_items, order_index, visible). Não vou misturar os dois formulários — risco alto de quebrar Lorena. Em vez disso, crio uma área paralela dedicada aos campos Bewild, sem tocar no admin Lorena.
 
 ---
 
-### Escopo
+### Rotas novas (todas protegidas por `<ProtectedRoute>`)
 
-1. Rota dinâmica `/portfolio/:slug` que carrega `projects` por `slug` com `published = true`. Sem match → 404.
-2. Cards de `/portfolio` (FASE 2) viram links para essa nova rota.
-3. Visual reusa `.bw-home` + novo CSS `.bw-detail` em `src/styles/portfolio-detail.css`.
+- `/admin/bewild` — lista de projetos Bewild (publicados + rascunhos), ordenada por `sort_order`.
+- `/admin/bewild/new` — criar.
+- `/admin/bewild/:slug` — editar.
 
-### Seções (todas condicionais quando o campo está vazio)
+`/admin/login`, `/admin/dashboard`, `/admin/projects` (Lorena), etc., **intocados**.
 
-- **Header**: link "← Portfólio", pill com `bewildTypeLabel(project_type)`, h1 `title`, meta `neighborhood · area_m2 m² · duration` (cada parte só aparece se existir).
-- **Cover**: `cover_image` (`projects.cover_url`) — se faltar, slot rotulado "Foto principal do studio entregue".
-- **Resumo**: `summary` (texto introdutório). Some se vazio.
-- **Cards Desafio / Solução / Resultado**: cada cartão só aparece se o campo correspondente tiver texto. Se nenhum dos três tiver, a seção inteira some.
-  - mapping: Desafio → `challenge`, Solução → `solution`, Resultado → `result` (campo já existe na tabela como `result_text`; confirmo no código).
-- **Antes e depois**: grid 2 colunas. Some inteiro se `before_image` OU `after_image` estiver vazio.
-  - mapping: `before_image` → `before_image_url`, `after_image` → `after_image_url`.
-- **Galeria**: grid 2 col com lightbox ao clicar. Some se `gallery` vazio.
-  - mapping: `gallery` → `gallery_urls text[]` (FASE 1).
-- **O que foi feito (escopo)**: lista com check ✓. Some se `scope text[]` vazio.
-- **Depoimento**: blockquote + autor. Some se `testimonial` vazio.
-- **CTA navy**: "Solicitar diagnóstico" → `/diagnostico` · "Falar no WhatsApp" → `whatsappHref()`.
-- **Footer** igual ao da FASE 2.
+### Lista `/admin/bewild`
 
-### Lightbox
+Tabela com: thumb (`cover_url`), título, tipo (`project_type`), bairro, m², status (publicado/rascunho com toggle), ações (editar, excluir, ↑ / ↓ para `sort_order`). Botão "+ novo projeto Bewild" no topo. Empty state se vazio.
 
-- Componente leve inline: clique em imagem da galeria abre overlay full-screen com a imagem + fechar (X, ESC, click fora) e setas ← →.
-- `document.body.overflow = hidden` enquanto aberto.
-- Sem dependência extra (segue padrão do `ProjectPage` antigo).
+Reusa `AdminLayout` com novo item de menu "Portfólio Bewild".
 
-### 404
+### Formulário `/admin/bewild/new` e `/admin/bewild/:slug`
 
-- Enquanto carrega: skeleton mínimo.
-- Carregado + sem projeto OU `published=false`: render `<NotFoundPage />` (já existe).
+Em português, agrupado em seções para reduzir carga cognitiva:
+
+1. **Identificação**
+   - `title` (texto, obrigatório)
+   - `slug` (texto, auto-gerado a partir do título via slugify; editável; valida unicidade no submit)
+   - `project_type` (select: Short stay / Turn-key / Studio na planta)
+   - `published` (toggle)
+   - `sort_order` (number)
+
+2. **Localização e dados**
+   - `neighborhood` (texto)
+   - `area_m2` (number)
+   - `duration` (texto livre, ex.: "55 dias úteis")
+
+3. **História do projeto** (todos opcionais — projeto em obra pode salvar vazio)
+   - `summary` (textarea curta, 1-2 linhas)
+   - `challenge`, `solution`, `result_text` (textareas)
+
+4. **Escopo** (`scope text[]`)
+   - Lista editável: input + botão "+ adicionar item", chips removíveis. Sem ordering complexo.
+
+5. **Mídia** — upload no bucket `project-images`
+   - **Capa** (`cover_url`) — campo único com botão upload + preview + "remover".
+   - **Antes** (`before_image_url`) — idem.
+   - **Depois** (`after_image_url`) — idem.
+   - **Galeria** (`gallery_urls text[]`) — múltiplos uploads, preview em grid, reordenar (↑/↓), remover.
+   - Cada upload chama `supabase.storage.from("project-images").upload(path, file)` com path `bewild/<slug-ou-uuid>/<timestamp>-<nome>` e grava a public URL.
+
+6. **Depoimento**
+   - `testimonial` (textarea)
+   - `testimonial_author` (texto)
+
+Botões: **Salvar rascunho** (mantém `published=false`), **Salvar e publicar** (seta `published=true`), **Cancelar** (volta à lista).
+
+### Validação e feedback
+
+- Slug obrigatório, lowercase, sem espaços (regex). Mostra erro inline se inválido ou duplicado.
+- Toast/inline message: "Projeto salvo", "Projeto publicado", "Erro ao subir imagem: …".
+- Upload em progresso desabilita o botão de salvar.
 
 ### Arquivos
 
-- **Novo**: `src/pages/BewildProjectPage.tsx`.
-- **Novo**: `src/styles/portfolio-detail.css`.
-- **Novo hook**: `src/lib/useBewildProject.ts` (busca um slug).
-- **Editar**: `src/lib/useHashRoute.ts` — adiciona parse `/portfolio/<slug>` → `{ name: "bewild-project", slug }`.
-- **Editar**: `src/router.tsx` — despacha `bewild-project` → `<BewildProjectPage slug=… />`.
-- **Editar**: `src/pages/BewildPortfolioPage.tsx` — `<article>` vira `<a href="/portfolio/<slug>">`.
+- **Novo**: `src/pages/admin/BewildProjectsListPage.tsx`
+- **Novo**: `src/pages/admin/BewildProjectFormPage.tsx`
+- **Novo**: `src/components/admin/BewildImageField.tsx` (campo único de imagem)
+- **Novo**: `src/components/admin/BewildGalleryField.tsx` (campo multi-imagem)
+- **Novo**: `src/lib/bewildAdmin.ts` (helpers: `slugify`, `uploadToProjectImages`)
+- **Editar**: `src/lib/useHashRoute.ts` — adiciona `admin-bewild`, `admin-bewild-new`, `admin-bewild-edit`
+- **Editar**: `src/router.tsx` — despacha as 3 rotas
+- **Editar**: `scripts/check-routes-parity.mjs` — adiciona em `SPA_ONLY_ALLOWED`
+- **Editar**: `src/components/admin/AdminLayout.tsx` — item de menu "Portfólio Bewild" (sem alterar os existentes)
 
-### Rotas / parity
+### Banco
 
-- `/portfolio/<slug>` é dinâmica → adiciono prefixo `/portfolio/` em `DYNAMIC_PREFIXES` da edge `not-found-check` (table=`projects`, column=`slug`, filtra `published=true`).
-- Não toca em `STATIC_ROUTES`. Parity script segue verde.
-
-### Copy
-
-- Sem travessões, sem clichês, separador `·`. Reuso literal do Anexo B onde houver placeholder.
+**Nenhuma migração nova.** RLS já cobre: `admin all projects` permite ao admin tudo; `Bewild portfolio published readable` permite leitura pública só dos publicados. Bucket `project-images` já existe e está público (FASE 1).
 
 ### Critério de aceite
 
-- Card no índice abre detalhe. Slug inválido ou despublicado → 404.
-- Projeto sem `testimonial`, sem `after_image_url` e sem `gallery_urls` → renderiza sem essas seções, sem espaço fantasma.
-- Lightbox abre/fecha por click, ESC e setas.
-- Home, blog, FASE 1 e FASE 2 intactos. Build + parity verdes.
+- Sem login: `/admin/bewild` redireciona para `/admin/login`.
+- Logado como admin: crio um projeto, faço upload de capa + 4 fotos de galeria, marco como publicado, vou em `/portfolio` e ele aparece; abro `/portfolio/<slug>` e a página de detalhe renderiza com as fotos.
+- Salvar como rascunho NÃO mostra o projeto em `/portfolio`.
+- Admin Lorena (`/admin/projects`) continua funcionando igual.
+- Build, parity e testes verdes.
 
-### Fora de escopo (FASE 4)
+### Fora de escopo
 
-Painel `/admin` com upload e CRUD.
-
----
+- Edição em batch, histórico de versões, preview lado-a-lado, drag-and-drop de galeria via @dnd-kit (uso ↑/↓ simples para evitar nova dependência de complexidade).
 
 Aprovo e sigo?
