@@ -9,7 +9,7 @@ export default function DifferentialsSection() {
           eyebrow="Diferenciais"
           title={
             <>
-              Por que a BeWild{" "}
+              Por que a Bewild{" "}
               <span className="italic text-bewild-blue">é diferente.</span>
             </>
           }

@@ -1,11 +1,11 @@
 /**
- * primitives.tsx — blocos reutilizáveis da landing **BeWild**.
+ * primitives.tsx — blocos reutilizáveis da landing **Bewild**.
  */
 import { useState, type ReactNode } from "react";
 import { ImageIcon } from "lucide-react";
 
 /* ----------------------------------------------------------------
- * Wordmark BeWild — `Be` + `Wild` itálico, sem espaço.
+ * Wordmark Bewild — `Be` + `Wild` itálico, sem espaço.
  * Tone:
  *  - "light" (sobre escuro): "Wild" em gold-400
  *  - "dark"  (sobre claro): "Wild" em petróleo
@@ -32,7 +32,7 @@ export function BewildLogo({
   const wildColor = tone === "light" ? "text-bewild-blue-400" : "text-bewild-blue";
   return (
     <span
-      aria-label="BeWild"
+      aria-label="Bewild"
       className={`inline-flex items-baseline font-display font-semibold leading-none tracking-tight ${sizeClass} ${className}`}
     >
       <span className={beColor}>Be</span>

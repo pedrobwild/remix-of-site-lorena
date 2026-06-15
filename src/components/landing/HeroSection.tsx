@@ -11,7 +11,7 @@ export default function HeroSection() {
   return (
     <section
       id="topo"
-      aria-label="BeWild — reforma turn-key de studios"
+      aria-label="Bewild — reforma turn-key de studios"
       className="relative overflow-hidden bg-bewild-ink"
       style={{ minHeight: "max(100vh, 640px)" }}
     >
@@ -63,7 +63,7 @@ export default function HeroSection() {
             className="font-mono text-[0.7rem] font-medium uppercase tracking-[0.28em] text-[#DCBE7A] animate-fade-in"
             style={{ animationDelay: "0.3s", animationFillMode: "backwards" }}
           >
-            BeWild · Reforma turn-key de studios · São Paulo
+            Bewild · Reforma turn-key de studios · São Paulo
           </p>
 
           <h1

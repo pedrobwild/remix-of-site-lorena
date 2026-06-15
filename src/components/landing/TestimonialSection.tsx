@@ -3,7 +3,7 @@ import { Container, SectionHeading } from "./primitives";
 
 export default function TestimonialSection() {
   return (
-    <section aria-label="Depoimento de cliente BeWild" className="bg-[#F5F7F9] py-20 sm:py-28">
+    <section aria-label="Depoimento de cliente Bewild" className="bg-[#F5F7F9] py-20 sm:py-28">
       <Container>
         <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16">
           <div className="relative aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-[#12395E] to-bewild-ink shadow-[0_24px_60px_-24px_rgba(10,37,64,0.18)]">
@@ -37,7 +37,7 @@ export default function TestimonialSection() {
               [Transcrever aqui a frase mais forte do depoimento em vídeo da cliente.]
             </blockquote>
             <p className="font-mono text-[0.6rem] uppercase tracking-[0.28em] text-bewild-steel/70">
-              Cliente BeWild · Studio reformado em São Paulo
+              Cliente Bewild · Studio reformado em São Paulo
             </p>
             <p className="font-mono text-[0.6rem] uppercase tracking-[0.18em] text-bewild-steel/55">
               Depoimento real · vídeo na íntegra ao lado

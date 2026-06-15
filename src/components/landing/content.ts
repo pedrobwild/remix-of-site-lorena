@@ -434,8 +434,8 @@ export interface FaqItem {
 
 export const FAQS: FaqItem[] = [
   {
-    q: "A BeWild faz só projeto ou também executa a obra?",
-    a: "A BeWild atua no modelo turn-key: projeto de arquitetura personalizado, planejamento, execução, compras, marcenaria, mobiliário e entrega final, conforme o escopo contratado.",
+    q: "A Bewild faz só projeto ou também executa a obra?",
+    a: "A Bewild atua no modelo turn-key: projeto de arquitetura personalizado, planejamento, execução, compras, marcenaria, mobiliário e entrega final, conforme o escopo contratado.",
   },
   {
     q: "O projeto de arquitetura é personalizado?",
@@ -443,7 +443,7 @@ export const FAQS: FaqItem[] = [
   },
   {
     q: "Vocês trabalham com studios pequenos?",
-    a: "Sim. Studios compactos são uma das especialidades da BeWild. O projeto é pensado para aproveitar melhor cada metro quadrado, sem comprometer circulação, estética e funcionalidade.",
+    a: "Sim. Studios compactos são uma das especialidades da Bewild. O projeto é pensado para aproveitar melhor cada metro quadrado, sem comprometer circulação, estética e funcionalidade.",
   },
   {
     q: "Consigo acompanhar a obra à distância?",
@@ -454,8 +454,8 @@ export const FAQS: FaqItem[] = [
     a: "Sim, quando incluído no escopo. A proposta pode contemplar mobiliário, eletrodomésticos, marcenaria, itens de acabamento e preparação para uso ou locação.",
   },
   {
-    q: "A BeWild atende imóveis para Airbnb?",
-    a: "Sim. A BeWild desenvolve reformas para short stay, long stay e uso misto, considerando estética, manutenção, limpeza, resistência e experiência do hóspede.",
+    q: "A Bewild atende imóveis para Airbnb?",
+    a: "Sim. A Bewild desenvolve reformas para short stay, long stay e uso misto, considerando estética, manutenção, limpeza, resistência e experiência do hóspede.",
   },
   {
     q: "O orçamento é fechado?",
@@ -463,7 +463,7 @@ export const FAQS: FaqItem[] = [
   },
   {
     q: "Posso ver exemplos antes de fechar?",
-    a: "Sim. A BeWild apresenta galeria de reformas entregues, imagens reais e, quando disponível, tours, antes/depois e projetos semelhantes por metragem.",
+    a: "Sim. A Bewild apresenta galeria de reformas entregues, imagens reais e, quando disponível, tours, antes/depois e projetos semelhantes por metragem.",
   },
   {
     q: "Vocês atendem fora de São Paulo?",

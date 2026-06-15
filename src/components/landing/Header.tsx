@@ -94,7 +94,7 @@ export default function Header() {
       }`}
     >
       <div className="mx-auto flex h-16 w-full max-w-wrap items-center justify-between px-5 sm:h-[4.5rem] sm:px-8">
-        <a href="/" className="flex items-center gap-2" aria-label="BeWild — início">
+        <a href="/" className="flex items-center gap-2" aria-label="Bewild — início">
           <BewildLogo heightClass="h-6 sm:h-7" tone={tone} />
         </a>
 

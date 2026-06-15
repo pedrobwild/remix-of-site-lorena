@@ -34,7 +34,7 @@ export default function Footer() {
       <div className="mx-auto w-full max-w-wrap px-5 sm:px-8">
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
           <div className="flex flex-col gap-4">
-            <span aria-label="BeWild" className="inline-flex items-baseline font-display text-2xl font-semibold leading-none">
+            <span aria-label="Bewild" className="inline-flex items-baseline font-display text-2xl font-semibold leading-none">
               <span className="text-white">Be</span>
               <span className="italic text-bewild-blue-400">Wild</span>
             </span>
@@ -96,10 +96,10 @@ export default function Footer() {
 
         <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-white/45">
-            BeWild · Reforma turn-key de studios em São Paulo.
+            Bewild · Reforma turn-key de studios em São Paulo.
           </p>
           <p className="text-xs text-white/35">
-            © {new Date().getFullYear()} BeWild. Todos os direitos reservados.
+            © {new Date().getFullYear()} Bewild. Todos os direitos reservados.
           </p>
         </div>
       </div>
