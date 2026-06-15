@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSeo } from "../lib/useSeo";
-import InternalNav from "../components/InternalNav";
 import { routes, navigate } from "../lib/useHashRoute";
 import { logNotFound, lookupActiveRedirect } from "../lib/notFoundLog";
+import BewildSiteNav from "@/components/BewildSiteNav";
 
 /**
  * Página 404 dedicada — sinaliza claramente ao Google que a URL é inválida.
@@ -70,7 +70,7 @@ export default function NotFoundPage() {
 
   return (
     <main id="main" tabIndex={-1} className="pf-page">
-      <InternalNav backLabel="voltar ao início" />
+      <BewildSiteNav />
 
       <header className="pf-head">
         <p className="pf-head__eyebrow mono">Erro 404 · Página não encontrada</p>
