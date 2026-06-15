@@ -1,6 +1,7 @@
 // Edge function: notify-lead
-// Notifies the commercial team on Slack when a new diagnostic lead arrives.
-// Future CRM (Bwild Engine) integration is stubbed via createCrmCard().
+// Notifies the commercial team on Slack AND creates an MQL card in the
+// Bwild Engine CRM. Slack and CRM are independent: a failure in one does
+// not block the other. Fire-and-forget from the client.
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -26,6 +27,8 @@ type Lead = {
   referrer?: string | null;
   landing_path?: string | null;
 };
+
+type Outcome = "sent" | "skipped" | "error";
 
 function fmtDateBR(d: Date): string {
   try {
@@ -56,7 +59,6 @@ function buildSlackMessage(lead: Lead) {
 
   const wa = waLink(lead.whatsapp);
 
-  // Main fields (omit empty)
   const fields: { label: string; value: string }[] = [];
   const push = (label: string, value?: string | number | null) => {
     if (value === null || value === undefined) return;
@@ -91,7 +93,6 @@ function buildSlackMessage(lead: Lead) {
     });
   }
 
-  // Origin block
   const origin: string[] = [];
   if (lead.utm_source) origin.push(`utm_source: ${lead.utm_source}`);
   if (lead.utm_medium) origin.push(`utm_medium: ${lead.utm_medium}`);
@@ -106,7 +107,6 @@ function buildSlackMessage(lead: Lead) {
     });
   }
 
-  // Action button
   if (wa) {
     blocks.push({
       type: "actions",
@@ -139,24 +139,88 @@ function buildSlackMessage(lead: Lead) {
   };
 }
 
-async function postToSlack(webhookUrl: string, payload: unknown) {
-  const res = await fetch(webhookUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    throw new Error(`Slack webhook failed: HTTP ${res.status} ${body.slice(0, 200)}`);
+async function notifySlack(lead: Lead): Promise<Outcome> {
+  const webhookUrl = Deno.env.get("SLACK_WEBHOOK_URL");
+  if (!webhookUrl) {
+    console.warn("[notify-lead] SLACK_WEBHOOK_URL is not set; skipping Slack");
+    return "skipped";
+  }
+  try {
+    const res = await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(buildSlackMessage(lead)),
+    });
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      throw new Error(`HTTP ${res.status} ${body.slice(0, 200)}`);
+    }
+    return "sent";
+  } catch (err) {
+    console.error("[notify-lead] slack post failed", err);
+    return "error";
   }
 }
 
-// TODO: Hook for the next step. Will create an MQL card in the
-// "Bwild Engine" CRM. Will use its own secrets (e.g. BWILD_ENGINE_API_URL,
-// BWILD_ENGINE_API_KEY). Keep isolated; do NOT implement now.
-async function createCrmCard(_lead: Lead): Promise<void> {
-  // Intentionally empty. Plug CRM integration here in a future step.
-  return;
+const BWILD_ENGINE_WEBHOOK_URL =
+  "https://pieenhgjulsrjlioozsy.supabase.co/functions/v1/lead-webhook";
+
+function buildCrmPayload(lead: Lead) {
+  const whatsappDigits = lead.whatsapp
+    ? String(lead.whatsapp).replace(/\D/g, "")
+    : "";
+  const phone = whatsappDigits ? `+55${whatsappDigits}` : null;
+
+  return {
+    source: "site_form",
+    name: lead.name && lead.name.trim() ? lead.name.trim() : "Lead sem nome",
+    email: lead.email ?? null,
+    phone,
+    utm_source: lead.utm_source ?? null,
+    utm_medium: lead.utm_medium ?? null,
+    utm_campaign: lead.utm_campaign ?? null,
+    form_name: "Diagnóstico Bewild",
+    bairro: lead.location ?? null,
+    extra: {
+      objetivo: lead.objetivo ?? null,
+      chaves: lead.chaves ?? null,
+      planta: lead.planta ?? null,
+      area_m2: lead.area_m2 ?? null,
+      message: lead.message ?? null,
+      location: lead.location ?? null,
+      referrer: lead.referrer ?? null,
+      landing_path: lead.landing_path ?? null,
+      lead_id: lead.id ?? null,
+    },
+  };
+}
+
+async function createCrmCard(lead: Lead): Promise<Outcome> {
+  const key = Deno.env.get("BWILD_ENGINE_INTEGRATION_KEY");
+  if (!key) {
+    console.warn(
+      "[notify-lead] BWILD_ENGINE_INTEGRATION_KEY is not set; skipping CRM",
+    );
+    return "skipped";
+  }
+  try {
+    const res = await fetch(BWILD_ENGINE_WEBHOOK_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-integration-key": key,
+      },
+      body: JSON.stringify(buildCrmPayload(lead)),
+    });
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      throw new Error(`HTTP ${res.status} ${body.slice(0, 200)}`);
+    }
+    return "sent";
+  } catch (err) {
+    console.error("[notify-lead] crm hook failed", err);
+    return "error";
+  }
 }
 
 Deno.serve(async (req) => {
@@ -181,35 +245,13 @@ Deno.serve(async (req) => {
     });
   }
 
-  const webhookUrl = Deno.env.get("SLACK_WEBHOOK_URL");
-  if (!webhookUrl) {
-    console.warn("[notify-lead] SLACK_WEBHOOK_URL is not set; skipping Slack notification");
-    return new Response(
-      JSON.stringify({ ok: true, slack: "skipped", reason: "missing_webhook_secret" }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
-  }
+  // Run Slack and CRM in parallel; one failure must not block the other.
+  const [slack, crm] = await Promise.all([
+    notifySlack(lead),
+    createCrmCard(lead),
+  ]);
 
-  try {
-    const payload = buildSlackMessage(lead);
-    await postToSlack(webhookUrl, payload);
-  } catch (err) {
-    // Never leak the webhook URL or secrets in the response.
-    console.error("[notify-lead] slack post failed", err);
-    return new Response(JSON.stringify({ ok: false, slack: "error" }), {
-      status: 502,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-
-  // Fire-and-forget CRM hook (stub for now).
-  try {
-    await createCrmCard(lead);
-  } catch (err) {
-    console.error("[notify-lead] crm hook failed", err);
-  }
-
-  return new Response(JSON.stringify({ ok: true, slack: "sent" }), {
+  return new Response(JSON.stringify({ ok: true, slack, crm }), {
     status: 200,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
