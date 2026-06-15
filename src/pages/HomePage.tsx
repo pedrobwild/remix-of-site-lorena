@@ -226,6 +226,7 @@ export default function HomePage() {
             <a href="#fazemos">O que fazemos</a>
             <a href="#processo">Como funciona</a>
             <a href="/portfolio">Portfólio</a>
+            <a href="/conteudos">Conteúdos</a>
             <a href="#diferenciais">Diferenciais</a>
             <a href="#faq">FAQ</a>
           </nav>
