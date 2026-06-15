@@ -28,7 +28,7 @@ export default function ComparisonSection() {
               className="border-b border-bewild-line p-5"
               style={{ background: "rgba(0,76,127,0.05)" }}
             >
-              <p className="font-display text-sm font-semibold text-bewild-blue">BeWild turn-key</p>
+              <p className="font-display text-sm font-semibold text-bewild-blue">Bewild turn-key</p>
             </div>
           </div>
           {COMPARISON.map((row) => (

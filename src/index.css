@@ -7211,7 +7211,7 @@ textarea.admin-field__input {
 }
 
 /* ============================================================
- * BeWild · Conteúdo do post (.bw-post-content)
+ * Bewild · Conteúdo do post (.bw-post-content)
  * Reset tipográfico para o HTML injetado dos artigos.
  * ============================================================ */
 .bw-post-content > * + * { margin-top: 1.1em; }

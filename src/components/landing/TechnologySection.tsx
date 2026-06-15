@@ -29,7 +29,7 @@ export default function TechnologySection() {
             />
             <p className="max-w-xl text-sm leading-relaxed text-bewild-steel">
               Acompanhamento por WhatsApp ajuda, mas não pode ser o único banco de dados da obra.
-              Por isso, a BeWild trabalha com portal, registros, fotos, cronograma e informações
+              Por isso, a Bewild trabalha com portal, registros, fotos, cronograma e informações
               organizadas para dar mais previsibilidade ao cliente e mais controle para a operação.
             </p>
             <ul className="grid gap-2.5 sm:grid-cols-2">
@@ -89,14 +89,14 @@ function PortalMockup() {
         background: "linear-gradient(180deg, #0F3154, #0B2746)",
         borderColor: "rgba(255,255,255,0.08)",
       }}
-      aria-label="Exemplo ilustrativo do portal de acompanhamento BeWild"
+      aria-label="Exemplo ilustrativo do portal de acompanhamento Bewild"
       role="img"
     >
 
       <div className="flex items-center justify-between border-b border-white/10 pb-4">
         <div>
           <p className="font-mono text-[0.6rem] uppercase tracking-[0.28em] text-[#DCBE7A]">
-            Portal BeWild · Exemplo
+            Portal Bewild · Exemplo
           </p>
           <p className="mt-1 font-display text-base font-semibold text-white">
             Studio Urban Flex · 22 m²

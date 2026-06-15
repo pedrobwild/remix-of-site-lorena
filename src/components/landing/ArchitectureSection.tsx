@@ -11,7 +11,7 @@ export default function ArchitectureSection() {
             <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-bewild-line shadow-[0_24px_60px_-24px_rgba(10,37,64,0.14)]">
               <LandingImage
                 src="/images/reformas/projeto-arquitetura-3d-01.jpg"
-                alt="Projeto de arquitetura personalizado para studio compacto da BeWild"
+                alt="Projeto de arquitetura personalizado para studio compacto da Bewild"
                 label="SLOT · PLANTA / ESTUDO"
               />
               <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 font-mono text-[0.55rem] uppercase tracking-[0.28em] text-bewild-ink/60 backdrop-blur">
@@ -20,7 +20,7 @@ export default function ArchitectureSection() {
             </div>
             <p className="max-w-md text-[0.85rem] leading-relaxed text-bewild-steel">
               Um studio de 19, 22 ou 28 m² não permite decisões aleatórias. Cada centímetro precisa
-              justificar sua existência. Por isso, a BeWild desenvolve projeto de arquitetura
+              justificar sua existência. Por isso, a Bewild desenvolve projeto de arquitetura
               personalizado para cada imóvel: layout, circulação, iluminação, marcenaria,
               armazenamento, eletros, pontos técnicos, estética e objetivo de uso.
             </p>

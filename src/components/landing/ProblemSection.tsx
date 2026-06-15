@@ -17,7 +17,7 @@ export default function ProblemSection() {
               }
             />
             <p className="max-w-xl text-base leading-relaxed text-bewild-steel">
-              A BeWild integra arquitetura, engenharia, obra e inteligência de mercado em um único
+              A Bewild integra arquitetura, engenharia, obra e inteligência de mercado em um único
               processo, para quem precisa reformar e não quer carregar o pesadelo de cuidar de uma
               obra sozinho, muitas vezes à distância. Você acompanha. A gente executa.
             </p>
