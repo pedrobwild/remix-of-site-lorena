@@ -46,18 +46,11 @@ Deno.test("rota inexistente devolve HTTP 404", async () => {
 });
 
 Deno.test("rota com slug dinâmico inválido devolve HTTP 404", async () => {
-  const r = await call("/projeto/slug-inexistente-xyz");
+  const r = await call("/portfolio/slug-inexistente-xyz");
   const body = await r.json();
   assertEquals(r.status, 404);
   assertEquals(body.status, "not_found");
   assertEquals(body.reason, "dynamic_slug_not_found");
-});
-
-Deno.test("blog com slug inválido devolve HTTP 404", async () => {
-  const r = await call("/blog/post-que-nao-existe");
-  const body = await r.json();
-  assertEquals(r.status, 404);
-  assertEquals(body.status, "not_found");
 });
 
 Deno.test("rota canônica conhecida devolve HTTP 200", async () => {
@@ -75,23 +68,15 @@ Deno.test("home devolve HTTP 200", async () => {
 });
 
 // ---------------------------------------------------------------------------
-// Cobertura de TODAS as rotas canônicas públicas.
-//
-// Espelha a constante STATIC_ROUTES em index.ts e a lista de rotas públicas
-// em src/lib/useHashRoute.ts. Se você adicionar uma nova página pública à
-// SPA (ex.: /servicos, /contato), adicione o path AQUI e em STATIC_ROUTES
-// na edge function. Caso contrário este teste falhará — o que é o
-// comportamento desejado: quebra cedo, durante o build/CI, em vez de
-// silenciosamente devolver 404 para crawlers em produção.
+// Cobertura de TODAS as rotas canônicas públicas (Bewild).
 // ---------------------------------------------------------------------------
 const CANONICAL_PUBLIC_ROUTES = [
   "/",
-  "/sobre",
   "/portfolio",
+  "/diagnostico",
   "/faq",
   "/privacidade",
-  "/blog",
-  "/blog/tags",
+  "/conteudos",
   "/404",
 ];
 
@@ -349,9 +334,7 @@ Deno.test("rota inexistente NÃO emite 3xx antes do 404 (sem cadeia de redirect)
 });
 
 Deno.test("rota com slug dinâmico inválido também não passa por 3xx", async () => {
-  // Mesmo contrato para /projeto/<slug-inexistente>: resposta direta 404,
-  // sem 301 para listagem nem 302 para home.
-  const r = await call("/projeto/slug-anti-redirect-xyz");
+  const r = await call("/portfolio/slug-anti-redirect-xyz");
   assert(
     r.status < 300 || r.status >= 400,
     `status ${r.status} indica redirect intermediário — quebra contrato`,
@@ -361,18 +344,6 @@ Deno.test("rota com slug dinâmico inválido também não passa por 3xx", async 
   const body = await r.json();
   assertEquals(body.status, "not_found");
   assertEquals(body.reason, "dynamic_slug_not_found");
-});
-
-Deno.test("blog com slug inválido também não passa por 3xx", async () => {
-  const r = await call("/blog/post-anti-redirect");
-  assert(
-    r.status < 300 || r.status >= 400,
-    `status ${r.status} indica redirect intermediário — quebra contrato`,
-  );
-  assertEquals(r.status, 404);
-  assertEquals(r.headers.get("location"), null);
-  // Consome body para evitar leak detectado pelo Deno test runner.
-  await r.text();
 });
 
 // ---------------------------------------------------------------------------

@@ -119,8 +119,8 @@ export default function NotFoundPage() {
             </a>
           </li>
           <li>
-            <a href={routes.sobre} style={{ textDecoration: "underline" }}>
-              → Conhecer o estúdio (Sobre)
+            <a href={routes.diagnostico} style={{ textDecoration: "underline" }}>
+              → Solicitar um diagnóstico do seu studio
             </a>
           </li>
           <li>

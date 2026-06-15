@@ -53,17 +53,11 @@ const corsHeaders = {
  */
 export const STATIC_ROUTES: ReadonlyArray<string> = [
   "/",
-  "/sobre",
   "/portfolio",
-  "/portfolio-lorena",
-
   "/diagnostico",
   "/faq",
   "/privacidade",
   "/conteudos",
-  "/conteudos/tags",
-  "/blog",
-  "/blog/tags",
   "/404",
 ];
 
@@ -71,12 +65,8 @@ const STATIC_ROUTES_SET = new Set<string>(STATIC_ROUTES);
 
 /** Prefixos dinâmicos cuja existência precisa ser checada no banco. */
 const DYNAMIC_PREFIXES: Array<{ prefix: string; table: string; column: string }> = [
-  { prefix: "/projeto/", table: "projects", column: "slug" },
   { prefix: "/portfolio/", table: "projects", column: "slug" },
-  { prefix: "/conteudos/tag/", table: "blog_posts", column: "tags" },
-  { prefix: "/conteudos/", table: "blog_posts", column: "slug" },
-  { prefix: "/blog/tag/", table: "blog_posts", column: "tags" },
-  { prefix: "/blog/", table: "blog_posts", column: "slug" },
+  { prefix: "/conteudos/", table: "bewild_posts", column: "slug" },
 ];
 
 function normalizePath(raw: string | null): string {
@@ -221,12 +211,11 @@ Deno.serve(async (req: Request) => {
     /* ignora erros de leitura, segue para checagem dinâmica */
   }
 
-  // 4) Rotas dinâmicas (projeto/<slug>, blog/<slug>, blog/tag/<slug>).
+  // 4) Rotas dinâmicas (portfolio/<slug>, conteudos/<slug>).
   for (const cfg of DYNAMIC_PREFIXES) {
     if (!path.startsWith(cfg.prefix)) continue;
     const slug = path.slice(cfg.prefix.length);
     if (!slug || slug.includes("/")) {
-      // segmento vazio ou path mais profundo => não existe
       return jsonResponse(404, {
         path,
         status: "not_found",
@@ -235,7 +224,7 @@ Deno.serve(async (req: Request) => {
     }
 
     try {
-      if (cfg.prefix === "/projeto/") {
+      if (cfg.prefix === "/portfolio/") {
         const { data } = await supabase
           .from("projects")
           .select("slug")
@@ -243,26 +232,14 @@ Deno.serve(async (req: Request) => {
           .eq("visible", true)
           .maybeSingle();
         if (data) return jsonResponse(200, { path, status: "ok", reason: "project_found" });
-      } else if (cfg.prefix === "/blog/") {
+      } else if (cfg.prefix === "/conteudos/") {
         const { data } = await supabase
-          .from("blog_posts")
+          .from("bewild_posts")
           .select("slug")
           .eq("slug", slug)
-          .eq("visible", true)
+          .eq("published", true)
           .maybeSingle();
         if (data) return jsonResponse(200, { path, status: "ok", reason: "post_found" });
-      } else if (cfg.prefix === "/blog/tag/") {
-        // tag existe se algum post visível tiver o slug entre suas tags.
-        // Como tags são strings livres, fazemos um contains liberal.
-        const { data } = await supabase
-          .from("blog_posts")
-          .select("slug")
-          .contains("tags", [slug])
-          .eq("visible", true)
-          .limit(1);
-        if (data && data.length > 0) {
-          return jsonResponse(200, { path, status: "ok", reason: "tag_found" });
-        }
       }
     } catch {
       /* falha fechada -> 404 */
