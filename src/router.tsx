@@ -30,7 +30,7 @@ import BlogTagsPage from "./pages/BlogTagsPage";
 import BlogTagPage from "./pages/BlogTagPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import LoginPage from "./pages/admin/LoginPage";
-import DashboardPage from "./pages/admin/DashboardPage";
+
 import BewildOverviewPage from "./pages/admin/BewildOverviewPage";
 import BewildLeadsAdminPage from "./pages/admin/BewildLeadsAdminPage";
 import BewildProjetosAdminPage from "./pages/admin/BewildProjetosAdminPage";
@@ -47,7 +47,7 @@ import FaqAdminPage from "./pages/admin/FaqAdminPage";
 import BlogListPage from "./pages/admin/BlogListPage";
 import BlogFormPage from "./pages/admin/BlogFormPage";
 import TypographyPage from "./pages/admin/TypographyPage";
-import LeadsPage from "./pages/admin/LeadsPage";
+
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import type { Route } from "./lib/useHashRoute";
 
