@@ -1,302 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Sitemap estático — Lorena Alves Arquitetura
-  Atualizado em 2026-04-22.
-  Lista TODAS as rotas indexáveis: home, sobre, portfólio, FAQ, privacidade,
-  blog (índice + tags + posts) e cada projeto individual visível.
-  A versão dinâmica (com galeria completa em tempo real) é servida pela
-  edge function /functions/v1/sitemap, declarada também no robots.txt.
+  Sitemap estático — Bewild (reforma turn-key de studios em São Paulo).
+  Lista as rotas indexáveis canônicas. A versão dinâmica (com galeria/
+  conteúdos em tempo real) é servida pela edge function
+  /functions/v1/sitemap, declarada também no robots.txt.
 -->
 <urlset
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-  xmlns:xhtml="http://www.w3.org/1999/xhtml"
-  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
-  <!-- Home -->
   <url>
-    <loc>https://lorenaalvesarq.com/</loc>
-    <lastmod>2026-04-22</lastmod>
+    <loc>https://bewild.com.br/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.00</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://lorenaalvesarq.com/" />
-    <image:image>
-      <image:loc>https://lorenaalvesarq.com/images/og-lorena-alves-arquitetura-uberlandia-mg.jpg</image:loc>
-      <image:title>Arquiteta em Uberlândia — Lorena Alves Arquitetura</image:title>
-      <image:caption>Escritório autoral de arquitetura e interiores em Uberlândia/MG.</image:caption>
-    </image:image>
-    <image:image>
-      <image:loc>https://lorenaalvesarq.com/images/lorena-alves-retrato-v2-lg.jpg</image:loc>
-      <image:title>Lorena Alves — arquiteta e urbanista em Uberlândia/MG</image:title>
-      <image:caption>Retrato da arquiteta Lorena Alves, fundadora do estúdio.</image:caption>
-    </image:image>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://bewild.com.br/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bewild.com.br/" />
   </url>
 
-  <!-- Sobre -->
   <url>
-    <loc>https://lorenaalvesarq.com/sobre</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/sobre" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://lorenaalvesarq.com/sobre" />
-    <image:image>
-      <image:loc>https://lorenaalvesarq.com/images/lorena-alves-retrato-v2-lg.jpg</image:loc>
-      <image:title>Lorena Alves — arquiteta e urbanista, fundadora do estúdio em Uberlândia/MG</image:title>
-      <image:caption>Formação UFU, com pós-graduações em Design de Interiores, Lighting Design (IPOG) e Gestão Empresarial (USP).</image:caption>
-    </image:image>
-  </url>
-
-  <!-- Portfolio -->
-  <url>
-    <loc>https://lorenaalvesarq.com/portfolio</loc>
-    <lastmod>2026-04-22</lastmod>
+    <loc>https://bewild.com.br/portfolio</loc>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/portfolio" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://lorenaalvesarq.com/portfolio" />
-    <image:image>
-      <image:loc>https://lorenaalvesarq.com/images/casa-paineira-pavilhao-concreto-ipe-uberlandia-lg.jpg</image:loc>
-      <image:title>Casa Paineira — Lorena Alves Arquitetura</image:title>
-      <image:caption>Casa Paineira em Itaim da Serra/SP — pavilhão residencial em concreto aparente apicoado e ipê tauari.</image:caption>
-    </image:image>
-    <image:image>
-      <image:loc>https://lorenaalvesarq.com/images/casa-jequitiba-interior-contemporaneo-brasileiro-lg.jpg</image:loc>
-      <image:title>Casa Jequitibá — Lorena Alves Arquitetura</image:title>
-      <image:caption>Apartamento em Jardim Europa, São Paulo/SP — design de interiores em residência modernista dos anos 70.</image:caption>
-    </image:image>
-    <image:image>
-      <image:loc>https://lorenaalvesarq.com/images/apartamento-higienopolis-design-interiores-walnut-lg.jpg</image:loc>
-      <image:title>Apartamento Higienópolis — Lorena Alves Arquitetura</image:title>
-      <image:caption>Apartamento em Higienópolis, São Paulo/SP — projeto residencial de 210 m² com estante-escultura em american walnut.</image:caption>
-    </image:image>
-    <image:image>
-      <image:loc>https://lorenaalvesarq.com/images/casa-pau-brasil-residencia-praia-cantilever-lg.jpg</image:loc>
-      <image:title>Casa Pau-Brasil — Lorena Alves Arquitetura</image:title>
-      <image:caption>Casa de praia no Guarujá/SP — residência em concreto protendido com cantiléver de 12 metros sobre o mar.</image:caption>
-    </image:image>
-    <image:image>
-      <image:loc>https://lorenaalvesarq.com/images/restaurante-takka-arquitetura-comercial-gastronomica-lg.jpg</image:loc>
-      <image:title>Restaurante Takka — Lorena Alves Arquitetura</image:title>
-      <image:caption>Restaurante em Pinheiros, São Paulo/SP — arquitetura comercial e gastronômica em couro caramelo e carvalho fumê.</image:caption>
-    </image:image>
-    <image:image>
-      <image:loc>https://lorenaalvesarq.com/images/fazenda-porto-arquitetura-rural-taipa-minas-gerais-lg.jpg</image:loc>
-      <image:title>Fazenda Porto — Lorena Alves Arquitetura</image:title>
-      <image:caption>Conjunto rural na Serra da Canastra/MG em taipa de pilão, pau-a-pique e telha cerâmica artesanal.</image:caption>
-    </image:image>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://bewild.com.br/portfolio" />
   </url>
 
-  <!-- FAQ -->
   <url>
-    <loc>https://lorenaalvesarq.com/faq</loc>
-    <lastmod>2026-04-22</lastmod>
+    <loc>https://bewild.com.br/diagnostico</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/faq" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://lorenaalvesarq.com/faq" />
+    <priority>0.90</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://bewild.com.br/diagnostico" />
   </url>
 
-  <!-- Privacidade -->
   <url>
-    <loc>https://lorenaalvesarq.com/privacidade</loc>
-    <lastmod>2026-04-22</lastmod>
+    <loc>https://bewild.com.br/conteudos</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://bewild.com.br/conteudos" />
+  </url>
+
+  <url>
+    <loc>https://bewild.com.br/faq</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://bewild.com.br/faq" />
+  </url>
+
+  <url>
+    <loc>https://bewild.com.br/privacidade</loc>
     <changefreq>yearly</changefreq>
     <priority>0.30</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/privacidade" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://lorenaalvesarq.com/privacidade" />
-  </url>
-
-  <!-- ============================================================
-       BLOG — índice, tags e posts
-       ============================================================ -->
-  <url>
-    <loc>https://lorenaalvesarq.com/blog</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/blog" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://lorenaalvesarq.com/blog" />
-  </url>
-
-  <url>
-    <loc>https://lorenaalvesarq.com/blog/tags</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.55</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/blog/tags" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://lorenaalvesarq.com/blog/tags" />
-  </url>
-
-  <!-- Blog post: Como funciona um projeto arquitetônico -->
-  <url>
-    <loc>https://lorenaalvesarq.com/blog/como-funciona-projeto-arquitetonico</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/blog/como-funciona-projeto-arquitetonico" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://lorenaalvesarq.com/blog/como-funciona-projeto-arquitetonico" />
-    <image:image>
-      <image:loc>https://erivcmnvvgxyfkhugupq.supabase.co/storage/v1/object/public/blog-images/a6881713-21c5-4b4e-a992-ddfd4d29ee38.jpg</image:loc>
-      <image:title>Como funciona um projeto arquitetônico — etapas, prazos, requisitos e ferramentas</image:title>
-      <image:caption>Escritório de arquitetura com mesas de trabalho, monitores e projetos em andamento.</image:caption>
-    </image:image>
-  </url>
-
-  <!-- Blog post: Como construir minha casa -->
-  <url>
-    <loc>https://lorenaalvesarq.com/blog/como-construir-minha-casa</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/blog/como-construir-minha-casa" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://lorenaalvesarq.com/blog/como-construir-minha-casa" />
-    <image:image>
-      <image:loc>https://lorenaalvesarq.com/images/blog/construir-casa-1-cover.jpg</image:loc>
-      <image:title>Como construir minha casa — guia de arquitetura residencial</image:title>
-      <image:caption>Casa residencial autoral em construção — projeto Lorena Alves Arquitetura.</image:caption>
-    </image:image>
-  </url>
-
-  <!-- Blog tags -->
-  <url>
-    <loc>https://lorenaalvesarq.com/blog/tag/arquitetura-residencial</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.50</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/blog/tag/arquitetura-residencial" />
-  </url>
-  <url>
-    <loc>https://lorenaalvesarq.com/blog/tag/briefing</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.50</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/blog/tag/briefing" />
-  </url>
-  <url>
-    <loc>https://lorenaalvesarq.com/blog/tag/construcao</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.50</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/blog/tag/construcao" />
-  </url>
-  <url>
-    <loc>https://lorenaalvesarq.com/blog/tag/etapas</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.50</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/blog/tag/etapas" />
-  </url>
-  <url>
-    <loc>https://lorenaalvesarq.com/blog/tag/prazo</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.50</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/blog/tag/prazo" />
-  </url>
-  <url>
-    <loc>https://lorenaalvesarq.com/blog/tag/primeira-casa</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.50</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/blog/tag/primeira-casa" />
-  </url>
-  <url>
-    <loc>https://lorenaalvesarq.com/blog/tag/projeto-arquitetonico</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.50</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/blog/tag/projeto-arquitetonico" />
-  </url>
-  <url>
-    <loc>https://lorenaalvesarq.com/blog/tag/projeto-autoral</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.50</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/blog/tag/projeto-autoral" />
-  </url>
-  <url>
-    <loc>https://lorenaalvesarq.com/blog/tag/reforma</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.50</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/blog/tag/reforma" />
-  </url>
-  <url>
-    <loc>https://lorenaalvesarq.com/blog/tag/uberlandia</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.50</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/blog/tag/uberlandia" />
-  </url>
-
-  <!-- ============================================================
-       PROJETOS — fichas individuais
-       ============================================================ -->
-  <url>
-    <loc>https://lorenaalvesarq.com/projeto/casa-paineira</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/projeto/casa-paineira" />
-    <image:image>
-      <image:loc>https://lorenaalvesarq.com/images/casa-paineira-pavilhao-concreto-ipe-uberlandia-lg.jpg</image:loc>
-      <image:title>Casa Paineira — projeto residencial em pavilhão de concreto e ipê</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://lorenaalvesarq.com/projeto/casa-jequitiba</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/projeto/casa-jequitiba" />
-    <image:image>
-      <image:loc>https://lorenaalvesarq.com/images/casa-jequitiba-interior-contemporaneo-brasileiro-lg.jpg</image:loc>
-      <image:title>Casa Jequitibá — design de interiores em residência modernista</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://lorenaalvesarq.com/projeto/apto-higienopolis</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/projeto/apto-higienopolis" />
-    <image:image>
-      <image:loc>https://lorenaalvesarq.com/images/apartamento-higienopolis-design-interiores-walnut-lg.jpg</image:loc>
-      <image:title>Apartamento Higienópolis — projeto de design de interiores</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://lorenaalvesarq.com/projeto/casa-pau-brasil</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/projeto/casa-pau-brasil" />
-    <image:image>
-      <image:loc>https://lorenaalvesarq.com/images/casa-pau-brasil-residencia-praia-cantilever-lg.jpg</image:loc>
-      <image:title>Casa Pau-Brasil — residência de praia em cantiléver</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://lorenaalvesarq.com/projeto/restaurante-takka</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/projeto/restaurante-takka" />
-    <image:image>
-      <image:loc>https://lorenaalvesarq.com/images/restaurante-takka-arquitetura-comercial-gastronomica-lg.jpg</image:loc>
-      <image:title>Restaurante Takka — arquitetura comercial e gastronômica</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://lorenaalvesarq.com/projeto/fazenda-porto</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://lorenaalvesarq.com/projeto/fazenda-porto" />
-    <image:image>
-      <image:loc>https://lorenaalvesarq.com/images/fazenda-porto-arquitetura-rural-taipa-minas-gerais-lg.jpg</image:loc>
-      <image:title>Fazenda Porto — arquitetura rural mineira em taipa</image:title>
-    </image:image>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://bewild.com.br/privacidade" />
   </url>
 </urlset>

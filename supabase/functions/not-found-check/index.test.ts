@@ -53,13 +53,6 @@ Deno.test("rota com slug dinâmico inválido devolve HTTP 404", async () => {
   assertEquals(body.reason, "dynamic_slug_not_found");
 });
 
-Deno.test("blog com slug inválido devolve HTTP 404", async () => {
-  const r = await call("/blog/post-que-nao-existe");
-  const body = await r.json();
-  assertEquals(r.status, 404);
-  assertEquals(body.status, "not_found");
-});
-
 Deno.test("rota canônica conhecida devolve HTTP 200", async () => {
   const r = await call("/portfolio");
   const body = await r.json();
@@ -75,23 +68,15 @@ Deno.test("home devolve HTTP 200", async () => {
 });
 
 // ---------------------------------------------------------------------------
-// Cobertura de TODAS as rotas canônicas públicas.
-//
-// Espelha a constante STATIC_ROUTES em index.ts e a lista de rotas públicas
-// em src/lib/useHashRoute.ts. Se você adicionar uma nova página pública à
-// SPA (ex.: /servicos, /contato), adicione o path AQUI e em STATIC_ROUTES
-// na edge function. Caso contrário este teste falhará — o que é o
-// comportamento desejado: quebra cedo, durante o build/CI, em vez de
-// silenciosamente devolver 404 para crawlers em produção.
+// Cobertura de TODAS as rotas canônicas públicas (Bewild).
 // ---------------------------------------------------------------------------
 const CANONICAL_PUBLIC_ROUTES = [
   "/",
-  "/sobre",
   "/portfolio",
+  "/diagnostico",
   "/faq",
   "/privacidade",
-  "/blog",
-  "/blog/tags",
+  "/conteudos",
   "/404",
 ];
 
