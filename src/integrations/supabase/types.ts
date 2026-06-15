@@ -413,6 +413,72 @@ export type Database = {
         }
         Relationships: []
       }
+      leads: {
+        Row: {
+          area_m2: number | null
+          chaves: string | null
+          created_at: string
+          email: string | null
+          id: string
+          landing_path: string | null
+          location: string | null
+          message: string | null
+          name: string
+          objetivo: string | null
+          planta: string | null
+          referrer: string | null
+          status: string
+          updated_at: string
+          user_agent: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          whatsapp: string
+        }
+        Insert: {
+          area_m2?: number | null
+          chaves?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          landing_path?: string | null
+          location?: string | null
+          message?: string | null
+          name: string
+          objetivo?: string | null
+          planta?: string | null
+          referrer?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          whatsapp: string
+        }
+        Update: {
+          area_m2?: number | null
+          chaves?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          landing_path?: string | null
+          location?: string | null
+          message?: string | null
+          name?: string
+          objetivo?: string | null
+          planta?: string | null
+          referrer?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          whatsapp?: string
+        }
+        Relationships: []
+      }
       project_images: {
         Row: {
           alt: string
