@@ -423,14 +423,14 @@ export default function BewildOverviewPage() {
           <div className="bw-admin__kpi-grid" style={{ marginBottom: 0 }}>
             <Kpi
               label="Novos leads"
-              value={fmtInt(diagCount)}
+              value={fmtInt(leadsCount)}
               sub="Via /diagnostico no período"
             />
             <Kpi
               label="Já contatados"
               value={fmtInt(contactedCount)}
               sub={
-                diagCount > 0
+                leadsCount > 0
                   ? `Taxa de contato: ${fmtPct(contactRate)}`
                   : "Sem leads no período"
               }
