@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Check, MessageCircle } from "lucide-react";
 import { useSeo, breadcrumbJsonLd, organizationJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
-import Header from "../components/landing/Header";
+import BewildSiteNav from "@/components/BewildSiteNav";
 import Footer from "../components/landing/Footer";
 import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton";
 import { Container, CTAButton, Selo } from "../components/landing/primitives";
@@ -97,7 +97,7 @@ export default function PortfolioPage() {
 
   return (
     <>
-      <Header />
+      <BewildSiteNav />
       <main id="main" className="bg-[#FBFAF8] text-bewild-ink">
         <PortfolioHero />
         <Disclaimer />

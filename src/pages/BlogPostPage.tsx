@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { gsap, ScrollTrigger } from "../lib/gsap";
-import Header from "../components/landing/Header";
+import BewildSiteNav from "@/components/BewildSiteNav";
 import Footer from "../components/landing/Footer";
 import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton";
 import { Container, CTAButton } from "../components/landing/primitives";
@@ -223,7 +223,7 @@ export default function BlogPostPage({ slug }: Props) {
   if (loading) {
     return (
       <>
-        <Header />
+        <BewildSiteNav />
         <main id="main" tabIndex={-1} className="bg-[#FBFAF8] text-bewild-ink">
           <Container className="py-32">
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-bewild-ink/45" role="status" aria-live="polite">
@@ -239,7 +239,7 @@ export default function BlogPostPage({ slug }: Props) {
   if (notFound || !post) {
     return (
       <>
-        <Header />
+        <BewildSiteNav />
         <main id="main" tabIndex={-1} className="bg-[#FBFAF8] text-bewild-ink">
           <Container className="py-32">
             <p className="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-bewild-blue-600">
@@ -267,7 +267,7 @@ export default function BlogPostPage({ slug }: Props) {
 
   return (
     <>
-      <Header />
+      <BewildSiteNav />
       <main id="main" tabIndex={-1} className="bg-[#FBFAF8] text-bewild-ink">
         <article>
           {/* HERO */}

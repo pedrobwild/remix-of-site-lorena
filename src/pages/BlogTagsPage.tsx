@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { ArrowRight } from "lucide-react";
-import Header from "../components/landing/Header";
+import BewildSiteNav from "@/components/BewildSiteNav";
 import Footer from "../components/landing/Footer";
 import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton";
 import { Container, CTAButton } from "../components/landing/primitives";
@@ -50,7 +50,7 @@ export default function BlogTagsPage() {
 
   return (
     <>
-      <Header />
+      <BewildSiteNav />
       <main id="main" tabIndex={-1} className="bg-[#FBFAF8] text-bewild-ink">
         <section className="border-b border-bewild-ink/10 bg-white">
           <Container className="pb-14 pt-32 sm:pb-20 sm:pt-40">
