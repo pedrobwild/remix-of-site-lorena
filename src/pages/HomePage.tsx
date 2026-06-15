@@ -18,6 +18,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSeo } from "@/lib/useSeo";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import "@/styles/home.css";
+import BewildSiteNav from "@/components/BewildSiteNav";
 
 /* ---------------- data ---------------- */
 
