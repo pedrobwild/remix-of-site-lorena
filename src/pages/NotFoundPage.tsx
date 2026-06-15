@@ -100,7 +100,7 @@ export default function NotFoundPage() {
                 <a href={routes.home} className="btn btn-cyan">
                   Voltar à página inicial <span className="arrow">→</span>
                 </a>
-                <a href={routes.diagnostico} className="btn btn-ghost">
+                <a href={routes.diagnostico} className="btn btn-primary">
                   Solicitar diagnóstico
                 </a>
               </div>
