@@ -167,7 +167,9 @@ export default function HomePage() {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
         const y = window.scrollY;
-        heroBg.style.transform = `translate3d(0, ${y * 0.35}px, 0)`;
+        if (y < window.innerHeight) {
+          heroBg.style.transform = `translate3d(0, ${y * 0.35}px, 0)`;
+        }
       });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
