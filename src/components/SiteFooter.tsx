@@ -10,11 +10,15 @@ import "@/styles/site-footer.css";
 
 function BrandLockup() {
   return (
-    <span className="bw-foot__brand" aria-label="Bewild · Grupo Bwild">
-      <span className="be">Be</span>
-      <span className="wild">wild</span>
-      <span className="sub">Grupo Bwild</span>
-    </span>
+    <img
+      src="/brand/bewild-logo.png"
+      alt="Bewild"
+      className="bw-foot__logo"
+      width={150}
+      height={30}
+      decoding="async"
+      loading="lazy"
+    />
   );
 }
 
