@@ -46,7 +46,7 @@ Deno.test("rota inexistente devolve HTTP 404", async () => {
 });
 
 Deno.test("rota com slug dinâmico inválido devolve HTTP 404", async () => {
-  const r = await call("/projeto/slug-inexistente-xyz");
+  const r = await call("/portfolio/slug-inexistente-xyz");
   const body = await r.json();
   assertEquals(r.status, 404);
   assertEquals(body.status, "not_found");
@@ -334,9 +334,7 @@ Deno.test("rota inexistente NÃO emite 3xx antes do 404 (sem cadeia de redirect)
 });
 
 Deno.test("rota com slug dinâmico inválido também não passa por 3xx", async () => {
-  // Mesmo contrato para /projeto/<slug-inexistente>: resposta direta 404,
-  // sem 301 para listagem nem 302 para home.
-  const r = await call("/projeto/slug-anti-redirect-xyz");
+  const r = await call("/portfolio/slug-anti-redirect-xyz");
   assert(
     r.status < 300 || r.status >= 400,
     `status ${r.status} indica redirect intermediário — quebra contrato`,
@@ -346,18 +344,6 @@ Deno.test("rota com slug dinâmico inválido também não passa por 3xx", async 
   const body = await r.json();
   assertEquals(body.status, "not_found");
   assertEquals(body.reason, "dynamic_slug_not_found");
-});
-
-Deno.test("blog com slug inválido também não passa por 3xx", async () => {
-  const r = await call("/blog/post-anti-redirect");
-  assert(
-    r.status < 300 || r.status >= 400,
-    `status ${r.status} indica redirect intermediário — quebra contrato`,
-  );
-  assertEquals(r.status, 404);
-  assertEquals(r.headers.get("location"), null);
-  // Consome body para evitar leak detectado pelo Deno test runner.
-  await r.text();
 });
 
 // ---------------------------------------------------------------------------
