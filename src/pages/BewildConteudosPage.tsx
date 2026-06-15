@@ -10,7 +10,7 @@
 import { useMemo, useState } from "react";
 import { useSeo } from "@/lib/useSeo";
 import BewildSiteNav from "@/components/BewildSiteNav";
-import { CONTACT, whatsappHref } from "@/components/landing/content";
+import SiteFooter from "@/components/SiteFooter";
 import {
   useBewildPosts,
   bewildCategoryLabel,
@@ -30,15 +30,6 @@ const FILTERS: { value: FilterValue; label: string }[] = [
   ...BEWILD_CATEGORIES.map((c) => ({ value: c, label: bewildCategoryLabel(c) })),
 ];
 
-function BrandLockup() {
-  return (
-    <span className="brand" aria-label="Bewild · Grupo Bwild">
-      <span className="be">Be</span>
-      <span className="wild">wild</span>
-      <span className="sub">Grupo Bwild</span>
-    </span>
-  );
-}
 
 function PostMeta({ post }: { post: BewildPost }) {
   const date = formatBewildDate(post.published_at ?? post.created_at);
@@ -252,45 +243,7 @@ export default function BewildConteudosPage() {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="foot">
-        <div className="foot-grid">
-          <div>
-            <a href="/">
-              <BrandLockup />
-            </a>
-            <p style={{ marginTop: 14 }}>
-              Reforma turn-key de studios em São Paulo. Projeto, obra,
-              marcenaria, mobiliário e entrega em um processo único.
-            </p>
-            <p style={{ marginTop: 10 }}>{CONTACT.city}</p>
-          </div>
-          <nav aria-label="Rodapé — navegação">
-            <h4 className="foot-col">Navegação</h4>
-            <ul>
-              <li><a href="/#fazemos">O que fazemos</a></li>
-              <li><a href="/#processo">Como funciona</a></li>
-              <li><a href="/portfolio">Portfólio</a></li>
-              <li><a href="/conteudos">Conteúdos</a></li>
-              <li><a href="/diagnostico">Diagnóstico</a></li>
-            </ul>
-          </nav>
-          <div>
-            <h4 className="foot-col">Contato</h4>
-            <ul>
-              <li><a href={whatsappHref()} target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
-              <li><a href={CONTACT.instagram} target="_blank" rel="noopener noreferrer">Instagram</a></li>
-              <li><a href={CONTACT.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
-              <li><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></li>
-              <li><a href="/privacidade">Política de privacidade</a></li>
-            </ul>
-          </div>
-        </div>
-        <div className="foot-bottom">
-          <p>Bewild · Reforma turn-key de studios em São Paulo</p>
-          <p>© {new Date().getFullYear()} Bewild · Grupo Bwild</p>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

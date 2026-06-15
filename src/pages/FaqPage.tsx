@@ -1,9 +1,8 @@
-import { routes } from "../lib/useHashRoute";
 import { useSeo, breadcrumbJsonLd, faqJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
 import { useFaq } from "../lib/useFaq";
-import { track } from "../lib/analytics";
 import BewildSiteNav from "@/components/BewildSiteNav";
+import SiteFooter from "@/components/SiteFooter";
 
 /**
  * Página dedicada /faq.
@@ -86,25 +85,7 @@ export default function FaqPage() {
         ))}
       </section>
 
-      {/* CTA final */}
-      <footer className="pf-foot">
-        <div>
-          <p className="pf-foot__quote">
-            Não encontrou sua dúvida? <em>Conversemos.</em>
-          </p>
-        </div>
-        <a
-          className="pf-foot__cta"
-          href={`${routes.home}#contato`}
-          data-cursor="hover"
-          onClick={() =>
-            track("click_cta", { value: { label: "contato", from: "faq-page" } })
-          }
-        >
-          <span>FALAR COM O ESTÚDIO</span>
-          <span className="btn-big__arrow" />
-        </a>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }

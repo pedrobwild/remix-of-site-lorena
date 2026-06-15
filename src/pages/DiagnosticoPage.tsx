@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useSeo, breadcrumbJsonLd, organizationJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
 import BewildSiteNav from "@/components/BewildSiteNav";
-import Footer from "../components/landing/Footer";
+import SiteFooter from "@/components/SiteFooter";
 import { CONTACT } from "../components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import "../styles/bw-diag.css";

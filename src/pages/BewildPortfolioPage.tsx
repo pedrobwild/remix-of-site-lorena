@@ -10,6 +10,7 @@
 import { useMemo, useState } from "react";
 import { useSeo } from "@/lib/useSeo";
 import BewildSiteNav from "@/components/BewildSiteNav";
+import SiteFooter from "@/components/SiteFooter";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import {
   useBewildProjects,
@@ -28,15 +29,6 @@ const FILTERS: { value: FilterValue; label: string }[] = [
   { value: "planta", label: "Planta" },
 ];
 
-function BrandLockup() {
-  return (
-    <span className="brand" aria-label="Bewild · Grupo Bwild">
-      <span className="be">Be</span>
-      <span className="wild">wild</span>
-      <span className="sub">Grupo Bwild</span>
-    </span>
-  );
-}
 
 export default function BewildPortfolioPage() {
   const { projects, loading, error } = useBewildProjects();
