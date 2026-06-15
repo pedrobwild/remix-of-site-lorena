@@ -49,7 +49,9 @@ export default function BewildPortfolioPage() {
   }, [projects, filter]);
 
   return (
+    <>
     <div className="bw-home bw-portfolio">
+
       {/* NAV */}
       <BewildSiteNav />
 
@@ -168,8 +170,10 @@ export default function BewildPortfolioPage() {
           </a>
         </div>
       </section>
-
-      <SiteFooter />
     </div>
+
+    <SiteFooter />
+    </>
   );
 }
+

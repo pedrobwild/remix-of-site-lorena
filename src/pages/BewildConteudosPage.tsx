@@ -66,7 +66,9 @@ export default function BewildConteudosPage() {
   const showFeatured = featured && (filter === "all" || featured.category === filter);
 
   return (
+    <>
     <div className="bw-home bw-conteudos">
+
       {/* NAV */}
       <BewildSiteNav />
 
@@ -243,8 +245,10 @@ export default function BewildConteudosPage() {
           </div>
         </div>
       </section>
-
-      <SiteFooter />
     </div>
+
+    <SiteFooter />
+    </>
   );
 }
+
