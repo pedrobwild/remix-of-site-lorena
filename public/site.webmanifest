@@ -1,13 +1,13 @@
 {
-  "name": "Lorena Alves Arquitetura — Uberlândia, MG",
-  "short_name": "Lorena Alves Arq",
-  "description": "Escritório autoral de arquitetura e design de interiores em Uberlândia, MG. Triângulo Mineiro.",
+  "name": "Bewild — Reformas turn-key para studios em São Paulo",
+  "short_name": "Bewild",
+  "description": "Reformas turn-key de studios para short stay em São Paulo. Projeto, obra, marcenaria e mobiliário em um único processo.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#0A0A0A",
-  "theme_color": "#0A0A0A",
+  "background_color": "#11355B",
+  "theme_color": "#11355B",
   "lang": "pt-BR",
   "dir": "ltr",
   "categories": ["design", "business", "lifestyle"]
