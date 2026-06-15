@@ -36,6 +36,8 @@ function parsePath(rawPath: string): Route {
 
   if (path === "/" || path === "") return { name: "home" };
   if (path === "/portfolio") return { name: "portfolio" };
+  if (path === "/portfolio-lorena") return { name: "portfolio-lorena" };
+
   if (path === "/diagnostico") return { name: "diagnostico" };
   if (path === "/faq") return { name: "faq" };
   if (path === "/sobre") return { name: "sobre" };
