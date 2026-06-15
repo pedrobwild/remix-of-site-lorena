@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { useSeo, breadcrumbJsonLd, organizationJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
-import Header from "../components/landing/Header";
+import BewildSiteNav from "@/components/BewildSiteNav";
 import Footer from "../components/landing/Footer";
 import { Container, CTAButton } from "../components/landing/primitives";
 import { CONTACT } from "../components/landing/content";
@@ -97,7 +97,7 @@ export default function DiagnosticoPage() {
 
   return (
     <>
-      <Header />
+      <BewildSiteNav />
       <main id="main" className="bg-bewild-ink text-white">
         <DiagnosticoSection />
       </main>

@@ -9,7 +9,7 @@ import { shouldRunParallax, shouldUseSmoothScroll } from "../lib/device";
 import { useSeo, projectJsonLd, breadcrumbJsonLd, organizationJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
 import SmartImage from "../components/SmartImage";
-import InternalNav from "../components/InternalNav";
+import BewildSiteNav from "@/components/BewildSiteNav";
 
 type Props = { slug: string };
 
@@ -183,13 +183,8 @@ export default function ProjectPage({ slug }: Props) {
       aria-busy={isTransitioning || undefined}
       data-transitioning={isTransitioning ? "true" : undefined}
     >
-      {/* Nav topo */}
-      <InternalNav
-        active="project"
-        extraClassName="pp-nav"
-        backHref={routes.portfolio}
-        backLabel="todos os projetos"
-      />
+      {/* Nav topo unificado */}
+      <BewildSiteNav />
 
       {/* Hero */}
       <header className="pp-hero">

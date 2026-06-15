@@ -9,6 +9,7 @@
  */
 import { useMemo, useState } from "react";
 import { useSeo } from "@/lib/useSeo";
+import BewildSiteNav from "@/components/BewildSiteNav";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import {
   useBewildPosts,
@@ -75,25 +76,7 @@ export default function BewildConteudosPage() {
   return (
     <div className="bw-home bw-conteudos">
       {/* NAV */}
-      <header className="nav">
-        <div className="nav-inner">
-          <a href="/" aria-label="Bewild — início">
-            <BrandLockup />
-          </a>
-          <nav className="nav-links" aria-label="Navegação principal">
-            <a href="/#fazemos">O que fazemos</a>
-            <a href="/#processo">Como funciona</a>
-            <a href="/portfolio">Portfólio</a>
-            <a href="/conteudos" aria-current="page">Conteúdos</a>
-            <a href="/#faq">FAQ</a>
-          </nav>
-          <div className="nav-cta">
-            <a href="/diagnostico" className="btn btn-primary">
-              Solicitar diagnóstico <span className="arrow">→</span>
-            </a>
-          </div>
-        </div>
-      </header>
+      <BewildSiteNav />
 
       {/* HERO */}
       <section className="ct-hero">

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRight } from "lucide-react";
-import Header from "../components/landing/Header";
+import BewildSiteNav from "@/components/BewildSiteNav";
 import Footer from "../components/landing/Footer";
 import FloatingWhatsAppButton from "../components/landing/FloatingWhatsAppButton";
 import { Container, CTAButton, LandingImage } from "../components/landing/primitives";
@@ -80,7 +80,7 @@ export default function BlogPage() {
 
   return (
     <>
-      <Header />
+      <BewildSiteNav />
       <main id="main" tabIndex={-1} className="bg-[#FBFAF8] text-bewild-ink">
         {/* HERO */}
         <section className="border-b border-bewild-ink/10 bg-white">

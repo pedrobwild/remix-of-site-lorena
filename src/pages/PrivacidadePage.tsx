@@ -1,7 +1,7 @@
 import { useSeo, breadcrumbJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
 import { track } from "../lib/analytics";
-import InternalNav from "../components/InternalNav";
+import BewildSiteNav from "@/components/BewildSiteNav";
 
 /**
  * Página /privacidade — Política de Privacidade (LGPD).
@@ -36,7 +36,7 @@ export default function PrivacidadePage() {
   return (
     <main id="main" tabIndex={-1} className="pf-page privacidade-page">
       {/* Top nav minimal — mesmo padrão do Portfolio/FAQ */}
-      <InternalNav backLabel="voltar ao início" />
+      <BewildSiteNav />
 
       {/* Header — H1 */}
       <header className="pf-head">

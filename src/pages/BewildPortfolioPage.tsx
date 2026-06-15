@@ -9,6 +9,7 @@
  */
 import { useMemo, useState } from "react";
 import { useSeo } from "@/lib/useSeo";
+import BewildSiteNav from "@/components/BewildSiteNav";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import {
   useBewildProjects,
@@ -58,25 +59,7 @@ export default function BewildPortfolioPage() {
   return (
     <div className="bw-home bw-portfolio">
       {/* NAV */}
-      <header className="nav">
-        <div className="nav-inner">
-          <a href="/" aria-label="Bewild — início">
-            <BrandLockup />
-          </a>
-          <nav className="nav-links" aria-label="Navegação principal">
-            <a href="/#fazemos">O que fazemos</a>
-            <a href="/#processo">Como funciona</a>
-            <a href="/portfolio" aria-current="page">Portfólio</a>
-            <a href="/#diferenciais">Diferenciais</a>
-            <a href="/#faq">FAQ</a>
-          </nav>
-          <div className="nav-cta">
-            <a href="/diagnostico" className="btn btn-primary">
-              Solicitar diagnóstico <span className="arrow">→</span>
-            </a>
-          </div>
-        </div>
-      </header>
+      <BewildSiteNav />
 
       {/* HERO */}
       <section className="pf-hero">

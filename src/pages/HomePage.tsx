@@ -18,6 +18,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSeo } from "@/lib/useSeo";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import "@/styles/home.css";
+import BewildSiteNav from "@/components/BewildSiteNav";
 
 /* ---------------- data ---------------- */
 
@@ -216,27 +217,9 @@ export default function HomePage() {
 
   return (
     <div className="bw-home" ref={rootRef}>
-      {/* NAV */}
-      <header className="nav">
-        <div className="nav-inner">
-          <a href="#top" aria-label="Bewild — início">
-            <BrandLockup />
-          </a>
-          <nav className="nav-links" aria-label="Navegação principal">
-            <a href="#fazemos">O que fazemos</a>
-            <a href="#processo">Como funciona</a>
-            <a href="/portfolio">Portfólio</a>
-            <a href="/conteudos">Conteúdos</a>
-            <a href="#diferenciais">Diferenciais</a>
-            <a href="#faq">FAQ</a>
-          </nav>
-          <div className="nav-cta">
-            <a href="/diagnostico" className="btn btn-primary">
-              Solicitar diagnóstico <span className="arrow">→</span>
-            </a>
-          </div>
-        </div>
-      </header>
+      {/* NAV — unificada para todas as páginas */}
+      <BewildSiteNav />
+
 
       {/* HERO */}
       <section className="hero" id="top" aria-label="Bewild — reforma turn-key de studios">

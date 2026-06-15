@@ -2,8 +2,8 @@ import { routes } from "../lib/useHashRoute";
 import { useSeo, breadcrumbJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
 import { track } from "../lib/analytics";
-import InternalNav from "../components/InternalNav";
 import Picture from "../components/Picture";
+import BewildSiteNav from "@/components/BewildSiteNav";
 
 /**
  * Página /sobre — Sobre a Lorena e o estúdio.
@@ -225,7 +225,7 @@ export default function SobrePage() {
   return (
     <main id="main" tabIndex={-1} className="pf-page sobre-page">
       {/* Top nav */}
-      <InternalNav active="sobre" backLabel="voltar ao início" />
+      <BewildSiteNav />
 
       {/* Header */}
       <header className="pf-head">

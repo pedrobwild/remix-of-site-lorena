@@ -3,7 +3,7 @@ import { useSeo, breadcrumbJsonLd, faqJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
 import { useFaq } from "../lib/useFaq";
 import { track } from "../lib/analytics";
-import InternalNav from "../components/InternalNav";
+import BewildSiteNav from "@/components/BewildSiteNav";
 
 /**
  * Página dedicada /faq.
@@ -38,7 +38,7 @@ export default function FaqPage() {
   return (
     <main id="main" tabIndex={-1} className="pf-page faq-page">
       {/* Top nav minimal — mesmo padrão do Portfolio */}
-      <InternalNav active="faq" backLabel="voltar ao início" />
+      <BewildSiteNav />
 
       {/* Header — H1 da página */}
       <header className="pf-head">
