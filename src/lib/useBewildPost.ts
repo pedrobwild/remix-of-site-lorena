@@ -8,7 +8,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { devWarn } from "@/lib/devLog";
-import type { BewildPost, BewildPostCategory } from "@/lib/useBewildPosts";
+import { normalizeBewildPost, type BewildPost, type BewildPostCategory } from "@/lib/useBewildPosts";
 
 const SELECT_COLS =
   "id, slug, title, meta_title, meta_description, category, excerpt, cover_image, body, faq, reading_time, author, featured, published, published_at, created_at";
@@ -49,7 +49,7 @@ export function useBewildPost(slug: string | undefined) {
           setLoading(false);
           return;
         }
-        setPost(data as unknown as BewildPost);
+        setPost(normalizeBewildPost(data as unknown as BewildPost) as BewildPost);
         setLoading(false);
       });
 
@@ -95,7 +95,7 @@ export function useBewildRelatedPosts(
           setLoading(false);
           return;
         }
-        setRelated((data ?? []) as unknown as BewildPost[]);
+        setRelated(((data ?? []) as unknown as BewildPost[]).map(normalizeBewildPost) as BewildPost[]);
         setLoading(false);
       });
 
