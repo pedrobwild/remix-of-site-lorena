@@ -15,6 +15,8 @@ import App from "./App";
 import PortfolioPage from "./pages/PortfolioPage";
 import BewildPortfolioPage from "./pages/BewildPortfolioPage";
 import BewildProjectPage from "./pages/BewildProjectPage";
+import BewildConteudosPage from "./pages/BewildConteudosPage";
+
 
 import DiagnosticoPage from "./pages/DiagnosticoPage";
 import ProjectPage from "./pages/ProjectPage";
