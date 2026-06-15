@@ -10,11 +10,13 @@ export type Route =
   | { name: "privacidade" }
   | { name: "project"; slug: string }
   | { name: "bewild-project"; slug: string }
+  | { name: "conteudos" }
   | { name: "blog" }
 
   | { name: "blog-tags" }
   | { name: "blog-tag"; slug: string }
   | { name: "blog-post"; slug: string }
+
   | { name: "admin-login" }
   | { name: "admin-dashboard" }
   | { name: "admin-analytics" }
