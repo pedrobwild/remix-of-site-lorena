@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
-import { routes } from "@/lib/useHashRoute";
+// routes helper não é necessário — links Bewild usam paths literais.
 import { bewildTypeLabel, type BewildProjectType } from "@/lib/useBewildProjects";
 
 type Row = {
