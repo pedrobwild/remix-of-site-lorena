@@ -244,7 +244,7 @@ export default function BewildOverviewPage() {
           icon={<Inbox aria-hidden />}
           label="Leads no período"
           value={fmtInt(totalLeads)}
-          sub={`${fmtInt(diagCount)} via diagnóstico · ${fmtInt(leadsCount)} via formulário`}
+          sub="Recebidos pelo formulário de /diagnostico"
         />
         <Kpi
           icon={<Target aria-hidden />}
