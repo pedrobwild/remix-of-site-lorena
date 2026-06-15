@@ -46,14 +46,13 @@ export default function BewildSiteNav() {
     { label: "O que fazemos", href: "/#fazemos", onlyHome: true },
     { label: "Como funciona", href: "/#processo", onlyHome: true },
     { label: "Portfólio", href: "/portfolio", hideOnPrefix: "/portfolio" },
-    { label: "Conteúdos", href: "/conteudos", hideOnPrefix: "/conteudos" },
     { label: "Diferenciais", href: "/#diferenciais", onlyHome: true },
-    { label: "Sobre", href: "/sobre", hideOnPrefix: "/sobre" },
     {
       label: "FAQ",
       href: isHome ? "#faq" : "/faq",
       hideOnPrefix: "/faq",
     },
+    { label: "Conteúdos", href: "/conteudos", hideOnPrefix: "/conteudos" },
   ];
 
   const visible = items.filter((it) => {
