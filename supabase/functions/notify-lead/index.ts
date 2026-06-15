@@ -39,6 +39,10 @@ type StepResult = {
   error?: string;
 };
 
+type CrmResult =
+  | { status: "sent" | "skipped" }
+  | { status: "error"; http_status?: number; body?: string; error?: string };
+
 function fmtDateBR(d: Date): string {
   try {
     return new Intl.DateTimeFormat("pt-BR", {
@@ -263,13 +267,13 @@ function buildCrmPayload(lead: Lead) {
   };
 }
 
-async function createCrmCard(lead: Lead): Promise<Outcome> {
+async function createCrmCard(lead: Lead): Promise<CrmResult> {
   const key = Deno.env.get("BWILD_ENGINE_INTEGRATION_KEY");
   if (!key) {
     console.warn(
       "[notify-lead] BWILD_ENGINE_INTEGRATION_KEY is not set; skipping CRM",
     );
-    return "skipped";
+    return { status: "skipped" };
   }
   try {
     const res = await fetch(BWILD_ENGINE_WEBHOOK_URL, {
@@ -281,13 +285,15 @@ async function createCrmCard(lead: Lead): Promise<Outcome> {
       body: JSON.stringify(buildCrmPayload(lead)),
     });
     if (!res.ok) {
-      const body = await res.text().catch(() => "");
-      throw new Error(`HTTP ${res.status} ${body.slice(0, 200)}`);
+      const body = (await res.text().catch(() => "")).slice(0, 200);
+      console.error("[notify-lead] crm hook non-2xx", res.status, body);
+      return { status: "error", http_status: res.status, body };
     }
-    return "sent";
+    return { status: "sent" };
   } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
     console.error("[notify-lead] crm hook failed", err);
-    return "error";
+    return { status: "error", error: message };
   }
 }
 
