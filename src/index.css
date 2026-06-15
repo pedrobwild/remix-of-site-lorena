@@ -2502,7 +2502,6 @@ body.has-custom-cursor *:focus-visible {
    ========================================================== */
 
 /* ---------- Shared nav ---------- */
-.pf-page,
 .pp-page {
   background: var(--bone);
   color: var(--ink);
