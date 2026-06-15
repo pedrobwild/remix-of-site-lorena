@@ -115,7 +115,7 @@ export default function NotFoundPage() {
           </li>
           <li>
             <a href={routes.portfolio} style={{ textDecoration: "underline" }}>
-              → Ver o portfólio de projetos
+              → Ver reformas entregues
             </a>
           </li>
           <li>
@@ -125,7 +125,7 @@ export default function NotFoundPage() {
           </li>
           <li>
             <a href={routes.blog} style={{ textDecoration: "underline" }}>
-              → Ler o blog de arquitetura
+              → Conteúdos sobre studios e short stay
             </a>
           </li>
           <li>
