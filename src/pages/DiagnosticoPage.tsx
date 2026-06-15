@@ -289,6 +289,8 @@ function DiagnosticoForm() {
         </div>
       )}
 
+      {!success && (
+        <>
       <div className="bw-diag__field">
         <label htmlFor="diag-nome">
           Nome <span className="bw-diag__req">*</span>
@@ -388,6 +390,8 @@ function DiagnosticoForm() {
       <p className="bw-diag__formfine">
         Ao enviar, abrimos uma conversa no WhatsApp com seus dados preenchidos.
       </p>
+        </>
+      )}
     </form>
   );
 }
