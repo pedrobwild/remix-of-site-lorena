@@ -154,6 +154,8 @@ export function useHashRoute(): Route {
 export const routes = {
   home: "/",
   portfolio: "/portfolio",
+  portfolioLorena: "/portfolio-lorena",
+
   diagnostico: "/diagnostico",
   faq: "/faq",
   sobre: "/sobre",
