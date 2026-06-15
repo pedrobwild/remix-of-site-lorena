@@ -2599,43 +2599,6 @@ body.has-custom-cursor *:focus-visible {
   .pf-nav__menu { display: none; }
 }
 
-/* ---------- Portfolio: header ---------- */
-.pf-head {
-  padding: clamp(4rem, 10vw, 8rem) var(--edge) clamp(2.5rem, 6vw, 4rem);
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.pf-head__eyebrow {
-  display: inline-block;
-  font-size: 0.72rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  opacity: 0.6;
-  margin-bottom: 1.8rem;
-}
-
-.pf-head__title {
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: clamp(2.5rem, 7.5vw, 6.5rem);
-  line-height: 1;
-  letter-spacing: -0.035em;
-  max-width: 20ch;
-  margin: 0 0 1.8rem;
-}
-
-.pf-head__title em {
-  font-style: italic;
-  color: var(--clay-deep);
-}
-
-.pf-head__lede {
-  font-size: clamp(1rem, 1.4vw, 1.2rem);
-  line-height: 1.55;
-  max-width: 52ch;
-  opacity: 0.78;
-}
 
 /* Filters */
 .pf-filters {
@@ -3398,21 +3361,6 @@ html { scroll-behavior: smooth; }
     padding: max(0.85rem, env(safe-area-inset-top)) var(--edge) 0.85rem;
   }
 
-  .pf-head {
-    padding-top: clamp(2.5rem, 10vw, 4rem);
-    padding-bottom: 2rem;
-  }
-
-  .pf-head__title {
-    font-size: clamp(2.1rem, 10vw, 3.4rem);
-    max-width: 16ch;
-  }
-
-  .pf-head__lede {
-    font-size: 1rem;
-    line-height: 1.5;
-    max-width: 38ch;
-  }
 
   /* Filtros ganham scroll horizontal quando precisam — evita quebrar linha
      em 3 filas num iPhone pequeno, e ficam fáceis de tapar. */
@@ -3620,7 +3568,6 @@ html { scroll-behavior: smooth; }
   /* Garantia de que texto grande nunca estoura a tela em iPhones estreitos */
   .hero__title,
   .section__title,
-  .pf-head__title,
   .pp-hero__title,
   .pp-next__title {
     overflow-wrap: anywhere;
@@ -3629,7 +3576,6 @@ html { scroll-behavior: smooth; }
 
 /* iPhone SE / 360px */
 @media (max-width: 380px) {
-  .pf-head__title { font-size: clamp(1.9rem, 10vw, 2.4rem); }
   .pp-hero__title { font-size: clamp(2.1rem, 11vw, 2.8rem); }
   .pp-next__title { font-size: clamp(2.1rem, 11vw, 2.8rem); }
   .pf-foot__quote { font-size: clamp(1.3rem, 6vw, 1.6rem); }
