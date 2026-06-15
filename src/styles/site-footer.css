@@ -1,0 +1,106 @@
+/**
+ * site-footer.css — estilos do <SiteFooter /> compartilhado.
+ * Autocontido, sem depender da classe .bw-home. Visualmente idêntico ao
+ * footer navy original da HomePage.
+ */
+.bw-foot {
+  --bwf-navy-deep: #0B2342;
+  --bwf-navy: #11355B;
+  --bwf-navy-3: #2A5A93;
+  --bwf-sky: #5FB2DD;
+  --bwf-display: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --bwf-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --bwf-maxw: 1120px;
+
+  background: var(--bwf-navy-deep);
+  color: rgba(255, 255, 255, .7);
+  padding: 54px 0 30px;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--bwf-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.bw-foot * { box-sizing: border-box; }
+.bw-foot a { color: inherit; text-decoration: none; transition: color .2s ease; }
+.bw-foot a:hover { color: #fff; }
+
+.bw-foot__grid {
+  max-width: var(--bwf-maxw);
+  margin: 0 auto;
+  padding: 0 28px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 32px;
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 720px) {
+  .bw-foot__grid { grid-template-columns: 1fr; }
+}
+
+.bw-foot__brand {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: .88;
+  font-family: var(--bwf-display);
+  margin-bottom: 14px;
+}
+.bw-foot__brand .be,
+.bw-foot__brand .wild {
+  font-weight: 800;
+  font-size: 27px;
+  color: #fff;
+  letter-spacing: -.02em;
+}
+.bw-foot__brand .wild { margin-top: 1px; }
+.bw-foot__brand .sub {
+  font-family: var(--bwf-display);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: .02em;
+  color: var(--bwf-sky);
+  margin-top: 4px;
+}
+
+.bw-foot p {
+  font-size: 13px;
+  line-height: 1.6;
+  max-width: 42ch;
+  margin: 0;
+}
+
+.bw-foot__col {
+  font-family: var(--bwf-sans);
+  font-size: 11px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--bwf-sky);
+  margin: 0 0 14px;
+  font-weight: 600;
+}
+.bw-foot ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.bw-foot li {
+  margin-bottom: 9px;
+  font-size: 13.5px;
+}
+
+.bw-foot__bottom {
+  max-width: var(--bwf-maxw);
+  margin: 30px auto 0;
+  padding: 18px 28px 0;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, .5);
+  position: relative;
+  z-index: 1;
+}
+.bw-foot__bottom p { margin: 0; font-size: 12px; color: rgba(255, 255, 255, .5); max-width: none; }

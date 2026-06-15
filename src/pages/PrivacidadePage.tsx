@@ -1,6 +1,6 @@
 import { useSeo, breadcrumbJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
-import { track } from "../lib/analytics";
+import SiteFooter from "@/components/SiteFooter";
 import BewildSiteNav from "@/components/BewildSiteNav";
 
 /**
@@ -272,27 +272,7 @@ export default function PrivacidadePage() {
         </article>
       </section>
 
-      {/* CTA final */}
-      <footer className="pf-foot">
-        <div>
-          <p className="pf-foot__quote">
-            Dúvidas sobre seus dados? <em>Fale conosco.</em>
-          </p>
-        </div>
-        <a
-          className="pf-foot__cta"
-          href={`mailto:${contactEmail}`}
-          data-cursor="hover"
-          onClick={() =>
-            track("click_cta", {
-              value: { label: "email-privacidade", from: "privacidade-page" },
-            })
-          }
-        >
-          <span>ESCREVER PARA O ESTÚDIO</span>
-          <span className="btn-big__arrow" />
-        </a>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }
