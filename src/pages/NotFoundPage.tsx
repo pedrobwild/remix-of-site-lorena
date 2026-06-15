@@ -78,9 +78,9 @@ export default function NotFoundPage() {
           Essa página <em>não existe</em>. (404)
         </h1>
         <p className="pf-head__lede">
-          O endereço acessado não corresponde a nenhuma página do estúdio. Talvez
-          o link esteja incorreto, a página tenha sido movida ou a URL contenha um
-          erro de digitação.
+          O endereço acessado não corresponde a nenhuma página da Bewild. O link
+          pode estar incorreto, a página pode ter sido movida ou a URL pode
+          conter um erro de digitação.
         </p>
       </header>
 
