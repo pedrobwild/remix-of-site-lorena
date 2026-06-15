@@ -208,9 +208,9 @@ export default function BewildOverviewPage() {
     };
   }, [sinceIso, untilIso]);
 
-  const totalLeads = leadsCount + diagCount;
+  const totalLeads = leadsCount;
   const contactRate =
-    diagCount > 0 ? (contactedCount / diagCount) * 100 : null;
+    leadsCount > 0 ? (contactedCount / leadsCount) * 100 : null;
   const engagementRate =
     kpis && kpis.bounce_rate != null ? 100 - kpis.bounce_rate : null;
 
