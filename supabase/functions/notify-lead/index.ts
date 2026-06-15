@@ -313,13 +313,15 @@ Deno.serve(async (req) => {
     });
   }
 
+  const { result: lead_insert, lead: savedLead } = await insertLead(lead);
+
   // Run Slack and CRM in parallel; one failure must not block the other.
   const [slack, crm] = await Promise.all([
-    notifySlack(lead),
-    createCrmCard(lead),
+    notifySlack(savedLead),
+    createCrmCard(savedLead),
   ]);
 
-  return new Response(JSON.stringify({ ok: true, slack, crm }), {
+  return new Response(JSON.stringify({ ok: true, lead_insert, slack, crm }), {
     status: 200,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
