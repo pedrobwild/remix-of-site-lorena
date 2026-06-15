@@ -2,7 +2,7 @@
  * /admin/dashboard — Visão geral Bewild (painel de marketing).
  *
  * Lê apenas dados reais já disponíveis no Supabase:
- *  - leads + diagnostic_leads (tabelas internas)
+ *  - leads (tabela única — alimentada pela edge `notify-lead`)
  *  - bewild_posts e projects (contadores de conteúdo/portfólio)
  *  - RPCs analytics_overview_kpis / analytics_top_paths_v2 / analytics_breakdown
  *
