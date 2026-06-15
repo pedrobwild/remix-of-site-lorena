@@ -56,12 +56,13 @@ function parsePath(rawPath: string): Route {
   if (bewildProjMatch) return { name: "bewild-project", slug: bewildProjMatch[1] };
 
   // Conteúdos (público) — canônico
-  if (path === "/conteudos") return { name: "blog" };
+  if (path === "/conteudos") return { name: "conteudos" };
   if (path === "/conteudos/tags") return { name: "blog-tags" };
   const conteudosTagMatch = path.match(/^\/conteudos\/tag\/([a-z0-9-]+)$/);
   if (conteudosTagMatch) return { name: "blog-tag", slug: conteudosTagMatch[1] };
   const conteudosMatch = path.match(/^\/conteudos\/([a-z0-9-]+)$/);
   if (conteudosMatch) return { name: "blog-post", slug: conteudosMatch[1] };
+
 
   // Blog (legado — redirecionado para /conteudos no mount)
   if (path === "/blog") return { name: "blog" };
