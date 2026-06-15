@@ -43,14 +43,14 @@ type TrackPayload = {
 };
 
 // ---------- storage keys ----------
-const SID_KEY = "lorena_sid";
-const SID_TS_KEY = "lorena_sid_ts";
-const VID_KEY = "lorena_vid";
-const VID_TS_KEY = "lorena_vid_ts";
-const UTM_KEY = "lorena_utm"; // last-touch (sessão)
-const FIRST_UTM_KEY = "lorena_first_utm"; // first-touch (visitante)
-const LANDING_KEY = "lorena_landing";
-const REFERRER_HOST_KEY = "lorena_ref_host";
+const SID_KEY = "bewild_sid";
+const SID_TS_KEY = "bewild_sid_ts";
+const VID_KEY = "bewild_vid";
+const VID_TS_KEY = "bewild_vid_ts";
+const UTM_KEY = "bewild_utm"; // last-touch (sessão)
+const FIRST_UTM_KEY = "bewild_first_utm"; // first-touch (visitante)
+const LANDING_KEY = "bewild_landing";
+const REFERRER_HOST_KEY = "bewild_ref_host";
 
 const VID_MAX_AGE = 365 * 86_400_000; // 365 dias
 const SID_IDLE = 30 * 60_000; // 30 min
