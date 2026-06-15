@@ -76,10 +76,10 @@ export default function BewildSiteNav() {
       <div className="bw-nav__inner">
         <a href="/" className="bw-nav__brand" aria-label="Bewild — início">
           <img
-            src="/brand/logo-branco.png"
+            src="/brand/bewild-logo-cropped.png"
             alt="Bewild"
             className="bw-nav__logo"
-            width={231}
+            width={81}
             height={28}
             decoding="async"
             {...({ fetchpriority: "high" } as { fetchpriority: string })}

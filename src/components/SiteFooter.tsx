@@ -11,10 +11,10 @@ import "@/styles/site-footer.css";
 function BrandLockup() {
   return (
     <img
-      src="/brand/logo-branco.png"
+      src="/brand/bewild-logo-cropped.png"
       alt="Bewild"
       className="bw-foot__logo"
-      width={247}
+      width={87}
       height={30}
       decoding="async"
       loading="lazy"
