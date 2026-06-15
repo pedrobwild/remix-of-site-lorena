@@ -1,32 +1,23 @@
 # =========================================================
-# robots.txt — Lorena Alves Arquitetura
-# Escritório de arquitetura em Uberlândia, MG
-# Host canônico: https://lorenaalvesarq.com
-# Atualizado: 2026-04-22
+# robots.txt — Bewild
+# Studios prontos para Airbnb e short stay (São Paulo)
+# Host canônico: https://bewild.com.br
 # =========================================================
 
-# --- Regra geral ---
 User-agent: *
 Allow: /
-Allow: /sobre
-Allow: /portfolio
-Allow: /projeto/
-Allow: /faq
-Allow: /privacidade
-Allow: /blog
-Allow: /blog/
 Disallow: /admin
 Disallow: /admin/
-Disallow: /*?*utm_           # evita indexar URLs com tracking duplicado
+Disallow: /*?*utm_
 Disallow: /*?*fbclid=
 Disallow: /*?*gclid=
 Disallow: /*?*ref=
 Disallow: /*?*mc_eid=
 Disallow: /*?*mc_cid=
 
-# Recursos estáticos liberados explicitamente (alguns crawlers
-# antigos bloqueiam por padrão sem essa permissão).
+# Recursos estáticos (alguns crawlers antigos bloqueiam por padrão)
 Allow: /images/
+Allow: /brand/
 Allow: /*.css$
 Allow: /*.js$
 Allow: /*.svg$
@@ -38,42 +29,28 @@ Allow: /*.png$
 Allow: /*.ico$
 Allow: /*.woff2$
 
-# --- Crawlers principais (sem crawl-delay para não atrasar indexação) ---
+# Crawlers principais
 User-agent: Googlebot
 Allow: /
-Allow: /sobre
-Allow: /portfolio
-Allow: /projeto/
-Allow: /faq
-Allow: /blog
-Allow: /blog/
 Disallow: /admin/
 
 User-agent: Googlebot-Image
-Allow: /images/
 Allow: /
-Disallow: /admin/
-
-User-agent: Googlebot-News
-Allow: /blog
-Allow: /blog/
 Disallow: /admin/
 
 User-agent: Bingbot
 Allow: /
-Allow: /sobre
-Allow: /portfolio
-Allow: /projeto/
-Allow: /faq
-Allow: /blog
-Allow: /blog/
 Disallow: /admin/
 
 User-agent: DuckDuckBot
 Allow: /
 Disallow: /admin/
 
-# --- LLMs / IA (permitido para citação da marca) ---
+User-agent: Applebot
+Allow: /
+Disallow: /admin/
+
+# LLMs / IA — permitido para citação da marca
 User-agent: GPTBot
 Allow: /
 
@@ -86,10 +63,10 @@ Allow: /
 User-agent: PerplexityBot
 Allow: /
 
-User-agent: Applebot
+User-agent: Amazonbot
 Allow: /
 
-# --- Bots agressivos / SEO scrapers — bloqueados ---
+# SEO scrapers agressivos — bloqueados
 User-agent: AhrefsBot
 Disallow: /
 
@@ -105,9 +82,8 @@ Disallow: /
 User-agent: BLEXBot
 Disallow: /
 
-# --- Sitemaps (estático + dinâmico do banco) ---
-Sitemap: https://lorenaalvesarq.com/sitemap.xml
-Sitemap: https://erivcmnvvgxyfkhugupq.supabase.co/functions/v1/sitemap
+# Sitemaps (estático + dinâmico do banco)
+Sitemap: https://bewild.com.br/sitemap.xml
+Sitemap: https://bewild.com.br/functions/v1/sitemap
 
-# --- Host preferencial (não-padrão, mas lido por Yandex e usado por alguns crawlers) ---
-Host: https://lorenaalvesarq.com
+Host: https://bewild.com.br

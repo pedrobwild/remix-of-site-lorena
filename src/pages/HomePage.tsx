@@ -152,9 +152,9 @@ const FAQS_HOME = [
 
 export default function HomePage() {
   useSeo({
-    title: "Bewild — Reforma turn-key de studios em São Paulo",
+    title: "Bewild | Studios prontos para Airbnb e short stay",
     description:
-      "Projeto, obra, marcenaria, mobiliário e tecnologia de acompanhamento em um processo único. Studios prontos para foto, anúncio e operação em São Paulo.",
+      "Design, obra, mobiliário e setup para transformar studios em imóveis prontos para short stay em SP — sem você virar gerente de obra.",
     canonicalPath: "/",
     ogType: "website",
   });
