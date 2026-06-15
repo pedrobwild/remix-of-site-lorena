@@ -81,32 +81,30 @@ export default function NotFoundPage() {
       <BewildSiteNav />
 
       <main id="main" tabIndex={-1}>
-        <header>
-          <section className="pt-hero">
-            <div className="container">
-              <div className="pt-cat">Erro 404</div>
-              <h1 className="pt-title" data-testid="not-found-h1">
-                404 · Essa página não existe.
-              </h1>
-              <p className="pt-excerpt">
-                O endereço acessado não corresponde a nenhuma página da Bewild.
-                O link pode estar incorreto, a página pode ter sido movida ou
-                a URL pode conter um erro de digitação.
-              </p>
-              <div
-                className="ct-cta__btns"
-                style={{ justifyContent: "flex-start", marginTop: 18 }}
-              >
-                <a href={routes.home} className="btn btn-cyan">
-                  Voltar à página inicial <span className="arrow">→</span>
-                </a>
-                <a href={routes.diagnostico} className="btn btn-primary">
-                  Solicitar diagnóstico
-                </a>
-              </div>
+        <section className="pt-hero">
+          <div className="container">
+            <div className="pt-cat">Erro 404</div>
+            <h1 className="pt-title" data-testid="not-found-h1">
+              404 · Essa página não existe.
+            </h1>
+            <p className="pt-excerpt">
+              O endereço acessado não corresponde a nenhuma página da Bewild.
+              O link pode estar incorreto, a página pode ter sido movida ou
+              a URL pode conter um erro de digitação.
+            </p>
+            <div
+              className="ct-cta__btns"
+              style={{ justifyContent: "flex-start", marginTop: 18 }}
+            >
+              <a href={routes.home} className="btn btn-cyan">
+                Voltar à página inicial <span className="arrow">→</span>
+              </a>
+              <a href={routes.diagnostico} className="btn btn-primary">
+                Solicitar diagnóstico
+              </a>
             </div>
-          </section>
-        </header>
+          </div>
+        </section>
 
         <section className="pt-body-section">
           <div className="container">
