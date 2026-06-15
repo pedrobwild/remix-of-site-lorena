@@ -119,7 +119,6 @@ export default function BewildOverviewPage() {
         pathsRes,
         sourcesRes,
         leadsCountRes,
-        diagCountRes,
         contactedRes,
         recentLeadsRes,
         postsRes,
@@ -141,20 +140,16 @@ export default function BewildOverviewPage() {
           p_limit: 8,
         } as never),
         supabase
-          .from("diagnostic_leads")
+          .from("leads")
           .select("id", { count: "exact", head: true })
           .gte("created_at", sinceIso),
         supabase
           .from("leads")
           .select("id", { count: "exact", head: true })
-          .gte("created_at", sinceIso),
-        supabase
-          .from("diagnostic_leads")
-          .select("id", { count: "exact", head: true })
           .gte("created_at", sinceIso)
           .neq("status", "novo"),
         supabase
-          .from("diagnostic_leads")
+          .from("leads")
           .select("id, name, whatsapp, status, created_at")
           .order("created_at", { ascending: false })
           .limit(5),
@@ -193,7 +188,6 @@ export default function BewildOverviewPage() {
 
       setSources((sourcesRes.data ?? []) as Breakdown[]);
 
-      setDiagCount(diagCountRes.count ?? 0);
       setLeadsCount(leadsCountRes.count ?? 0);
       setContactedCount(contactedRes.count ?? 0);
       setRecentLeads((recentLeadsRes.data ?? []) as LeadRow[]);
