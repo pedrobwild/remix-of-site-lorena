@@ -66,7 +66,7 @@ export default function AnalyticsShell({ state, children }: Props) {
               ← admin
             </a>
             <span className="admin-analytics__brand">
-              lorena<b>·</b>analytics
+              bewild<b>·</b>analytics
             </span>
 
             <div role="tablist" className="admin-analytics__tabs" style={{ marginLeft: 12 }}>

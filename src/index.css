@@ -16,12 +16,12 @@
 }
 
 /* =========================================================
-   LORENA ALVES ARQUITETURA — PREMIUM
+   BEWILD — DESIGN SYSTEM LEGADO
    Design system · Editorial · Brasilidade contemporânea
    ========================================================= */
 
 :root {
-  /* Palette — brandbook lorenaalves arq: Neutral Black / City Gray / Clear White */
+  /* Palette — paleta legada (uso interno): Neutral Black / City Gray / Clear White */
   --ink: #0A0A0A;            /* Neutral Black */
   --ink-900: #121212;
   --ink-800: #1A1A1A;
@@ -35,7 +35,7 @@
   --line: rgba(255, 255, 255, 0.12);
   --line-strong: rgba(255, 255, 255, 0.26);
 
-  /* Type — Manrope (sans geométrica, afinidade com o logotipo lorenaalves arq) */
+  /* Type — Manrope (sans geométrica, tipografia padrão das páginas internas) */
   --font-display: 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
   --font-body: 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
@@ -166,7 +166,7 @@ button {
   color: var(--bone-warm);
 }
 
-/* ---------- Brand lockup (lorenaalves arq) ---------- */
+/* ---------- Brand lockup (legado) ---------- */
 .brand-lockup {
   font-family: var(--font-display);
   font-weight: 300;

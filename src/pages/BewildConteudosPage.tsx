@@ -2,7 +2,7 @@
  * BewildConteudosPage — /conteudos (novo, Bewild).
  *
  * Lista pública dos posts publicados em `bewild_posts.published = true`.
- * Independente do BlogPage antigo (Lorena/blog_posts), que segue
+ * Independente do BlogPage antigo (legado), que segue
  * existindo no repo mas não está mais montado em /conteudos.
  *
  * Visual: reusa wrapper .bw-home + .bw-conteudos com chips do portfolio.

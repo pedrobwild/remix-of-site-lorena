@@ -2,7 +2,7 @@
  * useBewildPost / useBewildRelatedPosts — leitura pública de um post
  * individual de `bewild_posts` e seus relacionados.
  *
- * Independente do `useBlog` antigo (Lorena/blog_posts). RLS já restringe
+ * Independente do `useBlog` antigo (legado). RLS já restringe
  * a `published = true` para anônimos.
  */
 import { useEffect, useState } from "react";

@@ -4,7 +4,7 @@
  * Render do post individual de `bewild_posts`. Body em markdown,
  * parseado com `marked` e sanitizado por `sanitizeBlogHtml` antes
  * de injetar via `dangerouslySetInnerHTML`. Independente do
- * BlogPostPage antigo (Lorena/blog_posts).
+ * BlogPostPage antigo (legado).
  */
 import { useMemo } from "react";
 import { marked } from "marked";

@@ -215,10 +215,10 @@ function GlobalTab({
   s: SiteSettings;
   patch: <K extends keyof SiteSettings>(k: K, v: SiteSettings[K]) => void;
 }) {
-  const previewTitle = s.seo_default_title || s.site_title || "lorenaalves arq";
+  const previewTitle = s.seo_default_title || s.site_title || "Bewild";
   const previewDesc =
-    s.seo_default_description || s.site_description || "Estúdio autoral de Lorena Alves.";
-  const base = (s.seo_canonical_base || "https://lorenaalvesarq.com").replace(/\/$/, "");
+    s.seo_default_description || s.site_description || "Bewild prepara studios para short stay.";
+  const base = (s.seo_canonical_base || "https://bewild.com.br").replace(/\/$/, "");
 
   return (
     <>
@@ -242,7 +242,7 @@ function GlobalTab({
             className="admin-field__input"
             value={s.seo_canonical_base ?? ""}
             onChange={(e) => patch("seo_canonical_base", e.target.value)}
-            placeholder="https://lorenaalvesarq.com"
+            placeholder="https://bewild.com.br"
           />
         </Field>
         <Field label="Descrição padrão (≤ 160 caracteres)" full>
@@ -269,7 +269,7 @@ function GlobalTab({
             rows={2}
             value={s.seo_keywords ?? ""}
             onChange={(e) => patch("seo_keywords", e.target.value)}
-            placeholder="arquiteta em Uberlândia, design de interiores MG…"
+            placeholder="short stay em São Paulo, preparação de studio…"
           />
         </Field>
         <Field label="Autor/Marca">
@@ -284,7 +284,7 @@ function GlobalTab({
             className="admin-field__input"
             value={s.seo_twitter_handle ?? ""}
             onChange={(e) => patch("seo_twitter_handle", e.target.value)}
-            placeholder="@lorenaalvesarq"
+            placeholder="@bewild"
           />
         </Field>
         <Field label="Região (geo.region)">
@@ -300,7 +300,7 @@ function GlobalTab({
             className="admin-field__input"
             value={s.seo_geo_placename ?? ""}
             onChange={(e) => patch("seo_geo_placename", e.target.value)}
-            placeholder="Uberlândia, Minas Gerais"
+            placeholder="São Paulo, SP"
           />
         </Field>
         <Field label="Coordenadas geográficas (lat;lng)" full>
@@ -604,7 +604,7 @@ function SitemapTab({
   s: SiteSettings;
   onMarkSubmitted: () => void;
 }) {
-  const base = (s.seo_canonical_base || "https://lorenaalvesarq.com").replace(/\/$/, "");
+  const base = (s.seo_canonical_base || "https://bewild.com.br").replace(/\/$/, "");
   const sitemapPublic = `${base}/sitemap.xml`;
   const lastSubmit = s.seo_last_search_console_submit
     ? new Date(s.seo_last_search_console_submit).toLocaleString("pt-BR")
@@ -821,7 +821,7 @@ function scoreClass(n: number) {
 //  Aba: Guia Google
 // =============================================================
 function GuideTab({ s }: { s: SiteSettings }) {
-  const base = (s.seo_canonical_base || "https://lorenaalvesarq.com").replace(/\/$/, "");
+  const base = (s.seo_canonical_base || "https://bewild.com.br").replace(/\/$/, "");
   const domain = base.replace(/^https?:\/\//, "");
 
   return (
@@ -869,7 +869,7 @@ function GuideTab({ s }: { s: SiteSettings }) {
         <GuideStep
           n="06"
           title="Crie seu Perfil da Empresa (Google Business Profile)"
-          desc="Essencial para buscas locais em Uberlândia. Adicione foto, endereço, telefone, horário e link do site. Leva até 14 dias para o Google verificar por carta ou telefone."
+          desc="Essencial para buscas locais em São Paulo. Adicione foto, endereço, telefone, horário e link do site. Leva até 14 dias para o Google verificar por carta ou telefone."
           action={{
             label: "Abrir Google Business",
             href: "https://business.google.com/create",

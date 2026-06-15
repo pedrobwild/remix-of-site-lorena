@@ -174,22 +174,22 @@ function applySeo(settings: SiteSettings, seo: SeoInput) {
   //    é promovido aqui no runtime)
   //  - extrai apenas o ORIGIN (protocolo + host + porta), descartando
   //    qualquer path/query/hash. Isso protege contra cenários como:
-  //      "https://lorenaalvesarq.com/404"  → vira "https://lorenaalvesarq.com"
-  //      "https://lorenaalvesarq.com/blog/" → vira "https://lorenaalvesarq.com"
+  //      "https://bewild.com.br/404"  → vira "https://bewild.com.br"
+  //      "https://bewild.com.br/blog/" → vira "https://bewild.com.br"
   //    Caso contrário o canonical da 404 sairia duplicado tipo
-  //    "https://lorenaalvesarq.com/404/404" — Googlebot trata como URL
+  //    "https://bewild.com.br/404/404" — Googlebot trata como URL
   //    inexistente e gera mais ruído de soft-404.
-  const rawBase = settings.seo_canonical_base?.trim() || "https://lorenaalvesarq.com";
+  const rawBase = settings.seo_canonical_base?.trim() || "https://bewild.com.br";
   const httpsBase = rawBase.replace(/^http:\/\//i, "https://");
   let base: string;
   try {
     base = new URL(httpsBase).origin;
   } catch {
-    // URL inválida (ex.: "lorenaalvesarq.com" sem protocolo) — usa o fallback
+    // URL inválida (ex.: "bewild.com.br" sem protocolo) — usa o fallback
     // de produção em vez de tentar concatenar string crua.
-    base = "https://lorenaalvesarq.com";
+    base = "https://bewild.com.br";
   }
-  const title = seo.title || settings.seo_default_title || settings.site_title || "lorenaalves arq";
+  const title = seo.title || settings.seo_default_title || settings.site_title || "Bewild";
   const description =
     seo.description || settings.seo_default_description || settings.site_description || "";
   const ogImage = seo.ogImage || settings.seo_og_image || settings.default_og_image || "";
@@ -259,7 +259,7 @@ function applySeo(settings: SiteSettings, seo: SeoInput) {
   setMeta('meta[property="og:locale"]', { property: "og:locale", content: "pt_BR" });
   setMeta('meta[property="og:site_name"]', {
     property: "og:site_name",
-    content: settings.site_title || "Lorena Alves Arquitetura",
+    content: settings.site_title || "Bewild",
   });
   if (ogImage) {
     setMeta('meta[property="og:image"]', { property: "og:image", content: ogImage });
@@ -392,7 +392,7 @@ export async function refreshSeoEverywhere(opts?: { pingSearchEngines?: boolean 
 
 /** LocalBusiness / ProfessionalService — enriquecido com horário, faixa de preço e mapa. */
 export function professionalServiceJsonLd(s: SiteSettings) {
-  const base = (s.seo_canonical_base?.trim() || "https://lorenaalvesarq.com").replace(/\/$/, "");
+  const base = (s.seo_canonical_base?.trim() || "https://bewild.com.br").replace(/\/$/, "");
   const type = s.business_type || "ProfessionalService";
 
   const geo = (() => {
@@ -446,8 +446,8 @@ export function professionalServiceJsonLd(s: SiteSettings) {
     "@type": type,
     "@id": `${base}/#business`,
     parentOrganization: { "@id": `${base}/#organization` },
-    name: s.site_title || "Lorena Alves Arquitetura",
-    legalName: "Lorena Alves Arquitetura",
+    name: s.site_title || "Bewild",
+    legalName: "Bewild",
     description: s.seo_default_description || s.site_description || "",
     url: base,
     image: logoUrl,
@@ -455,7 +455,7 @@ export function professionalServiceJsonLd(s: SiteSettings) {
       ? {
           "@type": "ImageObject",
           url: logoUrl,
-          caption: s.site_title || "Lorena Alves Arquitetura",
+          caption: s.site_title || "Bewild",
         }
       : undefined,
     email: s.contact_email || undefined,
@@ -498,7 +498,7 @@ export function professionalServiceJsonLd(s: SiteSettings) {
     priceRange: s.business_price_range || undefined,
     foundingDate: s.business_founding_year || undefined,
     openingHours: s.business_opening_hours || undefined,
-    areaServed: s.seo_geo_placename || "Uberlândia, Minas Gerais",
+    areaServed: s.seo_geo_placename || "São Paulo, SP",
     hasMap: s.google_maps_url || undefined,
     address,
     geo,
@@ -519,7 +519,7 @@ export function projectJsonLd(
     tag?: string;
   }
 ) {
-  const base = (s.seo_canonical_base?.trim() || "https://lorenaalvesarq.com").replace(/\/$/, "");
+  const base = (s.seo_canonical_base?.trim() || "https://bewild.com.br").replace(/\/$/, "");
   return {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
@@ -529,7 +529,7 @@ export function projectJsonLd(
     url: `${base}/projeto/${project.slug}`,
     creator: {
       "@type": "Organization",
-      name: s.site_title || "Lorena Alves Arquitetura",
+      name: s.site_title || "Bewild",
       url: base,
     },
     about: project.tag,
@@ -543,7 +543,7 @@ export function breadcrumbJsonLd(
   s: SiteSettings,
   trail: Array<{ name: string; path: string }>
 ) {
-  const base = (s.seo_canonical_base?.trim() || "https://lorenaalvesarq.com").replace(/\/$/, "");
+  const base = (s.seo_canonical_base?.trim() || "https://bewild.com.br").replace(/\/$/, "");
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -561,7 +561,7 @@ export function itemListJsonLd(
   s: SiteSettings,
   items: Array<{ name: string; path: string; image?: string }>
 ) {
-  const base = (s.seo_canonical_base?.trim() || "https://lorenaalvesarq.com").replace(/\/$/, "");
+  const base = (s.seo_canonical_base?.trim() || "https://bewild.com.br").replace(/\/$/, "");
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -593,12 +593,12 @@ export function faqJsonLd(items: Array<{ q: string; a: string }>) {
 
 /** WebSite JSON-LD com SearchAction (ajuda a aparecer caixa de busca no Google). */
 export function websiteJsonLd(s: SiteSettings) {
-  const base = (s.seo_canonical_base?.trim() || "https://lorenaalvesarq.com").replace(/\/$/, "");
+  const base = (s.seo_canonical_base?.trim() || "https://bewild.com.br").replace(/\/$/, "");
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${base}/#website`,
-    name: s.site_title || "Lorena Alves Arquitetura",
+    name: s.site_title || "Bewild",
     url: base,
     inLanguage: "pt-BR",
     publisher: { "@id": `${base}/#organization` },
@@ -607,7 +607,7 @@ export function websiteJsonLd(s: SiteSettings) {
 
 /** Organization JSON-LD — reforça entidade para o Knowledge Graph. */
 export function organizationJsonLd(s: SiteSettings) {
-  const base = (s.seo_canonical_base?.trim() || "https://lorenaalvesarq.com").replace(/\/$/, "");
+  const base = (s.seo_canonical_base?.trim() || "https://bewild.com.br").replace(/\/$/, "");
 
   const absUrl = (u: string | null | undefined) => {
     if (!u) return undefined;
@@ -646,39 +646,20 @@ export function organizationJsonLd(s: SiteSettings) {
     "@context": "https://schema.org",
     "@type": "Organization",
     "@id": `${base}/#organization`,
-    name: s.site_title || "Lorena Alves Arquitetura",
-    legalName: "Lorena Alves Arquitetura",
+    name: s.site_title || "Bewild",
+    legalName: "Bewild",
     url: base,
     logo: logoUrl
       ? {
           "@type": "ImageObject",
           url: logoUrl,
-          caption: s.site_title || "Lorena Alves Arquitetura",
+          caption: s.site_title || "Bewild",
         }
       : undefined,
     image: logoUrl,
     email: s.contact_email || undefined,
     telephone: s.contact_phone || undefined,
     foundingDate: s.business_founding_year || undefined,
-    founder: {
-      "@type": "Person",
-      name: "Lorena Alves",
-      jobTitle: "Arquiteta e Urbanista",
-      hasCredential: s.cau
-        ? {
-            "@type": "EducationalOccupationalCredential",
-            name: "Registro Profissional CAU",
-            credentialCategory: "Professional Registration",
-            identifier: s.cau,
-            recognizedBy: {
-              "@type": "Organization",
-              name: "Conselho de Arquitetura e Urbanismo do Brasil",
-              alternateName: "CAU/BR",
-              url: "https://www.caubr.gov.br",
-            },
-          }
-        : undefined,
-    },
     taxID: s.cnpj || undefined,
     vatID: s.cnpj || undefined,
     iso6523Code: s.cnpj ? `0007:${s.cnpj.replace(/\D/g, "")}` : undefined,

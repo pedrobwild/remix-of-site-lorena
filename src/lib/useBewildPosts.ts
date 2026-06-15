@@ -54,7 +54,7 @@ const SELECT_COLS =
 
 /**
  * useBewildPosts — lê posts do blog Bewild (`bewild_posts.published = true`).
- * Independente do `useBlog` antigo (Lorena/blog_posts).
+ * Independente do `useBlog` antigo (legado).
  */
 export function useBewildPosts() {
   const [posts, setPosts] = useState<BewildPost[]>([]);

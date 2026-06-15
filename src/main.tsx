@@ -90,9 +90,9 @@ function Root() {
 }
 
 const rootElement = document.getElementById("root")!;
-const globalWithRoot = window as typeof window & { __lorenaReactRoot?: ReactRoot };
-const reactRoot = globalWithRoot.__lorenaReactRoot ?? ReactDOM.createRoot(rootElement);
-globalWithRoot.__lorenaReactRoot = reactRoot;
+const globalWithRoot = window as typeof window & { __bewildReactRoot?: ReactRoot };
+const reactRoot = globalWithRoot.__bewildReactRoot ?? ReactDOM.createRoot(rootElement);
+globalWithRoot.__bewildReactRoot = reactRoot;
 
 reactRoot.render(
   <React.StrictMode>

@@ -76,7 +76,7 @@ describe("sanitizeBlogHtml — preserva HTML legítimo do editor", () => {
 
   it("preserva <a href> http(s) com target/rel", () => {
     const out = sanitizeBlogHtml(
-      '<a href="https://wa.me/5534996668215" target="_blank" rel="noopener noreferrer">Lorena</a>'
+      '<a href="https://wa.me/5534996668215" target="_blank" rel="noopener noreferrer">Bewild</a>'
     );
     expect(out).toMatch(/href="https:\/\/wa\.me\/5534996668215"/);
     expect(out).toMatch(/target="_blank"/);

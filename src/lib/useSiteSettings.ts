@@ -66,29 +66,29 @@ export type SiteSettings = {
 
 const DEFAULTS: SiteSettings = {
   id: 1,
-  site_title: "lorenaalves arq",
+  site_title: "Bewild",
   site_description:
-    "Arquitetura e design de interiores. Estúdio autoral de Lorena Alves — sofisticação, inovação e compromisso.",
-  contact_email: "contato@lorenaalvesarq.com",
+    "Bewild prepara studios para short stay com processo de obra disciplinado e operação pronta para escalar.",
+  contact_email: "contato@bewild.com.br",
   contact_phone: null,
   address_street: null,
-  address_city: null,
-  address_region: null,
-  instagram_url: "https://instagram.com/lorenaalves_arq",
+  address_city: "São Paulo",
+  address_region: "SP",
+  instagram_url: "https://instagram.com/bewild",
   linkedin_url: null,
   pinterest_url: null,
   default_og_image: null,
 
   cnpj: "05.119.224/0001-30",
-  cau: "A66583-5",
+  cau: null,
   whatsapp_number: "5534996668215",
 
-  seo_default_title: "lorenaalves arq — Arquitetura e design de interiores",
+  seo_default_title: "Bewild — Studios prontos para short stay",
   seo_default_description:
-    "Estúdio autoral de Lorena Alves — sofisticação, inovação e compromisso.",
+    "Bewild prepara studios para short stay com processo de obra disciplinado e operação pronta para escalar.",
   seo_og_image: null,
   seo_twitter_handle: null,
-  seo_canonical_base: "https://lorenaalvesarq.com",
+  seo_canonical_base: "https://bewild.com.br",
   seo_robots: "index, follow",
 
   google_site_verification: null,
@@ -105,10 +105,10 @@ const DEFAULTS: SiteSettings = {
   clarity_id: null,
 
   seo_keywords: null,
-  seo_author: "Lorena Alves Arquitetura",
-  seo_geo_region: "BR-MG",
-  seo_geo_placename: "Uberlândia, Minas Gerais",
-  seo_geo_position: "-18.9186;-48.2772",
+  seo_author: "Bewild",
+  seo_geo_region: "BR-SP",
+  seo_geo_placename: "São Paulo, SP",
+  seo_geo_position: "-23.5505;-46.6333",
 
   business_type: "ProfessionalService",
   business_founding_year: null,

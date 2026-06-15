@@ -5,8 +5,8 @@
  * para que colar a URL reproduza exatamente a mesma view.
  *
  * Mantém também:
- *  - tema persistido em localStorage ("lorena_admin_theme")
- *  - views salvas em localStorage ("lorena_admin_views")
+ *  - tema persistido em localStorage ("bewild_admin_theme")
+ *  - views salvas em localStorage ("bewild_admin_views")
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
@@ -17,8 +17,8 @@ import type {
   Theme,
 } from "./types";
 
-const THEME_KEY = "lorena_admin_theme";
-const VIEWS_KEY = "lorena_admin_views";
+const THEME_KEY = "bewild_admin_theme";
+const VIEWS_KEY = "bewild_admin_views";
 
 export type SavedView = {
   id: string;

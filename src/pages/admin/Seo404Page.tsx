@@ -53,7 +53,7 @@ function statusTone(v: string) {
   return STATUS_OPTIONS.find((o) => o.value === v)?.tone ?? "#a3a3a3";
 }
 
-const SITE_BASE = "https://lorenaalvesarq.com";
+const SITE_BASE = "https://bewild.com.br";
 
 export default function Seo404Page() {
   const [rows, setRows] = useState<Row[]>([]);

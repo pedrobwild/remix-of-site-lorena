@@ -30,7 +30,7 @@ export function bewildTypeLabel(t: BewildProjectType | null | undefined): string
 
 /**
  * useBewildProjects — lê apenas projetos do novo portfólio Bewild
- * (published = true). Independente do `useProjects` antigo (Lorena).
+ * (published = true). Independente do `useProjects` antigo (legado).
  */
 export function useBewildProjects() {
   const [projects, setProjects] = useState<BewildProject[]>([]);
