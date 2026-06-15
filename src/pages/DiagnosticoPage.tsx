@@ -239,7 +239,7 @@ function DiagnosticoForm() {
     try {
       const areaDigits = f.metragem ? digits(f.metragem) : "";
       const areaNum = areaDigits ? Number(areaDigits) : null;
-      const { error } = await supabase.from("leads").insert({
+      const leadPayload = {
         name: f.nome.trim(),
         whatsapp: digits(f.whats),
         email: f.email.trim() || null,
@@ -255,13 +255,29 @@ function DiagnosticoForm() {
         referrer: typeof document !== "undefined" ? document.referrer || null : null,
         landing_path: typeof window !== "undefined" ? window.location.pathname : null,
         user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
-      });
+      };
+      const { data: inserted, error } = await supabase
+        .from("leads")
+        .insert(leadPayload)
+        .select("id")
+        .single();
       if (error) throw error;
+
+      // Fire-and-forget: notify Slack via edge function. Do NOT await,
+      // so the WhatsApp window opens immediately.
+      void supabase.functions
+        .invoke("notify-lead", {
+          body: { ...leadPayload, id: inserted?.id ?? null },
+        })
+        .catch((err) => {
+          console.error("[notify-lead] invoke failed", err);
+        });
     } catch (err) {
       console.error("[leads] insert failed", err);
     }
     // unused; kept to avoid breaking previous closure scope
     void scope;
+
 
     const url = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(messageText)}`;
     window.open(url, "_blank", "noopener,noreferrer");
