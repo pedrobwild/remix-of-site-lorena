@@ -42,6 +42,8 @@ import "@/styles/home.css";
 import BewildSiteNav from "@/components/BewildSiteNav";
 import SiteFooter from "@/components/SiteFooter";
 import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.json";
+import studioAntes from "@/assets/portfolio/studio-zip-brooklin-antes.jpg.asset.json";
+import studioDepois from "@/assets/portfolio/studio-zip-brooklin-depois.jpg.asset.json";
 
 
 /* ---------------- data ---------------- */
@@ -498,8 +500,25 @@ export default function HomePage() {
               </div>
             </div>
             <div className="case">
-              <div className="ph slot">
-                <span className="tag">Slot · antes / depois mesmo ângulo</span>
+              <div className="ph ba">
+                <figure className="ba__half">
+                  <img
+                    src={studioAntes.url}
+                    alt="Studio na planta, antes da reforma turn-key Bewild"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>Antes</figcaption>
+                </figure>
+                <figure className="ba__half">
+                  <img
+                    src={studioDepois.url}
+                    alt="Studio entregue pela Bewild, pronto para operar"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>Depois</figcaption>
+                </figure>
               </div>
               <div className="body">
                 <span className="pill">Turn-key</span>
