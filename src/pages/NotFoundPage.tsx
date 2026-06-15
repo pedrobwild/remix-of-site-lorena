@@ -3,9 +3,13 @@ import { useSeo } from "../lib/useSeo";
 import { routes, navigate } from "../lib/useHashRoute";
 import { logNotFound, lookupActiveRedirect } from "../lib/notFoundLog";
 import BewildSiteNav from "@/components/BewildSiteNav";
+import SiteFooter from "@/components/SiteFooter";
+import "@/styles/home.css";
+import "@/styles/conteudos.css";
+import "@/styles/post.css";
 
 /**
- * Página 404 dedicada — sinaliza claramente ao Google que a URL é inválida.
+ * Página 404 dedicada — design Bewild (.bw-home.bw-post).
  *
  * Como Lovable Hosting é SPA-fallback (toda URL inexistente recebe 200 + index.html),
  * o Search Console pode classificar páginas como "soft-404" se renderizarmos a home
@@ -33,16 +37,13 @@ export default function NotFoundPage() {
     const path = window.location.pathname || "/";
     const referrer = document.referrer || null;
 
-    // 1) Registra (best effort) o 404 para curadoria no admin
     void logNotFound(path, referrer);
 
-    // 2) Verifica se há um redirect ativo configurado para esse path
     let cancelled = false;
     void (async () => {
       const target = await lookupActiveRedirect(path);
       if (cancelled || !target) return;
       setRedirecting(true);
-      // pequeno delay garante que o registro foi enviado antes do unmount
       window.setTimeout(() => {
         if (target.startsWith("http")) {
           window.location.replace(target);
@@ -59,82 +60,78 @@ export default function NotFoundPage() {
 
   if (redirecting) {
     return (
-      <main id="main" tabIndex={-1} className="pf-page" aria-live="polite">
-        <header className="pf-head">
-          <p className="pf-head__eyebrow mono">Redirecionando…</p>
-          <h1 className="pf-head__title">Levando você ao lugar certo.</h1>
-        </header>
-      </main>
+      <div className="bw-home bw-post">
+        <BewildSiteNav />
+        <main id="main" tabIndex={-1} aria-live="polite">
+          <section className="pt-hero">
+            <div className="container">
+              <div className="pt-cat">Redirecionando</div>
+              <h1 className="pt-title" data-testid="not-found-h1">
+                404 · Levando você ao lugar certo.
+              </h1>
+            </div>
+          </section>
+        </main>
+      </div>
     );
   }
 
   return (
-    <main id="main" tabIndex={-1} className="pf-page">
+    <div className="bw-home bw-post">
       <BewildSiteNav />
 
-      <header className="pf-head">
-        <p className="pf-head__eyebrow mono">Erro 404 · Página não encontrada</p>
-        <h1 className="pf-head__title" data-testid="not-found-h1">
-          Essa página <em>não existe</em>. (404)
-        </h1>
-        <p className="pf-head__lede">
-          O endereço acessado não corresponde a nenhuma página da Bewild. O link
-          pode estar incorreto, a página pode ter sido movida ou a URL pode
-          conter um erro de digitação.
-        </p>
-      </header>
+      <main id="main" tabIndex={-1}>
+        <header>
+          <section className="pt-hero">
+            <div className="container">
+              <div className="pt-cat">Erro 404</div>
+              <h1 className="pt-title" data-testid="not-found-h1">
+                404 · Essa página não existe.
+              </h1>
+              <p className="pt-excerpt">
+                O endereço acessado não corresponde a nenhuma página da Bewild.
+                O link pode estar incorreto, a página pode ter sido movida ou
+                a URL pode conter um erro de digitação.
+              </p>
+              <div
+                className="ct-cta__btns"
+                style={{ justifyContent: "flex-start", marginTop: 18 }}
+              >
+                <a href={routes.home} className="btn btn-cyan">
+                  Voltar à página inicial <span className="arrow">→</span>
+                </a>
+                <a href={routes.diagnostico} className="btn btn-ghost">
+                  Solicitar diagnóstico
+                </a>
+              </div>
+            </div>
+          </section>
+        </header>
 
-      <section
-        className="privacidade-page__list"
-        aria-label="Atalhos para páginas principais"
-      >
-        <h2
-          className="mono"
-          style={{
-            fontSize: "0.85rem",
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            marginBottom: "1rem",
-          }}
-        >
-          Para onde ir agora
-        </h2>
-        <ul
-          style={{
-            listStyle: "none",
-            padding: 0,
-            display: "grid",
-            gap: "0.75rem",
-            fontSize: "1rem",
-          }}
-        >
-          <li>
-            <a href={routes.home} style={{ textDecoration: "underline" }}>
-              → Voltar à página inicial
-            </a>
-          </li>
-          <li>
-            <a href={routes.portfolio} style={{ textDecoration: "underline" }}>
-              → Ver reformas entregues
-            </a>
-          </li>
-          <li>
-            <a href={routes.diagnostico} style={{ textDecoration: "underline" }}>
-              → Solicitar um diagnóstico do seu studio
-            </a>
-          </li>
-          <li>
-            <a href={routes.blog} style={{ textDecoration: "underline" }}>
-              → Conteúdos sobre studios e short stay
-            </a>
-          </li>
-          <li>
-            <a href={routes.faq} style={{ textDecoration: "underline" }}>
-              → Perguntas frequentes (FAQ)
-            </a>
-          </li>
-        </ul>
-      </section>
-    </main>
+        <section className="pt-body-section">
+          <div className="container">
+            <div className="pt-body">
+              <h2>Para onde ir agora</h2>
+              <ul>
+                <li>
+                  <a href={routes.portfolio}>Ver reformas entregues</a>
+                </li>
+                <li>
+                  <a href={routes.blog}>Conteúdos sobre studios e short stay</a>
+                </li>
+                <li>
+                  <a href={routes.faq}>Perguntas frequentes</a>
+                </li>
+                <li>
+                  <a href={routes.privacidade}>Política de privacidade</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <SiteFooter />
+    </div>
   );
 }
