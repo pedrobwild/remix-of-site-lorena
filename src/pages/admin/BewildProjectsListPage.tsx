@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import AdminLayout from "@/components/admin/AdminLayout";
+import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import { supabase } from "@/integrations/supabase/client";
 // routes helper não é necessário — links Bewild usam paths literais.
 import { bewildTypeLabel, type BewildProjectType } from "@/lib/useBewildProjects";
@@ -59,10 +59,15 @@ export default function BewildProjectsListPage() {
   }
 
   return (
-    <AdminLayout
-      active="bewild"
-      title="Portfólio Bewild"
+    <BewildAdminShell
+      active="projetos"
+      title="Projetos"
       description="Projetos do portfólio público em /portfolio."
+      actions={
+        <a className="admin-btn admin-btn--primary" href="/admin/projetos/novo">
+          + novo projeto
+        </a>
+      }
     >
       <div className="admin-toolbar">
         <div className="admin-toolbar__filters">
@@ -70,9 +75,6 @@ export default function BewildProjectsListPage() {
             {loading ? "carregando…" : `${rows.length} projeto(s)`}
           </span>
         </div>
-        <a className="admin-btn admin-btn--primary" href="/admin/bewild/new">
-          + novo projeto
-        </a>
       </div>
 
       <div className="admin-table-wrap">
@@ -150,7 +152,7 @@ export default function BewildProjectsListPage() {
                   </button>
                 </td>
                 <td style={{ textAlign: "right" }}>
-                  <a className="admin-link" href={`/admin/bewild/${r.slug}`}>
+                  <a className="admin-link" href={`/admin/projetos/${r.slug}`}>
                     editar
                   </a>
                   {"  ·  "}
@@ -174,6 +176,6 @@ export default function BewildProjectsListPage() {
           </tbody>
         </table>
       </div>
-    </AdminLayout>
+    </BewildAdminShell>
   );
 }

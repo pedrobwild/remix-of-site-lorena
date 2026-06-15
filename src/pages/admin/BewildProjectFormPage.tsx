@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import AdminLayout from "@/components/admin/AdminLayout";
+import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import { supabase } from "@/integrations/supabase/client";
 import { navigate } from "@/lib/useHashRoute";
 import { slugify, isValidSlug } from "@/lib/bewildAdmin";
@@ -191,7 +191,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
           .insert({ ...payload, tag: TAG_FALLBACK });
         if (error) throw error;
       }
-      navigate("/admin/bewild");
+      navigate("/admin/projetos");
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Falha ao salvar.";
       // Detecta colisão de slug
@@ -207,20 +207,20 @@ export default function BewildProjectFormPage({ slug }: Props) {
 
   if (loading) {
     return (
-      <AdminLayout active="bewild" title={isEdit ? "Editar projeto" : "Novo projeto"}>
+      <BewildAdminShell active="projetos" title={isEdit ? "Editar projeto" : "Novo projeto"}>
         <p className="mono admin-hint">carregando…</p>
-      </AdminLayout>
+      </BewildAdminShell>
     );
   }
 
   return (
-    <AdminLayout
-      active="bewild"
-      title={isEdit ? "Editar projeto" : "Novo projeto Bewild"}
+    <BewildAdminShell
+      active="projetos"
+      title={isEdit ? "Editar projeto" : "Novo projeto"}
       description="Os campos vazios não aparecem na página pública — projetos em obra renderizam coerentes."
       actions={
         <>
-          <a className="admin-btn" href="/admin/bewild">
+          <a className="admin-btn" href="/admin/projetos">
             Cancelar
           </a>
           <button
@@ -553,7 +553,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
         </section>
 
         <div style={{ display: "flex", gap: 10, marginTop: 24, justifyContent: "flex-end" }}>
-          <a className="admin-btn" href="/admin/bewild">Cancelar</a>
+          <a className="admin-btn" href="/admin/projetos">Cancelar</a>
           <button
             type="button"
             className="admin-btn"
@@ -572,6 +572,6 @@ export default function BewildProjectFormPage({ slug }: Props) {
           </button>
         </div>
       </form>
-    </AdminLayout>
+    </BewildAdminShell>
   );
 }

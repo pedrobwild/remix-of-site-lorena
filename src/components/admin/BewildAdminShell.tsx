@@ -23,6 +23,7 @@ type Props = {
   title: string;
   eyebrow?: string;
   description?: string;
+  actions?: ReactNode;
 };
 
 const TABS: { key: BewildAdminTab; label: string; href: string; icon: typeof LayoutDashboard }[] = [
@@ -38,6 +39,7 @@ export default function BewildAdminShell({
   title,
   eyebrow,
   description,
+  actions,
 }: Props) {
   const { user, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -110,9 +112,12 @@ export default function BewildAdminShell({
 
       <main className="bw-admin__content">
         <div className="bw-admin__page-head">
-          {eyebrow && <span className="bw-admin__eyebrow">{eyebrow}</span>}
-          <h1 className="bw-admin__page-title">{title}</h1>
-          {description && <p className="bw-admin__page-desc">{description}</p>}
+          <div className="bw-admin__page-head-text">
+            {eyebrow && <span className="bw-admin__eyebrow">{eyebrow}</span>}
+            <h1 className="bw-admin__page-title">{title}</h1>
+            {description && <p className="bw-admin__page-desc">{description}</p>}
+          </div>
+          {actions && <div className="bw-admin__page-actions">{actions}</div>}
         </div>
         {children}
       </main>

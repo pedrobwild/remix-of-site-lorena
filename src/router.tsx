@@ -33,7 +33,6 @@ import LoginPage from "./pages/admin/LoginPage";
 
 import BewildOverviewPage from "./pages/admin/BewildOverviewPage";
 import BewildLeadsAdminPage from "./pages/admin/BewildLeadsAdminPage";
-import BewildProjetosAdminPage from "./pages/admin/BewildProjetosAdminPage";
 import BewildConteudosAdminPage from "./pages/admin/BewildConteudosAdminPage";
 import AnalyticsPage from "./pages/admin/AnalyticsPage";
 import SeoPage from "./pages/admin/SeoPage";
@@ -174,7 +173,19 @@ export function renderRoute(route: Route) {
   if (route.name === "admin-projetos")
     return (
       <ProtectedRoute>
-        <BewildProjetosAdminPage />
+        <BewildProjectsListPage />
+      </ProtectedRoute>
+    );
+  if (route.name === "admin-projetos-new")
+    return (
+      <ProtectedRoute>
+        <BewildProjectFormPage />
+      </ProtectedRoute>
+    );
+  if (route.name === "admin-projetos-edit")
+    return (
+      <ProtectedRoute>
+        <BewildProjectFormPage slug={route.slug} />
       </ProtectedRoute>
     );
   if (route.name === "admin-conteudos")
