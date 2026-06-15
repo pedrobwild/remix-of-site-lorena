@@ -418,7 +418,7 @@ export default function HomePage() {
             {DIFFS.map((d) => (
               <div key={d.title} className="diff">
                 <div className="ic" aria-hidden="true">
-                  {d.ic}
+                  <d.Icon size={18} strokeWidth={1.75} />
                 </div>
                 <h3>{d.title}</h3>
                 <p>{d.text}</p>
@@ -462,7 +462,7 @@ export default function HomePage() {
               "Entrega com checklist final",
             ].map((t) => (
               <div key={t} className="chk">
-                <span className="tick">✓</span>
+                <span className="tick"><Check size={12} strokeWidth={2.25} /></span>
                 {t}
               </div>
             ))}
@@ -524,7 +524,7 @@ export default function HomePage() {
       <section className="section" id="depoimento" style={{ background: "var(--sand)" }}>
         <div className="container testi">
           <div className="video slot">
-            <div className="play" aria-hidden="true">▶</div>
+            <div className="play" aria-hidden="true"><Play size={22} strokeWidth={1.75} fill="currentColor" /></div>
             <span className="tag">Slot · vídeo do depoimento da cliente · legendado</span>
           </div>
           <div>
@@ -564,7 +564,7 @@ export default function HomePage() {
                 "Visão clara do que está em andamento",
               ].map((t) => (
                 <div key={t} className="chk">
-                  <span className="tick">✓</span>
+                  <span className="tick"><Check size={12} strokeWidth={2.25} /></span>
                   {t}
                 </div>
               ))}
@@ -575,10 +575,10 @@ export default function HomePage() {
               <b>Studio Urban Flex · 22 m²</b>
               <span className="badge">Em obra</span>
             </div>
-            <div className="pline"><span className="pt done">✓</span>Demolição e remoção</div>
-            <div className="pline"><span className="pt done">✓</span>Elétrica e hidráulica</div>
-            <div className="pline"><span className="pt now">●</span>Marcenaria sob medida</div>
-            <div className="pline"><span className="pt todo">○</span>Montagem e enxoval</div>
+            <div className="pline"><span className="pt done"><Check size={10} strokeWidth={2.5} /></span>Demolição e remoção</div>
+            <div className="pline"><span className="pt done"><Check size={10} strokeWidth={2.5} /></span>Elétrica e hidráulica</div>
+            <div className="pline"><span className="pt now"><CircleDot size={10} strokeWidth={2} /></span>Marcenaria sob medida</div>
+            <div className="pline"><span className="pt todo"><Circle size={10} strokeWidth={2} /></span>Montagem e enxoval</div>
             <div className="pbar"><i /></div>
             <div className="pmeta">
               52% concluído · Relatório semanal #6: marcenaria instalada, elétrica revisada.
@@ -606,8 +606,8 @@ export default function HomePage() {
             {COMPARE.map((r) => (
               <div className="crow" key={r.label}>
                 <div className="rh">{r.label}</div>
-                <div className="trad"><span className="xmark">✕</span>{r.trad}</div>
-                <div className="bw"><span className="vmark">✓</span>{r.bw}</div>
+                <div className="trad"><span className="xmark"><X size={14} strokeWidth={2.25} /></span>{r.trad}</div>
+                <div className="bw"><span className="vmark"><Check size={14} strokeWidth={2.25} /></span>{r.bw}</div>
               </div>
             ))}
           </div>
@@ -625,7 +625,7 @@ export default function HomePage() {
           <div className="grid g3" style={{ marginTop: 30 }}>
             {WHO.map((w) => (
               <div key={w.title} className="who-card">
-                <div className="ic" aria-hidden="true">{w.ic}</div>
+                <div className="ic" aria-hidden="true"><w.Icon size={18} strokeWidth={1.75} /></div>
                 <h3>{w.title}</h3>
                 <p>{w.text}</p>
               </div>
