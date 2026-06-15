@@ -50,6 +50,8 @@ export function renderRoute(route: Route) {
   if (route.name === "portfolio") return <BewildPortfolioPage />;
   if (route.name === "portfolio-lorena") return <PortfolioPage />;
   if (route.name === "bewild-project") return <BewildProjectPage slug={route.slug} />;
+  if (route.name === "conteudos") return <BewildConteudosPage />;
+
 
   if (route.name === "diagnostico") return <DiagnosticoPage />;
   if (route.name === "project") return <ProjectPage slug={route.slug} />;
