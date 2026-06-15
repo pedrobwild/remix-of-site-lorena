@@ -523,9 +523,14 @@ export default function HomePage() {
       {/* DEPOIMENTO */}
       <section className="section" id="depoimento" style={{ background: "var(--sand)" }}>
         <div className="container testi">
-          <div className="video slot">
-            <div className="play" aria-hidden="true"><Play size={22} strokeWidth={1.75} fill="currentColor" /></div>
-            <span className="tag">Slot · vídeo do depoimento da cliente · legendado</span>
+          <div className="video">
+            <video
+              src={depoimentoVideo.url}
+              controls
+              playsInline
+              preload="metadata"
+              aria-label="Depoimento em vídeo de cliente Bewild"
+            />
           </div>
           <div>
             <div className="eyebrow">Depoimento</div>
@@ -533,13 +538,11 @@ export default function HomePage() {
               Quem já passou pela obra{" "}
               <span className="accent">conta melhor do que a gente.</span>
             </h2>
-            <blockquote className="ph-quote">
-              [ Transcrever aqui a frase mais forte do depoimento em vídeo da cliente. ]
-            </blockquote>
-            <p className="src">Depoimento real · vídeo na íntegra ao lado</p>
+            <p className="src">Depoimento real de cliente Bewild</p>
           </div>
         </div>
       </section>
+
 
       {/* PORTAL */}
       <section className="section" id="portal" style={{ background: "var(--paper)" }}>
