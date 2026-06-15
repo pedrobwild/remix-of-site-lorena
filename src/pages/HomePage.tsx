@@ -225,7 +225,7 @@ export default function HomePage() {
           <nav className="nav-links" aria-label="Navegação principal">
             <a href="#fazemos">O que fazemos</a>
             <a href="#processo">Como funciona</a>
-            <a href="#portfolio">Portfólio</a>
+            <a href="/portfolio">Portfólio</a>
             <a href="#diferenciais">Diferenciais</a>
             <a href="#faq">FAQ</a>
           </nav>
@@ -262,7 +262,7 @@ export default function HomePage() {
               <a href="/diagnostico" className="btn btn-cyan">
                 Solicitar diagnóstico <span className="arrow">→</span>
               </a>
-              <a href="#portfolio" className="btn btn-ghost-light">
+              <a href="/portfolio" className="btn btn-ghost-light">
                 Ver reformas entregues
               </a>
             </div>
@@ -702,7 +702,7 @@ export default function HomePage() {
             <ul>
               <li><a href="#fazemos">O que fazemos</a></li>
               <li><a href="#processo">Como funciona</a></li>
-              <li><a href="#portfolio">Portfólio</a></li>
+              <li><a href="/portfolio">Portfólio</a></li>
               <li><a href="/conteudos">Conteúdos</a></li>
               <li><a href="/diagnostico">Diagnóstico</a></li>
             </ul>
