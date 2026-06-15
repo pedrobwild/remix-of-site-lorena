@@ -32,7 +32,6 @@ import {
   Handshake,
   Check,
   X,
-  Play,
   CircleDot,
   Circle,
   type LucideIcon,
@@ -42,6 +41,8 @@ import { whatsappHref } from "@/components/landing/content";
 import "@/styles/home.css";
 import BewildSiteNav from "@/components/BewildSiteNav";
 import SiteFooter from "@/components/SiteFooter";
+import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.json";
+
 
 /* ---------------- data ---------------- */
 
