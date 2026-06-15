@@ -80,7 +80,7 @@ const DEFAULTS: SiteSettings = {
   default_og_image: null,
 
   cnpj: "05.119.224/0001-30",
-  cau: null,
+  cau: "A162437-7",
   whatsapp_number: "5534996668215",
 
   seo_default_title: "Bewild — Studios prontos para short stay",
