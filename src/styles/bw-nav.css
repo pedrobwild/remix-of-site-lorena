@@ -1,0 +1,118 @@
+/**
+ * BewildSiteNav — navegação Bewild v4 unificada para TODAS as páginas.
+ * Auto-contida: define seus próprios tokens em `.bw-nav` (não depende de
+ * `.bw-home`). Posicionamento fixo no topo, mesma identidade visual da
+ * home (navy + cyan + sand, Poppins + Inter).
+ */
+.bw-nav {
+  --bw-navy: #11355B;
+  --bw-cyan: #2F86B8;
+  --bw-sand: #F2ECE1;
+  --bw-ink: #202A31;
+  --bw-line: #E6DECF;
+  --bw-display: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --bw-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(250, 246, 239, 0.86);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--bw-line);
+  font-family: var(--bw-sans);
+  color: var(--bw-ink);
+}
+
+.bw-nav__inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 12px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+/* Brand lockup "Be / wild / Grupo Bwild" */
+.bw-nav__brand {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+  text-decoration: none;
+}
+.bw-nav__brand .be,
+.bw-nav__brand .wild {
+  font-family: var(--bw-display);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  color: var(--bw-navy);
+}
+.bw-nav__brand .wild { margin-top: 1px; }
+.bw-nav__brand .sub {
+  font-family: var(--bw-display);
+  font-weight: 600;
+  font-size: 8.5px;
+  letter-spacing: 0.02em;
+  color: #2A5A93;
+  margin-top: 4px;
+}
+
+/* Links */
+.bw-nav__links {
+  display: flex;
+  gap: 26px;
+  font-size: 14.5px;
+  font-weight: 500;
+}
+.bw-nav__links a {
+  position: relative;
+  color: var(--bw-ink);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.bw-nav__links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 0;
+  height: 2px;
+  background: var(--bw-cyan);
+  transition: width 0.2s ease;
+}
+.bw-nav__links a:hover { color: var(--bw-cyan); }
+.bw-nav__links a:hover::after { width: 100%; }
+.bw-nav__links a[aria-current="page"] {
+  color: var(--bw-navy);
+  font-weight: 600;
+}
+
+/* CTA */
+.bw-nav__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-family: var(--bw-sans);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 999px;
+  background: var(--bw-navy);
+  color: #fff;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.bw-nav__cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -12px rgba(17, 53, 91, 0.7);
+}
+.bw-nav__cta .arrow { transition: transform 0.2s ease; }
+.bw-nav__cta:hover .arrow { transform: translateX(3px); }
+
+/* Mobile: esconde links (paridade com home v4) */
+@media (max-width: 860px) {
+  .bw-nav__links { display: none; }
+  .bw-nav__cta { padding: 9px 16px; font-size: 13px; }
+}
