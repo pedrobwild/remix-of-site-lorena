@@ -405,114 +405,153 @@ export type Database = {
       }
       projects: {
         Row: {
+          after_image_url: string | null
           area: string | null
+          area_m2: number | null
           before_image_url: string | null
           before_text: string | null
+          challenge: string | null
           cover_alt: string | null
           cover_blur_data_url: string | null
           cover_url: string | null
           cover_url_md: string | null
           cover_url_sm: string | null
           created_at: string | null
+          duration: string | null
           em: string | null
           featured: boolean
           featured_order: number
+          gallery_urls: string[]
           id: string
           intro: string | null
           location: string | null
           materials: string[] | null
+          neighborhood: string | null
           number: string | null
           og_image_url: string | null
           order_index: number | null
           photographer: string | null
           portfolio_tags: string[]
           program: string | null
+          project_type: string | null
+          published: boolean
           ready_image_url: string | null
           ready_items: string[]
           result_text: string | null
+          scope: string[]
           seo_description: string | null
           seo_title: string | null
           slug: string
+          solution: string | null
+          sort_order: number
           status: string | null
           summary: string | null
           tag: string
           team: string | null
+          testimonial: string | null
+          testimonial_author: string | null
           title: string
           updated_at: string | null
           visible: boolean | null
           year: string | null
         }
         Insert: {
+          after_image_url?: string | null
           area?: string | null
+          area_m2?: number | null
           before_image_url?: string | null
           before_text?: string | null
+          challenge?: string | null
           cover_alt?: string | null
           cover_blur_data_url?: string | null
           cover_url?: string | null
           cover_url_md?: string | null
           cover_url_sm?: string | null
           created_at?: string | null
+          duration?: string | null
           em?: string | null
           featured?: boolean
           featured_order?: number
+          gallery_urls?: string[]
           id?: string
           intro?: string | null
           location?: string | null
           materials?: string[] | null
+          neighborhood?: string | null
           number?: string | null
           og_image_url?: string | null
           order_index?: number | null
           photographer?: string | null
           portfolio_tags?: string[]
           program?: string | null
+          project_type?: string | null
+          published?: boolean
           ready_image_url?: string | null
           ready_items?: string[]
           result_text?: string | null
+          scope?: string[]
           seo_description?: string | null
           seo_title?: string | null
           slug: string
+          solution?: string | null
+          sort_order?: number
           status?: string | null
           summary?: string | null
           tag: string
           team?: string | null
+          testimonial?: string | null
+          testimonial_author?: string | null
           title: string
           updated_at?: string | null
           visible?: boolean | null
           year?: string | null
         }
         Update: {
+          after_image_url?: string | null
           area?: string | null
+          area_m2?: number | null
           before_image_url?: string | null
           before_text?: string | null
+          challenge?: string | null
           cover_alt?: string | null
           cover_blur_data_url?: string | null
           cover_url?: string | null
           cover_url_md?: string | null
           cover_url_sm?: string | null
           created_at?: string | null
+          duration?: string | null
           em?: string | null
           featured?: boolean
           featured_order?: number
+          gallery_urls?: string[]
           id?: string
           intro?: string | null
           location?: string | null
           materials?: string[] | null
+          neighborhood?: string | null
           number?: string | null
           og_image_url?: string | null
           order_index?: number | null
           photographer?: string | null
           portfolio_tags?: string[]
           program?: string | null
+          project_type?: string | null
+          published?: boolean
           ready_image_url?: string | null
           ready_items?: string[]
           result_text?: string | null
+          scope?: string[]
           seo_description?: string | null
           seo_title?: string | null
           slug?: string
+          solution?: string | null
+          sort_order?: number
           status?: string | null
           summary?: string | null
           tag?: string
           team?: string | null
+          testimonial?: string | null
+          testimonial_author?: string | null
           title?: string
           updated_at?: string | null
           visible?: boolean | null
