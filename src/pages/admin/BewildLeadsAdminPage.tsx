@@ -1,7 +1,11 @@
 /**
  * /admin/leads — Listagem de leads do formulário de diagnóstico.
  *
- * Fonte: tabela `diagnostic_leads` (alimentada por /diagnostico).
+ * Fonte: tabela `leads` (alimentada pela edge function `notify-lead`,
+ * chamada a partir do formulário em /diagnostico). A tabela legada
+ * `diagnostic_leads` não é mais usada — ficou só por compatibilidade
+ * histórica.
+ *
  * Permite filtrar por status, ver origem (UTM/landing/referrer) e
  * marcar como contatado/qualificado/descartado direto da tabela.
  */
@@ -15,19 +19,18 @@ type Lead = {
   name: string | null;
   whatsapp: string | null;
   email: string | null;
-  neighborhood: string | null;
-  square_meters: number | null;
-  property_type: string | null;
-  timeframe: string | null;
-  budget_range: string | null;
-  scope: string[] | null;
+  location: string | null;
+  area_m2: number | null;
+  objetivo: string | null;
+  chaves: string | null;
+  planta: string | null;
   message: string | null;
   utm_source: string | null;
   utm_medium: string | null;
   utm_campaign: string | null;
+  referrer: string | null;
   landing_path: string | null;
   status: string | null;
-  internal_notes: string | null;
   created_at: string;
 };
 
@@ -73,8 +76,10 @@ export default function BewildLeadsAdminPage() {
   async function load() {
     setLoading(true);
     const { data } = await supabase
-      .from("diagnostic_leads")
-      .select("*")
+      .from("leads")
+      .select(
+        "id, name, whatsapp, email, location, area_m2, objetivo, chaves, planta, message, utm_source, utm_medium, utm_campaign, referrer, landing_path, status, created_at"
+      )
       .order("created_at", { ascending: false })
       .limit(200);
     setRows((data ?? []) as Lead[]);
@@ -95,7 +100,7 @@ export default function BewildLeadsAdminPage() {
     const idx = STATUS_NEXT.indexOf(current);
     const next = STATUS_NEXT[(idx + 1) % STATUS_NEXT.length];
     setBusy(lead.id);
-    await supabase.from("diagnostic_leads").update({ status: next }).eq("id", lead.id);
+    await supabase.from("leads").update({ status: next }).eq("id", lead.id);
     setBusy(null);
     load();
   }
@@ -172,7 +177,7 @@ export default function BewildLeadsAdminPage() {
                         </div>
                       </td>
                       <td className="muted">
-                        {[r.property_type, r.neighborhood, r.square_meters ? `${r.square_meters}m²` : null]
+                        {[r.objetivo, r.location, r.area_m2 ? `${r.area_m2}m²` : null]
                           .filter(Boolean)
                           .join(" · ") || "—"}
                       </td>
@@ -235,13 +240,13 @@ export default function BewildLeadsAdminPage() {
                             }}
                           >
                             <DetailItem label="E-mail" value={r.email} />
-                            <DetailItem label="Prazo" value={r.timeframe} />
-                            <DetailItem label="Faixa de investimento" value={r.budget_range} />
-                            <DetailItem
-                              label="Escopo"
-                              value={r.scope && r.scope.length ? r.scope.join(", ") : null}
-                            />
+                            <DetailItem label="Localização" value={r.location} />
+                            <DetailItem label="Metragem" value={r.area_m2 ? `${r.area_m2} m²` : null} />
+                            <DetailItem label="Objetivo" value={r.objetivo} />
+                            <DetailItem label="Chaves" value={r.chaves} />
+                            <DetailItem label="Planta" value={r.planta} />
                             <DetailItem label="Landing" value={r.landing_path} />
+                            <DetailItem label="Referrer" value={r.referrer} />
                             <DetailItem
                               label="UTM"
                               value={[r.utm_source, r.utm_medium, r.utm_campaign]

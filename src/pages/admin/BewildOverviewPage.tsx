@@ -2,7 +2,7 @@
  * /admin/dashboard — Visão geral Bewild (painel de marketing).
  *
  * Lê apenas dados reais já disponíveis no Supabase:
- *  - leads + diagnostic_leads (tabelas internas)
+ *  - leads (tabela única — alimentada pela edge `notify-lead`)
  *  - bewild_posts e projects (contadores de conteúdo/portfólio)
  *  - RPCs analytics_overview_kpis / analytics_top_paths_v2 / analytics_breakdown
  *
@@ -91,7 +91,6 @@ export default function BewildOverviewPage() {
   const [topPaths, setTopPaths] = useState<TopPath[]>([]);
   const [sources, setSources] = useState<Breakdown[]>([]);
   const [leadsCount, setLeadsCount] = useState(0);
-  const [diagCount, setDiagCount] = useState(0);
   const [contactedCount, setContactedCount] = useState(0);
   const [recentLeads, setRecentLeads] = useState<LeadRow[]>([]);
   const [postsTotal, setPostsTotal] = useState(0);
@@ -119,7 +118,6 @@ export default function BewildOverviewPage() {
         pathsRes,
         sourcesRes,
         leadsCountRes,
-        diagCountRes,
         contactedRes,
         recentLeadsRes,
         postsRes,
@@ -141,20 +139,16 @@ export default function BewildOverviewPage() {
           p_limit: 8,
         } as never),
         supabase
-          .from("diagnostic_leads")
+          .from("leads")
           .select("id", { count: "exact", head: true })
           .gte("created_at", sinceIso),
         supabase
           .from("leads")
           .select("id", { count: "exact", head: true })
-          .gte("created_at", sinceIso),
-        supabase
-          .from("diagnostic_leads")
-          .select("id", { count: "exact", head: true })
           .gte("created_at", sinceIso)
           .neq("status", "novo"),
         supabase
-          .from("diagnostic_leads")
+          .from("leads")
           .select("id, name, whatsapp, status, created_at")
           .order("created_at", { ascending: false })
           .limit(5),
@@ -193,7 +187,6 @@ export default function BewildOverviewPage() {
 
       setSources((sourcesRes.data ?? []) as Breakdown[]);
 
-      setDiagCount(diagCountRes.count ?? 0);
       setLeadsCount(leadsCountRes.count ?? 0);
       setContactedCount(contactedRes.count ?? 0);
       setRecentLeads((recentLeadsRes.data ?? []) as LeadRow[]);
@@ -215,9 +208,9 @@ export default function BewildOverviewPage() {
     };
   }, [sinceIso, untilIso]);
 
-  const totalLeads = leadsCount + diagCount;
+  const totalLeads = leadsCount;
   const contactRate =
-    diagCount > 0 ? (contactedCount / diagCount) * 100 : null;
+    leadsCount > 0 ? (contactedCount / leadsCount) * 100 : null;
   const engagementRate =
     kpis && kpis.bounce_rate != null ? 100 - kpis.bounce_rate : null;
 
@@ -251,7 +244,7 @@ export default function BewildOverviewPage() {
           icon={<Inbox aria-hidden />}
           label="Leads no período"
           value={fmtInt(totalLeads)}
-          sub={`${fmtInt(diagCount)} via diagnóstico · ${fmtInt(leadsCount)} via formulário`}
+          sub="Recebidos pelo formulário de /diagnostico"
         />
         <Kpi
           icon={<Target aria-hidden />}
@@ -430,14 +423,14 @@ export default function BewildOverviewPage() {
           <div className="bw-admin__kpi-grid" style={{ marginBottom: 0 }}>
             <Kpi
               label="Novos leads"
-              value={fmtInt(diagCount)}
+              value={fmtInt(leadsCount)}
               sub="Via /diagnostico no período"
             />
             <Kpi
               label="Já contatados"
               value={fmtInt(contactedCount)}
               sub={
-                diagCount > 0
+                leadsCount > 0
                   ? `Taxa de contato: ${fmtPct(contactRate)}`
                   : "Sem leads no período"
               }
