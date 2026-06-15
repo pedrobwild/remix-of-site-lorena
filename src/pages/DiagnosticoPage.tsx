@@ -284,7 +284,8 @@ function DiagnosticoForm() {
     >
       {success && (
         <div className="bw-diag__success" role="status">
-          Recebemos seus dados. Continue a conversa no WhatsApp que abrimos em outra aba.
+          <strong>Recebemos seus dados.</strong>
+          <span>Nosso time comercial vai falar com você no WhatsApp.</span>
         </div>
       )}
 
