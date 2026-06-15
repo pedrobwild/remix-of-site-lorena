@@ -39,28 +39,12 @@
   .bw-foot__grid { grid-template-columns: 1fr; }
 }
 
-.bw-foot__brand {
-  display: inline-flex;
-  flex-direction: column;
-  line-height: .88;
-  font-family: var(--bwf-display);
+.bw-foot__logo {
+  display: block;
+  height: 30px;
+  width: auto;
   margin-bottom: 14px;
-}
-.bw-foot__brand .be,
-.bw-foot__brand .wild {
-  font-weight: 800;
-  font-size: 27px;
-  color: #fff;
-  letter-spacing: -.02em;
-}
-.bw-foot__brand .wild { margin-top: 1px; }
-.bw-foot__brand .sub {
-  font-family: var(--bwf-display);
-  font-weight: 600;
-  font-size: 11px;
-  letter-spacing: .02em;
-  color: var(--bwf-sky);
-  margin-top: 4px;
+  user-select: none;
 }
 
 .bw-foot p {
