@@ -91,7 +91,6 @@ export default function BewildOverviewPage() {
   const [topPaths, setTopPaths] = useState<TopPath[]>([]);
   const [sources, setSources] = useState<Breakdown[]>([]);
   const [leadsCount, setLeadsCount] = useState(0);
-  const [diagCount, setDiagCount] = useState(0);
   const [contactedCount, setContactedCount] = useState(0);
   const [recentLeads, setRecentLeads] = useState<LeadRow[]>([]);
   const [postsTotal, setPostsTotal] = useState(0);
