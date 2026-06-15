@@ -21,9 +21,9 @@ export default function NotFoundPage() {
   const [redirecting, setRedirecting] = useState(false);
 
   useSeo({
-    title: "404 · Página não encontrada — Lorena Alves Arquitetura",
+    title: "404 · Página não encontrada · Bewild",
     description:
-      "A página solicitada não existe ou foi movida. Conheça o portfólio, blog e o estúdio Lorena Alves Arquitetura, em Uberlândia/MG.",
+      "A página solicitada não existe ou foi movida. Conheça o portfólio de reformas turn-key da Bewild para studios em São Paulo.",
     canonicalPath: "/404",
     ogType: "website",
     noindex: true,
@@ -78,9 +78,9 @@ export default function NotFoundPage() {
           Essa página <em>não existe</em>. (404)
         </h1>
         <p className="pf-head__lede">
-          O endereço acessado não corresponde a nenhuma página do estúdio. Talvez
-          o link esteja incorreto, a página tenha sido movida ou a URL contenha um
-          erro de digitação.
+          O endereço acessado não corresponde a nenhuma página da Bewild. O link
+          pode estar incorreto, a página pode ter sido movida ou a URL pode
+          conter um erro de digitação.
         </p>
       </header>
 
@@ -115,7 +115,7 @@ export default function NotFoundPage() {
           </li>
           <li>
             <a href={routes.portfolio} style={{ textDecoration: "underline" }}>
-              → Ver o portfólio de projetos
+              → Ver reformas entregues
             </a>
           </li>
           <li>
@@ -125,7 +125,7 @@ export default function NotFoundPage() {
           </li>
           <li>
             <a href={routes.blog} style={{ textDecoration: "underline" }}>
-              → Ler o blog de arquitetura
+              → Conteúdos sobre studios e short stay
             </a>
           </li>
           <li>

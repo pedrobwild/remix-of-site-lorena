@@ -49,7 +49,7 @@ export default function BewildConteudosPage() {
   const [filter, setFilter] = useState<FilterValue>("all");
 
   useSeo({
-    title: "Conteúdos Bewild — mercado, reforma e operação de studios em SP",
+    title: "Conteúdos Bewild · mercado, reforma e operação de studios em SP",
     description:
       "Quem investe em studio decide melhor informado. Mercado, regras, reforma e operação de short stay em São Paulo, explicados para quem investe.",
     canonicalPath: "/conteudos",

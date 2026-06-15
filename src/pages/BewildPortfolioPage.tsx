@@ -35,7 +35,7 @@ export default function BewildPortfolioPage() {
   const [filter, setFilter] = useState<FilterValue>("all");
 
   useSeo({
-    title: "Portfólio Bewild — reformas turn-key em São Paulo",
+    title: "Portfólio Bewild · reformas turn-key em São Paulo",
     description:
       "Studios reformados pela Bewild em São Paulo: projetos turn-key, short stay e reformas de planta entregues prontos para anúncio e operação.",
     canonicalPath: "/portfolio",
