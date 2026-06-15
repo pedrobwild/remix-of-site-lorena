@@ -256,19 +256,14 @@ function DiagnosticoForm() {
         landing_path: typeof window !== "undefined" ? window.location.pathname : null,
         user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
       };
-      const { data: inserted, error } = await supabase
-        .from("leads")
-        .insert(leadPayload)
-        .select("id")
-        .single();
+      const { error } = await supabase.from("leads").insert(leadPayload);
       if (error) throw error;
 
       // Fire-and-forget: notify Slack via edge function. Do NOT await,
-      // so the WhatsApp window opens immediately.
+      // so the WhatsApp window opens immediately. We don't need the DB id
+      // here because the `leads` table is not readable by anon (RLS).
       void supabase.functions
-        .invoke("notify-lead", {
-          body: { ...leadPayload, id: inserted?.id ?? null },
-        })
+        .invoke("notify-lead", { body: leadPayload })
         .catch((err) => {
           console.error("[notify-lead] invoke failed", err);
         });
