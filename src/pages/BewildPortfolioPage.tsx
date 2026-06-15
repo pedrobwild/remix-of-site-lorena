@@ -137,7 +137,12 @@ export default function BewildPortfolioPage() {
               {filtered.map((p) => {
                 const where = p.neighborhood || p.location || "São Paulo";
                 return (
-                  <article key={p.id} className="pf-card">
+                  <a
+                    key={p.id}
+                    href={`/portfolio/${p.slug}`}
+                    className="pf-card"
+                    aria-label={`Ver projeto ${p.title}`}
+                  >
                     <div
                       className={
                         "pf-card__media" + (!p.cover_url ? " pf-card__media--empty" : "")
@@ -167,7 +172,7 @@ export default function BewildPortfolioPage() {
                         </div>
                       )}
                     </div>
-                  </article>
+                  </a>
                 );
               })}
             </div>
