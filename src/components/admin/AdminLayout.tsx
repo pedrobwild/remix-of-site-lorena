@@ -11,7 +11,6 @@ import {
   PanelLeftOpen,
   Menu,
   HelpCircle,
-  Newspaper,
   Type,
   Inbox,
 } from "lucide-react";
