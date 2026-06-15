@@ -44,6 +44,8 @@ import SiteFooter from "@/components/SiteFooter";
 import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.json";
 import studioAntes from "@/assets/portfolio/studio-zip-brooklin-antes.jpg.asset.json";
 import studioDepois from "@/assets/portfolio/studio-zip-brooklin-depois.jpg.asset.json";
+import studioPronto from "@/assets/portfolio/studio-pronto.jpg.asset.json";
+
 
 
 /* ---------------- data ---------------- */
