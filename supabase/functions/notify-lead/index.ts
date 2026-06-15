@@ -3,6 +3,8 @@
 // Bwild Engine CRM. Slack and CRM are independent: a failure in one does
 // not block the other. Fire-and-forget from the client.
 
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -26,9 +28,16 @@ type Lead = {
   utm_campaign?: string | null;
   referrer?: string | null;
   landing_path?: string | null;
+  user_agent?: string | null;
 };
 
 type Outcome = "sent" | "skipped" | "error";
+
+type StepResult = {
+  status: Outcome;
+  id?: string;
+  error?: string;
+};
 
 function fmtDateBR(d: Date): string {
   try {
@@ -162,6 +171,65 @@ async function notifySlack(lead: Lead): Promise<Outcome> {
   }
 }
 
+function buildLeadInsertPayload(lead: Lead) {
+  return {
+    name: lead.name?.trim() || "Lead sem nome",
+    whatsapp: lead.whatsapp ? String(lead.whatsapp).replace(/\D/g, "") : "",
+    email: lead.email?.trim() || null,
+    location: lead.location?.trim() || null,
+    area_m2:
+      typeof lead.area_m2 === "number" && Number.isFinite(lead.area_m2)
+        ? Math.trunc(lead.area_m2)
+        : null,
+    objetivo: lead.objetivo ?? null,
+    chaves: lead.chaves ?? null,
+    planta: lead.planta ?? null,
+    message: lead.message?.trim() || null,
+    status: "novo",
+    utm_source: lead.utm_source ?? null,
+    utm_medium: lead.utm_medium ?? null,
+    utm_campaign: lead.utm_campaign ?? null,
+    referrer: lead.referrer ?? null,
+    landing_path: lead.landing_path ?? null,
+    user_agent: lead.user_agent ?? null,
+  };
+}
+
+async function insertLead(lead: Lead): Promise<{ result: StepResult; lead: Lead }> {
+  const url = Deno.env.get("SUPABASE_URL");
+  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!url || !key) {
+    console.error("[notify-lead] backend service credentials are not available");
+    return {
+      result: { status: "error", error: "service_credentials_missing" },
+      lead,
+    };
+  }
+
+  try {
+    const admin = createClient(url, key, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { data, error } = await admin
+      .from("leads")
+      .insert(buildLeadInsertPayload(lead))
+      .select("id")
+      .single();
+
+    if (error) throw error;
+
+    const insertedId = typeof data?.id === "string" ? data.id : undefined;
+    return {
+      result: { status: "sent", ...(insertedId ? { id: insertedId } : {}) },
+      lead: { ...lead, id: insertedId ?? lead.id ?? null },
+    };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[notify-lead] lead insert failed", err);
+    return { result: { status: "error", error: message }, lead };
+  }
+}
+
 const BWILD_ENGINE_WEBHOOK_URL =
   "https://pieenhgjulsrjlioozsy.supabase.co/functions/v1/lead-webhook";
 
@@ -245,13 +313,15 @@ Deno.serve(async (req) => {
     });
   }
 
+  const { result: lead_insert, lead: savedLead } = await insertLead(lead);
+
   // Run Slack and CRM in parallel; one failure must not block the other.
   const [slack, crm] = await Promise.all([
-    notifySlack(lead),
-    createCrmCard(lead),
+    notifySlack(savedLead),
+    createCrmCard(savedLead),
   ]);
 
-  return new Response(JSON.stringify({ ok: true, slack, crm }), {
+  return new Response(JSON.stringify({ ok: true, lead_insert, slack, crm }), {
     status: 200,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
