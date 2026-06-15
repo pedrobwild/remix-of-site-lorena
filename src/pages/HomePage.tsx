@@ -485,8 +485,14 @@ export default function HomePage() {
           </h2>
           <div className="grid" style={{ gridTemplateColumns: "1fr 1fr", marginTop: 30 }}>
             <div className="case">
-              <div className="ph slot">
-                <span className="tag">Slot · foto real do studio entregue</span>
+              <div className="ph" style={{ overflow: "hidden" }}>
+                <img
+                  src={studioPronto.url}
+                  alt="Studio compacto para short stay, reformado e pronto para operar pela Bewild"
+                  loading="lazy"
+                  decoding="async"
+                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                />
               </div>
               <div className="body">
                 <span className="pill">Short stay</span>
