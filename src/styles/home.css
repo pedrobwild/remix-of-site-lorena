@@ -465,7 +465,8 @@
 }
 .bw-home .arch-item h3 { font-size: 16px; }
 .bw-home .arch-item p { font-size: 13.5px; color: var(--muted-cool); margin: 0; padding-left: 24px; }
-.bw-home .arch-media { border-radius: 16px; overflow: hidden; aspect-ratio: 4/5; margin-bottom: 18px; }
+.bw-home .arch-media { border-radius: 16px; overflow: hidden; aspect-ratio: 4/5; margin-bottom: 18px; background: var(--sand); }
+.bw-home .arch-media img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
 .bw-home .arch-quote {
   font-family: var(--display);
   font-weight: 600;
