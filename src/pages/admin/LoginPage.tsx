@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/useAuth";
 import { navigate, routes } from "@/lib/useHashRoute";
+import "@/styles/admin-login.css";
 
 export default function LoginPage() {
   const { user, isAdmin, loading, signIn } = useAuth();
@@ -33,54 +34,84 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="admin-login">
-      <div className="admin-login__card">
-        <a href={routes.home} className="admin-login__brand">
-          <span className="brand-lockup">
-            lorena<b>alves</b>
-            <sup>arq</sup>
-          </span>
+    <div className="bw-login">
+      <aside className="bw-login__brandside" aria-hidden="true">
+        <a href={routes.home} className="bw-login__brand" aria-label="Bewild — início">
+          <img src="/brand/bewild-logo-branca.png" alt="" />
         </a>
-        <h1 className="admin-login__title">Acesso ao painel</h1>
-        <p className="admin-login__lede mono">entre com seu email autorizado</p>
+        <div className="bw-login__pitch">
+          <div className="bw-login__eyebrow">Painel Bewild</div>
+          <h2 className="bw-login__headline">
+            Operação de reformas turn-key, com tudo no mesmo lugar.
+          </h2>
+          <p className="bw-login__sub">
+            Leads, projetos e conteúdos do site Bewild em um único painel.
+          </p>
+        </div>
+        <p className="bw-login__legal">Bewild · São Paulo</p>
+      </aside>
 
-        <form onSubmit={handleSubmit} className="admin-login__form">
-          <label className="admin-field">
-            <span className="admin-field__label mono">email</span>
-            <input
-              type="email"
-              required
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="admin-field__input"
-            />
-          </label>
+      <main className="bw-login__formside">
+        <div className="bw-login__card">
+          <a href={routes.home} className="bw-login__card-brand" aria-label="Bewild — início">
+            <img src="/brand/bewild-logo-cropped.png" alt="Bewild" />
+          </a>
 
-          <label className="admin-field">
-            <span className="admin-field__label mono">senha</span>
-            <input
-              type="password"
-              required
-              minLength={6}
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="admin-field__input"
-            />
-          </label>
+          <h1 className="bw-login__title">Acessar o painel</h1>
+          <p className="bw-login__lede">Entre com seu e-mail autorizado.</p>
 
-          {error && <p className="admin-login__error mono">{error}</p>}
+          <form onSubmit={handleSubmit} className="bw-login__form" noValidate>
+            <div className="bw-login__field">
+              <label className="bw-login__label" htmlFor="bw-login-email">
+                E-mail
+              </label>
+              <input
+                id="bw-login-email"
+                type="email"
+                required
+                autoComplete="email"
+                placeholder="voce@bewild.com.br"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="bw-login__input"
+              />
+            </div>
 
-          <button
-            type="submit"
-            className="admin-btn admin-btn--primary admin-login__submit"
-            disabled={submitting}
-          >
-            {submitting ? "…" : "entrar"}
-          </button>
-        </form>
-      </div>
+            <div className="bw-login__field">
+              <label className="bw-login__label" htmlFor="bw-login-password">
+                Senha
+              </label>
+              <input
+                id="bw-login-password"
+                type="password"
+                required
+                minLength={6}
+                autoComplete="current-password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="bw-login__input"
+              />
+            </div>
+
+            {error && (
+              <p className="bw-login__error" role="alert">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              className="bw-login__submit"
+              disabled={submitting}
+            >
+              {submitting ? "Entrando..." : "Entrar"}
+            </button>
+          </form>
+
+          <a href={routes.home} className="bw-login__back">← Voltar ao site</a>
+        </div>
+      </main>
     </div>
   );
 }

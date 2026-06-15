@@ -154,7 +154,7 @@ export default function HomePage() {
   useSeo({
     title: "Bewild | Studios prontos para Airbnb e short stay",
     description:
-      "Design, obra, mobiliário e setup para transformar studios em imóveis prontos para short stay em SP — sem você virar gerente de obra.",
+      "Design, obra, mobiliário e setup para transformar studios em imóveis prontos para short stay em SP, sem você virar gerente de obra.",
     canonicalPath: "/",
     ogType: "website",
   });
@@ -385,8 +385,8 @@ export default function HomePage() {
               <span className="accent">trabalhar melhor.</span>
             </h2>
             <p className="lead" style={{ marginBottom: 20 }}>
-              Em studios compactos, projeto não é decoração. É estratégia de uso, operação
-              e rentabilidade.
+              Em studios compactos, o projeto é estratégia de uso, operação e
+              rentabilidade.
             </p>
             <div className="arch-list">
               {ARCH.map((a) => (
@@ -433,7 +433,7 @@ export default function HomePage() {
         <div className="container">
           <div className="eyebrow">Credibilidade</div>
           <h2>
-            Credibilidade não é promessa. <span className="accent">É processo visível.</span>
+            Credibilidade Bewild <span className="accent">é processo visível.</span>
           </h2>
           <div className="stats">
             <div className="stat">
