@@ -123,7 +123,7 @@ export default function DiagnosticoPage() {
           </div>
         </section>
       </main>
-      <Footer />
+      <SiteFooter />
     </>
   );
 }

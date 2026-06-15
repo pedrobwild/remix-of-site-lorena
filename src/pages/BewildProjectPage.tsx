@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import { useSeo } from "@/lib/useSeo";
 import BewildSiteNav from "@/components/BewildSiteNav";
 import SiteFooter from "@/components/SiteFooter";
+import { whatsappHref } from "@/components/landing/content";
 import { useBewildProject } from "@/lib/useBewildProject";
 import { bewildTypeLabel } from "@/lib/useBewildProjects";
 import NotFoundPage from "@/pages/NotFoundPage";

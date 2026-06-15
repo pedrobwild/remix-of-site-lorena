@@ -12,6 +12,7 @@ import { useSeo } from "@/lib/useSeo";
 import BewildSiteNav from "@/components/BewildSiteNav";
 import SiteFooter from "@/components/SiteFooter";
 import { sanitizeBlogHtml } from "@/lib/sanitizeHtml";
+import { whatsappHref } from "@/components/landing/content";
 import {
   bewildCategoryLabel,
   formatBewildDate,
