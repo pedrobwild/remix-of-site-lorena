@@ -433,7 +433,7 @@ export default function HomePage() {
         <div className="container">
           <div className="eyebrow">Credibilidade</div>
           <h2>
-            Credibilidade não é promessa. <span className="accent">É processo visível.</span>
+            Credibilidade Bewild <span className="accent">é processo visível.</span>
           </h2>
           <div className="stats">
             <div className="stat">
