@@ -15,6 +15,28 @@
  * - FAQ: `<details>/<summary>` nativo com primeiro item aberto.
  */
 import { useEffect, useRef, useState } from "react";
+import {
+  Network,
+  Building2,
+  Target,
+  ClipboardList,
+  MonitorCheck,
+  Settings2,
+  Sparkles,
+  Globe2,
+  BedDouble,
+  Compass,
+  Briefcase,
+  Plane,
+  Building,
+  Handshake,
+  Check,
+  X,
+  Play,
+  CircleDot,
+  Circle,
+  type LucideIcon,
+} from "lucide-react";
 import { useSeo } from "@/lib/useSeo";
 import { whatsappHref } from "@/components/landing/content";
 import "@/styles/home.css";
@@ -83,15 +105,15 @@ const ARCH = [
   { idx: "05", title: "Personalização sem perder eficiência", text: "O projeto respeita o imóvel e o perfil do investidor, sem escolhas que encarecem, atrasam ou prejudicam a operação." },
 ];
 
-const DIFFS = [
-  { ic: "◇", title: "Operação ponta a ponta", text: "Um único time integra arquitetura, obra, compras, fornecedores, marcenaria e entrega." },
-  { ic: "▣", title: "Especialização em studios compactos", text: "Conhecemos as decisões críticas de imóveis pequenos: layout, armazenamento, eletros, circulação, iluminação e operação." },
-  { ic: "◎", title: "Foco em investidor", text: "Cada escolha considera prazo, custo, percepção de valor, manutenção e potencial de rentabilização." },
-  { ic: "▤", title: "Transparência de escopo", text: "O cliente entende o que está incluso, o que é opcional e quais escolhas impactam preço ou prazo." },
-  { ic: "▢", title: "Portal de acompanhamento", text: "Fotos, relatórios, cronograma e atualizações para acompanhar a obra sem depender de mensagens soltas." },
-  { ic: "⚙", title: "Gestão técnica", text: "Cronograma, compras, lead times, fornecedores e execução tratados como partes do mesmo sistema." },
-  { ic: "✦", title: "Acabamentos pensados para operação", text: "Bonito na foto, resistente no uso, simples de limpar e mais fácil de manter." },
-  { ic: "◉", title: "Experiência remota", text: "Ideal para quem comprou imóvel em São Paulo, mas mora em outra cidade, estado ou país." },
+const DIFFS: { Icon: LucideIcon; title: string; text: string }[] = [
+  { Icon: Network, title: "Operação ponta a ponta", text: "Um único time integra arquitetura, obra, compras, fornecedores, marcenaria e entrega." },
+  { Icon: Building2, title: "Especialização em studios compactos", text: "Conhecemos as decisões críticas de imóveis pequenos: layout, armazenamento, eletros, circulação, iluminação e operação." },
+  { Icon: Target, title: "Foco em investidor", text: "Cada escolha considera prazo, custo, percepção de valor, manutenção e potencial de rentabilização." },
+  { Icon: ClipboardList, title: "Transparência de escopo", text: "O cliente entende o que está incluso, o que é opcional e quais escolhas impactam preço ou prazo." },
+  { Icon: MonitorCheck, title: "Portal de acompanhamento", text: "Fotos, relatórios, cronograma e atualizações para acompanhar a obra sem depender de mensagens soltas." },
+  { Icon: Settings2, title: "Gestão técnica", text: "Cronograma, compras, lead times, fornecedores e execução tratados como partes do mesmo sistema." },
+  { Icon: Sparkles, title: "Acabamentos pensados para operação", text: "Bonito na foto, resistente no uso, simples de limpar e mais fácil de manter." },
+  { Icon: Globe2, title: "Experiência remota", text: "Ideal para quem comprou imóvel em São Paulo, mas mora em outra cidade, estado ou país." },
 ];
 
 const COMPARE = [
@@ -103,13 +125,13 @@ const COMPARE = [
   { label: "Entrega", trad: "Imóvel reformado, mas nem sempre pronto para operar.", bw: "Imóvel pensado para uso, foto, anúncio e operação." },
 ];
 
-const WHO = [
-  { ic: "⌂", title: "Investidor de short stay", text: "Para quem quer preparar o imóvel para Airbnb, Booking ou locação por temporada." },
-  { ic: "◔", title: "Investidor iniciante", text: "Para quem comprou o primeiro studio e quer fazer certo desde o começo." },
-  { ic: "▦", title: "Investidor de portfólio", text: "Para quem tem múltiplas unidades e precisa de padrão, processo e escala." },
-  { ic: "➤", title: "Cliente remoto", text: "Para quem mora fora de São Paulo, em outro estado ou fora do Brasil." },
-  { ic: "⌗", title: "Proprietário de uso misto", text: "Para quem quer usar o imóvel em parte do ano e rentabilizar no restante." },
-  { ic: "⚑", title: "Parceiros imobiliários", text: "Para corretores e incorporadoras que querem entregar uma solução mais completa ao comprador." },
+const WHO: { Icon: LucideIcon; title: string; text: string }[] = [
+  { Icon: BedDouble, title: "Investidor de short stay", text: "Para quem quer preparar o imóvel para Airbnb, Booking ou locação por temporada." },
+  { Icon: Compass, title: "Investidor iniciante", text: "Para quem comprou o primeiro studio e quer fazer certo desde o começo." },
+  { Icon: Briefcase, title: "Investidor de portfólio", text: "Para quem tem múltiplas unidades e precisa de padrão, processo e escala." },
+  { Icon: Plane, title: "Cliente remoto", text: "Para quem mora fora de São Paulo, em outro estado ou fora do Brasil." },
+  { Icon: Building, title: "Proprietário de uso misto", text: "Para quem quer usar o imóvel em parte do ano e rentabilizar no restante." },
+  { Icon: Handshake, title: "Parceiros imobiliários", text: "Para corretores e incorporadoras que querem entregar uma solução mais completa ao comprador." },
 ];
 
 const FAQS_HOME = [
