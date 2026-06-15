@@ -11,6 +11,7 @@ export type Route =
   | { name: "project"; slug: string }
   | { name: "bewild-project"; slug: string }
   | { name: "conteudos" }
+  | { name: "bewild-post"; slug: string }
   | { name: "blog" }
 
   | { name: "blog-tags" }
@@ -61,7 +62,7 @@ function parsePath(rawPath: string): Route {
   const conteudosTagMatch = path.match(/^\/conteudos\/tag\/([a-z0-9-]+)$/);
   if (conteudosTagMatch) return { name: "blog-tag", slug: conteudosTagMatch[1] };
   const conteudosMatch = path.match(/^\/conteudos\/([a-z0-9-]+)$/);
-  if (conteudosMatch) return { name: "blog-post", slug: conteudosMatch[1] };
+  if (conteudosMatch) return { name: "bewild-post", slug: conteudosMatch[1] };
 
 
   // Blog (legado — redirecionado para /conteudos no mount)
