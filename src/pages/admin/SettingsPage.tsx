@@ -189,7 +189,7 @@ export default function SettingsPage() {
               value={s.contact_email ?? ""}
               onChange={(e) => patch("contact_email", e.target.value)}
               maxLength={255}
-              placeholder="contato@lorenaalvesarq.com"
+              placeholder="contato@bewild.com.br"
             />
           </Field>
           <Field
@@ -290,7 +290,7 @@ export default function SettingsPage() {
               className="admin-field__input"
               value={s.instagram_url ?? ""}
               onChange={(e) => patch("instagram_url", e.target.value)}
-              placeholder="https://instagram.com/lorenaalves_arq"
+              placeholder="https://instagram.com/bewild"
             />
           </Field>
           <Field label="LinkedIn" error={errors.linkedin_url}>

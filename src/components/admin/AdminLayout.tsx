@@ -92,9 +92,9 @@ export default function AdminLayout({
       <aside className="admin__sidebar" aria-label="Navegação do painel">
         <div className="admin__brand-row">
           <a href={routes.adminDashboard} className="admin__brand" aria-label="Início do painel">
-            <span className="admin__brand-mark">L</span>
+            <span className="admin__brand-mark">B</span>
             <span className="admin__brand-text">
-              <span className="admin__brand-name">lorena<b>alves</b><sup>arq</sup></span>
+              <span className="admin__brand-name"><b>B</b>ewild</span>
               <span className="admin__brand-tag">painel</span>
             </span>
           </a>

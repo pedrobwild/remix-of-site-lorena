@@ -247,7 +247,7 @@ export default function Seo404Page() {
             value={importText}
             onChange={(e) => setImportText(e.target.value)}
             rows={8}
-            placeholder={"/pagina-antiga\nhttps://lorenaalvesarq.com/projeto/casa-removida\n/blog/post-deletado"}
+            placeholder={"/pagina-antiga\nhttps://bewild.com.br/projeto/imovel-removido\n/conteudos/post-deletado"}
             style={{
               width: "100%",
               fontFamily: "monospace",
