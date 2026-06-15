@@ -20,9 +20,7 @@ import { navigate, routes } from "@/lib/useHashRoute";
 
 type ActiveKey =
   | "dashboard"
-  | "projects"
   | "bewild"
-  | "blog"
   | "leads"
   | "analytics"
   | "seo"
@@ -46,9 +44,7 @@ const NAV: { key: ActiveKey; label: string; href: string; icon: typeof LayoutDas
   { key: "dashboard", label: "Dashboard", href: routes.adminDashboard, icon: LayoutDashboard },
   { key: "analytics", label: "Analytics", href: routes.adminAnalytics, icon: BarChart3 },
   { key: "leads", label: "Leads", href: routes.adminLeads, icon: Inbox },
-  { key: "projects", label: "Projetos", href: routes.adminProjects, icon: FolderKanban },
-  { key: "bewild", label: "Portfólio Bewild", href: "/admin/bewild", icon: FolderKanban },
-  { key: "blog", label: "Blog", href: routes.adminBlog, icon: Newspaper },
+  { key: "bewild", label: "Portfólio Bewild", href: "/admin/projetos", icon: FolderKanban },
   { key: "faq", label: "FAQ", href: routes.adminFaq, icon: HelpCircle },
   { key: "seo", label: "SEO", href: routes.adminSeo, icon: Search },
   { key: "seo-404", label: "URLs 404", href: routes.adminSeo404, icon: Search },
