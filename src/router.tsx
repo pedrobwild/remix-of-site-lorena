@@ -72,7 +72,7 @@ export function renderRoute(route: Route) {
   if (route.name === "admin-dashboard")
     return (
       <ProtectedRoute>
-        <DashboardPage />
+        <BewildOverviewPage />
       </ProtectedRoute>
     );
   if (route.name === "admin-analytics")
@@ -168,7 +168,19 @@ export function renderRoute(route: Route) {
   if (route.name === "admin-leads")
     return (
       <ProtectedRoute>
-        <LeadsPage />
+        <BewildLeadsAdminPage />
+      </ProtectedRoute>
+    );
+  if (route.name === "admin-projetos")
+    return (
+      <ProtectedRoute>
+        <BewildProjetosAdminPage />
+      </ProtectedRoute>
+    );
+  if (route.name === "admin-conteudos")
+    return (
+      <ProtectedRoute>
+        <BewildConteudosAdminPage />
       </ProtectedRoute>
     );
   // Home (com ou sem âncora) — única rota que renderiza o App principal
