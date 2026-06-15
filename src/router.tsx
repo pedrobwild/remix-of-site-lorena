@@ -107,6 +107,24 @@ export function renderRoute(route: Route) {
         <ProjectFormPage slug={route.slug} />
       </ProtectedRoute>
     );
+  if (route.name === "admin-bewild")
+    return (
+      <ProtectedRoute>
+        <BewildProjectsListPage />
+      </ProtectedRoute>
+    );
+  if (route.name === "admin-bewild-new")
+    return (
+      <ProtectedRoute>
+        <BewildProjectFormPage />
+      </ProtectedRoute>
+    );
+  if (route.name === "admin-bewild-edit")
+    return (
+      <ProtectedRoute>
+        <BewildProjectFormPage slug={route.slug} />
+      </ProtectedRoute>
+    );
   if (route.name === "admin-faq")
     return (
       <ProtectedRoute>
