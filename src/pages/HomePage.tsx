@@ -45,6 +45,7 @@ import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.
 import studioAntes from "@/assets/portfolio/studio-zip-brooklin-antes.jpg.asset.json";
 import studioDepois from "@/assets/portfolio/studio-zip-brooklin-depois.jpg.asset.json";
 import studioPronto from "@/assets/portfolio/studio-pronto.jpg.asset.json";
+import plantaHumanizada from "@/assets/portfolio/planta-humanizada.png.asset.json";
 
 
 
@@ -367,8 +368,13 @@ export default function HomePage() {
       <section className="section" id="arquitetura" style={{ background: "var(--paper)" }}>
         <div className="container split">
           <div>
-            <div className="arch-media slot">
-              <span className="tag">Slot · planta humanizada / estudo Bewild</span>
+            <div className="arch-media">
+              <img
+                src={plantaHumanizada.url}
+                alt="Planta humanizada de studio Bewild com layout otimizado: cama, banheiro, cozinha compacta, home office e varanda."
+                loading="lazy"
+                decoding="async"
+              />
             </div>
             <p className="arch-quote">
               Um studio de 19, 22 ou 28 m² não permite decisões aleatórias. Cada
