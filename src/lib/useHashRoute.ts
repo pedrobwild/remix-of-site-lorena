@@ -3,12 +3,14 @@ import { useEffect, useState } from "react";
 export type Route =
   | { name: "home"; anchor?: string }
   | { name: "portfolio" }
+  | { name: "portfolio-lorena" }
   | { name: "diagnostico" }
   | { name: "faq" }
   | { name: "sobre" }
   | { name: "privacidade" }
   | { name: "project"; slug: string }
   | { name: "blog" }
+
   | { name: "blog-tags" }
   | { name: "blog-tag"; slug: string }
   | { name: "blog-post"; slug: string }
@@ -34,6 +36,8 @@ function parsePath(rawPath: string): Route {
 
   if (path === "/" || path === "") return { name: "home" };
   if (path === "/portfolio") return { name: "portfolio" };
+  if (path === "/portfolio-lorena") return { name: "portfolio-lorena" };
+
   if (path === "/diagnostico") return { name: "diagnostico" };
   if (path === "/faq") return { name: "faq" };
   if (path === "/sobre") return { name: "sobre" };
@@ -150,6 +154,8 @@ export function useHashRoute(): Route {
 export const routes = {
   home: "/",
   portfolio: "/portfolio",
+  portfolioLorena: "/portfolio-lorena",
+
   diagnostico: "/diagnostico",
   faq: "/faq",
   sobre: "/sobre",
