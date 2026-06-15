@@ -19,11 +19,10 @@ function isAdminRoute(route: Route) {
 }
 
 function routeKeyOf(route: Route) {
-  if (route.name === "project") return `project:${route.slug}`;
-  if (route.name === "admin-project-edit") return `admin-edit:${route.slug}`;
-  if (route.name === "blog-post") return `blog:${route.slug}`;
-  if (route.name === "blog-tag") return `blog-tag:${route.slug}`;
-  if (route.name === "admin-blog-edit") return `admin-blog-edit:${route.slug}`;
+  if (route.name === "bewild-project") return `bewild-project:${route.slug}`;
+  if (route.name === "bewild-post") return `bewild-post:${route.slug}`;
+  if (route.name === "admin-bewild-edit") return `admin-bewild-edit:${route.slug}`;
+  if (route.name === "admin-projetos-edit") return `admin-projetos-edit:${route.slug}`;
   return route.name;
 }
 

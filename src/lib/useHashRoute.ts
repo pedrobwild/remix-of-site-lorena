@@ -3,20 +3,12 @@ import { useEffect, useState } from "react";
 export type Route =
   | { name: "home"; anchor?: string }
   | { name: "portfolio" }
-  | { name: "portfolio-lorena" }
   | { name: "diagnostico" }
   | { name: "faq" }
-  | { name: "sobre" }
   | { name: "privacidade" }
-  | { name: "project"; slug: string }
   | { name: "bewild-project"; slug: string }
   | { name: "conteudos" }
   | { name: "bewild-post"; slug: string }
-  | { name: "blog" }
-
-  | { name: "blog-tags" }
-  | { name: "blog-tag"; slug: string }
-  | { name: "blog-post"; slug: string }
 
   | { name: "admin-login" }
   | { name: "admin-dashboard" }
@@ -24,16 +16,10 @@ export type Route =
   | { name: "admin-seo" }
   | { name: "admin-seo-404" }
   | { name: "admin-settings" }
-  | { name: "admin-projects" }
-  | { name: "admin-project-new" }
-  | { name: "admin-project-edit"; slug: string }
   | { name: "admin-bewild" }
   | { name: "admin-bewild-new" }
   | { name: "admin-bewild-edit"; slug: string }
   | { name: "admin-faq" }
-  | { name: "admin-blog" }
-  | { name: "admin-blog-new" }
-  | { name: "admin-blog-edit"; slug: string }
   | { name: "admin-typography" }
   | { name: "admin-leads" }
   | { name: "admin-projetos" }
@@ -47,35 +33,18 @@ function parsePath(rawPath: string): Route {
 
   if (path === "/" || path === "") return { name: "home" };
   if (path === "/portfolio") return { name: "portfolio" };
-  if (path === "/portfolio-lorena") return { name: "portfolio-lorena" };
 
   if (path === "/diagnostico") return { name: "diagnostico" };
   if (path === "/faq") return { name: "faq" };
-  if (path === "/sobre") return { name: "sobre" };
   if (path === "/privacidade") return { name: "privacidade" };
-
-  const projMatch = path.match(/^\/projeto\/([a-z0-9-]+)$/);
-  if (projMatch) return { name: "project", slug: projMatch[1] };
 
   const bewildProjMatch = path.match(/^\/portfolio\/([a-z0-9-]+)$/);
   if (bewildProjMatch) return { name: "bewild-project", slug: bewildProjMatch[1] };
 
-  // Conteúdos (público) — canônico
+  // Conteúdos (público) — canônico (Bewild). Sem tags.
   if (path === "/conteudos") return { name: "conteudos" };
-  if (path === "/conteudos/tags") return { name: "blog-tags" };
-  const conteudosTagMatch = path.match(/^\/conteudos\/tag\/([a-z0-9-]+)$/);
-  if (conteudosTagMatch) return { name: "blog-tag", slug: conteudosTagMatch[1] };
   const conteudosMatch = path.match(/^\/conteudos\/([a-z0-9-]+)$/);
   if (conteudosMatch) return { name: "bewild-post", slug: conteudosMatch[1] };
-
-
-  // Blog (legado — redirecionado para /conteudos no mount)
-  if (path === "/blog") return { name: "blog" };
-  if (path === "/blog/tags") return { name: "blog-tags" };
-  const blogTagMatch = path.match(/^\/blog\/tag\/([a-z0-9-]+)$/);
-  if (blogTagMatch) return { name: "blog-tag", slug: blogTagMatch[1] };
-  const blogMatch = path.match(/^\/blog\/([a-z0-9-]+)$/);
-  if (blogMatch) return { name: "blog-post", slug: blogMatch[1] };
 
   // Admin
   if (path === "/admin/login") return { name: "admin-login" };
@@ -85,18 +54,10 @@ function parsePath(rawPath: string): Route {
   if (path === "/admin/seo/404") return { name: "admin-seo-404" };
   if (path === "/admin/settings") return { name: "admin-settings" };
   if (path === "/admin/faq") return { name: "admin-faq" };
-  if (path === "/admin/projects") return { name: "admin-projects" };
-  if (path === "/admin/projects/new") return { name: "admin-project-new" };
-  const adminEdit = path.match(/^\/admin\/projects\/([a-z0-9-]+)$/);
-  if (adminEdit) return { name: "admin-project-edit", slug: adminEdit[1] };
   if (path === "/admin/bewild") return { name: "admin-bewild" };
   if (path === "/admin/bewild/new") return { name: "admin-bewild-new" };
   const adminBewildEdit = path.match(/^\/admin\/bewild\/([a-z0-9-]+)$/);
   if (adminBewildEdit) return { name: "admin-bewild-edit", slug: adminBewildEdit[1] };
-  if (path === "/admin/blog") return { name: "admin-blog" };
-  if (path === "/admin/blog/new") return { name: "admin-blog-new" };
-  const adminBlogEdit = path.match(/^\/admin\/blog\/([a-z0-9-]+)$/);
-  if (adminBlogEdit) return { name: "admin-blog-edit", slug: adminBlogEdit[1] };
   if (path === "/admin/typography") return { name: "admin-typography" };
   if (path === "/admin/leads") return { name: "admin-leads" };
   if (path === "/admin/projetos") return { name: "admin-projetos" };
@@ -110,29 +71,18 @@ function parsePath(rawPath: string): Route {
 
 /**
  * Função pura: lê `window.location` e devolve a `Route`, sem efeitos.
- * Separada de `migrateLegacyHashIfNeeded` para que o `useState` inicial
- * possa derivar a rota sem disparar `history.replaceState` durante o
- * render (M12) — side effects no init do `useState` rodam em modo
- * estrito duas vezes e são uma fonte clássica de loops sutis.
  */
 function parseLocation(): Route {
   const hash = window.location.hash.replace(/^#/, "");
   if (hash.startsWith("/")) {
-    // Resolve a rota a partir do hash legado SEM mutar a URL aqui.
     return parsePath(hash);
   }
-  // Âncoras puras (#estudio, #contato, #projetos) ficam na home
   if (hash && !hash.startsWith("/")) {
     return { name: "home", anchor: hash };
   }
   return parsePath(window.location.pathname || "/");
 }
 
-/**
- * Efeito colateral isolado: se a URL ainda usa o formato legado `#/algo`,
- * promove para `/algo` via `replaceState` (preservando histórico). Roda só
- * uma vez por mount no `useEffect`, fora do caminho de render.
- */
 function migrateLegacyHashIfNeeded(): void {
   const hash = window.location.hash.replace(/^#/, "");
   if (!hash.startsWith("/")) return;
@@ -143,16 +93,12 @@ export function useHashRoute(): Route {
   const [route, setRoute] = useState<Route>(() => parseLocation());
 
   useEffect(() => {
-    // Migra a URL legada uma única vez no mount. Se houve migração,
-    // re-deriva a rota para refletir o pathname novo (no caso geral
-    // é equivalente, mas o re-parse mantém o estado autoconsistente).
     migrateLegacyHashIfNeeded();
-    // Redireciona /admin → /admin/dashboard (canonical)
     if (window.location.pathname === "/admin") {
       window.history.replaceState({}, "", "/admin/dashboard");
       window.dispatchEvent(new Event("lovable:navigate"));
     }
-    // 301 client-side: /blog* → /conteudos* (URL canônica)
+    // 301 client-side: /blog* → /conteudos* (URL canônica) — blog legado removido.
     const p = window.location.pathname;
     if (p === "/blog" || p === "/blog/" || p.startsWith("/blog/")) {
       const newPath = "/conteudos" + p.slice(5);
@@ -174,22 +120,15 @@ export function useHashRoute(): Route {
   return route;
 }
 
-// Helper para construir links de forma consistente — agora URLs limpas.
+// Helper para construir links de forma consistente — URLs limpas.
 export const routes = {
   home: "/",
   portfolio: "/portfolio",
-  portfolioLorena: "/portfolio-lorena",
-
   diagnostico: "/diagnostico",
   faq: "/faq",
-  sobre: "/sobre",
   privacidade: "/privacidade",
-  project: (slug: string) => `/projeto/${slug}`,
   bewildProject: (slug: string) => `/portfolio/${slug}`,
   blog: "/conteudos",
-  blogTags: "/conteudos/tags",
-  blogTag: (slug: string) => `/conteudos/tag/${slug}`,
-  blogPost: (slug: string) => `/conteudos/${slug}`,
   conteudos: "/conteudos",
   conteudosPost: (slug: string) => `/conteudos/${slug}`,
   adminLogin: "/admin/login",
@@ -198,20 +137,13 @@ export const routes = {
   adminSeo: "/admin/seo",
   adminSeo404: "/admin/seo/404",
   adminSettings: "/admin/settings",
-  adminProjects: "/admin/projects",
-  adminProjectNew: "/admin/projects/new",
-  adminProjectEdit: (slug: string) => `/admin/projects/${slug}`,
   adminFaq: "/admin/faq",
-  adminBlog: "/admin/blog",
-  adminBlogNew: "/admin/blog/new",
-  adminBlogEdit: (slug: string) => `/admin/blog/${slug}`,
   adminTypography: "/admin/typography",
   adminLeads: "/admin/leads",
 };
 
 // Navega programaticamente sem recarregar a página.
 export function navigate(href: string) {
-  // Aceita formatos legados "#/algo" e novos "/algo"
   const cleaned = href.startsWith("#") ? href.slice(1) : href;
   const target = cleaned.startsWith("/") ? cleaned : `/${cleaned}`;
   window.history.pushState({}, "", target);
@@ -220,7 +152,6 @@ export function navigate(href: string) {
 }
 
 // Intercepta cliques em <a href="/..."> internos para usar pushState
-// em vez de full page reload — habilita SPA com URLs limpas.
 export function installLinkInterceptor() {
   if (typeof window === "undefined") return;
   if ((window as unknown as { __linkInterceptorInstalled?: boolean }).__linkInterceptorInstalled) {
@@ -229,7 +160,6 @@ export function installLinkInterceptor() {
   (window as unknown as { __linkInterceptorInstalled?: boolean }).__linkInterceptorInstalled = true;
 
   document.addEventListener("click", (e) => {
-    // Ignora cliques com modificadores ou botões não-primários
     const me = e as MouseEvent;
     if (me.defaultPrevented) return;
     if (me.button !== 0) return;
@@ -249,19 +179,15 @@ export function installLinkInterceptor() {
 
     const href = a.getAttribute("href") || "";
 
-    // Âncora pura na mesma página: deixa o browser cuidar (smooth scroll)
     if (href.startsWith("#")) return;
 
-    // Link legado #/algo → migra para URL limpa
     if (url.hash && url.hash.startsWith("#/")) {
       e.preventDefault();
       navigate(url.hash.slice(1));
       return;
     }
 
-    // Link interno com pathname diferente → SPA navigate
     if (url.pathname !== window.location.pathname || url.search !== window.location.search) {
-      // Mantém comportamento padrão para arquivos (.pdf, .png, etc.)
       if (/\.[a-z0-9]+$/i.test(url.pathname)) return;
       e.preventDefault();
       navigate(url.pathname + url.search);
