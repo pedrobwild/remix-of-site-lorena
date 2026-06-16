@@ -70,7 +70,7 @@
 /* Links */
 .bw-nav__links {
   display: flex;
-  gap: 26px;
+  gap: 22px;
   font-size: 14.5px;
   font-weight: 500;
 }
@@ -80,6 +80,7 @@
   text-decoration: none;
   transition: color 0.2s ease;
   padding: 4px 0;
+  white-space: nowrap;
 }
 .bw-nav__links a::after {
   content: "";
@@ -242,7 +243,7 @@ a.bw-nav__cta:hover,
 }
 
 /* Breakpoint: links viram menu hambúrguer em telas pequenas e médias */
-@media (max-width: 960px) {
+@media (max-width: 1080px) {
   .bw-nav__links,
   .bw-nav__actions {
     display: none;
