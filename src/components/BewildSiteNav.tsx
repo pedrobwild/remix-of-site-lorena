@@ -159,15 +159,20 @@ export default function BewildSiteNav() {
         </a>
 
         <nav className="bw-nav__links" aria-label="Navegação principal">
-          {ITEMS.map((it) => (
-            <a
-              key={it.label}
-              href={isHome ? it.homeHref : it.pageHref}
-              aria-current={isActive(it) ? "page" : undefined}
-            >
-              {it.label}
-            </a>
-          ))}
+          {ITEMS.map((it) => {
+            const sid = sectionId(it);
+            const current = sid !== null && activeSection === sid;
+            return (
+              <a
+                key={it.label}
+                href={isHome ? it.homeHref : it.pageHref}
+                aria-current={isActive(it) ? "page" : undefined}
+                className={current ? "is-current" : undefined}
+              >
+                {it.label}
+              </a>
+            );
+          })}
         </nav>
 
         <div className="bw-nav__actions">
