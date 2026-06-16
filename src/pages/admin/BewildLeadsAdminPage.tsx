@@ -42,7 +42,7 @@ const STATUS_OPTIONS = [
   { value: "descartado", label: "Descartados" },
 ];
 
-const STATUS_NEXT = ["novo", "contatado", "qualificado", "descartado"] as const;
+const STATUS_VALUES = ["novo", "contatado", "qualificado", "descartado"] as const;
 
 function fmtDate(iso: string): string {
   try {
