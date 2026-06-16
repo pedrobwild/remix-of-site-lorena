@@ -193,7 +193,7 @@ function DiagnosticoPitch() {
             aria-label="Depoimento em vídeo de cliente Bewild"
           />
         </div>
-        <p className="bw-diag__testisrc">Depoimento real de cliente Bewild</p>
+        <p className="bw-diag__testisrc">Vivian · cliente Bewild</p>
       </div>
 
       <a

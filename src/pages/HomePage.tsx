@@ -575,7 +575,7 @@ export default function HomePage() {
               Quem já passou pela obra{" "}
               <span className="accent">conta melhor do que a gente.</span>
             </h2>
-            <p className="src">Depoimento real de cliente Bewild</p>
+            <p className="src"><strong>Vivian</strong> — cliente Bewild · depoimento presencial</p>
             <a href="/diagnostico" className="btn btn-cyan">
               Solicitar diagnóstico <span className="arrow">→</span>
             </a>
