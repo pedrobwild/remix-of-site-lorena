@@ -6,6 +6,7 @@
  * "Bewild" (só B maiúsculo).
  */
 import { CONTACT, whatsappHref } from "@/components/landing/content";
+import { openCookiePreferences } from "@/lib/cookieConsent";
 import "@/styles/site-footer.css";
 
 function BrandLockup() {
