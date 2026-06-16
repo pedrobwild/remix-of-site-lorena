@@ -856,7 +856,7 @@ export default function HomePage() {
           </div>
 
           <p className="illus-note" style={{ textTransform: "none", letterSpacing: 0, fontSize: 12.5 }}>
-            Resultado do studio de um cliente. A performance varia conforme imóvel, região e operação.
+            Resultado de um cliente real. Ocupação e diária variam conforme imóvel, região e operação.
           </p>
 
           <div className="cta-btns" style={{ justifyContent: "center", marginTop: 28 }}>
