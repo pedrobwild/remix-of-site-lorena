@@ -237,6 +237,67 @@
 }
 .bw-home .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
 
+.bw-home .hero-proof {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3.5vw, 32px);
+  margin-top: clamp(24px, 4vw, 32px);
+  padding: 0;
+  max-width: 100%;
+}
+.bw-home .hero-proof li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+}
+.bw-home .hero-proof li:not(:first-child) {
+  padding-left: clamp(16px, 3.5vw, 32px);
+}
+.bw-home .hero-proof li:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 15%;
+  bottom: 15%;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.18);
+}
+.bw-home .hero-proof b {
+  font-family: var(--display);
+  font-size: clamp(20px, 3vw, 24px);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 2px;
+}
+.bw-home .hero-proof span {
+  font-family: var(--sans);
+  font-size: clamp(11px, 1.5vw, 12px);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.2;
+}
+
+@media (max-width: 520px) {
+  .bw-home .hero-proof {
+    gap: 12px;
+  }
+  .bw-home .hero-proof li:not(:first-child) {
+    padding-left: 12px;
+  }
+  .bw-home .hero-proof b {
+    font-size: 18px;
+  }
+  .bw-home .hero-proof span {
+    font-size: 10px;
+    letter-spacing: .04em;
+  }
+}
+
 @keyframes bw-heroUp {
   from { opacity: 0; transform: translateY(22px); }
   to { opacity: 1; transform: none; }
