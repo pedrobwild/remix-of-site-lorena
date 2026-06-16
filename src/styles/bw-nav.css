@@ -166,19 +166,22 @@ a.bw-nav__cta:hover,
 .bw-nav__close {
   display: none;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: none;
   color: #fff;
   width: 44px;
   height: 44px;
-  border-radius: 10px;
   cursor: pointer;
   align-items: center;
   justify-content: center;
+  transition: opacity 0.2s ease;
 }
+.bw-nav__toggle:hover,
+.bw-nav__close:hover { opacity: 0.75; }
 .bw-nav__toggle:focus-visible,
 .bw-nav__close:focus-visible {
   outline: 2px solid var(--bw-cyan-2);
   outline-offset: 2px;
+  border-radius: 8px;
 }
 
 /* Overlay mobile em tela cheia */
