@@ -95,13 +95,25 @@ export default function BewildLeadsAdminPage() {
     return rows.filter((r) => (r.status ?? "novo") === status);
   }, [rows, status]);
 
-  async function cycleStatus(lead: Lead) {
-    const current = (lead.status ?? "novo") as (typeof STATUS_NEXT)[number];
-    const idx = STATUS_NEXT.indexOf(current);
-    const next = STATUS_NEXT[(idx + 1) % STATUS_NEXT.length];
+  async function changeStatus(lead: Lead, next: string) {
+    if (next === (lead.status ?? "novo")) return;
     setBusy(lead.id);
     await supabase.from("leads").update({ status: next }).eq("id", lead.id);
     setBusy(null);
+    load();
+  }
+
+  async function deleteLead(lead: Lead) {
+    const label = lead.name?.trim() || "este lead";
+    if (!window.confirm(`Excluir ${label}? Essa ação não pode ser desfeita.`)) return;
+    setBusy(lead.id);
+    const { error } = await supabase.from("leads").delete().eq("id", lead.id);
+    setBusy(null);
+    if (error) {
+      window.alert(`Não foi possível excluir: ${error.message}`);
+      return;
+    }
+    if (openId === lead.id) setOpenId(null);
     load();
   }
 
