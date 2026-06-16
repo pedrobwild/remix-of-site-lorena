@@ -19,6 +19,19 @@
 
 const STORAGE_KEY = "lal_cookie_consent";
 export const CONSENT_EVENT = "cookie:consent-change";
+export const OPEN_PREFERENCES_EVENT = "cookie:open-preferences";
+
+/**
+ * Reabre o banner de cookies para o usuário trocar a escolha.
+ * Útil para LGPD (direito de retirar consentimento) e para testes.
+ */
+export function openCookiePreferences(): void {
+  try {
+    window.dispatchEvent(new CustomEvent(OPEN_PREFERENCES_EVENT));
+  } catch {
+    /* ambiente sem CustomEvent */
+  }
+}
 
 export type Consent = "accepted" | "declined";
 
