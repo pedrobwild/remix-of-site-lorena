@@ -425,3 +425,12 @@
   color: var(--cyan);
   font-weight: 700;
 }
+
+.bw-diag__trust2 {
+  margin-top: 4px;
+  font-size: 12px;
+}
+.bw-diag__trust2 strong {
+  color: var(--cyan);
+  font-weight: 700;
+}
