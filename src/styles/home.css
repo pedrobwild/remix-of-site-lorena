@@ -250,6 +250,7 @@
 .bw-home .hero-text > .sub { animation-delay: .30s; }
 .bw-home .hero-text > .micro { animation-delay: .40s; }
 .bw-home .hero-text > .hero-cta { animation-delay: .50s; }
+.bw-home .hero-text > .hero-proof { animation-delay: .60s; }
 
 /* grid helpers */
 .bw-home .grid { display: grid; gap: 18px; }
