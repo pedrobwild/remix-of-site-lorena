@@ -37,7 +37,7 @@ export function initGa4(): void {
   if (isAdminPath()) return;
 
   w.dataLayer = w.dataLayer || [];
-  function gtag() {
+  function gtag(..._args: unknown[]) {
     // IMPORTANTE: empurra o objeto `arguments` real (não um array via spread).
     // O gtag.js só reconhece comandos quando o item do dataLayer é um
     // [object Arguments]; um array puro é ignorado e nenhum /g/collect sai.
