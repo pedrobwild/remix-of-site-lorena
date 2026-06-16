@@ -654,39 +654,23 @@
 }
 
 /* DEPOIMENTO */
-.bw-home .testi { display: grid; grid-template-columns: .95fr 1.05fr; gap: 40px; align-items: center; }
-@media (max-width: 820px) { .bw-home .testi { grid-template-columns: 1fr; gap: 26px; } }
+.bw-home .testi { display: grid; grid-template-columns: auto 1fr; gap: 40px; align-items: center; }
+@media (max-width: 820px) { .bw-home .testi { grid-template-columns: 1fr; gap: 26px; justify-items: center; } }
 .bw-home .testi .video {
-  aspect-ratio: 16/11;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
   border-radius: 16px;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background: #000;
   box-shadow: 0 24px 50px -32px rgba(11,35,66,.55);
 }
 .bw-home .testi .video video {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
   display: block;
 }
 
-.bw-home .testi .video .play {
-  width: 58px;
-  height: 58px;
-  border-radius: 50%;
-  background: rgba(255,255,255,.94);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--navy);
-  font-size: 20px;
-  transition: transform .18s ease;
-  z-index: 2;
-}
-.bw-home .testi .video:hover .play { transform: scale(1.08); }
 .bw-home .testi blockquote {
   font-family: var(--display);
   font-weight: 600;
@@ -705,6 +689,7 @@
   letter-spacing: .06em;
   text-transform: uppercase;
 }
+
 
 /* PORTAL */
 .bw-home .portal-card {
@@ -770,19 +755,22 @@
   overflow: hidden;
   background: var(--card);
 }
+.bw-home .chead,
 .bw-home .crow {
   display: grid;
   grid-template-columns: .7fr 1.3fr 1.3fr;
-  border-bottom: 1px solid var(--line);
 }
+.bw-home .crow { border-bottom: 1px solid var(--line); }
 .bw-home .crow:last-child { border-bottom: none; }
-.bw-home .crow > div { padding: 15px 18px; }
+.bw-home .crow:nth-child(odd) .rh { background: rgba(11,35,66,.025); }
+.bw-home .crow > div,
+.bw-home .chead > div { padding: 18px 18px; align-items: flex-start; }
+.bw-home .crow > div { display: flex; }
 .bw-home .crow .rh {
   font-family: var(--sans);
   font-weight: 600;
   font-size: 13.5px;
   color: var(--navy);
-  display: flex;
   align-items: center;
 }
 .bw-home .crow .trad {
@@ -790,32 +778,63 @@
   font-size: 13px;
   border-left: 1px solid var(--line);
   background: #FBF8F2;
+  gap: 9px;
 }
 .bw-home .crow .bw {
   color: var(--ink);
   font-size: 13px;
   border-left: 1px solid var(--line);
+  background: rgba(47,134,184,.06);
+  gap: 9px;
 }
 .bw-home .chead { background: var(--navy); color: #fff; }
 .bw-home .chead > div {
-  padding: 15px 18px;
   font-family: var(--sans);
   font-weight: 600;
   font-size: 13.5px;
   color: #fff;
 }
 .bw-home .chead .trad { background: transparent; color: rgba(255,255,255,.7); border-left: 1px solid rgba(255,255,255,.15); }
-.bw-home .chead .bw { border-left: 1px solid rgba(255,255,255,.15); }
-.bw-home .xmark { color: #C57B6B; font-weight: 700; margin-right: 7px; }
-.bw-home .vmark { color: var(--cyan); font-weight: 700; margin-right: 7px; }
-@media (max-width: 680px) {
-  .bw-home .crow,
-  .bw-home .chead { grid-template-columns: 1fr; }
-  .bw-home .crow .trad,
-  .bw-home .crow .bw,
-  .bw-home .chead .trad,
-  .bw-home .chead .bw { border-left: none; border-top: 1px solid var(--line); }
+.bw-home .chead .bw {
+  border-left: 1px solid rgba(255,255,255,.15);
+  background: rgba(47,134,184,.18);
+  color: #BFE0F1;
+  letter-spacing: .01em;
 }
+.bw-home .xmark,
+.bw-home .vmark {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+.bw-home .xmark { background: rgba(197,123,107,.14); color: #B5604E; }
+.bw-home .vmark { background: var(--cyan-soft); color: var(--cyan); }
+.bw-home .crow .data-label { display: none; }
+@media (max-width: 680px) {
+  .bw-home .chead { display: none; }
+  .bw-home .crow { grid-template-columns: 1fr; }
+  .bw-home .crow .trad,
+  .bw-home .crow .bw { border-left: none; border-top: 1px solid var(--line); }
+  .bw-home .crow > div[data-label] { flex-direction: column; gap: 6px; }
+  .bw-home .crow > div[data-label]::before {
+    content: attr(data-label);
+    font-family: var(--sans);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--navy);
+    opacity: .65;
+  }
+  .bw-home .crow .bw[data-label]::before { color: var(--cyan); opacity: 1; }
+  .bw-home .crow > div[data-label] { padding-top: 14px; }
+}
+
 
 /* PARA QUEM */
 .bw-home .who-card {
