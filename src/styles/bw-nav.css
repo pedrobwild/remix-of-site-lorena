@@ -108,8 +108,10 @@
 }
 .bw-nav__links a:hover { color: var(--bw-cyan-2); }
 .bw-nav__links a:hover::after { width: 100%; }
-.bw-nav__links a[aria-current="page"] { color: var(--bw-cyan-2); font-weight: 600; }
-.bw-nav__links a[aria-current="page"]::after { width: 100%; background: var(--bw-cyan-2); }
+.bw-nav__links a[aria-current="page"],
+.bw-nav__links a.is-current { color: var(--bw-cyan-2); font-weight: 600; }
+.bw-nav__links a[aria-current="page"]::after,
+.bw-nav__links a.is-current::after { width: 100%; background: var(--bw-cyan-2); }
 
 /* Cluster de ações (desktop) */
 .bw-nav__actions {
