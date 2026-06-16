@@ -48,6 +48,8 @@ import studioAntes from "@/assets/portfolio/studio-zip-brooklin-antes.jpg.asset.
 import studioDepois from "@/assets/portfolio/studio-zip-brooklin-depois.jpg.asset.json";
 import studioPronto from "@/assets/portfolio/studio-pronto.jpg.asset.json";
 import plantaHumanizada from "@/assets/portfolio/planta-humanizada.png.asset.json";
+import rafaelOcupacao from "@/assets/testimonials/rafael/rafael-ocupacao-novembro.jpeg.asset.json";
+import rafaelAirbnb from "@/assets/testimonials/rafael/rafael-airbnb-butanta.jpeg.asset.json";
 
 
 
@@ -813,6 +815,55 @@ export default function HomePage() {
                 <div className="ans">{f.a}</div>
               </details>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* RESULTADO REAL — case Rafael */}
+      <section className="section" id="resultado" style={{ background: "var(--paper)" }}>
+        <div className="container">
+          <div className="eyebrow">Resultado real</div>
+          <h2 style={{ maxWidth: "22ch" }}>
+            Studio no Butantã: do projeto ao Airbnb{" "}
+            <span className="accent">com 70% de ocupação.</span>
+          </h2>
+          <p className="lead" style={{ maxWidth: "62ch" }}>
+            O Rafael chegou pra resolver um studio no Butantã e enxergou o que a Bewild entrega:
+            um ativo, não uma reforma. Decidiu colocar no short stay — e o resultado apareceu.
+            Anúncio no ar e novembro fechando com 70% de ocupação.
+          </p>
+
+          <figure className="bw-home__rafquote">
+            <Quote className="bw-home__rafquote-icon" aria-hidden="true" />
+            <blockquote>
+              Esses studios serão um negócio pra mim. Renda vitalícia.
+            </blockquote>
+            <figcaption>Rafael · cliente Bewild · studio no Butantã</figcaption>
+          </figure>
+
+          <div className="bw-home__rafproof">
+            <figure className="bw-home__rafproof-item">
+              <div className="bw-home__rafproof-frame">
+                <img src={rafaelOcupacao.url} alt="Print do calendário do anúncio mostrando novembro com 70% de ocupação." loading="lazy" />
+              </div>
+              <figcaption>Novembro: 70% de ocupação</figcaption>
+            </figure>
+            <figure className="bw-home__rafproof-item">
+              <div className="bw-home__rafproof-frame">
+                <img src={rafaelAirbnb.url} alt="Print do anúncio no Airbnb: Studio no Butantã, 400m da estação." loading="lazy" />
+              </div>
+              <figcaption>Anúncio no ar no Airbnb</figcaption>
+            </figure>
+          </div>
+
+          <p className="illus-note" style={{ textTransform: "none", letterSpacing: 0, fontSize: 12.5 }}>
+            Resultado do studio de um cliente. A performance varia conforme imóvel, região e operação.
+          </p>
+
+          <div className="cta-btns" style={{ justifyContent: "center", marginTop: 28 }}>
+            <a href="/diagnostico" className="btn btn-cyan">
+              Solicitar diagnóstico <span className="arrow">→</span>
+            </a>
           </div>
         </div>
       </section>

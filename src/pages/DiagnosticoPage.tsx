@@ -418,6 +418,9 @@ function DiagnosticoForm() {
       <p className="bw-diag__trust">
         <strong>+150</strong> studios entregues · <strong>5 anos</strong> de garantia
       </p>
+      <p className="bw-diag__trust bw-diag__trust2">
+        Studio de cliente no <strong>Butantã</strong>: <strong>70%</strong> de ocupação em novembro
+      </p>
         </>
       )}
     </form>
