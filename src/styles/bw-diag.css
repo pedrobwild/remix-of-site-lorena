@@ -392,7 +392,9 @@
 }
 .bw-diag__testivideo {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  max-width: 280px;
+  aspect-ratio: 9 / 16;
+  margin-inline: auto;
   border-radius: 14px;
   overflow: hidden;
   background: #000;
