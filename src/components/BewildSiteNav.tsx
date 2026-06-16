@@ -3,11 +3,18 @@
  *
  * Header navy sólido com a logo real da marca (lockup branco). Mesmos
  * links em todas as páginas; item da página atual marcado como ativo.
- * No mobile, um menu hambúrguer abre um painel com os mesmos links + CTA.
+ * No mobile, menu hambúrguer abre um overlay em tela cheia com os links
+ * e os dois CTAs (Área do cliente + Solicitar diagnóstico) no rodapé,
+ * dentro da zona do polegar.
  *
- * Auto-contida (não depende de `.bw-home`) — usa `bw-nav.css`.
+ * Na home (pathname "/"), o header começa transparente sobre o hero e
+ * condensa para navy sólido ao rolar (~70px). Nas demais páginas o
+ * header é sempre navy sólido.
+ *
+ * Auto-contido (não depende de `.bw-home`) — usa `bw-nav.css`.
  */
 import { useEffect, useRef, useState } from "react";
+import { Menu, X, CircleUserRound } from "lucide-react";
 import "@/styles/bw-nav.css";
 
 type Item = { label: string; homeHref: string; pageHref: string };
@@ -21,6 +28,8 @@ const ITEMS: Item[] = [
   { label: "Conteúdos", homeHref: "/conteudos", pageHref: "/conteudos" },
 ];
 
+const CLIENT_AREA_URL = "https://bwildworkflow.com";
+
 function getPathname(): string {
   if (typeof window === "undefined") return "/";
   return window.location.pathname || "/";
@@ -29,6 +38,7 @@ function getPathname(): string {
 export default function BewildSiteNav() {
   const [pathname, setPathname] = useState<string>(() => getPathname());
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
 
@@ -44,6 +54,14 @@ export default function BewildSiteNav() {
     };
   }, []);
 
+  // Scroll condense (passivo, sem jank)
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 70);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   useEffect(() => {
     if (!menuOpen) return;
     const onKey = (e: KeyboardEvent) => {
@@ -53,7 +71,6 @@ export default function BewildSiteNav() {
       }
     };
     document.addEventListener("keydown", onKey);
-    // foco no primeiro link
     setTimeout(() => firstLinkRef.current?.focus(), 10);
     document.body.style.overflow = "hidden";
     return () => {
@@ -71,8 +88,18 @@ export default function BewildSiteNav() {
     return false;
   };
 
+  const transparent = isHome && !scrolled && !menuOpen;
+
+  const headerClass = [
+    "bw-nav",
+    transparent ? "bw-nav--transparent" : "bw-nav--solid",
+    scrolled && !transparent ? "bw-nav--scrolled" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <header className="bw-nav">
+    <header className={headerClass}>
       <div className="bw-nav__inner">
         <a href="/" className="bw-nav__brand" aria-label="Bewild — início">
           <img
@@ -98,9 +125,20 @@ export default function BewildSiteNav() {
           ))}
         </nav>
 
-        <a href="/diagnostico" className="bw-nav__cta">
-          Solicitar diagnóstico <span className="arrow" aria-hidden>→</span>
-        </a>
+        <div className="bw-nav__actions">
+          <a
+            href={CLIENT_AREA_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bw-nav__secondary"
+          >
+            <CircleUserRound size={16} aria-hidden />
+            <span>Área do cliente</span>
+          </a>
+          <a href="/diagnostico" className="bw-nav__cta">
+            Solicitar diagnóstico <span className="arrow" aria-hidden>→</span>
+          </a>
+        </div>
 
         <button
           ref={toggleRef}
@@ -111,7 +149,7 @@ export default function BewildSiteNav() {
           aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
           onClick={() => setMenuOpen((v) => !v)}
         >
-          <span aria-hidden>{menuOpen ? "✕" : "☰"}</span>
+          <Menu size={22} aria-hidden />
         </button>
       </div>
 
@@ -123,6 +161,32 @@ export default function BewildSiteNav() {
           aria-modal="true"
           aria-label="Menu"
         >
+          <div className="bw-nav__mobile-top">
+            <a
+              href="/"
+              className="bw-nav__brand"
+              aria-label="Bewild — início"
+              onClick={() => setMenuOpen(false)}
+            >
+              <img
+                src="/brand/bewild-logo-cropped.png"
+                alt="Bewild"
+                className="bw-nav__logo"
+                width={81}
+                height={28}
+                decoding="async"
+              />
+            </a>
+            <button
+              type="button"
+              className="bw-nav__close"
+              aria-label="Fechar menu"
+              onClick={() => setMenuOpen(false)}
+            >
+              <X size={22} aria-hidden />
+            </button>
+          </div>
+
           <nav className="bw-nav__mobile-links" aria-label="Navegação principal — móvel">
             {ITEMS.map((it, i) => (
               <a
@@ -135,6 +199,19 @@ export default function BewildSiteNav() {
                 {it.label}
               </a>
             ))}
+          </nav>
+
+          <div className="bw-nav__mobile-foot">
+            <a
+              href={CLIENT_AREA_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bw-nav__secondary bw-nav__secondary--mobile"
+              onClick={() => setMenuOpen(false)}
+            >
+              <CircleUserRound size={18} aria-hidden />
+              <span>Área do cliente</span>
+            </a>
             <a
               href="/diagnostico"
               className="bw-nav__cta bw-nav__cta--mobile"
@@ -142,7 +219,7 @@ export default function BewildSiteNav() {
             >
               Solicitar diagnóstico <span className="arrow" aria-hidden>→</span>
             </a>
-          </nav>
+          </div>
         </div>
       )}
     </header>
