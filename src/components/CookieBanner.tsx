@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { routes } from "../lib/useHashRoute";
-import { readConsent, setConsent, type Consent } from "../lib/cookieConsent";
+import { readConsent, setConsent, OPEN_PREFERENCES_EVENT, type Consent } from "../lib/cookieConsent";
 
 /**
  * Banner de consentimento de cookies (LGPD).
@@ -26,6 +26,13 @@ export default function CookieBanner() {
       return () => window.clearTimeout(t);
     }
     return undefined;
+  }, []);
+
+  // Reabertura manual via "Preferências de cookies" (rodapé/política).
+  useEffect(() => {
+    const onOpen = () => setVisible(true);
+    window.addEventListener(OPEN_PREFERENCES_EVENT, onOpen);
+    return () => window.removeEventListener(OPEN_PREFERENCES_EVENT, onOpen);
   }, []);
 
   // M8: a11y — quando o banner aparece, lembra o elemento focado para

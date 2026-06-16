@@ -88,3 +88,19 @@
   z-index: 1;
 }
 .bw-foot__bottom p { margin: 0; font-size: 12px; color: rgba(255, 255, 255, .5); max-width: none; }
+
+.bw-foot__linkbtn {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.bw-foot__linkbtn:hover { color: #fff; }
+.bw-foot__linkbtn:focus-visible {
+  outline: 2px solid var(--bwf-sky);
+  outline-offset: 2px;
+}

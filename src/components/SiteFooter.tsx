@@ -6,6 +6,7 @@
  * "Bewild" (só B maiúsculo).
  */
 import { CONTACT, whatsappHref } from "@/components/landing/content";
+import { openCookiePreferences } from "@/lib/cookieConsent";
 import "@/styles/site-footer.css";
 
 function BrandLockup() {
@@ -63,6 +64,15 @@ export default function SiteFooter() {
             <li><a href={CONTACT.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
             <li><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></li>
             <li><a href="/privacidade">Política de privacidade</a></li>
+            <li>
+              <button
+                type="button"
+                onClick={openCookiePreferences}
+                className="bw-foot__linkbtn"
+              >
+                Preferências de cookies
+              </button>
+            </li>
           </ul>
         </div>
       </div>
