@@ -5,6 +5,7 @@ import BewildSiteNav from "@/components/BewildSiteNav";
 import SiteFooter from "@/components/SiteFooter";
 import { CONTACT } from "../components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
+import { trackEvent } from "@/lib/ga4";
 import "../styles/bw-diag.css";
 
 /* ============================================================
@@ -265,6 +266,15 @@ function DiagnosticoForm() {
       });
     // unused; kept to avoid breaking previous closure scope
     void scope;
+
+    // GA4: conversão de lead (no-op se sem consentimento).
+    trackEvent("generate_lead", {
+      method: "diagnostico_form",
+      objetivo: f.objetivo || undefined,
+      chaves: f.chaves || undefined,
+      planta: f.planta || undefined,
+      location: f.local || undefined,
+    });
 
 
     const url = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(messageText)}`;

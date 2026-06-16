@@ -5,6 +5,8 @@ import RootErrorBoundary from "./components/RootErrorBoundary";
 import { useCustomCursor } from "./lib/useCustomCursor";
 import { useHashRoute, installLinkInterceptor, type Route } from "./lib/useHashRoute";
 import { initAnalytics } from "./lib/analytics";
+import { initGa4, trackPageView } from "./lib/ga4";
+import { onConsentChange, isConsentAccepted } from "./lib/cookieConsent";
 import { installCrashRecovery, markHealthy } from "./lib/crashRecovery";
 import { renderRoute } from "./router";
 import "./index.css";
@@ -35,8 +37,22 @@ function Root() {
   useEffect(() => {
     markHealthy();
     const cleanup = initAnalytics();
-    return cleanup;
+    // GA4: tenta inicializar agora (caso já tenha consentimento salvo) e
+    // assina mudanças do banner para inicializar no momento do "Aceitar".
+    if (isConsentAccepted()) initGa4();
+    const off = onConsentChange((v) => {
+      if (v === "accepted") initGa4();
+    });
+    return () => {
+      cleanup?.();
+      off();
+    };
   }, []);
+
+  // Dispara page_view do GA4 a cada mudança de rota (router hash custom).
+  useEffect(() => {
+    trackPageView(window.location.pathname + window.location.search);
+  }, [route]);
 
   // "displayed" é a rota que está renderizada no DOM. Quando a rota real muda,
   // disparamos um fade-out, trocamos `displayed` no meio e fazemos fade-in.
