@@ -39,6 +39,7 @@ export default function BewildSiteNav() {
   const [pathname, setPathname] = useState<string>(() => getPathname());
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
 
@@ -54,13 +55,49 @@ export default function BewildSiteNav() {
     };
   }, []);
 
-  // Scroll condense (passivo, sem jank)
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 70);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Scrollspy: somente na home
+  useEffect(() => {
+    const isHomePath = pathname === "/" || pathname === "";
+    if (!isHomePath) {
+      setActiveSection(null);
+      return;
+    }
+    const ids = ["fazemos", "processo", "diferenciais"];
+    let raf = 0;
+    const attach = () => {
+      const els = ids
+        .map((id) => document.getElementById(id))
+        .filter((el): el is HTMLElement => !!el);
+      if (els.length === 0) {
+        raf = window.requestAnimationFrame(attach);
+        return;
+      }
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((e) => e.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+          if (visible[0]) setActiveSection(visible[0].target.id);
+        },
+        { rootMargin: "-45% 0px -45% 0px", threshold: [0, 0.25, 0.5, 1] },
+      );
+      els.forEach((el) => observer.observe(el));
+      cleanup = () => observer.disconnect();
+    };
+    let cleanup: (() => void) | null = null;
+    attach();
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      cleanup?.();
+    };
+  }, [pathname]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -86,6 +123,14 @@ export default function BewildSiteNav() {
       return pathname === it.pageHref || pathname.startsWith(it.pageHref + "/");
     }
     return false;
+  };
+
+  const sectionId = (it: Item): string | null => {
+    if (!isHome) return null;
+    if (it.homeHref === "#fazemos") return "fazemos";
+    if (it.homeHref === "#processo") return "processo";
+    if (it.homeHref === "#diferenciais") return "diferenciais";
+    return null;
   };
 
   const transparent = false;
