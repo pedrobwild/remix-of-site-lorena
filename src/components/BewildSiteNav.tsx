@@ -88,7 +88,7 @@ export default function BewildSiteNav() {
     return false;
   };
 
-  const transparent = isHome && !scrolled && !menuOpen;
+  const transparent = false;
 
   const headerClass = [
     "bw-nav",
