@@ -48,6 +48,8 @@ import studioAntes from "@/assets/portfolio/studio-zip-brooklin-antes.jpg.asset.
 import studioDepois from "@/assets/portfolio/studio-zip-brooklin-depois.jpg.asset.json";
 import studioPronto from "@/assets/portfolio/studio-pronto.jpg.asset.json";
 import plantaHumanizada from "@/assets/portfolio/planta-humanizada.png.asset.json";
+import rafaelOcupacao from "@/assets/testimonials/rafael/rafael-ocupacao-novembro.jpeg.asset.json";
+import rafaelAirbnb from "@/assets/testimonials/rafael/rafael-airbnb-butanta.jpeg.asset.json";
 
 
 
