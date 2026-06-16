@@ -33,6 +33,7 @@ import {
   Check,
   X,
   CircleDot,
+  Calendar,
   Circle,
   Quote,
   type LucideIcon,
@@ -623,44 +624,128 @@ export default function HomePage() {
               <p className="portal-cta-note">Acesso para clientes com obra ativa.</p>
             </div>
           </div>
-          <div className="portal-card">
-            <div className="portal-chrome">
-              <span className="portal-chrome-dot" aria-hidden="true" />
-              <span className="portal-chrome-name">Bwild Workflow</span>
-            </div>
-            <div className="portal-project">
-              <b>Studio Urban Flex · 22 m²</b>
-              <span className="badge">Em obra</span>
-            </div>
-            <ul className="portal-stages">
-              <li className="pline">
-                <span className="pt done"><Check size={10} strokeWidth={2.5} /></span>
-                <span className="pline-label">Demolição e remoção</span>
-              </li>
-              <li className="pline">
-                <span className="pt done"><Check size={10} strokeWidth={2.5} /></span>
-                <span className="pline-label">Elétrica e hidráulica</span>
-              </li>
-              <li className="pline">
-                <span className="pt now"><CircleDot size={10} strokeWidth={2} /></span>
-                <span className="pline-label">Marcenaria sob medida</span>
-                <span className="pline-tag">em andamento</span>
-              </li>
-              <li className="pline">
-                <span className="pt todo"><Circle size={10} strokeWidth={2} /></span>
-                <span className="pline-label muted">Montagem e enxoval</span>
-              </li>
-            </ul>
-            <div className="portal-progress">
-              <div className="pbar"><i /></div>
-              <div className="portal-progress-meta">
-                <span>52% concluído</span>
-                <span>Semana 6</span>
+          <div className="pf-app" role="img" aria-label="Réplica ilustrativa da tela do Bwild Workflow">
+            <div className="pf-chrome">
+              <div className="pf-brand">
+                <span className="pf-brand-dot" aria-hidden="true" />
+                <span className="pf-brand-name">Bwild Workflow</span>
+              </div>
+              <div className="pf-period">
+                <Calendar size={12} strokeWidth={2} aria-hidden="true" />
+                <span>Jun 2026</span>
               </div>
             </div>
-            <div className="portal-foot">
-              <p>Atualizado hoje. Relatório semanal #6: marcenaria instalada, elétrica revisada.</p>
-              <p className="portal-next">Próxima etapa: Montagem e enxoval.</p>
+            <div className="pf-tabs" role="tablist">
+              <span className="pf-tab is-active" role="tab" aria-selected="true">Curva S</span>
+              <span className="pf-tab" role="tab">Relatórios</span>
+              <span className="pf-tab" role="tab">Atividade</span>
+            </div>
+            <div className="pf-body">
+              <div className="pf-head">
+                <div className="pf-head-row">
+                  <b className="pf-title">Studio Urban Flex · 22 m²</b>
+                  <span className="pf-pill pf-pill-info">Em obra</span>
+                </div>
+                <span className="pf-caption">Semana 6 de 10</span>
+              </div>
+
+              <div className="pf-kpis">
+                <div className="pf-kpi">
+                  <span className="pf-kpi-label">Concluído</span>
+                  <span className="pf-kpi-value">52%</span>
+                </div>
+                <div className="pf-kpi">
+                  <span className="pf-kpi-label">Status</span>
+                  <span className="pf-kpi-value pf-kpi-row">
+                    <span className="pf-dot pf-dot-success" aria-hidden="true" />
+                    No prazo
+                  </span>
+                </div>
+                <div className="pf-kpi">
+                  <span className="pf-kpi-label">Cronograma</span>
+                  <span className="pf-kpi-value">Sem 6/10</span>
+                </div>
+              </div>
+
+              <div className="pf-chart">
+                <div className="pf-chart-legend">
+                  <span className="pf-leg"><span className="pf-leg-line pf-leg-real" aria-hidden="true" />Real</span>
+                  <span className="pf-leg"><span className="pf-leg-line pf-leg-plan" aria-hidden="true" />Planejado</span>
+                </div>
+                <svg viewBox="0 0 320 150" className="pf-svg" role="presentation" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="pfArea" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="hsl(204 100% 25%)" stopOpacity="0.18" />
+                      <stop offset="100%" stopColor="hsl(204 100% 25%)" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  {/* gridlines */}
+                  {[0, 1, 2, 3, 4].map((i) => {
+                    const y = 16 + i * 26;
+                    return <line key={i} x1="34" y1={y} x2="312" y2={y} stroke="hsl(220 16% 92%)" strokeWidth="1" />;
+                  })}
+                  {/* y labels */}
+                  <text x="26" y="20" textAnchor="end" className="pf-axis">100</text>
+                  <text x="26" y="72" textAnchor="end" className="pf-axis">50</text>
+                  <text x="26" y="124" textAnchor="end" className="pf-axis">0</text>
+                  {/* planejado (tracejado), curva S de (34,120) a (312,16) */}
+                  <path
+                    d="M34 120 C 110 118, 150 70, 180 56 S 270 22, 312 16"
+                    fill="none"
+                    stroke="hsl(220 12% 55%)"
+                    strokeWidth="1.5"
+                    strokeDasharray="4 4"
+                    strokeLinecap="round"
+                  />
+                  {/* real (sólida) até Sem 6 ~ x=200, ~52% -> y=120-(52*1.04)=65.92 */}
+                  <path
+                    d="M34 120 L34 120 C 90 119, 130 96, 160 82 S 195 70, 200 66 L200 120 L34 120 Z"
+                    fill="url(#pfArea)"
+                  />
+                  <path
+                    d="M34 120 C 90 119, 130 96, 160 82 S 195 70, 200 66"
+                    fill="none"
+                    stroke="hsl(204 100% 25%)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                  {/* marker */}
+                  <circle cx="200" cy="66" r="5" fill="hsl(204 100% 25%)" stroke="#fff" strokeWidth="2" />
+                  {/* x labels */}
+                  <text x="34" y="142" className="pf-axis">Início</text>
+                  <text x="200" y="142" textAnchor="middle" className="pf-axis">Sem 6</text>
+                  <text x="312" y="142" textAnchor="end" className="pf-axis">Entrega</text>
+                </svg>
+              </div>
+
+              <ul className="pf-stages">
+                <li className="pf-stage">
+                  <span className="pf-stage-icon pf-stage-icon-success"><Check size={11} strokeWidth={3} /></span>
+                  <span className="pf-stage-label">Demolição e remoção</span>
+                  <span className="pf-stage-status pf-stage-status-success">Concluída</span>
+                </li>
+                <li className="pf-stage">
+                  <span className="pf-stage-icon pf-stage-icon-success"><Check size={11} strokeWidth={3} /></span>
+                  <span className="pf-stage-label">Elétrica e hidráulica</span>
+                  <span className="pf-stage-status pf-stage-status-success">Concluída</span>
+                </li>
+                <li className="pf-stage">
+                  <span className="pf-stage-icon pf-stage-icon-warning"><CircleDot size={11} strokeWidth={2.25} /></span>
+                  <span className="pf-stage-label">Marcenaria sob medida</span>
+                  <span className="pf-stage-meta">
+                    <span className="pf-pill pf-pill-warning">em andamento</span>
+                    <span className="pf-stage-pct">60%</span>
+                  </span>
+                </li>
+                <li className="pf-stage">
+                  <span className="pf-stage-icon pf-stage-icon-todo"><Circle size={11} strokeWidth={2} /></span>
+                  <span className="pf-stage-label pf-stage-label-muted">Montagem e enxoval</span>
+                  <span className="pf-stage-status pf-stage-status-muted">A iniciar</span>
+                </li>
+              </ul>
+            </div>
+            <div className="pf-foot">
+              Atualizado hoje. Relatório semanal #6: marcenaria instalada, elétrica revisada.
             </div>
           </div>
         </div>
