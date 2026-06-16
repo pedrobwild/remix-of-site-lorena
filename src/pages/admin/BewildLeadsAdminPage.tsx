@@ -42,7 +42,7 @@ const STATUS_OPTIONS = [
   { value: "descartado", label: "Descartados" },
 ];
 
-const STATUS_NEXT = ["novo", "contatado", "qualificado", "descartado"] as const;
+const STATUS_VALUES = ["novo", "contatado", "qualificado", "descartado"] as const;
 
 function fmtDate(iso: string): string {
   try {
@@ -95,13 +95,25 @@ export default function BewildLeadsAdminPage() {
     return rows.filter((r) => (r.status ?? "novo") === status);
   }, [rows, status]);
 
-  async function cycleStatus(lead: Lead) {
-    const current = (lead.status ?? "novo") as (typeof STATUS_NEXT)[number];
-    const idx = STATUS_NEXT.indexOf(current);
-    const next = STATUS_NEXT[(idx + 1) % STATUS_NEXT.length];
+  async function changeStatus(lead: Lead, next: string) {
+    if (next === (lead.status ?? "novo")) return;
     setBusy(lead.id);
     await supabase.from("leads").update({ status: next }).eq("id", lead.id);
     setBusy(null);
+    load();
+  }
+
+  async function deleteLead(lead: Lead) {
+    const label = lead.name?.trim() || "este lead";
+    if (!window.confirm(`Excluir ${label}? Essa ação não pode ser desfeita.`)) return;
+    setBusy(lead.id);
+    const { error } = await supabase.from("leads").delete().eq("id", lead.id);
+    setBusy(null);
+    if (error) {
+      window.alert(`Não foi possível excluir: ${error.message}`);
+      return;
+    }
+    if (openId === lead.id) setOpenId(null);
     load();
   }
 
@@ -187,23 +199,26 @@ export default function BewildLeadsAdminPage() {
                           : r.landing_path ?? "(direto)"}
                       </td>
                       <td>
-                        <button
-                          type="button"
-                          className={
-                            "bw-admin__tag " +
-                            ((r.status ?? "novo") === "contatado" || (r.status ?? "novo") === "qualificado"
-                              ? "bw-admin__tag--ok"
-                              : (r.status ?? "novo") === "descartado"
-                                ? "bw-admin__tag--off"
-                                : "bw-admin__tag--info")
-                          }
-                          style={{ cursor: "pointer" }}
-                          onClick={() => cycleStatus(r)}
+                        <select
+                          value={r.status ?? "novo"}
+                          onChange={(e) => changeStatus(r, e.target.value)}
                           disabled={busy === r.id}
-                          title="Clique para mudar o status"
+                          aria-label={`Mudar status de ${r.name ?? "lead"}`}
+                          style={{
+                            padding: "6px 28px 6px 10px",
+                            borderRadius: 6,
+                            border: "1px solid var(--bw-border, #d6d3cc)",
+                            background: "#fff",
+                            fontSize: 13,
+                            cursor: busy === r.id ? "wait" : "pointer",
+                          }}
                         >
-                          {r.status ?? "novo"}
-                        </button>
+                          {STATUS_VALUES.map((s) => (
+                            <option key={s} value={s}>
+                              {s}
+                            </option>
+                          ))}
+                        </select>
                       </td>
                       <td className="muted" style={{ whiteSpace: "nowrap" }}>{fmtDate(r.created_at)}</td>
                       <td style={{ textAlign: "right", whiteSpace: "nowrap" }}>
@@ -226,8 +241,25 @@ export default function BewildLeadsAdminPage() {
                         >
                           {isOpen ? "fechar" : "detalhes"}
                         </button>
+                        {"  "}
+                        <button
+                          type="button"
+                          className="bw-admin__section-link"
+                          style={{
+                            background: "none",
+                            border: 0,
+                            cursor: busy === r.id ? "wait" : "pointer",
+                            color: "#b3261e",
+                          }}
+                          onClick={() => deleteLead(r)}
+                          disabled={busy === r.id}
+                          aria-label={`Excluir ${r.name ?? "lead"}`}
+                        >
+                          excluir
+                        </button>
                       </td>
                     </tr>
+
                     {isOpen && (
                       <tr key={`${r.id}-detail`}>
                         <td colSpan={6} style={{ background: "#FBFAF5", fontSize: 13 }}>
