@@ -274,6 +274,11 @@ export default function HomePage() {
                 Ver reformas entregues
               </a>
             </div>
+            <ul className="hero-proof" aria-label="Provas Bewild">
+              <li><b>+150</b><span>studios entregues</span></li>
+              <li><b>55</b><span>dias úteis de obra</span></li>
+              <li><b>5</b><span>anos de garantia</span></li>
+            </ul>
           </div>
         </div>
       </section>
