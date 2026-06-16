@@ -447,7 +447,7 @@ export const FAQS: FaqItem[] = [
   },
   {
     q: "Consigo acompanhar a obra à distância?",
-    a: "Sim. O processo inclui acompanhamento com fotos, relatórios, cronograma e comunicação organizada — especialmente importante para investidores que não moram perto do imóvel.",
+    a: "Sim. O processo inclui acompanhamento com fotos, relatórios, cronograma e comunicação organizada, especialmente importante para investidores que não moram perto do imóvel.",
   },
   {
     q: "Vocês ajudam com móveis, eletros e enxoval?",
