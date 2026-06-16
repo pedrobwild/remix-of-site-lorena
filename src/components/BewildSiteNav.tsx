@@ -22,10 +22,10 @@ type Item = { label: string; homeHref: string; pageHref: string };
 const ITEMS: Item[] = [
   { label: "O que fazemos", homeHref: "#fazemos", pageHref: "/#fazemos" },
   { label: "Como funciona", homeHref: "#processo", pageHref: "/#processo" },
+  { label: "Por que a Bewild", homeHref: "#diferenciais", pageHref: "/#diferenciais" },
   { label: "Portfólio", homeHref: "/portfolio", pageHref: "/portfolio" },
-  { label: "Diferenciais", homeHref: "#diferenciais", pageHref: "/#diferenciais" },
-  { label: "FAQ", homeHref: "/faq", pageHref: "/faq" },
   { label: "Conteúdos", homeHref: "/conteudos", pageHref: "/conteudos" },
+  { label: "FAQ", homeHref: "/faq", pageHref: "/faq" },
 ];
 
 const CLIENT_AREA_URL = "https://bwildworkflow.com";
