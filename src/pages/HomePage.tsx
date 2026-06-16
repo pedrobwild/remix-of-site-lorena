@@ -567,13 +567,17 @@ export default function HomePage() {
               aria-label="Depoimento em vídeo de cliente Bewild"
             />
           </div>
-          <div>
+          <div className="testi-content">
+            <Quote size={44} className="testi-quote-icon" />
             <div className="eyebrow">Depoimento</div>
             <h2>
               Quem já passou pela obra{" "}
               <span className="accent">conta melhor do que a gente.</span>
             </h2>
             <p className="src">Depoimento real de cliente Bewild</p>
+            <a href="/diagnostico" className="btn btn-cyan">
+              Solicitar diagnóstico <span className="arrow">→</span>
+            </a>
           </div>
         </div>
       </section>
