@@ -670,8 +670,9 @@
 }
 .bw-home .testi .video {
   width: 100%;
-  max-width: 340px;
-  margin: 0 auto;
+  max-width: 300px;
+  aspect-ratio: 9 / 16;
+  margin-inline: auto;
   border-radius: 16px;
   overflow: hidden;
   background: #000;
@@ -679,7 +680,8 @@
 }
 .bw-home .testi .video video {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
   display: block;
 }
 
