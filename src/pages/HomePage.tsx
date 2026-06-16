@@ -611,19 +611,56 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
+            <div className="portal-cta">
+              <a
+                className="btn btn-cyan"
+                href="https://bwildworkflow.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Acessar área do cliente <span className="arrow">→</span>
+              </a>
+              <p className="portal-cta-note">Acesso para clientes com obra ativa.</p>
+            </div>
           </div>
           <div className="portal-card">
-            <div className="portal-head">
+            <div className="portal-chrome">
+              <span className="portal-chrome-dot" aria-hidden="true" />
+              <span className="portal-chrome-name">Bwild Workflow</span>
+            </div>
+            <div className="portal-project">
               <b>Studio Urban Flex · 22 m²</b>
               <span className="badge">Em obra</span>
             </div>
-            <div className="pline"><span className="pt done"><Check size={10} strokeWidth={2.5} /></span>Demolição e remoção</div>
-            <div className="pline"><span className="pt done"><Check size={10} strokeWidth={2.5} /></span>Elétrica e hidráulica</div>
-            <div className="pline"><span className="pt now"><CircleDot size={10} strokeWidth={2} /></span>Marcenaria sob medida</div>
-            <div className="pline"><span className="pt todo"><Circle size={10} strokeWidth={2} /></span>Montagem e enxoval</div>
-            <div className="pbar"><i /></div>
-            <div className="pmeta">
-              52% concluído · Relatório semanal #6: marcenaria instalada, elétrica revisada.
+            <ul className="portal-stages">
+              <li className="pline">
+                <span className="pt done"><Check size={10} strokeWidth={2.5} /></span>
+                <span className="pline-label">Demolição e remoção</span>
+              </li>
+              <li className="pline">
+                <span className="pt done"><Check size={10} strokeWidth={2.5} /></span>
+                <span className="pline-label">Elétrica e hidráulica</span>
+              </li>
+              <li className="pline">
+                <span className="pt now"><CircleDot size={10} strokeWidth={2} /></span>
+                <span className="pline-label">Marcenaria sob medida</span>
+                <span className="pline-tag">em andamento</span>
+              </li>
+              <li className="pline">
+                <span className="pt todo"><Circle size={10} strokeWidth={2} /></span>
+                <span className="pline-label muted">Montagem e enxoval</span>
+              </li>
+            </ul>
+            <div className="portal-progress">
+              <div className="pbar"><i /></div>
+              <div className="portal-progress-meta">
+                <span>52% concluído</span>
+                <span>Semana 6</span>
+              </div>
+            </div>
+            <div className="portal-foot">
+              <p>Atualizado hoje. Relatório semanal #6: marcenaria instalada, elétrica revisada.</p>
+              <p className="portal-next">Próxima etapa: Montagem e enxoval.</p>
             </div>
           </div>
         </div>
