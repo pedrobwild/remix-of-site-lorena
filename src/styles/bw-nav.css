@@ -16,42 +16,56 @@
   z-index: 50;
   font-family: var(--bw-sans);
   color: #fff;
-  transition: background-color 200ms ease, box-shadow 200ms ease,
-    border-color 200ms ease, padding 200ms ease;
-}
-
-/* Sólido (default + páginas internas + após scroll na home) */
-.bw-nav--solid {
-  background: var(--bw-navy-deep);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* Transparente sobre o hero da home */
-.bw-nav--transparent {
   background: transparent;
-  border-bottom: 1px solid transparent;
+  transition: padding 200ms ease;
 }
 
-/* Condensado após scroll */
-.bw-nav--scrolled {
-  box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.5);
-}
-.bw-nav--scrolled .bw-nav__inner {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  min-height: 52px;
-}
+/* Variantes do wrapper agora não pintam fundo — quem pinta é o pill */
+.bw-nav--solid,
+.bw-nav--transparent { background: transparent; border: none; }
 
+/* Pill flutuante de vidro fosco */
 .bw-nav__inner {
   max-width: 1120px;
-  margin: 0 auto;
-  padding: 12px 28px;
-  min-height: 60px;
+  margin: 10px auto;
+  padding: 10px 22px;
+  min-height: 58px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  transition: padding 200ms ease, min-height 200ms ease;
+  border-radius: 16px;
+  background: rgba(11, 35, 66, 0.72);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 0 12px 34px -14px rgba(0, 0, 0, 0.5);
+  transition: background-color 200ms ease, padding 200ms ease,
+    min-height 200ms ease, margin 200ms ease, box-shadow 200ms ease;
+}
+
+/* Respiro lateral em viewports largos */
+@media (min-width: 1160px) {
+  .bw-nav__inner { margin-left: 20px; margin-right: 20px; max-width: calc(1120px); margin-left: auto; margin-right: auto; }
+}
+
+/* Fallback para navegadores sem backdrop-filter */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .bw-nav__inner { background: rgba(11, 35, 66, 0.96); }
+}
+
+/* Condensado após scroll: vidro mais opaco, margem menor, pill mais fino */
+.bw-nav--scrolled .bw-nav__inner {
+  background: rgba(11, 35, 66, 0.85);
+  margin-top: 6px;
+  margin-bottom: 6px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  min-height: 50px;
+  box-shadow: 0 14px 30px -16px rgba(0, 0, 0, 0.55);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .bw-nav--scrolled .bw-nav__inner { background: rgba(11, 35, 66, 0.98); }
 }
 
 .bw-nav__brand {
