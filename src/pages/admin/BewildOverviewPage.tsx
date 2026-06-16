@@ -512,6 +512,72 @@ export default function BewildOverviewPage() {
         </section>
       </div>
 
+      {/* Origem dos leads por canal (channel grouping estilo GA4) */}
+      <section className="bw-admin__section">
+        <header className="bw-admin__section-head">
+          <h2 className="bw-admin__section-title">Origem dos leads</h2>
+          <p className="bw-admin__section-desc">
+            Classificação por canal a partir de UTM e referrer dos leads
+            recebidos no período. Sem UTM e sem referrer externo conta como
+            Direto, comportamento esperado para tráfego que ainda não veio de
+            campanha.
+          </p>
+        </header>
+        {leadsCount === 0 ? (
+          <p className="bw-admin__empty">Sem leads no período.</p>
+        ) : (
+          <ul
+            style={{
+              listStyle: "none",
+              margin: 0,
+              padding: 0,
+              display: "grid",
+              gap: 10,
+            }}
+          >
+            {channelDist.map((row) => {
+              const pct = leadsCount > 0 ? (row.count / leadsCount) * 100 : 0;
+              return (
+                <li key={row.channel}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "baseline",
+                      fontSize: 13,
+                      marginBottom: 4,
+                    }}
+                  >
+                    <span style={{ color: "var(--bw-ink)" }}>{row.channel}</span>
+                    <span className="muted" style={{ fontVariantNumeric: "tabular-nums" }}>
+                      {fmtInt(row.count)} ({fmtPct(pct)})
+                    </span>
+                  </div>
+                  <div
+                    aria-hidden
+                    style={{
+                      height: 6,
+                      background: "var(--bw-border, #ece8df)",
+                      borderRadius: 3,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: `${pct}%`,
+                        height: "100%",
+                        background: "var(--bw-ink, #004C7F)",
+                        transition: "width .2s ease",
+                      }}
+                    />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+
       {/* Mídia paga — sem integração: card explícito de "Conectar" */}
       <section className="bw-admin__section">
         <header className="bw-admin__section-head">
