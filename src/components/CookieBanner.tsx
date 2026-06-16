@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { routes } from "../lib/useHashRoute";
-import { readConsent, setConsent, type Consent } from "../lib/cookieConsent";
+import { readConsent, setConsent, OPEN_PREFERENCES_EVENT, type Consent } from "../lib/cookieConsent";
 
 /**
  * Banner de consentimento de cookies (LGPD).
