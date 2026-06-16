@@ -94,6 +94,7 @@ export default function BewildOverviewPage() {
   const [leadsCount, setLeadsCount] = useState(0);
   const [contactedCount, setContactedCount] = useState(0);
   const [recentLeads, setRecentLeads] = useState<LeadRow[]>([]);
+  const [channelDist, setChannelDist] = useState<{ channel: string; count: number }[]>([]);
   const [postsTotal, setPostsTotal] = useState(0);
   const [postsPublished, setPostsPublished] = useState(0);
   const [postsFeatured, setPostsFeatured] = useState(0);
