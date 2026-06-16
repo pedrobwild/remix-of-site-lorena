@@ -25,6 +25,10 @@ import {
 } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  aggregateLeadChannels,
+  type LeadChannel,
+} from "@/lib/leadChannel";
 
 type Period = 7 | 30 | 90;
 
