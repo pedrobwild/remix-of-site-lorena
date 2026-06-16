@@ -6,6 +6,7 @@ import SiteFooter from "@/components/SiteFooter";
 import { CONTACT } from "../components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
+import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.json";
 import "../styles/bw-diag.css";
 
 /* ============================================================
@@ -180,6 +181,20 @@ function DiagnosticoPitch() {
       <p className="bw-diag__fine">
         Referências sujeitas ao escopo · Detalhes na proposta e no contrato
       </p>
+
+      <div className="bw-diag__testi">
+        <p className="bw-diag__blocklabel">Depoimento de cliente</p>
+        <div className="bw-diag__testivideo">
+          <video
+            src={depoimentoVideo.url}
+            controls
+            playsInline
+            preload="metadata"
+            aria-label="Depoimento em vídeo de cliente Bewild"
+          />
+        </div>
+        <p className="bw-diag__testisrc">Depoimento real de cliente Bewild</p>
+      </div>
 
       <a
         href={waUrl}
@@ -399,6 +414,9 @@ function DiagnosticoForm() {
       </button>
       <p className="bw-diag__formfine">
         Ao enviar, abrimos uma conversa no WhatsApp com seus dados preenchidos.
+      </p>
+      <p className="bw-diag__trust">
+        <strong>+150</strong> studios entregues · <strong>5 anos</strong> de garantia
       </p>
         </>
       )}
