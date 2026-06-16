@@ -70,7 +70,7 @@
 /* Links */
 .bw-nav__links {
   display: flex;
-  gap: 26px;
+  gap: 22px;
   font-size: 14.5px;
   font-weight: 500;
 }
@@ -80,6 +80,7 @@
   text-decoration: none;
   transition: color 0.2s ease;
   padding: 4px 0;
+  white-space: nowrap;
 }
 .bw-nav__links a::after {
   content: "";
