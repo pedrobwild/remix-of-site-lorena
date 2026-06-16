@@ -643,10 +643,11 @@ export default function HomePage() {
             {COMPARE.map((r) => (
               <div className="crow" key={r.label}>
                 <div className="rh">{r.label}</div>
-                <div className="trad"><span className="xmark"><X size={14} strokeWidth={2.25} /></span>{r.trad}</div>
-                <div className="bw"><span className="vmark"><Check size={14} strokeWidth={2.25} /></span>{r.bw}</div>
+                <div className="trad" data-label="Reforma tradicional"><span className="xmark"><X size={14} strokeWidth={2.25} /></span><span>{r.trad}</span></div>
+                <div className="bw" data-label="Bewild turn-key"><span className="vmark"><Check size={14} strokeWidth={2.25} /></span><span>{r.bw}</span></div>
               </div>
             ))}
+
           </div>
         </div>
       </section>
