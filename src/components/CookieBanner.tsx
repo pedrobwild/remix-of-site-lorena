@@ -28,6 +28,13 @@ export default function CookieBanner() {
     return undefined;
   }, []);
 
+  // Reabertura manual via "Preferências de cookies" (rodapé/política).
+  useEffect(() => {
+    const onOpen = () => setVisible(true);
+    window.addEventListener(OPEN_PREFERENCES_EVENT, onOpen);
+    return () => window.removeEventListener(OPEN_PREFERENCES_EVENT, onOpen);
+  }, []);
+
   // M8: a11y — quando o banner aparece, lembra o elemento focado para
   // restaurar depois, e move o foco para "Aceitar" (default não
   // destrutivo). ESC equivale a "Recusar" — opção mais segura para
