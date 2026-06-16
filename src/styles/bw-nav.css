@@ -16,56 +16,45 @@
   z-index: 50;
   font-family: var(--bw-sans);
   color: #fff;
-  background: transparent;
-  transition: padding 200ms ease;
+  background: rgba(11, 35, 66, 0.85);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.5);
+  transition: background-color 200ms ease, padding 200ms ease;
 }
 
-/* Variantes do wrapper agora não pintam fundo — quem pinta é o pill */
+/* Variantes do wrapper — vidro vem do .bw-nav base */
 .bw-nav--solid,
-.bw-nav--transparent { background: transparent; border: none; }
+.bw-nav--transparent { }
 
-/* Pill flutuante de vidro fosco */
+/* Linha de conteúdo (sem pill flutuante) */
 .bw-nav__inner {
   max-width: 1120px;
-  margin: 10px auto;
+  margin: 0 auto;
   padding: 10px 22px;
   min-height: 58px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  border-radius: 16px;
-  background: rgba(11, 35, 66, 0.72);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  backdrop-filter: blur(14px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  box-shadow: 0 12px 34px -14px rgba(0, 0, 0, 0.5);
-  transition: background-color 200ms ease, padding 200ms ease,
-    min-height 200ms ease, margin 200ms ease, box-shadow 200ms ease;
-}
-
-/* Respiro lateral em viewports largos */
-@media (min-width: 1160px) {
-  .bw-nav__inner { margin-left: 20px; margin-right: 20px; max-width: calc(1120px); margin-left: auto; margin-right: auto; }
+  transition: padding 200ms ease, min-height 200ms ease;
 }
 
 /* Fallback para navegadores sem backdrop-filter */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .bw-nav__inner { background: rgba(11, 35, 66, 0.96); }
+  .bw-nav { background: rgba(11, 35, 66, 0.97); }
+  .bw-nav--scrolled { background: rgba(11, 35, 66, 0.99); }
 }
 
-/* Condensado após scroll: vidro mais opaco, margem menor, pill mais fino */
+/* Condensado após scroll: vidro mais opaco, inner mais fino */
+.bw-nav--scrolled {
+  background: rgba(11, 35, 66, 0.92);
+}
 .bw-nav--scrolled .bw-nav__inner {
-  background: rgba(11, 35, 66, 0.85);
-  margin-top: 6px;
-  margin-bottom: 6px;
   padding-top: 6px;
   padding-bottom: 6px;
   min-height: 50px;
-  box-shadow: 0 14px 30px -16px rgba(0, 0, 0, 0.55);
-}
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .bw-nav--scrolled .bw-nav__inner { background: rgba(11, 35, 66, 0.98); }
 }
 
 .bw-nav__brand {
@@ -177,19 +166,22 @@ a.bw-nav__cta:hover,
 .bw-nav__close {
   display: none;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: none;
   color: #fff;
   width: 44px;
   height: 44px;
-  border-radius: 10px;
   cursor: pointer;
   align-items: center;
   justify-content: center;
+  transition: opacity 0.2s ease;
 }
+.bw-nav__toggle:hover,
+.bw-nav__close:hover { opacity: 0.75; }
 .bw-nav__toggle:focus-visible,
 .bw-nav__close:focus-visible {
   outline: 2px solid var(--bw-cyan-2);
   outline-offset: 2px;
+  border-radius: 8px;
 }
 
 /* Overlay mobile em tela cheia */
