@@ -62,7 +62,7 @@ export default function BewildSiteNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Scrollspy: somente na home
+  // Scrollspy: somente na home — baseado em posição (determinístico, sem flicker)
   useEffect(() => {
     const isHomePath = pathname === "/" || pathname === "";
     if (!isHomePath) {
@@ -71,31 +71,36 @@ export default function BewildSiteNav() {
     }
     const ids = ["fazemos", "processo", "diferenciais"];
     let raf = 0;
-    const attach = () => {
-      const els = ids
-        .map((id) => document.getElementById(id))
-        .filter((el): el is HTMLElement => !!el);
-      if (els.length === 0) {
-        raf = window.requestAnimationFrame(attach);
-        return;
+
+    const compute = () => {
+      raf = 0;
+      const line = window.innerHeight * 0.5; // centro da viewport
+      let current: string | null = null;
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const r = el.getBoundingClientRect();
+        if (r.top <= line && r.bottom > line) {
+          current = id;
+          break;
+        }
       }
-      const observer = new IntersectionObserver(
-        (entries) => {
-          const visible = entries
-            .filter((e) => e.isIntersecting)
-            .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-          if (visible[0]) setActiveSection(visible[0].target.id);
-        },
-        { rootMargin: "-45% 0px -45% 0px", threshold: [0, 0.25, 0.5, 1] },
-      );
-      els.forEach((el) => observer.observe(el));
-      cleanup = () => observer.disconnect();
+      setActiveSection((prev) => (prev === current ? prev : current));
     };
-    let cleanup: (() => void) | null = null;
-    attach();
+
+    const onScroll = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(compute);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    compute();
+
     return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
       if (raf) cancelAnimationFrame(raf);
-      cleanup?.();
     };
   }, [pathname]);
 
