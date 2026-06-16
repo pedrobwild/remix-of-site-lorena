@@ -37,10 +37,14 @@ export function initGa4(): void {
   if (isAdminPath()) return;
 
   w.dataLayer = w.dataLayer || [];
-  const gtag: GtagFn = function gtag(...args: unknown[]) {
-    (w.dataLayer as unknown[]).push(args);
-  };
-  w.gtag = gtag;
+  function gtag(..._args: unknown[]) {
+    // IMPORTANTE: empurra o objeto `arguments` real (não um array via spread).
+    // O gtag.js só reconhece comandos quando o item do dataLayer é um
+    // [object Arguments]; um array puro é ignorado e nenhum /g/collect sai.
+    // eslint-disable-next-line prefer-rest-params
+    (w.dataLayer as unknown[]).push(arguments);
+  }
+  w.gtag = gtag as unknown as GtagFn;
 
   gtag("js", new Date());
   // send_page_view:false — disparamos manualmente em cada troca de rota
