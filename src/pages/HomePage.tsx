@@ -34,6 +34,7 @@ import {
   X,
   CircleDot,
   Circle,
+  Quote,
   type LucideIcon,
 } from "lucide-react";
 import { useSeo } from "@/lib/useSeo";
