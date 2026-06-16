@@ -824,13 +824,12 @@ export default function HomePage() {
         <div className="container">
           <div className="eyebrow">Resultado real</div>
           <h2 style={{ maxWidth: "22ch" }}>
-            Studio no Butantã: do projeto ao Airbnb{" "}
-            <span className="accent">com 70% de ocupação.</span>
+            Um studio no Butantã com <span className="accent">70% de ocupação</span> em novembro.
           </h2>
           <p className="lead" style={{ maxWidth: "62ch" }}>
-            O Rafael chegou pra resolver um studio no Butantã e enxergou o que a Bewild entrega:
-            um ativo, não uma reforma. Decidiu colocar no short stay — e o resultado apareceu.
-            Anúncio no ar e novembro fechando com 70% de ocupação.
+            O Rafael tinha um studio no Butantã e queria transformar em renda. A Bewild reformou
+            e entregou pronto pra operar no short stay. Ele anunciou no Airbnb. Em novembro, o
+            calendário fechou com 70% de ocupação.
           </p>
 
           <figure className="bw-home__rafquote">
