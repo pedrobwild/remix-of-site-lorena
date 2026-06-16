@@ -207,6 +207,13 @@ export default function BewildOverviewPage() {
       setProjectsTotal(projs.length);
       setProjectsPublished(projs.filter((p) => p.published).length);
 
+      const channelLeads = (leadChannelsRes.data ?? []) as {
+        utm_source: string | null;
+        utm_medium: string | null;
+        referrer: string | null;
+      }[];
+      setChannelDist(aggregateLeadChannels(channelLeads));
+
       setLoading(false);
     }
     load();
