@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import { supabase } from "@/integrations/supabase/client";
+import { aggregateLeadChannels } from "@/lib/leadChannel";
 
 type Period = 7 | 30 | 90;
 
@@ -93,6 +94,7 @@ export default function BewildOverviewPage() {
   const [leadsCount, setLeadsCount] = useState(0);
   const [contactedCount, setContactedCount] = useState(0);
   const [recentLeads, setRecentLeads] = useState<LeadRow[]>([]);
+  const [channelDist, setChannelDist] = useState<{ channel: string; count: number }[]>([]);
   const [postsTotal, setPostsTotal] = useState(0);
   const [postsPublished, setPostsPublished] = useState(0);
   const [postsFeatured, setPostsFeatured] = useState(0);
@@ -122,6 +124,7 @@ export default function BewildOverviewPage() {
         recentLeadsRes,
         postsRes,
         projectsRes,
+        leadChannelsRes,
       ] = await Promise.all([
         supabase.rpc("analytics_overview_kpis" as never, {
           p_since: sinceIso,
@@ -158,6 +161,10 @@ export default function BewildOverviewPage() {
         supabase
           .from("projects")
           .select("id, published"),
+        supabase
+          .from("leads")
+          .select("utm_source, utm_medium, referrer")
+          .gte("created_at", sinceIso),
       ]);
 
       if (cancelled) return;
@@ -199,6 +206,13 @@ export default function BewildOverviewPage() {
       const projs = (projectsRes.data ?? []) as { published: boolean }[];
       setProjectsTotal(projs.length);
       setProjectsPublished(projs.filter((p) => p.published).length);
+
+      const channelLeads = (leadChannelsRes.data ?? []) as {
+        utm_source: string | null;
+        utm_medium: string | null;
+        referrer: string | null;
+      }[];
+      setChannelDist(aggregateLeadChannels(channelLeads));
 
       setLoading(false);
     }
@@ -497,6 +511,72 @@ export default function BewildOverviewPage() {
           </p>
         </section>
       </div>
+
+      {/* Origem dos leads por canal (channel grouping estilo GA4) */}
+      <section className="bw-admin__section">
+        <header className="bw-admin__section-head">
+          <h2 className="bw-admin__section-title">Origem dos leads</h2>
+          <p className="bw-admin__section-desc">
+            Classificação por canal a partir de UTM e referrer dos leads
+            recebidos no período. Sem UTM e sem referrer externo conta como
+            Direto, comportamento esperado para tráfego que ainda não veio de
+            campanha.
+          </p>
+        </header>
+        {leadsCount === 0 ? (
+          <p className="bw-admin__empty">Sem leads no período.</p>
+        ) : (
+          <ul
+            style={{
+              listStyle: "none",
+              margin: 0,
+              padding: 0,
+              display: "grid",
+              gap: 10,
+            }}
+          >
+            {channelDist.map((row) => {
+              const pct = leadsCount > 0 ? (row.count / leadsCount) * 100 : 0;
+              return (
+                <li key={row.channel}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "baseline",
+                      fontSize: 13,
+                      marginBottom: 4,
+                    }}
+                  >
+                    <span style={{ color: "var(--bw-ink)" }}>{row.channel}</span>
+                    <span className="muted" style={{ fontVariantNumeric: "tabular-nums" }}>
+                      {fmtInt(row.count)} ({fmtPct(pct)})
+                    </span>
+                  </div>
+                  <div
+                    aria-hidden
+                    style={{
+                      height: 6,
+                      background: "var(--bw-border, #ece8df)",
+                      borderRadius: 3,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: `${pct}%`,
+                        height: "100%",
+                        background: "var(--bw-ink, #004C7F)",
+                        transition: "width .2s ease",
+                      }}
+                    />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
 
       {/* Mídia paga — sem integração: card explícito de "Conectar" */}
       <section className="bw-admin__section">
