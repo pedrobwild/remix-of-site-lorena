@@ -124,6 +124,7 @@ export default function BewildOverviewPage() {
         recentLeadsRes,
         postsRes,
         projectsRes,
+        leadChannelsRes,
       ] = await Promise.all([
         supabase.rpc("analytics_overview_kpis" as never, {
           p_since: sinceIso,
