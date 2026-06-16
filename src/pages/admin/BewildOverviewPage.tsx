@@ -161,6 +161,10 @@ export default function BewildOverviewPage() {
         supabase
           .from("projects")
           .select("id, published"),
+        supabase
+          .from("leads")
+          .select("utm_source, utm_medium, referrer")
+          .gte("created_at", sinceIso),
       ]);
 
       if (cancelled) return;
