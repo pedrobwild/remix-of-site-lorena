@@ -755,19 +755,22 @@
   overflow: hidden;
   background: var(--card);
 }
+.bw-home .chead,
 .bw-home .crow {
   display: grid;
   grid-template-columns: .7fr 1.3fr 1.3fr;
-  border-bottom: 1px solid var(--line);
 }
+.bw-home .crow { border-bottom: 1px solid var(--line); }
 .bw-home .crow:last-child { border-bottom: none; }
-.bw-home .crow > div { padding: 15px 18px; }
+.bw-home .crow:nth-child(odd) .rh { background: rgba(11,35,66,.025); }
+.bw-home .crow > div,
+.bw-home .chead > div { padding: 18px 18px; align-items: flex-start; }
+.bw-home .crow > div { display: flex; }
 .bw-home .crow .rh {
   font-family: var(--sans);
   font-weight: 600;
   font-size: 13.5px;
   color: var(--navy);
-  display: flex;
   align-items: center;
 }
 .bw-home .crow .trad {
@@ -775,32 +778,63 @@
   font-size: 13px;
   border-left: 1px solid var(--line);
   background: #FBF8F2;
+  gap: 9px;
 }
 .bw-home .crow .bw {
   color: var(--ink);
   font-size: 13px;
   border-left: 1px solid var(--line);
+  background: rgba(47,134,184,.06);
+  gap: 9px;
 }
 .bw-home .chead { background: var(--navy); color: #fff; }
 .bw-home .chead > div {
-  padding: 15px 18px;
   font-family: var(--sans);
   font-weight: 600;
   font-size: 13.5px;
   color: #fff;
 }
 .bw-home .chead .trad { background: transparent; color: rgba(255,255,255,.7); border-left: 1px solid rgba(255,255,255,.15); }
-.bw-home .chead .bw { border-left: 1px solid rgba(255,255,255,.15); }
-.bw-home .xmark { color: #C57B6B; font-weight: 700; margin-right: 7px; }
-.bw-home .vmark { color: var(--cyan); font-weight: 700; margin-right: 7px; }
-@media (max-width: 680px) {
-  .bw-home .crow,
-  .bw-home .chead { grid-template-columns: 1fr; }
-  .bw-home .crow .trad,
-  .bw-home .crow .bw,
-  .bw-home .chead .trad,
-  .bw-home .chead .bw { border-left: none; border-top: 1px solid var(--line); }
+.bw-home .chead .bw {
+  border-left: 1px solid rgba(255,255,255,.15);
+  background: rgba(47,134,184,.18);
+  color: #BFE0F1;
+  letter-spacing: .01em;
 }
+.bw-home .xmark,
+.bw-home .vmark {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+.bw-home .xmark { background: rgba(197,123,107,.14); color: #B5604E; }
+.bw-home .vmark { background: var(--cyan-soft); color: var(--cyan); }
+.bw-home .crow .data-label { display: none; }
+@media (max-width: 680px) {
+  .bw-home .chead { display: none; }
+  .bw-home .crow { grid-template-columns: 1fr; }
+  .bw-home .crow .trad,
+  .bw-home .crow .bw { border-left: none; border-top: 1px solid var(--line); }
+  .bw-home .crow > div[data-label] { flex-direction: column; gap: 6px; }
+  .bw-home .crow > div[data-label]::before {
+    content: attr(data-label);
+    font-family: var(--sans);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--navy);
+    opacity: .65;
+  }
+  .bw-home .crow .bw[data-label]::before { color: var(--cyan); opacity: 1; }
+  .bw-home .crow > div[data-label] { padding-top: 14px; }
+}
+
 
 /* PARA QUEM */
 .bw-home .who-card {
