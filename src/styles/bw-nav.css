@@ -243,7 +243,7 @@ a.bw-nav__cta:hover,
 }
 
 /* Breakpoint: links viram menu hambúrguer em telas pequenas e médias */
-@media (max-width: 960px) {
+@media (max-width: 1080px) {
   .bw-nav__links,
   .bw-nav__actions {
     display: none;
