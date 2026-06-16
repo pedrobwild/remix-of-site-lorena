@@ -1,6 +1,7 @@
 /**
  * BewildSiteNav — header navy unificado para TODAS as páginas.
- * Auto-contido. Fundo #0B2342, logo real branca, links brancos, CTA cyan.
+ * Auto-contido. Fundo navy, logo branca, links brancos, CTA cyan.
+ * Na home, começa transparente sobre o hero e condensa para navy ao rolar.
  */
 .bw-nav {
   --bw-navy-deep: #0B2342;
@@ -13,10 +14,32 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--bw-navy-deep);
-  border-bottom: 1px solid rgba(255,255,255,.08);
   font-family: var(--bw-sans);
   color: #fff;
+  transition: background-color 200ms ease, box-shadow 200ms ease,
+    border-color 200ms ease, padding 200ms ease;
+}
+
+/* Sólido (default + páginas internas + após scroll na home) */
+.bw-nav--solid {
+  background: var(--bw-navy-deep);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Transparente sobre o hero da home */
+.bw-nav--transparent {
+  background: transparent;
+  border-bottom: 1px solid transparent;
+}
+
+/* Condensado após scroll */
+.bw-nav--scrolled {
+  box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.5);
+}
+.bw-nav--scrolled .bw-nav__inner {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  min-height: 52px;
 }
 
 .bw-nav__inner {
@@ -28,6 +51,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 24px;
+  transition: padding 200ms ease, min-height 200ms ease;
 }
 
 .bw-nav__brand {
@@ -72,7 +96,39 @@
 .bw-nav__links a[aria-current="page"] { color: var(--bw-cyan-2); font-weight: 600; }
 .bw-nav__links a[aria-current="page"]::after { width: 100%; background: var(--bw-cyan-2); }
 
-/* CTA */
+/* Cluster de ações (desktop) */
+.bw-nav__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Botão secundário: Área do cliente (ghost/outline) */
+a.bw-nav__secondary,
+.bw-nav__secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  font-family: var(--bw-sans);
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+}
+a.bw-nav__secondary:hover,
+.bw-nav__secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+}
+
+/* CTA primário */
 a.bw-nav__cta,
 .bw-nav__cta {
   display: inline-flex;
@@ -99,56 +155,99 @@ a.bw-nav__cta:hover,
 .bw-nav__cta .arrow { transition: transform 0.2s ease; }
 .bw-nav__cta:hover .arrow { transform: translateX(3px); }
 
-/* Toggle mobile (hidden on desktop) */
-.bw-nav__toggle {
+/* Toggle mobile */
+.bw-nav__toggle,
+.bw-nav__close {
   display: none;
   background: transparent;
-  border: 1px solid rgba(255,255,255,.2);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   color: #fff;
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  font-size: 18px;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
   cursor: pointer;
   align-items: center;
   justify-content: center;
 }
-.bw-nav__toggle:focus-visible { outline: 2px solid var(--bw-cyan-2); outline-offset: 2px; }
-
-/* Mobile panel */
-.bw-nav__mobile {
-  display: none;
-  background: var(--bw-navy-deep);
-  border-top: 1px solid rgba(255,255,255,.08);
-  padding: 16px 28px 24px;
+.bw-nav__toggle:focus-visible,
+.bw-nav__close:focus-visible {
+  outline: 2px solid var(--bw-cyan-2);
+  outline-offset: 2px;
 }
+
+/* Overlay mobile em tela cheia */
+.bw-nav__mobile {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--bw-navy-deep);
+  display: flex;
+  flex-direction: column;
+  padding: 16px 24px calc(24px + env(safe-area-inset-bottom)) 24px;
+  animation: bwNavFadeIn 200ms ease;
+}
+@keyframes bwNavFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.bw-nav__mobile-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+  margin-bottom: 16px;
+}
+.bw-nav__mobile-top .bw-nav__close { display: inline-flex; }
+
 .bw-nav__mobile-links {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
 }
 .bw-nav__mobile-links a {
   color: #fff;
   text-decoration: none;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
-  padding: 12px 4px;
-  border-bottom: 1px solid rgba(255,255,255,.06);
-  min-height: 44px;
+  padding: 14px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  min-height: 48px;
   display: flex;
   align-items: center;
 }
-.bw-nav__mobile-links a[aria-current="page"] { color: var(--bw-cyan-2); font-weight: 600; }
-.bw-nav__cta--mobile {
-  margin-top: 16px;
-  align-self: flex-start;
-  border-bottom: none !important;
+.bw-nav__mobile-links a[aria-current="page"] {
+  color: var(--bw-cyan-2);
+  font-weight: 600;
 }
 
-/* Mobile breakpoint */
-@media (max-width: 860px) {
-  .bw-nav__links { display: none; }
-  .bw-nav__cta:not(.bw-nav__cta--mobile) { display: none; }
-  .bw-nav__toggle { display: inline-flex; }
-  .bw-nav__mobile { display: block; }
+/* Rodapé do menu mobile: zona do polegar */
+.bw-nav__mobile-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.bw-nav__secondary--mobile,
+.bw-nav__cta--mobile {
+  width: 100%;
+  justify-content: center;
+  padding: 14px 18px;
+  font-size: 15px;
+  min-height: 48px;
+}
+
+/* Breakpoint: links viram menu hambúrguer em telas pequenas e médias */
+@media (max-width: 960px) {
+  .bw-nav__links,
+  .bw-nav__actions {
+    display: none;
+  }
+  .bw-nav__toggle {
+    display: inline-flex;
+  }
 }
