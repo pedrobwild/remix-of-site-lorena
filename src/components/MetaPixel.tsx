@@ -1,12 +1,10 @@
 /**
- * MetaPixel — dispara fbq('track','PageView') a cada mudança de rota.
+ * MetaPixel — dispara fbq('track','PageView') a cada mudança de rota após o load inicial.
  *
- * O carregador base e o `fbq('init', ...)` ficam no index.html.
- * Aqui só emitimos o PageView (inclui o primeiro load), usando o
- * roteador hash custom do projeto (`useHashRoute`).
+ * O carregador base, o `fbq('init', ...)` e o primeiro PageView ficam no index.html.
+ * Aqui emitimos apenas PageViews de navegação SPA, observando eventos do router.
  */
-import { useEffect } from "react";
-import { useHashRoute } from "../lib/useHashRoute";
+import { useEffect, useRef } from "react";
 
 declare global {
   interface Window {
@@ -15,13 +13,30 @@ declare global {
 }
 
 export default function MetaPixel() {
-  const route = useHashRoute();
+  const lastUrlRef = useRef<string>("");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (typeof window.fbq !== "function") return;
-    window.fbq("track", "PageView");
-  }, [route]);
+
+    lastUrlRef.current = window.location.pathname + window.location.search + window.location.hash;
+
+    const trackRouteChange = () => {
+      const nextUrl = window.location.pathname + window.location.search + window.location.hash;
+      if (nextUrl === lastUrlRef.current) return;
+      lastUrlRef.current = nextUrl;
+      if (typeof window.fbq !== "function") return;
+      window.fbq("track", "PageView");
+    };
+
+    window.addEventListener("popstate", trackRouteChange);
+    window.addEventListener("hashchange", trackRouteChange);
+    window.addEventListener("lovable:navigate", trackRouteChange);
+    return () => {
+      window.removeEventListener("popstate", trackRouteChange);
+      window.removeEventListener("hashchange", trackRouteChange);
+      window.removeEventListener("lovable:navigate", trackRouteChange);
+    };
+  }, []);
 
   return null;
 }
