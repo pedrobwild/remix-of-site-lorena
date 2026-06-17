@@ -112,6 +112,7 @@ function fmtDateTime(iso: string): string {
   } catch {
     return iso;
   }
+}
 function fmtDate(iso: string): string {
   try {
     return new Intl.DateTimeFormat("pt-BR", {
