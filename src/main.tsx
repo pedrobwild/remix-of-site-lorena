@@ -102,6 +102,7 @@ function Root() {
         {renderRoute(displayed)}
       </div>
       {!adminMode && <CookieBanner />}
+      <MetaPixel />
     </>
   );
 }
