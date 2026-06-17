@@ -102,6 +102,34 @@ export default function BewildOverviewPage() {
   const [projectsPublished, setProjectsPublished] = useState(0);
   const [pagePerf, setPagePerf] = useState<Record<string, TopPath | undefined>>({});
 
+  const [metaLoading, setMetaLoading] = useState(true);
+  const [metaData, setMetaData] = useState<MetaInsights | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setMetaLoading(true);
+    setMetaData(null);
+    supabase.functions
+      .invoke("meta-insights", { body: { date_preset: "last_30d" } })
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error || !data) {
+          setMetaData({ connected: false, reason: "api_error" });
+        } else {
+          setMetaData(data as MetaInsights);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setMetaData({ connected: false, reason: "api_error" });
+      })
+      .finally(() => {
+        if (!cancelled) setMetaLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const sinceIso = useMemo(() => {
     const d = new Date();
     d.setDate(d.getDate() - period);
