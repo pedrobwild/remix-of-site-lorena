@@ -42,6 +42,26 @@ type Kpis = {
 
 type TopPath = { path: string; pageviews: number; sessions: number };
 type Breakdown = { dim: string; sessions: number; conversions: number };
+
+type MetaInsights =
+  | { connected: false; reason: "no_token" | "api_error"; error?: string }
+  | {
+      connected: true;
+      account_id: string;
+      date_preset: string;
+      currency: string;
+      spend: number;
+      impressions: number;
+      clicks: number;
+      ctr: number;
+      cpc: number;
+      cpm: number;
+      leads: number;
+      cpl: number | null;
+      roas: number | null;
+      roas_available: boolean;
+      updated_at: string;
+    };
 type LeadRow = {
   id: string;
   name: string | null;
