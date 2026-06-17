@@ -94,7 +94,25 @@ function fmtTime(ms: number | null | undefined): string {
   const r = s % 60;
   return `${m}m ${r.toString().padStart(2, "0")}s`;
 }
-function fmtDate(iso: string): string {
+function fmtBRL(n: number | null | undefined): string {
+  if (n == null || !Number.isFinite(Number(n))) return "—";
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(Number(n));
+}
+function fmtDateTime(iso: string): string {
+  try {
+    return new Intl.DateTimeFormat("pt-BR", {
+      day: "2-digit",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(iso));
+  } catch {
+    return iso;
+  }
+}
   try {
     return new Intl.DateTimeFormat("pt-BR", {
       day: "2-digit",
