@@ -626,25 +626,74 @@ export default function BewildOverviewPage() {
         )}
       </section>
 
-      {/* Mídia paga — sem integração: card explícito de "Conectar" */}
+      {/* Mídia paga — Meta Marketing API (Insights) */}
       <section className="bw-admin__section">
         <header className="bw-admin__section-head">
           <h2 className="bw-admin__section-title">Mídia paga</h2>
           <p className="bw-admin__section-desc">
-            Investimento, CPL, CTR, CPC e ROAS aparecem aqui quando uma fonte real for conectada.
+            {metaData && metaData.connected
+              ? `Meta Ads · últimos 30 dias · atualizado em ${fmtDateTime(metaData.updated_at)}`
+              : "Investimento, CPL, CTR, CPC e ROAS aparecem aqui quando uma fonte real for conectada."}
           </p>
         </header>
-        <div className="bw-admin__connect">
-          <div className="bw-admin__connect-text">
-            <strong>Conectar Google Ads / Meta Ads</strong>
-            <p>
-              Ainda não há integração ativa com GA4, Windsor.ai ou Meta Marketing API.
-              Conecte uma fonte para popular gasto, cliques e custo por lead sem dados estimados.
-            </p>
+
+        {metaLoading ? (
+          <div className="bw-admin__kpi-grid" style={{ marginBottom: 0 }}>
+            {[0, 1, 2, 3, 4].map((i) => (
+              <div key={i} className="bw-admin__kpi-card" aria-hidden>
+                <div>
+                  <p className="bw-admin__kpi-label">Carregando…</p>
+                  <div className="bw-admin__kpi-value bw-admin__kpi-empty">—</div>
+                </div>
+              </div>
+            ))}
           </div>
-          <span className="bw-admin__tag bw-admin__tag--off">Não conectado</span>
-        </div>
+        ) : metaData && metaData.connected ? (
+          <div className="bw-admin__kpi-grid" style={{ marginBottom: 0 }}>
+            <Kpi
+              label="Investimento"
+              value={fmtBRL(metaData.spend)}
+              sub={`${fmtInt(metaData.impressions)} impressões · ${fmtInt(metaData.clicks)} cliques`}
+            />
+            <Kpi
+              label="CPL"
+              value={metaData.cpl != null ? fmtBRL(metaData.cpl) : "—"}
+              sub={
+                metaData.leads > 0
+                  ? `${fmtInt(metaData.leads)} leads na Meta`
+                  : "Sem leads atribuídos no período"
+              }
+            />
+            <Kpi
+              label="CTR"
+              value={`${metaData.ctr.toFixed(2)}%`}
+              sub="Cliques ÷ impressões"
+            />
+            <Kpi
+              label="CPC"
+              value={fmtBRL(metaData.cpc)}
+              sub={`CPM ${fmtBRL(metaData.cpm)}`}
+            />
+            <Kpi
+              label="ROAS"
+              value="—"
+              sub="Requer receita do CRM"
+            />
+          </div>
+        ) : (
+          <div className="bw-admin__connect">
+            <div className="bw-admin__connect-text">
+              <strong>Conectar Google Ads / Meta Ads</strong>
+              <p>
+                Ainda não há integração ativa com GA4, Windsor.ai ou Meta Marketing API.
+                Conecte uma fonte para popular gasto, cliques e custo por lead sem dados estimados.
+              </p>
+            </div>
+            <span className="bw-admin__tag bw-admin__tag--off">Não conectado</span>
+          </div>
+        )}
       </section>
+
     </BewildAdminShell>
   );
 }
