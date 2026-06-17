@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import ReactDOM, { type Root as ReactRoot } from "react-dom/client";
 import CookieBanner from "./components/CookieBanner";
+import MetaPixel from "./components/MetaPixel";
 import RootErrorBoundary from "./components/RootErrorBoundary";
 import { useCustomCursor } from "./lib/useCustomCursor";
 import { useHashRoute, installLinkInterceptor, type Route } from "./lib/useHashRoute";
@@ -101,6 +102,7 @@ function Root() {
         {renderRoute(displayed)}
       </div>
       {!adminMode && <CookieBanner />}
+      <MetaPixel />
     </>
   );
 }
