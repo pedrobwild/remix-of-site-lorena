@@ -393,6 +393,7 @@ export default function HomePage() {
                 decoding="async"
               />
             </div>
+            <p className="arch-caption">Planta humanizada · estudo de layout de um studio compacto</p>
             <p className="arch-quote">
               Um studio de 19, 22 ou 28 m² não permite decisões aleatórias. Cada
               centímetro precisa justificar sua existência. Por isso, a Bewild desenvolve
