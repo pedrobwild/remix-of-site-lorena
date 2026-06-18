@@ -69,20 +69,28 @@ function waLink(whatsapp: string | null): string | null {
 export default function BewildLeadsAdminPage() {
   const [rows, setRows] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [status, setStatus] = useState<string>("all");
   const [busy, setBusy] = useState<string | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
-    const { data } = await supabase
+    setLoadError(null);
+    const { data, error } = await supabase
       .from("leads")
       .select(
         "id, name, whatsapp, email, location, area_m2, objetivo, chaves, planta, message, utm_source, utm_medium, utm_campaign, referrer, landing_path, status, created_at"
       )
       .order("created_at", { ascending: false })
       .limit(200);
-    setRows((data ?? []) as Lead[]);
+    if (error) {
+      console.error("[admin/leads] falha ao carregar leads:", error);
+      setLoadError(error.message || "Não foi possível carregar os leads.");
+      setRows([]);
+    } else {
+      setRows((data ?? []) as Lead[]);
+    }
     setLoading(false);
   }
 
@@ -96,12 +104,20 @@ export default function BewildLeadsAdminPage() {
   }, [rows, status]);
 
   async function changeStatus(lead: Lead, next: string) {
-    if (next === (lead.status ?? "novo")) return;
+    const previous = lead.status ?? "novo";
+    if (next === previous) return;
+    // Optimistic: atualiza a UI imediatamente e faz rollback em caso de erro.
+    setRows((prev) => prev.map((r) => (r.id === lead.id ? { ...r, status: next } : r)));
     setBusy(lead.id);
-    await supabase.from("leads").update({ status: next }).eq("id", lead.id);
+    const { error } = await supabase.from("leads").update({ status: next }).eq("id", lead.id);
     setBusy(null);
-    load();
+    if (error) {
+      console.error("[admin/leads] falha ao atualizar status:", error);
+      setRows((prev) => prev.map((r) => (r.id === lead.id ? { ...r, status: previous } : r)));
+      window.alert(`Não foi possível atualizar o status: ${error.message}`);
+    }
   }
+
 
   async function deleteLead(lead: Lead) {
     const label = lead.name?.trim() || "este lead";
@@ -157,6 +173,17 @@ export default function BewildLeadsAdminPage() {
       <div className="bw-admin__section" style={{ padding: 0 }}>
         {loading ? (
           <p className="bw-admin__empty">Carregando…</p>
+        ) : loadError ? (
+          <div className="bw-admin__empty" role="alert" style={{ display: "grid", gap: 12, justifyItems: "center" }}>
+            <p style={{ margin: 0 }}>
+              <strong>Não consegui carregar os leads.</strong>
+              <br />
+              <span className="muted" style={{ fontSize: 13 }}>{loadError}</span>
+            </p>
+            <button type="button" className="bw-admin__btn bw-admin__btn--sm" onClick={load}>
+              Tentar de novo
+            </button>
+          </div>
         ) : filtered.length === 0 ? (
           <p className="bw-admin__empty">
             {rows.length === 0
