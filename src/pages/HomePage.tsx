@@ -276,7 +276,7 @@ export default function HomePage() {
                 Ver reformas entregues
               </a>
             </div>
-            <p className="hero-reassure">Resposta no mesmo dia · sem compromisso</p>
+            <p className="hero-reassure">Resposta rápida</p>
             <ul className="hero-proof" aria-label="Provas Bewild">
               <li><b>+150</b><span>studios entregues</span></li>
               <li><b>a partir de 60</b><span>dias úteis de obra</span></li>
