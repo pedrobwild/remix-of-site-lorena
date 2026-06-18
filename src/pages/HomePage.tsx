@@ -21,7 +21,6 @@ import {
   Target,
   ClipboardList,
   MonitorCheck,
-  Settings2,
   Sparkles,
   Globe2,
   BedDouble,
