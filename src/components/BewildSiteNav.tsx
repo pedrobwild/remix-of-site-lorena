@@ -14,6 +14,7 @@
  * Auto-contido (não depende de `.bw-home`) — usa `bw-nav.css`.
  */
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Menu, X, CircleUserRound } from "lucide-react";
 import "@/styles/bw-nav.css";
 
