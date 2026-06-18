@@ -209,75 +209,77 @@ export default function BewildSiteNav() {
         </button>
       </div>
 
-      {menuOpen && (
-        <div
-          id="bw-nav-mobile"
-          className="bw-nav__mobile"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Menu"
-        >
-          <div className="bw-nav__mobile-top">
-            <a
-              href="/"
-              className="bw-nav__brand"
-              aria-label="Bewild — início"
-              onClick={() => setMenuOpen(false)}
-            >
-              <img
-                src="/brand/bewild-logo-cropped.png"
-                alt="Bewild"
-                className="bw-nav__logo"
-                width={81}
-                height={28}
-                decoding="async"
-              />
-            </a>
-            <button
-              type="button"
-              className="bw-nav__close"
-              aria-label="Fechar menu"
-              onClick={() => setMenuOpen(false)}
-            >
-              <X size={22} aria-hidden />
-            </button>
-          </div>
-
-          <nav className="bw-nav__mobile-links" aria-label="Navegação principal — móvel">
-            {ITEMS.map((it, i) => (
+      {menuOpen && typeof document !== "undefined" &&
+        createPortal(
+          <div
+            id="bw-nav-mobile"
+            className="bw-nav__mobile"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu"
+          >
+            <div className="bw-nav__mobile-top">
               <a
-                key={it.label}
-                ref={i === 0 ? firstLinkRef : undefined}
-                href={isHome ? it.homeHref : it.pageHref}
-                aria-current={isActive(it) ? "page" : undefined}
+                href="/"
+                className="bw-nav__brand"
+                aria-label="Bewild — início"
                 onClick={() => setMenuOpen(false)}
               >
-                {it.label}
+                <img
+                  src="/brand/bewild-logo-cropped.png"
+                  alt="Bewild"
+                  className="bw-nav__logo"
+                  width={81}
+                  height={28}
+                  decoding="async"
+                />
               </a>
-            ))}
-          </nav>
+              <button
+                type="button"
+                className="bw-nav__close"
+                aria-label="Fechar menu"
+                onClick={() => setMenuOpen(false)}
+              >
+                <X size={22} aria-hidden />
+              </button>
+            </div>
 
-          <div className="bw-nav__mobile-foot">
-            <a
-              href={CLIENT_AREA_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bw-nav__secondary bw-nav__secondary--mobile"
-              onClick={() => setMenuOpen(false)}
-            >
-              <CircleUserRound size={18} aria-hidden />
-              <span>Área do cliente</span>
-            </a>
-            <a
-              href="/diagnostico"
-              className="bw-nav__cta bw-nav__cta--mobile"
-              onClick={() => setMenuOpen(false)}
-            >
-              Solicitar diagnóstico <span className="arrow" aria-hidden>→</span>
-            </a>
-          </div>
-        </div>
-      )}
+            <nav className="bw-nav__mobile-links" aria-label="Navegação principal — móvel">
+              {ITEMS.map((it, i) => (
+                <a
+                  key={it.label}
+                  ref={i === 0 ? firstLinkRef : undefined}
+                  href={isHome ? it.homeHref : it.pageHref}
+                  aria-current={isActive(it) ? "page" : undefined}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {it.label}
+                </a>
+              ))}
+            </nav>
+
+            <div className="bw-nav__mobile-foot">
+              <a
+                href={CLIENT_AREA_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bw-nav__secondary bw-nav__secondary--mobile"
+                onClick={() => setMenuOpen(false)}
+              >
+                <CircleUserRound size={18} aria-hidden />
+                <span>Área do cliente</span>
+              </a>
+              <a
+                href="/diagnostico"
+                className="bw-nav__cta bw-nav__cta--mobile"
+                onClick={() => setMenuOpen(false)}
+              >
+                Solicitar diagnóstico <span className="arrow" aria-hidden>→</span>
+              </a>
+            </div>
+          </div>,
+          document.body
+        )}
     </header>
   );
 }
