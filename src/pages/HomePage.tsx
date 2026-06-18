@@ -223,59 +223,78 @@ export default function HomePage() {
       <BewildSiteNav />
 
 
-      {/* HERO */}
-      <section className="hero" id="top" aria-label="Bewild — reforma turn-key de studios">
-        <div className="hero-bg" ref={heroBgRef} />
-        <div className="hero-shade" />
-        <div className="container">
-          <div className="hero-text">
-            <div className="eyebrow" style={{ color: "var(--sky)" }}>
-              Reforma turn-key de studios · São Paulo
-            </div>
-            <h1>
-              Seu studio pronto para render,{" "}
-              <span className="accent">sem você virar gerente de obra.</span>
-            </h1>
-            <p className="sub">
-              Projeto, obra, marcenaria, mobiliário e acompanhamento num processo único. Você acompanha; a Bewild executa.
-            </p>
-            <p className="micro">
-              Da entrega das chaves ao imóvel pronto para foto, anúncio e operação
-            </p>
-            <div className="hero-cta">
-              <a href="/diagnostico" className="btn btn-cyan">
-                Solicitar diagnóstico <span className="arrow">→</span>
+      {/* HERO — split: texto à esquerda (navy), render real à direita */}
+      <section className="hero hero-split" id="top" aria-label="Bewild — reforma turn-key de studios">
+        <div className="hero-text-col">
+          <div className="hero-text-inner">
+            <div className="hero-text">
+              <div className="eyebrow" style={{ color: "var(--sky)" }}>
+                Reforma turn-key de studios · São Paulo
+              </div>
+              <h1>
+                Seu studio pronto para render,{" "}
+                <span className="accent">sem você virar gerente de obra.</span>
+              </h1>
+              <p className="sub">
+                Projeto, obra, marcenaria, mobiliário e acompanhamento num processo único. Você acompanha; a Bewild executa.
+              </p>
+              <p className="micro">
+                Da entrega das chaves ao imóvel pronto para foto, anúncio e operação
+              </p>
+              <div className="hero-cta">
+                <a href="/diagnostico" className="btn btn-cyan">
+                  Solicitar diagnóstico <span className="arrow">→</span>
+                </a>
+                <a href="/portfolio" className="btn btn-ghost-light">
+                  Ver reformas entregues
+                </a>
+              </div>
+              <p className="hero-reassure">Resposta rápida</p>
+              <ul className="hero-proof" aria-label="Provas Bewild">
+                <li><b>+150</b><span>studios entregues</span></li>
+                <li><b>a partir de 60</b><span>dias úteis de obra</span></li>
+                <li><b>5</b><span>anos de garantia</span></li>
+              </ul>
+              <a
+                href="#resultado"
+                className="hero-social-proof"
+                data-cta="hero-prova-rafael"
+                aria-label="Caso real: 70% de ocupação em novembro num studio no Butantã — ver detalhes do resultado"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const target = document.getElementById("resultado");
+                  if (target) {
+                    target.scrollIntoView({ behavior: "smooth" });
+                  }
+                  trackEvent("click_prova_hero", { category: "rafael_butanta", label: "rafael_butanta" });
+                }}
+              >
+                {"Caso real:\u00a0"}
+                <span className="highlight">70% de ocupação</span>
+                {"\u00a0em novembro num studio no Butantã —\u00a0"}
+                <span className="action">ver →</span>
               </a>
-              <a href="/portfolio" className="btn btn-ghost-light">
-                Ver reformas entregues
-              </a>
             </div>
-            <p className="hero-reassure">Resposta rápida</p>
-            <ul className="hero-proof" aria-label="Provas Bewild">
-              <li><b>+150</b><span>studios entregues</span></li>
-              <li><b>a partir de 60</b><span>dias úteis de obra</span></li>
-              <li><b>5</b><span>anos de garantia</span></li>
-            </ul>
-            <a
-              href="#resultado"
-              className="hero-social-proof"
-              data-cta="hero-prova-rafael"
-              aria-label="Caso real: 70% de ocupação em novembro num studio no Butantã — ver detalhes do resultado"
-              onClick={(e) => {
-                e.preventDefault();
-                const target = document.getElementById("resultado");
-                if (target) {
-                  target.scrollIntoView({ behavior: "smooth" });
-                }
-                trackEvent("click_prova_hero", { category: "rafael_butanta", label: "rafael_butanta" });
-              }}
-            >
-              {"Caso real:\u00a0"}
-              <span className="highlight">70% de ocupação</span>
-              {"\u00a0em novembro num studio no Butantã —\u00a0"}
-              <span className="action">ver →</span>
-            </a>
           </div>
+        </div>
+        <div className="hero-image-col">
+          <picture>
+            <source
+              media="(max-width: 900px)"
+              srcSet="/hero-studio-mobile.webp"
+              type="image/webp"
+            />
+            <source srcSet="/hero-studio-desktop.webp" type="image/webp" />
+            <img
+              src="/hero-studio-desktop.webp"
+              alt="Studio compacto reformado pela Bewild, pronto para operar no short stay"
+              width={1600}
+              height={900}
+              fetchPriority="high"
+              loading="eager"
+              decoding="async"
+            />
+          </picture>
         </div>
       </section>
 
