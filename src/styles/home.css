@@ -1309,3 +1309,52 @@
   color: var(--muted-cool, var(--muted));
   font-weight: 500;
 }
+
+/* ------- Hero reassure (microcopy abaixo dos botões) ------- */
+.bw-home .hero-reassure{
+  margin-top: 14px;
+  font-size: .82rem;
+  color: rgba(255,255,255,.7);
+  letter-spacing: .02em;
+}
+
+/* ------- Sticky mobile CTA ------- */
+.bw-sticky-cta{
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 60;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: rgba(17,53,91,.96);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  transform: translateY(110%);
+  transition: transform .25s ease, opacity .25s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+.bw-sticky-cta.is-visible{
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.bw-sticky-cta .btn{
+  width: 100%;
+  max-width: 420px;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+@media (min-width: 768px){
+  .bw-sticky-cta{ display: none; }
+}
+@media (prefers-reduced-motion: reduce){
+  .bw-sticky-cta{
+    transition: opacity .15s linear;
+    transform: none;
+  }
+  .bw-sticky-cta:not(.is-visible){ opacity: 0; }
+}

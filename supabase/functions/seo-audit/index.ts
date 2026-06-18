@@ -182,13 +182,13 @@ function metaContent(doc: any, selector: string): string {
 
 function buildExpected(settings: Settings, sourceUrl: string): ExpectedTag[] {
   const cfg = settings ?? {};
-  const base = (s(cfg.seo_canonical_base) || "https://lorenaalvesarq.com").replace(/\/$/, "");
-  const title = s(cfg.seo_default_title) || s(cfg.site_title) || "lorenaalves arq";
+  const base = (s(cfg.seo_canonical_base) || "https://bewild.com.br").replace(/\/$/, "");
+  const title = s(cfg.seo_default_title) || s(cfg.site_title) || "Bewild";
   const description = s(cfg.seo_default_description) || s(cfg.site_description) || "";
   const ogImage = s(cfg.seo_og_image) || s(cfg.default_og_image) || "";
   const robots = s(cfg.seo_robots) || "index, follow";
   const canonical = `${base}${new URL(sourceUrl).pathname || "/"}`;
-  const siteName = s(cfg.site_title) || "Lorena Alves Arquitetura";
+  const siteName = s(cfg.site_title) || "Bewild";
   const twitterCard = ogImage ? "summary_large_image" : "summary";
 
   const tags: Omit<ExpectedTag, "found_in_static" | "found_value" | "matches_expected">[] = [
@@ -424,7 +424,7 @@ Deno.serve(async (req) => {
       url = new URL(req.url).searchParams.get("url") || "";
     }
 
-    if (!url) url = "https://lorenaalvesarq.com";
+    if (!url) url = "https://bewild.com.br";
 
     if (!/^https?:\/\//i.test(url)) {
       return new Response(JSON.stringify({ error: "URL inválida" }), {
