@@ -14,7 +14,7 @@
  *   touch; primeiro painel ativo por padrão; vira pilha vertical ≤760px.
  * - FAQ: `<details>/<summary>` nativo com primeiro item aberto.
  */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {
   Network,
   Building2,
@@ -56,37 +56,21 @@ import rafaelAirbnb from "@/assets/testimonials/rafael/rafael-airbnb-butanta.jpe
 
 /* ---------------- data ---------------- */
 
-const SERVICES = [
-  {
-    slot: "Foto · obra",
-    title: "Reforma turn-key",
-    desc: "Projeto, obra, marcenaria, mobiliário e entrega em um único processo, sob um único responsável.",
-  },
-  {
-    slot: "Foto · studio",
-    title: "Studios para short stay",
-    desc: "Imóveis pensados desde o projeto para diária, ocupação, foto e operação no Airbnb e na Booking.",
-  },
-  {
-    slot: "Foto · marcenaria",
-    title: "Marcenaria inteligente",
-    desc: "Armazenamento, painéis e bancadas sob medida para ganhar espaço, durabilidade e percepção de valor.",
-  },
-  {
-    slot: "Foto · interiores",
-    title: "Mobiliário, eletros e enxoval",
-    desc: "Imóvel entregue completo, pronto para receber o primeiro hóspede.",
-  },
-  {
-    slot: "Foto · portal",
-    title: "Acompanhamento sem caixa-preta",
-    desc: "Cronograma, fotos e decisões registradas no portal. Você vê a obra andar.",
-  },
-  {
-    slot: "Slot · prancha / estudo real Bewild",
-    title: "Arquitetura personalizada",
-    desc: "Cada imóvel recebe um estudo próprio de layout, circulação, marcenaria, iluminação, acabamentos e uso. Nada de copiar e colar projeto genérico.",
-  },
+const JOURNEY: {
+  num: string;
+  title: string;
+  text: string;
+  img: string | null;
+  alt?: string;
+  pos?: string;
+  slot?: string;
+}[] = [
+  { num: "01", title: "Diagnóstico e estratégia", text: "Avaliamos o imóvel e definimos o uso: short stay, long stay ou misto.", img: studioAntes.url, alt: "Studio antes da reforma, na etapa de diagnóstico", pos: "50% 50%" },
+  { num: "02", title: "Projeto personalizado", text: "Layout, marcenaria, iluminação e acabamentos desenhados para cada metro. Nada genérico.", img: "/hero-studio-desktop.webp", alt: "Render de studio projetado pela Bewild", pos: "50% 45%" },
+  { num: "03", title: "Escopo e orçamento fechados", text: "Você sabe o que está incluso e o que mexe no preço antes de a obra começar.", img: null, slot: "Documento · escopo" },
+  { num: "04", title: "Obra e marcenaria sob medida", text: "Execução acompanhada, marcenaria feita para durar, cada decisão registrada.", img: null, slot: "Foto · obra" },
+  { num: "05", title: "Acompanhamento no portal", text: "Cronograma e fotos da obra. Você vê andar sem precisar ir até lá.", img: null, slot: "Print · portal" },
+  { num: "06", title: "Entrega pronta para operar", text: "Mobiliado, com enxoval, pronto para foto, anúncio e diária.", img: studioPronto.url, alt: "Studio entregue pela Bewild, pronto para operar", pos: "50% 50%" },
 ];
 
 const PROBLEMS = [
@@ -98,15 +82,6 @@ const PROBLEMS = [
   "Imóvel parado enquanto deveria estar gerando receita.",
 ];
 
-const STEPS = [
-  { n: "01", title: "Diagnóstico do imóvel", text: "Analisamos metragem, planta, padrão do prédio, objetivo de uso, região, restrições e potencial do imóvel." },
-  { n: "02", title: "Briefing e estratégia", text: "Entendemos se o imóvel será usado para short stay, long stay, uso misto ou moradia. A estratégia define o nível de investimento e as escolhas do projeto." },
-  { n: "03", title: "Projeto de arquitetura personalizado", text: "Desenvolvemos layout, conceito, marcenaria, iluminação, acabamentos e soluções para performar melhor no uso e na foto." },
-  { n: "04", title: "Orçamento e escopo", text: "Escopo fechado e itens organizados por etapa, para você saber o que está incluso antes de a obra começar." },
-  { n: "05", title: "Compras e fornecedores", text: "Compras críticas planejadas e fornecedores coordenados pela Bewild, dentro do cronograma." },
-  { n: "06", title: "Obra e marcenaria", text: "Execução acompanhada, com gestão técnica e registro de cada decisão no portal." },
-  { n: "07", title: "Entrega e checklist", text: "Montagem, enxoval e checklist final. Imóvel pronto para foto, anúncio e operação." },
-];
 
 const ARCH = [
   { idx: "01", title: "Layout inteligente", text: "Cama, bancada, cozinha, armários, TV, circulação e apoio de malas para o espaço parecer maior e funcionar melhor." },
@@ -170,7 +145,6 @@ export default function HomePage() {
     jsonLd: [faqJsonLd(FAQS_HOME)],
   });
 
-  const [activePanel, setActivePanel] = useState(0);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   // Marca html.js (alguns seletores do spec dependem disso, mas o CSS aqui
@@ -212,8 +186,7 @@ export default function HomePage() {
     targets.forEach((el) => el.classList.add("in"));
   }, []);
 
-  const isTouch =
-    typeof window !== "undefined" && window.matchMedia("(hover: none)").matches;
+
 
   return (
     <div className="bw-home" ref={rootRef}>
@@ -318,68 +291,51 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* O QUE FAZEMOS */}
-      <section className="section" id="fazemos" style={{ background: "var(--paper)" }}>
-        <div className="container">
-          <div className="eyebrow">O que fazemos</div>
-          <h2>
-            Mais que uma reforma. <span className="accent">Um imóvel pronto para operar.</span>
-          </h2>
-          <p className="lead">
-            Arquitetura, obra, interiores, tecnologia e inteligência de investimento em
-            uma entrega única.
-          </p>
-          <div className="fz-acc" role="tablist" aria-label="Serviços Bewild">
-            {SERVICES.map((s, i) => (
-              <button
-                type="button"
-                key={s.title}
-                className={`fz-panel ${activePanel === i ? "active" : ""}`}
-                role="tab"
-                aria-selected={activePanel === i}
-                aria-label={s.title}
-                onMouseEnter={() => !isTouch && setActivePanel(i)}
-                onFocus={() => setActivePanel(i)}
-                onClick={() => setActivePanel(i)}
-              >
-                <span className="slot-mini">{s.slot}</span>
-                <span className="vlabel">{s.title}</span>
-                <div className="content">
-                  <h3>{s.title}</h3>
-                  <p>{s.desc}</p>
-                </div>
-              </button>
-            ))}
-          </div>
-          <p className="fz-hint">
-            Passe o mouse ou toque para abrir cada serviço. As fotos reais das obras
-            entram em cada card.
-          </p>
-        </div>
-      </section>
-
-      {/* COMO FUNCIONA */}
-      <section className="section" id="processo" style={{ background: "var(--sand)" }}>
+      {/* JORNADA — o que fazemos + como funciona, fundidos */}
+      <section className="section" id="fazemos" style={{ background: "var(--sand)" }}>
         <div className="container">
           <div className="eyebrow">Como funciona</div>
           <h2>
-            Um processo claro, <span className="accent">do diagnóstico à entrega.</span>
+            Da planta crua ao studio <span className="accent">pronto para operar.</span>
           </h2>
           <p className="lead">
-            Cada etapa tem começo, meio e fim. A obra anda sem você precisar empurrar.
+            Reforma turn-key: um único time cuida de projeto, obra, marcenaria, mobiliário
+            e entrega. Você acompanha cada etapa, sem virar gerente de obra.
           </p>
-          <div className="psteps">
-            {STEPS.map((s) => (
-              <div key={s.n} className="pstep">
-                <span className="ghost">{s.n}</span>
-                <span className="pnum">{s.n}</span>
-                <h3>{s.title}</h3>
-                <p>{s.text}</p>
+          <div className="jstack">
+            {JOURNEY.map((j, i) => (
+              <div
+                className="jstack__item"
+                style={{ ["--i" as string]: i } as React.CSSProperties}
+                key={j.num}
+              >
+                <article className="jcard">
+                  {j.img ? (
+                    <img
+                      className="jcard__img"
+                      src={j.img}
+                      alt={j.alt}
+                      loading="lazy"
+                      decoding="async"
+                      style={{ objectPosition: j.pos }}
+                    />
+                  ) : (
+                    <span className="jcard__tag">{j.slot}</span>
+                  )}
+                  <div className="jcard__scrim" />
+                  <span className="jcard__ghost">{j.num}</span>
+                  <div className="jcard__content">
+                    <span className="jcard__num">{j.num}</span>
+                    <h3>{j.title}</h3>
+                    <p>{j.text}</p>
+                  </div>
+                </article>
               </div>
             ))}
           </div>
         </div>
       </section>
+
 
       {/* ARQUITETURA */}
       <section className="section" id="arquitetura" style={{ background: "var(--paper)" }}>

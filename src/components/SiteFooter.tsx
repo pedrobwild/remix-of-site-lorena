@@ -49,7 +49,7 @@ export default function SiteFooter() {
           <h2 className="bw-foot__col">Navegação</h2>
           <ul>
             <li><a href="/#fazemos">O que fazemos</a></li>
-            <li><a href="/#processo">Como funciona</a></li>
+            <li><a href="/#fazemos">Como funciona</a></li>
             <li><a href="/portfolio">Portfólio</a></li>
             <li><a href="/conteudos">Conteúdos</a></li>
             <li><a href="/diagnostico">Diagnóstico</a></li>
