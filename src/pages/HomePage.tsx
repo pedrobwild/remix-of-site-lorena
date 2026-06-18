@@ -448,12 +448,12 @@ export default function HomePage() {
             <article className="diff-lead">
               <span className="diff-tag">Tudo num lugar só</span>
               <h3>Um time cuida de tudo, do começo ao fim</h3>
-              <p>Projeto, obra, marcenaria, compras, fornecedores e entrega ficam com a gente. <strong>Você não vira gerente de obra</strong>, não corre atrás de ninguém e não junta as pontas. A gente já faz isso por você.</p>
+              <p>Projeto, obra, marcenaria, compras, fornecedores e entrega ficam com a gente. <strong>Você não vira gerente de obra</strong>. Não precisa cobrar prazo, alinhar fornecedor nem resolver imprevisto. Isso é problema nosso.</p>
             </article>
             <article className="diff-lead">
               <span className="diff-tag">Especialistas no seu tipo de imóvel</span>
               <h3>A gente entende de studio compacto como ninguém</h3>
-              <p>Imóvel pequeno tem decisões que não perdoam erro: layout, armazenamento, circulação, iluminação. <strong>É exatamente nisso que somos especialistas</strong> — não é mais um serviço na lista, é o que fazemos o dia todo.</p>
+              <p>Em imóvel pequeno, um erro de layout, armazenamento ou circulação custa caro depois. <strong>Studio compacto é o que a Bewild faz todos os dias</strong>, então a gente já sabe o que funciona e o que dá problema.</p>
             </article>
           </div>
 
