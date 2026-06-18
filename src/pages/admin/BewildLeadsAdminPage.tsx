@@ -173,6 +173,17 @@ export default function BewildLeadsAdminPage() {
       <div className="bw-admin__section" style={{ padding: 0 }}>
         {loading ? (
           <p className="bw-admin__empty">Carregando…</p>
+        ) : loadError ? (
+          <div className="bw-admin__empty" role="alert" style={{ display: "grid", gap: 12, justifyItems: "center" }}>
+            <p style={{ margin: 0 }}>
+              <strong>Não consegui carregar os leads.</strong>
+              <br />
+              <span className="muted" style={{ fontSize: 13 }}>{loadError}</span>
+            </p>
+            <button type="button" className="bw-admin__btn bw-admin__btn--sm" onClick={load}>
+              Tentar de novo
+            </button>
+          </div>
         ) : filtered.length === 0 ? (
           <p className="bw-admin__empty">
             {rows.length === 0
