@@ -255,16 +255,14 @@ export default function HomePage() {
         <div className="container">
           <div className="hero-text">
             <div className="eyebrow" style={{ color: "var(--sky)" }}>
-              Bewild · Reforma turn-key de studios · São Paulo
+              Reforma turn-key de studios · São Paulo
             </div>
             <h1>
-              Reforma turn-key de studios,{" "}
-              <span className="accent">do projeto ao pronto para rentabilizar.</span>
+              Seu studio pronto para render,{" "}
+              <span className="accent">sem você virar gerente de obra.</span>
             </h1>
             <p className="sub">
-              Projeto de arquitetura, obra, marcenaria, mobiliário e tecnologia de
-              acompanhamento em um processo único, para você não precisar virar gerente da
-              própria reforma.
+              Projeto, obra, marcenaria, mobiliário e acompanhamento num processo único. Você acompanha; a Bewild executa.
             </p>
             <p className="micro">
               Da entrega das chaves ao imóvel pronto para foto, anúncio e operação
