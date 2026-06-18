@@ -145,7 +145,6 @@ export default function HomePage() {
     jsonLd: [faqJsonLd(FAQS_HOME)],
   });
 
-  const [activePanel, setActivePanel] = useState(0);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   // Marca html.js (alguns seletores do spec dependem disso, mas o CSS aqui
