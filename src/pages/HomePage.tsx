@@ -432,26 +432,52 @@ export default function HomePage() {
       </section>
 
       {/* DIFERENCIAIS */}
-      <section className="section dark" id="diferenciais">
+      <section className="section diffs" id="diferenciais">
         <div className="container">
-          <div className="eyebrow">Diferenciais</div>
-          <h2>
-            Por que a Bewild <span className="accent">é diferente.</span>
-          </h2>
-          <p className="lead">
-            O trabalho não termina no desenho bonito. Ele precisa fechar tecnicamente,
-            caber no orçamento, andar na obra e funcionar depois da entrega.
-          </p>
-          <div className="diff-grid">
-            {DIFFS.map((d) => (
-              <div key={d.title} className="diff">
-                <div className="ic" aria-hidden="true">
-                  <d.Icon size={18} strokeWidth={1.75} />
-                </div>
-                <h3>{d.title}</h3>
-                <p>{d.text}</p>
-              </div>
-            ))}
+          <div className="diffs-head">
+            <div className="eyebrow">Por que a Bewild</div>
+            <h2>A obra é com a gente. <span className="accent">A tranquilidade é sua.</span></h2>
+            <p className="lead">
+              Você não precisa entender de obra, coordenar fornecedor nem acompanhar cada
+              detalhe. A Bewild assume o imóvel do projeto à entrega e devolve ele pronto
+              para gerar renda.
+            </p>
+          </div>
+
+          <div className="diffs-leads">
+            <article className="diff-lead">
+              <span className="diff-tag">Tudo num lugar só</span>
+              <h3>Um time cuida de tudo, do começo ao fim</h3>
+              <p>Projeto, obra, marcenaria, compras, fornecedores e entrega ficam com a gente. <strong>Você não vira gerente de obra</strong>, não corre atrás de ninguém e não junta as pontas. A gente já faz isso por você.</p>
+            </article>
+            <article className="diff-lead">
+              <span className="diff-tag">Especialistas no seu tipo de imóvel</span>
+              <h3>A gente entende de studio compacto como ninguém</h3>
+              <p>Imóvel pequeno tem decisões que não perdoam erro: layout, armazenamento, circulação, iluminação. <strong>É exatamente nisso que somos especialistas</strong> — não é mais um serviço na lista, é o que fazemos o dia todo.</p>
+            </article>
+          </div>
+
+          <div className="diffs-support">
+            <article className="diff-sup">
+              <h3>Pensado para render</h3>
+              <p>Cada escolha considera prazo, custo, manutenção e potencial de rentabilização.</p>
+            </article>
+            <article className="diff-sup">
+              <h3>Sem surpresa no orçamento</h3>
+              <p>Você sabe o que está incluso, o que é opcional e o que mexe no preço ou no prazo.</p>
+            </article>
+            <article className="diff-sup">
+              <h3>Obra acompanhada de longe</h3>
+              <p>Fotos, relatórios e cronograma no portal. Você acompanha sem precisar ir até lá.</p>
+            </article>
+            <article className="diff-sup">
+              <h3>Feito para durar no uso</h3>
+              <p>Acabamento bonito na foto, resistente no dia a dia e simples de manter.</p>
+            </article>
+            <article className="diff-sup">
+              <h3>Funciona à distância</h3>
+              <p>Ideal para quem comprou em São Paulo, mas mora em outra cidade, estado ou país.</p>
+            </article>
           </div>
         </div>
       </section>
