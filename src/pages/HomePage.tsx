@@ -297,7 +297,10 @@ export default function HomePage() {
                 trackEvent("click_prova_hero", { category: "rafael_butanta", label: "rafael_butanta" });
               }}
             >
-              Caso real: <span className="highlight">70% de ocupação</span> em novembro num studio no Butantã — <span className="action">ver →</span>
+              Caso real:{" "}
+              <span className="highlight">70% de ocupação</span>{" "}
+              em novembro num studio no Butantã —{" "}
+              <span className="action">ver →</span>
             </a>
           </div>
         </div>
