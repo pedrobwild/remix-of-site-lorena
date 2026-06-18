@@ -111,10 +111,8 @@ Cada execução é registrada na tabela `seo_audit_log`.
 - `20260421203500_seo_advanced_fields.sql` — adiciona verificações, analytics,
   pixels, local business e tabela `seo_audit_log`
 
-> Migrations antigas ainda carregam defaults do template original
-> (`lorenaalvesarq.com`, "Lorena Alves"). Os valores efetivos vêm da linha
-> única em `site_settings` e dos fallbacks das edge functions, ambos já
-> apontando para `bewild.com.br`.
+> Os valores efetivos de SEO vêm da linha única em `site_settings` e dos
+> fallbacks das edge functions — todos já apontando para `bewild.com.br`.
 
 ---
 
