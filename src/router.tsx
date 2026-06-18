@@ -20,6 +20,7 @@ import LoginPage from "./pages/admin/LoginPage";
 import BewildOverviewPage from "./pages/admin/BewildOverviewPage";
 import BewildLeadsAdminPage from "./pages/admin/BewildLeadsAdminPage";
 import BewildConteudosAdminPage from "./pages/admin/BewildConteudosAdminPage";
+import BewildPostFormPage from "./pages/admin/BewildPostFormPage";
 import AnalyticsPage from "./pages/admin/AnalyticsPage";
 import SeoPage from "./pages/admin/SeoPage";
 import Seo404Page from "./pages/admin/Seo404Page";
@@ -130,6 +131,18 @@ export function renderRoute(route: Route) {
     return (
       <ProtectedRoute>
         <BewildConteudosAdminPage />
+      </ProtectedRoute>
+    );
+  if (route.name === "admin-conteudos-new")
+    return (
+      <ProtectedRoute>
+        <BewildPostFormPage />
+      </ProtectedRoute>
+    );
+  if (route.name === "admin-conteudos-edit")
+    return (
+      <ProtectedRoute>
+        <BewildPostFormPage slug={route.slug} />
       </ProtectedRoute>
     );
   if (route.name === "home") return <App />;
