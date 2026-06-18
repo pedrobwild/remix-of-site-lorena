@@ -39,6 +39,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useSeo, faqJsonLd } from "@/lib/useSeo";
+import { trackEvent } from "@/lib/ga4";
 import { whatsappHref } from "@/components/landing/content";
 import "@/styles/home.css";
 import BewildSiteNav from "@/components/BewildSiteNav";
