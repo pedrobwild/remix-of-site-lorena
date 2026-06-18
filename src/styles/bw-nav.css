@@ -188,7 +188,7 @@ a.bw-nav__cta:hover,
 .bw-nav__mobile {
   position: fixed;
   inset: 0;
-  z-index: 60;
+  z-index: 110;
   background: var(--bw-navy-deep);
   display: flex;
   flex-direction: column;
