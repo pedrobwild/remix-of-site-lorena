@@ -14,7 +14,7 @@
  *   touch; primeiro painel ativo por padrão; vira pilha vertical ≤760px.
  * - FAQ: `<details>/<summary>` nativo com primeiro item aberto.
  */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {
   Network,
   Building2,
