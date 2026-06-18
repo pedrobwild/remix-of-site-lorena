@@ -56,56 +56,21 @@ import rafaelAirbnb from "@/assets/testimonials/rafael/rafael-airbnb-butanta.jpe
 
 /* ---------------- data ---------------- */
 
-const SERVICES = [
-  {
-    slot: "Foto · obra",
-    title: "Reforma turn-key",
-    desc: "Projeto, obra, marcenaria, mobiliário e entrega em um único processo, sob um único responsável.",
-  },
-  {
-    slot: "Foto · studio",
-    title: "Studios para short stay",
-    desc: "Imóveis pensados desde o projeto para diária, ocupação, foto e operação no Airbnb e na Booking.",
-  },
-  {
-    slot: "Foto · marcenaria",
-    title: "Marcenaria inteligente",
-    desc: "Armazenamento, painéis e bancadas sob medida para ganhar espaço, durabilidade e percepção de valor.",
-  },
-  {
-    slot: "Foto · interiores",
-    title: "Mobiliário, eletros e enxoval",
-    desc: "Imóvel entregue completo, pronto para receber o primeiro hóspede.",
-  },
-  {
-    slot: "Foto · portal",
-    title: "Acompanhamento sem caixa-preta",
-    desc: "Cronograma, fotos e decisões registradas no portal. Você vê a obra andar.",
-  },
-  {
-    slot: "Slot · prancha / estudo real Bewild",
-    title: "Arquitetura personalizada",
-    desc: "Cada imóvel recebe um estudo próprio de layout, circulação, marcenaria, iluminação, acabamentos e uso. Nada de copiar e colar projeto genérico.",
-  },
-];
-
-const PROBLEMS = [
-  "Orçamentos que começam baixos e crescem no meio da obra.",
-  "Fornecedores que não conversam entre si.",
-  "Projeto bonito, mas difícil de executar.",
-  "Studio pronto visualmente, mas ruim de operar.",
-  "Cliente acompanhando tudo por WhatsApp, sem rastreabilidade.",
-  "Imóvel parado enquanto deveria estar gerando receita.",
-];
-
-const STEPS = [
-  { n: "01", title: "Diagnóstico do imóvel", text: "Analisamos metragem, planta, padrão do prédio, objetivo de uso, região, restrições e potencial do imóvel." },
-  { n: "02", title: "Briefing e estratégia", text: "Entendemos se o imóvel será usado para short stay, long stay, uso misto ou moradia. A estratégia define o nível de investimento e as escolhas do projeto." },
-  { n: "03", title: "Projeto de arquitetura personalizado", text: "Desenvolvemos layout, conceito, marcenaria, iluminação, acabamentos e soluções para performar melhor no uso e na foto." },
-  { n: "04", title: "Orçamento e escopo", text: "Escopo fechado e itens organizados por etapa, para você saber o que está incluso antes de a obra começar." },
-  { n: "05", title: "Compras e fornecedores", text: "Compras críticas planejadas e fornecedores coordenados pela Bewild, dentro do cronograma." },
-  { n: "06", title: "Obra e marcenaria", text: "Execução acompanhada, com gestão técnica e registro de cada decisão no portal." },
-  { n: "07", title: "Entrega e checklist", text: "Montagem, enxoval e checklist final. Imóvel pronto para foto, anúncio e operação." },
+const JOURNEY: {
+  num: string;
+  title: string;
+  text: string;
+  img: string | null;
+  alt?: string;
+  pos?: string;
+  slot?: string;
+}[] = [
+  { num: "01", title: "Diagnóstico e estratégia", text: "Avaliamos o imóvel e definimos o uso: short stay, long stay ou misto.", img: studioAntes.url, alt: "Studio antes da reforma, na etapa de diagnóstico", pos: "50% 50%" },
+  { num: "02", title: "Projeto personalizado", text: "Layout, marcenaria, iluminação e acabamentos desenhados para cada metro. Nada genérico.", img: "/hero-studio-desktop.webp", alt: "Render de studio projetado pela Bewild", pos: "50% 45%" },
+  { num: "03", title: "Escopo e orçamento fechados", text: "Você sabe o que está incluso e o que mexe no preço antes de a obra começar.", img: null, slot: "Documento · escopo" },
+  { num: "04", title: "Obra e marcenaria sob medida", text: "Execução acompanhada, marcenaria feita para durar, cada decisão registrada.", img: null, slot: "Foto · obra" },
+  { num: "05", title: "Acompanhamento no portal", text: "Cronograma e fotos da obra. Você vê andar sem precisar ir até lá.", img: null, slot: "Print · portal" },
+  { num: "06", title: "Entrega pronta para operar", text: "Mobiliado, com enxoval, pronto para foto, anúncio e diária.", img: studioPronto.url, alt: "Studio entregue pela Bewild, pronto para operar", pos: "50% 50%" },
 ];
 
 const ARCH = [
