@@ -211,7 +211,16 @@ export default function BewildSiteNav() {
 
       {menuOpen && typeof document !== "undefined" &&
         createPortal(
-          <div className="bw-nav">
+          <div
+            style={{
+              ["--bw-navy-deep" as string]: "#0B2342",
+              ["--bw-navy" as string]: "#11355B",
+              ["--bw-cyan" as string]: "#2F86B8",
+              ["--bw-cyan-2" as string]: "#5FB2DD",
+              ["--bw-display" as string]: '"Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+              ["--bw-sans" as string]: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+            } as React.CSSProperties}
+          >
           <div
             id="bw-nav-mobile"
             className="bw-nav__mobile"
