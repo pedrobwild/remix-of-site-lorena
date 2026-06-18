@@ -291,68 +291,51 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* O QUE FAZEMOS */}
-      <section className="section" id="fazemos" style={{ background: "var(--paper)" }}>
-        <div className="container">
-          <div className="eyebrow">O que fazemos</div>
-          <h2>
-            Mais que uma reforma. <span className="accent">Um imóvel pronto para operar.</span>
-          </h2>
-          <p className="lead">
-            Arquitetura, obra, interiores, tecnologia e inteligência de investimento em
-            uma entrega única.
-          </p>
-          <div className="fz-acc" role="tablist" aria-label="Serviços Bewild">
-            {SERVICES.map((s, i) => (
-              <button
-                type="button"
-                key={s.title}
-                className={`fz-panel ${activePanel === i ? "active" : ""}`}
-                role="tab"
-                aria-selected={activePanel === i}
-                aria-label={s.title}
-                onMouseEnter={() => !isTouch && setActivePanel(i)}
-                onFocus={() => setActivePanel(i)}
-                onClick={() => setActivePanel(i)}
-              >
-                <span className="slot-mini">{s.slot}</span>
-                <span className="vlabel">{s.title}</span>
-                <div className="content">
-                  <h3>{s.title}</h3>
-                  <p>{s.desc}</p>
-                </div>
-              </button>
-            ))}
-          </div>
-          <p className="fz-hint">
-            Passe o mouse ou toque para abrir cada serviço. As fotos reais das obras
-            entram em cada card.
-          </p>
-        </div>
-      </section>
-
-      {/* COMO FUNCIONA */}
-      <section className="section" id="processo" style={{ background: "var(--sand)" }}>
+      {/* JORNADA — o que fazemos + como funciona, fundidos */}
+      <section className="section" id="fazemos" style={{ background: "var(--sand)" }}>
         <div className="container">
           <div className="eyebrow">Como funciona</div>
           <h2>
-            Um processo claro, <span className="accent">do diagnóstico à entrega.</span>
+            Da planta crua ao studio <span className="accent">pronto para operar.</span>
           </h2>
           <p className="lead">
-            Cada etapa tem começo, meio e fim. A obra anda sem você precisar empurrar.
+            Reforma turn-key: um único time cuida de projeto, obra, marcenaria, mobiliário
+            e entrega. Você acompanha cada etapa, sem virar gerente de obra.
           </p>
-          <div className="psteps">
-            {STEPS.map((s) => (
-              <div key={s.n} className="pstep">
-                <span className="ghost">{s.n}</span>
-                <span className="pnum">{s.n}</span>
-                <h3>{s.title}</h3>
-                <p>{s.text}</p>
+          <div className="jstack">
+            {JOURNEY.map((j, i) => (
+              <div
+                className="jstack__item"
+                style={{ ["--i" as string]: i } as React.CSSProperties}
+                key={j.num}
+              >
+                <article className="jcard">
+                  {j.img ? (
+                    <img
+                      className="jcard__img"
+                      src={j.img}
+                      alt={j.alt}
+                      loading="lazy"
+                      decoding="async"
+                      style={{ objectPosition: j.pos }}
+                    />
+                  ) : (
+                    <span className="jcard__tag">{j.slot}</span>
+                  )}
+                  <div className="jcard__scrim" />
+                  <span className="jcard__ghost">{j.num}</span>
+                  <div className="jcard__content">
+                    <span className="jcard__num">{j.num}</span>
+                    <h3>{j.title}</h3>
+                    <p>{j.text}</p>
+                  </div>
+                </article>
               </div>
             ))}
           </div>
         </div>
       </section>
+
 
       {/* ARQUITETURA */}
       <section className="section" id="arquitetura" style={{ background: "var(--paper)" }}>
