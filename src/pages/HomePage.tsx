@@ -39,6 +39,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useSeo, faqJsonLd } from "@/lib/useSeo";
+import { trackEvent } from "@/lib/ga4";
 import { whatsappHref } from "@/components/landing/content";
 import "@/styles/home.css";
 import BewildSiteNav from "@/components/BewildSiteNav";
@@ -282,6 +283,25 @@ export default function HomePage() {
               <li><b>a partir de 60</b><span>dias úteis de obra</span></li>
               <li><b>5</b><span>anos de garantia</span></li>
             </ul>
+            <a
+              href="#resultado"
+              className="hero-social-proof"
+              data-cta="hero-prova-rafael"
+              aria-label="Caso real: 70% de ocupação em novembro num studio no Butantã — ver detalhes do resultado"
+              onClick={(e) => {
+                e.preventDefault();
+                const target = document.getElementById("resultado");
+                if (target) {
+                  target.scrollIntoView({ behavior: "smooth" });
+                }
+                trackEvent("click_prova_hero", { category: "rafael_butanta", label: "rafael_butanta" });
+              }}
+            >
+              {"Caso real: "}
+              <span className="highlight">70% de ocupação</span>
+              {" em novembro num studio no Butantã — "}
+              <span className="action">ver →</span>
+            </a>
           </div>
         </div>
       </section>
