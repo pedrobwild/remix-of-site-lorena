@@ -165,9 +165,6 @@ export default function DiagnosticoPage() {
 }
 
 function DiagnosticoPitch() {
-  const waUrl = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
-    "Olá, prefiro falar com um especialista sobre o diagnóstico."
-  )}`;
   return (
     <div>
       <p className="bw-diag__eyebrow">Diagnóstico Bewild</p>
@@ -215,29 +212,6 @@ function DiagnosticoPitch() {
       <p className="bw-diag__fine">
         Referências sujeitas ao escopo · Detalhes na proposta e no contrato
       </p>
-
-      <div className="bw-diag__testi">
-        <p className="bw-diag__blocklabel">Depoimento de cliente</p>
-        <div className="bw-diag__testivideo">
-          <video
-            src={depoimentoVideo.url}
-            controls
-            playsInline
-            preload="metadata"
-            aria-label="Depoimento em vídeo de cliente Bewild"
-          />
-        </div>
-        <p className="bw-diag__testisrc">Vivian · cliente Bewild</p>
-      </div>
-
-      <a
-        href={waUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bw-diag__alt"
-      >
-        <IconChat /> Prefiro falar com um especialista
-      </a>
     </div>
   );
 }
