@@ -133,7 +133,6 @@ export default function BewildSiteNav() {
   const sectionId = (it: Item): string | null => {
     if (!isHome) return null;
     if (it.homeHref === "#fazemos") return "fazemos";
-    if (it.homeHref === "#processo") return "processo";
     if (it.homeHref === "#diferenciais") return "diferenciais";
     return null;
   };
