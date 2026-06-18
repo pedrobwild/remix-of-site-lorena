@@ -21,8 +21,7 @@ import "@/styles/bw-nav.css";
 type Item = { label: string; homeHref: string; pageHref: string };
 
 const ITEMS: Item[] = [
-  { label: "O que fazemos", homeHref: "#fazemos", pageHref: "/#fazemos" },
-  { label: "Como funciona", homeHref: "#processo", pageHref: "/#processo" },
+  { label: "Como funciona", homeHref: "#fazemos", pageHref: "/#fazemos" },
   { label: "Por que a Bewild", homeHref: "#diferenciais", pageHref: "/#diferenciais" },
   { label: "Portfólio", homeHref: "/portfolio", pageHref: "/portfolio" },
   { label: "Conteúdos", homeHref: "/conteudos", pageHref: "/conteudos" },
