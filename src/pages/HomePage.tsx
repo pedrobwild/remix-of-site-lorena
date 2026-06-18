@@ -902,13 +902,12 @@ export default function HomePage() {
             Diagnóstico
           </div>
           <h2>
-            Quer transformar seu studio{" "}
-            <span className="accent">em um ativo pronto para operar?</span>
+            Você não comprou um imóvel para <span className="accent">virar gerente de obra.</span>
           </h2>
           <p>
-            Envie os dados do seu imóvel e receba uma análise inicial de escopo, projeto e
-            próximos passos. Sem compromisso.
+            Comprou para gerar renda. A Bewild reforma seu studio e entrega pronto para operar: projeto, obra, mobiliário e acompanhamento, com prazo e escopo fechados antes de começar.
           </p>
+          <div className="cta-signature">Built by the wild ones.</div>
           <div className="cta-btns">
             <a href="/diagnostico" className="btn btn-cyan">
               Solicitar diagnóstico <span className="arrow">→</span>
