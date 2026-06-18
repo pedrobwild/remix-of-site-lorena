@@ -69,7 +69,7 @@ export default function BewildSiteNav() {
       setActiveSection(null);
       return;
     }
-    const ids = ["fazemos", "processo", "diferenciais"];
+    const ids = ["fazemos", "diferenciais"];
     let raf = 0;
 
     const compute = () => {
