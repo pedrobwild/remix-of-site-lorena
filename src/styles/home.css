@@ -217,14 +217,22 @@
   position: relative;
   overflow: hidden;
   background: var(--navy-deep);
+  align-self: center;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 88vh;
 }
-.bw-home .hero-image-col picture,
+.bw-home .hero-image-col picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 .bw-home .hero-image-col img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: center 60%;
 }
 @media (max-width: 900px) {
   .bw-home .hero-split {
