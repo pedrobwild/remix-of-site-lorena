@@ -173,7 +173,6 @@ export default function HomePage() {
   });
 
   const [activePanel, setActivePanel] = useState(0);
-  const heroBgRef = useRef<HTMLDivElement | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   // Marca html.js (alguns seletores do spec dependem disso, mas o CSS aqui
@@ -182,28 +181,12 @@ export default function HomePage() {
     document.documentElement.classList.add("js");
   }, []);
 
-  // Hero parallax + scroll reveal
+  // Scroll reveal
   useEffect(() => {
     const reduce =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const heroBg = heroBgRef.current;
-    let raf = 0;
-    const onScroll = () => {
-      if (reduce || !heroBg) return;
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const y = window.scrollY;
-        if (y < window.innerHeight) {
-          heroBg.style.transform = `translate3d(0, ${y * 0.35}px, 0)`;
-        }
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-
-    // Scroll reveal
     const root = rootRef.current;
     const targets: HTMLElement[] = root
       ? Array.from(root.querySelectorAll(".section > .container > *"))
@@ -211,7 +194,9 @@ export default function HomePage() {
 
     if (reduce) {
       targets.forEach((el) => el.classList.add("in"));
-    } else if (typeof IntersectionObserver !== "undefined") {
+      return;
+    }
+    if (typeof IntersectionObserver !== "undefined") {
       const io = new IntersectionObserver(
         (entries) => {
           for (const e of entries) {
@@ -224,19 +209,9 @@ export default function HomePage() {
         { rootMargin: "0px 0px -10% 0px", threshold: 0.05 },
       );
       targets.forEach((el) => io.observe(el));
-      return () => {
-        window.removeEventListener("scroll", onScroll);
-        cancelAnimationFrame(raf);
-        io.disconnect();
-      };
-    } else {
-      targets.forEach((el) => el.classList.add("in"));
+      return () => io.disconnect();
     }
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(raf);
-    };
+    targets.forEach((el) => el.classList.add("in"));
   }, []);
 
   const isTouch =
