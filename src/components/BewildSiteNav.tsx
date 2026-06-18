@@ -211,6 +211,7 @@ export default function BewildSiteNav() {
 
       {menuOpen && typeof document !== "undefined" &&
         createPortal(
+          <div className="bw-nav">
           <div
             id="bw-nav-mobile"
             className="bw-nav__mobile"
