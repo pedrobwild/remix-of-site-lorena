@@ -297,9 +297,9 @@ export default function HomePage() {
                 trackEvent("click_prova_hero", { category: "rafael_butanta", label: "rafael_butanta" });
               }}
             >
-              {"Caso real: "}
+              {"Caso real:\u00a0"}
               <span className="highlight">70% de ocupação</span>
-              {" em novembro num studio no Butantã — "}
+              {"\u00a0em novembro num studio no Butantã —\u00a0"}
               <span className="action">ver →</span>
             </a>
           </div>
