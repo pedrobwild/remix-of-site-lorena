@@ -188,37 +188,61 @@
 .bw-home .nav .btn { padding: 10px 20px; font-size: 14px; }
 @media (max-width: 860px) { .bw-home .nav-links { display: none; } }
 
-/* HERO */
+/* HERO — split layout: texto à esquerda (navy), render à direita */
 .bw-home .hero {
   position: relative;
-  min-height: 90vh;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
   color: #fff;
   isolation: isolate;
+  background: var(--navy-deep);
 }
-.bw-home .hero-bg {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: calc(100% + 260px);
-  z-index: -2;
-  will-change: transform;
-  background-color: var(--navy-deep);
-  background-image: url("https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1920&q=80");
-  background-size: cover;
-  background-position: center;
+.bw-home .hero-split {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  min-height: 88vh;
+  align-items: stretch;
 }
-.bw-home .hero-shade {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(95deg, rgba(8,26,46,.90) 0%, rgba(8,26,46,.66) 46%, rgba(8,26,46,.34) 100%);
+.bw-home .hero-text-col {
+  background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 60%, #14406B 100%);
+  display: flex;
+  align-items: center;
+  padding: 96px clamp(24px, 5vw, 72px) 96px clamp(24px, 6vw, 96px);
+  position: relative;
 }
-.bw-home .hero .container { padding-top: 96px; padding-bottom: 96px; }
-.bw-home .hero-text { max-width: 680px; }
+.bw-home .hero-text-inner {
+  width: 100%;
+  max-width: 640px;
+  margin-left: auto;
+}
+.bw-home .hero-image-col {
+  position: relative;
+  overflow: hidden;
+  background: var(--navy-deep);
+}
+.bw-home .hero-image-col picture,
+.bw-home .hero-image-col img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+@media (max-width: 900px) {
+  .bw-home .hero-split {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .bw-home .hero-image-col {
+    order: -1;
+    aspect-ratio: 16 / 10;
+    width: 100%;
+  }
+  .bw-home .hero-image-col img { height: 100%; }
+  .bw-home .hero-text-col {
+    padding: 36px 22px 56px;
+  }
+  .bw-home .hero-text-inner { max-width: 100%; margin: 0; }
+}
+.bw-home .hero-text { max-width: 640px; }
 .bw-home .hero h1 { font-size: clamp(38px,6vw,60px); color: #fff; margin-bottom: 20px; }
 .bw-home .hero h1 .accent { color: var(--sky); }
 .bw-home .hero .sub {
