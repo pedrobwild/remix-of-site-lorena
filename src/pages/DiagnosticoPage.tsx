@@ -112,6 +112,9 @@ export default function DiagnosticoPage() {
       : undefined,
   });
 
+  const waUrl = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
+    "Olá, prefiro falar com um especialista sobre o diagnóstico."
+  )}`;
   return (
     <>
       <BewildSiteNav />
@@ -124,6 +127,37 @@ export default function DiagnosticoPage() {
             </div>
           </div>
         </section>
+
+        <section className="bw-diag__testiband" aria-label="Depoimento de cliente">
+          <div className="bw-diag__container">
+            <div className="bw-diag__testiband-grid">
+              <div className="bw-diag__testiband-video">
+                <video
+                  src={depoimentoVideo.url}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  aria-label="Depoimento em vídeo de cliente Bewild"
+                />
+              </div>
+              <div className="bw-diag__testiband-content">
+                <p className="bw-diag__eyebrow">Depoimento</p>
+                <h2 className="bw-diag__testiband-title">
+                  Quem já passou pela obra conta melhor do que a gente.
+                </h2>
+                <p className="bw-diag__testiband-src">Vivian · cliente Bewild</p>
+                <a
+                  href={waUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bw-diag__alt"
+                >
+                  <IconChat /> Prefiro falar com um especialista
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
       <SiteFooter />
     </>
@@ -131,9 +165,6 @@ export default function DiagnosticoPage() {
 }
 
 function DiagnosticoPitch() {
-  const waUrl = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
-    "Olá, prefiro falar com um especialista sobre o diagnóstico."
-  )}`;
   return (
     <div>
       <p className="bw-diag__eyebrow">Diagnóstico Bewild</p>
@@ -181,29 +212,6 @@ function DiagnosticoPitch() {
       <p className="bw-diag__fine">
         Referências sujeitas ao escopo · Detalhes na proposta e no contrato
       </p>
-
-      <div className="bw-diag__testi">
-        <p className="bw-diag__blocklabel">Depoimento de cliente</p>
-        <div className="bw-diag__testivideo">
-          <video
-            src={depoimentoVideo.url}
-            controls
-            playsInline
-            preload="metadata"
-            aria-label="Depoimento em vídeo de cliente Bewild"
-          />
-        </div>
-        <p className="bw-diag__testisrc">Vivian · cliente Bewild</p>
-      </div>
-
-      <a
-        href={waUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bw-diag__alt"
-      >
-        <IconChat /> Prefiro falar com um especialista
-      </a>
     </div>
   );
 }
