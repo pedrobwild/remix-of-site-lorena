@@ -186,8 +186,7 @@ export default function HomePage() {
     targets.forEach((el) => el.classList.add("in"));
   }, []);
 
-  const isTouch =
-    typeof window !== "undefined" && window.matchMedia("(hover: none)").matches;
+
 
   return (
     <div className="bw-home" ref={rootRef}>
