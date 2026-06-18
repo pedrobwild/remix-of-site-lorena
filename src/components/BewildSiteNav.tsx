@@ -278,6 +278,7 @@ export default function BewildSiteNav() {
                 Solicitar diagnóstico <span className="arrow" aria-hidden>→</span>
               </a>
             </div>
+          </div>
           </div>,
           document.body
         )}
