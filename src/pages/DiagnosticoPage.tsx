@@ -31,7 +31,7 @@ const PASSOS = [
 ];
 
 const STATS: { num: string; suf: string; small: string }[] = [
-  { num: "55", suf: "dias úteis", small: "referência de prazo de obra" },
+  { num: "a partir de 60", suf: "dias úteis", small: "referência de prazo de obra" },
   { num: "5", suf: "anos", small: "garantia de mão de obra" },
   { num: "10+", suf: "anos", small: "garantia em marcenaria selecionada" },
   { num: "100%", suf: "turn-key", small: "tudo em um processo único" },

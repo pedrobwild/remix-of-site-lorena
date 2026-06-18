@@ -1,11 +1,11 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Tailwind — tokens da marca **bewild**.
+ * Tailwind — tokens da marca **Bewild**.
  * A paleta deriva da logo (nó azul em gradiente): azul profundo + petróleo,
  * preto com leve tom azulado, cinza concreto e off-white.
  * Mantemos `theme.extend` para não quebrar utilitários padrão usados em
- * outras rotas legadas (Lorena Alves).
+ * rotas internas legadas.
  */
 export default {
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
@@ -27,10 +27,10 @@ export default {
         },
       },
       fontFamily: {
-        // BeWild brand: Playfair (serif) para títulos, Poppins (sans light) para corpo.
+        // Bewild brand: Playfair (serif) para títulos, Poppins (sans light) para corpo.
         display: ["'Playfair Display'", "Georgia", "serif"],
         body: ["Poppins", "Inter", "system-ui", "sans-serif"],
-        // Compat com páginas legadas (Lorena Alves) que ainda chamam font-sans/Manrope.
+        // Compat com rotas internas legadas que ainda chamam font-sans/Manrope.
         sans: ["Poppins", "Inter", "system-ui", "sans-serif"],
         manrope: ["Manrope", "Inter", "system-ui", "sans-serif"],
         mono: ["'JetBrains Mono'", "ui-monospace", "monospace"],

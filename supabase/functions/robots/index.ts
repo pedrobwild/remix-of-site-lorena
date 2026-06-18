@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
     .eq("id", 1)
     .maybeSingle();
 
-  const base = (settings?.seo_canonical_base || "https://lorenaalvesarq.com").replace(/\/$/, "");
+  const base = (settings?.seo_canonical_base || "https://bewild.com.br").replace(/\/$/, "");
   const robotsDirective = (settings?.seo_robots || "index, follow").toLowerCase();
   const disallowAll = robotsDirective.includes("noindex");
 

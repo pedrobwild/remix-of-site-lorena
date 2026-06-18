@@ -38,11 +38,12 @@ import {
   Quote,
   type LucideIcon,
 } from "lucide-react";
-import { useSeo } from "@/lib/useSeo";
+import { useSeo, faqJsonLd } from "@/lib/useSeo";
 import { whatsappHref } from "@/components/landing/content";
 import "@/styles/home.css";
 import BewildSiteNav from "@/components/BewildSiteNav";
 import SiteFooter from "@/components/SiteFooter";
+import StickyMobileCTA from "@/components/StickyMobileCTA";
 import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.json";
 import studioAntes from "@/assets/portfolio/studio-zip-brooklin-antes.jpg.asset.json";
 import studioDepois from "@/assets/portfolio/studio-zip-brooklin-depois.jpg.asset.json";
@@ -167,6 +168,7 @@ export default function HomePage() {
       "Design, obra, mobiliário e setup para transformar studios em imóveis prontos para short stay em SP, sem você virar gerente de obra.",
     canonicalPath: "/",
     ogType: "website",
+    jsonLd: [faqJsonLd(FAQS_HOME)],
   });
 
   const [activePanel, setActivePanel] = useState(0);
@@ -274,9 +276,10 @@ export default function HomePage() {
                 Ver reformas entregues
               </a>
             </div>
+            <p className="hero-reassure">Resposta no mesmo dia · sem compromisso</p>
             <ul className="hero-proof" aria-label="Provas Bewild">
               <li><b>+150</b><span>studios entregues</span></li>
-              <li><b>55</b><span>dias úteis de obra</span></li>
+              <li><b>a partir de 60</b><span>dias úteis de obra</span></li>
               <li><b>5</b><span>anos de garantia</span></li>
             </ul>
           </div>
@@ -462,9 +465,9 @@ export default function HomePage() {
               <p>Experiência real em reforma de studios compactos.</p>
             </div>
             <div className="stat">
-              <b>55</b>
+              <b>a partir de 60</b>
               <div className="u">dias úteis</div>
-              <p>Prazo de entrega de uma reforma completa.</p>
+              <p>Prazo de referência de uma reforma completa.</p>
             </div>
             <div className="stat">
               <b>5 anos</b>
@@ -902,6 +905,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      <StickyMobileCTA />
       <SiteFooter />
     </div>
   );

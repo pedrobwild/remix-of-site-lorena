@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
       .eq("id", 1)
       .maybeSingle();
 
-    const base = (settings?.seo_canonical_base || "https://lorenaalvesarq.com").replace(/\/$/, "");
+    const base = (settings?.seo_canonical_base || "https://bewild.com.br").replace(/\/$/, "");
     const sitemapStatic = `${base}/sitemap.xml`;
     const sitemapDynamic = `${SUPABASE_URL}/functions/v1/sitemap`;
 
