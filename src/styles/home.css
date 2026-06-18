@@ -315,8 +315,7 @@
 .bw-home .hero-text > .hero-social-proof { animation-delay: .70s; }
 
 .bw-home .hero-social-proof {
-  display: inline-flex;
-  align-items: center;
+  display: inline-block;
   margin-top: clamp(24px, 4vw, 32px);
   font-family: var(--sans);
   font-size: clamp(12px, 1.5vw, 13px);
