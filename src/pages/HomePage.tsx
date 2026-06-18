@@ -73,6 +73,16 @@ const JOURNEY: {
   { num: "06", title: "Entrega pronta para operar", text: "Mobiliado, com enxoval, pronto para foto, anúncio e diária.", img: studioPronto.url, alt: "Studio entregue pela Bewild, pronto para operar", pos: "50% 50%" },
 ];
 
+const PROBLEMS = [
+  "Orçamentos que começam baixos e crescem no meio da obra.",
+  "Fornecedores que não conversam entre si.",
+  "Projeto bonito, mas difícil de executar.",
+  "Studio pronto visualmente, mas ruim de operar.",
+  "Cliente acompanhando tudo por WhatsApp, sem rastreabilidade.",
+  "Imóvel parado enquanto deveria estar gerando receita.",
+];
+
+
 const ARCH = [
   { idx: "01", title: "Layout inteligente", text: "Cama, bancada, cozinha, armários, TV, circulação e apoio de malas para o espaço parecer maior e funcionar melhor." },
   { idx: "02", title: "Marcenaria sob medida", text: "Armazenamento, painéis, bancadas e nichos que aumentam a percepção de qualidade e reduzem improvisos." },
