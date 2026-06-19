@@ -771,63 +771,77 @@
   margin: 0;
 }
 
-/* ===== FAQ na /diagnostico — escopo isolado, branding Bewild =====
-   FaqSection é compartilhado com a home; aqui sobrescrevemos cor,
-   tipografia e fundo APENAS dentro de .bw-diag__faqwrap. A home,
-   que renderiza .faq fora desse wrapper, fica intacta. */
-.bw-diag__faqwrap {
-  margin-top: 56px;
-}
-.bw-diag__faqwrap .faq {
+/* ===== FAQ na /diagnostico — clone visual da FAQ da home, escopado em .bw-diag.
+   Não usa FaqSection (que é compartilhado). Markup próprio em DiagnosticoPage. */
+.bw-diag .bw-diag__faq {
   background: var(--paper);
-  color: var(--ink);
-  border-top: 1px solid var(--line-cool);
+  padding: 72px 28px 80px;
+  margin-top: 24px;
 }
-.bw-diag__faqwrap .section__eyebrow {
+.bw-diag .bw-diag__faq-eyebrow {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 11.5px;
+  letter-spacing: 0.2em;
+  font-size: 12px;
   font-weight: 600;
   color: var(--cyan);
+  margin: 0 0 16px;
+  text-align: center;
 }
-.bw-diag__faqwrap .section__eyebrow::before {
-  background: var(--cyan);
-}
-.bw-diag__faqwrap .section__title {
+.bw-diag .bw-diag__faq-title {
   font-family: "Poppins", -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 800;
-  font-style: normal;
   color: var(--navy);
+  font-size: clamp(27px, 4.2vw, 40px);
   letter-spacing: -0.015em;
+  line-height: 1.07;
+  margin: 0 auto 34px;
+  text-align: center;
 }
-.bw-diag__faqwrap .section__title em {
-  font-family: "Poppins", -apple-system, BlinkMacSystemFont, sans-serif;
-  font-style: normal;
-  font-weight: 800;
-  color: var(--cyan);
+.bw-diag .bw-diag__faq-list {
+  max-width: 760px;
+  margin: 0 auto;
 }
-.bw-diag__faqwrap .faq__item {
-  border-bottom: 1px solid var(--line-cool);
+.bw-diag .bw-diag__faq-item {
+  background: #fff;
+  border: 1px solid var(--line-cool);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  overflow: hidden;
 }
-.bw-diag__faqwrap .faq__q-num,
-.bw-diag__faqwrap .faq__q-num.mono {
+.bw-diag .bw-diag__faq-q {
+  list-style: none;
+  cursor: pointer;
+  padding: 17px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  font-weight: 700;
-  color: var(--cyan);
-  letter-spacing: 0.04em;
-}
-.bw-diag__faqwrap .faq__q-text {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 600;
+  font-size: 14.5px;
   color: var(--navy);
 }
-.bw-diag__faqwrap .faq__q-icon {
+.bw-diag .bw-diag__faq-q::-webkit-details-marker { display: none; }
+.bw-diag .bw-diag__faq-pm {
+  flex: none;
   color: var(--cyan);
+  font-size: 20px;
+  font-weight: 400;
+  transition: transform 0.2s;
+  line-height: 1;
 }
-.bw-diag__faqwrap .faq__a p {
+.bw-diag .bw-diag__faq-item[open] .bw-diag__faq-pm {
+  transform: rotate(45deg);
+}
+.bw-diag .bw-diag__faq-a {
+  padding: 0 20px 18px;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  color: var(--ink);
+  font-size: 13.8px;
+  color: #5E6E7C;
+  line-height: 1.6;
 }
+
 
 
 
