@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSeo, breadcrumbJsonLd, organizationJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
 import BewildSiteNav from "@/components/BewildSiteNav";
@@ -123,41 +123,14 @@ export default function DiagnosticoPage() {
           <div className="bw-diag__container">
             <div className="bw-diag__grid">
               <DiagnosticoPitch />
-              <DiagnosticoForm />
+              <div className="bw-diag__formcol">
+                <DiagnosticoForm />
+                <TestimonialCard waUrl={waUrl} />
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="bw-diag__testiband" aria-label="Depoimento de cliente">
-          <div className="bw-diag__container">
-            <div className="bw-diag__testiband-grid">
-              <div className="bw-diag__testiband-video">
-                <video
-                  src={depoimentoVideo.url}
-                  controls
-                  playsInline
-                  preload="metadata"
-                  aria-label="Depoimento em vídeo de cliente Bewild"
-                />
-              </div>
-              <div className="bw-diag__testiband-content">
-                <p className="bw-diag__eyebrow">Depoimento</p>
-                <h2 className="bw-diag__testiband-title">
-                  Quem já passou pela obra conta melhor do que a gente.
-                </h2>
-                <p className="bw-diag__testiband-src">Vivian · cliente Bewild</p>
-                <a
-                  href={waUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bw-diag__alt"
-                >
-                  <IconChat /> Prefiro falar com um especialista
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
       <SiteFooter />
     </>
@@ -468,3 +441,121 @@ function ChipsField({
     </fieldset>
   );
 }
+
+function IconPlay({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M8 5.14v13.72a1 1 0 0 0 1.52.86l11.14-6.86a1 1 0 0 0 0-1.72L9.52 4.28A1 1 0 0 0 8 5.14z" />
+    </svg>
+  );
+}
+
+function IconClose({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
+function TestimonialCard({ waUrl }: { waUrl: string }) {
+  const [open, setOpen] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const closeBtnRef = useRef<HTMLButtonElement | null>(null);
+
+  function handleOpen() {
+    trackEvent("play_depoimento", { page: "diagnostico", cliente: "vivian" });
+    setOpen(true);
+  }
+
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    const t = window.setTimeout(() => {
+      closeBtnRef.current?.focus();
+      videoRef.current?.play().catch(() => {});
+    }, 0);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener("keydown", onKey);
+      window.clearTimeout(t);
+    };
+  }, [open]);
+
+  return (
+    <>
+      <aside className="bw-diag__testicard" aria-label="Depoimento em vídeo de cliente">
+        <button
+          type="button"
+          className="bw-diag__testithumb"
+          onClick={handleOpen}
+          aria-label="Assistir depoimento em vídeo de Vivian"
+        >
+          <video
+            src={depoimentoVideo.url}
+            muted
+            playsInline
+            preload="metadata"
+            tabIndex={-1}
+            aria-hidden="true"
+          />
+          <span className="bw-diag__testiplay" aria-hidden="true">
+            <IconPlay />
+          </span>
+        </button>
+        <div className="bw-diag__testimeta">
+          <p className="bw-diag__eyebrow">Depoimento</p>
+          <p className="bw-diag__testiname">Vivian</p>
+          <p className="bw-diag__testirole">cliente Bewild · depoimento presencial</p>
+          <a
+            href={waUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bw-diag__alt bw-diag__alt--card"
+          >
+            <IconChat /> Prefiro falar com um especialista
+          </a>
+        </div>
+      </aside>
+
+      {open && (
+        <div
+          className="bw-diag__modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Depoimento em vídeo de Vivian"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setOpen(false);
+          }}
+        >
+          <div className="bw-diag__modal-inner">
+            <button
+              ref={closeBtnRef}
+              type="button"
+              className="bw-diag__modal-close"
+              onClick={() => setOpen(false)}
+              aria-label="Fechar vídeo"
+            >
+              <IconClose />
+            </button>
+            <video
+              ref={videoRef}
+              src={depoimentoVideo.url}
+              controls
+              playsInline
+              autoPlay
+              className="bw-diag__modal-video"
+            />
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
