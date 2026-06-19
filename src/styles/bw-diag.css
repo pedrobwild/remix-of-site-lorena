@@ -786,3 +786,13 @@
   margin-top: 32px;
 }
 
+/* Fecho navy da FAQ — apenas na página /diagnostico.
+   O componente FaqSection é compartilhado; aqui sobrescrevemos
+   o fundo escuro padrão (.faq usa var(--ink)) para o navy do hero,
+   sem alterar o uso na home. */
+.bw-diag__faqwrap .faq {
+  background: var(--navy-deep);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+
