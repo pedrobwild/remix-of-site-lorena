@@ -57,14 +57,20 @@
 
 .bw-diag__grid {
   display: grid;
-  grid-template-columns: 1.04fr 0.96fr;
-  gap: 44px;
+  grid-template-columns: 1.02fr 0.98fr;
+  grid-template-areas: "pitch form" "testi form";
+  column-gap: 44px;
+  row-gap: 20px;
   align-items: start;
 }
+.bw-diag__pitch { grid-area: pitch; }
+.bw-diag__formcard { grid-area: form; }
+.bw-diag__testicard { grid-area: testi; }
 @media (max-width: 920px) {
   .bw-diag__grid {
     grid-template-columns: 1fr;
-    gap: 32px;
+    grid-template-areas: "pitch" "form" "testi";
+    gap: 24px;
   }
 }
 
