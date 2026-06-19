@@ -783,7 +783,10 @@
 }
 
 .bw-diag__faqwrap {
-  margin-top: 32px;
+  margin-top: 56px;
+  /* Compensa o padding-bottom (56px) da .bw-diag__support para
+     a faixa navy da FAQ encostar no rodapé sem creme abaixo. */
+  margin-bottom: -56px;
 }
 
 /* Fecho navy da FAQ — apenas na página /diagnostico.
@@ -794,5 +797,6 @@
   background: var(--navy-deep);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
+
 
 
