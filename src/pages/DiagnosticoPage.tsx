@@ -559,9 +559,6 @@ function TestimonialCard({ waUrl }: { waUrl: string }) {
           <p className="bw-diag__testieyebrow">Depoimento</p>
           <p className="bw-diag__testiname">Vivian</p>
           <p className="bw-diag__testirole">cliente Bewild · depoimento presencial</p>
-          <p className="bw-diag__testistat">
-            <strong>70%</strong> de ocupação · studio no Butantã
-          </p>
           <a
             href={waUrl}
             target="_blank"
