@@ -623,18 +623,7 @@
   color: var(--cyan);
   margin: 0 0 6px;
 }
-.bw-diag__testistat {
-  font-size: 13px;
-  color: var(--ink);
-  margin: 0 0 10px;
-  line-height: 1.4;
-}
-.bw-diag__testistat strong {
-  color: var(--cyan);
-  font-size: 16px;
-  font-weight: 800;
-  font-family: "Poppins", sans-serif;
-}
+/* (removed) .bw-diag__testistat — dado pertencia a outro cliente */
 .bw-diag__testilink {
   display: inline-flex;
   align-items: center;
@@ -782,20 +771,62 @@
   margin: 0;
 }
 
+/* ===== FAQ na /diagnostico — escopo isolado, branding Bewild =====
+   FaqSection é compartilhado com a home; aqui sobrescrevemos cor,
+   tipografia e fundo APENAS dentro de .bw-diag__faqwrap. A home,
+   que renderiza .faq fora desse wrapper, fica intacta. */
 .bw-diag__faqwrap {
   margin-top: 56px;
-  /* Compensa o padding-bottom (56px) da .bw-diag__support para
-     a faixa navy da FAQ encostar no rodapé sem creme abaixo. */
-  margin-bottom: -56px;
 }
-
-/* Fecho navy da FAQ — apenas na página /diagnostico.
-   O componente FaqSection é compartilhado; aqui sobrescrevemos
-   o fundo escuro padrão (.faq usa var(--ink)) para o navy do hero,
-   sem alterar o uso na home. */
 .bw-diag__faqwrap .faq {
-  background: var(--navy-deep);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--paper);
+  color: var(--ink);
+  border-top: 1px solid var(--line-cool);
+}
+.bw-diag__faqwrap .section__eyebrow {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--cyan);
+}
+.bw-diag__faqwrap .section__eyebrow::before {
+  background: var(--cyan);
+}
+.bw-diag__faqwrap .section__title {
+  font-family: "Poppins", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 800;
+  font-style: normal;
+  color: var(--navy);
+  letter-spacing: -0.015em;
+}
+.bw-diag__faqwrap .section__title em {
+  font-family: "Poppins", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-style: normal;
+  font-weight: 800;
+  color: var(--cyan);
+}
+.bw-diag__faqwrap .faq__item {
+  border-bottom: 1px solid var(--line-cool);
+}
+.bw-diag__faqwrap .faq__q-num,
+.bw-diag__faqwrap .faq__q-num.mono {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 0.04em;
+}
+.bw-diag__faqwrap .faq__q-text {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--navy);
+}
+.bw-diag__faqwrap .faq__q-icon {
+  color: var(--cyan);
+}
+.bw-diag__faqwrap .faq__a p {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--ink);
 }
 
 
