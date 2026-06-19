@@ -623,18 +623,7 @@
   color: var(--cyan);
   margin: 0 0 6px;
 }
-.bw-diag__testistat {
-  font-size: 13px;
-  color: var(--ink);
-  margin: 0 0 10px;
-  line-height: 1.4;
-}
-.bw-diag__testistat strong {
-  color: var(--cyan);
-  font-size: 16px;
-  font-weight: 800;
-  font-family: "Poppins", sans-serif;
-}
+/* (removed) .bw-diag__testistat — dado pertencia a outro cliente */
 .bw-diag__testilink {
   display: inline-flex;
   align-items: center;
