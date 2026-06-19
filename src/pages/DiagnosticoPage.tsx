@@ -220,7 +220,7 @@ function DiagnosticoForm() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!canSubmit || submitting) {
-      setTouched({ nome: true, whats: true, email: true, local: true, chaves: true });
+      setTouched({ nome: true, whats: true, email: true, local: true, chaves: true, objetivo: true, metragem: true });
       return;
     }
     setSubmitting(true);
