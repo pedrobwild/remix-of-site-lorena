@@ -378,6 +378,38 @@ function DiagnosticoForm() {
             error={touched.chaves && !chavesOk ? "Selecione uma opção." : null}
           />
 
+          <ChipsField
+            label="Objetivo"
+            required
+            options={OBJETIVOS}
+            value={f.objetivo}
+            onChange={(v) => {
+              set("objetivo", v);
+              setTouched((t) => ({ ...t, objetivo: true }));
+            }}
+            error={touched.objetivo && !objetivoOk ? "Selecione o objetivo." : null}
+          />
+
+          <div className="bw-diag__field">
+            <label htmlFor="diag-m2">
+              Metragem (m²) <span className="bw-diag__req">*</span>
+            </label>
+            <input
+              id="diag-m2"
+              type="text"
+              inputMode="numeric"
+              placeholder="32"
+              className={touched.metragem && !metragemOk ? "bad" : ""}
+              value={f.metragem}
+              onChange={(e) => set("metragem", e.target.value.replace(/[^\d.,]/g, "").slice(0, 6))}
+              onBlur={() => setTouched((t) => ({ ...t, metragem: true }))}
+              required
+            />
+            {touched.metragem && !metragemOk && (
+              <span className="bw-diag__error">Informe a metragem em m².</span>
+            )}
+          </div>
+
           <button
             type="button"
             className="bw-diag__more-toggle"
@@ -389,18 +421,6 @@ function DiagnosticoForm() {
 
           {showMore && (
             <div className="bw-diag__more">
-              <ChipsField label="Objetivo" options={OBJETIVOS} value={f.objetivo} onChange={(v) => set("objetivo", v)} />
-              <div className="bw-diag__field">
-                <label htmlFor="diag-m2">Metragem (m²)</label>
-                <input
-                  id="diag-m2"
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="32"
-                  value={f.metragem}
-                  onChange={(e) => set("metragem", e.target.value.replace(/[^\d.,]/g, "").slice(0, 6))}
-                />
-              </div>
               <ChipsField label="Tem planta do imóvel?" options={PLANTA} value={f.planta} onChange={(v) => set("planta", v)} />
               <div className="bw-diag__field">
                 <label htmlFor="diag-msg">Mensagem</label>
