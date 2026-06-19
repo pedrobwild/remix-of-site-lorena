@@ -15,6 +15,8 @@ import DiagnosticoPage from "./pages/DiagnosticoPage";
 import FaqPage from "./pages/FaqPage";
 import PrivacidadePage from "./pages/PrivacidadePage";
 import NotFoundPage from "./pages/NotFoundPage";
+import MaintenancePage from "./pages/MaintenancePage";
+import { MAINTENANCE_MODE } from "./config/site";
 import LoginPage from "./pages/admin/LoginPage";
 
 import BewildOverviewPage from "./pages/admin/BewildOverviewPage";
@@ -34,6 +36,10 @@ import ProtectedRoute from "./components/admin/ProtectedRoute";
 import type { Route } from "./lib/useHashRoute";
 
 export function renderRoute(route: Route) {
+  // Gate de manutenção: esconde todo o site público (inclusive 404)
+  // enquanto a flag está ligada. Rotas /admin/* continuam normais.
+  if (MAINTENANCE_MODE && !route.name?.startsWith("admin")) return <MaintenancePage />;
+
   if (route.name === "portfolio") return <BewildPortfolioPage />;
   if (route.name === "bewild-project") return <BewildProjectPage slug={route.slug} />;
   if (route.name === "conteudos") return <BewildConteudosPage />;
