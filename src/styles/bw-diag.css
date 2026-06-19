@@ -228,15 +228,9 @@
   border-radius: 18px;
   padding: 28px 28px 26px;
   box-shadow: 0 44px 90px -44px rgba(0, 0, 0, 0.6);
-  position: sticky;
-  top: 96px;
   color: var(--ink);
 }
-@media (max-width: 920px) {
-  .bw-diag__formcard {
-    position: static;
-  }
-}
+
 .bw-diag__field {
   margin-bottom: 15px;
 }
