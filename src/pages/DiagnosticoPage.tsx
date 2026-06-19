@@ -145,10 +145,8 @@ export default function DiagnosticoPage() {
           <div className="bw-diag__container">
             <div className="bw-diag__grid">
               <DiagnosticoPitch />
-              <div className="bw-diag__formcol">
-                <DiagnosticoForm />
-                <TestimonialCard waUrl={waUrl} />
-              </div>
+              <DiagnosticoForm />
+              <TestimonialCard waUrl={waUrl} />
             </div>
           </div>
         </section>
@@ -197,7 +195,9 @@ function DiagnosticoForm() {
   const emailOk = EMAIL_RE.test(f.email.trim());
   const localOk = f.local.trim().length >= 2;
   const chavesOk = f.chaves.length > 0;
-  const canSubmit = nomeOk && whatsOk && emailOk && localOk && chavesOk;
+  const objetivoOk = f.objetivo.length > 0;
+  const metragemOk = digits(f.metragem).length > 0;
+  const canSubmit = nomeOk && whatsOk && emailOk && localOk && chavesOk && objetivoOk && metragemOk;
 
   const messageText = useMemo(() => {
     const lines: string[] = ["Olá! Quero um diagnóstico do meu studio."];
@@ -220,7 +220,7 @@ function DiagnosticoForm() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!canSubmit || submitting) {
-      setTouched({ nome: true, whats: true, email: true, local: true, chaves: true });
+      setTouched({ nome: true, whats: true, email: true, local: true, chaves: true, objetivo: true, metragem: true });
       return;
     }
     setSubmitting(true);
@@ -378,6 +378,38 @@ function DiagnosticoForm() {
             error={touched.chaves && !chavesOk ? "Selecione uma opção." : null}
           />
 
+          <ChipsField
+            label="Objetivo"
+            required
+            options={OBJETIVOS}
+            value={f.objetivo}
+            onChange={(v) => {
+              set("objetivo", v);
+              setTouched((t) => ({ ...t, objetivo: true }));
+            }}
+            error={touched.objetivo && !objetivoOk ? "Selecione o objetivo." : null}
+          />
+
+          <div className="bw-diag__field">
+            <label htmlFor="diag-m2">
+              Metragem (m²) <span className="bw-diag__req">*</span>
+            </label>
+            <input
+              id="diag-m2"
+              type="text"
+              inputMode="numeric"
+              placeholder="32"
+              className={touched.metragem && !metragemOk ? "bad" : ""}
+              value={f.metragem}
+              onChange={(e) => set("metragem", e.target.value.replace(/[^\d.,]/g, "").slice(0, 6))}
+              onBlur={() => setTouched((t) => ({ ...t, metragem: true }))}
+              required
+            />
+            {touched.metragem && !metragemOk && (
+              <span className="bw-diag__error">Informe a metragem em m².</span>
+            )}
+          </div>
+
           <button
             type="button"
             className="bw-diag__more-toggle"
@@ -389,18 +421,6 @@ function DiagnosticoForm() {
 
           {showMore && (
             <div className="bw-diag__more">
-              <ChipsField label="Objetivo" options={OBJETIVOS} value={f.objetivo} onChange={(v) => set("objetivo", v)} />
-              <div className="bw-diag__field">
-                <label htmlFor="diag-m2">Metragem (m²)</label>
-                <input
-                  id="diag-m2"
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="32"
-                  value={f.metragem}
-                  onChange={(e) => set("metragem", e.target.value.replace(/[^\d.,]/g, "").slice(0, 6))}
-                />
-              </div>
               <ChipsField label="Tem planta do imóvel?" options={PLANTA} value={f.planta} onChange={(v) => set("planta", v)} />
               <div className="bw-diag__field">
                 <label htmlFor="diag-msg">Mensagem</label>

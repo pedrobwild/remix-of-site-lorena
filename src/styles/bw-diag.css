@@ -57,14 +57,20 @@
 
 .bw-diag__grid {
   display: grid;
-  grid-template-columns: 1.04fr 0.96fr;
-  gap: 44px;
+  grid-template-columns: 1.02fr 0.98fr;
+  grid-template-areas: "pitch form" "testi form";
+  column-gap: 44px;
+  row-gap: 20px;
   align-items: start;
 }
+.bw-diag__pitch { grid-area: pitch; }
+.bw-diag__formcard { grid-area: form; }
+.bw-diag__testicard { grid-area: testi; }
 @media (max-width: 920px) {
   .bw-diag__grid {
     grid-template-columns: 1fr;
-    gap: 32px;
+    grid-template-areas: "pitch" "form" "testi";
+    gap: 24px;
   }
 }
 
@@ -380,12 +386,7 @@
   margin-bottom: 4px;
 }
 
-/* Coluna do formulário + card de depoimento */
-.bw-diag__formcol {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
+
 
 /* Card compacto de depoimento (abaixo do formulário) */
 .bw-diag__testicard {
@@ -660,7 +661,7 @@
   color: var(--ink);
   padding: 72px 0 56px;
 }
-.bw-diag__support-title {
+.bw-diag .bw-diag__support-title {
   font-family: "Poppins", sans-serif;
   font-weight: 800;
   font-size: clamp(24px, 3vw, 34px);
@@ -669,10 +670,10 @@
   color: var(--navy);
   margin: 0 0 24px;
 }
-.bw-diag__support-title--mt {
+.bw-diag .bw-diag__support-title--mt {
   margin-top: 56px;
 }
-.bw-diag__support-title .accent {
+.bw-diag .bw-diag__support-title .accent {
   color: var(--cyan);
 }
 
@@ -782,6 +783,20 @@
 }
 
 .bw-diag__faqwrap {
-  margin-top: 32px;
+  margin-top: 56px;
+  /* Compensa o padding-bottom (56px) da .bw-diag__support para
+     a faixa navy da FAQ encostar no rodapé sem creme abaixo. */
+  margin-bottom: -56px;
 }
+
+/* Fecho navy da FAQ — apenas na página /diagnostico.
+   O componente FaqSection é compartilhado; aqui sobrescrevemos
+   o fundo escuro padrão (.faq usa var(--ink)) para o navy do hero,
+   sem alterar o uso na home. */
+.bw-diag__faqwrap .faq {
+  background: var(--navy-deep);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+
 
