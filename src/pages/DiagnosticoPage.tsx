@@ -4,7 +4,7 @@ import { useSiteSettings } from "../lib/useSiteSettings";
 import BewildSiteNav from "@/components/BewildSiteNav";
 import SiteFooter from "@/components/SiteFooter";
 import StickyMobileCTA from "@/components/StickyMobileCTA";
-import FaqSection from "@/components/FaqSection";
+import { useFaq } from "@/lib/useFaq";
 import { CONTACT } from "../components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
@@ -649,8 +649,45 @@ function SupportSections() {
         </p>
       </div>
 
-      <div className="bw-diag__faqwrap">
-        <FaqSection />
+      <DiagFaq />
+    </section>
+  );
+}
+
+function DiagFaq() {
+  const { items } = useFaq();
+  if (items.length === 0) return null;
+  return (
+    <section className="bw-diag__faq" id="faq" aria-labelledby="bw-diag-faq-title">
+      <div className="bw-diag__faq-eyebrow">FAQ</div>
+      <h2 className="bw-diag__faq-title" id="bw-diag-faq-title">Perguntas frequentes</h2>
+      <div
+        className="bw-diag__faq-list"
+        itemScope
+        itemType="https://schema.org/FAQPage"
+      >
+        {items.map((item) => (
+          <details
+            key={item.id}
+            className="bw-diag__faq-item"
+            itemScope
+            itemProp="mainEntity"
+            itemType="https://schema.org/Question"
+          >
+            <summary className="bw-diag__faq-q">
+              <span itemProp="name">{item.question}</span>
+              <span className="bw-diag__faq-pm" aria-hidden="true">+</span>
+            </summary>
+            <div
+              className="bw-diag__faq-a"
+              itemScope
+              itemProp="acceptedAnswer"
+              itemType="https://schema.org/Answer"
+            >
+              <span itemProp="text">{item.answer}</span>
+            </div>
+          </details>
+        ))}
       </div>
     </section>
   );
