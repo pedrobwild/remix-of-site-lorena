@@ -145,10 +145,8 @@ export default function DiagnosticoPage() {
           <div className="bw-diag__container">
             <div className="bw-diag__grid">
               <DiagnosticoPitch />
-              <div className="bw-diag__formcol">
-                <DiagnosticoForm />
-                <TestimonialCard waUrl={waUrl} />
-              </div>
+              <DiagnosticoForm />
+              <TestimonialCard waUrl={waUrl} />
             </div>
           </div>
         </section>
