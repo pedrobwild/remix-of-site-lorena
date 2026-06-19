@@ -195,7 +195,9 @@ function DiagnosticoForm() {
   const emailOk = EMAIL_RE.test(f.email.trim());
   const localOk = f.local.trim().length >= 2;
   const chavesOk = f.chaves.length > 0;
-  const canSubmit = nomeOk && whatsOk && emailOk && localOk && chavesOk;
+  const objetivoOk = f.objetivo.length > 0;
+  const metragemOk = digits(f.metragem).length > 0;
+  const canSubmit = nomeOk && whatsOk && emailOk && localOk && chavesOk && objetivoOk && metragemOk;
 
   const messageText = useMemo(() => {
     const lines: string[] = ["Olá! Quero um diagnóstico do meu studio."];
