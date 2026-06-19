@@ -661,7 +661,7 @@
   color: var(--ink);
   padding: 72px 0 56px;
 }
-.bw-diag__support-title {
+.bw-diag .bw-diag__support-title {
   font-family: "Poppins", sans-serif;
   font-weight: 800;
   font-size: clamp(24px, 3vw, 34px);
@@ -670,10 +670,10 @@
   color: var(--navy);
   margin: 0 0 24px;
 }
-.bw-diag__support-title--mt {
+.bw-diag .bw-diag__support-title--mt {
   margin-top: 56px;
 }
-.bw-diag__support-title .accent {
+.bw-diag .bw-diag__support-title .accent {
   color: var(--cyan);
 }
 
