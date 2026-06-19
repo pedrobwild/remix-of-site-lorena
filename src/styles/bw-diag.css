@@ -386,12 +386,7 @@
   margin-bottom: 4px;
 }
 
-/* Coluna do formulário + card de depoimento */
-.bw-diag__formcol {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
+
 
 /* Card compacto de depoimento (abaixo do formulário) */
 .bw-diag__testicard {
