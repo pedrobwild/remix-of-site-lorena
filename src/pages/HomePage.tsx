@@ -264,6 +264,58 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* MANIFESTO — revelação Build→Bewild + descida "não é sua" (escura) */}
+      <section className="section bw-dark" id="manifesto" aria-label="Bewild — manifesto">
+        <div className="container">
+          <div className="bw-manifesto">
+            <h2 className="bw-name">
+              <span className="pre">Você nunca leu</span>
+              <span className="build">Build.</span>
+              <span className="bewild">Você leu Be<em>wild.</em></span>
+            </h2>
+            <p className="bw-lede">
+              <strong>Comprar um imóvel pra render não deveria virar um emprego.</strong>
+            </p>
+            <p className="bw-lede">
+              Ser <em>wild</em> é ter o ativo sem ser dominado por ele. A Bewild entrega o studio pronto pra render, sem você entrar na obra.
+            </p>
+
+            <div className="bw-manifesto-body">
+              <h2>Uma a uma, as responsabilidades <em>deixam de ser suas.</em></h2>
+              <div className="bw-descida">
+                <div className="bw-solta">
+                  <span className="num">01</span>
+                  <div className="txt">
+                    <div className="o">A arquitetura</div>
+                    <div className="d">Projeto e layout pensados pra render no short stay.</div>
+                  </div>
+                  <span className="selo">não é sua</span>
+                </div>
+                <div className="bw-solta">
+                  <span className="num">02</span>
+                  <div className="txt">
+                    <div className="o">A obra</div>
+                    <div className="d">Marcenaria, acabamento, fornecedores e prazo.</div>
+                  </div>
+                  <span className="selo">não é sua</span>
+                </div>
+                <div className="bw-solta">
+                  <span className="num">03</span>
+                  <div className="txt">
+                    <div className="o">A mobília</div>
+                    <div className="d">Móveis, enxoval, eletro e decoração.</div>
+                  </div>
+                  <span className="selo">não é sua</span>
+                </div>
+              </div>
+              <div className="bw-resto">
+                <p className="big">Fica o studio pronto.<br />Fica o seu tempo.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* PROBLEMA */}
       <section className="section" id="problema">
         <div className="container split">
