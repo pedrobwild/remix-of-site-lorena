@@ -264,6 +264,58 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* MANIFESTO — revelação Build→Bewild + descida "não é sua" (escura) */}
+      <section className="section bw-dark" id="manifesto" aria-label="Bewild — manifesto">
+        <div className="container">
+          <div className="bw-manifesto">
+            <h2 className="bw-name">
+              <span className="pre">Você nunca leu</span>
+              <span className="build">Build.</span>
+              <span className="bewild">Você leu Be<em>wild.</em></span>
+            </h2>
+            <p className="bw-lede">
+              <strong>Comprar um imóvel pra render não deveria virar um emprego.</strong>
+            </p>
+            <p className="bw-lede">
+              Ser <em>wild</em> é ter o ativo sem ser dominado por ele. A Bewild entrega o studio pronto pra render, sem você entrar na obra.
+            </p>
+
+            <div className="bw-manifesto-body">
+              <h2>Uma a uma, as responsabilidades <em>deixam de ser suas.</em></h2>
+              <div className="bw-descida">
+                <div className="bw-solta">
+                  <span className="num">01</span>
+                  <div className="txt">
+                    <div className="o">A arquitetura</div>
+                    <div className="d">Projeto e layout pensados pra render no short stay.</div>
+                  </div>
+                  <span className="selo">não é sua</span>
+                </div>
+                <div className="bw-solta">
+                  <span className="num">02</span>
+                  <div className="txt">
+                    <div className="o">A obra</div>
+                    <div className="d">Marcenaria, acabamento, fornecedores e prazo.</div>
+                  </div>
+                  <span className="selo">não é sua</span>
+                </div>
+                <div className="bw-solta">
+                  <span className="num">03</span>
+                  <div className="txt">
+                    <div className="o">A mobília</div>
+                    <div className="d">Móveis, enxoval, eletro e decoração.</div>
+                  </div>
+                  <span className="selo">não é sua</span>
+                </div>
+              </div>
+              <div className="bw-resto">
+                <p className="big">Fica o studio pronto.<br />Fica o seu tempo.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* PROBLEMA */}
       <section className="section" id="problema">
         <div className="container split">
@@ -336,6 +388,53 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* VÍDEOS — quem mede / quem executa (escura) */}
+      <section className="section bw-dark bw-videos" id="bastidores" aria-label="Bewild — quem projeta e quem executa">
+        <div className="container">
+          <div className="video-bloco">
+            <div className="video-texto">
+              <p className="vt-tag">antes de qualquer parede</p>
+              <h3 className="vt-h">Quem projeta o seu studio mede ele <em>pessoalmente.</em></h3>
+              <p>
+                A arquiteta vai até o imóvel e decide ali o que muda na diária: circulação, ponto de luz, onde a cama rende foto. Cada milímetro pensado pro studio operar bem, não só pra ficar bonito.
+              </p>
+            </div>
+            <div className="video-moldura">
+              <video
+                src="/videos/arquiteta-medicao.mp4"
+                poster="/videos/arquiteta-medicao-poster.jpg"
+                muted
+                loop
+                autoPlay
+                playsInline
+                preload="metadata"
+                aria-label="Arquiteta da Bewild fazendo a medição do imóvel"
+              />
+            </div>
+          </div>
+          <div className="video-bloco invertido">
+            <div className="video-moldura">
+              <video
+                src="/videos/time-obra.mp4"
+                poster="/videos/time-obra-poster.jpg"
+                muted
+                loop
+                autoPlay
+                playsInline
+                preload="metadata"
+                aria-label="Time de obra da Bewild a caminho da reforma"
+              />
+            </div>
+            <div className="video-texto">
+              <p className="vt-tag">e quem executa tem rosto</p>
+              <h3 className="vt-h">A obra que você não toca tem <em>time próprio.</em></h3>
+              <p>
+                Quem reforma o seu studio trabalha na Bewild, não é um terceiro que aparece e some. Você acompanha o andamento à distância e recebe o imóvel pronto pra operar.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ARQUITETURA */}
       <section className="section" id="arquitetura" style={{ background: "var(--paper)" }}>
