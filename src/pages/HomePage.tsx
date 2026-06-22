@@ -388,6 +388,53 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* VÍDEOS — quem mede / quem executa (escura) */}
+      <section className="section bw-dark bw-videos" id="bastidores" aria-label="Bewild — quem projeta e quem executa">
+        <div className="container">
+          <div className="video-bloco">
+            <div className="video-texto">
+              <p className="vt-tag">antes de qualquer parede</p>
+              <h3 className="vt-h">Quem projeta o seu studio mede ele <em>pessoalmente.</em></h3>
+              <p>
+                A arquiteta vai até o imóvel e decide ali o que muda na diária: circulação, ponto de luz, onde a cama rende foto. Cada milímetro pensado pro studio operar bem, não só pra ficar bonito.
+              </p>
+            </div>
+            <div className="video-moldura">
+              <video
+                src="/videos/arquiteta-medicao.mp4"
+                poster="/videos/arquiteta-medicao-poster.jpg"
+                muted
+                loop
+                autoPlay
+                playsInline
+                preload="metadata"
+                aria-label="Arquiteta da Bewild fazendo a medição do imóvel"
+              />
+            </div>
+          </div>
+          <div className="video-bloco invertido">
+            <div className="video-moldura">
+              <video
+                src="/videos/time-obra.mp4"
+                poster="/videos/time-obra-poster.jpg"
+                muted
+                loop
+                autoPlay
+                playsInline
+                preload="metadata"
+                aria-label="Time de obra da Bewild a caminho da reforma"
+              />
+            </div>
+            <div className="video-texto">
+              <p className="vt-tag">e quem executa tem rosto</p>
+              <h3 className="vt-h">A obra que você não toca tem <em>time próprio.</em></h3>
+              <p>
+                Quem reforma o seu studio trabalha na Bewild, não é um terceiro que aparece e some. Você acompanha o andamento à distância e recebe o imóvel pronto pra operar.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ARQUITETURA */}
       <section className="section" id="arquitetura" style={{ background: "var(--paper)" }}>
