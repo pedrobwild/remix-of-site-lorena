@@ -6,7 +6,7 @@
  *  - Acessível apenas via URL direta (QR).
  *  - Reaproveita pipeline de lead da DiagnosticoPage (notify-lead).
  */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSeo } from "@/lib/useSeo";
 import { CONTACT } from "@/components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
