@@ -244,7 +244,7 @@ export default function HomePage() {
               <span className="bw-reveal accent" data-delay="3"><span>sem você virar gerente de obra.</span></span>
             </h1>
             <p className="sub">
-              Projeto, obra, marcenaria, mobiliário e acompanhamento num processo único. Você acompanha; a Bewild executa.
+              Projeto, obra, marcenaria, mobília e setup num contrato só. Você acompanha tudo pelo portal. O trabalho fica com a gente.
             </p>
             <p className="micro bw-mono">
               Da entrega das chaves ao imóvel pronto para foto, anúncio e operação
@@ -289,10 +289,10 @@ export default function HomePage() {
       {/* Marquee — assinatura editorial entre hero e manifesto */}
       <div className="bw-marquee" aria-hidden="true">
         <div className="bw-marquee__track">
-          <span>CONSTRUÍDO POR QUEM NÃO ACEITA O ÓBVIO <i>—</i> BUILT BY THE WILD ONES <i>—</i> </span>
-          <span>CONSTRUÍDO POR QUEM NÃO ACEITA O ÓBVIO <i>—</i> BUILT BY THE WILD ONES <i>—</i> </span>
-          <span>CONSTRUÍDO POR QUEM NÃO ACEITA O ÓBVIO <i>—</i> BUILT BY THE WILD ONES <i>—</i> </span>
-          <span>CONSTRUÍDO POR QUEM NÃO ACEITA O ÓBVIO <i>—</i> BUILT BY THE WILD ONES <i>—</i> </span>
+          <span>CONSTRUÍDO POR QUEM NÃO ACEITA O ÓBVIO <i>/</i> BUILT BY THE WILD ONES <i>/</i> </span>
+          <span>CONSTRUÍDO POR QUEM NÃO ACEITA O ÓBVIO <i>/</i> BUILT BY THE WILD ONES <i>/</i> </span>
+          <span>CONSTRUÍDO POR QUEM NÃO ACEITA O ÓBVIO <i>/</i> BUILT BY THE WILD ONES <i>/</i> </span>
+          <span>CONSTRUÍDO POR QUEM NÃO ACEITA O ÓBVIO <i>/</i> BUILT BY THE WILD ONES <i>/</i> </span>
         </div>
       </div>
 
@@ -303,7 +303,7 @@ export default function HomePage() {
           <div className="bw-manifesto">
             <h2 className="bw-name">
               <span className="pre">Você nunca leu</span>
-              <span className="build">Build.<span className="bw-redline-tag" aria-hidden="true">REV. — leitura corrigida</span></span>
+              <span className="build">Build.</span>
               <span className="bewild">Você leu Be<em>wild.</em></span>
             </h2>
             <p className="bw-lede">
@@ -536,7 +536,7 @@ export default function HomePage() {
           <div className="diffs-leads">
             <article className="diff-lead">
               <span className="diff-tag">Tudo num lugar só</span>
-              <h3>Um time cuida de tudo, do começo ao fim</h3>
+              <h3>Um time cuida de tudo, da planta à chave</h3>
               <p>Projeto, obra, marcenaria, compras, fornecedores e entrega ficam com a gente. <strong>Você não vira gerente de obra</strong>. Não precisa cobrar prazo, alinhar fornecedor nem resolver imprevisto. Isso é problema nosso.</p>
             </article>
             <article className="diff-lead">
