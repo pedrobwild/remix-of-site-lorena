@@ -1,43 +1,13 @@
 /**
- * HomePage — Nova Home Bewild (spec v4).
+ * HomePage — Bewild Home v5 (direção "prancheta de arquitetura").
  *
- * Página totalmente autocontida: nav + 14 seções + footer, fiéis ao HTML
- * de referência. Todo o CSS vive em `src/styles/home.css` prefixado por
- * `.bw-home` para não vazar para outras páginas.
- *
- * Interações:
- * - Hero parallax suave (translate Y do background) via scroll listener,
- *   desligado em `prefers-reduced-motion`.
- * - Scroll-reveal via IntersectionObserver — adiciona `.in` aos filhos
- *   diretos de `.container` ao entrar na viewport.
- * - "O que fazemos": accordion horizontal — hover no desktop, click no
- *   touch; primeiro painel ativo por padrão; vira pilha vertical ≤760px.
- * - FAQ: `<details>/<summary>` nativo com primeiro item aberto.
+ * Estrutura inteiramente reescrita conforme o protótipo de direção de arte.
+ * Mantém o footer global (SiteFooter), a navegação unificada (BewildSiteNav),
+ * o sticky CTA mobile, os assets de imagem/vídeo já em uso, e toda a camada
+ * de SEO/analytics (useSeo + faqJsonLd + trackEvent + whatsappHref).
  */
 import { useEffect, useRef } from "react";
 import { useHomeFx } from "@/lib/useHomeFx";
-import {
-  Network,
-  Building2,
-  Target,
-  ClipboardList,
-  MonitorCheck,
-  Sparkles,
-  Globe2,
-  BedDouble,
-  Compass,
-  Briefcase,
-  Plane,
-  Building,
-  Handshake,
-  Check,
-  X,
-  CircleDot,
-  Calendar,
-  Circle,
-  Quote,
-  type LucideIcon,
-} from "lucide-react";
 import { useSeo, faqJsonLd } from "@/lib/useSeo";
 import { trackEvent } from "@/lib/ga4";
 import { whatsappHref } from "@/components/landing/content";
@@ -45,6 +15,7 @@ import "@/styles/home.css";
 import BewildSiteNav from "@/components/BewildSiteNav";
 import SiteFooter from "@/components/SiteFooter";
 import StickyMobileCTA from "@/components/StickyMobileCTA";
+
 import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.json";
 import studioAntes from "@/assets/portfolio/studio-zip-brooklin-antes.jpg.asset.json";
 import studioDepois from "@/assets/portfolio/studio-zip-brooklin-depois.jpg.asset.json";
@@ -53,88 +24,14 @@ import plantaHumanizada from "@/assets/portfolio/planta-humanizada.png.asset.jso
 import rafaelOcupacao from "@/assets/testimonials/rafael/rafael-ocupacao-novembro.jpeg.asset.json";
 import rafaelAirbnb from "@/assets/testimonials/rafael/rafael-airbnb-butanta.jpeg.asset.json";
 
-
-
-/* ---------------- data ---------------- */
-
-const JOURNEY: {
-  num: string;
-  title: string;
-  text: string;
-  img: string | null;
-  alt?: string;
-  pos?: string;
-  slot?: string;
-}[] = [
-  { num: "01", title: "Diagnóstico e estratégia", text: "Avaliamos o imóvel e definimos o uso: short stay, long stay ou misto.", img: studioAntes.url, alt: "Studio antes da reforma, na etapa de diagnóstico", pos: "50% 50%" },
-  { num: "02", title: "Projeto personalizado", text: "Layout, marcenaria, iluminação e acabamentos desenhados para cada metro. Nada genérico.", img: "/hero-studio-desktop.webp", alt: "Render de studio projetado pela Bewild", pos: "50% 45%" },
-  { num: "03", title: "Escopo e orçamento fechados", text: "Você sabe o que está incluso e o que mexe no preço antes de a obra começar.", img: null, slot: "Documento · escopo" },
-  { num: "04", title: "Obra e marcenaria sob medida", text: "Execução acompanhada, marcenaria feita para durar, cada decisão registrada.", img: null, slot: "Foto · obra" },
-  { num: "05", title: "Acompanhamento no portal", text: "Cronograma e fotos da obra. Você vê andar sem precisar ir até lá.", img: null, slot: "Print · portal" },
-  { num: "06", title: "Entrega pronta para operar", text: "Mobiliado, com enxoval, pronto para foto, anúncio e diária.", img: studioPronto.url, alt: "Studio entregue pela Bewild, pronto para operar", pos: "50% 50%" },
-];
-
-const PROBLEMS = [
-  "Orçamentos que começam baixos e crescem no meio da obra.",
-  "Fornecedores que não conversam entre si.",
-  "Projeto bonito, mas difícil de executar.",
-  "Studio pronto visualmente, mas ruim de operar.",
-  "Cliente acompanhando tudo por WhatsApp, sem rastreabilidade.",
-  "Imóvel parado enquanto deveria estar gerando receita.",
-];
-
-
-const ARCH = [
-  { idx: "01", title: "Layout inteligente", text: "Cama, bancada, cozinha, armários, TV, circulação e apoio de malas para o espaço parecer maior e funcionar melhor." },
-  { idx: "02", title: "Marcenaria sob medida", text: "Armazenamento, painéis, bancadas e nichos que aumentam a percepção de qualidade e reduzem improvisos." },
-  { idx: "03", title: "Iluminação e percepção de valor", text: "A luz certa melhora a foto, a experiência do hóspede e a sensação de cuidado no imóvel." },
-  { idx: "04", title: "Materiais para uso real", text: "A escolha não é só estética. Consideramos limpeza, manutenção, resistência, reposição e custo total." },
-  { idx: "05", title: "Personalização sem perder eficiência", text: "O projeto respeita o imóvel e o perfil do investidor, sem escolhas que encarecem, atrasam ou prejudicam a operação." },
-];
-
-export const DIFFS: { Icon: LucideIcon; title: string; text: string }[] = [
-  { Icon: Network, title: "Operação ponta a ponta", text: "Um único time integra arquitetura, obra, compras, fornecedores, marcenaria e entrega." },
-  { Icon: Building2, title: "Especialização em studios compactos", text: "Conhecemos as decisões críticas de imóveis pequenos: layout, armazenamento, eletros, circulação, iluminação e operação." },
-  { Icon: Target, title: "Foco em investidor", text: "Cada escolha considera prazo, custo, percepção de valor, manutenção e potencial de rentabilização." },
-  { Icon: ClipboardList, title: "Transparência de escopo", text: "O cliente entende o que está incluso, o que é opcional e quais escolhas impactam preço ou prazo." },
-  { Icon: MonitorCheck, title: "Portal de acompanhamento", text: "Fotos, relatórios, cronograma e atualizações para acompanhar a obra sem depender de mensagens soltas." },
-  { Icon: Sparkles, title: "Acabamentos pensados para operação", text: "Bonito na foto, resistente no uso, simples de limpar e mais fácil de manter." },
-  { Icon: Globe2, title: "Experiência remota", text: "Ideal para quem comprou imóvel em São Paulo, mas mora em outra cidade, estado ou país." },
-];
-
-const COMPARE = [
-  { label: "Arquitetura", trad: "Projeto isolado, nem sempre conectado à obra.", bw: "Projeto personalizado já pensado para execução, uso e operação." },
-  { label: "Orçamento", trad: "Múltiplos fornecedores e risco de lacunas.", bw: "Escopo centralizado e itens organizados por etapa." },
-  { label: "Obra", trad: "Cliente cobra e coordena.", bw: "Gestão técnica e acompanhamento estruturado." },
-  { label: "Marcenaria", trad: "Fornecedor separado.", bw: "Integrada ao projeto e à sequência da obra." },
-  { label: "Comunicação", trad: "Mensagens soltas.", bw: "Portal, registros e atualizações." },
-  { label: "Entrega", trad: "Imóvel reformado, mas nem sempre pronto para operar.", bw: "Imóvel pensado para uso, foto, anúncio e operação." },
-];
-
-const WHO: { Icon: LucideIcon; title: string; text: string }[] = [
-  { Icon: BedDouble, title: "Investidor de short stay", text: "Para quem quer preparar o imóvel para Airbnb, Booking ou locação por temporada." },
-  { Icon: Compass, title: "Investidor iniciante", text: "Para quem comprou o primeiro studio e quer fazer certo desde o começo." },
-  { Icon: Briefcase, title: "Investidor de portfólio", text: "Para quem tem múltiplas unidades e precisa de padrão, processo e escala." },
-  { Icon: Plane, title: "Cliente remoto", text: "Para quem mora fora de São Paulo, em outro estado ou fora do Brasil." },
-  { Icon: Building, title: "Proprietário de uso misto", text: "Para quem quer usar o imóvel em parte do ano e rentabilizar no restante." },
-  { Icon: Handshake, title: "Parceiros imobiliários", text: "Para corretores e incorporadoras que querem entregar uma solução mais completa ao comprador." },
-];
-
 const FAQS_HOME = [
-  { q: "A Bewild faz só projeto ou também executa a obra?", a: "A Bewild atua no modelo turn-key: projeto de arquitetura personalizado, planejamento, execução, compras, marcenaria, mobiliário e entrega final, conforme o escopo contratado." },
-  { q: "O projeto de arquitetura é personalizado?", a: "Sim. Cada imóvel recebe um estudo próprio de layout, circulação, marcenaria, iluminação e acabamentos. Nada de copiar e colar projeto genérico." },
-  { q: "Vocês trabalham com studios pequenos?", a: "É a nossa especialidade. Studios compactos de 19, 22 ou 28 m² exigem decisões precisas, e é exatamente nesse tipo de imóvel que a Bewild se concentra." },
-  { q: "Consigo acompanhar a obra à distância?", a: "Sim. Pelo portal de acompanhamento você vê cronograma, fotos de evolução, relatórios e decisões, sem depender de mensagens soltas no WhatsApp." },
-  { q: "Vocês ajudam com móveis, eletros e enxoval?", a: "Sim. A entrega turn-key inclui mobiliário, eletros e enxoval, conforme o escopo. O imóvel sai pronto para receber o primeiro hóspede." },
-  { q: "A Bewild atende imóveis para Airbnb?", a: "Sim. O projeto é pensado para short stay: diária, ocupação, foto e operação. O imóvel sai pronto para anunciar." },
-  { q: "O orçamento é fechado?", a: "O escopo é definido e organizado por etapa antes de a obra começar, para evitar surpresas no meio do caminho." },
-  { q: "Posso ver exemplos antes de fechar?", a: "Sim. Apresentamos cases de reformas entregues e o detalhamento do processo no diagnóstico inicial." },
-  { q: "Vocês atendem fora de São Paulo?", a: "O foco hoje é São Paulo, onde está a operação. Para imóveis em SP de clientes que moram em outra cidade, estado ou país, o acompanhamento remoto pelo portal foi feito sob medida." },
-  { q: "Como começo?", a: "Solicite o diagnóstico. Você envia os dados do imóvel e recebe uma análise inicial de escopo, projeto e próximos passos, sem compromisso." },
+  { q: "Quanto custa uma reforma dessas?", a: "Varia conforme o tamanho e o estado do studio. No diagnóstico a gente fecha o escopo e o valor, e ele não muda no meio da obra." },
+  { q: "Quanto tempo demora?", a: "A maioria fica pronta em torno de 60 dias úteis. No diagnóstico você já recebe a data da sua." },
+  { q: "Vocês só fazem a obra ou entregam pronto pra alugar?", a: "Entregamos pronto pra operar: obra, marcenaria, mobília, enxoval e as fotos pro anúncio." },
+  { q: "Airbnb ainda vale a pena?", a: "Depende do bairro e do studio. Por isso o diagnóstico começa avaliando o potencial real de diária e ocupação da sua unidade." },
+  { q: "Como sei que vai ficar bom?", a: "Você aprova o projeto antes, acompanha a obra pelo portal e tem 5 anos de garantia. Fora os mais de 150 studios já entregues." },
+  { q: "Preciso já ter o imóvel?", a: "O ideal é já ter. Se ainda está escolhendo, a gente ajuda a avaliar se o studio tem potencial antes da compra." },
 ];
-
-/* ---------------- component ---------------- */
-
 
 export default function HomePage() {
   useSeo({
@@ -148,147 +45,152 @@ export default function HomePage() {
 
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  // Marca html.js (alguns seletores do spec dependem disso, mas o CSS aqui
-  // não usa — mantido por compatibilidade).
   useEffect(() => {
     document.documentElement.classList.add("js");
   }, []);
 
-  // Scroll reveal
+  // Reveal coreografado para .rv, .fade, .hair, .vbloco
   useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
     const reduce =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    const root = rootRef.current;
-    const targets: HTMLElement[] = root
-      ? Array.from(root.querySelectorAll(".section > .container > *"))
-      : [];
-
-    if (reduce) {
+    const targets = Array.from(
+      root.querySelectorAll<HTMLElement>(".rv, .fade, .hair, .vbloco"),
+    );
+    if (reduce || typeof IntersectionObserver === "undefined") {
       targets.forEach((el) => el.classList.add("in"));
       return;
     }
-    if (typeof IntersectionObserver !== "undefined") {
-      const io = new IntersectionObserver(
-        (entries) => {
-          for (const e of entries) {
-            if (e.isIntersecting) {
-              e.target.classList.add("in");
-              io.unobserve(e.target);
-            }
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add("in");
+            io.unobserve(e.target);
           }
-        },
-        { rootMargin: "0px 0px -10% 0px", threshold: 0.05 },
-      );
-      targets.forEach((el) => io.observe(el));
-      return () => io.disconnect();
-    }
-    targets.forEach((el) => el.classList.add("in"));
+        }
+      },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.06 },
+    );
+    targets.forEach((el) => io.observe(el));
+    return () => io.disconnect();
   }, []);
 
-  // Sistema de direção de arte (smooth scroll, cursor crosshair, magnético, reveals masked).
   useHomeFx(rootRef);
 
+  const onCtaWhatsApp = () => {
+    trackEvent("click_whatsapp", { category: "home_cta", label: "cta_final" });
+  };
 
-
+  const scrollToResultado = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const t = document.getElementById("resultado");
+    if (t) t.scrollIntoView({ behavior: "smooth" });
+    trackEvent("click_prova_hero", { category: "rafael_butanta", label: "rafael_butanta" });
+  };
 
   return (
     <div className="bw-home" ref={rootRef}>
-      {/* Grain global — 1 camada GPU, ignora pointer events. */}
       <div className="bw-grain" aria-hidden="true" />
+      <div className="bw-frame" aria-hidden="true">
+        <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
+      </div>
+      <div className="bw-titleblock" aria-hidden="true">
+        BEWILD · GRUPO BWILD<br /><b>BW—001 / HOME</b><br />SÃO PAULO · BR
+      </div>
+      <div className="bw-sheetno" aria-hidden="true">SHEET 01 / 14</div>
 
-      {/* NAV — unificada para todas as páginas */}
       <BewildSiteNav />
 
-
-      {/* HERO — full-bleed: render de fundo, texto sobre gradiente */}
-      <section className="hero elevated" id="top" aria-label="Bewild — reforma turn-key de studios">
-        <picture className="hero-bg-pic">
-          <source media="(max-width: 760px)" srcSet="/hero-studio-mobile.webp" type="image/webp" />
-          <source srcSet="/hero-studio-desktop.webp" type="image/webp" />
-          <img
-            className="hero-bg"
-            src="/hero-studio-desktop.webp"
-            alt="Studio compacto reformado pela Bewild, pronto para operar no short stay"
-            width={1600}
-            height={900}
-            fetchPriority="high"
-            loading="eager"
-            decoding="async"
-          />
-        </picture>
-        <div className="hero-shade" />
-        <div className="hero-shade-bottom" />
-
-        {/* Rótulos técnicos do hero (desktop only via CSS). */}
-        <div className="hero-frame-label" aria-hidden="true">
-          STUDIO REF. — VILA OLÍMPIA · 22 M² · BEWILD/SP
-        </div>
-        <div className="hero-coord" aria-hidden="true">
-          -23.5965 · -46.6856 — REFORMA TURN-KEY
-        </div>
-        <div className="hero-scroll" aria-hidden="true">
-          ROLE 01—12
+      {/* ============ HERO ============ */}
+      <section className="hero" id="top" aria-label="Bewild — reforma turn-key de studios">
+        <div className="hero-grid" aria-hidden="true" />
+        <div className="hero-top">
+          <div className="hero-eyebrow">
+            <span className="mono tag">Reforma turn-key de studios · São Paulo</span>
+          </div>
+          <h1>
+            <span className="rv" data-d="1"><span>Seu studio pronto para render.</span></span>
+            <span className="rv lo" data-d="2"><span>Sem você virar gerente de obra.</span></span>
+          </h1>
         </div>
 
-        <div className="container">
-          <div className="hero-text">
-            <div className="eyebrow bw-mono" data-reveal>
-              <span className="bw-reveal"><span>Reforma turn-key de studios · São Paulo</span></span>
-            </div>
-            <h1>
-              <span className="bw-reveal" data-delay="1"><span>Seu studio pronto</span></span>{" "}
-              <span className="bw-reveal" data-delay="2"><span>para render,</span></span>
-              <br />
-              <span className="bw-reveal accent" data-delay="3"><span>sem você virar gerente de obra.</span></span>
-            </h1>
-            <p className="sub">
+        <div className="hero-row">
+          <div className="hero-left">
+            <p className="sub fade">
               Projeto, obra, marcenaria, mobília e setup num contrato só. Você acompanha tudo pelo portal. O trabalho fica com a gente.
             </p>
-            <p className="micro bw-mono">
-              Da entrega das chaves ao imóvel pronto para foto, anúncio e operação
-            </p>
-            <div className="hero-cta">
-              <a href="/diagnostico" className="btn btn-cyan bw-magnetic" data-cursor="hover">
-                Solicitar diagnóstico <span className="arrow">→</span>
+            <div className="cta fade">
+              <a className="btn btn-cyan bw-magnetic" href="/diagnostico" data-cursor="hover">
+                <span>Solicitar diagnóstico</span><span className="ar">→</span>
               </a>
-              <a href="/portfolio" className="btn btn-ghost-light" data-cursor="hover">
-                Ver reformas entregues
+              <a className="btn btn-ghost" href="/portfolio" data-cursor="hover">
+                <span>Ver reformas entregues</span>
               </a>
             </div>
-            <p className="hero-reassure">Resposta rápida</p>
-            <ul className="hero-proof" aria-label="Provas Bewild">
-              <li><b>150+</b><span>studios entregues</span></li>
-              <li><b>60</b><span>dias úteis · a partir de</span></li>
-              <li><b>05</b><span>anos de garantia</span></li>
-            </ul>
-            <a
-              href="#resultado"
-              className="hero-social-proof"
-              data-cta="hero-prova-rafael"
-              aria-label="Caso real: 70% de ocupação em novembro num studio no Butantã — ver detalhes do resultado"
-              onClick={(e) => {
-                e.preventDefault();
-                const target = document.getElementById("resultado");
-                if (target) {
-                  target.scrollIntoView({ behavior: "smooth" });
-                }
-                trackEvent("click_prova_hero", { category: "rafael_butanta", label: "rafael_butanta" });
-              }}
-            >
-              {"Caso real:\u00a0"}
-              <span className="highlight">70% de ocupação</span>
-              {"\u00a0em novembro num studio no Butantã —\u00a0"}
-              <span className="action">ver →</span>
-            </a>
           </div>
+
+          <div className="plate fade" aria-hidden="true">
+            <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
+            <svg className="pl-svg" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+              <g stroke="#5FB2DD" strokeWidth="1" opacity="0.9">
+                <rect x="70" y="70" width="260" height="360" />
+                <rect x="78" y="78" width="244" height="344" opacity="0.35" />
+                <rect x="70" y="70" width="92" height="96" />
+                <path d="M162 130 a32 32 0 0 1 -32 -32" strokeDasharray="2 4" opacity="0.7" />
+                <path d="M250 70 L250 150 L330 150" opacity="0.8" />
+                <line x1="250" y1="110" x2="290" y2="110" opacity="0.5" />
+                <rect x="92" y="300" width="120" height="110" opacity="0.8" />
+                <line x1="92" y1="326" x2="212" y2="326" opacity="0.5" />
+                <line x1="70" y1="240" x2="70" y2="300" strokeWidth="2" />
+                <line x1="66" y1="240" x2="66" y2="300" opacity="0.5" />
+                <rect x="250" y="330" width="72" height="80" opacity="0.7" />
+              </g>
+              <g stroke="#8FA6BC" strokeWidth="0.75" opacity="0.7">
+                <line x1="70" y1="450" x2="330" y2="450" />
+                <line x1="70" y1="445" x2="70" y2="455" /><line x1="330" y1="445" x2="330" y2="455" />
+                <line x1="350" y1="70" x2="350" y2="430" />
+                <line x1="345" y1="70" x2="355" y2="70" /><line x1="345" y1="430" x2="355" y2="430" />
+              </g>
+              <text x="200" y="466" fill="#8FA6BC" fontFamily="monospace" fontSize="11" letterSpacing="2" textAnchor="middle">5.80 M</text>
+              <text x="366" y="254" fill="#8FA6BC" fontFamily="monospace" fontSize="11" letterSpacing="2" textAnchor="middle" transform="rotate(90 366 254)">3.80 M</text>
+              <text x="116" y="356" fill="#5FB2DD" fontFamily="monospace" fontSize="9" letterSpacing="1.5">DORM.</text>
+              <text x="262" y="372" fill="#5FB2DD" fontFamily="monospace" fontSize="9" letterSpacing="1.5">ESTAR</text>
+              <text x="92" y="120" fill="#5FB2DD" fontFamily="monospace" fontSize="9" letterSpacing="1.5">BWC</text>
+            </svg>
+            <div className="pl-label">
+              <span>PL.01 — STUDIO / VILA OLÍMPIA</span>
+              <span><b>22 M²</b></span>
+            </div>
+          </div>
+        </div>
+
+        <div className="hero-data">
+          <div className="cell fade"><b>150+</b><span>studios entregues</span></div>
+          <div className="cell fade"><b>60</b><span>dias úteis · a partir de</span></div>
+          <div className="cell fade"><b>05</b><span>anos de garantia</span></div>
+          <a
+            href="#resultado"
+            className="hero-proof fade"
+            onClick={scrollToResultado}
+            aria-label="Caso real: 70% de ocupação em novembro num studio no Butantã"
+          >
+            <span className="pin">Caso real — Butantã</span>
+            <span className="hl">70% de ocupação</span> em novembro, num studio entregue pela Bewild. <span style={{ color: "var(--sky)" }}>ver →</span>
+          </a>
+        </div>
+
+        <div className="hero-status" aria-hidden="true">
+          <span className="sc">ROLE — 01 / 14</span>
+          <span>LAT -23.5965 · LON -46.6856</span>
         </div>
       </section>
 
-      {/* Marquee — assinatura editorial entre hero e manifesto */}
-      <div className="bw-marquee" aria-hidden="true">
-        <div className="bw-marquee__track">
+      {/* ============ MARQUEE ============ */}
+      <div className="marquee" aria-hidden="true">
+        <div className="trk">
           <span>CONSTRUÍDO POR QUEM NÃO ACEITA O ÓBVIO <i>/</i> BUILT BY THE WILD ONES <i>/</i> </span>
           <span>CONSTRUÍDO POR QUEM NÃO ACEITA O ÓBVIO <i>/</i> BUILT BY THE WILD ONES <i>/</i> </span>
           <span>CONSTRUÍDO POR QUEM NÃO ACEITA O ÓBVIO <i>/</i> BUILT BY THE WILD ONES <i>/</i> </span>
@@ -296,233 +198,157 @@ export default function HomePage() {
         </div>
       </div>
 
-
-      {/* MANIFESTO — revelação Build→Bewild + descida "não é sua" (escura) */}
-      <section className="section bw-dark" id="manifesto" aria-label="Bewild — manifesto">
-        <div className="container">
-          <div className="bw-manifesto">
-            <h2 className="bw-name">
-              <span className="pre">Você nunca leu</span>
-              <span className="build">Build.</span>
-              <span className="bewild">Você leu Be<em>wild.</em></span>
-            </h2>
-            <p className="bw-lede">
-              <strong>Comprar um imóvel pra render não deveria virar um emprego.</strong>
-            </p>
-            <p className="bw-lede">
-              Ser <em>wild</em> é ter o ativo sem ser dominado por ele. A Bewild entrega o studio pronto pra render, sem você entrar na obra.
-            </p>
-
-            <div className="bw-manifesto-body">
-              <h2>Uma a uma, as responsabilidades <em>deixam de ser suas.</em></h2>
-              <div className="bw-descida">
-                <div className="bw-solta">
-                  <span className="num">01</span>
-                  <div className="txt">
-                    <div className="o">A arquitetura</div>
-                    <div className="d">Projeto e layout pensados pra render no short stay.</div>
-                  </div>
-                  <span className="selo">não é sua</span>
-                </div>
-                <div className="bw-solta">
-                  <span className="num">02</span>
-                  <div className="txt">
-                    <div className="o">A obra</div>
-                    <div className="d">Marcenaria, acabamento, fornecedores e prazo.</div>
-                  </div>
-                  <span className="selo">não é sua</span>
-                </div>
-                <div className="bw-solta">
-                  <span className="num">03</span>
-                  <div className="txt">
-                    <div className="o">A mobília</div>
-                    <div className="d">Móveis, enxoval, eletro e decoração.</div>
-                  </div>
-                  <span className="selo">não é sua</span>
-                </div>
-              </div>
-              <div className="bw-resto">
-                <p className="big">Fica o studio pronto.<br />Fica o seu tempo.</p>
-              </div>
-            </div>
+      {/* ============ MANIFESTO ============ */}
+      <section className="manifesto" id="manifesto" aria-label="Manifesto Bewild">
+        <div className="sec-mark"><span className="n">01</span><span className="t">Manifesto</span><span className="ln" /></div>
+        <div className="reveal-block">
+          <div className="pre fade">Você nunca leu</div>
+          <div className="build-row">
+            <span className="build">Build.
+              <svg className="strike" viewBox="0 0 320 24" preserveAspectRatio="none" fill="none">
+                <path d="M4 15 C 80 8, 160 18, 250 9 S 312 12, 316 11" stroke="#2F86B8" strokeWidth="4" strokeLinecap="round" />
+              </svg>
+            </span>
           </div>
+          <div className="rv" data-d="2"><div className="bewild">Você leu Be<i>wild</i>.</div></div>
         </div>
-      </section>
-
-      {/* PROBLEMA */}
-      <section className="section" id="problema">
-        <div className="container split">
-          <div>
-            <div className="eyebrow">O problema</div>
-            <h2>
-              Reformar um studio para renda{" "}
-              <span className="accent">não precisa ser sua segunda profissão.</span>
-            </h2>
-            <p className="lead">
-              A Bewild integra arquitetura, engenharia, obra e inteligência de mercado em
-              um único processo, para quem precisa reformar e não quer carregar o pesadelo
-              de cuidar de uma obra sozinho, muitas vezes à distância.
-            </p>
-            <p className="stmt">Você acompanha. A gente executa.</p>
-          </div>
-          <div className="prob-list">
-            {PROBLEMS.map((p) => (
-              <div key={p} className="prob-item">
-                <span className="dot" />
-                <p>{p}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* JORNADA — o que fazemos + como funciona, fundidos */}
-      <section className="section" id="fazemos" style={{ background: "var(--sand)" }}>
-        <div className="container">
-          <div className="eyebrow">Como funciona</div>
-          <h2>
-            Da planta crua ao studio <span className="accent">pronto para operar.</span>
-          </h2>
-          <p className="lead">
-            Reforma turn-key: um único time cuida de projeto, obra, marcenaria, mobiliário
-            e entrega. Você acompanha cada etapa, sem virar gerente de obra.
+        <div className="manifesto-lede">
+          <p className="big fade">Comprar um imóvel pra render não deveria virar um emprego.</p>
+          <p className="fade">
+            Ser <span className="wild">wild</span> é ter o ativo sem ser dominado por ele. A Bewild entrega o studio pronto pra render, sem você entrar na obra.
           </p>
-          <div className="jstack">
-            {JOURNEY.map((j, i) => (
-              <div
-                className="jstack__item"
-                style={{ ["--i" as string]: i } as React.CSSProperties}
-                key={j.num}
-              >
-                <article className="jcard">
-                  {j.img ? (
-                    <img
-                      className="jcard__img"
-                      src={j.img}
-                      alt={j.alt}
-                      loading="lazy"
-                      decoding="async"
-                      style={{ objectPosition: j.pos }}
-                    />
-                  ) : (
-                    <span className="jcard__tag">{j.slot}</span>
-                  )}
-                  <div className="jcard__scrim" />
-                  <span className="jcard__ghost">{j.num}</span>
-                  <div className="jcard__content">
-                    <span className="jcard__num">{j.num}</span>
-                    <h3>{j.title}</h3>
-                    <p>{j.text}</p>
-                  </div>
-                </article>
+        </div>
+
+        <div className="descida">
+          <div className="it fade"><div className="num">01</div><div className="nm">Arquitetura</div><div className="ds">Projeto, medição e humanização da planta.</div><div className="seal">não é sua</div></div>
+          <div className="it fade"><div className="num">02</div><div className="nm">Obra</div><div className="ds">Demolição, hidráulica, elétrica e acabamento.</div><div className="seal">não é sua</div></div>
+          <div className="it fade"><div className="num">03</div><div className="nm">Mobília</div><div className="ds">Marcenaria sob medida, mobiliário e enxoval.</div><div className="seal">não é sua</div></div>
+        </div>
+
+        <div className="closer fade">Fica o studio pronto. <b>Fica o seu tempo.</b></div>
+      </section>
+
+      {/* ============ PROBLEMA ============ */}
+      <section className="sec sec-dark problema" id="problema" aria-label="O problema">
+        <div className="sec-mark"><span className="n">02</span><span className="t">O problema</span><span className="ln" /></div>
+        <div className="sec-head">
+          <h2 className="fade">Comprar o studio é o passo fácil.</h2>
+          <p className="lead fade">O difícil vem depois. Sem alguém pra assumir, tudo isso cai no seu colo. O que era pra ser investimento vira um segundo emprego.</p>
+        </div>
+        <div className="issues">
+          {[
+            ["OC—01", "Contratar e fiscalizar", "Achar pedreiro, marceneiro e eletricista. Depois correr atrás todo dia pra não atrasar."],
+            ["OC—02", "Orçamento que escapa", "Começa num valor e termina em outro. Cada imprevisto sai do seu bolso."],
+            ["OC—03", "Comprar tudo", "Móveis, eletro, enxoval, louça. São dezenas de decisões e entregas pra acompanhar."],
+            ["OC—04", "Acertar o padrão", "Studio pra morar segue uma lógica. Studio pra render, outra. Errar isso derruba a diária."],
+            ["OC—05", "Preparar pra operar", "Foto, anúncio, preço, check-in. O imóvel fica pronto e ainda não rende sozinho."],
+            ["OC—06", "Resolver o que der errado", "Fornecedor que some, prazo que estoura, retrabalho. Sempre sobra pra você."],
+          ].map(([code, ti, de]) => (
+            <div className="issue fade" key={code}>
+              <div className="code">{code}</div>
+              <div className="ti">{ti}</div>
+              <div className="de">{de}</div>
+            </div>
+          ))}
+        </div>
+        <div className="kicker fade">Você não comprou um imóvel pra ganhar um emprego. <b>Comprou pra ele render por você.</b></div>
+      </section>
+
+      {/* ============ PROCESSO ============ */}
+      <section className="paper" id="fazemos" aria-label="Processo Bewild">
+        <div className="sec-mark"><span className="n">03</span><span className="t">Processo</span><span className="ln" /></div>
+        <div className="paper-head">
+          <h2 className="fade">Da chave ao render, num processo só.</h2>
+          <div className="meta fade">06 ETAPAS<br />~60 DIAS ÚTEIS<br />ACOMPANHADO NO PORTAL</div>
+        </div>
+        <div className="steps">
+          {[
+            ["01", "Diagnóstico", "Visita, medição e leitura do potencial de renda do imóvel.", "2–3 dias"],
+            ["02", "Projeto & orçamento", "Planta humanizada, escopo fechado e um valor que não muda no meio da obra.", "7–10 dias"],
+            ["03", "Obra", "Demolição a acabamento com time próprio. Você não toca em nada.", "~40 dias"],
+            ["04", "Marcenaria & mobília", "Marcenaria sob medida, mobiliário e enxoval instalados.", "paralelo"],
+            ["05", "Styling & foto", "Ambientação e fotos prontas pra anúncio no short-stay.", "3–5 dias"],
+            ["06", "Entrega pra render", "Chaves de volta com o studio operando, pronto pra receber hóspede.", "dia 60"],
+          ].map(([sn, st, sd, sx]) => (
+            <div className="step fade" key={sn}>
+              <div className="sn">{sn}</div>
+              <div className="st">{st}</div>
+              <div className="sd">{sd}</div>
+              <div className="sx">{sx}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ============ POR DENTRO (vídeos) ============ */}
+      <section className="sec sec-dark dentro" id="bastidores" aria-label="Por dentro da obra">
+        <div className="sec-mark"><span className="n">04</span><span className="t">Por dentro</span><span className="ln" /></div>
+        <div className="sec-head">
+          <h2 className="fade">A obra é nossa, do primeiro milímetro.</h2>
+          <p className="lead fade">Antes de levantar parede, a gente mede cada centímetro do seu studio. O que você vê aqui é o nosso time, na obra de verdade.</p>
+        </div>
+        <div className="vblocos">
+          <div className="vbloco">
+            <div className="vtext">
+              <span className="vtag mono">Reg. 01 — Medição</span>
+              <h3>Quem projeta o seu studio mede ele <em>pessoalmente.</em></h3>
+              <p>A arquiteta vai até o imóvel e decide ali o que muda na diária: circulação, ponto de luz, onde a cama rende foto. Cada milímetro pensado pro studio operar, não só pra ficar bonito.</p>
+            </div>
+            <figure className="vphone">
+              <div className="vphone-frame">
+                <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
+                <img src={studioAntes.url} alt="Bastidor: arquiteta medindo o studio antes da reforma" loading="lazy" />
+                <div className="vph"><span className="play">▶</span></div>
+                <span className="vphone-tag">ARQUITETA · MEDIÇÃO</span>
               </div>
-            ))}
+            </figure>
           </div>
-        </div>
-      </section>
-
-      {/* VÍDEOS — quem mede / quem executa (escura) */}
-      <section className="section bw-dark bw-videos" id="bastidores" aria-label="Bewild — quem projeta e quem executa">
-        <div className="container">
-          <div className="video-bloco">
-            <div className="video-texto">
-              <p className="vt-tag">antes de qualquer parede</p>
-              <h3 className="vt-h">Quem projeta o seu studio mede ele <em>pessoalmente.</em></h3>
-              <p>
-                A arquiteta vai até o imóvel e decide ali o que muda na diária: circulação, ponto de luz, onde a cama rende foto. Cada milímetro pensado pro studio operar bem, não só pra ficar bonito.
-              </p>
-            </div>
-            <div className="video-moldura">
-              <i className="vtk tl" aria-hidden="true" />
-              <i className="vtk tr" aria-hidden="true" />
-              <i className="vtk bl" aria-hidden="true" />
-              <i className="vtk br" aria-hidden="true" />
-              <video
-                src="/videos/arquiteta-medicao.mp4"
-                poster="/videos/arquiteta-medicao-poster.jpg"
-                muted
-                loop
-                autoPlay
-                playsInline
-                preload="metadata"
-                aria-label="Arquiteta da Bewild fazendo a medição do imóvel"
-              />
-              <span className="vmlabel">Arquiteta · Medição</span>
-            </div>
-          </div>
-          <div className="video-bloco invertido">
-            <div className="video-moldura">
-              <i className="vtk tl" aria-hidden="true" />
-              <i className="vtk tr" aria-hidden="true" />
-              <i className="vtk bl" aria-hidden="true" />
-              <i className="vtk br" aria-hidden="true" />
-              <video
-                src="/videos/time-obra.mp4"
-                poster="/videos/time-obra-poster.jpg"
-                muted
-                loop
-                autoPlay
-                playsInline
-                preload="metadata"
-                aria-label="Time de obra da Bewild a caminho da reforma"
-              />
-              <span className="vmlabel">Obra · Time próprio</span>
-            </div>
-            <div className="video-texto">
-              <p className="vt-tag">e quem executa tem rosto</p>
-              <h3 className="vt-h">A obra que você não toca tem <em>time próprio.</em></h3>
-              <p>
-                Quem reforma o seu studio trabalha na Bewild, não é um terceiro que aparece e some. Você acompanha o andamento à distância e recebe o imóvel pronto pra operar.
-              </p>
+          <div className="vbloco invertido">
+            <figure className="vphone">
+              <div className="vphone-frame">
+                <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
+                <img src={studioDepois.url} alt="Bastidor: time próprio da Bewild executando a obra" loading="lazy" />
+                <div className="vph"><span className="play">▶</span></div>
+                <span className="vphone-tag">OBRA · TIME PRÓPRIO</span>
+              </div>
+            </figure>
+            <div className="vtext">
+              <span className="vtag mono">Reg. 02 — Obra</span>
+              <h3>A obra que você não toca tem <em>time próprio.</em></h3>
+              <p>Quem reforma o seu studio trabalha na Bewild, não é terceiro que aparece e some. Você acompanha o andamento à distância e recebe o imóvel pronto pra operar.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ARQUITETURA */}
-      <section className="section" id="arquitetura" style={{ background: "var(--paper)" }}>
-        <div className="container split">
-          <div>
-            <div className="arch-media">
-              <img
-                src={plantaHumanizada.url}
-                alt="Planta humanizada de studio Bewild com layout otimizado: cama, banheiro, cozinha compacta, home office e varanda."
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-            <p className="arch-caption">Planta humanizada · estudo de layout de um studio compacto</p>
-            <p className="arch-quote">
-              Um studio de 19, 22 ou 28 m² não permite decisões aleatórias. Cada
-              centímetro precisa justificar sua existência. Por isso, a Bewild desenvolve
-              projeto de arquitetura personalizado para cada imóvel: layout, circulação,
-              iluminação, marcenaria, armazenamento, eletros, pontos técnicos, estética e
-              objetivo de uso.
-            </p>
-            <div className="arch-cta">
-              <a href="/diagnostico" className="btn btn-primary">
-                Quero um projeto para meu studio <span className="arrow">→</span>
-              </a>
-            </div>
+      {/* ============ ARQUITETURA ============ */}
+      <section className="paper" id="arquitetura" aria-label="Arquitetura Bewild">
+        <div className="sec-mark"><span className="n">05</span><span className="t">Arquitetura</span><span className="ln" /></div>
+        <div className="arch-split">
+          <div className="arch-figc">
+            <figure className="planta fade">
+              <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
+              <img src={plantaHumanizada.url} alt="Planta humanizada de studio compacto 22 m²" loading="lazy" />
+            </figure>
+            <p className="arch-cap fade">PLANTA HUMANIZADA · STUDIO 22 M²</p>
           </div>
-          <div>
-            <div className="eyebrow">Projeto personalizado</div>
-            <h2>
-              Arquitetura para cada metro quadrado{" "}
-              <span className="accent">trabalhar melhor.</span>
-            </h2>
-            <p className="lead" style={{ marginBottom: 20 }}>
-              Em studios compactos, o projeto é estratégia de uso, operação e
-              rentabilidade.
-            </p>
+          <div className="arch-txt">
+            <h2 className="fade">Arquitetura pra cada metro <i>trabalhar melhor.</i></h2>
+            <p className="lead fade">Em studio compacto, o projeto é estratégia de uso, operação e renda. Cada centímetro precisa justificar a existência, e nada aqui é genérico.</p>
             <div className="arch-list">
-              {ARCH.map((a) => (
-                <div key={a.idx} className="arch-item">
-                  <div className="h">
-                    <span className="idx">{a.idx}</span>
-                    <h3>{a.title}</h3>
+              {[
+                ["01", "Layout inteligente", "Cama, bancada, cozinha, circulação e apoio de malas pro espaço parecer maior e render foto."],
+                ["02", "Marcenaria sob medida", "Armazenamento, painéis e nichos que aumentam a percepção de qualidade e cortam o improviso."],
+                ["03", "Iluminação e percepção de valor", "A luz certa melhora a foto, a experiência do hóspede e a sensação de cuidado no imóvel."],
+                ["04", "Materiais pra uso real", "A escolha não é só estética. Entra limpeza, manutenção, resistência, reposição e custo total."],
+                ["05", "Personalização sem perder eficiência", "O projeto respeita o imóvel e o perfil do investidor, sem escolha que encareça ou atrase a operação."],
+              ].map(([ax, at, ad]) => (
+                <div className="ai fade" key={ax}>
+                  <span className="ax">{ax}</span>
+                  <div>
+                    <div className="at">{at}</div>
+                    <div className="ad">{ad}</div>
                   </div>
-                  <p>{a.text}</p>
                 </div>
               ))}
             </div>
@@ -530,508 +356,331 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* DIFERENCIAIS */}
-      <section className="section diffs" id="diferenciais">
-        <div className="container">
-          <div className="diffs-head">
-            <div className="eyebrow">Por que a Bewild</div>
-            <h2>A obra é com a gente. <span className="accent">A tranquilidade é sua.</span></h2>
-            <p className="lead">
-              Você não precisa entender de obra, coordenar fornecedor nem acompanhar cada
-              detalhe. A Bewild assume o imóvel do projeto à entrega e devolve ele pronto
-              para gerar renda.
-            </p>
+      {/* ============ COMPARATIVO ============ */}
+      <section className="paper" id="diferenciais" aria-label="Comparativo Bewild">
+        <div className="sec-mark"><span className="n">06</span><span className="t">Comparativo</span><span className="ln" /></div>
+        <div className="paper-head">
+          <h2 className="fade">Dá pra fazer de outros jeitos. Nenhum entrega isso.</h2>
+          <div className="meta fade">BEWILD VS.<br />ALTERNATIVAS<br />DO MERCADO</div>
+        </div>
+        <div className="cmp-scroll fade">
+          <div className="cmp-wrap">
+            <table className="cmp">
+              <thead>
+                <tr>
+                  <th></th><th>Fazer sozinho</th><th>Reformeiro</th><th>Arquiteto</th><th className="bw">Bewild</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ["Projeto pensado pra render no short-stay", "—", "—", "±"],
+                  ["Obra, marcenaria e mobília num contrato só", "—", "±", "—"],
+                  ["Prazo e orçamento fechados desde o início", "—", "±", "±"],
+                  ["Acompanhamento pelo portal, sem você fiscalizar", "—", "—", "—"],
+                  ["Entregue pronto pra operar (foto e anúncio)", "—", "—", "—"],
+                  ["Garantia de 5 anos", "—", "—", "±"],
+                ].map(([label, a, b, c]) => (
+                  <tr key={label}>
+                    <th>{label}</th><td>{a}</td><td>{b}</td><td>{c}</td><td className="bw yes">sim</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
+        </div>
+        <div className="cmp-note fade">— não contempla &nbsp;·&nbsp; ± depende / parcial &nbsp;·&nbsp; sim incluso no escopo Bewild</div>
+      </section>
 
-          <div className="diffs-leads">
-            <article className="diff-lead">
-              <span className="diff-tag">Tudo num lugar só</span>
-              <h3>Um time cuida de tudo, da planta à chave</h3>
-              <p>Projeto, obra, marcenaria, compras, fornecedores e entrega ficam com a gente. <strong>Você não vira gerente de obra</strong>. Não precisa cobrar prazo, alinhar fornecedor nem resolver imprevisto. Isso é problema nosso.</p>
-            </article>
-            <article className="diff-lead">
-              <span className="diff-tag">Especialistas no seu tipo de imóvel</span>
-              <h3>A gente entende de studio compacto como ninguém</h3>
-              <p>Em imóvel pequeno, um erro de layout, armazenamento ou circulação custa caro depois. <strong>Studio compacto é o que a Bewild faz todos os dias</strong>, então a gente já sabe o que funciona e o que dá problema.</p>
-            </article>
-          </div>
+      {/* ============ PORTFÓLIO ============ */}
+      <section className="sec sec-dark" id="portfolio" aria-label="Portfólio Bewild">
+        <div className="sec-mark"><span className="n">07</span><span className="t">Portfólio</span><span className="ln" /></div>
+        <div className="sec-head">
+          <h2 className="fade">Reformas reais, pra imóvel que precisa performar.</h2>
+          <p className="lead fade">Não é render bonito de portfólio. É studio entregue, mobiliado e pronto pra receber hóspede.</p>
+        </div>
+        <div className="ports">
+          <article className="port fade">
+            <div className="port-ba">
+              <figure style={{ margin: 0 }}>
+                <div className="port-ph">
+                  <span>ANTES</span>
+                  <img src={studioAntes.url} alt="Studio Zip Brooklin antes da reforma" loading="lazy" />
+                </div>
+              </figure>
+              <figure style={{ margin: 0 }}>
+                <div className="port-ph">
+                  <span>DEPOIS</span>
+                  <img src={studioDepois.url} alt="Studio Zip Brooklin depois da reforma Bewild" loading="lazy" />
+                </div>
+              </figure>
+            </div>
+            <div className="port-body">
+              <span className="port-pill">Turn-key</span>
+              <h3>Studio na planta, entregue pronto</h3>
+              <dl>
+                <dt>Desafio</dt><dd>Sair do apartamento cru sem o cliente coordenar dez fornecedores.</dd>
+                <dt>Solução</dt><dd>Projeto sob medida, obra turn-key, compras planejadas e montagem final.</dd>
+                <dt>Resultado</dt><dd>Imóvel com visual consistente, layout otimizado e pronto pra uso.</dd>
+              </dl>
+            </div>
+          </article>
+          <article className="port fade">
+            <div className="port-ba" style={{ gridTemplateColumns: "1fr" }}>
+              <figure style={{ margin: 0 }}>
+                <div className="port-ph solo">
+                  <span>STUDIO PRONTO · SHORT-STAY</span>
+                  <img src={studioPronto.url} alt="Studio compacto pronto para short stay" loading="lazy" />
+                </div>
+              </figure>
+            </div>
+            <div className="port-body">
+              <span className="port-pill">Short stay</span>
+              <h3>Studio compacto pra short stay</h3>
+              <dl>
+                <dt>Desafio</dt><dd>Transformar uma planta pequena em imóvel funcional, bonito e fácil de operar.</dd>
+                <dt>Solução</dt><dd>Marcenaria inteligente, bancada compacta, luz estratégica e acabamento resistente.</dd>
+                <dt>Resultado</dt><dd>Unidade pronta pra foto, anúncio e operação.</dd>
+              </dl>
+            </div>
+          </article>
+        </div>
+        <p className="illus fade">Cases reais Bewild · São Paulo</p>
+      </section>
 
-          <div className="diffs-support">
-            <article className="diff-sup">
-              <h3>Pensado para render</h3>
-              <p>Cada escolha considera prazo, custo, manutenção e potencial de rentabilização.</p>
-            </article>
-            <article className="diff-sup">
-              <h3>O orçamento não muda no meio</h3>
-              <p>Você sabe o que está incluso, o que é opcional e o que mexe no preço ou no prazo.</p>
-            </article>
-            <article className="diff-sup">
-              <h3>Obra acompanhada de longe</h3>
-              <p>Fotos, relatórios e cronograma no portal. Você acompanha sem precisar ir até lá.</p>
-            </article>
-            <article className="diff-sup">
-              <h3>Feito para durar no uso</h3>
-              <p>Acabamento bonito na foto, resistente no dia a dia e simples de manter.</p>
-            </article>
-            <article className="diff-sup">
-              <h3>Funciona à distância</h3>
-              <p>Ideal para quem comprou em São Paulo, mas mora em outra cidade, estado ou país.</p>
-            </article>
+      {/* ============ DEPOIMENTO ============ */}
+      <section className="paper" id="depoimento" aria-label="Depoimento Vivian">
+        <div className="sec-mark"><span className="n">08</span><span className="t">Depoimento</span><span className="ln" /></div>
+        <div className="depo">
+          <figure className="vphone fade">
+            <div className="vphone-frame">
+              <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
+              <video
+                src={depoimentoVideo.url}
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                aria-label="Depoimento da Vivian, cliente Bewild"
+                controls
+              />
+              <span className="vphone-tag">VIVIAN · CLIENTE</span>
+            </div>
+          </figure>
+          <div className="depo-txt">
+            <h2 className="fade">Quem já passou pela obra <i>conta melhor que a gente.</i></h2>
+            <p className="lead fade">A Vivian reformou o studio dela com a Bewild e contou como foi acompanhar tudo sem entrar na obra. Depoimento gravado pessoalmente, sem roteiro.</p>
+            <p className="depo-src fade">VIVIAN · CLIENTE BEWILD · DEPOIMENTO PRESENCIAL</p>
           </div>
         </div>
       </section>
 
-      {/* CREDIBILIDADE */}
-      <section className="section cred" id="credibilidade">
-        <div className="container">
-          <div className="eyebrow">Credibilidade</div>
-          <h2>
-            Credibilidade Bewild <span className="accent">é processo visível.</span>
-          </h2>
-          <div className="stats">
-            <div className="stat">
-              <b>+150</b>
-              <div className="u">studios entregues</div>
-              <p>Experiência real em reforma de studios compactos.</p>
-            </div>
-            <div className="stat">
-              <b>a partir de 60</b>
-              <div className="u">dias úteis</div>
-              <p>Prazo de referência de uma reforma completa.</p>
-            </div>
-            <div className="stat">
-              <b>5 anos</b>
-              <div className="u">de garantia</div>
-              <p>Garantia Bewild sobre a reforma entregue.</p>
-            </div>
-          </div>
-          <div className="checks">
-            {[
-              "Contrato e escopo claros",
-              "Compras críticas planejadas",
-              "Fotos e relatórios de acompanhamento",
-              "Gestão de fornecedores",
-              "Projeto aprovado antes da execução",
-              "Entrega com checklist final",
-            ].map((t) => (
-              <div key={t} className="chk">
-                <span className="tick"><Check size={12} strokeWidth={2.25} /></span>
-                {t}
-              </div>
-            ))}
-          </div>
+      {/* ============ RESULTADO REAL ============ */}
+      <section className="paper" id="resultado" aria-label="Resultado real Rafael">
+        <div className="sec-mark"><span className="n">09</span><span className="t">Resultado real</span><span className="ln" /></div>
+        <div className="paper-head">
+          <h2 className="fade">Um studio no Butantã com <i>70% de ocupação</i> em novembro.</h2>
+          <div className="meta fade">CLIENTE REAL<br />RAFAEL · BUTANTÃ<br />SHORT-STAY</div>
         </div>
+        <p className="raf-lead fade">O Rafael tinha um studio no Butantã e queria virar renda. A Bewild reformou e entregou pronto pra operar. Ele anunciou no Airbnb, e em novembro o calendário fechou com 70% de ocupação.</p>
+        <figure className="raf-quote fade">
+          <blockquote>“Esses studios serão um negócio pra mim. Renda vitalícia.”</blockquote>
+          <figcaption>Rafael · cliente Bewild · studio no Butantã</figcaption>
+        </figure>
+        <div className="raf-proof">
+          <figure className="fade">
+            <div className="raf-ph">
+              <img src={rafaelOcupacao.url} alt="Calendário de novembro com 70% de ocupação no Airbnb" loading="lazy" />
+            </div>
+            <figcaption>Novembro: 70% de ocupação</figcaption>
+          </figure>
+          <figure className="fade">
+            <div className="raf-ph">
+              <img src={rafaelAirbnb.url} alt="Anúncio no Airbnb do studio no Butantã" loading="lazy" />
+            </div>
+            <figcaption>Anúncio no ar no Airbnb</figcaption>
+          </figure>
+        </div>
+        <p className="raf-note fade">Resultado de um cliente real. Ocupação e diária variam conforme imóvel, região e operação.</p>
       </section>
 
-      {/* PORTFÓLIO */}
-      <section className="section" id="portfolio" style={{ background: "var(--paper)" }}>
-        <div className="container">
-          <div className="eyebrow">Portfólio</div>
-          <h2>
-            Reformas reais para imóveis{" "}
-            <span className="accent">que precisam performar.</span>
-          </h2>
-          <div className="grid" style={{ gridTemplateColumns: "1fr 1fr", marginTop: 30 }}>
-            <div className="case">
-              <div className="ph" style={{ overflow: "hidden" }}>
-                <img
-                  src={studioPronto.url}
-                  alt="Studio compacto para short stay, reformado e pronto para operar pela Bewild"
-                  loading="lazy"
-                  decoding="async"
-                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                />
-              </div>
-              <div className="body">
-                <span className="pill">Short stay</span>
-                <h3>Studio compacto para short stay</h3>
-                <dl>
-                  <dt>Desafio</dt>
-                  <dd>Transformar uma planta pequena em um imóvel funcional, bonito e fácil de operar.</dd>
-                  <dt>Solução</dt>
-                  <dd>Marcenaria inteligente, bancada compacta, iluminação estratégica, eletros adequados e acabamento resistente.</dd>
-                  <dt>Resultado</dt>
-                  <dd>Unidade pronta para fotos, anúncio e operação.</dd>
-                </dl>
-              </div>
+      {/* ============ PORTAL ============ */}
+      <section className="paper" id="portal" aria-label="Portal de acompanhamento">
+        <div className="sec-mark"><span className="n">10</span><span className="t">Portal</span><span className="ln" /></div>
+        <div className="portal-split">
+          <div className="portal-txt">
+            <h2 className="fade">Obra com visibilidade. <i>Sem caixa-preta.</i></h2>
+            <p className="lead fade">Cronograma, decisões e compras organizados num portal. Você vê a obra andar pelo celular, sem precisar ir até lá nem cobrar no WhatsApp.</p>
+            <div className="portal-checks fade">
+              {[
+                "Cronograma por etapa","Fotos de evolução","Relatórios de acompanhamento",
+                "Registro de decisões","Controle de escopo","Compras e fornecedores",
+              ].map((t) => (
+                <div className="pchk" key={t}><i>✓</i>{t}</div>
+              ))}
             </div>
-            <div className="case">
-              <div className="ph ba">
-                <figure className="ba__half">
-                  <img
-                    src={studioAntes.url}
-                    alt="Studio na planta, antes da reforma turn-key Bewild"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <figcaption>Antes</figcaption>
-                </figure>
-                <figure className="ba__half">
-                  <img
-                    src={studioDepois.url}
-                    alt="Studio entregue pela Bewild, pronto para operar"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <figcaption>Depois</figcaption>
-                </figure>
-              </div>
-              <div className="body">
-                <span className="pill">Turn-key</span>
-                <h3>Studio recém-entregue na planta</h3>
-                <dl>
-                  <dt>Desafio</dt>
-                  <dd>Sair do apartamento cru para uma unidade mobiliada sem o cliente precisar coordenar múltiplos fornecedores.</dd>
-                  <dt>Solução</dt>
-                  <dd>Projeto personalizado, obra turn-key, compras planejadas e montagem final.</dd>
-                  <dt>Resultado</dt>
-                  <dd>Imóvel entregue com visual consistente, layout otimizado e pronto para uso.</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-          <p className="illus-note">
-            Cases ilustrativos até a publicação das fotos reais das reformas entregues
-          </p>
-        </div>
-      </section>
-
-      {/* DEPOIMENTO */}
-      <section className="section" id="depoimento" style={{ background: "var(--sand)" }}>
-        <div className="container testi">
-          <div className="video">
-            <video
-              src={depoimentoVideo.url}
-              controls
-              playsInline
-              preload="metadata"
-              aria-label="Depoimento em vídeo de cliente Bewild"
-            />
-          </div>
-          <div className="testi-content">
-            <Quote size={44} className="testi-quote-icon" />
-            <div className="eyebrow">Depoimento</div>
-            <h2>
-              Quem já passou pela obra{" "}
-              <span className="accent">conta melhor do que a gente.</span>
-            </h2>
-            <p className="src"><strong>Vivian</strong> · cliente Bewild · depoimento presencial</p>
-            <a href="/diagnostico" className="btn btn-cyan">
-              Solicitar diagnóstico <span className="arrow">→</span>
+            <a className="btn btn-cyan bw-magnetic fade" href="https://bwildworkflow.com" target="_blank" rel="noopener noreferrer">
+              <span>Acessar área do cliente</span><span className="ar">→</span>
             </a>
           </div>
-        </div>
-      </section>
-
-
-      {/* PORTAL */}
-      <section className="section" id="portal" style={{ background: "var(--paper)" }}>
-        <div className="container split">
-          <div>
-            <div className="eyebrow">Tecnologia · Portal</div>
-            <h2>
-              Obra com visibilidade. <span className="accent">Gestão sem caixa-preta.</span>
-            </h2>
-            <p className="lead" style={{ marginBottom: 18 }}>
-              Cronograma, decisões e compras organizados para dar mais previsibilidade ao
-              cliente e mais controle para a operação.
-            </p>
-            <div className="checks" style={{ gridTemplateColumns: "1fr 1fr" }}>
-              {[
-                "Cronograma por etapa",
-                "Fotos de evolução",
-                "Relatórios de acompanhamento",
-                "Registro de decisões",
-                "Controle de escopo",
-                "Compras e fornecedores",
-                "Visão clara do que está em andamento",
-              ].map((t) => (
-                <div key={t} className="chk">
-                  <span className="tick"><Check size={12} strokeWidth={2.25} /></span>
-                  {t}
-                </div>
-              ))}
-            </div>
-            <div className="portal-cta">
-              <a
-                className="btn btn-cyan"
-                href="https://bwildworkflow.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Acessar área do cliente <span className="arrow">→</span>
-              </a>
-              <p className="portal-cta-note">Acesso para clientes com obra ativa.</p>
-            </div>
-          </div>
-          <div className="pf-app" role="img" aria-label="Réplica ilustrativa da tela do Bwild Workflow">
+          <div className="pf-app fade" role="img" aria-label="Tela ilustrativa do Bwild Workflow">
             <div className="pf-chrome">
-              <div className="pf-brand">
-                <span className="pf-brand-dot" aria-hidden="true" />
-                <span className="pf-brand-name">Bwild Workflow</span>
-              </div>
-              <div className="pf-period">
-                <Calendar size={12} strokeWidth={2} aria-hidden="true" />
-                <span>Jun 2026</span>
-              </div>
+              <div className="pf-brand"><span className="pf-bdot" /><span className="pf-bname">Bwild Workflow</span></div>
+              <div className="pf-period">Jun 2026</div>
             </div>
-            <div className="pf-tabs" role="tablist">
-              <span className="pf-tab is-active" role="tab" aria-selected="true">Curva S</span>
-              <span className="pf-tab" role="tab">Relatórios</span>
-              <span className="pf-tab" role="tab">Atividade</span>
+            <div className="pf-tabs">
+              <span className="pf-tab act">Curva S</span>
+              <span className="pf-tab">Relatórios</span>
+              <span className="pf-tab">Atividade</span>
             </div>
             <div className="pf-body">
-              <div className="pf-head">
-                <div className="pf-head-row">
+              <div>
+                <div className="pf-hrow">
                   <b className="pf-title">Studio Urban Flex · 22 m²</b>
                   <span className="pf-pill pf-pill-info">Em obra</span>
                 </div>
-                <span className="pf-caption">Semana 6 de 10</span>
+                <div className="pf-cap">Semana 6 de 10</div>
               </div>
-
               <div className="pf-kpis">
-                <div className="pf-kpi">
-                  <span className="pf-kpi-label">Concluído</span>
-                  <span className="pf-kpi-value">52%</span>
-                </div>
-                <div className="pf-kpi">
-                  <span className="pf-kpi-label">Status</span>
-                  <span className="pf-kpi-value pf-kpi-row">
-                    <span className="pf-dot pf-dot-success" aria-hidden="true" />
-                    No prazo
-                  </span>
-                </div>
-                <div className="pf-kpi">
-                  <span className="pf-kpi-label">Cronograma</span>
-                  <span className="pf-kpi-value">Sem 6/10</span>
-                </div>
+                <div className="pf-kpi"><span className="pf-klab">Concluído</span><span className="pf-kval">52%</span></div>
+                <div className="pf-kpi"><span className="pf-klab">Status</span><span className="pf-kval"><span className="pf-sdot" />No prazo</span></div>
+                <div className="pf-kpi"><span className="pf-klab">Cronograma</span><span className="pf-kval">Sem 6/10</span></div>
               </div>
-
               <div className="pf-chart">
-                <div className="pf-chart-legend">
-                  <span className="pf-leg"><span className="pf-leg-line pf-leg-real" aria-hidden="true" />Real</span>
-                  <span className="pf-leg"><span className="pf-leg-line pf-leg-plan" aria-hidden="true" />Planejado</span>
+                <div className="pf-legend">
+                  <span className="pf-leg"><span className="pf-lline pf-lreal" />Real</span>
+                  <span className="pf-leg"><span className="pf-lline pf-lplan" />Planejado</span>
                 </div>
-                <svg viewBox="0 0 320 150" className="pf-svg" role="presentation" aria-hidden="true">
+                <svg viewBox="0 0 320 150" className="pf-svg" aria-hidden="true">
                   <defs>
-                    <linearGradient id="pfArea" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id="pfa" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="hsl(204 100% 25%)" stopOpacity="0.18" />
                       <stop offset="100%" stopColor="hsl(204 100% 25%)" stopOpacity="0" />
                     </linearGradient>
                   </defs>
-                  {/* gridlines */}
-                  {[0, 1, 2, 3, 4].map((i) => {
-                    const y = 16 + i * 26;
-                    return <line key={i} x1="34" y1={y} x2="312" y2={y} stroke="hsl(220 16% 92%)" strokeWidth="1" />;
-                  })}
-                  {/* y labels */}
+                  <line x1="34" y1="16" x2="312" y2="16" stroke="hsl(220 16% 92%)" />
+                  <line x1="34" y1="42" x2="312" y2="42" stroke="hsl(220 16% 92%)" />
+                  <line x1="34" y1="68" x2="312" y2="68" stroke="hsl(220 16% 92%)" />
+                  <line x1="34" y1="94" x2="312" y2="94" stroke="hsl(220 16% 92%)" />
+                  <line x1="34" y1="120" x2="312" y2="120" stroke="hsl(220 16% 92%)" />
                   <text x="26" y="20" textAnchor="end" className="pf-axis">100</text>
                   <text x="26" y="72" textAnchor="end" className="pf-axis">50</text>
                   <text x="26" y="124" textAnchor="end" className="pf-axis">0</text>
-                  {/* planejado (tracejado), curva S de (34,120) a (312,16) */}
-                  <path
-                    d="M34 120 C 110 118, 150 70, 180 56 S 270 22, 312 16"
-                    fill="none"
-                    stroke="hsl(220 12% 55%)"
-                    strokeWidth="1.5"
-                    strokeDasharray="4 4"
-                    strokeLinecap="round"
-                  />
-                  {/* real (sólida) até Sem 6 ~ x=200, ~52% -> y=120-(52*1.04)=65.92 */}
-                  <path
-                    d="M34 120 L34 120 C 90 119, 130 96, 160 82 S 195 70, 200 66 L200 120 L34 120 Z"
-                    fill="url(#pfArea)"
-                  />
-                  <path
-                    d="M34 120 C 90 119, 130 96, 160 82 S 195 70, 200 66"
-                    fill="none"
-                    stroke="hsl(204 100% 25%)"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                  {/* marker */}
+                  <path d="M34 120 C 110 118, 150 70, 180 56 S 270 22, 312 16" fill="none" stroke="hsl(220 12% 55%)" strokeWidth="1.5" strokeDasharray="4 4" strokeLinecap="round" />
+                  <path d="M34 120 C 90 119, 130 96, 160 82 S 195 70, 200 66 L200 120 L34 120 Z" fill="url(#pfa)" />
+                  <path d="M34 120 C 90 119, 130 96, 160 82 S 195 70, 200 66" fill="none" stroke="hsl(204 100% 25%)" strokeWidth="2" strokeLinecap="round" />
                   <circle cx="200" cy="66" r="5" fill="hsl(204 100% 25%)" stroke="#fff" strokeWidth="2" />
-                  {/* x labels */}
                   <text x="34" y="142" className="pf-axis">Início</text>
                   <text x="200" y="142" textAnchor="middle" className="pf-axis">Sem 6</text>
                   <text x="312" y="142" textAnchor="end" className="pf-axis">Entrega</text>
                 </svg>
               </div>
-
               <ul className="pf-stages">
-                <li className="pf-stage">
-                  <span className="pf-stage-icon pf-stage-icon-success"><Check size={11} strokeWidth={3} /></span>
-                  <span className="pf-stage-label">Demolição e remoção</span>
-                  <span className="pf-stage-status pf-stage-status-success">Concluída</span>
-                </li>
-                <li className="pf-stage">
-                  <span className="pf-stage-icon pf-stage-icon-success"><Check size={11} strokeWidth={3} /></span>
-                  <span className="pf-stage-label">Elétrica e hidráulica</span>
-                  <span className="pf-stage-status pf-stage-status-success">Concluída</span>
-                </li>
-                <li className="pf-stage">
-                  <span className="pf-stage-icon pf-stage-icon-warning"><CircleDot size={11} strokeWidth={2.25} /></span>
-                  <span className="pf-stage-label">Marcenaria sob medida</span>
-                  <span className="pf-stage-meta">
-                    <span className="pf-pill pf-pill-warning">em andamento</span>
-                    <span className="pf-stage-pct">60%</span>
-                  </span>
-                </li>
-                <li className="pf-stage">
-                  <span className="pf-stage-icon pf-stage-icon-todo"><Circle size={11} strokeWidth={2} /></span>
-                  <span className="pf-stage-label pf-stage-label-muted">Montagem e enxoval</span>
-                  <span className="pf-stage-status pf-stage-status-muted">A iniciar</span>
-                </li>
+                <li className="pf-stage"><span className="pf-sic pf-sic-ok">✓</span><span className="pf-slab">Demolição e remoção</span><span className="pf-sst ok">Concluída</span></li>
+                <li className="pf-stage"><span className="pf-sic pf-sic-ok">✓</span><span className="pf-slab">Elétrica e hidráulica</span><span className="pf-sst ok">Concluída</span></li>
+                <li className="pf-stage"><span className="pf-sic pf-sic-warn">◐</span><span className="pf-slab">Marcenaria sob medida</span><span className="pf-smeta"><span className="pf-pill pf-pill-warn">em andamento</span><span className="pf-spct">60%</span></span></li>
+                <li className="pf-stage"><span className="pf-sic pf-sic-todo">○</span><span className="pf-slab mut">Montagem e enxoval</span><span className="pf-sst mut">A iniciar</span></li>
               </ul>
             </div>
-            <div className="pf-foot">
-              Atualizado hoje. Relatório semanal #6: marcenaria instalada, elétrica revisada.
+            <div className="pf-foot">Atualizado hoje. Relatório semanal #6: marcenaria instalada, elétrica revisada.</div>
+          </div>
+        </div>
+        <p className="illus fade">Interface ilustrativa do portal de acompanhamento</p>
+      </section>
+
+      {/* ============ SEGURANÇA ============ */}
+      <section className="sec sec-dark garantias" aria-label="Segurança e garantias">
+        <div className="sec-mark"><span className="n">11</span><span className="t">Segurança</span><span className="ln" /></div>
+        <div className="sec-head">
+          <h2 className="fade">O risco fica do nosso lado.</h2>
+          <p className="lead fade">Tudo que costuma assustar numa obra fica com a gente, por contrato. Sobra pra você a parte boa: a renda.</p>
+        </div>
+        <div className="grnt">
+          {[
+            ["Escopo e prazo fechados em contrato", "Você sabe o valor e a data antes da obra começar."],
+            ["Time próprio na obra", "Quem começa termina. A gente não terceiriza pra sumir depois."],
+            ["Garantia de 5 anos", "A relação não acaba quando a chave volta pra sua mão."],
+            ["Tudo no portal", "Você vê cada etapa pelo celular, sem precisar ir na obra."],
+            ["+150 studios entregues", "Em São Paulo, pra quem investe em short-stay. O seu não é o primeiro."],
+          ].map(([gt, gd]) => (
+            <div className="g fade" key={gt}>
+              <span className="gp" />
+              <div className="gt">{gt}</div>
+              <div className="gd">{gd}</div>
             </div>
-          </div>
+          ))}
         </div>
-        <p className="illus-note" style={{ maxWidth: "var(--maxw)", marginLeft: "auto", marginRight: "auto" }}>
-          Interface ilustrativa do portal de acompanhamento
-        </p>
       </section>
 
-      {/* COMPARATIVO */}
-      <section className="section" id="comparativo" style={{ background: "var(--sand)" }}>
-        <div className="container">
-          <div className="eyebrow">Comparativo</div>
-          <h2>
-            Reforma tradicional <span className="accent">× Bewild turn-key.</span>
-          </h2>
-          <div className="compare" style={{ marginTop: 28 }}>
-            <div className="chead">
-              <div>&nbsp;</div>
-              <div className="trad">Reforma tradicional</div>
-              <div className="bw">Bewild turn-key</div>
+      {/* ============ PARA QUEM ============ */}
+      <section className="sec sec-dark" id="para-quem" aria-label="Para quem é a Bewild">
+        <div className="sec-mark"><span className="n">12</span><span className="t">Para quem</span><span className="ln" /></div>
+        <div className="sec-head">
+          <h2 className="fade">A Bewild não é pra todo mundo.</h2>
+          <p className="lead fade">Melhor deixar claro antes da reunião. Veja se é o seu caso.</p>
+        </div>
+        <div className="fork">
+          <div className="col is">
+            <div className="h"><span className="mk">É pra você se</span></div>
+            <ul>
+              <li><span className="b" />Comprou ou vai comprar um studio em SP pra rentabilizar no short-stay.</li>
+              <li><span className="b" />Quer renda do imóvel sem virar gerente de obra, comprador e operador.</li>
+              <li><span className="b" />Valoriza prazo, escopo fechado e transparência mais do que o menor preço.</li>
+              <li><span className="b" />Quer resolver o studio uma vez e partir pra renda.</li>
+            </ul>
+          </div>
+          <div className="col isnt">
+            <div className="h"><span className="mk">Não é pra você se</span></div>
+            <ul>
+              <li><span className="b" />Busca o orçamento mais barato, custe o que custar na entrega.</li>
+              <li><span className="b" />Quer tocar a obra você mesmo e contratar cada fornecedor.</li>
+              <li><span className="b" />Procura reforma pra morar, sem foco em renda.</li>
+              <li><span className="b" />Ainda não tem o imóvel nem pretende investir nisso agora.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ FAQ ============ */}
+      <section className="paper faq" id="faq" aria-label="Perguntas frequentes">
+        <div className="sec-mark"><span className="n">13</span><span className="t">Perguntas</span><span className="ln" /></div>
+        <div className="paper-head">
+          <h2 className="fade">O que todo investidor pergunta.</h2>
+          <div className="meta fade">DÚVIDAS<br />FREQUENTES<br />RESPOSTA DIRETA</div>
+        </div>
+        <div className="qa">
+          {FAQS_HOME.map(({ q, a }) => (
+            <div className="qi fade" key={q}>
+              <div className="q">{q}</div>
+              <div className="a">{a}</div>
             </div>
-            {COMPARE.map((r) => (
-              <div className="crow" key={r.label}>
-                <div className="rh">{r.label}</div>
-                <div className="trad" data-label="Reforma tradicional"><span className="xmark"><X size={14} strokeWidth={2.25} /></span><span>{r.trad}</span></div>
-                <div className="bw" data-label="Bewild turn-key"><span className="vmark"><Check size={14} strokeWidth={2.25} /></span><span>{r.bw}</span></div>
-              </div>
-            ))}
-
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* PARA QUEM */}
-      <section className="section" id="paraquem" style={{ background: "var(--paper)" }}>
-        <div className="container">
-          <div className="eyebrow">Para quem é</div>
-          <h2>
-            Para quem quer reformar{" "}
-            <span className="accent">sem virar gerente de obra.</span>
-          </h2>
-          <div className="grid g3" style={{ marginTop: 30 }}>
-            {WHO.map((w) => (
-              <div key={w.title} className="who-card">
-                <div className="ic" aria-hidden="true"><w.Icon size={18} strokeWidth={1.75} /></div>
-                <h3>{w.title}</h3>
-                <p>{w.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="section" id="faq" style={{ background: "var(--sand)" }}>
-        <div className="container">
-          <div className="eyebrow" style={{ textAlign: "center" }}>FAQ</div>
-          <h2 style={{ textAlign: "center", marginBottom: 34 }}>Perguntas frequentes</h2>
-          <div className="faq-list">
-            {FAQS_HOME.map((f, i) => (
-              <details key={f.q} open={i === 0}>
-                <summary>
-                  {f.q} <span className="pm">+</span>
-                </summary>
-                <div className="ans">{f.a}</div>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* RESULTADO REAL — case Rafael */}
-      <section className="section" id="resultado" style={{ background: "var(--paper)" }}>
-        <div className="container">
-          <div className="eyebrow">Resultado real</div>
-          <h2 style={{ maxWidth: "22ch" }}>
-            Um studio no Butantã com <span className="accent">70% de ocupação</span> em novembro.
-          </h2>
-          <p className="lead" style={{ maxWidth: "62ch" }}>
-            O Rafael tinha um studio no Butantã e queria transformar em renda. A Bewild reformou
-            e entregou pronto pra operar no short stay. Ele anunciou no Airbnb. Em novembro, o
-            calendário fechou com 70% de ocupação.
-          </p>
-
-          <figure className="bw-home__rafquote">
-            <Quote className="bw-home__rafquote-icon" aria-hidden="true" />
-            <blockquote>
-              Esses studios serão um negócio pra mim. Renda vitalícia.
-            </blockquote>
-            <figcaption>Rafael · cliente Bewild · studio no Butantã</figcaption>
-          </figure>
-
-          <div className="bw-home__rafproof">
-            <figure className="bw-home__rafproof-item">
-              <div className="bw-home__rafproof-frame">
-                <img src={rafaelOcupacao.url} alt="Print do calendário do anúncio mostrando novembro com 70% de ocupação." loading="lazy" />
-              </div>
-              <figcaption>Novembro: 70% de ocupação</figcaption>
-            </figure>
-            <figure className="bw-home__rafproof-item">
-              <div className="bw-home__rafproof-frame">
-                <img src={rafaelAirbnb.url} alt="Print do anúncio no Airbnb: Studio no Butantã, 400m da estação." loading="lazy" />
-              </div>
-              <figcaption>Anúncio no ar no Airbnb</figcaption>
-            </figure>
-          </div>
-
-          <p className="illus-note" style={{ textTransform: "none", letterSpacing: 0, fontSize: 12.5 }}>
-            Resultado de um cliente real. Ocupação e diária variam conforme imóvel, região e operação.
-          </p>
-
-          <div className="cta-btns" style={{ justifyContent: "center", marginTop: 28 }}>
-            <a href="/diagnostico" className="btn btn-cyan">
-              Solicitar diagnóstico <span className="arrow">→</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA FINAL */}
-      <section className="section cta" id="cta">
-        <div className="container">
-          <div className="eyebrow" style={{ color: "var(--sky)", textAlign: "center" }}>
-            Diagnóstico
-          </div>
-          <h2>
-            Você não comprou um imóvel para <span className="accent">virar gerente de obra.</span>
-          </h2>
-          <p>
-            Comprou para gerar renda. A Bewild reforma seu studio e entrega pronto para operar: projeto, obra, mobiliário e acompanhamento, com prazo e escopo fechados antes de começar.
-          </p>
-          <div className="cta-signature">Built by the wild ones.</div>
-          <div className="cta-btns">
-            <a href="/diagnostico" className="btn btn-cyan">
-              Solicitar diagnóstico <span className="arrow">→</span>
-            </a>
+      {/* ============ CTA FINAL ============ */}
+      <section className="cta-final" id="cta" aria-label="Diagnóstico gratuito">
+        <div className="grid-bg" aria-hidden="true" />
+        <div className="inner">
+          <div className="eye fade"><span className="mono tag">Diagnóstico gratuito · sem compromisso</span></div>
+          <h2 className="fade">Pronto pra ver seu<br />studio <i>rendendo?</i></h2>
+          <p className="fade">Manda os dados da sua unidade no WhatsApp. A gente avalia o potencial de renda e mostra como ficaria o projeto.</p>
+          <div className="act fade">
             <a
+              className="btn btn-cyan bw-magnetic"
               href={whatsappHref()}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn btn-ghost-light"
+              onClick={onCtaWhatsApp}
             >
-              Falar no WhatsApp
+              <span>Falar no WhatsApp</span><span className="ar">→</span>
+            </a>
+            <a className="btn btn-ghost" href="/portfolio">
+              <span>Ver reformas entregues</span>
             </a>
           </div>
+          <div className="rea fade">Atendimento de gente real · <b>retorno rápido</b> · 150+ studios entregues</div>
         </div>
+        <div className="stamp">BEWILD · GRUPO BWILD<br />SÃO PAULO · BR<br />BW—001 / HOME</div>
       </section>
 
       <StickyMobileCTA />
