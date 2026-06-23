@@ -303,7 +303,7 @@ export default function HomePage() {
           <div className="bw-manifesto">
             <h2 className="bw-name">
               <span className="pre">Você nunca leu</span>
-              <span className="build">Build.</span>
+              <span className="build">Build.<span className="bw-redline-tag" aria-hidden="true">REV. — leitura corrigida</span></span>
               <span className="bewild">Você leu Be<em>wild.</em></span>
             </h2>
             <p className="bw-lede">
