@@ -462,3 +462,11 @@
   .bw-home .hero-status .sc::after{animation:none;transform:scaleX(1)}
   .bw-home .bw-grain,.bw-home .bw-cursor{display:none}
 }
+
+/* Oculta o cursor nativo no desktop p/ o crosshair não duplicar com a
+   setinha do sistema. Mantém o cursor nativo sobre o vídeo (controles)
+   e intacto em telas touch. */
+@media (hover:hover) and (pointer:fine){
+  .bw-home, .bw-home *{cursor:none !important}
+  .bw-home video{cursor:auto !important}
+}
