@@ -1,11 +1,9 @@
 /**
  * SiteFooter — cena de fechamento "prancheta" (Utsubo). Fundo ink-deep,
- * assinatura da marca em destaque, ficha técnica como carimbo de prancha,
- * hairlines retas, cantos vivos. Autocontido.
+ * assinatura em destaque, ficha técnica como carimbo de prancha, hairlines.
  */
 .bw-foot{
   --bw-ink-deep:#071427;
-  --bw-navy-deep:#0B2342;
   --bw-cyan:#2F86B8;
   --bw-sky:#5FB2DD;
   --bw-muted-cool:#8FA6BC;
