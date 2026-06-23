@@ -14,6 +14,8 @@ import BewildPostPage from "./pages/BewildPostPage";
 import DiagnosticoPage from "./pages/DiagnosticoPage";
 import FaqPage from "./pages/FaqPage";
 import PrivacidadePage from "./pages/PrivacidadePage";
+import LpObraPage from "./pages/LpObraPage";
+import LpPanfletoPage from "./pages/LpPanfletoPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import MaintenancePage from "./pages/MaintenancePage";
 import { MAINTENANCE_MODE } from "./config/site";
@@ -48,6 +50,8 @@ export function renderRoute(route: Route) {
   if (route.name === "diagnostico") return <DiagnosticoPage />;
   if (route.name === "faq") return <FaqPage />;
   if (route.name === "privacidade") return <PrivacidadePage />;
+  if (route.name === "lp-obra") return <LpObraPage />;
+  if (route.name === "lp-panfleto") return <LpPanfletoPage />;
   if (route.name === "admin-login") return <LoginPage />;
   if (route.name === "admin-dashboard")
     return (

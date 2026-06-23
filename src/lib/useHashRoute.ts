@@ -9,6 +9,8 @@ export type Route =
   | { name: "bewild-project"; slug: string }
   | { name: "conteudos" }
   | { name: "bewild-post"; slug: string }
+  | { name: "lp-obra" }
+  | { name: "lp-panfleto" }
 
   | { name: "admin-login" }
   | { name: "admin-dashboard" }
@@ -36,6 +38,8 @@ function parsePath(rawPath: string): Route {
   if (path === "/" || path === "") return { name: "home" };
   if (path === "/portfolio") return { name: "portfolio" };
 
+  if (path === "/o") return { name: "lp-obra" };
+  if (path === "/p") return { name: "lp-panfleto" };
   if (path === "/diagnostico") return { name: "diagnostico" };
   if (path === "/faq") return { name: "faq" };
   if (path === "/privacidade") return { name: "privacidade" };
@@ -145,6 +149,8 @@ export const routes = {
   adminFaq: "/admin/faq",
   adminTypography: "/admin/typography",
   adminLeads: "/admin/leads",
+  lpObra: "/o",
+  lpPanfleto: "/p",
 };
 
 // Navega programaticamente sem recarregar a página.
