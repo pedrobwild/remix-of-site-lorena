@@ -101,7 +101,10 @@
 .bw-home .plate{position:relative;align-self:end;border:1px solid var(--hair);background:linear-gradient(160deg,#0c2543,#081a31);
   aspect-ratio:4/5;width:100%;overflow:hidden}
 .bw-home .plate .pl-svg{position:absolute;inset:0;width:100%;height:100%;opacity:.85}
-.bw-home .plate .pl-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55}
+.bw-home .plate .pl-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:1;z-index:0}
+.bw-home .plate::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(7,20,39,.12) 0%,transparent 26%,transparent 52%,rgba(7,20,39,.66) 100%)}
+.bw-home .plate .tk,.bw-home .plate .pl-label{z-index:2}
 .bw-home .plate .pl-label{position:absolute;left:14px;bottom:12px;right:14px;display:flex;justify-content:space-between;
   font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-cool)}
 .bw-home .plate .pl-label b{color:var(--sky);font-weight:500}
@@ -216,14 +219,17 @@
 }
 
 /* ============ CURSOR ============ */
-.bw-home .bw-cursor{position:fixed;top:0;left:0;width:26px;height:26px;z-index:9999;pointer-events:none;mix-blend-mode:difference;
+/* O elemento .bw-cursor é anexado ao <body> (fora de .bw-home), por isso
+   o estilo é GLOBAL, não escopado em .bw-home. */
+.bw-cursor{position:fixed;top:0;left:0;width:26px;height:26px;z-index:9999;pointer-events:none;mix-blend-mode:difference;
   transform:translate3d(-100px,-100px,0) translate(-50%,-50%);opacity:0;transition:width .18s,height .18s,opacity .2s}
-.bw-home .bw-cursor.is-on{opacity:1}
-.bw-home .bw-cursor.is-hover{width:54px;height:54px}
-.bw-home .bw-cursor::before,.bw-home .bw-cursor::after{content:"";position:absolute;background:var(--sky)}
-.bw-home .bw-cursor::before{left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%)}
-.bw-home .bw-cursor::after{top:50%;left:0;right:0;height:1px;transform:translateY(-50%)}
-@media(hover:none){.bw-home .bw-cursor{display:none}}
+.bw-cursor.is-on{opacity:1}
+.bw-cursor.is-hover{width:54px;height:54px}
+.bw-cursor::before,.bw-cursor::after{content:"";position:absolute;background:#5FB2DD}
+.bw-cursor::before{left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%)}
+.bw-cursor::after{top:50%;left:0;right:0;height:1px;transform:translateY(-50%)}
+@media(hover:none){.bw-cursor{display:none}}
+@media(prefers-reduced-motion:reduce){.bw-cursor{display:none}}
 
 /* ============ SEÇÕES GENÉRICAS ============ */
 .bw-home .sec{position:relative;padding:clamp(80px,12vh,150px) var(--mx)}

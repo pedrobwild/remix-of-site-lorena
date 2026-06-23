@@ -134,32 +134,7 @@ export default function HomePage() {
 
           <div className="plate fade" aria-hidden="true">
             <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
-            <svg className="pl-svg" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-              <g stroke="#5FB2DD" strokeWidth="1" opacity="0.9">
-                <rect x="70" y="70" width="260" height="360" />
-                <rect x="78" y="78" width="244" height="344" opacity="0.35" />
-                <rect x="70" y="70" width="92" height="96" />
-                <path d="M162 130 a32 32 0 0 1 -32 -32" strokeDasharray="2 4" opacity="0.7" />
-                <path d="M250 70 L250 150 L330 150" opacity="0.8" />
-                <line x1="250" y1="110" x2="290" y2="110" opacity="0.5" />
-                <rect x="92" y="300" width="120" height="110" opacity="0.8" />
-                <line x1="92" y1="326" x2="212" y2="326" opacity="0.5" />
-                <line x1="70" y1="240" x2="70" y2="300" strokeWidth="2" />
-                <line x1="66" y1="240" x2="66" y2="300" opacity="0.5" />
-                <rect x="250" y="330" width="72" height="80" opacity="0.7" />
-              </g>
-              <g stroke="#8FA6BC" strokeWidth="0.75" opacity="0.7">
-                <line x1="70" y1="450" x2="330" y2="450" />
-                <line x1="70" y1="445" x2="70" y2="455" /><line x1="330" y1="445" x2="330" y2="455" />
-                <line x1="350" y1="70" x2="350" y2="430" />
-                <line x1="345" y1="70" x2="355" y2="70" /><line x1="345" y1="430" x2="355" y2="430" />
-              </g>
-              <text x="200" y="466" fill="#8FA6BC" fontFamily="monospace" fontSize="11" letterSpacing="2" textAnchor="middle">5.80 M</text>
-              <text x="366" y="254" fill="#8FA6BC" fontFamily="monospace" fontSize="11" letterSpacing="2" textAnchor="middle" transform="rotate(90 366 254)">3.80 M</text>
-              <text x="116" y="356" fill="#5FB2DD" fontFamily="monospace" fontSize="9" letterSpacing="1.5">DORM.</text>
-              <text x="262" y="372" fill="#5FB2DD" fontFamily="monospace" fontSize="9" letterSpacing="1.5">ESTAR</text>
-              <text x="92" y="120" fill="#5FB2DD" fontFamily="monospace" fontSize="9" letterSpacing="1.5">BWC</text>
-            </svg>
+            <img className="pl-img" src={studioPronto.url} alt="" loading="eager" />
             <div className="pl-label">
               <span>PL.01 — STUDIO / VILA OLÍMPIA</span>
               <span><b>22 M²</b></span>
