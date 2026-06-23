@@ -195,12 +195,15 @@ export default function HomePage() {
 
   return (
     <div className="bw-home" ref={rootRef}>
+      {/* Grain global — 1 camada GPU, ignora pointer events. */}
+      <div className="bw-grain" aria-hidden="true" />
+
       {/* NAV — unificada para todas as páginas */}
       <BewildSiteNav />
 
 
       {/* HERO — full-bleed: render de fundo, texto sobre gradiente */}
-      <section className="hero" id="top" aria-label="Bewild — reforma turn-key de studios">
+      <section className="hero elevated" id="top" aria-label="Bewild — reforma turn-key de studios">
         <picture className="hero-bg-pic">
           <source media="(max-width: 760px)" srcSet="/hero-studio-mobile.webp" type="image/webp" />
           <source srcSet="/hero-studio-desktop.webp" type="image/webp" />
@@ -217,34 +220,48 @@ export default function HomePage() {
         </picture>
         <div className="hero-shade" />
         <div className="hero-shade-bottom" />
+
+        {/* Rótulos técnicos do hero (desktop only via CSS). */}
+        <div className="hero-frame-label" aria-hidden="true">
+          STUDIO REF. — VILA OLÍMPIA · 22 M² · BEWILD/SP
+        </div>
+        <div className="hero-coord" aria-hidden="true">
+          -23.5965 · -46.6856 — REFORMA TURN-KEY
+        </div>
+        <div className="hero-scroll" aria-hidden="true">
+          ROLE 01—12
+        </div>
+
         <div className="container">
           <div className="hero-text">
-            <div className="eyebrow" style={{ color: "var(--sky)" }}>
-              Reforma turn-key de studios · São Paulo
+            <div className="eyebrow bw-mono" data-reveal>
+              <span className="bw-reveal"><span>Reforma turn-key de studios · São Paulo</span></span>
             </div>
             <h1>
-              Seu studio pronto para render,{" "}
-              <span className="accent">sem você virar gerente de obra.</span>
+              <span className="bw-reveal" data-delay="1"><span>Seu studio pronto</span></span>{" "}
+              <span className="bw-reveal" data-delay="2"><span>para render,</span></span>
+              <br />
+              <span className="bw-reveal accent" data-delay="3"><span>sem você virar gerente de obra.</span></span>
             </h1>
             <p className="sub">
               Projeto, obra, marcenaria, mobiliário e acompanhamento num processo único. Você acompanha; a Bewild executa.
             </p>
-            <p className="micro">
+            <p className="micro bw-mono">
               Da entrega das chaves ao imóvel pronto para foto, anúncio e operação
             </p>
             <div className="hero-cta">
-              <a href="/diagnostico" className="btn btn-cyan">
+              <a href="/diagnostico" className="btn btn-cyan bw-magnetic" data-cursor="hover">
                 Solicitar diagnóstico <span className="arrow">→</span>
               </a>
-              <a href="/portfolio" className="btn btn-ghost-light">
+              <a href="/portfolio" className="btn btn-ghost-light" data-cursor="hover">
                 Ver reformas entregues
               </a>
             </div>
             <p className="hero-reassure">Resposta rápida</p>
             <ul className="hero-proof" aria-label="Provas Bewild">
-              <li><b>+150</b><span>studios entregues</span></li>
-              <li><b>a partir de 60</b><span>dias úteis de obra</span></li>
-              <li><b>5</b><span>anos de garantia</span></li>
+              <li><b>150+</b><span>studios entregues</span></li>
+              <li><b>60</b><span>dias úteis · a partir de</span></li>
+              <li><b>05</b><span>anos de garantia</span></li>
             </ul>
             <a
               href="#resultado"
@@ -268,6 +285,17 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Marquee — assinatura editorial entre hero e manifesto */}
+      <div className="bw-marquee" aria-hidden="true">
+        <div className="bw-marquee__track">
+          <span>CONSTRUÍDO POR QUEM NÃO ACEITA O ÓBVIO <i>—</i> BUILT BY THE WILD ONES <i>—</i> </span>
+          <span>CONSTRUÍDO POR QUEM NÃO ACEITA O ÓBVIO <i>—</i> BUILT BY THE WILD ONES <i>—</i> </span>
+          <span>CONSTRUÍDO POR QUEM NÃO ACEITA O ÓBVIO <i>—</i> BUILT BY THE WILD ONES <i>—</i> </span>
+          <span>CONSTRUÍDO POR QUEM NÃO ACEITA O ÓBVIO <i>—</i> BUILT BY THE WILD ONES <i>—</i> </span>
+        </div>
+      </div>
+
 
       {/* MANIFESTO — revelação Build→Bewild + descida "não é sua" (escura) */}
       <section className="section bw-dark" id="manifesto" aria-label="Bewild — manifesto">
