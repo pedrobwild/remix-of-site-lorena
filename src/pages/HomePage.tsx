@@ -187,6 +187,10 @@ export default function HomePage() {
     targets.forEach((el) => el.classList.add("in"));
   }, []);
 
+  // Sistema de direção de arte (smooth scroll, cursor crosshair, magnético, reveals masked).
+  useHomeFx(rootRef);
+
+
 
 
   return (
