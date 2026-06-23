@@ -1522,59 +1522,25 @@
 }
 
 /* --- Vídeos verticais --- */
-.bw-home .bw-videos .video-bloco{
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 44px;
-  align-items: center;
-}
-.bw-home .bw-videos .video-bloco + .video-bloco{ margin-top: 72px; }
-.bw-home .bw-videos .video-bloco.invertido .video-texto{ order:2; }
-.bw-home .bw-videos .video-bloco.invertido .video-moldura{ order:1; }
-.bw-home .bw-videos .video-moldura{
-  position: relative;
-  border-radius: 16px;
-  overflow: hidden;
-  aspect-ratio: 9/16;
-  max-height: 540px;
-  margin: 0 auto;
-  width: 100%;
-  background: var(--navy-deep);
-}
-.bw-home .bw-videos .video-moldura video{
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.bw-home .bw-videos .vt-tag{
-  font-family: var(--sans);
-  font-size: 11px;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: var(--sky);
-  margin-bottom: 18px;
-  font-weight: 600;
-}
-.bw-home .bw-videos .vt-h{
-  font-family: var(--display);
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -.01em;
-  font-size: clamp(1.4rem, 3.2vw, 2rem);
-  color:#fff;
-  margin-bottom: 16px;
-}
-.bw-home .bw-videos .vt-h em{ font-style: italic; color: var(--sky); }
-
-@media (max-width: 680px){
-  .bw-home .bw-videos .video-bloco{ grid-template-columns: 1fr; gap: 24px; }
-  .bw-home .bw-videos .video-bloco.invertido .video-texto{ order:2; }
-  .bw-home .bw-videos .video-bloco.invertido .video-moldura{ order:1; }
-  .bw-home .bw-videos .video-moldura{ max-height: 480px; max-width: 340px; }
-}
+.bw-home .bw-videos .video-bloco{display:grid;grid-template-columns:1fr minmax(248px,300px);gap:clamp(30px,5vw,72px);align-items:center}
+.bw-home .bw-videos .video-bloco + .video-bloco{margin-top:clamp(56px,8vh,96px)}
+.bw-home .bw-videos .video-bloco.invertido{grid-template-columns:minmax(248px,300px) 1fr}
+.bw-home .bw-videos .video-bloco.invertido .video-texto{order:2}
+.bw-home .bw-videos .video-bloco.invertido .video-moldura{order:1}
+.bw-home .bw-videos .video-moldura{position:relative;width:100%;max-width:300px;aspect-ratio:9/16;max-height:none;margin:0 auto;border:1px solid var(--hair);border-radius:18px;overflow:hidden;background:linear-gradient(165deg,#0c2543,#06152b)}
+.bw-home .bw-videos .video-moldura video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.bw-home .bw-videos .vtk{position:absolute;width:9px;height:9px;color:var(--sky);opacity:.8;z-index:2}
+.bw-home .bw-videos .vtk::before,.bw-home .bw-videos .vtk::after{content:"";position:absolute;background:currentColor}
+.bw-home .bw-videos .vtk::before{left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%)}
+.bw-home .bw-videos .vtk::after{top:50%;left:0;right:0;height:1px;transform:translateY(-50%)}
+.bw-home .bw-videos .vtk.tl{top:-4px;left:-4px}.bw-home .bw-videos .vtk.tr{top:-4px;right:-4px}
+.bw-home .bw-videos .vtk.bl{bottom:-4px;left:-4px}.bw-home .bw-videos .vtk.br{bottom:-4px;right:-4px}
+.bw-home .bw-videos .vmlabel{position:absolute;left:14px;bottom:14px;right:14px;font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.62);z-index:2}
+.bw-home .bw-videos .vt-tag{display:inline-block;margin-bottom:18px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.2em;font-size:11px;font-weight:600;color:var(--sky)}
+.bw-home .bw-videos .vt-h{font-family:var(--display);font-weight:700;font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.18;letter-spacing:-.01em;color:#fff;margin-bottom:15px}
+.bw-home .bw-videos .vt-h em{font-style:italic;color:var(--sky)}
+.bw-home .bw-videos .video-texto p{color:rgba(255,255,255,.78);line-height:1.72;font-weight:300;max-width:46ch}
+@media(max-width:760px){.bw-home .bw-videos .video-bloco,.bw-home .bw-videos .video-bloco.invertido{grid-template-columns:1fr;gap:24px;justify-items:center}.bw-home .bw-videos .video-bloco .video-texto{order:2;text-align:left}.bw-home .bw-videos .video-bloco .video-moldura{order:1;max-width:270px}}
 @media (max-width: 640px){
   .bw-home .bw-solta{ grid-template-columns: auto 1fr; gap: 14px; }
   .bw-home .bw-solta .selo{ grid-column: 2; justify-self: start; margin-top: 4px; }

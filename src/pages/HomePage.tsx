@@ -433,6 +433,10 @@ export default function HomePage() {
               </p>
             </div>
             <div className="video-moldura">
+              <i className="vtk tl" aria-hidden="true" />
+              <i className="vtk tr" aria-hidden="true" />
+              <i className="vtk bl" aria-hidden="true" />
+              <i className="vtk br" aria-hidden="true" />
               <video
                 src="/videos/arquiteta-medicao.mp4"
                 poster="/videos/arquiteta-medicao-poster.jpg"
@@ -443,10 +447,15 @@ export default function HomePage() {
                 preload="metadata"
                 aria-label="Arquiteta da Bewild fazendo a medição do imóvel"
               />
+              <span className="vmlabel">Arquiteta · Medição</span>
             </div>
           </div>
           <div className="video-bloco invertido">
             <div className="video-moldura">
+              <i className="vtk tl" aria-hidden="true" />
+              <i className="vtk tr" aria-hidden="true" />
+              <i className="vtk bl" aria-hidden="true" />
+              <i className="vtk br" aria-hidden="true" />
               <video
                 src="/videos/time-obra.mp4"
                 poster="/videos/time-obra-poster.jpg"
@@ -457,6 +466,7 @@ export default function HomePage() {
                 preload="metadata"
                 aria-label="Time de obra da Bewild a caminho da reforma"
               />
+              <span className="vmlabel">Obra · Time próprio</span>
             </div>
             <div className="video-texto">
               <p className="vt-tag">e quem executa tem rosto</p>
