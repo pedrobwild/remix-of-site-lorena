@@ -1,8 +1,7 @@
 /**
- * SiteFooter — rodapé "prancheta" (Utsubo) unificado de todas as páginas
- * públicas da Bewild. Cena de fechamento: assinatura da marca + tagline,
- * navegação e contato, e a ficha técnica (carimbo de prancha) com os dados
- * legais. Autocontido. Marca sempre grafada "Bewild" (só B maiúsculo).
+ * SiteFooter — rodapé "prancheta" (Utsubo) unificado das páginas públicas.
+ * Cena de fechamento: assinatura + tagline, navegação, contato e a ficha
+ * técnica (carimbo de prancha). Autocontido. Marca sempre "Bewild".
  */
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import { openCookiePreferences } from "@/lib/cookieConsent";
@@ -60,11 +59,7 @@ export default function SiteFooter() {
             <li><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></li>
             <li><a href="/privacidade">Política de privacidade</a></li>
             <li>
-              <button
-                type="button"
-                onClick={openCookiePreferences}
-                className="bw-foot__linkbtn"
-              >
+              <button type="button" onClick={openCookiePreferences} className="bw-foot__linkbtn">
                 Preferências de cookies
               </button>
             </li>
