@@ -1,9 +1,8 @@
 /**
- * SiteFooter — rodapé navy unificado de todas as páginas públicas da Bewild.
- *
- * Autocontido: importa seu próprio CSS (`src/styles/site-footer.css`) e não
- * depende de classes externas (ex.: `.bw-home`). Marca sempre grafada
- * "Bewild" (só B maiúsculo).
+ * SiteFooter — rodapé "prancheta" (Utsubo) unificado de todas as páginas
+ * públicas da Bewild. Cena de fechamento: assinatura da marca + tagline,
+ * navegação e contato, e a ficha técnica (carimbo de prancha) com os dados
+ * legais. Autocontido. Marca sempre grafada "Bewild" (só B maiúsculo).
  */
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import { openCookiePreferences } from "@/lib/cookieConsent";
@@ -27,25 +26,21 @@ export default function SiteFooter() {
   const year = new Date().getFullYear();
   return (
     <footer className="bw-foot">
-      <div className="bw-foot__grid">
-        <div>
+      <div className="bw-foot__top">
+        <div className="bw-foot__brand">
           <a href="/" aria-label="Bewild — início">
             <BrandLockup />
           </a>
-          <p style={{ marginTop: 14 }}>
+          <p className="bw-foot__tagline">
+            Built by the wild ones. <em>Be wild.</em>
+          </p>
+          <p className="bw-foot__desc">
             Reforma turn-key de studios em São Paulo. Projeto, obra, marcenaria,
-            mobiliário e entrega em um processo único.
-          </p>
-          <p style={{ marginTop: 10 }}>{CONTACT.city}</p>
-          <p style={{ marginTop: 10, fontSize: "0.85em", opacity: 0.75 }}>
-            CNPJ 47.350.338/0001-37
-          </p>
-          <p style={{ marginTop: 4, fontSize: "0.85em", opacity: 0.75 }}>
-            Responsável técnico: Thiago Dantas do Amor · CAU A162437-7
+            mobiliário e entrega num processo único.
           </p>
         </div>
 
-        <nav aria-label="Rodapé — navegação">
+        <nav className="bw-foot__nav" aria-label="Rodapé — navegação">
           <h2 className="bw-foot__col">Navegação</h2>
           <ul>
             <li><a href="/#fazemos">O que fazemos</a></li>
@@ -56,7 +51,7 @@ export default function SiteFooter() {
           </ul>
         </nav>
 
-        <div>
+        <div className="bw-foot__contact">
           <h2 className="bw-foot__col">Contato</h2>
           <ul>
             <li><a href={whatsappHref()} target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
@@ -77,9 +72,16 @@ export default function SiteFooter() {
         </div>
       </div>
 
+      <div className="bw-foot__spec" aria-label="Ficha técnica">
+        <span>BEWILD · GRUPO BWILD</span>
+        <span>{CONTACT.city}</span>
+        <span>CNPJ 47.350.338/0001-37</span>
+        <span>RESP. TÉCNICO · THIAGO DANTAS DO AMOR · CAU A162437-7</span>
+      </div>
+
       <div className="bw-foot__bottom">
-        <p>Bewild · Reforma turn-key de studios em São Paulo</p>
         <p>© {year} Bewild · Grupo Bwild</p>
+        <p>Reforma turn-key de studios em São Paulo</p>
       </div>
     </footer>
   );

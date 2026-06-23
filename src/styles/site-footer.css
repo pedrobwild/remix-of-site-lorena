@@ -1,7 +1,7 @@
 /**
- * SiteFooter — rodapé "prancheta" unificado (todas as páginas públicas).
- * Fecha a página no tom técnico do site: fundo ink-deep, hairlines retas,
- * headers mono, ticks em ciano, cantos vivos. Autocontido.
+ * SiteFooter — cena de fechamento "prancheta" (Utsubo). Fundo ink-deep,
+ * assinatura da marca em destaque, ficha técnica como carimbo de prancha,
+ * hairlines retas, cantos vivos. Autocontido.
  */
 .bw-foot{
   --bw-ink-deep:#071427;
@@ -10,29 +10,37 @@
   --bw-sky:#5FB2DD;
   --bw-muted-cool:#8FA6BC;
   --bw-hair:rgba(255,255,255,.12);
+  --bw-display:"Poppins",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   --bw-sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   --bw-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
 
   background:var(--bw-ink-deep);
-  color:#c4d1e0;
+  color:#aebccb;
   font-family:var(--bw-sans);
   border-top:1px solid var(--bw-hair);
-  padding:clamp(56px,9vh,88px) clamp(20px,4.5vw,40px) 0;
+  padding:clamp(64px,11vh,108px) clamp(20px,4.5vw,40px) 0;
   position:relative;
 }
 .bw-foot::before{
   content:"";position:absolute;left:clamp(20px,4.5vw,40px);top:0;
-  width:26px;height:1px;background:var(--bw-sky);opacity:.7;
+  width:30px;height:1px;background:var(--bw-sky);opacity:.7;
 }
-.bw-foot__grid{
-  max-width:1200px;margin:0 auto;
-  display:grid;grid-template-columns:1.6fr .9fr 1.1fr;gap:clamp(28px,5vw,72px);
-  padding-bottom:clamp(40px,6vh,64px);
-}
-.bw-foot__logo{display:block;height:30px;width:auto}
-.bw-foot p{font-size:14px;line-height:1.6;color:#aebccb;max-width:42ch}
 
-/* Headers das colunas — mono uppercase com tick em ciano */
+.bw-foot__top{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:1.5fr .8fr .9fr;gap:clamp(32px,6vw,80px);
+  align-items:start;padding-bottom:clamp(44px,7vh,76px);
+}
+.bw-foot__brand{max-width:44ch}
+.bw-foot__logo{display:block;height:30px;width:auto;margin-bottom:20px}
+.bw-foot__tagline{
+  font-family:var(--bw-display);font-weight:500;
+  font-size:clamp(20px,2.2vw,29px);line-height:1.22;letter-spacing:-.01em;
+  color:#fff;margin:0 0 14px;
+}
+.bw-foot__tagline em{font-style:italic;color:var(--bw-sky)}
+.bw-foot__desc{font-size:14px;line-height:1.6;color:#8fa0b2;margin:0;max-width:38ch}
+
 .bw-foot__col{
   font-family:var(--bw-mono);font-size:10.5px;font-weight:500;
   letter-spacing:.2em;text-transform:uppercase;color:var(--bw-muted-cool);
@@ -40,38 +48,47 @@
 }
 .bw-foot__col::after{content:"";position:absolute;left:0;bottom:-1px;width:28px;height:1px;background:var(--bw-sky)}
 
-/* Listas de links */
-.bw-foot nav ul,.bw-foot__grid div ul{list-style:none;margin:0;padding:0;display:grid;gap:12px}
-.bw-foot ul li{margin:0}
-.bw-foot ul a,.bw-foot__linkbtn{
+.bw-foot__nav ul,.bw-foot__contact ul{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.bw-foot li{margin:0}
+.bw-foot__nav a,.bw-foot__contact a,.bw-foot__linkbtn{
   color:#aebccb;text-decoration:none;
   font-family:var(--bw-sans);font-size:13.5px;line-height:1.4;
   display:inline-flex;align-items:center;gap:9px;
   transition:color .2s ease;cursor:pointer;
   background:none;border:0;padding:0;text-align:left;
 }
-.bw-foot ul a::before,.bw-foot__linkbtn::before{
+.bw-foot__nav a::before,.bw-foot__contact a::before,.bw-foot__linkbtn::before{
   content:"";width:0;height:1px;background:var(--bw-sky);transition:width .2s ease;flex:none;
 }
-.bw-foot ul a:hover,.bw-foot__linkbtn:hover{color:#fff}
-.bw-foot ul a:hover::before,.bw-foot__linkbtn:hover::before{width:12px}
+.bw-foot__nav a:hover,.bw-foot__contact a:hover,.bw-foot__linkbtn:hover{color:#fff}
+.bw-foot__nav a:hover::before,.bw-foot__contact a:hover::before,.bw-foot__linkbtn:hover::before{width:12px}
 
-/* Barra inferior — mono */
+/* Ficha técnica — carimbo de prancha */
+.bw-foot__spec{
+  max-width:1200px;margin:0 auto;
+  display:flex;flex-wrap:wrap;align-items:center;
+  padding:18px 0;border-top:1px solid var(--bw-hair);
+  font-family:var(--bw-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--bw-muted-cool);
+}
+.bw-foot__spec span{position:relative;padding-right:18px;margin-right:18px}
+.bw-foot__spec span:not(:last-child)::after{content:"";position:absolute;right:0;top:50%;width:1px;height:11px;background:var(--bw-hair);transform:translateY(-50%)}
+
 .bw-foot__bottom{
   max-width:1200px;margin:0 auto;
   display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
-  padding:18px 0 22px;border-top:1px solid var(--bw-hair);
+  padding:16px 0 24px;border-top:1px solid var(--bw-hair);
+  font-family:var(--bw-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--bw-muted-cool);
 }
-.bw-foot__bottom p{
-  margin:0;font-family:var(--bw-mono);font-size:10px;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--bw-muted-cool);max-width:none;
-}
+.bw-foot__bottom p{margin:0}
 
 @media (max-width:860px){
-  .bw-foot__grid{grid-template-columns:1fr 1fr;gap:36px 28px}
-  .bw-foot__grid > div:first-child{grid-column:1/-1}
+  .bw-foot__top{grid-template-columns:1fr 1fr;gap:36px 28px}
+  .bw-foot__brand{grid-column:1/-1}
 }
 @media (max-width:560px){
-  .bw-foot__grid{grid-template-columns:1fr;gap:32px}
+  .bw-foot__top{grid-template-columns:1fr;gap:30px}
+  .bw-foot__spec{flex-direction:column;align-items:flex-start;gap:7px}
+  .bw-foot__spec span{padding:0;margin:0}
+  .bw-foot__spec span:not(:last-child)::after{display:none}
   .bw-foot__bottom{flex-direction:column;align-items:flex-start;gap:6px}
 }
