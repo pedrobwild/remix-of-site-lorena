@@ -1,7 +1,7 @@
 /* ============================================================
  * Bewild v4 — Diagnóstico (/diagnostico)
+ * Linguagem visual de "prancheta de arquitetura" — alinhada à home.
  * CSS isolado por .bw-diag. Tokens locais para não vazar.
- * Espelha o anexo aprovado: hero escuro navy + card form branco.
  * ============================================================ */
 
 .bw-diag {
@@ -16,6 +16,7 @@
   --ink: #202A31;
   --muted: #6B6A64;
   --line-cool: #DCE6EE;
+  --hairline: #E6DECF;
 
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   color: #fff;
@@ -33,9 +34,9 @@
 .bw-diag h2,
 .bw-diag h3 {
   font-family: "Poppins", -apple-system, BlinkMacSystemFont, sans-serif;
-  font-weight: 800;
-  letter-spacing: -0.015em;
-  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
   color: #fff;
   margin: 0;
 }
@@ -46,14 +47,27 @@
   padding: 0 28px;
 }
 
-/* HERO escuro */
+/* HERO escuro — prancheta navy com grade técnica sutil */
 .bw-diag__hero {
-  background: radial-gradient(120% 130% at 15% 0%, #15406C 0%, #0E2C49 55%, var(--navy-deep) 100%);
+  background:
+    radial-gradient(120% 130% at 15% 0%, #15406C 0%, #0E2C49 55%, var(--navy-deep) 100%);
   color: #fff;
-  padding: 54px 0 64px;
+  padding: 64px 0 72px;
   position: relative;
   overflow: hidden;
 }
+.bw-diag__hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(95, 178, 221, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(95, 178, 221, 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+  pointer-events: none;
+  z-index: 0;
+}
+.bw-diag__hero > * { position: relative; z-index: 1; }
 
 .bw-diag__grid {
   display: grid;
@@ -76,28 +90,44 @@
 
 /* Pitch */
 .bw-diag__eyebrow {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
   text-transform: uppercase;
   letter-spacing: 0.22em;
-  font-size: 11.5px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 500;
   color: var(--sky);
-  margin-bottom: 16px;
+  margin-bottom: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.bw-diag__eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: var(--sky);
+  opacity: 0.8;
 }
 .bw-diag__title {
-  font-size: clamp(30px, 4.2vw, 46px);
-  line-height: 1.08;
-  margin-bottom: 16px;
-  max-width: 15ch;
+  font-size: clamp(32px, 4.6vw, 52px);
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  margin-bottom: 18px;
+  max-width: 16ch;
 }
 .bw-diag__title .accent {
-  color: var(--cyan);
+  color: var(--sky);
+  font-style: italic;
+  font-weight: 600;
 }
 .bw-diag__sub {
-  font-size: 16.5px;
-  color: rgba(255, 255, 255, 0.86);
-  max-width: 46ch;
-  margin-bottom: 12px;
-  line-height: 1.6;
+  font-family: "Inter", sans-serif;
+  font-size: 17px;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 48ch;
+  margin-bottom: 14px;
+  line-height: 1.55;
+  font-weight: 300;
 }
 .bw-diag__note {
   font-size: 12.5px;
@@ -108,10 +138,11 @@
 }
 
 .bw-diag__blocklabel {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 11px;
-  font-weight: 600;
+  letter-spacing: 0.18em;
+  font-size: 10.5px;
+  font-weight: 500;
   color: var(--sky);
   margin: 0 0 13px;
 }
@@ -125,11 +156,12 @@
   padding: 0;
 }
 .bw-diag__pill {
+  font-family: "Inter", sans-serif;
   font-size: 12.5px;
-  font-weight: 500;
+  font-weight: 400;
   color: #fff;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   padding: 7px 14px;
   border-radius: 999px;
 }
@@ -141,24 +173,24 @@
 }
 .bw-diag__step {
   display: flex;
-  gap: 13px;
+  gap: 14px;
   align-items: baseline;
-  padding: 9px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
-.bw-diag__step:last-child {
-  border-bottom: none;
-}
+.bw-diag__step:last-child { border-bottom: none; }
 .bw-diag__step .n {
-  font-family: "Poppins", sans-serif;
-  font-weight: 700;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-weight: 500;
   color: var(--sky);
-  font-size: 12.5px;
-  min-width: 20px;
+  font-size: 12px;
+  min-width: 26px;
+  letter-spacing: 0.05em;
 }
 .bw-diag__step .tx {
   font-size: 14.5px;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.5;
 }
 
 .bw-diag__stats {
@@ -168,38 +200,45 @@
   margin-bottom: 14px;
 }
 .bw-diag__stat {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.13);
-  border-radius: 12px;
-  padding: 15px 17px;
+  position: relative;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 16px 18px;
 }
 .bw-diag__stat b {
   font-family: "Poppins", sans-serif;
-  font-weight: 800;
-  font-size: 24px;
+  font-weight: 700;
+  font-size: 26px;
   color: #fff;
   line-height: 1;
   display: flex;
   align-items: baseline;
   gap: 6px;
+  letter-spacing: -0.02em;
 }
 .bw-diag__stat b em {
-  font-size: 12px;
-  font-weight: 600;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 500;
   font-style: normal;
   color: var(--sky);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .bw-diag__stat span {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.68);
+  color: rgba(255, 255, 255, 0.62);
   display: block;
-  margin-top: 7px;
+  margin-top: 8px;
+  line-height: 1.45;
 }
 .bw-diag__fine {
-  font-size: 11.5px;
-  color: rgba(255, 255, 255, 0.45);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
   margin-bottom: 24px;
 }
 
@@ -207,59 +246,95 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
+  gap: 10px;
   font-family: "Inter", sans-serif;
-  font-weight: 600;
-  font-size: 15px;
-  padding: 14px 26px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  font-weight: 500;
+  font-size: 14.5px;
+  padding: 13px 24px;
+  border-radius: 2px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.35);
   color: #fff;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  letter-spacing: 0.01em;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 .bw-diag__alt:hover {
-  transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--sky);
+  color: var(--sky);
 }
-.bw-diag__alt .ic {
-  width: 18px;
-  height: 18px;
-}
+.bw-diag__alt .ic { width: 17px; height: 17px; }
 
-/* FORM CARD */
+/* ============================================================
+ * FORM CARD — moldura branca de prancheta com corner ticks
+ * ============================================================ */
 .bw-diag__formcard {
+  position: relative;
   background: #fff;
-  border-radius: 18px;
-  padding: 28px 28px 26px;
-  box-shadow: 0 44px 90px -44px rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  padding: 32px 30px 28px;
+  box-shadow:
+    0 1px 0 rgba(11, 35, 66, 0.04),
+    0 44px 90px -44px rgba(0, 0, 0, 0.55);
   color: var(--ink);
+  border: 1px solid rgba(11, 35, 66, 0.06);
+}
+/* Corner ticks em L (4 quinas) — discretos, cor sky */
+.bw-diag__formcard::before,
+.bw-diag__formcard::after,
+.bw-diag__testicard::before,
+.bw-diag__testicard::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--sky);
+  border-style: solid;
+  pointer-events: none;
+  opacity: 0.85;
+}
+.bw-diag__formcard::before {
+  top: -1px; left: -1px;
+  border-width: 1.5px 0 0 1.5px;
+}
+.bw-diag__formcard::after {
+  bottom: -1px; right: -1px;
+  border-width: 0 1.5px 1.5px 0;
+}
+/* Para as outras 2 quinas, usamos um wrapper visual via box-shadow inset */
+.bw-diag__formcard {
+  background-image:
+    linear-gradient(to right, var(--sky) 14px, transparent 14px) top right / 14px 1.5px no-repeat,
+    linear-gradient(to bottom, var(--sky) 14px, transparent 14px) top right / 1.5px 14px no-repeat,
+    linear-gradient(to right, var(--sky) 14px, transparent 14px) bottom left / 14px 1.5px no-repeat,
+    linear-gradient(to bottom, var(--sky) 14px, transparent 14px) bottom left / 1.5px 14px no-repeat;
 }
 
 .bw-diag__field {
-  margin-bottom: 15px;
+  margin-bottom: 16px;
 }
 .bw-diag__field > label,
 .bw-diag__field > legend {
-  font-size: 13px;
-  font-weight: 600;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 10.5px;
+  font-weight: 500;
   color: var(--navy);
-  margin-bottom: 6px;
+  margin-bottom: 7px;
   display: block;
-  font-family: "Inter", sans-serif;
 }
-.bw-diag__req {
-  color: var(--cyan);
-}
+.bw-diag__req { color: var(--cyan); }
+
 .bw-diag__field input,
 .bw-diag__field textarea {
   width: 100%;
-  border: 1.5px solid var(--line-cool);
-  border-radius: 10px;
+  border: 1px solid var(--line-cool);
+  border-radius: 2px;
   padding: 12px 14px;
   font-family: "Inter", sans-serif;
-  font-size: 14.5px;
+  font-size: 15px;
   color: var(--ink);
   background: #fff;
   transition: border-color 0.12s, box-shadow 0.12s;
@@ -267,12 +342,13 @@
 .bw-diag__field input::placeholder,
 .bw-diag__field textarea::placeholder {
   color: #A9A69E;
+  font-weight: 300;
 }
 .bw-diag__field input:focus,
 .bw-diag__field textarea:focus {
   outline: none;
   border-color: var(--cyan);
-  box-shadow: 0 0 0 3px rgba(47, 134, 184, 0.12);
+  box-shadow: 0 0 0 3px rgba(47, 134, 184, 0.14);
 }
 .bw-diag__field input.bad,
 .bw-diag__field textarea.bad {
@@ -280,7 +356,7 @@
 }
 .bw-diag__field textarea {
   resize: vertical;
-  min-height: 84px;
+  min-height: 88px;
 }
 .bw-diag__frow {
   display: grid;
@@ -288,10 +364,9 @@
   gap: 13px;
 }
 @media (max-width: 480px) {
-  .bw-diag__frow {
-    grid-template-columns: 1fr;
-  }
+  .bw-diag__frow { grid-template-columns: 1fr; }
 }
+
 .bw-diag__opts {
   display: flex;
   gap: 8px;
@@ -300,7 +375,7 @@
 .bw-diag__opt {
   padding: 8px 14px;
   border-radius: 999px;
-  border: 1.5px solid var(--line-cool);
+  border: 1px solid var(--line-cool);
   background: #fff;
   font-family: "Inter", sans-serif;
   font-size: 13px;
@@ -309,9 +384,7 @@
   cursor: pointer;
   transition: all 0.12s;
 }
-.bw-diag__opt:hover {
-  border-color: var(--cyan);
-}
+.bw-diag__opt:hover { border-color: var(--cyan); color: var(--cyan); }
 .bw-diag__opt.sel {
   background: var(--navy);
   color: #fff;
@@ -328,36 +401,37 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
+  gap: 10px;
   width: 100%;
-  margin-top: 6px;
+  margin-top: 8px;
   font-family: "Inter", sans-serif;
   font-weight: 600;
   font-size: 15px;
-  padding: 14px 26px;
-  border-radius: 999px;
-  border: 1.5px solid transparent;
-  background: var(--navy);
+  padding: 15px 26px;
+  border-radius: 2px;
+  border: 1px solid var(--cyan);
+  background: var(--cyan);
   color: #fff;
   cursor: pointer;
+  letter-spacing: 0.01em;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 .bw-diag__submit:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px -12px rgba(17, 53, 91, 0.7);
+  transform: translateY(-1px);
+  background: var(--navy);
+  border-color: var(--navy);
+  box-shadow: 0 12px 28px -14px rgba(11, 35, 66, 0.55);
 }
 .bw-diag__submit:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 .bw-diag__submit .arrow {
-  width: 16px;
-  height: 16px;
+  width: 16px; height: 16px;
   transition: transform 0.15s ease;
 }
-.bw-diag__submit:hover:not(:disabled) .arrow {
-  transform: translateX(3px);
-}
+.bw-diag__submit:hover:not(:disabled) .arrow { transform: translateX(4px); }
+
 .bw-diag__formfine {
   font-size: 11.5px;
   color: var(--muted);
@@ -370,35 +444,43 @@
   background: #E8F4EC;
   border: 1px solid #9BC9AE;
   color: #1F5132;
-  border-radius: 12px;
+  border-radius: 4px;
   padding: 16px 18px;
   font-size: 14px;
   margin-bottom: 18px;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 .bw-diag__success strong,
-.bw-diag__success span {
-  display: block;
-}
+.bw-diag__success span { display: block; }
 .bw-diag__success strong {
   font-family: "Poppins", sans-serif;
   font-size: 16px;
   margin-bottom: 4px;
 }
 
-
-
-/* Card compacto de depoimento (abaixo do formulário) */
+/* ============================================================
+ * Card depoimento — também com corner ticks
+ * ============================================================ */
 .bw-diag__testicard {
+  position: relative;
   display: grid;
   grid-template-columns: 112px 1fr;
   gap: 16px;
   align-items: center;
-  padding: 16px;
-  background: var(--card, #fff);
-  border: 1px solid var(--border, rgba(17, 53, 91, 0.12));
-  border-radius: 14px;
-  box-shadow: 0 8px 24px -18px rgba(17, 53, 91, 0.25);
+  padding: 18px;
+  background: #fff;
+  border: 1px solid rgba(11, 35, 66, 0.08);
+  border-radius: 4px;
+  box-shadow: 0 8px 24px -18px rgba(11, 35, 66, 0.25);
+  background-image:
+    linear-gradient(to right, var(--sky) 12px, transparent 12px) top left / 12px 1.5px no-repeat,
+    linear-gradient(to bottom, var(--sky) 12px, transparent 12px) top left / 1.5px 12px no-repeat,
+    linear-gradient(to right, var(--sky) 12px, transparent 12px) top right / 12px 1.5px no-repeat,
+    linear-gradient(to bottom, var(--sky) 12px, transparent 12px) top right / 1.5px 12px no-repeat,
+    linear-gradient(to right, var(--sky) 12px, transparent 12px) bottom left / 12px 1.5px no-repeat,
+    linear-gradient(to bottom, var(--sky) 12px, transparent 12px) bottom left / 1.5px 12px no-repeat,
+    linear-gradient(to right, var(--sky) 12px, transparent 12px) bottom right / 12px 1.5px no-repeat,
+    linear-gradient(to bottom, var(--sky) 12px, transparent 12px) bottom right / 1.5px 12px no-repeat;
 }
 @media (max-width: 480px) {
   .bw-diag__testicard {
@@ -411,9 +493,9 @@
   position: relative;
   width: 112px;
   height: 140px;
-  border-radius: 10px;
+  border-radius: 2px;
   overflow: hidden;
-  border: 1px solid rgba(17, 53, 91, 0.14);
+  border: 1px solid rgba(11, 35, 66, 0.14);
   background: #000;
   padding: 0;
   cursor: pointer;
@@ -450,17 +532,17 @@
 .bw-diag__testithumb:focus-visible .bw-diag__testiplay {
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.55));
 }
-.bw-diag__testimeta {
-  min-width: 0;
-}
+.bw-diag__testimeta { min-width: 0; }
 .bw-diag__testimeta .bw-diag__eyebrow {
+  color: var(--cyan);
   margin: 0 0 6px;
 }
+.bw-diag__testimeta .bw-diag__eyebrow::before { background: var(--cyan); }
 .bw-diag__testiname {
   font-family: "Poppins", -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 600;
   font-size: 16px;
-  color: var(--ink, #11355b);
+  color: var(--navy);
   margin: 0 0 2px;
   letter-spacing: -0.01em;
 }
@@ -471,6 +553,16 @@
 }
 .bw-diag__alt--card {
   font-size: 13px;
+  padding: 9px 16px;
+  border: 1px solid var(--navy);
+  color: var(--navy);
+  background: transparent;
+  border-radius: 2px;
+}
+.bw-diag__alt--card:hover {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
 }
 
 /* Modal / lightbox de vídeo */
@@ -495,14 +587,12 @@
   max-height: 90vh;
   aspect-ratio: 9 / 16;
   background: #000;
-  border-radius: 16px;
+  border-radius: 4px;
   overflow: hidden;
   box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.6);
 }
 @media (max-width: 640px) {
-  .bw-diag__modal {
-    padding: 0;
-  }
+  .bw-diag__modal { padding: 0; }
   .bw-diag__modal-inner {
     width: 100%;
     height: 100%;
@@ -537,27 +627,23 @@
 .bw-diag__modal-close:focus-visible {
   background: rgba(0, 0, 0, 0.8);
 }
-.bw-diag__modal-close svg {
-  width: 18px;
-  height: 18px;
-}
-
+.bw-diag__modal-close svg { width: 18px; height: 18px; }
 
 /* ===== Faixa de confiança no hero ===== */
 .bw-diag__trustband {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  margin-top: 8px;
+  margin-top: 10px;
   padding: 10px 16px;
   border-radius: 999px;
-  background: rgba(95, 178, 221, 0.12);
-  border: 1px solid rgba(95, 178, 221, 0.35);
+  background: rgba(95, 178, 221, 0.1);
+  border: 1px solid rgba(95, 178, 221, 0.32);
   font-size: 14px;
   color: rgba(255, 255, 255, 0.92);
 }
 .bw-diag__trustband strong {
-  color: var(--cyan);
+  color: var(--sky);
   font-weight: 700;
 }
 .bw-diag__trustband-icon {
@@ -569,10 +655,7 @@
   background: var(--cyan);
   color: #fff;
 }
-.bw-diag__trustband-icon svg {
-  width: 13px;
-  height: 13px;
-}
+.bw-diag__trustband-icon svg { width: 13px; height: 13px; }
 
 /* ===== Toggle "+ Mais detalhes" no form ===== */
 .bw-diag__more-toggle {
@@ -582,23 +665,23 @@
   background: transparent;
   border: 1px dashed var(--line-cool);
   color: var(--navy);
-  font-family: "Inter", sans-serif;
-  font-size: 13px;
-  font-weight: 600;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: 2px;
   cursor: pointer;
   margin: 4px 0 14px;
-  transition: border-color 0.12s, background 0.12s;
+  transition: border-color 0.12s, background 0.12s, color 0.12s;
 }
 .bw-diag__more-toggle:hover {
   border-color: var(--cyan);
   background: rgba(47, 134, 184, 0.04);
+  color: var(--cyan);
 }
-.bw-diag__more-toggle svg {
-  width: 14px;
-  height: 14px;
-}
+.bw-diag__more-toggle svg { width: 14px; height: 14px; }
 .bw-diag__more {
   border-top: 1px dashed var(--line-cool);
   padding-top: 14px;
@@ -607,23 +690,26 @@
 
 /* ===== Garantia abaixo do submit ===== */
 .bw-diag__guarantee {
-  font-size: 12px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--muted);
   text-align: center;
-  margin-top: 12px;
+  margin-top: 14px;
   line-height: 1.5;
 }
 
 /* ===== Card de depoimento — extras ===== */
 .bw-diag__testieyebrow {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
   text-transform: uppercase;
   letter-spacing: 0.18em;
   font-size: 10.5px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--cyan);
   margin: 0 0 6px;
 }
-/* (removed) .bw-diag__testistat — dado pertencia a outro cliente */
 .bw-diag__testilink {
   display: inline-flex;
   align-items: center;
@@ -639,31 +725,42 @@
   color: var(--cyan);
   border-color: var(--cyan);
 }
-.bw-diag__testilink .ic {
-  width: 14px;
-  height: 14px;
-}
+.bw-diag__testilink .ic { width: 14px; height: 14px; }
 
-/* ===== Apoio (full width, abaixo da dobra) ===== */
+/* ============================================================
+ * Apoio (full width, abaixo da dobra) — claro, prancheta sand
+ * ============================================================ */
 .bw-diag__support {
   background: var(--paper);
   color: var(--ink);
-  padding: 72px 0 56px;
+  padding: 80px 0 64px;
+  position: relative;
+}
+.bw-diag__support::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: var(--hairline);
 }
 .bw-diag .bw-diag__support-title {
   font-family: "Poppins", sans-serif;
-  font-weight: 800;
-  font-size: clamp(24px, 3vw, 34px);
-  letter-spacing: -0.015em;
-  line-height: 1.15;
+  font-weight: 700;
+  font-size: clamp(26px, 3.4vw, 38px);
+  letter-spacing: -0.025em;
+  line-height: 1.12;
   color: var(--navy);
-  margin: 0 0 24px;
+  margin: 0 0 28px;
 }
 .bw-diag .bw-diag__support-title--mt {
   margin-top: 56px;
+  padding-top: 56px;
+  border-top: 1px solid var(--hairline);
 }
 .bw-diag .bw-diag__support-title .accent {
   color: var(--cyan);
+  font-style: italic;
+  font-weight: 600;
 }
 
 .bw-diag__supportsteps {
@@ -675,30 +772,29 @@
   gap: 14px;
 }
 @media (max-width: 920px) {
-  .bw-diag__supportsteps {
-    grid-template-columns: 1fr;
-  }
+  .bw-diag__supportsteps { grid-template-columns: 1fr; }
 }
 .bw-diag__supportstep {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 16px;
+  gap: 10px;
+  padding: 18px;
   background: #fff;
-  border: 1px solid var(--line-cool);
-  border-radius: 12px;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
 }
 .bw-diag__supportstep .n {
-  font-family: "Poppins", sans-serif;
-  font-weight: 800;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-weight: 500;
   color: var(--cyan);
-  font-size: 13px;
-  letter-spacing: 0.04em;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 .bw-diag__supportstep .tx {
   font-size: 14px;
   color: var(--ink);
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .bw-diag__supportpills {
@@ -710,11 +806,12 @@
   list-style: none;
 }
 .bw-diag__supportpill {
+  font-family: "Inter", sans-serif;
   font-size: 13px;
   font-weight: 500;
   color: var(--navy);
   background: #fff;
-  border: 1px solid var(--line-cool);
+  border: 1px solid var(--hairline);
   padding: 8px 14px;
   border-radius: 999px;
 }
@@ -726,75 +823,77 @@
   margin-bottom: 16px;
 }
 @media (max-width: 920px) {
-  .bw-diag__supportstats {
-    grid-template-columns: 1fr 1fr;
-  }
+  .bw-diag__supportstats { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 480px) {
-  .bw-diag__supportstats {
-    grid-template-columns: 1fr;
-  }
+  .bw-diag__supportstats { grid-template-columns: 1fr; }
 }
 .bw-diag__supportstat {
   background: #fff;
-  border: 1px solid var(--line-cool);
-  border-radius: 12px;
-  padding: 16px 18px;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  padding: 18px 20px;
 }
 .bw-diag__supportstat b {
   font-family: "Poppins", sans-serif;
-  font-weight: 800;
-  font-size: 22px;
+  font-weight: 700;
+  font-size: 24px;
   color: var(--navy);
   line-height: 1;
   display: flex;
   align-items: baseline;
   gap: 6px;
+  letter-spacing: -0.02em;
 }
 .bw-diag__supportstat b em {
-  font-size: 11.5px;
-  font-weight: 600;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 500;
   font-style: normal;
   color: var(--cyan);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .bw-diag__supportstat span {
   font-size: 12.5px;
   color: var(--muted);
   display: block;
-  margin-top: 7px;
+  margin-top: 8px;
+  line-height: 1.45;
 }
 .bw-diag__supportfine {
-  font-size: 12px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--muted);
   margin: 0;
 }
 
-/* ===== FAQ na /diagnostico — clone visual da FAQ da home, escopado em .bw-diag.
-   Não usa FaqSection (que é compartilhado). Markup próprio em DiagnosticoPage. */
+/* ===== FAQ na /diagnostico — clone visual da FAQ da home ===== */
 .bw-diag .bw-diag__faq {
   background: var(--paper);
   padding: 72px 28px 80px;
   margin-top: 24px;
+  border-top: 1px solid var(--hairline);
 }
 .bw-diag .bw-diag__faq-eyebrow {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 500;
   color: var(--cyan);
   margin: 0 0 16px;
   text-align: center;
 }
 .bw-diag .bw-diag__faq-title {
   font-family: "Poppins", -apple-system, BlinkMacSystemFont, sans-serif;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--navy);
-  font-size: clamp(27px, 4.2vw, 40px);
-  letter-spacing: -0.015em;
-  line-height: 1.07;
+  font-size: clamp(28px, 4.2vw, 42px);
+  letter-spacing: -0.025em;
+  line-height: 1.08;
   margin: 0 auto 34px;
   text-align: center;
 }
@@ -804,15 +903,15 @@
 }
 .bw-diag .bw-diag__faq-item {
   background: #fff;
-  border: 1px solid var(--line-cool);
-  border-radius: 12px;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
   margin-bottom: 10px;
   overflow: hidden;
 }
 .bw-diag .bw-diag__faq-q {
   list-style: none;
   cursor: pointer;
-  padding: 17px 20px;
+  padding: 18px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -837,11 +936,14 @@
 .bw-diag .bw-diag__faq-a {
   padding: 0 20px 18px;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 13.8px;
+  font-size: 14px;
   color: #5E6E7C;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
-
-
-
+@media (prefers-reduced-motion: reduce) {
+  .bw-diag * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
