@@ -321,75 +321,74 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ ARQUITETURA + COMPARATIVO (parallax sticky) ============ */}
-      <section className="paper" id="arquitetura" aria-label="Arquitetura e comparativo Bewild">
-        <div className="arch-parallax">
+      {/* ============ ARQUITETURA ============ */}
+      <section className="paper" id="arquitetura" aria-label="Arquitetura Bewild">
+        <div className="sec-mark"><span className="n">05</span><span className="t">Arquitetura</span><span className="ln" /></div>
+        <div className="arch-split">
           <div className="arch-figc">
-            <div className="sec-mark"><span className="n">05</span><span className="t">Arquitetura</span><span className="ln" /></div>
             <figure className="planta fade">
               <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
               <img src={plantaHumanizada.url} alt="Planta humanizada de studio compacto 22 m²" loading="lazy" />
             </figure>
             <p className="arch-cap fade">PLANTA HUMANIZADA · STUDIO 22 M²</p>
           </div>
-          <div className="arch-content">
-            <div className="arch-txt">
-              <h2 className="fade">Arquitetura pra cada metro <i>trabalhar melhor.</i></h2>
-              <p className="lead fade">Em studio compacto, o projeto é estratégia de uso, operação e renda. Cada centímetro precisa justificar a existência, e nada aqui é genérico.</p>
-              <div className="arch-list">
-                {[
-                  ["01", "Layout inteligente", "Cama, bancada, cozinha, circulação e apoio de malas pro espaço parecer maior e render foto."],
-                  ["02", "Marcenaria sob medida", "Armazenamento, painéis e nichos que aumentam a percepção de qualidade e cortam o improviso."],
-                  ["03", "Iluminação e percepção de valor", "A luz certa melhora a foto, a experiência do hóspede e a sensação de cuidado no imóvel."],
-                  ["04", "Materiais pra uso real", "A escolha não é só estética. Entra limpeza, manutenção, resistência, reposição e custo total."],
-                  ["05", "Personalização sem perder eficiência", "O projeto respeita o imóvel e o perfil do investidor, sem escolha que encareça ou atrase a operação."],
-                ].map(([ax, at, ad]) => (
-                  <div className="ai fade" key={ax}>
-                    <span className="ax">{ax}</span>
-                    <div>
-                      <div className="at">{at}</div>
-                      <div className="ad">{ad}</div>
-                    </div>
+          <div className="arch-txt">
+            <h2 className="fade">Arquitetura pra cada metro <i>trabalhar melhor.</i></h2>
+            <p className="lead fade">Em studio compacto, o projeto é estratégia de uso, operação e renda. Cada centímetro precisa justificar a existência, e nada aqui é genérico.</p>
+            <div className="arch-list">
+              {[
+                ["01", "Layout inteligente", "Cama, bancada, cozinha, circulação e apoio de malas pro espaço parecer maior e render foto."],
+                ["02", "Marcenaria sob medida", "Armazenamento, painéis e nichos que aumentam a percepção de qualidade e cortam o improviso."],
+                ["03", "Iluminação e percepção de valor", "A luz certa melhora a foto, a experiência do hóspede e a sensação de cuidado no imóvel."],
+                ["04", "Materiais pra uso real", "A escolha não é só estética. Entra limpeza, manutenção, resistência, reposição e custo total."],
+                ["05", "Personalização sem perder eficiência", "O projeto respeita o imóvel e o perfil do investidor, sem escolha que encareça ou atrase a operação."],
+              ].map(([ax, at, ad]) => (
+                <div className="ai fade" key={ax}>
+                  <span className="ax">{ax}</span>
+                  <div>
+                    <div className="at">{at}</div>
+                    <div className="ad">{ad}</div>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            <div id="diferenciais" className="cmp-block" aria-label="Comparativo Bewild">
-              <div className="sec-mark"><span className="n">06</span><span className="t">Comparativo</span><span className="ln" /></div>
-              <div className="paper-head">
-                <h2 className="fade">Dá pra fazer de outros jeitos. Nenhum entrega isso.</h2>
-                <div className="meta fade">BEWILD VS.<br />ALTERNATIVAS<br />DO MERCADO</div>
-              </div>
-              <div className="cmp-scroll fade">
-                <div className="cmp-wrap">
-                  <table className="cmp">
-                    <thead>
-                      <tr>
-                        <th></th><th>Fazer sozinho</th><th>Reformeiro</th><th>Arquiteto</th><th className="bw">Bewild</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {[
-                        ["Projeto pensado pra render no short-stay", "—", "—", "±"],
-                        ["Obra, marcenaria e mobília num contrato só", "—", "±", "—"],
-                        ["Prazo e orçamento fechados desde o início", "—", "±", "±"],
-                        ["Acompanhamento pelo portal, sem você fiscalizar", "—", "—", "—"],
-                        ["Entregue pronto pra operar (foto e anúncio)", "—", "—", "—"],
-                        ["Garantia de 5 anos", "—", "—", "±"],
-                      ].map(([label, a, b, c]) => (
-                        <tr key={label}>
-                          <th>{label}</th><td>{a}</td><td>{b}</td><td>{c}</td><td className="bw yes">sim</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
                 </div>
-              </div>
-              <div className="cmp-note fade">— não contempla &nbsp;·&nbsp; ± depende / parcial &nbsp;·&nbsp; sim incluso no escopo Bewild</div>
+              ))}
             </div>
           </div>
         </div>
+      </section>
+
+      {/* ============ COMPARATIVO ============ */}
+      <section className="paper" id="diferenciais" aria-label="Comparativo Bewild">
+        <div className="sec-mark"><span className="n">06</span><span className="t">Comparativo</span><span className="ln" /></div>
+        <div className="paper-head">
+          <h2 className="fade">Dá pra fazer de outros jeitos. Nenhum entrega isso.</h2>
+          <div className="meta fade">BEWILD VS.<br />ALTERNATIVAS<br />DO MERCADO</div>
+        </div>
+        <div className="cmp-scroll fade">
+          <div className="cmp-wrap">
+            <table className="cmp">
+              <thead>
+                <tr>
+                  <th></th><th>Fazer sozinho</th><th>Reformeiro</th><th>Arquiteto</th><th className="bw">Bewild</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ["Projeto pensado pra render no short-stay", "—", "—", "±"],
+                  ["Obra, marcenaria e mobília num contrato só", "—", "±", "—"],
+                  ["Prazo e orçamento fechados desde o início", "—", "±", "±"],
+                  ["Acompanhamento pelo portal, sem você fiscalizar", "—", "—", "—"],
+                  ["Entregue pronto pra operar (foto e anúncio)", "—", "—", "—"],
+                  ["Garantia de 5 anos", "—", "—", "±"],
+                ].map(([label, a, b, c]) => (
+                  <tr key={label}>
+                    <th>{label}</th><td>{a}</td><td>{b}</td><td>{c}</td><td className="bw yes">sim</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="cmp-note fade">— não contempla &nbsp;·&nbsp; ± depende / parcial &nbsp;·&nbsp; sim incluso no escopo Bewild</div>
       </section>
 
       {/* ============ PORTFÓLIO ============ */}
