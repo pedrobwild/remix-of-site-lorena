@@ -168,10 +168,10 @@ function DiagnosticoPitch() {
     <div className="bw-diag__pitch">
       <p className="bw-diag__eyebrow">Diagnóstico Bewild</p>
       <h1 className="bw-diag__title">
-        Quer transformar seu studio em <span className="accent">um ativo pronto para operar?</span>
+        Seu studio <span className="accent">pronto pra render.</span> Começa com um diagnóstico.
       </h1>
       <p className="bw-diag__sub">
-        Envie os dados do imóvel e receba uma análise inicial de escopo e próximos passos.
+        Você manda os dados do imóvel. A gente devolve uma leitura de escopo, projeto e próximos passos. Sem compromisso.
       </p>
       <div className="bw-diag__trustband" role="note">
         <span className="bw-diag__trustband-icon" aria-hidden="true"><IconCheck /></span>
