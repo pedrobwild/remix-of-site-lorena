@@ -216,14 +216,21 @@
 }
 
 /* ============ CURSOR ============ */
-.bw-home .bw-cursor{position:fixed;top:0;left:0;width:26px;height:26px;z-index:9999;pointer-events:none;mix-blend-mode:difference;
-  transform:translate3d(-100px,-100px,0) translate(-50%,-50%);opacity:0;transition:width .18s,height .18s,opacity .2s}
+/* Custom cursor: disco translúcido cyan que cresce no hover sobre links/botões. */
+.bw-home .bw-cursor{position:fixed;top:0;left:0;width:18px;height:18px;border-radius:50%;
+  background:rgba(47,134,184,.22);border:1px solid rgba(95,178,221,.7);
+  z-index:9999;pointer-events:none;
+  transform:translate3d(-100px,-100px,0) translate(-50%,-50%);opacity:0;
+  transition:width .28s cubic-bezier(.2,.7,.2,1),height .28s cubic-bezier(.2,.7,.2,1),
+    background-color .28s ease,border-color .28s ease,opacity .2s ease}
 .bw-home .bw-cursor.is-on{opacity:1}
-.bw-home .bw-cursor.is-hover{width:54px;height:54px}
-.bw-home .bw-cursor::before,.bw-home .bw-cursor::after{content:"";position:absolute;background:var(--sky)}
-.bw-home .bw-cursor::before{left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%)}
-.bw-home .bw-cursor::after{top:50%;left:0;right:0;height:1px;transform:translateY(-50%)}
+.bw-home .bw-cursor.is-hover{width:64px;height:64px;background:rgba(47,134,184,.32);border-color:rgba(95,178,221,.95)}
+.bw-home .bw-cursor::after{content:"ver +";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:#fff;opacity:0;transition:opacity .2s ease}
+.bw-home .bw-cursor.is-hover::after{opacity:1}
 @media(hover:none){.bw-home .bw-cursor{display:none}}
+/* Esconde o cursor global (.cursor de useCustomCursor) quando a home está montada. */
+body.has-custom-cursor:has(.bw-home) .cursor{display:none}
 
 /* ============ SEÇÕES GENÉRICAS ============ */
 .bw-home .sec{position:relative;padding:clamp(80px,12vh,150px) var(--mx)}
