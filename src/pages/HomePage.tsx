@@ -552,7 +552,7 @@ export default function HomePage() {
               <p>Cada escolha considera prazo, custo, manutenção e potencial de rentabilização.</p>
             </article>
             <article className="diff-sup">
-              <h3>Sem surpresa no orçamento</h3>
+              <h3>O orçamento não muda no meio</h3>
               <p>Você sabe o que está incluso, o que é opcional e o que mexe no preço ou no prazo.</p>
             </article>
             <article className="diff-sup">
