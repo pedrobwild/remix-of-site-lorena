@@ -15,6 +15,7 @@
  * - FAQ: `<details>/<summary>` nativo com primeiro item aberto.
  */
 import { useEffect, useRef } from "react";
+import { useHomeFx } from "@/lib/useHomeFx";
 import {
   Network,
   Building2,
