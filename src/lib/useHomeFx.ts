@@ -24,7 +24,7 @@ const isTouch = () =>
 function installRevealFallback(root: HTMLElement): Cleanup {
   if (typeof IntersectionObserver === "undefined") return () => {};
   const targets = root.querySelectorAll<HTMLElement>(
-    ".bw-reveal, .bw-hair, [data-reveal]",
+    ".rv, .fade, .hair, .vbloco",
   );
   const io = new IntersectionObserver(
     (entries) => {
