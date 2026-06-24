@@ -477,3 +477,21 @@
   .bw-home, .bw-home *{cursor:none !important}
   .bw-home video{cursor:auto !important}
 }
+
+/* ============ STICKY CTA — somente mobile ============ */
+.bw-home .bw-sticky-cta{display:none}
+@media(max-width:767px){
+  .bw-home .bw-sticky-cta{
+    display:block;position:fixed;left:0;right:0;bottom:0;z-index:80;
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));
+    background:linear-gradient(to top,var(--ink-deep) 62%,rgba(7,20,39,0));
+    transform:translateY(130%);
+    transition:transform .42s cubic-bezier(.22,1,.36,1);
+    pointer-events:none;
+  }
+  .bw-home .bw-sticky-cta.is-visible{transform:translateY(0);pointer-events:auto}
+  .bw-home .bw-sticky-cta .btn{width:100%;justify-content:center;padding:15px 22px;border-radius:2px}
+}
+@media(max-width:767px) and (prefers-reduced-motion:reduce){
+  .bw-home .bw-sticky-cta{transition:none}
+}
