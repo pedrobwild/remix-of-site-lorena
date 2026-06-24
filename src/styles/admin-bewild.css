@@ -632,3 +632,100 @@
   font-size: 13.5px;
 }
 .bw-admin__loading { color: var(--bw-muted); font-size: 13px; }
+/* ============================================================
+ * MOBILE (<=560px) — admin
+ * ============================================================ */
+.bw-admin,
+.bw-admin__content { overflow-x: clip; }
+
+/* Grids resilientes: nunca forçam overflow */
+.bw-admin__panel-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+}
+.bw-admin__form-row {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+}
+.bw-admin__kpi-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+}
+
+/* Tabelas rolam DENTRO da própria seção, não vazam a página */
+.bw-admin__section:has(> .bw-admin__table),
+.bw-admin__section:has(.bw-admin__table) {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 560px) {
+  .bw-admin__content { padding: 20px 14px 56px; }
+
+  /* page head: empilha */
+  .bw-admin__page-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+  .bw-admin__page-head-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .bw-admin__page-title { font-size: 22px; }
+
+  /* brand não estoura */
+  .bw-admin__brand { min-width: 0; }
+  .bw-admin__brand b,
+  .bw-admin__brand-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bw-admin__brand-sub { display: none; }
+
+  /* inputs ≥16px para evitar zoom iOS */
+  .bw-admin__input,
+  .bw-admin__textarea,
+  .bw-admin__select {
+    font-size: 16px;
+    width: 100%;
+  }
+
+  /* botões com toque confortável */
+  .bw-admin__btn { min-height: 40px; padding: 0 14px; }
+  .bw-admin__btn--sm { min-height: 36px; }
+
+  /* período: rola horizontal, não estoura */
+  .bw-admin__period {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+  .bw-admin__period button { flex: none; }
+
+  /* KPIs: 1 col garantido em telas muito estreitas */
+  .bw-admin__kpi-card { padding: 16px; }
+  .bw-admin__kpi-value { font-size: 26px; }
+
+  /* connect: empilha, botão full-width */
+  .bw-admin__connect {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+  .bw-admin__connect > a,
+  .bw-admin__connect > button,
+  .bw-admin__connect .bw-admin__btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* tabelas: target tátil maior + truncamento menor */
+  .bw-admin__table th,
+  .bw-admin__table td { padding: 12px 14px; }
+  .bw-admin__table .ellip { max-width: 200px; }
+
+  /* footer do form */
+  .bw-admin__form-foot {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .bw-admin__form-foot > * { width: 100%; }
+  .bw-admin__form-foot .bw-admin__btn { justify-content: center; }
+}
