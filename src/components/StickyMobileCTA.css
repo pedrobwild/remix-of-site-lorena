@@ -15,7 +15,7 @@
   .bw-sticky-cta.is-visible{transform:translateY(0);pointer-events:auto}
   .bw-sticky-cta .btn{
     display:inline-flex;align-items:center;justify-content:center;gap:9px;
-    width:100%;line-height:1;
+    width:100%;line-height:1;box-sizing:border-box;min-height:48px;
     font-family:'Inter',system-ui,sans-serif;font-weight:600;font-size:15px;
     padding:16px 22px;border-radius:2px;
     background:#2F86B8;color:#fff;text-decoration:none;
