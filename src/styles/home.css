@@ -477,3 +477,58 @@
   .bw-home, .bw-home *{cursor:none !important}
   .bw-home video{cursor:auto !important}
 }
+
+/* ============ MOBILE FINE-TUNING (≤560px) ============
+ * Ajustes mínimos para 360/390px. Não altera desktop.
+ * - HERO: min-height auto (evita corte no iOS com barra), padding-top menor,
+ *   plate ocupa largura cheia, CTAs full-width, hero-data em 2 col sem labels estourando.
+ * - Alvos de toque ≥ 44px nos botões.
+ * - Padding vertical de seções reduzido para mobile.
+ */
+@media (max-width:560px){
+  .bw-home{--mx:18px}
+  .bw-home .bw-frame{inset:6px}
+
+  /* HERO */
+  .bw-home .hero{min-height:auto;padding-bottom:40px}
+  .bw-home .hero-top{padding-top:96px}
+  .bw-home .hero h1{font-size:30px;line-height:1.08}
+  .bw-home .hero-row{margin-top:28px;gap:26px}
+  .bw-home .plate{max-width:100%}
+  .bw-home .hero .cta{flex-direction:column;align-items:stretch;gap:10px;margin-top:24px}
+  .bw-home .hero .cta .btn{justify-content:center;width:100%}
+
+  /* HERO DATA — 2 colunas, sem bordas internas (evita label overflow) */
+  .bw-home .hero-data{grid-template-columns:1fr 1fr;gap:18px;padding-top:16px;margin-top:24px}
+  .bw-home .hero-data .cell,
+  .bw-home .hero-data .cell:nth-child(3){padding:0;border:none}
+  .bw-home .hero-data .cell:not(:first-child){padding-left:0}
+  .bw-home .hero-data b{font-size:22px}
+  .bw-home .hero-data span{font-size:9.5px;letter-spacing:.14em;line-height:1.35;white-space:normal}
+
+  /* Botões em geral — alvo de toque ≥ 44px */
+  .bw-home .btn{min-height:44px;padding:13px 20px}
+
+  /* SEÇÕES — respiro vertical mais enxuto */
+  .bw-home .manifesto,
+  .bw-home .paper,
+  .bw-home .sec,
+  .bw-home .cta-final{padding-top:64px;padding-bottom:64px}
+  .bw-home .descida{margin-top:44px}
+
+  /* MANIFESTO — números gigantes não estouram */
+  .bw-home .build{font-size:48px}
+  .bw-home .bewild{font-size:52px}
+
+  /* CTA FINAL — botões empilhados full-width */
+  .bw-home .cta-final .act{flex-direction:column;align-items:stretch;gap:10px;margin-top:32px}
+  .bw-home .cta-final .act .btn{width:100%;justify-content:center}
+
+  /* MARQUEE — passo de tempo mais curto pra texto menor não parar visualmente */
+  .bw-home .marquee .trk{font-size:11px;letter-spacing:.2em}
+  .bw-home .marquee .trk span{padding:0 18px}
+
+  /* COMPARATIVO — garantir scroll horizontal isolado, sem vazar */
+  .bw-home .cmp-scroll{-webkit-overflow-scrolling:touch}
+}
+
