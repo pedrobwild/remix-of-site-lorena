@@ -4,15 +4,13 @@ import { useFaq } from "../lib/useFaq";
 import BewildSiteNav from "@/components/BewildSiteNav";
 import SiteFooter from "@/components/SiteFooter";
 import { whatsappHref } from "@/components/landing/content";
-import "@/styles/home.css";
-import "@/styles/conteudos.css";
-import "@/styles/post.css";
+import "@/styles/faq.css";
 
 /**
- * Página dedicada /faq — design Bewild (wrapper .bw-home.bw-post).
- * - Reaproveita pt-hero / pt-faq / ct-cta do design system de posts.
- * - Lê FAQs da tabela `faq_items` (gerenciada via /admin/faq).
- * - Mantém JSON-LD FAQPage + BreadcrumbList.
+ * Página pública /faq — "índice de dúvidas" (prancha 05).
+ * - Acordeão numerado, CSS isolado em .bw-faq.
+ * - Lê FAQs da tabela `faq_items` (gerenciada via /admin/faq), com fallback.
+ * - Preserva JSON-LD FAQPage + BreadcrumbList e microdata Schema.org inline.
  */
 export default function FaqPage() {
   const { settings } = useSiteSettings();
@@ -37,38 +35,50 @@ export default function FaqPage() {
   });
 
   return (
-    <div className="bw-home bw-post">
+    <div className="bw-faq">
       <BewildSiteNav />
 
+      <div className="bw-faq__frame" aria-hidden="true">
+        <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
+      </div>
+      <div className="bw-faq__titleblock" aria-hidden="true">BEWILD · GRUPO BWILD<br /><b>BW—005 / FAQ</b><br />SÃO PAULO · BR</div>
+      <div className="bw-faq__sheetno" aria-hidden="true">SHEET 05 / DÚVIDAS</div>
+
       <main id="main" tabIndex={-1}>
-        <section className="pt-hero">
-          <div className="container">
-            <div className="pt-cat">FAQ · Bewild</div>
-            <h1 className="pt-title">Perguntas frequentes.</h1>
-            <p className="pt-excerpt">
-              Reunimos as dúvidas mais comuns sobre a reforma turn-key de
-              studios da Bewild: do projeto à entrega pronta para anunciar,
-              prazos, garantias e como funciona o processo, da obra à operação.
+        {/* HERO */}
+        <section className="fq-hero">
+          <div className="fq-wrap">
+            <p className="fq-eyb">Antes de investir</p>
+            <h1>Perguntas frequentes.</h1>
+            <p className="fq-lead">
+              As dúvidas mais comuns de quem vai transformar um studio em ativo de short stay:
+              prazo, garantia, processo e o que está incluso, da obra à entrega pronta pra anunciar.
             </p>
           </div>
         </section>
 
-        <section className="pt-faq">
-          <div className="container">
-            <div
-              className="pt-faq__inner"
-              itemScope
-              itemType="https://schema.org/FAQPage"
-            >
-              {items.map((item) => (
+        {/* BODY */}
+        <section className="fq-body">
+          <div className="fq-wrap">
+            <div className="fq-secmark">
+              <span className="n">001</span>
+              <span className="t">Tudo que perguntam antes de começar</span>
+              <span className="ln" />
+            </div>
+
+            <div className="fq-list" itemScope itemType="https://schema.org/FAQPage">
+              {items.map((item, i) => (
                 <details
                   key={item.id}
+                  className="fq-item"
+                  open={i === 0}
                   itemScope
                   itemProp="mainEntity"
                   itemType="https://schema.org/Question"
                 >
-                  <summary itemProp="name">{item.question}</summary>
+                  <summary className="fq-q" itemProp="name">{item.question}</summary>
                   <div
+                    className="fq-a"
                     itemScope
                     itemProp="acceptedAnswer"
                     itemType="https://schema.org/Answer"
@@ -82,28 +92,19 @@ export default function FaqPage() {
         </section>
       </main>
 
-      <section className="ct-cta">
-        <div className="container">
-          <div className="eyebrow" style={{ color: "var(--sky, #5FB2DD)" }}>
-            Diagnóstico
-          </div>
-          <h2>Não encontrou sua resposta? Vamos conversar.</h2>
-          <p>
-            Envie os dados do seu studio e receba uma análise inicial de
-            escopo, projeto e próximos passos. Sem compromisso.
-          </p>
-          <div className="ct-cta__btns">
-            <a href="/diagnostico" className="btn btn-cyan">
-              Solicitar diagnóstico <span className="arrow">→</span>
-            </a>
-            <a
-              href={whatsappHref()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-ghost-light"
-            >
-              Falar no WhatsApp
-            </a>
+      {/* CTA */}
+      <section className="fq-cta">
+        <div className="gridbg" aria-hidden="true" />
+        <div className="fq-wrap">
+          <div className="fq-cta__inner">
+            <span className="fq-eyb center">Diagnóstico gratuito · sem compromisso</span>
+            <h2>Não encontrou sua resposta? <i>Vamos conversar.</i></h2>
+            <p>Manda os dados do seu studio e a gente devolve uma leitura de escopo, projeto e próximos passos.</p>
+            <div className="fq-cta__act">
+              <a href="/diagnostico" className="fq-btn cyan">Solicitar diagnóstico <span className="ar">→</span></a>
+              <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="fq-btn ghost">Falar no WhatsApp</a>
+            </div>
+            <div className="fq-cta__rea">+150 studios entregues em São Paulo</div>
           </div>
         </div>
       </section>
