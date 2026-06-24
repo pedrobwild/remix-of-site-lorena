@@ -281,8 +281,7 @@ export default function HomePage() {
             <figure className="vphone">
               <div className="vphone-frame">
                 <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
-                <img src={studioDepois.url} alt="Bastidor: time próprio da Bewild executando a obra" loading="lazy" />
-                <div className="vph"><span className="play">▶</span></div>
+                <video src="/videos/time-obra.mp4" poster={studioDepois.url} autoPlay muted loop playsInline preload="metadata" />
                 <span className="vphone-tag">OBRA · TIME PRÓPRIO</span>
               </div>
             </figure>
