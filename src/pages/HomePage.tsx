@@ -53,6 +53,11 @@ export default function HomePage() {
   // Determinístico: revela o que já está visível no load e o resto ao rolar.
   // Não depende de IntersectionObserver (que deixava blocos presos invisíveis
   // no mobile). Respeita prefers-reduced-motion.
+  // Reveal robusto para .rv, .fade, .hair, .vbloco.
+  // Usa IntersectionObserver (funciona com scroll no window OU em qualquer
+  // container, ao contrário de um listener de scroll no window), revela na hora
+  // o que já está visível no primeiro paint, e tem rede de segurança: se nada
+  // revelar (hidratação/webview), mostra tudo para nunca deixar conteúdo oculto.
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
@@ -61,48 +66,49 @@ export default function HomePage() {
     );
     if (els.length === 0) return;
 
+    const show = (el: Element) => el.classList.add("in");
     const reduce =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
-      els.forEach((el) => el.classList.add("in"));
+
+    if (reduce || typeof IntersectionObserver === "undefined") {
+      els.forEach(show);
       return;
     }
 
-    let pending = els;
-    let ticking = false;
+    const io = new IntersectionObserver(
+      (entries, obs) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            show(e.target);
+            obs.unobserve(e.target);
+          }
+        }
+      },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0 },
+    );
+    els.forEach((el) => io.observe(el));
 
-    const reveal = () => {
-      ticking = false;
+    // Revela imediatamente o que já está dentro da viewport no primeiro paint.
+    requestAnimationFrame(() => {
       const vh = window.innerHeight || document.documentElement.clientHeight;
-      const still: HTMLElement[] = [];
-      for (const el of pending) {
-        if (el.getBoundingClientRect().top < vh * 0.9) {
-          el.classList.add("in");
-        } else {
-          still.push(el);
+      for (const el of els) {
+        if (!el.classList.contains("in") && el.getBoundingClientRect().top < vh) {
+          show(el);
         }
       }
-      pending = still;
-      if (pending.length === 0) {
-        window.removeEventListener("scroll", onScroll);
-        window.removeEventListener("resize", onScroll);
+    });
+
+    // Rede de segurança: se em 2s nada foi revelado, mostra tudo.
+    const safety = window.setTimeout(() => {
+      if (!els.some((el) => el.classList.contains("in"))) {
+        els.forEach(show);
       }
-    };
-
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(reveal);
-    };
-
-    requestAnimationFrame(reveal);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
+    }, 2000);
 
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      io.disconnect();
+      clearTimeout(safety);
     };
   }, []);
 
