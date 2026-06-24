@@ -97,7 +97,7 @@
 .bw-home .hero h1 .lo{color:var(--sky);font-style:italic;font-weight:400}
 .bw-home .hero-row{position:relative;z-index:3;display:grid;grid-template-columns:1fr clamp(290px,30vw,420px);gap:clamp(24px,4vw,64px);align-items:end;margin-top:clamp(34px,5.5vh,64px)}
 .bw-home .hero .sub{max-width:460px;font-size:clamp(15px,1.25vw,17.5px);line-height:1.55;color:#c8d4e2}
-.bw-home .hero .cta{margin-top:32px;display:flex;gap:14px;flex-wrap:wrap}
+.bw-home .hero .cta{margin-top:32px;display:flex;gap:14px;flex-wrap:wrap;background:transparent;border:0;padding:0;overflow:visible}
 
 .bw-home .plate{position:relative;align-self:end;border:1px solid var(--hair);background:linear-gradient(160deg,#0c2543,#081a31);
   aspect-ratio:4/5;width:100%;overflow:hidden}
