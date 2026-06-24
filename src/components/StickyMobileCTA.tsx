@@ -9,6 +9,7 @@
  * - Respeita prefers-reduced-motion (sem animação de translate).
  */
 import { useEffect, useRef, useState } from "react";
+import "./StickyMobileCTA.css";
 
 type Props = {
   href?: string;
