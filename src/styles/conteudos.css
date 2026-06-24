@@ -132,3 +132,44 @@
 .bw-conteudos .ct-btn.ghost:hover{border-color:var(--sky);color:var(--sky)}
 
 @media(prefers-reduced-motion:reduce){.bw-conteudos *{animation:none!important;transition:none!important}}
+/* ============================================================
+ * MOBILE (<=560px)
+ * ============================================================ */
+@media (max-width:560px){
+  .bw-conteudos{ --mx:18px; overflow-x:clip; }
+  .bw-conteudos__frame{ inset:6px; }
+  .bw-conteudos__titleblock,.bw-conteudos__sheetno{ display:none; }
+
+  .bw-conteudos .ct-hero{ padding:42px 0 32px; }
+  .bw-conteudos .ct-hero h1{ font-size:clamp(26px,7.5vw,34px); max-width:100%; }
+  .bw-conteudos .ct-lead{ font-size:15px; max-width:100%; }
+  .bw-conteudos .ct-eyb{ font-size:10px; letter-spacing:.18em; }
+  .bw-conteudos .ct-eyb::before{ width:18px; }
+
+  .bw-conteudos .ct-body{ padding:36px 0 56px; }
+
+  /* featured empilha */
+  .bw-conteudos .ct-featured{ grid-template-columns:1fr; }
+  .bw-conteudos .ct-featured__media{ aspect-ratio:16/9; }
+  .bw-conteudos .ct-featured__body{ padding:22px 20px 24px; }
+  .bw-conteudos .ct-featured__title{ font-size:20px; }
+  .bw-conteudos .ct-featured__excerpt{ font-size:14.5px; }
+
+  /* toolbar/filters */
+  .bw-conteudos .ct-toolbar{ gap:12px; margin:32px 0 20px; }
+  .bw-conteudos .ct-filters{ gap:8px; }
+  .bw-conteudos .ct-chip{ font-size:12px; padding:12px 14px; min-height:44px; display:inline-flex; align-items:center; letter-spacing:.1em; }
+  .bw-conteudos .ct-count{ font-size:10px; white-space:normal; }
+
+  .bw-conteudos .ct-grid{ gap:14px; }
+  .bw-conteudos .ct-card__body{ padding:16px 16px 18px; }
+  .bw-conteudos .ct-card__title{ font-size:17px; }
+
+  .bw-conteudos .ct-cta{ padding:64px 18px; }
+  .bw-conteudos .ct-cta h2{ font-size:clamp(26px,7.5vw,34px); }
+  .bw-conteudos .ct-cta__act{ flex-direction:column; gap:10px; }
+  .bw-conteudos .ct-cta__act .ct-btn{ width:100%; justify-content:center; }
+  .bw-conteudos .ct-btn{ min-height:48px; padding:14px 22px; }
+
+  .bw-conteudos>:last-child{ padding-bottom:calc(80px + env(safe-area-inset-bottom)); }
+}
