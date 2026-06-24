@@ -49,33 +49,79 @@ export default function HomePage() {
     document.documentElement.classList.add("js");
   }, []);
 
-  // Reveal coreografado para .rv, .fade, .hair, .vbloco
+  // Reveal robusto (scroll-based) para .rv, .fade, .hair, .vbloco.
+  // Determinístico: revela o que já está visível no load e o resto ao rolar.
+  // Não depende de IntersectionObserver (que deixava blocos presos invisíveis
+  // no mobile). Respeita prefers-reduced-motion.
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
+    const els = Array.from(
+      root.querySelectorAll<HTMLElement>(".rv, .fade, .hair, .vbloco"),
+    );
+    if (els.length === 0) return;
+
     const reduce =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const targets = Array.from(
-      root.querySelectorAll<HTMLElement>(".rv, .fade, .hair, .vbloco"),
-    );
-    if (reduce || typeof IntersectionObserver === "undefined") {
-      targets.forEach((el) => el.classList.add("in"));
+    if (reduce) {
+      els.forEach((el) => el.classList.add("in"));
       return;
     }
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            e.target.classList.add("in");
-            io.unobserve(e.target);
-          }
+
+    let pending = els;
+    let ticking = false;
+
+    const reveal = () => {
+      ticking = false;
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      const still: HTMLElement[] = [];
+      for (const el of pending) {
+        if (el.getBoundingClientRect().top < vh * 0.9) {
+          el.classList.add("in");
+        } else {
+          still.push(el);
         }
-      },
-      { rootMargin: "0px 0px -8% 0px", threshold: 0.06 },
+      }
+      pending = still;
+      if (pending.length === 0) {
+        window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("resize", onScroll);
+      }
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(reveal);
+    };
+
+    requestAnimationFrame(reveal);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
+  // O React nem sempre reflete o atributo `muted` no DOM, o que faz o
+  // navegador bloquear o autoplay no mobile. Força muted real e dá play.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const vids = Array.from(
+      root.querySelectorAll<HTMLVideoElement>("video[autoplay]"),
     );
-    targets.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    vids.forEach((v) => {
+      v.muted = true;
+      v.defaultMuted = true;
+      const p = v.play();
+      if (p && typeof (p as Promise<void>).catch === "function") {
+        (p as Promise<void>).catch(() => {});
+      }
+    });
   }, []);
 
   useHomeFx(rootRef);
