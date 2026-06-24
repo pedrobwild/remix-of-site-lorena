@@ -20,7 +20,8 @@
   background:var(--ink-deep);
   color:#fff;
   -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
+  overflow-x:hidden; /* fallback p/ navegadores sem suporte a clip */
+  overflow-x:clip;   /* corta o vazamento horizontal sem criar scroll container, preservando position:sticky */
 }
 .bw-home *{box-sizing:border-box}
 .bw-home a{color:inherit;text-decoration:none}
