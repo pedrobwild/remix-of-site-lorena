@@ -475,8 +475,6 @@ export default function HomePage() {
               <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
               <video
                 src={depoimentoVideo.url}
-                muted
-                loop
                 playsInline
                 preload="metadata"
                 aria-label="Depoimento da Vivian, cliente Bewild"
