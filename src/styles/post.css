@@ -138,3 +138,61 @@
 .bw-post .pt-btn.ghost:hover{border-color:var(--sky);color:var(--sky)}
 
 @media(prefers-reduced-motion:reduce){.bw-post *{animation:none!important;transition:none!important}}
+
+/* ============================================================
+ * MOBILE (<=560px) — post/artigo
+ * ============================================================ */
+@media (max-width:560px){
+  .bw-post{ --mx:18px; overflow-x:clip; }
+  .bw-post__frame{ inset:6px; }
+  .bw-post__titleblock,.bw-post__sheetno{ display:none; }
+
+  /* HERO */
+  .bw-post .pt-hero{ padding:36px 0 30px; }
+  .bw-post .pt-breadcrumb{ font-size:10px; letter-spacing:.12em; gap:6px; flex-wrap:wrap; margin-bottom:16px; }
+  .bw-post .pt-title{ font-size:clamp(26px,7.2vw,34px); max-width:100%; }
+  .bw-post .pt-excerpt{ font-size:16px; max-width:100%; }
+  .bw-post .pt-meta{ font-size:10px; letter-spacing:.1em; gap:0 4px; }
+  .bw-post .pt-cat{ font-size:10px; letter-spacing:.16em; }
+  .bw-post .pt-cat::before{ width:16px; }
+
+  /* COVER */
+  .bw-post .pt-cover{ aspect-ratio:4/3; }
+
+  /* BODY — legibilidade + sem overflow lateral */
+  .bw-post .pt-body-section{ padding:32px 0 24px; }
+  .bw-post .pt-body{ font-size:17px; line-height:1.75; }
+  .bw-post .pt-body h2{ font-size:22px; padding-top:1.2em; margin-top:1.6em; }
+  .bw-post .pt-body h3{ font-size:18.5px; margin-top:1.5em; }
+  .bw-post .pt-body blockquote{ padding-left:16px; font-size:18px; }
+  .bw-post .pt-body ul,.bw-post .pt-body ol{ padding-left:1.1em; }
+
+  /* MARKDOWN — culpados de scroll lateral */
+  .bw-post .pt-body img{ max-width:100%; height:auto; margin:1.4em 0; }
+  .bw-post .pt-body pre{ max-width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; padding:14px 16px; font-size:13px; border-radius:3px; }
+  .bw-post .pt-body code{ word-break:break-word; }
+  .bw-post .pt-body table{ display:block; max-width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; border-collapse:collapse; }
+  .bw-post .pt-body a{ word-break:break-word; }
+
+  /* FAQ */
+  .bw-post .pt-faq{ padding:28px 0; }
+  .bw-post .pt-faq__head{ gap:10px; margin-bottom:16px; }
+  .bw-post .pt-faq summary{ font-size:15.5px; padding:16px 0; min-height:52px; gap:12px; }
+  .bw-post .pt-faq summary::after{ font-size:22px; }
+  .bw-post .pt-faq details p{ font-size:14.5px; padding-bottom:18px; }
+
+  /* RELATED — colapsa 1col em mobile */
+  .bw-post .pt-related{ padding:40px 0; }
+  .bw-post .pt-related__grid{ grid-template-columns:1fr; gap:14px; }
+  .bw-post .pt-rel-head{ gap:10px; margin-bottom:18px; }
+  .bw-post .ct-card__body{ padding:14px 16px 16px; }
+
+  /* CTA */
+  .bw-post .pt-cta{ padding:60px 0; }
+  .bw-post .pt-cta h2{ font-size:clamp(26px,7.5vw,34px); }
+  .bw-post .pt-cta__act{ flex-direction:column; gap:10px; padding:0 18px; }
+  .bw-post .pt-cta__act .pt-btn{ width:100%; justify-content:center; }
+  .bw-post .pt-btn{ min-height:48px; padding:14px 22px; }
+
+  .bw-post>:last-child{ padding-bottom:calc(80px + env(safe-area-inset-bottom)); }
+}
