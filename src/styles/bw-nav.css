@@ -135,3 +135,24 @@ a.bw-nav__cta:hover,.bw-nav__cta:hover{background:#3793c9;transform:translateY(-
   .bw-nav__links,.bw-nav__actions{display:none}
   .bw-nav__toggle{display:inline-flex}
 }
+
+/* Mobile: blindagens contra overflow horizontal e overlay 100% acima de tudo */
+@media (max-width:560px){
+  .bw-nav{max-width:100vw;overflow-x:clip}
+  .bw-nav__inner{padding:0 16px;gap:12px;min-width:0}
+  .bw-nav--scrolled .bw-nav__inner{min-height:56px}
+  .bw-nav__brand{min-width:0;flex:0 1 auto}
+  .bw-nav__logo{max-width:100%;height:24px}
+  /* Overlay: cobre TUDO (inclusive StickyMobileCTA z-index:80) com fundo opaco */
+  .bw-nav__mobile{
+    z-index:1000;
+    background:var(--bw-ink-deep);
+    height:100dvh;max-height:100dvh;
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding:14px 20px calc(24px + env(safe-area-inset-bottom));
+  }
+  .bw-nav__mobile-links{gap:2px;padding:14px 0}
+  .bw-nav__mobile-links a{min-height:52px;padding:16px 2px}
+  .bw-nav__mobile-foot{gap:12px;padding-top:18px}
+  .bw-nav__secondary--mobile,.bw-nav__cta--mobile{min-height:52px}
+}
