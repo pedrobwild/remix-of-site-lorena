@@ -103,7 +103,7 @@ a.bw-nav__cta:hover,.bw-nav__cta:hover{background:#3793c9;transform:translateY(-
 
 /* Overlay mobile em tela cheia */
 .bw-nav__mobile{
-  position:fixed;inset:0;z-index:110;background:var(--bw-ink-deep);
+  position:fixed;inset:0;z-index:110;background:#071427;
   display:flex;flex-direction:column;
   padding:14px clamp(20px,6vw,28px) calc(24px + env(safe-area-inset-bottom));
   animation:bwNavFadeIn .2s ease;
@@ -146,7 +146,7 @@ a.bw-nav__cta:hover,.bw-nav__cta:hover{background:#3793c9;transform:translateY(-
   /* Overlay: cobre TUDO (inclusive StickyMobileCTA z-index:80) com fundo opaco */
   .bw-nav__mobile{
     z-index:1000;
-    background:var(--bw-ink-deep);
+    background:#071427;
     height:100dvh;max-height:100dvh;
     overflow-y:auto;-webkit-overflow-scrolling:touch;
     padding:14px 20px calc(24px + env(safe-area-inset-bottom));

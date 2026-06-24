@@ -217,6 +217,10 @@ export default function BewildSiteNav() {
               ["--bw-cyan-2" as string]: "#5FB2DD",
               ["--bw-display" as string]: '"Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
               ["--bw-sans" as string]: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+              ["--bw-ink-deep" as string]: "#071427",
+              ["--bw-hair" as string]: "rgba(255,255,255,.14)",
+              ["--bw-sky" as string]: "#5FB2DD",
+              ["--bw-mono" as string]: '"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace',
             } as React.CSSProperties}
           >
           <div
