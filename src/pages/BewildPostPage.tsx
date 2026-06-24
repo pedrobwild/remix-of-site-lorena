@@ -1,10 +1,13 @@
 /**
- * BewildPostPage — /conteudos/:slug (novo, Bewild).
+ * BewildPostPage — /conteudos/:slug (Bewild).
  *
  * Render do post individual de `bewild_posts`. Body em markdown,
  * parseado com `marked` e sanitizado por `sanitizeBlogHtml` antes
- * de injetar via `dangerouslySetInnerHTML`. Independente do
- * BlogPostPage antigo (legado).
+ * de injetar via `dangerouslySetInnerHTML`.
+ *
+ * SEO/AEO: gera JSON-LD Article + BreadcrumbList + FAQPage (quando há FAQ),
+ * meta_title/description, canonical, ogImage e noindex no 404 — preservado.
+ * Visual: "artigo" na prancha 04. CSS isolado em .bw-post.
  */
 import { useMemo } from "react";
 import { marked } from "marked";
@@ -20,15 +23,12 @@ import {
 } from "@/lib/useBewildPosts";
 import { useBewildPost, useBewildRelatedPosts } from "@/lib/useBewildPost";
 import { navigate } from "@/lib/useHashRoute";
-import "@/styles/home.css";
-import "@/styles/conteudos.css";
 import "@/styles/post.css";
 
 type Props = { slug: string };
 
 // Configuração estável do marked (sem opções deprecadas em v18).
 marked.setOptions({ gfm: true, breaks: false });
-
 
 function RelatedCard({ p }: { p: BewildPost }) {
   return (
@@ -39,6 +39,7 @@ function RelatedCard({ p }: { p: BewildPost }) {
         ) : (
           <span>Capa em breve</span>
         )}
+        <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
       </div>
       <div className="ct-card__body">
         <div className="ct-card__cat">{bewildCategoryLabel(p.category)}</div>
@@ -135,7 +136,7 @@ export default function BewildPostPage({ slug }: Props) {
   // 404 — slug inválido ou rascunho
   if (notFound) {
     return (
-      <div className="bw-home bw-post">
+      <div className="bw-post">
         <BewildSiteNav />
         <section className="pt-hero">
           <div className="container">
@@ -144,15 +145,12 @@ export default function BewildPostPage({ slug }: Props) {
             <p className="pt-excerpt">
               O artigo que você procura pode ter sido movido ou ainda não foi publicado.
             </p>
-            <button
-              type="button"
-              onClick={() => navigate("/conteudos")}
-              className="btn btn-primary"
-            >
-              Voltar para Conteúdos <span className="arrow">→</span>
+            <button type="button" onClick={() => navigate("/conteudos")} className="pt-btn cyan">
+              Voltar para Conteúdos <span className="ar">→</span>
             </button>
           </div>
         </section>
+        <SiteFooter />
       </div>
     );
   }
@@ -160,7 +158,7 @@ export default function BewildPostPage({ slug }: Props) {
   // Loading — skeleton enxuto
   if (loading || !post) {
     return (
-      <div className="bw-home bw-post">
+      <div className="bw-post">
         <BewildSiteNav />
         <section className="pt-hero" aria-busy="true" aria-live="polite">
           <div className="container">
@@ -173,9 +171,14 @@ export default function BewildPostPage({ slug }: Props) {
   }
 
   return (
-    <div className="bw-home bw-post">
-      {/* NAV */}
+    <div className="bw-post">
       <BewildSiteNav />
+
+      <div className="bw-post__frame" aria-hidden="true">
+        <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
+      </div>
+      <div className="bw-post__titleblock" aria-hidden="true">BEWILD · GRUPO BWILD<br /><b>BW—004 / CONTEÚDOS</b><br />SÃO PAULO · BR</div>
+      <div className="bw-post__sheetno" aria-hidden="true">ARTIGO · {bewildCategoryLabel(post.category)}</div>
 
       <article>
         {/* HERO */}
@@ -192,9 +195,7 @@ export default function BewildPostPage({ slug }: Props) {
             <div className="pt-meta">
               {post.author ? <span>{post.author}</span> : null}
               {post.author && dateIso ? <span className="pt-dot">·</span> : null}
-              {dateIso ? (
-                <time dateTime={dateIso}>{formatBewildDate(dateIso)}</time>
-              ) : null}
+              {dateIso ? <time dateTime={dateIso}>{formatBewildDate(dateIso)}</time> : null}
               {post.reading_time ? <span className="pt-dot">·</span> : null}
               {post.reading_time ? <span>{post.reading_time} min de leitura</span> : null}
             </div>
@@ -213,6 +214,7 @@ export default function BewildPostPage({ slug }: Props) {
                   decoding="sync"
                   {...({ fetchpriority: "high" } as { fetchpriority: string })}
                 />
+                <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
               </figure>
             </div>
           </section>
@@ -221,10 +223,7 @@ export default function BewildPostPage({ slug }: Props) {
         {/* BODY */}
         <section className="pt-body-section">
           <div className="container">
-            <div
-              className="pt-body"
-              dangerouslySetInnerHTML={{ __html: bodyHtml }}
-            />
+            <div className="pt-body" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
           </div>
         </section>
 
@@ -233,9 +232,13 @@ export default function BewildPostPage({ slug }: Props) {
           <section className="pt-faq">
             <div className="container">
               <div className="pt-faq__inner">
-                <h2>Perguntas frequentes</h2>
+                <div className="pt-faq__head">
+                  <span className="n">FAQ</span>
+                  <h2>Perguntas frequentes</h2>
+                  <span className="ln" />
+                </div>
                 {post.faq.map((q, i) => (
-                  <details key={i}>
+                  <details key={i} open={i === 0}>
                     <summary>{q.question}</summary>
                     <p>{q.answer}</p>
                   </details>
@@ -249,7 +252,11 @@ export default function BewildPostPage({ slug }: Props) {
         {related.length > 0 ? (
           <section className="pt-related">
             <div className="container">
-              <h2>Continue lendo</h2>
+              <div className="pt-rel-head">
+                <span className="n">→</span>
+                <h2>Continue lendo</h2>
+                <span className="ln" />
+              </div>
               <div className="pt-related__grid">
                 {related.map((p) => <RelatedCard key={p.id} p={p} />)}
               </div>
@@ -259,26 +266,18 @@ export default function BewildPostPage({ slug }: Props) {
       </article>
 
       {/* CTA */}
-      <section className="ct-cta">
+      <section className="pt-cta">
+        <div className="gridbg" aria-hidden="true" />
         <div className="container">
-          <div className="eyebrow" style={{ color: "var(--sky, #5FB2DD)" }}>Diagnóstico</div>
-          <h2>Da leitura à decisão: avalie o seu studio.</h2>
-          <p>
-            Envie os dados do imóvel e receba uma análise inicial de escopo,
-            projeto e próximos passos. Sem compromisso.
-          </p>
-          <div className="ct-cta__btns">
-            <a href="/diagnostico" className="btn btn-cyan">
-              Solicitar diagnóstico <span className="arrow">→</span>
-            </a>
-            <a
-              href={whatsappHref()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-ghost-light"
-            >
-              Falar no WhatsApp
-            </a>
+          <div className="pt-cta__inner">
+            <span className="pt-eyb">Diagnóstico gratuito · sem compromisso</span>
+            <h2>Da leitura à decisão: <i>avalie o seu studio.</i></h2>
+            <p>Envie os dados do imóvel e receba uma análise inicial de escopo, projeto e próximos passos.</p>
+            <div className="pt-cta__act">
+              <a href="/diagnostico" className="pt-btn cyan">Solicitar diagnóstico <span className="ar">→</span></a>
+              <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="pt-btn ghost">Falar no WhatsApp</a>
+            </div>
+            <div className="pt-cta__rea">+150 studios entregues em São Paulo</div>
           </div>
         </div>
       </section>
