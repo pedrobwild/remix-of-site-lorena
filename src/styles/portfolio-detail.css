@@ -145,3 +145,52 @@
 .bw-lightbox__counter{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.16em;color:rgba(255,255,255,.72)}
 
 @media(prefers-reduced-motion:reduce){.bw-detail *,.bw-lightbox{animation:none!important;transition:none!important}}
+
+/* ============================================================
+ * MOBILE (<=560px) — ficha de obra + lightbox
+ * ============================================================ */
+@media (max-width:560px){
+  .bw-detail{ --mx:18px; overflow-x:clip; }
+  .bw-detail__frame{ inset:6px; }
+  .bw-detail__titleblock,.bw-detail__sheetno{ display:none; }
+
+  .bw-detail .pd-head{ padding:40px 0 32px; }
+  .bw-detail .pd-back{ font-size:12px; min-height:44px; padding:10px 0; margin-bottom:12px; align-items:center; letter-spacing:.12em; }
+  .bw-detail .pd-head h1{ font-size:clamp(26px,7.5vw,34px); }
+  .bw-detail .pd-metaline{ gap:6px 0; font-size:10px; letter-spacing:.12em; }
+  .bw-detail .pd-metaline span{ padding:0 10px; }
+
+  .bw-detail .pd-cover{ aspect-ratio:4/3; }
+  .bw-detail .pd-sec{ padding:40px 0; }
+  .bw-detail .pd-sechead{ gap:10px; margin-bottom:18px; }
+  .bw-detail .pd-sechead h2{ font-size:22px; }
+  .bw-detail .pd-intro{ font-size:15.5px; }
+
+  .bw-detail .pd-case{ margin-top:22px; }
+  .bw-detail .pd-case__cell{ padding:18px 16px; word-break:break-word; }
+
+  .bw-detail .pd-ba{ gap:10px; }
+  .bw-detail .pd-scope__item{ padding:14px 6px; font-size:14.5px; word-break:break-word; }
+
+  .bw-detail .pd-depo blockquote{ font-size:19px; padding-left:18px; }
+  .bw-detail .pd-depo__src{ padding-left:20px; }
+
+  .bw-detail .pd-cta{ padding:64px 18px; }
+  .bw-detail .pd-cta h2{ font-size:clamp(26px,7.5vw,34px); }
+  .bw-detail .pd-cta__act{ flex-direction:column; gap:10px; }
+  .bw-detail .pd-cta__act .pd-btn{ width:100%; justify-content:center; }
+  .bw-detail .pd-btn{ min-height:48px; padding:14px 22px; }
+
+  .bw-detail>:last-child{ padding-bottom:calc(80px + env(safe-area-inset-bottom)); }
+}
+
+/* Lightbox mobile — alvo de toque maior, controles cabíveis */
+@media (max-width:560px){
+  .bw-lightbox{ padding:16px; }
+  .bw-lightbox__btn{ width:48px; height:48px; }
+  .bw-lightbox__close{ top:12px; right:12px; background:rgba(0,0,0,.55); border-color:rgba(255,255,255,.35); }
+  .bw-lightbox__prev{ left:8px; }
+  .bw-lightbox__next{ right:8px; }
+  .bw-lightbox__counter{ bottom:14px; font-size:10.5px; }
+  .bw-lightbox__img{ max-height:calc(100vh - 96px); }
+}
