@@ -231,3 +231,19 @@
 .bw-lp .sticky{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:11px var(--mx) calc(11px + env(safe-area-inset-bottom));background:rgba(7,20,39,.92);backdrop-filter:blur(8px);border-top:1px solid var(--hair);transform:translateY(120%);transition:transform .3s}
 .bw-lp .sticky.show{transform:none}.bw-lp .sticky .btn{width:100%;justify-content:center}
 @media(min-width:761px){.bw-lp .sticky{display:none}}
+
+/* ===== /o — gate hero + portal takeover ===== */
+.bw-lp .hero.is-gate{min-height:auto;justify-content:flex-start;padding-bottom:clamp(48px,8vh,90px)}
+.bw-lp .hero.is-gate .hero-top{padding-top:clamp(96px,14vh,150px)}
+.bw-lp .hero.is-gate .gate-card{margin-top:clamp(28px,4vh,40px)}
+.bw-lp .fld-err{color:#c0392b;font-size:13px;margin:-4px 0 10px}
+.bw-lp .lp-portalview{padding-top:clamp(88px,13vh,130px)}
+.bw-lp .lp-portalview .pf-app{max-width:500px;margin:0 auto}
+.bw-lp .lp-portal-cta{max-width:640px;margin:clamp(36px,6vh,64px) auto 0;padding-top:clamp(28px,4vh,40px);border-top:1px solid var(--hair);text-align:center}
+.bw-lp .lp-portal-cta .eye{display:flex;justify-content:center;margin-bottom:16px}
+.bw-lp .lp-portal-cta h3{font-family:var(--display);font-weight:500;font-size:clamp(24px,3.2vw,38px);line-height:1.08;letter-spacing:-.02em;color:#fff}
+.bw-lp .lp-portal-cta p{margin:14px auto 0;font-size:clamp(15px,1.3vw,17px);line-height:1.55;color:#bccadb;max-width:46ch}
+.bw-lp .lp-portal-cta .act{margin-top:26px;display:flex;justify-content:center}
+.bw-lp .lp-portal-cta .btn-cyan{padding:16px 30px;font-size:15px}
+.bw-lp .lp-portal-cta .rea{margin-top:22px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-cool)}
+.bw-lp .lp-portal-cta .rea b{color:var(--sky);font-weight:500}
