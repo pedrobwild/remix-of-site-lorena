@@ -16,12 +16,14 @@ import { trackEvent } from "@/lib/ga4";
 import "@/styles/bw-lp.css";
 
 /**
- * Portal navegável (Bwild Workflow) — mesmo demo público do orçamento.
- * O sufixo ?cta=placa distingue este acesso (LP da placa) do link usado
- * nos orçamentos do Pedro, que continua sem o flag e sem CTA.
+ * Vitrine dedicada do portal (Bwild Workflow) — rota /vitrine/:projectId.
+ * Ela marca a sessão como "vitrine da placa" (ativando o CTA comercial no
+ * portal) e encaminha pro mesmo demo público. O link que o Pedro usa nos
+ * orçamentos aponta direto pro /auth (sem passar pela vitrine), então lá o
+ * CTA não aparece. Trocar o id da obra aqui se mudar a obra demo.
  */
 const WORKFLOW_DEMO_URL =
-  "https://bwildworkflow.com/auth?email=pedro.demo%40bwild.com.br&password=512451&redirect=%2Fobra%2Fecf601c3-87f9-4824-9fb3-26a96d120761%3Fcta%3Dplaca";
+  "https://bwildworkflow.com/vitrine/ecf601c3-87f9-4824-9fb3-26a96d120761";
 
 const digits = (v: string) => v.replace(/\D/g, "");
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
