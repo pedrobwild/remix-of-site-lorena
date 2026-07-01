@@ -17,13 +17,17 @@ import "@/styles/bw-lp.css";
 
 /**
  * Vitrine dedicada do portal (Bwild Workflow) — rota /vitrine/:projectId.
- * Ela marca a sessão como "vitrine da placa" (ativando o CTA comercial no
- * portal) e encaminha pro mesmo demo público. O link que o Pedro usa nos
- * orçamentos aponta direto pro /auth (sem passar pela vitrine), então lá o
- * CTA não aparece. Trocar o id da obra aqui se mudar a obra demo.
+ * Marca a sessão como "vitrine da placa" (ativa o CTA comercial no portal) e
+ * encaminha pro mesmo demo público. O link dos orçamentos do Pedro vai direto
+ * pro /auth, sem vitrine, então lá o CTA não aparece.
+ *
+ * ⚠️ GO-LIVE: hoje aponta pro PREVIEW do Workflow (funciona sem publicar).
+ * Antes de publicar o site em produção: (1) publique o app do Workflow e
+ * (2) troque esta URL pela de produção abaixo.
+ *   Produção: https://bwildworkflow.com/vitrine/ecf601c3-87f9-4824-9fb3-26a96d120761
  */
 const WORKFLOW_DEMO_URL =
-  "https://bwildworkflow.com/vitrine/ecf601c3-87f9-4824-9fb3-26a96d120761";
+  "https://id-preview--c9754542-d1f4-4007-9ead-4212e17bb44e.lovable.app/vitrine/ecf601c3-87f9-4824-9fb3-26a96d120761";
 
 const digits = (v: string) => v.replace(/\D/g, "");
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
