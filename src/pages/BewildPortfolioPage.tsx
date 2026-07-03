@@ -6,7 +6,8 @@
  * CSS isolado em .bw-portfolio (src/styles/portfolio.css).
  */
 import { useMemo, useState } from "react";
-import { useSeo } from "@/lib/useSeo";
+import { useSeo, breadcrumbJsonLd, itemListJsonLd } from "@/lib/useSeo";
+import { useSiteSettings } from "@/lib/useSiteSettings";
 import BewildSiteNav from "@/components/BewildSiteNav";
 import SiteFooter from "@/components/SiteFooter";
 import { CONTACT } from "../components/landing/content";
