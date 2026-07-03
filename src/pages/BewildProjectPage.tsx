@@ -6,7 +6,8 @@
  * CSS isolado em .bw-detail (src/styles/portfolio-detail.css).
  */
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { useSeo } from "@/lib/useSeo";
+import { useSeo, breadcrumbJsonLd, projectJsonLd } from "@/lib/useSeo";
+import { useSiteSettings } from "@/lib/useSiteSettings";
 import BewildSiteNav from "@/components/BewildSiteNav";
 import SiteFooter from "@/components/SiteFooter";
 import { whatsappHref } from "@/components/landing/content";
@@ -83,6 +84,7 @@ function Lightbox({
 
 export default function BewildProjectPage({ slug }: Props) {
   const { project, loading, error, notFound } = useBewildProject(slug);
+  const { settings } = useSiteSettings();
   const [lbIndex, setLbIndex] = useState<number | null>(null);
 
   // Capa e galeria com fallback: a capa usa cover_url; se faltar, usa a 1ª
@@ -104,6 +106,24 @@ export default function BewildProjectPage({ slug }: Props) {
     canonicalPath: `/portfolio/${slug}`,
     ogType: "article",
     ogImage: project?.og_image_url || project?.cover_url || undefined,
+    jsonLd:
+      settings && project
+        ? [
+            breadcrumbJsonLd(settings, [
+              { name: "Início", path: "/" },
+              { name: "Portfólio", path: "/portfolio" },
+              { name: project.title, path: `/portfolio/${project.slug}` },
+            ]),
+            projectJsonLd(settings, {
+              slug: project.slug,
+              title: project.title,
+              summary: project.summary ?? undefined,
+              cover: project.og_image_url ?? project.cover_url ?? undefined,
+              location: project.neighborhood ?? project.location ?? undefined,
+              tag: project.project_type ?? undefined,
+            }),
+          ]
+        : undefined,
   });
 
   const closeLb = useCallback(() => setLbIndex(null), []);
