@@ -40,6 +40,7 @@ function IconArrow() {
 
 export default function BewildPortfolioPage() {
   const { projects, loading, error } = useBewildProjects();
+  const { settings } = useSiteSettings();
   const [filter, setFilter] = useState<FilterValue>("all");
 
   useSeo({
@@ -49,6 +50,22 @@ export default function BewildPortfolioPage() {
     canonicalPath: "/portfolio",
     ogType: "website",
     ogImage: projects.find((p) => p.cover_url)?.cover_url ?? undefined,
+    jsonLd: settings
+      ? [
+          breadcrumbJsonLd(settings, [
+            { name: "Início", path: "/" },
+            { name: "Portfólio", path: "/portfolio" },
+          ]),
+          itemListJsonLd(
+            settings,
+            projects.map((p) => ({
+              name: p.title,
+              path: `/portfolio/${p.slug}`,
+              image: p.cover_url ?? undefined,
+            })),
+          ),
+        ]
+      : undefined,
   });
 
   // Número de prancha estável por projeto, na ordem do admin (sort_order).
