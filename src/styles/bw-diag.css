@@ -198,8 +198,8 @@
 /* btn */
 .bw-diag__btn{display:inline-flex;align-items:center;gap:9px;font-family:"Inter",sans-serif;font-weight:600;font-size:14px;padding:14px 24px;border-radius:2px;cursor:pointer;text-decoration:none;transition:transform .25s cubic-bezier(.22,1,.36,1),background .2s,border-color .2s,color .2s}
 .bw-diag__btn .ar{width:16px;height:16px;transition:transform .25s cubic-bezier(.22,1,.36,1)}
-.bw-diag__btn.cyan{background:var(--cyan);color:#fff;border:1px solid var(--cyan)}
-.bw-diag__btn.cyan:hover{background:#3793c9;border-color:#3793c9}
+.bw-diag__btn.cyan{background:#2a78a5;color:#fff;border:1px solid #2a78a5}
+.bw-diag__btn.cyan:hover{background:#3485b8;border-color:#3485b8}
 .bw-diag__btn.cyan:hover .ar{transform:translateY(-4px)}
 .bw-diag__btn.ghost{border:1px solid rgba(255,255,255,.28);color:#fff;background:transparent}
 .bw-diag__btn.ghost:hover{border-color:var(--sky);color:var(--sky)}

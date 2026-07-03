@@ -105,8 +105,8 @@
 .bw-lp .sec-mark .n{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--sky)}
 .bw-lp .sec-mark .t{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-cool)}
 .bw-lp .sec-mark .ln{flex:1;height:1px;background:var(--hair);align-self:center}
-.bw-lp .paper .sec-mark .t{color:#7d8a98}
-.bw-lp .paper .sec-mark .n{color:var(--cyan)}
+.bw-lp .paper .sec-mark .t{color:#67727e}
+.bw-lp .paper .sec-mark .n{color:#27719c}
 .bw-lp .paper .sec-mark .ln{background:var(--hair-ink)}
 
 .bw-lp .sec-head{max-width:780px;margin-bottom:clamp(40px,6vh,72px)}

@@ -84,7 +84,7 @@
 .bw-portfolio .pf-card__arrow svg{width:18px;height:18px}
 
 /* estados */
-.bw-portfolio .pf-state{text-align:center;padding:72px 16px;color:var(--muted-cool);font-size:15px}
+.bw-portfolio .pf-state{text-align:center;padding:72px 16px;color:#627281;font-size:15px}
 .bw-portfolio .pf-state a{color:var(--cyan);text-decoration:underline}
 .bw-portfolio .pf-skeleton{background:#ece5d8;border-radius:3px;aspect-ratio:4/3;animation:bwPfPulse 1.4s ease-in-out infinite}
 @keyframes bwPfPulse{0%,100%{opacity:.7}50%{opacity:.4}}
@@ -103,8 +103,8 @@
 .bw-portfolio .pf-btn{display:inline-flex;align-items:center;gap:9px;font-family:"Inter",sans-serif;font-weight:600;font-size:14px;padding:14px 24px;border-radius:2px;cursor:pointer;text-decoration:none;transition:transform .25s cubic-bezier(.22,1,.36,1),background .2s,border-color .2s,color .2s}
 .bw-portfolio .pf-btn .ar{display:inline-flex;transition:transform .25s cubic-bezier(.22,1,.36,1)}
 .bw-portfolio .pf-btn .ar svg{width:16px;height:16px}
-.bw-portfolio .pf-btn.cyan{background:var(--cyan);color:#fff;border:1px solid var(--cyan)}
-.bw-portfolio .pf-btn.cyan:hover{background:#3793c9;border-color:#3793c9}
+.bw-portfolio .pf-btn.cyan{background:#2a78a5;color:#fff;border:1px solid #2a78a5}
+.bw-portfolio .pf-btn.cyan:hover{background:#3485b8;border-color:#3485b8}
 .bw-portfolio .pf-btn.cyan:hover .ar{transform:translateX(5px)}
 .bw-portfolio .pf-btn.ghost{border:1px solid rgba(255,255,255,.28);color:#fff;background:transparent}
 .bw-portfolio .pf-btn.ghost:hover{border-color:var(--sky);color:var(--sky)}

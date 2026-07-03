@@ -18,10 +18,10 @@
     width:100%;line-height:1;box-sizing:border-box;min-height:48px;
     font-family:'Inter',system-ui,sans-serif;font-weight:600;font-size:15px;
     padding:16px 22px;border-radius:2px;
-    background:#2F86B8;color:#fff;text-decoration:none;
+    background:#2a78a5;color:#fff;text-decoration:none;
     border:0;cursor:pointer;transition:background .2s;
   }
-  .bw-sticky-cta .btn:hover{background:#3793c9}
+  .bw-sticky-cta .btn:hover{background:#3485b8}
   .bw-sticky-cta .arrow{flex:none;transition:transform .2s}
   .bw-sticky-cta .btn:hover .arrow{transform:translateX(4px)}
 }
