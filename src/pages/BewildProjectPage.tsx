@@ -84,6 +84,7 @@ function Lightbox({
 
 export default function BewildProjectPage({ slug }: Props) {
   const { project, loading, error, notFound } = useBewildProject(slug);
+  const { settings } = useSiteSettings();
   const [lbIndex, setLbIndex] = useState<number | null>(null);
 
   // Capa e galeria com fallback: a capa usa cover_url; se faltar, usa a 1ª
@@ -105,6 +106,24 @@ export default function BewildProjectPage({ slug }: Props) {
     canonicalPath: `/portfolio/${slug}`,
     ogType: "article",
     ogImage: project?.og_image_url || project?.cover_url || undefined,
+    jsonLd:
+      settings && project
+        ? [
+            breadcrumbJsonLd(settings, [
+              { name: "Início", path: "/" },
+              { name: "Portfólio", path: "/portfolio" },
+              { name: project.title, path: `/portfolio/${project.slug}` },
+            ]),
+            projectJsonLd(settings, {
+              slug: project.slug,
+              title: project.title,
+              summary: project.summary ?? undefined,
+              cover: project.og_image_url ?? project.cover_url ?? undefined,
+              location: project.neighborhood ?? project.location ?? undefined,
+              tag: project.project_type ?? undefined,
+            }),
+          ]
+        : undefined,
   });
 
   const closeLb = useCallback(() => setLbIndex(null), []);
