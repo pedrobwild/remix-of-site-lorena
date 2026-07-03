@@ -6,7 +6,8 @@
  * CSS isolado em .bw-detail (src/styles/portfolio-detail.css).
  */
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { useSeo } from "@/lib/useSeo";
+import { useSeo, breadcrumbJsonLd, projectJsonLd } from "@/lib/useSeo";
+import { useSiteSettings } from "@/lib/useSiteSettings";
 import BewildSiteNav from "@/components/BewildSiteNav";
 import SiteFooter from "@/components/SiteFooter";
 import { whatsappHref } from "@/components/landing/content";
