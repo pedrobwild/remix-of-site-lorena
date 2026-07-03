@@ -35,13 +35,16 @@ const FAQS_HOME = [
 ];
 
 export default function HomePage() {
+  const { settings } = useSiteSettings();
   useSeo({
     title: "Bewild | Studios prontos para Airbnb e short stay",
     description:
       "Design, obra, mobiliário e setup para transformar studios em imóveis prontos para short stay em SP, sem você virar gerente de obra.",
     canonicalPath: "/",
     ogType: "website",
-    jsonLd: [faqJsonLd(FAQS_HOME)],
+    jsonLd: settings
+      ? [faqJsonLd(FAQS_HOME), professionalServiceJsonLd(settings)]
+      : [faqJsonLd(FAQS_HOME)],
   });
 
   const rootRef = useRef<HTMLDivElement | null>(null);
