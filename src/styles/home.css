@@ -161,14 +161,14 @@
 .bw-home .sec-mark .n{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--sky)}
 .bw-home .sec-mark .t{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-cool)}
 .bw-home .sec-mark .ln{flex:1;height:1px;background:var(--hair);align-self:center}
-.bw-home .paper .sec-mark .t{color:#7d8a98}
-.bw-home .paper .sec-mark .n{color:var(--cyan)}
+.bw-home .paper .sec-mark .t{color:#67727e}
+.bw-home .paper .sec-mark .n{color:#27719c}
 .bw-home .paper .sec-mark .ln{background:var(--hair-ink)}
 
 .bw-home .reveal-block{max-width:1000px}
 .bw-home .reveal-block .pre{font-family:var(--display);font-weight:400;font-size:clamp(20px,2.4vw,30px);color:var(--muted-cool);margin-bottom:6px}
 .bw-home .build-row{position:relative;display:inline-flex;align-items:center}
-.bw-home .build{position:relative;font-family:var(--display);font-weight:600;font-size:clamp(52px,9vw,118px);line-height:1;color:#46638a}
+.bw-home .build{position:relative;font-family:var(--display);font-weight:600;font-size:clamp(52px,9vw,118px);line-height:1;color:#47648b}
 .bw-home .build .strike{position:absolute;left:-2%;right:-2%;top:52%;height:auto;color:var(--cyan)}
 .bw-home .bewild{font-family:var(--display);font-weight:600;font-size:clamp(56px,9.6vw,128px);line-height:1;color:#fff;margin-top:10px}
 .bw-home .bewild i{font-style:normal;color:var(--sky)}

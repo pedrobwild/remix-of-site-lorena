@@ -131,8 +131,8 @@
 /* btn */
 .bw-post .pt-btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--body);font-weight:600;font-size:14px;padding:14px 24px;border-radius:2px;cursor:pointer;text-decoration:none;border:0;transition:transform .25s cubic-bezier(.22,1,.36,1),background .2s,border-color .2s,color .2s}
 .bw-post .pt-btn .ar{transition:transform .25s cubic-bezier(.22,1,.36,1)}
-.bw-post .pt-btn.cyan{background:var(--cyan);color:#fff;border:1px solid var(--cyan)}
-.bw-post .pt-btn.cyan:hover{background:#3793c9;border-color:#3793c9}
+.bw-post .pt-btn.cyan{background:#2a78a5;color:#fff;border:1px solid #2a78a5}
+.bw-post .pt-btn.cyan:hover{background:#3485b8;border-color:#3485b8}
 .bw-post .pt-btn.cyan:hover .ar{transform:translateX(5px)}
 .bw-post .pt-btn.ghost{border:1px solid rgba(255,255,255,.28);color:#fff;background:transparent}
 .bw-post .pt-btn.ghost:hover{border-color:var(--sky);color:var(--sky)}

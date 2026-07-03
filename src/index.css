@@ -5383,13 +5383,13 @@ textarea.admin-field__input {
 }
 
 .cookie-banner__btn--solid {
-  background: #2F86B8;
-  border-color: #2F86B8;
+  background: #2a78a5;
+  border-color: #2a78a5;
   color: #fff;
 }
 .cookie-banner__btn--solid:hover {
-  background: #5FB2DD;
-  border-color: #5FB2DD;
+  background: #5aa4ca;
+  border-color: #5aa4ca;
   box-shadow: 0 12px 24px -12px rgba(47, 134, 184, 0.7);
 }
 

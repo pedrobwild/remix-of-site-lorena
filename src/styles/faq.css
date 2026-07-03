@@ -51,8 +51,8 @@
 /* body */
 .bw-faq .fq-body{background:var(--paper);padding:clamp(42px,6vh,72px) 0 clamp(64px,9vh,108px)}
 .bw-faq .fq-secmark{display:flex;align-items:center;gap:16px;margin-bottom:clamp(20px,3vh,34px)}
-.bw-faq .fq-secmark .n{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan)}
-.bw-faq .fq-secmark .t{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#7d8a98}
+.bw-faq .fq-secmark .n{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#27719c}
+.bw-faq .fq-secmark .t{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#67727e}
 .bw-faq .fq-secmark .ln{flex:1;height:1px;background:var(--hair-ink)}
 
 /* acordeão numerado */
@@ -81,8 +81,8 @@
 /* btn */
 .bw-faq .fq-btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--body);font-weight:600;font-size:14px;padding:14px 24px;border-radius:2px;cursor:pointer;text-decoration:none;transition:transform .25s cubic-bezier(.22,1,.36,1),background .2s,border-color .2s,color .2s}
 .bw-faq .fq-btn .ar{transition:transform .25s cubic-bezier(.22,1,.36,1)}
-.bw-faq .fq-btn.cyan{background:var(--cyan);color:#fff;border:1px solid var(--cyan)}
-.bw-faq .fq-btn.cyan:hover{background:#3793c9;border-color:#3793c9}
+.bw-faq .fq-btn.cyan{background:#2a78a5;color:#fff;border:1px solid #2a78a5}
+.bw-faq .fq-btn.cyan:hover{background:#3485b8;border-color:#3485b8}
 .bw-faq .fq-btn.cyan:hover .ar{transform:translateX(5px)}
 .bw-faq .fq-btn.ghost{border:1px solid rgba(255,255,255,.28);color:#fff;background:transparent}
 .bw-faq .fq-btn.ghost:hover{border-color:var(--sky);color:var(--sky)}
