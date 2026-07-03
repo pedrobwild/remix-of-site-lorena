@@ -8,7 +8,8 @@
  */
 import { useEffect, useRef } from "react";
 import { useHomeFx } from "@/lib/useHomeFx";
-import { useSeo, faqJsonLd } from "@/lib/useSeo";
+import { useSeo, faqJsonLd, professionalServiceJsonLd } from "@/lib/useSeo";
+import { useSiteSettings } from "@/lib/useSiteSettings";
 import { trackEvent } from "@/lib/ga4";
 import { whatsappHref } from "@/components/landing/content";
 import "@/styles/home.css";
