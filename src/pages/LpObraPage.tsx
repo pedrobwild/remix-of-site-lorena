@@ -150,6 +150,11 @@ export default function LpObraPage() {
     window.open(`https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
   };
 
+  const scrollToGate = (e: React.MouseEvent) => {
+    e.preventDefault();
+    document.getElementById("gate-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
   const eyebrowText = bairro ? `Obra Bewild · ${bairro}` : "Obra Bewild · São Paulo";
   const sheetNo = bairro ? `SHEET · OBRA ${bairroUp}` : "SHEET · OBRA";
 
