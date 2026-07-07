@@ -336,6 +336,41 @@ export default function LpPanfletoPage() {
         <p className="raf-note">Resultado de um cliente real. Ocupação e diária variam conforme imóvel, região e operação.</p>
       </section>
 
+      {/* 03 — QUEM FAZ */}
+      <section className="lp-quem" aria-label="Quem faz">
+        <div className="sec-mark"><span className="n">03</span><span className="t">Quem faz</span><span className="ln" /></div>
+
+        <div className="vblock">
+          <div className="vtext">
+            <p className="vtag">antes de qualquer parede</p>
+            <h3>Quem projeta o seu studio mede ele <em>pessoalmente.</em></h3>
+            <p>A arquiteta vai até o imóvel e decide ali o que muda na diária: circulação, ponto de luz, onde a cama rende foto.</p>
+          </div>
+          <div className="vframe">
+            <video src="/videos/arquiteta-medicao.mp4" poster="/videos/arquiteta-medicao-poster.jpg" muted loop playsInline preload="metadata" aria-label="Arquiteta da Bewild fazendo a medição do imóvel" />
+          </div>
+        </div>
+
+        <div className="vblock invertido">
+          <div className="vframe">
+            <video src="/videos/time-obra.mp4" poster="/videos/time-obra-poster.jpg" muted loop playsInline preload="metadata" aria-label="Time de obra da Bewild a caminho da reforma" />
+          </div>
+          <div className="vtext">
+            <p className="vtag">e quem executa tem rosto</p>
+            <h3>A obra que você não toca tem <em>time próprio.</em></h3>
+            <p>Quem reforma trabalha na Bewild, não é um terceiro que aparece e some. O dono acompanha tudo à distância pelo portal.</p>
+          </div>
+        </div>
+
+        <div className="lp-quem-cta">
+          <a className="btn btn-cyan" href="#diagnostico" onClick={scrollToForm}>
+            <span>Solicitar diagnóstico</span><span className="ar">→</span>
+          </a>
+        </div>
+      </section>
+
+
+
       {/* FOOTER MÍNIMO */}
       <footer className="lp-foot">
         BEWILD · GRUPO BWILD · SÃO PAULO · BR
