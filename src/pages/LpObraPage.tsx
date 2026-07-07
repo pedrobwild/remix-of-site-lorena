@@ -252,7 +252,7 @@ export default function LpObraPage() {
 
         <div className="vblock invertido">
           <div className="vframe">
-            <video src="/videos/time-obra.mp4" poster="/videos/time-obra-poster.jpg" muted loop playsInline preload="metadata" aria-label="Time de obra da Bewild a caminho da reforma" />
+            <video ref={videoObraRef} src="/videos/time-obra.mp4" poster="/videos/time-obra-poster.jpg" muted loop playsInline preload="metadata" aria-label="Time de obra da Bewild a caminho da reforma" />
           </div>
           <div className="vtext">
             <p className="vtag">e quem executa tem rosto</p>
