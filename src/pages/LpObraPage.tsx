@@ -167,6 +167,7 @@ export default function LpObraPage() {
       <section className="hero is-gate" aria-label="Obra Bewild">
         <div className="hero-grid" aria-hidden="true" />
         <div className="hero-top">
+          <img className="hero-logo" src="/brand/bewild-logo-branca.png" alt="Bewild · Grupo Bwild" />
           <div className="hero-eyebrow">
             <span className="mono tag">{eyebrowText}</span>
           </div>
@@ -178,6 +179,9 @@ export default function LpObraPage() {
             Atrás dessa placa, um studio está virando renda, sem o dono entrar na
             obra. Deixe seu contato pra abrir o portal navegável que o cliente
             Bewild usa pra acompanhar a obra, do primeiro dia à entrega.
+          </p>
+          <p className="institutional">
+            A Bewild é a construtora do Grupo Bwild especializada em reforma turnkey de studios. Projeto, obra, marcenaria, mobília e setup num contrato só — mais de 150 studios entregues em São Paulo, prontos pra render no short-stay. Esta obra é um deles.
           </p>
 
           {stage === "form" ? (
