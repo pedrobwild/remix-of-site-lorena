@@ -73,6 +73,8 @@ export default function LpPanfletoPage() {
   const bairroRaw = params?.get("bairro")?.trim() || "";
   const bairro = bairroRaw || null;
   const bairroUp = bairro ? bairro.toUpperCase() : "";
+  const videoArqRef = useVideoAutoplayInView();
+  const videoObraRef = useVideoAutoplayInView();
 
   useSeo({
     title: "Bewild · diagnóstico do seu studio",
