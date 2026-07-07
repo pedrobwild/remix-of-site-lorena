@@ -90,6 +90,8 @@ export default function LpObraPage() {
   const bairroRaw = params?.get("bairro")?.trim() || "";
   const bairro = bairroRaw || null;
   const bairroUp = bairro ? bairro.toUpperCase() : "";
+  const videoArqRef = useVideoAutoplayInView();
+  const videoObraRef = useVideoAutoplayInView();
 
   useSeo({
     title: "Obra Bewild · acompanhamento",
