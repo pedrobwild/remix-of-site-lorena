@@ -223,6 +223,51 @@ export default function LpObraPage() {
         </div>
       </section>
 
+      {/* 01 — QUEM FAZ */}
+      <section className="lp-quem" aria-label="Quem faz essa obra">
+        <div className="sec-mark"><span className="n">01</span><span className="t">Quem faz essa obra</span><span className="ln" /></div>
+        <div className="lp-quem-head">
+          <h2>A Bewild constrói studios pra render. <i>Este é um deles.</i></h2>
+          <p className="lead">Construtora do Grupo Bwild, especializada em reforma turnkey: projeto, obra, marcenaria, mobília e setup num contrato só.</p>
+        </div>
+        <div className="lp-quem-data">
+          <div className="cell"><b>150+</b><span>studios entregues</span></div>
+          <div className="cell"><b>60</b><span>dias úteis · a partir de</span></div>
+          <div className="cell"><b>05</b><span>anos de garantia</span></div>
+        </div>
+
+        <div className="vblock">
+          <div className="vtext">
+            <p className="vtag">antes de qualquer parede</p>
+            <h3>Quem projeta o seu studio mede ele <em>pessoalmente.</em></h3>
+            <p>A arquiteta vai até o imóvel e decide ali o que muda na diária: circulação, ponto de luz, onde a cama rende foto.</p>
+          </div>
+          <div className="vframe">
+            <video src="/videos/arquiteta-medicao.mp4" poster="/videos/arquiteta-medicao-poster.jpg" muted loop playsInline preload="metadata" aria-label="Arquiteta da Bewild fazendo a medição do imóvel" />
+          </div>
+        </div>
+
+        <div className="vblock invertido">
+          <div className="vframe">
+            <video src="/videos/time-obra.mp4" poster="/videos/time-obra-poster.jpg" muted loop playsInline preload="metadata" aria-label="Time de obra da Bewild a caminho da reforma" />
+          </div>
+          <div className="vtext">
+            <p className="vtag">e quem executa tem rosto</p>
+            <h3>A obra que você não toca tem <em>time próprio.</em></h3>
+            <p>Quem reforma trabalha na Bewild, não é um terceiro que aparece e some. O dono acompanha tudo à distância pelo portal.</p>
+          </div>
+        </div>
+
+        <div className="lp-quem-cta">
+          <a className="btn btn-cyan" href="#gate-card" onClick={scrollToGate}>
+            <span>Ver esta obra por dentro</span><span className="ar">→</span>
+          </a>
+          <button type="button" className="btn btn-ghost" onClick={openWhats}>
+            <span>Falar no WhatsApp</span>
+          </button>
+        </div>
+      </section>
+
       <div className="marquee" aria-hidden="true">
         <div className="trk">
           <span>CONSTRUÍDO POR QUEM NÃO ACEITA O ÓBVIO <i>/</i> BUILT BY THE WILD ONES <i>/</i> </span>
