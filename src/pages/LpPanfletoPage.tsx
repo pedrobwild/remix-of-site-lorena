@@ -198,9 +198,6 @@ export default function LpPanfletoPage() {
             Projeto, obra, marcenaria, mobília e setup num contrato só. Você
             acompanha tudo pelo portal. O trabalho fica com a gente.
           </p>
-          <p className="institutional compact">
-            A Bewild é a construtora do Grupo Bwild — mais de 150 studios entregues em São Paulo.
-          </p>
           <div className="cta">
             <a className="btn btn-cyan" href="#diagnostico" onClick={scrollToForm}>
               <span>Solicitar diagnóstico</span><span className="ar">→</span>
