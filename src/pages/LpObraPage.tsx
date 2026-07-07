@@ -211,7 +211,7 @@ export default function LpObraPage() {
               <button type="button" className="skip" onClick={openWhats}>Prefiro falar no WhatsApp</button>
             </form>
           ) : (
-            <div className="gate-card">
+            <div id="gate-card" className="gate-card">
               <div className="eye">Portal de acompanhamento</div>
               <h3>Abrindo o portal…</h3>
               <p>Você está sendo levado pro portal navegável da Bewild. Se não abrir em alguns segundos, use o botão abaixo.</p>
