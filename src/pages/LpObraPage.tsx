@@ -188,7 +188,7 @@ export default function LpObraPage() {
 
 
           {stage === "form" ? (
-            <form className="gate-card" onSubmit={onGateSubmit} noValidate>
+            <form id="gate-card" className="gate-card" onSubmit={onGateSubmit} noValidate>
               <div className="eye">Acesso ao portal de acompanhamento</div>
               <h3>Veja a obra por dentro</h3>
               <p>Preenche pra abrir o portal navegável. Seu contato fica com a gente, sem ligação automática e sem spam.</p>
