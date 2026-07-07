@@ -150,6 +150,11 @@ export default function LpObraPage() {
     window.open(`https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
   };
 
+  const scrollToGate = (e: React.MouseEvent) => {
+    e.preventDefault();
+    document.getElementById("gate-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
   const eyebrowText = bairro ? `Obra Bewild · ${bairro}` : "Obra Bewild · São Paulo";
   const sheetNo = bairro ? `SHEET · OBRA ${bairroUp}` : "SHEET · OBRA";
 
@@ -180,12 +185,10 @@ export default function LpObraPage() {
             obra. Deixe seu contato pra abrir o portal navegável que o cliente
             Bewild usa pra acompanhar a obra, do primeiro dia à entrega.
           </p>
-          <p className="institutional">
-            A Bewild é a construtora do Grupo Bwild especializada em reforma turnkey de studios. Projeto, obra, marcenaria, mobília e setup num contrato só — mais de 150 studios entregues em São Paulo, prontos pra render no short-stay. Esta obra é um deles.
-          </p>
+
 
           {stage === "form" ? (
-            <form className="gate-card" onSubmit={onGateSubmit} noValidate>
+            <form id="gate-card" className="gate-card" onSubmit={onGateSubmit} noValidate>
               <div className="eye">Acesso ao portal de acompanhamento</div>
               <h3>Veja a obra por dentro</h3>
               <p>Preenche pra abrir o portal navegável. Seu contato fica com a gente, sem ligação automática e sem spam.</p>
@@ -208,7 +211,7 @@ export default function LpObraPage() {
               <button type="button" className="skip" onClick={openWhats}>Prefiro falar no WhatsApp</button>
             </form>
           ) : (
-            <div className="gate-card">
+            <div id="gate-card" className="gate-card">
               <div className="eye">Portal de acompanhamento</div>
               <h3>Abrindo o portal…</h3>
               <p>Você está sendo levado pro portal navegável da Bewild. Se não abrir em alguns segundos, use o botão abaixo.</p>
@@ -217,6 +220,51 @@ export default function LpObraPage() {
               </button>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* 01 — QUEM FAZ */}
+      <section className="lp-quem" aria-label="Quem faz essa obra">
+        <div className="sec-mark"><span className="n">01</span><span className="t">Quem faz essa obra</span><span className="ln" /></div>
+        <div className="lp-quem-head">
+          <h2>A Bewild constrói studios pra render. <i>Este é um deles.</i></h2>
+          <p className="lead">Construtora do Grupo Bwild, especializada em reforma turnkey: projeto, obra, marcenaria, mobília e setup num contrato só.</p>
+        </div>
+        <div className="lp-quem-data">
+          <div className="cell"><b>150+</b><span>studios entregues</span></div>
+          <div className="cell"><b>60</b><span>dias úteis · a partir de</span></div>
+          <div className="cell"><b>05</b><span>anos de garantia</span></div>
+        </div>
+
+        <div className="vblock">
+          <div className="vtext">
+            <p className="vtag">antes de qualquer parede</p>
+            <h3>Quem projeta o seu studio mede ele <em>pessoalmente.</em></h3>
+            <p>A arquiteta vai até o imóvel e decide ali o que muda na diária: circulação, ponto de luz, onde a cama rende foto.</p>
+          </div>
+          <div className="vframe">
+            <video src="/videos/arquiteta-medicao.mp4" poster="/videos/arquiteta-medicao-poster.jpg" muted loop playsInline preload="metadata" aria-label="Arquiteta da Bewild fazendo a medição do imóvel" />
+          </div>
+        </div>
+
+        <div className="vblock invertido">
+          <div className="vframe">
+            <video src="/videos/time-obra.mp4" poster="/videos/time-obra-poster.jpg" muted loop playsInline preload="metadata" aria-label="Time de obra da Bewild a caminho da reforma" />
+          </div>
+          <div className="vtext">
+            <p className="vtag">e quem executa tem rosto</p>
+            <h3>A obra que você não toca tem <em>time próprio.</em></h3>
+            <p>Quem reforma trabalha na Bewild, não é um terceiro que aparece e some. O dono acompanha tudo à distância pelo portal.</p>
+          </div>
+        </div>
+
+        <div className="lp-quem-cta">
+          <a className="btn btn-cyan" href="#gate-card" onClick={scrollToGate}>
+            <span>Ver esta obra por dentro</span><span className="ar">→</span>
+          </a>
+          <button type="button" className="btn btn-ghost" onClick={openWhats}>
+            <span>Falar no WhatsApp</span>
+          </button>
         </div>
       </section>
 
