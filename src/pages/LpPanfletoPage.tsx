@@ -104,7 +104,7 @@ export default function LpPanfletoPage() {
   const canSubmit = nomeOk && whatsOk && emailOk && localOk && chavesOk && objetivoOk && metragemOk;
 
   const messageText = useMemo(() => {
-    const lines: string[] = ["Olá! Quero o diagnóstico do meu studio (panfleto)."];
+    const lines: string[] = ["[PANFLETO] Olá! Quero o diagnóstico do meu studio."];
     const add = (l: string, v: string) => { const x = v.trim(); if (x) lines.push(`${l}: ${x}`); };
     add("Nome", nome); add("WhatsApp", whats); add("E-mail", email);
     add("Bairro", local); add("Chaves", chaves); add("Objetivo", objetivo);
@@ -151,7 +151,7 @@ export default function LpPanfletoPage() {
     const utm = readUtm(utmDefaults);
     trackEvent("click_whatsapp", { category: "lp_panfleto", label: utm.utm_campaign });
     const bairroTxt = bairro ? ` no bairro ${bairro}` : "";
-    const msg = `Olá! Vim pelo panfleto da Bewild. Quero o diagnóstico do meu studio${bairroTxt} pra render no short-stay. (origem: ${utm.utm_campaign})`;
+    const msg = `[PANFLETO] Olá! Recebi o panfleto da Bewild e quero o diagnóstico do meu studio${bairroTxt}. (origem: ${utm.utm_campaign})`;
     const url = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(msg)}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
