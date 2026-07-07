@@ -72,8 +72,8 @@
   -webkit-mask-image:linear-gradient(180deg,transparent,#000 40%,#000 70%,transparent);
   mask-image:linear-gradient(180deg,transparent,#000 40%,#000 70%,transparent)}
 .bw-lp .hero-top{position:relative;z-index:3;width:100%;padding-top:96px}
-.bw-lp .hero-logo{display:block;width:170px;height:auto;margin-bottom:28px;opacity:.95}
-@media(max-width:760px){.bw-lp .hero-logo{width:125px;margin-bottom:22px}}
+.bw-lp .hero-logo{display:block;width:160px;height:auto;margin:0 0 24px;opacity:.95}
+@media(max-width:760px){.bw-lp .hero-logo{width:120px;margin-bottom:20px}}
 .bw-lp .hero-eyebrow{margin-bottom:26px}
 .bw-lp .hero h1{font-family:var(--display);font-weight:500;font-size:clamp(33px,5.3vw,74px);line-height:1.04;letter-spacing:-.025em;color:#fff}
 .bw-lp .hero h1 .lo{display:block;color:var(--sky);font-style:italic;font-weight:400}
