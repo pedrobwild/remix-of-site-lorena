@@ -13,6 +13,7 @@ import { useSeo } from "@/lib/useSeo";
 import { CONTACT } from "@/components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
+import { useVideoAutoplayInView } from "@/lib/useVideoAutoplayInView";
 import "@/styles/bw-lp.css";
 
 /**
