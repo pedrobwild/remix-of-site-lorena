@@ -38,9 +38,18 @@ import ProtectedRoute from "./components/admin/ProtectedRoute";
 import type { Route } from "./lib/useHashRoute";
 
 export function renderRoute(route: Route) {
-  // Gate de manutenção: esconde todo o site público (inclusive 404)
-  // enquanto a flag está ligada. Rotas /admin/* continuam normais.
-  if (MAINTENANCE_MODE && !route.name?.startsWith("admin")) return <MaintenancePage />;
+  // Gate de manutenção: esconde o site público principal (inclusive 404)
+  // enquanto a flag está ligada. Rotas /admin/* continuam normais, e as
+  // LPs fantasma /o e /p também passam — são páginas noindex acessadas só
+  // por QR/URL direta. Remover/revisar essa exceção no go-live do site.
+  const MAINTENANCE_EXEMPT = new Set([
+    "lp-obra",
+    "lp-panfleto",
+  ]);
+  if (MAINTENANCE_MODE && !route.name?.startsWith("admin") && !MAINTENANCE_EXEMPT.has(route.name)) {
+    return <MaintenancePage />;
+  }
+
 
   if (route.name === "portfolio") return <BewildPortfolioPage />;
   if (route.name === "bewild-project") return <BewildProjectPage slug={route.slug} />;
