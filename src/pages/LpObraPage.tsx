@@ -146,7 +146,7 @@ export default function LpObraPage() {
     const utm = readUtm(utmDefaults);
     trackEvent("click_whatsapp", { category: "lp_obra_gate", label: utm.utm_campaign });
     const bairroTxt = bairro ? ` em ${bairro}` : "";
-    const msg = `Olá! Vim pela placa da obra Bewild${bairroTxt}. Quero avaliar o potencial do meu studio pra render no short-stay. (origem: ${utm.utm_campaign})`;
+    const msg = `[PLACA DE OBRA] Olá! Vi a placa da obra da Bewild${bairroTxt} e quero saber como transformar meu studio em renda. (origem: ${utm.utm_campaign})`;
     window.open(`https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
   };
 
