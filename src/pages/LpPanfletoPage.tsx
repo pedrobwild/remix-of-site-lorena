@@ -186,6 +186,7 @@ export default function LpPanfletoPage() {
       <section className="hero" aria-label="Reforma turn-key Bewild">
         <div className="hero-grid" aria-hidden="true" />
         <div className="hero-top">
+          <img className="hero-logo" src="/brand/bewild-logo-branca.png" alt="Bewild · Grupo Bwild" />
           <div className="hero-eyebrow">
             <span className="mono tag">Reforma turn-key de studios · São Paulo</span>
           </div>
@@ -196,6 +197,9 @@ export default function LpPanfletoPage() {
           <p className="sub">
             Projeto, obra, marcenaria, mobília e setup num contrato só. Você
             acompanha tudo pelo portal. O trabalho fica com a gente.
+          </p>
+          <p className="institutional compact">
+            A Bewild é a construtora do Grupo Bwild — mais de 150 studios entregues em São Paulo.
           </p>
           <div className="cta">
             <a className="btn btn-cyan" href="#diagnostico" onClick={scrollToForm}>
