@@ -13,6 +13,7 @@ import { useSeo } from "@/lib/useSeo";
 import { CONTACT } from "@/components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
+import { useVideoAutoplayInView } from "@/lib/useVideoAutoplayInView";
 import "@/styles/bw-lp.css";
 
 /**
@@ -89,6 +90,8 @@ export default function LpObraPage() {
   const bairroRaw = params?.get("bairro")?.trim() || "";
   const bairro = bairroRaw || null;
   const bairroUp = bairro ? bairro.toUpperCase() : "";
+  const videoArqRef = useVideoAutoplayInView();
+  const videoObraRef = useVideoAutoplayInView();
 
   useSeo({
     title: "Obra Bewild · acompanhamento",
@@ -243,13 +246,13 @@ export default function LpObraPage() {
             <p>A arquiteta vai até o imóvel e decide ali o que muda na diária: circulação, ponto de luz, onde a cama rende foto.</p>
           </div>
           <div className="vframe">
-            <video src="/videos/arquiteta-medicao.mp4" poster="/videos/arquiteta-medicao-poster.jpg" muted loop playsInline preload="metadata" aria-label="Arquiteta da Bewild fazendo a medição do imóvel" />
+            <video ref={videoArqRef} src="/videos/arquiteta-medicao.mp4" poster="/videos/arquiteta-medicao-poster.jpg" muted loop playsInline preload="metadata" aria-label="Arquiteta da Bewild fazendo a medição do imóvel" />
           </div>
         </div>
 
         <div className="vblock invertido">
           <div className="vframe">
-            <video src="/videos/time-obra.mp4" poster="/videos/time-obra-poster.jpg" muted loop playsInline preload="metadata" aria-label="Time de obra da Bewild a caminho da reforma" />
+            <video ref={videoObraRef} src="/videos/time-obra.mp4" poster="/videos/time-obra-poster.jpg" muted loop playsInline preload="metadata" aria-label="Time de obra da Bewild a caminho da reforma" />
           </div>
           <div className="vtext">
             <p className="vtag">e quem executa tem rosto</p>
