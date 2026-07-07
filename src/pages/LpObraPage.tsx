@@ -175,7 +175,7 @@ export default function LpObraPage() {
       <section className="hero is-gate" aria-label="Obra Bewild">
         <div className="hero-grid" aria-hidden="true" />
         <div className="hero-top">
-          <img className="hero-logo" src="/brand/bewild-logo-branca.png" alt="Bewild · Grupo Bwild" />
+          <img className="hero-logo" src="/brand/bewild-logo-cropped.png" alt="Bewild · Grupo Bwild" />
           <div className="hero-eyebrow">
             <span className="mono tag">{eyebrowText}</span>
           </div>
