@@ -180,9 +180,7 @@ export default function LpObraPage() {
             obra. Deixe seu contato pra abrir o portal navegável que o cliente
             Bewild usa pra acompanhar a obra, do primeiro dia à entrega.
           </p>
-          <p className="institutional">
-            A Bewild é a construtora do Grupo Bwild especializada em reforma turnkey de studios. Projeto, obra, marcenaria, mobília e setup num contrato só — mais de 150 studios entregues em São Paulo, prontos pra render no short-stay. Esta obra é um deles.
-          </p>
+
 
           {stage === "form" ? (
             <form className="gate-card" onSubmit={onGateSubmit} noValidate>
