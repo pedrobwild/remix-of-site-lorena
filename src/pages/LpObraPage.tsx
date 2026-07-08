@@ -238,7 +238,7 @@ export default function LpObraPage() {
         <div className="sec-mark"><span className="n">01</span><span className="t">Quem faz essa obra</span><span className="ln" /></div>
         <div className="lp-quem-head">
           <h2>A Bewild constrói studios pra render. <i>Este é um deles.</i></h2>
-          <p className="lead">Construtora do Grupo Bwild, especializada em reforma turnkey: projeto, obra, marcenaria, mobília e setup num contrato só.</p>
+          <p className="lead">Projeto, obra, marcenaria, mobília e decoração em um único contrato. Mais de 150 studios entregues em São Paulo, prontos para receber hóspedes.</p>
         </div>
         <div className="lp-quem-data">
           <div className="cell"><b>150+</b><span>studios entregues</span></div>
