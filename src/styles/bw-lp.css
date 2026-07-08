@@ -54,13 +54,20 @@
 .bw-lp .tag{display:inline-flex;align-items:center;gap:10px}
 .bw-lp .tag::before{content:"";width:26px;height:1px;background:var(--sky);opacity:.6}
 
-.bw-lp .btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--body);font-weight:600;font-size:14px;
-  padding:13px 22px;border-radius:2px;transition:transform .25s cubic-bezier(.22,1,.36,1),background .2s}
+.bw-lp .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:var(--body);font-weight:600;font-size:15px;
+  padding:15px 26px;min-height:52px;border-radius:3px;cursor:pointer;
+  transition:transform .2s cubic-bezier(.22,1,.36,1),background .2s,box-shadow .2s,filter .2s}
 .bw-lp .btn .ar,.bw-lp .btn .arrow{transition:transform .25s cubic-bezier(.22,1,.36,1)}
 .bw-lp .btn:hover .ar,.bw-lp .btn:hover .arrow{transform:translateX(5px)}
-.bw-lp .btn-cyan{background:var(--cyan);color:#fff}
-.bw-lp .btn-cyan:hover{background:#3793c9}
-.bw-lp .btn-ghost{border:1px solid rgba(255,255,255,.28);color:#fff}
+/* CTA primário — cyan vivo, texto navy escuro para saltar do card claro e do fundo azul-noite */
+.bw-lp .btn-cyan{background:#00B4E0;color:#0B2342;font-weight:700;letter-spacing:.005em;
+  box-shadow:0 10px 24px -10px rgba(0,180,224,.55),0 2px 0 rgba(11,35,66,.06);}
+.bw-lp .btn-cyan:hover{background:#22C6EE;box-shadow:0 14px 30px -10px rgba(0,180,224,.7),0 2px 0 rgba(11,35,66,.08);transform:translateY(-1px)}
+.bw-lp .btn-cyan:active{background:#0BA6D0;transform:translateY(0);box-shadow:0 6px 14px -8px rgba(0,180,224,.5)}
+.bw-lp .btn-cyan:focus-visible{outline:2px solid #0B2342;outline-offset:2px}
+.bw-lp .btn-cyan[disabled]{opacity:.55;cursor:not-allowed;box-shadow:none;transform:none}
+.bw-lp .btn-ghost{border:1px solid rgba(255,255,255,.28);color:#fff;background:transparent}
+.bw-lp .btn-ghost:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.42)}
 
 /* ============ HERO ============ */
 .bw-lp .hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;
@@ -259,8 +266,8 @@
   .bw-lp .hero.is-gate .sub{margin-left:auto;margin-right:auto}
   .bw-lp .hero.is-gate .gate-card{margin-left:auto;margin-right:auto;text-align:left}
 }
-.bw-lp .gate-card .submit{margin-top:18px;padding:16px 24px;font-size:15px;font-weight:600;box-shadow:0 12px 26px -8px rgba(47,134,184,.6)}
-.bw-lp .gate-card .submit:hover{background:#3aa0d6;box-shadow:0 16px 32px -8px rgba(47,134,184,.72)}
+.bw-lp .gate-card .submit{margin-top:18px;padding:18px 26px;font-size:16px;font-weight:700;min-height:56px;box-shadow:0 14px 30px -10px rgba(0,180,224,.6),0 2px 0 rgba(11,35,66,.08)}
+.bw-lp .gate-card .submit:hover{box-shadow:0 18px 36px -10px rgba(0,180,224,.75),0 2px 0 rgba(11,35,66,.1)}
 
 /* ============ SEÇÃO DE PROVA (quem faz) — /o e /p ============ */
 .bw-lp .lp-quem{position:relative;background:var(--ink-deep);color:#fff;padding:clamp(80px,12vh,140px) var(--mx)}
