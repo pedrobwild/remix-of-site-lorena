@@ -168,7 +168,7 @@ export default function LpObraPage() {
         <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
       </div>
       <div className="bw-titleblock" aria-hidden="true">
-        BEWILD · GRUPO BWILD<br /><b>BW—OBRA / PLACA</b><br />SÃO PAULO · BR
+        BEWILD · GRUPO BWILD<br /><b>BW-OBRA / PLACA</b><br />SÃO PAULO · BR
       </div>
       <div className="bw-sheetno" aria-hidden="true">{sheetNo}</div>
 
