@@ -59,13 +59,16 @@
   transition:transform .2s cubic-bezier(.22,1,.36,1),background .2s,box-shadow .2s,filter .2s}
 .bw-lp .btn .ar,.bw-lp .btn .arrow{transition:transform .25s cubic-bezier(.22,1,.36,1)}
 .bw-lp .btn:hover .ar,.bw-lp .btn:hover .arrow{transform:translateX(5px)}
-/* CTA primário — cyan vivo, texto navy escuro para saltar do card claro e do fundo azul-noite */
-.bw-lp .btn-cyan{background:#00B4E0;color:#0B2342;font-weight:700;letter-spacing:.005em;
-  box-shadow:0 10px 24px -10px rgba(0,180,224,.55),0 2px 0 rgba(11,35,66,.06);}
-.bw-lp .btn-cyan:hover{background:#22C6EE;box-shadow:0 14px 30px -10px rgba(0,180,224,.7),0 2px 0 rgba(11,35,66,.08);transform:translateY(-1px)}
-.bw-lp .btn-cyan:active{background:#0BA6D0;transform:translateY(0);box-shadow:0 6px 14px -8px rgba(0,180,224,.5)}
+/* CTA primário — cyan vivo (--cyan-vivid), luminoso, texto navy escuro para saltar
+   do card branco (gate, formulário) e do fundo azul-noite (hero, cta-final, sticky).
+   Contraste texto #0B2342 sobre #4DD4FF ≈ 12:1 (AA/AAA). */
+.bw-lp .btn-cyan{background:var(--cyan-vivid);color:#0B2342;font-weight:700;letter-spacing:.005em;
+  border:1px solid rgba(11,35,66,.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 12px 26px -10px rgba(77,212,255,.55),0 2px 0 rgba(11,35,66,.08)}
+.bw-lp .btn-cyan:hover{background:var(--cyan-vivid-hi);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 16px 32px -10px rgba(77,212,255,.7),0 2px 0 rgba(11,35,66,.1);transform:translateY(-1px)}
+.bw-lp .btn-cyan:active{background:var(--cyan-vivid-lo);transform:translateY(0);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 6px 14px -8px rgba(77,212,255,.5)}
 .bw-lp .btn-cyan:focus-visible{outline:2px solid #0B2342;outline-offset:2px}
-.bw-lp .btn-cyan[disabled]{opacity:.55;cursor:not-allowed;box-shadow:none;transform:none}
+.bw-lp .btn-cyan[disabled]{opacity:.6;cursor:not-allowed;box-shadow:none;transform:none;filter:saturate(.7)}
 .bw-lp .btn-ghost{border:1px solid rgba(255,255,255,.28);color:#fff;background:transparent}
 .bw-lp .btn-ghost:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.42)}
 
