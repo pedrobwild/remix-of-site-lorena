@@ -78,7 +78,9 @@
 .bw-lp .hero h1{font-family:var(--display);font-weight:500;font-size:clamp(33px,5.3vw,74px);line-height:1.04;letter-spacing:-.025em;color:#fff}
 .bw-lp .hero h1 .lo{display:block;color:var(--sky);font-style:italic;font-weight:400}
 .bw-lp .hero .sub{margin-top:24px;max-width:560px;font-size:clamp(15px,1.25vw,17.5px);line-height:1.55;color:#c8d4e2}
-.bw-lp .hero .cta{margin-top:32px;display:flex;gap:14px;flex-wrap:wrap}
+/* Reset do .cta global (index.css aplica bg escuro em .cta) — LP não deve herdar */
+.bw-lp .cta{background:transparent;color:inherit;border:0;padding:0;overflow:visible}
+.bw-lp .hero .cta{margin-top:32px;display:flex;gap:14px;flex-wrap:wrap;background:transparent;border:0;padding:0}
 
 .bw-lp .hero-data{position:relative;z-index:3;margin-top:clamp(28px,4vh,52px);border-top:1px solid var(--hair);
   display:grid;grid-template-columns:repeat(3,1fr);gap:0;align-items:center;padding-top:18px}
