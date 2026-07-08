@@ -7,7 +7,7 @@
 
 .bw-lp{
   --navy:#11355B; --navy-deep:#0B2342; --ink-deep:#071427;
-  --cyan:#2F86B8; --sky:#5FB2DD;
+  --cyan:#2F86B8; --sky:#5FB2DD; --cyan-vivid:#4DD4FF; --cyan-vivid-hi:#7DE4FF; --cyan-vivid-lo:#22B5E8;
   --sand:#F2ECE1; --paper:#FAF6EF;
   --ink:#202A31; --muted:#6B6A64; --muted-cool:#8FA6BC;
   --hair:rgba(255,255,255,.14); --hair-ink:rgba(11,35,66,.16);
