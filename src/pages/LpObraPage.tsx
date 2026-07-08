@@ -250,7 +250,7 @@ export default function LpObraPage() {
           <div className="vtext">
             <p className="vtag">antes de qualquer parede</p>
             <h3>Quem projeta o seu studio mede ele <em>pessoalmente.</em></h3>
-            <p>A arquiteta vai até o imóvel e decide ali o que muda na diária: circulação, ponto de luz, onde a cama rende foto.</p>
+            <p>A arquiteta vai até o imóvel e decide ali o que muda na diária: circulação, iluminação e o layout que valoriza as fotos do anúncio.</p>
           </div>
           <div className="vframe">
             <video ref={videoArqRef} src="/videos/arquiteta-medicao.mp4" poster="/videos/arquiteta-medicao-poster.jpg" muted loop playsInline preload="metadata" aria-label="Arquiteta da Bewild fazendo a medição do imóvel" />
