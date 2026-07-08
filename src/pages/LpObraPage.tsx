@@ -188,13 +188,20 @@ export default function LpObraPage() {
             obra. Deixe seu contato pra abrir o portal navegável que o cliente
             Bewild usa pra acompanhar a obra, do primeiro dia à entrega.
           </p>
+          <p className="sub">
+            A Bewild transforma studios crus em imóveis prontos para alugar por
+            temporada. Projeto, obra, marcenaria, mobília e decoração em um único
+            contrato, com time próprio, em cerca de 60 dias úteis. O dono
+            acompanha tudo à distância e recebe as chaves com o anúncio pronto
+            para publicar.
+          </p>
 
 
           {stage === "form" ? (
             <form id="gate-card" className="gate-card" onSubmit={onGateSubmit} noValidate>
               <div className="eye">Acesso ao portal de acompanhamento</div>
               <h3>Veja a obra por dentro</h3>
-              <p>Preenche pra abrir o portal navegável. Seu contato fica com a gente, sem ligação automática e sem spam.</p>
+              <p>Deixe seu contato para abrir o portal navegável que nossos clientes usam para acompanhar a obra, do primeiro dia até a entrega.</p>
               <div className="fld">
                 <label htmlFor="g-nome">Nome <span className="req">*</span></label>
                 <input id="g-nome" type="text" autoComplete="name" value={nome} onChange={(e) => setNome(e.target.value)} required />
