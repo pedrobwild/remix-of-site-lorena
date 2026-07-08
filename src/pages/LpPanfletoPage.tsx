@@ -198,8 +198,8 @@ export default function LpPanfletoPage() {
             <span className="lo">Sem você virar gerente de obra.</span>
           </h1>
           <p className="sub">
-            Projeto, obra, marcenaria, mobília e setup num contrato só. Você
-            acompanha tudo pelo portal. O trabalho fica com a gente.
+            Projeto, obra, marcenaria, mobília e decoração em um único contrato.
+            Você acompanha tudo pelo portal. O trabalho fica com a gente.
           </p>
           <div className="cta">
             <a className="btn btn-cyan" href="#diagnostico" onClick={scrollToForm}>
