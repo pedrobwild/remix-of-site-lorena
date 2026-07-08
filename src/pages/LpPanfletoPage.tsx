@@ -181,7 +181,7 @@ export default function LpPanfletoPage() {
         <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
       </div>
       <div className="bw-titleblock" aria-hidden="true">
-        BEWILD · GRUPO BWILD<br /><b>BW—PANFLETO</b><br />SÃO PAULO · BR
+        BEWILD · GRUPO BWILD<br /><b>BW-PANFLETO</b><br />SÃO PAULO · BR
       </div>
       <div className="bw-sheetno" aria-hidden="true">{sheetNo}</div>
 
@@ -198,8 +198,8 @@ export default function LpPanfletoPage() {
             <span className="lo">Sem você virar gerente de obra.</span>
           </h1>
           <p className="sub">
-            Projeto, obra, marcenaria, mobília e setup num contrato só. Você
-            acompanha tudo pelo portal. O trabalho fica com a gente.
+            Projeto, obra, marcenaria, mobília e decoração em um único contrato.
+            Você acompanha tudo pelo portal. O trabalho fica com a gente.
           </p>
           <div className="cta">
             <a className="btn btn-cyan" href="#diagnostico" onClick={scrollToForm}>
@@ -342,12 +342,16 @@ export default function LpPanfletoPage() {
       {/* 03 — QUEM FAZ */}
       <section className="lp-quem" aria-label="Quem faz">
         <div className="sec-mark"><span className="n">03</span><span className="t">Quem faz</span><span className="ln" /></div>
+        <div className="lp-quem-head">
+          <h2>Quem constrói o seu studio. <i>Time próprio, do projeto à entrega.</i></h2>
+          <p className="lead">Projeto, obra, marcenaria, mobília e decoração em um único contrato. Mais de 150 studios entregues em São Paulo, prontos para receber hóspedes.</p>
+        </div>
 
         <div className="vblock">
           <div className="vtext">
             <p className="vtag">antes de qualquer parede</p>
             <h3>Quem projeta o seu studio mede ele <em>pessoalmente.</em></h3>
-            <p>A arquiteta vai até o imóvel e decide ali o que muda na diária: circulação, ponto de luz, onde a cama rende foto.</p>
+            <p>A arquiteta vai até o imóvel e decide ali o que muda na diária: circulação, iluminação e o layout que valoriza as fotos do anúncio.</p>
           </div>
           <div className="vframe">
             <video ref={videoArqRef} src="/videos/arquiteta-medicao.mp4" poster="/videos/arquiteta-medicao-poster.jpg" muted loop playsInline preload="metadata" aria-label="Arquiteta da Bewild fazendo a medição do imóvel" />

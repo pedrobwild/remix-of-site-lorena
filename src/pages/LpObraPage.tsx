@@ -168,7 +168,7 @@ export default function LpObraPage() {
         <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
       </div>
       <div className="bw-titleblock" aria-hidden="true">
-        BEWILD · GRUPO BWILD<br /><b>BW—OBRA / PLACA</b><br />SÃO PAULO · BR
+        BEWILD · GRUPO BWILD<br /><b>BW-OBRA / PLACA</b><br />SÃO PAULO · BR
       </div>
       <div className="bw-sheetno" aria-hidden="true">{sheetNo}</div>
 
@@ -188,13 +188,20 @@ export default function LpObraPage() {
             obra. Deixe seu contato pra abrir o portal navegável que o cliente
             Bewild usa pra acompanhar a obra, do primeiro dia à entrega.
           </p>
+          <p className="sub">
+            A Bewild transforma studios crus em imóveis prontos para alugar por
+            temporada. Projeto, obra, marcenaria, mobília e decoração em um único
+            contrato, com time próprio, em cerca de 60 dias úteis. O dono
+            acompanha tudo à distância e recebe as chaves com o anúncio pronto
+            para publicar.
+          </p>
 
 
           {stage === "form" ? (
             <form id="gate-card" className="gate-card" onSubmit={onGateSubmit} noValidate>
               <div className="eye">Acesso ao portal de acompanhamento</div>
               <h3>Veja a obra por dentro</h3>
-              <p>Preenche pra abrir o portal navegável. Seu contato fica com a gente, sem ligação automática e sem spam.</p>
+              <p>Deixe seu contato para abrir o portal navegável que nossos clientes usam para acompanhar a obra, do primeiro dia até a entrega.</p>
               <div className="fld">
                 <label htmlFor="g-nome">Nome <span className="req">*</span></label>
                 <input id="g-nome" type="text" autoComplete="name" value={nome} onChange={(e) => setNome(e.target.value)} required />
@@ -231,7 +238,7 @@ export default function LpObraPage() {
         <div className="sec-mark"><span className="n">01</span><span className="t">Quem faz essa obra</span><span className="ln" /></div>
         <div className="lp-quem-head">
           <h2>A Bewild constrói studios pra render. <i>Este é um deles.</i></h2>
-          <p className="lead">Construtora do Grupo Bwild, especializada em reforma turnkey: projeto, obra, marcenaria, mobília e setup num contrato só.</p>
+          <p className="lead">Projeto, obra, marcenaria, mobília e decoração em um único contrato. Mais de 150 studios entregues em São Paulo, prontos para receber hóspedes.</p>
         </div>
         <div className="lp-quem-data">
           <div className="cell"><b>150+</b><span>studios entregues</span></div>
@@ -243,7 +250,7 @@ export default function LpObraPage() {
           <div className="vtext">
             <p className="vtag">antes de qualquer parede</p>
             <h3>Quem projeta o seu studio mede ele <em>pessoalmente.</em></h3>
-            <p>A arquiteta vai até o imóvel e decide ali o que muda na diária: circulação, ponto de luz, onde a cama rende foto.</p>
+            <p>A arquiteta vai até o imóvel e decide ali o que muda na diária: circulação, iluminação e o layout que valoriza as fotos do anúncio.</p>
           </div>
           <div className="vframe">
             <video ref={videoArqRef} src="/videos/arquiteta-medicao.mp4" poster="/videos/arquiteta-medicao-poster.jpg" muted loop playsInline preload="metadata" aria-label="Arquiteta da Bewild fazendo a medição do imóvel" />
