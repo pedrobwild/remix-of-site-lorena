@@ -277,6 +277,54 @@ function PortalMock() {
   );
 }
 
+/* ============ Loader de entrada (assinatura premium) ============ */
+function EntryLoader() {
+  const [mounted, setMounted] = useState(() => {
+    if (typeof window === "undefined") return false;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+    try { if (sessionStorage.getItem("bwh_loader_done") === "1") return false; } catch { /* ignore */ }
+    return true;
+  });
+  const [out, setOut] = useState(false);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!mounted) return;
+    const start = performance.now();
+    const dur = 1400;
+    let raf = 0;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - start) / dur);
+      setCount(Math.round(p * 100));
+      if (p < 1) raf = requestAnimationFrame(tick);
+      else {
+        setOut(true);
+        window.setTimeout(finish, 520);
+      }
+    };
+    raf = requestAnimationFrame(tick);
+
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      try { sessionStorage.setItem("bwh_loader_done", "1"); } catch { /* ignore */ }
+      setMounted(false);
+    };
+    const failsafe = window.setTimeout(finish, 2500);
+
+    return () => { cancelAnimationFrame(raf); window.clearTimeout(failsafe); };
+  }, [mounted]);
+
+  if (!mounted) return null;
+  return (
+    <div className={"bwh-loader" + (out ? " is-out" : "")} aria-hidden="true">
+      <div className="bwh-loader__mark">Bewild</div>
+      <div className="bwh-loader__count">{String(count).padStart(3, "0")}</div>
+    </div>
+  );
+}
+
 /* ============ Página ============ */
 export default function HomePage() {
   const { settings } = useSiteSettings();
