@@ -660,3 +660,117 @@
   .bw-home .hero__slide img { animation: none; transform: none; }
   .bw-home .hero__slide { transition: none; }
 }
+
+/* ============ v6.1 — SR only, portal, band, dual proof ============ */
+.bw-home .sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0);
+  white-space: nowrap; border: 0;
+}
+
+/* Dual proof (Rafael): duas imagens lado a lado com legendas */
+.bw-home .proof__media--dual {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+  background: var(--hair);
+}
+.bw-home .proof__media--dual figure { position: relative; margin: 0; background: #000; overflow: hidden; min-height: 380px; }
+.bw-home .proof__media--dual figure img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bw-home .proof__media--dual figcaption {
+  position: absolute; left: 12px; bottom: 12px;
+  background: rgba(20,32,46,.72); color: #fff;
+  padding: 6px 10px; border-radius: 2px;
+  font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+}
+@media (max-width: 720px) {
+  .bw-home .proof__media--dual { grid-template-columns: 1fr; }
+  .bw-home .proof__media--dual figure { min-height: 240px; }
+}
+
+/* Workflow — coluna portal */
+.bw-home .wf__portal { display: flex; flex-direction: column; gap: 12px; }
+.bw-home .wf__illus { color: var(--dark-ink-2); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; text-align: right; }
+
+/* Portal (pf-*) — mock fiel do Bwild Workflow, sobre fundo escuro */
+.bw-home .pf-app {
+  background: #FAFBFC; color: #1A2332; border-radius: 8px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.35), 0 2px 4px rgba(0,0,0,.2);
+  border: 1px solid rgba(255,255,255,.08);
+  overflow: hidden; font-family: var(--f-sans);
+}
+.bw-home .pf-chrome {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-bottom: 1px solid hsl(220 16% 92%);
+  background: #fff;
+}
+.bw-home .pf-brand { display: inline-flex; align-items: center; gap: 8px; font-family: var(--f-mono); font-size: 12px; letter-spacing: .1em; color: #1A2332; font-weight: 600; }
+.bw-home .pf-bdot { width: 8px; height: 8px; background: hsl(204 100% 35%); border-radius: 50%; display: inline-block; }
+.bw-home .pf-period { font-family: var(--f-mono); font-size: 11px; color: #5A6472; letter-spacing: .12em; }
+.bw-home .pf-tabs { display: flex; gap: 4px; padding: 8px 16px 0; background: #fff; border-bottom: 1px solid hsl(220 16% 92%); }
+.bw-home .pf-tab { padding: 8px 12px; font-family: var(--f-mono); font-size: 11px; letter-spacing: .1em; color: #8A8272; border-bottom: 2px solid transparent; }
+.bw-home .pf-tab.act { color: hsl(204 100% 25%); border-bottom-color: hsl(204 100% 25%); }
+.bw-home .pf-body { padding: 20px 16px; display: flex; flex-direction: column; gap: 16px; background: #FAFBFC; }
+.bw-home .pf-hrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.bw-home .pf-title { font-family: var(--f-sans); font-weight: 600; font-size: 15px; color: #1A2332; }
+.bw-home .pf-cap { font-family: var(--f-mono); font-size: 10px; color: #8A8272; letter-spacing: .12em; margin-top: 2px; }
+.bw-home .pf-pill { padding: 3px 8px; border-radius: 999px; font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+.bw-home .pf-pill-info { background: hsl(204 100% 25% / .1); color: hsl(204 100% 25%); }
+.bw-home .pf-pill-warn { background: hsl(35 90% 50% / .12); color: hsl(30 70% 35%); }
+.bw-home .pf-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.bw-home .pf-kpi { padding: 10px 12px; background: #fff; border: 1px solid hsl(220 16% 92%); border-radius: 4px; }
+.bw-home .pf-klab { font-family: var(--f-mono); font-size: 9px; color: #8A8272; letter-spacing: .12em; text-transform: uppercase; display: block; }
+.bw-home .pf-kval { font-size: 14px; font-weight: 600; margin-top: 4px; display: inline-flex; align-items: center; gap: 6px; color: #1A2332; }
+.bw-home .pf-sdot { width: 6px; height: 6px; background: hsl(150 60% 45%); border-radius: 50%; display: inline-block; }
+.bw-home .pf-chart { background: #fff; border: 1px solid hsl(220 16% 92%); border-radius: 4px; padding: 12px; }
+.bw-home .pf-legend { display: flex; gap: 16px; margin-bottom: 8px; }
+.bw-home .pf-leg { display: inline-flex; align-items: center; gap: 6px; font-family: var(--f-mono); font-size: 10px; color: #5A6472; letter-spacing: .1em; }
+.bw-home .pf-lline { width: 16px; height: 2px; display: inline-block; }
+.bw-home .pf-lreal { background: hsl(204 100% 25%); }
+.bw-home .pf-lplan { background: #B4AA96; }
+.bw-home .pf-svg { width: 100%; height: auto; display: block; }
+.bw-home .pf-svg .pf-axis { font-family: var(--f-mono); font-size: 9px; fill: #8A8272; letter-spacing: .06em; }
+.bw-home .pf-stages { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; }
+.bw-home .pf-stage {
+  display: grid; grid-template-columns: 24px 1fr auto; gap: 10px; align-items: center;
+  padding: 10px 4px; border-top: 1px solid hsl(220 16% 92%); font-size: 13px;
+}
+.bw-home .pf-stage:first-child { border-top: 0; }
+.bw-home .pf-sic { width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+.bw-home .pf-sic-ok { background: hsl(150 60% 45%); color: #fff; }
+.bw-home .pf-sic-warn { background: hsl(35 90% 55%); color: #fff; }
+.bw-home .pf-sic-todo { background: transparent; border: 1.5px solid hsl(220 16% 78%); color: #8A8272; }
+.bw-home .pf-slab { color: #1A2332; }
+.bw-home .pf-slab.mut { color: #8A8272; }
+.bw-home .pf-sst { font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #5A6472; }
+.bw-home .pf-sst.ok { color: hsl(150 40% 30%); }
+.bw-home .pf-sst.mut { color: #B4AA96; }
+.bw-home .pf-smeta { display: inline-flex; align-items: center; gap: 8px; }
+.bw-home .pf-spct { font-family: var(--f-mono); font-size: 11px; font-weight: 600; color: #1A2332; }
+.bw-home .pf-foot {
+  padding: 12px 16px; border-top: 1px solid hsl(220 16% 92%);
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; color: #8A8272; background: #fff;
+}
+
+/* Botão "ghost" na sessão escura */
+.bw-home .btn-dark-ghost {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 24px;
+  border: 1px solid rgba(255,255,255,.28); background: transparent; color: var(--dark-ink);
+  font-family: var(--f-sans); font-weight: 500; font-size: 14px; letter-spacing: -.005em;
+  transition: background .2s ease, border-color .2s ease;
+}
+.bw-home .btn-dark-ghost:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.5); }
+
+/* Banda decorativa BE WILD acima do rodapé global */
+.bw-home .bw-band {
+  font-family: var(--f-sans); font-weight: 600;
+  font-size: clamp(90px, 22vw, 320px);
+  line-height: .85; letter-spacing: -.04em;
+  color: #EFE9DD;
+  text-align: center;
+  padding: 24px 0 8px;
+  user-select: none;
+  background: var(--bg);
+  overflow: hidden;
+}
