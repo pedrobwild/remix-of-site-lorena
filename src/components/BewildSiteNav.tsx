@@ -306,7 +306,7 @@ export default function BewildSiteNav() {
                 className="bw-nav__cta bw-nav__cta--mobile"
                 onClick={() => setMenuOpen(false)}
               >
-                Solicitar diagnóstico <span className="arrow" aria-hidden>→</span>
+                Solicitar diagnóstico <span className="arrow" aria-hidden>⟶</span>
               </a>
             </div>
           </div>
