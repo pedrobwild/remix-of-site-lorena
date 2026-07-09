@@ -122,9 +122,14 @@ function Hero() {
             href="/diagnostico"
             onClick={() => trackEvent("cta_click", { location: "hero", label: "solicitar_diagnostico" })}
           >
-            Solicitar diagnóstico <span className="bwh-ar" aria-hidden="true">→</span>
+            Solicitar diagnóstico <span className="bwh-ar" aria-hidden="true">⟶</span>
           </a>
         </div>
+      </div>
+
+      <div className="bwh-hero__scrollhint" aria-hidden="true">
+        <span>scroll</span>
+        <span className="bwh-hero__scrollline" />
       </div>
 
       <div className="bwh-hero__controls">
