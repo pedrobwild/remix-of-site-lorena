@@ -346,6 +346,7 @@ export default function HomePage() {
 
   return (
     <div className="bwh" ref={rootRef}>
+      <EntryLoader />
       <BewildSiteNav />
       <main id="top">
         <Hero />
