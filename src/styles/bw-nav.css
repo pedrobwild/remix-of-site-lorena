@@ -246,7 +246,8 @@ a.bw-nav__cta:hover,.bw-nav__cta:hover{background:#11355B;border-color:#11355B;c
   .bw-nav__inner{padding:0 16px;gap:12px;min-width:0}
   .bw-nav--scrolled .bw-nav__inner{min-height:56px}
   .bw-nav__brand{min-width:0;flex:0 1 auto}
-  .bw-nav__logo{max-width:100%;height:24px}
+  .bw-nav__logo{max-width:100%;height:26px}
+  .bw-nav__wordmark{font-size:18px}
   /* Overlay: cobre TUDO (inclusive StickyMobileCTA z-index:80) com fundo opaco */
   .bw-nav__mobile{
     z-index:1000;
