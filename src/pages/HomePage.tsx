@@ -415,7 +415,7 @@ export default function HomePage() {
                   rel="noopener noreferrer"
                   onClick={() => trackEvent("cta_click", { location: "workflow", label: "ver_demonstracao" })}
                 >
-                  Ver demonstração <span className="bwh-ar" aria-hidden="true">→</span>
+                  Ver demonstração <span className="bwh-ar" aria-hidden="true">⟶</span>
                 </a>
               </div>
               <div className="bwh-wf__col bwh-rv">
