@@ -39,9 +39,12 @@ export default function BewildSiteNav() {
   const [pathname, setPathname] = useState<string>(() => getPathname());
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
+  const lastYRef = useRef(0);
+
 
   useEffect(() => {
     const onNav = () => setPathname(getPathname());
