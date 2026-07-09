@@ -156,11 +156,14 @@ export default function BewildSiteNav() {
 
   const headerClass = [
     "bw-nav",
+    isHome ? "bw-nav--home" : "",
     transparent ? "bw-nav--transparent" : "bw-nav--solid",
     scrolled && !transparent ? "bw-nav--scrolled" : "",
+    hidden ? "bw-nav--hidden" : "",
   ]
     .filter(Boolean)
     .join(" ");
+
 
   return (
     <header className={headerClass}>
