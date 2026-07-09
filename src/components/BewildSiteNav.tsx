@@ -59,11 +59,23 @@ export default function BewildSiteNav() {
   }, []);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 70);
+    const isHome = pathname === "/" || pathname === "";
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 80);
+      if (isHome) {
+        const goingDown = y > lastYRef.current && y > 240;
+        setHidden(goingDown);
+      } else {
+        setHidden(false);
+      }
+      lastYRef.current = y;
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [pathname]);
+
 
   // Scrollspy: somente na home — baseado em posição (determinístico, sem flicker)
   useEffect(() => {
