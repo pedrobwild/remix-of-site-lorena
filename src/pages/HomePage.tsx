@@ -603,7 +603,7 @@ export default function HomePage() {
               href="/diagnostico"
               onClick={() => trackEvent("cta_click", { location: "final", label: "solicitar_diagnostico" })}
             >
-              Solicitar diagnóstico <span className="bwh-ar" aria-hidden="true">→</span>
+              Solicitar diagnóstico <span className="bwh-ar" aria-hidden="true">⟶</span>
             </a>
           </div>
         </section>
