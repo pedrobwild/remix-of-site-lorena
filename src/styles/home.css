@@ -255,14 +255,20 @@
 }
 @media (max-width:720px){
   .bwh-wrap{padding:0 20px}
-  .bwh-sec{padding:64px 0}
-  .bwh-hero__ticker{top:88px;left:20px}
-  .bwh-hero__inner{padding:0 20px 104px}
+  .bwh-sec{padding:clamp(64px,14vw,96px) 0}
+  .bwh-srlabel{padding:24px 0 40px}
+  .bwh-hero__ticker{top:auto;bottom:120px;right:16px;font-size:10px;letter-spacing:.22em}
+  .bwh-hero__scrollhint{bottom:24px;left:20px;font-size:9px;letter-spacing:.2em}
+  .bwh-hero__scrollline{height:24px}
+  .bwh-hero__inner{padding:0 20px 120px}
   .bwh-hero__controls{bottom:28px;right:20px}
-  .bwh-list li{grid-template-columns:1fr;gap:8px;padding:24px 0}
-  .bwh-split{grid-template-columns:1fr;gap:32px}
-  .bwh-proof__panel{padding:40px 24px;min-height:0}
+  .bwh-list li{grid-template-columns:1fr;gap:8px;padding:26px 0}
+  .bwh-projects{gap:26px}
+  .bwh-split{grid-template-columns:1fr;gap:36px;margin-top:36px}
+  .bwh-pillars,.bwh-goals{gap:26px;margin-top:48px}
+  .bwh-proof__panel{padding:44px 24px;min-height:0}
   .bwh-dual{grid-template-columns:1fr;padding:20px;gap:20px}
+  .bwh .bwh-btn{padding:14px 24px}
   .bwh-cmp table{display:none}
   .bwh-cmpcards{display:grid;gap:20px;margin-top:32px}
   .bwh-cmpcard{padding:20px;background:var(--bg);border:1px solid var(--hair);border-radius:4px}
@@ -277,4 +283,13 @@
   .bwh .bwh-rv{opacity:1;transform:none;transition:none}
   .bwh-hero__slide{transition:none}
   .bwh-hero__slide img{animation:none;transform:none}
+  .bwh-hero__scrollline::after{animation:none}
 }
+
+/* ============ Loader de entrada (assinatura premium) ============ */
+.bwh-loader{position:fixed;inset:0;z-index:9999;background:#FAF8F4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+  transition:transform .5s cubic-bezier(.7,0,.3,1);will-change:transform}
+.bwh-loader.is-out{transform:translateY(-100%)}
+.bwh-loader__mark{font-family:"Manrope",-apple-system,BlinkMacSystemFont,sans-serif;font-weight:700;font-size:clamp(32px,5vw,52px);letter-spacing:-.02em;color:#0B2342;line-height:1}
+.bwh-loader__count{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;letter-spacing:.28em;color:#11355B;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.bwh-loader{display:none}}
