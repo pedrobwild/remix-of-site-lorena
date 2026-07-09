@@ -76,7 +76,7 @@ export default function SiteFooter() {
 
       <div className="bw-foot__bottom">
         <p>© {year} Bewild · Grupo Bwild</p>
-        <p>Reforma turn-key de studios em São Paulo</p>
+        <p>Reforma completa de studios em São Paulo</p>
       </div>
     </footer>
   );
