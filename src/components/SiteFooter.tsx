@@ -34,7 +34,7 @@ export default function SiteFooter() {
             Built by the wild ones. <em>Be wild.</em>
           </p>
           <p className="bw-foot__desc">
-            Reforma turn-key de studios em São Paulo. Projeto, obra, marcenaria,
+            Reforma completa de studios em São Paulo. Projeto, obra, marcenaria,
             mobiliário e entrega num processo único.
           </p>
         </div>
