@@ -64,7 +64,8 @@
 .bw-nav--scrolled .bw-nav__inner{min-height:54px}
 
 .bw-nav__brand{display:inline-flex;align-items:center;line-height:1;text-decoration:none}
-.bw-nav__logo{display:block;height:25px;width:auto;user-select:none}
+.bw-nav__logo{display:block;height:32px;width:auto;user-select:none}
+.bw-nav__wordmark{font-family:var(--bw-display),"Manrope",-apple-system,BlinkMacSystemFont,sans-serif;font-weight:700;font-size:20px;line-height:1;letter-spacing:-.01em;color:#0B2342;user-select:none}
 
 /* Links — mono uppercase, restrição, underline-tick ciano */
 .bw-nav__links{display:flex;align-items:center;gap:clamp(20px,2.2vw,34px)}
@@ -113,6 +114,8 @@ a.bw-nav__cta:hover,.bw-nav__cta:hover{background:#11355B;border-color:#11355B;c
 .bw-nav--home.bw-nav--solid .bw-nav__cta{background:#0B2342;color:#fff;border-color:#0B2342}
 .bw-nav--home.bw-nav--solid a.bw-nav__cta:hover,
 .bw-nav--home.bw-nav--solid .bw-nav__cta:hover{background:#11355B;border-color:#11355B;color:#fff}
+.bwh a.bw-nav__cta,.bwh .bw-nav__cta{color:#fff}
+.bwh a.bw-nav__cta:hover,.bwh .bw-nav__cta:hover{color:#fff}
 .bw-nav__cta .arrow{transition:transform .2s ease}
 .bw-nav__cta:hover .arrow{transform:translateX(4px)}
 
@@ -243,7 +246,8 @@ a.bw-nav__cta:hover,.bw-nav__cta:hover{background:#11355B;border-color:#11355B;c
   .bw-nav__inner{padding:0 16px;gap:12px;min-width:0}
   .bw-nav--scrolled .bw-nav__inner{min-height:56px}
   .bw-nav__brand{min-width:0;flex:0 1 auto}
-  .bw-nav__logo{max-width:100%;height:24px}
+  .bw-nav__logo{max-width:100%;height:26px}
+  .bw-nav__wordmark{font-size:18px}
   /* Overlay: cobre TUDO (inclusive StickyMobileCTA z-index:80) com fundo opaco */
   .bw-nav__mobile{
     z-index:1000;
