@@ -39,9 +39,12 @@ export default function BewildSiteNav() {
   const [pathname, setPathname] = useState<string>(() => getPathname());
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
+  const lastYRef = useRef(0);
+
 
   useEffect(() => {
     const onNav = () => setPathname(getPathname());
@@ -56,11 +59,23 @@ export default function BewildSiteNav() {
   }, []);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 70);
+    const isHome = pathname === "/" || pathname === "";
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 80);
+      if (isHome) {
+        const goingDown = y > lastYRef.current && y > 240;
+        setHidden(goingDown);
+      } else {
+        setHidden(false);
+      }
+      lastYRef.current = y;
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [pathname]);
+
 
   // Scrollspy: somente na home — baseado em posição (determinístico, sem flicker)
   useEffect(() => {
@@ -141,11 +156,14 @@ export default function BewildSiteNav() {
 
   const headerClass = [
     "bw-nav",
+    isHome ? "bw-nav--home" : "",
     transparent ? "bw-nav--transparent" : "bw-nav--solid",
     scrolled && !transparent ? "bw-nav--scrolled" : "",
+    hidden ? "bw-nav--hidden" : "",
   ]
     .filter(Boolean)
     .join(" ");
+
 
   return (
     <header className={headerClass}>

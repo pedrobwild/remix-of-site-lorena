@@ -34,7 +34,7 @@ export default function SiteFooter() {
             Built by the wild ones. <em>Be wild.</em>
           </p>
           <p className="bw-foot__desc">
-            Reforma turn-key de studios em São Paulo. Projeto, obra, marcenaria,
+            Reforma completa de studios em São Paulo. Projeto, obra, marcenaria,
             mobiliário e entrega num processo único.
           </p>
         </div>
@@ -76,7 +76,7 @@ export default function SiteFooter() {
 
       <div className="bw-foot__bottom">
         <p>© {year} Bewild · Grupo Bwild</p>
-        <p>Reforma turn-key de studios em São Paulo</p>
+        <p>Reforma completa de studios em São Paulo</p>
       </div>
     </footer>
   );

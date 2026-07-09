@@ -1,22 +1,27 @@
 /**
- * HomePage — Bewild Home v6 ("editorial claro de arquitetura").
+ * HomePage — Bewild Home v6.1 ("editorial claro de arquitetura").
  *
- * Redesenho completo aprovado. Escopo isolado sob `.bw-home` com
- * navegação, seções e footer próprios da home (as demais rotas
- * seguem usando BewildSiteNav e SiteFooter globais).
- *
- * Copy: EXATAMENTE conforme spec — não editar textos sem alinhamento.
- * Marca: sempre "Bewild"; portal chama "Bwild Workflow". Sem travessão.
+ * Correções críticas aplicadas:
+ * - Voltou a usar BewildSiteNav (nav global) e SiteFooter (footer global),
+ *   com faixa decorativa "BE WILD" acima do footer.
+ * - Restaurada a réplica real do portal (bloco `.pf-app` com KPIs, curva S
+ *   e etapas) na sessão 04 (Workflow).
+ * - Removida a eyebrow da hero. H2s decorativos viraram `sr-only` (SEO
+ *   preservado). Pilares e prova reajustados.
+ * - Palavras "turn-key" removidas dos rótulos de projeto e alt do hero;
+ *   permanecem apenas na resposta 1 do FAQ.
  */
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { Menu, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useSeo, faqJsonLd, professionalServiceJsonLd } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import { useBewildProjects } from "@/lib/useBewildProjects";
 import { trackEvent } from "@/lib/ga4";
+import BewildSiteNav from "@/components/BewildSiteNav";
+import SiteFooter from "@/components/SiteFooter";
 import "@/styles/home.css";
 
-// Assets — reuso do que já existe no repo
+// Assets
 import slide1 from "@/assets/hero-slides/erik-03-8-1.png.asset.json";
 import slide2 from "@/assets/hero-slides/marcos-6-2.png.asset.json";
 import slide3 from "@/assets/hero-slides/rodrigo-1-1.png.asset.json";
@@ -27,13 +32,15 @@ import projFallback3 from "@/assets/hero-slides/premium-7-4.png.asset.json";
 import finalBg from "@/assets/hero-slides/erik-03-11.png.asset.json";
 import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.json";
 import rafaelOcupacao from "@/assets/testimonials/rafael/rafael-ocupacao-novembro.jpeg.asset.json";
+import rafaelAirbnb from "@/assets/testimonials/rafael/rafael-airbnb-butanta.jpeg.asset.json";
+import depoimentoPoster from "@/assets/hero-slides/rodrigo-15-1.png.asset.json";
 
 /* ============ Dados ============ */
 const HERO_SLIDES = [
   { src: slide1.url, alt: "Studio reformado pela Bewild em São Paulo" },
   { src: slide2.url, alt: "Interior de studio compacto com marcenaria sob medida" },
   { src: slide3.url, alt: "Studio pronto para short stay em São Paulo" },
-  { src: slide4.url, alt: "Studio entregue turn-key pela Bewild" },
+  { src: slide4.url, alt: "Studio entregue pronto pela Bewild em São Paulo" },
 ];
 
 const FAZEMOS = [
@@ -80,93 +87,13 @@ const FAQS: Array<{ q: string; a: string }> = [
     q: "Preciso ir à obra?",
     a: "Só se você quiser. Todo o acompanhamento acontece pelo Bwild Workflow. E moradores de fora de São Paulo contam com vistoria por procuração, ligação de energia e instalação de internet feitas pela gente.",
   },
+  {
+    q: "Quanto tempo leva uma reforma?",
+    a: "A maioria fica pronta em torno de 60 dias úteis. A sua data exata sai definida no contrato, antes de a obra começar.",
+  },
 ];
 // TODO: adicionar quando o produto tiver resposta definitiva:
-// { q: "Quanto tempo leva uma reforma?", a: "..." },
 // { q: "Vocês atendem quais regiões?", a: "..." },
-
-/* ============ NAV ============ */
-function HomeNav() {
-  const [open, setOpen] = useState(false);
-  const [solid, setSolid] = useState(false);
-  const [hidden, setHidden] = useState(false);
-  const lastY = useRef(0);
-
-  useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      setSolid(y > 80);
-      const goingDown = y > lastY.current && y > 200;
-      setHidden(goingDown);
-      lastY.current = y;
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [open]);
-
-  const cls = [
-    "bwnav",
-    solid ? "is-solid" : "",
-    hidden ? "is-hidden" : "",
-  ].filter(Boolean).join(" ");
-
-  const links = (
-    <>
-      <a href="/portfolio">Projetos</a>
-      <a href="/conteudos">Conteúdos</a>
-      <a href="/faq">FAQ</a>
-      <a href="https://bwildworkflow.com" target="_blank" rel="noopener noreferrer">Área do cliente</a>
-    </>
-  );
-
-  return (
-    <>
-      <header className={cls}>
-        <a href="/" className="bwnav__brand" aria-label="Bewild — início">Bewild</a>
-        <nav className="bwnav__links" aria-label="Navegação principal">{links}</nav>
-        <a
-          href="/diagnostico"
-          className="bwnav__cta"
-          onClick={() => trackEvent("cta_click", { location: "nav", label: "solicitar_diagnostico" })}
-        >
-          Solicitar diagnóstico <span aria-hidden>→</span>
-        </a>
-        <button
-          type="button"
-          className="bwnav__toggle"
-          aria-label="Abrir menu"
-          aria-expanded={open}
-          onClick={() => setOpen(true)}
-        >
-          <Menu size={22} />
-        </button>
-      </header>
-
-      {open && (
-        <div className="bwnav__mobile" role="dialog" aria-modal="true">
-          <div className="bwnav__mobile-top">
-            <a href="/" className="bwnav__brand" onClick={() => setOpen(false)}>Bewild</a>
-            <button type="button" onClick={() => setOpen(false)} aria-label="Fechar menu" style={{ background: "transparent", border: 0, cursor: "pointer" }}>
-              <X size={22} />
-            </button>
-          </div>
-          <nav className="bwnav__mobile-links" onClick={() => setOpen(false)}>{links}</nav>
-          <div className="bwnav__mobile-foot">
-            <a href="/diagnostico" className="btn" onClick={() => setOpen(false)}>
-              Solicitar diagnóstico <span className="ar" aria-hidden>→</span>
-            </a>
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
 
 /* ============ HERO ============ */
 function Hero() {
@@ -204,7 +131,6 @@ function Hero() {
 
       <div className="hero__inner">
         <div className="hero__col">
-          <div className="hero__eyebrow">Reforma turn-key · Studios</div>
           <h1 className="hero__h1">
             Reformamos seu studio <em>por completo</em>. Você não vira <em>gerente de obra</em>.
           </h1>
@@ -263,14 +189,14 @@ function usePortfolioCards(): Card[] {
     }));
   }
   return [
-    { href: "/portfolio", img: projFallback1.url, title: "Studio Vila Olímpia", area: "24 m²", meta: "Turn-key · 2026" },
+    { href: "/portfolio", img: projFallback1.url, title: "Studio Vila Olímpia", area: "24 m²", meta: "Reforma completa · 2026" },
     { href: "/portfolio", img: projFallback2.url, title: "Studio Pinheiros", area: "28 m²", meta: "Short stay · 2025" },
-    { href: "/portfolio", img: projFallback3.url, title: "Studio Brooklin", area: "32 m²", meta: "Turn-key · 2025" },
+    { href: "/portfolio", img: projFallback3.url, title: "Studio Brooklin", area: "32 m²", meta: "Reforma completa · 2025" },
   ];
 }
 function projectTypeLabel(t: string | null | undefined) {
   if (t === "short_stay") return "Short stay";
-  if (t === "turn_key") return "Turn-key";
+  if (t === "turn_key") return "Reforma completa";
   if (t === "planta") return "Planta";
   return "Projeto";
 }
@@ -298,10 +224,76 @@ function useReveals(root: React.RefObject<HTMLElement>) {
       { rootMargin: "0px 0px -10% 0px", threshold: 0.05 },
     );
     items.forEach((it) => io.observe(it));
-    // Safety net: se nada revelou em 2s, mostra tudo.
     const safety = window.setTimeout(() => items.forEach((it) => it.classList.add("in")), 2000);
     return () => { io.disconnect(); window.clearTimeout(safety); };
   }, [root]);
+}
+
+/* ============ Portal (Bwild Workflow) — bloco fiel ============ */
+function PortalMock() {
+  return (
+    <div className="pf-app rv" role="img" aria-label="Tela ilustrativa do Bwild Workflow">
+      <div className="pf-chrome">
+        <div className="pf-brand"><span className="pf-bdot" /><span className="pf-bname">Bwild Workflow</span></div>
+        <div className="pf-period">Jun 2026</div>
+      </div>
+      <div className="pf-tabs">
+        <span className="pf-tab act">Curva S</span>
+        <span className="pf-tab">Relatórios</span>
+        <span className="pf-tab">Atividade</span>
+      </div>
+      <div className="pf-body">
+        <div>
+          <div className="pf-hrow">
+            <b className="pf-title">Studio Urban Flex · 22 m²</b>
+            <span className="pf-pill pf-pill-info">Em obra</span>
+          </div>
+          <div className="pf-cap">Semana 6 de 10</div>
+        </div>
+        <div className="pf-kpis">
+          <div className="pf-kpi"><span className="pf-klab">Concluído</span><span className="pf-kval">52%</span></div>
+          <div className="pf-kpi"><span className="pf-klab">Status</span><span className="pf-kval"><span className="pf-sdot" />No prazo</span></div>
+          <div className="pf-kpi"><span className="pf-klab">Cronograma</span><span className="pf-kval">Sem 6/10</span></div>
+        </div>
+        <div className="pf-chart">
+          <div className="pf-legend">
+            <span className="pf-leg"><span className="pf-lline pf-lreal" />Real</span>
+            <span className="pf-leg"><span className="pf-lline pf-lplan" />Planejado</span>
+          </div>
+          <svg viewBox="0 0 320 150" className="pf-svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="pfa" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="hsl(204 100% 25%)" stopOpacity="0.18" />
+                <stop offset="100%" stopColor="hsl(204 100% 25%)" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <line x1="34" y1="16" x2="312" y2="16" stroke="hsl(220 16% 92%)" />
+            <line x1="34" y1="42" x2="312" y2="42" stroke="hsl(220 16% 92%)" />
+            <line x1="34" y1="68" x2="312" y2="68" stroke="hsl(220 16% 92%)" />
+            <line x1="34" y1="94" x2="312" y2="94" stroke="hsl(220 16% 92%)" />
+            <line x1="34" y1="120" x2="312" y2="120" stroke="hsl(220 16% 92%)" />
+            <text x="26" y="20" textAnchor="end" className="pf-axis">100</text>
+            <text x="26" y="72" textAnchor="end" className="pf-axis">50</text>
+            <text x="26" y="124" textAnchor="end" className="pf-axis">0</text>
+            <path d="M34 120 C 110 118, 150 70, 180 56 S 270 22, 312 16" fill="none" stroke="hsl(220 12% 55%)" strokeWidth="1.5" strokeDasharray="4 4" strokeLinecap="round" />
+            <path d="M34 120 C 90 119, 130 96, 160 82 S 195 70, 200 66 L200 120 L34 120 Z" fill="url(#pfa)" />
+            <path d="M34 120 C 90 119, 130 96, 160 82 S 195 70, 200 66" fill="none" stroke="hsl(204 100% 25%)" strokeWidth="2" strokeLinecap="round" />
+            <circle cx="200" cy="66" r="5" fill="hsl(204 100% 25%)" stroke="#fff" strokeWidth="2" />
+            <text x="34" y="142" className="pf-axis">Início</text>
+            <text x="200" y="142" textAnchor="middle" className="pf-axis">Sem 6</text>
+            <text x="312" y="142" textAnchor="end" className="pf-axis">Entrega</text>
+          </svg>
+        </div>
+        <ul className="pf-stages">
+          <li className="pf-stage"><span className="pf-sic pf-sic-ok">✓</span><span className="pf-slab">Demolição e remoção</span><span className="pf-sst ok">Concluída</span></li>
+          <li className="pf-stage"><span className="pf-sic pf-sic-ok">✓</span><span className="pf-slab">Elétrica e hidráulica</span><span className="pf-sst ok">Concluída</span></li>
+          <li className="pf-stage"><span className="pf-sic pf-sic-warn">◐</span><span className="pf-slab">Marcenaria sob medida</span><span className="pf-smeta"><span className="pf-pill pf-pill-warn">em andamento</span><span className="pf-spct">60%</span></span></li>
+          <li className="pf-stage"><span className="pf-sic pf-sic-todo">○</span><span className="pf-slab mut">Montagem e enxoval</span><span className="pf-sst mut">A iniciar</span></li>
+        </ul>
+      </div>
+      <div className="pf-foot">Atualizado hoje. Relatório semanal #6: marcenaria instalada, elétrica revisada.</div>
+    </div>
+  );
 }
 
 /* ============ Página ============ */
@@ -325,7 +317,7 @@ export default function HomePage() {
 
   return (
     <div className="bw-home" ref={rootRef}>
-      <HomeNav />
+      <BewildSiteNav />
       <Hero />
 
       {/* 01 O que fazemos */}
@@ -357,7 +349,7 @@ export default function HomePage() {
             <span className="lbl">Projetos entregues · 02</span>
             <span className="lbl">Selecionados · 2024–2026</span>
           </div>
-          <h2 id="s02-h" className="h rv">Alguns dos studios que a Bewild já entregou em São Paulo.</h2>
+          <h2 id="s02-h" className="sr-only">Alguns dos studios que a Bewild já entregou em São Paulo.</h2>
           <div className="projects">
             {cards.map((c, i) => (
               <a className="proj rv" href={c.href} key={c.href + i}>
@@ -460,30 +452,9 @@ export default function HomePage() {
                 Ver demonstração <span className="ar" aria-hidden>→</span>
               </a>
             </div>
-
-            <div className="wf__demo rv" role="img" aria-label="Tela do Bwild Workflow com cronograma e etapas">
-              <div className="wf__demo-head">
-                <span className="wf__demo-brand"><i /> Bwild Workflow</span>
-                <span className="wf__demo-per">Jun 2026</span>
-              </div>
-              <div className="wf__demo-tabs">
-                <span className="on">Curva S</span>
-                <span>Relatórios</span>
-                <span>Atividade</span>
-              </div>
-              <div className="wf__demo-title">Studio Urban Flex · 22 m²</div>
-              <div className="wf__demo-cap">Semana 6 de 10</div>
-              <div className="wf__demo-kpis">
-                <div className="wf__demo-kpi"><span className="lab">Concluído</span><span className="val">52%</span></div>
-                <div className="wf__demo-kpi"><span className="lab">Status</span><span className="val"><span className="dot" /> No prazo</span></div>
-                <div className="wf__demo-kpi"><span className="lab">Cronograma</span><span className="val">Sem 6/10</span></div>
-              </div>
-              <ul>
-                <li><i>✓</i> Demolição e remoção <span className="st ok">Concluída</span></li>
-                <li><i>✓</i> Elétrica e hidráulica <span className="st ok">Concluída</span></li>
-                <li><i>◐</i> Marcenaria sob medida <span className="st">Em andamento · 60%</span></li>
-                <li><i>○</i> Montagem e enxoval <span className="st">A iniciar</span></li>
-              </ul>
+            <div className="wf__portal">
+              <PortalMock />
+              <p className="wf__illus mono">Interface ilustrativa do portal de acompanhamento</p>
             </div>
           </div>
         </div>
@@ -492,18 +463,16 @@ export default function HomePage() {
       {/* 05 Prova — 2 blocos editoriais */}
       <section className="section" id="prova" aria-labelledby="s05-h">
         <div className="wrap">
-          <div className="sec-label"><span className="lbl">Prova · 05</span></div>
-          <h2 id="s05-h" className="h rv" style={{ marginBottom: 0 }}>Quem já reformou com a Bewild.</h2>
+          <h2 id="s05-h" className="sr-only">Quem já reformou com a Bewild.</h2>
         </div>
 
-        <div className="proof" style={{ marginTop: 48 }}>
+        <div className="proof">
           <div className="proof__media">
             <video
               src={depoimentoVideo.url}
-              muted
+              poster={depoimentoPoster.url}
+              controls
               playsInline
-              loop
-              autoPlay
               preload="metadata"
               aria-label="Depoimento em vídeo de cliente da Bewild"
             />
@@ -522,8 +491,15 @@ export default function HomePage() {
         </div>
 
         <div className="proof reverse">
-          <div className="proof__media">
-            <img src={rafaelOcupacao.url} alt="Print do calendário do Airbnb do studio do Rafael com novembro cheio" loading="lazy" />
+          <div className="proof__media proof__media--dual">
+            <figure>
+              <img src={rafaelOcupacao.url} alt="Calendário do Airbnb do studio do Rafael no Butantã, com novembro cheio" loading="lazy" />
+              <figcaption className="mono">Novembro: 70% de ocupação</figcaption>
+            </figure>
+            <figure>
+              <img src={rafaelAirbnb.url} alt="Anúncio no ar do studio do Rafael no Airbnb" loading="lazy" />
+              <figcaption className="mono">Anúncio no ar no Airbnb</figcaption>
+            </figure>
           </div>
           <div className="proof__panel">
             <span className="proof__word" aria-hidden>renda</span>
@@ -532,7 +508,7 @@ export default function HomePage() {
               <div className="proof__stat">70%</div>
               <div className="proof__stat-sub">de ocupação em novembro</div>
               <p className="proof__desc">
-                O Rafael tinha um studio parado no Butantã. A Bewild reformou e entregou pronto para operar. Ele anunciou no Airbnb e fechou novembro com 70% de ocupação. “Esses studios serão um negócio para mim. Renda vitalícia.” Com prints reais do calendário e do anúncio.
+                O Rafael tinha um studio parado no Butantã. A Bewild reformou e entregou pronto para operar. Ele anunciou no Airbnb e fechou novembro com 70% de ocupação. “Esses studios serão um negócio para mim. Renda vitalícia.”
               </p>
             </div>
           </div>
@@ -570,7 +546,7 @@ export default function HomePage() {
       <section className="section section--alt" id="compare" aria-labelledby="s07-h">
         <div className="wrap">
           <div className="sec-label"><span className="lbl">Compare · 06</span></div>
-          <h2 id="s07-h" className="h rv">Uma comparação honesta.</h2>
+          <h2 id="s07-h" className="sr-only">Uma comparação honesta.</h2>
           <div className="compare rv">
             <table>
               <thead>
@@ -640,7 +616,7 @@ export default function HomePage() {
       <section className="section section--alt" id="faq" aria-labelledby="s09-h">
         <div className="wrap">
           <div className="sec-label"><span className="lbl">FAQ · 08</span></div>
-          <h2 id="s09-h" className="h rv">Perguntas mais comuns.</h2>
+          <h2 id="s09-h" className="sr-only">Perguntas mais comuns.</h2>
           <div className="faq-list">
             {FAQS.map((f) => (
               <details className="faq-item rv" key={f.q}>
@@ -673,19 +649,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="site-foot">
-        <div className="site-foot__big" aria-hidden>BE WILD</div>
-        <div className="site-foot__row">
-          <div className="site-foot__brand">Bewild</div>
-          <div className="site-foot__meta">
-            <span>Arquitetura e reforma de studios</span>
-            <span>São Paulo</span>
-            <a href="https://bwildworkflow.com" target="_blank" rel="noopener noreferrer">Área do cliente</a>
-            <span>© 2026</span>
-          </div>
-        </div>
-      </footer>
+      {/* Faixa decorativa BE WILD */}
+      <div className="bw-band" aria-hidden="true">BE WILD</div>
+
+      {/* Footer global */}
+      <SiteFooter />
     </div>
   );
 }
