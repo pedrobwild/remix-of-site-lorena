@@ -122,9 +122,14 @@ function Hero() {
             href="/diagnostico"
             onClick={() => trackEvent("cta_click", { location: "hero", label: "solicitar_diagnostico" })}
           >
-            Solicitar diagnóstico <span className="bwh-ar" aria-hidden="true">→</span>
+            Solicitar diagnóstico <span className="bwh-ar" aria-hidden="true">⟶</span>
           </a>
         </div>
+      </div>
+
+      <div className="bwh-hero__scrollhint" aria-hidden="true">
+        <span>scroll</span>
+        <span className="bwh-hero__scrollline" />
       </div>
 
       <div className="bwh-hero__controls">
@@ -272,6 +277,54 @@ function PortalMock() {
   );
 }
 
+/* ============ Loader de entrada (assinatura premium) ============ */
+function EntryLoader() {
+  const [mounted, setMounted] = useState(() => {
+    if (typeof window === "undefined") return false;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+    try { if (sessionStorage.getItem("bwh_loader_done") === "1") return false; } catch { /* ignore */ }
+    return true;
+  });
+  const [out, setOut] = useState(false);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!mounted) return;
+    const start = performance.now();
+    const dur = 1400;
+    let raf = 0;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - start) / dur);
+      setCount(Math.round(p * 100));
+      if (p < 1) raf = requestAnimationFrame(tick);
+      else {
+        setOut(true);
+        window.setTimeout(finish, 520);
+      }
+    };
+    raf = requestAnimationFrame(tick);
+
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      try { sessionStorage.setItem("bwh_loader_done", "1"); } catch { /* ignore */ }
+      setMounted(false);
+    };
+    const failsafe = window.setTimeout(finish, 2500);
+
+    return () => { cancelAnimationFrame(raf); window.clearTimeout(failsafe); };
+  }, [mounted]);
+
+  if (!mounted) return null;
+  return (
+    <div className={"bwh-loader" + (out ? " is-out" : "")} aria-hidden="true">
+      <div className="bwh-loader__mark">Bewild</div>
+      <div className="bwh-loader__count">{String(count).padStart(3, "0")}</div>
+    </div>
+  );
+}
+
 /* ============ Página ============ */
 export default function HomePage() {
   const { settings } = useSiteSettings();
@@ -293,6 +346,7 @@ export default function HomePage() {
 
   return (
     <div className="bwh" ref={rootRef}>
+      <EntryLoader />
       <BewildSiteNav />
       <main id="top">
         <Hero />
@@ -342,7 +396,7 @@ export default function HomePage() {
             </div>
             <div className="bwh-projects-cta bwh-rv">
               <a className="bwh-btn" href="/portfolio">
-                Visitar portfólio completo <span className="bwh-ar" aria-hidden="true">→</span>
+                Visitar portfólio completo <span className="bwh-ar" aria-hidden="true">⟶</span>
               </a>
             </div>
           </div>
@@ -410,7 +464,7 @@ export default function HomePage() {
                   rel="noopener noreferrer"
                   onClick={() => trackEvent("cta_click", { location: "workflow", label: "ver_demonstracao" })}
                 >
-                  Ver demonstração <span className="bwh-ar" aria-hidden="true">→</span>
+                  Ver demonstração <span className="bwh-ar" aria-hidden="true">⟶</span>
                 </a>
               </div>
               <div className="bwh-wf__col bwh-rv">
@@ -598,7 +652,7 @@ export default function HomePage() {
               href="/diagnostico"
               onClick={() => trackEvent("cta_click", { location: "final", label: "solicitar_diagnostico" })}
             >
-              Solicitar diagnóstico <span className="bwh-ar" aria-hidden="true">→</span>
+              Solicitar diagnóstico <span className="bwh-ar" aria-hidden="true">⟶</span>
             </a>
           </div>
         </section>
