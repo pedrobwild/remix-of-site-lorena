@@ -347,7 +347,7 @@ export default function HomePage() {
             </div>
             <div className="bwh-projects-cta bwh-rv">
               <a className="bwh-btn" href="/portfolio">
-                Visitar portfólio completo <span className="bwh-ar" aria-hidden="true">→</span>
+                Visitar portfólio completo <span className="bwh-ar" aria-hidden="true">⟶</span>
               </a>
             </div>
           </div>
