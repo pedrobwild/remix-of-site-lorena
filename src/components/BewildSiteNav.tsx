@@ -21,11 +21,11 @@ import "@/styles/bw-nav.css";
 type Item = { label: string; homeHref: string; pageHref: string };
 
 const ITEMS: Item[] = [
-  { label: "Como funciona", homeHref: "#fazemos", pageHref: "/#fazemos" },
-  { label: "Por que a Bewild", homeHref: "#diferenciais", pageHref: "/#diferenciais" },
+  { label: "Como funciona", homeHref: "#como-funciona", pageHref: "/#como-funciona" },
+  { label: "Por que a Bewild", homeHref: "#por-que-a-bewild", pageHref: "/#por-que-a-bewild" },
   { label: "Portfólio", homeHref: "/portfolio", pageHref: "/portfolio" },
   { label: "Conteúdos", homeHref: "/conteudos", pageHref: "/conteudos" },
-  { label: "FAQ", homeHref: "/faq", pageHref: "/faq" },
+  { label: "FAQ", homeHref: "#faq", pageHref: "/#faq" },
 ];
 
 const CLIENT_AREA_URL = "https://bwildworkflow.com";
@@ -84,7 +84,7 @@ export default function BewildSiteNav() {
       setActiveSection(null);
       return;
     }
-    const ids = ["fazemos", "diferenciais"];
+    const ids = ["como-funciona", "por-que-a-bewild"];
     let raf = 0;
 
     const compute = () => {
@@ -147,8 +147,8 @@ export default function BewildSiteNav() {
 
   const sectionId = (it: Item): string | null => {
     if (!isHome) return null;
-    if (it.homeHref === "#fazemos") return "fazemos";
-    if (it.homeHref === "#diferenciais") return "diferenciais";
+    if (it.homeHref === "#como-funciona") return "como-funciona";
+    if (it.homeHref === "#por-que-a-bewild") return "por-que-a-bewild";
     return null;
   };
 
@@ -170,7 +170,7 @@ export default function BewildSiteNav() {
       <div className="bw-nav__inner">
         <a href="/" className="bw-nav__brand" aria-label="Bewild — início">
           <img
-            src="/brand/bewild-logo-cropped.png"
+            src={transparent ? "/brand/bewild-logo-branca.png" : "/brand/logo-positiva.png"}
             alt="Bewild"
             className="bw-nav__logo"
             width={81}
