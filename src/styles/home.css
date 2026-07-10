@@ -278,8 +278,8 @@
   .bwh .bwh-rv{opacity:1;transform:none;transition:none}
   .bwh-hero__slide{transition:none}
   .bwh-hero__slide img{animation:none;transform:none}
-  .bwh-hero__scrollline::after{animation:none}
 }
+
 
 /* ============ Loader de entrada (assinatura premium) ============ */
 .bwh-loader{position:fixed;inset:0;z-index:9999;background:#FAF8F4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
