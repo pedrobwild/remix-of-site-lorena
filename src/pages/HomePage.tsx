@@ -608,6 +608,25 @@ export default function HomePage() {
             <h2 id="s06h" className="bwh-h2 bwh-rv">
               O contrato é o mesmo. O projeto muda <em>conforme o seu objetivo</em>.
             </h2>
+
+            {/* Timeline clara — mesma costura do sistema, versão para objetivos */}
+            <div className="bwh-tl bwh-tl--light bwh-tl--goals bwh-rv" aria-hidden="true">
+              <div className="bwh-tl__p">
+                <span className="bwh-tl__dot" />
+                <span className="bwh-tl__d">Dia 0</span>
+                <span className="bwh-tl__l">projeto aprovado em 3D</span>
+              </div>
+              <div className="bwh-tl__mid">
+                <b>obra, marcenaria, mobília e vistorias</b>
+                <span>do nosso lado do contrato</span>
+              </div>
+              <div className="bwh-tl__p bwh-tl__p--r">
+                <span className="bwh-tl__dot" />
+                <span className="bwh-tl__d">≈ Dia 60</span>
+                <span className="bwh-tl__l">morar · alugar · vender</span>
+              </div>
+            </div>
+
             <div className="bwh-goals">
               <div className="bwh-goal bwh-rv"><span className="n">01</span><div className="t">Morar</div><div className="d">Seu apê do seu jeito, sem viver dentro de uma obra. Projeto pensado para a sua rotina, entrega com tudo instalado. É só mudar.</div></div>
               <div className="bwh-goal bwh-rv"><span className="n">02</span><div className="t">Alugar</div><div className="d">Studios desenhados para performar na locação, de curta ou longa temporada. O projeto já nasce pensando em conforto, foto de anúncio e ocupação.</div></div>
