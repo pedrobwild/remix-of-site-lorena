@@ -1,9 +1,9 @@
 /**
- * BewildPortfolioPage — /portfolio (Bewild).
- * "Caderno de obras" (prancha 03): grade de fichas de projeto na
- * linguagem de prancheta da home. Número de prancha (P01...) gerado
- * automaticamente pela ordem dos projetos publicados.
- * CSS isolado em .bw-portfolio (src/styles/portfolio.css).
+ * BewildPortfolioPage — /portfolio (Bewild) · reskin sob o DS `bwh-`.
+ *
+ * Copy, dados, ordenação, filtros e links de detalhe preservados sem
+ * qualquer alteração — apenas troca de pele para o design system da home.
+ * Grid segue o padrão .bwh-proj (foto 4/5 + contador + "ver projeto →").
  */
 import { useMemo, useState } from "react";
 import { useSeo, breadcrumbJsonLd, itemListJsonLd } from "@/lib/useSeo";
@@ -16,6 +16,8 @@ import {
   bewildTypeLabel,
   type BewildProjectType,
 } from "@/lib/useBewildProjects";
+import "@/styles/bwh-tokens.css";
+import "@/styles/bwh-overlays.css";
 import "@/styles/portfolio.css";
 
 type FilterValue = "all" | BewildProjectType;
@@ -28,15 +30,6 @@ const FILTERS: { value: FilterValue; label: string }[] = [
 ];
 
 const pad = (n: number) => String(n).padStart(2, "0");
-
-function IconArrow() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <line x1="5" y1="12" x2="19" y2="12" />
-      <polyline points="12 5 19 12 12 19" />
-    </svg>
-  );
-}
 
 export default function BewildPortfolioPage() {
   const { projects, loading, error } = useBewildProjects();
@@ -68,47 +61,57 @@ export default function BewildPortfolioPage() {
       : undefined,
   });
 
-  // Número de prancha estável por projeto, na ordem do admin (sort_order).
-  const plateNum = useMemo(() => {
-    const m = new Map<string, number>();
-    projects.forEach((p, i) => m.set(p.id, i + 1));
-    return m;
-  }, [projects]);
-
   const filtered = useMemo(() => {
     if (filter === "all") return projects;
     return projects.filter((p) => p.project_type === filter);
   }, [projects, filter]);
 
   const waUrl = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
-    "Olá! Vim pelo portfólio e quero um diagnóstico do meu studio."
+    "Olá! Vim pelo portfólio e quero um diagnóstico do meu studio.",
   )}`;
 
+  const total = filtered.length;
+
   return (
-    <>
-      <div className="bw-portfolio">
-        <BewildSiteNav />
+    <div className="bwh">
+      <BewildSiteNav />
 
-        <div className="bw-portfolio__frame" aria-hidden="true">
-          <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
-        </div>
-        <div className="bw-portfolio__titleblock" aria-hidden="true">BEWILD · GRUPO BWILD<br /><b>BW—003 / PORTFÓLIO</b><br />SÃO PAULO · BR</div>
-        <div className="bw-portfolio__sheetno" aria-hidden="true">SHEET 03 / OBRAS ENTREGUES</div>
-
+      <main id="main" tabIndex={-1}>
         {/* HERO */}
-        <section className="pf-hero">
-          <div className="pf-wrap">
-            <p className="pf-eyebrow">Portfólio · obras entregues</p>
-            <h1 className="pf-h1">Studios entregues, prontos pra <span className="accent">render.</span></h1>
-            <p className="pf-lead">
+        <section className="bwh-sec" style={{ paddingBottom: 0 }}>
+          <div className="bwh-wrap">
+            <div className="bwh-srlabel" style={{ borderTop: 0, paddingTop: 0 }}>
+              <span className="bwh-mono">Portfólio · obras entregues</span>
+              <span className="bwh-mono">São Paulo · 2024–2026</span>
+            </div>
+            <h1
+              className="bwh-h2"
+              style={{ fontSize: "clamp(38px, 5.6vw, 78px)", marginBottom: 24 }}
+            >
+              Studios entregues, prontos pra <em>render.</em>
+            </h1>
+            <p
+              style={{
+                color: "var(--ink2)",
+                fontSize: "clamp(16px,1.5vw,19px)",
+                lineHeight: 1.55,
+                maxWidth: 640,
+                margin: "0 0 32px",
+              }}
+            >
               Cada projeto aqui recebeu estudo próprio de layout, marcenaria, iluminação e acabamento, pensado pra performar no short stay. Do imóvel cru à foto do anúncio.
             </p>
-            <div className="pf-filters" role="group" aria-label="Filtrar por tipo de projeto">
+
+            <div
+              className="bwh-pf-chips"
+              role="group"
+              aria-label="Filtrar por tipo de projeto"
+            >
               {FILTERS.map((f) => (
                 <button
                   key={f.value}
                   type="button"
-                  className={`pf-chip${filter === f.value ? " active" : ""}`}
+                  className={`bwh-pf-chip${filter === f.value ? " is-on" : ""}`}
                   aria-pressed={filter === f.value}
                   onClick={() => setFilter(f.value)}
                 >
@@ -120,42 +123,58 @@ export default function BewildPortfolioPage() {
         </section>
 
         {/* LISTA */}
-        <section className="pf-list">
-          <div className="pf-wrap">
-            {!loading && !error && filtered.length > 0 && (
-              <div className="pf-index">
-                <span className="n">{pad(filtered.length)}</span>
-                <span className="t">{filtered.length === 1 ? "Projeto no índice" : "Projetos no índice"}</span>
-                <span className="ln" />
+        <section className="bwh-sec">
+          <div className="bwh-wrap">
+            {!loading && !error && total > 0 && (
+              <div className="bwh-srlabel">
+                <span className="bwh-mono">
+                  {pad(total)} · {total === 1 ? "Projeto no índice" : "Projetos no índice"}
+                </span>
               </div>
             )}
 
             {loading && (
-              <div className="pf-grid" aria-busy="true" aria-live="polite">
-                <div className="pf-skeleton" /><div className="pf-skeleton" /><div className="pf-skeleton" />
+              <div
+                className="bwh-projects"
+                aria-busy="true"
+                aria-live="polite"
+              >
+                <div className="bwh-pf-skel" />
+                <div className="bwh-pf-skel" />
+                <div className="bwh-pf-skel" />
               </div>
             )}
 
             {!loading && error && (
-              <div className="pf-state">
-                Não conseguimos carregar os projetos agora. <a href="/">Voltar para a home</a>.
-              </div>
+              <p style={{ color: "var(--ink2)", fontSize: 15 }}>
+                Não conseguimos carregar os projetos agora.{" "}
+                <a href="/" style={{ textDecoration: "underline" }}>
+                  Voltar para a home
+                </a>
+                .
+              </p>
             )}
 
-            {!loading && !error && filtered.length === 0 && (
-              <div className="pf-state">
-                {projects.length === 0 ? "Em breve, novos projetos publicados." : "Nenhum projeto nesse filtro ainda."}
-              </div>
+            {!loading && !error && total === 0 && (
+              <p style={{ color: "var(--ink2)", fontSize: 15 }}>
+                {projects.length === 0
+                  ? "Em breve, novos projetos publicados."
+                  : "Nenhum projeto nesse filtro ainda."}
+              </p>
             )}
 
-            {!loading && !error && filtered.length > 0 && (
-              <div className="pf-grid">
-                {filtered.map((p) => {
+            {!loading && !error && total > 0 && (
+              <div className="bwh-projects">
+                {filtered.map((p, i) => {
                   const where = p.neighborhood || p.location || "São Paulo";
-                  const plate = plateNum.get(p.id) ?? 0;
                   return (
-                    <a key={p.id} href={`/portfolio/${p.slug}`} className="pf-card" aria-label={`Ver projeto ${p.title}`}>
-                      <div className={"pf-card__media" + (!p.cover_url ? " is-empty" : "")}>
+                    <a
+                      key={p.id}
+                      href={`/portfolio/${p.slug}`}
+                      className="bwh-proj"
+                      aria-label={`Ver projeto ${p.title}`}
+                    >
+                      <div className="bwh-proj__media">
                         {p.cover_url ? (
                           <img
                             src={p.cover_url}
@@ -164,24 +183,35 @@ export default function BewildPortfolioPage() {
                             decoding="async"
                           />
                         ) : (
-                          <span className="pf-card__soon">Foto em breve</span>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              height: "100%",
+                              color: "var(--ink2)",
+                              fontSize: 12,
+                              letterSpacing: ".14em",
+                              textTransform: "uppercase",
+                              fontFamily: "var(--fm)",
+                            }}
+                          >
+                            Foto em breve
+                          </div>
                         )}
-                        <span className="pf-pl"><b>P{pad(plate)}</b></span>
-                        <span className="pf-tag">{bewildTypeLabel(p.project_type)}</span>
-                        <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
+                        <span className="bwh-proj__count">
+                          {pad(i + 1)} / {pad(total)}
+                        </span>
+                        <span className="bwh-proj__go">Ver projeto →</span>
                       </div>
-                      <div className="pf-card__body">
-                        <div className="pf-card__where">{where}</div>
-                        <div className="pf-card__title">{p.title}</div>
-                        <div className="pf-card__meta">
-                          {p.area_m2 ? (
-                            <div className="mi"><span className="mk">Área</span><span className="mv">{p.area_m2} m²</span></div>
-                          ) : null}
-                          {p.duration ? (
-                            <div className="mi"><span className="mk">Prazo</span><span className="mv">{p.duration}</span></div>
-                          ) : null}
-                          <span className="pf-card__arrow"><IconArrow /></span>
-                        </div>
+                      <div className="bwh-proj__t">
+                        {p.title}
+                        {p.area_m2 ? <em> · {p.area_m2} m²</em> : null}
+                      </div>
+                      <div className="bwh-proj__meta">
+                        {[where, bewildTypeLabel(p.project_type), p.duration]
+                          .filter(Boolean)
+                          .join(" · ")}
                       </div>
                     </a>
                   );
@@ -192,22 +222,69 @@ export default function BewildPortfolioPage() {
         </section>
 
         {/* CTA FINAL */}
-        <section className="pf-cta">
-          <div className="gridbg" aria-hidden="true" />
-          <div className="pf-cta__inner">
-            <p className="pf-eyebrow center">Diagnóstico gratuito · sem compromisso</p>
-            <h2>O próximo studio da lista <span className="accent">pode ser o seu.</span></h2>
-            <p className="pf-cta__sub">Manda os dados do seu imóvel e a gente devolve uma leitura de potencial, escopo e próximos passos.</p>
-            <div className="pf-cta__act">
-              <a className="pf-btn cyan" href="/diagnostico">Solicitar diagnóstico <span className="ar"><IconArrow /></span></a>
-              <a className="pf-btn ghost" href={waUrl} target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a>
+        <section className="bwh-sec bwh-sec--dark">
+          <div
+            className="bwh-wrap"
+            style={{ maxWidth: 900, textAlign: "center" }}
+          >
+            <div
+              className="bwh-mono"
+              style={{ color: "var(--dink2)", marginBottom: 24 }}
+            >
+              Diagnóstico gratuito · sem compromisso
             </div>
-            <div className="pf-cta__rea">+150 studios entregues em São Paulo</div>
+            <h2
+              className="bwh-h2"
+              style={{
+                margin: "0 auto 24px",
+                color: "#fff",
+                fontSize: "clamp(30px,5vw,56px)",
+              }}
+            >
+              O próximo studio da lista <em>pode ser o seu.</em>
+            </h2>
+            <p
+              style={{
+                color: "var(--dink2)",
+                fontSize: "clamp(16px,1.5vw,19px)",
+                lineHeight: 1.55,
+                maxWidth: 560,
+                margin: "0 auto 32px",
+              }}
+            >
+              Manda os dados do seu imóvel e a gente devolve uma leitura de potencial, escopo e próximos passos.
+            </p>
+            <div
+              style={{
+                display: "flex",
+                gap: 14,
+                justifyContent: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              <a href="/diagnostico" className="bwh-btn bwh-btn--invert">
+                Solicitar diagnóstico <span className="bwh-ar">→</span>
+              </a>
+              <a
+                className="bwh-btn bwh-btn--ghostdark"
+                href={waUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Falar no WhatsApp <span className="bwh-ar">→</span>
+              </a>
+            </div>
+            <div
+              className="bwh-mono"
+              style={{ color: "var(--dink2)", marginTop: 24 }}
+            >
+              +150 studios entregues em São Paulo
+            </div>
           </div>
         </section>
-      </div>
+      </main>
 
       <SiteFooter />
-    </>
+    </div>
   );
 }

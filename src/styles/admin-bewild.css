@@ -8,20 +8,21 @@
  */
 
 .bw-admin {
-  --bw-navy: #11355B;
-  --bw-navy-deep: #0B2342;
-  --bw-cyan: #2F86B8;
-  --bw-sky: #5FB2DD;
-  --bw-sand: #F2ECE1;
-  --bw-paper: #FAF7F1;
-  --bw-ink: #101D2C;
-  --bw-muted: #5A6A7D;
-  --bw-line: #E4DFD3;
+  /* Paleta harmonizada com o DS bwh- (home/portfolio/faq/diagnóstico). */
+  --bw-navy: #11355B;         /* navyacc */
+  --bw-navy-deep: #0B2342;    /* dark */
+  --bw-cyan: #11355B;         /* aciona no mesmo tom da home */
+  --bw-sky: #2F5E85;
+  --bw-sand: #F3EEE5;         /* bg-alt */
+  --bw-paper: #FAF8F4;        /* bg */
+  --bw-ink: #0B2342;
+  --bw-muted: #5A6472;
+  --bw-line: #E5DFD2;
   --bw-line-strong: #D6CFC0;
-  --bw-border: #E4DFD3;
+  --bw-border: #E5DFD2;
   --bw-hair: rgba(11, 35, 66, .14);
-  --bw-display: "Poppins", system-ui, -apple-system, sans-serif;
-  --bw-body: "Inter", system-ui, -apple-system, sans-serif;
+  --bw-display: "Manrope", system-ui, -apple-system, sans-serif;
+  --bw-body: "Manrope", system-ui, -apple-system, sans-serif;
   --bw-mono: "JetBrains Mono", ui-monospace, monospace;
 
   min-height: 100vh;

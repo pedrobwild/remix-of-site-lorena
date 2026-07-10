@@ -14,6 +14,8 @@ import { whatsappHref } from "@/components/landing/content";
 import { useBewildProject } from "@/lib/useBewildProject";
 import { bewildTypeLabel } from "@/lib/useBewildProjects";
 import NotFoundPage from "@/pages/NotFoundPage";
+import "@/styles/bwh-tokens.css";
+import "@/styles/bwh-overlays.css";
 import "@/styles/portfolio-detail.css";
 
 interface Props {
@@ -138,7 +140,7 @@ export default function BewildProjectPage({ slug }: Props) {
 
   if (loading) {
     return (
-      <div className="bw-detail">
+      <div className="bwh bw-detail">
         <BewildSiteNav />
         <div className="pd-wrap"><div className="pd-skeleton" aria-busy="true" aria-live="polite" /></div>
       </div>
@@ -149,7 +151,7 @@ export default function BewildProjectPage({ slug }: Props) {
 
   if (error || !project) {
     return (
-      <div className="bw-detail">
+      <div className="bwh bw-detail">
         <BewildSiteNav />
         <div className="pd-wrap pd-errorbox">
           <p>Não conseguimos carregar este projeto agora. <a href="/portfolio">Voltar ao portfólio</a>.</p>
@@ -162,7 +164,7 @@ export default function BewildProjectPage({ slug }: Props) {
   const metaParts = [where, project.area_m2 ? `${project.area_m2} m²` : null, project.duration].filter(Boolean) as string[];
 
   return (
-    <div className="bw-detail">
+    <div className="bwh bw-detail">
       <BewildSiteNav />
 
       <div className="bw-detail__frame" aria-hidden="true">

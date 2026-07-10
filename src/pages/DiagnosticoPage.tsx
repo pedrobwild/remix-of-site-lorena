@@ -9,6 +9,8 @@ import { CONTACT } from "../components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
 import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.json";
+import "@/styles/bwh-tokens.css";
+import "@/styles/bwh-overlays.css";
 import "../styles/bw-diag.css";
 
 /* ============================================================
@@ -125,7 +127,7 @@ export default function DiagnosticoPage() {
   return (
     <>
       <BewildSiteNav />
-      <main id="main" className="bw-diag">
+      <main id="main" className="bwh bw-diag">
         <div className="bw-diag__frame" aria-hidden="true">
           <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
         </div>
