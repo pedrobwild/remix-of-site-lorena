@@ -17,6 +17,7 @@ import {
   type BewildProjectType,
 } from "@/lib/useBewildProjects";
 import "@/styles/bwh-tokens.css";
+import "@/styles/bwh-overlays.css";
 import "@/styles/portfolio.css";
 
 type FilterValue = "all" | BewildProjectType;
