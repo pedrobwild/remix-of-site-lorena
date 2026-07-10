@@ -413,7 +413,7 @@ export default function HomePage() {
             </div>
             <div className="bwh-projects-cta bwh-rv">
               <a className="bwh-btn" href="/portfolio">
-                Visitar portfólio completo <span className="bwh-ar" aria-hidden="true">⟶</span>
+                Visitar portfólio completo <span className="bwh-ar" aria-hidden="true">→</span>
               </a>
             </div>
           </div>
@@ -481,7 +481,7 @@ export default function HomePage() {
                   rel="noopener noreferrer"
                   onClick={() => trackEvent("cta_click", { location: "workflow", label: "ver_demonstracao" })}
                 >
-                  Ver demonstração <span className="bwh-ar" aria-hidden="true">⟶</span>
+                  Ver demonstração <span className="bwh-ar" aria-hidden="true">→</span>
                 </a>
               </div>
               <div className="bwh-wf__col bwh-rv">
@@ -669,7 +669,7 @@ export default function HomePage() {
               href="/diagnostico"
               onClick={() => trackEvent("cta_click", { location: "final", label: "solicitar_diagnostico" })}
             >
-              Solicitar diagnóstico <span className="bwh-ar" aria-hidden="true">⟶</span>
+              Solicitar diagnóstico <span className="bwh-ar" aria-hidden="true">→</span>
             </a>
           </div>
         </section>
