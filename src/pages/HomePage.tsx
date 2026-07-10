@@ -147,13 +147,9 @@ function Hero() {
       </div>
 
 
-      <div className="bwh-hero__scrollhint" aria-hidden="true">
-        <span>scroll</span>
-        <span className="bwh-hero__scrollline" />
-      </div>
-
       <div className="bwh-hero__controls">
         <button type="button" className="bwh-hero__arrow" aria-label="Slide anterior" onClick={prev}>←</button>
+
         <span className="bwh-hero__count">
           {String(i + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
         </span>
