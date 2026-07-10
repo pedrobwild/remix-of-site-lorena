@@ -169,17 +169,8 @@ export default function BewildSiteNav() {
     <header className={headerClass}>
       <div className="bw-nav__inner">
         <a href="/" className="bw-nav__brand" aria-label="Bewild — início">
-          {transparent ? (
-            <img
-              src="/brand/bewild-logo-branca.png"
-              alt="Bewild"
-              className="bw-nav__logo"
-              decoding="async"
-              {...({ fetchpriority: "high" } as { fetchpriority: string })}
-            />
-          ) : (
-            <span className="bw-nav__wordmark" aria-hidden="false">Bewild</span>
-          )}
+          {/* TODO: substituir por arquivo oficial do logotipo quando disponível em proporção correta */}
+          <span className="bw-nav__wordmark" aria-hidden="false">Bewild</span>
         </a>
 
         <nav className="bw-nav__links" aria-label="Navegação principal">
@@ -257,14 +248,8 @@ export default function BewildSiteNav() {
                 aria-label="Bewild — início"
                 onClick={() => setMenuOpen(false)}
               >
-                <img
-                  src="/brand/bewild-logo-cropped.png"
-                  alt="Bewild"
-                  className="bw-nav__logo"
-                  width={81}
-                  height={28}
-                  decoding="async"
-                />
+                {/* TODO: substituir por arquivo oficial do logotipo quando disponível em proporção correta */}
+                <span className="bw-nav__wordmark" aria-hidden="false">Bewild</span>
               </a>
               <button
                 type="button"
