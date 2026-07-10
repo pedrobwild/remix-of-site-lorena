@@ -257,7 +257,7 @@
   .bwh-wrap{padding:0 20px}
   .bwh-sec{padding:clamp(64px,14vw,96px) 0}
   .bwh-srlabel{padding:24px 0 40px}
-  .bwh-hero__ticker{top:auto;bottom:120px;right:16px;font-size:10px;letter-spacing:.22em}
+  
   .bwh-hero__scrollhint{bottom:24px;left:20px;font-size:9px;letter-spacing:.2em}
   .bwh-hero__scrollline{height:24px}
   .bwh-hero__inner{padding:0 20px 120px}
