@@ -53,6 +53,10 @@
 .bw-nav--home.bw-nav--solid .bw-nav__links a:hover{color:#1A2332}
 .bw-nav--hidden{transform:translateY(-105%)}
 
+/* Home: respiro extra entre nav e hero (dois estados) */
+.bw-nav--home .bw-nav__inner{padding-top:24px;padding-bottom:24px}
+.bw-nav--home.bw-nav--scrolled .bw-nav__inner{padding-top:24px;padding-bottom:24px}
+
 
 .bw-nav__inner{
   max-width:1200px;margin:0 auto;
