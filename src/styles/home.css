@@ -63,12 +63,8 @@
 @keyframes bwh-zoom{from{transform:scale(1.12)}to{transform:scale(1.02)}}
 .bwh-hero__scrim{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,15,22,.78) 0%,rgba(10,15,22,.26) 55%,rgba(10,15,22,.38) 100%)}
 
-.bwh-hero__scrollhint{position:absolute;bottom:32px;left:32px;z-index:2;display:flex;flex-direction:column;align-items:center;gap:12px;color:rgba(255,255,255,.75);font-family:var(--fm);font-size:10px;letter-spacing:.24em;text-transform:uppercase;pointer-events:none}
-.bwh-hero__scrollhint span:first-child{writing-mode:vertical-rl;transform:rotate(180deg)}
-.bwh-hero__scrollline{width:1px;height:32px;background:linear-gradient(to bottom,rgba(255,255,255,.7),rgba(255,255,255,0));position:relative;overflow:hidden}
-.bwh-hero__scrollline::after{content:"";position:absolute;top:-32px;left:0;width:1px;height:32px;background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.9));animation:bwh-scrolldown 1.8s ease-in-out infinite}
-@keyframes bwh-scrolldown{0%{transform:translateY(0)}100%{transform:translateY(64px)}}
-.bwh-hero__inner{position:relative;z-index:2;height:100%;display:flex;align-items:flex-end;padding:0 32px 96px}
+.bwh-hero__inner{position:relative;z-index:2;height:100%;display:flex;align-items:flex-end;padding:0 32px 120px}
+
 .bwh-hero__col{max-width:1040px}
 .bwh-hero h1{font-weight:600;font-size:clamp(40px,6.4vw,92px);line-height:1.03;letter-spacing:-.02em;margin:0 0 24px}
 .bwh-hero__sub{font-size:clamp(16px,1.6vw,20px);line-height:1.55;max-width:620px;color:rgba(255,255,255,.92);margin:0 0 32px}
@@ -258,10 +254,9 @@
   .bwh-sec{padding:clamp(64px,14vw,96px) 0}
   .bwh-srlabel{padding:24px 0 40px}
   
-  .bwh-hero__scrollhint{bottom:24px;left:20px;font-size:9px;letter-spacing:.2em}
-  .bwh-hero__scrollline{height:24px}
   .bwh-hero__inner{padding:0 20px 120px}
   .bwh-hero__controls{bottom:28px;right:20px}
+
   .bwh-list li{grid-template-columns:1fr;gap:8px;padding:26px 0}
   .bwh-projects{gap:26px}
   .bwh-split{grid-template-columns:1fr;gap:36px;margin-top:36px}
@@ -283,8 +278,8 @@
   .bwh .bwh-rv{opacity:1;transform:none;transition:none}
   .bwh-hero__slide{transition:none}
   .bwh-hero__slide img{animation:none;transform:none}
-  .bwh-hero__scrollline::after{animation:none}
 }
+
 
 /* ============ Loader de entrada (assinatura premium) ============ */
 .bwh-loader{position:fixed;inset:0;z-index:9999;background:#FAF8F4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
