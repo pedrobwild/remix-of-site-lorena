@@ -174,15 +174,8 @@
 .bwh-manifesto .bwh-mtag{font-family:var(--fm);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--navyacc);margin-bottom:28px}
 .bwh-manifesto .bwh-mclose{font-weight:600;font-size:clamp(18px,2vw,24px)}
 
-/* ============ FAQ ============ */
-.bwh-faq{margin-top:8px;border-top:1px solid var(--hair)}
-.bwh-faq details{border-bottom:1px solid var(--hair)}
-.bwh-faq summary{list-style:none;cursor:pointer;padding:28px 0;display:flex;justify-content:space-between;align-items:baseline;gap:24px;
-  font-weight:500;font-size:clamp(17px,1.7vw,22px);letter-spacing:-.01em}
-.bwh-faq summary::-webkit-details-marker{display:none}
-.bwh-faq summary::after{content:"+";font-family:var(--fm);font-size:22px;color:var(--navyacc)}
-.bwh-faq details[open] summary::after{content:"−"}
-.bwh-faq details p{padding:0 0 28px;margin:0;color:var(--ink2);font-size:16px;line-height:1.65;max-width:800px}
+/* ============ FAQ — .bwh-faq vive em bwh-tokens.css ============ */
+
 
 /* ============ Final CTA ============ */
 .bwh-final{position:relative;min-height:88svh;color:#fff;overflow:hidden;display:flex;align-items:flex-end;padding:0 32px 72px}
