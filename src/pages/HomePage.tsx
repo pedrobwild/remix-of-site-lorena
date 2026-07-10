@@ -7,7 +7,7 @@
  * bloco de projetos de navy).
  *
  * Nav global: `BewildSiteNav` (variante home). Footer global:
- * `SiteFooter`, com faixa BE WILD imediatamente acima.
+ * `SiteFooter` imediatamente após o CTA final.
  * "turn-key/turnkey" só aparece na resposta 1 do FAQ.
  */
 import { useEffect, useRef, useState } from "react";
@@ -741,9 +741,6 @@ export default function HomePage() {
           </div>
         </section>
       </main>
-
-      {/* Faixa decorativa BE WILD (referência visual) acima do footer global */}
-      <div className="bwh-band" aria-hidden="true">BE WILD</div>
 
       <SiteFooter />
     </div>
