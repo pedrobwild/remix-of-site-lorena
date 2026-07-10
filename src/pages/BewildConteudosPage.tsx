@@ -77,7 +77,7 @@ export default function BewildConteudosPage() {
         <div className="bw-conteudos__frame" aria-hidden="true">
           <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
         </div>
-        <div className="bw-conteudos__titleblock" aria-hidden="true">BEWILD · GRUPO BWILD<br /><b>BW—004 / CONTEÚDOS</b><br />SÃO PAULO · BR</div>
+        <div className="bw-conteudos__titleblock" aria-hidden="true">BEWILD<br /><b>BW—004 / CONTEÚDOS</b><br />SÃO PAULO · BR</div>
         <div className="bw-conteudos__sheetno" aria-hidden="true">SHEET 04 / PUBLICAÇÕES</div>
 
         {/* HERO */}

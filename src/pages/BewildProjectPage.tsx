@@ -170,7 +170,7 @@ export default function BewildProjectPage({ slug }: Props) {
       <div className="bw-detail__frame" aria-hidden="true">
         <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
       </div>
-      <div className="bw-detail__titleblock" aria-hidden="true">BEWILD · GRUPO BWILD<br /><b>BW—003 / PORTFÓLIO</b><br />SÃO PAULO · BR</div>
+      <div className="bw-detail__titleblock" aria-hidden="true">BEWILD<br /><b>BW—003 / PORTFÓLIO</b><br />SÃO PAULO · BR</div>
       <div className="bw-detail__sheetno" aria-hidden="true">FICHA DE OBRA</div>
 
       {/* HEADER */}

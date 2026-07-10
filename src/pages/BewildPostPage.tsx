@@ -177,7 +177,7 @@ export default function BewildPostPage({ slug }: Props) {
       <div className="bw-post__frame" aria-hidden="true">
         <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
       </div>
-      <div className="bw-post__titleblock" aria-hidden="true">BEWILD · GRUPO BWILD<br /><b>BW—004 / CONTEÚDOS</b><br />SÃO PAULO · BR</div>
+      <div className="bw-post__titleblock" aria-hidden="true">BEWILD<br /><b>BW—004 / CONTEÚDOS</b><br />SÃO PAULO · BR</div>
       <div className="bw-post__sheetno" aria-hidden="true">ARTIGO · {bewildCategoryLabel(post.category)}</div>
 
       <article>

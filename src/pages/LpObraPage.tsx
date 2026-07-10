@@ -168,14 +168,14 @@ export default function LpObraPage() {
         <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
       </div>
       <div className="bw-titleblock" aria-hidden="true">
-        BEWILD · GRUPO BWILD<br /><b>BW-OBRA / PLACA</b><br />SÃO PAULO · BR
+        BEWILD<br /><b>BW-OBRA / PLACA</b><br />SÃO PAULO · BR
       </div>
       <div className="bw-sheetno" aria-hidden="true">{sheetNo}</div>
 
       <section className="hero is-gate" aria-label="Obra Bewild">
         <div className="hero-grid" aria-hidden="true" />
         <div className="hero-top">
-          <img className="hero-logo" src="/brand/bewild-logo-cropped.png" alt="Bewild · Grupo Bwild" />
+          <img className="hero-logo" src="/brand/bewild-logo-cropped.png" alt="Bewild" />
           <div className="hero-eyebrow">
             <span className="mono tag">{eyebrowText}</span>
           </div>
@@ -287,7 +287,7 @@ export default function LpObraPage() {
       </div>
 
       <footer className="lp-foot">
-        BEWILD · GRUPO BWILD · SÃO PAULO · BR
+        BEWILD · SÃO PAULO · BR
         <span>Portal de acompanhamento · Bwild Workflow</span>
       </footer>
     </div>
