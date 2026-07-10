@@ -26,6 +26,9 @@ import slide4 from "@/assets/hero-slides/premium-11-2.png.asset.json";
 import projFallback1 from "@/assets/hero-slides/rodrigo-8.png.asset.json";
 import projFallback2 from "@/assets/hero-slides/marcos-10-4.png.asset.json";
 import projFallback3 from "@/assets/hero-slides/premium-7-4.png.asset.json";
+// TODO: par ilustrativo — trocar por 3D aprovado + foto de entrega do MESMO projeto
+import cmp3dBefore from "@/assets/hero-slides/rodrigo-1-1.png.asset.json";
+import cmp3dAfter from "@/assets/hero-slides/rodrigo-8.png.asset.json";
 import finalBg from "@/assets/hero-slides/erik-03-11.png.asset.json";
 import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.json";
 import depoimentoPoster from "@/assets/hero-slides/rodrigo-15-1.png.asset.json";
@@ -107,8 +110,6 @@ function Hero() {
         <div className="bwh-hero__scrim" />
       </div>
 
-      <div className="bwh-hero__ticker">São Paulo · 2026</div>
-
       <div className="bwh-hero__inner">
         <div className="bwh-hero__col">
           <h1>
@@ -122,10 +123,29 @@ function Hero() {
             href="/diagnostico"
             onClick={() => trackEvent("cta_click", { location: "hero", label: "solicitar_diagnostico" })}
           >
-            Solicitar diagnóstico <span className="bwh-ar" aria-hidden="true">⟶</span>
+            Solicitar diagnóstico <span className="bwh-ar" aria-hidden="true">→</span>
           </a>
+
+          {/* Timeline comprimida (Dia 0 → Dia 60) */}
+          <div className="bwh-tl" aria-hidden="true">
+            <div className="bwh-tl__p">
+              <span className="bwh-tl__dot" />
+              <span className="bwh-tl__d">Dia 0</span>
+              <span className="bwh-tl__l">assinatura</span>
+            </div>
+            <div className="bwh-tl__mid">
+              <b>a obra acontece do nosso lado</b>
+              <span>você acompanha pelo Bwild Workflow</span>
+            </div>
+            <div className="bwh-tl__p bwh-tl__p--r">
+              <span className="bwh-tl__dot" />
+              <span className="bwh-tl__d">≈ Dia 60</span>
+              <span className="bwh-tl__l">chaves na mão</span>
+            </div>
+          </div>
         </div>
       </div>
+
 
       <div className="bwh-hero__scrollhint" aria-hidden="true">
         <span>scroll</span>
@@ -277,6 +297,54 @@ function PortalMock() {
   );
 }
 
+/* ============ Comparador "aprovado no 3D · entregue igual" ============ */
+function BeforeAfter3D() {
+  const [x, setX] = useState(50);
+  const trackedRef = useRef(false);
+  const onInput = (v: number) => {
+    setX(v);
+    if (!trackedRef.current) {
+      trackedRef.current = true;
+      trackEvent("comparador_interact", { location: "projetos" });
+    }
+  };
+  return (
+    <div className="bwh-cmpwrap bwh-rv">
+      <span className="bwh-cmpwrap__label">A prova · arraste para comparar</span>
+      <h3 className="bwh-cmpwrap__h">
+        Aprovado no 3D. <em>Entregue igual.</em>
+      </h3>
+      <span className="bwh-tag" style={{ marginBottom: 14 }}>
+        par ilustrativo · substituir pelo 3D aprovado e pela foto da entrega do mesmo projeto
+      </span>
+      <div className="bwh-cmp3d" style={{ ["--x" as string]: `${x}%` } as React.CSSProperties}>
+        <img className="bwh-cmp3d__img" src={cmp3dAfter.url} alt="Studio entregue" loading="lazy" />
+        <img className="bwh-cmp3d__img bwh-cmp3d__before" src={cmp3dBefore.url} alt="Render 3D aprovado do studio" loading="lazy" />
+        <span className="bwh-cmp3d__lab bwh-cmp3d__lab--l">Projeto 3D aprovado</span>
+        <span className="bwh-cmp3d__lab bwh-cmp3d__lab--r">Studio entregue</span>
+        <span className="bwh-cmp3d__line" aria-hidden="true" />
+        <span className="bwh-cmp3d__knob" aria-hidden="true">⇔</span>
+        <input
+          className="bwh-cmp3d__range"
+          type="range"
+          min={0}
+          max={100}
+          value={x}
+          onInput={(e) => onInput(Number((e.target as HTMLInputElement).value))}
+          onChange={(e) => onInput(Number(e.target.value))}
+          aria-label="Arraste para comparar o 3D aprovado com a entrega"
+        />
+      </div>
+      <div className="bwh-cmp3d__legend">
+        <span>O 3D que você aprovou antes da obra</span>
+        <span>O imóvel que você recebeu com as chaves</span>
+      </div>
+    </div>
+  );
+}
+
+
+
 /* ============ Loader de entrada (assinatura premium) ============ */
 function EntryLoader() {
   const [mounted, setMounted] = useState(() => {
@@ -381,7 +449,8 @@ export default function HomePage() {
               <span className="bwh-mono">Selecionados · 2024–2026</span>
             </div>
             <h2 id="s02h" className="bwh-sr-only">Studios que a Bewild já entregou em São Paulo.</h2>
-            <div className="bwh-projects">
+            <BeforeAfter3D />
+            <div className="bwh-projects" style={{ marginTop: 64 }}>
               {cards.map((c, i) => (
                 <a className="bwh-proj bwh-rv" href={c.href} key={c.href + i}>
                   <span className="bwh-proj__media">
@@ -396,7 +465,7 @@ export default function HomePage() {
             </div>
             <div className="bwh-projects-cta bwh-rv">
               <a className="bwh-btn" href="/portfolio">
-                Visitar portfólio completo <span className="bwh-ar" aria-hidden="true">⟶</span>
+                Visitar portfólio completo <span className="bwh-ar" aria-hidden="true">→</span>
               </a>
             </div>
           </div>
@@ -464,7 +533,7 @@ export default function HomePage() {
                   rel="noopener noreferrer"
                   onClick={() => trackEvent("cta_click", { location: "workflow", label: "ver_demonstracao" })}
                 >
-                  Ver demonstração <span className="bwh-ar" aria-hidden="true">⟶</span>
+                  Ver demonstração <span className="bwh-ar" aria-hidden="true">→</span>
                 </a>
               </div>
               <div className="bwh-wf__col bwh-rv">
@@ -491,7 +560,7 @@ export default function HomePage() {
               />
             </div>
             <div className="bwh-proof__panel">
-              <span className="bwh-proof__word" aria-hidden="true">confiança</span>
+              <span className="bwh-bigquote" aria-hidden="true">“</span>
               <div className="bwh-proof__inner bwh-rv">
                 <span className="bwh-proof__count">Depoimento · 01 / 02</span>
                 <p className="bwh-proof__quote">“Uma empresa <em>humana</em>, do começo ao fim.”</p>
@@ -515,7 +584,7 @@ export default function HomePage() {
               </figure>
             </div>
             <div className="bwh-proof__panel">
-              <span className="bwh-proof__word" aria-hidden="true">renda</span>
+              <span className="bwh-bignum" aria-hidden="true">70</span>
               <div className="bwh-proof__inner bwh-rv">
                 <span className="bwh-proof__count">Resultado · 02 / 02</span>
                 <div>
@@ -539,6 +608,25 @@ export default function HomePage() {
             <h2 id="s06h" className="bwh-h2 bwh-rv">
               O contrato é o mesmo. O projeto muda <em>conforme o seu objetivo</em>.
             </h2>
+
+            {/* Timeline clara — mesma costura do sistema, versão para objetivos */}
+            <div className="bwh-tl bwh-tl--light bwh-tl--goals bwh-rv" aria-hidden="true">
+              <div className="bwh-tl__p">
+                <span className="bwh-tl__dot" />
+                <span className="bwh-tl__d">Dia 0</span>
+                <span className="bwh-tl__l">projeto aprovado em 3D</span>
+              </div>
+              <div className="bwh-tl__mid">
+                <b>obra, marcenaria, mobília e vistorias</b>
+                <span>do nosso lado do contrato</span>
+              </div>
+              <div className="bwh-tl__p bwh-tl__p--r">
+                <span className="bwh-tl__dot" />
+                <span className="bwh-tl__d">≈ Dia 60</span>
+                <span className="bwh-tl__l">morar · alugar · vender</span>
+              </div>
+            </div>
+
             <div className="bwh-goals">
               <div className="bwh-goal bwh-rv"><span className="n">01</span><div className="t">Morar</div><div className="d">Seu apê do seu jeito, sem viver dentro de uma obra. Projeto pensado para a sua rotina, entrega com tudo instalado. É só mudar.</div></div>
               <div className="bwh-goal bwh-rv"><span className="n">02</span><div className="t">Alugar</div><div className="d">Studios desenhados para performar na locação, de curta ou longa temporada. O projeto já nasce pensando em conforto, foto de anúncio e ocupação.</div></div>
@@ -652,7 +740,7 @@ export default function HomePage() {
               href="/diagnostico"
               onClick={() => trackEvent("cta_click", { location: "final", label: "solicitar_diagnostico" })}
             >
-              Solicitar diagnóstico <span className="bwh-ar" aria-hidden="true">⟶</span>
+              Solicitar diagnóstico <span className="bwh-ar" aria-hidden="true">→</span>
             </a>
           </div>
         </section>
