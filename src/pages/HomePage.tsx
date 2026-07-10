@@ -584,7 +584,7 @@ export default function HomePage() {
               </figure>
             </div>
             <div className="bwh-proof__panel">
-              <span className="bwh-proof__word" aria-hidden="true">renda</span>
+              <span className="bwh-bignum" aria-hidden="true">70</span>
               <div className="bwh-proof__inner bwh-rv">
                 <span className="bwh-proof__count">Resultado · 02 / 02</span>
                 <div>
