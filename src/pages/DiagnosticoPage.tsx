@@ -10,15 +10,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
 import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.json";
 import "@/styles/bwh-tokens.css";
-import "@/styles/bwh-overlays.css";
 import "../styles/bw-diag.css";
 
 /* ============================================================
- * DiagnosticoPage — /diagnostico
- * "Prancha 02" do projeto: o investidor abre a ficha do próprio studio.
- * Linguagem de prancheta alinhada à home. Form é o herói.
+ * DiagnosticoPage — /diagnostico · DS bwh (claro editorial).
  * Mecânica preservada: lead -> notify-lead (Supabase) + WhatsApp + GA4.
- * CSS isolado .bw-diag.
+ * CSS isolado em classes bwd-*.
  * ============================================================ */
 
 const RECEBE: { t: string; rest: string }[] = [
@@ -73,7 +70,6 @@ const EMPTY_FORM: Form = {
   nome: "", whats: "", email: "", local: "", metragem: "", objetivo: "", chaves: "", planta: "", mensagem: "",
 };
 
-/* ============= Ícones ============= */
 function IconChat({ className = "ic" }: { className?: string }) {
   return (<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" /></svg>);
 }
@@ -127,19 +123,15 @@ export default function DiagnosticoPage() {
   return (
     <>
       <BewildSiteNav />
-      <main id="main" className="bwh bw-diag">
-        <div className="bw-diag__frame" aria-hidden="true">
-          <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
-        </div>
-        <div className="bw-diag__titleblock" aria-hidden="true">BEWILD · GRUPO BWILD<br /><b>BW—002 / DIAGNÓSTICO</b><br />SÃO PAULO · BR</div>
-        <div className="bw-diag__sheetno" aria-hidden="true">SHEET 02 / FICHA DO IMÓVEL</div>
-
-        <section className="bw-diag__hero" aria-label="Solicitar diagnóstico">
-          <div className="bw-diag__wrap">
-            <div className="bw-diag__hgrid">
-              <DiagnosticoPitch />
+      <main id="main" className="bwh bwd">
+        <section className="bwd-hero" aria-label="Solicitar diagnóstico">
+          <div className="bwh-wrap">
+            <div className="bwd-grid">
+              <div className="bwd-left">
+                <DiagnosticoPitch />
+                <TestimonialCard waUrl={waUrl} />
+              </div>
               <DiagnosticoForm />
-              <TestimonialCard waUrl={waUrl} />
             </div>
           </div>
         </section>
@@ -150,7 +142,7 @@ export default function DiagnosticoPage() {
       <StickyMobileCTA
         href={waUrl}
         label="Solicitar diagnóstico"
-        hideWhenVisibleSelector="footer, .bw-diag__formcard"
+        hideWhenVisibleSelector="footer, .bwd-form"
       />
       <SiteFooter />
     </>
@@ -159,25 +151,25 @@ export default function DiagnosticoPage() {
 
 function DiagnosticoPitch() {
   return (
-    <div className="bw-diag__pitch">
-      <p className="bw-diag__eyebrow">Diagnóstico · sem compromisso</p>
-      <h1 className="bw-diag__title">
-        Seu studio pronto pra <span className="accent">render</span> começa aqui.
+    <div className="bwd-pitch">
+      <p className="bwh-mono bwd-eyebrow">Diagnóstico · sem compromisso</p>
+      <h1 className="bwd-title">
+        Seu studio pronto pra <em>render</em> começa aqui.
       </h1>
-      <p className="bw-diag__sub">
+      <p className="bwd-sub">
         Você manda os dados do imóvel. A gente devolve uma leitura do potencial de renda, do escopo da reforma e dos próximos passos. Sem custo e sem compromisso.
       </p>
-      <div className="bw-diag__recebe">
-        <div className="bw-diag__rlabel">O que você recebe</div>
+      <div className="bwd-recebe">
+        <div className="bwh-mono bwd-rlabel">O que você recebe</div>
         {RECEBE.map((r, i) => (
-          <div className="bw-diag__ritem" key={r.t}>
+          <div className="bwd-ritem" key={r.t}>
             <span className="rn">0{i + 1}</span>
             <span className="rt"><b>{r.t}</b>{r.rest}</span>
           </div>
         ))}
       </div>
-      <div className="bw-diag__trustband" role="note">
-        <span className="bw-diag__trustband-icon" aria-hidden="true"><IconCheck /></span>
+      <div className="bwd-trust" role="note">
+        <span className="bwd-trust-ic" aria-hidden="true"><IconCheck /></span>
         <span><strong>+150</strong> studios entregues em São Paulo</span>
       </div>
     </div>
@@ -274,15 +266,14 @@ function DiagnosticoForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="bw-diag__formcard" id="diag-formcard" aria-label="Formulário de diagnóstico">
-      <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
-      <div className="bw-diag__fc-head">
+    <form onSubmit={onSubmit} noValidate className="bwd-form" id="diag-formcard" aria-label="Formulário de diagnóstico">
+      <div className="bwd-fhead">
         <span className="fl">Ficha do seu studio</span>
         <span className="fr">BW—002</span>
       </div>
 
       {success && (
-        <div className="bw-diag__success" role="status">
+        <div className="bwd-success" role="status">
           <strong>Recebemos seus dados.</strong>
           <span>Nosso time comercial vai falar com você no WhatsApp.</span>
         </div>
@@ -290,45 +281,45 @@ function DiagnosticoForm() {
 
       {!success && (
         <>
-          <div className="bw-diag__field">
-            <label htmlFor="diag-nome">Nome <span className="bw-diag__req">*</span></label>
+          <div className="bwd-field">
+            <label htmlFor="diag-nome">Nome <span className="bwd-req">*</span></label>
             <input id="diag-nome" type="text" placeholder="Como podemos te chamar"
               className={touched.nome && !nomeOk ? "bad" : ""}
               value={f.nome} onChange={(e) => set("nome", e.target.value)}
               onBlur={() => setTouched((t) => ({ ...t, nome: true }))}
               autoComplete="name" required maxLength={120} />
-            {touched.nome && !nomeOk && <span className="bw-diag__error">Informe seu nome.</span>}
+            {touched.nome && !nomeOk && <span className="bwd-error">Informe seu nome.</span>}
           </div>
 
-          <div className="bw-diag__frow">
-            <div className="bw-diag__field">
-              <label htmlFor="diag-whats">WhatsApp <span className="bw-diag__req">*</span></label>
+          <div className="bwd-frow">
+            <div className="bwd-field">
+              <label htmlFor="diag-whats">WhatsApp <span className="bwd-req">*</span></label>
               <input id="diag-whats" type="tel" inputMode="tel" placeholder="(11) 99999-9999"
                 className={touched.whats && !whatsOk ? "bad" : ""}
                 value={f.whats} onChange={(e) => set("whats", maskPhone(e.target.value))}
                 onBlur={() => setTouched((t) => ({ ...t, whats: true }))}
                 autoComplete="tel" required />
-              {touched.whats && !whatsOk && <span className="bw-diag__error">Informe um WhatsApp com DDD.</span>}
+              {touched.whats && !whatsOk && <span className="bwd-error">Informe um WhatsApp com DDD.</span>}
             </div>
-            <div className="bw-diag__field">
-              <label htmlFor="diag-email">E-mail <span className="bw-diag__optional">(opcional)</span></label>
+            <div className="bwd-field">
+              <label htmlFor="diag-email">E-mail <span className="bwd-opt">(opcional)</span></label>
               <input id="diag-email" type="email" placeholder="voce@email.com"
                 className={touched.email && emailFilled && !emailOk ? "bad" : ""}
                 value={f.email} onChange={(e) => set("email", e.target.value)}
                 onBlur={() => setTouched((t) => ({ ...t, email: true }))}
                 autoComplete="email" maxLength={255} />
-              {touched.email && emailFilled && !emailOk && <span className="bw-diag__error">E-mail inválido.</span>}
+              {touched.email && emailFilled && !emailOk && <span className="bwd-error">E-mail inválido.</span>}
             </div>
           </div>
 
-          <div className="bw-diag__field">
-            <label htmlFor="diag-local">Bairro do imóvel <span className="bw-diag__req">*</span></label>
+          <div className="bwd-field">
+            <label htmlFor="diag-local">Bairro do imóvel <span className="bwd-req">*</span></label>
             <input id="diag-local" type="text" placeholder="Ex: Pinheiros, Itaim, Butantã"
               className={touched.local && !localOk ? "bad" : ""}
               value={f.local} onChange={(e) => set("local", e.target.value)}
               onBlur={() => setTouched((t) => ({ ...t, local: true }))}
               maxLength={120} required />
-            {touched.local && !localOk && <span className="bw-diag__error">Informe o bairro do imóvel.</span>}
+            {touched.local && !localOk && <span className="bwd-error">Informe o bairro do imóvel.</span>}
           </div>
 
           <ChipsField label="Já tem as chaves do imóvel?" required options={CHAVES} value={f.chaves}
@@ -339,32 +330,32 @@ function DiagnosticoForm() {
             onChange={(v) => { set("objetivo", v); setTouched((t) => ({ ...t, objetivo: true })); }}
             error={touched.objetivo && !objetivoOk ? "Selecione o objetivo." : null} />
 
-          <div className="bw-diag__field">
-            <label htmlFor="diag-m2">Metragem (m²) <span className="bw-diag__optional">(opcional)</span></label>
+          <div className="bwd-field">
+            <label htmlFor="diag-m2">Metragem (m²) <span className="bwd-opt">(opcional)</span></label>
             <input id="diag-m2" type="text" inputMode="numeric" placeholder="32"
               value={f.metragem}
               onChange={(e) => set("metragem", e.target.value.replace(/[^\d.,]/g, "").slice(0, 6))} />
           </div>
 
-          <button type="button" className="bw-diag__more-toggle" aria-expanded={showMore} onClick={() => setShowMore((s) => !s)}>
+          <button type="button" className="bwd-more-toggle" aria-expanded={showMore} onClick={() => setShowMore((s) => !s)}>
             <IconPlus /> {showMore ? "Menos detalhes" : "Mais detalhes (opcional)"}
           </button>
 
           {showMore && (
-            <div className="bw-diag__more">
+            <div className="bwd-more">
               <ChipsField label="Tem planta do imóvel?" options={PLANTA} value={f.planta} onChange={(v) => set("planta", v)} />
-              <div className="bw-diag__field">
+              <div className="bwd-field">
                 <label htmlFor="diag-msg">Mensagem</label>
                 <textarea id="diag-msg" value={f.mensagem} onChange={(e) => set("mensagem", e.target.value)} maxLength={1000} />
               </div>
             </div>
           )}
 
-          <button type="submit" className="bw-diag__submit" disabled={!canSubmit || submitting}>
+          <button type="submit" className="bwd-submit" disabled={!canSubmit || submitting}>
             {submitting ? "Enviando…" : "Solicitar diagnóstico"}
             <IconArrow />
           </button>
-          <p className="bw-diag__guarantee">Sem compromisso · a gente só te chama no WhatsApp</p>
+          <p className="bwd-guarantee">Sem compromisso · a gente só te chama no WhatsApp</p>
         </>
       )}
     </form>
@@ -375,21 +366,21 @@ function ChipsField({ label, options, value, onChange, required, error }: {
   label: string; options: string[]; value: string; onChange: (v: string) => void; required?: boolean; error?: string | null;
 }) {
   return (
-    <fieldset className="bw-diag__field">
-      <legend>{label} {required && <span className="bw-diag__req">*</span>}</legend>
-      <div className="bw-diag__opts">
+    <fieldset className="bwd-field">
+      <legend>{label} {required && <span className="bwd-req">*</span>}</legend>
+      <div className="bwd-opts">
         {options.map((opt) => {
           const active = value === opt;
           return (
             <button key={opt} type="button" aria-pressed={active}
               onClick={() => onChange(active ? "" : opt)}
-              className={`bw-diag__opt${active ? " sel" : ""}`}>
+              className={`bwd-chip${active ? " sel" : ""}`}>
               {opt}
             </button>
           );
         })}
       </div>
-      {error && <span className="bw-diag__error">{error}</span>}
+      {error && <span className="bwd-error">{error}</span>}
     </fieldset>
   );
 }
@@ -423,30 +414,29 @@ function TestimonialCard({ waUrl }: { waUrl: string }) {
 
   return (
     <>
-      <aside className="bw-diag__testicard" aria-label="Depoimento em vídeo de cliente">
-        <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
-        <button type="button" className="bw-diag__testithumb" onClick={handleOpen} aria-label="Assistir depoimento em vídeo de Vivian">
+      <aside className="bwd-testi" aria-label="Depoimento em vídeo de cliente">
+        <button type="button" className="bwd-testithumb" onClick={handleOpen} aria-label="Assistir depoimento em vídeo de Vivian">
           <video src={depoimentoVideo.url} muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true" />
-          <span className="bw-diag__testiplay" aria-hidden="true"><IconPlay /></span>
+          <span className="bwd-testiplay" aria-hidden="true"><IconPlay /></span>
         </button>
-        <div className="bw-diag__testimeta">
-          <p className="bw-diag__testieyebrow">Depoimento</p>
-          <p className="bw-diag__testiname">Vivian</p>
-          <p className="bw-diag__testirole">cliente Bewild · depoimento presencial</p>
-          <a href={waUrl} target="_blank" rel="noopener noreferrer" className="bw-diag__testilink">
+        <div className="bwd-testimeta">
+          <p className="bwh-mono bwd-testieyb">Depoimento</p>
+          <p className="bwd-testiname">Vivian</p>
+          <p className="bwd-testirole">cliente Bewild · depoimento presencial</p>
+          <a href={waUrl} target="_blank" rel="noopener noreferrer" className="bwd-testilink">
             <IconChat /> Prefiro falar com um especialista
           </a>
         </div>
       </aside>
 
       {open && (
-        <div className="bw-diag__modal" role="dialog" aria-modal="true" aria-label="Depoimento em vídeo de Vivian"
+        <div className="bwd-modal" role="dialog" aria-modal="true" aria-label="Depoimento em vídeo de Vivian"
           onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
-          <div className="bw-diag__modal-inner">
-            <button ref={closeBtnRef} type="button" className="bw-diag__modal-close" onClick={() => setOpen(false)} aria-label="Fechar vídeo">
+          <div className="bwd-modal-inner">
+            <button ref={closeBtnRef} type="button" className="bwd-modal-close" onClick={() => setOpen(false)} aria-label="Fechar vídeo">
               <IconClose />
             </button>
-            <video ref={videoRef} src={depoimentoVideo.url} controls playsInline autoPlay className="bw-diag__modal-video" />
+            <video ref={videoRef} src={depoimentoVideo.url} controls playsInline autoPlay className="bwd-modal-video" />
           </div>
         </div>
       )}
@@ -457,59 +447,53 @@ function TestimonialCard({ waUrl }: { waUrl: string }) {
 function SupportSections() {
   return (
     <>
-      <section className="bw-diag__paper">
-        <div className="bw-diag__psec">
-          <div className="bw-diag__secmark"><span className="n">01</span><span className="t">Depois do envio</span><span className="ln" /></div>
-          <div className="bw-diag__phead">
-            <h2>O que acontece quando você <span className="accent">manda a ficha.</span></h2>
-            <p className="lead">Nada de mistério nem de fila. O processo é direto, e você decide cada passo seguinte.</p>
-          </div>
-          <div className="bw-diag__steps">
+      <section className="bwh-sec" style={{ paddingBottom: 0 }}>
+        <div className="bwh-wrap">
+          <div className="bwh-srlabel"><span className="bwh-mono">Depois do envio · 01</span></div>
+          <h2 className="bwh-h2">O que acontece quando você <em>manda a ficha.</em></h2>
+          <p className="bwd-lead">Nada de mistério nem de fila. O processo é direto, e você decide cada passo seguinte.</p>
+          <div className="bwd-steps">
             {PASSOS.map((p, i) => (
-              <div className="bw-diag__step" key={p.t}>
-                <div className="sn">0{i + 1}</div>
-                <div className="st">{p.t}</div>
-                <div className="sd">{p.d}</div>
+              <div className="bwd-cell" key={p.t}>
+                <span className="cn">0{i + 1}</span>
+                <div className="ct">{p.t}</div>
+                <div className="cd">{p.d}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bw-diag__paper">
-        <div className="bw-diag__psec">
-          <div className="bw-diag__secmark"><span className="n">02</span><span className="t">Escopo turn-key</span><span className="ln" /></div>
-          <div className="bw-diag__phead">
-            <h2>Tudo num contrato só. Você <span className="accent">não toca em nada.</span></h2>
-            <p className="lead">O diagnóstico é a porta de entrada pra um processo que entrega o studio pronto pra operar, do projeto à foto do anúncio.</p>
-          </div>
-          <div className="bw-diag__scope">
+      <section className="bwh-sec" style={{ paddingBottom: 0 }}>
+        <div className="bwh-wrap">
+          <div className="bwh-srlabel"><span className="bwh-mono">Escopo turn-key · 02</span></div>
+          <h2 className="bwh-h2">Tudo num contrato só. Você <em>não toca em nada.</em></h2>
+          <p className="bwd-lead">O diagnóstico é a porta de entrada pra um processo que entrega o studio pronto pra operar, do projeto à foto do anúncio.</p>
+          <div className="bwd-scope">
             {ESCOPO.map((s, i) => (
-              <div className="bw-diag__scell" key={s.t}>
-                <span className="sc-n">0{i + 1}</span>
-                <div className="sc-t">{s.t}</div>
-                <div className="sc-d">{s.d}</div>
+              <div className="bwd-cell" key={s.t}>
+                <span className="cn">0{i + 1}</span>
+                <div className="ct">{s.t}</div>
+                <div className="cd">{s.d}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bw-diag__paper">
-        <div className="bw-diag__psec">
-          <div className="bw-diag__secmark"><span className="n">03</span><span className="t">Por que a Bewild</span><span className="ln" /></div>
-          <div className="bw-diag__phead">
-            <h2>Já fizemos isso 150 vezes. <span className="accent">O seu é o próximo.</span></h2>
-          </div>
-          <div className="bw-diag__proof">
+      <section className="bwh-sec" style={{ paddingBottom: 0 }}>
+        <div className="bwh-wrap">
+          <div className="bwh-srlabel"><span className="bwh-mono">Por que a Bewild · 03</span></div>
+          <h2 className="bwh-h2">Já fizemos isso 150 vezes. <em>O seu é o próximo.</em></h2>
+          <div className="bwd-stats">
             {STATS.map((s) => (
-              <div className="bw-diag__pstat" key={s.num + s.suf}>
+              <div className="bwd-stat" key={s.num + s.suf}>
                 <b>{s.num}<em>{s.suf}</em></b>
                 <span>{s.small}</span>
               </div>
             ))}
           </div>
-          <p className="bw-diag__pfine">Referências sujeitas ao escopo · detalhes na proposta e no contrato</p>
+          <p className="bwd-fine bwh-mono">Referências sujeitas ao escopo · detalhes na proposta e no contrato</p>
         </div>
       </section>
 
@@ -522,19 +506,16 @@ function DiagFaq() {
   const { items } = useFaq();
   if (items.length === 0) return null;
   return (
-    <section className="bw-diag__paper" id="faq" aria-labelledby="bw-diag-faq-title">
-      <div className="bw-diag__psec">
-        <div className="bw-diag__secmark"><span className="n">04</span><span className="t">Perguntas</span><span className="ln" /></div>
-        <div className="bw-diag__phead"><h2 id="bw-diag-faq-title">O que todo investidor <span className="accent">pergunta.</span></h2></div>
-        <div className="bw-diag__faqlist" itemScope itemType="https://schema.org/FAQPage">
+    <section className="bwh-sec" id="faq" aria-labelledby="bw-diag-faq-title">
+      <div className="bwh-wrap" style={{ maxWidth: 960 }}>
+        <div className="bwh-srlabel"><span className="bwh-mono">Perguntas · 04</span></div>
+        <h2 id="bw-diag-faq-title" className="bwh-h2">O que todo investidor <em>pergunta.</em></h2>
+        <div className="bwh-faq" itemScope itemType="https://schema.org/FAQPage">
           {items.map((item) => (
-            <details key={item.id} className="bw-diag__qi" itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
-              <summary className="bw-diag__qq">
-                <span itemProp="name">{item.question}</span>
-                <span className="pm" aria-hidden="true">＋</span>
-              </summary>
-              <div className="bw-diag__qa" itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
-                <span itemProp="text">{item.answer}</span>
+            <details key={item.id} itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
+              <summary itemProp="name">{item.question}</summary>
+              <div itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
+                <p itemProp="text">{item.answer}</p>
               </div>
             </details>
           ))}
@@ -546,17 +527,16 @@ function DiagFaq() {
 
 function CtaFinal({ waUrl, onForm }: { waUrl: string; onForm: () => void }) {
   return (
-    <section className="bw-diag__ctafinal" aria-label="Solicitar diagnóstico">
-      <div className="gridbg" aria-hidden="true" />
-      <div className="inner">
-        <p className="bw-diag__eyebrow center">Diagnóstico gratuito · sem compromisso</p>
-        <h2>Pronto pra ver seu<br />studio <span className="accent">rendendo?</span></h2>
-        <p className="ct-sub">Leva menos de dois minutos pra preencher a ficha. O resto do trabalho fica com a gente.</p>
-        <div className="ct-act">
-          <button type="button" className="bw-diag__btn cyan" onClick={onForm}>Preencher a ficha <IconArrowUp /></button>
-          <a className="bw-diag__btn ghost" href={waUrl} target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a>
+    <section className="bwh-sec bwh-sec--dark" aria-label="Solicitar diagnóstico">
+      <div className="bwh-wrap" style={{ maxWidth: 900, textAlign: "center" }}>
+        <p className="bwh-mono" style={{ color: "var(--dink2)", margin: "0 0 24px" }}>Diagnóstico gratuito · sem compromisso</p>
+        <h2 className="bwh-h2" style={{ margin: "0 auto 24px", color: "#fff" }}>Pronto pra ver seu<br />studio <em>rendendo?</em></h2>
+        <p style={{ color: "var(--dink2)", fontSize: "clamp(16px,1.5vw,19px)", lineHeight: 1.55, maxWidth: 560, margin: "0 auto 32px" }}>Leva menos de dois minutos pra preencher a ficha. O resto do trabalho fica com a gente.</p>
+        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
+          <button type="button" className="bwh-btn bwh-btn--invert" onClick={onForm}>Preencher a ficha <IconArrowUp /></button>
+          <a className="bwh-btn bwh-btn--ghostdark" href={waUrl} target="_blank" rel="noopener noreferrer">Falar no WhatsApp <span className="bwh-ar">→</span></a>
         </div>
-        <div className="ct-rea">Atendimento de gente real · retorno rápido · 150+ studios entregues</div>
+        <p className="bwh-mono" style={{ color: "var(--dink2)", marginTop: 24 }}>Atendimento de gente real · retorno rápido · 150+ studios entregues</p>
       </div>
     </section>
   );

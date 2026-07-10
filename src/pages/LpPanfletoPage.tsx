@@ -181,7 +181,7 @@ export default function LpPanfletoPage() {
         <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
       </div>
       <div className="bw-titleblock" aria-hidden="true">
-        BEWILD · GRUPO BWILD<br /><b>BW-PANFLETO</b><br />SÃO PAULO · BR
+        BEWILD<br /><b>BW-PANFLETO</b><br />SÃO PAULO · BR
       </div>
       <div className="bw-sheetno" aria-hidden="true">{sheetNo}</div>
 
@@ -189,7 +189,7 @@ export default function LpPanfletoPage() {
       <section className="hero" aria-label="Reforma turn-key Bewild">
         <div className="hero-grid" aria-hidden="true" />
         <div className="hero-top">
-          <img className="hero-logo" src="/brand/bewild-logo-cropped.png" alt="Bewild · Grupo Bwild" />
+          <img className="hero-logo" src="/brand/bewild-logo-cropped.png" alt="Bewild" />
           <div className="hero-eyebrow">
             <span className="mono tag">Reforma turn-key de studios · São Paulo</span>
           </div>
@@ -380,7 +380,7 @@ export default function LpPanfletoPage() {
 
       {/* FOOTER MÍNIMO */}
       <footer className="lp-foot">
-        BEWILD · GRUPO BWILD · SÃO PAULO · BR
+        BEWILD · SÃO PAULO · BR
       </footer>
 
       {/* STICKY MOBILE */}

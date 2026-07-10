@@ -1,25 +1,10 @@
 /**
- * SiteFooter — rodapé "prancheta" (Utsubo) unificado das páginas públicas.
- * Cena de fechamento: assinatura + tagline, navegação, contato e a ficha
- * técnica (carimbo de prancha). Autocontido. Marca sempre "Bewild".
+ * SiteFooter — rodapé claro unificado (DS bwh). Autocontido em site-footer.css.
+ * Marca sempre "Bewild". A holding não aparece no rodapé.
  */
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import { openCookiePreferences } from "@/lib/cookieConsent";
 import "@/styles/site-footer.css";
-
-function BrandLockup() {
-  return (
-    <img
-      src="/brand/bewild-logo-cropped.png"
-      alt="Bewild"
-      className="bw-foot__logo"
-      width={87}
-      height={30}
-      decoding="async"
-      loading="lazy"
-    />
-  );
-}
 
 export default function SiteFooter() {
   const year = new Date().getFullYear();
@@ -27,8 +12,9 @@ export default function SiteFooter() {
     <footer className="bw-foot">
       <div className="bw-foot__top">
         <div className="bw-foot__brand">
-          <a href="/" aria-label="Bewild — início">
-            <BrandLockup />
+          <a href="/" aria-label="Bewild — início" className="bw-foot__brandlink">
+            {/* TODO: substituir por arquivo oficial do logotipo quando disponível */}
+            <span className="bw-foot__wordmark">Bewild</span>
           </a>
           <p className="bw-foot__tagline">
             Built by the wild ones. <em>Be wild.</em>
@@ -42,8 +28,8 @@ export default function SiteFooter() {
         <nav className="bw-foot__nav" aria-label="Rodapé — navegação">
           <h2 className="bw-foot__col">Navegação</h2>
           <ul>
-            <li><a href="/#fazemos">O que fazemos</a></li>
-            <li><a href="/#fazemos">Como funciona</a></li>
+            <li><a href="/#como-funciona">O que fazemos</a></li>
+            <li><a href="/#como-funciona">Como funciona</a></li>
             <li><a href="/portfolio">Portfólio</a></li>
             <li><a href="/conteudos">Conteúdos</a></li>
             <li><a href="/diagnostico">Diagnóstico</a></li>
@@ -68,14 +54,14 @@ export default function SiteFooter() {
       </div>
 
       <div className="bw-foot__spec" aria-label="Ficha técnica">
-        <span>BEWILD · GRUPO BWILD</span>
+        <span>BEWILD</span>
         <span>{CONTACT.city}</span>
         <span>CNPJ 47.350.338/0001-37</span>
         <span>RESP. TÉCNICO · THIAGO DANTAS DO AMOR · CAU A162437-7</span>
       </div>
 
       <div className="bw-foot__bottom">
-        <p>© {year} Bewild · Grupo Bwild</p>
+        <p>© {year} Bewild</p>
         <p>Reforma completa de studios em São Paulo</p>
       </div>
     </footer>

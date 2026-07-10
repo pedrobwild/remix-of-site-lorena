@@ -57,7 +57,7 @@ export default function PrivacidadePage() {
             <div className="pt-body">
               <h2>Quem é o controlador dos dados</h2>
               <p>
-                <strong>Bewild</strong> (Grupo Bwild), estabelecida em São
+                <strong>Bewild</strong>, estabelecida em São
                 Paulo/SP{settings?.cnpj && <>, inscrita no CNPJ {settings.cnpj}</>},
                 é a controladora dos dados pessoais tratados por meio deste
                 site, sendo responsável pelas decisões sobre o tratamento

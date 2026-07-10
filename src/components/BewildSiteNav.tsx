@@ -25,7 +25,7 @@ const ITEMS: Item[] = [
   { label: "Por que a Bewild", homeHref: "#por-que-a-bewild", pageHref: "/#por-que-a-bewild" },
   { label: "Portfólio", homeHref: "/portfolio", pageHref: "/portfolio" },
   { label: "Conteúdos", homeHref: "/conteudos", pageHref: "/conteudos" },
-  { label: "FAQ", homeHref: "#faq", pageHref: "/#faq" },
+  { label: "FAQ", homeHref: "/faq", pageHref: "/faq" },
 ];
 
 const CLIENT_AREA_URL = "https://bwildworkflow.com";
