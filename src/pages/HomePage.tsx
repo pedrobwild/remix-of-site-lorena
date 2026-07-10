@@ -107,8 +107,6 @@ function Hero() {
         <div className="bwh-hero__scrim" />
       </div>
 
-      <div className="bwh-hero__ticker">São Paulo · 2026</div>
-
       <div className="bwh-hero__inner">
         <div className="bwh-hero__col">
           <h1>
@@ -122,10 +120,29 @@ function Hero() {
             href="/diagnostico"
             onClick={() => trackEvent("cta_click", { location: "hero", label: "solicitar_diagnostico" })}
           >
-            Solicitar diagnóstico <span className="bwh-ar" aria-hidden="true">⟶</span>
+            Solicitar diagnóstico <span className="bwh-ar" aria-hidden="true">→</span>
           </a>
+
+          {/* Timeline comprimida (Dia 0 → Dia 60) */}
+          <div className="bwh-tl" aria-hidden="true">
+            <div className="bwh-tl__p">
+              <span className="bwh-tl__dot" />
+              <span className="bwh-tl__d">Dia 0</span>
+              <span className="bwh-tl__l">assinatura</span>
+            </div>
+            <div className="bwh-tl__mid">
+              <b>a obra acontece do nosso lado</b>
+              <span>você acompanha pelo Bwild Workflow</span>
+            </div>
+            <div className="bwh-tl__p bwh-tl__p--r">
+              <span className="bwh-tl__dot" />
+              <span className="bwh-tl__d">≈ Dia 60</span>
+              <span className="bwh-tl__l">chaves na mão</span>
+            </div>
+          </div>
         </div>
       </div>
+
 
       <div className="bwh-hero__scrollhint" aria-hidden="true">
         <span>scroll</span>
