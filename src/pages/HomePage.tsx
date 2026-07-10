@@ -560,7 +560,7 @@ export default function HomePage() {
               />
             </div>
             <div className="bwh-proof__panel">
-              <span className="bwh-proof__word" aria-hidden="true">confiança</span>
+              <span className="bwh-bigquote" aria-hidden="true">“</span>
               <div className="bwh-proof__inner bwh-rv">
                 <span className="bwh-proof__count">Depoimento · 01 / 02</span>
                 <p className="bwh-proof__quote">“Uma empresa <em>humana</em>, do começo ao fim.”</p>
