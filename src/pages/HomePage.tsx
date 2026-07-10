@@ -449,7 +449,8 @@ export default function HomePage() {
               <span className="bwh-mono">Selecionados · 2024–2026</span>
             </div>
             <h2 id="s02h" className="bwh-sr-only">Studios que a Bewild já entregou em São Paulo.</h2>
-            <div className="bwh-projects">
+            <BeforeAfter3D />
+            <div className="bwh-projects" style={{ marginTop: 64 }}>
               {cards.map((c, i) => (
                 <a className="bwh-proj bwh-rv" href={c.href} key={c.href + i}>
                   <span className="bwh-proj__media">
