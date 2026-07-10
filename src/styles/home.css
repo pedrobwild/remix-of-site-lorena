@@ -254,10 +254,9 @@
   .bwh-sec{padding:clamp(64px,14vw,96px) 0}
   .bwh-srlabel{padding:24px 0 40px}
   
-  .bwh-hero__scrollhint{bottom:24px;left:20px;font-size:9px;letter-spacing:.2em}
-  .bwh-hero__scrollline{height:24px}
   .bwh-hero__inner{padding:0 20px 120px}
   .bwh-hero__controls{bottom:28px;right:20px}
+
   .bwh-list li{grid-template-columns:1fr;gap:8px;padding:26px 0}
   .bwh-projects{gap:26px}
   .bwh-split{grid-template-columns:1fr;gap:36px;margin-top:36px}
