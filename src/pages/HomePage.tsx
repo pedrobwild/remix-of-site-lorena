@@ -297,6 +297,54 @@ function PortalMock() {
   );
 }
 
+/* ============ Comparador "aprovado no 3D · entregue igual" ============ */
+function BeforeAfter3D() {
+  const [x, setX] = useState(50);
+  const trackedRef = useRef(false);
+  const onInput = (v: number) => {
+    setX(v);
+    if (!trackedRef.current) {
+      trackedRef.current = true;
+      trackEvent("comparador_interact", { location: "projetos" });
+    }
+  };
+  return (
+    <div className="bwh-cmpwrap bwh-rv">
+      <span className="bwh-cmpwrap__label">A prova · arraste para comparar</span>
+      <h3 className="bwh-cmpwrap__h">
+        Aprovado no 3D. <em>Entregue igual.</em>
+      </h3>
+      <span className="bwh-tag" style={{ marginBottom: 14 }}>
+        par ilustrativo · substituir pelo 3D aprovado e pela foto da entrega do mesmo projeto
+      </span>
+      <div className="bwh-cmp3d" style={{ ["--x" as string]: `${x}%` } as React.CSSProperties}>
+        <img className="bwh-cmp3d__img" src={cmp3dAfter.url} alt="Studio entregue" loading="lazy" />
+        <img className="bwh-cmp3d__img bwh-cmp3d__before" src={cmp3dBefore.url} alt="Render 3D aprovado do studio" loading="lazy" />
+        <span className="bwh-cmp3d__lab bwh-cmp3d__lab--l">Projeto 3D aprovado</span>
+        <span className="bwh-cmp3d__lab bwh-cmp3d__lab--r">Studio entregue</span>
+        <span className="bwh-cmp3d__line" aria-hidden="true" />
+        <span className="bwh-cmp3d__knob" aria-hidden="true">⇔</span>
+        <input
+          className="bwh-cmp3d__range"
+          type="range"
+          min={0}
+          max={100}
+          value={x}
+          onInput={(e) => onInput(Number((e.target as HTMLInputElement).value))}
+          onChange={(e) => onInput(Number(e.target.value))}
+          aria-label="Arraste para comparar o 3D aprovado com a entrega"
+        />
+      </div>
+      <div className="bwh-cmp3d__legend">
+        <span>O 3D que você aprovou antes da obra</span>
+        <span>O imóvel que você recebeu com as chaves</span>
+      </div>
+    </div>
+  );
+}
+
+
+
 /* ============ Loader de entrada (assinatura premium) ============ */
 function EntryLoader() {
   const [mounted, setMounted] = useState(() => {
