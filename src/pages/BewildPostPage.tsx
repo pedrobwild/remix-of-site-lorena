@@ -24,6 +24,7 @@ import {
 import { useBewildPost, useBewildRelatedPosts } from "@/lib/useBewildPost";
 import { navigate } from "@/lib/useHashRoute";
 import "@/styles/post.css";
+import "@/styles/conteudos.css";
 
 type Props = { slug: string };
 
