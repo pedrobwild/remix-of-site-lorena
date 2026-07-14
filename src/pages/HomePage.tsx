@@ -27,8 +27,8 @@ import projFallback1 from "@/assets/hero-slides/rodrigo-8.png.asset.json";
 import projFallback2 from "@/assets/hero-slides/marcos-10-4.png.asset.json";
 import projFallback3 from "@/assets/hero-slides/premium-7-4.png.asset.json";
 // TODO: par ilustrativo — trocar por 3D aprovado + foto de entrega do MESMO projeto
-import cmp3dBefore from "@/assets/hero-slides/rodrigo-1-1.png.asset.json";
-import cmp3dAfter from "@/assets/hero-slides/rodrigo-8.png.asset.json";
+import cmp3dBefore from "@/assets/comparador/vivian-projeto-3d.jpg.asset.json";
+import cmp3dAfter from "@/assets/comparador/vivian-reforma-entregue.jpg.asset.json";
 import finalBg from "@/assets/hero-slides/erik-03-11.png.asset.json";
 import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.json";
 import depoimentoPoster from "@/assets/hero-slides/rodrigo-15-1.png.asset.json";
