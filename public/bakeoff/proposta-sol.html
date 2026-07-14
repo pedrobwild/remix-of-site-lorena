@@ -1,0 +1,2229 @@
+<!doctype html>
+<!-- Conceito: A obra cabe em um contrato. Prefixo de classes: bwr-. -->
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Reforma completa de studios em São Paulo. Projeto, obra, marcenaria, mobiliário e entrega num processo único.">
+  <title>Bewild | Reforma completa de studios em São Paulo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bwr-paper: #f7f3ea;
+      --bwr-paper-2: #ece5d8;
+      --bwr-paper-3: #ded4c4;
+      --bwr-ink: #171816;
+      --bwr-ink-soft: #51534e;
+      --bwr-navy: #0b2342;
+      --bwr-navy-2: #11355b;
+      --bwr-clay: #b74f32;
+      --bwr-line: rgba(23, 24, 22, .16);
+      --bwr-white: #fffdf8;
+      --bwr-max: 1440px;
+      --bwr-pad: clamp(22px, 4.3vw, 72px);
+      --bwr-header: 78px;
+      --bwr-ease: cubic-bezier(.2,.72,.2,1);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; background: var(--bwr-paper); }
+    body {
+      margin: 0;
+      color: var(--bwr-ink);
+      background: var(--bwr-paper);
+      font-family: "Manrope", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+    body.bwr-menu-open { overflow: hidden; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    img { display: block; width: 100%; }
+    a { color: inherit; }
+    ::selection { color: var(--bwr-white); background: var(--bwr-navy); }
+
+    .bwr-site {
+      min-width: 320px;
+      overflow-x: clip;
+    }
+
+    .bwr-skip {
+      position: fixed;
+      z-index: 1000;
+      top: 10px;
+      left: 10px;
+      padding: 12px 16px;
+      color: var(--bwr-white);
+      background: var(--bwr-navy);
+      font: 600 12px/1 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      transform: translateY(-160%);
+      transition: transform .2s ease;
+    }
+    .bwr-skip:focus { transform: translateY(0); }
+
+    .bwr-scroll {
+      position: fixed;
+      z-index: 100;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: var(--bwr-clay);
+      pointer-events: none;
+    }
+
+    .bwr-header {
+      position: fixed;
+      z-index: 90;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--bwr-header);
+      display: grid;
+      grid-template-columns: minmax(130px, 1fr) auto minmax(180px, 1fr);
+      align-items: center;
+      gap: 28px;
+      padding: 0 var(--bwr-pad);
+      color: var(--bwr-ink);
+      background: rgba(247, 243, 234, .94);
+      border-bottom: 1px solid var(--bwr-line);
+      transition: color .3s ease, background .3s ease, border-color .3s ease;
+    }
+    .bwr-header.bwr-header-on-hero {
+      color: var(--bwr-white);
+      background: transparent;
+      border-bottom-color: rgba(255,255,255,.25);
+          }
+    .bwr-brand {
+      width: max-content;
+      color: inherit;
+      text-decoration: none;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -.05em;
+    }
+    .bwr-nav {
+      display: flex;
+      align-items: center;
+      gap: clamp(18px, 2.2vw, 38px);
+    }
+    .bwr-nav a {
+      position: relative;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .02em;
+    }
+    .bwr-nav a::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: -8px;
+      left: 0;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform .25s var(--bwr-ease);
+    }
+    .bwr-nav a:hover::after,
+    .bwr-nav a:focus-visible::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    .bwr-header-action {
+      justify-self: end;
+    }
+    .bwr-menu-button {
+      display: none;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      color: inherit;
+      background: transparent;
+      border: 1px solid currentColor;
+      cursor: pointer;
+    }
+    .bwr-menu-button span {
+      display: block;
+      width: 18px;
+      height: 1px;
+      margin: 5px auto;
+      background: currentColor;
+      transition: transform .25s ease, opacity .25s ease;
+    }
+    .bwr-menu-open .bwr-menu-button span:first-child { transform: translateY(3px) rotate(45deg); }
+    .bwr-menu-open .bwr-menu-button span:last-child { transform: translateY(-3px) rotate(-45deg); }
+
+    .bwr-button {
+      display: inline-flex;
+      min-height: 52px;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding: 0 22px;
+      color: var(--bwr-white);
+      background: var(--bwr-navy);
+      border: 1px solid var(--bwr-navy);
+      border-radius: 0;
+      text-decoration: none;
+      font: 600 11px/1 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      transition: color .25s ease, background .25s ease, transform .25s ease;
+    }
+    .bwr-button::after { content: "→"; font-size: 16px; }
+    .bwr-button:hover,
+    .bwr-button:focus-visible {
+      color: var(--bwr-navy);
+      background: transparent;
+      transform: translateY(-2px);
+    }
+    .bwr-button-on-dark {
+      color: var(--bwr-navy);
+      background: var(--bwr-white);
+      border-color: var(--bwr-white);
+    }
+    .bwr-button-on-dark:hover,
+    .bwr-button-on-dark:focus-visible {
+      color: var(--bwr-white);
+      background: transparent;
+    }
+    .bwr-header-on-hero .bwr-header-action {
+      color: var(--bwr-navy);
+      background: var(--bwr-white);
+      border-color: var(--bwr-white);
+    }
+    .bwr-header-on-hero .bwr-header-action:hover,
+    .bwr-header-on-hero .bwr-header-action:focus-visible {
+      color: var(--bwr-white);
+      background: transparent;
+    }
+
+    .bwr-spine {
+      position: fixed;
+      z-index: 70;
+      top: var(--bwr-header);
+      bottom: 0;
+      left: 0;
+      width: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0;
+      color: rgba(255,255,255,.7);
+      background: var(--bwr-navy);
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font: 500 9px/1 "JetBrains Mono", monospace;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .bwr-wrap {
+      width: min(var(--bwr-max), 100%);
+      margin: 0 auto;
+      padding-right: var(--bwr-pad);
+      padding-left: calc(var(--bwr-pad) + 32px);
+    }
+
+    .bwr-hero {
+      position: relative;
+      min-height: 900px;
+      display: grid;
+      align-items: stretch;
+      color: var(--bwr-white);
+      background: var(--bwr-navy);
+      isolation: isolate;
+    }
+    .bwr-hero::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(5,16,31,.92) 0%, rgba(5,16,31,.83) 38%, rgba(5,16,31,.22) 68%, rgba(5,16,31,.08) 100%);
+    }
+    .bwr-hero-grid {
+      position: relative;
+      z-index: 2;
+      width: min(var(--bwr-max), 100%);
+      min-height: 900px;
+      margin: 0 auto;
+      padding: calc(var(--bwr-header) + 76px) var(--bwr-pad) 66px calc(var(--bwr-pad) + 32px);
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(520px, 1.1fr);
+      gap: clamp(44px, 6vw, 100px);
+      align-items: end;
+    }
+    .bwr-hero-copy {
+      position: relative;
+      z-index: 3;
+      max-width: 720px;
+      padding-bottom: 38px;
+    }
+    .bwr-hero-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      font: 500 10px/1.4 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+    .bwr-hero-note::before {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: currentColor;
+    }
+    .bwr-hero h1 {
+      max-width: 700px;
+      margin: 0;
+      font-size: clamp(54px, 5.55vw, 92px);
+      font-weight: 600;
+      line-height: .94;
+      letter-spacing: -.055em;
+    }
+    .bwr-hero h1 em {
+      display: block;
+      margin-top: .16em;
+      font-family: "Newsreader", Georgia, serif;
+      font-weight: 400;
+      line-height: .96;
+      letter-spacing: -.035em;
+    }
+    .bwr-hero-sub {
+      max-width: 590px;
+      margin: 30px 0 34px;
+      color: rgba(255,255,255,.83);
+      font-size: clamp(17px, 1.35vw, 21px);
+      line-height: 1.55;
+    }
+    .bwr-hero-plates {
+      position: absolute;
+      z-index: -2;
+      inset: 0 0 0 39%;
+      overflow: hidden;
+      background: #1a2634;
+    }
+    .bwr-hero-plate {
+      position: absolute;
+      overflow: hidden;
+      border-left: 1px solid rgba(255,255,255,.26);
+      border-bottom: 1px solid rgba(255,255,255,.26);
+    }
+    .bwr-hero-plate img {
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(.8) contrast(1.02);
+      transform: scale(1.035);
+      transition: transform 1.2s var(--bwr-ease), filter .6s ease;
+    }
+    .bwr-hero-plate:hover img {
+      filter: saturate(1);
+      transform: scale(1);
+    }
+    .bwr-hero-plate span {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      color: var(--bwr-white);
+      background: rgba(11,35,66,.78);
+      font: 500 9px/1 "JetBrains Mono", monospace;
+    }
+    .bwr-hero-plate:nth-child(1) { inset: 0 36% 37% 0; }
+    .bwr-hero-plate:nth-child(2) { inset: 0 0 50% 64%; }
+    .bwr-hero-plate:nth-child(3) { inset: 63% 36% 0 0; }
+    .bwr-hero-plate:nth-child(4) { inset: 50% 0 0 64%; }
+    .bwr-hero-index {
+      position: absolute;
+      z-index: 4;
+      right: var(--bwr-pad);
+      bottom: 32px;
+      display: flex;
+      gap: 8px;
+      color: rgba(255,255,255,.7);
+      font: 500 9px/1 "JetBrains Mono", monospace;
+    }
+    .bwr-hero-index span {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.35);
+    }
+
+    .bwr-chapter {
+      position: relative;
+      padding: clamp(92px, 10vw, 156px) 0;
+      border-top: 1px solid var(--bwr-line);
+    }
+    .bwr-chapter-alt { background: var(--bwr-paper-2); }
+    .bwr-chapter-dark {
+      color: var(--bwr-white);
+      background: var(--bwr-navy);
+      border-top-color: rgba(255,255,255,.18);
+    }
+    .bwr-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: clamp(34px, 4vw, 62px);
+      font: 500 10px/1.4 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .11em;
+    }
+    .bwr-label-row::after {
+      content: "";
+      flex: 1;
+      order: 1;
+      height: 1px;
+      background: currentColor;
+      opacity: .22;
+    }
+    .bwr-label-row > *:first-child { order: 0; }
+    .bwr-label-row > *:last-child { order: 2; text-align: right; }
+    .bwr-section-title {
+      max-width: 1180px;
+      margin: 0 0 clamp(54px, 6vw, 92px);
+      font-family: "Newsreader", Georgia, serif;
+      font-size: clamp(42px, 5.2vw, 80px);
+      font-weight: 400;
+      line-height: 1.01;
+      letter-spacing: -.035em;
+    }
+    .bwr-section-title strong {
+      font-family: "Manrope", sans-serif;
+      font-weight: 600;
+      letter-spacing: -.05em;
+    }
+
+    .bwr-scope {
+      display: grid;
+      border-top: 1px solid var(--bwr-line);
+    }
+    .bwr-scope-item {
+      display: grid;
+      grid-template-columns: 92px minmax(230px, .7fr) minmax(300px, 1.15fr);
+      gap: clamp(24px, 4vw, 68px);
+      align-items: baseline;
+      padding: 34px 0;
+      border-bottom: 1px solid var(--bwr-line);
+      transition: padding .3s var(--bwr-ease), background .3s ease;
+    }
+    .bwr-scope-item:hover { padding-right: 18px; padding-left: 18px; background: rgba(255,255,255,.35); }
+    .bwr-scope-number {
+      color: var(--bwr-clay);
+      font: 500 12px/1 "JetBrains Mono", monospace;
+    }
+    .bwr-scope h3 {
+      margin: 0;
+      font-size: clamp(20px, 1.9vw, 28px);
+      font-weight: 600;
+      line-height: 1.18;
+      letter-spacing: -.03em;
+    }
+    .bwr-scope p {
+      margin: 0;
+      color: var(--bwr-ink-soft);
+      font-size: 15px;
+      line-height: 1.72;
+    }
+
+    .bwr-fidelity {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: stretch;
+      margin-bottom: clamp(46px, 6vw, 88px);
+      color: var(--bwr-white);
+      background: var(--bwr-navy);
+    }
+    .bwr-fidelity-side {
+      min-height: 270px;
+      display: grid;
+      align-content: space-between;
+      padding: clamp(28px, 3vw, 46px);
+    }
+    .bwr-fidelity-side:first-child { background: var(--bwr-navy-2); }
+    .bwr-fidelity-label {
+      font: 500 10px/1.3 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+    .bwr-fidelity-side p {
+      max-width: 360px;
+      margin: 0;
+      color: rgba(255,255,255,.72);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .bwr-fidelity-core {
+      width: clamp(210px, 20vw, 330px);
+      display: grid;
+      place-items: center;
+      padding: 32px;
+      color: var(--bwr-ink);
+      background: var(--bwr-paper-3);
+      text-align: center;
+    }
+    .bwr-fidelity-core h3 {
+      margin: 0;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: clamp(34px, 3.6vw, 58px);
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: -.035em;
+    }
+
+    .bwr-projects {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+    }
+    .bwr-project {
+      position: relative;
+      min-height: 520px;
+      overflow: hidden;
+      color: var(--bwr-white);
+      background: var(--bwr-navy);
+    }
+    .bwr-project:nth-child(1) { grid-column: span 5; }
+    .bwr-project:nth-child(2) { grid-column: span 4; }
+    .bwr-project:nth-child(3) { grid-column: span 3; }
+    .bwr-project img {
+      height: 100%;
+      object-fit: cover;
+      transition: transform .9s var(--bwr-ease), filter .5s ease;
+    }
+    .bwr-project::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 42%, rgba(6,18,31,.88) 100%);
+    }
+    .bwr-project:hover img { transform: scale(1.035); filter: saturate(1.05); }
+    .bwr-project-copy {
+      position: absolute;
+      z-index: 2;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      padding: 28px;
+    }
+    .bwr-project-copy h3 {
+      margin: 0 0 8px;
+      font-size: clamp(19px, 1.7vw, 25px);
+      line-height: 1.2;
+      letter-spacing: -.025em;
+    }
+    .bwr-project-copy p,
+    .bwr-project-copy a {
+      margin: 0;
+      color: rgba(255,255,255,.72);
+      font: 500 10px/1.5 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .bwr-project-copy a {
+      display: inline-block;
+      margin-top: 18px;
+      color: var(--bwr-white);
+      text-decoration: none;
+    }
+    .bwr-project-copy a:hover,
+    .bwr-project-copy a:focus-visible { text-decoration: underline; text-underline-offset: 4px; }
+    .bwr-projects-action { margin-top: 34px; }
+
+    .bwr-responsibility-intro {
+      max-width: 1100px;
+      margin-bottom: clamp(60px, 7vw, 104px);
+      font-family: "Newsreader", Georgia, serif;
+      font-size: clamp(38px, 4.8vw, 72px);
+      font-weight: 400;
+      line-height: 1.04;
+      letter-spacing: -.035em;
+    }
+    .bwr-responsibility {
+      display: grid;
+      grid-template-columns: .72fr 1.58fr;
+      border: 1px solid rgba(255,255,255,.22);
+    }
+    .bwr-responsibility-column {
+      padding: clamp(28px, 4vw, 58px);
+    }
+    .bwr-responsibility-column + .bwr-responsibility-column {
+      border-left: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.055);
+    }
+    .bwr-responsibility h3,
+    .bwr-included h3 {
+      margin: 0 0 30px;
+      font: 500 11px/1.35 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+    .bwr-responsibility ul,
+    .bwr-included ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .bwr-responsibility li,
+    .bwr-included li {
+      position: relative;
+      padding: 16px 0 16px 32px;
+      border-top: 1px solid rgba(255,255,255,.16);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .bwr-responsibility li::before,
+    .bwr-included li::before {
+      content: "";
+      position: absolute;
+      top: 22px;
+      left: 0;
+      width: 10px;
+      height: 10px;
+      border: 1px solid var(--bwr-white);
+    }
+    .bwr-included {
+      margin-top: 28px;
+      padding: clamp(28px, 4vw, 58px);
+      color: var(--bwr-ink);
+      background: var(--bwr-paper);
+    }
+    .bwr-included li {
+      border-top-color: var(--bwr-line);
+    }
+    .bwr-included li::before { border-color: var(--bwr-clay); background: var(--bwr-clay); }
+    .bwr-pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 28px;
+      border: 1px solid rgba(255,255,255,.22);
+    }
+    .bwr-pillar {
+      min-height: 260px;
+      padding: clamp(26px, 3.2vw, 44px);
+    }
+    .bwr-pillar + .bwr-pillar { border-left: 1px solid rgba(255,255,255,.22); }
+    .bwr-pillar span {
+      color: rgba(255,255,255,.55);
+      font: 500 11px/1 "JetBrains Mono", monospace;
+    }
+    .bwr-pillar h3 {
+      margin: 54px 0 14px;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+    .bwr-pillar p {
+      margin: 0;
+      color: rgba(255,255,255,.68);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .bwr-technical {
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 1px solid rgba(255,255,255,.22);
+      color: rgba(255,255,255,.58);
+      font: 500 10px/1.7 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+    }
+
+    .bwr-workflow-grid {
+      display: grid;
+      grid-template-columns: minmax(320px, .68fr) minmax(520px, 1.32fr);
+      gap: clamp(46px, 7vw, 110px);
+      align-items: center;
+    }
+    .bwr-workflow-copy h2 {
+      margin: 0;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: clamp(46px, 5.4vw, 82px);
+      font-weight: 400;
+      line-height: .98;
+      letter-spacing: -.04em;
+    }
+    .bwr-workflow-copy p {
+      max-width: 600px;
+      margin: 28px 0;
+      color: var(--bwr-ink-soft);
+      font-size: 16px;
+      line-height: 1.72;
+    }
+    .bwr-text-link {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      color: var(--bwr-navy);
+      text-decoration: none;
+      font: 600 11px/1.3 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .bwr-text-link:hover,
+    .bwr-text-link:focus-visible { text-decoration: underline; text-underline-offset: 5px; }
+
+    .bwr-portal-shell {
+      padding: 12px;
+      background: var(--bwr-navy);
+      box-shadow: 18px 18px 0 rgba(11,35,66,.13);
+    }
+    .bwr-portal {
+      color: #273244;
+      background: #f6f7f8;
+      border: 1px solid rgba(255,255,255,.25);
+      font-family: "Manrope", sans-serif;
+    }
+    .bwr-portal-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 18px;
+      color: #fff;
+      background: #102944;
+      font: 600 10px/1 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .bwr-portal-tabs { display: flex; gap: 8px; }
+    .bwr-portal-tab {
+      padding: 10px 12px;
+      color: rgba(255,255,255,.62);
+      background: transparent;
+      border: 1px solid transparent;
+      font: inherit;
+    }
+    .bwr-portal-tab.bwr-is-active {
+      color: #fff;
+      border-color: rgba(255,255,255,.28);
+      background: rgba(255,255,255,.07);
+    }
+    .bwr-portal-main { padding: 22px; }
+    .bwr-portal-project {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid #dfe3e7;
+    }
+    .bwr-portal-project h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      letter-spacing: -.02em;
+    }
+    .bwr-portal-project p {
+      margin: 0;
+      color: #667080;
+      font-size: 12px;
+    }
+    .bwr-status {
+      display: inline-flex;
+      gap: 7px;
+      align-items: center;
+      padding: 8px 10px;
+      color: #154a2d;
+      background: #dcefe3;
+      border: 1px solid #bdd9c8;
+      font: 600 9px/1 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .bwr-status::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      background: #2a7c4d;
+      border-radius: 50%;
+    }
+    .bwr-portal-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      margin: 18px 0;
+      border: 1px solid #dfe3e7;
+    }
+    .bwr-portal-summary div {
+      min-height: 80px;
+      padding: 14px;
+      background: #fff;
+    }
+    .bwr-portal-summary div + div { border-left: 1px solid #dfe3e7; }
+    .bwr-portal-summary span {
+      display: block;
+      margin-bottom: 8px;
+      color: #7b8491;
+      font: 500 9px/1.3 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .bwr-portal-summary strong {
+      font-size: 19px;
+      letter-spacing: -.03em;
+    }
+    .bwr-chart {
+      padding: 16px;
+      background: #fff;
+      border: 1px solid #dfe3e7;
+    }
+    .bwr-chart-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .bwr-chart-head strong { font-size: 13px; }
+    .bwr-chart-legend {
+      display: flex;
+      gap: 14px;
+      color: #6d7682;
+      font: 500 9px/1 "JetBrains Mono", monospace;
+    }
+    .bwr-chart-legend span::before {
+      content: "";
+      display: inline-block;
+      width: 16px;
+      height: 2px;
+      margin-right: 6px;
+      vertical-align: middle;
+      background: #2b5f96;
+    }
+    .bwr-chart-legend span:last-child::before {
+      background: #a3abb4;
+      border-top: 1px dashed #fff;
+    }
+    .bwr-chart svg {
+      width: 100%;
+      height: auto;
+      overflow: visible;
+    }
+    .bwr-stages {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .bwr-stage {
+      display: grid;
+      grid-template-columns: minmax(150px, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 11px 12px;
+      background: #fff;
+      border: 1px solid #dfe3e7;
+      font-size: 11px;
+    }
+    .bwr-stage small {
+      color: #6f7884;
+      font: 500 8px/1.3 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .bwr-stage-progress {
+      grid-column: 1 / -1;
+      height: 3px;
+      background: #e9ecef;
+    }
+    .bwr-stage-progress i {
+      display: block;
+      width: var(--progress, 0%);
+      height: 100%;
+      background: #244f7f;
+    }
+    .bwr-portal-caption {
+      margin-top: 16px;
+      color: var(--bwr-ink-soft);
+      font: 500 9px/1.4 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .bwr-proof-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .bwr-proof-card {
+      position: relative;
+      background: var(--bwr-white);
+      border: 1px solid var(--bwr-line);
+    }
+    .bwr-proof-card-copy {
+      padding: clamp(28px, 4vw, 52px);
+    }
+    .bwr-proof-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 30px;
+      color: var(--bwr-ink-soft);
+      font: 500 10px/1.4 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+    }
+    .bwr-video {
+      position: relative;
+      aspect-ratio: 16 / 11;
+      overflow: hidden;
+      color: var(--bwr-white);
+      background: var(--bwr-navy);
+    }
+    .bwr-video img {
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(.76);
+      transition: transform .9s var(--bwr-ease);
+    }
+    .bwr-video::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(5,16,31,.08), rgba(5,16,31,.56));
+    }
+    .bwr-video:hover img { transform: scale(1.02); }
+    .bwr-video-button {
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      left: 50%;
+      width: 78px;
+      height: 78px;
+      display: grid;
+      place-items: center;
+      color: var(--bwr-navy);
+      background: var(--bwr-white);
+      border: 0;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      transition: transform .25s ease, background .25s ease;
+    }
+    .bwr-video-button::before {
+      content: "";
+      margin-left: 5px;
+      border-top: 9px solid transparent;
+      border-bottom: 9px solid transparent;
+      border-left: 14px solid currentColor;
+    }
+    .bwr-video-button:hover,
+    .bwr-video-button:focus-visible { transform: translate(-50%, -50%) scale(1.06); }
+    .bwr-video.bwr-is-playing .bwr-video-button::before {
+      width: 14px;
+      height: 18px;
+      border: 0;
+      background: linear-gradient(90deg, currentColor 0 5px, transparent 5px 9px, currentColor 9px 14px);
+    }
+    .bwr-video-progress {
+      position: absolute;
+      z-index: 2;
+      right: 24px;
+      bottom: 24px;
+      left: 24px;
+      height: 2px;
+      overflow: hidden;
+      background: rgba(255,255,255,.42);
+    }
+    .bwr-video-progress::after {
+      content: "";
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--bwr-white);
+    }
+    .bwr-video.bwr-is-playing .bwr-video-progress::after {
+      width: 54%;
+      transition: width 8s linear;
+    }
+    .bwr-proof-card h3 {
+      max-width: 620px;
+      margin: 0 0 18px;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: clamp(34px, 3.7vw, 56px);
+      font-weight: 400;
+      line-height: 1.02;
+      letter-spacing: -.035em;
+    }
+    .bwr-proof-card-copy > p {
+      margin: 0;
+      color: var(--bwr-ink-soft);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+    .bwr-result-mark {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 22px;
+      align-items: center;
+      margin-bottom: 28px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--bwr-line);
+    }
+    .bwr-result-mark strong {
+      display: grid;
+      width: 96px;
+      height: 96px;
+      place-items: center;
+      color: var(--bwr-white);
+      background: var(--bwr-clay);
+      font: 600 28px/1 "Manrope", sans-serif;
+    }
+    .bwr-result-mark span {
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: -.02em;
+    }
+    .bwr-result-copy {
+      margin: 0 0 26px !important;
+    }
+    .bwr-result-quote {
+      margin: 0 0 34px !important;
+      color: var(--bwr-ink) !important;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 25px !important;
+      line-height: 1.25 !important;
+    }
+    .bwr-screens {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 0 clamp(28px, 4vw, 52px) clamp(28px, 4vw, 52px);
+    }
+    .bwr-screen figure { margin: 0; }
+    .bwr-screen img {
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      object-position: top;
+      border: 1px solid var(--bwr-line);
+    }
+    .bwr-screen figcaption {
+      margin-top: 10px;
+      color: var(--bwr-ink-soft);
+      font: 500 9px/1.35 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+
+    .bwr-objectives {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--bwr-line);
+      border-bottom: 1px solid var(--bwr-line);
+    }
+    .bwr-objective {
+      position: relative;
+      min-height: 510px;
+      display: grid;
+      align-content: space-between;
+      padding: clamp(30px, 4vw, 54px);
+      overflow: hidden;
+      background: var(--bwr-paper);
+      transition: color .35s ease, background .35s ease;
+    }
+    .bwr-objective + .bwr-objective { border-left: 1px solid var(--bwr-line); }
+    .bwr-objective::before {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 8px;
+      background: var(--bwr-navy);
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform .35s var(--bwr-ease);
+    }
+    .bwr-objective:hover {
+      color: var(--bwr-white);
+      background: var(--bwr-navy);
+    }
+    .bwr-objective:hover::before { transform: scaleY(1); }
+    .bwr-objective-number {
+      color: var(--bwr-clay);
+      font: 500 12px/1 "JetBrains Mono", monospace;
+    }
+    .bwr-objective h3 {
+      margin: 0 0 22px;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: clamp(44px, 4.6vw, 68px);
+      font-weight: 400;
+      line-height: .95;
+      letter-spacing: -.04em;
+    }
+    .bwr-objective p {
+      max-width: 420px;
+      margin: 0;
+      color: var(--bwr-ink-soft);
+      font-size: 15px;
+      line-height: 1.72;
+      transition: color .35s ease;
+    }
+    .bwr-objective:hover p { color: rgba(255,255,255,.72); }
+
+    .bwr-compare-shell {
+      overflow-x: auto;
+      border: 1px solid var(--bwr-line);
+      background: var(--bwr-white);
+    }
+    .bwr-compare {
+      width: 100%;
+      min-width: 980px;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    .bwr-compare th,
+    .bwr-compare td {
+      padding: 22px 20px;
+      border-right: 1px solid var(--bwr-line);
+      border-bottom: 1px solid var(--bwr-line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bwr-compare th {
+      color: var(--bwr-ink-soft);
+      font: 600 10px/1.4 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .bwr-compare th:first-child,
+    .bwr-compare td:first-child { width: 20%; font-weight: 600; }
+    .bwr-compare th:last-child,
+    .bwr-compare td:last-child {
+      color: var(--bwr-white);
+      background: var(--bwr-navy);
+      border-right: 0;
+    }
+    .bwr-compare tr:last-child td { border-bottom: 0; }
+    .bwr-compare-note {
+      max-width: 1040px;
+      margin: 34px 0 0;
+      color: var(--bwr-ink-soft);
+      font-size: 15px;
+      line-height: 1.72;
+    }
+
+    .bwr-manifesto {
+      position: relative;
+      min-height: 820px;
+      display: grid;
+      align-items: center;
+      color: var(--bwr-white);
+      background: #11130f;
+      overflow: hidden;
+    }
+    .bwr-manifesto::before {
+      content: "BEWILD";
+      position: absolute;
+      right: -4vw;
+      bottom: -8vw;
+      color: rgba(255,255,255,.035);
+      font-size: clamp(150px, 25vw, 420px);
+      font-weight: 800;
+      line-height: .8;
+      letter-spacing: -.09em;
+      pointer-events: none;
+    }
+    .bwr-manifesto .bwr-wrap { position: relative; z-index: 2; }
+    .bwr-manifesto-copy {
+      max-width: 1180px;
+      margin: 0;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: clamp(40px, 5.3vw, 82px);
+      font-weight: 400;
+      line-height: 1.02;
+      letter-spacing: -.035em;
+    }
+    .bwr-manifesto-tag {
+      display: inline-block;
+      margin-top: 46px;
+      padding: 13px 0;
+      border-top: 1px solid rgba(255,255,255,.5);
+      border-bottom: 1px solid rgba(255,255,255,.5);
+      font: 500 10px/1.4 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .bwr-manifesto-close {
+      margin: clamp(78px, 10vw, 150px) 0 0;
+      font-size: clamp(22px, 2.6vw, 38px);
+      font-weight: 700;
+      letter-spacing: -.03em;
+    }
+
+    .bwr-faq {
+      max-width: 1160px;
+      margin-left: auto;
+    }
+    .bwr-faq-item { border-top: 1px solid var(--bwr-line); }
+    .bwr-faq-item:last-child { border-bottom: 1px solid var(--bwr-line); }
+    .bwr-faq-button {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 52px 1fr 34px;
+      gap: 18px;
+      align-items: center;
+      padding: 28px 0;
+      color: var(--bwr-ink);
+      background: transparent;
+      border: 0;
+      text-align: left;
+      cursor: pointer;
+    }
+    .bwr-faq-number {
+      color: var(--bwr-clay);
+      font: 500 10px/1 "JetBrains Mono", monospace;
+    }
+    .bwr-faq-question {
+      font-size: clamp(18px, 2vw, 26px);
+      font-weight: 600;
+      line-height: 1.25;
+      letter-spacing: -.025em;
+    }
+    .bwr-faq-icon {
+      position: relative;
+      width: 24px;
+      height: 24px;
+      justify-self: end;
+    }
+    .bwr-faq-icon::before,
+    .bwr-faq-icon::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: currentColor;
+      transition: transform .25s ease;
+    }
+    .bwr-faq-icon::after { transform: rotate(90deg); }
+    .bwr-faq-button[aria-expanded="true"] .bwr-faq-icon::after { transform: rotate(0); }
+    .bwr-faq-answer {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows .35s var(--bwr-ease);
+    }
+    .bwr-faq-answer > div { overflow: hidden; }
+    .bwr-faq-answer p {
+      max-width: 820px;
+      margin: 0;
+      padding: 0 62px 32px 70px;
+      color: var(--bwr-ink-soft);
+      font-size: 15px;
+      line-height: 1.75;
+    }
+    .bwr-faq-button[aria-expanded="true"] + .bwr-faq-answer { grid-template-rows: 1fr; }
+
+    .bwr-final {
+      position: relative;
+      min-height: 760px;
+      display: grid;
+      align-items: end;
+      color: var(--bwr-white);
+      background: var(--bwr-navy);
+      overflow: hidden;
+    }
+    .bwr-final-media {
+      position: absolute;
+      inset: 0;
+    }
+    .bwr-final-media img {
+      height: 100%;
+      object-fit: cover;
+    }
+    .bwr-final::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(5,15,27,.92), rgba(5,15,27,.62) 48%, rgba(5,15,27,.12));
+    }
+    .bwr-final .bwr-wrap {
+      position: relative;
+      z-index: 2;
+      padding-top: 130px;
+      padding-bottom: 92px;
+    }
+    .bwr-final-copy { max-width: 800px; }
+    .bwr-final-copy h2 {
+      margin: 0;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: clamp(54px, 6.4vw, 100px);
+      font-weight: 400;
+      line-height: .92;
+      letter-spacing: -.05em;
+    }
+    .bwr-final-copy p {
+      max-width: 650px;
+      margin: 30px 0 34px;
+      color: rgba(255,255,255,.78);
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .bwr-footer {
+      padding: 78px 0 32px;
+      color: var(--bwr-white);
+      background: var(--bwr-navy);
+      border-top: 1px solid rgba(255,255,255,.18);
+    }
+    .bwr-footer-top {
+      display: grid;
+      grid-template-columns: 1.2fr .72fr .72fr;
+      gap: clamp(38px, 7vw, 110px);
+      padding-bottom: 70px;
+    }
+    .bwr-footer-brand {
+      margin: 0 0 18px;
+      font-size: clamp(48px, 6vw, 86px);
+      font-weight: 800;
+      line-height: .9;
+      letter-spacing: -.075em;
+    }
+    .bwr-footer-tagline {
+      margin: 0 0 24px;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 23px;
+    }
+    .bwr-footer-description {
+      max-width: 520px;
+      margin: 0;
+      color: rgba(255,255,255,.62);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .bwr-footer h3 {
+      margin: 0 0 22px;
+      color: rgba(255,255,255,.52);
+      font: 500 9px/1.4 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .11em;
+    }
+    .bwr-footer ul { margin: 0; padding: 0; list-style: none; }
+    .bwr-footer li + li { margin-top: 12px; }
+    .bwr-footer a,
+    .bwr-footer button,
+    .bwr-footer span {
+      color: rgba(255,255,255,.84);
+      background: transparent;
+      border: 0;
+      padding: 0;
+      text-decoration: none;
+      font: 500 13px/1.4 "Manrope", sans-serif;
+    }
+    .bwr-footer a:hover,
+    .bwr-footer a:focus-visible,
+    .bwr-footer button:hover,
+    .bwr-footer button:focus-visible { color: #fff; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+    .bwr-footer-bottom {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 28px;
+      align-items: end;
+      padding-top: 28px;
+      border-top: 1px solid rgba(255,255,255,.18);
+    }
+    .bwr-technical-sheet {
+      max-width: 850px;
+      color: rgba(255,255,255,.52);
+      font: 500 9px/1.65 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .bwr-copyright {
+      color: rgba(255,255,255,.52);
+      font: 500 9px/1.4 "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      white-space: nowrap;
+    }
+
+    .bwr-mobile-cta { display: none; }
+
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .7s var(--bwr-ease), transform .7s var(--bwr-ease);
+    }
+    [data-reveal].bwr-is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1180px) {
+      .bwr-header {
+        grid-template-columns: 1fr auto auto;
+      }
+      .bwr-nav { gap: 18px; }
+      .bwr-nav a:nth-child(4) { display: none; }
+      .bwr-hero-grid {
+        grid-template-columns: minmax(0, 1fr) minmax(390px, .72fr);
+      }
+      .bwr-hero-plates { left: 52%; }
+      .bwr-project:nth-child(1),
+      .bwr-project:nth-child(2),
+      .bwr-project:nth-child(3) { grid-column: span 4; }
+      .bwr-project { min-height: 470px; }
+      .bwr-workflow-grid { grid-template-columns: .75fr 1.25fr; gap: 44px; }
+    }
+
+    @media (max-width: 980px) {
+      :root { --bwr-header: 68px; }
+      .bwr-header {
+        grid-template-columns: 1fr auto;
+        padding-right: 20px;
+        padding-left: 20px;
+      }
+      .bwr-menu-button { display: block; }
+      .bwr-header-action { display: none; }
+      .bwr-nav {
+        position: fixed;
+        top: var(--bwr-header);
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: grid;
+        align-content: center;
+        gap: 0;
+        padding: 36px;
+        color: var(--bwr-white);
+        background: var(--bwr-navy);
+        transform: translateX(100%);
+        transition: transform .35s var(--bwr-ease);
+      }
+      .bwr-menu-open .bwr-nav { transform: translateX(0); }
+      .bwr-nav a,
+      .bwr-nav a:nth-child(4) {
+        display: block;
+        padding: 22px 0;
+        border-bottom: 1px solid rgba(255,255,255,.2);
+        font-family: "Newsreader", Georgia, serif;
+        font-size: 34px;
+        font-weight: 400;
+      }
+      .bwr-nav a::after { display: none; }
+      .bwr-spine { width: 24px; }
+      .bwr-wrap { padding-right: 24px; padding-left: 48px; }
+      .bwr-hero { min-height: 820px; }
+      .bwr-hero-grid {
+        min-height: 820px;
+        grid-template-columns: 1fr;
+        align-items: end;
+        padding: calc(var(--bwr-header) + 70px) 24px 54px 48px;
+      }
+      .bwr-hero-copy { max-width: 760px; }
+      .bwr-hero-plates { inset: 0; }
+      .bwr-hero::after { background: linear-gradient(180deg, rgba(5,16,31,.18) 0%, rgba(5,16,31,.44) 38%, rgba(5,16,31,.94) 100%); }
+      .bwr-hero-plate:nth-child(1) { inset: 0 30% 46% 0; }
+      .bwr-hero-plate:nth-child(2) { inset: 0 0 46% 70%; }
+      .bwr-hero-plate:nth-child(3) { display: none; }
+      .bwr-hero-plate:nth-child(4) { display: none; }
+      .bwr-hero-index { display: none; }
+      .bwr-scope-item { grid-template-columns: 62px minmax(190px, .72fr) 1fr; gap: 24px; }
+      .bwr-fidelity { grid-template-columns: 1fr 1fr; }
+      .bwr-fidelity-core {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        width: auto;
+        min-height: 200px;
+      }
+      .bwr-fidelity-side { min-height: 220px; }
+      .bwr-projects { grid-template-columns: 1fr 1fr; }
+      .bwr-project:nth-child(1),
+      .bwr-project:nth-child(2) { grid-column: span 1; }
+      .bwr-project:nth-child(3) { grid-column: 1 / -1; min-height: 420px; }
+      .bwr-responsibility { grid-template-columns: 1fr 1.5fr; }
+      .bwr-pillars { grid-template-columns: 1fr; }
+      .bwr-pillar { min-height: auto; }
+      .bwr-pillar + .bwr-pillar { border-top: 1px solid rgba(255,255,255,.22); border-left: 0; }
+      .bwr-pillar h3 { margin-top: 28px; }
+      .bwr-workflow-grid { grid-template-columns: 1fr; }
+      .bwr-workflow-copy { max-width: 700px; }
+      .bwr-proof-grid { grid-template-columns: 1fr; }
+      .bwr-objectives { grid-template-columns: 1fr; }
+      .bwr-objective { min-height: 380px; }
+      .bwr-objective + .bwr-objective { border-top: 1px solid var(--bwr-line); border-left: 0; }
+      .bwr-footer-top { grid-template-columns: 1fr 1fr; }
+      .bwr-footer-main { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 700px) {
+      :root { --bwr-pad: 20px; }
+      .bwr-spine { display: none; }
+      .bwr-wrap { padding-right: 20px; padding-left: 20px; }
+      .bwr-hero-grid { padding-right: 20px; padding-left: 20px; }
+      .bwr-brand { font-size: 22px; }
+      .bwr-hero { min-height: 760px; }
+      .bwr-hero-grid { min-height: 760px; padding-bottom: 46px; }
+      .bwr-hero h1 { font-size: clamp(45px, 13.5vw, 64px); }
+      .bwr-hero-sub { margin-top: 22px; font-size: 16px; }
+      .bwr-hero-meta { display: none; }
+      .bwr-hero-note { max-width: 280px; }
+      .bwr-hero-plate:nth-child(1) { inset: 0; }
+      .bwr-hero-plate:nth-child(2) { display: none; }
+      .bwr-chapter { padding: 82px 0; }
+      .bwr-label-row {
+        align-items: flex-start;
+        margin-bottom: 30px;
+        font-size: 9px;
+      }
+      .bwr-label-row::after { display: none; }
+      .bwr-section-title { margin-bottom: 48px; font-size: 42px; }
+      .bwr-scope-item {
+        grid-template-columns: 46px 1fr;
+        gap: 14px;
+        padding: 26px 0;
+      }
+      .bwr-scope-item h3 { grid-column: 2; }
+      .bwr-scope-item p { grid-column: 2; }
+      .bwr-scope-item:hover { padding-right: 0; padding-left: 0; background: transparent; }
+      .bwr-fidelity { grid-template-columns: 1fr; }
+      .bwr-fidelity-core { grid-column: auto; grid-row: auto; min-height: 180px; }
+      .bwr-fidelity-side { min-height: 190px; }
+      .bwr-projects { grid-template-columns: 1fr; gap: 12px; }
+      .bwr-project:nth-child(1),
+      .bwr-project:nth-child(2),
+      .bwr-project:nth-child(3) { grid-column: auto; min-height: 430px; }
+      .bwr-responsibility-intro { font-size: 39px; }
+      .bwr-responsibility { grid-template-columns: 1fr; }
+      .bwr-responsibility-column + .bwr-responsibility-column { border-top: 1px solid rgba(255,255,255,.22); border-left: 0; }
+      .bwr-included { padding: 28px 22px; }
+      .bwr-pillars { margin-top: 18px; }
+      .bwr-technical { overflow-wrap: anywhere; }
+      .bwr-workflow-copy h2 { font-size: 48px; }
+      .bwr-portal-shell { margin-right: -20px; margin-left: -20px; padding: 7px; box-shadow: none; }
+      .bwr-portal-top { align-items: flex-start; flex-direction: column; }
+      .bwr-portal-tabs { width: 100%; overflow-x: auto; }
+      .bwr-portal-main { padding: 14px; }
+      .bwr-portal-project { flex-direction: column; }
+      .bwr-portal-summary { grid-template-columns: 1fr; }
+      .bwr-portal-summary div + div { border-top: 1px solid #dfe3e7; border-left: 0; }
+      .bwr-chart-head { align-items: flex-start; flex-direction: column; }
+      .bwr-proof-card-copy { padding: 28px 22px; }
+      .bwr-proof-card h3 { font-size: 38px; }
+      .bwr-result-mark { grid-template-columns: 82px 1fr; }
+      .bwr-result-mark strong { width: 74px; height: 74px; font-size: 22px; }
+      .bwr-screens { padding: 0 22px 28px; }
+      .bwr-objective { min-height: 340px; padding: 32px 22px; }
+      .bwr-objective:hover { color: var(--bwr-ink); background: var(--bwr-paper); }
+      .bwr-objective:hover p { color: var(--bwr-ink-soft); }
+      .bwr-manifesto { min-height: 760px; }
+      .bwr-manifesto-copy { font-size: 39px; }
+      .bwr-faq-button { grid-template-columns: 36px 1fr 26px; gap: 10px; }
+      .bwr-faq-answer p { padding: 0 0 28px 46px; }
+      .bwr-final { min-height: 690px; }
+      .bwr-final .bwr-wrap { padding-bottom: 72px; }
+      .bwr-final-copy h2 { font-size: 56px; }
+      .bwr-footer-top { grid-template-columns: 1fr; }
+      .bwr-footer-main { grid-column: auto; }
+      .bwr-footer-bottom { grid-template-columns: 1fr; }
+      .bwr-mobile-cta {
+        position: fixed;
+        z-index: 85;
+        right: 12px;
+        bottom: 12px;
+        left: 12px;
+        display: flex;
+        min-height: 54px;
+        justify-content: center;
+        box-shadow: 0 12px 34px rgba(4,14,28,.28);
+      }
+      .bwr-footer { padding-bottom: 100px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+      [data-reveal] { opacity: 1; transform: none; }
+    }
+
+    @media print {
+      .bwr-header, .bwr-spine, .bwr-mobile-cta, .bwr-scroll { display: none !important; }
+      .bwr-hero { min-height: auto; color: var(--bwr-ink); background: var(--bwr-white); }
+      .bwr-hero::after, .bwr-hero-plates { display: none; }
+      .bwr-hero-grid { min-height: auto; padding: 60px 30px; }
+      [data-reveal] { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body class="bwr-site">
+  <a class="bwr-skip" href="#conteudo">Pular para o conteúdo</a>
+  <div class="bwr-scroll" aria-hidden="true"></div>
+
+  <header class="bwr-header bwr-header-on-hero" data-header>
+    <a class="bwr-brand" href="/" aria-label="Bewild, página inicial">Bewild</a>
+    <button class="bwr-menu-button" type="button" aria-expanded="false" aria-controls="bwr-navigation" aria-label="Abrir menu">
+      <span></span><span></span>
+    </button>
+    <nav class="bwr-nav" id="bwr-navigation" aria-label="Navegação principal">
+      <a href="#oque-fazemos">O que fazemos</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#projetos">Portfólio</a>
+      <a href="/conteudos">Conteúdos</a>
+    </nav>
+    <a class="bwr-button bwr-header-action" href="/diagnostico">Solicitar diagnóstico</a>
+  </header>
+
+  <aside class="bwr-spine" aria-hidden="true">
+    <span>Um contrato</span>
+    <span>Bewild · São Paulo</span>
+    <span>Chaves na mão</span>
+  </aside>
+
+  <main id="conteudo">
+    <section class="bwr-hero" id="inicio" aria-labelledby="bwr-hero-title">
+      <div class="bwr-hero-plates" aria-hidden="true">
+        <figure class="bwr-hero-plate">
+          <img src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/86a64095-51d0-47de-b722-a8023fb5a64e/erik-03-8-1.png" alt="">
+          <span>01</span>
+        </figure>
+        <figure class="bwr-hero-plate">
+          <img src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/409b9ac5-1b84-451d-84bb-e8b28ea83ece/marcos-6-2.png" alt="">
+          <span>02</span>
+        </figure>
+        <figure class="bwr-hero-plate">
+          <img src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/fed798c0-0770-46ae-9aa6-469ed6cc98b9/rodrigo-1-1.png" alt="">
+          <span>03</span>
+        </figure>
+        <figure class="bwr-hero-plate">
+          <img src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/e4e04b71-6b36-4b07-805b-6bf2b37375d4/premium-11-2.png" alt="">
+          <span>04</span>
+        </figure>
+      </div>
+      <div class="bwr-hero-grid">
+        <div class="bwr-hero-copy" data-reveal>
+          <div class="bwr-hero-note">Um contrato · preço e prazo fechados</div>
+          <h1 id="bwr-hero-title">Reformamos seu studio por completo. <em>Você não vira gerente de obra.</em></h1>
+          <p class="bwr-hero-sub">Projeto, obra, marcenaria e mobília. Entregamos pronto para morar, alugar ou vender.</p>
+          <a class="bwr-button bwr-button-on-dark" href="/diagnostico">Solicitar diagnóstico</a>
+        </div>
+      </div>
+      <div class="bwr-hero-index" aria-hidden="true"><span>01</span><span>02</span><span>03</span><span>04</span></div>
+    </section>
+
+    <section class="bwr-chapter" id="oque-fazemos" aria-labelledby="bwr-scope-title">
+      <div class="bwr-wrap">
+        <div class="bwr-label-row" data-reveal>
+          <span>O que fazemos · 01</span>
+          <span>Um contrato · preço e prazo fechados</span>
+        </div>
+        <h2 class="bwr-section-title" id="bwr-scope-title" data-reveal>Você assina um único contrato, com preço e prazo definidos antes de a obra começar. Daí em diante, o trabalho é nosso.</h2>
+        <div class="bwr-scope">
+          <article class="bwr-scope-item" data-reveal>
+            <span class="bwr-scope-number">01</span>
+            <h3>Projeto de arquitetura personalizado</h3>
+            <p>Consultoria, projeto em 3D com revisões até a aprovação, projeto executivo e toda a documentação técnica. Você vê o resultado antes de a obra começar.</p>
+          </article>
+          <article class="bwr-scope-item" data-reveal>
+            <span class="bwr-scope-number">02</span>
+            <h3>Obra com time próprio</h3>
+            <p>Engenheiro dedicado, gestão e logística centralizadas, equipe própria de empreita, elétrica, vidraçaria e ar-condicionado. ART, CREA e liberação no condomínio por nossa conta.</p>
+          </article>
+          <article class="bwr-scope-item" data-reveal>
+            <span class="bwr-scope-number">03</span>
+            <h3>Marcenaria própria</h3>
+            <p>Móveis planejados fabricados pela gente, sob medida para espaços compactos.</p>
+          </article>
+          <article class="bwr-scope-item" data-reveal>
+            <span class="bwr-scope-number">04</span>
+            <h3>Mobília e equipamentos</h3>
+            <p>Escolhemos, compramos e instalamos tudo o que o imóvel precisa, dos eletros à cafeteira.</p>
+          </article>
+          <article class="bwr-scope-item" data-reveal>
+            <span class="bwr-scope-number">05</span>
+            <h3>Entrega das chaves</h3>
+            <p>Vistoria de entrega com engenheiro, termo de finalização assinado por você e fotos profissionais do imóvel pronto. Para morar, receber inquilino ou ir à venda.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="bwr-chapter bwr-chapter-alt" id="projetos" aria-labelledby="bwr-projects-title">
+      <div class="bwr-wrap">
+        <div class="bwr-label-row" data-reveal>
+          <span>Projetos entregues · 02</span>
+          <span>Selecionados · 2024–2026</span>
+        </div>
+        <div class="bwr-fidelity" data-reveal>
+          <div class="bwr-fidelity-side">
+            <span class="bwr-fidelity-label">Projeto 3D aprovado</span>
+            <p>O 3D que você aprovou antes da obra</p>
+          </div>
+          <div class="bwr-fidelity-core">
+            <h2 id="bwr-projects-title">Aprovado no 3D. Entregue igual.</h2>
+          </div>
+          <div class="bwr-fidelity-side">
+            <span class="bwr-fidelity-label">Studio entregue</span>
+            <p>O imóvel que você recebeu com as chaves</p>
+          </div>
+        </div>
+        <div class="bwr-projects">
+          <article class="bwr-project" data-reveal>
+            <img loading="lazy" src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/fc2269e8-1b1d-4cb8-bb09-118d23a6bf5f/rodrigo-8.png" alt="Render do Studio Vila Olímpia, 24 m²">
+            <div class="bwr-project-copy">
+              <h3>Studio Vila Olímpia 24 m²</h3>
+              <p>Reforma completa · 2026</p>
+              <a href="/portfolio">ver projeto →</a>
+            </div>
+          </article>
+          <article class="bwr-project" data-reveal>
+            <img loading="lazy" src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/2ca03da8-a59a-4563-954a-dec4f50e1a28/marcos-10-4.png" alt="Render do Studio Pinheiros, 28 m²">
+            <div class="bwr-project-copy">
+              <h3>Studio Pinheiros 28 m²</h3>
+              <p>Short stay · 2025</p>
+              <a href="/portfolio">ver projeto →</a>
+            </div>
+          </article>
+          <article class="bwr-project" data-reveal>
+            <img loading="lazy" src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/e38bf175-1868-4ad7-810b-2a84b6553cce/premium-7-4.png" alt="Render do Studio Brooklin, 32 m²">
+            <div class="bwr-project-copy">
+              <h3>Studio Brooklin 32 m²</h3>
+              <p>Reforma completa · 2025</p>
+              <a href="/portfolio">ver projeto →</a>
+            </div>
+          </article>
+        </div>
+        <div class="bwr-projects-action" data-reveal>
+          <a class="bwr-text-link" href="/portfolio">Visitar portfólio completo →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="bwr-chapter bwr-chapter-dark" id="como-funciona" aria-labelledby="bwr-responsibility-title">
+      <div class="bwr-wrap">
+        <div class="bwr-label-row" data-reveal>
+          <span>Sem dor de cabeça · 03</span>
+          <span></span>
+        </div>
+        <h2 class="bwr-responsibility-intro" id="bwr-responsibility-title" data-reveal>Quem reforma por conta própria vira comprador de material, fiscal de pedreiro e despachante de condomínio. Na Bewild, isso tudo fica do nosso lado do contrato.</h2>
+        <div class="bwr-responsibility" data-reveal>
+          <div class="bwr-responsibility-column">
+            <h3>Com você ficam três coisas</h3>
+            <ul>
+              <li>Aprovar o projeto.</li>
+              <li>Acompanhar pelo celular, se quiser.</li>
+              <li>Receber as chaves.</li>
+            </ul>
+          </div>
+          <div class="bwr-responsibility-column">
+            <h3>Com a gente fica o resto</h3>
+            <ul>
+              <li>Gestão da equipe e do canteiro.</li>
+              <li>Compra e conferência de material.</li>
+              <li>Documentação, ART e CREA.</li>
+              <li>Liberação no condomínio.</li>
+              <li>Vistoria do imóvel.</li>
+              <li>Prazo, logística e imprevistos.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="bwr-included" data-reveal>
+          <h3>Já incluso no contrato, sem custo extra</h3>
+          <ul>
+            <li>Vistoria de entrega com engenheiro Bewild, com você ou por procuração</li>
+            <li>Se você não mora em São Paulo, a gente vai à ENEL por você e liga a energia da unidade</li>
+            <li>Manutenção preventiva de ar-condicionado e elétrica: 2 visitas a cada 3 meses</li>
+            <li>2 chamados de emergência por semestre, atendidos em até 4 horas</li>
+            <li>Contratação e instalação da internet, testada e documentada, sem você se deslocar</li>
+            <li>Acesso ao Bwild Workflow durante toda a obra</li>
+          </ul>
+        </div>
+        <div class="bwr-pillars">
+          <article class="bwr-pillar" data-reveal>
+            <span>01</span>
+            <h3>Preço fechado</h3>
+            <p>Se a obra custar mais do que o combinado, a diferença é por nossa conta.</p>
+          </article>
+          <article class="bwr-pillar" data-reveal>
+            <span>02</span>
+            <h3>Prazo em contrato</h3>
+            <p>Você sabe a data de entrega no dia da assinatura.</p>
+          </article>
+          <article class="bwr-pillar" data-reveal>
+            <span>03</span>
+            <h3>5 anos de garantia</h3>
+            <p>Obra e marcenaria com garantia Bewild, conforme termo contratual.</p>
+          </article>
+        </div>
+        <div class="bwr-technical" data-reveal>ART · CREA · NBR 16280 · NBR 5410 · NBR 16401 · NBR 14917 · NBR 13749 · NBR 14033</div>
+      </div>
+    </section>
+
+    <section class="bwr-chapter bwr-chapter-alt" id="workflow" aria-labelledby="bwr-workflow-title">
+      <div class="bwr-wrap">
+        <div class="bwr-label-row" data-reveal>
+          <span>Obra sem caixa preta · 04</span>
+          <span></span>
+        </div>
+        <div class="bwr-workflow-grid">
+          <div class="bwr-workflow-copy" data-reveal>
+            <h2 id="bwr-workflow-title">Sua obra inteira na tela do celular.</h2>
+            <p>O Bwild Workflow é o portal onde você acompanha tudo: cronograma por etapa, fotos da evolução, decisões registradas, compras e fornecedores organizados. Você abre e sabe em que pé a obra está, sem precisar cobrar ninguém no WhatsApp.</p>
+            <a class="bwr-text-link" href="https://bwildworkflow.com" target="_blank" rel="noopener noreferrer">Ver demonstração →</a>
+          </div>
+          <div data-reveal>
+            <div class="bwr-portal-shell">
+              <div class="bwr-portal" aria-label="Interface ilustrativa do Bwild Workflow">
+                <div class="bwr-portal-top">
+                  <span>Bwild Workflow</span>
+                  <div class="bwr-portal-tabs" role="tablist" aria-label="Áreas do portal">
+                    <button class="bwr-portal-tab bwr-is-active" type="button" role="tab" aria-selected="true">Curva S</button>
+                    <button class="bwr-portal-tab" type="button" role="tab" aria-selected="false">Relatórios</button>
+                    <button class="bwr-portal-tab" type="button" role="tab" aria-selected="false">Atividade</button>
+                  </div>
+                </div>
+                <div class="bwr-portal-main">
+                  <div class="bwr-portal-project">
+                    <div>
+                      <h3>Studio Urban Flex · 22 m²</h3>
+                      <p>Em obra</p>
+                    </div>
+                    <span class="bwr-status">No prazo</span>
+                  </div>
+                  <div class="bwr-portal-summary">
+                    <div><span>Período</span><strong>Semana 6 de 10</strong></div>
+                    <div><span>Progresso</span><strong>52% concluído</strong></div>
+                    <div><span>Status</span><strong>No prazo</strong></div>
+                  </div>
+                  <div class="bwr-chart">
+                    <div class="bwr-chart-head">
+                      <strong>Curva S</strong>
+                      <div class="bwr-chart-legend"><span>Real</span><span>Planejado</span></div>
+                    </div>
+                    <svg viewBox="0 0 620 190" role="img" aria-label="Gráfico Curva S com linhas Real e Planejado">
+                      <g stroke="#e3e7eb" stroke-width="1">
+                        <line x1="36" y1="20" x2="36" y2="160"></line>
+                        <line x1="36" y1="160" x2="598" y2="160"></line>
+                        <line x1="36" y1="125" x2="598" y2="125"></line>
+                        <line x1="36" y1="90" x2="598" y2="90"></line>
+                        <line x1="36" y1="55" x2="598" y2="55"></line>
+                      </g>
+                      <path d="M36 157 C82 156 108 151 144 141 C184 129 206 111 246 90 C286 69 321 55 366 42 C412 29 470 21 598 16" fill="none" stroke="#a3abb4" stroke-width="3" stroke-dasharray="7 6"></path>
+                      <path d="M36 158 C82 157 113 154 148 145 C190 134 220 119 254 100 C295 77 329 63 371 52 C408 42 449 37 486 34" fill="none" stroke="#2b5f96" stroke-width="4"></path>
+                      <circle cx="486" cy="34" r="6" fill="#2b5f96"></circle>
+                    </svg>
+                  </div>
+                  <div class="bwr-stages">
+                    <div class="bwr-stage">
+                      <span>Demolição e remoção</span><small>Concluída</small>
+                      <div class="bwr-stage-progress"><i style="--progress:100%"></i></div>
+                    </div>
+                    <div class="bwr-stage">
+                      <span>Elétrica e hidráulica</span><small>Concluída</small>
+                      <div class="bwr-stage-progress"><i style="--progress:100%"></i></div>
+                    </div>
+                    <div class="bwr-stage">
+                      <span>Marcenaria sob medida</span><small>em andamento 60%</small>
+                      <div class="bwr-stage-progress"><i style="--progress:60%"></i></div>
+                    </div>
+                    <div class="bwr-stage">
+                      <span>Montagem e enxoval</span><small>A iniciar</small>
+                      <div class="bwr-stage-progress"><i style="--progress:0%"></i></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="bwr-portal-caption">Interface ilustrativa do portal de acompanhamento</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bwr-chapter" id="prova" aria-labelledby="bwr-proof-title">
+      <div class="bwr-wrap">
+        <div class="bwr-label-row" data-reveal>
+          <span id="bwr-proof-title">Prova</span>
+          <span></span>
+        </div>
+        <div class="bwr-proof-grid">
+          <article class="bwr-proof-card" data-reveal>
+            <div class="bwr-video" data-video>
+              <img loading="lazy" src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/409b9ac5-1b84-451d-84bb-e8b28ea83ece/marcos-6-2.png" alt="Poster do depoimento em vídeo da cliente Vivian">
+              <button class="bwr-video-button" type="button" aria-label="Reproduzir depoimento da Vivian" aria-pressed="false"></button>
+              <span class="bwr-video-progress" aria-hidden="true"></span>
+            </div>
+            <div class="bwr-proof-card-copy">
+              <div class="bwr-proof-label"><span>Depoimento 01</span><span>Vivian</span></div>
+              <h3>Uma empresa humana, do começo ao fim.</h3>
+              <p>A Vivian reformou o studio dela com a Bewild e contou como foi acompanhar tudo sem entrar na obra. Depoimento gravado sem roteiro.</p>
+            </div>
+          </article>
+          <article class="bwr-proof-card" data-reveal>
+            <div class="bwr-proof-card-copy">
+              <div class="bwr-proof-label"><span>Resultado 02</span><span>Rafael · Butantã</span></div>
+              <div class="bwr-result-mark">
+                <strong>70%</strong>
+                <span>de ocupação em novembro</span>
+              </div>
+              <p class="bwr-result-copy">O Rafael tinha um studio parado no Butantã. A Bewild reformou e entregou pronto para operar. Ele anunciou no Airbnb e fechou novembro com 70% de ocupação.</p>
+              <p class="bwr-result-quote">"Esses studios serão um negócio para mim. Renda vitalícia."</p>
+            </div>
+            <div class="bwr-screens">
+              <div class="bwr-screen">
+                <figure>
+                  <img loading="lazy" src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/52056442-e991-43d5-b15f-9862ed564987/rafael-ocupacao-novembro.jpeg" alt="Print do resultado de ocupação de novembro do studio do Rafael">
+                  <figcaption>Novembro: 70% de ocupação</figcaption>
+                </figure>
+              </div>
+              <div class="bwr-screen">
+                <figure>
+                  <img loading="lazy" src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/aab80290-aa8c-4677-a7cb-43365df1283f/rafael-airbnb-butanta.jpeg" alt="Print do anúncio do studio do Rafael no Airbnb">
+                  <figcaption>Anúncio no ar no Airbnb</figcaption>
+                </figure>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="bwr-chapter bwr-chapter-alt" id="objetivos" aria-labelledby="bwr-objectives-title">
+      <div class="bwr-wrap">
+        <div class="bwr-label-row" data-reveal>
+          <span>Para cada objetivo · 05</span>
+          <span></span>
+        </div>
+        <h2 class="bwr-section-title" id="bwr-objectives-title" data-reveal>O contrato é o mesmo. O projeto muda conforme o seu objetivo.</h2>
+        <div class="bwr-objectives" data-reveal>
+          <article class="bwr-objective">
+            <span class="bwr-objective-number">01</span>
+            <div>
+              <h3>Morar</h3>
+              <p>Seu apê do seu jeito, sem viver dentro de uma obra. Projeto pensado para a sua rotina, entrega com tudo instalado. É só mudar.</p>
+            </div>
+          </article>
+          <article class="bwr-objective">
+            <span class="bwr-objective-number">02</span>
+            <div>
+              <h3>Alugar</h3>
+              <p>Studios desenhados para performar na locação, de curta ou longa temporada. O projeto já nasce pensando em conforto, foto de anúncio e ocupação.</p>
+            </div>
+          </article>
+          <article class="bwr-objective">
+            <span class="bwr-objective-number">03</span>
+            <div>
+              <h3>Vender</h3>
+              <p>Reforma com foco em valorização e liquidez. Projeto e materiais para o comprador daquela região, imóvel fotografável e pronto para anunciar.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="bwr-chapter" id="compare" aria-labelledby="bwr-compare-title">
+      <div class="bwr-wrap">
+        <div class="bwr-label-row" data-reveal>
+          <span id="bwr-compare-title">Compare · 06</span>
+          <span></span>
+        </div>
+        <div class="bwr-compare-shell" data-reveal>
+          <table class="bwr-compare">
+            <thead>
+              <tr>
+                <th scope="col"></th>
+                <th scope="col">Sozinho</th>
+                <th scope="col">Reformeiro</th>
+                <th scope="col">Arquiteto + empreiteiro</th>
+                <th scope="col">Bewild</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Quem gerencia</td>
+                <td>Você</td>
+                <td>Você</td>
+                <td>Vocês dividem</td>
+                <td>A Bewild</td>
+              </tr>
+              <tr>
+                <td>Projeto personalizado</td>
+                <td>Não</td>
+                <td>Não</td>
+                <td>Sim</td>
+                <td>Sim</td>
+              </tr>
+              <tr>
+                <td>Preço final</td>
+                <td>Imprevisível</td>
+                <td>Costuma estourar</td>
+                <td>Depende dos fornecedores</td>
+                <td>Fechado em contrato</td>
+              </tr>
+              <tr>
+                <td>Prazo</td>
+                <td>Por sua conta</td>
+                <td>Instável</td>
+                <td>Variável</td>
+                <td>Definido em contrato</td>
+              </tr>
+              <tr>
+                <td>Mobília e eletros</td>
+                <td>Você compra</td>
+                <td>Não incluso</td>
+                <td>Raramente</td>
+                <td>Inclusos e instalados</td>
+              </tr>
+              <tr>
+                <td>Acompanhamento</td>
+                <td>Visitas</td>
+                <td>WhatsApp</td>
+                <td>Reuniões</td>
+                <td>Bwild Workflow</td>
+              </tr>
+              <tr>
+                <td>Pós-entrega</td>
+                <td>Ninguém</td>
+                <td>Ninguém</td>
+                <td>Raro</td>
+                <td>5 anos de garantia</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="bwr-compare-note" data-reveal>Se a sua prioridade é o orçamento mais barato da lista, ou se você prefere tocar a obra e contratar cada fornecedor por conta própria, a gente provavelmente não é a melhor escolha. Nosso trabalho é para quem quer assinar com uma empresa só e receber o imóvel pronto.</p>
+      </div>
+    </section>
+
+    <section class="bwr-manifesto" id="manifesto" aria-labelledby="bwr-manifesto-title">
+      <div class="bwr-wrap">
+        <div class="bwr-label-row" data-reveal>
+          <span>Manifesto · 07</span>
+          <span></span>
+        </div>
+        <h2 class="bwr-manifesto-copy" id="bwr-manifesto-title" data-reveal>A Bewild nasceu inconformada com o padrão do mercado. Com obra que atrasa, orçamento que estoura e cliente tratado como visita no próprio imóvel. Por isso medimos cada centímetro antes do primeiro corte, desenhamos como quem assina e entregamos mais do que o combinado.</h2>
+        <span class="bwr-manifesto-tag" data-reveal>Ambição selvagem · Processo disciplinado</span>
+        <p class="bwr-manifesto-close" data-reveal>Be wild. Built by the wild ones.</p>
+      </div>
+    </section>
+
+    <section class="bwr-chapter bwr-chapter-alt" id="faq" aria-labelledby="bwr-faq-title">
+      <div class="bwr-wrap">
+        <div class="bwr-label-row" data-reveal>
+          <span id="bwr-faq-title">FAQ · 08</span>
+          <span></span>
+        </div>
+        <div class="bwr-faq" data-reveal>
+          <article class="bwr-faq-item">
+            <button class="bwr-faq-button" type="button" aria-expanded="false" aria-controls="bwr-faq-a1">
+              <span class="bwr-faq-number">01</span>
+              <span class="bwr-faq-question">O que é uma reforma turnkey?</span>
+              <span class="bwr-faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="bwr-faq-answer" id="bwr-faq-a1">
+              <div><p>Turnkey quer dizer chave na mão. Você assina um contrato, a gente executa tudo e devolve o imóvel pronto para usar. É o modelo da Bewild desde o primeiro projeto.</p></div>
+            </div>
+          </article>
+          <article class="bwr-faq-item">
+            <button class="bwr-faq-button" type="button" aria-expanded="false" aria-controls="bwr-faq-a2">
+              <span class="bwr-faq-number">02</span>
+              <span class="bwr-faq-question">O que vocês chamam de contrato fechado?</span>
+              <span class="bwr-faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="bwr-faq-answer" id="bwr-faq-a2">
+              <div><p>Preço e prazo definidos e assinados antes de a obra começar. Se o valor ultrapassar o combinado, a diferença é por nossa conta.</p></div>
+            </div>
+          </article>
+          <article class="bwr-faq-item">
+            <button class="bwr-faq-button" type="button" aria-expanded="false" aria-controls="bwr-faq-a3">
+              <span class="bwr-faq-number">03</span>
+              <span class="bwr-faq-question">Vocês só reformam para Airbnb?</span>
+              <span class="bwr-faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="bwr-faq-answer" id="bwr-faq-a3">
+              <div><p>Não. Reformamos para morar, para alugar em curta ou longa temporada e para vender. O projeto muda conforme o objetivo.</p></div>
+            </div>
+          </article>
+          <article class="bwr-faq-item">
+            <button class="bwr-faq-button" type="button" aria-expanded="false" aria-controls="bwr-faq-a4">
+              <span class="bwr-faq-number">04</span>
+              <span class="bwr-faq-question">Preciso ir à obra?</span>
+              <span class="bwr-faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="bwr-faq-answer" id="bwr-faq-a4">
+              <div><p>Só se você quiser. Todo o acompanhamento acontece pelo Bwild Workflow. E moradores de fora de São Paulo contam com vistoria por procuração, ligação de energia e instalação de internet feitas pela gente.</p></div>
+            </div>
+          </article>
+          <article class="bwr-faq-item">
+            <button class="bwr-faq-button" type="button" aria-expanded="false" aria-controls="bwr-faq-a5">
+              <span class="bwr-faq-number">05</span>
+              <span class="bwr-faq-question">Quanto tempo leva uma reforma?</span>
+              <span class="bwr-faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="bwr-faq-answer" id="bwr-faq-a5">
+              <div><p>A maioria fica pronta em torno de 60 dias úteis. A sua data exata sai definida no contrato, antes de a obra começar.</p></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="bwr-final" id="contato" aria-labelledby="bwr-final-title">
+      <div class="bwr-final-media" aria-hidden="true">
+        <img loading="lazy" src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/b08f8380-2da0-4318-964a-22c45fd22fcc/erik-03-11.png" alt="">
+      </div>
+      <div class="bwr-wrap">
+        <div class="bwr-label-row" data-reveal>
+          <span>Contato · 09</span>
+          <span></span>
+        </div>
+        <div class="bwr-final-copy" data-reveal>
+          <h2 id="bwr-final-title">Vamos avaliar o seu studio?</h2>
+          <p>Conta para a gente o que você tem e o que quer fazer com ele. A gente analisa o potencial do imóvel e volta com um caminho claro, sem compromisso.</p>
+          <a class="bwr-button bwr-button-on-dark" href="/diagnostico">Solicitar diagnóstico</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bwr-footer">
+    <div class="bwr-wrap">
+      <div class="bwr-footer-top">
+        <div class="bwr-footer-main">
+          <p class="bwr-footer-brand">Bewild</p>
+          <p class="bwr-footer-tagline">Built by the wild ones. Be wild.</p>
+          <p class="bwr-footer-description">Reforma completa de studios em São Paulo. Projeto, obra, marcenaria, mobiliário e entrega num processo único.</p>
+        </div>
+        <div>
+          <h3>Navegação</h3>
+          <ul>
+            <li><a href="#oque-fazemos">O que fazemos</a></li>
+            <li><a href="#como-funciona">Como funciona</a></li>
+            <li><a href="/portfolio">Portfólio</a></li>
+            <li><a href="/conteudos">Conteúdos</a></li>
+            <li><a href="/diagnostico">Diagnóstico</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Contato</h3>
+          <ul>
+            <li><span>WhatsApp</span></li>
+            <li><span>Instagram</span></li>
+            <li><span>LinkedIn</span></li>
+            <li><span>e-mail</span></li>
+            <li><a href="/privacidade">Política de privacidade</a></li>
+            <li><button type="button" data-cookie>Preferências de cookies</button></li>
+          </ul>
+        </div>
+      </div>
+      <div class="bwr-footer-bottom">
+        <div class="bwr-technical-sheet">BEWILD · SÃO PAULO, BRASIL · CNPJ 47.350.338/0001-37 · RESP. TÉCNICO · THIAGO DANTAS DO AMOR · CAU A162437-7</div>
+        <div class="bwr-copyright">© 2026 Bewild</div>
+      </div>
+    </div>
+  </footer>
+
+  <a class="bwr-button bwr-mobile-cta" href="/diagnostico">Solicitar diagnóstico</a>
+
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const body = document.body;
+      const header = document.querySelector("[data-header]");
+      const hero = document.querySelector(".bwr-hero");
+      const menuButton = document.querySelector(".bwr-menu-button");
+      const nav = document.querySelector(".bwr-nav");
+      const scrollBar = document.querySelector(".bwr-scroll");
+
+      const updateScroll = () => {
+        const max = root.scrollHeight - window.innerHeight;
+        const ratio = max > 0 ? window.scrollY / max : 0;
+        scrollBar.style.width = `${Math.min(100, Math.max(0, ratio * 100))}%`;
+        if (header && hero) {
+          const threshold = Math.max(120, hero.offsetHeight - header.offsetHeight - 80);
+          header.classList.toggle("bwr-header-on-hero", window.scrollY < threshold);
+        }
+      };
+
+      updateScroll();
+      window.addEventListener("scroll", updateScroll, { passive: true });
+      window.addEventListener("resize", updateScroll);
+
+      if (menuButton && nav) {
+        const closeMenu = () => {
+          body.classList.remove("bwr-menu-open");
+          menuButton.setAttribute("aria-expanded", "false");
+          menuButton.setAttribute("aria-label", "Abrir menu");
+        };
+
+        menuButton.addEventListener("click", () => {
+          const open = !body.classList.contains("bwr-menu-open");
+          body.classList.toggle("bwr-menu-open", open);
+          menuButton.setAttribute("aria-expanded", String(open));
+          menuButton.setAttribute("aria-label", open ? "Fechar menu" : "Abrir menu");
+        });
+
+        nav.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
+        window.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") closeMenu();
+        });
+      }
+
+      document.querySelectorAll(".bwr-faq-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          const isOpen = button.getAttribute("aria-expanded") === "true";
+          document.querySelectorAll(".bwr-faq-button").forEach((item) => item.setAttribute("aria-expanded", "false"));
+          button.setAttribute("aria-expanded", String(!isOpen));
+        });
+      });
+
+      document.querySelectorAll("[data-video]").forEach((player) => {
+        const button = player.querySelector("button");
+        button.addEventListener("click", () => {
+          const playing = player.classList.toggle("bwr-is-playing");
+          button.setAttribute("aria-pressed", String(playing));
+          button.setAttribute("aria-label", playing ? "Pausar depoimento da Vivian" : "Reproduzir depoimento da Vivian");
+        });
+      });
+
+      document.querySelectorAll(".bwr-portal-tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          document.querySelectorAll(".bwr-portal-tab").forEach((item) => {
+            item.classList.remove("bwr-is-active");
+            item.setAttribute("aria-selected", "false");
+          });
+          tab.classList.add("bwr-is-active");
+          tab.setAttribute("aria-selected", "true");
+        });
+      });
+
+      const revealItems = document.querySelectorAll("[data-reveal]");
+      if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("bwr-is-visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: .12, rootMargin: "0px 0px -6% 0px" });
+        revealItems.forEach((item) => observer.observe(item));
+      } else {
+        revealItems.forEach((item) => item.classList.add("bwr-is-visible"));
+      }
+
+      const cookieButton = document.querySelector("[data-cookie]");
+      if (cookieButton) {
+        cookieButton.addEventListener("click", () => {
+          cookieButton.textContent = cookieButton.textContent === "Preferências de cookies" ? "Preferências de cookies" : "Preferências de cookies";
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
