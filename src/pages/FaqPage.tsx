@@ -5,6 +5,7 @@ import BewildSiteNav from "@/components/BewildSiteNav";
 import SiteFooter from "@/components/SiteFooter";
 import { whatsappHref } from "@/components/landing/content";
 import "@/styles/bwh-tokens.css";
+import "@/styles/bwh-sol-fusion.css";
 
 /**
  * Página pública /faq — copy original preservada, pele do DS bwh.
