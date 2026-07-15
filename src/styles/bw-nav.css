@@ -68,12 +68,12 @@
 .bw-nav--scrolled .bw-nav__inner{min-height:54px}
 
 .bw-nav__brand{display:inline-flex;align-items:center;line-height:1;text-decoration:none}
-.bw-nav__logo{display:block;height:34px;width:auto;user-select:none}
-.bw-nav--scrolled .bw-nav__logo{height:28px}
-.bw-nav__wordmark{display:none;font-family:var(--bw-sans);font-weight:700;font-size:22px;line-height:1;letter-spacing:-.01em;color:#0B2342;user-select:none}
-/* Sobre hero escuro (home transparente): mostra wordmark branco, esconde logo colorido */
-.bw-nav--transparent .bw-nav__logo{display:none}
-.bw-nav--transparent .bw-nav__wordmark{display:inline;color:#fff}
+.bw-nav__logo{display:block;height:48px;width:auto;user-select:none}
+.bw-nav--scrolled .bw-nav__logo{height:40px}
+/* Alterna entre logo colorido (fundos claros) e logo branco (hero escuro) */
+.bw-nav__logo--white{display:none}
+.bw-nav--transparent .bw-nav__logo--color{display:none}
+.bw-nav--transparent .bw-nav__logo--white{display:block}
 
 
 /* Links — Manrope, sublinhado animado (padrão SOL) */
@@ -167,7 +167,7 @@ a.bw-nav__cta:hover,.bw-nav__cta:hover{background:transparent;border-color:#0B23
   border-bottom:1px solid rgba(26,35,50,.12);
 }
 .bw-nav__mobile-top .bw-nav__close{display:inline-flex;color:#1A2332}
-.bw-nav__mobile-top .bw-nav__wordmark{color:#0B2342}
+.bw-nav__mobile-top .bw-nav__logo--white{display:none}
 
 .bw-nav__mobile-links{
   display:flex;flex-direction:column;flex:1;overflow-y:auto;padding:12px 0;
@@ -258,8 +258,8 @@ a.bw-nav__cta:hover,.bw-nav__cta:hover{background:transparent;border-color:#0B23
   .bw-nav__inner{padding:0 16px;gap:12px;min-width:0}
   .bw-nav--scrolled .bw-nav__inner{min-height:56px}
   .bw-nav__brand{min-width:0;flex:0 1 auto}
-  .bw-nav__logo{max-width:100%;height:26px}
-  .bw-nav__wordmark{font-size:18px}
+  .bw-nav__logo{max-width:100%;height:38px}
+  .bw-nav--scrolled .bw-nav__logo{height:32px}
   .bw-nav__mobile{
     z-index:1000;
     background:#FAF8F4;
