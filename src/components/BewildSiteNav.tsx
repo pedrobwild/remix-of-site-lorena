@@ -35,6 +35,27 @@ function getPathname(): string {
   return window.location.pathname || "/";
 }
 
+function BwNavProgress() {
+  const ref = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const p = max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0;
+      el.style.width = p + "%";
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+  return <span ref={ref} className="bw-nav__progress" aria-hidden="true" />;
+}
+
 export default function BewildSiteNav() {
   const [pathname, setPathname] = useState<string>(() => getPathname());
   const [menuOpen, setMenuOpen] = useState(false);
@@ -167,6 +188,7 @@ export default function BewildSiteNav() {
 
   return (
     <header className={headerClass}>
+      <BwNavProgress />
       <div className="bw-nav__inner">
         <a href="/" className="bw-nav__brand" aria-label="Bewild — início">
           {/* TODO: substituir por arquivo oficial do logotipo quando disponível em proporção correta */}

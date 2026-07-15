@@ -11,6 +11,7 @@ import { trackEvent } from "@/lib/ga4";
 import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.json";
 import "@/styles/bwh-tokens.css";
 import "../styles/bw-diag.css";
+import "@/styles/bwh-sol-fusion.css";
 
 /* ============================================================
  * DiagnosticoPage — /diagnostico · DS bwh (claro editorial).

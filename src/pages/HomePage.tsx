@@ -18,6 +18,7 @@ import { trackEvent } from "@/lib/ga4";
 import BewildSiteNav from "@/components/BewildSiteNav";
 import SiteFooter from "@/components/SiteFooter";
 import "@/styles/home.css";
+import "@/styles/bwh-sol-fusion.css";
 
 import slide1 from "@/assets/hero-slides/erik-03-8-1.png.asset.json";
 import slide2 from "@/assets/hero-slides/marcos-6-2.png.asset.json";
@@ -26,7 +27,7 @@ import slide4 from "@/assets/hero-slides/premium-11-2.png.asset.json";
 import projFallback1 from "@/assets/hero-slides/rodrigo-8.png.asset.json";
 import projFallback2 from "@/assets/hero-slides/marcos-10-4.png.asset.json";
 import projFallback3 from "@/assets/hero-slides/premium-7-4.png.asset.json";
-// TODO: par ilustrativo — trocar por 3D aprovado + foto de entrega do MESMO projeto
+
 import cmp3dBefore from "@/assets/comparador/vivian-projeto-3d.jpg.asset.json";
 import cmp3dAfter from "@/assets/comparador/vivian-reforma-entregue.jpg.asset.json";
 import finalBg from "@/assets/hero-slides/erik-03-11.png.asset.json";
@@ -310,9 +311,6 @@ function BeforeAfter3D() {
       <h3 className="bwh-cmpwrap__h">
         Aprovado no 3D. <em>Entregue igual.</em>
       </h3>
-      <span className="bwh-tag" style={{ marginBottom: 14 }}>
-        par ilustrativo · substituir pelo 3D aprovado e pela foto da entrega do mesmo projeto
-      </span>
       <div className="bwh-cmp3d" style={{ ["--x" as string]: `${x}%` } as React.CSSProperties}>
         <img className="bwh-cmp3d__img" src={cmp3dAfter.url} alt="Studio entregue" loading="lazy" />
         <img className="bwh-cmp3d__img bwh-cmp3d__before" src={cmp3dBefore.url} alt="Render 3D aprovado do studio" loading="lazy" />
@@ -438,7 +436,7 @@ export default function HomePage() {
         </section>
 
         {/* 02 Projetos */}
-        <section className="bwh-sec" id="projetos" aria-labelledby="s02h" style={{ paddingTop: 0 }}>
+        <section className="bwh-sec" id="projetos" aria-labelledby="s02h">
           <div className="bwh-wrap">
             <div className="bwh-srlabel">
               <span className="bwh-mono">Projetos entregues · 02</span>
