@@ -273,9 +273,10 @@ export default function BewildSiteNav() {
                 aria-label="Bewild — início"
                 onClick={() => setMenuOpen(false)}
               >
-                {/* TODO: substituir por arquivo oficial do logotipo quando disponível em proporção correta */}
-                <span className="bw-nav__wordmark" aria-hidden="false">Bewild</span>
+                <img src={bewildLogo.url} alt="Bewild" className="bw-nav__logo" />
+                <span className="bw-nav__wordmark" aria-hidden="true">Bewild</span>
               </a>
+
               <button
                 type="button"
                 className="bw-nav__close"
