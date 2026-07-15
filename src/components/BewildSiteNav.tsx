@@ -17,6 +17,8 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Menu, X, CircleUserRound } from "lucide-react";
 import "@/styles/bw-nav.css";
+import bewildLogo from "@/assets/bewild-logo-color.png.asset.json";
+
 
 type Item = { label: string; homeHref: string; pageHref: string };
 
@@ -191,9 +193,10 @@ export default function BewildSiteNav() {
       <BwNavProgress />
       <div className="bw-nav__inner">
         <a href="/" className="bw-nav__brand" aria-label="Bewild — início">
-          {/* TODO: substituir por arquivo oficial do logotipo quando disponível em proporção correta */}
-          <span className="bw-nav__wordmark" aria-hidden="false">Bewild</span>
+          <img src={bewildLogo.url} alt="Bewild" className="bw-nav__logo" />
+          <span className="bw-nav__wordmark" aria-hidden="true">Bewild</span>
         </a>
+
 
         <nav className="bw-nav__links" aria-label="Navegação principal">
           {ITEMS.map((it) => {
@@ -270,9 +273,10 @@ export default function BewildSiteNav() {
                 aria-label="Bewild — início"
                 onClick={() => setMenuOpen(false)}
               >
-                {/* TODO: substituir por arquivo oficial do logotipo quando disponível em proporção correta */}
-                <span className="bw-nav__wordmark" aria-hidden="false">Bewild</span>
+                <img src={bewildLogo.url} alt="Bewild" className="bw-nav__logo" />
+                <span className="bw-nav__wordmark" aria-hidden="true">Bewild</span>
               </a>
+
               <button
                 type="button"
                 className="bw-nav__close"

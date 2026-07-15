@@ -68,9 +68,13 @@
 .bw-nav--scrolled .bw-nav__inner{min-height:54px}
 
 .bw-nav__brand{display:inline-flex;align-items:center;line-height:1;text-decoration:none}
-.bw-nav__logo{display:block;height:32px;width:auto;user-select:none}
-.bw-nav__wordmark{font-family:var(--bw-sans);font-weight:700;font-size:22px;line-height:1;letter-spacing:-.01em;color:#0B2342;user-select:none}
-.bw-nav--transparent .bw-nav__wordmark{color:#fff}
+.bw-nav__logo{display:block;height:34px;width:auto;user-select:none}
+.bw-nav--scrolled .bw-nav__logo{height:28px}
+.bw-nav__wordmark{display:none;font-family:var(--bw-sans);font-weight:700;font-size:22px;line-height:1;letter-spacing:-.01em;color:#0B2342;user-select:none}
+/* Sobre hero escuro (home transparente): mostra wordmark branco, esconde logo colorido */
+.bw-nav--transparent .bw-nav__logo{display:none}
+.bw-nav--transparent .bw-nav__wordmark{display:inline;color:#fff}
+
 
 /* Links — Manrope, sublinhado animado (padrão SOL) */
 .bw-nav__links{display:flex;align-items:center;gap:clamp(20px,2.4vw,38px)}
