@@ -193,9 +193,10 @@ export default function BewildSiteNav() {
       <BwNavProgress />
       <div className="bw-nav__inner">
         <a href="/" className="bw-nav__brand" aria-label="Bewild — início">
-          {/* TODO: substituir por arquivo oficial do logotipo quando disponível em proporção correta */}
-          <span className="bw-nav__wordmark" aria-hidden="false">Bewild</span>
+          <img src={bewildLogo.url} alt="Bewild" className="bw-nav__logo" />
+          <span className="bw-nav__wordmark" aria-hidden="true">Bewild</span>
         </a>
+
 
         <nav className="bw-nav__links" aria-label="Navegação principal">
           {ITEMS.map((it) => {
