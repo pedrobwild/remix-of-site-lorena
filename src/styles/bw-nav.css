@@ -1,16 +1,14 @@
 /**
- * BewildSiteNav — header unificado claro (DS bwh). Transparente sobre o hero
- * na home; sólido claro em todas as outras páginas e ao rolar. Mono/uppercase,
- * hairline reta, cantos vivos. A lógica vive no .tsx.
+ * BewildSiteNav — header unificado claro + barra de progresso de scroll (padrão SOL).
+ * Transparente sobre o hero na home; sólido claro nas demais páginas e ao rolar.
+ * Links em Manrope com sublinhado animado; CTA com hover invertido.
  */
 .bw-nav{
   --bw-navy:#11355B;
   --bw-navy-deep:#0B2342;
-  --bw-cyan:#11355B;
-  --bw-sky:#11355B;
+  --bw-clay:#B74F32;
   --bw-muted-cool:#5A6472;
   --bw-hair:rgba(26,35,50,.10);
-  --bw-display:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   --bw-sans:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   --bw-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
 
@@ -27,7 +25,14 @@
 }
 .bw-nav--scrolled{background:rgba(250,248,244,.98)}
 
-/* Transparente sobre o hero (home, topo) — precisa vir DEPOIS do base */
+/* Barra de progresso de leitura (assinatura SOL) */
+.bw-nav__progress{
+  position:fixed;top:0;left:0;z-index:130;
+  height:3px;width:0;background:var(--bw-clay);
+  pointer-events:none;
+}
+
+/* Transparente sobre o hero (home, topo) */
 .bw-nav--transparent{
   background:transparent;
   -webkit-backdrop-filter:none;backdrop-filter:none;
@@ -50,7 +55,6 @@
 }
 .bw-nav--hidden{transform:translateY(-105%)}
 
-/* Home: respiro extra entre nav e hero (dois estados) */
 .bw-nav--home .bw-nav__inner{padding-top:24px;padding-bottom:24px}
 .bw-nav--home.bw-nav--scrolled .bw-nav__inner{padding-top:24px;padding-bottom:24px}
 
@@ -65,23 +69,31 @@
 
 .bw-nav__brand{display:inline-flex;align-items:center;line-height:1;text-decoration:none}
 .bw-nav__logo{display:block;height:32px;width:auto;user-select:none}
-.bw-nav__wordmark{font-family:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-weight:700;font-size:22px;line-height:1;letter-spacing:-.01em;color:#0B2342;user-select:none}
+.bw-nav__wordmark{font-family:var(--bw-sans);font-weight:700;font-size:22px;line-height:1;letter-spacing:-.01em;color:#0B2342;user-select:none}
 .bw-nav--transparent .bw-nav__wordmark{color:#fff}
 
-/* Links — mono uppercase, sublinhado fino */
-.bw-nav__links{display:flex;align-items:center;gap:clamp(20px,2.2vw,34px)}
+/* Links — Manrope, sublinhado animado (padrão SOL) */
+.bw-nav__links{display:flex;align-items:center;gap:clamp(20px,2.4vw,38px)}
 .bwh-nav__spacer{display:none}
 .bw-nav__links a{
-  position:relative;color:rgba(26,35,50,.78);text-decoration:none;
-  font-family:var(--bw-mono);font-size:10.5px;font-weight:500;
-  letter-spacing:.2em;text-transform:uppercase;
-  padding:6px 0;white-space:nowrap;transition:color .2s ease,text-decoration-color .2s ease;
-  text-decoration:underline;text-decoration-color:transparent;text-decoration-thickness:1px;text-underline-offset:6px;
+  position:relative;color:inherit;text-decoration:none;
+  font-family:var(--bw-sans);font-size:12px;font-weight:600;
+  letter-spacing:.02em;
+  padding:6px 0;white-space:nowrap;transition:color .2s ease;
 }
-.bw-nav__links a:hover{color:#1A2332;text-decoration-color:currentColor}
+.bw-nav__links a::after{
+  content:"";position:absolute;right:0;bottom:-2px;left:0;height:1px;
+  background:currentColor;
+  transform:scaleX(0);transform-origin:right;
+  transition:transform .25s cubic-bezier(.2,.72,.2,1);
+}
+.bw-nav__links a:hover::after,
+.bw-nav__links a:focus-visible::after{transform:scaleX(1);transform-origin:left}
 .bw-nav__links a[aria-current="page"],
-.bw-nav__links a.is-current{color:var(--bw-navy);text-decoration-color:currentColor}
-.bw-nav--transparent .bw-nav__links a{color:rgba(255,255,255,.82)}
+.bw-nav__links a.is-current{color:var(--bw-navy)}
+.bw-nav__links a[aria-current="page"]::after,
+.bw-nav__links a.is-current::after{transform:scaleX(1)}
+.bw-nav--transparent .bw-nav__links a{color:rgba(255,255,255,.88)}
 .bw-nav--transparent .bw-nav__links a:hover{color:#fff}
 .bw-nav--transparent .bw-nav__links a[aria-current="page"],
 .bw-nav--transparent .bw-nav__links a.is-current{color:#fff}
@@ -89,31 +101,35 @@
 /* Ações */
 .bw-nav__actions{display:inline-flex;align-items:center;gap:clamp(14px,1.6vw,22px)}
 
-/* Área do cliente — link mono puro (sem caixa) */
+/* Área do cliente — link discreto */
 a.bw-nav__secondary,.bw-nav__secondary{
   display:inline-flex;align-items:center;gap:7px;
   padding:6px 0;background:none;border:none;border-radius:0;
-  font-family:var(--bw-mono);font-size:10.5px;font-weight:500;
-  letter-spacing:.18em;text-transform:uppercase;color:rgba(26,35,50,.78);
+  font-family:var(--bw-sans);font-size:12px;font-weight:600;
+  letter-spacing:.02em;color:rgba(26,35,50,.78);
   text-decoration:none;transition:color .2s ease;white-space:nowrap;
 }
 a.bw-nav__secondary:hover,.bw-nav__secondary:hover{color:var(--bw-navy);background:none}
 .bw-nav--transparent a.bw-nav__secondary,.bw-nav--transparent .bw-nav__secondary{color:rgba(255,255,255,.82)}
 .bw-nav--transparent a.bw-nav__secondary:hover,.bw-nav--transparent .bw-nav__secondary:hover{color:#fff}
 
-/* CTA primário — navy oficial preenchido, texto branco em qualquer estado */
+/* CTA primário — navy preenchido; hover inverte (padrão SOL) */
 a.bw-nav__cta,.bw-nav__cta{
-  display:inline-flex;align-items:center;gap:10px;
+  display:inline-flex;align-items:center;gap:12px;
   padding:12px 20px;min-height:40px;
   font-family:var(--bw-mono);font-size:10.5px;font-weight:500;
   letter-spacing:.16em;text-transform:uppercase;
   border-radius:0;background:#0B2342;color:#fff;text-decoration:none;
   border:1px solid #0B2342;
-  transition:background .2s ease,border-color .2s ease,transform .2s ease;white-space:nowrap;
+  transition:background .25s ease,border-color .25s ease,color .25s ease,transform .25s ease;white-space:nowrap;
 }
-a.bw-nav__cta:hover,.bw-nav__cta:hover{background:#11355B;border-color:#11355B;color:#fff;transform:translateY(-1px)}
+a.bw-nav__cta:hover,.bw-nav__cta:hover{background:transparent;border-color:#0B2342;color:#0B2342;transform:translateY(-2px)}
 .bwh a.bw-nav__cta,.bwh .bw-nav__cta{color:#fff}
-.bwh a.bw-nav__cta:hover,.bwh .bw-nav__cta:hover{color:#fff}
+.bwh a.bw-nav__cta:hover,.bwh .bw-nav__cta:hover{color:#0B2342}
+.bw-nav--transparent a.bw-nav__cta,.bw-nav--transparent .bw-nav__cta{background:#fff;border-color:#fff;color:#0B2342}
+.bw-nav--transparent a.bw-nav__cta:hover,.bw-nav--transparent .bw-nav__cta:hover{background:transparent;border-color:#fff;color:#fff}
+.bwh .bw-nav--transparent a.bw-nav__cta,.bwh .bw-nav--transparent .bw-nav__cta{color:#0B2342}
+.bwh .bw-nav--transparent a.bw-nav__cta:hover,.bwh .bw-nav--transparent .bw-nav__cta:hover{color:#fff}
 .bw-nav__cta .arrow{display:inline-block;transition:transform .25s cubic-bezier(.22,1,.36,1);font-size:14px;line-height:1}
 .bw-nav__cta:hover .arrow{transform:translateX(6px)}
 
@@ -128,7 +144,7 @@ a.bw-nav__cta:hover,.bw-nav__cta:hover{background:#11355B;border-color:#11355B;c
   outline:1px solid var(--bw-navy);outline-offset:2px;border-radius:2px
 }
 
-/* Overlay mobile em tela cheia — claro, mesma língua do site */
+/* Overlay mobile em tela cheia — claro */
 .bw-nav__mobile{
   position:fixed;inset:0;z-index:110;background:#FAF8F4;color:#1A2332;
   display:flex;flex-direction:column;
@@ -149,7 +165,6 @@ a.bw-nav__cta:hover,.bw-nav__cta:hover{background:#11355B;border-color:#11355B;c
 .bw-nav__mobile-top .bw-nav__close{display:inline-flex;color:#1A2332}
 .bw-nav__mobile-top .bw-nav__wordmark{color:#0B2342}
 
-/* Lista de links com contador 01,02,03… */
 .bw-nav__mobile-links{
   display:flex;flex-direction:column;flex:1;overflow-y:auto;padding:12px 0;
   counter-reset:bwnav;
@@ -191,8 +206,6 @@ a.bw-nav__cta:hover,.bw-nav__cta:hover{background:#11355B;border-color:#11355B;c
 .bw-nav__mobile-links a:hover::after,
 .bw-nav__mobile-links a:focus-visible::after,
 .bw-nav__mobile-links a:active::after{transform:translate(0,-50%);opacity:1}
-
-/* Página atual: destaque permanente + seta visível */
 .bw-nav__mobile-links a[aria-current="page"]{color:var(--bw-navy)}
 .bw-nav__mobile-links a[aria-current="page"]::before{opacity:1;color:var(--bw-navy)}
 .bw-nav__mobile-links a[aria-current="page"]::after{transform:translate(0,-50%);opacity:1}
@@ -231,13 +244,11 @@ a.bw-nav__cta:hover,.bw-nav__cta:hover{background:#11355B;border-color:#11355B;c
   .bw-nav__mobile-links a::before{transition:none!important}
 }
 
-/* Breakpoint: links viram hambúrguer */
 @media (max-width:1080px){
   .bw-nav__links,.bw-nav__actions{display:none}
   .bw-nav__toggle{display:inline-flex}
 }
 
-/* Mobile: blindagens contra overflow horizontal e overlay 100% acima de tudo */
 @media (max-width:560px){
   .bw-nav{max-width:100vw;overflow-x:clip}
   .bw-nav__inner{padding:0 16px;gap:12px;min-width:0}
