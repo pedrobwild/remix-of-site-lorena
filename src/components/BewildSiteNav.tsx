@@ -17,6 +17,8 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Menu, X, CircleUserRound } from "lucide-react";
 import "@/styles/bw-nav.css";
+import bewildLogo from "@/assets/bewild-logo-color.png.asset.json";
+
 
 type Item = { label: string; homeHref: string; pageHref: string };
 
