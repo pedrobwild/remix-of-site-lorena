@@ -100,3 +100,60 @@
   .bwh .bwh-projects{grid-template-columns:1fr;gap:12px}
   .bwh .bwh-proj:nth-child(1),.bwh .bwh-proj:nth-child(2),.bwh .bwh-proj:nth-child(3){grid-column:auto;min-height:430px}
 }
+
+/* ============================================================
+ * INCORPORAÇÃO BWX — moldura de porta no portal, tratamento
+ * editorial dos renders e hover dos objetivos.
+ * ============================================================ */
+
+/* 1. Moldura de porta do Bwild Workflow (dispositivo BWX, cores invertidas p/ sessão escura) */
+.bwh .bwh-pfshell{
+  position:relative;
+  padding:30px 30px 30px 58px;
+  background:#FAF8F4;
+  box-shadow:0 28px 70px rgba(0,0,0,.35);
+}
+.bwh .bwh-pfshell::before{
+  content:"";position:absolute;
+  top:30px;bottom:30px;left:26px;width:10px;
+  background:#0B2342;
+}
+.bwh .bwh-pfshell::after{
+  content:"";position:absolute;
+  top:50%;left:11px;width:34px;height:2px;
+  background:#0B2342;transform:translateY(-50%);
+}
+.bwh .bwh-pfshell .bwh-pf{box-shadow:0 24px 45px rgba(0,0,0,.18)}
+@media (max-width:700px){
+  .bwh .bwh-pfshell{padding:16px 16px 16px 38px}
+  .bwh .bwh-pfshell::before{top:16px;bottom:16px;left:16px;width:7px}
+  .bwh .bwh-pfshell::after{left:4px;width:26px}
+}
+
+/* 2. Tratamento editorial dos renders (padrão BWX) — NÃO aplicar no comparador */
+.bwh .bwh-hero__slide img{filter:saturate(.9) contrast(1.02)}
+.bwh .bwh-proj__media img{filter:saturate(.92) contrast(1.02)}
+
+/* 3. Objetivos Morar/Alugar/Vender — hover invertido com traço que cresce (padrão BWX) */
+.bwh .bwh-goal{
+  position:relative;
+  padding:28px;
+  border:1px solid var(--hair,#E4DFD6);
+  transition:color .45s ease,background .45s ease,transform .45s cubic-bezier(.2,.72,.2,1);
+}
+.bwh .bwh-goal::after{
+  content:"";position:absolute;right:22px;bottom:22px;
+  width:42px;height:2px;background:currentColor;
+  transition:width .4s cubic-bezier(.2,.72,.2,1);
+}
+.bwh .bwh-goal:hover{color:#fff;background:#0B2342;transform:translateY(-8px)}
+.bwh .bwh-goal:hover::after{width:86px}
+.bwh .bwh-goal .n,
+.bwh .bwh-goal .t,
+.bwh .bwh-goal .d{transition:color .45s ease}
+.bwh .bwh-goal:hover .n{color:rgba(255,255,255,.65)}
+.bwh .bwh-goal:hover .t{color:#fff}
+.bwh .bwh-goal:hover .d{color:rgba(255,255,255,.72)}
+@media (max-width:820px){
+  .bwh .bwh-goal:hover{transform:none}
+}

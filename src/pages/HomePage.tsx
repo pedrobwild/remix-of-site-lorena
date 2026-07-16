@@ -531,7 +531,7 @@ export default function HomePage() {
                 </a>
               </div>
               <div className="bwh-wf__col bwh-rv">
-                <PortalMock />
+                <div className="bwh-pfshell"><PortalMock /></div>
                 <p className="bwh-wf__illus">Interface ilustrativa do portal de acompanhamento</p>
               </div>
             </div>
