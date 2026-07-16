@@ -11,7 +11,8 @@
   display:grid;grid-template-columns:1.2fr .72fr .72fr;gap:clamp(38px,7vw,110px);
   padding-bottom:70px;
 }
-.bw-foot__brandlink{text-decoration:none;display:inline-block}
+.bw-foot__brandlink{text-decoration:none;display:inline-block;line-height:0}
+.bw-foot__logo{display:block;height:clamp(72px,9vw,120px);width:auto;user-select:none}
 .bw-foot__wordmark{
   display:block;font-weight:800;font-size:clamp(48px,6vw,86px);line-height:.9;
   letter-spacing:-.075em;color:#fff;
