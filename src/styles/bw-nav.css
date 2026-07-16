@@ -258,8 +258,8 @@ a.bw-nav__cta:hover,.bw-nav__cta:hover{background:transparent;border-color:#0B23
   .bw-nav__inner{padding:0 16px;gap:12px;min-width:0}
   .bw-nav--scrolled .bw-nav__inner{min-height:56px}
   .bw-nav__brand{min-width:0;flex:0 1 auto}
-  .bw-nav__logo{max-width:100%;height:38px}
-  .bw-nav--scrolled .bw-nav__logo{height:32px}
+  .bw-nav__logo{max-width:100%;height:52px}
+  .bw-nav--scrolled .bw-nav__logo{height:44px}
   .bw-nav__mobile{
     z-index:1000;
     background:#FAF8F4;
