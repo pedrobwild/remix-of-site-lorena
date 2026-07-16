@@ -1,0 +1,169 @@
+<!doctype html>
+<!-- MOCKUP · Nova seção "A história · 01" · inserção pós-hero · DS bwh + fusão -->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Bewild · Mockup · A história</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAF8F4; --alt:#F3EEE5; --ink:#1A2332; --ink2:#5A6472;
+  --hair:#E4DFD6; --navy:#0B2342; --acc:#11355B; --clay:#B74F32;
+  --fm:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --ease:cubic-bezier(.2,.72,.2,1);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Manrope",sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block;max-width:100%}
+.wrap{max-width:1200px;margin:0 auto;padding:0 clamp(20px,4.5vw,40px)}
+.mono{font-family:var(--fm);font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase}
+
+/* etiqueta do mockup */
+.tag{position:fixed;z-index:99;top:10px;left:10px;background:var(--navy);color:#fff;font-family:var(--fm);font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:7px 10px}
+
+/* ===== HERO (contexto, resumido — no site é o slider atual) ===== */
+.hero{position:relative;min-height:78vh;display:flex;align-items:flex-end;color:#fff;background:var(--navy);overflow:hidden}
+.hero img.bgimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.9) contrast(1.02)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,16,30,.30) 0%,rgba(6,16,30,.62) 62%,rgba(6,16,30,.86) 100%)}
+.hero .wrap{position:relative;z-index:2;padding-bottom:56px}
+.hero h1{margin:0 0 16px;font-weight:600;font-size:clamp(38px,5.4vw,72px);line-height:1.04;letter-spacing:-.03em;max-width:820px}
+.hero h1 em{font-style:italic;font-weight:300}
+.hero p{margin:0 0 26px;color:rgba(255,255,255,.85);font-size:clamp(16px,1.5vw,19px);max-width:560px;line-height:1.55}
+.btn{display:inline-flex;align-items:center;gap:12px;padding:17px 28px;font-family:var(--fm);font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;border-radius:0;background:#FAF8F4;color:var(--navy);border:1px solid #FAF8F4;transition:background .25s,color .25s,border-color .25s,transform .25s}
+.btn:hover{background:transparent;color:#fff;border-color:#fff;transform:translateY(-2px)}
+.tl{display:flex;align-items:center;gap:14px;margin-top:34px;flex-wrap:wrap}
+.tl .node{font-family:var(--fm);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.85)}
+.tl .node b{display:block;font-size:12px;color:#fff;letter-spacing:.08em}
+.tl .line{flex:1;min-width:60px;height:1px;background:rgba(255,255,255,.35)}
+
+/* ===== NOVA SEÇÃO · A HISTÓRIA · 01 ===== */
+.sec{padding:clamp(56px,7vw,104px) 0}
+.srlabel{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:28px;border-bottom:1px solid var(--hair);padding-bottom:14px}
+.srlabel .mono{color:var(--ink2)}
+.srlabel .mono:first-child{color:var(--acc)}
+.h2{margin:0 0 22px;font-weight:600;font-size:clamp(30px,4.2vw,54px);line-height:1.1;letter-spacing:-.02em;max-width:900px}
+.h2 em{font-style:italic;font-weight:300}
+.lead{margin:0 0 44px;color:var(--ink2);font-size:clamp(15px,1.4vw,17.5px);line-height:1.65;max-width:640px}
+
+.stimg{position:relative;margin:0 0 clamp(40px,5vw,64px);border:1px solid var(--hair);background:var(--alt);overflow:hidden}
+.stimg img{width:100%;aspect-ratio:21/9;object-fit:cover;filter:saturate(.9) contrast(1.02)}
+.stimg figcaption{position:absolute;left:14px;bottom:12px;background:var(--navy);color:#fff;font-family:var(--fm);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;padding:7px 11px}
+
+.chapters{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--hair)}
+.ch{position:relative;padding:30px 26px 34px 0;border-bottom:1px solid var(--hair)}
+.ch + .ch{padding-left:26px;border-left:1px solid var(--hair)}
+.ch .n{font-family:var(--fm);font-size:10.5px;font-weight:500;letter-spacing:.14em;color:var(--acc)}
+.ch h3{margin:44px 0 12px;font-weight:600;font-size:clamp(19px,1.8vw,23px);letter-spacing:-.015em}
+.ch p{margin:0;color:var(--ink2);font-size:14.5px;line-height:1.7}
+.ch::after{content:"";position:absolute;right:26px;bottom:22px;width:34px;height:2px;background:var(--ink);opacity:0;transform-origin:left;transition:opacity .35s,width .4s var(--ease)}
+.ch:hover::after{opacity:.85;width:64px}
+
+.stclose{display:flex;align-items:center;gap:16px;margin-top:34px}
+.stclose .mono{color:var(--ink2)}
+.stclose .line{flex:1;height:1px;background:var(--hair)}
+
+/* ===== COSTURA · início da seção 02 (existente, renumerada) ===== */
+.next{background:var(--alt);border-top:1px solid var(--hair);position:relative}
+.next .fade{position:absolute;left:0;right:0;bottom:0;height:140px;background:linear-gradient(180deg,rgba(243,238,229,0),var(--alt) 85%);pointer-events:none}
+.next .hint{font-family:var(--fm);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);opacity:.7;margin-top:26px}
+
+@media (max-width:980px){
+  .chapters{grid-template-columns:1fr 1fr}
+  .ch{padding:26px 20px 30px 0}
+  .ch + .ch{padding-left:0;border-left:0}
+  .ch:nth-child(even){padding-left:20px;border-left:1px solid var(--hair)}
+}
+@media (max-width:640px){
+  .chapters{grid-template-columns:1fr}
+  .ch, .ch + .ch, .ch:nth-child(even){padding:24px 0 28px;border-left:0}
+  .ch h3{margin-top:30px}
+  .stimg img{aspect-ratio:16/10}
+  .hero{min-height:70vh}
+}
+</style>
+</head>
+<body>
+<span class="tag">Mockup · nova seção 01 · A história</span>
+
+<!-- HERO ATUAL (resumo estático só pra contexto de leitura) -->
+<section class="hero">
+  <img class="bgimg" src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/86a64095-51d0-47de-b722-a8023fb5a64e/erik-03-8-1.png" alt="">
+  <div class="wrap">
+    <h1>Reformamos seu studio <em>por completo</em>. Você não vira <em>gerente de obra</em>.</h1>
+    <p>Projeto, obra, marcenaria e mobília. Entregamos pronto para morar, alugar ou vender.</p>
+    <a class="btn" href="#historia">Solicitar diagnóstico →</a>
+    <div class="tl" aria-hidden="true">
+      <span class="node"><b>Dia 0</b>assinatura</span>
+      <span class="line"></span>
+      <span class="node">a obra acontece do nosso lado</span>
+      <span class="line"></span>
+      <span class="node"><b>≈ Dia 60</b>chaves na mão</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NOVA SEÇÃO · A HISTÓRIA · 01 ============ -->
+<section class="sec" id="historia" aria-labelledby="st-h">
+  <div class="wrap">
+    <div class="srlabel">
+      <span class="mono">A história · 01</span>
+      <span class="mono">antes da obra · depois das chaves</span>
+    </div>
+
+    <h2 class="h2" id="st-h">Ninguém sonha com a obra. As pessoas sonham com o que vem <em>depois</em> dela.</h2>
+    <p class="lead">Em mais de 150 studios, a gente aprendeu que reforma nunca é o objetivo. É o meio. A história abaixo muda de nome e de bairro, mas chega aqui toda semana.</p>
+
+    <figure class="stimg">
+      <img src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/e38bf175-1868-4ad7-810b-2a84b6553cce/premium-7-4.png" alt="Studio entregue pela Bewild em São Paulo">
+      <figcaption>Studio entregue · São Paulo</figcaption>
+    </figure>
+
+    <div class="chapters">
+      <article class="ch">
+        <span class="n">01 · O plano</span>
+        <h3>Todo imóvel chega com um plano</h3>
+        <p>Alguém herda um apartamento parado há anos. Outra pessoa compra um studio de 24 m² pra morar perto de tudo. Uma terceira quer o imóvel rendendo, no Airbnb ou num contrato longo. Planos diferentes, mesmo ponto de partida: um imóvel que ainda não é o que precisa ser.</p>
+      </article>
+      <article class="ch">
+        <span class="n">02 · O muro</span>
+        <h3>Entre o plano e as chaves, existe uma obra</h3>
+        <p>Três orçamentos que não fecham, fornecedor que some, decisão técnica que ninguém explica. É aqui que muita história boa fica adiada. Ou vira a rotina de cobrar pedreiro pelo WhatsApp.</p>
+      </article>
+      <article class="ch">
+        <span class="n">03 · O olhar</span>
+        <h3>Nosso trabalho começa ouvindo a sua história</h3>
+        <p>A arquitetura traduz: cada centímetro medido, cada escolha com um porquê, o projeto em 3D aprovado por você antes do primeiro corte. É assim que a ideia que só existia na sua cabeça vira planta, cronograma e contrato.</p>
+      </article>
+      <article class="ch">
+        <span class="n">04 · As chaves</span>
+        <h3>No fim, a história volta pra sua mão</h3>
+        <p>Pra morar, alugar ou vender, você recebe o studio pronto, igual ao que aprovou. A obra inteira ficou do nosso lado. A vida que você planejou fica do seu.</p>
+      </article>
+    </div>
+
+    <div class="stclose" aria-hidden="true">
+      <span class="mono">o resto desta página mostra como</span>
+      <span class="line"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COSTURA · seção existente renumerada pra 02 ============ -->
+<section class="sec next">
+  <div class="wrap">
+    <div class="srlabel" style="border-color:#E0D8C8">
+      <span class="mono">O que fazemos · 02</span>
+      <span class="mono">Um contrato · preço e prazo fechados</span>
+    </div>
+    <h2 class="h2">Você assina um único contrato, com preço e prazo definidos antes de a obra começar. Daí em diante, o trabalho é nosso.</h2>
+    <p class="hint">↓ daqui pra baixo o site segue exatamente como está, com os números deslizando (Projetos 03 · Sem dor 04 · Workflow 05 · Objetivos 06 · Compare 07 · Manifesto 08 · FAQ 09 · Contato 10)</p>
+  </div>
+  <div class="fade"></div>
+</section>
+
+</body>
+</html>
