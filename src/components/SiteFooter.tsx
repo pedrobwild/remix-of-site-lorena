@@ -4,6 +4,7 @@
  */
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import { openCookiePreferences } from "@/lib/cookieConsent";
+import bewildLogoWhite from "@/assets/bewild-logo-white.png.asset.json";
 import "@/styles/site-footer.css";
 
 export default function SiteFooter() {
@@ -13,8 +14,7 @@ export default function SiteFooter() {
       <div className="bw-foot__top">
         <div className="bw-foot__brand">
           <a href="/" aria-label="Bewild — início" className="bw-foot__brandlink">
-            {/* TODO: substituir por arquivo oficial do logotipo quando disponível */}
-            <span className="bw-foot__wordmark">Bewild</span>
+            <img src={bewildLogoWhite.url} alt="Bewild" className="bw-foot__logo" />
           </a>
           <p className="bw-foot__tagline">
             Built by the wild ones. <em>Be wild.</em>
