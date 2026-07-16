@@ -61,11 +61,11 @@
 .bw-nav__inner{
   max-width:1200px;margin:0 auto;
   padding:0 clamp(20px,4.5vw,40px);
-  min-height:64px;
+  min-height:88px;
   display:flex;align-items:center;justify-content:space-between;gap:28px;
   transition:min-height .25s ease;
 }
-.bw-nav--scrolled .bw-nav__inner{min-height:54px}
+.bw-nav--scrolled .bw-nav__inner{min-height:72px}
 
 .bw-nav__brand{display:inline-flex;align-items:center;line-height:0;text-decoration:none}
 .bw-nav__logo{display:block;height:68px;width:auto;user-select:none;object-fit:contain}
