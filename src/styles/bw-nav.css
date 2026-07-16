@@ -67,9 +67,9 @@
 }
 .bw-nav--scrolled .bw-nav__inner{min-height:54px}
 
-.bw-nav__brand{display:inline-flex;align-items:center;line-height:1;text-decoration:none}
-.bw-nav__logo{display:block;height:48px;width:auto;user-select:none}
-.bw-nav--scrolled .bw-nav__logo{height:40px}
+.bw-nav__brand{display:inline-flex;align-items:center;line-height:0;text-decoration:none}
+.bw-nav__logo{display:block;height:68px;width:auto;user-select:none;object-fit:contain}
+.bw-nav--scrolled .bw-nav__logo{height:56px}
 /* Alterna entre logo colorido (fundos claros) e logo branco (hero escuro) */
 .bw-nav__logo--white{display:none}
 .bw-nav--transparent .bw-nav__logo--color{display:none}
