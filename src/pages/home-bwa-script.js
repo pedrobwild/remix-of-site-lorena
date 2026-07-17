@@ -1,6 +1,16 @@
 export function initHomeBwa() {
+    // Guarda de idempotência: React StrictMode roda o effect duas vezes em dev
+    // (mount → cleanup → mount) e, sem esse guard, cada listener seria anexado
+    // 2x — resultado: acordeões abrem e fecham no mesmo clique, menu mobile
+    // idem. Marcar o body impede a segunda execução sem alterar a lógica
+    // aprovada. O guard é removido quando a home desmonta (ver HomePage.tsx
+    // efetua unmount que reinjeta o CSS, e uma nova visita reinicializa via
+    // MutationObserver abaixo). Para permitir reinit ao voltar à home num
+    // remount, também limpamos a flag se o markup principal sumiu.
+    if (!document.querySelector("[data-nav]")) return;
+    if (document.body.dataset.bwaInited === "1") return;
+    document.body.dataset.bwaInited = "1";
 
-    (() => {
       const body = document.body;
       const nav = document.querySelector("[data-nav]");
       const menuButton = document.querySelector("[data-menu-button]");
