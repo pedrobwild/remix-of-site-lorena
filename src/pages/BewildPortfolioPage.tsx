@@ -82,7 +82,7 @@ export default function BewildPortfolioPage() {
           <div className="bwh-wrap">
             <div className="bwh-srlabel" style={{ borderTop: 0, paddingTop: 0 }}>
               <span className="bwh-mono">Portfólio · obras entregues</span>
-              <span className="bwh-mono">São Paulo · 2024–2026</span>
+              <span className="bwh-mono">São Paulo · 2025–2026</span>
             </div>
             <h1
               className="bwh-h2"
