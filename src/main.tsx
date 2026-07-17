@@ -98,9 +98,6 @@ function Root() {
       // Fase 2: fade-in da nova rota
       requestAnimationFrame(() => setPhase("in"));
     }, TRANSITION_MS);
-      // Fase 2: fade-in da nova rota
-      requestAnimationFrame(() => setPhase("in"));
-    }, TRANSITION_MS);
 
     return () => window.clearTimeout(swapTimer);
   }, [route]);
