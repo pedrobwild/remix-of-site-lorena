@@ -57,6 +57,21 @@ function Root() {
     trackPageView(window.location.pathname + window.location.search);
   }, [route]);
 
+  // Fresh-load em /#foo: rola até a seção após primeira renderização
+  // (o efeito de transição só cobre trocas SPA subsequentes).
+  useEffect(() => {
+    const hash = window.location.hash.replace(/^#/, "");
+    if (!hash || hash.startsWith("/")) return;
+    if (route.name !== "home") return;
+    const id = window.setTimeout(() => {
+      const el = document.getElementById(hash);
+      if (el) el.scrollIntoView({ behavior: "auto", block: "start" });
+    }, TRANSITION_MS + 60);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
   // "displayed" é a rota que está renderizada no DOM. Quando a rota real muda,
   // disparamos um fade-out, trocamos `displayed` no meio e fazemos fade-in.
   const [displayed, setDisplayed] = useState<Route>(route);
