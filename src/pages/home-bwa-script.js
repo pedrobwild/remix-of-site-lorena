@@ -1,4 +1,4 @@
-export function initHomeBwa(): (() => void) | void {
+export function initHomeBwa() {
 
     (() => {
       const body = document.body;
