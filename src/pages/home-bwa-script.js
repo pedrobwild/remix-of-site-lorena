@@ -236,6 +236,6 @@ export function initHomeBwa() {
           if (detail) detail.style.maxHeight = detail.scrollHeight + "px";
         });
       });
-    })();
   
 }
+
