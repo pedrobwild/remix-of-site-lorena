@@ -90,11 +90,8 @@ function Root() {
   }, [route]);
 
   const adminMode = isAdminRoute(displayed);
+  const homeMode = displayed.name === "home";
 
-  // O elemento `.cursor` é criado/removido pelo próprio `useCustomCursor`
-  // — manter um <div className="cursor"> renderizado aqui em paralelo
-  // duplicava a responsabilidade e abria janela para dois nodes coexistirem
-  // se o hook fosse desabilitado/habilitado durante a vida do app. (M7)
   return (
     <>
       <div
@@ -103,7 +100,7 @@ function Root() {
       >
         {renderRoute(displayed)}
       </div>
-      {!adminMode && <CookieBanner />}
+      {!adminMode && !homeMode && <CookieBanner />}
       <MetaPixel />
     </>
   );
