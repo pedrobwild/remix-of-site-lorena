@@ -80,8 +80,24 @@ function Root() {
     const swapTimer = window.setTimeout(() => {
       // Troca o conteúdo e volta ao topo no momento "invisível"
       setDisplayed(route);
-      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      // Se a nova rota é a home e a URL tem #foo (âncora cross-page vinda de
+      // uma página interna, ex.: /faq → /#certeza), rola para a seção correta
+      // depois do fade-in. Caso contrário, volta ao topo (comportamento antigo).
+      const hash = window.location.hash.replace(/^#/, "");
+      const isSectionAnchor = route.name === "home" && hash && !hash.startsWith("/");
+      if (isSectionAnchor) {
+        requestAnimationFrame(() => {
+          const el = document.getElementById(hash);
+          if (el) el.scrollIntoView({ behavior: "auto", block: "start" });
+          else window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+        });
+      } else {
+        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      }
       lastRouteKey.current = nextKey;
+      // Fase 2: fade-in da nova rota
+      requestAnimationFrame(() => setPhase("in"));
+    }, TRANSITION_MS);
       // Fase 2: fade-in da nova rota
       requestAnimationFrame(() => setPhase("in"));
     }, TRANSITION_MS);
