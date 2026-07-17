@@ -1090,7 +1090,9 @@
       padding-bottom: 22px;
       overflow-x: auto;
       overscroll-behavior-inline: contain;
-      scroll-snap-type: inline mandatory;
+      /* FIX autorizado 17/jul: snap proximity — mandatory prendia o scroll com cards da largura da viewport */
+      scroll-snap-type: inline proximity;
+
       scrollbar-width: thin;
       scrollbar-color: rgba(255, 255, 255, .35) transparent;
     }
