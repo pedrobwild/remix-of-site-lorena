@@ -1,0 +1,1631 @@
+<body>
+
+  <svg class="bwa-svg-library" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="bwa-glyph-architecture" viewBox="0 0 64 64">
+        <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke">
+          <path d="M8 55V10h29v15h19v30H8Z"/><path d="M37 10v15M25 55V40H8M44 25v17h12"/>
+          <path d="M15 29c7-11 16-11 23 0s13 11 18 3"/>
+        </g><circle cx="15" cy="29" r="2.2" fill="currentColor"/>
+      </symbol>
+      <symbol id="bwa-glyph-contract" viewBox="0 0 64 64">
+        <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke">
+          <path d="M16 7h23l9 9v41H16Z"/><path d="M39 7v11h9M23 28h18M23 36h14"/><path d="M23 47h10l4 4 9-12"/>
+        </g><circle cx="23" cy="28" r="1.9" fill="currentColor"/>
+      </symbol>
+      <symbol id="bwa-glyph-deadline" viewBox="0 0 64 64">
+        <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke">
+          <path d="M17 49a22 22 0 1 1 9 5"/><path d="M32 16v17l11 7M9 47h13v10"/>
+        </g><circle cx="32" cy="33" r="2.2" fill="currentColor"/>
+      </symbol>
+      <symbol id="bwa-glyph-craft" viewBox="0 0 64 64">
+        <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke">
+          <path d="M9 17h29v16H9ZM26 33h29v16H26Z"/><path d="M38 17v16M26 40h12M46 33v16M14 55h36"/>
+        </g><rect x="14" y="22" width="4" height="4" fill="currentColor"/>
+      </symbol>
+      <symbol id="bwa-glyph-delivery" viewBox="0 0 64 64">
+        <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke">
+          <path d="M10 57V11h22v46M32 11h22v46M18 45h19"/><circle cx="45" cy="35" r="6"/><path d="M39 35H24v8h5v5h5"/>
+        </g><circle cx="45" cy="35" r="2" fill="currentColor"/>
+      </symbol>
+      <symbol id="bwa-glyph-workflow" viewBox="0 0 64 64">
+        <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke">
+          <rect x="15" y="6" width="34" height="52"/><path d="M22 19h14M22 25h9M22 46c7 0 7-12 14-12s7-13 13-13"/><path d="M22 52h20"/>
+        </g><circle cx="22" cy="46" r="2.1" fill="currentColor"/><circle cx="36" cy="34" r="2.1" fill="currentColor"/><circle cx="49" cy="21" r="2.1" fill="currentColor"/>
+      </symbol>
+      <symbol id="bwa-glyph-assurance" viewBox="0 0 64 64">
+        <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke">
+          <path d="M32 7 51 15v16c0 12-7 21-19 27C20 52 13 43 13 31V15Z"/><path d="m22 32 7 7 14-17"/>
+        </g><circle cx="32" cy="7" r="2.1" fill="currentColor"/>
+      </symbol>
+      <symbol id="bwa-glyph-stage" viewBox="0 0 64 64">
+        <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke">
+          <path d="M8 53h14V40h14V27h20"/><path d="M22 40V19h14v8M36 27V11h20v16"/>
+        </g><circle cx="8" cy="53" r="2.2" fill="currentColor"/><circle cx="36" cy="27" r="2.2" fill="currentColor"/><circle cx="56" cy="11" r="2.2" fill="currentColor"/>
+      </symbol>
+      <symbol id="bwa-glyph-curve" viewBox="0 0 64 64">
+        <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke">
+          <path d="M7 55h50M9 52c10 0 11-8 18-8 9 0 8-15 17-15 8 0 7-15 13-18"/>
+          <path d="M9 49c8 0 12-4 18-4 10 0 10-11 17-11 9 0 8-13 13-17" stroke-dasharray="3 4" opacity=".45"/>
+        </g><circle cx="44" cy="29" r="2.2" fill="currentColor"/>
+      </symbol>
+      <symbol id="bwa-glyph-evidence" viewBox="0 0 64 64">
+        <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke">
+          <path d="M10 18h37v32H10ZM17 11h37v32"/><path d="m14 44 11-11 8 7 8-10 6 7"/>
+        </g><circle cx="23" cy="28" r="4" fill="currentColor"/>
+      </symbol>
+      <symbol id="bwa-glyph-decisions" viewBox="0 0 64 64">
+        <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke">
+          <circle cx="12" cy="18" r="4"/><circle cx="12" cy="46" r="4"/>
+          <path d="M16 18h12c9 0 8 14 17 14h7M16 46h12c9 0 8-14 17-14"/><path d="m46 32 4 4 7-9"/>
+        </g><circle cx="45" cy="32" r="2.2" fill="currentColor"/>
+      </symbol>
+      <symbol id="bwa-glyph-suppliers" viewBox="0 0 64 64">
+        <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke">
+          <path d="m8 19 24-10 24 10-24 10Z"/><path d="m8 31 24 10 24-10M8 43l24 10 24-10"/><path d="M8 19v24M56 19v24"/>
+        </g><circle cx="32" cy="29" r="2.2" fill="currentColor"/>
+      </symbol>
+      <symbol id="bwa-glyph-reports" viewBox="0 0 64 64">
+        <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke">
+          <path d="M14 9h28l8 8v38H14Z"/><path d="M42 9v10h8M22 29h20M22 37h20M22 45h13"/>
+        </g><rect x="22" y="21" width="7" height="3" fill="currentColor"/>
+      </symbol>
+      <symbol id="bwa-glyph-activity" viewBox="0 0 64 64">
+        <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke">
+          <path d="M18 8v48M18 16h29M18 32h20M18 49h29"/>
+        </g><circle cx="18" cy="16" r="3" fill="currentColor"/><circle cx="18" cy="32" r="3" fill="currentColor"/><circle cx="18" cy="49" r="3" fill="currentColor"/>
+      </symbol>
+      <symbol id="bwa-glyph-arrow" viewBox="0 0 40 20">
+        <path d="M1 10h35M28 2l8 8-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <a class="bwa-skip" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="bwa-nav" data-nav>
+    <div class="bwa-shell bwa-nav-inner">
+      <a class="bwa-wordmark" href="#inicio" aria-label="Bewild, início">Bewild</a>
+
+      <nav class="bwa-nav-links" aria-label="Navegação principal">
+        <a href="#certeza">O contrato</a>
+        <a href="#historia">A história</a>
+        <a href="#projetos">Projetos</a>
+        <a href="#workflow">Bwild Workflow</a>
+        <a href="#prova">Prova</a>
+      </nav>
+
+      <a class="bwa-button" href="/diagnostico">
+        Solicitar diagnóstico
+        <span aria-hidden="true">→</span>
+      </a>
+
+      <button class="bwa-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false" data-menu-button>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="bwa-mobile-menu" data-mobile-menu>
+    <nav aria-label="Navegação mobile">
+      <a href="#certeza">O contrato</a>
+      <a href="#historia">A história</a>
+      <a href="#projetos">Projetos</a>
+      <a href="#oque-fazemos">O que fazemos</a>
+      <a href="#workflow">Bwild Workflow</a>
+      <a href="#prova">Prova</a>
+      <a href="#objetivos">Morar, alugar ou vender</a>
+      <a href="/diagnostico">Solicitar diagnóstico</a>
+    </nav>
+  </div>
+
+  <main id="conteudo">
+    <section class="bwa-hero" id="inicio">
+      <div class="bwa-hero-grid">
+        <div class="bwa-hero-copy">
+          <p class="bwa-label">Arquitetura, Design, Engenharia, Gestão e Tecnologia.</p>
+
+          <h1>
+            Projetamos e reformamos seu apartamento <em>por completo.</em>
+          </h1>
+
+          <div class="bwa-hero-bottom bwa-hero-bottom-single">
+            <a class="bwa-button bwa-button-light" href="/diagnostico">
+              Solicitar diagnóstico
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="bwa-hero-visual" aria-label="Render de um apartamento compacto projetado pela Bewild">
+          <img
+            class="bwa-hero-image"
+            src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/86a64095-51d0-47de-b722-a8023fb5a64e/erik-03-8-1.png"
+            alt="Render de apartamento compacto com marcenaria sob medida e ambientes integrados"
+            fetchpriority="high"
+          >
+          <div class="bwa-hero-frame" aria-hidden="true"></div>
+
+          <svg class="bwa-hero-signature" viewBox="0 0 180 180" aria-hidden="true">
+            <path d="M22 154V28h72V14h64v116h-34v24H22Z"/>
+            <path d="M22 104c31 0 33-36 63-36 37 0 34-42 73-42"/>
+            <circle cx="22" cy="104" r="4"></circle>
+            <circle cx="85" cy="68" r="4"></circle>
+            <circle cx="158" cy="26" r="4"></circle>
+          </svg>
+
+          <div class="bwa-hero-objectives" aria-label="Objetivos atendidos">
+            <span>Morar</span>
+            <span>Alugar</span>
+            <span>Vender</span>
+          </div>
+
+          <div class="bwa-hero-caption">
+            <strong>Você não vira gerente de obra. Entregamos pronto para morar, alugar ou vender.</strong>
+            <span>Projeto em 3D antes da obra</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bwa-hero-facts">
+        <div class="bwa-shell bwa-hero-facts-inner">
+          <div class="bwa-hero-fact">
+            <svg class="bwa-hero-fact-glyph" aria-hidden="true"><use href="#bwa-glyph-contract"></use></svg>
+            <div class="bwa-hero-fact-copy">
+              <strong>Preço fechado</strong>
+              <span>Definido antes da obra</span>
+            </div>
+          </div>
+          <div class="bwa-hero-fact">
+            <svg class="bwa-hero-fact-glyph" aria-hidden="true"><use href="#bwa-glyph-deadline"></use></svg>
+            <div class="bwa-hero-fact-copy">
+              <strong>Prazo em contrato</strong>
+              <span>Data de entrega na assinatura</span>
+            </div>
+          </div>
+          <div class="bwa-hero-fact">
+            <svg class="bwa-hero-fact-glyph" aria-hidden="true"><use href="#bwa-glyph-assurance"></use></svg>
+            <div class="bwa-hero-fact-copy">
+              <strong>5 anos de garantia</strong>
+              <span>Obra e marcenaria</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bwa-certainty" id="certeza">
+      <div class="bwa-shell">
+        <div class="bwa-certainty-head">
+          <div class="bwa-certainty-intro">
+            <p class="bwa-label bwa-label-light">O que entra no contrato · 01</p>
+            <p>
+              O primeiro contato com a Bewild precisa deixar uma coisa clara: você contrata uma empresa para assumir o processo inteiro e devolver o apartamento pronto.
+            </p>
+          </div>
+
+          <h2 class="bwa-title bwa-certainty-title">
+            A Bewild cuida da sua obra. <strong>Você cuida do seu tempo</strong>
+          </h2>
+        </div>
+      </div>
+
+      <div class="bwa-certainty-list">
+        <article class="bwa-certainty-item bwa-open">
+          <button class="bwa-certainty-toggle" type="button" aria-expanded="true">
+            <span class="bwa-certainty-num">
+              <svg class="bwa-certainty-glyph" aria-hidden="true"><use href="#bwa-glyph-architecture"></use></svg>
+              <i>01</i>
+            </span>
+            <span class="bwa-certainty-name">Projeto de arquitetura personalizado</span>
+            <span class="bwa-certainty-outcome">Você aprova antes da obra</span>
+            <span class="bwa-certainty-icon" aria-hidden="true"></span>
+          </button>
+          <div class="bwa-certainty-detail">
+            <div class="bwa-certainty-detail-inner">
+              <p>
+                Consultoria, projeto em 3D com revisões até a aprovação, projeto executivo e toda a documentação técnica. Você vê o resultado antes de a obra começar.
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bwa-certainty-item">
+          <button class="bwa-certainty-toggle" type="button" aria-expanded="false">
+            <span class="bwa-certainty-num">
+              <svg class="bwa-certainty-glyph" aria-hidden="true"><use href="#bwa-glyph-contract"></use></svg>
+              <i>02</i>
+            </span>
+            <span class="bwa-certainty-name">Preço fechado</span>
+            <span class="bwa-certainty-outcome">O risco fica com a Bewild</span>
+            <span class="bwa-certainty-icon" aria-hidden="true"></span>
+          </button>
+          <div class="bwa-certainty-detail">
+            <div class="bwa-certainty-detail-inner">
+              <p>
+                Você assina um único contrato, com preço definido antes de a obra começar. Se a obra custar mais do que o combinado, a diferença é por nossa conta.
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bwa-certainty-item">
+          <button class="bwa-certainty-toggle" type="button" aria-expanded="false">
+            <span class="bwa-certainty-num">
+              <svg class="bwa-certainty-glyph" aria-hidden="true"><use href="#bwa-glyph-deadline"></use></svg>
+              <i>03</i>
+            </span>
+            <span class="bwa-certainty-name">Prazo em contrato</span>
+            <span class="bwa-certainty-outcome">Data definida na assinatura</span>
+            <span class="bwa-certainty-icon" aria-hidden="true"></span>
+          </button>
+          <div class="bwa-certainty-detail">
+            <div class="bwa-certainty-detail-inner">
+              <p>
+                Você sabe a data de entrega no dia da assinatura. A gestão da equipe, da logística, dos fornecedores e dos imprevistos acontece do nosso lado.
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bwa-certainty-item">
+          <button class="bwa-certainty-toggle" type="button" aria-expanded="false">
+            <span class="bwa-certainty-num">
+              <svg class="bwa-certainty-glyph" aria-hidden="true"><use href="#bwa-glyph-craft"></use></svg>
+              <i>04</i>
+            </span>
+            <span class="bwa-certainty-name">Time e marcenaria próprios</span>
+            <span class="bwa-certainty-outcome">Responsabilidade centralizada</span>
+            <span class="bwa-certainty-icon" aria-hidden="true"></span>
+          </button>
+          <div class="bwa-certainty-detail">
+            <div class="bwa-certainty-detail-inner">
+              <p>
+                Engenheiro dedicado, equipe própria de obra e móveis planejados fabricados pela gente, sob medida para espaços compactos.
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bwa-certainty-item">
+          <button class="bwa-certainty-toggle" type="button" aria-expanded="false">
+            <span class="bwa-certainty-num">
+              <svg class="bwa-certainty-glyph" aria-hidden="true"><use href="#bwa-glyph-delivery"></use></svg>
+              <i>05</i>
+            </span>
+            <span class="bwa-certainty-name">Mobília, equipamentos e entrega das chaves</span>
+            <span class="bwa-certainty-outcome">Tudo comprado e instalado</span>
+            <span class="bwa-certainty-icon" aria-hidden="true"></span>
+          </button>
+          <div class="bwa-certainty-detail">
+            <div class="bwa-certainty-detail-inner">
+              <p>
+                Escolhemos, compramos e instalamos tudo o que o imóvel precisa, dos eletros à cafeteira. A entrega inclui vistoria com engenheiro, termo de finalização e fotos profissionais do imóvel pronto.
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bwa-certainty-item">
+          <button class="bwa-certainty-toggle" type="button" aria-expanded="false">
+            <span class="bwa-certainty-num">
+              <svg class="bwa-certainty-glyph" aria-hidden="true"><use href="#bwa-glyph-workflow"></use></svg>
+              <i>06</i>
+            </span>
+            <span class="bwa-certainty-name">Bwild Workflow e 5 anos de garantia</span>
+            <span class="bwa-certainty-outcome">Visibilidade durante e depois</span>
+            <span class="bwa-certainty-icon" aria-hidden="true"></span>
+          </button>
+          <div class="bwa-certainty-detail">
+            <div class="bwa-certainty-detail-inner">
+              <p>
+                Você acompanha cronograma, fotos, decisões, compras e fornecedores pelo Bwild Workflow. Obra e marcenaria têm garantia Bewild, conforme termo contratual.
+              </p>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="bwa-shell bwa-certainty-close">
+        <p>O contrato reúne o que normalmente fica espalhado entre pessoas, mensagens e promessas.</p>
+        <a class="bwa-button bwa-button-light" href="/diagnostico">
+          Solicitar diagnóstico
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="bwa-story" id="historia">
+      <div class="bwa-shell">
+        <div class="bwa-story-head">
+          <div>
+            <p class="bwa-label bwa-label-accent">Marcenaria orientada ao uso · 02</p>
+          </div>
+
+          <div class="bwa-story-head-copy">
+            <h2 class="bwa-title bwa-title-serif">
+              O uso do apartamento define a marcenaria.
+            </h2>
+            <p class="bwa-lead">
+              Em apartamentos compactos, a marcenaria define quanto o espaço guarda, quanto custa e como ele funciona. Para short stay, o projeto usa apenas o necessário. Para long stay e moradia, armazenamento é parte essencial da sensação de casa.
+            </p>
+            <p class="bwa-story-disclaimer">
+              Marina é uma personagem composta, criada a partir de situações recorrentes de proprietários que chegam à Bewild. A história não representa um depoimento ou case individual.
+            </p>
+          </div>
+        </div>
+
+        <div class="bwa-story-layout">
+          <div class="bwa-story-stage" aria-hidden="true">
+            <div class="bwa-story-aperture" data-story-aperture>
+              <svg class="bwa-story-linework bwa-story-linework-millwork" viewBox="0 0 800 1000" aria-hidden="true">
+                <path d="M92 88h616v824H92Z"/>
+                <path d="M92 278h616M92 630h616"/>
+                <path d="M264 88v824M528 88v824"/>
+                <path d="M116 112h124v142H116ZM288 112h216v142H288ZM552 112h132v142H552Z"/>
+                <path d="M116 302h124v304H116ZM288 302h216v304H288ZM552 302h132v304H552Z"/>
+                <path d="M116 654h124v234H116ZM288 654h216v234H288ZM552 654h132v234H552Z"/>
+                <path d="M194 438h-30M394 438h-30M630 438h-30"/>
+                <path d="M194 770h-30M394 770h-30M630 770h-30"/>
+                <path class="bwa-story-linework-route" d="M118 864C206 864 197 520 322 520S430 166 588 166s91 285 92 445"/>
+                <circle cx="118" cy="864" r="7"></circle>
+                <circle cx="322" cy="520" r="7"></circle>
+                <circle cx="588" cy="166" r="7"></circle>
+                <circle cx="680" cy="611" r="7"></circle>
+              </svg>
+
+              <div class="bwa-story-images">
+                <img
+                  class="bwa-story-image bwa-active"
+                  src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/409b9ac5-1b84-451d-84bb-e8b28ea83ece/marcos-6-2.png"
+                  alt=""
+                  loading="lazy"
+                  data-story-image="0"
+                >
+                <img
+                  class="bwa-story-image"
+                  src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/fed798c0-0770-46ae-9aa6-469ed6cc98b9/rodrigo-1-1.png"
+                  alt=""
+                  loading="lazy"
+                  data-story-image="1"
+                >
+                <img
+                  class="bwa-story-image"
+                  src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/e4e04b71-6b36-4b07-805b-6bf2b37375d4/premium-11-2.png"
+                  alt=""
+                  loading="lazy"
+                  data-story-image="2"
+                >
+                <img
+                  class="bwa-story-image"
+                  src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/86a64095-51d0-47de-b722-a8023fb5a64e/erik-03-8-1.png"
+                  alt=""
+                  loading="lazy"
+                  data-story-image="3"
+                >
+              </div>
+
+              <div class="bwa-story-stage-caption">
+                <span data-story-caption-index>01 · ponto de partida</span>
+                <strong data-story-caption>Cada armário precisa justificar espaço, uso e custo.</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="bwa-story-steps">
+            <article
+              class="bwa-story-step bwa-active"
+              data-story-step
+              data-aperture="18%"
+              data-caption-index="01 · ponto de partida"
+              data-caption="Cada armário precisa justificar espaço, uso e custo."
+            >
+              <span class="bwa-story-step-num">01 · A pergunta certa</span>
+              <h3>Marina chegou querendo aproveitar cada parede com armários.</h3>
+              <p>
+                Ela mora fora de São Paulo e comprou um apartamento compacto para usar quando está na cidade, com a possibilidade de colocá-lo em locação de longa temporada depois. A primeira ideia era preencher o espaço com marcenaria. A equipe começou por outra pergunta: o que realmente precisa ser guardado, por quem e por quanto tempo?
+              </p>
+              <div class="bwa-story-proof">
+                <div>
+                  <small>Quanto mais marcenaria</small>
+                  <strong>Maior o investimento e menor a área livre.</strong>
+                </div>
+                <div>
+                  <small>Critério de projeto</small>
+                  <strong>Cada módulo precisa resolver uma necessidade real.</strong>
+                </div>
+              </div>
+            </article>
+
+            <article
+              class="bwa-story-step"
+              data-story-step
+              data-aperture="10%"
+              data-caption-index="02 · short stay"
+              data-caption="Guardar o necessário. Liberar o que o hóspede usa."
+            >
+              <span class="bwa-story-step-num">02 · Short stay</span>
+              <h3>Para estadias curtas, excesso de armário pode ocupar o lugar de coisas mais importantes.</h3>
+              <p>
+                Quem fica poucos dias chega com uma mala e usa o apartamento de outro jeito. O projeto mantém o armazenamento necessário e direciona espaço e investimento para circulação, apoio de bagagem, iluminação, conforto e uma composição que funciona bem nas fotos do anúncio.
+              </p>
+              <div class="bwa-story-proof">
+                <div>
+                  <small>Armazenamento</small>
+                  <strong>O suficiente para a estadia, sem preencher todas as paredes.</strong>
+                </div>
+                <div>
+                  <small>Prioridade</small>
+                  <strong>Mais respiro, melhor uso e uma chegada mais acolhedora.</strong>
+                </div>
+              </div>
+            </article>
+
+            <article
+              class="bwa-story-step"
+              data-story-step
+              data-aperture="5%"
+              data-caption-index="03 · long stay e moradia"
+              data-caption="Armazenamento transforma um compacto em casa."
+            >
+              <span class="bwa-story-step-num">03 · Long stay e moradia</span>
+              <h3>Para viver por meses ou anos, a marcenaria vira infraestrutura da casa.</h3>
+              <p>
+                Roupas, roupa de cama, itens de limpeza, cozinha, trabalho e objetos pessoais precisam de lugar. Em apartamentos compactos, guarda-roupa, cozinha, lavanderia e apoios precisam funcionar como um único sistema. Como Marina queria usar o imóvel e depois alugá-lo por meses, o armazenamento ganhou protagonismo.
+              </p>
+              <div class="bwa-story-proof">
+                <div>
+                  <small>Rotina longa</small>
+                  <strong>Tudo tem lugar sem transformar o ambiente em depósito.</strong>
+                </div>
+                <div>
+                  <small>Sensação de casa</small>
+                  <strong>O apartamento compacto deixa de parecer provisório.</strong>
+                </div>
+              </div>
+            </article>
+
+            <article
+              class="bwa-story-step"
+              data-story-step
+              data-aperture="0%"
+              data-caption-index="04 · execução"
+              data-caption="A marcenaria sai do 3D e chega instalada."
+            >
+              <span class="bwa-story-step-num">04 · Projeto e execução</span>
+              <h3>A mesma equipe que projeta coordena a fabricação, a obra e a instalação.</h3>
+              <p>
+                A Bewild define a marcenaria no projeto em 3D, compatibiliza cada módulo com elétrica, iluminação, hidráulica e equipamentos, fabrica sob medida e instala junto com o restante do apartamento. Depois da aprovação, preço, prazo e escopo entram no contrato. Marina acompanha pelo Bwild Workflow e recebe tudo pronto.
+              </p>
+              <div class="bwa-story-proof">
+                <div>
+                  <small>Marcenaria própria</small>
+                  <strong>Projeto, fabricação e instalação sob uma responsabilidade.</strong>
+                </div>
+                <div>
+                  <small>Sem gerenciar a obra</small>
+                  <strong>A Bewild coordena o processo e entrega as chaves.</strong>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="bwa-story-resolution">
+          <div class="bwa-story-resolution-head">
+            <p class="bwa-label">A mesma metragem, prioridades diferentes</p>
+            <p>A marcenaria responde ao tempo de permanência, à rotina e ao objetivo do apartamento.</p>
+          </div>
+
+          <div class="bwa-resolution-row">
+            <span>Short stay</span>
+            <p>Armazenamento essencial, apoio de mala, circulação, conforto e leitura visual para o anúncio.</p>
+          </div>
+
+          <div class="bwa-resolution-row">
+            <span>Long stay</span>
+            <p>Guarda-roupa, cozinha, lavanderia e apoios dimensionados para uma rotina de meses.</p>
+          </div>
+
+          <div class="bwa-resolution-row">
+            <span>Moradia</span>
+            <p>Marcenaria personalizada para hábitos, objetos e a sensação de casa de quem vai viver ali.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bwa-projects" id="projetos">
+      <div class="bwa-shell">
+        <div class="bwa-projects-head">
+          <p class="bwa-label bwa-label-light">Projetos entregues · 03</p>
+
+          <div class="bwa-projects-head-copy">
+            <h2 class="bwa-title">
+              O espaço imaginado precisa sobreviver à obra.
+            </h2>
+            <p class="bwa-lead">
+              Aprovado no 3D. Entregue igual. O projeto orienta cada escolha, do primeiro corte à instalação final.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bwa-projects-rail" aria-label="Projetos selecionados">
+        <article class="bwa-project-card">
+          <a href="/portfolio" aria-label="Ver projeto Studio Vila Olímpia, 24 metros quadrados">
+            <div class="bwa-project-image">
+              <img
+                src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/fc2269e8-1b1d-4cb8-bb09-118d23a6bf5f/rodrigo-8.png"
+                alt="Render do Studio Vila Olímpia com marcenaria integrada"
+                loading="lazy"
+              >
+            </div>
+            <div class="bwa-project-meta">
+              <div>
+                <div class="bwa-project-name">Studio Vila Olímpia</div>
+                <span class="bwa-text-link">ver projeto →</span>
+              </div>
+              <div class="bwa-project-data">
+                <span>24 m²</span>
+                <span>Reforma completa · 2026</span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <article class="bwa-project-card">
+          <a href="/portfolio" aria-label="Ver projeto Studio Pinheiros, 28 metros quadrados">
+            <div class="bwa-project-image">
+              <img
+                src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/2ca03da8-a59a-4563-954a-dec4f50e1a28/marcos-10-4.png"
+                alt="Render do Studio Pinheiros com ambiente integrado e iluminação quente"
+                loading="lazy"
+              >
+            </div>
+            <div class="bwa-project-meta">
+              <div>
+                <div class="bwa-project-name">Studio Pinheiros</div>
+                <span class="bwa-text-link">ver projeto →</span>
+              </div>
+              <div class="bwa-project-data">
+                <span>28 m²</span>
+                <span>Short stay · 2025</span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <article class="bwa-project-card">
+          <a href="/portfolio" aria-label="Ver projeto Studio Brooklin, 32 metros quadrados">
+            <div class="bwa-project-image">
+              <img
+                src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/e38bf175-1868-4ad7-810b-2a84b6553cce/premium-7-4.png"
+                alt="Render do Studio Brooklin com materiais claros e mobiliário sob medida"
+                loading="lazy"
+              >
+            </div>
+            <div class="bwa-project-meta">
+              <div>
+                <div class="bwa-project-name">Studio Brooklin</div>
+                <span class="bwa-text-link">ver projeto →</span>
+              </div>
+              <div class="bwa-project-data">
+                <span>32 m²</span>
+                <span>Reforma completa · 2025</span>
+              </div>
+            </div>
+          </a>
+        </article>
+      </div>
+
+      <div class="bwa-shell bwa-projects-foot">
+        <p>
+          Selecionados · 2024–2026. Cada ambiente é pensado para o uso real do studio, com projeto aprovado antes da execução.
+        </p>
+        <a class="bwa-button bwa-button-light" href="/portfolio">
+          Visitar portfólio completo
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="bwa-scope" id="oque-fazemos">
+      <div class="bwa-shell">
+        <div class="bwa-scope-head">
+          <p class="bwa-label">O que fazemos · 04</p>
+
+          <div class="bwa-scope-head-copy">
+            <h2 class="bwa-title">
+              Você assina um único contrato, com preço e prazo definidos antes de a obra começar.
+            </h2>
+            <p class="bwa-lead">
+              Daí em diante, o trabalho é nosso.
+            </p>
+          </div>
+        </div>
+
+        <div class="bwa-scope-layout">
+          <div class="bwa-scope-visual" aria-hidden="true">
+            <img
+              class="bwa-scope-image bwa-active"
+              src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/fed798c0-0770-46ae-9aa6-469ed6cc98b9/rodrigo-1-1.png"
+              alt=""
+              loading="lazy"
+              data-scope-image="0"
+            >
+            <img
+              class="bwa-scope-image"
+              src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/86a64095-51d0-47de-b722-a8023fb5a64e/erik-03-8-1.png"
+              alt=""
+              loading="lazy"
+              data-scope-image="1"
+            >
+            <img
+              class="bwa-scope-image"
+              src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/e4e04b71-6b36-4b07-805b-6bf2b37375d4/premium-11-2.png"
+              alt=""
+              loading="lazy"
+              data-scope-image="2"
+            >
+            <img
+              class="bwa-scope-image"
+              src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/409b9ac5-1b84-451d-84bb-e8b28ea83ece/marcos-6-2.png"
+              alt=""
+              loading="lazy"
+              data-scope-image="3"
+            >
+            <img
+              class="bwa-scope-image"
+              src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/e38bf175-1868-4ad7-810b-2a84b6553cce/premium-7-4.png"
+              alt=""
+              loading="lazy"
+              data-scope-image="4"
+            >
+          </div>
+
+          <div class="bwa-scope-accordion">
+            <article class="bwa-scope-item bwa-open" data-scope-item="0">
+              <button class="bwa-scope-toggle" type="button" aria-expanded="true">
+                <span>01</span>
+                <strong>Projeto de arquitetura personalizado</strong>
+                <i aria-hidden="true"></i>
+              </button>
+              <div class="bwa-scope-detail">
+                <p>
+                  Consultoria, projeto em 3D com revisões até a aprovação, projeto executivo e toda a documentação técnica. Você vê o resultado antes de a obra começar.
+                </p>
+              </div>
+            </article>
+
+            <article class="bwa-scope-item" data-scope-item="1">
+              <button class="bwa-scope-toggle" type="button" aria-expanded="false">
+                <span>02</span>
+                <strong>Obra com time próprio</strong>
+                <i aria-hidden="true"></i>
+              </button>
+              <div class="bwa-scope-detail">
+                <p>
+                  Engenheiro dedicado, gestão e logística centralizadas, equipe própria de empreita, elétrica, vidraçaria e ar-condicionado. ART, CREA e liberação no condomínio por nossa conta.
+                </p>
+              </div>
+            </article>
+
+            <article class="bwa-scope-item" data-scope-item="2">
+              <button class="bwa-scope-toggle" type="button" aria-expanded="false">
+                <span>03</span>
+                <strong>Marcenaria própria</strong>
+                <i aria-hidden="true"></i>
+              </button>
+              <div class="bwa-scope-detail">
+                <p>
+                  Móveis planejados fabricados pela gente, sob medida para espaços compactos.
+                </p>
+              </div>
+            </article>
+
+            <article class="bwa-scope-item" data-scope-item="3">
+              <button class="bwa-scope-toggle" type="button" aria-expanded="false">
+                <span>04</span>
+                <strong>Mobília e equipamentos</strong>
+                <i aria-hidden="true"></i>
+              </button>
+              <div class="bwa-scope-detail">
+                <p>
+                  Escolhemos, compramos e instalamos tudo o que o imóvel precisa, dos eletros à cafeteira.
+                </p>
+              </div>
+            </article>
+
+            <article class="bwa-scope-item" data-scope-item="4">
+              <button class="bwa-scope-toggle" type="button" aria-expanded="false">
+                <span>05</span>
+                <strong>Entrega das chaves</strong>
+                <i aria-hidden="true"></i>
+              </button>
+              <div class="bwa-scope-detail">
+                <p>
+                  Vistoria de entrega com engenheiro, termo de finalização assinado por você e fotos profissionais do imóvel pronto. Para morar, receber inquilino ou ir à venda.
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bwa-responsibility" id="como-funciona">
+      <div class="bwa-shell bwa-responsibility-intro">
+        <p class="bwa-label bwa-label-light">Sem dor de cabeça · 05</p>
+
+        <div>
+          <h2 class="bwa-title">
+            Quem reforma por conta própria vira comprador de material, fiscal de pedreiro e despachante de condomínio.
+          </h2>
+          <p class="bwa-lead">
+            Na Bewild, isso tudo fica do nosso lado do contrato.
+          </p>
+        </div>
+      </div>
+
+      <div class="bwa-responsibility-split">
+        <div class="bwa-side-you">
+          <h3 class="bwa-side-title">Com você ficam três coisas</h3>
+          <ol class="bwa-responsibility-list">
+            <li data-index="01">Aprovar o projeto.</li>
+            <li data-index="02">Acompanhar pelo celular, se quiser.</li>
+            <li data-index="03">Receber as chaves.</li>
+          </ol>
+        </div>
+
+        <div class="bwa-side-us">
+          <h3 class="bwa-side-title">Com a gente fica o resto</h3>
+          <ol class="bwa-responsibility-list">
+            <li data-index="01">Gestão da equipe e do canteiro.</li>
+            <li data-index="02">Compra e conferência de material.</li>
+            <li data-index="03">Documentação, ART e CREA.</li>
+            <li data-index="04">Liberação no condomínio.</li>
+            <li data-index="05">Vistoria do imóvel.</li>
+            <li data-index="06">Prazo, logística e imprevistos.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="bwa-shell bwa-included">
+        <div class="bwa-included-head">
+          <p class="bwa-label bwa-label-light">Já incluso no contrato</p>
+          <h3>Pequenas operações que costumam devolver o cliente para dentro da obra também ficam com a Bewild.</h3>
+        </div>
+
+        <div class="bwa-included-grid">
+          <div class="bwa-included-item">
+            <span>01 · vistoria</span>
+            <p>Vistoria de entrega com engenheiro Bewild, com você ou por procuração.</p>
+          </div>
+          <div class="bwa-included-item">
+            <span>02 · energia</span>
+            <p>Se você não mora em São Paulo, a gente vai à ENEL por você e liga a energia da unidade.</p>
+          </div>
+          <div class="bwa-included-item">
+            <span>03 · prevenção</span>
+            <p>Manutenção preventiva de ar-condicionado e elétrica: 2 visitas a cada 3 meses.</p>
+          </div>
+          <div class="bwa-included-item">
+            <span>04 · emergência</span>
+            <p>2 chamados de emergência por semestre, atendidos em até 4 horas.</p>
+          </div>
+          <div class="bwa-included-item">
+            <span>05 · internet</span>
+            <p>Contratação e instalação da internet, testada e documentada, sem você se deslocar.</p>
+          </div>
+          <div class="bwa-included-item">
+            <span>06 · visibilidade</span>
+            <p>Acesso ao Bwild Workflow durante toda a obra.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bwa-pillars">
+        <article class="bwa-pillar">
+          <span class="bwa-pillar-num">01</span>
+          <h3>Preço fechado</h3>
+          <p>Se a obra custar mais do que o combinado, a diferença é por nossa conta.</p>
+        </article>
+        <article class="bwa-pillar">
+          <span class="bwa-pillar-num">02</span>
+          <h3>Prazo em contrato</h3>
+          <p>Você sabe a data de entrega no dia da assinatura.</p>
+        </article>
+        <article class="bwa-pillar">
+          <span class="bwa-pillar-num">03</span>
+          <h3>5 anos de garantia</h3>
+          <p>Obra e marcenaria com garantia Bewild, conforme termo contratual.</p>
+        </article>
+      </div>
+
+      <div class="bwa-technical">
+        <div class="bwa-shell">
+          ART · CREA · NBR 16280 · NBR 5410 · NBR 16401 · NBR 14917 · NBR 13749 · NBR 14033
+        </div>
+      </div>
+    </section>
+
+
+    <section class="bwa-workflow" id="workflow">
+      <div class="bwa-shell">
+        <div class="bwa-wf2-head">
+          <div class="bwa-wf2-kicker">
+            <p class="bwa-label bwa-label-light">Obra sem caixa preta · 06</p>
+
+            <svg class="bwa-wf2-emblem" viewBox="0 0 260 260" aria-hidden="true">
+              <path class="bwa-wf2-emblem-line" d="M27 220V43h104V18h102v174h-52v28H27Z"/>
+              <path class="bwa-wf2-emblem-line bwa-wf2-emblem-line-soft" d="M27 151c42 0 44-46 83-46 50 0 44-57 96-57"/>
+              <circle cx="27" cy="151" r="5"/>
+              <circle cx="110" cy="105" r="5"/>
+              <circle cx="206" cy="48" r="5"/>
+            </svg>
+          </div>
+
+          <div class="bwa-wf2-copy">
+            <h2 class="bwa-title">Sua obra inteira na tela do celular.</h2>
+
+            <p class="bwa-lead">
+              O Bwild Workflow é o portal onde você acompanha tudo: cronograma por etapa, fotos da evolução, decisões registradas, compras e fornecedores organizados. Você abre e sabe em que pé a obra está, sem precisar cobrar ninguém no WhatsApp.
+            </p>
+
+            <p class="bwa-wf2-thesis">
+              Ele organiza a obra em uma leitura simples: o que foi planejado, o que já foi executado, o que ficou registrado e o que acontece a seguir.
+            </p>
+
+            <a class="bwa-text-link" href="https://bwildworkflow.com" target="_blank" rel="noreferrer">
+              Ver demonstração →
+            </a>
+          </div>
+        </div>
+
+        <div class="bwa-wf2-question-head">
+          <p class="bwa-label bwa-label-light">O que você consegue acompanhar</p>
+          <p>As perguntas que normalmente viram cobrança, visita à obra e mensagem espalhada aparecem no mesmo lugar.</p>
+        </div>
+
+        <div class="bwa-wf2-questions" aria-label="Informações acompanhadas no Bwild Workflow">
+          <svg class="bwa-wf2-route" viewBox="0 0 1400 540" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M35 105C260 105 213 275 455 275S650 83 875 83s190 342 490 342"/>
+            <circle cx="35" cy="105" r="5"/>
+            <circle cx="455" cy="275" r="5"/>
+            <circle cx="875" cy="83" r="5"/>
+            <circle cx="1365" cy="425" r="5"/>
+          </svg>
+
+          <article class="bwa-wf2-question">
+            <svg class="bwa-wf2-icon" aria-hidden="true"><use href="#bwa-glyph-stage"></use></svg>
+            <span>01 · agora</span>
+            <h3>Em que ponto a obra está?</h3>
+            <p>Semana atual, percentual concluído, etapa em andamento e status do prazo.</p>
+          </article>
+
+          <article class="bwa-wf2-question">
+            <svg class="bwa-wf2-icon" aria-hidden="true"><use href="#bwa-glyph-curve"></use></svg>
+            <span>02 · ritmo</span>
+            <h3>O avanço segue o planejado?</h3>
+            <p>A Curva S coloca a execução real e a planejada na mesma leitura.</p>
+          </article>
+
+          <article class="bwa-wf2-question">
+            <svg class="bwa-wf2-icon" aria-hidden="true"><use href="#bwa-glyph-evidence"></use></svg>
+            <span>03 · evidência</span>
+            <h3>O que já foi executado?</h3>
+            <p>Fotos da evolução e relatórios semanais deixam um histórico consultável.</p>
+          </article>
+
+          <article class="bwa-wf2-question">
+            <svg class="bwa-wf2-icon" aria-hidden="true"><use href="#bwa-glyph-decisions"></use></svg>
+            <span>04 · decisão</span>
+            <h3>O que ficou decidido?</h3>
+            <p>As decisões permanecem registradas, fora de conversas soltas e memória de WhatsApp.</p>
+          </article>
+
+          <article class="bwa-wf2-question">
+            <svg class="bwa-wf2-icon" aria-hidden="true"><use href="#bwa-glyph-suppliers"></use></svg>
+            <span>05 · organização</span>
+            <h3>Como a execução está organizada?</h3>
+            <p>Compras e fornecedores relacionados à obra ficam reunidos no portal.</p>
+          </article>
+
+          <article class="bwa-wf2-question">
+            <svg class="bwa-wf2-icon" aria-hidden="true"><use href="#bwa-glyph-activity"></use></svg>
+            <span>06 · próximo passo</span>
+            <h3>O que aconteceu por último e o que vem agora?</h3>
+            <p>A atividade recente e as etapas concluídas, em andamento ou a iniciar mostram a sequência da obra.</p>
+          </article>
+        </div>
+
+        <div class="bwa-wf2-stage">
+          <aside class="bwa-wf2-stage-copy">
+            <p class="bwa-label bwa-label-light">A obra tem memória</p>
+            <h3>Você acompanha. A Bewild resolve.</h3>
+            <p>
+              O portal não transfere a gestão para você. Ele transforma a gestão da Bewild em registro consultável durante toda a obra.
+            </p>
+
+            <dl class="bwa-wf2-tabs">
+              <div>
+                <dt>Curva S</dt>
+                <dd>Avanço real comparado ao planejado.</dd>
+              </div>
+              <div>
+                <dt>Relatórios</dt>
+                <dd>Fotos, evolução e relato semanal da execução.</dd>
+              </div>
+              <div>
+                <dt>Atividade</dt>
+                <dd>Histórico do que foi atualizado e da sequência do projeto.</dd>
+              </div>
+            </dl>
+          </aside>
+
+          <div class="bwa-wf2-portal-column">
+            <div class="bwa-portal-wrap">
+              <div class="bwa-portal" aria-label="Interface ilustrativa do Bwild Workflow">
+                <div class="bwa-portal-top">
+                  <strong class="bwa-portal-brand">Bwild Workflow</strong>
+
+                  <div class="bwa-portal-tabs" aria-hidden="true">
+                    <span>Curva S</span>
+                    <span>Relatórios</span>
+                    <span>Atividade</span>
+                  </div>
+
+                  <span class="bwa-portal-status">No prazo</span>
+                </div>
+
+                <div class="bwa-portal-body">
+                  <div class="bwa-portal-project">
+                    <h3>Studio Urban Flex · 22 m²</h3>
+                    <span>Em obra</span>
+                  </div>
+
+                  <div class="bwa-portal-metrics">
+                    <div class="bwa-portal-metric">
+                      <small>Período</small>
+                      <strong>Semana 6 de 10</strong>
+                    </div>
+                    <div class="bwa-portal-metric">
+                      <small>Progresso</small>
+                      <strong>52% concluído</strong>
+                    </div>
+                    <div class="bwa-portal-metric">
+                      <small>Status</small>
+                      <strong>No prazo</strong>
+                    </div>
+                  </div>
+
+                  <div class="bwa-wf2-portal-index" aria-label="Outras informações organizadas no portal">
+                    <span>Fotos da evolução</span>
+                    <span>Decisões registradas</span>
+                    <span>Compras e fornecedores</span>
+                  </div>
+
+                  <div class="bwa-portal-grid">
+                    <div class="bwa-chart">
+                      <div class="bwa-chart-head">
+                        <strong>Curva S</strong>
+                        <div class="bwa-chart-legend">
+                          <span>Real</span>
+                          <span>Planejado</span>
+                        </div>
+                      </div>
+
+                      <svg class="bwa-chart-svg" viewBox="0 0 600 260" role="img" aria-label="Gráfico Curva S com progresso real e planejado">
+                        <line class="bwa-chart-gridline" x1="20" y1="40" x2="580" y2="40"></line>
+                        <line class="bwa-chart-gridline" x1="20" y1="100" x2="580" y2="100"></line>
+                        <line class="bwa-chart-gridline" x1="20" y1="160" x2="580" y2="160"></line>
+                        <line class="bwa-chart-gridline" x1="20" y1="220" x2="580" y2="220"></line>
+                        <path class="bwa-chart-plan" d="M20 224 C90 223 115 212 165 198 C245 175 265 130 335 103 C410 75 500 52 580 34"></path>
+                        <path class="bwa-chart-real" d="M20 224 C92 222 120 207 166 192 C236 170 280 137 338 111 C410 78 488 63 580 48"></path>
+                      </svg>
+                    </div>
+
+                    <div class="bwa-portal-tasks">
+                      <div class="bwa-task">
+                        <div class="bwa-task-top">
+                          <strong>Demolição e remoção</strong>
+                          <span>Concluída</span>
+                        </div>
+                        <div class="bwa-task-progress"><i style="width: 100%"></i></div>
+                      </div>
+
+                      <div class="bwa-task">
+                        <div class="bwa-task-top">
+                          <strong>Elétrica e hidráulica</strong>
+                          <span>Concluída</span>
+                        </div>
+                        <div class="bwa-task-progress"><i style="width: 100%"></i></div>
+                      </div>
+
+                      <div class="bwa-task">
+                        <div class="bwa-task-top">
+                          <strong>Marcenaria sob medida</strong>
+                          <span>Em andamento 60%</span>
+                        </div>
+                        <div class="bwa-task-progress"><i class="bwa-60"></i></div>
+                      </div>
+
+                      <div class="bwa-task">
+                        <div class="bwa-task-top">
+                          <strong>Montagem e enxoval</strong>
+                          <span>A iniciar</span>
+                        </div>
+                        <div class="bwa-task-progress"><i class="bwa-0"></i></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="bwa-wf2-update">
+                    <svg aria-hidden="true"><use href="#bwa-glyph-reports"></use></svg>
+                    <div>
+                      <span>Atividade mais recente</span>
+                      <strong>Atualizado hoje. Relatório semanal #6: marcenaria instalada, elétrica revisada.</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p class="bwa-portal-caption">Interface ilustrativa do portal de acompanhamento</p>
+          </div>
+        </div>
+
+        <div class="bwa-wf2-close">
+          <svg class="bwa-wf2-close-line" viewBox="0 0 420 120" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M2 60h128c46 0 44-42 87-42s39 84 85 84 45-42 116-42"/>
+            <circle cx="2" cy="60" r="4"/>
+            <circle cx="418" cy="60" r="4"/>
+          </svg>
+
+          <p>Você não usa o Bwild Workflow para gerenciar a obra. Usa para verificar, a qualquer momento, que ela está sendo gerenciada.</p>
+          <span>Acesso durante toda a obra</span>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="bwa-proof" id="prova">
+      <div class="bwa-shell">
+        <div class="bwa-proof-head">
+          <p class="bwa-label">Prova · 07</p>
+          <h2 class="bwa-title">
+            A promessa só ganha peso quando aparece na experiência real.
+          </h2>
+        </div>
+
+        <div class="bwa-proof-grid">
+          <article class="bwa-proof-card">
+            <div class="bwa-proof-card-label">
+              <span>Depoimento 01</span>
+              <span>Vivian</span>
+            </div>
+
+            <div class="bwa-video">
+              <img
+                src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/409b9ac5-1b84-451d-84bb-e8b28ea83ece/marcos-6-2.png"
+                alt="Imagem de capa do depoimento da cliente Vivian"
+                loading="lazy"
+              >
+              <button class="bwa-play" type="button" aria-label="Reproduzir depoimento da Vivian" data-video-demo></button>
+            </div>
+
+            <!-- Frase provisória da Vivian. Substituir apenas após extração literal do vídeo. -->
+            <blockquote>“Uma empresa humana, do começo ao fim.”</blockquote>
+            <p>
+              A Vivian reformou o studio dela com a Bewild e contou como foi acompanhar tudo sem entrar na obra. Depoimento gravado sem roteiro.
+            </p>
+          </article>
+
+          <article class="bwa-proof-card">
+            <div class="bwa-proof-card-label">
+              <span>Resultado 02</span>
+              <span>Rafael · Butantã</span>
+            </div>
+
+            <div class="bwa-result-number">70<span>%</span></div>
+            <p class="bwa-result-sub">de ocupação em novembro</p>
+            <p>
+              O Rafael tinha um studio parado no Butantã. A Bewild reformou e entregou pronto para operar. Ele anunciou no Airbnb e fechou novembro com 70% de ocupação. “Esses studios serão um negócio para mim. Renda vitalícia.”
+            </p>
+
+            <div class="bwa-proof-prints">
+              <figure class="bwa-proof-print">
+                <img
+                  src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/52056442-e991-43d5-b15f-9862ed564987/rafael-ocupacao-novembro.jpeg"
+                  alt="Print do calendário de ocupação do studio do Rafael em novembro"
+                  loading="lazy"
+                >
+                <figcaption>Novembro: 70% de ocupação</figcaption>
+              </figure>
+
+              <figure class="bwa-proof-print">
+                <img
+                  src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/aab80290-aa8c-4677-a7cb-43365df1283f/rafael-airbnb-butanta.jpeg"
+                  alt="Print do anúncio do studio do Rafael no Airbnb"
+                  loading="lazy"
+                >
+                <figcaption>Anúncio no ar no Airbnb</figcaption>
+              </figure>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="bwa-objectives" id="objetivos">
+      <div class="bwa-shell">
+        <div class="bwa-objectives-head">
+          <p class="bwa-label bwa-label-light">Para cada objetivo · 08</p>
+
+          <div>
+            <h2 class="bwa-title">
+              O contrato é o mesmo. O projeto muda conforme o seu objetivo.
+            </h2>
+            <p class="bwa-lead">
+              Morar, alugar em curta ou longa temporada, ou vender. A arquitetura começa pelo uso que o studio precisa sustentar.
+            </p>
+          </div>
+        </div>
+
+        <div class="bwa-objectives-grid">
+          <article class="bwa-objective">
+            <img
+              src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/86a64095-51d0-47de-b722-a8023fb5a64e/erik-03-8-1.png"
+              alt=""
+              loading="lazy"
+            >
+            <span class="bwa-objective-num">01</span>
+            <h3>Morar</h3>
+            <p>
+              Seu apê do seu jeito, sem viver dentro de uma obra. Projeto pensado para a sua rotina, entrega com tudo instalado. É só mudar.
+            </p>
+          </article>
+
+          <article class="bwa-objective">
+            <img
+              src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/2ca03da8-a59a-4563-954a-dec4f50e1a28/marcos-10-4.png"
+              alt=""
+              loading="lazy"
+            >
+            <span class="bwa-objective-num">02</span>
+            <h3>Alugar</h3>
+            <p>
+              Studios desenhados para performar na locação, de curta ou longa temporada. O projeto já nasce pensando em conforto, foto de anúncio e ocupação.
+            </p>
+          </article>
+
+          <article class="bwa-objective">
+            <img
+              src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/e38bf175-1868-4ad7-810b-2a84b6553cce/premium-7-4.png"
+              alt=""
+              loading="lazy"
+            >
+            <span class="bwa-objective-num">03</span>
+            <h3>Vender</h3>
+            <p>
+              Reforma com foco em valorização e liquidez. Projeto e materiais para o comprador daquela região, imóvel fotografável e pronto para anunciar.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="bwa-manifesto" id="manifesto">
+      <div class="bwa-shell bwa-manifesto-grid">
+        <p class="bwa-label">Manifesto · 09</p>
+
+        <div class="bwa-manifesto-copy">
+          <p>
+            A Bewild nasceu inconformada com o padrão do mercado. Com obra que atrasa, orçamento que estoura e cliente tratado como visita no próprio imóvel. Por isso medimos cada centímetro antes do primeiro corte, desenhamos como quem assina e entregamos mais do que o combinado.
+          </p>
+
+          <div class="bwa-manifesto-tag">
+            <span>Ambição selvagem · Processo disciplinado</span>
+            <span class="bwa-manifesto-sign">Be wild. Built by the wild ones.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bwa-faq" id="faq">
+      <div class="bwa-shell">
+        <div class="bwa-faq-head">
+          <p class="bwa-label">FAQ · 10</p>
+          <h2 class="bwa-title">Perguntas antes de entregar a chave.</h2>
+        </div>
+
+        <div class="bwa-faq-list">
+          <article class="bwa-faq-item bwa-open">
+            <button class="bwa-faq-question" type="button" aria-expanded="true">
+              <span class="bwa-faq-num">01</span>
+              <strong>O que é uma reforma turnkey?</strong>
+              <span class="bwa-faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="bwa-faq-answer">
+              <p>
+                Turnkey quer dizer chave na mão. Você assina um contrato, a gente executa tudo e devolve o imóvel pronto para usar. É o modelo da Bewild desde o primeiro projeto.
+              </p>
+            </div>
+          </article>
+
+          <article class="bwa-faq-item">
+            <button class="bwa-faq-question" type="button" aria-expanded="false">
+              <span class="bwa-faq-num">02</span>
+              <strong>O que vocês chamam de contrato fechado?</strong>
+              <span class="bwa-faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="bwa-faq-answer">
+              <p>
+                Preço e prazo definidos e assinados antes de a obra começar. Se o valor ultrapassar o combinado, a diferença é por nossa conta.
+              </p>
+            </div>
+          </article>
+
+          <article class="bwa-faq-item">
+            <button class="bwa-faq-question" type="button" aria-expanded="false">
+              <span class="bwa-faq-num">03</span>
+              <strong>Vocês só reformam para Airbnb?</strong>
+              <span class="bwa-faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="bwa-faq-answer">
+              <p>
+                Não. Reformamos para morar, para alugar em curta ou longa temporada e para vender. O projeto muda conforme o objetivo.
+              </p>
+            </div>
+          </article>
+
+          <article class="bwa-faq-item">
+            <button class="bwa-faq-question" type="button" aria-expanded="false">
+              <span class="bwa-faq-num">04</span>
+              <strong>Preciso ir à obra?</strong>
+              <span class="bwa-faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="bwa-faq-answer">
+              <p>
+                Só se você quiser. Todo o acompanhamento acontece pelo Bwild Workflow. E moradores de fora de São Paulo contam com vistoria por procuração, ligação de energia e instalação de internet feitas pela gente.
+              </p>
+            </div>
+          </article>
+
+          <article class="bwa-faq-item">
+            <button class="bwa-faq-question" type="button" aria-expanded="false">
+              <span class="bwa-faq-num">05</span>
+              <strong>Quanto tempo leva uma reforma?</strong>
+              <span class="bwa-faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="bwa-faq-answer">
+              <p>
+                A maioria fica pronta em torno de 60 dias úteis. A sua data exata sai definida no contrato, antes de a obra começar.
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="bwa-final" id="contato">
+      <img
+        src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/b08f8380-2da0-4318-964a-22c45fd22fcc/erik-03-11.png"
+        alt=""
+        loading="lazy"
+      >
+
+      <div class="bwa-shell bwa-final-grid">
+        <p class="bwa-label bwa-label-light">Contato · 11</p>
+
+        <div class="bwa-final-copy">
+          <h2 class="bwa-display">Vamos avaliar o seu studio?</h2>
+          <p class="bwa-lead">
+            Conta para a gente o que você tem e o que quer fazer com ele. A gente analisa o potencial do imóvel e volta com um caminho claro, sem compromisso.
+          </p>
+          <div class="bwa-final-actions">
+            <a class="bwa-button bwa-button-light" href="/diagnostico">
+              Solicitar diagnóstico
+              <span aria-hidden="true">→</span>
+            </a>
+            <span class="bwa-label bwa-label-light">Morar · alugar · vender</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bwa-footer">
+    <div class="bwa-shell">
+      <div class="bwa-footer-main">
+        <div class="bwa-footer-brand">
+          <div class="bwa-footer-wordmark">Bewild</div>
+          <p>Built by the wild ones. Be wild.</p>
+          <p>
+            Reforma completa de studios em São Paulo. Projeto, obra, marcenaria, mobiliário e entrega num processo único.
+          </p>
+        </div>
+
+        <div class="bwa-footer-column">
+          <h3>Navegação</h3>
+          <nav>
+            <a href="#certeza">O contrato</a>
+            <a href="#historia">A história</a>
+            <a href="#oque-fazemos">O que fazemos</a>
+            <a href="#como-funciona">Como funciona</a>
+            <a href="/portfolio">Portfólio</a>
+            <a href="/conteudos">Conteúdos</a>
+            <a href="/diagnostico">Diagnóstico</a>
+          </nav>
+        </div>
+
+        <div class="bwa-footer-column">
+          <h3>Contato</h3>
+          <div>
+            <span>WhatsApp</span>
+            <span>Instagram</span>
+            <span>LinkedIn</span>
+            <span>e-mail</span>
+            <a href="/privacidade">Política de privacidade</a>
+            <span>Preferências de cookies</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bwa-footer-bottom">
+        <p class="bwa-footer-tech">
+          BEWILD · SÃO PAULO, BRASIL · CNPJ 47.350.338/0001-37 · RESP. TÉCNICO · THIAGO DANTAS DO AMOR · CAU A162437-7
+        </p>
+        <span class="bwa-footer-copy">© 2026 Bewild</span>
+      </div>
+    </div>
+  </footer>
+
+  <a class="bwa-button bwa-mobile-cta" href="/diagnostico">
+    Solicitar diagnóstico
+    <span aria-hidden="true">→</span>
+  </a>
+
+  <div class="bwa-modal" role="dialog" aria-modal="true" aria-labelledby="bwa-video-title" data-video-modal>
+    <div class="bwa-modal-card">
+      <p class="bwa-label bwa-label-accent">Depoimento Vivian</p>
+      <h2 id="bwa-video-title">O player real entra no porte para o Lovable.</h2>
+      <p>
+        Neste HTML de aprovação, o render funciona como poster. No código de produção, o botão deve abrir o asset local <strong>depoimento-cliente.mp4</strong> e disparar o evento <strong>play_depoimento</strong>.
+      </p>
+      <button class="bwa-button" type="button" data-close-modal>Fechar</button>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const body = document.body;
+      const nav = document.querySelector("[data-nav]");
+      const menuButton = document.querySelector("[data-menu-button]");
+      const mobileMenu = document.querySelector("[data-mobile-menu]");
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const setExpandedPanel = (item, open, detailSelector, buttonSelector) => {
+        const detail = item.querySelector(detailSelector);
+        const button = item.querySelector(buttonSelector);
+        if (!detail || !button) return;
+
+        item.classList.toggle("bwa-open", open);
+        button.setAttribute("aria-expanded", String(open));
+        detail.style.maxHeight = open ? detail.scrollHeight + "px" : "0px";
+      };
+
+      const updateNav = () => {
+        nav.classList.toggle("bwa-scrolled", window.scrollY > 28);
+      };
+
+      updateNav();
+      window.addEventListener("scroll", updateNav, { passive: true });
+
+      if (menuButton && mobileMenu) {
+        menuButton.addEventListener("click", () => {
+          const open = !body.classList.contains("bwa-menu-open");
+          body.classList.toggle("bwa-menu-open", open);
+          menuButton.setAttribute("aria-expanded", String(open));
+          menuButton.setAttribute("aria-label", open ? "Fechar menu" : "Abrir menu");
+        });
+
+        mobileMenu.querySelectorAll("a").forEach((link) => {
+          link.addEventListener("click", () => {
+            body.classList.remove("bwa-menu-open");
+            menuButton.setAttribute("aria-expanded", "false");
+            menuButton.setAttribute("aria-label", "Abrir menu");
+          });
+        });
+      }
+
+      document.querySelectorAll(".bwa-certainty-item").forEach((item) => {
+        const button = item.querySelector(".bwa-certainty-toggle");
+        setExpandedPanel(
+          item,
+          item.classList.contains("bwa-open"),
+          ".bwa-certainty-detail",
+          ".bwa-certainty-toggle"
+        );
+
+        button.addEventListener("click", () => {
+          const willOpen = !item.classList.contains("bwa-open");
+          document.querySelectorAll(".bwa-certainty-item").forEach((other) => {
+            setExpandedPanel(
+              other,
+              other === item && willOpen,
+              ".bwa-certainty-detail",
+              ".bwa-certainty-toggle"
+            );
+          });
+        });
+      });
+
+      const storySteps = [...document.querySelectorAll("[data-story-step]")];
+      const storyImages = [...document.querySelectorAll("[data-story-image]")];
+      const storyAperture = document.querySelector("[data-story-aperture]");
+      const storyCaption = document.querySelector("[data-story-caption]");
+      const storyCaptionIndex = document.querySelector("[data-story-caption-index]");
+
+      const activateStory = (index) => {
+        storySteps.forEach((step, stepIndex) => {
+          step.classList.toggle("bwa-active", stepIndex === index);
+        });
+
+        storyImages.forEach((image, imageIndex) => {
+          image.classList.toggle("bwa-active", imageIndex === index);
+        });
+
+        const step = storySteps[index];
+        if (step && storyAperture) {
+          storyAperture.style.setProperty("--bwa-aperture", step.dataset.aperture || "0%");
+        }
+        if (step && storyCaption) {
+          storyCaption.textContent = step.dataset.caption || "";
+        }
+        if (step && storyCaptionIndex) {
+          storyCaptionIndex.textContent = step.dataset.captionIndex || "";
+        }
+      };
+
+      if (storySteps.length && "IntersectionObserver" in window) {
+        const storyObserver = new IntersectionObserver(
+          (entries) => {
+            const visible = entries
+              .filter((entry) => entry.isIntersecting)
+              .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+            if (!visible) return;
+            const index = storySteps.indexOf(visible.target);
+            if (index >= 0) activateStory(index);
+          },
+          {
+            rootMargin: "-30% 0px -35% 0px",
+            threshold: [0.15, 0.35, 0.55]
+          }
+        );
+
+        storySteps.forEach((step) => storyObserver.observe(step));
+      }
+
+      const scopeItems = [...document.querySelectorAll("[data-scope-item]")];
+      const scopeImages = [...document.querySelectorAll("[data-scope-image]")];
+
+      const activateScope = (item) => {
+        const index = Number(item.dataset.scopeItem);
+        scopeItems.forEach((other) => {
+          setExpandedPanel(
+            other,
+            other === item,
+            ".bwa-scope-detail",
+            ".bwa-scope-toggle"
+          );
+        });
+        scopeImages.forEach((image, imageIndex) => {
+          image.classList.toggle("bwa-active", imageIndex === index);
+        });
+      };
+
+      scopeItems.forEach((item) => {
+        setExpandedPanel(
+          item,
+          item.classList.contains("bwa-open"),
+          ".bwa-scope-detail",
+          ".bwa-scope-toggle"
+        );
+        item.querySelector(".bwa-scope-toggle").addEventListener("click", () => activateScope(item));
+      });
+
+      document.querySelectorAll(".bwa-faq-item").forEach((item) => {
+        const button = item.querySelector(".bwa-faq-question");
+
+        setExpandedPanel(
+          item,
+          item.classList.contains("bwa-open"),
+          ".bwa-faq-answer",
+          ".bwa-faq-question"
+        );
+
+        button.addEventListener("click", () => {
+          const willOpen = !item.classList.contains("bwa-open");
+          setExpandedPanel(
+            item,
+            willOpen,
+            ".bwa-faq-answer",
+            ".bwa-faq-question"
+          );
+        });
+      });
+
+      const videoButton = document.querySelector("[data-video-demo]");
+      const modal = document.querySelector("[data-video-modal]");
+      const closeModal = document.querySelector("[data-close-modal]");
+
+      const setModal = (open) => {
+        if (!modal) return;
+        modal.classList.toggle("bwa-open", open);
+        body.style.overflow = open ? "hidden" : "";
+        if (open && closeModal) closeModal.focus();
+        if (!open && videoButton) videoButton.focus();
+      };
+
+      if (videoButton) videoButton.addEventListener("click", () => setModal(true));
+      if (closeModal) closeModal.addEventListener("click", () => setModal(false));
+      if (modal) {
+        modal.addEventListener("click", (event) => {
+          if (event.target === modal) setModal(false);
+        });
+      }
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          if (body.classList.contains("bwa-menu-open")) {
+            body.classList.remove("bwa-menu-open");
+            menuButton?.setAttribute("aria-expanded", "false");
+          }
+          if (modal?.classList.contains("bwa-open")) setModal(false);
+        }
+      });
+
+      const revealElements = [...document.querySelectorAll(
+        ".bwa-title, .bwa-lead, .bwa-project-card, .bwa-proof-card, .bwa-objective"
+      )];
+
+      revealElements.forEach((element) => element.classList.add("bwa-reveal"));
+
+      if (!reducedMotion && "IntersectionObserver" in window) {
+        const revealObserver = new IntersectionObserver(
+          (entries, observer) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add("bwa-visible");
+              observer.unobserve(entry.target);
+            });
+          },
+          { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
+        );
+
+        revealElements.forEach((element) => revealObserver.observe(element));
+      } else {
+        revealElements.forEach((element) => element.classList.add("bwa-visible"));
+      }
+
+      window.addEventListener("resize", () => {
+        document.querySelectorAll(".bwa-certainty-item.bwa-open").forEach((item) => {
+          const detail = item.querySelector(".bwa-certainty-detail");
+          if (detail) detail.style.maxHeight = detail.scrollHeight + "px";
+        });
+        document.querySelectorAll(".bwa-scope-item.bwa-open").forEach((item) => {
+          const detail = item.querySelector(".bwa-scope-detail");
+          if (detail) detail.style.maxHeight = detail.scrollHeight + "px";
+        });
+        document.querySelectorAll(".bwa-faq-item.bwa-open").forEach((item) => {
+          const detail = item.querySelector(".bwa-faq-answer");
+          if (detail) detail.style.maxHeight = detail.scrollHeight + "px";
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
