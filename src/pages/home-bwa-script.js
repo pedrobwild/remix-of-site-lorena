@@ -252,3 +252,79 @@ export function initHomeBwa() {
 
 }
 
+/* =========================================================================
+ * Exports para páginas internas com o mesmo chrome .bwa (nav + FAQ opcional).
+ * Guardas idempotentes por atributo no elemento (StrictMode-safe).
+ * Nenhuma alteração de comportamento em relação ao initHomeBwa da home.
+ * ========================================================================= */
+
+export function initBwaNav(root = document) {
+  const nav = root.querySelector("[data-nav]");
+  if (!nav || nav.dataset.bwaNavInited === "1") return;
+  nav.dataset.bwaNavInited = "1";
+
+  const body = document.body;
+  const menuButton = root.querySelector("[data-menu-button]");
+  const mobileMenu = root.querySelector("[data-mobile-menu]");
+
+  const updateNav = () => {
+    nav.classList.toggle("bwa-scrolled", window.scrollY > 28);
+  };
+  updateNav();
+  window.addEventListener("scroll", updateNav, { passive: true });
+
+  if (menuButton && mobileMenu) {
+    menuButton.addEventListener("click", () => {
+      const open = !body.classList.contains("bwa-menu-open");
+      body.classList.toggle("bwa-menu-open", open);
+      menuButton.setAttribute("aria-expanded", String(open));
+      menuButton.setAttribute("aria-label", open ? "Fechar menu" : "Abrir menu");
+    });
+    mobileMenu.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        body.classList.remove("bwa-menu-open");
+        menuButton.setAttribute("aria-expanded", "false");
+        menuButton.setAttribute("aria-label", "Abrir menu");
+      });
+    });
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && body.classList.contains("bwa-menu-open")) {
+      body.classList.remove("bwa-menu-open");
+      menuButton?.setAttribute("aria-expanded", "false");
+    }
+  });
+}
+
+export function initBwaFaqAccordions(container = document) {
+  const items = container.querySelectorAll(".bwa-faq-item");
+  items.forEach((item) => {
+    if (item.dataset.bwaFaqInited === "1") return;
+    item.dataset.bwaFaqInited = "1";
+    const button = item.querySelector(".bwa-faq-question");
+    const detail = item.querySelector(".bwa-faq-answer");
+    if (!button || !detail) return;
+
+    const setOpen = (open) => {
+      item.classList.toggle("bwa-open", open);
+      button.setAttribute("aria-expanded", String(open));
+      detail.style.maxHeight = open ? detail.scrollHeight + "px" : "0px";
+    };
+
+    setOpen(item.classList.contains("bwa-open"));
+    button.addEventListener("click", () => setOpen(!item.classList.contains("bwa-open")));
+  });
+
+  if (!container.dataset || container.dataset.bwaFaqResizeInited !== "1") {
+    if (container.dataset) container.dataset.bwaFaqResizeInited = "1";
+    window.addEventListener("resize", () => {
+      container.querySelectorAll(".bwa-faq-item.bwa-open").forEach((item) => {
+        const d = item.querySelector(".bwa-faq-answer");
+        if (d) d.style.maxHeight = d.scrollHeight + "px";
+      });
+    });
+  }
+}
+
+

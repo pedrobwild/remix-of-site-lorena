@@ -1,105 +1,158 @@
 
-# Diagnóstico — /admin/leads (BewildLeadsAdminPage)
+# Integração das páginas internas ao sistema .bwa
 
-Escopo: `src/pages/admin/BewildLeadsAdminPage.tsx` (338 linhas) + tabela `public.leads` + RLS. Nenhuma correção foi aplicada.
+## Fase 0 — Inventário (relatório, sem edição)
 
----
+### a) Rotas e componentes
 
-## PARTE 1 — BUGS REAIS (com evidência)
+Todas as 4 rotas alvo já existem em `src/lib/useHashRoute.ts` e são despachadas por `src/router.tsx`:
 
-### Confirmações que NÃO são bugs (ruled out)
-- **Fetch funciona:** lê de `public.leads` (linhas 78–84), colunas batem com o schema. `whatsapp` e `status` são NOT NULL no banco — sem risco de undefined nesses campos.
-- **RLS está OK:** `Admins can view leads = is_admin()` para SELECT, idem UPDATE e DELETE; `Anyone can submit a lead` para INSERT. Grants efetivos OK (`has_table_privilege` confirma SELECT/UPDATE para `authenticated` e INSERT para `anon`). Não há o mesmo problema de GRANT que poderia esvaziar a lista.
-- **Nenhum link/rota quebrada** dentro deste admin (diferente do bug de `/admin/conteudos/novo`).
-- **Acesso a campos nulos** está protegido com `??`, `filter(Boolean)` e `value` checked no `DetailItem`. Não há `.map` que estoure em undefined.
-- **Tabela hoje:** `SELECT count(*) FROM leads` → 0 linhas. A tela nunca foi exercitada com dados reais — boa parte da percepção de "não funcional" pode vir do estado vazio puro.
+- `/diagnostico` → `src/pages/DiagnosticoPage.tsx` (544 linhas — hero + formulário + `SupportSections` + `CtaFinal`; usa `BewildSiteNav`, `SiteFooter`, `StickyMobileCTA`; CSS `bwh-tokens`, `bw-diag`, `bwh-sol-fusion`).
+- `/faq` → `src/pages/FaqPage.tsx` (94 linhas — hero + acordeão `<details>` + CTA escuro; consome `useFaq()` de Lovable Cloud, com fallback).
+- `/portfolio` → `src/pages/BewildPortfolioPage.tsx` (290 linhas — grade de projetos; consome `useBewildProjects()`).
+- `/conteudos` → `src/pages/BewildConteudosPage.tsx` (202 linhas — índice de posts; consome `useBewildPosts()`). Post individual em `src/pages/BewildPostPage.tsx` (`/conteudos/:slug`).
 
-### Bugs reais, do mais grave ao mais leve
+Conteúdo dinâmico (posts, projetos, FAQ, settings) é preservado por vir dos hooks — só a camada visual muda.
 
-**P0 — `load()` engole erros silenciosamente** (linhas 76–87)
-```ts
-const { data } = await supabase.from("leads").select(...).limit(200);
-setRows((data ?? []) as Lead[]);
-```
-- O `error` do Supabase é descartado. Se a query falhar (rede, RLS, sessão expirada, role errada), a UI mostra exatamente a mesma coisa que "sem leads": *"Nenhum lead ainda…"*. Isso é o sintoma clássico de "parece quebrado, não sei se é bug ou se não tem dado". 
-- **Fix:** desestruturar `error`, guardar em estado e renderizar bloco de erro distinto do empty (com botão "tentar de novo").
+### b) Formulário /diagnostico — INTOCÁVEL
 
-**P0 — `changeStatus()` também engole erros** (linhas 98–104)
-```ts
-await supabase.from("leads").update({ status: next }).eq("id", lead.id);
-setBusy(null); load();
-```
-- Sem checar `error`. Se o UPDATE falhar (ex.: sessão admin expirou), o `load()` em seguida vai trazer o status antigo e o usuário vê o dropdown "voltar sozinho" — parece bug fantasma. A persistência em si está correta (UPDATE direto na tabela; RLS permite). 
-- **Fix:** checar `error`, exibir toast/alert, e fazer update otimista com rollback.
+- 9 campos: `nome` (req, ≥2), `whats` (req, mask `(11) 99999-9999`, ≥10 dígitos), `email` (opc, regex), `local` (req, ≥2), `metragem` (opc, numérico), `objetivo` (chip req), `chaves` (chip req), `planta` (chip opc), `mensagem` (opc, ≤1000).
+- Submit: `supabase.functions.invoke("notify-lead", { body: leadPayload })` + `trackEvent("generate_lead", …)` (GA4) + abre `https://wa.me/${CONTACT.whatsappNumber}?text=…` em nova aba + reseta form + estado `success`.
+- Payload inclui UTM params, referrer, landing_path, user_agent.
+- Nada da lógica, validação, endpoint, payload, tracking ou estado de sucesso será alterado — apenas classes, markup wrapper e CSS.
 
-**P1 — Limite hardcoded de 200 sem indicação e sem paginação** (linha 84)
-- `.limit(200)` + sem `count`. Quando passar de 200 leads, o 201º simplesmente some — e os KPIs no topo (Novos/Contatados/…) são calculados em cima de `rows` (linha 120–127), então também ficam errados sem aviso. 
-- **Fix mínimo:** pedir `{ count: 'exact' }`, mostrar "exibindo 200 de N" e adicionar paginação ou "carregar mais". Os KPIs deveriam vir de um `count` agregado por status, não do array local.
+### c) Roteamento — teste crítico
 
-**P1 — KPIs do topo refletem só o que foi carregado** (linhas 120–127, 136–141)
-- Mesma raiz do item anterior. Hoje, com 0 leads, não tem impacto; com volume real, vira métrica falsa no painel.
-- **Fix:** consulta separada `select status, count(*) ... group by status` (ou RPC) executada junto do `load()`.
+O router é **path-based** (não hash), com `installLinkInterceptor` em `main.tsx` que captura cliques em `<a href="/…">` internos e chama `navigate()` (pushState + evento custom). Links planos `href="/diagnostico"` do HTML aprovado da home **funcionam** — verificado no código do interceptor (linhas 173-206 de `useHashRoute.ts`).
 
-**P2 — Key warning do React no `.map`** (linhas 179–301)
-```tsx
-{filtered.map((r) => { ...
-  return (<> <tr key={r.id}>...</tr> {isOpen && <tr key={`${r.id}-detail`}>...} </>);
-})}
-```
-- O Fragment `<>` dentro do `.map` é o filho direto iterado — ele precisa de `key`, não os `<tr>` internos. Vai gerar warning no console e, em casos de reordenação, pode bagunçar o estado do `<select>` de status. 
-- **Fix:** trocar `<>` por `<React.Fragment key={r.id}>` (ou repensar como `<tbody>` por linha).
+**Risco identificado**: âncoras da home (`#certeza`, `#historia`, `#projetos`, `#workflow`, `#prova`) começam com `#` e o interceptor faz early-return (linha 193). Em páginas internas, clicar num link `#certeza` do nav vai tentar rolar para `#certeza` na página atual (que não existe) em vez de ir para a home. **Correção necessária antes da Fase 1**: nas páginas internas o nav precisa usar `href="/#certeza"`, e o app precisa passar a scrollar para a âncora ao aterrissar em `/` com hash. Detalhes na Fase 1 abaixo.
 
-**P2 — `waLink()` cobre mal números fora do formato BR padrão** (linhas 56–62)
-```ts
-const withCountry = digits.length === 11 || digits.length === 10 ? `55${digits}` : digits;
-```
-- 11 dígitos (DDD+9+8) e 10 dígitos (DDD+8, fixo) recebem `55`. Qualquer outro tamanho (ex.: 12 ou 13 que já vem com 55) cai no `else` e é usado como está — o que está certo para "55 + 11" mas erra silenciosamente para entradas em outros formatos. Como `whatsapp` é NOT NULL e validado no form, baixo risco hoje, mas é falha de robustez.
-- **Sem mensagem pré-pronta** no link (`?text=`), apesar do briefing pedir "número + texto" — listado também como gap em Parte 2.
-- **Fix:** normalizar mais tolerante (sempre garantir prefixo 55, deduplicar se já tiver) e anexar `?text=` parametrizado.
+## Fase 1 — Chrome compartilhado .bwa
 
-**P2 — Filtro "todos" e contagem usam `r.status ?? "novo"` mas `status` é NOT NULL no banco** (linhas 95, 123)
-- Código defensivo desnecessário; não quebra nada, só confunde quem lê. Cosmético.
+### Novos arquivos
 
-**P3 — Sem realtime/auto-refresh**
-- O comercial precisa apertar F5 para ver lead novo entrando. Não é bug, mas combina com a percepção "não parece funcional".
+- `src/components/BwaSharedChrome.tsx` — componente wrapper que:
+  1. Injeta `home-bwa.css` no `<head>` no mount (mesma técnica do `HomePage.tsx`), remove no unmount.
+  2. Aplica classes `bwa-home-root` em `html`/`body`.
+  3. Renderiza o mesmo `<header class="bwa-nav">` + `<div class="bwa-mobile-menu">` da home, mas com prop `variant="internal"` que adiciona classe `bwa-nav--internal` (nav inicia em estado escuro-sobre-papel, sem esperar scroll).
+  4. Renderiza o mesmo footer da home (extraído do `HOME_BWA_HTML` para JSX estático — sem alterar copy, CNPJ, resp. técnico).
+  5. Re-executa a lógica de nav do `home-bwa-script.js` (scroll state, menu mobile), com o mesmo guard de idempotência.
+- `src/pages/bwa-internal.css` — pequeno complemento com:
+  - `.bwa-nav--internal` (força texto escuro/borda visível desde o topo, sem depender do `.bwa-scrolled`).
+  - Tokens locais para inputs, chips e cards das páginas internas usando as MESMAS variáveis do `home-bwa.css` (paper, navy, mono, borders 1px).
+  - Nenhum override das regras .bwa* já existentes.
 
----
+### Menu — mudanças coordenadas com o dono
 
-## PARTE 2 — O QUE FALTA (features ausentes)
+Aplicar em `src/pages/home-bwa-body.ts` (nav desktop, mobile-menu) e replicar no `BwaSharedChrome`:
 
-Nenhuma existe parcialmente — todas seriam do zero, exceto onde indicado.
+- Nav desktop (5 links atuais → 6):
+  - `O contrato` → `/#certeza`
+  - `Projetos` → `/#projetos`
+  - `Bwild Workflow` → `/#workflow`
+  - `Portfólio` → `/portfolio` **(novo)**
+  - `Conteúdos` → `/conteudos` **(novo)**
+  - `FAQ` → `/faq` **(novo)**
+  - Remover `A história` e `Prova` do desktop (decisão implícita: 6 é o limite visual do nav; se o dono quiser manter, ajustar). **Assunção a confirmar**: se preferir manter os 8 links no desktop, aplicar em vez disso um layout com wrap ou reduzir spacing. Estou removendo os 2 menos usados; se estiver errado, corrijo antes de seguir.
+- Menu mobile: manter os 8 links atuais + acrescentar `Portfólio`, `Conteúdos`, `FAQ` antes de `Solicitar diagnóstico`.
+- Footer: acrescentar `FAQ` ao grupo de navegação.
+- Marcador em ambos os locais: `<!-- MENU atualizado 17/jul por ordem do dono: páginas internas integradas -->`.
 
-| Feature | Estado atual | Esforço |
-|---|---|---|
-| **Busca por nome / telefone / bairro (location)** | 0 — não tem input nenhum | Baixo (filter client-side em cima de `rows`) |
-| **Export CSV** | 0 | Baixo (gerar do array filtrado, com BOM p/ Excel pt-BR) |
-| **Ordenação por coluna (data, status, tempo)** | Parcial — só ordena por `created_at desc` no fetch | Baixo (estado local de sort) |
-| **SLA / speed-to-lead** (quanto tempo o lead está esperando) | 0 — só mostra `fmtDate(created_at)` absoluto | Baixo (helper "há 12 min" + badge vermelho > N horas em status `novo`) |
-| **Filtros salvos / views ("novos de hoje", "leads pagos via UTM")** | 0 — só tem filtro por status | Médio (presets fixos primeiro, salvos depois) |
-| **Score / priorização de lead** | 0 — campo não existe na tabela | Médio (regra simples: tem `area_m2` + `chaves` + UTM pago = quente; precisa decidir regra com o dono) |
-| **Tela de detalhe dedicada do lead** | Hoje só tem o `<dl>` expandível inline | — não pedido, mas ajudaria |
-| **Mensagem pré-preenchida no WhatsApp** | 0 — link só com número | Baixíssimo |
+### Correção de âncora cross-page
 
----
+- `src/lib/useHashRoute.ts` (`navigate`) ou `src/main.tsx`: ao aterrissar em `/` com `window.location.hash` não vazio e não-rota, após renderizar a home, disparar `document.getElementById(hash)?.scrollIntoView()` (respeitar transição). Isto habilita `/#certeza` das páginas internas.
+- Nav da home mantém `#certeza` (âncora local, mais rápida); nav do `BwaSharedChrome` das internas usa `/#certeza`.
 
-## Proposta de correção dos BUGS (sem aplicar)
+### Não vai mudar
 
-Tudo isolado em **um único arquivo: `src/pages/admin/BewildLeadsAdminPage.tsx`**. Nenhuma mudança de schema, RLS, edge function ou rota.
+- Rotas `admin-*` continuam usando `AdminLayout` — chrome .bwa não é aplicado.
+- `LpObraPage`, `LpPanfletoPage`, `PrivacidadePage`, `NotFoundPage`, `MaintenancePage` — sem alteração (não estão no escopo).
 
-1. **Adicionar estado de erro** ao `load()` e ao `changeStatus()/deleteLead()`; renderizar bloco de erro distinto do empty; logar `error` no console para diagnóstico.
-2. **Update otimista no `changeStatus`** com rollback em erro + toast (`window.alert` já é o padrão usado no `deleteLead`, mantemos consistência por ora).
-3. **Pedir `count: 'exact'`** no `.select(..., { count: 'exact' })`, exibir "mostrando X de N", e fazer os KPIs do topo a partir de uma segunda query agregada por status (ou RPC) em vez de `rows`.
-4. **Trocar `<>` por `<React.Fragment key={r.id}>`** no `.map`.
-5. **Reescrever `waLink`** para sempre normalizar BR + adicionar `?text=` com mensagem padrão tipo *"Oi {nome}, aqui é da Bewild, recebi seu diagnóstico…"* (texto exato a confirmar).
-6. **Remover defensivos mortos** (`?? "novo"`) já que `status` é NOT NULL — opcional, só limpeza.
+## Fase 2 — Páginas (uma por vez, com relatório entre elas)
 
-P3 (auto-refresh / realtime) e a Parte 2 inteira **ficam fora** desta rodada de correção — entram em fases separadas para você priorizar.
+### 1. `/diagnostico`
 
----
+- Trocar `BewildSiteNav` + `SiteFooter` + `StickyMobileCTA` pelo `BwaSharedChrome`.
+- Reconstruir apenas o markup visual (hero e formulário) com classes `bwa-*`:
+  - Hero: `<section class="bwa-section">` com label numerada (`bwa-label` "001 · Diagnóstico"), `bwa-title`, `bwa-lead`, e à direita o card com prova (150+ studios, 5 anos garantia, preço fechado) usando `bwa-proof-card`.
+  - Formulário: mesmo componente `<DiagnosticoForm>` — só as classes CSS mudam. Inputs ganham borda 1px, radius 0, fundo paper. Chips no padrão `bwa-chip` (a criar como variação de `.bwa-scope-toggle`). Botão submit: `.bwa-button` (padrão da home).
+  - Todo `useState`, `onSubmit`, `messageText`, `trackEvent`, `supabase.functions.invoke` **intactos byte a byte**.
+- Meta: `title="Diagnóstico Bewild · Análise do seu studio"`, description mantida.
 
-## Próximo passo
-Confirma quais itens autoriza para a próxima rodada:
-- **(a)** só os P0 (erro silencioso de load + changeStatus),
-- **(b)** P0 + P1 (paginação/KPIs corretos),
-- **(c)** P0+P1+P2 (tudo de bug, inclusive `waLink` e key do fragment),
-- **(d)** tudo de bug **+** algum subset de features da Parte 2 (diga quais).
+### 2. `/faq`
+
+- Trocar `BewildSiteNav`/`SiteFooter` pelo `BwaSharedChrome`.
+- Substituir `<details>` por markup `.bwa-faq-item` (mesmo padrão da home, controle via `home-bwa-script.js` — precisa reinicializar no mount da página; encapsular a lógica de FAQ em função exportada de `home-bwa-script.js` chamável isoladamente).
+- Preservar `useFaq()`, JSON-LD `FAQPage` + `BreadcrumbList`, microdata Schema.org.
+- Manter CTA final (converter para o padrão `.bwa-cta` escuro do fim da home).
+
+### 3. `/portfolio`
+
+- Trocar chrome. Reconstruir a grade com classes `.bwa-project-card` (a mesma do carrossel de projetos da home) num `<div class="bwa-portfolio-grid">` (grid CSS 1/2/3 colunas responsivas — nova regra CSS aditiva em `bwa-internal.css`, sem tocar em `home-bwa.css`).
+- Preservar `useBewildProjects()`, filtros existentes, links `/portfolio/:slug`.
+- Detalhe do projeto (`BewildProjectPage`) recebe o mesmo chrome; conteúdo interno (galeria, textos) preservado com wrapper `.bwa-shell`.
+
+### 4. `/conteudos`
+
+- Trocar chrome. Índice em lista com bordas 1px (padrão editorial `.bwa-story-step`).
+- Título serif (usar mesma fonte da home — Manrope; se "serif" for interpretação do dono, confirmar; **assunção**: uso Manrope 300 para títulos de post, coerente com o `.bwa-title` da home).
+- Labels mono (`.bwa-label` do sistema).
+- Preservar `useBewildPosts()`, paginação/filtros se existirem, links `/conteudos/:slug`.
+- Página de post individual (`BewildPostPage`) recebe o mesmo chrome; conteúdo do post (renderer HTML sanitizado) preservado com wrapper `.bwa-shell` e tipografia .bwa.
+
+## Fase 3 — QA
+
+Para cada página (viewports 1440 / 1015 / 390):
+
+- HTTP 200 e 0 erros de console.
+- Screenshot full-page.
+- Nav funcional: cada link do desktop e do mobile clicável, navegando corretamente (âncoras cross-page também).
+- Footer com FAQ presente.
+- `CookieBanner` presente.
+- `/diagnostico`: preencher todos os campos, submeter, e via Playwright interceptar `supabase.functions.invoke` para confirmar payload idêntico ao atual (name, whatsapp, email, location, area_m2, objetivo, chaves, planta, message, utm_*, referrer, landing_path, user_agent) e disparo de `generate_lead` no GA4. Sem enviar lead real (mock do fetch de functions).
+- Regressão da home: nav com 6 links + hambúrguer, âncoras funcionando, mobile menu com 8+3 links, footer com FAQ, home visualmente idêntica exceto pelas mudanças de menu/footer.
+- Regressão admin: `/admin/dashboard` continua com `AdminLayout` sem `home-bwa.css`.
+- Regressão `/privacidade`: continua usando o sistema antigo (fora do escopo).
+
+## Detalhes técnicos
+
+### Arquitetura de estilo
+
+`home-bwa.css` continua sendo a folha fonte da linguagem visual. Estende via `src/pages/bwa-internal.css` (importado por `BwaSharedChrome`) apenas com regras **aditivas** para elementos que a home não tem (inputs de formulário, grid de portfólio, lista de posts). Nenhum valor aprovado é sobrescrito.
+
+### Refactor do script da home
+
+`home-bwa-script.js` hoje inicializa tudo num único `initHomeBwa`. Vou extrair funções puras (`initNav(el)`, `initFaqAccordions(container)`, etc.) preservando a lógica atual — a home continua chamando `initHomeBwa()` que orquestra tudo, e as páginas internas chamam só o que precisam (`initNav`, `initFaqAccordions`). Guard `data-bwa-inited` permanece.
+
+### Arquivos que serão criados
+
+- `src/components/BwaSharedChrome.tsx`
+- `src/pages/bwa-internal.css`
+
+### Arquivos que serão editados
+
+- `src/pages/home-bwa-body.ts` (menu desktop 6 links, menu mobile +3, footer +FAQ)
+- `src/pages/home-bwa-script.js` (extrair funções reutilizáveis; nada de comportamento muda)
+- `src/pages/DiagnosticoPage.tsx` (só markup, JSX; toda lógica intacta)
+- `src/pages/FaqPage.tsx` (markup)
+- `src/pages/BewildPortfolioPage.tsx` (markup)
+- `src/pages/BewildConteudosPage.tsx` (markup)
+- `src/pages/BewildPostPage.tsx` (markup — mesmo chrome)
+- `src/pages/BewildProjectPage.tsx` (markup — mesmo chrome)
+- `src/lib/useHashRoute.ts` OU `src/main.tsx` (scroll para âncora ao aterrissar em `/#foo`)
+
+### Arquivos NÃO tocados
+
+- `BewildSiteNav.tsx`, `SiteFooter.tsx`, `StickyMobileCTA.tsx`, `bwh-*.css`, `bw-diag.css` — permanecem para o caso de alguma rota ainda depender (e para reversibilidade); podem ser removidos numa fase posterior se o dono confirmar que nenhuma outra rota os usa.
+- Componentes `admin/*`, `landing/*`, `Header.tsx`, `Footer.tsx` legado.
+- Todos os hooks (`useFaq`, `useBewildPosts`, `useBewildProjects`, `useSeo`, `useSiteSettings`).
+- `home-bwa.css`, `HomePage.tsx`.
+
+## Assunções que preciso confirmar antes de executar
+
+1. **Nav desktop com 6 links**: removi `A história` e `Prova` do desktop (mantidos no mobile). Se preferir manter todos, digo qual layout aplico.
+2. **`/portfolio`, `/conteudos`, `/faq` recebem o mesmo nav claro (não navy)**. Confirmado no briefing ("nas internas o nav inicia no estado de texto escuro sobre papel").
+3. **Página de detalhe de projeto e post** também recebem o novo chrome (não estão explicitamente listadas, mas seria estranho o índice ser .bwa e o detalhe voltar ao sistema antigo).
+4. **Título dos posts em Manrope** (design system .bwa) — o briefing menciona "título serif" na descrição de `/conteudos`; se for literal, uso a fallback serif do sistema; se for referência genérica a "título editorial", uso Manrope como no resto do .bwa.
+
+Se as 4 estiverem OK, sigo com Fase 1 e reporto antes de iniciar cada página.

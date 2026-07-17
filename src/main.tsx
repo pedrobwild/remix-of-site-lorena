@@ -57,6 +57,21 @@ function Root() {
     trackPageView(window.location.pathname + window.location.search);
   }, [route]);
 
+  // Fresh-load em /#foo: rola até a seção após primeira renderização
+  // (o efeito de transição só cobre trocas SPA subsequentes).
+  useEffect(() => {
+    const hash = window.location.hash.replace(/^#/, "");
+    if (!hash || hash.startsWith("/")) return;
+    if (route.name !== "home") return;
+    const id = window.setTimeout(() => {
+      const el = document.getElementById(hash);
+      if (el) el.scrollIntoView({ behavior: "auto", block: "start" });
+    }, TRANSITION_MS + 60);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
   // "displayed" é a rota que está renderizada no DOM. Quando a rota real muda,
   // disparamos um fade-out, trocamos `displayed` no meio e fazemos fade-in.
   const [displayed, setDisplayed] = useState<Route>(route);
@@ -80,7 +95,20 @@ function Root() {
     const swapTimer = window.setTimeout(() => {
       // Troca o conteúdo e volta ao topo no momento "invisível"
       setDisplayed(route);
-      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      // Se a nova rota é a home e a URL tem #foo (âncora cross-page vinda de
+      // uma página interna, ex.: /faq → /#certeza), rola para a seção correta
+      // depois do fade-in. Caso contrário, volta ao topo (comportamento antigo).
+      const hash = window.location.hash.replace(/^#/, "");
+      const isSectionAnchor = route.name === "home" && hash && !hash.startsWith("/");
+      if (isSectionAnchor) {
+        requestAnimationFrame(() => {
+          const el = document.getElementById(hash);
+          if (el) el.scrollIntoView({ behavior: "auto", block: "start" });
+          else window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+        });
+      } else {
+        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      }
       lastRouteKey.current = nextKey;
       // Fase 2: fade-in da nova rota
       requestAnimationFrame(() => setPhase("in"));
