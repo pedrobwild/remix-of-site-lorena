@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import "./home-bwa.css";
+import homeBwaCssUrl from "./home-bwa.css?url";
 import { HOME_BWA_HTML } from "./home-bwa-body";
 // @ts-expect-error - JS module, no types
 import { initHomeBwa } from "./home-bwa-script.js";
@@ -44,6 +44,34 @@ function ensureLink(rel: string, href: string, extra: Record<string, string> = {
   return el;
 }
 
+/**
+ * Injeta a folha aprovada da home APÓS todos os CSS globais (index.css,
+ * bwh-*, etc.) para que suas regras vençam por ordem de cascata, sem
+ * precisar editar valores. Ao desmontar, remove — assim não vaza a
+ * paleta clara para outras rotas.
+ */
+function mountHomeStylesheet(): () => void {
+  const marker = "data-bwa-home-css";
+  let link = document.head.querySelector<HTMLLinkElement>(`link[${marker}]`);
+  if (!link) {
+    link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = homeBwaCssUrl;
+    link.setAttribute(marker, "");
+    document.head.appendChild(link);
+  } else {
+    // reordena para ficar por último
+    document.head.appendChild(link);
+  }
+  document.documentElement.classList.add("bwa-home-root");
+  document.body.classList.add("bwa-home-root");
+  return () => {
+    document.documentElement.classList.remove("bwa-home-root");
+    document.body.classList.remove("bwa-home-root");
+    link?.parentNode?.removeChild(link);
+  };
+}
+
 export default function HomePage() {
   useEffect(() => {
     const previousTitle = document.title;
@@ -57,11 +85,13 @@ export default function HomePage() {
     ensureLink("preload", HERO_PRELOAD, { as: "image", fetchpriority: "high" });
     ensureLink("stylesheet", FONTS_HREF);
 
+    const unmountCss = mountHomeStylesheet();
     // Run the original init script (same logic as the source HTML).
     initHomeBwa();
 
     return () => {
       document.title = previousTitle;
+      unmountCss();
     };
   }, []);
 

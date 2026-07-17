@@ -1,6 +1,16 @@
 export function initHomeBwa() {
+    // Guard de idempotência colado no próprio <nav data-nav>: se a home
+    // remonta (route change), o nó é recriado e o guard é naturalmente
+    // resetado. Em StrictMode (mount→cleanup→mount) o nó persiste e o
+    // guard evita duplicação de listeners — sem ele, cada acordeão
+    // recebe 2 handlers e abre/fecha no mesmo clique. Nada da lógica
+    // original abaixo é alterado.
+    const _nav = document.querySelector("[data-nav]");
+    if (!_nav) return;
+    if (_nav.dataset.bwaInited === "1") return;
+    _nav.dataset.bwaInited = "1";
 
-    (() => {
+
       const body = document.body;
       const nav = document.querySelector("[data-nav]");
       const menuButton = document.querySelector("[data-menu-button]");
@@ -226,6 +236,6 @@ export function initHomeBwa() {
           if (detail) detail.style.maxHeight = detail.scrollHeight + "px";
         });
       });
-    })();
   
 }
+
