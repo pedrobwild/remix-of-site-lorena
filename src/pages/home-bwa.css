@@ -367,10 +367,15 @@
       inset: 76px 0 0 0;
       z-index: 990;
       display: none;
-      padding: 40px var(--bwa-gutter);
+      /* FIX autorizado 17/jul: menu mobile rolável; último item alcançável em telas baixas */
+      padding: 40px var(--bwa-gutter) 96px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
       color: var(--bwa-white);
       background: var(--bwa-navy);
     }
+
 
     .bwa-mobile-menu nav {
       display: grid;
