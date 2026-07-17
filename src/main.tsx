@@ -90,7 +90,7 @@ function Root() {
   }, [route]);
 
   const adminMode = isAdminRoute(displayed);
-  const homeMode = displayed.name === "home";
+  void displayed;
 
   return (
     <>
