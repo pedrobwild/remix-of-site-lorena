@@ -32,7 +32,9 @@ function routeKeyOf(route: Route) {
 function Root() {
   const route = useHashRoute();
   const isAdmin = route.name.startsWith("admin");
-  useCustomCursor(!isAdmin);
+  const isHome = route.name === "home";
+  // Home tem cursor/CTAs/nav próprios do design aprovado — nada de chrome antigo.
+  useCustomCursor(!isAdmin && !isHome);
 
   // Inicializa analytics uma vez no mount
   useEffect(() => {
