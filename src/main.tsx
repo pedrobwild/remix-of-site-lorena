@@ -90,7 +90,7 @@ function Root() {
   }, [route]);
 
   const adminMode = isAdminRoute(displayed);
-  void displayed;
+
 
   return (
     <>
