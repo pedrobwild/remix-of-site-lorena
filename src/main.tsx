@@ -100,10 +100,12 @@ function Root() {
       >
         {renderRoute(displayed)}
       </div>
-      {!adminMode && !homeMode && <CookieBanner />}
+      {/* Banner mantido na home por conformidade LGPD (MetaPixel ativo) — exceção consciente à paridade visual */}
+      {!adminMode && <CookieBanner />}
       <MetaPixel />
     </>
   );
+
 }
 
 const rootElement = document.getElementById("root")!;
