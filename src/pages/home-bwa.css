@@ -2441,6 +2441,14 @@
         display: none;
       }
 
+      /* FIX autorizado 17/jul: hambúrguer visível na faixa 901-1180px onde os links já ficam ocultos */
+      .bwa-menu-button {
+        display: grid;
+        justify-self: end;
+      }
+
+
+
       .bwa-nav-inner {
         grid-template-columns: auto 1fr auto;
       }
