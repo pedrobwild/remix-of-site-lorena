@@ -91,6 +91,7 @@ export default function HomePage() {
 
     return () => {
       document.title = previousTitle;
+      delete document.body.dataset.bwaInited;
       unmountCss();
     };
   }, []);
