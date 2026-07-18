@@ -1,54 +1,60 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSeo, breadcrumbJsonLd, organizationJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
-import BwaSharedChrome from "@/components/BwaSharedChrome";
-import { useFaq } from "@/lib/useFaq";
 import { CONTACT } from "../components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
 import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.json";
+import diagCssUrl from "./diagnostico-bwa.css?url";
 
 /* ============================================================
- * DiagnosticoPage — /diagnostico redesenhada no sistema .bwa.
- * Camada visual: BwaSharedChrome (nav + footer + home-bwa.css +
- * bwa-internal.css). Copy e lógica do formulário PRESERVADAS
- * byte a byte (names/ids/types, validação, notify-lead, GA4,
- * WhatsApp) — apenas a apresentação muda.
+ * DiagnosticoPage — /diagnostico no visual .bwa aprovado em
+ * public/mockups/diag-bwa-aprovado.html (fonte da verdade da
+ * APRESENTAÇÃO + COPY). A MECÂNICA do formulário é a testada:
+ * names/ids/types, maskPhone, validações, notify-lead (15 chaves),
+ * GA4 (generate_lead, play_depoimento), WhatsApp, useSeo e
+ * jsonLd — TUDO PRESERVADO.
+ *
+ * Adições permitidas (documentadas no brief do dono):
+ *  a) mensagens de erro de validação sob os campos;
+ *  b) modal do vídeo da Vivian (thumb com <video>);
+ *  c) botão "Enviando…" durante submit.
+ *
+ * O bloco FAQ dinâmico (useFaq) foi substituído pela versão de 4
+ * perguntas aprovada pelo dono em 18/jul, com microdata FAQPage.
  * ============================================================ */
 
-const RECEBE: { t: string; rest: string }[] = [
-  { t: "Potencial de diária e ocupação", rest: " pro seu bairro" },
-  { t: "Escopo da reforma", rest: " pra deixar o studio pronto pra operar" },
-  { t: "Faixa de investimento e prazo", rest: " estimados pro seu caso" },
-  { t: "Os próximos passos", rest: ", no seu tempo e sem compromisso" },
-];
+const FONTS_HREF =
+  "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&display=swap";
 
-const PASSOS: { t: string; d: string }[] = [
-  { t: "Análise", d: "A gente lê o potencial do seu imóvel pra short stay, considerando bairro, metragem e estado atual." },
-  { t: "Retorno no WhatsApp", d: "Te chamamos com uma leitura inicial e tiramos suas dúvidas. Sem robô, gente de verdade." },
-  { t: "Visita e projeto", d: "Se fizer sentido pra você, agendamos a visita técnica e começamos o projeto do studio." },
-  { t: "Proposta fechada", d: "Escopo, prazo e orçamento definidos antes de começar. Sem surpresa no meio da obra." },
-];
+function ensureLinkOnce(rel: string, href: string, marker: string) {
+  if (document.head.querySelector(`link[${marker}]`)) return;
+  const el = document.createElement("link");
+  el.rel = rel;
+  el.href = href;
+  el.setAttribute(marker, "");
+  document.head.appendChild(el);
+}
 
-const ESCOPO: { t: string; d: string }[] = [
-  { t: "Projeto de arquitetura", d: "Planta humanizada, desenhada pra aproveitar cada metro e render." },
-  { t: "Obra completa", d: "Demolição a acabamento com time próprio. Você acompanha pelo portal." },
-  { t: "Marcenaria sob medida", d: "Cada centímetro aproveitado pra valorizar o studio compacto." },
-  { t: "Mobiliário e enxoval", d: "Mobília, eletro e enxoval instalados, prontos pra receber hóspede." },
-  { t: "Styling e fotos", d: "Ambientação e fotos profissionais prontas pro anúncio no short stay." },
-  { t: "Portal de acompanhamento", d: "Cronograma, decisões e evolução da obra na palma da mão." },
-];
-
-const STATS: { num: string; suf: string; small: string }[] = [
-  { num: "150", suf: "+", small: "studios entregues em São Paulo" },
-  { num: "60", suf: "dias úteis", small: "referência de prazo de obra, a partir de" },
-  { num: "5", suf: "anos", small: "garantia de mão de obra" },
-  { num: "100", suf: "% turn-key", small: "projeto, obra e operação num processo único" },
-];
-
-const OBJETIVOS = ["Short stay", "Locação tradicional", "Uso misto", "Moradia", "Ainda avaliando"];
-const CHAVES = ["Sim", "Ainda não", "Estou comprando"];
-const PLANTA = ["Sim", "Não", "Não sei"];
+/** Mesma técnica da home: injeta o CSS da rota POR ÚLTIMO no head
+ *  para vencer cascata dos globais (index.css, bwh-*); remove no
+ *  unmount para não vazar paleta para outras rotas. */
+function mountDiagStylesheet(): () => void {
+  const marker = "data-bwa-diag-css";
+  let link = document.head.querySelector<HTMLLinkElement>(`link[${marker}]`);
+  if (!link) {
+    link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = diagCssUrl;
+    link.setAttribute(marker, "");
+    document.head.appendChild(link);
+  } else {
+    document.head.appendChild(link);
+  }
+  return () => {
+    link?.parentNode?.removeChild(link);
+  };
+}
 
 function maskPhone(v: string): string {
   const d = v.replace(/\D/g, "").slice(0, 11);
@@ -59,6 +65,11 @@ function maskPhone(v: string): string {
 }
 const digits = (v: string) => v.replace(/\D/g, "");
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/* VALORES verbatim do mockup (dados do CRM, inalterados) */
+const CHAVES = ["Sim", "Ainda não", "Estou comprando"];
+const OBJETIVOS = ["Short stay", "Locação tradicional", "Uso misto", "Moradia", "Ainda avaliando"];
+const PLANTA = ["Sim", "Não", "Não sei"];
 
 type Form = {
   nome: string; whats: string; email: string; local: string;
@@ -74,7 +85,7 @@ export default function DiagnosticoPage() {
   useSeo({
     title: "Diagnóstico | Bewild",
     description:
-      "Envie os dados do seu studio e receba a análise inicial de escopo, projeto e próximos passos para a reforma turn-key com a Bewild.",
+      "Preencha a ficha do seu apartamento e receba a leitura do potencial, o escopo da reforma e os próximos passos. Sem custo e sem compromisso.",
     canonicalPath: "/diagnostico",
     ogType: "website",
     jsonLd: settings
@@ -88,132 +99,272 @@ export default function DiagnosticoPage() {
       : undefined,
   });
 
+  useEffect(() => {
+    ensureLinkOnce("preconnect", "https://fonts.googleapis.com", "data-bwa-diag-pc1");
+    const el2 = document.head.querySelector("link[data-bwa-diag-pc2]");
+    if (!el2) {
+      const l = document.createElement("link");
+      l.rel = "preconnect";
+      l.href = "https://fonts.gstatic.com";
+      l.crossOrigin = "anonymous";
+      l.setAttribute("data-bwa-diag-pc2", "");
+      document.head.appendChild(l);
+    }
+    ensureLinkOnce("stylesheet", FONTS_HREF, "data-bwa-diag-fonts");
+    const unmountCss = mountDiagStylesheet();
+
+    /* Nav + menu mobile — mesma lógica do script do mockup, com guard
+       idempotente (StrictMode monta 2x). */
+    const body = document.body;
+    if ((body as any).__dgInited) return () => { unmountCss(); };
+    (body as any).__dgInited = true;
+
+    const nav = document.querySelector<HTMLElement>("[data-nav]");
+    const menuButton = document.querySelector<HTMLButtonElement>("[data-menu-button]");
+    const mobileMenu = document.querySelector<HTMLElement>("[data-mobile-menu]");
+
+    const updateNav = () => nav?.classList.toggle("dg-scrolled", window.scrollY > 20);
+    updateNav();
+    window.addEventListener("scroll", updateNav, { passive: true });
+
+    const onMenuClick = () => {
+      const open = !body.classList.contains("dg-menu-open");
+      body.classList.toggle("dg-menu-open", open);
+      menuButton?.setAttribute("aria-expanded", String(open));
+      menuButton?.setAttribute("aria-label", open ? "Fechar menu" : "Abrir menu");
+    };
+    menuButton?.addEventListener("click", onMenuClick);
+    const linkHandlers: Array<[HTMLAnchorElement, () => void]> = [];
+    mobileMenu?.querySelectorAll("a").forEach((a) => {
+      const h = () => {
+        body.classList.remove("dg-menu-open");
+        menuButton?.setAttribute("aria-expanded", "false");
+      };
+      (a as HTMLAnchorElement).addEventListener("click", h);
+      linkHandlers.push([a as HTMLAnchorElement, h]);
+    });
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && body.classList.contains("dg-menu-open")) {
+        body.classList.remove("dg-menu-open");
+        menuButton?.setAttribute("aria-expanded", "false");
+      }
+    };
+    document.addEventListener("keydown", onKey);
+
+    return () => {
+      window.removeEventListener("scroll", updateNav);
+      menuButton?.removeEventListener("click", onMenuClick);
+      linkHandlers.forEach(([a, h]) => a.removeEventListener("click", h));
+      document.removeEventListener("keydown", onKey);
+      body.classList.remove("dg-menu-open");
+      delete (body as any).__dgInited;
+      unmountCss();
+    };
+  }, []);
+
   const waUrl = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
     "Olá, prefiro falar com um especialista sobre o diagnóstico."
   )}`;
 
-  const scrollToForm = () => {
-    document.getElementById("diag-formcard")?.scrollIntoView({ behavior: "smooth", block: "center" });
-  };
-
   return (
-    <BwaSharedChrome>
-      {/* Hero + formulário */}
-      <section className="bwa-section" aria-label="Solicitar diagnóstico">
-        <div className="bwa-shell">
-          <div className="bwa-diag-grid">
-            <div className="bwa-diag-left">
-              <p className="bwa-label">001 · Diagnóstico · sem compromisso</p>
-              <h1 className="bwa-title">
-                Seu studio pronto pra render começa aqui.
-              </h1>
-              <p className="bwa-lead">
-                Você manda os dados do imóvel. A gente devolve uma leitura do potencial de renda, do escopo da reforma e dos próximos passos. Sem custo e sem compromisso.
-              </p>
+    <>
+      <a className="dg-skip" href="#dg-ficha">Pular para a ficha</a>
 
-              <div className="bwa-diag-recebe">
-                <p className="bwa-label">O que você recebe</p>
-                <ol>
-                  {RECEBE.map((r, i) => (
-                    <li key={r.t}>
-                      <span className="bwa-mono">0{i + 1}</span>
-                      <span><strong>{r.t}</strong>{r.rest}</span>
-                    </li>
-                  ))}
-                </ol>
+      <header className="dg-nav" data-nav>
+        <div className="dg-shell dg-nav-inner">
+          <a className="dg-wordmark" href="/" aria-label="Bewild, início">Bewild</a>
+          <nav className="dg-nav-links" aria-label="Navegação principal">
+            <a href="/#certeza">O contrato</a>
+            <a href="/#historia">A história</a>
+            <a href="/#projetos">Projetos</a>
+            <a href="/#workflow">Bwild Workflow</a>
+            <a href="/#prova">Prova</a>
+            <a href="/portfolio">Portfólio</a>
+            <a href="/conteudos">Conteúdos</a>
+            <a href="/faq">FAQ</a>
+          </nav>
+          <a className="dg-button" href="#dg-ficha">Preencher a ficha <span aria-hidden="true">↓</span></a>
+          <button className="dg-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false" data-menu-button><span></span></button>
+        </div>
+      </header>
+
+      <div className="dg-mobile-menu" data-mobile-menu>
+        <nav aria-label="Navegação mobile">
+          <a href="/#certeza">O contrato</a>
+          <a href="/#historia">A história</a>
+          <a href="/#projetos">Projetos</a>
+          <a href="/#oque-fazemos">O que fazemos</a>
+          <a href="/#workflow">Bwild Workflow</a>
+          <a href="/#prova">Prova</a>
+          <a href="/#objetivos">Morar, alugar ou vender</a>
+          <a href="/portfolio">Portfólio</a>
+          <a href="/conteudos">Conteúdos</a>
+          <a href="/faq">FAQ</a>
+          <a href="#dg-ficha">Preencher a ficha</a>
+        </nav>
+      </div>
+
+      <main id="conteudo">
+        {/* 01 · HERO + FICHA */}
+        <section className="dg-hero" aria-label="Solicitar diagnóstico">
+          <div className="dg-shell dg-hero-grid">
+            <div>
+              <div className="dg-intro">
+                <p className="dg-label">Diagnóstico · 01 · sem custo, sem compromisso</p>
+                <h1 className="dg-title">Conte o que você tem. A gente devolve o caminho.</h1>
+                <p className="dg-lead">
+                  Preencha a ficha do seu apartamento. A Bewild analisa o potencial do imóvel — para morar, alugar ou vender — e volta no seu WhatsApp com uma leitura clara do escopo, do investimento estimado e dos próximos passos.
+                </p>
               </div>
 
-              <p className="bwa-diag-trust bwa-mono">
-                +150 studios entregues em São Paulo
-              </p>
+              <div className="dg-support">
+                <div className="dg-recebe">
+                  <p className="dg-label">O que você recebe</p>
+                  <ol>
+                    <li><i>01</i><span><strong>Leitura do potencial do imóvel</strong>, considerando uso, bairro e metragem.</span></li>
+                    <li><i>02</i><span><strong>Escopo da reforma</strong> para deixar o apartamento pronto para o seu objetivo.</span></li>
+                    <li><i>03</i><span><strong>Faixa de investimento e prazo</strong> estimados para o seu caso.</span></li>
+                    <li><i>04</i><span><strong>Próximos passos, no seu tempo</strong> — você decide se avança.</span></li>
+                  </ol>
+                </div>
 
-              <TestimonialCard waUrl={waUrl} />
+                <p className="dg-trust">150+ studios entregues em São Paulo</p>
+
+                <TestimonialCard waUrl={waUrl} />
+              </div>
             </div>
 
-            <div className="bwa-diag-right">
-              <DiagnosticoForm />
+            <DiagnosticoForm waUrl={waUrl} />
+          </div>
+        </section>
+
+        {/* 02 · DEPOIS DO ENVIO */}
+        <section className="dg-section" aria-labelledby="dg-passos-title">
+          <div className="dg-shell">
+            <div className="dg-section-head">
+              <p className="dg-label">Depois do envio · 02</p>
+              <h2 id="dg-passos-title" className="dg-title">O que acontece quando você manda a ficha.</h2>
+              <p className="dg-lead">Nada de mistério nem de fila. O processo é direto — e você decide cada passo seguinte.</p>
+            </div>
+            <div className="dg-cells">
+              <div className="dg-cell"><i>01 · Análise</i><h3>A gente lê o seu imóvel.</h3><p>Bairro, metragem, estado atual e objetivo entram na leitura do potencial.</p></div>
+              <div className="dg-cell"><i>02 · Retorno</i><h3>Voltamos no seu WhatsApp.</h3><p>Uma leitura inicial e as suas dúvidas respondidas. Gente de verdade, sem robô.</p></div>
+              <div className="dg-cell"><i>03 · Visita e projeto</i><h3>Se fizer sentido, avançamos.</h3><p>Agendamos a visita técnica e começamos o projeto do seu apartamento.</p></div>
+              <div className="dg-cell"><i>04 · Proposta fechada</i><h3>Preço e prazo antes da obra.</h3><p>Escopo, data de entrega e valor definidos em contrato. Sem surpresa no meio do caminho.</p></div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Depois do envio */}
-      <section className="bwa-section">
-        <div className="bwa-shell">
-          <p className="bwa-label">002 · Depois do envio</p>
-          <h2 className="bwa-title">O que acontece quando você manda a ficha.</h2>
-          <p className="bwa-lead">Nada de mistério nem de fila. O processo é direto, e você decide cada passo seguinte.</p>
-          <div className="bwa-diag-steps">
-            {PASSOS.map((p, i) => (
-              <div className="bwa-diag-cell" key={p.t}>
-                <span className="bwa-mono">0{i + 1}</span>
-                <h3>{p.t}</h3>
-                <p>{p.d}</p>
+        {/* 03 · PROVA EM NÚMEROS */}
+        <section className="dg-section" style={{ paddingTop: 0 }} aria-labelledby="dg-num-title">
+          <div className="dg-shell">
+            <div className="dg-section-head">
+              <p className="dg-label">Por que a Bewild · 03</p>
+              <h2 id="dg-num-title" className="dg-title">Já fizemos isso mais de 150 vezes.</h2>
+            </div>
+            <div className="dg-cells">
+              <div className="dg-cell dg-stat"><b>150<em>+</em></b><span>studios entregues em São Paulo</span></div>
+              <div className="dg-cell dg-stat"><b>60<em>dias úteis</em></b><span>referência de prazo de obra, a partir de</span></div>
+              <div className="dg-cell dg-stat"><b>5<em>anos</em></b><span>garantia de obra e marcenaria</span></div>
+              <div className="dg-cell dg-stat"><b>1<em>contrato</em></b><span>preço e prazo fechados antes de a obra começar</span></div>
+            </div>
+            <p className="dg-fine dg-mono">Referências sujeitas ao escopo · detalhes na proposta e no contrato</p>
+          </div>
+        </section>
+
+        {/* 04 · FAQ — versão aprovada de 4 perguntas (substitui useFaq dinâmico) */}
+        <section className="dg-section" style={{ paddingTop: 0 }} aria-labelledby="dg-faq-title">
+          <div className="dg-shell">
+            <div className="dg-section-head">
+              <p className="dg-label">Perguntas · 04</p>
+              <h2 id="dg-faq-title" className="dg-title">Antes de mandar a ficha.</h2>
+            </div>
+            <div className="dg-faq" itemScope itemType="https://schema.org/FAQPage">
+              <details open itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
+                <summary itemProp="name">Quanto custa o diagnóstico?</summary>
+                <div itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
+                  <p itemProp="text">Nada. É uma análise inicial sem custo e sem compromisso — você decide se quer avançar depois de receber a leitura.</p>
+                </div>
+              </details>
+              <details itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
+                <summary itemProp="name">Em quanto tempo vocês respondem?</summary>
+                <div itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
+                  <p itemProp="text">Nosso time retorna no seu WhatsApp em horário comercial, normalmente no mesmo dia útil.</p>
+                </div>
+              </details>
+              <details itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
+                <summary itemProp="name">Preciso ter as chaves para pedir o diagnóstico?</summary>
+                <div itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
+                  <p itemProp="text">Não. Dá para começar a análise antes mesmo da compra — muitos clientes usam o diagnóstico para decidir o imóvel.</p>
+                </div>
+              </details>
+              <details itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
+                <summary itemProp="name">E se eu ainda não souber o objetivo?</summary>
+                <div itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
+                  <p itemProp="text">Sem problema. Marque "Ainda avaliando" e a gente compara com você os cenários de morar, alugar e vender.</p>
+                </div>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        {/* 05 · CTA FINAL */}
+        <section className="dg-final" aria-label="Preencher a ficha">
+          <div className="dg-shell">
+            <p className="dg-label" style={{ justifySelf: "center" }}>Diagnóstico gratuito · 05</p>
+            <h2 className="dg-title">Pronto para ver o projeto antes da obra?</h2>
+            <p className="dg-lead" style={{ margin: "0 auto" }}>A ficha leva menos de dois minutos. O resto do trabalho é nosso.</p>
+            <div className="dg-final-actions">
+              <a className="dg-button dg-button-light" href="#dg-ficha">Preencher a ficha <span aria-hidden="true">↑</span></a>
+              <a className="dg-textlink" href={waUrl} target="_blank" rel="noopener noreferrer">Falar no WhatsApp →</a>
+            </div>
+            <p className="dg-mono">Atendimento de gente real · retorno rápido · 150+ studios entregues</p>
+          </div>
+        </section>
+      </main>
+
+      <footer className="dg-footer">
+        <div className="dg-shell">
+          <div className="dg-footer-main">
+            <div>
+              <div className="dg-footer-wordmark">Bewild</div>
+              <p>Built by the wild ones. Be wild.</p>
+              <p>Reforma completa de studios em São Paulo. Projeto, obra, marcenaria, mobiliário e entrega num processo único.</p>
+            </div>
+            <div>
+              <h3>Navegação</h3>
+              <nav>
+                <a href="/#certeza">O contrato</a>
+                <a href="/#historia">A história</a>
+                <a href="/portfolio">Portfólio</a>
+                <a href="/conteudos">Conteúdos</a>
+                <a href="/faq">FAQ</a>
+                <a href="/diagnostico">Diagnóstico</a>
+              </nav>
+            </div>
+            <div className="dg-footer-contact">
+              <h3>Contato</h3>
+              <div>
+                <span>WhatsApp</span>
+                <span>Instagram</span>
+                <span>LinkedIn</span>
+                <span>e-mail</span>
+                <a href="/privacidade">Política de privacidade</a>
+                <span>Preferências de cookies</span>
               </div>
-            ))}
+            </div>
+          </div>
+          <div className="dg-footer-bottom">
+            <p style={{ margin: 0 }}>BEWILD · SÃO PAULO, BRASIL · CNPJ 47.350.338/0001-37 · RESP. TÉCNICO · THIAGO DANTAS DO AMOR · CAU A162437-7</p>
+            <span>© 2026 Bewild</span>
           </div>
         </div>
-      </section>
-
-      {/* Escopo turn-key */}
-      <section className="bwa-section">
-        <div className="bwa-shell">
-          <p className="bwa-label">003 · Escopo turn-key</p>
-          <h2 className="bwa-title">Tudo num contrato só. Você não toca em nada.</h2>
-          <p className="bwa-lead">O diagnóstico é a porta de entrada pra um processo que entrega o studio pronto pra operar, do projeto à foto do anúncio.</p>
-          <div className="bwa-diag-steps">
-            {ESCOPO.map((s, i) => (
-              <div className="bwa-diag-cell" key={s.t}>
-                <span className="bwa-mono">0{i + 1}</span>
-                <h3>{s.t}</h3>
-                <p>{s.d}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Prova numérica */}
-      <section className="bwa-section">
-        <div className="bwa-shell">
-          <p className="bwa-label">004 · Por que a Bewild</p>
-          <h2 className="bwa-title">Já fizemos isso 150 vezes. O seu é o próximo.</h2>
-          <div className="bwa-diag-stats">
-            {STATS.map((s) => (
-              <div className="bwa-diag-stat" key={s.num + s.suf}>
-                <b>{s.num}<em>{s.suf}</em></b>
-                <span>{s.small}</span>
-              </div>
-            ))}
-          </div>
-          <p className="bwa-diag-fine bwa-mono">Referências sujeitas ao escopo · detalhes na proposta e no contrato</p>
-        </div>
-      </section>
-
-      <DiagFaq />
-
-      {/* CTA final */}
-      <section className="bwa-section bwa-diag-cta" aria-label="Solicitar diagnóstico">
-        <div className="bwa-shell" style={{ maxWidth: 900, textAlign: "center" }}>
-          <p className="bwa-label">Diagnóstico gratuito · sem compromisso</p>
-          <h2 className="bwa-title">Pronto pra ver seu studio rendendo?</h2>
-          <p className="bwa-lead">Leva menos de dois minutos pra preencher a ficha. O resto do trabalho fica com a gente.</p>
-          <div className="bwa-diag-cta-actions">
-            <button type="button" className="bwa-button" onClick={scrollToForm}>
-              Preencher a ficha <span aria-hidden="true">↑</span>
-            </button>
-            <a className="bwa-text-link" href={waUrl} target="_blank" rel="noopener noreferrer">
-              Falar no WhatsApp <span aria-hidden="true">→</span>
-            </a>
-          </div>
-          <p className="bwa-mono bwa-diag-cta-note">Atendimento de gente real · retorno rápido · 150+ studios entregues</p>
-        </div>
-      </section>
-    </BwaSharedChrome>
+      </footer>
+    </>
   );
 }
 
-function DiagnosticoForm() {
+function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
   const [f, setF] = useState<Form>(EMPTY_FORM);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -234,10 +385,7 @@ function DiagnosticoForm() {
 
   const messageText = useMemo(() => {
     const lines: string[] = ["Olá! Quero um diagnóstico do meu studio."];
-    const add = (label: string, val: string) => {
-      const v = val.trim();
-      if (v) lines.push(`${label}: ${v}`);
-    };
+    const add = (label: string, val: string) => { const v = val.trim(); if (v) lines.push(`${label}: ${v}`); };
     add("Nome", f.nome);
     add("WhatsApp", f.whats);
     add("E-mail", f.email);
@@ -281,9 +429,7 @@ function DiagnosticoForm() {
 
     void supabase.functions
       .invoke("notify-lead", { body: leadPayload })
-      .catch((err) => {
-        console.error("[notify-lead] invoke failed", err);
-      });
+      .catch((err) => { console.error("[notify-lead] invoke failed", err); });
 
     trackEvent("generate_lead", {
       method: "diagnostico_form",
@@ -302,151 +448,161 @@ function DiagnosticoForm() {
     setSubmitting(false);
   }
 
+  const badCls = (bad: boolean) => (bad ? " dg-bad" : "");
+
   return (
     <form
-      onSubmit={onSubmit}
+      className={`dg-ficha${success ? " dg-sent" : ""}`}
+      id="dg-ficha"
+      data-ficha
       noValidate
-      className="bwa-form"
-      id="diag-formcard"
+      onSubmit={onSubmit}
       aria-label="Formulário de diagnóstico"
     >
-      <div className="bwa-form-head">
-        <span className="bwa-label">Ficha do seu studio</span>
-        <span className="bwa-mono">BW—002</span>
+      <div className="dg-ficha-head">
+        <span className="dg-label">Ficha do seu studio</span>
+        <span className="dg-mono">BW—002</span>
       </div>
 
-      {success && (
-        <div className="bwa-form-success" role="status">
-          <strong>Recebemos seus dados.</strong>
-          <span>Nosso time comercial vai falar com você no WhatsApp.</span>
+      <div className="dg-success" role="status">
+        <strong>Recebemos seus dados.</strong>
+        <span>Nosso time vai falar com você no WhatsApp.</span>
+      </div>
+
+      <div className="dg-field dg-hidepós">
+        <label htmlFor="dg-nome">Nome <span aria-hidden="true">*</span></label>
+        <input
+          id="dg-nome" name="nome" type="text" placeholder="Como podemos te chamar"
+          autoComplete="name" required
+          className={badCls(!!touched.nome && !nomeOk).trim()}
+          value={f.nome}
+          onChange={(e) => set("nome", e.target.value)}
+          onBlur={() => setTouched((t) => ({ ...t, nome: true }))}
+          maxLength={120}
+        />
+        {touched.nome && !nomeOk && <span className="dg-field-error">Informe seu nome.</span>}
+      </div>
+
+      <div className="dg-row dg-hidepós">
+        <div className="dg-field">
+          <label htmlFor="dg-whats">WhatsApp <span aria-hidden="true">*</span></label>
+          <input
+            id="dg-whats" name="whats" type="tel" inputMode="tel" placeholder="(11) 99999-9999"
+            autoComplete="tel" required
+            className={badCls(!!touched.whats && !whatsOk).trim()}
+            value={f.whats}
+            onChange={(e) => set("whats", maskPhone(e.target.value))}
+            onBlur={() => setTouched((t) => ({ ...t, whats: true }))}
+          />
+          {touched.whats && !whatsOk && <span className="dg-field-error">Informe um WhatsApp com DDD.</span>}
+        </div>
+        <div className="dg-field">
+          <label htmlFor="dg-email">E-mail <span className="dg-opt">(opcional)</span></label>
+          <input
+            id="dg-email" name="email" type="email" placeholder="voce@email.com"
+            autoComplete="email"
+            className={badCls(!!touched.email && emailFilled && !emailOk).trim()}
+            value={f.email}
+            onChange={(e) => set("email", e.target.value)}
+            onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+            maxLength={255}
+          />
+          {touched.email && emailFilled && !emailOk && <span className="dg-field-error">E-mail inválido.</span>}
+        </div>
+      </div>
+
+      <div className="dg-field dg-hidepós">
+        <label htmlFor="dg-local">Bairro do imóvel <span aria-hidden="true">*</span></label>
+        <input
+          id="dg-local" name="local" type="text" placeholder="Ex: Pinheiros, Itaim, Butantã" required
+          className={badCls(!!touched.local && !localOk).trim()}
+          value={f.local}
+          onChange={(e) => set("local", e.target.value)}
+          onBlur={() => setTouched((t) => ({ ...t, local: true }))}
+          maxLength={120}
+        />
+        {touched.local && !localOk && <span className="dg-field-error">Informe o bairro do imóvel.</span>}
+      </div>
+
+      <fieldset className="dg-field dg-hidepós">
+        <legend>Já tem as chaves do imóvel? <span aria-hidden="true">*</span></legend>
+        <ChipRow
+          options={CHAVES} value={f.chaves}
+          onChange={(v) => { set("chaves", v); setTouched((t) => ({ ...t, chaves: true })); }}
+        />
+        {touched.chaves && !chavesOk && <span className="dg-field-error">Selecione uma opção.</span>}
+      </fieldset>
+
+      <fieldset className="dg-field dg-hidepós">
+        <legend>Objetivo <span aria-hidden="true">*</span></legend>
+        <ChipRow
+          options={OBJETIVOS} value={f.objetivo}
+          onChange={(v) => { set("objetivo", v); setTouched((t) => ({ ...t, objetivo: true })); }}
+        />
+        {touched.objetivo && !objetivoOk && <span className="dg-field-error">Selecione o objetivo.</span>}
+      </fieldset>
+
+      <div className="dg-field dg-hidepós">
+        <label htmlFor="dg-m2">Metragem (m²) <span className="dg-opt">(opcional)</span></label>
+        <input
+          id="dg-m2" name="metragem" type="text" inputMode="numeric" placeholder="32"
+          value={f.metragem}
+          onChange={(e) => set("metragem", e.target.value.replace(/[^\d.,]/g, "").slice(0, 6))}
+        />
+      </div>
+
+      <button
+        type="button"
+        className="dg-textlink dg-more dg-hidepós"
+        data-more
+        aria-expanded={showMore}
+        onClick={() => setShowMore((s) => !s)}
+      >
+        {showMore ? "− Menos detalhes" : "+ Mais detalhes (opcional)"}
+      </button>
+
+      {showMore && (
+        <div className="dg-hidepós" data-more-panel>
+          <fieldset className="dg-field">
+            <legend>Tem planta do imóvel?</legend>
+            <ChipRow options={PLANTA} value={f.planta} onChange={(v) => set("planta", v)} />
+          </fieldset>
+          <div className="dg-field" style={{ marginTop: 14 }}>
+            <label htmlFor="dg-msg">Mensagem</label>
+            <textarea id="dg-msg" name="mensagem" maxLength={1000}
+              value={f.mensagem} onChange={(e) => set("mensagem", e.target.value)} />
+          </div>
         </div>
       )}
 
-      {!success && (
-        <>
-          <div className="bwa-form-field">
-            <label htmlFor="diag-nome">Nome <span className="bwa-form-req">*</span></label>
-            <input
-              id="diag-nome" name="nome" type="text" placeholder="Como podemos te chamar"
-              className={touched.nome && !nomeOk ? "bad" : ""}
-              value={f.nome} onChange={(e) => set("nome", e.target.value)}
-              onBlur={() => setTouched((t) => ({ ...t, nome: true }))}
-              autoComplete="name" required maxLength={120}
-            />
-            {touched.nome && !nomeOk && <span className="bwa-form-error">Informe seu nome.</span>}
-          </div>
-
-          <div className="bwa-form-row">
-            <div className="bwa-form-field">
-              <label htmlFor="diag-whats">WhatsApp <span className="bwa-form-req">*</span></label>
-              <input
-                id="diag-whats" name="whats" type="tel" inputMode="tel" placeholder="(11) 99999-9999"
-                className={touched.whats && !whatsOk ? "bad" : ""}
-                value={f.whats} onChange={(e) => set("whats", maskPhone(e.target.value))}
-                onBlur={() => setTouched((t) => ({ ...t, whats: true }))}
-                autoComplete="tel" required
-              />
-              {touched.whats && !whatsOk && <span className="bwa-form-error">Informe um WhatsApp com DDD.</span>}
-            </div>
-            <div className="bwa-form-field">
-              <label htmlFor="diag-email">E-mail <span className="bwa-form-opt">(opcional)</span></label>
-              <input
-                id="diag-email" name="email" type="email" placeholder="voce@email.com"
-                className={touched.email && emailFilled && !emailOk ? "bad" : ""}
-                value={f.email} onChange={(e) => set("email", e.target.value)}
-                onBlur={() => setTouched((t) => ({ ...t, email: true }))}
-                autoComplete="email" maxLength={255}
-              />
-              {touched.email && emailFilled && !emailOk && <span className="bwa-form-error">E-mail inválido.</span>}
-            </div>
-          </div>
-
-          <div className="bwa-form-field">
-            <label htmlFor="diag-local">Bairro do imóvel <span className="bwa-form-req">*</span></label>
-            <input
-              id="diag-local" name="local" type="text" placeholder="Ex: Pinheiros, Itaim, Butantã"
-              className={touched.local && !localOk ? "bad" : ""}
-              value={f.local} onChange={(e) => set("local", e.target.value)}
-              onBlur={() => setTouched((t) => ({ ...t, local: true }))}
-              maxLength={120} required
-            />
-            {touched.local && !localOk && <span className="bwa-form-error">Informe o bairro do imóvel.</span>}
-          </div>
-
-          <ChipsField
-            label="Já tem as chaves do imóvel?" required options={CHAVES} value={f.chaves}
-            onChange={(v) => { set("chaves", v); setTouched((t) => ({ ...t, chaves: true })); }}
-            error={touched.chaves && !chavesOk ? "Selecione uma opção." : null}
-          />
-
-          <ChipsField
-            label="Objetivo" required options={OBJETIVOS} value={f.objetivo}
-            onChange={(v) => { set("objetivo", v); setTouched((t) => ({ ...t, objetivo: true })); }}
-            error={touched.objetivo && !objetivoOk ? "Selecione o objetivo." : null}
-          />
-
-          <div className="bwa-form-field">
-            <label htmlFor="diag-m2">Metragem (m²) <span className="bwa-form-opt">(opcional)</span></label>
-            <input
-              id="diag-m2" name="metragem" type="text" inputMode="numeric" placeholder="32"
-              value={f.metragem}
-              onChange={(e) => set("metragem", e.target.value.replace(/[^\d.,]/g, "").slice(0, 6))}
-            />
-          </div>
-
-          <button
-            type="button"
-            className="bwa-text-link"
-            aria-expanded={showMore}
-            onClick={() => setShowMore((s) => !s)}
-            style={{ justifySelf: "start" }}
-          >
-            {showMore ? "− Menos detalhes" : "+ Mais detalhes (opcional)"}
-          </button>
-
-          {showMore && (
-            <>
-              <ChipsField label="Tem planta do imóvel?" options={PLANTA} value={f.planta} onChange={(v) => set("planta", v)} />
-              <div className="bwa-form-field">
-                <label htmlFor="diag-msg">Mensagem</label>
-                <textarea id="diag-msg" name="mensagem" value={f.mensagem} onChange={(e) => set("mensagem", e.target.value)} maxLength={1000} />
-              </div>
-            </>
-          )}
-
-          <button type="submit" className="bwa-button" disabled={!canSubmit || submitting}>
-            {submitting ? "Enviando…" : "Solicitar diagnóstico"}
-            <span aria-hidden="true">→</span>
-          </button>
-          <p className="bwa-mono bwa-diag-guarantee">Sem compromisso · a gente só te chama no WhatsApp</p>
-        </>
-      )}
+      <button type="submit" className="dg-button dg-hidepós" disabled={!canSubmit || submitting}>
+        {submitting ? "Enviando…" : "Solicitar diagnóstico"} <span aria-hidden="true">→</span>
+      </button>
+      <p className="dg-ficha-note dg-hidepós">Sem compromisso · a gente só te chama no WhatsApp</p>
     </form>
   );
 }
 
-function ChipsField({ label, options, value, onChange, required, error }: {
-  label: string; options: string[]; value: string; onChange: (v: string) => void; required?: boolean; error?: string | null;
+function ChipRow({ options, value, onChange }: {
+  options: string[]; value: string; onChange: (v: string) => void;
 }) {
   return (
-    <fieldset className="bwa-form-field">
-      <legend>{label} {required && <span className="bwa-form-req">*</span>}</legend>
-      <div className="bwa-chip-row">
-        {options.map((opt) => {
-          const active = value === opt;
-          return (
-            <button
-              key={opt} type="button" aria-pressed={active}
-              onClick={() => onChange(active ? "" : opt)}
-              className={`bwa-chip${active ? " sel" : ""}`}
-            >
-              {opt}
-            </button>
-          );
-        })}
-      </div>
-      {error && <span className="bwa-form-error">{error}</span>}
-    </fieldset>
+    <div className="dg-chips" data-chips>
+      {options.map((opt) => {
+        const active = value === opt;
+        return (
+          <button
+            key={opt}
+            type="button"
+            className="dg-chip"
+            aria-pressed={active}
+            onClick={() => onChange(active ? "" : opt)}
+          >
+            {opt}
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
@@ -479,20 +635,22 @@ function TestimonialCard({ waUrl }: { waUrl: string }) {
 
   return (
     <>
-      <aside className="bwa-diag-testi" aria-label="Depoimento em vídeo de cliente">
+      <aside className="dg-testi" aria-label="Depoimento em vídeo de cliente">
         <button
-          type="button" className="bwa-diag-testithumb"
+          type="button"
+          className="dg-testithumb"
           onClick={handleOpen}
           aria-label="Assistir depoimento em vídeo de Vivian"
         >
+          {/* Conforme nota do mockup: em produção entra o vídeo real (muted,
+              preload=metadata) no lugar da <img> poster. */}
           <video src={depoimentoVideo.url} muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true" />
-          <span className="bwa-diag-testiplay" aria-hidden="true">▶</span>
         </button>
-        <div className="bwa-diag-testimeta">
-          <p className="bwa-mono">Depoimento</p>
-          <p className="bwa-diag-testiname">Vivian</p>
-          <p className="bwa-diag-testirole">cliente Bewild · depoimento presencial</p>
-          <a href={waUrl} target="_blank" rel="noopener noreferrer" className="bwa-text-link">
+        <div className="dg-testimeta">
+          <p className="dg-mono">Depoimento</p>
+          <p className="dg-testiname">Vivian</p>
+          <p className="dg-testirole">cliente Bewild · depoimento gravado sem roteiro</p>
+          <a className="dg-textlink" href={waUrl} target="_blank" rel="noopener noreferrer">
             Prefiro falar com um especialista →
           </a>
         </div>
@@ -500,43 +658,33 @@ function TestimonialCard({ waUrl }: { waUrl: string }) {
 
       {open && (
         <div
-          className="bwa-diag-modal" role="dialog" aria-modal="true" aria-label="Depoimento em vídeo de Vivian"
+          className="dg-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Depoimento em vídeo de Vivian"
           onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}
         >
-          <div className="bwa-diag-modal-inner">
+          <div className="dg-modal-inner">
             <button
-              ref={closeBtnRef} type="button"
-              className="bwa-diag-modal-close" onClick={() => setOpen(false)} aria-label="Fechar vídeo"
+              ref={closeBtnRef}
+              type="button"
+              className="dg-modal-close"
+              onClick={() => setOpen(false)}
+              aria-label="Fechar vídeo"
             >
               ✕
             </button>
-            <video ref={videoRef} src={depoimentoVideo.url} controls playsInline autoPlay className="bwa-diag-modal-video" />
+            <video
+              ref={videoRef}
+              src={depoimentoVideo.url}
+              controls
+              playsInline
+              autoPlay
+              className="dg-modal-video"
+            />
           </div>
         </div>
       )}
     </>
-  );
-}
-
-function DiagFaq() {
-  const { items } = useFaq();
-  if (items.length === 0) return null;
-  return (
-    <section className="bwa-section" id="faq" aria-labelledby="bw-diag-faq-title">
-      <div className="bwa-shell" style={{ maxWidth: 960 }}>
-        <p className="bwa-label">005 · Perguntas</p>
-        <h2 id="bw-diag-faq-title" className="bwa-title">O que todo investidor pergunta.</h2>
-        <div className="bwa-diag-faq" itemScope itemType="https://schema.org/FAQPage">
-          {items.map((item) => (
-            <details key={item.id} itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
-              <summary itemProp="name">{item.question}</summary>
-              <div itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
-                <p itemProp="text">{item.answer}</p>
-              </div>
-            </details>
-          ))}
-        </div>
-      </div>
-    </section>
   );
 }
