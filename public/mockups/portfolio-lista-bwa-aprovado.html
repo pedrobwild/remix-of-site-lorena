@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfólio | Bewild</title>
+<meta name="description" content="Studios entregues pela Bewild em São Paulo: obra real, escopo fechado, prazo cumprido e resultado documentado, ficha por ficha.">
+<meta name="theme-color" content="#0B2342">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&display=swap" rel="stylesheet">
+<!--
+  PRANCHA 1 DE APROVAÇÃO — /portfolio (LISTA) no sistema .bwa
+  · Campos reais da tabela projects: cover_url(+alt), title, project_type
+    (short_stay|turn_key|planta), neighborhood, area_m2, duration, slug,
+    published, sort_order. Nada inventado.
+  · DOIS ESTADOS de card demonstrados: COM FOTO (cover_url preenchida) e
+    SEM FOTO (placeholder tipográfico .pf-ph — usado enquanto o admin não
+    tiver imagem). O placeholder é design, não erro.
+  · Filtro por tipo é client-side e FUNCIONAL nesta prancha (clique nos chips).
+  · Os projetos abaixo são conteúdo de exemplo (3 da home + o 1 publicado
+    hoje no banco). Na implementação, a lista vem do Supabase como já vem.
+  · Chrome (nav/footer) idêntico ao aprovado no /diagnostico; aqui o CTA do
+    nav volta a ser "Solicitar diagnóstico" → /diagnostico.
+-->
+<style>
+:root{
+  --navy:#0B2342;
+  --paper:#FAF8F4;
+  --line:rgba(11,35,66,.16);
+  --line-strong:rgba(11,35,66,.32);
+  --mono:'JetBrains Mono',monospace;
+  --body:'Manrope',sans-serif;
+  --gutter:clamp(20px,4vw,48px);
+  --max:1320px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--navy);
+  font-family:var(--body);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--navy);color:var(--paper)}
+img,video{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+.dg-shell{max-width:var(--max);margin:0 auto;padding:0 var(--gutter)}
+
+/* ---------- primitivas .bwa (idênticas ao /diagnostico aprovado) ---------- */
+.dg-label{
+  font-family:var(--mono);font-size:10px;font-weight:500;
+  letter-spacing:.32em;text-transform:uppercase;
+  display:flex;align-items:center;gap:12px;margin:0;
+}
+.dg-label::before{content:"";width:7px;height:7px;background:currentColor;flex:none}
+.dg-title{
+  font-family:var(--body);font-weight:350;letter-spacing:-.015em;
+  font-size:clamp(30px,4.4vw,52px);line-height:1.08;margin:0;
+}
+.dg-lead{font-size:clamp(16px,1.35vw,18px);line-height:1.65;max-width:58ch;opacity:.88;margin:0}
+.dg-mono{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.dg-button{
+  display:inline-flex;align-items:center;gap:12px;
+  font-family:var(--mono);font-size:11px;font-weight:500;
+  letter-spacing:.18em;text-transform:uppercase;
+  background:var(--navy);color:var(--paper);
+  border:1px solid var(--navy);padding:16px 24px;cursor:pointer;
+  transition:transform .25s ease,background .25s ease;
+}
+.dg-button:hover{transform:translateY(-2px)}
+.dg-button-light{background:var(--paper);color:var(--navy);border-color:var(--paper)}
+.dg-textlink{
+  font-family:var(--mono);font-size:11px;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;
+  border-bottom:1px solid currentColor;padding-bottom:3px;
+  background:none;border-top:0;border-left:0;border-right:0;cursor:pointer;color:inherit;
+}
+.dg-skip{position:absolute;left:-9999px}
+.dg-skip:focus{left:16px;top:12px;background:var(--navy);color:var(--paper);padding:10px 16px;z-index:99}
+
+/* ---------- nav interna ---------- */
+.dg-nav{
+  position:fixed;inset:0 0 auto 0;z-index:60;
+  background:var(--paper);border-bottom:1px solid var(--line);
+  transition:box-shadow .3s ease;
+}
+.dg-nav.dg-scrolled{box-shadow:0 8px 30px rgba(11,35,66,.08)}
+.dg-nav-inner{
+  display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;
+  gap:clamp(16px,2vw,32px);min-height:76px;
+}
+.dg-wordmark{font-weight:800;font-size:20px;letter-spacing:-.02em}
+.dg-nav-links{display:flex;gap:clamp(16px,1.9vw,34px);justify-content:center}
+.dg-nav-links a{
+  font-family:var(--mono);font-size:10px;font-weight:500;
+  letter-spacing:.2em;text-transform:uppercase;opacity:.82;
+  transition:opacity .2s ease;
+}
+.dg-nav-links a:hover{opacity:1}
+.dg-nav .dg-button{padding:12px 18px}
+.dg-menu-button{
+  display:none;width:44px;height:44px;background:none;border:1px solid var(--line-strong);
+  cursor:pointer;place-items:center;position:relative;
+}
+.dg-menu-button span,
+.dg-menu-button::before,
+.dg-menu-button::after{
+  content:"";position:absolute;left:12px;right:12px;height:1.5px;background:var(--navy);
+  transition:transform .3s ease,opacity .3s ease;
+}
+.dg-menu-button::before{top:16px}
+.dg-menu-button span{top:21px}
+.dg-menu-button::after{top:26px}
+body.dg-menu-open .dg-menu-button::before{transform:translateY(5px) rotate(45deg)}
+body.dg-menu-open .dg-menu-button span{opacity:0}
+body.dg-menu-open .dg-menu-button::after{transform:translateY(-5px) rotate(-45deg)}
+.dg-mobile-menu{
+  position:fixed;inset:76px 0 0 0;z-index:55;background:var(--paper);
+  padding:40px var(--gutter) 96px;
+  overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  transform:translateY(-8px);opacity:0;pointer-events:none;
+  transition:opacity .3s ease,transform .3s ease;
+}
+body.dg-menu-open .dg-mobile-menu{transform:none;opacity:1;pointer-events:auto}
+body.dg-menu-open{overflow:hidden}
+.dg-mobile-menu a{
+  display:block;font-weight:300;font-size:clamp(26px,6vw,34px);
+  padding:16px 0;border-bottom:1px solid var(--line);
+}
+@media (max-width:1180px){
+  .dg-nav-links{display:none}
+  .dg-menu-button{display:grid;justify-self:end}
+}
+@media (max-width:640px){
+  .dg-nav .dg-button{display:none}
+  .dg-nav-inner{grid-template-columns:auto 1fr auto;min-height:68px}
+  .dg-mobile-menu{inset:68px 0 0 0}
+}
+
+/* ---------- hero do portfólio ---------- */
+.pf-hero{padding:clamp(140px,16vw,190px) 0 clamp(36px,4vw,56px)}
+.pf-hero-head{display:grid;gap:clamp(16px,2vw,26px);max-width:860px}
+.pf-hero-meta{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline}
+.pf-filter{
+  display:flex;flex-wrap:wrap;gap:8px;
+  margin-top:clamp(24px,3vw,36px);
+  padding-top:clamp(20px,2.4vw,28px);
+  border-top:1px solid var(--line);
+}
+.pf-chip{
+  font-family:var(--mono);font-size:10px;font-weight:500;
+  letter-spacing:.14em;text-transform:uppercase;
+  border:1px solid var(--line-strong);background:transparent;color:var(--navy);
+  padding:11px 16px;cursor:pointer;transition:background .2s ease,color .2s ease;
+}
+.pf-chip[aria-pressed="true"]{background:var(--navy);color:var(--paper);border-color:var(--navy)}
+
+/* ---------- grid de projetos ---------- */
+.pf-list{padding:0 0 clamp(72px,9vw,130px)}
+.pf-count{margin:0 0 clamp(20px,2.4vw,30px);opacity:.6}
+.pf-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(20px,2.6vw,36px);
+}
+.pf-card{display:grid;gap:14px}
+.pf-card[hidden]{display:none}
+.pf-media{
+  position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--navy);
+}
+.pf-media img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .6s ease;
+}
+.pf-card:hover .pf-media img{transform:scale(1.04)}
+.pf-media-tag{
+  position:absolute;top:14px;left:14px;
+  font-family:var(--mono);font-size:9px;font-weight:500;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:var(--paper);background:rgba(11,35,66,.72);
+  padding:6px 10px;
+}
+.pf-media-cta{
+  position:absolute;inset:auto 0 0 0;
+  display:flex;justify-content:flex-end;
+  padding:14px;
+  font-family:var(--mono);font-size:10px;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper);
+  background:linear-gradient(to top,rgba(11,35,66,.65),transparent);
+  opacity:0;transform:translateY(6px);
+  transition:opacity .3s ease,transform .3s ease;
+}
+.pf-card:hover .pf-media-cta{opacity:1;transform:none}
+
+/* placeholder tipográfico — usado quando cover_url está vazia */
+.pf-ph{
+  position:absolute;inset:0;color:var(--paper);
+  display:grid;grid-template-rows:auto 1fr auto;
+  padding:16px;
+  background:
+    linear-gradient(var(--navy),var(--navy)) padding-box;
+}
+.pf-ph::before,.pf-ph::after{
+  content:"";position:absolute;pointer-events:none;
+  border:1px solid rgba(250,248,244,.25);
+}
+.pf-ph::before{inset:10px;border-right:0;border-bottom:0;width:22px;height:22px}
+.pf-ph::after{right:10px;bottom:10px;border-left:0;border-top:0;width:22px;height:22px}
+.pf-ph-top{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;opacity:.6}
+.pf-ph-center{display:grid;place-content:center;text-align:center}
+.pf-ph-center b{font-weight:300;font-size:clamp(44px,5vw,64px);line-height:1;display:block}
+.pf-ph-center b em{font-style:normal;font-size:15px;letter-spacing:.06em;margin-left:4px;opacity:.7}
+.pf-ph-center span{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;opacity:.6;margin-top:12px;display:block}
+.pf-ph-bottom{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;opacity:.75}
+
+.pf-card-body{display:grid;gap:6px}
+.pf-card-index{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:.5}
+.pf-card-title{
+  font-weight:500;font-size:19px;line-height:1.3;margin:0;
+  display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+}
+.pf-card-title .pf-m2{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.1em;opacity:.65}
+.pf-card-meta{font-size:13px;opacity:.72;margin:0}
+
+@media (max-width:980px){.pf-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.pf-grid{grid-template-columns:1fr}}
+
+/* ---------- CTA final ---------- */
+.pf-final{background:var(--navy);color:var(--paper);text-align:center;padding:clamp(90px,11vw,150px) 0}
+.pf-final .dg-shell{max-width:880px;display:grid;gap:clamp(18px,2.4vw,28px);justify-items:center}
+.pf-final-actions{display:flex;gap:24px;align-items:center;flex-wrap:wrap;justify-content:center;margin-top:6px}
+.pf-final .dg-mono{opacity:.65}
+
+/* ---------- footer ---------- */
+.dg-footer{background:var(--navy);color:var(--paper);border-top:1px solid rgba(250,248,244,.14);padding:clamp(56px,7vw,88px) 0 32px}
+.dg-footer-main{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:clamp(32px,4vw,64px)}
+.dg-footer-wordmark{font-weight:800;font-size:22px}
+.dg-footer p{font-size:14px;line-height:1.6;opacity:.75;max-width:34ch}
+.dg-footer h3{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;opacity:.6;margin:0 0 16px}
+.dg-footer nav a,.dg-footer-contact span,.dg-footer-contact a{display:block;font-size:14px;padding:5px 0;opacity:.85}
+.dg-footer-bottom{
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  border-top:1px solid rgba(250,248,244,.14);margin-top:clamp(40px,5vw,64px);padding-top:24px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;opacity:.55;
+}
+@media (max-width:980px){.dg-footer-main{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.dg-footer-main{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<a class="dg-skip" href="#pf-lista">Pular para os projetos</a>
+
+<header class="dg-nav" data-nav>
+  <div class="dg-shell dg-nav-inner">
+    <a class="dg-wordmark" href="/" aria-label="Bewild, início">Bewild</a>
+    <nav class="dg-nav-links" aria-label="Navegação principal">
+      <a href="/#certeza">O contrato</a>
+      <a href="/#historia">A história</a>
+      <a href="/#projetos">Projetos</a>
+      <a href="/#workflow">Bwild Workflow</a>
+      <a href="/#prova">Prova</a>
+      <a href="/portfolio">Portfólio</a>
+      <a href="/conteudos">Conteúdos</a>
+      <a href="/faq">FAQ</a>
+    </nav>
+    <a class="dg-button" href="/diagnostico">Solicitar diagnóstico <span aria-hidden="true">→</span></a>
+    <button class="dg-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false" data-menu-button><span></span></button>
+  </div>
+</header>
+
+<div class="dg-mobile-menu" data-mobile-menu>
+  <nav aria-label="Navegação mobile">
+    <a href="/#certeza">O contrato</a>
+    <a href="/#historia">A história</a>
+    <a href="/#projetos">Projetos</a>
+    <a href="/#oque-fazemos">O que fazemos</a>
+    <a href="/#workflow">Bwild Workflow</a>
+    <a href="/#prova">Prova</a>
+    <a href="/#objetivos">Morar, alugar ou vender</a>
+    <a href="/portfolio">Portfólio</a>
+    <a href="/conteudos">Conteúdos</a>
+    <a href="/faq">FAQ</a>
+    <a href="/diagnostico">Solicitar diagnóstico</a>
+  </nav>
+</div>
+
+<main id="conteudo">
+
+  <!-- 01 · HERO + FILTRO -->
+  <section class="pf-hero" aria-label="Portfólio Bewild">
+    <div class="dg-shell">
+      <div class="pf-hero-meta">
+        <p class="dg-label">Portfólio · 01 · obras entregues</p>
+        <span class="dg-mono">São Paulo · BR</span>
+      </div>
+      <div class="pf-hero-head" style="margin-top:clamp(16px,2vw,24px)">
+        <h1 class="dg-title">Studios entregues. Prova, não promessa.</h1>
+        <p class="dg-lead">
+          Cada projeto abaixo é uma obra real: escopo fechado em contrato, prazo cumprido e resultado documentado. Abra a ficha para ver o desafio, a solução, o antes e depois.
+        </p>
+      </div>
+      <div class="pf-filter" role="group" aria-label="Filtrar por tipo">
+        <!-- data-filter mapeia para project_type do banco; "all" = todos -->
+        <button type="button" class="pf-chip" data-filter="all" aria-pressed="true">Todos</button>
+        <button type="button" class="pf-chip" data-filter="short_stay" aria-pressed="false">Short stay</button>
+        <button type="button" class="pf-chip" data-filter="turn_key" aria-pressed="false">Turn-key</button>
+        <button type="button" class="pf-chip" data-filter="planta" aria-pressed="false">Na planta</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · LISTA -->
+  <section class="pf-list" id="pf-lista" aria-label="Projetos">
+    <div class="dg-shell">
+      <p class="dg-mono pf-count"><span data-count>04</span> · Projetos no índice</p>
+
+      <div class="pf-grid" data-grid>
+
+        <!-- CARD COM FOTO (cover_url preenchida) -->
+        <a class="pf-card" href="/portfolio/studio-vila-olimpia" data-type="short_stay">
+          <div class="pf-media">
+            <img src="https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/409b9ac5-1b84-451d-84bb-e8b28ea83ece/marcos-6-2.png" alt="Studio Vila Olímpia finalizado" loading="lazy">
+            <span class="pf-media-tag">Short stay</span>
+            <span class="pf-media-cta">Ver ficha →</span>
+          </div>
+          <div class="pf-card-body">
+            <span class="pf-card-index">BW—001</span>
+            <h2 class="pf-card-title">Studio Vila Olímpia <span class="pf-m2">24 m²</span></h2>
+            <p class="pf-card-meta">Vila Olímpia · Short stay · 60 dias úteis</p>
+          </div>
+        </a>
+
+        <!-- CARD SEM FOTO (placeholder tipográfico .pf-ph) -->
+        <a class="pf-card" href="/portfolio/studio-pinheiros" data-type="turn_key">
+          <div class="pf-media">
+            <div class="pf-ph" aria-hidden="true">
+              <span class="pf-ph-top">Bewild · São Paulo</span>
+              <span class="pf-ph-center">
+                <b>28<em>m²</em></b>
+                <span>Ficha de obra</span>
+              </span>
+              <span class="pf-ph-bottom">Pinheiros · Turn-key</span>
+            </div>
+            <span class="pf-media-cta">Ver ficha →</span>
+          </div>
+          <div class="pf-card-body">
+            <span class="pf-card-index">BW—002</span>
+            <h2 class="pf-card-title">Studio Pinheiros <span class="pf-m2">28 m²</span></h2>
+            <p class="pf-card-meta">Pinheiros · Turn-key · 55 dias úteis</p>
+          </div>
+        </a>
+
+        <a class="pf-card" href="/portfolio/studio-brooklin" data-type="turn_key">
+          <div class="pf-media">
+            <div class="pf-ph" aria-hidden="true">
+              <span class="pf-ph-top">Bewild · São Paulo</span>
+              <span class="pf-ph-center">
+                <b>32<em>m²</em></b>
+                <span>Ficha de obra</span>
+              </span>
+              <span class="pf-ph-bottom">Brooklin · Turn-key</span>
+            </div>
+            <span class="pf-media-cta">Ver ficha →</span>
+          </div>
+          <div class="pf-card-body">
+            <span class="pf-card-index">BW—003</span>
+            <h2 class="pf-card-title">Studio Brooklin <span class="pf-m2">32 m²</span></h2>
+            <p class="pf-card-meta">Brooklin · Turn-key · 65 dias úteis</p>
+          </div>
+        </a>
+
+        <!-- O projeto real publicado hoje no banco -->
+        <a class="pf-card" href="/portfolio/studio-planta-construtora" data-type="planta">
+          <div class="pf-media">
+            <div class="pf-ph" aria-hidden="true">
+              <span class="pf-ph-top">Bewild · São Paulo</span>
+              <span class="pf-ph-center">
+                <b>22<em>m²</em></b>
+                <span>Ficha de obra</span>
+              </span>
+              <span class="pf-ph-bottom">Pinheiros · Na planta</span>
+            </div>
+            <span class="pf-media-cta">Ver ficha →</span>
+          </div>
+          <div class="pf-card-body">
+            <span class="pf-card-index">BW—004</span>
+            <h2 class="pf-card-title">Studio recém-entregue na planta <span class="pf-m2">22 m²</span></h2>
+            <p class="pf-card-meta">Pinheiros · Na planta · 70 dias úteis</p>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · CTA FINAL -->
+  <section class="pf-final" aria-label="Solicitar diagnóstico">
+    <div class="dg-shell">
+      <p class="dg-label" style="justify-self:center">Portfólio · 03</p>
+      <h2 class="dg-title">O próximo studio desta lista pode ser o seu.</h2>
+      <p class="dg-lead" style="margin:0 auto">Conte o que você tem e o que quer fazer com ele. A gente devolve o caminho — sem custo e sem compromisso.</p>
+      <div class="pf-final-actions">
+        <a class="dg-button dg-button-light" href="/diagnostico">Solicitar diagnóstico <span aria-hidden="true">→</span></a>
+        <button type="button" class="dg-textlink">Falar no WhatsApp →</button>
+      </div>
+      <p class="dg-mono">150+ studios entregues · preço e prazo em contrato · 5 anos de garantia</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="dg-footer">
+  <div class="dg-shell">
+    <div class="dg-footer-main">
+      <div>
+        <div class="dg-footer-wordmark">Bewild</div>
+        <p>Built by the wild ones. Be wild.</p>
+        <p>Reforma completa de studios em São Paulo. Projeto, obra, marcenaria, mobiliário e entrega num processo único.</p>
+      </div>
+      <div>
+        <h3>Navegação</h3>
+        <nav>
+          <a href="/#certeza">O contrato</a>
+          <a href="/#historia">A história</a>
+          <a href="/portfolio">Portfólio</a>
+          <a href="/conteudos">Conteúdos</a>
+          <a href="/faq">FAQ</a>
+          <a href="/diagnostico">Diagnóstico</a>
+        </nav>
+      </div>
+      <div class="dg-footer-contact">
+        <h3>Contato</h3>
+        <div>
+          <span>WhatsApp</span>
+          <span>Instagram</span>
+          <span>LinkedIn</span>
+          <span>e-mail</span>
+          <a href="/privacidade">Política de privacidade</a>
+          <span>Preferências de cookies</span>
+        </div>
+      </div>
+    </div>
+    <div class="dg-footer-bottom">
+      <p style="margin:0">BEWILD · SÃO PAULO, BRASIL · CNPJ 47.350.338/0001-37 · RESP. TÉCNICO · THIAGO DANTAS DO AMOR · CAU A162437-7</p>
+      <span>© 2026 Bewild</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const body = document.body;
+  const nav = document.querySelector("[data-nav]");
+  const menuButton = document.querySelector("[data-menu-button]");
+  const mobileMenu = document.querySelector("[data-mobile-menu]");
+
+  const updateNav = () => nav.classList.toggle("dg-scrolled", window.scrollY > 20);
+  updateNav();
+  window.addEventListener("scroll", updateNav, { passive: true });
+
+  if (menuButton && mobileMenu) {
+    menuButton.addEventListener("click", () => {
+      const open = !body.classList.contains("dg-menu-open");
+      body.classList.toggle("dg-menu-open", open);
+      menuButton.setAttribute("aria-expanded", String(open));
+      menuButton.setAttribute("aria-label", open ? "Fechar menu" : "Abrir menu");
+    });
+    mobileMenu.querySelectorAll("a").forEach((a) =>
+      a.addEventListener("click", () => {
+        body.classList.remove("dg-menu-open");
+        menuButton.setAttribute("aria-expanded", "false");
+      })
+    );
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && body.classList.contains("dg-menu-open")) {
+      body.classList.remove("dg-menu-open");
+      menuButton?.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  // filtro por tipo (client-side, como já é hoje; data-filter = project_type)
+  const chips = document.querySelectorAll(".pf-chip");
+  const cards = document.querySelectorAll(".pf-card");
+  const countEl = document.querySelector("[data-count]");
+  const pad = (n) => String(n).padStart(2, "0");
+  chips.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      chips.forEach((c) => c.setAttribute("aria-pressed", "false"));
+      chip.setAttribute("aria-pressed", "true");
+      const f = chip.dataset.filter;
+      let visible = 0;
+      cards.forEach((card) => {
+        const show = f === "all" || card.dataset.type === f;
+        card.hidden = !show;
+        if (show) visible++;
+      });
+      if (countEl) countEl.textContent = pad(visible);
+    });
+  });
+})();
+</script>
+</body>
+</html>
