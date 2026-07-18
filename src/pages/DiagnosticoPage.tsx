@@ -1,22 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSeo, breadcrumbJsonLd, organizationJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
-import BewildSiteNav from "@/components/BewildSiteNav";
-import SiteFooter from "@/components/SiteFooter";
-import StickyMobileCTA from "@/components/StickyMobileCTA";
+import BwaSharedChrome from "@/components/BwaSharedChrome";
 import { useFaq } from "@/lib/useFaq";
 import { CONTACT } from "../components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
 import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.json";
-import "@/styles/bwh-tokens.css";
-import "../styles/bw-diag.css";
-import "@/styles/bwh-sol-fusion.css";
 
 /* ============================================================
- * DiagnosticoPage — /diagnostico · DS bwh (claro editorial).
- * Mecânica preservada: lead -> notify-lead (Supabase) + WhatsApp + GA4.
- * CSS isolado em classes bwd-*.
+ * DiagnosticoPage — /diagnostico redesenhada no sistema .bwa.
+ * Camada visual: BwaSharedChrome (nav + footer + home-bwa.css +
+ * bwa-internal.css). Copy e lógica do formulário PRESERVADAS
+ * byte a byte (names/ids/types, validação, notify-lead, GA4,
+ * WhatsApp) — apenas a apresentação muda.
  * ============================================================ */
 
 const RECEBE: { t: string; rest: string }[] = [
@@ -71,35 +68,13 @@ const EMPTY_FORM: Form = {
   nome: "", whats: "", email: "", local: "", metragem: "", objetivo: "", chaves: "", planta: "", mensagem: "",
 };
 
-function IconChat({ className = "ic" }: { className?: string }) {
-  return (<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" /></svg>);
-}
-function IconArrow({ className = "ar" }: { className?: string }) {
-  return (<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>);
-}
-function IconArrowUp({ className = "ar" }: { className?: string }) {
-  return (<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5" /><polyline points="5 12 12 5 19 12" /></svg>);
-}
-function IconCheck({ className = "ic" }: { className?: string }) {
-  return (<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>);
-}
-function IconPlus({ className = "" }: { className?: string }) {
-  return (<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>);
-}
-function IconPlay({ className = "" }: { className?: string }) {
-  return (<svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.14v13.72a1 1 0 0 0 1.52.86l11.14-6.86a1 1 0 0 0 0-1.72L9.52 4.28A1 1 0 0 0 8 5.14z" /></svg>);
-}
-function IconClose({ className = "" }: { className?: string }) {
-  return (<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>);
-}
-
 export default function DiagnosticoPage() {
   const { settings } = useSiteSettings();
 
   useSeo({
-    title: "Diagnóstico Bewild · Análise inicial do seu studio",
+    title: "Diagnóstico | Bewild",
     description:
-      "Envie os dados do seu imóvel e receba uma análise inicial de escopo, projeto e próximos passos para a reforma turn-key do seu studio em São Paulo.",
+      "Envie os dados do seu studio e receba a análise inicial de escopo, projeto e próximos passos para a reforma turn-key com a Bewild.",
     canonicalPath: "/diagnostico",
     ogType: "website",
     jsonLd: settings
@@ -122,58 +97,119 @@ export default function DiagnosticoPage() {
   };
 
   return (
-    <>
-      <BewildSiteNav />
-      <main id="main" className="bwh bwd">
-        <section className="bwd-hero" aria-label="Solicitar diagnóstico">
-          <div className="bwh-wrap">
-            <div className="bwd-grid">
-              <div className="bwd-left">
-                <DiagnosticoPitch />
-                <TestimonialCard waUrl={waUrl} />
+    <BwaSharedChrome>
+      {/* Hero + formulário */}
+      <section className="bwa-section" aria-label="Solicitar diagnóstico">
+        <div className="bwa-shell">
+          <div className="bwa-diag-grid">
+            <div className="bwa-diag-left">
+              <p className="bwa-label">001 · Diagnóstico · sem compromisso</p>
+              <h1 className="bwa-title">
+                Seu studio pronto pra render começa aqui.
+              </h1>
+              <p className="bwa-lead">
+                Você manda os dados do imóvel. A gente devolve uma leitura do potencial de renda, do escopo da reforma e dos próximos passos. Sem custo e sem compromisso.
+              </p>
+
+              <div className="bwa-diag-recebe">
+                <p className="bwa-label">O que você recebe</p>
+                <ol>
+                  {RECEBE.map((r, i) => (
+                    <li key={r.t}>
+                      <span className="bwa-mono">0{i + 1}</span>
+                      <span><strong>{r.t}</strong>{r.rest}</span>
+                    </li>
+                  ))}
+                </ol>
               </div>
+
+              <p className="bwa-diag-trust bwa-mono">
+                +150 studios entregues em São Paulo
+              </p>
+
+              <TestimonialCard waUrl={waUrl} />
+            </div>
+
+            <div className="bwa-diag-right">
               <DiagnosticoForm />
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <SupportSections />
-        <CtaFinal waUrl={waUrl} onForm={scrollToForm} />
-      </main>
-      <StickyMobileCTA
-        href={waUrl}
-        label="Solicitar diagnóstico"
-        hideWhenVisibleSelector="footer, .bwd-form"
-      />
-      <SiteFooter />
-    </>
-  );
-}
-
-function DiagnosticoPitch() {
-  return (
-    <div className="bwd-pitch">
-      <p className="bwh-mono bwd-eyebrow">Diagnóstico · sem compromisso</p>
-      <h1 className="bwd-title">
-        Seu studio pronto pra <em>render</em> começa aqui.
-      </h1>
-      <p className="bwd-sub">
-        Você manda os dados do imóvel. A gente devolve uma leitura do potencial de renda, do escopo da reforma e dos próximos passos. Sem custo e sem compromisso.
-      </p>
-      <div className="bwd-recebe">
-        <div className="bwh-mono bwd-rlabel">O que você recebe</div>
-        {RECEBE.map((r, i) => (
-          <div className="bwd-ritem" key={r.t}>
-            <span className="rn">0{i + 1}</span>
-            <span className="rt"><b>{r.t}</b>{r.rest}</span>
+      {/* Depois do envio */}
+      <section className="bwa-section">
+        <div className="bwa-shell">
+          <p className="bwa-label">002 · Depois do envio</p>
+          <h2 className="bwa-title">O que acontece quando você manda a ficha.</h2>
+          <p className="bwa-lead">Nada de mistério nem de fila. O processo é direto, e você decide cada passo seguinte.</p>
+          <div className="bwa-diag-steps">
+            {PASSOS.map((p, i) => (
+              <div className="bwa-diag-cell" key={p.t}>
+                <span className="bwa-mono">0{i + 1}</span>
+                <h3>{p.t}</h3>
+                <p>{p.d}</p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <div className="bwd-trust" role="note">
-        <span className="bwd-trust-ic" aria-hidden="true"><IconCheck /></span>
-        <span><strong>+150</strong> studios entregues em São Paulo</span>
-      </div>
-    </div>
+        </div>
+      </section>
+
+      {/* Escopo turn-key */}
+      <section className="bwa-section">
+        <div className="bwa-shell">
+          <p className="bwa-label">003 · Escopo turn-key</p>
+          <h2 className="bwa-title">Tudo num contrato só. Você não toca em nada.</h2>
+          <p className="bwa-lead">O diagnóstico é a porta de entrada pra um processo que entrega o studio pronto pra operar, do projeto à foto do anúncio.</p>
+          <div className="bwa-diag-steps">
+            {ESCOPO.map((s, i) => (
+              <div className="bwa-diag-cell" key={s.t}>
+                <span className="bwa-mono">0{i + 1}</span>
+                <h3>{s.t}</h3>
+                <p>{s.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Prova numérica */}
+      <section className="bwa-section">
+        <div className="bwa-shell">
+          <p className="bwa-label">004 · Por que a Bewild</p>
+          <h2 className="bwa-title">Já fizemos isso 150 vezes. O seu é o próximo.</h2>
+          <div className="bwa-diag-stats">
+            {STATS.map((s) => (
+              <div className="bwa-diag-stat" key={s.num + s.suf}>
+                <b>{s.num}<em>{s.suf}</em></b>
+                <span>{s.small}</span>
+              </div>
+            ))}
+          </div>
+          <p className="bwa-diag-fine bwa-mono">Referências sujeitas ao escopo · detalhes na proposta e no contrato</p>
+        </div>
+      </section>
+
+      <DiagFaq />
+
+      {/* CTA final */}
+      <section className="bwa-section bwa-diag-cta" aria-label="Solicitar diagnóstico">
+        <div className="bwa-shell" style={{ maxWidth: 900, textAlign: "center" }}>
+          <p className="bwa-label">Diagnóstico gratuito · sem compromisso</p>
+          <h2 className="bwa-title">Pronto pra ver seu studio rendendo?</h2>
+          <p className="bwa-lead">Leva menos de dois minutos pra preencher a ficha. O resto do trabalho fica com a gente.</p>
+          <div className="bwa-diag-cta-actions">
+            <button type="button" className="bwa-button" onClick={scrollToForm}>
+              Preencher a ficha <span aria-hidden="true">↑</span>
+            </button>
+            <a className="bwa-text-link" href={waUrl} target="_blank" rel="noopener noreferrer">
+              Falar no WhatsApp <span aria-hidden="true">→</span>
+            </a>
+          </div>
+          <p className="bwa-mono bwa-diag-cta-note">Atendimento de gente real · retorno rápido · 150+ studios entregues</p>
+        </div>
+      </section>
+    </BwaSharedChrome>
   );
 }
 
@@ -267,14 +303,20 @@ function DiagnosticoForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="bwd-form" id="diag-formcard" aria-label="Formulário de diagnóstico">
-      <div className="bwd-fhead">
-        <span className="fl">Ficha do seu studio</span>
-        <span className="fr">BW—002</span>
+    <form
+      onSubmit={onSubmit}
+      noValidate
+      className="bwa-form"
+      id="diag-formcard"
+      aria-label="Formulário de diagnóstico"
+    >
+      <div className="bwa-form-head">
+        <span className="bwa-label">Ficha do seu studio</span>
+        <span className="bwa-mono">BW—002</span>
       </div>
 
       {success && (
-        <div className="bwd-success" role="status">
+        <div className="bwa-form-success" role="status">
           <strong>Recebemos seus dados.</strong>
           <span>Nosso time comercial vai falar com você no WhatsApp.</span>
         </div>
@@ -282,81 +324,101 @@ function DiagnosticoForm() {
 
       {!success && (
         <>
-          <div className="bwd-field">
-            <label htmlFor="diag-nome">Nome <span className="bwd-req">*</span></label>
-            <input id="diag-nome" type="text" placeholder="Como podemos te chamar"
+          <div className="bwa-form-field">
+            <label htmlFor="diag-nome">Nome <span className="bwa-form-req">*</span></label>
+            <input
+              id="diag-nome" name="nome" type="text" placeholder="Como podemos te chamar"
               className={touched.nome && !nomeOk ? "bad" : ""}
               value={f.nome} onChange={(e) => set("nome", e.target.value)}
               onBlur={() => setTouched((t) => ({ ...t, nome: true }))}
-              autoComplete="name" required maxLength={120} />
-            {touched.nome && !nomeOk && <span className="bwd-error">Informe seu nome.</span>}
+              autoComplete="name" required maxLength={120}
+            />
+            {touched.nome && !nomeOk && <span className="bwa-form-error">Informe seu nome.</span>}
           </div>
 
-          <div className="bwd-frow">
-            <div className="bwd-field">
-              <label htmlFor="diag-whats">WhatsApp <span className="bwd-req">*</span></label>
-              <input id="diag-whats" type="tel" inputMode="tel" placeholder="(11) 99999-9999"
+          <div className="bwa-form-row">
+            <div className="bwa-form-field">
+              <label htmlFor="diag-whats">WhatsApp <span className="bwa-form-req">*</span></label>
+              <input
+                id="diag-whats" name="whats" type="tel" inputMode="tel" placeholder="(11) 99999-9999"
                 className={touched.whats && !whatsOk ? "bad" : ""}
                 value={f.whats} onChange={(e) => set("whats", maskPhone(e.target.value))}
                 onBlur={() => setTouched((t) => ({ ...t, whats: true }))}
-                autoComplete="tel" required />
-              {touched.whats && !whatsOk && <span className="bwd-error">Informe um WhatsApp com DDD.</span>}
+                autoComplete="tel" required
+              />
+              {touched.whats && !whatsOk && <span className="bwa-form-error">Informe um WhatsApp com DDD.</span>}
             </div>
-            <div className="bwd-field">
-              <label htmlFor="diag-email">E-mail <span className="bwd-opt">(opcional)</span></label>
-              <input id="diag-email" type="email" placeholder="voce@email.com"
+            <div className="bwa-form-field">
+              <label htmlFor="diag-email">E-mail <span className="bwa-form-opt">(opcional)</span></label>
+              <input
+                id="diag-email" name="email" type="email" placeholder="voce@email.com"
                 className={touched.email && emailFilled && !emailOk ? "bad" : ""}
                 value={f.email} onChange={(e) => set("email", e.target.value)}
                 onBlur={() => setTouched((t) => ({ ...t, email: true }))}
-                autoComplete="email" maxLength={255} />
-              {touched.email && emailFilled && !emailOk && <span className="bwd-error">E-mail inválido.</span>}
+                autoComplete="email" maxLength={255}
+              />
+              {touched.email && emailFilled && !emailOk && <span className="bwa-form-error">E-mail inválido.</span>}
             </div>
           </div>
 
-          <div className="bwd-field">
-            <label htmlFor="diag-local">Bairro do imóvel <span className="bwd-req">*</span></label>
-            <input id="diag-local" type="text" placeholder="Ex: Pinheiros, Itaim, Butantã"
+          <div className="bwa-form-field">
+            <label htmlFor="diag-local">Bairro do imóvel <span className="bwa-form-req">*</span></label>
+            <input
+              id="diag-local" name="local" type="text" placeholder="Ex: Pinheiros, Itaim, Butantã"
               className={touched.local && !localOk ? "bad" : ""}
               value={f.local} onChange={(e) => set("local", e.target.value)}
               onBlur={() => setTouched((t) => ({ ...t, local: true }))}
-              maxLength={120} required />
-            {touched.local && !localOk && <span className="bwd-error">Informe o bairro do imóvel.</span>}
+              maxLength={120} required
+            />
+            {touched.local && !localOk && <span className="bwa-form-error">Informe o bairro do imóvel.</span>}
           </div>
 
-          <ChipsField label="Já tem as chaves do imóvel?" required options={CHAVES} value={f.chaves}
+          <ChipsField
+            label="Já tem as chaves do imóvel?" required options={CHAVES} value={f.chaves}
             onChange={(v) => { set("chaves", v); setTouched((t) => ({ ...t, chaves: true })); }}
-            error={touched.chaves && !chavesOk ? "Selecione uma opção." : null} />
+            error={touched.chaves && !chavesOk ? "Selecione uma opção." : null}
+          />
 
-          <ChipsField label="Objetivo" required options={OBJETIVOS} value={f.objetivo}
+          <ChipsField
+            label="Objetivo" required options={OBJETIVOS} value={f.objetivo}
             onChange={(v) => { set("objetivo", v); setTouched((t) => ({ ...t, objetivo: true })); }}
-            error={touched.objetivo && !objetivoOk ? "Selecione o objetivo." : null} />
+            error={touched.objetivo && !objetivoOk ? "Selecione o objetivo." : null}
+          />
 
-          <div className="bwd-field">
-            <label htmlFor="diag-m2">Metragem (m²) <span className="bwd-opt">(opcional)</span></label>
-            <input id="diag-m2" type="text" inputMode="numeric" placeholder="32"
+          <div className="bwa-form-field">
+            <label htmlFor="diag-m2">Metragem (m²) <span className="bwa-form-opt">(opcional)</span></label>
+            <input
+              id="diag-m2" name="metragem" type="text" inputMode="numeric" placeholder="32"
               value={f.metragem}
-              onChange={(e) => set("metragem", e.target.value.replace(/[^\d.,]/g, "").slice(0, 6))} />
+              onChange={(e) => set("metragem", e.target.value.replace(/[^\d.,]/g, "").slice(0, 6))}
+            />
           </div>
 
-          <button type="button" className="bwd-more-toggle" aria-expanded={showMore} onClick={() => setShowMore((s) => !s)}>
-            <IconPlus /> {showMore ? "Menos detalhes" : "Mais detalhes (opcional)"}
+          <button
+            type="button"
+            className="bwa-text-link"
+            aria-expanded={showMore}
+            onClick={() => setShowMore((s) => !s)}
+            style={{ justifySelf: "start" }}
+          >
+            {showMore ? "− Menos detalhes" : "+ Mais detalhes (opcional)"}
           </button>
 
           {showMore && (
-            <div className="bwd-more">
+            <>
               <ChipsField label="Tem planta do imóvel?" options={PLANTA} value={f.planta} onChange={(v) => set("planta", v)} />
-              <div className="bwd-field">
+              <div className="bwa-form-field">
                 <label htmlFor="diag-msg">Mensagem</label>
-                <textarea id="diag-msg" value={f.mensagem} onChange={(e) => set("mensagem", e.target.value)} maxLength={1000} />
+                <textarea id="diag-msg" name="mensagem" value={f.mensagem} onChange={(e) => set("mensagem", e.target.value)} maxLength={1000} />
               </div>
-            </div>
+            </>
           )}
 
-          <button type="submit" className="bwd-submit" disabled={!canSubmit || submitting}>
+          <button type="submit" className="bwa-button" disabled={!canSubmit || submitting}>
             {submitting ? "Enviando…" : "Solicitar diagnóstico"}
-            <IconArrow />
+            <span aria-hidden="true">→</span>
           </button>
-          <p className="bwd-guarantee">Sem compromisso · a gente só te chama no WhatsApp</p>
+          <p className="bwa-mono bwa-diag-guarantee">Sem compromisso · a gente só te chama no WhatsApp</p>
         </>
       )}
     </form>
@@ -367,21 +429,23 @@ function ChipsField({ label, options, value, onChange, required, error }: {
   label: string; options: string[]; value: string; onChange: (v: string) => void; required?: boolean; error?: string | null;
 }) {
   return (
-    <fieldset className="bwd-field">
-      <legend>{label} {required && <span className="bwd-req">*</span>}</legend>
-      <div className="bwd-opts">
+    <fieldset className="bwa-form-field">
+      <legend>{label} {required && <span className="bwa-form-req">*</span>}</legend>
+      <div className="bwa-chip-row">
         {options.map((opt) => {
           const active = value === opt;
           return (
-            <button key={opt} type="button" aria-pressed={active}
+            <button
+              key={opt} type="button" aria-pressed={active}
               onClick={() => onChange(active ? "" : opt)}
-              className={`bwd-chip${active ? " sel" : ""}`}>
+              className={`bwa-chip${active ? " sel" : ""}`}
+            >
               {opt}
             </button>
           );
         })}
       </div>
-      {error && <span className="bwd-error">{error}</span>}
+      {error && <span className="bwa-form-error">{error}</span>}
     </fieldset>
   );
 }
@@ -415,90 +479,41 @@ function TestimonialCard({ waUrl }: { waUrl: string }) {
 
   return (
     <>
-      <aside className="bwd-testi" aria-label="Depoimento em vídeo de cliente">
-        <button type="button" className="bwd-testithumb" onClick={handleOpen} aria-label="Assistir depoimento em vídeo de Vivian">
+      <aside className="bwa-diag-testi" aria-label="Depoimento em vídeo de cliente">
+        <button
+          type="button" className="bwa-diag-testithumb"
+          onClick={handleOpen}
+          aria-label="Assistir depoimento em vídeo de Vivian"
+        >
           <video src={depoimentoVideo.url} muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true" />
-          <span className="bwd-testiplay" aria-hidden="true"><IconPlay /></span>
+          <span className="bwa-diag-testiplay" aria-hidden="true">▶</span>
         </button>
-        <div className="bwd-testimeta">
-          <p className="bwh-mono bwd-testieyb">Depoimento</p>
-          <p className="bwd-testiname">Vivian</p>
-          <p className="bwd-testirole">cliente Bewild · depoimento presencial</p>
-          <a href={waUrl} target="_blank" rel="noopener noreferrer" className="bwd-testilink">
-            <IconChat /> Prefiro falar com um especialista
+        <div className="bwa-diag-testimeta">
+          <p className="bwa-mono">Depoimento</p>
+          <p className="bwa-diag-testiname">Vivian</p>
+          <p className="bwa-diag-testirole">cliente Bewild · depoimento presencial</p>
+          <a href={waUrl} target="_blank" rel="noopener noreferrer" className="bwa-text-link">
+            Prefiro falar com um especialista →
           </a>
         </div>
       </aside>
 
       {open && (
-        <div className="bwd-modal" role="dialog" aria-modal="true" aria-label="Depoimento em vídeo de Vivian"
-          onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
-          <div className="bwd-modal-inner">
-            <button ref={closeBtnRef} type="button" className="bwd-modal-close" onClick={() => setOpen(false)} aria-label="Fechar vídeo">
-              <IconClose />
+        <div
+          className="bwa-diag-modal" role="dialog" aria-modal="true" aria-label="Depoimento em vídeo de Vivian"
+          onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}
+        >
+          <div className="bwa-diag-modal-inner">
+            <button
+              ref={closeBtnRef} type="button"
+              className="bwa-diag-modal-close" onClick={() => setOpen(false)} aria-label="Fechar vídeo"
+            >
+              ✕
             </button>
-            <video ref={videoRef} src={depoimentoVideo.url} controls playsInline autoPlay className="bwd-modal-video" />
+            <video ref={videoRef} src={depoimentoVideo.url} controls playsInline autoPlay className="bwa-diag-modal-video" />
           </div>
         </div>
       )}
-    </>
-  );
-}
-
-function SupportSections() {
-  return (
-    <>
-      <section className="bwh-sec" style={{ paddingBottom: 0 }}>
-        <div className="bwh-wrap">
-          <div className="bwh-srlabel"><span className="bwh-mono">Depois do envio · 01</span></div>
-          <h2 className="bwh-h2">O que acontece quando você <em>manda a ficha.</em></h2>
-          <p className="bwd-lead">Nada de mistério nem de fila. O processo é direto, e você decide cada passo seguinte.</p>
-          <div className="bwd-steps">
-            {PASSOS.map((p, i) => (
-              <div className="bwd-cell" key={p.t}>
-                <span className="cn">0{i + 1}</span>
-                <div className="ct">{p.t}</div>
-                <div className="cd">{p.d}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bwh-sec" style={{ paddingBottom: 0 }}>
-        <div className="bwh-wrap">
-          <div className="bwh-srlabel"><span className="bwh-mono">Escopo turn-key · 02</span></div>
-          <h2 className="bwh-h2">Tudo num contrato só. Você <em>não toca em nada.</em></h2>
-          <p className="bwd-lead">O diagnóstico é a porta de entrada pra um processo que entrega o studio pronto pra operar, do projeto à foto do anúncio.</p>
-          <div className="bwd-scope">
-            {ESCOPO.map((s, i) => (
-              <div className="bwd-cell" key={s.t}>
-                <span className="cn">0{i + 1}</span>
-                <div className="ct">{s.t}</div>
-                <div className="cd">{s.d}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bwh-sec" style={{ paddingBottom: 0 }}>
-        <div className="bwh-wrap">
-          <div className="bwh-srlabel"><span className="bwh-mono">Por que a Bewild · 03</span></div>
-          <h2 className="bwh-h2">Já fizemos isso 150 vezes. <em>O seu é o próximo.</em></h2>
-          <div className="bwd-stats">
-            {STATS.map((s) => (
-              <div className="bwd-stat" key={s.num + s.suf}>
-                <b>{s.num}<em>{s.suf}</em></b>
-                <span>{s.small}</span>
-              </div>
-            ))}
-          </div>
-          <p className="bwd-fine bwh-mono">Referências sujeitas ao escopo · detalhes na proposta e no contrato</p>
-        </div>
-      </section>
-
-      <DiagFaq />
     </>
   );
 }
@@ -507,11 +522,11 @@ function DiagFaq() {
   const { items } = useFaq();
   if (items.length === 0) return null;
   return (
-    <section className="bwh-sec" id="faq" aria-labelledby="bw-diag-faq-title">
-      <div className="bwh-wrap" style={{ maxWidth: 960 }}>
-        <div className="bwh-srlabel"><span className="bwh-mono">Perguntas · 04</span></div>
-        <h2 id="bw-diag-faq-title" className="bwh-h2">O que todo investidor <em>pergunta.</em></h2>
-        <div className="bwh-faq" itemScope itemType="https://schema.org/FAQPage">
+    <section className="bwa-section" id="faq" aria-labelledby="bw-diag-faq-title">
+      <div className="bwa-shell" style={{ maxWidth: 960 }}>
+        <p className="bwa-label">005 · Perguntas</p>
+        <h2 id="bw-diag-faq-title" className="bwa-title">O que todo investidor pergunta.</h2>
+        <div className="bwa-diag-faq" itemScope itemType="https://schema.org/FAQPage">
           {items.map((item) => (
             <details key={item.id} itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
               <summary itemProp="name">{item.question}</summary>
@@ -521,23 +536,6 @@ function DiagFaq() {
             </details>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
-
-function CtaFinal({ waUrl, onForm }: { waUrl: string; onForm: () => void }) {
-  return (
-    <section className="bwh-sec bwh-sec--dark" aria-label="Solicitar diagnóstico">
-      <div className="bwh-wrap" style={{ maxWidth: 900, textAlign: "center" }}>
-        <p className="bwh-mono" style={{ color: "var(--dink2)", margin: "0 0 24px" }}>Diagnóstico gratuito · sem compromisso</p>
-        <h2 className="bwh-h2" style={{ margin: "0 auto 24px", color: "#fff" }}>Pronto pra ver seu<br />studio <em>rendendo?</em></h2>
-        <p style={{ color: "var(--dink2)", fontSize: "clamp(16px,1.5vw,19px)", lineHeight: 1.55, maxWidth: 560, margin: "0 auto 32px" }}>Leva menos de dois minutos pra preencher a ficha. O resto do trabalho fica com a gente.</p>
-        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-          <button type="button" className="bwh-btn bwh-btn--invert" onClick={onForm}>Preencher a ficha <IconArrowUp /></button>
-          <a className="bwh-btn bwh-btn--ghostdark" href={waUrl} target="_blank" rel="noopener noreferrer">Falar no WhatsApp <span className="bwh-ar">→</span></a>
-        </div>
-        <p className="bwh-mono" style={{ color: "var(--dink2)", marginTop: 24 }}>Atendimento de gente real · retorno rápido · 150+ studios entregues</p>
       </div>
     </section>
   );
