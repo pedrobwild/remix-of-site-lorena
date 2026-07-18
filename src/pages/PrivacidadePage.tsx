@@ -1,7 +1,7 @@
 import { useSeo, breadcrumbJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
-import SiteFooter from "@/components/SiteFooter";
-import BewildSiteNav from "@/components/BewildSiteNav";
+import BwaFooter from "@/components/BwaFooter";
+import BwaNav from "@/components/BwaNav";
 import "@/styles/home.css";
 import "@/styles/conteudos.css";
 import "@/styles/post.css";
@@ -34,7 +34,7 @@ export default function PrivacidadePage() {
 
   return (
     <div className="bw-home bw-post">
-      <BewildSiteNav />
+      <BwaNav />
 
       <main id="main" tabIndex={-1}>
         <section className="pt-hero">
@@ -223,7 +223,7 @@ export default function PrivacidadePage() {
         </section>
       </main>
 
-      <SiteFooter />
+      <BwaFooter />
     </div>
   );
 }

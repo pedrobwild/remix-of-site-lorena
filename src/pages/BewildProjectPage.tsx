@@ -8,8 +8,8 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useSeo, breadcrumbJsonLd, projectJsonLd } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
-import BewildSiteNav from "@/components/BewildSiteNav";
-import SiteFooter from "@/components/SiteFooter";
+import BwaNav from "@/components/BwaNav";
+import BwaFooter from "@/components/BwaFooter";
 import { whatsappHref } from "@/components/landing/content";
 import { useBewildProject } from "@/lib/useBewildProject";
 import { bewildTypeLabel } from "@/lib/useBewildProjects";
@@ -141,7 +141,7 @@ export default function BewildProjectPage({ slug }: Props) {
   if (loading) {
     return (
       <div className="bwh bw-detail">
-        <BewildSiteNav />
+        <BwaNav />
         <div className="pd-wrap"><div className="pd-skeleton" aria-busy="true" aria-live="polite" /></div>
       </div>
     );
@@ -152,7 +152,7 @@ export default function BewildProjectPage({ slug }: Props) {
   if (error || !project) {
     return (
       <div className="bwh bw-detail">
-        <BewildSiteNav />
+        <BwaNav />
         <div className="pd-wrap pd-errorbox">
           <p>Não conseguimos carregar este projeto agora. <a href="/portfolio">Voltar ao portfólio</a>.</p>
         </div>
@@ -165,7 +165,7 @@ export default function BewildProjectPage({ slug }: Props) {
 
   return (
     <div className="bwh bw-detail">
-      <BewildSiteNav />
+      <BwaNav />
 
       <div className="bw-detail__frame" aria-hidden="true">
         <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
@@ -290,7 +290,7 @@ export default function BewildProjectPage({ slug }: Props) {
         </div>
       </section>
 
-      <SiteFooter />
+      <BwaFooter />
 
       {lbIndex !== null && galleryImgs.length > 0 && (
         <Lightbox images={galleryImgs} index={lbIndex} onClose={closeLb} onPrev={prevLb} onNext={nextLb} />

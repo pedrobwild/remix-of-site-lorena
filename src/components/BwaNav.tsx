@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef } from "react";
 import homeBwaCssUrl from "../pages/home-bwa.css?url";
 import bwaInternalCssUrl from "../pages/bwa-internal.css?url";
 // @ts-expect-error - JS module sem tipos
@@ -8,18 +8,15 @@ const FONTS_HREF =
   "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&display=swap";
 
 /**
- * BwaSharedChrome — nav + main slot + footer no design .bwa,
- * usado por todas as páginas internas (FAQ, Portfólio, Conteúdos, Diagnóstico
- * e páginas de detalhe). Injeta home-bwa.css + bwa-internal.css como
- * ÚLTIMAS folhas do <head> (para vencer o preflight/tema legado),
- * reaproveita o guard de idempotência do nav (data-bwa-nav-inited) e
- * remove tudo no unmount para não vazar paleta para rotas antigas.
+ * BwaNav — Header .bwa unificado (nav desktop + menu mobile), idêntico ao
+ * da home. Autoinjeta home-bwa.css + bwa-internal.css como ÚLTIMAS folhas do
+ * <head> (para vencer preflight/temas legados) e inicializa initBwaNav
+ * (idempotente). Usado em toda página pública fora da home.
  */
-export default function BwaSharedChrome({ children }: { children: ReactNode }) {
-  const rootRef = useRef<HTMLDivElement>(null);
+export default function BwaNav({ variant = "internal" }: { variant?: "internal" | "dark-text" } = {}) {
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // 1) Fontes + folhas .bwa como últimas no <head>
     const marker1 = "data-bwa-home-css";
     const marker2 = "data-bwa-internal-css";
     let homeLink = document.head.querySelector<HTMLLinkElement>(`link[${marker1}]`);
@@ -53,24 +50,22 @@ export default function BwaSharedChrome({ children }: { children: ReactNode }) {
 
     document.documentElement.classList.add("bwa-home-root");
     document.body.classList.add("bwa-home-root");
-
-    // 2) Inicializa nav (idempotente)
-    initBwaNav(rootRef.current ?? document);
+    initBwaNav(document);
 
     return () => {
       document.documentElement.classList.remove("bwa-home-root");
       document.body.classList.remove("bwa-home-root");
-      homeLink?.parentNode?.removeChild(homeLink);
-      intLink?.parentNode?.removeChild(intLink);
     };
   }, []);
 
   return (
-    <div ref={rootRef}>
-      <a className="bwa-skip" href="#conteudo">Pular para o conteúdo</a>
+    <div ref={ref}>
+      <a className="bwa-skip" href="#main">Pular para o conteúdo</a>
 
-      {/* MENU atualizado 17/jul por ordem do dono: páginas internas integradas */}
-      <header className="bwa-nav bwa-nav--internal" data-nav>
+      <header
+        className={`bwa-nav bwa-nav--internal${variant === "dark-text" ? " bwa-nav--dark-text" : ""}`}
+        data-nav
+      >
         <div className="bwa-shell bwa-nav-inner">
           <a className="bwa-wordmark" href="/" aria-label="Bewild, início">Bewild</a>
 
@@ -117,58 +112,6 @@ export default function BwaSharedChrome({ children }: { children: ReactNode }) {
           <a href="/diagnostico">Solicitar diagnóstico</a>
         </nav>
       </div>
-
-      <main id="conteudo" className="bwa-internal-main">
-        {children}
-      </main>
-
-      <footer className="bwa-footer">
-        <div className="bwa-shell">
-          <div className="bwa-footer-main">
-            <div className="bwa-footer-brand">
-              <div className="bwa-footer-wordmark">Bewild</div>
-              <p>Built by the wild ones. Be wild.</p>
-              <p>
-                Reforma completa de studios em São Paulo. Projeto, obra, marcenaria,
-                mobiliário e entrega num processo único.
-              </p>
-            </div>
-
-            <div className="bwa-footer-column">
-              <h3>Navegação</h3>
-              <nav>
-                <a href="/#certeza">O contrato</a>
-                <a href="/#historia">A história</a>
-                <a href="/#oque-fazemos">O que fazemos</a>
-                <a href="/#como-funciona">Como funciona</a>
-                <a href="/portfolio">Portfólio</a>
-                <a href="/conteudos">Conteúdos</a>
-                <a href="/faq">FAQ</a>
-                <a href="/diagnostico">Diagnóstico</a>
-              </nav>
-            </div>
-
-            <div className="bwa-footer-column">
-              <h3>Contato</h3>
-              <div>
-                <span>WhatsApp</span>
-                <span>Instagram</span>
-                <span>LinkedIn</span>
-                <span>e-mail</span>
-                <a href="/privacidade">Política de privacidade</a>
-                <span>Preferências de cookies</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bwa-footer-bottom">
-            <p className="bwa-footer-tech">
-              BEWILD · SÃO PAULO, BRASIL · CNPJ 47.350.338/0001-37 · RESP. TÉCNICO · THIAGO DANTAS DO AMOR · CAU A162437-7
-            </p>
-            <span className="bwa-footer-copy">© 2026 Bewild</span>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
