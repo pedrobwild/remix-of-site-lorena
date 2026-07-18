@@ -153,12 +153,17 @@ export const routes = {
   lpPanfleto: "/p",
 };
 
-// Navega programaticamente sem recarregar a página.
+// Navega programaticamente sem recarregar a página. Preserva o hash quando
+// presente (ex.: "/#certeza" a partir de uma página interna), para que o
+// handler de hashchange/route em main.tsx possa rolar até a seção-âncora.
 export function navigate(href: string) {
   const cleaned = href.startsWith("#") ? href.slice(1) : href;
   const target = cleaned.startsWith("/") ? cleaned : `/${cleaned}`;
   window.history.pushState({}, "", target);
-  window.scrollTo({ top: 0, behavior: "auto" });
+  const hashIdx = target.indexOf("#");
+  if (hashIdx === -1) {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }
   window.dispatchEvent(new Event("lovable:navigate"));
 }
 
@@ -201,7 +206,7 @@ export function installLinkInterceptor() {
     if (url.pathname !== window.location.pathname || url.search !== window.location.search) {
       if (/\.[a-z0-9]+$/i.test(url.pathname)) return;
       e.preventDefault();
-      navigate(url.pathname + url.search);
+      navigate(url.pathname + url.search + url.hash);
     }
   });
 }
