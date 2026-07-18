@@ -76,8 +76,10 @@ export default function BwaSharedChrome({ children }: { children: ReactNode }) {
 
           <nav className="bwa-nav-links" aria-label="Navegação principal">
             <a href="/#certeza">O contrato</a>
+            <a href="/#historia">A história</a>
             <a href="/#projetos">Projetos</a>
             <a href="/#workflow">Bwild Workflow</a>
+            <a href="/#prova">Prova</a>
             <a href="/portfolio">Portfólio</a>
             <a href="/conteudos">Conteúdos</a>
             <a href="/faq">FAQ</a>
