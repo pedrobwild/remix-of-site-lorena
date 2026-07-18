@@ -1,8 +1,8 @@
 import { useSeo, breadcrumbJsonLd, faqJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
 import { useFaq } from "../lib/useFaq";
-import BewildSiteNav from "@/components/BewildSiteNav";
-import SiteFooter from "@/components/SiteFooter";
+import BwaNav from "@/components/BwaNav";
+import BwaFooter from "@/components/BwaFooter";
 import { whatsappHref } from "@/components/landing/content";
 import "@/styles/bwh-tokens.css";
 import "@/styles/bwh-sol-fusion.css";
@@ -36,7 +36,7 @@ export default function FaqPage() {
 
   return (
     <div className="bwh">
-      <BewildSiteNav />
+      <BwaNav />
 
       <main id="main" tabIndex={-1}>
         <section className="bwh-sec" style={{ paddingTop: "clamp(56px,7vw,96px)", paddingBottom: 0 }}>
@@ -88,7 +88,7 @@ export default function FaqPage() {
         </div>
       </section>
 
-      <SiteFooter />
+      <BwaFooter />
     </div>
   );
 }

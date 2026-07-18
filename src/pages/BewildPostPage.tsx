@@ -12,8 +12,8 @@
 import { useMemo } from "react";
 import { marked } from "marked";
 import { useSeo } from "@/lib/useSeo";
-import BewildSiteNav from "@/components/BewildSiteNav";
-import SiteFooter from "@/components/SiteFooter";
+import BwaNav from "@/components/BwaNav";
+import BwaFooter from "@/components/BwaFooter";
 import { sanitizeBlogHtml } from "@/lib/sanitizeHtml";
 import { whatsappHref } from "@/components/landing/content";
 import {
@@ -138,7 +138,7 @@ export default function BewildPostPage({ slug }: Props) {
   if (notFound) {
     return (
       <div className="bw-post">
-        <BewildSiteNav />
+        <BwaNav />
         <section className="pt-hero">
           <div className="container">
             <div className="pt-cat">404</div>
@@ -151,7 +151,7 @@ export default function BewildPostPage({ slug }: Props) {
             </button>
           </div>
         </section>
-        <SiteFooter />
+        <BwaFooter />
       </div>
     );
   }
@@ -160,7 +160,7 @@ export default function BewildPostPage({ slug }: Props) {
   if (loading || !post) {
     return (
       <div className="bw-post">
-        <BewildSiteNav />
+        <BwaNav />
         <section className="pt-hero" aria-busy="true" aria-live="polite">
           <div className="container">
             <div className="pt-cat">Carregando…</div>
@@ -173,7 +173,7 @@ export default function BewildPostPage({ slug }: Props) {
 
   return (
     <div className="bw-post">
-      <BewildSiteNav />
+      <BwaNav />
 
       <div className="bw-post__frame" aria-hidden="true">
         <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
@@ -283,7 +283,7 @@ export default function BewildPostPage({ slug }: Props) {
         </div>
       </section>
 
-      <SiteFooter />
+      <BwaFooter />
     </div>
   );
 }

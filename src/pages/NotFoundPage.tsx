@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useSeo } from "../lib/useSeo";
 import { routes, navigate } from "../lib/useHashRoute";
 import { logNotFound, lookupActiveRedirect } from "../lib/notFoundLog";
-import BewildSiteNav from "@/components/BewildSiteNav";
-import SiteFooter from "@/components/SiteFooter";
+import BwaNav from "@/components/BwaNav";
+import BwaFooter from "@/components/BwaFooter";
 import "@/styles/home.css";
 import "@/styles/conteudos.css";
 import "@/styles/post.css";
@@ -61,7 +61,7 @@ export default function NotFoundPage() {
   if (redirecting) {
     return (
       <div className="bw-home bw-post">
-        <BewildSiteNav />
+        <BwaNav />
         <main id="main" tabIndex={-1} aria-live="polite">
           <section className="pt-hero">
             <div className="container">
@@ -78,7 +78,7 @@ export default function NotFoundPage() {
 
   return (
     <div className="bw-home bw-post">
-      <BewildSiteNav />
+      <BwaNav />
 
       <main id="main" tabIndex={-1}>
         <section className="pt-hero">
@@ -129,7 +129,7 @@ export default function NotFoundPage() {
         </section>
       </main>
 
-      <SiteFooter />
+      <BwaFooter />
     </div>
   );
 }

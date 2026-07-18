@@ -8,8 +8,8 @@
 import { useMemo, useState } from "react";
 import { useSeo, breadcrumbJsonLd, itemListJsonLd } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
-import BewildSiteNav from "@/components/BewildSiteNav";
-import SiteFooter from "@/components/SiteFooter";
+import BwaNav from "@/components/BwaNav";
+import BwaFooter from "@/components/BwaFooter";
 import { CONTACT } from "../components/landing/content";
 import {
   useBewildProjects,
@@ -74,7 +74,7 @@ export default function BewildPortfolioPage() {
 
   return (
     <div className="bwh">
-      <BewildSiteNav />
+      <BwaNav />
 
       <main id="main" tabIndex={-1}>
         {/* HERO */}
@@ -284,7 +284,7 @@ export default function BewildPortfolioPage() {
         </section>
       </main>
 
-      <SiteFooter />
+      <BwaFooter />
     </div>
   );
 }

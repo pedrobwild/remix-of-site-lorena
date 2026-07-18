@@ -6,8 +6,8 @@
  */
 import { useMemo, useState } from "react";
 import { useSeo } from "@/lib/useSeo";
-import BewildSiteNav from "@/components/BewildSiteNav";
-import SiteFooter from "@/components/SiteFooter";
+import BwaNav from "@/components/BwaNav";
+import BwaFooter from "@/components/BwaFooter";
 import { whatsappHref } from "@/components/landing/content";
 import {
   useBewildPosts,
@@ -72,7 +72,7 @@ export default function BewildConteudosPage() {
   return (
     <>
       <div className="bw-conteudos">
-        <BewildSiteNav />
+        <BwaNav />
 
         <div className="bw-conteudos__frame" aria-hidden="true">
           <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
@@ -196,7 +196,7 @@ export default function BewildConteudosPage() {
         </section>
       </div>
 
-      <SiteFooter />
+      <BwaFooter />
     </>
   );
 }
