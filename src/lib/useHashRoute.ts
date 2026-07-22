@@ -86,11 +86,15 @@ function parseLocation(): Route {
   if (hash.startsWith("/")) {
     return parsePath(hash);
   }
-  if (hash && !hash.startsWith("/")) {
+  // Âncora pura (#foo): só vira home-anchor se já estamos na home.
+  // Em outras rotas, preserva a rota atual e deixa o scroll nativo agir.
+  const pathname = window.location.pathname || "/";
+  if (hash && !hash.startsWith("/") && (pathname === "/" || pathname === "")) {
     return { name: "home", anchor: hash };
   }
-  return parsePath(window.location.pathname || "/");
+  return parsePath(pathname);
 }
+
 
 function migrateLegacyHashIfNeeded(): void {
   const hash = window.location.hash.replace(/^#/, "");
