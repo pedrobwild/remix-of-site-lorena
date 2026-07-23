@@ -3922,3 +3922,6 @@
 @media (min-width:821px){
   .bwa-manifesto{min-height:0 !important}
 }
+
+.bwa-footer-seals{margin-top:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.bwa-footer-ssl{height:44px;width:auto;display:block}
