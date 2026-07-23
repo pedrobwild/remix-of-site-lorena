@@ -1,0 +1,111 @@
+/* bwa-footer-shared.css — regras extraídas 1:1 de home-bwa.css para uso do SiteFooter fora da home. */
+
+.bwa-footer {
+      padding-block: 78px 26px;
+      color: var(--bwa-white);
+      background: var(--bwa-navy);
+      border-top: 1px solid var(--bwa-white-line);
+    }
+
+.bwa-footer-main {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr .8fr;
+      gap: clamp(40px, 7vw, 110px);
+      padding-bottom: 72px;
+    }
+
+.bwa-footer-brand {
+      display: grid;
+      align-content: start;
+      gap: 26px;
+    }
+
+.bwa-footer-wordmark {
+      font-size: clamp(52px, 7vw, 110px);
+      font-weight: 800;
+      line-height: .8;
+      letter-spacing: -.085em;
+    }
+
+.bwa-footer-brand p {
+      max-width: 560px;
+      margin: 0;
+      color: rgba(255, 255, 255, .62);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+.bwa-footer-column h3 {
+      margin: 0 0 22px;
+      color: rgba(255, 255, 255, .42);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 9px;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+.bwa-footer-column nav,
+    .bwa-footer-column div {
+      display: grid;
+      gap: 12px;
+    }
+
+.bwa-footer-column a,
+    .bwa-footer-column span {
+      color: rgba(255, 255, 255, .78);
+      font-size: 14px;
+    }
+
+.bwa-footer-bottom {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--bwa-white-line);
+    }
+
+.bwa-footer-tech {
+      max-width: 900px;
+      margin: 0;
+      color: rgba(255, 255, 255, .42);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 8px;
+      line-height: 1.7;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+.bwa-footer-copy {
+      color: rgba(255, 255, 255, .42);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 8px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+@media (max-width: 900px) {
+  .bwa-footer-main {
+        grid-template-columns: 1fr 1fr;
+      }
+  .bwa-footer-brand {
+        grid-column: 1 / -1;
+      }
+  .bwa-footer {
+        padding-bottom: 92px;
+      }
+}
+
+@media (max-width: 600px) {
+  .bwa-footer-main {
+        grid-template-columns: 1fr;
+      }
+  .bwa-footer-brand {
+        grid-column: auto;
+      }
+}
+
+.bwa-footer-seals{margin-top:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+
+.bwa-footer-ssl{height:44px;width:auto;display:block}
