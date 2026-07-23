@@ -3902,3 +3902,12 @@
 .bwa-final .bwa-display{color:#fff}
 .bwa-final .bwa-lead{color:rgba(255,255,255,.88)}
 .bwa-final .bwa-label{color:rgba(255,255,255,.78)}
+
+/* ===== Parte 2 · Projetos em grade contida no desktop (>=1101px) ===== */
+@media (min-width:1101px){
+  .bwa-projects-rail{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1280px;margin:0 auto;padding:0 clamp(20px,4.5vw,40px);overflow:visible}
+  .bwa-projects .bwa-projects-rail .bwa-project-card{width:auto;min-width:0;max-width:none;flex:none}
+  .bwa-project-image{aspect-ratio:4/3;overflow:hidden}
+  .bwa-project-image img{width:100%;height:100%;object-fit:cover}
+  .bwa-projects{padding-top:clamp(56px,6vw,88px);padding-bottom:clamp(56px,6vw,88px)}
+}
