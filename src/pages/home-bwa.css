@@ -441,8 +441,9 @@
       margin: 0;
       font-size: clamp(50px, 6.65vw, 116px);
       font-weight: 500;
-      line-height: .91;
+      line-height: 1.05;
       letter-spacing: -.068em;
+      padding-bottom: .04em;
     }
 
     .bwa-hero h1 em {
@@ -460,12 +461,12 @@
     }
 
     .bwa-hero-sub {
-      max-width: 650px;
-      margin: 0;
-      color: rgba(255, 255, 255, .77);
-      font-size: clamp(17px, 1.35vw, 23px);
-      line-height: 1.45;
-      letter-spacing: -.018em;
+      max-width: 34rem;
+      margin: clamp(24px, 2.4vw, 32px) 0 0;
+      color: rgba(255, 255, 255, .82);
+      font-size: clamp(18px, 1.25vw, 20px);
+      line-height: 1.5;
+      letter-spacing: -.012em;
     }
 
     .bwa-hero-visual {
