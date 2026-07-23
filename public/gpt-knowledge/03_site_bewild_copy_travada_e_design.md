@@ -36,3 +36,6 @@ Base: https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app · He
 Toda proposta compete sob o mesmo briefing, copy travada e entregável (1 HTML autocontido). Julgamento por 7 critérios, os dois primeiros com peso dobrado: 1 ataca o medo de virar gerente de obra acima da dobra; 2 serve morar/alugar/vender sem parecer site de Airbnb; 3 prova crível só com dados reais; 4 craft premium sem copiar a referência e sem cara de tech; 5 funciona com renders; 6 um CTA dominante e fricção baixa; 7 portável (HTML único, classes prefixadas). Fusão permitida: no máximo UMA assinatura do perdedor; nunca misturar dois conceitos.
 
 Naming: Bewild · Bwild Workflow · Bwild Ventures · Bewander. Nunca "Grupo Bwild".
+
+## Atualização 23/jul/2026 — Home v4, seção 01 (ordem do Pedro)
+Na home v4 (bwa), a seção 'O que entra no contrato · 01' (#certeza) tem copy travada nova, ditada pelo Pedro em 23/jul/2026: apoio 'Cada item desta lista fica registrado em contrato antes de a obra começar. É o modelo Bewild: uma responsabilidade só, do projeto à entrega das chaves.' · título 'A Bewild assume o processo inteiro. Você recebe o apartamento pronto' (ênfase na segunda frase). Substitui o par anterior ('O primeiro contato com a Bewild precisa deixar uma coisa clara…' / 'A Bewild cuida da sua obra. Você cuida do seu tempo').
