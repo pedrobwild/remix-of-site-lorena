@@ -273,7 +273,34 @@ export function initHomeBwa() {
     raEl.appendChild(s);
   }
 
+  initBwaComparador();
 }
+
+function initBwaComparador() {
+  document.querySelectorAll("[data-cmp]").forEach(function (cmp) {
+    var stage = cmp.querySelector(".bwa-cmp-stage");
+    var range = cmp.querySelector(".bwa-cmp-range");
+    function set(v) {
+      v = Math.max(0, Math.min(100, v));
+      cmp.style.setProperty("--cmp", v + "%");
+      if (range) range.value = String(Math.round(v));
+    }
+    set(50);
+    if (range) range.addEventListener("input", function () { set(parseFloat(range.value)); });
+    if (stage) {
+      var dragging = false;
+      function fromEvent(e) {
+        var r = stage.getBoundingClientRect();
+        return ((e.clientX - r.left) / r.width) * 100;
+      }
+      stage.addEventListener("pointerdown", function (e) { dragging = true; stage.setPointerCapture(e.pointerId); set(fromEvent(e)); });
+      stage.addEventListener("pointermove", function (e) { if (dragging) set(fromEvent(e)); });
+      stage.addEventListener("pointerup", function () { dragging = false; });
+      stage.addEventListener("pointercancel", function () { dragging = false; });
+    }
+  });
+}
+
 
 
 /* =========================================================================
