@@ -2695,6 +2695,12 @@
         gap: 34px;
       }
 
+      .bwa-certainty-lead {
+        position: static;
+        top: auto;
+      }
+
+
       .bwa-certainty-toggle {
         grid-template-columns: 46px minmax(0, 1fr) 38px;
         gap: 14px;
