@@ -2744,13 +2744,18 @@
       }
 
       .bwa-hero-caption {
-        display: block;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 14px;
+        text-align: right;
+      }
+
+      .bwa-hero-caption strong {
+        max-width: 100%;
       }
 
       .bwa-hero-caption span {
-        display: block;
-        margin-top: 18px;
-        text-align: left;
+        text-align: right;
       }
 
       .bwa-certainty-name {
