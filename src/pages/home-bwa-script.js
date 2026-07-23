@@ -260,8 +260,21 @@ export function initHomeBwa() {
         }, { passive: false });
       }
 
+  // Selo Reclame Aqui no rodapé (idempotente).
+  const raEl = document.getElementById("ra-verified-seal");
+  if (raEl && !document.getElementById("ra-embed-verified-seal")) {
+    const s = document.createElement("script");
+    s.type = "text/javascript";
+    s.id = "ra-embed-verified-seal";
+    s.src = "https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js";
+    s.setAttribute("data-id", "SEpqak1Mcm9aM09nMm0wbDpid2lsZC1yZWZvcm1hcw==");
+    s.setAttribute("data-target", "ra-verified-seal");
+    s.setAttribute("data-model", "horizontal_1");
+    raEl.appendChild(s);
+  }
 
 }
+
 
 /* =========================================================================
  * Exports para páginas internas com o mesmo chrome .bwa (nav + FAQ opcional).
