@@ -3874,3 +3874,35 @@
     }
 
 
+
+/* ===== Fusão 23/jul: slogan no hero, comparador, CTAs intermediários, contato legível ===== */
+.bwa-hero-visual{position:relative}
+.bwa-hero-visual::after{content:"";position:absolute;left:0;right:0;bottom:0;height:52%;background:linear-gradient(180deg,rgba(6,16,30,0),rgba(6,16,30,.78));pointer-events:none;z-index:1}
+.bwa-hero-frame{z-index:2}
+.bwa-hero-caption{z-index:3}
+.bwa-hero-objectives{z-index:3}
+.bwa-hero-caption-slogan{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.bwa-hero-slogan-text{font-family:"Manrope",sans-serif;font-style:italic;font-weight:300;font-size:clamp(24px,2.8vw,38px);line-height:1.12;letter-spacing:-.02em;color:#fff}
+
+.bwa-cmp-wrap{margin:0 auto clamp(40px,5vw,64px)}
+.bwa-cmp{--cmp:50%}
+.bwa-cmp-stage{position:relative;aspect-ratio:16/10;overflow:hidden;background:#0B2342;touch-action:pan-y;cursor:ew-resize}
+.bwa-cmp-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.bwa-cmp-img-before{clip-path:inset(0 calc(100% - var(--cmp)) 0 0)}
+.bwa-cmp-handle{position:absolute;top:0;bottom:0;left:var(--cmp);width:2px;background:#fff;transform:translateX(-1px);z-index:2;pointer-events:none}
+.bwa-cmp-handle span{position:absolute;top:50%;left:50%;width:34px;height:34px;transform:translate(-50%,-50%);background:#fff;border-radius:50%;box-shadow:0 4px 14px rgba(6,16,30,.35)}
+.bwa-cmp-handle span::before{content:"◂ ▸";position:absolute;inset:0;display:grid;place-items:center;font-size:11px;color:#0B2342;letter-spacing:1px}
+.bwa-cmp-tag{position:absolute;bottom:14px;z-index:3;background:#0B2342;color:#fff;font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:9.5px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:7px 11px}
+.bwa-cmp-tag-l{left:14px}
+.bwa-cmp-tag-r{right:14px;background:#FAF8F4;color:#0B2342}
+.bwa-cmp-range{width:100%;margin:14px 0 8px;accent-color:#0B2342}
+.bwa-cmp-caption{margin:0;font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#5A6472}
+
+.bwa-midcta{background:#0B2342;border-top:1px solid rgba(255,255,255,.14);border-bottom:1px solid rgba(255,255,255,.14)}
+.bwa-midcta-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;padding-top:52px;padding-bottom:52px}
+.bwa-midcta-inner p{margin:0;color:#fff;font-family:"Manrope",sans-serif;font-weight:500;font-size:clamp(20px,2.3vw,28px);letter-spacing:-.015em;max-width:640px}
+@media (max-width:700px){.bwa-midcta-inner{flex-direction:column;align-items:flex-start;padding-top:40px;padding-bottom:40px}}
+
+.bwa-final .bwa-display{color:#fff}
+.bwa-final .bwa-lead{color:rgba(255,255,255,.88)}
+.bwa-final .bwa-label{color:rgba(255,255,255,.78)}
