@@ -100,7 +100,7 @@ export default function NotFoundPage() {
                 Voltar à página inicial <span className="arrow">→</span>
               </a>
               <a href={routes.diagnostico} className="btn btn-primary">
-                Solicitar diagnóstico
+                Solicitar Orçamento
               </a>
             </div>
           </div>

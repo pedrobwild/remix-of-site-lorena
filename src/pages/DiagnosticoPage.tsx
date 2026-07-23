@@ -206,7 +206,7 @@ export default function DiagnosticoPage() {
 
       <main id="conteudo">
         {/* 01 · HERO + FICHA */}
-        <section className="dg-hero" aria-label="Solicitar diagnóstico">
+        <section className="dg-hero" aria-label="Solicitar Orçamento">
           <div className="dg-shell dg-hero-grid">
             <div>
               <div className="dg-intro">
@@ -576,7 +576,7 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
       )}
 
       <button type="submit" className="dg-button dg-hidepós" disabled={!canSubmit || submitting}>
-        {submitting ? "Enviando…" : "Solicitar diagnóstico"} <span aria-hidden="true">→</span>
+        {submitting ? "Enviando…" : "Solicitar Orçamento"} <span aria-hidden="true">→</span>
       </button>
       <p className="dg-ficha-note dg-hidepós">Sem compromisso · a gente só te chama no WhatsApp</p>
     </form>

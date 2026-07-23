@@ -4,7 +4,7 @@
  * Header navy sólido com a logo real da marca (lockup branco). Mesmos
  * links em todas as páginas; item da página atual marcado como ativo.
  * No mobile, menu hambúrguer abre um overlay em tela cheia com os links
- * e os dois CTAs (Área do cliente + Solicitar diagnóstico) no rodapé,
+ * e os dois CTAs (Área do cliente + Solicitar Orçamento) no rodapé,
  * dentro da zona do polegar.
  *
  * Na home (pathname "/"), o header começa transparente sobre o hero e
