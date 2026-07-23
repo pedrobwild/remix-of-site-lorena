@@ -2428,11 +2428,14 @@
     }
 
     .bwa-modal-card {
-      width: min(100%, 760px);
-      padding: clamp(30px, 6vw, 70px);
+      width: min(100%, 960px);
+      padding: clamp(20px, 3vw, 32px);
       color: var(--bwa-ink);
       background: var(--bwa-paper);
       box-shadow: var(--bwa-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
     .bwa-modal-card h2 {
@@ -2449,6 +2452,24 @@
       color: var(--bwa-ink-soft);
       line-height: 1.7;
     }
+
+    .bwa-modal-video {
+      width: 100%;
+      max-height: 80vh;
+      background: #000;
+      display: block;
+    }
+
+    .bwa-visually-hidden {
+      position: absolute !important;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
 
     @media (max-width: 1180px) {
       .bwa-nav-links {
