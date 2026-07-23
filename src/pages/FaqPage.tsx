@@ -72,7 +72,7 @@ export default function FaqPage() {
         </section>
       </main>
 
-      <section className="bwh-sec bwh-sec--dark" aria-label="Solicitar diagnóstico">
+      <section className="bwh-sec bwh-sec--dark" aria-label="Solicitar Orçamento">
         <div className="bwh-wrap" style={{ maxWidth: 900, textAlign: "center" }}>
           <p className="bwh-mono" style={{ color: "var(--dink2)", margin: "0 0 24px" }}>Diagnóstico gratuito · sem compromisso</p>
           <h2 className="bwh-h2" style={{ margin: "0 auto 24px", color: "#fff" }}>
@@ -82,7 +82,7 @@ export default function FaqPage() {
             Manda os dados do seu studio e a gente devolve uma leitura de escopo, projeto e próximos passos.
           </p>
           <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-            <a href="/diagnostico" className="bwh-btn bwh-btn--invert">Solicitar diagnóstico <span className="bwh-ar">→</span></a>
+            <a href="/diagnostico" className="bwh-btn bwh-btn--invert">Solicitar Orçamento <span className="bwh-ar">→</span></a>
             <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="bwh-btn bwh-btn--ghostdark">Falar no WhatsApp <span className="bwh-ar">→</span></a>
           </div>
           <p className="bwh-mono" style={{ color: "var(--dink2)", marginTop: 24 }}>+150 studios entregues em São Paulo</p>

@@ -283,7 +283,7 @@ export default function BewildProjectPage({ slug }: Props) {
           <h2>Quer um studio assim <span className="accent">rendendo pra você?</span></h2>
           <p>Manda os dados do seu imóvel e a gente devolve uma leitura de potencial, escopo e próximos passos.</p>
           <div className="pd-cta__act">
-            <a href="/diagnostico" className="pd-btn cyan">Solicitar diagnóstico <span className="ar"><IconArrow /></span></a>
+            <a href="/diagnostico" className="pd-btn cyan">Solicitar Orçamento <span className="ar"><IconArrow /></span></a>
             <a href={whatsappHref()} className="pd-btn ghost" target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a>
           </div>
           <div className="pd-cta__rea">+150 studios entregues em São Paulo</div>

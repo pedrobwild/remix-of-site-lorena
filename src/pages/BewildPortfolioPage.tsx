@@ -263,7 +263,7 @@ export default function BewildPortfolioPage() {
               }}
             >
               <a href="/diagnostico" className="bwh-btn bwh-btn--invert">
-                Solicitar diagnóstico <span className="bwh-ar">→</span>
+                Solicitar Orçamento <span className="bwh-ar">→</span>
               </a>
               <a
                 className="bwh-btn bwh-btn--ghostdark"

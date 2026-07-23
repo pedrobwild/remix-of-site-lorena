@@ -22,7 +22,7 @@ type Props = {
 
 export default function StickyMobileCTA({
   href = "/diagnostico",
-  label = "Solicitar diagnóstico",
+  label = "Solicitar Orçamento",
   hideWhenVisibleSelector = "#cta, footer",
   threshold = 0.3,
 }: Props) {
