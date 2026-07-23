@@ -3917,3 +3917,8 @@
   .bwa-certainty-close{margin-top:clamp(36px,4vw,56px) !important}
   .bwa-projects-foot{margin-top:clamp(28px,3vw,40px) !important}
 }
+
+/* Caça: .bwa-manifesto forçava 100svh + align-items:center criando ~210px de vão residual */
+@media (min-width:821px){
+  .bwa-manifesto{min-height:0 !important}
+}
