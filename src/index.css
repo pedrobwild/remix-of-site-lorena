@@ -84,13 +84,8 @@ body {
   overflow-x: hidden;
 }
 
-/* Cursor customizado só onde faz sentido (desktop com mouse) e só nas páginas
-   que efetivamente montam o elemento .cursor (controlado via body.has-custom-cursor). */
-@media (hover: hover) and (pointer: fine) {
-  body.has-custom-cursor,
-  body.has-custom-cursor button,
-  body.has-custom-cursor a { cursor: none; }
-}
+/* Cursor customizado removido — usa cursor padrão do navegador. */
+
 
 ::selection {
   background: var(--clay);
@@ -434,74 +429,8 @@ body.is-ready .loader {
   background: var(--clay);
 }
 
-/* ---------- Cursor ---------- */
-.cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 8px;
-  height: 8px;
-  background: var(--bone);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: width 0.3s var(--ease), height 0.3s var(--ease),
-    background 0.3s var(--ease), color 0.3s var(--ease);
-  mix-blend-mode: difference;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  color: var(--ink);
-  box-shadow: 0 0 0 1px rgba(10, 10, 10, 0.18), 0 8px 24px rgba(10, 10, 10, 0.12);
-}
+/* ---------- Cursor customizado removido ---------- */
 
-.cursor__label {
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  opacity: 0;
-  transform: scale(0.85);
-  transition: opacity 0.25s var(--ease), transform 0.25s var(--ease);
-  white-space: nowrap;
-  pointer-events: none;
-}
-.cursor__label i {
-  font-style: normal;
-  display: inline-block;
-  margin-left: 0.15em;
-}
-
-.cursor--hover {
-  width: 56px;
-  height: 56px;
-  background: var(--bone);
-}
-
-.cursor--text {
-  width: 2px;
-  height: 20px;
-  border-radius: 2px;
-}
-
-/* Variante "ampliar" — círculo grande com label "ver +" */
-.cursor--zoom {
-  width: 96px;
-  height: 96px;
-  background: var(--bone);
-  mix-blend-mode: normal;
-  box-shadow: 0 0 0 1px rgba(15, 14, 12, 0.14), 0 16px 40px rgba(15, 14, 12, 0.14);
-}
-.cursor--zoom .cursor__label {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* Cursor customizado escondido em qualquer device sem hover/pointer fino */
-@media not all and (hover: hover) and (pointer: fine) {
-  .cursor { display: none; }
-}
 
 /* ---------- Nav ---------- */
 .nav {
@@ -2332,12 +2261,8 @@ main:focus { outline: none; }
   border-radius: 2px;
 }
 
-/* Mesmo com cursor customizado (cursor: none), o anel de foco do teclado
-   precisa aparecer — navegação por Tab e leitores de tela dependem disso. */
-body.has-custom-cursor *:focus-visible {
-  outline: 2px solid var(--bone) !important;
-  outline-offset: 3px !important;
-}
+
+
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
@@ -2347,7 +2272,6 @@ body.has-custom-cursor *:focus-visible {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  .cursor { display: none; }
   body { cursor: auto; }
   /* Desliga parallax e transforms decorativos */
   .ensaios__track,

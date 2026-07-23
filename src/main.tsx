@@ -3,7 +3,7 @@ import ReactDOM, { type Root as ReactRoot } from "react-dom/client";
 import CookieBanner from "./components/CookieBanner";
 import MetaPixel from "./components/MetaPixel";
 import RootErrorBoundary from "./components/RootErrorBoundary";
-import { useCustomCursor } from "./lib/useCustomCursor";
+
 import { useHashRoute, installLinkInterceptor, type Route } from "./lib/useHashRoute";
 import { initAnalytics } from "./lib/analytics";
 import { initGa4, trackPageView } from "./lib/ga4";
@@ -31,10 +31,8 @@ function routeKeyOf(route: Route) {
 
 function Root() {
   const route = useHashRoute();
-  const isAdmin = route.name.startsWith("admin");
-  const isHome = route.name === "home";
-  // Home tem cursor/CTAs/nav próprios do design aprovado — nada de chrome antigo.
-  useCustomCursor(!isAdmin && !isHome);
+  // Cursor customizado removido — cursor padrão do navegador em todas as rotas.
+
 
   // Inicializa analytics uma vez no mount
   useEffect(() => {
