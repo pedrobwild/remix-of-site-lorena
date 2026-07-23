@@ -3646,4 +3646,59 @@
       }
     }
 
-  
+
+    /* ============================================================
+     * Padrão global de subtítulos (.bwa-lead) — inspirado no hero.
+     * Aplica: tipografia unificada, espaçamento título↔subtítulo,
+     * cor com ~82% de ênfase (branco em fundo escuro, ink em claro),
+     * e line-height mínimo de displays/titles para não cortar itálicos.
+     * ============================================================ */
+    .bwa-shell .bwa-lead {
+      font-size: clamp(18px, 1.25vw, 20px);
+      line-height: 1.5;
+      letter-spacing: -.012em;
+      max-width: 34rem;
+      margin-top: clamp(16px, 2.4vw, 32px);
+      color: rgba(26, 35, 50, .82); /* --bwa-ink @ 82% */
+    }
+    .bwa-shell .bwa-sec--dark .bwa-lead,
+    .bwa-shell .bwa-projects .bwa-lead,
+    .bwa-shell .bwa-responsibility .bwa-lead,
+    .bwa-shell .bwa-workflow .bwa-lead,
+    .bwa-shell .bwa-wf2 .bwa-lead,
+    .bwa-shell .bwa-objectives .bwa-lead,
+    .bwa-shell .bwa-final .bwa-lead {
+      color: rgba(255, 255, 255, .82);
+    }
+    /* Primeiro subtítulo depois de um título não recebe margem extra
+       quando o container já usa gap (grid). */
+    .bwa-shell .bwa-story-head-copy > .bwa-lead,
+    .bwa-shell .bwa-workflow-copy > .bwa-lead,
+    .bwa-shell .bwa-wf2-copy > .bwa-lead,
+    .bwa-shell .bwa-final-copy > .bwa-lead {
+      margin-top: 0;
+    }
+    @media (max-width: 600px) {
+      .bwa-shell .bwa-lead {
+        margin-top: clamp(16px, 4vw, 20px);
+      }
+    }
+    /* Displays/títulos: line-height mínimo 1.05 para preservar
+       descendentes (itálicos com haste inferior). */
+    .bwa-shell .bwa-display { line-height: 1.05; padding-bottom: .04em; }
+    .bwa-shell .bwa-title   { line-height: 1.05; padding-bottom: .04em; }
+
+    /* Diagnóstico — alinhar .dg-lead ao mesmo padrão. */
+    .dg-lead {
+      font-size: clamp(18px, 1.25vw, 20px);
+      line-height: 1.5;
+      letter-spacing: -.012em;
+      max-width: 34rem;
+      opacity: 1;
+      color: rgba(26, 35, 50, .82);
+    }
+    .dg-final .dg-lead,
+    .dg-footer .dg-lead {
+      color: rgba(255, 255, 255, .82);
+    }
+
