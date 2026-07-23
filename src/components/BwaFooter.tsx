@@ -1,8 +1,25 @@
+import { useEffect, useRef } from "react";
+
 /**
  * BwaFooter — Footer .bwa unificado, idêntico ao da home. Usado em toda
  * página pública fora da home. Depende do CSS injetado por BwaNav.
  */
 export default function BwaFooter() {
+  const raRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = raRef.current;
+    if (!container || container.querySelector("script")) return;
+    const s = document.createElement("script");
+    s.type = "text/javascript";
+    s.id = "ra-embed-verified-seal";
+    s.src = "https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js";
+    s.setAttribute("data-id", "SEpqak1Mcm9aM09nMm0wbDpid2lsZC1yZWZvcm1hcw==");
+    s.setAttribute("data-target", "ra-verified-seal");
+    s.setAttribute("data-model", "horizontal_1");
+    container.appendChild(s);
+  }, []);
+
   return (
     <footer className="bwa-footer">
       <div className="bwa-shell">
@@ -40,6 +57,7 @@ export default function BwaFooter() {
               <a href="/privacidade">Política de privacidade</a>
               <span>Preferências de cookies</span>
             </div>
+            <div id="ra-verified-seal" ref={raRef} style={{ marginTop: 20 }} />
           </div>
         </div>
 
