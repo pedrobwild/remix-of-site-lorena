@@ -3908,3 +3908,17 @@
 .bwa-pgrid-link{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#fff;text-decoration:underline;text-underline-offset:4px;margin-top:4px}
 @media (max-width:820px){.bwa-pgrid{grid-template-columns:1fr;gap:28px}}
 
+
+/* === Passe de densidade desktop — ritmo final entre seções (Parte 1) === */
+@media (min-width:821px){
+  .bwa-certainty,.bwa-story,.bwa-projects,.bwa-responsibility,.bwa-workflow,.bwa-proof,.bwa-objectives,.bwa-manifesto,.bwa-faq{padding-top:clamp(56px,6vw,88px) !important;padding-bottom:clamp(56px,6vw,88px) !important}
+  .bwa-certainty-head,.bwa-story-head,.bwa-projects-head,.bwa-proof-head,.bwa-objectives-head,.bwa-faq-head,.bwa-wf2-head{margin-bottom:clamp(32px,4vw,48px) !important;min-height:0 !important}
+  .bwa-story-resolution{margin-top:clamp(40px,5vw,64px) !important}
+  .bwa-certainty-close{margin-top:clamp(36px,4vw,56px) !important}
+  .bwa-projects-foot{margin-top:clamp(28px,3vw,40px) !important}
+}
+
+/* Caça: .bwa-manifesto forçava 100svh + align-items:center criando ~210px de vão residual */
+@media (min-width:821px){
+  .bwa-manifesto{min-height:0 !important}
+}
