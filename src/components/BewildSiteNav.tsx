@@ -227,7 +227,7 @@ export default function BewildSiteNav() {
             <span>Área do cliente</span>
           </a>
           <a href="/diagnostico" className="bw-nav__cta">
-            Solicitar diagnóstico <span className="arrow" aria-hidden>→</span>
+            Solicitar Orçamento <span className="arrow" aria-hidden>→</span>
           </a>
         </div>
 
@@ -317,7 +317,7 @@ export default function BewildSiteNav() {
                 className="bw-nav__cta bw-nav__cta--mobile"
                 onClick={() => setMenuOpen(false)}
               >
-                Solicitar diagnóstico <span className="arrow" aria-hidden>→</span>
+                Solicitar Orçamento <span className="arrow" aria-hidden>→</span>
               </a>
             </div>
           </div>
