@@ -172,6 +172,7 @@ export function initHomeBwa() {
       const videoButton = document.querySelector("[data-video-demo]");
       const modal = document.querySelector("[data-video-modal]");
       const closeModal = document.querySelector("[data-close-modal]");
+      const videoEl = document.querySelector("[data-video-element]");
 
       const setModal = (open) => {
         if (!modal) return;
@@ -179,6 +180,14 @@ export function initHomeBwa() {
         body.style.overflow = open ? "hidden" : "";
         if (open && closeModal) closeModal.focus();
         if (!open && videoButton) videoButton.focus();
+        if (videoEl) {
+          if (open) {
+            const p = videoEl.play();
+            if (p && typeof p.catch === "function") p.catch(() => {});
+          } else {
+            try { videoEl.pause(); videoEl.currentTime = 0; } catch (e) {}
+          }
+        }
       };
 
       if (videoButton) videoButton.addEventListener("click", () => setModal(true));
@@ -188,6 +197,7 @@ export function initHomeBwa() {
           if (event.target === modal) setModal(false);
         });
       }
+
 
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
