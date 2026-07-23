@@ -2261,12 +2261,8 @@ main:focus { outline: none; }
   border-radius: 2px;
 }
 
-/* Mesmo com cursor customizado (cursor: none), o anel de foco do teclado
-   precisa aparecer — navegação por Tab e leitores de tela dependem disso. */
-body.has-custom-cursor *:focus-visible {
-  outline: 2px solid var(--bone) !important;
-  outline-offset: 3px !important;
-}
+
+
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
