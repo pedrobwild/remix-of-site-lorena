@@ -57,7 +57,15 @@ export default function BwaFooter() {
               <a href="/privacidade">Política de privacidade</a>
               <span>Preferências de cookies</span>
             </div>
-            <div id="ra-verified-seal" ref={raRef} style={{ marginTop: 20 }} />
+            <div className="bwa-footer-seals">
+              <div id="ra-verified-seal" ref={raRef} />
+              <img
+                className="bwa-footer-ssl"
+                src="/__l5e/assets-v1/5fc52424-22a9-4b06-8b2f-50ab9cc91361/ssl-shield.png"
+                alt="Site seguro · certificado SSL"
+                loading="lazy"
+              />
+            </div>
           </div>
         </div>
 
