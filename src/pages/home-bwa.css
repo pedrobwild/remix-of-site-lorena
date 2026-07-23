@@ -3689,17 +3689,16 @@
     .bwa-shell .bwa-title   { line-height: 1.05; padding-bottom: .04em; }
 
     /* Diagnóstico — alinhar .dg-lead ao mesmo padrão. */
-    .dg-page .dg-lead,
     .dg-lead {
       font-size: clamp(18px, 1.25vw, 20px);
       line-height: 1.5;
       letter-spacing: -.012em;
       max-width: 34rem;
-      margin-top: clamp(16px, 2.4vw, 32px);
       opacity: 1;
       color: rgba(26, 35, 50, .82);
     }
-    .dg-hero .dg-lead,
-    .dg-sec--dark .dg-lead {
+    .dg-final .dg-lead,
+    .dg-footer .dg-lead {
       color: rgba(255, 255, 255, .82);
     }
+
