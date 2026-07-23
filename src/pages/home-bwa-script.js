@@ -247,18 +247,8 @@ export function initHomeBwa() {
         });
       });
 
-      // FIX autorizado 17/jul: latch de wheel em trackpad prendia o scroll vertical sobre o trilho de projetos.
-      // Gesto predominantemente vertical → rola a página; predominantemente horizontal → rola o trilho (nativo).
-      const projectsRail = document.querySelector(".bwa-projects-rail");
-      if (projectsRail) {
-        projectsRail.addEventListener("wheel", (event) => {
-          if (event.ctrlKey) return; // preserva pinch-zoom
-          if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
-            event.preventDefault();
-            window.scrollBy({ top: event.deltaY, behavior: "auto" });
-          }
-        }, { passive: false });
-      }
+      // Listener de wheel do trilho de projetos removido (Parte 4): rolagem vertical nativa em toda a seção.
+
 
   // Selo Reclame Aqui no rodapé (idempotente).
   const raEl = document.getElementById("ra-verified-seal");
