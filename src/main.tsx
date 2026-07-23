@@ -32,7 +32,7 @@ function routeKeyOf(route: Route) {
 function Root() {
   const route = useHashRoute();
   // Cursor customizado removido — cursor padrão do navegador em todas as rotas.
-  useCustomCursor(!isAdmin && !isHome);
+
 
   // Inicializa analytics uma vez no mount
   useEffect(() => {
