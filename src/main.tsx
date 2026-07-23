@@ -3,7 +3,7 @@ import ReactDOM, { type Root as ReactRoot } from "react-dom/client";
 import CookieBanner from "./components/CookieBanner";
 import MetaPixel from "./components/MetaPixel";
 import RootErrorBoundary from "./components/RootErrorBoundary";
-import { useCustomCursor } from "./lib/useCustomCursor";
+
 import { useHashRoute, installLinkInterceptor, type Route } from "./lib/useHashRoute";
 import { initAnalytics } from "./lib/analytics";
 import { initGa4, trackPageView } from "./lib/ga4";
