@@ -250,55 +250,6 @@ export function initHomeBwa() {
         }, { passive: false });
       }
 
-      // Bairros: card do projeto seguindo o cursor com lerp (desktop, hover-capable).
-      const dCursor = document.querySelector("[data-districts-cursor]");
-      const dCursorImg = document.querySelector("[data-districts-cursor-img]");
-      const dCursorCap = document.querySelector("[data-districts-cursor-caption]");
-      const dTriggers = [...document.querySelectorAll("[data-district-trigger]")];
-      const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-      if (dCursor && dCursorImg && dTriggers.length && !reducedMotion && canHover) {
-        let tx = window.innerWidth / 2;
-        let ty = window.innerHeight / 2;
-        let cx = tx;
-        let cy = ty;
-        let active = false;
-        let raf = 0;
-        const render = () => {
-          cx += (tx - cx) * 0.18;
-          cy += (ty - cy) * 0.18;
-          const scale = active ? 1 : 0.9;
-          dCursor.style.transform = `translate3d(${cx}px, ${cy}px, 0) translate(-50%, -50%) scale(${scale})`;
-          if (active || Math.abs(tx - cx) > 0.5 || Math.abs(ty - cy) > 0.5) {
-            raf = requestAnimationFrame(render);
-          } else {
-            raf = 0;
-          }
-        };
-        const kick = () => { if (!raf) raf = requestAnimationFrame(render); };
-        window.addEventListener("mousemove", (event) => {
-          tx = event.clientX;
-          ty = event.clientY;
-          kick();
-        }, { passive: true });
-        dTriggers.forEach((trigger) => {
-          const img = trigger.getAttribute("data-district-img");
-          const cap = trigger.getAttribute("data-district-caption") || "";
-          trigger.addEventListener("mouseenter", () => {
-            if (img && dCursorImg.getAttribute("src") !== img) dCursorImg.src = img;
-            if (dCursorCap) dCursorCap.textContent = cap;
-            active = true;
-            dCursor.classList.add("bwa-visible");
-            kick();
-          });
-          trigger.addEventListener("mouseleave", () => {
-            active = false;
-            dCursor.classList.remove("bwa-visible");
-          });
-          trigger.addEventListener("focus", () => {
-            if (dCursorCap) dCursorCap.textContent = cap;
-          });
-        });
-      }
 
 }
 
