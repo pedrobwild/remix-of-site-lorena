@@ -2673,7 +2673,7 @@
       .bwa-hero-fact {
         min-height: 84px;
         border-right: 0;
-        border-bottom: 1px solid rgba(255, 255, 255, .22);
+        border-bottom: 1px solid var(--bwa-line);
       }
 
       .bwa-hero-fact:last-child {
