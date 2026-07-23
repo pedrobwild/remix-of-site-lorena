@@ -39,3 +39,5 @@ Naming: Bewild · Bwild Workflow · Bwild Ventures · Bewander. Nunca "Grupo Bwi
 
 ## Atualização 23/jul/2026 — Home v4, seção 01 (ordem do Pedro)
 Na home v4 (bwa), a seção 'O que entra no contrato · 01' (#certeza) tem copy travada nova, ditada pelo Pedro em 23/jul/2026: apoio 'Cada item desta lista fica registrado em contrato antes de a obra começar. É o modelo Bewild: uma responsabilidade só, do projeto à entrega das chaves.' · título 'A Bewild assume o processo inteiro. Você recebe o apartamento pronto' (ênfase na segunda frase). Substitui o par anterior ('O primeiro contato com a Bewild precisa deixar uma coisa clara…' / 'A Bewild cuida da sua obra. Você cuida do seu tempo').
+
+Também em 23/jul/2026, ordem do Pedro: cards da faixa do hero (bwa-hero-facts) trocados de 'Preço fechado / Prazo em contrato / 5 anos de garantia' para '+80 · Obras entregues' / '+180 · Projetos executados' / 'São Paulo e Rio de Janeiro · Atuação'.
