@@ -18,7 +18,7 @@ import {
 } from "@/lib/useBewildProjects";
 import "@/styles/bwh-tokens.css";
 import "@/styles/bwh-overlays.css";
-import "@/styles/portfolio.css";
+import "@/styles/bwh-sol-fusion.css";
 
 type FilterValue = "all" | BewildProjectType;
 
@@ -83,24 +83,13 @@ export default function BewildPortfolioPage() {
         <section className="bwh-sec" style={{ paddingBottom: 0 }}>
           <div className="bwh-wrap">
             <div className="bwh-srlabel" style={{ borderTop: 0, paddingTop: 0 }}>
-              <span className="bwh-mono">Portfólio · obras entregues</span>
+              <span className="bwh-mono bwh-label bwh-label--accent">Portfólio · obras entregues</span>
               <span className="bwh-mono">São Paulo · 2025–2026</span>
             </div>
-            <h1
-              className="bwh-h2"
-              style={{ fontSize: "clamp(38px, 5.6vw, 78px)", marginBottom: 24 }}
-            >
+            <h1 className="bwh-h2" style={{ marginBottom: 24 }}>
               Apartamentos entregues, prontos pra <em>morar, alugar ou vender.</em>
             </h1>
-            <p
-              style={{
-                color: "var(--ink2)",
-                fontSize: "clamp(16px,1.5vw,19px)",
-                lineHeight: 1.55,
-                maxWidth: 640,
-                margin: "0 0 32px",
-              }}
-            >
+            <p className="bwh-lead" style={{ margin: "0 0 32px" }}>
               Cada projeto aqui recebeu estudo próprio de layout, marcenaria, iluminação e acabamento, pensado pro uso que o apartamento precisa sustentar. Do imóvel cru à entrega das chaves.
             </p>
 
@@ -131,7 +120,7 @@ export default function BewildPortfolioPage() {
           <div className="bwh-wrap">
             {!loading && !error && total > 0 && (
               <div className="bwh-srlabel">
-                <span className="bwh-mono">
+                <span className="bwh-mono bwh-label bwh-label--accent">
                   {pad(total)} · {total === 1 ? "Projeto no índice" : "Projetos no índice"}
                 </span>
               </div>
@@ -232,30 +221,15 @@ export default function BewildPortfolioPage() {
             style={{ maxWidth: 900, textAlign: "center" }}
           >
             <div
-              className="bwh-mono"
-              style={{ color: "var(--dink2)", marginBottom: 24 }}
+              className="bwh-mono bwh-label"
+              style={{ color: "var(--dink2)", marginBottom: 24, justifyContent: "center" }}
             >
               Diagnóstico gratuito · sem compromisso
             </div>
-            <h2
-              className="bwh-h2"
-              style={{
-                margin: "0 auto 24px",
-                color: "#fff",
-                fontSize: "clamp(30px,5vw,56px)",
-              }}
-            >
+            <h2 className="bwh-h2" style={{ margin: "0 auto 24px", color: "#fff" }}>
               O próximo studio da lista <em>pode ser o seu.</em>
             </h2>
-            <p
-              style={{
-                color: "var(--dink2)",
-                fontSize: "clamp(16px,1.5vw,19px)",
-                lineHeight: 1.55,
-                maxWidth: 560,
-                margin: "0 auto 32px",
-              }}
-            >
+            <p className="bwh-lead" style={{ margin: "0 auto 32px" }}>
               Manda os dados do seu imóvel e a gente devolve uma leitura de potencial, escopo e próximos passos.
             </p>
             <div

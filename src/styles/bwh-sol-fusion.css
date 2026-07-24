@@ -1,104 +1,55 @@
-/* Camada de fusão SOL sobre o DS bwh. Importar por ÚLTIMO nas páginas. */
-.bwh{--bwh-clay:#B74F32}
+/* Camada de fusão SOL sobre o DS bwh. Importar por ÚLTIMO nas páginas.
+ *
+ * ALINHAMENTO 24/jul: as camadas que divergiam da homepage foram removidas
+ * daqui e absorvidas por `bwh-tokens.css`, que agora replica os valores
+ * canônicos de `home-bwa.css`:
+ *  - botões  → .bwa-button (navy sólido, mono 600/.08em, min-height 54px);
+ *  - FAQ     → .bwa-faq-list (numeração navy, ícone +/− em caixa de 36px);
+ *  - seções  → mesmo ritmo vertical da home (incl. densidade ≥821px).
+ * A cor de destaque terracota (--bwh-clay) saiu: não existe na paleta da
+ * marca, que usa var(--navyacc) #11355B para numerações e marcadores.
+ */
 
-/* ===== 1. Botões: hover invertido (padrão SOL) ===== */
-.bwh .bwh-btn{border:1px solid #0B2342;transition:background .25s ease,color .25s ease,border-color .25s ease,transform .25s ease}
-.bwh .bwh-btn:hover{background:transparent;color:#0B2342;border-color:#0B2342;transform:translateY(-2px)}
-.bwh .bwh-btn .bwh-ar{transition:transform .25s cubic-bezier(.2,.72,.2,1)}
-.bwh .bwh-btn:hover .bwh-ar{transform:translateX(6px)}
-.bwh .bwh-btn--onphoto{border-color:rgba(255,255,255,.85)}
-.bwh .bwh-btn--onphoto:hover{background:#FAF8F4;color:#0B2342;border-color:#FAF8F4}
-.bwh .bwh-btn--invert:hover{background:transparent;color:#fff;border-color:#fff}
-.bwh .bwh-btn--ghostdark{border-color:rgba(255,255,255,.55)}
-.bwh .bwh-btn--ghostdark:hover{background:transparent;color:#fff;border-color:#fff}
-
-/* ===== 2. FAQ numerada (padrão SOL), preservando details/summary e schema ===== */
-.bwh .bwh-faq{counter-reset:bwfaq;max-width:1160px}
-.bwh .bwh-faq details{border-top:1px solid var(--hair,#E4DFD6);counter-increment:bwfaq}
-.bwh .bwh-faq details:last-of-type{border-bottom:1px solid var(--hair,#E4DFD6)}
-.bwh .bwh-faq summary{
-  list-style:none;cursor:pointer;
-  display:grid;grid-template-columns:52px 1fr 34px;gap:18px;align-items:center;
-  padding:28px 0;color:var(--ink,#1A2332);
-  font-weight:600;font-size:clamp(18px,2vw,26px);line-height:1.25;letter-spacing:-.025em;
-}
-.bwh .bwh-faq summary::-webkit-details-marker{display:none}
-.bwh .bwh-faq summary::before{
-  content:counter(bwfaq,decimal-leading-zero);
-  font-family:var(--fm,"JetBrains Mono",monospace);font-size:10px;font-weight:500;
-  letter-spacing:.05em;color:var(--bwh-clay,#B74F32);
-}
-.bwh .bwh-faq summary::after{
-  content:"+";justify-self:end;
-  font-weight:300;font-size:26px;line-height:1;color:var(--ink,#1A2332);
-  transform:none;position:static;
-}
-.bwh .bwh-faq details[open] summary::after{content:"−"}
-.bwh .bwh-faq details p{
-  margin:0;padding:0 62px 32px 70px;max-width:820px;
-  color:var(--ink2,#5A6472);font-size:15px;line-height:1.75;
-}
-@media (max-width:700px){
-  .bwh .bwh-faq summary{grid-template-columns:36px 1fr 26px;gap:10px;font-size:18px}
-  .bwh .bwh-faq details p{padding:0 0 28px 46px}
-}
-
-/* ===== 3. Densidade: respiro reduzido nas seções ===== */
-.bwh .bwh-sec{padding:clamp(56px,7vw,104px) 0}
+/* ===== Densidade: apenas margens internas dos blocos, sem tocar no ritmo ===== */
 .bwh .bwh-srlabel{margin-bottom:28px}
 .bwh .bwh-h2{margin-bottom:32px}
 .bwh .bwh-tl--goals{margin-bottom:36px}
 
-/* ===== 4. Projetos: cards com foto integral e texto sobreposto (padrão SOL) ===== */
-.bwh #projetos.bwh-sec{background:var(--bg-alt,#F3EEE5);border-top:1px solid var(--hair,#E4DFD6)}
-.bwh .bwh-projects{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
-.bwh .bwh-proj{position:relative;display:block;min-height:520px;overflow:hidden;background:#0B2342;color:#fff;text-decoration:none}
-.bwh .bwh-proj:nth-child(1){grid-column:span 5}
-.bwh .bwh-proj:nth-child(2){grid-column:span 4}
-.bwh .bwh-proj:nth-child(3){grid-column:span 3}
-.bwh .bwh-proj__media{position:absolute;inset:0;display:block;aspect-ratio:auto}
-.bwh .bwh-proj__media img{width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.2,.72,.2,1),filter .5s ease}
-.bwh .bwh-proj:hover .bwh-proj__media img{transform:scale(1.035);filter:saturate(1.05)}
-.bwh .bwh-proj__media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(6,18,31,.88) 100%)}
-.bwh .bwh-proj__count{display:none}
+/* ===== Projetos: mesma grade de cards da home (.bwa-pgrid) =====
+ * Foto 4/3 no topo, legenda abaixo, 3 colunas com gap 24px. A grade antiga
+ * usava spans 5/4/3 de 12 colunas fixados por nth-child, o que só funcionava
+ * com exatamente 3 cards — do 4º em diante o card colapsava para 1/12. */
+.bwh #projetos.bwh-sec{background:var(--bg-alt,#F3EEE5);border-top:1px solid var(--hair)}
+.bwh .bwh-projects{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.bwh .bwh-proj{position:relative;display:block;overflow:visible;background:transparent;color:inherit;text-decoration:none}
+.bwh .bwh-proj__media{position:relative;display:block;aspect-ratio:4/3;overflow:hidden;background:var(--dark)}
+.bwh .bwh-proj__media img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.72,.2,1)}
+.bwh .bwh-proj:hover .bwh-proj__media img{transform:scale(1.03)}
+.bwh .bwh-proj__count{position:absolute;z-index:2;top:14px;left:14px;
+  font-family:var(--fm);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.45)}
 .bwh .bwh-proj__t{
-  position:absolute;z-index:2;left:28px;right:28px;bottom:76px;
-  font-size:clamp(19px,1.7vw,25px);font-weight:600;line-height:1.2;letter-spacing:-.025em;color:#fff;
+  margin-top:14px;font-family:var(--fs);font-size:21px;font-weight:600;
+  line-height:1.2;letter-spacing:-.02em;color:var(--ink);
 }
-.bwh .bwh-proj__t em{font-style:normal;font-weight:600}
+.bwh .bwh-proj__t em{font-style:normal;font-weight:600;color:var(--ink2)}
 .bwh .bwh-proj__meta{
-  position:absolute;z-index:2;left:28px;right:28px;bottom:54px;
-  font-family:var(--fm,"JetBrains Mono",monospace);font-size:10px;font-weight:500;
-  letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.72);
+  margin-top:6px;
+  font-family:var(--fm);font-size:10px;font-weight:400;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);
 }
 .bwh .bwh-proj__go{
-  position:absolute;z-index:2;left:28px;right:auto;top:auto;bottom:24px;
-  background:none;padding:0;opacity:1;transform:none;
-  font-family:var(--fm,"JetBrains Mono",monospace);font-size:10px;font-weight:500;
-  letter-spacing:.08em;text-transform:uppercase;color:#fff;
+  position:static;display:inline-block;margin-top:4px;background:none;padding:0;opacity:1;transform:none;
+  font-family:var(--fm);font-size:10px;font-weight:400;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--navyacc);
+  text-decoration:underline;text-underline-offset:4px;
 }
-.bwh .bwh-proj:hover .bwh-proj__go{text-decoration:underline;text-underline-offset:4px}
-.bwh .bwh-projects-cta{margin-top:34px}
-.bwh .bwh-projects-cta .bwh-btn{
-  background:transparent;border:0;color:var(--navyacc,#11355B);padding:0;min-height:0;
-  font-family:var(--fm,"JetBrains Mono",monospace);font-size:11px;font-weight:600;
-  letter-spacing:.08em;text-transform:uppercase;
-}
-.bwh .bwh-projects-cta .bwh-btn:hover{
-  background:transparent;color:var(--navyacc,#11355B);border:0;transform:none;
-  text-decoration:underline;text-underline-offset:5px;
-}
-@media (max-width:1180px){
-  .bwh .bwh-proj{min-height:470px}
-}
+.bwh .bwh-projects-cta{margin-top:clamp(28px,3vw,40px)}
 @media (max-width:980px){
-  .bwh .bwh-projects{grid-template-columns:1fr 1fr}
-  .bwh .bwh-proj:nth-child(1),.bwh .bwh-proj:nth-child(2){grid-column:span 1}
-  .bwh .bwh-proj:nth-child(3){grid-column:1 / -1;min-height:420px}
+  .bwh .bwh-projects{grid-template-columns:repeat(2,1fr)}
 }
-@media (max-width:700px){
-  .bwh .bwh-projects{grid-template-columns:1fr;gap:12px}
-  .bwh .bwh-proj:nth-child(1),.bwh .bwh-proj:nth-child(2),.bwh .bwh-proj:nth-child(3){grid-column:auto;min-height:430px}
+@media (max-width:640px){
+  .bwh .bwh-projects{grid-template-columns:1fr;gap:28px}
 }
 
 /* ============================================================
@@ -130,9 +81,11 @@
   .bwh .bwh-pfshell::after{left:4px;width:26px}
 }
 
-/* 2. Tratamento editorial dos renders (padrão BWX) — NÃO aplicar no comparador */
+/* 2. Tratamento editorial dos renders (padrão BWX) — NÃO aplicar no comparador.
+ *    Os cards de projeto ficaram de fora: a home (.bwa-pgrid-media img) não
+ *    aplica filtro, e a dessaturação deixava a mesma foto com cor diferente
+ *    entre a home e o portfólio. */
 .bwh .bwh-hero__slide img{filter:saturate(.9) contrast(1.02)}
-.bwh .bwh-proj__media img{filter:saturate(.92) contrast(1.02)}
 
 /* 3. Objetivos Morar/Alugar/Vender — hover invertido com traço que cresce (padrão BWX) */
 .bwh .bwh-goal{
@@ -158,7 +111,6 @@
   .bwh .bwh-goal:hover{transform:none}
 }
 
-/* --- CTA final da home (.bwa-final) — garantir legibilidade sobre fundo escuro.
-   Ordem do CEO: título #fff, parágrafo rgba(255,255,255,.85). */
-.bwa-final .bwa-display{ color:#fff; }
-.bwa-final .bwa-lead{ color:rgba(255,255,255,.85); }
+/* As regras de .bwa-final que moravam aqui foram removidas: pertencem à home
+   e já existem em home-bwa.css (linhas 3905-3907), com o mesmo efeito. Mantê-las
+   num arquivo do DS interno criava uma segunda fonte de verdade para a home. */

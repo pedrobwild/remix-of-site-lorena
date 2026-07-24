@@ -8,14 +8,43 @@
  *   - shell padrão para o conteúdo das internas (padding vertical).
  * ========================================================================= */
 
-/* NAV inicia visível/escuro em página interna (não há hero navy). */
+/* Famílias tipográficas do DS .bwa. Estavam AUSENTES: as regras abaixo já
+   referenciavam var(--bwa-font-body)/var(--bwa-font-mono), mas nenhum arquivo
+   definia essas variáveis — os campos de formulário, chips e a lista editorial
+   caíam na fonte herdada em vez da fonte da marca. */
+:root {
+  --bwa-font-body: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --bwa-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* NAV inicia visível/escuro em página interna (não há hero navy).
+   Replica exatamente o estado `.bwa-scrolled` da home: papel translúcido com
+   blur e a hairline do ::after (não uma segunda borda).
+
+   Duas correções de 24/jul:
+   1. `color` só era trocado no wordmark e nos links, então o header continuava
+      com `color: var(--bwa-white)` herdado de `.bwa-nav`. O botão hambúrguer
+      usa `currentColor` na borda e nas três barras — ficava BRANCO sobre papel,
+      isto é, invisível em toda página interna no mobile.
+   2. O CTA do header ficava branco sobre papel; na home, quando a nav está
+      sobre papel (`.bwa-scrolled`), o botão é navy sólido com texto branco. */
 .bwa-nav.bwa-nav--internal {
-  background: var(--bwa-paper);
-  border-bottom: 1px solid rgba(11, 35, 66, 0.14);
+  color: var(--bwa-ink);
+  background: rgba(247, 244, 237, .94);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+.bwa-nav.bwa-nav--internal::after {
+  background: var(--bwa-line);
 }
 .bwa-nav.bwa-nav--internal .bwa-wordmark,
 .bwa-nav.bwa-nav--internal .bwa-nav-links a {
   color: var(--bwa-navy);
+}
+.bwa-nav.bwa-nav--internal .bwa-button {
+  color: var(--bwa-white);
+  background: var(--bwa-navy);
+  border-color: var(--bwa-navy);
 }
 
 /* Shell padrão de página interna (respiro top/bottom coerente com .bwa-section). */
@@ -37,7 +66,7 @@
 .bwa-portfolio-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(24px, 3vw, 40px);
+  gap: 24px;
 }
 @media (max-width: 960px) {
   .bwa-portfolio-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -48,7 +77,7 @@
 
 /* Lista editorial de conteúdos: linhas com bordas 1px. */
 .bwa-editorial-list {
-  border-top: 1px solid rgba(11, 35, 66, 0.18);
+  border-top: 1px solid var(--bwa-line);
 }
 .bwa-editorial-item {
   display: grid;
@@ -56,7 +85,7 @@
   gap: clamp(20px, 3vw, 40px);
   align-items: baseline;
   padding: clamp(28px, 3.6vw, 44px) 0;
-  border-bottom: 1px solid rgba(11, 35, 66, 0.18);
+  border-bottom: 1px solid var(--bwa-line);
   color: inherit;
   text-decoration: none;
   transition: opacity 200ms ease;
@@ -65,14 +94,16 @@
 .bwa-editorial-item .bwa-mono { color: var(--bwa-navy); opacity: 0.7; }
 .bwa-editorial-item h2 {
   font-family: var(--bwa-font-body);
-  font-weight: 300;
+  font-weight: 600;
   font-size: clamp(24px, 2.6vw, 34px);
-  line-height: 1.2;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
   margin: 0;
 }
 .bwa-editorial-item .bwa-editorial-arrow {
   font-family: var(--bwa-font-mono);
-  font-size: 13px;
+  font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -86,8 +117,9 @@
 .bwa-form-field > label,
 .bwa-form-field > legend {
   font-family: var(--bwa-font-mono);
-  font-size: 12px;
-  letter-spacing: 0.12em;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--bwa-navy);
 }
@@ -98,7 +130,7 @@
   line-height: 1.5;
   color: var(--bwa-navy);
   background: var(--bwa-paper);
-  border: 1px solid rgba(11, 35, 66, 0.24);
+  border: 1px solid var(--bwa-line);
   border-radius: 0;
   padding: 14px 16px;
   transition: border-color 160ms ease;
@@ -115,7 +147,8 @@
 }
 .bwa-form-error {
   font-family: var(--bwa-font-mono);
-  font-size: 11px;
+  font-size: 10px;
+  font-weight: 600;
   letter-spacing: 0.1em;
   color: #a12327;
 }
@@ -129,14 +162,16 @@
 .bwa-chip-row { display: flex; flex-wrap: wrap; gap: 10px; }
 .bwa-chip {
   font-family: var(--bwa-font-mono);
-  font-size: 12px;
-  letter-spacing: 0.1em;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  min-height: 42px;
   color: var(--bwa-navy);
   background: transparent;
-  border: 1px solid rgba(11, 35, 66, 0.24);
-  padding: 10px 16px;
-  border-radius: 999px;
+  border: 1px solid var(--bwa-line);
+  padding: 11px 16px;
+  border-radius: 0;
   cursor: pointer;
   transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
 }

@@ -6,12 +6,24 @@
  *
  * Tudo aqui é escopado sob `.bwh` — nada afeta páginas que não usam a classe.
  * Regras específicas da home (hero, workflow, proof, etc.) permanecem em `home.css`.
+ *
+ * ALINHAMENTO 24/jul: os valores abaixo espelham o design system canônico da
+ * homepage (`src/pages/home-bwa.css`, prefixo `.bwa`). Os tokens `--bwa-*` já
+ * vêm do `:root` daquela folha (injetada por `BwaNav`); os fallbacks mantêm a
+ * página coerente caso ela ainda não tenha carregado.
+ *   container  → .bwa-shell   | título → .bwa-title
+ *   eyebrow    → .bwa-label   | lead   → .bwa-lead
+ *   botões     → .bwa-button  | seção  → padding-block clamp(100px,12vw,190px)
  */
 
 .bwh {
   --bg:#FAF8F4; --bg-alt:#F3EEE5; --ink:#1A2332; --ink2:#5A6472;
-  --hair:#E4DFD6; --mono:#5A6472; --num:#11355B;
-  --dark:#0B2342; --dink:#FAF8F4; --dink2:#B9C2CE;
+  /* hairline idêntica à da home (--bwa-line) */
+  --hair:var(--bwa-line,rgba(23,27,34,.17));
+  --mono:#5A6472; --num:#11355B;
+  --dark:#0B2342; --dink:#FAF8F4;
+  /* texto de apoio sobre fundo escuro: mesmo valor da home */
+  --dink2:rgba(255,255,255,.72);
   --navyacc:#11355B; --navysoft:#E4EAF3;
   --fs:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   --fm:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -25,43 +37,101 @@
 .bwh a{color:inherit;text-decoration:none}
 .bwh em{font-style:italic;font-weight:300}
 
-.bwh-wrap{max-width:1280px;margin:0 auto;padding:0 32px}
-.bwh-mono{font-family:var(--fm);font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--mono)}
+/* Container: mesma geometria de .bwa-shell (nav e footer usam a mesma),
+   para que rótulos, títulos e cards alinhem com o wordmark do header. */
+.bwh-wrap{
+  width:min(calc(100% - (var(--bwa-gutter,clamp(20px,4vw,72px)) * 2)),var(--bwa-max,1540px));
+  max-width:none;
+  margin-inline:auto;
+  padding:0;
+}
+/* Eyebrow / rótulo mono — métricas de .bwa-label. */
+.bwh-mono{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--mono);line-height:1.2}
+/* Marcador quadrado da home; só nos rótulos que abrem seção. */
+.bwh-label{display:inline-flex;align-items:center;gap:10px;margin:0}
+.bwh-label::before{content:"";width:8px;height:8px;background:currentColor;flex:none}
+.bwh-label--accent{color:var(--navyacc)}
 .bwh-srlabel{display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:36px 0 64px;border-top:1px solid var(--hair)}
 .bwh-sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-.bwh-h2{font-weight:600;font-size:clamp(30px,4vw,56px);line-height:1.12;letter-spacing:-.02em;margin:0 0 32px;max-width:900px}
-.bwh-sec{padding:clamp(96px,11vw,150px) 0}
+/* Título de seção — mesma escala/peso/tracking de .bwa-title. */
+.bwh-h2{font-weight:600;font-size:clamp(38px,5.4vw,86px);line-height:1.05;letter-spacing:-.055em;
+  padding-bottom:.04em;margin:0 0 32px;max-width:900px}
+.bwh-h2 em{font-style:italic;font-weight:300;letter-spacing:-.065em}
+/* Texto de apoio — mesmos tokens de .bwa-lead dentro de .bwa-shell. */
+.bwh-lead{font-size:clamp(18px,1.25vw,20px);line-height:1.5;letter-spacing:-.012em;max-width:34rem;
+  margin:clamp(16px,2.4vw,32px) 0 0;color:rgba(26,35,50,.82)}
+.bwh-sec--dark .bwh-lead{color:rgba(255,255,255,.82)}
+/* Ritmo vertical das seções — igual ao da home (inclusive o passe de
+   densidade desktop de home-bwa.css, a partir de 821px). */
+.bwh-sec{padding:clamp(100px,12vw,190px) 0}
+@media (min-width:821px){
+  .bwh-sec{padding:clamp(56px,6vw,88px) 0}
+}
+/* A nav é fixa (min-height 76px) e a home só não precisa de folga porque começa
+   com o hero de tela cheia. Nas internas o primeiro bloco encostava — e entre
+   821px e ~1265px chegava a ficar POR BAIXO da barra. */
+.bwh main > .bwh-sec:first-child{padding-top:calc(76px + clamp(24px,3vw,40px))}
 .bwh-sec--alt{background:var(--bg-alt)}
 .bwh-sec--dark{background:var(--dark);color:var(--dink)}
-.bwh-sec--dark .bwh-srlabel{border-color:rgba(255,255,255,.12)}
+.bwh-sec--dark .bwh-srlabel{border-color:var(--bwa-white-line,rgba(255,255,255,.22))}
 .bwh-sec--dark .bwh-mono{color:var(--dink2)}
 .bwh-sec--dark em{color:var(--dink2)}
 
-.bwh .bwh-btn{display:inline-flex;align-items:center;gap:12px;padding:17px 28px;min-height:48px;
-  font-family:var(--fm);font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;
-  border:1px solid var(--ink);background:transparent;color:var(--ink);border-radius:0;cursor:pointer;
-  transition:background .2s,color .2s,border-color .2s}
-.bwh .bwh-btn:hover{background:var(--ink);color:var(--bg)}
-.bwh .bwh-btn .bwh-ar{display:inline-block;transition:transform .25s cubic-bezier(.22,1,.36,1);font-size:14px;line-height:1}
-.bwh .bwh-btn:hover .bwh-ar{transform:translateX(6px)}
-.bwh .bwh-btn--onphoto{border-color:#fff;color:#fff;background:transparent}
-.bwh .bwh-btn--onphoto:hover{background:#fff;color:var(--ink);border-color:#fff}
-.bwh .bwh-btn--invert{background:#FAF8F4;color:var(--dark);border-color:#FAF8F4}
-.bwh .bwh-btn--invert:hover{background:transparent;color:#FAF8F4;border-color:#FAF8F4}
-.bwh .bwh-btn--ghostdark{border-color:rgba(255,255,255,.35);color:var(--dink);background:transparent}
-.bwh .bwh-btn--ghostdark:hover{background:var(--dink);color:var(--dark);border-color:var(--dink)}
+@media (max-width:600px){
+  .bwh-h2{font-size:clamp(39px,12vw,60px)}
+}
+
+/* Botões — réplica de .bwa-button (+ variantes light/ghost da home). */
+.bwh .bwh-btn{min-height:54px;display:inline-flex;align-items:center;justify-content:center;gap:18px;
+  padding:15px 20px;
+  font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  border:1px solid var(--dark);background:var(--dark);color:#fff;border-radius:0;cursor:pointer;
+  transition:color .35s var(--bwa-ease,cubic-bezier(.22,1,.36,1)),
+    background .35s var(--bwa-ease,cubic-bezier(.22,1,.36,1)),
+    border-color .35s var(--bwa-ease,cubic-bezier(.22,1,.36,1)),
+    transform .35s var(--bwa-ease,cubic-bezier(.22,1,.36,1))}
+.bwh .bwh-btn:hover,.bwh .bwh-btn:focus-visible{background:var(--navyacc);border-color:var(--navyacc);color:#fff;transform:translateY(-2px)}
+.bwh .bwh-btn .bwh-ar{display:inline-block;line-height:1}
+/* onphoto / invert = .bwa-button-light (papel sólido sobre foto ou navy) */
+.bwh .bwh-btn--onphoto,
+.bwh .bwh-btn--invert{background:#fff;color:var(--dark);border-color:#fff}
+/* hover herdado de .bwa-button:hover na home: accent navy + texto branco */
+.bwh .bwh-btn--onphoto:hover,.bwh .bwh-btn--onphoto:focus-visible,
+.bwh .bwh-btn--invert:hover,.bwh .bwh-btn--invert:focus-visible{background:var(--navyacc);border-color:var(--navyacc);color:#fff}
+/* ghostdark = .bwa-button-ghost sobre fundo escuro */
+.bwh .bwh-btn--ghostdark{background:transparent;color:#fff;border-color:var(--bwa-white-line,rgba(255,255,255,.22))}
+.bwh .bwh-btn--ghostdark:hover,.bwh .bwh-btn--ghostdark:focus-visible{background:transparent;color:#fff;border-color:#fff}
 .bwh .bwh-btn--fill{background:var(--dark);color:#fff;border-color:var(--dark)}
-.bwh .bwh-btn--fill:hover{background:transparent;color:var(--dark);border-color:var(--dark)}
+
+/* Link de texto — .bwa-text-link */
+.bwh .bwh-textlink{display:inline-flex;align-items:center;gap:14px;padding-bottom:6px;
+  border-bottom:1px solid currentColor;font-family:var(--fm);font-size:11px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;transition:gap .3s var(--bwa-ease,cubic-bezier(.22,1,.36,1))}
+.bwh .bwh-textlink:hover,.bwh .bwh-textlink:focus-visible{gap:22px}
 
 /* Tag âmbar (avisos provisórios / disclaimers curtos) */
 .bwh-tag{display:inline-block;background:#FAEEDA;color:#854F0B;font-family:var(--fm);font-size:10px;letter-spacing:.06em;padding:3px 8px;border-radius:2px;width:fit-content}
 
-/* FAQ acordeão (hairlines + marcador +/− em var(--navyacc)) */
-.bwh-faq{margin-top:8px;border-top:1px solid var(--hair)}
-.bwh-faq details{border-bottom:1px solid var(--hair)}
-.bwh-faq summary{list-style:none;cursor:pointer;padding:28px 0;display:flex;justify-content:space-between;align-items:baseline;gap:24px;
-  font-weight:500;font-size:clamp(17px,1.7vw,22px);letter-spacing:-.01em}
+/* FAQ acordeão — réplica do .bwa-faq-list da home (numeração mono em
+   var(--navyacc), pergunta em 500/-.04em e ícone +/− em caixa de 36px). */
+.bwh-faq{counter-reset:bwhfaq;margin-top:8px;border-top:1px solid var(--hair)}
+.bwh-faq details{border-bottom:1px solid var(--hair);counter-increment:bwhfaq}
+.bwh-faq summary{list-style:none;cursor:pointer;padding:28px 0;
+  display:grid;grid-template-columns:58px minmax(0,1fr) 42px;align-items:center;gap:18px;
+  font-weight:500;font-size:clamp(22px,2.4vw,39px);line-height:1.15;letter-spacing:-.04em}
 .bwh-faq summary::-webkit-details-marker{display:none}
-.bwh-faq summary::after{content:"+";font-family:var(--fm);font-size:22px;color:var(--navyacc)}
-.bwh-faq details[open] summary::after{content:"−"}
-.bwh-faq details p{padding:0 0 28px;margin:0;color:var(--ink2);font-size:16px;line-height:1.65;max-width:800px}
+.bwh-faq summary::before{content:counter(bwhfaq,decimal-leading-zero);
+  font-family:var(--fm);font-size:10px;font-weight:400;letter-spacing:.08em;color:var(--navyacc)}
+.bwh-faq summary::after{content:"";justify-self:end;width:36px;height:36px;
+  border:1px solid var(--hair);
+  background-image:linear-gradient(var(--ink),var(--ink)),linear-gradient(var(--ink),var(--ink));
+  background-size:13px 1px,1px 13px;background-position:center,center;background-repeat:no-repeat;
+  transition:background-size .25s ease}
+.bwh-faq details[open] summary::after{background-size:13px 1px,1px 0}
+.bwh-faq details p{padding:0 52px 32px 76px;margin:0;color:var(--ink2);
+  font-size:clamp(16px,1.3vw,20px);line-height:1.7;max-width:900px}
+@media (max-width:700px){
+  .bwh-faq summary{grid-template-columns:36px minmax(0,1fr) 30px;gap:12px;font-size:20px}
+  .bwh-faq summary::after{width:30px;height:30px}
+  .bwh-faq details p{padding:0 0 28px 48px}
+}

@@ -142,7 +142,10 @@ export default function BewildProjectPage({ slug }: Props) {
     return (
       <div className="bwh bw-detail">
         <BwaNav />
-        <div className="pd-wrap"><div className="pd-skeleton" aria-busy="true" aria-live="polite" /></div>
+        <main id="main" tabIndex={-1}>
+          <div className="pd-wrap"><div className="pd-skeleton" aria-busy="true" aria-live="polite" /></div>
+        </main>
+        <BwaFooter />
       </div>
     );
   }
@@ -153,9 +156,12 @@ export default function BewildProjectPage({ slug }: Props) {
     return (
       <div className="bwh bw-detail">
         <BwaNav />
-        <div className="pd-wrap pd-errorbox">
-          <p>Não conseguimos carregar este projeto agora. <a href="/portfolio">Voltar ao portfólio</a>.</p>
-        </div>
+        <main id="main" tabIndex={-1}>
+          <div className="pd-wrap pd-errorbox">
+            <p>Não conseguimos carregar este projeto agora. <a href="/portfolio">Voltar ao portfólio</a>.</p>
+          </div>
+        </main>
+        <BwaFooter />
       </div>
     );
   }
@@ -172,6 +178,8 @@ export default function BewildProjectPage({ slug }: Props) {
       </div>
       <div className="bw-detail__titleblock" aria-hidden="true">BEWILD<br /><b>BW—003 / PORTFÓLIO</b><br />SÃO PAULO · BR</div>
       <div className="bw-detail__sheetno" aria-hidden="true">FICHA DE OBRA</div>
+
+      <main id="main" tabIndex={-1}>
 
       {/* HEADER */}
       <section className="pd-head">
@@ -289,6 +297,7 @@ export default function BewildProjectPage({ slug }: Props) {
           <div className="pd-cta__rea">+150 studios entregues em São Paulo</div>
         </div>
       </section>
+      </main>
 
       <BwaFooter />
 

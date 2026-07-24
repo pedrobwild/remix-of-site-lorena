@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSeo, breadcrumbJsonLd, organizationJsonLd } from "../lib/useSeo";
-import { openCookiePreferences } from "../lib/cookieConsent";
 import { useSiteSettings } from "../lib/useSiteSettings";
+import BwaNav from "@/components/BwaNav";
+import BwaFooter from "@/components/BwaFooter";
 import { CONTACT } from "../components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
@@ -114,51 +115,7 @@ export default function DiagnosticoPage() {
     ensureLinkOnce("stylesheet", FONTS_HREF, "data-bwa-diag-fonts");
     const unmountCss = mountDiagStylesheet();
 
-    /* Nav + menu mobile — mesma lógica do script do mockup, com guard
-       idempotente (StrictMode monta 2x). */
-    const body = document.body;
-    if ((body as any).__dgInited) return () => { unmountCss(); };
-    (body as any).__dgInited = true;
-
-    const nav = document.querySelector<HTMLElement>("[data-nav]");
-    const menuButton = document.querySelector<HTMLButtonElement>("[data-menu-button]");
-    const mobileMenu = document.querySelector<HTMLElement>("[data-mobile-menu]");
-
-    const updateNav = () => nav?.classList.toggle("dg-scrolled", window.scrollY > 20);
-    updateNav();
-    window.addEventListener("scroll", updateNav, { passive: true });
-
-    const onMenuClick = () => {
-      const open = !body.classList.contains("dg-menu-open");
-      body.classList.toggle("dg-menu-open", open);
-      menuButton?.setAttribute("aria-expanded", String(open));
-      menuButton?.setAttribute("aria-label", open ? "Fechar menu" : "Abrir menu");
-    };
-    menuButton?.addEventListener("click", onMenuClick);
-    const linkHandlers: Array<[HTMLAnchorElement, () => void]> = [];
-    mobileMenu?.querySelectorAll("a").forEach((a) => {
-      const h = () => {
-        body.classList.remove("dg-menu-open");
-        menuButton?.setAttribute("aria-expanded", "false");
-      };
-      (a as HTMLAnchorElement).addEventListener("click", h);
-      linkHandlers.push([a as HTMLAnchorElement, h]);
-    });
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && body.classList.contains("dg-menu-open")) {
-        body.classList.remove("dg-menu-open");
-        menuButton?.setAttribute("aria-expanded", "false");
-      }
-    };
-    document.addEventListener("keydown", onKey);
-
     return () => {
-      window.removeEventListener("scroll", updateNav);
-      menuButton?.removeEventListener("click", onMenuClick);
-      linkHandlers.forEach(([a, h]) => a.removeEventListener("click", h));
-      document.removeEventListener("keydown", onKey);
-      body.classList.remove("dg-menu-open");
-      delete (body as any).__dgInited;
       unmountCss();
     };
   }, []);
@@ -169,43 +126,12 @@ export default function DiagnosticoPage() {
 
   return (
     <>
-      <a className="dg-skip" href="#dg-ficha">Pular para a ficha</a>
+      {/* Nav compartilhado (mesmo componente da home e das demais internas).
+          A nav própria .dg-nav foi removida: era o único header do site com
+          wordmark de 20px, tracking .2em nos links e CTA navy sólido. */}
+      <BwaNav />
 
-      <header className="dg-nav" data-nav>
-        <div className="dg-shell dg-nav-inner">
-          <a className="dg-wordmark" href="/" aria-label="Bewild, início">Bewild</a>
-          <nav className="dg-nav-links" aria-label="Navegação principal">
-            <a href="/#certeza">O contrato</a>
-            <a href="/#historia">A história</a>
-            <a href="/#projetos">Projetos</a>
-            <a href="/#workflow">Bwild Workflow</a>
-            <a href="/#prova">Prova</a>
-            <a href="/portfolio">Portfólio</a>
-            <a href="/conteudos">Conteúdos</a>
-            <a href="/faq">FAQ</a>
-          </nav>
-          <a className="dg-button" href="#dg-ficha">Preencher a ficha <span aria-hidden="true">↓</span></a>
-          <button className="dg-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false" data-menu-button><span></span></button>
-        </div>
-      </header>
-
-      <div className="dg-mobile-menu" data-mobile-menu>
-        <nav aria-label="Navegação mobile">
-          <a href="/#certeza">O contrato</a>
-          <a href="/#historia">A história</a>
-          <a href="/#projetos">Projetos</a>
-          <a href="/#oque-fazemos">O que fazemos</a>
-          <a href="/#workflow">Bwild Workflow</a>
-          <a href="/#prova">Prova</a>
-          <a href="/#objetivos">Morar, alugar ou vender</a>
-          <a href="/portfolio">Portfólio</a>
-          <a href="/conteudos">Conteúdos</a>
-          <a href="/faq">FAQ</a>
-          <a href="#dg-ficha">Preencher a ficha</a>
-        </nav>
-      </div>
-
-      <main id="conteudo">
+      <main id="main" tabIndex={-1}>
         {/* 01 · HERO + FICHA */}
         <section className="dg-hero" aria-label="Solicitar Orçamento">
           <div className="dg-shell dg-hero-grid">
@@ -324,43 +250,7 @@ export default function DiagnosticoPage() {
         </section>
       </main>
 
-      <footer className="dg-footer">
-        <div className="dg-shell">
-          <div className="dg-footer-main">
-            <div>
-              <div className="dg-footer-wordmark">Bewild</div>
-              <p>Built by the wild ones. Be wild.</p>
-              <p>Reforma completa de studios em São Paulo. Projeto, obra, marcenaria, mobiliário e entrega num processo único.</p>
-            </div>
-            <div>
-              <h3>Navegação</h3>
-              <nav>
-                <a href="/#certeza">O contrato</a>
-                <a href="/#historia">A história</a>
-                <a href="/portfolio">Portfólio</a>
-                <a href="/conteudos">Conteúdos</a>
-                <a href="/faq">FAQ</a>
-                <a href="/diagnostico">Diagnóstico</a>
-              </nav>
-            </div>
-            <div className="dg-footer-contact">
-              <h3>Contato</h3>
-              <div>
-                <span>WhatsApp</span>
-                <span>Instagram</span>
-                <span>LinkedIn</span>
-                <span>e-mail</span>
-                <a href="/privacidade">Política de privacidade</a>
-                <button type="button" className="bwa-footer-cookie-prefs" onClick={openCookiePreferences}>Preferências de cookies</button>
-              </div>
-            </div>
-          </div>
-          <div className="dg-footer-bottom">
-            <p style={{ margin: 0 }}>BEWILD · SÃO PAULO, BRASIL · CNPJ 47.350.338/0001-37 · RESP. TÉCNICO · THIAGO DANTAS DO AMOR · CAU A162437-7</p>
-            <span>© 2026 Bewild</span>
-          </div>
-        </div>
-      </footer>
+      <BwaFooter />
     </>
   );
 }

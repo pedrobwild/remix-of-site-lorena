@@ -4,8 +4,7 @@ import { routes, navigate } from "../lib/useHashRoute";
 import { logNotFound, lookupActiveRedirect } from "../lib/notFoundLog";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
-import "@/styles/home.css";
-import "@/styles/conteudos.css";
+/* Só post.css — ver nota em PrivacidadePage.tsx. */
 import "@/styles/post.css";
 
 /**
@@ -92,15 +91,18 @@ export default function NotFoundPage() {
               O link pode estar incorreto, a página pode ter sido movida ou
               a URL pode conter um erro de digitação.
             </p>
+            {/* CTAs no padrão .bwa-button da home (antes usavam .btn/.btn-cyan/
+                .btn-primary, classes que só existem escopadas em .bw-lp — na
+                prática os dois links renderizavam como texto puro). */}
             <div
-              className="ct-cta__btns"
-              style={{ justifyContent: "flex-start", marginTop: 18 }}
+              className="pt-cta__act"
+              style={{ justifyContent: "flex-start", marginTop: 28 }}
             >
-              <a href={routes.home} className="btn btn-cyan">
-                Voltar à página inicial <span className="arrow">→</span>
+              <a href={routes.home} className="pt-btn">
+                Voltar à página inicial <span className="ar" aria-hidden="true">→</span>
               </a>
-              <a href={routes.diagnostico} className="btn btn-primary">
-                Solicitar Orçamento
+              <a href={routes.diagnostico} className="pt-btn outline">
+                Solicitar Orçamento <span className="ar" aria-hidden="true">→</span>
               </a>
             </div>
           </div>
@@ -108,23 +110,25 @@ export default function NotFoundPage() {
 
         <section className="pt-body-section">
           <div className="container">
-            <div className="pt-body">
+            <div className="pt-rel-head">
+              <span className="n">002</span>
               <h2>Para onde ir agora</h2>
-              <ul>
-                <li>
-                  <a href={routes.portfolio}>Ver reformas entregues</a>
-                </li>
-                <li>
-                  <a href={routes.blog}>Conteúdos sobre studios e short stay</a>
-                </li>
-                <li>
-                  <a href={routes.faq}>Perguntas frequentes</a>
-                </li>
-                <li>
-                  <a href={routes.privacidade}>Política de privacidade</a>
-                </li>
-              </ul>
+              <span className="ln" />
             </div>
+            <ul className="pt-404-links">
+              <li>
+                <a href={routes.portfolio}>Ver reformas entregues</a>
+              </li>
+              <li>
+                <a href={routes.blog}>Conteúdos sobre studios e short stay</a>
+              </li>
+              <li>
+                <a href={routes.faq}>Perguntas frequentes</a>
+              </li>
+              <li>
+                <a href={routes.privacidade}>Política de privacidade</a>
+              </li>
+            </ul>
           </div>
         </section>
       </main>

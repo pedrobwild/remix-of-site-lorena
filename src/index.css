@@ -5216,9 +5216,9 @@ textarea.admin-field__input {
   z-index: 80;
   padding: 12px 16px calc(12px + env(safe-area-inset-bottom)) 16px;
   background: #0B2342;
-  color: #F2ECE1;
-  border-top: 1px solid rgba(95, 178, 221, 0.25);
-  box-shadow: 0 -18px 40px -24px rgba(4, 14, 28, 0.55);
+  color: #fff;
+  border-top: 1px solid var(--bwa-white-line, rgba(255, 255, 255, 0.22));
+  box-shadow: 0 -18px 40px -24px rgba(11, 35, 66, 0.55);
   animation: cookieBannerIn 0.35s cubic-bezier(.2,.7,.2,1) both;
 }
 
@@ -5228,7 +5228,8 @@ textarea.admin-field__input {
 }
 
 .cookie-banner__inner {
-  max-width: 1200px;
+  /* mesma caixa de .bwa-shell, para alinhar com nav e footer */
+  width: min(calc(100% - (var(--bwa-gutter, clamp(20px, 4vw, 72px)) * 2)), var(--bwa-max, 1540px));
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -5246,23 +5247,23 @@ textarea.admin-field__input {
   font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
   font-weight: 600;
   font-size: 11px;
-  letter-spacing: .1em;
+  letter-spacing: .15em;
   text-transform: uppercase;
   color: #fff;
   margin: 0 0 4px;
 }
 
 .cookie-banner__desc {
-  font-family: "Inter", system-ui, sans-serif;
-  font-size: 13px;
-  line-height: 1.45;
-  color: rgba(242, 236, 225, 0.9);
+  font-family: "Manrope", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
   margin: 0;
   max-width: 68ch;
 }
 
 .cookie-banner__link {
-  color: #5FB2DD;
+  color: #E4EAF3;
   text-decoration: underline;
   text-underline-offset: 3px;
   transition: color 0.2s ease;
@@ -5279,11 +5280,11 @@ textarea.admin-field__input {
   font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
   font-weight: 600;
   font-size: 11px;
-  letter-spacing: .1em;
+  letter-spacing: .08em;
   text-transform: uppercase;
-  padding: 10px 18px;
-  min-height: 40px;
-  border: 1.5px solid transparent;
+  padding: 11px 16px;
+  min-height: 42px;
+  border: 1px solid transparent;
   background: transparent;
   color: #fff;
   cursor: pointer;
@@ -5297,24 +5298,25 @@ textarea.admin-field__input {
 }
 
 .cookie-banner__btn--ghost {
-  border-color: rgba(242, 236, 225, 0.6);
-  color: #F2ECE1;
+  border-color: var(--bwa-white-line, rgba(255, 255, 255, 0.22));
+  color: #fff;
   background: transparent;
 }
 .cookie-banner__btn--ghost:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: #F2ECE1;
+  background: transparent;
+  border-color: #fff;
 }
 
+/* = .bwa-button-light da home: papel sólido, texto navy */
 .cookie-banner__btn--solid {
-  background: #0B2342;
-  border-color: #F2ECE1;
-  color: #fff;
+  background: #fff;
+  border-color: #fff;
+  color: #0B2342;
 }
 .cookie-banner__btn--solid:hover {
-  background: #F2ECE1;
-  color: #0B2342;
-  border-color: #F2ECE1;
+  background: #11355B;
+  color: #fff;
+  border-color: #11355B;
 }
 
 @media (max-width: 720px) {
