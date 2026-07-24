@@ -460,7 +460,7 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
       aria-label="Formulário de diagnóstico"
     >
       <div className="dg-ficha-head">
-        <span className="dg-label">Ficha do seu studio</span>
+        <span className="dg-label">Ficha do seu apartamento</span>
         <span className="dg-mono">BW—002</span>
       </div>
 
