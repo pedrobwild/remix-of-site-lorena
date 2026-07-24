@@ -318,7 +318,7 @@ export default function DiagnosticoPage() {
               <a className="dg-button dg-button-light" href="#dg-ficha">Preencher a ficha <span aria-hidden="true">↑</span></a>
               <a className="dg-textlink" href={waUrl} target="_blank" rel="noopener noreferrer">Falar no WhatsApp →</a>
             </div>
-            <p className="dg-mono">Atendimento de gente real · retorno rápido · 150+ studios entregues</p>
+            <p className="dg-mono">Atendimento de gente real · retorno rápido · +80 obras entregues</p>
           </div>
         </section>
       </main>
