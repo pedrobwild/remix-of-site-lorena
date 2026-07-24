@@ -83,9 +83,9 @@ export default function DiagnosticoPage() {
   const { settings } = useSiteSettings();
 
   useSeo({
-    title: "Diagnóstico | Bewild",
+    title: "Solicitar orçamento | Bewild",
     description:
-      "Preencha a ficha do seu apartamento e receba a leitura do potencial, o escopo da reforma e os próximos passos. Sem custo e sem compromisso.",
+      "Envie os dados do seu apartamento e receba uma leitura do potencial do imóvel, do escopo e dos próximos passos. Sem custo e sem compromisso.",
     canonicalPath: "/diagnostico",
     ogType: "website",
     jsonLd: settings
