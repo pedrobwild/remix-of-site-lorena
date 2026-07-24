@@ -61,10 +61,12 @@ export default function BewildPortfolioPage() {
       : undefined,
   });
 
+  const withCover = useMemo(() => projects.filter((p) => !!p.cover_url), [projects]);
   const filtered = useMemo(() => {
-    if (filter === "all") return projects;
-    return projects.filter((p) => p.project_type === filter);
-  }, [projects, filter]);
+    if (filter === "all") return withCover;
+    return withCover.filter((p) => p.project_type === filter);
+  }, [withCover, filter]);
+  const showChips = withCover.length >= 4;
 
   const waUrl = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
     "Olá! Vim pelo portfólio e quero um diagnóstico do meu studio.",
