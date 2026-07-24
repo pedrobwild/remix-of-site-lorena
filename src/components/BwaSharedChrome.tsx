@@ -157,7 +157,7 @@ export default function BwaSharedChrome({ children }: { children: ReactNode }) {
                 <span>LinkedIn</span>
                 <span>e-mail</span>
                 <a href="/privacidade">Política de privacidade</a>
-                <span>Preferências de cookies</span>
+                <button type="button" className="bwa-footer-cookie-prefs" onClick={openCookiePreferences}>Preferências de cookies</button>
               </div>
             </div>
           </div>
