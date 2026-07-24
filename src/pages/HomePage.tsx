@@ -1,12 +1,14 @@
 import { useEffect } from "react";
 import homeBwaCssUrl from "./home-bwa.css?url";
 import { HOME_BWA_HTML } from "./home-bwa-body";
+import { useSeo } from "@/lib/useSeo";
 // @ts-expect-error - JS module, no types
 import { initHomeBwa } from "./home-bwa-script.js";
 
-const TITLE = "Bewild | Projetamos e reformamos por completo";
+const TITLE =
+  "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro";
 const DESCRIPTION =
-  "A Bewild projeta e reforma apartamentos por completo, reunindo arquitetura, design, engenharia, gestão, tecnologia, marcenaria e entrega em uma única responsabilidade.";
+  "Projeto, obra, marcenaria e mobília num único contrato, com preço e prazo fechados. Você não vira gerente de obra.";
 const THEME_COLOR = "#0B2342";
 const FONTS_HREF =
   "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&display=swap";
