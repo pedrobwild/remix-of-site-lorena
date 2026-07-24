@@ -191,7 +191,7 @@ export default function BewildConteudosPage() {
               <a href="/diagnostico" className="ct-btn cyan">Solicitar Orçamento <span className="ar"><IconArrow /></span></a>
               <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="ct-btn ghost">Falar no WhatsApp</a>
             </div>
-            <div className="ct-cta__rea">+150 studios entregues em São Paulo</div>
+            <div className="ct-cta__rea">+80 obras entregues · São Paulo e Rio de Janeiro</div>
           </div>
         </section>
       </div>
