@@ -47,8 +47,8 @@ export default function FaqPage() {
               Perguntas frequentes.
             </h1>
             <p style={{ color: "var(--ink2)", fontSize: "clamp(16px,1.5vw,19px)", lineHeight: 1.55, maxWidth: 640, margin: 0 }}>
-              As dúvidas mais comuns de quem vai transformar um studio em ativo de short stay:
-              prazo, garantia, processo e o que está incluso, da obra à entrega pronta pra anunciar.
+              As dúvidas mais comuns de quem vai reformar um apartamento com a Bewild:
+              prazo, garantia, processo e o que está incluso, da obra à entrega das chaves.
             </p>
           </div>
         </section>

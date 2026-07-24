@@ -61,10 +61,12 @@ export default function BewildPortfolioPage() {
       : undefined,
   });
 
+  const withCover = useMemo(() => projects.filter((p) => !!p.cover_url), [projects]);
   const filtered = useMemo(() => {
-    if (filter === "all") return projects;
-    return projects.filter((p) => p.project_type === filter);
-  }, [projects, filter]);
+    if (filter === "all") return withCover;
+    return withCover.filter((p) => p.project_type === filter);
+  }, [withCover, filter]);
+  const showChips = withCover.length >= 4;
 
   const waUrl = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
     "Olá! Vim pelo portfólio e quero um diagnóstico do meu studio.",
@@ -88,7 +90,7 @@ export default function BewildPortfolioPage() {
               className="bwh-h2"
               style={{ fontSize: "clamp(38px, 5.6vw, 78px)", marginBottom: 24 }}
             >
-              Studios entregues, prontos pra <em>render.</em>
+              Apartamentos entregues, prontos pra <em>morar, alugar ou vender.</em>
             </h1>
             <p
               style={{
@@ -99,9 +101,10 @@ export default function BewildPortfolioPage() {
                 margin: "0 0 32px",
               }}
             >
-              Cada projeto aqui recebeu estudo próprio de layout, marcenaria, iluminação e acabamento, pensado pra performar no short stay. Do imóvel cru à foto do anúncio.
+              Cada projeto aqui recebeu estudo próprio de layout, marcenaria, iluminação e acabamento, pensado pro uso que o apartamento precisa sustentar. Do imóvel cru à entrega das chaves.
             </p>
 
+            {showChips && (
             <div
               className="bwh-pf-chips"
               role="group"
@@ -119,6 +122,7 @@ export default function BewildPortfolioPage() {
                 </button>
               ))}
             </div>
+            )}
           </div>
         </section>
 

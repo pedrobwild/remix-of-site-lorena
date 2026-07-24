@@ -228,7 +228,7 @@ export default function DiagnosticoPage() {
                   </ol>
                 </div>
 
-                <p className="dg-trust">150+ studios entregues em São Paulo</p>
+                <p className="dg-trust">+80 obras entregues</p>
 
                 <TestimonialCard waUrl={waUrl} />
               </div>
@@ -263,7 +263,7 @@ export default function DiagnosticoPage() {
               <h2 id="dg-num-title" className="dg-title">Já fizemos isso mais de 150 vezes.</h2>
             </div>
             <div className="dg-cells">
-              <div className="dg-cell dg-stat"><b>150<em>+</em></b><span>studios entregues em São Paulo</span></div>
+              <div className="dg-cell dg-stat"><b>+80</b><span>obras entregues</span></div>
               <div className="dg-cell dg-stat"><b>60<em>dias úteis</em></b><span>referência de prazo de obra, a partir de</span></div>
               <div className="dg-cell dg-stat"><b>5<em>anos</em></b><span>garantia de obra e marcenaria</span></div>
               <div className="dg-cell dg-stat"><b>1<em>contrato</em></b><span>preço e prazo fechados antes de a obra começar</span></div>
@@ -318,7 +318,7 @@ export default function DiagnosticoPage() {
               <a className="dg-button dg-button-light" href="#dg-ficha">Preencher a ficha <span aria-hidden="true">↑</span></a>
               <a className="dg-textlink" href={waUrl} target="_blank" rel="noopener noreferrer">Falar no WhatsApp →</a>
             </div>
-            <p className="dg-mono">Atendimento de gente real · retorno rápido · 150+ studios entregues</p>
+            <p className="dg-mono">Atendimento de gente real · retorno rápido · +80 obras entregues</p>
           </div>
         </section>
       </main>
@@ -460,7 +460,7 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
       aria-label="Formulário de diagnóstico"
     >
       <div className="dg-ficha-head">
-        <span className="dg-label">Ficha do seu studio</span>
+        <span className="dg-label">Ficha do seu apartamento</span>
         <span className="dg-mono">BW—002</span>
       </div>
 

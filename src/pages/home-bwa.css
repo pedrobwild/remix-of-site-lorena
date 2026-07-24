@@ -584,7 +584,7 @@
 
     .bwa-hero-caption span {
       font-family: "JetBrains Mono", monospace;
-      font-size: 9px;
+      font-size: 10px;
       letter-spacing: .1em;
       text-transform: uppercase;
       text-align: right;
@@ -1013,7 +1013,7 @@
 
     .bwa-story-stage-caption span {
       font-family: "JetBrains Mono", monospace;
-      font-size: 9px;
+      font-size: 10px;
       letter-spacing: .1em;
       text-transform: uppercase;
     }
@@ -1095,7 +1095,7 @@
       margin-bottom: 10px;
       color: var(--bwa-accent);
       font-family: "JetBrains Mono", monospace;
-      font-size: 9px;
+      font-size: 10px;
       letter-spacing: .08em;
       text-transform: uppercase;
     }
@@ -1242,7 +1242,7 @@
       gap: 5px;
       color: rgba(255, 255, 255, .58);
       font-family: "JetBrains Mono", monospace;
-      font-size: 9px;
+      font-size: 10px;
       letter-spacing: .08em;
       text-transform: uppercase;
       text-align: right;
@@ -1479,7 +1479,7 @@
       color: rgba(255, 255, 255, .5);
       content: attr(data-index);
       font-family: "JetBrains Mono", monospace;
-      font-size: 9px;
+      font-size: 10px;
       letter-spacing: .07em;
     }
 
@@ -1524,7 +1524,7 @@
     .bwa-included-item span {
       color: rgba(255, 255, 255, .48);
       font-family: "JetBrains Mono", monospace;
-      font-size: 9px;
+      font-size: 10px;
       letter-spacing: .08em;
       text-transform: uppercase;
     }
@@ -1633,7 +1633,7 @@
     .bwa-workflow-principle span {
       color: var(--bwa-accent);
       font-family: "JetBrains Mono", monospace;
-      font-size: 9px;
+      font-size: 10px;
       letter-spacing: .08em;
       text-transform: uppercase;
     }
@@ -1720,7 +1720,7 @@
       display: flex;
       gap: 10px;
       font-family: "JetBrains Mono", monospace;
-      font-size: 8px;
+      font-size: 10px;
       letter-spacing: .05em;
       text-transform: uppercase;
     }
@@ -1742,7 +1742,7 @@
       gap: 7px;
       color: #11355B;
       font-family: "JetBrains Mono", monospace;
-      font-size: 8px;
+      font-size: 10px;
       text-transform: uppercase;
     }
 
@@ -1777,7 +1777,7 @@
     .bwa-portal-project span {
       color: var(--bwa-ink-soft);
       font-family: "JetBrains Mono", monospace;
-      font-size: 8px;
+      font-size: 10px;
       text-transform: uppercase;
     }
 
@@ -1800,7 +1800,7 @@
       margin-bottom: 7px;
       color: var(--bwa-ink-soft);
       font-family: "JetBrains Mono", monospace;
-      font-size: 7px;
+      font-size: 10px;
       letter-spacing: .05em;
       text-transform: uppercase;
     }
@@ -1841,7 +1841,7 @@
       gap: 14px;
       color: var(--bwa-ink-soft);
       font-family: "JetBrains Mono", monospace;
-      font-size: 7px;
+      font-size: 10px;
       text-transform: uppercase;
     }
 
@@ -1912,7 +1912,7 @@
     .bwa-task span {
       color: var(--bwa-ink-soft);
       font-family: "JetBrains Mono", monospace;
-      font-size: 7px;
+      font-size: 10px;
       text-transform: uppercase;
     }
 
@@ -1941,7 +1941,7 @@
       margin: 15px 0 0;
       color: rgba(255, 255, 255, .48);
       font-family: "JetBrains Mono", monospace;
-      font-size: 9px;
+      font-size: 10px;
       letter-spacing: .05em;
       text-transform: uppercase;
     }
@@ -1980,7 +1980,7 @@
       margin-bottom: 36px;
       color: var(--bwa-ink-soft);
       font-family: "JetBrains Mono", monospace;
-      font-size: 9px;
+      font-size: 10px;
       letter-spacing: .08em;
       text-transform: uppercase;
     }
@@ -2106,7 +2106,7 @@
       margin-top: 10px;
       color: var(--bwa-ink-soft);
       font-family: "JetBrains Mono", monospace;
-      font-size: 8px;
+      font-size: 10px;
       letter-spacing: .04em;
       text-transform: uppercase;
     }
@@ -2436,7 +2436,7 @@
       margin: 0 0 22px;
       color: rgba(255, 255, 255, .42);
       font-family: "JetBrains Mono", monospace;
-      font-size: 9px;
+      font-size: 10px;
       letter-spacing: .09em;
       text-transform: uppercase;
     }
@@ -2466,18 +2466,18 @@
     .bwa-footer-tech {
       max-width: 900px;
       margin: 0;
-      color: rgba(255, 255, 255, .42);
+      color: rgba(255, 255, 255, .7);
       font-family: "JetBrains Mono", monospace;
-      font-size: 8px;
+      font-size: 10px;
       line-height: 1.7;
       letter-spacing: .06em;
       text-transform: uppercase;
     }
 
     .bwa-footer-copy {
-      color: rgba(255, 255, 255, .42);
+      color: rgba(255, 255, 255, .7);
       font-family: "JetBrains Mono", monospace;
-      font-size: 8px;
+      font-size: 10px;
       letter-spacing: .06em;
       text-transform: uppercase;
     }
@@ -3346,7 +3346,7 @@
     .bwa-wf2-question > span {
       color: rgba(255, 255, 255, .48);
       font-family: "JetBrains Mono", monospace;
-      font-size: 9px;
+      font-size: 10px;
       letter-spacing: .09em;
       text-transform: uppercase;
       transition: color .35s ease;
@@ -3479,7 +3479,7 @@
       border-bottom: 1px solid rgba(26, 35, 50, .13);
       color: var(--bwa-ink-soft);
       font-family: "JetBrains Mono", monospace;
-      font-size: 8px;
+      font-size: 10px;
       line-height: 1.45;
       letter-spacing: .06em;
       text-transform: uppercase;
@@ -3519,7 +3519,7 @@
     .bwa-wf2-update span {
       color: rgba(255, 255, 255, .58);
       font-family: "JetBrains Mono", monospace;
-      font-size: 8px;
+      font-size: 10px;
       letter-spacing: .08em;
       text-transform: uppercase;
     }
@@ -3569,7 +3569,7 @@
     .bwa-wf2-close > span {
       color: rgba(255, 255, 255, .48);
       font-family: "JetBrains Mono", monospace;
-      font-size: 9px;
+      font-size: 10px;
       line-height: 1.5;
       letter-spacing: .08em;
       text-align: right;

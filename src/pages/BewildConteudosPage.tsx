@@ -56,7 +56,7 @@ export default function BewildConteudosPage() {
   useSeo({
     title: "Conteúdos Bewild · mercado, reforma e operação de studios em SP",
     description:
-      "Quem investe em studio decide melhor informado. Mercado, regras, reforma e operação de short stay em São Paulo, explicados para quem investe.",
+      "Quem reforma decide melhor informado. Mercado, regras, reforma e operação de short stay em São Paulo, explicados para quem investe.",
     canonicalPath: "/conteudos",
     ogType: "website",
     ogImage: featured?.cover_image ?? posts.find((p) => p.cover_image)?.cover_image ?? undefined,
@@ -84,7 +84,7 @@ export default function BewildConteudosPage() {
         <section className="ct-hero">
           <div className="ct-wrap">
             <p className="ct-eyb">Conteúdos · inteligência de short stay</p>
-            <h1>Quem investe em studio decide <span className="accent">melhor informado.</span></h1>
+            <h1>Quem reforma decide <span className="accent">melhor informado.</span></h1>
             <p className="ct-lead">Mercado, regras, reforma e operação de short stay em São Paulo, explicados pra quem investe e não quer errar a compra.</p>
           </div>
         </section>
@@ -191,7 +191,7 @@ export default function BewildConteudosPage() {
               <a href="/diagnostico" className="ct-btn cyan">Solicitar Orçamento <span className="ar"><IconArrow /></span></a>
               <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="ct-btn ghost">Falar no WhatsApp</a>
             </div>
-            <div className="ct-cta__rea">+150 studios entregues em São Paulo</div>
+            <div className="ct-cta__rea">+80 obras entregues · São Paulo e Rio de Janeiro</div>
           </div>
         </section>
       </div>
