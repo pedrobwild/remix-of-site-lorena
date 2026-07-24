@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from "react";
+import { openCookiePreferences } from "@/lib/cookieConsent";
 import homeBwaCssUrl from "../pages/home-bwa.css?url";
 import bwaInternalCssUrl from "../pages/bwa-internal.css?url";
 // @ts-expect-error - JS module sem tipos
