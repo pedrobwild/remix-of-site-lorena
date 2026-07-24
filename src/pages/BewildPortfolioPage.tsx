@@ -104,6 +104,7 @@ export default function BewildPortfolioPage() {
               Cada projeto aqui recebeu estudo próprio de layout, marcenaria, iluminação e acabamento, pensado pro uso que o apartamento precisa sustentar. Do imóvel cru à entrega das chaves.
             </p>
 
+            {showChips && (
             <div
               className="bwh-pf-chips"
               role="group"
@@ -121,6 +122,7 @@ export default function BewildPortfolioPage() {
                 </button>
               ))}
             </div>
+            )}
           </div>
         </section>
 
