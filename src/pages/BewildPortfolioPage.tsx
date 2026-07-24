@@ -88,7 +88,7 @@ export default function BewildPortfolioPage() {
               className="bwh-h2"
               style={{ fontSize: "clamp(38px, 5.6vw, 78px)", marginBottom: 24 }}
             >
-              Studios entregues, prontos pra <em>render.</em>
+              Apartamentos entregues, prontos pra <em>morar, alugar ou vender.</em>
             </h1>
             <p
               style={{
@@ -99,7 +99,7 @@ export default function BewildPortfolioPage() {
                 margin: "0 0 32px",
               }}
             >
-              Cada projeto aqui recebeu estudo próprio de layout, marcenaria, iluminação e acabamento, pensado pra performar no short stay. Do imóvel cru à foto do anúncio.
+              Cada projeto aqui recebeu estudo próprio de layout, marcenaria, iluminação e acabamento, pensado pro uso que o apartamento precisa sustentar. Do imóvel cru à entrega das chaves.
             </p>
 
             <div
