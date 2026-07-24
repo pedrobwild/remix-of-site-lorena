@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { openCookiePreferences } from "@/lib/cookieConsent";
 
 /**
  * BwaFooter — Footer .bwa unificado, idêntico ao da home. Usado em toda
@@ -55,7 +56,7 @@ export default function BwaFooter() {
               <span>LinkedIn</span>
               <span>e-mail</span>
               <a href="/privacidade">Política de privacidade</a>
-              <span>Preferências de cookies</span>
+              <button type="button" className="bwa-footer-cookie-prefs" onClick={openCookiePreferences}>Preferências de cookies</button>
             </div>
             <div className="bwa-footer-seals">
               <div id="ra-verified-seal" ref={raRef} />

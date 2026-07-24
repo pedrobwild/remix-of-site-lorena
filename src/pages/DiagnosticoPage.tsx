@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSeo, breadcrumbJsonLd, organizationJsonLd } from "../lib/useSeo";
+import { openCookiePreferences } from "../lib/cookieConsent";
 import { useSiteSettings } from "../lib/useSiteSettings";
 import { CONTACT } from "../components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
@@ -83,9 +84,9 @@ export default function DiagnosticoPage() {
   const { settings } = useSiteSettings();
 
   useSeo({
-    title: "Diagnóstico | Bewild",
+    title: "Solicitar orçamento | Bewild",
     description:
-      "Preencha a ficha do seu apartamento e receba a leitura do potencial, o escopo da reforma e os próximos passos. Sem custo e sem compromisso.",
+      "Envie os dados do seu apartamento e receba uma leitura do potencial do imóvel, do escopo e dos próximos passos. Sem custo e sem compromisso.",
     canonicalPath: "/diagnostico",
     ogType: "website",
     jsonLd: settings
@@ -350,7 +351,7 @@ export default function DiagnosticoPage() {
                 <span>LinkedIn</span>
                 <span>e-mail</span>
                 <a href="/privacidade">Política de privacidade</a>
-                <span>Preferências de cookies</span>
+                <button type="button" className="bwa-footer-cookie-prefs" onClick={openCookiePreferences}>Preferências de cookies</button>
               </div>
             </div>
           </div>

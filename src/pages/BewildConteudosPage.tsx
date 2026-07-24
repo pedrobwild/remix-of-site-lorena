@@ -54,9 +54,9 @@ export default function BewildConteudosPage() {
   const [filter, setFilter] = useState<FilterValue>("all");
 
   useSeo({
-    title: "Conteúdos Bewild · mercado, reforma e operação de studios em SP",
+    title: "Conteúdos | Bewild",
     description:
-      "Quem reforma decide melhor informado. Mercado, regras, reforma e operação de short stay em São Paulo, explicados para quem investe.",
+      "Guias e análises sobre reforma, locação e decisão imobiliária, direto da operação da Bewild.",
     canonicalPath: "/conteudos",
     ogType: "website",
     ogImage: featured?.cover_image ?? posts.find((p) => p.cover_image)?.cover_image ?? undefined,

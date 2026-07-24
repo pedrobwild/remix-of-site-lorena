@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import "@/styles/bwa-footer-shared.css";
+import { openCookiePreferences } from "@/lib/cookieConsent";
 
 const WHATSAPP_URL =
   "https://wa.me/5511911906183?text=Ol%C3%A1%2C%20quero%20um%20diagn%C3%B3stico%20para%20meu%20studio";
@@ -53,7 +54,7 @@ export default function SiteFooter(_props: Record<string, unknown>) {
               <a href={LINKEDIN_URL} target="_blank" rel="noreferrer">LinkedIn</a>
               <a href={EMAIL_URL}>e-mail</a>
               <a href="/privacidade">Política de privacidade</a>
-              <span>Preferências de cookies</span>
+              <button type="button" className="bwa-footer-cookie-prefs" onClick={openCookiePreferences}>Preferências de cookies</button>
               <div className="bwa-footer-seals">
                 <div id="ra-verified-seal"></div>
                 <img

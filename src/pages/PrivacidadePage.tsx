@@ -17,9 +17,8 @@ export default function PrivacidadePage() {
   const lastUpdated = "21 de abril de 2026";
 
   useSeo({
-    title: "Política de Privacidade · Bewild",
-    description:
-      "Política de Privacidade e tratamento de dados pessoais do site da Bewild, em conformidade com a LGPD (Lei nº 13.709/2018).",
+    title: "Política de privacidade | Bewild",
+    description: "Como a Bewild coleta, usa e protege seus dados.",
     canonicalPath: "/privacidade",
     ogType: "website",
     jsonLd: settings

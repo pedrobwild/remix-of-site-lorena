@@ -103,8 +103,8 @@ export default function BewildProjectPage({ slug }: Props) {
   const scopeItems = useMemo(() => (project?.scope ?? []).filter(Boolean), [project]);
 
   useSeo({
-    title: project ? project.seo_title || `${project.title} · Portfólio Bewild` : "Projeto · Bewild",
-    description: project?.seo_description || project?.summary || "Studio reformado pela Bewild em São Paulo.",
+    title: project ? project.seo_title || `${project.title} | Bewild` : "Projeto | Bewild",
+    description: project?.seo_description || project?.summary || "Apartamento reformado pela Bewild em São Paulo ou Rio de Janeiro.",
     canonicalPath: `/portfolio/${slug}`,
     ogType: "article",
     ogImage: project?.og_image_url || project?.cover_url || undefined,

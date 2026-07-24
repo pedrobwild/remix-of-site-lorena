@@ -5,6 +5,7 @@ import MetaPixel from "./components/MetaPixel";
 import RootErrorBoundary from "./components/RootErrorBoundary";
 
 import { useHashRoute, installLinkInterceptor, type Route } from "./lib/useHashRoute";
+import { openCookiePreferences } from "./lib/cookieConsent";
 import { initAnalytics } from "./lib/analytics";
 import { initGa4, trackPageView } from "./lib/ga4";
 import { onConsentChange, isConsentAccepted } from "./lib/cookieConsent";
@@ -44,9 +45,22 @@ function Root() {
     const off = onConsentChange((v) => {
       if (v === "accepted") initGa4();
     });
+
+    // Delegação global para "Preferências de cookies" (inclui o link
+    // dentro do footer da home injetado via dangerouslySetInnerHTML).
+    const onDocClick = (e: MouseEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (t?.closest?.(".bwa-footer-cookie-prefs")) {
+        e.preventDefault();
+        openCookiePreferences();
+      }
+    };
+    document.addEventListener("click", onDocClick);
+
     return () => {
       cleanup?.();
       off();
+      document.removeEventListener("click", onDocClick);
     };
   }, []);
 

@@ -109,3 +109,8 @@
 .bwa-footer-seals{margin-top:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 
 .bwa-footer-ssl{height:44px;width:auto;display:block}
+
+/* Botão "Preferências de cookies" no footer — visual de link. */
+.bwa-footer-cookie-prefs{background:none;border:0;padding:0;margin:0;color:inherit;font:inherit;text-align:left;cursor:pointer;text-decoration:none}
+.bwa-footer-cookie-prefs:hover{text-decoration:underline;text-underline-offset:3px}
+.bwa-footer-cookie-prefs:focus-visible{outline:2px solid #5FB2DD;outline-offset:2px}
