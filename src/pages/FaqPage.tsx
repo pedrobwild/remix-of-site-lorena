@@ -17,9 +17,9 @@ export default function FaqPage() {
   const { items } = useFaq();
 
   useSeo({
-    title: "FAQ — reforma turn-key de studios | Bewild",
+    title: "Perguntas frequentes | Bewild",
     description:
-      "Dúvidas sobre reforma turn-key de studios para short stay em São Paulo: prazos, garantias, processo do projeto à entrega e contratação.",
+      "Prazo, garantia de 5 anos, contrato fechado e como funciona a reforma completa da Bewild.",
 
     canonicalPath: "/faq",
     ogType: "website",
