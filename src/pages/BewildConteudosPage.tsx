@@ -56,7 +56,7 @@ export default function BewildConteudosPage() {
   useSeo({
     title: "Conteúdos Bewild · mercado, reforma e operação de studios em SP",
     description:
-      "Quem investe em studio decide melhor informado. Mercado, regras, reforma e operação de short stay em São Paulo, explicados para quem investe.",
+      "Quem reforma decide melhor informado. Mercado, regras, reforma e operação de short stay em São Paulo, explicados para quem investe.",
     canonicalPath: "/conteudos",
     ogType: "website",
     ogImage: featured?.cover_image ?? posts.find((p) => p.cover_image)?.cover_image ?? undefined,
