@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { openCookiePreferences } from "@/lib/cookieConsent";
 
 /**
  * BwaFooter — Footer .bwa unificado, idêntico ao da home. Usado em toda
