@@ -228,7 +228,7 @@ export default function DiagnosticoPage() {
                   </ol>
                 </div>
 
-                <p className="dg-trust">150+ studios entregues em São Paulo</p>
+                <p className="dg-trust">+80 obras entregues</p>
 
                 <TestimonialCard waUrl={waUrl} />
               </div>
