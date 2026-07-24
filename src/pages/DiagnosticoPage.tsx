@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSeo, breadcrumbJsonLd, organizationJsonLd } from "../lib/useSeo";
+import { openCookiePreferences } from "../lib/cookieConsent";
 import { useSiteSettings } from "../lib/useSiteSettings";
 import { CONTACT } from "../components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
