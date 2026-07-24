@@ -54,7 +54,7 @@ export default function SiteFooter(_props: Record<string, unknown>) {
               <a href={LINKEDIN_URL} target="_blank" rel="noreferrer">LinkedIn</a>
               <a href={EMAIL_URL}>e-mail</a>
               <a href="/privacidade">Política de privacidade</a>
-              <span>Preferências de cookies</span>
+              <button type="button" className="bwa-footer-cookie-prefs" onClick={openCookiePreferences}>Preferências de cookies</button>
               <div className="bwa-footer-seals">
                 <div id="ra-verified-seal"></div>
                 <img
