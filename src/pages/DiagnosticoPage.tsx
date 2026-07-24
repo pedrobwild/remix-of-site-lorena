@@ -263,7 +263,7 @@ export default function DiagnosticoPage() {
               <h2 id="dg-num-title" className="dg-title">Já fizemos isso mais de 150 vezes.</h2>
             </div>
             <div className="dg-cells">
-              <div className="dg-cell dg-stat"><b>150<em>+</em></b><span>studios entregues em São Paulo</span></div>
+              <div className="dg-cell dg-stat"><b>+80</b><span>obras entregues</span></div>
               <div className="dg-cell dg-stat"><b>60<em>dias úteis</em></b><span>referência de prazo de obra, a partir de</span></div>
               <div className="dg-cell dg-stat"><b>5<em>anos</em></b><span>garantia de obra e marcenaria</span></div>
               <div className="dg-cell dg-stat"><b>1<em>contrato</em></b><span>preço e prazo fechados antes de a obra começar</span></div>
