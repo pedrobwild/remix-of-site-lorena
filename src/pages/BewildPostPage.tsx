@@ -119,10 +119,10 @@ export default function BewildPostPage({ slug }: Props) {
 
   useSeo({
     title: post
-      ? post.meta_title || `${post.title} · Bewild`
+      ? post.meta_title || `${post.title} | Bewild`
       : notFound
-        ? "Conteúdo não encontrado · Bewild"
-        : "Carregando · Bewild",
+        ? "Conteúdo não encontrado | Bewild"
+        : "Carregando | Bewild",
     description:
       post?.meta_description ||
       post?.excerpt ||
