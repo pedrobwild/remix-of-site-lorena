@@ -75,10 +75,15 @@ function mountHomeStylesheet(): () => void {
 }
 
 export default function HomePage() {
+  // SEO por rota (title/description/canonical + gating de trackers por consentimento).
+  useSeo({
+    title: TITLE,
+    description: DESCRIPTION,
+    canonicalPath: "/",
+    ogType: "website",
+  });
+
   useEffect(() => {
-    const previousTitle = document.title;
-    document.title = TITLE;
-    ensureMeta("description", DESCRIPTION);
     ensureMeta("theme-color", THEME_COLOR);
 
     PRECONNECTS.forEach((p) =>
@@ -92,7 +97,6 @@ export default function HomePage() {
     initHomeBwa();
 
     return () => {
-      document.title = previousTitle;
       unmountCss();
     };
   }, []);
