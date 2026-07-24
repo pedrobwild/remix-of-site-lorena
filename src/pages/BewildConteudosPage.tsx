@@ -84,7 +84,7 @@ export default function BewildConteudosPage() {
         <section className="ct-hero">
           <div className="ct-wrap">
             <p className="ct-eyb">Conteúdos · inteligência de short stay</p>
-            <h1>Quem investe em studio decide <span className="accent">melhor informado.</span></h1>
+            <h1>Quem reforma decide <span className="accent">melhor informado.</span></h1>
             <p className="ct-lead">Mercado, regras, reforma e operação de short stay em São Paulo, explicados pra quem investe e não quer errar a compra.</p>
           </div>
         </section>
