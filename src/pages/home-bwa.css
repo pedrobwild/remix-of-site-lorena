@@ -2482,15 +2482,7 @@
       text-transform: uppercase;
     }
 
-    .bwa-mobile-cta {
-      position: fixed;
-      right: 12px;
-      bottom: 12px;
-      left: 12px;
-      z-index: 900;
-      display: none;
-      box-shadow: 0 16px 50px rgba(11, 35, 66, .24);
-    }
+    .bwa-mobile-cta { display: none; }
 
     .bwa-reveal {
       opacity: 0;
