@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { openCookiePreferences } from "@/lib/cookieConsent";
+import { CONTACT, whatsappHref } from "@/components/landing/content";
 
 /**
  * BwaFooter — Footer .bwa unificado, idêntico ao da home. Usado em toda
@@ -29,8 +30,8 @@ export default function BwaFooter() {
             <div className="bwa-footer-wordmark">Bewild</div>
             <p>Built by the wild ones. Be wild.</p>
             <p>
-              Reforma completa de studios em São Paulo. Projeto, obra, marcenaria,
-              mobiliário e entrega num processo único.
+              Reforma completa de apartamentos em São Paulo e no Rio de Janeiro.
+              Projeto, obra, marcenaria, mobiliário e entrega num processo único.
             </p>
           </div>
 
@@ -39,7 +40,7 @@ export default function BwaFooter() {
             <nav>
               <a href="/#certeza">O contrato</a>
               <a href="/#historia">A história</a>
-              <a href="/#oque-fazemos">O que fazemos</a>
+              <a href="/#certeza">O que fazemos</a>
               <a href="/#como-funciona">Como funciona</a>
               <a href="/portfolio">Portfólio</a>
               <a href="/conteudos">Conteúdos</a>
@@ -50,11 +51,12 @@ export default function BwaFooter() {
 
           <div className="bwa-footer-column">
             <h3>Contato</h3>
+            {/* Links reais, como no rodapé da home — antes eram <span> inertes. */}
             <div>
-              <span>WhatsApp</span>
-              <span>Instagram</span>
-              <span>LinkedIn</span>
-              <span>e-mail</span>
+              <a href={whatsappHref("Olá, quero um diagnóstico para meu studio")} target="_blank" rel="noreferrer">WhatsApp</a>
+              <a href={CONTACT.instagram} target="_blank" rel="noreferrer">Instagram</a>
+              <a href={CONTACT.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+              <a href={`mailto:${CONTACT.email}`}>e-mail</a>
               <a href="/privacidade">Política de privacidade</a>
               <button type="button" className="bwa-footer-cookie-prefs" onClick={openCookiePreferences}>Preferências de cookies</button>
             </div>

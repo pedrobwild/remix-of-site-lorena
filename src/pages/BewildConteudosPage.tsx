@@ -80,6 +80,7 @@ export default function BewildConteudosPage() {
         <div className="bw-conteudos__titleblock" aria-hidden="true">BEWILD<br /><b>BW—004 / CONTEÚDOS</b><br />SÃO PAULO · BR</div>
         <div className="bw-conteudos__sheetno" aria-hidden="true">SHEET 04 / PUBLICAÇÕES</div>
 
+        <main id="main" tabIndex={-1}>
         {/* HERO */}
         <section className="ct-hero">
           <div className="ct-wrap">
@@ -194,6 +195,7 @@ export default function BewildConteudosPage() {
             <div className="ct-cta__rea">+80 obras entregues · São Paulo e Rio de Janeiro</div>
           </div>
         </section>
+        </main>
       </div>
 
       <BwaFooter />

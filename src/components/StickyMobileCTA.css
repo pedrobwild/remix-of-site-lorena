@@ -1,12 +1,16 @@
 /* StickyMobileCTA — barra de CTA fixa no rodapé, somente mobile.
    Global e auto-contido: funciona em qualquer página, sem depender
-   do escopo .bw-home ou .bw-diag. */
+   do escopo .bw-home ou .bw-diag.
+
+   ALINHAMENTO 24/jul: usava o ciano #2a78a5, fundo #071427, Inter 15px e
+   canto de 2px — nenhum desses valores existe na homepage. Agora o botão é
+   o .bwa-button da home (navy sólido, mono 11/600 .08em, canto reto). */
 .bw-sticky-cta{display:none}
 @media(max-width:767px){
   .bw-sticky-cta{
     display:block;position:fixed;left:0;right:0;bottom:0;z-index:70;
     padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));
-    background:linear-gradient(to top,#071427 62%,rgba(7,20,39,0));
+    background:linear-gradient(to top,#0B2342 62%,rgba(11,35,66,0));
     transform:translateY(130%);
     transition:transform .42s cubic-bezier(.22,1,.36,1);
     pointer-events:none;
@@ -14,16 +18,18 @@
   }
   .bw-sticky-cta.is-visible{transform:translateY(0);pointer-events:auto}
   .bw-sticky-cta .btn{
-    display:inline-flex;align-items:center;justify-content:center;gap:9px;
-    width:100%;line-height:1;box-sizing:border-box;min-height:48px;
-    font-family:'Inter',system-ui,sans-serif;font-weight:600;font-size:15px;
-    padding:16px 22px;border-radius:2px;
-    background:#2a78a5;color:#fff;text-decoration:none;
-    border:0;cursor:pointer;transition:background .2s;
+    display:inline-flex;align-items:center;justify-content:center;gap:18px;
+    width:100%;line-height:1;box-sizing:border-box;min-height:54px;
+    font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    padding:15px 20px;border-radius:0;
+    background:#fff;color:#0B2342;text-decoration:none;
+    border:1px solid #fff;cursor:pointer;
+    transition:background .35s cubic-bezier(.22,1,.36,1),border-color .35s cubic-bezier(.22,1,.36,1),color .35s cubic-bezier(.22,1,.36,1);
   }
-  .bw-sticky-cta .btn:hover{background:#3485b8}
-  .bw-sticky-cta .arrow{flex:none;transition:transform .2s}
-  .bw-sticky-cta .btn:hover .arrow{transform:translateX(4px)}
+  .bw-sticky-cta .btn:hover{background:#11355B;border-color:#11355B;color:#fff}
+  .bw-sticky-cta .arrow{flex:none;transition:transform .25s cubic-bezier(.22,1,.36,1)}
+  .bw-sticky-cta .btn:hover .arrow{transform:translateX(6px)}
 }
 @media(max-width:767px) and (prefers-reduced-motion:reduce){
   .bw-sticky-cta{transition:none}

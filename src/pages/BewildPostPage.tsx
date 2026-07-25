@@ -139,6 +139,7 @@ export default function BewildPostPage({ slug }: Props) {
     return (
       <div className="bw-post">
         <BwaNav />
+        <main id="main" tabIndex={-1}>
         <section className="pt-hero">
           <div className="container">
             <div className="pt-cat">404</div>
@@ -151,6 +152,7 @@ export default function BewildPostPage({ slug }: Props) {
             </button>
           </div>
         </section>
+        </main>
         <BwaFooter />
       </div>
     );
@@ -161,12 +163,15 @@ export default function BewildPostPage({ slug }: Props) {
     return (
       <div className="bw-post">
         <BwaNav />
-        <section className="pt-hero" aria-busy="true" aria-live="polite">
-          <div className="container">
-            <div className="pt-cat">Carregando…</div>
-            <h1 className="pt-title">&nbsp;</h1>
-          </div>
-        </section>
+        <main id="main" tabIndex={-1}>
+          <section className="pt-hero" aria-busy="true" aria-live="polite">
+            <div className="container">
+              <div className="pt-cat">Carregando…</div>
+              <h1 className="pt-title">&nbsp;</h1>
+            </div>
+          </section>
+        </main>
+        <BwaFooter />
       </div>
     );
   }
@@ -181,7 +186,7 @@ export default function BewildPostPage({ slug }: Props) {
       <div className="bw-post__titleblock" aria-hidden="true">BEWILD<br /><b>BW—004 / CONTEÚDOS</b><br />SÃO PAULO · BR</div>
       <div className="bw-post__sheetno" aria-hidden="true">ARTIGO · {bewildCategoryLabel(post.category)}</div>
 
-      <article>
+      <article id="main" tabIndex={-1}>
         {/* HERO */}
         <section className="pt-hero">
           <div className="container">

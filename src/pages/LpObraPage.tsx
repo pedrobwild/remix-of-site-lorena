@@ -287,8 +287,10 @@ export default function LpObraPage() {
       </div>
 
       <footer className="lp-foot">
-        BEWILD · SÃO PAULO · BR
+        {/* Mesma linha técnica do rodapé da home e das páginas internas. */}
+        BEWILD · SÃO PAULO, BRASIL · CNPJ 47.350.338/0001-37 · RESP. TÉCNICO · THIAGO DANTAS DO AMOR · CAU A162437-7
         <span>Portal de acompanhamento · Bwild Workflow</span>
+        <span>© 2026 Bewild</span>
       </footer>
     </div>
   );

@@ -13,7 +13,7 @@ const FONTS_HREF =
  * <head> (para vencer preflight/temas legados) e inicializa initBwaNav
  * (idempotente). Usado em toda página pública fora da home.
  */
-export default function BwaNav({ variant = "internal" }: { variant?: "internal" | "dark-text" } = {}) {
+export default function BwaNav() {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -55,6 +55,11 @@ export default function BwaNav({ variant = "internal" }: { variant?: "internal" 
     return () => {
       document.documentElement.classList.remove("bwa-home-root");
       document.body.classList.remove("bwa-home-root");
+      // As folhas .bwa são mantidas de propósito no <head>: remover e recriar o
+      // <link> a cada navegação entre internas abre uma janela de repaint sem
+      // estilo. O vazamento de paleta que isso poderia causar está coberto na
+      // origem — /diagnostico injeta a própria folha por último e as LPs
+      // definem o fundo com `body:has(.bw-lp)`, de especificidade maior.
     };
   }, []);
 
@@ -62,10 +67,7 @@ export default function BwaNav({ variant = "internal" }: { variant?: "internal" 
     <div ref={ref}>
       <a className="bwa-skip" href="#main">Pular para o conteúdo</a>
 
-      <header
-        className={`bwa-nav bwa-nav--internal${variant === "dark-text" ? " bwa-nav--dark-text" : ""}`}
-        data-nav
-      >
+      <header className="bwa-nav bwa-nav--internal" data-nav>
         <div className="bwa-shell bwa-nav-inner">
           <a className="bwa-wordmark" href="/" aria-label="Bewild, início">Bewild</a>
 
@@ -102,7 +104,7 @@ export default function BwaNav({ variant = "internal" }: { variant?: "internal" 
           <a href="/#certeza">O contrato</a>
           <a href="/#historia">A história</a>
           <a href="/#projetos">Projetos</a>
-          <a href="/#oque-fazemos">O que fazemos</a>
+          <a href="/#certeza">O que fazemos</a>
           <a href="/#workflow">Bwild Workflow</a>
           <a href="/#prova">Prova</a>
           <a href="/#objetivos">Morar, alugar ou vender</a>

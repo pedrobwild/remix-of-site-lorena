@@ -40,13 +40,14 @@ export default function FaqPage() {
       <BwaNav />
 
       <main id="main" tabIndex={-1}>
-        <section className="bwh-sec" style={{ paddingTop: "clamp(56px,7vw,96px)", paddingBottom: 0 }}>
+        {/* padding-top vem do .bwh-sec:first-child (folga da nav fixa) */}
+        <section className="bwh-sec" style={{ paddingBottom: 0 }}>
           <div className="bwh-wrap">
-            <p className="bwh-mono" style={{ color: "var(--navyacc)", margin: "0 0 20px" }}>Antes de investir</p>
-            <h1 className="bwh-h2" style={{ fontSize: "clamp(38px,5.6vw,78px)", marginBottom: 24 }}>
+            <p className="bwh-mono bwh-label bwh-label--accent" style={{ margin: "0 0 20px" }}>Antes de investir</p>
+            <h1 className="bwh-h2" style={{ marginBottom: 24 }}>
               Perguntas frequentes.
             </h1>
-            <p style={{ color: "var(--ink2)", fontSize: "clamp(16px,1.5vw,19px)", lineHeight: 1.55, maxWidth: 640, margin: 0 }}>
+            <p className="bwh-lead" style={{ margin: 0 }}>
               As dúvidas mais comuns de quem vai reformar um apartamento com a Bewild:
               prazo, garantia, processo e o que está incluso, da obra à entrega das chaves.
             </p>
@@ -54,9 +55,9 @@ export default function FaqPage() {
         </section>
 
         <section className="bwh-sec" style={{ paddingTop: "clamp(48px,6vw,80px)" }}>
-          <div className="bwh-wrap" style={{ maxWidth: 960 }}>
+          <div className="bwh-wrap">
             <div className="bwh-srlabel">
-              <span className="bwh-mono">001 · Tudo que perguntam antes de começar</span>
+              <span className="bwh-mono bwh-label bwh-label--accent">001 · Tudo que perguntam antes de começar</span>
             </div>
             <div className="bwh-faq" itemScope itemType="https://schema.org/FAQPage">
               {items.map((item, i) => (
@@ -74,11 +75,11 @@ export default function FaqPage() {
 
       <section className="bwh-sec bwh-sec--dark" aria-label="Solicitar Orçamento">
         <div className="bwh-wrap" style={{ maxWidth: 900, textAlign: "center" }}>
-          <p className="bwh-mono" style={{ color: "var(--dink2)", margin: "0 0 24px" }}>Diagnóstico gratuito · sem compromisso</p>
+          <p className="bwh-mono bwh-label" style={{ color: "var(--dink2)", margin: "0 0 24px", justifyContent: "center" }}>Diagnóstico gratuito · sem compromisso</p>
           <h2 className="bwh-h2" style={{ margin: "0 auto 24px", color: "#fff" }}>
             Não encontrou sua resposta? <em>Vamos conversar.</em>
           </h2>
-          <p style={{ color: "var(--dink2)", fontSize: "clamp(16px,1.5vw,19px)", lineHeight: 1.55, maxWidth: 560, margin: "0 auto 32px" }}>
+          <p className="bwh-lead" style={{ margin: "0 auto 32px" }}>
             Manda os dados do seu studio e a gente devolve uma leitura de escopo, projeto e próximos passos.
           </p>
           <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>

@@ -2,8 +2,10 @@ import { useSeo, breadcrumbJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
-import "@/styles/home.css";
-import "@/styles/conteudos.css";
+/* Só post.css: a página usa exclusivamente as classes .bw-post/.pt-*.
+   home.css (folha legada da home antiga) e conteudos.css entravam no bundle
+   global sem serem usadas aqui e sobrescreviam .bwh-wrap/.bwh-sec/.bwh-btn
+   em telas <=720px, quebrando o alinhamento do FAQ e do portfólio. */
 import "@/styles/post.css";
 
 /**
