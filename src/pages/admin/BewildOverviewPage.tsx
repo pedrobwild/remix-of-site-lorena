@@ -752,7 +752,7 @@ function Kpi({
 function LeadStatusTag({ status }: { status: string | null }) {
   const s = (status ?? "novo").toLowerCase();
   let cls = "bw-admin__tag";
-  let label = status ?? "novo";
+  const label = status ?? "novo";
   if (s === "novo") cls += " bw-admin__tag--info";
   else if (s === "contatado" || s === "qualificado") cls += " bw-admin__tag--ok";
   else if (s === "descartado") cls += " bw-admin__tag--off";
