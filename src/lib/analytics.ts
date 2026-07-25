@@ -32,7 +32,9 @@ type EventType =
   | "outbound_click"
   | "scroll_depth"
   | "form_submit"
-  | "engagement_time";
+  | "engagement_time"
+  | "consent_accept"
+  | "consent_decline";
 
 type TrackPayload = {
   path?: string;
@@ -410,6 +412,29 @@ export function track(eventType: EventType, payload?: TrackPayload): void {
     // o caso "usuário ainda não decidiu" quanto "recusou".
     if (!isConsentAccepted()) return;
     sendEvent(buildRow(eventType, payload), false);
+  } catch {
+    /* never throw */
+  }
+}
+
+/**
+ * Registra a escolha de consentimento (aceite ou recusa) para trilha de
+ * auditoria LGPD. NÃO passa pelo gate `isConsentAccepted()` — o próprio
+ * evento é o registro da decisão do titular (art. 8º §2º da LGPD: ônus
+ * da prova do controlador). Envia payload mínimo, sem UTM/referrer.
+ */
+export function logConsentAudit(
+  action: "accepted" | "declined",
+  source: string = "banner"
+): void {
+  try {
+    if (isAdminContext()) return;
+    const eventType: EventType =
+      action === "accepted" ? "consent_accept" : "consent_decline";
+    const row = buildRow(eventType, {
+      value: { action, source, ts: new Date().toISOString() },
+    });
+    sendEvent(row, false);
   } catch {
     /* never throw */
   }
