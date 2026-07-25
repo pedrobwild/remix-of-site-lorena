@@ -32,7 +32,9 @@ type EventType =
   | "outbound_click"
   | "scroll_depth"
   | "form_submit"
-  | "engagement_time";
+  | "engagement_time"
+  | "consent_accept"
+  | "consent_decline";
 
 type TrackPayload = {
   path?: string;
