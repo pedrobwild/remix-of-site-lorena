@@ -6,7 +6,7 @@ import RootErrorBoundary from "./components/RootErrorBoundary";
 
 import { useHashRoute, installLinkInterceptor, type Route } from "./lib/useHashRoute";
 import { openCookiePreferences } from "./lib/cookieConsent";
-import { initAnalytics } from "./lib/analytics";
+import { initAnalytics, logConsentAudit } from "./lib/analytics";
 import { initGa4, trackPageView } from "./lib/ga4";
 import { onConsentChange, isConsentAccepted } from "./lib/cookieConsent";
 import { installCrashRecovery, markHealthy } from "./lib/crashRecovery";
