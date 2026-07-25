@@ -43,6 +43,7 @@ function Root() {
     // assina mudanças do banner para inicializar no momento do "Aceitar".
     if (isConsentAccepted()) initGa4();
     const off = onConsentChange((v) => {
+      logConsentAudit(v, "banner");
       if (v === "accepted") initGa4();
     });
 
