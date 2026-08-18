@@ -391,14 +391,16 @@ export default function BewildProjectFormPage({ slug }: Props) {
           </div>
 
           <div className="admin-field">
-            <label className="admin-field__label">Área (m²)</label>
+            <label className="admin-field__label">Área (m²) — opcional</label>
             <input
-              type="number"
               className="admin-field__input"
               value={form.area_m2}
               onChange={(e) => set("area_m2", e.target.value)}
-              placeholder="22"
+              placeholder="ex: 45"
             />
+            <p className="mono admin-hint" style={{ marginTop: 6 }}>
+              Deixe em branco se ainda não souber a metragem.
+            </p>
           </div>
 
           <div className="admin-field admin-field--full">
