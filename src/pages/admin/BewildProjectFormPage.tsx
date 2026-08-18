@@ -57,6 +57,46 @@ const EMPTY: FormState = {
   sort_order: 0,
 };
 
+type SaveError = {
+  code?: string;
+  message?: string;
+  details?: string;
+  hint?: string;
+};
+
+function getSaveError(error: unknown): SaveError {
+  if (error instanceof Error) return { message: error.message };
+  if (typeof error !== "object" || error === null) return {};
+
+  const value = error as Record<string, unknown>;
+  return {
+    code: typeof value.code === "string" ? value.code : undefined,
+    message: typeof value.message === "string" ? value.message : undefined,
+    details: typeof value.details === "string" ? value.details : undefined,
+    hint: typeof value.hint === "string" ? value.hint : undefined,
+  };
+}
+
+function saveErrorMessage(error: unknown): string {
+  const { code, message = "", details = "", hint = "" } = getSaveError(error);
+  const combined = `${message} ${details} ${hint}`.toLowerCase();
+
+  if (code === "23505" || combined.includes("duplicate") || combined.includes("projects_slug_key")) {
+    return "Já existe um projeto com esse endereço (slug). Altere o slug e tente novamente.";
+  }
+  if (code === "23514" || combined.includes("check constraint")) {
+    return "Um dos campos contém uma opção inválida. Revise o tipo do projeto e tente novamente.";
+  }
+  if (code === "42501" || combined.includes("row-level security") || combined.includes("permission")) {
+    return "Sua sessão não tem permissão para salvar. Entre novamente no painel e tente de novo.";
+  }
+  if (combined.includes("network") || combined.includes("fetch")) {
+    return "Não foi possível conectar ao servidor. Verifique sua internet e tente novamente.";
+  }
+  if (message) return `Não foi possível salvar: ${message}`;
+  return "Não foi possível salvar o projeto. Tente novamente.";
+}
+
 export default function BewildProjectFormPage({ slug }: Props) {
   const isEdit = !!slug;
   const [form, setForm] = useState<FormState>(EMPTY);
@@ -151,6 +191,11 @@ export default function BewildProjectFormPage({ slug }: Props) {
       setError("Slug inválido. Use só letras minúsculas, números e hífens.");
       return;
     }
+    const area = form.area_m2.trim() ? Number(form.area_m2) : null;
+    if (area !== null && (!Number.isInteger(area) || area <= 0)) {
+      setError("A área precisa ser informada em um número inteiro maior que zero.");
+      return;
+    }
     // Tag (legado) é NOT NULL com CHECK — preenchemos um valor padrão para
     // projetos Bewild novos, já que esta área não usa o campo "tag" antigo.
     const TAG_FALLBACK = "Interiores";
@@ -160,7 +205,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
       slug: form.slug.trim(),
       project_type: form.project_type || null,
       neighborhood: form.neighborhood.trim() || null,
-      area_m2: form.area_m2 ? Number(form.area_m2) : null,
+      area_m2: area,
       duration: form.duration.trim() || null,
       summary: form.summary.trim() || null,
       challenge: form.challenge.trim() || null,
@@ -193,13 +238,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
       }
       navigate("/admin/projetos");
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "Falha ao salvar.";
-      // Detecta colisão de slug
-      if (msg.toLowerCase().includes("duplicate") || msg.includes("23505")) {
-        setError("Já existe um projeto com esse slug. Escolha outro.");
-      } else {
-        setError(msg);
-      }
+      setError(saveErrorMessage(e));
     } finally {
       setSaving(false);
     }
@@ -245,6 +284,8 @@ export default function BewildProjectFormPage({ slug }: Props) {
       {error && (
         <div
           className="mono"
+          role="alert"
+          aria-live="assertive"
           style={{
             background: "#fff0f0",
             border: "1px solid #f5c2c7",
