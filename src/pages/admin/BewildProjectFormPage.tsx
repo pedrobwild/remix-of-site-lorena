@@ -191,11 +191,14 @@ export default function BewildProjectFormPage({ slug }: Props) {
       setError("Slug inválido. Use só letras minúsculas, números e hífens.");
       return;
     }
-    const area = form.area_m2.trim() ? Number(form.area_m2) : null;
-    if (area !== null && (!Number.isInteger(area) || area <= 0)) {
-      setError("A área precisa ser informada em um número inteiro maior que zero.");
+    // Aceita "45", "45,5", "45.5 m²" etc. — arredonda para inteiro.
+    const areaRaw = form.area_m2.replace(/[^\d,.-]/g, "").replace(",", ".").trim();
+    const areaNum = areaRaw ? Number(areaRaw) : null;
+    if (areaRaw && (!Number.isFinite(areaNum as number) || (areaNum as number) <= 0)) {
+      setError("Informe a área em metros quadrados, por exemplo 45. Deixe em branco se ainda não souber.");
       return;
     }
+    const area = areaNum === null ? null : Math.round(areaNum);
     // Tag (legado) é NOT NULL com CHECK — preenchemos um valor padrão para
     // projetos Bewild novos, já que esta área não usa o campo "tag" antigo.
     const TAG_FALLBACK = "Interiores";
