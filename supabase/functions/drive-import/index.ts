@@ -261,7 +261,91 @@ Deno.serve(async (req) => {
       return json({ imported, failed });
     }
 
+    // ---- criar um projeto a partir de UMA pasta (importação em lote) ------
+    if (action === "create_from_folder") {
+      const folderId: string = body?.folderId;
+      const title: string = String(body?.title || "").trim();
+      const rawSlug: string = slugify(String(body?.slug || title)) || "projeto";
+      const sortOrder: number = Number.isFinite(body?.sortOrder) ? Number(body.sortOrder) : 0;
+      const max = Math.min(Math.max(Number(body?.max) || 12, 1), 24);
+      if (!folderId || !title) return json({ error: "folderId e title são obrigatórios." }, 400);
+
+      const admin = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      );
+
+      // slug único
+      let slug = rawSlug;
+      for (let i = 2; i < 50; i++) {
+        const { data: exists } = await admin
+          .from("projects")
+          .select("id")
+          .eq("slug", slug)
+          .maybeSingle();
+        if (!exists) break;
+        slug = `${rawSlug}-${i}`;
+      }
+
+      const files = (await driveListAll(
+        {
+          q: `'${folderId.replace(/'/g, "\\'")}' in parents and mimeType contains 'image/' and trashed = false`,
+          orderBy: "name",
+          supportsAllDrives: "true",
+          includeItemsFromAllDrives: "true",
+        },
+        "files(id,name,mimeType)",
+      )) as unknown as { id: string; name?: string; mimeType?: string }[];
+      files.sort((a, b) =>
+        (a.name ?? "").localeCompare(b.name ?? "", "pt-BR", { numeric: true, sensitivity: "base" }),
+      );
+
+      const urls: string[] = [];
+      for (const f of files.slice(0, max)) {
+        try {
+          const mediaRes = await drive(`/drive/v3/files/${encodeURIComponent(f.id)}`, {
+            alt: "media",
+            supportsAllDrives: "true",
+          });
+          const bytes = new Uint8Array(await mediaRes.arrayBuffer());
+          const name = f.name || "foto.jpg";
+          const dot = name.lastIndexOf(".");
+          const ext = dot >= 0 ? name.slice(dot).toLowerCase() : ".jpg";
+          const base = slugify(dot >= 0 ? name.slice(0, dot) : name).slice(0, 60) || "foto";
+          const path = `bewild/${slug}/${Date.now()}-${base}${ext}`;
+          const { error } = await admin.storage.from(BUCKET).upload(path, bytes, {
+            cacheControl: "31536000",
+            upsert: false,
+            contentType: f.mimeType || "image/jpeg",
+          });
+          if (error) throw error;
+          urls.push(admin.storage.from(BUCKET).getPublicUrl(path).data.publicUrl);
+        } catch (e) {
+          console.error("batch upload falhou:", e);
+        }
+      }
+
+      const { data: created, error: insErr } = await admin
+        .from("projects")
+        .insert({
+          title,
+          slug,
+          tag: "reforma",
+          cover_url: urls[0] ?? null,
+          cover_alt: title,
+          gallery_urls: urls.slice(1),
+          published: false,
+          sort_order: sortOrder,
+        })
+        .select("id, slug")
+        .single();
+      if (insErr) return json({ error: insErr.message }, 400);
+
+      return json({ project: created, images: urls.length, totalInFolder: files.length });
+    }
+
     return json({ error: "Ação inválida." }, 400);
+
   } catch (e) {
     console.error("drive-import error:", e);
     return json({ error: e instanceof Error ? e.message : "Erro inesperado." }, 500);

@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
+import DriveBatchImportDialog from "@/components/admin/DriveBatchImportDialog";
 import { supabase } from "@/integrations/supabase/client";
 // routes helper não é necessário — links Bewild usam paths literais.
 import { bewildTypeLabel, type BewildProjectType } from "@/lib/useBewildProjects";
+
 
 type Row = {
   id: string;
@@ -20,6 +22,8 @@ export default function BewildProjectsListPage() {
   const [rows, setRows] = useState<Row[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [batchOpen, setBatchOpen] = useState(false);
+
 
   async function load() {
     setLoading(true);
@@ -64,17 +68,34 @@ export default function BewildProjectsListPage() {
       title="Projetos"
       description="Projetos do portfólio público em /portfolio."
       actions={
-        <a className="admin-btn admin-btn--primary" href="/admin/projetos/novo">
-          + novo projeto
-        </a>
+        <>
+          <button
+            type="button"
+            className="admin-btn"
+            onClick={() => setBatchOpen(true)}
+            style={{ marginRight: 8 }}
+          >
+            importar do Drive em lote
+          </button>
+          <a className="admin-btn admin-btn--primary" href="/admin/projetos/novo">
+            + novo projeto
+          </a>
+        </>
       }
     >
+      <DriveBatchImportDialog
+        open={batchOpen}
+        onClose={() => setBatchOpen(false)}
+        onDone={load}
+      />
+
       <div className="admin-toolbar">
         <div className="admin-toolbar__filters">
           <span className="mono admin-hint">
             {loading ? "carregando…" : `${rows.length} projeto(s)`}
           </span>
         </div>
+
       </div>
 
       <div className="admin-table-wrap">
