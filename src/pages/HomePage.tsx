@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import homeBwaCssUrl from "./home-bwa.css?url";
 import { HOME_BWA_HTML } from "./home-bwa-body";
 import { useSeo } from "@/lib/useSeo";
+import { hydrateHomeProjects } from "@/lib/hydrateHomeProjects";
+
 // @ts-expect-error - JS module, no types
 import { initHomeBwa } from "./home-bwa-script.js";
 
