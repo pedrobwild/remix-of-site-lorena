@@ -55,9 +55,15 @@
 .pt-body figure{margin:26px 0}
 .pt-body figcaption{font-family:var(--pt-mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#5A6472;margin-top:8px}
 .pt-body hr{border:0;border-top:1px solid var(--pt-hair);margin:34px 0}
-.pt-body table{width:100%;border-collapse:collapse;margin:26px 0;font-size:15px}
-.pt-body th,.pt-body td{border-bottom:1px solid var(--pt-hair);padding:10px 12px;text-align:left}
-.pt-body th{font-family:var(--pt-mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#5A6472}
+.pt-body table{width:100%;min-width:520px;border-collapse:collapse;margin:26px 0;font-size:15px;line-height:1.5}
+.pt-body th,.pt-body td{border-bottom:1px solid var(--pt-hair);padding:12px 14px;text-align:left;vertical-align:top}
+.pt-body thead th{border-bottom:1px solid var(--pt-hair);font-family:var(--pt-mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#5A6472}
+.pt-body th{font-weight:600;color:#1A2332}
+.pt-body tbody tr:last-child td{border-bottom:1px solid var(--pt-hair)}
+.pt-body caption{caption-side:top;text-align:left;font-family:var(--pt-mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#5A6472;padding-bottom:8px}
+/* Rolagem horizontal no mobile: a tabela não estoura a largura da prancha. */
+.pt-body .pt-table-wrap,.pt-body table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media (min-width:700px){.pt-body table{display:table;min-width:0;overflow-x:visible}}
 .pt-body code{font-family:var(--pt-mono);font-size:.9em;background:#F3EEE5;padding:2px 6px}
 
 /* FAQ do artigo */

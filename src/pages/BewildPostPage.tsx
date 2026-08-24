@@ -12,6 +12,7 @@
 import { useMemo, type ReactNode } from "react";
 import { marked } from "marked";
 import { useSeo } from "@/lib/useSeo";
+import { optimizedImageUrl } from "@/lib/imageUrl";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import { sanitizeBlogHtml } from "@/lib/sanitizeHtml";
@@ -212,7 +213,7 @@ export default function BewildPostPage({ slug }: Props) {
       "Conteúdos Bewild sobre reforma turn-key e operação de studios em São Paulo.",
     canonicalPath: post ? `/conteudos/${post.slug}` : `/conteudos/${slug}`,
     ogType: "article",
-    ogImage: post?.cover_image ?? undefined,
+    ogImage: post?.cover_image ? optimizedImageUrl(post.cover_image) : undefined,
     noindex: notFound,
     jsonLd,
   });
@@ -297,7 +298,7 @@ export default function BewildPostPage({ slug }: Props) {
             <div className="container">
               <figure className="pt-cover">
                 <img
-                  src={post.cover_image}
+                  src={optimizedImageUrl(post.cover_image)}
                   alt={post.title}
                   loading="eager"
                   decoding="sync"
