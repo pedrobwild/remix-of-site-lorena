@@ -535,6 +535,27 @@ export default function BewildProjectFormPage({ slug }: Props) {
             </p>
           </header>
 
+          <div className="admin-field admin-field--full">
+            <button type="button" className="admin-btn" onClick={() => setDriveOpen(true)}>
+              Importar fotos do Google Drive
+            </button>
+            <p className="mono admin-hint" style={{ marginTop: 6 }}>
+              Abre a pasta do cliente no Drive; as fotos escolhidas entram na galeria.
+            </p>
+          </div>
+
+          <DriveImportDialog
+            open={driveOpen}
+            folder={folder}
+            onClose={() => setDriveOpen(false)}
+            onImported={(urls) => {
+              const gallery = [...form.gallery_urls, ...urls];
+              set("gallery_urls", gallery);
+              if (!form.cover_url && urls[0]) set("cover_url", urls[0]);
+            }}
+          />
+
+
           <BewildImageField
             label="Capa"
             value={form.cover_url}
