@@ -160,7 +160,9 @@ Deno.serve(async (req) => {
         allFolders.push(...(data.files ?? []) as { id: string; name: string }[]);
       }
 
-      allFolders.sort((a, b) => a.name.localeCompare(b.name));
+      allFolders.sort((a, b) =>
+        a.name.localeCompare(b.name, "pt-BR", { numeric: true, sensitivity: "base" }),
+      );
       return json({ folders: allFolders });
     }
 
