@@ -112,8 +112,30 @@ export default function BewildProjectFormPage({ slug }: Props) {
 
   const folder = useMemo(() => form.slug || "rascunho", [form.slug]);
 
+  // Novo projeto: já sugere o próximo número da ordem (último + 1).
+  useEffect(() => {
+    if (isEdit) return;
+    let mounted = true;
+    supabase
+      .from("projects")
+      .select("sort_order")
+      .order("sort_order", { ascending: false })
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!mounted) return;
+        setForm((f) =>
+          f.sort_order ? f : { ...f, sort_order: (data?.sort_order ?? 0) + 1 },
+        );
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [isEdit]);
+
   useEffect(() => {
     if (!isEdit || !slug) return;
+
     let mounted = true;
     setLoading(true);
     supabase
