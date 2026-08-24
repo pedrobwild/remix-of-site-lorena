@@ -344,7 +344,7 @@ export default function LpPanfletoPage() {
         <div className="sec-mark"><span className="n">03</span><span className="t">Quem faz</span><span className="ln" /></div>
         <div className="lp-quem-head">
           <h2>Quem constrói o seu studio. <i>Time próprio, do projeto à entrega.</i></h2>
-          <p className="lead">Projeto, obra, marcenaria, mobília e decoração em um único contrato. +160 reformas entregues · +200 projetos, prontos para receber hóspedes.</p>
+          <p className="lead">Projeto, obra, marcenaria, mobília e decoração em um único contrato. Já somamos +160 reformas entregues · +200 projetos, prontos para receber hóspedes.</p>
         </div>
 
         <div className="vblock">
