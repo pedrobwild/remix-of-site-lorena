@@ -82,25 +82,86 @@ Deno.serve(async (req) => {
     if (action === "folders") {
       const parentId: string = body?.parentId || "root";
       const search: string = (body?.search || "").trim();
-      const clauses = [
-        "mimeType = 'application/vnd.google-apps.folder'",
-        "trashed = false",
-      ];
+      const fields = "files(id,name)";
+      const orderBy = "name";
+      const pageSize = "100";
+
       if (search) {
-        clauses.push(`name contains '${search.replace(/'/g, "\\'")}'`);
-      } else {
-        clauses.push(`'${parentId.replace(/'/g, "\\'")}' in parents`);
+        const clauses = [
+          "mimeType = 'application/vnd.google-apps.folder'",
+          "trashed = false",
+          `name contains '${search.replace(/'/g, "\\'")}'`,
+        ];
+        const res = await drive("/drive/v3/files", {
+          q: clauses.join(" and "),
+          fields,
+          orderBy,
+          pageSize,
+          supportsAllDrives: "true",
+          includeItemsFromAllDrives: "true",
+        });
+        const data = await res.json();
+        return json({ folders: (data.files ?? []) as { id: string; name: string }[] });
       }
-      const res = await drive("/drive/v3/files", {
-        q: clauses.join(" and "),
-        fields: "files(id,name)",
-        orderBy: "name",
-        pageSize: "100",
-        supportsAllDrives: "true",
-        includeItemsFromAllDrives: "true",
-      });
-      const data = await res.json();
-      return json({ folders: data.files ?? [] });
+
+      const allFolders: { id: string; name: string }[] = [];
+
+      if (parentId === "root") {
+        // Meu Drive + raiz de cada shared drive acessível.
+        const [myDriveRes, drivesRes] = await Promise.all([
+          drive("/drive/v3/files", {
+            q: "mimeType = 'application/vnd.google-apps.folder' and trashed = false and 'root' in parents",
+            fields,
+            orderBy,
+            pageSize,
+            supportsAllDrives: "true",
+            includeItemsFromAllDrives: "true",
+          }),
+          drive("/drive/v3/drives", { fields: "drives(id,name)", pageSize: "100" }),
+        ]);
+        const myDriveData = await myDriveRes.json();
+        allFolders.push(...(myDriveData.files ?? []) as { id: string; name: string }[]);
+
+        const drivesData = await drivesRes.json();
+        const drives = (drivesData.drives ?? []) as { id: string; name: string }[];
+        if (drives.length > 0) {
+          const driveRoots = await Promise.all(
+            drives.map((d) =>
+              drive("/drive/v3/files", {
+                q: `mimeType = 'application/vnd.google-apps.folder' and trashed = false and '${d.id}' in parents`,
+                fields,
+                orderBy,
+                pageSize,
+                supportsAllDrives: "true",
+                includeItemsFromAllDrives: "true",
+              })
+            ),
+          );
+          for (const r of driveRoots) {
+            const data = await r.json();
+            allFolders.push(...(data.files ?? []) as { id: string; name: string }[]);
+          }
+        }
+      } else {
+        const clauses = [
+          "mimeType = 'application/vnd.google-apps.folder'",
+          "trashed = false",
+          `'${parentId.replace(/'/g, "\\'")}' in parents`,
+        ];
+        const res = await drive("/drive/v3/files", {
+          q: clauses.join(" and "),
+          fields,
+          orderBy,
+          pageSize,
+          supportsAllDrives: "true",
+          includeItemsFromAllDrives: "true",
+        });
+        const data = await res.json();
+        allFolders.push(...(data.files ?? []) as { id: string; name: string }[]);
+      }
+
+      allFolders.sort((a, b) => a.name.localeCompare(b.name));
+      return json({ folders: allFolders });
     }
 
     // ---- listar imagens de uma pasta -------------------------------------
