@@ -105,6 +105,8 @@ export default function BewildProjectFormPage({ slug }: Props) {
   const [slugTouched, setSlugTouched] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [driveOpen, setDriveOpen] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
   const [scopeInput, setScopeInput] = useState("");
 
