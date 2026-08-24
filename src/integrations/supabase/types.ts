@@ -1100,6 +1100,21 @@ export type Database = {
             Args: { p_path: string; p_reason?: string; p_referrer?: string }
             Returns: undefined
           }
+      top_projects: {
+        Args: { p_days?: number; p_limit?: number }
+        Returns: {
+          area_m2: number
+          cover_url: string
+          duration: string
+          id: string
+          location: string
+          neighborhood: string
+          project_type: string
+          slug: string
+          title: string
+          views: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
