@@ -311,41 +311,37 @@ Deno.serve(async (req) => {
           "files(id,name)",
         )) as unknown as { id: string; name?: string }[];
 
-      // Varre a pasta do cliente e suas subpastas (até 3 níveis), dando
-      // prioridade às pastas de imagens do projeto (ex.: "Imagens Projeto PNG").
+      // Procura primeiro a subpasta de imagens do projeto (ex.: "Imagens Projeto PNG").
+      // Só se não achar nada é que varre as demais subpastas (até 2 níveis).
       const PRIORITY = /imagens|fotos|render|projeto png/i;
-      const seen = new Set<string>();
-      const collected: { img: DriveImg; priority: boolean; path: string }[] = [];
-
-      const walk = async (parent: string, depth: number, priority: boolean, path: string) => {
-        if (depth > 3 || collected.length > 400) return;
-        for (const img of await listImages(parent)) {
-          if (seen.has(img.id)) continue;
-          seen.add(img.id);
-          collected.push({ img, priority, path });
-        }
-        const subs = await listSubfolders(parent);
-        for (const s of subs) {
-          const isPrio = priority || PRIORITY.test(s.name ?? "");
-          await walk(s.id, depth + 1, isPrio, `${path}/${s.name ?? ""}`);
-        }
-      };
-
-      await walk(folderId, 0, false, "");
-
       const cmp = (a: string, b: string) =>
         a.localeCompare(b, "pt-BR", { numeric: true, sensitivity: "base" });
 
-      // pastas de imagens primeiro; depois ordem natural por caminho/nome
-      collected.sort(
-        (a, b) =>
-          Number(b.priority) - Number(a.priority) ||
-          cmp(a.path, b.path) ||
-          cmp(a.img.name ?? "", b.img.name ?? ""),
-      );
+      let files: DriveImg[] = [];
+      let visited = 0;
 
-      const files = collected.map((c) => c.img);
+      const walk = async (parent: string, depth: number, onlyPriority: boolean) => {
+        if (files.length >= max || depth > 2 || visited > 40) return;
+        visited++;
+        const subs = (await listSubfolders(parent)).sort((a, b) => cmp(a.name ?? "", b.name ?? ""));
+        const prio = subs.filter((s) => PRIORITY.test(s.name ?? ""));
+        const targets = onlyPriority ? prio : [...prio, ...subs.filter((s) => !prio.includes(s))];
+        for (const s of targets) {
+          if (files.length >= max) return;
+          const imgs = (await listImages(s.id)).sort((a, b) => cmp(a.name ?? "", b.name ?? ""));
+          files.push(...imgs.slice(0, max - files.length));
+          if (files.length >= max) return;
+          await walk(s.id, depth + 1, onlyPriority);
+        }
+      };
 
+      // imagens soltas na própria pasta do cliente
+      files = (await listImages(folderId))
+        .sort((a, b) => cmp(a.name ?? "", b.name ?? ""))
+        .slice(0, max);
+
+      if (files.length < max) await walk(folderId, 0, true);
+      if (files.length === 0) await walk(folderId, 0, false);
 
       const urls: string[] = [];
       for (const f of files.slice(0, max)) {
@@ -371,6 +367,7 @@ Deno.serve(async (req) => {
           console.error("batch upload falhou:", e);
         }
       }
+
 
       const { data: created, error: insErr } = await admin
         .from("projects")
