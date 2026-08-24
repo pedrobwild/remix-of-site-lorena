@@ -95,6 +95,9 @@ export default function HomePage() {
     const unmountCss = mountHomeStylesheet();
     // Run the original init script (same logic as the source HTML).
     initHomeBwa();
+    // Vitrine "Projetos": troca os cards estáticos pelos mais acessados.
+    void hydrateHomeProjects();
+
 
     return () => {
       unmountCss();
