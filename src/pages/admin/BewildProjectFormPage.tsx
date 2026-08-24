@@ -587,8 +587,79 @@ export default function BewildProjectFormPage({ slug }: Props) {
             folder={folder}
             onChange={(url) => set("cover_url", url)}
             onBusyChange={setUploading}
-            hint="Recomendado: foto horizontal do studio entregue."
+            hint="Recomendado: foto horizontal do apartamento entregue."
           />
+
+          {form.gallery_urls.length > 0 && (
+            <div className="admin-field admin-field--full">
+              <label className="admin-field__label">Escolher a capa entre as fotos do projeto</label>
+              <p className="mono admin-hint" style={{ marginTop: 0, marginBottom: 8 }}>
+                Clique em uma foto da galeria para usá-la como capa.
+              </p>
+              <ul
+                style={{
+                  listStyle: "none",
+                  margin: 0,
+                  padding: 0,
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(112px, 1fr))",
+                  gap: 8,
+                }}
+              >
+                {form.gallery_urls.map((url) => {
+                  const selected = form.cover_url === url;
+                  return (
+                    <li key={url}>
+                      <button
+                        type="button"
+                        onClick={() => set("cover_url", url)}
+                        aria-pressed={selected}
+                        title={selected ? "Capa atual" : "Usar como capa"}
+                        style={{
+                          display: "block",
+                          width: "100%",
+                          padding: 0,
+                          border: selected ? "2px solid #11355B" : "1px solid #d9d4cb",
+                          borderRadius: 8,
+                          overflow: "hidden",
+                          background: "none",
+                          cursor: "pointer",
+                          position: "relative",
+                          lineHeight: 0,
+                        }}
+                      >
+                        <img
+                          src={url}
+                          alt=""
+                          loading="lazy"
+                          style={{ width: "100%", aspectRatio: "4 / 3", objectFit: "cover" }}
+                        />
+                        {selected && (
+                          <span
+                            className="mono"
+                            style={{
+                              position: "absolute",
+                              left: 6,
+                              bottom: 6,
+                              background: "#11355B",
+                              color: "#fff",
+                              fontSize: 10,
+                              padding: "2px 6px",
+                              borderRadius: 999,
+                              lineHeight: 1.4,
+                            }}
+                          >
+                            capa
+                          </span>
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+
 
           <BewildImageField
             label="Antes (opcional)"
