@@ -107,22 +107,29 @@ export default function DriveBatchImportDialog({ open, onClose, onDone }: Props)
     let order = Math.max(1, from);
     for (const f of queue) {
       const { title } = parseDriveFolderName(f.name);
+      setLog((l) => [...l, `⏳ ${title} — importando…`]);
       try {
-        const res = await callDrive<{ project: { slug: string }; images: number; totalInFolder: number }>({
-          action: "create_from_folder",
-          folderId: f.id,
-          title,
-          slug: slugify(title),
-          sortOrder: order,
-          max: maxImages,
-        });
+        const res = await Promise.race([
+          callDrive<{ project: { slug: string }; images: number }>({
+            action: "create_from_folder",
+            folderId: f.id,
+            title,
+            slug: slugify(title),
+            sortOrder: order,
+            max: maxImages,
+          }),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error("demorou demais (tente menos fotos por projeto)")), 180000),
+          ),
+        ]);
         setCreatedAny(true);
         setLog((l) => [
-          ...l,
-          `✅ ${title} — ${res.images} de ${res.totalInFolder} foto(s) · /portfolio/${res.project.slug}`,
+          ...l.slice(0, -1),
+          `✅ ${title} — ${res.images} foto(s) · /portfolio/${res.project.slug}`,
         ]);
       } catch (e) {
-        setLog((l) => [...l, `⚠️ ${title} — ${e instanceof Error ? e.message : "falhou"}`]);
+        console.error("batch import falhou", f.name, e);
+        setLog((l) => [...l.slice(0, -1), `⚠️ ${title} — ${e instanceof Error ? e.message : "falhou"}`]);
       }
       order += 1;
     }
