@@ -9,7 +9,7 @@
  * meta_title/description, canonical, ogImage e noindex no 404 — preservado.
  * Visual: "artigo" na prancha 04. CSS isolado em .bw-post.
  */
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import { marked } from "marked";
 import { useSeo } from "@/lib/useSeo";
 import BwaNav from "@/components/BwaNav";
@@ -20,6 +20,7 @@ import {
   bewildCategoryLabel,
   formatBewildDate,
   type BewildPost,
+  type BewildPostCategory,
 } from "@/lib/useBewildPosts";
 import { useBewildPost, useBewildRelatedPosts } from "@/lib/useBewildPost";
 import { navigate } from "@/lib/useHashRoute";
@@ -30,6 +31,82 @@ type Props = { slug: string };
 
 // Configuração estável do marked (sem opções deprecadas em v18).
 marked.setOptions({ gfm: true, breaks: false });
+
+type CtaContent = {
+  eyebrow: string;
+  title: ReactNode;
+  body: string;
+  buttonLabel: string;
+};
+
+const CTA_FALLBACK: CtaContent = {
+  eyebrow: "Diagnóstico gratuito · sem compromisso",
+  title: (
+    <>
+      Da leitura à decisão: <i>avalie o seu studio.</i>
+    </>
+  ),
+  body: "Envie os dados do imóvel e receba uma análise inicial de escopo, projeto e próximos passos.",
+  buttonLabel: "Solicitar Orçamento",
+};
+
+const CTA_BY_CATEGORY: Record<BewildPostCategory, CtaContent> = {
+  fiscal: {
+    eyebrow: "Análise gratuita · sem compromisso",
+    title: (
+      <>
+        Regra é uma coisa. <i>O seu caso é outra.</i>
+      </>
+    ),
+    body: "Envie os dados do imóvel e receba uma leitura de escopo, prazo e investimento. Para decidir com número, não com manchete.",
+    buttonLabel: "Avaliar meu studio",
+  },
+  investimento: {
+    eyebrow: "Diagnóstico gratuito · sem compromisso",
+    title: (
+      <>
+        Da leitura à decisão: <i>avalie o seu studio.</i>
+      </>
+    ),
+    body: "Envie os dados do imóvel e receba uma análise inicial de escopo, projeto e próximos passos.",
+    buttonLabel: "Solicitar diagnóstico",
+  },
+  mercado: {
+    eyebrow: "Diagnóstico gratuito · sem compromisso",
+    title: (
+      <>
+        Média de mercado não paga conta. <i>A do seu imóvel, sim.</i>
+      </>
+    ),
+    body: "Envie os dados do studio e receba uma leitura do potencial dele, não do mercado inteiro.",
+    buttonLabel: "Avaliar meu imóvel",
+  },
+  reforma: {
+    eyebrow: "Orçamento sem compromisso",
+    title: (
+      <>
+        Sabe o que quer. <i>Falta saber quanto e quando.</i>
+      </>
+    ),
+    body: "Envie a planta ou os dados do imóvel e receba escopo, prazo e investimento estimados.",
+    buttonLabel: "Solicitar orçamento",
+  },
+  operacao: {
+    eyebrow: "Diagnóstico gratuito · sem compromisso",
+    title: (
+      <>
+        Operar bem começa <i>antes de anunciar.</i>
+      </>
+    ),
+    body: "Envie os dados do imóvel e receba uma leitura do que ajustar para performar desde a primeira diária.",
+    buttonLabel: "Avaliar meu studio",
+  },
+};
+
+function getCtaContent(category: BewildPostCategory | null | undefined): CtaContent {
+  if (!category) return CTA_FALLBACK;
+  return CTA_BY_CATEGORY[category] ?? CTA_FALLBACK;
+}
 
 function RelatedCard({ p }: { p: BewildPost }) {
   return (
@@ -57,6 +134,12 @@ function RelatedCard({ p }: { p: BewildPost }) {
 export default function BewildPostPage({ slug }: Props) {
   const { post, loading, notFound } = useBewildPost(slug);
   const { related } = useBewildRelatedPosts(post?.category, post?.id, 3);
+
+  const cta = useMemo(() => getCtaContent(post?.category), [post?.category]);
+  const ctaHref = post
+    ? `/diagnostico?utm_source=conteudo&utm_medium=post&utm_campaign=${encodeURIComponent(post.slug)}`
+    : "/diagnostico";
+  const ctaWhatsHref = post ? whatsappHref(`Vim do artigo "${post.title}" no site.`) : whatsappHref();
 
   const bodyHtml = useMemo(() => {
     if (!post?.body) return "";
@@ -276,12 +359,12 @@ export default function BewildPostPage({ slug }: Props) {
         <div className="gridbg" aria-hidden="true" />
         <div className="container">
           <div className="pt-cta__inner">
-            <span className="pt-eyb">Diagnóstico gratuito · sem compromisso</span>
-            <h2>Da leitura à decisão: <i>avalie o seu studio.</i></h2>
-            <p>Envie os dados do imóvel e receba uma análise inicial de escopo, projeto e próximos passos.</p>
+            <span className="pt-eyb">{cta.eyebrow}</span>
+            <h2>{cta.title}</h2>
+            <p>{cta.body}</p>
             <div className="pt-cta__act">
-              <a href="/diagnostico" className="pt-btn cyan">Solicitar Orçamento <span className="ar">→</span></a>
-              <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="pt-btn ghost">Falar no WhatsApp</a>
+              <a href={ctaHref} className="pt-btn cyan">{cta.buttonLabel} <span className="ar">→</span></a>
+              <a href={ctaWhatsHref} target="_blank" rel="noopener noreferrer" className="pt-btn ghost">Falar no WhatsApp</a>
             </div>
             <div className="pt-cta__rea">+150 studios entregues em São Paulo</div>
           </div>
