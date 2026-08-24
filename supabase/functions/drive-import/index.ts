@@ -50,6 +50,31 @@ async function drive(path: string, params: Record<string, string>) {
   return res;
 }
 
+/** Lista TODAS as páginas de /drive/v3/files (o Drive devolve no máx. 1000 por página). */
+async function driveListAll(
+  params: Record<string, string>,
+  innerFields: string,
+): Promise<Record<string, unknown>[]> {
+  const out: Record<string, unknown>[] = [];
+  let pageToken: string | undefined;
+  let guard = 0;
+  do {
+    const res = await drive("/drive/v3/files", {
+      ...params,
+      pageSize: "1000",
+      fields: `nextPageToken,${innerFields}`,
+      ...(pageToken ? { pageToken } : {}),
+    });
+    const data = await res.json();
+    out.push(...((data.files ?? []) as Record<string, unknown>[]));
+    pageToken = data.nextPageToken as string | undefined;
+    guard += 1;
+  } while (pageToken && guard < 20);
+  return out;
+}
+
+
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -82,82 +107,75 @@ Deno.serve(async (req) => {
     if (action === "folders") {
       const parentId: string = body?.parentId || "root";
       const search: string = (body?.search || "").trim();
-      const fields = "files(id,name)";
-      const orderBy = "name";
-      const pageSize = "100";
+      const inner = "files(id,name)";
+      const common = {
+        orderBy: "name",
+        supportsAllDrives: "true",
+        includeItemsFromAllDrives: "true",
+      };
 
       if (search) {
-        const clauses = [
-          "mimeType = 'application/vnd.google-apps.folder'",
-          "trashed = false",
-          `name contains '${search.replace(/'/g, "\\'")}'`,
-        ];
-        const res = await drive("/drive/v3/files", {
-          q: clauses.join(" and "),
-          fields,
-          orderBy,
-          pageSize,
-          supportsAllDrives: "true",
-          includeItemsFromAllDrives: "true",
-        });
-        const data = await res.json();
-        return json({ folders: (data.files ?? []) as { id: string; name: string }[] });
+        const folders = await driveListAll(
+          {
+            q: [
+              "mimeType = 'application/vnd.google-apps.folder'",
+              "trashed = false",
+              `name contains '${search.replace(/'/g, "\\'")}'`,
+            ].join(" and "),
+            ...common,
+          },
+          inner,
+        );
+        return json({ folders: folders as unknown as { id: string; name: string }[] });
       }
 
       const allFolders: { id: string; name: string }[] = [];
 
       if (parentId === "root") {
         // Meu Drive + raiz de cada shared drive acessível.
-        const [myDriveRes, drivesRes] = await Promise.all([
-          drive("/drive/v3/files", {
-            q: "mimeType = 'application/vnd.google-apps.folder' and trashed = false and 'root' in parents",
-            fields,
-            orderBy,
-            pageSize,
-            supportsAllDrives: "true",
-            includeItemsFromAllDrives: "true",
-          }),
+        const [myDrive, drivesRes] = await Promise.all([
+          driveListAll(
+            {
+              q: "mimeType = 'application/vnd.google-apps.folder' and trashed = false and 'root' in parents",
+              ...common,
+            },
+            inner,
+          ),
           drive("/drive/v3/drives", { fields: "drives(id,name)", pageSize: "100" }),
         ]);
-        const myDriveData = await myDriveRes.json();
-        allFolders.push(...(myDriveData.files ?? []) as { id: string; name: string }[]);
+        allFolders.push(...(myDrive as unknown as { id: string; name: string }[]));
 
         const drivesData = await drivesRes.json();
         const drives = (drivesData.drives ?? []) as { id: string; name: string }[];
         if (drives.length > 0) {
           const driveRoots = await Promise.all(
             drives.map((d) =>
-              drive("/drive/v3/files", {
-                q: `mimeType = 'application/vnd.google-apps.folder' and trashed = false and '${d.id}' in parents`,
-                fields,
-                orderBy,
-                pageSize,
-                supportsAllDrives: "true",
-                includeItemsFromAllDrives: "true",
-              })
+              driveListAll(
+                {
+                  q: `mimeType = 'application/vnd.google-apps.folder' and trashed = false and '${d.id}' in parents`,
+                  ...common,
+                },
+                inner,
+              )
             ),
           );
           for (const r of driveRoots) {
-            const data = await r.json();
-            allFolders.push(...(data.files ?? []) as { id: string; name: string }[]);
+            allFolders.push(...(r as unknown as { id: string; name: string }[]));
           }
         }
       } else {
-        const clauses = [
-          "mimeType = 'application/vnd.google-apps.folder'",
-          "trashed = false",
-          `'${parentId.replace(/'/g, "\\'")}' in parents`,
-        ];
-        const res = await drive("/drive/v3/files", {
-          q: clauses.join(" and "),
-          fields,
-          orderBy,
-          pageSize,
-          supportsAllDrives: "true",
-          includeItemsFromAllDrives: "true",
-        });
-        const data = await res.json();
-        allFolders.push(...(data.files ?? []) as { id: string; name: string }[]);
+        const folders = await driveListAll(
+          {
+            q: [
+              "mimeType = 'application/vnd.google-apps.folder'",
+              "trashed = false",
+              `'${parentId.replace(/'/g, "\\'")}' in parents`,
+            ].join(" and "),
+            ...common,
+          },
+          inner,
+        );
+        allFolders.push(...(folders as unknown as { id: string; name: string }[]));
       }
 
       allFolders.sort((a, b) =>
@@ -170,16 +188,15 @@ Deno.serve(async (req) => {
     if (action === "files") {
       const folderId: string = body?.folderId;
       if (!folderId) return json({ error: "folderId é obrigatório." }, 400);
-      const res = await drive("/drive/v3/files", {
-        q: `'${folderId.replace(/'/g, "\\'")}' in parents and mimeType contains 'image/' and trashed = false`,
-        fields: "files(id,name,mimeType,size,thumbnailLink,imageMediaMetadata(width,height))",
-        orderBy: "name",
-        pageSize: "200",
-        supportsAllDrives: "true",
-        includeItemsFromAllDrives: "true",
-      });
-      const data = await res.json();
-      const files = (data.files ?? []) as { name?: string }[];
+      const files = (await driveListAll(
+        {
+          q: `'${folderId.replace(/'/g, "\\'")}' in parents and mimeType contains 'image/' and trashed = false`,
+          orderBy: "name",
+          supportsAllDrives: "true",
+          includeItemsFromAllDrives: "true",
+        },
+        "files(id,name,mimeType,size,thumbnailLink,imageMediaMetadata(width,height))",
+      )) as unknown as { name?: string }[];
       files.sort((a, b) =>
         (a.name ?? "").localeCompare(b.name ?? "", "pt-BR", {
           numeric: true,
@@ -188,6 +205,7 @@ Deno.serve(async (req) => {
       );
       return json({ files });
     }
+
 
     // ---- importar arquivos para o storage --------------------------------
     if (action === "import") {

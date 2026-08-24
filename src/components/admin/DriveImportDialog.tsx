@@ -237,7 +237,13 @@ export default function DriveImportDialog({ folder, open, onClose, onImported }:
           )}
 
           {!loading && folders.length > 0 && (
+            <p className="mono admin-hint" style={{ margin: "0 0 8px" }}>
+              {folders.length} pasta(s)
+            </p>
+          )}
+          {!loading && folders.length > 0 && (
             <ul style={{ listStyle: "none", padding: 0, margin: "0 0 20px", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 8 }}>
+
               {folders.map((f) => (
                 <li key={f.id}>
                   <button
