@@ -10,6 +10,9 @@ import DOMPurify from "dompurify";
  *    decoding, fetchpriority, width, height).
  *  - Permite âncoras (`<a href>`) com `target` e `rel`; `FORCE_BODY` mantém
  *    `<figure>` e `<figcaption>` que o editor envolve em volta de imagens.
+ *  - Permite tabelas (`table`/`thead`/`tbody`/`tfoot`/`tr`/`th`/`td`/`caption`/
+ *    `colgroup`/`col`) com `colspan`, `rowspan`, `scope` e `span` — o `marked`
+ *    com `gfm: true` gera esse HTML e ele não é vetor de XSS.
  *  - Remove `<script>`, `<style>`, `<iframe>`, `<object>`, handlers `on*=`
  *    e qualquer URL `javascript:` — vetores típicos de XSS armazenado.
  *
