@@ -5,6 +5,7 @@ import { navigate } from "@/lib/useHashRoute";
 import { slugify, isValidSlug } from "@/lib/bewildAdmin";
 import BewildImageField from "@/components/admin/BewildImageField";
 import BewildGalleryField from "@/components/admin/BewildGalleryField";
+import DriveImportDialog from "@/components/admin/DriveImportDialog";
 import type { BewildProjectType } from "@/lib/useBewildProjects";
 
 interface Props {
@@ -548,7 +549,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
             open={driveOpen}
             folder={folder}
             onClose={() => setDriveOpen(false)}
-            onImported={(urls) => {
+            onImported={(urls: string[]) => {
               const gallery = [...form.gallery_urls, ...urls];
               set("gallery_urls", gallery);
               if (!form.cover_url && urls[0]) set("cover_url", urls[0]);
