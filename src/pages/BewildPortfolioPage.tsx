@@ -256,7 +256,7 @@ export default function BewildPortfolioPage() {
               className="bwh-mono"
               style={{ color: "var(--dink2)", marginTop: 24 }}
             >
-              +150 studios entregues em São Paulo
+              +160 reformas entregues · +200 projetos
             </div>
           </div>
         </section>

@@ -128,7 +128,7 @@ export default function BwaSharedChrome({ children }: { children: ReactNode }) {
           <div className="bwa-footer-main">
             <div className="bwa-footer-brand">
               <div className="bwa-footer-wordmark">Bewild</div>
-              <p>Built by the wild ones. Be wild.</p>
+              <p>Seu desejo é uma obra.</p>
               <p>
                 Reforma completa de studios em São Paulo. Projeto, obra, marcenaria,
                 mobiliário e entrega num processo único.

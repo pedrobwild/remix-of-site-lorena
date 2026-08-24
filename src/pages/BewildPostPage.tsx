@@ -367,7 +367,7 @@ export default function BewildPostPage({ slug }: Props) {
               <a href={ctaHref} className="pt-btn cyan">{cta.buttonLabel} <span className="ar">→</span></a>
               <a href={ctaWhatsHref} target="_blank" rel="noopener noreferrer" className="pt-btn ghost">Falar no WhatsApp</a>
             </div>
-            <div className="pt-cta__rea">+150 studios entregues em São Paulo</div>
+            <div className="pt-cta__rea">+160 reformas entregues · +200 projetos</div>
           </div>
         </div>
       </section>
