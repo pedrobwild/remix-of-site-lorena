@@ -55,7 +55,7 @@ const FALLBACK: FaqItem[] = [
     id: "fallback-5",
     question: "Em qual região a Bewild atende?",
     answer:
-      "A Bewild atua em São Paulo, com foco em studios para short stay, e já entregou mais de 150 studios.",
+      "A Bewild atua em São Paulo, com foco em studios para short stay, e já entregou +160 reformas entregues · +200 projetos.",
     order_index: 5,
     visible: true,
   },

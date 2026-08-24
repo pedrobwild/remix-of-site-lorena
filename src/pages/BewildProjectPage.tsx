@@ -294,7 +294,7 @@ export default function BewildProjectPage({ slug }: Props) {
             <a href="/diagnostico" className="pd-btn cyan">Solicitar Orçamento <span className="ar"><IconArrow /></span></a>
             <a href={whatsappHref()} className="pd-btn ghost" target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a>
           </div>
-          <div className="pd-cta__rea">+150 studios entregues em São Paulo</div>
+          <div className="pd-cta__rea">+160 reformas entregues · +200 projetos</div>
         </div>
       </section>
       </main>

@@ -212,7 +212,7 @@ export default function LpPanfletoPage() {
         </div>
 
         <div className="hero-data">
-          <div className="cell"><b>150+</b><span>studios entregues</span></div>
+          <div className="cell"><b>+160</b><span>reformas entregues · +200 projetos</span></div>
           <div className="cell"><b>60</b><span>dias úteis · a partir de</span></div>
           <div className="cell"><b>05</b><span>anos de garantia</span></div>
         </div>
@@ -238,7 +238,7 @@ export default function LpPanfletoPage() {
               Você manda os dados do imóvel. A gente devolve uma leitura de escopo,
               projeto e próximos passos. Sem compromisso.
             </p>
-            <div className="trust"><b>✓</b> +150 studios entregues em São Paulo</div>
+            <div className="trust"><b>✓</b> +160 reformas entregues · +200 projetos</div>
           </div>
 
           <form className={`formcard${done ? " done" : ""}`} onSubmit={onSubmit} noValidate>
@@ -344,7 +344,7 @@ export default function LpPanfletoPage() {
         <div className="sec-mark"><span className="n">03</span><span className="t">Quem faz</span><span className="ln" /></div>
         <div className="lp-quem-head">
           <h2>Quem constrói o seu studio. <i>Time próprio, do projeto à entrega.</i></h2>
-          <p className="lead">Projeto, obra, marcenaria, mobília e decoração em um único contrato. Mais de 150 studios entregues em São Paulo, prontos para receber hóspedes.</p>
+          <p className="lead">Projeto, obra, marcenaria, mobília e decoração em um único contrato. +160 reformas entregues · +200 projetos, prontos para receber hóspedes.</p>
         </div>
 
         <div className="vblock">

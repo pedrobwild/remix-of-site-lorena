@@ -86,7 +86,7 @@ export default function FaqPage() {
             <a href="/diagnostico" className="bwh-btn bwh-btn--invert">Solicitar Orçamento <span className="bwh-ar">→</span></a>
             <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="bwh-btn bwh-btn--ghostdark">Falar no WhatsApp <span className="bwh-ar">→</span></a>
           </div>
-          <p className="bwh-mono" style={{ color: "var(--dink2)", marginTop: 24 }}>+150 studios entregues em São Paulo</p>
+          <p className="bwh-mono" style={{ color: "var(--dink2)", marginTop: 24 }}>+160 reformas entregues · +200 projetos</p>
         </div>
       </section>
 
