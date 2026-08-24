@@ -50,6 +50,31 @@ async function drive(path: string, params: Record<string, string>) {
   return res;
 }
 
+/** Lista TODAS as páginas de /drive/v3/files (o Drive devolve no máx. 1000 por página). */
+async function driveListAll(
+  params: Record<string, string>,
+  innerFields: string,
+): Promise<Record<string, unknown>[]> {
+  const out: Record<string, unknown>[] = [];
+  let pageToken: string | undefined;
+  let guard = 0;
+  do {
+    const res = await drive("/drive/v3/files", {
+      ...params,
+      pageSize: "1000",
+      fields: `nextPageToken,${innerFields}`,
+      ...(pageToken ? { pageToken } : {}),
+    });
+    const data = await res.json();
+    out.push(...((data.files ?? []) as Record<string, unknown>[]));
+    pageToken = data.nextPageToken as string | undefined;
+    guard += 1;
+  } while (pageToken && guard < 20);
+  return out;
+}
+
+
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
