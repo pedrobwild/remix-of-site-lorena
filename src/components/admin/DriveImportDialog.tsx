@@ -52,6 +52,12 @@ export default function DriveImportDialog({ folder, open, onClose, onImported }:
 
   const currentId = trail.length > 0 ? trail[trail.length - 1].id : "root";
 
+  const byNaturalName = (a: { name?: string }, b: { name?: string }) =>
+    (a.name ?? "").localeCompare(b.name ?? "", "pt-BR", {
+      numeric: true,
+      sensitivity: "base",
+    });
+
   async function loadFolder(parentId: string, term = "") {
     setLoading(true);
     setError(null);
@@ -61,10 +67,10 @@ export default function DriveImportDialog({ folder, open, onClose, onImported }:
         parentId,
         search: term,
       });
-      setFolders(res.folders);
+      setFolders([...res.folders].sort(byNaturalName));
       if (parentId !== "root" && !term) {
         const f = await callDrive<{ files: DriveFile[] }>({ action: "files", folderId: parentId });
-        setFiles(f.files);
+        setFiles([...f.files].sort(byNaturalName));
       } else {
         setFiles([]);
       }
