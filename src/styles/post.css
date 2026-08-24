@@ -125,5 +125,5 @@
 .pt-cta__rea{font-family:var(--pt-mono);font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.72)}
 
 @media (max-width:960px){.pt-related__grid{grid-template-columns:repeat(2,1fr);gap:24px}}
-@media (max-width:700px){.pt-faq summary{font-size:19px;padding-right:44px}.pt-faq summary::after{width:28px;height:28px}}
+@media (max-width:700px){.pt-cover{aspect-ratio:4/3}.pt-faq summary{font-size:19px;padding-right:44px}.pt-faq summary::after{width:28px;height:28px}}
 @media (max-width:640px){.pt-related__grid{grid-template-columns:1fr}}
