@@ -129,3 +129,20 @@
 @media (max-width:960px){.pt-related__grid{grid-template-columns:repeat(2,1fr);gap:24px}}
 @media (max-width:700px){.pt-cover{aspect-ratio:4/3}.pt-faq summary{font-size:19px;padding-right:44px}.pt-faq summary::after{width:28px;height:28px}}
 @media (max-width:640px){.pt-related__grid{grid-template-columns:1fr}}
+
+/* ── Correção de leitura do artigo (24/ago) ───────────────────────────── */
+/* Uma coluna só. Antes: título 900, olho 34rem, capa 1540, corpo 760,
+   FAQ 900 — cinco eixos flush left, com vazio à direita. */
+.bw-post{--pt-measure:880px}
+.pt-title,.pt-excerpt,.pt-body,.pt-faq__inner{max-width:var(--pt-measure)}
+
+/* Capa com proporção fixa: imagem quadrada não vira mais bloco gigante. */
+.pt-cover{max-width:var(--pt-measure);aspect-ratio:3/2;max-height:600px}
+.pt-cover img{width:100%;height:100%;display:block;object-fit:cover;object-position:center}
+
+/* `display:grid` no ul removia o display:list-item dos <li> e apagava o
+   ::marker — por isso as listas saíam sem bolinha. */
+.pt-body ul,.pt-body ol{display:block;gap:normal}
+.pt-body li{display:list-item;margin-bottom:8px}
+
+@media (max-width:700px){.pt-cover{aspect-ratio:4/3}}
