@@ -146,3 +146,6 @@
 .pt-body li{display:list-item;margin-bottom:8px}
 
 @media (max-width:700px){.pt-cover{aspect-ratio:4/3}}
+
+/* ── Centralizar coluna de leitura nos posts (24/ago) ───────────────────── */
+.pt-title,.pt-excerpt,.pt-cover,.pt-body,.pt-faq__inner{margin-inline:auto}
