@@ -287,18 +287,65 @@ Deno.serve(async (req) => {
         slug = `${rawSlug}-${i}`;
       }
 
-      const files = (await driveListAll(
-        {
-          q: `'${folderId.replace(/'/g, "\\'")}' in parents and mimeType contains 'image/' and trashed = false`,
-          orderBy: "name",
-          supportsAllDrives: "true",
-          includeItemsFromAllDrives: "true",
-        },
-        "files(id,name,mimeType)",
-      )) as unknown as { id: string; name?: string; mimeType?: string }[];
-      files.sort((a, b) =>
-        (a.name ?? "").localeCompare(b.name ?? "", "pt-BR", { numeric: true, sensitivity: "base" }),
+      type DriveImg = { id: string; name?: string; mimeType?: string };
+
+      const listImages = async (parent: string): Promise<DriveImg[]> =>
+        (await driveListAll(
+          {
+            q: `'${parent.replace(/'/g, "\\'")}' in parents and mimeType contains 'image/' and trashed = false`,
+            orderBy: "name",
+            supportsAllDrives: "true",
+            includeItemsFromAllDrives: "true",
+          },
+          "files(id,name,mimeType)",
+        )) as unknown as DriveImg[];
+
+      const listSubfolders = async (parent: string): Promise<{ id: string; name?: string }[]> =>
+        (await driveListAll(
+          {
+            q: `'${parent.replace(/'/g, "\\'")}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+            orderBy: "name",
+            supportsAllDrives: "true",
+            includeItemsFromAllDrives: "true",
+          },
+          "files(id,name)",
+        )) as unknown as { id: string; name?: string }[];
+
+      // Varre a pasta do cliente e suas subpastas (até 3 níveis), dando
+      // prioridade às pastas de imagens do projeto (ex.: "Imagens Projeto PNG").
+      const PRIORITY = /imagens|fotos|render|projeto png/i;
+      const seen = new Set<string>();
+      const collected: { img: DriveImg; priority: boolean; path: string }[] = [];
+
+      const walk = async (parent: string, depth: number, priority: boolean, path: string) => {
+        if (depth > 3 || collected.length > 400) return;
+        for (const img of await listImages(parent)) {
+          if (seen.has(img.id)) continue;
+          seen.add(img.id);
+          collected.push({ img, priority, path });
+        }
+        const subs = await listSubfolders(parent);
+        for (const s of subs) {
+          const isPrio = priority || PRIORITY.test(s.name ?? "");
+          await walk(s.id, depth + 1, isPrio, `${path}/${s.name ?? ""}`);
+        }
+      };
+
+      await walk(folderId, 0, false, "");
+
+      const cmp = (a: string, b: string) =>
+        a.localeCompare(b, "pt-BR", { numeric: true, sensitivity: "base" });
+
+      // pastas de imagens primeiro; depois ordem natural por caminho/nome
+      collected.sort(
+        (a, b) =>
+          Number(b.priority) - Number(a.priority) ||
+          cmp(a.path, b.path) ||
+          cmp(a.img.name ?? "", b.img.name ?? ""),
       );
+
+      const files = collected.map((c) => c.img);
+
 
       const urls: string[] = [];
       for (const f of files.slice(0, max)) {

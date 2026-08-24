@@ -175,7 +175,8 @@ export default function DriveBatchImportDialog({ open, onClose, onDone }: Props)
           <div>
             <h2 style={{ margin: 0, fontSize: 18 }}>Importar projetos em lote</h2>
             <p className="mono admin-hint" style={{ margin: "4px 0 0" }}>
-              Cada subpasta vira um projeto (rascunho) com título “iniciais · prédio”.
+              Selecione as pastas dos clientes: cada uma vira um projeto (rascunho) “iniciais ·
+              prédio” e as fotos são buscadas também nas subpastas (ex.: Imagens Projeto PNG).
             </p>
           </div>
           <button type="button" className="admin-btn" onClick={onClose} disabled={running}>
