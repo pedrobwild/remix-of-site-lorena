@@ -50,6 +50,8 @@
 .pt-body a{color:#11355B;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
 .pt-body strong{color:#1A2332;font-weight:600}
 .pt-body ul,.pt-body ol{margin:0 0 18px;padding-left:22px}
+.pt-body ul{list-style-type:disc}
+.pt-body ol{list-style-type:decimal}
 .pt-body li{margin-bottom:8px}
 .pt-body li:last-child{margin-bottom:0}
 .pt-body li::marker{color:#11355B}
