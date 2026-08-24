@@ -177,7 +177,14 @@ Deno.serve(async (req) => {
         includeItemsFromAllDrives: "true",
       });
       const data = await res.json();
-      return json({ files: data.files ?? [] });
+      const files = (data.files ?? []) as { name?: string }[];
+      files.sort((a, b) =>
+        (a.name ?? "").localeCompare(b.name ?? "", "pt-BR", {
+          numeric: true,
+          sensitivity: "base",
+        }),
+      );
+      return json({ files });
     }
 
     // ---- importar arquivos para o storage --------------------------------
