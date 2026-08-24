@@ -22,6 +22,8 @@ export default function BewildProjectsListPage() {
   const [rows, setRows] = useState<Row[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [batchOpen, setBatchOpen] = useState(false);
+
 
   async function load() {
     setLoading(true);
