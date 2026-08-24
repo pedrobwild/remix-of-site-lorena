@@ -68,17 +68,34 @@ export default function BewildProjectsListPage() {
       title="Projetos"
       description="Projetos do portfólio público em /portfolio."
       actions={
-        <a className="admin-btn admin-btn--primary" href="/admin/projetos/novo">
-          + novo projeto
-        </a>
+        <>
+          <button
+            type="button"
+            className="admin-btn"
+            onClick={() => setBatchOpen(true)}
+            style={{ marginRight: 8 }}
+          >
+            importar do Drive em lote
+          </button>
+          <a className="admin-btn admin-btn--primary" href="/admin/projetos/novo">
+            + novo projeto
+          </a>
+        </>
       }
     >
+      <DriveBatchImportDialog
+        open={batchOpen}
+        onClose={() => setBatchOpen(false)}
+        onDone={load}
+      />
+
       <div className="admin-toolbar">
         <div className="admin-toolbar__filters">
           <span className="mono admin-hint">
             {loading ? "carregando…" : `${rows.length} projeto(s)`}
           </span>
         </div>
+
       </div>
 
       <div className="admin-table-wrap">
