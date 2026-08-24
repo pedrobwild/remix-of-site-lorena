@@ -353,12 +353,12 @@ export default function BewildPostPage({ slug }: Props) {
         <div className="gridbg" aria-hidden="true" />
         <div className="container">
           <div className="pt-cta__inner">
-            <span className="pt-eyb">Diagnóstico gratuito · sem compromisso</span>
-            <h2>Da leitura à decisão: <i>avalie o seu studio.</i></h2>
-            <p>Envie os dados do imóvel e receba uma análise inicial de escopo, projeto e próximos passos.</p>
+            <span className="pt-eyb">{cta.eyebrow}</span>
+            <h2>{cta.title}</h2>
+            <p>{cta.body}</p>
             <div className="pt-cta__act">
-              <a href="/diagnostico" className="pt-btn cyan">Solicitar Orçamento <span className="ar">→</span></a>
-              <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="pt-btn ghost">Falar no WhatsApp</a>
+              <a href={ctaHref} className="pt-btn cyan">{cta.buttonLabel} <span className="ar">→</span></a>
+              <a href={ctaWhatsHref} target="_blank" rel="noopener noreferrer" className="pt-btn ghost">Falar no WhatsApp</a>
             </div>
             <div className="pt-cta__rea">+150 studios entregues em São Paulo</div>
           </div>
