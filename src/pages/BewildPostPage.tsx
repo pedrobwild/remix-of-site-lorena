@@ -135,6 +135,12 @@ export default function BewildPostPage({ slug }: Props) {
   const { post, loading, notFound } = useBewildPost(slug);
   const { related } = useBewildRelatedPosts(post?.category, post?.id, 3);
 
+  const cta = useMemo(() => getCtaContent(post?.category), [post?.category]);
+  const ctaHref = post
+    ? `/diagnostico?utm_source=conteudo&utm_medium=post&utm_campaign=${encodeURIComponent(post.slug)}`
+    : "/diagnostico";
+  const ctaWhatsHref = post ? whatsappHref(`Vim do artigo "${post.title}" no site.`) : whatsappHref();
+
   const bodyHtml = useMemo(() => {
     if (!post?.body) return "";
     try {
