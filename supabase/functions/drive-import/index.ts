@@ -335,43 +335,43 @@ Deno.serve(async (req) => {
           "files(id,name)",
         )) as unknown as { id: string; name?: string }[];
 
-      // Procura primeiro a subpasta de imagens do projeto (ex.: "Imagens Projeto PNG").
-      // Só se não achar nada é que varre as demais subpastas (até 2 níveis).
-      const PRIORITY = /imagens|fotos|render|projeto png/i;
+      // Regra do estúdio: importar SOMENTE as fotos da subpasta "Imagens Projeto PNG"
+      // (procurada até 2 níveis abaixo da pasta do cliente). Nenhuma outra pasta é usada.
+      const TARGET = /imagens\s*projeto\s*png/i;
       const cmp = (a: string, b: string) =>
         a.localeCompare(b, "pt-BR", { numeric: true, sensitivity: "base" });
 
       let files: DriveImg[] = [];
       let visited = 0;
 
-      const walk = async (parent: string, depth: number, onlyPriority: boolean) => {
-        if (files.length >= max || depth > 2 || visited > 40) return;
+      const findTarget = async (parent: string, depth: number): Promise<string | null> => {
+        if (depth > 2 || visited > 60) return null;
         visited++;
         const subs = (await listSubfolders(parent)).sort((a, b) => cmp(a.name ?? "", b.name ?? ""));
-        const prio = subs.filter((s) => PRIORITY.test(s.name ?? ""));
-        const targets = onlyPriority ? prio : [...prio, ...subs.filter((s) => !prio.includes(s))];
-        for (const s of targets) {
-          if (files.length >= max) return;
-          const imgs = (await listImages(s.id)).sort((a, b) => cmp(a.name ?? "", b.name ?? ""));
-          files.push(...imgs.slice(0, max - files.length));
-          if (files.length >= max) return;
-          await walk(s.id, depth + 1, onlyPriority);
+        const hit = subs.find((s) => TARGET.test(s.name ?? ""));
+        if (hit) return hit.id;
+        for (const s of subs) {
+          const found = await findTarget(s.id, depth + 1);
+          if (found) return found;
         }
+        return null;
       };
 
       let discoveryWarning: string | null = null;
       try {
-        // imagens soltas na própria pasta do cliente
-        files = (await listImages(folderId))
-          .sort((a, b) => cmp(a.name ?? "", b.name ?? ""))
-          .slice(0, max);
-
-        if (files.length < max) await walk(folderId, 0, true);
-        if (files.length === 0) await walk(folderId, 0, false);
+        const targetId = await findTarget(folderId, 0);
+        if (targetId) {
+          files = (await listImages(targetId))
+            .sort((a, b) => cmp(a.name ?? "", b.name ?? ""))
+            .slice(0, max);
+        } else {
+          discoveryWarning = "não encontrei a subpasta \"Imagens Projeto PNG\" nessa pasta de cliente.";
+        }
       } catch (e) {
         discoveryWarning = e instanceof Error ? e.message : "Não foi possível listar as fotos.";
         console.error("batch image discovery falhou:", discoveryWarning);
       }
+
 
       const urls: string[] = [];
       let failedImages = 0;
