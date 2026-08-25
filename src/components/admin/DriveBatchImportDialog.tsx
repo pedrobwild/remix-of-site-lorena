@@ -115,7 +115,7 @@ export default function DriveBatchImportDialog({ open, onClose, onDone }: Props)
       setLog((l) => [...l, `⏳ ${title} — importando…`]);
       try {
         const res = await Promise.race([
-          callDrive<{ project: { slug: string }; images: number }>({
+          callDrive<{ project: { slug: string }; images: number; warning?: string | null }>({
             action: "create_from_folder",
             folderId: f.id,
             title,
@@ -131,7 +131,9 @@ export default function DriveBatchImportDialog({ open, onClose, onDone }: Props)
         created += 1;
         setLog((l) => [
           ...l.slice(0, -1),
-          `✅ ${title} — ${res.images} foto(s) · /portfolio/${res.project.slug}`,
+          res.warning
+            ? `⚠️ ${title} — ${res.warning} · /admin/projetos/${res.project.slug}`
+            : `✅ ${title} — criado com ${res.images} foto(s) · /admin/projetos/${res.project.slug}`,
         ]);
       } catch (e) {
         console.error("batch import falhou", f.name, e);
