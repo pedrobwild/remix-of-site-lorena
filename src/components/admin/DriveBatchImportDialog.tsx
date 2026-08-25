@@ -46,6 +46,7 @@ export default function DriveBatchImportDialog({ open, onClose, onDone }: Props)
   const [running, setRunning] = useState(false);
   const [log, setLog] = useState<string[]>([]);
   const [createdAny, setCreatedAny] = useState(false);
+  const [summary, setSummary] = useState<{ created: number; failed: number } | null>(null);
 
   async function loadFolder(parentId: string) {
     setLoading(true);
@@ -66,6 +67,7 @@ export default function DriveBatchImportDialog({ open, onClose, onDone }: Props)
     setSelected(new Set());
     setLog([]);
     setCreatedAny(false);
+    setSummary(null);
     loadFolder("root");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
@@ -104,7 +106,10 @@ export default function DriveBatchImportDialog({ open, onClose, onDone }: Props)
     setRunning(true);
     setError(null);
     setLog([]);
+    setSummary(null);
     let order = Math.max(1, from);
+    let created = 0;
+    let failed = 0;
     for (const f of queue) {
       const { title } = parseDriveFolderName(f.name);
       setLog((l) => [...l, `⏳ ${title} — importando…`]);
@@ -123,18 +128,21 @@ export default function DriveBatchImportDialog({ open, onClose, onDone }: Props)
           ),
         ]);
         setCreatedAny(true);
+        created += 1;
         setLog((l) => [
           ...l.slice(0, -1),
           `✅ ${title} — ${res.images} foto(s) · /portfolio/${res.project.slug}`,
         ]);
       } catch (e) {
         console.error("batch import falhou", f.name, e);
+        failed += 1;
         setLog((l) => [...l.slice(0, -1), `⚠️ ${title} — ${e instanceof Error ? e.message : "falhou"}`]);
       }
       order += 1;
     }
     setRunning(false);
-    onDone();
+    setSummary({ created, failed });
+    if (created > 0) onDone();
   }
 
   const queue = folders.filter((f) => selected.has(f.id));
@@ -271,6 +279,27 @@ export default function DriveBatchImportDialog({ open, onClose, onDone }: Props)
             </p>
           )}
 
+          {summary && (
+            <div
+              role="status"
+              aria-live="polite"
+              style={{
+                margin: "0 0 16px",
+                padding: "12px 14px",
+                border: summary.failed === 0 ? "1px solid #15803d" : "1px solid #b45309",
+                borderRadius: 8,
+                background: summary.failed === 0 ? "#f0fdf4" : "#fffbeb",
+                color: summary.failed === 0 ? "#166534" : "#92400e",
+              }}
+            >
+              <strong>
+                {summary.failed === 0
+                  ? `Importação concluída com sucesso: ${summary.created} projeto(s) criado(s).`
+                  : `Importação concluída: ${summary.created} projeto(s) criado(s) e ${summary.failed} com erro.`}
+              </strong>
+            </div>
+          )}
+
           {!loading && (
             <p className="mono admin-hint" style={{ margin: "0 0 8px" }}>
               {folders.length} pasta(s) · {selected.size} selecionada(s)
@@ -344,7 +373,7 @@ export default function DriveBatchImportDialog({ open, onClose, onDone }: Props)
         >
           {running && (
             <span className="mono admin-hint" style={{ marginRight: "auto" }}>
-              Importando… {log.length} de {queue.length}
+              Importando… {Math.min(log.length, queue.length)} de {queue.length}
             </span>
           )}
           <button type="button" className="admin-btn" onClick={onClose} disabled={running}>

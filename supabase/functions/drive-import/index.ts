@@ -287,6 +287,29 @@ Deno.serve(async (req) => {
         slug = `${rawSlug}-${i}`;
       }
 
+      // Cria o rascunho antes do trabalho demorado com as imagens. Além de usar
+      // um valor aceito pelo CHECK de projects.tag, isso garante que uma
+      // interrupção durante os downloads não faça todo o projeto desaparecer.
+      const { data: created, error: insErr } = await admin
+        .from("projects")
+        .insert({
+          title,
+          slug,
+          tag: "Interiores",
+          cover_url: null,
+          cover_alt: title,
+          gallery_urls: [],
+          published: false,
+          sort_order: sortOrder,
+        })
+        .select("id, slug")
+        .single();
+      if (insErr || !created) {
+        console.error("batch project create falhou:", insErr);
+        return json({ error: insErr?.message || "Não foi possível criar o projeto." }, 400);
+      }
+      console.log("batch project criado:", created.id, created.slug);
+
       type DriveImg = { id: string; name?: string; mimeType?: string };
 
       const listImages = async (parent: string): Promise<DriveImg[]> =>
@@ -368,23 +391,24 @@ Deno.serve(async (req) => {
         }
       }
 
-
-      const { data: created, error: insErr } = await admin
+      const { error: updateErr } = await admin
         .from("projects")
-        .insert({
-          title,
-          slug,
-          tag: "reforma",
+        .update({
           cover_url: urls[0] ?? null,
-          cover_alt: title,
           gallery_urls: urls.slice(1),
-          published: false,
-          sort_order: sortOrder,
         })
-        .select("id, slug")
-        .single();
-      if (insErr) return json({ error: insErr.message }, 400);
+        .eq("id", created.id);
+      if (updateErr) {
+        console.error("batch project images update falhou:", updateErr);
+        return json({
+          error: `O projeto foi criado, mas as fotos não puderam ser vinculadas: ${updateErr.message}`,
+          project: created,
+          images: urls.length,
+          partial: true,
+        }, 500);
+      }
 
+      console.log("batch import concluído:", created.id, urls.length, "imagem(ns)");
       return json({ project: created, images: urls.length, totalInFolder: files.length });
     }
 
