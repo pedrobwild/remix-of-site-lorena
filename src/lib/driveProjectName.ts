@@ -55,6 +55,8 @@ function titleCaseWord(word: string, index: number): string {
   if (!word) return word;
   // Mantém siglas já em caixa alta (YBY, SP, JK…)
   if (word.length <= 4 && word === word.toUpperCase() && /[A-ZÀ-Ú]/.test(word)) return word;
+  // Mantém grafias com maiúscula interna (MetroCasa, YbY, JHSF)
+  if (/[A-ZÀ-Ú]/.test(word.slice(1))) return word;
   const lower = word.toLocaleLowerCase("pt-BR");
   if (index > 0 && SMALL_WORDS.has(lower)) return lower;
   return lower.charAt(0).toLocaleUpperCase("pt-BR") + lower.slice(1);
