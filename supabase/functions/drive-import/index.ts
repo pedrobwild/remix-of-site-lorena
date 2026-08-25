@@ -268,7 +268,7 @@ Deno.serve(async (req) => {
       const title: string = String(body?.title || "").trim();
       const rawSlug: string = slugify(String(body?.slug || title)) || "projeto";
       const sortOrder: number = Number.isFinite(body?.sortOrder) ? Number(body.sortOrder) : 0;
-      const max = Math.min(Math.max(Number(body?.max) || 12, 1), 24);
+      const max = Math.min(Math.max(Number(body?.max) || 200, 1), 200);
       if (!folderId || !title) return json({ error: "folderId e title são obrigatórios." }, 400);
 
       const admin = createClient(
