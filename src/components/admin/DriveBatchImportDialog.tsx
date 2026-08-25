@@ -42,7 +42,7 @@ export default function DriveBatchImportDialog({ open, onClose, onDone }: Props)
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [from, setFrom] = useState(34);
-  const [maxImages, setMaxImages] = useState(12);
+  const [maxImages, setMaxImages] = useState(200);
   const [running, setRunning] = useState(false);
   const [log, setLog] = useState<string[]>([]);
   const [createdAny, setCreatedAny] = useState(false);
@@ -124,7 +124,7 @@ export default function DriveBatchImportDialog({ open, onClose, onDone }: Props)
             max: maxImages,
           }),
           new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error("demorou demais (tente menos fotos por projeto)")), 180000),
+            setTimeout(() => reject(new Error("demorou demais (tente menos fotos por projeto)")), 480000),
           ),
         ]);
         setCreatedAny(true);
@@ -258,9 +258,9 @@ export default function DriveBatchImportDialog({ open, onClose, onDone }: Props)
               className="admin-field__input"
               type="number"
               min={1}
-              max={24}
+              max={200}
               value={maxImages}
-              onChange={(e) => setMaxImages(Number(e.target.value) || 12)}
+              onChange={(e) => setMaxImages(Number(e.target.value) || 200)}
               style={{ width: 120 }}
               disabled={running}
             />
