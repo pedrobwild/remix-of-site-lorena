@@ -37,6 +37,7 @@ async function drive(path: string, params: Record<string, string>) {
   const url = new URL(`${GATEWAY}${path}`);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
   const res = await fetch(url.toString(), {
+    signal: AbortSignal.timeout(30000),
     headers: {
       Authorization: `Bearer ${LOVABLE_API_KEY}`,
       "X-Connection-Api-Key": GOOGLE_DRIVE_API_KEY,
@@ -287,6 +288,29 @@ Deno.serve(async (req) => {
         slug = `${rawSlug}-${i}`;
       }
 
+      // Cria o rascunho antes do trabalho demorado com as imagens. Além de usar
+      // um valor aceito pelo CHECK de projects.tag, isso garante que uma
+      // interrupção durante os downloads não faça todo o projeto desaparecer.
+      const { data: created, error: insErr } = await admin
+        .from("projects")
+        .insert({
+          title,
+          slug,
+          tag: "Interiores",
+          cover_url: null,
+          cover_alt: title,
+          gallery_urls: [],
+          published: false,
+          sort_order: sortOrder,
+        })
+        .select("id, slug")
+        .single();
+      if (insErr || !created) {
+        console.error("batch project create falhou:", insErr);
+        return json({ error: insErr?.message || "Não foi possível criar o projeto." }, 400);
+      }
+      console.log("batch project criado:", created.id, created.slug);
+
       type DriveImg = { id: string; name?: string; mimeType?: string };
 
       const listImages = async (parent: string): Promise<DriveImg[]> =>
@@ -335,15 +359,22 @@ Deno.serve(async (req) => {
         }
       };
 
-      // imagens soltas na própria pasta do cliente
-      files = (await listImages(folderId))
-        .sort((a, b) => cmp(a.name ?? "", b.name ?? ""))
-        .slice(0, max);
+      let discoveryWarning: string | null = null;
+      try {
+        // imagens soltas na própria pasta do cliente
+        files = (await listImages(folderId))
+          .sort((a, b) => cmp(a.name ?? "", b.name ?? ""))
+          .slice(0, max);
 
-      if (files.length < max) await walk(folderId, 0, true);
-      if (files.length === 0) await walk(folderId, 0, false);
+        if (files.length < max) await walk(folderId, 0, true);
+        if (files.length === 0) await walk(folderId, 0, false);
+      } catch (e) {
+        discoveryWarning = e instanceof Error ? e.message : "Não foi possível listar as fotos.";
+        console.error("batch image discovery falhou:", discoveryWarning);
+      }
 
       const urls: string[] = [];
+      let failedImages = 0;
       for (const f of files.slice(0, max)) {
         try {
           const mediaRes = await drive(`/drive/v3/files/${encodeURIComponent(f.id)}`, {
@@ -364,28 +395,43 @@ Deno.serve(async (req) => {
           if (error) throw error;
           urls.push(admin.storage.from(BUCKET).getPublicUrl(path).data.publicUrl);
         } catch (e) {
+          failedImages += 1;
           console.error("batch upload falhou:", e);
         }
       }
 
-
-      const { data: created, error: insErr } = await admin
+      const { error: updateErr } = await admin
         .from("projects")
-        .insert({
-          title,
-          slug,
-          tag: "reforma",
+        .update({
           cover_url: urls[0] ?? null,
-          cover_alt: title,
           gallery_urls: urls.slice(1),
-          published: false,
-          sort_order: sortOrder,
         })
-        .select("id, slug")
-        .single();
-      if (insErr) return json({ error: insErr.message }, 400);
+        .eq("id", created.id);
+      if (updateErr) {
+        console.error("batch project images update falhou:", updateErr);
+        return json({
+          error: `O projeto foi criado, mas as fotos não puderam ser vinculadas: ${updateErr.message}`,
+          project: created,
+          images: urls.length,
+          partial: true,
+        }, 500);
+      }
 
-      return json({ project: created, images: urls.length, totalInFolder: files.length });
+      console.log("batch import concluído:", created.id, urls.length, "imagem(ns)");
+      const warning = discoveryWarning
+        ? `Projeto criado, mas não foi possível buscar as fotos: ${discoveryWarning}`
+        : failedImages > 0
+          ? `Projeto criado; ${failedImages} foto(s) não puderam ser importadas.`
+          : files.length === 0
+            ? "Projeto criado, mas nenhuma foto foi encontrada na pasta selecionada."
+            : null;
+      return json({
+        project: created,
+        images: urls.length,
+        totalInFolder: files.length,
+        failedImages,
+        warning,
+      });
     }
 
     return json({ error: "Ação inválida." }, 400);
