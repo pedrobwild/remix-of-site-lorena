@@ -101,17 +101,21 @@ function splitPersonPrefix(words: string[]): { person: string[]; rest: string[] 
   if (words.length < 2) return null;
   if (!GIVEN_NAMES.has(strip(words[0]))) return null;
   const person: string[] = [words[0]];
+  let unknown = 0; // sobrenomes fora da lista: aceita no máximo 1
   for (let i = 1; i < words.length; i++) {
     const w = words[i];
     const s = strip(w);
-    const isNameLike =
-      /^[A-Za-zÀ-ÿ']+$/.test(w) &&
-      (NAME_PARTICLES.has(s) || GIVEN_NAMES.has(s) || /^[A-ZÀ-Ý]/.test(w) || w === w.toUpperCase());
-    // Para de consumir quando sobra pouca coisa para o prédio.
-    if (!isNameLike || words.length - i <= 1) break;
-    if (person.length >= 4) break;
+    if (words.length - i <= 1 || person.length >= 4) break; // sobra pouca coisa para o prédio
+    if (!/^[A-Za-zÀ-ÿ']+$/.test(w)) break;
+    if (/[A-ZÀ-Ú]/.test(w.slice(1))) break; // "MetroCasa" já é o empreendimento
+    const known = NAME_PARTICLES.has(s) || GIVEN_NAMES.has(s);
+    if (!known) {
+      if (unknown >= 1 || !/^[A-ZÀ-Ý]/.test(w)) break;
+      unknown += 1;
+    }
     person.push(w);
   }
+
   const rest = words.slice(person.length);
   if (rest.length === 0) return null;
   return { person, rest };
