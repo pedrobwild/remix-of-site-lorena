@@ -82,8 +82,7 @@ Disallow: /
 User-agent: BLEXBot
 Disallow: /
 
-# Sitemaps (estático + dinâmico do banco)
+# Sitemap
 Sitemap: https://bewild.com.br/sitemap.xml
-Sitemap: https://bewild.com.br/functions/v1/sitemap
 
 Host: https://bewild.com.br

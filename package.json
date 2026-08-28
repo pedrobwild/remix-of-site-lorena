@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "vite",
     "prepare": "husky",
-    "prebuild": "node scripts/check-routes-parity.mjs",
+    "prebuild": "node scripts/generate-sitemap.mjs && node scripts/check-routes-parity.mjs",
     "build": "tsc -b && vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
+    "sitemap": "node scripts/generate-sitemap.mjs",
     "routes:check": "node scripts/check-routes-parity.mjs",
     "lint": "eslint .",
     "format": "prettier --check .",

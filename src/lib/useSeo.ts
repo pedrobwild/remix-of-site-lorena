@@ -17,6 +17,43 @@ export type SeoInput = {
 const MANAGED_ATTR = "data-seo-managed";
 const INJECTED_ATTR = "data-seo-injected";
 
+/** Selectors de verificação que jamais podem ser removidos do <head>. */
+const PROTECTED_META_SELECTORS = [
+  'meta[name="google-site-verification"]',
+  'meta[name="facebook-domain-verification"]',
+];
+
+/** Domínio oficial da Bewild. Nunca deve ser sobrescrito por outro host. */
+export const BEWILD_CANONICAL_BASE = "https://bewild.com.br";
+const ALLOWED_CANONICAL_HOSTS = ["bewild.com.br", "www.bewild.com.br"];
+let warnedCanonicalHost = false;
+
+/**
+ * Retorna sempre o domínio oficial da Bewild, exceto quando o banco traz
+ * uma URL https válida cujo host é bewild.com.br (www é normalizado).
+ * Qualquer outro host é ignorado silenciosamente (com um warn único).
+ */
+export function getCanonicalBase(settings?: { seo_canonical_base?: string | null } | null): string {
+  const raw = settings?.seo_canonical_base?.trim();
+  if (!raw) return BEWILD_CANONICAL_BASE;
+  try {
+    const url = new URL(raw.replace(/^http:\/\//i, "https://"));
+    if (url.protocol !== "https:") return BEWILD_CANONICAL_BASE;
+    if (!ALLOWED_CANONICAL_HOSTS.includes(url.hostname.toLowerCase())) {
+      if (!warnedCanonicalHost) {
+        warnedCanonicalHost = true;
+        console.warn(
+          `[seo] seo_canonical_base ignorado (host "${url.hostname}" nao e bewild.com.br).`
+        );
+      }
+      return BEWILD_CANONICAL_BASE;
+    }
+    return BEWILD_CANONICAL_BASE;
+  } catch {
+    return BEWILD_CANONICAL_BASE;
+  }
+}
+
 function setMeta(selector: string, attrs: Record<string, string>) {
   let el = document.head.querySelector<HTMLMetaElement | HTMLLinkElement>(selector);
   if (!el) {
@@ -54,6 +91,9 @@ function addJsonLd(data: Record<string, unknown> | Array<Record<string, unknown>
 /** Injeta uma tag <meta name=X content=Y> apenas se value for truthy */
 function setMetaIf(selector: string, attrs: Record<string, string>, value?: string | null) {
   if (!value) {
+    // Nunca remover as verificações de propriedade que já existem estáticas
+    // no index.html — elas sustentam Search Console / Meta Business.
+    if (PROTECTED_META_SELECTORS.includes(selector)) return;
     const existing = document.head.querySelector(selector);
     if (existing?.getAttribute(MANAGED_ATTR)) existing.remove();
     return;
@@ -166,29 +206,9 @@ function setupTrackersConsentGate() {
 }
 
 function applySeo(settings: SiteSettings, seo: SeoInput) {
-  // Normaliza a base canônica:
-  //  - trim (cobre "   ")
-  //  - fallback para o domínio de produção quando ausente
-  //  - força https:// (Search Console penaliza canonical http quando o
-  //    domínio serve https — qualquer http salvo no admin por engano
-  //    é promovido aqui no runtime)
-  //  - extrai apenas o ORIGIN (protocolo + host + porta), descartando
-  //    qualquer path/query/hash. Isso protege contra cenários como:
-  //      "https://bewild.com.br/404"  → vira "https://bewild.com.br"
-  //      "https://bewild.com.br/blog/" → vira "https://bewild.com.br"
-  //    Caso contrário o canonical da 404 sairia duplicado tipo
-  //    "https://bewild.com.br/404/404" — Googlebot trata como URL
-  //    inexistente e gera mais ruído de soft-404.
-  const rawBase = settings.seo_canonical_base?.trim() || "https://bewild.com.br";
-  const httpsBase = rawBase.replace(/^http:\/\//i, "https://");
-  let base: string;
-  try {
-    base = new URL(httpsBase).origin;
-  } catch {
-    // URL inválida (ex.: "bewild.com.br" sem protocolo) — usa o fallback
-    // de produção em vez de tentar concatenar string crua.
-    base = "https://bewild.com.br";
-  }
+  // Base canônica blindada: sempre o domínio oficial da Bewild.
+  // Ver `getCanonicalBase` — hosts estranhos vindos do banco são ignorados.
+  const base = getCanonicalBase(settings);
   const title = seo.title || settings.seo_default_title || settings.site_title || "Bewild";
   const description =
     seo.description || settings.seo_default_description || settings.site_description || "";
@@ -259,7 +279,7 @@ function applySeo(settings: SiteSettings, seo: SeoInput) {
   setMeta('meta[property="og:locale"]', { property: "og:locale", content: "pt_BR" });
   setMeta('meta[property="og:site_name"]', {
     property: "og:site_name",
-    content: settings.site_title || "Bewild",
+    content: "Bewild",
   });
   if (ogImage) {
     setMeta('meta[property="og:image"]', { property: "og:image", content: ogImage });
@@ -392,7 +412,7 @@ export async function refreshSeoEverywhere(opts?: { pingSearchEngines?: boolean 
 
 /** LocalBusiness / ProfessionalService — enriquecido com horário, faixa de preço e mapa. */
 export function professionalServiceJsonLd(s: SiteSettings) {
-  const base = (s.seo_canonical_base?.trim() || "https://bewild.com.br").replace(/\/$/, "");
+  const base = getCanonicalBase(s);
   const type = s.business_type || "ProfessionalService";
 
   const geo = (() => {
@@ -446,7 +466,7 @@ export function professionalServiceJsonLd(s: SiteSettings) {
     "@type": type,
     "@id": `${base}/#business`,
     parentOrganization: { "@id": `${base}/#organization` },
-    name: s.site_title || "Bewild",
+    name: "Bewild",
     legalName: "Bewild",
     description: s.seo_default_description || s.site_description || "",
     url: base,
@@ -455,7 +475,7 @@ export function professionalServiceJsonLd(s: SiteSettings) {
       ? {
           "@type": "ImageObject",
           url: logoUrl,
-          caption: s.site_title || "Bewild",
+          caption: "Bewild",
         }
       : undefined,
     email: s.contact_email || undefined,
@@ -519,7 +539,7 @@ export function projectJsonLd(
     tag?: string;
   }
 ) {
-  const base = (s.seo_canonical_base?.trim() || "https://bewild.com.br").replace(/\/$/, "");
+  const base = getCanonicalBase(s);
   return {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
@@ -529,7 +549,7 @@ export function projectJsonLd(
     url: `${base}/portfolio/${project.slug}`,
     creator: {
       "@type": "Organization",
-      name: s.site_title || "Bewild",
+      name: "Bewild",
       url: base,
     },
     about: project.tag,
@@ -543,7 +563,7 @@ export function breadcrumbJsonLd(
   s: SiteSettings,
   trail: Array<{ name: string; path: string }>
 ) {
-  const base = (s.seo_canonical_base?.trim() || "https://bewild.com.br").replace(/\/$/, "");
+  const base = getCanonicalBase(s);
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -561,7 +581,7 @@ export function itemListJsonLd(
   s: SiteSettings,
   items: Array<{ name: string; path: string; image?: string }>
 ) {
-  const base = (s.seo_canonical_base?.trim() || "https://bewild.com.br").replace(/\/$/, "");
+  const base = getCanonicalBase(s);
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -593,12 +613,12 @@ export function faqJsonLd(items: Array<{ q: string; a: string }>) {
 
 /** WebSite JSON-LD com SearchAction (ajuda a aparecer caixa de busca no Google). */
 export function websiteJsonLd(s: SiteSettings) {
-  const base = (s.seo_canonical_base?.trim() || "https://bewild.com.br").replace(/\/$/, "");
+  const base = getCanonicalBase(s);
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${base}/#website`,
-    name: s.site_title || "Bewild",
+    name: "Bewild",
     url: base,
     inLanguage: "pt-BR",
     publisher: { "@id": `${base}/#organization` },
@@ -607,7 +627,7 @@ export function websiteJsonLd(s: SiteSettings) {
 
 /** Organization JSON-LD — reforça entidade para o Knowledge Graph. */
 export function organizationJsonLd(s: SiteSettings) {
-  const base = (s.seo_canonical_base?.trim() || "https://bewild.com.br").replace(/\/$/, "");
+  const base = getCanonicalBase(s);
 
   const absUrl = (u: string | null | undefined) => {
     if (!u) return undefined;
@@ -646,14 +666,14 @@ export function organizationJsonLd(s: SiteSettings) {
     "@context": "https://schema.org",
     "@type": "Organization",
     "@id": `${base}/#organization`,
-    name: s.site_title || "Bewild",
+    name: "Bewild",
     legalName: "Bewild",
     url: base,
     logo: logoUrl
       ? {
           "@type": "ImageObject",
           url: logoUrl,
-          caption: s.site_title || "Bewild",
+          caption: "Bewild",
         }
       : undefined,
     image: logoUrl,

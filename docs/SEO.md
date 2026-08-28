@@ -68,20 +68,25 @@ Valide tudo em: https://search.google.com/test/rich-results
 
 ---
 
-## Sitemap dinâmico
+## Sitemap
 
-A edge function `supabase/functions/sitemap/index.ts` gera o XML a partir dos
-projetos visíveis no banco. Inclui:
+O sitemap oficial do site é o arquivo estático **`public/sitemap.xml`**, servido
+em `https://bewild.com.br/sitemap.xml` e declarado no `robots.txt`.
 
-- Namespace de imagens (`xmlns:image`) para Google Images
-- Hreflang `pt-BR`
-- `lastmod` baseado em `updated_at` de cada projeto
-- Cache de 1 hora
+Ele é **regenerado automaticamente no `prebuild`** pelo script
+`scripts/generate-sitemap.mjs`, que consulta o banco via REST (chave pública) e
+inclui:
 
-A função `robots/index.ts` gera o robots.txt dinâmico, bloqueando `/admin`
-e incluindo regras para Googlebot, Bingbot, GPTBot e Google-Extended (LLMs).
+- as 6 rotas estáticas indexáveis (`/`, `/portfolio`, `/diagnostico`,
+  `/conteudos`, `/faq`, `/privacidade`);
+- um `<url>` por projeto com `published = true` e `visible = true` (prioridade 0.7);
+- um `<url>` por conteúdo com `published = true` (prioridade 0.6);
+- `lastmod` a partir da data mais recente disponível de cada registro.
 
-O `public/sitemap.xml` estático também é servido como fallback indexável.
+O script nunca quebra o build: se faltar env, a rede falhar ou vierem menos de 6
+projetos, ele imprime um aviso e mantém o arquivo atual.
+
+Rodar manualmente: `npm run sitemap`.
 
 ---
 
