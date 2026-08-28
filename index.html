@@ -36,7 +36,6 @@
     <meta name="language" content="Portuguese" />
 
     <!-- Canonical + hreflang -->
-    <!-- TODO: confirmar domínio oficial da Bewild (usado em canonical/OG). -->
     <link rel="canonical" href="https://bewild.com.br/" />
     <link rel="alternate" hreflang="pt-BR" href="https://bewild.com.br/" />
     <link rel="alternate" hreflang="x-default" href="https://bewild.com.br/" />
@@ -177,9 +176,6 @@
         body {
           cursor: auto !important;
         }
-        .seo-fallback {
-          display: block !important;
-        }
       </style>
     </noscript>
     <meta property="og:title" content="Bewild — Reforma completa de apartamentos em São Paulo e Rio de Janeiro">
@@ -256,47 +252,6 @@
       setTimeout(finish, MAX); // trava de segurança: nunca segura a página além disso
     })();
     </script>
-
-    <!-- Conteúdo SEO-friendly para crawlers que não executam JS.
-       Visualmente oculto quando o JS carrega, mas indexado pelo Google. -->
-    <div
-      class="seo-fallback"
-      style="
-        position: absolute;
-        left: -9999px;
-        top: auto;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-      "
-    >
-      <p><strong>Bewild — Reformas turn-key para studios, short-stay e imóveis compactos</strong></p>
-      <p>
-        A <strong>Bewild</strong> transforma studios e apartamentos compactos em
-        <strong>imóveis prontos para rentabilizar</strong>. Reunimos projeto de arquitetura
-        personalizado, reforma turn-key, marcenaria, mobiliário, tecnologia de acompanhamento e
-        gestão ponta-a-ponta em um único processo — pensado para foto, uso, manutenção e operação.
-      </p>
-      <h2>O que a Bewild faz</h2>
-      <ul>
-        <li>Reforma turn-key de studios e apartamentos compactos</li>
-        <li>Projeto de arquitetura personalizado para cada imóvel</li>
-        <li>Studios para short-stay, long stay e uso misto (Airbnb/Booking)</li>
-        <li>Interiores e marcenaria sob medida</li>
-        <li>Mobiliário, eletrodomésticos e enxoval</li>
-        <li>Portal e tecnologia de acompanhamento de obra</li>
-      </ul>
-      <h2>Atendimento</h2>
-      <p>
-        Operação concentrada em <strong>São Paulo e região</strong>, com possibilidade de análise
-        para outras praças conforme escopo e disponibilidade. Atende investidores locais e remotos.
-      </p>
-      <h2>Contato</h2>
-      <p>
-        E-mail: <a href="mailto:contato@bewild.com.br">contato@bewild.com.br</a>. São Paulo —
-        Brasil.
-      </p>
-    </div>
 
     <!-- Meta Pixel noscript fallback removido: LGPD exige aceite do banner antes de qualquer tracking. -->
 
