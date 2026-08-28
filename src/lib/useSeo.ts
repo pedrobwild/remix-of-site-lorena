@@ -209,7 +209,7 @@ function applySeo(settings: SiteSettings, seo: SeoInput) {
   // Base canônica blindada: sempre o domínio oficial da Bewild.
   // Ver `getCanonicalBase` — hosts estranhos vindos do banco são ignorados.
   const base = getCanonicalBase(settings);
-  const title = seo.title || settings.seo_default_title || setting"Bewild";
+  const title = seo.title || settings.seo_default_title || settings.site_title || "Bewild";
   const description =
     seo.description || settings.seo_default_description || settings.site_description || "";
   const ogImage = seo.ogImage || settings.seo_og_image || settings.default_og_image || "";
