@@ -1,54 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Sitemap estático — Bewild (reforma turn-key de studios em São Paulo).
-  Lista as rotas indexáveis canônicas. A versão dinâmica (com galeria/
-  conteúdos em tempo real) é servida pela edge function
-  /functions/v1/sitemap, declarada também no robots.txt.
--->
-<urlset
-  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-  xmlns:xhtml="http://www.w3.org/1999/xhtml">
-
-  <url>
-    <loc>https://bewild.com.br/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.00</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://bewild.com.br/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://bewild.com.br/" />
-  </url>
-
-  <url>
-    <loc>https://bewild.com.br/portfolio</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://bewild.com.br/portfolio" />
-  </url>
-
-  <url>
-    <loc>https://bewild.com.br/diagnostico</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.90</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://bewild.com.br/diagnostico" />
-  </url>
-
-  <url>
-    <loc>https://bewild.com.br/conteudos</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.80</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://bewild.com.br/conteudos" />
-  </url>
-
-  <url>
-    <loc>https://bewild.com.br/faq</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://bewild.com.br/faq" />
-  </url>
-
-  <url>
-    <loc>https://bewild.com.br/privacidade</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.30</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://bewild.com.br/privacidade" />
-  </url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://bewild.com.br/</loc><lastmod>2026-08-28</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://bewild.com.br/portfolio</loc><lastmod>2026-08-27</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://bewild.com.br/diagnostico</loc><lastmod>2026-08-28</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://bewild.com.br/conteudos</loc><lastmod>2026-08-24</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bewild.com.br/faq</loc><lastmod>2026-08-28</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/privacidade</loc><lastmod>2026-08-28</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ab-modern-campo-belo</loc><lastmod>2026-08-20</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ab-peninsula-vila-madalena</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ab-the-collection-moema</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/af-living-full-vila-nova-conceicao</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ag</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ag-oriz-by-plano-plano</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ah-place-klabin-residence</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ah-soma-perdizes</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/al-nurban-santa-cecilia</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/am-maceio-88-by-you-inc</loc><lastmod>2026-08-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/am-maceio88-higienopolis</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/am-my-one-estacao-frandique-coutinho</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/am-voxx-itaim</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ap-level-brooklin</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ap-now-butanta</loc><lastmod>2026-08-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/as-hub-brooklin-by-ez</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/az-the-collection-paulista</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/bf</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/bn-next-one-joao-cachoeira</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/cc-my-one-brooklin</loc><lastmod>2026-08-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/cg-yby-urban-home</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/cm-caminho-boa-vista</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/co-chacara-klabin</loc><lastmod>2026-08-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/cs-latitude-campo-belo</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/dm</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ea-now-butanta</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ea-zip-brooklin</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ec-nurban-santa-cecilia</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ej-vital-home</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/em-do-it-pinheiros</loc><lastmod>2026-08-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/es</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/fb-la-vida</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/fc-think-tanabi-perdizes</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/fd-balkon-campo-belo</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/fd-nex-one-vila-nova</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/fd-next-one-vila-nova</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ff</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/fg</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/fp-cyrela-by-you-perdizes</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/fp-nex-one-paraiso</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/fp-nex-one-vila-nova</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ga-id-home-lifestyle-paraiso</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/gf-wonder-ipiranga</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/il-mobi-tucuruvi</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/jc-exalt-ibirapuera-by-ez</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/jl-soma-perdizes</loc><lastmod>2026-08-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/jp-the-collection-madalena</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/jr-vitacon-boa-vista</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/kc-vivaz-prime-alto-do-ipiranga</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/kd-now-butanta</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/lc-essencial-faria-lima</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/lc-today-faria-lima</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/le-hub-brooklin-by-ez</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/lf-modern-estacao-butanta</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/lv-modern-estacao-butanta</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/md-peninsula-vila-madalena</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/me-hub-brooklin-by-ez</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ml-brasilio-177</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ml-nurban-vila-madalena</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/mm-pinheiros-by-passarelli</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/mrfb-level-brooklin</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ms-do-it-vila-olimpia</loc><lastmod>2026-08-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ms-today-vila-mariana</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/pg-metrocasa-berrini</loc><lastmod>2026-08-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/pp-via-alameda</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/prg-metrocasa-berrini</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/r-tbg</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ra-soma-perdizes</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/rb-cyrela-for-you-perdizes</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/rjm</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/rkj-le-jardin-cyrela-by-yoo</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/rm</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/rm-metrocasa-berrini</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/rm-metrocasa-paulista</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/rs-metro-casa-9-de-julho</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/rs-my-one-estacao-japao-liberdade</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/rs-sergipe-boutique</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/rs-sergipe-boutique-apartments-by-you</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/rs-spotlights-pinheiros</loc><lastmod>2026-08-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/rw-the-collection-puq-sp</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/sc-my-one</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/scjb-nik-paulista</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/sf-organy-essencial-vila-clementino</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/sp-pacoba</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/sr-vibe-vila-olimpia</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/ta-metrocasa-berrini</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/tb-latitude-campo-belo</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/tbcf-latitude-campo-belo</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/tr-metrocasa-berrini</loc><lastmod>2026-08-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/tv-s-level-brooklin</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/vc-terrae</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/vg-essential-perdizes-by-one</loc><lastmod>2026-08-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/vh-pinheiros-by-passarely</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/vhms-on-vila-madalena</loc><lastmod>2026-08-27</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/como-declarar-renda-airbnb-imposto-de-renda</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/recebi-chaves-studio-na-planta-o-que-fazer</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/reforma-tributaria-short-stay-ibs-cbs</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/reforma-turn-key-ou-tradicional</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/short-stay-ou-long-stay-studio-compacto</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/studios-airbnb-sao-paulo-o-que-a-lei-permite</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
 </urlset>
