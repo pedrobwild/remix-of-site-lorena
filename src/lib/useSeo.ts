@@ -209,7 +209,7 @@ function applySeo(settings: SiteSettings, seo: SeoInput) {
   // Base canônica blindada: sempre o domínio oficial da Bewild.
   // Ver `getCanonicalBase` — hosts estranhos vindos do banco são ignorados.
   const base = getCanonicalBase(settings);
-  const title = seo.title || settings.seo_default_title || settings.site_title || "Bewild";
+  const title = seo.title || settings.seo_default_title || setting"Bewild";
   const description =
     seo.description || settings.seo_default_description || settings.site_description || "";
   const ogImage = seo.ogImage || settings.seo_og_image || settings.default_og_image || "";
@@ -466,7 +466,7 @@ export function professionalServiceJsonLd(s: SiteSettings) {
     "@type": type,
     "@id": `${base}/#business`,
     parentOrganization: { "@id": `${base}/#organization` },
-    name: s.site_title || "Bewild",
+    name: "Bewild",
     legalName: "Bewild",
     description: s.seo_default_description || s.site_description || "",
     url: base,
@@ -475,7 +475,7 @@ export function professionalServiceJsonLd(s: SiteSettings) {
       ? {
           "@type": "ImageObject",
           url: logoUrl,
-          caption: s.site_title || "Bewild",
+          caption: "Bewild",
         }
       : undefined,
     email: s.contact_email || undefined,
@@ -549,7 +549,7 @@ export function projectJsonLd(
     url: `${base}/portfolio/${project.slug}`,
     creator: {
       "@type": "Organization",
-      name: s.site_title || "Bewild",
+      name: "Bewild",
       url: base,
     },
     about: project.tag,
@@ -618,7 +618,7 @@ export function websiteJsonLd(s: SiteSettings) {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${base}/#website`,
-    name: s.site_title || "Bewild",
+    name: "Bewild",
     url: base,
     inLanguage: "pt-BR",
     publisher: { "@id": `${base}/#organization` },
@@ -666,14 +666,14 @@ export function organizationJsonLd(s: SiteSettings) {
     "@context": "https://schema.org",
     "@type": "Organization",
     "@id": `${base}/#organization`,
-    name: s.site_title || "Bewild",
+    name: "Bewild",
     legalName: "Bewild",
     url: base,
     logo: logoUrl
       ? {
           "@type": "ImageObject",
           url: logoUrl,
-          caption: s.site_title || "Bewild",
+          caption: "Bewild",
         }
       : undefined,
     image: logoUrl,
