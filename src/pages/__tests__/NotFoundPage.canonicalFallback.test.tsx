@@ -406,9 +406,9 @@ describe("NotFoundPage — canonical sobrevive a seo_canonical_base ausente", ()
       }
     );
 
-    it("base com origin alternativo (subdomínio) preserva o subdomínio mas descarta path", async () => {
-      // Caso de migração: admin testando em subdomain. Devemos respeitar o
-      // host configurado, mas descartar o path indevido.
+    it("base com host diferente de bewild.com.br é ignorada e cai no domínio oficial", async () => {
+      // Blindagem: valores herdados de outro projeto (ou subdomínios de
+      // teste) nunca podem vazar para o canonical de produção.
       fetchSiteSettingsMock.mockResolvedValue({
         seo_canonical_base: "https://staging.bewild.com.br/qualquer-coisa",
       });
@@ -416,7 +416,7 @@ describe("NotFoundPage — canonical sobrevive a seo_canonical_base ausente", ()
       render(<NotFoundPage />);
 
       await waitFor(() => {
-        expect(getCanonicalHref()).toBe("https://staging.bewild.com.br/404");
+        expect(getCanonicalHref()).toBe(EXPECTED_CANONICAL);
       });
     });
 
