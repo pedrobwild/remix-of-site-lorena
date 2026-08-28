@@ -206,19 +206,8 @@ function setupTrackersConsentGate() {
 }
 
 function applySeo(settings: SiteSettings, seo: SeoInput) {
-  // Normaliza a base canônica:
-  //  - trim (cobre "   ")
-  //  - fallback para o domínio de produção quando ausente
-  //  - força https:// (Search Console penaliza canonical http quando o
-  //    domínio serve https — qualquer http salvo no admin por engano
-  //    é promovido aqui no runtime)
-  //  - extrai apenas o ORIGIN (protocolo + host + porta), descartando
-  //    qualquer path/query/hash. Isso protege contra cenários como:
-  //      "https://bewild.com.br/404"  → vira "https://bewild.com.br"
-  //      "https://bewild.com.br/blog/" → vira "https://bewild.com.br"
-  //    Caso contrário o canonical da 404 sairia duplicado tipo
-  //    "https://bewild.com.br/404/404" — Googlebot trata como URL
-  //    inexistente e gera mais ruído de soft-404.
+  // Base canônica blindada: sempre o domínio oficial da Bewild.
+  // Ver `getCanonicalBase` — hosts estranhos vindos do banco são ignorados.
   const base = getCanonicalBase(settings);
   const title = seo.title || settings.seo_default_title || settings.site_title || "Bewild";
   const description =
