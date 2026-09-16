@@ -6,6 +6,7 @@ import BwaFooter from "@/components/BwaFooter";
 import { CONTACT } from "../components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
+import { isLeadDelivered, timeoutAfter } from "@/lib/leadDelivery";
 import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.json";
 import diagCssUrl from "./diagnostico-bwa.css?url";
 
@@ -260,6 +261,8 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  // true quando o WhatsApp abriu mas nenhum destino (banco/Slack/CRM) confirmou.
+  const [deliveryFailed, setDeliveryFailed] = useState(false);
   const [showMore, setShowMore] = useState(false);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
@@ -318,9 +321,24 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
       user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
     };
 
-    void supabase.functions
-      .invoke("notify-lead", { body: leadPayload })
-      .catch((err) => { console.error("[notify-lead] invoke failed", err); });
+    // WhatsApp abre ANTES de qualquer await (senão o navegador bloqueia o popup).
+    const url = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(messageText)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+
+    // Espera a edge function (com teto de 8 s) antes de dizer "recebemos".
+    // `notify-lead` responde 200 mesmo quando banco/Slack/CRM falharam, então
+    // a confirmação vem de `isLeadDelivered`, não do status HTTP.
+    let delivered = false;
+    try {
+      const result = await Promise.race([
+        supabase.functions.invoke("notify-lead", { body: leadPayload }),
+        timeoutAfter(8000),
+      ]);
+      delivered = isLeadDelivered(result);
+      if (!delivered) console.error("[notify-lead] lead não confirmado", result);
+    } catch (err) {
+      console.error("[notify-lead] invoke failed", err);
+    }
 
     trackEvent("generate_lead", {
       method: "diagnostico_form",
@@ -328,13 +346,13 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
       chaves: f.chaves || undefined,
       planta: f.planta || undefined,
       location: f.local || undefined,
+      delivery: delivered ? "confirmed" : "whatsapp_fallback",
     });
 
-    const url = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(messageText)}`;
-    window.open(url, "_blank", "noopener,noreferrer");
     setF(EMPTY_FORM);
     setTouched({});
     setShowMore(false);
+    setDeliveryFailed(!delivered);
     setSuccess(true);
     setSubmitting(false);
   }
@@ -355,9 +373,25 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
         <span className="dg-mono">BW—002</span>
       </div>
 
-      <div className="dg-success" role="status">
-        <strong>Recebemos seus dados.</strong>
-        <span>Nosso time vai falar com você no WhatsApp.</span>
+      <div className="dg-success" role="status" data-delivery={deliveryFailed ? "fallback" : "confirmed"}>
+        {deliveryFailed ? (
+          <>
+            <strong>Abrimos o WhatsApp com seus dados.</strong>
+            <span>
+              Não conseguimos registrar a ficha automaticamente. Envie a mensagem que já está
+              pronta no WhatsApp para garantir o atendimento — ou{" "}
+              <a className="dg-textlink" href={_waUrl} target="_blank" rel="noopener noreferrer">
+                abra o WhatsApp de novo
+              </a>
+              .
+            </span>
+          </>
+        ) : (
+          <>
+            <strong>Recebemos seus dados.</strong>
+            <span>Nosso time vai falar com você no WhatsApp.</span>
+          </>
+        )}
       </div>
 
       <div className="dg-field dg-hidepós">

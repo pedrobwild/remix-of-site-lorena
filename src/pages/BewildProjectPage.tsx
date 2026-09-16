@@ -13,6 +13,7 @@ import BwaFooter from "@/components/BwaFooter";
 import { whatsappHref } from "@/components/landing/content";
 import { useBewildProject } from "@/lib/useBewildProject";
 import { bewildTypeLabel } from "@/lib/useBewildProjects";
+import { projectMetaDescription } from "@/lib/projectSeo";
 import NotFoundPage from "@/pages/NotFoundPage";
 import "@/styles/bwh-tokens.css";
 import "@/styles/bwh-overlays.css";
@@ -104,7 +105,12 @@ export default function BewildProjectPage({ slug }: Props) {
 
   useSeo({
     title: project ? project.seo_title || `${project.title} | Bewild` : "Projeto | Bewild",
-    description: project?.seo_description || project?.summary || "Apartamento reformado pela Bewild em São Paulo ou Rio de Janeiro.",
+    // Sem seo_description/summary no admin, monta a frase com bairro/metragem/tipo
+    // reais do projeto (evita ~100 URLs com a mesma description genérica).
+    description: projectMetaDescription(
+      project,
+      "Apartamento reformado pela Bewild em São Paulo ou Rio de Janeiro.",
+    ),
     canonicalPath: `/portfolio/${slug}`,
     ogType: "article",
     ogImage: project?.og_image_url || project?.cover_url || undefined,

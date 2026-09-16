@@ -84,16 +84,8 @@
       rel="stylesheet"
     />
 
-    <!-- Preload do render do hero (LCP) -->
-    <link
-      rel="preload"
-      as="image"
-      href="/hero-studio-desktop.webp"
-      type="image/webp"
-      imagesrcset="/hero-studio-mobile.webp 1080w, /hero-studio-desktop.webp 1600w"
-      imagesizes="(max-width: 900px) 100vw, 50vw"
-      fetchpriority="high"
-    />
+    <!-- Preload do hero: feito por rota em src/pages/HomePage.tsx (a imagem
+         /hero-studio-*.webp não é usada por nenhuma página — preload removido). -->
 
     <!-- =========================================================
      JSON-LD — Organization + WebSite + Service (Bewild)

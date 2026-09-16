@@ -1,5 +1,10 @@
 import { useEffect, useMemo } from "react";
-import { fetchSiteSettings, invalidateSiteSettings, type SiteSettings } from "./useSiteSettings";
+import {
+  fetchSiteSettings,
+  getCachedSiteSettings,
+  invalidateSiteSettings,
+  type SiteSettings,
+} from "./useSiteSettings";
 import { isConsentAccepted, onConsentChange } from "./cookieConsent";
 
 export const SEO_REFRESH_EVENT = "seo:refresh";
@@ -360,11 +365,23 @@ export function useSeo(seo: SeoInput) {
   useEffect(() => {
     setupTrackersConsentGate();
     let cancelled = false;
+    const input = { title, description, canonicalPath, ogImage, ogType, noindex, jsonLd };
+    // 1) Síncrono: title/canonical/robots da rota entram no <head> AGORA, com
+    //    as settings em cache (ou defaults). Sem isso, enquanto `site_settings`
+    //    não respondia, toda rota ficava com o canonical da home e a 404 sem
+    //    noindex — o snapshot que um crawler pode capturar.
+    applySeo(getCachedSiteSettings(), input);
+    // 2) Assíncrono: refina com as settings do banco (og:image, verificações,
+    //    trackers) assim que chegarem.
     const apply = (force = false) =>
-      fetchSiteSettings(force).then((settings) => {
-        if (cancelled) return;
-        applySeo(settings, { title, description, canonicalPath, ogImage, ogType, noindex, jsonLd });
-      });
+      fetchSiteSettings(force)
+        .then((settings) => {
+          if (cancelled) return;
+          applySeo(settings, input);
+        })
+        .catch(() => {
+          /* backend indisponível: já aplicamos os defaults acima */
+        });
     apply();
     const onRefresh = () => apply(true);
     window.addEventListener(SEO_REFRESH_EVENT, onRefresh);

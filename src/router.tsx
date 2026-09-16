@@ -19,37 +19,40 @@ import LpPanfletoPage from "./pages/LpPanfletoPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import MaintenancePage from "./pages/MaintenancePage";
 import { MAINTENANCE_MODE } from "./config/site";
-import LoginPage from "./pages/admin/LoginPage";
+import { lazy, Suspense, type ReactNode } from "react";
 
-import BewildOverviewPage from "./pages/admin/BewildOverviewPage";
-import BewildLeadsAdminPage from "./pages/admin/BewildLeadsAdminPage";
-import BewildConteudosAdminPage from "./pages/admin/BewildConteudosAdminPage";
-import BewildPostFormPage from "./pages/admin/BewildPostFormPage";
-import AnalyticsPage from "./pages/admin/AnalyticsPage";
-import SeoPage from "./pages/admin/SeoPage";
-import Seo404Page from "./pages/admin/Seo404Page";
-import SettingsPage from "./pages/admin/SettingsPage";
-import BewildProjectsListPage from "./pages/admin/BewildProjectsListPage";
-import BewildProjectFormPage from "./pages/admin/BewildProjectFormPage";
-import FaqAdminPage from "./pages/admin/FaqAdminPage";
-import TypographyPage from "./pages/admin/TypographyPage";
+// Admin em chunks separados: o visitante público não baixa recharts, dnd-kit
+// e todo o painel (o bundle único tinha ~1,45 MB / 414 kB gzip).
+const LoginPage = lazy(() => import("./pages/admin/LoginPage"));
+const BewildOverviewPage = lazy(() => import("./pages/admin/BewildOverviewPage"));
+const BewildLeadsAdminPage = lazy(() => import("./pages/admin/BewildLeadsAdminPage"));
+const BewildConteudosAdminPage = lazy(() => import("./pages/admin/BewildConteudosAdminPage"));
+const BewildPostFormPage = lazy(() => import("./pages/admin/BewildPostFormPage"));
+const AnalyticsPage = lazy(() => import("./pages/admin/AnalyticsPage"));
+const SeoPage = lazy(() => import("./pages/admin/SeoPage"));
+const Seo404Page = lazy(() => import("./pages/admin/Seo404Page"));
+const SettingsPage = lazy(() => import("./pages/admin/SettingsPage"));
+const BewildProjectsListPage = lazy(() => import("./pages/admin/BewildProjectsListPage"));
+const BewildProjectFormPage = lazy(() => import("./pages/admin/BewildProjectFormPage"));
+const FaqAdminPage = lazy(() => import("./pages/admin/FaqAdminPage"));
+const TypographyPage = lazy(() => import("./pages/admin/TypographyPage"));
 
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import type { Route } from "./lib/useHashRoute";
+
+function AdminChunk({ children }: { children: ReactNode }) {
+  return <Suspense fallback={null}>{children}</Suspense>;
+}
 
 export function renderRoute(route: Route) {
   // Gate de manutenção: esconde o site público principal (inclusive 404)
   // enquanto a flag está ligada. Rotas /admin/* continuam normais, e as
   // LPs fantasma /o e /p também passam — são páginas noindex acessadas só
   // por QR/URL direta. Remover/revisar essa exceção no go-live do site.
-  const MAINTENANCE_EXEMPT = new Set([
-    "lp-obra",
-    "lp-panfleto",
-  ]);
+  const MAINTENANCE_EXEMPT = new Set(["lp-obra", "lp-panfleto"]);
   if (MAINTENANCE_MODE && !route.name?.startsWith("admin") && !MAINTENANCE_EXEMPT.has(route.name)) {
     return <MaintenancePage />;
   }
-
 
   if (route.name === "portfolio") return <BewildPortfolioPage />;
   if (route.name === "bewild-project") return <BewildProjectPage slug={route.slug} />;
@@ -61,108 +64,147 @@ export function renderRoute(route: Route) {
   if (route.name === "privacidade") return <PrivacidadePage />;
   if (route.name === "lp-obra") return <LpObraPage />;
   if (route.name === "lp-panfleto") return <LpPanfletoPage />;
-  if (route.name === "admin-login") return <LoginPage />;
+  if (route.name === "admin-login")
+    return (
+      <AdminChunk>
+        <LoginPage />
+      </AdminChunk>
+    );
   if (route.name === "admin-dashboard")
     return (
-      <ProtectedRoute>
-        <BewildOverviewPage />
-      </ProtectedRoute>
+      <AdminChunk>
+        <ProtectedRoute>
+          <BewildOverviewPage />
+        </ProtectedRoute>
+      </AdminChunk>
     );
   if (route.name === "admin-analytics")
     return (
-      <ProtectedRoute>
-        <AnalyticsPage />
-      </ProtectedRoute>
+      <AdminChunk>
+        <ProtectedRoute>
+          <AnalyticsPage />
+        </ProtectedRoute>
+      </AdminChunk>
     );
   if (route.name === "admin-seo")
     return (
-      <ProtectedRoute>
-        <SeoPage />
-      </ProtectedRoute>
+      <AdminChunk>
+        <ProtectedRoute>
+          <SeoPage />
+        </ProtectedRoute>
+      </AdminChunk>
     );
   if (route.name === "admin-seo-404")
     return (
-      <ProtectedRoute>
-        <Seo404Page />
-      </ProtectedRoute>
+      <AdminChunk>
+        <ProtectedRoute>
+          <Seo404Page />
+        </ProtectedRoute>
+      </AdminChunk>
     );
   if (route.name === "admin-settings")
     return (
-      <ProtectedRoute>
-        <SettingsPage />
-      </ProtectedRoute>
+      <AdminChunk>
+        <ProtectedRoute>
+          <SettingsPage />
+        </ProtectedRoute>
+      </AdminChunk>
     );
   if (route.name === "admin-bewild")
     return (
-      <ProtectedRoute>
-        <BewildProjectsListPage />
-      </ProtectedRoute>
+      <AdminChunk>
+        <ProtectedRoute>
+          <BewildProjectsListPage />
+        </ProtectedRoute>
+      </AdminChunk>
     );
   if (route.name === "admin-bewild-new")
     return (
-      <ProtectedRoute>
-        <BewildProjectFormPage />
-      </ProtectedRoute>
+      <AdminChunk>
+        <ProtectedRoute>
+          <BewildProjectFormPage />
+        </ProtectedRoute>
+      </AdminChunk>
     );
   if (route.name === "admin-bewild-edit")
     return (
-      <ProtectedRoute>
-        <BewildProjectFormPage slug={route.slug} />
-      </ProtectedRoute>
+      <AdminChunk>
+        <ProtectedRoute>
+          <BewildProjectFormPage slug={route.slug} />
+        </ProtectedRoute>
+      </AdminChunk>
     );
   if (route.name === "admin-faq")
     return (
-      <ProtectedRoute>
-        <FaqAdminPage />
-      </ProtectedRoute>
+      <AdminChunk>
+        <ProtectedRoute>
+          <FaqAdminPage />
+        </ProtectedRoute>
+      </AdminChunk>
     );
   if (route.name === "admin-typography")
     return (
-      <ProtectedRoute>
-        <TypographyPage />
-      </ProtectedRoute>
+      <AdminChunk>
+        <ProtectedRoute>
+          <TypographyPage />
+        </ProtectedRoute>
+      </AdminChunk>
     );
   if (route.name === "admin-leads")
     return (
-      <ProtectedRoute>
-        <BewildLeadsAdminPage />
-      </ProtectedRoute>
+      <AdminChunk>
+        <ProtectedRoute>
+          <BewildLeadsAdminPage />
+        </ProtectedRoute>
+      </AdminChunk>
     );
   if (route.name === "admin-projetos")
     return (
-      <ProtectedRoute>
-        <BewildProjectsListPage />
-      </ProtectedRoute>
+      <AdminChunk>
+        <ProtectedRoute>
+          <BewildProjectsListPage />
+        </ProtectedRoute>
+      </AdminChunk>
     );
   if (route.name === "admin-projetos-new")
     return (
-      <ProtectedRoute>
-        <BewildProjectFormPage />
-      </ProtectedRoute>
+      <AdminChunk>
+        <ProtectedRoute>
+          <BewildProjectFormPage />
+        </ProtectedRoute>
+      </AdminChunk>
     );
   if (route.name === "admin-projetos-edit")
     return (
-      <ProtectedRoute>
-        <BewildProjectFormPage slug={route.slug} />
-      </ProtectedRoute>
+      <AdminChunk>
+        <ProtectedRoute>
+          <BewildProjectFormPage slug={route.slug} />
+        </ProtectedRoute>
+      </AdminChunk>
     );
   if (route.name === "admin-conteudos")
     return (
-      <ProtectedRoute>
-        <BewildConteudosAdminPage />
-      </ProtectedRoute>
+      <AdminChunk>
+        <ProtectedRoute>
+          <BewildConteudosAdminPage />
+        </ProtectedRoute>
+      </AdminChunk>
     );
   if (route.name === "admin-conteudos-new")
     return (
-      <ProtectedRoute>
-        <BewildPostFormPage />
-      </ProtectedRoute>
+      <AdminChunk>
+        <ProtectedRoute>
+          <BewildPostFormPage />
+        </ProtectedRoute>
+      </AdminChunk>
     );
   if (route.name === "admin-conteudos-edit")
     return (
-      <ProtectedRoute>
-        <BewildPostFormPage slug={route.slug} />
-      </ProtectedRoute>
+      <AdminChunk>
+        <ProtectedRoute>
+          <BewildPostFormPage slug={route.slug} />
+        </ProtectedRoute>
+      </AdminChunk>
     );
   if (route.name === "home") return <App />;
   return <NotFoundPage />;

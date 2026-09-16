@@ -17,13 +17,12 @@ const FONTS_HREF =
 const PRECONNECTS: Array<{ href: string; crossOrigin?: string }> = [
   { href: "https://fonts.googleapis.com" },
   { href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-  {
-    href: "https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app",
-    crossOrigin: "anonymous",
-  },
 ];
+// Mesmo origin do site (asset store do Lovable, ver src/assets/**/*.asset.json).
+// Antes apontava para o domínio de PREVIEW do projeto — conexão extra no
+// caminho crítico do LCP e dependência de um ambiente que não é produção.
 const HERO_PRELOAD =
-  "https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad3/hero-cozinha.jpg";
+  "/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad3/hero-cozinha.jpg";
 
 function ensureMeta(name: string, content: string, attr: "name" | "property" = "name") {
   let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${name}"]`);
