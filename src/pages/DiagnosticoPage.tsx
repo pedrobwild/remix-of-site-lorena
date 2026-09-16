@@ -156,7 +156,7 @@ export default function DiagnosticoPage() {
                   </ol>
                 </div>
 
-                <p className="dg-trust">+80 obras entregues</p>
+                <p className="dg-trust">+160 reformas entregues</p>
 
                 <TestimonialCard waUrl={waUrl} />
               </div>
@@ -188,10 +188,10 @@ export default function DiagnosticoPage() {
           <div className="dg-shell">
             <div className="dg-section-head">
               <p className="dg-label">Por que a Bewild · 03</p>
-              <h2 id="dg-num-title" className="dg-title">Já fizemos isso mais de 150 vezes.</h2>
+              <h2 id="dg-num-title" className="dg-title">Já fizemos isso mais de 160 vezes.</h2>
             </div>
             <div className="dg-cells">
-              <div className="dg-cell dg-stat"><b>+80</b><span>obras entregues</span></div>
+              <div className="dg-cell dg-stat"><b>+160</b><span>reformas entregues</span></div>
               <div className="dg-cell dg-stat"><b>60<em>dias úteis</em></b><span>referência de prazo de obra, a partir de</span></div>
               <div className="dg-cell dg-stat"><b>5<em>anos</em></b><span>garantia de obra e marcenaria</span></div>
               <div className="dg-cell dg-stat"><b>1<em>contrato</em></b><span>preço e prazo fechados antes de a obra começar</span></div>
@@ -246,7 +246,7 @@ export default function DiagnosticoPage() {
               <a className="dg-button dg-button-light" href="#dg-ficha">Preencher a ficha <span aria-hidden="true">↑</span></a>
               <a className="dg-textlink" href={waUrl} target="_blank" rel="noopener noreferrer">Falar no WhatsApp →</a>
             </div>
-            <p className="dg-mono">Atendimento de gente real · retorno rápido · +80 obras entregues</p>
+            <p className="dg-mono">Atendimento de gente real · retorno rápido · +160 reformas entregues</p>
           </div>
         </section>
       </main>
