@@ -5328,6 +5328,11 @@ textarea.admin-field__input {
     align-items: stretch;
     gap: 10px;
   }
+  /* Em coluna, o flex-basis de 320px do bloco de texto vira ALTURA e o
+     banner passa a ocupar ~50% da viewport no celular. Volta para auto. */
+  .cookie-banner__text {
+    flex-basis: auto;
+  }
   .cookie-banner__desc {
     font-size: 12px;
     line-height: 1.4;

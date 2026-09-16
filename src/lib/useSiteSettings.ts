@@ -126,6 +126,14 @@ const DEFAULTS: SiteSettings = {
 let cache: SiteSettings | null = null;
 let inflight: Promise<SiteSettings> | null = null;
 
+/**
+ * Settings já carregadas (ou DEFAULTS) — síncrono. Permite aplicar SEO da
+ * rota na hora, sem esperar a rede; `fetchSiteSettings` refina depois.
+ */
+export function getCachedSiteSettings(): SiteSettings {
+  return cache ?? DEFAULTS;
+}
+
 export async function fetchSiteSettings(force = false): Promise<SiteSettings> {
   if (cache && !force) return cache;
   if (inflight) return inflight;

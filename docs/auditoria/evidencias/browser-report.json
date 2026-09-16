@@ -1,0 +1,2539 @@
+{
+  "/": {
+    "360": {
+      "loadMs": 2603,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad3/hero-cozinha.jpg",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/rpc/top_projects",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/409b9ac5-1b84-451d-84bb-e8b28ea83ece/marcos-6-2.png",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/fed798c0-0770-46ae-9aa6-469ed6cc98b9/rodrigo-1-1.png",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/e4e04b71-6b36-4b07-805b-6bf2b37375d4/premium-11-2.png"
+      ],
+      "overflowX": false,
+      "scrollWidth": 360,
+      "clientWidth": 360,
+      "wide": [
+        "img.bwa-hero-image right=367",
+        "svg right=439",
+        "path right=394",
+        "path right=394",
+        "path right=384",
+        "path right=384",
+        "path right=384",
+        "path right=388"
+      ],
+      "h1s": [
+        "Projetamos e reformamos seu apartamento por completo."
+      ],
+      "headingsCount": 36,
+      "headings": [
+        "H1: Projetamos e reformamos seu apartamento por completo.",
+        "H2: A Bewild assume o processo inteiro. Seu tempo é valioso, entregamos se",
+        "H3: Arquitetura",
+        "H3: Engenharia & gestão",
+        "H2: O uso do apartamento define a marcenaria.",
+        "H3: Marina chegou querendo aproveitar cada parede com armários.",
+        "H3: Para estadias curtas, excesso de armário pode ocupar o lugar de coisas",
+        "H3: Para viver por meses ou anos, a marcenaria vira infraestrutura da casa",
+        "H3: A mesma equipe que projeta coordena a fabricação, a obra e a instalaçã",
+        "H2: O espaço imaginado precisa sobreviver à obra.",
+        "H2: Quem reforma por conta própria vira comprador de material, fiscal de p",
+        "H3: Com você ficam três coisas",
+        "H3: Com a gente fica o resto",
+        "H3: Pequenas operações que costumam devolver o cliente para dentro da obra",
+        "H3: Preço fechado",
+        "H3: Prazo em contrato",
+        "H3: 5 anos de garantia",
+        "H2: Sua obra inteira na tela do celular.",
+        "H3: Em que ponto a obra está?",
+        "H3: O avanço segue o planejado?",
+        "H3: O que já foi executado?",
+        "H3: O que ficou decidido?",
+        "H3: Como a execução está organizada?",
+        "H3: O que aconteceu por último e o que vem agora?",
+        "H3: Você acompanha. A Bewild resolve.",
+        "H3: Studio Urban Flex · 22 m²",
+        "H2: A promessa só ganha peso quando aparece na experiência real.",
+        "H2: O contrato é o mesmo. O projeto muda conforme o seu objetivo.",
+        "H3: Morar",
+        "H3: Alugar",
+        "H3: Vender",
+        "H2: Perguntas antes de entregar a chave.",
+        "H2: Vamos avaliar o seu apartamento?",
+        "H3: Navegação",
+        "H3: Contato",
+        "H2: Depoimento Vivian"
+      ],
+      "imgs": 16,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 8,
+      "imgBroken": [
+        "https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad",
+        "https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad",
+        "https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad"
+      ],
+      "imgRemote": 15,
+      "small": [
+        "a \"Política de Privacidade\" 135x14"
+      ],
+      "smallCount": 1,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 47,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 14089,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "a.bwa-mobile-cta h=52 top=736",
+        "div.bwa-modal h=0 top=0",
+        "div.cookie-banner h=393 top=407"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"\" ring=true",
+        "a \"Solicitar Orçamento\n     \" ring=true",
+        "button \"01\n            \n         \" ring=true",
+        "button \"02\n            \n         \" ring=true",
+        "button \"03\n            \n         \" ring=true",
+        "button \"04\n            \n         \" ring=true",
+        "button \"05\n            \n         \" ring=true",
+        "button \"06\n            \n         \" ring=true",
+        "a \"Solicitar Orçamento\n     \" ring=true"
+      ],
+      "axe": [
+        {
+          "id": "aria-allowed-role",
+          "impact": "minor",
+          "help": "ARIA role should be appropriate for the element",
+          "nodes": 2,
+          "sample": [
+            ".bwa-ccard[role=\"listitem\"]:nth-child(1)",
+            ".bwa-ccard[role=\"listitem\"]:nth-child(2)"
+          ]
+        },
+        {
+          "id": "region",
+          "impact": "moderate",
+          "help": "All page content should be contained by landmarks",
+          "nodes": 1,
+          "sample": [
+            ".bwa-mobile-cta"
+          ]
+        }
+      ]
+    },
+    "390": {
+      "loadMs": 2539,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad3/hero-cozinha.jpg",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/rpc/top_projects",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/409b9ac5-1b84-451d-84bb-e8b28ea83ece/marcos-6-2.png",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/fed798c0-0770-46ae-9aa6-469ed6cc98b9/rodrigo-1-1.png",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/e4e04b71-6b36-4b07-805b-6bf2b37375d4/premium-11-2.png"
+      ],
+      "overflowX": false,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "wide": [
+        "img.bwa-hero-image right=397",
+        "svg right=479",
+        "path right=417",
+        "path right=417",
+        "path right=407",
+        "path right=407",
+        "path right=407",
+        "path right=411"
+      ],
+      "h1s": [
+        "Projetamos e reformamos seu apartamento por completo."
+      ],
+      "headingsCount": 36,
+      "headings": [
+        "H1: Projetamos e reformamos seu apartamento por completo.",
+        "H2: A Bewild assume o processo inteiro. Seu tempo é valioso, entregamos se",
+        "H3: Arquitetura",
+        "H3: Engenharia & gestão",
+        "H2: O uso do apartamento define a marcenaria.",
+        "H3: Marina chegou querendo aproveitar cada parede com armários.",
+        "H3: Para estadias curtas, excesso de armário pode ocupar o lugar de coisas",
+        "H3: Para viver por meses ou anos, a marcenaria vira infraestrutura da casa",
+        "H3: A mesma equipe que projeta coordena a fabricação, a obra e a instalaçã",
+        "H2: O espaço imaginado precisa sobreviver à obra.",
+        "H2: Quem reforma por conta própria vira comprador de material, fiscal de p",
+        "H3: Com você ficam três coisas",
+        "H3: Com a gente fica o resto",
+        "H3: Pequenas operações que costumam devolver o cliente para dentro da obra",
+        "H3: Preço fechado",
+        "H3: Prazo em contrato",
+        "H3: 5 anos de garantia",
+        "H2: Sua obra inteira na tela do celular.",
+        "H3: Em que ponto a obra está?",
+        "H3: O avanço segue o planejado?",
+        "H3: O que já foi executado?",
+        "H3: O que ficou decidido?",
+        "H3: Como a execução está organizada?",
+        "H3: O que aconteceu por último e o que vem agora?",
+        "H3: Você acompanha. A Bewild resolve.",
+        "H3: Studio Urban Flex · 22 m²",
+        "H2: A promessa só ganha peso quando aparece na experiência real.",
+        "H2: O contrato é o mesmo. O projeto muda conforme o seu objetivo.",
+        "H3: Morar",
+        "H3: Alugar",
+        "H3: Vender",
+        "H2: Perguntas antes de entregar a chave.",
+        "H2: Vamos avaliar o seu apartamento?",
+        "H3: Navegação",
+        "H3: Contato",
+        "H2: Depoimento Vivian"
+      ],
+      "imgs": 16,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 8,
+      "imgBroken": [
+        "https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad",
+        "https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad",
+        "https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad"
+      ],
+      "imgRemote": 15,
+      "small": [],
+      "smallCount": 0,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 47,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 14089,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "a.bwa-mobile-cta h=52 top=736",
+        "div.bwa-modal h=0 top=0",
+        "div.cookie-banner h=393 top=407"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"\" ring=true",
+        "a \"Solicitar Orçamento\n     \" ring=true",
+        "button \"01\n            \n         \" ring=true",
+        "button \"02\n            \n         \" ring=true",
+        "button \"03\n            \n         \" ring=true",
+        "button \"04\n            \n         \" ring=true",
+        "button \"05\n            \n         \" ring=true",
+        "button \"06\n            \n         \" ring=true",
+        "a \"Solicitar Orçamento\n     \" ring=true"
+      ],
+      "axe": [
+        {
+          "id": "aria-allowed-role",
+          "impact": "minor",
+          "help": "ARIA role should be appropriate for the element",
+          "nodes": 2,
+          "sample": [
+            ".bwa-ccard[role=\"listitem\"]:nth-child(1)",
+            ".bwa-ccard[role=\"listitem\"]:nth-child(2)"
+          ]
+        },
+        {
+          "id": "region",
+          "impact": "moderate",
+          "help": "All page content should be contained by landmarks",
+          "nodes": 1,
+          "sample": [
+            ".bwa-mobile-cta"
+          ]
+        }
+      ]
+    },
+    "768": {
+      "loadMs": 2458,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad3/hero-cozinha.jpg",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/rpc/top_projects",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/409b9ac5-1b84-451d-84bb-e8b28ea83ece/marcos-6-2.png",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/fed798c0-0770-46ae-9aa6-469ed6cc98b9/rodrigo-1-1.png",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/e4e04b71-6b36-4b07-805b-6bf2b37375d4/premium-11-2.png"
+      ],
+      "overflowX": false,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "wide": [
+        "img.bwa-hero-image right=782",
+        "svg right=797"
+      ],
+      "h1s": [
+        "Projetamos e reformamos seu apartamento por completo."
+      ],
+      "headingsCount": 36,
+      "headings": [
+        "H1: Projetamos e reformamos seu apartamento por completo.",
+        "H2: A Bewild assume o processo inteiro. Seu tempo é valioso, entregamos se",
+        "H3: Arquitetura",
+        "H3: Engenharia & gestão",
+        "H2: O uso do apartamento define a marcenaria.",
+        "H3: Marina chegou querendo aproveitar cada parede com armários.",
+        "H3: Para estadias curtas, excesso de armário pode ocupar o lugar de coisas",
+        "H3: Para viver por meses ou anos, a marcenaria vira infraestrutura da casa",
+        "H3: A mesma equipe que projeta coordena a fabricação, a obra e a instalaçã",
+        "H2: O espaço imaginado precisa sobreviver à obra.",
+        "H2: Quem reforma por conta própria vira comprador de material, fiscal de p",
+        "H3: Com você ficam três coisas",
+        "H3: Com a gente fica o resto",
+        "H3: Pequenas operações que costumam devolver o cliente para dentro da obra",
+        "H3: Preço fechado",
+        "H3: Prazo em contrato",
+        "H3: 5 anos de garantia",
+        "H2: Sua obra inteira na tela do celular.",
+        "H3: Em que ponto a obra está?",
+        "H3: O avanço segue o planejado?",
+        "H3: O que já foi executado?",
+        "H3: O que ficou decidido?",
+        "H3: Como a execução está organizada?",
+        "H3: O que aconteceu por último e o que vem agora?",
+        "H3: Você acompanha. A Bewild resolve.",
+        "H3: Studio Urban Flex · 22 m²",
+        "H2: A promessa só ganha peso quando aparece na experiência real.",
+        "H2: O contrato é o mesmo. O projeto muda conforme o seu objetivo.",
+        "H3: Morar",
+        "H3: Alugar",
+        "H3: Vender",
+        "H2: Perguntas antes de entregar a chave.",
+        "H2: Vamos avaliar o seu apartamento?",
+        "H3: Navegação",
+        "H3: Contato",
+        "H2: Depoimento Vivian"
+      ],
+      "imgs": 16,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 8,
+      "imgBroken": [
+        "https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad",
+        "https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad",
+        "https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad"
+      ],
+      "imgRemote": 15,
+      "small": [
+        "a \"Política de Privacidade\" 158x16"
+      ],
+      "smallCount": 1,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 47,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 14089,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "a.bwa-mobile-cta h=52 top=836",
+        "div.bwa-modal h=0 top=0",
+        "div.cookie-banner h=109 top=792"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"\" ring=true",
+        "a \"Solicitar Orçamento\n     \" ring=true",
+        "button \"01\n            \n         \" ring=true",
+        "button \"02\n            \n         \" ring=true",
+        "button \"03\n            \n         \" ring=true",
+        "button \"04\n            \n         \" ring=true",
+        "button \"05\n            \n         \" ring=true",
+        "button \"06\n            \n         \" ring=true",
+        "a \"Solicitar Orçamento\n     \" ring=true"
+      ],
+      "axe": [
+        {
+          "id": "aria-allowed-role",
+          "impact": "minor",
+          "help": "ARIA role should be appropriate for the element",
+          "nodes": 2,
+          "sample": [
+            ".bwa-ccard[role=\"listitem\"]:nth-child(1)",
+            ".bwa-ccard[role=\"listitem\"]:nth-child(2)"
+          ]
+        },
+        {
+          "id": "region",
+          "impact": "moderate",
+          "help": "All page content should be contained by landmarks",
+          "nodes": 1,
+          "sample": [
+            ".bwa-mobile-cta"
+          ]
+        }
+      ]
+    },
+    "1440": {
+      "loadMs": 2335,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent",
+        "[warning] The resource http://127.0.0.1:4173/hero-studio-mobile.webp was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` "
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad3/hero-cozinha.jpg",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/rpc/top_projects"
+      ],
+      "overflowX": false,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "wide": [
+        "img.bwa-hero-image right=1453"
+      ],
+      "h1s": [
+        "Projetamos e reformamos seu apartamento por completo."
+      ],
+      "headingsCount": 36,
+      "headings": [
+        "H1: Projetamos e reformamos seu apartamento por completo.",
+        "H2: A Bewild assume o processo inteiro. Seu tempo é valioso, entregamos se",
+        "H3: Arquitetura",
+        "H3: Engenharia & gestão",
+        "H2: O uso do apartamento define a marcenaria.",
+        "H3: Marina chegou querendo aproveitar cada parede com armários.",
+        "H3: Para estadias curtas, excesso de armário pode ocupar o lugar de coisas",
+        "H3: Para viver por meses ou anos, a marcenaria vira infraestrutura da casa",
+        "H3: A mesma equipe que projeta coordena a fabricação, a obra e a instalaçã",
+        "H2: O espaço imaginado precisa sobreviver à obra.",
+        "H2: Quem reforma por conta própria vira comprador de material, fiscal de p",
+        "H3: Com você ficam três coisas",
+        "H3: Com a gente fica o resto",
+        "H3: Pequenas operações que costumam devolver o cliente para dentro da obra",
+        "H3: Preço fechado",
+        "H3: Prazo em contrato",
+        "H3: 5 anos de garantia",
+        "H2: Sua obra inteira na tela do celular.",
+        "H3: Em que ponto a obra está?",
+        "H3: O avanço segue o planejado?",
+        "H3: O que já foi executado?",
+        "H3: O que ficou decidido?",
+        "H3: Como a execução está organizada?",
+        "H3: O que aconteceu por último e o que vem agora?",
+        "H3: Você acompanha. A Bewild resolve.",
+        "H3: Studio Urban Flex · 22 m²",
+        "H2: A promessa só ganha peso quando aparece na experiência real.",
+        "H2: O contrato é o mesmo. O projeto muda conforme o seu objetivo.",
+        "H3: Morar",
+        "H3: Alugar",
+        "H3: Vender",
+        "H2: Perguntas antes de entregar a chave.",
+        "H2: Vamos avaliar o seu apartamento?",
+        "H3: Navegação",
+        "H3: Contato",
+        "H2: Depoimento Vivian"
+      ],
+      "imgs": 16,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 8,
+      "imgBroken": [
+        "https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad",
+        "https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad",
+        "https://id-preview--6a6657bf-3700-4d35-867e-c076acbf7613.lovable.app/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad"
+      ],
+      "imgRemote": 15,
+      "small": [
+        "a \"FAQ\" 20x35",
+        "a \"Ver demonstração →\" 135x24",
+        "a \"O contrato\" 321x21",
+        "a \"A história\" 321x21",
+        "a \"O que fazemos\" 321x21",
+        "a \"Como funciona\" 321x21",
+        "a \"Portfólio\" 321x21",
+        "a \"Conteúdos\" 321x21",
+        "a \"FAQ\" 321x21",
+        "a \"Diagnóstico\" 321x21",
+        "a \"WhatsApp\" 321x21",
+        "a \"Instagram\" 321x21"
+      ],
+      "smallCount": 16,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 47,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 14331,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=76 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.bwa-modal h=0 top=0",
+        "div.cookie-banner h=109 top=792"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "a \"O contrato\" ring=true",
+        "a \"A história\" ring=true",
+        "a \"Projetos\" ring=true",
+        "a \"Bwild Workflow\" ring=true",
+        "a \"Prova\" ring=true",
+        "a \"Portfólio\" ring=true",
+        "a \"Conteúdos\" ring=true",
+        "a \"FAQ\" ring=true",
+        "a \"Solicitar Orçamento\n     \" ring=true"
+      ],
+      "axe": [
+        {
+          "id": "aria-allowed-role",
+          "impact": "minor",
+          "help": "ARIA role should be appropriate for the element",
+          "nodes": 2,
+          "sample": [
+            ".bwa-ccard[role=\"listitem\"]:nth-child(1)",
+            ".bwa-ccard[role=\"listitem\"]:nth-child(2)"
+          ]
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": 21,
+          "sample": [
+            "article[data-aperture=\"10%\"] > .bwa-story-step-num",
+            "article[data-aperture=\"10%\"] > h3"
+          ]
+        }
+      ]
+    }
+  },
+  "/diagnostico": {
+    "360": {
+      "loadMs": 2457,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js"
+      ],
+      "overflowX": false,
+      "scrollWidth": 360,
+      "clientWidth": 360,
+      "wide": [],
+      "h1s": [
+        "Conte o que você tem. A gente devolve o caminho."
+      ],
+      "headingsCount": 11,
+      "headings": [
+        "H1: Conte o que você tem. A gente devolve o caminho.",
+        "H2: O que acontece quando você manda a ficha.",
+        "H3: A gente lê o seu imóvel.",
+        "H3: Voltamos no seu WhatsApp.",
+        "H3: Se fizer sentido, avançamos.",
+        "H3: Preço e prazo antes da obra.",
+        "H2: Já fizemos isso mais de 150 vezes.",
+        "H2: Antes de mandar a ficha.",
+        "H2: Pronto para ver o projeto antes da obra?",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [],
+      "imgRemote": 0,
+      "small": [
+        "a \"Política de Privacidade\" 135x14"
+      ],
+      "smallCount": 1,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 39,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 3273,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=393 top=407"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "button \"Assistir depoimento em ví\" ring=true",
+        "a \"Prefiro falar com um espe\" ring=true",
+        "input#dg-nome \"\" ring=true",
+        "input#dg-whats \"\" ring=true",
+        "input#dg-email \"\" ring=true",
+        "input#dg-local \"\" ring=true",
+        "button \"Sim\" ring=true",
+        "button \"Ainda não\" ring=true"
+      ],
+      "axe": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": 12,
+          "sample": [
+            "li:nth-child(1) > i",
+            "li:nth-child(2) > i"
+          ]
+        }
+      ]
+    },
+    "390": {
+      "loadMs": 2489,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1"
+      ],
+      "overflowX": false,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "wide": [],
+      "h1s": [
+        "Conte o que você tem. A gente devolve o caminho."
+      ],
+      "headingsCount": 11,
+      "headings": [
+        "H1: Conte o que você tem. A gente devolve o caminho.",
+        "H2: O que acontece quando você manda a ficha.",
+        "H3: A gente lê o seu imóvel.",
+        "H3: Voltamos no seu WhatsApp.",
+        "H3: Se fizer sentido, avançamos.",
+        "H3: Preço e prazo antes da obra.",
+        "H2: Já fizemos isso mais de 150 vezes.",
+        "H2: Antes de mandar a ficha.",
+        "H2: Pronto para ver o projeto antes da obra?",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [],
+      "imgRemote": 0,
+      "small": [],
+      "smallCount": 0,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 39,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 3273,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=393 top=407"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "button \"Assistir depoimento em ví\" ring=true",
+        "a \"Prefiro falar com um espe\" ring=true",
+        "input#dg-nome \"\" ring=true",
+        "input#dg-whats \"\" ring=true",
+        "input#dg-email \"\" ring=true",
+        "input#dg-local \"\" ring=true",
+        "button \"Sim\" ring=true",
+        "button \"Ainda não\" ring=true"
+      ],
+      "axe": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": 12,
+          "sample": [
+            "li:nth-child(1) > i",
+            "li:nth-child(2) > i"
+          ]
+        }
+      ]
+    },
+    "768": {
+      "loadMs": 2458,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js"
+      ],
+      "overflowX": false,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "wide": [],
+      "h1s": [
+        "Conte o que você tem. A gente devolve o caminho."
+      ],
+      "headingsCount": 11,
+      "headings": [
+        "H1: Conte o que você tem. A gente devolve o caminho.",
+        "H2: O que acontece quando você manda a ficha.",
+        "H3: A gente lê o seu imóvel.",
+        "H3: Voltamos no seu WhatsApp.",
+        "H3: Se fizer sentido, avançamos.",
+        "H3: Preço e prazo antes da obra.",
+        "H2: Já fizemos isso mais de 150 vezes.",
+        "H2: Antes de mandar a ficha.",
+        "H2: Pronto para ver o projeto antes da obra?",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [],
+      "imgRemote": 0,
+      "small": [
+        "a \"Política de Privacidade\" 158x16"
+      ],
+      "smallCount": 1,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 39,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 3273,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=109 top=792"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "button \"Assistir depoimento em ví\" ring=true",
+        "a \"Prefiro falar com um espe\" ring=true",
+        "input#dg-nome \"\" ring=true",
+        "input#dg-whats \"\" ring=true",
+        "input#dg-email \"\" ring=true",
+        "input#dg-local \"\" ring=true",
+        "button \"Sim\" ring=true",
+        "button \"Ainda não\" ring=true"
+      ],
+      "axe": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": 12,
+          "sample": [
+            "li:nth-child(1) > i",
+            "li:nth-child(2) > i"
+          ]
+        }
+      ]
+    },
+    "1440": {
+      "loadMs": 2384,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js"
+      ],
+      "overflowX": false,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "wide": [],
+      "h1s": [
+        "Conte o que você tem. A gente devolve o caminho."
+      ],
+      "headingsCount": 11,
+      "headings": [
+        "H1: Conte o que você tem. A gente devolve o caminho.",
+        "H2: O que acontece quando você manda a ficha.",
+        "H3: A gente lê o seu imóvel.",
+        "H3: Voltamos no seu WhatsApp.",
+        "H3: Se fizer sentido, avançamos.",
+        "H3: Preço e prazo antes da obra.",
+        "H2: Já fizemos isso mais de 150 vezes.",
+        "H2: Antes de mandar a ficha.",
+        "H2: Pronto para ver o projeto antes da obra?",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [
+        "http://127.0.0.1:4173/__l5e/assets-v1/5fc52424-22a9-4b06-8b2f-50ab9cc91361/ssl-shield.png"
+      ],
+      "imgRemote": 0,
+      "small": [
+        "a \"FAQ\" 20x35",
+        "a \"Prefiro falar com um especiali\" 263x24",
+        "button \"+ Mais detalhes (opcional)\" 195x24",
+        "a \"Falar no WhatsApp →\" 143x24",
+        "a \"O contrato\" 321x21",
+        "a \"A história\" 321x21",
+        "a \"O que fazemos\" 321x21",
+        "a \"Como funciona\" 321x21",
+        "a \"Portfólio\" 321x21",
+        "a \"Conteúdos\" 321x21",
+        "a \"FAQ\" 321x21",
+        "a \"Diagnóstico\" 321x21"
+      ],
+      "smallCount": 18,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 39,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 3371,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=76 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=109 top=792"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "a \"O contrato\" ring=true",
+        "a \"A história\" ring=true",
+        "a \"Projetos\" ring=true",
+        "a \"Bwild Workflow\" ring=true",
+        "a \"Prova\" ring=true",
+        "a \"Portfólio\" ring=true",
+        "a \"Conteúdos\" ring=true",
+        "a \"FAQ\" ring=true",
+        "a \"Solicitar Orçamento→\" ring=true"
+      ],
+      "axe": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": 12,
+          "sample": [
+            "li:nth-child(1) > i",
+            "li:nth-child(2) > i"
+          ]
+        }
+      ]
+    }
+  },
+  "/portfolio": {
+    "360": {
+      "loadMs": 2256,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/projects?select=id%2Cslug%2Ctitle%2Ccover_url%2Cproject_type%2Cneighborhood%2Clocation%2Car",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js"
+      ],
+      "overflowX": false,
+      "scrollWidth": 360,
+      "clientWidth": 360,
+      "wide": [],
+      "h1s": [
+        "Apartamentos entregues, prontos pra morar, alugar ou vender."
+      ],
+      "headingsCount": 4,
+      "headings": [
+        "H1: Apartamentos entregues, prontos pra morar, alugar ou vender.",
+        "H2: O próximo studio da lista pode ser o seu.",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [],
+      "imgRemote": 0,
+      "small": [
+        "a \"Política de Privacidade\" 135x14"
+      ],
+      "smallCount": 1,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 38,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 1294,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=393 top=407"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "a \"Solicitar Orçamento →\" ring=true",
+        "a \"Falar no WhatsApp →\" ring=true",
+        "a \"O contrato\" ring=true",
+        "a \"A história\" ring=true",
+        "a \"O que fazemos\" ring=true",
+        "a \"Como funciona\" ring=true",
+        "a \"Portfólio\" ring=true",
+        "a \"Conteúdos\" ring=true"
+      ],
+      "axe": []
+    },
+    "390": {
+      "loadMs": 2433,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/projects?select=id%2Cslug%2Ctitle%2Ccover_url%2Cproject_type%2Cneighborhood%2Clocation%2Car",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1"
+      ],
+      "overflowX": false,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "wide": [],
+      "h1s": [
+        "Apartamentos entregues, prontos pra morar, alugar ou vender."
+      ],
+      "headingsCount": 4,
+      "headings": [
+        "H1: Apartamentos entregues, prontos pra morar, alugar ou vender.",
+        "H2: O próximo studio da lista pode ser o seu.",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [],
+      "imgRemote": 0,
+      "small": [],
+      "smallCount": 0,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 38,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 1294,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=393 top=407"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "a \"Solicitar Orçamento →\" ring=true",
+        "a \"Falar no WhatsApp →\" ring=true",
+        "a \"O contrato\" ring=true",
+        "a \"A história\" ring=true",
+        "a \"O que fazemos\" ring=true",
+        "a \"Como funciona\" ring=true",
+        "a \"Portfólio\" ring=true",
+        "a \"Conteúdos\" ring=true"
+      ],
+      "axe": []
+    },
+    "768": {
+      "loadMs": 2498,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/projects?select=id%2Cslug%2Ctitle%2Ccover_url%2Cproject_type%2Cneighborhood%2Clocation%2Car",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js"
+      ],
+      "overflowX": false,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "wide": [],
+      "h1s": [
+        "Apartamentos entregues, prontos pra morar, alugar ou vender."
+      ],
+      "headingsCount": 4,
+      "headings": [
+        "H1: Apartamentos entregues, prontos pra morar, alugar ou vender.",
+        "H2: O próximo studio da lista pode ser o seu.",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [],
+      "imgRemote": 0,
+      "small": [
+        "a \"Política de Privacidade\" 158x16"
+      ],
+      "smallCount": 1,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 38,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 1294,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=109 top=792"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "a \"Solicitar Orçamento →\" ring=true",
+        "a \"Falar no WhatsApp →\" ring=true",
+        "a \"O contrato\" ring=true",
+        "a \"A história\" ring=true",
+        "a \"O que fazemos\" ring=true",
+        "a \"Como funciona\" ring=true",
+        "a \"Portfólio\" ring=true",
+        "a \"Conteúdos\" ring=true"
+      ],
+      "axe": []
+    },
+    "1440": {
+      "loadMs": 2421,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/projects?select=id%2Cslug%2Ctitle%2Ccover_url%2Cproject_type%2Cneighborhood%2Clocation%2Car",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;"
+      ],
+      "overflowX": false,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "wide": [],
+      "h1s": [
+        "Apartamentos entregues, prontos pra morar, alugar ou vender."
+      ],
+      "headingsCount": 4,
+      "headings": [
+        "H1: Apartamentos entregues, prontos pra morar, alugar ou vender.",
+        "H2: O próximo studio da lista pode ser o seu.",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [
+        "http://127.0.0.1:4173/__l5e/assets-v1/5fc52424-22a9-4b06-8b2f-50ab9cc91361/ssl-shield.png"
+      ],
+      "imgRemote": 0,
+      "small": [
+        "a \"FAQ\" 20x35",
+        "a \"O contrato\" 321x21",
+        "a \"A história\" 321x21",
+        "a \"O que fazemos\" 321x21",
+        "a \"Como funciona\" 321x21",
+        "a \"Portfólio\" 321x21",
+        "a \"Conteúdos\" 321x21",
+        "a \"FAQ\" 321x21",
+        "a \"Diagnóstico\" 321x21",
+        "a \"WhatsApp\" 321x21",
+        "a \"Instagram\" 321x21",
+        "a \"LinkedIn\" 321x21"
+      ],
+      "smallCount": 15,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 38,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 1392,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=76 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=109 top=792"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "a \"O contrato\" ring=true",
+        "a \"A história\" ring=true",
+        "a \"Projetos\" ring=true",
+        "a \"Bwild Workflow\" ring=true",
+        "a \"Prova\" ring=true",
+        "a \"Portfólio\" ring=true",
+        "a \"Conteúdos\" ring=true",
+        "a \"FAQ\" ring=true",
+        "a \"Solicitar Orçamento→\" ring=true"
+      ],
+      "axe": []
+    }
+  },
+  "/conteudos": {
+    "360": {
+      "loadMs": 2418,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/bewild_posts?select=id%2Cslug%2Ctitle%2Cmeta_title%2Cmeta_description%2Ccategory%2Cexcerpt%",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js"
+      ],
+      "overflowX": false,
+      "scrollWidth": 360,
+      "clientWidth": 360,
+      "wide": [],
+      "h1s": [
+        "Quem reforma decide melhor informado."
+      ],
+      "headingsCount": 4,
+      "headings": [
+        "H1: Quem reforma decide melhor informado.",
+        "H2: Da leitura à decisão: avalie o seu studio.",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [],
+      "imgRemote": 0,
+      "small": [
+        "a \"Política de Privacidade\" 135x14"
+      ],
+      "smallCount": 1,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 38,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 1258,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=393 top=407"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "button \"Todos\" ring=true",
+        "button \"Mercado\" ring=true",
+        "button \"Investimento\" ring=true",
+        "button \"Reforma\" ring=true",
+        "button \"Operação\" ring=true",
+        "button \"Fiscal\" ring=true",
+        "a \"Solicitar Orçamento\" ring=true",
+        "a \"Falar no WhatsApp\" ring=true"
+      ],
+      "axe": []
+    },
+    "390": {
+      "loadMs": 2251,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/bewild_posts?select=id%2Cslug%2Ctitle%2Cmeta_title%2Cmeta_description%2Ccategory%2Cexcerpt%",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js"
+      ],
+      "overflowX": false,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "wide": [],
+      "h1s": [
+        "Quem reforma decide melhor informado."
+      ],
+      "headingsCount": 4,
+      "headings": [
+        "H1: Quem reforma decide melhor informado.",
+        "H2: Da leitura à decisão: avalie o seu studio.",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [],
+      "imgRemote": 0,
+      "small": [],
+      "smallCount": 0,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 38,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 1258,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=393 top=407"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "button \"Todos\" ring=true",
+        "button \"Mercado\" ring=true",
+        "button \"Investimento\" ring=true",
+        "button \"Reforma\" ring=true",
+        "button \"Operação\" ring=true",
+        "button \"Fiscal\" ring=true",
+        "a \"Solicitar Orçamento\" ring=true",
+        "a \"Falar no WhatsApp\" ring=true"
+      ],
+      "axe": []
+    },
+    "768": {
+      "loadMs": 2370,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/bewild_posts?select=id%2Cslug%2Ctitle%2Cmeta_title%2Cmeta_description%2Ccategory%2Cexcerpt%",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js"
+      ],
+      "overflowX": false,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "wide": [],
+      "h1s": [
+        "Quem reforma decide melhor informado."
+      ],
+      "headingsCount": 4,
+      "headings": [
+        "H1: Quem reforma decide melhor informado.",
+        "H2: Da leitura à decisão: avalie o seu studio.",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [
+        "http://127.0.0.1:4173/__l5e/assets-v1/5fc52424-22a9-4b06-8b2f-50ab9cc91361/ssl-shield.png"
+      ],
+      "imgRemote": 0,
+      "small": [
+        "a \"Política de Privacidade\" 158x16"
+      ],
+      "smallCount": 1,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 38,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 1258,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=109 top=792"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "button \"Todos\" ring=true",
+        "button \"Mercado\" ring=true",
+        "button \"Investimento\" ring=true",
+        "button \"Reforma\" ring=true",
+        "button \"Operação\" ring=true",
+        "button \"Fiscal\" ring=true",
+        "a \"Solicitar Orçamento\" ring=true",
+        "a \"Falar no WhatsApp\" ring=true"
+      ],
+      "axe": []
+    },
+    "1440": {
+      "loadMs": 2373,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/bewild_posts?select=id%2Cslug%2Ctitle%2Cmeta_title%2Cmeta_description%2Ccategory%2Cexcerpt%",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js"
+      ],
+      "overflowX": false,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "wide": [],
+      "h1s": [
+        "Quem reforma decide melhor informado."
+      ],
+      "headingsCount": 4,
+      "headings": [
+        "H1: Quem reforma decide melhor informado.",
+        "H2: Da leitura à decisão: avalie o seu studio.",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [
+        "http://127.0.0.1:4173/__l5e/assets-v1/5fc52424-22a9-4b06-8b2f-50ab9cc91361/ssl-shield.png"
+      ],
+      "imgRemote": 0,
+      "small": [
+        "a \"FAQ\" 20x35",
+        "a \"O contrato\" 321x21",
+        "a \"A história\" 321x21",
+        "a \"O que fazemos\" 321x21",
+        "a \"Como funciona\" 321x21",
+        "a \"Portfólio\" 321x21",
+        "a \"Conteúdos\" 321x21",
+        "a \"FAQ\" 321x21",
+        "a \"Diagnóstico\" 321x21",
+        "a \"WhatsApp\" 321x21",
+        "a \"Instagram\" 321x21",
+        "a \"LinkedIn\" 321x21"
+      ],
+      "smallCount": 15,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 38,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 1356,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=76 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=109 top=792"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "a \"O contrato\" ring=true",
+        "a \"A história\" ring=true",
+        "a \"Projetos\" ring=true",
+        "a \"Bwild Workflow\" ring=true",
+        "a \"Prova\" ring=true",
+        "a \"Portfólio\" ring=true",
+        "a \"Conteúdos\" ring=true",
+        "a \"FAQ\" ring=true",
+        "a \"Solicitar Orçamento→\" ring=true"
+      ],
+      "axe": []
+    }
+  },
+  "/faq": {
+    "360": {
+      "loadMs": 2358,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/faq_items?select=id%2Cquestion%2Canswer%2Corder_index%2Cvisible&visible=eq.true&order=order",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;"
+      ],
+      "overflowX": false,
+      "scrollWidth": 360,
+      "clientWidth": 360,
+      "wide": [],
+      "h1s": [
+        "Perguntas frequentes."
+      ],
+      "headingsCount": 4,
+      "headings": [
+        "H1: Perguntas frequentes.",
+        "H2: Não encontrou sua resposta? Vamos conversar.",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [],
+      "imgRemote": 0,
+      "small": [
+        "a \"Política de Privacidade\" 135x14"
+      ],
+      "smallCount": 1,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 38,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 1803,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=393 top=407"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "summary \"O que é uma reforma turn-\" ring=true",
+        "summary \"Quanto tempo leva a obra \" ring=true",
+        "summary \"Quais garantias a Bewild \" ring=true",
+        "summary \"Preciso acompanhar a obra\" ring=true",
+        "summary \"Em qual região a Bewild a\" ring=true",
+        "summary \"A Bewild também faz a ges\" ring=true",
+        "summary \"Quanto custa uma reforma \" ring=true",
+        "a \"Solicitar Orçamento →\" ring=true"
+      ],
+      "axe": []
+    },
+    "390": {
+      "loadMs": 2346,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/faq_items?select=id%2Cquestion%2Canswer%2Corder_index%2Cvisible&visible=eq.true&order=order",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js"
+      ],
+      "overflowX": false,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "wide": [],
+      "h1s": [
+        "Perguntas frequentes."
+      ],
+      "headingsCount": 4,
+      "headings": [
+        "H1: Perguntas frequentes.",
+        "H2: Não encontrou sua resposta? Vamos conversar.",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [],
+      "imgRemote": 0,
+      "small": [],
+      "smallCount": 0,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 38,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 1803,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=393 top=407"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "summary \"O que é uma reforma turn-\" ring=true",
+        "summary \"Quanto tempo leva a obra \" ring=true",
+        "summary \"Quais garantias a Bewild \" ring=true",
+        "summary \"Preciso acompanhar a obra\" ring=true",
+        "summary \"Em qual região a Bewild a\" ring=true",
+        "summary \"A Bewild também faz a ges\" ring=true",
+        "summary \"Quanto custa uma reforma \" ring=true",
+        "a \"Solicitar Orçamento →\" ring=true"
+      ],
+      "axe": []
+    },
+    "768": {
+      "loadMs": 2373,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/faq_items?select=id%2Cquestion%2Canswer%2Corder_index%2Cvisible&visible=eq.true&order=order",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js"
+      ],
+      "overflowX": false,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "wide": [],
+      "h1s": [
+        "Perguntas frequentes."
+      ],
+      "headingsCount": 4,
+      "headings": [
+        "H1: Perguntas frequentes.",
+        "H2: Não encontrou sua resposta? Vamos conversar.",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [],
+      "imgRemote": 0,
+      "small": [
+        "a \"Política de Privacidade\" 158x16"
+      ],
+      "smallCount": 1,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 38,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 1803,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=109 top=792"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "summary \"O que é uma reforma turn-\" ring=true",
+        "summary \"Quanto tempo leva a obra \" ring=true",
+        "summary \"Quais garantias a Bewild \" ring=true",
+        "summary \"Preciso acompanhar a obra\" ring=true",
+        "summary \"Em qual região a Bewild a\" ring=true",
+        "summary \"A Bewild também faz a ges\" ring=true",
+        "summary \"Quanto custa uma reforma \" ring=true",
+        "a \"Solicitar Orçamento →\" ring=true"
+      ],
+      "axe": []
+    },
+    "1440": {
+      "loadMs": 2471,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/faq_items?select=id%2Cquestion%2Canswer%2Corder_index%2Cvisible&visible=eq.true&order=order",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1"
+      ],
+      "overflowX": false,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "wide": [],
+      "h1s": [
+        "Perguntas frequentes."
+      ],
+      "headingsCount": 4,
+      "headings": [
+        "H1: Perguntas frequentes.",
+        "H2: Não encontrou sua resposta? Vamos conversar.",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [],
+      "imgRemote": 0,
+      "small": [
+        "a \"FAQ\" 20x35",
+        "a \"O contrato\" 321x21",
+        "a \"A história\" 321x21",
+        "a \"O que fazemos\" 321x21",
+        "a \"Como funciona\" 321x21",
+        "a \"Portfólio\" 321x21",
+        "a \"Conteúdos\" 321x21",
+        "a \"FAQ\" 321x21",
+        "a \"Diagnóstico\" 321x21",
+        "a \"WhatsApp\" 321x21",
+        "a \"Instagram\" 321x21",
+        "a \"LinkedIn\" 321x21"
+      ],
+      "smallCount": 15,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 38,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 1901,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=76 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=109 top=792"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "a \"O contrato\" ring=true",
+        "a \"A história\" ring=true",
+        "a \"Projetos\" ring=true",
+        "a \"Bwild Workflow\" ring=true",
+        "a \"Prova\" ring=true",
+        "a \"Portfólio\" ring=true",
+        "a \"Conteúdos\" ring=true",
+        "a \"FAQ\" ring=true",
+        "a \"Solicitar Orçamento→\" ring=true"
+      ],
+      "axe": []
+    }
+  },
+  "/privacidade": {
+    "360": {
+      "loadMs": 2220,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js"
+      ],
+      "overflowX": false,
+      "scrollWidth": 360,
+      "clientWidth": 360,
+      "wide": [],
+      "h1s": [
+        "Política de privacidade."
+      ],
+      "headingsCount": 12,
+      "headings": [
+        "H1: Política de privacidade.",
+        "H2: Quem é o controlador dos dados",
+        "H2: Quais dados coletamos",
+        "H2: Finalidade do tratamento",
+        "H2: Base legal",
+        "H2: Compartilhamento com terceiros",
+        "H2: Cookies",
+        "H2: Seus direitos",
+        "H2: Retenção e segurança",
+        "H2: Alterações e contato",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [],
+      "imgRemote": 0,
+      "small": [
+        "a \"contato@bewild.com.br\" 177x19",
+        "a \"contato@bewild.com.br\" 177x19",
+        "a \"Política de Privacidade\" 135x14"
+      ],
+      "smallCount": 3,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 38,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 4860,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=393 top=407"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "a \"contato@bewild.com.br\" ring=true",
+        "a \"contato@bewild.com.br\" ring=true",
+        "a \"O contrato\" ring=true",
+        "a \"A história\" ring=true",
+        "a \"O que fazemos\" ring=true",
+        "a \"Como funciona\" ring=true",
+        "a \"Portfólio\" ring=true",
+        "a \"Conteúdos\" ring=true"
+      ],
+      "axe": []
+    },
+    "390": {
+      "loadMs": 2379,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;"
+      ],
+      "overflowX": false,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "wide": [],
+      "h1s": [
+        "Política de privacidade."
+      ],
+      "headingsCount": 12,
+      "headings": [
+        "H1: Política de privacidade.",
+        "H2: Quem é o controlador dos dados",
+        "H2: Quais dados coletamos",
+        "H2: Finalidade do tratamento",
+        "H2: Base legal",
+        "H2: Compartilhamento com terceiros",
+        "H2: Cookies",
+        "H2: Seus direitos",
+        "H2: Retenção e segurança",
+        "H2: Alterações e contato",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [],
+      "imgRemote": 0,
+      "small": [
+        "a \"contato@bewild.com.br\" 177x19",
+        "a \"contato@bewild.com.br\" 177x19"
+      ],
+      "smallCount": 2,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 38,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 4860,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=393 top=407"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "a \"contato@bewild.com.br\" ring=true",
+        "a \"contato@bewild.com.br\" ring=true",
+        "a \"O contrato\" ring=true",
+        "a \"A história\" ring=true",
+        "a \"O que fazemos\" ring=true",
+        "a \"Como funciona\" ring=true",
+        "a \"Portfólio\" ring=true",
+        "a \"Conteúdos\" ring=true"
+      ],
+      "axe": []
+    },
+    "768": {
+      "loadMs": 2208,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;"
+      ],
+      "overflowX": false,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "wide": [],
+      "h1s": [
+        "Política de privacidade."
+      ],
+      "headingsCount": 12,
+      "headings": [
+        "H1: Política de privacidade.",
+        "H2: Quem é o controlador dos dados",
+        "H2: Quais dados coletamos",
+        "H2: Finalidade do tratamento",
+        "H2: Base legal",
+        "H2: Compartilhamento com terceiros",
+        "H2: Cookies",
+        "H2: Seus direitos",
+        "H2: Retenção e segurança",
+        "H2: Alterações e contato",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [],
+      "imgRemote": 0,
+      "small": [
+        "a \"contato@bewild.com.br\" 177x19",
+        "a \"contato@bewild.com.br\" 177x19",
+        "a \"Política de Privacidade\" 158x16"
+      ],
+      "smallCount": 3,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 38,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 4860,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=109 top=792"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "a \"contato@bewild.com.br\" ring=true",
+        "a \"contato@bewild.com.br\" ring=true",
+        "a \"O contrato\" ring=true",
+        "a \"A história\" ring=true",
+        "a \"O que fazemos\" ring=true",
+        "a \"Como funciona\" ring=true",
+        "a \"Portfólio\" ring=true",
+        "a \"Conteúdos\" ring=true"
+      ],
+      "axe": []
+    },
+    "1440": {
+      "loadMs": 2450,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js"
+      ],
+      "overflowX": false,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "wide": [],
+      "h1s": [
+        "Política de privacidade."
+      ],
+      "headingsCount": 12,
+      "headings": [
+        "H1: Política de privacidade.",
+        "H2: Quem é o controlador dos dados",
+        "H2: Quais dados coletamos",
+        "H2: Finalidade do tratamento",
+        "H2: Base legal",
+        "H2: Compartilhamento com terceiros",
+        "H2: Cookies",
+        "H2: Seus direitos",
+        "H2: Retenção e segurança",
+        "H2: Alterações e contato",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [],
+      "imgRemote": 0,
+      "small": [
+        "a \"FAQ\" 20x35",
+        "a \"contato@bewild.com.br\" 177x19",
+        "a \"contato@bewild.com.br\" 177x19",
+        "a \"O contrato\" 321x21",
+        "a \"A história\" 321x21",
+        "a \"O que fazemos\" 321x21",
+        "a \"Como funciona\" 321x21",
+        "a \"Portfólio\" 321x21",
+        "a \"Conteúdos\" 321x21",
+        "a \"FAQ\" 321x21",
+        "a \"Diagnóstico\" 321x21",
+        "a \"WhatsApp\" 321x21"
+      ],
+      "smallCount": 17,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 38,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 4958,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=76 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=109 top=792"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "a \"O contrato\" ring=true",
+        "a \"A história\" ring=true",
+        "a \"Projetos\" ring=true",
+        "a \"Bwild Workflow\" ring=true",
+        "a \"Prova\" ring=true",
+        "a \"Portfólio\" ring=true",
+        "a \"Conteúdos\" ring=true",
+        "a \"FAQ\" ring=true",
+        "a \"Solicitar Orçamento→\" ring=true"
+      ],
+      "axe": []
+    }
+  },
+  "/rota-inexistente-xyz": {
+    "360": {
+      "loadMs": 2390,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/rpc/log_404",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/seo_404_log?select=redirect_to%2Cstatus&path=eq.%2Frota-inexistente-xyz&status=eq.redirect"
+      ],
+      "overflowX": false,
+      "scrollWidth": 360,
+      "clientWidth": 360,
+      "wide": [],
+      "h1s": [
+        "404 · Essa página não existe."
+      ],
+      "headingsCount": 4,
+      "headings": [
+        "H1: 404 · Essa página não existe.",
+        "H2: Para onde ir agora",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [
+        "http://127.0.0.1:4173/__l5e/assets-v1/5fc52424-22a9-4b06-8b2f-50ab9cc91361/ssl-shield.png"
+      ],
+      "imgRemote": 0,
+      "small": [
+        "a \"Política de Privacidade\" 135x14"
+      ],
+      "smallCount": 1,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 42,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 1124,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=393 top=407"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "a \"Voltar à página inicial →\" ring=true",
+        "a \"Solicitar Orçamento →\" ring=true",
+        "a \"Ver reformas entregues\" ring=true",
+        "a \"Conteúdos sobre studios e\" ring=true",
+        "a \"Perguntas frequentes\" ring=true",
+        "a \"Política de privacidade\" ring=true",
+        "a \"O contrato\" ring=true",
+        "a \"A história\" ring=true"
+      ],
+      "axe": []
+    },
+    "390": {
+      "loadMs": 4538,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/rpc/log_404",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/seo_404_log?select=redirect_to%2Cstatus&path=eq.%2Frota-inexistente-xyz&status=eq.redirect"
+      ],
+      "overflowX": false,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "wide": [],
+      "h1s": [
+        "404 · Essa página não existe."
+      ],
+      "headingsCount": 4,
+      "headings": [
+        "H1: 404 · Essa página não existe.",
+        "H2: Para onde ir agora",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [],
+      "imgRemote": 0,
+      "small": [],
+      "smallCount": 0,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 42,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 1124,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=393 top=407"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "a \"Voltar à página inicial →\" ring=true",
+        "a \"Solicitar Orçamento →\" ring=true",
+        "a \"Ver reformas entregues\" ring=true",
+        "a \"Conteúdos sobre studios e\" ring=true",
+        "a \"Perguntas frequentes\" ring=true",
+        "a \"Política de privacidade\" ring=true",
+        "a \"O contrato\" ring=true",
+        "a \"A história\" ring=true"
+      ],
+      "axe": []
+    },
+    "768": {
+      "loadMs": 2387,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/rpc/log_404",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/seo_404_log?select=redirect_to%2Cstatus&path=eq.%2Frota-inexistente-xyz&status=eq.redirect"
+      ],
+      "overflowX": false,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "wide": [],
+      "h1s": [
+        "404 · Essa página não existe."
+      ],
+      "headingsCount": 4,
+      "headings": [
+        "H1: 404 · Essa página não existe.",
+        "H2: Para onde ir agora",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [
+        "http://127.0.0.1:4173/__l5e/assets-v1/5fc52424-22a9-4b06-8b2f-50ab9cc91361/ssl-shield.png"
+      ],
+      "imgRemote": 0,
+      "small": [
+        "a \"Política de Privacidade\" 158x16"
+      ],
+      "smallCount": 1,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 42,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 1124,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=68 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=109 top=792"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "button \"Abrir menu\" ring=true",
+        "a \"Voltar à página inicial →\" ring=true",
+        "a \"Solicitar Orçamento →\" ring=true",
+        "a \"Ver reformas entregues\" ring=true",
+        "a \"Conteúdos sobre studios e\" ring=true",
+        "a \"Perguntas frequentes\" ring=true",
+        "a \"Política de privacidade\" ring=true",
+        "a \"O contrato\" ring=true",
+        "a \"A história\" ring=true"
+      ],
+      "axe": []
+    },
+    "1440": {
+      "loadMs": 2270,
+      "consoleErrors": [
+        "[error] Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID",
+        "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+        "[warning] Couldn't load preload assets:  ProgressEvent"
+      ],
+      "failedRequests": [
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains",
+        "net::ERR_CERT_AUTHORITY_INVALID https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+        "net::ERR_CERT_AUTHORITY_INVALID https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/rpc/log_404",
+        "net::ERR_TUNNEL_CONNECTION_FAILED https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/seo_404_log?select=redirect_to%2Cstatus&path=eq.%2Frota-inexistente-xyz&status=eq.redirect"
+      ],
+      "overflowX": false,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "wide": [],
+      "h1s": [
+        "404 · Essa página não existe."
+      ],
+      "headingsCount": 4,
+      "headings": [
+        "H1: 404 · Essa página não existe.",
+        "H2: Para onde ir agora",
+        "H3: Navegação",
+        "H3: Contato"
+      ],
+      "imgs": 1,
+      "imgNoAlt": 0,
+      "imgEmptyAlt": 0,
+      "imgBroken": [
+        "http://127.0.0.1:4173/__l5e/assets-v1/5fc52424-22a9-4b06-8b2f-50ab9cc91361/ssl-shield.png"
+      ],
+      "imgRemote": 0,
+      "small": [
+        "a \"FAQ\" 20x35",
+        "a \"O contrato\" 321x21",
+        "a \"A história\" 321x21",
+        "a \"O que fazemos\" 321x21",
+        "a \"Como funciona\" 321x21",
+        "a \"Portfólio\" 321x21",
+        "a \"Conteúdos\" 321x21",
+        "a \"FAQ\" 321x21",
+        "a \"Diagnóstico\" 321x21",
+        "a \"WhatsApp\" 321x21",
+        "a \"Instagram\" 321x21",
+        "a \"LinkedIn\" 321x21"
+      ],
+      "smallCount": 15,
+      "title": "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro",
+      "desc": "A Bewild reforma seu apartamento por completo em São Paulo e Rio de Janeiro: projeto de arquitetura, obra, marcenaria e mobília em um único contrato. Entrega pronta para morar, alugar ou vender.",
+      "canonical": "https://bewild.com.br/",
+      "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "ld": [
+        "graph:Organization+WebSite+Service"
+      ],
+      "lang": "pt-BR",
+      "linksCount": 42,
+      "emptyLinks": 0,
+      "externalNoRel": 0,
+      "textLen": 1222,
+      "fixedEls": [
+        "a.bwa-skip h=48 top=-62",
+        "header.bwa-nav h=76 top=0",
+        "div.bwa-mobile-menu h=0 top=0",
+        "div.cookie-banner h=109 top=792"
+      ],
+      "focusTrail": [
+        "body",
+        "a \"Pular para o conteúdo\" ring=true",
+        "a \"Bewild\" ring=true",
+        "a \"O contrato\" ring=true",
+        "a \"A história\" ring=true",
+        "a \"Projetos\" ring=true",
+        "a \"Bwild Workflow\" ring=true",
+        "a \"Prova\" ring=true",
+        "a \"Portfólio\" ring=true",
+        "a \"Conteúdos\" ring=true",
+        "a \"FAQ\" ring=true",
+        "a \"Solicitar Orçamento→\" ring=true"
+      ],
+      "axe": []
+    }
+  },
+  "__form": {
+    "form": {
+      "found": true,
+      "fields": [
+        {
+          "name": "nome",
+          "type": "text",
+          "required": true,
+          "label": true,
+          "autocomplete": "name",
+          "inputmode": null
+        },
+        {
+          "name": "whats",
+          "type": "tel",
+          "required": true,
+          "label": true,
+          "autocomplete": "tel",
+          "inputmode": "tel"
+        },
+        {
+          "name": "email",
+          "type": "email",
+          "required": false,
+          "label": true,
+          "autocomplete": "email",
+          "inputmode": null
+        },
+        {
+          "name": "local",
+          "type": "text",
+          "required": true,
+          "label": true,
+          "autocomplete": null,
+          "inputmode": null
+        },
+        {
+          "name": "metragem",
+          "type": "text",
+          "required": false,
+          "label": true,
+          "autocomplete": null,
+          "inputmode": "numeric"
+        }
+      ],
+      "submitDisabledInitially": true,
+      "submitText": "Solicitar Orçamento →"
+    },
+    "emptyErrors": [],
+    "chipTexts": [
+      "Sim",
+      "Ainda não",
+      "Estou comprando",
+      "Short stay",
+      "Locação tradicional",
+      "Uso misto",
+      "Moradia",
+      "Ainda avaliando"
+    ],
+    "clickedGroups": 4,
+    "stateBefore": {
+      "submitDisabled": false,
+      "errors": []
+    },
+    "after": {
+      "success": true,
+      "successText": "Recebemos seus dados.Nosso time vai falar com você no WhatsApp.",
+      "formCleared": true
+    },
+    "net": [
+      "GET https://www.googletagmanager.com/gtag/js?id=G-CE7GKKDG4L",
+      "GET https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+      "POST https://aamlnkmqvjcowixdgqii.supabase.co/functions/v1/track",
+      "GET https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1",
+      "POST https://aamlnkmqvjcowixdgqii.supabase.co/functions/v1/track",
+      "POST https://aamlnkmqvjcowixdgqii.supabase.co/functions/v1/notify-lead",
+      "GET https://aamlnkmqvjcowixdgqii.supabase.co/rest/v1/site_settings?select=*&id=eq.1"
+    ],
+    "popups": [
+      "chrome-error://chromewebdata/"
+    ]
+  }
+}
