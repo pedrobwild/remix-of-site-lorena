@@ -192,7 +192,7 @@ export default function DiagnosticoPage() {
             </div>
             <div className="dg-cells">
               <div className="dg-cell dg-stat"><b>+160</b><span>reformas entregues</span></div>
-              <div className="dg-cell dg-stat"><b>60<em>dias úteis</em></b><span>referência de prazo de obra, a partir de</span></div>
+              <div className="dg-cell dg-stat"><b>60<em>dias úteis</em></b><span>referência de prazo de obra até 30 m²</span></div>
               <div className="dg-cell dg-stat"><b>5<em>anos</em></b><span>garantia de obra e marcenaria</span></div>
               <div className="dg-cell dg-stat"><b>1<em>contrato</em></b><span>preço e prazo fechados antes de a obra começar</span></div>
             </div>
