@@ -1,0 +1,59 @@
+# Plano de ação — site Bewild (bewild.com.br)
+
+Data: 16/09/2026 · Base: `AUDITORIA_SITE.md` · Branch: `claude/charming-keller-awrwxk`
+Horizontes são de **trabalho**, não promessa de resultado no Google (novo rastreamento leva dias ou semanas e não garante inclusão — [ref.](https://developers.google.com/search/docs/crawling-indexing/ask-google-to-recrawl)).
+
+Ambientes: **Código** = Claude Code/este repositório · **Lovable** = publicação/hosting/domínio · **GSC** = Search Console · **Wix** = site legado · **Mkt** = marketing/conteúdo/negócio.
+
+## As cinco primeiras ações e por quê nesta ordem
+
+1. **A-01 Publicar a rodada 1** — desbloqueia tudo o que depende de produção (verificações, GSC) e tira do ar os documentos internos; esforço mínimo, risco baixo, já validado localmente.
+2. **A-02 Verificar produção (www/apex, assets, 404 dos docs, headers)** — 10 minutos de `curl`; responde SEO-04 e confirma SEO-02/SEC-01 sem depender de ninguém.
+3. **A-03 Coletar a evidência mínima no Search Console** — sem isso nenhuma conclusão sobre indexação é honesta; alta confiança de que muda as próximas decisões.
+4. **A-04 Decidir a estratégia de domínio (bwild.com.br × bewild.com.br)** — maior impacto provável; depende só do negócio; tudo de conteúdo/redirecionamento deriva dela.
+5. **A-05 Preservar UTM no lead (first/last-touch)** — perda de atribuição comprovada em 22/38 leads; pequena no código; melhora a leitura de todas as campanhas daqui para frente.
+
+## Tabela
+
+| ID | Prioridade | Ação concreta | Responsável/ambiente | Dependências | Esforço | Critério de aceite | Verificação | Prazo proposto | Status |
+|---|---|---|---|---|---|---|---|---|---|
+| A-01 | P0 | Revisar e mesclar a branch `claude/charming-keller-awrwxk` em `main`; publicar no Lovable | Dev + Lovable | — | 30 min | CI verde no merge; publicação concluída | Lovable › Publish; GitHub Actions verde | Hoje | Pronto para revisão |
+| A-02 | P0 | Rodar de fora do ambiente: `curl -sI https://www.bewild.com.br/`, `curl -sI https://bewild.com.br/faq`, `curl -o /dev/null -w '%{http_code}' https://bewild.com.br/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad3/hero-cozinha.jpg`, `curl -o /dev/null -w '%{http_code}' https://bewild.com.br/gpt-knowledge/01_fonte_de_verdade.md`, `curl -sI https://bewild.com.br/sitemap.xml` | Mkt/Dev (terminal) | A-01 | 10 min | www → 301 para apex (ou o inverso documentado); hero 200; gpt-knowledge 404; sitemap 200 `application/xml` | Saída dos comandos colada na issue | Hoje | Pendente |
+| A-03 | P0 | Exportar do GSC (`bewild.com.br`): Sitemaps; Inspeção de URL de `/`, `/diagnostico`, `/portfolio`, `/faq`, 1 projeto, 1 post **com "Ver página rastreada"**; Páginas › motivos de não indexação; Desempenho 90 dias (marca × não marca); Ações manuais/Segurança | Mkt (GSC) | — | 45 min | 5 blocos de evidência anexados | Capturas/exports na issue | Hoje/24 h | Pendente |
+| A-04 | P0 | Decidir: domínio canônico da marca. Se `bewild.com.br`: aprovar migração com mapa de 301 do Wix (home, páginas, 36 posts) e "Alteração de endereço" no GSC; se coexistência: documentar papéis e evitar conteúdo duplicado | CEO/Mkt | A-03 | Decisão + 2 h de mapeamento | Decisão registrada; planilha URL antiga → URL nova (com 410 para o que não terá destino) | Planilha revisada por Mkt | 7 dias | Bloqueado por decisão |
+| A-05 | P1 | Lead lê UTM/referrer/landing da atribuição persistida (`bewild_utm`/`bewild_first_utm`/`bewild_landing`) quando a URL atual não tem UTM | Código | — | 1–2 h | Landing em `/?utm_source=x` → `/diagnostico` → lead com `utm_source=x`; teste unitário | Vitest + teste manual no preview | 7 dias | Proposto |
+| A-06 | P1 | Testar ponta a ponta `notify-lead` em ambiente de teste (secrets de Slack/CRM): lead de teste chega no banco, Slack e Bwild Engine; UI mostra "Recebemos" | Dev + Lovable (secrets) | A-01 | 1 h | 1 lead de teste visível nos 3 destinos e depois removido | Captura do Slack/CRM + `select` no banco | 7 dias | Pendente |
+| A-07 | P1 | Trocar a URL de demonstração em `src/pages/LpObraPage.tsx` do preview para `https://bwildworkflow.com/vitrine/…` após confirmar que responde 200 | Código (+ dono do Workflow) | Workflow publicado | 15 min | `/o` abre a vitrine de produção | `curl -sI` na URL + clique na LP | 7 dias | Proposto |
+| A-08 | P1 | Definir área de atuação e números oficiais (SP × SP+RJ; "+80" × "150"; 55 × 60 dias) e alinhar title/description/JSON-LD/FAQ/`llms.txt`/`/diagnostico` | Mkt (decisão) → Código | — | Decisão + 1 h | Um único conjunto de afirmações em todas as superfícies | grep no repositório + leitura das páginas | 7 dias | Bloqueado por decisão |
+| A-09 | P1 | Portfólio: texto real (2–4 frases) + `cover_alt` nos 20–30 projetos mais fortes; corrigir bairros com erro ("Brookling", "Pinheiro", "Campo Bela", "Avenida Salgado Filho"); unificar duplicatas (`fd-nex-one…`/`fd-next-one…`) | Mkt (admin `/admin/projetos`) | — | 4–8 h | 30 projetos com summary + alt; 0 bairros errados | Query no banco (`seo_description`/`summary`/`cover_alt`) | 2–4 semanas | Proposto |
+| A-10 | P1 | Política para projetos sem texto: excluir do sitemap (`scripts/generate-sitemap.mjs`: filtrar `summary` vazio) **ou** `noindex` até terem conteúdo | Mkt decide → Código | A-09 (política) | 30 min | Sitemap só com URLs que passam na política | Contagem de `<loc>` no `sitemap.xml` | 2–4 semanas | Proposto |
+| A-11 | P1 | Validar pré-renderização para o Googlebot: no GSC, "Ver página rastreada" de `/faq` e de 1 projeto deve conter title/canonical próprios; se não, abrir chamado no Lovable com a evidência | Mkt (GSC) + Lovable | A-01, A-03 | 30 min | HTML rastreado com `<title>` da própria página | Captura do HTML rastreado | 7 dias | Pendente |
+| A-12 | P1 | Submeter `https://bewild.com.br/sitemap.xml` no GSC (se ainda não) e pedir indexação das 6 URLs estáticas + 5 projetos com conteúdo + 6 posts | Mkt (GSC) | A-01, A-02 | 20 min | Sitemap "Sucesso"; solicitações registradas | GSC › Sitemaps / Inspeção | 24 h após publicar | Pendente |
+| A-13 | P1 | Publicar os 8 rascunhos prontos em `/conteudos` (revisão editorial; priorizar "quanto custa reformar um studio…", "melhores bairros…") | Mkt (admin) | — | 4 h | 8 posts publicados com `meta_description` e capa | `/conteudos` + sitemap regenerado | 2–4 semanas | Proposto |
+| A-14 | P1 | Lazy-load do restante pesado: `BewildPostPage` (`marked`+`dompurify`), `gsap`/`lenis` só na home; medir PSI antes/depois | Código | A-01 | 2 h | `index-*.js` < 450 kB; LCP/INP de laboratório iguais ou melhores | `npm run build` + PSI (URL, data, dispositivo) | 2–4 semanas | Proposto |
+| A-15 | P1 | Hero LCP: gerar `hero-cozinha` em webp/avif (3 larguras) a partir do original e usar `srcset`; manter `fetchpriority="high"` | Código (precisa do binário original) | Mkt entrega a imagem | 1 h | LCP de laboratório mobile < 2,5 s no PSI | PSI antes/depois | 2–4 semanas | Proposto |
+| A-16 | P1 | Rodar PSI em `/`, `/diagnostico`, `/portfolio`, 1 projeto (mobile e desktop) e registrar; verificar se há dados de campo (CrUX) | Mkt (pagespeed.web.dev) | A-01 | 20 min | Tabela com LCP/INP/CLS lab + campo (se houver) por URL/data | Links dos relatórios | 24 h após publicar | Pendente |
+| A-17 | P2 | Hardening de leads: validação zod em `notify-lead`, honeypot no form, remover política `INSERT anon` em `leads` (migration) após confirmar que nada externo a usa | Código + Supabase (migration) | A-06 | 2 h | Payload inválido → 400; insert anônimo direto → negado; formulário segue funcionando | Teste de função + `select` de policies | 2–4 semanas | Proposto |
+| A-18 | P2 | Contraste: escurecer cinzas de passos inativos (home) e microcópias do `/diagnostico` para ≥ 4,5:1 (texto pequeno) mantendo a hierarquia | Código (tokens existentes) | — | 1 h | axe sem `color-contrast` serious nessas rotas | Playwright + axe (script em `docs/auditoria`) | 2–4 semanas | Proposto |
+| A-19 | P2 | `alt` descritivo nas 8 imagens da home com `alt=""`; landmark para `.bwa-mobile-cta`; `role` correto nos cards | Mkt (copy) → Código | — | 1 h | 0 imagens de conteúdo com alt vazio; axe sem `region` | axe | 2–4 semanas | Proposto |
+| A-20 | P2 | Fontes: reduzir famílias/pesos do Google Fonts ao que é usado; avaliar self-host com `font-display: swap`; remover a segunda folha injetada por rota se redundante | Código | A-16 (medir) | 2 h | ≤ 2 requisições de fonte; sem regressão visual (antes/depois) | Screenshots + PSI | 2–4 semanas | Opcional |
+| A-21 | P2 | Documentação: corrigir `docs/ROUTING.md` (crawlers não usam `not-found-check`), README (router path-based), remover/alinhar edge functions `sitemap`/`robots` não usadas, mover `update_home*.py` para `scripts/` ou apagar | Código | — | 1 h | Docs coerentes com o código | Revisão | 2–4 semanas | Proposto |
+| A-22 | P2 | Rodapé: LinkedIn real (hoje `https://www.linkedin.com/`), telefone/endereço/GBP em `site_settings` **se existirem** (alimenta JSON-LD LocalBusiness) | Mkt (admin `/admin/seo`) | — | 30 min | Links e dados reais; JSON-LD válido no Rich Results Test | Teste de resultados avançados | 7 dias | Proposto |
+| A-23 | P2 | Definir critério de lead qualificado (ICP do workspace: studio 21–35 m², investidor SP) e refletir nos campos/chips do `/diagnostico` e no CRM | Mkt/Comercial | — | Reunião | Documento em `docs/` + campos mapeados | Revisão | 2–4 semanas | Lacuna registrada |
+| A-24 | P2 | Evidência de "aparecemos em IA": registrar plataforma, pergunta, data, URL citada; classificar menção × citação × link | Mkt | — | 30 min | Tabela com ≥ 3 ocorrências | Anexo | 7 dias | Pendente |
+| A-25 | P2 | Pipeline de leads: decidir fonte de verdade (admin `/admin/leads` com 38 "novo" × Bwild Engine) e desativar/ocultar o que não for usado | Comercial | — | Decisão | Um funil só | Revisão | 2–4 semanas | Proposto |
+
+## Ordem de publicação (rodada 1)
+
+1. **Código:** merge da branch → `main` (CI verde) → Lovable publica.
+2. **Verificar produção (A-02):** www/apex, hero `/__l5e/...` = 200, `/gpt-knowledge/...` = 404, `sitemap.xml`/`robots.txt` = 200, `/faq` abre e o `<title>` da aba muda imediatamente, formulário de teste (com nome "TESTE AUDITORIA") chega no Slack/CRM e é removido.
+3. **GSC (A-12):** sitemap enviado/reprocessado; Inspeção de URL com "Ver página rastreada" (A-11); solicitar indexação das URLs prioritárias.
+4. **Domínio (A-04):** só depois da decisão — 301 no Wix + Alteração de endereço.
+
+## Acompanhamento
+
+| Marco | O que olhar | Fonte | Cuidado |
+|---|---|---|---|
+| 7 dias | URLs prioritárias inspecionadas (indexada? canonical selecionada = própria); erros de sitemap; leads por origem com UTM preservada | GSC, banco `leads` | Volume baixo: não atribuir variação a nada ainda |
+| 14 dias | Impressões/cliques marca × não marca; páginas de entrada; PSI repetido nas mesmas URLs/condições | GSC, PSI | Comparar com o período anterior equivalente |
+| 28 dias | Tendência de impressões não marca; CTR por página; leads → leads qualificados (após A-23); se migração de domínio aprovada: quedas no antigo × ganhos no novo | GSC (ambas propriedades), CRM | Defasagem do GSC (2–3 dias) e do índice (semanas) |
