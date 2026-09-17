@@ -132,8 +132,8 @@ Prioridades: P0 falha crítica demonstrada · P1 impacto claro · P2 incremental
 
 **LEAD-03 · P1 · Confiança alta**
 - **Evidência:** o payload do lead lê `utm_*` de `window.location.search` **no momento do envio**. Quem chega em `/` com UTM e clica em "Solicitar orçamento" navega para `/diagnostico` sem query → UTM perdida. O tracker interno (`src/lib/analytics.ts`) já persiste first/last-touch em storage (`bewild_utm`, `bewild_first_utm`, `bewild_landing`), mas o formulário não os usa. Banco: 22 de 38 leads sem UTM; `landing_path` registrado (`/diagnostico`: 22, `/o`: 15, `/p`: 1).
-- **Correção:** ler UTM/referrer/landing da atribuição persistida quando a URL atual não tiver UTM (pequena; próxima rodada).
-- **Aceite:** landing em `/?utm_source=x` → clique → envio: lead com `utm_source=x`.
+- **Correção (rodada 2):** (1) a navegação SPA interna carrega `utm_*`/`gclid`/`fbclid` da URL atual para o destino (`carryCampaignParams` em `navigate()`), sem cookie e sem depender de consentimento; (2) no envio, precedência URL → last-touch da sessão → first-touch do visitante (`resolveLeadAttribution`), com `landing_path`/referrer persistidos quando existem. Testes em `src/lib/__tests__/campaignParams.test.ts`.
+- **Aceite:** landing em `/?utm_source=x` → clique → envio: lead com `utm_source=x` (verificar no admin `/admin/leads` com um lead de teste).
 
 **LEAD-02 · P2 · Confiança alta**
 - `notify-lead` não valida entrada no servidor (aceita qualquer JSON; nome vazio vira "Lead sem nome") e não limita taxa. A tabela `leads` tem política `INSERT WITH CHECK (true)` para `anon`, **não usada** pelo front (o insert é feito pela função com service role). Propor: validação zod na função, honeypot no form, remover a política de insert anônimo (migration) — depois de confirmar que nenhum fluxo externo depende dela.

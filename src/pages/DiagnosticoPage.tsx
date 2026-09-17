@@ -7,6 +7,8 @@ import { CONTACT } from "../components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
 import { isLeadDelivered, timeoutAfter } from "@/lib/leadDelivery";
+import { resolveLeadAttribution } from "@/lib/campaignParams";
+import { readPersistedAttribution } from "@/lib/analytics";
 import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.json";
 import diagCssUrl from "./diagnostico-bwa.css?url";
 
@@ -300,7 +302,19 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
     }
     setSubmitting(true);
 
-    const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+    // Origem: URL atual → last-touch da sessão → first-touch do visitante.
+    // (Antes lia só a URL atual, e quem chegava com UTM na home perdia a
+    // origem ao navegar para /diagnostico — 22 de 38 leads sem UTM.)
+    const persisted = readPersistedAttribution();
+    const attribution = resolveLeadAttribution({
+      search: typeof window !== "undefined" ? window.location.search : "",
+      sessionUtm: persisted.sessionUtm,
+      firstUtm: persisted.firstUtm,
+      referrer: typeof document !== "undefined" ? document.referrer : "",
+      referrerHost: persisted.referrerHost,
+      landingPath: persisted.landingPath,
+      currentPath: typeof window !== "undefined" ? window.location.pathname : "",
+    });
     const areaDigits = f.metragem ? digits(f.metragem) : "";
     const areaNum = areaDigits ? Number(areaDigits) : null;
     const leadPayload = {
@@ -313,11 +327,11 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
       chaves: f.chaves || null,
       planta: f.planta || null,
       message: f.mensagem.trim() || null,
-      utm_source: params?.get("utm_source") ?? null,
-      utm_medium: params?.get("utm_medium") ?? null,
-      utm_campaign: params?.get("utm_campaign") ?? null,
-      referrer: typeof document !== "undefined" ? document.referrer || null : null,
-      landing_path: typeof window !== "undefined" ? window.location.pathname : null,
+      utm_source: attribution.utm_source,
+      utm_medium: attribution.utm_medium,
+      utm_campaign: attribution.utm_campaign,
+      referrer: attribution.referrer,
+      landing_path: attribution.landing_path,
       user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
     };
 

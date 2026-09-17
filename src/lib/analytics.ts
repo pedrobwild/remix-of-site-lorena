@@ -585,6 +585,37 @@ function attachListeners(): () => void {
   };
 }
 
+/**
+ * Atribuição persistida pelo tracker (só existe quando o visitante aceitou
+ * cookies e o tracker rodou). Usada como fallback pelo formulário de lead.
+ */
+export function readPersistedAttribution(): {
+  sessionUtm: Utm | null;
+  firstUtm: Utm | null;
+  referrerHost: string | null;
+  landingPath: string | null;
+} {
+  const parse = (raw: string | null): Utm | null => {
+    if (!raw) return null;
+    try {
+      const v = JSON.parse(raw) as Utm;
+      return v && typeof v === "object" ? v : null;
+    } catch {
+      return null;
+    }
+  };
+  try {
+    return {
+      sessionUtm: parse(sessionStorage.getItem(UTM_KEY)),
+      firstUtm: parse(localStorage.getItem(FIRST_UTM_KEY)),
+      referrerHost: sessionStorage.getItem(REFERRER_HOST_KEY),
+      landingPath: sessionStorage.getItem(LANDING_KEY),
+    };
+  } catch {
+    return { sessionUtm: null, firstUtm: null, referrerHost: null, landingPath: null };
+  }
+}
+
 export function initAnalytics(): () => void {
   if (typeof window === "undefined") return () => undefined;
   if (initialized) return () => undefined;
