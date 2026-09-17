@@ -1,6 +1,6 @@
 # Mapa de redirecionamento — `www.bwild.com.br` (Wix) → `bewild.com.br`
 
-**Status:** decisão tomada em 17/09/2026 — domínio oficial `bewild.com.br`; `bwild.com.br` vira site legado com 301. Mapa completo para revisão final; execução pela API de Redirecionamentos do Wix (seção 7) após o "ok".
+**Status: EXECUTADO em 17/09/2026** (aprovação do marketing). Pela API de Redirecionamentos do Wix foram criados **179 redirecionamentos 301** para `bewild.com.br`: 36 posts, 11 páginas, 19 redirecionamentos internos recriados apontando direto, 110 projetos do portfólio e 3 categorias do blog — 0 falhas. O site Wix tem agora 184 redirecionamentos (os 5 restantes são variantes acentuadas antigas que o Wix manteve como cadeia de 2 saltos, ver seção 5). **Provisório:** como os 5 rascunhos ainda não estavam publicados, os 22 posts marcados **R** apontam por enquanto para `/conteudos`; quando publicarem, os 22 são apagados e recriados com o destino final (a API não tem "update"). **Pendente:** home (seção 7, passo 3) e *Alteração de endereço* no GSC.
 **Fonte dos slugs:** API do Wix (Blog › List Posts), site "BWILD" (`78cef3a6-…`), 36 posts publicados entre fev/2025 e nov/2025. Páginas e portfólio obtidos pela API (Portfolio › Query Projects, SEO › List Redirects) em 17/09; o índice `sitemap.xml` do Wix tem 4 sitemaps: posts, categorias do blog, projetos do portfólio e páginas.
 
 Regras usadas: destino = página equivalente por intenção de busca; quando o equivalente é um **rascunho** do novo site, ele precisa ser publicado antes (A-13); quando não há equivalente, `/conteudos` (índice) — nunca tudo para a home.
@@ -194,18 +194,24 @@ Os projetos do Wix são identificados por iniciais de clientes ("Projeto CN", "S
 
 ## 5. Redirecionamentos internos que já existem no Wix (19)
 
-O Wix já tem 19 redirecionamentos internos (ex.: `/blog` → `/blog-reformas-studios`, `/portfolio` → `/portfolio-projetos-studios`, `/orçamento-reforma` → `/orcamento`, `/privacy-policy` → `/politica-de-privacidade`, `/projects` → `/portfolio`, slugs antigos de projetos com acento → sem acento). Quando os destinos deles passarem a redirecionar para `bewild.com.br`, viram cadeias de 2 saltos — aceitável, mas o ideal é recriá-los apontando direto para o destino final (`options.forceReplace` na API) na mesma execução.
+O Wix já tem 19 redirecionamentos internos (ex.: `/blog` → `/blog-reformas-studios`, `/portfolio` → `/portfolio-projetos-studios`, `/orçamento-reforma` → `/orcamento`, `/privacy-policy` → `/politica-de-privacidade`, `/projects` → `/portfolio`, slugs antigos de projetos com acento → sem acento). Recriados em 17/09 com `options.forceReplace` apontando direto para o destino final. Exceção: 5 origens com acento (`studio-s-pinheiros-são-paulo-sp`, `studio-g-sacomã-são-paulo-sp`, `escritório-bwild`, `projeto-fb-alto-da-boa-vista-são-paulo-sp`, `studio-lr-butantã-são-paulo-sp`) — o Wix guarda a versão antiga em outra codificação e manteve as duas; na prática viram cadeia de 2 saltos (acento → sem acento → `bewild.com.br/portfolio`), aceitável. Não apagar as antigas sem testar a URL acentuada depois.
 
-## 6. Categorias do blog
+## 6. Categorias do blog (3, obtidas pela API — executado)
 
-`https://www.bwild.com.br/blog-categories-sitemap.xml` ainda não foi lido. Regra: cada `/blog-reformas-studios/categories/<x>` → `https://bewild.com.br/conteudos` (redirecionamento exato por categoria; **não** usar redirecionamento de grupo, porque ele carregaria o sufixo para `/conteudos/<x>`, que não existe no novo site).
+| Origem (Wix) | Destino |
+|---|---|
+| `/blog-reformas-studios/categories/design-de-studios` | `https://bewild.com.br/conteudos` |
+| `/blog-reformas-studios/categories/mercado-e-economia-de-studios` | `https://bewild.com.br/conteudos` |
+| `/blog-reformas-studios/categories/reforma-em-sp` | `https://bewild.com.br/conteudos` |
+
+Redirecionamento exato por categoria (não de grupo, que carregaria o sufixo para `/conteudos/<x>`, inexistente no novo site).
 
 ## 7. Execução (API de Redirecionamentos do Wix — 301, efeito imediato, sem republicar o site)
 
 1. **Pré-requisito de conteúdo:** publicar os 5 rascunhos que recebem 22 posts (seção 2). Enquanto não publicados, os posts correspondentes podem ir provisoriamente para `/conteudos` e ser trocados depois (a API não tem "update": é apagar e recriar).
 2. **Criar em lotes de até 100** (`POST /seo-redirects-service/v1/bulk/redirects/create`): lote A = posts (36) + páginas (12) + categorias; lote B = projetos do portfólio (110, em 2 chamadas). Cada item `{ "from": "/caminho-no-wix", "to": "https://bewild.com.br/..." }`.
 3. **Home (`/`):** a API/gerenciador do Wix **não aceita a raiz** como origem (schema: "Can't be the site root"). Plano em duas fases: (a) junto com os 301 por URL, na página inicial do Wix definir canonical `https://bewild.com.br/` (Wix › SEO da página) e um redirecionamento Velo no `onReady` (`wixLocation.to("https://bewild.com.br/")`) com um link visível — o Google segue redirecionamentos JavaScript, embora com menos peso que um 301; (b) depois que o Search Console mostrar os 301 por URL processados (2–4 semanas), acionar o **redirecionamento de domínio** no painel de Domínios do Wix, que responde 301 na raiz e é o que a ferramenta *Alteração de endereço* exige da home — ciente de que ele passa a mandar **todas** as URLs para o destino único, por isso só depois de os 301 por URL terem transferido os sinais.
-4. **Verificação:** `curl -sI https://www.bwild.com.br/post/5-motivos-para-investir-em-short-stay-em-2025` → `301` + `Location: https://bewild.com.br/conteudos/short-stay-ou-long-stay-studio-compacto`; amostra de 10 URLs de cada seção.
+4. **Verificação (a fazer pelo time — este ambiente não alcança o site):** `curl -sI https://www.bwild.com.br/post/5-motivos-para-investir-em-short-stay-em-2025` → `301` + `Location: https://bewild.com.br/conteudos/short-stay-ou-long-stay-studio-compacto`; `curl -sI https://www.bwild.com.br/orcamento` → `Location: https://bewild.com.br/diagnostico`; `curl -sI https://www.bwild.com.br/portfolio-collections/portfolio-bwild/projeto-kd` → `Location: https://bewild.com.br/portfolio`.
 5. **Search Console:** na propriedade do Wix, *Configurações › Alteração de endereço* → `https://bewild.com.br/`. Manter as duas propriedades por 12 meses.
 6. **Perfis externos apontando para o domínio novo** (autoridade e consistência da entidade): Perfil da Empresa no Google, Instagram (bio), LinkedIn, Reclame Aqui (perfil `bwild-reformas` → campo site), assinaturas de e-mail, materiais impressos/QR.
 7. **Não cancelar o plano Premium do Wix** enquanto os 301 precisarem existir (≥ 12 meses).
