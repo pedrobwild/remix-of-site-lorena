@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { carryCampaignParams } from "./campaignParams";
 
 export type Route =
   | { name: "home"; anchor?: string }
@@ -162,7 +163,12 @@ export const routes = {
 // handler de hashchange/route em main.tsx possa rolar até a seção-âncora.
 export function navigate(href: string) {
   const cleaned = href.startsWith("#") ? href.slice(1) : href;
-  const target = cleaned.startsWith("/") ? cleaned : `/${cleaned}`;
+  // Navegação interna carrega utm_*/gclid/fbclid da URL atual, para que o
+  // lead enviado em /diagnostico mantenha a origem da campanha.
+  const target = carryCampaignParams(
+    cleaned.startsWith("/") ? cleaned : `/${cleaned}`,
+    window.location.search,
+  );
   window.history.pushState({}, "", target);
   const hashIdx = target.indexOf("#");
   if (hashIdx === -1) {
