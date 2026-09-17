@@ -61,7 +61,7 @@ Resumo: 11 destinos já publicados, **22 dependem dos rascunhos** `quanto-custa-
 
 | Origem (Wix) | Destino em `bewild.com.br` | Observação |
 |---|---|---|
-| `/` | `https://bewild.com.br/` | home — ver caveat na seção 7 (o gerenciador do Wix pode não aceitar `/` como origem) |
+| `/` | `https://bewild.com.br/` | home — **a API do Wix não aceita a raiz como origem** ("Can't be the site root"); ver seção 7, passo 3 |
 | `/orcamento` | `https://bewild.com.br/diagnostico` | página de orçamento → formulário |
 | `/servicos-reforma-studio-apartamento` | `https://bewild.com.br/` | serviços → home (seções "O contrato"/"O que fazemos") |
 | `/arquitetura-studio-apartamento-bwild` | `https://bewild.com.br/` | |
@@ -204,7 +204,7 @@ O Wix já tem 19 redirecionamentos internos (ex.: `/blog` → `/blog-reformas-st
 
 1. **Pré-requisito de conteúdo:** publicar os 5 rascunhos que recebem 22 posts (seção 2). Enquanto não publicados, os posts correspondentes podem ir provisoriamente para `/conteudos` e ser trocados depois (a API não tem "update": é apagar e recriar).
 2. **Criar em lotes de até 100** (`POST /seo-redirects-service/v1/bulk/redirects/create`): lote A = posts (36) + páginas (12) + categorias; lote B = projetos do portfólio (110, em 2 chamadas). Cada item `{ "from": "/caminho-no-wix", "to": "https://bewild.com.br/..." }`.
-3. **Home:** tentar `from: "/"`; se a API recusar, alternativa: manter a home do Wix no ar com canonical apontando para `https://bewild.com.br/` (Wix › SEO da página) e um aviso/link visível para o site novo; ou redirecionar o domínio inteiro no painel de Domínios do Wix **só depois** que os 301 por URL estiverem no ar e o Google os tiver processado (o redirecionamento de domínio manda tudo para uma única URL).
+3. **Home (`/`):** a API/gerenciador do Wix **não aceita a raiz** como origem (schema: "Can't be the site root"). Plano em duas fases: (a) junto com os 301 por URL, na página inicial do Wix definir canonical `https://bewild.com.br/` (Wix › SEO da página) e um redirecionamento Velo no `onReady` (`wixLocation.to("https://bewild.com.br/")`) com um link visível — o Google segue redirecionamentos JavaScript, embora com menos peso que um 301; (b) depois que o Search Console mostrar os 301 por URL processados (2–4 semanas), acionar o **redirecionamento de domínio** no painel de Domínios do Wix, que responde 301 na raiz e é o que a ferramenta *Alteração de endereço* exige da home — ciente de que ele passa a mandar **todas** as URLs para o destino único, por isso só depois de os 301 por URL terem transferido os sinais.
 4. **Verificação:** `curl -sI https://www.bwild.com.br/post/5-motivos-para-investir-em-short-stay-em-2025` → `301` + `Location: https://bewild.com.br/conteudos/short-stay-ou-long-stay-studio-compacto`; amostra de 10 URLs de cada seção.
 5. **Search Console:** na propriedade do Wix, *Configurações › Alteração de endereço* → `https://bewild.com.br/`. Manter as duas propriedades por 12 meses.
 6. **Perfis externos apontando para o domínio novo** (autoridade e consistência da entidade): Perfil da Empresa no Google, Instagram (bio), LinkedIn, Reclame Aqui (perfil `bwild-reformas` → campo site), assinaturas de e-mail, materiais impressos/QR.
