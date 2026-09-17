@@ -434,7 +434,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
               className="admin-field__input"
               value={form.duration}
               onChange={(e) => set("duration", e.target.value)}
-              placeholder="55 dias úteis"
+              placeholder="60 dias úteis"
             />
           </div>
         </section>

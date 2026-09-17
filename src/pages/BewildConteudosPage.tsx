@@ -192,7 +192,7 @@ export default function BewildConteudosPage() {
               <a href="/diagnostico" className="ct-btn cyan">Solicitar Orçamento <span className="ar"><IconArrow /></span></a>
               <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="ct-btn ghost">Falar no WhatsApp</a>
             </div>
-            <div className="ct-cta__rea">+160 reformas entregues · São Paulo capital e Rio de Janeiro</div>
+            <div className="ct-cta__rea">+160 reformas entregues · São Paulo capital</div>
           </div>
         </section>
         </main>

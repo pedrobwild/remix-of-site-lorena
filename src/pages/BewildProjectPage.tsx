@@ -109,7 +109,7 @@ export default function BewildProjectPage({ slug }: Props) {
     // reais do projeto (evita ~100 URLs com a mesma description genérica).
     description: projectMetaDescription(
       project,
-      "Apartamento reformado pela Bewild em São Paulo ou Rio de Janeiro.",
+      "Apartamento reformado pela Bewild em São Paulo.",
     ),
     canonicalPath: `/portfolio/${slug}`,
     ogType: "article",
