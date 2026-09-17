@@ -30,7 +30,7 @@ export default function BwaFooter() {
             <div className="bwa-footer-wordmark">Bewild</div>
             <p>Seu desejo é uma obra.</p>
             <p>
-              Reforma completa de apartamentos em São Paulo e no Rio de Janeiro.
+              Reforma completa de apartamentos em São Paulo.
               Projeto, obra, marcenaria, mobiliário e entrega num processo único.
             </p>
           </div>

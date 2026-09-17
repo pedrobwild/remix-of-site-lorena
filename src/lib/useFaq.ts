@@ -31,7 +31,7 @@ const FALLBACK: FaqItem[] = [
     id: "fallback-2",
     question: "Quanto tempo leva a obra com a Bewild?",
     answer:
-      "O prazo de obra é de 55 dias úteis, com acompanhamento do início à entrega. O cronograma é definido no projeto e você acompanha a evolução em cada etapa.",
+      "O prazo de obra é de 60 dias úteis, com acompanhamento do início à entrega. O cronograma é definido no projeto e você acompanha a evolução em cada etapa.",
     order_index: 2,
     visible: true,
   },

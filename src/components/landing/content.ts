@@ -257,7 +257,7 @@ export const DIFFERENTIALS: Differential[] = [
  */
 export const METRICS: { value: string; suffix: string; label: string }[] = [
   {
-    value: "55",
+    value: "60",
     suffix: "dias úteis",
     label: "referência de prazo para obras padrão, sujeito ao escopo",
   },

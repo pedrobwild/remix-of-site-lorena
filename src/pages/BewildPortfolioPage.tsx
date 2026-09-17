@@ -39,7 +39,7 @@ export default function BewildPortfolioPage() {
   useSeo({
     title: "Portfólio | Apartamentos entregues pela Bewild",
     description:
-      "Projetos entregues em São Paulo e Rio de Janeiro: reforma completa com projeto aprovado em 3D antes da execução.",
+      "Projetos entregues em São Paulo: reforma completa com projeto aprovado em 3D antes da execução.",
     canonicalPath: "/portfolio",
     ogType: "website",
     ogImage: projects.find((p) => p.cover_url)?.cover_url ?? undefined,

@@ -8,7 +8,7 @@ import { hydrateHomeProjects } from "@/lib/hydrateHomeProjects";
 import { initHomeBwa } from "./home-bwa-script.js";
 
 const TITLE =
-  "Bewild | Reforma completa de apartamentos em São Paulo e Rio de Janeiro";
+  "Bewild | Reforma completa de apartamentos em São Paulo";
 const DESCRIPTION =
   "Projeto, obra, marcenaria e mobília num único contrato, com preço e prazo fechados. Você não vira gerente de obra.";
 const THEME_COLOR = "#0B2342";
