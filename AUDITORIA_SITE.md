@@ -76,14 +76,21 @@ Prioridades: P0 falha crítica demonstrada · P1 impacto claro · P2 incremental
 - **Risco:** se `www` responder 200 sem redirecionar para o apex, o Google recebe dois hosts com o mesmo conteúdo e canonical cruzado.
 - **Correção:** confirmar no painel do Lovable qual host é o primário e se o outro redireciona (301). Alinhar campanhas, GSC (propriedade de domínio `bewild.com.br` cobre os dois) e materiais ao host canônico.
 - **Aceite:** `curl -sI https://www.bewild.com.br/` → `301/308 Location: https://bewild.com.br/` (ou o inverso, com o canonical atualizado em código e banco).
-- **Status:** pendente de teste externo.
+- **Status:** verificado em 16/09: `www.bewild.com.br` → 302 para `https://bewild.com.br/` (direção correta; 301 seria o ideal — configuração do Lovable, sem ação de código).
 
-**SEO-05 · P1 · Confiança baixa (não verificável daqui)**
+**SEO-05 · Descartado em 17/09 (teste ao vivo no GSC: renderização OK)**
 - **Evidência:** SPA React/Vite. `index.html` estático traz título, description, canonical (`https://bewild.com.br/`) e hreflang **da home** para qualquer URL. A documentação do Lovable (consultada por busca em 16/09/2026; página não acessível diretamente) afirma que projetos React+Vite publicados recebem pré-renderização sob demanda **apenas para crawlers verificados** (Google, Bing, bots de preview social e de IA) — scanners comuns veem o shell da SPA. [Ref. Lovable SEO/AEO](https://docs.lovable.dev/features/seo-aeo)
 - **Risco:** se a pré-renderização não estiver ativa para este domínio/projeto, toda URL profunda pode ser lida como duplicata da home (canonical → `/`).
 - **Correção:** validar no Search Console › Inspeção de URL › *Testar URL ativa* › *Ver página rastreada* em `/faq`, `/portfolio/<slug>` e `/conteudos/<slug>`: o HTML rastreado deve conter o `<title>` e o `<link rel="canonical">` **da própria página**. Se contiver os da home, escalar ao suporte do Lovable ou avaliar SSR (a documentação indica que projetos novos usam TanStack Start com SSR; migração só com justificativa comparada).
 - **Aceite:** 3 URLs inspecionadas mostrando title/canonical próprios no HTML rastreado; "Canonical selecionada pelo Google" = a própria URL.
-- **Status:** pendente (Search Console).
+- **Status:** encerrado — "Testar URL publicado" de `/faq` retornou HTML completo com `<title>` e canonical próprios, JSON-LD e conteúdo do banco.
+
+**CRAWL-01 · P1 · Confiança alta (GSC, 17/09)**
+- **Evidência:** Inspeção de URL — `/diagnostico` e `/portfolio/ab-the-collection-moema`: "Detectada, mas não indexada no momento", último rastreamento N/D, "Página de referência: nenhuma detectada", apesar de estarem no sitemap desde 11/07 e linkadas em todas as páginas. `/faq`: indexada, último rastreamento 12/07. Post `/conteudos/reforma-turn-key-ou-tradicional`: rastreado 15/09 (Googlebot Smartphone, busca com êxito, indexação permitida), não indexado; páginas de referência: `/faq` e um site de scraping (`jacobverghese.info` — irrelevante, ignorar).
+- **Causa provável:** orçamento/prioridade de rastreamento muito baixos para o domínio (novo, sem links externos — DOM-01), agravados pelo período em que as páginas internas se declaravam duplicatas da home (SEO-01).
+- **Impacto:** a página de conversão (`/diagnostico`) e o portfólio inteiro não existem para o Google.
+- **Correção:** (1) "Solicitar indexação" no GSC para as URLs prioritárias (cota ≈10/dia): dia 1 `/diagnostico`, `/portfolio`, `/conteudos`, `/faq`, `/privacidade` + 5 posts; dia 2 o 6º post + 9 projetos com mais fotos; dias 3–5 demais projetos por relevância comercial; (2) sitemap regenerado com `lastmod` reais (feito 17/09) e reenviado no GSC; (3) links externos para o domínio novo — o mais eficaz é o redirecionamento do site Wix (DOM-01).
+- **Aceite:** em 7 dias, `/diagnostico` e `/portfolio` com "Último rastreamento" preenchido; em 28 dias, indexadas.
 
 **SEO-01 · P1 · Confiança alta — CORRIGIDO**
 - **Arquivo:** `src/lib/useSeo.ts`, `src/lib/useSiteSettings.ts`.
@@ -91,6 +98,7 @@ Prioridades: P0 falha crítica demonstrada · P1 impacto claro · P2 incremental
 - **Causa:** `applySeo` só rodava após `fetchSiteSettings()` resolver.
 - **Correção:** aplicação síncrona com settings em cache/defaults (`getCachedSiteSettings`) e refino assíncrono. Teste `src/lib/__tests__/useSeo.immediate.test.tsx`.
 - **Aceite:** com backend pendurado, title/canonical/robots da rota presentes em < 1 s (verificado: 600 ms em `/faq`, `/portfolio` e 404 com `noindex`).
+- **Confirmação em produção (GSC, 17/09):** o post `/conteudos/reforma-turn-key-ou-tradicional`, rastreado em 15/09 (antes da correção), aparece com "URL canônico declarado pelo usuário: https://bewild.com.br/" — a página se declarava cópia da home. Teste ao vivo de `/faq` em 17/09 (após a correção): canonical `/faq` e title próprios.
 
 **SEO-02 / PERF-02 · P1 · Confiança alta — CORRIGIDO**
 - **Arquivos:** `src/pages/home-bwa-body.ts`, `src/pages/HomePage.tsx`.
@@ -114,7 +122,7 @@ Prioridades: P0 falha crítica demonstrada · P1 impacto claro · P2 incremental
 **SEO-07 · P2 · Confiança alta**
 - `docs/ROUTING.md` afirma que crawlers "precisam saber se uma URL é válida" via a edge function `not-found-check`. O Googlebot **nunca chama** essa função: ele recebe o `index.html` (HTTP 200) para qualquer path — a 404 é "soft" e só vira `noindex` após o JS (agora imediato, SEO-01). A função serve a testes internos. Ajustar a documentação para evitar falsa segurança. `seo_404_log` tem 0 linhas — ou não há 404s, ou a RPC `log_404` não está sendo aceita; verificar no admin.
 
-**SEO-08 · P2 · Confiança alta**
+**SEO-08 · P2 · Confiança alta** — regenerado manualmente em 17/09 a partir do banco (173 URLs, `lastmod` real por projeto/post; ver A-28 para automatizar).
 - `public/sitemap.xml` (106 URLs, 16/09: regenerado só quando há `.env` no build — no CI não há, então o arquivo commitado é o que vale). `lastmod` das páginas estáticas = data do build (não é a data real de alteração). As edge functions `sitemap` e `robots` são **duplicatas não usadas** (o hosting serve `public/`), com regra diferente (`visible` vs `visible+published`) — remover ou alinhar.
 
 **SEO-09 / CONT-03 · P1 · Confiança alta (conteúdo)**
@@ -160,7 +168,7 @@ Referência: Core Web Vitals no p75 — LCP ≤ 2,5 s, INP ≤ 200 ms, CLS ≤ 0
 
 **PERF-06 · P2** — `src/index.css` global com 238 kB (42 kB gzip) inclui páginas legadas (`.sobre-page`, etc.) em todas as rotas. Limpeza incremental.
 
-**PERF-07 · P2 (informativo)** — Terceiros na home: selo Reclame Aqui (`s3.amazonaws.com/raichu-beta/ra-verified/bundle.js`), Google Fonts. GA4/Pixel só após consentimento.
+**PERF-07 · P2 (informativo)** — Terceiros na home: selo Reclame Aqui (`s3.amazonaws.com/raichu-beta/ra-verified/bundle.js`), Google Fonts. GA4/Pixel só após consentimento. O HTML publicado também traz `<script defer src="/~flock.js" data-proxy-url="/~api/analytics">`, injetado pelo hosting do Lovable (analytics da plataforma; não está no repositório e carrega sem depender do banner) — verificar na documentação do Lovable se é cookieless e, se necessário, desativar nas configurações do projeto.
 
 ### 3.4 Design, experiência e acessibilidade
 
@@ -202,17 +210,17 @@ Positivos verificados: um único `<h1>` por página; hierarquia H2/H3 coerente n
 
 | Etapa | Situação | Evidência / o que falta |
 |---|---|---|
-| Descoberta | **Provavelmente prejudicada** | Sitemap ok (106 URLs, host correto), links internos rastreáveis (`<a href>` reais, verificado), `robots.txt` permite. **Mas** o domínio novo não recebe links do domínio antigo (DOM-01) e o Wix continua sendo o site "conhecido". Falta: GSC › Sitemaps (status, última leitura). |
-| Rastreamento | Sem bloqueio conhecido | `robots.txt` só bloqueia `/admin` e URLs com parâmetros de campanha (`utm_`, `fbclid`, `gclid`…). Assets liberados. Falta: GSC › Estatísticas de rastreamento; verificar `X-Robots-Tag` em produção (`curl -sI`). |
-| Renderização | **Hipótese crítica** (SEO-05) | HTML estático = home para todas as URLs; depende da pré-renderização do Lovable para crawlers verificados. SEO-01 corrigido reduz o risco quando há renderização JS. Falta: Inspeção de URL › "Ver página rastreada". |
-| Indexação | Desconhecida | 100 páginas finas de portfólio (SEO-03) e possíveis duplicatas www/apex (SEO-04). Falta: GSC › Páginas (motivos de exclusão por URL). |
+| Descoberta | **OK (GSC, 17/09)** | Sitemap "Processado": enviado 11/07, última leitura 06/09, 106 URLs encontradas. Links internos rastreáveis. Regenerado em 17/09 com 173 URLs (161 projetos, 6 posts, 6 estáticas) e `lastmod` reais. Pendente: o domínio novo continua sem links do domínio antigo (DOM-01). |
+| Rastreamento | **Gargalo confirmado (GSC, 17/09)** | `/diagnostico` e `/portfolio/ab-the-collection-moema`: "Detectada, mas não indexada no momento", **nunca rastreadas** (no sitemap desde 11/07). `/faq`: último rastreamento **12/07**. Post `/conteudos/reforma-turn-key-ou-tradicional`: rastreado 15/09. O Google visita o domínio muito pouco (típico de domínio novo sem autoridade — DOM-01) e o pouco que rastreou antes de 16/09 se declarava cópia da home (SEO-01). Ver CRAWL-01. Pendente: Estatísticas de rastreamento para quantificar. |
+| Renderização | **OK (teste ao vivo, 17/09)** | "Testar URL publicado" de `/faq` devolveu HTML renderizado completo: `<title>Perguntas frequentes | Bewild</title>`, canonical `/faq`, `robots index, follow`, JSON-LD FAQPage/Breadcrumb, conteúdo do FAQ vindo do banco, sem mensagens de console. Hipótese SEO-05 descartada. |
+| Indexação | **Parcial (GSC, 17/09)** | Indexadas: `/` e `/faq`. Não indexadas: `/diagnostico`, projeto e post inspecionados. No post rastreado em 15/09 o Google registrou **"URL canônico declarado pelo usuário: https://bewild.com.br/"** — evidência direta do bug SEO-01 em produção (corrigido em 16/09). Pendente: GSC › Páginas (tabela de motivos) para dimensionar. |
 | Exposição a consultas | **Provavelmente baixa** | Busca mostra `bwild.com.br` para marca e comercial; nenhuma URL `bewild.com.br`. Falta: GSC › Desempenho (90 dias) separando marca (Bewild/Bwild/Be wild) de não marca. |
 | Clique | Sem dados | Title/description ok tecnicamente; conteúdo inconsistente (RJ vs SP). Falta: CTR por página no GSC. |
 | Conversão | Instrumentada | Formulário → `notify-lead` → banco/Slack/CRM; WhatsApp direto; 20 leads em 30 dias. Falta: taxa por origem (LEAD-03) e confirmação ponta a ponta (LEAD-01 parcial). |
 
-**Conclusão possível hoje:** o problema mais provável está **antes** da etapa técnica — autoridade e histórico presos em outro domínio (DOM-01) — somado a riscos técnicos reais que foram corrigidos (SEO-01/02) ou que precisam de um teste no Search Console (SEO-04/05). Não há evidência de penalização, ação manual ou problema de segurança (nada a afirmar sem GSC).
+**Conclusão (atualizada em 17/09 com o Search Console):** o Google descobre as URLs (sitemap OK) e consegue renderizar o site (teste ao vivo OK), mas **rastreia muito pouco** o domínio: páginas comerciais no sitemap desde julho nunca foram buscadas, e as poucas rastreadas antes de 16/09 se declaravam cópia da home (SEO-01, confirmado no rastreamento do post em 15/09). Duas causas se somam: baixa prioridade de rastreamento de um domínio novo sem autoridade (DOM-01 — o site Wix continua sendo "a Bwild" para o Google) e o defeito técnico já corrigido. Próximos passos que dependem do Google: pedir indexação das URLs prioritárias (força novo rastreamento com a canonical correta), sitemap regenerado e reenviado, e a decisão de domínio. Ações manuais/segurança: ainda sem captura.
 
-**Evidência mínima pedida (Search Console, propriedade `bewild.com.br` — captura ou export):**
+**Evidência mínima pedida (Search Console, propriedade `https://bewild.com.br/`) — recebido em 17/09: itens 1 e 2 (5 URLs, com teste ao vivo de `/faq`); faltam 3, 4 e 5:**
 1. Sitemaps: status, data da última leitura, URLs descobertas/indexadas.
 2. Inspeção de URL de `/`, `/diagnostico`, `/portfolio`, `/faq`, 1 projeto e 1 post: "URL está no Google?", último rastreamento, canonical declarada vs selecionada, **e o teste ao vivo com "Ver página rastreada"** (HTML).
 3. Páginas › motivos de "Não indexadas" com contagem e 5 URLs de exemplo por motivo.
