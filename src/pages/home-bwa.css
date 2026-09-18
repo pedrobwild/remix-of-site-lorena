@@ -270,9 +270,15 @@
     }
 
     .bwa-wordmark {
-      font-size: 24px;
-      font-weight: 800;
-      letter-spacing: -.06em;
+      display: block;
+      width: clamp(112px, 11vw, 150px);
+      line-height: 0;
+    }
+
+    .bwa-wordmark img {
+      display: block;
+      width: 100%;
+      height: auto;
     }
 
     .bwa-nav-links {
