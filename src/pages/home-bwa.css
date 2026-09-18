@@ -828,6 +828,10 @@
       height: 20px;
     }
 
+    .bwa-gallery-arrow[data-gallery-prev] svg {
+      transform: rotate(180deg);
+    }
+
     .bwa-image-gallery-rail {
       display: flex;
       gap: clamp(16px, 2vw, 28px);
