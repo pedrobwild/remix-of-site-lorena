@@ -77,6 +77,17 @@ export function initHomeBwa() {
       const gallerySlides = galleryRail ? [...galleryRail.querySelectorAll(".bwa-image-gallery-slide")] : [];
       const galleryCurrent = document.querySelector("[data-gallery-current]");
       const galleryProgress = document.querySelector("[data-gallery-progress]");
+      let galleryStatusFrame = 0;
+      let galleryAnimationFrame = 0;
+      let galleryPointerId = null;
+      let galleryPointerStartX = 0;
+      let galleryPointerStartY = 0;
+      let galleryScrollStart = 0;
+      let galleryLastX = 0;
+      let galleryLastTime = 0;
+      let galleryVelocity = 0;
+      let galleryDragAxis = null;
+      let galleryDidDrag = false;
 
       const updateGalleryStatus = () => {
         if (!galleryRail || !gallerySlides.length) return;
@@ -95,15 +106,123 @@ export function initHomeBwa() {
         if (galleryProgress) galleryProgress.style.transform = `scaleX(${activeIndex + 1})`;
       };
 
+      const requestGalleryStatusUpdate = () => {
+        if (galleryStatusFrame) return;
+        galleryStatusFrame = window.requestAnimationFrame(() => {
+          galleryStatusFrame = 0;
+          updateGalleryStatus();
+        });
+      };
+
+      const stopGalleryMomentum = () => {
+        if (!galleryAnimationFrame) return;
+        window.cancelAnimationFrame(galleryAnimationFrame);
+        galleryAnimationFrame = 0;
+      };
+
+      const settleGallery = () => {
+        if (!galleryRail || reducedMotion) return;
+        const railCenter = galleryRail.scrollLeft + galleryRail.clientWidth / 2;
+        const closestSlide = gallerySlides.reduce((closest, slide) => {
+          const distance = Math.abs(slide.offsetLeft + slide.clientWidth / 2 - railCenter);
+          return distance < closest.distance ? { slide, distance } : closest;
+        }, { slide: gallerySlides[0], distance: Infinity }).slide;
+        closestSlide?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+      };
+
+      const releaseGalleryPointer = (event) => {
+        if (!galleryRail || event.pointerId !== galleryPointerId) return;
+        galleryRail.releasePointerCapture?.(event.pointerId);
+        galleryRail.classList.remove("bwa-dragging");
+        galleryPointerId = null;
+
+        if (galleryDragAxis !== "x" || reducedMotion) {
+          galleryDragAxis = null;
+          return;
+        }
+
+        let velocity = galleryVelocity;
+        const coast = () => {
+          if (!galleryRail) return;
+          velocity *= .92;
+          if (Math.abs(velocity) < .18) {
+            galleryAnimationFrame = 0;
+            settleGallery();
+            return;
+          }
+          galleryRail.scrollLeft -= velocity * 16;
+          galleryAnimationFrame = window.requestAnimationFrame(coast);
+        };
+        galleryAnimationFrame = window.requestAnimationFrame(coast);
+        galleryDragAxis = null;
+      };
+
       const moveGallery = (direction) => {
         if (!galleryRail || !gallerySlides.length) return;
-        const distance = gallerySlides[0].clientWidth + 28;
-        galleryRail.scrollBy({ left: distance * direction, behavior: reducedMotion ? "auto" : "smooth" });
+        stopGalleryMomentum();
+        const railCenter = galleryRail.scrollLeft + galleryRail.clientWidth / 2;
+        let activeIndex = 0;
+        let closestDistance = Infinity;
+        gallerySlides.forEach((slide, index) => {
+          const distance = Math.abs(slide.offsetLeft + slide.clientWidth / 2 - railCenter);
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            activeIndex = index;
+          }
+        });
+        const targetIndex = Math.max(0, Math.min(gallerySlides.length - 1, activeIndex + direction));
+        gallerySlides[targetIndex]?.scrollIntoView({
+          behavior: reducedMotion ? "auto" : "smooth",
+          block: "nearest",
+          inline: "center"
+        });
       };
 
       document.querySelector("[data-gallery-prev]")?.addEventListener("click", () => moveGallery(-1));
       document.querySelector("[data-gallery-next]")?.addEventListener("click", () => moveGallery(1));
-      galleryRail?.addEventListener("scroll", updateGalleryStatus, { passive: true });
+      galleryRail?.addEventListener("pointerdown", (event) => {
+        if (event.pointerType === "touch" || event.button !== 0) return;
+        stopGalleryMomentum();
+        galleryPointerId = event.pointerId;
+        galleryPointerStartX = event.clientX;
+        galleryPointerStartY = event.clientY;
+        galleryScrollStart = galleryRail.scrollLeft;
+        galleryLastX = event.clientX;
+        galleryLastTime = performance.now();
+        galleryVelocity = 0;
+        galleryDragAxis = null;
+        galleryDidDrag = false;
+      });
+      galleryRail?.addEventListener("pointermove", (event) => {
+        if (!galleryRail || event.pointerId !== galleryPointerId) return;
+        const deltaX = event.clientX - galleryPointerStartX;
+        const deltaY = event.clientY - galleryPointerStartY;
+        if (!galleryDragAxis && Math.hypot(deltaX, deltaY) > 6) {
+          galleryDragAxis = Math.abs(deltaX) > Math.abs(deltaY) ? "x" : "y";
+          if (galleryDragAxis === "x") {
+            galleryRail.setPointerCapture(event.pointerId);
+            galleryRail.classList.add("bwa-dragging");
+          }
+        }
+        if (galleryDragAxis !== "x") return;
+        event.preventDefault();
+        galleryDidDrag = true;
+        galleryRail.scrollLeft = galleryScrollStart - deltaX;
+        const now = performance.now();
+        const elapsed = Math.max(1, now - galleryLastTime);
+        galleryVelocity = (event.clientX - galleryLastX) / elapsed;
+        galleryLastX = event.clientX;
+        galleryLastTime = now;
+      });
+      galleryRail?.addEventListener("pointerup", releaseGalleryPointer);
+      galleryRail?.addEventListener("pointercancel", releaseGalleryPointer);
+      galleryRail?.addEventListener("click", (event) => {
+        if (!galleryDidDrag) return;
+        event.preventDefault();
+        event.stopPropagation();
+        galleryDidDrag = false;
+      }, true);
+      galleryRail?.addEventListener("scroll", requestGalleryStatusUpdate, { passive: true });
       updateGalleryStatus();
 
       const storySteps = [...document.querySelectorAll("[data-story-step]")];
