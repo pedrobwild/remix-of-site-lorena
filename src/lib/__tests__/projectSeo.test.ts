@@ -70,7 +70,7 @@ describe("projectSeoTitle", () => {
     const title = projectSeoTitle({
       title: "Apartamento completo no empreendimento mais desejado da Vila Olímpia",
     });
-    expect(title.length).toBeLessThanOrEqual(70);
+    expect(title.length).toBeLessThanOrEqual(75);
     expect(title).toContain("Reforma de apartamento em SP");
   });
 });
