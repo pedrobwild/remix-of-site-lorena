@@ -65,4 +65,12 @@ describe("projectSeoTitle", () => {
       "Apartamento pronto em São Paulo | Bewild",
     );
   });
+
+  it("limita títulos gerados sem perder a intenção de busca", () => {
+    const title = projectSeoTitle({
+      title: "Apartamento completo no empreendimento mais desejado da Vila Olímpia",
+    });
+    expect(title.length).toBeLessThanOrEqual(65);
+    expect(title).toContain("Reforma de apartamento em SP");
+  });
 });

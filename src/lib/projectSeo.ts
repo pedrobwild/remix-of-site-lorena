@@ -31,13 +31,20 @@ const hasSearchContext = (value: string) =>
   /s[aã]o paulo|\bsp\b/i.test(value) &&
   /reforma|apartamento pronto|apartamentos prontos/i.test(value);
 
+const truncateTitleBase = (value: string, maxLength: number) => {
+  if (value.length <= maxLength) return value;
+  const shortened = value.slice(0, maxLength + 1).replace(/\s+\S*$/, "").trim();
+  return shortened || value.slice(0, maxLength).trim();
+};
+
 export function projectSeoTitle(p: ProjectSeoInput | null | undefined): string {
   if (!p) return "Reforma de apartamento em São Paulo | Bewild";
   const explicit = (p.seo_title || "").trim();
   if (explicit && hasSearchContext(explicit)) return explicit;
 
   const base = explicit || (p.title || "Projeto").trim();
-  return `${base} | Reforma de apartamento em SP | Bewild`;
+  const suffix = " | Reforma de apartamento em SP | Bewild";
+  return `${truncateTitleBase(base, 65 - suffix.length)}${suffix}`;
 }
 
 export function projectMetaDescription(
