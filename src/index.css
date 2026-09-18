@@ -5021,6 +5021,52 @@ textarea.admin-field__input {
   border-bottom-color: currentColor;
 }
 
+.seo-sitemap-note,
+.seo-sitemap-empty,
+.seo-sitemap-publish-note {
+  color: var(--muted-foreground);
+  font-size: var(--admin-fs-sm);
+  line-height: 1.55;
+}
+.seo-sitemap-note { margin: 6px 0 0; }
+.seo-sitemap-empty { margin: 8px 0 0; }
+.seo-sitemap-publish-note { margin: 0 0 16px; max-width: 76ch; }
+.seo-sitemap-stats { margin: 18px 0; }
+.seo-sitemap-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.seo-sitemap-preview {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+.seo-sitemap-preview summary {
+  color: var(--foreground);
+  cursor: pointer;
+  font-weight: 600;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.seo-sitemap-preview ol {
+  margin: 8px 0 0;
+  padding-left: 26px;
+  max-height: 320px;
+  overflow: auto;
+}
+.seo-sitemap-preview li {
+  color: var(--muted-foreground);
+  font-size: var(--admin-fs-xs);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .seo-sitemap-actions > * { width: 100%; justify-content: center; }
+}
+
 /* Verificação status */
 .seo-status-list {
   list-style: none;
