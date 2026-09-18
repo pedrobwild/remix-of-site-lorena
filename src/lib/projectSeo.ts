@@ -44,7 +44,7 @@ export function projectSeoTitle(p: ProjectSeoInput | null | undefined): string {
 
   const base = explicit || (p.title || "Projeto").trim();
   const suffix = " | Reforma de apartamento em SP | Bewild";
-  return `${truncateTitleBase(base, 65 - suffix.length)}${suffix}`;
+  return `${truncateTitleBase(base, 70 - suffix.length)}${suffix}`;
 }
 
 export function projectMetaDescription(
