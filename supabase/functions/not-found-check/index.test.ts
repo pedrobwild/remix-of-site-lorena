@@ -75,6 +75,7 @@ const CANONICAL_PUBLIC_ROUTES = [
   "/portfolio",
   "/diagnostico",
   "/faq",
+  "/contato",
   "/privacidade",
   "/conteudos",
   "/404",

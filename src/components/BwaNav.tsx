@@ -80,6 +80,7 @@ export default function BwaNav() {
             <a href="/portfolio">Portfólio</a>
             <a href="/conteudos">Conteúdos</a>
             <a href="/faq">FAQ</a>
+            <a href="/contato">Contato</a>
           </nav>
 
           <a className="bwa-button" href="/diagnostico">
@@ -111,6 +112,7 @@ export default function BwaNav() {
           <a href="/portfolio">Portfólio</a>
           <a href="/conteudos">Conteúdos</a>
           <a href="/faq">FAQ</a>
+          <a href="/contato">Contato</a>
           <a href="/diagnostico">Solicitar Orçamento</a>
         </nav>
       </div>
