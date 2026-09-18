@@ -10,10 +10,12 @@
 export type ProjectSeoInput = {
   title?: string | null;
   neighborhood?: string | null;
+  location?: string | null;
   area_m2?: number | null;
   project_type?: string | null;
   seo_description?: string | null;
   summary?: string | null;
+  seo_title?: string | null;
 };
 
 const TYPE_NOUN: Record<string, string> = {
@@ -21,7 +23,20 @@ const TYPE_NOUN: Record<string, string> = {
   turn_key: "Apartamento reformado turn-key",
 };
 
-const CLOSING = "Projeto, obra, marcenaria e mobiliário em um único contrato pela Bewild.";
+const LOCAL_DESCRIPTION =
+  "Arquitetura em São Paulo-SP e projetos de reforma em São Paulo pela Bewild.";
+
+const hasLocalContext = (value: string) =>
+  /s[aã]o paulo|\bsp\b/i.test(value) && /arquitetura|reforma/i.test(value);
+
+export function projectSeoTitle(p: ProjectSeoInput | null | undefined): string {
+  if (!p) return "Projeto de reforma em São Paulo | Bewild";
+  const explicit = (p.seo_title || "").trim();
+  if (explicit && hasLocalContext(explicit)) return explicit;
+
+  const base = explicit || (p.title || "Projeto").trim();
+  return `${base} | Projeto de reforma em São Paulo | Bewild`;
+}
 
 export function projectMetaDescription(
   p: ProjectSeoInput | null | undefined,
@@ -29,19 +44,19 @@ export function projectMetaDescription(
 ): string {
   if (!p) return fallback;
   const explicit = (p.seo_description || p.summary || "").trim();
-  if (explicit) return explicit;
+  if (explicit) return hasLocalContext(explicit) ? explicit : `${explicit} ${LOCAL_DESCRIPTION}`;
 
   const noun = (p.project_type && TYPE_NOUN[p.project_type]) || "Apartamento reformado";
   const area =
     typeof p.area_m2 === "number" && Number.isFinite(p.area_m2) && p.area_m2 > 0
       ? `${Math.round(p.area_m2)} m²`
       : "";
-  const bairro = (p.neighborhood || "").trim();
+  const bairro = (p.neighborhood || p.location || "").trim();
 
-  if (!area && !bairro) return fallback;
+  if (!area && !bairro) return `${fallback} ${LOCAL_DESCRIPTION}`;
 
   const parts = [noun];
   if (area) parts.push(`de ${area}`);
-  if (bairro) parts.push(`em ${bairro}, São Paulo`);
-  return `${parts.join(" ")}. ${CLOSING}`;
+  if (bairro) parts.push(`em ${bairro}, São Paulo-SP`);
+  return `${parts.join(" ")}. ${LOCAL_DESCRIPTION}`;
 }
