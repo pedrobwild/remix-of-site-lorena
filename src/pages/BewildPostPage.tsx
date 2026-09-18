@@ -163,7 +163,10 @@ export default function BewildPostPage({ slug }: Props) {
         "@context": "https://schema.org",
         "@type": "Article",
         headline: post.title,
-        description: post.meta_description || post.excerpt || post.title,
+        description:
+          post.meta_description ||
+          post.excerpt ||
+          `${post.title}. Conteúdo Bewild sobre reformas de apartamentos e imóveis prontos.`,
         image: post.cover_image ? [post.cover_image] : undefined,
         author: { "@type": "Organization", name: post.author || "Bewild" },
         publisher: {
@@ -210,7 +213,7 @@ export default function BewildPostPage({ slug }: Props) {
     description:
       post?.meta_description ||
       post?.excerpt ||
-      "Conteúdos Bewild sobre reforma turn-key e operação de studios em São Paulo.",
+      "Conteúdos Bewild sobre reformas de apartamentos e entrega de imóveis prontos em São Paulo.",
     canonicalPath: post ? `/conteudos/${post.slug}` : `/conteudos/${slug}`,
     ogType: "article",
     ogImage: post?.cover_image ? optimizedImageUrl(post.cover_image) : undefined,

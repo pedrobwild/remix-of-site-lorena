@@ -15,9 +15,9 @@ export default function ContatoPage() {
   const email = settings?.contact_email || CONTACT.email;
 
   useSeo({
-    title: "Contato | Bewild — Arquitetura e reforma em São Paulo",
+    title: "Contato para reforma de apartamento em SP | Bewild",
     description:
-      "Fale com a Bewild por WhatsApp ou e-mail e encontre nosso escritório na Vila Olímpia, em São Paulo-SP.",
+      "Fale com a Bewild sobre sua reforma de apartamento e a entrega do imóvel pronto. WhatsApp, e-mail e escritório na Vila Olímpia, São Paulo-SP.",
     canonicalPath: "/contato",
     ogType: "website",
     jsonLd: settings

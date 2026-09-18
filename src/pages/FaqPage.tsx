@@ -17,9 +17,9 @@ export default function FaqPage() {
   const { items } = useFaq();
 
   useSeo({
-    title: "Perguntas frequentes | Bewild",
+    title: "Dúvidas sobre reforma de apartamentos | Bewild",
     description:
-      "Prazo, garantia de 5 anos, contrato fechado e como funciona a reforma completa da Bewild.",
+      "Tire dúvidas sobre prazo, garantia, contrato e as etapas da reforma completa até a entrega do apartamento pronto pela Bewild.",
 
     canonicalPath: "/faq",
     ogType: "website",

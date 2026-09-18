@@ -88,9 +88,9 @@ export default function DiagnosticoPage() {
   const { settings } = useSiteSettings();
 
   useSeo({
-    title: "Solicitar orçamento | Bewild",
+    title: "Orçamento para reforma de apartamento | Bewild",
     description:
-      "Envie os dados do seu apartamento e receba uma leitura do potencial do imóvel, do escopo e dos próximos passos. Sem custo e sem compromisso.",
+      "Solicite um orçamento para reforma completa de apartamento em São Paulo, do projeto à entrega do imóvel pronto. Sem custo e sem compromisso.",
     canonicalPath: "/diagnostico",
     ogType: "website",
     jsonLd: settings

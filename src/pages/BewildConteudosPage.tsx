@@ -54,9 +54,9 @@ export default function BewildConteudosPage() {
   const [filter, setFilter] = useState<FilterValue>("all");
 
   useSeo({
-    title: "Conteúdos | Bewild",
+    title: "Conteúdos sobre reformas de apartamentos | Bewild",
     description:
-      "Guias e análises sobre reforma, locação e decisão imobiliária, direto da operação da Bewild.",
+      "Guias sobre reformas de apartamentos, arquitetura, obra e decisões para receber um apartamento pronto para morar ou rentabilizar.",
     canonicalPath: "/conteudos",
     ogType: "website",
     ogImage: featured?.cover_image ?? posts.find((p) => p.cover_image)?.cover_image ?? undefined,

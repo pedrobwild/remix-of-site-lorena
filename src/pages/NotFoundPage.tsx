@@ -26,7 +26,7 @@ export default function NotFoundPage() {
   useSeo({
     title: "404 · Página não encontrada · Bewild",
     description:
-      "A página solicitada não existe ou foi movida. Conheça o portfólio de reformas turn-key da Bewild para studios em São Paulo.",
+      "A página solicitada não existe ou foi movida. Conheça o portfólio de reformas de apartamentos e imóveis prontos da Bewild em São Paulo.",
     canonicalPath: "/404",
     ogType: "website",
     noindex: true,
