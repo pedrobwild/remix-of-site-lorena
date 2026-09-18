@@ -570,6 +570,13 @@ export function projectJsonLd(
       url: base,
     },
     about: project.tag,
+    keywords: [
+      "reforma de apartamento",
+      "reformas de apartamentos",
+      "apartamento pronto",
+      "arquitetura em São Paulo",
+      project.tag,
+    ].filter(Boolean).join(", "),
     contentLocation: project.location
       ? {
           "@type": "Place",

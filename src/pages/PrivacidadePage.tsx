@@ -20,7 +20,7 @@ export default function PrivacidadePage() {
 
   useSeo({
     title: "Política de privacidade | Bewild",
-    description: "Como a Bewild coleta, usa e protege seus dados.",
+    description: "Como a Bewild coleta, usa e protege os dados de clientes e interessados em projetos e reformas de apartamentos.",
     canonicalPath: "/privacidade",
     ogType: "website",
     jsonLd: settings
