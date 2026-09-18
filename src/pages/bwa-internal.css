@@ -18,8 +18,8 @@
 }
 
 /* NAV inicia visível/escuro em página interna (não há hero navy).
-   Replica exatamente o estado `.bwa-scrolled` da home: papel translúcido com
-   blur e a hairline do ::after (não uma segunda borda).
+   Replica o fundo branco-gelo opaco da home e a hairline do ::after
+   (não uma segunda borda).
 
    Duas correções de 24/jul:
    1. `color` só era trocado no wordmark e nos links, então o header continuava
@@ -30,7 +30,7 @@
       sobre papel (`.bwa-scrolled`), o botão é navy sólido com texto branco. */
 .bwa-nav.bwa-nav--internal {
   color: var(--bwa-ink);
-  background: rgba(247, 244, 237, .94);
+  background: var(--bwa-paper);
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
 }
