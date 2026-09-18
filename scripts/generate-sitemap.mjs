@@ -95,6 +95,7 @@ async function main() {
       priority: "0.8",
     },
     { loc: `${BASE_URL}/faq`, changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/contato`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/privacidade`, changefreq: "yearly", priority: "0.3" },
   ];
 

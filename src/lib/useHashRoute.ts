@@ -6,6 +6,7 @@ export type Route =
   | { name: "portfolio" }
   | { name: "diagnostico" }
   | { name: "faq" }
+  | { name: "contato" }
   | { name: "privacidade" }
   | { name: "bewild-project"; slug: string }
   | { name: "conteudos" }
@@ -43,6 +44,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/p") return { name: "lp-panfleto" };
   if (path === "/diagnostico") return { name: "diagnostico" };
   if (path === "/faq") return { name: "faq" };
+  if (path === "/contato") return { name: "contato" };
   if (path === "/privacidade") return { name: "privacidade" };
 
   const bewildProjMatch = path.match(/^\/portfolio\/([a-z0-9-]+)$/);
@@ -140,6 +142,7 @@ export const routes = {
   portfolio: "/portfolio",
   diagnostico: "/diagnostico",
   faq: "/faq",
+  contato: "/contato",
   privacidade: "/privacidade",
   bewildProject: (slug: string) => `/portfolio/${slug}`,
   blog: "/conteudos",
