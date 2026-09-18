@@ -74,29 +74,28 @@ async function main() {
   }
   if (!Array.isArray(posts)) posts = [];
 
-  const today = new Date().toISOString().slice(0, 10);
   const newest = (rows, ...fields) => {
     const days = rows.map((r) => day(...fields.map((f) => r[f]))).filter(Boolean).sort();
-    return days.length ? days[days.length - 1] : today;
+    return days.length ? days[days.length - 1] : null;
   };
 
   const staticUrls = [
-    { loc: `${BASE_URL}/`, lastmod: today, changefreq: "weekly", priority: "1.0" },
+    { loc: `${BASE_URL}/`, changefreq: "weekly", priority: "1.0" },
     {
       loc: `${BASE_URL}/portfolio`,
       lastmod: newest(projects, "updated_at", "created_at"),
       changefreq: "weekly",
       priority: "0.9",
     },
-    { loc: `${BASE_URL}/diagnostico`, lastmod: today, changefreq: "monthly", priority: "0.9" },
+    { loc: `${BASE_URL}/diagnostico`, changefreq: "monthly", priority: "0.9" },
     {
       loc: `${BASE_URL}/conteudos`,
-      lastmod: posts.length ? newest(posts, "updated_at", "published_at", "created_at") : today,
+      lastmod: posts.length ? newest(posts, "updated_at", "published_at", "created_at") : null,
       changefreq: "weekly",
       priority: "0.8",
     },
-    { loc: `${BASE_URL}/faq`, lastmod: today, changefreq: "monthly", priority: "0.7" },
-    { loc: `${BASE_URL}/privacidade`, lastmod: today, changefreq: "yearly", priority: "0.3" },
+    { loc: `${BASE_URL}/faq`, changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/privacidade`, changefreq: "yearly", priority: "0.3" },
   ];
 
   const projectUrls = projects
@@ -104,7 +103,7 @@ async function main() {
     .sort((a, b) => a.slug.localeCompare(b.slug))
     .map((p) => ({
       loc: `${BASE_URL}/portfolio/${p.slug}`,
-      lastmod: day(p.updated_at, p.created_at) || today,
+      lastmod: day(p.updated_at, p.created_at),
       changefreq: "monthly",
       priority: "0.7",
     }));
@@ -114,7 +113,7 @@ async function main() {
     .sort((a, b) => a.slug.localeCompare(b.slug))
     .map((p) => ({
       loc: `${BASE_URL}/conteudos/${p.slug}`,
-      lastmod: day(p.updated_at, p.published_at, p.created_at) || today,
+      lastmod: day(p.updated_at, p.published_at, p.created_at),
       changefreq: "monthly",
       priority: "0.6",
     }));
