@@ -13,7 +13,7 @@ import BwaFooter from "@/components/BwaFooter";
 import { whatsappHref } from "@/components/landing/content";
 import { useBewildProject } from "@/lib/useBewildProject";
 import { bewildTypeLabel } from "@/lib/useBewildProjects";
-import { projectMetaDescription } from "@/lib/projectSeo";
+import { projectMetaDescription, projectSeoTitle } from "@/lib/projectSeo";
 import NotFoundPage from "@/pages/NotFoundPage";
 import "@/styles/bwh-tokens.css";
 import "@/styles/bwh-overlays.css";
@@ -102,15 +102,17 @@ export default function BewildProjectPage({ slug }: Props) {
   const hasCase = !!(project?.challenge || project?.solution || project?.result_text);
   const hasBA = !!(project?.before_image_url && project?.after_image_url);
   const scopeItems = useMemo(() => (project?.scope ?? []).filter(Boolean), [project]);
+  const seoTitle = projectSeoTitle(project);
+  const seoDescription = projectMetaDescription(
+    project,
+    "Apartamento reformado pela Bewild em São Paulo-SP.",
+  );
 
   useSeo({
-    title: project ? project.seo_title || `${project.title} | Bewild` : "Projeto | Bewild",
+    title: seoTitle,
     // Sem seo_description/summary no admin, monta a frase com bairro/metragem/tipo
     // reais do projeto (evita ~100 URLs com a mesma description genérica).
-    description: projectMetaDescription(
-      project,
-      "Apartamento reformado pela Bewild em São Paulo.",
-    ),
+    description: seoDescription,
     canonicalPath: `/portfolio/${slug}`,
     ogType: "article",
     ogImage: project?.og_image_url || project?.cover_url || undefined,
@@ -125,7 +127,7 @@ export default function BewildProjectPage({ slug }: Props) {
             projectJsonLd(settings, {
               slug: project.slug,
               title: project.title,
-              summary: project.summary ?? undefined,
+              summary: seoDescription,
               cover: project.og_image_url ?? project.cover_url ?? undefined,
               location: project.neighborhood ?? project.location ?? undefined,
               tag: project.project_type ?? undefined,

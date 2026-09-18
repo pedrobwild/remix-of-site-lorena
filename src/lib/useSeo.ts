@@ -570,7 +570,27 @@ export function projectJsonLd(
       url: base,
     },
     about: project.tag,
-    contentLocation: project.location,
+    contentLocation: project.location
+      ? {
+          "@type": "Place",
+          name: project.location,
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "São Paulo",
+            addressRegion: "SP",
+            addressCountry: "BR",
+          },
+        }
+      : {
+          "@type": "Place",
+          name: "São Paulo-SP",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "São Paulo",
+            addressRegion: "SP",
+            addressCountry: "BR",
+          },
+        },
     dateCreated: project.year,
   };
 }
