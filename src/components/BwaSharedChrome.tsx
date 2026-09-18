@@ -1,5 +1,6 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { openCookiePreferences } from "@/lib/cookieConsent";
+import BewildLogo from "@/components/BewildLogo";
 import homeBwaCssUrl from "../pages/home-bwa.css?url";
 import bwaInternalCssUrl from "../pages/bwa-internal.css?url";
 // @ts-expect-error - JS module sem tipos
@@ -73,7 +74,9 @@ export default function BwaSharedChrome({ children }: { children: ReactNode }) {
       {/* MENU atualizado 17/jul por ordem do dono: páginas internas integradas */}
       <header className="bwa-nav bwa-nav--internal" data-nav>
         <div className="bwa-shell bwa-nav-inner">
-          <a className="bwa-wordmark" href="/" aria-label="Bewild, início">Bewild</a>
+          <a className="bwa-wordmark" href="/" aria-label="Bewild, início">
+            <BewildLogo decorative />
+          </a>
 
           <nav className="bwa-nav-links" aria-label="Navegação principal">
             <a href="/#certeza">O contrato</a>
@@ -84,6 +87,7 @@ export default function BwaSharedChrome({ children }: { children: ReactNode }) {
             <a href="/portfolio">Portfólio</a>
             <a href="/conteudos">Conteúdos</a>
             <a href="/faq">FAQ</a>
+            <a href="/contato">Contato</a>
           </nav>
 
           <a className="bwa-button" href="/diagnostico">
@@ -115,6 +119,7 @@ export default function BwaSharedChrome({ children }: { children: ReactNode }) {
           <a href="/portfolio">Portfólio</a>
           <a href="/conteudos">Conteúdos</a>
           <a href="/faq">FAQ</a>
+          <a href="/contato">Contato</a>
           <a href="/diagnostico">Solicitar Orçamento</a>
         </nav>
       </div>
