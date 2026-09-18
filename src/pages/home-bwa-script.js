@@ -73,6 +73,39 @@ export function initHomeBwa() {
         });
       });
 
+      const galleryRail = document.querySelector("[data-gallery-rail]");
+      const gallerySlides = galleryRail ? [...galleryRail.querySelectorAll(".bwa-image-gallery-slide")] : [];
+      const galleryCurrent = document.querySelector("[data-gallery-current]");
+      const galleryProgress = document.querySelector("[data-gallery-progress]");
+
+      const updateGalleryStatus = () => {
+        if (!galleryRail || !gallerySlides.length) return;
+        const railCenter = galleryRail.scrollLeft + galleryRail.clientWidth / 2;
+        let activeIndex = 0;
+        let closestDistance = Infinity;
+        gallerySlides.forEach((slide, index) => {
+          const slideCenter = slide.offsetLeft + slide.clientWidth / 2;
+          const distance = Math.abs(slideCenter - railCenter);
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            activeIndex = index;
+          }
+        });
+        if (galleryCurrent) galleryCurrent.textContent = String(activeIndex + 1).padStart(2, "0");
+        if (galleryProgress) galleryProgress.style.transform = `scaleX(${activeIndex + 1})`;
+      };
+
+      const moveGallery = (direction) => {
+        if (!galleryRail || !gallerySlides.length) return;
+        const distance = gallerySlides[0].clientWidth + 28;
+        galleryRail.scrollBy({ left: distance * direction, behavior: reducedMotion ? "auto" : "smooth" });
+      };
+
+      document.querySelector("[data-gallery-prev]")?.addEventListener("click", () => moveGallery(-1));
+      document.querySelector("[data-gallery-next]")?.addEventListener("click", () => moveGallery(1));
+      galleryRail?.addEventListener("scroll", updateGalleryStatus, { passive: true });
+      updateGalleryStatus();
+
       const storySteps = [...document.querySelectorAll("[data-story-step]")];
       const storyImages = [...document.querySelectorAll("[data-story-image]")];
       const storyAperture = document.querySelector("[data-story-aperture]");
