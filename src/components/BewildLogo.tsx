@@ -1,4 +1,4 @@
-import bewildLogo from "@/assets/bewild-logo.png.asset.json";
+import bewildLogo from "@/assets/bewild-logo-header.png.asset.json";
 
 type BewildLogoProps = {
   className?: string;
