@@ -14,6 +14,7 @@ import { CONTACT } from "@/components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
 import { useVideoAutoplayInView } from "@/lib/useVideoAutoplayInView";
+import BewildLogo from "@/components/BewildLogo";
 import "@/styles/bw-lp.css";
 
 /**
@@ -175,7 +176,7 @@ export default function LpObraPage() {
       <section className="hero is-gate" aria-label="Obra Bewild">
         <div className="hero-grid" aria-hidden="true" />
         <div className="hero-top">
-          <img className="hero-logo" src="/brand/bewild-logo-cropped.png" alt="Bewild" />
+          <BewildLogo className="hero-logo" />
           <div className="hero-eyebrow">
             <span className="mono tag">{eyebrowText}</span>
           </div>

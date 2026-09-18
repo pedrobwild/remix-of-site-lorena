@@ -12,6 +12,7 @@ import { CONTACT } from "@/components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
 import { useVideoAutoplayInView } from "@/lib/useVideoAutoplayInView";
+import BewildLogo from "@/components/BewildLogo";
 import "@/styles/bw-lp.css";
 
 const digits = (v: string) => v.replace(/\D/g, "");
@@ -189,7 +190,7 @@ export default function LpPanfletoPage() {
       <section className="hero" aria-label="Reforma turn-key Bewild">
         <div className="hero-grid" aria-hidden="true" />
         <div className="hero-top">
-          <img className="hero-logo" src="/brand/bewild-logo-cropped.png" alt="Bewild" />
+          <BewildLogo className="hero-logo" />
           <div className="hero-eyebrow">
             <span className="mono tag">Reforma turn-key de studios · São Paulo</span>
           </div>
