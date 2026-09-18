@@ -132,7 +132,9 @@ export function initHomeBwa() {
 
       const releaseGalleryPointer = (event) => {
         if (!galleryRail || event.pointerId !== galleryPointerId) return;
-        galleryRail.releasePointerCapture?.(event.pointerId);
+        if (galleryRail.hasPointerCapture?.(event.pointerId)) {
+          galleryRail.releasePointerCapture(event.pointerId);
+        }
         galleryRail.classList.remove("bwa-dragging");
         galleryPointerId = null;
 
