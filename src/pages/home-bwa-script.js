@@ -186,6 +186,7 @@ export function initHomeBwa() {
         if (event.pointerType === "touch" || event.button !== 0) return;
         stopGalleryMomentum();
         galleryPointerId = event.pointerId;
+        galleryRail.setPointerCapture(event.pointerId);
         galleryPointerStartX = event.clientX;
         galleryPointerStartY = event.clientY;
         galleryScrollStart = galleryRail.scrollLeft;
@@ -202,7 +203,6 @@ export function initHomeBwa() {
         if (!galleryDragAxis && Math.hypot(deltaX, deltaY) > 6) {
           galleryDragAxis = Math.abs(deltaX) > Math.abs(deltaY) ? "x" : "y";
           if (galleryDragAxis === "x") {
-            galleryRail.setPointerCapture(event.pointerId);
             galleryRail.classList.add("bwa-dragging");
           }
         }
@@ -218,6 +218,7 @@ export function initHomeBwa() {
       });
       galleryRail?.addEventListener("pointerup", releaseGalleryPointer);
       galleryRail?.addEventListener("pointercancel", releaseGalleryPointer);
+      galleryRail?.addEventListener("dragstart", (event) => event.preventDefault());
       galleryRail?.addEventListener("click", (event) => {
         if (!galleryDidDrag) return;
         event.preventDefault();

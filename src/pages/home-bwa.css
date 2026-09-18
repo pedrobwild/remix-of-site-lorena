@@ -891,6 +891,7 @@
       display: block;
       object-fit: cover;
       transition: transform .8s var(--bwa-ease);
+      -webkit-user-drag: none;
     }
 
     .bwa-image-gallery-slide:hover img {
