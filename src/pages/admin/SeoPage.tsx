@@ -7,6 +7,7 @@ import {
   type SiteSettings,
 } from "@/lib/useSiteSettings";
 import { runSeoAudit, type SeoAuditResult } from "@/lib/seoAudit";
+import { downloadSitemap, parseSitemapXml, type SitemapSnapshot } from "@/lib/sitemap";
 import { refreshSeoEverywhere } from "@/lib/useSeo";
 
 const SITEMAP_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sitemap`;
@@ -606,15 +607,103 @@ function SitemapTab({
 }) {
   const base = (s.seo_canonical_base || "https://bewild.com.br").replace(/\/$/, "");
   const sitemapPublic = `${base}/sitemap.xml`;
+  const [generating, setGenerating] = useState(false);
+  const [snapshot, setSnapshot] = useState<SitemapSnapshot | null>(null);
+  const [generationError, setGenerationError] = useState<string | null>(null);
   const lastSubmit = s.seo_last_search_console_submit
     ? new Date(s.seo_last_search_console_submit).toLocaleString("pt-BR")
     : "nunca";
+
+  async function generateSitemap() {
+    setGenerating(true);
+    setGenerationError(null);
+    try {
+      const response = await fetch(`${SITEMAP_URL}?refresh=${Date.now()}`, {
+        headers: { Accept: "application/xml" },
+        cache: "no-store",
+      });
+      if (!response.ok) throw new Error(`Falha ao gerar o sitemap (HTTP ${response.status}).`);
+      const nextSnapshot = parseSitemapXml(await response.text());
+      setSnapshot(nextSnapshot);
+    } catch (error) {
+      setSnapshot(null);
+      setGenerationError(error instanceof Error ? error.message : "Não foi possível gerar o sitemap.");
+    } finally {
+      setGenerating(false);
+    }
+  }
 
   return (
     <>
       <p className="mono" style={{ opacity: 0.7, marginBottom: 16, maxWidth: 720 }}>
         São gerados dinamicamente a partir dos projetos visíveis. Use estas URLs para enviar ao
         Google Search Console.
+      </p>
+
+      <section className="admin-section" aria-labelledby="sitemap-generator-title">
+        <div className="admin-section__head">
+          <div>
+            <h2 className="admin-section__title" id="sitemap-generator-title">
+              Gerador do sitemap
+            </h2>
+            <p className="mono seo-sitemap-note">
+              Lê os projetos visíveis e publicados e gera o XML atualizado na hora.
+            </p>
+          </div>
+          <button
+            type="button"
+            className="admin-btn admin-btn--primary"
+            onClick={generateSitemap}
+            disabled={generating}
+          >
+            {generating ? "gerando…" : "gerar sitemap agora"}
+          </button>
+        </div>
+
+        {generationError && (
+          <p className="admin-flash admin-flash--err mono" role="alert">
+            {generationError}
+          </p>
+        )}
+
+        {!snapshot && !generationError && (
+          <p className="mono seo-sitemap-empty">Gere o arquivo para conferir as URLs incluídas.</p>
+        )}
+
+        {snapshot && (
+          <div aria-live="polite">
+            <p className="admin-flash admin-flash--ok mono">
+              Sitemap válido gerado em {snapshot.generatedAt.toLocaleString("pt-BR")}.
+            </p>
+            <div className="admin-cards seo-sitemap-stats">
+              <Stat label="Total de URLs" value={snapshot.total} />
+              <Stat label="Projetos" value={snapshot.projects} />
+              <Stat label="Conteúdos" value={snapshot.posts} />
+              <Stat label="Páginas fixas" value={snapshot.pages} />
+            </div>
+            <div className="seo-sitemap-actions">
+              <a className="admin-btn" href={SITEMAP_URL} target="_blank" rel="noreferrer">
+                abrir XML
+              </a>
+              <button type="button" className="admin-btn" onClick={() => downloadSitemap(snapshot)}>
+                baixar sitemap.xml
+              </button>
+            </div>
+            <details className="seo-sitemap-preview">
+              <summary>Ver URLs incluídas</summary>
+              <ol>
+                {snapshot.urls.map((url) => (
+                  <li key={url} className="mono">{url}</li>
+                ))}
+              </ol>
+            </details>
+          </div>
+        )}
+      </section>
+
+      <p className="mono seo-sitemap-publish-note">
+        O sitemap dinâmico acima é atualizado imediatamente. O arquivo público em {sitemapPublic} é
+        substituído automaticamente na próxima publicação do site.
       </p>
 
       <div className="admin-table-wrap">
