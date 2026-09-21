@@ -12,7 +12,17 @@ import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import { CONTACT } from "../components/landing/content";
 import { useBewildProjects, bewildTypeLabel } from "@/lib/useBewildProjects";
-import { PORTFOLIO_FILTERS, applyPortfolioFilter, type PortfolioFilter } from "@/lib/portfolioFilter";
+import {
+  PORTFOLIO_FILTERS,
+  PORTFOLIO_SORTS,
+  ALL_NEIGHBORHOODS,
+  applyPortfolioFilter,
+  applyNeighborhoodFilter,
+  applyPortfolioSort,
+  neighborhoodOptions,
+  type PortfolioFilter,
+  type PortfolioSort,
+} from "@/lib/portfolioFilter";
 import { hasReadyPhotos, photoKindLabel } from "@/lib/projectPhotos";
 import "@/styles/bwh-tokens.css";
 import "@/styles/bwh-overlays.css";
@@ -24,6 +34,8 @@ export default function BewildPortfolioPage() {
   const { projects, loading, error } = useBewildProjects();
   const { settings } = useSiteSettings();
   const [filter, setFilter] = useState<PortfolioFilter>("all");
+  const [place, setPlace] = useState<string>(ALL_NEIGHBORHOODS);
+  const [sort, setSort] = useState<PortfolioSort>("curadoria");
 
   useSeo({
     title: "Projetos de reforma e apartamentos prontos | Bewild",
@@ -51,8 +63,17 @@ export default function BewildPortfolioPage() {
   });
 
   const withCover = useMemo(() => projects.filter((p) => !!p.cover_url), [projects]);
-  const filtered = useMemo(() => applyPortfolioFilter(withCover, filter), [withCover, filter]);
+  const places = useMemo(() => neighborhoodOptions(withCover), [withCover]);
+  const filtered = useMemo(
+    () =>
+      applyPortfolioSort(
+        applyNeighborhoodFilter(applyPortfolioFilter(withCover, filter), place),
+        sort,
+      ),
+    [withCover, filter, place, sort],
+  );
   const showChips = withCover.length >= 4;
+  const hasFilters = filter !== "all" || place !== ALL_NEIGHBORHOODS || sort !== "curadoria";
 
   const waUrl = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
     "Olá! Vim pelo portfólio e quero um diagnóstico do meu studio.",
@@ -98,8 +119,58 @@ export default function BewildPortfolioPage() {
               ))}
             </div>
             )}
+
+            {showChips && (
+              <div className="bwh-pf-controls">
+                <label className="bwh-pf-field">
+                  <span className="bwh-mono bwh-pf-field__label">Bairro</span>
+                  <select
+                    className="bwh-pf-select"
+                    value={place}
+                    onChange={(e) => setPlace(e.target.value)}
+                  >
+                    <option value={ALL_NEIGHBORHOODS}>Todos os bairros</option>
+                    {places.map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="bwh-pf-field">
+                  <span className="bwh-mono bwh-pf-field__label">Ordenar por</span>
+                  <select
+                    className="bwh-pf-select"
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value as PortfolioSort)}
+                  >
+                    {PORTFOLIO_SORTS.map((s) => (
+                      <option key={s.value} value={s.value}>
+                        {s.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                {hasFilters && (
+                  <button
+                    type="button"
+                    className="bwh-pf-clear bwh-mono"
+                    onClick={() => {
+                      setFilter("all");
+                      setPlace(ALL_NEIGHBORHOODS);
+                      setSort("curadoria");
+                    }}
+                  >
+                    Limpar filtros
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </section>
+
 
         {/* LISTA */}
         <section className="bwh-sec">

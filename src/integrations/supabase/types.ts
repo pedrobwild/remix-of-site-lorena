@@ -548,7 +548,6 @@ export type Database = {
           featured: boolean
           featured_order: number
           gallery_urls: string[]
-          ready_gallery_urls: string[]
           id: string
           intro: string | null
           location: string | null
@@ -562,6 +561,7 @@ export type Database = {
           program: string | null
           project_type: string | null
           published: boolean
+          ready_gallery_urls: string[]
           ready_image_url: string | null
           ready_items: string[]
           result_text: string | null
@@ -600,7 +600,6 @@ export type Database = {
           featured?: boolean
           featured_order?: number
           gallery_urls?: string[]
-          ready_gallery_urls?: string[]
           id?: string
           intro?: string | null
           location?: string | null
@@ -614,6 +613,7 @@ export type Database = {
           program?: string | null
           project_type?: string | null
           published?: boolean
+          ready_gallery_urls?: string[]
           ready_image_url?: string | null
           ready_items?: string[]
           result_text?: string | null
@@ -652,7 +652,6 @@ export type Database = {
           featured?: boolean
           featured_order?: number
           gallery_urls?: string[]
-          ready_gallery_urls?: string[]
           id?: string
           intro?: string | null
           location?: string | null
@@ -666,6 +665,7 @@ export type Database = {
           program?: string | null
           project_type?: string | null
           published?: boolean
+          ready_gallery_urls?: string[]
           ready_image_url?: string | null
           ready_items?: string[]
           result_text?: string | null
