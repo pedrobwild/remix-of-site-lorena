@@ -119,8 +119,58 @@ export default function BewildPortfolioPage() {
               ))}
             </div>
             )}
+
+            {showChips && (
+              <div className="bwh-pf-controls">
+                <label className="bwh-pf-field">
+                  <span className="bwh-mono bwh-pf-field__label">Bairro</span>
+                  <select
+                    className="bwh-pf-select"
+                    value={place}
+                    onChange={(e) => setPlace(e.target.value)}
+                  >
+                    <option value={ALL_NEIGHBORHOODS}>Todos os bairros</option>
+                    {places.map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="bwh-pf-field">
+                  <span className="bwh-mono bwh-pf-field__label">Ordenar por</span>
+                  <select
+                    className="bwh-pf-select"
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value as PortfolioSort)}
+                  >
+                    {PORTFOLIO_SORTS.map((s) => (
+                      <option key={s.value} value={s.value}>
+                        {s.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                {hasFilters && (
+                  <button
+                    type="button"
+                    className="bwh-pf-clear bwh-mono"
+                    onClick={() => {
+                      setFilter("all");
+                      setPlace(ALL_NEIGHBORHOODS);
+                      setSort("curadoria");
+                    }}
+                  >
+                    Limpar filtros
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </section>
+
 
         {/* LISTA */}
         <section className="bwh-sec">

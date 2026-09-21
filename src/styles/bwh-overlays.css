@@ -26,6 +26,16 @@
     border-color .35s var(--bwa-ease,cubic-bezier(.22,1,.36,1))}
 .bwh-pf-chip:hover{border-color:var(--dark)}
 .bwh-pf-chip.is-on{background:var(--dark);color:#fff;border-color:var(--dark)}
+/* ===== Controles de bairro + ordenação (mesma linguagem dos chips) ===== */
+.bwh-pf-controls{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px;margin-top:14px}
+.bwh-pf-field{display:flex;flex-direction:column;gap:6px;min-width:min(100%,240px)}
+.bwh-pf-field__label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
+.bwh-pf-select{font-family:var(--fm);font-size:12px;letter-spacing:.04em;color:var(--ink);
+  min-height:42px;padding:10px 14px;border:1px solid var(--hair);border-radius:0;background:transparent;cursor:pointer}
+.bwh-pf-select:hover{border-color:var(--dark)}
+.bwh-pf-select:focus-visible,.bwh-pf-chip:focus-visible,.bwh-pf-clear:focus-visible{outline:2px solid var(--dark);outline-offset:2px}
+.bwh-pf-clear{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);
+  min-height:42px;padding:11px 4px;border:0;background:transparent;text-decoration:underline;cursor:pointer}
 /* skeleton na mesma proporção do card de projeto (4/3, igual à home) */
 .bwh-pf-skel{aspect-ratio:4/3;background:var(--bg-alt);animation:bwh-pulse 1.4s ease-in-out infinite}
 @keyframes bwh-pulse{0%,100%{opacity:.6}50%{opacity:.9}}
