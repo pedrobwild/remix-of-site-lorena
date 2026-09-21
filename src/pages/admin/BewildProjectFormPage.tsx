@@ -31,6 +31,8 @@ type FormState = {
   before_image_url: string | null;
   after_image_url: string | null;
   gallery_urls: string[];
+  /** Fotos da obra pronta; gallery_urls = projeto 3D (renders). */
+  ready_gallery_urls: string[];
   published: boolean;
   sort_order: number;
 };
@@ -54,9 +56,116 @@ const EMPTY: FormState = {
   before_image_url: null,
   after_image_url: null,
   gallery_urls: [],
+  ready_gallery_urls: [],
   published: false,
   sort_order: 0,
 };
+
+type CoverOption = { url: string; kind: "3D" | "Obra" };
+
+/** Escolha da capa entre as fotos das duas galerias, cada uma identificada. */
+function CoverPicker({
+  gallery,
+  ready,
+  cover,
+  onPick,
+}: {
+  gallery: string[];
+  ready: string[];
+  cover: string | null;
+  onPick: (url: string) => void;
+}) {
+  const options: CoverOption[] = [
+    ...gallery.map((url) => ({ url, kind: "3D" as const })),
+    ...ready.map((url) => ({ url, kind: "Obra" as const })),
+  ];
+  if (options.length === 0) return null;
+  return (
+    <div className="admin-field admin-field--full">
+      <label className="admin-field__label">Escolher a capa entre as fotos do projeto</label>
+      <p className="mono admin-hint" style={{ marginTop: 0, marginBottom: 8 }}>
+        Clique em uma foto (3D ou obra pronta) para usá-la como capa.
+      </p>
+      <ul
+        style={{
+          listStyle: "none",
+          margin: 0,
+          padding: 0,
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(112px, 1fr))",
+          gap: 8,
+        }}
+      >
+        {options.map(({ url, kind }) => {
+          const selected = cover === url;
+          return (
+            <li key={kind + url}>
+              <button
+                type="button"
+                onClick={() => onPick(url)}
+                aria-pressed={selected}
+                title={selected ? "Capa atual" : `Usar como capa (${kind === "3D" ? "projeto 3D" : "obra pronta"})`}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  padding: 0,
+                  border: selected ? "2px solid #11355B" : "1px solid #d9d4cb",
+                  borderRadius: 8,
+                  overflow: "hidden",
+                  background: "none",
+                  cursor: "pointer",
+                  position: "relative",
+                  lineHeight: 0,
+                }}
+              >
+                <img
+                  src={url}
+                  alt=""
+                  loading="lazy"
+                  style={{ width: "100%", aspectRatio: "4 / 3", objectFit: "cover" }}
+                />
+                <span
+                  className="mono"
+                  style={{
+                    position: "absolute",
+                    right: 6,
+                    top: 6,
+                    background: kind === "Obra" ? "#11355B" : "rgba(10,20,40,.6)",
+                    color: "#fff",
+                    fontSize: 10,
+                    padding: "2px 6px",
+                    borderRadius: 999,
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {kind === "Obra" ? "obra pronta" : "3D"}
+                </span>
+                {selected && (
+                  <span
+                    className="mono"
+                    style={{
+                      position: "absolute",
+                      left: 6,
+                      bottom: 6,
+                      background: "#11355B",
+                      color: "#fff",
+                      fontSize: 10,
+                      padding: "2px 6px",
+                      borderRadius: 999,
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    capa
+                  </span>
+                )}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
 
 type SaveError = {
   code?: string;
@@ -105,7 +214,8 @@ export default function BewildProjectFormPage({ slug }: Props) {
   const [slugTouched, setSlugTouched] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [driveOpen, setDriveOpen] = useState(false);
+  // Para qual galeria a importação do Drive vai: renders (3D) ou obra pronta.
+  const [driveTarget, setDriveTarget] = useState<"gallery" | "ready" | null>(null);
 
   const [error, setError] = useState<string | null>(null);
   const [scopeInput, setScopeInput] = useState("");
@@ -141,7 +251,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
     supabase
       .from("projects")
       .select(
-        "id, title, slug, project_type, neighborhood, area_m2, duration, summary, challenge, solution, result_text, scope, testimonial, testimonial_author, cover_url, before_image_url, after_image_url, gallery_urls, published, sort_order",
+        "id, title, slug, project_type, neighborhood, area_m2, duration, summary, challenge, solution, result_text, scope, testimonial, testimonial_author, cover_url, before_image_url, after_image_url, gallery_urls, ready_gallery_urls, published, sort_order",
       )
       .eq("slug", slug)
       .maybeSingle()
@@ -172,6 +282,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
           before_image_url: data.before_image_url ?? null,
           after_image_url: data.after_image_url ?? null,
           gallery_urls: Array.isArray(data.gallery_urls) ? data.gallery_urls : [],
+          ready_gallery_urls: Array.isArray(data.ready_gallery_urls) ? data.ready_gallery_urls : [],
           published: !!data.published,
           sort_order: data.sort_order ?? 0,
         });
@@ -246,6 +357,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
       before_image_url: form.before_image_url,
       after_image_url: form.after_image_url,
       gallery_urls: form.gallery_urls,
+      ready_gallery_urls: form.ready_gallery_urls,
       published: publish ?? form.published,
       sort_order: form.sort_order,
     };
@@ -557,29 +669,39 @@ export default function BewildProjectFormPage({ slug }: Props) {
             <h2 className="admin-section__title">Fotos</h2>
             <p className="mono admin-hint">
               As fotos são subidas para o bucket project-images. Capa é o destaque do card e do topo da página.
+              Há duas galerias: <strong>Projeto 3D</strong> (renders) e <strong>Obra pronta</strong> (fotos do
+              apartamento entregue). O site identifica cada bloco; com ao menos uma foto da obra, o projeto
+              recebe a tag "Obra pronta" no portfólio e entra no filtro de mesmo nome.
             </p>
           </header>
 
           <div className="admin-field admin-field--full">
-            <button type="button" className="admin-btn" onClick={() => setDriveOpen(true)}>
-              Importar fotos do Google Drive
-            </button>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <button type="button" className="admin-btn" onClick={() => setDriveTarget("gallery")}>
+                Importar do Google Drive → Projeto 3D
+              </button>
+              <button type="button" className="admin-btn" onClick={() => setDriveTarget("ready")}>
+                Importar do Google Drive → Obra pronta
+              </button>
+            </div>
             <p className="mono admin-hint" style={{ marginTop: 6 }}>
-              Abre a pasta do cliente no Drive; as fotos escolhidas entram na galeria.
+              Abre a pasta do cliente no Drive; as fotos escolhidas entram na galeria indicada.
             </p>
           </div>
 
           <DriveImportDialog
-            open={driveOpen}
-            folder={folder}
-            onClose={() => setDriveOpen(false)}
+            open={driveTarget !== null}
+            folder={driveTarget === "ready" ? `${folder}-obra` : folder}
+            onClose={() => setDriveTarget(null)}
             onImported={(urls: string[]) => {
-              const gallery = [...form.gallery_urls, ...urls];
-              set("gallery_urls", gallery);
+              if (driveTarget === "ready") {
+                set("ready_gallery_urls", [...form.ready_gallery_urls, ...urls]);
+              } else {
+                set("gallery_urls", [...form.gallery_urls, ...urls]);
+              }
               if (!form.cover_url && urls[0]) set("cover_url", urls[0]);
             }}
           />
-
 
           <BewildImageField
             label="Capa"
@@ -590,76 +712,12 @@ export default function BewildProjectFormPage({ slug }: Props) {
             hint="Recomendado: foto horizontal do apartamento entregue."
           />
 
-          {form.gallery_urls.length > 0 && (
-            <div className="admin-field admin-field--full">
-              <label className="admin-field__label">Escolher a capa entre as fotos do projeto</label>
-              <p className="mono admin-hint" style={{ marginTop: 0, marginBottom: 8 }}>
-                Clique em uma foto da galeria para usá-la como capa.
-              </p>
-              <ul
-                style={{
-                  listStyle: "none",
-                  margin: 0,
-                  padding: 0,
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(112px, 1fr))",
-                  gap: 8,
-                }}
-              >
-                {form.gallery_urls.map((url) => {
-                  const selected = form.cover_url === url;
-                  return (
-                    <li key={url}>
-                      <button
-                        type="button"
-                        onClick={() => set("cover_url", url)}
-                        aria-pressed={selected}
-                        title={selected ? "Capa atual" : "Usar como capa"}
-                        style={{
-                          display: "block",
-                          width: "100%",
-                          padding: 0,
-                          border: selected ? "2px solid #11355B" : "1px solid #d9d4cb",
-                          borderRadius: 8,
-                          overflow: "hidden",
-                          background: "none",
-                          cursor: "pointer",
-                          position: "relative",
-                          lineHeight: 0,
-                        }}
-                      >
-                        <img
-                          src={url}
-                          alt=""
-                          loading="lazy"
-                          style={{ width: "100%", aspectRatio: "4 / 3", objectFit: "cover" }}
-                        />
-                        {selected && (
-                          <span
-                            className="mono"
-                            style={{
-                              position: "absolute",
-                              left: 6,
-                              bottom: 6,
-                              background: "#11355B",
-                              color: "#fff",
-                              fontSize: 10,
-                              padding: "2px 6px",
-                              borderRadius: 999,
-                              lineHeight: 1.4,
-                            }}
-                          >
-                            capa
-                          </span>
-                        )}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          )}
-
+          <CoverPicker
+            gallery={form.gallery_urls}
+            ready={form.ready_gallery_urls}
+            cover={form.cover_url}
+            onPick={(url) => set("cover_url", url)}
+          />
 
           <BewildImageField
             label="Antes (opcional)"
@@ -679,10 +737,20 @@ export default function BewildProjectFormPage({ slug }: Props) {
           />
 
           <BewildGalleryField
-            label="Galeria"
+            label="Projeto 3D (renders)"
+            hint="Imagens do projeto. Aparecem na seção “Projeto 3D” da página."
             value={form.gallery_urls}
             folder={folder}
             onChange={(urls) => set("gallery_urls", urls)}
+            onBusyChange={setUploading}
+          />
+
+          <BewildGalleryField
+            label="Obra pronta (fotos do apartamento entregue)"
+            hint="Aparecem na seção “Obra pronta” da página e marcam o projeto como Obra pronta no portfólio."
+            value={form.ready_gallery_urls}
+            folder={`${folder}-obra`}
+            onChange={(urls) => set("ready_gallery_urls", urls)}
             onBusyChange={setUploading}
           />
         </section>

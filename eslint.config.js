@@ -45,6 +45,13 @@ export default tseslint.config(
     },
   },
   {
+    // previewAuthStorage.ts é regenerado pelo Lovable (16/09 e 18/09) e volta
+    // com `let` onde cabe `const`, derrubando a CI a cada regeneração. A regra
+    // fica desligada só neste arquivo; o conteúdo continua sendo o do Lovable.
+    files: ["src/integrations/supabase/previewAuthStorage.ts"],
+    rules: { "prefer-const": "off" },
+  },
+  {
     // Em arquivos de teste, o ambiente jsdom + globals da vitest exigem
     // relaxar a regra de `no-undef`/`require` para os helpers do framework.
     files: ["src/**/*.test.{ts,tsx}", "src/test/**/*.{ts,tsx}"],

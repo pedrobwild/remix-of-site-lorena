@@ -548,6 +548,7 @@ export type Database = {
           featured: boolean
           featured_order: number
           gallery_urls: string[]
+          ready_gallery_urls: string[]
           id: string
           intro: string | null
           location: string | null
@@ -599,6 +600,7 @@ export type Database = {
           featured?: boolean
           featured_order?: number
           gallery_urls?: string[]
+          ready_gallery_urls?: string[]
           id?: string
           intro?: string | null
           location?: string | null
@@ -650,6 +652,7 @@ export type Database = {
           featured?: boolean
           featured_order?: number
           gallery_urls?: string[]
+          ready_gallery_urls?: string[]
           id?: string
           intro?: string | null
           location?: string | null

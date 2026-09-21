@@ -24,6 +24,8 @@ export type BewildProjectFull = {
   before_image_url: string | null;
   after_image_url: string | null;
   gallery_urls: string[] | null;
+  /** Fotos da obra pronta (apartamento entregue). gallery_urls = projeto 3D. */
+  ready_gallery_urls: string[] | null;
   og_image_url: string | null;
   seo_title: string | null;
   seo_description: string | null;
@@ -32,7 +34,7 @@ export type BewildProjectFull = {
 const COLUMNS =
   "id, slug, title, project_type, neighborhood, location, area_m2, duration, " +
   "summary, challenge, solution, result_text, scope, testimonial, testimonial_author, " +
-  "cover_url, cover_alt, before_image_url, after_image_url, gallery_urls, " +
+  "cover_url, cover_alt, before_image_url, after_image_url, gallery_urls, ready_gallery_urls, " +
   "og_image_url, seo_title, seo_description";
 
 /**

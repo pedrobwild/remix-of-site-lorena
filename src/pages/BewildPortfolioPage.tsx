@@ -11,30 +11,19 @@ import { useSiteSettings } from "@/lib/useSiteSettings";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import { CONTACT } from "../components/landing/content";
-import {
-  useBewildProjects,
-  bewildTypeLabel,
-  type BewildProjectType,
-} from "@/lib/useBewildProjects";
+import { useBewildProjects, bewildTypeLabel } from "@/lib/useBewildProjects";
+import { PORTFOLIO_FILTERS, applyPortfolioFilter, type PortfolioFilter } from "@/lib/portfolioFilter";
+import { hasReadyPhotos, photoKindLabel } from "@/lib/projectPhotos";
 import "@/styles/bwh-tokens.css";
 import "@/styles/bwh-overlays.css";
 import "@/styles/bwh-sol-fusion.css";
-
-type FilterValue = "all" | BewildProjectType;
-
-const FILTERS: { value: FilterValue; label: string }[] = [
-  { value: "all", label: "Todos" },
-  { value: "short_stay", label: "Short stay" },
-  { value: "turn_key", label: "Turn-key" },
-  { value: "planta", label: "Planta" },
-];
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
 export default function BewildPortfolioPage() {
   const { projects, loading, error } = useBewildProjects();
   const { settings } = useSiteSettings();
-  const [filter, setFilter] = useState<FilterValue>("all");
+  const [filter, setFilter] = useState<PortfolioFilter>("all");
 
   useSeo({
     title: "Projetos de reforma e apartamentos prontos | Bewild",
@@ -62,10 +51,7 @@ export default function BewildPortfolioPage() {
   });
 
   const withCover = useMemo(() => projects.filter((p) => !!p.cover_url), [projects]);
-  const filtered = useMemo(() => {
-    if (filter === "all") return withCover;
-    return withCover.filter((p) => p.project_type === filter);
-  }, [withCover, filter]);
+  const filtered = useMemo(() => applyPortfolioFilter(withCover, filter), [withCover, filter]);
   const showChips = withCover.length >= 4;
 
   const waUrl = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
@@ -97,9 +83,9 @@ export default function BewildPortfolioPage() {
             <div
               className="bwh-pf-chips"
               role="group"
-              aria-label="Filtrar por tipo de projeto"
+              aria-label="Filtrar projetos"
             >
-              {FILTERS.map((f) => (
+              {PORTFOLIO_FILTERS.map((f) => (
                 <button
                   key={f.value}
                   type="button"
@@ -194,6 +180,9 @@ export default function BewildPortfolioPage() {
                         )}
                         <span className="bwh-proj__count">
                           {pad(i + 1)} / {pad(total)}
+                        </span>
+                        <span className={`bwh-proj__kind${hasReadyPhotos(p) ? " bwh-proj__kind--ready" : ""}`}>
+                          {photoKindLabel(p)}
                         </span>
                         <span className="bwh-proj__go">Ver projeto →</span>
                       </div>
