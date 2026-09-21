@@ -12,7 +12,17 @@ import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import { CONTACT } from "../components/landing/content";
 import { useBewildProjects, bewildTypeLabel } from "@/lib/useBewildProjects";
-import { PORTFOLIO_FILTERS, applyPortfolioFilter, type PortfolioFilter } from "@/lib/portfolioFilter";
+import {
+  PORTFOLIO_FILTERS,
+  PORTFOLIO_SORTS,
+  ALL_NEIGHBORHOODS,
+  applyPortfolioFilter,
+  applyNeighborhoodFilter,
+  applyPortfolioSort,
+  neighborhoodOptions,
+  type PortfolioFilter,
+  type PortfolioSort,
+} from "@/lib/portfolioFilter";
 import { hasReadyPhotos, photoKindLabel } from "@/lib/projectPhotos";
 import "@/styles/bwh-tokens.css";
 import "@/styles/bwh-overlays.css";
