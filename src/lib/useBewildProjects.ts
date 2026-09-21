@@ -15,6 +15,8 @@ export type BewildProject = {
   area_m2: number | null;
   duration: string | null;
   sort_order: number | null;
+  /** Data de publicação/cadastro; usada na ordenação do portfólio. */
+  created_at: string | null;
   /** Fotos da obra pronta; define a tag "Obra pronta" e o filtro (projectPhotos.ts). */
   ready_gallery_urls: string[] | null;
 };
