@@ -7,6 +7,8 @@ interface Props {
   folder: string;
   onChange: (urls: string[]) => void;
   onBusyChange?: (busy: boolean) => void;
+  /** Texto curto sob o rótulo (ex.: em que seção do site as fotos aparecem). */
+  hint?: string;
 }
 
 export default function BewildGalleryField({
@@ -15,6 +17,7 @@ export default function BewildGalleryField({
   folder,
   onChange,
   onBusyChange,
+  hint,
 }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [busy, setBusy] = useState(false);
@@ -67,6 +70,11 @@ export default function BewildGalleryField({
   return (
     <div className="admin-field admin-field--full">
       <label className="admin-field__label">{label}</label>
+      {hint && (
+        <p className="mono admin-hint" style={{ marginTop: 0, marginBottom: 8 }}>
+          {hint}
+        </p>
+      )}
 
       {value.length > 0 && (
         <div

@@ -28,6 +28,11 @@
 .bwh .bwh-proj__count{position:absolute;z-index:2;top:14px;left:14px;
   font-family:var(--fm);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
   color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.45)}
+/* Selo "Projeto 3D" / "Obra pronta" (derivado das fotos da obra; ver projectPhotos.ts) */
+.bwh .bwh-proj__kind{position:absolute;z-index:2;top:12px;right:12px;
+  font-family:var(--fm);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:#fff;background:rgba(10,20,40,.55);border:1px solid rgba(255,255,255,.45);padding:5px 9px;line-height:1.2}
+.bwh .bwh-proj__kind--ready{background:var(--navyacc);border-color:var(--navyacc)}
 .bwh .bwh-proj__t{
   margin-top:14px;font-family:var(--fs);font-size:21px;font-weight:600;
   line-height:1.2;letter-spacing:-.02em;color:var(--ink);

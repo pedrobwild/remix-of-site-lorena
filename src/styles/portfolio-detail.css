@@ -53,6 +53,8 @@
 .bw-detail .pd-back{display:inline-flex;align-items:center;gap:8px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em;font-size:11px;font-weight:600;color:rgba(255,255,255,.72);margin-bottom:24px;transition:color .2s;position:relative;z-index:1}
 .bw-detail .pd-back:hover{color:#fff}
 .bw-detail .pd-pill{display:inline-block;font-family:var(--fm);text-transform:uppercase;letter-spacing:.15em;font-size:11px;font-weight:600;color:#fff;border:1px solid var(--hair);background:rgba(255,255,255,.05);padding:6px 12px;border-radius:0;margin-bottom:18px;position:relative;z-index:1}
+.bw-detail .pd-pill+.pd-pill{margin-left:8px}
+.bw-detail .pd-pill--ready{background:#fff;border-color:#fff;color:var(--navy-deep)}
 .bw-detail .pd-head h1{font-weight:600;font-size:clamp(38px,5.4vw,86px);line-height:1.05;letter-spacing:-.055em;padding-bottom:.04em;color:#fff;margin-bottom:16px;position:relative;z-index:1}
 .bw-detail .pd-metaline{display:flex;flex-wrap:wrap;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em;font-size:11px;font-weight:600;color:var(--sky);position:relative;z-index:1}
 .bw-detail .pd-metaline span{padding:0 14px;border-right:1px solid var(--hair)}
@@ -71,6 +73,8 @@
 .bw-detail .pd-sechead .n{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.15em;color:var(--cyan)}
 .bw-detail .pd-sechead h2{font-weight:600;font-size:clamp(24px,2.6vw,34px);letter-spacing:-.035em;color:var(--navy-deep)}
 .bw-detail .pd-sechead .ln{flex:1;height:1px;background:var(--hair-ink);align-self:center}
+/* nota curta sob o título da galeria: identifica se é projeto 3D ou obra pronta */
+.bw-detail .pd-secnote{margin:calc(-1 * clamp(22px,3.5vh,38px) + 10px) 0 22px;font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(26,35,50,.55)}
 .bw-detail .pd-intro{font-size:clamp(18px,1.25vw,20px);line-height:1.5;letter-spacing:-.012em;color:rgba(26,35,50,.82);max-width:34rem;font-weight:400}
 
 /* case */

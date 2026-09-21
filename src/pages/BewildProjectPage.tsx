@@ -13,6 +13,7 @@ import BwaFooter from "@/components/BwaFooter";
 import { whatsappHref } from "@/components/landing/content";
 import { useBewildProject } from "@/lib/useBewildProject";
 import { bewildTypeLabel } from "@/lib/useBewildProjects";
+import { readyPhotos, renderPhotos } from "@/lib/projectPhotos";
 import { projectMetaDescription, projectSeoTitle } from "@/lib/projectSeo";
 import NotFoundPage from "@/pages/NotFoundPage";
 import "@/styles/bwh-tokens.css";
@@ -85,19 +86,66 @@ function Lightbox({
   );
 }
 
+/**
+ * Uma galeria identificada: "Projeto 3D" (renders) ou "Obra pronta" (fotos do
+ * apartamento entregue). Mesmo grid e lightbox para as duas.
+ */
+function GallerySection({
+  title,
+  note,
+  images,
+  altPrefix,
+  openLabel,
+  onOpen,
+}: {
+  title: string;
+  note: string;
+  images: string[];
+  altPrefix: string;
+  openLabel: string;
+  onOpen: (index: number) => void;
+}) {
+  return (
+    <section className="pd-sec pd-sec--tight"><div className="pd-wrap">
+      <div className="pd-sechead"><span className="n">{pad(images.length)}</span><h2>{title}</h2><span className="ln" /></div>
+      <p className="pd-secnote">{note}</p>
+      <div className="pd-gallery">
+        {images.map((src, i) => (
+          <button
+            key={src + i}
+            type="button"
+            className={"pd-gitem" + (i % 5 === 0 && i > 0 ? " pd-gitem--wide" : "")}
+            onClick={() => onOpen(i)}
+            aria-label={`${openLabel} ${i + 1}`}
+          >
+            <img src={src} alt={`${altPrefix} ${i + 1}`} loading="lazy" decoding="async" />
+            <span className="gno">{pad(i + 1)}</span>
+            <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
+          </button>
+        ))}
+      </div>
+    </div></section>
+  );
+}
+
 export default function BewildProjectPage({ slug }: Props) {
   const { project, loading, error, notFound } = useBewildProject(slug);
   const { settings } = useSiteSettings();
-  const [lbIndex, setLbIndex] = useState<number | null>(null);
+  // Lightbox: qual galeria (renders ou obra pronta) e o índice dentro dela.
+  const [lb, setLb] = useState<{ set: "render" | "ready"; index: number } | null>(null);
 
   // Capa e galeria com fallback: a capa usa cover_url; se faltar, usa a 1ª
   // foto da galeria, e a galeria mostra o restante (sem duplicar).
-  const galleryAll = useMemo(() => (project?.gallery_urls ?? []).filter(Boolean), [project]);
+  const galleryAll = useMemo(() => renderPhotos(project), [project]);
   const coverSrc = project?.cover_url || galleryAll[0] || null;
   const galleryImgs = useMemo(
     () => (project?.cover_url ? galleryAll : galleryAll.slice(1)),
     [project, galleryAll],
   );
+  // Fotos da obra pronta: segunda galeria, identificada na página; a tag
+  // "Obra pronta" do portfólio é derivada dela (projectPhotos.ts).
+  const readyImgs = useMemo(() => readyPhotos(project), [project]);
+  const lbImages = lb?.set === "ready" ? readyImgs : galleryImgs;
 
   const hasCase = !!(project?.challenge || project?.solution || project?.result_text);
   const hasBA = !!(project?.before_image_url && project?.after_image_url);
@@ -136,15 +184,19 @@ export default function BewildProjectPage({ slug }: Props) {
         : undefined,
   });
 
-  const closeLb = useCallback(() => setLbIndex(null), []);
-  const prevLb = useCallback(
-    () => setLbIndex((i) => (i === null ? null : (i - 1 + galleryImgs.length) % galleryImgs.length)),
-    [galleryImgs.length],
+  const closeLb = useCallback(() => setLb(null), []);
+  const stepLb = useCallback(
+    (dir: -1 | 1) =>
+      setLb((cur) => {
+        if (!cur) return cur;
+        const len = (cur.set === "ready" ? readyImgs : galleryImgs).length;
+        if (len === 0) return null;
+        return { ...cur, index: (cur.index + dir + len) % len };
+      }),
+    [galleryImgs, readyImgs],
   );
-  const nextLb = useCallback(
-    () => setLbIndex((i) => (i === null ? null : (i + 1) % galleryImgs.length)),
-    [galleryImgs.length],
-  );
+  const prevLb = useCallback(() => stepLb(-1), [stepLb]);
+  const nextLb = useCallback(() => stepLb(1), [stepLb]);
 
   if (loading) {
     return (
@@ -176,6 +228,7 @@ export default function BewildProjectPage({ slug }: Props) {
 
   const where = project.neighborhood || project.location || "São Paulo";
   const metaParts = [where, project.area_m2 ? `${project.area_m2} m²` : null, project.duration].filter(Boolean) as string[];
+  const hasReady = readyImgs.length > 0;
 
   return (
     <div className="bwh bw-detail">
@@ -193,8 +246,11 @@ export default function BewildProjectPage({ slug }: Props) {
       <section className="pd-head">
         <div className="pd-wrap">
           <a className="pd-back" href="/portfolio">← Portfólio</a>
-          {project.project_type && (
-            <div><span className="pd-pill">{bewildTypeLabel(project.project_type)}</span></div>
+          {(project.project_type || hasReady) && (
+            <div>
+              {project.project_type && <span className="pd-pill">{bewildTypeLabel(project.project_type)}</span>}
+              {hasReady && <span className="pd-pill pd-pill--ready">Obra pronta</span>}
+            </div>
           )}
           <h1>{project.title}</h1>
           {metaParts.length > 0 && (
@@ -244,26 +300,26 @@ export default function BewildProjectPage({ slug }: Props) {
         </div></section>
       )}
 
-      {/* GALERIA */}
+      {/* GALERIAS: projeto 3D (renders) e obra pronta, cada uma identificada */}
       {galleryImgs.length > 0 && (
-        <section className="pd-sec pd-sec--tight"><div className="pd-wrap">
-          <div className="pd-sechead"><span className="n">{pad(galleryImgs.length)}</span><h2>Fotos do projeto</h2><span className="ln" /></div>
-          <div className="pd-gallery">
-            {galleryImgs.map((src, i) => (
-              <button
-                key={src + i}
-                type="button"
-                className={"pd-gitem" + (i % 5 === 0 && i > 0 ? " pd-gitem--wide" : "")}
-                onClick={() => setLbIndex(i)}
-                aria-label={`Abrir foto ${i + 1}`}
-              >
-                <img src={src} alt={`${project.title} — foto ${i + 1}`} loading="lazy" decoding="async" />
-                <span className="gno">{pad(i + 1)}</span>
-                <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
-              </button>
-            ))}
-          </div>
-        </div></section>
+        <GallerySection
+          title="Projeto 3D"
+          note="Imagens do projeto de arquitetura e interiores (renders)"
+          images={galleryImgs}
+          altPrefix={`${project.title} — projeto 3D, imagem`}
+          openLabel="Abrir imagem do projeto 3D"
+          onOpen={(i) => setLb({ set: "render", index: i })}
+        />
+      )}
+      {hasReady && (
+        <GallerySection
+          title="Obra pronta"
+          note="Fotos do apartamento entregue"
+          images={readyImgs}
+          altPrefix={`${project.title} — obra pronta, foto`}
+          openLabel="Abrir foto da obra pronta"
+          onOpen={(i) => setLb({ set: "ready", index: i })}
+        />
       )}
 
       {/* ESCOPO */}
@@ -309,8 +365,14 @@ export default function BewildProjectPage({ slug }: Props) {
 
       <BwaFooter />
 
-      {lbIndex !== null && galleryImgs.length > 0 && (
-        <Lightbox images={galleryImgs} index={lbIndex} onClose={closeLb} onPrev={prevLb} onNext={nextLb} />
+      {lb && lbImages.length > 0 && (
+        <Lightbox
+          images={lbImages}
+          index={Math.min(lb.index, lbImages.length - 1)}
+          onClose={closeLb}
+          onPrev={prevLb}
+          onNext={nextLb}
+        />
       )}
     </div>
   );

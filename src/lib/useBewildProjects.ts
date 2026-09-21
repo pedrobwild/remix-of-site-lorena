@@ -15,6 +15,8 @@ export type BewildProject = {
   area_m2: number | null;
   duration: string | null;
   sort_order: number | null;
+  /** Fotos da obra pronta; define a tag "Obra pronta" e o filtro (projectPhotos.ts). */
+  ready_gallery_urls: string[] | null;
 };
 
 const PROJECT_TYPE_LABEL: Record<BewildProjectType, string> = {
@@ -42,7 +44,7 @@ export function useBewildProjects() {
     supabase
       .from("projects")
       .select(
-        "id, slug, title, cover_url, project_type, neighborhood, location, area_m2, duration, sort_order, created_at"
+        "id, slug, title, cover_url, project_type, neighborhood, location, area_m2, duration, sort_order, created_at, ready_gallery_urls"
       )
       .eq("published", true)
       .order("sort_order", { ascending: true })
