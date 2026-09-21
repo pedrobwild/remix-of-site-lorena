@@ -34,6 +34,8 @@ export default function BewildPortfolioPage() {
   const { projects, loading, error } = useBewildProjects();
   const { settings } = useSiteSettings();
   const [filter, setFilter] = useState<PortfolioFilter>("all");
+  const [place, setPlace] = useState<string>(ALL_NEIGHBORHOODS);
+  const [sort, setSort] = useState<PortfolioSort>("curadoria");
 
   useSeo({
     title: "Projetos de reforma e apartamentos prontos | Bewild",
@@ -61,8 +63,17 @@ export default function BewildPortfolioPage() {
   });
 
   const withCover = useMemo(() => projects.filter((p) => !!p.cover_url), [projects]);
-  const filtered = useMemo(() => applyPortfolioFilter(withCover, filter), [withCover, filter]);
+  const places = useMemo(() => neighborhoodOptions(withCover), [withCover]);
+  const filtered = useMemo(
+    () =>
+      applyPortfolioSort(
+        applyNeighborhoodFilter(applyPortfolioFilter(withCover, filter), place),
+        sort,
+      ),
+    [withCover, filter, place, sort],
+  );
   const showChips = withCover.length >= 4;
+  const hasFilters = filter !== "all" || place !== ALL_NEIGHBORHOODS || sort !== "curadoria";
 
   const waUrl = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
     "Olá! Vim pelo portfólio e quero um diagnóstico do meu studio.",
