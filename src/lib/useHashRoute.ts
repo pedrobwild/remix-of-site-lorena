@@ -30,6 +30,7 @@ export type Route =
   | { name: "admin-faq" }
   | { name: "admin-typography" }
   | { name: "admin-leads" }
+  | { name: "admin-qualificacao" }
   | { name: "admin-mensagens" }
   | { name: "admin-diagnostico" }
   | { name: "admin-orcamentos" }

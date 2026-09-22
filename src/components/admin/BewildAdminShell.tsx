@@ -15,7 +15,14 @@ import { useAuth } from "@/lib/useAuth";
 import { navigate, routes } from "@/lib/useHashRoute";
 import "@/styles/admin-bewild.css";
 
-export type BewildAdminTab = "overview" | "leads" | "diagnostico" | "mensagens" | "projetos" | "conteudos";
+export type BewildAdminTab =
+  | "overview"
+  | "leads"
+  | "qualificacao"
+  | "diagnostico"
+  | "mensagens"
+  | "projetos"
+  | "conteudos";
 
 type Props = {
   children: ReactNode;
