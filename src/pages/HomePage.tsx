@@ -4,6 +4,8 @@ import { HOME_BWA_HTML } from "./home-bwa-body";
 import { useSeo } from "@/lib/useSeo";
 import { hydrateHomeProjects } from "@/lib/hydrateHomeProjects";
 import { trackEvent } from "@/lib/ga4";
+import { installCatalogPreview } from "@/lib/homeCatalog";
+import { installInstagramEmbeds } from "@/lib/homeInstagram";
 
 // @ts-expect-error - JS module, no types
 import { initHomeBwa } from "./home-bwa-script.js";
@@ -103,9 +105,14 @@ export default function HomePage() {
     initHomeBwa();
     // Vitrine "Projetos": troca os cards estáticos pelos mais acessados.
     void hydrateHomeProjects();
-
+    // Marcenaria (Catálogo Bwild) e depoimentos (Instagram): carregam quando
+    // as seções se aproximam da tela. Ligados aqui, no efeito que a home de
+    // fato executa — useHomeFx não é chamado por esta página.
+    const root = homeRef.current;
+    const cleanups = root ? [installCatalogPreview(root), installInstagramEmbeds(root)] : [];
 
     return () => {
+      cleanups.forEach((cleanup) => cleanup());
       unmountCss();
     };
   }, []);
