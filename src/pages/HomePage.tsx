@@ -8,9 +8,11 @@ import { trackEvent } from "@/lib/ga4";
 // @ts-expect-error - JS module, no types
 import { initHomeBwa } from "./home-bwa-script.js";
 
-const TITLE = "Reforma de apartamento em São Paulo | Bewild";
+const TITLE = "Reforma de apartamento em SP (São Paulo) | Bewild";
 const DESCRIPTION =
-  "Reforma de apartamento em São Paulo do projeto à entrega: obra, marcenaria e mobília em um contrato, preço e prazo fechados e obra em 60 dias úteis.";
+  "Reforma de apartamento em SP do projeto à entrega: obra, marcenaria e mobília em um contrato, preço e prazo fechados e obra em 60 dias úteis em São Paulo.";
+const KEYWORDS =
+  "reforma de apartamento em SP, reforma de apartamento em São Paulo, reforma completa de apartamento, empresa de reforma de apartamento SP, reforma turnkey São Paulo, custo de reforma de apartamento, Bewild";
 const THEME_COLOR = "#0B2342";
 const FONTS_HREF =
   "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&display=swap";
@@ -82,6 +84,7 @@ export default function HomePage() {
   useSeo({
     title: TITLE,
     description: DESCRIPTION,
+    keywords: KEYWORDS,
     canonicalPath: "/",
     ogType: "website",
   });

@@ -41,6 +41,8 @@ export default function BewildPortfolioPage() {
     title: "Projetos de reforma e apartamentos prontos | Bewild",
     description:
       "Conheça reformas de apartamentos entregues em São Paulo pela Bewild, com projeto, obra e marcenaria até o apartamento pronto.",
+    keywords:
+      "reforma de apartamento em SP, projetos de reforma de apartamento São Paulo, apartamentos reformados, antes e depois de reforma, Bewild",
     canonicalPath: "/portfolio",
     ogType: "website",
     ogImage: projects.find((p) => p.cover_url)?.cover_url ?? undefined,

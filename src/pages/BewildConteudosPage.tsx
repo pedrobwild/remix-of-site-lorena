@@ -57,6 +57,8 @@ export default function BewildConteudosPage() {
     title: "Conteúdos sobre reformas de apartamentos | Bewild",
     description:
       "Guias sobre reformas de apartamentos, arquitetura, obra e decisões para receber um apartamento pronto para morar ou rentabilizar.",
+    keywords:
+      "custo de reforma, quanto custa reformar um apartamento, etapas de uma reforma, prazo de reforma de apartamento, reforma de apartamento em SP, Bewild",
     canonicalPath: "/conteudos",
     ogType: "website",
     ogImage: featured?.cover_image ?? posts.find((p) => p.cover_image)?.cover_image ?? undefined,

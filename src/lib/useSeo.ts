@@ -16,6 +16,8 @@ export type SeoInput = {
   ogImage?: string;
   ogType?: "website" | "article";
   noindex?: boolean;
+  /** Palavras-chave da rota. Sobrepõe `settings.seo_keywords` (global). */
+  keywords?: string;
   jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
 };
 
@@ -259,8 +261,8 @@ function applySeo(settings: SiteSettings, seo: SeoInput) {
   document.head.appendChild(hrefDefault);
 
   // SEO extras (autor, keywords, geo)
-  if (settings.seo_keywords)
-    setMeta('meta[name="keywords"]', { name: "keywords", content: settings.seo_keywords });
+  const keywords = seo.keywords || settings.seo_keywords;
+  if (keywords) setMeta('meta[name="keywords"]', { name: "keywords", content: keywords });
   if (settings.seo_author)
     setMeta('meta[name="author"]', { name: "author", content: settings.seo_author });
   if (settings.seo_geo_region)
@@ -359,13 +361,13 @@ export function useSeo(seo: SeoInput) {
   // `JSON.stringify(seo)` no corpo do hook. Mais honesto sobre o que
   // dispara o re-apply, e barra a regressão silenciosa do "ESLint não
   // sabia que dependíamos de X porque tudo passava por uma string única".
-  const { title, description, canonicalPath, ogImage, ogType, noindex, jsonLd } = seo;
+  const { title, description, canonicalPath, ogImage, ogType, noindex, jsonLd, keywords } = seo;
   const jsonLdKey = useMemo(() => (jsonLd ? JSON.stringify(jsonLd) : ""), [jsonLd]);
 
   useEffect(() => {
     setupTrackersConsentGate();
     let cancelled = false;
-    const input = { title, description, canonicalPath, ogImage, ogType, noindex, jsonLd };
+    const input = { title, description, canonicalPath, ogImage, ogType, noindex, jsonLd, keywords };
     // 1) Síncrono: title/canonical/robots da rota entram no <head> AGORA, com
     //    as settings em cache (ou defaults). Sem isso, enquanto `site_settings`
     //    não respondia, toda rota ficava com o canonical da home e a 404 sem
@@ -392,7 +394,7 @@ export function useSeo(seo: SeoInput) {
     // jsonLd entra na dep via `jsonLdKey` (hash estável da serialização);
     // a função `applySeo` é importada estaticamente, sem captura instável.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, description, canonicalPath, ogImage, ogType, noindex, jsonLdKey]);
+  }, [title, description, canonicalPath, ogImage, ogType, noindex, jsonLdKey, keywords]);
 }
 
 /**
