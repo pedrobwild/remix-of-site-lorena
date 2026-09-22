@@ -52,7 +52,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/o") return { name: "lp-obra" };
   if (path === "/p") return { name: "lp-panfleto" };
   if (path === "/diagnostico") return { name: "diagnostico" };
-  // Alias de SEO: /orcamento redireciona (no router) para /diagnostico.
+  // Página real de pedido de orçamento (entrega no mesmo canal do /contato).
   if (path === "/orcamento") return { name: "orcamento" };
   if (path === "/faq") return { name: "faq" };
   if (path === "/autorizacao-condominio") return { name: "autorizacao-condominio" };

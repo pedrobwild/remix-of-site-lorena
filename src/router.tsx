@@ -15,6 +15,7 @@ import DiagnosticoPage from "./pages/DiagnosticoPage";
 import FaqPage from "./pages/FaqPage";
 import AutorizacaoCondominioPage from "./pages/AutorizacaoCondominioPage";
 import ContatoPage from "./pages/ContatoPage";
+import OrcamentoPage from "./pages/OrcamentoPage";
 import EscopoPage from "./pages/EscopoPage";
 import ComoFuncionaPage from "./pages/ComoFuncionaPage";
 import OndeAtuamosPage from "./pages/OndeAtuamosPage";
@@ -24,7 +25,7 @@ import LpPanfletoPage from "./pages/LpPanfletoPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import MaintenancePage from "./pages/MaintenancePage";
 import { MAINTENANCE_MODE } from "./config/site";
-import { lazy, Suspense, useEffect, type ReactNode } from "react";
+import { lazy, Suspense, type ReactNode } from "react";
 
 // Admin em chunks separados: o visitante público não baixa recharts, dnd-kit
 // e todo o painel (o bundle único tinha ~1,45 MB / 414 kB gzip).
@@ -52,18 +53,6 @@ function AdminChunk({ children }: { children: ReactNode }) {
   return <Suspense fallback={null}>{children}</Suspense>;
 }
 
-/**
- * /orcamento é um alias de SEO de /diagnostico: redireciona preservando
- * query (?objetivo=...) e hash. Fora do sitemap — URL redirecionada não
- * deve ser indexada; quem ranqueia para "orçamento" é /diagnostico.
- */
-function OrcamentoRedirect() {
-  useEffect(() => {
-    window.location.replace(`/diagnostico${window.location.search}${window.location.hash}`);
-  }, []);
-  return null;
-}
-
 export function renderRoute(route: Route) {
   // Gate de manutenção: esconde o site público principal (inclusive 404)
   // enquanto a flag está ligada. Rotas /admin/* continuam normais, e as
@@ -80,7 +69,7 @@ export function renderRoute(route: Route) {
   if (route.name === "bewild-post") return <BewildPostPage slug={route.slug} />;
 
   if (route.name === "diagnostico") return <DiagnosticoPage />;
-  if (route.name === "orcamento") return <OrcamentoRedirect />;
+  if (route.name === "orcamento") return <OrcamentoPage />;
   if (route.name === "faq") return <FaqPage />;
   if (route.name === "autorizacao-condominio") return <AutorizacaoCondominioPage />;
   if (route.name === "contato") return <ContatoPage />;
