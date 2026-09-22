@@ -185,11 +185,11 @@ export default function BewildConteudosPage() {
         <section className="ct-cta">
           <div className="gridbg" aria-hidden="true" />
           <div className="ct-cta__inner">
-            <span className="ct-eyb center">Diagnóstico gratuito · sem compromisso</span>
+            <span className="ct-eyb center">Orçamento · sem custo, sem compromisso</span>
             <h2>Da leitura à decisão: <span className="accent">avalie o seu studio.</span></h2>
             <p>Manda os dados do seu imóvel e a gente devolve uma leitura de potencial, escopo e próximos passos.</p>
             <div className="ct-cta__act">
-              <a href="/diagnostico" className="ct-btn cyan">Solicitar Orçamento <span className="ar"><IconArrow /></span></a>
+              <a href="/diagnostico" className="ct-btn cyan">Solicitar orçamento <span className="ar"><IconArrow /></span></a>
               <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="ct-btn ghost">Falar no WhatsApp</a>
             </div>
             <div className="ct-cta__rea">+160 reformas entregues · São Paulo capital</div>

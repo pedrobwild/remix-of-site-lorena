@@ -204,7 +204,7 @@ export default function LpPanfletoPage() {
           </p>
           <div className="cta">
             <a className="btn btn-cyan" href="#diagnostico" onClick={scrollToForm}>
-              <span>Solicitar Orçamento</span><span className="ar">→</span>
+              <span>Solicitar orçamento</span><span className="ar">→</span>
             </a>
             <button className="btn btn-ghost" type="button" onClick={openWhatsRaw}>
               <span>Falar no WhatsApp</span>
@@ -304,7 +304,7 @@ export default function LpPanfletoPage() {
               </div>
 
               <button type="submit" className="btn btn-cyan submit" disabled={!canSubmit || submitting}>
-                <span>{submitting ? "Enviando…" : "Solicitar Orçamento"}</span><span className="ar">→</span>
+                <span>{submitting ? "Enviando…" : "Solicitar orçamento"}</span><span className="ar">→</span>
               </button>
               <p className="guarantee">Sem compromisso · a gente só liga se você pedir</p>
 
@@ -372,7 +372,7 @@ export default function LpPanfletoPage() {
 
         <div className="lp-quem-cta">
           <a className="btn btn-cyan" href="#diagnostico" onClick={scrollToForm}>
-            <span>Solicitar Orçamento</span><span className="ar">→</span>
+            <span>Solicitar orçamento</span><span className="ar">→</span>
           </a>
         </div>
       </section>
@@ -394,7 +394,7 @@ export default function LpPanfletoPage() {
           tabIndex={showSticky ? 0 : -1}
           onClick={scrollToForm}
         >
-          <span>Solicitar Orçamento</span><span className="ar">→</span>
+          <span>Solicitar orçamento</span><span className="ar">→</span>
         </a>
       </div>
     </div>

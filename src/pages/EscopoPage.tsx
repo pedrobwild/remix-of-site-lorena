@@ -272,7 +272,7 @@ export default function EscopoPage() {
 
                   <div className="bwa-scope-actions">
                     <a className="bwa-button" href="/diagnostico" data-cta="escopo-diagnostico">
-                      Solicitar Orçamento
+                      Solicitar orçamento
                     </a>
                     <a
                       className="bwa-button bwa-button-ghost"

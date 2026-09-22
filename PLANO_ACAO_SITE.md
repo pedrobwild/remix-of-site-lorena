@@ -100,6 +100,44 @@ Origem: documento `Plano_SEO__IA.docx` (21/09/2026), aplicado nesta rodada. O qu
 
 **Uma correção ao plano:** o `FAQPage` do post já era emitido a partir do campo `faq` (não era só o `/faq`). O que faltava era o editor de FAQ no admin, o autor como `Person`, o `dateModified` real e o título de fallback por slug — tudo nesta rodada.
 
+## Ações — plano "Site Bewild: copy e estrutura vs. Decorafit e Obrafy" (22/09/2026)
+
+Origem: documento de 22/09/2026 (proposta para aprovação do Pedro; copy travada pelo CEO). Nesta rodada entrou o que é objetivo e reversível; o que muda promessa comercial ou cria página nova ficou como decisão. **Já estava aplicado pelo Lovable antes desta rodada (commits do bot em 22/09):** o hero recomendado (eyebrow, H1 "Seu apartamento pronto para morar ou para render…", subtítulo), o título travado da seção 01 e a correção dos erros de texto. A página `/escopo` ("Escopo com IA") criada na mesma madrugada faz o papel do passo leve que o documento chama de "Simular".
+
+| ID | Prioridade | Ação concreta | Responsável/ambiente | Dependências | Esforço estimado | Critério de aceite | Verificação | Prazo proposto | Status |
+|---|---|---|---|---|---|---|---|---|---|
+| A-53 | P0 | Unificar o CTA em "Solicitar orçamento" (17 arquivos) e reescrever `/diagnostico` como pedido de orçamento: rótulo "Orçamento · sem custo, sem compromisso", H1 "Conte o que você tem. A Bewild devolve escopo, investimento e prazo.", "ficha" → "dados", "Não precisa ter as chaves nem a planta.", rótulos de rodapé/nav "Diagnóstico" → "Orçamento", mensagens de WhatsApp; "Locação tradicional" exibido como "Locação longa" (valor enviado ao CRM inalterado) | Código | — | 2 h | Um nome só em todo o site; URL `/diagnostico` mantida | grep "Solicitar Orçamento" = 0 | 22/09 | **Feito 22/09** |
+| A-54 | P0 | Formulário de orçamento: metragem obrigatória ("aproximada serve"), chips "Você mora em São Paulo capital?" (Sim/Não, com a lista de inclusos quando "Não") e "Como conheceu a Bewild?" (Indicação · Instagram · Google · Placa de obra · Corretor ou imobiliária · Outro); colunas `leads.lead_source` e `leads.lives_in_sp`; `notify-lead` grava, mostra no Slack e envia ao CRM (`extra.lead_source`, `extra.lives_in_sp`); admin de leads exibe os dois | Código + banco | — | 3 h | Lead novo chega com origem e cidade no banco, no Slack e no CRM | `select lead_source, lives_in_sp from leads order by created_at desc limit 5` | 22/09 | **Feito 22/09** (colunas aplicadas; a edge function precisa do deploy que acompanha a publicação) |
+| A-55 | P0 | Título e description da home (7.10) em `index.html`, `HomePage.tsx` e `site_settings`; descrição do rodapé (7.8); assinatura "Seu desejo é uma obra." sem artigo; texto do CTA final da home sem a promessa de prazo de resposta | Código + banco | — | 30 min | `<title>` = "Reforma completa de studios e apartamentos compactos em São Paulo \| Bewild" | view-source | 22/09 | **Feito 22/09** |
+| A-56 | P1 | FAQ: vocabulário "orçamento" no item de preço; 3 perguntas novas com copy já existente no site (cliente de outra cidade, chaves ainda não recebidas, liberação do condomínio); pergunta do cliente remoto também em `/diagnostico` | Banco + código | — | 1 h | 10 itens em `/faq` e na home | `/faq` | 22/09 | **Feito 22/09** — as demais 8 perguntas do FAQ proposto dependem das decisões D-1, D-2, D-5 e D-6 |
+| A-57 | P1 | Bloco "Para quem" (investir / morar) no topo da home e páginas `/para-investir` e `/para-morar` com a copy da seção 7.2 | Pedro (copy) + Código | 2 cases por público; depoimento real de moradia | 1–2 semanas | Duas páginas no ar, linkadas do hero e da nav | páginas | 2–4 semanas | Pendente |
+| A-58 | P1 | Bloco "Como garantimos" (promessa → como garantimos → como provamos) | Pedro (D-1) + CRM (aditivos e prazo mediano medidos) | D-1 | 1 semana | métricas com origem declarada | home | 2–4 semanas | Pendente |
+| A-59 | P1 | Bloco e página "Quanto custa" com faixa por metragem e condições de pagamento | Pedro (D-2, D-5) | D-2, D-5 | 1–2 semanas | faixa publicada com data e amostra | `/quanto-custa` | 2–4 semanas | Pendente |
+| A-60 | P1 | 20–30 cases preenchidos com o template da seção 9; renomear `/portfolio` → `/projetos` com 301 (sitemap, parity, Wix); fichas sem texto fora do sitemap | Mkt (conteúdo) + Código | fotos de obra pronta; autorização de clientes | 3–4 semanas | 20 cases com m², bairro, prazo real e resultado | `/projetos` | trimestre | Pendente |
+| A-61 | P1 | Nova navegação (Como funciona · Para investir · Para morar · Projetos · Quanto custa · Sobre + 2 CTAs) e barra mobile com WhatsApp + CTA leve | Código | A-57, A-59, A-64, A-65 existirem | 2 dias | 6 itens no desktop | nav | após as páginas | Pendente |
+| A-62 | P1 | Prova social: frase real da Vivian, 4–6 depoimentos com nome/cidade/objetivo, nota do Google se ≥ 4,5 | Mkt | transcrição dos vídeos; autorização; D-4 | 1–2 semanas | bloco 07 da home com depoimentos reais | home | 2–4 semanas | Pendente |
+| A-63 | P2 | Página "Sobre" (fundadores, responsáveis técnicos, time e marcenaria próprios, escritório) | Mkt + Código | fotos da equipe | 1 semana | `/sobre` no ar | página | trimestre | Pendente |
+| A-64 | P2 | Página "Como funciona" (7 etapas com tempos, checkpoints, política de aditivos, pós-obra); absorve os cartões "Arquitetura" e "Engenharia & gestão" | Pedro (copy) + Código | captura real do Workflow | 1 semana | `/como-funciona` no ar | página | trimestre | Pendente |
+| A-65 | P2 | Página "Parceiros" (corretores e incorporadoras) com formulário próprio | Pedro (oferta) + Código | oferta definida | 3 dias | `/parceiros` no ar | página | trimestre | Pendente |
+| A-66 | P2 | Reativar a tabela "Compare" (10 linhas) na home | Código | D-1 para a linha "multa" | 1 dia | tabela na home | home | 2–4 semanas | Pendente |
+| A-67 | P2 | Mover "A história" (Marina) para `/marcenaria` ou artigo em `/conteudos`; galeria "Atmosferas" some ou vira fundo | Pedro (decisão) + Código | — | 1 dia | bloco 02 da home = "Para quem" | home | 2–4 semanas | Pendente |
+| A-68 | P2 | `/contato` com formulário curto e horário; LinkedIn real no rodapé (D-7) | Código | D-7 | 1 dia | formulário grava em `leads` | `/contato` | 2–4 semanas | Pendente |
+
+**Decisões que só o Pedro pode tomar (seção 12 do documento):**
+
+| ID | Decisão | Por que trava |
+|---|---|---|
+| D-1 | Multa por dia de atraso: a cláusula de ago/2025 e fev/2026 vale no contrato vigente? | Sem ela, "Como garantimos", a tabela Compare e a pergunta 5 do FAQ não podem citar multa |
+| D-2 | Publicar faixa de investimento por metragem (R$ 53–75 mil na maioria; mediana R$ 64 mil para 25 m²)? Com que granularidade e data? | Bloco/página "Quanto custa" e pergunta 1 do FAQ |
+| D-3 | Garantia da marcenaria: o site diz 5 anos (obra e marcenaria); o FAQ item 3 no banco diz "mais de 10 anos". Escolher um número | Inconsistência **no ar hoje** entre home e `/faq` |
+| D-4 | Nota do Google: verificar; exibir só se ≥ 4,5 | Faixa de prova e bloco de depoimentos |
+| D-5 | Condições de pagamento (entrada, parcelas na obra, última após vistoria; cartão em X vezes) | Pergunta 12 do FAQ e página "Quanto custa" |
+| D-6 | Política do 3D antes de fechar (3D isolado pago e abatido no contrato?) | Pergunta 4 do FAQ |
+| D-7 | URL real do LinkedIn da empresa | Rodapé aponta para `linkedin.com` |
+| D-8 | Frase real da Vivian e par real do comparador 3D × entregue | Bloco de prova e projetos |
+| D-9 | Usar "quase metade dos clientes não mora em São Paulo" (30 de 62 na base de 22/09)? | Bloco "Reforma à distância" e hero |
+| D-10 | Selo do Reclame Aqui na home enquanto a nota for 5,4; responder a reclamação pendente | Credibilidade da promessa de prazo |
+
 ## Acompanhamento
 
 | Marco | O que olhar | Fonte | Cuidado |

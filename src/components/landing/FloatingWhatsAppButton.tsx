@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, X } from "lucide-react";
 
-/** Card flutuante "Quer um diagnóstico do seu studio?" — substitui o widget antigo. */
+/** Card flutuante "Quer um orçamento para o seu studio?" — substitui o widget antigo. */
 export default function FloatingWhatsAppButton() {
   const [closed, setClosed] = useState(false);
   const [show, setShow] = useState(false);
@@ -32,7 +32,7 @@ export default function FloatingWhatsAppButton() {
         <X className="h-4 w-4" />
       </button>
       <p className="pr-6 font-display text-base font-semibold leading-snug">
-        Quer um diagnóstico do seu studio?
+        Quer um orçamento para o seu studio?
       </p>
       <a
         href="/diagnostico"

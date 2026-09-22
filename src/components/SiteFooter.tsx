@@ -43,7 +43,7 @@ export default function SiteFooter(_props: Record<string, unknown>) {
               <a href="/portfolio">Portfólio</a>
               <a href="/conteudos">Conteúdos</a>
               <a href="/faq">FAQ</a>
-              <a href="/diagnostico">Diagnóstico</a>
+              <a href="/diagnostico">Orçamento</a>
             </nav>
           </div>
           <div className="bwa-footer-column">

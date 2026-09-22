@@ -261,7 +261,7 @@ export default function Header() {
             href="/diagnostico"
             className="group inline-flex items-center justify-center gap-2 rounded-full bg-bewild-blue px-[1.7rem] py-2.5 text-[0.95rem] font-semibold text-white shadow-[0_14px_34px_-14px_rgba(0,76,127,0.55)] transition-all hover:bg-[#005C99] hover:-translate-y-0.5"
           >
-            Solicitar Orçamento
+            Solicitar orçamento
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </a>
         </div>
@@ -304,7 +304,7 @@ export default function Header() {
                 onClick={() => setOpen(false)}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-bewild-blue px-5 py-3 text-sm font-semibold text-white"
               >
-                Solicitar Orçamento <ArrowRight className="h-4 w-4" />
+                Solicitar orçamento <ArrowRight className="h-4 w-4" />
               </a>
               <a
                 href={whatsappHref()}

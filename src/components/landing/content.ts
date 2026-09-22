@@ -44,7 +44,7 @@ import {
 /** Contato — editar com os dados oficiais antes de publicar. */
 export const CONTACT = {
   whatsappNumber: "5511911906183",
-  whatsappText: "Olá, quero um diagnóstico para meu studio",
+  whatsappText: "Olá, quero um orçamento para o meu studio",
   email: "contato@bewild.com.br",
   instagram: "https://instagram.com/bewild.oficial",
   linkedin: "https://www.linkedin.com/",

@@ -351,11 +351,11 @@ export default function BewildProjectPage({ slug }: Props) {
       <section className="pd-cta">
         <div className="gridbg" aria-hidden="true" />
         <div className="pd-cta__inner">
-          <span className="pd-eyb">Diagnóstico gratuito · sem compromisso</span>
+          <span className="pd-eyb">Orçamento · sem custo, sem compromisso</span>
           <h2>Quer um studio assim <span className="accent">rendendo pra você?</span></h2>
           <p>Manda os dados do seu imóvel e a gente devolve uma leitura de potencial, escopo e próximos passos.</p>
           <div className="pd-cta__act">
-            <a href="/diagnostico" className="pd-btn cyan">Solicitar Orçamento <span className="ar"><IconArrow /></span></a>
+            <a href="/diagnostico" className="pd-btn cyan">Solicitar orçamento <span className="ar"><IconArrow /></span></a>
             <a href={whatsappHref()} className="pd-btn ghost" target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a>
           </div>
           <div className="pd-cta__rea">+160 reformas entregues · +200 projetos</div>
