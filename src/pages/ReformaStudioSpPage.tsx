@@ -149,7 +149,7 @@ export default function ReformaStudioSpPage() {
               </h1>
               <p className="bwa-servico-lead">
                 A Bewild é especialista em reforma completa de studios e
-                apartamentos compactos em São Paulo, para morar ou para locação
+                apartamentos em São Paulo, para morar ou para locação
                 (short stay e longa duração). Projeto, obra, marcenaria sob
                 medida e mobília em um único contrato, com preço fechado, prazo
                 em contrato e 5 anos de garantia. Mais de 160 reformas
