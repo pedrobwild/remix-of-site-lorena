@@ -394,7 +394,7 @@ export function useSeo(seo: SeoInput) {
     // jsonLd entra na dep via `jsonLdKey` (hash estável da serialização);
     // a função `applySeo` é importada estaticamente, sem captura instável.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, description, canonicalPath, ogImage, ogType, noindex, jsonLdKey]);
+  }, [title, description, canonicalPath, ogImage, ogType, noindex, jsonLdKey, keywords]);
 }
 
 /**
