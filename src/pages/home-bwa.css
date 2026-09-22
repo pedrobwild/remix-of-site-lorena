@@ -4298,3 +4298,141 @@
   .bwa-audience-card{grid-template-rows:auto auto auto minmax(0,1fr) auto auto}
   .bwa-audience-card .bwa-button{margin-top:auto;justify-self:start}
 }
+
+/* ---------- Disciplinas: Arquitetura · Engenharia e gestão (seção 02) ---------- */
+.bwa-disciplines {
+  container-type: inline-size;
+  padding-bottom: clamp(56px, 7vw, 104px);
+}
+
+.bwa-disciplines-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(20px, 2.4vw, 32px);
+}
+
+@container (min-width: 760px) {
+  .bwa-disciplines-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.bwa-discipline {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(22px, 2.4vw, 32px);
+  padding: clamp(26px, 3vw, 44px);
+  background: var(--bwa-navy);
+  border: 1px solid var(--bwa-white-line);
+  transition: border-color .4s var(--bwa-ease);
+}
+
+.bwa-discipline:hover,
+.bwa-discipline:focus-within { border-color: rgba(255, 255, 255, .46); }
+
+.bwa-discipline-head {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: clamp(14px, 1.4vw, 20px);
+  align-items: start;
+}
+
+.bwa-discipline-badge {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  color: var(--bwa-blue-mist);
+  border: 1px solid var(--bwa-white-line);
+  transition: color .35s ease, border-color .35s ease;
+}
+
+.bwa-discipline-badge svg { width: 30px; height: 30px; }
+
+.bwa-discipline:hover .bwa-discipline-badge {
+  color: var(--bwa-white);
+  border-color: rgba(255, 255, 255, .46);
+}
+
+.bwa-discipline-heading { display: grid; gap: 8px; }
+
+.bwa-discipline-kicker {
+  margin: 0;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .55);
+}
+
+.bwa-discipline h3 {
+  margin: 0;
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(24px, 2.4vw, 34px);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -.03em;
+  color: var(--bwa-white);
+}
+
+.bwa-discipline-sub {
+  margin: 0;
+  max-width: 44ch;
+  font-size: clamp(15px, 1.05vw, 17px);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, .72);
+}
+
+.bwa-discipline-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid rgba(255, 255, 255, .14);
+}
+
+.bwa-discipline-list li {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 14px;
+  padding-block: clamp(14px, 1.6vw, 18px);
+  border-bottom: 1px solid rgba(255, 255, 255, .14);
+}
+
+.bwa-discipline-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+
+.bwa-discipline-list b {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.9;
+  letter-spacing: .08em;
+  color: rgba(255, 255, 255, .55);
+}
+
+.bwa-discipline-list p {
+  margin: 0;
+  font-size: clamp(15px, 1.05vw, 17px);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, .82);
+}
+
+.bwa-discipline-list strong { color: var(--bwa-white); font-weight: 600; }
+
+.bwa-certainty-kicker {
+  display: grid;
+  gap: 12px;
+  padding-bottom: clamp(24px, 3vw, 36px);
+}
+
+.bwa-certainty-kicker p:last-child {
+  margin: 0;
+  max-width: 62ch;
+  font-size: clamp(15px, 1.1vw, 18px);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, .78);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bwa-discipline,
+  .bwa-discipline-badge { transition: none; }
+}
