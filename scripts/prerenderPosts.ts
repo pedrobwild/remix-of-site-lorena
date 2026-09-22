@@ -12,6 +12,7 @@
 import { mkdirSync, readFileSync, writeFileSync, existsSync, rmSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import type { Plugin } from "vite";
+import { marked } from "marked";
 import { keywordsForPost } from "../src/lib/postKeywords";
 
 const BASE_URL = "https://bewild.com.br";
