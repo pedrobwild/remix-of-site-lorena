@@ -3623,7 +3623,7 @@
 
     .bwa-wf2-head {
       display: grid;
-      grid-template-columns: minmax(240px, .55fr) minmax(0, 1.45fr);
+      grid-template-columns: 1fr;
       gap: clamp(48px, 8vw, 140px);
       align-items: start;
       margin-bottom: clamp(96px, 12vw, 180px);
