@@ -112,6 +112,8 @@ export async function uploadImageGeneric(
     avif,
     blurDataUrl: processed.blurDataUrl,
     path: basePath,
+    width: processed.width,
+    height: processed.height,
   };
 }
 
