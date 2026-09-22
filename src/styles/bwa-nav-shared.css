@@ -143,6 +143,7 @@
 .bwa-nav .bwa-button {
       min-height: 42px;
       padding: 11px 16px;
+      white-space: nowrap;
       color: var(--bwa-white);
       background: var(--bwa-navy);
       border-color: var(--bwa-navy);
