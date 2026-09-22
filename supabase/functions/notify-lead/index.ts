@@ -173,27 +173,65 @@ async function notifySlack(lead: Lead): Promise<Outcome> {
   }
 }
 
+/**
+ * LEAD-07 — limites de tamanho por campo.
+ *
+ * Esta função grava com a SERVICE ROLE KEY, então nenhuma policy de RLS
+ * limita o que entra: até a auditoria de 22/09/2026 qualquer POST anônimo
+ * podia inserir strings de tamanho arbitrário em `leads`. Os tetos abaixo
+ * são generosos para uso legítimo (o formulário já limita `nome` a 120) e
+ * cortam o abuso. Truncar em vez de rejeitar: um lead real com um campo
+ * grande demais precisa chegar ao time comercial mesmo assim.
+ */
+const FIELD_LIMITS = {
+  name: 120,
+  whatsapp: 20,
+  email: 254,
+  location: 200,
+  objetivo: 80,
+  chaves: 80,
+  planta: 80,
+  message: 4000,
+  utm_source: 200,
+  utm_medium: 200,
+  utm_campaign: 200,
+  referrer: 500,
+  landing_path: 500,
+  user_agent: 500,
+} as const;
+
+/** Teto do corpo cru, antes de qualquer parse. */
+const MAX_BODY_BYTES = 64 * 1024;
+
+function cut(value: string | null | undefined, max: number): string | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return trimmed ? trimmed.slice(0, max) : null;
+}
+
 function buildLeadInsertPayload(lead: Lead) {
   return {
-    name: lead.name?.trim() || "Lead sem nome",
-    whatsapp: lead.whatsapp ? String(lead.whatsapp).replace(/\D/g, "") : "",
-    email: lead.email?.trim() || null,
-    location: lead.location?.trim() || null,
+    name: cut(lead.name, FIELD_LIMITS.name) || "Lead sem nome",
+    whatsapp: lead.whatsapp
+      ? String(lead.whatsapp).replace(/\D/g, "").slice(0, FIELD_LIMITS.whatsapp)
+      : "",
+    email: cut(lead.email, FIELD_LIMITS.email),
+    location: cut(lead.location, FIELD_LIMITS.location),
     area_m2:
       typeof lead.area_m2 === "number" && Number.isFinite(lead.area_m2)
-        ? Math.trunc(lead.area_m2)
+        ? Math.min(Math.max(Math.trunc(lead.area_m2), 0), 100000)
         : null,
-    objetivo: lead.objetivo ?? null,
-    chaves: lead.chaves ?? null,
-    planta: lead.planta ?? null,
-    message: lead.message?.trim() || null,
+    objetivo: cut(lead.objetivo, FIELD_LIMITS.objetivo),
+    chaves: cut(lead.chaves, FIELD_LIMITS.chaves),
+    planta: cut(lead.planta, FIELD_LIMITS.planta),
+    message: cut(lead.message, FIELD_LIMITS.message),
     status: "novo",
-    utm_source: lead.utm_source ?? null,
-    utm_medium: lead.utm_medium ?? null,
-    utm_campaign: lead.utm_campaign ?? null,
-    referrer: lead.referrer ?? null,
-    landing_path: lead.landing_path ?? null,
-    user_agent: lead.user_agent ?? null,
+    utm_source: cut(lead.utm_source, FIELD_LIMITS.utm_source),
+    utm_medium: cut(lead.utm_medium, FIELD_LIMITS.utm_medium),
+    utm_campaign: cut(lead.utm_campaign, FIELD_LIMITS.utm_campaign),
+    referrer: cut(lead.referrer, FIELD_LIMITS.referrer),
+    landing_path: cut(lead.landing_path, FIELD_LIMITS.landing_path),
+    user_agent: cut(lead.user_agent, FIELD_LIMITS.user_agent),
   };
 }
 
@@ -306,9 +344,29 @@ Deno.serve(async (req) => {
     });
   }
 
+  // Corpo grande demais nem chega a ser parseado (LEAD-07).
+  const declared = Number(req.headers.get("content-length") ?? "0");
+  if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) {
+    return new Response(JSON.stringify({ error: "payload_too_large" }), {
+      status: 413,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   let lead: Lead;
   try {
-    lead = (await req.json()) as Lead;
+    const raw = await req.text();
+    if (raw.length > MAX_BODY_BYTES) {
+      return new Response(JSON.stringify({ error: "payload_too_large" }), {
+        status: 413,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      throw new Error("not_an_object");
+    }
+    lead = parsed as Lead;
   } catch {
     return new Response(JSON.stringify({ error: "invalid_json" }), {
       status: 400,
