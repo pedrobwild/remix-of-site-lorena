@@ -27,7 +27,7 @@ export type CatalogRoomSlug = (typeof CATALOG_ROOMS)[number]["slug"];
 
 export type CatalogItem = { id: string; image_url: string; caption: string | null };
 
-const TIMEOUT_MS = 6000;
+const TIMEOUT_MS = 15000;
 const STORAGE_OBJECT_PATH = "/storage/v1/object/public/";
 const STORAGE_RENDER_PATH = "/storage/v1/render/image/public/";
 
@@ -76,8 +76,21 @@ async function getJson(path: string, signal: AbortSignal): Promise<unknown> {
   return res.json();
 }
 
-/** Até `limit` itens do cômodo, na ordem do catálogo. Lança em erro de rede/HTTP. */
+/**
+ * Até `limit` itens do cômodo, com uma nova tentativa automática quando a
+ * primeira falha (rede instável / cold start do catálogo).
+ */
 export async function fetchCatalogItems(slug: string, limit = 6): Promise<CatalogItem[]> {
+  try {
+    return await fetchCatalogItemsOnce(slug, limit);
+  } catch {
+    await new Promise((r) => setTimeout(r, 900));
+    return fetchCatalogItemsOnce(slug, limit);
+  }
+}
+
+/** Uma tentativa. Lança em erro de rede/HTTP. */
+async function fetchCatalogItemsOnce(slug: string, limit = 6): Promise<CatalogItem[]> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
   const order = "order=sort_order.asc.nullslast,created_at.asc";
