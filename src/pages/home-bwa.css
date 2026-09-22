@@ -2550,7 +2550,7 @@
       max-width: 1150px;
       margin: 0;
       font-family: "Manrope", sans-serif;
-      font-size: clamp(45px, 6vw, 101px);
+      font-size: clamp(28px, 3.4vw, 56px);
       font-weight: 400;
       line-height: .98;
       letter-spacing: -.033em;
