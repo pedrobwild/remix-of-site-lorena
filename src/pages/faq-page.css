@@ -38,6 +38,21 @@
   font: inherit;
 }
 
+/* Link interno dentro da resposta do guia (ex.: → /autorizacao-condominio) */
+.bwa-faqpage-guia-link {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--bwa-navy-2);
+  font-size: 15px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.bwa-faqpage-guia-link:focus-visible {
+  outline: 2px solid var(--bwa-navy-2);
+  outline-offset: 4px;
+}
+
 /* Na home o acordeão abre via JS inline; aqui a classe .bwa-open basta */
 .bwa-faqpage .bwa-faq-item.bwa-open .bwa-faq-answer {
   max-height: 600px;
