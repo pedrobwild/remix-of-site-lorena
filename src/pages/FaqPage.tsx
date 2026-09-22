@@ -86,6 +86,7 @@ const GUIA_ITEMS: { q: string; a: string }[] = [
 export default function FaqPage() {
   const { settings } = useSiteSettings();
   const [aberto, setAberto] = useState(0);
+  const [guiaAberto, setGuiaAberto] = useState(-1);
   const [pergunta, setPergunta] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [erroIa, setErroIa] = useState<string | null>(null);
@@ -130,9 +131,9 @@ export default function FaqPage() {
 
 
   useSeo({
-    title: "Reforma de apartamento ou casa em SP: dúvidas | Bewild",
+    title: "Como fazer uma reforma de apartamento em SP: guia e dúvidas | Bewild",
     description:
-      "Perguntas frequentes sobre reforma de apartamento em São Paulo: prazo, preço fechado, garantia e onde a Bewild atua (obras de apartamentos, não casas).",
+      "Como fazer uma reforma de apartamento passo a passo: por onde começar, quanto custa em São Paulo, prazo, autorização do condomínio e o que entra no contrato fechado da Bewild.",
     canonicalPath: "/faq",
     ogType: "website",
     jsonLd: settings
@@ -141,7 +142,7 @@ export default function FaqPage() {
             { name: "Início", path: "/" },
             { name: "Perguntas frequentes", path: "/faq" },
           ]),
-          faqJsonLd(FAQ_ITEMS.map((i) => ({ q: i.q, a: i.a }))),
+          faqJsonLd([...FAQ_ITEMS, ...GUIA_ITEMS].map((i) => ({ q: i.q, a: i.a }))),
         ]
       : undefined,
   });
@@ -197,6 +198,50 @@ export default function FaqPage() {
                       itemType="https://schema.org/Answer"
                     >
                       <p itemProp="text">{item.a}</p>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section className="bwa-faqpage-intro bwa-faqpage-guia" aria-labelledby="faq-guia-title">
+          <div className="bwa-shell bwa-faq-head bwa-faqpage-head">
+            <p className="bwa-label">Como fazer uma reforma</p>
+            <div>
+              <h2 className="bwa-title" id="faq-guia-title">
+                Reforma de apartamento, <em>do começo ao fim.</em>
+              </h2>
+              <p className="bwa-faqpage-lead">
+                O passo a passo de quem vai reformar um apartamento em São
+                Paulo: por onde começar, quanto custa, quanto demora e o que o
+                condomínio exige.
+              </p>
+            </div>
+          </div>
+
+          <div className="bwa-shell">
+            <div className="bwa-faq-list">
+              {GUIA_ITEMS.map((item, i) => {
+                const open = guiaAberto === i;
+                return (
+                  <article key={item.q} className={`bwa-faq-item${open ? " bwa-open" : ""}`}>
+                    <h3 className="bwa-faqpage-q">
+                      <button
+                        className="bwa-faq-question"
+                        type="button"
+                        aria-expanded={open}
+                        aria-controls={`faq-guia-resposta-${i}`}
+                        onClick={() => setGuiaAberto(open ? -1 : i)}
+                      >
+                        <span className="bwa-faq-num">{String(i + 1).padStart(2, "0")}</span>
+                        <strong>{item.q}</strong>
+                        <span className="bwa-faq-icon" aria-hidden="true" />
+                      </button>
+                    </h3>
+                    <div id={`faq-guia-resposta-${i}`} className="bwa-faq-answer">
+                      <p>{item.a}</p>
                     </div>
                   </article>
                 );
