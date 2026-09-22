@@ -1,9 +1,24 @@
+import { useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
+import { supabase } from "@/integrations/supabase/client";
+import { isLeadDelivered, timeoutAfter } from "@/lib/leadDelivery";
+import { trackEvent } from "@/lib/ga4";
 import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./contato.css";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const digits = (v: string) => v.replace(/\D+/g, "");
+
+function maskPhone(v: string) {
+  const d = digits(v).slice(0, 11);
+  if (d.length <= 2) return d;
+  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+}
 
 const ADDRESS = "Rua Pitú, 72, Sala 115, Vila Olímpia, São Paulo-SP";
 const MAP_QUERY = encodeURIComponent(ADDRESS);
