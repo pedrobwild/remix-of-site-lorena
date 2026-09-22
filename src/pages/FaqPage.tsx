@@ -1,10 +1,19 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
+import { supabase } from "@/integrations/supabase/client";
+import { trackEvent } from "@/lib/ga4";
 import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./faq-page.css";
+
+type RespostaIa = {
+  resposta: string;
+  pontos: string[];
+  proximo_passo: string;
+  fora_do_escopo: boolean;
+};
 
 /* ============================================================
  * FaqPage — /faq
@@ -43,6 +52,48 @@ const FAQ_ITEMS: { q: string; a: string }[] = [
 export default function FaqPage() {
   const { settings } = useSiteSettings();
   const [aberto, setAberto] = useState(0);
+  const [pergunta, setPergunta] = useState("");
+  const [carregando, setCarregando] = useState(false);
+  const [erroIa, setErroIa] = useState<string | null>(null);
+  const [respostaIa, setRespostaIa] = useState<RespostaIa | null>(null);
+  const respostaRef = useRef<HTMLDivElement>(null);
+
+  async function perguntar(e: React.FormEvent) {
+    e.preventDefault();
+    if (carregando) return;
+    const texto = pergunta.trim();
+    if (texto.length < 8) {
+      setErroIa("Escreva sua pergunta com um pouco mais de detalhe.");
+      return;
+    }
+    setErroIa(null);
+    setCarregando(true);
+    trackEvent("faq_ai_question", { location: "faq" });
+
+    try {
+      const { data, error } = await supabase.functions.invoke("faq-answer", {
+        body: { pergunta: texto },
+      });
+      const payload = data as { resposta?: RespostaIa; error?: string } | null;
+      if (error || !payload?.resposta) {
+        setErroIa(
+          payload?.error ||
+            "Não conseguimos responder agora. Tente de novo em instantes ou fale com a gente no WhatsApp.",
+        );
+        return;
+      }
+      setRespostaIa(payload.resposta);
+      trackEvent("faq_ai_answer", { location: "faq" });
+      window.setTimeout(() => {
+        respostaRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }, 60);
+    } catch {
+      setErroIa("Não conseguimos responder agora. Tente de novo em instantes.");
+    } finally {
+      setCarregando(false);
+    }
+  }
+
 
   useSeo({
     title: "Perguntas frequentes sobre reforma de apartamentos | Bewild",
@@ -116,6 +167,75 @@ export default function FaqPage() {
                   </article>
                 );
               })}
+            </div>
+          </div>
+        </section>
+
+        <section className="bwa-faqpage-ask" aria-labelledby="faq-ask-title">
+          <div className="bwa-shell">
+            <p className="bwa-label">Pergunte à Bewild</p>
+            <h2 className="bwa-faqpage-ask-title" id="faq-ask-title">
+              Sua dúvida não está na lista? <em>Pergunte aqui.</em>
+            </h2>
+            <p className="bwa-faqpage-lead">
+              Escreva com suas palavras e a assistente da Bewild responde na
+              hora, com base em como a gente trabalha. Para preço e prazo do seu
+              imóvel, quem fecha é o time no diagnóstico.
+            </p>
+
+            <form className="bwa-faqpage-ask-form" onSubmit={perguntar}>
+              <label className="bwa-faqpage-ask-label" htmlFor="faq-pergunta">
+                Sua pergunta
+              </label>
+              <textarea
+                id="faq-pergunta"
+                className="bwa-faqpage-ask-input"
+                rows={3}
+                maxLength={1000}
+                placeholder="Ex.: moro em Curitiba e comprei um studio de 28 m² na Vila Olímpia. Como funciona o acompanhamento?"
+                value={pergunta}
+                onChange={(e) => setPergunta(e.target.value)}
+              />
+              <button className="bwa-button" type="submit" disabled={carregando}>
+                {carregando ? "Pensando…" : "Perguntar"} <span aria-hidden="true">→</span>
+              </button>
+            </form>
+
+            <div aria-live="polite" ref={respostaRef}>
+              {erroIa && <p className="bwa-faqpage-ask-erro">{erroIa}</p>}
+
+              {respostaIa && (
+                <div className="bwa-faqpage-ask-answer">
+                  <p className="bwa-faqpage-ask-text">{respostaIa.resposta}</p>
+                  {respostaIa.pontos?.length > 0 && (
+                    <ul className="bwa-faqpage-ask-list">
+                      {respostaIa.pontos.map((p) => (
+                        <li key={p}>{p}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {respostaIa.proximo_passo && (
+                    <p className="bwa-faqpage-ask-next">{respostaIa.proximo_passo}</p>
+                  )}
+                  <div className="bwa-faqpage-ask-actions">
+                    <a className="bwa-button" href="/diagnostico" data-cta="faq-ia-diagnostico">
+                      Solicitar orçamento <span aria-hidden="true">→</span>
+                    </a>
+                    <a
+                      className="bwa-faqpage-ask-whats"
+                      href={whatsappHref()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Falar no WhatsApp <span aria-hidden="true">→</span>
+                    </a>
+                  </div>
+                  <p className="bwa-faqpage-ask-note">
+                    Resposta gerada por IA com base nas informações da Bewild.
+                    Preço e prazo do seu imóvel são confirmados no diagnóstico.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </section>
