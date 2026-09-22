@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import BwaFooter from "@/components/BwaFooter";
+import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { BAIRROS, REMOTO_ITEMS } from "@/lib/bairrosSp";
@@ -270,6 +271,8 @@ export default function ReformaStudioSpPage() {
             </ul>
           </div>
         </section>
+
+        <BwaImprensa />
 
         <section className="bwa-servico-block" aria-labelledby="faq">
           <div className="bwa-shell">
