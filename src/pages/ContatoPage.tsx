@@ -180,6 +180,120 @@ export default function ContatoPage() {
             </div>
           </div>
         </section>
+
+        <section className="bwa-contact-form-sec" id="formulario">
+          <div className="bwa-shell bwa-contact-form-grid">
+            <div className="bwa-contact-form-intro">
+              <p className="bwa-label">Formulário · 04</p>
+              <h2>Prefere escrever? Conte aqui o que você precisa.</h2>
+              <p>
+                Respondemos em horário comercial pelo WhatsApp informado. Se preferir falar agora, o
+                atendimento direto continua aberto.
+              </p>
+              <a
+                className="bwa-contact-link"
+                href={whatsappHref("Olá, quero falar com a Bewild sobre meu apartamento")}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cta="contato-form-whatsapp"
+              >
+                Falar no WhatsApp <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+
+            {enviado ? (
+              <div className="bwa-contact-form-done" role="status">
+                <p className="bwa-label">Mensagem recebida</p>
+                <h3>Obrigado, {nome.trim().split(" ")[0]}.</h3>
+                <p>
+                  Nosso time entra em contato pelo WhatsApp informado. Se quiser adiantar, fale com a
+                  gente agora mesmo.
+                </p>
+                <a
+                  className="bwa-button"
+                  href={whatsappHref("Olá, acabei de enviar uma mensagem pelo site da Bewild")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Falar no WhatsApp <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            ) : (
+              <form className="bwa-contact-form" onSubmit={enviar} noValidate>
+                <label className="bwa-contact-field">
+                  <span>Nome</span>
+                  <input
+                    type="text"
+                    value={nome}
+                    maxLength={120}
+                    autoComplete="name"
+                    onChange={(e) => setNome(e.target.value)}
+                    onBlur={() => setTouched((t) => ({ ...t, nome: true }))}
+                    aria-invalid={touched.nome && !nomeOk}
+                  />
+                  {touched.nome && !nomeOk && <em>Informe seu nome.</em>}
+                </label>
+
+                <label className="bwa-contact-field">
+                  <span>WhatsApp</span>
+                  <input
+                    type="tel"
+                    inputMode="tel"
+                    value={whats}
+                    autoComplete="tel"
+                    placeholder="(11) 90000-0000"
+                    onChange={(e) => setWhats(maskPhone(e.target.value))}
+                    onBlur={() => setTouched((t) => ({ ...t, whats: true }))}
+                    aria-invalid={touched.whats && !whatsOk}
+                  />
+                  {touched.whats && !whatsOk && <em>Informe um número com DDD.</em>}
+                </label>
+
+                <label className="bwa-contact-field">
+                  <span>E-mail (opcional)</span>
+                  <input
+                    type="email"
+                    value={mail}
+                    maxLength={180}
+                    autoComplete="email"
+                    onChange={(e) => setMail(e.target.value)}
+                    onBlur={() => setTouched((t) => ({ ...t, mail: true }))}
+                    aria-invalid={touched.mail && !mailOk}
+                  />
+                  {touched.mail && !mailOk && <em>Confira o e-mail digitado.</em>}
+                </label>
+
+                <label className="bwa-contact-field bwa-contact-field--full">
+                  <span>Mensagem</span>
+                  <textarea
+                    rows={5}
+                    value={mensagem}
+                    maxLength={1200}
+                    placeholder="Conte o tamanho do apartamento, o bairro e o que você quer fazer."
+                    onChange={(e) => setMensagem(e.target.value)}
+                    onBlur={() => setTouched((t) => ({ ...t, mensagem: true }))}
+                    aria-invalid={touched.mensagem && !msgOk}
+                  />
+                  {touched.mensagem && !msgOk && <em>Escreva ao menos uma frase.</em>}
+                </label>
+
+                {erro && (
+                  <p className="bwa-contact-form-error" role="alert">
+                    {erro}
+                  </p>
+                )}
+
+                <div className="bwa-contact-form-actions">
+                  <button className="bwa-button" type="submit" disabled={!podeEnviar}>
+                    {enviando ? "Enviando…" : "Enviar mensagem"}
+                    <span aria-hidden="true">→</span>
+                  </button>
+                  <p>Seus dados são usados apenas para responder ao seu contato.</p>
+                </div>
+              </form>
+            )}
+          </div>
+        </section>
       </main>
 
       <BwaFooter />
