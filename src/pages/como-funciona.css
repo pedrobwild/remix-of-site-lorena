@@ -1,0 +1,189 @@
+/* /como-funciona — mesma linguagem visual da home (.bwa), tema claro.
+   Os tokens --bwa-* e as classes base (.bwa-shell, .bwa-label, .bwa-button)
+   são injetados pelo BwaNav via home-bwa.css. */
+
+.bwa-how-page {
+  min-height: 100vh;
+  overflow-x: clip;
+  color: var(--bwa-navy);
+  background: var(--bwa-paper);
+}
+
+.bwa-svg-library {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.bwa-how-intro {
+  padding: clamp(148px, 17vw, 220px) 0 clamp(64px, 8vw, 112px);
+  border-bottom: 1px solid var(--bwa-line);
+}
+
+.bwa-how-intro-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr);
+  gap: clamp(40px, 8vw, 120px);
+  align-items: end;
+}
+
+.bwa-how-intro h1 {
+  max-width: 900px;
+  margin: 20px 0 0;
+  font-family: var(--bwa-font-body);
+  font-size: clamp(40px, 5.6vw, 80px);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+.bwa-how-lead {
+  max-width: 520px;
+  margin: 0;
+  color: var(--bwa-ink);
+  font-size: clamp(17px, 1.5vw, 21px);
+  line-height: 1.65;
+}
+
+.bwa-how-cards {
+  padding: clamp(72px, 9vw, 132px) 0;
+}
+
+.bwa-how-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(20px, 3vw, 40px);
+  align-items: start;
+}
+
+/* Cartões: adaptação clara dos .bwa-ccard originais (fundo escuro na home) */
+.bwa-how-card {
+  background: var(--bwa-white);
+  border: 1px solid var(--bwa-line);
+  border-radius: 14px;
+  padding: 28px clamp(24px, 3vw, 36px);
+  transition: border-color .3s ease, transform .3s ease;
+}
+
+.bwa-how-card:hover {
+  border-color: var(--bwa-navy-2);
+}
+
+.bwa-how-card-head {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 16px;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--bwa-line);
+}
+
+.bwa-how-card-badge {
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(17, 53, 91, .1);
+  color: var(--bwa-navy-2);
+  border-radius: 12px;
+}
+
+.bwa-how-card-badge svg {
+  width: 24px;
+  height: 24px;
+}
+
+.bwa-how-card-title {
+  margin: 0;
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(22px, 1.8vw, 28px);
+  font-weight: 600;
+  letter-spacing: -.01em;
+  color: var(--bwa-ink);
+}
+
+.bwa-how-card-sub {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--bwa-ink-soft);
+}
+
+.bwa-how-card-list {
+  list-style: none;
+  margin: 0;
+  padding: 20px 0 0;
+  display: grid;
+  gap: 16px;
+}
+
+.bwa-how-card-list li {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.bwa-how-card-ico {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  color: var(--bwa-navy-2);
+  flex: none;
+}
+
+.bwa-how-card-list p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--bwa-ink);
+}
+
+.bwa-how-card-list strong {
+  color: var(--bwa-navy);
+  font-weight: 600;
+}
+
+.bwa-how-cta {
+  padding: clamp(64px, 8vw, 120px) 0;
+  border-top: 1px solid var(--bwa-line);
+  background: var(--bwa-navy);
+  color: var(--bwa-white);
+}
+
+.bwa-how-cta-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(28px, 4vw, 64px);
+  align-items: center;
+}
+
+.bwa-how-cta h2 {
+  margin: 0;
+  max-width: 22ch;
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(28px, 3.4vw, 48px);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -.01em;
+}
+
+@media (max-width: 900px) {
+  .bwa-how-intro-grid,
+  .bwa-how-grid,
+  .bwa-how-cta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bwa-how-cta .bwa-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bwa-how-card {
+    transition: none;
+  }
+}

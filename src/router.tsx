@@ -15,6 +15,7 @@ import DiagnosticoPage from "./pages/DiagnosticoPage";
 import FaqPage from "./pages/FaqPage";
 import ContatoPage from "./pages/ContatoPage";
 import EscopoPage from "./pages/EscopoPage";
+import ComoFuncionaPage from "./pages/ComoFuncionaPage";
 import PrivacidadePage from "./pages/PrivacidadePage";
 import LpObraPage from "./pages/LpObraPage";
 import LpPanfletoPage from "./pages/LpPanfletoPage";
@@ -65,6 +66,7 @@ export function renderRoute(route: Route) {
   if (route.name === "faq") return <FaqPage />;
   if (route.name === "contato") return <ContatoPage />;
   if (route.name === "escopo") return <EscopoPage />;
+  if (route.name === "como-funciona") return <ComoFuncionaPage />;
   if (route.name === "privacidade") return <PrivacidadePage />;
   if (route.name === "lp-obra") return <LpObraPage />;
   if (route.name === "lp-panfleto") return <LpPanfletoPage />;

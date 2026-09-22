@@ -1,15 +1,25 @@
-# Cartões "Arquitetura" e "Engenharia & gestão" — texto revisado para a futura página /como-funciona
-(removidos da home em 22/09/2026 conforme item 7.3 do documento de copy)
+# Cartões "Como funciona" — texto de referência
 
-## Arquitetura — Do conceito à documentação.
-- Consultoria: leitura do imóvel e do perfil de uso para direcionar o projeto e o investimento.
-- Projeto 3D: maquete realista com rodadas de revisão até você aprovar sem dúvidas.
-- Personalização: cores, materiais e layout escolhidos junto ao arquiteto, com foco em durabilidade e estética.
-- Projeto executivo: plantas detalhadas que eliminam improviso e retrabalho no canteiro.
-- Documentação: ART, CREA e aprovação em condomínio resolvidos por nós.
+Texto dos cartões que ficavam no bloco `#certeza` da home (removidos no item 7.3),
+já com as correções aprovadas. Fonte de verdade para a página `/como-funciona`.
+Arquivo interno — não é servido publicamente.
 
-## Engenharia & gestão — Engenharia que entrega no prazo, no orçamento e no padrão.
-- Gestão centralizada: planejamento, execução e qualidade sob uma única responsabilidade — você fala com um só interlocutor.
-- Logística integrada: compra de materiais, fornecedores e entregas coordenados unicamente por nós.
-- Engenheiro dedicado: vistorias de qualidade frequentes, relatórios semanais e gestão ativa de cronograma, custo e escopo.
-- Equipe própria, sem terceirização: marcenaria, empreita, vidraçaria, elétrica e ar-condicionado.
+## Cartão 1 — Arquitetura
+
+**Do conceito à documentação.**
+
+- **Consultoria:** orientação para o melhor resultado do investimento.
+- **Projeto 3D:** maquete realista com revisões até a aprovação.
+- **Personalização:** cores, materiais e disposição guiados pelo arquiteto.
+- **Projeto executivo:** plantas detalhadas que eliminam improvisos.
+- **Documentação:** ART, CREA e liberação do condomínio.
+- **Acompanhamento:** arquiteto e engenheiro juntos durante toda a obra.
+
+## Cartão 2 — Engenharia & gestão
+
+**Engenharia que entrega no prazo, no orçamento e no padrão.**
+
+- **Gestão centralizada:** planejamento, execução e qualidade sob uma única responsabilidade.
+- **Logística integrada:** materiais, fornecedores e entregas coordenados.
+- **Engenheiro dedicado:** vistorias e gestão ativa de cronograma.
+- **Sem terceirização:** equipe própria de marcenaria, empreita, vidraçaria, elétrica e ar-condicionado.
