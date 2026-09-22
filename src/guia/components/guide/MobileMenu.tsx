@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { Button } from "@/guia/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/guia/components/ui/sheet";
 import { Menu, ChevronDown } from "lucide-react";
-import bwildLogo from "@/guia/assets/bwild-logo.png";
+import bewildLogo from "@/guia/assets/bewild-logo.png.asset.json";
 import { SECTIONS, PHASES } from "@/guia/data/guide-data";
 
 interface Props {
@@ -56,7 +56,7 @@ export default function MobileMenu({ activeId, sectionIndex, sectionCount }: Pro
 
   return (
     <div className="lg:hidden fixed top-0 left-0 right-0 z-40 glass-nav px-4 py-3 flex items-center justify-between">
-      <img src={bwildLogo} alt="Bewild" className="h-7 w-auto" />
+      <img src={bewildLogo.url} alt="Bewild" className="h-7 w-auto" />
       <div className="flex items-center gap-2">
         <span className="text-xs text-muted-foreground bg-muted/60 rounded-full px-2.5 py-0.5">
           {sectionIndex}/{sectionCount}
@@ -70,7 +70,7 @@ export default function MobileMenu({ activeId, sectionIndex, sectionCount }: Pro
         <SheetContent side="left" className="w-72 p-0">
           <SheetHeader className="px-4 pt-5 pb-3 border-b border-border/60">
             <SheetTitle className="flex items-center gap-2">
-              <img src={bwildLogo} alt="Bewild" className="h-7 w-auto" />
+              <img src={bewildLogo.url} alt="Bewild" className="h-7 w-auto" />
             </SheetTitle>
           </SheetHeader>
           <nav className="px-3 py-4 overflow-y-auto max-h-[calc(100vh-120px)] scrollbar-thin">

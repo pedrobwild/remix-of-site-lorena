@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { ChevronDown } from "lucide-react";
-import bwildLogo from "@/guia/assets/bwild-logo.png";
+import bewildLogo from "@/guia/assets/bewild-logo.png.asset.json";
 import { SECTIONS, PHASES } from "@/guia/data/guide-data";
 
 interface Props {
@@ -71,10 +71,10 @@ export default function TableOfContents({ activeId, visitedSections }: Props) {
       {/* Logo */}
       <div className={`mb-5 flex items-center ${expanded ? "px-2" : "justify-center"}`}>
         {expanded ? (
-          <img src={bwildLogo} alt="Bewild" className="h-7 w-auto" />
+          <img src={bewildLogo.url} alt="Bewild" className="h-7 w-auto" />
         ) : (
           <img
-            src={bwildLogo}
+            src={bewildLogo.url}
             alt="Bewild"
             className="h-6 w-6 object-contain object-left"
             style={{ clipPath: "inset(0 60% 0 0)" }}
