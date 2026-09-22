@@ -10,7 +10,7 @@
  * o guardrail "ícones em SVG, nunca emoji".
  */
 import { ReactNode, useEffect, useState } from "react";
-import { LayoutDashboard, Inbox, MessagesSquare, FolderKanban, Newspaper, LogOut, Menu } from "lucide-react";
+import { LayoutDashboard, Inbox, MessagesSquare, ClipboardList, FolderKanban, Newspaper, LogOut, Menu } from "lucide-react";
 import { useAuth } from "@/lib/useAuth";
 import { navigate, routes } from "@/lib/useHashRoute";
 import "@/styles/admin-bewild.css";
