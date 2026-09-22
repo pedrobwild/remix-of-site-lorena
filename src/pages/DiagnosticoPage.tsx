@@ -108,6 +108,8 @@ export default function DiagnosticoPage() {
     title: "Orçamento para reforma de apartamento | Bewild",
     description:
       "Solicite um orçamento para reforma completa de apartamento em São Paulo, do projeto à entrega do imóvel pronto. Sem custo e sem compromisso.",
+    keywords:
+      "orçamento de reforma de apartamento, custo de reforma em SP, quanto custa reformar apartamento São Paulo, orçamento reforma completa, Bewild",
     canonicalPath: "/diagnostico",
     ogType: "website",
     jsonLd: settings
