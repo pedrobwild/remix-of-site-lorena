@@ -203,11 +203,11 @@
 
 
 /* Menu interno com 7 itens (o "Guia do investidor" entrou em 22/09/2026):
-   entre 1181px e 1400px os rótulos descritivos não cabiam ao lado do botão de
+   entre 1181px e 1520px os rótulos descritivos não cabiam ao lado do botão de
    orçamento e empurravam o CTA para fora do shell. Abaixo de 1181px o menu já
    vira hambúrguer, então o ajuste vale só nessa faixa e só no header interno —
    a home mantém 6 itens e não precisa dele. */
-@media (max-width: 1400px) {
+@media (max-width: 1520px) {
   .bwa-nav--internal .bwa-nav-links {
     gap: clamp(10px, 1.1vw, 18px);
     letter-spacing: 0.02em;
