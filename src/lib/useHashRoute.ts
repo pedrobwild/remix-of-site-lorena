@@ -171,6 +171,7 @@ export const routes = {
   adminTypography: "/admin/typography",
   adminLeads: "/admin/leads",
   adminMensagens: "/admin/mensagens",
+  adminDiagnostico: "/admin/diagnostico",
   lpObra: "/o",
   lpPanfleto: "/p",
 };
