@@ -16,6 +16,23 @@ export const PORTFOLIO_FILTERS: { value: PortfolioFilter; label: string }[] = [
   { value: "planta", label: "Planta" },
 ];
 
+/**
+ * Chips que fazem sentido para a lista recebida.
+ *
+ * "Obra pronta" deriva de `ready_gallery_urls`, e hoje 0 dos 161 projetos
+ * publicados têm esse campo preenchido: o chip aparecia sempre e garantia
+ * "Nenhum projeto nesse filtro ainda" em 100% dos cliques. Só oferecemos o
+ * filtro quando existe ao menos um projeto que ele consegue casar — quando o
+ * campo começar a ser preenchido no admin, o chip volta sozinho.
+ * Ver PORT-01 em docs/auditoria/rodada-2026-09-22.md.
+ */
+export function availablePortfolioFilters<T extends WithGalleries>(
+  list: T[],
+): { value: PortfolioFilter; label: string }[] {
+  const temObraPronta = list.some((p) => hasReadyPhotos(p));
+  return PORTFOLIO_FILTERS.filter((f) => f.value !== "obra_pronta" || temObraPronta);
+}
+
 type Filterable = WithGalleries & { project_type: BewildProjectType | null };
 
 export function applyPortfolioFilter<T extends Filterable>(list: T[], filter: PortfolioFilter): T[] {
