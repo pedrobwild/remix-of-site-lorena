@@ -79,11 +79,10 @@ export default function OndeAtuamosPage() {
           </div>
         </section>
 
-        <section className="bwa-atuamos-remoto" aria-labelledby="remoto-title">
+        <section className="bwa-atuamos-remoto" aria-label="Reforma à distância">
           <div className="bwa-shell bwa-atuamos-remoto-head">
             <p className="bwa-label">Reforma à distância</p>
             <div>
-              <h2 className="bwa-title" id="remoto-title">\n</h2>
               <p className="bwa-atuamos-remoto-lead">
                 Quem mora em Uberlândia, Salvador, Curitiba ou Brasília compra,
                 reforma e recebe o apartamento pronto sem vir a São Paulo: o
@@ -92,7 +91,6 @@ export default function OndeAtuamosPage() {
             </div>
           </div>
           <div className="bwa-shell">
-            <h3 className="bwa-atuamos-h3">\n</h3>
             <ul className="bwa-atuamos-remoto-list">
               {REMOTO_ITEMS.map((item) => (
                 <li key={item.n}>
