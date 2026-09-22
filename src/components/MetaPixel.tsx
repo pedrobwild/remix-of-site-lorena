@@ -1,8 +1,15 @@
 /**
- * MetaPixel — dispara fbq('track','PageView') a cada mudança de rota após o load inicial.
+ * MetaPixel — dispara fbq('track','PageView') a cada mudança de rota na SPA.
  *
- * O carregador base, o `fbq('init', ...)` e o primeiro PageView ficam no index.html.
- * Aqui emitimos apenas PageViews de navegação SPA, observando eventos do router.
+ * O carregador base, o `fbq('init', ...)` e o primeiro PageView **não** estão
+ * no index.html (o comentário anterior dizia que sim — CODE-05, corrigido em
+ * 22/09/2026; `grep -c fbq index.html` devolve 0). Quem injeta tudo isso é
+ * `injectMetaPixel` em src/lib/useSeo.ts, a partir de
+ * `site_settings.meta_pixel_id` e **só depois do aceite de cookies** (LGPD).
+ *
+ * Consequência prática: enquanto o visitante não aceita o banner, `window.fbq`
+ * não existe e a guarda abaixo transforma este componente num no-op. É o
+ * comportamento desejado — não mexa na ordem sem reler o gate de consentimento.
  */
 import { useEffect, useRef } from "react";
 
