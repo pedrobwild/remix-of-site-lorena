@@ -85,6 +85,40 @@ function estimateReading(body: string): number {
   return Math.max(1, Math.round(words / 220));
 }
 
+function escapeAttr(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+const SIZES_ATTR = '(max-width: 880px) 100vw, 880px';
+
+/** Monta o bloco <figure><picture>… a inserir no corpo do post. */
+function buildFigureHtml(up: UploadResult, alt: string, caption: string): string {
+  const lines: string[] = ["<figure>", "  <picture>"];
+  if (up.avif) {
+    lines.push(
+      `    <source type="image/avif" srcset="${up.avif.sm} 640w, ${up.avif.md} 1280w, ${up.avif.lg} 1920w" sizes="${SIZES_ATTR}">`
+    );
+  }
+  lines.push(
+    `    <source type="image/webp" srcset="${up.webp.sm} 640w, ${up.webp.md} 1280w, ${up.webp.lg} 1920w" sizes="${SIZES_ATTR}">`
+  );
+  const w = Math.min(1920, up.width || 1920);
+  const h = up.width ? Math.round((up.height * w) / up.width) : up.height;
+  lines.push(
+    `    <img src="${up.jpeg.lg}" alt="${escapeAttr(alt)}" width="${w}" height="${h}" loading="lazy" decoding="async">`
+  );
+  lines.push("  </picture>");
+  if (caption.trim()) {
+    lines.push(`  <figcaption>${escapeAttr(caption.trim())}</figcaption>`);
+  }
+  lines.push("</figure>");
+  return lines.join("\n");
+}
+
 export default function BewildPostFormPage({ slug }: Props) {
   const isNew = !slug;
   const [loading, setLoading] = useState(!isNew);
