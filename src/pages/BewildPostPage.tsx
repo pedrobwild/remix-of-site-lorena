@@ -371,6 +371,27 @@ export default function BewildPostPage({ slug }: Props) {
           </section>
         ) : null}
 
+        {/* LINKS INTERNOS */}
+        <section className="pt-links">
+          <div className="container">
+            <div className="pt-rel-head">
+              <span className="n">↳</span>
+              <h2>Páginas relacionadas</h2>
+              <span className="ln" />
+            </div>
+            <ul className="pt-links__grid">
+              {internalLinksForPost(post.slug, post.category).map((l) => (
+                <li key={l.href}>
+                  <a href={l.href}>
+                    <strong>{l.label}</strong>
+                    <span>{l.description}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
         {/* RELATED */}
         {related.length > 0 ? (
           <section className="pt-related">
