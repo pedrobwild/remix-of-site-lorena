@@ -202,6 +202,12 @@
       border-color: var(--bwa-white);
     }
 
+    .bwa-button-wa {
+      color: var(--bwa-white);
+      background: transparent;
+      border-color: var(--bwa-white);
+    }
+
     .bwa-button-ghost {
       color: var(--bwa-ink);
       background: transparent;
