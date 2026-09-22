@@ -245,7 +245,7 @@ export default function ReformaStudioSpPage() {
               acompanha projeto, obra e entrega pelo Bwild Workflow — veja{" "}
               <a href="/onde-atuamos">onde atuamos</a>.
             </p>
-            <h3 className="bwa-servico-h3">Já incluso no contrato</h3>
+            <h3 className="bwa-servico-h3">\n</h3>
             <ul className="bwa-servico-list">
               {REMOTO_ITEMS.map((item) => (
                 <li key={item.n}>

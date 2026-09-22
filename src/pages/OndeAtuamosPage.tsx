@@ -83,9 +83,7 @@ export default function OndeAtuamosPage() {
           <div className="bwa-shell bwa-atuamos-remoto-head">
             <p className="bwa-label">Reforma à distância</p>
             <div>
-              <h2 className="bwa-title" id="remoto-title">
-                Você não precisa estar em São Paulo para reformar com a Bewild.
-              </h2>
+              <h2 className="bwa-title" id="remoto-title">\n</h2>
               <p className="bwa-atuamos-remoto-lead">
                 Quem mora em Uberlândia, Salvador, Curitiba ou Brasília compra,
                 reforma e recebe o apartamento pronto sem vir a São Paulo: o
@@ -94,7 +92,7 @@ export default function OndeAtuamosPage() {
             </div>
           </div>
           <div className="bwa-shell">
-            <h3 className="bwa-atuamos-h3">Já incluso no contrato</h3>
+            <h3 className="bwa-atuamos-h3">\n</h3>
             <ul className="bwa-atuamos-remoto-list">
               {REMOTO_ITEMS.map((item) => (
                 <li key={item.n}>
