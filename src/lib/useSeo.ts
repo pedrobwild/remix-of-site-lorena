@@ -361,13 +361,13 @@ export function useSeo(seo: SeoInput) {
   // `JSON.stringify(seo)` no corpo do hook. Mais honesto sobre o que
   // dispara o re-apply, e barra a regressão silenciosa do "ESLint não
   // sabia que dependíamos de X porque tudo passava por uma string única".
-  const { title, description, canonicalPath, ogImage, ogType, noindex, jsonLd } = seo;
+  const { title, description, canonicalPath, ogImage, ogType, noindex, jsonLd, keywords } = seo;
   const jsonLdKey = useMemo(() => (jsonLd ? JSON.stringify(jsonLd) : ""), [jsonLd]);
 
   useEffect(() => {
     setupTrackersConsentGate();
     let cancelled = false;
-    const input = { title, description, canonicalPath, ogImage, ogType, noindex, jsonLd };
+    const input = { title, description, canonicalPath, ogImage, ogType, noindex, jsonLd, keywords };
     // 1) Síncrono: title/canonical/robots da rota entram no <head> AGORA, com
     //    as settings em cache (ou defaults). Sem isso, enquanto `site_settings`
     //    não respondia, toda rota ficava com o canonical da home e a 404 sem
