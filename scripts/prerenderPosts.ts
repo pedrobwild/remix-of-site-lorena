@@ -12,6 +12,7 @@
 import { mkdirSync, readFileSync, writeFileSync, existsSync, rmSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import type { Plugin } from "vite";
+import { marked } from "marked";
 import { keywordsForPost } from "../src/lib/postKeywords";
 
 const BASE_URL = "https://bewild.com.br";
@@ -27,7 +28,34 @@ type Post = {
   published_at: string | null;
   updated_at: string | null;
   created_at: string | null;
+  body: string | null;
 };
+
+/** Remove vetores de XSS do markdown renderizado (conteúdo próprio, defesa extra). */
+function stripUnsafe(html: string): string {
+  return html
+    .replace(/<\/?(script|style|iframe|object|embed)[^>]*>/gi, "")
+    .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(/(href|src)\s*=\s*("|')\s*javascript:[^"']*\2/gi, "");
+}
+
+/** Corpo do artigo já pronto no primeiro carregamento (o React substitui ao montar). */
+function bodyFor(post: Post, html: string): string {
+  let article = "";
+  try {
+    article = stripUnsafe(marked.parse(post.body || "", { async: false, gfm: true }) as string);
+  } catch {
+    article = "";
+  }
+  const excerpt = post.excerpt ? `<p>${attr(post.excerpt)}</p>` : "";
+  const content =
+    `<article data-prerender="post-body">` +
+    `<nav><a href="/">Início</a> / <a href="/conteudos">Conteúdos</a></nav>` +
+    `<h1>${attr(post.title)}</h1>${excerpt}${article}` +
+    `<p><a href="/orcamento">Solicitar orçamento de reforma</a> · <a href="/portfolio">Portfólio de reformas em SP</a> · <a href="/conteudos">Mais guias de custo de reforma</a></p>` +
+    `</article>`;
+  return html.replace('<div id="root"></div>', `<div id="root">${content}</div>`);
+}
 
 function warn(msg: string) {
   console.warn(`[prerender-posts] ${msg} — dist/conteudos não foi gerado.`);
@@ -158,7 +186,7 @@ export function prerenderPosts(): Plugin {
         const baseHtml = readFileSync(distIndex, "utf8");
 
         const res = await fetch(
-          `${supabaseUrl.replace(/\/$/, "")}/rest/v1/bewild_posts?published=eq.true&select=slug,title,meta_title,meta_description,excerpt,cover_image,category,published_at,updated_at,created_at`,
+          `${supabaseUrl.replace(/\/$/, "")}/rest/v1/bewild_posts?published=eq.true&select=slug,title,meta_title,meta_description,excerpt,cover_image,category,published_at,updated_at,created_at,body`,
           { headers: { apikey: key, Authorization: `Bearer ${key}` } },
         );
         if (!res.ok) return warn(`consulta ao banco falhou (HTTP ${res.status})`);
@@ -171,14 +199,14 @@ export function prerenderPosts(): Plugin {
         let written = 0;
         for (const post of posts) {
           if (!post?.slug || !/^[a-z0-9-]+$/.test(post.slug)) continue;
-          const html = headFor(post, baseHtml);
+          const html = bodyFor(post, headFor(post, baseHtml));
           const dirFile = resolve(outDir, post.slug, "index.html");
           mkdirSync(dirname(dirFile), { recursive: true });
           writeFileSync(dirFile, html, "utf8");
           writeFileSync(resolve(outDir, `${post.slug}.html`), html, "utf8");
           written += 1;
         }
-        console.log(`[prerender-posts] ${written} artigos com <head> pronto em dist/conteudos/`);
+        console.log(`[prerender-posts] ${written} artigos com <head> e corpo prontos em dist/conteudos/`);
       } catch (err) {
         warn(err instanceof Error ? err.message : String(err));
       }
