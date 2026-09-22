@@ -28,11 +28,8 @@ export default function BewildSiteNav(_props: Record<string, unknown>) {
             <BewildLogo decorative />
           </a>
           <nav className="bwa-nav-links" aria-label="Navegação principal">
-            <a href="/#certeza">O contrato</a>
-            <a href="/#historia">A história</a>
             <a href="/#projetos">Projetos</a>
-            <a href="/#workflow">Bwild Workflow</a>
-            <a href="/#prova">Prova</a>
+            <a href="/#workflow">Como funciona</a>
             <a href="/portfolio">Portfólio</a>
             <a href="/conteudos">Conteúdos</a>
             <a href="/faq">FAQ</a>
@@ -55,11 +52,8 @@ export default function BewildSiteNav(_props: Record<string, unknown>) {
       </header>
       <div className={"bwa-mobile-menu" + (open ? " " + OPEN_CLASS : "")}>
         <nav aria-label="Navegação mobile" onClick={close}>
-          <a href="/#certeza">O contrato</a>
-          <a href="/#historia">A história</a>
           <a href="/#projetos">Projetos</a>
-          <a href="/#workflow">Bwild Workflow</a>
-          <a href="/#prova">Prova</a>
+          <a href="/#workflow">Como funciona</a>
           <a href="/portfolio">Portfólio</a>
           <a href="/conteudos">Conteúdos</a>
           <a href="/faq">FAQ</a>
