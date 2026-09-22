@@ -1,10 +1,19 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
+import { supabase } from "@/integrations/supabase/client";
+import { trackEvent } from "@/lib/ga4";
 import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./faq-page.css";
+
+type RespostaIa = {
+  resposta: string;
+  pontos: string[];
+  proximo_passo: string;
+  fora_do_escopo: boolean;
+};
 
 /* ============================================================
  * FaqPage — /faq
