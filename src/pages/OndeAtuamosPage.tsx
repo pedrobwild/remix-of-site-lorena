@@ -63,7 +63,7 @@ export default function OndeAtuamosPage() {
   useSeo({
     title: "Onde atuamos: reforma de apartamentos em São Paulo | Bewild",
     description:
-      "Buscando reforma de apartamento ou casa em SP? A Bewild reforma apartamentos em São Paulo capital, com obras em mais de 27 bairros, e atende à distância clientes de outras cidades.",
+      "Buscando reforma de apartamento ou casa em SP? A Bewild reforma apartamentos em São Paulo capital, em mais de 27 bairros, e atende à distância clientes de outras cidades.",
     canonicalPath: "/onde-atuamos",
     ogType: "website",
     jsonLd: settings
