@@ -108,7 +108,7 @@ export default function SeoIndexacaoPage() {
     setRunning(true);
     setMsg(null);
     const { data, error } = await supabase.functions.invoke("index-tracker", {
-      body: { limit: 25 },
+      body: { limit: 10 },
     });
     setRunning(false);
     if (error) {
