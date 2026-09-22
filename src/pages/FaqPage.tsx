@@ -133,11 +133,11 @@ export default function FaqPage() {
 
 
   useSeo({
-    title: "Como fazer uma reforma de apartamento em SP: guia e dúvidas | Bewild",
+    title: "Dúvidas sobre reforma de apartamento em SP: FAQ | Bewild",
     description:
-      "Como fazer uma reforma de apartamento passo a passo: por onde começar, quanto custa em São Paulo, prazo, autorização do condomínio e o que entra no contrato fechado da Bewild.",
+      "Dúvidas sobre reforma de apartamento em SP respondidas: quanto custa, quanto tempo leva, autorização do condomínio, etapas e o que entra no contrato fechado da Bewild.",
     keywords:
-      "como fazer uma reforma de apartamento, por onde começar uma reforma, dúvidas sobre reforma de apartamento em SP, custo de reforma, prazo de reforma, autorização de reforma condomínio, Bewild",
+      "dúvidas sobre reforma de apartamento em SP, dúvidas sobre reforma de apartamento, reforma de apartamento em SP, custo de reforma, prazo de reforma, autorização de reforma condomínio, Bewild",
     canonicalPath: "/faq",
     ogType: "website",
     jsonLd: settings
