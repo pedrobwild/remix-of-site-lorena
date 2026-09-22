@@ -32,6 +32,7 @@ export type Route =
   | { name: "admin-leads" }
   | { name: "admin-mensagens" }
   | { name: "admin-diagnostico" }
+  | { name: "admin-orcamentos" }
   | { name: "admin-projetos" }
   | { name: "admin-projetos-new" }
   | { name: "admin-projetos-edit"; slug: string }
@@ -82,6 +83,8 @@ function parsePath(rawPath: string): Route {
   if (path === "/admin/leads") return { name: "admin-leads" };
   if (path === "/admin/mensagens") return { name: "admin-mensagens" };
   if (path === "/admin/diagnostico") return { name: "admin-diagnostico" };
+  // Alias pedido pelo dono: mesma página de submissões do /diagnostico.
+  if (path === "/admin/orcamentos") return { name: "admin-orcamentos" };
   if (path === "/admin/projetos") return { name: "admin-projetos" };
   if (path === "/admin/projetos/novo") return { name: "admin-projetos-new" };
   const adminProjetosEdit = path.match(/^\/admin\/projetos\/([a-z0-9-]+)$/);
@@ -175,6 +178,7 @@ export const routes = {
   adminTypography: "/admin/typography",
   adminLeads: "/admin/leads",
   adminMensagens: "/admin/mensagens",
+  adminOrcamentos: "/admin/orcamentos",
   adminDiagnostico: "/admin/diagnostico",
   lpObra: "/o",
   lpPanfleto: "/p",
