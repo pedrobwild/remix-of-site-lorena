@@ -1847,9 +1847,16 @@
       color: var(--bwa-lead-paper);
     }
 
-    /* Bloco "Já incluso no contrato" agora vive dentro do #workflow */
+    /* Bloco "Já incluso no contrato" agora vive dentro do #workflow:
+       o padding próprio é zerado para não duplicar o respiro da seção. */
     .bwa-workflow .bwa-included {
+      padding-block: 0;
       margin-bottom: clamp(48px, 6vw, 80px);
+    }
+
+    /* Lead da abertura do #como-funciona: legível no fundo escuro. */
+    .bwa-responsibility .bwa-shell .bwa-lead {
+      color: var(--bwa-lead-paper);
     }
 
     .bwa-pillars {
