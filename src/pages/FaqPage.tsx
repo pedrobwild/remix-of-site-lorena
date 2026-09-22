@@ -52,7 +52,7 @@ const FAQ_ITEMS: { q: string; a: string }[] = [
 /* Bloco de conteúdo (não é copy travada da home): responde a buscas do tipo
  * "como fazer uma reforma de apartamento", "por onde começar uma reforma",
  * "quanto custa reformar apartamento em São Paulo". */
-const GUIA_ITEMS: { q: string; a: string }[] = [
+const GUIA_ITEMS: { q: string; a: string; href?: string; linkLabel?: string }[] = [
   {
     q: "Como fazer uma reforma de apartamento, passo a passo?",
     a: "Na prática são seis etapas: definir o objetivo do imóvel (morar, alugar ou vender), levantar a metragem e o estado atual, aprovar o projeto em 3D, fechar preço e prazo em contrato, executar a obra com marcenaria e mobília, e receber o apartamento pronto para usar. Na Bewild essas seis etapas acontecem dentro de um único contrato, com um só responsável.",
@@ -72,6 +72,8 @@ const GUIA_ITEMS: { q: string; a: string }[] = [
   {
     q: "Preciso de autorização do condomínio para reformar?",
     a: "Sim. A maioria dos condomínios pede comunicado prévio, ART ou RRT do responsável técnico e horários definidos para obra e para uso do elevador. Toda essa parte burocrática com o condomínio é conduzida pela nossa equipe, não por você.",
+    href: "/autorizacao-condominio",
+    linkLabel: "Guia completo: autorização de reforma no condomínio →",
   },
   {
     q: "Reforma com empresa única ou contratando profissionais separados?",
@@ -242,6 +244,11 @@ export default function FaqPage() {
                     </h3>
                     <div id={`faq-guia-resposta-${i}`} className="bwa-faq-answer">
                       <p>{item.a}</p>
+                      {item.href && (
+                        <a className="bwa-faqpage-guia-link" href={item.href}>
+                          {item.linkLabel}
+                        </a>
+                      )}
                     </div>
                   </article>
                 );

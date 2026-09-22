@@ -96,6 +96,7 @@ async function main() {
       priority: "0.8",
     },
     { loc: `${BASE_URL}/faq`, changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/autorizacao-condominio`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/contato`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/escopo`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/como-funciona`, changefreq: "monthly", priority: "0.7" },

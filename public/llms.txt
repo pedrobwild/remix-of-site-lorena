@@ -16,6 +16,8 @@ A Bewild é uma empresa brasileira focada em transformar studios e apartamentos 
 ## Conteúdos publicados
 
 <!-- posts:start -->
+- [Meu studio é HIS ou HMP: o que dá para fazer com ele em 2026 (e o que não dá)](/conteudos/studio-his-ou-hmp-o-que-fazer)
+- [O que é short stay: definição, regras e números de São Paulo em 2026](/conteudos/o-que-e-short-stay)
 - [Reforma de apartamento em São Paulo: o guia completo para fazer sem dor de cabeça](/conteudos/reforma-de-apartamento-em-sao-paulo-guia)
 - [Reforma de casa ou de apartamento em SP: o que muda na prática (e qual a Bewild faz)](/conteudos/reforma-de-casa-ou-apartamento-em-sp)
 - [Como reformar um studio em São Paulo morando em outra cidade (ou em outro país)](/conteudos/reformar-studio-sao-paulo-morando-em-outra-cidade)
