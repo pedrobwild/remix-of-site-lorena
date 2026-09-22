@@ -413,6 +413,47 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_qualification_log: {
+        Row: {
+          changed_by: string | null
+          changed_by_email: string | null
+          created_at: string
+          from_status: string | null
+          id: string
+          lead_id: string
+          note: string | null
+          to_status: string
+        }
+        Insert: {
+          changed_by?: string | null
+          changed_by_email?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: string
+          lead_id: string
+          note?: string | null
+          to_status: string
+        }
+        Update: {
+          changed_by?: string | null
+          changed_by_email?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: string
+          lead_id?: string
+          note?: string | null
+          to_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_qualification_log_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           area_m2: number | null

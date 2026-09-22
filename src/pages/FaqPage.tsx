@@ -49,9 +49,44 @@ const FAQ_ITEMS: { q: string; a: string }[] = [
   },
 ];
 
+/* Bloco de conteúdo (não é copy travada da home): responde a buscas do tipo
+ * "como fazer uma reforma de apartamento", "por onde começar uma reforma",
+ * "quanto custa reformar apartamento em São Paulo". */
+const GUIA_ITEMS: { q: string; a: string }[] = [
+  {
+    q: "Como fazer uma reforma de apartamento, passo a passo?",
+    a: "Na prática são seis etapas: definir o objetivo do imóvel (morar, alugar ou vender), levantar a metragem e o estado atual, aprovar o projeto em 3D, fechar preço e prazo em contrato, executar a obra com marcenaria e mobília, e receber o apartamento pronto para usar. Na Bewild essas seis etapas acontecem dentro de um único contrato, com um só responsável.",
+  },
+  {
+    q: "Por onde começar uma reforma de apartamento?",
+    a: "Comece pelo objetivo, não pelo acabamento. Um apartamento para short stay pede layout, marcenaria e mobília pensados para alta rotatividade; um para morar pede outra coisa. Definido o objetivo, o passo seguinte é o projeto — decidir tudo no papel e no 3D é o que evita mudança cara no meio da obra.",
+  },
+  {
+    q: "Quanto custa reformar um apartamento em São Paulo?",
+    a: "Depende da metragem, do estado do imóvel e do nível de acabamento. Nas obras que entregamos, apartamentos compactos de 21 a 35 m² ficam em torno de R$ 2.400 por metro quadrado, já incluindo projeto, obra, marcenaria e mobília. O valor do seu imóvel sai fechado no diagnóstico, antes de a obra começar.",
+  },
+  {
+    q: "Quanto tempo demora uma reforma de apartamento?",
+    a: "A maior parte das nossas obras fica pronta em cerca de 60 dias úteis, referência para apartamentos de até 30 m². A data exata entra no contrato antes do início — e se o prazo atrasar por nossa conta, o problema é nosso.",
+  },
+  {
+    q: "Preciso de autorização do condomínio para reformar?",
+    a: "Sim. A maioria dos condomínios pede comunicado prévio, ART ou RRT do responsável técnico e horários definidos para obra e para uso do elevador. Toda essa parte burocrática com o condomínio é conduzida pela nossa equipe, não por você.",
+  },
+  {
+    q: "Reforma com empresa única ou contratando profissionais separados?",
+    a: "Contratar arquiteto, empreiteiro, marceneiro e mobiliário separadamente costuma sair mais barato no papel e mais caro na conta final: cada um culpa o outro pelo atraso e o custo escapa. Com um contrato único, preço e prazo são fechados e existe um só responsável pelo resultado.",
+  },
+  {
+    q: "Quais erros mais atrasam uma reforma de apartamento?",
+    a: "Mudar de ideia depois que a obra começou, deixar elétrica e hidráulica para decidir na hora, comprar acabamento sem medida definida e contratar por orçamento aberto. Projeto aprovado em 3D antes de quebrar a primeira parede resolve quase todos eles.",
+  },
+];
+
 export default function FaqPage() {
   const { settings } = useSiteSettings();
   const [aberto, setAberto] = useState(0);
+  const [guiaAberto, setGuiaAberto] = useState(-1);
   const [pergunta, setPergunta] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [erroIa, setErroIa] = useState<string | null>(null);
@@ -96,9 +131,9 @@ export default function FaqPage() {
 
 
   useSeo({
-    title: "Reforma de apartamento ou casa em SP: dúvidas | Bewild",
+    title: "Como fazer uma reforma de apartamento em SP: guia e dúvidas | Bewild",
     description:
-      "Perguntas frequentes sobre reforma de apartamento em São Paulo: prazo, preço fechado, garantia e onde a Bewild atua (obras de apartamentos, não casas).",
+      "Como fazer uma reforma de apartamento passo a passo: por onde começar, quanto custa em São Paulo, prazo, autorização do condomínio e o que entra no contrato fechado da Bewild.",
     canonicalPath: "/faq",
     ogType: "website",
     jsonLd: settings
@@ -107,7 +142,7 @@ export default function FaqPage() {
             { name: "Início", path: "/" },
             { name: "Perguntas frequentes", path: "/faq" },
           ]),
-          faqJsonLd(FAQ_ITEMS.map((i) => ({ q: i.q, a: i.a }))),
+          faqJsonLd([...FAQ_ITEMS, ...GUIA_ITEMS].map((i) => ({ q: i.q, a: i.a }))),
         ]
       : undefined,
   });
@@ -163,6 +198,50 @@ export default function FaqPage() {
                       itemType="https://schema.org/Answer"
                     >
                       <p itemProp="text">{item.a}</p>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section className="bwa-faqpage-intro bwa-faqpage-guia" aria-labelledby="faq-guia-title">
+          <div className="bwa-shell bwa-faq-head bwa-faqpage-head">
+            <p className="bwa-label">Como fazer uma reforma</p>
+            <div>
+              <h2 className="bwa-title" id="faq-guia-title">
+                Reforma de apartamento, <em>do começo ao fim.</em>
+              </h2>
+              <p className="bwa-faqpage-lead">
+                O passo a passo de quem vai reformar um apartamento em São
+                Paulo: por onde começar, quanto custa, quanto demora e o que o
+                condomínio exige.
+              </p>
+            </div>
+          </div>
+
+          <div className="bwa-shell">
+            <div className="bwa-faq-list">
+              {GUIA_ITEMS.map((item, i) => {
+                const open = guiaAberto === i;
+                return (
+                  <article key={item.q} className={`bwa-faq-item${open ? " bwa-open" : ""}`}>
+                    <h3 className="bwa-faqpage-q">
+                      <button
+                        className="bwa-faq-question"
+                        type="button"
+                        aria-expanded={open}
+                        aria-controls={`faq-guia-resposta-${i}`}
+                        onClick={() => setGuiaAberto(open ? -1 : i)}
+                      >
+                        <span className="bwa-faq-num">{String(i + 1).padStart(2, "0")}</span>
+                        <strong>{item.q}</strong>
+                        <span className="bwa-faq-icon" aria-hidden="true" />
+                      </button>
+                    </h3>
+                    <div id={`faq-guia-resposta-${i}`} className="bwa-faq-answer">
+                      <p>{item.a}</p>
                     </div>
                   </article>
                 );

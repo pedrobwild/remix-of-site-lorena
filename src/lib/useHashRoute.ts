@@ -30,6 +30,7 @@ export type Route =
   | { name: "admin-faq" }
   | { name: "admin-typography" }
   | { name: "admin-leads" }
+  | { name: "admin-qualificacao" }
   | { name: "admin-mensagens" }
   | { name: "admin-diagnostico" }
   | { name: "admin-orcamentos" }
@@ -81,6 +82,7 @@ function parsePath(rawPath: string): Route {
   if (adminBewildEdit) return { name: "admin-bewild-edit", slug: adminBewildEdit[1] };
   if (path === "/admin/typography") return { name: "admin-typography" };
   if (path === "/admin/leads") return { name: "admin-leads" };
+  if (path === "/admin/qualificacao") return { name: "admin-qualificacao" };
   if (path === "/admin/mensagens") return { name: "admin-mensagens" };
   if (path === "/admin/diagnostico") return { name: "admin-diagnostico" };
   // Alias pedido pelo dono: mesma página de submissões do /diagnostico.
@@ -177,6 +179,7 @@ export const routes = {
   adminFaq: "/admin/faq",
   adminTypography: "/admin/typography",
   adminLeads: "/admin/leads",
+  adminQualificacao: "/admin/qualificacao",
   adminMensagens: "/admin/mensagens",
   adminOrcamentos: "/admin/orcamentos",
   adminDiagnostico: "/admin/diagnostico",
