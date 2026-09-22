@@ -3,6 +3,7 @@ import ReactDOM, { type Root as ReactRoot } from "react-dom/client";
 import CookieBanner from "./components/CookieBanner";
 import MetaPixel from "./components/MetaPixel";
 import RootErrorBoundary from "./components/RootErrorBoundary";
+import SiteAssistant from "./components/assistant/SiteAssistant";
 
 import { useHashRoute, installLinkInterceptor, type Route } from "./lib/useHashRoute";
 import { openCookiePreferences } from "./lib/cookieConsent";
@@ -143,6 +144,7 @@ function Root() {
       </div>
       {/* Banner mantido na home por conformidade LGPD (MetaPixel ativo) — exceção consciente à paridade visual */}
       {!adminMode && <CookieBanner />}
+      {!adminMode && <SiteAssistant />}
       <MetaPixel />
     </>
   );
