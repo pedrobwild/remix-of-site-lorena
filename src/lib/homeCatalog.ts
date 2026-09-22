@@ -199,7 +199,17 @@ export function installCatalogPreview(root: HTMLElement): Cleanup {
       cache.delete(slug);
       if (disposed || active !== slug) return;
       grid.replaceChildren();
-      if (status) status.textContent = `As referências de ${roomLabel.toLowerCase()} não carregaram agora. Abra o catálogo completo.`;
+      if (status) {
+        status.textContent = `As referências de ${roomLabel.toLowerCase()} não carregaram agora. `;
+        const again = document.createElement("button");
+        again.type = "button";
+        again.className = "bwa-marcenaria-retry";
+        again.textContent = "Tentar de novo";
+        again.addEventListener("click", () => {
+          void show(slug);
+        });
+        status.appendChild(again);
+      }
     }
   };
 
