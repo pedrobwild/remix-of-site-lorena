@@ -181,7 +181,11 @@ export default function FaqPage() {
             { name: "Início", path: "/" },
             { name: "Perguntas frequentes", path: "/faq" },
           ]),
-          faqJsonLd([...FAQ_ITEMS, ...GUIA_ITEMS].map((i) => ({ q: i.q, a: i.a }))),
+          faqJsonLd(
+            (kb ?? null)
+              ? kb.map((i) => ({ q: i.pergunta, a: i.resposta }))
+              : [...FAQ_ITEMS, ...GUIA_ITEMS].map((i) => ({ q: i.q, a: i.a })),
+          ),
         ]
       : undefined,
   });
@@ -205,43 +209,102 @@ export default function FaqPage() {
           </div>
 
           <div className="bwa-shell">
-            <div className="bwa-faq-list" itemScope itemType="https://schema.org/FAQPage">
-              {FAQ_ITEMS.map((item, i) => {
-                const open = aberto === i;
-                return (
-                  <article
-                    key={item.q}
-                    className={`bwa-faq-item${open ? " bwa-open" : ""}`}
-                    itemScope
-                    itemProp="mainEntity"
-                    itemType="https://schema.org/Question"
-                  >
-                    <h2 className="bwa-faqpage-q">
-                      <button
-                        className="bwa-faq-question"
-                        type="button"
-                        aria-expanded={open}
-                        aria-controls={`faq-resposta-${i}`}
-                        onClick={() => setAberto(open ? -1 : i)}
-                      >
-                        <span className="bwa-faq-num">{String(i + 1).padStart(2, "0")}</span>
-                        <strong itemProp="name">{item.q}</strong>
-                        <span className="bwa-faq-icon" aria-hidden="true" />
-                      </button>
-                    </h2>
-                    <div
-                      id={`faq-resposta-${i}`}
-                      className="bwa-faq-answer"
+            {kbGrupos ? (
+              kbGrupos.map(([tema, itens]) => (
+                <div key={tema}>
+                  <p className="bwa-label bwa-faqpage-tema">{tema}</p>
+                  <div className="bwa-faq-list" itemScope itemType="https://schema.org/FAQPage">
+                    {itens.map((item, i) => {
+                      const key = `k-${item.id}`;
+                      const open = aberto === key;
+                      return (
+                        <article
+                          key={item.id}
+                          className={`bwa-faq-item${open ? " bwa-open" : ""}`}
+                          itemScope
+                          itemProp="mainEntity"
+                          itemType="https://schema.org/Question"
+                        >
+                          <h2 className="bwa-faqpage-q">
+                            <button
+                              className="bwa-faq-question"
+                              type="button"
+                              aria-expanded={open}
+                              aria-controls={`faq-resposta-${item.id}`}
+                              onClick={() => setAberto(open ? "" : key)}
+                            >
+                              <span className="bwa-faq-num">{String(i + 1).padStart(2, "0")}</span>
+                              <strong itemProp="name">{item.pergunta}</strong>
+                              <span className="bwa-faq-icon" aria-hidden="true" />
+                            </button>
+                          </h2>
+                          <div
+                            id={`faq-resposta-${item.id}`}
+                            className="bwa-faq-answer"
+                            itemScope
+                            itemProp="acceptedAnswer"
+                            itemType="https://schema.org/Answer"
+                          >
+                            <p itemProp="text">{item.resposta}</p>
+                            {(item.acoes ?? []).map((acao) => (
+                              <a
+                                key={acao.rotulo}
+                                className="bwa-faqpage-guia-link"
+                                href={acao.tipo === "whatsapp" ? whatsappHref() : acao.url}
+                                {...(acao.tipo === "whatsapp"
+                                  ? { target: "_blank", rel: "noopener noreferrer" }
+                                  : {})}
+                              >
+                                {acao.rotulo} →
+                              </a>
+                            ))}
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="bwa-faq-list" itemScope itemType="https://schema.org/FAQPage">
+                {FAQ_ITEMS.map((item, i) => {
+                  const key = `f-${i}`;
+                  const open = aberto === key;
+                  return (
+                    <article
+                      key={item.q}
+                      className={`bwa-faq-item${open ? " bwa-open" : ""}`}
                       itemScope
-                      itemProp="acceptedAnswer"
-                      itemType="https://schema.org/Answer"
+                      itemProp="mainEntity"
+                      itemType="https://schema.org/Question"
                     >
-                      <p itemProp="text">{item.a}</p>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
+                      <h2 className="bwa-faqpage-q">
+                        <button
+                          className="bwa-faq-question"
+                          type="button"
+                          aria-expanded={open}
+                          aria-controls={`faq-resposta-${i}`}
+                          onClick={() => setAberto(open ? "" : key)}
+                        >
+                          <span className="bwa-faq-num">{String(i + 1).padStart(2, "0")}</span>
+                          <strong itemProp="name">{item.q}</strong>
+                          <span className="bwa-faq-icon" aria-hidden="true" />
+                        </button>
+                      </h2>
+                      <div
+                        id={`faq-resposta-${i}`}
+                        className="bwa-faq-answer"
+                        itemScope
+                        itemProp="acceptedAnswer"
+                        itemType="https://schema.org/Answer"
+                      >
+                        <p itemProp="text">{item.a}</p>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </section>
 
