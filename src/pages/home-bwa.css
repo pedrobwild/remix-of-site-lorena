@@ -447,7 +447,7 @@
     .bwa-hero h1 {
       max-width: 980px;
       margin: 0;
-      font-size: clamp(50px, 6.65vw, 116px);
+      font-size: clamp(42px, 5.4vw, 94px);
       font-weight: 500;
       line-height: 1.05;
       letter-spacing: -.068em;
@@ -2772,7 +2772,7 @@
       }
 
       .bwa-hero h1 {
-        font-size: clamp(48px, 7.4vw, 90px);
+        font-size: clamp(40px, 6vw, 74px);
       }
 
       .bwa-story-layout,
@@ -2823,7 +2823,7 @@
       }
 
       .bwa-hero h1 {
-        font-size: clamp(47px, 12.2vw, 83px);
+        font-size: clamp(38px, 10.5vw, 68px);
       }
 
       .bwa-hero-bottom {
