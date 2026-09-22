@@ -813,6 +813,96 @@ export type Database = {
         }
         Relationships: []
       }
+      seo_index_runs: {
+        Row: {
+          checked: number
+          errors: number
+          id: number
+          newly_indexed: number
+          notes: string | null
+          ran_at: string
+          source: string
+          urls_total: number
+        }
+        Insert: {
+          checked?: number
+          errors?: number
+          id?: number
+          newly_indexed?: number
+          notes?: string | null
+          ran_at?: string
+          source?: string
+          urls_total?: number
+        }
+        Update: {
+          checked?: number
+          errors?: number
+          id?: number
+          newly_indexed?: number
+          notes?: string | null
+          ran_at?: string
+          source?: string
+          urls_total?: number
+        }
+        Relationships: []
+      }
+      seo_index_status: {
+        Row: {
+          acknowledged_at: string | null
+          changed_at: string | null
+          coverage_state: string | null
+          error: string | null
+          first_seen_at: string
+          id: number
+          indexed: boolean
+          indexed_at: string | null
+          last_checked_at: string | null
+          last_crawl_at: string | null
+          previous_verdict: string | null
+          removed: boolean
+          robots_state: string | null
+          updated_at: string
+          url: string
+          verdict: string | null
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          changed_at?: string | null
+          coverage_state?: string | null
+          error?: string | null
+          first_seen_at?: string
+          id?: number
+          indexed?: boolean
+          indexed_at?: string | null
+          last_checked_at?: string | null
+          last_crawl_at?: string | null
+          previous_verdict?: string | null
+          removed?: boolean
+          robots_state?: string | null
+          updated_at?: string
+          url: string
+          verdict?: string | null
+        }
+        Update: {
+          acknowledged_at?: string | null
+          changed_at?: string | null
+          coverage_state?: string | null
+          error?: string | null
+          first_seen_at?: string
+          id?: number
+          indexed?: boolean
+          indexed_at?: string | null
+          last_checked_at?: string | null
+          last_crawl_at?: string | null
+          previous_verdict?: string | null
+          removed?: boolean
+          robots_state?: string | null
+          updated_at?: string
+          url?: string
+          verdict?: string | null
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           address_city: string | null
