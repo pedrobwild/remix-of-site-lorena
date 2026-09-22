@@ -27,6 +27,7 @@ import { useBewildPost, useBewildRelatedPosts } from "@/lib/useBewildPost";
 import { postAuthorByline, postAuthorJsonLd, postDates, postTitleFromSlug } from "@/lib/postSeo";
 import { navigate } from "@/lib/useHashRoute";
 import { keywordsForPost } from "@/lib/postKeywords";
+import { internalLinksForPost } from "@/lib/postInternalLinks";
 import "@/styles/post.css";
 import "@/styles/conteudos.css";
 
