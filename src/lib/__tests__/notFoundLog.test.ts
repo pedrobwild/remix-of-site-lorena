@@ -44,12 +44,13 @@ describe("logNotFound", () => {
     expect(args.p_reason).toBe(DEFAULT_404_REASON);
   });
 
-  it("manda p_referrer null (e não undefined) quando não há referrer", async () => {
+  it("manda p_referrer string vazia (e não undefined) quando não há referrer", async () => {
     await logNotFound("/outra-rota");
 
     const [, args] = rpc.mock.calls[0] as [string, Record<string, unknown>];
-    // `undefined` sumiria no JSON.stringify e a chamada voltaria a ser ambígua.
-    expect(args).toHaveProperty("p_referrer", null);
+    // `undefined` sumiria no JSON.stringify e mudaria a assinatura enviada.
+    expect(args).toHaveProperty("p_referrer", "");
+    expect(JSON.parse(JSON.stringify(args))).toHaveProperty("p_referrer", "");
   });
 
   it("avisa quando a RPC responde erro — supabase-js não lança", async () => {

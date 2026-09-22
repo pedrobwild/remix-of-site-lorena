@@ -49,9 +49,12 @@ export async function logNotFound(path: string, referrer?: string | null): Promi
     // supabase-js NÃO lança em erro de API: devolve `{ error }`. Sem ler esse
     // campo, o try/catch abaixo nunca disparava e a falha ficava invisível —
     // foi assim que `seo_404_log` ficou em 0 linhas sem ninguém perceber.
+    // `p_referrer: ""` e não `undefined`: uma chave ausente some no
+    // JSON.stringify e muda a assinatura enviada ao PostgREST. A função faz
+    // `coalesce(p_referrer, '')`, então string vazia e NULL gravam o mesmo.
     const { error } = await supabase.rpc("log_404", {
       p_path: path,
-      p_referrer: referrer || null,
+      p_referrer: referrer || "",
       p_reason: DEFAULT_404_REASON,
     });
     if (error) devWarn("[notFoundLog] log_404 respondeu erro:", error);
