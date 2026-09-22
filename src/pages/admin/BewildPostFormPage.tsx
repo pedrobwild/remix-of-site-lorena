@@ -8,11 +8,12 @@
  * padrão de post citável do plano SEO + IA (4 a 6 perguntas, respostas de
  * 40 a 70 palavras).
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Save } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import { supabase } from "@/integrations/supabase/client";
 import { navigate } from "@/lib/useHashRoute";
+import { uploadImageGeneric, type UploadResult } from "@/lib/uploadImage";
 
 type Props = { slug?: string };
 
