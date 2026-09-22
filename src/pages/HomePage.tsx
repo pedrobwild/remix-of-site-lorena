@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import homeBwaCssUrl from "./home-bwa.css?url";
 import { HOME_BWA_HTML } from "./home-bwa-body";
 import { useSeo } from "@/lib/useSeo";
 import { hydrateHomeProjects } from "@/lib/hydrateHomeProjects";
+import { trackEvent } from "@/lib/ga4";
 
 // @ts-expect-error - JS module, no types
 import { initHomeBwa } from "./home-bwa-script.js";
@@ -76,6 +77,8 @@ function mountHomeStylesheet(): () => void {
 }
 
 export default function HomePage() {
+  const homeRef = useRef<HTMLDivElement>(null);
+
   // SEO por rota (title/description/canonical + gating de trackers por consentimento).
   useSeo({
     title: TITLE,
@@ -105,5 +108,21 @@ export default function HomePage() {
     };
   }, []);
 
-  return <div dangerouslySetInnerHTML={{ __html: HOME_BWA_HTML }} />;
+  useEffect(() => {
+    const container = homeRef.current;
+    if (!container) return;
+
+    const handleCtaClick = (event: MouseEvent) => {
+      const target = event.target instanceof Element
+        ? event.target.closest<HTMLAnchorElement>("a[data-cta]")
+        : null;
+      if (!target?.dataset.cta) return;
+      trackEvent("cta_click", { location: target.dataset.cta });
+    };
+
+    container.addEventListener("click", handleCtaClick);
+    return () => container.removeEventListener("click", handleCtaClick);
+  }, []);
+
+  return <div ref={homeRef} dangerouslySetInnerHTML={{ __html: HOME_BWA_HTML }} />;
 }

@@ -74,6 +74,13 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 /* VALORES verbatim do mockup (dados do CRM, inalterados) */
 const CHAVES = ["Sim", "Ainda não", "Estou comprando"];
 const OBJETIVOS = ["Short stay", "Locação tradicional", "Uso misto", "Moradia", "Ainda avaliando"];
+const OBJETIVO_QUERY_MAP: Record<string, string> = {
+  "short-stay": "Short stay",
+  moradia: "Moradia",
+  locacao: "Locação tradicional",
+  "uso-misto": "Uso misto",
+  avaliando: "Ainda avaliando",
+};
 const PLANTA = ["Sim", "Não", "Não sei"];
 
 type Form = {
@@ -266,6 +273,14 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
   // true quando o WhatsApp abriu mas nenhum destino (banco/Slack/CRM) confirmou.
   const [deliveryFailed, setDeliveryFailed] = useState(false);
   const [showMore, setShowMore] = useState(false);
+
+  useEffect(() => {
+    const objetivoParam = new URLSearchParams(window.location.search).get("objetivo");
+    const objetivo = objetivoParam ? OBJETIVO_QUERY_MAP[objetivoParam] : undefined;
+    if (!objetivo) return;
+    setF((previous) => ({ ...previous, objetivo }));
+    setTouched((previous) => ({ ...previous, objetivo: true }));
+  }, []);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
 

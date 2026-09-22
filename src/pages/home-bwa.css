@@ -643,6 +643,112 @@
       background: var(--bwa-ink);
     }
 
+    .bwa-audience {
+      color: var(--bwa-ink);
+      background: var(--bwa-paper);
+      padding-block: clamp(56px, 6vw, 88px);
+    }
+
+    .bwa-audience-head {
+      display: grid;
+      grid-template-columns: .58fr 1.42fr;
+      gap: clamp(40px, 8vw, 140px);
+    }
+
+    .bwa-audience-head .bwa-lead {
+      color: var(--bwa-lead-ink);
+    }
+
+    .bwa-audience-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(20px, 3vw, 40px);
+    }
+
+    .bwa-audience-card {
+      display: grid;
+      gap: 18px;
+      align-content: start;
+      padding: clamp(22px, 3vw, 36px);
+      border: 1px solid var(--bwa-line);
+      border-radius: var(--bwa-radius);
+      background: var(--bwa-white);
+    }
+
+    .bwa-audience-media {
+      margin: 0;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+    }
+
+    .bwa-audience-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(.85);
+      transition: transform 1s var(--bwa-ease);
+    }
+
+    .bwa-audience-card:hover .bwa-audience-media img {
+      transform: scale(1.04);
+    }
+
+    .bwa-audience-card h3 {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      font-size: clamp(26px, 2.4vw, 40px);
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -.03em;
+    }
+
+    .bwa-audience-text {
+      max-width: 60ch;
+      margin: 0;
+      color: var(--bwa-ink-soft);
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    .bwa-audience-proof {
+      margin: 0;
+      padding-top: 14px;
+      border-top: 1px solid var(--bwa-line);
+      color: var(--bwa-ink-soft);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      letter-spacing: .04em;
+    }
+
+    .bwa-audience-proof strong {
+      margin-right: 6px;
+      color: var(--bwa-navy-2);
+      font-family: "Manrope", sans-serif;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .bwa-audience-note {
+      max-width: 70ch;
+      margin: clamp(28px, 4vw, 48px) 0 0;
+      padding-top: 18px;
+      border-top: 1px solid var(--bwa-line);
+      color: var(--bwa-ink-soft);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .bwa-audience-note strong {
+      color: var(--bwa-ink);
+    }
+
+    .bwa-audience-note a {
+      color: var(--bwa-navy-2);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
     .bwa-certainty-head {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
@@ -2866,6 +2972,7 @@
       }
 
       .bwa-certainty-head,
+      .bwa-audience-head,
       .bwa-story-head,
       .bwa-projects-head,
       .bwa-scope-head,
@@ -2884,6 +2991,14 @@
       .bwa-certainty-lead {
         position: static;
         top: auto;
+      }
+
+      .bwa-audience-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bwa-audience-card .bwa-button {
+        width: 100%;
       }
 
       .bwa-image-gallery-head {
@@ -3217,6 +3332,10 @@
 
       .bwa-reveal {
         opacity: 1;
+        transform: none;
+      }
+
+      .bwa-audience-card:hover .bwa-audience-media img {
         transform: none;
       }
     }
@@ -4122,8 +4241,8 @@
 
 /* === Passe de densidade desktop — ritmo final entre seções (Parte 1) === */
 @media (min-width:821px){
-  .bwa-certainty,.bwa-story,.bwa-projects,.bwa-responsibility,.bwa-workflow,.bwa-proof,.bwa-objectives,.bwa-manifesto,.bwa-faq{padding-top:clamp(56px,6vw,88px) !important;padding-bottom:clamp(56px,6vw,88px) !important}
-  .bwa-certainty-head,.bwa-story-head,.bwa-projects-head,.bwa-proof-head,.bwa-objectives-head,.bwa-faq-head,.bwa-wf2-head{margin-bottom:clamp(32px,4vw,48px) !important;min-height:0 !important}
+  .bwa-audience,.bwa-certainty,.bwa-story,.bwa-projects,.bwa-responsibility,.bwa-workflow,.bwa-proof,.bwa-objectives,.bwa-manifesto,.bwa-faq{padding-top:clamp(56px,6vw,88px) !important;padding-bottom:clamp(56px,6vw,88px) !important}
+  .bwa-audience-head,.bwa-certainty-head,.bwa-story-head,.bwa-projects-head,.bwa-proof-head,.bwa-objectives-head,.bwa-faq-head,.bwa-wf2-head{margin-bottom:clamp(32px,4vw,48px) !important;min-height:0 !important}
   .bwa-story-resolution{margin-top:clamp(40px,5vw,64px) !important}
   .bwa-certainty-close{margin-top:clamp(36px,4vw,56px) !important}
   .bwa-projects-foot{margin-top:clamp(28px,3vw,40px) !important}
@@ -4141,3 +4260,12 @@
 .bwa-footer .bwa-footer-cookie-prefs{background:none;border:0;padding:0;margin:0;color:inherit;font:inherit;text-align:left;cursor:pointer;text-decoration:none}
 .bwa-footer .bwa-footer-cookie-prefs:hover{text-decoration:underline;text-underline-offset:3px}
 .bwa-footer .bwa-footer-cookie-prefs:focus-visible{outline:2px solid #5FB2DD;outline-offset:2px}
+
+@media (max-width:899px){
+  .bwa-audience-grid{grid-template-columns:1fr}
+  .bwa-audience-card .bwa-button{width:100%}
+}
+@media (min-width:900px){
+  .bwa-audience-card{grid-template-rows:auto auto auto minmax(0,1fr) auto auto}
+  .bwa-audience-card .bwa-button{margin-top:auto;justify-self:start}
+}

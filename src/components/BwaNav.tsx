@@ -111,7 +111,7 @@ export default function BwaNav() {
           <a href="/#certeza">O que fazemos</a>
           <a href="/#workflow">Bwild Workflow</a>
           <a href="/#prova">Prova</a>
-          <a href="/#objetivos">Morar, alugar ou vender</a>
+          <a href="/#para-quem">Morar, alugar ou vender</a>
           <a href="/portfolio">Portfólio</a>
           <a href="/conteudos">Conteúdos</a>
           <a href="/faq">FAQ</a>

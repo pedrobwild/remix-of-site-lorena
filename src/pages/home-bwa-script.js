@@ -365,7 +365,7 @@ export function initHomeBwa() {
       });
 
       const revealElements = [...document.querySelectorAll(
-        ".bwa-title, .bwa-lead, .bwa-project-card, .bwa-proof-card, .bwa-objective"
+        ".bwa-title, .bwa-lead, .bwa-project-card, .bwa-proof-card, .bwa-objective, .bwa-audience-card"
       )];
 
       revealElements.forEach((element) => element.classList.add("bwa-reveal"));
