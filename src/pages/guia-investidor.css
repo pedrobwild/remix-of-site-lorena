@@ -1,319 +1,214 @@
-/* /guia-do-investidor — página pilar editorial, linguagem visual .bwa (tema claro).
-   Os tokens --bwa-* e as classes base (.bwa-shell, .bwa-label, .bwa-button,
-   .bwa-mono) são injetados pelo BwaNav via home-bwa.css. */
+/* ============================================================
+ * guia-investidor.css — tema ISOLADO da rota /guia-do-investidor
+ *
+ * Todos os tokens vivem dentro de `.guia-root`. Nada aqui usa
+ * `:root`, `html` ou `body`, para que o tema do guia não vaze
+ * para o restante do site (home, portfólio, conteúdos, FAQ…).
+ * ============================================================ */
 
-.bwa-gi-page {
-  min-height: 100vh;
-  overflow-x: clip;
-  color: var(--bwa-navy);
-  background: var(--bwa-paper);
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Playfair+Display:wght@600;700;800&display=swap");
+
+.guia-root {
+  --background: 210 20% 97%;
+  --foreground: 215 30% 10%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 215 30% 10%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 215 30% 10%;
+
+  --primary: 210 70% 25%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 210 20% 92%;
+  --secondary-foreground: 215 30% 10%;
+
+  --muted: 210 15% 94%;
+  --muted-foreground: 215 10% 46%;
+
+  --accent: 200 65% 45%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 210 15% 88%;
+  --input: 210 15% 88%;
+  --ring: 210 70% 25%;
+
+  --radius: 0.75rem;
+
+  --hero-gradient: linear-gradient(135deg, hsl(210 70% 20%), hsl(200 60% 30%));
+  --hero-gradient-subtle: linear-gradient(135deg, hsl(210 70% 20% / 0.03), hsl(200 60% 30% / 0.06));
+  --gold: 200 65% 45%;
+  --gold-light: 200 40% 92%;
+
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "DM Sans", "Inter", system-ui, sans-serif;
+
+  --shadow-card: 0 1px 3px 0 hsl(210 15% 10% / 0.04), 0 1px 2px -1px hsl(210 15% 10% / 0.04);
+  --shadow-card-hover: 0 4px 12px -2px hsl(210 15% 10% / 0.08), 0 2px 6px -2px hsl(210 15% 10% / 0.05);
+  --shadow-elevated: 0 10px 30px -8px hsl(210 15% 10% / 0.12);
+
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-.bwa-gi-intro {
-  padding: clamp(148px, 17vw, 210px) 0 clamp(48px, 6vw, 80px);
-  border-bottom: 1px solid var(--bwa-line);
+/* Tipografia do guia (sobrepõe font-display/font-body do site só aqui) */
+.guia-root .font-display,
+.guia-root h1,
+.guia-root h2,
+.guia-root h3,
+.guia-root h4 {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+.guia-root .font-body {
+  font-family: var(--font-body);
 }
 
-.bwa-gi-intro h1 {
-  max-width: 980px;
-  margin: 20px 0 0;
-  font-family: var(--bwa-font-body);
-  font-size: clamp(34px, 4.4vw, 62px);
-  font-weight: 500;
-  line-height: 1.05;
-  letter-spacing: 0;
+/* Raios do guia (0.75rem) sem tocar no borderRadius global do Tailwind */
+.guia-root .rounded-lg { border-radius: var(--radius); }
+.guia-root .rounded-md { border-radius: calc(var(--radius) - 2px); }
+.guia-root .rounded-sm { border-radius: calc(var(--radius) - 4px); }
+
+.guia-root a,
+.guia-root button,
+.guia-root [role="button"] {
+  transition: color 0.2s, background-color 0.2s, border-color 0.2s;
 }
 
-.bwa-gi-lead {
-  max-width: 820px;
-  margin: 28px 0 0;
-  color: var(--bwa-ink);
-  font-size: clamp(16px, 1.35vw, 19px);
-  line-height: 1.7;
+.guia-root :focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
 }
 
-.bwa-gi-stamp {
-  margin: 22px 0 0;
-  font-size: 11px;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--bwa-ink);
-  opacity: .7;
+/* ─── Utilitários do guia (escopados) ─── */
+.guia-root .card-elevated {
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
+.guia-root .card-elevated:hover { box-shadow: var(--shadow-card-hover); }
 
-/* Índice */
-.bwa-gi-toc {
-  padding: clamp(28px, 4vw, 44px) 0;
-  border-bottom: 1px solid var(--bwa-line);
-}
-
-.bwa-gi-toc h2 {
-  margin: 0 0 16px;
-  font-size: 12px;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  font-weight: 600;
-}
-
-.bwa-gi-toc ol {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 28px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: gi;
-}
-
-.bwa-gi-toc li {
-  counter-increment: gi;
-}
-
-.bwa-gi-toc li a {
-  color: var(--bwa-navy);
-  text-decoration: none;
-  border-bottom: 1px solid var(--bwa-line);
-  font-size: 15px;
-  line-height: 1.5;
-}
-
-.bwa-gi-toc li a:hover,
-.bwa-gi-toc li a:focus-visible {
-  border-bottom-color: currentColor;
-}
-
-/* Seções */
-.bwa-gi-section {
-  padding: clamp(56px, 7vw, 96px) 0;
-  border-bottom: 1px solid var(--bwa-line);
-  scroll-margin-top: 96px;
-}
-
-.bwa-gi-section > .bwa-shell > * {
-  max-width: 860px;
-}
-
-.bwa-gi-section h2 {
-  margin: 12px 0 24px;
-  font-family: var(--bwa-font-body);
-  font-size: clamp(26px, 3vw, 40px);
-  font-weight: 500;
-  line-height: 1.12;
-}
-
-.bwa-gi-section h3 {
-  margin: 40px 0 12px;
-  font-size: clamp(19px, 1.8vw, 24px);
-  font-weight: 600;
-  line-height: 1.25;
-}
-
-.bwa-gi-section p {
-  margin: 0 0 18px;
-  color: var(--bwa-ink);
-  font-size: clamp(16px, 1.3vw, 18px);
-  line-height: 1.75;
-}
-
-.bwa-gi-section ul,
-.bwa-gi-section ol {
-  margin: 0 0 20px;
-  padding-left: 22px;
-  color: var(--bwa-ink);
-  font-size: clamp(15px, 1.25vw, 17px);
-  line-height: 1.7;
-}
-
-.bwa-gi-section li {
-  margin: 0 0 8px;
-}
-
-.bwa-gi-section a {
-  color: var(--bwa-navy);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.bwa-gi-link-line {
-  font-size: 15px;
-}
-
-/* Tabelas */
-.bwa-gi-tablewrap {
-  max-width: 860px;
-  margin: 0 0 14px;
-  overflow-x: auto;
-  border: 1px solid var(--bwa-line);
-}
-
-.bwa-gi-table {
-  width: 100%;
-  min-width: 560px;
-  border-collapse: collapse;
-  font-size: 15px;
-}
-
-.bwa-gi-table th,
-.bwa-gi-table td {
-  padding: 12px 14px;
-  text-align: left;
-  border-bottom: 1px solid var(--bwa-line);
-  color: var(--bwa-ink);
-  white-space: nowrap;
-}
-
-.bwa-gi-table th {
-  font-size: 11px;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  font-weight: 600;
-  color: var(--bwa-navy);
-}
-
-.bwa-gi-table tbody tr:last-child td {
-  border-bottom: 0;
-}
-
-.bwa-gi-table td:first-child {
-  color: var(--bwa-navy);
-  font-weight: 500;
-}
-
-.bwa-gi-note {
-  max-width: 860px;
-  margin: 0 0 28px;
-  font-size: 12px;
-  line-height: 1.65;
-  color: var(--bwa-ink);
-  opacity: .78;
-  text-transform: none;
-  letter-spacing: 0;
-}
-
-/* Cartões de verificação */
-.bwa-gi-cards {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(16px, 2.2vw, 28px);
-  margin: 0 0 28px;
-  max-width: 860px;
-}
-
-.bwa-gi-card {
-  border: 1px solid var(--bwa-line);
-  padding: clamp(20px, 2.4vw, 28px);
-  background: #fff;
-}
-
-.bwa-gi-card h3 {
-  margin: 0 0 12px;
-  font-size: 17px;
-  font-weight: 600;
-}
-
-.bwa-gi-card ul {
-  margin: 0;
-  font-size: 15px;
-}
-
-/* FAQ */
-.bwa-gi-faq details {
-  max-width: 860px;
-  border-bottom: 1px solid var(--bwa-line);
-  padding: 4px 0;
-}
-
-.bwa-gi-faq summary {
+.guia-root .card-interactive {
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
   cursor: pointer;
-  list-style: none;
-  padding: 18px 32px 18px 0;
-  position: relative;
-  font-size: clamp(16px, 1.3vw, 18px);
-  font-weight: 500;
-  color: var(--bwa-navy);
+}
+.guia-root .card-interactive:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
 }
 
-.bwa-gi-faq summary::-webkit-details-marker {
-  display: none;
+.guia-root .section-divider {
+  border-top: 1px solid hsl(var(--border) / 0.4);
+  margin-top: 3rem;
+  margin-bottom: 3rem;
 }
 
-.bwa-gi-faq summary::after {
-  content: "+";
-  position: absolute;
-  right: 4px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 20px;
-  line-height: 1;
+.guia-root .glass-nav {
+  background: hsl(var(--background) / 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
+  box-shadow: 0 1px 8px hsl(210 15% 10% / 0.04);
 }
 
-.bwa-gi-faq details[open] summary::after {
-  content: "–";
+.guia-root .text-gradient-premium {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.bwa-gi-faq details p {
-  margin: 0 0 18px;
-  font-size: 16px;
+.guia-root .text-gradient-hero {
+  background: var(--hero-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.guia-root .bg-hero-gradient { background: var(--hero-gradient); }
+.guia-root .bg-hero-gradient-subtle { background: var(--hero-gradient-subtle); }
+.guia-root .bg-gold-subtle { background: hsl(var(--gold-light)); }
+
+.guia-root .page-enter { animation: guiaPageEnter 0.4s ease-out both; }
+@keyframes guiaPageEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Ferramentas */
-.bwa-gi-tools {
-  max-width: 860px;
-  border: 1px solid var(--bwa-line);
-  padding: clamp(22px, 3vw, 34px);
-  background: #fff;
+.guia-root .scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.guia-root .scrollbar-none::-webkit-scrollbar { display: none; }
+
+.guia-root .scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
+}
+.guia-root .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+.guia-root .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.guia-root .scrollbar-thin::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 9999px;
+}
+.guia-root .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.4);
 }
 
-.bwa-gi-tools h2 {
-  margin: 0 0 12px;
-  font-size: clamp(20px, 2vw, 26px);
+.guia-root table tbody tr { transition: background-color 0.15s ease; }
+
+/* MapLibre — o popup é renderizado dentro do container do mapa,
+   que vive dentro de .guia-root */
+.guia-root .maplibregl-popup-content {
+  background: hsl(0 0% 100% / 0.95) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid hsl(210 15% 88%) !important;
+  border-radius: 0.5rem !important;
+  padding: 8px 12px !important;
+  box-shadow: 0 10px 30px -8px hsl(210 15% 10% / 0.12) !important;
+  color: hsl(215 30% 10%);
+}
+.guia-root .maplibregl-popup-tip { border-top-color: hsl(0 0% 100% / 0.95) !important; }
+.guia-root .maplibregl-ctrl-group {
+  border-radius: 0.5rem !important;
+  border: 1px solid hsl(210 15% 88%) !important;
+  overflow: hidden;
 }
 
-.bwa-gi-tools ul {
-  margin: 0;
-  padding-left: 22px;
+/* Elementos do guia renderizados em portal (Radix Dialog/Sheet/Select) */
+.guia-portal {
+  --background: 210 20% 97%;
+  --foreground: 215 30% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 215 30% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 215 30% 10%;
+  --primary: 210 70% 25%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 20% 92%;
+  --secondary-foreground: 215 30% 10%;
+  --muted: 210 15% 94%;
+  --muted-foreground: 215 10% 46%;
+  --accent: 200 65% 45%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 210 15% 88%;
+  --input: 210 15% 88%;
+  --ring: 210 70% 25%;
+  --radius: 0.75rem;
+  --gold: 200 65% 45%;
+  --gold-light: 200 40% 92%;
+  font-family: "DM Sans", "Inter", system-ui, sans-serif;
+  color: hsl(var(--foreground));
 }
-
-/* CTA */
-.bwa-gi-cta {
-  padding: clamp(64px, 8vw, 110px) 0;
-}
-
-.bwa-gi-cta h2 {
-  margin: 0 0 16px;
-  font-family: var(--bwa-font-body);
-  font-size: clamp(28px, 3.4vw, 46px);
-  font-weight: 500;
-  line-height: 1.1;
-  max-width: 820px;
-}
-
-.bwa-gi-cta p {
-  max-width: 720px;
-  margin: 0 0 28px;
-  color: var(--bwa-ink);
-  font-size: clamp(16px, 1.3vw, 18px);
-  line-height: 1.7;
-}
-
-/* Disclaimer */
-.bwa-gi-disclaimer {
-  padding: 0 0 clamp(48px, 6vw, 80px);
-}
-
-.bwa-gi-disclaimer p {
-  max-width: 860px;
-  margin: 0;
-  font-size: 11.5px;
-  line-height: 1.7;
-  color: var(--bwa-ink);
-  opacity: .72;
-  text-transform: none;
-  letter-spacing: 0;
-}
-
-@media (max-width: 860px) {
-  .bwa-gi-cards {
-    grid-template-columns: minmax(0, 1fr);
-  }
+.guia-portal .rounded-lg { border-radius: var(--radius); }
+.guia-portal h1, .guia-portal h2, .guia-portal h3, .guia-portal h4 {
+  font-family: "Playfair Display", Georgia, serif;
 }
