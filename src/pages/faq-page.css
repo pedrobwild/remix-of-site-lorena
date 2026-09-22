@@ -123,3 +123,129 @@
     transition: none;
   }
 }
+
+/* Pergunta livre respondida por IA (edge function faq-answer) */
+.bwa-faqpage-ask {
+  padding: 0 0 clamp(72px, 9vw, 120px);
+  background: var(--bwa-paper);
+}
+
+.bwa-faqpage-ask-title {
+  margin: clamp(14px, 1.8vw, 20px) 0 0;
+  max-width: 20ch;
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(26px, 2.8vw, 40px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -.01em;
+}
+
+.bwa-faqpage-ask-title em {
+  font-style: italic;
+  font-weight: 300;
+}
+
+.bwa-faqpage-ask-form {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+  max-width: 62ch;
+  margin-top: clamp(24px, 3vw, 36px);
+}
+
+.bwa-faqpage-ask-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--bwa-ink-soft);
+}
+
+.bwa-faqpage-ask-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--bwa-line);
+  border-radius: 10px;
+  background: var(--bwa-white);
+  color: var(--bwa-ink);
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.bwa-faqpage-ask-input:focus-visible {
+  outline: 2px solid var(--bwa-navy-2);
+  outline-offset: 2px;
+}
+
+.bwa-faqpage-ask-erro {
+  max-width: 62ch;
+  margin: 18px 0 0;
+  color: var(--bwa-ink);
+  font-size: 15px;
+}
+
+.bwa-faqpage-ask-answer {
+  max-width: 68ch;
+  margin-top: clamp(24px, 3vw, 36px);
+  padding: clamp(20px, 2.6vw, 32px);
+  border: 1px solid var(--bwa-line);
+  border-radius: 12px;
+  background: var(--bwa-white);
+}
+
+.bwa-faqpage-ask-text {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.bwa-faqpage-ask-list {
+  margin: 16px 0 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 8px;
+  color: var(--bwa-ink-soft);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.bwa-faqpage-ask-next {
+  margin: 18px 0 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--bwa-navy-2);
+}
+
+.bwa-faqpage-ask-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: clamp(18px, 2.4vw, 26px);
+}
+
+.bwa-faqpage-ask-whats {
+  color: var(--bwa-navy-2);
+  font-size: 15px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.bwa-faqpage-ask-note {
+  margin: 16px 0 0;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  line-height: 1.7;
+  letter-spacing: .04em;
+  color: var(--bwa-ink-soft);
+}
+
+@media (max-width: 700px) {
+  .bwa-faqpage-ask-form .bwa-button,
+  .bwa-faqpage-ask-actions .bwa-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
