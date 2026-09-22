@@ -28,6 +28,8 @@ export type BewildPost = {
   published: boolean;
   published_at: string | null;
   created_at: string;
+  /** Última alteração (trigger set_updated_at). Alimenta dateModified e a linha "Atualizado em". */
+  updated_at?: string | null;
 };
 
 /**

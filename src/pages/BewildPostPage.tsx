@@ -24,6 +24,7 @@ import {
   type BewildPostCategory,
 } from "@/lib/useBewildPosts";
 import { useBewildPost, useBewildRelatedPosts } from "@/lib/useBewildPost";
+import { postAuthorByline, postAuthorJsonLd, postDates, postTitleFromSlug } from "@/lib/postSeo";
 import { navigate } from "@/lib/useHashRoute";
 import "@/styles/post.css";
 import "@/styles/conteudos.css";
@@ -154,7 +155,11 @@ export default function BewildPostPage({ slug }: Props) {
 
   const baseUrl = "https://bewild.com.br";
   const articleUrl = post ? `${baseUrl}/conteudos/${post.slug}` : `${baseUrl}/conteudos/${slug}`;
-  const dateIso = post?.published_at ?? post?.created_at ?? null;
+  const dates = postDates(post);
+  const dateIso = dates.published;
+  // Enquanto o banco não responde, título e H1 saem do slug (SEO-14): o
+  // snapshot do Googlebot nunca vê "Carregando" sem H1.
+  const slugTitle = postTitleFromSlug(slug);
 
   const jsonLd = useMemo(() => {
     if (!post) return undefined;
@@ -168,14 +173,14 @@ export default function BewildPostPage({ slug }: Props) {
           post.excerpt ||
           `${post.title}. Conteúdo Bewild sobre reformas de apartamentos e imóveis prontos.`,
         image: post.cover_image ? [post.cover_image] : undefined,
-        author: { "@type": "Organization", name: post.author || "Bewild" },
+        author: postAuthorJsonLd(post.author),
         publisher: {
           "@type": "Organization",
           name: "Bewild",
           logo: { "@type": "ImageObject", url: `${baseUrl}/images/og-bewild.jpg` },
         },
         datePublished: dateIso,
-        dateModified: dateIso,
+        dateModified: dates.modified,
         mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
         inLanguage: "pt-BR",
         articleSection: bewildCategoryLabel(post.category),
@@ -202,14 +207,30 @@ export default function BewildPostPage({ slug }: Props) {
       });
     }
     return arr;
-  }, [post, articleUrl, dateIso]);
+  }, [post, articleUrl, dateIso, dates.modified]);
+
+  // Breadcrumb estático durante o carregamento: não depende de rede.
+  const loadingJsonLd = useMemo(
+    () => [
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Início", item: `${baseUrl}/` },
+          { "@type": "ListItem", position: 2, name: "Conteúdos", item: `${baseUrl}/conteudos` },
+          { "@type": "ListItem", position: 3, name: slugTitle, item: articleUrl },
+        ],
+      },
+    ],
+    [articleUrl, slugTitle],
+  );
 
   useSeo({
     title: post
       ? post.meta_title || `${post.title} | Bewild`
       : notFound
         ? "Conteúdo não encontrado | Bewild"
-        : "Carregando | Bewild",
+        : `${slugTitle} | Bewild`,
     description:
       post?.meta_description ||
       post?.excerpt ||
@@ -218,7 +239,7 @@ export default function BewildPostPage({ slug }: Props) {
     ogType: "article",
     ogImage: post?.cover_image ? optimizedImageUrl(post.cover_image) : undefined,
     noindex: notFound,
-    jsonLd,
+    jsonLd: post ? jsonLd : notFound ? undefined : loadingJsonLd,
   });
 
   // 404 — slug inválido ou rascunho
@@ -254,7 +275,7 @@ export default function BewildPostPage({ slug }: Props) {
           <section className="pt-hero" aria-busy="true" aria-live="polite">
             <div className="container">
               <div className="pt-cat">Carregando…</div>
-              <h1 className="pt-title">&nbsp;</h1>
+              <h1 className="pt-title">{slugTitle}</h1>
             </div>
           </section>
         </main>
@@ -286,11 +307,17 @@ export default function BewildPostPage({ slug }: Props) {
             <h1 className="pt-title">{post.title}</h1>
             {post.excerpt ? <p className="pt-excerpt">{post.excerpt}</p> : null}
             <div className="pt-meta">
-              {post.author ? <span>{post.author}</span> : null}
-              {post.author && dateIso ? <span className="pt-dot">·</span> : null}
+              <span>{postAuthorByline(post.author)}</span>
+              {dateIso ? <span className="pt-dot">·</span> : null}
               {dateIso ? <time dateTime={dateIso}>{formatBewildDate(dateIso)}</time> : null}
               {post.reading_time ? <span className="pt-dot">·</span> : null}
               {post.reading_time ? <span>{post.reading_time} min de leitura</span> : null}
+              {dates.showUpdated && dates.modified ? <span className="pt-dot">·</span> : null}
+              {dates.showUpdated && dates.modified ? (
+                <span>
+                  Atualizado em <time dateTime={dates.modified}>{formatBewildDate(dates.modified)}</time>
+                </span>
+              ) : null}
             </div>
           </div>
         </section>

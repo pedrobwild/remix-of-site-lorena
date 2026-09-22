@@ -7,6 +7,7 @@ import { resolve } from "node:path";
 
 const BASE_URL = "https://bewild.com.br";
 const OUT = resolve("public/sitemap.xml");
+const LLMS = resolve("public/llms.txt");
 
 function warn(msg) {
   console.warn(`[sitemap] ${msg} — public/sitemap.xml mantido como está.`);
@@ -61,7 +62,7 @@ async function main() {
   try {
     [projects, posts] = await Promise.all([
       get("projects?published=eq.true&visible=eq.true&select=slug,updated_at,created_at"),
-      get("bewild_posts?published=eq.true&select=slug,updated_at,published_at,created_at"),
+      get("bewild_posts?published=eq.true&select=slug,title,updated_at,published_at,created_at"),
     ]);
   } catch (err) {
     warn(`falha ao consultar o banco: ${err.message}`);
@@ -131,6 +132,34 @@ async function main() {
 
   writeFileSync(OUT, xml);
   console.log(`[sitemap] public/sitemap.xml escrito (${all.length} URLs).`);
+  updateLlmsTxt(posts);
+}
+
+/**
+ * Mantém a seção "Conteúdos publicados" do public/llms.txt em dia (plano
+ * SEO + IA: os posts precisam estar listados para os crawlers de IA). Só
+ * mexe no trecho entre os marcadores; sem marcadores, não toca no arquivo.
+ */
+function updateLlmsTxt(posts) {
+  if (!existsSync(LLMS)) return;
+  const start = "<!-- posts:start -->";
+  const end = "<!-- posts:end -->";
+  const txt = readFileSync(LLMS, "utf8");
+  const a = txt.indexOf(start);
+  const b = txt.indexOf(end);
+  if (a === -1 || b === -1 || b < a) {
+    warn("llms.txt sem marcadores posts:start/posts:end; lista de posts não atualizada");
+    return;
+  }
+  const lines = posts
+    .filter((p) => p.slug && p.title)
+    .sort((x, y) => String(y.published_at || y.created_at || "").localeCompare(String(x.published_at || x.created_at || "")))
+    .map((p) => `- [${String(p.title).replace(/[\[\]]/g, "")}](/conteudos/${p.slug})`);
+  const next = `${txt.slice(0, a + start.length)}\n${lines.join("\n")}\n${txt.slice(b)}`;
+  if (next !== txt) {
+    writeFileSync(LLMS, next);
+    console.log(`[sitemap] public/llms.txt: ${lines.length} posts listados.`);
+  }
 }
 
 main().catch((err) => {
