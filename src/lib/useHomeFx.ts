@@ -10,6 +10,7 @@
  * caem num fallback: IntersectionObserver simples liga `.in` e nada mais.
  */
 import { useEffect } from "react";
+import { closestElementFrom } from "@/lib/useHashRoute";
 
 type Cleanup = () => void;
 
@@ -59,7 +60,10 @@ function installCrosshair(): Cleanup {
     if (!c.classList.contains("is-on")) c.classList.add("is-on");
   };
   const onOver = (e: MouseEvent) => {
-    const t = e.target as HTMLElement | null;
+    // Mesmo motivo do interceptor de links (FE-01): `e.target` pode não ser um
+    // Element e `closest` estourar. Os crashes vinham em par — dois handlers
+    // de `document` quebrando no mesmo evento sintético.
+    const t = closestElementFrom(e.target);
     if (!t) return;
     if (t.closest('a, button, [data-cursor="hover"]'))
       c.classList.add("is-hover");

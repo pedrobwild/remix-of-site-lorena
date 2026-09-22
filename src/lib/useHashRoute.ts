@@ -180,6 +180,28 @@ export function navigate(href: string) {
   window.dispatchEvent(new Event("lovable:navigate"));
 }
 
+/**
+ * Resolve o `event.target` para o Element mais próximo que responda a
+ * `closest`. `event.target` é tipado como `EventTarget` e nem sempre é um
+ * Element: em eventos sintéticos despachados direto no `document` (comum em
+ * bots, extensões e WebViews instrumentadas) ele é o próprio `Document`, que
+ * não tem `closest` — daí o `b.closest is not a function` registrado 26 vezes
+ * em `crash_reports`. Nós de texto sobem para o `parentElement`.
+ *
+ * Exportado para teste. Ver FE-01 em docs/auditoria/rodada-2026-09-22.md.
+ */
+export function closestElementFrom(target: EventTarget | null): Element | null {
+  let node: unknown = target;
+  // Text/Comment node → sobe para o elemento que o contém.
+  if (node && typeof node === "object" && "nodeType" in node) {
+    const n = node as Node;
+    if (n.nodeType !== 1) node = (n as { parentElement?: Element | null }).parentElement ?? null;
+  }
+  if (!node) return null;
+  const el = node as { closest?: unknown };
+  return typeof el.closest === "function" ? (node as Element) : null;
+}
+
 // Intercepta cliques em <a href="/..."> internos para usar pushState
 export function installLinkInterceptor() {
   if (typeof window === "undefined") return;
@@ -194,7 +216,7 @@ export function installLinkInterceptor() {
     if (me.button !== 0) return;
     if (me.metaKey || me.ctrlKey || me.shiftKey || me.altKey) return;
 
-    const target = (me.target as HTMLElement | null)?.closest("a");
+    const target = closestElementFrom(me.target)?.closest("a");
     if (!target) return;
     const a = target as HTMLAnchorElement;
     if (!a.href) return;
