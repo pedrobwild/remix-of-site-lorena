@@ -10,7 +10,7 @@
  * o guardrail "ícones em SVG, nunca emoji".
  */
 import { ReactNode, useEffect, useState } from "react";
-import { LayoutDashboard, Inbox, MessagesSquare, ClipboardList, FolderKanban, Newspaper, LogOut, Menu } from "lucide-react";
+import { LayoutDashboard, Inbox, MessagesSquare, ListChecks, ClipboardList, FolderKanban, Newspaper, LogOut, Menu } from "lucide-react";
 import { useAuth } from "@/lib/useAuth";
 import { navigate, routes } from "@/lib/useHashRoute";
 import "@/styles/admin-bewild.css";
@@ -36,6 +36,7 @@ type Props = {
 const TABS: { key: BewildAdminTab; label: string; href: string; icon: typeof LayoutDashboard }[] = [
   { key: "overview", label: "Visão geral", href: "/admin/dashboard", icon: LayoutDashboard },
   { key: "leads", label: "Leads", href: "/admin/leads", icon: Inbox },
+  { key: "qualificacao", label: "Qualificação", href: "/admin/qualificacao", icon: ListChecks },
   { key: "mensagens", label: "Mensagens", href: "/admin/mensagens", icon: MessagesSquare },
   { key: "diagnostico", label: "Diagnósticos", href: "/admin/diagnostico", icon: ClipboardList },
   { key: "projetos", label: "Projetos", href: "/admin/projetos", icon: FolderKanban },

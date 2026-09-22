@@ -30,6 +30,7 @@ import { lazy, Suspense, useEffect, type ReactNode } from "react";
 const LoginPage = lazy(() => import("./pages/admin/LoginPage"));
 const BewildOverviewPage = lazy(() => import("./pages/admin/BewildOverviewPage"));
 const BewildLeadsAdminPage = lazy(() => import("./pages/admin/BewildLeadsAdminPage"));
+const BewildQualificacaoAdminPage = lazy(() => import("./pages/admin/BewildQualificacaoAdminPage"));
 const BewildMensagensAdminPage = lazy(() => import("./pages/admin/BewildMensagensAdminPage"));
 const BewildDiagnosticoAdminPage = lazy(() => import("./pages/admin/BewildDiagnosticoAdminPage"));
 const BewildConteudosAdminPage = lazy(() => import("./pages/admin/BewildConteudosAdminPage"));
@@ -178,6 +179,14 @@ export function renderRoute(route: Route) {
       <AdminChunk>
         <ProtectedRoute>
           <BewildLeadsAdminPage />
+        </ProtectedRoute>
+      </AdminChunk>
+    );
+  if (route.name === "admin-qualificacao")
+    return (
+      <AdminChunk>
+        <ProtectedRoute>
+          <BewildQualificacaoAdminPage />
         </ProtectedRoute>
       </AdminChunk>
     );
