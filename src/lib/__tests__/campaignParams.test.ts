@@ -13,6 +13,15 @@ describe("carryCampaignParams", () => {
     expect(carryCampaignParams("/faq?x=1#top", "?utm_source=ig")).toBe("/faq?x=1&utm_source=ig#top");
   });
 
+  it("preserva objetivo do destino ao acrescentar parâmetros de campanha", () => {
+    expect(
+      carryCampaignParams(
+        "/diagnostico?objetivo=short-stay",
+        "?utm_source=meta&utm_campaign=studios",
+      ),
+    ).toBe("/diagnostico?objetivo=short-stay&utm_source=meta&utm_campaign=studios");
+  });
+
   it("não sobrescreve quando o destino já tem parâmetro de campanha", () => {
     expect(carryCampaignParams("/diagnostico?utm_source=qr", "?utm_source=meta")).toBe(
       "/diagnostico?utm_source=qr",
