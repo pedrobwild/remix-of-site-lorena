@@ -6,4 +6,4 @@ export const MAINTENANCE_MODE = false;
 // Assistente de dúvidas do site (src/components/assistant/SiteAssistant.tsx).
 // false = desligado para o público; aparece só com ?assistente=1 na URL (teste interno).
 // true = ligado para todos os visitantes.
-export const ASSISTANT_ENABLED = false;
+export const ASSISTANT_ENABLED = true;
