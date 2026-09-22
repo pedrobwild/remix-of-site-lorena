@@ -1,0 +1,65 @@
+-- =====================================================================
+-- DB-01 · Remove a sobrecarga antiga de log_404(text, text)
+-- =====================================================================
+-- STATUS: PREPARADA, NÃO APLICADA (auditoria de 22/09/2026).
+--
+-- Problema
+-- --------
+-- O banco de produção tem DUAS funções log_404:
+--
+--   log_404(p_path text, p_referrer text DEFAULT NULL)
+--   log_404(p_path text, p_referrer text DEFAULT NULL, p_reason text DEFAULT NULL)
+--
+-- Como as duas têm default em tudo menos p_path, um POST do PostgREST com
+-- {p_path, p_referrer} satisfaz as duas assinaturas e a resposta é
+-- PGRST203 ("Could not choose the best candidate function") — nada é
+-- gravado. `seo_404_log` está em 0 linhas desde que a tabela existe.
+--
+-- O cliente já foi corrigido para sempre enviar p_reason (ver
+-- src/lib/notFoundLog.ts), o que fecha o match na sobrecarga de 3
+-- argumentos sem depender desta migration. Esta migration elimina a causa
+-- raiz: enquanto a sobrecarga de 2 argumentos existir, qualquer chamador
+-- novo (edge function, script, outro app) volta a cair na ambiguidade.
+--
+-- Dependência / ordem
+-- -------------------
+-- Aplicar SOMENTE depois que a correção de src/lib/notFoundLog.ts estiver
+-- publicada em produção. Se esta migration for aplicada antes, um cliente
+-- antigo que mande só {p_path, p_referrer} passa a casar com a sobrecarga
+-- de 3 argumentos (p_reason usa o DEFAULT) — ou seja, também funciona.
+-- A ordem é conservadora, não obrigatória.
+--
+-- Verificação depois de aplicar
+-- -----------------------------
+--   select oid::regprocedure::text
+--     from pg_proc
+--    where proname = 'log_404';
+--   -- esperado: exatamente uma linha, log_404(text,text,text)
+--
+--   -- e, após uma visita a uma URL inexistente no site publicado:
+--   select path, hits, reason, last_seen_at from public.seo_404_log;
+--   -- esperado: pelo menos uma linha com reason = 'spa_not_found'
+--
+-- Rollback
+-- --------
+-- Recriar a assinatura de 2 argumentos (conteúdo idêntico ao que está em
+-- produção hoje). Só faz sentido se algum cliente não atualizado depender
+-- dela; na prática, a de 3 argumentos atende os dois formatos de chamada.
+--
+--   CREATE OR REPLACE FUNCTION public.log_404(p_path text, p_referrer text DEFAULT NULL::text)
+--   RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path TO 'public' AS $fn$
+--   DECLARE v_path TEXT;
+--   BEGIN
+--     v_path := substring(coalesce(p_path, '/') from 1 for 500);
+--     IF v_path IS NULL OR length(trim(v_path)) = 0 THEN RETURN; END IF;
+--     INSERT INTO public.seo_404_log (path, referrer, source, hits, last_seen_at)
+--     VALUES (v_path, substring(coalesce(p_referrer, '') from 1 for 500), 'auto', 1, now())
+--     ON CONFLICT (path) DO UPDATE
+--       SET hits = public.seo_404_log.hits + 1,
+--           last_seen_at = now(),
+--           referrer = COALESCE(EXCLUDED.referrer, public.seo_404_log.referrer);
+--   END;
+--   $fn$;
+-- =====================================================================
+
+DROP FUNCTION IF EXISTS public.log_404(text, text);

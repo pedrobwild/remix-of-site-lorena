@@ -9,7 +9,11 @@ Domínio canônico: [https://bewild.com.br](https://bewild.com.br)
 SPA React + TypeScript com:
 
 - **Vite 5** — bundler / dev server
-- **React 18** + roteador próprio baseado em hash (`src/lib/useHashRoute.ts`)
+- **React 18** + roteador próprio baseado em **path** (`src/lib/useHashRoute.ts`)
+  — o nome do arquivo é histórico: o roteador lê `window.location.pathname` e
+  navega com `history.pushState`. O hash só é lido para migrar URLs legadas
+  (`#/rota` → `/rota`) e para âncoras da home. Renomear o arquivo mexeria em
+  dezenas de imports sem ganho nenhum, então fica como está (CODE-03).
 - **Supabase / Lovable Cloud** — banco, auth, storage e edge functions (`src/integrations/supabase`)
 - **GSAP 3.12** + **ScrollTrigger** — timelines e reveals
 - **Lenis** — smooth scroll editorial
@@ -76,5 +80,20 @@ npm run preview     # serve o bundle de dist/ localmente
 
 ## Deploy
 
-Bundle SPA — qualquer CDN compatível (Vercel, Netlify, Cloudflare Pages, S3 + CloudFront).
-Defina as três variáveis `VITE_*` no painel do provedor antes do build.
+O site é publicado pelo **hosting da Lovable** (projeto
+`6a6657bf-3700-4d35-867e-c076acbf7613`), em `https://bewild.com.br`.
+
+> **O bundle não é portátil hoje** (corrigido no texto em 22/09/2026 — CODE-06).
+> Parte dos assets — incluindo o logo do cabeçalho e a imagem do hero — é
+> referenciada por caminhos `/__l5e/assets-v1/<uuid>/...`, servidos **apenas**
+> pelo hosting da Lovable (ver `src/assets/*.asset.json`). Num `vite preview`
+> local ou em qualquer outro CDN essas imagens voltam 404. Migrar de hosting
+> exige antes trazer esses arquivos para `public/` e trocar as referências.
+> A versão anterior deste README dizia "qualquer CDN compatível", o que não se
+> sustenta enquanto isso não for feito.
+
+Um build servido localmente (`npm run build && npm run preview`) funciona para
+auditar rotas, SEO e acessibilidade; só as imagens `/__l5e/...` ficam faltando.
+
+As três variáveis `VITE_*` precisam estar definidas no ambiente de build
+(existe fallback público em `vite.config.ts` para a chave `anon`).

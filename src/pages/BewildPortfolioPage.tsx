@@ -13,7 +13,7 @@ import BwaFooter from "@/components/BwaFooter";
 import { CONTACT } from "../components/landing/content";
 import { useBewildProjects, bewildTypeLabel } from "@/lib/useBewildProjects";
 import {
-  PORTFOLIO_FILTERS,
+  availablePortfolioFilters,
   PORTFOLIO_SORTS,
   ALL_NEIGHBORHOODS,
   applyPortfolioFilter,
@@ -64,6 +64,7 @@ export default function BewildPortfolioPage() {
 
   const withCover = useMemo(() => projects.filter((p) => !!p.cover_url), [projects]);
   const places = useMemo(() => neighborhoodOptions(withCover), [withCover]);
+  const chips = useMemo(() => availablePortfolioFilters(withCover), [withCover]);
   const filtered = useMemo(
     () =>
       applyPortfolioSort(
@@ -106,7 +107,7 @@ export default function BewildPortfolioPage() {
               role="group"
               aria-label="Filtrar projetos"
             >
-              {PORTFOLIO_FILTERS.map((f) => (
+              {chips.map((f) => (
                 <button
                   key={f.value}
                   type="button"

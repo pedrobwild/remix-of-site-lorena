@@ -79,9 +79,14 @@ const DEFAULTS: SiteSettings = {
   pinterest_url: null,
   default_og_image: null,
 
-  cnpj: "05.119.224/0001-30",
+  // Identidade oficial da Bewild (decisão de 17/09/2026). Estes defaults não
+  // são "enquanto carrega": a coluna `cnpj` ainda não existe em produção, então
+  // `organizationJsonLd` (usada em /diagnostico) publica exatamente o que está
+  // aqui. Os valores anteriores eram herdados do site anterior. Travados em
+  // src/lib/__tests__/identidadeOficial.test.ts.
+  cnpj: "47.350.338/0001-37",
   cau: "A162437-7",
-  whatsapp_number: "5534996668215",
+  whatsapp_number: "5511911906183",
 
   seo_default_title: "Bewild — Studios prontos para short stay",
   seo_default_description:
