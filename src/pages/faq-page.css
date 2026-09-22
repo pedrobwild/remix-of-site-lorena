@@ -264,3 +264,7 @@
     justify-content: center;
   }
 }
+
+/* Título de tema das dúvidas do assistente (assistant_kb) */
+.bwa-faqpage-tema { margin: 40px 0 16px; }
+.bwa-faqpage-intro > .bwa-shell > div:first-child > .bwa-faqpage-tema:first-child { margin-top: 0; }
