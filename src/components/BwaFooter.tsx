@@ -42,7 +42,7 @@ export default function BwaFooter() {
               <a href="/#historia">A história</a>
               <a href="/#certeza">O que fazemos</a>
               <a href="/como-funciona">Como funciona</a>
-              <a href="/portfolio">Portfólio</a>
+              <a href="/portfolio">Portfólio de reformas em SP</a>
               <a href="/onde-atuamos">Onde atuamos</a>
               <a href="/conteudos">Conteúdos</a>
               <a href="/faq">FAQ</a>
