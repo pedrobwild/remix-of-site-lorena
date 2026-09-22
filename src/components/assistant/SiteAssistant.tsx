@@ -183,7 +183,7 @@ export default function SiteAssistant({ getPath = currentPath }: Props = {}) {
   const compact = useCompactLayout();
 
   const rootRef = useRef<HTMLDivElement>(null);
-  const launcherRef = useRef<HTMLButtonElement>(null);
+  const launcherRef = useRef<HTMLAnchorElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
