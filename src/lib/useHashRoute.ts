@@ -5,6 +5,7 @@ export type Route =
   | { name: "home"; anchor?: string }
   | { name: "portfolio" }
   | { name: "diagnostico" }
+  | { name: "orcamento" }
   | { name: "faq" }
   | { name: "contato" }
   | { name: "escopo" }
@@ -48,6 +49,8 @@ function parsePath(rawPath: string): Route {
   if (path === "/o") return { name: "lp-obra" };
   if (path === "/p") return { name: "lp-panfleto" };
   if (path === "/diagnostico") return { name: "diagnostico" };
+  // Alias de SEO: /orcamento redireciona (no router) para /diagnostico.
+  if (path === "/orcamento") return { name: "orcamento" };
   if (path === "/faq") return { name: "faq" };
   if (path === "/contato") return { name: "contato" };
   if (path === "/escopo") return { name: "escopo" };
@@ -151,6 +154,7 @@ export const routes = {
   home: "/",
   portfolio: "/portfolio",
   diagnostico: "/diagnostico",
+  orcamento: "/orcamento",
   faq: "/faq",
   contato: "/contato",
   escopo: "/escopo",
