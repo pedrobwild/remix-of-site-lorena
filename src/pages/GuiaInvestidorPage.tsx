@@ -1,123 +1,132 @@
-import BwaFooter from "@/components/BwaFooter";
-import BwaNav from "@/components/BwaNav";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { CheckSquare, Menu, X } from "lucide-react";
+
+import BewildLogo from "@/components/BewildLogo";
 import { breadcrumbJsonLd, faqJsonLd, getCanonicalBase, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
+
+import { Card, CardContent } from "@/guia/components/ui/card";
+import { BairroProvider, useBairroData } from "@/guia/hooks/useBairroData";
+import { GuideDecisionProvider } from "@/guia/hooks/useGuideDecision";
+import { setGlobalSessionId, setGlobalTrack, useGuideAnalytics } from "@/guia/hooks/useGuideAnalytics";
+import { useReadingProgress } from "@/guia/hooks/useReadingProgress";
+import { useScrollspy } from "@/guia/hooks/useScrollspy";
+import { PHASES, SECTIONS, fmt } from "@/guia/data/guide-data";
+
+import LazyMapaBairrosEmbed from "@/guia/components/mapa/LazyMapaBairrosEmbed";
+import AntiChecklistSection from "@/guia/components/guide/AntiChecklistSection";
+import AnuncioPrecificacaoSection from "@/guia/components/guide/AnuncioPrecificacaoSection";
+import CaseStudySection from "@/guia/components/guide/CaseStudySection";
+import ChecklistSection from "@/guia/components/guide/ChecklistSection";
+import DecoracaoSection from "@/guia/components/guide/DecoracaoSection";
+import EscolhaAtivoSection from "@/guia/components/guide/EscolhaAtivoSection";
+import FAQSection, { FAQ_ITEMS } from "@/guia/components/guide/FAQSection";
+import FinalCTASection from "@/guia/components/guide/FinalCTASection";
+import HeroSection from "@/guia/components/guide/HeroSection";
+import MercadoSection from "@/guia/components/guide/MercadoSection";
+import MidPageCTA from "@/guia/components/guide/MidPageCTA";
+import MobileMenu from "@/guia/components/guide/MobileMenu";
+import MobileStickyBar from "@/guia/components/guide/MobileStickyBar";
+import PhaseHeader from "@/guia/components/guide/PhaseHeader";
+import ReformaSection from "@/guia/components/guide/ReformaSection";
+import RentabilidadeSection from "@/guia/components/guide/RentabilidadeSection";
+import ReservasSection from "@/guia/components/guide/ReservasSection";
+import ResumeToast from "@/guia/components/guide/ResumeToast";
+import ScrollProgressBar from "@/guia/components/guide/ScrollProgressBar";
+import SectionIntro from "@/guia/components/guide/SectionIntro";
+import TableOfContents from "@/guia/components/guide/TableOfContents";
+import TrustSignals from "@/guia/components/guide/TrustSignals";
+
 import "./guia-investidor.css";
+
+const TendenciasSection = lazy(() => import("@/guia/components/guide/TendenciasSection"));
 
 /* ============================================================
  * GuiaInvestidorPage — /guia-do-investidor
  *
- * Página pilar de SEO, 100% editorial e estática (sem banco, sem
- * formulário próprio). Conteúdo extraído do app "Guia do Investidor"
- * (shortstay-guide.lovable.app); aqui fica a versão indexável no
- * domínio bewild.com.br, apontando para as ferramentas interativas.
+ * Port do app "Guia do Investidor" (shortstay-guide) para o site
+ * da Bewild: mesmo conteúdo, mesmo visual, com simulador,
+ * checklists pontuados e mapa de bairros.
+ *
+ * Isolamento: todo o código portado vive em `src/guia/` e o tema
+ * fica dentro de `.guia-root` (src/pages/guia-investidor.css).
+ * Esta página NÃO usa BwaNav/BwaFooter — eles injetam CSS global
+ * que conflita com o tema do guia; o cabeçalho abaixo é próprio.
  *
  * Regra de conteúdo: nenhuma promessa de renda, ocupação ou
- * rentabilidade. Toda faixa numérica vem com origem e período.
+ * rentabilidade. Toda faixa numérica é retrato de mercado.
  *
- * Datas do JSON-LD são CONSTANTES (nunca new Date()): a página é
- * editorial e a data muda só quando o texto muda.
+ * Datas do JSON-LD são CONSTANTES (nunca new Date()).
  * ============================================================ */
 
 const PUBLISHED = "2026-09-22";
-const MODIFIED = "2026-09-22";
+const MODIFIED = "2026-10-06";
 const H1 = "Guia do investidor em studios para short stay em São Paulo";
 const CANONICAL = "/guia-do-investidor";
 
-/**
- * Faixas por bairro alinhadas ao post já publicado
- * /conteudos/melhores-bairros-short-stay-sao-paulo (fonte: GuestFavorites,
- * jan–ago/2026). A tabela original do app divergia dessa base, então vale a
- * fonte publicada.
- */
-const BAIRROS: Array<{ bairro: string; diaria: string; ocupacao: string; receita: string }> = [
-  { bairro: "Itaim Bibi", diaria: "R$ 359", ocupacao: "59%", receita: "R$ 77.390" },
-  { bairro: "Jardim Paulista", diaria: "R$ 319", ocupacao: "62%", receita: "R$ 72.372" },
-  { bairro: "Pinheiros", diaria: "R$ 300", ocupacao: "62%", receita: "R$ 68.335" },
-  { bairro: "Consolação", diaria: "R$ 269", ocupacao: "63%", receita: "R$ 61.447" },
-  { bairro: "Butantã", diaria: "R$ 276", ocupacao: "61%", receita: "R$ 61.177" },
-  { bairro: "Moema", diaria: "R$ 263", ocupacao: "61%", receita: "R$ 58.542" },
-  { bairro: "Bela Vista", diaria: "R$ 237", ocupacao: "64%", receita: "R$ 54.942" },
-  { bairro: "Campo Belo", diaria: "R$ 233", ocupacao: "60%", receita: "R$ 51.132" },
-  { bairro: "Vila Mariana", diaria: "R$ 226", ocupacao: "60%", receita: "R$ 49.446" },
-  { bairro: "Perdizes", diaria: "R$ 254", ocupacao: "53%", receita: "R$ 49.423" },
+const NAV_LINKS = [
+  { href: "/", label: "Início" },
+  { href: "/portfolio", label: "Portfólio" },
+  { href: "/conteudos", label: "Conteúdos" },
+  { href: "/faq", label: "FAQ" },
+  { href: "/contato", label: "Contato" },
 ];
 
-const CASCATA: Array<{ linha: string; referencia: string }> = [
-  { linha: "Receita bruta", referencia: "diária média × noites ocupadas no mês" },
-  { linha: "Comissão da plataforma", referencia: "~15% (anúncio + processamento)" },
-  { linha: "Gestão operacional", referencia: "~18% da receita, quando terceirizada" },
-  { linha: "Limpeza", referencia: "~R$ 100 por virada, ~8 viradas/mês" },
-  { linha: "Condomínio", referencia: "custo fixo mensal, não escala com a receita" },
-  { linha: "IPTU e utilidades", referencia: "luz, água, internet, gás" },
-  { linha: "Impostos", referencia: "~6% (Simples/MEI)" },
-  { linha: "Receita líquida", referencia: "o que sobra depois de tudo" },
-];
+/** Cabeçalho próprio desta rota, no visual do guia. */
+function GuiaHeader() {
+  const [open, setOpen] = useState(false);
 
-const CHECKLIST = [
-  "Localização com demanda comprovada",
-  "Condomínio permite short stay",
-  "Análise de concorrência feita",
-  "Orçamento de reforma definido",
-  "Projeção financeira validada",
-  "Fotos profissionais planejadas",
-  "Mobília funcional selecionada",
-  "Plano de precificação dinâmica",
-  "Gestão operacional definida",
-  "Documentação fiscal em ordem",
-];
+  return (
+    <header className="glass-nav fixed top-0 left-0 right-0 z-40 hidden lg:block">
+      <div className="max-w-[1280px] mx-auto px-5 lg:px-10 h-16 flex items-center justify-between gap-6">
+        <a href="/" className="flex items-center gap-3 shrink-0" aria-label="Bewild — página inicial">
+          <BewildLogo className="h-7 w-auto" />
+        </a>
 
-const FAQ_ITEMS: Array<{ q: string; a: string }> = [
-  {
-    q: "Quanto custa um studio para short stay em São Paulo?",
-    a: "O investimento total costuma ficar entre R$ 250 mil e R$ 600 mil, dependendo do bairro, da metragem e do nível de acabamento. Studios de 25 a 35 m² em bairros como Pinheiros, Vila Mariana e Consolação são os que mais aparecem na faixa de melhor custo-benefício.",
-  },
-  {
-    q: "Qual o retorno esperado de um studio em short stay?",
-    a: "O yield bruto observado no mercado varia aproximadamente de 8% a 18% ao ano, conforme bairro, produto e operação. É uma faixa de mercado, não uma projeção: o resultado depende de execução, precificação, sazonalidade e concorrência local, e a Bewild não garante renda ou ocupação.",
-  },
-  {
-    q: "Preciso de CNPJ para operar short stay?",
-    a: "Não é obrigatório, mas costuma ser recomendado. Com CNPJ você emite nota fiscal, organiza a tributação e ganha credibilidade junto a plataformas e hóspedes. Confirme o enquadramento com seu contador.",
-  },
-  {
-    q: "O condomínio pode proibir short stay?",
-    a: "Pode. A convenção do condomínio é o documento decisivo e pode restringir locação por temporada. Verifique a convenção e as atas de assembleia antes de comprar, e priorize prédios que permitem ou são neutros quanto ao tema.",
-  },
-  {
-    q: "Qual a ocupação média de um studio em São Paulo?",
-    a: "As ocupações medianas por bairro observadas no levantamento ficam entre 53% e 64%, variando por bairro e temporada. Unidades bem operadas em bairros de alta demanda costumam trabalhar na parte de cima dessa faixa.",
-  },
-  {
-    q: "Vale a pena contratar uma administradora?",
-    a: "Com uma ou duas unidades e tempo disponível, a autogestão funciona. Acima disso, ou sem disponibilidade, a gestão terceirizada — que costuma cobrar entre 15% e 25% da receita — passa a fazer sentido. É uma troca entre margem e tempo.",
-  },
-  {
-    q: "Quanto custa a reforma de um studio?",
-    a: "Depende do estado da unidade e do escopo. Uma reforma inteligente, sem demolições desnecessárias, custa bem menos que uma obra com mudança de instalações; a decoração e o mobiliário entram como linha separada. A Bewild orça por escopo fechado, item a item, antes do início da obra.",
-  },
-  {
-    q: "Qual o melhor bairro para investir em short stay?",
-    a: "Depende do orçamento e do perfil de risco. Pinheiros, Consolação e Bela Vista aparecem com boa relação entre risco e retorno; Itaim Bibi e Jardim Paulista têm diárias mais altas, mas exigem investimento de aquisição maior.",
-  },
-];
+        <nav aria-label="Navegação principal" className="flex items-center gap-6 font-body text-sm">
+          {NAV_LINKS.map((l) => (
+            <a key={l.href} href={l.href} className="text-muted-foreground hover:text-foreground transition-colors">
+              {l.label}
+            </a>
+          ))}
+          <a
+            href="/orcamento"
+            className="rounded-lg bg-primary px-4 py-2 font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            Solicitar orçamento
+          </a>
+        </nav>
 
-const TOC: Array<{ href: string; label: string }> = [
-  { href: "#bairros", label: "Onde investir: como escolher o bairro?" },
-  { href: "#unidade", label: "Como avaliar a unidade antes de comprar?" },
-  { href: "#condominio", label: "O condomínio pode proibir short stay?" },
-  { href: "#matematica", label: "Como funciona a matemática do investimento?" },
-  { href: "#performance", label: "O que faz um studio performar?" },
-  { href: "#reforma", label: "Reforma inteligente: onde investir e onde não mexer?" },
-  { href: "#decoracao", label: "Decoração e fotos: o que muda a diária?" },
-  { href: "#anuncio", label: "Como estruturar o anúncio e a precificação?" },
-  { href: "#checklist", label: "Checklist do investidor" },
-  { href: "#faq", label: "Perguntas frequentes" },
-];
+        {/* fallback de acessibilidade em telas estreitas do desktop */}
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="sr-only"
+          aria-expanded={open}
+          aria-label="Abrir menu"
+        >
+          {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+        </button>
+      </div>
+    </header>
+  );
+}
 
 export default function GuiaInvestidorPage() {
-  const { settings } = useSiteSettings();
+  return (
+    <div className="guia-root min-h-screen">
+      <BairroProvider>
+        <GuideDecisionProvider>
+          <GuiaInvestidorInner />
+        </GuideDecisionProvider>
+      </BairroProvider>
+    </div>
+  );
+}
 
+function GuiaInvestidorInner() {
+  const { settings } = useSiteSettings();
   const base = getCanonicalBase(settings);
   const ogImage = settings?.seo_og_image || settings?.default_og_image || undefined;
   const absOg = ogImage
@@ -130,11 +139,11 @@ export default function GuiaInvestidorPage() {
   useSeo({
     title: "Guia do investidor em studios para short stay em SP | Bewild",
     description:
-      "Como escolher o bairro, validar a conta, reformar e operar um studio para short stay em São Paulo. Faixas de diária, custos, checklist e FAQ do investidor.",
+      "Como escolher o bairro, validar a conta, reformar e operar um studio para short stay em São Paulo. Mapa de bairros, simulador de receita, checklists e FAQ.",
     canonicalPath: CANONICAL,
     ogType: "article",
     keywords:
-      "guia do investidor short stay, studio para airbnb são paulo, investir em studio compacto, rentabilidade short stay sp",
+      "guia do investidor short stay, studio para airbnb são paulo, investir em studio compacto, mapa de bairros short stay sp",
     jsonLd: settings
       ? [
           {
@@ -158,603 +167,279 @@ export default function GuiaInvestidorPage() {
       : undefined,
   });
 
+  const sectionIds = SECTIONS.map((s) => s.id);
+  const activeId = useScrollspy(sectionIds);
+  const { trackEvent, sessionId } = useGuideAnalytics();
+  const { bairros } = useBairroData();
+  const scrollMilestones = useRef(new Set<string>());
+  const { scrollPercent, visitedSections, sectionIndex, sectionCount, resumeData, dismissResume } =
+    useReadingProgress(activeId);
+
+  useEffect(() => {
+    setGlobalTrack(trackEvent);
+    setGlobalSessionId(sessionId);
+    return () => {
+      setGlobalTrack(null);
+      setGlobalSessionId(null);
+    };
+  }, [trackEvent, sessionId]);
+
+  useEffect(() => {
+    const handler = () => {
+      const pct = Math.round((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100);
+      for (const m of [25, 50, 75, 100]) {
+        if (pct >= m && !scrollMilestones.current.has(`scroll_${m}`)) {
+          scrollMilestones.current.add(`scroll_${m}`);
+          trackEvent(`scroll_${m}`, {});
+        }
+      }
+    };
+    window.addEventListener("scroll", handler, { passive: true });
+    return () => window.removeEventListener("scroll", handler);
+  }, [trackEvent]);
+
+  const phase = (n: number) => PHASES[n - 1];
+
   return (
-    <div className="bwa-gi-page">
-      <BwaNav />
+    <>
+      <GuiaHeader />
+      <ScrollProgressBar percent={scrollPercent} />
+      <ResumeToast data={resumeData} onDismiss={dismissResume} />
+      <TableOfContents activeId={activeId} visitedSections={visitedSections} />
+      <MobileMenu activeId={activeId} sectionIndex={sectionIndex} sectionCount={sectionCount} />
+      <MobileStickyBar />
 
-      <main id="main" tabIndex={-1}>
-        <section className="bwa-gi-intro">
-          <div className="bwa-shell">
-            <p className="bwa-label">Guia do investidor · Edição 2026</p>
-            <h1>{H1}</h1>
-            <p className="bwa-gi-lead">
-              Um studio de 20 a 40 m² é o formato mais comum de investimento em short stay em
-              São Paulo, e a conta dele se decide em quatro perguntas: onde comprar, quanto a
-              unidade consegue cobrar por noite, quanto da receita bruta sobra depois dos custos
-              e o que a reforma precisa entregar para sustentar a diária. Este guia reúne o que a
-              Bewild aprendeu executando reformas de studios na cidade, organizado como um manual
-              de decisão — não como promessa de retorno. Nenhum número aqui é garantia: são
-              faixas observadas no mercado, que variam por unidade, prédio, execução e operação.
-            </p>
-            <p className="bwa-mono bwa-gi-stamp">
-              Atualizado em setembro de 2026 · Bewild · Resp. técnico Thiago Dantas do Amor,
-              CAU A162437-7
-            </p>
+      <main className="lg:ml-[60px] w-full flex flex-col items-center pb-24 lg:pb-8 pt-16">
+        {/* ═══ HERO ═══ */}
+        <div className="w-full">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10 py-0 lg:py-10">
+            <HeroSection />
           </div>
-        </section>
+        </div>
 
-        <nav className="bwa-gi-toc" aria-label="Índice do guia">
-          <div className="bwa-shell">
-            <h2>Índice</h2>
-            <ol>
-              {TOC.map((item) => (
-                <li key={item.href}>
-                  <a href={item.href}>{item.label}</a>
-                </li>
-              ))}
-            </ol>
+        {/* ═══ BLOCO 1 — Onde investir ═══ */}
+        <div className="w-full">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <PhaseHeader {...phase(1)} />
           </div>
-        </nav>
+        </div>
 
-        <section className="bwa-gi-section" id="bairros">
-          <div className="bwa-shell">
-            <h2>Onde investir: como escolher o bairro?</h2>
-            <p>
-              A localização define o teto da diária e o piso da ocupação. A tabela abaixo traz a
-              diária média observada para anúncios de short stay por bairro em São Paulo, a
-              ocupação mediana da região e a receita anual mediana por anúncio, usada como
-              referência de comparação entre ativos.
-            </p>
+        {/* Mapa de bairros */}
+        <div className="w-full">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <section id="mapa-bairros" className="scroll-mt-24 py-16 md:py-20">
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.5 }}
+              >
+                <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">
+                  Mapa de bairros rentáveis
+                </h2>
+                <p className="text-muted-foreground text-lg mb-6">
+                  Analise a demanda, compare bairros e simule cenários de receita para studios em São Paulo.
+                </p>
+                <LazyMapaBairrosEmbed />
+                <Card className="border-border overflow-hidden mt-8">
+                  <CardContent className="p-0">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm font-body">
+                        <thead className="bg-secondary">
+                          <tr>
+                            {["Bairro", "Diária mín.", "Ocupação média", "20–25 m²", "26–35 m²", "36–50 m²"].map((h) => (
+                              <th key={h} className="px-4 py-3 text-left font-semibold text-foreground whitespace-nowrap">
+                                {h}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {bairros.map((b) => (
+                            <tr key={b.name} className="border-t border-border hover:bg-muted/50 transition-colors">
+                              <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">{b.name}</td>
+                              <td className="px-4 py-3 text-muted-foreground">R$ {fmt(b.dailyMin)}</td>
+                              <td className="px-4 py-3 text-muted-foreground">{b.avgOccupancy}%</td>
+                              <td className="px-4 py-3 text-muted-foreground">R$ {fmt(b.avgBySize["20–25 m²"])}</td>
+                              <td className="px-4 py-3 text-muted-foreground">R$ {fmt(b.avgBySize["26–35 m²"])}</td>
+                              <td className="px-4 py-3 font-semibold text-foreground">R$ {fmt(b.avgBySize["36–50 m²"])}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </section>
+          </div>
+        </div>
 
-            <div className="bwa-gi-tablewrap">
-              <table className="bwa-gi-table">
-                <thead>
-                  <tr>
-                    <th scope="col">Bairro</th>
-                    <th scope="col">Diária média</th>
-                    <th scope="col">Ocupação</th>
-                    <th scope="col">Receita anual mediana</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {BAIRROS.map((b) => (
-                    <tr key={b.bairro}>
-                      <td>{b.bairro}</td>
-                      <td>{b.diaria}</td>
-                      <td>{b.ocupacao}</td>
-                      <td>{b.receita}</td>
-                    </tr>
+        {/* Mercado e precificação */}
+        <div className="w-full bg-muted/20">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <MercadoSection />
+          </div>
+        </div>
+
+        {/* ═══ BLOCO 2 — Como validar a conta ═══ */}
+        <div className="w-full">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <PhaseHeader {...phase(2)} />
+          </div>
+        </div>
+
+        <div className="w-full">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <EscolhaAtivoSection />
+          </div>
+        </div>
+
+        <div className="w-full bg-muted/20">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <RentabilidadeSection />
+          </div>
+        </div>
+
+        <div className="w-full">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <SimuladorSectionLazy />
+          </div>
+        </div>
+
+        <div className="w-full">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <MidPageCTA variant="slim" />
+          </div>
+        </div>
+
+        {/* ═══ BLOCO 3 — O que faz um studio performar ═══ */}
+        <div className="w-full">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <PhaseHeader {...phase(3)} />
+          </div>
+        </div>
+
+        <div className="w-full bg-muted/20">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <ReservasSection />
+          </div>
+        </div>
+
+        <div className="w-full">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <ReformaSection />
+          </div>
+        </div>
+
+        <div className="w-full bg-destructive/[0.02]">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <AntiChecklistSection />
+          </div>
+        </div>
+
+        <div className="w-full">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <DecoracaoSection />
+          </div>
+        </div>
+
+        <div className="w-full">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <Suspense
+              fallback={
+                <div className="py-16">
+                  <div className="h-4 w-4 border-2 border-primary/40 border-t-primary rounded-full animate-spin mx-auto" />
+                </div>
+              }
+            >
+              <TendenciasSection />
+            </Suspense>
+          </div>
+        </div>
+
+        {/* ═══ BLOCO 4 — Como agir com confiança ═══ */}
+        <div className="w-full">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <PhaseHeader {...phase(4)} />
+          </div>
+        </div>
+
+        <div className="w-full">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <AnuncioPrecificacaoSection />
+          </div>
+        </div>
+
+        <div className="w-full bg-muted/20">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <CaseStudySection />
+          </div>
+        </div>
+
+        <div className="w-full">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <SectionIntro icon={CheckSquare} text="Avalie se você está pronto para dar o próximo passo" />
+            <ChecklistSection />
+          </div>
+        </div>
+
+        <div className="w-full">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <TrustSignals />
+            <FAQSection />
+          </div>
+        </div>
+
+        <div className="w-full bg-hero-gradient">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <FinalCTASection />
+          </div>
+        </div>
+
+        {/* Rodapé simples desta rota (sem BwaFooter, que injeta CSS global) */}
+        <div className="w-full">
+          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+            <footer className="py-10 text-sm text-muted-foreground font-body border-t border-border/60">
+              <div className="flex flex-col items-center gap-4 text-center">
+                <BewildLogo className="h-6 w-auto opacity-70" />
+                <nav aria-label="Rodapé" className="flex flex-wrap justify-center gap-x-5 gap-y-2">
+                  {NAV_LINKS.map((l) => (
+                    <a key={l.href} href={l.href} className="hover:text-foreground transition-colors">
+                      {l.label}
+                    </a>
                   ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="bwa-mono bwa-gi-note">
-              Ocupação mediana, diária média e receita anual mediana por anúncio: levantamento
-              GuestFavorites sobre 34.854 anúncios ativos em São Paulo, janeiro a agosto de 2026,
-              compilado pela Bewild — os mesmos números publicados no ranking de bairros do blog.
-              São estimativas de referência para tomada de decisão, não projeção de resultado.
-            </p>
-
-            <p>
-              Duas variáveis deslocam os números da tabela para cima ou para baixo dentro do mesmo
-              bairro. A metragem: studios abaixo de 25 m² tendem a operar cerca de 8% abaixo da
-              média do bairro, e acima de 35 m², cerca de 8% acima. E o nível de acabamento:
-              unidades com acabamento e fotos acima da média costumam operar perto de 1,2× a
-              diária média do bairro, e unidades com design autoral e operação profissional,
-              perto de 1,45×.
-            </p>
-            <p>
-              Para operar acima da média do bairro, o conjunto que mais aparece nas unidades bem
-              posicionadas é o mesmo: marcenaria planejada, iluminação cênica e fotos
-              profissionais.
-            </p>
-            <p className="bwa-gi-link-line">
-              Leia também:{" "}
-              <a href="/conteudos/melhores-bairros-short-stay-sao-paulo">
-                Os melhores bairros para short stay em São Paulo em 2026
-              </a>
-              .
-            </p>
-          </div>
-        </section>
-
-        <section className="bwa-gi-section" id="unidade">
-          <div className="bwa-shell">
-            <h2>Como avaliar a unidade antes de comprar?</h2>
-            <p>
-              Nem todo studio é bom para short stay. Antes da proposta, vale rodar quatro blocos
-              de verificação.
-            </p>
-
-            <div className="bwa-gi-cards">
-              <article className="bwa-gi-card">
-                <h3>Condomínio</h3>
-                <ul>
-                  <li>Permite short stay (sem restrição em convenção)</li>
-                  <li>Portaria 24h ou controle de acesso</li>
-                  <li>Áreas comuns relevantes (academia, coworking, lavanderia)</li>
-                  <li>Bom estado de conservação e manutenção</li>
-                  <li>Vizinhança sem histórico de reclamações contra locação curta</li>
-                </ul>
-              </article>
-
-              <article className="bwa-gi-card">
-                <h3>Unidade</h3>
-                <ul>
-                  <li>Metragem eficiente (20–40 m²)</li>
-                  <li>Planta inteligente (sem corredores desperdiçados)</li>
-                  <li>Boa insolação e ventilação natural</li>
-                  <li>Andar alto ou posição com menos ruído</li>
-                  <li>Banheiro com ventilação (janela ou exaustão)</li>
-                  <li>Varanda ou sacada (diferencial competitivo)</li>
-                </ul>
-              </article>
-
-              <article className="bwa-gi-card">
-                <h3>Entorno</h3>
-                <ul>
-                  <li>Próximo a metrô ou transporte público</li>
-                  <li>Bairro com demanda comprovada para short stay</li>
-                  <li>Comércio, restaurantes e serviços a pé</li>
-                  <li>Região percebida como segura</li>
-                  <li>Mercado não saturado (concorrência saudável)</li>
-                </ul>
-              </article>
-
-              <article className="bwa-gi-card">
-                <h3>Due diligence documental</h3>
-                <ul>
-                  <li>Verificar matrícula atualizada do imóvel</li>
-                  <li>Confirmar inexistência de ônus ou penhoras</li>
-                  <li>Ler a convenção do condomínio (cláusulas sobre locação)</li>
-                  <li>Consultar atas de assembleia recentes</li>
-                  <li>Visitar em horários diferentes (ruído, luz, circulação)</li>
-                  <li>Verificar estado de instalações (elétrica, hidráulica)</li>
-                  <li>Checar pressão de água e funcionamento de ralos</li>
-                  <li>Avaliar vedação de janelas e acústica</li>
-                  <li>Pesquisar anúncios ativos no mesmo edifício</li>
-                  <li>Comparar preço/m² com transações recentes da região</li>
-                </ul>
-              </article>
-            </div>
-
-            <h3>Qual a metragem ideal de um studio para short stay?</h3>
-            <p>
-              De 25 a 35 m² é o intervalo mais equilibrado para short stay em São Paulo. Abaixo
-              de 25 m², o espaço limita a experiência, especialmente em estadias acima de três
-              noites. Acima de 40 m², o custo de aquisição e o condomínio sobem sem aumento
-              proporcional na diária. Eficiência de planta pesa mais que metragem bruta: uma
-              planta de 28 m² bem desenhada pode performar melhor que uma de 35 m² com layout
-              ruim. O teste prático é simples — se cama, mesa de trabalho, um assento e armário
-              cabem sem comprometer a circulação, a planta é eficiente.
-            </p>
-
-            <h3>Comprar para operar ou para revender?</h3>
-            <p>
-              São dois ativos diferentes. Um bom ativo de operação tem planta eficiente e fácil
-              de mobiliar, bairro com demanda real de hóspedes, condomínio acessível que permite
-              short stay, decoração viável com investimento controlado e preço de aquisição que
-              comporta a conta. Um bom ativo de revenda tem localização premium, acabamento de
-              alto padrão e marca do incorporador — mas costuma vir com metragem generosa (que
-              reduz a eficiência por m²), condomínio alto que comprime a margem operacional e uma
-              demanda de hóspedes que nem sempre justifica a diária necessária. Decida o objetivo
-              antes de comparar unidades.
-            </p>
-          </div>
-        </section>
-
-        <section className="bwa-gi-section" id="condominio">
-          <div className="bwa-shell">
-            <h2>O condomínio pode proibir short stay?</h2>
-            <p>
-              A convenção do condomínio é o documento decisivo. Procure cláusulas sobre "locação
-              por temporada", "hospedagem" ou "uso residencial exclusivo". Quando a convenção é
-              silente sobre o tema, há espaço legal para operar — mas isso pode mudar em
-              assembleia.
-            </p>
-            <p>
-              <em>Sinais de alerta:</em> proibição explícita de locação por período inferior a 30
-              dias, histórico de multas a proprietários que operam short stay, ou assembleia
-              recente que deliberou contra.
-            </p>
-            <p>
-              <em>Sinais positivos:</em> outros proprietários já operando na plataforma,
-              administradora receptiva e prédio com perfil de investidores, não apenas de
-              moradores.
-            </p>
-            <p className="bwa-gi-link-line">
-              <a href="/conteudos/studios-airbnb-sao-paulo-o-que-a-lei-permite">
-                Condomínio pode proibir Airbnb? O que o STJ decidiu em 2026
-              </a>
-              .
-            </p>
-          </div>
-        </section>
-
-        <section className="bwa-gi-section" id="matematica">
-          <div className="bwa-shell">
-            <h2>Como funciona a matemática do investimento?</h2>
-            <p>
-              Receita bruta não é o que entra no bolso. A cascata abaixo mostra, em percentuais
-              típicos, o que sai da receita antes do resultado líquido.
-            </p>
-
-            <div className="bwa-gi-tablewrap">
-              <table className="bwa-gi-table">
-                <thead>
-                  <tr>
-                    <th scope="col">Linha</th>
-                    <th scope="col">Referência</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {CASCATA.map((l) => (
-                    <tr key={l.linha}>
-                      <td>{l.linha}</td>
-                      <td>{l.referencia}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="bwa-mono bwa-gi-note">
-              Percentuais de referência de mercado, não tabela de preços da Bewild. Variam por
-              operação, regime tributário e contrato de gestão.
-            </p>
-
-            <h3>Qual métrica usar — yield, ROI ou payback?</h3>
-            <p>
-              <em>Yield bruto</em> é a receita anual bruta dividida pelo valor do imóvel; serve
-              para comparação rápida entre ativos e regiões, mas ignora custos operacionais.{" "}
-              <em>Yield líquido</em> usa a receita anual líquida — mais realista, porém dependente
-              de premissas de custo que mudam de operação para operação. <em>ROI</em> é o lucro
-              líquido sobre o capital total investido (imóvel, reforma, mobília, ITBI); é a
-              métrica mais completa e a que exige mais dados. <em>Payback</em> é o capital
-              investido dividido pelo lucro líquido mensal, e indica em quantos meses o
-              investimento se paga.
-            </p>
-
-            <h3>Quais custos os investidores iniciantes esquecem?</h3>
-            <ul>
-              <li>ITBI: cerca de 3% do valor do imóvel na compra</li>
-              <li>Registro e escritura: cerca de 1,5% adicional</li>
-              <li>Fundo de reserva: cobrado em muitos condomínios além da taxa ordinária</li>
-              <li>
-                Reposição de enxoval: toalhas, roupa de cama e itens de cozinha a cada 6 a 12
-                meses
-              </li>
-              <li>
-                Manutenção corretiva: reserve um percentual da receita anual para reparos
-                inesperados
-              </li>
-              <li>
-                Vacância sazonal: janeiro e períodos entre feriados costumam ter ocupação bem
-                menor
-              </li>
-            </ul>
-
-            <h3>O que mexe mais no retorno?</h3>
-            <p>
-              Ocupação e diária média puxam a receita; condomínio e custo de operação puxam a
-              margem. O ponto é que nenhum fator isolado resolve: um studio com diária média e
-              ocupação alta pode render mais que um com diária alta e ocupação baixa, e um
-              condomínio barato em bairro bom pode compensar uma diária menor. É a composição que
-              decide.
-            </p>
-            <p className="bwa-gi-link-line">
-              <a href="/conteudos/quanto-rende-studio-short-stay-sao-paulo">
-                Quanto rende um studio no short stay em São Paulo em 2026
-              </a>{" "}
-              ·{" "}
-              <a href="/conteudos/short-stay-ou-long-stay-studio-compacto">
-                Short stay ou aluguel de longa duração: qual rende mais
-              </a>
-            </p>
-          </div>
-        </section>
-
-        <section className="bwa-gi-section" id="performance">
-          <div className="bwa-shell">
-            <h2>O que faz um studio performar?</h2>
-            <p>
-              Seis fatores aparecem repetidamente na diferença entre um studio que enche e um que
-              fica parado.
-            </p>
-            <ol>
-              <li>
-                <strong>Limpeza.</strong> É o critério mais citado por hóspedes na escolha e o que
-                mais aparece nas avaliações negativas.
-              </li>
-              <li>
-                <strong>Check-in sem atrito.</strong> Fechadura digital ou key box eliminam
-                espera. Hóspede corporativo chega tarde — check-in autônomo é decisivo.
-              </li>
-              <li>
-                <strong>Precisão do anúncio.</strong> Fotos reais, descrição honesta, expectativa
-                alinhada. Anúncio que entrega o que promete gera menos cancelamento.
-              </li>
-              <li>
-                <strong>Avaliações e nota.</strong> Acima de 4,8 a unidade entra no topo das
-                buscas; as primeiras 5 a 10 avaliações definem a posição inicial.
-              </li>
-              <li>
-                <strong>Segurança e acessibilidade.</strong> Portaria 24h, câmeras em áreas
-                comuns, boa iluminação.
-              </li>
-              <li>
-                <strong>Ambiente de trabalho e entretenimento.</strong> Wi-Fi rápido, mesa de
-                trabalho, smart TV e boa acústica — em estadias de 3+ dias o setup define a
-                experiência.
-              </li>
-            </ol>
-          </div>
-        </section>
-
-        <section className="bwa-gi-section" id="reforma">
-          <div className="bwa-shell">
-            <h2>Reforma inteligente: onde investir e onde não mexer?</h2>
-
-            <h3>O que priorizar</h3>
-            <p>
-              Iluminação gera impacto visual desproporcional ao custo: transforma as fotos, eleva
-              a percepção de qualidade e custa bem menos que a troca de bancada. Priorize
-              iluminação. Marcenaria vem logo depois — é o que aparece no anúncio. Armários
-              fechados protegem os itens dos hóspedes; nichos abertos com iluminação fotografam
-              melhor. O equilíbrio entre os dois é uma decisão de projeto, não de gosto.
-            </p>
-
-            <h3>Piso vinílico ou porcelanato?</h3>
-            <p>
-              Para short stay, o vinílico costuma vencer no custo-benefício: é mais barato por m²,
-              instala em 1 a 2 dias contra 3 a 5 do porcelanato, é visualmente indistinguível nas
-              fotos do anúncio, mais silencioso e mais fácil de reparar — basta trocar a régua
-              danificada. O porcelanato faz sentido em áreas molhadas, onde a resistência à água é
-              crítica, e em studios de alto padrão, onde a diária mais alta compensa o
-              investimento. E se o imóvel já veio com porcelanato em bom estado, não troque:
-              aproveite.
-            </p>
-            <p className="bwa-gi-link-line">
-              <a href="/conteudos/piso-vinilico-ou-porcelanato-studio">
-                Piso vinílico ou porcelanato no studio para alugar
-              </a>
-              .
-            </p>
-
-            <h3>Anti-checklist — o que NÃO fazer</h3>
-            <ul>
-              <li>
-                <strong>Não troque bancadas novas.</strong> Trocar bancadas em bom estado custa
-                milhares de reais e raramente muda a percepção do hóspede. Troque só se estiverem
-                danificadas ou com padrão muito datado.
-              </li>
-              <li>
-                <strong>Cuidado com integração de sacada.</strong> Custo alto e risco com as
-                regras do condomínio. Avalie se o ganho de espaço justifica, e verifique a
-                convenção antes.
-              </li>
-              <li>
-                <strong>Não mexa no revestimento do banheiro.</strong> Remover o revestimento
-                original pode comprometer a impermeabilização, cuja garantia costuma ser de cinco
-                anos. Risco de infiltração e custo imprevisível.
-              </li>
-              <li>
-                <strong>Evite demolições e mudança de instalações.</strong> Prefira resolver com
-                marcenaria e layout. Mover pontos hidráulicos ou elétricos encarece e atrasa.
-              </li>
-            </ul>
-            <p>
-              Evitar demolições desnecessárias e priorizar marcenaria e layout libera orçamento
-              para decoração e fotos, onde o retorno é mais direto.
-            </p>
-
-            <h3>Quando demolir faz sentido?</h3>
-            <p>
-              Apenas quando o layout atual impede a funcionalidade básica do studio — cozinha
-              inacessível, banheiro sem ventilação mínima — e quando a conta fecha. Antes de
-              decidir, faça a matemática: se a demolição custa R$ 10.000 e o ganho mensal
-              projetado é R$ 300, o payback passa de 33 meses. Consulte um arquiteto com
-              experiência em short stay antes.
-            </p>
-            <p className="bwa-gi-link-line">
-              <a href="/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo">
-                Quanto custa reformar um studio em São Paulo em 2026
-              </a>{" "}
-              ·{" "}
-              <a href="/conteudos/cronograma-reforma-studio-60-dias-uteis">
-                Cronograma de uma reforma de studio: 60 dias úteis, semana a semana
-              </a>{" "}
-              · <a href="/conteudos/nbr-16280-reforma-studio-condominio">NBR 16280 na prática</a>
-            </p>
-          </div>
-        </section>
-
-        <section className="bwa-gi-section" id="decoracao">
-          <div className="bwa-shell">
-            <h2>Decoração e fotos: o que muda a diária?</h2>
-            <p>
-              A decoração de um studio de short stay não é decoração residencial. Ela responde a
-              três exigências ao mesmo tempo: fotografar bem, resistir ao uso intenso e caber no
-              orçamento.
-            </p>
-            <ul>
-              <li>
-                <strong>Fotos profissionais</strong> são o maior retorno por real investido: a
-                primeira imagem concentra a maior parte dos cliques no anúncio. Fotografe com luz
-                natural, enquadramento amplo, mostrando o ambiente inteiro.
-              </li>
-              <li>
-                <strong>Identidade visual consistente.</strong> Um conceito definido (paleta,
-                materiais, uma peça marcante) diferencia o anúncio de dezenas de studios iguais no
-                mesmo bairro.
-              </li>
-              <li>
-                <strong>Colchão e enxoval padrão hotel.</strong> Sono é um dos maiores
-                determinantes de avaliação. Colchão de qualidade, dois tipos de travesseiro,
-                protetor impermeável, jogo de cama reserva.
-              </li>
-              <li>
-                <strong>Cortina blackout de verdade</strong>, com vedação lateral.
-              </li>
-              <li>
-                <strong>Wi-Fi rápido e mesa de trabalho.</strong> Para estadia de trabalho remoto,
-                é filtro de busca.
-              </li>
-              <li>
-                <strong>Materiais que resistem ao uso intenso</strong> — o custo de manutenção
-                aparece no segundo ano.
-              </li>
-            </ul>
-            <p className="bwa-gi-link-line">
-              <a href="/conteudos/preparar-studio-airbnb-checklist">
-                Como preparar um studio para Airbnb: o que muda na diária
-              </a>
-              .
-            </p>
-          </div>
-        </section>
-
-        <section className="bwa-gi-section" id="anuncio">
-          <div className="bwa-shell">
-            <h2>Como estruturar o anúncio e a precificação?</h2>
-
-            <h3>Anúncio</h3>
-            <ul>
-              <li>
-                <strong>Título com localização e diferencial.</strong> O título aparece na busca:
-                inclua bairro, metrô próximo e o diferencial principal.
-              </li>
-              <li>
-                <strong>Descrição orientada a benefício.</strong> Não liste features — mostre como
-                cada item resolve uma necessidade real. "Wi-Fi 300 Mbps, ideal para trabalho
-                remoto" vale mais que "tem Wi-Fi". Evite superlativos genéricos.
-              </li>
-              <li>
-                <strong>Amenidades completas.</strong> Cada amenidade é um possível filtro do
-                hóspede. Marque todas as reais, inclusive as óbvias.
-              </li>
-              <li>
-                <strong>Foto de capa irresistível.</strong> Luz natural, enquadramento amplo, um
-                elemento memorável.
-              </li>
-            </ul>
-
-            <h3>Precificação</h3>
-            <ul>
-              <li>
-                <strong>Comece pelo volume.</strong> Nas primeiras semanas, priorize reservas e
-                avaliações: elas definem a posição no algoritmo.
-              </li>
-              <li>
-                <strong>Suba gradualmente.</strong> Com avaliações positivas, aumentos
-                escalonados, monitorando a taxa de conversão. Se cair, volte um degrau.
-              </li>
-              <li>
-                <strong>Preço dinâmico.</strong> Ferramentas de precificação automática capturam
-                picos que ninguém monitora manualmente. Defina piso, teto e regras por temporada.
-              </li>
-              <li>
-                <strong>Estadia mínima inteligente.</strong> Mínimos maiores em fim de semana e
-                alta temporada reduzem viradas e custo de limpeza.
-              </li>
-              <li>
-                <strong>Datas-chave de São Paulo.</strong> Carnaval, F1, festivais, feriados
-                prolongados e eventos corporativos: antecipe a precificação.
-              </li>
-            </ul>
-            <p className="bwa-gi-link-line">
-              <a href="/conteudos/airbnb-ou-booking">Airbnb ou Booking? Onde anunciar seu studio</a>{" "}
-              ·{" "}
-              <a href="/conteudos/gestao-propria-vs-gestora">
-                Gestão própria vs. gestora profissional
-              </a>
-            </p>
-          </div>
-        </section>
-
-        <section className="bwa-gi-section" id="checklist">
-          <div className="bwa-shell">
-            <h2>Checklist do investidor</h2>
-            <p>Dez itens que precisam estar resolvidos antes de assinar a compra.</p>
-            <ol>
-              {CHECKLIST.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ol>
-          </div>
-        </section>
-
-        <section className="bwa-gi-section bwa-gi-faq" id="faq">
-          <div className="bwa-shell">
-            <h2>Perguntas frequentes</h2>
-            {FAQ_ITEMS.map((item, i) => (
-              <details key={item.q} open={i === 0}>
-                <summary>{item.q}</summary>
-                <p>{item.a}</p>
-              </details>
-            ))}
-          </div>
-        </section>
-
-        <section className="bwa-gi-section">
-          <div className="bwa-shell">
-            <div className="bwa-gi-tools">
-              <h2>Ferramentas interativas do guia</h2>
-              <p>
-                As versões interativas (simulador de receita, mapa de bairros e comparador de
-                cenários) ficam no app do Guia do Investidor.
-              </p>
-              <ul>
-                <li>
-                  <a
-                    href="https://shortstay-guide.lovable.app/#simulador"
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    Simulador de receita
+                  <a href="/orcamento" className="text-primary hover:underline">
+                    Solicitar orçamento
                   </a>
-                </li>
-                <li>
-                  <a
-                    href="https://shortstay-guide.lovable.app/#mapa-bairros"
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    Mapa de bairros de São Paulo
-                  </a>
-                </li>
-              </ul>
-            </div>
+                </nav>
+                <p className="max-w-3xl text-xs leading-relaxed">
+                  Conteúdo informativo. As faixas de diária, ocupação e custo citadas são retratos de mercado do período
+                  analisado e não constituem promessa, garantia ou recomendação de investimento. Resultados variam por
+                  imóvel, condomínio, operação e sazonalidade.
+                </p>
+                <p className="text-xs">© 2026 Bewild · Guia do investidor em studios para short stay</p>
+              </div>
+            </footer>
           </div>
-        </section>
-
-        <section className="bwa-gi-cta">
-          <div className="bwa-shell">
-            <h2>Quer avaliar o seu studio?</h2>
-            <p>
-              A Bewild faz projeto, reforma, marcenaria e mobiliário do studio em um contrato só,
-              com escopo, preço e prazo fechados antes do início da obra.
-            </p>
-            <a className="bwa-button" href="/orcamento">
-              Solicitar orçamento
-              <span aria-hidden="true">→</span>
-            </a>
-          </div>
-        </section>
-
-        <section className="bwa-gi-disclaimer">
-          <div className="bwa-shell">
-            <p className="bwa-mono">
-              As faixas e percentuais deste guia são referências de mercado compiladas pela Bewild
-              a partir de bases do setor, com os períodos declarados em cada seção. Não constituem
-              promessa nem projeção de rendimento. Resultados reais dependem de localização,
-              produto, execução da reforma, qualidade das fotos, gestão operacional, sazonalidade
-              e concorrência. A Bewild não garante renda, ocupação ou rentabilidade.
-            </p>
-          </div>
-        </section>
+        </div>
       </main>
+    </>
+  );
+}
 
-      <BwaFooter />
-    </div>
+/** Simulador é pesado (recharts + sliders); carrega sob demanda. */
+const SimuladorSectionInner = lazy(() => import("@/guia/components/guide/SimuladorSection"));
+function SimuladorSectionLazy() {
+  return (
+    <Suspense
+      fallback={
+        <div className="py-16">
+          <div className="h-4 w-4 border-2 border-primary/40 border-t-primary rounded-full animate-spin mx-auto" />
+        </div>
+      }
+    >
+      <SimuladorSectionInner />
+    </Suspense>
   );
 }

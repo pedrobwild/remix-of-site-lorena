@@ -20,7 +20,6 @@ import EscopoPage from "./pages/EscopoPage";
 import ComoFuncionaPage from "./pages/ComoFuncionaPage";
 import OndeAtuamosPage from "./pages/OndeAtuamosPage";
 import ParceirosPage from "./pages/ParceirosPage";
-import GuiaInvestidorPage from "./pages/GuiaInvestidorPage";
 import PrivacidadePage from "./pages/PrivacidadePage";
 import LpObraPage from "./pages/LpObraPage";
 import LpPanfletoPage from "./pages/LpPanfletoPage";
@@ -31,6 +30,8 @@ import { lazy, Suspense, type ReactNode } from "react";
 
 // Admin em chunks separados: o visitante público não baixa recharts, dnd-kit
 // e todo o painel (o bundle único tinha ~1,45 MB / 414 kB gzip).
+// O guia carrega framer-motion, recharts e maplibre: fica em chunk próprio.
+const GuiaInvestidorPage = lazy(() => import("./pages/GuiaInvestidorPage"));
 const LoginPage = lazy(() => import("./pages/admin/LoginPage"));
 const BewildOverviewPage = lazy(() => import("./pages/admin/BewildOverviewPage"));
 const BewildLeadsAdminPage = lazy(() => import("./pages/admin/BewildLeadsAdminPage"));
@@ -80,7 +81,12 @@ export function renderRoute(route: Route) {
   if (route.name === "como-funciona") return <ComoFuncionaPage />;
   if (route.name === "onde-atuamos") return <OndeAtuamosPage />;
   if (route.name === "parceiros") return <ParceirosPage />;
-  if (route.name === "guia-do-investidor") return <GuiaInvestidorPage />;
+  if (route.name === "guia-do-investidor")
+    return (
+      <Suspense fallback={null}>
+        <GuiaInvestidorPage />
+      </Suspense>
+    );
   if (route.name === "privacidade") return <PrivacidadePage />;
   if (route.name === "lp-obra") return <LpObraPage />;
   if (route.name === "lp-panfleto") return <LpPanfletoPage />;
