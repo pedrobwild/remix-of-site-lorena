@@ -49,6 +49,40 @@ const FAQ_ITEMS: { q: string; a: string }[] = [
   },
 ];
 
+/* Bloco de conteúdo (não é copy travada da home): responde a buscas do tipo
+ * "como fazer uma reforma de apartamento", "por onde começar uma reforma",
+ * "quanto custa reformar apartamento em São Paulo". */
+const GUIA_ITEMS: { q: string; a: string }[] = [
+  {
+    q: "Como fazer uma reforma de apartamento, passo a passo?",
+    a: "Na prática são seis etapas: definir o objetivo do imóvel (morar, alugar ou vender), levantar a metragem e o estado atual, aprovar o projeto em 3D, fechar preço e prazo em contrato, executar a obra com marcenaria e mobília, e receber o apartamento pronto para usar. Na Bewild essas seis etapas acontecem dentro de um único contrato, com um só responsável.",
+  },
+  {
+    q: "Por onde começar uma reforma de apartamento?",
+    a: "Comece pelo objetivo, não pelo acabamento. Um apartamento para short stay pede layout, marcenaria e mobília pensados para alta rotatividade; um para morar pede outra coisa. Definido o objetivo, o passo seguinte é o projeto — decidir tudo no papel e no 3D é o que evita mudança cara no meio da obra.",
+  },
+  {
+    q: "Quanto custa reformar um apartamento em São Paulo?",
+    a: "Depende da metragem, do estado do imóvel e do nível de acabamento. Nas obras que entregamos, apartamentos compactos de 21 a 35 m² ficam em torno de R$ 2.400 por metro quadrado, já incluindo projeto, obra, marcenaria e mobília. O valor do seu imóvel sai fechado no diagnóstico, antes de a obra começar.",
+  },
+  {
+    q: "Quanto tempo demora uma reforma de apartamento?",
+    a: "A maior parte das nossas obras fica pronta em cerca de 60 dias úteis, referência para apartamentos de até 30 m². A data exata entra no contrato antes do início — e se o prazo atrasar por nossa conta, o problema é nosso.",
+  },
+  {
+    q: "Preciso de autorização do condomínio para reformar?",
+    a: "Sim. A maioria dos condomínios pede comunicado prévio, ART ou RRT do responsável técnico e horários definidos para obra e para uso do elevador. Toda essa parte burocrática com o condomínio é conduzida pela nossa equipe, não por você.",
+  },
+  {
+    q: "Reforma com empresa única ou contratando profissionais separados?",
+    a: "Contratar arquiteto, empreiteiro, marceneiro e mobiliário separadamente costuma sair mais barato no papel e mais caro na conta final: cada um culpa o outro pelo atraso e o custo escapa. Com um contrato único, preço e prazo são fechados e existe um só responsável pelo resultado.",
+  },
+  {
+    q: "Quais erros mais atrasam uma reforma de apartamento?",
+    a: "Mudar de ideia depois que a obra começou, deixar elétrica e hidráulica para decidir na hora, comprar acabamento sem medida definida e contratar por orçamento aberto. Projeto aprovado em 3D antes de quebrar a primeira parede resolve quase todos eles.",
+  },
+];
+
 export default function FaqPage() {
   const { settings } = useSiteSettings();
   const [aberto, setAberto] = useState(0);
