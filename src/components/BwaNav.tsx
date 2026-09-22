@@ -75,17 +75,12 @@ export default function BwaNav() {
           </a>
 
           <nav className="bwa-nav-links" aria-label="Navegação principal">
-            <a href="/#certeza">O contrato</a>
-            <a href="/#historia">A história</a>
             <a href="/#projetos">Projetos</a>
-            <a href="/#workflow">Bwild Workflow</a>
-            <a href="/#prova">Prova</a>
+            <a href="/#workflow">Como funciona</a>
             <a href="/portfolio">Portfólio</a>
-            <a href="/onde-atuamos">Onde atuamos</a>
             <a href="/conteudos">Conteúdos</a>
             <a href="/faq">FAQ</a>
             <a href="/contato">Contato</a>
-            <a href="/escopo">Escopo com IA</a>
           </nav>
 
           <a className="bwa-button" href="/diagnostico">
@@ -107,19 +102,12 @@ export default function BwaNav() {
 
       <div className="bwa-mobile-menu" data-mobile-menu>
         <nav aria-label="Navegação mobile">
-          <a href="/#certeza">O contrato</a>
-          <a href="/#historia">A história</a>
           <a href="/#projetos">Projetos</a>
-          <a href="/#certeza">O que fazemos</a>
-          <a href="/#workflow">Bwild Workflow</a>
-          <a href="/#prova">Prova</a>
-          <a href="/#para-quem">Morar, alugar ou vender</a>
+          <a href="/#workflow">Como funciona</a>
           <a href="/portfolio">Portfólio</a>
-          <a href="/onde-atuamos">Onde atuamos</a>
           <a href="/conteudos">Conteúdos</a>
           <a href="/faq">FAQ</a>
           <a href="/contato">Contato</a>
-            <a href="/escopo">Escopo com IA</a>
           <a href="/diagnostico">Solicitar orçamento</a>
         </nav>
       </div>
