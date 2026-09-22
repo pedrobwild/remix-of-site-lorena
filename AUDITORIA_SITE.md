@@ -3,6 +3,14 @@
 **Data:** 16/09/2026 · **Branch:** `claude/charming-keller-awrwxk` · **Commit auditado:** `c09f0f6` (HEAD de `main` no início da auditoria)
 **Escopo:** código real deste repositório + banco de dados do projeto Lovable + investigação de domínio/publicação. Plano de ação em `PLANO_ACAO_SITE.md`.
 
+> **➜ Existe uma rodada mais recente.** A segunda auditoria completa (22/09/2026,
+> HEAD `77dfad4`) está em
+> **[`docs/auditoria/rodada-2026-09-22.md`](docs/auditoria/rodada-2026-09-22.md)**.
+> Ela cobre o que entrou depois de `c09f0f6` — em especial os commits do agente
+> do Lovable de 18/09 e 21/09 — e fecha ou reclassifica parte dos achados
+> abaixo. Onde as duas divergirem, **vale a rodada 2**; este documento fica como
+> registro do estado em 16/09 e não foi reescrito.
+
 ---
 
 ## 1. Resumo executivo
