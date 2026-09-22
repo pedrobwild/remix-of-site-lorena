@@ -189,7 +189,7 @@ export function renderRoute(route: Route) {
         </ProtectedRoute>
       </AdminChunk>
     );
-  if (route.name === "admin-diagnostico")
+  if (route.name === "admin-diagnostico" || route.name === "admin-orcamentos")
     return (
       <AdminChunk>
         <ProtectedRoute>
