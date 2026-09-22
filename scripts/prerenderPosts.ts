@@ -186,7 +186,7 @@ export function prerenderPosts(): Plugin {
         const baseHtml = readFileSync(distIndex, "utf8");
 
         const res = await fetch(
-          `${supabaseUrl.replace(/\/$/, "")}/rest/v1/bewild_posts?published=eq.true&select=slug,title,meta_title,meta_description,excerpt,cover_image,category,published_at,updated_at,created_at`,
+          `${supabaseUrl.replace(/\/$/, "")}/rest/v1/bewild_posts?published=eq.true&select=slug,title,meta_title,meta_description,excerpt,cover_image,category,published_at,updated_at,created_at,body`,
           { headers: { apikey: key, Authorization: `Bearer ${key}` } },
         );
         if (!res.ok) return warn(`consulta ao banco falhou (HTTP ${res.status})`);
@@ -199,14 +199,14 @@ export function prerenderPosts(): Plugin {
         let written = 0;
         for (const post of posts) {
           if (!post?.slug || !/^[a-z0-9-]+$/.test(post.slug)) continue;
-          const html = headFor(post, baseHtml);
+          const html = bodyFor(post, headFor(post, baseHtml));
           const dirFile = resolve(outDir, post.slug, "index.html");
           mkdirSync(dirname(dirFile), { recursive: true });
           writeFileSync(dirFile, html, "utf8");
           writeFileSync(resolve(outDir, `${post.slug}.html`), html, "utf8");
           written += 1;
         }
-        console.log(`[prerender-posts] ${written} artigos com <head> pronto em dist/conteudos/`);
+        console.log(`[prerender-posts] ${written} artigos com <head> e corpo prontos em dist/conteudos/`);
       } catch (err) {
         warn(err instanceof Error ? err.message : String(err));
       }
