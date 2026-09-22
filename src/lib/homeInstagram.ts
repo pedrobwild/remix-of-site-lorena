@@ -75,6 +75,14 @@ export function installInstagramEmbeds(root: HTMLElement): Cleanup {
     iframe.setAttribute("allowtransparency", "true");
     iframe.style.height = `${INITIAL_EMBED_HEIGHT}px`;
     holder.replaceChildren(iframe);
+    // Selo próprio de visualizações: o Instagram desenha "X curtidas" dentro
+    // do iframe (inacessível), então cobrimos essa linha com o rótulo do card.
+    if (card.dataset.igViewsLabel) {
+      const badge = document.createElement("p");
+      badge.className = "bwa-ig-views";
+      badge.textContent = card.dataset.igViewsLabel;
+      holder.appendChild(badge);
+    }
     holder.dataset.igState = "loaded";
     frames.set(iframe, holder);
   };
