@@ -42,7 +42,7 @@ const PASSOS: { n: string; t: string }[] = [
 const FAQ: { q: string; a: string; node?: ReactNode }[] = [
   {
     q: "Vocês reformam apartamentos de qualquer tamanho?",
-    a: "Sim: studios e apartamentos de qualquer metragem em São Paulo capital. O escopo e a proposta são definidos após a leitura do imóvel.",
+    a: "Sim: studios e apartamentos de qualquer metragem em São Paulo capital, e também escritórios. O escopo e a proposta são definidos após a leitura do imóvel.",
   },
   {
     q: "Quanto tempo demora?",

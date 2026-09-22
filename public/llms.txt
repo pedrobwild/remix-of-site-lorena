@@ -2,12 +2,12 @@
 
 > Built by the wild ones. Be wild.
 
-A Bewild é uma empresa de reforma completa de apartamentos e studios em São Paulo: projeto, obra, marcenaria, mobília e setup em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia. Atende studios e apartamentos de qualquer metragem em São Paulo capital, para morar, alugar (short stay ou longa duração) ou vender; os donos podem morar em qualquer cidade.
+A Bewild é uma empresa de reforma completa de apartamentos e studios em São Paulo: projeto, obra, marcenaria, mobília e setup em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia. O foco é studio e apartamento; atende apartamentos de qualquer metragem e também escritórios, em São Paulo capital, para morar, alugar (short stay ou longa duração) ou vender; os donos podem morar em qualquer cidade.
 
 ## Pages
 
 - [Home](/): Studio de projeto, reforma turn-key e setup para short stay.
-- [Portfólio](/portfolio): Projetos entregues de studios e imóveis compactos.
+- [Portfólio](/portfolio): Projetos entregues de studios e apartamentos.
 - [Reforma de apartamento em São Paulo](/reforma-de-apartamento-sao-paulo): Empresa de reforma completa de apartamentos em SP, com preço fechado e prazo em contrato.
 - [Reforma de studio em São Paulo](/reforma-de-studio-sao-paulo): Reforma completa de studio para morar ou alugar, entregue pronto para anunciar.
 - [Diagnóstico](/diagnostico): Entrada de leads para avaliação do imóvel.
