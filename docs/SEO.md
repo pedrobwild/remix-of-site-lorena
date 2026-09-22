@@ -53,16 +53,30 @@ Tudo explicado passo-a-passo na aba **Guia Google** do admin.
 
 ## Schema.org emitido automaticamente
 
-A home injeta blocos JSON-LD:
+**A home não injeta JSON-LD via `useSeo`.** O JSON-LD dela é estático, escrito
+direto no `index.html` (`Organization`, `WebSite`, `Service`, `City`) — o
+`HomePage.tsx` chama `useSeo` sem a chave `jsonLd`. Corrigido em 22/09/2026;
+este documento descrevia o comportamento antigo.
 
-- `Organization` / `LocalBusiness` — dados da Bewild, endereço, horário, geo, serviços
-- `WebSite` — nome, URL, idioma, publisher
-- `FAQPage` — perguntas frequentes da home (reuso do helper `faqJsonLd`)
+Os blocos dinâmicos ficam nas rotas internas, via os helpers de
+`src/lib/useSeo.ts`:
 
-Cada projeto/post individual adiciona também:
+| Rota | Blocos |
+|---|---|
+| `/diagnostico` | `Organization` (helper `organizationJsonLd`) + `BreadcrumbList` |
+| `/portfolio` | `BreadcrumbList` + `ItemList` |
+| `/portfolio/:slug` | `CreativeWork` + `BreadcrumbList` |
+| `/conteudos/:slug` | `Article` + `BreadcrumbList` |
+| `/faq` | `FAQPage` |
+| `/contato` | `BreadcrumbList` |
 
-- `CreativeWork` ou `Article` — ficha do conteúdo
-- `BreadcrumbList` — trilha de navegação
+> `organizationJsonLd` e `professionalServiceJsonLd` publicam CNPJ e CAU a
+> partir de `site_settings`. Como as colunas `cnpj`/`cau` ainda **não existem**
+> no banco de produção (ver `docs/auditoria/rodada-2026-09-22.md`, DB-02), o
+> valor que vai ao ar é o de `DEFAULTS` em `src/lib/useSiteSettings.ts`. Esses
+> números estão travados por teste em
+> `src/lib/__tests__/identidadeOficial.test.ts` — não altere sem atualizar o
+> teste.
 
 Valide tudo em: https://search.google.com/test/rich-results
 
