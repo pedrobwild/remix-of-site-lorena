@@ -14,44 +14,44 @@ Regras usadas: destino = página equivalente por intenção de busca; quando o e
 
 ## 2. Posts do blog (36)
 
-Legenda: **P** = destino já publicado · **R** = rascunho no novo site (publicar antes) · **I** = índice `/conteudos`
+Legenda: **P** = destino já publicado · **R** = rascunho no novo site (publicar antes) · **I** = índice `/conteudos` · **P (22/09)** = era R, destino publicado e redirecionamento trocado em 22/09/2026
 
 | # | Origem (Wix `/post/…`) | Destino em `bewild.com.br` | Tipo |
 |---|---|---|---|
 | 1 | `/post/reforma-de-studio-para-short-stay-sao-paulo` | `/diagnostico` | P |
 | 2 | `/post/quem-faz-reforma-e-decoração-para-aumentar-o-retorno-financeiro-de-imóveis-em-são-paulo` | `/` | P |
 | 3 | `/post/blog-projeto-arquitetonico-personalizado-studios` | `/conteudos/reforma-turn-key-ou-tradicional` | P |
-| 4 | `/post/decoração-estratégica-o-que-realmente-faz-diferença-na-rentabilidade-do-seu-imóvel-de-short-stay` | `/conteudos/preparar-studio-airbnb-checklist` | R |
-| 5 | `/post/reforma-airbnb-sao-paulo-cuidados` | `/conteudos/7-erros-imovel-short-stay` | R |
+| 4 | `/post/decoração-estratégica-o-que-realmente-faz-diferença-na-rentabilidade-do-seu-imóvel-de-short-stay` | `/conteudos/preparar-studio-airbnb-checklist` | P (22/09) |
+| 5 | `/post/reforma-airbnb-sao-paulo-cuidados` | `/conteudos/7-erros-imovel-short-stay` | P (22/09) |
 | 6 | `/post/como-a-gestão-turnkey-facilita-reformas-de-apartamentos-em-são-paulo` | `/conteudos/reforma-turn-key-ou-tradicional` | P |
 | 7 | `/post/materiais-para-serviço-completo-de-reforma-e-decoração-para-imóveis-voltados-ao-airbnb` | `/conteudos/reforma-turn-key-ou-tradicional` | P |
-| 8 | `/post/diária-média-de-airbnb-em-são-paulo-por-bairro-guia-prático-para-precificar-seu-apê-em-2025` | `/conteudos/quanto-rende-studio-short-stay-sao-paulo` | R |
+| 8 | `/post/diária-média-de-airbnb-em-são-paulo-por-bairro-guia-prático-para-precificar-seu-apê-em-2025` | `/conteudos/quanto-rende-studio-short-stay-sao-paulo` | P (22/09) |
 | 9 | `/post/guia-do-investidor-reformar-para-locação-em-pinheiros-dados-e-padrões-que-funcionam` | `/conteudos/melhores-bairros-short-stay-sao-paulo` | R |
-| 10 | `/post/como-aumentar-o-valor-da-diária-do-seu-short-stay-em-até-30-com-reforma-inteligente` | `/conteudos/quanto-rende-studio-short-stay-sao-paulo` | R |
+| 10 | `/post/como-aumentar-o-valor-da-diária-do-seu-short-stay-em-até-30-com-reforma-inteligente` | `/conteudos/quanto-rende-studio-short-stay-sao-paulo` | P (22/09) |
 | 11 | `/post/estudo-de-mercado-bwild-studios-airbnb-chácara-klabin-sp` | `/conteudos/melhores-bairros-short-stay-sao-paulo` | R |
 | 12 | `/post/estudo-de-mercado-bwild-studios-airbnb-moema-sp` | `/conteudos/melhores-bairros-short-stay-sao-paulo` | R |
-| 13 | `/post/qual-é-o-valor-de-obra-por-metro-quadrado-studios-para-airbnb` | `/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo` | R |
-| 14 | `/post/como-fazer-o-orçamento-de-uma-reforma-de-studio-ou-apartamento` | `/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo` | R |
+| 13 | `/post/qual-é-o-valor-de-obra-por-metro-quadrado-studios-para-airbnb` | `/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo` | P (22/09) |
+| 14 | `/post/como-fazer-o-orçamento-de-uma-reforma-de-studio-ou-apartamento` | `/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo` | P (22/09) |
 | 15 | `/post/estudo-de-mercado-studios-no-butantã-são-paulo` | `/conteudos/melhores-bairros-short-stay-sao-paulo` | R |
 | 16 | `/post/estudo-de-mercado-studios-para-short-stay-na-vila-madalena` | `/conteudos/melhores-bairros-short-stay-sao-paulo` | R |
-| 17 | `/post/como-economizar-de-forma-inteligente-na-reforma-do-seu-studio-sem-perder-valor-de-mercado` | `/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo` | R |
+| 17 | `/post/como-economizar-de-forma-inteligente-na-reforma-do-seu-studio-sem-perder-valor-de-mercado` | `/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo` | P (22/09) |
 | 18 | `/post/estudo-de-mercado-studios-para-short-stay-no-paraíso-são-paulo` | `/conteudos/melhores-bairros-short-stay-sao-paulo` | R |
 | 19 | `/post/estudo-de-mercado-studios-na-vila-olímpia-são-paulo` | `/conteudos/melhores-bairros-short-stay-sao-paulo` | R |
 | 20 | `/post/estudo-de-mercado-studios-para-short-stay-em-pinheiros-são-paulo` | `/conteudos/melhores-bairros-short-stay-sao-paulo` | R |
-| 21 | `/post/5-estratégias-essenciais-para-reformar-seu-studio-e-maximizar-seu-investimento` | `/conteudos/preparar-studio-airbnb-checklist` | R |
-| 22 | `/post/quanto-custa-a-reforma-de-um-studio-para-locação-no-airbnb-analisamos-100-orçamentos-da-bwild` | `/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo` | R |
+| 21 | `/post/5-estratégias-essenciais-para-reformar-seu-studio-e-maximizar-seu-investimento` | `/conteudos/preparar-studio-airbnb-checklist` | P (22/09) |
+| 22 | `/post/quanto-custa-a-reforma-de-um-studio-para-locação-no-airbnb-analisamos-100-orçamentos-da-bwild` | `/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo` | P (22/09) |
 | 23 | `/post/studios-para-locação-short-stay-o-crescimento-exponencial-deste-mercado-no-brasil` | `/conteudos/short-stay-ou-long-stay-studio-compacto` | P |
 | 24 | `/post/entenda-o-que-é-o-short-stay-oportunidade-de-investimento-e-tendência-no-mercado-imobiliário` | `/conteudos/short-stay-ou-long-stay-studio-compacto` | P |
 | 25 | `/post/financiar-ou-comprar-à-vista-qual-a-melhor-opção-para-adquirir-um-imóvel` | `/conteudos` | I |
 | 26 | `/post/quais-são-os-documentos-necessários-para-a-compra-de-um-imóvel` | `/conteudos` | I |
-| 27 | `/post/as-preferências-dos-hóspedes-que-buscam-por-locações-de-curta-temporada-short-stay` | `/conteudos/preparar-studio-airbnb-checklist` | R |
-| 28 | `/post/o-que-considerar-na-reforma-do-seu-studio-para-reduzir-os-custos-de-manutenção-para-locação-no-airbn` | `/conteudos/7-erros-imovel-short-stay` | R |
+| 27 | `/post/as-preferências-dos-hóspedes-que-buscam-por-locações-de-curta-temporada-short-stay` | `/conteudos/preparar-studio-airbnb-checklist` | P (22/09) |
+| 28 | `/post/o-que-considerar-na-reforma-do-seu-studio-para-reduzir-os-custos-de-manutenção-para-locação-no-airbn` | `/conteudos/7-erros-imovel-short-stay` | P (22/09) |
 | 29 | `/post/quais-cuidados-tomar-antes-de-comprar-um-studio-ou-apartamento-para-locação-no-airbnb` | `/conteudos/studios-airbnb-sao-paulo-o-que-a-lei-permite` | P |
-| 30 | `/post/quanto-custa-reformar-um-studio-ou-apartamento-para-locação-short-stay` | `/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo` | R |
+| 30 | `/post/quanto-custa-reformar-um-studio-ou-apartamento-para-locação-short-stay` | `/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo` | P (22/09) |
 | 31 | `/post/reformas-rápidas-como-minimizar-o-tempo-fora-do-mercado-de-locação` | `/conteudos/reforma-turn-key-ou-tradicional` | P |
 | 32 | `/post/5-motivos-para-investir-em-short-stay-em-2025` | `/conteudos/short-stay-ou-long-stay-studio-compacto` | P |
 | 33 | `/post/como-a-valorização-imobiliária-em-são-paulo-impacta-seu-retorno-de-investimento` | `/conteudos` | I |
-| 34 | `/post/tendências-de-design-para-studios-em-2025-o-que-atrai-mais-hóspedes` | `/conteudos/preparar-studio-airbnb-checklist` | R |
+| 34 | `/post/tendências-de-design-para-studios-em-2025-o-que-atrai-mais-hóspedes` | `/conteudos/preparar-studio-airbnb-checklist` | P (22/09) |
 | 35 | `/post/o-guia-definitivo-para-a-reforma-de-um-apartamento-ou-studio` | `/conteudos/reforma-turn-key-ou-tradicional` | P |
 | 36 | `/post/bem-vindo-ao-nosso-blog-inspiração-e-dicas-para-seu-novo-apartamento-studio` | `/conteudos` | I |
 
@@ -215,3 +215,18 @@ Redirecionamento exato por categoria (não de grupo, que carregaria o sufixo par
 5. **Search Console:** na propriedade do Wix, *Configurações › Alteração de endereço* → `https://bewild.com.br/`. Manter as duas propriedades por 12 meses.
 6. **Perfis externos apontando para o domínio novo** (autoridade e consistência da entidade): Perfil da Empresa no Google, Instagram (bio), LinkedIn, Reclame Aqui (perfil `bwild-reformas` → campo site), assinaturas de e-mail, materiais impressos/QR.
 7. **Não cancelar o plano Premium do Wix** enquanto os 301 precisarem existir (≥ 12 meses).
+
+## 8. Troca dos provisórios (22/09/2026)
+
+Executada pela API depois da publicação de 6 rascunhos (plano "Blog SEO + IA"). `options.forceReplace` no bulk create foi recusado com `FROM_URL_EXISTS` para todos os 13; o caminho que funciona é o da documentação: **bulk delete** dos IDs e **bulk create** com o destino final (13 apagados, 13 criados, 0 falhas; o site continua com 184 redirecionamentos).
+
+| Destino final | Origens trocadas |
+|---|---|
+| `/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo` | 13, 14, 17, 22, 30 |
+| `/conteudos/preparar-studio-airbnb-checklist` | 4, 21, 27, 34 |
+| `/conteudos/7-erros-imovel-short-stay` | 5, 28 |
+| `/conteudos/quanto-rende-studio-short-stay-sao-paulo` | 8, 10 |
+
+**Continuam em `/conteudos` (17):** os 8 estudos por bairro (9, 11, 12, 15, 16, 18, 19, 20) até `melhores-bairros-short-stay-sao-paulo` ser expandido e publicado (A-44); os 3 temas sem equivalente (25, 26, 33); o post de boas-vindas (36); `/blog`, `/blog-reformas-studios` e as 3 categorias, que são índices por definição.
+
+**Sobre o "302" citado no plano:** a API de Redirecionamentos do Wix responde 301 por definição (documentação: "A redirect returns a 301 permanent redirect"). Um 302 observado em `curl -sI` costuma ser o primeiro salto de canonicalização (`http` → `https` ou `bwild.com.br` → `www`). Conferir com `curl -sIL https://www.bwild.com.br/post/reforma-airbnb-sao-paulo-cuidados`: a cadeia deve terminar em `https://bewild.com.br/conteudos/7-erros-imovel-short-stay`.

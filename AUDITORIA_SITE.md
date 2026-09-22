@@ -271,6 +271,20 @@ Positivos verificados: um único `<h1>` por página; hierarquia H2/H3 coerente n
 
 ---
 
+### 5.4 Rodada 3 — plano "Blog SEO + IA" (22/09/2026)
+
+| Verificação | Método | Resultado |
+|---|---|---|
+| Estado do blog no banco antes da rodada | `information_schema` + `select` em `bewild_posts` | 6 publicados, 8 rascunhos (desde 24/08); 3 rascunhos sem FAQ; 3 `meta_title` com "BeWild"; todos assinados "Equipe Bewild"; `updated_at` existe com trigger `set_updated_at` |
+| Correção do plano: "só o /faq emite FAQPage" | leitura de `src/pages/BewildPostPage.tsx` | falso — o post já emitia `FAQPage` do campo `faq`; faltavam editor no admin, `Person`, `dateModified` real e fallback de título |
+| Fonte do registro profissional usado no JSON-LD | `docs/internal/gpt-knowledge/03` (rodapé oficial) | "RESP. TÉCNICO · THIAGO DANTAS DO AMOR · CAU A162437-7"; "Pedro Alves, engenheiro USP" não consta nas fontes internas → `Person` só com o nome quando for usado |
+| Publicação dos 6 rascunhos prontos | `update … returning` | 6 posts `published = true`, `published_at = 2026-09-22`, FAQ 3–5 perguntas cada, meta titles sem "BeWild" |
+| Redirecionamentos provisórios do Wix | `GET /seo-redirects-service/v1/redirects` | 30 apontavam para `/conteudos`; 13 tinham destino final publicado |
+| Troca dos 13 (a API não tem update) | bulk create com `options.forceReplace` → `FROM_URL_EXISTS` em todos; depois bulk delete + bulk create | ver mapa em `docs/auditoria/mapa-redirecionamento-wix.md` (seção 8) |
+| "Redirects respondem 302" (plano) | documentação da API de Redirecionamentos do Wix | a API emite 301 por definição; o 302 observado deve ser o salto de canonicalização (`http`/`www`) antes do 301 — confirmar com `curl -sIL` (time) |
+| Código desta rodada | `npm run lint`, `tsc --noEmit`, `vitest run`, `vite build` | 0 erros; 170 testes passando (8 novos em `postSeo.test.ts`); build OK |
+| Não verificado daqui | — | site publicado (proxy bloqueia o domínio); Search Console; renderização das 6 páginas novas |
+
 ## 6. Alterações desta rodada (para revisão)
 
 Commits na branch `claude/charming-keller-awrwxk`:

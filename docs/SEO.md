@@ -66,7 +66,7 @@ Os blocos dinâmicos ficam nas rotas internas, via os helpers de
 | `/diagnostico` | `Organization` (helper `organizationJsonLd`) + `BreadcrumbList` |
 | `/portfolio` | `BreadcrumbList` + `ItemList` |
 | `/portfolio/:slug` | `CreativeWork` + `BreadcrumbList` |
-| `/conteudos/:slug` | `Article` + `BreadcrumbList` |
+| `/conteudos/:slug` | `Article` (autor `Person` ou `Organization`, `datePublished`/`dateModified` reais) + `BreadcrumbList` + `FAQPage` quando o post tem FAQ; durante o carregamento, `BreadcrumbList` estático e título por slug |
 | `/faq` | `FAQPage` |
 | `/contato` | `BreadcrumbList` |
 
@@ -77,6 +77,34 @@ Os blocos dinâmicos ficam nas rotas internas, via os helpers de
 > números estão travados por teste em
 > `src/lib/__tests__/identidadeOficial.test.ts` — não altere sem atualizar o
 > teste.
+
+### Posts: autor, datas e FAQ (`src/lib/postSeo.ts`)
+
+- **Autor.** O campo "Autor" do admin é texto livre. `Equipe Bewild` (ou vazio)
+  publica `Organization`; um nome de pessoa publica `Person`. Nomes com registro
+  conhecido ganham cargo e registro (hoje só Thiago Dantas do Amor, CAU
+  A162437-7, fonte: rodapé oficial). Para acrescentar alguém, edite
+  `KNOWN_AUTHORS` com uma fonte verificável — nada de número de registro de
+  memória.
+- **Datas.** `datePublished` = `published_at`; `dateModified` = `updated_at`
+  quando é posterior. A linha "Atualizado em" aparece só quando a alteração foi
+  em outro dia. Editar o post no admin já atualiza tudo (trigger `set_updated_at`).
+- **FAQ.** Editado no admin (pergunta + resposta) e emitido como `FAQPage`.
+  Padrão do plano SEO + IA: 4–6 perguntas, respostas de 40–70 palavras, tiradas
+  do que o leitor pergunta ao Google.
+- **Fallback.** Enquanto o banco não responde, `<title>` e H1 vêm do slug e o
+  `BreadcrumbList` é estático (SEO-14).
+- **llms.txt.** A seção "Conteúdos publicados" é reescrita por
+  `scripts/generate-sitemap.mjs` entre os marcadores `posts:start`/`posts:end`.
+
+### Padrão de post citável (resumo do plano de 21/09/2026)
+
+Resposta em 2–3 frases no primeiro parágrafo, com número; um dado próprio com
+origem e período declarados; uma tabela; subtítulos em forma de pergunta; FAQ
+com 4–6 perguntas; autor com nome e registro; 3–5 links internos (pilar do
+cluster, portfólio do bairro, `/diagnostico` uma vez no fim) e 2–3 externos para
+fonte primária; ano no título quando o tema é preço, lei ou mercado; um único
+CTA no fim. Nunca prometer renda ou ocupação; "Bewild", nunca "BeWild".
 
 Valide tudo em: https://search.google.com/test/rich-results
 
