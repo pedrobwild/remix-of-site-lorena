@@ -646,6 +646,7 @@
     .bwa-audience {
       color: var(--bwa-ink);
       background: var(--bwa-paper);
+      padding-block: clamp(56px, 6vw, 88px);
     }
 
     .bwa-audience-head {
