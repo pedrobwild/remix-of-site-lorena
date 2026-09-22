@@ -29,15 +29,32 @@ function markLoggedThisSession(path: string) {
   }
 }
 
+/**
+ * Motivo padrão do registro. Existe para desambiguar a RPC, não por estética:
+ * o banco de produção tem DUAS sobrecargas de `log_404` —
+ * `(p_path, p_referrer)` e `(p_path, p_referrer, p_reason)`, ambas com
+ * defaults. Um POST com só `{p_path, p_referrer}` casa com as duas e o
+ * PostgREST responde PGRST203 ("could not choose the best candidate
+ * function") em vez de gravar. Enviar `p_reason` sempre fecha o match na
+ * sobrecarga de 3 argumentos. Ver DB-01 em
+ * docs/auditoria/rodada-2026-09-22.md.
+ */
+export const DEFAULT_404_REASON = "spa_not_found";
+
 export async function logNotFound(path: string, referrer?: string | null): Promise<void> {
   if (!path || path === "/") return;
   if (hasLoggedThisSession(path)) return;
   markLoggedThisSession(path);
   try {
-    await supabase.rpc("log_404", {
+    // supabase-js NÃO lança em erro de API: devolve `{ error }`. Sem ler esse
+    // campo, o try/catch abaixo nunca disparava e a falha ficava invisível —
+    // foi assim que `seo_404_log` ficou em 0 linhas sem ninguém perceber.
+    const { error } = await supabase.rpc("log_404", {
       p_path: path,
-      p_referrer: referrer || undefined,
+      p_referrer: referrer || null,
+      p_reason: DEFAULT_404_REASON,
     });
+    if (error) devWarn("[notFoundLog] log_404 respondeu erro:", error);
   } catch (err) {
     // Nunca derruba o render por logging — mas em DEV avisa o autor,
     // antes o catch silenciava completamente (L9 do audit).
