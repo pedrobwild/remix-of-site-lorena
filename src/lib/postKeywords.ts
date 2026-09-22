@@ -13,14 +13,14 @@ const SHORT_STAY = "short stay em São Paulo, studio para alugar, renda de alugu
 
 export const POST_KEYWORDS: Record<string, string> = {
   // --- Reforma: custo e prazo ---
-  "quanto-custa-reformar-apartamento-sao-paulo-2026": `custo de reforma, quanto custa reformar um apartamento, ${REFORMA}, preço de reforma por m²`,
+  "quanto-custa-reformar-apartamento-sao-paulo-2026": `quanto custa reformar um apartamento em SP, custo de reforma, preço de reforma por m², custo de reforma de apartamento 2026, ${REFORMA}`,
   "quanto-custa-reformar-studio-short-stay-sao-paulo": `custo de reforma de studio, quanto custa reformar um studio, ${REFORMA_STUDIO}, valor por m² de reforma`,
-  "quanto-tempo-demora-reforma-apartamento": `prazo de reforma de apartamento, quanto tempo demora uma reforma, ${REFORMA}`,
-  "cronograma-reforma-studio-60-dias-uteis": `cronograma de reforma, prazo de reforma de studio, ${REFORMA_STUDIO}`,
-  "etapas-de-reforma-de-apartamento-cronograma": `etapas de uma reforma, cronograma de reforma de apartamento, ${REFORMA}`,
+  "quanto-tempo-demora-reforma-apartamento": `quanto tempo demora uma reforma de apartamento, prazo de reforma de apartamento em SP, tempo de obra em apartamento, ${REFORMA}`,
+  "cronograma-reforma-studio-60-dias-uteis": `cronograma de reforma de studio, prazo de reforma de studio em SP, reforma em 60 dias úteis, ${REFORMA_STUDIO}`,
+  "etapas-de-reforma-de-apartamento-cronograma": `etapas de reforma de apartamento, passo a passo de uma reforma, ordem das etapas de obra, cronograma de reforma, ${REFORMA}`,
 
   // --- Reforma: orçamento e contrato ---
-  "como-comparar-orcamentos-de-reforma": `comparar orçamento de reforma, custo de reforma, orçamento de reforma de apartamento, ${REFORMA}`,
+  "como-comparar-orcamentos-de-reforma": `como comparar orçamentos de reforma, orçamento de reforma de apartamento em SP, custo de reforma, o que olhar num orçamento de obra, ${REFORMA}`,
   "o-que-esta-incluso-orcamento-reforma-studio": `orçamento de reforma de studio, o que entra no orçamento de reforma, custo de reforma, ${REFORMA_STUDIO}`,
   "reforma-turn-key-ou-tradicional": `reforma turn-key, custo de reforma, comparativo de custo de reforma, ${REFORMA}`,
   "aditivo-em-obra-por-que-existe": `aditivo de obra, custo de reforma, orçamento de reforma de apartamento, ${REFORMA}`,
