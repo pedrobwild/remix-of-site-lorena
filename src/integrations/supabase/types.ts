@@ -421,6 +421,8 @@ export type Database = {
           email: string | null
           id: string
           landing_path: string | null
+          lead_source: string | null
+          lives_in_sp: boolean | null
           location: string | null
           message: string | null
           name: string
@@ -442,6 +444,8 @@ export type Database = {
           email?: string | null
           id?: string
           landing_path?: string | null
+          lead_source?: string | null
+          lives_in_sp?: boolean | null
           location?: string | null
           message?: string | null
           name: string
@@ -463,6 +467,8 @@ export type Database = {
           email?: string | null
           id?: string
           landing_path?: string | null
+          lead_source?: string | null
+          lives_in_sp?: boolean | null
           location?: string | null
           message?: string | null
           name?: string
