@@ -154,7 +154,7 @@ export default function BwaSharedChrome({ children }: { children: ReactNode }) {
                 <a href="/portfolio">Portfólio</a>
                 <a href="/conteudos">Conteúdos</a>
                 <a href="/faq">FAQ</a>
-                <a href="/diagnostico">Orçamento</a>
+                <a href="/orcamento">Orçamento</a>
               </nav>
             </div>
 
