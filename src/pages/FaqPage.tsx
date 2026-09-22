@@ -71,7 +71,7 @@ const GUIA_ITEMS: { q: string; a: string }[] = [
   },
   {
     q: "Preciso de autorização do condomínio para reformar?",
-    a: "Sim. A maioria dos condomínios pede comunicado prévio, ART ou RRT do responsável técnico e horários definidos para obra e para uso do elevador. Toda essa parte burocrática com o condomínio é conduzida pela nossa equipe, não por você.",
+    a: "Sim. A maioria dos condomínios pede comunicado prévio, ART ou RRT do responsável técnico e horários definidos para obra e para uso do elevador. Toda essa parte burocrática com o condomínio é conduzida pela nossa equipe, não por você — veja o guia completo de autorização de reforma no condomínio.",
   },
   {
     q: "Reforma com empresa única ou contratando profissionais separados?",
