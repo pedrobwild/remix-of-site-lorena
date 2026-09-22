@@ -997,7 +997,7 @@
       position: relative;
       z-index: 1;
       display: grid;
-      grid-template-columns: 90px minmax(0, 1fr) minmax(220px, .75fr) 44px;
+      grid-template-columns: 90px minmax(0, 1fr) minmax(260px, .8fr) 44px;
       align-items: center;
       gap: 24px;
       padding: 28px var(--bwa-gutter);
