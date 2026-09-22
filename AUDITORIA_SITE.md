@@ -298,6 +298,17 @@ Positivos verificados: um único `<h1>` por página; hierarquia H2/H3 coerente n
 | Promessas não validadas do documento | leitura (marcas [validar]) | multa por atraso, faixas de preço, nota do Google, "quase metade fora de SP", prazo de resposta "mesmo dia útil": **nada disso entrou no site**; a nota de resposta no mesmo dia útil que já existia no FAQ de `/diagnostico` foi mantida como estava |
 | Código desta rodada | `npm run lint`, `tsc --noEmit`, `vitest run`, `vite build` | ver PR |
 
+### 5.6 Rodada 5 — home: marcenaria, depoimentos do Instagram, remoção da história (22/09/2026)
+
+| Verificação | Método | Resultado |
+|---|---|---|
+| Origem da "mídia de marcenaria" do orçamento público | leitura de `pedrobwild/envision-build-guide` (`CatalogRoomBrowser`, `catalog-preview.ts`, `catalog-preview-api.ts`) | grade de referências do Catálogo Bwild por cômodo, lida por `fetch` no PostgREST do projeto do catálogo com a chave anon; miniaturas via transformação de imagem do Storage |
+| Origem dos depoimentos | `src/lib/instagram-posts.ts` e `InstagramTestimonials.tsx` do mesmo repositório | 3 postagens fixas do @bewild.oficial no embed oficial (`/p/<code>/embed/`), altura por `postMessage` MEASURE |
+| Chave anon do catálogo | `.env` do repositório do Engine | chave publicável, já exposta no bundle do orçamento público; copiada para `src/lib/homeCatalog.ts` (não é segredo; RLS do catálogo continua valendo) |
+| Scripts da home que dependiam das seções removidas | leitura de `home-bwa-script.js` | o bloco da história (`data-story-*`) é protegido por `storySteps.length`; nada quebra sem `#historia` |
+| Promessa não validada no ar | leitura do HTML atual (commits do Lovable de 22/09) | "multa se atrasar / a Bewild paga multa por dia de atraso" estava publicada sem a confirmação D-1 → removida nesta rodada |
+| Build local após `git pull` | `tsc`, `vitest`, `vite build` | falharam antes do `npm ci` por dependências novas do `main` (`framer-motion`, guia do investidor); passaram após sincronizar `node_modules` |
+
 ## 6. Alterações desta rodada (para revisão)
 
 Commits na branch `claude/charming-keller-awrwxk`:

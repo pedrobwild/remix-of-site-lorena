@@ -22,7 +22,7 @@ function Linkedin({ className = "h-4 w-4" }: { className?: string }) {
 
 const FOOTER_NAV = [
   { label: "O que fazemos", href: "/#o-que-fazemos" },
-  { label: "Como funciona", href: "/#como-funciona" },
+  { label: "Como funciona", href: "/como-funciona" },
   { label: "Portfólio", href: "/portfolio" },
   { label: "Conteúdos", href: "/conteudos" },
   { label: "Diagnóstico", href: "/diagnostico" },
