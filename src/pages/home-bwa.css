@@ -774,7 +774,7 @@
       font-weight: 400;
     }
 
-    .bwa-certainty-support {
+    .bwa-shell .bwa-lead.bwa-certainty-support {
       color: var(--bwa-lead-paper);
       max-width: 60ch;
       margin-top: clamp(16px, 2.4vw, 28px);
