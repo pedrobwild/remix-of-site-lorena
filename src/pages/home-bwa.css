@@ -304,6 +304,7 @@
     .bwa-nav-links a {
       position: relative;
       padding-block: 10px;
+      white-space: nowrap;
     }
 
     .bwa-nav-links a::after {
