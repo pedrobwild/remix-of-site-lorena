@@ -387,6 +387,25 @@ export function initHomeBwa() {
         revealElements.forEach((element) => element.classList.add("bwa-visible"));
       }
 
+      // Formulário de contato do rodapé → abre direto no WhatsApp.
+      const whatsForm = document.querySelector("[data-whats-form]");
+      if (whatsForm) {
+        whatsForm.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const nome = (whatsForm.querySelector('input[name="nome"]')?.value ?? "").trim();
+          const msg = (whatsForm.querySelector('textarea[name="mensagem"]')?.value ?? "").trim();
+          const text = ["Olá! Me chamo " + nome + ".", msg].filter(Boolean).join(" ");
+          if (typeof window.gtag === "function") {
+            window.gtag("event", "cta_click", { location: "footer-whatsapp" });
+          }
+          window.open(
+            "https://wa.me/5511911906183?text=" + encodeURIComponent(text),
+            "_blank",
+            "noopener,noreferrer"
+          );
+        });
+      }
+
       window.addEventListener("resize", () => {
         document.querySelectorAll(".bwa-certainty-item.bwa-open").forEach((item) => {
           const detail = item.querySelector(".bwa-certainty-detail");

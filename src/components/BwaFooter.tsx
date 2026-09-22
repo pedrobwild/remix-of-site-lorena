@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { openCookiePreferences } from "@/lib/cookieConsent";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
+import BwaWhatsForm from "@/components/BwaWhatsForm";
 
 /**
  * BwaFooter — Footer .bwa unificado, idêntico ao da home. Usado em toda
@@ -75,6 +76,8 @@ export default function BwaFooter() {
             </div>
           </div>
         </div>
+
+        <BwaWhatsForm />
 
         <div className="bwa-footer-bottom">
           <p className="bwa-footer-tech">
