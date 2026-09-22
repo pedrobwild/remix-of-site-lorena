@@ -7,6 +7,8 @@
  * ============================================================ */
 
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Playfair+Display:wght@600;700;800&display=swap");
+/* Fontes do rodapé oficial (.bwa-footer) — mesmas da home. */
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap");
 
 .guia-root {
   --background: 210 20% 97%;
@@ -212,3 +214,82 @@
 .guia-portal h1, .guia-portal h2, .guia-portal h3, .guia-portal h4 {
   font-family: "Playfair Display", Georgia, serif;
 }
+
+/* ============================================================
+ * Rodapé oficial do site (BwaFooter) dentro do tema isolado.
+ * O BwaFooter depende de variáveis/classes de home-bwa.css, que NÃO
+ * é injetado nesta rota (vazaría para o resto do site). Os valores
+ * abaixo são cópias 1:1 de home-bwa.css, escopadas em .guia-root.
+ * ============================================================ */
+.guia-root .bwa-footer {
+  --bwa-navy: #0b2342;
+  --bwa-accent: #11355b;
+  --bwa-ink: #1a2332;
+  --bwa-white: #fff;
+  --bwa-white-line: rgba(255, 255, 255, .22);
+  --bwa-radius: 0px;
+  --bwa-max: 1540px;
+  --bwa-gutter: clamp(20px, 4vw, 72px);
+  --bwa-ease: cubic-bezier(.22, 1, .36, 1);
+  font-family: "Manrope", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.guia-root .bwa-shell {
+  width: min(calc(100% - (var(--bwa-gutter) * 2)), var(--bwa-max));
+  margin-inline: auto;
+}
+
+.guia-root .bwa-footer .bwa-footer-column a:hover,
+.guia-root .bwa-footer .bwa-footer-column a:focus-visible {
+  color: #fff;
+}
+
+/* Botão do formulário de WhatsApp (bwa-button / bwa-button-light) */
+.guia-root .bwa-footer .bwa-button {
+  min-height: 54px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 15px 20px;
+  border: 1px solid var(--bwa-navy);
+  border-radius: var(--bwa-radius);
+  color: var(--bwa-white);
+  background: var(--bwa-navy);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    color .35s var(--bwa-ease),
+    background .35s var(--bwa-ease),
+    border-color .35s var(--bwa-ease),
+    transform .35s var(--bwa-ease);
+}
+.guia-root .bwa-footer .bwa-button:hover,
+.guia-root .bwa-footer .bwa-button:focus-visible {
+  color: var(--bwa-white);
+  background: var(--bwa-accent);
+  border-color: var(--bwa-accent);
+  transform: translateY(-2px);
+}
+.guia-root .bwa-footer .bwa-button-light {
+  color: var(--bwa-navy);
+  background: var(--bwa-white);
+  border-color: var(--bwa-white);
+}
+
+/* Formulário de contato do rodapé → abre direto no WhatsApp */
+.guia-root .bwa-footer-whats { margin-top: 56px; padding-top: 44px; border-top: 1px solid var(--bwa-white-line); display: grid; gap: 18px; max-width: 520px; }
+.guia-root .bwa-footer-whats h3 { margin: 0; font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--bwa-white); }
+.guia-root .bwa-footer-whats > p { margin: 0; font-size: 14px; line-height: 1.6; color: rgba(255, 255, 255, .75); }
+.guia-root .bwa-fw-field { display: grid; gap: 8px; }
+.guia-root .bwa-fw-field span { font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgba(255, 255, 255, .85); }
+.guia-root .bwa-fw-field input, .guia-root .bwa-fw-field textarea { width: 100%; padding: 14px 16px; border: 1px solid var(--bwa-white-line); border-radius: var(--bwa-radius); background: rgba(255, 255, 255, .06); color: var(--bwa-white); font-family: "Manrope", sans-serif; font-size: 15px; line-height: 1.5; resize: vertical; }
+.guia-root .bwa-fw-field input::placeholder, .guia-root .bwa-fw-field textarea::placeholder { color: rgba(255, 255, 255, .45); }
+.guia-root .bwa-fw-field input:focus-visible, .guia-root .bwa-fw-field textarea:focus-visible { outline: 2px solid #5FB2DD; outline-offset: 2px; }
+.guia-root .bwa-footer-whats .bwa-button { justify-self: start; }
