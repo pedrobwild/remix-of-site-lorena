@@ -31,6 +31,7 @@ const LoginPage = lazy(() => import("./pages/admin/LoginPage"));
 const BewildOverviewPage = lazy(() => import("./pages/admin/BewildOverviewPage"));
 const BewildLeadsAdminPage = lazy(() => import("./pages/admin/BewildLeadsAdminPage"));
 const BewildMensagensAdminPage = lazy(() => import("./pages/admin/BewildMensagensAdminPage"));
+const BewildDiagnosticoAdminPage = lazy(() => import("./pages/admin/BewildDiagnosticoAdminPage"));
 const BewildConteudosAdminPage = lazy(() => import("./pages/admin/BewildConteudosAdminPage"));
 const BewildPostFormPage = lazy(() => import("./pages/admin/BewildPostFormPage"));
 const AnalyticsPage = lazy(() => import("./pages/admin/AnalyticsPage"));
@@ -172,6 +173,14 @@ export function renderRoute(route: Route) {
       <AdminChunk>
         <ProtectedRoute>
           <BewildMensagensAdminPage />
+        </ProtectedRoute>
+      </AdminChunk>
+    );
+  if (route.name === "admin-diagnostico")
+    return (
+      <AdminChunk>
+        <ProtectedRoute>
+          <BewildDiagnosticoAdminPage />
         </ProtectedRoute>
       </AdminChunk>
     );

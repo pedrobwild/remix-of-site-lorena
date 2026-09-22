@@ -10,12 +10,12 @@
  * o guardrail "ícones em SVG, nunca emoji".
  */
 import { ReactNode, useEffect, useState } from "react";
-import { LayoutDashboard, Inbox, MessagesSquare, FolderKanban, Newspaper, LogOut, Menu } from "lucide-react";
+import { LayoutDashboard, Inbox, MessagesSquare, ClipboardList, FolderKanban, Newspaper, LogOut, Menu } from "lucide-react";
 import { useAuth } from "@/lib/useAuth";
 import { navigate, routes } from "@/lib/useHashRoute";
 import "@/styles/admin-bewild.css";
 
-export type BewildAdminTab = "overview" | "leads" | "mensagens" | "projetos" | "conteudos";
+export type BewildAdminTab = "overview" | "leads" | "diagnostico" | "mensagens" | "projetos" | "conteudos";
 
 type Props = {
   children: ReactNode;
@@ -30,6 +30,7 @@ const TABS: { key: BewildAdminTab; label: string; href: string; icon: typeof Lay
   { key: "overview", label: "Visão geral", href: "/admin/dashboard", icon: LayoutDashboard },
   { key: "leads", label: "Leads", href: "/admin/leads", icon: Inbox },
   { key: "mensagens", label: "Mensagens", href: "/admin/mensagens", icon: MessagesSquare },
+  { key: "diagnostico", label: "Diagnósticos", href: "/admin/diagnostico", icon: ClipboardList },
   { key: "projetos", label: "Projetos", href: "/admin/projetos", icon: FolderKanban },
   { key: "conteudos", label: "Conteúdos", href: "/admin/conteudos", icon: Newspaper },
 ];
