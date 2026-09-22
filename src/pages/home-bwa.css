@@ -4352,3 +4352,14 @@
   .bwa-discipline,
   .bwa-discipline-badge { transition: none; }
 }
+
+/* Formulário de contato do rodapé → abre direto no WhatsApp */
+.bwa-footer-whats{margin-top:56px;padding-top:44px;border-top:1px solid var(--bwa-white-line);display:grid;gap:18px;max-width:520px}
+.bwa-footer-whats h3{margin:0;font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--bwa-white)}
+.bwa-footer-whats>p{margin:0;font-size:14px;line-height:1.6;color:rgba(255,255,255,.75)}
+.bwa-fw-field{display:grid;gap:8px}
+.bwa-fw-field span{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.85)}
+.bwa-fw-field input,.bwa-fw-field textarea{width:100%;padding:14px 16px;border:1px solid var(--bwa-white-line);border-radius:var(--bwa-radius);background:rgba(255,255,255,.06);color:var(--bwa-white);font-family:"Manrope",sans-serif;font-size:15px;line-height:1.5;resize:vertical}
+.bwa-fw-field input::placeholder,.bwa-fw-field textarea::placeholder{color:rgba(255,255,255,.45)}
+.bwa-fw-field input:focus-visible,.bwa-fw-field textarea:focus-visible{outline:2px solid #5FB2DD;outline-offset:2px}
+.bwa-footer-whats .bwa-button{justify-self:start}
