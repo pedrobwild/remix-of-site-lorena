@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
 import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
+import type { KbItem } from "@/lib/assistant/assistantEngine";
 import "./faq-page.css";
 
 type RespostaIa = {
@@ -87,13 +88,47 @@ const GUIA_ITEMS: { q: string; a: string; href?: string; linkLabel?: string }[] 
 
 export default function FaqPage() {
   const { settings } = useSiteSettings();
-  const [aberto, setAberto] = useState(0);
+  const [aberto, setAberto] = useState("f-0");
   const [guiaAberto, setGuiaAberto] = useState(-1);
   const [pergunta, setPergunta] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [erroIa, setErroIa] = useState<string | null>(null);
   const [respostaIa, setRespostaIa] = useState<RespostaIa | null>(null);
   const respostaRef = useRef<HTMLDivElement>(null);
+
+  // Dúvidas do assistente (tabela assistant_kb): quando existem, substituem a
+  // lista fixa abaixo, agrupadas por tema. Se o banco estiver vazio ou a
+  // leitura falhar, a lista fixa continua no ar.
+  const [kb, setKb] = useState<KbItem[] | null>(null);
+  useEffect(() => {
+    let alive = true;
+    supabase
+      .from("assistant_kb")
+      .select("id, tema, pergunta, resposta, acoes, ordem")
+      .eq("ativo", true)
+      .order("ordem", { ascending: true })
+      .then(
+        ({ data, error }) => {
+          if (!alive) return;
+          if (!error && data && data.length > 0) setKb(data as unknown as KbItem[]);
+        },
+        () => undefined,
+      );
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const kbGrupos = useMemo(() => {
+    if (!kb) return null;
+    const mapa = new Map<string, KbItem[]>();
+    for (const item of kb) {
+      const grupo = mapa.get(item.tema) ?? [];
+      grupo.push(item);
+      mapa.set(item.tema, grupo);
+    }
+    return [...mapa.entries()];
+  }, [kb]);
 
   async function perguntar(e: React.FormEvent) {
     e.preventDefault();
