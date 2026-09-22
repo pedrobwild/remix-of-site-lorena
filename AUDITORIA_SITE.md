@@ -312,6 +312,18 @@ Positivos verificados: um único `<h1>` por página; hierarquia H2/H3 coerente n
 | Correção verificada em navegador | Playwright (Chromium) sobre o build de produção local, com respostas **simuladas** do PostgREST do catálogo e do embed do Instagram — o proxy deste ambiente não alcança `supabase.co` nem `instagram.com` | Desktop 1280 e celular 390: nada carrega antes de rolar; ao aproximar, grade com 6 miniaturas (URL de render 800×600), troca de aba (Cozinha) com nova consulta e link "Abrir este cômodo" atualizado; 3 iframes `/p/<code>/embed/` com a altura da mensagem MEASURE aplicada; cookies recusados: nenhum iframe e o botão carrega só aquele card; falha de rede: grade vazia + "não carregaram agora"; 0 erros de JS do app. Consultas enviadas com `apikey`/`Authorization`, idênticas às do orçamento público. **O que não foi verificado:** a resposta real do catálogo (RLS/dados) e o embed real do Instagram — conferir na home publicada |
 | Achado no celular durante a verificação | mesma bateria, viewport 390 | Com um observer por card, o 3º card do trilho horizontal nunca "entrava na tela" até o swipe — só começava a carregar depois de o usuário chegar nele (2 de 3 iframes montados). Passou a observar o bloco `[data-instagram]` e montar os 3 de uma vez; teste de DOM em `src/lib/__tests__/homeInstagramDom.test.ts` |
 
+### 5.7 Rodada 6 — assistente de dúvidas não aparecia (22/09/2026)
+
+| Verificação | Método | Resultado |
+|---|---|---|
+| Onde o assistente é montado | leitura de `src/main.tsx` e `src/components/assistant/SiteAssistant.tsx` | `<SiteAssistant />` renderiza em todas as rotas não-admin via portal no `body`; o botão só existe quando `enabled && !MAINTENANCE_MODE && !isHiddenPath` |
+| Por que não aparecia | `src/config/site.ts` | `ASSISTANT_ENABLED = false` — o componente só aparecia com `?assistente=1` (flag de sessão). Não era CSS, z-index, banner nem erro de JS |
+| Origem do `false` | histórico de mensagens do projeto no Lovable (22/09 20:43) | o pedido que entregou o código ao Lovable exigia a flag desligada, sem dados na tabela e sem publicar ("eu mesmo vou popular a tabela assistant_kb depois") — gate intencional, cumprido |
+| Banco de respostas | `select count(*)` em `assistant_kb` (projeto Supabase do site) | 29 itens, todos ativos; RLS permite leitura pública só de `ativo = true`; `assistant_unanswered` vazia |
+| Comportamento com a flag ligada | Playwright sobre o build de produção (desktop 1280, celular 390, `/` e `/faq`; resposta do `assistant_kb` simulada porque o proxy não alcança o Supabase) | botão fixo a 20 px da direita, acima do banner de cookies (offset medido 109 px desktop / 127 px celular); abre, carrega o banco em 1 request, mostra as sugestões da página, responde ao clicar numa sugestão; com banco vazio avisa e oferece WhatsApp; 0 erros de JS |
+| Achado de acessibilidade | mesma bateria | depois de clicar numa pergunta sugerida, o botão clicado é substituído pela nova lista, o foco cai no `body` e o Esc (ouvido só no painel) deixava de fechar. Corrigido: Esc ouvido no documento enquanto o painel está aberto; foco vai para o campo (desktop) ou para a conversa (celular) antes de enviar a sugestão |
+| O que não foi verificado | — | a resposta real do Supabase em produção (dados reais) e o registro de perguntas sem resposta; conferir na home publicada |
+
 ## 6. Alterações desta rodada (para revisão)
 
 Commits na branch `claude/charming-keller-awrwxk`:

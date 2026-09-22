@@ -341,6 +341,20 @@ export default function SiteAssistant({ getPath = currentPath }: Props = {}) {
 
   const closePanel = useCallback(() => setOpen(false), []);
 
+  // Esc fecha mesmo quando o foco saiu do painel: depois de clicar numa
+  // pergunta sugerida, o botão clicado é substituído pela nova lista e o foco
+  // cai no body, onde o onKeyDown do painel não ouve.
+  useEffect(() => {
+    if (!open) return;
+    const onDocKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      e.stopPropagation();
+      closePanel();
+    };
+    document.addEventListener("keydown", onDocKeyDown);
+    return () => document.removeEventListener("keydown", onDocKeyDown);
+  }, [open, closePanel]);
+
   const send = useCallback(
     (raw: string) => {
       const q = raw.trim().slice(0, 300);
@@ -388,6 +402,17 @@ export default function SiteAssistant({ getPath = currentPath }: Props = {}) {
       }
     },
     [kb, getPath],
+  );
+
+  // Pergunta sugerida: o botão clicado some da lista ao responder, então o
+  // foco vai antes para o campo (desktop) ou para a conversa (celular, sem
+  // abrir o teclado), em vez de se perder no body.
+  const sendFromChip = useCallback(
+    (question: string) => {
+      (compact ? logRef : inputRef).current?.focus({ preventScroll: true });
+      send(question);
+    },
+    [compact, send],
   );
 
   const onAction = useCallback((a: KbAction) => {
@@ -541,7 +566,7 @@ export default function SiteAssistant({ getPath = currentPath }: Props = {}) {
                 const it = byId.get(id);
                 if (!it) return null;
                 return (
-                  <button key={id} type="button" className="bwas-chip" onClick={() => send(it.pergunta)}>
+                  <button key={id} type="button" className="bwas-chip" onClick={() => sendFromChip(it.pergunta)}>
                     {it.pergunta}
                   </button>
                 );
