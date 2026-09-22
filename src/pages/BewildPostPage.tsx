@@ -26,6 +26,7 @@ import {
 import { useBewildPost, useBewildRelatedPosts } from "@/lib/useBewildPost";
 import { postAuthorByline, postAuthorJsonLd, postDates, postTitleFromSlug } from "@/lib/postSeo";
 import { navigate } from "@/lib/useHashRoute";
+import { keywordsForPost } from "@/lib/postKeywords";
 import "@/styles/post.css";
 import "@/styles/conteudos.css";
 
@@ -235,9 +236,7 @@ export default function BewildPostPage({ slug }: Props) {
       post?.meta_description ||
       post?.excerpt ||
       "Conteúdos Bewild sobre reformas de apartamentos e entrega de imóveis prontos em São Paulo.",
-    keywords: post
-      ? `${post.title.toLowerCase()}, reforma de apartamento em SP, custo de reforma, reforma de apartamento em São Paulo, Bewild`
-      : undefined,
+    keywords: post ? keywordsForPost(post.slug) : undefined,
     canonicalPath: post ? `/conteudos/${post.slug}` : `/conteudos/${slug}`,
     ogType: "article",
     ogImage: post?.cover_image ? optimizedImageUrl(post.cover_image) : undefined,
