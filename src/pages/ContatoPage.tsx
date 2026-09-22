@@ -5,6 +5,7 @@ import { CONTACT, whatsappHref } from "@/components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { isLeadDelivered, timeoutAfter } from "@/lib/leadDelivery";
 import { trackEvent } from "@/lib/ga4";
+import { useCtaClickTracking } from "@/lib/trackCta";
 import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./contato.css";
@@ -26,6 +27,7 @@ const MAP_EMBED_URL = `https://www.google.com/maps?q=${MAP_QUERY}&output=embed`;
 const MAP_LINK = `https://www.google.com/maps/search/?api=1&query=${MAP_QUERY}`;
 
 export default function ContatoPage() {
+  useCtaClickTracking("contato");
   const { settings } = useSiteSettings();
   const email = settings?.contact_email || CONTACT.email;
 
@@ -284,7 +286,7 @@ export default function ContatoPage() {
                 )}
 
                 <div className="bwa-contact-form-actions">
-                  <button className="bwa-button" type="submit" disabled={!podeEnviar}>
+                  <button className="bwa-button" type="submit" data-cta="contato-enviar" disabled={!podeEnviar}>
                     {enviando ? "Enviando…" : "Enviar mensagem"}
                     <span aria-hidden="true">→</span>
                   </button>
