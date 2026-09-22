@@ -102,6 +102,7 @@ async function main() {
     { loc: `${BASE_URL}/escopo`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/como-funciona`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/onde-atuamos`, changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/parceiros`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/privacidade`, changefreq: "yearly", priority: "0.3" },
   ];
 
