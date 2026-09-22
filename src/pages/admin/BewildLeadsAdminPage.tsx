@@ -1,5 +1,5 @@
 /**
- * /admin/leads — Listagem de leads do formulário de diagnóstico.
+ * /admin/leads — Central única de contatos recebidos pelo site.
  *
  * Fonte: tabela `leads` (alimentada pela edge function `notify-lead`,
  * chamada a partir do formulário em /diagnostico). A tabela legada
@@ -89,6 +89,42 @@ function waLink(whatsapp: string | null): string | null {
   return `https://wa.me/${full}`;
 }
 
+type Origem = "contato" | "orcamento" | "outro";
+
+const ORIGEM_OPTIONS: { value: "all" | Origem; label: string }[] = [
+  { value: "all", label: "Tudo" },
+  { value: "contato", label: "Mensagens (/contato)" },
+  { value: "orcamento", label: "Orçamentos (/diagnostico)" },
+  { value: "outro", label: "Outras origens" },
+];
+
+const ORIGEM_LABEL: Record<Origem, string> = {
+  contato: "Mensagem",
+  orcamento: "Orçamento",
+  outro: "Outra",
+};
+
+function origemOf(lead: Lead): Origem {
+  const p = (lead.landing_path ?? "").toLowerCase();
+  if (p.startsWith("/contato")) return "contato";
+  if (p.startsWith("/diagnostico") || p.startsWith("/orcamento")) return "orcamento";
+  return "outro";
+}
+
+/** Prazo de resposta combinado: 24h corridas a partir do recebimento. */
+const SLA_HOURS = 24;
+
+function slaInfo(lead: Lead): { label: string; late: boolean; done: boolean } {
+  if (lead.status !== "novo") return { label: "respondido", late: false, done: true };
+  const ms = Date.now() - new Date(lead.created_at).getTime();
+  const h = Math.floor(ms / 3_600_000);
+  if (h >= SLA_HOURS) {
+    const d = Math.floor(h / 24);
+    return { label: d >= 1 ? `atrasado · ${d}d` : `atrasado · ${h}h`, late: true, done: false };
+  }
+  return { label: `no prazo · faltam ${SLA_HOURS - h}h`, late: false, done: false };
+}
+
 type StatusCounts = Record<LeadStatus, number>;
 
 const ZERO_COUNTS: StatusCounts = { novo: 0, contatado: 0, qualificado: 0, descartado: 0 };
@@ -101,6 +137,7 @@ export default function BewildLeadsAdminPage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [status, setStatus] = useState<"all" | LeadStatus>("all");
+  const [origem, setOrigem] = useState<"all" | Origem>("all");
   const [busy, setBusy] = useState<string | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
 
@@ -173,10 +210,17 @@ export default function BewildLeadsAdminPage() {
     setRows((prev) => [...prev, ...((data ?? []) as Lead[])]);
   }
 
-  const filtered = useMemo(() => {
-    if (status === "all") return rows;
-    return rows.filter((r) => r.status === status);
-  }, [rows, status]);
+  const filtered = useMemo(
+    () =>
+      rows.filter(
+        (r) =>
+          (status === "all" || r.status === status) &&
+          (origem === "all" || origemOf(r) === origem),
+      ),
+    [rows, status, origem],
+  );
+
+  const atrasados = useMemo(() => rows.filter((r) => slaInfo(r).late).length, [rows]);
 
   async function changeStatus(lead: Lead, next: string) {
     if (!STATUS_VALUES.includes(next as LeadStatus)) return;
@@ -230,13 +274,28 @@ export default function BewildLeadsAdminPage() {
       active="leads"
       eyebrow="Painel"
       title="Leads"
-      description="Quem caiu no formulário de /diagnostico. Filtre por status e responda direto no WhatsApp."
+      description="Tudo que chega pelo site em um lugar só: mensagens do /contato, orçamentos do /diagnostico e demais origens, com status de resposta e prazo de 24h."
     >
       <div className="bw-admin__kpi-grid">
         <KpiSimple label="Novos" value={counts.novo} />
         <KpiSimple label="Contatados" value={counts.contatado} />
         <KpiSimple label="Qualificados" value={counts.qualificado} />
         <KpiSimple label="Descartados" value={counts.descartado} />
+        <KpiSimple label="Fora do prazo" value={atrasados} />
+      </div>
+
+      <div className="bw-admin__period" style={{ marginBottom: 10 }} role="group" aria-label="Filtro por origem">
+        {ORIGEM_OPTIONS.map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            className={origem === opt.value ? "is-active" : ""}
+            onClick={() => setOrigem(opt.value)}
+            aria-pressed={origem === opt.value}
+          >
+            {opt.label}
+          </button>
+        ))}
       </div>
 
       <div className="bw-admin__period" style={{ marginBottom: 14 }} role="group" aria-label="Filtro por status">
@@ -282,8 +341,8 @@ export default function BewildLeadsAdminPage() {
         ) : filtered.length === 0 ? (
           <p className="bw-admin__empty">
             {totalCount === 0
-              ? "Nenhum lead ainda. Quando alguém enviar o formulário de /diagnostico, ele aparece aqui."
-              : "Nenhum lead com esse status."}
+              ? "Nada recebido ainda. Mensagens do /contato e orçamentos do /diagnostico aparecem aqui."
+              : "Nenhum contato com esse filtro."}
           </p>
         ) : (
           <>
@@ -299,9 +358,10 @@ export default function BewildLeadsAdminPage() {
               <thead>
                 <tr>
                   <th>Quem</th>
-                  <th>Imóvel</th>
-                  <th>Origem</th>
+                  <th>Tipo</th>
+                  <th>Imóvel / mensagem</th>
                   <th>Status</th>
+                  <th>Prazo</th>
                   <th>Recebido</th>
                   <th></th>
                 </tr>
@@ -310,6 +370,8 @@ export default function BewildLeadsAdminPage() {
                 {filtered.map((r) => {
                   const wa = waLink(r.whatsapp);
                   const isOpen = openId === r.id;
+                  const org = origemOf(r);
+                  const sla = slaInfo(r);
                   return (
                     <React.Fragment key={r.id}>
                       <tr>
@@ -319,15 +381,17 @@ export default function BewildLeadsAdminPage() {
                             {r.whatsapp ?? r.email ?? "—"}
                           </div>
                         </td>
-                        <td className="muted">
-                          {[r.objetivo, r.location, r.area_m2 ? `${r.area_m2}m²` : null]
-                            .filter(Boolean)
-                            .join(" · ") || "—"}
+                        <td className="muted" style={{ whiteSpace: "nowrap" }} title={r.landing_path ?? ""}>
+                          {ORIGEM_LABEL[org]}
                         </td>
-                        <td className="muted ellip" title={r.landing_path ?? ""}>
-                          {r.utm_source || r.utm_medium || r.utm_campaign
-                            ? [r.utm_source, r.utm_medium, r.utm_campaign].filter(Boolean).join(" / ")
-                            : r.landing_path ?? "(direto)"}
+                        <td className="muted">
+                          {org === "contato"
+                            ? r.message?.trim().slice(0, 120) || "—"
+                            : [r.objetivo, r.location, r.area_m2 ? `${r.area_m2}m²` : null]
+                                .filter(Boolean)
+                                .join(" · ") ||
+                              r.message?.trim().slice(0, 120) ||
+                              "—"}
                         </td>
                         <td>
                           <select
@@ -350,6 +414,17 @@ export default function BewildLeadsAdminPage() {
                               </option>
                             ))}
                           </select>
+                        </td>
+                        <td style={{ whiteSpace: "nowrap" }}>
+                          <span
+                            style={{
+                              fontSize: 12,
+                              fontWeight: 600,
+                              color: sla.done ? "#15803D" : sla.late ? "#B3261E" : "var(--bw-muted)",
+                            }}
+                          >
+                            {sla.label}
+                          </span>
                         </td>
                         <td className="muted" style={{ whiteSpace: "nowrap" }}>{fmtDate(r.created_at)}</td>
                         <td style={{ textAlign: "right", whiteSpace: "nowrap" }}>
@@ -393,7 +468,7 @@ export default function BewildLeadsAdminPage() {
 
                       {isOpen && (
                         <tr>
-                          <td colSpan={6} style={{ background: "#FBFAF5", fontSize: 13 }}>
+                          <td colSpan={7} style={{ background: "#FBFAF5", fontSize: 13 }}>
                             <dl
                               style={{
                                 display: "grid",

@@ -6,6 +6,7 @@ import BwaFooter from "@/components/BwaFooter";
 import { CONTACT } from "../components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
+import { useCtaClickTracking } from "@/lib/trackCta";
 import { isLeadDelivered, timeoutAfter } from "@/lib/leadDelivery";
 import { resolveLeadAttribution } from "@/lib/campaignParams";
 import { readPersistedAttribution } from "@/lib/analytics";
@@ -100,6 +101,7 @@ const EMPTY_FORM: Form = {
 };
 
 export default function DiagnosticoPage() {
+  useCtaClickTracking("diagnostico");
   const { settings } = useSiteSettings();
 
   useSeo({
@@ -266,7 +268,7 @@ export default function DiagnosticoPage() {
             <h2 className="dg-title">Pronto para ver o projeto antes da obra?</h2>
             <p className="dg-lead" style={{ margin: "0 auto" }}>Leva menos de dois minutos. O resto do trabalho é nosso.</p>
             <div className="dg-final-actions">
-              <a className="dg-button dg-button-light" href="#dg-ficha">Preencher os dados <span aria-hidden="true">↑</span></a>
+              <a className="dg-button dg-button-light" data-cta="diagnostico-preencher" href="#dg-ficha">Preencher os dados <span aria-hidden="true">↑</span></a>
               <a className="dg-textlink" href={waUrl} target="_blank" rel="noopener noreferrer">Falar no WhatsApp →</a>
             </div>
             <p className="dg-mono">Atendimento de gente real · retorno rápido · +160 reformas entregues</p>
@@ -579,7 +581,7 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
         </div>
       )}
 
-      <button type="submit" className="dg-button dg-hidepós" disabled={!canSubmit || submitting}>
+      <button type="submit" className="dg-button dg-hidepós" data-cta="diagnostico-solicitar-orcamento" disabled={!canSubmit || submitting}>
         {submitting ? "Enviando…" : "Solicitar orçamento"} <span aria-hidden="true">→</span>
       </button>
       <p className="dg-ficha-note dg-hidepós">Sem compromisso · a gente só te chama no WhatsApp</p>
