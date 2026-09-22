@@ -58,6 +58,7 @@ export const STATIC_ROUTES: ReadonlyArray<string> = [
   "/faq",
   "/contato",
   "/escopo",
+  "/como-funciona",
   "/privacidade",
   "/conteudos",
   "/o",
