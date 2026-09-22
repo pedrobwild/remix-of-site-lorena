@@ -105,7 +105,7 @@ export default function DiagnosticoPage() {
   const { settings } = useSiteSettings();
 
   useSeo({
-    title: "Orçamento para reforma de apartamento | Bewild",
+    title: "Diagnóstico gratuito da sua reforma em São Paulo | Bewild",
     description:
       "Solicite um orçamento para reforma completa de apartamento em São Paulo, do projeto à entrega do imóvel pronto. Sem custo e sem compromisso.",
     keywords:
