@@ -26,8 +26,8 @@ export const POST_KEYWORDS: Record<string, string> = {
   "aditivo-em-obra-por-que-existe": `aditivo de obra, custo de reforma, orçamento de reforma de apartamento, ${REFORMA}`,
 
   // --- Reforma: guias gerais ---
-  "reforma-de-apartamento-em-sao-paulo-guia": `${REFORMA}, como fazer uma reforma de apartamento, empresa de reforma em São Paulo`,
-  "reforma-de-casa-ou-apartamento-em-sp": `reforma de casa em SP, ${REFORMA}, diferença entre reforma de casa e de apartamento`,
+  "reforma-de-apartamento-em-sao-paulo-guia": `${REFORMA}, guia de reforma de apartamento, como fazer uma reforma de apartamento, empresa de reforma em São Paulo`,
+  "reforma-de-casa-ou-apartamento-em-sp": `reforma de casa em SP, diferença entre reforma de casa e de apartamento, reforma de casa ou apartamento, ${REFORMA}`,
   "reformar-studio-sao-paulo-morando-em-outra-cidade": `reforma à distância, ${REFORMA_STUDIO}, reformar apartamento morando em outra cidade`,
 
   // --- Reforma: condomínio e obra ---
