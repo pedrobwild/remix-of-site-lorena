@@ -33,6 +33,10 @@ export type UploadResult = {
   blurDataUrl: string;
   /** Caminho-base no bucket (sem sufixo de tamanho/formato) */
   path: string;
+  /** Largura do arquivo original em px. */
+  width: number;
+  /** Altura do arquivo original em px. */
+  height: number;
 };
 
 type Bucket = "project-covers" | "project-gallery" | "blog-images";
@@ -108,6 +112,8 @@ export async function uploadImageGeneric(
     avif,
     blurDataUrl: processed.blurDataUrl,
     path: basePath,
+    width: processed.width,
+    height: processed.height,
   };
 }
 
