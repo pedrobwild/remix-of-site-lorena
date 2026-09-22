@@ -75,15 +75,15 @@ export default function BwaNav() {
           </a>
 
           <nav className="bwa-nav-links" aria-label="Navegação principal">
-            <a href="/#projetos">Projetos</a>
+            <a href="/#projetos">Projetos reformados</a>
             <a href="/#workflow">Como funciona</a>
-            <a href="/portfolio">Portfólio</a>
-            <a href="/conteudos">Conteúdos</a>
-            <a href="/faq">FAQ</a>
+            <a href="/portfolio">Portfólio de reformas em SP</a>
+            <a href="/conteudos">Custos e prazos</a>
+            <a href="/faq">Dúvidas frequentes</a>
             <a href="/contato">Contato</a>
           </nav>
 
-          <a className="bwa-button" href="/diagnostico">
+          <a className="bwa-button" href="/orcamento">
             Solicitar orçamento
             <span aria-hidden="true">→</span>
           </a>
@@ -102,13 +102,13 @@ export default function BwaNav() {
 
       <div className="bwa-mobile-menu" data-mobile-menu>
         <nav aria-label="Navegação mobile">
-          <a href="/#projetos">Projetos</a>
+          <a href="/#projetos">Projetos reformados</a>
           <a href="/#workflow">Como funciona</a>
-          <a href="/portfolio">Portfólio</a>
-          <a href="/conteudos">Conteúdos</a>
-          <a href="/faq">FAQ</a>
+          <a href="/portfolio">Portfólio de reformas em SP</a>
+          <a href="/conteudos">Custos e prazos</a>
+          <a href="/faq">Dúvidas frequentes</a>
           <a href="/contato">Contato</a>
-          <a href="/diagnostico">Solicitar orçamento</a>
+          <a href="/orcamento">Solicitar orçamento</a>
         </nav>
       </div>
     </div>
