@@ -54,6 +54,16 @@ const L = {
     label: "Dúvidas frequentes sobre reforma",
     description: "Prazo, garantia, pagamento e obra à distância.",
   },
+  reformaApartamentoSp: {
+    href: "/reforma-de-apartamento-sao-paulo",
+    label: "Reforma de apartamento em São Paulo",
+    description: "Projeto, obra, marcenaria e mobília em um único contrato.",
+  },
+  reformaStudioSp: {
+    href: "/reforma-de-studio-sao-paulo",
+    label: "Reforma de studio em São Paulo",
+    description: "Studio entregue pronto para morar ou para anunciar.",
+  },
   diagnostico: {
     href: "/diagnostico",
     label: "Diagnóstico gratuito do seu imóvel",
@@ -62,10 +72,10 @@ const L = {
 } satisfies Record<string, InternalLink>;
 
 const BY_CATEGORY: Record<BewildPostCategory, InternalLink[]> = {
-  reforma: [L.orcamento, L.portfolio, L.conteudos, L.autorizacao, L.comoFunciona, L.faq],
-  investimento: [L.orcamento, L.portfolio, L.conteudos, L.ondeAtuamos, L.comoFunciona, L.faq],
-  mercado: [L.portfolio, L.ondeAtuamos, L.conteudos, L.orcamento, L.comoFunciona, L.faq],
-  operacao: [L.portfolio, L.conteudos, L.orcamento, L.ondeAtuamos, L.comoFunciona, L.faq],
+  reforma: [L.reformaApartamentoSp, L.orcamento, L.portfolio, L.conteudos, L.autorizacao, L.comoFunciona, L.faq],
+  investimento: [L.reformaStudioSp, L.orcamento, L.portfolio, L.conteudos, L.ondeAtuamos, L.comoFunciona, L.faq],
+  mercado: [L.reformaStudioSp, L.portfolio, L.ondeAtuamos, L.conteudos, L.orcamento, L.comoFunciona, L.faq],
+  operacao: [L.reformaStudioSp, L.portfolio, L.conteudos, L.orcamento, L.ondeAtuamos, L.comoFunciona, L.faq],
   fiscal: [L.conteudos, L.orcamento, L.portfolio, L.autorizacao, L.comoFunciona, L.faq],
 };
 
