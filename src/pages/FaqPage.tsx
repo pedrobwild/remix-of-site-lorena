@@ -120,14 +120,14 @@ export default function FaqPage() {
           </div>
         </section>
 
-        <section className="bwa-faqpage-cta" aria-label="Solicitar Orçamento">
+        <section className="bwa-faqpage-cta" aria-label="Solicitar orçamento">
           <div className="bwa-shell bwa-faqpage-cta-grid">
             <h2>
               Não encontrou sua resposta? <em>Vamos conversar.</em>
             </h2>
             <div className="bwa-faqpage-cta-actions">
               <a className="bwa-button bwa-button-light" href="/diagnostico" data-cta="faq-cta">
-                Solicitar Orçamento <span aria-hidden="true">→</span>
+                Solicitar orçamento <span aria-hidden="true">→</span>
               </a>
               <a
                 className="bwa-faqpage-whats"

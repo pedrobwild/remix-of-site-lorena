@@ -82,13 +82,21 @@ const OBJETIVO_QUERY_MAP: Record<string, string> = {
   avaliando: "Ainda avaliando",
 };
 const PLANTA = ["Sim", "Não", "Não sei"];
+/* Rótulo exibido difere do valor enviado ao CRM (valor permanece o histórico). */
+const OBJETIVO_LABELS: Record<string, string> = { "Locação tradicional": "Locação longa" };
+/* Dois campos de qualificação/atribuição (plano de copy vs. concorrentes, 22/09/2026):
+   ~48% dos clientes moram fora da capital e ~97% das vendas não tinham origem registrada. */
+const MORA_SP = ["Sim", "Não"];
+const ORIGENS = ["Indicação", "Instagram", "Google", "Placa de obra", "Corretor ou imobiliária", "Outro"];
 
 type Form = {
   nome: string; whats: string; email: string; local: string;
   metragem: string; objetivo: string; chaves: string; planta: string; mensagem: string;
+  moraSp: string; origem: string;
 };
 const EMPTY_FORM: Form = {
   nome: "", whats: "", email: "", local: "", metragem: "", objetivo: "", chaves: "", planta: "", mensagem: "",
+  moraSp: "", origem: "",
 };
 
 export default function DiagnosticoPage() {
@@ -105,7 +113,7 @@ export default function DiagnosticoPage() {
           organizationJsonLd(settings),
           breadcrumbJsonLd(settings, [
             { name: "Início", path: "/" },
-            { name: "Diagnóstico", path: "/diagnostico" },
+            { name: "Orçamento", path: "/diagnostico" },
           ]),
         ]
       : undefined,
@@ -131,7 +139,7 @@ export default function DiagnosticoPage() {
   }, []);
 
   const waUrl = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
-    "Olá, prefiro falar com um especialista sobre o diagnóstico."
+    "Olá, prefiro falar com um especialista sobre o orçamento."
   )}`;
 
   return (
@@ -143,14 +151,14 @@ export default function DiagnosticoPage() {
 
       <main id="main" tabIndex={-1}>
         {/* 01 · HERO + FICHA */}
-        <section className="dg-hero" aria-label="Solicitar Orçamento">
+        <section className="dg-hero" aria-label="Solicitar orçamento">
           <div className="dg-shell dg-hero-grid">
             <div>
               <div className="dg-intro">
-                <p className="dg-label">Diagnóstico · 01 · sem custo, sem compromisso</p>
-                <h1 className="dg-title">Conte o que você tem. A gente devolve o caminho.</h1>
+                <p className="dg-label">Orçamento · 01 · sem custo, sem compromisso</p>
+                <h1 className="dg-title">Conte o que você tem. A Bewild devolve escopo, investimento e prazo.</h1>
                 <p className="dg-lead">
-                  Preencha a ficha do seu apartamento. A Bewild analisa o potencial do imóvel — para morar, alugar ou vender — e volta no seu WhatsApp com uma leitura clara do escopo, do investimento estimado e dos próximos passos.
+                  Preencha os dados do seu apartamento. A Bewild analisa o potencial do imóvel — para morar, alugar ou vender — e volta no seu WhatsApp com uma leitura clara do escopo, do investimento estimado e dos próximos passos. Não precisa ter as chaves nem a planta.
                 </p>
               </div>
 
@@ -180,14 +188,14 @@ export default function DiagnosticoPage() {
           <div className="dg-shell">
             <div className="dg-section-head">
               <p className="dg-label">Depois do envio · 02</p>
-              <h2 id="dg-passos-title" className="dg-title">O que acontece quando você manda a ficha.</h2>
+              <h2 id="dg-passos-title" className="dg-title">O que acontece quando você manda os dados.</h2>
               <p className="dg-lead">Nada de mistério nem de fila. O processo é direto — e você decide cada passo seguinte.</p>
             </div>
             <div className="dg-cells">
               <div className="dg-cell"><i>01 · Análise</i><h3>A gente lê o seu imóvel.</h3><p>Bairro, metragem, estado atual e objetivo entram na leitura do potencial.</p></div>
               <div className="dg-cell"><i>02 · Retorno</i><h3>Voltamos no seu WhatsApp.</h3><p>Uma leitura inicial e as suas dúvidas respondidas. Gente de verdade, sem robô.</p></div>
               <div className="dg-cell"><i>03 · Visita e projeto</i><h3>Se fizer sentido, avançamos.</h3><p>Agendamos a visita técnica e começamos o projeto do seu apartamento.</p></div>
-              <div className="dg-cell"><i>04 · Proposta fechada</i><h3>Preço e prazo antes da obra.</h3><p>Escopo, data de entrega e valor definidos em contrato. Sem surpresa no meio do caminho.</p></div>
+              <div className="dg-cell"><i>04 · Proposta fechada</i><h3>Preço e prazo antes da obra.</h3><p>Escopo, data de entrega e valor definidos em contrato antes de a obra começar.</p></div>
             </div>
           </div>
         </section>
@@ -214,11 +222,11 @@ export default function DiagnosticoPage() {
           <div className="dg-shell">
             <div className="dg-section-head">
               <p className="dg-label">Perguntas · 04</p>
-              <h2 id="dg-faq-title" className="dg-title">Antes de mandar a ficha.</h2>
+              <h2 id="dg-faq-title" className="dg-title">Antes de mandar os dados.</h2>
             </div>
             <div className="dg-faq" itemScope itemType="https://schema.org/FAQPage">
               <details open itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
-                <summary itemProp="name">Quanto custa o diagnóstico?</summary>
+                <summary itemProp="name">Quanto custa pedir o orçamento?</summary>
                 <div itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
                   <p itemProp="text">Nada. É uma análise inicial sem custo e sem compromisso — você decide se quer avançar depois de receber a leitura.</p>
                 </div>
@@ -230,9 +238,9 @@ export default function DiagnosticoPage() {
                 </div>
               </details>
               <details itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
-                <summary itemProp="name">Preciso ter as chaves para pedir o diagnóstico?</summary>
+                <summary itemProp="name">Preciso ter as chaves para pedir o orçamento?</summary>
                 <div itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
-                  <p itemProp="text">Não. Dá para começar a análise antes mesmo da compra — muitos clientes usam o diagnóstico para decidir o imóvel.</p>
+                  <p itemProp="text">Não. Dá para começar a análise antes mesmo da compra — muitos clientes usam essa leitura para decidir o imóvel.</p>
                 </div>
               </details>
               <details itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
@@ -241,18 +249,24 @@ export default function DiagnosticoPage() {
                   <p itemProp="text">Sem problema. Marque "Ainda avaliando" e a gente compara com você os cenários de morar, alugar e vender.</p>
                 </div>
               </details>
+              <details itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
+                <summary itemProp="name">Moro em outra cidade. Consigo reformar sem ir a São Paulo?</summary>
+                <div itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
+                  <p itemProp="text">Sim. Vistoria de entrega por procuração, ligação de energia, contratação e instalação da internet, manutenção preventiva e chamados de emergência ficam com a Bewild. Você acompanha a obra pelo Bwild Workflow, de onde estiver, e recebe o imóvel pronto para usar ou anunciar.</p>
+                </div>
+              </details>
             </div>
           </div>
         </section>
 
         {/* 05 · CTA FINAL */}
-        <section className="dg-final" aria-label="Preencher a ficha">
+        <section className="dg-final" aria-label="Preencher os dados">
           <div className="dg-shell">
-            <p className="dg-label" style={{ justifySelf: "center" }}>Diagnóstico gratuito · 05</p>
+            <p className="dg-label" style={{ justifySelf: "center" }}>Orçamento · 05 · sem custo</p>
             <h2 className="dg-title">Pronto para ver o projeto antes da obra?</h2>
-            <p className="dg-lead" style={{ margin: "0 auto" }}>A ficha leva menos de dois minutos. O resto do trabalho é nosso.</p>
+            <p className="dg-lead" style={{ margin: "0 auto" }}>Leva menos de dois minutos. O resto do trabalho é nosso.</p>
             <div className="dg-final-actions">
-              <a className="dg-button dg-button-light" href="#dg-ficha">Preencher a ficha <span aria-hidden="true">↑</span></a>
+              <a className="dg-button dg-button-light" href="#dg-ficha">Preencher os dados <span aria-hidden="true">↑</span></a>
               <a className="dg-textlink" href={waUrl} target="_blank" rel="noopener noreferrer">Falar no WhatsApp →</a>
             </div>
             <p className="dg-mono">Atendimento de gente real · retorno rápido · +160 reformas entregues</p>
@@ -292,10 +306,15 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
   const localOk = f.local.trim().length >= 2;
   const chavesOk = f.chaves.length > 0;
   const objetivoOk = f.objetivo.length > 0;
-  const canSubmit = nomeOk && whatsOk && localOk && chavesOk && objetivoOk && emailValid;
+  // Metragem aproximada é obrigatória: é ela que define a faixa de investimento.
+  const metragemOk = digits(f.metragem).length > 0;
+  const moraSpOk = f.moraSp.length > 0;
+  const origemOk = f.origem.length > 0;
+  const canSubmit =
+    nomeOk && whatsOk && localOk && chavesOk && objetivoOk && metragemOk && moraSpOk && origemOk && emailValid;
 
   const messageText = useMemo(() => {
-    const lines: string[] = ["Olá! Quero um diagnóstico do meu studio."];
+    const lines: string[] = ["Olá! Quero um orçamento para o meu apartamento."];
     const add = (label: string, val: string) => { const v = val.trim(); if (v) lines.push(`${label}: ${v}`); };
     add("Nome", f.nome);
     add("WhatsApp", f.whats);
@@ -304,6 +323,8 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
     add("Chaves", f.chaves);
     add("Objetivo", f.objetivo);
     add("Metragem (m²)", f.metragem);
+    add("Mora em SP capital", f.moraSp);
+    add("Como conheceu", f.origem);
     add("Planta", f.planta);
     add("Mensagem", f.mensagem);
     return lines.join("\n");
@@ -312,7 +333,7 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!canSubmit || submitting) {
-      setTouched({ nome: true, whats: true, email: true, local: true, chaves: true, objetivo: true });
+      setTouched({ nome: true, whats: true, email: true, local: true, chaves: true, objetivo: true, metragem: true, moraSp: true, origem: true });
       return;
     }
     setSubmitting(true);
@@ -348,6 +369,9 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
       referrer: attribution.referrer,
       landing_path: attribution.landing_path,
       user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+      // Qualificação e atribuição declaradas pelo lead (gravadas em `leads` e enviadas ao CRM).
+      lives_in_sp: f.moraSp ? f.moraSp === "Sim" : null,
+      lead_source: f.origem || null,
     };
 
     // WhatsApp abre ANTES de qualquer await (senão o navegador bloqueia o popup).
@@ -375,6 +399,8 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
       chaves: f.chaves || undefined,
       planta: f.planta || undefined,
       location: f.local || undefined,
+      lead_source: f.origem || undefined,
+      lives_in_sp: f.moraSp || undefined,
       delivery: delivered ? "confirmed" : "whatsapp_fallback",
     });
 
@@ -395,10 +421,10 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
       data-ficha
       noValidate
       onSubmit={onSubmit}
-      aria-label="Formulário de diagnóstico"
+      aria-label="Formulário de orçamento"
     >
       <div className="dg-ficha-head">
-        <span className="dg-label">Ficha do seu apartamento</span>
+        <span className="dg-label">Dados do seu apartamento</span>
         <span className="dg-mono">BW—002</span>
       </div>
 
@@ -407,7 +433,7 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
           <>
             <strong>Abrimos o WhatsApp com seus dados.</strong>
             <span>
-              Não conseguimos registrar a ficha automaticamente. Envie a mensagem que já está
+              Não conseguimos registrar os dados automaticamente. Envie a mensagem que já está
               pronta no WhatsApp para garantir o atendimento — ou{" "}
               <a className="dg-textlink" href={_waUrl} target="_blank" rel="noopener noreferrer">
                 abra o WhatsApp de novo
@@ -490,20 +516,44 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
       <fieldset className="dg-field dg-hidepós">
         <legend>Objetivo <span aria-hidden="true">*</span></legend>
         <ChipRow
-          options={OBJETIVOS} value={f.objetivo}
+          options={OBJETIVOS} labels={OBJETIVO_LABELS} value={f.objetivo}
           onChange={(v) => { set("objetivo", v); setTouched((t) => ({ ...t, objetivo: true })); }}
         />
         {touched.objetivo && !objetivoOk && <span className="dg-field-error">Selecione o objetivo.</span>}
       </fieldset>
 
       <div className="dg-field dg-hidepós">
-        <label htmlFor="dg-m2">Metragem (m²) <span className="dg-opt">(opcional)</span></label>
+        <label htmlFor="dg-m2">Metragem (m²) <span aria-hidden="true">*</span> <span className="dg-opt">(aproximada serve)</span></label>
         <input
-          id="dg-m2" name="metragem" type="text" inputMode="numeric" placeholder="32"
+          id="dg-m2" name="metragem" type="text" inputMode="numeric" placeholder="32" required
+          className={badCls(!!touched.metragem && !metragemOk).trim()}
           value={f.metragem}
           onChange={(e) => set("metragem", e.target.value.replace(/[^\d.,]/g, "").slice(0, 6))}
+          onBlur={() => setTouched((t) => ({ ...t, metragem: true }))}
         />
+        {touched.metragem && !metragemOk && <span className="dg-field-error">Informe a metragem aproximada.</span>}
       </div>
+
+      <fieldset className="dg-field dg-hidepós">
+        <legend>Você mora em São Paulo capital? <span aria-hidden="true">*</span></legend>
+        <ChipRow
+          options={MORA_SP} value={f.moraSp}
+          onChange={(v) => { set("moraSp", v); setTouched((t) => ({ ...t, moraSp: true })); }}
+        />
+        {f.moraSp === "Não" && (
+          <span className="dg-mono">Sem problema: a Bewild faz a vistoria por procuração, liga energia e internet, e você acompanha pelo Bwild Workflow.</span>
+        )}
+        {touched.moraSp && !moraSpOk && <span className="dg-field-error">Selecione uma opção.</span>}
+      </fieldset>
+
+      <fieldset className="dg-field dg-hidepós">
+        <legend>Como conheceu a Bewild? <span aria-hidden="true">*</span></legend>
+        <ChipRow
+          options={ORIGENS} value={f.origem}
+          onChange={(v) => { set("origem", v); setTouched((t) => ({ ...t, origem: true })); }}
+        />
+        {touched.origem && !origemOk && <span className="dg-field-error">Selecione uma opção.</span>}
+      </fieldset>
 
       <button
         type="button"
@@ -530,15 +580,15 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
       )}
 
       <button type="submit" className="dg-button dg-hidepós" disabled={!canSubmit || submitting}>
-        {submitting ? "Enviando…" : "Solicitar Orçamento"} <span aria-hidden="true">→</span>
+        {submitting ? "Enviando…" : "Solicitar orçamento"} <span aria-hidden="true">→</span>
       </button>
       <p className="dg-ficha-note dg-hidepós">Sem compromisso · a gente só te chama no WhatsApp</p>
     </form>
   );
 }
 
-function ChipRow({ options, value, onChange }: {
-  options: string[]; value: string; onChange: (v: string) => void;
+function ChipRow({ options, value, onChange, labels }: {
+  options: string[]; value: string; onChange: (v: string) => void; labels?: Record<string, string>;
 }) {
   return (
     <div className="dg-chips" data-chips>
@@ -552,7 +602,7 @@ function ChipRow({ options, value, onChange }: {
             aria-pressed={active}
             onClick={() => onChange(active ? "" : opt)}
           >
-            {opt}
+            {labels?.[opt] ?? opt}
           </button>
         );
       })}

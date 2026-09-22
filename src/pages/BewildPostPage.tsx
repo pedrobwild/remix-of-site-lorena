@@ -49,7 +49,7 @@ const CTA_FALLBACK: CtaContent = {
     </>
   ),
   body: "Envie os dados do imóvel e receba uma análise inicial de escopo, projeto e próximos passos.",
-  buttonLabel: "Solicitar Orçamento",
+  buttonLabel: "Solicitar orçamento",
 };
 
 const CTA_BY_CATEGORY: Record<BewildPostCategory, CtaContent> = {

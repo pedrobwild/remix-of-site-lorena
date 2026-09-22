@@ -95,7 +95,7 @@ export default function HeroSection() {
             style={{ animationDelay: "1.2s", animationFillMode: "backwards" }}
           >
             <CTAButton href="/diagnostico" variant="primary" className="group">
-              Solicitar Orçamento
+              Solicitar orçamento
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </CTAButton>
             <CTAButton href="/portfolio" variant="ghost">

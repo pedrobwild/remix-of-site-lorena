@@ -39,7 +39,7 @@ export default function BewildSiteNav(_props: Record<string, unknown>) {
             <a href="/contato">Contato</a>
           </nav>
           <a className="bwa-button" href="/diagnostico">
-            Solicitar Orçamento
+            Solicitar orçamento
             <span aria-hidden="true">→</span>
           </a>
           <button
@@ -64,7 +64,7 @@ export default function BewildSiteNav(_props: Record<string, unknown>) {
           <a href="/conteudos">Conteúdos</a>
           <a href="/faq">FAQ</a>
           <a href="/contato">Contato</a>
-          <a href="/diagnostico">Solicitar Orçamento</a>
+          <a href="/diagnostico">Solicitar orçamento</a>
         </nav>
       </div>
     </>

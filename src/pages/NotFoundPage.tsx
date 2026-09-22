@@ -102,7 +102,7 @@ export default function NotFoundPage() {
                 Voltar à página inicial <span className="ar" aria-hidden="true">→</span>
               </a>
               <a href={routes.diagnostico} className="pt-btn outline">
-                Solicitar Orçamento <span className="ar" aria-hidden="true">→</span>
+                Solicitar orçamento <span className="ar" aria-hidden="true">→</span>
               </a>
             </div>
           </div>

@@ -29,6 +29,10 @@ type Lead = {
   referrer?: string | null;
   landing_path?: string | null;
   user_agent?: string | null;
+  /** "Como conheceu a Bewild?" declarado no formulário (atribuição). */
+  lead_source?: string | null;
+  /** "Você mora em São Paulo capital?" (true/false; null se não informado). */
+  lives_in_sp?: boolean | null;
 };
 
 type Outcome = "sent" | "skipped" | "error";
@@ -86,6 +90,8 @@ function buildSlackMessage(lead: Lead) {
   push("Objetivo", lead.objetivo);
   push("Chaves", lead.chaves);
   push("Planta", lead.planta);
+  push("Mora em SP capital", typeof lead.lives_in_sp === "boolean" ? (lead.lives_in_sp ? "Sim" : "Não") : null);
+  push("Como conheceu", lead.lead_source);
 
   if (fields.length) {
     blocks.push({
@@ -198,6 +204,7 @@ const FIELD_LIMITS = {
   referrer: 500,
   landing_path: 500,
   user_agent: 500,
+  lead_source: 80,
 } as const;
 
 /** Teto do corpo cru, antes de qualquer parse. */
@@ -232,6 +239,8 @@ function buildLeadInsertPayload(lead: Lead) {
     referrer: cut(lead.referrer, FIELD_LIMITS.referrer),
     landing_path: cut(lead.landing_path, FIELD_LIMITS.landing_path),
     user_agent: cut(lead.user_agent, FIELD_LIMITS.user_agent),
+    lead_source: cut(lead.lead_source, FIELD_LIMITS.lead_source),
+    lives_in_sp: typeof lead.lives_in_sp === "boolean" ? lead.lives_in_sp : null,
   };
 }
 
@@ -298,6 +307,8 @@ function buildCrmPayload(lead: Lead) {
       location: lead.location ?? null,
       referrer: lead.referrer ?? null,
       landing_path: lead.landing_path ?? null,
+      lead_source: lead.lead_source ?? null,
+      lives_in_sp: typeof lead.lives_in_sp === "boolean" ? lead.lives_in_sp : null,
       lead_id: lead.id ?? null,
     },
   };

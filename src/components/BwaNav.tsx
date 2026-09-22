@@ -88,7 +88,7 @@ export default function BwaNav() {
           </nav>
 
           <a className="bwa-button" href="/diagnostico">
-            Solicitar Orçamento
+            Solicitar orçamento
             <span aria-hidden="true">→</span>
           </a>
 
@@ -118,7 +118,7 @@ export default function BwaNav() {
           <a href="/faq">FAQ</a>
           <a href="/contato">Contato</a>
             <a href="/escopo">Escopo com IA</a>
-          <a href="/diagnostico">Solicitar Orçamento</a>
+          <a href="/diagnostico">Solicitar orçamento</a>
         </nav>
       </div>
     </div>

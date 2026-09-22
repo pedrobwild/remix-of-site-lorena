@@ -34,6 +34,8 @@ type Lead = {
   utm_campaign: string | null;
   referrer: string | null;
   landing_path: string | null;
+  lead_source: string | null;
+  lives_in_sp: boolean | null;
   status: LeadStatus;
   created_at: string;
 };
@@ -51,7 +53,7 @@ const STATUS_OPTIONS: { value: "all" | LeadStatus; label: string }[] = [
 const STATUS_VALUES: LeadStatus[] = ["novo", "contatado", "qualificado", "descartado"];
 
 const SELECT_COLS =
-  "id, name, whatsapp, email, location, area_m2, objetivo, chaves, planta, message, utm_source, utm_medium, utm_campaign, referrer, landing_path, status, created_at";
+  "id, name, whatsapp, email, location, area_m2, objetivo, chaves, planta, message, utm_source, utm_medium, utm_campaign, referrer, landing_path, lead_source, lives_in_sp, status, created_at";
 
 function fmtDate(iso: string): string {
   try {
@@ -404,6 +406,8 @@ export default function BewildLeadsAdminPage() {
                               <DetailItem label="Localização" value={r.location} />
                               <DetailItem label="Metragem" value={r.area_m2 ? `${r.area_m2} m²` : null} />
                               <DetailItem label="Objetivo" value={r.objetivo} />
+                              <DetailItem label="Como conheceu" value={r.lead_source} />
+                              <DetailItem label="Mora em SP capital" value={r.lives_in_sp === null ? null : r.lives_in_sp ? "Sim" : "Não"} />
                               <DetailItem label="Chaves" value={r.chaves} />
                               <DetailItem label="Planta" value={r.planta} />
                               <DetailItem label="Landing" value={r.landing_path} />

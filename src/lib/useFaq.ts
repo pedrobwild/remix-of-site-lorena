@@ -71,7 +71,7 @@ const FALLBACK: FaqItem[] = [
     id: "fallback-7",
     question: "Quanto custa uma reforma com a Bewild?",
     answer:
-      "O investimento depende do tamanho do imóvel, do estado atual e do padrão de acabamento. O ponto de partida é um diagnóstico do seu studio, em que avaliamos o escopo e apresentamos uma estimativa para o seu caso.",
+      "O investimento depende do tamanho do imóvel, do estado atual e do padrão de acabamento. O ponto de partida é o pedido de orçamento, sem custo: avaliamos o escopo e apresentamos uma estimativa para o seu caso.",
     order_index: 7,
     visible: true,
   },

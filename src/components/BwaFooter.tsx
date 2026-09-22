@@ -30,7 +30,7 @@ export default function BwaFooter() {
             <div className="bwa-footer-wordmark">Bewild</div>
             <p>Seu desejo é uma obra.</p>
             <p>
-              Reforma completa de apartamentos em São Paulo.
+              Reforma completa de studios e apartamentos compactos em São Paulo.
               Projeto, obra, marcenaria, mobiliário e entrega num processo único.
             </p>
           </div>
@@ -47,7 +47,7 @@ export default function BwaFooter() {
               <a href="/faq">FAQ</a>
               <a href="/contato">Contato</a>
             <a href="/escopo">Escopo com IA</a>
-              <a href="/diagnostico">Diagnóstico</a>
+              <a href="/diagnostico">Orçamento</a>
             </nav>
           </div>
 
@@ -55,7 +55,7 @@ export default function BwaFooter() {
             <h3>Contato</h3>
             {/* Links reais, como no rodapé da home — antes eram <span> inertes. */}
             <div>
-              <a href={whatsappHref("Olá, quero um diagnóstico para meu studio")} target="_blank" rel="noreferrer">WhatsApp</a>
+              <a href={whatsappHref("Olá, quero um orçamento para o meu studio")} target="_blank" rel="noreferrer">WhatsApp</a>
               <a href={CONTACT.instagram} target="_blank" rel="noreferrer">Instagram</a>
               <a href={CONTACT.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
               <a href={`mailto:${CONTACT.email}`}>e-mail</a>

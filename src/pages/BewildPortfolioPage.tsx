@@ -285,7 +285,7 @@ export default function BewildPortfolioPage() {
               className="bwh-mono bwh-label"
               style={{ color: "var(--dink2)", marginBottom: 24, justifyContent: "center" }}
             >
-              Diagnóstico gratuito · sem compromisso
+              Orçamento · sem custo, sem compromisso
             </div>
             <h2 className="bwh-h2" style={{ margin: "0 auto 24px", color: "#fff" }}>
               O próximo studio da lista <em>pode ser o seu.</em>
@@ -302,7 +302,7 @@ export default function BewildPortfolioPage() {
               }}
             >
               <a href="/diagnostico" className="bwh-btn bwh-btn--invert">
-                Solicitar Orçamento <span className="bwh-ar">→</span>
+                Solicitar orçamento <span className="bwh-ar">→</span>
               </a>
               <a
                 className="bwh-btn bwh-btn--ghostdark"

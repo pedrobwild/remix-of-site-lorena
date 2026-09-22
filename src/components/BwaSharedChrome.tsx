@@ -92,7 +92,7 @@ export default function BwaSharedChrome({ children }: { children: ReactNode }) {
           </nav>
 
           <a className="bwa-button" href="/diagnostico">
-            Solicitar Orçamento
+            Solicitar orçamento
             <span aria-hidden="true">→</span>
           </a>
 
@@ -122,7 +122,7 @@ export default function BwaSharedChrome({ children }: { children: ReactNode }) {
           <a href="/faq">FAQ</a>
           <a href="/contato">Contato</a>
             <a href="/escopo">Escopo com IA</a>
-          <a href="/diagnostico">Solicitar Orçamento</a>
+          <a href="/diagnostico">Solicitar orçamento</a>
         </nav>
       </div>
 
@@ -152,7 +152,7 @@ export default function BwaSharedChrome({ children }: { children: ReactNode }) {
                 <a href="/portfolio">Portfólio</a>
                 <a href="/conteudos">Conteúdos</a>
                 <a href="/faq">FAQ</a>
-                <a href="/diagnostico">Diagnóstico</a>
+                <a href="/diagnostico">Orçamento</a>
               </nav>
             </div>
 

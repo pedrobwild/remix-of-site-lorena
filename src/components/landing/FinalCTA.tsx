@@ -17,7 +17,7 @@ export default function FinalCTA() {
           </p>
           <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center">
             <CTAButton href="/diagnostico" variant="primary" className="group">
-              Solicitar Orçamento
+              Solicitar orçamento
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </CTAButton>
             <CTAButton href={whatsappHref()} variant="ghost-ink" external>

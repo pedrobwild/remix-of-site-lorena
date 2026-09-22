@@ -285,6 +285,19 @@ Positivos verificados: um único `<h1>` por página; hierarquia H2/H3 coerente n
 | Código desta rodada | `npm run lint`, `tsc --noEmit`, `vitest run`, `vite build` | 0 erros; 170 testes passando (8 novos em `postSeo.test.ts`); build OK |
 | Não verificado daqui | — | site publicado (proxy bloqueia o domínio); Search Console; renderização das 6 páginas novas |
 
+### 5.5 Rodada 4 — plano "Copy e estrutura vs. Decorafit e Obrafy" (22/09/2026)
+
+| Verificação | Método | Resultado |
+|---|---|---|
+| Estado da home antes da rodada | leitura de `home-bwa-body.ts` no `main` (commits do bot do Lovable de 22/09, 03:41–03:49) | hero recomendado (7.1) e título travado da seção 01 já aplicados; erros de texto (D14) já corrigidos; nav ainda com 9 itens + "Escopo com IA" |
+| CTA | `grep -rc "Solicitar Orçamento" src` | 17 arquivos com a grafia antiga → 0 depois da rodada |
+| Página `/diagnostico` | leitura do código | rótulos "Diagnóstico"/"ficha", metragem opcional, sem origem nem cidade → reescrita (A-53, A-54) |
+| Coluna `leads.lead_source` / `lives_in_sp` | `information_schema` antes; `ALTER … IF NOT EXISTS` depois | criadas em 22/09; `notify-lead` e admin atualizados na PR |
+| Valores do CRM | comentário em `DiagnosticoPage.tsx` ("VALORES verbatim do mockup, dados do CRM") | "Locação tradicional" mantido como valor; só o rótulo virou "Locação longa" |
+| FAQ no banco | `select … from faq_items` | 7 itens; item 3 diz "mais de 10 anos de garantia da marcenaria" enquanto a home diz 5 anos → decisão D-3, não alterado |
+| Promessas não validadas do documento | leitura (marcas [validar]) | multa por atraso, faixas de preço, nota do Google, "quase metade fora de SP", prazo de resposta "mesmo dia útil": **nada disso entrou no site**; a nota de resposta no mesmo dia útil que já existia no FAQ de `/diagnostico` foi mantida como estava |
+| Código desta rodada | `npm run lint`, `tsc --noEmit`, `vitest run`, `vite build` | ver PR |
+
 ## 6. Alterações desta rodada (para revisão)
 
 Commits na branch `claude/charming-keller-awrwxk`:
