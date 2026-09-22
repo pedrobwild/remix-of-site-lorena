@@ -1,4 +1,5 @@
 import BwaFooter from "@/components/BwaFooter";
+import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { BAIRROS, REMOTO_ITEMS } from "@/lib/bairrosSp";
@@ -104,6 +105,8 @@ export default function OndeAtuamosPage() {
             </ul>
           </div>
         </section>
+
+        <BwaImprensa />
 
         <section className="bwa-atuamos-cta" aria-label="Solicitar orçamento">
           <div className="bwa-shell bwa-atuamos-cta-grid">
