@@ -794,6 +794,19 @@
       font-weight: 400;
     }
 
+    .bwa-certainty-statement {
+      margin: 0;
+      padding-block: clamp(28px, 4vw, 64px) clamp(56px, 7vw, 120px);
+      padding-inline: var(--bwa-gutter);
+      color: var(--bwa-white);
+      font-family: "Manrope", sans-serif;
+      font-size: clamp(30px, 4.6vw, 76px);
+      font-weight: 400;
+      line-height: 1.04;
+      letter-spacing: -.03em;
+      text-wrap: balance;
+    }
+
     .bwa-certainty-cards {
       display: grid;
       gap: 20px;
