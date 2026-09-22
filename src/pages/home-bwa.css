@@ -1784,19 +1784,29 @@
 
     .bwa-process {
       margin-bottom: clamp(72px, 9vw, 132px);
+      padding: clamp(28px, 4vw, 58px);
+      color: var(--bwa-ink);
+      background: var(--bwa-white);
+      border: 1px solid var(--bwa-line);
+      border-radius: 8px;
     }
 
     .bwa-process-head {
       display: grid;
-      grid-template-columns: .58fr 1.42fr;
-      gap: clamp(40px, 8vw, 140px);
-      align-items: start;
-      margin-bottom: clamp(48px, 6vw, 84px);
+      gap: 14px;
+      margin-bottom: clamp(34px, 4vw, 54px);
     }
 
     .bwa-process-head h2 {
-      max-width: 900px;
+      max-width: 980px;
       margin: 0;
+      color: var(--bwa-ink);
+      font-size: clamp(30px, 3.2vw, 52px);
+      line-height: 1.06;
+    }
+
+    .bwa-process-head .bwa-label {
+      color: var(--bwa-navy-2);
     }
 
     .bwa-process-grid {
@@ -1804,17 +1814,18 @@
       grid-template-columns: repeat(3, minmax(0, 1fr));
       margin: 0;
       padding: 0;
-      border-top: 1px solid var(--bwa-white-line);
-      border-left: 1px solid var(--bwa-white-line);
+      border-top: 1px solid var(--bwa-line);
+      border-left: 1px solid var(--bwa-line);
       list-style: none;
     }
 
     .bwa-process-phase {
       grid-column: 1 / -1;
-      padding: 13px clamp(20px, 2vw, 28px);
-      border-right: 1px solid var(--bwa-white-line);
-      border-bottom: 1px solid var(--bwa-white-line);
-      color: rgba(255, 255, 255, .72);
+      padding: 11px clamp(18px, 2vw, 26px);
+      border-right: 1px solid var(--bwa-line);
+      border-bottom: 1px solid var(--bwa-line);
+      color: var(--bwa-ink-soft);
+      background: var(--bwa-paper);
       font-family: "JetBrains Mono", monospace;
       font-size: 10px;
       font-weight: 600;
@@ -1825,41 +1836,72 @@
 
     .bwa-process-step {
       min-width: 0;
-      min-height: 230px;
-      display: grid;
-      align-content: space-between;
-      gap: clamp(40px, 5vw, 72px);
-      padding: clamp(24px, 3vw, 38px);
-      border-right: 1px solid var(--bwa-white-line);
-      border-bottom: 1px solid var(--bwa-white-line);
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: clamp(28px, 3.2vw, 46px) clamp(20px, 2.6vw, 38px);
+      border-right: 1px solid var(--bwa-line);
+      border-bottom: 1px solid var(--bwa-line);
+      text-align: center;
     }
 
     .bwa-process-step span {
-      color: rgba(255, 255, 255, .78);
+      display: grid;
+      justify-items: center;
+      gap: 13px;
+      color: var(--bwa-ink);
       font-family: "JetBrains Mono", monospace;
-      font-size: 10px;
+      font-size: 12px;
       font-weight: 600;
-      letter-spacing: .08em;
+      letter-spacing: .04em;
       line-height: 1.5;
       text-transform: uppercase;
     }
 
-    .bwa-process-step p {
-      max-width: 34ch;
-      margin: 0;
+    .bwa-process-step-number {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      color: var(--bwa-white);
+      background: var(--bwa-navy-2);
+      border-radius: 50%;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+
+    .bwa-process-step-name {
+      color: var(--bwa-ink);
       font-family: "Manrope", sans-serif;
-      font-size: clamp(16px, 1.35vw, 21px);
-      line-height: 1.55;
-      letter-spacing: -.02em;
+      font-size: clamp(17px, 1.4vw, 21px);
+      font-weight: 700;
+      letter-spacing: 0;
+      line-height: 1.25;
+      text-transform: none;
+    }
+
+    .bwa-process-step p {
+      max-width: 38ch;
+      margin: 0;
+      color: var(--bwa-ink-soft);
+      font-family: "Manrope", sans-serif;
+      font-size: clamp(15px, 1.15vw, 18px);
+      line-height: 1.5;
+      letter-spacing: 0;
       overflow-wrap: anywhere;
     }
 
     .bwa-process-foot {
-      margin: clamp(28px, 4vw, 48px) auto 0;
-      color: rgba(255, 255, 255, .72);
-      font-family: "JetBrains Mono", monospace;
-      font-size: 10px;
-      letter-spacing: .08em;
+      margin: clamp(28px, 3vw, 42px) auto 0;
+      color: var(--bwa-ink-soft);
+      font-family: "Manrope", sans-serif;
+      font-size: clamp(14px, 1.1vw, 17px);
+      letter-spacing: 0;
       line-height: 1.6;
       text-align: center;
     }
