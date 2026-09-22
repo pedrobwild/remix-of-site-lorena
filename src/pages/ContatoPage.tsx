@@ -29,6 +29,68 @@ export default function ContatoPage() {
   const { settings } = useSiteSettings();
   const email = settings?.contact_email || CONTACT.email;
 
+  const [nome, setNome] = useState("");
+  const [whats, setWhats] = useState("");
+  const [mail, setMail] = useState("");
+  const [mensagem, setMensagem] = useState("");
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [enviando, setEnviando] = useState(false);
+  const [enviado, setEnviado] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+
+  const nomeOk = nome.trim().length >= 2;
+  const whatsOk = digits(whats).length >= 10;
+  const mailOk = mail.trim() === "" || EMAIL_RE.test(mail.trim());
+  const msgOk = mensagem.trim().length >= 10;
+  const podeEnviar = nomeOk && whatsOk && mailOk && msgOk && !enviando;
+
+  async function enviar(e: React.FormEvent) {
+    e.preventDefault();
+    setTouched({ nome: true, whats: true, mail: true, mensagem: true });
+    if (!podeEnviar) return;
+    setEnviando(true);
+    setErro(null);
+
+    const payload = {
+      name: nome.trim(),
+      whatsapp: digits(whats),
+      email: mail.trim() || null,
+      message: mensagem.trim(),
+      location: null,
+      area_m2: null,
+      objetivo: null,
+      chaves: null,
+      planta: null,
+      utm_source: null,
+      utm_medium: null,
+      utm_campaign: null,
+      referrer: typeof document !== "undefined" ? document.referrer || null : null,
+      landing_path: "/contato",
+      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+    };
+
+    let delivered = false;
+    try {
+      const result = await Promise.race([
+        supabase.functions.invoke("notify-lead", { body: payload }),
+        timeoutAfter(8000),
+      ]);
+      delivered = isLeadDelivered(result);
+    } catch (err) {
+      console.error("[notify-lead] invoke failed", err);
+    }
+
+    setEnviando(false);
+    if (delivered) {
+      setEnviado(true);
+      trackEvent("generate_lead", { method: "contato_form" });
+    } else {
+      setErro(
+        "Não conseguimos enviar sua mensagem agora. Tente novamente ou fale com a gente no WhatsApp.",
+      );
+    }
+  }
+
   useSeo({
     title: "Contato para reforma de apartamento em SP | Bewild",
     description:
