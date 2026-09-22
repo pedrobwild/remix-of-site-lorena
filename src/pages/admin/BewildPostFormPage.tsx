@@ -3,8 +3,10 @@
  *
  * Criar/editar posts da página pública /conteudos (tabela `bewild_posts`).
  * Formulário mínimo e direto — sem upload de imagem (cover_image é URL),
- * sem editor rico (body é markdown/HTML em textarea), sem FAQ inline
- * (mantemos o JSON `faq` intacto ao editar; novo post começa com `[]`).
+ * sem editor rico (body é markdown/HTML em textarea). O FAQ é editado
+ * inline (pergunta + resposta) e vira FAQPage no JSON-LD do post: é o
+ * padrão de post citável do plano SEO + IA (4 a 6 perguntas, respostas de
+ * 40 a 70 palavras).
  */
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Save } from "lucide-react";
@@ -29,7 +31,34 @@ type PostRow = {
   featured: boolean;
   published: boolean;
   published_at: string | null;
+  faq: unknown;
 };
+
+type FaqItem = { question: string; answer: string };
+
+/** Aceita o JSONB como veio ({question, answer} ou o formato antigo {q, a}). */
+function toFaqList(raw: unknown): FaqItem[] {
+  let value = raw;
+  if (typeof value === "string") {
+    try {
+      value = JSON.parse(value);
+    } catch {
+      return [];
+    }
+  }
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => {
+      if (!item || typeof item !== "object") return null;
+      const o = item as Record<string, unknown>;
+      const question = String(o.question ?? o.q ?? "").trim();
+      const answer = String(o.answer ?? o.a ?? "").trim();
+      return question || answer ? { question, answer } : null;
+    })
+    .filter((x): x is FaqItem => !!x);
+}
+
+const wordCount = (s: string) => s.trim().split(/\s+/).filter(Boolean).length;
 
 const CATEGORIES = [
   { value: "", label: "Sem categoria" },
@@ -75,6 +104,7 @@ export default function BewildPostFormPage({ slug }: Props) {
   const [featured, setFeatured] = useState(false);
   const [published, setPublished] = useState(false);
   const [publishedAt, setPublishedAt] = useState<string | null>(null);
+  const [faq, setFaq] = useState<FaqItem[]>([]);
 
   useEffect(() => {
     if (isNew) return;
@@ -107,6 +137,7 @@ export default function BewildPostFormPage({ slug }: Props) {
       setFeatured(!!p.featured);
       setPublished(!!p.published);
       setPublishedAt(p.published_at);
+      setFaq(toFaqList(p.faq));
       setLoading(false);
     })();
     return () => {
@@ -148,6 +179,9 @@ export default function BewildPostFormPage({ slug }: Props) {
       featured,
       published,
       reading_time: readingTime,
+      faq: faq
+        .map((f) => ({ question: f.question.trim(), answer: f.answer.trim() }))
+        .filter((f) => f.question && f.answer),
     };
     if (published && !publishedAt) {
       payload.published_at = new Date().toISOString();
@@ -315,6 +349,70 @@ export default function BewildPostFormPage({ slug }: Props) {
             <span className="hint">
               Tempo de leitura estimado: {readingTime} min
             </span>
+          </div>
+
+          <div className="bw-admin__field">
+            <label>FAQ do post</label>
+            <span className="hint" style={{ display: "block", marginBottom: 8 }}>
+              4 a 6 perguntas tiradas do que o leitor pergunta ao Google; respostas de 40 a 70 palavras.
+              Aparecem no fim do artigo e viram FAQPage nos dados estruturados. Pergunta ou resposta em
+              branco é descartada ao salvar.
+            </span>
+            {faq.map((item, i) => (
+              <div
+                key={i}
+                style={{
+                  border: "1px solid var(--bw-line)",
+                  borderRadius: 8,
+                  padding: 10,
+                  marginBottom: 8,
+                  display: "grid",
+                  gap: 6,
+                }}
+              >
+                <input
+                  className="bw-admin__input"
+                  type="text"
+                  value={item.question}
+                  onChange={(e) =>
+                    setFaq((list) => list.map((f, k) => (k === i ? { ...f, question: e.target.value } : f)))
+                  }
+                  placeholder={`Pergunta ${i + 1}`}
+                  aria-label={`Pergunta ${i + 1}`}
+                  maxLength={160}
+                />
+                <textarea
+                  className="bw-admin__textarea"
+                  style={{ minHeight: 64, fontFamily: "inherit", fontSize: 14 }}
+                  value={item.answer}
+                  onChange={(e) =>
+                    setFaq((list) => list.map((f, k) => (k === i ? { ...f, answer: e.target.value } : f)))
+                  }
+                  placeholder="Resposta direta, com o número ou o critério que decide."
+                  aria-label={`Resposta ${i + 1}`}
+                />
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span className="hint">{wordCount(item.answer)} palavras</span>
+                  <button
+                    type="button"
+                    className="bw-admin__btn"
+                    onClick={() => setFaq((list) => list.filter((_, k) => k !== i))}
+                  >
+                    Remover
+                  </button>
+                </div>
+              </div>
+            ))}
+            <div>
+              <button
+                type="button"
+                className="bw-admin__btn"
+                onClick={() => setFaq((list) => [...list, { question: "", answer: "" }])}
+                disabled={faq.length >= 8}
+              >
+                + adicionar pergunta
+              </button>
+            </div>
           </div>
 
           <details>

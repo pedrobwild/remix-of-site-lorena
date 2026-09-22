@@ -11,7 +11,7 @@ import { devWarn } from "@/lib/devLog";
 import { normalizeBewildPost, type BewildPost, type BewildPostCategory } from "@/lib/useBewildPosts";
 
 const SELECT_COLS =
-  "id, slug, title, meta_title, meta_description, category, excerpt, cover_image, body, faq, reading_time, author, featured, published, published_at, created_at";
+  "id, slug, title, meta_title, meta_description, category, excerpt, cover_image, body, faq, reading_time, author, featured, published, published_at, created_at, updated_at";
 
 export function useBewildPost(slug: string | undefined) {
   const [post, setPost] = useState<BewildPost | null>(null);
