@@ -148,7 +148,12 @@ Deno.serve(async (req) => {
         if (error) throw new Error(`upsert sitemap: ${error.message}`);
       }
       // marca como removidas as que saíram do sitemap
-      await admin.from("seo_index_status").update({ removed: true }).not("url", "in", `(${urls.map((u) => `"${u}"`).join(",")})`);
+      const inSitemap = new Set(urls);
+      const { data: known } = await admin.from("seo_index_status").select("id, url, removed");
+      const gone = (known ?? []).filter((r) => !inSitemap.has(r.url) && !r.removed).map((r) => r.id);
+      for (let i = 0; i < gone.length; i += 100) {
+        await admin.from("seo_index_status").update({ removed: true }).in("id", gone.slice(i, i + 100));
+      }
     }
 
     // 2) resolve a propriedade verificada
