@@ -425,14 +425,34 @@ export default function BewildPostFormPage({ slug }: Props) {
 
           <div className="bw-admin__field">
             <label htmlFor="post-cover">URL da imagem de capa</label>
-            <input
-              id="post-cover"
-              className="bw-admin__input"
-              type="url"
-              value={coverImage}
-              onChange={(e) => setCoverImage(e.target.value)}
-              placeholder="https://… ou /__l5e/assets-v1/…"
-            />
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <input
+                id="post-cover"
+                className="bw-admin__input"
+                type="url"
+                value={coverImage}
+                onChange={(e) => setCoverImage(e.target.value)}
+                placeholder="https://… ou /__l5e/assets-v1/…"
+              />
+              <button
+                type="button"
+                className="bw-admin__btn"
+                onClick={() => coverFileRef.current?.click()}
+                disabled={uploadingCover}
+              >
+                {uploadingCover ? "Enviando…" : "Enviar imagem"}
+              </button>
+              <input
+                ref={coverFileRef}
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={(e) => {
+                  void handleCoverFile(e.target.files?.[0]);
+                  e.target.value = "";
+                }}
+              />
+            </div>
             {coverImage && (
               <img
                 src={coverImage}
@@ -449,18 +469,132 @@ export default function BewildPostFormPage({ slug }: Props) {
 
           <div className="bw-admin__field">
             <label htmlFor="post-body">Conteúdo (markdown ou HTML)</label>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 6 }}>
+              <button
+                type="button"
+                className="bw-admin__btn"
+                onClick={() => bodyFileRef.current?.click()}
+                disabled={uploading}
+              >
+                {uploading ? "Enviando…" : "Inserir imagem"}
+              </button>
+              <span className="hint">
+                Você também pode colar (Ctrl+V) ou arrastar a imagem para dentro do texto.
+              </span>
+              <input
+                ref={bodyFileRef}
+                type="file"
+                accept="image/*"
+                multiple
+                hidden
+                onChange={(e) => {
+                  void handleBodyFiles(Array.from(e.target.files ?? []));
+                  e.target.value = "";
+                }}
+              />
+            </div>
             <textarea
               id="post-body"
+              ref={bodyRef}
               className="bw-admin__textarea"
               style={{ minHeight: 360 }}
               value={body}
               onChange={(e) => setBody(e.target.value)}
+              onPaste={(e) => {
+                const files = Array.from(e.clipboardData?.files ?? []).filter((f) =>
+                  f.type.startsWith("image/")
+                );
+                if (!files.length) return;
+                e.preventDefault();
+                void handleBodyFiles(files);
+              }}
+              onDragOver={(e) => {
+                if (Array.from(e.dataTransfer?.types ?? []).includes("Files")) e.preventDefault();
+              }}
+              onDrop={(e) => {
+                const files = Array.from(e.dataTransfer?.files ?? []).filter((f) =>
+                  f.type.startsWith("image/")
+                );
+                if (!files.length) return;
+                e.preventDefault();
+                void handleBodyFiles(files);
+              }}
               placeholder="# Título da seção&#10;&#10;Corpo do artigo…"
             />
             <span className="hint">
               Tempo de leitura estimado: {readingTime} min
             </span>
           </div>
+
+          {pendingUploads.length > 0 && (
+            <div
+              className="bw-admin__field"
+              style={{
+                border: "1px solid var(--bw-line)",
+                borderRadius: 8,
+                padding: 12,
+                background: "#F7F8FA",
+              }}
+            >
+              <strong style={{ fontSize: 14 }}>
+                {pendingUploads.length > 1
+                  ? `${pendingUploads.length} imagens enviadas`
+                  : "Imagem enviada"}
+              </strong>
+              <img
+                src={pendingUploads[0].jpeg.sm}
+                alt=""
+                style={{ maxWidth: 200, borderRadius: 8, margin: "8px 0" }}
+              />
+              <label htmlFor="post-img-alt">Texto alternativo (obrigatório)</label>
+              <input
+                id="post-img-alt"
+                className="bw-admin__input"
+                type="text"
+                value={altText}
+                onChange={(e) => setAltText(e.target.value)}
+                maxLength={160}
+                placeholder="Descreva o que aparece na imagem."
+              />
+              <span className="hint">
+                Descreve a imagem para quem usa leitor de tela e para o Google entender o conteúdo:
+                é acessibilidade e SEO.
+              </span>
+              <label htmlFor="post-img-caption" style={{ marginTop: 8 }}>
+                Legenda (opcional)
+              </label>
+              <input
+                id="post-img-caption"
+                className="bw-admin__input"
+                type="text"
+                value={caption}
+                onChange={(e) => setCaption(e.target.value)}
+                maxLength={200}
+                placeholder="Texto que aparece abaixo da imagem."
+              />
+              <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+                <button
+                  type="button"
+                  className="bw-admin__btn bw-admin__btn--primary"
+                  onClick={insertPendingUploads}
+                  disabled={!altText.trim()}
+                >
+                  Inserir no texto
+                </button>
+                <button
+                  type="button"
+                  className="bw-admin__btn"
+                  onClick={() => {
+                    setPendingUploads([]);
+                    setAltText("");
+                    setCaption("");
+                  }}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="bw-admin__field">
             <label>FAQ do post</label>
