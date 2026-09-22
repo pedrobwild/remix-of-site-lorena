@@ -76,7 +76,7 @@ export default function OndeAtuamosPage() {
             "@context": "https://schema.org",
             "@type": "Service",
             name: "Reforma completa de studios e apartamentos",
-            provider: { "@type": "Organization", name: "Bewild", url: settings.site_url },
+            provider: { "@type": "Organization", name: "Bewild", url: "https://bewild.com.br" },
             areaServed: { "@type": "City", name: "São Paulo" },
           },
         ]
