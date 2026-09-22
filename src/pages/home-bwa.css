@@ -4574,3 +4574,21 @@
   .bwa-marcenaria-head{flex-direction:column;align-items:flex-start;gap:18px}
   .bwa-marcenaria-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+/* 22/set (pedido do dono): logo apos o titulo "Sua obra inteira na tela do celular." entra direto o painel do Bwild Workflow; o conteudo intermediario da secao fica oculto. */
+.bwa-wf2-copy > .bwa-lead,
+.bwa-wf2-copy > .bwa-wf2-thesis,
+.bwa-wf2-copy > .bwa-text-link,
+.bwa-wf2-question-head,
+.bwa-wf2-questions,
+.bwa-wf2-stage-copy {
+  display: none !important;
+}
+
+.bwa-wf2-head {
+  margin-bottom: clamp(40px, 5vw, 72px) !important;
+}
+
+.bwa-wf2-stage {
+  grid-template-columns: 1fr !important;
+}
