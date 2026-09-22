@@ -2924,6 +2924,10 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .bwa-process-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       .bwa-objective {
         min-height: 570px;
       }
@@ -3017,6 +3021,11 @@
       .bwa-manifesto-grid,
       .bwa-faq-head,
       .bwa-final-grid {
+        grid-template-columns: 1fr;
+        gap: 34px;
+      }
+
+      .bwa-process-head {
         grid-template-columns: 1fr;
         gap: 34px;
       }
@@ -3294,6 +3303,14 @@
 
       .bwa-included-grid {
         grid-template-columns: 1fr;
+      }
+
+      .bwa-process-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bwa-process-step {
+        min-height: 200px;
       }
 
       .bwa-workflow-principles {
