@@ -41,7 +41,7 @@ export default function BwaFooter() {
               <a href="/#certeza">O contrato</a>
               <a href="/#historia">A história</a>
               <a href="/#certeza">O que fazemos</a>
-              <a href="/#como-funciona">Como funciona</a>
+              <a href="/como-funciona">Como funciona</a>
               <a href="/portfolio">Portfólio</a>
               <a href="/conteudos">Conteúdos</a>
               <a href="/faq">FAQ</a>
