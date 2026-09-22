@@ -46,6 +46,7 @@ export default function BwaFooter() {
               <a href="/portfolio">Portfólio de reformas em SP</a>
               <a href="/onde-atuamos">Onde atuamos</a>
               <a href="/conteudos">Conteúdos</a>
+              <a href="/guia-do-investidor">Guia do investidor</a>
               <a href="/faq">FAQ</a>
               <a href="/contato">Contato</a>
             <a href="/escopo">Escopo com IA</a>

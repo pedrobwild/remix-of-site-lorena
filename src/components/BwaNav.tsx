@@ -79,7 +79,9 @@ export default function BwaNav() {
             <a href="/#workflow">Como funciona</a>
             <a href="/portfolio">Portfólio de reformas em SP</a>
             <a href="/conteudos">Blog</a>
-            <a href="/faq">Dúvidas frequentes</a>
+            <a href="/guia-do-investidor">Guia do investidor</a>
+            <a href="/guia-do-investidor">Guia do investidor</a>
+          <a href="/faq">Dúvidas frequentes</a>
             <a href="/contato">Contato</a>
           </nav>
 

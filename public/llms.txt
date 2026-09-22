@@ -10,6 +10,7 @@ A Bewild é uma empresa brasileira focada em transformar studios e apartamentos 
 - [Portfólio](/portfolio): Projetos entregues de studios e imóveis compactos.
 - [Diagnóstico](/diagnostico): Entrada de leads para avaliação do imóvel.
 - [Conteúdos](/conteudos): Artigos e guias sobre reforma e operação de short stay.
+- [Guia do investidor](/guia-do-investidor): Guia de decisão para investir em studio de short stay em São Paulo.
 - [FAQ](/faq): Perguntas frequentes sobre o processo e garantias.
 - [Parceiros](/parceiros): Programa de indicação para corretores, imobiliárias e incorporadoras.
 - [Privacidade](/privacidade): Política de privacidade e tratamento de dados.
