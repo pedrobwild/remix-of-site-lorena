@@ -28,6 +28,7 @@ export type Route =
   | { name: "admin-faq" }
   | { name: "admin-typography" }
   | { name: "admin-leads" }
+  | { name: "admin-mensagens" }
   | { name: "admin-projetos" }
   | { name: "admin-projetos-new" }
   | { name: "admin-projetos-edit"; slug: string }
@@ -73,6 +74,7 @@ function parsePath(rawPath: string): Route {
   if (adminBewildEdit) return { name: "admin-bewild-edit", slug: adminBewildEdit[1] };
   if (path === "/admin/typography") return { name: "admin-typography" };
   if (path === "/admin/leads") return { name: "admin-leads" };
+  if (path === "/admin/mensagens") return { name: "admin-mensagens" };
   if (path === "/admin/projetos") return { name: "admin-projetos" };
   if (path === "/admin/projetos/novo") return { name: "admin-projetos-new" };
   const adminProjetosEdit = path.match(/^\/admin\/projetos\/([a-z0-9-]+)$/);
@@ -163,6 +165,7 @@ export const routes = {
   adminFaq: "/admin/faq",
   adminTypography: "/admin/typography",
   adminLeads: "/admin/leads",
+  adminMensagens: "/admin/mensagens",
   lpObra: "/o",
   lpPanfleto: "/p",
 };
