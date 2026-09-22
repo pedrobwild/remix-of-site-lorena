@@ -20,6 +20,7 @@ import EscopoPage from "./pages/EscopoPage";
 import ComoFuncionaPage from "./pages/ComoFuncionaPage";
 import OndeAtuamosPage from "./pages/OndeAtuamosPage";
 import ParceirosPage from "./pages/ParceirosPage";
+import GuiaInvestidorPage from "./pages/GuiaInvestidorPage";
 import PrivacidadePage from "./pages/PrivacidadePage";
 import LpObraPage from "./pages/LpObraPage";
 import LpPanfletoPage from "./pages/LpPanfletoPage";
@@ -78,6 +79,7 @@ export function renderRoute(route: Route) {
   if (route.name === "como-funciona") return <ComoFuncionaPage />;
   if (route.name === "onde-atuamos") return <OndeAtuamosPage />;
   if (route.name === "parceiros") return <ParceirosPage />;
+  if (route.name === "guia-do-investidor") return <GuiaInvestidorPage />;
   if (route.name === "privacidade") return <PrivacidadePage />;
   if (route.name === "lp-obra") return <LpObraPage />;
   if (route.name === "lp-panfleto") return <LpPanfletoPage />;

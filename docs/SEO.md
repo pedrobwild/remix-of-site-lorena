@@ -119,9 +119,12 @@ Ele é **regenerado automaticamente no `prebuild`** pelo script
 `scripts/generate-sitemap.mjs`, que consulta o banco via REST (chave pública) e
 inclui:
 
-- as 7 rotas estáticas indexáveis (`/`, `/portfolio`, `/diagnostico`,
-  `/conteudos`, `/faq`, `/contato`, `/privacidade`) — `/contato` entrou em
-  18/09/2026 e a contagem aqui dizia 6 até 22/09/2026;
+- as rotas estáticas indexáveis (`/`, `/portfolio`, `/diagnostico`,
+  `/orcamento`, `/conteudos`, `/guia-do-investidor`, `/faq`,
+  `/autorizacao-condominio`, `/contato`, `/escopo`, `/como-funciona`,
+  `/onde-atuamos`, `/parceiros`, `/privacidade`) — `/contato` entrou em
+  18/09/2026 e `/guia-do-investidor` (página pilar, prioridade 0.8) em
+  22/09/2026;
 - um `<url>` por projeto com `published = true` e `visible = true` (prioridade 0.7);
 - um `<url>` por conteúdo com `published = true` (prioridade 0.6);
 - `lastmod` a partir da data mais recente disponível de cada registro.
@@ -139,8 +142,8 @@ em `Admin › SEO › Sitemap & Robots`, que mostra as URLs e permite baixar o
 arquivo. Quem vai ao ar continua sendo o `public/sitemap.xml` commitado; o
 próprio painel avisa isso.
 
-As duas fontes foram conferidas em 22/09/2026 e estão **alinhadas**: mesmas 7
-rotas estáticas, mesmas prioridades, mesmo filtro (`published = true AND
+As duas fontes foram conferidas em 22/09/2026 e estão **alinhadas**: mesmas
+rotas estáticas (14, incluindo `/guia-do-investidor`), mesmas prioridades, mesmo filtro (`published = true AND
 visible = true` para projetos, `published = true` para conteúdos) e mesmo
 critério de `lastmod`. Travado por `src/lib/__tests__/sitemapParidade.test.ts`.
 Se alterar uma, altere a outra — senão o preview do admin passa a divergir do
