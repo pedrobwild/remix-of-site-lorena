@@ -10,6 +10,8 @@
  * caem num fallback: IntersectionObserver simples liga `.in` e nada mais.
  */
 import { useEffect } from "react";
+import { installCatalogPreview } from "@/lib/homeCatalog";
+import { installInstagramEmbeds } from "@/lib/homeInstagram";
 import { closestElementFrom } from "@/lib/useHashRoute";
 
 type Cleanup = () => void;
@@ -122,13 +124,16 @@ export function useHomeFx(rootRef: React.RefObject<HTMLElement>) {
 
     // Sempre: fallback IO para reveals (cobre mobile e reduced-motion)
     const fallbackCleanup = installRevealFallback(root);
+    // Sempre (inclusive mobile/reduced-motion): marcenaria do catálogo e
+    // depoimentos do Instagram carregam quando as seções se aproximam da tela.
+    const baseCleanups: Cleanup[] = [fallbackCleanup, installCatalogPreview(root), installInstagramEmbeds(root)];
 
     if (isReduced() || isTouch()) {
-      return () => fallbackCleanup();
+      return () => baseCleanups.forEach((c) => c());
     }
 
     let cancelled = false;
-    const cleanups: Cleanup[] = [fallbackCleanup];
+    const cleanups: Cleanup[] = [...baseCleanups];
 
     cleanups.push(installCrosshair());
     cleanups.push(installMagnetic(root));

@@ -37,7 +37,7 @@ export default function SiteFooter(_props: Record<string, unknown>) {
             <h3>Navegação</h3>
             <nav>
               <a href="/#certeza">O contrato</a>
-              <a href="/#historia">A história</a>
+              <a href="/#marcenaria">Marcenaria</a>
               <a href="/#projetos">Projetos</a>
               <a href="/#workflow">Bwild Workflow</a>
               <a href="/portfolio">Portfólio</a>

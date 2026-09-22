@@ -138,6 +138,15 @@ Origem: documento de 22/09/2026 (proposta para aprovação do Pedro; copy travad
 | D-9 | Usar "quase metade dos clientes não mora em São Paulo" (30 de 62 na base de 22/09)? | Bloco "Reforma à distância" e hero |
 | D-10 | Selo do Reclame Aqui na home enquanto a nota for 5,4; responder a reclamação pendente | Credibilidade da promessa de prazo |
 
+## Ações — pedidos do Pedro sobre a home (22/09/2026, prints do editor)
+
+| ID | Prioridade | Ação concreta | Responsável/ambiente | Dependências | Esforço estimado | Critério de aceite | Verificação | Prazo proposto | Status |
+|---|---|---|---|---|---|---|---|---|---|
+| A-69 | P0 | Trocar a seção "Sem dor de cabeça" (bloco 05, `#como-funciona`) pela mídia de marcenaria do orçamento público do Bwild Engine: grade do Catálogo Bwild por cômodo (Sala, Cozinha, Dormitório, Banheiros, Armários abertos), miniaturas lidas do projeto Supabase do catálogo com a chave anon pública (a mesma que o orçamento público expõe), link "Ver catálogo completo" (catalogobewild.com). Carrega só quando a seção se aproxima da tela; sem client supabase-js | Código | — | 3 h | seção `#marcenaria` no lugar; miniaturas reais por cômodo; mensagem honesta quando o catálogo não responde | home publicada | 22/09 | **Feito 22/09** (PR desta rodada) |
+| A-70 | P0 | Integrar abaixo de "Como trabalhamos" (`#certeza`) os 3 depoimentos do Instagram do orçamento público (`DZbjyUQNaOL`, `DVyeOxXjQKI`, `DQ2zDmujdso`, @bewild.oficial), com o embed oficial; iframe criado quando o card aparece; quem recusou cookies vê botão "Carregar depoimento" e o link direto | Código | — | 2 h | seção `#depoimentos` entre `#certeza` e `#projetos`; altura do embed vinda do Instagram | home publicada | 22/09 | **Feito 22/09** |
+| A-71 | P0 | Remover a seção "O uso do apartamento define a marcenaria" (Marina, `#historia`); trocar as âncoras `/#historia` por `/#marcenaria` (rodapés e chrome) e `/#como-funciona` pela página `/como-funciona` | Código | — | 30 min | nenhuma âncora quebrada; `bwa-story` fora do HTML | grep + home | 22/09 | **Feito 22/09** (o CSS antigo de `.bwa-story` e `.bwa-responsibility` ficou no arquivo, sem uso; limpar numa rodada de CSS) |
+| A-72 | P0 | Enxugar "O que entra no contrato": 6 descrições encurtadas (≤ 20 palavras). O subtítulo do item 03 dizia "multa se atrasar" e a descrição "a Bewild paga multa por dia de atraso" — texto que o Lovable colocou no ar sem a validação pedida pelo documento de copy (decisão **D-1**). Removido até a cláusula ser confirmada; volta com uma linha quando o Pedro confirmar | Código + Pedro (D-1) | — | 30 min | 6 itens curtos; sem promessa não validada | home | 22/09 | **Feito 22/09** — D-1 continua em aberto |
+
 ## Acompanhamento
 
 | Marco | O que olhar | Fonte | Cuidado |
