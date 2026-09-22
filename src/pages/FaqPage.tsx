@@ -182,7 +182,7 @@ export default function FaqPage() {
             { name: "Perguntas frequentes", path: "/faq" },
           ]),
           faqJsonLd(
-            (kb ?? null)
+            kb
               ? kb.map((i) => ({ q: i.pergunta, a: i.resposta }))
               : [...FAQ_ITEMS, ...GUIA_ITEMS].map((i) => ({ q: i.q, a: i.a })),
           ),
