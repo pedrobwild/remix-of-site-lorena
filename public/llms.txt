@@ -16,18 +16,19 @@ A Bewild é uma empresa brasileira focada em transformar studios e apartamentos 
 ## Conteúdos publicados
 
 <!-- posts:start -->
+- [Como reformar um studio em São Paulo morando em outra cidade (ou em outro país)](/conteudos/reformar-studio-sao-paulo-morando-em-outra-cidade)
 - [Quanto rende um studio no short stay em São Paulo em 2026](/conteudos/quanto-rende-studio-short-stay-sao-paulo)
 - [Como preparar um studio para Airbnb: o que muda na diária](/conteudos/preparar-studio-airbnb-checklist)
 - [Os 7 erros mais comuns de quem prepara imóvel para short stay](/conteudos/7-erros-imovel-short-stay)
 - [Gestão própria vs. gestora profissional: o custo real de cada caminho](/conteudos/gestao-propria-vs-gestora)
-- [Quanto custa reformar um studio para short stay em São Paulo](/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo)
 - [Airbnb ou Booking? Onde anunciar seu studio](/conteudos/airbnb-ou-booking)
+- [Quanto custa reformar um studio em São Paulo em 2026: o valor por m² de 58 obras reais](/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo)
 - [Recebi as chaves do studio na planta. O que fazer antes de anunciar](/conteudos/recebi-chaves-studio-na-planta-o-que-fazer)
 - [Short stay ou aluguel de longa duração: qual rende mais em um studio compacto](/conteudos/short-stay-ou-long-stay-studio-compacto)
 - [Como declarar a renda de Airbnb no imposto de renda](/conteudos/como-declarar-renda-airbnb-imposto-de-renda)
 - [Reforma tributária e short stay: quem realmente vai pagar IBS e CBS](/conteudos/reforma-tributaria-short-stay-ibs-cbs)
 - [Reforma turn-key ou tradicional: qual vale mais para rentabilizar](/conteudos/reforma-turn-key-ou-tradicional)
-- [Quais studios podem virar Airbnb em São Paulo (e quais a lei proíbe)](/conteudos/studios-airbnb-sao-paulo-o-que-a-lei-permite)
+- [Condomínio pode proibir Airbnb? O que o STJ decidiu em 2026 e o que checar antes de comprar um studio em São Paulo](/conteudos/studios-airbnb-sao-paulo-o-que-a-lei-permite)
 <!-- posts:end -->
 
 ## Optional
