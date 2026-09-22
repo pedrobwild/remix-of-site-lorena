@@ -141,6 +141,82 @@ export default function BewildPostFormPage({ slug }: Props) {
   const [publishedAt, setPublishedAt] = useState<string | null>(null);
   const [faq, setFaq] = useState<FaqItem[]>([]);
 
+  // --- upload de imagem no corpo do post ---
+  const bodyRef = useRef<HTMLTextAreaElement | null>(null);
+  const bodyFileRef = useRef<HTMLInputElement | null>(null);
+  const coverFileRef = useRef<HTMLInputElement | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const [pendingUploads, setPendingUploads] = useState<UploadResult[]>([]);
+  const [altText, setAltText] = useState("");
+  const [caption, setCaption] = useState("");
+
+  const folder = currentSlug || "rascunho";
+
+  async function handleBodyFiles(files: File[]) {
+    const images = files.filter((f) => f.type.startsWith("image/"));
+    if (!images.length) return;
+    setError(null);
+    setUploading(true);
+    try {
+      const results: UploadResult[] = [];
+      for (const file of images) {
+        results.push(await uploadImageGeneric(file, "blog-images", folder));
+      }
+      setPendingUploads(results);
+      setAltText("");
+      setCaption("");
+    } catch (err) {
+      setError(
+        `Falha ao enviar a imagem: ${err instanceof Error ? err.message : String(err)}`
+      );
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  function insertPendingUploads() {
+    if (!pendingUploads.length || !altText.trim()) return;
+    const blocks = pendingUploads
+      .map((up) => buildFigureHtml(up, altText.trim(), caption))
+      .join("\n\n");
+    const el = bodyRef.current;
+    const hasCursor = el && document.activeElement === el;
+    const pos = hasCursor ? (el as HTMLTextAreaElement).selectionStart : body.length;
+    const before = body.slice(0, pos);
+    const after = body.slice(pos);
+    const snippet = `\n\n${blocks}\n\n`;
+    const next = before + snippet + after;
+    setBody(next);
+    const cursor = before.length + snippet.length;
+    setPendingUploads([]);
+    setAltText("");
+    setCaption("");
+    requestAnimationFrame(() => {
+      const t = bodyRef.current;
+      if (!t) return;
+      t.focus();
+      t.setSelectionRange(cursor, cursor);
+    });
+  }
+
+  async function handleCoverFile(file: File | undefined) {
+    if (!file) return;
+    setError(null);
+    setUploadingCover(true);
+    try {
+      const up = await uploadImageGeneric(file, "blog-images", folder);
+      // JPEG grande: og:image precisa de formato que todo crawler lê.
+      setCoverImage(up.jpeg.lg);
+    } catch (err) {
+      setError(
+        `Falha ao enviar a imagem de capa: ${err instanceof Error ? err.message : String(err)}`
+      );
+    } finally {
+      setUploadingCover(false);
+    }
+  }
+
   useEffect(() => {
     if (isNew) return;
     let cancelled = false;
