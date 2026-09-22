@@ -4242,7 +4242,6 @@
 @media (min-width:821px){
   .bwa-audience,.bwa-certainty,.bwa-story,.bwa-projects,.bwa-responsibility,.bwa-workflow,.bwa-proof,.bwa-objectives,.bwa-manifesto,.bwa-faq{padding-top:clamp(56px,6vw,88px) !important;padding-bottom:clamp(56px,6vw,88px) !important}
   .bwa-audience-head,.bwa-certainty-head,.bwa-story-head,.bwa-projects-head,.bwa-proof-head,.bwa-objectives-head,.bwa-faq-head,.bwa-wf2-head{margin-bottom:clamp(32px,4vw,48px) !important;min-height:0 !important}
-  .bwa-audience-card .bwa-button{margin-top:auto;justify-self:start}
   .bwa-story-resolution{margin-top:clamp(40px,5vw,64px) !important}
   .bwa-certainty-close{margin-top:clamp(36px,4vw,56px) !important}
   .bwa-projects-foot{margin-top:clamp(28px,3vw,40px) !important}
@@ -4260,3 +4259,12 @@
 .bwa-footer .bwa-footer-cookie-prefs{background:none;border:0;padding:0;margin:0;color:inherit;font:inherit;text-align:left;cursor:pointer;text-decoration:none}
 .bwa-footer .bwa-footer-cookie-prefs:hover{text-decoration:underline;text-underline-offset:3px}
 .bwa-footer .bwa-footer-cookie-prefs:focus-visible{outline:2px solid #5FB2DD;outline-offset:2px}
+
+@media (max-width:899px){
+  .bwa-audience-grid{grid-template-columns:1fr}
+  .bwa-audience-card .bwa-button{width:100%}
+}
+@media (min-width:900px){
+  .bwa-audience-card{grid-template-rows:auto auto auto minmax(0,1fr) auto auto}
+  .bwa-audience-card .bwa-button{margin-top:auto;justify-self:start}
+}
