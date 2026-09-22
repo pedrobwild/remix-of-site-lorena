@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { CheckSquare, Menu, X } from "lucide-react";
 
 import BewildLogo from "@/components/BewildLogo";
+import BwaFooter from "@/components/BwaFooter";
+import "@/styles/bwa-footer-shared.css";
 import { breadcrumbJsonLd, faqJsonLd, getCanonicalBase, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 
@@ -51,8 +53,10 @@ const TendenciasSection = lazy(() => import("@/guia/components/guide/TendenciasS
  *
  * Isolamento: todo o código portado vive em `src/guia/` e o tema
  * fica dentro de `.guia-root` (src/pages/guia-investidor.css).
- * Esta página NÃO usa BwaNav/BwaFooter — eles injetam CSS global
- * que conflita com o tema do guia; o cabeçalho abaixo é próprio.
+ * Esta página NÃO usa BwaNav — ele injeta CSS global que conflita com o
+ * tema do guia; o cabeçalho abaixo é próprio. O rodapé, porém, é o BwaFooter
+ * oficial do site, com os estilos .bwa que ele precisa escopados em
+ * .guia-root no fim de guia-investidor.css.
  *
  * Regra de conteúdo: nenhuma promessa de renda, ocupação ou
  * rentabilidade. Toda faixa numérica é retrato de mercado.
