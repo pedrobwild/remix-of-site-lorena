@@ -420,6 +420,17 @@
   margin-top: 0;
 }
 
+/* O acordeão base (home-bwa.css) fecha .bwa-faq-answer; aqui a classe .bwa-open reabre */
+.bwa-parceiros .bwa-faq-item.bwa-open .bwa-faq-answer {
+  max-height: 600px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bwa-parceiros .bwa-faq-answer {
+    transition: none;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .bwa-parceiros html {
     scroll-behavior: smooth;
