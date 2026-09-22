@@ -26,6 +26,7 @@ const ROTAS_INDEXAVEIS = [
   { path: "/conteudos", priority: "0.8", changefreq: "weekly" },
   { path: "/faq", priority: "0.7", changefreq: "monthly" },
   { path: "/contato", priority: "0.7", changefreq: "monthly" },
+  { path: "/escopo", priority: "0.7", changefreq: "monthly" },
   { path: "/privacidade", priority: "0.3", changefreq: "yearly" },
 ];
 
