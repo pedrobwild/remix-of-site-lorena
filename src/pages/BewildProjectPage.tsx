@@ -161,6 +161,17 @@ export default function BewildProjectPage({ slug }: Props) {
     // Sem seo_description/summary no admin, monta a frase com bairro/metragem/tipo
     // reais do projeto (evita ~100 URLs com a mesma description genérica).
     description: seoDescription,
+    keywords: [
+      "reforma de apartamento em SP",
+      "reforma de apartamento São Paulo",
+      project?.neighborhood ? `reforma de apartamento ${project.neighborhood}` : null,
+      project?.project_type ? `${project.project_type} reformado em SP` : null,
+      "antes e depois reforma apartamento",
+      "custo de reforma",
+      "Bewild",
+    ]
+      .filter(Boolean)
+      .join(", "),
     canonicalPath: `/portfolio/${slug}`,
     ogType: "article",
     ogImage: project?.og_image_url || project?.cover_url || undefined,

@@ -278,11 +278,11 @@ export default function ParceirosPage() {
   }
 
   useSeo({
-    title: "Parceiros — corretores, imobiliárias e incorporadoras | Bewild",
+    title: "Parcerias em reforma de apartamento em SP: corretores e imobiliárias | Bewild",
     description:
-      "Você vende o imóvel, a Bewild entrega pronto: reforma completa de studios e apartamentos compactos em SP, com preço e prazo em contrato e 5 anos de garantia. Programa de indicação para corretores, imobiliárias e incorporadoras.",
+      "Você vende o imóvel, a Bewild entrega pronto: reforma de apartamento em SP completa, com preço e prazo em contrato e 5 anos de garantia. Programa de indicação para corretores, imobiliárias e incorporadoras.",
     keywords:
-      "parceria corretor reforma, indicação reforma comissão, reforma de studio para investidor, reforma apartamento compacto São Paulo, incorporadora reforma pós-chaves, Bewild parceiros",
+      "reforma de apartamento em SP, parceria corretor reforma, indicação reforma comissão, reforma de studio para investidor, reforma apartamento compacto São Paulo, incorporadora reforma pós-chaves, custo de reforma, Bewild parceiros",
     canonicalPath: "/parceiros",
     ogType: "website",
     jsonLd: settings
