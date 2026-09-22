@@ -86,7 +86,7 @@ const FAQ_ITEMS: Array<{ q: string; a: string }> = [
   },
   {
     q: "Qual a ocupação média de um studio em São Paulo?",
-    a: "As médias observadas ficam entre 65% e 80%, variando por bairro e temporada. Unidades bem operadas em bairros de alta demanda costumam trabalhar na parte de cima dessa faixa.",
+    a: "As ocupações medianas por bairro observadas no levantamento ficam entre 53% e 64%, variando por bairro e temporada. Unidades bem operadas em bairros de alta demanda costumam trabalhar na parte de cima dessa faixa.",
   },
   {
     q: "Vale a pena contratar uma administradora?",
@@ -98,7 +98,7 @@ const FAQ_ITEMS: Array<{ q: string; a: string }> = [
   },
   {
     q: "Qual o melhor bairro para investir em short stay?",
-    a: "Depende do orçamento e do perfil de risco. Pinheiros, Vila Mariana e Consolação aparecem com boa relação entre risco e retorno; Itaim Bibi e Vila Olímpia têm diárias mais altas, mas exigem investimento de aquisição maior.",
+    a: "Depende do orçamento e do perfil de risco. Pinheiros, Consolação e Bela Vista aparecem com boa relação entre risco e retorno; Itaim Bibi e Jardim Paulista têm diárias mais altas, mas exigem investimento de aquisição maior.",
   },
 ];
 
@@ -236,14 +236,15 @@ export default function GuiaInvestidorPage() {
             </p>
 
             <p>
-              Duas variáveis deslocam a faixa da tabela para cima ou para baixo dentro do mesmo
+              Duas variáveis deslocam os números da tabela para cima ou para baixo dentro do mesmo
               bairro. A metragem: studios abaixo de 25 m² tendem a operar cerca de 8% abaixo da
               média do bairro, e acima de 35 m², cerca de 8% acima. E o nível de acabamento:
               unidades com acabamento e fotos acima da média costumam operar perto de 1,2× a
-              faixa base, e unidades com design autoral e operação profissional, perto de 1,45×.
+              diária média do bairro, e unidades com design autoral e operação profissional,
+              perto de 1,45×.
             </p>
             <p>
-              Para chegar ao topo da faixa, o conjunto que mais aparece nas unidades bem
+              Para operar acima da média do bairro, o conjunto que mais aparece nas unidades bem
               posicionadas é o mesmo: marcenaria planejada, iluminação cênica e fotos
               profissionais.
             </p>
@@ -743,8 +744,8 @@ export default function GuiaInvestidorPage() {
         <section className="bwa-gi-disclaimer">
           <div className="bwa-shell">
             <p className="bwa-mono">
-              As faixas e percentuais deste guia são referências de mercado coletadas pela Bewild
-              a partir de bases do setor, com médias trimestrais da edição 2026. Não constituem
+              As faixas e percentuais deste guia são referências de mercado compiladas pela Bewild
+              a partir de bases do setor, com os períodos declarados em cada seção. Não constituem
               promessa nem projeção de rendimento. Resultados reais dependem de localização,
               produto, execução da reforma, qualidade das fotos, gestão operacional, sazonalidade
               e concorrência. A Bewild não garante renda, ocupação ou rentabilidade.
