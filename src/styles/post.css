@@ -149,3 +149,12 @@
 
 /* ── Centralizar coluna de leitura nos posts (24/ago) ───────────────────── */
 .pt-title,.pt-excerpt,.pt-cover,.pt-body,.pt-faq__inner{margin-inline:auto}
+
+/* Links internos do artigo (SEO: caminhos de rastreamento a partir do post) */
+.pt-links{padding:clamp(28px,4vw,48px) 0 0}
+.pt-links__grid{list-style:none;margin:20px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.pt-links__grid a{display:flex;flex-direction:column;gap:6px;min-height:44px;padding:16px 18px;border:1px solid var(--pt-hair);border-radius:4px;background:#fff;text-decoration:none;color:#1A2332;transition:border-color .18s ease,transform .18s ease}
+.pt-links__grid a:hover{border-color:#11355B;transform:translateY(-2px)}
+.pt-links__grid a:focus-visible{outline:2px solid #2F86B8;outline-offset:2px}
+.pt-links__grid strong{font-size:15px;font-weight:700;line-height:1.3;color:#11355B}
+.pt-links__grid span{font-size:13px;line-height:1.5;color:#5A6472}

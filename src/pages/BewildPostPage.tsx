@@ -27,6 +27,7 @@ import { useBewildPost, useBewildRelatedPosts } from "@/lib/useBewildPost";
 import { postAuthorByline, postAuthorJsonLd, postDates, postTitleFromSlug } from "@/lib/postSeo";
 import { navigate } from "@/lib/useHashRoute";
 import { keywordsForPost } from "@/lib/postKeywords";
+import { internalLinksForPost } from "@/lib/postInternalLinks";
 import "@/styles/post.css";
 import "@/styles/conteudos.css";
 
@@ -369,6 +370,27 @@ export default function BewildPostPage({ slug }: Props) {
             </div>
           </section>
         ) : null}
+
+        {/* LINKS INTERNOS */}
+        <section className="pt-links">
+          <div className="container">
+            <div className="pt-rel-head">
+              <span className="n">↳</span>
+              <h2>Páginas relacionadas</h2>
+              <span className="ln" />
+            </div>
+            <ul className="pt-links__grid">
+              {internalLinksForPost(post.slug, post.category).map((l) => (
+                <li key={l.href}>
+                  <a href={l.href}>
+                    <strong>{l.label}</strong>
+                    <span>{l.description}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
 
         {/* RELATED */}
         {related.length > 0 ? (
