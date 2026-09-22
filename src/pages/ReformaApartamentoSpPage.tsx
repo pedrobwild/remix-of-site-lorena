@@ -169,7 +169,8 @@ export default function ReformaApartamentoSpPage() {
             </ul>
             <p className="bwa-servico-text" style={{ marginTop: 24 }}>
               Atendemos studios e apartamentos de qualquer metragem em São Paulo
-              capital. Veja obras entregues no{" "}
+              capital. Também reformamos escritórios e salas comerciais. Veja
+              obras entregues no{" "}
               <a href="/portfolio">portfólio</a> e o passo a passo do processo em{" "}
               <a href="/conteudos/reforma-de-apartamento-em-sao-paulo-guia">
                 reforma de apartamento em São Paulo: o guia completo
