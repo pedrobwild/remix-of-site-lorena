@@ -2924,10 +2924,6 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .bwa-process-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
       .bwa-objective {
         min-height: 570px;
       }
@@ -3302,10 +3298,6 @@
       }
 
       .bwa-included-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .bwa-process-grid {
         grid-template-columns: 1fr;
       }
 
