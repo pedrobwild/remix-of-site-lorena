@@ -52,6 +52,48 @@ const FAQ_ITEMS: { q: string; a: string }[] = [
 export default function FaqPage() {
   const { settings } = useSiteSettings();
   const [aberto, setAberto] = useState(0);
+  const [pergunta, setPergunta] = useState("");
+  const [carregando, setCarregando] = useState(false);
+  const [erroIa, setErroIa] = useState<string | null>(null);
+  const [respostaIa, setRespostaIa] = useState<RespostaIa | null>(null);
+  const respostaRef = useRef<HTMLDivElement>(null);
+
+  async function perguntar(e: React.FormEvent) {
+    e.preventDefault();
+    if (carregando) return;
+    const texto = pergunta.trim();
+    if (texto.length < 8) {
+      setErroIa("Escreva sua pergunta com um pouco mais de detalhe.");
+      return;
+    }
+    setErroIa(null);
+    setCarregando(true);
+    trackEvent("faq_ai_question", { location: "faq" });
+
+    try {
+      const { data, error } = await supabase.functions.invoke("faq-answer", {
+        body: { pergunta: texto },
+      });
+      const payload = data as { resposta?: RespostaIa; error?: string } | null;
+      if (error || !payload?.resposta) {
+        setErroIa(
+          payload?.error ||
+            "Não conseguimos responder agora. Tente de novo em instantes ou fale com a gente no WhatsApp.",
+        );
+        return;
+      }
+      setRespostaIa(payload.resposta);
+      trackEvent("faq_ai_answer", { location: "faq" });
+      window.setTimeout(() => {
+        respostaRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }, 60);
+    } catch {
+      setErroIa("Não conseguimos responder agora. Tente de novo em instantes.");
+    } finally {
+      setCarregando(false);
+    }
+  }
+
 
   useSeo({
     title: "Perguntas frequentes sobre reforma de apartamentos | Bewild",
