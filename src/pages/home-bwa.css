@@ -1782,22 +1782,86 @@
       letter-spacing: -.02em;
     }
 
-    /* Reforma à distância: abertura do #workflow (bloco 06) */
-    .bwa-shell.bwa-remote-intro {
-      padding-top: 0;
-      margin-bottom: clamp(32px, 4vw, 48px);
+    .bwa-process {
+      margin-bottom: clamp(72px, 9vw, 132px);
     }
 
-    .bwa-shell.bwa-remote-intro .bwa-lead {
-      max-width: 64ch;
-      color: var(--bwa-lead-paper);
+    .bwa-process-head {
+      display: grid;
+      grid-template-columns: .58fr 1.42fr;
+      gap: clamp(40px, 8vw, 140px);
+      align-items: start;
+      margin-bottom: clamp(48px, 6vw, 84px);
     }
 
-    /* Bloco "Já incluso no contrato" agora vive dentro do #workflow:
-       o padding próprio é zerado para não duplicar o respiro da seção. */
-    .bwa-workflow .bwa-included {
-      padding-block: 0;
-      margin-bottom: clamp(48px, 6vw, 80px);
+    .bwa-process-head h2 {
+      max-width: 900px;
+      margin: 0;
+    }
+
+    .bwa-process-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin: 0;
+      padding: 0;
+      border-top: 1px solid var(--bwa-white-line);
+      border-left: 1px solid var(--bwa-white-line);
+      list-style: none;
+    }
+
+    .bwa-process-phase {
+      grid-column: 1 / -1;
+      padding: 13px clamp(20px, 2vw, 28px);
+      border-right: 1px solid var(--bwa-white-line);
+      border-bottom: 1px solid var(--bwa-white-line);
+      color: rgba(255, 255, 255, .72);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      line-height: 1.5;
+      text-transform: uppercase;
+    }
+
+    .bwa-process-step {
+      min-width: 0;
+      min-height: 230px;
+      display: grid;
+      align-content: space-between;
+      gap: clamp(40px, 5vw, 72px);
+      padding: clamp(24px, 3vw, 38px);
+      border-right: 1px solid var(--bwa-white-line);
+      border-bottom: 1px solid var(--bwa-white-line);
+    }
+
+    .bwa-process-step span {
+      color: rgba(255, 255, 255, .78);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      line-height: 1.5;
+      text-transform: uppercase;
+    }
+
+    .bwa-process-step p {
+      max-width: 34ch;
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      font-size: clamp(16px, 1.35vw, 21px);
+      line-height: 1.55;
+      letter-spacing: -.02em;
+      overflow-wrap: anywhere;
+    }
+
+    .bwa-process-foot {
+      margin: clamp(28px, 4vw, 48px) auto 0;
+      color: rgba(255, 255, 255, .72);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      letter-spacing: .08em;
+      line-height: 1.6;
+      text-align: center;
     }
 
     /* Lead da abertura do #como-funciona: legível no fundo escuro. */
@@ -2865,6 +2929,12 @@
       }
     }
 
+    @media (min-width: 700px) and (max-width: 1024px) {
+      .bwa-process-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
     @media (max-width: 900px) {
       :root {
         --bwa-gutter: 22px;
@@ -2953,6 +3023,11 @@
       .bwa-manifesto-grid,
       .bwa-faq-head,
       .bwa-final-grid {
+        grid-template-columns: 1fr;
+        gap: 34px;
+      }
+
+      .bwa-process-head {
         grid-template-columns: 1fr;
         gap: 34px;
       }
@@ -3142,6 +3217,12 @@
       }
     }
 
+    @media (max-width: 699px) {
+      .bwa-process-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     @media (max-width: 600px) {
       .bwa-display {
         font-size: clamp(43px, 13.5vw, 67px);
@@ -3230,6 +3311,10 @@
 
       .bwa-included-grid {
         grid-template-columns: 1fr;
+      }
+
+      .bwa-process-step {
+        min-height: 200px;
       }
 
       .bwa-workflow-principles {
