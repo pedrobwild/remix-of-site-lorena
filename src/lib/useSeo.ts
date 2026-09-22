@@ -16,6 +16,8 @@ export type SeoInput = {
   ogImage?: string;
   ogType?: "website" | "article";
   noindex?: boolean;
+  /** Palavras-chave da rota. Sobrepõe `settings.seo_keywords` (global). */
+  keywords?: string;
   jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
 };
 
@@ -259,8 +261,8 @@ function applySeo(settings: SiteSettings, seo: SeoInput) {
   document.head.appendChild(hrefDefault);
 
   // SEO extras (autor, keywords, geo)
-  if (settings.seo_keywords)
-    setMeta('meta[name="keywords"]', { name: "keywords", content: settings.seo_keywords });
+  const keywords = seo.keywords || settings.seo_keywords;
+  if (keywords) setMeta('meta[name="keywords"]', { name: "keywords", content: keywords });
   if (settings.seo_author)
     setMeta('meta[name="author"]', { name: "author", content: settings.seo_author });
   if (settings.seo_geo_region)
