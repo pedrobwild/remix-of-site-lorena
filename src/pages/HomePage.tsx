@@ -8,10 +8,9 @@ import { trackEvent } from "@/lib/ga4";
 // @ts-expect-error - JS module, no types
 import { initHomeBwa } from "./home-bwa-script.js";
 
-const TITLE =
-  "Reforma completa de studios e apartamentos compactos em São Paulo | Bewild";
+const TITLE = "Reforma de apartamento em São Paulo | Bewild";
 const DESCRIPTION =
-  "Projeto, obra, marcenaria e mobília em um contrato, com preço e prazo fechados. Studio ou apartamento compacto pronto para morar, alugar ou vender em cerca de 60 dias úteis, em São Paulo.";
+  "Reforma de apartamento em São Paulo do projeto à entrega: obra, marcenaria e mobília em um contrato, preço e prazo fechados e obra em 60 dias úteis.";
 const THEME_COLOR = "#0B2342";
 const FONTS_HREF =
   "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&display=swap";

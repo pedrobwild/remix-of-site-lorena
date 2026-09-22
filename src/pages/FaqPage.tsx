@@ -96,9 +96,9 @@ export default function FaqPage() {
 
 
   useSeo({
-    title: "Perguntas frequentes sobre reforma de apartamentos | Bewild",
+    title: "Reforma de apartamento ou casa em SP: dúvidas | Bewild",
     description:
-      "Tire dúvidas sobre prazo, garantia, contrato fechado e as etapas da reforma completa até a entrega do apartamento pronto pela Bewild em São Paulo.",
+      "Perguntas frequentes sobre reforma de apartamento em São Paulo: prazo, preço fechado, garantia e onde a Bewild atua (obras de apartamentos, não casas).",
     canonicalPath: "/faq",
     ogType: "website",
     jsonLd: settings
