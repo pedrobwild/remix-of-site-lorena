@@ -85,6 +85,8 @@ export default function BwaSharedChrome({ children }: { children: ReactNode }) {
             <a href="/#workflow">Bwild Workflow</a>
             <a href="/#prova">Prova</a>
             <a href="/portfolio">Portfólio</a>
+          <a href="/onde-atuamos">Onde atuamos</a>
+            <a href="/onde-atuamos">Onde atuamos</a>
             <a href="/conteudos">Conteúdos</a>
             <a href="/faq">FAQ</a>
             <a href="/contato">Contato</a>
