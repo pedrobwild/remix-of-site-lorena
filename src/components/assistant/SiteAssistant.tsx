@@ -329,15 +329,12 @@ export default function SiteAssistant({ getPath = currentPath }: Props = {}) {
     if (el) el.scrollTop = el.scrollHeight;
   }, [msgs, open]);
 
-  const openPanel = useCallback(() => {
-    // Se o carregamento falhou antes, tenta de novo ao reabrir.
-    if (!kb) {
-      setLoadError(false);
-      errorShown.current = false;
-    }
-    setOpen(true);
-    trackEvent("assistant_open", { path: getPath() });
-  }, [getPath, kb]);
+  // O botão flutuante leva para a página de FAQ (/faq), que lista as
+  // perguntas e respostas do banco do assistente — o painel de conversa não
+  // abre mais a partir do launcher.
+  const goToFaq = useCallback(() => {
+    trackEvent("assistant_open", { path: getPath(), destino: "/faq" });
+  }, [getPath]);
 
   const closePanel = useCallback(() => setOpen(false), []);
 
@@ -464,20 +461,13 @@ export default function SiteAssistant({ getPath = currentPath }: Props = {}) {
       }}
     >
       {!open && (
-        <button
-          ref={launcherRef}
-          type="button"
-          className="bwas-launcher"
-          aria-haspopup="dialog"
-          aria-expanded={false}
-          onClick={openPanel}
-        >
+        <a ref={launcherRef} href="/faq" className="bwas-launcher" onClick={goToFaq}>
           <svg className="bwas-launcher-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path d="M4 5h16v11H9l-5 4z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
           </svg>
           <span className="bwas-launcher-long">Dúvidas? Pergunte aqui</span>
           <span className="bwas-launcher-short">Dúvidas</span>
-        </button>
+        </a>
       )}
 
       {open && (
