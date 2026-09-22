@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+import { prerenderPosts } from "./scripts/prerenderPosts";
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL || "https://aamlnkmqvjcowixdgqii.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY =
@@ -9,7 +10,7 @@ const SUPABASE_PUBLISHABLE_KEY =
 const SUPABASE_PROJECT_ID = process.env.VITE_SUPABASE_PROJECT_ID || "aamlnkmqvjcowixdgqii";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), prerenderPosts()],
   define: {
     "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(SUPABASE_URL),
     "import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY": JSON.stringify(SUPABASE_PUBLISHABLE_KEY),
