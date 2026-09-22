@@ -2,9 +2,13 @@
  * Depoimentos do Instagram na home: as mesmas 3 postagens do @bewild.oficial
  * que o orçamento público (Bwild Engine) mostra, no embed oficial.
  *
- * O iframe só é criado quando o card se aproxima da tela. Quem recusou
- * cookies não recebe o embed automaticamente: o card mostra um botão
- * "Carregar depoimento" e o link direto para a postagem.
+ * Os iframes só são criados quando o bloco de depoimentos se aproxima da
+ * tela — os 3 de uma vez, e não card a card: no celular os cards ficam
+ * lado a lado num trilho horizontal, e um card fora da tela nunca
+ * "intersecta" até o usuário arrastar (o depoimento só começaria a
+ * carregar depois do swipe). Quem recusou cookies não recebe o embed
+ * automaticamente: o card mostra um botão "Carregar depoimento" e o link
+ * direto para a postagem.
  *
  * A altura real vem do próprio Instagram por `postMessage`
  * ({ type: "MEASURE", details: { height } }), como no orçamento público.
@@ -65,7 +69,7 @@ export function installInstagramEmbeds(root: HTMLElement): Cleanup {
     const iframe = document.createElement("iframe");
     iframe.src = ref.embedUrl;
     iframe.title = `Depoimento de cliente no Instagram (${ref.code})`;
-    iframe.loading = "lazy";
+    iframe.setAttribute("loading", "lazy");
     iframe.setAttribute("scrolling", "no");
     iframe.setAttribute("allow", "encrypted-media");
     iframe.setAttribute("allowtransparency", "true");
@@ -101,18 +105,18 @@ export function installInstagramEmbeds(root: HTMLElement): Cleanup {
   let io: IntersectionObserver | null = null;
   if (!declined) {
     if ("IntersectionObserver" in window) {
+      // Observa o bloco (a seção `[data-instagram]`), não cada card — ver o
+      // comentário no topo do arquivo sobre o trilho horizontal do celular.
+      const block = cards[0].closest<HTMLElement>("[data-instagram]") ?? cards[0].parentElement ?? cards[0];
       io = new IntersectionObserver(
         (entries) => {
-          for (const en of entries) {
-            if (en.isIntersecting) {
-              mount(en.target as HTMLElement);
-              io?.unobserve(en.target);
-            }
-          }
+          if (!entries.some((en) => en.isIntersecting)) return;
+          cards.forEach(mount);
+          io?.disconnect();
         },
         { rootMargin: "400px 0px" },
       );
-      cards.forEach((c) => io!.observe(c));
+      io.observe(block);
     } else {
       cards.forEach(mount);
     }
