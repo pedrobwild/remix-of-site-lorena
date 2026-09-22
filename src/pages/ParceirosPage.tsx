@@ -1,7 +1,7 @@
 import { useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
-import { CONTACT, whatsappHref } from "@/components/landing/content";
+import { CONTACT } from "@/components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { isLeadDelivered, timeoutAfter } from "@/lib/leadDelivery";
 import { trackEvent } from "@/lib/ga4";
