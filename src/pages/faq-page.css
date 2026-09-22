@@ -1,0 +1,125 @@
+/* /faq — mesma linguagem visual da home (.bwa), tema claro.
+   Os tokens --bwa-*, as classes base (.bwa-shell, .bwa-label, .bwa-title,
+   .bwa-button) e o acordeão (.bwa-faq-*) são injetados pelo BwaNav via
+   home-bwa.css. Aqui só o que é específico da página. */
+
+.bwa-faqpage {
+  min-height: 100vh;
+  overflow-x: clip;
+  color: var(--bwa-ink);
+  background: var(--bwa-paper);
+}
+
+.bwa-faqpage-intro {
+  padding: clamp(148px, 17vw, 220px) 0 clamp(72px, 9vw, 132px);
+}
+
+/* Reaproveita a grade .bwa-faq-head da home (rótulo + título) */
+.bwa-faqpage-head {
+  margin-bottom: clamp(48px, 6vw, 88px);
+}
+
+.bwa-faqpage-head .bwa-title {
+  margin: 0;
+  max-width: 14ch;
+}
+
+.bwa-faqpage-lead {
+  max-width: 60ch;
+  margin: clamp(16px, 2.4vw, 28px) 0 0;
+  color: var(--bwa-ink-soft);
+  font-size: clamp(16px, 1.4vw, 19px);
+  line-height: 1.65;
+}
+
+/* h2 sem estilo visual próprio: a aparência fica no botão .bwa-faq-question */
+.bwa-faqpage-q {
+  margin: 0;
+  font: inherit;
+}
+
+/* Na home o acordeão abre via JS inline; aqui a classe .bwa-open basta */
+.bwa-faqpage .bwa-faq-item.bwa-open .bwa-faq-answer {
+  max-height: 600px;
+}
+
+.bwa-faqpage .bwa-faq-question:focus-visible {
+  outline: 2px solid var(--bwa-navy-2);
+  outline-offset: 4px;
+}
+
+/* Fecho em azul-marinho, como o CTA final da home */
+.bwa-faqpage-cta {
+  padding: clamp(64px, 8vw, 120px) 0;
+  border-top: 1px solid var(--bwa-line);
+  background: var(--bwa-navy);
+  color: var(--bwa-white);
+}
+
+.bwa-faqpage-cta-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(28px, 4vw, 64px);
+  align-items: center;
+}
+
+.bwa-faqpage-cta h2 {
+  margin: 0;
+  max-width: 22ch;
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(28px, 3.4vw, 48px);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -.01em;
+}
+
+.bwa-faqpage-cta h2 em {
+  font-style: italic;
+  font-weight: 300;
+}
+
+.bwa-faqpage-cta-actions {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+}
+
+.bwa-faqpage-whats {
+  color: var(--bwa-white);
+  font-size: 15px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.bwa-faqpage-cta-note {
+  margin: 10px 0 0;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: rgba(255, 255, 255, .72);
+}
+
+@media (max-width: 900px) {
+  .bwa-faqpage-cta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bwa-faqpage-cta .bwa-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .bwa-faqpage-cta-actions {
+    justify-items: stretch;
+  }
+
+  .bwa-faqpage-whats {
+    justify-self: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bwa-faqpage .bwa-faq-answer {
+    transition: none;
+  }
+}
