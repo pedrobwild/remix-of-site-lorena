@@ -49,6 +49,7 @@ export default function BwaFooter() {
               <a href="/contato">Contato</a>
             <a href="/escopo">Escopo com IA</a>
               <a href="/orcamento">Orçamento</a>
+              <a href="/parceiros">Parceiros</a>
             </nav>
           </div>
 
