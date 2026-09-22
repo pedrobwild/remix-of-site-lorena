@@ -16,6 +16,13 @@ A Bewild é uma empresa brasileira focada em transformar studios e apartamentos 
 ## Conteúdos publicados
 
 <!-- posts:start -->
+- [Piso vinílico ou porcelanato no studio para alugar: o que a Bewild especifica e por quê](/conteudos/piso-vinilico-ou-porcelanato-studio)
+- [Ar-condicionado no studio: quantos BTUs por metragem e por que ele muda a avaliação](/conteudos/ar-condicionado-studio-quantos-btus)
+- [Fechar a varanda do studio com vidro: regra do condomínio, custo e efeito na diária](/conteudos/fechar-varanda-em-vidro-studio-condominio)
+- [O que vem (e o que não vem) no seu studio novo em São Paulo](/conteudos/o-que-vem-no-studio-novo-sao-paulo)
+- [Cronograma de uma reforma de studio: 60 dias úteis, semana a semana](/conteudos/cronograma-reforma-studio-60-dias-uteis)
+- [Comprou studio na planta: o que fazer antes de receber as chaves](/conteudos/comprou-studio-na-planta-antes-das-chaves)
+- [O que perguntar ao síndico antes de reformar um studio (e o que depende do condomínio)](/conteudos/o-que-perguntar-ao-sindico-antes-de-reformar)
 - [Etapas de uma reforma de apartamento: o cronograma completo, do projeto à entrega das chaves](/conteudos/etapas-de-reforma-de-apartamento-cronograma)
 - [Quanto tempo demora uma reforma de apartamento? O prazo real, por tipo de obra](/conteudos/quanto-tempo-demora-reforma-apartamento)
 - [Quanto custa reformar um apartamento em São Paulo em 2026: o preço por m² de obras reais](/conteudos/quanto-custa-reformar-apartamento-sao-paulo-2026)
@@ -39,7 +46,7 @@ A Bewild é uma empresa brasileira focada em transformar studios e apartamentos 
 - [Short stay ou aluguel de longa duração: qual rende mais em um studio compacto](/conteudos/short-stay-ou-long-stay-studio-compacto)
 - [Como declarar a renda de Airbnb no imposto de renda](/conteudos/como-declarar-renda-airbnb-imposto-de-renda)
 - [Reforma tributária e short stay: quem realmente vai pagar IBS e CBS](/conteudos/reforma-tributaria-short-stay-ibs-cbs)
-- [Reforma turn-key ou tradicional: qual vale mais para rentabilizar](/conteudos/reforma-turn-key-ou-tradicional)
+- [Reforma turn-key ou tradicional: a planilha de custo total antes de decidir](/conteudos/reforma-turn-key-ou-tradicional)
 - [Condomínio pode proibir Airbnb? O que o STJ decidiu em 2026 e o que checar antes de comprar um studio em São Paulo](/conteudos/studios-airbnb-sao-paulo-o-que-a-lei-permite)
 <!-- posts:end -->
 
