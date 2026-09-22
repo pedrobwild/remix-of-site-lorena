@@ -6,19 +6,29 @@ Este documento descreve o contrato entre as rotas da SPA e a edge function
 
 ## Por que existe essa paridade
 
-O hosting da Lovable já entrega `index.html` para qualquer path desconhecido
-(SPA fallback), então o navegador sempre carrega a SPA. O problema é que
-crawlers (Googlebot, Bingbot) e ferramentas de SEO precisam saber **se uma
-URL é uma página válida** antes de indexar. Para isso usamos a edge function
-`supabase/functions/not-found-check/index.ts`, que responde:
+O hosting da Lovable entrega `index.html` com **HTTP 200** para qualquer path
+desconhecido (SPA fallback), então o navegador sempre carrega a SPA.
 
-- **HTTP 200** + `reason` apropriado → rota válida, pode indexar.
-- **HTTP 404** → rota inexistente, não indexar (e logamos em `seo_404_log`).
+> **Atenção (corrigido em 22/09/2026 — SEO-07):** o Googlebot **não** consulta
+> `not-found-check`. Nada no caminho do crawler passa por essa edge function —
+> nenhum código da SPA a chama (confira com
+> `grep -rn "not-found-check" src`: só testes e o script de paridade
+> aparecem). Para o Google, o sinal de "página não encontrada" é o
+> `<meta name="robots" content="noindex, nofollow">` que a `NotFoundPage`
+> injeta no render — um soft-404 que ele classifica como "Não encontrada
+> (404)" mesmo recebendo 200. A versão anterior deste documento afirmava que
+> os crawlers usavam a função, o que nunca foi verdade.
 
-Se a SPA tem uma rota pública (ex.: `/blog/tags`) que a edge function não
-conhece, o Google recebe **404 indevido** e remove a URL do índice. Esse é
-um dos bugs de SEO mais silenciosos que existem: a página funciona no
-navegador, mas some do Google em semanas.
+A edge function `supabase/functions/not-found-check/index.ts` responde:
+
+- **HTTP 200** + `reason` apropriado → rota válida.
+- **HTTP 404** → rota inexistente (e registra em `seo_404_log`).
+
+Mesmo sem estar no caminho do crawler, a paridade continua valendo a pena por
+dois motivos concretos: é a lista revisável de "quais rotas públicas existem",
+consultável por qualquer ferramenta externa de verificação de SEO; e é o
+gatilho que obriga quem cria uma rota a lembrar do `sitemap.xml` e da
+navegação. Por isso o CI continua quebrando na divergência.
 
 O script `scripts/check-routes-parity.mjs` previne isso comparando as duas
 fontes de verdade em todo build e em todo CI.

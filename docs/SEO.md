@@ -91,8 +91,9 @@ Ele é **regenerado automaticamente no `prebuild`** pelo script
 `scripts/generate-sitemap.mjs`, que consulta o banco via REST (chave pública) e
 inclui:
 
-- as 6 rotas estáticas indexáveis (`/`, `/portfolio`, `/diagnostico`,
-  `/conteudos`, `/faq`, `/privacidade`);
+- as 7 rotas estáticas indexáveis (`/`, `/portfolio`, `/diagnostico`,
+  `/conteudos`, `/faq`, `/contato`, `/privacidade`) — `/contato` entrou em
+  18/09/2026 e a contagem aqui dizia 6 até 22/09/2026;
 - um `<url>` por projeto com `published = true` e `visible = true` (prioridade 0.7);
 - um `<url>` por conteúdo com `published = true` (prioridade 0.6);
 - `lastmod` a partir da data mais recente disponível de cada registro.
@@ -101,6 +102,25 @@ O script nunca quebra o build: se faltar env, a rede falhar ou vierem menos de 6
 projetos, ele imprime um aviso e mantém o arquivo atual.
 
 Rodar manualmente: `npm run sitemap`.
+
+### Por que existem duas fontes de sitemap (SEO-08)
+
+Além do script de build existe a edge function `supabase/functions/sitemap/`.
+**Ela não serve `/sitemap.xml`** — é o motor do botão *"gerar sitemap agora"*
+em `Admin › SEO › Sitemap & Robots`, que mostra as URLs e permite baixar o
+arquivo. Quem vai ao ar continua sendo o `public/sitemap.xml` commitado; o
+próprio painel avisa isso.
+
+As duas fontes foram conferidas em 22/09/2026 e estão **alinhadas**: mesmas 7
+rotas estáticas, mesmas prioridades, mesmo filtro (`published = true AND
+visible = true` para projetos, `published = true` para conteúdos) e mesmo
+critério de `lastmod`. Travado por `src/lib/__tests__/sitemapParidade.test.ts`.
+Se alterar uma, altere a outra — senão o preview do admin passa a divergir do
+arquivo publicado.
+
+A edge function `supabase/functions/robots/` tem a mesma natureza de preview e
+**é mais permissiva** que o `public/robots.txt` real: não traz os `Disallow`
+de `/gpt-knowledge/` e `/bakeoff/`. O arquivo estático é a fonte de verdade.
 
 ---
 

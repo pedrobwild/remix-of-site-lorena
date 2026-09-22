@@ -9,8 +9,23 @@ const BASE = process.env.BASE || "http://127.0.0.1:4173";
 const OUT = path.resolve("out");
 fs.mkdirSync(OUT, { recursive: true });
 
-const ROUTES = ["/", "/diagnostico", "/portfolio", "/conteudos", "/faq", "/privacidade", "/rota-inexistente-xyz"];
-const WIDTHS = [360, 390, 768, 1440];
+// Rodada 2 (22/09/2026): acrescenta /contato (rota nova do agente Lovable), uma
+// ficha de projeto e um conteúdo reais, e as larguras 320 (menor tela comum) e
+// 1280 (notebook). Os slugs dinâmicos só renderizam conteúdo quando o backend
+// está acessível; sem rede eles exercitam o estado vazio/erro da página.
+const ROUTES = [
+  "/",
+  "/diagnostico",
+  "/portfolio",
+  "/portfolio/ab-modern-campo-belo",
+  "/conteudos",
+  "/conteudos/recebi-chaves-studio-na-planta-o-que-fazer",
+  "/faq",
+  "/contato",
+  "/privacidade",
+  "/rota-inexistente-xyz",
+];
+const WIDTHS = [320, 360, 390, 768, 1280, 1440];
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium", args: ["--no-sandbox"] });
 const report = {};
@@ -109,7 +124,12 @@ for (const route of ROUTES) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 800 }, locale: "pt-BR" });
   const page = await ctx.newPage();
   const net = [];
-  page.on("request", (r) => { if (/functions\/v1|wa\.me|googletagmanager|facebook|supabase/.test(r.url())) net.push(`${r.method()} ${r.url().slice(0, 120)}`); });
+  const leadPayloads = [];
+  page.on("request", (r) => {
+    if (/functions\/v1|wa\.me|googletagmanager|facebook|supabase/.test(r.url())) net.push(`${r.method()} ${r.url().slice(0, 120)}`);
+    // LEAD-06: o corpo enviado a notify-lead é a prova da atribuição (UTM).
+    if (/functions\/v1\/notify-lead/.test(r.url())) leadPayloads.push(r.postData()?.slice(0, 2000) ?? null);
+  });
   const popups = [];
   page.on("popup", (p) => popups.push(p.url().slice(0, 160)));
   await page.addInitScript(() => { try { sessionStorage.setItem("bw-splash", "1"); localStorage.setItem("lal_cookie_consent", "accepted"); } catch {} });
@@ -147,7 +167,7 @@ for (const route of ROUTES) {
   await page.waitForTimeout(1500);
   const after = await page.evaluate(() => ({ success: !!document.querySelector(".dg-success"), successText: document.querySelector(".dg-success")?.textContent.trim().slice(0, 200), formCleared: !document.querySelector('input[name="nome"], #nome')?.value }));
   await page.screenshot({ path: path.join(OUT, "diagnostico-390-after-submit.png"), fullPage: true }).catch(() => {});
-  report.__form = { form, emptyErrors, chipTexts, clickedGroups: clicked, stateBefore, after, net, popups };
+  report.__form = { form, emptyErrors, chipTexts, clickedGroups: clicked, stateBefore, after, net, popups, leadPayloads };
   await ctx.close();
 }
 
