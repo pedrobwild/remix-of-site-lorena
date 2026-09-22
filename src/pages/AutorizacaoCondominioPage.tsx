@@ -23,7 +23,7 @@ const ITENS: { q: string; a: string }[] = [
   },
   {
     q: "Como pedir a autorização de reforma ao condomínio?",
-    a: "O caminho é o protocolo na administradora: ofício ou formulário próprio do condomínio, com anexos técnicos (ART/RRT, seguro, cronograma) e, em alguns prédios, assinatura dos vizinhos vizinhos ao imóvel. Aprovado o pedido, a obra passa a valer dentro das condições combinadas — horários, rota de entulho e cuidados com áreas comuns.",
+    a: "O caminho é o protocolo na administradora: ofício ou formulário próprio do condomínio, com anexos técnicos (ART/RRT, seguro, cronograma) e, em alguns prédios, ciência dos vizinhos ao imóvel. Aprovado o pedido, a obra passa a valer dentro das condições combinadas — horários, rota de entulho e cuidados com áreas comuns.",
   },
   {
     q: "Quanto tempo demora a aprovação do condomínio?",
@@ -128,7 +128,7 @@ export default function AutorizacaoCondominioPage() {
         <section className="bwa-faqpage-cta" aria-label="Solicitar orçamento">
           <div className="bwa-shell bwa-faqpage-cta-grid">
             <h2>
-              Protocollamos, aprovamos e executamos. <em>Você acompanha.</em>
+              Protocolamos, aprovamos e executamos. <em>Você acompanha.</em>
             </h2>
             <div className="bwa-faqpage-cta-actions">
               <a className="bwa-button bwa-button-light" href="/diagnostico" data-cta="autorizacao-cta">
