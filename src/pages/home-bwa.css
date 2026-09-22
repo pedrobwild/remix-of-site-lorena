@@ -1696,6 +1696,31 @@
     .bwa-included {
       padding-block: clamp(80px, 10vw, 150px);
     }
+    .bwa-remote-intro {
+      padding-top: 0;
+      margin-bottom: clamp(32px, 4vw, 48px);
+    }
+
+    .bwa-remote-intro .bwa-title {
+      max-width: 980px;
+    }
+
+    .bwa-shell.bwa-remote-intro .bwa-lead {
+      color: var(--bwa-lead-paper);
+      max-width: 64ch;
+      margin-top: clamp(16px, 2.4vw, 28px);
+    }
+
+    .bwa-workflow .bwa-included {
+      padding-block: 0;
+      margin-bottom: clamp(48px, 6vw, 80px);
+    }
+
+    /* Lead do #como-funciona: a seção escura é pai do shell, então o token não alcança. */
+    .bwa-responsibility .bwa-shell .bwa-lead {
+      color: var(--bwa-lead-paper);
+    }
+
 
     .bwa-included-head {
       display: grid;
