@@ -4563,6 +4563,7 @@
 @keyframes bwa-marcenaria-pulse{0%,100%{opacity:.55}50%{opacity:1}}
 .bwa-marcenaria-status{margin:14px 0 0;min-height:1em;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--bwa-lead-paper)}
 .bwa-marcenaria-status:empty{display:none}
+.bwa-marcenaria-retry{display:inline-block;min-height:44px;padding:0 4px;background:none;border:0;font:inherit;color:var(--bwa-white);text-decoration:underline;text-underline-offset:4px;cursor:pointer}
 .bwa-marcenaria-actions{margin:clamp(18px,2.5vw,28px) 0 0}
 .bwa-marcenaria-open{color:var(--bwa-white);font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;text-decoration:underline;text-underline-offset:4px}
 @media (prefers-reduced-motion:reduce){.bwa-marcenaria-ph{animation:none}.bwa-marcenaria-item:hover img{transform:none}}
