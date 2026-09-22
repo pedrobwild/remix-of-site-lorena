@@ -2929,6 +2929,12 @@
       }
     }
 
+    @media (min-width: 700px) and (max-width: 1024px) {
+      .bwa-process-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
     @media (max-width: 900px) {
       :root {
         --bwa-gutter: 22px;
@@ -3208,6 +3214,12 @@
 
       .bwa-footer {
         padding-bottom: 96px;
+      }
+    }
+
+    @media (max-width: 699px) {
+      .bwa-process-grid {
+        grid-template-columns: 1fr;
       }
     }
 
