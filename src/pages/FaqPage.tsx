@@ -171,6 +171,75 @@ export default function FaqPage() {
           </div>
         </section>
 
+        <section className="bwa-faqpage-ask" aria-labelledby="faq-ask-title">
+          <div className="bwa-shell">
+            <p className="bwa-label">Pergunte à Bewild</p>
+            <h2 className="bwa-faqpage-ask-title" id="faq-ask-title">
+              Sua dúvida não está na lista? <em>Pergunte aqui.</em>
+            </h2>
+            <p className="bwa-faqpage-lead">
+              Escreva com suas palavras e a assistente da Bewild responde na
+              hora, com base em como a gente trabalha. Para preço e prazo do seu
+              imóvel, quem fecha é o time no diagnóstico.
+            </p>
+
+            <form className="bwa-faqpage-ask-form" onSubmit={perguntar}>
+              <label className="bwa-faqpage-ask-label" htmlFor="faq-pergunta">
+                Sua pergunta
+              </label>
+              <textarea
+                id="faq-pergunta"
+                className="bwa-faqpage-ask-input"
+                rows={3}
+                maxLength={1000}
+                placeholder="Ex.: moro em Curitiba e comprei um studio de 28 m² na Vila Olímpia. Como funciona o acompanhamento?"
+                value={pergunta}
+                onChange={(e) => setPergunta(e.target.value)}
+              />
+              <button className="bwa-button" type="submit" disabled={carregando}>
+                {carregando ? "Pensando…" : "Perguntar"} <span aria-hidden="true">→</span>
+              </button>
+            </form>
+
+            <div aria-live="polite" ref={respostaRef}>
+              {erroIa && <p className="bwa-faqpage-ask-erro">{erroIa}</p>}
+
+              {respostaIa && (
+                <div className="bwa-faqpage-ask-answer">
+                  <p className="bwa-faqpage-ask-text">{respostaIa.resposta}</p>
+                  {respostaIa.pontos?.length > 0 && (
+                    <ul className="bwa-faqpage-ask-list">
+                      {respostaIa.pontos.map((p) => (
+                        <li key={p}>{p}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {respostaIa.proximo_passo && (
+                    <p className="bwa-faqpage-ask-next">{respostaIa.proximo_passo}</p>
+                  )}
+                  <div className="bwa-faqpage-ask-actions">
+                    <a className="bwa-button" href="/diagnostico" data-cta="faq-ia-diagnostico">
+                      Solicitar orçamento <span aria-hidden="true">→</span>
+                    </a>
+                    <a
+                      className="bwa-faqpage-ask-whats"
+                      href={whatsappHref()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Falar no WhatsApp <span aria-hidden="true">→</span>
+                    </a>
+                  </div>
+                  <p className="bwa-faqpage-ask-note">
+                    Resposta gerada por IA com base nas informações da Bewild.
+                    Preço e prazo do seu imóvel são confirmados no diagnóstico.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
         <section className="bwa-faqpage-cta" aria-label="Solicitar orçamento">
           <div className="bwa-shell bwa-faqpage-cta-grid">
             <h2>
