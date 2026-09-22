@@ -287,12 +287,18 @@ function buildCrmPayload(lead: Lead) {
     ? String(lead.whatsapp).replace(/\D/g, "")
     : "";
   const phone = whatsappDigits ? `+55${whatsappDigits}` : null;
+  // O texto livre de "Detalhes" precisa aparecer no card do CRM, não só
+  // dentro de `extra`. Enviamos nos campos de texto mais comuns do webhook.
+  const detalhes = cut(lead.message, FIELD_LIMITS.message);
 
   return {
     source: "site_form",
     name: lead.name && lead.name.trim() ? lead.name.trim() : "Lead sem nome",
     email: lead.email ?? null,
     phone,
+    message: detalhes,
+    notes: detalhes,
+    observacao: detalhes,
     utm_source: lead.utm_source ?? null,
     utm_medium: lead.utm_medium ?? null,
     utm_campaign: lead.utm_campaign ?? null,

@@ -1,6 +1,8 @@
 import BwaFooter from "@/components/BwaFooter";
+import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
+import { BAIRROS, REMOTO_ITEMS } from "@/lib/bairrosSp";
 import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./onde-atuamos.css";
@@ -12,50 +14,6 @@ import "./onde-atuamos.css";
  * capital é a área de obra (bairros reais do portfólio) e a
  * reforma à distância atende clientes de outras cidades.
  * ============================================================ */
-
-// Bairros reais com projetos publicados no portfólio (consulta ao banco
-// em set/2026). "São Paulo" genérico e grafias duplicadas ficam de fora.
-const BAIRROS: string[] = [
-  "Alto da Boa Vista",
-  "Avenida Paulista",
-  "Barra Funda",
-  "Bela Vista",
-  "Brooklin",
-  "Butantã",
-  "Campo Belo",
-  "Cerqueira César",
-  "Chácara Klabin",
-  "Cidade Jardim",
-  "Consolação",
-  "Higienópolis",
-  "Ibirapuera",
-  "Indianópolis",
-  "Ipiranga",
-  "Itaim Bibi",
-  "Jardim Paulista",
-  "Liberdade",
-  "Moema",
-  "Paraíso",
-  "Perdizes",
-  "Pinheiros",
-  "República",
-  "Santo Amaro",
-  "Vila Buarque",
-  "Vila Clementino",
-  "Vila Madalena",
-  "Vila Mariana",
-  "Vila Nova Conceição",
-  "Vila Olímpia",
-];
-
-const REMOTO_ITEMS: { n: string; t: string }[] = [
-  { n: "01", t: "Vistoria por procuração" },
-  { n: "02", t: "Ligação de energia" },
-  { n: "03", t: "Prevenção de vícios de obra" },
-  { n: "04", t: "Atendimento de emergências" },
-  { n: "05", t: "Instalação de internet" },
-  { n: "06", t: "Visibilidade total pelo Bwild Workflow" },
-];
 
 export default function OndeAtuamosPage() {
   const { settings } = useSiteSettings();
@@ -121,13 +79,10 @@ export default function OndeAtuamosPage() {
           </div>
         </section>
 
-        <section className="bwa-atuamos-remoto" aria-labelledby="remoto-title">
+        <section className="bwa-atuamos-remoto" aria-label="Reforma à distância">
           <div className="bwa-shell bwa-atuamos-remoto-head">
             <p className="bwa-label">Reforma à distância</p>
             <div>
-              <h2 className="bwa-title" id="remoto-title">
-                Você não precisa estar em São Paulo para reformar com a Bewild.
-              </h2>
               <p className="bwa-atuamos-remoto-lead">
                 Quem mora em Uberlândia, Salvador, Curitiba ou Brasília compra,
                 reforma e recebe o apartamento pronto sem vir a São Paulo: o
@@ -136,7 +91,6 @@ export default function OndeAtuamosPage() {
             </div>
           </div>
           <div className="bwa-shell">
-            <h3 className="bwa-atuamos-h3">Já incluso no contrato</h3>
             <ul className="bwa-atuamos-remoto-list">
               {REMOTO_ITEMS.map((item) => (
                 <li key={item.n}>
@@ -147,6 +101,8 @@ export default function OndeAtuamosPage() {
             </ul>
           </div>
         </section>
+
+        <BwaImprensa />
 
         <section className="bwa-atuamos-cta" aria-label="Solicitar orçamento">
           <div className="bwa-shell bwa-atuamos-cta-grid">

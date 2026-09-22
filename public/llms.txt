@@ -2,12 +2,14 @@
 
 > Built by the wild ones. Be wild.
 
-A Bewild é uma empresa brasileira focada em transformar studios e apartamentos compactos em ativos prontos para short stay, através de projeto de arquitetura, reforma turn-key, mobiliário e setup operacional. O foco geográfico atual é São Paulo (SP).
+A Bewild é uma empresa de reforma completa de apartamentos e studios em São Paulo: projeto, obra, marcenaria, mobília e setup em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia. O foco é studio e apartamento; atende apartamentos de qualquer metragem e também escritórios, em São Paulo capital, para morar, alugar (short stay ou longa duração) ou vender; os donos podem morar em qualquer cidade.
 
 ## Pages
 
 - [Home](/): Studio de projeto, reforma turn-key e setup para short stay.
-- [Portfólio](/portfolio): Projetos entregues de studios e imóveis compactos.
+- [Portfólio](/portfolio): Projetos entregues de studios e apartamentos.
+- [Reforma de apartamento em São Paulo](/reforma-de-apartamento-sao-paulo): Empresa de reforma completa de apartamentos em SP, com preço fechado e prazo em contrato.
+- [Reforma de studio em São Paulo](/reforma-de-studio-sao-paulo): Reforma completa de studio para morar ou alugar, entregue pronto para anunciar.
 - [Diagnóstico](/diagnostico): Entrada de leads para avaliação do imóvel.
 - [Conteúdos](/conteudos): Artigos e guias sobre reforma e operação de short stay.
 - [Guia do investidor](/guia-do-investidor): Guia de decisão para investir em studio de short stay em São Paulo.
@@ -57,6 +59,10 @@ A Bewild é uma empresa brasileira focada em transformar studios e apartamentos 
 - [Reforma turn-key ou tradicional: a planilha de custo total antes de decidir](/conteudos/reforma-turn-key-ou-tradicional)
 - [Condomínio pode proibir Airbnb? O que o STJ decidiu em 2026 e o que checar antes de comprar um studio em São Paulo](/conteudos/studios-airbnb-sao-paulo-o-que-a-lei-permite)
 <!-- posts:end -->
+
+## Na imprensa
+
+- Record News (14/09/2026): A dor de cabeça de fazer a obra trava muitos investidores, diz o arquiteto Thiago Dantas — https://noticias.r7.com/record-news/inovacao-e-negocios/video/a-dor-de-cabeca-de-fazer-a-obra-trava-muitos-investidores-diz-o-arquiteto-thiago-dantas-14092026/
 
 ## Optional
 

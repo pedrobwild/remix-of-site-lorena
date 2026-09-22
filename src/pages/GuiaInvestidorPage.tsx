@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { CheckSquare, Menu, X } from "lucide-react";
 
 import BewildLogo from "@/components/BewildLogo";
+import BwaFooter from "@/components/BwaFooter";
+import "@/styles/bwa-footer-shared.css";
 import { breadcrumbJsonLd, faqJsonLd, getCanonicalBase, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 
@@ -51,8 +53,10 @@ const TendenciasSection = lazy(() => import("@/guia/components/guide/TendenciasS
  *
  * Isolamento: todo o código portado vive em `src/guia/` e o tema
  * fica dentro de `.guia-root` (src/pages/guia-investidor.css).
- * Esta página NÃO usa BwaNav/BwaFooter — eles injetam CSS global
- * que conflita com o tema do guia; o cabeçalho abaixo é próprio.
+ * Esta página NÃO usa BwaNav — ele injeta CSS global que conflita com o
+ * tema do guia; o cabeçalho abaixo é próprio. O rodapé, porém, é o BwaFooter
+ * oficial do site, com os estilos .bwa que ele precisa escopados em
+ * .guia-root no fim de guia-investidor.css.
  *
  * Regra de conteúdo: nenhuma promessa de renda, ocupação ou
  * rentabilidade. Toda faixa numérica é retrato de mercado.
@@ -397,33 +401,21 @@ function GuiaInvestidorInner() {
           </div>
         </div>
 
-        {/* Rodapé simples desta rota (sem BwaFooter, que injeta CSS global) */}
-        <div className="w-full">
-          <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
-            <footer className="py-10 text-sm text-muted-foreground font-body border-t border-border/60">
-              <div className="flex flex-col items-center gap-4 text-center">
-                <BewildLogo className="h-6 w-auto opacity-70" />
-                <nav aria-label="Rodapé" className="flex flex-wrap justify-center gap-x-5 gap-y-2">
-                  {NAV_LINKS.map((l) => (
-                    <a key={l.href} href={l.href} className="hover:text-foreground transition-colors">
-                      {l.label}
-                    </a>
-                  ))}
-                  <a href="/orcamento" className="text-primary hover:underline">
-                    Solicitar orçamento
-                  </a>
-                </nav>
-                <p className="max-w-3xl text-xs leading-relaxed">
-                  Conteúdo informativo. As faixas de diária, ocupação e custo citadas são retratos de mercado do período
-                  analisado e não constituem promessa, garantia ou recomendação de investimento. Resultados variam por
-                  imóvel, condomínio, operação e sazonalidade.
-                </p>
-                <p className="text-xs">© 2026 Bewild · Guia do investidor em studios para short stay</p>
-              </div>
-            </footer>
-          </div>
-        </div>
       </main>
+
+      {/* Aviso legal do guia — obrigatório, sem promessa de resultados */}
+      <div className="w-full">
+        <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
+          <p className="py-8 max-w-3xl mx-auto text-center text-xs leading-relaxed text-muted-foreground font-body border-t border-border/60">
+            Conteúdo informativo. As faixas de diária, ocupação e custo citadas são retratos de mercado do período
+            analisado e não constituem promessa, garantia ou recomendação de investimento. Resultados variam por
+            imóvel, condomínio, operação e sazonalidade.
+          </p>
+        </div>
+      </div>
+
+      {/* Rodapé oficial do site (BwaFooter) — estilos .bwa escopados em .guia-root */}
+      <BwaFooter />
     </>
   );
 }

@@ -56,7 +56,9 @@ export default function MobileMenu({ activeId, sectionIndex, sectionCount }: Pro
 
   return (
     <div className="lg:hidden fixed top-0 left-0 right-0 z-40 glass-nav px-4 py-3 flex items-center justify-between">
-      <img src={bewildLogo.url} alt="Bewild" className="h-7 w-auto" />
+      <a href="/" aria-label="Bewild — voltar para o site" className="shrink-0">
+        <img src={bewildLogo.url} alt="Bewild" className="h-7 w-auto" />
+      </a>
       <div className="flex items-center gap-2">
         <span className="text-xs text-muted-foreground bg-muted/60 rounded-full px-2.5 py-0.5">
           {sectionIndex}/{sectionCount}
@@ -70,7 +72,9 @@ export default function MobileMenu({ activeId, sectionIndex, sectionCount }: Pro
         <SheetContent side="left" className="w-72 p-0">
           <SheetHeader className="px-4 pt-5 pb-3 border-b border-border/60">
             <SheetTitle className="flex items-center gap-2">
-              <img src={bewildLogo.url} alt="Bewild" className="h-7 w-auto" />
+              <a href="/" onClick={() => setOpen(false)} aria-label="Bewild — voltar para o site">
+                <img src={bewildLogo.url} alt="Bewild" className="h-7 w-auto" />
+              </a>
             </SheetTitle>
           </SheetHeader>
           <nav className="px-3 py-4 overflow-y-auto max-h-[calc(100vh-120px)] scrollbar-thin">
@@ -167,6 +171,18 @@ export default function MobileMenu({ activeId, sectionIndex, sectionCount }: Pro
                 </div>
               );
             })}
+
+            <div className="h-px bg-border/40 mx-1 my-3" />
+
+            {/* Caminho de volta para o site */}
+            <a
+              href="/"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm transition-all min-h-[44px] text-muted-foreground hover:text-foreground hover:bg-muted/60"
+            >
+              <span aria-hidden="true">←</span>
+              <span>Voltar para o site</span>
+            </a>
           </nav>
         </SheetContent>
       </Sheet>

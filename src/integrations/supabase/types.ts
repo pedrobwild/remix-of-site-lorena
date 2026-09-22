@@ -122,6 +122,81 @@ export type Database = {
         }
         Relationships: []
       }
+      assistant_kb: {
+        Row: {
+          acoes: Json
+          ativo: boolean
+          exemplos: string[]
+          gatilhos: string[]
+          id: string
+          ordem: number
+          palavras: string[]
+          palavras_fortes: string[]
+          pergunta: string
+          relacionadas: string[]
+          resposta: string
+          status: string
+          sugerir_em: string[]
+          tema: string
+          updated_at: string
+        }
+        Insert: {
+          acoes?: Json
+          ativo?: boolean
+          exemplos?: string[]
+          gatilhos?: string[]
+          id: string
+          ordem?: number
+          palavras?: string[]
+          palavras_fortes?: string[]
+          pergunta: string
+          relacionadas?: string[]
+          resposta: string
+          status?: string
+          sugerir_em?: string[]
+          tema: string
+          updated_at?: string
+        }
+        Update: {
+          acoes?: Json
+          ativo?: boolean
+          exemplos?: string[]
+          gatilhos?: string[]
+          id?: string
+          ordem?: number
+          palavras?: string[]
+          palavras_fortes?: string[]
+          pergunta?: string
+          relacionadas?: string[]
+          resposta?: string
+          status?: string
+          sugerir_em?: string[]
+          tema?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      assistant_unanswered: {
+        Row: {
+          created_at: string
+          id: string
+          path: string | null
+          pergunta: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          path?: string | null
+          pergunta: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          path?: string | null
+          pergunta?: string
+        }
+        Relationships: []
+      }
       bewild_posts: {
         Row: {
           author: string
