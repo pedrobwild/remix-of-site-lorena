@@ -355,7 +355,7 @@ export default function ParceirosPage() {
 
   // Com a página de incorporadoras no ar, a /parceiros deixa de falar por ela.
   const incorporadorasOn = useIncorporadorasEnabled();
-  const { data: casoLeal } = usePartnerCase("leal-moreira");
+  const { data: casoLeal } = usePartnerCase("leal-moreira", incorporadorasOn);
   // Com a página própria no ar, incorporadora não se cadastra por aqui.
   const tiposVisiveis = incorporadorasOn ? TIPOS.filter((t) => t !== "Incorporadora") : TIPOS;
   const mostrarStats = !!casoLeal && (casoLeal.published || isIncorporadorasPreview());

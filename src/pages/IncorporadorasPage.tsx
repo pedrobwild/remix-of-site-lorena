@@ -292,7 +292,7 @@ export default function IncorporadorasPage() {
               </a>
             </div>
             <a className="bwa-incorp-strip" href={`#${INCORP_CASE.id}`} data-cta="incorporadoras-faixa-case">
-              <BewildLealMoreiraLogos />
+              <BewildLealMoreiraLogos as="span" />
               <span>{INCORP_HERO.caseStrip}</span>
             </a>
           </div>
