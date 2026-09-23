@@ -39,11 +39,10 @@ export default function BwaFooter() {
           <div className="bwa-footer-column">
             <h3>Navegação</h3>
             <nav>
-              <a href="/#certeza">O contrato</a>
-              <a href="/marcenaria">Marcenaria sob medida</a>
-              <a href="/#certeza">O que fazemos</a>
+              <a href="/#certeza">Como trabalhamos</a>
+              <a href="/marcenaria">Marcenaria</a>
               <a href="/como-funciona">Como funciona</a>
-              <a href="/portfolio">Portfólio de reformas em SP</a>
+              <a href="/portfolio">Projetos</a>
               <a href="/onde-atuamos">Onde atuamos</a>
               <a href="/reforma-de-apartamento-sao-paulo">Reforma de apartamento em SP</a>
               <a href="/reforma-de-studio-sao-paulo">Reforma de studio em SP</a>
