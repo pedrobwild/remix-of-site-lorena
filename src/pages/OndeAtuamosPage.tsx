@@ -110,7 +110,7 @@ export default function OndeAtuamosPage() {
               Seu imóvel é em São Paulo? <em>O resto é com a gente.</em>
             </h2>
             <div className="bwa-atuamos-cta-actions">
-              <a className="bwa-button bwa-button-light" href="/diagnostico" data-cta="atuamos-cta">
+              <a className="bwa-button bwa-button-light" href="/orcamento" data-cta="atuamos-cta">
                 Solicitar orçamento <span aria-hidden="true">→</span>
               </a>
               <a

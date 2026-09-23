@@ -31,6 +31,8 @@ export function isLeadStatus(value: unknown): value is LeadStatus {
 
 /** Formulários do site que gravam `leads.form_path`. */
 export const LEAD_FORM_PATHS = [
+  // "/diagnostico" ficou: a página saiu do ar (virou /orcamento), mas leads
+  // históricos gravados com esse form_path continuam no painel.
   "/diagnostico",
   "/orcamento",
   "/o",

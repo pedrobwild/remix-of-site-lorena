@@ -82,7 +82,7 @@ const DEFAULTS: SiteSettings = {
 
   // Identidade oficial da Bewild (decisão de 17/09/2026). Estes defaults não
   // são "enquanto carrega": a coluna `cnpj` ainda não existe em produção, então
-  // `organizationJsonLd` (usada em /diagnostico) publica exatamente o que está
+  // `organizationJsonLd` (schema.org da organização) publica exatamente o que está
   // aqui. Os valores anteriores eram herdados do site anterior. Travados em
   // src/lib/__tests__/identidadeOficial.test.ts.
   cnpj: "47.350.338/0001-37",

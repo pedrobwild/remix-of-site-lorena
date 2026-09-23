@@ -36,6 +36,8 @@ export function timeoutAfter(ms: number): Promise<null> {
 
 /** Formulário que originou o lead. Gravado em `leads.form_path`. */
 export type LeadFormPath =
+  // "/diagnostico" ficou: página removida (virou /orcamento), mas há leads
+  // históricos gravados com esse form_path.
   | "/diagnostico"
   | "/contato"
   | "/orcamento"

@@ -100,7 +100,6 @@ async function main() {
       changefreq: "weekly",
       priority: "0.9",
     },
-    { loc: `${BASE_URL}/diagnostico`, changefreq: "monthly", priority: "0.9" },
     {
       loc: `${BASE_URL}/conteudos`,
       lastmod: day("2026-09-23", posts.length ? newest(posts, "updated_at", "published_at", "created_at") : null),

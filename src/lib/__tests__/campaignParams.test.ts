@@ -4,8 +4,8 @@ import { navigate } from "../useHashRoute";
 
 describe("carryCampaignParams", () => {
   it("anexa utm/gclid/fbclid da URL atual ao destino interno", () => {
-    expect(carryCampaignParams("/diagnostico", "?utm_source=meta&utm_medium=cpc&gclid=abc")).toBe(
-      "/diagnostico?utm_source=meta&utm_medium=cpc&gclid=abc",
+    expect(carryCampaignParams("/orcamento", "?utm_source=meta&utm_medium=cpc&gclid=abc")).toBe(
+      "/orcamento?utm_source=meta&utm_medium=cpc&gclid=abc",
     );
   });
 
@@ -16,15 +16,15 @@ describe("carryCampaignParams", () => {
   it("preserva objetivo do destino ao acrescentar parâmetros de campanha", () => {
     expect(
       carryCampaignParams(
-        "/diagnostico?objetivo=short-stay",
+        "/orcamento?objetivo=short-stay",
         "?utm_source=meta&utm_campaign=studios",
       ),
-    ).toBe("/diagnostico?objetivo=short-stay&utm_source=meta&utm_campaign=studios");
+    ).toBe("/orcamento?objetivo=short-stay&utm_source=meta&utm_campaign=studios");
   });
 
   it("não sobrescreve quando o destino já tem parâmetro de campanha", () => {
-    expect(carryCampaignParams("/diagnostico?utm_source=qr", "?utm_source=meta")).toBe(
-      "/diagnostico?utm_source=qr",
+    expect(carryCampaignParams("/orcamento?utm_source=qr", "?utm_source=meta")).toBe(
+      "/orcamento?utm_source=qr",
     );
   });
 
@@ -40,9 +40,9 @@ describe("navigate() carrega parâmetros de campanha", () => {
     window.history.replaceState({}, "", "/?utm_source=meta&utm_campaign=set26");
   });
 
-  it("/ → /diagnostico mantém os UTMs na URL", () => {
-    navigate("/diagnostico");
-    expect(window.location.pathname).toBe("/diagnostico");
+  it("/ → /orcamento mantém os UTMs na URL", () => {
+    navigate("/orcamento");
+    expect(window.location.pathname).toBe("/orcamento");
     expect(new URLSearchParams(window.location.search).get("utm_source")).toBe("meta");
     expect(new URLSearchParams(window.location.search).get("utm_campaign")).toBe("set26");
   });
@@ -54,7 +54,7 @@ describe("navigate() carrega parâmetros de campanha", () => {
 });
 
 describe("resolveLeadAttribution", () => {
-  const base = { currentPath: "/diagnostico" };
+  const base = { currentPath: "/orcamento" };
 
   it("URL atual tem precedência", () => {
     const r = resolveLeadAttribution({
@@ -75,7 +75,7 @@ describe("resolveLeadAttribution", () => {
 
   it("sem nada, devolve nulos e landing_path = página atual", () => {
     const r = resolveLeadAttribution({ ...base, search: "" });
-    expect(r).toEqual({ utm_source: null, utm_medium: null, utm_campaign: null, referrer: null, landing_path: "/diagnostico" });
+    expect(r).toEqual({ utm_source: null, utm_medium: null, utm_campaign: null, referrer: null, landing_path: "/orcamento" });
   });
 
   it("landing_path e referrer vêm do que foi persistido na sessão quando existem", () => {

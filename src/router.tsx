@@ -12,7 +12,6 @@ import BewildProjectPage from "./pages/BewildProjectPage";
 import BewildConteudosPage from "./pages/BewildConteudosPage";
 import BewildPostPage from "./pages/BewildPostPage";
 
-import DiagnosticoPage from "./pages/DiagnosticoPage";
 import FaqPage from "./pages/FaqPage";
 import AutorizacaoCondominioPage from "./pages/AutorizacaoCondominioPage";
 import ContatoPage from "./pages/ContatoPage";
@@ -87,7 +86,6 @@ export function renderRoute(route: Route) {
   if (route.name === "conteudos") return <BewildConteudosPage />;
   if (route.name === "bewild-post") return <BewildPostPage slug={route.slug} />;
 
-  if (route.name === "diagnostico") return <DiagnosticoPage />;
   if (route.name === "orcamento") return <OrcamentoPage />;
   if (route.name === "faq") return <FaqPage />;
   if (route.name === "autorizacao-condominio") return <AutorizacaoCondominioPage />;

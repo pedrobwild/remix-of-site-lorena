@@ -247,7 +247,7 @@ export function reply(input: string, kb: KbItem[], ctx: ReplyContext): Reply {
       out.texto = isBye
         ? "Até mais! Quando quiser, o orçamento é sem custo e sem compromisso."
         : "Por nada! Se surgir outra dúvida, é só escrever aqui.";
-      out.acoes = [{ tipo: "link", rotulo: "Solicitar orçamento", url: "/diagnostico" }, waAction];
+      out.acoes = [{ tipo: "link", rotulo: "Solicitar orçamento", url: "/orcamento" }, waAction];
       return out;
     }
     if (isHello) {

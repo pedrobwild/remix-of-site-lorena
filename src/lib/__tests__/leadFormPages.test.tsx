@@ -31,7 +31,6 @@ vi.mock("@/components/BwaNav", () => ({ default: () => null }));
 vi.mock("@/components/BwaFooter", () => ({ default: () => null }));
 
 import ContatoPage from "@/pages/ContatoPage";
-import DiagnosticoPage from "@/pages/DiagnosticoPage";
 import LpObraPage from "@/pages/LpObraPage";
 import LpPanfletoPage from "@/pages/LpPanfletoPage";
 import OrcamentoPage from "@/pages/OrcamentoPage";
@@ -286,54 +285,3 @@ describe("/parceiros", () => {
   });
 });
 
-describe("/diagnostico", () => {
-  function preencher() {
-    type("dg-nome", "Fábio");
-    type("dg-whats", "11912345678");
-    type("dg-local", "Pinheiros");
-    fireEvent.click(screen.getAllByRole("button", { name: "Sim" })[0]);
-    fireEvent.click(screen.getByRole("button", { name: "Short stay" }));
-    type("dg-m2", "32,5");
-    fireEvent.click(screen.getAllByRole("button", { name: "Sim" })[1]);
-    fireEvent.click(screen.getByRole("button", { name: "Instagram" }));
-  }
-
-  it("falha mantém os dados e o fallback usa a mensagem preenchida (PUB-05)", async () => {
-    sendLeadMock.mockResolvedValueOnce(FAILED);
-    render(<DiagnosticoPage />);
-    preencher();
-    await act(async () => fireEvent.click(screen.getByRole("button", { name: /Solicitar orçamento/ })));
-
-    const waUrl = openSpy.mock.calls[0][0] as string;
-    expect(decodeURIComponent(waUrl)).toContain("Nome: Fábio");
-    expect(screen.getByRole("link", { name: "Abrir o WhatsApp de novo" })).toHaveAttribute("href", waUrl);
-    expect(byId("dg-nome").value).toBe("Fábio");
-    expect(sendLeadMock.mock.calls[0][0]).toMatchObject({ area_m2: 32.5, form_path: "/diagnostico" });
-
-    sendLeadMock.mockResolvedValueOnce(DELIVERED);
-    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Tentar enviar de novo" })));
-    expect(openSpy).toHaveBeenCalledTimes(1);
-    expect(screen.getByText("Recebemos seus dados.")).toBeInTheDocument();
-    expect(byId("dg-nome").value).toBe("");
-  });
-
-  it("modal do depoimento: foco entra, Escape fecha e o foco volta ao gatilho (PUB-13)", () => {
-    vi.spyOn(HTMLMediaElement.prototype, "play").mockImplementation(() => Promise.resolve());
-    render(<DiagnosticoPage />);
-    const trigger = screen.getByRole("button", { name: "Assistir depoimento em vídeo de Vivian" });
-    trigger.focus();
-    fireEvent.click(trigger);
-    const dialog = screen.getByRole("dialog");
-    expect(dialog).toHaveAttribute("aria-modal", "true");
-    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Fechar vídeo" }));
-
-    // Guardas de foco nas pontas devolvem o Tab para dentro.
-    const guards = dialog.querySelectorAll<HTMLElement>(":scope > [tabindex='0']");
-    fireEvent.focus(guards[guards.length - 1]);
-    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Fechar vídeo" }));
-
-    fireEvent.keyDown(document, { key: "Escape" });
-    expect(screen.queryByRole("dialog")).toBeNull();
-    expect(document.activeElement).toBe(trigger);
-  });
-});

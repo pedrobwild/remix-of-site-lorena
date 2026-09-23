@@ -23,7 +23,6 @@ const read = (p: string) => readFileSync(path.join(root, p), "utf8");
 const ROTAS_INDEXAVEIS = [
   { path: "/", priority: "1.0", changefreq: "weekly" },
   { path: "/portfolio", priority: "0.9", changefreq: "weekly" },
-  { path: "/diagnostico", priority: "0.9", changefreq: "monthly" },
   { path: "/conteudos", priority: "0.8", changefreq: "weekly" },
   { path: "/orcamento", priority: "0.9", changefreq: "monthly" },
   { path: "/faq", priority: "0.7", changefreq: "monthly" },
@@ -159,7 +158,7 @@ describe("public/sitemap.xml commitado", () => {
   });
 
   it("traz as rotas estáticas principais, no domínio oficial", () => {
-    for (const rota of ["/", "/portfolio", "/diagnostico", "/conteudos", "/orcamento", "/faq", "/guia-do-investidor"]) {
+    for (const rota of ["/", "/portfolio", "/conteudos", "/orcamento", "/faq", "/guia-do-investidor"]) {
       expect(locs).toContain(`https://bewild.com.br${rota}`);
     }
     expect(locs.every((l) => l.startsWith("https://bewild.com.br/"))).toBe(true);

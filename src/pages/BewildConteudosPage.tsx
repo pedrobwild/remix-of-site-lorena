@@ -191,7 +191,7 @@ export default function BewildConteudosPage() {
             <h2>Da leitura à decisão: <span className="accent">avalie o seu studio.</span></h2>
             <p>Manda os dados do seu imóvel e a gente devolve uma leitura de potencial, escopo e próximos passos.</p>
             <div className="ct-cta__act">
-              <a href="/diagnostico" className="ct-btn cyan">Solicitar orçamento <span className="ar"><IconArrow /></span></a>
+              <a href="/orcamento" className="ct-btn cyan">Solicitar orçamento <span className="ar"><IconArrow /></span></a>
               <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="ct-btn ghost">Falar no WhatsApp</a>
             </div>
             <div className="ct-cta__rea">+160 reformas entregues · São Paulo capital</div>
