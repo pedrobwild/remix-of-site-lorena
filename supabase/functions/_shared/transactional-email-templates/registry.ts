@@ -19,4 +19,6 @@ export interface TemplateEntry {
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'novo-lead-site': novoLeadSite,
+  'confirmacao-orcamento': confirmacaoOrcamento,
+  'confirmacao-parceria': confirmacaoParceria,
 }
