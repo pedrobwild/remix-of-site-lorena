@@ -136,8 +136,24 @@ function CurveTooltip({ active, payload, label }: { active?: boolean; payload?: 
 
 function TodayLabel({ viewBox }: { viewBox?: { x?: number } }) {
   const x = viewBox?.x;
+  const textRef = useRef<SVGTextElement | null>(null);
+  const [pillWidth, setPillWidth] = useState(78);
+
+  // A pílula acompanha o texto medido (getComputedTextLength) + 6px de respiro em cada lado.
+  useEffect(() => {
+    if (textRef.current) {
+      const measured = Math.ceil(textRef.current.getComputedTextLength());
+      if (measured > 0) setPillWidth(measured + 12);
+    }
+  }, []);
+
   if (typeof x !== "number") return null;
-  return <g transform={`translate(${x - 30},8)`}><rect className="wf-reference-pill" width="60" height="18" rx="9" /><text className="wf-reference-label" x="30" y="12" textAnchor="middle">52% Execução</text></g>;
+  return (
+    <g transform={`translate(${x - pillWidth / 2},8)`}>
+      <rect className="wf-reference-pill" width={pillWidth} height={18} rx={9} />
+      <text ref={textRef} className="wf-reference-label" x={pillWidth / 2} y={12} textAnchor="middle">52% Execução</text>
+    </g>
+  );
 }
 
 function CurvePanel() {
