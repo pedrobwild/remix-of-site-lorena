@@ -41,6 +41,13 @@
 .bwa-nav.bwa-nav--internal .bwa-nav-links a {
   color: var(--bwa-navy);
 }
+/* Painel do dropdown é navy: os links dele ficam brancos mesmo no header claro. */
+.bwa-nav.bwa-nav--internal .bwa-nav-dd-panel a,
+.bwa-nav.bwa-nav--internal .bwa-nav-dd-panel a .bwa-nav-dd-title,
+.bwa-nav.bwa-nav--internal .bwa-nav-dd-panel a .bwa-nav-dd-desc {
+  color: var(--bwa-white);
+}
+
 .bwa-nav.bwa-nav--internal .bwa-button {
   color: var(--bwa-white);
   background: var(--bwa-navy);
