@@ -458,6 +458,24 @@ export type Database = {
         }
         Relationships: []
       }
+      edge_rate_limits: {
+        Row: {
+          hits: number
+          key: string
+          window_start: string
+        }
+        Insert: {
+          hits?: number
+          key: string
+          window_start?: string
+        }
+        Update: {
+          hits?: number
+          key?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       faq_items: {
         Row: {
           answer: string
@@ -535,6 +553,7 @@ export type Database = {
           chaves: string | null
           created_at: string
           email: string | null
+          form_path: string | null
           id: string
           landing_path: string | null
           lead_source: string | null
@@ -558,6 +577,7 @@ export type Database = {
           chaves?: string | null
           created_at?: string
           email?: string | null
+          form_path?: string | null
           id?: string
           landing_path?: string | null
           lead_source?: string | null
@@ -581,6 +601,7 @@ export type Database = {
           chaves?: string | null
           created_at?: string
           email?: string | null
+          form_path?: string | null
           id?: string
           landing_path?: string | null
           lead_source?: string | null
@@ -1337,14 +1358,6 @@ export type Database = {
           sessions: number
         }[]
       }
-      analytics_top_paths: {
-        Args: { p_limit?: number; p_since: string }
-        Returns: {
-          pageviews: number
-          path: string
-          sessions: number
-        }[]
-      }
       analytics_top_paths_v2: {
         Args: {
           p_country?: string
@@ -1362,14 +1375,6 @@ export type Database = {
           pageviews: number
           path: string
           sessions: number
-        }[]
-      }
-      analytics_top_projects: {
-        Args: { p_limit?: number; p_since: string }
-        Returns: {
-          project_slug: string
-          sessions: number
-          views: number
         }[]
       }
       analytics_top_projects_v2: {
@@ -1391,20 +1396,16 @@ export type Database = {
           views: number
         }[]
       }
-      analytics_top_referrers: {
-        Args: { p_limit?: number; p_since: string }
-        Returns: {
-          referrer: string
-          sessions: number
-        }[]
+      hit_rate_limit: {
+        Args: { p_key: string; p_max: number; p_window_s: number }
+        Returns: boolean
       }
       is_admin: { Args: never; Returns: boolean }
-      log_404:
-        | { Args: { p_path: string; p_referrer?: string }; Returns: undefined }
-        | {
-            Args: { p_path: string; p_reason?: string; p_referrer?: string }
-            Returns: undefined
-          }
+      log_404: {
+        Args: { p_path: string; p_reason?: string; p_referrer?: string }
+        Returns: undefined
+      }
+      resolve_404_redirect: { Args: { p_path: string }; Returns: string }
       top_projects: {
         Args: { p_days?: number; p_limit?: number }
         Returns: {
