@@ -1,15 +1,19 @@
 // Edge function: notify-lead
-// Grava o lead em `leads`, avisa o time comercial no Slack e cria um card de
-// MQL no CRM (Bwild Engine). Slack e CRM são independentes: a falha de um não
-// bloqueia o outro. O cliente decide "entregue" pelo corpo da resposta
-// (ver src/lib/leadDelivery.ts), nunca pelo status HTTP.
+// Grava o lead em `leads`, avisa o time comercial no Slack e por e-mail e cria
+// um card de MQL no CRM (Bwild Engine). Os destinos são independentes: a falha
+// de um não bloqueia os outros. O cliente decide "entregue" pelo corpo da
+// resposta (ver src/lib/leadDelivery.ts), nunca pelo status HTTP.
 
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.45.4";
+import { sendTemplateEmail } from "../_shared/transactional-email-templates/send-email.ts";
 import {
   BWILD_ENGINE_WEBHOOK_URL,
   buildCrmPayload,
+  buildLeadEmail,
   buildSlackMessage,
   type CleanLead,
+  LEAD_EMAIL_TEMPLATE,
+  LEAD_EMAIL_TO,
   leadSchema,
   MAX_BODY_BYTES,
   type Outcome,
@@ -110,6 +114,35 @@ async function createCrmCard(lead: CleanLead, leadId: string | null): Promise<Ou
 }
 
 /**
+ * Aviso por e-mail (marketing@bewild.com.br, fixo no modelo) pela fila de
+ * e-mails transacionais da Lovable. Com teto de tempo: o cliente espera esta
+ * resposta, e um envio lento não pode fazer um lead já gravado parecer perdido.
+ */
+async function sendLeadEmail(lead: CleanLead, leadId: string | null): Promise<Outcome> {
+  if (!Deno.env.get("LOVABLE_API_KEY")) {
+    console.warn("[notify-lead] LOVABLE_API_KEY is not set; skipping e-mail");
+    return "skipped";
+  }
+  const { idempotencyKey, templateData } = buildLeadEmail(lead, leadId);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    const result = await Promise.race([
+      sendTemplateEmail(LEAD_EMAIL_TEMPLATE, LEAD_EMAIL_TO, { idempotencyKey, templateData }),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error("timeout")), 10_000);
+      }),
+    ]);
+    // Destinatário suprimido (bounce/descadastro) não é entrega.
+    return result.sent ? "sent" : "skipped";
+  } catch (err) {
+    console.error("[notify-lead] email send failed", err instanceof Error ? err.message : String(err));
+    return "error";
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
  * IP do cliente para o rate limit. O primeiro item de X-Forwarded-For pode
  * ser forjado pelo cliente; por isso os cabeçalhos definidos pela borda vêm
  * antes. O teto global diário cobre o que escapar daqui.
@@ -200,11 +233,12 @@ Deno.serve(async (req) => {
   }
   const leadId = lead_insert.id ?? null;
 
-  // Slack e CRM em paralelo; a falha de um não bloqueia o outro.
-  const [slack, crm] = await Promise.all([
+  // Slack, CRM e e-mail em paralelo; a falha de um não bloqueia os outros.
+  const [slack, crm, email] = await Promise.all([
     notifySlack(lead, leadId),
     createCrmCard(lead, leadId),
+    sendLeadEmail(lead, leadId),
   ]);
 
-  return json(200, { ok: true, lead_insert, slack, crm });
+  return json(200, { ok: true, lead_insert, slack, crm, email });
 });

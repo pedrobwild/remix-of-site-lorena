@@ -1,17 +1,18 @@
 /**
  * Interpretação do resultado da edge function `notify-lead`.
  *
- * A função responde HTTP 200 com `{ ok: true, lead_insert, slack, crm }`
+ * A função responde HTTP 200 com `{ ok: true, lead_insert, slack, crm, email }`
  * mesmo quando TODAS as etapas falharam (ela nunca lança para o cliente).
  * "Sucesso na interface" não pode significar "lead entregue": só
  * consideramos entregue quando pelo menos um destino real confirmou —
- * gravação no banco (`lead_insert.status === "sent"`), Slack ou CRM.
+ * gravação no banco (`lead_insert.status === "sent"`), Slack, CRM ou e-mail.
  */
 export type NotifyLeadResponse = {
   ok?: boolean;
   lead_insert?: { status?: string; id?: string; error?: string } | null;
   slack?: string | null;
   crm?: string | null;
+  email?: string | null;
 };
 
 export function isLeadDelivered(
@@ -21,7 +22,10 @@ export function isLeadDelivered(
   const data = result.data as NotifyLeadResponse | null | undefined;
   if (!data || typeof data !== "object") return false;
   return (
-    data.lead_insert?.status === "sent" || data.slack === "sent" || data.crm === "sent"
+    data.lead_insert?.status === "sent" ||
+    data.slack === "sent" ||
+    data.crm === "sent" ||
+    data.email === "sent"
   );
 }
 

@@ -212,6 +212,18 @@ function formLabel(lead: CleanLead): string {
   return lead.form_path ? FORM_LABELS[lead.form_path] : "Site";
 }
 
+/** Atribuição do lead, uma linha por item — usada no Slack e no e-mail. */
+function originLines(lead: CleanLead): string[] {
+  const origin: string[] = [];
+  if (lead.form_path) origin.push(`formulário: ${lead.form_path}`);
+  if (lead.utm_source) origin.push(`utm_source: ${lead.utm_source}`);
+  if (lead.utm_medium) origin.push(`utm_medium: ${lead.utm_medium}`);
+  if (lead.utm_campaign) origin.push(`utm_campaign: ${lead.utm_campaign}`);
+  if (lead.referrer) origin.push(`referrer: ${lead.referrer}`);
+  if (lead.landing_path) origin.push(`landing_path: ${lead.landing_path}`);
+  return origin;
+}
+
 export function buildSlackMessage(lead: CleanLead, leadId: string | null) {
   const blocks: unknown[] = [];
   const title = `Novo lead · ${formLabel(lead)}`;
@@ -262,13 +274,7 @@ export function buildSlackMessage(lead: CleanLead, leadId: string | null) {
     });
   }
 
-  const origin: string[] = [];
-  if (lead.form_path) origin.push(`formulário: ${lead.form_path}`);
-  if (lead.utm_source) origin.push(`utm_source: ${lead.utm_source}`);
-  if (lead.utm_medium) origin.push(`utm_medium: ${lead.utm_medium}`);
-  if (lead.utm_campaign) origin.push(`utm_campaign: ${lead.utm_campaign}`);
-  if (lead.referrer) origin.push(`referrer: ${lead.referrer}`);
-  if (lead.landing_path) origin.push(`landing_path: ${lead.landing_path}`);
+  const origin = originLines(lead);
   if (origin.length) {
     blocks.push({ type: "divider" });
     blocks.push({
@@ -305,6 +311,43 @@ export function buildSlackMessage(lead: CleanLead, leadId: string | null) {
     // `text` é o fallback das notificações push — também escapado.
     text: slackEscape(`${title} · ${lead.name}`).slice(0, 300),
     blocks,
+  };
+}
+
+/** Modelo registrado em _shared/transactional-email-templates/registry.ts. */
+export const LEAD_EMAIL_TEMPLATE = "novo-lead-site";
+/** O destinatário real é o `to` fixo do modelo; este é só o fallback. */
+export const LEAD_EMAIL_TO = "marketing@bewild.com.br";
+
+/**
+ * Dados do e-mail de aviso ao time. O modelo é React (escapa o texto do
+ * usuário). A chave de idempotência usa o id do banco: um retry do mesmo
+ * lead não manda dois e-mails.
+ */
+export function buildLeadEmail(lead: CleanLead, leadId: string | null, now: Date = new Date()) {
+  const origin = originLines(lead);
+  return {
+    idempotencyKey: leadId ? `lead-email-${leadId}` : undefined,
+    templateData: {
+      formLabel:
+        lead.form_path === "/parceiros"
+          ? "Nova solicitação de parceria · /parceiros"
+          : `Novo lead · ${formLabel(lead)}`,
+      name: lead.name,
+      whatsapp: lead.whatsapp || null,
+      email: lead.email,
+      location: lead.location,
+      area_m2: lead.area_m2,
+      objetivo: lead.objetivo,
+      chaves: lead.chaves,
+      planta: lead.planta,
+      lives_in_sp: lead.lives_in_sp,
+      lead_source: lead.lead_source,
+      message: lead.message,
+      origin: origin.length ? origin.join("\n") : null,
+      waLink: waLink(lead.whatsapp),
+      receivedAt: fmtDateBR(now),
+    },
   };
 }
 

@@ -4,6 +4,7 @@
 import { assert, assertEquals } from "jsr:@std/assert@1";
 import {
   buildCrmPayload,
+  buildLeadEmail,
   buildSlackMessage,
   FIELD_LIMITS,
   leadSchema,
@@ -89,4 +90,22 @@ Deno.test("indicação (Indique um amigo) é reconhecida e marcada no CRM", () =
   const lead = parse({ name: "Ana", whatsapp: "11912345678", form_path: "/indique-um-amigo" });
   assertEquals(lead.form_path, "/indique-um-amigo");
   assertEquals(buildCrmPayload(lead, null).extra.lead_type, "indicacao");
+});
+
+Deno.test("e-mail: rótulo pelo formulário, idempotência pelo id do banco", () => {
+  const lead = parse({ name: "Ana", whatsapp: "+55 11 91234-5678", form_path: "/contato", utm_source: "google" });
+  const { idempotencyKey, templateData } = buildLeadEmail(lead, "db-id");
+  assertEquals(idempotencyKey, "lead-email-db-id");
+  assertEquals(templateData.formLabel, "Novo lead · Contato");
+  assertEquals(templateData.whatsapp, "11912345678");
+  assertEquals(templateData.waLink, "https://wa.me/5511912345678");
+  assert(templateData.origin?.includes("formulário: /contato"));
+  assert(templateData.origin?.includes("utm_source: google"));
+  // Sem id do banco não há chave: cada tentativa é um envio novo.
+  assertEquals(buildLeadEmail(lead, null).idempotencyKey, undefined);
+});
+
+Deno.test("e-mail: parceria mantém o rótulo próprio", () => {
+  const lead = parse({ whatsapp: "11912345678", form_path: "/parceiros", objetivo: "Parceria comercial — Corretor" });
+  assertEquals(buildLeadEmail(lead, null).templateData.formLabel, "Nova solicitação de parceria · /parceiros");
 });

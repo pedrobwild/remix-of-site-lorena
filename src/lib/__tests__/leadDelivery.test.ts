@@ -11,6 +11,9 @@ describe("isLeadDelivered — só conta entrega confirmada por um destino real",
   it("true quando só o Slack ou só o CRM confirmou", () => {
     expect(isLeadDelivered({ data: { ok: true, lead_insert: { status: "error" }, slack: "sent", crm: "error" } })).toBe(true);
     expect(isLeadDelivered({ data: { ok: true, lead_insert: { status: "error" }, slack: "error", crm: "sent" } })).toBe(true);
+    expect(
+      isLeadDelivered({ data: { ok: true, lead_insert: { status: "error" }, slack: "error", crm: "error", email: "sent" } }),
+    ).toBe(true);
   });
 
   it("false quando a função respondeu ok:true mas nenhum destino recebeu", () => {
