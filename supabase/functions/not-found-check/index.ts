@@ -71,7 +71,6 @@ export const STATIC_ROUTES: ReadonlyArray<string> = [
   "/marcas-e-parcerias",
   "/guia-do-investidor",
   "/privacidade",
-  "/unsubscribe",
   "/conteudos",
   "/o",
   "/p",

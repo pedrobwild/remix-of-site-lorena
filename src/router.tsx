@@ -27,7 +27,6 @@ import ParceirosPage from "./pages/ParceirosPage";
 import IndiquePage from "./pages/IndiquePage";
 import MarcasParceriasPage from "./pages/MarcasParceriasPage";
 import PrivacidadePage from "./pages/PrivacidadePage";
-import UnsubscribePage from "./pages/UnsubscribePage";
 import LpObraPage from "./pages/LpObraPage";
 import LpPanfletoPage from "./pages/LpPanfletoPage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -103,7 +102,6 @@ export function renderRoute(route: Route) {
       </Suspense>
     );
   if (route.name === "privacidade") return <PrivacidadePage />;
-  if (route.name === "unsubscribe") return <UnsubscribePage />;
   if (route.name === "lp-obra") return <LpObraPage />;
   if (route.name === "lp-panfleto") return <LpPanfletoPage />;
   if (route.name === "admin-login")
