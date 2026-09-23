@@ -1070,7 +1070,9 @@ export type Database = {
           business_postal_code: string | null
           business_price_range: string | null
           business_type: string | null
+          cau: string | null
           clarity_id: string | null
+          cnpj: string | null
           contact_email: string | null
           contact_phone: string | null
           default_og_image: string | null
@@ -1105,6 +1107,7 @@ export type Database = {
           site_description: string | null
           site_title: string | null
           updated_at: string | null
+          whatsapp_number: string | null
           yandex_verification: string | null
         }
         Insert: {
@@ -1117,7 +1120,9 @@ export type Database = {
           business_postal_code?: string | null
           business_price_range?: string | null
           business_type?: string | null
+          cau?: string | null
           clarity_id?: string | null
+          cnpj?: string | null
           contact_email?: string | null
           contact_phone?: string | null
           default_og_image?: string | null
@@ -1152,6 +1157,7 @@ export type Database = {
           site_description?: string | null
           site_title?: string | null
           updated_at?: string | null
+          whatsapp_number?: string | null
           yandex_verification?: string | null
         }
         Update: {
@@ -1164,7 +1170,9 @@ export type Database = {
           business_postal_code?: string | null
           business_price_range?: string | null
           business_type?: string | null
+          cau?: string | null
           clarity_id?: string | null
+          cnpj?: string | null
           contact_email?: string | null
           contact_phone?: string | null
           default_og_image?: string | null
@@ -1199,6 +1207,7 @@ export type Database = {
           site_description?: string | null
           site_title?: string | null
           updated_at?: string | null
+          whatsapp_number?: string | null
           yandex_verification?: string | null
         }
         Relationships: []
