@@ -265,6 +265,25 @@ export default function ParceirosPage() {
       dados.unidades ? `Unidades vendidas por mês: ${dados.unidades}` : null,
     ].filter(Boolean);
 
+    // Mensagem que chega no WhatsApp de atendimento (5511 91190-6183) com
+    // a solicitação de indicação, igual ao fluxo da página /contato.
+    const waTexto = [
+      "Olá, vim pelo site da Bewild e quero participar do programa de indicações.",
+      `Nome: ${dados.nome}`,
+      `Tipo: ${dados.tipo}`,
+      dados.empresa ? `Empresa: ${dados.empresa}` : null,
+      dados.documento ? `CRECI/CNPJ: ${dados.documento}` : null,
+      `WhatsApp: ${whats}`,
+      dados.mail ? `E-mail: ${dados.mail}` : null,
+      `Região/empreendimentos: ${dados.regiao}`,
+      dados.unidades ? `Unidades/mês: ${dados.unidades}` : null,
+      dados.origem ? `Como conheceu: ${dados.origem}` : null,
+    ]
+      .filter(Boolean)
+      .join("\n");
+    const waLink = whatsappHref(waTexto);
+    setWhatsLink(waLink);
+
     const payload = {
       name: dados.nome,
       whatsapp: dados.whats,
@@ -299,6 +318,7 @@ export default function ParceirosPage() {
     if (delivered) {
       setEnviado(true);
       trackEvent("generate_lead", { method: "parceiros_form" });
+      window.open(waLink, "_blank", "noopener,noreferrer");
     } else {
       setErro(
         "Não conseguimos enviar seu cadastro agora. Tente novamente ou fale com a gente no WhatsApp.",
