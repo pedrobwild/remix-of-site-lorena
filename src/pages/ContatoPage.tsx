@@ -46,12 +46,27 @@ export default function ContatoPage() {
   const msgOk = mensagem.trim().length >= 10;
   const podeEnviar = nomeOk && whatsOk && mailOk && msgOk && !enviando;
 
+  const [whatsLink, setWhatsLink] = useState<string | null>(null);
+
   async function enviar(e: React.FormEvent) {
     e.preventDefault();
     setTouched({ nome: true, whats: true, mail: true, mensagem: true });
     if (!podeEnviar) return;
     setEnviando(true);
     setErro(null);
+
+    const waTexto = [
+      "Olá, vim pelo site da Bewild e quero conversar.",
+      `Nome: ${nome.trim()}`,
+      `WhatsApp: ${whats}`,
+      mail.trim() ? `E-mail: ${mail.trim()}` : null,
+      `Mensagem: ${mensagem.trim()}`,
+    ]
+      .filter(Boolean)
+      .join("\n");
+    const waLink = whatsappHref(waTexto);
+    setWhatsLink(waLink);
+
 
     const payload = {
       name: nome.trim(),
@@ -86,6 +101,7 @@ export default function ContatoPage() {
     if (delivered) {
       setEnviado(true);
       trackEvent("generate_lead", { method: "contato_form" });
+      window.open(waLink, "_blank", "noopener,noreferrer");
     } else {
       setErro(
         "Não conseguimos enviar sua mensagem agora. Tente novamente ou fale com a gente no WhatsApp.",
@@ -213,7 +229,7 @@ export default function ContatoPage() {
                 </p>
                 <a
                   className="bwa-button"
-                  href={whatsappHref("Olá, acabei de enviar uma mensagem pelo site da Bewild")}
+                  href={whatsLink ?? whatsappHref("Olá, acabei de enviar uma mensagem pelo site da Bewild")}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
