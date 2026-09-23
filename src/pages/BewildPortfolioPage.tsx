@@ -38,11 +38,11 @@ export default function BewildPortfolioPage() {
   const [sort, setSort] = useState<PortfolioSort>("curadoria");
 
   useSeo({
-    title: "Reforma de apartamento em SP: projetos entregues | Bewild",
+    title: "Projetos de arquitetura e reforma de apartamento em SP | Bewild",
     description:
-      "Reforma de apartamento em SP com projeto, obra e marcenaria: veja apartamentos entregues pela Bewild em São Paulo, prontos para morar ou alugar.",
+      "Projetos de arquitetura, engenharia e reforma de apartamento em SP: veja apartamentos entregues pela Bewild em São Paulo, prontos para morar ou alugar.",
     keywords:
-      "reforma de apartamento em SP, reforma de apartamento São Paulo, apartamentos reformados em SP, antes e depois reforma apartamento, portfólio de reformas em SP, Bewild",
+      "projeto de arquitetura em São Paulo, escritório de arquitetura e engenharia, projeto de interiores, reforma de apartamento em SP, apartamentos reformados em SP, antes e depois reforma apartamento, portfólio de arquitetura e reformas em SP, Bewild",
     canonicalPath: "/portfolio",
     ogType: "website",
     ogImage: projects.find((p) => p.cover_url)?.cover_url ?? undefined,

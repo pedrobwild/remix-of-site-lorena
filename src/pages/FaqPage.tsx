@@ -175,11 +175,11 @@ export default function FaqPage() {
 
 
   useSeo({
-    title: "Dúvidas sobre reforma de apartamento em SP: FAQ | Bewild",
+    title: "Dúvidas sobre arquitetura, engenharia e reforma em SP | Bewild",
     description:
-      "Dúvidas sobre reforma de apartamento em SP respondidas: quanto custa, quanto tempo leva, autorização do condomínio, etapas e o que entra no contrato fechado da Bewild.",
+      "Dúvidas sobre arquitetura, engenharia e reforma de apartamento em SP respondidas: quanto custa, quanto tempo leva, projeto, autorização do condomínio, etapas e o que entra no contrato fechado da Bewild.",
     keywords:
-      "dúvidas sobre reforma de apartamento em SP, dúvidas sobre reforma de apartamento, reforma de apartamento em SP, custo de reforma, prazo de reforma, autorização de reforma condomínio, Bewild",
+      "dúvidas sobre arquitetura e engenharia, projeto de arquitetura em São Paulo, dúvidas sobre reforma de apartamento em SP, dúvidas sobre reforma de apartamento, reforma de apartamento em SP, custo de reforma, prazo de reforma, autorização de reforma condomínio, Bewild",
     canonicalPath: "/faq",
     ogType: "website",
     jsonLd: settings

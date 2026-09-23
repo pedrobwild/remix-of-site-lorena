@@ -282,7 +282,7 @@ export default function ParceirosPage() {
     description:
       "Você vende o imóvel, a Bewild entrega pronto: reforma de apartamento em SP completa, com preço e prazo em contrato e 5 anos de garantia. Programa de indicação para corretores, imobiliárias e incorporadoras.",
     keywords:
-      "reforma de apartamento em SP, parceria corretor reforma, indicação reforma comissão, reforma de studio para investidor, reforma apartamento compacto São Paulo, incorporadora reforma pós-chaves, custo de reforma, Bewild parceiros",
+      "escritório de arquitetura e engenharia em SP, reforma de apartamento em SP, parceria corretor reforma, indicação reforma comissão, reforma de studio para investidor, reforma apartamento compacto São Paulo, incorporadora reforma pós-chaves, custo de reforma, Bewild parceiros",
     canonicalPath: "/parceiros",
     ogType: "website",
     jsonLd: settings

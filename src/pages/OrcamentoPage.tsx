@@ -108,11 +108,11 @@ export default function OrcamentoPage() {
   }
 
   useSeo({
-    title: "Orçamento de reforma de studio e apartamento em SP: custo e prazo | Bewild",
+    title: "Orçamento de projeto de arquitetura e reforma em SP | Bewild",
     description:
-      "Peça o orçamento da reforma do seu studio ou apartamento em São Paulo e receba faixa de custo e prazo: projeto, obra, marcenaria e mobília em um contrato fechado.",
+      "Peça o orçamento de arquitetura, engenharia e reforma do seu studio ou apartamento em São Paulo e receba faixa de custo e prazo: projeto, obra, marcenaria e mobília em um contrato fechado.",
     keywords:
-      "orçamento de reforma de studio, quanto custa reformar um studio em São Paulo, custo de reforma de studio, prazo de reforma de studio, orçamento de reforma de apartamento, orçamento de reforma em SP, preço e prazo de reforma São Paulo, reforma de studio para short stay, Bewild",
+      "orçamento de projeto de arquitetura, quanto custa um projeto de arquitetura em São Paulo, orçamento de reforma de studio, quanto custa reformar um studio em São Paulo, custo de reforma de studio, prazo de reforma de studio, orçamento de reforma de apartamento, orçamento de reforma em SP, preço e prazo de reforma São Paulo, reforma de studio para short stay, Bewild",
     canonicalPath: "/orcamento",
     ogType: "website",
     jsonLd: settings

@@ -10,11 +10,11 @@ import { installInstagramEmbeds } from "@/lib/homeInstagram";
 // @ts-expect-error - JS module, no types
 import { initHomeBwa } from "./home-bwa-script.js";
 
-const TITLE = "Reforma de apartamento em SP e custo de reforma | Bewild";
+const TITLE = "Arquitetura, engenharia e reforma de apartamento em SP | Bewild";
 const DESCRIPTION =
-  "Reforma de apartamento em SP com custo de reforma fechado: projeto, obra, marcenaria e mobília em um contrato, com preço e prazo garantidos.";
+  "Escritório de arquitetura e engenharia em São Paulo: projeto arquitetônico 3D, obra e marcenaria na reforma do seu apartamento, com preço fechado e prazo em contrato.";
 const KEYWORDS =
-  "reforma de apartamento em SP, custo de reforma, custo de reforma de apartamento, quanto custa reformar um apartamento em SP, reforma completa de apartamento, empresa de reforma de apartamento SP, reforma turnkey São Paulo, Bewild";
+  "escritório de arquitetura em São Paulo, arquitetura e engenharia, projeto arquitetônico, projeto de interiores, engenharia civil São Paulo, reforma de apartamento em SP, custo de reforma, quanto custa reformar um apartamento em SP, empresa de reforma de apartamento SP, reforma turnkey São Paulo, Bewild";
 const THEME_COLOR = "#0B2342";
 const FONTS_HREF =
   "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&display=swap";
