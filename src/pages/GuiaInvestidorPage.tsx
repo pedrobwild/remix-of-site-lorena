@@ -113,7 +113,32 @@ function GuiaHeader() {
   );
 }
 
+/**
+ * Fontes do guia (e do rodapé oficial). Por <link>, não por @import no CSS:
+ * se o Google Fonts falhar, a página segue com a fonte de fallback em vez de
+ * o chunk de CSS inteiro dar erro e derrubar a rota.
+ */
+const GUIA_FONT_URLS = [
+  "https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Playfair+Display:wght@600;700;800&display=swap",
+  "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap",
+];
+
+function ensureGuiaFonts(): void {
+  if (typeof document === "undefined") return;
+  for (const href of GUIA_FONT_URLS) {
+    if (document.head.querySelector(`link[rel="stylesheet"][href="${href}"]`)) continue;
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = href;
+    document.head.appendChild(link);
+  }
+}
+
 export default function GuiaInvestidorPage() {
+  useEffect(() => {
+    ensureGuiaFonts();
+  }, []);
+
   return (
     <div className="guia-root min-h-screen">
       {/* Respeita "reduzir movimento" do sistema em todas as animações do guia. */}
