@@ -47,6 +47,16 @@ export const ALL_NEIGHBORHOODS = "__all__";
 
 type WithPlace = { neighborhood?: string | null; location?: string | null };
 
+const collapseSpaces = (value: string): string => value.trim().replace(/\s+/g, " ");
+
+const neighborhoodKey = (value: string): string =>
+  collapseSpaces(value)
+    .toLocaleLowerCase("pt-BR")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+const hasAccent = (value: string): boolean => value.normalize("NFD") !== value.normalize("NFC");
+
 /** Bairro exibido no card (mesma regra do grid): bairro → cidade → São Paulo. */
 export function placeOf(p: WithPlace): string {
   return (p.neighborhood || p.location || "São Paulo").trim();
@@ -54,13 +64,32 @@ export function placeOf(p: WithPlace): string {
 
 /** Lista de bairros disponíveis, sem repetição, em ordem alfabética pt-BR. */
 export function neighborhoodOptions<T extends WithPlace>(list: T[]): string[] {
-  const set = new Set(list.map(placeOf).filter(Boolean));
-  return [...set].sort((a, b) => a.localeCompare(b, "pt-BR"));
+  const groups = new Map<string, Map<string, number>>();
+
+  list.forEach((item) => {
+    const label = collapseSpaces(placeOf(item));
+    const key = neighborhoodKey(label);
+    const spellings = groups.get(key) ?? new Map<string, number>();
+    spellings.set(label, (spellings.get(label) ?? 0) + 1);
+    groups.set(key, spellings);
+  });
+
+  return [...groups.values()]
+    .map((spellings) =>
+      [...spellings.entries()].sort(
+        ([labelA, countA], [labelB, countB]) =>
+          countB - countA ||
+          Number(hasAccent(labelB)) - Number(hasAccent(labelA)) ||
+          labelA.localeCompare(labelB, "pt-BR"),
+      )[0][0],
+    )
+    .sort((a, b) => a.localeCompare(b, "pt-BR"));
 }
 
 export function applyNeighborhoodFilter<T extends WithPlace>(list: T[], value: string): T[] {
   if (!value || value === ALL_NEIGHBORHOODS) return list;
-  return list.filter((p) => placeOf(p) === value);
+  const selectedKey = neighborhoodKey(value);
+  return list.filter((p) => neighborhoodKey(placeOf(p)) === selectedKey);
 }
 
 /* =========================== Ordenação =========================== */
