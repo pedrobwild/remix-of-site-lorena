@@ -40,7 +40,7 @@ export default function BwaFooter() {
             <h3>Navegação</h3>
             <nav>
               <a href="/#certeza">O contrato</a>
-              <a href="/#marcenaria">Marcenaria</a>
+              <a href="/marcenaria">Marcenaria sob medida</a>
               <a href="/#certeza">O que fazemos</a>
               <a href="/como-funciona">Como funciona</a>
               <a href="/portfolio">Portfólio de reformas em SP</a>
