@@ -13,15 +13,7 @@
 .bwa-partner-logos-bewild {
   display: block;
   width: clamp(104px, 14vw, 150px);
-  height: clamp(34px, 4vw, 42px);
-  overflow: hidden;
-}
-
-.bwa-partner-logos-bewild img {
-  display: block;
-  width: 222.68%;
   height: auto;
-  transform: translate(-27.31%, -44.44%);
 }
 
 .bwa-partner-logos-leal {
@@ -49,7 +41,6 @@
 
   .bwa-partner-logos-bewild {
     width: 100px;
-    height: 33px;
   }
 
   .bwa-partner-logos-leal {

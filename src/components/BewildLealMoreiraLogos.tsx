@@ -8,9 +8,14 @@ export default function BewildLealMoreiraLogos({ className = "" }: BewildLealMor
   return (
     <h3 className={`bwa-partner-logos ${className}`.trim()}>
       <span className="sr-only">Bewild e Leal Moreira</span>
-      <span className="bwa-partner-logos-bewild" aria-hidden="true">
-        <img src="/brand/bewild-logo-branca.png" alt="" width={1080} height={1350} decoding="async" />
-      </span>
+      <img
+        className="bwa-partner-logos-bewild"
+        src="/brand/bewild-logo-branca-horizontal.png"
+        alt=""
+        width={525}
+        height={201}
+        decoding="async"
+      />
       <span className="bwa-partner-logos-x" aria-hidden="true">×</span>
       <img
         className="bwa-partner-logos-leal"
