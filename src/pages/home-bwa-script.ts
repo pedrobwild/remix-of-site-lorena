@@ -136,6 +136,8 @@ function installNavDropdowns(root: HTMLElement, signal: AbortSignal): Cleanup {
 
     let open = false;
     let closeTimer = 0;
+    // Em telas com mouse o painel já abre no hover: o primeiro clique não pode fechá-lo.
+    let abertoPorHover = false;
 
     const setOpen = (next: boolean, restoreFocus = false) => {
       window.clearTimeout(closeTimer);
@@ -151,7 +153,18 @@ function installNavDropdowns(root: HTMLElement, signal: AbortSignal): Cleanup {
     closers.push(() => setOpen(false));
 
     // Clique e toque: o próprio <button> já responde a Enter e Espaço.
-    button.addEventListener("click", () => setOpen(!open), { signal });
+    button.addEventListener(
+      "click",
+      () => {
+        if (abertoPorHover) {
+          abertoPorHover = false;
+          setOpen(true);
+          return;
+        }
+        setOpen(!open);
+      },
+      { signal },
+    );
     button.addEventListener(
       "keydown",
       (event) => {
@@ -192,12 +205,22 @@ function installNavDropdowns(root: HTMLElement, signal: AbortSignal): Cleanup {
     );
 
     if (canHover) {
-      wrapper.addEventListener("mouseenter", () => setOpen(true), { signal });
+      wrapper.addEventListener(
+        "mouseenter",
+        () => {
+          if (!open) abertoPorHover = true;
+          setOpen(true);
+        },
+        { signal },
+      );
       wrapper.addEventListener(
         "mouseleave",
         () => {
           window.clearTimeout(closeTimer);
-          closeTimer = window.setTimeout(() => setOpen(false), 220);
+          closeTimer = window.setTimeout(() => {
+            abertoPorHover = false;
+            setOpen(false);
+          }, 220);
         },
         { signal },
       );
