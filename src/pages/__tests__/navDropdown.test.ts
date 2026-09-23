@@ -110,11 +110,11 @@ describe("dropdown Parceiros", () => {
     cleanup();
   });
 
-  it("Incorporadoras fica escondido com a flag desligada", async () => {
+  it("Incorporadoras aparece no site publicado com a flag ligada", async () => {
     const initBwaNav = await loadNav("");
     const { root, wrapper } = mount();
     const cleanup = initBwaNav(root);
-    expect(wrapper.querySelector("[data-incorp-gated]")!.hasAttribute("hidden")).toBe(true);
+    expect(wrapper.querySelector("[data-incorp-gated]")!.hasAttribute("hidden")).toBe(false);
     cleanup();
   });
 
