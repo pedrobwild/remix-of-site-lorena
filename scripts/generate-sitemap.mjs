@@ -109,6 +109,7 @@ async function main() {
     { loc: `${BASE_URL}/como-funciona`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/onde-atuamos`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/parceiros`, changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/indique-um-amigo`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/marcas-e-parcerias`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/guia-do-investidor`, lastmod: "2026-09-22", changefreq: "monthly", priority: "0.8" },
     { loc: `${BASE_URL}/privacidade`, changefreq: "yearly", priority: "0.3" },
