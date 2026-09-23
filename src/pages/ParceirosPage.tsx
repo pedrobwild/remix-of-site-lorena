@@ -552,11 +552,11 @@ export default function ParceirosPage() {
                 </p>
               </article>
               <article className="bwa-parc-card">
-                <h3>Rafael · Butantã · 70% de ocupação</h3>
+                <h3>Rafael · Butantã · 100% de ocupação em setembro</h3>
                 <p>
                   O Rafael comprou um studio no Butantã para renda de curta temporada e mora fora
                   de São Paulo. A Bewild entregou projeto, obra, marcenaria e mobília à distância —
-                  e o imóvel opera com cerca de 70% de ocupação.
+                  e o imóvel opera com cerca de 100% de ocupação.
                 </p>
               </article>
             </div>
