@@ -4752,6 +4752,77 @@
 }
 
 /* ---------------------------------------------------------------
+   Tour virtual 3D (dentro do bloco 02, logo depois de "Atmosferas
+   Bewild") — os 3 cômodos do Enscape lado a lado, em qualquer largura.
+   Estados do quadro (data-tour3d-state): sem estado = capa "Explorar
+   em 3D"; loading = "Carregando tour 3D…"; ready = a capa vira uma
+   película transparente (a roda do mouse segue rolando a página) até o
+   clique, que marca data-tour3d-active. A consulta "inline" abaixo é a
+   mesma de TOUR3D_INLINE_QUERY (src/lib/homeTour3d.ts).
+   --------------------------------------------------------------- */
+.bwa-tour3d{padding-top:clamp(56px,7vw,104px);color:var(--bwa-white)}
+.bwa-tour3d-head{display:flex;align-items:flex-end;justify-content:space-between;gap:36px;margin-bottom:clamp(28px,4vw,48px);padding-left:clamp(20px,3vw,44px);border-left:1px solid var(--bwa-white-line)}
+.bwa-tour3d-head .bwa-label{margin-bottom:16px}
+.bwa-tour3d-title{margin:0;color:var(--bwa-white);font-family:"Manrope",sans-serif;font-size:clamp(38px,5vw,72px);font-weight:300;line-height:1}
+.bwa-tour3d-title strong{font-weight:500}
+.bwa-tour3d-lead{max-width:40ch;margin:0;color:rgba(255,255,255,.74);font-size:clamp(15px,1.15vw,18px);line-height:1.55}
+.bwa-tour3d-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(10px,2vw,28px)}
+.bwa-tour3d-card{min-width:0;margin:0;display:flex;flex-direction:column}
+.bwa-tour3d-frame{position:relative;aspect-ratio:1/1;overflow:hidden;container-type:inline-size;background:var(--bwa-navy);border:1px solid var(--bwa-white-line)}
+.bwa-tour3d-frame iframe{position:absolute;inset:0;display:block;width:100%;height:100%;border:0;background:var(--bwa-navy)}
+.bwa-tour3d-frame:fullscreen{border:0}
+.bwa-tour3d-cover{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;gap:clamp(12px,8cqi,24px);width:100%;margin:0;padding:12px;border:0;border-radius:0;color:var(--bwa-white);background-color:var(--bwa-navy);background-image:linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);background-size:28px 28px;background-position:center;font:inherit;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.bwa-tour3d-cover:focus-visible{outline:2px solid var(--bwa-white);outline-offset:-6px}
+.bwa-tour3d-glyph{width:64px;height:64px;width:clamp(40px,26cqi,92px);height:clamp(40px,26cqi,92px);color:rgba(255,255,255,.92);transition:transform .5s var(--bwa-ease)}
+.bwa-tour3d-cover:hover .bwa-tour3d-glyph{transform:translateY(-3px)}
+.bwa-tour3d-cta,.bwa-tour3d-loading,.bwa-tour3d-chip{font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:500;letter-spacing:.14em;line-height:1.2;text-transform:uppercase}
+.bwa-tour3d-cta{padding:11px 16px;border:1px solid rgba(255,255,255,.42);transition:background .25s ease,color .25s ease,border-color .25s ease}
+.bwa-tour3d-cover:hover .bwa-tour3d-cta,.bwa-tour3d-cover:focus-visible .bwa-tour3d-cta{color:var(--bwa-ink);background:var(--bwa-white);border-color:var(--bwa-white)}
+.bwa-tour3d-loading,.bwa-tour3d-chip,.bwa-tour3d-tag{display:none}
+.bwa-tour3d-tag{position:absolute;top:7px;right:7px;padding:3px 5px;border:1px solid rgba(255,255,255,.42);font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.1em;line-height:1}
+[data-tour3d-state="loading"] .bwa-tour3d-cover{cursor:progress}
+[data-tour3d-state="loading"] .bwa-tour3d-cta{display:none}
+[data-tour3d-state="loading"] .bwa-tour3d-loading{display:block;color:rgba(255,255,255,.78);animation:bwa-tour3d-pulse 1.4s ease-in-out infinite}
+@keyframes bwa-tour3d-pulse{0%,100%{opacity:.5}50%{opacity:1}}
+[data-tour3d-state="ready"] .bwa-tour3d-cover{justify-content:flex-end;padding-bottom:18px;background:transparent}
+[data-tour3d-state="ready"] .bwa-tour3d-glyph,[data-tour3d-state="ready"] .bwa-tour3d-cta{display:none}
+[data-tour3d-state="ready"] .bwa-tour3d-chip{display:block;padding:9px 14px;color:var(--bwa-white);background:rgba(11,35,66,.88);opacity:0;transform:translateY(6px);transition:opacity .25s ease,transform .25s ease}
+[data-tour3d-state="ready"] .bwa-tour3d-cover:hover .bwa-tour3d-chip,[data-tour3d-state="ready"] .bwa-tour3d-cover:focus-visible .bwa-tour3d-chip{opacity:1;transform:none}
+[data-tour3d-state="ready"][data-tour3d-active] .bwa-tour3d-cover{display:none}
+.bwa-tour3d-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:36px;margin-top:14px}
+.bwa-tour3d-name{margin:0;color:var(--bwa-white);font-family:"Manrope",sans-serif;font-size:clamp(14px,1.45vw,21px);font-weight:500;line-height:1.2;letter-spacing:-.02em}
+.bwa-tour3d-expand{display:none;flex-shrink:0;align-items:center;gap:8px;min-height:36px;padding:0;border:0;background:none;color:rgba(255,255,255,.72);font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:color .2s ease}
+.bwa-tour3d-expand svg{width:14px;height:14px}
+.bwa-tour3d-expand:hover,.bwa-tour3d-expand:focus-visible{color:var(--bwa-white)}
+.bwa-tour3d-expand:focus-visible{outline:2px solid var(--bwa-white);outline-offset:4px}
+.bwa-tour3d-hint{margin:clamp(18px,2.4vw,28px) 0 0;color:rgba(255,255,255,.6);font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;line-height:1.6;text-transform:uppercase}
+.bwa-tour3d-hint-pointer{display:none}
+/* Quadro estreito (celular): sem o botão escrito; o selo "3D" no canto indica o tour. */
+@container (max-width:200px){.bwa-tour3d-cta{display:none}.bwa-tour3d-frame:not([data-tour3d-state]) .bwa-tour3d-tag{display:block}}
+@media (min-width:1024px) and (hover:hover) and (pointer:fine){
+  .bwa-tour3d-expand{display:inline-flex}
+  .bwa-tour3d-hint-pointer{display:block}
+  .bwa-tour3d-hint-touch{display:none}
+}
+@media (max-width:900px){.bwa-tour3d-head{flex-direction:column;align-items:flex-start;gap:18px}}
+@media (max-width:820px){.bwa-tour3d{padding-bottom:clamp(56px,12vw,80px)}}
+@media (prefers-reduced-motion:reduce){[data-tour3d-state="loading"] .bwa-tour3d-loading{animation:none}.bwa-tour3d-glyph,.bwa-tour3d-chip{transition:none}.bwa-tour3d-cover:hover .bwa-tour3d-glyph{transform:none}}
+/* Tela cheia em <dialog> (toque/tela estreita), criado por homeTour3d.ts no <body>. */
+html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
+.bwa-tour3d-dialog{position:fixed;inset:0;z-index:2147483000;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;color:var(--bwa-white);background:var(--bwa-ink);overscroll-behavior:contain}
+.bwa-tour3d-dialog[open]{display:flex;flex-direction:column}
+.bwa-tour3d-dialog::backdrop{background:var(--bwa-ink)}
+.bwa-tour3d-dialog-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px var(--bwa-gutter);padding-top:max(10px,env(safe-area-inset-top));border-bottom:1px solid var(--bwa-white-line)}
+.bwa-tour3d-dialog-title{margin:0;font-family:"Manrope",sans-serif;font-size:17px;font-weight:500;letter-spacing:-.01em}
+.bwa-tour3d-dialog-close{min-height:44px;padding:0 18px;border:1px solid var(--bwa-white-line);border-radius:0;color:var(--bwa-white);background:transparent;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.bwa-tour3d-dialog-close:hover,.bwa-tour3d-dialog-close:focus-visible{color:var(--bwa-ink);background:var(--bwa-white);border-color:var(--bwa-white)}
+.bwa-tour3d-dialog-stage{position:relative;flex:1;min-height:0;background:var(--bwa-navy)}
+.bwa-tour3d-dialog-stage iframe{position:absolute;inset:0;display:block;width:100%;height:100%;border:0}
+.bwa-tour3d-dialog-loading{position:absolute;inset:0;z-index:1;display:grid;place-items:center;margin:0;color:rgba(255,255,255,.78);background:var(--bwa-navy);font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;pointer-events:none}
+.bwa-tour3d-dialog-stage[data-tour3d-state="ready"] .bwa-tour3d-dialog-loading{display:none}
+.bwa-tour3d-dialog-hint{margin:0;padding:10px var(--bwa-gutter);padding-bottom:max(10px,env(safe-area-inset-bottom));color:rgba(255,255,255,.6);font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;text-align:center;text-transform:uppercase}
+
+/* ---------------------------------------------------------------
    Marcenaria própria (bloco 05) — grade do Catálogo Bwild por cômodo,
    a mesma do orçamento público. Fundo escuro.
    --------------------------------------------------------------- */
