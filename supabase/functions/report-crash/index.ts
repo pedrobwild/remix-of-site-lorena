@@ -19,8 +19,8 @@
 // qualquer sessao existir. A seguranca vem da allowlist + bot-filter +
 // rate-limit + sanitizacao/limite de tamanho do payload.
 
-import "jsr:@supabase/functions-js@2/edge-runtime.d.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.45.4";
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -65,16 +65,11 @@ function isRateLimited(ip: string): boolean {
   return false;
 }
 
-// Cabeçalhos definidos pela borda primeiro: o 1º item de X-Forwarded-For
-// pode vir do próprio cliente e burlar o rate limit.
 function extractClientIp(req: Request): string {
-  const edge = req.headers.get("cf-connecting-ip") ?? req.headers.get("x-real-ip");
-  if (edge) return edge.trim();
   const xff = req.headers.get("x-forwarded-for");
-  return (xff ? xff.split(",")[0]!.trim() : "") || "unknown";
+  if (xff) return xff.split(",")[0]!.trim();
+  return req.headers.get("x-real-ip") || "unknown";
 }
-
-const MAX_BODY_BYTES = 32 * 1024;
 
 // Limites de tamanho por campo. Curtos o suficiente pra nao deixar um
 // atacante inflar armazenamento, generosos o bastante pra um stack real.
@@ -106,12 +101,7 @@ Deno.serve(async (req) => {
     // Aceita JSON tanto via application/json quanto via text/plain (o client
     // pode cair em sendBeacon/keepalive ao descarregar a pagina).
     const raw = await req.text();
-    if (raw.length > MAX_BODY_BYTES) {
-      return new Response("payload too large", { status: 413, headers: corsHeaders });
-    }
-    const parsed = raw ? (JSON.parse(raw) as unknown) : {};
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("not_object");
-    body = parsed as Record<string, unknown>;
+    body = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
   } catch {
     return new Response("invalid json", { status: 400, headers: corsHeaders });
   }
@@ -160,9 +150,10 @@ Deno.serve(async (req) => {
 
   const { error } = await supabase.from("crash_reports").insert(row);
   if (error) {
-    // Sem a mensagem do Postgres na resposta (endpoint anônimo).
-    console.error("[report-crash] insert failed", error.code ?? "unknown");
-    return new Response("insert failed", { status: 500, headers: corsHeaders });
+    return new Response(`insert failed: ${error.message}`, {
+      status: 500,
+      headers: corsHeaders,
+    });
   }
 
   return new Response(null, { status: 204, headers: corsHeaders });

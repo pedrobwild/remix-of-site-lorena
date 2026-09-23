@@ -4,12 +4,6 @@
 // admin "Mídia paga". Nunca quebra: se faltar token ou a Graph API
 // rejeitar, devolve { connected:false, reason } com status 200 pra UI
 // degradar graciosamente. NUNCA loga/retorna o access_token.
-//
-// Somente admin logado: sem isso qualquer pessoa com a chave pública do
-// site lia gasto, CPL, CTR e o id da conta de anúncios (e consumia a cota
-// da Graph API).
-
-import { createClient } from "npm:@supabase/supabase-js@2.45.4";
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -55,24 +49,6 @@ function num(v: unknown): number {
   return Number.isFinite(n) ? n : 0;
 }
 
-/** Valida o JWT do usuário e `is_admin()` no banco. Devolve a resposta de erro ou null. */
-async function requireAdmin(req: Request): Promise<Response | null> {
-  const authHeader = req.headers.get("Authorization") ?? "";
-  if (!authHeader.startsWith("Bearer ")) return json({ error: "não autorizado" }, 401);
-  const url = Deno.env.get("SUPABASE_URL");
-  const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
-  if (!url || !anonKey) return json({ error: "indisponível" }, 503);
-  const client = createClient(url, anonKey, {
-    global: { headers: { Authorization: authHeader } },
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-  const { data: userData } = await client.auth.getUser();
-  if (!userData?.user) return json({ error: "não autorizado" }, 401);
-  const { data: isAdmin, error } = await client.rpc("is_admin");
-  if (error || isAdmin !== true) return json({ error: "somente administradores" }, 403);
-  return null;
-}
-
 function isLeadAction(t: string | undefined): boolean {
   if (!t) return false;
   return t.toLowerCase().includes("lead");
@@ -82,9 +58,6 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
-
-  const denied = await requireAdmin(req);
-  if (denied) return denied;
 
   // Janela
   let datePreset = "last_30d";
@@ -129,7 +102,7 @@ Deno.serve(async (req) => {
 
   let res: Response;
   try {
-    res = await fetch(apiUrl.toString(), { method: "GET", signal: AbortSignal.timeout(15_000) });
+    res = await fetch(apiUrl.toString(), { method: "GET" });
   } catch (_e) {
     return json({
       connected: false,

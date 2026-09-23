@@ -24,7 +24,7 @@
 //
 // `verify_jwt = false` — endpoint público, idempotente, somente leitura.
 
-import { createClient } from "npm:@supabase/supabase-js@2.45.4";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
 
 /**
  * Versão lógica desta edge function. Incrementar manualmente a cada mudança
@@ -200,13 +200,16 @@ Deno.serve(async (req: Request) => {
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
   // 3) Redirect ativo em seo_404_log? -> 301 com Location.
-  //    `seo_404_log` não tem leitura anônima; a RPC devolve só o destino
-  //    (e só destinos relativos). A leitura direta antiga voltava sempre
-  //    vazia com a chave anon, então este 301 nunca disparava.
   try {
-    const { data: target, error } = await supabase.rpc("resolve_404_redirect", { p_path: path });
+    const { data: redirectRow } = await supabase
+      .from("seo_404_log")
+      .select("redirect_to, status")
+      .eq("path", path)
+      .eq("status", "redirect")
+      .maybeSingle();
 
-    if (!error && typeof target === "string" && target.startsWith("/") && !target.startsWith("//")) {
+    if (redirectRow?.redirect_to) {
+      const target = redirectRow.redirect_to;
       return new Response(
         JSON.stringify({ path, status: "redirect", target }),
         {
