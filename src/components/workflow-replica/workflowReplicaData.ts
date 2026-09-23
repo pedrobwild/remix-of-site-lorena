@@ -68,9 +68,9 @@ export const reportPhotos = [
 
 export const reports = [
   { week: 6, dates: "15 set - 19 set", stage: "Instalação de marcenaria", progress: 52, planned: 55, current: true },
-  { week: 5, dates: "08 set - 12 set", stage: "Instalações e pintura", progress: 45, planned: 47 },
-  { week: 4, dates: "01 set - 05 set", stage: "Drywall e metais", progress: 36, planned: 38 },
-  { week: 3, dates: "25 ago - 29 ago", stage: "Piso e marcenaria", progress: 28, planned: 29 },
-  { week: 2, dates: "18 ago - 22 ago", stage: "Instalações", progress: 18, planned: 18 },
-  { week: 1, dates: "11 ago - 15 ago", stage: "Preparação", progress: 9, planned: 10 },
+  { week: 5, dates: "08 set - 12 set", stage: "Instalações e pintura", progress: 45, planned: 47, current: false },
+  { week: 4, dates: "01 set - 05 set", stage: "Drywall e metais", progress: 36, planned: 38, current: false },
+  { week: 3, dates: "25 ago - 29 ago", stage: "Piso e marcenaria", progress: 28, planned: 29, current: false },
+  { week: 2, dates: "18 ago - 22 ago", stage: "Instalações", progress: 18, planned: 18, current: false },
+  { week: 1, dates: "11 ago - 15 ago", stage: "Preparação", progress: 9, planned: 10, current: false },
 ] as const;
