@@ -24,6 +24,7 @@ import {
   type PortfolioSort,
 } from "@/lib/portfolioFilter";
 import { hasReadyPhotos, photoKindLabel } from "@/lib/projectPhotos";
+import { useImageAlts } from "@/lib/useImageAlts";
 import "@/styles/bwh-tokens.css";
 import "@/styles/bwh-overlays.css";
 import "@/styles/bwh-sol-fusion.css";
@@ -36,6 +37,8 @@ export default function BewildPortfolioPage() {
   const [filter, setFilter] = useState<PortfolioFilter>("all");
   const [place, setPlace] = useState<string>(ALL_NEIGHBORHOODS);
   const [sort, setSort] = useState<PortfolioSort>("curadoria");
+  // Alt text descritivo das capas (gerado a partir da análise de cada foto).
+  const coverAlts = useImageAlts(useMemo(() => projects.map((p) => p.cover_url), [projects]));
 
   useSeo({
     title: "Projetos de arquitetura e reforma de apartamento em SP | Bewild",
@@ -231,7 +234,10 @@ export default function BewildPortfolioPage() {
                         {p.cover_url ? (
                           <img
                             src={p.cover_url}
-                            alt={`${p.title} — ${bewildTypeLabel(p.project_type)} em ${where}`}
+                            alt={
+                              coverAlts[p.cover_url] ||
+                              `${p.title} — ${bewildTypeLabel(p.project_type)} em ${where}`
+                            }
                             loading="lazy"
                             decoding="async"
                           />
