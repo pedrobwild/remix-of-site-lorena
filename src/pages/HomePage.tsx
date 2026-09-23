@@ -139,6 +139,8 @@ export default function HomePage() {
           // quando as seções se aproximam da tela.
           installCatalogPreview(root),
           installInstagramEmbeds(root),
+          // Tour virtual 3D (Enscape): 3 cômodos lado a lado; no toque, tela cheia.
+          installTour3d(root),
           installFooterLinkedin(root),
         ]
       : [];
