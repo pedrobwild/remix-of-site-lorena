@@ -4,7 +4,6 @@ import { carryCampaignParams } from "./campaignParams";
 export type Route =
   | { name: "home"; anchor?: string }
   | { name: "portfolio" }
-  | { name: "diagnostico" }
   | { name: "orcamento" }
   | { name: "faq" }
   | { name: "autorizacao-condominio" }
