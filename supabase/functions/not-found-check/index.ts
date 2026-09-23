@@ -54,7 +54,6 @@ const corsHeaders = {
 export const STATIC_ROUTES: ReadonlyArray<string> = [
   "/",
   "/portfolio",
-  "/diagnostico",
   "/orcamento",
   "/faq",
   "/autorizacao-condominio",

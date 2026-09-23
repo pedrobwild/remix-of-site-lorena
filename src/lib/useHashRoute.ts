@@ -62,11 +62,14 @@ export type Route =
  * primeiro, registrava um falso 404 em `seo_404_log` e piscava na tela).
  *  - `/admin` → `/admin/dashboard`
  *  - `/blog*` → `/conteudos*` (blog legado removido; URL canônica nova)
+ *  - `/diagnostico` → `/orcamento` (página removida; o pedido de orçamento
+ *    é a única entrada de lead)
  */
 export function normalizeLegacyPath(pathname: string): string {
   if (/^\/admin\/?$/.test(pathname)) return "/admin/dashboard";
   const blog = pathname.match(/^\/blog(\/.*)?$/);
   if (blog) return "/conteudos" + (blog[1] && blog[1] !== "/" ? blog[1] : "");
+  if (pathname === "/diagnostico") return "/orcamento";
   return pathname;
 }
 
@@ -88,8 +91,8 @@ function parsePath(rawPath: string): Route {
 
   if (path === "/o") return { name: "lp-obra" };
   if (path === "/p") return { name: "lp-panfleto" };
-  if (path === "/diagnostico") return { name: "diagnostico" };
-  // Página real de pedido de orçamento (entrega no mesmo canal do /contato).
+  // Página de pedido de orçamento (entrega no mesmo canal do /contato).
+  // /diagnostico foi removida e virou redirect legado para /orcamento.
   if (path === "/orcamento") return { name: "orcamento" };
   if (path === "/faq") return { name: "faq" };
   if (path === "/autorizacao-condominio") return { name: "autorizacao-condominio" };
@@ -245,7 +248,6 @@ export function useHashRoute(): Route {
 export const routes = {
   home: "/",
   portfolio: "/portfolio",
-  diagnostico: "/diagnostico",
   orcamento: "/orcamento",
   faq: "/faq",
   autorizacaoCondominio: "/autorizacao-condominio",
@@ -426,7 +428,7 @@ export function scrollToHashTarget(timeoutMs = 3000): () => void {
 export function navigate(href: string, opts: { replace?: boolean } = {}) {
   const cleaned = href.startsWith("#") ? href.slice(1) : href;
   // Navegação interna carrega utm_*/gclid/fbclid da URL atual, para que o
-  // lead enviado em /diagnostico mantenha a origem da campanha.
+  // lead enviado em /orcamento mantenha a origem da campanha.
   const target = carryCampaignParams(
     normalizeLegacyHref(cleaned.startsWith("/") ? cleaned : `/${cleaned}`),
     window.location.search,
