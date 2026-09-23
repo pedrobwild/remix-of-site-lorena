@@ -1,4 +1,4 @@
-- [ ] Recriar a réplica do portal Bwild Workflow na home, validar e capturar em 1280/390/320 sem publicar.
+- [x] Recriar a réplica do portal Bwild Workflow na home, validar e capturar em 1280/390/320 sem publicar.
 # Roadmap
 
 - [x] Publicar o site (solicitado — deploy em https://bewild.com.br)
