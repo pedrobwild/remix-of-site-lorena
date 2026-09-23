@@ -309,9 +309,6 @@ export default function IncorporadorasPage() {
                 {caso.stats.length > 0 && (
                   <>
                     <h3>{INCORP_CASE.statsTitle}</h3>
-                    {preview && !caso.published && (
-                      <p className="bwa-incorp-pending">{INCORP_CASE.previewPending}</p>
-                    )}
                     <ul className="bwa-parc-facts">
                       {caso.stats.map((s) => (
                         <li key={s.label}>
