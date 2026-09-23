@@ -15,6 +15,7 @@ export type Route =
   | { name: "reforma-apartamento-sp" }
   | { name: "reforma-studio-sp" }
   | { name: "reforma-cobertura-sp" }
+  | { name: "marcenaria" }
   | { name: "parceiros" }
   | { name: "guia-do-investidor" }
   | { name: "privacidade" }
@@ -70,6 +71,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/reforma-de-apartamento-sao-paulo") return { name: "reforma-apartamento-sp" };
   if (path === "/reforma-de-studio-sao-paulo") return { name: "reforma-studio-sp" };
   if (path === "/reforma-de-cobertura-sao-paulo") return { name: "reforma-cobertura-sp" };
+  if (path === "/marcenaria") return { name: "marcenaria" };
   if (path === "/parceiros") return { name: "parceiros" };
   if (path === "/guia-do-investidor") return { name: "guia-do-investidor" };
   if (path === "/privacidade") return { name: "privacidade" };
@@ -185,6 +187,7 @@ export const routes = {
   reformaApartamentoSp: "/reforma-de-apartamento-sao-paulo",
   reformaStudioSp: "/reforma-de-studio-sao-paulo",
   reformaCoberturaSp: "/reforma-de-cobertura-sao-paulo",
+  marcenaria: "/marcenaria",
   parceiros: "/parceiros",
   guiaDoInvestidor: "/guia-do-investidor",
   privacidade: "/privacidade",
