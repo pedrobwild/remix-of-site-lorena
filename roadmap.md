@@ -10,4 +10,4 @@
 - [x] Rodapé Parceiros (clientes e corretores / incorporadoras)
 - [x] Guia: link de pular + movimento reduzido
 - [x] Página /acessibilidade com link no rodapé
-- [ ] Redesenhar a jornada de 12 etapas e criar as abas Curva S / Relatórios / Cronograma em #workflow; validar e salvar capturas sem publicar
+- [x] Redesenhar a jornada de 12 etapas e criar as abas Curva S / Relatórios / Cronograma em #workflow; validar e salvar capturas sem publicar
