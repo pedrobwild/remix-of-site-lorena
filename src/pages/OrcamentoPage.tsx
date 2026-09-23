@@ -7,6 +7,7 @@ import { isLeadDelivered, timeoutAfter } from "@/lib/leadDelivery";
 import { trackEvent } from "@/lib/ga4";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
+import { readUtmParams } from "@/lib/utm";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./contato.css";
 
@@ -60,12 +61,22 @@ export default function OrcamentoPage() {
   const areaOk = area.trim() === "" || (areaNum > 0 && areaNum < 2000);
   const podeEnviar = nomeOk && whatsOk && mailOk && bairroOk && areaOk && !enviando;
 
+  // Lista o que falta para o botão deixar de ficar apagado.
+  const faltando: string[] = [];
+  if (!nomeOk) faltando.push("seu nome");
+  if (!whatsOk) faltando.push("um WhatsApp com DDD");
+  if (!mailOk) faltando.push("um e-mail válido (ou deixe em branco)");
+  if (!bairroOk) faltando.push("o bairro do apartamento");
+  if (!areaOk) faltando.push("a metragem em números (ou deixe em branco)");
+
   async function enviar(e: React.FormEvent) {
     e.preventDefault();
     setTouched({ nome: true, whats: true, mail: true, bairro: true, area: true });
     if (!podeEnviar) return;
     setEnviando(true);
     setErro(null);
+    // Origem da campanha: lê as UTMs da URL/sessão para não perder o rastreio.
+    const utm = readUtmParams();
 
     const payload = {
       name: nome.trim(),
@@ -77,9 +88,9 @@ export default function OrcamentoPage() {
       objetivo: objetivo || null,
       chaves: null,
       planta: null,
-      utm_source: null,
-      utm_medium: null,
-      utm_campaign: null,
+      utm_source: utm.utm_source ?? null,
+      utm_medium: utm.utm_medium ?? null,
+      utm_campaign: utm.utm_campaign ?? null,
       referrer: typeof document !== "undefined" ? document.referrer || null : null,
       landing_path: "/orcamento",
       user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
@@ -296,6 +307,11 @@ export default function OrcamentoPage() {
                     {enviando ? "Enviando…" : "Pedir orçamento"}
                     <span aria-hidden="true">→</span>
                   </button>
+                  {!podeEnviar && !enviando && faltando.length > 0 && (
+                    <p className="bwa-contact-form-hint" role="status">
+                      Para enviar, falta: {faltando.join(", ")}.
+                    </p>
+                  )}
                   <p>Seus dados são usados apenas para responder ao seu pedido de orçamento.</p>
                 </div>
               </form>

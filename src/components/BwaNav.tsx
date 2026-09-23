@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import BewildLogo from "@/components/BewildLogo";
+import { withUtm } from "@/lib/utm";
 import homeBwaCssUrl from "../pages/home-bwa.css?url";
 import bwaInternalCssUrl from "../pages/bwa-internal.css?url";
 // @ts-expect-error - JS module sem tipos
@@ -87,7 +88,7 @@ export default function BwaNav() {
             <a href="/contato">Contato</a>
           </nav>
 
-          <a className="bwa-button" href="/orcamento">
+          <a className="bwa-button" href={withUtm("/orcamento")}>
             Solicitar orçamento
             <span aria-hidden="true">→</span>
           </a>
@@ -116,7 +117,7 @@ export default function BwaNav() {
           <a href="/guia-do-investidor">Guia do Investidor</a>
           <a href="/faq">FAQ</a>
           <a href="/contato">Contato</a>
-          <a href="/orcamento">Solicitar orçamento</a>
+          <a href={withUtm("/orcamento")}>Solicitar orçamento</a>
         </nav>
       </div>
     </div>

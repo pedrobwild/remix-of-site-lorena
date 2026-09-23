@@ -10,6 +10,26 @@ export function initHomeBwa() {
     if (_nav.dataset.bwaInited === "1") return;
     _nav.dataset.bwaInited = "1";
 
+    // Propaga a origem da campanha (UTMs) para os links de orçamento da home,
+    // espelhando src/lib/utm.ts — sem isso, quem chega por anúncio perde o
+    // rastreio ao clicar em "Solicitar orçamento".
+    try {
+      const _utm = new URLSearchParams(window.location.search);
+      const _qs = new URLSearchParams();
+      ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"].forEach((k) => {
+        const v = _utm.get(k);
+        if (v) _qs.set(k, v);
+      });
+      const _utmString = _qs.toString();
+      if (_utmString) {
+        document.querySelectorAll('a[href="/orcamento"]').forEach((a) => {
+          a.setAttribute("href", "/orcamento?" + _utmString);
+        });
+      }
+    } catch (_e) {
+      /* sem suporte a URLSearchParams: segue sem propagar */
+    }
+
 
       const body = document.body;
       const nav = document.querySelector("[data-nav]");
