@@ -44,8 +44,11 @@ function fakeHost(hostname: string) {
     configurable: true,
     writable: true,
     value: new Proxy(realLocation, {
-      get: (alvo, chave) =>
-        chave === "hostname" ? hostname : Reflect.get(alvo, chave, alvo),
+      get: (alvo, chave) => {
+        if (chave === "hostname") return hostname;
+        const valor = Reflect.get(alvo, chave, alvo);
+        return typeof valor === "function" ? valor.bind(alvo) : valor;
+      },
     }),
   });
 }
