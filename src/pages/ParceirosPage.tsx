@@ -552,11 +552,11 @@ export default function ParceirosPage() {
                 </p>
               </article>
               <article className="bwa-parc-card">
-                <h3>Vivian · Vila Olímpia · 99% de ocupação em setembro</h3>
+                <h3>Vivian · Vila Olímpia · 98% de ocupação em setembro</h3>
                 <p>
                   A Vivian comprou um studio na Vila Olímpia para renda de curta temporada e mora fora
                   de São Paulo. A Bewild entregou projeto, obra, marcenaria e mobília à distância —
-                  e o imóvel opera com cerca de 99% de ocupação em setembro.
+                  e o imóvel opera com cerca de 98% de ocupação em setembro.
                 </p>
               </article>
             </div>
