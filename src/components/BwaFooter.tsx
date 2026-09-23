@@ -63,7 +63,7 @@ export default function BwaFooter() {
             <h3>Contato</h3>
             {/* Links reais, como no rodapé da home — antes eram <span> inertes. */}
             <div>
-              <a href={whatsappHref("Olá, quero um orçamento para o meu studio")} target="_blank" rel="noreferrer">WhatsApp</a>
+              <a href={whatsappHref("Olá! Quero um orçamento para o meu apartamento.")} target="_blank" rel="noreferrer">WhatsApp</a>
               <a href={CONTACT.instagram} target="_blank" rel="noreferrer">Instagram</a>
               <a href={CONTACT.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
               <a href={`mailto:${CONTACT.email}`}>e-mail</a>
