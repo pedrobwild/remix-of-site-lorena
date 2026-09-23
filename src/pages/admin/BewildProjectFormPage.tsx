@@ -1,12 +1,21 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import { supabase } from "@/integrations/supabase/client";
 import { navigate } from "@/lib/useHashRoute";
 import { slugify, isValidSlug } from "@/lib/bewildAdmin";
 import BewildImageField from "@/components/admin/BewildImageField";
-import BewildGalleryField from "@/components/admin/BewildGalleryField";
+import BewildGalleryField, { type GalleryUpdate } from "@/components/admin/BewildGalleryField";
 import DriveImportDialog from "@/components/admin/DriveImportDialog";
 import type { BewildProjectType } from "@/lib/useBewildProjects";
+import { cleanupRemovedProjectImages, projectImageUrls } from "@/lib/projectImageCleanup";
+import {
+  needsSlugRedirect,
+  publicPathFor,
+  slugChangeConfirmMessage,
+  upsertSlugRedirect,
+} from "@/lib/seoRedirects";
+import { useUnsavedChangesGuard } from "@/lib/useUnsavedChangesGuard";
+import { devWarn } from "@/lib/devLog";
 
 interface Props {
   slug?: string;
@@ -207,10 +216,17 @@ function saveErrorMessage(error: unknown): string {
   return "Não foi possível salvar o projeto. Tente novamente.";
 }
 
+/** Estado do projeto como está no banco (para slug antigo e "publicado"). */
+type Original = { slug: string; published: boolean };
+
 export default function BewildProjectFormPage({ slug }: Props) {
   const isEdit = !!slug;
   const [form, setForm] = useState<FormState>(EMPTY);
+  // Linha de base para "há alterações não salvas".
+  const [baseline, setBaseline] = useState<FormState>(EMPTY);
+  const [original, setOriginal] = useState<Original | null>(null);
   const [loading, setLoading] = useState(isEdit);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [slugTouched, setSlugTouched] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -220,9 +236,24 @@ export default function BewildProjectFormPage({ slug }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [scopeInput, setScopeInput] = useState("");
 
-  const folder = useMemo(() => form.slug || "rascunho", [form.slug]);
+  /**
+   * Toda URL de imagem que passou pelo formulário (carregada, enviada,
+   * importada). Depois de salvar, as que não ficaram no registro são
+   * apagadas do storage — nunca antes (ver projectImageCleanup.ts).
+   */
+  const knownImageUrls = useRef(new Set<string>());
+  useEffect(() => {
+    for (const u of projectImageUrls(form)) knownImageUrls.current.add(u);
+  }, [form]);
 
-  // Novo projeto: já sugere o próximo número da ordem (último + 1).
+  const folder = useMemo(() => form.slug || "rascunho", [form.slug]);
+  const dirty = useMemo(
+    () => !loading && !loadError && JSON.stringify(form) !== JSON.stringify(baseline),
+    [form, baseline, loading, loadError],
+  );
+  useUnsavedChangesGuard(dirty && !saving);
+
+  // Novo projeto: já sugere a próxima posição (depois do último).
   useEffect(() => {
     if (isEdit) return;
     let mounted = true;
@@ -232,11 +263,12 @@ export default function BewildProjectFormPage({ slug }: Props) {
       .order("sort_order", { ascending: false })
       .limit(1)
       .maybeSingle()
-      .then(({ data }) => {
-        if (!mounted) return;
-        setForm((f) =>
-          f.sort_order ? f : { ...f, sort_order: (data?.sort_order ?? 0) + 1 },
-        );
+      .then(({ data, error }) => {
+        if (!mounted || error) return;
+        const next = (data?.sort_order ?? 0) + 10;
+        // Sugestão automática não conta como alteração do admin.
+        setForm((f) => (f.sort_order ? f : { ...f, sort_order: next }));
+        setBaseline((b) => (b.sort_order ? b : { ...b, sort_order: next }));
       });
     return () => {
       mounted = false;
@@ -248,6 +280,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
 
     let mounted = true;
     setLoading(true);
+    setLoadError(null);
     supabase
       .from("projects")
       .select(
@@ -258,12 +291,17 @@ export default function BewildProjectFormPage({ slug }: Props) {
       .then(({ data, error }) => {
         if (!mounted) return;
         if (error || !data) {
-          setError("Projeto não encontrado.");
+          // Sem o projeto carregado NÃO mostramos o formulário: salvar a partir
+          // de um formulário vazio criaria um projeto novo por engano.
+          setLoadError(
+            error
+              ? `Não foi possível carregar o projeto: ${error.message}`
+              : "Projeto não encontrado. Ele pode ter sido excluído ou ter mudado de endereço.",
+          );
           setLoading(false);
           return;
         }
-        setSlugTouched(true);
-        setForm({
+        const loaded: FormState = {
           id: data.id,
           title: data.title ?? "",
           slug: data.slug ?? "",
@@ -285,7 +323,11 @@ export default function BewildProjectFormPage({ slug }: Props) {
           ready_gallery_urls: Array.isArray(data.ready_gallery_urls) ? data.ready_gallery_urls : [],
           published: !!data.published,
           sort_order: data.sort_order ?? 0,
-        });
+        };
+        setSlugTouched(true);
+        setForm(loaded);
+        setBaseline(loaded);
+        setOriginal({ slug: loaded.slug, published: loaded.published });
         setLoading(false);
       });
     return () => {
@@ -295,6 +337,11 @@ export default function BewildProjectFormPage({ slug }: Props) {
 
   function set<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
+  }
+
+  /** Atualização funcional de uma galeria (uploads longos não perdem fotos). */
+  function updateGallery(key: "gallery_urls" | "ready_gallery_urls", update: GalleryUpdate) {
+    setForm((f) => ({ ...f, [key]: update(f[key]) }));
   }
 
   function onTitleChange(value: string) {
@@ -308,17 +355,24 @@ export default function BewildProjectFormPage({ slug }: Props) {
   function addScope() {
     const v = scopeInput.trim();
     if (!v) return;
-    set("scope", [...form.scope, v]);
+    setForm((f) => ({ ...f, scope: [...f.scope, v] }));
     setScopeInput("");
   }
 
   function removeScope(i: number) {
-    set("scope", form.scope.filter((_, k) => k !== i));
+    setForm((f) => ({ ...f, scope: f.scope.filter((_, k) => k !== i) }));
   }
+
+  /** Foto de projeto publicado: remover pede confirmação. */
+  const confirmRemoval = !!original?.published;
 
   async function save(publish?: boolean) {
     setError(null);
 
+    if (isEdit && !form.id) {
+      setError("O projeto não foi carregado; recarregue a página antes de salvar.");
+      return;
+    }
     if (!form.title.trim()) {
       setError("O título é obrigatório.");
       return;
@@ -339,9 +393,21 @@ export default function BewildProjectFormPage({ slug }: Props) {
     // projetos Bewild novos, já que esta área não usa o campo "tag" antigo.
     const TAG_FALLBACK = "Interiores";
 
+    const newSlug = form.slug.trim();
+    const redirect = needsSlugRedirect({
+      wasPublished: !!original?.published,
+      oldSlug: original?.slug,
+      newSlug,
+    });
+    const oldPath = original ? publicPathFor("project", original.slug) : "";
+    const newPath = publicPathFor("project", newSlug);
+    if (redirect && !window.confirm(slugChangeConfirmMessage("project", oldPath, newPath))) {
+      return;
+    }
+
     const payload = {
       title: form.title.trim(),
-      slug: form.slug.trim(),
+      slug: newSlug,
       project_type: form.project_type || null,
       neighborhood: form.neighborhood.trim() || null,
       area_m2: area,
@@ -364,18 +430,48 @@ export default function BewildProjectFormPage({ slug }: Props) {
 
     setSaving(true);
     try {
+      let projectId: string;
       if (form.id) {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("projects")
           .update(payload)
-          .eq("id", form.id);
+          .eq("id", form.id)
+          .select("id");
         if (error) throw error;
+        // Com RLS, um update sem permissão não dá erro: só não altera nada.
+        if (!data || data.length === 0) {
+          throw { code: "42501", message: "Nenhuma linha foi atualizada." };
+        }
+        projectId = form.id;
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("projects")
-          .insert({ ...payload, tag: TAG_FALLBACK });
+          .insert({ ...payload, tag: TAG_FALLBACK })
+          .select("id")
+          .single();
         if (error) throw error;
+        projectId = data.id;
       }
+
+      // A partir daqui o projeto está salvo.
+      setForm((f) => ({ ...f, id: projectId, published: payload.published }));
+
+      if (redirect) {
+        const { error: redirectError } = await upsertSlugRedirect(oldPath, newPath);
+        if (redirectError) {
+          setBaseline({ ...form, id: projectId, published: payload.published });
+          setError(
+            `Projeto salvo, mas o redirecionamento de ${oldPath} para ${newPath} não foi criado (${redirectError}). ` +
+              "Clique em salvar de novo para tentar outra vez ou crie o redirecionamento em SEO › URLs 404.",
+          );
+          return;
+        }
+      }
+
+      // Só agora, com o registro salvo, apaga do storage o que saiu do formulário.
+      const cleanup = await cleanupRemovedProjectImages(projectId, knownImageUrls.current, payload);
+      if (cleanup.error) devWarn("[admin/projetos] limpeza de fotos não concluída:", cleanup.error);
+
       navigate("/admin/projetos");
     } catch (e) {
       setError(saveErrorMessage(e));
@@ -388,6 +484,34 @@ export default function BewildProjectFormPage({ slug }: Props) {
     return (
       <BewildAdminShell active="projetos" title={isEdit ? "Editar projeto" : "Novo projeto"}>
         <p className="mono admin-hint">carregando…</p>
+      </BewildAdminShell>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <BewildAdminShell
+        active="projetos"
+        title="Editar projeto"
+        actions={
+          <a className="admin-btn" href="/admin/projetos">
+            Voltar para a lista
+          </a>
+        }
+      >
+        <div
+          className="mono"
+          role="alert"
+          style={{
+            background: "#fff0f0",
+            border: "1px solid #f5c2c7",
+            color: "#842029",
+            padding: "10px 14px",
+            borderRadius: 6,
+          }}
+        >
+          {loadError}
+        </div>
       </BewildAdminShell>
     );
   }
@@ -447,8 +571,9 @@ export default function BewildProjectFormPage({ slug }: Props) {
           </header>
 
           <div className="admin-field admin-field--full">
-            <label className="admin-field__label">Título *</label>
+            <label className="admin-field__label" htmlFor="pf-title">Título *</label>
             <input
+              id="pf-title"
               className="admin-field__input"
               value={form.title}
               onChange={(e) => onTitleChange(e.target.value)}
@@ -457,8 +582,9 @@ export default function BewildProjectFormPage({ slug }: Props) {
           </div>
 
           <div className="admin-field admin-field--full">
-            <label className="admin-field__label">Slug (URL) *</label>
+            <label className="admin-field__label" htmlFor="pf-slug">Slug (URL) *</label>
             <input
+              id="pf-slug"
               className="admin-field__input"
               value={form.slug}
               onChange={(e) => {
@@ -470,11 +596,18 @@ export default function BewildProjectFormPage({ slug }: Props) {
             <p className="mono admin-hint" style={{ marginTop: 6 }}>
               Aparece em /portfolio/{form.slug || "<slug>"}.
             </p>
+            {original?.published && form.slug && form.slug !== original.slug && (
+              <p className="mono admin-hint" role="status" style={{ marginTop: 4, color: "#8A5A00" }}>
+                Projeto publicado: ao salvar, /portfolio/{original.slug} passa a redirecionar para o
+                novo endereço.
+              </p>
+            )}
           </div>
 
           <div className="admin-field">
-            <label className="admin-field__label">Tipo</label>
+            <label className="admin-field__label" htmlFor="pf-type">Tipo</label>
             <select
+              id="pf-type"
               className="admin-field__input"
               value={form.project_type}
               onChange={(e) => set("project_type", e.target.value as BewildProjectType | "")}
@@ -487,8 +620,9 @@ export default function BewildProjectFormPage({ slug }: Props) {
           </div>
 
           <div className="admin-field">
-            <label className="admin-field__label">Ordem de exibição</label>
+            <label className="admin-field__label" htmlFor="pf-order">Ordem de exibição</label>
             <input
+              id="pf-order"
               type="number"
               className="admin-field__input"
               value={form.sort_order}
@@ -502,6 +636,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
               className={`admin-toggle ${form.published ? "is-on" : ""}`}
               onClick={() => set("published", !form.published)}
               aria-label={form.published ? "Despublicar" : "Publicar"}
+              aria-pressed={form.published}
             >
               <span />
             </button>
@@ -518,8 +653,9 @@ export default function BewildProjectFormPage({ slug }: Props) {
           </header>
 
           <div className="admin-field">
-            <label className="admin-field__label">Bairro</label>
+            <label className="admin-field__label" htmlFor="pf-neighborhood">Bairro</label>
             <input
+              id="pf-neighborhood"
               className="admin-field__input"
               value={form.neighborhood}
               onChange={(e) => set("neighborhood", e.target.value)}
@@ -528,8 +664,9 @@ export default function BewildProjectFormPage({ slug }: Props) {
           </div>
 
           <div className="admin-field">
-            <label className="admin-field__label">Área (m²) — opcional</label>
+            <label className="admin-field__label" htmlFor="pf-area">Área (m²) — opcional</label>
             <input
+              id="pf-area"
               className="admin-field__input"
               value={form.area_m2}
               onChange={(e) => set("area_m2", e.target.value)}
@@ -541,8 +678,9 @@ export default function BewildProjectFormPage({ slug }: Props) {
           </div>
 
           <div className="admin-field admin-field--full">
-            <label className="admin-field__label">Duração da obra</label>
+            <label className="admin-field__label" htmlFor="pf-duration">Duração da obra</label>
             <input
+              id="pf-duration"
               className="admin-field__input"
               value={form.duration}
               onChange={(e) => set("duration", e.target.value)}
@@ -559,8 +697,9 @@ export default function BewildProjectFormPage({ slug }: Props) {
           </header>
 
           <div className="admin-field admin-field--full">
-            <label className="admin-field__label">Resumo</label>
+            <label className="admin-field__label" htmlFor="pf-summary">Resumo</label>
             <textarea
+              id="pf-summary"
               className="admin-field__input"
               rows={2}
               value={form.summary}
@@ -570,8 +709,9 @@ export default function BewildProjectFormPage({ slug }: Props) {
           </div>
 
           <div className="admin-field admin-field--full">
-            <label className="admin-field__label">Desafio</label>
+            <label className="admin-field__label" htmlFor="pf-challenge">Desafio</label>
             <textarea
+              id="pf-challenge"
               className="admin-field__input"
               rows={3}
               value={form.challenge}
@@ -580,8 +720,9 @@ export default function BewildProjectFormPage({ slug }: Props) {
           </div>
 
           <div className="admin-field admin-field--full">
-            <label className="admin-field__label">Solução</label>
+            <label className="admin-field__label" htmlFor="pf-solution">Solução</label>
             <textarea
+              id="pf-solution"
               className="admin-field__input"
               rows={3}
               value={form.solution}
@@ -590,8 +731,9 @@ export default function BewildProjectFormPage({ slug }: Props) {
           </div>
 
           <div className="admin-field admin-field--full">
-            <label className="admin-field__label">Resultado</label>
+            <label className="admin-field__label" htmlFor="pf-result">Resultado</label>
             <textarea
+              id="pf-result"
               className="admin-field__input"
               rows={3}
               value={form.result_text}
@@ -607,9 +749,10 @@ export default function BewildProjectFormPage({ slug }: Props) {
           </header>
 
           <div className="admin-field admin-field--full">
-            <label className="admin-field__label">Itens do escopo</label>
+            <label className="admin-field__label" htmlFor="pf-scope">Itens do escopo</label>
             <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
               <input
+                id="pf-scope"
                 className="admin-field__input"
                 value={scopeInput}
                 onChange={(e) => setScopeInput(e.target.value)}
@@ -694,12 +837,13 @@ export default function BewildProjectFormPage({ slug }: Props) {
             folder={driveTarget === "ready" ? `${folder}-obra` : folder}
             onClose={() => setDriveTarget(null)}
             onImported={(urls: string[]) => {
-              if (driveTarget === "ready") {
-                set("ready_gallery_urls", [...form.ready_gallery_urls, ...urls]);
-              } else {
-                set("gallery_urls", [...form.gallery_urls, ...urls]);
-              }
-              if (!form.cover_url && urls[0]) set("cover_url", urls[0]);
+              // Funcional: a importação demora e o formulário pode ter mudado no meio.
+              const key = driveTarget === "ready" ? "ready_gallery_urls" : "gallery_urls";
+              setForm((f) => ({
+                ...f,
+                [key]: [...f[key], ...urls],
+                cover_url: f.cover_url || urls[0] || null,
+              }));
             }}
           />
 
@@ -709,6 +853,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
             folder={folder}
             onChange={(url) => set("cover_url", url)}
             onBusyChange={setUploading}
+            confirmRemoval={confirmRemoval}
             hint="Recomendado: foto horizontal do apartamento entregue."
           />
 
@@ -725,6 +870,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
             folder={folder}
             onChange={(url) => set("before_image_url", url)}
             onBusyChange={setUploading}
+            confirmRemoval={confirmRemoval}
             hint="A seção antes/depois só aparece se houver as duas fotos."
           />
 
@@ -734,6 +880,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
             folder={folder}
             onChange={(url) => set("after_image_url", url)}
             onBusyChange={setUploading}
+            confirmRemoval={confirmRemoval}
           />
 
           <BewildGalleryField
@@ -741,8 +888,9 @@ export default function BewildProjectFormPage({ slug }: Props) {
             hint="Imagens do projeto. Aparecem na seção “Projeto 3D” da página."
             value={form.gallery_urls}
             folder={folder}
-            onChange={(urls) => set("gallery_urls", urls)}
+            onChange={(update) => updateGallery("gallery_urls", update)}
             onBusyChange={setUploading}
+            confirmRemoval={confirmRemoval}
           />
 
           <BewildGalleryField
@@ -750,8 +898,9 @@ export default function BewildProjectFormPage({ slug }: Props) {
             hint="Aparecem na seção “Obra pronta” da página e marcam o projeto como Obra pronta no portfólio."
             value={form.ready_gallery_urls}
             folder={`${folder}-obra`}
-            onChange={(urls) => set("ready_gallery_urls", urls)}
+            onChange={(update) => updateGallery("ready_gallery_urls", update)}
             onBusyChange={setUploading}
+            confirmRemoval={confirmRemoval}
           />
         </section>
 
@@ -763,8 +912,9 @@ export default function BewildProjectFormPage({ slug }: Props) {
           </header>
 
           <div className="admin-field admin-field--full">
-            <label className="admin-field__label">Texto do depoimento</label>
+            <label className="admin-field__label" htmlFor="pf-testimonial">Texto do depoimento</label>
             <textarea
+              id="pf-testimonial"
               className="admin-field__input"
               rows={3}
               value={form.testimonial}
@@ -773,8 +923,9 @@ export default function BewildProjectFormPage({ slug }: Props) {
           </div>
 
           <div className="admin-field admin-field--full">
-            <label className="admin-field__label">Autor</label>
+            <label className="admin-field__label" htmlFor="pf-testimonial-author">Autor</label>
             <input
+              id="pf-testimonial-author"
               className="admin-field__input"
               value={form.testimonial_author}
               onChange={(e) => set("testimonial_author", e.target.value)}

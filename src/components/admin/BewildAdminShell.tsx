@@ -2,15 +2,31 @@
  * BewildAdminShell — layout topbar do painel Bewild (spec v4).
  *
  * - Branding "Bewild · Painel" à esquerda.
- * - 4 abas: Visão geral · Leads · Projetos · Conteúdos.
+ * - Abas do dia a dia: Visão geral · Leads · Qualificação · Mensagens ·
+ *   Diagnósticos · Projetos · Conteúdos.
+ * - Menu "Site" com as telas de configuração que vivem no layout antigo
+ *   (Analytics, FAQ, SEO, URLs 404, Indexação, Rastreamento, Configurações) —
+ *   antes não havia link para elas a partir deste painel.
  * - Botão Sair à direita (encerra sessão Supabase).
  * - Sem sidebar. Independente do AdminLayout antigo (legado).
  *
  * Os ícones são SVGs do lucide-react (que já é usado no projeto), conforme
  * o guardrail "ícones em SVG, nunca emoji".
  */
-import { ReactNode, useEffect, useState } from "react";
-import { LayoutDashboard, Inbox, MessagesSquare, ListChecks, ClipboardList, FolderKanban, Newspaper, LogOut, Menu } from "lucide-react";
+import { ReactNode, useEffect, useRef, useState } from "react";
+import {
+  LayoutDashboard,
+  Inbox,
+  MessagesSquare,
+  ListChecks,
+  ClipboardList,
+  FolderKanban,
+  Newspaper,
+  LogOut,
+  Menu,
+  Settings2,
+  ChevronDown,
+} from "lucide-react";
 import { useAuth } from "@/lib/useAuth";
 import { navigate, routes } from "@/lib/useHashRoute";
 import "@/styles/admin-bewild.css";
@@ -43,6 +59,17 @@ const TABS: { key: BewildAdminTab; label: string; href: string; icon: typeof Lay
   { key: "conteudos", label: "Conteúdos", href: "/admin/conteudos", icon: Newspaper },
 ];
 
+/** Telas do layout antigo (AdminLayout) — configuração do site. */
+const SITE_LINKS: { label: string; href: string }[] = [
+  { label: "Analytics", href: routes.adminAnalytics },
+  { label: "FAQ", href: routes.adminFaq },
+  { label: "SEO", href: routes.adminSeo },
+  { label: "URLs 404", href: routes.adminSeo404 },
+  { label: "Indexação", href: routes.adminIndexacao },
+  { label: "Rastreamento", href: routes.adminRastreamento },
+  { label: "Configurações", href: routes.adminSettings },
+];
+
 export default function BewildAdminShell({
   children,
   active,
@@ -53,6 +80,28 @@ export default function BewildAdminShell({
 }: Props) {
   const { user, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const moreRef = useRef<HTMLDetailsElement | null>(null);
+
+  // Fecha o menu "Site" ao clicar fora ou apertar Esc.
+  useEffect(() => {
+    function onPointerDown(e: PointerEvent) {
+      const el = moreRef.current;
+      if (el?.open && !el.contains(e.target as Node)) el.open = false;
+    }
+    function onKey(e: KeyboardEvent) {
+      const el = moreRef.current;
+      if (e.key === "Escape" && el?.open) {
+        el.open = false;
+        el.querySelector("summary")?.focus();
+      }
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, []);
 
   // Fecha o drawer mobile ao trocar de aba
   useEffect(() => {
@@ -97,6 +146,22 @@ export default function BewildAdminShell({
                 </a>
               );
             })}
+            <details className="bw-admin__more" ref={moreRef}>
+              <summary className="bw-admin__tab bw-admin__more-toggle">
+                <Settings2 aria-hidden />
+                <span>Site</span>
+                <ChevronDown aria-hidden className="bw-admin__more-caret" />
+              </summary>
+              <ul className="bw-admin__more-menu">
+                {SITE_LINKS.map((l) => (
+                  <li key={l.href}>
+                    <a href={l.href} className="bw-admin__more-link">
+                      {l.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </details>
           </nav>
 
           <div className="bw-admin__right">

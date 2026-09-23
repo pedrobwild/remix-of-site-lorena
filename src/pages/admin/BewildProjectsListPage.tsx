@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
+import AdminAlert from "@/components/admin/AdminAlert";
 import DriveBatchImportDialog from "@/components/admin/DriveBatchImportDialog";
 import { supabase } from "@/integrations/supabase/client";
 // routes helper não é necessário — links Bewild usam paths literais.
 import { bewildTypeLabel, type BewildProjectType } from "@/lib/useBewildProjects";
+import { applyOrderChanges, moveItem, renumber } from "@/lib/adminOrdering";
 
 
 type Row = {
@@ -21,45 +23,82 @@ type Row = {
 export default function BewildProjectsListPage() {
   const [rows, setRows] = useState<Row[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
+  const [reordering, setReordering] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [batchOpen, setBatchOpen] = useState(false);
 
-
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
+    setLoadError(null);
+    const { data, error } = await supabase
       .from("projects")
       .select("id, slug, title, project_type, neighborhood, area_m2, cover_url, published, sort_order")
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false });
+    if (error) {
+      setLoadError(error.message);
+      setLoading(false);
+      return;
+    }
     setRows((data ?? []) as Row[]);
     setLoading(false);
-  }
-
-  useEffect(() => {
-    load();
   }, []);
 
-  async function togglePublished(id: string, current: boolean) {
-    setBusy(id);
-    await supabase.from("projects").update({ published: !current }).eq("id", id);
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  async function togglePublished(r: Row) {
+    setBusy(r.id);
+    setActionError(null);
+    const { data, error } = await supabase
+      .from("projects")
+      .update({ published: !r.published })
+      .eq("id", r.id)
+      .select("id");
     setBusy(null);
-    load();
+    if (error || !data || data.length === 0) {
+      setActionError(
+        `Não foi possível ${r.published ? "despublicar" : "publicar"} "${r.title}": ${error?.message ?? "nenhuma linha foi alterada (sem permissão?)."}`,
+      );
+    }
+    await load();
   }
 
-  async function remove(id: string, slug: string) {
-    if (!confirm(`Excluir o projeto "${slug}"? Essa ação não pode ser desfeita.`)) return;
-    setBusy(id);
-    await supabase.from("projects").delete().eq("id", id);
+  async function remove(r: Row) {
+    if (!confirm(`Excluir o projeto "${r.slug}"? Essa ação não pode ser desfeita.`)) return;
+    setBusy(r.id);
+    setActionError(null);
+    const { data, error } = await supabase.from("projects").delete().eq("id", r.id).select("id");
     setBusy(null);
-    load();
+    if (error || !data || data.length === 0) {
+      setActionError(
+        `Não foi possível excluir "${r.title}": ${error?.message ?? "nada foi excluído (sem permissão ou já removido)."}`,
+      );
+    }
+    await load();
   }
 
-  async function nudge(id: string, current: number, dir: -1 | 1) {
-    setBusy(id);
-    await supabase.from("projects").update({ sort_order: current + dir }).eq("id", id);
-    setBusy(null);
-    load();
+  /**
+   * Troca a linha com a vizinha e renumera a lista inteira (10, 20, 30…).
+   * Antes era só ±1 numa linha: com empates, quem decidia era `created_at`
+   * e o clique muitas vezes não mexia nada.
+   */
+  async function move(index: number, dir: -1 | 1) {
+    const target = index + dir;
+    if (reordering || target < 0 || target >= rows.length) return;
+    const { list, changes } = renumber(moveItem(rows, index, target), "sort_order");
+    setRows(list); // otimista
+    setReordering(true);
+    setActionError(null);
+    const { error } = await applyOrderChanges(changes, (c) =>
+      supabase.from("projects").update({ sort_order: c.value }).eq("id", c.id),
+    );
+    setReordering(false);
+    if (error) setActionError(`Não foi possível salvar a nova ordem: ${error}. A lista foi recarregada.`);
+    await load();
   }
 
   return (
@@ -86,13 +125,25 @@ export default function BewildProjectsListPage() {
       <DriveBatchImportDialog
         open={batchOpen}
         onClose={() => setBatchOpen(false)}
-        onDone={load}
+        onDone={() => void load()}
       />
+
+      {actionError && (
+        <AdminAlert onClose={() => setActionError(null)}>{actionError}</AdminAlert>
+      )}
+      {loadError && (
+        <AdminAlert>
+          Erro ao carregar os projetos: {loadError}{" "}
+          <button type="button" className="admin-link" onClick={() => void load()}>
+            tentar de novo
+          </button>
+        </AdminAlert>
+      )}
 
       <div className="admin-toolbar">
         <div className="admin-toolbar__filters">
           <span className="mono admin-hint">
-            {loading ? "carregando…" : `${rows.length} projeto(s)`}
+            {loading ? "carregando…" : reordering ? "salvando nova ordem…" : `${rows.length} projeto(s)`}
           </span>
         </div>
 
@@ -113,7 +164,7 @@ export default function BewildProjectsListPage() {
             </tr>
           </thead>
           <tbody>
-            {rows.map((r) => (
+            {rows.map((r, i) => (
               <tr key={r.id}>
                 <td style={{ width: 64 }}>
                   {r.cover_url ? (
@@ -140,9 +191,9 @@ export default function BewildProjectsListPage() {
                   <button
                     type="button"
                     className="admin-btn"
-                    onClick={() => nudge(r.id, r.sort_order, -1)}
-                    disabled={busy === r.id}
-                    aria-label="Subir"
+                    onClick={() => void move(i, -1)}
+                    disabled={reordering || loading || i === 0}
+                    aria-label={`Subir "${r.title}"`}
                     style={{ padding: "2px 8px" }}
                   >
                     ↑
@@ -153,9 +204,9 @@ export default function BewildProjectsListPage() {
                   <button
                     type="button"
                     className="admin-btn"
-                    onClick={() => nudge(r.id, r.sort_order, 1)}
-                    disabled={busy === r.id}
-                    aria-label="Descer"
+                    onClick={() => void move(i, 1)}
+                    disabled={reordering || loading || i === rows.length - 1}
+                    aria-label={`Descer "${r.title}"`}
                     style={{ padding: "2px 8px" }}
                   >
                     ↓
@@ -165,9 +216,10 @@ export default function BewildProjectsListPage() {
                   <button
                     type="button"
                     className={`admin-toggle ${r.published ? "is-on" : ""}`}
-                    onClick={() => togglePublished(r.id, r.published)}
+                    onClick={() => void togglePublished(r)}
                     disabled={busy === r.id}
-                    aria-label={r.published ? "Despublicar" : "Publicar"}
+                    aria-label={r.published ? `Despublicar "${r.title}"` : `Publicar "${r.title}"`}
+                    aria-pressed={r.published}
                   >
                     <span />
                   </button>
@@ -179,7 +231,7 @@ export default function BewildProjectsListPage() {
                   {"  ·  "}
                   <button
                     className="admin-link admin-link--danger"
-                    onClick={() => remove(r.id, r.slug)}
+                    onClick={() => void remove(r)}
                     disabled={busy === r.id}
                   >
                     excluir
@@ -187,7 +239,7 @@ export default function BewildProjectsListPage() {
                 </td>
               </tr>
             ))}
-            {!loading && rows.length === 0 && (
+            {!loading && !loadError && rows.length === 0 && (
               <tr>
                 <td colSpan={8} className="mono" style={{ opacity: 0.6, padding: 24 }}>
                   Nenhum projeto Bewild ainda. Clique em "+ novo projeto" para começar.

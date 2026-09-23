@@ -2,21 +2,39 @@
  * /admin/leads — Central única de contatos recebidos pelo site.
  *
  * Fonte: tabela `leads` (alimentada pela edge function `notify-lead`,
- * chamada a partir do formulário em /diagnostico). A tabela legada
- * `diagnostic_leads` não é mais usada — ficou só por compatibilidade
- * histórica.
+ * chamada pelos formulários de /diagnostico, /orcamento, /contato,
+ * /parceiros e das LPs /o e /p). A tabela legada `diagnostic_leads` não é
+ * mais usada — ficou só por compatibilidade histórica.
+ *
+ * O tipo de cada lead vem de `form_path` (qual formulário foi enviado).
+ * `landing_path` é só atribuição: a primeira página da sessão.
  *
  * Esta é a tela do DONO para conferir os leads. A operação comercial
  * (responder, qualificar de verdade, etc.) acontece no Bwild Engine —
  * por isso aqui não há mensagem pré-preenchida no WhatsApp nem features
- * de SLA/score/realtime.
+ * de score/realtime.
  */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { MessageCircle } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
+import AdminAlert from "@/components/admin/AdminAlert";
 import { supabase } from "@/integrations/supabase/client";
-
-type LeadStatus = "novo" | "contatado" | "qualificado" | "descartado";
+import {
+  LEAD_ORIGEM_LABEL,
+  LEAD_STATUSES,
+  ZERO_STATUS_COUNTS,
+  fetchLeadStatusCounts,
+  isLeadStatus,
+  leadFormLabel,
+  leadOrigem,
+  mailtoHref,
+  moveStatusCount,
+  updateLeadStatus,
+  waLink,
+  type LeadOrigem,
+  type LeadStatus,
+  type LeadStatusCounts,
+} from "@/lib/adminLeads";
 
 type Lead = {
   id: string;
@@ -34,6 +52,7 @@ type Lead = {
   utm_campaign: string | null;
   referrer: string | null;
   landing_path: string | null;
+  form_path: string | null;
   lead_source: string | null;
   lives_in_sp: boolean | null;
   status: LeadStatus;
@@ -50,10 +69,8 @@ const STATUS_OPTIONS: { value: "all" | LeadStatus; label: string }[] = [
   { value: "descartado", label: "Descartados" },
 ];
 
-const STATUS_VALUES: LeadStatus[] = ["novo", "contatado", "qualificado", "descartado"];
-
 const SELECT_COLS =
-  "id, name, whatsapp, email, location, area_m2, objetivo, chaves, planta, message, utm_source, utm_medium, utm_campaign, referrer, landing_path, lead_source, lives_in_sp, status, created_at";
+  "id, name, whatsapp, email, location, area_m2, objetivo, chaves, planta, message, utm_source, utm_medium, utm_campaign, referrer, landing_path, form_path, lead_source, lives_in_sp, status, created_at";
 
 function fmtDate(iso: string): string {
   try {
@@ -69,47 +86,13 @@ function fmtDate(iso: string): string {
   }
 }
 
-/**
- * Normaliza um número brasileiro para link wa.me.
- * - 10 dígitos (DDD + fixo 8) ou 11 dígitos (DDD + celular 9) → prefixa 55.
- * - 12/13 dígitos começando com 55 → usa como está.
- * - Qualquer outra coisa → retorna null (link omitido).
- */
-function waLink(whatsapp: string | null): string | null {
-  if (!whatsapp) return null;
-  const digits = whatsapp.replace(/\D/g, "");
-  let full: string;
-  if (digits.length === 10 || digits.length === 11) {
-    full = `55${digits}`;
-  } else if ((digits.length === 12 || digits.length === 13) && digits.startsWith("55")) {
-    full = digits;
-  } else {
-    return null;
-  }
-  return `https://wa.me/${full}`;
-}
-
-type Origem = "contato" | "orcamento" | "outro";
-
-const ORIGEM_OPTIONS: { value: "all" | Origem; label: string }[] = [
+const ORIGEM_OPTIONS: { value: "all" | LeadOrigem; label: string }[] = [
   { value: "all", label: "Tudo" },
   { value: "contato", label: "Mensagens (/contato)" },
-  { value: "orcamento", label: "Orçamentos (/diagnostico)" },
-  { value: "outro", label: "Outras origens" },
+  { value: "orcamento", label: "Orçamentos (/diagnostico, /orcamento, /o, /p)" },
+  { value: "parceiro", label: "Parceiros (/parceiros)" },
+  { value: "outro", label: "Não identificado" },
 ];
-
-const ORIGEM_LABEL: Record<Origem, string> = {
-  contato: "Mensagem",
-  orcamento: "Orçamento",
-  outro: "Outra",
-};
-
-function origemOf(lead: Lead): Origem {
-  const p = (lead.landing_path ?? "").toLowerCase();
-  if (p.startsWith("/contato")) return "contato";
-  if (p.startsWith("/diagnostico") || p.startsWith("/orcamento")) return "orcamento";
-  return "outro";
-}
 
 /** Prazo de resposta combinado: 24h corridas a partir do recebimento. */
 const SLA_HOURS = 24;
@@ -125,33 +108,39 @@ function slaInfo(lead: Lead): { label: string; late: boolean; done: boolean } {
   return { label: `no prazo · faltam ${SLA_HOURS - h}h`, late: false, done: false };
 }
 
-type StatusCounts = Record<LeadStatus, number>;
-
-const ZERO_COUNTS: StatusCounts = { novo: 0, contatado: 0, qualificado: 0, descartado: 0 };
-
 export default function BewildLeadsAdminPage() {
   const [rows, setRows] = useState<Lead[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
-  const [counts, setCounts] = useState<StatusCounts>(ZERO_COUNTS);
+  const [counts, setCounts] = useState<LeadStatusCounts>(ZERO_STATUS_COUNTS);
+  const [lateCount, setLateCount] = useState<number | null>(null);
+  const [countsError, setCountsError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [actionMsg, setActionMsg] = useState<{ kind: "err" | "warn"; text: string } | null>(null);
   const [status, setStatus] = useState<"all" | LeadStatus>("all");
-  const [origem, setOrigem] = useState<"all" | Origem>("all");
+  const [origem, setOrigem] = useState<"all" | LeadOrigem>("all");
   const [busy, setBusy] = useState<string | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     setLoadError(null);
-    // Query principal (página 1) + contagem total por status em paralelo.
-    const [listRes, countsRes] = await Promise.all([
+    const lateCutoff = new Date(Date.now() - SLA_HOURS * 3_600_000).toISOString();
+    // Página 1 + contagens exatas (uma consulta `head` por status: o antigo
+    // `select("status")` era cortado em 1000 linhas pelo PostgREST).
+    const [listRes, countsRes, lateRes] = await Promise.all([
       supabase
         .from("leads")
         .select(SELECT_COLS, { count: "exact" })
         .order("created_at", { ascending: false })
         .range(0, PAGE_SIZE - 1),
-      supabase.from("leads").select("status"),
+      fetchLeadStatusCounts(),
+      supabase
+        .from("leads")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "novo")
+        .lt("created_at", lateCutoff),
     ]);
 
     if (listRes.error) {
@@ -159,36 +148,22 @@ export default function BewildLeadsAdminPage() {
       setLoadError(listRes.error.message || "Não foi possível carregar os leads.");
       setRows([]);
       setTotalCount(0);
-      setCounts(ZERO_COUNTS);
+      setCounts(ZERO_STATUS_COUNTS);
+      setLateCount(null);
       setLoading(false);
       return;
     }
 
     setRows((listRes.data ?? []) as Lead[]);
-    setTotalCount(listRes.count ?? (listRes.data?.length ?? 0));
-
-    if (countsRes.error) {
-      console.warn("[admin/leads] falha ao agregar contagens por status:", countsRes.error);
-      // Fallback: contar a partir das linhas já carregadas.
-      const c: StatusCounts = { ...ZERO_COUNTS };
-      for (const r of (listRes.data ?? []) as Lead[]) {
-        if (r.status in c) c[r.status] += 1;
-      }
-      setCounts(c);
-    } else {
-      const c: StatusCounts = { ...ZERO_COUNTS };
-      for (const row of countsRes.data ?? []) {
-        const s = (row as { status: LeadStatus }).status;
-        if (s in c) c[s] += 1;
-      }
-      setCounts(c);
-    }
-
+    setTotalCount(listRes.count ?? listRes.data?.length ?? 0);
+    setCounts(countsRes.counts);
+    setLateCount(lateRes.error ? null : (lateRes.count ?? 0));
+    setCountsError(countsRes.error ?? lateRes.error?.message ?? null);
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    load();
+    void load();
   }, [load]);
 
   async function loadMore() {
@@ -204,10 +179,13 @@ export default function BewildLeadsAdminPage() {
     setLoadingMore(false);
     if (error) {
       console.error("[admin/leads] falha ao carregar mais leads:", error);
-      window.alert(`Não foi possível carregar mais: ${error.message}`);
+      setActionMsg({ kind: "err", text: `Não foi possível carregar mais: ${error.message}` });
       return;
     }
-    setRows((prev) => [...prev, ...((data ?? []) as Lead[])]);
+    setRows((prev) => {
+      const seen = new Set(prev.map((r) => r.id));
+      return [...prev, ...((data ?? []) as Lead[]).filter((r) => !seen.has(r.id))];
+    });
   }
 
   const filtered = useMemo(
@@ -215,37 +193,36 @@ export default function BewildLeadsAdminPage() {
       rows.filter(
         (r) =>
           (status === "all" || r.status === status) &&
-          (origem === "all" || origemOf(r) === origem),
+          (origem === "all" || leadOrigem(r) === origem),
       ),
     [rows, status, origem],
   );
 
-  const atrasados = useMemo(() => rows.filter((r) => slaInfo(r).late).length, [rows]);
-
   async function changeStatus(lead: Lead, next: string) {
-    if (!STATUS_VALUES.includes(next as LeadStatus)) return;
-    const nextStatus = next as LeadStatus;
+    if (!isLeadStatus(next)) return;
     const previous = lead.status;
-    if (nextStatus === previous) return;
+    if (next === previous) return;
+    // Status fora da lista (dado antigo/manual) não entra nas contagens.
+    const known = isLeadStatus(previous);
     // Otimista: UI atualiza imediatamente; rollback em caso de erro.
-    setRows((prev) => prev.map((r) => (r.id === lead.id ? { ...r, status: nextStatus } : r)));
-    setCounts((prev) => ({
-      ...prev,
-      [previous]: Math.max(0, prev[previous] - 1),
-      [nextStatus]: prev[nextStatus] + 1,
-    }));
+    setRows((prev) => prev.map((r) => (r.id === lead.id ? { ...r, status: next } : r)));
+    if (known) setCounts((prev) => moveStatusCount(prev, previous, next));
     setBusy(lead.id);
-    const { error } = await supabase.from("leads").update({ status: nextStatus }).eq("id", lead.id);
+    setActionMsg(null);
+    const result = await updateLeadStatus(lead.id, known ? previous : null, next);
     setBusy(null);
-    if (error) {
-      console.error("[admin/leads] falha ao atualizar status:", error);
+    if (!result.ok) {
+      console.error("[admin/leads] falha ao atualizar status:", result.error);
       setRows((prev) => prev.map((r) => (r.id === lead.id ? { ...r, status: previous } : r)));
-      setCounts((prev) => ({
-        ...prev,
-        [previous]: prev[previous] + 1,
-        [nextStatus]: Math.max(0, prev[nextStatus] - 1),
-      }));
-      window.alert(`Não foi possível atualizar o status: ${error.message}`);
+      if (known) setCounts((prev) => moveStatusCount(prev, next, previous));
+      setActionMsg({ kind: "err", text: `Não foi possível atualizar o status: ${result.error}` });
+      return;
+    }
+    if (result.logError) {
+      setActionMsg({
+        kind: "warn",
+        text: `Status salvo, mas o histórico de qualificação não foi registrado: ${result.logError}`,
+      });
     }
   }
 
@@ -253,18 +230,24 @@ export default function BewildLeadsAdminPage() {
     const label = lead.name?.trim() || "este lead";
     if (!window.confirm(`Excluir ${label}? Essa ação não pode ser desfeita.`)) return;
     setBusy(lead.id);
-    const { error } = await supabase.from("leads").delete().eq("id", lead.id);
+    setActionMsg(null);
+    const { data, error } = await supabase.from("leads").delete().eq("id", lead.id).select("id");
     setBusy(null);
-    if (error) {
+    if (error || !data || data.length === 0) {
       console.error("[admin/leads] falha ao excluir lead:", error);
-      window.alert(`Não foi possível excluir: ${error.message}`);
+      setActionMsg({
+        kind: "err",
+        text: `Não foi possível excluir: ${error?.message ?? "nada foi excluído (sem permissão ou já removido)."}`,
+      });
       return;
     }
     if (openId === lead.id) setOpenId(null);
     // Atualiza local sem refetch completo.
     setRows((prev) => prev.filter((r) => r.id !== lead.id));
     setTotalCount((n) => Math.max(0, n - 1));
-    setCounts((prev) => ({ ...prev, [lead.status]: Math.max(0, prev[lead.status] - 1) }));
+    if (isLeadStatus(lead.status)) {
+      setCounts((prev) => ({ ...prev, [lead.status]: Math.max(0, prev[lead.status] - 1) }));
+    }
   }
 
   const hasMore = rows.length < totalCount;
@@ -274,15 +257,26 @@ export default function BewildLeadsAdminPage() {
       active="leads"
       eyebrow="Painel"
       title="Leads"
-      description="Tudo que chega pelo site em um lugar só: mensagens do /contato, orçamentos do /diagnostico e demais origens, com status de resposta e prazo de 24h."
+      description="Tudo que chega pelo site em um lugar só: mensagens do /contato, pedidos de orçamento (/diagnostico, /orcamento e LPs /o e /p) e parceiros, com status de resposta e prazo de 24h."
     >
+      {actionMsg && (
+        <AdminAlert kind={actionMsg.kind} onClose={() => setActionMsg(null)}>
+          {actionMsg.text}
+        </AdminAlert>
+      )}
+
       <div className="bw-admin__kpi-grid">
         <KpiSimple label="Novos" value={counts.novo} />
         <KpiSimple label="Contatados" value={counts.contatado} />
         <KpiSimple label="Qualificados" value={counts.qualificado} />
         <KpiSimple label="Descartados" value={counts.descartado} />
-        <KpiSimple label="Fora do prazo" value={atrasados} />
+        <KpiSimple label="Fora do prazo" value={lateCount} />
       </div>
+      {countsError && !loading && (
+        <p className="bw-admin__card-error" title={countsError} style={{ marginTop: -16, marginBottom: 16 }}>
+          contagens incompletas · erro ao carregar
+        </p>
+      )}
 
       <div className="bw-admin__period" style={{ marginBottom: 10 }} role="group" aria-label="Filtro por origem">
         {ORIGEM_OPTIONS.map((opt) => (
@@ -334,15 +328,17 @@ export default function BewildLeadsAdminPage() {
               <br />
               <span style={{ fontSize: 13 }}>{loadError}</span>
             </p>
-            <button type="button" className="bw-admin__btn bw-admin__btn--sm" onClick={load}>
+            <button type="button" className="bw-admin__btn bw-admin__btn--sm" onClick={() => void load()}>
               Tentar de novo
             </button>
           </div>
         ) : filtered.length === 0 ? (
           <p className="bw-admin__empty">
             {totalCount === 0
-              ? "Nada recebido ainda. Mensagens do /contato e orçamentos do /diagnostico aparecem aqui."
-              : "Nenhum contato com esse filtro."}
+              ? "Nada recebido ainda. Mensagens do /contato e pedidos de orçamento aparecem aqui."
+              : hasMore
+                ? "Nenhum contato com esse filtro entre os carregados. Use “Carregar mais” para buscar os mais antigos."
+                : "Nenhum contato com esse filtro."}
           </p>
         ) : (
           <>
@@ -370,7 +366,7 @@ export default function BewildLeadsAdminPage() {
                 {filtered.map((r) => {
                   const wa = waLink(r.whatsapp);
                   const isOpen = openId === r.id;
-                  const org = origemOf(r);
+                  const org = leadOrigem(r);
                   const sla = slaInfo(r);
                   return (
                     <React.Fragment key={r.id}>
@@ -381,8 +377,8 @@ export default function BewildLeadsAdminPage() {
                             {r.whatsapp ?? r.email ?? "—"}
                           </div>
                         </td>
-                        <td className="muted" style={{ whiteSpace: "nowrap" }} title={r.landing_path ?? ""}>
-                          {ORIGEM_LABEL[org]}
+                        <td className="muted" style={{ whiteSpace: "nowrap" }} title={leadFormLabel(r)}>
+                          {LEAD_ORIGEM_LABEL[org]}
                         </td>
                         <td className="muted">
                           {org === "contato"
@@ -396,7 +392,7 @@ export default function BewildLeadsAdminPage() {
                         <td>
                           <select
                             value={r.status}
-                            onChange={(e) => changeStatus(r, e.target.value)}
+                            onChange={(e) => void changeStatus(r, e.target.value)}
                             disabled={busy === r.id}
                             aria-label={`Mudar status de ${r.name ?? "lead"}`}
                             style={{
@@ -408,7 +404,12 @@ export default function BewildLeadsAdminPage() {
                               cursor: busy === r.id ? "wait" : "pointer",
                             }}
                           >
-                            {STATUS_VALUES.map((s) => (
+                            {!isLeadStatus(r.status) && (
+                              <option value={r.status} disabled>
+                                {r.status}
+                              </option>
+                            )}
+                            {LEAD_STATUSES.map((s) => (
                               <option key={s} value={s}>
                                 {s}
                               </option>
@@ -444,6 +445,7 @@ export default function BewildLeadsAdminPage() {
                             className="bw-admin__section-link"
                             style={{ background: "none", border: 0, cursor: "pointer" }}
                             onClick={() => setOpenId(isOpen ? null : r.id)}
+                            aria-expanded={isOpen}
                           >
                             {isOpen ? "fechar" : "detalhes"}
                           </button>
@@ -457,7 +459,7 @@ export default function BewildLeadsAdminPage() {
                               cursor: busy === r.id ? "wait" : "pointer",
                               color: "#b3261e",
                             }}
-                            onClick={() => deleteLead(r)}
+                            onClick={() => void deleteLead(r)}
                             disabled={busy === r.id}
                             aria-label={`Excluir ${r.name ?? "lead"}`}
                           >
@@ -477,7 +479,8 @@ export default function BewildLeadsAdminPage() {
                                 margin: 0,
                               }}
                             >
-                              <DetailItem label="E-mail" value={r.email} />
+                              <DetailItem label="Formulário" value={leadFormLabel(r)} />
+                              <DetailItem label="E-mail" value={r.email} href={mailtoHref(r.email)} />
                               <DetailItem label="Localização" value={r.location} />
                               <DetailItem label="Metragem" value={r.area_m2 ? `${r.area_m2} m²` : null} />
                               <DetailItem label="Objetivo" value={r.objetivo} />
@@ -485,7 +488,7 @@ export default function BewildLeadsAdminPage() {
                               <DetailItem label="Mora em SP capital" value={r.lives_in_sp === null ? null : r.lives_in_sp ? "Sim" : "Não"} />
                               <DetailItem label="Chaves" value={r.chaves} />
                               <DetailItem label="Planta" value={r.planta} />
-                              <DetailItem label="Landing" value={r.landing_path} />
+                              <DetailItem label="1ª página da sessão" value={r.landing_path} />
                               <DetailItem label="Referrer" value={r.referrer} />
                               <DetailItem
                                 label="UTM"
@@ -510,35 +513,45 @@ export default function BewildLeadsAdminPage() {
                 })}
               </tbody>
             </table>
-            {hasMore && (
-              <div style={{ display: "flex", justifyContent: "center", padding: 16 }}>
-                <button
-                  type="button"
-                  className="bw-admin__btn bw-admin__btn--sm"
-                  onClick={loadMore}
-                  disabled={loadingMore}
-                >
-                  {loadingMore ? "Carregando…" : `Carregar mais (${totalCount - rows.length} restantes)`}
-                </button>
-              </div>
-            )}
           </>
+        )}
+        {!loading && !loadError && hasMore && (
+          <div style={{ display: "flex", justifyContent: "center", padding: 16 }}>
+            <button
+              type="button"
+              className="bw-admin__btn bw-admin__btn--sm"
+              onClick={() => void loadMore()}
+              disabled={loadingMore}
+            >
+              {loadingMore ? "Carregando…" : `Carregar mais (${totalCount - rows.length} restantes)`}
+            </button>
+          </div>
         )}
       </div>
     </BewildAdminShell>
   );
 }
 
-function KpiSimple({ label, value }: { label: string; value: number }) {
+function KpiSimple({ label, value }: { label: string; value: number | null }) {
   return (
     <div className="bw-admin__kpi-card">
       <p className="bw-admin__kpi-label">{label}</p>
-      <div className="bw-admin__kpi-value">{value}</div>
+      <div className={"bw-admin__kpi-value" + (value === null ? " bw-admin__kpi-empty" : "")}>
+        {value === null ? "—" : value}
+      </div>
     </div>
   );
 }
 
-function DetailItem({ label, value }: { label: string; value: string | null }) {
+function DetailItem({
+  label,
+  value,
+  href,
+}: {
+  label: string;
+  value: string | null;
+  href?: string | null;
+}) {
   if (!value) return null;
   return (
     <div>
@@ -553,7 +566,9 @@ function DetailItem({ label, value }: { label: string; value: string | null }) {
       >
         {label}
       </dt>
-      <dd style={{ margin: 0, color: "var(--bw-ink)" }}>{value}</dd>
+      <dd style={{ margin: 0, color: "var(--bw-ink)", overflowWrap: "anywhere" }}>
+        {href ? <a href={href}>{value}</a> : value}
+      </dd>
     </div>
   );
 }

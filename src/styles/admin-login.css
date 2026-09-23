@@ -238,6 +238,35 @@
   line-height: 1.4;
 }
 
+/* Aviso: sessão aberta com conta sem acesso ao painel */
+.bw-login__notice {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  background: var(--sand);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.bw-login__notice p { margin: 0 0 10px; }
+.bw-login__notice-btn {
+  appearance: none;
+  border: 1px solid var(--navy);
+  background: #fff;
+  color: var(--navy);
+  border-radius: 6px;
+  padding: 7px 12px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.bw-login__notice-btn:hover { background: var(--paper); }
+.bw-login__notice-btn:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
 .bw-login__back {
   display: inline-flex;
   align-items: center;

@@ -14,6 +14,13 @@ import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import { supabase } from "@/integrations/supabase/client";
 import { navigate } from "@/lib/useHashRoute";
 import { uploadImageGeneric, type UploadResult } from "@/lib/uploadImage";
+import {
+  needsSlugRedirect,
+  publicPathFor,
+  slugChangeConfirmMessage,
+  upsertSlugRedirect,
+} from "@/lib/seoRedirects";
+import { useUnsavedChangesGuard } from "@/lib/useUnsavedChangesGuard";
 
 type Props = { slug?: string };
 
@@ -95,6 +102,50 @@ function escapeAttr(s: string): string {
 
 const SIZES_ATTR = '(max-width: 880px) 100vw, 880px';
 
+/** Campos editáveis — usados para detectar alterações não salvas. */
+type PostSnapshot = {
+  title: string;
+  slug: string;
+  category: string;
+  excerpt: string;
+  coverImage: string;
+  body: string;
+  author: string;
+  metaTitle: string;
+  metaDescription: string;
+  featured: boolean;
+  published: boolean;
+  faq: FaqItem[];
+};
+
+const EMPTY_SNAPSHOT: PostSnapshot = {
+  title: "",
+  slug: "",
+  category: "",
+  excerpt: "",
+  coverImage: "",
+  body: "",
+  author: "Equipe Bewild",
+  metaTitle: "",
+  metaDescription: "",
+  featured: false,
+  published: false,
+  faq: [],
+};
+
+function saveErrorText(error: { code?: string; message: string }): string {
+  if (error.code === "23505" || /duplicate|bewild_posts_slug/i.test(error.message)) {
+    return "Já existe um post com esse endereço (slug). Altere o slug e tente de novo.";
+  }
+  if (error.code === "PGRST116") {
+    return "Nada foi gravado: o post não foi encontrado ou sua sessão não tem permissão. Recarregue a página.";
+  }
+  if (error.code === "42501" || /row-level security|permission/i.test(error.message)) {
+    return "Sua sessão não tem permissão para salvar. Entre de novo no painel.";
+  }
+  return error.message;
+}
+
 /** Monta o bloco <figure><picture>… a inserir no corpo do post. */
 function buildFigureHtml(up: UploadResult, alt: string, caption: string): string {
   const lines: string[] = ["<figure>", "  <picture>"];
@@ -124,7 +175,11 @@ export default function BewildPostFormPage({ slug }: Props) {
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [postId, setPostId] = useState<string | null>(null);
+  /** Slug e publicação como estão no banco (para o redirecionamento de slug). */
+  const [original, setOriginal] = useState<{ slug: string; published: boolean } | null>(null);
+  const [baseline, setBaseline] = useState<string>(() => JSON.stringify(EMPTY_SNAPSHOT));
 
   const [title, setTitle] = useState("");
   const [currentSlug, setCurrentSlug] = useState("");
@@ -222,6 +277,7 @@ export default function BewildPostFormPage({ slug }: Props) {
     let cancelled = false;
     (async () => {
       setLoading(true);
+      setLoadError(null);
       const { data, error } = await supabase
         .from("bewild_posts" as never)
         .select("*")
@@ -229,7 +285,13 @@ export default function BewildPostFormPage({ slug }: Props) {
         .maybeSingle();
       if (cancelled) return;
       if (error || !data) {
-        setError(error?.message ?? "Post não encontrado.");
+        // Sem o post carregado o formulário NÃO aparece: antes ele vinha vazio
+        // e "Salvar" não gravava nada e ainda voltava para a lista em silêncio.
+        setLoadError(
+          error
+            ? `Não foi possível carregar o post: ${error.message}`
+            : "Post não encontrado. Ele pode ter sido excluído ou ter mudado de endereço.",
+        );
         setLoading(false);
         return;
       }
@@ -249,6 +311,23 @@ export default function BewildPostFormPage({ slug }: Props) {
       setPublished(!!p.published);
       setPublishedAt(p.published_at);
       setFaq(toFaqList(p.faq));
+      setOriginal({ slug: p.slug, published: !!p.published });
+      setBaseline(
+        JSON.stringify({
+          title: p.title,
+          slug: p.slug,
+          category: p.category ?? "",
+          excerpt: p.excerpt ?? "",
+          coverImage: p.cover_image ?? "",
+          body: p.body ?? "",
+          author: p.author ?? "Equipe Bewild",
+          metaTitle: p.meta_title ?? "",
+          metaDescription: p.meta_description ?? "",
+          featured: !!p.featured,
+          published: !!p.published,
+          faq: toFaqList(p.faq),
+        } satisfies PostSnapshot),
+      );
       setLoading(false);
     })();
     return () => {
@@ -264,9 +343,34 @@ export default function BewildPostFormPage({ slug }: Props) {
 
   const readingTime = useMemo(() => estimateReading(body), [body]);
 
+  const snapshot = useMemo(
+    () =>
+      JSON.stringify({
+        title,
+        slug: currentSlug,
+        category,
+        excerpt,
+        coverImage,
+        body,
+        author,
+        metaTitle,
+        metaDescription,
+        featured,
+        published,
+        faq,
+      } satisfies PostSnapshot),
+    [title, currentSlug, category, excerpt, coverImage, body, author, metaTitle, metaDescription, featured, published, faq],
+  );
+  const dirty = !loading && !loadError && snapshot !== baseline;
+  useUnsavedChangesGuard(dirty && !saving);
+
   async function save(e?: React.FormEvent) {
     e?.preventDefault();
     setError(null);
+    if (!isNew && !postId) {
+      setError("O post não foi carregado; recarregue a página antes de salvar.");
+      return;
+    }
     if (!title.trim()) {
       setError("Título é obrigatório.");
       return;
@@ -276,9 +380,21 @@ export default function BewildPostFormPage({ slug }: Props) {
       return;
     }
 
+    const newSlug = currentSlug.trim();
+    const redirect = needsSlugRedirect({
+      wasPublished: !!original?.published,
+      oldSlug: original?.slug,
+      newSlug,
+    });
+    const oldPath = original ? publicPathFor("post", original.slug) : "";
+    const newPath = publicPathFor("post", newSlug);
+    if (redirect && !window.confirm(slugChangeConfirmMessage("post", oldPath, newPath))) {
+      return;
+    }
+
     setSaving(true);
     const payload: Record<string, unknown> = {
-      slug: currentSlug.trim(),
+      slug: newSlug,
       title: title.trim(),
       category: category || null,
       excerpt: excerpt.trim() || null,
@@ -298,23 +414,37 @@ export default function BewildPostFormPage({ slug }: Props) {
       payload.published_at = new Date().toISOString();
     }
 
-    let result;
-    if (isNew) {
-      result = await supabase.from("bewild_posts" as never).insert(payload as never).select("slug").single();
-    } else if (postId) {
-      result = await supabase
-        .from("bewild_posts" as never)
-        .update(payload as never)
-        .eq("id", postId)
-        .select("slug")
-        .single();
+    const result = isNew
+      ? await supabase.from("bewild_posts" as never).insert(payload as never).select("slug").single()
+      : await supabase
+          .from("bewild_posts" as never)
+          .update(payload as never)
+          .eq("id", postId as string)
+          .select("slug")
+          .single();
+
+    if (result.error) {
+      setSaving(false);
+      setError(saveErrorText(result.error));
+      return;
+    }
+
+    if (redirect) {
+      const { error: redirectError } = await upsertSlugRedirect(oldPath, newPath);
+      if (redirectError) {
+        setSaving(false);
+        // O post está salvo: a tela deixa de acusar alteração pendente, mas
+        // mantém `original` para "salvar" de novo tentar o redirecionamento.
+        setBaseline(snapshot);
+        setError(
+          `Post salvo, mas o redirecionamento de ${oldPath} para ${newPath} não foi criado (${redirectError}). ` +
+            "Clique em salvar de novo para tentar outra vez ou crie o redirecionamento em SEO › URLs 404.",
+        );
+        return;
+      }
     }
 
     setSaving(false);
-    if (result?.error) {
-      setError(result.error.message);
-      return;
-    }
     navigate("/admin/conteudos");
   }
 
@@ -332,6 +462,20 @@ export default function BewildPostFormPage({ slug }: Props) {
     >
       {loading ? (
         <p className="bw-admin__loading">Carregando…</p>
+      ) : loadError ? (
+        <div
+          role="alert"
+          style={{
+            background: "#FBECEE",
+            color: "#8C2230",
+            border: "1px solid #ECCCD2",
+            borderRadius: 8,
+            padding: "10px 12px",
+            fontSize: 13,
+          }}
+        >
+          {loadError}
+        </div>
       ) : (
         <form className="bw-admin__form" onSubmit={save}>
           {error && (
@@ -380,6 +524,12 @@ export default function BewildPostFormPage({ slug }: Props) {
                 required
               />
               <span className="hint">/conteudos/{currentSlug || "..."}</span>
+              {original?.published && currentSlug && currentSlug !== original.slug && (
+                <span className="hint" role="status" style={{ color: "#8A5A00" }}>
+                  Post publicado: ao salvar, /conteudos/{original.slug} passa a redirecionar para o
+                  novo endereço.
+                </span>
+              )}
             </div>
             <div className="bw-admin__field">
               <label htmlFor="post-category">Categoria</label>

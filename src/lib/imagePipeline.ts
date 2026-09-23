@@ -45,9 +45,15 @@ function loadImage(file: File): Promise<HTMLImageElement> {
       URL.revokeObjectURL(url);
       resolve(img);
     };
-    img.onerror = (e) => {
+    // `onerror` entrega um Event, não um Error: quem mostrava a mensagem
+    // exibia "[object Event]" (ex.: foto HEIC do iPhone no Chrome).
+    img.onerror = () => {
       URL.revokeObjectURL(url);
-      reject(e);
+      reject(
+        new Error(
+          `Não foi possível ler "${file.name}". O navegador não abre esse formato — envie JPG, PNG ou WebP.`,
+        ),
+      );
     };
     img.src = url;
   });

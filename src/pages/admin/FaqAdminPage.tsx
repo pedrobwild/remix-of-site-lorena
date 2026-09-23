@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
+import { applyOrderChanges, moveItem, renumber } from "@/lib/adminOrdering";
 import {
   DndContext,
   PointerSensor,
@@ -12,7 +13,6 @@ import {
 } from "@dnd-kit/core";
 import {
   SortableContext,
-  arrayMove,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
@@ -41,6 +41,8 @@ export default function FaqAdminPage() {
   const [search, setSearch] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
   const [savingOrder, setSavingOrder] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
   // Edição inline: id em foco + draft
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -56,32 +58,55 @@ export default function FaqAdminPage() {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  async function load() {
-    const { data } = await supabase
+  const load = useCallback(async () => {
+    const { data, error } = await supabase
       .from("faq_items")
       .select("id, question, answer, visible, order_index")
       .order("order_index", { ascending: true });
+    if (error) {
+      setLoadError(`Não foi possível carregar as perguntas: ${error.message}`);
+      return;
+    }
+    setLoadError(null);
     setRows((data ?? []) as Row[]);
-  }
+  }, []);
 
   useEffect(() => {
-    load();
-  }, []);
+    void load();
+  }, [load]);
 
   async function toggleVisible(id: string, current: boolean) {
     setBusy(id);
-    await supabase.from("faq_items").update({ visible: !current }).eq("id", id);
+    setMsg(null);
+    const { data, error } = await supabase
+      .from("faq_items")
+      .update({ visible: !current })
+      .eq("id", id)
+      .select("id");
     setBusy(null);
-    load();
+    if (error || !data || data.length === 0) {
+      setMsg({
+        kind: "err",
+        text: `Não foi possível ${current ? "ocultar" : "mostrar"} a pergunta: ${error?.message ?? "nenhuma linha foi alterada."}`,
+      });
+    }
+    await load();
   }
 
   async function remove(id: string, q: string) {
     if (!confirm(`Excluir a pergunta "${q}"? Essa ação não pode ser desfeita.`))
       return;
     setBusy(id);
-    await supabase.from("faq_items").delete().eq("id", id);
+    setMsg(null);
+    const { data, error } = await supabase.from("faq_items").delete().eq("id", id).select("id");
     setBusy(null);
-    load();
+    if (error || !data || data.length === 0) {
+      setMsg({
+        kind: "err",
+        text: `Não foi possível excluir a pergunta: ${error?.message ?? "nada foi excluído."}`,
+      });
+    }
+    await load();
   }
 
   function startEdit(r: Row) {
@@ -120,7 +145,7 @@ export default function FaqAdminPage() {
       return;
     }
     cancelEdit();
-    load();
+    await load();
   }
 
   async function createItem() {
@@ -153,7 +178,7 @@ export default function FaqAdminPage() {
     }
     setCreating(false);
     setNewDraft(EMPTY_DRAFT);
-    load();
+    await load();
   }
 
   const filtered = rows.filter((r) => {
@@ -165,37 +190,33 @@ export default function FaqAdminPage() {
     );
   });
 
-  const canReorder = search.trim() === "";
+  // Sem reordenar durante busca (lista parcial) nem enquanto grava a ordem
+  // anterior — dois arrastos seguidos intercalavam as gravações.
+  const canReorder = search.trim() === "" && !savingOrder;
 
   async function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-    if (!over || active.id === over.id) return;
+    if (!over || active.id === over.id || savingOrder) return;
     const oldIndex = rows.findIndex((r) => r.id === active.id);
     const newIndex = rows.findIndex((r) => r.id === over.id);
     if (oldIndex < 0 || newIndex < 0) return;
 
-    const previous = rows;
-    const reordered = arrayMove(rows, oldIndex, newIndex).map((r, i) => ({
-      ...r,
-      order_index: (i + 1) * 10,
-    }));
-    setRows(reordered);
+    const { list, changes } = renumber(moveItem(rows, oldIndex, newIndex), "order_index");
+    setRows(list); // otimista
+    if (changes.length === 0) return;
 
     setSavingOrder(true);
-    try {
-      await Promise.all(
-        reordered.map((r) =>
-          supabase
-            .from("faq_items")
-            .update({ order_index: r.order_index })
-            .eq("id", r.id)
-        )
-      );
-    } catch {
-      setRows(previous);
-    } finally {
-      setSavingOrder(false);
+    setMsg(null);
+    // Uma gravação por vez, conferindo cada erro. Se algo falhar, recarrega
+    // do banco para a tela mostrar a ordem real.
+    const { error } = await applyOrderChanges(changes, (c) =>
+      supabase.from("faq_items").update({ order_index: c.value }).eq("id", c.id),
+    );
+    if (error) {
+      setMsg({ kind: "err", text: `A nova ordem não foi salva: ${error}. A lista foi recarregada.` });
+      await load();
     }
+    setSavingOrder(false);
   }
 
   return (
@@ -225,10 +246,27 @@ export default function FaqAdminPage() {
 
       {aba === "home" && (
         <>
+      {loadError && (
+        <p className="admin-flash admin-flash--err mono" role="alert">
+          {loadError}{" "}
+          <button type="button" className="admin-link" onClick={() => void load()}>
+            tentar de novo
+          </button>
+        </p>
+      )}
+      {msg && (
+        <p
+          className={`admin-flash admin-flash--${msg.kind} mono`}
+          role={msg.kind === "err" ? "alert" : "status"}
+        >
+          {msg.text}
+        </p>
+      )}
       <div className="admin-toolbar">
         <div className="admin-toolbar__filters">
           <input
             type="search"
+            aria-label="Buscar pergunta ou resposta"
             placeholder="buscar pergunta ou resposta…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -250,8 +288,11 @@ export default function FaqAdminPage() {
       {creating && (
         <div className="admin-card admin-card--inset" style={{ marginBottom: "1rem" }}>
           <div className="admin-field">
-            <label className="admin-field__label">Pergunta</label>
+            <label className="admin-field__label" htmlFor="faq-home-new-question">
+              Pergunta
+            </label>
             <input
+              id="faq-home-new-question"
               className="admin-field__input"
               maxLength={300}
               value={newDraft.question}
@@ -262,8 +303,11 @@ export default function FaqAdminPage() {
             />
           </div>
           <div className="admin-field">
-            <label className="admin-field__label">Resposta</label>
+            <label className="admin-field__label" htmlFor="faq-home-new-answer">
+              Resposta
+            </label>
             <textarea
+              id="faq-home-new-answer"
               className="admin-field__input"
               rows={5}
               maxLength={4000}
@@ -309,7 +353,7 @@ export default function FaqAdminPage() {
         </div>
       )}
 
-      {!canReorder && (
+      {search.trim() !== "" && (
         <p className="mono admin-hint">
           arraste para reordenar é desabilitado durante uma busca.
         </p>
@@ -358,7 +402,11 @@ export default function FaqAdminPage() {
                         <td>
                           {editingId === r.id ? (
                             <div className="admin-field" style={{ margin: 0 }}>
+                              <label className="admin-field__label" htmlFor={`faq-home-edit-q-${r.id}`}>
+                                Pergunta
+                              </label>
                               <input
+                                id={`faq-home-edit-q-${r.id}`}
                                 className="admin-field__input"
                                 maxLength={300}
                                 value={draft.question}
@@ -369,11 +417,18 @@ export default function FaqAdminPage() {
                                   }))
                                 }
                               />
+                              <label
+                                className="admin-field__label"
+                                htmlFor={`faq-home-edit-a-${r.id}`}
+                                style={{ marginTop: 8 }}
+                              >
+                                Resposta
+                              </label>
                               <textarea
+                                id={`faq-home-edit-a-${r.id}`}
                                 className="admin-field__input"
                                 rows={5}
                                 maxLength={4000}
-                                style={{ marginTop: 8 }}
                                 value={draft.answer}
                                 onChange={(e) =>
                                   setDraft((d) => ({

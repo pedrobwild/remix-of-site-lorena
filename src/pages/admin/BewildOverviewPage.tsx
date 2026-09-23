@@ -7,8 +7,12 @@
  *  - RPCs analytics_overview_kpis / analytics_top_paths_v2 / analytics_breakdown
  *
  * Seletor de período (7/30/90 dias) propaga em todas as queries de
- * analytics. Mídia paga fica em estado "Conectar" porque ainda não há
- * integração GA4/Windsor/Meta no projeto — nunca exibimos valores fake.
+ * analytics. "7 dias" = hoje + os 6 dias anteriores (7 dias de calendário).
+ * Mídia paga fica em estado "Conectar" quando não há integração — nunca
+ * exibimos valores fake.
+ *
+ * Cada bloco confere o `{ error }` da sua consulta (o supabase-js não lança):
+ * antes, um erro de permissão aparecia como "sem tráfego no período".
  */
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -62,6 +66,27 @@ type MetaInsights =
       roas_available: boolean;
       updated_at: string;
     };
+type CardKey = "analytics" | "sources" | "paths" | "leads" | "content" | "channels";
+type CardErrors = Partial<Record<CardKey, string>>;
+
+/** Busca todas as linhas (o PostgREST corta cada resposta em 1000). */
+async function fetchAllLeadChannels(sinceIso: string) {
+  const PAGE = 1000;
+  const out: { utm_source: string | null; utm_medium: string | null; referrer: string | null }[] = [];
+  for (let from = 0; from < 20_000; from += PAGE) {
+    const { data, error } = await supabase
+      .from("leads")
+      .select("utm_source, utm_medium, referrer")
+      .gte("created_at", sinceIso)
+      .order("created_at", { ascending: false })
+      .range(from, from + PAGE - 1);
+    if (error) return { data: out, error: error.message };
+    out.push(...(data ?? []));
+    if (!data || data.length < PAGE) break;
+  }
+  return { data: out, error: null };
+}
+
 type LeadRow = {
   id: string;
   name: string | null;
@@ -127,6 +152,7 @@ function fmtDate(iso: string): string {
 export default function BewildOverviewPage() {
   const [period, setPeriod] = useState<Period>(30);
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState<CardErrors>({});
   const [kpis, setKpis] = useState<Kpis>(null);
   const [topPaths, setTopPaths] = useState<TopPath[]>([]);
   const [sources, setSources] = useState<Breakdown[]>([]);
@@ -153,13 +179,19 @@ export default function BewildOverviewPage() {
       .then(({ data, error }) => {
         if (cancelled) return;
         if (error || !data) {
-          setMetaData({ connected: false, reason: "api_error" });
+          setMetaData({ connected: false, reason: "api_error", error: error?.message });
         } else {
           setMetaData(data as MetaInsights);
         }
       })
-      .catch(() => {
-        if (!cancelled) setMetaData({ connected: false, reason: "api_error" });
+      .catch((e: unknown) => {
+        if (!cancelled) {
+          setMetaData({
+            connected: false,
+            reason: "api_error",
+            error: e instanceof Error ? e.message : String(e),
+          });
+        }
       })
       .finally(() => {
         if (!cancelled) setMetaLoading(false);
@@ -169,13 +201,14 @@ export default function BewildOverviewPage() {
     };
   }, []);
 
-  const sinceIso = useMemo(() => {
+  // Janela = hoje + (period − 1) dias anteriores, desde a meia-noite local.
+  // Antes era "hoje − period" à meia-noite: o "7 dias" cobria 8 dias.
+  const { sinceIso, untilIso } = useMemo(() => {
     const d = new Date();
-    d.setDate(d.getDate() - period);
+    d.setDate(d.getDate() - (period - 1));
     d.setHours(0, 0, 0, 0);
-    return d.toISOString();
+    return { sinceIso: d.toISOString(), untilIso: new Date().toISOString() };
   }, [period]);
-  const untilIso = useMemo(() => new Date().toISOString(), [period]);
 
   useEffect(() => {
     let cancelled = false;
@@ -228,43 +261,61 @@ export default function BewildOverviewPage() {
         supabase
           .from("projects")
           .select("id, published"),
-        supabase
-          .from("leads")
-          .select("utm_source, utm_medium, referrer")
-          .gte("created_at", sinceIso),
+        fetchAllLeadChannels(sinceIso),
       ]);
 
       if (cancelled) return;
 
-      const kpi = (Array.isArray(kpiRes.data) ? kpiRes.data[0] : null) as Record<string, number | string | null> | null;
-      setKpis(
-        kpi
-          ? {
-              sessions: Number(kpi.sessions) || 0,
-              unique_visitors: Number(kpi.unique_visitors) || 0,
-              pageviews: Number(kpi.pageviews) || 0,
-              pages_per_session: Number(kpi.pages_per_session) || 0,
-              avg_engagement_ms: Number(kpi.avg_engagement_ms) || 0,
-              bounce_rate: Number(kpi.bounce_rate) || 0,
-              conversions: Number(kpi.conversions) || 0,
-              conversion_rate: Number(kpi.conversion_rate) || 0,
-            }
-          : null
-      );
+      const errs: CardErrors = {};
 
+      if (kpiRes.error) {
+        errs.analytics = kpiRes.error.message;
+        setKpis(null);
+      } else {
+        const kpi = (Array.isArray(kpiRes.data) ? kpiRes.data[0] : null) as Record<string, number | string | null> | null;
+        setKpis(
+          kpi
+            ? {
+                sessions: Number(kpi.sessions) || 0,
+                unique_visitors: Number(kpi.unique_visitors) || 0,
+                pageviews: Number(kpi.pageviews) || 0,
+                pages_per_session: Number(kpi.pages_per_session) || 0,
+                avg_engagement_ms: Number(kpi.avg_engagement_ms) || 0,
+                bounce_rate: Number(kpi.bounce_rate) || 0,
+                conversions: Number(kpi.conversions) || 0,
+                conversion_rate: Number(kpi.conversion_rate) || 0,
+              }
+            : null
+        );
+      }
 
-      const paths = (pathsRes.data ?? []) as TopPath[];
-      setTopPaths(paths);
-      const perf: Record<string, TopPath | undefined> = {};
-      for (const t of TARGET_PATHS) perf[t] = paths.find((p) => p.path === t);
-      setPagePerf(perf);
+      if (pathsRes.error) {
+        errs.paths = pathsRes.error.message;
+        setTopPaths([]);
+        setPagePerf({});
+      } else {
+        const paths = (pathsRes.data ?? []) as TopPath[];
+        setTopPaths(paths);
+        const perf: Record<string, TopPath | undefined> = {};
+        for (const t of TARGET_PATHS) perf[t] = paths.find((p) => p.path === t);
+        setPagePerf(perf);
+      }
 
-      setSources((sourcesRes.data ?? []) as Breakdown[]);
+      if (sourcesRes.error) {
+        errs.sources = sourcesRes.error.message;
+        setSources([]);
+      } else {
+        setSources((sourcesRes.data ?? []) as Breakdown[]);
+      }
 
+      const leadsError = leadsCountRes.error ?? contactedRes.error ?? recentLeadsRes.error;
+      if (leadsError) errs.leads = leadsError.message;
       setLeadsCount(leadsCountRes.count ?? 0);
       setContactedCount(contactedRes.count ?? 0);
       setRecentLeads((recentLeadsRes.data ?? []) as LeadRow[]);
 
+      const contentError = postsRes.error ?? projectsRes.error;
+      if (contentError) errs.content = contentError.message;
       const posts = (postsRes.data ?? []) as { published: boolean; featured: boolean }[];
       setPostsTotal(posts.length);
       setPostsPublished(posts.filter((p) => p.published).length);
@@ -274,16 +325,13 @@ export default function BewildOverviewPage() {
       setProjectsTotal(projs.length);
       setProjectsPublished(projs.filter((p) => p.published).length);
 
-      const channelLeads = (leadChannelsRes.data ?? []) as {
-        utm_source: string | null;
-        utm_medium: string | null;
-        referrer: string | null;
-      }[];
-      setChannelDist(aggregateLeadChannels(channelLeads));
+      if (leadChannelsRes.error) errs.channels = leadChannelsRes.error;
+      setChannelDist(aggregateLeadChannels(leadChannelsRes.data));
 
+      setErrors(errs);
       setLoading(false);
     }
-    load();
+    void load();
     return () => {
       cancelled = true;
     };
@@ -325,7 +373,8 @@ export default function BewildOverviewPage() {
           icon={<Inbox aria-hidden />}
           label="Leads no período"
           value={fmtInt(totalLeads)}
-          sub="Recebidos pelo formulário de /diagnostico"
+          sub="Todos os formulários do site"
+          error={errors.leads}
         />
         <Kpi
           icon={<Target aria-hidden />}
@@ -340,6 +389,7 @@ export default function BewildOverviewPage() {
               ? `${fmtInt(totalLeads)} leads / ${fmtInt(kpis.sessions)} sessões`
               : "Sem sessões registradas no período"
           }
+          error={errors.analytics ?? errors.leads}
         />
         <Kpi
           icon={<Users aria-hidden />}
@@ -350,6 +400,7 @@ export default function BewildOverviewPage() {
               ? `${fmtInt(kpis.unique_visitors)} visitantes únicos`
               : "Sem dados"
           }
+          error={errors.analytics}
         />
         <Kpi
           icon={<Eye aria-hidden />}
@@ -360,12 +411,14 @@ export default function BewildOverviewPage() {
               ? `${(kpis.pages_per_session || 0).toFixed(2)} páginas/sessão`
               : "Sem dados"
           }
+          error={errors.analytics}
         />
         <Kpi
           icon={<Timer aria-hidden />}
           label="Engajamento médio"
           value={fmtTime(kpis?.avg_engagement_ms)}
           sub="Tempo médio com a aba em foco"
+          error={errors.analytics}
         />
         <Kpi
           icon={<TrendingDown aria-hidden />}
@@ -376,6 +429,7 @@ export default function BewildOverviewPage() {
               ? `Engajamento ${engagementRate.toFixed(1)}% — derivado de 1 − taxa de engajamento (GA4-like)`
               : "Sem dados"
           }
+          error={errors.analytics}
         />
       </div>
 
@@ -388,8 +442,12 @@ export default function BewildOverviewPage() {
               ver análise completa
             </a>
           </header>
-          {sources.length === 0 ? (
-            <p className="bw-admin__empty">Sem sessões com origem identificada no período.</p>
+          {errors.sources ? (
+            <CardError message={errors.sources} />
+          ) : sources.length === 0 ? (
+            <p className="bw-admin__empty">
+              {loading ? "Carregando…" : "Sem sessões com origem identificada no período."}
+            </p>
           ) : (
             <table className="bw-admin__table">
               <thead>
@@ -420,8 +478,10 @@ export default function BewildOverviewPage() {
               ver análise completa
             </a>
           </header>
-          {topPaths.length === 0 ? (
-            <p className="bw-admin__empty">Sem pageviews no período.</p>
+          {errors.paths ? (
+            <CardError message={errors.paths} />
+          ) : topPaths.length === 0 ? (
+            <p className="bw-admin__empty">{loading ? "Carregando…" : "Sem pageviews no período."}</p>
           ) : (
             <table className="bw-admin__table">
               <thead>
@@ -455,6 +515,7 @@ export default function BewildOverviewPage() {
             Tráfego para Home, Diagnóstico, Portfólio e Conteúdos.
           </p>
         </header>
+        {errors.paths && <CardError message={errors.paths} />}
         <table className="bw-admin__table">
           <thead>
             <tr>
@@ -503,9 +564,10 @@ export default function BewildOverviewPage() {
           </header>
           <div className="bw-admin__kpi-grid" style={{ marginBottom: 0 }}>
             <Kpi
-              label="Novos leads"
+              label="Leads recebidos"
               value={fmtInt(leadsCount)}
-              sub="Via /diagnostico no período"
+              sub="Todos os formulários, no período"
+              error={errors.leads}
             />
             <Kpi
               label="Já contatados"
@@ -515,6 +577,7 @@ export default function BewildOverviewPage() {
                   ? `Taxa de contato: ${fmtPct(contactRate)}`
                   : "Sem leads no período"
               }
+              error={errors.leads}
             />
           </div>
           {recentLeads.length > 0 && (
@@ -559,12 +622,14 @@ export default function BewildOverviewPage() {
               label="Posts publicados"
               value={fmtInt(postsPublished)}
               sub={`${postsTotal - postsPublished} em rascunho · ${postsFeatured} em destaque`}
+              error={errors.content}
             />
             <Kpi
               icon={<FolderKanban aria-hidden />}
               label="Projetos publicados"
               value={fmtInt(projectsPublished)}
               sub={`${projectsTotal - projectsPublished} em rascunho`}
+              error={errors.content}
             />
           </div>
           <p style={{ margin: 0 }}>
@@ -590,8 +655,10 @@ export default function BewildOverviewPage() {
             campanha.
           </p>
         </header>
-        {leadsCount === 0 ? (
-          <p className="bw-admin__empty">Sem leads no período.</p>
+        {errors.channels || errors.leads ? (
+          <CardError message={(errors.channels ?? errors.leads) as string} />
+        ) : leadsCount === 0 ? (
+          <p className="bw-admin__empty">{loading ? "Carregando…" : "Sem leads no período."}</p>
         ) : (
           <ul
             style={{
@@ -699,6 +766,18 @@ export default function BewildOverviewPage() {
               sub="Requer receita do CRM"
             />
           </div>
+        ) : metaData && !metaData.connected && metaData.reason === "api_error" ? (
+          <div className="bw-admin__connect">
+            <div className="bw-admin__connect-text">
+              <strong>Não foi possível consultar a Meta Ads agora</strong>
+              <p>
+                A integração respondeu com erro — os números não foram zerados, só não puderam
+                ser lidos. Tente recarregar a página em alguns minutos.
+              </p>
+              {metaData.error && <CardError message={metaData.error} />}
+            </div>
+            <span className="bw-admin__tag bw-admin__tag--warn">Erro</span>
+          </div>
         ) : (
           <div className="bw-admin__connect">
             <div className="bw-admin__connect-text">
@@ -722,13 +801,17 @@ function Kpi({
   label,
   value,
   sub,
+  error,
 }: {
   icon?: React.ReactNode;
   label: string;
   value: string;
   sub?: string;
+  /** Falha na consulta deste card: mostra "—" e um aviso discreto. */
+  error?: string;
 }) {
-  const empty = value === "—";
+  const shown = error ? "—" : value;
+  const empty = shown === "—";
   return (
     <div className="bw-admin__kpi-card">
       <div>
@@ -741,11 +824,28 @@ function Kpi({
           {label}
         </p>
         <div className={"bw-admin__kpi-value" + (empty ? " bw-admin__kpi-empty" : "")}>
-          {value}
+          {shown}
         </div>
       </div>
-      {sub && <p className="bw-admin__kpi-sub">{sub}</p>}
+      {error ? (
+        <p className="bw-admin__kpi-sub">
+          <span className="bw-admin__card-error" title={error}>
+            erro ao carregar
+          </span>
+        </p>
+      ) : (
+        sub && <p className="bw-admin__kpi-sub">{sub}</p>
+      )}
     </div>
+  );
+}
+
+/** Aviso discreto de falha num bloco; o detalhe técnico fica no `title`. */
+function CardError({ message }: { message: string }) {
+  return (
+    <p className="bw-admin__card-error" role="status" title={message}>
+      erro ao carregar
+    </p>
   );
 }
 
