@@ -106,7 +106,7 @@ function mountHomeStylesheet(): () => void {
   };
 }
 
-export function installWorkflowPortal(root: HTMLElement): () => void {
+function installWorkflowPortal(root: HTMLElement): () => void {
   const portal = root.querySelector<HTMLElement>("[data-workflow-portal]");
   if (!portal) return () => undefined;
 
