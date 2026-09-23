@@ -90,6 +90,22 @@
   line-height: 1.6;
 }
 
+.bwa-parc-seal-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  margin-top: 18px;
+  color: var(--bwa-accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.bwa-parc-seal-link:hover,
+.bwa-parc-seal-link:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 /* Faixa de fatos */
 .bwa-parc-facts {
   list-style: none;
