@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import homeBwaCssUrl from "./home-bwa.css?url";
 import { HOME_BWA_HTML } from "./home-bwa-body";
+import BwaFooter from "@/components/BwaFooter";
 import { useSeo } from "@/lib/useSeo";
 import { hydrateHomeProjects } from "@/lib/hydrateHomeProjects";
 import { trackEvent } from "@/lib/ga4";
@@ -133,5 +134,11 @@ export default function HomePage() {
     return () => container.removeEventListener("click", handleCtaClick);
   }, []);
 
-  return <div ref={homeRef} dangerouslySetInnerHTML={{ __html: HOME_BWA_HTML }} />;
+  return (
+    <>
+      <div ref={homeRef} dangerouslySetInnerHTML={{ __html: HOME_BWA_HTML }} />
+      {/* Rodapé único do site — mesmo componente de todas as páginas. */}
+      <BwaFooter />
+    </>
+  );
 }
