@@ -87,6 +87,44 @@ const GUIA_ITEMS: { q: string; a: string; href?: string; linkLabel?: string }[] 
   },
 ];
 
+/* Bloco "Contratos e comissões": regras do contrato fechado e do programa de
+ * indicações (parceiros e clientes). Copy segue as decisões travadas do dono:
+ * sem percentual público de comissão — o valor é definido no termo individual. */
+const CONTRATO_ITEMS: { q: string; a: string; href?: string; linkLabel?: string }[] = [
+  {
+    q: "Como funciona o contrato fechado da Bewild?",
+    a: "Preço e prazo são definidos e assinados antes de a obra começar, com memorial descritivo item a item. Se o valor final ultrapassar o combinado, a diferença é por nossa conta — sem aditivo surpresa. O contrato cobre projeto, obra, marcenaria, mobiliário e entrega.",
+  },
+  {
+    q: "O que acontece se a obra atrasar?",
+    a: "A data de entrega entra no contrato antes do início da obra. Se o atraso for por nossa conta, a indenização prevista em contrato é aplicada — você não paga por um problema nosso. E tudo fica registrado no Bwild Workflow, visível para você do começo ao fim.",
+  },
+  {
+    q: "Qual é a garantia da reforma?",
+    a: "Cinco anos de garantia, cobrindo a execução da obra e o que está no contrato. Se algo der errado dentro desse período, a Bewild resolve.",
+  },
+  {
+    q: "Como funciona a comissão para parceiros que indicam?",
+    a: "Corretores, imobiliárias, incorporadoras, arquitetos e administradoras de locação recebem comissão por contrato indicado. O percentual não é público: é definido no termo individual, conforme o perfil e o volume de indicações, calculado sobre o valor líquido do contrato e com relatório mensal. O pagamento acontece após o recebimento da Bewild.",
+    href: "/parceiros",
+    linkLabel: "Ver o programa de indicações para parceiros →",
+  },
+  {
+    q: "Como funciona a recompensa para quem indica um amigo?",
+    a: "Qualquer pessoa pode indicar, sem precisar ser do mercado. O valor da recompensa é combinado com você e confirmado por escrito no momento do registro, e o pagamento é feito por Pix após o fechamento do contrato do indicado.",
+    href: "/indique-um-amigo",
+    linkLabel: "Indicar um amigo agora →",
+  },
+  {
+    q: "Por quanto tempo vale uma indicação?",
+    a: "A indicação vale por 12 meses contados do registro. Se a pessoa indicada fechar contrato dentro desse período, a recompensa ou a comissão é sua.",
+  },
+  {
+    q: "Meu indicado já estava negociando com a Bewild. Conta?",
+    a: "Não. A indicação só vale para quem ainda não está em negociação com a gente — evita conflito entre indicadores e mantém a regra clara para todo mundo.",
+  },
+];
+
 export default function FaqPage() {
   const { settings } = useSiteSettings();
   const [aberto, setAberto] = useState("f-0");
