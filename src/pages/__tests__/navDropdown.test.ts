@@ -119,6 +119,14 @@ describe("dropdown Parceiros", () => {
     cleanup();
   });
 
+  it("Incorporadoras aparece na prévia do Lovable sem parâmetro", async () => {
+    const initBwaNav = await loadNav("", "id-preview--abc.lovable.app");
+    const { root, wrapper } = mount();
+    const cleanup = initBwaNav(root);
+    expect(wrapper.querySelector("[data-incorp-gated]")!.hasAttribute("hidden")).toBe(false);
+    cleanup();
+  });
+
   it("Incorporadoras aparece na prévia com ?incorporadoras=1", async () => {
     const initBwaNav = await loadNav("?incorporadoras=1");
     const { root, wrapper } = mount();
