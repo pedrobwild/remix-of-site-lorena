@@ -58,11 +58,12 @@ async function main() {
     return res.json();
   };
 
-  let projects, posts;
+  let projects, posts, faqEntries;
   try {
-    [projects, posts] = await Promise.all([
+    [projects, posts, faqEntries] = await Promise.all([
       get("projects?published=eq.true&visible=eq.true&select=slug,updated_at,created_at"),
       get("bewild_posts?published=eq.true&select=slug,title,updated_at,published_at,created_at"),
+      get("assistant_kb?ativo=eq.true&select=updated_at"),
     ]);
   } catch (err) {
     warn(`falha ao consultar o banco: ${err.message}`);
@@ -96,7 +97,12 @@ async function main() {
       priority: "0.8",
     },
     { loc: `${BASE_URL}/orcamento`, changefreq: "monthly", priority: "0.9" },
-    { loc: `${BASE_URL}/faq`, changefreq: "monthly", priority: "0.7" },
+    {
+      loc: `${BASE_URL}/faq`,
+      lastmod: Array.isArray(faqEntries) ? newest(faqEntries, "updated_at") : null,
+      changefreq: "monthly",
+      priority: "0.7",
+    },
     { loc: `${BASE_URL}/autorizacao-condominio`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/contato`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/escopo`, changefreq: "monthly", priority: "0.7" },
