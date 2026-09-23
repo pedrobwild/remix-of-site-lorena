@@ -337,6 +337,123 @@
       }
     }
 
+    /* ---- Dropdown "Parceiros" do menu desktop (padrão disclosure) ---- */
+    .bwa-nav-dd {
+      position: relative;
+      display: inline-flex;
+    }
+
+    .bwa-nav-dd-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding-block: 10px;
+      font: inherit;
+      color: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      white-space: nowrap;
+      background: none;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .bwa-nav-dd-chev {
+      width: 7px;
+      height: 7px;
+      border-right: 1.5px solid currentColor;
+      border-bottom: 1.5px solid currentColor;
+      transform: translateY(-2px) rotate(45deg);
+      transition: transform .25s var(--bwa-ease);
+    }
+
+    .bwa-nav-dd.bwa-open .bwa-nav-dd-chev {
+      transform: translateY(1px) rotate(-135deg);
+    }
+
+    .bwa-nav-dd-panel {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 50%;
+      z-index: 1000;
+      display: none;
+      grid-template-columns: 1fr;
+      width: min(320px, calc(100vw - 32px));
+      padding: 8px;
+      transform: translateX(-50%);
+      color: var(--bwa-white);
+      background: var(--bwa-navy);
+      border: 1px solid var(--bwa-white-line);
+      border-radius: 10px;
+      box-shadow: 0 18px 44px rgba(11, 35, 66, .28);
+      text-align: left;
+    }
+
+    .bwa-nav-dd.bwa-open .bwa-nav-dd-panel {
+      display: grid;
+    }
+
+    .bwa-nav-dd-panel a {
+      display: grid;
+      gap: 3px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      white-space: normal;
+      transition: background-color .2s var(--bwa-ease);
+    }
+
+    .bwa-nav-dd-panel a::after {
+      content: none;
+    }
+
+    .bwa-nav-dd-panel a:hover,
+    .bwa-nav-dd-panel a:focus-visible {
+      background: rgba(255, 255, 255, .1);
+    }
+
+    .bwa-nav-dd-title {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .bwa-nav-dd-desc {
+      font-family: "Manrope", sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0;
+      line-height: 1.35;
+      text-transform: none;
+      opacity: .72;
+    }
+
+    /* ---- Grupo "Parceiros" do menu mobile ---- */
+    .bwa-mobile-menu .bwa-menu-group-label {
+      padding-block: 12px 4px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      opacity: .6;
+    }
+
+    .bwa-mobile-menu a.bwa-menu-sub {
+      padding-left: 18px;
+      font-size: clamp(20px, 5.5vw, 30px);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bwa-nav-dd-chev,
+      .bwa-nav-dd-panel a {
+        transition: none;
+      }
+    }
+
+
+
     .bwa-nav .bwa-button {
       min-height: 42px;
       padding: 11px 16px;
