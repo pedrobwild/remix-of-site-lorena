@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import homeBwaCssUrl from "./home-bwa.css?url";
 import { HOME_BWA_HTML } from "./home-bwa-body";
 import BwaFooter from "@/components/BwaFooter";
@@ -11,6 +12,7 @@ import { installTour3d } from "@/lib/homeTour3d";
 import { fetchSiteSettings } from "@/lib/useSiteSettings";
 import { isExternalHref, safeHref } from "@/lib/safeUrl";
 import { initHomeBwa } from "./home-bwa-script";
+import WorkflowPortalReplica from "@/components/workflow-replica/WorkflowPortalReplica";
 
 const TITLE = "Arquitetura, engenharia e reforma de apartamento em SP | Bewild";
 const DESCRIPTION =
@@ -106,62 +108,9 @@ function mountHomeStylesheet(): () => void {
   };
 }
 
-function installWorkflowPortal(root: HTMLElement): () => void {
-  const portal = root.querySelector<HTMLElement>("[data-workflow-portal]");
-  if (!portal) return () => undefined;
-
-  const tabs = Array.from(
-    portal.querySelectorAll<HTMLButtonElement>("[data-workflow-tab]"),
-  );
-  const panels = Array.from(
-    portal.querySelectorAll<HTMLElement>("[data-workflow-panel]"),
-  );
-
-  const selectTab = (tab: HTMLButtonElement, moveFocus: boolean) => {
-    const target = tab.dataset.workflowTab;
-    if (!target) return;
-
-    tabs.forEach((item) => {
-      const selected = item === tab;
-      item.setAttribute("aria-selected", String(selected));
-      item.tabIndex = selected ? 0 : -1;
-    });
-    panels.forEach((panel) => {
-      panel.hidden = panel.dataset.workflowPanel !== target;
-    });
-    if (moveFocus) tab.focus();
-  };
-
-  const handleClick = (event: MouseEvent) => {
-    const target = event.target instanceof Element
-      ? event.target.closest<HTMLButtonElement>("[data-workflow-tab]")
-      : null;
-    if (target && portal.contains(target)) selectTab(target, false);
-  };
-
-  const handleKeydown = (event: KeyboardEvent) => {
-    const target = event.target instanceof Element
-      ? event.target.closest<HTMLButtonElement>("[data-workflow-tab]")
-      : null;
-    if (!target || !portal.contains(target)) return;
-    const currentIndex = tabs.indexOf(target);
-    if (currentIndex < 0 || (event.key !== "ArrowLeft" && event.key !== "ArrowRight")) return;
-    event.preventDefault();
-    const direction = event.key === "ArrowRight" ? 1 : -1;
-    const next = tabs[(currentIndex + direction + tabs.length) % tabs.length];
-    if (next) selectTab(next, true);
-  };
-
-  portal.addEventListener("click", handleClick);
-  portal.addEventListener("keydown", handleKeydown);
-  return () => {
-    portal.removeEventListener("click", handleClick);
-    portal.removeEventListener("keydown", handleKeydown);
-  };
-}
-
 export default function HomePage() {
   const homeRef = useRef<HTMLDivElement>(null);
+  const [workflowPortalRoot, setWorkflowPortalRoot] = useState<HTMLElement | null>(null);
 
   // SEO por rota (title/description/canonical + gating de trackers por consentimento).
   useSeo({
@@ -196,14 +145,15 @@ export default function HomePage() {
           installInstagramEmbeds(root),
           // Tour virtual 3D (Enscape): 3 cômodos lado a lado; no toque, tela cheia.
           installTour3d(root),
-          installWorkflowPortal(root),
           installFooterLinkedin(root),
         ]
       : [];
     // Vitrine "Projetos": troca os cards estáticos pelos mais acessados.
     void hydrateHomeProjects();
+    setWorkflowPortalRoot(root?.querySelector<HTMLElement>("#workflow-portal-root") ?? null);
 
     return () => {
+      setWorkflowPortalRoot(null);
       cleanups.forEach((cleanup) => cleanup());
       unmountCss();
     };
@@ -228,6 +178,7 @@ export default function HomePage() {
   return (
     <>
       <div ref={homeRef} dangerouslySetInnerHTML={{ __html: HOME_BWA_HTML }} />
+      {workflowPortalRoot ? createPortal(<WorkflowPortalReplica />, workflowPortalRoot) : null}
       {/* Rodapé único do site — mesmo componente de todas as páginas. */}
       <BwaFooter />
     </>
