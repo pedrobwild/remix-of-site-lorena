@@ -535,6 +535,7 @@ export type Database = {
           chaves: string | null
           created_at: string
           email: string | null
+          form_path: string | null
           id: string
           landing_path: string | null
           lead_source: string | null
@@ -558,6 +559,7 @@ export type Database = {
           chaves?: string | null
           created_at?: string
           email?: string | null
+          form_path?: string | null
           id?: string
           landing_path?: string | null
           lead_source?: string | null
@@ -581,6 +583,7 @@ export type Database = {
           chaves?: string | null
           created_at?: string
           email?: string | null
+          form_path?: string | null
           id?: string
           landing_path?: string | null
           lead_source?: string | null
