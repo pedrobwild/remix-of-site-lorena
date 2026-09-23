@@ -12,4 +12,4 @@ export const ASSISTANT_ENABLED = true;
 // false = fora do ar para o público: a rota responde como página não encontrada, fica fora do menu e do sitemap.
 //         Prévia interna com ?incorporadoras=1 na URL (vale para a sessão; ?incorporadoras=0 desliga).
 // true = publicada para todos.
-export const INCORPORADORAS_PAGE_ENABLED = false;
+export const INCORPORADORAS_PAGE_ENABLED = true;

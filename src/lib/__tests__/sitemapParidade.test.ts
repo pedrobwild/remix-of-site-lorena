@@ -36,6 +36,7 @@ const ROTAS_INDEXAVEIS = [
   { path: "/reforma-de-cobertura-sao-paulo", priority: "0.9", changefreq: "monthly" },
   { path: "/marcenaria", priority: "0.9", changefreq: "monthly" },
   { path: "/parceiros", priority: "0.7", changefreq: "monthly" },
+  { path: "/parceiros/incorporadoras", priority: "0.8", changefreq: "monthly" },
   { path: "/indique-um-amigo", priority: "0.7", changefreq: "monthly" },
   { path: "/marcas-e-parcerias", priority: "0.7", changefreq: "monthly" },
   { path: "/guia-do-investidor", priority: "0.8", changefreq: "monthly" },
@@ -77,8 +78,8 @@ const indexaveisDoRoteador = rotasDoRoteador.filter(
     !FORA_DO_SITEMAP_POR_FLAG.includes(r),
 );
 /** Rotas estáticas listadas em cada gerador (`${BASE_URL}/x` / `${base}/x` seguidos de crase). */
-const rotasDoScript = unicos([...script.matchAll(/\$\{BASE_URL\}(\/[a-z0-9-]*)`/g)].map((m) => m[1]));
-const rotasDaEdge = unicos([...edge.matchAll(/\$\{base\}(\/[a-z0-9-]*)`/g)].map((m) => m[1]));
+const rotasDoScript = unicos([...script.matchAll(/\$\{BASE_URL\}(\/[a-z0-9-/]*)`/g)].map((m) => m[1]));
+const rotasDaEdge = unicos([...edge.matchAll(/\$\{base\}(\/[a-z0-9-/]*)`/g)].map((m) => m[1]));
 
 describe("rotas do roteador ↔ geradores de sitemap", () => {
   it("toda rota estática indexável do roteador está no script de build", () => {
