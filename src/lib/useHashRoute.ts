@@ -21,6 +21,7 @@ export type Route =
   | { name: "marcas-e-parcerias" }
   | { name: "guia-do-investidor" }
   | { name: "privacidade" }
+  | { name: "unsubscribe" }
   | { name: "bewild-project"; slug: string }
   | { name: "conteudos" }
   | { name: "bewild-post"; slug: string }
@@ -80,6 +81,8 @@ function parsePath(rawPath: string): Route {
   if (path === "/marcas-e-parcerias") return { name: "marcas-e-parcerias" };
   if (path === "/guia-do-investidor") return { name: "guia-do-investidor" };
   if (path === "/privacidade") return { name: "privacidade" };
+  // Descadastro dos e-mails transacionais (link do rodapé dos e-mails).
+  if (path === "/unsubscribe") return { name: "unsubscribe" };
 
   const bewildProjMatch = path.match(/^\/portfolio\/([a-z0-9-]+)$/);
   if (bewildProjMatch) return { name: "bewild-project", slug: bewildProjMatch[1] };
@@ -199,6 +202,7 @@ export const routes = {
   marcasEParcerias: "/marcas-e-parcerias",
   guiaDoInvestidor: "/guia-do-investidor",
   privacidade: "/privacidade",
+  unsubscribe: "/unsubscribe",
   bewildProject: (slug: string) => `/portfolio/${slug}`,
   blog: "/conteudos",
   conteudos: "/conteudos",
