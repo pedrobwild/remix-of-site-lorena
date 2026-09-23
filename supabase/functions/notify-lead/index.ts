@@ -4,6 +4,7 @@
 // not block the other. Fire-and-forget from the client.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "npm:zod@3.23.8";
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -44,6 +45,28 @@ type StepResult = {
 };
 
 type CrmResult = Outcome;
+
+const nullableText = (max: number) => z.string().trim().max(max).nullable().optional();
+const leadSchema = z.object({
+  id: z.string().uuid().nullable().optional(),
+  name: nullableText(120),
+  whatsapp: nullableText(20),
+  email: z.union([z.string().trim().email().max(254), z.literal(""), z.null()]).optional(),
+  location: nullableText(200),
+  area_m2: z.number().finite().min(0).max(100000).nullable().optional(),
+  objetivo: nullableText(80),
+  chaves: nullableText(80),
+  planta: nullableText(80),
+  message: nullableText(4000),
+  utm_source: nullableText(200),
+  utm_medium: nullableText(200),
+  utm_campaign: nullableText(200),
+  referrer: nullableText(500),
+  landing_path: nullableText(500),
+  user_agent: nullableText(500),
+  lead_source: nullableText(80),
+  lives_in_sp: z.boolean().nullable().optional(),
+}).strict();
 
 function fmtDateBR(d: Date): string {
   try {
@@ -379,11 +402,9 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const parsed = JSON.parse(raw) as unknown;
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-      throw new Error("not_an_object");
-    }
-    lead = parsed as Lead;
+    const parsed = leadSchema.safeParse(JSON.parse(raw) as unknown);
+    if (!parsed.success) throw new Error("invalid_payload");
+    lead = parsed.data;
   } catch {
     return new Response(JSON.stringify({ error: "invalid_json" }), {
       status: 400,

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { z } from "zod";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { CONTACT } from "@/components/landing/content";
@@ -187,6 +188,18 @@ const FAQ_PARCEIRO = [
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const digits = (v: string) => v.replace(/\D+/g, "");
 
+const parceiroSchema = z.object({
+  tipo: z.enum(TIPOS as [string, ...string[]]),
+  nome: z.string().trim().min(2).max(120),
+  empresa: z.string().trim().max(120),
+  documento: z.string().trim().max(24),
+  whats: z.string().transform(digits).refine((value) => value.length >= 10 && value.length <= 11),
+  mail: z.union([z.literal(""), z.string().trim().email().max(180)]),
+  regiao: z.string().trim().min(2).max(180),
+  unidades: z.union([z.literal(""), z.string().regex(/^\d{1,4}$/)]),
+  origem: z.string().trim().max(180),
+});
+
 function maskPhone(v: string) {
   const d = digits(v).slice(0, 11);
   if (d.length <= 2) return d;
@@ -225,25 +238,38 @@ export default function ParceirosPage() {
   async function enviar(e: React.FormEvent) {
     e.preventDefault();
     setTouched({ tipo: true, nome: true, whats: true, mail: true, regiao: true });
-    if (!podeEnviar) return;
+    const parsed = parceiroSchema.safeParse({
+      tipo,
+      nome,
+      empresa,
+      documento,
+      whats,
+      mail,
+      regiao,
+      unidades,
+      origem,
+    });
+    if (!podeEnviar || !parsed.success) return;
     setEnviando(true);
     setErro(null);
 
+    const dados = parsed.data;
+
     const linhas = [
-      `Tipo de parceiro: ${tipo}`,
-      empresa.trim() ? `Empresa: ${empresa.trim()}` : null,
-      documento.trim() ? `CRECI/CNPJ: ${documento.trim()}` : null,
-      unidades.trim() ? `Unidades vendidas por mês: ${unidades.trim()}` : null,
+      `Tipo de parceiro: ${dados.tipo}`,
+      dados.empresa ? `Empresa: ${dados.empresa}` : null,
+      dados.documento ? `CRECI/CNPJ: ${dados.documento}` : null,
+      dados.unidades ? `Unidades vendidas por mês: ${dados.unidades}` : null,
     ].filter(Boolean);
 
     const payload = {
-      name: nome.trim(),
-      whatsapp: digits(whats),
-      email: mail.trim() || null,
+      name: dados.nome,
+      whatsapp: dados.whats,
+      email: dados.mail || null,
       message: linhas.join("\n"),
-      location: regiao.trim(),
+      location: dados.regiao,
       area_m2: null,
-      objetivo: `Parceria comercial — ${tipo}`,
+      objetivo: `Parceria comercial — ${dados.tipo}`,
       chaves: null,
       planta: null,
       utm_source: null,
@@ -252,7 +278,7 @@ export default function ParceirosPage() {
       referrer: typeof document !== "undefined" ? document.referrer || null : null,
       landing_path: "/parceiros",
       user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
-      lead_source: origem.trim() || null,
+      lead_source: dados.origem || null,
     };
 
     let delivered = false;
@@ -278,9 +304,9 @@ export default function ParceirosPage() {
   }
 
   useSeo({
-    title: "Parcerias em reforma de apartamento em SP: corretores e imobiliárias | Bewild",
+    title: "Programa de indicações para parceiros profissionais | Bewild",
     description:
-      "Você vende o imóvel, a Bewild entrega pronto: reforma de apartamento em SP completa, com preço e prazo em contrato e 5 anos de garantia. Programa de indicação para corretores, imobiliárias e incorporadoras.",
+      "Indique clientes para a Bewild, acompanhe cada oportunidade e receba comissão conforme o termo. Programa para corretores, imobiliárias, incorporadoras, arquitetos e administradoras.",
     keywords:
       "escritório de arquitetura e engenharia em SP, reforma de apartamento em SP, parceria corretor reforma, indicação reforma comissão, reforma de studio para investidor, reforma apartamento compacto São Paulo, incorporadora reforma pós-chaves, custo de reforma, Bewild parceiros",
     canonicalPath: "/parceiros",
@@ -289,7 +315,7 @@ export default function ParceirosPage() {
       ? [
           breadcrumbJsonLd(settings, [
             { name: "Início", path: "/" },
-            { name: "Parceiros", path: "/parceiros" },
+            { name: "Programa de indicações", path: "/parceiros" },
           ]),
           faqJsonLd(FAQ_PARCEIRO.map((i) => ({ q: i.q, a: i.a }))),
         ]
@@ -301,22 +327,22 @@ export default function ParceirosPage() {
       <BwaNav />
 
       <main id="main" tabIndex={-1}>
-        {/* 01 · Hero + faixa de fatos + selo de parceria vigente */}
+        {/* 01 · Programa de indicações + recompensa + parceria vigente */}
         <section className="bwa-parc-hero">
           <div className="bwa-shell bwa-parc-hero-grid">
             <div>
-              <p className="bwa-label">Parceiros · corretores, imobiliárias e incorporadoras</p>
+              <p className="bwa-label">Programa de indicações · parceiros profissionais</p>
               <h1>
-                Você vende o imóvel. <em>A Bewild entrega pronto.</em>
+                Indique um cliente. <em>A Bewild entrega e você recebe.</em>
               </h1>
               <p className="bwa-parc-lead">
-                Toda venda de studio trava na mesma pergunta: “e depois, quem reforma isso?”.
-                A Bewild é a resposta que destrava a assinatura — projeto, obra, marcenaria e
-                mobília em um único contrato, com preço e prazo fechados.
+                Corretores, imobiliárias, incorporadoras, arquitetos e administradoras podem
+                indicar clientes para uma entrega completa de projeto, obra, marcenaria e mobília.
+                Quando o contrato indicado é pago, você recebe a comissão definida no seu termo.
               </p>
               <div className="bwa-parc-hero-actions">
                 <a className="bwa-button" href="#cadastro" data-cta="parceiros-hero-cadastro">
-                  Quero ser parceiro <span aria-hidden="true">→</span>
+                  Solicitar participação <span aria-hidden="true">→</span>
                 </a>
                 <a
                   className="bwa-parc-ghost"
@@ -329,13 +355,15 @@ export default function ParceirosPage() {
                 </a>
               </div>
             </div>
-            <aside className="bwa-parc-seal" aria-label="Parceria vigente">
-              <p className="bwa-label">Parceria vigente</p>
-              <strong>Bewild × Leal Moreira</strong>
+            <aside className="bwa-parc-seal" aria-label="Recompensa do programa de indicações">
+              <p className="bwa-label">Sua recompensa</p>
+              <strong>Comissão por contrato indicado</strong>
               <p>
-                Programa de indicações em operação com a Leal Moreira, com termo assinado,
-                regras públicas e relatório mensal de comissões.
+                O percentual é definido no termo individual, conforme o perfil e o volume de
+                indicações. Você recebe sobre o valor líquido efetivamente pago pelo cliente e
+                acompanha contratos, recebimentos e comissões em relatório mensal.
               </p>
+              <a className="bwa-parc-seal-link" href="#comissao">Ver todas as regras <span aria-hidden="true">↓</span></a>
             </aside>
           </div>
           <div className="bwa-shell">
