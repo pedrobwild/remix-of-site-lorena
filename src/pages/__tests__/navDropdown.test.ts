@@ -33,8 +33,26 @@ function mount(): { root: HTMLElement; button: HTMLButtonElement; wrapper: HTMLE
   };
 }
 
-async function loadNav(search: string) {
+const realLocation = window.location;
+
+/**
+ * O host do jsdom é "localhost", que a flag trata como prévia interna.
+ * Para os testes, o endereço finge ser o site publicado.
+ */
+function fakeHost(hostname: string) {
+  Object.defineProperty(window, "location", {
+    configurable: true,
+    writable: true,
+    value: new Proxy(realLocation, {
+      get: (alvo, chave) =>
+        chave === "hostname" ? hostname : Reflect.get(alvo, chave, alvo),
+    }),
+  });
+}
+
+async function loadNav(search: string, hostname = "bewild.com.br") {
   window.history.replaceState({}, "", `/parceiros${search}`);
+  fakeHost(hostname);
   vi.resetModules();
   const { initBwaNav } = await import("../home-bwa-script");
   return initBwaNav;
@@ -51,6 +69,11 @@ beforeEach(() => {
 afterEach(() => {
   vi.restoreAllMocks();
   document.body.innerHTML = "";
+  Object.defineProperty(window, "location", {
+    configurable: true,
+    writable: true,
+    value: realLocation,
+  });
   window.history.replaceState({}, "", "/");
 });
 
