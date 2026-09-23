@@ -331,11 +331,11 @@ export default function LpPanfletoPage() {
       </section>
 
       {/* 02 — RESULTADO REAL */}
-      <section className="sec sec-dark" aria-label="Resultado real Rafael">
+      <section className="sec sec-dark" aria-label="Resultado real Vivian">
         <div className="sec-mark"><span className="n">02</span><span className="t">Resultado real</span><span className="ln" /></div>
         <figure className="raf-quote">
           <blockquote>“Esses studios serão um negócio pra mim. Renda vitalícia.”</blockquote>
-          <figcaption>Rafael · cliente Bewild · studio no Butantã · 100% de ocupação em setembro</figcaption>
+          <figcaption>Vivian · cliente Bewild · studio na Vila Olímpia · 99% de ocupação em setembro</figcaption>
         </figure>
         <p className="raf-note">Resultado de um cliente real. Ocupação e diária variam conforme imóvel, região e operação.</p>
       </section>
