@@ -129,6 +129,7 @@ export default function FaqPage() {
   const { settings } = useSiteSettings();
   const [aberto, setAberto] = useState("f-0");
   const [guiaAberto, setGuiaAberto] = useState(-1);
+  const [contratoAberto, setContratoAberto] = useState(-1);
   const [pergunta, setPergunta] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [erroIa, setErroIa] = useState<string | null>(null);
