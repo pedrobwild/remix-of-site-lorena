@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
-import { whatsappHref } from "@/components/landing/content";
 import {
   CATALOG_ROOMS,
   catalogRoomUrl,
@@ -308,13 +307,8 @@ export default function MarcenariaPage() {
               >
                 Solicitar orçamento <span aria-hidden="true">→</span>
               </a>
-              <a
-                className="bwa-servico-whats"
-                href={whatsappHref("Olá! Quero falar sobre marcenaria sob medida.")}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Falar no WhatsApp <span aria-hidden="true">→</span>
+              <a className="bwa-servico-whats" href="/contato" data-cta="marcenaria-contato">
+                Falar com a gente <span aria-hidden="true">→</span>
               </a>
               <p className="bwa-servico-cta-note">
                 +160 reformas entregues · +200 projetos
