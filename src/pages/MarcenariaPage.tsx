@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
-import { whatsappHref } from "@/components/landing/content";
 import {
   CATALOG_ROOMS,
   catalogRoomUrl,
