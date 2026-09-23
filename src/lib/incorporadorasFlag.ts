@@ -36,11 +36,14 @@ function previewOn(): boolean {
   if (typeof window === "undefined") return false;
   try {
     const q = new URLSearchParams(window.location.search).get("incorporadoras");
+    // Em host de prévia a página já vem ligada, então "0" fica guardado na
+    // sessão para continuar desligada nas navegações seguintes.
     if (q === "1") window.sessionStorage.setItem(FLAG_KEY, "1");
-    if (q === "0") window.sessionStorage.removeItem(FLAG_KEY);
-    if (window.sessionStorage.getItem(FLAG_KEY) === "1") return true;
-    // Host de prévia: ligada por padrão, mas ?incorporadoras=0 desliga na sessão.
-    return q !== "0" && isPreviewHost();
+    if (q === "0") window.sessionStorage.setItem(FLAG_KEY, "0");
+    const saved = window.sessionStorage.getItem(FLAG_KEY);
+    if (saved === "1") return true;
+    if (saved === "0") return false;
+    return isPreviewHost();
   } catch {
     // Sessão indisponível (modo privado antigo, storage bloqueado): a prévia
     // ainda vale para a URL atual, sem persistir.
