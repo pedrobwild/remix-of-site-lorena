@@ -33,8 +33,29 @@ function mount(): { root: HTMLElement; button: HTMLButtonElement; wrapper: HTMLE
   };
 }
 
-async function loadNav(search: string) {
+const realLocation = window.location;
+
+/**
+ * O host do jsdom é "localhost", que a flag trata como prévia interna.
+ * Para os testes, o endereço finge ser o site publicado.
+ */
+function fakeHost(hostname: string) {
+  Object.defineProperty(window, "location", {
+    configurable: true,
+    writable: true,
+    value: new Proxy(realLocation, {
+      get: (alvo, chave) => {
+        if (chave === "hostname") return hostname;
+        const valor = Reflect.get(alvo, chave, alvo);
+        return typeof valor === "function" ? valor.bind(alvo) : valor;
+      },
+    }),
+  });
+}
+
+async function loadNav(search: string, hostname = "bewild.com.br") {
   window.history.replaceState({}, "", `/parceiros${search}`);
+  fakeHost(hostname);
   vi.resetModules();
   const { initBwaNav } = await import("../home-bwa-script");
   return initBwaNav;
@@ -51,6 +72,11 @@ beforeEach(() => {
 afterEach(() => {
   vi.restoreAllMocks();
   document.body.innerHTML = "";
+  Object.defineProperty(window, "location", {
+    configurable: true,
+    writable: true,
+    value: realLocation,
+  });
   window.history.replaceState({}, "", "/");
 });
 
@@ -90,6 +116,14 @@ describe("dropdown Parceiros", () => {
     const { root, wrapper } = mount();
     const cleanup = initBwaNav(root);
     expect(wrapper.querySelector("[data-incorp-gated]")!.hasAttribute("hidden")).toBe(true);
+    cleanup();
+  });
+
+  it("Incorporadoras aparece na prévia do Lovable sem parâmetro", async () => {
+    const initBwaNav = await loadNav("", "id-preview--abc.lovable.app");
+    const { root, wrapper } = mount();
+    const cleanup = initBwaNav(root);
+    expect(wrapper.querySelector("[data-incorp-gated]")!.hasAttribute("hidden")).toBe(false);
     cleanup();
   });
 
