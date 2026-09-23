@@ -92,7 +92,27 @@ export default function BwaNav() {
             <a href="/conteudos">Blog</a>
             <a href="/guia-do-investidor">Guia do Investidor</a>
             <a href="/faq">FAQ</a>
-            <a href="/parceiros">Parceiros</a>
+            {/* Disclosure, não role="menu": são links de navegação comuns. */}
+            <div className="bwa-nav-dd" data-nav-dd>
+              <button
+                className="bwa-nav-dd-button"
+                type="button"
+                aria-expanded="false"
+                aria-controls="bwa-nav-dd-parceiros"
+                data-nav-dd-button
+              >
+                {NAV_PARCEIROS.label}
+                <span className="bwa-nav-dd-chev" aria-hidden="true" />
+              </button>
+              <div className="bwa-nav-dd-panel" id="bwa-nav-dd-parceiros" data-nav-dd-panel>
+                {itensParceiros.map((item) => (
+                  <a key={item.href} href={item.href} data-cta={item.cta}>
+                    <span className="bwa-nav-dd-title">{item.title}</span>
+                    <span className="bwa-nav-dd-desc">{item.desc}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
             <a href="/contato">Contato</a>
           </nav>
 
