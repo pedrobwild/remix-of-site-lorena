@@ -101,6 +101,7 @@ export default function ContatoPage() {
     if (delivered) {
       setEnviado(true);
       trackEvent("generate_lead", { method: "contato_form" });
+      window.open(waLink, "_blank", "noopener,noreferrer");
     } else {
       setErro(
         "Não conseguimos enviar sua mensagem agora. Tente novamente ou fale com a gente no WhatsApp.",
@@ -228,7 +229,7 @@ export default function ContatoPage() {
                 </p>
                 <a
                   className="bwa-button"
-                  href={whatsappHref("Olá, acabei de enviar uma mensagem pelo site da Bewild")}
+                  href={whatsLink ?? whatsappHref("Olá, acabei de enviar uma mensagem pelo site da Bewild")}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
