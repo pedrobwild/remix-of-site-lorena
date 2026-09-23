@@ -92,7 +92,7 @@ async function main() {
     { loc: `${BASE_URL}/diagnostico`, changefreq: "monthly", priority: "0.9" },
     {
       loc: `${BASE_URL}/conteudos`,
-      lastmod: posts.length ? newest(posts, "updated_at", "published_at", "created_at") : null,
+      lastmod: day("2026-09-23", posts.length ? newest(posts, "updated_at", "published_at", "created_at") : null),
       changefreq: "weekly",
       priority: "0.8",
     },
@@ -104,12 +104,12 @@ async function main() {
       priority: "0.7",
     },
     { loc: `${BASE_URL}/autorizacao-condominio`, changefreq: "monthly", priority: "0.7" },
-    { loc: `${BASE_URL}/contato`, changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/contato`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/escopo`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/como-funciona`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/onde-atuamos`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/parceiros`, changefreq: "monthly", priority: "0.7" },
-    { loc: `${BASE_URL}/guia-do-investidor`, changefreq: "monthly", priority: "0.8" },
+    { loc: `${BASE_URL}/guia-do-investidor`, lastmod: "2026-09-22", changefreq: "monthly", priority: "0.8" },
     { loc: `${BASE_URL}/privacidade`, changefreq: "yearly", priority: "0.3" },
   ];
 
