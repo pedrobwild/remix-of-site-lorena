@@ -75,12 +75,15 @@ export default function BwaNav() {
           </a>
 
           <nav className="bwa-nav-links" aria-label="Navegação principal">
-            <a href="/#projetos">Projetos reformados</a>
-            <a href="/#workflow">Como funciona</a>
-            <a href="/portfolio">Portfólio de reformas em SP</a>
+            <a href="/#para-quem">Para quem</a>
+            <a href="/#certeza">Como trabalhamos</a>
+            <a href="/#depoimentos">Depoimentos</a>
+            <a href="/#projetos">Projetos</a>
+            <a href="/marcenaria">Marcenaria</a>
+            <a href="/#workflow">Processo</a>
             <a href="/conteudos">Blog</a>
-            <a href="/guia-do-investidor">Guia do investidor</a>
-            <a href="/faq">Dúvidas frequentes</a>
+            <a href="/guia-do-investidor">Guia do Investidor</a>
+            <a href="/faq">FAQ</a>
             <a href="/contato">Contato</a>
           </nav>
 
@@ -103,12 +106,15 @@ export default function BwaNav() {
 
       <div className="bwa-mobile-menu" data-mobile-menu>
         <nav aria-label="Navegação mobile">
-          <a href="/#projetos">Projetos reformados</a>
-          <a href="/#workflow">Como funciona</a>
-          <a href="/portfolio">Portfólio de reformas em SP</a>
+          <a href="/#para-quem">Para quem</a>
+          <a href="/#certeza">Como trabalhamos</a>
+          <a href="/#depoimentos">Depoimentos</a>
+          <a href="/#projetos">Projetos</a>
+          <a href="/marcenaria">Marcenaria</a>
+          <a href="/#workflow">Processo</a>
           <a href="/conteudos">Blog</a>
-          <a href="/guia-do-investidor">Guia do investidor</a>
-          <a href="/faq">Dúvidas frequentes</a>
+          <a href="/guia-do-investidor">Guia do Investidor</a>
+          <a href="/faq">FAQ</a>
           <a href="/contato">Contato</a>
           <a href="/orcamento">Solicitar orçamento</a>
         </nav>
