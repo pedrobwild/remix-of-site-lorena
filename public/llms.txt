@@ -19,6 +19,7 @@ A Bewild é uma empresa de reforma completa de apartamentos e studios em São Pa
 - [Parceiros](/parceiros): Programa de indicação para corretores, imobiliárias e incorporadoras.
 - [Indique um amigo](/indique-um-amigo): Programa de indicação para clientes, com recompensa em Pix após o fechamento do contrato.
 - [Privacidade](/privacidade): Política de privacidade e tratamento de dados.
+- [Acessibilidade](/acessibilidade): Declaração de acessibilidade do site e como relatar barreiras.
 
 ## Conteúdos publicados
 

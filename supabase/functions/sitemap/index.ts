@@ -102,6 +102,7 @@ Deno.serve(async (req) => {
     { loc: `${base}/marcas-e-parcerias`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/guia-do-investidor`, priority: "0.8", changefreq: "monthly" },
     { loc: `${base}/privacidade`, priority: "0.3", changefreq: "yearly" },
+    { loc: `${base}/acessibilidade`, priority: "0.3", changefreq: "yearly" },
   ];
 
   const projectUrls: UrlEntry[] = projectRows.filter((p) => p.slug).map((p) => ({

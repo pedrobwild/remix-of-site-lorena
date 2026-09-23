@@ -129,6 +129,7 @@ async function main() {
     // lastmod = GUIA_MODIFIED de src/guia/data/guiaMeta.ts (conferido em teste).
     { loc: `${BASE_URL}/guia-do-investidor`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.8" },
     { loc: `${BASE_URL}/privacidade`, changefreq: "yearly", priority: "0.3" },
+    { loc: `${BASE_URL}/acessibilidade`, changefreq: "yearly", priority: "0.3" },
   ];
 
   const projectUrls = projects
