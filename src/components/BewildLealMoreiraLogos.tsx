@@ -19,7 +19,7 @@ export default function BewildLealMoreiraLogos({ className = "" }: BewildLealMor
       <span className="bwa-partner-logos-x" aria-hidden="true">×</span>
       <img
         className="bwa-partner-logos-leal"
-        src="/brand/leal-moreira-logo.png"
+        src="/brand/leal-moreira-logo-branca.png"
         alt=""
         width={320}
         height={35}
