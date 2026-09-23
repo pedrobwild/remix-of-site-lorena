@@ -5164,7 +5164,6 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
 
 .bwa-gantt {
   position: relative;
-  overflow: hidden;
   border-top: 1px solid rgba(26, 35, 50, .13);
   border-left: 1px solid rgba(26, 35, 50, .13);
 }
@@ -5193,30 +5192,31 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
   padding-inline: 14px;
 }
 
-.bwa-gantt-today::after {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  z-index: 2;
-  width: 1px;
-  content: "";
-  background: var(--bwa-accent);
-  pointer-events: none;
-}
-
 .bwa-gantt-today small {
-  position: absolute;
-  top: -8px;
+  position: static;
+  display: block;
   color: var(--bwa-accent);
   font: inherit;
 }
 
 .bwa-gantt-list {
+  position: relative;
   margin: 0;
   padding: 0;
   list-style: none;
   overflow: hidden;
+}
+
+.bwa-gantt-list::after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: max(68.67%, calc(55% + 117px));
+  z-index: 2;
+  width: 1px;
+  content: "";
+  background: var(--bwa-accent);
+  pointer-events: none;
 }
 
 .bwa-gantt-list li {
@@ -5225,19 +5225,6 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
   align-items: center;
   border-bottom: 1px solid rgba(26, 35, 50, .13);
   background: var(--bwa-white);
-}
-
-.bwa-gantt-list li::after {
-  position: relative;
-  z-index: 2;
-  width: 1px;
-  height: 100%;
-  grid-column: 7;
-  grid-row: 1;
-  justify-self: center;
-  content: "";
-  background: var(--bwa-accent);
-  pointer-events: none;
 }
 
 .bwa-gantt-copy {
@@ -5435,7 +5422,7 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
     display: none;
   }
 
-  .bwa-gantt-list li::after {
+  .bwa-gantt-list::after {
     display: none;
   }
 }
