@@ -729,6 +729,14 @@ export default function ParceirosPage() {
                 </p>
                 <a
                   className="bwa-button"
+                  href={whatsLink ?? whatsappHref("Olá, acabei de enviar meu cadastro de parceiro pelo site da Bewild")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-cta="parceiros-form-whatsapp"
+                >
+                  Confirmar no WhatsApp <span aria-hidden="true">↗</span>
+                </a>
+                <a
                   href={INDICACAO_URL}
                   target="_blank"
                   rel="noopener noreferrer"
