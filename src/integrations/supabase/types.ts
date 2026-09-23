@@ -506,6 +506,30 @@ export type Database = {
         }
         Relationships: []
       }
+      image_alt_texts: {
+        Row: {
+          alt: string
+          created_at: string
+          model: string | null
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          alt: string
+          created_at?: string
+          model?: string | null
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          alt?: string
+          created_at?: string
+          model?: string | null
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       lead_qualification_log: {
         Row: {
           changed_by: string | null
