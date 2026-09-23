@@ -3,13 +3,16 @@
 // - logNotFound: registra (de forma idempotente) o path 404 atual no banco.
 //   Usa a RPC SECURITY DEFINER `log_404`, que faz o upsert e incrementa hits.
 //
-// - lookupActiveRedirect: consulta seo_404_log e devolve `redirect_to` se houver
-//   um redirecionamento configurado para o path atual com status='redirect'.
-//   Usado no momento em que a NotFoundPage monta para enviar o usuário para a
-//   URL correta sem precisar publicar configuração extra de hosting.
+// - lookupActiveRedirect: devolve o destino do redirecionamento configurado no
+//   admin (/admin/seo/404) para o path atual, ou null. Usado quando a
+//   NotFoundPage monta, para mandar o usuário à URL certa sem configuração
+//   extra de hosting. Lê pela RPC SECURITY DEFINER `resolve_404_redirect`
+//   (o visitante anônimo não tem SELECT em seo_404_log — por isso os
+//   redirecionamentos nunca funcionavam para quem não estava logado).
 
 import { supabase } from "@/integrations/supabase/client";
 import { devWarn } from "@/lib/devLog";
+import { isFramed } from "@/lib/cookieConsent";
 
 const SESSION_FLAG_PREFIX = "404-logged:";
 
@@ -43,6 +46,8 @@ export const DEFAULT_404_REASON = "spa_not_found";
 
 export async function logNotFound(path: string, referrer?: string | null): Promise<void> {
   if (!path || path === "/") return;
+  // Página aberta num iframe (auditoria de SEO do admin) não é hit de visitante.
+  if (isFramed()) return;
   if (hasLoggedThisSession(path)) return;
   markLoggedThisSession(path);
   try {
@@ -65,8 +70,71 @@ export async function logNotFound(path: string, referrer?: string | null): Promi
   }
 }
 
+/** Hosts do próprio site: URL absoluta para eles vira caminho relativo. */
+const OWN_HOSTS = ["bewild.com.br", "www.bewild.com.br"];
+
+/**
+ * Normaliza o destino gravado no admin para um caminho interno seguro, ou
+ * `null`. Só aceita caminho relativo à raiz (`/x`) — `//host`, `/\\host`,
+ * esquemas (`javascript:`), espaços/caracteres de controle e hosts de
+ * terceiros são recusados (open redirect), como no admin (seoRedirects.ts).
+ * URL absoluta do próprio domínio vira caminho.
+ */
+export function safeRedirectTarget(raw: unknown, currentPath?: string): string | null {
+  if (typeof raw !== "string") return null;
+  let target = raw.trim();
+  if (!target) return null;
+  if (/^https?:\/\//i.test(target)) {
+    try {
+      const url = new URL(target);
+      const host = url.hostname.toLowerCase();
+      const own = OWN_HOSTS.includes(host) || (typeof window !== "undefined" && host === window.location.hostname);
+      if (!own) return null;
+      target = url.pathname + url.search + url.hash;
+    } catch {
+      return null;
+    }
+  }
+  // eslint-disable-next-line no-control-regex
+  if (!target.startsWith("/") || target.startsWith("//") || /[\\\s\u0000-\u001f\u007f]/.test(target)) {
+    return null;
+  }
+  // Redirecionar para si mesmo = laço infinito de 404.
+  if (currentPath && target.split(/[?#]/)[0].replace(/\/+$/, "") === currentPath.replace(/\/+$/, "")) {
+    return null;
+  }
+  return target;
+}
+
+type RpcError = { code?: string; message?: string } | null;
+type RpcClient = {
+  rpc: (fn: string, args: Record<string, unknown>) => PromiseLike<{ data: unknown; error: RpcError }>;
+};
+
+/** A RPC ainda não existe no banco (migração pendente). */
+function isMissingRpc(error: RpcError): boolean {
+  return error?.code === "PGRST202" || error?.code === "42883";
+}
+
 export async function lookupActiveRedirect(path: string): Promise<string | null> {
   if (!path) return null;
+  try {
+    // `resolve_404_redirect` ainda não está nos tipos gerados (types.ts).
+    const { data, error } = await (supabase as unknown as RpcClient).rpc("resolve_404_redirect", {
+      p_path: path,
+    });
+    if (!error) return safeRedirectTarget(data, path);
+    if (!isMissingRpc(error)) {
+      devWarn("[notFoundLog] resolve_404_redirect respondeu erro:", error);
+      return null;
+    }
+  } catch (err) {
+    devWarn("[notFoundLog] resolve_404_redirect falhou:", err);
+    return null;
+  }
+
+  // Fallback enquanto a RPC não é publicada: leitura direta (só funciona para
+  // quem tem SELECT na tabela — hoje, admin logado).
   try {
     const { data, error } = await supabase
       .from("seo_404_log")
@@ -75,7 +143,7 @@ export async function lookupActiveRedirect(path: string): Promise<string | null>
       .eq("status", "redirect")
       .maybeSingle();
     if (error || !data?.redirect_to) return null;
-    return data.redirect_to;
+    return safeRedirectTarget(data.redirect_to, path);
   } catch (err) {
     devWarn("[notFoundLog] lookupActiveRedirect falhou:", err);
     return null;

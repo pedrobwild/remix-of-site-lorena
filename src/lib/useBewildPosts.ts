@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { devWarn } from "@/lib/devLog";
+import { bewildCalendarDay } from "@/lib/postSeo";
 
 export type BewildPostCategory =
   | "mercado"
@@ -129,16 +130,24 @@ export function useBewildPosts() {
   return { posts, featured, grid, loading, error };
 }
 
+/**
+ * "22 de set. de 2026" — o dia civil em São Paulo (ver `bewildCalendarDay`),
+ * igual para qualquer visitante e coerente com o "Atualizado em" de
+ * `postDates`. Antes usava o fuso do navegador: `2026-09-22` saía "21 set".
+ */
 export function formatBewildDate(iso: string | null | undefined): string {
-  if (!iso) return "";
+  const day = bewildCalendarDay(iso);
+  if (!day) return "";
   try {
-    const d = new Date(iso);
+    const [y, m, d] = day.split("-").map(Number);
+    // Meio-dia UTC formatado em UTC: o mesmo dia civil em qualquer fuso.
     return new Intl.DateTimeFormat("pt-BR", {
       day: "2-digit",
       month: "short",
       year: "numeric",
+      timeZone: "UTC",
     })
-      .format(d)
+      .format(new Date(Date.UTC(y, m - 1, d, 12)))
       .replace(/\.$/, "");
   } catch {
     return "";

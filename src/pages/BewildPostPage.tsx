@@ -8,8 +8,12 @@
  * SEO/AEO: gera JSON-LD Article + BreadcrumbList + FAQPage (quando há FAQ),
  * meta_title/description, canonical, ogImage e noindex no 404 — preservado.
  * Visual: "artigo" na prancha 04. CSS isolado em .bw-post.
+ *
+ * O Root (main.tsx) remonta esta página a cada slug (key da rota), e
+ * `useBewildPost` zera o estado na troca: nunca há post A sob a URL de B.
+ * Falha de leitura mostra erro com "Tentar novamente" (antes: skeleton eterno).
  */
-import { useMemo, type ReactNode } from "react";
+import { useEffect, useMemo, type ReactNode } from "react";
 import { marked } from "marked";
 import { useSeo } from "@/lib/useSeo";
 import { optimizedImageUrl } from "@/lib/imageUrl";
@@ -28,6 +32,7 @@ import { postAuthorByline, postAuthorJsonLd, postDates, postTitleFromSlug } from
 import { navigate } from "@/lib/useHashRoute";
 import { keywordsForPost } from "@/lib/postKeywords";
 import { internalLinksForPost } from "@/lib/postInternalLinks";
+import { logNotFound, lookupActiveRedirect } from "@/lib/notFoundLog";
 import "@/styles/post.css";
 import "@/styles/conteudos.css";
 
@@ -136,13 +141,14 @@ function RelatedCard({ p }: { p: BewildPost }) {
 }
 
 export default function BewildPostPage({ slug }: Props) {
-  const { post, loading, notFound } = useBewildPost(slug);
+  const { post, loading, notFound, error, retry } = useBewildPost(slug);
   const { related } = useBewildRelatedPosts(post?.category, post?.id, 3);
 
   const cta = useMemo(() => getCtaContent(post?.category), [post?.category]);
-  const ctaHref = post
-    ? `/diagnostico?utm_source=conteudo&utm_medium=post&utm_campaign=${encodeURIComponent(post.slug)}`
-    : "/diagnostico";
+  // Link interno SEM utm_*: UTM fixo aqui sobrescrevia a campanha real do
+  // visitante (e perdia gclid/fbclid). A navegação SPA já carrega os
+  // parâmetros da URL atual (carryCampaignParams).
+  const ctaHref = "/diagnostico";
   const ctaWhatsHref = post ? whatsappHref(`Vim do artigo "${post.title}" no site.`) : whatsappHref();
 
   const bodyHtml = useMemo(() => {
@@ -176,10 +182,14 @@ export default function BewildPostPage({ slug }: Props) {
           `${post.title}. Conteúdo Bewild sobre reformas de apartamentos e imóveis prontos.`,
         image: post.cover_image ? [post.cover_image] : undefined,
         author: postAuthorJsonLd(post.author),
+        // Mesma entidade do nó Organization do index.html (`#org`). O logo
+        // antigo (/images/og-bewild.jpg) não existe em public/.
         publisher: {
           "@type": "Organization",
+          "@id": `${baseUrl}/#org`,
           name: "Bewild",
-          logo: { "@type": "ImageObject", url: `${baseUrl}/images/og-bewild.jpg` },
+          url: `${baseUrl}/`,
+          logo: { "@type": "ImageObject", url: `${baseUrl}/brand/bewild-logo.png` },
         },
         datePublished: dateIso,
         dateModified: dates.modified,
@@ -245,6 +255,22 @@ export default function BewildPostPage({ slug }: Props) {
     jsonLd: post ? jsonLd : notFound ? undefined : loadingJsonLd,
   });
 
+  // Post inexistente: segue o redirect cadastrado no admin (é o que o painel
+  // grava quando o slug de um post publicado muda) e registra o 404 para
+  // curadoria. Sem redirect, fica a tela de 404 abaixo (noindex).
+  useEffect(() => {
+    if (!notFound) return;
+    const path = window.location.pathname;
+    void logNotFound(path, document.referrer || null);
+    let cancelled = false;
+    void lookupActiveRedirect(path).then((target) => {
+      if (!cancelled && target) navigate(target, { replace: true });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [notFound]);
+
   // 404 — slug inválido ou rascunho
   if (notFound) {
     return (
@@ -263,6 +289,30 @@ export default function BewildPostPage({ slug }: Props) {
             </button>
           </div>
         </section>
+        </main>
+        <BwaFooter />
+      </div>
+    );
+  }
+
+  // Erro de leitura (rede/backend) — mensagem honesta + nova tentativa.
+  if (error && !post) {
+    return (
+      <div className="bw-post">
+        <BwaNav />
+        <main id="main" tabIndex={-1}>
+          <section className="pt-hero" role="alert">
+            <div className="container">
+              <div className="pt-cat">Conteúdo indisponível</div>
+              <h1 className="pt-title">{slugTitle}</h1>
+              <p className="pt-excerpt">
+                Não foi possível carregar este artigo agora. Verifique sua conexão e tente de novo.
+              </p>
+              <button type="button" onClick={retry} className="pt-btn cyan">
+                Tentar novamente <span className="ar">→</span>
+              </button>
+            </div>
+          </section>
         </main>
         <BwaFooter />
       </div>

@@ -50,10 +50,35 @@ export type Route =
   | { name: "admin-conteudos" }
   | { name: "admin-conteudos-new" }
   | { name: "admin-conteudos-edit"; slug: string }
-  | { name: "not-found" };
+  /** `path` diferencia uma 404 da outra (chave de rota / remount). */
+  | { name: "not-found"; path?: string };
+
+/**
+ * Redirecionamentos legados, resolvidos ANTES do primeiro render e em toda
+ * navegação SPA (antes eram um efeito pós-montagem: a 404 renderizava
+ * primeiro, registrava um falso 404 em `seo_404_log` e piscava na tela).
+ *  - `/admin` → `/admin/dashboard`
+ *  - `/blog*` → `/conteudos*` (blog legado removido; URL canônica nova)
+ */
+export function normalizeLegacyPath(pathname: string): string {
+  if (/^\/admin\/?$/.test(pathname)) return "/admin/dashboard";
+  const blog = pathname.match(/^\/blog(\/.*)?$/);
+  if (blog) return "/conteudos" + (blog[1] && blog[1] !== "/" ? blog[1] : "");
+  return pathname;
+}
+
+/** Aplica `normalizeLegacyPath` à parte de caminho de um href relativo. */
+function normalizeLegacyHref(href: string): string {
+  const cut = href.search(/[?#]/);
+  const pathPart = cut === -1 ? href : href.slice(0, cut);
+  const rest = cut === -1 ? "" : href.slice(cut);
+  return normalizeLegacyPath(pathPart) + rest;
+}
 
 function parsePath(rawPath: string): Route {
-  const path = (rawPath.split("?")[0] || "").replace(/\/+$/, "") || "/";
+  const path = normalizeLegacyPath(
+    (rawPath.split("#")[0].split("?")[0] || "").replace(/\/+$/, "") || "/",
+  );
 
   if (path === "/" || path === "") return { name: "home" };
   if (path === "/portfolio") return { name: "portfolio" };
@@ -116,7 +141,7 @@ function parsePath(rawPath: string): Route {
   if (adminConteudosEdit) return { name: "admin-conteudos-edit", slug: adminConteudosEdit[1] };
   if (path === "/admin/conteudos") return { name: "admin-conteudos" };
 
-  return { name: "not-found" };
+  return { name: "not-found", path };
 }
 
 /**
@@ -136,31 +161,65 @@ function parseLocation(): Route {
   return parsePath(pathname);
 }
 
+/** Exportado para teste: resolve um caminho (com ou sem query) para a Route. */
+export { parsePath as parseRoutePath };
+
+/**
+ * Chave estável da página exibida: `name`, mais o `slug` quando existe (troca
+ * de post/projeto remonta a página) e o caminho no caso da 404 (cada URL
+ * inexistente é uma página própria). Âncora e querystring não entram.
+ */
+export function routeKeyOf(route: Route): string {
+  if ("slug" in route && route.slug) return `${route.name}:${route.slug}`;
+  if (route.name === "not-found") return `not-found:${route.path ?? ""}`;
+  return route.name;
+}
+
+export function isAdminRoute(route: Route): boolean {
+  return route.name.startsWith("admin-");
+}
 
 function migrateLegacyHashIfNeeded(): void {
   const hash = window.location.hash.replace(/^#/, "");
   if (!hash.startsWith("/")) return;
-  window.history.replaceState({}, "", hash || "/");
+  window.history.replaceState(window.history.state, "", hash || "/");
 }
+
+function replaceLegacyPathIfNeeded(): void {
+  const { pathname, search, hash } = window.location;
+  const next = normalizeLegacyPath(pathname);
+  if (next !== pathname) window.history.replaceState(window.history.state, "", next + search + hash);
+}
+
+/**
+ * Reescreve a URL de entrada (hash-route legado `#/x`, `/blog*`, `/admin`)
+ * com `replaceState`. Chamar antes do primeiro render. Idempotente.
+ */
+export function normalizeInitialUrl(): void {
+  if (typeof window === "undefined") return;
+  migrateLegacyHashIfNeeded();
+  replaceLegacyPathIfNeeded();
+}
+
+const sameRoute = (a: Route, b: Route) => JSON.stringify(a) === JSON.stringify(b);
 
 export function useHashRoute(): Route {
   const [route, setRoute] = useState<Route>(() => parseLocation());
 
   useEffect(() => {
-    migrateLegacyHashIfNeeded();
-    if (window.location.pathname === "/admin") {
-      window.history.replaceState({}, "", "/admin/dashboard");
-      window.dispatchEvent(new Event("lovable:navigate"));
-    }
-    // 301 client-side: /blog* → /conteudos* (URL canônica) — blog legado removido.
-    const p = window.location.pathname;
-    if (p === "/blog" || p === "/blog/" || p.startsWith("/blog/")) {
-      const newPath = "/conteudos" + p.slice(5);
-      window.history.replaceState({}, "", newPath + window.location.search);
-    }
-    setRoute(parseLocation());
+    // Normalmente já feito pelo bootstrap (main.tsx); aqui por segurança.
+    normalizeInitialUrl();
+    // Mantém a identidade do objeto quando nada mudou: um objeto novo aqui
+    // re-disparava os efeitos de rota do Root (page_view duplicado).
+    setRoute((prev) => {
+      const next = parseLocation();
+      return sameRoute(prev, next) ? prev : next;
+    });
 
-    const onChange = () => setRoute(parseLocation());
+    const onChange = () => {
+      replaceLegacyPathIfNeeded();
+      setRoute(parseLocation());
+    };
     window.addEventListener("popstate", onChange);
     window.addEventListener("hashchange", onChange);
     window.addEventListener("lovable:navigate", onChange);
@@ -217,22 +276,155 @@ export const routes = {
   lpPanfleto: "/p",
 };
 
+// ---------------------------------------------------------------------------
+// Memória de rolagem (Voltar/Avançar)
+// ---------------------------------------------------------------------------
+//
+// `history.scrollRestoration = "manual"`: a troca de página da SPA acontece
+// no meio de um fade (main.tsx), depois que o navegador já teria restaurado
+// a posição — e com a página errada no DOM. A posição de cada entrada fica em
+// `history.state` (gravada ao parar de rolar, antes de navegar e no
+// `pagehide`) e o Root a reaplica depois que a página exibida monta.
+
+const SCROLL_STATE_KEY = "__bwScrollY";
+let scrollSaveTimer: number | undefined;
+let scrollMemoryInstalled = false;
+
+function cancelPendingScrollSave(): void {
+  if (scrollSaveTimer !== undefined) window.clearTimeout(scrollSaveTimer);
+  scrollSaveTimer = undefined;
+}
+
+/** Grava a rolagem atual no `history.state` da entrada corrente. */
+export function saveScrollPosition(): void {
+  try {
+    const state = window.history.state;
+    const base = state && typeof state === "object" ? (state as Record<string, unknown>) : {};
+    window.history.replaceState({ ...base, [SCROLL_STATE_KEY]: Math.round(window.scrollY) }, "");
+  } catch {
+    /* Safari limita replaceState em rajada — perder uma posição é aceitável */
+  }
+}
+
+/** Posição salva na entrada corrente do histórico (ou `null`). */
+export function readSavedScroll(): number | null {
+  try {
+    const state = window.history.state as Record<string, unknown> | null;
+    const v = state && typeof state === "object" ? state[SCROLL_STATE_KEY] : undefined;
+    return typeof v === "number" && Number.isFinite(v) && v >= 0 ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+export function installScrollMemory(): void {
+  if (typeof window === "undefined" || scrollMemoryInstalled) return;
+  scrollMemoryInstalled = true;
+  try {
+    if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
+  } catch {
+    /* navegador sem suporte: fica o comportamento nativo */
+  }
+  window.addEventListener(
+    "scroll",
+    () => {
+      cancelPendingScrollSave();
+      // Debounce (e não throttle): uma escrita por gesto, bem abaixo do
+      // limite de replaceState do Safari.
+      scrollSaveTimer = window.setTimeout(saveScrollPosition, 150);
+    },
+    { passive: true },
+  );
+  // Um save pendente da página que ficou para trás não pode cair na entrada
+  // para a qual o usuário acabou de voltar.
+  window.addEventListener("popstate", cancelPendingScrollSave);
+  window.addEventListener("pagehide", saveScrollPosition);
+}
+
+const USER_SCROLL_EVENTS = ["wheel", "touchstart", "keydown", "pointerdown"] as const;
+
+/**
+ * Repete `step` a cada frame até ele devolver `true`, estourar `timeoutMs` ou
+ * o usuário interagir (nunca "puxa" a página de volta contra a vontade dele).
+ * Devolve a função que cancela.
+ */
+function retryEachFrame(step: () => boolean, timeoutMs: number): () => void {
+  if (step()) return () => undefined;
+  const started = Date.now();
+  let raf = 0;
+  let stopped = false;
+  const stop = () => {
+    if (stopped) return;
+    stopped = true;
+    window.cancelAnimationFrame(raf);
+    USER_SCROLL_EVENTS.forEach((ev) => window.removeEventListener(ev, stop));
+  };
+  USER_SCROLL_EVENTS.forEach((ev) => window.addEventListener(ev, stop, { passive: true }));
+  const tick = () => {
+    if (stopped) return;
+    if (step() || Date.now() - started > timeoutMs) {
+      stop();
+      return;
+    }
+    raf = window.requestAnimationFrame(tick);
+  };
+  raf = window.requestAnimationFrame(tick);
+  return stop;
+}
+
+/**
+ * Restaura a rolagem `y`, tentando por alguns frames enquanto o conteúdo
+ * cresce (ex.: lista do portfólio chegando do banco).
+ */
+export function restoreScrollPosition(y: number, timeoutMs = 2500): () => void {
+  return retryEachFrame(() => {
+    const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    window.scrollTo({ top: Math.min(y, max), left: 0, behavior: "auto" });
+    return max >= y - 1;
+  }, timeoutMs);
+}
+
+/**
+ * Rola até o alvo de `location.hash` (deep link `/guia-do-investidor#faq`),
+ * esperando algumas frações de segundo por seções montadas tardiamente
+ * (chunks lazy, conteúdo vindo do banco). Hash de rota legado (`#/x`) e hash
+ * vazio são ignorados. Devolve a função que cancela.
+ */
+export function scrollToHashTarget(timeoutMs = 3000): () => void {
+  const raw = window.location.hash.replace(/^#/, "");
+  if (!raw || raw.startsWith("/")) return () => undefined;
+  let id = raw;
+  try {
+    id = decodeURIComponent(raw);
+  } catch {
+    /* hash malformado: tenta literal */
+  }
+  return retryEachFrame(() => {
+    const el = document.getElementById(id);
+    if (!el) return false;
+    el.scrollIntoView({ behavior: "auto", block: "start" });
+    return true;
+  }, timeoutMs);
+}
+
 // Navega programaticamente sem recarregar a página. Preserva o hash quando
-// presente (ex.: "/#certeza" a partir de uma página interna), para que o
-// handler de hashchange/route em main.tsx possa rolar até a seção-âncora.
-export function navigate(href: string) {
+// presente (ex.: "/#certeza" a partir de uma página interna); o Root
+// (main.tsx) rola até a seção — ou volta ao topo — quando a página nova monta.
+// `replace: true` substitui a entrada atual (redirecionamentos: o Voltar não
+// pode devolver o usuário para a URL que redireciona de novo).
+export function navigate(href: string, opts: { replace?: boolean } = {}) {
   const cleaned = href.startsWith("#") ? href.slice(1) : href;
   // Navegação interna carrega utm_*/gclid/fbclid da URL atual, para que o
   // lead enviado em /diagnostico mantenha a origem da campanha.
   const target = carryCampaignParams(
-    cleaned.startsWith("/") ? cleaned : `/${cleaned}`,
+    normalizeLegacyHref(cleaned.startsWith("/") ? cleaned : `/${cleaned}`),
     window.location.search,
   );
-  window.history.pushState({}, "", target);
-  const hashIdx = target.indexOf("#");
-  if (hashIdx === -1) {
-    window.scrollTo({ top: 0, behavior: "auto" });
-  }
+  // A posição da página que fica para trás vai para o histórico dela.
+  cancelPendingScrollSave();
+  saveScrollPosition();
+  if (opts.replace) window.history.replaceState({}, "", target);
+  else window.history.pushState({}, "", target);
   window.dispatchEvent(new Event("lovable:navigate"));
 }
 

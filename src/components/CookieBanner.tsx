@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { routes } from "../lib/useHashRoute";
 import { readConsent, setConsent, OPEN_PREFERENCES_EVENT, type Consent } from "../lib/cookieConsent";
+import { logConsentAudit } from "../lib/analytics";
 
 /**
  * Banner de consentimento de cookies (LGPD).
@@ -8,7 +9,10 @@ import { readConsent, setConsent, OPEN_PREFERENCES_EVENT, type Consent } from ".
  * - Persiste e propaga a decisão via `src/lib/cookieConsent.ts` (chave
  *   `lal_cookie_consent` no localStorage + evento `cookie:consent-change`).
  * - Analytics, GA4, GTM, Meta Pixel, Clarity e Hotjar só rodam quando o
- *   valor é `"accepted"` — sem aceite, nenhum tracker é injetado.
+ *   valor é `"accepted"` — sem aceite, nenhum tracker é injetado. Recusar
+ *   depois de aceitar recarrega a página limpa (ver cookieConsent.ts).
+ * - A trilha de auditoria (`logConsentAudit`) sai daqui, do clique explícito
+ *   — nunca de eventos de outras abas.
  * - Link para /privacidade para detalhes.
  */
 
@@ -37,30 +41,33 @@ export default function CookieBanner() {
 
   // M8: a11y — quando o banner aparece, lembra o elemento focado para
   // restaurar depois, e move o foco para "Aceitar" (default não
-  // destrutivo). ESC equivale a "Recusar" — opção mais segura para
-  // privacidade do que dispensar sem decisão.
+  // destrutivo).
   useEffect(() => {
     if (!visible) return;
     previousFocusRef.current =
       (document.activeElement as HTMLElement | null) ?? null;
     acceptBtnRef.current?.focus({ preventScroll: true });
-
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        handle("declined");
-      }
-    };
-    window.addEventListener("keydown", onKey);
     return () => {
-      window.removeEventListener("keydown", onKey);
       previousFocusRef.current?.focus?.({ preventScroll: true });
     };
   }, [visible]);
 
   function handle(choice: Consent) {
+    // Auditoria antes de gravar: a retirada do aceite recarrega a página logo
+    // depois, e o registro vai por beacon (sobrevive ao reload).
+    logConsentAudit(choice, readConsent() === null ? "banner" : "preferences");
     setConsent(choice);
     setVisible(false);
+  }
+
+  // ESC equivale a "Recusar" (opção mais segura para privacidade do que
+  // dispensar sem decisão) — mas só com o foco DENTRO do banner. Antes o
+  // listener era global: fechar um lightbox/modal com ESC registrava recusa.
+  function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    if (e.key !== "Escape") return;
+    e.preventDefault();
+    e.stopPropagation();
+    handle("declined");
   }
 
   if (!visible) return null;
@@ -69,13 +76,14 @@ export default function CookieBanner() {
     // Usa `role="region"` (não "dialog") porque o banner não bloqueia
     // interação com o resto da página — declarar dialog sem aria-modal
     // nem focus-trap é o pior dos mundos. Region + aria-labelledby
-    // mantém o banner navegável por leitores de tela como landmark,
-    // e o ESC handler global cobre o fluxo de teclado. (M8)
+    // mantém o banner navegável por leitores de tela como landmark;
+    // o ESC (com foco no banner) cobre o fluxo de teclado. (M8)
     <div
       className="cookie-banner"
       role="region"
       aria-live="polite"
       aria-labelledby="cookie-banner-title"
+      onKeyDown={onKeyDown}
     >
       <div className="cookie-banner__inner">
         <div className="cookie-banner__text">

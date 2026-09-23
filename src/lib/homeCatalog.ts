@@ -9,6 +9,8 @@
  * Sem client do supabase-js: um `fetch` com timeout, cache por cômodo e
  * carregamento só quando a seção se aproxima da tela.
  */
+import { closestElementFrom } from "@/lib/useHashRoute";
+
 export const CATALOG_URL = "https://umejnulhkmwyewepkdsl.supabase.co";
 const CATALOG_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVtZWpudWxoa213eWV3ZXBrZHNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzMDMyNDUsImV4cCI6MjA5ODg3OTI0NX0.Po1C96qq_sJ8VwV91xgepei_xspvLHU6_HsESmsKC3A";
@@ -225,7 +227,7 @@ export function installCatalogPreview(root: HTMLElement): Cleanup {
   };
 
   const onClick = (e: Event) => {
-    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("[data-catalog-room]");
+    const btn = closestElementFrom(e.target)?.closest<HTMLButtonElement>("[data-catalog-room]");
     if (!btn || !btn.dataset.catalogRoom) return;
     started = true;
     select(btn.dataset.catalogRoom);

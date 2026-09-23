@@ -20,7 +20,7 @@ vi.mock("@/integrations/supabase/client", () => ({
 }));
 
 import { getCachedSiteSettings } from "@/lib/useSiteSettings";
-import { organizationJsonLd, professionalServiceJsonLd } from "@/lib/useSeo";
+import { organizationJsonLd } from "@/lib/useSeo";
 
 const CNPJ_OFICIAL = "47.350.338/0001-37";
 const CAU_OFICIAL = "A162437-7";
@@ -49,15 +49,17 @@ describe("identidade oficial da Bewild nos defaults de site_settings", () => {
     expect(serialized).toContain(CAU_OFICIAL);
   });
 
-  it("professionalServiceJsonLd publica o CNPJ oficial", () => {
-    const ld = professionalServiceJsonLd(getCachedSiteSettings()) as Record<string, unknown>;
-    expect(ld.taxID).toBe(CNPJ_OFICIAL);
-    expect(JSON.stringify(ld)).not.toContain(CNPJ_ANTIGO);
+  it("organizationJsonLd usa o mesmo @id (#org) e o logo do nó estático do index.html", () => {
+    const ld = organizationJsonLd(getCachedSiteSettings()) as Record<string, unknown>;
+    expect(ld["@id"]).toBe("https://bewild.com.br/#org");
+    expect((ld.logo as { url: string }).url).toBe("https://bewild.com.br/brand/bewild-logo.png");
+    // Sem referência a nó que nenhuma página publica.
+    expect(ld).not.toHaveProperty("subOrganization");
+    expect(JSON.stringify(ld)).not.toMatch(/#organization|#business/);
   });
 
-  it("whatsappUrl cai no número oficial quando as settings não trazem o campo", async () => {
-    const { whatsappUrl } = await import("@/lib/useSiteSettings");
-    expect(whatsappUrl(null)).toBe(`https://wa.me/${WHATSAPP_OFICIAL}`);
-    expect(whatsappUrl(null)).not.toContain(WHATSAPP_ANTIGO);
+  it("DEFAULTS não trazem o WhatsApp do site anterior", () => {
+    const s = getCachedSiteSettings();
+    expect(s.whatsapp_number).not.toBe(WHATSAPP_ANTIGO);
   });
 });

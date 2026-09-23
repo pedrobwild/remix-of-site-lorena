@@ -7,13 +7,20 @@
  * - Atribuição: 1ª pageview captura utm_*, referrer_host, landing_path
  *   (last-touch por sessão; first-touch persistido por visitante)
  * - Engagement time: timer baseado em document.visibilityState,
- *   enviado via sendBeacon no unload/hashchange
+ *   enviado via sendBeacon no unload/troca de página
  * - Scroll depth: marcos 25/50/75/100 uma vez por página
- * - Outbound/CTA: delegação no document
- * - Privacidade: respeita DNT, ignora rotas /admin
+ * - Outbound/contato: delegação no document — um evento por clique
+ *   (WhatsApp → click_whatsapp, tel: → click_phone, mailto: → click_contact,
+ *   resto → outbound_click). É a fonte ÚNICA desses eventos (trackCta.ts não
+ *   os repete).
+ * - Privacidade: só com aceite do banner; respeita DNT; ignora rotas /admin.
+ *   Dentro de iframe (auditoria de SEO do admin) `isConsentAccepted()` é
+ *   falso, então nada sai; a auditoria de consentimento checa `isFramed()`.
+ *   Nada (nem ids no storage) é gravado sem aceite; recusar apaga o que existir.
  * - Resiliência: nunca lança exceção
  */
-import { isConsentAccepted, onConsentChange } from "@/lib/cookieConsent";
+import { isConsentAccepted, isFramed, onConsentChange } from "@/lib/cookieConsent";
+import { closestElementFrom } from "@/lib/useHashRoute";
 
 type EventType =
   | "pageview"
@@ -27,6 +34,7 @@ type EventType =
   | "blog_related_click"
   | "click_contact"
   | "click_whatsapp"
+  | "click_phone"
   | "click_instagram"
   | "click_cta"
   | "outbound_click"
@@ -57,6 +65,25 @@ const REFERRER_HOST_KEY = "bewild_ref_host";
 
 const VID_MAX_AGE = 365 * 86_400_000; // 365 dias
 const SID_IDLE = 30 * 60_000; // 30 min
+
+/** Chaves que o tracker grava. A chave do consentimento fica de fora. */
+const LOCAL_KEYS = [VID_KEY, VID_TS_KEY, FIRST_UTM_KEY] as const;
+const SESSION_KEYS = [SID_KEY, SID_TS_KEY, UTM_KEY, LANDING_KEY, REFERRER_HOST_KEY] as const;
+
+/**
+ * Apaga ids e atribuição persistidos pelo tracker (LGPD: recusa/retirada do
+ * consentimento). Remove as chaves dos dois storages, por garantia.
+ */
+export function purgeAnalyticsStorage(): void {
+  for (const storage of [() => window.localStorage, () => window.sessionStorage]) {
+    try {
+      const s = storage();
+      for (const k of [...LOCAL_KEYS, ...SESSION_KEYS]) s.removeItem(k);
+    } catch {
+      /* storage indisponível: não há o que apagar */
+    }
+  }
+}
 
 // ---------- helpers ----------
 function uuid(): string {
@@ -220,9 +247,13 @@ function getLandingPath(isNewSession: boolean, currentPath: string): string {
   }
 }
 
+function isAdminPath(path: string | null | undefined): boolean {
+  return !!path && (path === "/admin" || path.startsWith("/admin/"));
+}
+
 function isAdminContext(): boolean {
   try {
-    return window.location.pathname.startsWith("/admin");
+    return isAdminPath(window.location.pathname);
   } catch {
     return false;
   }
@@ -287,14 +318,26 @@ function engagementPause() {
 
 function engagementFlush(useBeacon: boolean) {
   engagementPause();
-  if (engagementMs >= 1000 && currentPageForEngagement) {
-    sendEvent(
-      buildRow("engagement_time", {
-        path: currentPageForEngagement,
-        duration_ms: Math.round(engagementMs),
-      }),
-      useBeacon
-    );
+  try {
+    // Mesmos gates de `track()`: sem eles o flush do `pagehide` enviava a
+    // linha completa (ids, UA, UTMs) mesmo com DNT, sem aceite ou no /admin.
+    if (
+      engagementMs >= 1000 &&
+      currentPageForEngagement &&
+      !isAdminPath(currentPageForEngagement) &&
+      !isDntEnabled() &&
+      isConsentAccepted()
+    ) {
+      sendEvent(
+        buildRow("engagement_time", {
+          path: currentPageForEngagement,
+          duration_ms: Math.round(engagementMs),
+        }),
+        useBeacon
+      );
+    }
+  } catch {
+    /* never throw */
   }
   engagementMs = 0;
 }
@@ -422,20 +465,27 @@ export function track(eventType: EventType, payload?: TrackPayload): void {
  * Registra a escolha de consentimento (aceite ou recusa) para trilha de
  * auditoria LGPD. NÃO passa pelo gate `isConsentAccepted()` — o próprio
  * evento é o registro da decisão do titular (art. 8º §2º da LGPD: ônus
- * da prova do controlador). Envia payload mínimo, sem UTM/referrer.
+ * da prova do controlador).
+ *
+ * Payload mínimo de verdade: tipo, rota e `{action, source, ts}`. Nada de
+ * visitor_id/session_id/UTM/referrer/tela — e nada gravado no storage (antes
+ * um "Recusar" criava um visitor_id de 365 dias). Chamado só pela ação
+ * explícita no banner, nunca pelo evento `storage` de outras abas (que
+ * duplicava o registro por aba aberta). Vai por beacon: a retirada do
+ * consentimento recarrega a página logo em seguida.
  */
 export function logConsentAudit(
   action: "accepted" | "declined",
   source: string = "banner"
 ): void {
   try {
-    if (isAdminContext()) return;
-    const eventType: EventType =
-      action === "accepted" ? "consent_accept" : "consent_decline";
-    const row = buildRow(eventType, {
+    if (isAdminContext() || isFramed()) return;
+    const row = {
+      event_type: (action === "accepted" ? "consent_accept" : "consent_decline") satisfies EventType,
+      path: window.location.pathname || "/",
       value: { action, source, ts: new Date().toISOString() },
-    });
-    sendEvent(row, false);
+    };
+    sendEvent(row, true);
   } catch {
     /* never throw */
   }
@@ -443,18 +493,18 @@ export function logConsentAudit(
 
 function emitPageview() {
   const now = Date.now();
-  if (lastPageviewAt) {
-    pendingDurationMs = now - lastPageviewAt;
-  }
-
   const path = window.location.pathname || "/";
-  const key = path;
+  // Chave = caminho + query. Âncora (#faq) não é página nova: o hashchange
+  // de um clique em "#secao" não gera pageview.
+  const key = path + window.location.search;
 
   if (pageviewDebounceTimer) {
     window.clearTimeout(pageviewDebounceTimer);
   }
   pageviewDebounceTimer = window.setTimeout(() => {
-    if (lastPageviewKey === key && now - (lastPageviewAt ?? 0) < 800) return;
+    pageviewDebounceTimer = null;
+    if (lastPageviewKey === key) return;
+    pendingDurationMs = lastPageviewAt ? now - lastPageviewAt : null;
 
     // flush engagement da página anterior antes de mudar
     if (currentPageForEngagement && currentPageForEngagement !== path) {
@@ -505,16 +555,40 @@ function parseDataValue(raw: string | undefined): Record<string, unknown> | unde
   }
 }
 
+/**
+ * Classifica um href de contato. WhatsApp (wa.me, api/web.whatsapp.com,
+ * whatsapp:) → `click_whatsapp`; telefone → `click_phone` (antes `tel:` era
+ * contado como WhatsApp); e-mail → `click_contact`. `null` = não é contato.
+ */
+export function contactEventForHref(
+  href: string
+): {
+  type: "click_whatsapp" | "click_phone" | "click_contact";
+  channel: "whatsapp" | "phone" | "email";
+} | null {
+  const h = (href || "").trim();
+  if (
+    /^whatsapp:/i.test(h) ||
+    /^(?:https?:)?\/\/(?:wa\.me|(?:api|web)\.whatsapp\.com)(?:[/?#]|$)/i.test(h)
+  ) {
+    return { type: "click_whatsapp", channel: "whatsapp" };
+  }
+  if (/^tel:/i.test(h)) return { type: "click_phone", channel: "phone" };
+  if (/^mailto:/i.test(h)) return { type: "click_contact", channel: "email" };
+  return null;
+}
+
 function onClick(e: MouseEvent) {
   try {
-    const target = e.target as HTMLElement | null;
-    if (!target) return;
-    const link = target.closest("a, button") as HTMLElement | null;
+    // `closestElementFrom`: o target pode ser o próprio `document` ou um nó
+    // de texto (ver FE-01) — `closest` direto lançava.
+    const link = closestElementFrom(e.target)?.closest<HTMLElement>("a, button");
     if (!link) return;
 
     const trackAttr = link.dataset.track;
     const valueAttr = link.dataset.value;
-    const href = link.getAttribute?.("href") || "";
+    const href = link.getAttribute("href") || "";
+    const cta = link.dataset.cta || undefined;
 
     if (trackAttr) {
       const value = parseDataValue(valueAttr) ?? (href ? { href } : undefined);
@@ -523,6 +597,14 @@ function onClick(e: MouseEvent) {
     }
 
     if (link.tagName !== "A" || !href) return;
+
+    // Um evento por clique: contato tem precedência sobre "saída" (um clique
+    // no WhatsApp é conversão, não abandono).
+    const contact = contactEventForHref(href);
+    if (contact) {
+      track(contact.type, { value: { href, channel: contact.channel, ...(cta ? { cta } : {}) } });
+      return;
+    }
 
     // outbound (http/https para outro host)
     if (/^https?:\/\//i.test(href)) {
@@ -534,11 +616,6 @@ function onClick(e: MouseEvent) {
       } catch {
         /* noop */
       }
-    }
-
-    // wa.me / tel:
-    if (/^https?:\/\/wa\.me\//i.test(href) || href.startsWith("tel:")) {
-      track("click_whatsapp", { value: { href } });
     }
   } catch {
     /* noop */
@@ -558,7 +635,21 @@ function onPageHide() {
 }
 
 let initialized = false;
-let pendingConsentUnsub: (() => void) | null = null;
+let consentUnsub: (() => void) | null = null;
+
+/** Zera o estado em memória do tracker (recusa / cleanup). */
+function resetTrackerState() {
+  if (pageviewDebounceTimer) window.clearTimeout(pageviewDebounceTimer);
+  pageviewDebounceTimer = null;
+  lastPageviewAt = null;
+  pendingDurationMs = null;
+  lastPageviewPath = null;
+  lastPageviewKey = null;
+  engagementMs = 0;
+  engagementTickStart = null;
+  currentPageForEngagement = null;
+  scrollDepthFired.clear();
+}
 
 function attachListeners(): () => void {
   // pageview inicial — track() já gateia por consentimento, então emitir aqui
@@ -624,24 +715,27 @@ export function initAnalytics(): () => void {
 
   // Gate LGPD: se o usuário já aceitou, anexa listeners agora; senão,
   // anexa só quando o consentimento mudar para "accepted". Recusa ou
-  // ausência de decisão mantém o app totalmente silencioso.
-  let detachListeners: (() => void) | null = null;
+  // ausência de decisão mantém o app totalmente silencioso. Recusar depois
+  // de aceitar (nesta aba ou em outra) desliga tudo e apaga o storage.
+  let detachListeners: (() => void) | null = isConsentAccepted() ? attachListeners() : null;
 
-  if (isConsentAccepted()) {
-    detachListeners = attachListeners();
-  } else {
-    pendingConsentUnsub = onConsentChange((v) => {
-      if (v === "accepted" && !detachListeners) {
-        detachListeners = attachListeners();
-      }
-    });
-  }
+  consentUnsub = onConsentChange((v) => {
+    if (v === "accepted") {
+      if (!detachListeners) detachListeners = attachListeners();
+      return;
+    }
+    detachListeners?.();
+    detachListeners = null;
+    resetTrackerState();
+    purgeAnalyticsStorage();
+  });
 
   return () => {
     detachListeners?.();
     detachListeners = null;
-    pendingConsentUnsub?.();
-    pendingConsentUnsub = null;
+    consentUnsub?.();
+    consentUnsub = null;
+    resetTrackerState();
     initialized = false;
   };
 }

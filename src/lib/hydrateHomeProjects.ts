@@ -35,10 +35,18 @@ function esc(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
+const AREA_FORMAT = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
+
+/** "27,5 m²" (pt-BR) — antes saía "27.5 m²". `null` para área ausente/inválida. */
+export function formatAreaM2(area: number | null | undefined): string | null {
+  if (typeof area !== "number" || !Number.isFinite(area) || area <= 0) return null;
+  return `${AREA_FORMAT.format(area)} m²`;
+}
+
 function cardHtml(p: TopProject): string {
   const where = p.neighborhood || p.location || "São Paulo";
   const meta = [
-    p.area_m2 ? `${p.area_m2} m²` : null,
+    formatAreaM2(p.area_m2),
     p.project_type ? (TYPE_LABEL[p.project_type] ?? "Reforma completa") : "Reforma completa",
     where,
   ]

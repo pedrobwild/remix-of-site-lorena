@@ -39,21 +39,21 @@ export default function NotFoundPage() {
     void logNotFound(path, referrer);
 
     let cancelled = false;
+    let timer: number | undefined;
     void (async () => {
+      // Sempre um caminho interno já validado (ver `safeRedirectTarget`).
       const target = await lookupActiveRedirect(path);
       if (cancelled || !target) return;
       setRedirecting(true);
-      window.setTimeout(() => {
-        if (target.startsWith("http")) {
-          window.location.replace(target);
-        } else {
-          navigate(target.startsWith("/") ? target : `/${target}`);
-        }
+      timer = window.setTimeout(() => {
+        // `replace`: o Voltar não pode cair de novo na URL que redireciona.
+        navigate(target, { replace: true });
       }, 60);
     })();
 
     return () => {
       cancelled = true;
+      window.clearTimeout(timer);
     };
   }, []);
 
