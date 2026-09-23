@@ -24,6 +24,7 @@ import ReformaStudioSpPage from "./pages/ReformaStudioSpPage";
 import ReformaCoberturaSpPage from "./pages/ReformaCoberturaSpPage";
 import MarcenariaPage from "./pages/MarcenariaPage";
 import ParceirosPage from "./pages/ParceirosPage";
+import IndiquePage from "./pages/IndiquePage";
 import MarcasParceriasPage from "./pages/MarcasParceriasPage";
 import PrivacidadePage from "./pages/PrivacidadePage";
 import LpObraPage from "./pages/LpObraPage";
@@ -92,6 +93,7 @@ export function renderRoute(route: Route) {
   if (route.name === "reforma-cobertura-sp") return <ReformaCoberturaSpPage />;
   if (route.name === "marcenaria") return <MarcenariaPage />;
   if (route.name === "parceiros") return <ParceirosPage />;
+  if (route.name === "indique-um-amigo") return <IndiquePage />;
   if (route.name === "marcas-e-parcerias") return <MarcasParceriasPage />;
   if (route.name === "guia-do-investidor")
     return (
