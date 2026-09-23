@@ -2,7 +2,7 @@ import { useState } from "react";
 import { z } from "zod";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
-import { CONTACT } from "@/components/landing/content";
+import { CONTACT, whatsappHref } from "@/components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { isLeadDelivered, timeoutAfter } from "@/lib/leadDelivery";
 import { trackEvent } from "@/lib/ga4";
@@ -227,6 +227,9 @@ export default function ParceirosPage() {
   const [enviando, setEnviando] = useState(false);
   const [enviado, setEnviado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  // Link de WhatsApp com a solicitação pré-preenchida, aberto após o envio
+  // para que o pedido de indicação chegue direto no WhatsApp de atendimento.
+  const [whatsLink, setWhatsLink] = useState<string | null>(null);
 
   const tipoOk = tipo !== "";
   const nomeOk = nome.trim().length >= 2;
