@@ -91,9 +91,10 @@ export default function ReformaApartamentoSpPage() {
   const { settings } = useSiteSettings();
 
   useSeo({
-    title: "Empresa de reforma de apartamento em São Paulo | Bewild",
+    title:
+      "Reforma de apartamento em São Paulo | Projeto, obra e mobília — Bewild",
     description:
-      "A Bewild é uma empresa de reforma de apartamentos e studios em São Paulo: projeto, obra, marcenaria e mobília em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia.",
+      "Reforma de apartamento em São Paulo com preço fechado e prazo em contrato: projeto 3D, obra, marcenaria e mobília em um único contrato. Studios e apartamentos de qualquer metragem, com 5 anos de garantia.",
     canonicalPath: CANONICAL,
     ogType: "website",
     jsonLd: settings
@@ -105,11 +106,31 @@ export default function ReformaApartamentoSpPage() {
           {
             "@context": "https://schema.org",
             "@type": "Service",
-            name: "Reforma completa de apartamentos em São Paulo",
+            name: "Reforma de apartamento em São Paulo",
+            alternateName: "Empresa de reforma de apartamento em São Paulo",
             serviceType: "Reforma de apartamento",
+            description:
+              "Reforma completa de apartamentos e studios em São Paulo: projeto aprovado em 3D, obra, marcenaria e mobília em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia sobre a mão de obra.",
             provider: { "@id": "https://bewild.com.br/#org" },
-            areaServed: { "@type": "City", name: "São Paulo" },
+            areaServed: {
+              "@type": "City",
+              name: "São Paulo",
+              containedInPlace: { "@type": "State", name: "São Paulo" },
+            },
             url: `https://bewild.com.br${CANONICAL}`,
+            hasOfferCatalog: {
+              "@type": "OfferCatalog",
+              name: "Escopo da reforma",
+              itemListElement: [
+                "Projeto aprovado em 3D antes da obra",
+                "Obra com preço fechado e prazo em contrato",
+                "Marcenaria, mobília e eletrodomésticos",
+                "Vistoria e entrega das chaves",
+              ].map((item) => ({
+                "@type": "Offer",
+                itemOffered: { "@type": "Service", name: item },
+              })),
+            },
           },
           faqJsonLd(FAQ.map((f) => ({ q: f.q, a: f.a }))),
         ]
