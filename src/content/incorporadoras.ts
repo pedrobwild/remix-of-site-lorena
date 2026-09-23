@@ -262,17 +262,10 @@ export const NAV_PARCEIROS = {
   label: "Parceiros",
   items: [
     {
-      href: "/indique-um-amigo",
-      title: "Clientes e amigos",
-      desc: "Indique quem vai reformar e receba no Pix.",
-      cta: "nav-parceiros-clientes",
-      gated: false,
-    },
-    {
       href: "/parceiros",
-      title: "Corretores e profissionais",
-      desc: "Comissão por contrato indicado, com relatório mensal.",
-      cta: "nav-parceiros-profissionais",
+      title: "Clientes e corretores",
+      desc: "Indique quem vai reformar e receba pela indicação.",
+      cta: "nav-parceiros-clientes-corretores",
       gated: false,
     },
     {

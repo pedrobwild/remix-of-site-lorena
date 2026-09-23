@@ -413,6 +413,13 @@ export default function ParceirosPage() {
                   Já sou parceiro — registrar indicação <span aria-hidden="true">↗</span>
                 </a>
               </div>
+              <p className="bwa-parc-note">
+                É cliente ou amigo de quem vai reformar?{" "}
+                <a href="/indique-um-amigo" data-cta="parceiros-hero-cliente">
+                  Indique um amigo e receba no Pix
+                </a>
+                , sem CNPJ.
+              </p>
             </div>
             <aside className="bwa-parc-seal" aria-label="Recompensa do programa de indicações">
               <p className="bwa-label">Sua recompensa</p>

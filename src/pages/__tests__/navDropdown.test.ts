@@ -15,8 +15,7 @@ function mount(): { root: HTMLElement; button: HTMLButtonElement; wrapper: HTMLE
             <button type="button" class="bwa-nav-dd-button" aria-expanded="false"
                     aria-controls="bwa-nav-dd-parceiros" data-nav-dd-button>Parceiros</button>
             <div class="bwa-nav-dd-panel" id="bwa-nav-dd-parceiros" data-nav-dd-panel>
-              <a href="/indique-um-amigo">Clientes e amigos</a>
-              <a href="/parceiros">Corretores e profissionais</a>
+              <a href="/parceiros">Clientes e corretores</a>
               <a href="/parceiros/incorporadoras" hidden data-incorp-gated>Incorporadoras</a>
             </div>
           </div>
