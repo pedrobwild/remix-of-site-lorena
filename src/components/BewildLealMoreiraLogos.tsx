@@ -30,6 +30,6 @@ export default function BewildLealMoreiraLogos({
         height={35}
         decoding="async"
       />
-    </h3>
+    </Tag>
   );
 }
