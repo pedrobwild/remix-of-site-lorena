@@ -1,30 +1,101 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
-import { supabase } from "@/integrations/supabase/client";
-import { isLeadDelivered, timeoutAfter } from "@/lib/leadDelivery";
-import { trackEvent } from "@/lib/ga4";
+import { isConsentAccepted, onConsentChange } from "@/lib/cookieConsent";
+import type { LeadPayload } from "@/lib/leadDelivery";
+import {
+  buildLeadMessage,
+  fieldErrorId,
+  fieldErrorProps,
+  firstInvalidField,
+  isValidEmail,
+  touchAll,
+  type FieldErrors,
+} from "@/lib/leadForm";
+import { formatBrPhone, isValidBrPhone, normalizeBrPhoneDigits } from "@/lib/phone";
 import { useCtaClickTracking } from "@/lib/trackCta";
+import {
+  browserUserAgent,
+  collectLeadAttribution,
+  focusField,
+  openWhatsapp,
+  useLeadSubmit,
+} from "@/lib/useLeadSubmit";
 import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./contato.css";
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const digits = (v: string) => v.replace(/\D+/g, "");
-
-function maskPhone(v: string) {
-  const d = digits(v).slice(0, 11);
-  if (d.length <= 2) return d;
-  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
-  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
-  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
-}
 
 const ADDRESS = "Rua Pitú, 72, Sala 115, Vila Olímpia, São Paulo-SP";
 const MAP_QUERY = encodeURIComponent(ADDRESS);
 const MAP_EMBED_URL = `https://www.google.com/maps?q=${MAP_QUERY}&output=embed`;
 const MAP_LINK = `https://www.google.com/maps/search/?api=1&query=${MAP_QUERY}`;
+
+type Campo = "nome" | "whats" | "mail" | "mensagem";
+const CAMPOS: readonly Campo[] = ["nome", "whats", "mail", "mensagem"];
+const CAMPO_ID: Record<Campo, string> = {
+  nome: "ct-nome",
+  whats: "ct-whats",
+  mail: "ct-mail",
+  mensagem: "ct-mensagem",
+};
+const MENSAGEM_MIN = 10;
+
+function validar(v: Record<Campo, string>): FieldErrors<Campo> {
+  const e: FieldErrors<Campo> = {};
+  if (v.nome.trim().length < 2) e.nome = "Informe seu nome.";
+  if (!isValidBrPhone(v.whats)) e.whats = "Informe um número com DDD.";
+  if (v.mail.trim() && !isValidEmail(v.mail)) e.mail = "Confira o e-mail digitado.";
+  // A regra dos 10 caracteres agora aparece no texto — antes o botão só
+  // ficava cinza e o visitante que escreveu "Olá" não sabia por quê.
+  if (v.mensagem.trim().length < MENSAGEM_MIN) {
+    e.mensagem = v.mensagem.trim()
+      ? `Escreva um pouco mais (ao menos ${MENSAGEM_MIN} caracteres).`
+      : "Escreva sua mensagem.";
+  }
+  return e;
+}
+
+/**
+ * Mapa do escritório. O embed do Google Maps grava cookies do Google, então
+ * só carrega com o consentimento aceito — ou quando o visitante pede.
+ */
+function MapaEscritorio() {
+  const [consentido, setConsentido] = useState(isConsentAccepted);
+  const [pedido, setPedido] = useState(false);
+
+  useEffect(() => onConsentChange((v) => setConsentido(v === "accepted")), []);
+
+  if (consentido || pedido) {
+    return (
+      <iframe
+        className="bwa-contact-map"
+        title="Mapa do escritório Bewild na Vila Olímpia"
+        src={MAP_EMBED_URL}
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+      />
+    );
+  }
+
+  return (
+    <div className="bwa-contact-map-placeholder">
+      <p className="bwa-label">Mapa · Vila Olímpia</p>
+      <p>
+        O mapa vem do Google Maps, que grava cookies próprios. Por isso ele só carrega se você
+        pedir.
+      </p>
+      <div className="bwa-contact-map-actions">
+        <button type="button" className="bwa-button" onClick={() => setPedido(true)}>
+          Carregar mapa
+        </button>
+        <a className="bwa-contact-link" href={MAP_LINK} target="_blank" rel="noopener noreferrer">
+          Abrir no Google Maps <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </div>
+  );
+}
 
 export default function ContatoPage() {
   useCtaClickTracking("contato");
@@ -35,42 +106,47 @@ export default function ContatoPage() {
   const [whats, setWhats] = useState("");
   const [mail, setMail] = useState("");
   const [mensagem, setMensagem] = useState("");
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
-  const [enviando, setEnviando] = useState(false);
-  const [enviado, setEnviado] = useState(false);
-  const [erro, setErro] = useState<string | null>(null);
-
-  const nomeOk = nome.trim().length >= 2;
-  const whatsOk = digits(whats).length >= 10;
-  const mailOk = mail.trim() === "" || EMAIL_RE.test(mail.trim());
-  const msgOk = mensagem.trim().length >= 10;
-  const podeEnviar = nomeOk && whatsOk && mailOk && msgOk && !enviando;
-
+  const [touched, setTouched] = useState<Partial<Record<Campo, boolean>>>({});
+  // Link do WhatsApp com a mensagem do visitante: aberto no envio e reusado
+  // no aviso de sucesso e no fallback.
   const [whatsLink, setWhatsLink] = useState<string | null>(null);
+  const ultimoAberto = useRef<string | null>(null);
+  const resultadoRef = useRef<HTMLDivElement | null>(null);
+  const { sending: enviando, outcome, submit } = useLeadSubmit({ method: "contato_form" });
 
-  async function enviar(e: React.FormEvent) {
+  const errors = validar({ nome, whats, mail, mensagem });
+  const erro = (k: Campo) => (touched[k] ? errors[k] : undefined);
+  const touch = (k: Campo) => setTouched((t) => ({ ...t, [k]: true }));
+  const concluido = outcome === "delivered" || outcome === "timedOut";
+
+  // O formulário é trocado pelo aviso: o foco vai junto (senão cai no <body>).
+  useEffect(() => {
+    if (concluido) resultadoRef.current?.focus();
+  }, [concluido]);
+
+  function enviar(e: React.FormEvent) {
     e.preventDefault();
-    setTouched({ nome: true, whats: true, mail: true, mensagem: true });
-    if (!podeEnviar) return;
-    setEnviando(true);
-    setErro(null);
+    if (enviando) return;
+    const primeiro = firstInvalidField(CAMPOS, errors);
+    if (primeiro) {
+      setTouched(touchAll(CAMPOS));
+      focusField(CAMPO_ID[primeiro]);
+      return;
+    }
 
-    const waTexto = [
-      "Olá, vim pelo site da Bewild e quero conversar.",
-      `Nome: ${nome.trim()}`,
-      `WhatsApp: ${whats}`,
-      mail.trim() ? `E-mail: ${mail.trim()}` : null,
-      `Mensagem: ${mensagem.trim()}`,
-    ]
-      .filter(Boolean)
-      .join("\n");
-    const waLink = whatsappHref(waTexto);
+    const waLink = whatsappHref(
+      buildLeadMessage("Olá, vim pelo site da Bewild e quero conversar.", [
+        ["Nome", nome],
+        ["WhatsApp", whats],
+        ["E-mail", mail],
+        ["Mensagem", mensagem],
+      ]),
+    );
     setWhatsLink(waLink);
 
-
-    const payload = {
+    const payload: LeadPayload = {
       name: nome.trim(),
-      whatsapp: digits(whats),
+      whatsapp: normalizeBrPhoneDigits(whats),
       email: mail.trim() || null,
       message: mensagem.trim(),
       location: null,
@@ -78,35 +154,24 @@ export default function ContatoPage() {
       objetivo: null,
       chaves: null,
       planta: null,
-      utm_source: null,
-      utm_medium: null,
-      utm_campaign: null,
-      referrer: typeof document !== "undefined" ? document.referrer || null : null,
-      landing_path: "/contato",
-      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+      ...collectLeadAttribution(),
+      user_agent: browserUserAgent(),
+      form_path: "/contato",
     };
 
-    let delivered = false;
-    try {
-      const result = await Promise.race([
-        supabase.functions.invoke("notify-lead", { body: payload }),
-        timeoutAfter(8000),
-      ]);
-      delivered = isLeadDelivered(result);
-    } catch (err) {
-      console.error("[notify-lead] invoke failed", err);
-    }
-
-    setEnviando(false);
-    if (delivered) {
-      setEnviado(true);
-      trackEvent("generate_lead", { method: "contato_form" });
-      window.open(waLink, "_blank", "noopener,noreferrer");
-    } else {
-      setErro(
-        "Não conseguimos enviar sua mensagem agora. Tente novamente ou fale com a gente no WhatsApp.",
-      );
-    }
+    // O contato continua no WhatsApp com a mensagem pronta. A aba abre
+    // DENTRO do gesto (antes de qualquer await), senão o Safari/Chrome mobile
+    // bloqueiam o popup. Num reenvio com os mesmos dados não abre de novo.
+    void submit(payload, {
+      beforeSend:
+        ultimoAberto.current === waLink
+          ? undefined
+          : () => {
+              ultimoAberto.current = waLink;
+              openWhatsapp(waLink);
+            },
+      handedToWhatsapp: true,
+    });
   }
 
   useSeo({
@@ -124,6 +189,8 @@ export default function ContatoPage() {
         ]
       : undefined,
   });
+
+  const primeiroNome = nome.trim().split(" ")[0];
 
   return (
     <div className="bwa-contact-page">
@@ -188,13 +255,7 @@ export default function ContatoPage() {
             </div>
 
             <div className="bwa-contact-map-wrap">
-              <iframe
-                className="bwa-contact-map"
-                title="Mapa do escritório Bewild na Vila Olímpia"
-                src={MAP_EMBED_URL}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
+              <MapaEscritorio />
             </div>
           </div>
         </section>
@@ -219,10 +280,10 @@ export default function ContatoPage() {
               </a>
             </div>
 
-            {enviado ? (
-              <div className="bwa-contact-form-done" role="status">
+            {outcome === "delivered" ? (
+              <div className="bwa-contact-form-done" role="status" tabIndex={-1} ref={resultadoRef}>
                 <p className="bwa-label">Mensagem recebida</p>
-                <h3>Obrigado, {nome.trim().split(" ")[0]}.</h3>
+                <h3>Obrigado, {primeiroNome}.</h3>
                 <p>
                   Nosso time entra em contato pelo WhatsApp informado. Se quiser adiantar, fale com a
                   gente agora mesmo.
@@ -236,74 +297,110 @@ export default function ContatoPage() {
                   Falar no WhatsApp <span aria-hidden="true">→</span>
                 </a>
               </div>
+            ) : outcome === "timedOut" ? (
+              <div className="bwa-contact-form-done" role="status" tabIndex={-1} ref={resultadoRef}>
+                <p className="bwa-label">Envio sem confirmação</p>
+                <h3>Sua mensagem pode já ter chegado, {primeiroNome}.</h3>
+                <p>
+                  A confirmação demorou mais que o normal. Abrimos o WhatsApp com a sua mensagem
+                  pronta: envie por lá para garantir o atendimento — se já tivermos recebido, é só
+                  ignorar.
+                </p>
+                {whatsLink && (
+                  <a className="bwa-button" href={whatsLink} target="_blank" rel="noopener noreferrer">
+                    Enviar pelo WhatsApp <span aria-hidden="true">→</span>
+                  </a>
+                )}
+              </div>
             ) : (
-              <form className="bwa-contact-form" onSubmit={enviar} noValidate>
-                <label className="bwa-contact-field">
-                  <span>Nome</span>
+              <form className="bwa-contact-form" onSubmit={enviar} noValidate aria-label="Formulário de contato">
+                <div className="bwa-contact-field">
+                  <label htmlFor="ct-nome">Nome</label>
                   <input
+                    id="ct-nome"
                     type="text"
                     value={nome}
                     maxLength={120}
                     autoComplete="name"
+                    required
                     onChange={(e) => setNome(e.target.value)}
-                    onBlur={() => setTouched((t) => ({ ...t, nome: true }))}
-                    aria-invalid={touched.nome && !nomeOk}
+                    onBlur={() => touch("nome")}
+                    {...fieldErrorProps("ct-nome", erro("nome"))}
                   />
-                  {touched.nome && !nomeOk && <em>Informe seu nome.</em>}
-                </label>
+                  {erro("nome") && <em id={fieldErrorId("ct-nome")}>{erro("nome")}</em>}
+                </div>
 
-                <label className="bwa-contact-field">
-                  <span>WhatsApp</span>
+                <div className="bwa-contact-field">
+                  <label htmlFor="ct-whats">WhatsApp</label>
                   <input
+                    id="ct-whats"
                     type="tel"
                     inputMode="tel"
                     value={whats}
                     autoComplete="tel"
                     placeholder="(11) 90000-0000"
-                    onChange={(e) => setWhats(maskPhone(e.target.value))}
-                    onBlur={() => setTouched((t) => ({ ...t, whats: true }))}
-                    aria-invalid={touched.whats && !whatsOk}
+                    required
+                    onChange={(e) => setWhats(formatBrPhone(e.target.value))}
+                    onBlur={() => touch("whats")}
+                    {...fieldErrorProps("ct-whats", erro("whats"))}
                   />
-                  {touched.whats && !whatsOk && <em>Informe um número com DDD.</em>}
-                </label>
+                  {erro("whats") && <em id={fieldErrorId("ct-whats")}>{erro("whats")}</em>}
+                </div>
 
-                <label className="bwa-contact-field">
-                  <span>E-mail (opcional)</span>
+                <div className="bwa-contact-field">
+                  <label htmlFor="ct-mail">E-mail (opcional)</label>
                   <input
+                    id="ct-mail"
                     type="email"
                     value={mail}
                     maxLength={180}
                     autoComplete="email"
                     onChange={(e) => setMail(e.target.value)}
-                    onBlur={() => setTouched((t) => ({ ...t, mail: true }))}
-                    aria-invalid={touched.mail && !mailOk}
+                    onBlur={() => touch("mail")}
+                    {...fieldErrorProps("ct-mail", erro("mail"))}
                   />
-                  {touched.mail && !mailOk && <em>Confira o e-mail digitado.</em>}
-                </label>
+                  {erro("mail") && <em id={fieldErrorId("ct-mail")}>{erro("mail")}</em>}
+                </div>
 
-                <label className="bwa-contact-field bwa-contact-field--full">
-                  <span>Mensagem</span>
+                <div className="bwa-contact-field bwa-contact-field--full">
+                  <label htmlFor="ct-mensagem">Mensagem</label>
                   <textarea
+                    id="ct-mensagem"
                     rows={5}
                     value={mensagem}
                     maxLength={1200}
+                    required
                     placeholder="Conte o tamanho do apartamento, o bairro e o que você quer fazer."
                     onChange={(e) => setMensagem(e.target.value)}
-                    onBlur={() => setTouched((t) => ({ ...t, mensagem: true }))}
-                    aria-invalid={touched.mensagem && !msgOk}
+                    onBlur={() => touch("mensagem")}
+                    {...fieldErrorProps("ct-mensagem", erro("mensagem"))}
                   />
-                  {touched.mensagem && !msgOk && <em>Escreva ao menos uma frase.</em>}
-                </label>
+                  {erro("mensagem") && <em id={fieldErrorId("ct-mensagem")}>{erro("mensagem")}</em>}
+                </div>
 
-                {erro && (
-                  <p className="bwa-contact-form-error" role="alert">
-                    {erro}
-                  </p>
+                {outcome === "failed" && !enviando && (
+                  <div className="bwa-contact-form-error" role="alert">
+                    <p>
+                      Não conseguimos registrar sua mensagem pelo site. Abrimos o WhatsApp com ela
+                      pronta: envie por lá para garantir o atendimento, ou tente de novo.
+                    </p>
+                    {whatsLink && (
+                      <a
+                        className="bwa-contact-link"
+                        href={whatsLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Abrir o WhatsApp com a mensagem <span aria-hidden="true">↗</span>
+                      </a>
+                    )}
+                  </div>
                 )}
 
                 <div className="bwa-contact-form-actions">
-                  <button className="bwa-button" type="submit" data-cta="contato-enviar" disabled={!podeEnviar}>
-                    {enviando ? "Enviando…" : "Enviar mensagem"}
+                  {/* Habilitado com campos pendentes: o clique mostra os erros e leva o foco ao primeiro. */}
+                  <button className="bwa-button" type="submit" data-cta="contato-enviar" disabled={enviando}>
+                    {enviando ? "Enviando…" : outcome === "failed" ? "Tentar de novo" : "Enviar mensagem"}
                     <span aria-hidden="true">→</span>
                   </button>
                   <p>Seus dados são usados apenas para responder ao seu contato.</p>

@@ -1,12 +1,25 @@
-import { useState } from "react";
-import { z } from "zod";
+import { useEffect, useRef, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
-import { CONTACT } from "@/components/landing/content";
-import { supabase } from "@/integrations/supabase/client";
-import { isLeadDelivered, timeoutAfter } from "@/lib/leadDelivery";
-import { trackEvent } from "@/lib/ga4";
+import { CONTACT, whatsappHref } from "@/components/landing/content";
+import type { LeadPayload } from "@/lib/leadDelivery";
+import {
+  buildLeadMessage,
+  fieldErrorId,
+  fieldErrorProps,
+  firstInvalidField,
+  isValidEmail,
+  touchAll,
+  type FieldErrors,
+} from "@/lib/leadForm";
+import { formatBrPhone, isValidBrPhone, normalizeBrPhoneDigits } from "@/lib/phone";
 import { useCtaClickTracking } from "@/lib/trackCta";
+import {
+  browserUserAgent,
+  collectLeadAttribution,
+  focusField,
+  useLeadSubmit,
+} from "@/lib/useLeadSubmit";
 import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./faq-page.css";
@@ -185,27 +198,27 @@ const FAQ_PARCEIRO = [
   },
 ];
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const digits = (v: string) => v.replace(/\D+/g, "");
+/* Uma única fonte de validação. Antes havia duas (flags + schema zod) que
+   discordavam: um e-mail aceito por uma e recusado pela outra fazia o
+   clique em "Cadastrar" não fazer nada, sem mensagem nenhuma. */
+type Campo = "tipo" | "nome" | "whats" | "mail" | "regiao";
+const CAMPOS: readonly Campo[] = ["tipo", "nome", "whats", "mail", "regiao"];
+const CAMPO_ID: Record<Campo, string> = {
+  tipo: "parc-tipo",
+  nome: "parc-nome",
+  whats: "parc-whats",
+  mail: "parc-mail",
+  regiao: "parc-regiao",
+};
 
-const parceiroSchema = z.object({
-  tipo: z.enum(TIPOS as [string, ...string[]]),
-  nome: z.string().trim().min(2).max(120),
-  empresa: z.string().trim().max(120),
-  documento: z.string().trim().max(24),
-  whats: z.string().transform(digits).refine((value) => value.length >= 10 && value.length <= 11),
-  mail: z.union([z.literal(""), z.string().trim().email().max(180)]),
-  regiao: z.string().trim().min(2).max(180),
-  unidades: z.union([z.literal(""), z.string().regex(/^\d{1,4}$/)]),
-  origem: z.string().trim().max(180),
-});
-
-function maskPhone(v: string) {
-  const d = digits(v).slice(0, 11);
-  if (d.length <= 2) return d;
-  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
-  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
-  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+function validar(v: Record<Campo, string>): FieldErrors<Campo> {
+  const e: FieldErrors<Campo> = {};
+  if (!TIPOS.includes(v.tipo)) e.tipo = "Selecione o tipo de atuação.";
+  if (v.nome.trim().length < 2) e.nome = "Informe seu nome.";
+  if (!isValidBrPhone(v.whats)) e.whats = "Informe um número com DDD.";
+  if (v.mail.trim() && !isValidEmail(v.mail)) e.mail = "Confira o e-mail digitado.";
+  if (v.regiao.trim().length < 2) e.regiao = "Informe a região ou os empreendimentos.";
+  return e;
 }
 
 export default function ParceirosPage() {
@@ -223,84 +236,70 @@ export default function ParceirosPage() {
   const [regiao, setRegiao] = useState("");
   const [unidades, setUnidades] = useState("");
   const [origem, setOrigem] = useState("");
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
-  const [enviando, setEnviando] = useState(false);
-  const [enviado, setEnviado] = useState(false);
-  const [erro, setErro] = useState<string | null>(null);
+  const [touched, setTouched] = useState<Partial<Record<Campo, boolean>>>({});
+  // WhatsApp com os dados do cadastro — saída quando a entrega não é confirmada.
+  const [whatsLink, setWhatsLink] = useState<string | null>(null);
+  const resultadoRef = useRef<HTMLDivElement | null>(null);
+  const { sending: enviando, outcome, submit } = useLeadSubmit({ method: "parceiros_form" });
 
-  const tipoOk = tipo !== "";
-  const nomeOk = nome.trim().length >= 2;
-  const whatsOk = digits(whats).length >= 10;
-  const mailOk = mail.trim() === "" || EMAIL_RE.test(mail.trim());
-  const regiaoOk = regiao.trim().length >= 2;
-  const podeEnviar = tipoOk && nomeOk && whatsOk && mailOk && regiaoOk && !enviando;
+  const errors = validar({ tipo, nome, whats, mail, regiao });
+  const erro = (k: Campo) => (touched[k] ? errors[k] : undefined);
+  const touch = (k: Campo) => setTouched((t) => ({ ...t, [k]: true }));
+  const concluido = outcome === "delivered" || outcome === "timedOut";
 
-  async function enviar(e: React.FormEvent) {
+  useEffect(() => {
+    if (concluido) resultadoRef.current?.focus();
+  }, [concluido]);
+
+  function enviar(e: React.FormEvent) {
     e.preventDefault();
-    setTouched({ tipo: true, nome: true, whats: true, mail: true, regiao: true });
-    const parsed = parceiroSchema.safeParse({
-      tipo,
-      nome,
-      empresa,
-      documento,
-      whats,
-      mail,
-      regiao,
-      unidades,
-      origem,
-    });
-    if (!podeEnviar || !parsed.success) return;
-    setEnviando(true);
-    setErro(null);
+    if (enviando) return;
+    const primeiro = firstInvalidField(CAMPOS, errors);
+    if (primeiro) {
+      setTouched(touchAll(CAMPOS));
+      focusField(CAMPO_ID[primeiro]);
+      return;
+    }
 
-    const dados = parsed.data;
+    setWhatsLink(
+      whatsappHref(
+        buildLeadMessage("Olá! Quero ser parceiro da Bewild.", [
+          ["Tipo de parceiro", tipo],
+          ["Nome", nome],
+          ["Empresa", empresa],
+          ["CRECI/CNPJ", documento],
+          ["WhatsApp", whats],
+          ["E-mail", mail],
+          ["Região ou empreendimentos", regiao],
+          ["Unidades vendidas por mês", unidades],
+          ["Como conheceu", origem],
+        ]),
+      ),
+    );
 
-    const linhas = [
-      `Tipo de parceiro: ${dados.tipo}`,
-      dados.empresa ? `Empresa: ${dados.empresa}` : null,
-      dados.documento ? `CRECI/CNPJ: ${dados.documento}` : null,
-      dados.unidades ? `Unidades vendidas por mês: ${dados.unidades}` : null,
-    ].filter(Boolean);
-
-    const payload = {
-      name: dados.nome,
-      whatsapp: dados.whats,
-      email: dados.mail || null,
-      message: linhas.join("\n"),
-      location: dados.regiao,
+    // `form_path: "/parceiros"` separa o cadastro de parceiro dos leads de
+    // cliente no banco e no admin; `landing_path` é a atribuição da sessão.
+    const payload: LeadPayload = {
+      name: nome.trim(),
+      whatsapp: normalizeBrPhoneDigits(whats),
+      email: mail.trim() || null,
+      message: buildLeadMessage(`Tipo de parceiro: ${tipo}`, [
+        ["Empresa", empresa],
+        ["CRECI/CNPJ", documento],
+        ["Unidades vendidas por mês", unidades],
+      ]),
+      location: regiao.trim(),
       area_m2: null,
-      objetivo: `Parceria comercial — ${dados.tipo}`,
+      objetivo: `Parceria comercial — ${tipo}`,
       chaves: null,
       planta: null,
-      utm_source: null,
-      utm_medium: null,
-      utm_campaign: null,
-      referrer: typeof document !== "undefined" ? document.referrer || null : null,
-      landing_path: "/parceiros",
-      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
-      lead_source: dados.origem || null,
+      ...collectLeadAttribution(),
+      user_agent: browserUserAgent(),
+      lead_source: origem.trim() || null,
+      form_path: "/parceiros",
     };
 
-    let delivered = false;
-    try {
-      const result = await Promise.race([
-        supabase.functions.invoke("notify-lead", { body: payload }),
-        timeoutAfter(8000),
-      ]);
-      delivered = isLeadDelivered(result);
-    } catch (err) {
-      console.error("[notify-lead] invoke failed", err);
-    }
-
-    setEnviando(false);
-    if (delivered) {
-      setEnviado(true);
-      trackEvent("generate_lead", { method: "parceiros_form" });
-    } else {
-      setErro(
-        "Não conseguimos enviar seu cadastro agora. Tente novamente ou fale com a gente no WhatsApp.",
-      );
-    }
+    void submit(payload, { params: { tipo } });
   }
 
   useSeo({
@@ -627,16 +626,15 @@ export default function ParceirosPage() {
           <div className="bwa-shell">
             <p className="bwa-label">10 · Perguntas de quem indica</p>
             <h2>8 respostas diretas, sem rodeio.</h2>
-            <div className="bwa-faq-list" itemScope itemType="https://schema.org/FAQPage">
+            {/* Dados estruturados só pelo JSON-LD (faqJsonLd no useSeo): microdata
+                FAQPage no mesmo conteúdo duplicava a entidade para o Google. */}
+            <div className="bwa-faq-list">
               {FAQ_PARCEIRO.map((item, i) => {
                 const open = faqAberto === i;
                 return (
                   <article
                     key={item.q}
                     className={`bwa-faq-item${open ? " bwa-open" : ""}`}
-                    itemScope
-                    itemProp="mainEntity"
-                    itemType="https://schema.org/Question"
                   >
                     <h3 className="bwa-faqpage-q">
                       <button
@@ -647,18 +645,12 @@ export default function ParceirosPage() {
                         onClick={() => setFaqAberto(open ? -1 : i)}
                       >
                         <span className="bwa-faq-num">{String(i + 1).padStart(2, "0")}</span>
-                        <strong itemProp="name">{item.q}</strong>
+                        <strong>{item.q}</strong>
                         <span className="bwa-faq-icon" aria-hidden="true" />
                       </button>
                     </h3>
-                    <div
-                      id={`parceiros-resposta-${i}`}
-                      className="bwa-faq-answer"
-                      itemScope
-                      itemProp="acceptedAnswer"
-                      itemType="https://schema.org/Answer"
-                    >
-                      <p itemProp="text">{item.a}</p>
+                    <div id={`parceiros-resposta-${i}`} className="bwa-faq-answer">
+                      <p>{item.a}</p>
                     </div>
                   </article>
                 );
@@ -695,8 +687,8 @@ export default function ParceirosPage() {
               </p>
             </div>
 
-            {enviado ? (
-              <div className="bwa-contact-form-done" role="status">
+            {outcome === "delivered" ? (
+              <div className="bwa-contact-form-done" role="status" tabIndex={-1} ref={resultadoRef}>
                 <p className="bwa-label">Cadastro recebido</p>
                 <h3>Obrigado, {nome.trim().split(" ")[0]}.</h3>
                 <p>
@@ -713,15 +705,32 @@ export default function ParceirosPage() {
                   Registrar indicação <span aria-hidden="true">↗</span>
                 </a>
               </div>
+            ) : outcome === "timedOut" ? (
+              <div className="bwa-contact-form-done" role="status" tabIndex={-1} ref={resultadoRef}>
+                <p className="bwa-label">Envio sem confirmação</p>
+                <h3>Seu cadastro pode já ter chegado, {nome.trim().split(" ")[0]}.</h3>
+                <p>
+                  A confirmação demorou mais que o normal. Para garantir, mande o cadastro pelo
+                  WhatsApp — a mensagem já vai com os seus dados. Se já tivermos recebido, é só
+                  ignorar.
+                </p>
+                {whatsLink && (
+                  <a className="bwa-button" href={whatsLink} target="_blank" rel="noopener noreferrer">
+                    Enviar pelo WhatsApp <span aria-hidden="true">→</span>
+                  </a>
+                )}
+              </div>
             ) : (
-              <form className="bwa-contact-form" onSubmit={enviar} noValidate>
-                <label className="bwa-contact-field">
-                  <span>Tipo de parceiro</span>
+              <form className="bwa-contact-form" onSubmit={enviar} noValidate aria-label="Cadastro de parceiro">
+                <div className="bwa-contact-field">
+                  <label htmlFor="parc-tipo">Tipo de parceiro</label>
                   <select
+                    id="parc-tipo"
                     value={tipo}
+                    required
                     onChange={(e) => setTipo(e.target.value)}
-                    onBlur={() => setTouched((t) => ({ ...t, tipo: true }))}
-                    aria-invalid={touched.tipo && !tipoOk}
+                    onBlur={() => touch("tipo")}
+                    {...fieldErrorProps("parc-tipo", erro("tipo"))}
                   >
                     <option value="">Selecione</option>
                     {TIPOS.map((tp) => (
@@ -730,26 +739,29 @@ export default function ParceirosPage() {
                       </option>
                     ))}
                   </select>
-                  {touched.tipo && !tipoOk && <em>Selecione o tipo de atuação.</em>}
-                </label>
+                  {erro("tipo") && <em id={fieldErrorId("parc-tipo")}>{erro("tipo")}</em>}
+                </div>
 
-                <label className="bwa-contact-field">
-                  <span>Nome</span>
+                <div className="bwa-contact-field">
+                  <label htmlFor="parc-nome">Nome</label>
                   <input
+                    id="parc-nome"
                     type="text"
                     value={nome}
                     maxLength={120}
                     autoComplete="name"
+                    required
                     onChange={(e) => setNome(e.target.value)}
-                    onBlur={() => setTouched((t) => ({ ...t, nome: true }))}
-                    aria-invalid={touched.nome && !nomeOk}
+                    onBlur={() => touch("nome")}
+                    {...fieldErrorProps("parc-nome", erro("nome"))}
                   />
-                  {touched.nome && !nomeOk && <em>Informe seu nome.</em>}
-                </label>
+                  {erro("nome") && <em id={fieldErrorId("parc-nome")}>{erro("nome")}</em>}
+                </div>
 
-                <label className="bwa-contact-field">
-                  <span>Empresa (opcional)</span>
+                <div className="bwa-contact-field">
+                  <label htmlFor="parc-empresa">Empresa (opcional)</label>
                   <input
+                    id="parc-empresa"
                     type="text"
                     value={empresa}
                     maxLength={120}
@@ -757,65 +769,72 @@ export default function ParceirosPage() {
                     placeholder="Imobiliária, incorporadora ou escritório"
                     onChange={(e) => setEmpresa(e.target.value)}
                   />
-                </label>
+                </div>
 
-                <label className="bwa-contact-field">
-                  <span>CRECI ou CNPJ (opcional)</span>
+                <div className="bwa-contact-field">
+                  <label htmlFor="parc-documento">CRECI ou CNPJ (opcional)</label>
                   <input
+                    id="parc-documento"
                     type="text"
                     value={documento}
                     maxLength={24}
                     placeholder="CRECI 00000-F ou 00.000.000/0000-00"
                     onChange={(e) => setDocumento(e.target.value)}
                   />
-                </label>
+                </div>
 
-                <label className="bwa-contact-field">
-                  <span>WhatsApp</span>
+                <div className="bwa-contact-field">
+                  <label htmlFor="parc-whats">WhatsApp</label>
                   <input
+                    id="parc-whats"
                     type="tel"
                     inputMode="tel"
                     value={whats}
                     autoComplete="tel"
                     placeholder="(11) 90000-0000"
-                    onChange={(e) => setWhats(maskPhone(e.target.value))}
-                    onBlur={() => setTouched((t) => ({ ...t, whats: true }))}
-                    aria-invalid={touched.whats && !whatsOk}
+                    required
+                    onChange={(e) => setWhats(formatBrPhone(e.target.value))}
+                    onBlur={() => touch("whats")}
+                    {...fieldErrorProps("parc-whats", erro("whats"))}
                   />
-                  {touched.whats && !whatsOk && <em>Informe um número com DDD.</em>}
-                </label>
+                  {erro("whats") && <em id={fieldErrorId("parc-whats")}>{erro("whats")}</em>}
+                </div>
 
-                <label className="bwa-contact-field">
-                  <span>E-mail (opcional)</span>
+                <div className="bwa-contact-field">
+                  <label htmlFor="parc-mail">E-mail (opcional)</label>
                   <input
+                    id="parc-mail"
                     type="email"
                     value={mail}
                     maxLength={180}
                     autoComplete="email"
                     onChange={(e) => setMail(e.target.value)}
-                    onBlur={() => setTouched((t) => ({ ...t, mail: true }))}
-                    aria-invalid={touched.mail && !mailOk}
+                    onBlur={() => touch("mail")}
+                    {...fieldErrorProps("parc-mail", erro("mail"))}
                   />
-                  {touched.mail && !mailOk && <em>Confira o e-mail digitado.</em>}
-                </label>
+                  {erro("mail") && <em id={fieldErrorId("parc-mail")}>{erro("mail")}</em>}
+                </div>
 
-                <label className="bwa-contact-field">
-                  <span>Região ou empreendimentos</span>
+                <div className="bwa-contact-field">
+                  <label htmlFor="parc-regiao">Região ou empreendimentos</label>
                   <input
+                    id="parc-regiao"
                     type="text"
                     value={regiao}
                     maxLength={180}
                     placeholder="Pinheiros e Vila Olímpia · ou nomes dos empreendimentos"
+                    required
                     onChange={(e) => setRegiao(e.target.value)}
-                    onBlur={() => setTouched((t) => ({ ...t, regiao: true }))}
-                    aria-invalid={touched.regiao && !regiaoOk}
+                    onBlur={() => touch("regiao")}
+                    {...fieldErrorProps("parc-regiao", erro("regiao"))}
                   />
-                  {touched.regiao && !regiaoOk && <em>Informe a região ou os empreendimentos.</em>}
-                </label>
+                  {erro("regiao") && <em id={fieldErrorId("parc-regiao")}>{erro("regiao")}</em>}
+                </div>
 
-                <label className="bwa-contact-field">
-                  <span>Unidades vendidas por mês (opcional)</span>
+                <div className="bwa-contact-field">
+                  <label htmlFor="parc-unidades">Unidades vendidas por mês (opcional)</label>
                   <input
+                    id="parc-unidades"
                     type="text"
                     inputMode="numeric"
                     value={unidades}
@@ -823,33 +842,53 @@ export default function ParceirosPage() {
                     placeholder="Ex.: 6"
                     onChange={(e) => setUnidades(e.target.value.replace(/\D+/g, ""))}
                   />
-                </label>
+                </div>
 
-                <label className="bwa-contact-field bwa-contact-field--full">
-                  <span>Como conheceu a Bewild (opcional)</span>
+                <div className="bwa-contact-field bwa-contact-field--full">
+                  <label htmlFor="parc-origem">Como conheceu a Bewild (opcional)</label>
+                  {/* 80 = limite de `lead_source` no servidor (acima disso era cortado em silêncio). */}
                   <input
+                    id="parc-origem"
                     type="text"
                     value={origem}
-                    maxLength={180}
+                    maxLength={80}
                     placeholder="Indicação, Instagram, Google, evento…"
                     onChange={(e) => setOrigem(e.target.value)}
                   />
-                </label>
+                </div>
 
-                {erro && (
-                  <p className="bwa-contact-form-error" role="alert">
-                    {erro}
-                  </p>
+                {outcome === "failed" && !enviando && (
+                  <div className="bwa-contact-form-error" role="alert">
+                    <p>
+                      Não conseguimos enviar seu cadastro agora. Tente de novo ou mande pelo
+                      WhatsApp — a mensagem já vai com os seus dados.
+                    </p>
+                    {whatsLink && (
+                      <a
+                        className="bwa-contact-link"
+                        href={whatsLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Enviar pelo WhatsApp <span aria-hidden="true">↗</span>
+                      </a>
+                    )}
+                  </div>
                 )}
 
                 <div className="bwa-contact-form-actions">
+                  {/* Habilitado com campos pendentes: o clique mostra os erros e leva o foco ao primeiro. */}
                   <button
                     className="bwa-button"
                     type="submit"
                     data-cta="parceiros-enviar"
-                    disabled={!podeEnviar}
+                    disabled={enviando}
                   >
-                    {enviando ? "Enviando…" : "Cadastrar como parceiro"}
+                    {enviando
+                      ? "Enviando…"
+                      : outcome === "failed"
+                        ? "Tentar de novo"
+                        : "Cadastrar como parceiro"}
                     <span aria-hidden="true">→</span>
                   </button>
                   <p>

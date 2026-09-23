@@ -158,6 +158,12 @@ fieldset.dg-field{border:0;margin:0;padding:0}
 }
 .dg-success strong{display:block;font-size:21px;font-weight:600;letter-spacing:-.02em;margin-bottom:6px}
 .dg-success span{font-size:14px;opacity:.85}
+/* recebe foco programático quando o formulário some (não é controle) */
+.dg-success:focus{outline:none}
+/* fallback sem confirmação: WhatsApp com os dados + reenvio */
+.dg-success-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 24px;margin-top:18px}
+.dg-success-actions .dg-textlink{color:#fff}
+.dg-success-actions .dg-textlink:disabled{opacity:.6;cursor:progress}
 .dg-ficha.dg-sent .dg-success{display:block}
 .dg-ficha.dg-sent .dg-hidepós{display:none}
 

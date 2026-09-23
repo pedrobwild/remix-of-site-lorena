@@ -6,13 +6,36 @@
  * diferenciar do link usado nos orçamentos do Pedro (o CTA no portal é
  * renderizado no app do Workflow só quando esse flag está presente).
  *  - noindex, sem nav/footer global, acessível só por URL direta (QR).
- *  - Lead via notify-lead (mesmo pipeline da DiagnosticoPage).
+ *  - Lead via `sendLead` (notify-lead, `form_path: "/o"`), mesmo pipeline
+ *    da DiagnosticoPage.
+ *  - O redirecionamento só acontece DEPOIS que o envio termina (navegar antes
+ *    abortava a requisição). Sem confirmação, o visitante vê um aviso com o
+ *    WhatsApp já preenchido em vez de ser levado embora em silêncio.
  */
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSeo } from "@/lib/useSeo";
-import { CONTACT } from "@/components/landing/content";
-import { supabase } from "@/integrations/supabase/client";
+import { whatsappHref } from "@/components/landing/content";
 import { trackEvent } from "@/lib/ga4";
+import type { LeadPayload } from "@/lib/leadDelivery";
+import {
+  buildLeadMessage,
+  fieldErrorId,
+  fieldErrorProps,
+  firstInvalidField,
+  isValidEmail,
+  touchAll,
+  type FieldErrors,
+  type QrUtmDefaults,
+} from "@/lib/leadForm";
+import { formatBrPhone, isValidBrPhone, normalizeBrPhoneDigits } from "@/lib/phone";
+import { scrollBehavior } from "@/lib/reducedMotion";
+import {
+  browserUserAgent,
+  collectLeadAttribution,
+  focusField,
+  openWhatsapp,
+  useLeadSubmit,
+} from "@/lib/useLeadSubmit";
 import { useVideoAutoplayInView } from "@/lib/useVideoAutoplayInView";
 import BewildLogo from "@/components/BewildLogo";
 import "@/styles/bw-lp.css";
@@ -31,58 +54,19 @@ import "@/styles/bw-lp.css";
 const WORKFLOW_DEMO_URL =
   "https://id-preview--c9754542-d1f4-4007-9ead-4212e17bb44e.lovable.app/vitrine/ecf601c3-87f9-4824-9fb3-26a96d120761";
 
-const digits = (v: string) => v.replace(/\D/g, "");
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+/** Atribuição padrão da placa (a URL do QR pode sobrescrever campo a campo). */
+const UTM_PADRAO: QrUtmDefaults = { utm_source: "qr", utm_medium: "placa", utm_campaign: "obra-placa" };
 
-function maskPhone(v: string): string {
-  const d = v.replace(/\D/g, "").slice(0, 11);
-  if (d.length <= 2) return d.length ? `(${d}` : "";
-  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
-  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
-  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
-}
+type Campo = "nome" | "whats" | "email";
+const CAMPOS: readonly Campo[] = ["nome", "whats", "email"];
+const CAMPO_ID: Record<Campo, string> = { nome: "g-nome", whats: "g-whats", email: "g-email" };
 
-type LeadPayload = {
-  name: string;
-  whatsapp: string;
-  email: string | null;
-  location: string | null;
-  area_m2: number | null;
-  objetivo: string | null;
-  chaves: string | null;
-  planta: string | null;
-  message: string | null;
-  utm_source: string | null;
-  utm_medium: string | null;
-  utm_campaign: string | null;
-  referrer: string | null;
-  landing_path: string | null;
-  user_agent: string | null;
-};
-
-function readUtm(defaults: { source: string; medium: string; campaign: string }) {
-  const params =
-    typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
-  return {
-    utm_source: params?.get("utm_source") || defaults.source,
-    utm_medium: params?.get("utm_medium") || defaults.medium,
-    utm_campaign: params?.get("utm_campaign") || defaults.campaign,
-    referrer: typeof document !== "undefined" ? document.referrer || null : null,
-    landing_path: typeof window !== "undefined" ? window.location.pathname : null,
-    user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
-  };
-}
-
-async function sendLead(payload: LeadPayload) {
-  try {
-    await supabase.functions.invoke("notify-lead", { body: payload });
-  } catch (err) {
-    console.error("[notify-lead] invoke failed", err);
-  }
-}
-
-function withTimeout<T>(p: Promise<T>, ms: number) {
-  return Promise.race([p, new Promise((resolve) => setTimeout(resolve, ms))]);
+function validar(v: Record<Campo, string>): FieldErrors<Campo> {
+  const e: FieldErrors<Campo> = {};
+  if (v.nome.trim().length < 2) e.nome = "Informe seu nome.";
+  if (!isValidBrPhone(v.whats)) e.whats = "Informe um telefone com DDD.";
+  if (!isValidEmail(v.email)) e.email = v.email.trim() ? "Confira o e-mail digitado." : "Informe seu e-mail.";
+  return e;
 }
 
 export default function LpObraPage() {
@@ -101,62 +85,112 @@ export default function LpObraPage() {
     noindex: true,
   });
 
-  const utmDefaults = { source: "qr", medium: "placa", campaign: "obra-placa" };
-
-  const [stage, setStage] = useState<"form" | "opening">("form");
+  // form → (envio) → opening (entregue: redireciona) | fallback (sem confirmação)
+  const [stage, setStage] = useState<"form" | "opening" | "fallback">("form");
   const [nome, setNome] = useState("");
   const [whats, setWhats] = useState("");
   const [email, setEmail] = useState("");
-  const [err, setErr] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [touched, setTouched] = useState<Partial<Record<Campo, boolean>>>({});
+  // WhatsApp com os dados do gate — saída quando a entrega não é confirmada.
+  const [waLeadUrl, setWaLeadUrl] = useState<string | null>(null);
+  const lastPayload = useRef<LeadPayload | null>(null);
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const { sending: submitting, outcome, submit, isMounted } = useLeadSubmit({ method: "lp_obra_gate" });
+
+  const errors = validar({ nome, whats, email });
+  const erro = (k: Campo) => (touched[k] ? errors[k] : undefined);
+  const touch = (k: Campo) => setTouched((t) => ({ ...t, [k]: true }));
+
+  // O formulário é trocado pelo aviso: o foco vai junto.
+  useEffect(() => {
+    if (stage !== "form") cardRef.current?.focus();
+  }, [stage]);
 
   const goPortal = () => {
-    window.location.href = WORKFLOW_DEMO_URL;
+    window.location.assign(WORKFLOW_DEMO_URL);
   };
 
-  const onGateSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (nome.trim().length < 2 || digits(whats).length < 10 || !EMAIL_RE.test(email.trim())) {
-      setErr("Preenche nome, telefone e e-mail pra ver o portal.");
-      return;
-    }
-    setErr(null);
-    setSubmitting(true);
-    const utm = readUtm(utmDefaults);
-    // Garante a gravação do lead antes de navegar (com teto de tempo).
-    await withTimeout(
-      sendLead({
-        name: nome.trim(),
-        whatsapp: digits(whats),
-        email: email.trim() || null,
-        location: bairro,
-        area_m2: null,
-        objetivo: null,
-        chaves: null,
-        planta: null,
-        message: "Lead via QR da placa de obra",
-        ...utm,
-      }),
-      3500,
-    );
-    trackEvent("generate_lead", { method: "lp_obra_gate", location: bairro || undefined });
-    trackEvent("open_portal_demo", { category: "lp_obra", label: utm.utm_campaign });
-    setSubmitting(false);
-    setStage("opening");
+  const continuarParaPortal = () => {
+    trackEvent("open_portal_demo", { category: "lp_obra", label: lastPayload.current?.utm_campaign });
     goPortal();
   };
 
-  const openWhats = () => {
-    const utm = readUtm(utmDefaults);
-    trackEvent("click_whatsapp", { category: "lp_obra_gate", label: utm.utm_campaign });
+  async function enviar(payload: LeadPayload) {
+    const result = await submit(payload, { params: { location: bairro || undefined } });
+    // null = envio já em andamento; página desmontada = o visitante saiu
+    // (voltar do navegador) e não deve ser arrastado para o portal.
+    if (!result || !isMounted()) return;
+    if (result === "delivered") {
+      trackEvent("open_portal_demo", { category: "lp_obra", label: payload.utm_campaign });
+      setStage("opening");
+      // A requisição já terminou: navegar agora não aborta a gravação do lead.
+      goPortal();
+    } else {
+      setStage("fallback");
+    }
+  }
+
+  const onGateSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (submitting) return;
+    const primeiro = firstInvalidField(CAMPOS, errors);
+    if (primeiro) {
+      setTouched(touchAll(CAMPOS));
+      focusField(CAMPO_ID[primeiro]);
+      return;
+    }
+
+    const attribution = collectLeadAttribution(UTM_PADRAO);
+    const payload: LeadPayload = {
+      name: nome.trim(),
+      whatsapp: normalizeBrPhoneDigits(whats),
+      email: email.trim() || null,
+      location: bairro,
+      area_m2: null,
+      objetivo: null,
+      chaves: null,
+      planta: null,
+      message: "Lead via QR da placa de obra",
+      ...attribution,
+      user_agent: browserUserAgent(),
+      form_path: "/o",
+    };
+    lastPayload.current = payload;
     const bairroTxt = bairro ? ` em ${bairro}` : "";
-    const msg = `[PLACA DE OBRA] Olá! Vi a placa da obra da Bewild${bairroTxt} e quero saber como transformar meu studio em renda. (origem: ${utm.utm_campaign})`;
-    window.open(`https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
+    setWaLeadUrl(
+      whatsappHref(
+        buildLeadMessage(
+          `[PLACA DE OBRA] Olá! Vi a placa da obra da Bewild${bairroTxt} e quero ver o portal de acompanhamento.`,
+          [
+            ["Nome", nome],
+            ["Telefone", whats],
+            ["E-mail", email],
+          ],
+          `(origem: ${attribution.utm_campaign})`,
+        ),
+      ),
+    );
+    void enviar(payload);
+  };
+
+  const reenviar = () => {
+    // Só em falha confirmada (nada gravado): reenviar não duplica.
+    if (lastPayload.current && !submitting) void enviar(lastPayload.current);
+  };
+
+  const openWhats = () => {
+    const campanha = collectLeadAttribution(UTM_PADRAO).utm_campaign;
+    trackEvent("click_whatsapp", { category: "lp_obra_gate", label: campanha });
+    const bairroTxt = bairro ? ` em ${bairro}` : "";
+    const msg = `[PLACA DE OBRA] Olá! Vi a placa da obra da Bewild${bairroTxt} e quero saber como transformar meu studio em renda. (origem: ${campanha})`;
+    openWhatsapp(whatsappHref(msg));
   };
 
   const scrollToGate = (e: React.MouseEvent) => {
     e.preventDefault();
-    document.getElementById("gate-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    document
+      .getElementById("gate-card")
+      ?.scrollIntoView({ behavior: scrollBehavior(), block: "center" });
   };
 
   const eyebrowText = bairro ? `Obra Bewild · ${bairro}` : "Obra Bewild · São Paulo";
@@ -199,35 +233,72 @@ export default function LpObraPage() {
 
 
           {stage === "form" ? (
-            <form id="gate-card" className="gate-card" onSubmit={onGateSubmit} noValidate>
+            <form id="gate-card" className="gate-card" onSubmit={onGateSubmit} noValidate aria-label="Acesso ao portal de acompanhamento">
               <div className="eye">Acesso ao portal de acompanhamento</div>
               <h3>Veja a obra por dentro</h3>
               <p>Deixe seu contato para abrir o portal navegável que nossos clientes usam para acompanhar a obra, do primeiro dia até a entrega.</p>
               <div className="fld">
-                <label htmlFor="g-nome">Nome <span className="req">*</span></label>
-                <input id="g-nome" type="text" autoComplete="name" value={nome} onChange={(e) => setNome(e.target.value)} required />
+                <label htmlFor="g-nome">Nome <span className="req" aria-hidden="true">*</span></label>
+                <input id="g-nome" type="text" autoComplete="name" value={nome} maxLength={120}
+                  onChange={(e) => setNome(e.target.value)} onBlur={() => touch("nome")} required
+                  {...fieldErrorProps("g-nome", erro("nome"))} />
+                {erro("nome") && <p className="fld-err" id={fieldErrorId("g-nome")}>{erro("nome")}</p>}
               </div>
               <div className="fld">
-                <label htmlFor="g-whats">Telefone / WhatsApp <span className="req">*</span></label>
-                <input id="g-whats" type="tel" inputMode="tel" placeholder="(11) 99999-9999" autoComplete="tel" value={whats} onChange={(e) => setWhats(maskPhone(e.target.value))} required />
+                <label htmlFor="g-whats">Telefone / WhatsApp <span className="req" aria-hidden="true">*</span></label>
+                <input id="g-whats" type="tel" inputMode="tel" placeholder="(11) 99999-9999" autoComplete="tel" value={whats}
+                  onChange={(e) => setWhats(formatBrPhone(e.target.value))} onBlur={() => touch("whats")} required
+                  {...fieldErrorProps("g-whats", erro("whats"))} />
+                {erro("whats") && <p className="fld-err" id={fieldErrorId("g-whats")}>{erro("whats")}</p>}
               </div>
               <div className="fld">
-                <label htmlFor="g-email">E-mail <span className="req">*</span></label>
-                <input id="g-email" type="email" inputMode="email" placeholder="voce@email.com" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <label htmlFor="g-email">E-mail <span className="req" aria-hidden="true">*</span></label>
+                <input id="g-email" type="email" inputMode="email" placeholder="voce@email.com" autoComplete="email" value={email} maxLength={254}
+                  onChange={(e) => setEmail(e.target.value)} onBlur={() => touch("email")} required
+                  {...fieldErrorProps("g-email", erro("email"))} />
+                {erro("email") && <p className="fld-err" id={fieldErrorId("g-email")}>{erro("email")}</p>}
               </div>
-              {err && <p className="fld-err">{err}</p>}
+              {/* Habilitado com campos pendentes: o clique mostra os erros e leva o foco ao primeiro. */}
               <button type="submit" className="btn btn-cyan submit" disabled={submitting}>
-                <span>{submitting ? "Abrindo…" : "Ver portal"}</span><span className="ar">→</span>
+                <span>{submitting ? "Abrindo…" : "Ver portal"}</span><span className="ar" aria-hidden="true">→</span>
               </button>
               <button type="button" className="skip" onClick={openWhats}>Prefiro falar no WhatsApp</button>
             </form>
-          ) : (
-            <div id="gate-card" className="gate-card">
+          ) : stage === "opening" ? (
+            <div id="gate-card" className="gate-card" tabIndex={-1} ref={cardRef}>
               <div className="eye">Portal de acompanhamento</div>
               <h3>Abrindo o portal…</h3>
               <p>Você está sendo levado pro portal navegável da Bewild. Se não abrir em alguns segundos, use o botão abaixo.</p>
               <button type="button" className="btn btn-cyan submit" onClick={goPortal}>
-                <span>Abrir o portal</span><span className="ar">→</span>
+                <span>Abrir o portal</span><span className="ar" aria-hidden="true">→</span>
+              </button>
+            </div>
+          ) : (
+            <div id="gate-card" className="gate-card" tabIndex={-1} ref={cardRef}>
+              <div className="eye">Portal de acompanhamento</div>
+              {outcome === "timedOut" ? (
+                <>
+                  <h3>Seu contato pode já ter chegado.</h3>
+                  <p>A confirmação demorou mais que o normal. Para garantir, mande seus dados pelo WhatsApp — a mensagem já vai pronta. Se já tivermos recebido, é só ignorar.</p>
+                </>
+              ) : (
+                <>
+                  <h3>Não conseguimos registrar seu contato.</h3>
+                  <p>Mande seus dados pelo WhatsApp — a mensagem já vai pronta — ou tente de novo. O portal continua liberado.</p>
+                </>
+              )}
+              {waLeadUrl && (
+                <a className="btn btn-cyan submit" href={waLeadUrl} target="_blank" rel="noopener noreferrer">
+                  <span>Enviar pelo WhatsApp</span><span className="ar" aria-hidden="true">→</span>
+                </a>
+              )}
+              {outcome === "failed" && (
+                <button type="button" className="skip" onClick={reenviar} disabled={submitting}>
+                  {submitting ? "Enviando…" : "Tentar enviar de novo"}
+                </button>
+              )}
+              <button type="button" className="skip" onClick={continuarParaPortal}>
+                {outcome === "failed" ? "Ver o portal mesmo assim" : "Continuar para o portal"}
               </button>
             </div>
           )}

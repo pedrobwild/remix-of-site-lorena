@@ -1,39 +1,74 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
-import { supabase } from "@/integrations/supabase/client";
-import { isLeadDelivered, timeoutAfter } from "@/lib/leadDelivery";
-import { trackEvent } from "@/lib/ga4";
+import type { LeadPayload } from "@/lib/leadDelivery";
+import {
+  buildLeadMessage,
+  fieldErrorId,
+  fieldErrorProps,
+  firstInvalidField,
+  isValidAreaM2,
+  isValidEmail,
+  parseAreaM2,
+  sanitizeAreaInput,
+  touchAll,
+  type FieldErrors,
+  type LeadObjetivo,
+} from "@/lib/leadForm";
+import { formatBrPhone, isValidBrPhone, normalizeBrPhoneDigits } from "@/lib/phone";
 import { useCtaClickTracking } from "@/lib/trackCta";
+import {
+  browserUserAgent,
+  collectLeadAttribution,
+  focusField,
+  useLeadSubmit,
+} from "@/lib/useLeadSubmit";
 import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./contato.css";
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const digits = (v: string) => v.replace(/\D+/g, "");
-
-function maskPhone(v: string) {
-  const d = digits(v).slice(0, 11);
-  if (d.length <= 2) return d;
-  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
-  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
-  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
-}
-
-const OBJETIVOS = [
-  "Morar",
-  "Short stay (curta temporada)",
-  "Locação tradicional",
-  "Uso misto",
-  "Ainda avaliando",
+/**
+ * O VALOR enviado é o canônico do CRM (o mesmo de /diagnostico); o rótulo é
+ * o texto amigável desta página. Antes o valor era o próprio rótulo
+ * ("Morar", "Short stay (curta temporada)") e o CRM não agrupava os leads.
+ */
+const OBJETIVOS: ReadonlyArray<{ value: LeadObjetivo; label: string }> = [
+  { value: "Moradia", label: "Morar" },
+  { value: "Short stay", label: "Short stay (curta temporada)" },
+  { value: "Locação tradicional", label: "Locação tradicional" },
+  { value: "Uso misto", label: "Uso misto" },
+  { value: "Ainda avaliando", label: "Ainda avaliando" },
 ];
+
+type Campo = "nome" | "whats" | "mail" | "bairro" | "area";
+const CAMPOS: readonly Campo[] = ["nome", "whats", "mail", "bairro", "area"];
+const CAMPO_ID: Record<Campo, string> = {
+  nome: "orc-nome",
+  whats: "orc-whats",
+  mail: "orc-mail",
+  bairro: "orc-bairro",
+  area: "orc-area",
+};
+
+function validar(v: Record<Campo, string>): FieldErrors<Campo> {
+  const e: FieldErrors<Campo> = {};
+  if (v.nome.trim().length < 2) e.nome = "Informe seu nome.";
+  if (!isValidBrPhone(v.whats)) e.whats = "Informe um número com DDD.";
+  if (v.mail.trim() && !isValidEmail(v.mail)) e.mail = "Confira o e-mail digitado.";
+  if (v.bairro.trim().length < 2) e.bairro = "Informe o bairro.";
+  if (v.area.trim() && !isValidAreaM2(parseAreaM2(v.area))) {
+    e.area = "Informe a metragem em números (ex.: 28 ou 32,5).";
+  }
+  return e;
+}
 
 /**
  * OrcamentoPage — /orcamento
  *
  * Página real de pedido de orçamento. O formulário entrega no mesmo canal
- * do /contato (edge function `notify-lead`), marcando a origem `/orcamento`.
+ * do /contato (edge function `notify-lead`, via `sendLead`), marcado com
+ * `form_path: "/orcamento"`; `landing_path` segue a atribuição da sessão.
  */
 export default function OrcamentoPage() {
   useCtaClickTracking("orcamento");
@@ -45,66 +80,66 @@ export default function OrcamentoPage() {
   const [mail, setMail] = useState("");
   const [bairro, setBairro] = useState("");
   const [area, setArea] = useState("");
-  const [objetivo, setObjetivo] = useState("");
+  const [objetivo, setObjetivo] = useState<LeadObjetivo | "">("");
   const [mensagem, setMensagem] = useState("");
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
-  const [enviando, setEnviando] = useState(false);
-  const [enviado, setEnviado] = useState(false);
-  const [erro, setErro] = useState<string | null>(null);
+  const [touched, setTouched] = useState<Partial<Record<Campo, boolean>>>({});
+  // WhatsApp com os dados do pedido — saída quando a entrega não é confirmada.
+  const [whatsLink, setWhatsLink] = useState<string | null>(null);
+  const resultadoRef = useRef<HTMLDivElement | null>(null);
+  const { sending: enviando, outcome, submit } = useLeadSubmit({ method: "orcamento_form" });
 
-  const nomeOk = nome.trim().length >= 2;
-  const whatsOk = digits(whats).length >= 10;
-  const mailOk = mail.trim() === "" || EMAIL_RE.test(mail.trim());
-  const bairroOk = bairro.trim().length >= 2;
-  const areaNum = Number(digits(area));
-  const areaOk = area.trim() === "" || (areaNum > 0 && areaNum < 2000);
-  const podeEnviar = nomeOk && whatsOk && mailOk && bairroOk && areaOk && !enviando;
+  const errors = validar({ nome, whats, mail, bairro, area });
+  const erro = (k: Campo) => (touched[k] ? errors[k] : undefined);
+  const touch = (k: Campo) => setTouched((t) => ({ ...t, [k]: true }));
+  const concluido = outcome === "delivered" || outcome === "timedOut";
 
-  async function enviar(e: React.FormEvent) {
+  useEffect(() => {
+    if (concluido) resultadoRef.current?.focus();
+  }, [concluido]);
+
+  function enviar(e: React.FormEvent) {
     e.preventDefault();
-    setTouched({ nome: true, whats: true, mail: true, bairro: true, area: true });
-    if (!podeEnviar) return;
-    setEnviando(true);
-    setErro(null);
+    if (enviando) return;
+    const primeiro = firstInvalidField(CAMPOS, errors);
+    if (primeiro) {
+      setTouched(touchAll(CAMPOS));
+      focusField(CAMPO_ID[primeiro]);
+      return;
+    }
 
-    const payload = {
+    setWhatsLink(
+      whatsappHref(
+        buildLeadMessage("Olá! Quero um orçamento de reforma para o meu apartamento.", [
+          ["Nome", nome],
+          ["WhatsApp", whats],
+          ["E-mail", mail],
+          ["Bairro", bairro],
+          ["Metragem (m²)", area],
+          ["Objetivo", objetivo],
+          ["Detalhes", mensagem],
+        ]),
+      ),
+    );
+
+    const payload: LeadPayload = {
       name: nome.trim(),
-      whatsapp: digits(whats),
+      whatsapp: normalizeBrPhoneDigits(whats),
       email: mail.trim() || null,
       message: mensagem.trim() || null,
       location: bairro.trim(),
-      area_m2: area.trim() ? areaNum : null,
+      // Decimal de verdade ("32,5" → 32.5); `fitLeadPayload` arredonda para a coluna INTEGER.
+      area_m2: area.trim() ? parseAreaM2(area) : null,
       objetivo: objetivo || null,
       chaves: null,
       planta: null,
-      utm_source: null,
-      utm_medium: null,
-      utm_campaign: null,
-      referrer: typeof document !== "undefined" ? document.referrer || null : null,
-      landing_path: "/orcamento",
-      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+      ...collectLeadAttribution(),
+      user_agent: browserUserAgent(),
+      form_path: "/orcamento",
     };
 
-    let delivered = false;
-    try {
-      const result = await Promise.race([
-        supabase.functions.invoke("notify-lead", { body: payload }),
-        timeoutAfter(8000),
-      ]);
-      delivered = isLeadDelivered(result);
-    } catch (err) {
-      console.error("[notify-lead] invoke failed", err);
-    }
-
-    setEnviando(false);
-    if (delivered) {
-      setEnviado(true);
-      trackEvent("generate_lead", { method: "orcamento_form" });
-    } else {
-      setErro(
-        "Não conseguimos enviar seu pedido agora. Tente novamente ou fale com a gente no WhatsApp.",
-      );
-    }
+    void submit(payload, {
+      params: { objetivo: objetivo || undefined, location: bairro.trim() || undefined },
+    });
   }
 
   useSeo({
@@ -124,6 +159,8 @@ export default function OrcamentoPage() {
         ]
       : undefined,
   });
+
+  const primeiroNome = nome.trim().split(" ")[0];
 
   return (
     <div className="bwa-contact-page">
@@ -166,10 +203,10 @@ export default function OrcamentoPage() {
               </p>
             </div>
 
-            {enviado ? (
-              <div className="bwa-contact-form-done" role="status">
+            {outcome === "delivered" ? (
+              <div className="bwa-contact-form-done" role="status" tabIndex={-1} ref={resultadoRef}>
                 <p className="bwa-label">Pedido recebido</p>
-                <h3>Obrigado, {nome.trim().split(" ")[0]}.</h3>
+                <h3>Obrigado, {primeiroNome}.</h3>
                 <p>
                   Nosso time analisa as informações do apartamento e responde pelo WhatsApp
                   informado. Se quiser adiantar, fale com a gente agora mesmo.
@@ -183,117 +220,159 @@ export default function OrcamentoPage() {
                   Falar no WhatsApp <span aria-hidden="true">→</span>
                 </a>
               </div>
+            ) : outcome === "timedOut" ? (
+              <div className="bwa-contact-form-done" role="status" tabIndex={-1} ref={resultadoRef}>
+                <p className="bwa-label">Envio sem confirmação</p>
+                <h3>Seu pedido pode já ter chegado, {primeiroNome}.</h3>
+                <p>
+                  A confirmação demorou mais que o normal. Para garantir, mande o pedido pelo
+                  WhatsApp — a mensagem já vai com os seus dados. Se já tivermos recebido, é só
+                  ignorar.
+                </p>
+                {whatsLink && (
+                  <a className="bwa-button" href={whatsLink} target="_blank" rel="noopener noreferrer">
+                    Enviar pelo WhatsApp <span aria-hidden="true">→</span>
+                  </a>
+                )}
+              </div>
             ) : (
-              <form className="bwa-contact-form" onSubmit={enviar} noValidate>
-                <label className="bwa-contact-field">
-                  <span>Nome</span>
+              <form className="bwa-contact-form" onSubmit={enviar} noValidate aria-label="Pedido de orçamento">
+                <div className="bwa-contact-field">
+                  <label htmlFor="orc-nome">Nome</label>
                   <input
+                    id="orc-nome"
                     type="text"
                     value={nome}
                     maxLength={120}
                     autoComplete="name"
+                    required
                     onChange={(e) => setNome(e.target.value)}
-                    onBlur={() => setTouched((t) => ({ ...t, nome: true }))}
-                    aria-invalid={touched.nome && !nomeOk}
+                    onBlur={() => touch("nome")}
+                    {...fieldErrorProps("orc-nome", erro("nome"))}
                   />
-                  {touched.nome && !nomeOk && <em>Informe seu nome.</em>}
-                </label>
+                  {erro("nome") && <em id={fieldErrorId("orc-nome")}>{erro("nome")}</em>}
+                </div>
 
-                <label className="bwa-contact-field">
-                  <span>WhatsApp</span>
+                <div className="bwa-contact-field">
+                  <label htmlFor="orc-whats">WhatsApp</label>
                   <input
+                    id="orc-whats"
                     type="tel"
                     inputMode="tel"
                     value={whats}
                     autoComplete="tel"
                     placeholder="(11) 90000-0000"
-                    onChange={(e) => setWhats(maskPhone(e.target.value))}
-                    onBlur={() => setTouched((t) => ({ ...t, whats: true }))}
-                    aria-invalid={touched.whats && !whatsOk}
+                    required
+                    onChange={(e) => setWhats(formatBrPhone(e.target.value))}
+                    onBlur={() => touch("whats")}
+                    {...fieldErrorProps("orc-whats", erro("whats"))}
                   />
-                  {touched.whats && !whatsOk && <em>Informe um número com DDD.</em>}
-                </label>
+                  {erro("whats") && <em id={fieldErrorId("orc-whats")}>{erro("whats")}</em>}
+                </div>
 
-                <label className="bwa-contact-field">
-                  <span>E-mail (opcional)</span>
+                <div className="bwa-contact-field">
+                  <label htmlFor="orc-mail">E-mail (opcional)</label>
                   <input
+                    id="orc-mail"
                     type="email"
                     value={mail}
                     maxLength={180}
                     autoComplete="email"
                     onChange={(e) => setMail(e.target.value)}
-                    onBlur={() => setTouched((t) => ({ ...t, mail: true }))}
-                    aria-invalid={touched.mail && !mailOk}
+                    onBlur={() => touch("mail")}
+                    {...fieldErrorProps("orc-mail", erro("mail"))}
                   />
-                  {touched.mail && !mailOk && <em>Confira o e-mail digitado.</em>}
-                </label>
+                  {erro("mail") && <em id={fieldErrorId("orc-mail")}>{erro("mail")}</em>}
+                </div>
 
-                <label className="bwa-contact-field">
-                  <span>Bairro do apartamento</span>
+                <div className="bwa-contact-field">
+                  <label htmlFor="orc-bairro">Bairro do apartamento</label>
                   <input
+                    id="orc-bairro"
                     type="text"
                     value={bairro}
                     maxLength={120}
                     placeholder="Vila Olímpia, São Paulo-SP"
+                    required
                     onChange={(e) => setBairro(e.target.value)}
-                    onBlur={() => setTouched((t) => ({ ...t, bairro: true }))}
-                    aria-invalid={touched.bairro && !bairroOk}
+                    onBlur={() => touch("bairro")}
+                    {...fieldErrorProps("orc-bairro", erro("bairro"))}
                   />
-                  {touched.bairro && !bairroOk && <em>Informe o bairro.</em>}
-                </label>
+                  {erro("bairro") && <em id={fieldErrorId("orc-bairro")}>{erro("bairro")}</em>}
+                </div>
 
-                <label className="bwa-contact-field">
-                  <span>Metragem (m²)</span>
+                <div className="bwa-contact-field">
+                  <label htmlFor="orc-area">Metragem (m²)</label>
                   <input
+                    id="orc-area"
                     type="text"
-                    inputMode="numeric"
+                    inputMode="decimal"
                     value={area}
-                    maxLength={5}
+                    maxLength={7}
                     placeholder="28"
-                    onChange={(e) => setArea(e.target.value.replace(/\D+/g, ""))}
-                    onBlur={() => setTouched((t) => ({ ...t, area: true }))}
-                    aria-invalid={touched.area && !areaOk}
+                    onChange={(e) => setArea(sanitizeAreaInput(e.target.value))}
+                    onBlur={() => touch("area")}
+                    {...fieldErrorProps("orc-area", erro("area"))}
                   />
-                  {touched.area && !areaOk && <em>Informe a metragem em números.</em>}
-                </label>
+                  {erro("area") && <em id={fieldErrorId("orc-area")}>{erro("area")}</em>}
+                </div>
 
-                <label className="bwa-contact-field">
-                  <span>Objetivo da reforma</span>
-                  <select value={objetivo} onChange={(e) => setObjetivo(e.target.value)}>
+                <div className="bwa-contact-field">
+                  <label htmlFor="orc-objetivo">Objetivo da reforma</label>
+                  <select
+                    id="orc-objetivo"
+                    value={objetivo}
+                    onChange={(e) => setObjetivo(e.target.value as LeadObjetivo | "")}
+                  >
                     <option value="">Selecione</option>
                     {OBJETIVOS.map((o) => (
-                      <option key={o} value={o}>
-                        {o}
+                      <option key={o.value} value={o.value}>
+                        {o.label}
                       </option>
                     ))}
                   </select>
-                </label>
+                </div>
 
-                <label className="bwa-contact-field bwa-contact-field--full">
-                  <span>Detalhes (opcional)</span>
+                <div className="bwa-contact-field bwa-contact-field--full">
+                  <label htmlFor="orc-mensagem">Detalhes (opcional)</label>
                   <textarea
+                    id="orc-mensagem"
                     rows={4}
                     value={mensagem}
                     maxLength={1200}
                     placeholder="Conte o estado do imóvel, prazo desejado e o que não pode faltar."
                     onChange={(e) => setMensagem(e.target.value)}
                   />
-                </label>
+                </div>
 
-                {erro && (
-                  <p className="bwa-contact-form-error" role="alert">
-                    {erro}
-                  </p>
+                {outcome === "failed" && !enviando && (
+                  <div className="bwa-contact-form-error" role="alert">
+                    <p>
+                      Não conseguimos enviar seu pedido agora. Tente de novo ou mande pelo WhatsApp —
+                      a mensagem já vai com os seus dados.
+                    </p>
+                    {whatsLink && (
+                      <a
+                        className="bwa-contact-link"
+                        href={whatsLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Enviar pelo WhatsApp <span aria-hidden="true">↗</span>
+                      </a>
+                    )}
+                  </div>
                 )}
 
                 <div className="bwa-contact-form-actions">
+                  {/* Habilitado com campos pendentes: o clique mostra os erros e leva o foco ao primeiro. */}
                   <button
                     className="bwa-button"
                     type="submit"
                     data-cta="orcamento-enviar"
-                    disabled={!podeEnviar}
+                    disabled={enviando}
                   >
-                    {enviando ? "Enviando…" : "Pedir orçamento"}
+                    {enviando ? "Enviando…" : outcome === "failed" ? "Tentar de novo" : "Pedir orçamento"}
                     <span aria-hidden="true">→</span>
                   </button>
                   <p>Seus dados são usados apenas para responder ao seu pedido de orçamento.</p>

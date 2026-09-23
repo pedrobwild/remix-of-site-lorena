@@ -3,13 +3,32 @@ import { useSeo, breadcrumbJsonLd, organizationJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
-import { CONTACT } from "../components/landing/content";
-import { supabase } from "@/integrations/supabase/client";
+import { whatsappHref } from "../components/landing/content";
 import { trackEvent } from "@/lib/ga4";
 import { useCtaClickTracking } from "@/lib/trackCta";
-import { isLeadDelivered, timeoutAfter } from "@/lib/leadDelivery";
-import { resolveLeadAttribution } from "@/lib/campaignParams";
-import { readPersistedAttribution } from "@/lib/analytics";
+import type { LeadPayload } from "@/lib/leadDelivery";
+import { formatBrPhone, isValidBrPhone, normalizeBrPhoneDigits } from "@/lib/phone";
+import {
+  LEAD_CHAVES,
+  LEAD_OBJETIVOS,
+  buildLeadMessage,
+  fieldErrorId,
+  fieldErrorProps,
+  firstInvalidField,
+  isValidAreaM2,
+  isValidEmail,
+  parseAreaM2,
+  sanitizeAreaInput,
+  touchAll,
+  type FieldErrors,
+} from "@/lib/leadForm";
+import {
+  browserUserAgent,
+  collectLeadAttribution,
+  focusField,
+  openWhatsapp,
+  useLeadSubmit,
+} from "@/lib/useLeadSubmit";
 import depoimentoVideo from "@/assets/testimonials/depoimento-cliente.mp4.asset.json";
 import diagCssUrl from "./diagnostico-bwa.css?url";
 
@@ -17,7 +36,7 @@ import diagCssUrl from "./diagnostico-bwa.css?url";
  * DiagnosticoPage — /diagnostico no visual .bwa aprovado em
  * public/mockups/diag-bwa-aprovado.html (fonte da verdade da
  * APRESENTAÇÃO + COPY). A MECÂNICA do formulário é a testada:
- * names/ids/types, maskPhone, validações, notify-lead (15 chaves),
+ * names/ids/types, máscara de telefone, validações, notify-lead (via sendLead),
  * GA4 (generate_lead, play_depoimento), WhatsApp, useSeo e
  * jsonLd — TUDO PRESERVADO.
  *
@@ -62,19 +81,10 @@ function mountDiagStylesheet(): () => void {
   };
 }
 
-function maskPhone(v: string): string {
-  const d = v.replace(/\D/g, "").slice(0, 11);
-  if (d.length <= 2) return d.length ? `(${d}` : "";
-  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
-  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
-  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
-}
-const digits = (v: string) => v.replace(/\D/g, "");
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-/* VALORES verbatim do mockup (dados do CRM, inalterados) */
-const CHAVES = ["Sim", "Ainda não", "Estou comprando"];
-const OBJETIVOS = ["Short stay", "Locação tradicional", "Uso misto", "Moradia", "Ainda avaliando"];
+/* VALORES verbatim do mockup (dados do CRM, inalterados) — a lista canônica
+   vive em leadForm.ts para /orcamento e /p mandarem os mesmos valores. */
+const CHAVES = LEAD_CHAVES;
+const OBJETIVOS = LEAD_OBJETIVOS;
 const OBJETIVO_QUERY_MAP: Record<string, string> = {
   "short-stay": "Short stay",
   moradia: "Moradia",
@@ -99,6 +109,31 @@ const EMPTY_FORM: Form = {
   nome: "", whats: "", email: "", local: "", metragem: "", objetivo: "", chaves: "", planta: "", mensagem: "",
   moraSp: "", origem: "",
 };
+
+/* Campos validados, na ordem visual (o foco vai para o primeiro inválido). */
+type Campo = "nome" | "whats" | "email" | "local" | "chaves" | "objetivo" | "metragem" | "moraSp" | "origem";
+const CAMPOS: readonly Campo[] = ["nome", "whats", "email", "local", "chaves", "objetivo", "metragem", "moraSp", "origem"];
+const CAMPO_ID: Record<Campo, string> = {
+  nome: "dg-nome", whats: "dg-whats", email: "dg-email", local: "dg-local", chaves: "dg-chaves",
+  objetivo: "dg-objetivo", metragem: "dg-m2", moraSp: "dg-morasp", origem: "dg-origem",
+};
+
+function validar(f: Form): FieldErrors<Campo> {
+  const e: FieldErrors<Campo> = {};
+  if (f.nome.trim().length < 2) e.nome = "Informe seu nome.";
+  if (!isValidBrPhone(f.whats)) e.whats = "Informe um WhatsApp com DDD.";
+  if (f.email.trim() && !isValidEmail(f.email)) e.email = "E-mail inválido.";
+  if (f.local.trim().length < 2) e.local = "Informe o bairro do imóvel.";
+  if (!f.chaves) e.chaves = "Selecione uma opção.";
+  if (!f.objetivo) e.objetivo = "Selecione o objetivo.";
+  // Metragem aproximada é obrigatória: é ela que define a faixa de investimento.
+  if (!isValidAreaM2(parseAreaM2(f.metragem))) {
+    e.metragem = f.metragem.trim() ? "Confira a metragem (em m²)." : "Informe a metragem aproximada.";
+  }
+  if (!f.moraSp) e.moraSp = "Selecione uma opção.";
+  if (!f.origem) e.origem = "Selecione uma opção.";
+  return e;
+}
 
 export default function DiagnosticoPage() {
   useCtaClickTracking("diagnostico");
@@ -142,9 +177,7 @@ export default function DiagnosticoPage() {
     };
   }, []);
 
-  const waUrl = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
-    "Olá, prefiro falar com um especialista sobre o orçamento."
-  )}`;
+  const waUrl = whatsappHref("Olá, prefiro falar com um especialista sobre o orçamento.");
 
   return (
     <>
@@ -183,7 +216,7 @@ export default function DiagnosticoPage() {
               </div>
             </div>
 
-            <DiagnosticoForm waUrl={waUrl} />
+            <DiagnosticoForm />
           </div>
         </section>
 
@@ -283,14 +316,16 @@ export default function DiagnosticoPage() {
   );
 }
 
-function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
+function DiagnosticoForm() {
   const [f, setF] = useState<Form>(EMPTY_FORM);
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
-  const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
-  // true quando o WhatsApp abriu mas nenhum destino (banco/Slack/CRM) confirmou.
-  const [deliveryFailed, setDeliveryFailed] = useState(false);
+  const [touched, setTouched] = useState<Partial<Record<Campo, boolean>>>({});
   const [showMore, setShowMore] = useState(false);
+  // Link do WhatsApp COM os dados do lead — é o fallback quando a entrega
+  // não é confirmada (antes o fallback abria uma mensagem genérica).
+  const [waLeadUrl, setWaLeadUrl] = useState<string | null>(null);
+  const lastPayload = useRef<LeadPayload | null>(null);
+  const successRef = useRef<HTMLDivElement | null>(null);
+  const { sending, outcome, submit, isMounted } = useLeadSubmit({ method: "diagnostico_form" });
 
   useEffect(() => {
     const objetivoParam = new URLSearchParams(window.location.search).get("objetivo");
@@ -300,127 +335,109 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
     setTouched((previous) => ({ ...previous, objetivo: true }));
   }, []);
 
+  // O formulário some quando há resultado: o foco vai para o aviso, senão
+  // ficaria num botão escondido (e o leitor de tela não saberia do envio).
+  useEffect(() => {
+    if (outcome) successRef.current?.focus();
+  }, [outcome]);
+
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
+  const touch = (k: Campo) => setTouched((t) => ({ ...t, [k]: true }));
 
-  const nomeOk = f.nome.trim().length >= 2;
-  const whatsOk = digits(f.whats).length >= 10;
-  const emailFilled = f.email.trim().length > 0;
-  const emailOk = EMAIL_RE.test(f.email.trim());
-  const emailValid = !emailFilled || emailOk;
-  const localOk = f.local.trim().length >= 2;
-  const chavesOk = f.chaves.length > 0;
-  const objetivoOk = f.objetivo.length > 0;
-  // Metragem aproximada é obrigatória: é ela que define a faixa de investimento.
-  const metragemOk = digits(f.metragem).length > 0;
-  const moraSpOk = f.moraSp.length > 0;
-  const origemOk = f.origem.length > 0;
-  const canSubmit =
-    nomeOk && whatsOk && localOk && chavesOk && objetivoOk && metragemOk && moraSpOk && origemOk && emailValid;
+  const errors = validar(f);
+  const erro = (k: Campo) => (touched[k] ? errors[k] : undefined);
 
-  const messageText = useMemo(() => {
-    const lines: string[] = ["Olá! Quero um orçamento para o meu apartamento."];
-    const add = (label: string, val: string) => { const v = val.trim(); if (v) lines.push(`${label}: ${v}`); };
-    add("Nome", f.nome);
-    add("WhatsApp", f.whats);
-    add("E-mail", f.email);
-    add("Bairro", f.local);
-    add("Chaves", f.chaves);
-    add("Objetivo", f.objetivo);
-    add("Metragem (m²)", f.metragem);
-    add("Mora em SP capital", f.moraSp);
-    add("Como conheceu", f.origem);
-    add("Planta", f.planta);
-    add("Mensagem", f.mensagem);
-    return lines.join("\n");
-  }, [f]);
+  const messageText = useMemo(
+    () =>
+      buildLeadMessage("Olá! Quero um orçamento para o meu apartamento.", [
+        ["Nome", f.nome],
+        ["WhatsApp", f.whats],
+        ["E-mail", f.email],
+        ["Bairro", f.local],
+        ["Chaves", f.chaves],
+        ["Objetivo", f.objetivo],
+        ["Metragem (m²)", f.metragem],
+        ["Mora em SP capital", f.moraSp],
+        ["Como conheceu", f.origem],
+        ["Planta", f.planta],
+        ["Mensagem", f.mensagem],
+      ]),
+    [f],
+  );
 
-  async function onSubmit(e: React.FormEvent) {
+  async function enviar(payload: LeadPayload, abrirWhatsapp?: string) {
+    const result = await submit(payload, {
+      beforeSend: abrirWhatsapp ? () => openWhatsapp(abrirWhatsapp) : undefined,
+      handedToWhatsapp: true,
+      params: {
+        objetivo: payload.objetivo || undefined,
+        chaves: payload.chaves || undefined,
+        planta: payload.planta || undefined,
+        location: payload.location || undefined,
+        lead_source: payload.lead_source || undefined,
+        lives_in_sp: f.moraSp || undefined,
+      },
+    });
+    // Só limpa o formulário quando o lead chegou: em falha ou timeout os
+    // dados continuam no estado para o reenvio e para o link do WhatsApp.
+    if (result === "delivered" && isMounted()) {
+      setF(EMPTY_FORM);
+      setTouched({});
+      setShowMore(false);
+    }
+  }
+
+  function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!canSubmit || submitting) {
-      setTouched({ nome: true, whats: true, email: true, local: true, chaves: true, objetivo: true, metragem: true, moraSp: true, origem: true });
+    if (sending) return;
+    const primeiro = firstInvalidField(CAMPOS, errors);
+    if (primeiro) {
+      setTouched(touchAll(CAMPOS));
+      focusField(CAMPO_ID[primeiro]);
       return;
     }
-    setSubmitting(true);
 
     // Origem: URL atual → last-touch da sessão → first-touch do visitante.
     // (Antes lia só a URL atual, e quem chegava com UTM na home perdia a
     // origem ao navegar para /diagnostico — 22 de 38 leads sem UTM.)
-    const persisted = readPersistedAttribution();
-    const attribution = resolveLeadAttribution({
-      search: typeof window !== "undefined" ? window.location.search : "",
-      sessionUtm: persisted.sessionUtm,
-      firstUtm: persisted.firstUtm,
-      referrer: typeof document !== "undefined" ? document.referrer : "",
-      referrerHost: persisted.referrerHost,
-      landingPath: persisted.landingPath,
-      currentPath: typeof window !== "undefined" ? window.location.pathname : "",
-    });
-    const areaDigits = f.metragem ? digits(f.metragem) : "";
-    const areaNum = areaDigits ? Number(areaDigits) : null;
-    const leadPayload = {
+    const attribution = collectLeadAttribution();
+    const payload: LeadPayload = {
       name: f.nome.trim(),
-      whatsapp: digits(f.whats),
+      whatsapp: normalizeBrPhoneDigits(f.whats),
       email: f.email.trim() || null,
       location: f.local.trim() || null,
-      area_m2: Number.isFinite(areaNum as number) ? (areaNum as number) : null,
+      // Decimal de verdade ("32,5" → 32.5); `fitLeadPayload` arredonda para a coluna INTEGER.
+      area_m2: parseAreaM2(f.metragem),
       objetivo: f.objetivo || null,
       chaves: f.chaves || null,
       planta: f.planta || null,
       message: f.mensagem.trim() || null,
-      utm_source: attribution.utm_source,
-      utm_medium: attribution.utm_medium,
-      utm_campaign: attribution.utm_campaign,
-      referrer: attribution.referrer,
-      landing_path: attribution.landing_path,
-      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+      ...attribution,
+      user_agent: browserUserAgent(),
       // Qualificação e atribuição declaradas pelo lead (gravadas em `leads` e enviadas ao CRM).
       lives_in_sp: f.moraSp ? f.moraSp === "Sim" : null,
       lead_source: f.origem || null,
+      form_path: "/diagnostico",
     };
+    lastPayload.current = payload;
 
-    // WhatsApp abre ANTES de qualquer await (senão o navegador bloqueia o popup).
-    const url = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(messageText)}`;
-    window.open(url, "_blank", "noopener,noreferrer");
+    // WhatsApp abre ANTES de qualquer await (senão o navegador bloqueia o
+    // popup); `sendLead` espera a confirmação real (teto de 8 s).
+    const url = whatsappHref(messageText);
+    setWaLeadUrl(url);
+    void enviar(payload, url);
+  }
 
-    // Espera a edge function (com teto de 8 s) antes de dizer "recebemos".
-    // `notify-lead` responde 200 mesmo quando banco/Slack/CRM falharam, então
-    // a confirmação vem de `isLeadDelivered`, não do status HTTP.
-    let delivered = false;
-    try {
-      const result = await Promise.race([
-        supabase.functions.invoke("notify-lead", { body: leadPayload }),
-        timeoutAfter(8000),
-      ]);
-      delivered = isLeadDelivered(result);
-      if (!delivered) console.error("[notify-lead] lead não confirmado", result);
-    } catch (err) {
-      console.error("[notify-lead] invoke failed", err);
-    }
-
-    trackEvent("generate_lead", {
-      method: "diagnostico_form",
-      objetivo: f.objetivo || undefined,
-      chaves: f.chaves || undefined,
-      planta: f.planta || undefined,
-      location: f.local || undefined,
-      lead_source: f.origem || undefined,
-      lives_in_sp: f.moraSp || undefined,
-      delivery: delivered ? "confirmed" : "whatsapp_fallback",
-    });
-
-    setF(EMPTY_FORM);
-    setTouched({});
-    setShowMore(false);
-    setDeliveryFailed(!delivered);
-    setSuccess(true);
-    setSubmitting(false);
+  function reenviar() {
+    // Só em falha confirmada (nada gravado): o WhatsApp já foi aberto uma vez.
+    if (lastPayload.current && !sending) void enviar(lastPayload.current);
   }
 
   const badCls = (bad: boolean) => (bad ? " dg-bad" : "");
 
   return (
     <form
-      className={`dg-ficha${success ? " dg-sent" : ""}`}
+      className={`dg-ficha${outcome ? " dg-sent" : ""}`}
       id="dg-ficha"
       data-ficha
       noValidate
@@ -432,24 +449,48 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
         <span className="dg-mono">BW—002</span>
       </div>
 
-      <div className="dg-success" role="status" data-delivery={deliveryFailed ? "fallback" : "confirmed"}>
-        {deliveryFailed ? (
-          <>
-            <strong>Abrimos o WhatsApp com seus dados.</strong>
-            <span>
-              Não conseguimos registrar os dados automaticamente. Envie a mensagem que já está
-              pronta no WhatsApp para garantir o atendimento — ou{" "}
-              <a className="dg-textlink" href={_waUrl} target="_blank" rel="noopener noreferrer">
-                abra o WhatsApp de novo
-              </a>
-              .
-            </span>
-          </>
-        ) : (
+      <div
+        className="dg-success"
+        role="status"
+        tabIndex={-1}
+        ref={successRef}
+        data-delivery={outcome === "delivered" ? "confirmed" : outcome === "timedOut" ? "timeout" : "fallback"}
+      >
+        {outcome === "delivered" && (
           <>
             <strong>Recebemos seus dados.</strong>
             <span>Nosso time vai falar com você no WhatsApp.</span>
           </>
+        )}
+        {outcome === "failed" && (
+          <>
+            <strong>Abrimos o WhatsApp com seus dados.</strong>
+            <span>
+              Não conseguimos registrar os dados pelo site. Envie a mensagem que já está pronta no
+              WhatsApp para garantir o atendimento.
+            </span>
+          </>
+        )}
+        {outcome === "timedOut" && (
+          <>
+            <strong>Seus dados podem já ter chegado.</strong>
+            <span>
+              A confirmação demorou mais que o normal. Para garantir, envie a mensagem que já está
+              pronta no WhatsApp — se já tivermos recebido, é só ignorar.
+            </span>
+          </>
+        )}
+        {outcome && outcome !== "delivered" && waLeadUrl && (
+          <div className="dg-success-actions">
+            <a className="dg-textlink" href={waLeadUrl} target="_blank" rel="noopener noreferrer">
+              Abrir o WhatsApp de novo
+            </a>
+            {outcome === "failed" && (
+              <button type="button" className="dg-textlink" onClick={reenviar} disabled={sending}>
+                {sending ? "Enviando…" : "Tentar enviar de novo"}
+              </button>
+            )}
+          </div>
         )}
       </div>
 
@@ -458,13 +499,14 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
         <input
           id="dg-nome" name="nome" type="text" placeholder="Como podemos te chamar"
           autoComplete="name" required
-          className={badCls(!!touched.nome && !nomeOk).trim()}
+          className={badCls(!!erro("nome")).trim()}
+          {...fieldErrorProps("dg-nome", erro("nome"))}
           value={f.nome}
           onChange={(e) => set("nome", e.target.value)}
-          onBlur={() => setTouched((t) => ({ ...t, nome: true }))}
+          onBlur={() => touch("nome")}
           maxLength={120}
         />
-        {touched.nome && !nomeOk && <span className="dg-field-error">Informe seu nome.</span>}
+        {erro("nome") && <span className="dg-field-error" id={fieldErrorId("dg-nome")}>{erro("nome")}</span>}
       </div>
 
       <div className="dg-row dg-hidepós">
@@ -473,25 +515,27 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
           <input
             id="dg-whats" name="whats" type="tel" inputMode="tel" placeholder="(11) 99999-9999"
             autoComplete="tel" required
-            className={badCls(!!touched.whats && !whatsOk).trim()}
+            className={badCls(!!erro("whats")).trim()}
+            {...fieldErrorProps("dg-whats", erro("whats"))}
             value={f.whats}
-            onChange={(e) => set("whats", maskPhone(e.target.value))}
-            onBlur={() => setTouched((t) => ({ ...t, whats: true }))}
+            onChange={(e) => set("whats", formatBrPhone(e.target.value))}
+            onBlur={() => touch("whats")}
           />
-          {touched.whats && !whatsOk && <span className="dg-field-error">Informe um WhatsApp com DDD.</span>}
+          {erro("whats") && <span className="dg-field-error" id={fieldErrorId("dg-whats")}>{erro("whats")}</span>}
         </div>
         <div className="dg-field">
           <label htmlFor="dg-email">E-mail <span className="dg-opt">(opcional)</span></label>
           <input
             id="dg-email" name="email" type="email" placeholder="voce@email.com"
             autoComplete="email"
-            className={badCls(!!touched.email && emailFilled && !emailOk).trim()}
+            className={badCls(!!erro("email")).trim()}
+            {...fieldErrorProps("dg-email", erro("email"))}
             value={f.email}
             onChange={(e) => set("email", e.target.value)}
-            onBlur={() => setTouched((t) => ({ ...t, email: true }))}
-            maxLength={255}
+            onBlur={() => touch("email")}
+            maxLength={254}
           />
-          {touched.email && emailFilled && !emailOk && <span className="dg-field-error">E-mail inválido.</span>}
+          {erro("email") && <span className="dg-field-error" id={fieldErrorId("dg-email")}>{erro("email")}</span>}
         </div>
       </div>
 
@@ -499,64 +543,66 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
         <label htmlFor="dg-local">Bairro do imóvel <span aria-hidden="true">*</span></label>
         <input
           id="dg-local" name="local" type="text" placeholder="Ex: Pinheiros, Itaim, Butantã" required
-          className={badCls(!!touched.local && !localOk).trim()}
+          className={badCls(!!erro("local")).trim()}
+          {...fieldErrorProps("dg-local", erro("local"))}
           value={f.local}
           onChange={(e) => set("local", e.target.value)}
-          onBlur={() => setTouched((t) => ({ ...t, local: true }))}
+          onBlur={() => touch("local")}
           maxLength={120}
         />
-        {touched.local && !localOk && <span className="dg-field-error">Informe o bairro do imóvel.</span>}
+        {erro("local") && <span className="dg-field-error" id={fieldErrorId("dg-local")}>{erro("local")}</span>}
       </div>
 
-      <fieldset className="dg-field dg-hidepós">
+      <fieldset className="dg-field dg-hidepós" id="dg-chaves" aria-describedby={erro("chaves") ? fieldErrorId("dg-chaves") : undefined}>
         <legend>Já tem as chaves do imóvel? <span aria-hidden="true">*</span></legend>
         <ChipRow
           options={CHAVES} value={f.chaves}
-          onChange={(v) => { set("chaves", v); setTouched((t) => ({ ...t, chaves: true })); }}
+          onChange={(v) => { set("chaves", v); touch("chaves"); }}
         />
-        {touched.chaves && !chavesOk && <span className="dg-field-error">Selecione uma opção.</span>}
+        {erro("chaves") && <span className="dg-field-error" id={fieldErrorId("dg-chaves")}>{erro("chaves")}</span>}
       </fieldset>
 
-      <fieldset className="dg-field dg-hidepós">
+      <fieldset className="dg-field dg-hidepós" id="dg-objetivo" aria-describedby={erro("objetivo") ? fieldErrorId("dg-objetivo") : undefined}>
         <legend>Objetivo <span aria-hidden="true">*</span></legend>
         <ChipRow
           options={OBJETIVOS} labels={OBJETIVO_LABELS} value={f.objetivo}
-          onChange={(v) => { set("objetivo", v); setTouched((t) => ({ ...t, objetivo: true })); }}
+          onChange={(v) => { set("objetivo", v); touch("objetivo"); }}
         />
-        {touched.objetivo && !objetivoOk && <span className="dg-field-error">Selecione o objetivo.</span>}
+        {erro("objetivo") && <span className="dg-field-error" id={fieldErrorId("dg-objetivo")}>{erro("objetivo")}</span>}
       </fieldset>
 
       <div className="dg-field dg-hidepós">
         <label htmlFor="dg-m2">Metragem (m²) <span aria-hidden="true">*</span> <span className="dg-opt">(aproximada serve)</span></label>
         <input
-          id="dg-m2" name="metragem" type="text" inputMode="numeric" placeholder="32" required
-          className={badCls(!!touched.metragem && !metragemOk).trim()}
+          id="dg-m2" name="metragem" type="text" inputMode="decimal" placeholder="32" required
+          className={badCls(!!erro("metragem")).trim()}
+          {...fieldErrorProps("dg-m2", erro("metragem"))}
           value={f.metragem}
-          onChange={(e) => set("metragem", e.target.value.replace(/[^\d.,]/g, "").slice(0, 6))}
-          onBlur={() => setTouched((t) => ({ ...t, metragem: true }))}
+          onChange={(e) => set("metragem", sanitizeAreaInput(e.target.value))}
+          onBlur={() => touch("metragem")}
         />
-        {touched.metragem && !metragemOk && <span className="dg-field-error">Informe a metragem aproximada.</span>}
+        {erro("metragem") && <span className="dg-field-error" id={fieldErrorId("dg-m2")}>{erro("metragem")}</span>}
       </div>
 
-      <fieldset className="dg-field dg-hidepós">
+      <fieldset className="dg-field dg-hidepós" id="dg-morasp" aria-describedby={erro("moraSp") ? fieldErrorId("dg-morasp") : undefined}>
         <legend>Você mora em São Paulo capital? <span aria-hidden="true">*</span></legend>
         <ChipRow
           options={MORA_SP} value={f.moraSp}
-          onChange={(v) => { set("moraSp", v); setTouched((t) => ({ ...t, moraSp: true })); }}
+          onChange={(v) => { set("moraSp", v); touch("moraSp"); }}
         />
         {f.moraSp === "Não" && (
           <span className="dg-mono">Sem problema: a Bewild faz a vistoria por procuração, liga energia e internet, e você acompanha pelo Bwild Workflow.</span>
         )}
-        {touched.moraSp && !moraSpOk && <span className="dg-field-error">Selecione uma opção.</span>}
+        {erro("moraSp") && <span className="dg-field-error" id={fieldErrorId("dg-morasp")}>{erro("moraSp")}</span>}
       </fieldset>
 
-      <fieldset className="dg-field dg-hidepós">
+      <fieldset className="dg-field dg-hidepós" id="dg-origem" aria-describedby={erro("origem") ? fieldErrorId("dg-origem") : undefined}>
         <legend>Como conheceu a Bewild? <span aria-hidden="true">*</span></legend>
         <ChipRow
           options={ORIGENS} value={f.origem}
-          onChange={(v) => { set("origem", v); setTouched((t) => ({ ...t, origem: true })); }}
+          onChange={(v) => { set("origem", v); touch("origem"); }}
         />
-        {touched.origem && !origemOk && <span className="dg-field-error">Selecione uma opção.</span>}
+        {erro("origem") && <span className="dg-field-error" id={fieldErrorId("dg-origem")}>{erro("origem")}</span>}
       </fieldset>
 
       <button
@@ -583,8 +629,10 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
         </div>
       )}
 
-      <button type="submit" className="dg-button dg-hidepós" data-cta="diagnostico-solicitar-orcamento" disabled={!canSubmit || submitting}>
-        {submitting ? "Enviando…" : "Solicitar orçamento"} <span aria-hidden="true">→</span>
+      {/* Habilitado mesmo com campos pendentes: o clique mostra TODOS os erros
+          e leva o foco ao primeiro. Desabilitado só durante o envio. */}
+      <button type="submit" className="dg-button dg-hidepós" data-cta="diagnostico-solicitar-orcamento" disabled={sending}>
+        {sending ? "Enviando…" : "Solicitar orçamento"} <span aria-hidden="true">→</span>
       </button>
       <p className="dg-ficha-note dg-hidepós">Sem compromisso · a gente só te chama no WhatsApp</p>
     </form>
@@ -592,7 +640,7 @@ function DiagnosticoForm({ waUrl: _waUrl }: { waUrl: string }) {
 }
 
 function ChipRow({ options, value, onChange, labels }: {
-  options: string[]; value: string; onChange: (v: string) => void; labels?: Record<string, string>;
+  options: readonly string[]; value: string; onChange: (v: string) => void; labels?: Record<string, string>;
 }) {
   return (
     <div className="dg-chips" data-chips>
@@ -614,8 +662,16 @@ function ChipRow({ options, value, onChange, labels }: {
   );
 }
 
+/** Guarda de foco invisível: ao receber foco, devolve-o para dentro do diálogo.
+ *  Funciona também com os controles nativos do <video>, que ficam em shadow DOM
+ *  e não aparecem num querySelectorAll. */
+const FOCUS_GUARD_STYLE: React.CSSProperties = {
+  position: "fixed", top: 1, left: 1, width: 1, height: 0, padding: 0, overflow: "hidden",
+};
+
 function TestimonialCard({ waUrl }: { waUrl: string }) {
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const closeBtnRef = useRef<HTMLButtonElement | null>(null);
 
@@ -626,18 +682,24 @@ function TestimonialCard({ waUrl }: { waUrl: string }) {
 
   useEffect(() => {
     if (!open) return;
+    const trigger = triggerRef.current;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setOpen(false);
+      }
+    };
     document.addEventListener("keydown", onKey);
-    const t = window.setTimeout(() => {
-      closeBtnRef.current?.focus();
-      videoRef.current?.play().catch(() => {});
-    }, 0);
+    // O diálogo já está no DOM (efeito roda após o commit): foco para dentro.
+    closeBtnRef.current?.focus();
+    videoRef.current?.play().catch(() => {});
     return () => {
       document.body.style.overflow = prev;
       document.removeEventListener("keydown", onKey);
-      window.clearTimeout(t);
+      // Devolve o foco a quem abriu o modal.
+      trigger?.focus();
     };
   }, [open]);
 
@@ -645,10 +707,12 @@ function TestimonialCard({ waUrl }: { waUrl: string }) {
     <>
       <aside className="dg-testi" aria-label="Depoimento em vídeo de cliente">
         <button
+          ref={triggerRef}
           type="button"
           className="dg-testithumb"
           onClick={handleOpen}
           aria-label="Assistir depoimento em vídeo de Vivian"
+          aria-haspopup="dialog"
         >
           {/* Conforme nota do mockup: em produção entra o vídeo real (muted,
               preload=metadata) no lugar da <img> poster. */}
@@ -672,6 +736,16 @@ function TestimonialCard({ waUrl }: { waUrl: string }) {
           aria-label="Depoimento em vídeo de Vivian"
           onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}
         >
+          {/* Tab/Shift+Tab ficam presos no diálogo: as guardas das pontas
+              mandam o foco para o outro extremo. */}
+          <div
+            tabIndex={0}
+            style={FOCUS_GUARD_STYLE}
+            onFocus={() => {
+              videoRef.current?.focus();
+              if (document.activeElement !== videoRef.current) closeBtnRef.current?.focus();
+            }}
+          />
           <div className="dg-modal-inner">
             <button
               ref={closeBtnRef}
@@ -688,9 +762,11 @@ function TestimonialCard({ waUrl }: { waUrl: string }) {
               controls
               playsInline
               autoPlay
+              tabIndex={0}
               className="dg-modal-video"
             />
           </div>
+          <div tabIndex={0} style={FOCUS_GUARD_STYLE} onFocus={() => closeBtnRef.current?.focus()} />
         </div>
       )}
     </>

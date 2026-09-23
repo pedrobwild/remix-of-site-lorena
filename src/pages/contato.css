@@ -112,18 +112,45 @@
   filter: saturate(.65) contrast(1.04);
 }
 
+/* Mapa sob demanda: o embed do Google grava cookies, então antes do aceite
+   (ou do clique em "Carregar mapa") fica este aviso no lugar do iframe. */
+.bwa-contact-map-placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 16px;
+  height: 100%;
+  min-height: 620px;
+  padding: clamp(28px, 4vw, 56px);
+}
+
+.bwa-contact-map-placeholder p { margin: 0; max-width: 42ch; color: var(--bwa-ink); line-height: 1.65; }
+.bwa-contact-map-placeholder .bwa-label { color: var(--bwa-navy); }
+
+.bwa-contact-map-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+}
+
+.bwa-contact-map-actions .bwa-contact-link { margin-top: 0; }
+
 @media (max-width: 820px) {
   .bwa-contact-intro-grid,
   .bwa-contact-grid { grid-template-columns: 1fr; }
   .bwa-contact-intro { padding-top: 132px; }
   .bwa-contact-map-wrap,
-  .bwa-contact-map { min-height: 440px; }
+  .bwa-contact-map,
+  .bwa-contact-map-placeholder { min-height: 440px; }
 }
 
 @media (max-width: 480px) {
   .bwa-contact-option { grid-template-columns: 32px minmax(0, 1fr); gap: 10px; }
   .bwa-contact-map-wrap,
-  .bwa-contact-map { min-height: 360px; }
+  .bwa-contact-map,
+  .bwa-contact-map-placeholder { min-height: 360px; }
 }
 /* ---------- Formulário de contato ---------- */
 .bwa-contact-form-sec {
@@ -158,6 +185,9 @@
 .bwa-contact-field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .bwa-contact-field--full { grid-column: 1 / -1; }
 
+/* Rótulo: <label for> irmão do campo (o erro fica fora do rótulo e entra
+   pelo aria-describedby); `> span` mantido para marcações antigas. */
+.bwa-contact-field > label,
 .bwa-contact-field > span {
   font-family: var(--bwa-font-mono);
   font-size: 11px;
@@ -168,6 +198,7 @@
 }
 
 .bwa-contact-field input,
+.bwa-contact-field select,
 .bwa-contact-field textarea {
   width: 100%;
   min-height: 48px;
@@ -181,12 +212,14 @@
 }
 
 .bwa-contact-field input:focus-visible,
+.bwa-contact-field select:focus-visible,
 .bwa-contact-field textarea:focus-visible {
   outline: 2px solid var(--bwa-navy);
   outline-offset: 2px;
 }
 
 .bwa-contact-field input[aria-invalid="true"],
+.bwa-contact-field select[aria-invalid="true"],
 .bwa-contact-field textarea[aria-invalid="true"] { border-color: #b3261e; }
 
 .bwa-contact-field em {
@@ -202,6 +235,9 @@
   color: #b3261e;
 }
 
+.bwa-contact-form-error p { margin: 0; line-height: 1.6; }
+.bwa-contact-form-error .bwa-contact-link { margin-top: 10px; }
+
 .bwa-contact-form-actions {
   grid-column: 1 / -1;
   display: flex;
@@ -211,7 +247,11 @@
 }
 
 .bwa-contact-form-actions p { margin: 0; font-size: 13px; color: var(--bwa-ink); }
-.bwa-contact-form-actions .bwa-button[disabled] { opacity: .5; cursor: not-allowed; }
+/* Só desabilitado durante o envio (validação aparece no clique). */
+.bwa-contact-form-actions .bwa-button[disabled] { opacity: .5; cursor: progress; }
+
+/* Recebe foco programático quando substitui o formulário. */
+.bwa-contact-form-done:focus { outline: none; }
 
 .bwa-contact-form-done {
   padding: clamp(24px, 3vw, 36px);
