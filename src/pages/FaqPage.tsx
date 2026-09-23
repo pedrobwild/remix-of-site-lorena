@@ -4,6 +4,7 @@ import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
+import { track } from "@/lib/analytics";
 import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import type { KbItem } from "@/lib/assistant/assistantEngine";
@@ -119,6 +120,12 @@ export default function FaqPage() {
     };
   }, []);
 
+  /** Registra o clique na pergunta (só na abertura) para o painel de rastreamento. */
+  function abrirPergunta(key: string, aberta: boolean, pergunta: string) {
+    if (!aberta) track("faq_question_click", { value: { pergunta } });
+    setAberto(aberta ? "" : key);
+  }
+
   const kbGrupos = useMemo(() => {
     if (!kb) return null;
     const mapa = new Map<string, KbItem[]>();
@@ -231,7 +238,7 @@ export default function FaqPage() {
                               type="button"
                               aria-expanded={open}
                               aria-controls={`faq-resposta-${item.id}`}
-                              onClick={() => setAberto(open ? "" : key)}
+                              onClick={() => abrirPergunta(key, open, item.pergunta)}
                             >
                               <span className="bwa-faq-num">{String(i + 1).padStart(2, "0")}</span>
                               <strong itemProp="name">{item.pergunta}</strong>
@@ -284,7 +291,7 @@ export default function FaqPage() {
                           type="button"
                           aria-expanded={open}
                           aria-controls={`faq-resposta-${i}`}
-                          onClick={() => setAberto(open ? "" : key)}
+                          onClick={() => abrirPergunta(key, open, item.q)}
                         >
                           <span className="bwa-faq-num">{String(i + 1).padStart(2, "0")}</span>
                           <strong itemProp="name">{item.q}</strong>
@@ -335,7 +342,10 @@ export default function FaqPage() {
                         type="button"
                         aria-expanded={open}
                         aria-controls={`faq-guia-resposta-${i}`}
-                        onClick={() => setGuiaAberto(open ? -1 : i)}
+                        onClick={() => {
+                          if (!open) track("faq_question_click", { value: { pergunta: item.q } });
+                          setGuiaAberto(open ? -1 : i);
+                        }}
                       >
                         <span className="bwa-faq-num">{String(i + 1).padStart(2, "0")}</span>
                         <strong>{item.q}</strong>
