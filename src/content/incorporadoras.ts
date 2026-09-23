@@ -28,7 +28,6 @@ export const INCORP_SEO = {
   ],
 };
 
-export const INCORP_PREVIEW_BANNER = "Prévia interna. Esta página ainda não está publicada.";
 
 export const INCORP_HERO = {
   label: "Para incorporadoras",
@@ -60,7 +59,6 @@ export const INCORP_CASE = {
   ],
   statsTitle: "O case em números",
   updatedPrefix: "Atualizado em",
-  previewPending: "Prévia: números e linha do tempo ainda não publicados (aguardando autorização da Leal Moreira).",
   timelineTitle: "Linha do tempo",
   galleryTitle: "Projetos das unidades",
   galleryNote:
