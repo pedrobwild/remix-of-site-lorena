@@ -116,20 +116,20 @@ function inertOutside(keep: Element[]): Cleanup {
  * ========================================================================= */
 function installNavDropdowns(root: HTMLElement, signal: AbortSignal): Cleanup {
   const wrappers = Array.from(root.querySelectorAll<HTMLElement>("[data-nav-dd]"));
+  const incorpOn = isIncorporadorasEnabled();
+  // Itens condicionais do menu (desktop e mobile) só aparecem com a flag ou em prévia.
+  if (incorpOn) {
+    root
+      .querySelectorAll<HTMLElement>("[data-incorp-gated]")
+      .forEach((el) => el.removeAttribute("hidden"));
+  }
   if (!wrappers.length) return NOOP;
 
-  const incorpOn = isIncorporadorasEnabled();
   const closers: Cleanup[] = [];
   const canHover =
     typeof window.matchMedia === "function" ? window.matchMedia("(hover: hover)").matches : false;
 
   for (const wrapper of wrappers) {
-    if (incorpOn) {
-      wrapper
-        .querySelectorAll<HTMLElement>("[data-incorp-gated]")
-        .forEach((el) => el.removeAttribute("hidden"));
-    }
-
     const button = wrapper.querySelector<HTMLButtonElement>("[data-nav-dd-button]");
     const panel = wrapper.querySelector<HTMLElement>("[data-nav-dd-panel]");
     if (!button || !panel) continue;
