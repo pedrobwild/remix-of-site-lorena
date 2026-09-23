@@ -68,20 +68,65 @@ function cardHtml(p: TopProject): string {
     </article>`;
 }
 
+const CACHE_KEY = "bwa:home-projects:v1";
+/** 7 dias: o ranking exibido na home só muda quando este prazo vence. */
+const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+function readCache(): TopProject[] | null {
+  try {
+    const raw = window.localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { ts?: number; items?: TopProject[] };
+    if (!parsed || typeof parsed.ts !== "number" || !Array.isArray(parsed.items)) return null;
+    if (Date.now() - parsed.ts > CACHE_TTL_MS) return null;
+    return parsed.items;
+  } catch {
+    return null;
+  }
+}
+
+function writeCache(items: TopProject[]): void {
+  try {
+    window.localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), items }));
+  } catch {
+    /* modo privado / cota cheia: segue sem cache */
+  }
+}
+
+/** Slider em loop infinito: a lista é duplicada e o trilho corre metade da largura. */
+function renderSlider(grid: HTMLElement, items: TopProject[]): void {
+  const cards = items.map(cardHtml).join("\n");
+  grid.classList.add("bwa-pslider");
+  grid.innerHTML = `<div class="bwa-pslider-track" style="--bwa-pslider-count:${items.length}">${cards}\n${cards.replace(
+    /<article class="bwa-pgrid-card">/g,
+    '<article class="bwa-pgrid-card" aria-hidden="true">',
+  )}</div>`;
+  grid.querySelectorAll<HTMLElement>('[aria-hidden="true"] a').forEach((a) => {
+    a.setAttribute("tabindex", "-1");
+  });
+}
+
 export async function hydrateHomeProjects(): Promise<void> {
   const grid = document.querySelector<HTMLElement>(".bwa-pgrid");
   if (!grid) return;
 
+  const cached = readCache();
+  if (cached && cached.length >= 3) {
+    renderSlider(grid, cached);
+    return;
+  }
+
   try {
-    const { data, error } = await supabase.rpc("top_projects", { p_limit: 3, p_days: 90 });
+    const { data, error } = await supabase.rpc("top_projects", { p_limit: 6, p_days: 90 });
     if (error) {
       devWarn("[hydrateHomeProjects] rpc falhou:", error);
       return;
     }
-    const items = ((data ?? []) as TopProject[]).filter((p) => !!p.cover_url && !!p.slug);
+    const items = ((data ?? []) as TopProject[]).filter((p) => !!p.cover_url && !!p.slug).slice(0, 6);
     if (items.length < 3) return; // mantém o fallback estático
 
-    grid.innerHTML = items.map(cardHtml).join("\n");
+    writeCache(items);
+    renderSlider(grid, items);
   } catch (err) {
     devWarn("[hydrateHomeProjects] erro inesperado:", err);
   }
