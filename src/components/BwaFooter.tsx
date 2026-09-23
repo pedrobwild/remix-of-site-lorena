@@ -8,17 +8,13 @@ import { isExternalHref, safeHref } from "@/lib/safeUrl";
 /**
  * BwaFooter — Footer .bwa unificado, idêntico ao da home. Usado em toda
  * página pública fora da home. Depende do CSS injetado por BwaNav.
- *
- * "O contrato" e "O que fazemos" apontam os dois para /#certeza de propósito:
- * é a seção da home que apresenta o contrato único e as disciplinas; a home
- * não tem âncora mais específica para nenhum dos dois.
  */
 export default function BwaFooter() {
   const raRef = useRef<HTMLDivElement>(null);
-  // LinkedIn vem do admin (site_settings.linkedin_url); sem URL real
-  // configurada o link não aparece — antes apontava para linkedin.com.
+  // LinkedIn: o do admin (site_settings.linkedin_url) quando configurado,
+  // senão a página oficial. Validado — o valor do banco vira href.
   const { settings } = useSiteSettings();
-  const linkedinHref = safeHref(settings?.linkedin_url);
+  const linkedinHref = safeHref(settings?.linkedin_url) ?? CONTACT.linkedin;
 
   useEffect(() => {
     const container = raRef.current;
@@ -41,19 +37,18 @@ export default function BwaFooter() {
             <div className="bwa-footer-wordmark">Bewild</div>
             <p>Seu desejo é uma obra.</p>
             <p>
-              Reforma completa de studios e apartamentos compactos em São Paulo.
-              Projeto, obra, marcenaria, mobiliário e entrega num processo único.
+              Reforma completa de apartamentos em São Paulo. Projeto, obra,
+              marcenaria, mobiliário e entrega num processo único.
             </p>
           </div>
 
           <div className="bwa-footer-column">
             <h3>Navegação</h3>
             <nav>
-              <a href="/#certeza">O contrato</a>
-              <a href="/marcenaria">Marcenaria sob medida</a>
-              <a href="/#certeza">O que fazemos</a>
+              <a href="/#certeza">Como trabalhamos</a>
+              <a href="/marcenaria">Marcenaria</a>
               <a href="/como-funciona">Como funciona</a>
-              <a href="/portfolio">Portfólio de reformas em SP</a>
+              <a href="/portfolio">Projetos</a>
               <a href="/onde-atuamos">Onde atuamos</a>
               <a href="/reforma-de-apartamento-sao-paulo">Reforma de apartamento em SP</a>
               <a href="/reforma-de-studio-sao-paulo">Reforma de studio em SP</a>
@@ -65,6 +60,7 @@ export default function BwaFooter() {
               <a href="/escopo">Escopo com IA</a>
               <a href="/orcamento">Orçamento</a>
               <a href="/parceiros">Parceiros</a>
+              <a href="/indique-um-amigo">Indique um amigo</a>
               <a href="/marcas-e-parcerias">Marcas e parcerias</a>
             </nav>
           </div>
@@ -73,7 +69,7 @@ export default function BwaFooter() {
             <h3>Contato</h3>
             {/* Links reais, como no rodapé da home — antes eram <span> inertes. */}
             <div>
-              <a href={whatsappHref("Olá, quero um orçamento para o meu studio")} target="_blank" rel="noreferrer">WhatsApp</a>
+              <a href={whatsappHref("Olá! Quero um orçamento para o meu apartamento.")} target="_blank" rel="noreferrer">WhatsApp</a>
               <a href={CONTACT.instagram} target="_blank" rel="noreferrer">Instagram</a>
               {linkedinHref && isExternalHref(linkedinHref) && (
                 <a href={linkedinHref} target="_blank" rel="noopener noreferrer">LinkedIn</a>

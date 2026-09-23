@@ -66,9 +66,12 @@ const REFERRER_HOST_KEY = "bewild_ref_host";
 const VID_MAX_AGE = 365 * 86_400_000; // 365 dias
 const SID_IDLE = 30 * 60_000; // 30 min
 
+/** Campanha da sessão gravada por src/lib/utm.ts (links de orçamento). */
+const LINK_UTM_KEY = "bwa_utm";
+
 /** Chaves que o tracker grava. A chave do consentimento fica de fora. */
 const LOCAL_KEYS = [VID_KEY, VID_TS_KEY, FIRST_UTM_KEY] as const;
-const SESSION_KEYS = [SID_KEY, SID_TS_KEY, UTM_KEY, LANDING_KEY, REFERRER_HOST_KEY] as const;
+const SESSION_KEYS = [SID_KEY, SID_TS_KEY, UTM_KEY, LANDING_KEY, REFERRER_HOST_KEY, LINK_UTM_KEY] as const;
 
 /**
  * Apaga ids e atribuição persistidos pelo tracker (LGPD: recusa/retirada do

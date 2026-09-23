@@ -17,6 +17,7 @@ export type Route =
   | { name: "reforma-cobertura-sp" }
   | { name: "marcenaria" }
   | { name: "parceiros" }
+  | { name: "indique-um-amigo" }
   | { name: "marcas-e-parcerias" }
   | { name: "guia-do-investidor" }
   | { name: "privacidade" }
@@ -40,6 +41,7 @@ export type Route =
   | { name: "admin-faq" }
   | { name: "admin-typography" }
   | { name: "admin-leads" }
+  | { name: "admin-indicacoes" }
   | { name: "admin-qualificacao" }
   | { name: "admin-mensagens" }
   | { name: "admin-diagnostico" }
@@ -99,6 +101,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/reforma-de-cobertura-sao-paulo") return { name: "reforma-cobertura-sp" };
   if (path === "/marcenaria") return { name: "marcenaria" };
   if (path === "/parceiros") return { name: "parceiros" };
+  if (path === "/indique-um-amigo") return { name: "indique-um-amigo" };
   if (path === "/marcas-e-parcerias") return { name: "marcas-e-parcerias" };
   if (path === "/guia-do-investidor") return { name: "guia-do-investidor" };
   if (path === "/privacidade") return { name: "privacidade" };
@@ -127,6 +130,7 @@ function parsePath(rawPath: string): Route {
   if (adminBewildEdit) return { name: "admin-bewild-edit", slug: adminBewildEdit[1] };
   if (path === "/admin/typography") return { name: "admin-typography" };
   if (path === "/admin/leads") return { name: "admin-leads" };
+  if (path === "/admin/indicacoes") return { name: "admin-indicacoes" };
   if (path === "/admin/qualificacao") return { name: "admin-qualificacao" };
   if (path === "/admin/mensagens") return { name: "admin-mensagens" };
   if (path === "/admin/diagnostico") return { name: "admin-diagnostico" };
@@ -250,6 +254,7 @@ export const routes = {
   reformaCoberturaSp: "/reforma-de-cobertura-sao-paulo",
   marcenaria: "/marcenaria",
   parceiros: "/parceiros",
+  indiqueUmAmigo: "/indique-um-amigo",
   marcasEParcerias: "/marcas-e-parcerias",
   guiaDoInvestidor: "/guia-do-investidor",
   privacidade: "/privacidade",
@@ -268,6 +273,7 @@ export const routes = {
   adminFaq: "/admin/faq",
   adminTypography: "/admin/typography",
   adminLeads: "/admin/leads",
+  adminIndicacoes: "/admin/indicacoes",
   adminQualificacao: "/admin/qualificacao",
   adminMensagens: "/admin/mensagens",
   adminOrcamentos: "/admin/orcamentos",

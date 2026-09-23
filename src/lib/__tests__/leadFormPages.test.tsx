@@ -17,10 +17,15 @@ vi.mock("@/lib/ga4", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../ga4")>()),
   trackEvent: (name: string, params?: Record<string, unknown>) => trackEventMock(name, params),
 }));
+const insertMock = vi.hoisted(() => vi.fn((_row: Record<string, unknown>) => Promise.resolve({ error: null })));
+const fromMock = vi.hoisted(() =>
+  vi.fn((_table: string) => ({
+    select: () => ({ eq: () => ({ maybeSingle: () => new Promise(() => {}) }) }),
+    insert: insertMock,
+  })),
+);
 vi.mock("@/integrations/supabase/client", () => ({
-  supabase: {
-    from: () => ({ select: () => ({ eq: () => ({ maybeSingle: () => new Promise(() => {}) }) }) }),
-  },
+  supabase: { from: fromMock },
 }));
 vi.mock("@/components/BwaNav", () => ({ default: () => null }));
 vi.mock("@/components/BwaFooter", () => ({ default: () => null }));
@@ -52,6 +57,8 @@ let openSpy: ReturnType<typeof vi.spyOn>;
 beforeEach(() => {
   sendLeadMock.mockReset();
   trackEventMock.mockReset();
+  insertMock.mockClear();
+  fromMock.mockClear();
   localStorage.clear();
   sessionStorage.clear();
   window.history.replaceState({}, "", "/");
@@ -261,6 +268,20 @@ describe("/parceiros", () => {
       lead_source: "Evento",
       location: "Pinheiros",
     });
+    // WhatsApp de atendimento abre dentro do gesto, antes do envio.
+    expect(openSpy).toHaveBeenCalledTimes(1);
+    expect(openSpy.mock.invocationCallOrder[0]).toBeLessThan(sendLeadMock.mock.invocationCallOrder[0]);
+    // Indicação registrada para /admin/indicacoes, só com campos do formulário.
+    expect(fromMock).toHaveBeenCalledWith("partner_referrals");
+    expect(insertMock).toHaveBeenCalledTimes(1);
+    expect(insertMock.mock.calls[0][0]).toMatchObject({
+      partner_name: "Eva",
+      partner_type: "Imobiliária",
+      whatsapp: "11912345678",
+      region: "Pinheiros",
+      landing_path: "/parceiros",
+    });
+    expect(insertMock.mock.calls[0][0]).not.toHaveProperty("status");
     expect(screen.getByText("Cadastro recebido")).toBeInTheDocument();
   });
 });

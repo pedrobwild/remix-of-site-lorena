@@ -238,6 +238,13 @@
 .bwa-contact-form-error p { margin: 0; line-height: 1.6; }
 .bwa-contact-form-error .bwa-contact-link { margin-top: 10px; }
 
+.bwa-contact-form-hint {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 13px;
+  color: #6b5a1f;
+}
+
 .bwa-contact-form-actions {
   grid-column: 1 / -1;
   display: flex;

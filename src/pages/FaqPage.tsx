@@ -89,10 +89,49 @@ const GUIA_ITEMS: { q: string; a: string; href?: string; linkLabel?: string }[] 
   },
 ];
 
+/* Bloco "Contratos e comissões": regras do contrato fechado e do programa de
+ * indicações (parceiros e clientes). Copy segue as decisões travadas do dono:
+ * sem percentual público de comissão — o valor é definido no termo individual. */
+const CONTRATO_ITEMS: { q: string; a: string; href?: string; linkLabel?: string }[] = [
+  {
+    q: "Como funciona o contrato fechado da Bewild?",
+    a: "Preço e prazo são definidos e assinados antes de a obra começar, com memorial descritivo item a item. Se o valor final ultrapassar o combinado, a diferença é por nossa conta — sem aditivo surpresa. O contrato cobre projeto, obra, marcenaria, mobiliário e entrega.",
+  },
+  {
+    q: "O que acontece se a obra atrasar?",
+    a: "A data de entrega entra no contrato antes do início da obra. Se o atraso for por nossa conta, a indenização prevista em contrato é aplicada — você não paga por um problema nosso. E tudo fica registrado no Bwild Workflow, visível para você do começo ao fim.",
+  },
+  {
+    q: "Qual é a garantia da reforma?",
+    a: "Cinco anos de garantia, cobrindo a execução da obra e o que está no contrato. Se algo der errado dentro desse período, a Bewild resolve.",
+  },
+  {
+    q: "Como funciona a comissão para parceiros que indicam?",
+    a: "Corretores, imobiliárias, incorporadoras, arquitetos e administradoras de locação recebem comissão por contrato indicado. O percentual não é público: é definido no termo individual, conforme o perfil e o volume de indicações, calculado sobre o valor líquido do contrato e com relatório mensal. O pagamento acontece após o recebimento da Bewild.",
+    href: "/parceiros",
+    linkLabel: "Ver o programa de indicações para parceiros →",
+  },
+  {
+    q: "Como funciona a recompensa para quem indica um amigo?",
+    a: "Qualquer pessoa pode indicar, sem precisar ser do mercado. O valor da recompensa é combinado com você e confirmado por escrito no momento do registro, e o pagamento é feito por Pix após o fechamento do contrato do indicado.",
+    href: "/indique-um-amigo",
+    linkLabel: "Indicar um amigo agora →",
+  },
+  {
+    q: "Por quanto tempo vale uma indicação?",
+    a: "A indicação vale por 12 meses contados do registro. Se a pessoa indicada fechar contrato dentro desse período, a recompensa ou a comissão é sua.",
+  },
+  {
+    q: "Meu indicado já estava negociando com a Bewild. Conta?",
+    a: "Não. A indicação só vale para quem ainda não está em negociação com a gente — evita conflito entre indicadores e mantém a regra clara para todo mundo.",
+  },
+];
+
 export default function FaqPage() {
   const { settings } = useSiteSettings();
   const [aberto, setAberto] = useState("f-0");
   const [guiaAberto, setGuiaAberto] = useState(-1);
+  const [contratoAberto, setContratoAberto] = useState(-1);
   const [pergunta, setPergunta] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [erroIa, setErroIa] = useState<string | null>(null);
@@ -179,14 +218,14 @@ export default function FaqPage() {
   useSeo({
     title: "Dúvidas sobre arquitetura, engenharia e reforma em SP | Bewild",
     description:
-      "Dúvidas sobre arquitetura, engenharia e reforma de apartamento em SP respondidas: quanto custa, quanto tempo leva, projeto, autorização do condomínio, etapas e o que entra no contrato fechado da Bewild.",
+      "Dúvidas sobre arquitetura, engenharia e reforma de apartamento em SP respondidas: quanto custa, quanto tempo leva, contrato fechado, garantia, comissão de indicações, autorização do condomínio e etapas da obra com a Bewild.",
     keywords:
-      "dúvidas sobre arquitetura e engenharia, projeto de arquitetura em São Paulo, dúvidas sobre reforma de apartamento em SP, dúvidas sobre reforma de apartamento, reforma de apartamento em SP, custo de reforma, prazo de reforma, autorização de reforma condomínio, Bewild",
+      "dúvidas sobre arquitetura e engenharia, projeto de arquitetura em São Paulo, dúvidas sobre reforma de apartamento em SP, reforma de apartamento em SP, custo de reforma, prazo de reforma, contrato fechado de reforma, garantia de reforma, comissão de indicação de imóvel, autorização de reforma condomínio, Bewild",
     canonicalPath: "/faq",
     ogType: "website",
     // Um único FAQPage por página (só JSON-LD, sem microdata duplicada), com
-    // exatamente as perguntas visíveis: as do banco (ou a lista fixa) + o
-    // bloco "Como fazer uma reforma".
+    // exatamente as perguntas visíveis: as do banco (ou a lista fixa) + os
+    // blocos "Contratos e comissões" e "Como fazer uma reforma".
     jsonLd: settings
       ? [
           breadcrumbJsonLd(settings, [
@@ -197,6 +236,8 @@ export default function FaqPage() {
             ...(kb
               ? kb.map((i) => ({ q: i.pergunta, a: i.resposta }))
               : FAQ_ITEMS.map((i) => ({ q: i.q, a: i.a }))),
+            // Blocos fixos exibidos em qualquer cenário (com ou sem o banco).
+            ...CONTRATO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
             ...GUIA_ITEMS.map((i) => ({ q: i.q, a: i.a })),
           ]),
         ]
@@ -298,6 +339,58 @@ export default function FaqPage() {
                 })}
               </div>
             )}
+          </div>
+        </section>
+
+        <section className="bwa-faqpage-intro bwa-faqpage-contrato" aria-labelledby="faq-contrato-title">
+          <div className="bwa-shell bwa-faq-head bwa-faqpage-head">
+            <p className="bwa-label">Contratos e comissões</p>
+            <div>
+              <h2 className="bwa-title" id="faq-contrato-title">
+                Contrato fechado e indicações, <em>sem letra miúda.</em>
+              </h2>
+              <p className="bwa-faqpage-lead">
+                Como funciona o contrato fechado, o que acontece se a obra atrasar
+                e as regras do programa de indicações — para parceiros do mercado
+                e para quem só quer indicar um amigo.
+              </p>
+            </div>
+          </div>
+
+          <div className="bwa-shell">
+            <div className="bwa-faq-list">
+              {CONTRATO_ITEMS.map((item, i) => {
+                const open = contratoAberto === i;
+                return (
+                  <article key={item.q} className={`bwa-faq-item${open ? " bwa-open" : ""}`}>
+                    <h3 className="bwa-faqpage-q">
+                      <button
+                        className="bwa-faq-question"
+                        type="button"
+                        aria-expanded={open}
+                        aria-controls={`faq-contrato-resposta-${i}`}
+                        onClick={() => {
+                          if (!open) track("faq_question_click", { value: { pergunta: item.q } });
+                          setContratoAberto(open ? -1 : i);
+                        }}
+                      >
+                        <span className="bwa-faq-num">{String(i + 1).padStart(2, "0")}</span>
+                        <strong>{item.q}</strong>
+                        <span className="bwa-faq-icon" aria-hidden="true" />
+                      </button>
+                    </h3>
+                    <div id={`faq-contrato-resposta-${i}`} className="bwa-faq-answer">
+                      <p>{item.a}</p>
+                      {item.href && (
+                        <a className="bwa-faqpage-guia-link" href={item.href}>
+                          {item.linkLabel}
+                        </a>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
           </div>
         </section>
 

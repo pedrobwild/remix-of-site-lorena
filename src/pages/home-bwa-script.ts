@@ -22,6 +22,7 @@
  * `[data-scope-item]` nem `[data-story-step]` — e `initBwaFaqAccordions`,
  * que nenhuma página chamava (os acordeões internos são React).
  */
+import { withUtm } from "@/lib/utm";
 import { trackEvent } from "@/lib/ga4";
 import { prefersReducedMotion } from "@/lib/reducedMotion";
 
@@ -542,6 +543,19 @@ function installReclameAquiSeal(root: HTMLElement): void {
  * ========================================================================= */
 
 /** Home inteira (header, galeria, FAQ, vídeo, reveals, rodapé). */
+/**
+ * Propaga a origem da campanha (UTMs) para os links de orçamento da home.
+ * O clique normal já passa pela navegação SPA (que carrega os parâmetros),
+ * mas o href precisa carregá-los também para abrir em nova aba/cópia de link.
+ */
+function propagateCampaignToBudgetLinks(root: HTMLElement): void {
+  const target = withUtm("/orcamento");
+  if (target === "/orcamento") return;
+  root.querySelectorAll<HTMLAnchorElement>('a[href="/orcamento"]').forEach((a) => {
+    a.setAttribute("href", target);
+  });
+}
+
 export function initHomeBwa(root: HTMLElement | null): Cleanup {
   if (!root || root.dataset.bwaHomeInited === "1") return NOOP;
   root.dataset.bwaHomeInited = "1";
@@ -558,6 +572,7 @@ export function initHomeBwa(root: HTMLElement | null): Cleanup {
   ];
   installWhatsForm(root, signal);
   installReclameAquiSeal(root);
+  propagateCampaignToBudgetLinks(root);
 
   return () => {
     controller.abort();

@@ -18,6 +18,7 @@ import {
   MessagesSquare,
   ClipboardList,
   Newspaper,
+  Handshake,
 } from "lucide-react";
 import { useAuth } from "@/lib/useAuth";
 import { navigate, routes } from "@/lib/useHashRoute";
@@ -30,6 +31,7 @@ type ActiveKey =
   | "mensagens"
   | "diagnostico"
   | "conteudos"
+  | "indicacoes"
   | "analytics"
   | "seo"
   | "seo-404"
@@ -57,6 +59,7 @@ const NAV: { key: ActiveKey; label: string; href: string; icon: typeof LayoutDas
   { key: "qualificacao", label: "Qualificação", href: routes.adminQualificacao, icon: ListChecks },
   { key: "mensagens", label: "Mensagens", href: routes.adminMensagens, icon: MessagesSquare },
   { key: "diagnostico", label: "Diagnósticos", href: routes.adminDiagnostico, icon: ClipboardList },
+  { key: "indicacoes", label: "Indicações", href: routes.adminIndicacoes, icon: Handshake },
   { key: "bewild", label: "Portfólio Bewild", href: "/admin/projetos", icon: FolderKanban },
   { key: "conteudos", label: "Conteúdos", href: "/admin/conteudos", icon: Newspaper },
   { key: "faq", label: "FAQ", href: routes.adminFaq, icon: HelpCircle },

@@ -10,9 +10,10 @@
 /** Contato oficial. */
 export const CONTACT = {
   whatsappNumber: "5511911906183",
-  whatsappText: "Olá, quero um orçamento para o meu studio",
+  whatsappText: "Olá! Quero um orçamento para o meu apartamento.",
   email: "contato@bewild.com.br",
   instagram: "https://instagram.com/bewild.oficial",
+  linkedin: "https://www.linkedin.com/company/bewild-reformas/",
   city: "São Paulo, Brasil",
 };
 

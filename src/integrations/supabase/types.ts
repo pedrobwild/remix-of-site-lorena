@@ -458,6 +458,24 @@ export type Database = {
         }
         Relationships: []
       }
+      edge_rate_limits: {
+        Row: {
+          hits: number
+          key: string
+          window_start: string
+        }
+        Insert: {
+          hits?: number
+          key: string
+          window_start?: string
+        }
+        Update: {
+          hits?: number
+          key?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       faq_items: {
         Row: {
           answer: string
@@ -600,6 +618,87 @@ export type Database = {
           utm_campaign?: string | null
           utm_medium?: string | null
           utm_source?: string | null
+          whatsapp?: string
+        }
+        Relationships: []
+      }
+      partner_referrals: {
+        Row: {
+          client_name: string | null
+          commission_amount: number | null
+          commission_status: string
+          company: string | null
+          confirmed_at: string | null
+          confirmed_by: string | null
+          contract_value: number | null
+          created_at: string
+          document: string | null
+          email: string | null
+          id: string
+          internal_notes: string | null
+          landing_path: string | null
+          message: string | null
+          origin: string | null
+          partner_name: string
+          partner_type: string | null
+          referrer: string | null
+          region: string | null
+          status: string
+          units: string | null
+          updated_at: string
+          user_agent: string | null
+          whatsapp: string
+        }
+        Insert: {
+          client_name?: string | null
+          commission_amount?: number | null
+          commission_status?: string
+          company?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          contract_value?: number | null
+          created_at?: string
+          document?: string | null
+          email?: string | null
+          id?: string
+          internal_notes?: string | null
+          landing_path?: string | null
+          message?: string | null
+          origin?: string | null
+          partner_name: string
+          partner_type?: string | null
+          referrer?: string | null
+          region?: string | null
+          status?: string
+          units?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          whatsapp: string
+        }
+        Update: {
+          client_name?: string | null
+          commission_amount?: number | null
+          commission_status?: string
+          company?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          contract_value?: number | null
+          created_at?: string
+          document?: string | null
+          email?: string | null
+          id?: string
+          internal_notes?: string | null
+          landing_path?: string | null
+          message?: string | null
+          origin?: string | null
+          partner_name?: string
+          partner_type?: string | null
+          referrer?: string | null
+          region?: string | null
+          status?: string
+          units?: string | null
+          updated_at?: string
+          user_agent?: string | null
           whatsapp?: string
         }
         Relationships: []
@@ -992,7 +1091,9 @@ export type Database = {
           business_postal_code: string | null
           business_price_range: string | null
           business_type: string | null
+          cau: string | null
           clarity_id: string | null
+          cnpj: string | null
           contact_email: string | null
           contact_phone: string | null
           default_og_image: string | null
@@ -1027,6 +1128,7 @@ export type Database = {
           site_description: string | null
           site_title: string | null
           updated_at: string | null
+          whatsapp_number: string | null
           yandex_verification: string | null
         }
         Insert: {
@@ -1039,7 +1141,9 @@ export type Database = {
           business_postal_code?: string | null
           business_price_range?: string | null
           business_type?: string | null
+          cau?: string | null
           clarity_id?: string | null
+          cnpj?: string | null
           contact_email?: string | null
           contact_phone?: string | null
           default_og_image?: string | null
@@ -1074,6 +1178,7 @@ export type Database = {
           site_description?: string | null
           site_title?: string | null
           updated_at?: string | null
+          whatsapp_number?: string | null
           yandex_verification?: string | null
         }
         Update: {
@@ -1086,7 +1191,9 @@ export type Database = {
           business_postal_code?: string | null
           business_price_range?: string | null
           business_type?: string | null
+          cau?: string | null
           clarity_id?: string | null
+          cnpj?: string | null
           contact_email?: string | null
           contact_phone?: string | null
           default_og_image?: string | null
@@ -1121,6 +1228,7 @@ export type Database = {
           site_description?: string | null
           site_title?: string | null
           updated_at?: string | null
+          whatsapp_number?: string | null
           yandex_verification?: string | null
         }
         Relationships: []
@@ -1250,14 +1358,6 @@ export type Database = {
           sessions: number
         }[]
       }
-      analytics_top_paths: {
-        Args: { p_limit?: number; p_since: string }
-        Returns: {
-          pageviews: number
-          path: string
-          sessions: number
-        }[]
-      }
       analytics_top_paths_v2: {
         Args: {
           p_country?: string
@@ -1275,14 +1375,6 @@ export type Database = {
           pageviews: number
           path: string
           sessions: number
-        }[]
-      }
-      analytics_top_projects: {
-        Args: { p_limit?: number; p_since: string }
-        Returns: {
-          project_slug: string
-          sessions: number
-          views: number
         }[]
       }
       analytics_top_projects_v2: {
@@ -1304,20 +1396,16 @@ export type Database = {
           views: number
         }[]
       }
-      analytics_top_referrers: {
-        Args: { p_limit?: number; p_since: string }
-        Returns: {
-          referrer: string
-          sessions: number
-        }[]
+      hit_rate_limit: {
+        Args: { p_key: string; p_max: number; p_window_s: number }
+        Returns: boolean
       }
       is_admin: { Args: never; Returns: boolean }
-      log_404:
-        | { Args: { p_path: string; p_referrer?: string }; Returns: undefined }
-        | {
-            Args: { p_path: string; p_reason?: string; p_referrer?: string }
-            Returns: undefined
-          }
+      log_404: {
+        Args: { p_path: string; p_reason?: string; p_referrer?: string }
+        Returns: undefined
+      }
+      resolve_404_redirect: { Args: { p_path: string }; Returns: string }
       top_projects: {
         Args: { p_days?: number; p_limit?: number }
         Returns: {

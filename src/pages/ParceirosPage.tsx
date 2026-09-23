@@ -13,11 +13,13 @@ import {
   type FieldErrors,
 } from "@/lib/leadForm";
 import { formatBrPhone, isValidBrPhone, normalizeBrPhoneDigits } from "@/lib/phone";
+import { supabase } from "@/integrations/supabase/client";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import {
   browserUserAgent,
   collectLeadAttribution,
   focusField,
+  openWhatsapp,
   useLeadSubmit,
 } from "@/lib/useLeadSubmit";
 import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
@@ -241,6 +243,9 @@ export default function ParceirosPage() {
   const [whatsLink, setWhatsLink] = useState<string | null>(null);
   const resultadoRef = useRef<HTMLDivElement | null>(null);
   const { sending: enviando, outcome, submit } = useLeadSubmit({ method: "parceiros_form" });
+  // Evita reabrir o WhatsApp e duplicar a indicação num reenvio com os mesmos dados.
+  const ultimoAberto = useRef<string | null>(null);
+  const ultimaIndicacao = useRef<string | null>(null);
 
   const errors = validar({ tipo, nome, whats, mail, regiao });
   const erro = (k: Campo) => (touched[k] ? errors[k] : undefined);
@@ -261,21 +266,20 @@ export default function ParceirosPage() {
       return;
     }
 
-    setWhatsLink(
-      whatsappHref(
-        buildLeadMessage("Olá! Quero ser parceiro da Bewild.", [
-          ["Tipo de parceiro", tipo],
-          ["Nome", nome],
-          ["Empresa", empresa],
-          ["CRECI/CNPJ", documento],
-          ["WhatsApp", whats],
-          ["E-mail", mail],
-          ["Região ou empreendimentos", regiao],
-          ["Unidades vendidas por mês", unidades],
-          ["Como conheceu", origem],
-        ]),
-      ),
+    const waLink = whatsappHref(
+      buildLeadMessage("Olá, vim pelo site da Bewild e quero participar do programa de indicações.", [
+        ["Tipo de parceiro", tipo],
+        ["Nome", nome],
+        ["Empresa", empresa],
+        ["CRECI/CNPJ", documento],
+        ["WhatsApp", whats],
+        ["E-mail", mail],
+        ["Região ou empreendimentos", regiao],
+        ["Unidades vendidas por mês", unidades],
+        ["Como conheceu", origem],
+      ]),
     );
+    setWhatsLink(waLink);
 
     // `form_path: "/parceiros"` separa o cadastro de parceiro dos leads de
     // cliente no banco e no admin; `landing_path` é a atribuição da sessão.
@@ -299,7 +303,50 @@ export default function ParceirosPage() {
       form_path: "/parceiros",
     };
 
-    void submit(payload, { params: { tipo } });
+    // Registra a solicitação no painel /admin/indicacoes (uma vez por
+    // conjunto de dados). Os tetos seguem a policy de INSERT anônimo.
+    const assinatura = JSON.stringify([tipo, nome, whats, mail, regiao]);
+    if (ultimaIndicacao.current !== assinatura) {
+      ultimaIndicacao.current = assinatura;
+      void supabase
+        .from("partner_referrals")
+        .insert({
+          partner_name: nome.trim().slice(0, 160),
+          partner_type: tipo.slice(0, 80),
+          company: empresa.trim().slice(0, 160) || null,
+          document: documento.trim().slice(0, 40) || null,
+          whatsapp: normalizeBrPhoneDigits(whats),
+          email: mail.trim().slice(0, 254) || null,
+          region: regiao.trim().slice(0, 200),
+          units: unidades.trim().slice(0, 80) || null,
+          origin: origem.trim().slice(0, 120) || null,
+          message: payload.message?.slice(0, 4000) ?? null,
+          landing_path: "/parceiros",
+          referrer: typeof document !== "undefined" ? (document.referrer || "").slice(0, 500) || null : null,
+          user_agent: browserUserAgent()?.slice(0, 500) ?? null,
+        })
+        .then(({ error }) => {
+          if (error) {
+            ultimaIndicacao.current = null;
+            console.error("[partner_referrals] insert failed", error);
+          }
+        });
+    }
+
+    // O cadastro continua no WhatsApp de atendimento com a mensagem pronta. A
+    // aba abre DENTRO do gesto (antes de qualquer await), senão o Safari/Chrome
+    // mobile bloqueiam o popup. Num reenvio com os mesmos dados não abre de novo.
+    void submit(payload, {
+      params: { tipo },
+      beforeSend:
+        ultimoAberto.current === waLink
+          ? undefined
+          : () => {
+              ultimoAberto.current = waLink;
+              openWhatsapp(waLink);
+            },
+      handedToWhatsapp: true,
+    });
   }
 
   useSeo({
@@ -698,6 +745,14 @@ export default function ParceirosPage() {
                 </p>
                 <a
                   className="bwa-button"
+                  href={whatsLink ?? whatsappHref("Olá, acabei de enviar meu cadastro de parceiro pelo site da Bewild")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-cta="parceiros-form-whatsapp"
+                >
+                  Confirmar no WhatsApp <span aria-hidden="true">↗</span>
+                </a>
+                <a
                   href={INDICACAO_URL}
                   target="_blank"
                   rel="noopener noreferrer"

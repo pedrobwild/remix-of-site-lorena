@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import BewildLogo from "@/components/BewildLogo";
+import { withUtm } from "@/lib/utm";
 import homeBwaCssUrl from "../pages/home-bwa.css?url";
 import bwaInternalCssUrl from "../pages/bwa-internal.css?url";
 import { initBwaNav } from "../pages/home-bwa-script";
@@ -85,16 +86,16 @@ export default function BwaNav() {
             <a href="/#para-quem">Para quem</a>
             <a href="/#certeza">Como trabalhamos</a>
             <a href="/#depoimentos">Depoimentos</a>
-            <a href="/#projetos">Projetos</a>
+            <a href="/portfolio">Projetos</a>
             <a href="/marcenaria">Marcenaria</a>
-            <a href="/#workflow">Processo</a>
+            <a href="/como-funciona">Como funciona</a>
             <a href="/conteudos">Blog</a>
             <a href="/guia-do-investidor">Guia do Investidor</a>
             <a href="/faq">FAQ</a>
             <a href="/contato">Contato</a>
           </nav>
 
-          <a className="bwa-button" href="/orcamento">
+          <a className="bwa-button" href={withUtm("/orcamento")}>
             Solicitar orçamento
             <span aria-hidden="true">→</span>
           </a>
@@ -117,14 +118,14 @@ export default function BwaNav() {
           <a href="/#para-quem">Para quem</a>
           <a href="/#certeza">Como trabalhamos</a>
           <a href="/#depoimentos">Depoimentos</a>
-          <a href="/#projetos">Projetos</a>
+          <a href="/portfolio">Projetos</a>
           <a href="/marcenaria">Marcenaria</a>
-          <a href="/#workflow">Processo</a>
+          <a href="/como-funciona">Como funciona</a>
           <a href="/conteudos">Blog</a>
           <a href="/guia-do-investidor">Guia do Investidor</a>
           <a href="/faq">FAQ</a>
           <a href="/contato">Contato</a>
-          <a href="/orcamento">Solicitar orçamento</a>
+          <a href={withUtm("/orcamento")}>Solicitar orçamento</a>
         </nav>
       </div>
     </div>
