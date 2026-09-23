@@ -36,6 +36,7 @@ export type LeadFormPath =
   | "/contato"
   | "/orcamento"
   | "/parceiros"
+  | "/indique-um-amigo"
   | "/o"
   | "/p";
 

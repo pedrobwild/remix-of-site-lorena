@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { z } from "zod";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
-import { isLeadDelivered, timeoutAfter } from "@/lib/leadDelivery";
-import { trackEvent } from "@/lib/ga4";
+import { isServerAcceptedEmail, type LeadPayload } from "@/lib/leadDelivery";
+import { buildLeadMessage } from "@/lib/leadForm";
+import { formatBrPhone, isValidBrPhone, normalizeBrPhoneDigits } from "@/lib/phone";
 import { useCtaClickTracking } from "@/lib/trackCta";
+import { browserUserAgent, collectLeadAttribution, openWhatsapp, useLeadSubmit } from "@/lib/useLeadSubmit";
 import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./faq-page.css";
@@ -114,26 +116,16 @@ const FAQ_INDICADOR = [
   },
 ];
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const digits = (v: string) => v.replace(/\D+/g, "");
-
+// Telefone e e-mail com as mesmas regras dos outros formulários (e do servidor).
 const indicadorSchema = z.object({
   nome: z.string().trim().min(2).max(120),
-  whats: z.string().transform(digits).refine((v) => v.length >= 10 && v.length <= 11),
-  mail: z.union([z.literal(""), z.string().trim().email().max(180)]),
+  whats: z.string().refine(isValidBrPhone),
+  mail: z.union([z.literal(""), z.string().trim().refine(isServerAcceptedEmail)]),
   indicadoNome: z.string().trim().min(2).max(120),
-  indicadoWhats: z.string().transform(digits).refine((v) => v.length >= 10 && v.length <= 11),
+  indicadoWhats: z.string().refine(isValidBrPhone),
   relacao: z.enum(RELACOES as [string, ...string[]]),
   mensagem: z.string().trim().max(600),
 });
-
-function maskPhone(v: string) {
-  const d = digits(v).slice(0, 11);
-  if (d.length <= 2) return d;
-  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
-  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
-  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
-}
 
 export default function IndiquePage() {
   useCtaClickTracking("indique-um-amigo");
@@ -149,22 +141,25 @@ export default function IndiquePage() {
   const [relacao, setRelacao] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [touched, setTouched] = useState<Record<string, boolean>>({});
-  const [enviando, setEnviando] = useState(false);
+  const { sending: enviando, submit } = useLeadSubmit({ method: "indique_um_amigo_form" });
   const [enviado, setEnviado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [whatsLink, setWhatsLink] = useState<string | null>(null);
+  // Evita reabrir o WhatsApp e duplicar a indicação num reenvio igual.
+  const ultimoAberto = useRef<string | null>(null);
+  const ultimaIndicacao = useRef<string | null>(null);
 
   const nomeOk = nome.trim().length >= 2;
-  const whatsOk = digits(whats).length >= 10;
-  const mailOk = mail.trim() === "" || EMAIL_RE.test(mail.trim());
+  const whatsOk = isValidBrPhone(whats);
+  const mailOk = mail.trim() === "" || isServerAcceptedEmail(mail.trim());
   const indicadoNomeOk = indicadoNome.trim().length >= 2;
-  const indicadoWhatsOk = digits(indicadoWhats).length >= 10;
+  const indicadoWhatsOk = isValidBrPhone(indicadoWhats);
   const relacaoOk = relacao !== "";
-  const podeEnviar =
-    nomeOk && whatsOk && mailOk && indicadoNomeOk && indicadoWhatsOk && relacaoOk && !enviando;
+  const podeEnviar = nomeOk && whatsOk && mailOk && indicadoNomeOk && indicadoWhatsOk && relacaoOk;
 
   async function enviar(e: React.FormEvent) {
     e.preventDefault();
+    if (enviando) return;
     setTouched({ nome: true, whats: true, mail: true, indicadoNome: true, indicadoWhats: true, relacao: true });
     const parsed = indicadorSchema.safeParse({
       nome,
@@ -176,9 +171,6 @@ export default function IndiquePage() {
       mensagem,
     });
     if (!podeEnviar || !parsed.success) return;
-    setEnviando(true);
-    setErro(null);
-
     const dados = parsed.data;
 
     const linhas = [
@@ -189,26 +181,59 @@ export default function IndiquePage() {
       dados.mensagem ? `Mensagem: ${dados.mensagem}` : null,
     ].filter(Boolean);
 
-    // Mensagem que chega no WhatsApp de atendimento (5511 91190-6183),
-    // igual ao fluxo das páginas /contato e /parceiros.
-    const waTexto = [
-      "Olá, vim pelo site da Bewild e quero indicar alguém no programa Indique um Amigo.",
-      `Meu nome: ${dados.nome}`,
-      `Meu WhatsApp: ${whats}`,
-      dados.mail ? `Meu e-mail: ${dados.mail}` : null,
-      `Indicado: ${dados.indicadoNome}`,
-      `WhatsApp do indicado: ${indicadoWhats}`,
-      `Relação: ${dados.relacao}`,
-      dados.mensagem ? `Mensagem: ${dados.mensagem}` : null,
-    ]
-      .filter(Boolean)
-      .join("\n");
-    const waLink = whatsappHref(waTexto);
+    // Mensagem que chega no WhatsApp de atendimento, igual ao fluxo das
+    // páginas /contato e /parceiros.
+    const waLink = whatsappHref(
+      buildLeadMessage("Olá, vim pelo site da Bewild e quero indicar alguém no programa Indique um Amigo.", [
+        ["Meu nome", dados.nome],
+        ["Meu WhatsApp", whats],
+        ["Meu e-mail", dados.mail],
+        ["Indicado", dados.indicadoNome],
+        ["WhatsApp do indicado", indicadoWhats],
+        ["Relação", dados.relacao],
+        ["Mensagem", dados.mensagem],
+      ]),
+    );
     setWhatsLink(waLink);
 
-    const payload = {
+    // A aba do WhatsApp abre DENTRO do gesto (antes de qualquer await): depois
+    // do await o Safari/Chrome mobile bloqueiam o popup. Num reenvio com os
+    // mesmos dados não abre de novo.
+    if (ultimoAberto.current !== waLink) {
+      ultimoAberto.current = waLink;
+      openWhatsapp(waLink);
+    }
+
+    // Registra a indicação no painel /admin/indicacoes (mesma tabela do
+    // programa de parceiros, com tipo próprio), uma vez por conjunto de dados.
+    // Os tetos seguem a policy de INSERT anônimo da tabela.
+    if (ultimaIndicacao.current !== waLink) {
+      ultimaIndicacao.current = waLink;
+      void supabase
+        .from("partner_referrals")
+        .insert({
+          partner_name: dados.nome.slice(0, 160),
+          partner_type: "Cliente indicador",
+          whatsapp: normalizeBrPhoneDigits(whats),
+          email: dados.mail ? dados.mail.slice(0, 254) : null,
+          origin: "indique-um-amigo",
+          message: linhas.join("\n").slice(0, 4000),
+          client_name: dados.indicadoNome.slice(0, 160),
+          landing_path: "/indique-um-amigo",
+          referrer: typeof document !== "undefined" ? (document.referrer || "").slice(0, 500) || null : null,
+          user_agent: browserUserAgent()?.slice(0, 500) ?? null,
+        })
+        .then(({ error }) => {
+          if (error) {
+            ultimaIndicacao.current = null;
+            console.error("[partner_referrals] insert failed", error);
+          }
+        });
+    }
+
+    const payload: LeadPayload = {
       name: dados.nome,
-      whatsapp: dados.whats,
+      whatsapp: normalizeBrPhoneDigits(whats),
       email: dados.mail || null,
       message: linhas.join("\n"),
       location: null,
@@ -216,58 +241,19 @@ export default function IndiquePage() {
       objetivo: "Indique um Amigo — indicação de cliente",
       chaves: null,
       planta: null,
-      utm_source: null,
-      utm_medium: null,
-      utm_campaign: null,
-      referrer: typeof document !== "undefined" ? document.referrer || null : null,
-      landing_path: "/indique-um-amigo",
-      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+      ...collectLeadAttribution(),
+      user_agent: browserUserAgent(),
       lead_source: "indique-um-amigo",
+      form_path: "/indique-um-amigo",
     };
 
-    // Registra a indicação no painel /admin/indicacoes (mesma tabela do
-    // programa de parceiros, com tipo próprio para separar as origens).
-    void supabase
-      .from("partner_referrals")
-      .insert({
-        partner_name: dados.nome,
-        partner_type: "Cliente indicador",
-        company: null,
-        document: null,
-        whatsapp: dados.whats,
-        email: dados.mail || null,
-        region: null,
-        units: null,
-        origin: "indique-um-amigo",
-        message: linhas.join("\n"),
-        client_name: dados.indicadoNome,
-        landing_path: "/indique-um-amigo",
-        referrer: typeof document !== "undefined" ? document.referrer || null : null,
-        user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
-      })
-      .then(({ error }) => {
-        if (error) console.error("[partner_referrals] insert failed", error);
-      });
-
-    let delivered = false;
-    try {
-      const result = await Promise.race([
-        supabase.functions.invoke("notify-lead", { body: payload }),
-        timeoutAfter(8000),
-      ]);
-      delivered = isLeadDelivered(result);
-    } catch (err) {
-      console.error("[notify-lead] invoke failed", err);
-    }
-
-    setEnviando(false);
-    if (delivered) {
+    setErro(null);
+    const resultado = await submit(payload, { handedToWhatsapp: true });
+    if (resultado === "delivered" || resultado === "timedOut") {
       setEnviado(true);
-      trackEvent("generate_lead", { method: "indique_um_amigo_form" });
-      window.open(waLink, "_blank", "noopener,noreferrer");
-    } else {
+    } else if (resultado === "failed") {
       setErro(
-        "Não conseguimos registrar sua indicação agora. Tente novamente ou fale com a gente no WhatsApp.",
+        "Não conseguimos registrar sua indicação agora. Envie a mensagem que abriu no WhatsApp ou tente novamente.",
       );
     }
   }
@@ -576,7 +562,7 @@ export default function IndiquePage() {
                     value={whats}
                     autoComplete="tel"
                     placeholder="(11) 90000-0000"
-                    onChange={(e) => setWhats(maskPhone(e.target.value))}
+                    onChange={(e) => setWhats(formatBrPhone(e.target.value))}
                     onBlur={() => setTouched((t) => ({ ...t, whats: true }))}
                     aria-invalid={touched.whats && !whatsOk}
                   />
@@ -618,7 +604,7 @@ export default function IndiquePage() {
                     inputMode="tel"
                     value={indicadoWhats}
                     placeholder="(11) 90000-0000"
-                    onChange={(e) => setIndicadoWhats(maskPhone(e.target.value))}
+                    onChange={(e) => setIndicadoWhats(formatBrPhone(e.target.value))}
                     onBlur={() => setTouched((t) => ({ ...t, indicadoWhats: true }))}
                     aria-invalid={touched.indicadoWhats && !indicadoWhatsOk}
                   />
@@ -665,7 +651,7 @@ export default function IndiquePage() {
                     className="bwa-button"
                     type="submit"
                     data-cta="indique-enviar"
-                    disabled={!podeEnviar}
+                    disabled={enviando}
                   >
                     {enviando ? "Enviando…" : "Registrar indicação"}
                     <span aria-hidden="true">→</span>

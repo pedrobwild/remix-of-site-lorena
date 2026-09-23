@@ -41,6 +41,7 @@ describe("formulário de origem do lead", () => {
     expect(leadOrigem({ form_path: "/orcamento", landing_path: "/portfolio" })).toBe("orcamento");
     expect(leadOrigem({ form_path: "/contato", landing_path: "/diagnostico" })).toBe("contato");
     expect(leadOrigem({ form_path: "/parceiros", landing_path: "/" })).toBe("parceiro");
+    expect(leadOrigem({ form_path: "/indique-um-amigo", landing_path: "/" })).toBe("indicacao");
     expect(leadOrigem({ form_path: "/o" })).toBe("orcamento");
     expect(leadOrigem({ form_path: "/p" })).toBe("orcamento");
   });

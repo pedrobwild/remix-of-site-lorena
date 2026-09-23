@@ -12,7 +12,15 @@ export type StepResult = {
 };
 
 /** Formulários conhecidos. Qualquer outro valor vira null. */
-export const FORM_PATHS = ["/diagnostico", "/contato", "/orcamento", "/parceiros", "/o", "/p"] as const;
+export const FORM_PATHS = [
+  "/diagnostico",
+  "/contato",
+  "/orcamento",
+  "/parceiros",
+  "/indique-um-amigo",
+  "/o",
+  "/p",
+] as const;
 export type FormPath = (typeof FORM_PATHS)[number];
 
 const FORM_LABELS: Record<FormPath, string> = {
@@ -20,6 +28,7 @@ const FORM_LABELS: Record<FormPath, string> = {
   "/contato": "Contato",
   "/orcamento": "Orçamento",
   "/parceiros": "Parceria comercial",
+  "/indique-um-amigo": "Indique um amigo",
   "/o": "LP Obra (QR)",
   "/p": "LP Panfleto (QR)",
 };
@@ -335,7 +344,12 @@ export function buildCrmPayload(lead: CleanLead, leadId: string | null) {
       lead_source: lead.lead_source,
       lives_in_sp: lead.lives_in_sp,
       form_path: lead.form_path,
-      lead_type: lead.form_path === "/parceiros" ? "parceiro" : "cliente",
+      lead_type:
+        lead.form_path === "/parceiros"
+          ? "parceiro"
+          : lead.form_path === "/indique-um-amigo"
+            ? "indicacao"
+            : "cliente",
       // Só o id gerado pelo banco; nunca um id vindo do cliente.
       lead_id: leadId,
     },

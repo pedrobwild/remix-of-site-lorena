@@ -37,6 +37,7 @@ export const LEAD_FORM_PATHS = [
   "/p",
   "/contato",
   "/parceiros",
+  "/indique-um-amigo",
 ] as const;
 
 export type LeadFormPath = (typeof LEAD_FORM_PATHS)[number];
@@ -53,15 +54,17 @@ export const LEAD_FORM_LABEL: Record<LeadFormPath, string> = {
   "/p": "LP panfleto (/p)",
   "/contato": "Contato",
   "/parceiros": "Parceiros",
+  "/indique-um-amigo": "Indique um amigo",
 };
 
 /** Agrupamento usado no filtro "Tipo" de /admin/leads. */
-export type LeadOrigem = "orcamento" | "contato" | "parceiro" | "outro";
+export type LeadOrigem = "orcamento" | "contato" | "parceiro" | "indicacao" | "outro";
 
 export const LEAD_ORIGEM_LABEL: Record<LeadOrigem, string> = {
   orcamento: "Orçamento",
   contato: "Mensagem",
   parceiro: "Parceiro",
+  indicacao: "Indicação",
   outro: "Outra",
 };
 
@@ -113,6 +116,7 @@ export function leadOrigem(lead: LeadFormSource): LeadOrigem {
   if ((DIAGNOSTICO_FORMS as readonly string[]).includes(form)) return "orcamento";
   if ((MENSAGEM_FORMS as readonly string[]).includes(form)) return "contato";
   if (form === "/parceiros") return "parceiro";
+  if (form === "/indique-um-amigo") return "indicacao";
   return "outro";
 }
 

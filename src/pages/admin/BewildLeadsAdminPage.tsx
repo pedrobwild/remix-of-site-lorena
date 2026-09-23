@@ -91,6 +91,7 @@ const ORIGEM_OPTIONS: { value: "all" | LeadOrigem; label: string }[] = [
   { value: "contato", label: "Mensagens (/contato)" },
   { value: "orcamento", label: "Orçamentos (/diagnostico, /orcamento, /o, /p)" },
   { value: "parceiro", label: "Parceiros (/parceiros)" },
+  { value: "indicacao", label: "Indicações (/indique-um-amigo)" },
   { value: "outro", label: "Não identificado" },
 ];
 

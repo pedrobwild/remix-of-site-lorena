@@ -84,3 +84,9 @@ Deno.test("CRM recebe o lead saneado e só o id gerado pelo banco", () => {
   assertEquals(crm.extra.lead_type, "parceiro");
   assertEquals(crm.extra.form_path, "/parceiros");
 });
+
+Deno.test("indicação (Indique um amigo) é reconhecida e marcada no CRM", () => {
+  const lead = parse({ name: "Ana", whatsapp: "11912345678", form_path: "/indique-um-amigo" });
+  assertEquals(lead.form_path, "/indique-um-amigo");
+  assertEquals(buildCrmPayload(lead, null).extra.lead_type, "indicacao");
+});
