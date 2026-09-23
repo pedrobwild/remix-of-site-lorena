@@ -21,6 +21,7 @@ import ComoFuncionaPage from "./pages/ComoFuncionaPage";
 import OndeAtuamosPage from "./pages/OndeAtuamosPage";
 import ReformaApartamentoSpPage from "./pages/ReformaApartamentoSpPage";
 import ReformaStudioSpPage from "./pages/ReformaStudioSpPage";
+import ReformaCoberturaSpPage from "./pages/ReformaCoberturaSpPage";
 import ParceirosPage from "./pages/ParceirosPage";
 import PrivacidadePage from "./pages/PrivacidadePage";
 import LpObraPage from "./pages/LpObraPage";
@@ -85,6 +86,7 @@ export function renderRoute(route: Route) {
   if (route.name === "onde-atuamos") return <OndeAtuamosPage />;
   if (route.name === "reforma-apartamento-sp") return <ReformaApartamentoSpPage />;
   if (route.name === "reforma-studio-sp") return <ReformaStudioSpPage />;
+  if (route.name === "reforma-cobertura-sp") return <ReformaCoberturaSpPage />;
   if (route.name === "parceiros") return <ParceirosPage />;
   if (route.name === "guia-do-investidor")
     return (

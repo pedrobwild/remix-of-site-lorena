@@ -47,6 +47,7 @@ export default function BwaFooter() {
               <a href="/onde-atuamos">Onde atuamos</a>
               <a href="/reforma-de-apartamento-sao-paulo">Reforma de apartamento em SP</a>
               <a href="/reforma-de-studio-sao-paulo">Reforma de studio em SP</a>
+              <a href="/reforma-de-cobertura-sao-paulo">Reforma de cobertura em SP</a>
               <a href="/conteudos">Conteúdos</a>
               <a href="/guia-do-investidor">Guia do investidor</a>
               <a href="/faq">FAQ</a>
