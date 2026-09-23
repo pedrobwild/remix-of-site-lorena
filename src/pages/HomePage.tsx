@@ -133,5 +133,11 @@ export default function HomePage() {
     return () => container.removeEventListener("click", handleCtaClick);
   }, []);
 
-  return <div ref={homeRef} dangerouslySetInnerHTML={{ __html: HOME_BWA_HTML }} />;
+  return (
+    <>
+      <div ref={homeRef} dangerouslySetInnerHTML={{ __html: HOME_BWA_HTML }} />
+      {/* Rodapé único do site — mesmo componente de todas as páginas. */}
+      <BwaFooter />
+    </>
+  );
 }
