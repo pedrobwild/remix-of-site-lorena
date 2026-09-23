@@ -34,6 +34,7 @@ import {
   reportPhotos,
   reports,
   type WorkflowActivity,
+  type WorkflowReport,
 } from "./workflowReplicaData";
 import "./workflow-portal-replica.css";
 
@@ -50,6 +51,14 @@ const TABS = [
 ] as const;
 
 const FONT_URL = "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap";
+const DAY = 86_400_000;
+const TODAY = new Date(2026, 8, 19).getTime();
+const PROJECT_START = new Date(2026, 7, 4).getTime();
+const PROJECT_END = new Date(2026, 9, 10).getTime();
+
+function formatChartDate(timestamp: number) {
+  return new Date(timestamp).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+}
 
 function StatusPill({ activity }: { activity: WorkflowActivity }) {
   const done = activity.status === "Concluído";
@@ -120,9 +129,9 @@ function SchedulePanel() {
   );
 }
 
-function CurveTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ name?: string; value?: number }>; label?: string }) {
+function CurveTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ name?: string; value?: number }>; label?: number }) {
   if (!active || !payload?.length) return null;
-  return <div className="wf-tooltip"><strong>{label}</strong><span>Etapa em execução</span>{payload.map((item) => item.value === undefined ? null : <span key={item.name}>{item.name}: {item.value}%</span>)}</div>;
+  return <div className="wf-tooltip"><strong>{typeof label === "number" ? formatChartDate(label) : ""}</strong><span>Etapa em execução</span>{payload.map((item) => item.value === undefined ? null : <span key={item.name}>{item.name}: {item.value}%</span>)}</div>;
 }
 
 function TodayLabel({ viewBox }: { viewBox?: { x?: number } }) {
@@ -133,7 +142,17 @@ function TodayLabel({ viewBox }: { viewBox?: { x?: number } }) {
 
 function CurvePanel() {
   const [showAll, setShowAll] = useState(false);
-  const data = showAll ? curveData : curveData.slice(2, 18);
+  const [isMobile, setIsMobile] = useState(false);
+  const domain: [number, number] = showAll ? [PROJECT_START, PROJECT_END] : [TODAY - 30 * DAY, TODAY + 15 * DAY];
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
   return (
     <div>
       <header className="wf-section-head">
@@ -142,16 +161,16 @@ function CurvePanel() {
       </header>
       <div className="wf-chart-frame">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 27, right: 15, left: -16, bottom: 28 }}>
+          <LineChart data={curveData} margin={{ top: 27, right: 15, left: -16, bottom: 28 }}>
             <CartesianGrid vertical={false} stroke="var(--wf-border)" strokeDasharray="3 3" />
-            <XAxis dataKey="date" tick={{ fontSize: 8, fill: "var(--wf-muted-foreground)" }} angle={-45} textAnchor="end" height={42} axisLine={false} tickLine={false} interval={2} />
+            <XAxis dataKey="timestamp" type="number" domain={domain} tickFormatter={formatChartDate} tick={{ fontSize: 8, fill: "var(--wf-muted-foreground)" }} angle={-45} textAnchor="end" height={42} axisLine={false} tickLine={false} tickCount={7} />
             <YAxis domain={[0,100]} ticks={[0,25,50,75,100]} tickFormatter={(value) => `${value}%`} tick={{ fontSize: 9, fill: "var(--wf-muted-foreground)" }} axisLine={false} tickLine={false} />
             <Tooltip content={<CurveTooltip />} />
-            <ReferenceLine x="04/08" stroke="var(--wf-muted-foreground)" strokeDasharray="4 4" label={{ value: "Início", position: "insideTopLeft", fill: "var(--wf-muted-foreground)", fontSize: 9 }} />
-            <ReferenceLine x="19/09" stroke="var(--wf-primary)" strokeDasharray="4 4" label={<TodayLabel />} />
-            <ReferenceLine x="09/10" stroke="var(--wf-success)" strokeDasharray="4 4" label={{ value: "Entrega", position: "insideTopRight", fill: "var(--wf-success)", fontSize: 9 }} />
+            <ReferenceLine x={PROJECT_START} stroke="var(--wf-muted-foreground)" strokeDasharray="4 4" label={{ value: "Início", position: "insideTopLeft", fill: "var(--wf-muted-foreground)", fontSize: 9 }} />
+            <ReferenceLine x={TODAY} stroke="var(--wf-primary)" strokeDasharray="4 4" label={<TodayLabel />} />
+            <ReferenceLine x={PROJECT_END} stroke="var(--wf-success)" strokeDasharray="4 4" label={{ value: "Entrega", position: "insideTopRight", fill: "var(--wf-success)", fontSize: 9 }} />
             <Line type="monotone" dataKey="previsto" name="Previsto" stroke="var(--wf-primary)" strokeWidth={2} strokeOpacity={0.5} strokeDasharray="6 4" dot={{ r: 2, fill: "var(--wf-primary)" }} isAnimationActive={false} />
-            <Line type="monotone" dataKey="realizado" name="Realizado" stroke="#22c55e" strokeWidth={3.5} connectNulls={false} dot={{ r: 4, fill: "#22c55e", stroke: "#fff", strokeWidth: 2 }} isAnimationActive={false} />
+            <Line type="monotone" dataKey="realizado" name="Realizado" stroke="#22c55e" strokeWidth={3.5} connectNulls={false} dot={{ r: isMobile ? 2 : 4, fill: "#22c55e", stroke: "#fff", strokeWidth: isMobile ? 1 : 2 }} isAnimationActive={false} />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -160,27 +179,30 @@ function CurvePanel() {
   );
 }
 
-function ReportDetail({ onBack }: { onBack: () => void }) {
+function ReportDetail({ report, onBack, onPrevious, onNext }: { report: WorkflowReport; onBack: () => void; onPrevious: () => void; onNext: () => void }) {
   return <article className="wf-report-detail">
-    <div className="wf-report-actions"><button className="wf-button" type="button" onClick={onBack}>Ver todos</button><button className="wf-button" type="button">Anterior</button><button className="wf-button" type="button">Próxima</button><button className="wf-button" type="button"><FileDown size={13} />PDF</button></div>
-    <div className="wf-report-overview"><div><span className="wf-badge">Semana 6</span><h3>15/09/2026 - 19/09/2026</h3><p>Etapa: Instalação de marcenaria</p></div><strong className="wf-report-percent">52%</strong></div>
-    <div className="wf-report-progress" style={{ "--planned": "55%" } as React.CSSProperties}><i style={{ width: "52%" }} /></div>
+    <div className="wf-report-actions"><button className="wf-button" type="button" onClick={onBack}>Ver todos</button><button className="wf-button" type="button" onClick={onPrevious} disabled={report.week === 1}>Anterior</button><button className="wf-button" type="button" onClick={onNext} disabled={report.week === 6}>Próxima</button><button className="wf-button" type="button"><FileDown size={13} />PDF</button></div>
+    <div className="wf-report-overview"><div><span className="wf-badge">Semana {report.week}</span><h3>{report.fullDates}</h3><p>Etapa: {report.stage}</p></div><strong className="wf-report-percent">{report.progress}%</strong></div>
+    <div className="wf-report-progress" style={{ "--planned": `${report.planned}%` } as React.CSSProperties}><i style={{ width: `${report.progress}%` }} /></div>
     <section className="wf-report-section"><h4>Galeria de Fotos (3)</h4><div className="wf-report-body wf-gallery">{reportPhotos.map((photo) => <figure key={photo.caption}><img src={photo.src} alt={photo.alt} loading="lazy" /><figcaption>{photo.caption}</figcaption></figure>)}</div></section>
-    <section className="wf-report-section"><h4>Resumo Executivo</h4><div className="wf-report-body"><p>Instalação de ar-condicionado e primeira demão de pintura concluídas. Início da instalação de marcenaria.</p><h5>Entregáveis concluídos na semana</h5><ul><li>Ar-condicionado instalado</li><li>Primeira demão de pintura</li></ul></div></section>
-    <section className="wf-report-section"><h4>Na próxima semana vamos focar em:</h4><div className="wf-report-body"><ul><li>Instalação de marcenaria e ajustes</li><li>Instalação de rodapé e acabamentos de civil</li></ul></div></section>
-    <section className="wf-report-section"><h4>Decisões e Aprovações do Cliente</h4><div className="wf-report-body wf-decision"><span>Puxador da marcenaria da cozinha aprovado</span><time>17/09</time><span className="wf-approved">Aprovado</span></div></section>
+    <section className="wf-report-section"><h4>Resumo Executivo</h4><div className="wf-report-body"><p>{report.summary}</p><h5>Entregáveis concluídos na semana</h5><ul>{report.completed.map((item) => <li key={item}>{item}</li>)}</ul></div></section>
+    <section className="wf-report-section"><h4>Na próxima semana vamos focar em:</h4><div className="wf-report-body"><ul>{report.next.map((item) => <li key={item}>{item}</li>)}</ul></div></section>
+    <section className="wf-report-section"><h4>Decisões e Aprovações do Cliente</h4><div className="wf-report-body wf-decision"><span>{report.decision}</span><time>{report.decisionDate}</time><span className="wf-approved">Aprovado</span></div></section>
     <footer className="wf-report-footer">Gestão de Obras · Bwild</footer>
   </article>;
 }
 
 function ReportsPanel() {
-  const [detail, setDetail] = useState(false);
-  return <div className={`wf-reports-layout ${detail ? "detail" : ""}`}>
+  const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
+  const selectedReport = reports.find((report) => report.week === selectedWeek);
+  const selectWeek = (week: number) => setSelectedWeek(Math.min(6, Math.max(1, week)));
+  return <div className={`wf-reports-layout ${selectedReport ? "detail" : ""}`}>
+    {!selectedReport ? (
     <section className="wf-report-list"><div className="wf-report-list-head"><h3>Histórico de Relatórios</h3><span>6 relatórios</span></div>
-      {reports.map((report) => <button className="wf-report-row" type="button" aria-current={report.current ? "true" : undefined} key={report.week} onClick={() => setDetail(true)}><span className="wf-week">Sem {report.week}</span><span><strong>{report.dates}{report.current ? " · Atual" : ""}</strong><p>Etapa: {report.stage}</p><span className="wf-report-progress" style={{ "--planned": `${report.planned}%` } as React.CSSProperties}><i style={{ width: `${report.progress}%` }} /></span></span><ChevronRight size={15} /></button>)}
+      {reports.map((report) => <button className="wf-report-row" type="button" aria-current={report.current ? "true" : undefined} key={report.week} onClick={() => setSelectedWeek(report.week)}><span className="wf-week">Sem {report.week}</span><span><strong>{report.dates}{report.current ? " · Atual" : ""}</strong><p>Etapa: {report.stage}</p><span className="wf-report-progress" style={{ "--planned": `${report.planned}%` } as React.CSSProperties}><i style={{ width: `${report.progress}%` }} /></span></span><ChevronRight size={15} /></button>)}
       <div className="wf-report-row wf-coming"><span className="wf-week"><Lock size={14} /></span><span><strong>Sem 7</strong><p>Disponível em breve</p></span></div>
     </section>
-    <ReportDetail onBack={() => setDetail(false)} />
+    ) : <ReportDetail report={selectedReport} onBack={() => setSelectedWeek(null)} onPrevious={() => selectWeek(selectedReport.week - 1)} onNext={() => selectWeek(selectedReport.week + 1)} />}
   </div>;
 }
 
@@ -221,7 +243,7 @@ export default function WorkflowPortalReplica() {
       <IdentificationCard />
       <section className="wf-card wf-tabs-card">
         <div className="wf-tablist" role="tablist" aria-label="Áreas do portal">
-          {TABS.map((tab, index) => { const Icon = tab.icon; return <button ref={(node) => { tabRefs.current[index] = node; }} className="wf-tab" type="button" role="tab" id={`wf-tab-${tab.id}`} aria-controls={`wf-panel-${tab.id}`} aria-selected={activeTab === tab.id} tabIndex={activeTab === tab.id ? 0 : -1} onClick={() => setActiveTab(tab.id)} onKeyDown={(event) => handleTabKeyDown(event, index)} key={tab.id}><Icon size={14} /><span>{tab.label}</span></button>; })}
+          {TABS.map((tab, index) => { const Icon = tab.icon; return <button ref={(node) => { tabRefs.current[index] = node; }} className="wf-tab" type="button" role="tab" id={`wf-tab-${tab.id}`} aria-controls={`wf-panel-${tab.id}`} aria-selected={activeTab === tab.id} tabIndex={activeTab === tab.id ? 0 : -1} onClick={() => setActiveTab(tab.id)} onKeyDown={(event) => handleTabKeyDown(event, index)} key={tab.id}><Icon size={14} /><span className={tab.id === "curve" ? "wf-tab-label-long" : undefined}>{tab.label}</span>{tab.id === "curve" ? <span className="wf-tab-label-short">Evolução</span> : null}</button>; })}
         </div>
         {TABS.map((tab) => <section className="wf-panel" role="tabpanel" id={`wf-panel-${tab.id}`} aria-labelledby={`wf-tab-${tab.id}`} hidden={activeTab !== tab.id} key={tab.id}>
           {tab.id === "schedule" ? <SchedulePanel /> : tab.id === "curve" ? <CurvePanel /> : tab.id === "reports" ? <ReportsPanel /> : <EmptyPanel />}
