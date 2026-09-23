@@ -125,7 +125,7 @@ describe("BewildPostPage", () => {
     await act(async () => pending.get("post-a")!({ data: postRow("post-a", "A"), error: null }));
 
     const cta = screen.getByRole("link", { name: /Solicitar orçamento/ });
-    expect(cta.getAttribute("href")).toBe("/diagnostico");
+    expect(cta.getAttribute("href")).toBe("/orcamento");
 
     await waitFor(() => {
       const article = Array.from(document.head.querySelectorAll('script[type="application/ld+json"]'))
