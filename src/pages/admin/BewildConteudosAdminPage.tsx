@@ -11,9 +11,10 @@
  *  - Excluir
  *  - Links para novo post e edição (BewildPostFormPage)
  */
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Plus, ExternalLink } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
+import AdminAlert from "@/components/admin/AdminAlert";
 import { supabase } from "@/integrations/supabase/client";
 
 type Row = {
@@ -43,51 +44,81 @@ function fmtDate(iso: string | null): string {
 export default function BewildConteudosAdminPage() {
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
+    setLoadError(null);
+    const { data, error } = await supabase
       .from("bewild_posts" as never)
       .select("id, slug, title, category, published, featured, published_at, updated_at")
       .order("published", { ascending: false })
       .order("published_at", { ascending: false, nullsFirst: false })
       .order("updated_at", { ascending: false });
+    if (error) {
+      // Sem isso, uma falha de permissão aparecia como "Nenhum post ainda".
+      setLoadError(error.message);
+      setLoading(false);
+      return;
+    }
     setRows((data ?? []) as Row[]);
     setLoading(false);
-  }
-
-  useEffect(() => {
-    load();
   }, []);
 
-  async function togglePublished(r: Row) {
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  /**
+   * Update de uma linha com conferência de erro e de "linha afetada" (com
+   * RLS, update sem permissão não dá erro — só não altera nada).
+   */
+  async function updateRow(r: Row, patch: Record<string, unknown>, what: string) {
     setBusy(r.id);
+    setActionError(null);
+    const { data, error } = await supabase
+      .from("bewild_posts" as never)
+      .update(patch as never)
+      .eq("id", r.id)
+      .select("id");
+    setBusy(null);
+    if (error || !data || (data as unknown[]).length === 0) {
+      setActionError(
+        `Não foi possível ${what} "${r.title}": ${error?.message ?? "nenhuma linha foi alterada (sem permissão ou post excluído)."}`,
+      );
+    }
+    await load();
+  }
+
+  async function togglePublished(r: Row) {
     const next = !r.published;
     const patch: Record<string, unknown> = { published: next };
     if (next && !r.published_at) patch.published_at = new Date().toISOString();
-    await supabase.from("bewild_posts" as never).update(patch as never).eq("id", r.id);
-    setBusy(null);
-    load();
+    await updateRow(r, patch, next ? "publicar" : "despublicar");
   }
 
   async function toggleFeatured(r: Row) {
-    setBusy(r.id);
-    await supabase
-      .from("bewild_posts" as never)
-      .update({ featured: !r.featured } as never)
-      .eq("id", r.id);
-
-    setBusy(null);
-    load();
+    await updateRow(r, { featured: !r.featured }, r.featured ? "tirar o destaque de" : "destacar");
   }
 
   async function remove(r: Row) {
     if (!confirm(`Excluir o post "${r.title}"? Essa ação não pode ser desfeita.`)) return;
     setBusy(r.id);
-    await supabase.from("bewild_posts" as never).delete().eq("id", r.id);
+    setActionError(null);
+    const { data, error } = await supabase
+      .from("bewild_posts" as never)
+      .delete()
+      .eq("id", r.id)
+      .select("id");
     setBusy(null);
-    load();
+    if (error || !data || (data as unknown[]).length === 0) {
+      setActionError(
+        `Não foi possível excluir "${r.title}": ${error?.message ?? "nada foi excluído (sem permissão ou já removido)."}`,
+      );
+    }
+    await load();
   }
 
   const totalPublished = rows.filter((r) => r.published).length;
@@ -105,6 +136,10 @@ export default function BewildConteudosAdminPage() {
         </a>
       }
     >
+      {actionError && (
+        <AdminAlert onClose={() => setActionError(null)}>{actionError}</AdminAlert>
+      )}
+
       <div className="bw-admin__kpi-grid">
         <KpiSimple label="Publicados" value={totalPublished} />
         <KpiSimple label="Em rascunho" value={totalDraft} />
@@ -114,6 +149,17 @@ export default function BewildConteudosAdminPage() {
       <div className="bw-admin__section" style={{ padding: 0 }}>
         {loading ? (
           <p className="bw-admin__empty">Carregando…</p>
+        ) : loadError ? (
+          <div className="bw-admin__empty" role="alert" style={{ display: "grid", gap: 12, justifyItems: "center" }}>
+            <p style={{ margin: 0, color: "#991B1B" }}>
+              <strong>Erro ao carregar os posts.</strong>
+              <br />
+              <span style={{ fontSize: 13 }}>{loadError}</span>
+            </p>
+            <button type="button" className="bw-admin__btn bw-admin__btn--sm" onClick={() => void load()}>
+              Tentar de novo
+            </button>
+          </div>
         ) : rows.length === 0 ? (
           <p className="bw-admin__empty">
             Nenhum post ainda. Clique em <strong>Novo post</strong> para começar.
@@ -150,7 +196,7 @@ export default function BewildConteudosAdminPage() {
                       style={{ cursor: "pointer" }}
                       onClick={() => togglePublished(r)}
                       disabled={busy === r.id}
-                      aria-label={r.published ? "Despublicar" : "Publicar"}
+                      aria-label={r.published ? `Despublicar "${r.title}"` : `Publicar "${r.title}"`}
                     >
                       {r.published ? "Publicado" : "Rascunho"}
                     </button>
@@ -165,7 +211,7 @@ export default function BewildConteudosAdminPage() {
                       style={{ cursor: "pointer" }}
                       onClick={() => toggleFeatured(r)}
                       disabled={busy === r.id}
-                      aria-label={r.featured ? "Remover destaque" : "Destacar"}
+                      aria-label={r.featured ? `Remover destaque de "${r.title}"` : `Destacar "${r.title}"`}
                     >
                       {r.featured ? "Em destaque" : "—"}
                     </button>

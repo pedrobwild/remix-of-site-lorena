@@ -78,9 +78,18 @@ export default function SeoIndexacaoPage() {
         .limit(1000),
       supabase.from("seo_index_runs").select("*").order("ran_at", { ascending: false }).limit(5),
     ]);
-    if (list.error) setMsg({ kind: "err", text: `Erro ao carregar: ${list.error.message}` });
-    setRows((list.data ?? []) as Row[]);
-    setRuns((runList.data ?? []) as Run[]);
+    if (list.error) {
+      // Mantém a lista anterior: "nenhuma página" aqui seria mentira.
+      setMsg({ kind: "err", text: `Erro ao carregar: ${list.error.message}` });
+    } else {
+      setRows((list.data ?? []) as Row[]);
+    }
+    if (runList.error) {
+      const text = `Erro ao carregar o histórico de verificações: ${runList.error.message}`;
+      setMsg((m) => m ?? { kind: "err", text });
+    } else {
+      setRuns((runList.data ?? []) as Run[]);
+    }
     setLoading(false);
   }
 
@@ -115,7 +124,11 @@ export default function SeoIndexacaoPage() {
       setMsg({ kind: "err", text: `Falha na verificação: ${error.message}` });
       return;
     }
-    const r = data as { checked?: number; newly_indexed?: number };
+    const r = data as { checked?: number; newly_indexed?: number; error?: string };
+    if (r?.error) {
+      setMsg({ kind: "err", text: `Falha na verificação: ${r.error}` });
+      return;
+    }
     setMsg({
       kind: "ok",
       text: `${r?.checked ?? 0} página(s) verificadas · ${r?.newly_indexed ?? 0} nova(s) no índice.`,
@@ -125,10 +138,19 @@ export default function SeoIndexacaoPage() {
 
   async function acknowledge(ids: number[]) {
     if (ids.length === 0) return;
-    await supabase
+    setMsg(null);
+    const { data, error } = await supabase
       .from("seo_index_status")
       .update({ acknowledged_at: new Date().toISOString() })
-      .in("id", ids);
+      .in("id", ids)
+      .select("id");
+    if (error || !data || data.length === 0) {
+      setMsg({
+        kind: "err",
+        text: `Não foi possível marcar como visto: ${error?.message ?? "nenhuma linha foi alterada (sem permissão?)."}`,
+      });
+      return;
+    }
     await load();
   }
 
@@ -139,7 +161,14 @@ export default function SeoIndexacaoPage() {
       description="Acompanha quais páginas do site já aparecem no Google."
       actions={
         <>
-          {msg && <span className={`admin-flash admin-flash--${msg.kind} mono`}>{msg.text}</span>}
+          {msg && (
+            <span
+              className={`admin-flash admin-flash--${msg.kind} mono`}
+              role={msg.kind === "err" ? "alert" : "status"}
+            >
+              {msg.text}
+            </span>
+          )}
           <button className="admin-btn" onClick={runNow} disabled={running}>
             <RefreshCw size={14} /> {running ? "verificando…" : "verificar agora"}
           </button>
@@ -211,7 +240,13 @@ export default function SeoIndexacaoPage() {
                   <td className="mono">{fmt(r.indexed_at)}</td>
                   <td className="mono">{fmt(r.last_checked_at)}</td>
                   <td>
-                    <a href={r.url} target="_blank" rel="noopener noreferrer" title="Abrir página">
+                    <a
+                      href={r.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Abrir página"
+                      aria-label={`Abrir ${pathOf(r.url)}`}
+                    >
                       <ExternalLink size={14} />
                     </a>
                   </td>

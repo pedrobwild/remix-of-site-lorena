@@ -87,17 +87,12 @@ export default function AutorizacaoCondominioPage() {
           </div>
 
           <div className="bwa-shell">
-            <div className="bwa-faq-list" itemScope itemType="https://schema.org/FAQPage">
+            {/* Dados estruturados só no JSON-LD (useSeo): um FAQPage por página. */}
+            <div className="bwa-faq-list">
               {ITENS.map((item, i) => {
                 const open = aberto === i;
                 return (
-                  <article
-                    key={item.q}
-                    className={`bwa-faq-item${open ? " bwa-open" : ""}`}
-                    itemScope
-                    itemProp="mainEntity"
-                    itemType="https://schema.org/Question"
-                  >
+                  <article key={item.q} className={`bwa-faq-item${open ? " bwa-open" : ""}`}>
                     <h2 className="bwa-faqpage-q">
                       <button
                         className="bwa-faq-question"
@@ -107,18 +102,12 @@ export default function AutorizacaoCondominioPage() {
                         onClick={() => setAberto(open ? -1 : i)}
                       >
                         <span className="bwa-faq-num">{String(i + 1).padStart(2, "0")}</span>
-                        <strong itemProp="name">{item.q}</strong>
+                        <strong>{item.q}</strong>
                         <span className="bwa-faq-icon" aria-hidden="true" />
                       </button>
                     </h2>
-                    <div
-                      id={`autorizacao-resposta-${i}`}
-                      className="bwa-faq-answer"
-                      itemScope
-                      itemProp="acceptedAnswer"
-                      itemType="https://schema.org/Answer"
-                    >
-                      <p itemProp="text">{item.a}</p>
+                    <div id={`autorizacao-resposta-${i}`} className="bwa-faq-answer">
+                      <p>{item.a}</p>
                     </div>
                   </article>
                 );

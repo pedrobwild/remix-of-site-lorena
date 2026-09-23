@@ -100,11 +100,48 @@ export type PostDates = {
   published: string | null;
   /** ISO da última alteração: updated_at quando é posterior à publicação. */
   modified: string | null;
-  /** true quando o dia de `modified` é posterior ao dia de `published`. */
+  /** true quando o dia de `modified` é posterior ao dia de `published` (dias em São Paulo). */
   showUpdated: boolean;
 };
 
-const day = (iso: string | null | undefined) => (iso ? iso.slice(0, 10) : null);
+/** Fuso da operação: é nele que "a data do post" é lida, para qualquer visitante. */
+export const BEWILD_TIME_ZONE = "America/Sao_Paulo";
+
+const DATE_ONLY_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
+/** Meia-noite UTC exata (`2026-09-22T00:00:00+00:00`): data gravada sem hora. */
+const MIDNIGHT_UTC_RE = /^(\d{4})-(\d{2})-(\d{2})[T ]00:00(?::00(?:\.0+)?)?(?:Z|[+-]00(?::?00)?)$/i;
+
+let spDayFormat: Intl.DateTimeFormat | null = null;
+
+/**
+ * Dia civil (`YYYY-MM-DD`) de uma data do banco, lido em São Paulo.
+ *
+ * - Data sem hora (`2026-09-22`) e meia-noite UTC exata — o que o Postgres
+ *   devolve quando alguém grava só a data num timestamptz — são datas de
+ *   calendário: valem como estão. Convertidas de fuso, viravam "21 set" no
+ *   Brasil (UTC−3).
+ * - Timestamps reais (`new Date().toISOString()` do admin) são convertidos
+ *   para o dia em São Paulo, igual para todo visitante (antes: fuso do
+ *   navegador na tela, dia UTC na comparação de "Atualizado em").
+ */
+export function bewildCalendarDay(iso: string | null | undefined): string | null {
+  if (!iso) return null;
+  const s = iso.trim();
+  const m = s.match(DATE_ONLY_RE) ?? s.match(MIDNIGHT_UTC_RE);
+  if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+  const d = new Date(s);
+  if (Number.isNaN(d.getTime())) return null;
+  spDayFormat ??= new Intl.DateTimeFormat("en-US", {
+    timeZone: BEWILD_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const parts = Object.fromEntries(spDayFormat.formatToParts(d).map((p) => [p.type, p.value]));
+  return `${parts.year}-${parts.month}-${parts.day}`;
+}
+
+const day = bewildCalendarDay;
 
 export function postDates(
   post: { published_at?: string | null; created_at?: string | null; updated_at?: string | null } | null | undefined,

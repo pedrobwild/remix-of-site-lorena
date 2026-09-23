@@ -2,7 +2,13 @@
  * utm.ts — preserva a origem da campanha (UTMs) entre páginas públicas.
  * Lê os parâmetros da URL atual; se não houver, cai no último valor visto
  * na sessão (sessionStorage), para não perder a campanha na navegação.
+ *
+ * Guardar a campanha é atribuição de marketing: só com consentimento (LGPD),
+ * igual a `campaignParams.ts`. Sem aceite, vale apenas a URL atual — a
+ * navegação SPA já carrega os parâmetros de página em página.
  */
+
+import { isConsentAccepted } from "@/lib/cookieConsent";
 
 const UTM_KEYS = [
   "utm_source",
@@ -25,6 +31,7 @@ export function readUtmParams(): UtmParams {
     if (value) fromUrl[key] = value.slice(0, 120);
   }
   if (Object.keys(fromUrl).length > 0) {
+    if (!isConsentAccepted()) return fromUrl;
     try {
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(fromUrl));
     } catch {
@@ -32,6 +39,7 @@ export function readUtmParams(): UtmParams {
     }
     return fromUrl;
   }
+  if (!isConsentAccepted()) return {};
   try {
     const saved = sessionStorage.getItem(STORAGE_KEY);
     if (saved) return JSON.parse(saved) as UtmParams;

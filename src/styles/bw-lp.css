@@ -247,7 +247,18 @@ html:has(.bw-lp),body:has(.bw-lp){background:#0B2342}
 .bw-lp .fld input:focus{outline:2px solid var(--cyan);outline-offset:1px;border-color:transparent}
 .bw-lp .frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:520px){.bw-lp .frow{grid-template-columns:1fr}}
-.bw-lp .skip{display:block;width:100%;text-align:center;font-size:13px;color:#8fa0b2;text-decoration:underline;margin-top:14px}
+/* #8fa0b2 sobre branco dava 2,6:1 — o link é um controle, então usa o --muted (≈6:1). */
+.bw-lp .skip{display:block;width:100%;text-align:center;font-size:13px;color:var(--muted);text-decoration:underline;margin-top:14px}
+.bw-lp .skip:disabled{opacity:.6;cursor:progress}
+/* Erros por campo (associados via aria-describedby) */
+.bw-lp .fld .fld-err,.bw-lp .chips .fld-err{margin:0}
+.bw-lp .chips .fld-err{margin-top:8px}
+.bw-lp .fld input[aria-invalid="true"]{border-color:#c0392b}
+/* Avisos que substituem o formulário recebem foco programático */
+.bw-lp .gate-card:focus,.bw-lp .success:focus{outline:none}
+.bw-lp .gate-card .skip + .skip{margin-top:8px}
+/* /p · fallback sem confirmação: WhatsApp com os dados + reenvio */
+.bw-lp .success-act{margin-top:18px}
 .bw-lp .gate-card.done .gate-form{display:none}
 .bw-lp .gate-done{display:none;text-align:center}.bw-lp .gate-card.done .gate-done{display:block}
 .bw-lp .gate-done .ok,.bw-lp .success .ok{width:44px;height:44px;border-radius:50%;background:var(--navy-deep);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:20px}
@@ -339,3 +350,13 @@ html:has(.bw-lp),body:has(.bw-lp){background:#0B2342}
   .bw-lp .lp-quem .vblock .vframe,.bw-lp .lp-quem .vblock.invertido .vframe{order:1;max-height:480px;max-width:340px}
 }
 .bw-lp .lp-quem .lp-quem-cta{margin-top:clamp(48px,7vh,80px);padding-top:clamp(28px,4vh,40px);border-top:1px solid var(--hair);display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:center}
+
+/* Movimento reduzido: faixa parada (o texto é decorativo, aria-hidden). Os
+   vídeos param via useVideoAutoplayInView; aqui saem o marquee e os
+   deslocamentos de hover/sticky. */
+@media (prefers-reduced-motion: reduce){
+  .bw-lp .marquee .trk{animation:none}
+  .bw-lp .btn,.bw-lp .btn .ar,.bw-lp .btn .arrow,.bw-lp .sticky,.bw-lp .opt{transition:none}
+  .bw-lp .btn:hover,.bw-lp .btn-cyan:hover,.bw-lp .btn-ghost:hover{transform:none}
+  .bw-lp .btn:hover .ar,.bw-lp .btn:hover .arrow{transform:none}
+}

@@ -215,7 +215,7 @@ export default function RentabilidadeSection() {
           <AccordionContent>
             <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
               <p>• <strong className="text-foreground">ITBI</strong>: ~3% do valor do imóvel na compra</p>
-              <p>• <strong className="text-foreground">Registro e escritura</strong>: ~1.5% adicional</p>
+              <p>• <strong className="text-foreground">Registro e escritura</strong>: ~1,5% adicional</p>
               <p>• <strong className="text-foreground">Fundo de reserva</strong>: cobrado em muitos condomínios além da taxa ordinária</p>
               <p>• <strong className="text-foreground">Reposição de enxoval</strong>: toalhas, roupas de cama e itens de cozinha a cada 6-12 meses</p>
               <p>• <strong className="text-foreground">Manutenção corretiva</strong>: ~5% da receita anual para reparos inesperados</p>

@@ -1,6 +1,7 @@
 /** @vitest-environment jsdom */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { INSTAGRAM_TESTIMONIAL_POSTS, installInstagramEmbeds } from "../homeInstagram";
+import { setConsent } from "../cookieConsent";
 
 type Entry = { isIntersecting: boolean; target: Element };
 type Observer = { cb: (entries: Entry[]) => void; targets: Element[] };
@@ -49,7 +50,8 @@ describe("installInstagramEmbeds (DOM)", () => {
     vi.unstubAllGlobals();
   });
 
-  it("monta os 3 embeds quando o bloco de depoimentos se aproxima da tela, não card a card", () => {
+  it("com cookies aceitos, monta os 3 embeds quando o bloco se aproxima da tela, não card a card", () => {
+    window.localStorage.setItem("lal_cookie_consent", "accepted");
     const observers = stubIntersectionObserver();
     const root = mountHome();
     const cleanup = installInstagramEmbeds(root);
@@ -90,6 +92,49 @@ describe("installInstagramEmbeds (DOM)", () => {
     expect(iframes(root)[0].getAttribute("src")).toBe(`https://www.instagram.com/p/${INSTAGRAM_TESTIMONIAL_POSTS[1]}/embed/`);
     expect(states(root)).toEqual(["consent", "loaded", "consent"]);
     cleanup();
+  });
+
+  it("sem decisão de cookies (CORE-09): nada da Meta monta sozinho; o botão carrega sob demanda", () => {
+    const observers = stubIntersectionObserver();
+    const root = mountHome();
+    const cleanup = installInstagramEmbeds(root);
+
+    // Antes: consentimento `null` montava os iframes do Instagram sozinho.
+    expect(observers).toHaveLength(0);
+    expect(iframes(root)).toHaveLength(0);
+    expect(states(root)).toEqual(["consent", "consent", "consent"]);
+
+    root.querySelectorAll<HTMLButtonElement>("[data-ig-load]")[0].click();
+    expect(iframes(root)).toHaveLength(1);
+    expect(states(root)).toEqual(["loaded", "consent", "consent"]);
+    cleanup();
+  });
+
+  it("aceitar depois (sem recarregar) liga a montagem automática", () => {
+    const observers = stubIntersectionObserver();
+    const root = mountHome();
+    const cleanup = installInstagramEmbeds(root);
+    expect(observers).toHaveLength(0);
+
+    setConsent("accepted");
+    expect(observers).toHaveLength(1);
+    observers[0].cb([{ isIntersecting: true, target: observers[0].targets[0] }]);
+    expect(iframes(root)).toHaveLength(3);
+    expect(states(root)).toEqual(["loaded", "loaded", "loaded"]);
+
+    // Um segundo "aceitar" (outra aba, reabertura do banner) não duplica nada.
+    setConsent("accepted");
+    expect(observers).toHaveLength(1);
+    cleanup();
+  });
+
+  it("depois do cleanup, aceitar não monta mais nada", () => {
+    const observers = stubIntersectionObserver();
+    const root = mountHome();
+    installInstagramEmbeds(root)();
+    setConsent("accepted");
+    expect(observers).toHaveLength(0);
+    expect(iframes(root)).toHaveLength(0);
   });
 
   it("sem cards, não faz nada e o cleanup é inofensivo", () => {

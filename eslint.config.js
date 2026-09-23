@@ -17,7 +17,6 @@ export default tseslint.config(
       "dist-ssr",
       "node_modules",
       "supabase/functions/**",
-      "scripts/**",
     ],
   },
   {
@@ -50,6 +49,21 @@ export default tseslint.config(
     // fica desligada só neste arquivo; o conteúdo continua sendo o do Lovable.
     files: ["src/integrations/supabase/previewAuthStorage.ts"],
     rules: { "prefer-const": "off" },
+  },
+  {
+    // Scripts de build/prebuild e arquivos de configuração: rodam em Node.
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ["scripts/**/*.{ts,mjs,js}", "*.config.{ts,js}"],
+    languageOptions: {
+      ecmaVersion: 2022,
+      globals: { ...globals.node, ...globals.es2022 },
+    },
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+    },
   },
   {
     // Em arquivos de teste, o ambiente jsdom + globals da vitest exigem

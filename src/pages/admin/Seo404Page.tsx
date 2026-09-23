@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
+import { isSafeRedirectTarget } from "@/lib/seoRedirects";
 import { ExternalLink, Trash2, Upload, RefreshCw, Plus } from "lucide-react";
 
 /**
@@ -96,20 +97,48 @@ export default function Seo404Page() {
   }, [rows]);
 
   async function updateRow(id: number, patch: Partial<Row>) {
+    // O visitante é redirecionado para `redirect_to` pela NotFoundPage: só
+    // aceitamos caminho interno ("/x") — nada de "//outro-site" ou "javascript:".
+    if (patch.redirect_to && !isSafeRedirectTarget(patch.redirect_to)) {
+      setMsg({
+        kind: "err",
+        text: "Destino inválido. Use um caminho do próprio site começando com /, por exemplo /portfolio.",
+      });
+      void load();
+      return;
+    }
     const optimistic = rows.map((r) => (r.id === id ? { ...r, ...patch } : r));
     setRows(optimistic);
-    const { error } = await supabase.from("seo_404_log").update(patch).eq("id", id);
-    if (error) {
-      setMsg({ kind: "err", text: `Erro ao salvar: ${error.message}` });
+    const { data, error } = await supabase
+      .from("seo_404_log")
+      .update(patch)
+      .eq("id", id)
+      .select("id");
+    if (error || !data || data.length === 0) {
+      setMsg({
+        kind: "err",
+        text: `Erro ao salvar: ${error?.message ?? "nenhuma linha foi alterada (sem permissão?)."}`,
+      });
       void load();
+      return;
+    }
+    const row = optimistic.find((r) => r.id === id);
+    if (row?.status === "redirect" && !row.redirect_to) {
+      setMsg({
+        kind: "err",
+        text: `"${row.path}" está como Redirecionar, mas sem destino — o visitante continua vendo a página 404.`,
+      });
     }
   }
 
   async function deleteRow(id: number) {
     if (!confirm("Apagar este registro?")) return;
-    const { error } = await supabase.from("seo_404_log").delete().eq("id", id);
-    if (error) {
-      setMsg({ kind: "err", text: `Erro ao apagar: ${error.message}` });
+    const { data, error } = await supabase.from("seo_404_log").delete().eq("id", id).select("id");
+    if (error || !data || data.length === 0) {
+      setMsg({
+        kind: "err",
+        text: `Erro ao apagar: ${error?.message ?? "nada foi apagado (sem permissão?)."}`,
+      });
       return;
     }
     setRows((prev) => prev.filter((r) => r.id !== id));
@@ -123,15 +152,22 @@ export default function Seo404Page() {
       setMsg({ kind: "err", text: "Caminho inválido. Use algo como /pagina-antiga" });
       return;
     }
-    const { error } = await supabase
+    // `ignoreDuplicates`: se o caminho já existe, NÃO zera `hits` nem troca
+    // `source` (antes um "adicionar" manual apagava o histórico de acessos).
+    const { data, error } = await supabase
       .from("seo_404_log")
-      .upsert({ path, source: "manual", hits: 0 }, { onConflict: "path" });
+      .upsert({ path, source: "manual", hits: 0 }, { onConflict: "path", ignoreDuplicates: true })
+      .select("id");
     if (error) {
       setMsg({ kind: "err", text: `Erro: ${error.message}` });
       return;
     }
     setNewPath("");
-    setMsg({ kind: "ok", text: "URL adicionada." });
+    setMsg(
+      data && data.length > 0
+        ? { kind: "ok", text: "URL adicionada." }
+        : { kind: "ok", text: `"${path}" já estava na lista — mantivemos os acessos registrados.` },
+    );
     void load();
   }
 
@@ -172,7 +208,7 @@ export default function Seo404Page() {
 
   return (
     <AdminLayout
-      active="seo"
+      active="seo-404"
       title="URLs 404 — Search Console"
       description="Veja todas as URLs que retornaram “Não encontrado”, configure redirecionamentos e marque as que precisam de atualização de links."
       actions={
@@ -244,6 +280,7 @@ export default function Seo404Page() {
             URLs absolutas (https://…) são convertidas em caminho relativo automaticamente.
           </p>
           <textarea
+            aria-label="URLs do Search Console, uma por linha"
             value={importText}
             onChange={(e) => setImportText(e.target.value)}
             rows={8}
@@ -284,6 +321,7 @@ export default function Seo404Page() {
       >
         <input
           type="text"
+          aria-label="Caminho da URL quebrada"
           value={newPath}
           onChange={(e) => setNewPath(e.target.value)}
           onKeyDown={(e) => {
@@ -407,6 +445,7 @@ export default function Seo404Page() {
               >
                 <select
                   value={r.status}
+                  aria-label={`Status de ${r.path}`}
                   onChange={(e) => void updateRow(r.id, { status: e.target.value })}
                   style={{
                     padding: "0.4rem",
@@ -424,6 +463,7 @@ export default function Seo404Page() {
 
                 <input
                   type="text"
+                  aria-label={`Destino do redirecionamento de ${r.path}`}
                   value={r.redirect_to ?? ""}
                   onChange={(e) =>
                     setRows((prev) =>
@@ -433,7 +473,7 @@ export default function Seo404Page() {
                     )
                   }
                   onBlur={(e) =>
-                    void updateRow(r.id, { redirect_to: e.target.value || null })
+                    void updateRow(r.id, { redirect_to: e.target.value.trim() || null })
                   }
                   placeholder={
                     r.status === "redirect"
@@ -468,6 +508,7 @@ export default function Seo404Page() {
               </div>
 
               <textarea
+                aria-label={`Observações sobre ${r.path}`}
                 value={r.notes ?? ""}
                 onChange={(e) =>
                   setRows((prev) =>

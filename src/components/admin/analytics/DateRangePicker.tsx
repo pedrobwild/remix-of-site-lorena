@@ -83,11 +83,15 @@ function formatRange(r: DateRange): string {
   return `${fmt(r.from)} – ${fmt(r.to)}${yearSuffix}`;
 }
 
+/**
+ * Dias de calendário no intervalo, contando as duas pontas. Normaliza para
+ * meia-noite: o `to` do range é 23:59:59.999, e somar 1 ao arredondamento
+ * mostrava "31d" para os últimos 30 dias.
+ */
 function diffDays(r: DateRange): number {
-  return Math.max(
-    1,
-    Math.round((r.to.getTime() - r.from.getTime()) / 86400_000) + 1
-  );
+  const from = startOfDay(r.from).getTime();
+  const to = startOfDay(r.to).getTime();
+  return Math.max(1, Math.round((to - from) / 86400_000) + 1);
 }
 
 function detectPreset(r: DateRange): string | null {

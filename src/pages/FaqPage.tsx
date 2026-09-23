@@ -7,7 +7,9 @@ import { trackEvent } from "@/lib/ga4";
 import { track } from "@/lib/analytics";
 import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
-import type { KbItem } from "@/lib/assistant/assistantEngine";
+import { safeKbActions, type KbItem } from "@/lib/assistant/assistantEngine";
+import { isExternalHref } from "@/lib/safeUrl";
+import { scrollBehavior } from "@/lib/reducedMotion";
 import "./faq-page.css";
 
 type RespostaIa = {
@@ -203,7 +205,7 @@ export default function FaqPage() {
       setRespostaIa(payload.resposta);
       trackEvent("faq_ai_answer", { location: "faq" });
       window.setTimeout(() => {
-        respostaRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        respostaRef.current?.scrollIntoView({ behavior: scrollBehavior(), block: "nearest" });
       }, 60);
     } catch {
       setErroIa("Não conseguimos responder agora. Tente de novo em instantes.");
@@ -221,6 +223,9 @@ export default function FaqPage() {
       "dúvidas sobre arquitetura e engenharia, projeto de arquitetura em São Paulo, dúvidas sobre reforma de apartamento em SP, reforma de apartamento em SP, custo de reforma, prazo de reforma, contrato fechado de reforma, garantia de reforma, comissão de indicação de imóvel, autorização de reforma condomínio, Bewild",
     canonicalPath: "/faq",
     ogType: "website",
+    // Um único FAQPage por página (só JSON-LD, sem microdata duplicada), com
+    // exatamente as perguntas visíveis: as do banco (ou a lista fixa) + os
+    // blocos "Contratos e comissões" e "Como fazer uma reforma".
     jsonLd: settings
       ? [
           breadcrumbJsonLd(settings, [
@@ -230,9 +235,10 @@ export default function FaqPage() {
           faqJsonLd([
             ...(kb
               ? kb.map((i) => ({ q: i.pergunta, a: i.resposta }))
-              : [...FAQ_ITEMS, ...GUIA_ITEMS].map((i) => ({ q: i.q, a: i.a }))),
-            // Contratos e comissões entram no JSON-LD em qualquer cenário.
+              : FAQ_ITEMS.map((i) => ({ q: i.q, a: i.a }))),
+            // Blocos fixos exibidos em qualquer cenário (com ou sem o banco).
             ...CONTRATO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
+            ...GUIA_ITEMS.map((i) => ({ q: i.q, a: i.a })),
           ]),
         ]
       : undefined,
@@ -261,18 +267,12 @@ export default function FaqPage() {
               kbGrupos.map(([tema, itens]) => (
                 <div key={tema}>
                   <p className="bwa-label bwa-faqpage-tema">{tema}</p>
-                  <div className="bwa-faq-list" itemScope itemType="https://schema.org/FAQPage">
+                  <div className="bwa-faq-list">
                     {itens.map((item, i) => {
                       const key = `k-${item.id}`;
                       const open = aberto === key;
                       return (
-                        <article
-                          key={item.id}
-                          className={`bwa-faq-item${open ? " bwa-open" : ""}`}
-                          itemScope
-                          itemProp="mainEntity"
-                          itemType="https://schema.org/Question"
-                        >
+                        <article key={item.id} className={`bwa-faq-item${open ? " bwa-open" : ""}`}>
                           <h2 className="bwa-faqpage-q">
                             <button
                               className="bwa-faq-question"
@@ -282,30 +282,28 @@ export default function FaqPage() {
                               onClick={() => abrirPergunta(key, open, item.pergunta)}
                             >
                               <span className="bwa-faq-num">{String(i + 1).padStart(2, "0")}</span>
-                              <strong itemProp="name">{item.pergunta}</strong>
+                              <strong>{item.pergunta}</strong>
                               <span className="bwa-faq-icon" aria-hidden="true" />
                             </button>
                           </h2>
-                          <div
-                            id={`faq-resposta-${item.id}`}
-                            className="bwa-faq-answer"
-                            itemScope
-                            itemProp="acceptedAnswer"
-                            itemType="https://schema.org/Answer"
-                          >
-                            <p itemProp="text">{item.resposta}</p>
-                            {(item.acoes ?? []).map((acao) => (
-                              <a
-                                key={acao.rotulo}
-                                className="bwa-faqpage-guia-link"
-                                href={acao.tipo === "whatsapp" ? whatsappHref() : acao.url}
-                                {...(acao.tipo === "whatsapp"
-                                  ? { target: "_blank", rel: "noopener noreferrer" }
-                                  : {})}
-                              >
-                                {acao.rotulo} →
-                              </a>
-                            ))}
+                          <div id={`faq-resposta-${item.id}`} className="bwa-faq-answer">
+                            <p>{item.resposta}</p>
+                            {/* URL do banco só vira href depois de safeHref. */}
+                            {safeKbActions(item.acoes).map((acao, j) => {
+                              const href = acao.tipo === "whatsapp" ? whatsappHref() : acao.url;
+                              if (!href) return null;
+                              const external = isExternalHref(href);
+                              return (
+                                <a
+                                  key={`${acao.tipo}-${j}`}
+                                  className="bwa-faqpage-guia-link"
+                                  href={href}
+                                  {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                                >
+                                  {acao.rotulo || "Falar no WhatsApp"} →
+                                </a>
+                              );
+                            })}
                           </div>
                         </article>
                       );
@@ -314,18 +312,12 @@ export default function FaqPage() {
                 </div>
               ))
             ) : (
-              <div className="bwa-faq-list" itemScope itemType="https://schema.org/FAQPage">
+              <div className="bwa-faq-list">
                 {FAQ_ITEMS.map((item, i) => {
                   const key = `f-${i}`;
                   const open = aberto === key;
                   return (
-                    <article
-                      key={item.q}
-                      className={`bwa-faq-item${open ? " bwa-open" : ""}`}
-                      itemScope
-                      itemProp="mainEntity"
-                      itemType="https://schema.org/Question"
-                    >
+                    <article key={item.q} className={`bwa-faq-item${open ? " bwa-open" : ""}`}>
                       <h2 className="bwa-faqpage-q">
                         <button
                           className="bwa-faq-question"
@@ -335,18 +327,12 @@ export default function FaqPage() {
                           onClick={() => abrirPergunta(key, open, item.q)}
                         >
                           <span className="bwa-faq-num">{String(i + 1).padStart(2, "0")}</span>
-                          <strong itemProp="name">{item.q}</strong>
+                          <strong>{item.q}</strong>
                           <span className="bwa-faq-icon" aria-hidden="true" />
                         </button>
                       </h2>
-                      <div
-                        id={`faq-resposta-${i}`}
-                        className="bwa-faq-answer"
-                        itemScope
-                        itemProp="acceptedAnswer"
-                        itemType="https://schema.org/Answer"
-                      >
-                        <p itemProp="text">{item.a}</p>
+                      <div id={`faq-resposta-${i}`} className="bwa-faq-answer">
+                        <p>{item.a}</p>
                       </div>
                     </article>
                   );
@@ -481,6 +467,7 @@ export default function FaqPage() {
                 className="bwa-faqpage-ask-input"
                 rows={3}
                 maxLength={1000}
+                aria-describedby="faq-pergunta-aviso"
                 placeholder="Ex.: moro em Curitiba e comprei um studio de 28 m² na Vila Olímpia. Como funciona o acompanhamento?"
                 value={pergunta}
                 onChange={(e) => setPergunta(e.target.value)}
@@ -489,6 +476,15 @@ export default function FaqPage() {
                 {carregando ? "Pensando…" : "Perguntar"} <span aria-hidden="true">→</span>
               </button>
             </form>
+            {/* faq-page.css é compartilhado com /parceiros: ajuste local inline. */}
+            <p className="bwa-faqpage-ask-note" id="faq-pergunta-aviso" style={{ maxWidth: "62ch" }}>
+              Sua pergunta é enviada a um provedor de inteligência artificial só para gerar a
+              resposta. Não escreva nome, telefone ou outros dados pessoais.{" "}
+              <a href="/privacidade" style={{ textDecoration: "underline", textUnderlineOffset: 3 }}>
+                Política de privacidade
+              </a>
+              .
+            </p>
 
             <div aria-live="polite" ref={respostaRef}>
               {erroIa && <p className="bwa-faqpage-ask-erro">{erroIa}</p>}

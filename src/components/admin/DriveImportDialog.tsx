@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Folder as FolderIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 type Folder = { id: string; name: string };
@@ -249,10 +250,10 @@ export default function DriveImportDialog({ folder, open, onClose, onImported }:
                   <button
                     type="button"
                     className="admin-btn"
-                    style={{ width: "100%", textAlign: "left" }}
+                    style={{ width: "100%", textAlign: "left", display: "inline-flex", gap: 8, alignItems: "center" }}
                     onClick={() => enter(f)}
                   >
-                    📁 {f.name}
+                    <FolderIcon size={15} aria-hidden style={{ flexShrink: 0 }} /> {f.name}
                   </button>
                 </li>
               ))}

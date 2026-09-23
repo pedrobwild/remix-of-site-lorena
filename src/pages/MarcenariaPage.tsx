@@ -13,6 +13,7 @@ import {
 import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import { useSiteSettings } from "@/lib/useSiteSettings";
+import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
 import "./marcenaria.css";
 
@@ -23,8 +24,11 @@ import "./marcenaria.css";
  * ============================================================ */
 
 const CANONICAL = "/marcenaria";
-const CTA_HREF =
-  "/diagnostico?utm_source=site&utm_medium=servico&utm_campaign=marcenaria-sp";
+// Link interno SEM utm_*: UTM em link interno sobrescreve a campanha paga real
+// (e o gclid/fbclid) com que o visitante chegou. A navegação da SPA já carrega
+// os parâmetros de campanha da URL atual (carryCampaignParams), e o clique no
+// CTA é medido por useCtaClickTracking (data-cta).
+const CTA_HREF = "/diagnostico";
 
 const ESPECIFICACOES: { n: string; t: string }[] = [
   { n: "01", t: "MDF de procedência certificada, com garantia de fábrica" },
@@ -171,6 +175,7 @@ function RoomGallery() {
 
 export default function MarcenariaPage() {
   const { settings } = useSiteSettings();
+  useCtaClickTracking("marcenaria");
 
   useSeo({
     title: "Marcenaria sob medida em São Paulo | Fábrica própria — Bewild",

@@ -4,7 +4,10 @@ import { Badge } from "@/guia/components/ui/badge";
 import { Button } from "@/guia/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { TrendingUp, DollarSign, BarChart3, Users, ChevronDown, Lightbulb } from "lucide-react";
-import { Neighborhood, INVESTOR_INSIGHTS, DEMAND_PROFILE_LABELS, fmt } from "@/guia/data/mapaBairrosData";
+import { type Neighborhood, INVESTOR_INSIGHTS, DEMAND_PROFILE_LABELS, fmt } from "@/guia/data/mapaBairrosData";
+import { ROI_AVISO } from "@/guia/data/bairros";
+import { fmtPct } from "@/guia/lib/format";
+import { pressionavel } from "@/guia/lib/a11y";
 
 type SortKey = "roi" | "nightly" | "occupancy" | "competition";
 
@@ -49,14 +52,19 @@ export default function ROIRanking({ neighborhoods, onSelectNeighborhood, select
         </div>
         <div className="relative">
           <Button
+            type="button"
             variant="outline"
             size="sm"
             className="text-xs gap-1.5"
+            aria-haspopup="true"
+            aria-expanded={showSort}
+            aria-label={`Ordenar ranking por: ${currentSort.label}`}
             onClick={() => setShowSort(!showSort)}
+            onKeyDown={(e) => { if (e.key === "Escape") setShowSort(false); }}
           >
-            <currentSort.icon size={12} />
+            <currentSort.icon size={12} aria-hidden="true" />
             {currentSort.label}
-            <ChevronDown size={12} className={`transition-transform ${showSort ? "rotate-180" : ""}`} />
+            <ChevronDown size={12} aria-hidden="true" className={`transition-transform ${showSort ? "rotate-180" : ""}`} />
           </Button>
           <AnimatePresence>
             {showSort && (
@@ -65,16 +73,19 @@ export default function ROIRanking({ neighborhoods, onSelectNeighborhood, select
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg z-50 min-w-[160px]"
+                onKeyDown={(e) => { if (e.key === "Escape") setShowSort(false); }}
               >
                 {SORT_OPTIONS.map((opt) => (
                   <button
                     key={opt.key}
+                    type="button"
+                    aria-pressed={sortBy === opt.key}
                     onClick={() => { setSortBy(opt.key); setShowSort(false); }}
                     className={`w-full flex items-center gap-2 text-xs px-3 py-2 hover:bg-muted transition-colors first:rounded-t-lg last:rounded-b-lg ${
                       sortBy === opt.key ? "text-primary font-semibold bg-primary/5" : "text-foreground"
                     }`}
                   >
-                    <opt.icon size={12} />
+                    <opt.icon size={12} aria-hidden="true" />
                     {opt.label}
                   </button>
                 ))}
@@ -87,10 +98,10 @@ export default function ROIRanking({ neighborhoods, onSelectNeighborhood, select
       {/* Ranking list */}
       <div className="flex flex-wrap items-center gap-3 mb-2 text-[10px] text-muted-foreground font-body p-2 rounded-md bg-muted/30">
         <span className="font-semibold text-foreground">Legenda:</span>
-        <span><strong className="text-emerald-600">ROI est.</strong> = retorno anual sobre investimento</span>
         <span><strong>Diária</strong> = preço médio/noite</span>
         <span><strong>Ocupação</strong> = % de dias reservados</span>
-        <span><strong>Receita/mês</strong> = faturamento mensal estimado</span>
+        <span><strong>Receita/mês</strong> = diária × 30 × ocupação, antes de custos</span>
+        <span className="basis-full"><strong className="text-emerald-700">ROI est.*</strong> {ROI_AVISO}</span>
       </div>
       <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
         <AnimatePresence mode="popLayout">
@@ -107,7 +118,9 @@ export default function ROIRanking({ neighborhoods, onSelectNeighborhood, select
                 transition={{ delay: i * 0.03 }}
               >
                 <Card
-                  onClick={() => onSelectNeighborhood(n)}
+                  {...pressionavel(() => onSelectNeighborhood(n))}
+                  aria-pressed={isSelected}
+                  aria-label={`${i + 1}º ${n.name}: ROI estimado ${fmtPct(n.metrics.estimatedROI)}, diária média R$ ${fmt(n.metrics.nightlyRate)}, ocupação ${fmtPct(n.metrics.occupancy)}`}
                   className={`cursor-pointer transition-all hover:shadow-md ${
                     isSelected ? "ring-2 ring-primary border-primary" : "border-border hover:border-primary/30"
                   }`}
@@ -128,24 +141,24 @@ export default function ROIRanking({ neighborhoods, onSelectNeighborhood, select
                         </div>
                         <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2">
                           <div>
-                            <p className="text-[10px] text-muted-foreground">ROI est.</p>
-                            <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{n.metrics.estimatedROI}%</p>
+                            <p className="text-[10px] text-muted-foreground">ROI est.*</p>
+                            <p className="text-xs font-bold text-emerald-700">{fmtPct(n.metrics.estimatedROI)}</p>
                           </div>
                           <div>
                             <p className="text-[10px] text-muted-foreground">Diária média</p>
-                            <p className="text-xs font-bold text-foreground">R${fmt(n.metrics.nightlyRate)}</p>
+                            <p className="text-xs font-bold text-foreground">R$ {fmt(n.metrics.nightlyRate)}</p>
                           </div>
                           <div>
                             <p className="text-[10px] text-muted-foreground">Ocupação</p>
-                            <p className="text-xs font-bold text-foreground">{n.metrics.occupancy}%</p>
+                            <p className="text-xs font-bold text-foreground">{fmtPct(n.metrics.occupancy)}</p>
                           </div>
                           <div>
                             <p className="text-[10px] text-muted-foreground">Receita/mês</p>
-                            <p className="text-xs font-bold text-foreground">R${fmt(n.metrics.avgRevenueMo)}</p>
+                            <p className="text-xs font-bold text-foreground">R$ {fmt(n.metrics.avgRevenueMo)}</p>
                           </div>
                         </div>
                         <p className="text-[9px] text-muted-foreground mt-1.5 font-body">
-                          Faixa: R${fmt(n.metrics.nightlyRateRange[0])}–R${fmt(n.metrics.nightlyRateRange[1])} · {n.metrics.activeListings} anúncios · Fonte: {n.metrics.dataSource}
+                          Faixa: R$ {fmt(n.metrics.nightlyRateRange[0])}–{fmt(n.metrics.nightlyRateRange[1])} · ~{fmt(n.metrics.activeListings)} anúncios
                         </p>
                       </div>
                     </div>
@@ -160,10 +173,10 @@ export default function ROIRanking({ neighborhoods, onSelectNeighborhood, select
       {/* Investor insights */}
       <div className="pt-2 space-y-2">
         <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
-          <Lightbulb size={12} />
+          <Lightbulb size={12} aria-hidden="true" />
           Insights do investidor
         </div>
-        {INVESTOR_INSIGHTS.slice(0, 3).map((insight, i) => (
+        {INVESTOR_INSIGHTS.map((insight, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 8 }}
@@ -171,7 +184,7 @@ export default function ROIRanking({ neighborhoods, onSelectNeighborhood, select
             transition={{ delay: 0.3 + i * 0.1 }}
           >
             <div className="flex items-start gap-2 p-2.5 rounded-lg bg-primary/5 border border-primary/10">
-              <insight.icon size={14} className="text-primary shrink-0 mt-0.5" />
+              <insight.icon size={14} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
               <p className="text-[11px] text-foreground/80 font-body leading-relaxed">{insight.text}</p>
             </div>
           </motion.div>

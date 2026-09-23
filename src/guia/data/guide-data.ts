@@ -6,6 +6,8 @@ import {
   Package, BadgeCheck, Clock,
   Calculator, Building2, PieChart, Megaphone,
 } from "lucide-react";
+import { gravarJSON, lerJSON } from "@/guia/lib/browser";
+import { fmtInt } from "@/guia/lib/format";
 
 /* ─── Phases (4 macro-blocks) ─── */
 export const PHASES = [
@@ -15,28 +17,7 @@ export const PHASES = [
   { number: 4, label: "Como agir com confiança", description: "Anúncio, precificação, evidências e próximo passo" },
 ] as const;
 
-/* ─── Bairro fallback data ─── */
-export const BAIRRO_DATA = [
-  { name: "Vila Mariana", dailyMin: 280, dailyMax: 420, avgOccupancy: 80, perSqm: 9.5, avgBySize: { "20–25 m²": 260, "26–35 m²": 330, "36–50 m²": 410 } },
-  { name: "Pinheiros", dailyMin: 320, dailyMax: 480, avgOccupancy: 82, perSqm: 11, avgBySize: { "20–25 m²": 300, "26–35 m²": 380, "36–50 m²": 470 } },
-  { name: "Consolação", dailyMin: 260, dailyMax: 390, avgOccupancy: 76, perSqm: 8.8, avgBySize: { "20–25 m²": 240, "26–35 m²": 310, "36–50 m²": 380 } },
-  { name: "Bela Vista", dailyMin: 240, dailyMax: 370, avgOccupancy: 74, perSqm: 8.2, avgBySize: { "20–25 m²": 220, "26–35 m²": 290, "36–50 m²": 360 } },
-  { name: "Itaim Bibi", dailyMin: 350, dailyMax: 520, avgOccupancy: 78, perSqm: 12, avgBySize: { "20–25 m²": 330, "26–35 m²": 420, "36–50 m²": 510 } },
-  { name: "Moema", dailyMin: 300, dailyMax: 450, avgOccupancy: 77, perSqm: 10.5, avgBySize: { "20–25 m²": 280, "26–35 m²": 360, "36–50 m²": 440 } },
-  { name: "Brooklin", dailyMin: 290, dailyMax: 430, avgOccupancy: 75, perSqm: 9.8, avgBySize: { "20–25 m²": 270, "26–35 m²": 350, "36–50 m²": 420 } },
-  { name: "República", dailyMin: 200, dailyMax: 310, avgOccupancy: 72, perSqm: 7.2, avgBySize: { "20–25 m²": 185, "26–35 m²": 245, "36–50 m²": 300 } },
-  { name: "Liberdade", dailyMin: 220, dailyMax: 340, avgOccupancy: 73, perSqm: 7.8, avgBySize: { "20–25 m²": 200, "26–35 m²": 270, "36–50 m²": 330 } },
-  { name: "Vila Olímpia", dailyMin: 330, dailyMax: 500, avgOccupancy: 79, perSqm: 11.5, avgBySize: { "20–25 m²": 310, "26–35 m²": 400, "36–50 m²": 490 } },
-] as const;
-
-export type BairroItem = {
-  name: string;
-  dailyMin: number;
-  dailyMax: number;
-  avgOccupancy: number;
-  perSqm: number;
-  avgBySize: { "20–25 m²": number; "26–35 m²": number; "36–50 m²": number };
-};
+/* Dados por bairro: fonte única em src/guia/data/bairros.ts. */
 
 export const DECORATION_LEVELS = [
   { value: "basico", label: "Básico", multiplier: 1.0 },
@@ -68,19 +49,14 @@ export const SECTIONS = [
   { id: "cta-final", label: "Falar com a Bewild", icon: Send, phase: 4 },
 ] as const;
 
-export type SectionItem = {
-  id: string;
-  label: string;
-  icon: any;
-  phase: number;
-  href?: string;
-};
+/** Ids das seções na ordem da página (referência estável para o scrollspy). */
+export const SECTION_IDS: readonly string[] = SECTIONS.map((s) => s.id);
 
 export const DECISION_DRIVERS = [
   { id: "limpeza", title: "Limpeza", desc: "Fator #1 global: 90% dos hóspedes consideram limpeza o critério mais importante na escolha. Limpeza impecável = reviews 5 estrelas.", icon: SprayCan, priority: { executivo: 1, turista: 2, estudante: 3, casal: 2 } },
   { id: "checkin", title: "Check-in sem atrito", desc: "Fechadura digital ou key box eliminam esperas e reclamações. Hóspedes corporativos chegam tarde — check-in autônomo é decisivo.", icon: DoorOpen, priority: { executivo: 2, turista: 3, estudante: 2, casal: 4 } },
   { id: "precisao", title: "Precisão do anúncio", desc: "Fotos reais, descrição honesta e expectativa alinhada. Anúncios que entregam o que prometem têm 2x menos cancelamentos.", icon: Target, priority: { executivo: 3, turista: 1, estudante: 4, casal: 3 } },
-  { id: "avaliacoes", title: "Avaliações e nota", desc: "Acima de 4.8 você entra no topo das buscas. Cada 0.1 ponto acima de 4.5 pode aumentar sua taxa de conversão em até 12%.", icon: Star, priority: { executivo: 5, turista: 4, estudante: 1, casal: 1 } },
+  { id: "avaliacoes", title: "Avaliações e nota", desc: "Acima de 4,8 você entra no topo das buscas. Cada 0,1 ponto acima de 4,5 pode aumentar sua taxa de conversão em até 12%.", icon: Star, priority: { executivo: 5, turista: 4, estudante: 1, casal: 1 } },
   { id: "seguranca", title: "Segurança e acessibilidade", desc: "Portaria 24h, câmeras em áreas comuns, boa iluminação. Casais e turistas solo priorizam segurança acima do preço.", icon: Lock, priority: { executivo: 4, turista: 5, estudante: 5, casal: 5 } },
   { id: "ambiente", title: "Ambiente + trabalho + entretenimento", desc: "Wi-Fi rápido, mesa de trabalho, smart TV e boa acústica. Para estadias de 3+ dias, o setup do ambiente define a experiência.", icon: Wifi, priority: { executivo: 6, turista: 6, estudante: 6, casal: 6 } },
 ];
@@ -172,32 +148,17 @@ export const trendImpactColor: Record<TrendImpact, string> = {
 
 export type TrendSortMode = "impact" | "easy" | "pro";
 
-export const CHECKLIST_ITEMS = [
-  "Localização com demanda comprovada",
-  "Condomínio permite short stay",
-  "Análise de concorrência feita",
-  "Orçamento de reforma definido",
-  "Projeção financeira validada",
-  "Fotos profissionais planejadas",
-  "Mobília funcional selecionada",
-  "Plano de precificação dinâmica",
-  "Gestão operacional definida",
-  "Documentação fiscal em ordem",
-];
-
-export const SCORE_TIERS = [
-  { min: 0, max: 3, label: "Iniciante", color: "bg-destructive", desc: "Você precisa amadurecer o projeto antes de investir." },
-  { min: 4, max: 6, label: "Em progresso", color: "bg-accent", desc: "Bom começo, mas faltam itens críticos. Considere um diagnóstico." },
-  { min: 7, max: 8, label: "Quase pronto", color: "bg-primary/70", desc: "Falta pouco! Revise os itens pendentes e avance com confiança." },
-  { min: 9, max: 10, label: "Pronto para investir", color: "bg-primary", desc: "Excelente! Seu planejamento está sólido. Hora de agir." },
-];
+/* Checklist do investidor: fonte única em src/guia/data/checklist.ts. */
 
 export type SavedScenario = {
   id: string;
   name: string;
   bairro: string;
   metragem: number;
+  /** Ocupação escolhida no controle (antes do ajuste do objetivo). */
   ocupacao: number;
+  /** Ocupação usada na conta (depois do objetivo). Ausente em cenários antigos. */
+  ocupacaoConsiderada?: number;
   diariaAtual: string;
   objetivo: string;
   rateBoost: number;
@@ -209,31 +170,45 @@ export type SavedScenario = {
 };
 
 export const SCENARIOS_KEY = "bwild_guide_scenarios";
+/** Máximo de cenários salvos por sessão. */
+export const MAX_SCENARIOS = 5;
 
+function isSavedScenario(v: unknown): v is SavedScenario {
+  if (!v || typeof v !== "object") return false;
+  const s = v as Record<string, unknown>;
+  return (
+    typeof s.id === "string" &&
+    typeof s.name === "string" &&
+    typeof s.bairro === "string" &&
+    typeof s.metragem === "number" &&
+    typeof s.ocupacao === "number" &&
+    typeof s.receitaMensal === "number" &&
+    typeof s.receitaAnual === "number" &&
+    typeof s.boostedDaily === "number"
+  );
+}
+
+function isScenarioList(v: unknown): v is SavedScenario[] {
+  return Array.isArray(v);
+}
+
+/** Cenários da sessão; entradas corrompidas ou de versões antigas incompatíveis são descartadas. */
 export function loadScenarios(): SavedScenario[] {
-  try {
-    return JSON.parse(sessionStorage.getItem(SCENARIOS_KEY) || "[]");
-  } catch { return []; }
+  const lista = lerJSON("session", SCENARIOS_KEY, isScenarioList) ?? [];
+  return lista.filter(isSavedScenario).slice(0, MAX_SCENARIOS);
 }
 
-export function persistScenarios(scenarios: SavedScenario[]) {
-  sessionStorage.setItem(SCENARIOS_KEY, JSON.stringify(scenarios));
+/** Persiste os cenários. Devolve false se o navegador recusar (aba privada, cota, bloqueio). */
+export function persistScenarios(scenarios: SavedScenario[]): boolean {
+  return gravarJSON("session", SCENARIOS_KEY, scenarios);
 }
 
-export const fmt = (v: number) => v.toLocaleString("pt-BR", { maximumFractionDigits: 0 });
+/** Inteiro pt-BR (9225 → "9.225"). */
+export const fmt = fmtInt;
 
 export const TRUST_SIGNALS_DATA = [
   { label: "+200 studios", icon: Package },
-  { label: "4.9 nota média", icon: Star },
+  { label: "4,9 nota média", icon: Star },
   { label: "Operação própria", icon: BadgeCheck },
   { label: "+5 anos no mercado", icon: Clock },
-];
-
-export const FAQ_DATA = [
-  { q: "Quanto custa começar um studio para short stay?", a: "Depende do estado do imóvel e do padrão desejado. Reformas leves começam em R$ 35.000 e projetos premium podem chegar a R$ 120.000. O simulador neste guia ajuda a estimar o retorno sobre cada faixa de investimento." },
-  { q: "Qual o retorno médio de um studio em São Paulo?", a: "Studios bem posicionados e operados geram entre R$ 5.000 e R$ 12.000 de receita bruta mensal, dependendo do bairro, metragem e qualidade do anúncio. Descontando custos operacionais (limpeza, taxa de plataforma, condomínio, IPTU), o yield líquido fica entre 6% e 12% ao ano." },
-  { q: "Preciso de CNPJ para operar no Airbnb?", a: "Não é obrigatório, mas altamente recomendado. Com CNPJ (MEI ou Simples), você pode emitir notas fiscais, ter conta PJ dedicada e otimizar a tributação. Sem CNPJ, a renda deve ser declarada como pessoa física e pode ter alíquota mais alta de IR." },
-  { q: "E se o condomínio não permitir short stay?", a: "Verifique a convenção do condomínio antes de comprar. Se já possui o imóvel, consulte um advogado especializado. Muitos condomínios ainda não têm regras claras — nesse caso, é possível operar dentro da legalidade até que haja deliberação formal em assembleia." },
-  { q: "A Bewild faz a gestão operacional do studio?", a: "Sim. A Bewild oferece gestão completa: precificação dinâmica, atendimento ao hóspede, limpeza profissional, manutenção e relatórios mensais. O investidor recebe o rendimento líquido sem se envolver na operação diária." },
-  { q: "Qual a diferença entre short stay e aluguel tradicional?", a: "Short stay (menos de 90 dias) geralmente rende 40-80% mais que aluguel tradicional, mas envolve custos operacionais maiores e gestão ativa. Aluguel tradicional é mais previsível e passivo. A decisão depende do perfil do investidor e da localização." },
 ];

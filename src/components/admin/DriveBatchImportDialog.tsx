@@ -69,7 +69,6 @@ export default function DriveBatchImportDialog({ open, onClose, onDone }: Props)
     setCreatedAny(false);
     setSummary(null);
     loadFolder("root");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   if (!open) return null;

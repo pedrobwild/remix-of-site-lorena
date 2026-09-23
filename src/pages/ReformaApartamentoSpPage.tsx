@@ -6,6 +6,7 @@ import { whatsappHref } from "@/components/landing/content";
 import { BAIRROS, REMOTO_ITEMS } from "@/lib/bairrosSp";
 import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
+import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
 
 /* ============================================================
@@ -16,8 +17,11 @@ import "./servico-reforma.css";
  * ============================================================ */
 
 const CANONICAL = "/reforma-de-apartamento-sao-paulo";
-const CTA_HREF =
-  "/diagnostico?utm_source=site&utm_medium=servico&utm_campaign=reforma-apartamento-sp";
+// Link interno SEM utm_*: UTM em link interno sobrescreve a campanha paga real
+// (e o gclid/fbclid) com que o visitante chegou. A navegação da SPA já carrega
+// os parâmetros de campanha da URL atual (carryCampaignParams), e o clique no
+// CTA é medido por useCtaClickTracking (data-cta).
+const CTA_HREF = "/diagnostico";
 
 const CONTRATO: { n: string; t: string }[] = [
   { n: "01", t: "Projeto aprovado em 3D antes da obra" },
@@ -89,6 +93,7 @@ const FAQ: { q: string; a: string; node?: ReactNode }[] = [
 
 export default function ReformaApartamentoSpPage() {
   const { settings } = useSiteSettings();
+  useCtaClickTracking("reforma-apartamento-sp");
 
   useSeo({
     title:

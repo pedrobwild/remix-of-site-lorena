@@ -12,10 +12,6 @@ export function trackGlobal(_event: string, _data?: Record<string, unknown>): vo
   /* no-op */
 }
 
-export function getGlobalSessionId(): string {
-  return "";
-}
-
 export function setGlobalTrack(_fn: TrackFn | null): void {
   /* no-op */
 }

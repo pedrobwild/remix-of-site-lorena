@@ -1,5 +1,11 @@
-// Auditoria SEO on-page: inspeciona o DOM da página atual e detecta
-// problemas comuns que o Google usa para ranquear conteúdos.
+// Auditoria SEO on-page: inspeciona o DOM de uma página e detecta problemas
+// comuns que o Google usa para ranquear conteúdos.
+//
+// Antes a auditoria lia o `document` ATUAL — ou seja, a própria tela
+// /admin/seo (noindex, sem JSON-LD…) — e gravava esse score como se fosse o
+// do site. Agora `runSeoAudit` recebe o Document a auditar e
+// `auditPublicPage` carrega a página pública num iframe oculto de mesma
+// origem, espera o SPA renderizar e audita o documento dela.
 
 import type { SiteSettings } from "./useSiteSettings";
 
@@ -31,21 +37,30 @@ export type SeoAuditResult = {
   };
 };
 
-function has(sel: string) {
-  return !!document.head.querySelector(sel);
+function has(doc: Document, sel: string) {
+  return !!doc.head?.querySelector(sel);
 }
-function getMeta(name: string) {
-  const el = document.head.querySelector<HTMLMetaElement>(
+function getMeta(doc: Document, name: string) {
+  const el = doc.head?.querySelector<HTMLMetaElement>(
     `meta[name="${name}"], meta[property="${name}"]`
   );
   return el?.getAttribute("content") || "";
 }
 
-export function runSeoAudit(settings: SiteSettings): SeoAuditResult {
+type AuditSettings = Pick<
+  SiteSettings,
+  "google_site_verification" | "google_analytics_id" | "google_tag_manager_id"
+>;
+
+/**
+ * Audita `doc` (padrão: o documento atual). Para auditar o SITE, use
+ * `auditPublicPage`, que passa o documento da página pública.
+ */
+export function runSeoAudit(settings: AuditSettings, doc: Document = document): SeoAuditResult {
   const issues: SeoIssue[] = [];
 
   // --- Title
-  const title = document.title || "";
+  const title = (doc.title || "").trim();
   if (!title) {
     issues.push({
       id: "title-missing",
@@ -80,7 +95,7 @@ export function runSeoAudit(settings: SiteSettings): SeoAuditResult {
   }
 
   // --- Description
-  const desc = getMeta("description");
+  const desc = getMeta(doc, "description");
   if (!desc) {
     issues.push({
       id: "desc-missing",
@@ -114,7 +129,7 @@ export function runSeoAudit(settings: SiteSettings): SeoAuditResult {
   }
 
   // --- Robots
-  const robots = getMeta("robots") || "index, follow";
+  const robots = getMeta(doc, "robots") || "index, follow";
   if (robots.toLowerCase().includes("noindex")) {
     issues.push({
       id: "robots-noindex",
@@ -126,7 +141,7 @@ export function runSeoAudit(settings: SiteSettings): SeoAuditResult {
   }
 
   // --- Canonical
-  const canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+  const canonical = doc.head?.querySelector<HTMLLinkElement>('link[rel="canonical"]');
   const hasCanonical = !!canonical?.href;
   if (!hasCanonical) {
     issues.push({
@@ -139,8 +154,8 @@ export function runSeoAudit(settings: SiteSettings): SeoAuditResult {
   }
 
   // --- H1 / H2
-  const h1s = document.querySelectorAll("h1");
-  const h2s = document.querySelectorAll("h2");
+  const h1s = doc.querySelectorAll("h1");
+  const h2s = doc.querySelectorAll("h2");
   if (h1s.length === 0) {
     issues.push({
       id: "h1-missing",
@@ -169,7 +184,7 @@ export function runSeoAudit(settings: SiteSettings): SeoAuditResult {
   }
 
   // --- Imagens com alt
-  const imgs = Array.from(document.querySelectorAll("img"));
+  const imgs = Array.from(doc.querySelectorAll("img"));
   const imgsNoAlt = imgs.filter((i) => !(i.getAttribute("alt") || "").trim());
   if (imgs.length > 0 && imgsNoAlt.length > 0) {
     issues.push({
@@ -189,7 +204,7 @@ export function runSeoAudit(settings: SiteSettings): SeoAuditResult {
   }
 
   // --- Links sem texto
-  const links = Array.from(document.querySelectorAll("a"));
+  const links = Array.from(doc.querySelectorAll("a"));
   const linksNoText = links.filter((a) => {
     const text = (a.textContent || "").trim();
     const aria = a.getAttribute("aria-label");
@@ -206,7 +221,7 @@ export function runSeoAudit(settings: SiteSettings): SeoAuditResult {
   }
 
   // --- Open Graph
-  const ogImage = getMeta("og:image");
+  const ogImage = getMeta(doc, "og:image");
   if (!ogImage) {
     issues.push({
       id: "og-image-missing",
@@ -218,7 +233,7 @@ export function runSeoAudit(settings: SiteSettings): SeoAuditResult {
   }
 
   // --- Schema / JSON-LD
-  const jsonLd = document.head.querySelectorAll('script[type="application/ld+json"]');
+  const jsonLd = doc.querySelectorAll('script[type="application/ld+json"]');
   if (jsonLd.length === 0) {
     issues.push({
       id: "jsonld-missing",
@@ -237,7 +252,7 @@ export function runSeoAudit(settings: SiteSettings): SeoAuditResult {
   }
 
   // --- Viewport & idioma
-  if (!has('meta[name="viewport"]')) {
+  if (!has(doc, 'meta[name="viewport"]')) {
     issues.push({
       id: "viewport-missing",
       level: "error",
@@ -245,7 +260,7 @@ export function runSeoAudit(settings: SiteSettings): SeoAuditResult {
       message: "Meta viewport ausente — o site não é mobile-friendly.",
     });
   }
-  const lang = document.documentElement.getAttribute("lang");
+  const lang = doc.documentElement.getAttribute("lang");
   if (!lang) {
     issues.push({
       id: "lang-missing",
@@ -257,7 +272,8 @@ export function runSeoAudit(settings: SiteSettings): SeoAuditResult {
   }
 
   // --- HTTPS
-  if (location.protocol !== "https:" && location.hostname !== "localhost") {
+  const loc = doc.location ?? (typeof location !== "undefined" ? location : null);
+  if (loc && loc.protocol !== "https:" && loc.hostname !== "localhost") {
     issues.push({
       id: "https-missing",
       level: "error",
@@ -274,7 +290,7 @@ export function runSeoAudit(settings: SiteSettings): SeoAuditResult {
       level: "info",
       area: "Google Search Console",
       message: "Código de verificação do Search Console não foi preenchido.",
-      hint: "Em Admin › SEO › Ferramentas Google, cole o código de verificação.",
+      hint: "Em Admin › SEO › Verificações, cole o código de verificação.",
     });
   }
   if (!settings.google_analytics_id && !settings.google_tag_manager_id) {
@@ -309,4 +325,151 @@ export function runSeoAudit(settings: SiteSettings): SeoAuditResult {
       hasJsonLd: jsonLd.length > 0,
     },
   };
+}
+
+// =============================================================
+//  Auditoria da página pública (iframe oculto de mesma origem)
+// =============================================================
+
+/** Caminho público auditável: interno ("/x"), fora de /admin. */
+export function normalizeAuditPath(input: string): string | null {
+  let p = (input || "").trim();
+  if (!p) return "/";
+  if (/^https?:\/\//i.test(p)) {
+    try {
+      const u = new URL(p);
+      if (typeof window !== "undefined" && u.origin !== window.location.origin) return null;
+      p = u.pathname + u.search;
+    } catch {
+      return null;
+    }
+  }
+  if (!p.startsWith("/")) p = `/${p}`;
+  if (p.startsWith("//") || /\s/.test(p)) return null;
+  const pathOnly = p.split(/[?#]/)[0];
+  if (pathOnly === "/admin" || pathOnly.startsWith("/admin/")) return null;
+  return p;
+}
+
+type WaitOptions = {
+  /** Tempo máximo esperando o SPA renderizar. */
+  timeoutMs?: number;
+  /** Intervalo entre as leituras do DOM. */
+  pollMs?: number;
+  /** Leituras idênticas seguidas para considerar a página estável. */
+  stablePolls?: number;
+};
+
+/** Assinatura do que a auditoria lê; estável = SPA terminou de aplicar SEO e conteúdo. */
+function renderSignature(doc: Document): string {
+  const root = doc.getElementById("root");
+  const canonical = doc.head?.querySelector('link[rel="canonical"]')?.getAttribute("href") ?? "";
+  const desc = getMeta(doc, "description");
+  return [
+    doc.title,
+    canonical,
+    desc.length,
+    root?.childElementCount ?? 0,
+    doc.querySelectorAll("h1").length,
+    doc.querySelectorAll("img").length,
+    doc.querySelectorAll('script[type="application/ld+json"]').length,
+  ].join("|");
+}
+
+/**
+ * Carrega `path` num iframe oculto (mesma origem), espera o SPA renderizar
+ * (título/canonical/conteúdo estáveis por algumas leituras, ou o tempo
+ * limite) e chama `fn` com o Document dele. O iframe é removido no fim,
+ * com sucesso ou erro.
+ */
+export async function withPublicPageDocument<T>(
+  path: string,
+  fn: (doc: Document, info: { timedOut: boolean }) => T,
+  { timeoutMs = 15_000, pollMs = 250, stablePolls = 4 }: WaitOptions = {},
+): Promise<T> {
+  const target = normalizeAuditPath(path);
+  if (!target) throw new Error("Caminho inválido para auditoria. Use um caminho do site, como / ou /portfolio.");
+
+  const iframe = document.createElement("iframe");
+  iframe.setAttribute("aria-hidden", "true");
+  iframe.setAttribute("tabindex", "-1");
+  iframe.title = "Auditoria SEO (oculto)";
+  // Largura de desktop para o layout real; fora da tela e sem interação.
+  iframe.style.cssText =
+    "position:fixed;left:-10000px;top:0;width:1280px;height:900px;border:0;opacity:0;pointer-events:none;";
+  iframe.src = target;
+
+  try {
+    document.body.appendChild(iframe);
+
+    await new Promise<void>((resolve, reject) => {
+      const timer = setTimeout(
+        () => reject(new Error("A página não carregou a tempo para a auditoria.")),
+        timeoutMs,
+      );
+      iframe.addEventListener(
+        "load",
+        () => {
+          clearTimeout(timer);
+          resolve();
+        },
+        { once: true },
+      );
+      iframe.addEventListener(
+        "error",
+        () => {
+          clearTimeout(timer);
+          reject(new Error("Não foi possível carregar a página para a auditoria."));
+        },
+        { once: true },
+      );
+    });
+
+    const started = Date.now();
+    let last = "";
+    let stable = 0;
+    let timedOut = false;
+    for (;;) {
+      const doc = iframe.contentDocument;
+      if (!doc) throw new Error("A página auditada não é da mesma origem do painel.");
+      const sig = renderSignature(doc);
+      const rendered = (doc.getElementById("root")?.childElementCount ?? 0) > 0;
+      stable = rendered && sig === last ? stable + 1 : 0;
+      last = sig;
+      if (stable >= stablePolls) break;
+      if (Date.now() - started > timeoutMs) {
+        timedOut = true;
+        break;
+      }
+      await new Promise((r) => setTimeout(r, pollMs));
+    }
+
+    const doc = iframe.contentDocument;
+    if (!doc) throw new Error("A página auditada não é da mesma origem do painel.");
+    return fn(doc, { timedOut });
+  } finally {
+    iframe.remove();
+  }
+}
+
+export type PublicPageAudit = SeoAuditResult & {
+  /** Caminho auditado (normalizado). */
+  path: string;
+  /** `true` quando o SPA não estabilizou dentro do tempo limite (resultado pode estar incompleto). */
+  timedOut: boolean;
+};
+
+/** Audita uma página pública do site (padrão: a home). */
+export async function auditPublicPage(
+  settings: AuditSettings,
+  path = "/",
+  options?: WaitOptions,
+): Promise<PublicPageAudit> {
+  const target = normalizeAuditPath(path);
+  if (!target) throw new Error("Caminho inválido para auditoria. Use um caminho do site, como / ou /portfolio.");
+  return withPublicPageDocument(
+    target,
+    (doc, { timedOut }) => ({ ...runSeoAudit(settings, doc), path: target, timedOut }),
+    options,
+  );
 }

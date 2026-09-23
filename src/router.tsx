@@ -5,6 +5,7 @@
  * `src/__tests__/router.test.tsx` valida que essa cadeia funciona
  * de ponta a ponta.
  */
+import { useSeo } from "./lib/useSeo";
 import App from "./App";
 import BewildPortfolioPage from "./pages/BewildPortfolioPage";
 import BewildProjectPage from "./pages/BewildProjectPage";
@@ -62,6 +63,9 @@ import ProtectedRoute from "./components/admin/ProtectedRoute";
 import type { Route } from "./lib/useHashRoute";
 
 function AdminChunk({ children }: { children: ReactNode }) {
+  // Todo o /admin (inclusive o login) fica fora dos buscadores. O robots.txt
+  // só impede o rastreamento; um link externo ainda poderia indexar a URL.
+  useSeo({ title: "Painel · Bewild", noindex: true });
   return <Suspense fallback={null}>{children}</Suspense>;
 }
 

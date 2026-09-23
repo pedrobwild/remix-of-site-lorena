@@ -1,16 +1,32 @@
-import { useRef, useState } from "react";
-import { uploadBewildImage, deleteBewildImage } from "@/lib/bewildAdmin";
+import { useId, useRef, useState } from "react";
+import {
+  BEWILD_IMAGE_ACCEPT,
+  uploadBewildImage,
+  validateBewildImageFile,
+} from "@/lib/bewildAdmin";
+
+/** Atualização funcional: o pai aplica sobre o valor MAIS RECENTE do formulário. */
+export type GalleryUpdate = (prev: string[]) => string[];
 
 interface Props {
   label: string;
   value: string[];
   folder: string;
-  onChange: (urls: string[]) => void;
+  onChange: (update: GalleryUpdate) => void;
   onBusyChange?: (busy: boolean) => void;
   /** Texto curto sob o rótulo (ex.: em que seção do site as fotos aparecem). */
   hint?: string;
+  /** Pede confirmação antes de remover (ex.: projeto já publicado). */
+  confirmRemoval?: boolean;
 }
 
+/**
+ * Galeria de fotos. Remover só tira do formulário — o arquivo é apagado do
+ * storage depois do save, e apenas se não estiver em uso (a capa costuma ser
+ * a mesma URL da primeira foto). As mudanças são funcionais (`prev => …`)
+ * para uploads longos não sobrescreverem fotos adicionadas no meio do caminho
+ * (ex.: uma importação do Drive terminando durante o upload).
+ */
 export default function BewildGalleryField({
   label,
   value,
@@ -18,10 +34,13 @@ export default function BewildGalleryField({
   onChange,
   onBusyChange,
   hint,
+  confirmRemoval,
 }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const labelId = useId();
+  const hintId = useId();
 
   function setBusyAndNotify(b: boolean) {
     setBusy(b);
@@ -30,19 +49,24 @@ export default function BewildGalleryField({
 
   async function handleFiles(files: FileList | null) {
     if (!files || files.length === 0) return;
-    const list = Array.from(files).filter((f) => f.type.startsWith("image/"));
+    const all = Array.from(files);
+    const problems: string[] = [];
+    const list = all.filter((f) => {
+      const invalid = validateBewildImageFile(f);
+      if (invalid) problems.push(invalid);
+      return !invalid;
+    });
     if (list.length === 0) {
-      setError("Selecione arquivos de imagem.");
+      setError(problems.join(" ") || "Selecione arquivos de imagem.");
+      if (inputRef.current) inputRef.current.value = "";
       return;
     }
-    setError(null);
+    setError(problems.length ? `${problems.length} arquivo(s) ignorado(s): ${problems.join(" ")}` : null);
     setBusyAndNotify(true);
-    const next = [...value];
     try {
       for (const file of list) {
         const url = await uploadBewildImage(file, folder);
-        next.push(url);
-        onChange([...next]);
+        onChange((prev) => [...prev, url]);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Falha ao subir uma imagem.");
@@ -53,25 +77,45 @@ export default function BewildGalleryField({
   }
 
   function move(i: number, dir: -1 | 1) {
-    const j = i + dir;
-    if (j < 0 || j >= value.length) return;
-    const next = [...value];
-    [next[i], next[j]] = [next[j], next[i]];
-    onChange(next);
+    const url = value[i];
+    onChange((prev) => {
+      const from = prev[i] === url ? i : prev.indexOf(url);
+      const to = from + dir;
+      if (from < 0 || to < 0 || to >= prev.length) return prev;
+      const next = [...prev];
+      [next[from], next[to]] = [next[to], next[from]];
+      return next;
+    });
   }
 
-  async function remove(i: number) {
+  function remove(i: number) {
     const url = value[i];
-    const next = value.filter((_, k) => k !== i);
-    onChange(next);
-    await deleteBewildImage(url);
+    if (
+      confirmRemoval &&
+      !window.confirm(
+        `Remover a foto #${i + 1} de "${label}"? O projeto está publicado: ela sai do site quando você salvar.`,
+      )
+    ) {
+      return;
+    }
+    onChange((prev) => {
+      const at = prev[i] === url ? i : prev.indexOf(url);
+      return at < 0 ? prev : prev.filter((_, k) => k !== at);
+    });
   }
 
   return (
-    <div className="admin-field admin-field--full">
-      <label className="admin-field__label">{label}</label>
+    <div
+      className="admin-field admin-field--full"
+      role="group"
+      aria-labelledby={labelId}
+      aria-describedby={hint ? hintId : undefined}
+    >
+      <span className="admin-field__label" id={labelId}>
+        {label}
+      </span>
       {hint && (
-        <p className="mono admin-hint" style={{ marginTop: 0, marginBottom: 8 }}>
+        <p className="mono admin-hint" id={hintId} style={{ marginTop: 0, marginBottom: 8 }}>
           {hint}
         </p>
       )}
@@ -117,7 +161,7 @@ export default function BewildGalleryField({
                     className="admin-btn"
                     onClick={() => move(i, -1)}
                     disabled={busy || i === 0}
-                    aria-label="Subir"
+                    aria-label={`Subir foto ${i + 1}`}
                     style={{ padding: "2px 8px" }}
                   >
                     ↑
@@ -127,7 +171,7 @@ export default function BewildGalleryField({
                     className="admin-btn"
                     onClick={() => move(i, 1)}
                     disabled={busy || i === value.length - 1}
-                    aria-label="Descer"
+                    aria-label={`Descer foto ${i + 1}`}
                     style={{ padding: "2px 8px" }}
                   >
                     ↓
@@ -137,7 +181,7 @@ export default function BewildGalleryField({
                     className="admin-btn admin-link--danger"
                     onClick={() => remove(i)}
                     disabled={busy}
-                    aria-label="Remover"
+                    aria-label={`Remover foto ${i + 1}`}
                     style={{ padding: "2px 8px" }}
                   >
                     ×
@@ -160,13 +204,17 @@ export default function BewildGalleryField({
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept={BEWILD_IMAGE_ACCEPT}
         multiple
         style={{ display: "none" }}
+        aria-labelledby={labelId}
         onChange={(e) => handleFiles(e.target.files)}
       />
+      <p className="mono admin-hint" style={{ marginTop: 6 }}>
+        JPG, PNG, WebP ou AVIF, até 15 MB por foto.
+      </p>
       {error && (
-        <p className="mono admin-hint" style={{ color: "#b00020", marginTop: 6 }}>
+        <p className="mono admin-hint" role="alert" style={{ color: "#b00020", marginTop: 6 }}>
           {error}
         </p>
       )}

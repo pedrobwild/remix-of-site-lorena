@@ -6,14 +6,19 @@
  * tela — os 3 de uma vez, e não card a card: no celular os cards ficam
  * lado a lado num trilho horizontal, e um card fora da tela nunca
  * "intersecta" até o usuário arrastar (o depoimento só começaria a
- * carregar depois do swipe). Quem recusou cookies não recebe o embed
- * automaticamente: o card mostra um botão "Carregar depoimento" e o link
- * direto para a postagem.
+ * carregar depois do swipe).
+ *
+ * O embed é da Meta (cookies/rastreamento de terceiros), então só monta
+ * sozinho com cookies ACEITOS. Sem decisão ou com recusa, o card mostra o
+ * botão "Carregar depoimento" (carrega só aquele, por escolha do visitante)
+ * e o link direto para a postagem; se o visitante aceitar depois, os embeds
+ * passam a montar sozinhos sem recarregar a página.
  *
  * A altura real vem do próprio Instagram por `postMessage`
  * ({ type: "MEASURE", details: { height } }), como no orçamento público.
  */
-import { readConsent } from "@/lib/cookieConsent";
+import { isConsentAccepted, onConsentChange } from "@/lib/cookieConsent";
+import { closestElementFrom } from "@/lib/useHashRoute";
 
 export const INSTAGRAM_PROFILE_HANDLE = "bewild.oficial";
 export const INSTAGRAM_PROFILE_URL = `https://www.instagram.com/${INSTAGRAM_PROFILE_HANDLE}/`;
@@ -100,10 +105,9 @@ export function installInstagramEmbeds(root: HTMLElement): Cleanup {
   };
   window.addEventListener("message", onMessage);
 
-  // Cookies recusados: nada carrega sozinho; o botão do card carrega sob demanda.
-  const declined = readConsent() === "declined";
+  // Botão do card: carrega sob demanda (vale em qualquer estado de consentimento).
   const onClick = (e: Event) => {
-    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("[data-ig-load]");
+    const btn = closestElementFrom(e.target)?.closest<HTMLButtonElement>("[data-ig-load]");
     if (!btn) return;
     const card = btn.closest<HTMLElement>("[data-ig-post]");
     if (card) mount(card);
@@ -111,7 +115,10 @@ export function installInstagramEmbeds(root: HTMLElement): Cleanup {
   root.addEventListener("click", onClick);
 
   let io: IntersectionObserver | null = null;
-  if (!declined) {
+  let autoStarted = false;
+  const startAutoMount = () => {
+    if (autoStarted) return;
+    autoStarted = true;
     if ("IntersectionObserver" in window) {
       // Observa o bloco (a seção `[data-instagram]`), não cada card — ver o
       // comentário no topo do arquivo sobre o trilho horizontal do celular.
@@ -128,15 +135,25 @@ export function installInstagramEmbeds(root: HTMLElement): Cleanup {
     } else {
       cards.forEach(mount);
     }
+  };
+
+  let offConsent: (() => void) | null = null;
+  if (isConsentAccepted()) {
+    startAutoMount();
   } else {
+    // Sem aceite (ainda não decidiu OU recusou): nada da Meta carrega sozinho.
     for (const card of cards) {
       const holder = card.querySelector<HTMLElement>("[data-ig-frame]");
-      if (holder) holder.dataset.igState = "consent";
+      if (holder && !holder.querySelector("iframe")) holder.dataset.igState = "consent";
     }
+    offConsent = onConsentChange((v) => {
+      if (v === "accepted") startAutoMount();
+    });
   }
 
   return () => {
     io?.disconnect();
+    offConsent?.();
     window.removeEventListener("message", onMessage);
     root.removeEventListener("click", onClick);
   };

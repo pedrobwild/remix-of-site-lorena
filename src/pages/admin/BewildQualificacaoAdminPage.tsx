@@ -12,10 +12,21 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { MessageCircle } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
+import AdminAlert from "@/components/admin/AdminAlert";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/lib/useAuth";
-
-type LeadStatus = "novo" | "contatado" | "qualificado" | "descartado";
+import {
+  LEAD_LOG_COLUMNS,
+  ZERO_STATUS_COUNTS,
+  fetchLeadStatusCounts,
+  isLeadStatus,
+  leadFormLabel,
+  moveStatusCount,
+  updateLeadStatus,
+  waLink,
+  type LeadLogRow,
+  type LeadStatus,
+  type LeadStatusCounts,
+} from "@/lib/adminLeads";
 
 type Lead = {
   id: string;
@@ -27,22 +38,15 @@ type Lead = {
   objetivo: string | null;
   message: string | null;
   landing_path: string | null;
+  form_path: string | null;
   status: LeadStatus;
   created_at: string;
 };
 
-type LogRow = {
-  id: string;
-  lead_id: string;
-  from_status: string | null;
-  to_status: string;
-  note: string | null;
-  changed_by_email: string | null;
-  created_at: string;
-};
+type LogRow = LeadLogRow;
 
 const SELECT_COLS =
-  "id, name, whatsapp, email, location, area_m2, objetivo, message, landing_path, status, created_at";
+  "id, name, whatsapp, email, location, area_m2, objetivo, message, landing_path, form_path, status, created_at";
 
 const PAGE_SIZE = 200;
 
@@ -84,15 +88,6 @@ function fmtDate(iso: string): string {
   }
 }
 
-function waLink(whatsapp: string | null): string | null {
-  if (!whatsapp) return null;
-  const digits = whatsapp.replace(/\D/g, "");
-  if (digits.length === 10 || digits.length === 11) return `https://wa.me/55${digits}`;
-  if ((digits.length === 12 || digits.length === 13) && digits.startsWith("55"))
-    return `https://wa.me/${digits}`;
-  return null;
-}
-
 function resumo(lead: Lead): string {
   const partes = [lead.objetivo, lead.location, lead.area_m2 ? `${lead.area_m2} m²` : null].filter(
     Boolean,
@@ -102,11 +97,13 @@ function resumo(lead: Lead): string {
 }
 
 export default function BewildQualificacaoAdminPage() {
-  const { user } = useAuth();
   const [rows, setRows] = useState<Lead[]>([]);
   const [logs, setLogs] = useState<Record<string, LogRow[]>>({});
+  const [counts, setCounts] = useState<LeadStatusCounts>(ZERO_STATUS_COUNTS);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [logLoadError, setLogLoadError] = useState<string | null>(null);
+  const [actionMsg, setActionMsg] = useState<{ kind: "err" | "warn"; text: string } | null>(null);
   const [filtro, setFiltro] = useState<"all" | LeadStatus>("all");
   const [openId, setOpenId] = useState<string | null>(null);
   const [nota, setNota] = useState<Record<string, string>>({});
@@ -115,7 +112,7 @@ export default function BewildQualificacaoAdminPage() {
   const load = useCallback(async () => {
     setLoading(true);
     setLoadError(null);
-    const [listRes, logRes] = await Promise.all([
+    const [listRes, logRes, countsRes] = await Promise.all([
       supabase
         .from("leads")
         .select(SELECT_COLS)
@@ -123,9 +120,10 @@ export default function BewildQualificacaoAdminPage() {
         .range(0, PAGE_SIZE - 1),
       supabase
         .from("lead_qualification_log")
-        .select("id, lead_id, from_status, to_status, note, changed_by_email, created_at")
+        .select(LEAD_LOG_COLUMNS)
         .order("created_at", { ascending: false })
         .limit(1000),
+      fetchLeadStatusCounts(),
     ]);
 
     if (listRes.error) {
@@ -137,7 +135,10 @@ export default function BewildQualificacaoAdminPage() {
     }
 
     setRows((listRes.data ?? []) as Lead[]);
+    setCounts(countsRes.counts);
 
+    // Sem o histórico a tela diria "sem histórico" para todo mundo — avisa.
+    setLogLoadError(logRes.error ? logRes.error.message : null);
     const byLead: Record<string, LogRow[]> = {};
     for (const row of (logRes.data ?? []) as LogRow[]) {
       (byLead[row.lead_id] ||= []).push(row);
@@ -147,7 +148,7 @@ export default function BewildQualificacaoAdminPage() {
   }, []);
 
   useEffect(() => {
-    load();
+    void load();
   }, [load]);
 
   const filtered = useMemo(
@@ -155,52 +156,43 @@ export default function BewildQualificacaoAdminPage() {
     [rows, filtro],
   );
 
-  const counts = useMemo(() => {
-    const c: Record<LeadStatus, number> = { novo: 0, contatado: 0, qualificado: 0, descartado: 0 };
-    for (const r of rows) if (r.status in c) c[r.status] += 1;
-    return c;
-  }, [rows]);
-
   async function classificar(lead: Lead, next: LeadStatus) {
     if (busy) return;
     const observacao = (nota[lead.id] ?? "").trim();
     if (next === lead.status && !observacao) return;
 
     const previous = lead.status;
+    const known = isLeadStatus(previous);
     setBusy(lead.id);
+    setActionMsg(null);
     setRows((prev) => prev.map((r) => (r.id === lead.id ? { ...r, status: next } : r)));
+    if (known) setCounts((prev) => moveStatusCount(prev, previous, next));
 
-    const { error } = await supabase.from("leads").update({ status: next }).eq("id", lead.id);
-    if (error) {
-      setRows((prev) => prev.map((r) => (r.id === lead.id ? { ...r, status: previous } : r)));
-      setBusy(null);
-      window.alert(`Não foi possível salvar a classificação: ${error.message}`);
-      return;
-    }
-
-    const { data: inserted, error: logError } = await supabase
-      .from("lead_qualification_log")
-      .insert({
-        lead_id: lead.id,
-        from_status: previous,
-        to_status: next,
-        note: observacao || null,
-        changed_by: user?.id ?? null,
-        changed_by_email: user?.email ?? null,
-      })
-      .select("id, lead_id, from_status, to_status, note, changed_by_email, created_at")
-      .single();
-
+    const result = await updateLeadStatus(lead.id, known ? previous : null, next, observacao);
     setBusy(null);
-    setNota((prev) => ({ ...prev, [lead.id]: "" }));
 
-    if (logError || !inserted) {
-      console.warn("[admin/qualificacao] falha ao gravar histórico:", logError);
+    if (!result.ok) {
+      setRows((prev) => prev.map((r) => (r.id === lead.id ? { ...r, status: previous } : r)));
+      if (known) setCounts((prev) => moveStatusCount(prev, next, previous));
+      // A observação digitada fica no campo para tentar de novo.
+      setActionMsg({ kind: "err", text: `Não foi possível salvar a classificação: ${result.error}` });
       return;
     }
+
+    if (result.logError !== null) {
+      // O status foi salvo, o histórico não. Mantém a observação no campo:
+      // clicar de novo no mesmo status registra só a observação.
+      setActionMsg({
+        kind: "warn",
+        text: `Classificação salva, mas o histórico não foi registrado (${result.logError}). A observação continua no campo — clique em "${STATUS_LABEL[next]}" de novo para registrá-la.`,
+      });
+      return;
+    }
+
+    setNota((prev) => ({ ...prev, [lead.id]: "" }));
     setLogs((prev) => ({
       ...prev,
-      [lead.id]: [inserted as LogRow, ...(prev[lead.id] ?? [])],
+      [lead.id]: [result.log, ...(prev[lead.id] ?? [])],
     }));
   }
 
@@ -209,8 +201,20 @@ export default function BewildQualificacaoAdminPage() {
       active="qualificacao"
       eyebrow="Painel"
       title="Qualificação"
-      description="Classifique cada lead como qualificado, em andamento ou descartado. Toda mudança fica registrada no histórico, com observação, autor e data."
+      description="Classifique cada lead como qualificado, em andamento ou descartado. Toda mudança — aqui ou nas telas de Leads, Mensagens e Diagnósticos — fica registrada no histórico, com observação, autor e data."
     >
+      {actionMsg && (
+        <AdminAlert kind={actionMsg.kind} onClose={() => setActionMsg(null)}>
+          {actionMsg.text}
+        </AdminAlert>
+      )}
+      {logLoadError && (
+        <AdminAlert kind="warn">
+          O histórico de classificações não carregou ({logLoadError}); os registros abaixo podem
+          estar incompletos.
+        </AdminAlert>
+      )}
+
       <div className="bw-admin__kpi-grid">
         <KpiSimple label="Novos" value={counts.novo} />
         <KpiSimple label="Em andamento" value={counts.contatado} />
@@ -247,7 +251,7 @@ export default function BewildQualificacaoAdminPage() {
               <br />
               <span style={{ fontSize: 13 }}>{loadError}</span>
             </p>
-            <button type="button" className="bw-admin__btn bw-admin__btn--sm" onClick={load}>
+            <button type="button" className="bw-admin__btn bw-admin__btn--sm" onClick={() => void load()}>
               Tentar de novo
             </button>
           </div>
@@ -282,10 +286,13 @@ export default function BewildQualificacaoAdminPage() {
                           {r.whatsapp ?? r.email ?? "—"}
                         </div>
                       </td>
-                      <td className="muted">{resumo(r)}</td>
+                      <td className="muted">
+                        {resumo(r)}
+                        <div style={{ fontSize: 11, marginTop: 2 }}>{leadFormLabel(r)}</div>
+                      </td>
                       <td style={{ whiteSpace: "nowrap" }}>
-                        <span style={{ fontSize: 13, fontWeight: 600, color: STATUS_COLOR[r.status] }}>
-                          {STATUS_LABEL[r.status]}
+                        <span style={{ fontSize: 13, fontWeight: 600, color: STATUS_COLOR[r.status] ?? "#6B7280" }}>
+                          {STATUS_LABEL[r.status] ?? r.status}
                         </span>
                         <div className="muted" style={{ fontSize: 11 }}>
                           {hist.length > 0 ? `${hist.length} registro(s)` : "sem histórico"}
@@ -350,7 +357,7 @@ export default function BewildQualificacaoAdminPage() {
                                     type="button"
                                     className="bw-admin__btn bw-admin__btn--sm"
                                     disabled={busy === r.id}
-                                    onClick={() => classificar(r, s)}
+                                    onClick={() => void classificar(r, s)}
                                     style={{ borderColor: STATUS_COLOR[s], color: STATUS_COLOR[s] }}
                                   >
                                     {STATUS_LABEL[s]}

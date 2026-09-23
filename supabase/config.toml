@@ -1,8 +1,67 @@
 project_id = "aamlnkmqvjcowixdgqii"
 
-[functions]
-  [functions.auth-email-hook]
-    verify_jwt = false
+# Edge functions — `verify_jwt` declarado explicitamente.
+#
+# Todas validam o chamador no próprio código; o gateway não acrescenta
+# proteção porque a chave anon do site é um JWT público. O que importa:
+#   - públicas (anônimas por natureza): track, report-crash, sitemap, robots,
+#     not-found-check, notify-lead, faq-answer, scope-plan. `track` e
+#     `report-crash` são chamadas por fetch/sendBeacon SEM cabeçalho de
+#     autenticação — com verify_jwt=true um redeploy pelo CLI derrubaria
+#     analytics e crash reports em silêncio.
+#   - admin (JWT do usuário + public.is_admin() no código): drive-import,
+#     index-tracker, meta-insights, generate-alt-text, seo-audit,
+#     ping-sitemap, search-console-stats.
+#   - e-mail (Lovable): auth-email-hook valida a assinatura do webhook;
+#     preview-transactional-email exige LOVABLE_API_KEY no Authorization.
+
+[functions.track]
+verify_jwt = false
+
+[functions.report-crash]
+verify_jwt = false
+
+[functions.sitemap]
+verify_jwt = false
+
+[functions.robots]
+verify_jwt = false
+
+[functions.not-found-check]
+verify_jwt = false
+
+[functions.notify-lead]
+verify_jwt = false
+
+[functions.faq-answer]
+verify_jwt = false
+
+[functions.scope-plan]
+verify_jwt = false
+
+[functions.drive-import]
+verify_jwt = false
+
+[functions.index-tracker]
+verify_jwt = false
+
+[functions.meta-insights]
+verify_jwt = false
+
+[functions.generate-alt-text]
+verify_jwt = false
+
+[functions.seo-audit]
+verify_jwt = false
+
+[functions.ping-sitemap]
+verify_jwt = false
+
+[functions.search-console-stats]
+verify_jwt = false
+
+[functions.auth-email-hook]
+verify_jwt = false
 
 [functions.preview-transactional-email]
 verify_jwt = false

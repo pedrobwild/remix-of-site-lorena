@@ -16,7 +16,7 @@ export default function PrivacidadePage() {
   const { settings } = useSiteSettings();
 
   const contactEmail = settings?.contact_email || "contato@bewild.com.br";
-  const lastUpdated = "21 de abril de 2026";
+  const lastUpdated = "23 de setembro de 2026";
 
   useSeo({
     title: "Política de privacidade | Bewild",
@@ -73,15 +73,35 @@ export default function PrivacidadePage() {
               </p>
               <ul>
                 <li>
+                  <strong>Dados que você envia nos formulários do site:</strong>{" "}
+                  nome, WhatsApp, e-mail, localização do imóvel, metragem,
+                  objetivo da reforma e mensagem, nos formulários de orçamento,
+                  diagnóstico, contato e do programa de parceiros. O pedido de
+                  orçamento também pergunta se você já tem as chaves e a planta
+                  do imóvel, se mora em São Paulo e como conheceu a Bewild.
+                  Junto com o envio, registramos a origem da visita (parâmetros
+                  de campanha, site de referência e página de entrada) e o tipo
+                  de navegador.
+                </li>
+                <li>
                   <strong>Dados de contato voluntários:</strong> nome, e-mail,
-                  telefone e mensagem, apenas quando você escolhe nos contatar
-                  por WhatsApp, e-mail ou outros canais indicados no site.
+                  telefone e mensagem, quando você escolhe nos contatar por
+                  WhatsApp, e-mail ou outros canais indicados no site.
+                </li>
+                <li>
+                  <strong>Textos digitados nos recursos de inteligência
+                  artificial:</strong> a pergunta livre da página de perguntas
+                  frequentes e a descrição do imóvel (com metragem, bairro,
+                  objetivo e investimento pretendido, se informados) na página
+                  de escopo.
                 </li>
                 <li>
                   <strong>Dados de navegação e analytics:</strong> páginas
                   visitadas, tempo de permanência, eventos de clique, tipo de
-                  dispositivo, referrer e um identificador anônimo de sessão.
-                  Esses dados não permitem sua identificação pessoal direta.
+                  dispositivo, referrer e identificadores aleatórios de
+                  visitante e de sessão guardados no seu navegador — coletados
+                  somente depois que você aceita os cookies. Esses dados não
+                  permitem sua identificação pessoal direta.
                 </li>
                 <li>
                   <strong>Cookies e armazenamento local:</strong> utilizados
@@ -95,6 +115,10 @@ export default function PrivacidadePage() {
               <ul>
                 <li>Responder a pedidos de orçamento, dúvidas e contatos;</li>
                 <li>
+                  Gerar, na hora, as respostas e recomendações pedidas nos
+                  recursos de inteligência artificial do site;
+                </li>
+                <li>
                   Compreender o desempenho do site e aprimorar a experiência
                   de navegação (analytics agregados);
                 </li>
@@ -106,6 +130,30 @@ export default function PrivacidadePage() {
                   à atividade da empresa.
                 </li>
               </ul>
+
+              <h2>Para onde vão os dados dos formulários</h2>
+              <p>
+                Quando você envia um formulário do site, os dados são gravados
+                no nosso banco de dados, mantido no Supabase (serviço de banco
+                de dados e infraestrutura em nuvem), e encaminhados a dois
+                sistemas internos: o canal da equipe comercial no Slack, que
+                avisa o time sobre o novo contato, e o nosso CRM, onde o
+                atendimento e o orçamento são acompanhados. Esses dados são
+                usados apenas para responder ao seu pedido e dar andamento a
+                ele.
+              </p>
+
+              <h2>Recursos com inteligência artificial</h2>
+              <p>
+                A pergunta livre da página de perguntas frequentes
+                (&ldquo;Pergunte à Bewild&rdquo;) e a descrição do imóvel na
+                página de escopo são enviadas a um provedor de inteligência
+                artificial contratado, que processa o texto somente para gerar
+                a resposta exibida na tela. Não gravamos esse texto no nosso
+                banco de dados. Por isso, pedimos que você não inclua nesses
+                campos nome, telefone, endereço completo ou outros dados
+                pessoais.
+              </p>
 
               <h2>Base legal</h2>
               <p>O tratamento de dados pessoais fundamenta-se em:</p>
@@ -136,9 +184,12 @@ export default function PrivacidadePage() {
               <p>
                 Não comercializamos dados pessoais. Podemos compartilhar dados
                 apenas com operadores contratados para hospedagem,
-                infraestrutura e analytics, sempre sob obrigação contratual de
-                confidencialidade e segurança. Também poderemos compartilhar
-                dados mediante obrigação legal ou decisão judicial.
+                infraestrutura e banco de dados (Supabase), comunicação interna
+                da equipe (Slack), gestão do atendimento (CRM), processamento
+                dos recursos de inteligência artificial e medição de audiência
+                (Google e Meta, somente com o seu aceite), sempre sob obrigação
+                contratual de confidencialidade e segurança. Também poderemos
+                compartilhar dados mediante obrigação legal ou decisão judicial.
               </p>
 
               <h2>Cookies</h2>
@@ -152,15 +203,34 @@ export default function PrivacidadePage() {
                   do site, como lembrar seu consentimento a esta política.
                 </li>
                 <li>
-                  <strong>Analytics:</strong> coletam dados agregados e
-                  anônimos sobre uso do site, permitindo-nos entender o que é
-                  mais relevante para os visitantes.
+                  <strong>Analytics e publicidade:</strong> o Google Analytics
+                  (medição de audiência), o Pixel da Meta (medição de anúncios
+                  no Facebook e no Instagram) e a nossa própria medição de
+                  navegação. Eles só são carregados depois que você clica em
+                  &ldquo;Aceitar&rdquo; no banner de cookies; se você recusar,
+                  nenhum deles é carregado. O mesmo vale para qualquer outra
+                  ferramenta de medição configurada no site.
                 </li>
               </ul>
               <p>
-                Você pode aceitar ou recusar cookies não essenciais no banner
-                exibido ao entrar no site, e limpar seu consentimento a
-                qualquer momento pelas configurações do seu navegador.
+                Da sua decisão no banner, registramos apenas a escolha (aceite
+                ou recusa), a página e o horário, sem identificador pessoal,
+                para comprovar o consentimento. Você pode mudar sua escolha a
+                qualquer momento pelo link &ldquo;Preferências de
+                cookies&rdquo;, no rodapé do site.
+              </p>
+
+              <h2>Conteúdos de terceiros</h2>
+              <p>
+                O mapa do Google Maps, na página de contato, e as postagens do
+                Instagram exibidas na página inicial vêm diretamente do Google
+                e da Meta, que podem registrar dados técnicos do acesso (como
+                endereço IP e navegador) e gravar cookies próprios. Por isso,
+                esses conteúdos só são carregados depois que você aceita os
+                cookies ou quando você clica para exibi-los. As fontes
+                tipográficas (Google Fonts) e o selo do Reclame Aqui, no
+                rodapé, também são carregados a partir dos servidores desses
+                serviços.
               </p>
 
               <h2>Seus direitos</h2>

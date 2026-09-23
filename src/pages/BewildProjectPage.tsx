@@ -5,7 +5,7 @@
  * conteúdo no admin — campo vazio simplesmente não aparece no site.
  * CSS isolado em .bw-detail (src/styles/portfolio-detail.css).
  */
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useSeo, breadcrumbJsonLd, projectJsonLd } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import BwaNav from "@/components/BwaNav";
@@ -44,45 +44,94 @@ function IconCheck() {
   );
 }
 
+/**
+ * Visualizador em tela cheia. Diálogo modal de verdade: o foco entra no
+ * botão Fechar ao abrir, o Tab circula só entre os controles, Esc fecha,
+ * ← → trocam a imagem (o contador é anunciado) e, ao fechar, o foco volta
+ * para a miniatura que abriu.
+ */
 function Lightbox({
   images,
   index,
-  alts,
+  altOf,
   onClose,
   onPrev,
   onNext,
 }: {
   images: string[];
   index: number;
-  alts?: AltMap;
+  altOf: (index: number) => string;
   onClose: () => void;
   onPrev: () => void;
   onNext: () => void;
 }) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  // Rolagem da página travada enquanto aberto; foco entra e depois volta.
   useEffect(() => {
-    const prev = document.body.style.overflow;
+    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    closeRef.current?.focus({ preventScroll: true });
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      opener?.focus({ preventScroll: true });
+    };
+  }, []);
+
+  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      else if (e.key === "ArrowLeft") onPrev();
-      else if (e.key === "ArrowRight") onNext();
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        onPrev();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        onNext();
+      } else if (e.key === "Tab" && dialogRef.current) {
+        const buttons = Array.from(dialogRef.current.querySelectorAll<HTMLButtonElement>("button"));
+        if (!buttons.length) return;
+        const first = buttons[0];
+        const last = buttons[buttons.length - 1];
+        const active = document.activeElement;
+        if (!dialogRef.current.contains(active)) {
+          e.preventDefault();
+          first.focus();
+        } else if (e.shiftKey && active === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && active === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, [onClose, onPrev, onNext]);
 
   return (
-    <div className="bw-lightbox" role="dialog" aria-modal="true" aria-label="Visualizar imagem" onClick={onClose}>
-      <img className="bw-lightbox__img" src={images[index]} alt={alts?.[images[index]] || ""} onClick={(e) => e.stopPropagation()} />
-      <button type="button" className="bw-lightbox__btn bw-lightbox__close" aria-label="Fechar" onClick={(e) => { e.stopPropagation(); onClose(); }}>×</button>
+    <div
+      ref={dialogRef}
+      className="bw-lightbox"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Visualizar imagem"
+      onClick={onClose}
+    >
+      <img className="bw-lightbox__img" src={images[index]} alt={altOf(index)} onClick={(e) => e.stopPropagation()} />
+      <button ref={closeRef} type="button" className="bw-lightbox__btn bw-lightbox__close" aria-label="Fechar" onClick={(e) => { e.stopPropagation(); onClose(); }}>×</button>
       {images.length > 1 && (
         <>
-          <button type="button" className="bw-lightbox__btn bw-lightbox__prev" aria-label="Anterior" onClick={(e) => { e.stopPropagation(); onPrev(); }}>‹</button>
-          <button type="button" className="bw-lightbox__btn bw-lightbox__next" aria-label="Próxima" onClick={(e) => { e.stopPropagation(); onNext(); }}>›</button>
-          <span className="bw-lightbox__counter">{pad(index + 1)} / {pad(images.length)}</span>
+          <button type="button" className="bw-lightbox__btn bw-lightbox__prev" aria-label="Imagem anterior" onClick={(e) => { e.stopPropagation(); onPrev(); }}>‹</button>
+          <button type="button" className="bw-lightbox__btn bw-lightbox__next" aria-label="Próxima imagem" onClick={(e) => { e.stopPropagation(); onNext(); }}>›</button>
+          <span className="bw-lightbox__counter" aria-live="polite">
+            <span className="sr-only">Imagem </span>
+            {pad(index + 1)} / {pad(images.length)}
+          </span>
         </>
       )}
     </div>
@@ -400,7 +449,14 @@ export default function BewildProjectPage({ slug }: Props) {
         <Lightbox
           images={lbImages}
           index={Math.min(lb.index, lbImages.length - 1)}
-          alts={alts}
+          altOf={(i) =>
+            // Alt descritivo da foto (gerado pela análise da imagem) quando
+            // existir; senão, título + posição na série.
+            alts[lbImages[i]] ||
+            (lb.set === "ready"
+              ? `${project.title} — obra pronta, foto ${i + 1}`
+              : `${project.title} — projeto 3D, imagem ${i + 1}`)
+          }
           onClose={closeLb}
           onPrev={prevLb}
           onNext={nextLb}

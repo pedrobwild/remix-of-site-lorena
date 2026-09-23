@@ -14,6 +14,10 @@ import {
   Type,
   Inbox,
   Activity,
+  ListChecks,
+  MessagesSquare,
+  ClipboardList,
+  Newspaper,
   Handshake,
 } from "lucide-react";
 import { useAuth } from "@/lib/useAuth";
@@ -23,6 +27,10 @@ type ActiveKey =
   | "dashboard"
   | "bewild"
   | "leads"
+  | "qualificacao"
+  | "mensagens"
+  | "diagnostico"
+  | "conteudos"
   | "indicacoes"
   | "analytics"
   | "seo"
@@ -48,8 +56,12 @@ const NAV: { key: ActiveKey; label: string; href: string; icon: typeof LayoutDas
   { key: "dashboard", label: "Dashboard", href: routes.adminDashboard, icon: LayoutDashboard },
   { key: "analytics", label: "Analytics", href: routes.adminAnalytics, icon: BarChart3 },
   { key: "leads", label: "Leads", href: routes.adminLeads, icon: Inbox },
+  { key: "qualificacao", label: "Qualificação", href: routes.adminQualificacao, icon: ListChecks },
+  { key: "mensagens", label: "Mensagens", href: routes.adminMensagens, icon: MessagesSquare },
+  { key: "diagnostico", label: "Diagnósticos", href: routes.adminDiagnostico, icon: ClipboardList },
   { key: "indicacoes", label: "Indicações", href: routes.adminIndicacoes, icon: Handshake },
   { key: "bewild", label: "Portfólio Bewild", href: "/admin/projetos", icon: FolderKanban },
+  { key: "conteudos", label: "Conteúdos", href: "/admin/conteudos", icon: Newspaper },
   { key: "faq", label: "FAQ", href: routes.adminFaq, icon: HelpCircle },
   { key: "seo", label: "SEO", href: routes.adminSeo, icon: Search },
   { key: "seo-404", label: "URLs 404", href: routes.adminSeo404, icon: Search },
@@ -69,15 +81,22 @@ export default function AdminLayout({
   actions,
 }: Props) {
   const { user, signOut } = useAuth();
+  // localStorage pode lançar (modo privado, armazenamento bloqueado): a
+  // preferência do menu nunca pode derrubar o painel.
   const [collapsed, setCollapsed] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return window.localStorage.getItem(STORAGE_KEY) === "1";
+    try {
+      return window.localStorage.getItem(STORAGE_KEY) === "1";
+    } catch {
+      return false;
+    }
   });
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    try {
       window.localStorage.setItem(STORAGE_KEY, collapsed ? "1" : "0");
+    } catch {
+      /* preferência só não persiste */
     }
   }, [collapsed]);
 

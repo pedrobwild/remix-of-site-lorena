@@ -12,6 +12,7 @@ import {
   type TrendSortMode, type TrendItem,
 } from "@/guia/data/guide-data";
 import SectionBlock from "./SectionBlock";
+import { pressionavel } from "@/guia/lib/a11y";
 
 const PAGE_SIZE_DESKTOP = 8;
 
@@ -92,10 +93,11 @@ export default function TendenciasSection() {
             <Card
               key={kpi.id}
               className={`cursor-pointer transition-all ${isActive ? "bg-primary text-primary-foreground border-primary" : "border-border hover:border-primary/30"}`}
-              onClick={() => handleKpiClick(kpi.id)}
+              {...pressionavel(() => handleKpiClick(kpi.id))}
+              aria-pressed={isActive}
             >
               <CardContent className="p-4 flex items-center gap-3">
-                <kpi.icon size={18} className={isActive ? "text-primary-foreground" : "text-primary"} />
+                <kpi.icon size={18} className={isActive ? "text-primary-foreground" : "text-primary"} aria-hidden="true" />
                 <span className={`text-sm font-medium font-body ${isActive ? "text-primary-foreground" : "text-foreground"}`}>{kpi.label}</span>
               </CardContent>
             </Card>
@@ -108,7 +110,8 @@ export default function TendenciasSection() {
         <Badge
           variant={!activeTag && !activeKpi ? "default" : "secondary"}
           className="cursor-pointer font-body min-h-[36px] px-3 flex items-center"
-          onClick={() => handleTagClick(null)}
+          {...pressionavel(() => handleTagClick(null))}
+          aria-pressed={!activeTag && !activeKpi}
         >
           Todos
         </Badge>
@@ -119,9 +122,10 @@ export default function TendenciasSection() {
               key={tag}
               variant={activeTag === tag ? "default" : "secondary"}
               className={`cursor-pointer font-body min-h-[36px] px-3 flex items-center ${activeTag !== tag && !activeKpi ? TREND_TAG_COLORS[tag] || "" : ""}`}
-              onClick={() => handleTagClick(tag === activeTag ? null : tag)}
+              {...pressionavel(() => handleTagClick(tag === activeTag ? null : tag))}
+              aria-pressed={activeTag === tag}
             >
-              {Icon && <Icon size={12} className="mr-1" />}
+              {Icon && <Icon size={12} className="mr-1" aria-hidden="true" />}
               {tag}
             </Badge>
           );
@@ -178,7 +182,9 @@ export default function TendenciasSection() {
             >
               <Card
                 className="border-border hover:border-primary/30 transition-all cursor-pointer h-full flex flex-col"
-                onClick={() => setDetailTrend(trend)}
+                {...pressionavel(() => setDetailTrend(trend))}
+                aria-haspopup="dialog"
+                aria-label={`${trend.numberLabel} ${trend.title}: ver detalhes`}
               >
                 <CardContent className="p-4 flex flex-col flex-1">
                   <div className="flex items-center justify-between mb-2">

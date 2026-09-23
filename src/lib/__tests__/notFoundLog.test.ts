@@ -11,10 +11,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const rpc = vi.fn();
+const selectMaybeSingle = vi.fn();
 
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
     rpc: (...args: unknown[]) => rpc(...args),
+    from: () => ({
+      select: () => ({
+        eq: () => ({ eq: () => ({ maybeSingle: () => selectMaybeSingle() }) }),
+      }),
+    }),
   },
 }));
 
@@ -24,10 +30,11 @@ vi.mock("@/lib/devLog", () => ({
   devLog: vi.fn(),
 }));
 
-import { DEFAULT_404_REASON, logNotFound } from "../notFoundLog";
+import { DEFAULT_404_REASON, logNotFound, lookupActiveRedirect, safeRedirectTarget } from "../notFoundLog";
 
 beforeEach(() => {
   rpc.mockReset();
+  selectMaybeSingle.mockReset();
   devWarn.mockReset();
   sessionStorage.clear();
   rpc.mockResolvedValue({ data: null, error: null });
@@ -74,5 +81,74 @@ describe("logNotFound", () => {
     await logNotFound("/repetida");
     await logNotFound("/repetida");
     expect(rpc).toHaveBeenCalledTimes(1);
+  });
+});
+
+/**
+ * ADM-04 — redirecionamentos do admin (/admin/seo/404) precisam funcionar para
+ * o visitante anônimo, que não tem SELECT em `seo_404_log`: a leitura passa
+ * pela RPC SECURITY DEFINER `resolve_404_redirect`, com fallback para a
+ * leitura direta enquanto a migração não chega. Só destino interno.
+ */
+describe("lookupActiveRedirect", () => {
+  it("usa a RPC resolve_404_redirect e devolve o caminho interno", async () => {
+    rpc.mockResolvedValue({ data: "/conteudos/novo-slug", error: null });
+    await expect(lookupActiveRedirect("/post-antigo")).resolves.toBe("/conteudos/novo-slug");
+    expect(rpc).toHaveBeenCalledWith("resolve_404_redirect", { p_path: "/post-antigo" });
+    expect(selectMaybeSingle).not.toHaveBeenCalled();
+  });
+
+  it("RPC sem redirecionamento (null) → null, sem cair no fallback", async () => {
+    rpc.mockResolvedValue({ data: null, error: null });
+    await expect(lookupActiveRedirect("/x")).resolves.toBeNull();
+    expect(selectMaybeSingle).not.toHaveBeenCalled();
+  });
+
+  it.each(["PGRST202", "42883"])("RPC ainda inexistente (%s) → leitura direta", async (code) => {
+    rpc.mockResolvedValue({ data: null, error: { code, message: "function not found" } });
+    selectMaybeSingle.mockResolvedValue({ data: { redirect_to: "/portfolio", status: "redirect" }, error: null });
+    await expect(lookupActiveRedirect("/obras")).resolves.toBe("/portfolio");
+    expect(selectMaybeSingle).toHaveBeenCalledTimes(1);
+  });
+
+  it("outro erro da RPC → null (sem fallback, sem lançar)", async () => {
+    rpc.mockResolvedValue({ data: null, error: { code: "500", message: "boom" } });
+    await expect(lookupActiveRedirect("/x")).resolves.toBeNull();
+    expect(selectMaybeSingle).not.toHaveBeenCalled();
+  });
+
+  it("destino externo vindo do banco é recusado (open redirect)", async () => {
+    rpc.mockResolvedValue({ data: "//evil.example/phish", error: null });
+    await expect(lookupActiveRedirect("/x")).resolves.toBeNull();
+  });
+});
+
+describe("safeRedirectTarget", () => {
+  it.each([
+    ["/portfolio", "/portfolio"],
+    ["  /conteudos/a?x=1#faq ", "/conteudos/a?x=1#faq"],
+    ["https://bewild.com.br/faq?x=1", "/faq?x=1"],
+    ["https://www.bewild.com.br/contato", "/contato"],
+  ])("aceita %j → %j", (raw, out) => {
+    expect(safeRedirectTarget(raw)).toBe(out);
+  });
+
+  it.each([
+    "//evil.example",
+    "/\\evil.example",
+    "https://evil.example/x",
+    "javascript:alert(1)",
+    "portfolio",
+    "/a\nb",
+    "/a b",
+    "",
+    null,
+    42,
+  ])("recusa %j", (raw) => {
+    expect(safeRedirectTarget(raw)).toBeNull();
+  });
+
+  it("recusa redirecionar para o próprio caminho (laço)", () => {
+    expect(safeRedirectTarget("/obras/", "/obras")).toBeNull();
   });
 });

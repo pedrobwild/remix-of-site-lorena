@@ -3,7 +3,9 @@ import { Button } from "@/guia/components/ui/button";
 import { Badge } from "@/guia/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, ArrowUpDown, Check } from "lucide-react";
-import { Neighborhood, NEIGHBORHOODS, DEMAND_PROFILE_LABELS, fmt } from "@/guia/data/mapaBairrosData";
+import { type Neighborhood, NEIGHBORHOODS, DEMAND_PROFILE_LABELS, fmt } from "@/guia/data/mapaBairrosData";
+import { ROI_AVISO } from "@/guia/data/bairros";
+import { fmtPct } from "@/guia/lib/format";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/guia/components/ui/chart";
 
@@ -13,13 +15,12 @@ interface ComparisonProps {
 }
 
 const METRICS: { key: string; label: string; getValue: (n: Neighborhood) => number | string; format: (v: number | string) => string; higherIsBetter: boolean }[] = [
-  { key: "nightly", label: "Diária média", getValue: (n) => n.metrics.nightlyRate, format: (v) => `R$${fmt(v as number)}`, higherIsBetter: true },
-  { key: "nightlyRange", label: "Faixa de diária", getValue: (n) => `R$${fmt(n.metrics.nightlyRateRange[0])}–R$${fmt(n.metrics.nightlyRateRange[1])}`, format: (v) => `${v}`, higherIsBetter: false },
-  { key: "occupancy", label: "Ocupação", getValue: (n) => n.metrics.occupancy, format: (v) => `${v}%`, higherIsBetter: true },
-  { key: "roi", label: "ROI estimado", getValue: (n) => n.metrics.estimatedROI, format: (v) => `${v}%`, higherIsBetter: true },
-  { key: "revenue", label: "Receita mensal", getValue: (n) => n.metrics.avgRevenueMo, format: (v) => `R$${fmt(v as number)}`, higherIsBetter: true },
+  { key: "nightly", label: "Diária média", getValue: (n) => n.metrics.nightlyRate, format: (v) => `R$ ${fmt(v as number)}`, higherIsBetter: true },
+  { key: "nightlyRange", label: "Faixa de diária", getValue: (n) => `R$ ${fmt(n.metrics.nightlyRateRange[0])}–${fmt(n.metrics.nightlyRateRange[1])}`, format: (v) => `${v}`, higherIsBetter: false },
+  { key: "occupancy", label: "Ocupação", getValue: (n) => n.metrics.occupancy, format: (v) => fmtPct(v as number), higherIsBetter: true },
+  { key: "roi", label: "ROI estimado*", getValue: (n) => n.metrics.estimatedROI, format: (v) => fmtPct(v as number), higherIsBetter: true },
+  { key: "revenue", label: "Receita mensal", getValue: (n) => n.metrics.avgRevenueMo, format: (v) => `R$ ${fmt(v as number)}`, higherIsBetter: true },
   { key: "listings", label: "Anúncios ativos", getValue: (n) => n.metrics.activeListings, format: (v) => `${fmt(v as number)}`, higherIsBetter: false },
-  { key: "seasonality", label: "Sazonalidade", getValue: (n) => n.metrics.seasonalityIndex, format: (v) => Number(v) > 1.2 ? "Alta" : Number(v) > 0.9 ? "Moderada" : "Estável", higherIsBetter: false },
   { key: "profile", label: "Perfil de demanda", getValue: (n) => DEMAND_PROFILE_LABELS[n.demandProfile]?.label || n.demandProfile, format: (v) => `${v}`, higherIsBetter: false },
   { key: "competition", label: "Competição", getValue: (n) => n.metrics.competitionLevel, format: (v) => `${v}`, higherIsBetter: false },
 ];
@@ -28,13 +29,13 @@ function getMetricColor(values: (number | string)[], idx: number, higherIsBetter
   if (typeof values[0] === "string") return "text-foreground";
   const nums = values as number[];
   const sorted = [...nums].sort((a, b) => higherIsBetter ? b - a : a - b);
-  if (nums[idx] === sorted[0]) return "text-emerald-600 dark:text-emerald-400 font-bold";
+  if (nums[idx] === sorted[0]) return "text-emerald-700 font-bold";
   if (nums[idx] === sorted[sorted.length - 1] && nums.length > 2) return "text-muted-foreground";
-  return "text-amber-600 dark:text-amber-400";
+  return "text-amber-700";
 }
 
 const chartConfig = {
-  revenue: { label: "Receita potencial", color: "hsl(var(--primary))" },
+  revenue: { label: "Receita de referência (R$)", color: "hsl(var(--primary))" },
 };
 
 export default function NeighborhoodComparison({ onClose, initialNeighborhoods = [] }: ComparisonProps) {
@@ -56,7 +57,7 @@ export default function NeighborhoodComparison({ onClose, initialNeighborhoods =
 
   const chartData = selected.map((n) => ({
     name: n.name.length > 12 ? n.name.slice(0, 12) + "…" : n.name,
-    revenue: Math.round(n.metrics.nightlyRate * 30 * (n.metrics.occupancy / 100)),
+    revenue: n.metrics.avgRevenueMo,
   }));
 
   return (
@@ -71,7 +72,7 @@ export default function NeighborhoodComparison({ onClose, initialNeighborhoods =
           <h3 className="font-display text-lg font-bold text-foreground">Comparar bairros</h3>
           <p className="text-xs text-muted-foreground font-body">Selecione até 3 bairros</p>
         </div>
-        <Button size="icon" variant="ghost" onClick={onClose}><X size={16} /></Button>
+        <Button type="button" size="icon" variant="ghost" onClick={onClose} aria-label="Fechar comparação"><X size={16} aria-hidden="true" /></Button>
       </div>
 
       {/* Selected neighborhoods chips */}
@@ -80,20 +81,22 @@ export default function NeighborhoodComparison({ onClose, initialNeighborhoods =
           <Badge key={n.id} variant="outline" className="gap-1.5 py-1 px-2.5 text-xs">
             <span className={`w-2 h-2 rounded-full ${i === 0 ? "bg-emerald-500" : i === 1 ? "bg-primary" : "bg-amber-500"}`} />
             {n.name}
-            <button onClick={() => removeNeighborhood(n.id)} className="ml-1 hover:text-destructive">
-              <X size={10} />
+            <button type="button" onClick={() => removeNeighborhood(n.id)} className="ml-1 hover:text-destructive" aria-label={`Remover ${n.name} da comparação`}>
+              <X size={10} aria-hidden="true" />
             </button>
           </Badge>
         ))}
         {selected.length < 3 && (
           <div className="relative">
             <Button
+              type="button"
               variant="outline"
               size="sm"
               className="text-xs gap-1 h-7"
+              aria-expanded={showPicker}
               onClick={() => setShowPicker(!showPicker)}
             >
-              <Plus size={12} />
+              <Plus size={12} aria-hidden="true" />
               Adicionar
             </Button>
             <AnimatePresence>
@@ -107,6 +110,7 @@ export default function NeighborhoodComparison({ onClose, initialNeighborhoods =
                   {available.map((n) => (
                     <button
                       key={n.id}
+                      type="button"
                       onClick={() => addNeighborhood(n)}
                       className="w-full flex items-center gap-2 text-xs px-3 py-2 hover:bg-muted transition-colors text-left"
                     >
@@ -170,15 +174,16 @@ export default function NeighborhoodComparison({ onClose, initialNeighborhoods =
                 })}
               </tbody>
             </table>
+            <p className="mt-2 text-[10px] text-muted-foreground font-body">* {ROI_AVISO}</p>
           </div>
 
           {/* Revenue chart */}
           <div>
-            <h4 className="text-xs font-semibold text-muted-foreground mb-3">Receita mensal potencial</h4>
+            <h4 className="text-xs font-semibold text-muted-foreground mb-3">Receita mensal de referência (diária média × 30 × ocupação, antes de custos)</h4>
             <ChartContainer config={chartConfig} className="h-[160px] w-full">
               <BarChart data={chartData} layout="vertical" margin={{ left: 0, right: 20, top: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                <XAxis type="number" tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} className="text-[10px]" />
+                <XAxis type="number" tickFormatter={(v: number) => `R$ ${fmt(v / 1000)} mil`} className="text-[10px]" />
                 <YAxis dataKey="name" type="category" width={90} className="text-[10px]" />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar dataKey="revenue" radius={[0, 4, 4, 0]} barSize={20}>

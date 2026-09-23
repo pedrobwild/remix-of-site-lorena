@@ -19,7 +19,10 @@
  *     acontecer dentro dessa janela, paramos de recarregar e
  *     mostramos fallback — recarregar em loop com a mesma falha
  *     deixa o usuário pior do que uma tela de erro estática.
- *     O contador é limpo após 5s de render saudável (`markHealthy`).
+ *     O contador só expira pela própria janela de 60s. (Antes `markHealthy`
+ *     o zerava 5s depois de todo boot: um crash que acontecesse mais de 5s
+ *     após montar recarregava para sempre — o boot "saudável" apagava a
+ *     tentativa anterior a cada ciclo.)
  */
 import { devError } from "./devLog";
 
@@ -33,7 +36,6 @@ const LOG_LIMIT = 20;
 const QUEUE_LIMIT = 50;
 const BLANK_SCREEN_TIMEOUT_MS = 12_000;
 const BLANK_SCREEN_RECHECK_MS = 4_000;
-const HEALTHY_AFTER_MS = 5_000;
 const UPLOAD_TIMEOUT_MS = 4_000;
 const MAX_FIELD_LEN = 8_000;
 
@@ -309,16 +311,14 @@ export function tryAutoReload(): boolean {
   return true;
 }
 
-/** Chamada após render bem-sucedida — zera o contador anti-loop. */
+/**
+ * Chamada após o primeiro render bem-sucedido: desliga o watchdog de tela em
+ * branco. NÃO mexe no contador anti-loop — ele expira sozinho pela janela
+ * (`ATTEMPTS_WINDOW_MS`), senão um crash tardio (> alguns segundos após o
+ * boot) nunca esgotaria o orçamento de reloads.
+ */
 export function markHealthy(): void {
   appMarkedHealthy = true;
-  window.setTimeout(() => {
-    try {
-      sessionStorage.removeItem(ATTEMPTS_KEY);
-    } catch {
-      // ignore
-    }
-  }, HEALTHY_AFTER_MS);
 }
 
 let installed = false;
@@ -388,7 +388,6 @@ export function installCrashRecovery(): void {
   w.__crashLogBySession = (sessionId?: string) => {
     const target = sessionId ?? getSessionId();
     const entries = getCrashLog().filter((e) => e.sessionId === target);
-    // eslint-disable-next-line no-console
     console.info(
       `[crash] ${entries.length} entrada(s) para sessionId=${target}`,
       entries,

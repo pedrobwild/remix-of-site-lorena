@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import bewildLogo from "@/guia/assets/bewild-logo.png.asset.json";
 import { SECTIONS, PHASES } from "@/guia/data/guide-data";
@@ -18,17 +18,12 @@ export default function TableOfContents({ activeId, visitedSections }: Props) {
   }, [activeId]);
 
   // Track which phases are open (auto-open active phase)
-  const [openPhases, setOpenPhases] = useState<Set<number>>(new Set([activePhase]));
+  const [openPhases, setOpenPhases] = useState<Set<number>>(() => new Set([activePhase]));
 
-  // Keep active phase open
-  useMemo(() => {
-    if (activePhase > 0) {
-      setOpenPhases((prev) => {
-        const next = new Set(prev);
-        next.add(activePhase);
-        return next;
-      });
-    }
+  // Mantém a fase ativa aberta (efeito, não useMemo: memo não pode ter efeito colateral).
+  useEffect(() => {
+    if (activePhase <= 0) return;
+    setOpenPhases((prev) => (prev.has(activePhase) ? prev : new Set(prev).add(activePhase)));
   }, [activePhase]);
 
   const togglePhase = (num: number) => {
@@ -62,8 +57,14 @@ export default function TableOfContents({ activeId, visitedSections }: Props) {
 
   return (
     <nav
+      aria-label="Sumário do guia"
       onMouseEnter={() => setExpanded(true)}
       onMouseLeave={() => setExpanded(false)}
+      // Teclado: expande quando o foco entra e recolhe quando sai do sumário.
+      onFocus={() => setExpanded(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setExpanded(false);
+      }}
       className={`hidden lg:flex flex-col fixed left-0 top-0 h-screen overflow-y-auto overflow-x-hidden border-r border-border/60 bg-card/95 backdrop-blur-md z-30 scrollbar-thin py-5 transition-all duration-300 ease-in-out ${
         expanded ? "w-60 px-3" : "w-[60px] px-2"
       }`}
@@ -91,13 +92,15 @@ export default function TableOfContents({ activeId, visitedSections }: Props) {
             <li key={s.id} className="relative group">
               <a
                 href={`#${s.id}`}
+                aria-label={expanded ? undefined : s.label}
+                aria-current={isActive ? "location" : undefined}
                 className={`flex items-center gap-2.5 rounded-lg transition-all duration-200 ${
                   isActive
                     ? "bg-primary text-primary-foreground font-semibold shadow-sm"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
                 } ${expanded ? "px-3 py-2" : "px-0 py-2 justify-center"}`}
               >
-                <Icon size={16} className="shrink-0" />
+                <Icon size={16} className="shrink-0" aria-hidden="true" />
                 {expanded && <span className="truncate text-sm whitespace-nowrap">Início</span>}
               </a>
               {!expanded && (
@@ -120,17 +123,20 @@ export default function TableOfContents({ activeId, visitedSections }: Props) {
           const PhaseIcon = PHASE_ICONS[phase.number as keyof typeof PHASE_ICONS];
 
           return (
-            <li key={phase.number}>
+            <li key={phase.number} className="relative group">
               {/* Phase header — clickable group toggle */}
               <button
+                type="button"
                 onClick={() => togglePhase(phase.number)}
+                aria-expanded={expanded ? isOpen : undefined}
+                aria-label={expanded ? undefined : `Fase ${phase.number}: ${phase.label}`}
                 className={`w-full flex items-center gap-2.5 rounded-lg transition-all duration-200 group/phase ${
                   isPhaseActive && !isOpen
                     ? "bg-primary/10 text-primary font-semibold"
                     : "text-foreground/80 hover:text-foreground hover:bg-muted/60"
                 } ${expanded ? "px-3 py-2.5" : "px-0 py-2.5 justify-center"}`}
               >
-                {PhaseIcon && <PhaseIcon size={16} className={`shrink-0 ${isPhaseActive ? "text-primary" : "text-muted-foreground"}`} />}
+                {PhaseIcon && <PhaseIcon size={16} aria-hidden="true" className={`shrink-0 ${isPhaseActive ? "text-primary" : "text-muted-foreground"}`} />}
                 {expanded && (
                   <>
                     <div className="flex flex-col items-start min-w-0 flex-1">
@@ -150,6 +156,7 @@ export default function TableOfContents({ activeId, visitedSections }: Props) {
                       )}
                       <ChevronDown
                         size={14}
+                        aria-hidden="true"
                         className={`text-muted-foreground/40 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
                       />
                     </div>
@@ -184,10 +191,10 @@ export default function TableOfContents({ activeId, visitedSections }: Props) {
 
                     const inner = (
                       <>
-                        <Icon size={13} className="shrink-0 opacity-60" />
+                        <Icon size={13} className="shrink-0 opacity-60" aria-hidden="true" />
                         <span className="truncate text-[13px] whitespace-nowrap">{s.label}</span>
                         {(
-                          <span className={`ml-auto w-1.5 h-1.5 rounded-full shrink-0 transition-colors duration-300 ${dotClass}`} />
+                          <span aria-hidden="true" className={`ml-auto w-1.5 h-1.5 rounded-full shrink-0 transition-colors duration-300 ${dotClass}`} />
                         )}
                       </>
                     );
@@ -196,6 +203,7 @@ export default function TableOfContents({ activeId, visitedSections }: Props) {
                       <li key={s.id}>
                         <a
                           href={`#${s.id}`}
+                          aria-current={isActive ? "location" : undefined}
                           className={`flex items-center gap-2 rounded-md px-2 py-1.5 transition-all duration-200 ${textClass}`}
                         >
                           {inner}

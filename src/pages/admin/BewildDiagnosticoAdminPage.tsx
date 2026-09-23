@@ -1,17 +1,33 @@
 /**
- * /admin/diagnostico — Submissões do formulário de diagnóstico (/diagnostico).
+ * /admin/diagnostico (e o alias /admin/orcamentos) — pedidos de orçamento.
  *
  * Fonte: tabela `leads` (alimentada pela edge function `notify-lead`),
- * filtrada por `landing_path = '/diagnostico'`. Diferente de /admin/mensagens
- * (formulário de /contato), esta tela destaca os dados do IMÓVEL: bairro,
- * metragem, objetivo, chaves e planta — tudo visível na lista.
+ * filtrada pelo FORMULÁRIO que gerou o lead: /diagnostico, /orcamento e as
+ * LPs /o (placa de obra) e /p (panfleto). Antes o filtro era
+ * `landing_path = '/diagnostico'` — mas `landing_path` é a primeira página
+ * da sessão (atribuição): quem entrou pela home sumia daqui e os pedidos do
+ * /orcamento nunca apareciam. Leads antigos, sem `form_path`, entram pelo
+ * `landing_path` como antes.
+ *
+ * Diferente de /admin/mensagens (formulário de /contato), esta tela destaca
+ * os dados do IMÓVEL: bairro, metragem, objetivo, chaves e planta.
  */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { MessageCircle, Mail } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
+import AdminAlert from "@/components/admin/AdminAlert";
 import { supabase } from "@/integrations/supabase/client";
-
-type LeadStatus = "novo" | "contatado" | "qualificado" | "descartado";
+import {
+  DIAGNOSTICO_FORMS,
+  LEAD_STATUSES,
+  isLeadStatus,
+  leadFormLabel,
+  leadFormOrFilter,
+  mailtoHref,
+  updateLeadStatus,
+  waLink,
+  type LeadStatus,
+} from "@/lib/adminLeads";
 
 type Diagnostico = {
   id: string;
@@ -25,13 +41,13 @@ type Diagnostico = {
   planta: string | null;
   lives_in_sp: boolean | null;
   message: string | null;
+  form_path: string | null;
+  landing_path: string | null;
   status: LeadStatus;
   created_at: string;
 };
 
 const PAGE_SIZE = 200;
-
-const STATUS_VALUES: LeadStatus[] = ["novo", "contatado", "qualificado", "descartado"];
 
 const STATUS_OPTIONS: { value: "all" | LeadStatus; label: string }[] = [
   { value: "all", label: "Todos" },
@@ -42,7 +58,8 @@ const STATUS_OPTIONS: { value: "all" | LeadStatus; label: string }[] = [
 ];
 
 const SELECT_COLS =
-  "id, name, whatsapp, email, location, area_m2, objetivo, chaves, planta, lives_in_sp, message, status, created_at";
+  "id, name, whatsapp, email, location, area_m2, objetivo, chaves, planta, lives_in_sp, message, form_path, landing_path, status, created_at";
+const FORM_FILTER = leadFormOrFilter(DIAGNOSTICO_FORMS);
 
 function fmtDate(iso: string): string {
   try {
@@ -58,20 +75,6 @@ function fmtDate(iso: string): string {
   }
 }
 
-function waLink(whatsapp: string | null): string | null {
-  if (!whatsapp) return null;
-  const digits = whatsapp.replace(/\D/g, "");
-  let full: string;
-  if (digits.length === 10 || digits.length === 11) {
-    full = `55${digits}`;
-  } else if ((digits.length === 12 || digits.length === 13) && digits.startsWith("55")) {
-    full = digits;
-  } else {
-    return null;
-  }
-  return `https://wa.me/${full}`;
-}
-
 function imovelResumo(r: Diagnostico): string {
   const partes: string[] = [];
   if (r.location) partes.push(r.location);
@@ -83,90 +86,144 @@ function imovelResumo(r: Diagnostico): string {
 export default function BewildDiagnosticoAdminPage() {
   const [rows, setRows] = useState<Diagnostico[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [novos, setNovos] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [actionMsg, setActionMsg] = useState<{ kind: "err" | "warn"; text: string } | null>(null);
   const [status, setStatus] = useState<"all" | LeadStatus>("all");
   const [busy, setBusy] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     setLoadError(null);
-    const { data, error, count } = await supabase
-      .from("leads")
-      .select(SELECT_COLS, { count: "exact" })
-      .eq("landing_path", "/diagnostico")
-      .order("created_at", { ascending: false })
-      .range(0, PAGE_SIZE - 1);
+    const [listRes, novosRes] = await Promise.all([
+      supabase
+        .from("leads")
+        .select(SELECT_COLS, { count: "exact" })
+        .or(FORM_FILTER)
+        .order("created_at", { ascending: false })
+        .range(0, PAGE_SIZE - 1),
+      supabase
+        .from("leads")
+        .select("id", { count: "exact", head: true })
+        .or(FORM_FILTER)
+        .eq("status", "novo"),
+    ]);
 
-    if (error) {
-      console.error("[admin/diagnostico] falha ao carregar diagnósticos:", error);
-      setLoadError(error.message || "Não foi possível carregar os diagnósticos.");
+    if (listRes.error) {
+      console.error("[admin/diagnostico] falha ao carregar diagnósticos:", listRes.error);
+      setLoadError(listRes.error.message || "Não foi possível carregar os pedidos.");
       setRows([]);
       setTotalCount(0);
+      setNovos(null);
     } else {
-      setRows((data ?? []) as Diagnostico[]);
-      setTotalCount(count ?? data?.length ?? 0);
+      setRows((listRes.data ?? []) as Diagnostico[]);
+      setTotalCount(listRes.count ?? listRes.data?.length ?? 0);
+      setNovos(novosRes.error ? null : (novosRes.count ?? 0));
     }
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    load();
+    void load();
   }, [load]);
+
+  async function loadMore() {
+    if (loadingMore || rows.length >= totalCount) return;
+    setLoadingMore(true);
+    const { data, error } = await supabase
+      .from("leads")
+      .select(SELECT_COLS)
+      .or(FORM_FILTER)
+      .order("created_at", { ascending: false })
+      .range(rows.length, rows.length + PAGE_SIZE - 1);
+    setLoadingMore(false);
+    if (error) {
+      setActionMsg({ kind: "err", text: `Não foi possível carregar mais: ${error.message}` });
+      return;
+    }
+    setRows((prev) => {
+      const seen = new Set(prev.map((r) => r.id));
+      return [...prev, ...((data ?? []) as Diagnostico[]).filter((r) => !seen.has(r.id))];
+    });
+  }
 
   const filtered = useMemo(() => {
     if (status === "all") return rows;
     return rows.filter((r) => r.status === status);
   }, [rows, status]);
 
-  const novos = useMemo(() => rows.filter((r) => r.status === "novo").length, [rows]);
-
   async function changeStatus(item: Diagnostico, next: string) {
-    if (!STATUS_VALUES.includes(next as LeadStatus)) return;
-    const nextStatus = next as LeadStatus;
+    if (!isLeadStatus(next)) return;
     const previous = item.status;
-    if (nextStatus === previous) return;
-    setRows((prev) => prev.map((r) => (r.id === item.id ? { ...r, status: nextStatus } : r)));
+    if (next === previous) return;
+    setRows((prev) => prev.map((r) => (r.id === item.id ? { ...r, status: next } : r)));
+    setNovos((n) => (n === null ? n : n + (next === "novo" ? 1 : 0) - (previous === "novo" ? 1 : 0)));
     setBusy(item.id);
-    const { error } = await supabase.from("leads").update({ status: nextStatus }).eq("id", item.id);
+    setActionMsg(null);
+    const result = await updateLeadStatus(item.id, isLeadStatus(previous) ? previous : null, next);
     setBusy(null);
-    if (error) {
-      console.error("[admin/diagnostico] falha ao atualizar status:", error);
+    if (!result.ok) {
+      console.error("[admin/diagnostico] falha ao atualizar status:", result.error);
       setRows((prev) => prev.map((r) => (r.id === item.id ? { ...r, status: previous } : r)));
-      window.alert(`Não foi possível atualizar o status: ${error.message}`);
+      setNovos((n) => (n === null ? n : n - (next === "novo" ? 1 : 0) + (previous === "novo" ? 1 : 0)));
+      setActionMsg({ kind: "err", text: `Não foi possível atualizar o status: ${result.error}` });
+      return;
+    }
+    if (result.logError) {
+      setActionMsg({
+        kind: "warn",
+        text: `Status salvo, mas o histórico de qualificação não foi registrado: ${result.logError}`,
+      });
     }
   }
 
   async function deleteItem(item: Diagnostico) {
-    const label = item.name?.trim() || "este diagnóstico";
-    if (!window.confirm(`Excluir o diagnóstico de ${label}? Essa ação não pode ser desfeita.`)) return;
+    const label = item.name?.trim() || "este pedido";
+    if (!window.confirm(`Excluir o pedido de ${label}? Essa ação não pode ser desfeita.`)) return;
     setBusy(item.id);
-    const { error } = await supabase.from("leads").delete().eq("id", item.id);
+    setActionMsg(null);
+    const { data, error } = await supabase.from("leads").delete().eq("id", item.id).select("id");
     setBusy(null);
-    if (error) {
+    if (error || !data || data.length === 0) {
       console.error("[admin/diagnostico] falha ao excluir:", error);
-      window.alert(`Não foi possível excluir: ${error.message}`);
+      setActionMsg({
+        kind: "err",
+        text: `Não foi possível excluir: ${error?.message ?? "nada foi excluído (sem permissão ou já removido)."}`,
+      });
       return;
     }
     setRows((prev) => prev.filter((r) => r.id !== item.id));
     setTotalCount((n) => Math.max(0, n - 1));
+    if (item.status === "novo") setNovos((n) => (n === null ? n : Math.max(0, n - 1)));
   }
+
+  const hasMore = rows.length < totalCount;
 
   return (
     <BewildAdminShell
       active="diagnostico"
       eyebrow="Painel"
-      title="Diagnósticos"
-      description="Todas as submissões do formulário de /diagnostico, mais recentes primeiro."
+      title="Diagnósticos e orçamentos"
+      description="Pedidos enviados pelos formulários de /diagnostico e /orcamento e pelas LPs /o e /p, mais recentes primeiro."
     >
+      {actionMsg && (
+        <AdminAlert kind={actionMsg.kind} onClose={() => setActionMsg(null)}>
+          {actionMsg.text}
+        </AdminAlert>
+      )}
+
       <div className="bw-admin__kpi-grid">
         <div className="bw-admin__kpi-card">
-          <p className="bw-admin__kpi-label">Total de diagnósticos</p>
+          <p className="bw-admin__kpi-label">Total de pedidos</p>
           <div className="bw-admin__kpi-value">{totalCount}</div>
         </div>
         <div className="bw-admin__kpi-card">
           <p className="bw-admin__kpi-label">Novos</p>
-          <div className="bw-admin__kpi-value">{novos}</div>
+          <div className={"bw-admin__kpi-value" + (novos === null ? " bw-admin__kpi-empty" : "")}>
+            {novos === null ? "—" : novos}
+          </div>
         </div>
       </div>
 
@@ -202,19 +259,21 @@ export default function BewildDiagnosticoAdminPage() {
             }}
           >
             <p style={{ margin: 0, color: "#991B1B" }}>
-              <strong>Erro ao carregar os diagnósticos.</strong>
+              <strong>Erro ao carregar os pedidos.</strong>
               <br />
               <span style={{ fontSize: 13 }}>{loadError}</span>
             </p>
-            <button type="button" className="bw-admin__btn bw-admin__btn--sm" onClick={load}>
+            <button type="button" className="bw-admin__btn bw-admin__btn--sm" onClick={() => void load()}>
               Tentar de novo
             </button>
           </div>
         ) : filtered.length === 0 ? (
           <p className="bw-admin__empty">
             {totalCount === 0
-              ? "Nenhum diagnóstico ainda. Quando alguém enviar o formulário de /diagnostico, ele aparece aqui."
-              : "Nenhum diagnóstico com esse status."}
+              ? "Nenhum pedido ainda. Quando alguém enviar o /diagnostico, o /orcamento ou as LPs /o e /p, ele aparece aqui."
+              : hasMore
+                ? "Nenhum pedido com esse status entre os carregados. Use “Carregar mais” para ver os mais antigos."
+                : "Nenhum pedido com esse status."}
           </p>
         ) : (
           <table className="bw-admin__table">
@@ -223,6 +282,7 @@ export default function BewildDiagnosticoAdminPage() {
                 <th>Quem</th>
                 <th>Imóvel</th>
                 <th>Detalhes</th>
+                <th>Formulário</th>
                 <th>Status</th>
                 <th>Recebido</th>
                 <th></th>
@@ -231,6 +291,7 @@ export default function BewildDiagnosticoAdminPage() {
             <tbody>
               {filtered.map((r) => {
                 const wa = waLink(r.whatsapp);
+                const mailto = mailtoHref(r.email);
                 const resumo = imovelResumo(r);
                 return (
                   <React.Fragment key={r.id}>
@@ -241,7 +302,7 @@ export default function BewildDiagnosticoAdminPage() {
                           {r.whatsapp ?? "—"}
                         </div>
                         {r.email && (
-                          <div className="muted" style={{ fontSize: 12 }}>
+                          <div className="muted" style={{ fontSize: 12, overflowWrap: "anywhere" }}>
                             {r.email}
                           </div>
                         )}
@@ -264,12 +325,19 @@ export default function BewildDiagnosticoAdminPage() {
                         )}
                         {!r.chaves && !r.planta && !r.message && <span className="muted">—</span>}
                       </td>
+                      <td
+                        className="muted"
+                        style={{ verticalAlign: "top", whiteSpace: "nowrap", fontSize: 12 }}
+                        title={r.landing_path ? `1ª página da sessão: ${r.landing_path}` : undefined}
+                      >
+                        {leadFormLabel(r)}
+                      </td>
                       <td style={{ verticalAlign: "top" }}>
                         <select
                           value={r.status}
-                          onChange={(e) => changeStatus(r, e.target.value)}
+                          onChange={(e) => void changeStatus(r, e.target.value)}
                           disabled={busy === r.id}
-                          aria-label={`Mudar status de ${r.name ?? "diagnóstico"}`}
+                          aria-label={`Mudar status de ${r.name ?? "pedido"}`}
                           style={{
                             padding: "6px 28px 6px 10px",
                             borderRadius: 6,
@@ -279,7 +347,12 @@ export default function BewildDiagnosticoAdminPage() {
                             cursor: busy === r.id ? "wait" : "pointer",
                           }}
                         >
-                          {STATUS_VALUES.map((s) => (
+                          {!isLeadStatus(r.status) && (
+                            <option value={r.status} disabled>
+                              {r.status}
+                            </option>
+                          )}
+                          {LEAD_STATUSES.map((s) => (
                             <option key={s} value={s}>
                               {s}
                             </option>
@@ -300,10 +373,10 @@ export default function BewildDiagnosticoAdminPage() {
                             <MessageCircle aria-hidden /> WhatsApp
                           </a>
                         )}
-                        {r.email && (
+                        {mailto && (
                           <>
                             {"  "}
-                            <a className="bw-admin__btn bw-admin__btn--sm" href={`mailto:${r.email}`}>
+                            <a className="bw-admin__btn bw-admin__btn--sm" href={mailto}>
                               <Mail aria-hidden /> E-mail
                             </a>
                           </>
@@ -318,9 +391,9 @@ export default function BewildDiagnosticoAdminPage() {
                             cursor: busy === r.id ? "wait" : "pointer",
                             color: "#b3261e",
                           }}
-                          onClick={() => deleteItem(r)}
+                          onClick={() => void deleteItem(r)}
                           disabled={busy === r.id}
-                          aria-label={`Excluir diagnóstico de ${r.name ?? "contato"}`}
+                          aria-label={`Excluir pedido de ${r.name ?? "contato"}`}
                         >
                           excluir
                         </button>
@@ -331,6 +404,18 @@ export default function BewildDiagnosticoAdminPage() {
               })}
             </tbody>
           </table>
+        )}
+        {!loading && !loadError && hasMore && (
+          <div style={{ display: "flex", justifyContent: "center", padding: 16 }}>
+            <button
+              type="button"
+              className="bw-admin__btn bw-admin__btn--sm"
+              onClick={() => void loadMore()}
+              disabled={loadingMore}
+            >
+              {loadingMore ? "Carregando…" : `Carregar mais (${totalCount - rows.length} restantes)`}
+            </button>
+          </div>
         )}
       </div>
     </BewildAdminShell>

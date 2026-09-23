@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/guia/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/guia/components/ui/sheet";
 import { Menu, ChevronDown } from "lucide-react";
@@ -19,17 +19,12 @@ export default function MobileMenu({ activeId, sectionIndex, sectionCount }: Pro
     return s?.phase ?? 0;
   }, [activeId]);
 
-  const [openPhases, setOpenPhases] = useState<Set<number>>(new Set([activePhase]));
+  const [openPhases, setOpenPhases] = useState<Set<number>>(() => new Set([activePhase]));
 
-  // Keep active phase open
-  useMemo(() => {
-    if (activePhase > 0) {
-      setOpenPhases((prev) => {
-        const next = new Set(prev);
-        next.add(activePhase);
-        return next;
-      });
-    }
+  // Mantém a fase ativa aberta (efeito, não useMemo: memo não pode ter efeito colateral).
+  useEffect(() => {
+    if (activePhase <= 0) return;
+    setOpenPhases((prev) => (prev.has(activePhase) ? prev : new Set(prev).add(activePhase)));
   }, [activePhase]);
 
   const togglePhase = (num: number) => {
@@ -60,16 +55,24 @@ export default function MobileMenu({ activeId, sectionIndex, sectionCount }: Pro
         <img src={bewildLogo.url} alt="Bewild" className="h-7 w-auto" />
       </a>
       <div className="flex items-center gap-2">
-        <span className="text-xs text-muted-foreground bg-muted/60 rounded-full px-2.5 py-0.5">
+        <span className="text-xs text-muted-foreground bg-muted/60 rounded-full px-2.5 py-0.5" aria-label={`Seção ${sectionIndex} de ${sectionCount}`}>
           {sectionIndex}/{sectionCount}
         </span>
-        <Button variant="ghost" size="icon" onClick={() => setOpen(true)} className="hover:bg-muted/50 min-h-[44px] min-w-[44px]">
-          <Menu size={22} />
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={() => setOpen(true)}
+          aria-label="Abrir sumário do guia"
+          aria-expanded={open}
+          className="hover:bg-muted/50 min-h-[44px] min-w-[44px]"
+        >
+          <Menu size={22} aria-hidden="true" />
         </Button>
       </div>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="left" className="w-72 p-0">
+        <SheetContent side="left" className="w-72 p-0" aria-describedby={undefined}>
           <SheetHeader className="px-4 pt-5 pb-3 border-b border-border/60">
             <SheetTitle className="flex items-center gap-2">
               <a href="/" onClick={() => setOpen(false)} aria-label="Bewild — voltar para o site">
@@ -77,7 +80,7 @@ export default function MobileMenu({ activeId, sectionIndex, sectionCount }: Pro
               </a>
             </SheetTitle>
           </SheetHeader>
-          <nav className="px-3 py-4 overflow-y-auto max-h-[calc(100vh-120px)] scrollbar-thin">
+          <nav aria-label="Sumário do guia" className="px-3 py-4 overflow-y-auto max-h-[calc(100vh-120px)] scrollbar-thin">
             {/* Hero */}
             <ul className="space-y-0.5 mb-1">
               {heroSections.map((s) => {
@@ -88,13 +91,14 @@ export default function MobileMenu({ activeId, sectionIndex, sectionCount }: Pro
                     <a
                       href={`#${s.id}`}
                       onClick={() => setOpen(false)}
+                      aria-current={isActive ? "location" : undefined}
                       className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-all min-h-[44px] ${
                         isActive
                           ? "bg-primary text-primary-foreground font-semibold shadow-sm"
                           : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
                       }`}
                     >
-                      <Icon size={16} className="shrink-0" />
+                      <Icon size={16} className="shrink-0" aria-hidden="true" />
                       <span>Início</span>
                     </a>
                   </li>
@@ -114,7 +118,9 @@ export default function MobileMenu({ activeId, sectionIndex, sectionCount }: Pro
                 <div key={phase.number} className="mb-1">
                   {/* Phase header */}
                   <button
+                    type="button"
                     onClick={() => togglePhase(phase.number)}
+                    aria-expanded={isOpen}
                     className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-all min-h-[44px] ${
                       isPhaseActive && !isOpen
                         ? "bg-primary/10 text-primary font-semibold"
@@ -122,7 +128,7 @@ export default function MobileMenu({ activeId, sectionIndex, sectionCount }: Pro
                     }`}
                   >
                     {PhaseIcon && (
-                      <PhaseIcon size={16} className={`shrink-0 ${isPhaseActive ? "text-primary" : "text-muted-foreground"}`} />
+                      <PhaseIcon size={16} aria-hidden="true" className={`shrink-0 ${isPhaseActive ? "text-primary" : "text-muted-foreground"}`} />
                     )}
                     <div className="flex flex-col items-start min-w-0 flex-1">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 leading-none mb-0.5">
@@ -132,6 +138,7 @@ export default function MobileMenu({ activeId, sectionIndex, sectionCount }: Pro
                     </div>
                     <ChevronDown
                       size={14}
+                      aria-hidden="true"
                       className={`text-muted-foreground/40 shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
                     />
                   </button>
@@ -149,7 +156,7 @@ export default function MobileMenu({ activeId, sectionIndex, sectionCount }: Pro
 
                         const inner = (
                           <>
-                            <Icon size={14} className="shrink-0 opacity-60" />
+                            <Icon size={14} className="shrink-0 opacity-60" aria-hidden="true" />
                             <span className="truncate text-[13px]">{s.label}</span>
                           </>
                         );
@@ -159,6 +166,7 @@ export default function MobileMenu({ activeId, sectionIndex, sectionCount }: Pro
                             <a
                               href={`#${s.id}`}
                               onClick={() => setOpen(false)}
+                              aria-current={isActive ? "location" : undefined}
                               className={`flex items-center gap-2 px-2 py-2 rounded-md transition-all min-h-[44px] ${textClass}`}
                             >
                               {inner}

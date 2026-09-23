@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { maskPII, reply, suggestionsForPath, type KbItem } from "@/lib/assistant/assistantEngine";
+import {
+  maskPII,
+  reply,
+  safeKbActions,
+  suggestionsForPath,
+  type KbItem,
+} from "@/lib/assistant/assistantEngine";
 
 const base = {
   exemplos: [],
@@ -95,6 +101,38 @@ describe("assistantEngine.reply", () => {
     const r = reply("onde fica o escritório de vocês?", KB, ctx);
     expect(r.item?.id).toBe("escritorio");
     expect(r.acoes.some((a) => a.tipo === "whatsapp")).toBe(true);
+  });
+});
+
+describe("assistantEngine — ações do banco viram href só se seguras", () => {
+  const perigoso: KbItem = {
+    ...KB[0],
+    id: "perigoso",
+    acoes: [
+      { tipo: "link", rotulo: "Script", url: "javascript:alert(document.cookie)" },
+      { tipo: "link", rotulo: "Outro domínio", url: "//golpe.com" },
+      { tipo: "link", rotulo: "Sem URL" },
+      { tipo: "link", rotulo: "Orçamento", url: "/diagnostico" },
+      { tipo: "whatsapp", rotulo: "", url: "javascript:alert(1)" },
+    ],
+  };
+
+  it("reply descarta links inseguros e monta o WhatsApp pelo site", () => {
+    const r = reply("qual o prazo da obra?", [perigoso], ctx);
+    expect(r.item?.id).toBe("perigoso");
+    expect(r.acoes).toEqual([
+      { tipo: "link", rotulo: "Orçamento", url: "/diagnostico" },
+      { tipo: "whatsapp", rotulo: "Falar no WhatsApp", url: expect.stringContaining("https://wa.me/5511911906183") },
+    ]);
+  });
+
+  it("safeKbActions tolera JSON malformado vindo do banco", () => {
+    expect(safeKbActions(null)).toEqual([]);
+    expect(safeKbActions("[]")).toEqual([]);
+    expect(safeKbActions([null, 1, { tipo: "link", rotulo: "  ", url: "/faq" }])).toEqual([]);
+    expect(safeKbActions([{ tipo: "link", rotulo: "FAQ", url: " /faq " }])).toEqual([
+      { tipo: "link", rotulo: "FAQ", url: "/faq" },
+    ]);
   });
 });
 

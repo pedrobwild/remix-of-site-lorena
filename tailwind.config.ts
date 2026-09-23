@@ -9,6 +9,11 @@ import tailwindcssAnimate from "tailwindcss-animate";
  * rotas internas legadas.
  */
 export default {
+  // O site é só tema claro. Sem isto o padrão é "media": as classes `dark:`
+  // (usadas só no /guia-do-investidor, herdadas do app original) passavam a
+  // valer com o sistema em modo escuro, sobre a página clara — texto ilegível.
+  // Com "class", `dark:` só vale sob um ancestral `.dark`, que o site não usa.
+  darkMode: "class",
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
   theme: {
     extend: {

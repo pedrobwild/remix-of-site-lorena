@@ -9,6 +9,8 @@
  *  - views salvas em localStorage ("bewild_admin_views")
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { fmtLocalDay, parseLocalDay } from "@/lib/analyticsTimeseries";
+import { ALL_TABS } from "./types";
 import type {
   DateRange,
   Segment,
@@ -16,6 +18,28 @@ import type {
   TabKey,
   Theme,
 } from "./types";
+
+const SEGMENT_DIMS: readonly SegmentDim[] = [
+  "device",
+  "country",
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "landing_path",
+  "referrer_host",
+];
+
+/**
+ * Valor que a RPC `analytics_breakdown` usa para "sem valor" (coalesce com
+ * '(n/a)'). Filtrar por ele procuraria o texto literal "(n/a)" e zeraria o
+ * painel — a RPC não tem como filtrar "é nulo".
+ */
+export const NA_SEGMENT_VALUE = "(n/a)";
+
+export function isFilterableSegmentValue(value: string | null | undefined): boolean {
+  const v = (value ?? "").trim();
+  return v !== "" && v !== NA_SEGMENT_VALUE;
+}
 
 const THEME_KEY = "bewild_admin_theme";
 const VIEWS_KEY = "bewild_admin_views";
@@ -53,16 +77,11 @@ export function previousRange(range: DateRange): DateRange {
   return { from, to };
 }
 
-function fmtDay(d: Date): string {
-  return d.toISOString().slice(0, 10);
-}
-function parseDay(s: string | null): Date | null {
-  if (!s) return null;
-  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (!m) return null;
-  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
-  return Number.isNaN(d.getTime()) ? null : d;
-}
+// Datas da URL em data LOCAL nos dois sentidos (ver analyticsTimeseries.ts):
+// gravar com toISOString() (UTC) e ler local empurrava o fim do período um
+// dia para frente a cada recarga em São Paulo.
+const fmtDay = fmtLocalDay;
+const parseDay = parseLocalDay;
 
 function readQuery(): URLSearchParams {
   return new URLSearchParams(window.location.search || "");
@@ -81,11 +100,24 @@ function parseSegments(raw: string | null): Segment[] {
     .split(",")
     .map((p) => {
       const [dim, ...rest] = p.split(":");
-      const value = rest.join(":");
-      if (!dim || !value) return null;
-      return { dim: dim as SegmentDim, value: decodeURIComponent(value) };
+      const encoded = rest.join(":");
+      if (!dim || !encoded) return null;
+      if (!(SEGMENT_DIMS as readonly string[]).includes(dim)) return null;
+      let value: string;
+      try {
+        value = decodeURIComponent(encoded);
+      } catch {
+        // URL editada à mão com "%" solto: ignora o segmento em vez de quebrar a página.
+        return null;
+      }
+      if (!isFilterableSegmentValue(value)) return null;
+      return { dim: dim as SegmentDim, value };
     })
     .filter((s): s is Segment => s !== null);
+}
+
+function parseTab(raw: string | null): TabKey {
+  return ALL_TABS.some((t) => t.key === raw) ? (raw as TabKey) : "overview";
 }
 function stringifySegments(segs: Segment[]): string {
   return segs.map((s) => `${s.dim}:${encodeURIComponent(s.value)}`).join(",");
@@ -101,7 +133,7 @@ function readTheme(): Theme {
 export function useAnalyticsState() {
   const init = useMemo(() => {
     const q = readQuery();
-    const tab = (q.get("tab") as TabKey) || "overview";
+    const tab = parseTab(q.get("tab"));
     const from = parseDay(q.get("from"));
     const to = parseDay(q.get("to"));
     const range: DateRange =
@@ -146,6 +178,7 @@ export function useAnalyticsState() {
   }, [tab, range, segments, comparePrev]);
 
   const addSegment = useCallback((s: Segment) => {
+    if (!isFilterableSegmentValue(s.value)) return;
     setSegments((prev) => {
       const filtered = prev.filter((p) => p.dim !== s.dim);
       return [...filtered, s];

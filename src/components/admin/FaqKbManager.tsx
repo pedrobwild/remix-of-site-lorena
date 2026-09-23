@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { safeHref } from "@/lib/safeUrl";
 
 /* ============================================================
  * FaqKbManager — gerencia a tabela `assistant_kb`, que é a
@@ -65,11 +66,34 @@ function draftFromRow(r: Row): Draft {
   };
 }
 
-function acoesFromDraft(d: Draft): Acao[] {
-  if (d.acaoTipo === "nenhuma") return [];
+const URL_PERMITIDAS =
+  "Use um caminho do site (ex.: /autorizacao-condominio), um endereço https://…, mailto: ou tel:.";
+
+/**
+ * Problema no endereço do botão "link", ou `null` se estiver ok.
+ *
+ * O valor vai para o `href` do botão na /faq pública e o React 18 ainda
+ * renderiza `href="javascript:…"`. Por isso a validação é a MESMA lista de
+ * permissão usada na renderização (`safeHref`): caminho interno "/…" (nunca
+ * "//host"), https: sem usuário/senha, mailto: e tel:.
+ */
+function problemaUrlAcao(d: Draft): string | null {
+  if (d.acaoTipo !== "link") return null;
+  const url = d.acaoUrl.trim();
+  if (!url) return "Informe o endereço do link da ação.";
+  if (!safeHref(url)) return `Endereço não permitido para o botão. ${URL_PERMITIDAS}`;
+  return null;
+}
+
+/** Ações a gravar. Um link inseguro NUNCA vira dado: devolve erro em vez de gravar. */
+function acoesFromDraft(d: Draft): { acoes: Acao[] } | { erro: string } {
+  if (d.acaoTipo === "nenhuma") return { acoes: [] };
   const rotulo = d.acaoRotulo.trim() || (d.acaoTipo === "whatsapp" ? "Falar no WhatsApp" : "Saiba mais");
-  if (d.acaoTipo === "whatsapp") return [{ tipo: "whatsapp", rotulo }];
-  return [{ tipo: "link", rotulo, url: d.acaoUrl.trim() }];
+  if (d.acaoTipo === "whatsapp") return { acoes: [{ tipo: "whatsapp", rotulo }] };
+  const url = safeHref(d.acaoUrl);
+  if (!url) return { erro: problemaUrlAcao(d) ?? `Endereço não permitido. ${URL_PERMITIDAS}` };
+  // Grava a forma normalizada que o `safeHref` devolve (ex.: host em minúsculas).
+  return { acoes: [{ tipo: "link", rotulo, url }] };
 }
 
 function validar(d: Draft): string | null {
@@ -78,8 +102,28 @@ function validar(d: Draft): string | null {
   if (!d.resposta.trim()) return "A resposta é obrigatória.";
   if (d.pergunta.length > 300) return "Pergunta excede 300 caracteres.";
   if (d.resposta.length > 4000) return "Resposta excede 4000 caracteres.";
-  if (d.acaoTipo === "link" && !d.acaoUrl.trim()) return "Informe o endereço do link da ação.";
-  return null;
+  return problemaUrlAcao(d);
+}
+
+/** Resumo do botão de uma linha salva, com o link passado por `safeHref`. */
+function AcaoResumo({ acoes }: { acoes: Acao[] | null | undefined }) {
+  const acao = Array.isArray(acoes) ? acoes[0] : undefined;
+  if (!acao) return <span className="mono admin-hint">—</span>;
+  if (acao.tipo === "whatsapp") return <span className="mono">WhatsApp</span>;
+  const href = safeHref(acao.url);
+  if (!href) {
+    // Dado antigo gravado antes da validação: a /faq não renderiza esse link.
+    return (
+      <span className="mono" style={{ color: "#b91c1c" }} title={String(acao.url ?? "")}>
+        link bloqueado — edite o endereço
+      </span>
+    );
+  }
+  return (
+    <a className="admin-link" href={href} target="_blank" rel="noopener noreferrer" title={href}>
+      {acao.rotulo || "link"} ↗
+    </a>
+  );
 }
 
 export default function FaqKbManager() {
@@ -95,6 +139,12 @@ export default function FaqKbManager() {
   const [criando, setCriando] = useState(false);
   const [novo, setNovo] = useState<Draft>(EMPTY_DRAFT);
   const [criandoBusy, setCriandoBusy] = useState(false);
+
+  /** Erros mostrados dentro de cada formulário (em vez de `alert`). */
+  const [erroForm, setErroForm] = useState<{ novo: string | null; edit: string | null }>({
+    novo: null,
+    edit: null,
+  });
 
   async function load() {
     setCarregando(true);
@@ -113,7 +163,7 @@ export default function FaqKbManager() {
   }
 
   useEffect(() => {
-    load();
+    void load();
   }, []);
 
   const temas = useMemo(
@@ -134,38 +184,40 @@ export default function FaqKbManager() {
 
   async function toggleAtivo(r: Row) {
     setBusy(r.id);
-    const { error } = await supabase
+    // `.select("id")`: com RLS, update sem permissão volta sem erro e sem linhas.
+    const { data, error } = await supabase
       .from("assistant_kb")
       .update({ ativo: !r.ativo, updated_at: new Date().toISOString() })
-      .eq("id", r.id);
+      .eq("id", r.id)
+      .select("id");
     setBusy(null);
-    if (error) {
-      alert("Não foi possível salvar: " + error.message);
-      return;
+    if (error || !data || data.length === 0) {
+      alert("Não foi possível salvar: " + (error?.message ?? "nenhuma linha foi alterada."));
     }
-    load();
+    await load();
   }
 
   async function remover(r: Row) {
     if (!confirm(`Excluir a pergunta "${r.pergunta}"? Essa ação não pode ser desfeita.`)) return;
     setBusy(r.id);
-    const { error } = await supabase.from("assistant_kb").delete().eq("id", r.id);
+    const { data, error } = await supabase.from("assistant_kb").delete().eq("id", r.id).select("id");
     setBusy(null);
-    if (error) {
-      alert("Não foi possível excluir: " + error.message);
-      return;
+    if (error || !data || data.length === 0) {
+      alert("Não foi possível excluir: " + (error?.message ?? "nada foi excluído."));
     }
-    load();
+    await load();
   }
 
   async function salvarEdicao(id: string) {
     const problema = validar(draft);
-    if (problema) {
-      alert(problema);
+    const montado = acoesFromDraft(draft);
+    if (problema || "erro" in montado) {
+      setErroForm((e) => ({ ...e, edit: problema ?? ("erro" in montado ? montado.erro : null) }));
       return;
     }
+    setErroForm((e) => ({ ...e, edit: null }));
     setBusy(id);
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("assistant_kb")
       .update({
         tema: draft.tema.trim(),
@@ -173,25 +225,31 @@ export default function FaqKbManager() {
         resposta: draft.resposta.trim(),
         ordem: Number(draft.ordem) || 100,
         ativo: draft.ativo,
-        acoes: acoesFromDraft(draft),
+        acoes: montado.acoes,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", id);
+      .eq("id", id)
+      .select("id");
     setBusy(null);
-    if (error) {
-      alert("Não foi possível salvar: " + error.message);
+    if (error || !data || data.length === 0) {
+      setErroForm((e) => ({
+        ...e,
+        edit: "Não foi possível salvar: " + (error?.message ?? "nenhuma linha foi alterada."),
+      }));
       return;
     }
     setEditandoId(null);
-    load();
+    await load();
   }
 
   async function criar() {
     const problema = validar(novo);
-    if (problema) {
-      alert(problema);
+    const montado = acoesFromDraft(novo);
+    if (problema || "erro" in montado) {
+      setErroForm((e) => ({ ...e, novo: problema ?? ("erro" in montado ? montado.erro : null) }));
       return;
     }
+    setErroForm((e) => ({ ...e, novo: null }));
     const base = slugify(novo.pergunta) || "pergunta";
     let id = base;
     let n = 2;
@@ -207,17 +265,17 @@ export default function FaqKbManager() {
       resposta: novo.resposta.trim(),
       ordem: Number(novo.ordem) || 100,
       ativo: novo.ativo,
-      acoes: acoesFromDraft(novo) as unknown as never,
+      acoes: montado.acoes as unknown as never,
       updated_at: new Date().toISOString(),
     });
     setCriandoBusy(false);
     if (error) {
-      alert("Não foi possível criar: " + error.message);
+      setErroForm((e) => ({ ...e, novo: "Não foi possível criar: " + error.message }));
       return;
     }
     setCriando(false);
     setNovo(EMPTY_DRAFT);
-    load();
+    await load();
   }
 
   function campos(d: Draft, set: (fn: (prev: Draft) => Draft) => void, prefixo: string) {
@@ -230,13 +288,13 @@ export default function FaqKbManager() {
           <input
             id={`${prefixo}-tema`}
             className="admin-field__input"
-            list="faq-kb-temas"
+            list={`${prefixo}-temas`}
             maxLength={80}
             value={d.tema}
             onChange={(e) => set((p) => ({ ...p, tema: e.target.value }))}
             placeholder="Ex.: Sobre a Bewild"
           />
-          <datalist id="faq-kb-temas">
+          <datalist id={`${prefixo}-temas`}>
             {temas.map((t) => (
               <option key={t} value={t} />
             ))}
@@ -292,15 +350,19 @@ export default function FaqKbManager() {
               set((p) => ({
                 ...p,
                 acaoTipo: e.target.value as Draft["acaoTipo"],
+                // Trocar de WhatsApp para link não deve manter o texto padrão
+                // "Falar no WhatsApp" num botão que abre outra página.
                 acaoRotulo:
                   e.target.value === "whatsapp"
                     ? p.acaoRotulo || "Falar no WhatsApp"
-                    : p.acaoRotulo,
+                    : e.target.value === "link" && p.acaoRotulo === "Falar no WhatsApp"
+                      ? "Saiba mais"
+                      : p.acaoRotulo,
               }))
             }
           >
             <option value="whatsapp">WhatsApp</option>
-            <option value="link">Link interno</option>
+            <option value="link">Link</option>
             <option value="nenhuma">Nenhum</option>
           </select>
         </div>
@@ -318,20 +380,47 @@ export default function FaqKbManager() {
             />
           </div>
         )}
-        {d.acaoTipo === "link" && (
-          <div className="admin-field">
-            <label className="admin-field__label" htmlFor={`${prefixo}-url`}>
-              Endereço do link
-            </label>
-            <input
-              id={`${prefixo}-url`}
-              className="admin-field__input"
-              value={d.acaoUrl}
-              onChange={(e) => set((p) => ({ ...p, acaoUrl: e.target.value }))}
-              placeholder="/autorizacao-condominio"
-            />
-          </div>
-        )}
+        {d.acaoTipo === "link" && (() => {
+          const typed = d.acaoUrl.trim();
+          const href = typed ? safeHref(typed) : null;
+          const invalido = !!typed && !href;
+          return (
+            <div className="admin-field">
+              <label className="admin-field__label" htmlFor={`${prefixo}-url`}>
+                Endereço do link
+              </label>
+              <input
+                id={`${prefixo}-url`}
+                className="admin-field__input"
+                value={d.acaoUrl}
+                onChange={(e) => set((p) => ({ ...p, acaoUrl: e.target.value }))}
+                placeholder="/autorizacao-condominio"
+                aria-invalid={invalido}
+                aria-describedby={`${prefixo}-url-ajuda`}
+                spellCheck={false}
+              />
+              <p
+                id={`${prefixo}-url-ajuda`}
+                className="mono admin-hint"
+                role={invalido ? "alert" : undefined}
+                style={{ marginTop: 6, color: invalido ? "#b91c1c" : undefined }}
+              >
+                {invalido ? (
+                  `Endereço não permitido para o botão. ${URL_PERMITIDAS}`
+                ) : href ? (
+                  <>
+                    Prévia:{" "}
+                    <a className="admin-link" href={href} target="_blank" rel="noopener noreferrer">
+                      {d.acaoRotulo.trim() || "Saiba mais"} ↗
+                    </a>
+                  </>
+                ) : (
+                  URL_PERMITIDAS
+                )}
+              </p>
+            </div>
+          );
+        })()}
         <label className="admin-field" style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <input
             type="checkbox"
@@ -355,6 +444,7 @@ export default function FaqKbManager() {
         <div className="admin-toolbar__filters">
           <input
             type="search"
+            aria-label="Buscar pergunta, resposta ou tema"
             placeholder="buscar pergunta, resposta ou tema…"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
@@ -367,6 +457,7 @@ export default function FaqKbManager() {
           onClick={() => {
             setCriando((c) => !c);
             setNovo(EMPTY_DRAFT);
+            setErroForm((e) => ({ ...e, novo: null }));
           }}
         >
           {criando ? "× cancelar" : "+ nova pergunta"}
@@ -376,6 +467,11 @@ export default function FaqKbManager() {
       {criando && (
         <div className="admin-card admin-card--inset" style={{ marginBottom: "1rem" }}>
           {campos(novo, setNovo, "novo")}
+          {erroForm.novo && (
+            <p className="admin-flash admin-flash--err mono" role="alert">
+              {erroForm.novo}
+            </p>
+          )}
           <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
             <button
               type="button"
@@ -392,7 +488,14 @@ export default function FaqKbManager() {
         </div>
       )}
 
-      {erro && <p className="mono admin-hint">{erro}</p>}
+      {erro && (
+        <p className="admin-flash admin-flash--err mono" role="alert">
+          {erro}{" "}
+          <button type="button" className="admin-link" onClick={() => void load()}>
+            tentar de novo
+          </button>
+        </p>
+      )}
       {carregando && <p className="mono admin-hint">carregando perguntas…</p>}
       {!carregando && !erro && rows.length === 0 && (
         <p className="mono admin-hint">
@@ -403,6 +506,11 @@ export default function FaqKbManager() {
       {editandoId && (
         <div className="admin-card admin-card--inset" style={{ marginBottom: "1rem" }}>
           {campos(draft, setDraft, "edit")}
+          {erroForm.edit && (
+            <p className="admin-flash admin-flash--err mono" role="alert">
+              {erroForm.edit}
+            </p>
+          )}
           <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
             <button
               type="button"
@@ -427,6 +535,7 @@ export default function FaqKbManager() {
                 <th style={{ width: 160 }}>Tema</th>
                 <th>Pergunta</th>
                 <th style={{ width: 70 }}>Ordem</th>
+                <th style={{ width: 170 }}>Botão</th>
                 <th style={{ width: 90 }}>Publicada</th>
                 <th style={{ width: 170 }}></th>
               </tr>
@@ -437,6 +546,9 @@ export default function FaqKbManager() {
                   <td className="mono">{r.tema}</td>
                   <td>{r.pergunta}</td>
                   <td className="mono">{r.ordem}</td>
+                  <td>
+                    <AcaoResumo acoes={r.acoes} />
+                  </td>
                   <td>
                     <button
                       type="button"
@@ -454,6 +566,7 @@ export default function FaqKbManager() {
                       onClick={() => {
                         setEditandoId(r.id);
                         setDraft(draftFromRow(r));
+                        setErroForm((e) => ({ ...e, edit: null }));
                         window.scrollTo({ top: 0, behavior: "smooth" });
                       }}
                     >

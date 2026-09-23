@@ -14,6 +14,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { GUIA_MODIFIED } from "@/guia/data/guiaMeta";
 
 const root = path.resolve(__dirname, "../../..");
 const read = (p: string) => readFileSync(path.join(root, p), "utf8");
@@ -31,7 +32,12 @@ const ROTAS_INDEXAVEIS = [
   { path: "/escopo", priority: "0.7", changefreq: "monthly" },
   { path: "/como-funciona", priority: "0.7", changefreq: "monthly" },
   { path: "/onde-atuamos", priority: "0.7", changefreq: "monthly" },
+  { path: "/reforma-de-apartamento-sao-paulo", priority: "0.9", changefreq: "monthly" },
+  { path: "/reforma-de-studio-sao-paulo", priority: "0.9", changefreq: "monthly" },
+  { path: "/reforma-de-cobertura-sao-paulo", priority: "0.9", changefreq: "monthly" },
+  { path: "/marcenaria", priority: "0.9", changefreq: "monthly" },
   { path: "/parceiros", priority: "0.7", changefreq: "monthly" },
+  { path: "/indique-um-amigo", priority: "0.7", changefreq: "monthly" },
   { path: "/marcas-e-parcerias", priority: "0.7", changefreq: "monthly" },
   { path: "/guia-do-investidor", priority: "0.8", changefreq: "monthly" },
   { path: "/privacidade", priority: "0.3", changefreq: "yearly" },
@@ -39,6 +45,54 @@ const ROTAS_INDEXAVEIS = [
 
 const script = read("scripts/generate-sitemap.mjs");
 const edge = read("supabase/functions/sitemap/index.ts");
+const router = read("src/lib/useHashRoute.ts");
+
+/**
+ * Rotas estáticas do roteador que NÃO entram no sitemap, com a página que
+ * prova o motivo (noindex). /admin/* fica de fora por prefixo.
+ */
+const NAO_INDEXAVEIS: Record<string, string> = {
+  "/o": "src/pages/LpObraPage.tsx",
+  "/p": "src/pages/LpPanfletoPage.tsx",
+};
+
+const unicos = (xs: string[]) => [...new Set(xs)].sort();
+
+/** Rotas estáticas (`path === "/x"`) declaradas em useHashRoute.ts. */
+const rotasDoRoteador = unicos([...router.matchAll(/path === "(\/[^"]*)"/g)].map((m) => m[1]));
+const indexaveisDoRoteador = rotasDoRoteador.filter(
+  (r) => !r.startsWith("/admin") && !(r in NAO_INDEXAVEIS),
+);
+/** Rotas estáticas listadas em cada gerador (`${BASE_URL}/x` / `${base}/x` seguidos de crase). */
+const rotasDoScript = unicos([...script.matchAll(/\$\{BASE_URL\}(\/[a-z0-9-]*)`/g)].map((m) => m[1]));
+const rotasDaEdge = unicos([...edge.matchAll(/\$\{base\}(\/[a-z0-9-]*)`/g)].map((m) => m[1]));
+
+describe("rotas do roteador ↔ geradores de sitemap", () => {
+  it("toda rota estática indexável do roteador está no script de build", () => {
+    expect(rotasDoScript).toEqual(indexaveisDoRoteador);
+  });
+
+  it("toda rota estática indexável do roteador está na edge function", () => {
+    expect(rotasDaEdge).toEqual(indexaveisDoRoteador);
+  });
+
+  it("a tabela de prioridades deste teste cobre exatamente as rotas indexáveis", () => {
+    expect(unicos(ROTAS_INDEXAVEIS.map((r) => r.path))).toEqual(indexaveisDoRoteador);
+  });
+
+  it.each(Object.entries(NAO_INDEXAVEIS))("%s fica fora do sitemap porque a página é noindex", (_rota, arquivo) => {
+    expect(read(arquivo)).toMatch(/noindex:\s*true/);
+  });
+
+  it("lastmod do guia no script = GUIA_MODIFIED (src/guia/data/guiaMeta.ts)", () => {
+    expect(script).toMatch(new RegExp(`\\$\\{BASE_URL\\}/guia-do-investidor\`, lastmod: "${GUIA_MODIFIED}"`));
+  });
+
+  it("os dois geradores escapam o <loc> para XML", () => {
+    expect(script).toMatch(/<loc>\$\{xmlEscape\(loc\)\}<\/loc>/);
+    expect(edge).toMatch(/<loc>\$\{xmlEscape\(u\.loc\)\}<\/loc>/);
+  });
+});
 
 describe("paridade entre as duas fontes de sitemap", () => {
   it.each(ROTAS_INDEXAVEIS)(
@@ -90,11 +144,32 @@ describe("public/sitemap.xml commitado", () => {
     expect(new Set(locs).size).toBe(locs.length);
   });
 
-  it("traz as 7 rotas estáticas indexáveis, no domínio oficial", () => {
-    for (const { path: rota } of ROTAS_INDEXAVEIS) {
-      expect(locs).toContain(`https://bewild.com.br${rota === "/" ? "/" : rota}`);
+  it("traz as rotas estáticas principais, no domínio oficial", () => {
+    for (const rota of ["/", "/portfolio", "/diagnostico", "/conteudos", "/orcamento", "/faq", "/guia-do-investidor"]) {
+      expect(locs).toContain(`https://bewild.com.br${rota}`);
     }
     expect(locs.every((l) => l.startsWith("https://bewild.com.br/"))).toBe(true);
+  });
+
+  it("toda rota estática do arquivo existe no roteador e no gerador (nada órfão)", () => {
+    const estaticas = locs
+      .map((l) => new URL(l).pathname)
+      .filter((p) => !p.startsWith("/portfolio/") && !p.startsWith("/conteudos/"));
+    for (const p of estaticas) {
+      expect(indexaveisDoRoteador, `${p} no sitemap mas não é rota indexável`).toContain(p);
+      expect(rotasDoScript, `${p} no sitemap mas não está no gerador`).toContain(p);
+    }
+  });
+
+  it("arquivo gerado está em dia com o gerador (aviso — o prebuild regenera)", () => {
+    // O public/sitemap.xml é saída do prebuild (scripts/generate-sitemap.mjs,
+    // que precisa do banco). Rota nova no gerador só aparece no arquivo no
+    // próximo build com acesso ao banco — por isso aqui é aviso, não falha.
+    const faltando = rotasDoScript.filter((r) => !locs.includes(`https://bewild.com.br${r}`));
+    if (faltando.length > 0) {
+      console.warn(`[sitemap] public/sitemap.xml desatualizado; faltam: ${faltando.join(", ")} — rode \`npm run sitemap\`.`);
+    }
+    expect(Array.isArray(faltando)).toBe(true);
   });
 
   it("não expõe admin, LPs de anúncio, 404 nem mockups", () => {

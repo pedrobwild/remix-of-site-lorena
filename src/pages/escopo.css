@@ -118,6 +118,12 @@
   color: var(--bwa-ink-soft, var(--bwa-ink));
 }
 
+.bwa-scope-hint a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .bwa-scope-error {
   color: #a4232b;
 }

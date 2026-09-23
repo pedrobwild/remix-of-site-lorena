@@ -5,11 +5,24 @@
  *   - analytics_overview_kpis(since, until, ...filters): KPIs + sparkline (14d)
  *   - analytics_timeseries(since, until, grain): série diária para o chart principal
  *
- * O cliente nunca puxa eventos brutos. Todos os filtros de segmento são
- * traduzidos em parâmetros nomeados da RPC. Comparativo com período anterior
- * faz uma segunda chamada paralela com a janela equivalente.
+ * O cliente nunca puxa eventos brutos. Os filtros de segmento são traduzidos
+ * em parâmetros nomeados da RPC de KPIs; `analytics_timeseries` ainda NÃO
+ * aceita segmentos — com segmento ativo o gráfico mostra o tráfego total e a
+ * tela avisa. Comparativo com período anterior faz uma segunda chamada
+ * paralela com a janela equivalente.
+ *
+ * A série é completada no cliente (dias sem sessão = 0) e o período anterior
+ * é alinhado por deslocamento de bucket — ver lib/analyticsTimeseries.ts.
  */
 import { useEffect, useMemo, useState } from "react";
+import {
+  alignPrevious,
+  fillTimeseries,
+  formatBucketLabel,
+  pickGrain,
+  type RawTimeseriesRow,
+  type SeriesPoint,
+} from "@/lib/analyticsTimeseries";
 import {
   Area,
   AreaChart,
@@ -38,14 +51,6 @@ type Kpis = {
   conversions: number;
   conversion_rate: number;
   spark: { d: string; sessions: number; pageviews: number }[];
-};
-
-type DailyPoint = {
-  day: string;
-  sessions: number;
-  pageviews: number;
-  prevSessions?: number;
-  prevPageviews?: number;
 };
 
 const EMPTY_KPIS: Kpis = {
@@ -111,8 +116,9 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [kpis, setKpis] = useState<Kpis>(EMPTY_KPIS);
   const [prevKpis, setPrevKpis] = useState<Kpis>(EMPTY_KPIS);
-  const [series, setSeries] = useState<DailyPoint[]>([]);
+  const [series, setSeries] = useState<SeriesPoint[]>([]);
   const [metric, setMetric] = useState<"sessions" | "pageviews">("sessions");
+  const grain = useMemo(() => pickGrain(range.from, range.to), [range]);
 
   const prevRange = useMemo<DateRange | null>(() => {
     if (!comparePrev) return null;
@@ -130,11 +136,6 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
     const segArgs = segmentsToRpcArgs(segments);
     const sinceISO = range.from.toISOString();
     const untilISO = range.to.toISOString();
-
-    // grain heurístico: ≤2 dias = hora, ≤90 = dia, ≤365 = semana, > = mês
-    const days = (range.to.getTime() - range.from.getTime()) / 86400_000;
-    const grain: "hour" | "day" | "week" | "month" =
-      days <= 2 ? "hour" : days <= 90 ? "day" : days <= 365 ? "week" : "month";
 
     const calls: Promise<unknown>[] = [
       Promise.resolve(
@@ -178,7 +179,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
         type RpcRes<T> = { data: T | null; error: { message: string } | null };
 
         const kpiRes = results[0] as RpcRes<Kpis[]>;
-        const tsRes = results[1] as RpcRes<{ bucket: string; sessions: number; pageviews: number; conversions: number }[]>;
+        const tsRes = results[1] as RpcRes<RawTimeseriesRow[]>;
 
         if (kpiRes.error) throw new Error(kpiRes.error.message);
         if (tsRes.error) throw new Error(tsRes.error.message);
@@ -193,16 +194,12 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
             : [];
         setKpis({ ...k, spark });
 
-        const ts = tsRes.data ?? [];
-        const main: DailyPoint[] = ts.map((p) => ({
-          day: p.bucket,
-          sessions: Number(p.sessions ?? 0),
-          pageviews: Number(p.pageviews ?? 0),
-        }));
+        // Dias sem sessão não vêm da RPC: a grade completa é montada aqui.
+        let main = fillTimeseries(tsRes.data ?? [], range.from, range.to, grain);
 
         if (prevRange) {
           const prevKpiRes = results[2] as RpcRes<Kpis[]>;
-          const prevTsRes = results[3] as RpcRes<{ bucket: string; sessions: number; pageviews: number }[]>;
+          const prevTsRes = results[3] as RpcRes<RawTimeseriesRow[]>;
           if (prevKpiRes.error) throw new Error(prevKpiRes.error.message);
           if (prevTsRes.error) throw new Error(prevTsRes.error.message);
 
@@ -215,14 +212,15 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
               : [];
           setPrevKpis({ ...pk, spark: pSpark });
 
-          // alinha série anterior ao mesmo offset da série atual
-          const prevTs = prevTsRes.data ?? [];
-          for (let i = 0; i < main.length; i++) {
-            const p = prevTs[i];
-            if (!p) continue;
-            main[i].prevSessions = Number(p.sessions ?? 0);
-            main[i].prevPageviews = Number(p.pageviews ?? 0);
-          }
+          // Alinha pelo deslocamento do bucket (1º dia com 1º dia…), não pela
+          // posição no array bruto — que pulava os dias sem visitas.
+          const prevSeries = fillTimeseries(
+            prevTsRes.data ?? [],
+            prevRange.from,
+            range.from,
+            grain,
+          );
+          main = alignPrevious(main, prevSeries);
         } else {
           setPrevKpis(EMPTY_KPIS);
         }
@@ -241,7 +239,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [range, prevRange, segments]);
+  }, [range, prevRange, segments, grain]);
 
   // ----- render -----
   if (loading) {
@@ -324,6 +322,23 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
 
       {/* Main chart */}
       <div className="aa-card">
+        {segments.length > 0 && (
+          <div
+            className="aa-faint aa-mono"
+            role="note"
+            style={{
+              fontSize: "var(--aa-text-xs)",
+              padding: "8px 12px",
+              marginBottom: 10,
+              border: "1px dashed var(--aa-border)",
+              borderRadius: 6,
+              background: "var(--aa-bg-soft)",
+            }}
+          >
+            ⓘ série temporal com todo o tráfego do período · os segmentos ativos filtram só os
+            indicadores acima (ainda)
+          </div>
+        )}
         <div className="aa-card__head">
           <h3 className="aa-card__title">série temporal</h3>
           <div className="aa-row" style={{ gap: 4 }}>
@@ -360,12 +375,8 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
               </defs>
               <CartesianGrid stroke="var(--aa-border)" vertical={false} />
               <XAxis
-                dataKey="day"
-                tickFormatter={(d: string) => {
-                  const dt = new Date(d);
-                  if (Number.isNaN(dt.getTime())) return d;
-                  return dt.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
-                }}
+                dataKey="t"
+                tickFormatter={(t: number) => formatBucketLabel(Number(t), grain)}
                 tick={{ fontSize: "var(--aa-text-2xs)", fontFamily: "var(--aa-font-mono)", fill: "var(--aa-fg-faint)" }}
                 tickLine={false}
                 axisLine={false}
@@ -386,10 +397,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
                   fontSize: "var(--aa-text-xs)",
                   color: "var(--aa-fg)",
                 }}
-                labelFormatter={(d) => {
-                  const dt = new Date(String(d));
-                  return Number.isNaN(dt.getTime()) ? String(d) : dt.toLocaleString("pt-BR");
-                }}
+                labelFormatter={(t) => formatBucketLabel(Number(t), grain, true)}
               />
               <Area
                 type="monotone"

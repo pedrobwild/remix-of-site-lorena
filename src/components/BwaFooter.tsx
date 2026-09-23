@@ -2,6 +2,8 @@ import { useEffect, useRef } from "react";
 import { openCookiePreferences } from "@/lib/cookieConsent";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import BwaWhatsForm from "@/components/BwaWhatsForm";
+import { useSiteSettings } from "@/lib/useSiteSettings";
+import { isExternalHref, safeHref } from "@/lib/safeUrl";
 
 /**
  * BwaFooter — Footer .bwa unificado, idêntico ao da home. Usado em toda
@@ -9,6 +11,10 @@ import BwaWhatsForm from "@/components/BwaWhatsForm";
  */
 export default function BwaFooter() {
   const raRef = useRef<HTMLDivElement>(null);
+  // LinkedIn: o do admin (site_settings.linkedin_url) quando configurado,
+  // senão a página oficial. Validado — o valor do banco vira href.
+  const { settings } = useSiteSettings();
+  const linkedinHref = safeHref(settings?.linkedin_url) ?? CONTACT.linkedin;
 
   useEffect(() => {
     const container = raRef.current;
@@ -51,7 +57,7 @@ export default function BwaFooter() {
               <a href="/guia-do-investidor">Guia do investidor</a>
               <a href="/faq">FAQ</a>
               <a href="/contato">Contato</a>
-            <a href="/escopo">Escopo com IA</a>
+              <a href="/escopo">Escopo com IA</a>
               <a href="/orcamento">Orçamento</a>
               <a href="/parceiros">Parceiros</a>
               <a href="/indique-um-amigo">Indique um amigo</a>
@@ -65,7 +71,9 @@ export default function BwaFooter() {
             <div>
               <a href={whatsappHref("Olá! Quero um orçamento para o meu apartamento.")} target="_blank" rel="noreferrer">WhatsApp</a>
               <a href={CONTACT.instagram} target="_blank" rel="noreferrer">Instagram</a>
-              <a href={CONTACT.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+              {linkedinHref && isExternalHref(linkedinHref) && (
+                <a href={linkedinHref} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              )}
               <a href={`mailto:${CONTACT.email}`}>e-mail</a>
               <a href="/privacidade">Política de privacidade</a>
               <button type="button" className="bwa-footer-cookie-prefs" onClick={openCookiePreferences}>Preferências de cookies</button>

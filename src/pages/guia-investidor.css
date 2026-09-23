@@ -6,9 +6,10 @@
  * para o restante do site (home, portfólio, conteúdos, FAQ…).
  * ============================================================ */
 
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Playfair+Display:wght@600;700;800&display=swap");
-/* Fontes do rodapé oficial (.bwa-footer) — mesmas da home. */
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap");
+/* Fontes (DM Sans, Playfair Display, JetBrains Mono, Manrope): carregadas por
+ * <link> em GuiaInvestidorPage.tsx, NÃO por @import. Um @import que falha
+ * (bloqueador de fontes, rede corporativa) fazia o Chromium marcar este CSS
+ * inteiro como erro — e o preload do Vite derrubava a página do guia. */
 
 .guia-root {
   --background: 210 20% 97%;

@@ -1,58 +1,63 @@
 import { useState, useEffect } from "react";
+import { porFrame } from "@/guia/lib/scroll";
 
-export function useScrollspy(ids: string[]) {
-  const [activeId, setActiveId] = useState(ids[0]);
+/**
+ * Seção ativa = a última cujo topo já passou da linha de ativação (15% da
+ * altura da janela). No fim da página, a última seção vence.
+ *
+ * Recalcula no máximo uma vez por frame (scroll/resize). Os elementos são
+ * guardados em cache, mas re-buscados se ainda não existiam — seções
+ * carregadas sob demanda (simulador, tendências) entram no cálculo quando
+ * montam.
+ */
+export function useScrollspy(ids: readonly string[]) {
+  const [activeId, setActiveId] = useState(ids[0] ?? "");
+  // Chave estável: o efeito só reinicia se a LISTA de ids mudar, não a
+  // referência do array (que o chamador pode recriar a cada render).
+  const key = ids.join("|");
 
   useEffect(() => {
-    if (!ids.length) return;
+    const lista = key ? key.split("|") : [];
+    if (!lista.length) return;
+    const cache = new Map<string, HTMLElement>();
+    const elemento = (id: string) => {
+      const cached = cache.get(id);
+      if (cached?.isConnected) return cached;
+      const el = document.getElementById(id);
+      if (el) cache.set(id, el);
+      return el;
+    };
 
-    // Fallback: pick the section whose top is closest to (but above) the activation line.
     const computeActive = () => {
       const activationY = window.innerHeight * 0.15;
-      let bestId = ids[0];
+      let bestId = lista[0];
       let bestTop = -Infinity;
-      for (const id of ids) {
-        const el = document.getElementById(id);
+      for (const id of lista) {
+        const el = elemento(id);
         if (!el) continue;
         const top = el.getBoundingClientRect().top;
-        // Section has crossed the activation line (top <= activationY) and is the lowest such.
         if (top <= activationY && top > bestTop) {
           bestTop = top;
           bestId = id;
         }
       }
-      // If nothing crossed yet (page top), keep first section.
-      // If scrolled to bottom, ensure last visible section wins.
       const nearBottom =
-        window.innerHeight + window.scrollY >=
-        document.documentElement.scrollHeight - 2;
-      if (nearBottom) bestId = ids[ids.length - 1];
-      setActiveId(bestId);
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      if (nearBottom) bestId = lista[lista.length - 1];
+      setActiveId((prev) => (prev === bestId ? prev : bestId));
     };
 
-    const observer = new IntersectionObserver(
-      () => computeActive(),
-      { rootMargin: "-15% 0px -70% 0px", threshold: [0, 0.1, 0.5, 1] }
-    );
-
-    ids.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-
-    // Initial sync (handles load + hash navigation) and keep in sync on resize.
+    const { agendar, cancel } = porFrame(computeActive);
+    // Sincronia inicial (carga + navegação por âncora).
     computeActive();
-    const onResize = () => computeActive();
-    const onScroll = () => computeActive();
-    window.addEventListener("resize", onResize);
-    window.addEventListener("scroll", onScroll, { passive: true });
-
+    window.addEventListener("scroll", agendar, { passive: true });
+    window.addEventListener("resize", agendar);
     return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("scroll", agendar);
+      window.removeEventListener("resize", agendar);
+      cancel();
     };
-  }, [ids.join("|")]);
+  }, [key]);
 
   return activeId;
 }

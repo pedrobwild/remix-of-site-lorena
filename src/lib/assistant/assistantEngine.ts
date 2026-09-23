@@ -10,9 +10,35 @@
  *    sobreposição com a pergunta e os exemplos (até 1) e bônus de 0,3 se o
  *    item é sugerido na página atual.
  * 4. Abaixo de 1 ponto não arrisca: oferece o WhatsApp.
+ *
+ * As ações vêm do banco (`assistant_kb.acoes`) e viram `href`: toda URL passa
+ * por `safeHref` (src/lib/safeUrl.ts) e link inválido é descartado.
  */
+import { safeHref } from "@/lib/safeUrl";
 
 export type KbAction = { tipo: "link" | "whatsapp"; rotulo: string; url?: string };
+
+/**
+ * Ações de "link" do banco prontas para virar `href`: URL validada por
+ * `safeHref`, sem rótulo vazio. Ações de WhatsApp passam adiante (o link do
+ * WhatsApp é sempre montado pelo site, nunca lido do banco).
+ */
+export function safeKbActions(acoes: unknown): KbAction[] {
+  if (!Array.isArray(acoes)) return [];
+  const out: KbAction[] = [];
+  for (const raw of acoes) {
+    if (!raw || typeof raw !== "object") continue;
+    const a = raw as Partial<KbAction>;
+    const rotulo = typeof a.rotulo === "string" ? a.rotulo.trim() : "";
+    if (a.tipo === "whatsapp") {
+      out.push({ tipo: "whatsapp", rotulo });
+      continue;
+    }
+    const url = safeHref(a.url);
+    if (a.tipo === "link" && url && rotulo) out.push({ tipo: "link", rotulo, url });
+  }
+  return out;
+}
 
 export type KbItem = {
   id: string;
@@ -283,7 +309,7 @@ export function reply(input: string, kb: KbItem[], ctx: ReplyContext): Reply {
   out.pontos = Math.round(best.s * 10) / 10;
   out.hits = best.hits;
   out.texto = hello + it.resposta + (isThanks ? " E obrigado pelo contato." : "");
-  out.acoes = (it.acoes || []).map((a) =>
+  out.acoes = safeKbActions(it.acoes).map((a) =>
     a.tipo === "whatsapp" ? { tipo: "whatsapp", rotulo: a.rotulo || "Falar no WhatsApp", url: ctx.waHref(waText) } : a,
   );
   if (it.status === "whatsapp" && !out.acoes.some((a) => a.tipo === "whatsapp")) out.acoes.push(waAction);

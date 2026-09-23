@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { RefreshCw, ExternalLink } from "lucide-react";
@@ -32,6 +32,9 @@ type GscResponse = {
 type PathRow = { path: string; pageviews: number; sessions: number };
 type FaqRow = { pergunta: string; cliques: number };
 
+/** Teto de eventos lidos para o ranking do FAQ (o PostgREST corta em 1000). */
+const FAQ_EVENTS_LIMIT = 1000;
+
 const PERIODS = [
   { days: 7, label: "7 dias" },
   { days: 28, label: "28 dias" },
@@ -56,8 +59,12 @@ export default function RastreamentoPage() {
   const [gsc, setGsc] = useState<GscResponse | null>(null);
   const [gscErro, setGscErro] = useState<string | null>(null);
   const [paths, setPaths] = useState<PathRow[]>([]);
+  const [pathsErro, setPathsErro] = useState<string | null>(null);
   const [faq, setFaq] = useState<FaqRow[]>([]);
-  const [erro, setErro] = useState<string | null>(null);
+  const [faqErro, setFaqErro] = useState<string | null>(null);
+  const [faqTruncado, setFaqTruncado] = useState(false);
+  // Trocar de período rápido disparava cargas concorrentes; só a última vale.
+  const requestId = useRef(0);
 
   const range = useMemo(() => {
     const until = new Date();
@@ -66,9 +73,8 @@ export default function RastreamentoPage() {
   }, [days]);
 
   async function load() {
+    const id = ++requestId.current;
     setLoading(true);
-    setErro(null);
-    setGscErro(null);
 
     const [gscRes, pathsRes, faqRes] = await Promise.all([
       supabase.functions.invoke("search-console-stats", {
@@ -86,8 +92,9 @@ export default function RastreamentoPage() {
         .gte("created_at", range.since)
         .lte("created_at", range.until)
         .order("created_at", { ascending: false })
-        .limit(1000),
+        .limit(FAQ_EVENTS_LIMIT),
     ]);
+    if (id !== requestId.current) return;
 
     if (gscRes.error) {
       setGscErro(
@@ -100,24 +107,40 @@ export default function RastreamentoPage() {
         setGscErro(data.error);
         setGsc(null);
       } else {
+        setGscErro(null);
         setGsc(data);
       }
     }
 
-    if (pathsRes.error) setErro(pathsRes.error.message);
-    setPaths((pathsRes.data ?? []) as PathRow[]);
-
-    const contagem = new Map<string, number>();
-    for (const ev of (faqRes.data ?? []) as Array<{ value: unknown }>) {
-      const v = (ev.value ?? {}) as { pergunta?: string };
-      const nome = typeof v.pergunta === "string" && v.pergunta ? v.pergunta : "(sem título)";
-      contagem.set(nome, (contagem.get(nome) ?? 0) + 1);
+    if (pathsRes.error) {
+      setPathsErro(`Não foi possível ler as visitas por página: ${pathsRes.error.message}`);
+      setPaths([]);
+    } else {
+      setPathsErro(null);
+      setPaths((pathsRes.data ?? []) as PathRow[]);
     }
-    setFaq(
-      [...contagem.entries()]
-        .map(([pergunta, cliques]) => ({ pergunta, cliques }))
-        .sort((a, b) => b.cliques - a.cliques),
-    );
+
+    if (faqRes.error) {
+      // Antes o erro virava "nenhum clique registrado".
+      setFaqErro(`Não foi possível ler os cliques do FAQ: ${faqRes.error.message}`);
+      setFaq([]);
+      setFaqTruncado(false);
+    } else {
+      setFaqErro(null);
+      const eventos = (faqRes.data ?? []) as Array<{ value: unknown }>;
+      setFaqTruncado(eventos.length >= FAQ_EVENTS_LIMIT);
+      const contagem = new Map<string, number>();
+      for (const ev of eventos) {
+        const v = (ev.value ?? {}) as { pergunta?: string };
+        const nome = typeof v.pergunta === "string" && v.pergunta ? v.pergunta : "(sem título)";
+        contagem.set(nome, (contagem.get(nome) ?? 0) + 1);
+      }
+      setFaq(
+        [...contagem.entries()]
+          .map(([pergunta, cliques]) => ({ pergunta, cliques }))
+          .sort((a, b) => b.cliques - a.cliques),
+      );
+    }
 
     setLoading(false);
   }
@@ -157,27 +180,25 @@ export default function RastreamentoPage() {
         </>
       }
     >
-      {erro && (
-        <div className="admin-flash admin-flash--err mono" style={{ marginBottom: 16 }}>
-          {erro}
-        </div>
-      )}
-
       <div style={{ display: "flex", gap: 24, flexWrap: "wrap", marginBottom: 28 }}>
-        <Stat label="Impressões no Google" value={gsc?.totals.impressions ?? 0} />
-        <Stat label="Cliques no Google" value={gsc?.totals.clicks ?? 0} />
+        {/* "—" (e não 0) quando a fonte falhou: zero seria uma informação falsa. */}
+        <Stat label="Impressões no Google" value={gsc ? gsc.totals.impressions : "—"} />
+        <Stat label="Cliques no Google" value={gsc ? gsc.totals.clicks : "—"} />
         <Stat label="Taxa de clique" value={gsc ? pct(gsc.totals.ctr) : "—"} />
         <Stat
           label="Posição média"
           value={gsc ? gsc.totals.position.toFixed(1).replace(".", ",") : "—"}
         />
-        <Stat label="Visitas medidas no site" value={totalVisitas} />
-        <Stat label="Cliques no FAQ" value={totalFaq} />
+        <Stat label="Visitas medidas no site" value={pathsErro ? "—" : totalVisitas} />
+        <Stat
+          label={faqTruncado ? `Cliques no FAQ (últimos ${FAQ_EVENTS_LIMIT})` : "Cliques no FAQ"}
+          value={faqErro ? "—" : totalFaq}
+        />
       </div>
 
       <Section title="Impressões e cliques por página (Google)">
         {gscErro ? (
-          <p className="mono">{gscErro}</p>
+          <p className="admin-flash admin-flash--err mono" role="alert">{gscErro}</p>
         ) : loading ? (
           <p className="mono">carregando…</p>
         ) : !gsc || gsc.rows.length === 0 ? (
@@ -204,7 +225,13 @@ export default function RastreamentoPage() {
                     <td className="mono">{pct(r.ctr)}</td>
                     <td className="mono">{r.position.toFixed(1).replace(".", ",")}</td>
                     <td>
-                      <a href={r.key} target="_blank" rel="noopener noreferrer" title="Abrir página">
+                      <a
+                        href={r.key}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Abrir página"
+                        aria-label={`Abrir ${pathOf(r.key)}`}
+                      >
                         <ExternalLink size={14} />
                       </a>
                     </td>
@@ -217,7 +244,9 @@ export default function RastreamentoPage() {
       </Section>
 
       <Section title="Cliques nas perguntas do FAQ">
-        {loading ? (
+        {faqErro ? (
+          <p className="admin-flash admin-flash--err mono" role="alert">{faqErro}</p>
+        ) : loading ? (
           <p className="mono">carregando…</p>
         ) : faq.length === 0 ? (
           <p className="mono">nenhum clique registrado neste período.</p>
@@ -244,7 +273,9 @@ export default function RastreamentoPage() {
       </Section>
 
       <Section title="Visitas por página (medição do site)">
-        {loading ? (
+        {pathsErro ? (
+          <p className="admin-flash admin-flash--err mono" role="alert">{pathsErro}</p>
+        ) : loading ? (
           <p className="mono">carregando…</p>
         ) : paths.length === 0 ? (
           <p className="mono">nenhuma visita registrada neste período.</p>

@@ -1,14 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  fetchSiteSettings,
-  invalidateSiteSettings,
-  type SiteSettings,
-} from "@/lib/useSiteSettings";
-import { runSeoAudit, type SeoAuditResult } from "@/lib/seoAudit";
+import { invalidateSiteSettings, type SiteSettings } from "@/lib/useSiteSettings";
+import { auditPublicPage, type PublicPageAudit } from "@/lib/seoAudit";
 import { downloadSitemap, parseSitemapXml, type SitemapSnapshot } from "@/lib/sitemap";
 import { refreshSeoEverywhere } from "@/lib/useSeo";
+import {
+  diffSettings,
+  loadSettingsRow,
+  saveSettingsPatch,
+  settingsErrorMessage,
+  type SettingsRow,
+} from "@/lib/adminSiteSettings";
+import { useUnsavedChangesGuard } from "@/lib/useUnsavedChangesGuard";
 
 const SITEMAP_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sitemap`;
 const ROBOTS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/robots`;
@@ -25,102 +29,175 @@ const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "guide", label: "Guia Google" },
 ];
 
+/**
+ * Campos que esta tela edita. O save envia SÓ os que mudaram em relação ao
+ * que foi lido do banco — antes eram ~30 campos de uma vez, a partir de um
+ * estado que podia ser os DEFAULTS do código (quando a leitura falhava), e
+ * um clique em "salvar" apagava Pixel, GTM, códigos de verificação…
+ */
+const SEO_FIELDS = [
+  // Global
+  "seo_default_title",
+  "seo_default_description",
+  "seo_og_image",
+  "seo_twitter_handle",
+  "seo_canonical_base",
+  "seo_robots",
+  "seo_keywords",
+  "seo_author",
+  "seo_geo_region",
+  "seo_geo_placename",
+  "seo_geo_position",
+  // Verificações
+  "google_site_verification",
+  "bing_site_verification",
+  "yandex_verification",
+  "facebook_domain_verification",
+  "pinterest_site_verification",
+  // Analytics & pixels
+  "google_analytics_id",
+  "google_tag_manager_id",
+  "google_ads_conversion_id",
+  "meta_pixel_id",
+  "hotjar_id",
+  "clarity_id",
+  // Local business
+  "business_type",
+  "business_founding_year",
+  "business_price_range",
+  "business_postal_code",
+  "business_opening_hours",
+  "google_maps_url",
+  "google_business_profile_url",
+] as const satisfies readonly (keyof SiteSettings)[];
+
+type Msg = { kind: "ok" | "err"; text: string };
+
 export default function SeoPage() {
+  // `loaded` = o que está no banco; `s` = o que está na tela.
+  const [loaded, setLoaded] = useState<SiteSettings | null>(null);
   const [s, setS] = useState<SiteSettings | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadingRow, setLoadingRow] = useState(true);
   const [saving, setSaving] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  const [msg, setMsg] = useState<Msg | null>(null);
   const [tab, setTab] = useState<TabKey>("global");
-  const [audit, setAudit] = useState<SeoAuditResult | null>(null);
+  const [audit, setAudit] = useState<PublicPageAudit | null>(null);
+  const [auditing, setAuditing] = useState(false);
+  const [auditError, setAuditError] = useState<string | null>(null);
+
+  const pending = useMemo(
+    () =>
+      loaded && s
+        ? diffSettings(loaded as unknown as SettingsRow, s as unknown as SettingsRow, SEO_FIELDS)
+        : {},
+    [loaded, s],
+  );
+  const dirty = Object.keys(pending).length > 0;
+  useUnsavedChangesGuard(dirty);
+
+  const load = useCallback(async () => {
+    setLoadingRow(true);
+    setLoadError(null);
+    const { row, error } = await loadSettingsRow();
+    if (error || !row) {
+      setLoadError(error ?? "Não foi possível ler as configurações.");
+      setLoadingRow(false);
+      return;
+    }
+    const settings = row as unknown as SiteSettings;
+    setLoaded(settings);
+    setS(settings);
+    setLoadingRow(false);
+  }, []);
 
   useEffect(() => {
-    fetchSiteSettings(true).then(setS);
-  }, []);
+    void load();
+  }, [load]);
 
   function patch<K extends keyof SiteSettings>(k: K, v: SiteSettings[K]) {
     setS((prev) => (prev ? { ...prev, [k]: v } : prev));
   }
 
   async function save() {
-    if (!s) return;
-    setSaving(true);
+    if (!s || !loaded) return;
     setMsg(null);
-    const payload = {
-      // Global
-      seo_default_title: s.seo_default_title,
-      seo_default_description: s.seo_default_description,
-      seo_og_image: s.seo_og_image,
-      seo_twitter_handle: s.seo_twitter_handle,
-      seo_canonical_base: s.seo_canonical_base,
-      seo_robots: s.seo_robots,
-      seo_keywords: s.seo_keywords,
-      seo_author: s.seo_author,
-      seo_geo_region: s.seo_geo_region,
-      seo_geo_placename: s.seo_geo_placename,
-      seo_geo_position: s.seo_geo_position,
-
-      // Verificações
-      google_site_verification: s.google_site_verification,
-      bing_site_verification: s.bing_site_verification,
-      yandex_verification: s.yandex_verification,
-      facebook_domain_verification: s.facebook_domain_verification,
-      pinterest_site_verification: s.pinterest_site_verification,
-
-      // Analytics & pixels
-      google_analytics_id: s.google_analytics_id,
-      google_tag_manager_id: s.google_tag_manager_id,
-      google_ads_conversion_id: s.google_ads_conversion_id,
-      meta_pixel_id: s.meta_pixel_id,
-      hotjar_id: s.hotjar_id,
-      clarity_id: s.clarity_id,
-
-      // Local business
-      business_type: s.business_type,
-      business_founding_year: s.business_founding_year,
-      business_price_range: s.business_price_range,
-      business_postal_code: s.business_postal_code,
-      business_opening_hours: s.business_opening_hours,
-      google_maps_url: s.google_maps_url,
-      google_business_profile_url: s.google_business_profile_url,
-    };
-    const { error } = await supabase.from("site_settings").update(payload).eq("id", 1);
+    if (!dirty) {
+      setMsg({ kind: "ok", text: "nada mudou desde a última gravação." });
+      return;
+    }
+    setSaving(true);
+    const { error } = await saveSettingsPatch(pending);
     setSaving(false);
     if (error) {
-      setMsg({ kind: "err", text: error.message });
-    } else {
-      invalidateSiteSettings();
-      setMsg({ kind: "ok", text: "salvo. recarregue o site para aplicar." });
+      setMsg({ kind: "err", text: error });
+      return;
+    }
+    // O banco agora tem o que está na tela (só para os campos enviados).
+    setLoaded((prev) => (prev ? ({ ...prev, ...pending } as SiteSettings) : prev));
+    invalidateSiteSettings();
+    const n = Object.keys(pending).length;
+    setMsg({
+      kind: "ok",
+      text: `${n} campo(s) salvo(s). Recarregue o site para aplicar.`,
+    });
+  }
+
+  /** Grava um carimbo de data em site_settings e reflete na tela sem sujar o formulário. */
+  async function stampSetting(
+    field: "seo_last_audit_at" | "seo_last_search_console_submit",
+  ): Promise<string | null> {
+    const now = new Date().toISOString();
+    const { error } = await saveSettingsPatch({ [field]: now });
+    if (error) return error;
+    setLoaded((prev) => (prev ? { ...prev, [field]: now } : prev));
+    setS((prev) => (prev ? { ...prev, [field]: now } : prev));
+    return null;
+  }
+
+  async function runAudit(path: string) {
+    if (!s) return;
+    setAuditing(true);
+    setAuditError(null);
+    try {
+      const result = await auditPublicPage(s, path);
+      setAudit(result);
+      const problems: string[] = [];
+      const { error: logError } = await supabase.from("seo_audit_log").insert({
+        kind: "audit",
+        score: result.score,
+        issues: result.issues,
+        notes: `Página auditada: ${result.path}${result.timedOut ? " (render incompleto)" : ""}`,
+      });
+      if (logError) problems.push(`histórico: ${settingsErrorMessage(logError)}`);
+      const stampError = await stampSetting("seo_last_audit_at");
+      if (stampError) problems.push(`data da última auditoria: ${stampError}`);
+      if (problems.length) {
+        setAuditError(`A auditoria rodou, mas não foi registrada (${problems.join("; ")}).`);
+      }
+    } catch (e) {
+      setAuditError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setAuditing(false);
     }
   }
 
-  async function runAudit() {
-    if (!s) return;
-    const result = runSeoAudit(s);
-    setAudit(result);
-    // Log no banco (best-effort)
-    await supabase.from("seo_audit_log").insert({
-      kind: "audit",
-      score: result.score,
-      issues: result.issues,
-    });
-    await supabase
-      .from("site_settings")
-      .update({ seo_last_audit_at: new Date().toISOString() })
-      .eq("id", 1);
-  }
-
   async function markSubmitted() {
-    await supabase.from("seo_audit_log").insert({
+    setMsg(null);
+    const { error: logError } = await supabase.from("seo_audit_log").insert({
       kind: "submit",
       notes: "Sitemap enviado ao Google Search Console",
     });
-    await supabase
-      .from("site_settings")
-      .update({ seo_last_search_console_submit: new Date().toISOString() })
-      .eq("id", 1);
-    invalidateSiteSettings();
-    const fresh = await fetchSiteSettings(true);
-    setS(fresh);
+    const stampError = await stampSetting("seo_last_search_console_submit");
+    if (logError || stampError) {
+      const parts = [
+        logError ? `histórico: ${settingsErrorMessage(logError)}` : null,
+        stampError ? `data do envio: ${stampError}` : null,
+      ].filter(Boolean);
+      setMsg({ kind: "err", text: `Não foi possível registrar o envio (${parts.join("; ")}).` });
+      return;
+    }
     setMsg({ kind: "ok", text: "marcado como enviado." });
   }
 
@@ -129,10 +206,8 @@ export default function SeoPage() {
     setMsg(null);
     try {
       const result = await refreshSeoEverywhere({ pingSearchEngines: true });
-      // Recarrega o snapshot local também
-      const fresh = await fetchSiteSettings(true);
-      setS(fresh);
-
+      // Não recarrega o formulário: o que está na tela (inclusive edições
+      // ainda não salvas) continua como está.
       const pingOk = result.ping?.results?.every((r) => r.ok);
       const pingMsg = result.ping
         ? pingOk
@@ -141,7 +216,7 @@ export default function SeoPage() {
         : "";
       setMsg({
         kind: "ok",
-        text: `SEO atualizado em todas as páginas.${pingMsg}`,
+        text: `SEO atualizado em todas as páginas.${pingMsg}${dirty ? " Há alterações não salvas no formulário." : ""}`,
       });
     } catch (err) {
       setMsg({ kind: "err", text: `falha ao atualizar SEO: ${String(err)}` });
@@ -150,10 +225,25 @@ export default function SeoPage() {
     }
   }
 
-  if (!s) {
+  if (loadingRow && !s) {
     return (
       <AdminLayout active="seo">
         <p className="mono">carregando…</p>
+      </AdminLayout>
+    );
+  }
+
+  if (!s) {
+    return (
+      <AdminLayout active="seo">
+        <div className="admin-flash admin-flash--err mono" role="alert" style={{ marginBottom: 16 }}>
+          Não foi possível ler as configurações de SEO: {loadError}. Nada foi alterado — o
+          formulário fica bloqueado até a leitura funcionar, para não gravar valores padrão por
+          cima dos reais.
+        </div>
+        <button type="button" className="admin-btn" onClick={() => void load()} disabled={loadingRow}>
+          {loadingRow ? "tentando…" : "tentar de novo"}
+        </button>
       </AdminLayout>
     );
   }
@@ -163,7 +253,19 @@ export default function SeoPage() {
       <div className="admin-form-head">
         <h1 className="admin-form-head__title">SEO</h1>
         <div className="admin-form-head__actions">
-          {msg && <span className={`admin-flash admin-flash--${msg.kind} mono`}>{msg.text}</span>}
+          {msg && (
+            <span
+              className={`admin-flash admin-flash--${msg.kind} mono`}
+              role={msg.kind === "err" ? "alert" : "status"}
+            >
+              {msg.text}
+            </span>
+          )}
+          {dirty && !msg && (
+            <span className="mono admin-hint" role="status">
+              {Object.keys(pending).length} alteração(ões) não salva(s)
+            </span>
+          )}
           <button
             className="admin-btn"
             onClick={refreshSeo}
@@ -172,7 +274,11 @@ export default function SeoPage() {
           >
             {refreshing ? "atualizando…" : "atualizar SEO"}
           </button>
-          <button className="admin-btn admin-btn--primary" onClick={save} disabled={saving || refreshing}>
+          <button
+            className="admin-btn admin-btn--primary"
+            onClick={save}
+            disabled={saving || refreshing || !dirty}
+          >
             {saving ? "salvando…" : "salvar"}
           </button>
         </div>
@@ -200,7 +306,15 @@ export default function SeoPage() {
       {tab === "sitemap" && (
         <SitemapTab s={s} onMarkSubmitted={markSubmitted} />
       )}
-      {tab === "audit" && <AuditTab audit={audit} onRun={runAudit} />}
+      {tab === "audit" && (
+        <AuditTab
+          audit={audit}
+          auditing={auditing}
+          error={auditError}
+          lastAuditAt={s.seo_last_audit_at}
+          onRun={runAudit}
+        />
+      )}
       {tab === "guide" && <GuideTab s={s} />}
     </AdminLayout>
   );
@@ -820,14 +934,21 @@ function SitemapTab({
 // =============================================================
 function AuditTab({
   audit,
+  auditing,
+  error,
+  lastAuditAt,
   onRun,
 }: {
-  audit: SeoAuditResult | null;
-  onRun: () => void;
+  audit: PublicPageAudit | null;
+  auditing: boolean;
+  error: string | null;
+  lastAuditAt: string | null;
+  onRun: (path: string) => void;
 }) {
+  const [path, setPath] = useState("/");
   const grouped = useMemo(() => {
-    if (!audit) return {} as Record<string, SeoAuditResult["issues"]>;
-    const g: Record<string, SeoAuditResult["issues"]> = {};
+    if (!audit) return {} as Record<string, PublicPageAudit["issues"]>;
+    const g: Record<string, PublicPageAudit["issues"]> = {};
     for (const i of audit.issues) {
       g[i.area] = g[i.area] || [];
       g[i.area].push(i);
@@ -838,26 +959,63 @@ function AuditTab({
   return (
     <>
       <p className="mono" style={{ opacity: 0.7, marginBottom: 16, maxWidth: 720 }}>
-        A auditoria analisa o DOM desta janela (abra a página que deseja auditar em outra aba
-        primeiro, se quiser resultado por página). Abaixo, o score global da home.
+        A auditoria abre a página pública escolhida numa janela oculta, espera o site terminar de
+        carregar e analisa título, descrição, canonical, hierarquia, imagens e dados estruturados
+        dela — não desta tela do painel. Por padrão, a home.
       </p>
 
-      <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 24 }}>
-        <button className="admin-btn admin-btn--primary" onClick={onRun}>
-          rodar auditoria agora
+      <form
+        style={{ display: "flex", gap: 12, alignItems: "flex-end", marginBottom: 24, flexWrap: "wrap" }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (!auditing) onRun(path);
+        }}
+      >
+        <label className="admin-field" htmlFor="seo-audit-path" style={{ margin: 0, minWidth: 260 }}>
+          <span className="admin-field__label mono">Página a auditar</span>
+          <input
+            id="seo-audit-path"
+            className="admin-field__input"
+            value={path}
+            onChange={(e) => setPath(e.target.value)}
+            placeholder="/ ou /portfolio"
+            spellCheck={false}
+          />
+        </label>
+        <button type="submit" className="admin-btn admin-btn--primary" disabled={auditing}>
+          {auditing ? "auditando…" : "rodar auditoria agora"}
         </button>
-        {audit && (
+        {audit && !auditing && (
           <span className="mono" style={{ opacity: 0.7 }}>
-            {audit.issues.length} verificações · score {audit.score}/100
+            {audit.path} · {audit.issues.length} verificações · score {audit.score}/100
           </span>
         )}
-      </div>
+      </form>
+
+      {lastAuditAt && (
+        <p className="mono admin-hint" style={{ marginTop: -12, marginBottom: 16 }}>
+          Última auditoria registrada: {new Date(lastAuditAt).toLocaleString("pt-BR")}
+        </p>
+      )}
+
+      {error && (
+        <p className="admin-flash admin-flash--err mono" role="alert">
+          {error}
+        </p>
+      )}
+
+      {audit?.timedOut && (
+        <p className="admin-flash admin-flash--err mono" role="status">
+          A página demorou para terminar de carregar; o resultado pode estar incompleto. Rode de novo
+          se algo parecer errado.
+        </p>
+      )}
 
       {audit && (
         <>
           <div className={`seo-score seo-score--${scoreClass(audit.score)}`}>
             <div className="seo-score__value">{audit.score}</div>
-            <div className="seo-score__label mono">de 100</div>
+            <div className="seo-score__label mono">de 100 · {audit.path}</div>
           </div>
 
           <section className="admin-section">
@@ -1045,18 +1203,23 @@ function StatusRow({ label, ok }: { label: string; ok: boolean }) {
 }
 
 function CopyBtn({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
+  const [state, setState] = useState<"idle" | "copied" | "failed">("idle");
   return (
     <button
       type="button"
       className="admin-btn admin-btn--ghost admin-btn--sm"
       onClick={async () => {
-        await navigator.clipboard.writeText(text);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
+        try {
+          await navigator.clipboard.writeText(text);
+          setState("copied");
+        } catch {
+          // Clipboard bloqueado (permissão/iframe): o link continua visível ao lado.
+          setState("failed");
+        }
+        setTimeout(() => setState("idle"), 1500);
       }}
     >
-      {copied ? "copiado" : "copiar"}
+      {state === "copied" ? "copiado" : state === "failed" ? "não copiou" : "copiar"}
     </button>
   );
 }

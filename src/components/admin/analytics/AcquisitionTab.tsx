@@ -11,6 +11,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { devError } from "@/lib/devLog";
+import { isFilterableSegmentValue } from "./useAnalyticsState";
 import type { DateRange, Segment, SegmentDim } from "./types";
 
 type Row = {
@@ -177,6 +178,8 @@ export default function AcquisitionTab({
   }
 
   function toggleSegment(dim: SegmentDim, value: string) {
+    // "(n/a)" = sessões sem valor nessa dimensão; a RPC não filtra "é nulo".
+    if (!isFilterableSegmentValue(value)) return;
     if (isActiveSegment(dim, value)) onRemoveSegment(dim);
     else onAddSegment({ dim, value });
   }
@@ -202,6 +205,24 @@ export default function AcquisitionTab({
 
   return (
     <div className="aa-grid">
+      {segments.length > 0 && (
+        <div className="aa-col-12">
+          <div
+            className="aa-faint aa-mono"
+            role="note"
+            style={{
+              fontSize: "var(--aa-text-xs)",
+              padding: "8px 12px",
+              border: "1px dashed var(--aa-border)",
+              borderRadius: 6,
+              background: "var(--aa-bg-soft)",
+            }}
+          >
+            ⓘ estas tabelas mostram todo o tráfego do período · os segmentos ativos só destacam a
+            linha escolhida (ainda)
+          </div>
+        </div>
+      )}
       {GROUPS.map((g) => {
         const rows = state.data[g.dim];
         const max = rows.reduce((acc, r) => Math.max(acc, r.sessions), 0) || 1;
@@ -232,16 +253,23 @@ export default function AcquisitionTab({
                   <tbody>
                     {rows.map((r) => {
                       const active = isActiveSegment(g.dim, r.dim);
+                      const filterable = isFilterableSegmentValue(r.dim);
                       const d = comparePrev ? deltaPct(r.sessions, r.prev_sessions) : null;
                       return (
                         <tr
                           key={r.dim}
-                          onClick={() => toggleSegment(g.dim, r.dim)}
+                          onClick={filterable ? () => toggleSegment(g.dim, r.dim) : undefined}
                           style={{
-                            cursor: "pointer",
+                            cursor: filterable ? "pointer" : "default",
                             background: active ? "var(--aa-row-hover)" : undefined,
                           }}
-                          title={active ? "clique para remover filtro" : "clique para filtrar por este valor"}
+                          title={
+                            !filterable
+                              ? "sessões sem valor nesta dimensão · não dá para filtrar"
+                              : active
+                                ? "clique para remover filtro"
+                                : "clique para filtrar por este valor"
+                          }
                         >
                           <td>
                             <div style={{ display: "grid", gap: 4 }}>

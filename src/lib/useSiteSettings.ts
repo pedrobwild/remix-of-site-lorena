@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { devWarn } from "@/lib/devLog";
 
 export type SiteSettings = {
   id: number;
@@ -139,14 +140,31 @@ export function getCachedSiteSettings(): SiteSettings {
   return cache ?? DEFAULTS;
 }
 
+/**
+ * Lê `site_settings` (linha única). Nunca rejeita: em erro devolve o último
+ * valor bom (ou DEFAULTS) SEM cachear — a próxima chamada tenta de novo.
+ * Antes o `{ error }` do supabase-js era ignorado e DEFAULTS ficavam em cache
+ * a sessão inteira (trackers, verificações e og:image sumiam até o reload), e
+ * uma exceção deixava `inflight` preso para sempre.
+ */
 export async function fetchSiteSettings(force = false): Promise<SiteSettings> {
   if (cache && !force) return cache;
   if (inflight) return inflight;
   inflight = (async () => {
-    const { data } = await supabase.from("site_settings").select("*").eq("id", 1).maybeSingle();
-    cache = { ...DEFAULTS, ...(data ?? {}) } as SiteSettings;
-    inflight = null;
-    return cache;
+    try {
+      const { data, error } = await supabase.from("site_settings").select("*").eq("id", 1).maybeSingle();
+      if (error) {
+        devWarn("[useSiteSettings] leitura falhou (não cacheado):", error);
+        return cache ?? DEFAULTS;
+      }
+      cache = { ...DEFAULTS, ...(data ?? {}) } as SiteSettings;
+      return cache;
+    } catch (err) {
+      devWarn("[useSiteSettings] leitura lançou (não cacheado):", err);
+      return cache ?? DEFAULTS;
+    } finally {
+      inflight = null;
+    }
   })();
   return inflight;
 }
@@ -157,11 +175,18 @@ export function useSiteSettings() {
 
   useEffect(() => {
     let mounted = true;
-    fetchSiteSettings().then((s) => {
-      if (!mounted) return;
-      setSettings(s);
-      setLoading(false);
-    });
+    fetchSiteSettings()
+      .then((s) => {
+        if (!mounted) return;
+        setSettings(s);
+        setLoading(false);
+      })
+      .catch(() => {
+        // fetchSiteSettings não rejeita; guarda contra regressão futura.
+        if (!mounted) return;
+        setSettings(DEFAULTS);
+        setLoading(false);
+      });
     return () => {
       mounted = false;
     };
@@ -172,22 +197,4 @@ export function useSiteSettings() {
 
 export function invalidateSiteSettings() {
   cache = null;
-}
-
-/**
- * Monta a URL do WhatsApp a partir das configurações do site.
- *
- * Centraliza o número (A6) — antes ele estava hardcoded como
- * `https://wa.me/5534996668215` em App.tsx e BlogPostPage.tsx, divergindo
- * do valor já disponível em `site_settings`. Cai para o número padrão em
- * `DEFAULTS` enquanto as settings ainda carregam, então o CTA nunca aponta
- * para um link quebrado. Atualizar o número passa a ser feito num só lugar.
- */
-export function whatsappUrl(settings: SiteSettings | null, text?: string): string {
-  const digits = (settings?.whatsapp_number ?? DEFAULTS.whatsapp_number ?? "").replace(
-    /\D/g,
-    ""
-  );
-  const base = `https://wa.me/${digits}`;
-  return text ? `${base}?text=${encodeURIComponent(text)}` : base;
 }

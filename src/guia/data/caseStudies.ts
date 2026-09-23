@@ -55,7 +55,7 @@ export interface CaseStudy {
   ocupacao: number;
   receitaMensal: number;
   receitaAnual: number;
-  /** Ex.: "29.1%". */
+  /** Ex.: "29,1%" (formato pt-BR). */
   yieldBruto: string;
   paybackMeses: number;
   timeline: CaseTimelineStep[];
@@ -97,7 +97,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     ocupacao: 82,
     receitaMensal: 9348,
     receitaAnual: 112176,
-    yieldBruto: "29.1%",
+    yieldBruto: "29,1%",
     paybackMeses: 7,
     timeline: PINHEIROS_TIMELINE,
     verified: true,

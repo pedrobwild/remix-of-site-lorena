@@ -139,6 +139,54 @@
 }
 .bw-admin__tab svg { width: 15px; height: 15px; flex-shrink: 0; }
 
+/* Menu "Site" (telas de configuração do layout antigo) */
+.bw-admin__more { position: relative; }
+.bw-admin__more-toggle {
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.bw-admin__more-toggle::-webkit-details-marker { display: none; }
+.bw-admin__more-toggle:focus-visible {
+  outline: 2px solid var(--bw-cyan);
+  outline-offset: 2px;
+}
+.bw-admin__more[open] > .bw-admin__more-toggle {
+  color: var(--bw-navy);
+  background: var(--bw-sand);
+  border-color: var(--bw-line-strong);
+}
+.bw-admin__more-caret { transition: transform 120ms ease; }
+.bw-admin__more[open] .bw-admin__more-caret { transform: rotate(180deg); }
+.bw-admin__more-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 50;
+  min-width: 200px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #fff;
+  border: 1px solid var(--bw-line-strong);
+  border-radius: 3px;
+  box-shadow: 0 10px 28px rgba(11, 35, 66, .12);
+}
+.bw-admin__more-link {
+  display: block;
+  padding: 9px 12px;
+  border-radius: 2px;
+  color: var(--bw-ink);
+  text-decoration: none;
+  font-size: 13.5px;
+}
+.bw-admin__more-link:hover,
+.bw-admin__more-link:focus-visible {
+  background: var(--bw-sand);
+  color: var(--bw-navy);
+  outline: none;
+}
+
 /* Direita: e-mail + Sair */
 .bw-admin__right {
   display: inline-flex;
@@ -284,6 +332,15 @@
   }
   .bw-admin--mobile-open .bw-admin__tabs { display: flex; }
   .bw-admin__tab { justify-content: flex-start; }
+  /* No menu mobile o "Site" abre como lista, sem flutuar. */
+  .bw-admin__more-menu {
+    position: static;
+    box-shadow: none;
+    border: 0;
+    border-left: 2px solid var(--bw-line);
+    margin: 4px 0 0 14px;
+    padding: 0 0 0 6px;
+  }
   .bw-admin__menu-btn { display: inline-flex; }
   .bw-admin__user { display: none; }
   .bw-admin__content { padding: 24px 18px 64px; }
@@ -633,6 +690,57 @@
   font-size: 13.5px;
 }
 .bw-admin__loading { color: var(--bw-muted); font-size: 13px; }
+
+/* Falha de carga discreta dentro de um card/seção (ex.: "erro ao carregar").
+   A mensagem técnica vai no `title` para não poluir o painel. */
+.bw-admin__card-error {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--bw-mono);
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #9A2A33;
+  cursor: help;
+}
+.bw-admin__card-error::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+.bw-admin__section .bw-admin__card-error { margin: 4px 0 0; }
+
+/* Faixa de aviso/erro no topo de uma tela (ações que falharam). */
+.bw-admin__alert {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 16px;
+  padding: 11px 14px;
+  border-radius: 3px;
+  font-size: 13px;
+  line-height: 1.45;
+  border: 1px solid #ECCCD2;
+  background: #FBECEE;
+  color: #8C2230;
+}
+.bw-admin__alert--warn { border-color: #ECD9A1; background: #FBF1DA; color: #6B4700; }
+.bw-admin__alert--ok { border-color: #BFE1CB; background: #E9F6EE; color: #1F6A3B; }
+.bw-admin__alert-close {
+  flex: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+}
 /* ============================================================
  * MOBILE (<=560px) — admin
  * ============================================================ */

@@ -1,27 +1,37 @@
 name: Production build
 
-# Roda o pipeline completo de build em qualquer push ou PR.
+# Roda o pipeline completo de build em push para a main e em pull requests.
 # Falha o job (exit != 0) se qualquer etapa falhar:
 #   1. routes:check  → paridade de rotas SPA ↔ edge function
-#   2. test          → suíte Vitest (jsdom)
-#   3. prebuild      → mesmo script via npm prebuild hook
-#   4. tsc -b        → checagem de tipos
-#   5. vite build    → bundle de produção
+#   2. lint          → ESLint (inclui scripts/)
+#   3. test          → suíte Vitest (jsdom), inclusive o guard de src/test/setup.ts
+#                      (setupNoTsExpectError) e os testes dos scripts de build
+#   4. prebuild      → sitemap + paridade de rotas (via npm prebuild hook)
+#   5. tsc -b        → checagem de tipos
+#   6. vite build    → bundle de produção
 #
-# O `npm run build` já encadeia prebuild + tsc + vite build, então
-# basta executá-lo: qualquer falha aborta com status non-zero e o
-# GitHub Actions marca o workflow como failed automaticamente.
+# Gatilhos: push só na main + pull_request. Antes era push em qualquer branch
+# E pull_request, então todo commit de PR rodava duas vezes.
 
 on:
   push:
-    branches: ["**"]
+    branches: [main]
   pull_request:
-    branches: ["**"]
+
+# Só leitura do repositório: o job não publica nada.
+permissions:
+  contents: read
+
+# Um push novo no mesmo ref cancela o run anterior ainda em andamento.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
-    name: build (parity + tests + tsc + vite)
+    name: build (parity + lint + tests + tsc + vite)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
@@ -30,7 +40,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          # Node 20 saiu de suporte (EOL em 2026-04-30); 22 é a LTS atual.
+          node-version: "22"
           cache: "npm"
 
       - name: Install dependencies
@@ -50,7 +61,7 @@ jobs:
         run: npm test
 
       - name: Production build (tsc + vite)
-        # `npm run build` aciona o prebuild (parity check) novamente,
+        # `npm run build` aciona o prebuild (sitemap + parity check) novamente,
         # roda `tsc -b` e em seguida `vite build`. Falha em qualquer
         # uma das etapas faz o step retornar exit != 0.
         run: npm run build
