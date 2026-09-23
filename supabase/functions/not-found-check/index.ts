@@ -64,6 +64,7 @@ export const STATIC_ROUTES: ReadonlyArray<string> = [
   "/onde-atuamos",
   "/reforma-de-apartamento-sao-paulo",
   "/reforma-de-studio-sao-paulo",
+  "/reforma-de-cobertura-sao-paulo",
   "/parceiros",
   "/guia-do-investidor",
   "/privacidade",
