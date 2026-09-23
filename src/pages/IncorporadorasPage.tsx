@@ -21,6 +21,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { isIncorporadorasPreview } from "@/lib/incorporadorasFlag";
 import { formatDate, usePartnerCase } from "@/lib/usePartnerCase";
 import { unidadeLabel } from "@/lib/unidadeLabel";
+import { devWarn } from "@/lib/devLog";
 import type { LeadPayload } from "@/lib/leadDelivery";
 import {
   buildLeadMessage,
