@@ -591,17 +591,16 @@ export default function ParceirosPage() {
               <article className="bwa-parc-card bwa-parc-card--dark">
                 <h3>Antes das chaves</h3>
                 <p>
-                  Padrão de acabamento e unidade decorada de studios e compactos, desenhados para
-                  o comprador investidor. O decorado mostra o imóvel pronto para render — e vende
-                  o estoque de unidades compactas que mais trava na prateleira.
+                  Padrão de acabamento e unidade decorada de studios e apartamentos, desenhados
+                  para o comprador investidor. O decorado mostra o imóvel pronto para render.
                 </p>
               </article>
               <article className="bwa-parc-card bwa-parc-card--dark">
                 <h3>Depois das chaves</h3>
                 <p>
-                  Quase metade dos compradores de studio mora fora da capital e precisa de quem
+                  Quase metade dos clientes da Bewild mora fora da capital e precisa de quem
                   entregue o apartamento pronto à distância. A Bewild executa a reforma dos
-                  compradores do empreendimento com preço, prazo e garantia em contrato — sem
+                  compradores do empreendimento com preço, prazo e garantia em contrato, sem
                   disputar a venda e sem falar em nome da incorporadora.
                 </p>
               </article>
@@ -615,7 +614,7 @@ export default function ParceirosPage() {
         {/* 08 · Prova */}
         <section className="bwa-parc-section" id="prova">
           <div className="bwa-shell">
-            <p className="bwa-label">08 · Prova, não promessa</p>
+            <p className="bwa-label">08 · Parceria e resultado</p>
             <h2>Parceria e resultado com nome e número.</h2>
             <div className="bwa-parc-two">
               <article className="bwa-parc-card">
@@ -627,11 +626,11 @@ export default function ParceirosPage() {
                 </p>
               </article>
               <article className="bwa-parc-card">
-                <h3>Vivian · Vila Olímpia · 98% de ocupação em setembro</h3>
+                <h3>Vivian · Pinheiros · 98% de ocupação em setembro</h3>
                 <p>
-                  A Vivian comprou um studio na Vila Olímpia para renda de curta temporada e mora fora
-                  de São Paulo. A Bewild entregou projeto, obra, marcenaria e mobília à distância —
-                  e o imóvel opera com cerca de 98% de ocupação em setembro.
+                  A Vivian comprou um studio em Pinheiros para renda de curta temporada e mora fora
+                  de São Paulo. A Bewild entregou projeto, obra, marcenaria e mobília à distância, e
+                  o imóvel opera com cerca de 98% de ocupação em setembro.
                 </p>
               </article>
             </div>
