@@ -601,6 +601,87 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_referrals: {
+        Row: {
+          client_name: string | null
+          commission_amount: number | null
+          commission_status: string
+          company: string | null
+          confirmed_at: string | null
+          confirmed_by: string | null
+          contract_value: number | null
+          created_at: string
+          document: string | null
+          email: string | null
+          id: string
+          internal_notes: string | null
+          landing_path: string | null
+          message: string | null
+          origin: string | null
+          partner_name: string
+          partner_type: string | null
+          referrer: string | null
+          region: string | null
+          status: string
+          units: string | null
+          updated_at: string
+          user_agent: string | null
+          whatsapp: string
+        }
+        Insert: {
+          client_name?: string | null
+          commission_amount?: number | null
+          commission_status?: string
+          company?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          contract_value?: number | null
+          created_at?: string
+          document?: string | null
+          email?: string | null
+          id?: string
+          internal_notes?: string | null
+          landing_path?: string | null
+          message?: string | null
+          origin?: string | null
+          partner_name: string
+          partner_type?: string | null
+          referrer?: string | null
+          region?: string | null
+          status?: string
+          units?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          whatsapp: string
+        }
+        Update: {
+          client_name?: string | null
+          commission_amount?: number | null
+          commission_status?: string
+          company?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          contract_value?: number | null
+          created_at?: string
+          document?: string | null
+          email?: string | null
+          id?: string
+          internal_notes?: string | null
+          landing_path?: string | null
+          message?: string | null
+          origin?: string | null
+          partner_name?: string
+          partner_type?: string | null
+          referrer?: string | null
+          region?: string | null
+          status?: string
+          units?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          whatsapp?: string
+        }
+        Relationships: []
+      }
       project_images: {
         Row: {
           alt: string
