@@ -4773,6 +4773,7 @@
 .bwa-tour3d-frame:fullscreen{border:0}
 .bwa-tour3d-cover{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;gap:clamp(12px,8cqi,24px);width:100%;margin:0;padding:12px;border:0;border-radius:0;color:var(--bwa-white);background-color:var(--bwa-navy);background-image:linear-gradient(rgba(11,35,66,.74),rgba(11,35,66,.8)),url("/__l5e/assets-v1/45461624-92f6-43ba-8242-ff826ac7a1d6/tour3d-capa.png");background-size:cover,cover;background-position:center,center;background-repeat:no-repeat,no-repeat;font:inherit;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
 [data-tour3d-room="dormitorio"] .bwa-tour3d-cover{background-image:linear-gradient(rgba(11,35,66,.74),rgba(11,35,66,.8)),url("/__l5e/assets-v1/40645128-d35a-4606-aeb8-8f5999d9beaf/tour3d-capa-dormitorio.png")}
+[data-tour3d-room="banho"] .bwa-tour3d-cover{background-image:linear-gradient(rgba(11,35,66,.74),rgba(11,35,66,.8)),url("/__l5e/assets-v1/c64afa24-f64d-4e3e-8c71-9025b00453c8/tour3d-capa-banho.png")}
 .bwa-tour3d-cover:focus-visible{outline:2px solid var(--bwa-white);outline-offset:-6px}
 .bwa-tour3d-glyph{width:64px;height:64px;width:clamp(40px,26cqi,92px);height:clamp(40px,26cqi,92px);color:rgba(255,255,255,.92);transition:transform .5s var(--bwa-ease)}
 .bwa-tour3d-cover:hover .bwa-tour3d-glyph{transform:translateY(-3px)}
