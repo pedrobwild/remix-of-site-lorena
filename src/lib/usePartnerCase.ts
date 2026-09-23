@@ -107,7 +107,7 @@ export function usePartnerCase(slug: string, enabled = true) {
     return () => {
       mounted = false;
     };
-  }, [slug]);
+  }, [slug, enabled]);
 
   return { data, projects };
 }
