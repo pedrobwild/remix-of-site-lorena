@@ -65,3 +65,6 @@ verify_jwt = false
 
 [functions.preview-transactional-email]
 verify_jwt = false
+
+[functions.enviar-nutricao]
+verify_jwt = false
