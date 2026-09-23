@@ -13,6 +13,7 @@ import {
   HelpCircle,
   Type,
   Inbox,
+  Activity,
 } from "lucide-react";
 import { useAuth } from "@/lib/useAuth";
 import { navigate, routes } from "@/lib/useHashRoute";
@@ -25,6 +26,7 @@ type ActiveKey =
   | "seo"
   | "seo-404"
   | "seo-indexacao"
+  | "rastreamento"
   | "settings"
   | "faq"
   | "typography";
@@ -49,6 +51,7 @@ const NAV: { key: ActiveKey; label: string; href: string; icon: typeof LayoutDas
   { key: "seo", label: "SEO", href: routes.adminSeo, icon: Search },
   { key: "seo-404", label: "URLs 404", href: routes.adminSeo404, icon: Search },
   { key: "seo-indexacao", label: "Indexação", href: routes.adminIndexacao, icon: Search },
+  { key: "rastreamento", label: "Rastreamento", href: routes.adminRastreamento, icon: Activity },
   { key: "settings", label: "Configurações", href: routes.adminSettings, icon: Settings },
   { key: "typography", label: "Tipografia", href: routes.adminTypography, icon: Type },
 ];
