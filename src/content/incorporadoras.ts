@@ -28,7 +28,6 @@ export const INCORP_SEO = {
   ],
 };
 
-export const INCORP_PREVIEW_BANNER = "Prévia interna. Esta página ainda não está publicada.";
 
 export const INCORP_HERO = {
   label: "Para incorporadoras",
