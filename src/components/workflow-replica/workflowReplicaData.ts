@@ -50,8 +50,8 @@ export const activities: WorkflowActivity[] = [
 
 const DAY = 86_400_000;
 const curveStart = new Date(2026, 7, 4).getTime();
-const planned = [0, 2, 5, 8, 12, 16, 21, 27, 33, 39, 45, 50, 54, 58, 63, 68, 73, 79, 84, 89, 93, 97, 100];
-const actual = [0, 1, 4, 7, 11, 15, 19, 25, 31, 37, 42, 47, 50, 52];
+const planned = [0, 2, 5, 8, 12, 16, 21, 27, 33, 38, 42, 46, 49, 51, 53, 54, 60, 67, 75, 83, 90, 96, 100];
+const actual = [0, 1, 4, 7, 11, 15, 19, 25, 31, 37, 42, 46, 49, 50, 51, 51];
 
 const regularCurveData = planned.map((value, index) => ({
   timestamp: curveStart + index * 3 * DAY,

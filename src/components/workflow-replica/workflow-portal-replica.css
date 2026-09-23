@@ -39,6 +39,7 @@
 .wf-replica .wf-current-meta { display: flex; align-items: center; gap: 9px; color: var(--wf-muted-foreground); font-size: 12px; }
 .wf-replica .wf-badge { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 999px; color: var(--wf-primary); background: var(--wf-accent); font-size: 11px; font-weight: 600; }
 .wf-replica .wf-details-toggle { display: none; }
+.wf-replica .wf-address { display: none; }
 .wf-replica .wf-milestones { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 0; padding-top: 14px; }
 .wf-replica .wf-milestone { position: relative; min-width: 0; padding: 18px 6px 0; text-align: center; }
 .wf-replica .wf-milestone::before { position: absolute; top: 5px; right: 50%; left: -50%; height: 2px; content: ""; background: color-mix(in srgb, var(--wf-success) 35%, transparent); }
@@ -60,6 +61,7 @@
 .wf-replica .wf-tab { position: relative; min-width: 0; min-height: 44px; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 5px; border: 0; color: var(--wf-muted-foreground); background: transparent; font-size: 12px; font-weight: 600; cursor: pointer; }
 .wf-replica .wf-tab[aria-selected="true"] { color: var(--wf-primary); }
 .wf-replica .wf-tab[aria-selected="true"]::after { position: absolute; right: 0; bottom: 0; left: 0; height: 2px; content: ""; background: var(--wf-primary); }
+.wf-replica .wf-tab-label-short { display: none; }
 .wf-replica .wf-panel { min-height: 420px; padding: 24px; }
 .wf-replica .wf-panel[hidden] { display: none; }
 .wf-replica .wf-section-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 16px; }
@@ -68,6 +70,7 @@
 .wf-replica .wf-section-title h3 { font-size: 16px; font-weight: 700; }
 .wf-replica .wf-section-title p { margin: 1px 0 0; color: var(--wf-muted-foreground); font-size: 11px; }
 .wf-replica .wf-button { min-height: 36px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 11px; border: 1px solid var(--wf-border); border-radius: 6px; color: var(--wf-primary); background: var(--wf-card); font-size: 12px; font-weight: 600; cursor: pointer; }
+.wf-replica .wf-button:disabled { opacity: .45; cursor: not-allowed; }
 .wf-replica .wf-table-wrap { overflow: hidden; border: 1px solid var(--wf-border); border-radius: 8px; }
 .wf-replica .wf-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
 .wf-replica .wf-table th { padding: 9px 7px; color: #fff; background: var(--wf-primary); font-size: 10px; font-weight: 700; letter-spacing: .05em; text-align: left; text-transform: uppercase; }
@@ -95,7 +98,8 @@
 .wf-replica .wf-tooltip span { color: var(--wf-muted-foreground); }
 .wf-replica .wf-reference-pill { fill: var(--wf-primary); }
 .wf-replica .wf-reference-label { fill: #fff; font-size: 9px; font-weight: 700; }
-.wf-replica .wf-reports-layout { display: grid; grid-template-columns: minmax(240px,.75fr) minmax(0,1.6fr); gap: 16px; }
+.wf-replica .wf-reports-layout { display: block; }
+.wf-replica .wf-report-list { width: 100%; }
 .wf-replica .wf-report-list h3 { margin: 0; font: 700 15px "Montserrat",sans-serif; }
 .wf-replica .wf-report-list-head { display: flex; justify-content: space-between; margin-bottom: 10px; color: var(--wf-muted-foreground); font-size: 11px; }
 .wf-replica .wf-report-row { width: 100%; min-height: 62px; display: grid; grid-template-columns: 40px minmax(0,1fr) auto; gap: 9px; align-items: center; margin-bottom: 7px; padding: 8px; border: 1px solid var(--wf-border); border-radius: 8px; color: var(--wf-foreground); background: var(--wf-card); text-align: left; cursor: pointer; }
@@ -104,10 +108,10 @@
 .wf-replica .wf-report-row[aria-current="true"] .wf-week { color: var(--wf-card); background: var(--wf-primary); }
 .wf-replica .wf-report-row strong { font-size: 11px; }
 .wf-replica .wf-report-row p { margin: 2px 0; color: var(--wf-muted-foreground); font-size: 9px; }
-.wf-replica .wf-report-progress { height: 6px; }
+.wf-replica .wf-report-progress { width: 100%; height: 6px; display: block; }
 .wf-replica .wf-report-progress::after { position: absolute; top: -1px; bottom: -1px; left: var(--planned); width: 1px; content: ""; background: var(--wf-foreground); }
 .wf-replica .wf-coming { opacity: .65; cursor: default; }
-.wf-replica .wf-report-detail { min-width: 0; max-width: 840px; }
+.wf-replica .wf-report-detail { min-width: 0; max-width: 840px; margin-inline: auto; }
 .wf-replica .wf-report-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
 .wf-replica .wf-report-overview { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end; margin-bottom: 12px; }
 .wf-replica .wf-report-overview h3 { margin: 7px 0 2px; font: 700 16px "Montserrat",sans-serif; }
@@ -156,7 +160,7 @@
   .wf-replica .wf-progress { margin-top: 8px; padding: 12px; }
   .wf-replica .wf-tablist { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); }
   .wf-replica .wf-tab:nth-child(n+4) { display: none; }
-  .wf-replica .wf-tab { gap: 4px; padding-inline: 2px; font-size: 12px; }
+  .wf-replica .wf-tab { gap: 3px; padding-inline: 1px; font-size: 11px; white-space: nowrap; }
   .wf-replica .wf-tab span { display: inline; }
   .wf-replica .wf-panel { min-height: 400px; padding: 12px; }
   .wf-replica .wf-section-head { align-items: flex-start; }
@@ -180,6 +184,8 @@
 @media (max-width: 359px) {
   .wf-replica .wf-tab { font-size: 10px; }
   .wf-replica .wf-tab svg { width: 13px; height: 13px; }
+  .wf-replica .wf-tab-label-long { display: none; }
+  .wf-replica .wf-tab-label-short { display: inline; }
   .wf-replica .wf-section-head { flex-wrap: wrap; }
   .wf-replica .wf-report-overview { grid-template-columns: 1fr; }
 }
