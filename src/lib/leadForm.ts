@@ -1,5 +1,5 @@
 /**
- * Regras compartilhadas pelos 6 formulários de lead (/diagnostico, /contato,
+ * Regras compartilhadas pelos formulários de lead (/orcamento, /contato,
  * /orcamento, /parceiros, /o, /p).
  *
  * Só lógica pura aqui — testável sem DOM. A cola com o navegador (envio,
@@ -21,7 +21,7 @@ import type { SendLeadResult } from "@/lib/sendLead";
  * Valores de `objetivo` que o CRM conhece — os mesmos em todos os
  * formulários. O RÓTULO exibido pode variar por página; o valor enviado não
  * (/orcamento mandava "Morar" e "Short stay (curta temporada)", que o CRM
- * não agrupava com "Moradia" e "Short stay" de /diagnostico).
+ * não agrupava com "Moradia" e "Short stay" de /orcamento).
  */
 export const LEAD_OBJETIVOS = [
   "Short stay",

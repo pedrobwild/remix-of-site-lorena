@@ -24,7 +24,7 @@ import { sendLead, type SendLeadResult } from "@/lib/sendLead";
 
 /**
  * Atribuição no momento do envio: URL atual → last-touch da sessão →
- * first-touch do visitante (mesma regra de /diagnostico). Com `qrDefaults`
+ * first-touch do visitante (mesma regra de /orcamento). Com `qrDefaults`
  * (/o e /p), só URL → padrão da peça impressa.
  */
 export function collectLeadAttribution(qrDefaults?: QrUtmDefaults): LeadAttribution {

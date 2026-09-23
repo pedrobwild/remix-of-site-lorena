@@ -1,5 +1,5 @@
 /**
- * Rastreamento de cliques em CTAs (/diagnostico, /contato, /orcamento e
+ * Rastreamento de cliques em CTAs (/contato, /orcamento e
  * /parceiros).
  *
  * Dispara dois destinos, ambos fire-and-forget e gated por consentimento:
