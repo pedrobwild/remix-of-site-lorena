@@ -59,7 +59,6 @@ export const INCORP_CASE = {
   ],
   statsTitle: "O case em números",
   updatedPrefix: "Atualizado em",
-  previewPending: "Prévia: números e linha do tempo ainda não publicados (aguardando autorização da Leal Moreira).",
   timelineTitle: "Linha do tempo",
   galleryTitle: "Projetos das unidades",
   galleryNote:
