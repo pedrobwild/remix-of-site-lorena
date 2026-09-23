@@ -17,6 +17,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { SortableRow, DragHandle } from "@/components/admin/SortableRow";
+import FaqKbManager from "@/components/admin/FaqKbManager";
 
 type Row = {
   id: string;
@@ -35,6 +36,7 @@ type Draft = {
 const EMPTY_DRAFT: Draft = { question: "", answer: "", visible: true };
 
 export default function FaqAdminPage() {
+  const [aba, setAba] = useState<"site" | "home">("site");
   const [rows, setRows] = useState<Row[]>([]);
   const [search, setSearch] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
@@ -486,6 +488,8 @@ export default function FaqAdminPage() {
           </SortableContext>
         </DndContext>
       </div>
+        </>
+      )}
     </AdminLayout>
   );
 }
