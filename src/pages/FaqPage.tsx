@@ -227,11 +227,13 @@ export default function FaqPage() {
             { name: "Início", path: "/" },
             { name: "Perguntas frequentes", path: "/faq" },
           ]),
-          faqJsonLd(
-            kb
+          faqJsonLd([
+            ...(kb
               ? kb.map((i) => ({ q: i.pergunta, a: i.resposta }))
-              : [...FAQ_ITEMS, ...GUIA_ITEMS].map((i) => ({ q: i.q, a: i.a })),
-          ),
+              : [...FAQ_ITEMS, ...GUIA_ITEMS].map((i) => ({ q: i.q, a: i.a }))),
+            // Contratos e comissões entram no JSON-LD em qualquer cenário.
+            ...CONTRATO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
+          ]),
         ]
       : undefined,
   });
