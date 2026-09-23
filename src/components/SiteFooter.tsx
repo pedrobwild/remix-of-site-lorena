@@ -5,7 +5,7 @@ import { openCookiePreferences } from "@/lib/cookieConsent";
 const WHATSAPP_URL =
   "https://wa.me/5511911906183?text=Ol%C3%A1%2C%20quero%20um%20diagn%C3%B3stico%20para%20meu%20studio";
 const INSTAGRAM_URL = "https://instagram.com/bewild.oficial";
-const LINKEDIN_URL = "https://www.linkedin.com/";
+const LINKEDIN_URL = "https://www.linkedin.com/company/bewild-reformas/";
 const EMAIL_URL = "mailto:contato@bewild.com.br";
 
 export default function SiteFooter(_props: Record<string, unknown>) {
