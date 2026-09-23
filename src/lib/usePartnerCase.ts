@@ -49,12 +49,13 @@ export function formatDate(iso: string | null): string | null {
   return m ? `${m[3]}/${m[2]}/${m[1]}` : null;
 }
 
-/** Case + projetos do case, na ordem de `project_slugs`. */
-export function usePartnerCase(slug: string) {
+/** Case + projetos do case, na ordem de `project_slugs`. `enabled = false` não consulta. */
+export function usePartnerCase(slug: string, enabled = true) {
   const [data, setData] = useState<PartnerCase | null>(null);
   const [projects, setProjects] = useState<CaseProject[]>([]);
 
   useEffect(() => {
+    if (!enabled) return;
     let mounted = true;
     void (async () => {
       const { data: row, error } = await supabase

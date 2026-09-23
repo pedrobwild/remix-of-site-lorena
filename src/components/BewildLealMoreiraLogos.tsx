@@ -2,11 +2,16 @@ import "./bewild-leal-moreira-logos.css";
 
 type BewildLealMoreiraLogosProps = {
   className?: string;
+  /** Tag do container: "h3" por padrão; "span" ou "div" quando não for um título. */
+  as?: "h3" | "span" | "div";
 };
 
-export default function BewildLealMoreiraLogos({ className = "" }: BewildLealMoreiraLogosProps) {
+export default function BewildLealMoreiraLogos({
+  className = "",
+  as: Tag = "h3",
+}: BewildLealMoreiraLogosProps) {
   return (
-    <h3 className={`bwa-partner-logos ${className}`.trim()}>
+    <Tag className={`bwa-partner-logos ${className}`.trim()}>
       <span className="sr-only">Bewild e Leal Moreira</span>
       <img
         className="bwa-partner-logos-bewild"
