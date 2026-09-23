@@ -36,6 +36,7 @@ const ROTAS_INDEXAVEIS = [
   { path: "/reforma-de-cobertura-sao-paulo", priority: "0.9", changefreq: "monthly" },
   { path: "/marcenaria", priority: "0.9", changefreq: "monthly" },
   { path: "/parceiros", priority: "0.7", changefreq: "monthly" },
+  { path: "/parceiros/incorporadoras", priority: "0.8", changefreq: "monthly" },
   { path: "/indique-um-amigo", priority: "0.7", changefreq: "monthly" },
   { path: "/marcas-e-parcerias", priority: "0.7", changefreq: "monthly" },
   { path: "/guia-do-investidor", priority: "0.8", changefreq: "monthly" },
