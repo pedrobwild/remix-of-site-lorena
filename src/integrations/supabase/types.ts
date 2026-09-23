@@ -646,6 +646,48 @@ export type Database = {
         }
         Relationships: []
       }
+      nutricao_envios: {
+        Row: {
+          created_at: string
+          email: string
+          enviado_em: string | null
+          erro: string | null
+          id: string
+          idempotency_key: string
+          status: string
+          template_data: Json
+          tentativas: number
+          teste: boolean
+          trilha: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          enviado_em?: string | null
+          erro?: string | null
+          id?: string
+          idempotency_key: string
+          status?: string
+          template_data: Json
+          tentativas?: number
+          teste?: boolean
+          trilha: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          enviado_em?: string | null
+          erro?: string | null
+          id?: string
+          idempotency_key?: string
+          status?: string
+          template_data?: Json
+          tentativas?: number
+          teste?: boolean
+          trilha?: string
+        }
+        Relationships: []
+      }
       partner_cases: {
         Row: {
           created_at: string
