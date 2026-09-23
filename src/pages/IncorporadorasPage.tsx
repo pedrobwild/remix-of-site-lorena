@@ -20,6 +20,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { isIncorporadorasPreview } from "@/lib/incorporadorasFlag";
 import { formatDate, usePartnerCase } from "@/lib/usePartnerCase";
+import { unidadeLabel } from "@/lib/unidadeLabel";
 import { devWarn } from "@/lib/devLog";
 import type { LeadPayload } from "@/lib/leadDelivery";
 import {
@@ -359,7 +360,7 @@ export default function IncorporadorasPage() {
                                 alt={
                                   p.cover_alt ||
                                   alts[p.cover_url] ||
-                                  `Projeto 3D de ${p.title}`
+                                  `Projeto 3D da ${unidadeLabel(p.title)}`
                                 }
                                 loading="lazy"
                                 decoding="async"
@@ -370,7 +371,7 @@ export default function IncorporadorasPage() {
                             {INCORP_CASE.statusLabels[p.status ?? "entregue"] ??
                               INCORP_CASE.statusLabels.entregue}
                           </span>
-                          <h4>{p.title}</h4>
+                          <h4>{unidadeLabel(p.title)}</h4>
                           <a
                             href={`/portfolio/${p.slug}`}
                             data-cta="incorporadoras-case-projeto"
