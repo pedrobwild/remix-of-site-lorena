@@ -32,6 +32,7 @@ const ROTAS_INDEXAVEIS = [
   { path: "/como-funciona", priority: "0.7", changefreq: "monthly" },
   { path: "/onde-atuamos", priority: "0.7", changefreq: "monthly" },
   { path: "/parceiros", priority: "0.7", changefreq: "monthly" },
+  { path: "/marcas-e-parcerias", priority: "0.7", changefreq: "monthly" },
   { path: "/guia-do-investidor", priority: "0.8", changefreq: "monthly" },
   { path: "/privacidade", priority: "0.3", changefreq: "yearly" },
 ];

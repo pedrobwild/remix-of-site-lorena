@@ -17,6 +17,7 @@ export type Route =
   | { name: "reforma-cobertura-sp" }
   | { name: "marcenaria" }
   | { name: "parceiros" }
+  | { name: "marcas-e-parcerias" }
   | { name: "guia-do-investidor" }
   | { name: "privacidade" }
   | { name: "bewild-project"; slug: string }
@@ -73,6 +74,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/reforma-de-cobertura-sao-paulo") return { name: "reforma-cobertura-sp" };
   if (path === "/marcenaria") return { name: "marcenaria" };
   if (path === "/parceiros") return { name: "parceiros" };
+  if (path === "/marcas-e-parcerias") return { name: "marcas-e-parcerias" };
   if (path === "/guia-do-investidor") return { name: "guia-do-investidor" };
   if (path === "/privacidade") return { name: "privacidade" };
 
@@ -189,6 +191,7 @@ export const routes = {
   reformaCoberturaSp: "/reforma-de-cobertura-sao-paulo",
   marcenaria: "/marcenaria",
   parceiros: "/parceiros",
+  marcasEParcerias: "/marcas-e-parcerias",
   guiaDoInvestidor: "/guia-do-investidor",
   privacidade: "/privacidade",
   bewildProject: (slug: string) => `/portfolio/${slug}`,
