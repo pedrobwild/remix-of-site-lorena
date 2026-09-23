@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
+import BewildLealMoreiraLogos from "@/components/BewildLealMoreiraLogos";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import type { LeadPayload } from "@/lib/leadDelivery";
 import {
@@ -618,7 +619,7 @@ export default function ParceirosPage() {
             <h2>Parceria e resultado com nome e número.</h2>
             <div className="bwa-parc-two">
               <article className="bwa-parc-card">
-                <h3>Bewild × Leal Moreira</h3>
+                <BewildLealMoreiraLogos />
                 <p>
                   Programa de indicações vigente com a Leal Moreira, formalizado em termo de
                   parceria: registro de indicação com validade de 12 meses, comissão sobre valor

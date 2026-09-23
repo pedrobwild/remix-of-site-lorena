@@ -1,5 +1,6 @@
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
+import BewildLealMoreiraLogos from "@/components/BewildLealMoreiraLogos";
 import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./marcas-parcerias.css";
@@ -94,7 +95,7 @@ export default function MarcasParceriasPage() {
             <article className="bwa-marcas-partner">
               <div>
                 <p className="bwa-marcas-partner-meta">Parceria vigente</p>
-                <h3>Bewild × Leal Moreira</h3>
+                <BewildLealMoreiraLogos />
               </div>
               <div className="bwa-marcas-partner-copy">
                 <p>

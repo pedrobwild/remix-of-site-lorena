@@ -1,0 +1,42 @@
+.bwa-partner-logos {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 76px;
+  align-items: center;
+  gap: clamp(14px, 2vw, 24px);
+  padding: 18px clamp(18px, 3vw, 30px);
+  border: 1px solid color-mix(in srgb, var(--bwa-paper) 18%, transparent);
+  background: var(--bwa-navy);
+}
+
+.bwa-partner-logos img {
+  display: block;
+  width: auto;
+  max-width: min(34vw, 190px);
+  height: clamp(28px, 4vw, 42px);
+  object-fit: contain;
+}
+
+.bwa-partner-logos-x {
+  flex: 0 0 auto;
+  color: var(--bwa-paper);
+  font-family: var(--bwa-font-body);
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+@media (max-width: 420px) {
+  .bwa-partner-logos {
+    width: 100%;
+    gap: 10px;
+    padding-inline: 14px;
+  }
+
+  .bwa-partner-logos img {
+    min-width: 0;
+    max-width: calc((100% - 42px) / 2);
+    height: 28px;
+  }
+}
