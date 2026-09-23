@@ -552,11 +552,11 @@ export default function ParceirosPage() {
                 </p>
               </article>
               <article className="bwa-parc-card">
-                <h3>Rafael · Butantã · 100% de ocupação em setembro</h3>
+                <h3>Vivian · Vila Olímpia · 99% de ocupação em setembro</h3>
                 <p>
-                  O Rafael comprou um studio no Butantã para renda de curta temporada e mora fora
+                  A Vivian comprou um studio na Vila Olímpia para renda de curta temporada e mora fora
                   de São Paulo. A Bewild entregou projeto, obra, marcenaria e mobília à distância —
-                  e o imóvel opera com cerca de 100% de ocupação em setembro.
+                  e o imóvel opera com cerca de 99% de ocupação em setembro.
                 </p>
               </article>
             </div>
