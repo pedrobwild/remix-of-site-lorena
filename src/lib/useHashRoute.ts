@@ -14,6 +14,7 @@ export type Route =
   | { name: "onde-atuamos" }
   | { name: "reforma-apartamento-sp" }
   | { name: "reforma-studio-sp" }
+  | { name: "reforma-cobertura-sp" }
   | { name: "parceiros" }
   | { name: "guia-do-investidor" }
   | { name: "privacidade" }
