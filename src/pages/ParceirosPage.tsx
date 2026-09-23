@@ -556,7 +556,7 @@ export default function ParceirosPage() {
                 <p>
                   O Rafael comprou um studio no Butantã para renda de curta temporada e mora fora
                   de São Paulo. A Bewild entregou projeto, obra, marcenaria e mobília à distância —
-                  e o imóvel opera com cerca de 100% de ocupação.
+                  e o imóvel opera com cerca de 100% de ocupação em setembro.
                 </p>
               </article>
             </div>
