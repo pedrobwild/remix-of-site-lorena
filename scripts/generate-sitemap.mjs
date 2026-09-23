@@ -123,6 +123,7 @@ async function main() {
     { loc: `${BASE_URL}/reforma-de-cobertura-sao-paulo`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.9" },
     { loc: `${BASE_URL}/marcenaria`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.9" },
     { loc: `${BASE_URL}/parceiros`, changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/parceiros/incorporadoras`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.8" },
     { loc: `${BASE_URL}/indique-um-amigo`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/marcas-e-parcerias`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.7" },
     // lastmod = GUIA_MODIFIED de src/guia/data/guiaMeta.ts (conferido em teste).
