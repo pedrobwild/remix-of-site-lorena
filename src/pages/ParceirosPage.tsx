@@ -15,6 +15,9 @@ import {
 } from "@/lib/leadForm";
 import { formatBrPhone, isValidBrPhone, normalizeBrPhoneDigits } from "@/lib/phone";
 import { supabase } from "@/integrations/supabase/client";
+import { PARCEIROS_WHEN_INCORP_ON } from "@/content/incorporadoras";
+import { isIncorporadorasPreview, useIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
+import { usePartnerCase } from "@/lib/usePartnerCase";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import {
   browserUserAgent,
@@ -350,10 +353,17 @@ export default function ParceirosPage() {
     });
   }
 
+  // Com a página de incorporadoras no ar, a /parceiros deixa de falar por ela.
+  const incorporadorasOn = useIncorporadorasEnabled();
+  const { data: casoLeal } = usePartnerCase("leal-moreira");
+  const mostrarStats = !!casoLeal && (casoLeal.published || isIncorporadorasPreview());
+  const statsLeal = mostrarStats ? casoLeal.stats.slice(0, 3) : [];
+
   useSeo({
     title: "Programa de indicações para parceiros profissionais | Bewild",
-    description:
-      "Indique clientes para a Bewild, acompanhe cada oportunidade e receba comissão conforme o termo. Programa para corretores, imobiliárias, incorporadoras, arquitetos e administradoras.",
+    description: incorporadorasOn
+      ? PARCEIROS_WHEN_INCORP_ON.seoDescription
+      : "Indique clientes para a Bewild, acompanhe cada oportunidade e receba comissão conforme o termo. Programa para corretores, imobiliárias, incorporadoras, arquitetos e administradoras.",
     keywords:
       "escritório de arquitetura e engenharia em SP, reforma de apartamento em SP, parceria corretor reforma, indicação reforma comissão, reforma de studio para investidor, reforma apartamento compacto São Paulo, incorporadora reforma pós-chaves, custo de reforma, Bewild parceiros",
     canonicalPath: "/parceiros",
@@ -383,9 +393,9 @@ export default function ParceirosPage() {
                 Indique um cliente. <em>A Bewild entrega e você recebe.</em>
               </h1>
               <p className="bwa-parc-lead">
-                Corretores, imobiliárias, incorporadoras, arquitetos e administradoras podem
-                indicar clientes para uma entrega completa de projeto, obra, marcenaria e mobília.
-                Quando o contrato indicado é pago, você recebe a comissão definida no seu termo.
+                {incorporadorasOn
+                  ? PARCEIROS_WHEN_INCORP_ON.heroLead
+                  : "Corretores, imobiliárias, incorporadoras, arquitetos e administradoras podem indicar clientes para uma entrega completa de projeto, obra, marcenaria e mobília. Quando o contrato indicado é pago, você recebe a comissão definida no seu termo."}
               </p>
               <div className="bwa-parc-hero-actions">
                 <a className="bwa-button" href="#cadastro" data-cta="parceiros-hero-cadastro">
@@ -450,8 +460,14 @@ export default function ParceirosPage() {
                   delas (reforma dos compradores e investidores), sem disputar a venda e sem
                   falar em nome da incorporadora.
                 </p>
-                <a href="#incorporadoras" data-cta="parceiros-caminho-incorporadora">
-                  Ver o modelo para incorporadoras <span aria-hidden="true">→</span>
+                <a
+                  href={incorporadorasOn ? "/parceiros/incorporadoras" : "#incorporadoras"}
+                  data-cta="parceiros-caminho-incorporadora"
+                >
+                  {incorporadorasOn
+                    ? PARCEIROS_WHEN_INCORP_ON.caminhoIncorporadorasLink
+                    : "Ver o modelo para incorporadoras"}{" "}
+                  <span aria-hidden="true">→</span>
                 </a>
               </article>
             </div>
