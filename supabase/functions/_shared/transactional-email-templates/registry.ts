@@ -4,6 +4,8 @@
 
 import type * as React from 'npm:react@18.3.1'
 import { template as novoLeadSite } from './novo-lead-site.tsx'
+import { template as confirmacaoOrcamento } from './confirmacao-orcamento.tsx'
+import { template as confirmacaoParceria } from './confirmacao-parceria.tsx'
 
 export interface TemplateEntry {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
