@@ -31,8 +31,8 @@ export default function BwaFooter() {
             <div className="bwa-footer-wordmark">Bewild</div>
             <p>Seu desejo é uma obra.</p>
             <p>
-              Reforma completa de studios e apartamentos compactos em São Paulo.
-              Projeto, obra, marcenaria, mobiliário e entrega num processo único.
+              Reforma completa de apartamentos em São Paulo. Projeto, obra,
+              marcenaria, mobiliário e entrega num processo único.
             </p>
           </div>
 
