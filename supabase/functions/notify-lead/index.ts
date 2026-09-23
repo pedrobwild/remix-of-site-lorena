@@ -419,6 +419,42 @@ async function sendLeadEmail(lead: Lead): Promise<Outcome> {
   }
 }
 
+/**
+ * Resposta automática para o próprio visitante (confirmação de recebimento).
+ * Só acontece quando ele informou um e-mail. Falha aqui nunca bloqueia o lead.
+ */
+async function sendLeadAutoReply(lead: Lead): Promise<Outcome> {
+  const to = (lead.email ?? "").trim();
+  if (!to) return "skipped";
+
+  const isParceria = (lead.objetivo ?? "").startsWith("Parceria");
+  const templateName = isParceria ? "confirmacao-parceria" : "confirmacao-orcamento";
+
+  try {
+    const result = await sendTemplateEmail(templateName, to, {
+      idempotencyKey: `lead-autoreply-${templateName}-${lead.id ?? crypto.randomUUID()}`,
+      templateData: isParceria
+        ? {
+            name: lead.name ?? null,
+            objetivo: lead.objetivo ?? null,
+            receivedAt: fmtDateBR(new Date()),
+          }
+        : {
+            name: lead.name ?? null,
+            location: lead.location ?? null,
+            area_m2: lead.area_m2 ?? null,
+            objetivo: lead.objetivo ?? null,
+            receivedAt: fmtDateBR(new Date()),
+          },
+    });
+    // Destinatário descadastrado/suprimido é um desfecho esperado, não um erro.
+    return result.sent ? "sent" : "skipped";
+  } catch (err) {
+    console.error("[notify-lead] auto-reply send failed", err);
+    return "error";
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -462,13 +498,14 @@ Deno.serve(async (req) => {
   const { result: lead_insert, lead: savedLead } = await insertLead(lead);
 
   // Slack, CRM e e-mail em paralelo; a falha de um não bloqueia os outros.
-  const [slack, crm, email] = await Promise.all([
+  const [slack, crm, email, auto_reply] = await Promise.all([
     notifySlack(savedLead),
     createCrmCard(savedLead),
     sendLeadEmail(savedLead),
+    sendLeadAutoReply(savedLead),
   ]);
 
-  return new Response(JSON.stringify({ ok: true, lead_insert, slack, crm, email }), {
+  return new Response(JSON.stringify({ ok: true, lead_insert, slack, crm, email, auto_reply }), {
     status: 200,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
