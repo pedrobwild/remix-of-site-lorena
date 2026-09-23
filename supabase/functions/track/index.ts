@@ -15,8 +15,8 @@
 // verify_jwt esta DESLIGADO de proposito: tracking e anonimo. A seguranca
 // vem da allowlist + bot-filter + rate-limit + sanitizacao de payload.
 
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import "jsr:@supabase/functions-js@2/edge-runtime.d.ts";
+import { createClient } from "npm:@supabase/supabase-js@2.45.4";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -38,6 +38,7 @@ const ALLOWED_EVENT_TYPES = new Set<string>([
   "blog_related_click",
   "click_contact",
   "click_whatsapp",
+  "click_phone",
   "click_instagram",
   "click_cta",
   "outbound_click",
@@ -79,11 +80,36 @@ function isRateLimited(ip: string): boolean {
   return false;
 }
 
+// Cabeçalhos definidos pela borda primeiro: o 1º item de X-Forwarded-For
+// pode vir do próprio cliente e burlar o rate limit.
 function extractClientIp(req: Request): string {
+  const edge = req.headers.get("cf-connecting-ip") ?? req.headers.get("x-real-ip");
+  if (edge) return edge.trim();
   const xff = req.headers.get("x-forwarded-for");
-  if (xff) return xff.split(",")[0]!.trim();
-  return req.headers.get("x-real-ip") || "unknown";
+  return (xff ? xff.split(",")[0]!.trim() : "") || "unknown";
 }
+
+/** Teto do corpo cru e do campo livre `value` (a service role passa por cima das policies). */
+const MAX_BODY_BYTES = 16 * 1024;
+const MAX_VALUE_BYTES = 2000;
+
+/** `value` só como objeto simples e pequeno; qualquer outra coisa vira null. */
+function sanitizeValue(v: unknown): Record<string, unknown> | null {
+  if (!v || typeof v !== "object" || Array.isArray(v)) return null;
+  try {
+    return JSON.stringify(v).length <= MAX_VALUE_BYTES ? (v as Record<string, unknown>) : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Registro de consentimento (LGPD) é prova do controlador, não tracking:
+ * nenhum identificador de visitante/sessão nem atribuição é gravado, mesmo
+ * que o cliente envie. Também mantém essas linhas fora de analytics_sessions
+ * (a view ignora session_id nulo) — antes cada recusa virava uma "sessão".
+ */
+const CONSENT_EVENTS = new Set(["consent_accept", "consent_decline"]);
 
 function extractCountry(req: Request): string | null {
   return (
@@ -115,13 +141,23 @@ Deno.serve(async (req) => {
     return new Response("rate limited", { status: 429, headers: corsHeaders });
   }
 
+  const declared = Number(req.headers.get("content-length") ?? "0");
+  if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) {
+    return new Response("payload too large", { status: 413, headers: corsHeaders });
+  }
+
   let body: Record<string, unknown>;
   try {
     // Aceita JSON tanto via application/json quanto via text/plain (sendBeacon
     // nao consegue setar Content-Type que dispara preflight, entao o client
     // envia como text/plain quando passa por beacon).
     const raw = await req.text();
-    body = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
+    if (raw.length > MAX_BODY_BYTES) {
+      return new Response("payload too large", { status: 413, headers: corsHeaders });
+    }
+    const parsed = raw ? (JSON.parse(raw) as unknown) : {};
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("not_object");
+    body = parsed as Record<string, unknown>;
   } catch {
     return new Response("invalid json", { status: 400, headers: corsHeaders });
   }
@@ -137,31 +173,38 @@ Deno.serve(async (req) => {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
 
-  const row = {
-    event_type,
-    session_id: str(body.session_id),
-    visitor_id: str(body.visitor_id),
-    path: str(body.path),
-    landing_path: str(body.landing_path),
-    referrer: str(body.referrer),
-    referrer_host: str(body.referrer_host),
-    user_agent: ua ? ua.slice(0, 1024) : null,
-    device: str(body.device),
-    browser: str(body.browser),
-    os: str(body.os),
-    screen: str(body.screen),
-    language: str(body.language),
-    project_slug: str(body.project_slug),
-    scroll_depth: num(body.scroll_depth),
-    duration_ms: num(body.duration_ms),
-    value: body.value ?? null,
-    utm_source: str(body.utm_source),
-    utm_medium: str(body.utm_medium),
-    utm_campaign: str(body.utm_campaign),
-    utm_term: str(body.utm_term),
-    utm_content: str(body.utm_content),
-    country: extractCountry(req) ?? str(body.country),
-  };
+  const consent = CONSENT_EVENTS.has(event_type);
+  const row = consent
+    ? {
+        event_type,
+        path: str(body.path),
+        value: sanitizeValue(body.value),
+      }
+    : {
+        event_type,
+        session_id: str(body.session_id),
+        visitor_id: str(body.visitor_id),
+        path: str(body.path),
+        landing_path: str(body.landing_path),
+        referrer: str(body.referrer),
+        referrer_host: str(body.referrer_host),
+        user_agent: ua ? ua.slice(0, 1024) : null,
+        device: str(body.device),
+        browser: str(body.browser),
+        os: str(body.os),
+        screen: str(body.screen),
+        language: str(body.language),
+        project_slug: str(body.project_slug),
+        scroll_depth: num(body.scroll_depth),
+        duration_ms: num(body.duration_ms),
+        value: sanitizeValue(body.value),
+        utm_source: str(body.utm_source),
+        utm_medium: str(body.utm_medium),
+        utm_campaign: str(body.utm_campaign),
+        utm_term: str(body.utm_term),
+        utm_content: str(body.utm_content),
+        country: extractCountry(req) ?? str(body.country),
+      };
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
@@ -171,10 +214,9 @@ Deno.serve(async (req) => {
 
   const { error } = await supabase.from("analytics_events").insert(row);
   if (error) {
-    return new Response(`insert failed: ${error.message}`, {
-      status: 500,
-      headers: corsHeaders,
-    });
+    // Sem a mensagem do Postgres na resposta (endpoint anônimo).
+    console.error("[track] insert failed", error.code ?? "unknown");
+    return new Response("insert failed", { status: 500, headers: corsHeaders });
   }
 
   return new Response(null, { status: 204, headers: corsHeaders });
