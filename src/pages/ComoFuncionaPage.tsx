@@ -73,9 +73,9 @@ export default function ComoFuncionaPage() {
   const { settings } = useSiteSettings();
 
   useSeo({
-    title: "Como funciona a reforma completa de apartamento em SP | Bewild",
+    title: "Arquitetura, engenharia e obra em um contrato só em SP | Bewild",
     description:
-      "Arquitetura e engenharia sob um único contrato: projeto 3D, documentação, obra com equipe própria e entrega do apartamento pronto em São Paulo.",
+      "Arquitetura e engenharia sob um único contrato: projeto arquitetônico 3D, documentação técnica (ART/RRT), obra com equipe própria e entrega do apartamento pronto em São Paulo.",
     canonicalPath: "/como-funciona",
     ogType: "website",
     jsonLd: settings

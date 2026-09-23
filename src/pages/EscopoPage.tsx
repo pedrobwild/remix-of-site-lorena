@@ -52,9 +52,9 @@ export default function EscopoPage() {
   const resultRef = useRef<HTMLDivElement>(null);
 
   useSeo({
-    title: "Escopo de reforma com IA para apartamento em SP | Bewild",
+    title: "Escopo de arquitetura e reforma para apartamento em SP | Bewild",
     description:
-      "Descreva seu apartamento e seu objetivo e receba na hora uma recomendação de escopo de reforma, prazo de referência e próximos passos com a Bewild.",
+      "Descreva seu apartamento e seu objetivo e receba na hora uma recomendação de escopo de arquitetura, engenharia e reforma, prazo de referência e próximos passos com a Bewild.",
     canonicalPath: "/escopo",
     ogType: "website",
     jsonLd: settings

@@ -95,7 +95,7 @@ export default function ReformaCoberturaSpPage() {
   useSeo({
     title: "Reforma de cobertura em São Paulo | Projeto, obra e mobília — Bewild",
     description:
-      "Reforma completa de cobertura em São Paulo: projeto 3D, obra, terraço, marcenaria sob medida e mobília em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia.",
+      "Reforma completa de cobertura em São Paulo com arquitetura e engenharia próprias: projeto arquitetônico 3D, obra, terraço, marcenaria sob medida e mobília em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia.",
     canonicalPath: CANONICAL,
     ogType: "website",
     jsonLd: settings

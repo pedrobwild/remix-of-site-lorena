@@ -112,7 +112,7 @@ export default function ReformaStudioSpPage() {
   useSeo({
     title: "Reforma de studio em São Paulo para morar ou alugar | Bewild",
     description:
-      "Reforma completa de studio em São Paulo, pronta para morar ou para short stay: projeto, obra, marcenaria e mobília em um contrato, com preço fechado, prazo em contrato e 5 anos de garantia.",
+      "Reforma completa de studio em São Paulo, pronta para morar ou para short stay, com arquitetura e engenharia próprias: projeto arquitetônico, obra, marcenaria e mobília em um contrato, com preço fechado, prazo em contrato e 5 anos de garantia.",
     canonicalPath: CANONICAL,
     ogType: "website",
     jsonLd: settings
