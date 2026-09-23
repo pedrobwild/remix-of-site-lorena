@@ -200,8 +200,29 @@ export default function FaqAdminPage() {
     <AdminLayout
       active="faq"
       title="FAQ"
-      description="Gerencie as perguntas frequentes que aparecem na home e em /faq."
+      description="Gerencie as perguntas frequentes da home e da página /faq."
     >
+      <div className="admin-toolbar" style={{ gap: 8 }}>
+        <button
+          type="button"
+          className={`admin-btn${aba === "site" ? " admin-btn--primary" : ""}`}
+          onClick={() => setAba("site")}
+        >
+          Página /faq
+        </button>
+        <button
+          type="button"
+          className={`admin-btn${aba === "home" ? " admin-btn--primary" : ""}`}
+          onClick={() => setAba("home")}
+        >
+          FAQ da home
+        </button>
+      </div>
+
+      {aba === "site" && <FaqKbManager />}
+
+      {aba === "home" && (
+        <>
       <div className="admin-toolbar">
         <div className="admin-toolbar__filters">
           <input
