@@ -28,6 +28,7 @@ const MIDIA = [
 
 export default function MarcasParceriasPage() {
   const { settings } = useSiteSettings();
+  const incorporadorasOn = useIncorporadorasEnabled();
 
   useSeo({
     title: "Marcas, parcerias e Bewild na mídia | Bewild",
