@@ -294,3 +294,15 @@
 .guia-root .bwa-fw-field input::placeholder, .guia-root .bwa-fw-field textarea::placeholder { color: rgba(255, 255, 255, .45); }
 .guia-root .bwa-fw-field input:focus-visible, .guia-root .bwa-fw-field textarea:focus-visible { outline: 2px solid #5FB2DD; outline-offset: 2px; }
 .guia-root .bwa-footer-whats .bwa-button { justify-self: start; }
+
+/* Movimento reduzido: desliga animações e transições de todo o guia (WCAG 2.2 AA). */
+@media (prefers-reduced-motion: reduce) {
+  .guia-root *,
+  .guia-root *::before,
+  .guia-root *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
