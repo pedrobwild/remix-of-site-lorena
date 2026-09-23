@@ -141,6 +141,7 @@ export default function GuiaInvestidorPage() {
 
   return (
     <div className="guia-root min-h-screen">
+      <a className="bwa-skip" href="#main">Pular para o conteúdo</a>
       {/* Respeita "reduzir movimento" do sistema em todas as animações do guia. */}
       <MotionConfig reducedMotion="user">
         <BairroProvider>
@@ -228,7 +229,7 @@ const phase = (n: number) => PHASES[n - 1];
 function GuiaConteudo() {
   return (
     <>
-      <main className="lg:ml-[60px] w-full flex flex-col items-center pb-24 lg:pb-8 pt-16">
+      <main id="main" tabIndex={-1} className="lg:ml-[60px] w-full flex flex-col items-center pb-24 lg:pb-8 pt-16">
         {/* ═══ HERO ═══ */}
         <div className="w-full">
           <div className="max-w-[1280px] mx-auto px-5 lg:px-10 py-0 lg:py-10">

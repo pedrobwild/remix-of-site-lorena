@@ -1,15 +1,18 @@
 import { useEffect, useRef } from "react";
+import { Accessibility } from "lucide-react";
 import { openCookiePreferences } from "@/lib/cookieConsent";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import BwaWhatsForm from "@/components/BwaWhatsForm";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import { isExternalHref, safeHref } from "@/lib/safeUrl";
+import { useIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
 
 /**
  * BwaFooter — Footer .bwa unificado, idêntico ao da home. Usado em toda
  * página pública fora da home. Depende do CSS injetado por BwaNav.
  */
 export default function BwaFooter() {
+  const incorporadorasOn = useIncorporadorasEnabled();
   const raRef = useRef<HTMLDivElement>(null);
   // LinkedIn: o do admin (site_settings.linkedin_url) quando configurado,
   // senão a página oficial. Validado — o valor do banco vira href.
@@ -59,8 +62,10 @@ export default function BwaFooter() {
               <a href="/contato">Contato</a>
               <a href="/escopo">Escopo com IA</a>
               <a href="/orcamento">Orçamento</a>
-              <a href="/parceiros">Parceiros</a>
-              <a href="/indique-um-amigo">Indique um amigo</a>
+              <a href="/parceiros">Parceiros: clientes e corretores</a>
+              {incorporadorasOn && (
+                <a href="/parceiros/incorporadoras">Parceiros: incorporadoras</a>
+              )}
               <a href="/marcas-e-parcerias">Marcas e parcerias</a>
             </nav>
           </div>
@@ -76,6 +81,10 @@ export default function BwaFooter() {
               )}
               <a href={`mailto:${CONTACT.email}`}>e-mail</a>
               <a href="/privacidade">Política de privacidade</a>
+              <a href="/acessibilidade" className="bwa-footer-a11y">
+                <Accessibility size={16} aria-hidden="true" />
+                Acessibilidade
+              </a>
               <button type="button" className="bwa-footer-cookie-prefs" onClick={openCookiePreferences}>Preferências de cookies</button>
             </div>
             <div className="bwa-footer-seals">

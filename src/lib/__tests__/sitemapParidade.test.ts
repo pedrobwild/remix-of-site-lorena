@@ -41,6 +41,7 @@ const ROTAS_INDEXAVEIS = [
   { path: "/marcas-e-parcerias", priority: "0.7", changefreq: "monthly" },
   { path: "/guia-do-investidor", priority: "0.8", changefreq: "monthly" },
   { path: "/privacidade", priority: "0.3", changefreq: "yearly" },
+  { path: "/acessibilidade", priority: "0.3", changefreq: "yearly" },
 ];
 
 const script = read("scripts/generate-sitemap.mjs");

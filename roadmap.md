@@ -6,3 +6,7 @@
 - [x] Expandir corpo pré-renderizado do /guia-do-investidor (scripts/prerenderGuia.ts): seções com texto real dos componentes, tabela de bairros, MODIFIED = 2026-09-22 — build OK (dist/guia-do-investidor/index.html 50,6 KB); não publicado
 - [ ] Publicar o guia expandido quando o usuário pedir
 - [ ] Avisar o usuário quando as páginas aparecerem nos resultados de busca — indexadas; posição/cliques acompanhar via Search Console (desempenho) ou novo check quando o usuário pedir
+- [ ] Publicar a correção do ícone (aba e celular) — o Matheus publica
+- [x] Rodapé Parceiros (clientes e corretores / incorporadoras)
+- [x] Guia: link de pular + movimento reduzido
+- [x] Página /acessibilidade com link no rodapé

@@ -28,6 +28,7 @@ import { isIncorporadorasEnabled } from "./lib/incorporadorasFlag";
 import IndiquePage from "./pages/IndiquePage";
 import MarcasParceriasPage from "./pages/MarcasParceriasPage";
 import PrivacidadePage from "./pages/PrivacidadePage";
+import AcessibilidadePage from "./pages/AcessibilidadePage";
 import LpObraPage from "./pages/LpObraPage";
 import LpPanfletoPage from "./pages/LpPanfletoPage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -117,6 +118,7 @@ export function renderRoute(route: Route) {
       </Suspense>
     );
   if (route.name === "privacidade") return <PrivacidadePage />;
+  if (route.name === "acessibilidade") return <AcessibilidadePage />;
   if (route.name === "lp-obra") return <LpObraPage />;
   if (route.name === "lp-panfleto") return <LpPanfletoPage />;
   if (route.name === "admin-login")
