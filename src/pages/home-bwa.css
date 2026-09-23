@@ -4886,3 +4886,7 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
 .bwa-wf2-stage {
   grid-template-columns: 1fr !important;
 }
+
+/* Link de acessibilidade no rodapé: símbolo à esquerda (LBI, art. 63, § 1º). */
+.bwa-footer .bwa-footer-a11y{display:inline-flex;align-items:center;gap:6px;width:fit-content}
+.bwa-footer .bwa-footer-a11y svg{flex:none;color:currentColor}
