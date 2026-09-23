@@ -83,7 +83,7 @@
   margin: 12px 0 10px;
 }
 
-.bwa-parc-seal p:last-child {
+.bwa-parc-seal p:not(.bwa-label) {
   margin: 0;
   color: var(--bwa-ink-soft);
   font-size: 15px;
