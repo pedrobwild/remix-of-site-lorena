@@ -4873,17 +4873,12 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
 .bwa-wf2-copy > .bwa-wf2-thesis,
 .bwa-wf2-copy > .bwa-text-link,
 .bwa-wf2-question-head,
-.bwa-wf2-questions,
-.bwa-wf2-stage-copy {
+.bwa-wf2-questions {
   display: none !important;
 }
 
 .bwa-wf2-head {
   margin-bottom: clamp(40px, 5vw, 72px) !important;
-}
-
-.bwa-wf2-stage {
-  grid-template-columns: 1fr !important;
 }
 
 /* Link de acessibilidade no rodapé: símbolo à esquerda (LBI, art. 63, § 1º). */
@@ -5224,7 +5219,7 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
   position: relative;
   align-items: center;
   border-bottom: 1px solid rgba(26, 35, 50, .13);
-  background-image: repeating-linear-gradient(to right, transparent 0, transparent calc((100% - min(38%, 340px)) / 10 - 1px), rgba(26, 35, 50, .09) calc((100% - min(38%, 340px)) / 10 - 1px), rgba(26, 35, 50, .09) calc((100% - min(38%, 340px)) / 10));
+  background: var(--bwa-white);
 }
 
 .bwa-gantt-copy {
