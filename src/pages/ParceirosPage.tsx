@@ -303,6 +303,28 @@ export default function ParceirosPage() {
       lead_source: dados.origem || null,
     };
 
+    // Registra a solicitação no painel /admin/indicacoes.
+    void supabase
+      .from("partner_referrals")
+      .insert({
+        partner_name: dados.nome,
+        partner_type: dados.tipo,
+        company: dados.empresa || null,
+        document: dados.documento || null,
+        whatsapp: dados.whats,
+        email: dados.mail || null,
+        region: dados.regiao,
+        units: dados.unidades || null,
+        origin: dados.origem || null,
+        message: linhas.join("\n"),
+        landing_path: "/parceiros",
+        referrer: typeof document !== "undefined" ? document.referrer || null : null,
+        user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+      })
+      .then(({ error }) => {
+        if (error) console.error("[partner_referrals] insert failed", error);
+      });
+
     let delivered = false;
     try {
       const result = await Promise.race([
