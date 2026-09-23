@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 import BewildLogo from "@/components/BewildLogo";
+import { NAV_PARCEIROS } from "@/content/incorporadoras";
+import { useIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
 import { withUtm } from "@/lib/utm";
 import homeBwaCssUrl from "../pages/home-bwa.css?url";
 import bwaInternalCssUrl from "../pages/bwa-internal.css?url";
@@ -23,6 +25,9 @@ const FONTS_HREF =
  */
 export default function BwaNav() {
   const ref = useRef<HTMLDivElement>(null);
+  // "Incorporadoras" só entra no menu com a flag ligada ou em prévia interna.
+  const incorporadorasOn = useIncorporadorasEnabled();
+  const itensParceiros = NAV_PARCEIROS.items.filter((item) => !item.gated || incorporadorasOn);
 
   useEffect(() => {
     const marker1 = "data-bwa-home-css";
@@ -92,7 +97,27 @@ export default function BwaNav() {
             <a href="/conteudos">Blog</a>
             <a href="/guia-do-investidor">Guia do Investidor</a>
             <a href="/faq">FAQ</a>
-            <a href="/parceiros">Parceiros</a>
+            {/* Disclosure, não role="menu": são links de navegação comuns. */}
+            <div className="bwa-nav-dd" data-nav-dd>
+              <button
+                className="bwa-nav-dd-button"
+                type="button"
+                aria-expanded="false"
+                aria-controls="bwa-nav-dd-parceiros"
+                data-nav-dd-button
+              >
+                {NAV_PARCEIROS.label}
+                <span className="bwa-nav-dd-chev" aria-hidden="true" />
+              </button>
+              <div className="bwa-nav-dd-panel" id="bwa-nav-dd-parceiros" data-nav-dd-panel>
+                {itensParceiros.map((item) => (
+                  <a key={item.href} href={item.href} data-cta={item.cta}>
+                    <span className="bwa-nav-dd-title">{item.title}</span>
+                    <span className="bwa-nav-dd-desc">{item.desc}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
             <a href="/contato">Contato</a>
           </nav>
 
@@ -125,7 +150,12 @@ export default function BwaNav() {
           <a href="/conteudos">Blog</a>
           <a href="/guia-do-investidor">Guia do Investidor</a>
           <a href="/faq">FAQ</a>
-          <a href="/parceiros">Parceiros</a>
+          <p className="bwa-menu-group-label">{NAV_PARCEIROS.label}</p>
+          {itensParceiros.map((item) => (
+            <a className="bwa-menu-sub" key={item.href} href={item.href} data-cta={item.cta}>
+              {item.title}
+            </a>
+          ))}
           <a href="/contato">Contato</a>
           <a href={withUtm("/orcamento")}>Solicitar orçamento</a>
         </nav>

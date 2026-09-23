@@ -22,6 +22,7 @@
  * `[data-scope-item]` nem `[data-story-step]` — e `initBwaFaqAccordions`,
  * que nenhuma página chamava (os acordeões internos são React).
  */
+import { isIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
 import { withUtm } from "@/lib/utm";
 import { trackEvent } from "@/lib/ga4";
 import { prefersReducedMotion } from "@/lib/reducedMotion";
@@ -108,6 +109,142 @@ function inertOutside(keep: Element[]): Cleanup {
 }
 
 /* =========================================================================
+ * Dropdown "Parceiros" do menu desktop (padrão disclosure, sem role="menu").
+ * Vale para os dois headers: o da home (HTML estático) e o BwaNav (JSX).
+ * O item "Incorporadoras" nasce com `hidden` no HTML da home e só aparece
+ * quando a flag/prévia de incorporadoras está ligada.
+ * ========================================================================= */
+function installNavDropdowns(root: HTMLElement, signal: AbortSignal): Cleanup {
+  const wrappers = Array.from(root.querySelectorAll<HTMLElement>("[data-nav-dd]"));
+  const incorpOn = isIncorporadorasEnabled();
+  // Itens condicionais do menu (desktop e mobile) só aparecem com a flag ou em prévia.
+  if (incorpOn) {
+    root
+      .querySelectorAll<HTMLElement>("[data-incorp-gated]")
+      .forEach((el) => el.removeAttribute("hidden"));
+  }
+  if (!wrappers.length) return NOOP;
+
+  const closers: Cleanup[] = [];
+  const canHover =
+    typeof window.matchMedia === "function" ? window.matchMedia("(hover: hover)").matches : false;
+
+  for (const wrapper of wrappers) {
+    const button = wrapper.querySelector<HTMLButtonElement>("[data-nav-dd-button]");
+    const panel = wrapper.querySelector<HTMLElement>("[data-nav-dd-panel]");
+    if (!button || !panel) continue;
+
+    let open = false;
+    let closeTimer = 0;
+    // Em telas com mouse o painel já abre no hover: o primeiro clique não pode fechá-lo.
+    let abertoPorHover = false;
+
+    const setOpen = (next: boolean, restoreFocus = false) => {
+      window.clearTimeout(closeTimer);
+      if (next === open) return;
+      open = next;
+      wrapper.classList.toggle("bwa-open", next);
+      button.setAttribute("aria-expanded", String(next));
+      if (!next && restoreFocus) button.focus({ preventScroll: true });
+    };
+
+    setOpen(false);
+    button.setAttribute("aria-expanded", "false");
+    closers.push(() => setOpen(false));
+
+    // Clique e toque: o próprio <button> já responde a Enter e Espaço.
+    button.addEventListener(
+      "click",
+      () => {
+        if (abertoPorHover) {
+          abertoPorHover = false;
+          setOpen(true);
+          return;
+        }
+        setOpen(!open);
+      },
+      { signal },
+    );
+    button.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key === "ArrowDown") {
+          event.preventDefault();
+          setOpen(true);
+          focusablesIn([panel])[0]?.focus({ preventScroll: true });
+        }
+      },
+      { signal },
+    );
+    wrapper.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key === "Escape" && open) {
+          event.preventDefault();
+          setOpen(false, true);
+        }
+      },
+      { signal },
+    );
+    // O foco saiu do dropdown (Tab para o próximo link do menu): fecha.
+    wrapper.addEventListener(
+      "focusout",
+      (event) => {
+        const next = event.relatedTarget;
+        if (!(next instanceof Node) || !wrapper.contains(next)) setOpen(false);
+      },
+      { signal },
+    );
+    // Navegou por um item: fecha antes de a SPA trocar de página.
+    panel.addEventListener(
+      "click",
+      (event) => {
+        if (event.target instanceof Element && event.target.closest("a")) setOpen(false);
+      },
+      { signal },
+    );
+
+    if (canHover) {
+      wrapper.addEventListener(
+        "mouseenter",
+        () => {
+          if (!open) abertoPorHover = true;
+          setOpen(true);
+        },
+        { signal },
+      );
+      wrapper.addEventListener(
+        "mouseleave",
+        () => {
+          window.clearTimeout(closeTimer);
+          closeTimer = window.setTimeout(() => {
+            abertoPorHover = false;
+            setOpen(false);
+          }, 220);
+        },
+        { signal },
+      );
+    }
+  }
+
+  const closeAll = () => closers.forEach((c) => c());
+  // Clique fora e navegação da SPA fecham qualquer painel aberto.
+  document.addEventListener(
+    "pointerdown",
+    (event) => {
+      const target = event.target;
+      if (target instanceof Node && wrappers.some((w) => w.contains(target))) return;
+      closeAll();
+    },
+    { signal },
+  );
+  window.addEventListener("popstate", closeAll, { signal });
+  window.addEventListener("lovable:navigate", closeAll, { signal });
+
+  return closeAll;
+}
+
+/* =========================================================================
  * Header: estado "rolado" + menu mobile acessível.
  * Menu aberto: foco vai para o primeiro link, Tab fica preso no header +
  * menu, o resto da página fica `inert`, Esc fecha e devolve o foco ao botão.
@@ -117,6 +254,7 @@ function installNavChrome(root: HTMLElement, signal: AbortSignal): Cleanup {
   const nav = root.querySelector<HTMLElement>("[data-nav]");
   const button = root.querySelector<HTMLButtonElement>("[data-menu-button]");
   const menu = root.querySelector<HTMLElement>("[data-mobile-menu]");
+  const closeDropdowns = installNavDropdowns(root, signal);
 
   if (nav) {
     const updateNav = () => nav.classList.toggle("bwa-scrolled", window.scrollY > 28);
@@ -124,7 +262,7 @@ function installNavChrome(root: HTMLElement, signal: AbortSignal): Cleanup {
     window.addEventListener("scroll", updateNav, { passive: true, signal });
   }
 
-  if (!button || !menu) return NOOP;
+  if (!button || !menu) return closeDropdowns;
 
   const keep = nav ? [nav, menu] : [button, menu];
   let open = false;
@@ -182,7 +320,10 @@ function installNavChrome(root: HTMLElement, signal: AbortSignal): Cleanup {
     { signal },
   );
 
-  return () => setOpen(false);
+  return () => {
+    setOpen(false);
+    closeDropdowns();
+  };
 }
 
 /* =========================================================================

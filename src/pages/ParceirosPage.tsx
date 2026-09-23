@@ -15,6 +15,9 @@ import {
 } from "@/lib/leadForm";
 import { formatBrPhone, isValidBrPhone, normalizeBrPhoneDigits } from "@/lib/phone";
 import { supabase } from "@/integrations/supabase/client";
+import { PARCEIROS_WHEN_INCORP_ON } from "@/content/incorporadoras";
+import { isIncorporadorasPreview, useIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
+import { usePartnerCase } from "@/lib/usePartnerCase";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import {
   browserUserAgent,
@@ -350,10 +353,19 @@ export default function ParceirosPage() {
     });
   }
 
+  // Com a página de incorporadoras no ar, a /parceiros deixa de falar por ela.
+  const incorporadorasOn = useIncorporadorasEnabled();
+  const { data: casoLeal } = usePartnerCase("leal-moreira");
+  // Com a página própria no ar, incorporadora não se cadastra por aqui.
+  const tiposVisiveis = incorporadorasOn ? TIPOS.filter((t) => t !== "Incorporadora") : TIPOS;
+  const mostrarStats = !!casoLeal && (casoLeal.published || isIncorporadorasPreview());
+  const statsLeal = mostrarStats ? casoLeal.stats.slice(0, 3) : [];
+
   useSeo({
     title: "Programa de indicações para parceiros profissionais | Bewild",
-    description:
-      "Indique clientes para a Bewild, acompanhe cada oportunidade e receba comissão conforme o termo. Programa para corretores, imobiliárias, incorporadoras, arquitetos e administradoras.",
+    description: incorporadorasOn
+      ? PARCEIROS_WHEN_INCORP_ON.seoDescription
+      : "Indique clientes para a Bewild, acompanhe cada oportunidade e receba comissão conforme o termo. Programa para corretores, imobiliárias, incorporadoras, arquitetos e administradoras.",
     keywords:
       "escritório de arquitetura e engenharia em SP, reforma de apartamento em SP, parceria corretor reforma, indicação reforma comissão, reforma de studio para investidor, reforma apartamento compacto São Paulo, incorporadora reforma pós-chaves, custo de reforma, Bewild parceiros",
     canonicalPath: "/parceiros",
@@ -383,9 +395,9 @@ export default function ParceirosPage() {
                 Indique um cliente. <em>A Bewild entrega e você recebe.</em>
               </h1>
               <p className="bwa-parc-lead">
-                Corretores, imobiliárias, incorporadoras, arquitetos e administradoras podem
-                indicar clientes para uma entrega completa de projeto, obra, marcenaria e mobília.
-                Quando o contrato indicado é pago, você recebe a comissão definida no seu termo.
+                {incorporadorasOn
+                  ? PARCEIROS_WHEN_INCORP_ON.heroLead
+                  : "Corretores, imobiliárias, incorporadoras, arquitetos e administradoras podem indicar clientes para uma entrega completa de projeto, obra, marcenaria e mobília. Quando o contrato indicado é pago, você recebe a comissão definida no seu termo."}
               </p>
               <div className="bwa-parc-hero-actions">
                 <a className="bwa-button" href="#cadastro" data-cta="parceiros-hero-cadastro">
@@ -450,8 +462,14 @@ export default function ParceirosPage() {
                   delas (reforma dos compradores e investidores), sem disputar a venda e sem
                   falar em nome da incorporadora.
                 </p>
-                <a href="#incorporadoras" data-cta="parceiros-caminho-incorporadora">
-                  Ver o modelo para incorporadoras <span aria-hidden="true">→</span>
+                <a
+                  href={incorporadorasOn ? "/parceiros/incorporadoras" : "#incorporadoras"}
+                  data-cta="parceiros-caminho-incorporadora"
+                >
+                  {incorporadorasOn
+                    ? PARCEIROS_WHEN_INCORP_ON.caminhoIncorporadorasLink
+                    : "Ver o modelo para incorporadoras"}{" "}
+                  <span aria-hidden="true">→</span>
                 </a>
               </article>
             </div>
@@ -582,56 +600,97 @@ export default function ParceirosPage() {
           </div>
         </section>
 
-        {/* 07 · Bloco B2B incorporadoras */}
-        <section className="bwa-parc-section bwa-parc-section--dark" id="incorporadoras">
-          <div className="bwa-shell">
-            <p className="bwa-label">07 · Para incorporadoras</p>
-            <h2>Antes das chaves e depois delas.</h2>
-            <div className="bwa-parc-two">
-              <article className="bwa-parc-card bwa-parc-card--dark">
-                <h3>Antes das chaves</h3>
-                <p>
-                  Padrão de acabamento e unidade decorada de studios e compactos, desenhados para
-                  o comprador investidor. O decorado mostra o imóvel pronto para render — e vende
-                  o estoque de unidades compactas que mais trava na prateleira.
-                </p>
-              </article>
-              <article className="bwa-parc-card bwa-parc-card--dark">
-                <h3>Depois das chaves</h3>
-                <p>
-                  Quase metade dos compradores de studio mora fora da capital e precisa de quem
-                  entregue o apartamento pronto à distância. A Bewild executa a reforma dos
-                  compradores do empreendimento com preço, prazo e garantia em contrato — sem
-                  disputar a venda e sem falar em nome da incorporadora.
-                </p>
-              </article>
+        {/* 07 · Bloco B2B incorporadoras. Com a página própria no ar, aqui
+            fica só um card curto que leva para ela. */}
+        {incorporadorasOn ? (
+          <section className="bwa-parc-section bwa-parc-section--dark" id="incorporadoras">
+            <div className="bwa-shell">
+              <p className="bwa-label">{PARCEIROS_WHEN_INCORP_ON.bloco07.label}</p>
+              <h2>{PARCEIROS_WHEN_INCORP_ON.bloco07.title}</h2>
+              <p className="bwa-parc-lead2">{PARCEIROS_WHEN_INCORP_ON.bloco07.text}</p>
+              <a
+                className="bwa-button bwa-button-light"
+                href="/parceiros/incorporadoras"
+                data-cta="parceiros-b2b-pagina"
+              >
+                {PARCEIROS_WHEN_INCORP_ON.bloco07.cta} <span aria-hidden="true">→</span>
+              </a>
             </div>
-            <a className="bwa-button bwa-button-light" href="#cadastro" data-cta="parceiros-b2b-cta">
-              Conversar sobre o empreendimento <span aria-hidden="true">→</span>
-            </a>
-          </div>
-        </section>
+          </section>
+        ) : (
+          <section className="bwa-parc-section bwa-parc-section--dark" id="incorporadoras">
+            <div className="bwa-shell">
+              <p className="bwa-label">07 · Para incorporadoras</p>
+              <h2>Antes das chaves e depois delas.</h2>
+              <div className="bwa-parc-two">
+                <article className="bwa-parc-card bwa-parc-card--dark">
+                  <h3>Antes das chaves</h3>
+                  <p>
+                    Padrão de acabamento e unidade decorada de studios e apartamentos, desenhados
+                    para o comprador investidor. O decorado mostra o imóvel pronto para render.
+                  </p>
+                </article>
+                <article className="bwa-parc-card bwa-parc-card--dark">
+                  <h3>Depois das chaves</h3>
+                  <p>
+                    Quase metade dos clientes da Bewild mora fora da capital e precisa de quem
+                    entregue o apartamento pronto à distância. A Bewild executa a reforma dos
+                    compradores do empreendimento com preço, prazo e garantia em contrato, sem
+                    disputar a venda e sem falar em nome da incorporadora.
+                  </p>
+                </article>
+              </div>
+              <a className="bwa-button bwa-button-light" href="#cadastro" data-cta="parceiros-b2b-cta">
+                Conversar sobre o empreendimento <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </section>
+        )}
 
         {/* 08 · Prova */}
         <section className="bwa-parc-section" id="prova">
           <div className="bwa-shell">
-            <p className="bwa-label">08 · Prova, não promessa</p>
+            <p className="bwa-label">08 · Parceria e resultado</p>
             <h2>Parceria e resultado com nome e número.</h2>
-            <div className="bwa-parc-two">
-              <article className="bwa-parc-card">
+            {incorporadorasOn && (
+              <a
+                className="bwa-parc-card bwa-parc-leal-hero"
+                href={PARCEIROS_WHEN_INCORP_ON.cardLealMoreira.href}
+                data-cta="parceiros-prova-leal-moreira"
+              >
                 <BewildLealMoreiraLogos />
-                <p>
-                  Programa de indicações vigente com a Leal Moreira, formalizado em termo de
-                  parceria: registro de indicação com validade de 12 meses, comissão sobre valor
-                  líquido recebido e relatório mensal de status, contratos e comissões.
-                </p>
-              </article>
+                <p>{PARCEIROS_WHEN_INCORP_ON.cardLealMoreira.text}</p>
+                {statsLeal.length > 0 && (
+                  <ul className="bwa-parc-facts">
+                    {statsLeal.map((st) => (
+                      <li key={st.label}>
+                        <strong>{st.value}</strong> {st.label}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <span className="bwa-parc-leal-cta">
+                  {PARCEIROS_WHEN_INCORP_ON.cardLealMoreira.cta} <span aria-hidden="true">→</span>
+                </span>
+              </a>
+            )}
+            <div className={incorporadorasOn ? "bwa-parc-two bwa-parc-two--single" : "bwa-parc-two"}>
+              {!incorporadorasOn && (
+                <article className="bwa-parc-card">
+                  <BewildLealMoreiraLogos />
+                  <p>
+                    Programa de indicações vigente com a Leal Moreira, formalizado em termo de
+                    parceria: registro de indicação com validade de 12 meses, comissão sobre valor
+                    líquido recebido e relatório mensal de status, contratos e comissões.
+                  </p>
+                </article>
+              )}
               <article className="bwa-parc-card">
-                <h3>Vivian · Vila Olímpia · 98% de ocupação em setembro</h3>
+                <h3>Vivian · Pinheiros · 98% de ocupação em setembro</h3>
                 <p>
-                  A Vivian comprou um studio na Vila Olímpia para renda de curta temporada e mora fora
-                  de São Paulo. A Bewild entregou projeto, obra, marcenaria e mobília à distância —
-                  e o imóvel opera com cerca de 98% de ocupação em setembro.
+                  A Vivian comprou um studio em Pinheiros para renda de curta temporada e mora fora
+                  de São Paulo. A Bewild entregou projeto, obra, marcenaria e mobília à distância, e
+                  o imóvel opera com cerca de 98% de ocupação em setembro.
                 </p>
               </article>
             </div>
@@ -789,7 +848,7 @@ export default function ParceirosPage() {
                     {...fieldErrorProps("parc-tipo", erro("tipo"))}
                   >
                     <option value="">Selecione</option>
-                    {TIPOS.map((tp) => (
+                    {tiposVisiveis.map((tp) => (
                       <option key={tp} value={tp}>
                         {tp}
                       </option>
