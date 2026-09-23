@@ -393,7 +393,9 @@
       display: grid;
     }
 
+    .bwa-nav-links .bwa-nav-dd-panel a,
     .bwa-nav-dd-panel a {
+      color: var(--bwa-white);
       display: grid;
       gap: 3px;
       padding: 10px 12px;
