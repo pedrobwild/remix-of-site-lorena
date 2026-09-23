@@ -1,6 +1,8 @@
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import BewildLealMoreiraLogos from "@/components/BewildLealMoreiraLogos";
+import { PARCEIROS_WHEN_INCORP_ON } from "@/content/incorporadoras";
+import { useIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
 import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./marcas-parcerias.css";
@@ -102,9 +104,19 @@ export default function MarcasParceriasPage() {
                   Programa de indicações em operação com a Leal Moreira, conectando compradores e investidores a uma entrega completa de projeto, obra, marcenaria e mobília.
                 </p>
                 <div className="bwa-marcas-partner-actions">
-                  <a className="bwa-button bwa-button-light" href="/parceiros">
-                    Conhecer o programa de parceiros <span aria-hidden="true">→</span>
-                  </a>
+                  {incorporadorasOn ? (
+                    <a
+                      className="bwa-button bwa-button-light"
+                      href="/parceiros/incorporadoras#leal-moreira"
+                      data-cta="marcas-leal-moreira-case"
+                    >
+                      {PARCEIROS_WHEN_INCORP_ON.marcasCta} <span aria-hidden="true">→</span>
+                    </a>
+                  ) : (
+                    <a className="bwa-button bwa-button-light" href="/parceiros">
+                      Conhecer o programa de parceiros <span aria-hidden="true">→</span>
+                    </a>
+                  )}
                   <a className="bwa-marcas-text-link" href="/contato">
                     Falar com a Bewild <span aria-hidden="true">→</span>
                   </a>

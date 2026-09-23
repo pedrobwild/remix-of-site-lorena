@@ -356,6 +356,8 @@ export default function ParceirosPage() {
   // Com a página de incorporadoras no ar, a /parceiros deixa de falar por ela.
   const incorporadorasOn = useIncorporadorasEnabled();
   const { data: casoLeal } = usePartnerCase("leal-moreira");
+  // Com a página própria no ar, incorporadora não se cadastra por aqui.
+  const tiposVisiveis = incorporadorasOn ? TIPOS.filter((t) => t !== "Incorporadora") : TIPOS;
   const mostrarStats = !!casoLeal && (casoLeal.published || isIncorporadorasPreview());
   const statsLeal = mostrarStats ? casoLeal.stats.slice(0, 3) : [];
 
@@ -847,7 +849,7 @@ export default function ParceirosPage() {
                     {...fieldErrorProps("parc-tipo", erro("tipo"))}
                   >
                     <option value="">Selecione</option>
-                    {TIPOS.map((tp) => (
+                    {tiposVisiveis.map((tp) => (
                       <option key={tp} value={tp}>
                         {tp}
                       </option>
