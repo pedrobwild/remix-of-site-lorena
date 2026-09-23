@@ -1,5 +1,3 @@
-import bewildLogo from "@/assets/bewild-logo-white.png.asset.json";
-import lealMoreiraLogo from "@/assets/leal-moreira-logo.png.asset.json";
 import "./bewild-leal-moreira-logos.css";
 
 type BewildLealMoreiraLogosProps = {
@@ -10,9 +8,18 @@ export default function BewildLealMoreiraLogos({ className = "" }: BewildLealMor
   return (
     <h3 className={`bwa-partner-logos ${className}`.trim()}>
       <span className="sr-only">Bewild e Leal Moreira</span>
-      <img src={bewildLogo.url} alt="" width={2000} height={600} decoding="async" />
+      <span className="bwa-partner-logos-bewild" aria-hidden="true">
+        <img src="/brand/bewild-logo-branca.png" alt="" width={1080} height={1350} decoding="async" />
+      </span>
       <span className="bwa-partner-logos-x" aria-hidden="true">×</span>
-      <img src={lealMoreiraLogo.url} alt="" width={316} height={67} decoding="async" />
+      <img
+        className="bwa-partner-logos-leal"
+        src="/brand/leal-moreira-logo.png"
+        alt=""
+        width={320}
+        height={35}
+        decoding="async"
+      />
     </h3>
   );
 }
