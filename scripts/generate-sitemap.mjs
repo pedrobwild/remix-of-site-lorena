@@ -4,6 +4,7 @@
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const BASE_URL = "https://bewild.com.br";
 const OUT = resolve("public/sitemap.xml");
@@ -21,7 +22,7 @@ function loadEnv() {
       const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/);
       if (!m) continue;
       const key = m[1];
-      let value = m[2].trim().replace(/^["']|["']$/g, "");
+      const value = m[2].trim().replace(/^["']|["']$/g, "");
       if (!env[key]) env[key] = value;
     }
   }
@@ -37,9 +38,19 @@ function day(...candidates) {
   return new Date(Math.max(...times)).toISOString().slice(0, 10);
 }
 
-function urlTag({ loc, lastmod, changefreq, priority }) {
-  const lm = lastmod ? `<lastmod>${lastmod}</lastmod>` : "";
-  return `  <url><loc>${loc}</loc>${lm}<changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
+/** Escapa texto para XML (slug vindo do banco não pode quebrar o sitemap). */
+export function xmlEscape(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+export function urlTag({ loc, lastmod, changefreq, priority }) {
+  const lm = lastmod ? `<lastmod>${xmlEscape(lastmod)}</lastmod>` : "";
+  return `  <url><loc>${xmlEscape(loc)}</loc>${lm}<changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
 }
 
 async function main() {
@@ -108,9 +119,14 @@ async function main() {
     { loc: `${BASE_URL}/escopo`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/como-funciona`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/onde-atuamos`, changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/reforma-de-apartamento-sao-paulo`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.9" },
+    { loc: `${BASE_URL}/reforma-de-studio-sao-paulo`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.9" },
+    { loc: `${BASE_URL}/reforma-de-cobertura-sao-paulo`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.9" },
+    { loc: `${BASE_URL}/marcenaria`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.9" },
     { loc: `${BASE_URL}/parceiros`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/marcas-e-parcerias`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.7" },
-    { loc: `${BASE_URL}/guia-do-investidor`, lastmod: "2026-09-22", changefreq: "monthly", priority: "0.8" },
+    // lastmod = GUIA_MODIFIED de src/guia/data/guiaMeta.ts (conferido em teste).
+    { loc: `${BASE_URL}/guia-do-investidor`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.8" },
     { loc: `${BASE_URL}/privacidade`, changefreq: "yearly", priority: "0.3" },
   ];
 
@@ -167,7 +183,7 @@ function updateLlmsTxt(posts) {
   const lines = posts
     .filter((p) => p.slug && p.title)
     .sort((x, y) => String(y.published_at || y.created_at || "").localeCompare(String(x.published_at || x.created_at || "")))
-    .map((p) => `- [${String(p.title).replace(/[\[\]]/g, "")}](/conteudos/${p.slug})`);
+    .map((p) => `- [${String(p.title).replace(/[[\]]/g, "")}](/conteudos/${p.slug})`);
   const next = `${txt.slice(0, a + start.length)}\n${lines.join("\n")}\n${txt.slice(b)}`;
   if (next !== txt) {
     writeFileSync(LLMS, next);
@@ -175,6 +191,9 @@ function updateLlmsTxt(posts) {
   }
 }
 
-main().catch((err) => {
-  warn(`erro inesperado: ${err?.message || err}`);
-});
+// Só roda quando executado como script (o teste importa xmlEscape/urlTag).
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((err) => {
+    warn(`erro inesperado: ${err?.message || err}`);
+  });
+}

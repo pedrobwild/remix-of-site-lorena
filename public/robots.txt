@@ -1,8 +1,15 @@
 # =========================================================
 # robots.txt — Bewild
-# Studios prontos para Airbnb e short stay (São Paulo)
+# Reforma de apartamentos e studios em São Paulo
 # Host canônico: https://bewild.com.br
 # =========================================================
+#
+# Um único grupo vale para todos os robôs de busca e de IA (Googlebot,
+# Bingbot, GPTBot, ClaudeBot, PerplexityBot…). Pela RFC 9309, o robô segue
+# SÓ o grupo mais específico que casar com o nome dele: um grupo
+# "User-agent: Googlebot" com apenas "Allow: /" fazia o Googlebot ignorar
+# todos os Disallow abaixo. Por isso não há grupos por robô, exceto o de
+# bloqueio total no fim. Robôs de IA seguem permitidos (citação da marca).
 
 User-agent: *
 Allow: /
@@ -10,6 +17,7 @@ Disallow: /admin
 Disallow: /admin/
 Disallow: /gpt-knowledge/
 Disallow: /bakeoff/
+Disallow: /mockups/
 Disallow: /*?*utm_
 Disallow: /*?*fbclid=
 Disallow: /*?*gclid=
@@ -31,60 +39,13 @@ Allow: /*.png$
 Allow: /*.ico$
 Allow: /*.woff2$
 
-# Crawlers principais
-User-agent: Googlebot
-Allow: /
-Disallow: /admin/
-
-User-agent: Googlebot-Image
-Allow: /
-Disallow: /admin/
-
-User-agent: Bingbot
-Allow: /
-Disallow: /admin/
-
-User-agent: DuckDuckBot
-Allow: /
-Disallow: /admin/
-
-User-agent: Applebot
-Allow: /
-Disallow: /admin/
-
-# LLMs / IA — permitido para citação da marca
-User-agent: GPTBot
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: Amazonbot
-Allow: /
-
-# SEO scrapers agressivos — bloqueados
+# SEO scrapers agressivos — bloqueados por completo
 User-agent: AhrefsBot
-Disallow: /
-
 User-agent: SemrushBot
-Disallow: /
-
 User-agent: MJ12bot
-Disallow: /
-
 User-agent: DotBot
-Disallow: /
-
 User-agent: BLEXBot
 Disallow: /
 
 # Sitemap
 Sitemap: https://bewild.com.br/sitemap.xml
-
-Host: https://bewild.com.br

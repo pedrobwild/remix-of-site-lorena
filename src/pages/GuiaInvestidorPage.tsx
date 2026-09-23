@@ -1,31 +1,35 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { CheckSquare, Menu, X } from "lucide-react";
+import { lazy, useCallback, useEffect, useRef } from "react";
+import { MotionConfig, motion } from "framer-motion";
+import { CheckSquare } from "lucide-react";
 
 import BewildLogo from "@/components/BewildLogo";
 import BwaFooter from "@/components/BwaFooter";
 import "@/styles/bwa-footer-shared.css";
-import { breadcrumbJsonLd, faqJsonLd, getCanonicalBase, useSeo } from "@/lib/useSeo";
+import { getCanonicalBase, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 
-import { Card, CardContent } from "@/guia/components/ui/card";
-import { BairroProvider, useBairroData } from "@/guia/hooks/useBairroData";
+import { BairroProvider } from "@/guia/hooks/useBairroData";
 import { GuideDecisionProvider } from "@/guia/hooks/useGuideDecision";
 import { setGlobalSessionId, setGlobalTrack, useGuideAnalytics } from "@/guia/hooks/useGuideAnalytics";
 import { useReadingProgress } from "@/guia/hooks/useReadingProgress";
 import { useScrollspy } from "@/guia/hooks/useScrollspy";
-import { PHASES, SECTIONS, fmt } from "@/guia/data/guide-data";
+import { PHASES, SECTION_IDS } from "@/guia/data/guide-data";
+import {
+  GUIA_DESCRIPTION, GUIA_KEYWORDS, GUIA_PATH, GUIA_TITLE, guiaJsonLd,
+} from "@/guia/data/guiaMeta";
 
 import LazyMapaBairrosEmbed from "@/guia/components/mapa/LazyMapaBairrosEmbed";
+import BairrosTable from "@/guia/components/mapa/BairrosTable";
 import AntiChecklistSection from "@/guia/components/guide/AntiChecklistSection";
 import AnuncioPrecificacaoSection from "@/guia/components/guide/AnuncioPrecificacaoSection";
 import CaseStudySection from "@/guia/components/guide/CaseStudySection";
 import ChecklistSection from "@/guia/components/guide/ChecklistSection";
 import DecoracaoSection from "@/guia/components/guide/DecoracaoSection";
 import EscolhaAtivoSection from "@/guia/components/guide/EscolhaAtivoSection";
-import FAQSection, { FAQ_ITEMS } from "@/guia/components/guide/FAQSection";
+import FAQSection from "@/guia/components/guide/FAQSection";
 import FinalCTASection from "@/guia/components/guide/FinalCTASection";
 import HeroSection from "@/guia/components/guide/HeroSection";
+import LazySection from "@/guia/components/guide/LazySection";
 import MercadoSection from "@/guia/components/guide/MercadoSection";
 import MidPageCTA from "@/guia/components/guide/MidPageCTA";
 import MobileMenu from "@/guia/components/guide/MobileMenu";
@@ -42,7 +46,9 @@ import TrustSignals from "@/guia/components/guide/TrustSignals";
 
 import "./guia-investidor.css";
 
+/** Seções pesadas (recharts + sliders / lista longa) carregam sob demanda. */
 const TendenciasSection = lazy(() => import("@/guia/components/guide/TendenciasSection"));
+const SimuladorSection = lazy(() => import("@/guia/components/guide/SimuladorSection"));
 
 /* ============================================================
  * GuiaInvestidorPage — /guia-do-investidor
@@ -61,13 +67,14 @@ const TendenciasSection = lazy(() => import("@/guia/components/guide/TendenciasS
  * Regra de conteúdo: nenhuma promessa de renda, ocupação ou
  * rentabilidade. Toda faixa numérica é retrato de mercado.
  *
- * Datas do JSON-LD são CONSTANTES (nunca new Date()).
+ * Título, descrição, datas, FAQ e JSON-LD vêm de src/guia/data/guiaMeta.ts —
+ * o mesmo módulo do HTML pré-renderizado (scripts/prerenderGuia.ts).
+ *
+ * Desempenho: o estado que muda com a rolagem (seção ativa, progresso) vive
+ * só em <GuiaChrome> (navegação). O conteúdo (<GuiaConteudo>) não tem
+ * estado e não re-renderiza ao rolar — mapa, gráficos e animações ficam
+ * quietos.
  * ============================================================ */
-
-const PUBLISHED = "2026-09-22";
-const MODIFIED = "2026-10-06";
-const H1 = "Guia do investidor em studios para short stay em São Paulo";
-const CANONICAL = "/guia-do-investidor";
 
 const NAV_LINKS = [
   { href: "/", label: "Início" },
@@ -77,10 +84,10 @@ const NAV_LINKS = [
   { href: "/contato", label: "Contato" },
 ];
 
-/** Cabeçalho próprio desta rota, no visual do guia. */
-function GuiaHeader() {
-  const [open, setOpen] = useState(false);
+const SCROLL_MILESTONES = [25, 50, 75, 100] as const;
 
+/** Cabeçalho próprio desta rota, no visual do guia (desktop; no mobile, MobileMenu). */
+function GuiaHeader() {
   return (
     <header className="glass-nav fixed top-0 left-0 right-0 z-40 hidden lg:block">
       <div className="max-w-[1280px] mx-auto px-5 lg:px-10 h-16 flex items-center justify-between gap-6">
@@ -101,17 +108,6 @@ function GuiaHeader() {
             Solicitar orçamento
           </a>
         </nav>
-
-        {/* fallback de acessibilidade em telas estreitas do desktop */}
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          className="sr-only"
-          aria-expanded={open}
-          aria-label="Abrir menu"
-        >
-          {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-        </button>
       </div>
     </header>
   );
@@ -120,16 +116,22 @@ function GuiaHeader() {
 export default function GuiaInvestidorPage() {
   return (
     <div className="guia-root min-h-screen">
-      <BairroProvider>
-        <GuideDecisionProvider>
-          <GuiaInvestidorInner />
-        </GuideDecisionProvider>
-      </BairroProvider>
+      {/* Respeita "reduzir movimento" do sistema em todas as animações do guia. */}
+      <MotionConfig reducedMotion="user">
+        <BairroProvider>
+          <GuideDecisionProvider>
+            <GuiaSeo />
+            <GuiaChrome />
+            <GuiaConteudo />
+          </GuideDecisionProvider>
+        </BairroProvider>
+      </MotionConfig>
     </div>
   );
 }
 
-function GuiaInvestidorInner() {
+/** <head> da rota: título, descrição, canonical e JSON-LD (Article + Breadcrumb + FAQ). */
+function GuiaSeo() {
   const { settings } = useSiteSettings();
   const base = getCanonicalBase(settings);
   const ogImage = settings?.seo_og_image || settings?.default_og_image || undefined;
@@ -138,46 +140,28 @@ function GuiaInvestidorInner() {
       ? ogImage
       : `${base}${ogImage.startsWith("/") ? "" : "/"}${ogImage}`
     : undefined;
-  const org = { "@type": "Organization", name: "Bewild", url: `${base}/` };
 
   useSeo({
-    title: "Guia do investidor: studio para short stay em SP — bairros, custo e prazo | Bewild",
-    description:
-      "Bairro a bairro em São Paulo — Pinheiros, Itaim Bibi, Jardim Paulista, Consolação, Vila Mariana, Moema, Brooklin e mais — com mapa, simulador, checklists e o que considerar em custo e prazo da reforma do studio.",
-    canonicalPath: CANONICAL,
+    title: GUIA_TITLE,
+    description: GUIA_DESCRIPTION,
+    canonicalPath: GUIA_PATH,
     ogType: "article",
-    keywords:
-      "guia do investidor short stay, studio para airbnb são paulo, custo de reforma de studio em sp, prazo de reforma de studio, quanto custa reformar studio são paulo, mapa de bairros short stay sp, short stay Pinheiros, short stay Itaim Bibi, short stay Jardim Paulista, short stay Consolação, short stay Bela Vista, short stay Moema, short stay Vila Mariana, short stay Barra Funda, short stay Campo Belo, short stay República, short stay Santana, short stay Brooklin, short stay Itaquera",
-    jsonLd: settings
-      ? [
-          {
-            "@context": "https://schema.org",
-            "@type": "Article",
-            headline: H1,
-            inLanguage: "pt-BR",
-            author: org,
-            publisher: org,
-            mainEntityOfPage: `${base}${CANONICAL}`,
-            ...(absOg ? { image: absOg } : {}),
-            datePublished: PUBLISHED,
-            dateModified: MODIFIED,
-          },
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Guia do investidor", path: CANONICAL },
-          ]),
-          faqJsonLd(FAQ_ITEMS),
-        ]
-      : undefined,
+    keywords: GUIA_KEYWORDS,
+    // Sempre presente (não espera o banco): o JSON-LD do pré-render é
+    // substituído no primeiro apply, sem janela sem dados estruturados.
+    jsonLd: guiaJsonLd({ image: absOg }),
   });
 
-  const sectionIds = SECTIONS.map((s) => s.id);
-  const activeId = useScrollspy(sectionIds);
+  return null;
+}
+
+/** Navegação e indicadores que dependem da rolagem. */
+function GuiaChrome() {
+  const activeId = useScrollspy(SECTION_IDS);
   const { trackEvent, sessionId } = useGuideAnalytics();
-  const { bairros } = useBairroData();
-  const scrollMilestones = useRef(new Set<string>());
-  const { scrollPercent, visitedSections, sectionIndex, sectionCount, resumeData, dismissResume } =
+  const { visitedSections, sectionIndex, sectionCount, resumeData, dismissResume } =
     useReadingProgress(activeId);
+  const scrollMilestones = useRef(new Set<number>());
 
   useEffect(() => {
     setGlobalTrack(trackEvent);
@@ -188,31 +172,37 @@ function GuiaInvestidorInner() {
     };
   }, [trackEvent, sessionId]);
 
-  useEffect(() => {
-    const handler = () => {
-      const pct = Math.round((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100);
-      for (const m of [25, 50, 75, 100]) {
-        if (pct >= m && !scrollMilestones.current.has(`scroll_${m}`)) {
-          scrollMilestones.current.add(`scroll_${m}`);
+  // Marcos de leitura (25/50/75/100%) no mesmo frame da barra de progresso.
+  const onProgress = useCallback(
+    (pct: number) => {
+      for (const m of SCROLL_MILESTONES) {
+        if (pct >= m && !scrollMilestones.current.has(m)) {
+          scrollMilestones.current.add(m);
           trackEvent(`scroll_${m}`, {});
         }
       }
-    };
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
-  }, [trackEvent]);
-
-  const phase = (n: number) => PHASES[n - 1];
+    },
+    [trackEvent],
+  );
 
   return (
     <>
       <GuiaHeader />
-      <ScrollProgressBar percent={scrollPercent} />
+      <ScrollProgressBar onProgress={onProgress} />
       <ResumeToast data={resumeData} onDismiss={dismissResume} />
       <TableOfContents activeId={activeId} visitedSections={visitedSections} />
       <MobileMenu activeId={activeId} sectionIndex={sectionIndex} sectionCount={sectionCount} />
       <MobileStickyBar />
+    </>
+  );
+}
 
+const phase = (n: number) => PHASES[n - 1];
+
+/** Conteúdo do guia — sem estado próprio: não re-renderiza com a rolagem. */
+function GuiaConteudo() {
+  return (
+    <>
       <main className="lg:ml-[60px] w-full flex flex-col items-center pb-24 lg:pb-8 pt-16">
         {/* ═══ HERO ═══ */}
         <div className="w-full">
@@ -231,49 +221,21 @@ function GuiaInvestidorInner() {
         {/* Mapa de bairros */}
         <div className="w-full">
           <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
-            <section id="mapa-bairros" className="scroll-mt-24 py-16 md:py-20">
+            <section id="mapa-bairros" className="scroll-mt-24 py-16 md:py-20" aria-labelledby="mapa-bairros-titulo">
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.5 }}
               >
-                <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">
+                <h2 id="mapa-bairros-titulo" className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">
                   Mapa de bairros rentáveis
                 </h2>
                 <p className="text-muted-foreground text-lg mb-6">
                   Analise a demanda, compare bairros e simule cenários de receita para studios em São Paulo.
                 </p>
                 <LazyMapaBairrosEmbed />
-                <Card className="border-border overflow-hidden mt-8">
-                  <CardContent className="p-0">
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm font-body">
-                        <thead className="bg-secondary">
-                          <tr>
-                            {["Bairro", "Diária mín.", "Ocupação média", "20–25 m²", "26–35 m²", "36–50 m²"].map((h) => (
-                              <th key={h} className="px-4 py-3 text-left font-semibold text-foreground whitespace-nowrap">
-                                {h}
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {bairros.map((b) => (
-                            <tr key={b.name} className="border-t border-border hover:bg-muted/50 transition-colors">
-                              <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">{b.name}</td>
-                              <td className="px-4 py-3 text-muted-foreground">R$ {fmt(b.dailyMin)}</td>
-                              <td className="px-4 py-3 text-muted-foreground">{b.avgOccupancy}%</td>
-                              <td className="px-4 py-3 text-muted-foreground">R$ {fmt(b.avgBySize["20–25 m²"])}</td>
-                              <td className="px-4 py-3 text-muted-foreground">R$ {fmt(b.avgBySize["26–35 m²"])}</td>
-                              <td className="px-4 py-3 font-semibold text-foreground">R$ {fmt(b.avgBySize["36–50 m²"])}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </CardContent>
-                </Card>
+                <BairrosTable />
               </motion.div>
             </section>
           </div>
@@ -307,7 +269,9 @@ function GuiaInvestidorInner() {
 
         <div className="w-full">
           <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
-            <SimuladorSectionLazy />
+            <LazySection nome="Simulador de Receita">
+              <SimuladorSection />
+            </LazySection>
           </div>
         </div>
 
@@ -350,15 +314,9 @@ function GuiaInvestidorInner() {
 
         <div className="w-full">
           <div className="max-w-[1280px] mx-auto px-5 lg:px-10">
-            <Suspense
-              fallback={
-                <div className="py-16">
-                  <div className="h-4 w-4 border-2 border-primary/40 border-t-primary rounded-full animate-spin mx-auto" />
-                </div>
-              }
-            >
+            <LazySection nome="Tendências 2026">
               <TendenciasSection />
-            </Suspense>
+            </LazySection>
           </div>
         </div>
 
@@ -400,7 +358,6 @@ function GuiaInvestidorInner() {
             <FinalCTASection />
           </div>
         </div>
-
       </main>
 
       {/* Aviso legal do guia — obrigatório, sem promessa de resultados */}
@@ -417,21 +374,5 @@ function GuiaInvestidorInner() {
       {/* Rodapé oficial do site (BwaFooter) — estilos .bwa escopados em .guia-root */}
       <BwaFooter />
     </>
-  );
-}
-
-/** Simulador é pesado (recharts + sliders); carrega sob demanda. */
-const SimuladorSectionInner = lazy(() => import("@/guia/components/guide/SimuladorSection"));
-function SimuladorSectionLazy() {
-  return (
-    <Suspense
-      fallback={
-        <div className="py-16">
-          <div className="h-4 w-4 border-2 border-primary/40 border-t-primary rounded-full animate-spin mx-auto" />
-        </div>
-      }
-    >
-      <SimuladorSectionInner />
-    </Suspense>
   );
 }

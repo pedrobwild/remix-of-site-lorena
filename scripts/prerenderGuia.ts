@@ -9,61 +9,32 @@
  * src/guia/components/guide/ (mesmos ids de âncora, listas e tabelas).
  * O React substitui o corpo ao montar.
  *
+ * Título, descrição, datas, FAQ, JSON-LD, tabela de bairros e checklist vêm
+ * dos MESMOS módulos que a SPA usa (src/guia/data/guiaMeta.ts, bairros.ts e
+ * checklist.ts) — dado puro, sem alias "@/", para rodar aqui em Node. Assim o
+ * HTML servido ao crawler e a página montada nunca divergem.
+ *
+ * O JSON-LD sai marcado com data-seo-managed="true": o useSeo da SPA remove
+ * os blocos marcados antes de inserir os seus, sem duplicar dados estruturados.
+ *
  * NUNCA pode quebrar o build: qualquer falha apenas imprime um aviso.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import type { Plugin } from "vite";
-
-const BASE_URL = "https://bewild.com.br";
-const PATH = "/guia-do-investidor";
-const URL_ABS = `${BASE_URL}${PATH}`;
-
-const TITLE = "Guia do investidor em studios para short stay em SP | Bewild";
-const DESCRIPTION =
-  "Como escolher o bairro, validar a conta, reformar e operar um studio para short stay em São Paulo. Mapa de bairros, simulador de receita, checklists e FAQ.";
-const KEYWORDS =
-  "guia do investidor short stay, studio para airbnb são paulo, investir em studio compacto, mapa de bairros short stay sp";
-const H1 = "Guia do investidor em studios para short stay em São Paulo";
-const PUBLISHED = "2026-09-22";
-const MODIFIED = "2026-09-22";
-const IMAGE = `${BASE_URL}/og_final_v2.jpg`;
-
-/** Espelha a FAQ renderizada em src/guia/components/guide/FAQSection.tsx. */
-const FAQ: Array<{ q: string; a: string }> = [
-  {
-    q: "Quanto custa um studio para short stay em São Paulo?",
-    a: "O investimento total costuma variar de R$ 250 mil a R$ 600 mil, dependendo do bairro, da metragem e do nível de acabamento. Studios de 25–35 m² em bairros como Pinheiros, Vila Mariana e Consolação são os mais procurados por quem busca equilíbrio entre preço de entrada e demanda.",
-  },
-  {
-    q: "Como estimar o retorno de um studio em Airbnb?",
-    a: "Não existe retorno garantido. O caminho é montar a conta com dados do próprio bairro: diária praticada, ocupação observada, custos fixos, limpeza, taxas de plataforma e vacância. O simulador desta página serve para testar cenários — otimista, provável e conservador — e não para prever resultado.",
-  },
-  {
-    q: "Preciso de CNPJ para alugar no Airbnb?",
-    a: "Não é obrigatório, mas costuma ser recomendado. Com CNPJ você emite nota fiscal, organiza a contabilidade e passa mais credibilidade. Vale conversar com um contador antes de decidir o regime.",
-  },
-  {
-    q: "Condomínio pode proibir Airbnb?",
-    a: "Pode restringir. O STJ entendeu que a convenção do condomínio pode limitar a locação por temporada. Leia a convenção e a ata antes de comprar e priorize prédios que permitem ou são neutros quanto ao uso.",
-  },
-  {
-    q: "Qual a ocupação média de um studio em São Paulo?",
-    a: "Nos bairros mais procurados, as bases públicas de mercado mostram ocupação entre 53% e 64% no período analisado. É um retrato do passado recente, não uma projeção do seu imóvel.",
-  },
-  {
-    q: "Vale a pena contratar uma administradora?",
-    a: "Com 1–2 unidades e tempo disponível, a autogestão funciona. Acima disso, ou sem disponibilidade, uma administradora (que costuma cobrar entre 15% e 25% da receita) pode fazer sentido. Compare o custo com as horas que você realmente tem.",
-  },
-  {
-    q: "Quanto custa a reforma de um studio?",
-    a: "Uma reforma bem dimensionada, sem demolições desnecessárias, costuma ficar entre R$ 15 mil e R$ 40 mil. Mobiliário e decoração somam outra faixa, de R$ 15 mil a R$ 60 mil, conforme o padrão escolhido.",
-  },
-  {
-    q: "Qual o melhor bairro para investir em short stay?",
-    a: "Depende do orçamento e do apetite a risco. Pinheiros, Consolação e Bela Vista aparecem com boa relação entre preço de entrada e demanda; Itaim Bibi e Jardim Paulista registram diárias mais altas, mas exigem investimento maior.",
-  },
-];
+import {
+  GUIA_DESCRIPTION,
+  GUIA_FAQ,
+  GUIA_H1,
+  GUIA_KEYWORDS,
+  GUIA_PATH,
+  GUIA_TITLE,
+  GUIA_URL,
+  guiaJsonLd,
+} from "../src/guia/data/guiaMeta";
+import { BAIRROS_ORDENADOS, FAIXAS_METRAGEM, ROI_AVISO } from "../src/guia/data/bairros";
+import { CHECKLIST_ITEMS, textoFaixasChecklist } from "../src/guia/data/checklist";
+import { fmtBRL, fmtPct } from "../src/guia/lib/format";
 
 /* ────────────────────────────────────────────────────────────────
    Corpo pré-renderizado — uma <section> por seção do guia, na mesma
@@ -80,22 +51,20 @@ type Bloco =
 
 type Secao = { id: string; h2: string; blocos: Bloco[] };
 
-/** Tabela de bairros — mesmos valores exibidos na tela (guide-data.ts). */
+/** Tabela de bairros — gerada da mesma base da tela (src/guia/data/bairros.ts). */
 const TABELA_BAIRROS: Bloco = {
   tipo: "table",
-  cabecalho: ["Bairro", "Diária mín.", "Diária máx.", "Ocupação média", "20–25 m²", "26–35 m²", "36–50 m²"],
-  linhas: [
-    ["Vila Mariana", "R$ 280", "R$ 420", "80%", "R$ 260", "R$ 330", "R$ 410"],
-    ["Pinheiros", "R$ 320", "R$ 480", "82%", "R$ 300", "R$ 380", "R$ 470"],
-    ["Consolação", "R$ 260", "R$ 390", "76%", "R$ 240", "R$ 310", "R$ 380"],
-    ["Bela Vista", "R$ 240", "R$ 370", "74%", "R$ 220", "R$ 290", "R$ 360"],
-    ["Itaim Bibi", "R$ 350", "R$ 520", "78%", "R$ 330", "R$ 420", "R$ 510"],
-    ["Moema", "R$ 300", "R$ 450", "77%", "R$ 280", "R$ 360", "R$ 440"],
-    ["Brooklin", "R$ 290", "R$ 430", "75%", "R$ 270", "R$ 350", "R$ 420"],
-    ["República", "R$ 200", "R$ 310", "72%", "R$ 185", "R$ 245", "R$ 300"],
-    ["Liberdade", "R$ 220", "R$ 340", "73%", "R$ 200", "R$ 270", "R$ 330"],
-    ["Vila Olímpia", "R$ 330", "R$ 500", "79%", "R$ 310", "R$ 400", "R$ 490"],
-  ],
+  cabecalho: ["Bairro", "Diária mín.", "Diária máx.", "Ocupação média", ...FAIXAS_METRAGEM],
+  linhas: BAIRROS_ORDENADOS.map((b) => [
+    b.nome,
+    fmtBRL(b.mercado.diariaMin),
+    fmtBRL(b.mercado.diariaMax),
+    fmtPct(b.mercado.ocupacao),
+    ...FAIXAS_METRAGEM.map((f) => {
+      const v = b.mercado.diariaPorMetragem?.[f];
+      return v === undefined ? "—" : fmtBRL(v);
+    }),
+  ]),
 };
 
 const SECOES: Secao[] = [
@@ -111,15 +80,20 @@ const SECOES: Secao[] = [
       {
         tipo: "p",
         texto:
-          "O ranking de rentabilidade ordena os bairros por ROI estimado, diária média, ocupação ou menor competição. Cada bairro exibe o número aproximado de studios no Airbnb, a faixa de diária em R$/noite, a ocupação média e a receita mensal estimada. ROI est. = retorno anual sobre investimento.",
+          `O ranking de rentabilidade ordena os bairros por ROI estimado, diária média, ocupação ou menor competição. Cada bairro exibe o número aproximado de studios no Airbnb, a faixa de diária em R$/noite, a ocupação média e a receita mensal de referência (diária média × 30 × ocupação, antes de custos). ${ROI_AVISO}`,
       },
       {
         tipo: "p",
         texto:
-          "A comparação permite selecionar até 3 bairros e confrontar diária média, faixa de diária, ocupação, ROI estimado, receita mensal, anúncios ativos, sazonalidade, perfil de demanda e competição.",
+          "A comparação permite selecionar até 3 bairros e confrontar diária média, faixa de diária, ocupação, ROI estimado, receita mensal, anúncios ativos, perfil de demanda e competição.",
       },
       { tipo: "h3", texto: "Diária e ocupação por bairro" },
       TABELA_BAIRROS,
+      {
+        tipo: "p",
+        texto:
+          "Faixas observadas de diária (R$/noite) e ocupação média de studios por bairro. “—” = a base não traz o recorte por metragem para o bairro.",
+      },
       {
         tipo: "links",
         itens: [
@@ -141,7 +115,7 @@ const SECOES: Secao[] = [
       {
         tipo: "p",
         texto:
-          "Metodologia de cálculo: a diária mínima e máxima são faixas observadas para studios do bairro selecionado, baseadas em dados de mercado. O multiplicador de decoração ajusta a faixa: Básico (1.0×) mantém valores base, Premium (1.2×) reflete studios com acabamento e fotos acima da média, Alto padrão (1.45×) reflete studios com design autoral e operação profissional. A metragem aplica ajuste adicional: studios abaixo de 25 m² recebem -8% e acima de 35 m² recebem +8%.",
+          "Metodologia de cálculo: a diária mínima e máxima são faixas observadas para studios do bairro selecionado, baseadas em dados de mercado. O multiplicador de decoração ajusta a faixa: Básico (1,0×) mantém valores base, Premium (1,2×) reflete studios com acabamento e fotos acima da média, Alto padrão (1,45×) reflete studios com design autoral e operação profissional. A metragem aplica ajuste adicional: studios abaixo de 25 m² recebem -8% e acima de 35 m² recebem +8%.",
       },
       {
         tipo: "p",
@@ -338,17 +312,17 @@ const SECOES: Secao[] = [
       {
         tipo: "p",
         texto:
-          "Informe bairro, metragem, ocupação estimada, diária atual (opcional — se não informar, usamos a média do bairro) e o objetivo: maximizar receita, estabilidade de ocupação ou posicionamento premium. Se informar o orçamento de reforma, o simulador calcula o payback da reforma.",
+          "Informe bairro, metragem, ocupação estimada, diária atual (opcional — se não informar, usamos a média do bairro para a faixa de metragem do studio) e o objetivo: maximizar receita (+5 p.p. de ocupação), estabilidade de ocupação (−10% na diária) ou posicionamento premium (−10 p.p. de ocupação e +20% na diária). A ocupação e a diária consideradas aparecem no resultado. Se informar o orçamento de reforma, o simulador calcula o payback da reforma.",
       },
       {
         tipo: "p",
         texto:
-          "Como funciona o rate boost: o cenário base usa a diária média do bairro (ou sua diária atual, se informada). +10% = decoração básica melhorada (pintura, iluminação, enxoval novo). +20% = decoração premium com fotos profissionais e mobília planejada. +30% = studio de alto padrão com design autoral, fotos de catálogo e operação otimizada. Cada nível é cumulativo ao anterior.",
+          "Como funciona o rate boost: o cenário base usa a diária média do bairro para a faixa de metragem do seu studio (ou a sua diária atual, se informada), já com o ajuste do objetivo escolhido. +10% = decoração básica melhorada (pintura, iluminação, enxoval novo). +20% = decoração premium com fotos profissionais e mobília planejada. +30% = studio de alto padrão com design autoral, fotos de catálogo e operação otimizada. Cada nível já inclui os itens do anterior, e o percentual é o aumento total sobre a diária base — os níveis não se somam.",
       },
       {
         tipo: "p",
         texto:
-          "O que o payback considera: o cálculo é simplificado — Payback = Orçamento de reforma ÷ Receita incremental mensal (diferença entre cenário com boost e cenário base). Não inclui custos operacionais como limpeza (~R$ 80–120/virada), taxa da plataforma (~15%), condomínio, IPTU ou imposto de renda. Para uma projeção completa, solicite um diagnóstico personalizado.",
+          "O que o payback considera: o cálculo é simplificado — Payback = Orçamento de reforma ÷ Receita incremental mensal (diferença entre o cenário com aumento de diária e o cenário base, com a mesma ocupação e o mesmo objetivo). Sem aumento de diária não há receita incremental, e o payback não é calculado. Não inclui custos operacionais como limpeza (~R$ 80–120/virada), taxa da plataforma (~15%), condomínio, IPTU ou imposto de renda. Para uma projeção completa, solicite um diagnóstico personalizado.",
       },
       {
         tipo: "links",
@@ -371,7 +345,7 @@ const SECOES: Secao[] = [
           "Limpeza — fator #1 global: 90% dos hóspedes consideram limpeza o critério mais importante na escolha. Limpeza impecável = reviews 5 estrelas.",
           "Check-in sem atrito — fechadura digital ou key box eliminam esperas e reclamações. Hóspedes corporativos chegam tarde — check-in autônomo é decisivo.",
           "Precisão do anúncio — fotos reais, descrição honesta e expectativa alinhada. Anúncios que entregam o que prometem têm 2x menos cancelamentos.",
-          "Avaliações e nota — acima de 4.8 você entra no topo das buscas. Cada 0.1 ponto acima de 4.5 pode aumentar sua taxa de conversão em até 12%.",
+          "Avaliações e nota — acima de 4,8 você entra no topo das buscas. Cada 0,1 ponto acima de 4,5 pode aumentar sua taxa de conversão em até 12%.",
           "Segurança e acessibilidade — portaria 24h, câmeras em áreas comuns, boa iluminação. Casais e turistas solo priorizam segurança acima do preço.",
           "Ambiente + trabalho + entretenimento — Wi-Fi rápido, mesa de trabalho, smart TV e boa acústica. Para estadias de 3+ dias, o setup do ambiente define a experiência.",
         ],
@@ -693,26 +667,8 @@ const SECOES: Secao[] = [
     h2: "Checklist do Investidor",
     blocos: [
       { tipo: "p", texto: "Avalie sua preparação antes de investir." },
-      {
-        tipo: "ul",
-        itens: [
-          "Localização com demanda comprovada",
-          "Condomínio permite short stay",
-          "Análise de concorrência feita",
-          "Orçamento de reforma definido",
-          "Projeção financeira validada",
-          "Fotos profissionais planejadas",
-          "Mobília funcional selecionada",
-          "Plano de precificação dinâmica",
-          "Gestão operacional definida",
-          "Documentação fiscal em ordem",
-        ],
-      },
-      {
-        tipo: "p",
-        texto:
-          "A pontuação mostra o nível de preparação: até 3 itens, Iniciante — você precisa amadurecer o projeto antes de investir. De 4 a 6, Em progresso — bom começo, resolva os itens pendentes para reduzir riscos. De 7 a 9, Quase pronto — poucos itens faltam para investir com segurança. Com os 10 itens, Pronto — seu projeto está maduro. Hora de executar.",
-      },
+      { tipo: "ul", itens: [...CHECKLIST_ITEMS] },
+      { tipo: "p", texto: textoFaixasChecklist() },
       {
         tipo: "links",
         itens: [
@@ -731,81 +687,56 @@ const attr = (value: string) =>
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 
+/**
+ * Substitui a primeira ocorrência de `pattern`. Usa função de substituição:
+ * com string, `$&`, `$'` e `$1` no texto seriam interpretados pelo replace.
+ */
+const substituir = (html: string, pattern: RegExp, valor: string) => html.replace(pattern, () => valor);
+
 function headFor(html: string): string {
-  const set = (pattern: RegExp, replacement: string) => {
-    html = html.replace(pattern, replacement);
+  const set = (pattern: RegExp, valor: string) => {
+    html = substituir(html, pattern, valor);
   };
 
-  set(/<title>[\s\S]*?<\/title>/, `<title>${attr(TITLE)}</title>`);
+  set(/<title>[\s\S]*?<\/title>/, `<title>${attr(GUIA_TITLE)}</title>`);
   set(
     /<meta\s+name="description"\s+content="[\s\S]*?"\s*\/?>/,
-    `<meta name="description" content="${attr(DESCRIPTION)}" />`,
+    `<meta name="description" content="${attr(GUIA_DESCRIPTION)}" />`,
   );
-  set(/<meta\s+name="keywords"[\s\S]*?\/>/, `<meta name="keywords" content="${attr(KEYWORDS)}" />`);
-  set(/<meta\s+name="DC.title"\s+content="[\s\S]*?"\s*\/?>/, `<meta name="DC.title" content="${attr(TITLE)}" />`);
-  set(/<link\s+rel="canonical"\s+href="[\s\S]*?"\s*\/?>/, `<link rel="canonical" href="${URL_ABS}" />`);
+  set(/<meta\s+name="keywords"[\s\S]*?\/>/, `<meta name="keywords" content="${attr(GUIA_KEYWORDS)}" />`);
+  set(/<meta\s+name="DC.title"\s+content="[\s\S]*?"\s*\/?>/, `<meta name="DC.title" content="${attr(GUIA_TITLE)}" />`);
+  set(/<link\s+rel="canonical"\s+href="[\s\S]*?"\s*\/?>/, `<link rel="canonical" href="${GUIA_URL}" />`);
   html = html.replace(
     /<link\s+rel="alternate"\s+hreflang="([\w-]+)"\s+href="[\s\S]*?"\s*\/?>/g,
-    (_m, lang: string) => `<link rel="alternate" hreflang="${lang}" href="${URL_ABS}" />`,
+    (_m, lang: string) => `<link rel="alternate" hreflang="${lang}" href="${GUIA_URL}" />`,
   );
   set(/<meta\s+property="og:type"\s+content="[\s\S]*?"\s*\/?>/, `<meta property="og:type" content="article" />`);
-  set(/<meta\s+property="og:url"\s+content="[\s\S]*?"\s*\/?>/, `<meta property="og:url" content="${URL_ABS}" />`);
+  set(/<meta\s+property="og:url"\s+content="[\s\S]*?"\s*\/?>/, `<meta property="og:url" content="${GUIA_URL}" />`);
   set(
     /<meta\s+property="og:title"\s+content="[\s\S]*?"\s*\/?>/,
-    `<meta property="og:title" content="${attr(TITLE)}" />`,
+    `<meta property="og:title" content="${attr(GUIA_TITLE)}" />`,
   );
   set(
     /<meta\s+property="og:description"\s+content="[\s\S]*?"\s*\/?>/,
-    `<meta property="og:description" content="${attr(DESCRIPTION)}" />`,
+    `<meta property="og:description" content="${attr(GUIA_DESCRIPTION)}" />`,
   );
   set(
     /<meta\s+name="twitter:title"\s+content="[\s\S]*?"\s*\/?>/,
-    `<meta name="twitter:title" content="${attr(TITLE)}" />`,
+    `<meta name="twitter:title" content="${attr(GUIA_TITLE)}" />`,
   );
   set(
     /<meta\s+name="twitter:description"\s+content="[\s\S]*?"\s*\/?>/,
-    `<meta name="twitter:description" content="${attr(DESCRIPTION)}" />`,
+    `<meta name="twitter:description" content="${attr(GUIA_DESCRIPTION)}" />`,
   );
 
-  const jsonLd = [
-    {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      headline: H1,
-      description: DESCRIPTION,
-      image: [IMAGE],
-      author: { "@type": "Organization", name: "Bewild" },
-      publisher: {
-        "@type": "Organization",
-        name: "Bewild",
-        logo: { "@type": "ImageObject", url: `${BASE_URL}/brand/bewild-logo.png` },
-      },
-      datePublished: PUBLISHED,
-      dateModified: MODIFIED,
-      mainEntityOfPage: { "@type": "WebPage", "@id": URL_ABS },
-      inLanguage: "pt-BR",
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Início", item: `${BASE_URL}/` },
-        { "@type": "ListItem", position: 2, name: "Guia do investidor", item: URL_ABS },
-      ],
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: FAQ.map((f) => ({
-        "@type": "Question",
-        name: f.q,
-        acceptedAnswer: { "@type": "Answer", text: f.a },
-      })),
-    },
-  ];
-
-  const block = `<script type="application/ld+json" data-prerender="guia">${JSON.stringify(jsonLd).replace(/</g, "\\u003c")}</script>\n</head>`;
-  return html.replace("</head>", block);
+  // Um bloco por objeto, como o useSeo faz; marcados para a SPA substituir.
+  const blocos = guiaJsonLd()
+    .map(
+      (obj) =>
+        `<script type="application/ld+json" data-seo-managed="true" data-prerender="guia">${JSON.stringify(obj).replace(/</g, "\\u003c")}</script>`,
+    )
+    .join("\n");
+  return substituir(html, /<\/head>/, `${blocos}\n</head>`);
 }
 
 function renderBloco(b: Bloco): string {
@@ -818,9 +749,12 @@ function renderBloco(b: Bloco): string {
       return `<ul>${b.itens.map((i) => `<li>${attr(i)}</li>`).join("")}</ul>`;
     case "table":
       return (
-        `<table><thead><tr>${b.cabecalho.map((h) => `<th>${attr(h)}</th>`).join("")}</tr></thead>` +
+        `<table><thead><tr>${b.cabecalho.map((h) => `<th scope="col">${attr(h)}</th>`).join("")}</tr></thead>` +
         `<tbody>${b.linhas
-          .map((linha) => `<tr>${linha.map((c) => `<td>${attr(c)}</td>`).join("")}</tr>`)
+          .map(
+            (linha) =>
+              `<tr>${linha.map((c, i) => (i === 0 ? `<th scope="row">${attr(c)}</th>` : `<td>${attr(c)}</td>`)).join("")}</tr>`,
+          )
           .join("")}</tbody></table>`
       );
     case "links": {
@@ -837,21 +771,26 @@ function bodyFor(html: string): string {
 
   const faq =
     `<section id="faq"><h2>Perguntas frequentes</h2>` +
-    FAQ.map((f) => `<h3>${attr(f.q)}</h3><p>${attr(f.a)}</p>`).join("") +
+    GUIA_FAQ.map((f) => `<h3>${attr(f.q)}</h3><p>${attr(f.a)}</p>`).join("") +
     `</section>`;
 
   const content =
     `<article data-prerender="guia-body">` +
-    `<nav><a href="/">Início</a> / <a href="${PATH}">Guia do investidor</a></nav>` +
-    `<h1>${attr(H1)}</h1>` +
-    `<p>${attr(DESCRIPTION)}</p>` +
+    `<nav><a href="/">Início</a> / <a href="${GUIA_PATH}">Guia do investidor</a></nav>` +
+    `<h1>${attr(GUIA_H1)}</h1>` +
+    `<p>${attr(GUIA_DESCRIPTION)}</p>` +
     secoes +
     faq +
     `<p><a href="/orcamento">Solicitar orçamento</a> · <a href="/portfolio">Portfólio de reformas em SP</a> · <a href="/conteudos">Conteúdos sobre reforma e short stay</a></p>` +
     `<p>Conteúdo informativo. As faixas de diária, ocupação e custo citadas são retratos de mercado do período analisado e não constituem promessa, garantia ou recomendação de investimento.</p>` +
     `</article>`;
 
-  return html.replace('<div id="root"></div>', `<div id="root">${content}</div>`);
+  return substituir(html, /<div id="root"><\/div>/, `<div id="root">${content}</div>`);
+}
+
+/** HTML final do guia a partir do dist/index.html (exportado para teste). */
+export function renderGuiaHtml(baseHtml: string): string {
+  return bodyFor(headFor(baseHtml));
 }
 
 export function prerenderGuia(): Plugin {
@@ -865,7 +804,7 @@ export function prerenderGuia(): Plugin {
           console.warn("[prerender-guia] dist/index.html não encontrado — nada gerado.");
           return;
         }
-        const html = bodyFor(headFor(readFileSync(distIndex, "utf8")));
+        const html = renderGuiaHtml(readFileSync(distIndex, "utf8"));
         const dirFile = resolve("dist/guia-do-investidor/index.html");
         mkdirSync(dirname(dirFile), { recursive: true });
         writeFileSync(dirFile, html, "utf8");

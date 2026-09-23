@@ -1,24 +1,24 @@
 import { createContext, useContext } from "react";
 
-import { BAIRRO_DATA, type BairroItem } from "../data/guide-data";
+import { BAIRROS_ORDENADOS, type Bairro } from "@/guia/data/bairros";
 
 /**
- * Versão estática do provedor de dados de bairro.
+ * Provedor dos dados de bairro do guia.
  *
  * O app original lia a tabela `bairro_airbnb_sp` do banco dele. Aqui a
- * página é editorial e usa a base já compilada em `guide-data.ts`.
+ * página é editorial e usa a base única compilada em
+ * `src/guia/data/bairros.ts` — a mesma do mapa e do HTML pré-renderizado.
  */
 
 type BairroContextValue = {
-  bairros: BairroItem[];
+  bairros: readonly Bairro[];
+  /** Data ISO da última atualização da base (null = base estática sem data). */
   lastUpdated: string | null;
-  isLoading: boolean;
 };
 
 const STATIC_VALUE: BairroContextValue = {
-  bairros: BAIRRO_DATA as unknown as BairroItem[],
+  bairros: BAIRROS_ORDENADOS,
   lastUpdated: null,
-  isLoading: false,
 };
 
 const BairroContext = createContext<BairroContextValue>(STATIC_VALUE);

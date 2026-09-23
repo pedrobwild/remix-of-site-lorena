@@ -67,10 +67,7 @@ A Bewild é uma empresa de reforma completa de apartamentos e studios em São Pa
 
 - Record News (14/09/2026): A dor de cabeça de fazer a obra trava muitos investidores, diz o arquiteto Thiago Dantas — https://noticias.r7.com/record-news/inovacao-e-negocios/video/a-dor-de-cabeca-de-fazer-a-obra-trava-muitos-investidores-diz-o-arquiteto-thiago-dantas-14092026/
 
-## Optional
-
-- [Portal de Obra](/o): Gate de acesso ao portal de acompanhamento de obra.
-- [Panfleto](/p): Material de apresentação da Bewild.
+## Sobre a Bewild
 
 A entrega é um processo único: projeto, obra, marcenaria, mobiliário, tecnologia e setup, com escopo definido por etapa antes do início da obra.
 

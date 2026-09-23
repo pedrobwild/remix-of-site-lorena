@@ -1,6 +1,11 @@
 /**
- * Embeddable version of the Mapa de Bairros dashboard.
- * Can be used standalone (MapaBairros page) or embedded as a section in Index.
+ * Mapa de bairros do /guia-do-investidor (carregado sob demanda por
+ * LazyMapaBairrosEmbed).
+ *
+ * Todos os números vêm da base única `src/guia/data/bairros.ts` (via
+ * NEIGHBORHOODS): pinos, cards, ranking, comparador e polígonos mostram a
+ * mesma diária, ocupação e receita da tabela e do simulador. O geojson dos
+ * polígonos só fornece o desenho — suas propriedades numéricas são ignoradas.
  */
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { Card, CardContent } from "@/guia/components/ui/card";
@@ -10,22 +15,64 @@ import { Input } from "@/guia/components/ui/input";
 import { Switch } from "@/guia/components/ui/switch";
 
 import type * as GeoJSON from "geojson";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
   MapPin, Calendar, TrendingUp,
-  Flame, ArrowUpDown, CircleDot, Layers,
+  Flame, ArrowUpDown, CircleDot, Layers, SearchX, MapPinOff,
 } from "lucide-react";
 import {
-  Neighborhood, CityEvent, NEIGHBORHOODS, EVENTS,
+  type Neighborhood, type CityEvent, NEIGHBORHOODS, EVENTS,
   DEMAND_FILTERS, EVENT_ICONS, IMPACT_STYLES, TAG_ICONS, scoreColor, fmt,
   POI_CATEGORIES, type POICategoryKey,
 } from "@/guia/data/mapaBairrosData";
+import { BAIRROS, ROI_AVISO, diariaMediaDe, receitaMensalDe } from "@/guia/data/bairros";
+import {
+  eventosFuturos, filtrarBairros, juntarPoligonos, limitesDoMapa,
+  type FiltroDemanda, type PropriedadesPoligono,
+} from "@/guia/lib/mapa";
+import { fmtIntervaloDatas, fmtPct, hojeISO } from "@/guia/lib/format";
+import { pressionavel } from "@/guia/lib/a11y";
 import ROIRanking from "@/guia/components/mapa/ROIRanking";
 import NeighborhoodComparison from "@/guia/components/mapa/NeighborhoodComparison";
 import ReactMap, { Marker, Popup, NavigationControl, Source, Layer, MapRef } from "react-map-gl/maplibre";
-import type { MapLayerMouseEvent, GeoJSONSource } from "maplibre-gl";
+import type { MapLayerMouseEvent, GeoJSONSource, ExpressionSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
+/* ─── Configuração ─── */
+
+/**
+ * Chave pública do MapTiler (restrita por domínio no painel do MapTiler).
+ * Configure VITE_MAPTILER_KEY no ambiente; o valor abaixo é o fallback atual.
+ */
+const MAPTILER_KEY = (import.meta.env.VITE_MAPTILER_KEY as string | undefined) || "AI17dHeoeJx6rUC1KlSL";
+const MAP_STYLE = `https://api.maptiler.com/maps/019cc06d-fb8e-741d-b158-a17a30e87c08/style.json?key=${MAPTILER_KEY}`;
+
+/** Limites calculados a partir dos centros de TODOS os bairros (Itaquera incluída). */
+const MAP_BOUNDS = limitesDoMapa(BAIRROS.map((b) => b.centro), 0.08);
+
+const BAIRRO_POR_ID = new Map(BAIRROS.map((b) => [b.id, b]));
+const NEIGHBORHOOD_POR_ID = new Map(NEIGHBORHOODS.map((n) => [n.id, n]));
+
+const POI_COLOR_EXPR = [
+  "match",
+  ["get", "category"],
+  ...POI_CATEGORIES.flatMap((c) => [c.key, c.color]),
+  "#888",
+] as unknown as ExpressionSpecification;
+
+const SCORE_FILL_EXPR = [
+  "case",
+  [">=", ["get", "score"], 88], "rgba(34,197,94,0.25)",
+  [">=", ["get", "score"], 84], "rgba(245,158,11,0.2)",
+  "rgba(156,163,175,0.15)",
+] as unknown as ExpressionSpecification;
+
+const SCORE_LINE_EXPR = [
+  "case",
+  [">=", ["get", "score"], 88], "rgba(34,197,94,0.6)",
+  [">=", ["get", "score"], 84], "rgba(245,158,11,0.5)",
+  "rgba(156,163,175,0.3)",
+] as unknown as ExpressionSpecification;
 
 /* ─── Neighborhood Card ─── */
 function NeighborhoodCard({ n, isSelected, isHighlighted, onClick, index = 0 }: { n: Neighborhood; isSelected: boolean; isHighlighted: boolean; onClick: () => void; index?: number }) {
@@ -40,7 +87,9 @@ function NeighborhoodCard({ n, isSelected, isHighlighted, onClick, index = 0 }: 
       transition={{ duration: 0.45, delay: index * 0.04, ease: [0.22, 1, 0.36, 1] }}
     >
       <Card
-        onClick={onClick}
+        {...pressionavel(onClick)}
+        aria-pressed={isSelected}
+        aria-label={`${n.name}: score ${n.score}, diária média R$ ${fmt(n.metrics.nightlyRate)}, ocupação ${fmtPct(n.metrics.occupancy)}`}
         className={`cursor-pointer transition-all duration-300 overflow-hidden relative group ${
           isSelected ? "ring-2 ring-primary border-primary shadow-lg shadow-primary/10" : isHighlighted ? "ring-2 ring-amber-400 border-amber-400 shadow-md shadow-amber-400/10" : "border-border hover:shadow-lg hover:border-primary/30"
         }`}
@@ -59,19 +108,19 @@ function NeighborhoodCard({ n, isSelected, isHighlighted, onClick, index = 0 }: 
             </div>
           </div>
           <div className="flex items-center gap-3 text-xs text-muted-foreground font-body mb-1.5">
-            <span>R$ {n.avgNightly}/noite</span>
-            <span>{n.avgOccupancy}% ocup.</span>
-            <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{n.metrics.estimatedROI}% ROI</span>
+            <span>R$ {fmt(n.metrics.nightlyRate)}/noite</span>
+            <span>{fmtPct(n.metrics.occupancy)} ocup.</span>
+            <span className="text-emerald-700 font-semibold">{fmtPct(n.metrics.estimatedROI)} ROI est.*</span>
           </div>
-          <p className="text-[9px] text-muted-foreground font-body mb-2.5">
-            ~{fmt(n.metrics.activeListings)} studios no Airbnb · R${fmt(n.metrics.nightlyRateRange[0])}–R${fmt(n.metrics.nightlyRateRange[1])}/noite · R${fmt(n.metrics.avgRevenueMo)}/mês
+          <p className="text-[10px] text-muted-foreground font-body mb-2.5">
+            ~{fmt(n.metrics.activeListings)} studios no Airbnb · R$ {fmt(n.metrics.nightlyRateRange[0])}–{fmt(n.metrics.nightlyRateRange[1])}/noite · R$ {fmt(n.metrics.avgRevenueMo)}/mês
           </p>
           <div className="flex flex-wrap gap-1">
             {n.tags.slice(0, 4).map((tag) => {
               const Icon = TAG_ICONS[tag] || MapPin;
               return (
                 <span key={tag} className="inline-flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-secondary text-secondary-foreground transition-colors group-hover:bg-primary/10 group-hover:text-primary">
-                  <Icon size={8} />{tag}
+                  <Icon size={8} aria-hidden="true" />{tag}
                 </span>
               );
             })}
@@ -83,114 +132,97 @@ function NeighborhoodCard({ n, isSelected, isHighlighted, onClick, index = 0 }: 
   );
 }
 
-const MAP_STYLE = "https://api.maptiler.com/maps/019cc06d-fb8e-741d-b158-a17a30e87c08/style.json?key=AI17dHeoeJx6rUC1KlSL";
-const SP_BOUNDS: [number, number, number, number] = [-46.82, -23.68, -46.55, -23.45];
+type HoverPoligono = { bairroId: string; poligonoNome: string; lng: number; lat: number };
 
 /* ─── Interactive Map ─── */
 function InteractiveMap({
-  neighborhoods, showMetro, showHeatmap, showClusters, showPOIs, selected, highlightedNames, onSelect,
+  neighborhoods, showHeatmap, showClusters, showPOIs, selected, highlightedNames, onSelect,
 }: {
-  neighborhoods: Neighborhood[]; showMetro: boolean; showHeatmap: boolean; showClusters: boolean;
+  neighborhoods: Neighborhood[]; showHeatmap: boolean; showClusters: boolean;
   showPOIs: POICategoryKey[];
   selected: Neighborhood | null; highlightedNames: string[]; onSelect: (n: Neighborhood) => void;
 }) {
   const mapRef = useRef<MapRef>(null);
+  const loadedRef = useRef(false);
+  const reduceMotion = useReducedMotion();
+  const [mapError, setMapError] = useState(false);
   const [hoveredN, setHoveredN] = useState<Neighborhood | null>(null);
-  const [hoveredPoly, setHoveredPoly] = useState<{ name: string; roi: number; rate: number; occ: number; rev: number; lng: number; lat: number } | null>(null);
-  const [hoveredStation, setHoveredStation] = useState<{ name: string; line: string; lng: number; lat: number } | null>(null);
+  const [hoveredPoly, setHoveredPoly] = useState<HoverPoligono | null>(null);
   const [poisGeoJSON, setPoisGeoJSON] = useState<GeoJSON.FeatureCollection | null>(null);
+  const [polygons, setPolygons] = useState<GeoJSON.FeatureCollection<GeoJSON.Geometry, PropriedadesPoligono> | null>(null);
   const [hoveredPOI, setHoveredPOI] = useState<{ name: string; category: string; neighborhood: string; lng: number; lat: number } | null>(null);
 
   useEffect(() => {
-    fetch("/geo/pois.geojson")
-      .then(r => r.json())
-      .then((geojson: GeoJSON.FeatureCollection) => {
-        setPoisGeoJSON(geojson);
-      })
-      .catch(() => {});
+    const ctrl = new AbortController();
+    fetch("/geo/pois.geojson", { signal: ctrl.signal })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((geojson: GeoJSON.FeatureCollection) => setPoisGeoJSON(geojson))
+      .catch(() => { /* camada opcional: sem POIs o mapa continua útil */ });
+    // Polígonos: só o desenho vem do arquivo; os dados vêm da base única.
+    fetch("/geo/neighborhoods.geojson", { signal: ctrl.signal })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((geojson: GeoJSON.FeatureCollection) => setPolygons(juntarPoligonos(geojson)))
+      .catch(() => { /* camada opcional: os pinos continuam mostrando os bairros */ });
+    return () => ctrl.abort();
   }, []);
 
   useEffect(() => {
     if (!mapRef.current || !selected) return;
-    mapRef.current.flyTo({ center: [selected.centerLng, selected.centerLat], zoom: 14, duration: 800 });
-  }, [selected]);
+    mapRef.current.flyTo({ center: [selected.centerLng, selected.centerLat], zoom: 14, duration: reduceMotion ? 0 : 800 });
+  }, [selected, reduceMotion]);
+
+  const setCursor = (cursor: string) => {
+    const canvas = mapRef.current?.getCanvas();
+    if (canvas) canvas.style.cursor = cursor;
+  };
 
   const onPolygonHover = useCallback((e: MapLayerMouseEvent) => {
-    if (e.features && e.features.length > 0) {
-      const f = e.features[0];
-      const p = f.properties;
-      setHoveredPoly({
-        name: p?.name || "", roi: p?.estimatedROI || 0, rate: p?.nightlyRate || 0,
-        occ: p?.occupancy || 0, rev: p?.revenueMonth || 0, lng: e.lngLat.lng, lat: e.lngLat.lat,
-      });
-      if (mapRef.current) mapRef.current.getCanvas().style.cursor = "pointer";
-    }
-  }, []);
-
-  const onPolygonLeave = useCallback(() => {
-    setHoveredPoly(null);
-    if (mapRef.current) mapRef.current.getCanvas().style.cursor = "";
+    const p = e.features?.[0]?.properties as Partial<PropriedadesPoligono> | undefined;
+    if (!p?.bairroId) return;
+    setHoveredPoly({ bairroId: p.bairroId, poligonoNome: p.poligonoNome ?? "", lng: e.lngLat.lng, lat: e.lngLat.lat });
+    setCursor("pointer");
   }, []);
 
   const onPolygonClick = useCallback((e: MapLayerMouseEvent) => {
-    if (e.features && e.features.length > 0) {
-      const name = e.features[0].properties?.name;
-      const n = NEIGHBORHOODS.find((nb) => nb.name === name);
-      if (n) onSelect(n);
-    }
+    const bairroId = (e.features?.[0]?.properties as Partial<PropriedadesPoligono> | undefined)?.bairroId;
+    const n = bairroId ? NEIGHBORHOOD_POR_ID.get(bairroId) : undefined;
+    if (n) onSelect(n);
   }, [onSelect]);
 
-  const onMetroHover = useCallback((e: MapLayerMouseEvent) => {
-    if (e.features && e.features.length > 0) {
-      const p = e.features[0].properties;
-      setHoveredStation({ name: p?.name || "", line: p?.line || "", lng: e.lngLat.lng, lat: e.lngLat.lat });
-      if (mapRef.current) mapRef.current.getCanvas().style.cursor = "pointer";
-    }
-  }, []);
-
-  const onMetroLeave = useCallback(() => {
-    setHoveredStation(null);
-    if (mapRef.current) mapRef.current.getCanvas().style.cursor = "";
-  }, []);
-
-  const onClusterClick = useCallback((e: MapLayerMouseEvent) => {
-    if (!mapRef.current || !e.features?.length) return;
-    const feature = e.features[0];
+  const onClusterClick = useCallback((e: MapLayerMouseEvent, sourceId: string, maxZoom = 17) => {
+    const map = mapRef.current;
+    const feature = e.features?.[0];
+    if (!map || !feature) return;
     const clusterId = feature.properties?.cluster_id;
-    const source = mapRef.current.getSource("clusters-source") as GeoJSONSource;
-    if (source && clusterId != null) {
-      source.getClusterExpansionZoom(clusterId).then((zoom) => {
-        const geom = feature.geometry as GeoJSON.Point;
-        mapRef.current!.easeTo({ center: geom.coordinates as [number, number], zoom, duration: 500 });
-      });
-    }
-  }, []);
+    const source = map.getSource(sourceId) as GeoJSONSource | undefined;
+    if (!source || clusterId == null) return;
+    source.getClusterExpansionZoom(clusterId).then((zoom) => {
+      const geom = feature.geometry as GeoJSON.Point;
+      mapRef.current?.easeTo({ center: geom.coordinates as [number, number], zoom: Math.min(zoom, maxZoom), duration: reduceMotion ? 0 : 500 });
+    }).catch(() => { /* cluster sumiu entre o clique e a resposta */ });
+  }, [reduceMotion]);
 
   const onPOIHover = useCallback((e: MapLayerMouseEvent) => {
-    if (e.features && e.features.length > 0) {
-      const p = e.features[0].properties;
-      setHoveredPOI({ name: p?.name || "", category: p?.category || "", neighborhood: p?.neighborhood || "", lng: e.lngLat.lng, lat: e.lngLat.lat });
-      if (mapRef.current) mapRef.current.getCanvas().style.cursor = "pointer";
-    }
+    const p = e.features?.[0]?.properties;
+    if (!p) return;
+    setHoveredPOI({ name: p.name || "", category: p.category || "", neighborhood: p.neighborhood || "", lng: e.lngLat.lng, lat: e.lngLat.lat });
+    setCursor("pointer");
   }, []);
 
-  const onPOILeave = useCallback(() => {
-    setHoveredPOI(null);
-    if (mapRef.current) mapRef.current.getCanvas().style.cursor = "";
-  }, []);
+  // Memoizado: um objeto novo a cada render faria o MapLibre reprocessar e
+  // reagrupar os POIs a cada movimento do mouse.
+  const filteredPOIs = useMemo<GeoJSON.FeatureCollection | null>(() => {
+    if (!poisGeoJSON || showPOIs.length === 0) return null;
+    return {
+      type: "FeatureCollection",
+      features: poisGeoJSON.features.filter((f) =>
+        showPOIs.includes((f.properties as { category?: string } | null)?.category as POICategoryKey),
+      ),
+    };
+  }, [poisGeoJSON, showPOIs]);
 
-  const onPOIClusterClick = useCallback((e: MapLayerMouseEvent) => {
-    if (!mapRef.current || !e.features?.length) return;
-    const feature = e.features[0];
-    const clusterId = feature.properties?.cluster_id;
-    const source = mapRef.current.getSource("pois-clustered") as GeoJSONSource;
-    if (source && clusterId != null) {
-      source.getClusterExpansionZoom(clusterId).then((zoom) => {
-        const geom = feature.geometry as GeoJSON.Point;
-        mapRef.current!.easeTo({ center: geom.coordinates as [number, number], zoom: Math.min(zoom, 16), duration: 500 });
-      });
-    }
-  }, []);
+  const hoveredPolyData = hoveredPoly ? BAIRRO_POR_ID.get(hoveredPoly.bairroId) : undefined;
+  const hoveredPolyNeighborhood = hoveredPoly ? NEIGHBORHOOD_POR_ID.get(hoveredPoly.bairroId) : undefined;
 
   return (
     <motion.div
@@ -204,54 +236,70 @@ function InteractiveMap({
         initialViewState={{ longitude: -46.6333, latitude: -23.5505, zoom: 11 }}
         style={{ width: "100%", height: "100%" }}
         mapStyle={MAP_STYLE}
-        minZoom={10} maxZoom={17} maxBounds={SP_BOUNDS}
-        interactiveLayerIds={["neighborhood-fill", "metro-stations-circle", "cluster-circles", "poi-unclustered", "poi-clusters"]}
+        minZoom={10} maxZoom={17} maxBounds={MAP_BOUNDS}
+        interactiveLayerIds={["neighborhood-fill", "cluster-circles", "poi-unclustered", "poi-clusters"]}
+        onLoad={() => { loadedRef.current = true; setMapError(false); }}
+        onError={(e) => {
+          // Falha de tile isolada não derruba o mapa; falha antes do primeiro
+          // "load" (estilo, chave, rede) deixa a área em branco — avisa.
+          if (import.meta.env.DEV) console.warn("[mapa de bairros]", e.error);
+          if (!loadedRef.current) setMapError(true);
+        }}
         onMouseMove={(e) => {
           const polyFeatures = e.features?.filter((f) => f.layer?.id === "neighborhood-fill");
-          const metroFeatures = e.features?.filter((f) => f.layer?.id === "metro-stations-circle");
           const poiFeatures = e.features?.filter((f) => f.layer?.id === "poi-unclustered");
           if (polyFeatures?.length) onPolygonHover({ ...e, features: polyFeatures } as MapLayerMouseEvent);
           else setHoveredPoly(null);
-          if (metroFeatures?.length) onMetroHover({ ...e, features: metroFeatures } as MapLayerMouseEvent);
-          else setHoveredStation(null);
           if (poiFeatures?.length) onPOIHover({ ...e, features: poiFeatures } as MapLayerMouseEvent);
           else setHoveredPOI(null);
+          if (!polyFeatures?.length && !poiFeatures?.length) setCursor("");
         }}
-        onMouseLeave={() => { onPolygonLeave(); onMetroLeave(); onPOILeave(); }}
+        onMouseLeave={() => { setHoveredPoly(null); setHoveredPOI(null); setCursor(""); }}
         onClick={(e) => {
           const polyFeatures = e.features?.filter((f) => f.layer?.id === "neighborhood-fill");
           const clusterFeatures = e.features?.filter((f) => f.layer?.id === "cluster-circles");
           const poiClusterFeatures = e.features?.filter((f) => f.layer?.id === "poi-clusters");
           if (polyFeatures?.length) onPolygonClick({ ...e, features: polyFeatures } as MapLayerMouseEvent);
-          if (clusterFeatures?.length) onClusterClick({ ...e, features: clusterFeatures } as MapLayerMouseEvent);
-          if (poiClusterFeatures?.length) onPOIClusterClick({ ...e, features: poiClusterFeatures } as MapLayerMouseEvent);
+          if (clusterFeatures?.length) onClusterClick({ ...e, features: clusterFeatures } as MapLayerMouseEvent, "clusters-source");
+          if (poiClusterFeatures?.length) onClusterClick({ ...e, features: poiClusterFeatures } as MapLayerMouseEvent, "pois-clustered", 16);
         }}
       >
         <NavigationControl position="top-right" showCompass={false} />
 
-        {/* Neighborhood polygons */}
-        <Source id="neighborhoods-source" type="geojson" data="/geo/neighborhoods.geojson">
-          <Layer id="neighborhood-fill" type="fill" paint={{
-            "fill-color": ["case", [">=", ["get", "score"], 88], "rgba(34,197,94,0.25)", [">=", ["get", "score"], 84], "rgba(245,158,11,0.2)", "rgba(156,163,175,0.15)"],
-            "fill-opacity": showHeatmap ? 0.12 : 0.3,
-          }} />
-          <Layer id="neighborhood-outline" type="line" paint={{
-            "line-color": ["case", [">=", ["get", "score"], 88], "rgba(34,197,94,0.6)", [">=", ["get", "score"], 84], "rgba(245,158,11,0.5)", "rgba(156,163,175,0.3)"],
-            "line-width": 2,
-          }} />
-        </Source>
+        {/* Neighborhood polygons — desenho do geojson, dados da base única */}
+        {polygons && (
+          <Source id="neighborhoods-source" type="geojson" data={polygons}>
+            <Layer id="neighborhood-fill" type="fill" paint={{
+              "fill-color": SCORE_FILL_EXPR,
+              "fill-opacity": showHeatmap ? 0.12 : 0.3,
+            }} />
+            <Layer id="neighborhood-outline" type="line" paint={{
+              "line-color": SCORE_LINE_EXPR,
+              "line-width": 2,
+            }} />
+          </Source>
+        )}
 
-        {/* Neighborhood pins */}
+        {/* Neighborhood pins — botões de verdade (foco + Enter/Espaço) */}
         {neighborhoods.map((n) => {
-          const isSel = selected?.name === n.name;
+          const isSel = selected?.id === n.id;
           const isHigh = highlightedNames.includes(n.name);
-          const bgClass = isSel ? "bg-primary" : isHigh ? "bg-amber-400" : n.score >= 88 ? "bg-green-500" : n.score >= 84 ? "bg-amber-500" : "bg-gray-400";
+          const bgClass = isSel ? "bg-primary" : isHigh ? "bg-amber-400" : n.score >= 88 ? "bg-green-600" : n.score >= 84 ? "bg-amber-600" : "bg-gray-500";
           return (
             <Marker key={n.id} longitude={n.centerLng} latitude={n.centerLat} anchor="center">
-              <div onClick={() => onSelect(n)} onMouseEnter={() => setHoveredN(n)} onMouseLeave={() => setHoveredN(null)}
-                className={`${bgClass} text-white rounded-full px-2 py-1 text-xs font-bold cursor-pointer transition-transform duration-200 hover:scale-[1.4] shadow-md ${isSel ? "ring-2 ring-primary/50 scale-110" : ""}`}>
+              <button
+                type="button"
+                onClick={() => onSelect(n)}
+                onMouseEnter={() => setHoveredN(n)}
+                onMouseLeave={() => setHoveredN(null)}
+                onFocus={() => setHoveredN(n)}
+                onBlur={() => setHoveredN(null)}
+                aria-pressed={isSel}
+                aria-label={`${n.name}, score ${n.score}. Selecionar bairro`}
+                className={`${bgClass} text-white rounded-full px-2 py-1 text-xs font-bold cursor-pointer transition-transform duration-200 hover:scale-[1.4] focus-visible:scale-[1.4] shadow-md ${isSel ? "ring-2 ring-primary/50 scale-110" : ""}`}
+              >
                 {n.score}
-              </div>
+              </button>
             </Marker>
           );
         })}
@@ -260,50 +308,31 @@ function InteractiveMap({
           <Popup longitude={hoveredN.centerLng} latitude={hoveredN.centerLat} offset={16} closeButton={false} closeOnClick={false} anchor="bottom">
             <div className="flex items-center gap-2 mb-1">
               <div className="text-[12px] font-bold">{hoveredN.name}</div>
-              <div className={`px-1.5 py-0.5 rounded text-[9px] font-bold text-white ${hoveredN.score >= 88 ? "bg-emerald-500" : hoveredN.score >= 84 ? "bg-amber-500" : "bg-gray-400"}`}>
+              <div className={`px-1.5 py-0.5 rounded text-[9px] font-bold text-white ${hoveredN.score >= 88 ? "bg-emerald-600" : hoveredN.score >= 84 ? "bg-amber-600" : "bg-gray-500"}`}>
                 Score {hoveredN.score}
               </div>
             </div>
-            <div className="text-[10px] text-muted-foreground">R${hoveredN.avgNightly}/noite · {hoveredN.avgOccupancy}% ocup.</div>
-            <div className="text-[10px] text-muted-foreground">ROI est. {hoveredN.metrics.estimatedROI}% · ~{fmt(hoveredN.metrics.activeListings)} studios</div>
-            <div className="text-[9px] text-muted-foreground/60 mt-1">Clique para selecionar</div>
+            <div className="text-[10px] text-muted-foreground">R$ {fmt(hoveredN.metrics.nightlyRate)}/noite · {fmtPct(hoveredN.metrics.occupancy)} ocup.</div>
+            <div className="text-[10px] text-muted-foreground">ROI est.* {fmtPct(hoveredN.metrics.estimatedROI)} · ~{fmt(hoveredN.metrics.activeListings)} studios</div>
+            <div className="text-[9px] text-muted-foreground/70 mt-1">Clique para selecionar · *estimativa</div>
           </Popup>
         )}
 
-        {hoveredPoly && !hoveredN && (
+        {hoveredPoly && hoveredPolyData && !hoveredN && (
           <Popup longitude={hoveredPoly.lng} latitude={hoveredPoly.lat} offset={8} closeButton={false} closeOnClick={false} anchor="bottom">
-            <div className="text-[11px] font-bold">{hoveredPoly.name}</div>
+            <div className="text-[11px] font-bold">{hoveredPolyData.nome}</div>
+            {hoveredPoly.poligonoNome && hoveredPoly.poligonoNome !== hoveredPolyData.nome && (
+              <div className="text-[9px] text-muted-foreground">Região: {hoveredPoly.poligonoNome}</div>
+            )}
             <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[10px] text-muted-foreground mt-1">
-              <span>ROI est.</span><span className="font-semibold text-foreground">{hoveredPoly.roi}%</span>
-              <span>Diária</span><span className="font-semibold text-foreground">R${hoveredPoly.rate}</span>
-              <span>Ocupação</span><span className="font-semibold text-foreground">{hoveredPoly.occ}%</span>
-              <span>Receita/mês</span><span className="font-semibold text-foreground">R${fmt(hoveredPoly.rev)}</span>
+              <span>Diária média</span><span className="font-semibold text-foreground">R$ {fmt(diariaMediaDe(hoveredPolyData.mercado))}</span>
+              <span>Ocupação</span><span className="font-semibold text-foreground">{fmtPct(hoveredPolyData.mercado.ocupacao)}</span>
+              <span>Receita/mês</span><span className="font-semibold text-foreground">R$ {fmt(receitaMensalDe(hoveredPolyData.mercado))}</span>
+              {hoveredPolyNeighborhood && (
+                <><span>ROI est.*</span><span className="font-semibold text-foreground">{fmtPct(hoveredPolyNeighborhood.metrics.estimatedROI)}</span></>
+              )}
             </div>
-          </Popup>
-        )}
-
-        {/* Metro */}
-        {showMetro && (
-          <>
-            <Source id="metro-lines-source" type="geojson" data="/geo/metro-lines.geojson">
-              <Layer id="metro-lines" type="line" paint={{ "line-color": ["get", "color"], "line-width": 3, "line-opacity": 0.6 }} />
-            </Source>
-            <Source id="metro-stations-source" type="geojson" data="/geo/metro-stations.geojson">
-              <Layer id="metro-walk-radius" type="circle" paint={{
-                "circle-radius": ["interpolate", ["exponential", 2], ["zoom"], 10, 3, 12, 12, 14, 48, 16, 192],
-                "circle-color": ["get", "color"], "circle-opacity": 0.08, "circle-stroke-color": ["get", "color"], "circle-stroke-width": 1, "circle-stroke-opacity": 0.2,
-              }} />
-              <Layer id="metro-stations-circle" type="circle" paint={{ "circle-radius": 6, "circle-color": ["get", "color"], "circle-stroke-color": "#ffffff", "circle-stroke-width": 2 }} />
-              <Layer id="metro-stations-label" type="symbol" layout={{ "text-field": ["get", "name"], "text-size": 10, "text-offset": [0, 1.5], "text-anchor": "top", "text-optional": true }}
-                paint={{ "text-color": "#555", "text-halo-color": "#fff", "text-halo-width": 1.5 }} />
-            </Source>
-          </>
-        )}
-
-        {hoveredStation && (
-          <Popup longitude={hoveredStation.lng} latitude={hoveredStation.lat} offset={12} closeButton={false} closeOnClick={false} anchor="bottom">
-            <div className="text-[11px] font-bold">{hoveredStation.name}</div>
-            <div className="text-[10px] text-muted-foreground">{hoveredStation.line}</div>
+            {hoveredPolyNeighborhood && <div className="text-[9px] text-muted-foreground/70 mt-1">*estimativa ilustrativa</div>}
           </Popup>
         )}
 
@@ -333,46 +362,28 @@ function InteractiveMap({
         )}
 
         {/* POIs as clustered native layers for performance */}
-        {poisGeoJSON && showPOIs.length > 0 && (() => {
-          // Filter features to only active categories
-          const filteredGeoJSON: GeoJSON.FeatureCollection = {
-            type: "FeatureCollection",
-            features: poisGeoJSON.features.filter((f: GeoJSON.Feature) =>
-              showPOIs.includes((f.properties as any)?.category as POICategoryKey)
-            ),
-          };
-          // Build a match expression for colors by category
-          const colorExpr: any = ["match", ["get", "category"]];
-          POI_CATEGORIES.forEach(c => { colorExpr.push(c.key, c.color); });
-          colorExpr.push("#888"); // fallback
-
-          return (
-            <Source id="pois-clustered" type="geojson" data={filteredGeoJSON} cluster={true} clusterRadius={40} clusterMaxZoom={14}>
-              {/* Cluster circles */}
-              <Layer id="poi-clusters" type="circle" filter={["has", "point_count"]} paint={{
-                "circle-color": "#1e3a5f",
-                "circle-radius": ["step", ["get", "point_count"], 16, 5, 20, 10, 26],
-                "circle-opacity": 0.85,
-                "circle-stroke-width": 2,
-                "circle-stroke-color": "#fff",
-              }} />
-              {/* Cluster count labels */}
-              <Layer id="poi-cluster-count" type="symbol" filter={["has", "point_count"]} layout={{
-                "text-field": "{point_count_abbreviated}",
-                "text-size": 11,
-              }} paint={{ "text-color": "#fff" }} />
-              {/* Individual POI points */}
-              <Layer id="poi-unclustered" type="circle" filter={["!", ["has", "point_count"]]} paint={{
-                "circle-color": colorExpr,
-                "circle-radius": 6,
-                "circle-stroke-width": 2,
-                "circle-stroke-color": "#fff",
-                "circle-opacity": 0.9,
-              }}
-              />
-            </Source>
-          );
-        })()}
+        {filteredPOIs && (
+          <Source id="pois-clustered" type="geojson" data={filteredPOIs} cluster={true} clusterRadius={40} clusterMaxZoom={14}>
+            <Layer id="poi-clusters" type="circle" filter={["has", "point_count"]} paint={{
+              "circle-color": "#1e3a5f",
+              "circle-radius": ["step", ["get", "point_count"], 16, 5, 20, 10, 26],
+              "circle-opacity": 0.85,
+              "circle-stroke-width": 2,
+              "circle-stroke-color": "#fff",
+            }} />
+            <Layer id="poi-cluster-count" type="symbol" filter={["has", "point_count"]} layout={{
+              "text-field": "{point_count_abbreviated}",
+              "text-size": 11,
+            }} paint={{ "text-color": "#fff" }} />
+            <Layer id="poi-unclustered" type="circle" filter={["!", ["has", "point_count"]]} paint={{
+              "circle-color": POI_COLOR_EXPR,
+              "circle-radius": 6,
+              "circle-stroke-width": 2,
+              "circle-stroke-color": "#fff",
+              "circle-opacity": 0.9,
+            }} />
+          </Source>
+        )}
 
         {hoveredPOI && (
           <Popup
@@ -393,6 +404,16 @@ function InteractiveMap({
           </Popup>
         )}
       </ReactMap>
+
+      {mapError && (
+        <div role="alert" className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 bg-muted/95 p-6 text-center">
+          <MapPinOff size={28} className="text-muted-foreground" aria-hidden="true" />
+          <p className="text-sm font-semibold text-foreground font-body">O mapa não carregou.</p>
+          <p className="text-xs text-muted-foreground font-body max-w-xs">
+            Os números de cada bairro continuam no ranking, nos cards e na tabela desta seção.
+          </p>
+        </div>
+      )}
 
       {/* Legend */}
       <motion.div className="absolute bottom-4 left-4 bg-card/95 backdrop-blur-md border border-border rounded-xl px-4 py-3 z-10 shadow-lg"
@@ -415,7 +436,7 @@ function InteractiveMap({
             <span className="text-muted-foreground">(score &lt; 84)</span>
           </span>
         </div>
-        <p className="text-[9px] text-muted-foreground mt-2 font-body">Clique nos pontos para ver detalhes</p>
+        <p className="text-[9px] text-muted-foreground mt-2 font-body">Clique nos pinos (ou use Tab e Enter) para selecionar</p>
         {showPOIs.length > 0 && (
           <div className="mt-2 pt-2 border-t border-border/50">
             <p className="text-[11px] font-semibold text-foreground font-display mb-1.5">Pontos de Interesse</p>
@@ -436,6 +457,13 @@ function InteractiveMap({
 
 /* ─── Events Timeline ─── */
 function EventsTimeline({ events, onEventClick, activeEventId }: { events: CityEvent[]; onEventClick: (e: CityEvent) => void; activeEventId: number | null }) {
+  if (events.length === 0) {
+    return (
+      <p className="text-sm text-muted-foreground font-body rounded-lg border border-dashed border-border p-4">
+        Nenhum evento futuro no calendário deste guia. Consulte a agenda oficial da cidade para planejar datas de pico.
+      </p>
+    );
+  }
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {events.map((event, i) => {
@@ -446,17 +474,22 @@ function EventsTimeline({ events, onEventClick, activeEventId }: { events: CityE
           <motion.div key={event.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
             whileHover={{ y: -3, scale: 1.01 }} whileTap={{ scale: 0.98 }}>
-            <Card onClick={() => onEventClick(event)}
+            <Card
+              {...pressionavel(() => onEventClick(event))}
+              aria-pressed={isActive}
+              aria-label={`${event.name}, ${fmtIntervaloDatas(event.startDate, event.endDate)}. Destacar bairros impactados no mapa`}
               className={`cursor-pointer transition-all duration-200 ${isActive ? "ring-2 ring-primary border-primary shadow-md" : "border-border hover:shadow-md hover:border-primary/30"}`}>
               <CardContent className="p-3">
                 <div className="flex items-start gap-2.5">
-                  <div className={`p-1.5 rounded-lg ${style.bg}`}><Icon size={14} className={style.text} /></div>
+                  <div className={`p-1.5 rounded-lg ${style.bg}`}><Icon size={14} className={style.text} aria-hidden="true" /></div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 mb-0.5">
                       <h4 className="text-xs font-bold font-display text-foreground truncate">{event.name}</h4>
                       <Badge className={`text-[9px] px-1 py-0 ${style.bg} ${style.text} border-0`}>{style.label}</Badge>
                     </div>
-                    <p className="text-[10px] text-muted-foreground font-body">{event.startDate} — {event.endDate}</p>
+                    <p className="text-[10px] text-muted-foreground font-body">
+                      <time dateTime={event.startDate}>{fmtIntervaloDatas(event.startDate, event.endDate)}</time>
+                    </p>
                     <p className="text-[10px] text-muted-foreground font-body mt-0.5 line-clamp-2">{event.location}</p>
                     <div className="flex flex-wrap gap-1 mt-1.5">
                       {event.nearbyNeighborhoods.slice(0, 3).map((name) => (
@@ -478,8 +511,7 @@ function EventsTimeline({ events, onEventClick, activeEventId }: { events: CityE
 /* ─── Main Component ─── */
 export default function MapaBairrosEmbed() {
   const [selectedNeighborhood, setSelectedNeighborhood] = useState<Neighborhood | null>(null);
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
-  const [showMetro] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<FiltroDemanda[]>([]);
   const [showHeatmap, setShowHeatmap] = useState(false);
   const [showClusters, setShowClusters] = useState(false);
   const [activePOIs, setActivePOIs] = useState<POICategoryKey[]>([]);
@@ -487,33 +519,49 @@ export default function MapaBairrosEmbed() {
   const [search, setSearch] = useState("");
   const [showComparison, setShowComparison] = useState(false);
 
+  // Calculado uma vez por montagem: a lista de eventos é estática.
+  const upcomingEvents = useMemo(() => eventosFuturos(EVENTS, hojeISO()), []);
+
   const togglePOI = useCallback((key: POICategoryKey) => {
     setActivePOIs((prev) => prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]);
   }, []);
 
-  const toggleFilter = useCallback((filterId: string) => {
+  const toggleFilter = useCallback((filterId: FiltroDemanda) => {
     setActiveFilters((prev) => prev.includes(filterId) ? prev.filter((f) => f !== filterId) : [...prev, filterId]);
+  }, []);
+
+  const clearFilters = useCallback(() => {
+    setActiveFilters([]);
+    setSearch("");
   }, []);
 
   const handleEventClick = useCallback((event: CityEvent) => {
     setActiveEvent((prev) => prev?.id === event.id ? null : event);
   }, []);
 
-  const handleRankingSelect = useCallback((n: Neighborhood) => {
+  const handleSelect = useCallback((n: Neighborhood) => {
     setSelectedNeighborhood(n);
   }, []);
 
   const highlightedNames = useMemo(() => activeEvent?.nearbyNeighborhoods || [], [activeEvent]);
 
-  const filtered = useMemo(() => {
-    let list = NEIGHBORHOODS;
-    if (search) list = list.filter((n) => n.name.toLowerCase().includes(search.toLowerCase()));
-    if (activeFilters.length > 0) {
-      list = list.filter((n) => activeFilters.some((f) => n.tags.map((t) => t.toLowerCase()).includes(f.toLowerCase())));
-    }
-    return list;
-  }, [search, activeFilters]);
+  const filtered = useMemo(
+    () => filtrarBairros(NEIGHBORHOODS, { busca: search, filtros: activeFilters }),
+    [search, activeFilters],
+  );
 
+  const hasQuery = search.trim() !== "" || activeFilters.length > 0;
+
+  const emptyState = (
+    <div role="status" className="flex flex-col items-center gap-2 rounded-lg border border-dashed border-border p-6 text-center">
+      <SearchX size={22} className="text-muted-foreground" aria-hidden="true" />
+      <p className="text-sm font-semibold text-foreground font-body">Nenhum bairro com esse perfil ou nome.</p>
+      <p className="text-xs text-muted-foreground font-body">Tente outro filtro ou limpe a busca.</p>
+      <Button type="button" variant="outline" size="sm" onClick={clearFilters} className="mt-1 text-xs font-body">
+        Limpar filtros
+      </Button>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -521,47 +569,47 @@ export default function MapaBairrosEmbed() {
       <div className="flex flex-col gap-3">
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <MapPin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Buscar bairro..." value={search} onChange={(e) => setSearch(e.target.value)}
+            <MapPin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+            <Input type="search" aria-label="Buscar bairro" placeholder="Buscar bairro..." value={search} onChange={(e) => setSearch(e.target.value)}
               className="pl-9 font-body" />
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => setShowComparison(!showComparison)} className="font-body text-xs">
-              <ArrowUpDown size={14} className="mr-1.5" />Comparar
+            <Button type="button" variant="outline" size="sm" aria-expanded={showComparison} onClick={() => setShowComparison((v) => !v)} className="font-body text-xs">
+              <ArrowUpDown size={14} className="mr-1.5" aria-hidden="true" />Comparar
             </Button>
           </div>
         </div>
 
         {/* Demand filters */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrar por perfil de demanda">
           {DEMAND_FILTERS.map((f) => {
             const active = activeFilters.includes(f.key);
             const Icon = f.icon;
             return (
-              <button key={f.key} onClick={() => toggleFilter(f.key)}
+              <button key={f.key} type="button" aria-pressed={active} onClick={() => toggleFilter(f.key)}
                 className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-all ${
                   active ? "bg-primary text-primary-foreground border-primary" : "bg-card text-muted-foreground border-border hover:border-primary/30 hover:text-foreground"
                 }`}>
-                <Icon size={12} />{f.label}
+                <Icon size={12} aria-hidden="true" />{f.label}
               </button>
             );
           })}
           <div className="flex items-center gap-2 ml-auto">
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-body">
-              <Flame size={12} /><span>Heatmap</span>
-              <Switch checked={showHeatmap} onCheckedChange={setShowHeatmap} className="scale-75" />
+              <Flame size={12} aria-hidden="true" /><label htmlFor="mapa-toggle-heatmap">Heatmap</label>
+              <Switch id="mapa-toggle-heatmap" checked={showHeatmap} onCheckedChange={setShowHeatmap} className="scale-75" />
             </div>
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-body">
-              <CircleDot size={12} /><span>Clusters</span>
-              <Switch checked={showClusters} onCheckedChange={setShowClusters} className="scale-75" />
+              <CircleDot size={12} aria-hidden="true" /><label htmlFor="mapa-toggle-clusters">Clusters</label>
+              <Switch id="mapa-toggle-clusters" checked={showClusters} onCheckedChange={setShowClusters} className="scale-75" />
             </div>
           </div>
         </div>
 
         {/* POI filters */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-thin">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-thin" role="group" aria-label="Pontos de interesse no mapa">
           <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap flex items-center gap-1">
-            <Layers size={12} /> Pontos de interesse:
+            <Layers size={12} aria-hidden="true" /> Pontos de interesse:
           </span>
           {POI_CATEGORIES.map((cat) => {
             const active = activePOIs.includes(cat.key);
@@ -569,6 +617,8 @@ export default function MapaBairrosEmbed() {
             return (
               <button
                 key={cat.key}
+                type="button"
+                aria-pressed={active}
                 onClick={() => togglePOI(cat.key)}
                 className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-all whitespace-nowrap flex-shrink-0 ${
                   active
@@ -577,12 +627,12 @@ export default function MapaBairrosEmbed() {
                 }`}
                 style={active ? { backgroundColor: `${cat.color}18`, color: cat.color, borderColor: `${cat.color}60` } : undefined}
               >
-                <Icon size={12} />{cat.label}
+                <Icon size={12} aria-hidden="true" />{cat.label}
               </button>
             );
           })}
           {activePOIs.length > 0 && (
-            <button onClick={() => setActivePOIs([])} className="text-xs text-muted-foreground hover:text-foreground underline ml-1 flex-shrink-0">
+            <button type="button" onClick={() => setActivePOIs([])} className="text-xs text-muted-foreground hover:text-foreground underline ml-1 flex-shrink-0">
               Limpar POIs
             </button>
           )}
@@ -591,14 +641,14 @@ export default function MapaBairrosEmbed() {
         {/* POI legend when active */}
         {activePOIs.length > 0 && (
           <div className="flex flex-wrap items-center gap-3 mt-1 text-[10px] text-muted-foreground font-body">
-            📍 Mostrando {activePOIs.length} categoria{activePOIs.length > 1 ? "s" : ""} de pontos de interesse no mapa. Zoom in para ver nomes.
+            📍 Mostrando {activePOIs.length} categoria{activePOIs.length > 1 ? "s" : ""} de pontos de interesse no mapa. Aproxime o mapa para ver os nomes.
           </div>
         )}
 
         {/* Filter explainer */}
         {activeFilters.length > 0 && (
-          <p className="text-[10px] text-muted-foreground font-body mt-1 ml-1">
-            🔍 Filtrando por perfil de demanda — mostrando apenas bairros com esse tipo de público predominante.
+          <p className="text-[10px] text-muted-foreground font-body mt-1 ml-1" aria-live="polite">
+            🔍 Filtrando por perfil de demanda — {filtered.length} bairro{filtered.length !== 1 ? "s" : ""} com {activeFilters.length > 1 ? "algum dos perfis selecionados" : "esse perfil"}.
           </p>
         )}
       </div>
@@ -617,29 +667,30 @@ export default function MapaBairrosEmbed() {
         <div className="lg:col-span-2 order-1">
           <InteractiveMap
             neighborhoods={filtered}
-            showMetro={showMetro}
             showHeatmap={showHeatmap}
             showClusters={showClusters}
             showPOIs={activePOIs}
             selected={selectedNeighborhood}
             highlightedNames={highlightedNames}
-            onSelect={(n) => { setSelectedNeighborhood(n); }}
+            onSelect={handleSelect}
           />
         </div>
 
         <div className="lg:col-span-1 order-2">
           <div className="flex items-center gap-2 mb-4">
-            <TrendingUp size={16} className="text-primary" />
+            <TrendingUp size={16} className="text-primary" aria-hidden="true" />
             <h3 className="font-display text-sm font-bold text-foreground">Ranking de Bairros</h3>
           </div>
-          <ROIRanking neighborhoods={filtered} onSelectNeighborhood={handleRankingSelect} selectedName={selectedNeighborhood?.name} />
+          {filtered.length === 0 && hasQuery ? emptyState : (
+            <ROIRanking neighborhoods={filtered} onSelectNeighborhood={handleSelect} selectedName={selectedNeighborhood?.name} />
+          )}
         </div>
       </div>
 
       {/* Neighborhood Grid */}
       <div className="mb-12">
         <h3 className="font-display text-xl font-bold text-foreground mb-1">Bairros analisados</h3>
-        <p className="text-sm text-muted-foreground font-body mb-3">{filtered.length} bairro{filtered.length !== 1 ? "s" : ""}</p>
+        <p className="text-sm text-muted-foreground font-body mb-3" aria-live="polite">{filtered.length} bairro{filtered.length !== 1 ? "s" : ""}</p>
         {/* Card legend */}
         <div className="flex flex-wrap items-center gap-4 mb-4 p-3 rounded-lg bg-muted/30 border border-border/50 text-[11px] text-muted-foreground font-body">
           <span className="font-semibold text-foreground text-xs">Como ler os cards:</span>
@@ -654,33 +705,36 @@ export default function MapaBairrosEmbed() {
           </span>
           <span className="hidden sm:inline text-muted-foreground/60">|</span>
           <span className="hidden sm:inline">Tags indicam perfil de demanda e amenidades da região</span>
+          <span className="basis-full">* {ROI_AVISO}</span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          <AnimatePresence>
-            {filtered.map((n, i) => (
-              <NeighborhoodCard key={n.name} n={n} index={i} isSelected={selectedNeighborhood?.name === n.name}
-                isHighlighted={highlightedNames.includes(n.name)}
-                onClick={() => { setSelectedNeighborhood(n); }} />
-            ))}
-          </AnimatePresence>
-        </div>
+        {filtered.length === 0 && hasQuery ? emptyState : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <AnimatePresence>
+              {filtered.map((n, i) => (
+                <NeighborhoodCard key={n.id} n={n} index={i} isSelected={selectedNeighborhood?.id === n.id}
+                  isHighlighted={highlightedNames.includes(n.name)}
+                  onClick={() => handleSelect(n)} />
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
       </div>
 
       {/* Events */}
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-1">
-          <Calendar size={20} className="text-primary" />
+          <Calendar size={20} className="text-primary" aria-hidden="true" />
           <h3 className="font-display text-xl font-bold text-foreground">Eventos que aumentam a demanda</h3>
         </div>
-        <p className="text-sm text-muted-foreground font-body mb-3">Clique em um evento para destacar os bairros impactados no mapa.</p>
+        <p className="text-sm text-muted-foreground font-body mb-3">Próximos eventos. Clique em um evento para destacar os bairros impactados no mapa.</p>
         {/* Events impact legend */}
         <div className="flex flex-wrap items-center gap-3 mb-4 text-[11px] font-body">
           <span className="text-muted-foreground font-semibold">Nível de impacto:</span>
           <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-destructive/10 text-destructive">🔴 Alta demanda — picos de até +40% nas reservas</span>
-          <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300">🟡 Média demanda — aumento moderado</span>
+          <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">🟡 Média demanda — aumento moderado</span>
           <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-muted text-muted-foreground">⚪ Baixa demanda — impacto localizado</span>
         </div>
-        <EventsTimeline events={EVENTS} onEventClick={handleEventClick} activeEventId={activeEvent?.id ?? null} />
+        <EventsTimeline events={upcomingEvents} onEventClick={handleEventClick} activeEventId={activeEvent?.id ?? null} />
       </div>
     </div>
   );

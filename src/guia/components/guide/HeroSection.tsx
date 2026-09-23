@@ -134,7 +134,7 @@ export default function HeroSection() {
               </div>
               <div className="w-px h-8 bg-border" />
               <div className="text-center">
-                <p className="text-xs font-mono font-bold text-foreground">4.9</p>
+                <p className="text-xs font-mono font-bold text-foreground">4,9</p>
                 <p className="text-[10px] text-muted-foreground font-body">nota</p>
               </div>
               <div className="w-px h-8 bg-border" />

@@ -28,7 +28,8 @@ export default function ResumeToast({ data, onDismiss }: Props) {
 
   const handleContinue = () => {
     const el = document.getElementById(data.activeSection);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    const reduzir = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (el) el.scrollIntoView({ behavior: reduzir ? "auto" : "smooth" });
     setVisible(false);
     onDismiss();
   };
@@ -46,9 +47,11 @@ export default function ResumeToast({ data, onDismiss }: Props) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
+          role="status"
+          aria-live="polite"
           className="fixed top-2 lg:top-3 left-1/2 -translate-x-1/2 z-50 w-[90vw] max-w-md bg-card border border-border rounded-xl shadow-lg p-4 flex items-start gap-3"
         >
-          <BookOpen size={20} className="text-primary shrink-0 mt-0.5" />
+          <BookOpen size={20} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-body font-semibold text-foreground mb-1">
               Bem-vindo de volta!
@@ -57,16 +60,16 @@ export default function ResumeToast({ data, onDismiss }: Props) {
               Você parou em <strong className="text-foreground">{sectionName}</strong>. Continuar?
             </p>
             <div className="flex gap-2 mt-2.5">
-              <Button size="sm" onClick={handleContinue} className="min-h-[36px] text-xs font-body">
+              <Button type="button" size="sm" onClick={handleContinue} className="min-h-[36px] text-xs font-body">
                 Continuar
               </Button>
-              <Button size="sm" variant="ghost" onClick={handleDismiss} className="min-h-[36px] text-xs font-body text-muted-foreground">
+              <Button type="button" size="sm" variant="ghost" onClick={handleDismiss} className="min-h-[36px] text-xs font-body text-muted-foreground">
                 Início
               </Button>
             </div>
           </div>
-          <button onClick={handleDismiss} className="text-muted-foreground/50 hover:text-foreground transition-colors">
-            <X size={16} />
+          <button type="button" onClick={handleDismiss} aria-label="Fechar aviso" className="text-muted-foreground/70 hover:text-foreground transition-colors">
+            <X size={16} aria-hidden="true" />
           </button>
         </motion.div>
       )}

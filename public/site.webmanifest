@@ -1,14 +1,17 @@
 {
-  "name": "Bewild — Reformas turn-key para studios em São Paulo",
+  "name": "Bewild — Arquitetura, engenharia e reforma de apartamento em SP",
   "short_name": "Bewild",
-  "description": "Reformas turn-key de studios para short stay em São Paulo. Projeto, obra, marcenaria e mobiliário em um único processo.",
+  "description": "Escritório de arquitetura e engenharia em São Paulo: projeto arquitetônico 3D, obra e marcenaria na reforma do seu apartamento, com preço fechado e prazo em contrato.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#11355B",
-  "theme_color": "#11355B",
+  "background_color": "#FAF8F4",
+  "theme_color": "#FAF8F4",
   "lang": "pt-BR",
   "dir": "ltr",
-  "categories": ["design", "business", "lifestyle"]
+  "categories": ["design", "business", "lifestyle"],
+  "icons": [
+    { "src": "/brand/bewild-mark.png", "sizes": "625x625", "type": "image/png", "purpose": "any" }
+  ]
 }
