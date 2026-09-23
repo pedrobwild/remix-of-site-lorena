@@ -98,6 +98,33 @@ describe("bairro", () => {
     expect(neighborhoodOptions(list)).toEqual(["Água Branca", "Butantã", "Vila Olímpia"]);
   });
 
+  it('trata "Brooklin" e "Brooklin " como uma opção', () => {
+    const list = [proj({ neighborhood: "Brooklin" }), proj({ neighborhood: "Brooklin " })];
+    expect(neighborhoodOptions(list)).toEqual(["Brooklin"]);
+  });
+
+  it('prefere "Paraíso" quando há empate com "Paraiso"', () => {
+    const list = [proj({ neighborhood: "Paraiso" }), proj({ neighborhood: "Paraíso" })];
+    expect(neighborhoodOptions(list)).toEqual(["Paraíso"]);
+  });
+
+  it('filtrar por "Paraíso" inclui também a grafia "Paraiso"', () => {
+    const semAcento = proj({ neighborhood: "Paraiso" });
+    const comAcento = proj({ neighborhood: "Paraíso" });
+    expect(applyNeighborhoodFilter([semAcento, comAcento], "Paraíso")).toEqual([
+      semAcento,
+      comAcento,
+    ]);
+  });
+
+  it('mantém "Brooklin" e "Brooklin Paulista" separados', () => {
+    const list = [
+      proj({ neighborhood: "Brooklin" }),
+      proj({ neighborhood: "Brooklin Paulista" }),
+    ];
+    expect(neighborhoodOptions(list)).toEqual(["Brooklin", "Brooklin Paulista"]);
+  });
+
   it("o valor sentinela devolve a lista inteira", () => {
     const list = [shortStay, turnKey];
     expect(applyNeighborhoodFilter(list, ALL_NEIGHBORHOODS)).toEqual(list);
