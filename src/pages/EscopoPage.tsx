@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
 import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
+import { scrollBehavior } from "@/lib/reducedMotion";
 import "./escopo.css";
 
 /* ============================================================
@@ -101,7 +102,7 @@ export default function EscopoPage() {
       setRecomendacao(payload.recomendacao);
       trackEvent("scope_plan_result", { objetivo });
       window.setTimeout(() => {
-        resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        resultRef.current?.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
       }, 60);
     } catch {
       setErro("Não conseguimos gerar a recomendação agora. Tente novamente em instantes.");
@@ -186,8 +187,9 @@ export default function EscopoPage() {
                   placeholder="Ex.: studio de 26 m² entregue pela construtora, sem marcenaria, com piso cerâmico. Quero deixar pronto para alugar por temporada, com cozinha equipada e uma boa cama."
                   maxLength={4000}
                   required
+                  aria-describedby="escopo-dica escopo-aviso-ia"
                 />
-                <p className="bwa-scope-hint">
+                <p className="bwa-scope-hint" id="escopo-dica">
                   Quanto mais detalhes (estado atual, ambientes, prioridades), melhor a recomendação.
                 </p>
               </div>
@@ -201,9 +203,11 @@ export default function EscopoPage() {
               <button className="bwa-button bwa-scope-submit" type="submit" disabled={loading}>
                 {loading ? "Gerando recomendação…" : "Gerar recomendação"}
               </button>
-              <p className="bwa-scope-hint">
+              <p className="bwa-scope-hint" id="escopo-aviso-ia">
                 Recomendação gerada por inteligência artificial com base na experiência da Bewild.
-                Não substitui visita técnica nem proposta comercial.
+                Não substitui visita técnica nem proposta comercial. O texto que você escreve é
+                enviado a um provedor de IA só para gerar a recomendação: não inclua nome, telefone
+                ou endereço completo. <a href="/privacidade">Política de privacidade</a>.
               </p>
             </form>
 

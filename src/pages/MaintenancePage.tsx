@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { CONTACT, whatsappHref } from "../components/landing/content";
 import { useSeo } from "../lib/useSeo";
+import { useVideoAutoplayInView } from "../lib/useVideoAutoplayInView";
 import "./MaintenancePage.css";
 
 const WHATSAPP_HREF = whatsappHref(CONTACT.whatsappText);
@@ -15,7 +16,23 @@ export default function MaintenancePage() {
     noindex: true,
   });
 
+  const rootRef = useRef<HTMLDivElement>(null);
+  // Vídeos: tocam só quando visíveis; com prefers-reduced-motion ficam
+  // parados no pôster, com os controles nativos (useVideoAutoplayInView).
+  const videoArqRef = useVideoAutoplayInView();
+  const videoObraRef = useVideoAutoplayInView();
+
   useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const reveals = root.querySelectorAll(".reveal");
+    // Sem IntersectionObserver (navegador antigo), mostra tudo de uma vez.
+    if (typeof IntersectionObserver === "undefined") {
+      reveals.forEach((el) => el.classList.add("in"));
+      root.querySelectorAll(".reveal-solta").forEach((el) => el.classList.add("in"));
+      return;
+    }
+    const timers: number[] = [];
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -23,7 +40,7 @@ export default function MaintenancePage() {
             e.target.classList.add("in");
             const soltas = e.target.querySelectorAll(".reveal-solta");
             soltas.forEach((s, i) => {
-              setTimeout(() => s.classList.add("in"), 350 + i * 550);
+              timers.push(window.setTimeout(() => s.classList.add("in"), 350 + i * 550));
             });
             io.unobserve(e.target);
           }
@@ -31,12 +48,15 @@ export default function MaintenancePage() {
       },
       { threshold: 0.2 }
     );
-    document.querySelectorAll(".bw-construcao .reveal").forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    reveals.forEach((el) => io.observe(el));
+    return () => {
+      io.disconnect();
+      timers.forEach((t) => window.clearTimeout(t));
+    };
   }, []);
 
   return (
-    <div className="bw-construcao">
+    <div className="bw-construcao" ref={rootRef}>
       <div className="bg" aria-hidden="true" />
       <main>
         <section className="hero" aria-label="Bewild">
@@ -113,12 +133,12 @@ export default function MaintenancePage() {
                 </p>
               </div>
               <div className="video-moldura">
-                <video src="/videos/arquiteta-medicao.mp4" poster="/videos/arquiteta-medicao-poster.jpg" muted loop autoPlay playsInline preload="metadata" aria-label="Arquiteta da Bewild fazendo a medição do imóvel" />
+                <video ref={videoArqRef} src="/videos/arquiteta-medicao.mp4" poster="/videos/arquiteta-medicao-poster.jpg" muted loop playsInline preload="metadata" aria-label="Arquiteta da Bewild fazendo a medição do imóvel" />
               </div>
             </div>
             <div className="video-bloco invertido">
               <div className="video-moldura">
-                <video src="/videos/time-obra.mp4" poster="/videos/time-obra-poster.jpg" muted loop autoPlay playsInline preload="metadata" aria-label="Time de obra da Bewild a caminho da reforma" />
+                <video ref={videoObraRef} src="/videos/time-obra.mp4" poster="/videos/time-obra-poster.jpg" muted loop playsInline preload="metadata" aria-label="Time de obra da Bewild a caminho da reforma" />
               </div>
               <div className="video-texto">
                 <p className="vt-tag">e quem executa tem rosto</p>

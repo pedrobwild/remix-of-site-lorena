@@ -2,13 +2,23 @@ import { useEffect, useRef } from "react";
 import { openCookiePreferences } from "@/lib/cookieConsent";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import BwaWhatsForm from "@/components/BwaWhatsForm";
+import { useSiteSettings } from "@/lib/useSiteSettings";
+import { isExternalHref, safeHref } from "@/lib/safeUrl";
 
 /**
  * BwaFooter — Footer .bwa unificado, idêntico ao da home. Usado em toda
  * página pública fora da home. Depende do CSS injetado por BwaNav.
+ *
+ * "O contrato" e "O que fazemos" apontam os dois para /#certeza de propósito:
+ * é a seção da home que apresenta o contrato único e as disciplinas; a home
+ * não tem âncora mais específica para nenhum dos dois.
  */
 export default function BwaFooter() {
   const raRef = useRef<HTMLDivElement>(null);
+  // LinkedIn vem do admin (site_settings.linkedin_url); sem URL real
+  // configurada o link não aparece — antes apontava para linkedin.com.
+  const { settings } = useSiteSettings();
+  const linkedinHref = safeHref(settings?.linkedin_url);
 
   useEffect(() => {
     const container = raRef.current;
@@ -52,7 +62,7 @@ export default function BwaFooter() {
               <a href="/guia-do-investidor">Guia do investidor</a>
               <a href="/faq">FAQ</a>
               <a href="/contato">Contato</a>
-            <a href="/escopo">Escopo com IA</a>
+              <a href="/escopo">Escopo com IA</a>
               <a href="/orcamento">Orçamento</a>
               <a href="/parceiros">Parceiros</a>
               <a href="/marcas-e-parcerias">Marcas e parcerias</a>
@@ -65,7 +75,9 @@ export default function BwaFooter() {
             <div>
               <a href={whatsappHref("Olá, quero um orçamento para o meu studio")} target="_blank" rel="noreferrer">WhatsApp</a>
               <a href={CONTACT.instagram} target="_blank" rel="noreferrer">Instagram</a>
-              <a href={CONTACT.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+              {linkedinHref && isExternalHref(linkedinHref) && (
+                <a href={linkedinHref} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              )}
               <a href={`mailto:${CONTACT.email}`}>e-mail</a>
               <a href="/privacidade">Política de privacidade</a>
               <button type="button" className="bwa-footer-cookie-prefs" onClick={openCookiePreferences}>Preferências de cookies</button>

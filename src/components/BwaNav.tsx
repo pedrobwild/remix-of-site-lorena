@@ -2,8 +2,7 @@ import { useEffect, useRef } from "react";
 import BewildLogo from "@/components/BewildLogo";
 import homeBwaCssUrl from "../pages/home-bwa.css?url";
 import bwaInternalCssUrl from "../pages/bwa-internal.css?url";
-// @ts-expect-error - JS module sem tipos
-import { initBwaNav } from "../pages/home-bwa-script.js";
+import { initBwaNav } from "../pages/home-bwa-script";
 
 const FONTS_HREF =
   "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&display=swap";
@@ -12,7 +11,14 @@ const FONTS_HREF =
  * BwaNav — Header .bwa unificado (nav desktop + menu mobile), idêntico ao
  * da home. Autoinjeta home-bwa.css + bwa-internal.css como ÚLTIMAS folhas do
  * <head> (para vencer preflight/temas legados) e inicializa initBwaNav
- * (idempotente). Usado em toda página pública fora da home.
+ * (idempotente, restrito a este componente). Usado em toda página pública
+ * fora da home.
+ *
+ * Menu mobile acessível (em home-bwa-script.ts): ao abrir, o foco vai para
+ * o primeiro link, o Tab fica preso no header + menu e o resto da página
+ * fica `inert`; Esc fecha e devolve o foco ao botão. Ao desmontar, o menu
+ * fecha — a classe `bwa-menu-open` (que trava a rolagem do body) nunca
+ * vaza para a próxima rota.
  */
 export default function BwaNav() {
   const ref = useRef<HTMLDivElement>(null);
@@ -51,9 +57,10 @@ export default function BwaNav() {
 
     document.documentElement.classList.add("bwa-home-root");
     document.body.classList.add("bwa-home-root");
-    initBwaNav(document);
+    const cleanupNav = initBwaNav(ref.current);
 
     return () => {
+      cleanupNav();
       document.documentElement.classList.remove("bwa-home-root");
       document.body.classList.remove("bwa-home-root");
       // As folhas .bwa são mantidas de propósito no <head>: remover e recriar o
@@ -97,6 +104,7 @@ export default function BwaNav() {
             type="button"
             aria-label="Abrir menu"
             aria-expanded="false"
+            aria-controls="bwa-mobile-menu"
             data-menu-button
           >
             <span></span>
@@ -104,7 +112,7 @@ export default function BwaNav() {
         </div>
       </header>
 
-      <div className="bwa-mobile-menu" data-mobile-menu>
+      <div className="bwa-mobile-menu" id="bwa-mobile-menu" data-mobile-menu>
         <nav aria-label="Navegação mobile">
           <a href="/#para-quem">Para quem</a>
           <a href="/#certeza">Como trabalhamos</a>

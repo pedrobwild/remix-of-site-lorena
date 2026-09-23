@@ -6,9 +6,9 @@ import { hydrateHomeProjects } from "@/lib/hydrateHomeProjects";
 import { trackEvent } from "@/lib/ga4";
 import { installCatalogPreview } from "@/lib/homeCatalog";
 import { installInstagramEmbeds } from "@/lib/homeInstagram";
-
-// @ts-expect-error - JS module, no types
-import { initHomeBwa } from "./home-bwa-script.js";
+import { fetchSiteSettings } from "@/lib/useSiteSettings";
+import { isExternalHref, safeHref } from "@/lib/safeUrl";
+import { initHomeBwa } from "./home-bwa-script";
 
 const TITLE = "Arquitetura, engenharia e reforma de apartamento em SP | Bewild";
 const DESCRIPTION =
@@ -57,6 +57,31 @@ function ensureLink(rel: string, href: string, extra: Record<string, string> = {
  * precisar editar valores. Ao desmontar, remove — assim não vaza a
  * paleta clara para outras rotas.
  */
+/**
+ * LinkedIn do rodapé (mesma regra do BwaFooter): só aparece com a URL real
+ * configurada no admin (`site_settings.linkedin_url`), validada por safeHref.
+ * O HTML estático não traz o link — antes ele apontava para linkedin.com.
+ */
+function installFooterLinkedin(root: HTMLElement): () => void {
+  let alive = true;
+  void fetchSiteSettings().then((settings) => {
+    const href = safeHref(settings.linkedin_url);
+    if (!alive || !href || !isExternalHref(href)) return;
+    const instagram = root.querySelector<HTMLAnchorElement>('.bwa-footer-column a[href*="instagram.com"]');
+    if (!instagram || root.querySelector("[data-footer-linkedin]")) return;
+    const link = document.createElement("a");
+    link.href = href;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "LinkedIn";
+    link.setAttribute("data-footer-linkedin", "");
+    instagram.after(link);
+  });
+  return () => {
+    alive = false;
+  };
+}
+
 function mountHomeStylesheet(): () => void {
   const marker = "data-bwa-home-css";
   let link = document.head.querySelector<HTMLLinkElement>(`link[${marker}]`);
@@ -101,15 +126,23 @@ export default function HomePage() {
     ensureLink("stylesheet", FONTS_HREF);
 
     const unmountCss = mountHomeStylesheet();
-    // Run the original init script (same logic as the source HTML).
-    initHomeBwa();
+    const root = homeRef.current;
+    // Comportamento do HTML aprovado (menu, galeria, FAQ, vídeo, reveals),
+    // restrito a esta raiz. A limpeza fecha modal/menu abertos e devolve a
+    // rolagem do <body> — sem ela o vídeo aberto + Voltar travava a rota
+    // seguinte.
+    const cleanups = root
+      ? [
+          initHomeBwa(root),
+          // Marcenaria (Catálogo Bwild) e depoimentos (Instagram): carregam
+          // quando as seções se aproximam da tela.
+          installCatalogPreview(root),
+          installInstagramEmbeds(root),
+          installFooterLinkedin(root),
+        ]
+      : [];
     // Vitrine "Projetos": troca os cards estáticos pelos mais acessados.
     void hydrateHomeProjects();
-    // Marcenaria (Catálogo Bwild) e depoimentos (Instagram): carregam quando
-    // as seções se aproximam da tela. Ligados aqui, no efeito que a home de
-    // fato executa — useHomeFx não é chamado por esta página.
-    const root = homeRef.current;
-    const cleanups = root ? [installCatalogPreview(root), installInstagramEmbeds(root)] : [];
 
     return () => {
       cleanups.forEach((cleanup) => cleanup());

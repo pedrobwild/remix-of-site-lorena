@@ -6,7 +6,7 @@ import { trackEvent } from "@/lib/ga4";
  * BwaWhatsForm — formulário compacto no rodapé. Ao enviar, monta a mensagem
  * e abre a conversa direto no WhatsApp oficial da Bewild (sem backend).
  * A home usa o mesmo formulário em HTML estático (home-bwa-body.ts), ligado
- * pelo home-bwa-script.js — mantenha os dois em sincronia.
+ * pelo home-bwa-script.ts — mantenha os dois em sincronia.
  */
 const WHATS_NUMBER = "5511911906183";
 
