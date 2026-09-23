@@ -106,6 +106,60 @@ function mountHomeStylesheet(): () => void {
   };
 }
 
+function installWorkflowPortal(root: HTMLElement): () => void {
+  const portal = root.querySelector<HTMLElement>("[data-workflow-portal]");
+  if (!portal) return () => undefined;
+
+  const tabs = Array.from(
+    portal.querySelectorAll<HTMLButtonElement>("[data-workflow-tab]"),
+  );
+  const panels = Array.from(
+    portal.querySelectorAll<HTMLElement>("[data-workflow-panel]"),
+  );
+
+  const selectTab = (tab: HTMLButtonElement, moveFocus: boolean) => {
+    const target = tab.dataset.workflowTab;
+    if (!target) return;
+
+    tabs.forEach((item) => {
+      const selected = item === tab;
+      item.setAttribute("aria-selected", String(selected));
+      item.tabIndex = selected ? 0 : -1;
+    });
+    panels.forEach((panel) => {
+      panel.hidden = panel.dataset.workflowPanel !== target;
+    });
+    if (moveFocus) tab.focus();
+  };
+
+  const handleClick = (event: MouseEvent) => {
+    const target = event.target instanceof Element
+      ? event.target.closest<HTMLButtonElement>("[data-workflow-tab]")
+      : null;
+    if (target && portal.contains(target)) selectTab(target, false);
+  };
+
+  const handleKeydown = (event: KeyboardEvent) => {
+    const target = event.target instanceof Element
+      ? event.target.closest<HTMLButtonElement>("[data-workflow-tab]")
+      : null;
+    if (!target || !portal.contains(target)) return;
+    const currentIndex = tabs.indexOf(target);
+    if (currentIndex < 0 || (event.key !== "ArrowLeft" && event.key !== "ArrowRight")) return;
+    event.preventDefault();
+    const direction = event.key === "ArrowRight" ? 1 : -1;
+    const next = tabs[(currentIndex + direction + tabs.length) % tabs.length];
+    if (next) selectTab(next, true);
+  };
+
+  portal.addEventListener("click", handleClick);
+  portal.addEventListener("keydown", handleKeydown);
+  return () => {
+    portal.removeEventListener("click", handleClick);
+    portal.removeEventListener("keydown", handleKeydown);
+  };
+}
+
 export default function HomePage() {
   const homeRef = useRef<HTMLDivElement>(null);
 
@@ -142,6 +196,7 @@ export default function HomePage() {
           installInstagramEmbeds(root),
           // Tour virtual 3D (Enscape): 3 cômodos lado a lado; no toque, tela cheia.
           installTour3d(root),
+          installWorkflowPortal(root),
           installFooterLinkedin(root),
         ]
       : [];
