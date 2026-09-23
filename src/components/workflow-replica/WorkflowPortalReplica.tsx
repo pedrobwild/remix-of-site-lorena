@@ -163,7 +163,7 @@ function CurvePanel() {
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={curveData} margin={{ top: 27, right: 15, left: -16, bottom: 28 }}>
             <CartesianGrid vertical={false} stroke="var(--wf-border)" strokeDasharray="3 3" />
-            <XAxis dataKey="timestamp" type="number" domain={domain} tickFormatter={formatChartDate} tick={{ fontSize: 8, fill: "var(--wf-muted-foreground)" }} angle={-45} textAnchor="end" height={42} axisLine={false} tickLine={false} tickCount={7} />
+            <XAxis dataKey="timestamp" type="number" domain={domain} allowDataOverflow tickFormatter={formatChartDate} tick={{ fontSize: 8, fill: "var(--wf-muted-foreground)" }} angle={-45} textAnchor="end" height={42} axisLine={false} tickLine={false} tickCount={7} />
             <YAxis domain={[0,100]} ticks={[0,25,50,75,100]} tickFormatter={(value) => `${value}%`} tick={{ fontSize: 9, fill: "var(--wf-muted-foreground)" }} axisLine={false} tickLine={false} />
             <Tooltip content={<CurveTooltip />} />
             <ReferenceLine x={PROJECT_START} stroke="var(--wf-muted-foreground)" strokeDasharray="4 4" label={{ value: "Início", position: "insideTopLeft", fill: "var(--wf-muted-foreground)", fontSize: 9 }} />
