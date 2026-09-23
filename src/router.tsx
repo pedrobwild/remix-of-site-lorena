@@ -54,6 +54,7 @@ const SettingsPage = lazy(() => import("./pages/admin/SettingsPage"));
 const BewildProjectsListPage = lazy(() => import("./pages/admin/BewildProjectsListPage"));
 const BewildProjectFormPage = lazy(() => import("./pages/admin/BewildProjectFormPage"));
 const FaqAdminPage = lazy(() => import("./pages/admin/FaqAdminPage"));
+const IndicacoesAdminPage = lazy(() => import("./pages/admin/IndicacoesAdminPage"));
 const TypographyPage = lazy(() => import("./pages/admin/TypographyPage"));
 
 import ProtectedRoute from "./components/admin/ProtectedRoute";
@@ -184,6 +185,14 @@ export function renderRoute(route: Route) {
       <AdminChunk>
         <ProtectedRoute>
           <RastreamentoPage />
+        </ProtectedRoute>
+      </AdminChunk>
+    );
+  if (route.name === "admin-indicacoes")
+    return (
+      <AdminChunk>
+        <ProtectedRoute>
+          <IndicacoesAdminPage />
         </ProtectedRoute>
       </AdminChunk>
     );

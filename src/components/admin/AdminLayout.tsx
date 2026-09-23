@@ -14,6 +14,7 @@ import {
   Type,
   Inbox,
   Activity,
+  Handshake,
 } from "lucide-react";
 import { useAuth } from "@/lib/useAuth";
 import { navigate, routes } from "@/lib/useHashRoute";
@@ -22,6 +23,7 @@ type ActiveKey =
   | "dashboard"
   | "bewild"
   | "leads"
+  | "indicacoes"
   | "analytics"
   | "seo"
   | "seo-404"
@@ -46,6 +48,7 @@ const NAV: { key: ActiveKey; label: string; href: string; icon: typeof LayoutDas
   { key: "dashboard", label: "Dashboard", href: routes.adminDashboard, icon: LayoutDashboard },
   { key: "analytics", label: "Analytics", href: routes.adminAnalytics, icon: BarChart3 },
   { key: "leads", label: "Leads", href: routes.adminLeads, icon: Inbox },
+  { key: "indicacoes", label: "Indicações", href: routes.adminIndicacoes, icon: Handshake },
   { key: "bewild", label: "Portfólio Bewild", href: "/admin/projetos", icon: FolderKanban },
   { key: "faq", label: "FAQ", href: routes.adminFaq, icon: HelpCircle },
   { key: "seo", label: "SEO", href: routes.adminSeo, icon: Search },
