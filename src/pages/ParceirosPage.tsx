@@ -618,7 +618,6 @@ export default function ParceirosPage() {
             </div>
           </section>
         ) : (
-          {/* 07 · Bloco B2B incorporadoras */}
           <section className="bwa-parc-section bwa-parc-section--dark" id="incorporadoras">
             <div className="bwa-shell">
               <p className="bwa-label">07 · Para incorporadoras</p>
