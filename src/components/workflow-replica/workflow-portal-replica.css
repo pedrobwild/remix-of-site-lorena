@@ -162,6 +162,7 @@
   .wf-replica .wf-tab:nth-child(n+4) { display: none; }
   .wf-replica .wf-tab { gap: 3px; padding-inline: 1px; font-size: 11px; white-space: nowrap; }
   .wf-replica .wf-tab span { display: inline; }
+  .wf-replica .wf-tab .wf-tab-label-short { display: none; }
   .wf-replica .wf-panel { min-height: 400px; padding: 12px; }
   .wf-replica .wf-section-head { align-items: flex-start; }
   .wf-replica .wf-table-wrap { display: none; }
@@ -184,8 +185,8 @@
 @media (max-width: 359px) {
   .wf-replica .wf-tab { font-size: 10px; }
   .wf-replica .wf-tab svg { width: 13px; height: 13px; }
-  .wf-replica .wf-tab-label-long { display: none; }
-  .wf-replica .wf-tab-label-short { display: inline; }
+  .wf-replica .wf-tab .wf-tab-label-long { display: none; }
+  .wf-replica .wf-tab .wf-tab-label-short { display: inline; }
   .wf-replica .wf-section-head { flex-wrap: wrap; }
   .wf-replica .wf-report-overview { grid-template-columns: 1fr; }
 }

@@ -1,3 +1,4 @@
+- [ ] Corrigir gráfico, relatórios, abas móveis e isolamento CSS da réplica do Bwild Workflow; validar e recapturar sem publicar.
 - [x] Recriar a réplica do portal Bwild Workflow na home, validar e capturar em 1280/390/320 sem publicar.
 # Roadmap
 
