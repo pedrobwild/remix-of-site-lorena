@@ -1,10 +1,13 @@
 /**
  * hydrateHomeProjects — troca os 3 cards estáticos da seção "Projetos" da home
- * pelos projetos publicados MAIS ACESSADOS (visitas em /portfolio/:slug nos
- * últimos 90 dias), via RPC `top_projects`.
+ * por um slider em loop infinito com os 6 projetos publicados MAIS ACESSADOS
+ * (visitas em /portfolio/:slug nos últimos 90 dias), via RPC `top_projects`.
  *
- * Só substitui o markup se a consulta retornar 3 itens válidos — caso
- * contrário, os cards estáticos permanecem como fallback.
+ * A lista é congelada por 7 dias (cache em localStorage): o ranking só é
+ * atualizado quando o cache expira, para a home não mudar todo dia.
+ *
+ * Só substitui o markup se houver ao menos 3 itens válidos — caso contrário,
+ * os cards estáticos permanecem como fallback.
  */
 import { supabase } from "@/integrations/supabase/client";
 import { devWarn } from "@/lib/devLog";
