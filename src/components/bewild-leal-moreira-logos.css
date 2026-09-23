@@ -12,14 +12,16 @@
 
 .bwa-partner-logos-bewild {
   display: block;
-  width: clamp(104px, 14vw, 150px);
+  width: clamp(100px, 12vw, 130px);
+  min-width: 0;
   height: auto;
 }
 
 .bwa-partner-logos-leal {
   display: block;
-  width: clamp(150px, 23vw, 230px);
-  max-width: 40vw;
+  width: clamp(145px, 19vw, 200px);
+  min-width: 0;
+  max-width: 42%;
   height: auto;
 }
 
