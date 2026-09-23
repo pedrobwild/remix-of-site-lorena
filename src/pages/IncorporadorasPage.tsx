@@ -260,12 +260,6 @@ export default function IncorporadorasPage() {
     <div className="bwa-parceiros">
       <BwaNav />
 
-      {preview && (
-        <p className="bwa-incorp-preview" role="status">
-          {INCORP_PREVIEW_BANNER}
-        </p>
-      )}
-
       <main id="main" tabIndex={-1}>
         {/* Abertura */}
         <section className="bwa-parc-hero">
