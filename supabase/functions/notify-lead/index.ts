@@ -5,6 +5,7 @@
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "npm:zod@3.23.8";
+import { sendTemplateEmail } from "../_shared/transactional-email-templates/send-email.ts";
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -378,13 +379,6 @@ async function createCrmCard(lead: Lead): Promise<CrmResult> {
  * pode derrubar o recebimento do lead.
  */
 async function sendLeadEmail(lead: Lead): Promise<Outcome> {
-  const url = Deno.env.get("SUPABASE_URL");
-  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!url || !key) {
-    console.warn("[notify-lead] service credentials missing; skipping email");
-    return "skipped";
-  }
-
   const origin: string[] = [];
   if (lead.utm_source) origin.push(`utm_source: ${lead.utm_source}`);
   if (lead.utm_medium) origin.push(`utm_medium: ${lead.utm_medium}`);
@@ -395,44 +389,29 @@ async function sendLeadEmail(lead: Lead): Promise<Outcome> {
   const isParceria = (lead.objetivo ?? "").startsWith("Parceria");
 
   try {
-    const res = await fetch(`${url}/functions/v1/send-transactional-email`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${key}`,
-        apikey: key,
+    // O destinatário fixo (marketing@bewild.com.br) está no próprio modelo.
+    await sendTemplateEmail("novo-lead-site", "marketing@bewild.com.br", {
+      idempotencyKey: `lead-email-${lead.id ?? crypto.randomUUID()}`,
+      templateData: {
+        formLabel: isParceria
+          ? "Nova solicitação de parceria · /parceiros"
+          : `Novo lead · ${lead.landing_path === "/orcamento" ? "Pedido de orçamento" : "Diagnóstico Bewild"}`,
+        name: lead.name ?? null,
+        whatsapp: lead.whatsapp ?? null,
+        email: lead.email ?? null,
+        location: lead.location ?? null,
+        area_m2: lead.area_m2 ?? null,
+        objetivo: lead.objetivo ?? null,
+        chaves: lead.chaves ?? null,
+        planta: lead.planta ?? null,
+        lives_in_sp: typeof lead.lives_in_sp === "boolean" ? lead.lives_in_sp : null,
+        lead_source: lead.lead_source ?? null,
+        message: lead.message ?? null,
+        origin: origin.length ? origin.join("\n") : null,
+        waLink: waLink(lead.whatsapp),
+        receivedAt: fmtDateBR(new Date()),
       },
-      body: JSON.stringify({
-        templateName: "novo-lead-site",
-        // Destinatário fixo definido no próprio modelo (equipe comercial).
-        recipientEmail: "marketing@bewild.com.br",
-        idempotencyKey: `lead-email-${lead.id ?? crypto.randomUUID()}`,
-        templateData: {
-          formLabel: isParceria
-            ? "Nova solicitação de parceria · /parceiros"
-            : `Novo lead · ${lead.landing_path === "/orcamento" ? "Pedido de orçamento" : "Diagnóstico Bewild"}`,
-          name: lead.name ?? null,
-          whatsapp: lead.whatsapp ?? null,
-          email: lead.email ?? null,
-          location: lead.location ?? null,
-          area_m2: lead.area_m2 ?? null,
-          objetivo: lead.objetivo ?? null,
-          chaves: lead.chaves ?? null,
-          planta: lead.planta ?? null,
-          lives_in_sp: typeof lead.lives_in_sp === "boolean" ? lead.lives_in_sp : null,
-          lead_source: lead.lead_source ?? null,
-          message: lead.message ?? null,
-          origin: origin.length ? origin.join("\n") : null,
-          waLink: waLink(lead.whatsapp),
-          receivedAt: fmtDateBR(new Date()),
-        },
-      }),
     });
-    if (!res.ok) {
-      const body = (await res.text().catch(() => "")).slice(0, 200);
-      console.error("[notify-lead] email send non-2xx", res.status, body);
-      return "error";
-    }
     return "sent";
   } catch (err) {
     console.error("[notify-lead] email send failed", err);
