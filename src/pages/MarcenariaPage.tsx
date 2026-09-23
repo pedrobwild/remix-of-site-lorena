@@ -11,6 +11,7 @@ import {
   type CatalogItem,
 } from "@/lib/homeCatalog";
 import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
+import { CONTACT, whatsappHref } from "@/components/landing/content";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./servico-reforma.css";
 import "./marcenaria.css";
@@ -307,11 +308,35 @@ export default function MarcenariaPage() {
               >
                 Solicitar orçamento <span aria-hidden="true">→</span>
               </a>
+              <a
+                className="bwa-servico-whats"
+                href={whatsappHref(
+                  "Olá, quero um orçamento de marcenaria sob medida"
+                )}
+                target="_blank"
+                rel="noreferrer"
+                data-cta="marcenaria-whatsapp"
+              >
+                Falar no WhatsApp <span aria-hidden="true">→</span>
+              </a>
               <a className="bwa-servico-whats" href="/contato" data-cta="marcenaria-contato">
                 Falar com a gente <span aria-hidden="true">→</span>
               </a>
               <p className="bwa-servico-cta-note">
                 +160 reformas entregues · +200 projetos
+              </p>
+              <p className="bwa-servico-cta-note">
+                <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+                {" · "}
+                <a
+                  href={whatsappHref(
+                    "Olá, quero um orçamento de marcenaria sob medida"
+                  )}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  +55 11 91190-6183
+                </a>
               </p>
             </div>
           </div>
