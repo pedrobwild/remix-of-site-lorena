@@ -461,3 +461,39 @@
 .bwa-parceiros .bwa-contact-form-done a + a {
   margin-top: 14px;
 }
+
+/* Card Leal Moreira em destaque (só com a página de incorporadoras ligada):
+   largura total, acima do card menor da Vivian. */
+.bwa-parc-leal-hero {
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+  margin-bottom: 24px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color .2s ease;
+}
+
+.bwa-parc-leal-hero:hover,
+.bwa-parc-leal-hero:focus-visible {
+  border-color: currentColor;
+}
+
+.bwa-parc-leal-cta {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.bwa-parc-two--single {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 640px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bwa-parc-leal-hero {
+    transition: none;
+  }
+}
