@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import homeBwaCssUrl from "./home-bwa.css?url";
 import { HOME_BWA_HTML } from "./home-bwa-body";
+import BwaFooter from "@/components/BwaFooter";
 import { useSeo } from "@/lib/useSeo";
 import { hydrateHomeProjects } from "@/lib/hydrateHomeProjects";
 import { trackEvent } from "@/lib/ga4";
