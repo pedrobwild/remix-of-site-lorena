@@ -3000,10 +3000,9 @@
     }
 
     .bwa-footer-wordmark {
-      font-size: clamp(52px, 7vw, 110px);
-      font-weight: 800;
-      line-height: .8;
-      letter-spacing: -.085em;
+      display: block;
+      height: clamp(42px, 5.6vw, 88px);
+      width: auto;
     }
 
     .bwa-footer-brand p {
