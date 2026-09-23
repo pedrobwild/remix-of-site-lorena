@@ -309,7 +309,7 @@ export default function BewildPortfolioPage() {
                 flexWrap: "wrap",
               }}
             >
-              <a href="/diagnostico" className="bwh-btn bwh-btn--invert">
+              <a href="/orcamento" className="bwh-btn bwh-btn--invert">
                 Solicitar orçamento <span className="bwh-ar">→</span>
               </a>
               <a

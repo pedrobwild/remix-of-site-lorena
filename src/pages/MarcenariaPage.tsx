@@ -28,7 +28,7 @@ const CANONICAL = "/marcenaria";
 // (e o gclid/fbclid) com que o visitante chegou. A navegação da SPA já carrega
 // os parâmetros de campanha da URL atual (carryCampaignParams), e o clique no
 // CTA é medido por useCtaClickTracking (data-cta).
-const CTA_HREF = "/diagnostico";
+const CTA_HREF = "/orcamento";
 
 const ESPECIFICACOES: { n: string; t: string }[] = [
   { n: "01", t: "MDF de procedência certificada, com garantia de fábrica" },

@@ -122,7 +122,7 @@ export default function AutorizacaoCondominioPage() {
               Protocolamos, aprovamos e executamos. <em>Você acompanha.</em>
             </h2>
             <div className="bwa-faqpage-cta-actions">
-              <a className="bwa-button bwa-button-light" href="/diagnostico" data-cta="autorizacao-cta">
+              <a className="bwa-button bwa-button-light" href="/orcamento" data-cta="autorizacao-cta">
                 Solicitar orçamento <span aria-hidden="true">→</span>
               </a>
               <a

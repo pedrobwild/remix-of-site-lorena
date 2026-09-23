@@ -503,7 +503,7 @@ export default function FaqPage() {
                     <p className="bwa-faqpage-ask-next">{respostaIa.proximo_passo}</p>
                   )}
                   <div className="bwa-faqpage-ask-actions">
-                    <a className="bwa-button" href="/diagnostico" data-cta="faq-ia-diagnostico">
+                    <a className="bwa-button" href="/orcamento" data-cta="faq-ia-diagnostico">
                       Solicitar orçamento <span aria-hidden="true">→</span>
                     </a>
                     <a
@@ -531,7 +531,7 @@ export default function FaqPage() {
               Não encontrou sua resposta? <em>Vamos conversar.</em>
             </h2>
             <div className="bwa-faqpage-cta-actions">
-              <a className="bwa-button bwa-button-light" href="/diagnostico" data-cta="faq-cta">
+              <a className="bwa-button bwa-button-light" href="/orcamento" data-cta="faq-cta">
                 Solicitar orçamento <span aria-hidden="true">→</span>
               </a>
               <a

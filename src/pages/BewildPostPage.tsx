@@ -148,7 +148,7 @@ export default function BewildPostPage({ slug }: Props) {
   // Link interno SEM utm_*: UTM fixo aqui sobrescrevia a campanha real do
   // visitante (e perdia gclid/fbclid). A navegação SPA já carrega os
   // parâmetros da URL atual (carryCampaignParams).
-  const ctaHref = "/diagnostico";
+  const ctaHref = "/orcamento";
   const ctaWhatsHref = post ? whatsappHref(`Vim do artigo "${post.title}" no site.`) : whatsappHref();
 
   const bodyHtml = useMemo(() => {

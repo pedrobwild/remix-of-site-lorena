@@ -70,7 +70,7 @@ const L = {
     description: "Cobertura entregue pronta para morar, do terraço à marcenaria.",
   },
   diagnostico: {
-    href: "/diagnostico",
+    href: "/orcamento",
     label: "Diagnóstico gratuito do seu imóvel",
     description: "Leitura inicial de escopo, prazo e investimento.",
   },

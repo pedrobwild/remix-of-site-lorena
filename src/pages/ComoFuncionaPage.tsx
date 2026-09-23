@@ -194,7 +194,7 @@ export default function ComoFuncionaPage() {
         <section className="bwa-how-cta">
           <div className="bwa-shell bwa-how-cta-grid">
             <h2>Um contrato, uma responsabilidade, um apartamento pronto.</h2>
-            <a className="bwa-button" href="/diagnostico">
+            <a className="bwa-button" href="/orcamento">
               Solicitar Orçamento
               <span aria-hidden="true">→</span>
             </a>
