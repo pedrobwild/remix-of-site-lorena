@@ -3,7 +3,7 @@
 // período pedido, agrupados por página ou por consulta. Somente admin logado.
 //
 // Usa o mesmo connector gateway do Search Console já usado pelo index-tracker.
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2.45.4";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",

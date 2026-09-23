@@ -9,7 +9,7 @@
 // presente no HTML estático ou só aparece após o React hidratar.
 
 import { DOMParser, Element } from "https://deno.land/x/deno_dom@v0.1.45/deno-dom-wasm.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { createClient } from "npm:@supabase/supabase-js@2.45.4";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -399,7 +399,8 @@ function summarizeExpected(checked: ExpectedTag[]) {
 
 async function loadSettings(): Promise<Settings> {
   const url = Deno.env.get("SUPABASE_URL");
-  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? Deno.env.get("SUPABASE_ANON_KEY");
+  // site_settings tem leitura pública: a service role não é necessária aqui.
+  const key = Deno.env.get("SUPABASE_ANON_KEY");
   if (!url || !key) return null;
   try {
     const sb = createClient(url, key);
@@ -410,48 +411,108 @@ async function loadSettings(): Promise<Settings> {
   }
 }
 
+/** Hosts que esta auditoria pode buscar — nunca uma URL arbitrária (SSRF). */
+const ALLOWED_HOSTS = new Set(["bewild.com.br", "www.bewild.com.br"]);
+const MAX_HTML_BYTES = 2 * 1024 * 1024;
+
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body, null, 2), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
+/** Valida o JWT do usuário e `is_admin()` no banco. Devolve a resposta de erro ou null. */
+async function requireAdmin(req: Request): Promise<Response | null> {
+  const authHeader = req.headers.get("Authorization") ?? "";
+  if (!authHeader.startsWith("Bearer ")) return jsonResponse({ error: "não autorizado" }, 401);
+  const url = Deno.env.get("SUPABASE_URL");
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+  if (!url || !anonKey) return jsonResponse({ error: "indisponível" }, 503);
+  const client = createClient(url, anonKey, {
+    global: { headers: { Authorization: authHeader } },
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  const { data: userData } = await client.auth.getUser();
+  if (!userData?.user) return jsonResponse({ error: "não autorizado" }, 401);
+  const { data: isAdmin, error } = await client.rpc("is_admin");
+  if (error || isAdmin !== true) return jsonResponse({ error: "somente administradores" }, 403);
+  return null;
+}
+
+async function readCapped(res: Response, max: number): Promise<string> {
+  const reader = res.body?.getReader();
+  if (!reader) return "";
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done || !value) break;
+    total += value.byteLength;
+    if (total > max) {
+      await reader.cancel();
+      throw new Error("HTML maior que o limite da auditoria");
+    }
+    chunks.push(value);
+  }
+  const all = new Uint8Array(total);
+  let offset = 0;
+  for (const c of chunks) {
+    all.set(c, offset);
+    offset += c.byteLength;
+  }
+  return new TextDecoder().decode(all);
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
+
   try {
     let url = "";
     if (req.method === "POST") {
       const body = await req.json().catch(() => ({}));
-      url = body.url || "";
+      url = typeof body?.url === "string" ? body.url : "";
     } else {
       url = new URL(req.url).searchParams.get("url") || "";
     }
 
     if (!url) url = "https://bewild.com.br";
 
-    if (!/^https?:\/\//i.test(url)) {
-      return new Response(JSON.stringify({ error: "URL inválida" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    let target: URL;
+    try {
+      target = new URL(url);
+    } catch {
+      return jsonResponse({ error: "URL inválida" }, 400);
     }
+    if (target.protocol !== "https:" || !ALLOWED_HOSTS.has(target.hostname) || target.port) {
+      return jsonResponse({ error: "Só é possível auditar páginas de bewild.com.br" }, 400);
+    }
+    url = target.toString();
 
     const [res, settings] = await Promise.all([
       fetch(url, {
         headers: {
-          "User-Agent": "Mozilla/5.0 (compatible; LorenaAlvesSEOAudit/1.0)",
+          "User-Agent": "Mozilla/5.0 (compatible; BewildSEOAudit/1.0)",
           Accept: "text/html",
         },
-        redirect: "follow",
+        // Redirect não é seguido: um 3xx para outro host transformaria a
+        // auditoria em proxy. O status aparece no erro.
+        redirect: "manual",
+        signal: AbortSignal.timeout(10_000),
       }),
       loadSettings(),
     ]);
 
     if (!res.ok) {
-      return new Response(
-        JSON.stringify({ error: `Falha ao buscar URL (${res.status})`, url }),
-        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+      return jsonResponse({ error: `Falha ao buscar URL (${res.status})`, url }, 502);
     }
 
-    const html = await res.text();
+    const html = await readCapped(res, MAX_HTML_BYTES);
     const doc = new DOMParser().parseFromString(html, "text/html");
     if (!doc) throw new Error("Falha ao parsear HTML");
 
@@ -460,7 +521,7 @@ Deno.serve(async (req) => {
     const checked = checkExpected(doc, expectedTags);
     const summary = summarizeExpected(checked);
 
-    const report = {
+    return jsonResponse({
       ...auditResult,
       source: url,
       fetched_at: new Date().toISOString(),
@@ -475,17 +536,9 @@ Deno.serve(async (req) => {
         },
         tags: checked,
       },
-    };
-
-    return new Response(JSON.stringify(report, null, 2), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    console.error("[seo-audit] failed", err instanceof Error ? err.message : String(err));
+    return jsonResponse({ error: "Falha ao auditar a página" }, 500);
   }
 });

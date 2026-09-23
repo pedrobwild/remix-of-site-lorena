@@ -10,7 +10,7 @@
 // A API do Search Console tem cota diária; por isso cada execução verifica
 // apenas um lote (padrão 120), começando pelas URLs nunca verificadas e
 // depois pelas verificadas há mais tempo.
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2.45.4";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -179,8 +179,16 @@ Deno.serve(async (req) => {
     let newlyIndexed = 0;
     let errors = 0;
     const now = new Date().toISOString();
+    // O runtime encerra a função perto de 150 s; com ~0,5 s por inspeção um
+    // lote de 200 URLs estourava e perdia o registro em seo_index_runs.
+    const startedAt = Date.now();
+    let stoppedByBudget = false;
 
     for (const row of rows ?? []) {
+      if (Date.now() - startedAt > 100_000) {
+        stoppedByBudget = true;
+        break;
+      }
       try {
         const result = await inspect(resolution.siteUrl, row.url);
         const isIndexed = result.verdict === "PASS";
@@ -222,10 +230,17 @@ Deno.serve(async (req) => {
       checked,
       newly_indexed: newlyIndexed,
       errors,
-      notes: resolution.siteUrl,
+      notes: stoppedByBudget ? `${resolution.siteUrl} (lote interrompido pelo limite de tempo)` : resolution.siteUrl,
     });
 
-    return json(200, { ok: true, urls_total: urls.length, checked, newly_indexed: newlyIndexed, errors });
+    return json(200, {
+      ok: true,
+      urls_total: urls.length,
+      checked,
+      newly_indexed: newlyIndexed,
+      errors,
+      partial: stoppedByBudget,
+    });
   } catch (err) {
     console.error("[index-tracker]", err);
     return json(500, { error: String(err) });

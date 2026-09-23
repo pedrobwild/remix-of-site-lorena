@@ -1,6 +1,6 @@
 // Importa fotos do Google Drive (conta conectada do estúdio) para o bucket
 // public project-images. Somente administradores autenticados.
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2.45.4";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -75,6 +75,19 @@ async function driveListAll(
 }
 
 
+
+/** Só formatos raster: SVG num bucket público pode carregar script. */
+function isRasterImage(mime: unknown): boolean {
+  return /^image\/(jpeg|png|webp|avif|gif)$/i.test(String(mime || ""));
+}
+
+/**
+ * Orçamento de tempo do lote. O runtime mata a função perto de 150 s; o
+ * trabalho para antes e devolve o que já foi importado (e já vinculado).
+ */
+const BATCH_TIME_BUDGET_MS = 110_000;
+/** A galeria é gravada no projeto a cada N fotos, não só no fim. */
+const PERSIST_EVERY = 5;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -230,8 +243,8 @@ Deno.serve(async (req) => {
             supportsAllDrives: "true",
           });
           const meta = await metaRes.json();
-          if (!String(meta.mimeType || "").startsWith("image/")) {
-            failed.push({ fileId, name: meta.name, error: "Não é uma imagem." });
+          if (!isRasterImage(meta.mimeType)) {
+            failed.push({ fileId, name: meta.name, error: "Formato não suportado (use JPG, PNG, WebP ou AVIF)." });
             continue;
           }
           const mediaRes = await drive(`/drive/v3/files/${encodeURIComponent(fileId)}`, {
@@ -375,7 +388,29 @@ Deno.serve(async (req) => {
 
       const urls: string[] = [];
       let failedImages = 0;
+      let stoppedByBudget = false;
+      const startedAt = Date.now();
+      let persistedCount = 0;
+      // Vincula as fotos já enviadas ao projeto. Chamado durante o lote para
+      // que um timeout não deixe um rascunho vazio com arquivos órfãos.
+      const persist = async () => {
+        if (urls.length === persistedCount) return null;
+        const { error } = await admin
+          .from("projects")
+          .update({ cover_url: urls[0] ?? null, gallery_urls: urls.slice(1) })
+          .eq("id", created.id);
+        if (!error) persistedCount = urls.length;
+        return error;
+      };
       for (const f of files.slice(0, max)) {
+        if (Date.now() - startedAt > BATCH_TIME_BUDGET_MS) {
+          stoppedByBudget = true;
+          break;
+        }
+        if (!isRasterImage(f.mimeType)) {
+          failedImages += 1;
+          continue;
+        }
         try {
           const mediaRes = await drive(`/drive/v3/files/${encodeURIComponent(f.id)}`, {
             alt: "media",
@@ -394,19 +429,17 @@ Deno.serve(async (req) => {
           });
           if (error) throw error;
           urls.push(admin.storage.from(BUCKET).getPublicUrl(path).data.publicUrl);
+          if (urls.length % PERSIST_EVERY === 0) {
+            const persistErr = await persist();
+            if (persistErr) console.error("batch persist parcial falhou:", persistErr.code ?? persistErr.message);
+          }
         } catch (e) {
           failedImages += 1;
           console.error("batch upload falhou:", e);
         }
       }
 
-      const { error: updateErr } = await admin
-        .from("projects")
-        .update({
-          cover_url: urls[0] ?? null,
-          gallery_urls: urls.slice(1),
-        })
-        .eq("id", created.id);
+      const updateErr = await persist();
       if (updateErr) {
         console.error("batch project images update falhou:", updateErr);
         return json({
@@ -418,9 +451,12 @@ Deno.serve(async (req) => {
       }
 
       console.log("batch import concluído:", created.id, urls.length, "imagem(ns)");
+      const remaining = Math.max(0, Math.min(files.length, max) - urls.length - failedImages);
       const warning = discoveryWarning
         ? `Projeto criado, mas não foi possível buscar as fotos: ${discoveryWarning}`
-        : failedImages > 0
+        : stoppedByBudget
+          ? `Projeto criado com ${urls.length} foto(s); o tempo do lote acabou e ${remaining} ficaram de fora — importe o restante pela galeria do projeto.`
+          : failedImages > 0
           ? `Projeto criado; ${failedImages} foto(s) não puderam ser importadas.`
           : files.length === 0
             ? "Projeto criado, mas nenhuma foto foi encontrada na pasta selecionada."
@@ -430,6 +466,7 @@ Deno.serve(async (req) => {
         images: urls.length,
         totalInFolder: files.length,
         failedImages,
+        partial: stoppedByBudget,
         warning,
       });
     }

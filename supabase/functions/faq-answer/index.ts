@@ -4,6 +4,8 @@
 // servidor). Nunca fecha preço nem promete prazo: tudo é referência e o
 // próximo passo é sempre diagnóstico ou WhatsApp.
 
+import { createClient } from "npm:@supabase/supabase-js@2.45.4";
+
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -16,6 +18,50 @@ const json = (body: unknown, status = 200) =>
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
+
+/**
+ * Rate limit durável (RPC `hit_rate_limit`, só service role): por IP e um
+ * orçamento diário global — cada chamada gasta créditos de IA. Fail-open se a
+ * RPC não existir: a página não pode quebrar por causa do limitador.
+ */
+async function withinRateLimit(req: Request, scope: string, perIp: { windowS: number; max: number }, perDay: number): Promise<boolean> {
+  const url = Deno.env.get("SUPABASE_URL");
+  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!url || !key) return true;
+  const ip =
+    req.headers.get("cf-connecting-ip") ??
+    req.headers.get("x-real-ip") ??
+    ((req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown");
+  const admin = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+  const hit = async (k: string, windowS: number, max: number) => {
+    try {
+      const { data, error } = await admin.rpc("hit_rate_limit", { p_key: k, p_window_s: windowS, p_max: max });
+      return error ? true : data !== false;
+    } catch {
+      return true;
+    }
+  };
+  const day = new Date().toISOString().slice(0, 10);
+  const [ipOk, dayOk] = await Promise.all([
+    hit(`${scope}:ip:${ip}`, perIp.windowS, perIp.max),
+    hit(`${scope}:day:${day}`, 86_400, perDay),
+  ]);
+  return ipOk && dayOk;
+}
+
+/** Lê o corpo com teto de tamanho; null se passar do limite ou não for JSON. */
+async function readJsonBody(req: Request, maxBytes: number): Promise<Record<string, unknown> | null> {
+  const declared = Number(req.headers.get("content-length") ?? "0");
+  if (Number.isFinite(declared) && declared > maxBytes) return null;
+  const text = await req.text().catch(() => "");
+  if (text.length > maxBytes) return null;
+  try {
+    const parsed = JSON.parse(text || "{}");
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
 
 const SCHEMA = {
   type: "object",
@@ -50,9 +96,11 @@ Deno.serve(async (req) => {
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
   if (!LOVABLE_API_KEY) return json({ error: "LOVABLE_API_KEY não configurada" }, 500);
 
-  const body = await req.json().catch(() => ({}));
-  const pergunta = String(body?.pergunta ?? "").trim();
-  const contexto = String(body?.contexto ?? "").trim();
+  const body = await readJsonBody(req, 16 * 1024);
+  if (!body) return json({ error: "Pergunta inválida." }, 400);
+  const pergunta = String(body.pergunta ?? "").trim();
+  // O site não envia `contexto`; se vier, é cortado (antes não tinha teto).
+  const contexto = String(body.contexto ?? "").trim().slice(0, 300);
 
   if (pergunta.length < 8) {
     return json({ error: "Escreva sua pergunta com um pouco mais de detalhe." }, 400);
@@ -68,6 +116,10 @@ Deno.serve(async (req) => {
   ]
     .filter(Boolean)
     .join("\n");
+
+  if (!(await withinRateLimit(req, "faq-answer", { windowS: 3600, max: 20 }, 400))) {
+    return json({ error: "Muitas solicitações agora. Tente de novo em alguns minutos." }, 429);
+  }
 
   let upstream: Response;
   try {
@@ -93,6 +145,7 @@ Deno.serve(async (req) => {
           },
         },
       }),
+      signal: AbortSignal.timeout(60_000),
     });
   } catch (err) {
     console.error("faq-answer: falha de rede no gateway", err);
@@ -117,7 +170,14 @@ Deno.serve(async (req) => {
   let text = "";
 
   while (true) {
-    const { done, value } = await reader.read();
+    let chunk: ReadableStreamReadResult<Uint8Array>;
+    try {
+      chunk = await reader.read();
+    } catch {
+      // Timeout ou queda do gateway no meio do streaming.
+      return json({ error: "Não conseguimos responder agora." }, 504);
+    }
+    const { done, value } = chunk;
     if (done) break;
     buffer += decoder.decode(value, { stream: true });
     const parts = buffer.split("\n\n");
