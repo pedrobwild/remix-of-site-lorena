@@ -37,6 +37,7 @@ export const LEAD_FORM_PATHS = [
   "/p",
   "/contato",
   "/parceiros",
+  "/parceiros/incorporadoras",
   "/indique-um-amigo",
 ] as const;
 
@@ -54,6 +55,7 @@ export const LEAD_FORM_LABEL: Record<LeadFormPath, string> = {
   "/p": "LP panfleto (/p)",
   "/contato": "Contato",
   "/parceiros": "Parceiros",
+  "/parceiros/incorporadoras": "Incorporadoras",
   "/indique-um-amigo": "Indique um amigo",
 };
 
@@ -115,7 +117,7 @@ export function leadOrigem(lead: LeadFormSource): LeadOrigem {
   if (!form) return "outro";
   if ((DIAGNOSTICO_FORMS as readonly string[]).includes(form)) return "orcamento";
   if ((MENSAGEM_FORMS as readonly string[]).includes(form)) return "contato";
-  if (form === "/parceiros") return "parceiro";
+  if (form === "/parceiros" || form === "/parceiros/incorporadoras") return "parceiro";
   if (form === "/indique-um-amigo") return "indicacao";
   return "outro";
 }

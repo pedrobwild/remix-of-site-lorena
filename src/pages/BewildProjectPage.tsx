@@ -307,6 +307,10 @@ export default function BewildProjectPage({ slug }: Props) {
   const where = project.neighborhood || project.location || "São Paulo";
   const metaParts = [where, project.area_m2 ? `${project.area_m2} m²` : null, project.duration].filter(Boolean) as string[];
   const hasReady = readyImgs.length > 0;
+  // Fase da obra: só projetos ainda não entregues ganham pílula e título próprios.
+  const faseLabel =
+    project.status === "em_projeto" ? "Em projeto" : project.status === "em_obra" ? "Em obra" : null;
+  const escopoTitulo = faseLabel ? "O que está no projeto" : "O que foi feito";
 
   return (
     <div className="bwh bw-detail">
@@ -324,9 +328,10 @@ export default function BewildProjectPage({ slug }: Props) {
       <section className="pd-head">
         <div className="pd-wrap">
           <a className="pd-back" href="/portfolio">← Portfólio</a>
-          {(project.project_type || hasReady) && (
+          {(project.project_type || hasReady || faseLabel) && (
             <div>
               {project.project_type && <span className="pd-pill">{bewildTypeLabel(project.project_type)}</span>}
+              {faseLabel && <span className="pd-pill">{faseLabel}</span>}
               {hasReady && <span className="pd-pill pd-pill--ready">Obra pronta</span>}
             </div>
           )}
@@ -405,7 +410,7 @@ export default function BewildProjectPage({ slug }: Props) {
       {/* ESCOPO */}
       {scopeItems.length > 0 && (
         <section className="pd-sec pd-scope-wrap"><div className="pd-wrap">
-          <div className="pd-sechead"><span className="n">{pad(scopeItems.length)}</span><h2>O que foi feito</h2><span className="ln" /></div>
+          <div className="pd-sechead"><span className="n">{pad(scopeItems.length)}</span><h2>{escopoTitulo}</h2><span className="ln" /></div>
           <div className="pd-scope">
             {scopeItems.map((item, i) => (
               <div className="pd-scope__item" key={item + i}>

@@ -646,6 +646,51 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_cases: {
+        Row: {
+          created_at: string
+          partner_name: string
+          project_slugs: string[]
+          published: boolean
+          quote_author: string | null
+          quote_role: string | null
+          quote_text: string | null
+          slug: string
+          stats: Json
+          timeline: Json
+          updated_at: string
+          updated_on: string | null
+        }
+        Insert: {
+          created_at?: string
+          partner_name: string
+          project_slugs?: string[]
+          published?: boolean
+          quote_author?: string | null
+          quote_role?: string | null
+          quote_text?: string | null
+          slug: string
+          stats?: Json
+          timeline?: Json
+          updated_at?: string
+          updated_on?: string | null
+        }
+        Update: {
+          created_at?: string
+          partner_name?: string
+          project_slugs?: string[]
+          published?: boolean
+          quote_author?: string | null
+          quote_role?: string | null
+          quote_text?: string | null
+          slug?: string
+          stats?: Json
+          timeline?: Json
+          updated_at?: string
+          updated_on?: string | null
+        }
+        Relationships: []
+      }
       partner_referrals: {
         Row: {
           client_name: string | null

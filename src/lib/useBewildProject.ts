@@ -8,6 +8,8 @@ export type BewildProjectFull = {
   slug: string;
   title: string;
   project_type: BewildProjectType | null;
+  /** Fase da obra: "em_projeto", "em_obra" ou null/"entregue" (padrão). */
+  status: string | null;
   neighborhood: string | null;
   location: string | null;
   area_m2: number | null;
@@ -32,7 +34,7 @@ export type BewildProjectFull = {
 };
 
 const COLUMNS =
-  "id, slug, title, project_type, neighborhood, location, area_m2, duration, " +
+  "id, slug, title, project_type, status, neighborhood, location, area_m2, duration, " +
   "summary, challenge, solution, result_text, scope, testimonial, testimonial_author, " +
   "cover_url, cover_alt, before_image_url, after_image_url, gallery_urls, ready_gallery_urls, " +
   "og_image_url, seo_title, seo_description";
