@@ -4912,6 +4912,7 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
 
 .bwa-process-phase {
   min-width: 0;
+  grid-column: auto;
   padding: 0;
   border: 0;
   background: transparent;
