@@ -453,12 +453,11 @@
   }
 }
 
-/* Confirmação do cadastro: botões empilhados (WhatsApp + registrar indicação) */
-.bwa-parceiros .bwa-contact-form-done .bwa-button {
-  display: inline-flex;
+/* Confirmação do cadastro: WhatsApp e "registrar indicação" empilhados */
+.bwa-parceiros .bwa-contact-form-done a {
+  display: block;
   width: fit-content;
-  margin-bottom: 14px;
 }
-.bwa-parceiros .bwa-contact-form-done a:last-child {
-  display: inline-block;
+.bwa-parceiros .bwa-contact-form-done a + a {
+  margin-top: 14px;
 }
