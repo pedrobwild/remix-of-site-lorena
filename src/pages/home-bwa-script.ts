@@ -22,6 +22,7 @@
  * `[data-scope-item]` nem `[data-story-step]` — e `initBwaFaqAccordions`,
  * que nenhuma página chamava (os acordeões internos são React).
  */
+import { isIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
 import { withUtm } from "@/lib/utm";
 import { trackEvent } from "@/lib/ga4";
 import { prefersReducedMotion } from "@/lib/reducedMotion";
@@ -238,7 +239,7 @@ function installNavChrome(root: HTMLElement, signal: AbortSignal): Cleanup {
     window.addEventListener("scroll", updateNav, { passive: true, signal });
   }
 
-  if (!button || !menu) return NOOP;
+  if (!button || !menu) return closeDropdowns;
 
   const keep = nav ? [nav, menu] : [button, menu];
   let open = false;
@@ -296,7 +297,10 @@ function installNavChrome(root: HTMLElement, signal: AbortSignal): Cleanup {
     { signal },
   );
 
-  return () => setOpen(false);
+  return () => {
+    setOpen(false);
+    closeDropdowns();
+  };
 }
 
 /* =========================================================================
