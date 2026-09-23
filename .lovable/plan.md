@@ -1,31 +1,41 @@
-# Redesenho da jornada e do portal Bwild Workflow
+# Réplica fiel do portal Bwild Workflow na home
 
 ## Objetivo
-Atualizar somente a seção `#workflow` da home, preservando os textos existentes exigidos e sem publicar.
+Substituir somente a interface ilustrativa dentro de `.bwa-portal-wrap#workflow-portal` por uma réplica React do portal do cliente, usando dados simulados e preservando integralmente a jornada das 12 etapas e o restante da home. Não publicar.
 
 ## Implementação
-1. Reorganizar as 12 etapas em três fases conectadas, com linha do tempo responsiva:
-   - três colunas no desktop;
-   - fases empilhadas com duas colunas de etapas no tablet;
-   - linha única com divisores de fase no celular;
-   - links “no Bwild Workflow” nas etapas 09 e 11 apontando para o portal.
-2. Transformar a réplica do portal em três abas acessíveis: Curva S, Relatórios e Cronograma.
-3. Preservar integralmente a tela Curva S e acrescentar:
-   - relatório semanal com três imagens e os textos fornecidos;
-   - cronograma de dez semanas e doze atividades, com versão compacta no celular.
-4. Implementar navegação das abas por clique e setas esquerda/direita em `HomePage.tsx`, mantendo Curva S visível sem JavaScript.
-5. Aplicar apenas estilos da seção, seguindo Manrope, JetBrains Mono, hairlines e cantos vivos, sem gradientes ou efeitos de vidro.
-6. Ajustar ou adicionar testes específicos da interação e estrutura da seção.
+1. Criar `src/components/workflow-replica/workflowReplicaData.ts` com:
+   - identificação fictícia do imóvel e cliente;
+   - marcos, progresso e 12 atividades com datas/status simulados;
+   - pontos da Curva S entre 04/08/2026 e 10/10/2026;
+   - histórico e detalhe dos relatórios;
+   - referências às três imagens já existentes no projeto.
+2. Criar `WorkflowPortalReplica.tsx` e CSS isolado sob `.wf-replica`, com tokens exatos do Workflow, moldura de navegador e fontes Montserrat/Inter carregadas apenas para a réplica.
+3. Implementar no componente:
+   - identificação, etapa atual, marcos e progresso;
+   - abas acessíveis com teclado e sete áreas, exibindo três no celular;
+   - Cronograma responsivo em tabela no desktop e cartões no celular;
+   - Evolução de Obra com Curva S em Recharts, referências, legenda, tooltip e alternância de janela;
+   - Relatórios com lista, navegação de detalhe e galeria;
+   - estados vazios das demais áreas.
+4. Em `HOME_BWA_HTML`, manter `.bwa-portal-wrap#workflow-portal`, substituir somente o portal antigo por `<div id="workflow-portal-root"></div>` e preservar a legenda existente.
+5. Em `HomePage.tsx`, renderizar a réplica nesse nó com `createPortal`, remover a instalação das abas antigas e manter as demais integrações da home intactas.
+6. Atualizar `dl.bwa-wf2-tabs` apenas nos três títulos/textos solicitados: Cronograma, Evolução de Obra e Relatórios.
+7. Remover ou neutralizar somente os estilos antigos do portal que não forem mais usados, sem tocar nos estilos da jornada.
 
 ## Verificação
 - Build, lint e suíte de testes.
-- Conferência visual da jornada e das três abas em 1280 px e 390 px, além de checagem de 320 px sem rolagem horizontal.
-- Capturas em `docs/auditoria/evidencias/2026-09-23/`.
+- Interações das abas, teclado, expansão dos detalhes e alternância da Curva S.
+- Conferência visual em 1280, 390 e 320 px, sem rolagem horizontal e com altura interna controlada no desktop.
+- Capturas das abas Cronograma, Evolução de Obra e Relatórios em 1280 e 390 px, em `docs/auditoria/evidencias/2026-09-23/`, com prefixo `wf-replica-`.
 - Nenhuma publicação.
 
 ## Arquivos previstos
+- `src/components/workflow-replica/workflowReplicaData.ts`
+- `src/components/workflow-replica/WorkflowPortalReplica.tsx`
+- `src/components/workflow-replica/workflow-portal-replica.css`
 - `src/pages/home-bwa-body.ts`
-- `src/pages/home-bwa.css`
 - `src/pages/HomePage.tsx`
-- testes diretamente relacionados, se necessário
-- capturas solicitadas em `docs/auditoria/evidencias/2026-09-23/`
+- `src/pages/home-bwa.css` apenas para remover conflitos antigos estritamente necessários
+- testes diretamente relacionados
+- capturas solicitadas
