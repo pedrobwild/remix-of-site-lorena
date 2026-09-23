@@ -52,8 +52,9 @@ import "./incorporadoras.css";
  * IncorporadorasPage — /parceiros/incorporadoras
  *
  * Página atrás da flag INCORPORADORAS_PAGE_ENABLED (src/config/site.ts):
- * enquanto estiver false, o roteador devolve a 404 e a prévia interna
- * (?incorporadoras=1) sai com noindex e um aviso fixo na tela.
+ * enquanto estiver false, o roteador devolve a 404 no site publicado. Na
+ * prévia (endereços de prévia do Lovable, localhost ou ?incorporadoras=1)
+ * a página abre com noindex, sem aviso na tela.
  *
  * Todo o texto vem de src/content/incorporadoras.ts (aprovado em 23/09/2026).
  * Números, linha do tempo, projetos e depoimento do case vêm da tabela
