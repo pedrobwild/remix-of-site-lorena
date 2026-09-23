@@ -64,6 +64,11 @@ const L = {
     label: "Reforma de studio em São Paulo",
     description: "Studio entregue pronto para morar ou para anunciar.",
   },
+  reformaCoberturaSp: {
+    href: "/reforma-de-cobertura-sao-paulo",
+    label: "Reforma de cobertura em São Paulo",
+    description: "Cobertura entregue pronta para morar, do terraço à marcenaria.",
+  },
   diagnostico: {
     href: "/diagnostico",
     label: "Diagnóstico gratuito do seu imóvel",
@@ -72,7 +77,7 @@ const L = {
 } satisfies Record<string, InternalLink>;
 
 const BY_CATEGORY: Record<BewildPostCategory, InternalLink[]> = {
-  reforma: [L.reformaApartamentoSp, L.orcamento, L.portfolio, L.conteudos, L.autorizacao, L.comoFunciona, L.faq],
+  reforma: [L.reformaApartamentoSp, L.reformaCoberturaSp, L.orcamento, L.portfolio, L.conteudos, L.autorizacao, L.comoFunciona],
   investimento: [L.reformaStudioSp, L.orcamento, L.portfolio, L.conteudos, L.ondeAtuamos, L.comoFunciona, L.faq],
   mercado: [L.reformaStudioSp, L.portfolio, L.ondeAtuamos, L.conteudos, L.orcamento, L.comoFunciona, L.faq],
   operacao: [L.reformaStudioSp, L.portfolio, L.conteudos, L.orcamento, L.ondeAtuamos, L.comoFunciona, L.faq],
