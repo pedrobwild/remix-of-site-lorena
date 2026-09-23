@@ -33,6 +33,7 @@ type EventType =
   | "scroll_depth"
   | "form_submit"
   | "engagement_time"
+  | "faq_question_click"
   | "consent_accept"
   | "consent_decline";
 

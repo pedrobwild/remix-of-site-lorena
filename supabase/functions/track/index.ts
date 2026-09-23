@@ -44,6 +44,7 @@ const ALLOWED_EVENT_TYPES = new Set<string>([
   "scroll_depth",
   "form_submit",
   "engagement_time",
+  "faq_question_click",
   // LGPD: registro de auditoria do consentimento (aceite/recusa). Não é
   // tracking do usuário — é o ônus da prova do controlador (art. 8º §2º).
   "consent_accept",
