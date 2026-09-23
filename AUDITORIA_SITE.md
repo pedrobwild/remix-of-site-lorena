@@ -324,6 +324,16 @@ Positivos verificados: um único `<h1>` por página; hierarquia H2/H3 coerente n
 | Achado de acessibilidade | mesma bateria | depois de clicar numa pergunta sugerida, o botão clicado é substituído pela nova lista, o foco cai no `body` e o Esc (ouvido só no painel) deixava de fechar. Corrigido: Esc ouvido no documento enquanto o painel está aberto; foco vai para o campo (desktop) ou para a conversa (celular) antes de enviar a sugestão |
 | O que não foi verificado | — | a resposta real do Supabase em produção (dados reais) e o registro de perguntas sem resposta; conferir na home publicada |
 
+### 5.8 Rodada 7 — home: tour virtual 3D (23/09/2026)
+
+| Verificação | Método | Resultado |
+|---|---|---|
+| Links dos tours | imagem com os 3 QR codes enviada pelo Pedro, lida por dois decodificadores (OpenCV e ZXing) | os dois concordam: Cozinha / Estar `48c6d935-b812-4e73-ac78-1fee136d0119`, Dormitório `2644b907-7537-49f2-a373-247c5d6d1976`, Banho `6aba3d40-628d-42d8-99a9-70f9bcb133ce`, todos em `https://api2.enscape3d.com/v3/view/<id>` |
+| Como o orçamento público mostra o Tour 3D | leitura de `Tour3DViewer.tsx`, `ProjectGallery.tsx`, `useBudgetTours.ts` e `MediaUploadSection.tsx` do `envision-build-guide` (pelo Lovable) | iframe com o link salvo, sem transformação, `allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; magnetometer; xr-spatial-tracking; fullscreen"` e `allowfullscreen`; um cômodo por vez (abas), quadro 16:10, montagem escalonada; no celular, escolher o cômodo abre a tela cheia. Dados em `budget_tours` (leitura pública por `get_public_budget_tours`) |
+| Comportamento no navegador | Playwright (Chromium) sobre o build de produção local em 360, 390, 768 (toque), 1024, 1280 e 1440, com o viewer do Enscape **simulado** — o proxy deste ambiente bloqueia `api2.enscape3d.com` | 3 quadros na mesma linha em todas as larguras, sem rolagem horizontal. Desktop com cookies aceitos: nenhum pedido ao Enscape antes de rolar; depois, os 3 com 1,2 s de intervalo. Sem aceite: nenhum pedido até o clique, que carrega só aquele cômodo. Com um viewer que captura a roda do mouse: sobre a capa a página rola; depois do clique, roda e setas vão para o tour; ao sair do card a capa volta e a página rola de novo. "Tela cheia" põe o próprio quadro em tela cheia (sem recarregar). 768 com toque e 390: nenhum iframe na página; o toque abre o `<dialog>` com o cômodo certo, a página não rola por trás, Esc fecha, o iframe sai e o foco volta ao card. 0 erros de JS do app |
+| Testes e build | `src/lib/__tests__/homeTour3d.test.ts` (10 testes), suíte completa, `lint`, `routes:check`, `npm run build` | 654 testes passando (4 pulados), 0 erros de lint (os 6 avisos de antes), build ok; bundle principal +11 kB (+2,6 kB gzip) |
+| O que não foi verificado | — | o viewer real do Enscape num quadro de ~300–420 px (interface e desempenho com 3 viewers WebGL abertos) e se o Enscape grava cookies; conferir na home publicada |
+
 ## 6. Alterações desta rodada (para revisão)
 
 Commits na branch `claude/charming-keller-awrwxk`:

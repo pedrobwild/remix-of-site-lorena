@@ -7,6 +7,7 @@ import { hydrateHomeProjects } from "@/lib/hydrateHomeProjects";
 import { trackEvent } from "@/lib/ga4";
 import { installCatalogPreview } from "@/lib/homeCatalog";
 import { installInstagramEmbeds } from "@/lib/homeInstagram";
+import { installTour3d } from "@/lib/homeTour3d";
 import { fetchSiteSettings } from "@/lib/useSiteSettings";
 import { isExternalHref, safeHref } from "@/lib/safeUrl";
 import { initHomeBwa } from "./home-bwa-script";
@@ -139,6 +140,8 @@ export default function HomePage() {
           // quando as seções se aproximam da tela.
           installCatalogPreview(root),
           installInstagramEmbeds(root),
+          // Tour virtual 3D (Enscape): 3 cômodos lado a lado; no toque, tela cheia.
+          installTour3d(root),
           installFooterLinkedin(root),
         ]
       : [];
