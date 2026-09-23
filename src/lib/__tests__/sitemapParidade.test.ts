@@ -56,12 +56,26 @@ const NAO_INDEXAVEIS: Record<string, string> = {
   "/p": "src/pages/LpPanfletoPage.tsx",
 };
 
+/**
+ * Exceção explícita e temporária: /parceiros/incorporadoras existe no roteador,
+ * mas fica fora do sitemap enquanto `INCORPORADORAS_PAGE_ENABLED` for false
+ * (rota responde 404 para o público; prévia interna é noindex).
+ * Ao virar `true`, esta lista fica vazia e o teste passa a exigir a rota nos
+ * dois geradores e na tabela de prioridades, sem nenhuma outra mudança aqui.
+ */
+const siteConfig = read("src/config/site.ts");
+const incorporadorasOn = /INCORPORADORAS_PAGE_ENABLED\s*=\s*true/.test(siteConfig);
+const FORA_DO_SITEMAP_POR_FLAG = incorporadorasOn ? [] : ["/parceiros/incorporadoras"];
+
 const unicos = (xs: string[]) => [...new Set(xs)].sort();
 
 /** Rotas estáticas (`path === "/x"`) declaradas em useHashRoute.ts. */
 const rotasDoRoteador = unicos([...router.matchAll(/path === "(\/[^"]*)"/g)].map((m) => m[1]));
 const indexaveisDoRoteador = rotasDoRoteador.filter(
-  (r) => !r.startsWith("/admin") && !(r in NAO_INDEXAVEIS),
+  (r) =>
+    !r.startsWith("/admin") &&
+    !(r in NAO_INDEXAVEIS) &&
+    !FORA_DO_SITEMAP_POR_FLAG.includes(r),
 );
 /** Rotas estáticas listadas em cada gerador (`${BASE_URL}/x` / `${base}/x` seguidos de crase). */
 const rotasDoScript = unicos([...script.matchAll(/\$\{BASE_URL\}(\/[a-z0-9-]*)`/g)].map((m) => m[1]));

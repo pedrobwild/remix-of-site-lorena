@@ -25,6 +25,7 @@ import ReformaStudioSpPage from "./pages/ReformaStudioSpPage";
 import ReformaCoberturaSpPage from "./pages/ReformaCoberturaSpPage";
 import MarcenariaPage from "./pages/MarcenariaPage";
 import ParceirosPage from "./pages/ParceirosPage";
+import { isIncorporadorasEnabled } from "./lib/incorporadorasFlag";
 import IndiquePage from "./pages/IndiquePage";
 import MarcasParceriasPage from "./pages/MarcasParceriasPage";
 import PrivacidadePage from "./pages/PrivacidadePage";
@@ -39,6 +40,8 @@ import { lazy, Suspense, type ReactNode } from "react";
 // e todo o painel (o bundle único tinha ~1,45 MB / 414 kB gzip).
 // O guia carrega framer-motion, recharts e maplibre: fica em chunk próprio.
 const GuiaInvestidorPage = lazy(() => import("./pages/GuiaInvestidorPage"));
+// Página atrás de flag: chunk próprio, baixado só por quem a abre.
+const IncorporadorasPage = lazy(() => import("./pages/IncorporadorasPage"));
 const LoginPage = lazy(() => import("./pages/admin/LoginPage"));
 const BewildOverviewPage = lazy(() => import("./pages/admin/BewildOverviewPage"));
 const BewildLeadsAdminPage = lazy(() => import("./pages/admin/BewildLeadsAdminPage"));
@@ -97,6 +100,16 @@ export function renderRoute(route: Route) {
   if (route.name === "reforma-cobertura-sp") return <ReformaCoberturaSpPage />;
   if (route.name === "marcenaria") return <MarcenariaPage />;
   if (route.name === "parceiros") return <ParceirosPage />;
+  // /parceiros/incorporadoras: fora do ar para o público enquanto a flag
+  // estiver desligada (só aparece na prévia interna com ?incorporadoras=1).
+  if (route.name === "incorporadoras")
+    return isIncorporadorasEnabled() ? (
+      <Suspense fallback={null}>
+        <IncorporadorasPage />
+      </Suspense>
+    ) : (
+      <NotFoundPage />
+    );
   if (route.name === "indique-um-amigo") return <IndiquePage />;
   if (route.name === "marcas-e-parcerias") return <MarcasParceriasPage />;
   if (route.name === "guia-do-investidor")
