@@ -92,6 +92,7 @@ export default function BwaNav() {
             <a href="/conteudos">Blog</a>
             <a href="/guia-do-investidor">Guia do Investidor</a>
             <a href="/faq">FAQ</a>
+            <a href="/parceiros">Parceiros</a>
             <a href="/contato">Contato</a>
           </nav>
 
@@ -124,6 +125,7 @@ export default function BwaNav() {
           <a href="/conteudos">Blog</a>
           <a href="/guia-do-investidor">Guia do Investidor</a>
           <a href="/faq">FAQ</a>
+          <a href="/parceiros">Parceiros</a>
           <a href="/contato">Contato</a>
           <a href={withUtm("/orcamento")}>Solicitar orçamento</a>
         </nav>
