@@ -1,20 +1,27 @@
-import bewildLogo from "@/assets/bewild-logo-header.png.asset.json";
+import bewildLogoBlue from "@/assets/bewild-logo-blue-2026.png.asset.json";
+import bewildLogoWhite from "@/assets/bewild-logo-white-2026.png.asset.json";
 
 type BewildLogoProps = {
   className?: string;
   decorative?: boolean;
+  variant?: "blue" | "white";
 };
 
-export const BEWILD_LOGO_URL = bewildLogo.url;
+export const BEWILD_LOGO_URL = bewildLogoBlue.url;
+export const BEWILD_LOGO_WHITE_URL = bewildLogoWhite.url;
 
-export default function BewildLogo({ className, decorative = false }: BewildLogoProps) {
+export default function BewildLogo({
+  className,
+  decorative = false,
+  variant = "blue",
+}: BewildLogoProps) {
   return (
     <img
       className={className}
-      src={BEWILD_LOGO_URL}
+      src={variant === "white" ? BEWILD_LOGO_WHITE_URL : BEWILD_LOGO_URL}
       alt={decorative ? "" : "Bewild"}
-      width={2000}
-      height={600}
+      width={variant === "white" ? 1435 : 1607}
+      height={variant === "white" ? 458 : 502}
       decoding="async"
     />
   );

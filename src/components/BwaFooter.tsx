@@ -6,6 +6,7 @@ import BwaWhatsForm from "@/components/BwaWhatsForm";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import { isExternalHref, safeHref } from "@/lib/safeUrl";
 import { useIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
+import BewildLogo from "@/components/BewildLogo";
 
 /**
  * BwaFooter — Footer .bwa unificado, idêntico ao da home. Usado em toda
@@ -37,11 +38,7 @@ export default function BwaFooter() {
       <div className="bwa-shell">
         <div className="bwa-footer-main">
           <div className="bwa-footer-brand">
-            <img
-              src="/brand/bewild-logo-branca-horizontal.png"
-              alt="Bewild"
-              className="bwa-footer-wordmark"
-            />
+            <BewildLogo variant="white" className="bwa-footer-wordmark" />
             <p>Seu desejo é uma obra.</p>
             <p>
               Reforma completa de apartamentos em São Paulo. Projeto, obra,
