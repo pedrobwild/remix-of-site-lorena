@@ -9,10 +9,9 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
-import TextAlign from "@tiptap/extension-text-align";
 import {
   Bold, Italic, Underline as UIcon, Strikethrough, Heading2, Heading3, List, ListOrdered,
-  Quote, Link as LinkIcon, Unlink, AlignLeft, AlignCenter, AlignRight, Minus, Undo2, Redo2,
+  Quote, Link as LinkIcon, Unlink, Minus, Undo2, Redo2,
   Pilcrow, ImagePlus,
 } from "lucide-react";
 
@@ -31,7 +30,6 @@ export default function RichTextEditor({ value, onChange, onReady, onRequestImag
       Underline,
       Link.configure({ openOnClick: false, autolink: true }),
       Image.configure({ inline: false }),
-      TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
     content: value,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
@@ -108,9 +106,6 @@ export default function RichTextEditor({ value, onChange, onReady, onRequestImag
         {btn("Citação", editor.isActive("blockquote"), () => c().toggleBlockquote().run(), Quote)}
         {btn("Linha divisória", false, () => c().setHorizontalRule().run(), Minus)}
         <span className="bw-rte__sep" />
-        {btn("Alinhar à esquerda", editor.isActive({ textAlign: "left" }), () => c().setTextAlign("left").run(), AlignLeft)}
-        {btn("Centralizar", editor.isActive({ textAlign: "center" }), () => c().setTextAlign("center").run(), AlignCenter)}
-        {btn("Alinhar à direita", editor.isActive({ textAlign: "right" }), () => c().setTextAlign("right").run(), AlignRight)}
         <span className="bw-rte__sep" />
         {btn("Inserir link", editor.isActive("link"), setLink, LinkIcon)}
         {btn("Remover link", false, () => c().unsetLink().run(), Unlink)}
