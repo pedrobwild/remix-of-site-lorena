@@ -8,7 +8,10 @@
  * padrão de post citável do plano SEO + IA (4 a 6 perguntas, respostas de
  * 40 a 70 palavras).
  */
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { marked } from "marked";
+import type { Editor } from "@tiptap/react";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 import { ArrowLeft, Save } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import { supabase } from "@/integrations/supabase/client";
@@ -205,6 +208,20 @@ export default function BewildPostFormPage({ slug }: Props) {
   const [pendingUploads, setPendingUploads] = useState<UploadResult[]>([]);
   const [altText, setAltText] = useState("");
   const [caption, setCaption] = useState("");
+  // Editor visual (padrão) ou código (markdown/HTML) para conteúdos antigos.
+  const [editorMode, setEditorMode] = useState<"visual" | "code">("visual");
+  const editorRef = useRef<Editor | null>(null);
+  const onEditorReady = useCallback((ed: Editor) => { editorRef.current = ed; }, []);
+
+  function switchToVisual() {
+    const looksHtml = /^\s*</.test(body);
+    if (body.trim() && !looksHtml) {
+      setBody(marked.parse(body, { async: false }) as string);
+    }
+    if (/<figure|<picture/i.test(body) &&
+      !window.confirm("O editor visual simplifica imagens com legenda. Continuar?")) return;
+    setEditorMode("visual");
+  }
 
   const folder = currentSlug || "rascunho";
 
@@ -232,6 +249,19 @@ export default function BewildPostFormPage({ slug }: Props) {
 
   function insertPendingUploads() {
     if (!pendingUploads.length || !altText.trim()) return;
+    if (editorMode === "visual" && editorRef.current) {
+      const ed = editorRef.current;
+      const chain = ed.chain().focus();
+      for (const up of pendingUploads) {
+        chain.setImage({ src: up.jpeg.lg, alt: altText.trim() });
+        if (caption.trim()) chain.insertContent(`<p><em>${escapeAttr(caption.trim())}</em></p>`);
+      }
+      chain.run();
+      setPendingUploads([]);
+      setAltText("");
+      setCaption("");
+      return;
+    }
     const blocks = pendingUploads
       .map((up) => buildFigureHtml(up, altText.trim(), caption))
       .join("\n\n");
@@ -304,6 +334,11 @@ export default function BewildPostFormPage({ slug }: Props) {
       setExcerpt(p.excerpt ?? "");
       setCoverImage(p.cover_image ?? "");
       setBody(p.body ?? "");
+      {
+        const b = p.body ?? "";
+        const legacy = b.trim() && (!/^\s*</.test(b) || /<figure|<picture/i.test(b));
+        if (legacy) setEditorMode("code");
+      }
       setAuthor(p.author ?? "Equipe Bewild");
       setMetaTitle(p.meta_title ?? "");
       setMetaDescription(p.meta_description ?? "");
@@ -618,7 +653,15 @@ export default function BewildPostFormPage({ slug }: Props) {
           </div>
 
           <div className="bw-admin__field">
-            <label htmlFor="post-body">Conteúdo (markdown ou HTML)</label>
+            <label htmlFor="post-body">Conteúdo</label>
+            <div className="bw-rte__modes" role="tablist" aria-label="Modo do editor">
+              <button type="button" role="tab" aria-selected={editorMode === "visual"}
+                className={`bw-admin__btn${editorMode === "visual" ? " is-active" : ""}`}
+                onClick={switchToVisual}>Editor visual</button>
+              <button type="button" role="tab" aria-selected={editorMode === "code"}
+                className={`bw-admin__btn${editorMode === "code" ? " is-active" : ""}`}
+                onClick={() => setEditorMode("code")}>Código (HTML/markdown)</button>
+            </div>
             <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 6 }}>
               <button
                 type="button"
@@ -643,6 +686,15 @@ export default function BewildPostFormPage({ slug }: Props) {
                 }}
               />
             </div>
+            {editorMode === "visual" ? (
+              <RichTextEditor
+                value={body}
+                onChange={setBody}
+                onReady={onEditorReady}
+                onRequestImage={() => bodyFileRef.current?.click()}
+                onFiles={(files) => void handleBodyFiles(files)}
+              />
+            ) : (
             <textarea
               id="post-body"
               ref={bodyRef}
@@ -671,6 +723,7 @@ export default function BewildPostFormPage({ slug }: Props) {
               }}
               placeholder="# Título da seção&#10;&#10;Corpo do artigo…"
             />
+            )}
             <span className="hint">
               Tempo de leitura estimado: {readingTime} min
             </span>
