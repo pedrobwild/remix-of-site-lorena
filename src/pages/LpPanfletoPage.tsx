@@ -218,7 +218,7 @@ export default function LpPanfletoPage() {
       <section className="hero" aria-label="Reforma turn-key Bewild">
         <div className="hero-grid" aria-hidden="true" />
         <div className="hero-top">
-          <BewildLogo className="hero-logo" />
+          <BewildLogo className="hero-logo" variant="white" />
           <div className="hero-eyebrow">
             <span className="mono tag">Reforma turn-key de studios · São Paulo</span>
           </div>
