@@ -887,6 +887,26 @@
       text-underline-offset: 3px;
     }
 
+    /* Faixa de renders entre #para-quem e #certeza — imagem 2000×600, largura total */
+    .bwa-faixa {
+      margin: 0;
+      line-height: 0;
+    }
+
+    .bwa-faixa img {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 10 / 3;
+      object-fit: cover;
+    }
+
+    @media (max-width: 699px) {
+      .bwa-faixa img {
+        min-height: 180px;
+      }
+    }
+
     .bwa-certainty-head {
       display: grid;
       grid-template-columns: 1fr;
