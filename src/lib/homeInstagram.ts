@@ -73,7 +73,7 @@ export function installInstagramEmbeds(root: HTMLElement): Cleanup {
     if (!holder || !ref || holder.querySelector("iframe")) return;
     const iframe = document.createElement("iframe");
     iframe.src = ref.embedUrl;
-    iframe.title = `Depoimento de cliente no Instagram (${ref.code})`;
+    iframe.title = card.dataset.igTitle ?? `Depoimento de cliente no Instagram (${ref.code})`;
     iframe.setAttribute("loading", "lazy");
     iframe.setAttribute("scrolling", "no");
     iframe.setAttribute("allow", "encrypted-media");
@@ -120,18 +120,30 @@ export function installInstagramEmbeds(root: HTMLElement): Cleanup {
     if (autoStarted) return;
     autoStarted = true;
     if ("IntersectionObserver" in window) {
-      // Observa o bloco (a seção `[data-instagram]`), não cada card — ver o
-      // comentário no topo do arquivo sobre o trilho horizontal do celular.
-      const block = cards[0].closest<HTMLElement>("[data-instagram]") ?? cards[0].parentElement ?? cards[0];
+      // Cada bloco `[data-instagram]` (bastidores, depoimentos) monta os
+      // próprios cards quando ELE se aproxima da tela, todos de uma vez
+      // (ver o comentário no topo sobre o trilho horizontal do celular).
+      const blocks = new Map<HTMLElement, HTMLElement[]>();
+      for (const card of cards) {
+        const block = card.closest<HTMLElement>("[data-instagram]") ?? card.parentElement ?? card;
+        const list = blocks.get(block) ?? [];
+        list.push(card);
+        blocks.set(block, list);
+      }
       io = new IntersectionObserver(
         (entries) => {
-          if (!entries.some((en) => en.isIntersecting)) return;
-          cards.forEach(mount);
-          io?.disconnect();
+          for (const en of entries) {
+            if (!en.isIntersecting) continue;
+            const block = en.target as HTMLElement;
+            blocks.get(block)?.forEach(mount);
+            blocks.delete(block);
+            io?.unobserve(block);
+          }
+          if (blocks.size === 0) io?.disconnect();
         },
         { rootMargin: "400px 0px" },
       );
-      io.observe(block);
+      blocks.forEach((_, block) => io!.observe(block));
     } else {
       cards.forEach(mount);
     }

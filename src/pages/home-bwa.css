@@ -5471,10 +5471,9 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
 
 /* ---------------------------------------------------------------
    Bastidores (dentro do bloco 02, logo depois das disciplinas e antes da
-   galeria "Atmosferas Bewild"): slider com os 6 vídeos do time em obra
-   (mesmos reels do @bewild.oficial, servidos pelo próprio site em
-   /videos/bastidores/). O vídeo que está na tela toca sozinho, sem som e
-   em loop; o ícone liga o som. Texto de cada vídeo embaixo dele.
+   galeria "Atmosferas Bewild"): slider com os 6 posts do @bewild.oficial
+   do time em obra, no embed oficial do Instagram (mesmo mecanismo dos
+   depoimentos, homeInstagram.ts). Texto de cada post embaixo dele.
    --------------------------------------------------------------- */
 .bwa-bastidores{color:var(--bwa-white);padding-bottom:clamp(64px,8vw,120px)}
 .bwa-bastidores-head{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;margin-bottom:clamp(30px,4vw,52px);padding-left:clamp(20px,3vw,44px);border-left:1px solid var(--bwa-white-line)}
@@ -5493,43 +5492,33 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
 .bwa-bastidores-ig:hover,.bwa-bastidores-ig:focus-visible{color:var(--bwa-ink);background:var(--bwa-white);border-color:var(--bwa-white)}
 
 /* Trilho: mesmo alinhamento da galeria "Atmosferas Bewild" */
-.bwa-bastidores-rail{display:flex;gap:clamp(14px,1.6vw,24px);overflow-x:auto;overscroll-behavior-inline:contain;scroll-behavior:smooth;scroll-snap-type:x mandatory;scroll-padding-inline:max(var(--bwa-gutter),calc((100vw - var(--bwa-max)) / 2 + var(--bwa-gutter)));padding:0 max(var(--bwa-gutter),calc((100vw - var(--bwa-max)) / 2 + var(--bwa-gutter))) 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.bwa-bastidores-rail{display:flex;align-items:flex-start;gap:clamp(16px,1.8vw,28px);overflow-x:auto;overscroll-behavior-inline:contain;scroll-behavior:smooth;scroll-snap-type:x mandatory;scroll-padding-inline:max(var(--bwa-gutter),calc((100vw - var(--bwa-max)) / 2 + var(--bwa-gutter)));padding:0 max(var(--bwa-gutter),calc((100vw - var(--bwa-max)) / 2 + var(--bwa-gutter))) 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .bwa-bastidores-rail::-webkit-scrollbar{display:none}
 .bwa-bastidores-rail:focus-visible{outline:2px solid #5FB2DD;outline-offset:4px}
-.bwa-bastidores-card{flex:0 0 clamp(248px,21vw,330px);min-width:0;scroll-snap-align:start}
+.bwa-bastidores-card{flex:0 0 clamp(326px,24vw,360px);min-width:0;scroll-snap-align:start}
 
-.bwa-bastidores-media{position:relative;aspect-ratio:9/16;overflow:hidden;border:1px solid var(--bwa-white-line);background:linear-gradient(160deg,#1E3A5F 0%,var(--bwa-navy) 55%,#0A111E 100%);transition:border-color .4s var(--bwa-ease)}
-.bwa-bastidores-card:hover .bwa-bastidores-media{border-color:rgba(255,255,255,.5)}
-.bwa-bastidores-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;cursor:pointer}
-.bwa-bastidores-media::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(10,17,30,.35) 0%,rgba(10,17,30,0) 22%,rgba(10,17,30,0) 78%,rgba(10,17,30,.45) 100%)}
-.bwa-bastidores-idx{position:absolute;top:14px;left:14px;z-index:1;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;color:rgba(255,255,255,.8)}
-.bwa-bastidores-sound{position:absolute;right:12px;bottom:12px;z-index:1;width:40px;height:40px;display:grid;place-items:center;padding:0;border:1px solid rgba(255,255,255,.55);border-radius:50%;background:rgba(10,17,30,.45);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);color:var(--bwa-white);cursor:pointer;transition:background .25s ease,color .25s ease,border-color .25s ease}
-.bwa-bastidores-sound svg{width:18px;height:18px}
-.bwa-bastidores-sound:hover,.bwa-bastidores-sound:focus-visible,.bwa-bastidores-sound[aria-pressed="true"]{background:var(--bwa-white);color:var(--bwa-ink);border-color:var(--bwa-white)}
-.bwa-bastidores-sound:focus-visible{outline:2px solid #5FB2DD;outline-offset:3px}
-.bwa-bastidores-ico-on{display:none}
-.bwa-bastidores-sound[aria-pressed="true"] .bwa-bastidores-ico-on{display:block}
-.bwa-bastidores-sound[aria-pressed="true"] .bwa-bastidores-ico-off{display:none}
+/* Post (embed do Instagram): reaproveita .bwa-ig-card dos depoimentos */
+.bwa-bastidores-post{border-color:var(--bwa-white-line)}
+.bwa-bastidores-post .bwa-ig-frame{min-height:560px}
 
-.bwa-bastidores-body{padding:18px 2px 0}
+/* Texto embaixo do post */
+.bwa-bastidores-body{padding:20px 2px 0}
 .bwa-bastidores-tag{margin:0 0 8px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55)}
-.bwa-bastidores-name{margin:0 0 8px;font-family:"Manrope",sans-serif;font-size:clamp(17px,1.35vw,20px);font-weight:500;line-height:1.2;letter-spacing:-.015em;color:var(--bwa-white)}
-.bwa-bastidores-text{margin:0 0 14px;font-size:14px;line-height:1.55;color:rgba(255,255,255,.66)}
-.bwa-bastidores-link{display:inline-flex;gap:8px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.72);text-decoration:none;border-bottom:1px solid transparent;transition:color .25s ease,border-color .25s ease}
-.bwa-bastidores-link:hover,.bwa-bastidores-link:focus-visible{color:var(--bwa-white);border-color:var(--bwa-white)}
+.bwa-bastidores-name{margin:0 0 8px;font-family:"Manrope",sans-serif;font-size:clamp(18px,1.4vw,21px);font-weight:500;line-height:1.2;letter-spacing:-.015em;color:var(--bwa-white)}
+.bwa-bastidores-text{margin:0;font-size:14px;line-height:1.55;color:rgba(255,255,255,.66)}
 
-.bwa-bastidores-foot{display:grid;grid-template-columns:auto minmax(120px,320px) auto;align-items:center;gap:18px;margin-top:28px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.bwa-bastidores-foot{display:grid;grid-template-columns:auto minmax(120px,320px) auto;align-items:center;gap:18px;margin-top:32px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5)}
 .bwa-bastidores-progress{height:1px;overflow:hidden;background:var(--bwa-white-line)}
 .bwa-bastidores-progress span{display:block;width:100%;height:100%;background:var(--bwa-white);transform-origin:left center;transform:scaleX(.17);transition:transform .35s var(--bwa-ease)}
 
 @media (max-width:899px){
   .bwa-bastidores-head{flex-direction:column;align-items:flex-start;gap:20px}
   .bwa-bastidores-arrow{display:none}
-  .bwa-bastidores-card{flex-basis:min(72vw,320px)}
+  .bwa-bastidores-card{flex-basis:min(86vw,380px)}
   .bwa-bastidores-foot{grid-template-columns:1fr auto}
   .bwa-bastidores-foot>span:first-child{grid-column:1/-1}
 }
 @media (prefers-reduced-motion:reduce){
   .bwa-bastidores-rail{scroll-behavior:auto}
-  .bwa-bastidores-media,.bwa-bastidores-progress span{transition:none}
+  .bwa-bastidores-progress span{transition:none}
 }
