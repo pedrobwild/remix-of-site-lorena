@@ -84,7 +84,7 @@ export default function BwaNav() {
       <header className="bwa-nav bwa-nav--internal" data-nav>
         <div className="bwa-shell bwa-nav-inner">
           <a className="bwa-wordmark" href="/" aria-label="Bewild, início">
-            <BewildLogo decorative variant="white" />
+            <BewildLogo decorative variant="blue" />
           </a>
 
           <nav className="bwa-nav-links" aria-label="Navegação principal">
