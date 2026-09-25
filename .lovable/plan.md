@@ -1,17 +1,19 @@
-# Troca de Bastidores por slider de vídeos
+# Metadados SEO e Open Graph do site Bewild
+
+## Objetivo
+Atualizar os metadados da home para refletir a nova seção Bastidores e garantir que cada página pública tenha título, descrição, URL canônica e Open Graph próprios.
 
 ## Implementação
-- Substituir somente o bloco `bwa-bastidores` da home pelo HTML fornecido, preservando as demais seções.
-- Remover integralmente os estilos antigos de cards/lightbox e inserir exatamente o CSS do novo slider.
-- Substituir o instalador por vídeo próprio com carregamento sob demanda, autoplay silencioso, som exclusivo, navegação, progresso e limpeza.
-- Atualizar apenas o comentário da integração existente em `HomePage.tsx`.
-- Criar o README dos 12 arquivos esperados em `public/videos/bastidores/` e remover o README anterior de capas, se confirmado como pertencente à mudança anterior.
-- Reescrever o teste da seção com os quatro cenários solicitados e stubs de mídia.
+- Atualizar a descrição da home no HTML principal e na configuração da própria página, citando os bastidores reais da equipe em obra sem perder o foco em arquitetura, reforma e São Paulo.
+- Revisar todas as rotas públicas e completar somente as páginas que não tenham metadados próprios.
+- Manter os artigos e projetos com seus dados dinâmicos, capas próprias quando disponíveis e a imagem social padrão como fallback.
+- Preservar páginas internas e administrativas como `noindex`.
+- Manter `https://bewild.com.br` como domínio canônico e não alterar o conteúdo visual das páginas.
 
 ## Validação
-- Confirmar por busca que não restaram regras `.bwa-bst-lb` nem `.bwa-bastidores-tile`.
-- Rodar a suíte de testes e o build, registrando separadamente apenas eventuais falhas antigas conhecidas.
-- Não publicar.
+- Confirmar no navegador os metadados renderizados da home e das rotas públicas representativas.
+- Rodar os testes de SEO, a suíte completa e o build.
+- Não publicar sem uma solicitação explícita.
 
-## Observação
-Os vídeos e capas não serão criados, baixados ou convertidos; o slider exibirá o fallback previsto até os 12 arquivos serem enviados.
+## Observação técnica
+A seção Bastidores faz parte da home, portanto ela não recebe uma URL ou Open Graph separado. A indexação acontece pela home; o texto visível da seção e a nova descrição da página serão lidos pelos mecanismos de busca após a próxima publicação e novo rastreamento.
