@@ -20,10 +20,10 @@ export const GUIA_URL = `${GUIA_BASE_URL}${GUIA_PATH}`;
 export const GUIA_H1 = "Guia do investidor em studios para short stay em São Paulo";
 
 export const GUIA_TITLE =
-  "Guia do investidor: studio para short stay em SP — bairros, custo e prazo | Bewild";
+  "Studio para short stay em SP: guia do investidor | Bewild";
 
 export const GUIA_DESCRIPTION =
-  "Bairro a bairro em São Paulo — Pinheiros, Itaim Bibi, Jardim Paulista, Consolação, Vila Mariana, Moema, Brooklin e mais — com mapa, simulador, checklists e o que considerar em custo e prazo da reforma do studio.";
+  "Como escolher o bairro, estimar custo e prazo da reforma e preparar um studio para short stay em São Paulo — com mapa, simulador e checklists.";
 
 export const GUIA_KEYWORDS =
   "guia do investidor short stay, studio para airbnb são paulo, custo de reforma de studio em sp, prazo de reforma de studio, quanto custa reformar studio são paulo, mapa de bairros short stay sp, short stay Pinheiros, short stay Itaim Bibi, short stay Jardim Paulista, short stay Consolação, short stay Bela Vista, short stay Moema, short stay Vila Mariana, short stay Barra Funda, short stay Campo Belo, short stay República, short stay Santana, short stay Brooklin, short stay Itaquera";
