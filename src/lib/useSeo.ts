@@ -385,18 +385,31 @@ function setupTrackersConsentGate() {
 //  Aplicação do <head>
 // =============================================================
 
-function applySeo(settings: SiteSettings, seo: SeoInput) {
+function applySeo(settings: SiteSettings, seoInput: SeoInput) {
   // Base canônica blindada: sempre o domínio oficial da Bewild.
   // Ver `getCanonicalBase` — hosts estranhos vindos do banco são ignorados.
   const base = getCanonicalBase(settings);
-  const title = seo.title || settings.seo_default_title || settings.site_title || "Bewild";
-  const description =
-    seo.description || settings.seo_default_description || settings.site_description || "";
 
   // Canonical: ignora âncoras (#faq) e querystring para evitar duplicidade
   // Ex.: /#faq → canonical da home (/), /faq → canonical próprio
-  const rawPath = seo.canonicalPath || "/";
+  const rawPath = seoInput.canonicalPath || "/";
   const cleanPath = rawPath.split("#")[0].split("?")[0] || "/";
+
+  // Textos editados em /admin/seo (aba "Páginas") vencem os da rota.
+  const ov = pageSeoOverride(settings.pages_seo, cleanPath);
+  const seo: SeoInput = {
+    ...seoInput,
+    title: ov.title || seoInput.title,
+    description: ov.description || seoInput.description,
+    ogTitle: ov.og_title || seoInput.ogTitle,
+    ogDescription: ov.og_description || seoInput.ogDescription,
+    ogImage: ov.og_image || seoInput.ogImage,
+    ...(ov.og_image ? { ogImageWidth: undefined, ogImageHeight: undefined } : null),
+  };
+
+  const title = seo.title || settings.seo_default_title || settings.site_title || "Bewild";
+  const description =
+    seo.description || settings.seo_default_description || settings.site_description || "";
   const canonical = `${base}${cleanPath.startsWith("/") ? cleanPath : `/${cleanPath}`}`.replace(
     /(.+)\/$/,
     "$1"
