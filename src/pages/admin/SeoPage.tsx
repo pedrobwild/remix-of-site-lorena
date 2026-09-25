@@ -47,6 +47,7 @@ const SEO_FIELDS = [
   "home_og_description",
   "home_og_image",
   "bastidores_seo",
+  "pages_seo",
   // Global
   "seo_default_title",
   "seo_default_description",
