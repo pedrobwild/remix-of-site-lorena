@@ -45,8 +45,15 @@ export function installBastidores(root: HTMLElement): () => void {
   window.addEventListener("resize", update);
 
   update();
+  // Os iframes do Instagram inflam os cards depois da montagem; sem esse
+  // reagendamento, o primeiro `update` media o trilho ainda estreito e a
+  // seta "Próximo" nascia desativada no celular.
+  const reupdate = window.setTimeout(update, 2000);
+  const reupdate2 = window.setTimeout(update, 6000);
 
   return () => {
+    window.clearTimeout(reupdate);
+    window.clearTimeout(reupdate2);
     prev?.removeEventListener("click", goPrev);
     next?.removeEventListener("click", goNext);
     rail.removeEventListener("scroll", update);
