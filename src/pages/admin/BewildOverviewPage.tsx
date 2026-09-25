@@ -676,87 +676,109 @@ export default function BewildOverviewPage() {
         )}
       </section>
 
-      {/* Mídia paga — Meta Marketing API (Insights) */}
-      <section className="bw-admin__section">
-        <header className="bw-admin__section-head">
-          <h2 className="bw-admin__section-title">Mídia paga</h2>
-          <p className="bw-admin__section-desc">
-            {metaData && metaData.connected
-              ? `Meta Ads · últimos 30 dias · atualizado em ${fmtDateTime(metaData.updated_at)}`
-              : "Investimento, CPL, CTR, CPC e ROAS aparecem aqui quando uma fonte real for conectada."}
-          </p>
-        </header>
-
-        {metaLoading ? (
-          <div className="bw-admin__kpi-grid" style={{ marginBottom: 0 }}>
-            {[0, 1, 2, 3, 4].map((i) => (
-              <div key={i} className="bw-admin__kpi-card" aria-hidden>
-                <div>
-                  <p className="bw-admin__kpi-label">Carregando…</p>
-                  <div className="bw-admin__kpi-value bw-admin__kpi-empty">—</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : metaData && metaData.connected ? (
-          <div className="bw-admin__kpi-grid" style={{ marginBottom: 0 }}>
-            <Kpi
-              label="Investimento"
-              value={fmtBRL(metaData.spend)}
-              sub={`${fmtInt(metaData.impressions)} impressões · ${fmtInt(metaData.clicks)} cliques`}
-            />
-            <Kpi
-              label="CPL"
-              value={metaData.cpl != null ? fmtBRL(metaData.cpl) : "—"}
-              sub={
-                metaData.leads > 0
-                  ? `${fmtInt(metaData.leads)} leads na Meta`
-                  : "Sem leads atribuídos no período"
-              }
-            />
-            <Kpi
-              label="CTR"
-              value={`${metaData.ctr.toFixed(2)}%`}
-              sub="Cliques ÷ impressões"
-            />
-            <Kpi
-              label="CPC"
-              value={fmtBRL(metaData.cpc)}
-              sub={`CPM ${fmtBRL(metaData.cpm)}`}
-            />
-            <Kpi
-              label="ROAS"
-              value="—"
-              sub="Requer receita do CRM"
-            />
-          </div>
-        ) : metaData && !metaData.connected && metaData.reason === "api_error" ? (
-          <div className="bw-admin__connect">
-            <div className="bw-admin__connect-text">
-              <strong>Não foi possível consultar a Meta Ads agora</strong>
-              <p>
-                A integração respondeu com erro — os números não foram zerados, só não puderam
-                ser lidos. Tente recarregar a página em alguns minutos.
-              </p>
-              {metaData.error && <CardError message={metaData.error} />}
-            </div>
-            <span className="bw-admin__tag bw-admin__tag--warn">Erro</span>
-          </div>
-        ) : (
-          <div className="bw-admin__connect">
-            <div className="bw-admin__connect-text">
-              <strong>Conectar Google Ads / Meta Ads</strong>
-              <p>
-                Ainda não há integração ativa com GA4, Windsor.ai ou Meta Marketing API.
-                Conecte uma fonte para popular gasto, cliques e custo por lead sem dados estimados.
-              </p>
-            </div>
-            <span className="bw-admin__tag bw-admin__tag--off">Não conectado</span>
-          </div>
-        )}
-      </section>
+      {/* Mídia paga — Meta Ads (meta_ads_daily + meta_leads, via meta-sync) */}
+      <PaidMediaSection loading={paidLoading} paid={paid} periodLabel={PERIODS.find((p) => p.value === period)?.label ?? ""} />
 
     </BewildAdminShell>
+  );
+}
+
+function PaidMediaSection({
+  loading,
+  paid,
+  periodLabel,
+}: {
+  loading: boolean;
+  paid: MetaPaidSummary | null;
+  periodLabel: string;
+}) {
+  const sync = metaSyncSummary(paid?.states ?? []);
+  const t = paid?.totals;
+  const show = !!paid && !!t && (paid.hasRows || sync.connected);
+  const warn = sync.tone === "error" || sync.tone === "warn";
+  return (
+    <section className="bw-admin__section">
+      <header className="bw-admin__section-head">
+        <h2 className="bw-admin__section-title">Mídia paga</h2>
+        <p className="bw-admin__section-desc">
+          {show
+            ? `Meta Ads · ${periodLabel} · ${sync.label}`
+            : "Investimento, leads e custo por lead da Meta aparecem aqui quando a conta estiver conectada."}
+        </p>
+        {show && (
+          <a className="bw-admin__section-link" href="/admin/analytics?tab=paid">
+            ver por campanha
+          </a>
+        )}
+      </header>
+
+      {loading ? (
+        <div className="bw-admin__kpi-grid" style={{ marginBottom: 0 }}>
+          {[0, 1, 2, 3, 4].map((i) => (
+            <div key={i} className="bw-admin__kpi-card" aria-hidden>
+              <div>
+                <p className="bw-admin__kpi-label">Carregando…</p>
+                <div className="bw-admin__kpi-value bw-admin__kpi-empty">—</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : show && t ? (
+        <>
+          <div className="bw-admin__kpi-grid" style={{ marginBottom: warn || paid?.error ? 12 : 0 }}>
+            <Kpi
+              label="Investimento"
+              value={fmtBRL(t.spend)}
+              sub={`${fmtInt(t.impressions)} impressões · ${fmtInt(t.linkClicks)} cliques no link`}
+            />
+            <Kpi
+              label="Leads (Meta)"
+              value={fmtInt(t.leads)}
+              sub={
+                t.leads > 0
+                  ? `${fmtInt(t.formLeads)} de formulário · ${fmtInt(t.siteLeads)} no site`
+                  : "Nenhum lead atribuído no período"
+              }
+            />
+            <Kpi label="CPL" value={t.cpl != null ? fmtBRL(t.cpl) : "—"} sub="Investimento ÷ leads da Meta" />
+            <Kpi
+              label="CTR (link)"
+              value={t.ctr != null ? `${t.ctr.toFixed(2)}%` : "—"}
+              sub={`CPC ${fmtBRL(t.cpc)} · CPM ${fmtBRL(t.cpm)}`}
+            />
+            <Kpi
+              label="Formulários recebidos"
+              value={fmtInt(paid?.formLeads)}
+              sub={
+                paid?.siteLeadsFromMeta != null
+                  ? `+ ${fmtInt(paid.siteLeadsFromMeta)} lead(s) do site vindos da Meta`
+                  : undefined
+              }
+            />
+          </div>
+          {(warn || paid?.error) && (
+            <p className="bw-admin__card-error" role="status" title={paid?.error ?? undefined} style={{ margin: 0 }}>
+              {sync.hint ?? "Parte dos números não pôde ser lida agora."}
+            </p>
+          )}
+        </>
+      ) : (
+        <div className="bw-admin__connect">
+          <div className="bw-admin__connect-text">
+            <strong>Conectar Meta Ads</strong>
+            <p>
+              Falta o token da Meta no projeto (segredo META_ADS_ACCESS_TOKEN, de um usuário do sistema com
+              acesso à conta de anúncios e à Página). Com ele, investimento, cliques e leads por campanha e os
+              formulários do Facebook/Instagram passam a chegar aqui a cada 30 minutos.
+            </p>
+            {sync.hint && sync.tone === "error" && <CardError message={sync.hint} />}
+          </div>
+          <span className={`bw-admin__tag ${sync.tone === "error" ? "bw-admin__tag--warn" : "bw-admin__tag--off"}`}>
+            {sync.tone === "error" ? "Erro" : "Não conectado"}
+          </span>
+        </div>
+      )}
+    </section>
   );
 }
 
