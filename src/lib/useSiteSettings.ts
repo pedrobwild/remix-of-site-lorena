@@ -63,6 +63,11 @@ export type SiteSettings = {
   seo_custom_head_html: string | null;
   seo_last_audit_at: string | null;
   seo_last_search_console_submit: string | null;
+  home_seo_title: string | null;
+  home_seo_description: string | null;
+  home_og_title: string | null;
+  home_og_description: string | null;
+  home_og_image: string | null;
 };
 
 const DEFAULTS: SiteSettings = {
@@ -127,6 +132,11 @@ const DEFAULTS: SiteSettings = {
   seo_custom_head_html: null,
   seo_last_audit_at: null,
   seo_last_search_console_submit: null,
+  home_seo_title: null,
+  home_seo_description: null,
+  home_og_title: null,
+  home_og_description: null,
+  home_og_image: null,
 };
 
 let cache: SiteSettings | null = null;

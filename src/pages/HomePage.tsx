@@ -4,6 +4,7 @@ import homeBwaCssUrl from "./home-bwa.css?url";
 import { HOME_BWA_HTML } from "./home-bwa-body";
 import BwaFooter from "@/components/BwaFooter";
 import { useSeo } from "@/lib/useSeo";
+import { useSiteSettings } from "@/lib/useSiteSettings";
 import { hydrateHomeProjects } from "@/lib/hydrateHomeProjects";
 import { trackEvent } from "@/lib/ga4";
 import { installCatalogPreview } from "@/lib/homeCatalog";
@@ -117,9 +118,16 @@ export default function HomePage() {
   const [workflowPortalRoot, setWorkflowPortalRoot] = useState<HTMLElement | null>(null);
 
   // SEO por rota (title/description/canonical + gating de trackers por consentimento).
+  // Título, descrição e Open Graph editáveis em /admin/seo (aba Home);
+  // vazio no painel = texto padrão abaixo.
+  const { settings } = useSiteSettings();
+  const clean = (v?: string | null) => (v ?? "").trim() || undefined;
   useSeo({
-    title: TITLE,
-    description: DESCRIPTION,
+    title: clean(settings?.home_seo_title) ?? TITLE,
+    description: clean(settings?.home_seo_description) ?? DESCRIPTION,
+    ogTitle: clean(settings?.home_og_title),
+    ogDescription: clean(settings?.home_og_description),
+    ogImage: clean(settings?.home_og_image),
     keywords: KEYWORDS,
     canonicalPath: "/",
     ogType: "website",

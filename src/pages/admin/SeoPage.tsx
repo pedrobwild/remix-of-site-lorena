@@ -17,9 +17,10 @@ import { useUnsavedChangesGuard } from "@/lib/useUnsavedChangesGuard";
 const SITEMAP_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sitemap`;
 const ROBOTS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/robots`;
 
-type TabKey = "global" | "verify" | "analytics" | "local" | "sitemap" | "audit" | "guide";
+type TabKey = "home" | "global" | "verify" | "analytics" | "local" | "sitemap" | "audit" | "guide";
 
 const TABS: Array<{ key: TabKey; label: string }> = [
+  { key: "home", label: "Home" },
   { key: "global", label: "Global" },
   { key: "verify", label: "Verificações" },
   { key: "analytics", label: "Analytics & Pixels" },
@@ -36,6 +37,12 @@ const TABS: Array<{ key: TabKey; label: string }> = [
  * um clique em "salvar" apagava Pixel, GTM, códigos de verificação…
  */
 const SEO_FIELDS = [
+  // Home
+  "home_seo_title",
+  "home_seo_description",
+  "home_og_title",
+  "home_og_description",
+  "home_og_image",
   // Global
   "seo_default_title",
   "seo_default_description",
@@ -82,7 +89,7 @@ export default function SeoPage() {
   const [saving, setSaving] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [msg, setMsg] = useState<Msg | null>(null);
-  const [tab, setTab] = useState<TabKey>("global");
+  const [tab, setTab] = useState<TabKey>("home");
   const [audit, setAudit] = useState<PublicPageAudit | null>(null);
   const [auditing, setAuditing] = useState(false);
   const [auditError, setAuditError] = useState<string | null>(null);
@@ -299,6 +306,7 @@ export default function SeoPage() {
         ))}
       </nav>
 
+      {tab === "home" && <HomeTab s={s} patch={patch} />}
       {tab === "global" && <GlobalTab s={s} patch={patch} />}
       {tab === "verify" && <VerifyTab s={s} patch={patch} />}
       {tab === "analytics" && <AnalyticsTab s={s} patch={patch} />}
@@ -317,6 +325,113 @@ export default function SeoPage() {
       )}
       {tab === "guide" && <GuideTab s={s} />}
     </AdminLayout>
+  );
+}
+
+// =============================================================
+//  Aba: Home — título, descrição e Open Graph da página inicial
+// =============================================================
+const HOME_DEFAULT_TITLE = "Arquitetura, engenharia e reforma de apartamento em SP | Bewild";
+const HOME_DEFAULT_DESC =
+  "Reforma completa de apartamentos em São Paulo: projeto, obra, marcenaria e mobília, com preço e prazo fechados. Veja os bastidores da equipe em obra.";
+
+function HomeTab({
+  s,
+  patch,
+}: {
+  s: SiteSettings;
+  patch: <K extends keyof SiteSettings>(k: K, v: SiteSettings[K]) => void;
+}) {
+  const title = s.home_seo_title?.trim() || HOME_DEFAULT_TITLE;
+  const desc = s.home_seo_description?.trim() || HOME_DEFAULT_DESC;
+  const ogTitle = s.home_og_title?.trim() || title;
+  const ogDesc = s.home_og_description?.trim() || desc;
+  const ogImage =
+    s.home_og_image?.trim() || s.seo_og_image?.trim() || "https://bewild.com.br/og_final_v2.jpg";
+
+  return (
+    <>
+      <p className="mono" style={{ opacity: 0.7, marginBottom: 24, maxWidth: 680 }}>
+        Textos da página inicial. Campo vazio usa o texto padrão (mostrado em cinza). Depois de
+        salvar, publique o site para a mudança chegar ao endereço oficial.
+      </p>
+
+      <div className="admin-grid-2">
+        <Field label="Título no Google (≤ 60 caracteres)" full>
+          <input
+            className="admin-field__input"
+            value={s.home_seo_title ?? ""}
+            placeholder={HOME_DEFAULT_TITLE}
+            onChange={(e) => patch("home_seo_title", e.target.value)}
+            maxLength={90}
+          />
+          <Hint count={(s.home_seo_title ?? "").length} max={60} />
+        </Field>
+        <Field label="Descrição no Google (≤ 160 caracteres)" full>
+          <textarea
+            className="admin-field__input"
+            rows={3}
+            value={s.home_seo_description ?? ""}
+            placeholder={HOME_DEFAULT_DESC}
+            onChange={(e) => patch("home_seo_description", e.target.value)}
+            maxLength={220}
+          />
+          <Hint count={(s.home_seo_description ?? "").length} max={160} />
+        </Field>
+        <Field label="Título ao compartilhar (Open Graph) — vazio usa o do Google" full>
+          <input
+            className="admin-field__input"
+            value={s.home_og_title ?? ""}
+            placeholder={title}
+            onChange={(e) => patch("home_og_title", e.target.value)}
+            maxLength={90}
+          />
+          <Hint count={(s.home_og_title ?? "").length} max={60} />
+        </Field>
+        <Field label="Descrição ao compartilhar (Open Graph) — vazio usa a do Google" full>
+          <textarea
+            className="admin-field__input"
+            rows={3}
+            value={s.home_og_description ?? ""}
+            placeholder={desc}
+            onChange={(e) => patch("home_og_description", e.target.value)}
+            maxLength={220}
+          />
+          <Hint count={(s.home_og_description ?? "").length} max={160} />
+        </Field>
+        <Field label="Imagem ao compartilhar — URL pública https, 1200×630" full>
+          <input
+            className="admin-field__input"
+            value={s.home_og_image ?? ""}
+            placeholder={ogImage}
+            onChange={(e) => patch("home_og_image", e.target.value)}
+          />
+        </Field>
+      </div>
+
+      <h3 className="mono" style={{ marginTop: 32, marginBottom: 12 }}>Prévia no Google</h3>
+      <div style={{ border: "1px solid currentColor", padding: 16, maxWidth: 640, opacity: 0.9 }}>
+        <div className="mono" style={{ fontSize: 12, opacity: 0.7 }}>https://bewild.com.br/</div>
+        <div style={{ fontSize: 18, fontWeight: 600, margin: "4px 0" }}>{title}</div>
+        <div style={{ fontSize: 14, opacity: 0.8 }}>{desc}</div>
+      </div>
+
+      <h3 className="mono" style={{ marginTop: 32, marginBottom: 12 }}>
+        Prévia ao compartilhar (WhatsApp, LinkedIn, Facebook)
+      </h3>
+      <div style={{ border: "1px solid currentColor", maxWidth: 480 }}>
+        <img
+          src={ogImage}
+          alt="Imagem de compartilhamento da home"
+          style={{ display: "block", width: "100%", aspectRatio: "1200 / 630", objectFit: "cover" }}
+        />
+        <div style={{ padding: 12 }}>
+          <div className="mono" style={{ fontSize: 11, opacity: 0.7 }}>BEWILD.COM.BR</div>
+          <div style={{ fontWeight: 600, margin: "4px 0" }}>{ogTitle}</div>
+          <div style={{ fontSize: 13, opacity: 0.8 }}>{ogDesc}</div>
+        </div>
+      </div>
+    </>
   );
 }
 
