@@ -13,11 +13,16 @@
  * (responder, qualificar de verdade, etc.) acontece no Bwild Engine —
  * por isso aqui não há mensagem pré-preenchida no WhatsApp nem features
  * de score/realtime.
+ *
+ * A aba "Formulários Meta" (?aba=meta, o link dos avisos no Slack) mostra os
+ * leads dos formulários instantâneos do Facebook/Instagram — tabela
+ * `meta_leads`, ver MetaLeadsPanel.
  */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { MessageCircle } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import AdminAlert from "@/components/admin/AdminAlert";
+import MetaLeadsPanel from "@/components/admin/MetaLeadsPanel";
 import { supabase } from "@/integrations/supabase/client";
 import {
   LEAD_ORIGEM_LABEL,
@@ -119,6 +124,29 @@ const ORIGEM_OPTIONS: { value: "all" | LeadOrigem; label: string }[] = [
   { value: "outro", label: "Não identificado" },
 ];
 
+type LeadsTab = "site" | "meta";
+
+/** Aba inicial pela URL: `/admin/leads?aba=meta` abre os formulários da Meta. */
+function readTab(): LeadsTab {
+  try {
+    return new URLSearchParams(window.location.search).get("aba") === "meta" ? "meta" : "site";
+  } catch {
+    return "site";
+  }
+}
+
+/** Mantém a aba na URL (recarregar ou copiar o link abre a mesma aba). */
+function writeTab(tab: LeadsTab) {
+  try {
+    const url = new URL(window.location.href);
+    if (tab === "meta") url.searchParams.set("aba", "meta");
+    else url.searchParams.delete("aba");
+    window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+  } catch {
+    /* sem History API: a aba só não fica na URL */
+  }
+}
+
 /** Prazo de resposta combinado: 24h corridas a partir do recebimento. */
 const SLA_HOURS = 24;
 
@@ -134,6 +162,7 @@ function slaInfo(lead: Lead): { label: string; late: boolean; done: boolean } {
 }
 
 export default function BewildLeadsAdminPage() {
+  const [tab, setTab] = useState<LeadsTab>(readTab);
   const [rows, setRows] = useState<Lead[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [counts, setCounts] = useState<LeadStatusCounts>(ZERO_STATUS_COUNTS);
@@ -188,8 +217,13 @@ export default function BewildLeadsAdminPage() {
   }, []);
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    if (tab === "site") void load();
+  }, [load, tab]);
+
+  function switchTab(next: LeadsTab) {
+    setTab(next);
+    writeTab(next);
+  }
 
   async function loadMore() {
     if (loadingMore || rows.length >= totalCount) return;
@@ -277,13 +311,27 @@ export default function BewildLeadsAdminPage() {
 
   const hasMore = rows.length < totalCount;
 
+  const shellProps = {
+    active: "leads",
+    eyebrow: "Painel",
+    title: "Leads",
+    description:
+      "Tudo que chega em um lugar só: mensagens do /contato, pedidos de orçamento (/diagnostico, /orcamento e LPs /o e /p) e parceiros, com status de resposta e prazo de 24h — e, na outra aba, os formulários do Facebook e do Instagram.",
+  } as const;
+
+  if (tab === "meta") {
+    return (
+      <BewildAdminShell {...shellProps}>
+        <LeadsTabs tab={tab} onChange={switchTab} />
+        <MetaLeadsPanel />
+      </BewildAdminShell>
+    );
+  }
+
   return (
-    <BewildAdminShell
-      active="leads"
-      eyebrow="Painel"
-      title="Leads"
-      description="Tudo que chega pelo site em um lugar só: mensagens do /contato, pedidos de orçamento (/diagnostico, /orcamento e LPs /o e /p) e parceiros, com status de resposta e prazo de 24h."
-    >
+    <BewildAdminShell {...shellProps}>
+      <LeadsTabs tab={tab} onChange={switchTab} />
+
       {actionMsg && (
         <AdminAlert kind={actionMsg.kind} onClose={() => setActionMsg(null)}>
           {actionMsg.text}
@@ -573,6 +621,31 @@ export default function BewildLeadsAdminPage() {
         )}
       </div>
     </BewildAdminShell>
+  );
+}
+
+function LeadsTabs({ tab, onChange }: { tab: LeadsTab; onChange: (t: LeadsTab) => void }) {
+  return (
+    <div className="bw-admin__period" style={{ marginBottom: 18 }} role="tablist" aria-label="Origem dos leads">
+      <button
+        type="button"
+        role="tab"
+        aria-selected={tab === "site"}
+        className={tab === "site" ? "is-active" : ""}
+        onClick={() => onChange("site")}
+      >
+        Site
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={tab === "meta"}
+        className={tab === "meta" ? "is-active" : ""}
+        onClick={() => onChange("meta")}
+      >
+        Formulários Meta
+      </button>
+    </div>
   );
 }
 
