@@ -1226,6 +1226,7 @@ export type Database = {
           instagram_url: string | null
           linkedin_url: string | null
           meta_pixel_id: string | null
+          pages_seo: Json
           pinterest_site_verification: string | null
           pinterest_url: string | null
           seo_author: string | null
@@ -1282,6 +1283,7 @@ export type Database = {
           instagram_url?: string | null
           linkedin_url?: string | null
           meta_pixel_id?: string | null
+          pages_seo?: Json
           pinterest_site_verification?: string | null
           pinterest_url?: string | null
           seo_author?: string | null
@@ -1338,6 +1340,7 @@ export type Database = {
           instagram_url?: string | null
           linkedin_url?: string | null
           meta_pixel_id?: string | null
+          pages_seo?: Json
           pinterest_site_verification?: string | null
           pinterest_url?: string | null
           seo_author?: string | null
