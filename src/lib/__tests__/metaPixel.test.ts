@@ -5,11 +5,12 @@ vi.mock("@/lib/cookieConsent", () => ({
   isConsentAccepted: () => consent.accepted,
 }));
 
-import { fbcFromFbclid, newMetaEventId, readMetaBrowserIds, trackMetaLead } from "@/lib/metaPixel";
+import { FBC_SESSION_KEY, captureFbclid, fbcFromFbclid, newMetaEventId, readMetaBrowserIds, trackMetaLead } from "@/lib/metaPixel";
 
 beforeEach(() => {
   consent.accepted = true;
   delete window.fbq;
+  window.sessionStorage.clear();
   window.history.replaceState({}, "", "/orcamento");
 });
 
@@ -36,6 +37,20 @@ describe("readMetaBrowserIds", () => {
     expect(ids.fbp).toBe("fb.1.1700000000000.42");
     expect(ids.fbc).toBe("fb.1.1700000000123.IwAR0xyz");
     expect(fbcFromFbclid("abc", 5)).toBe("fb.1.5.abc");
+  });
+
+  it("usa o fbclid guardado na sessão quando a URL atual já não o tem", () => {
+    expect(captureFbclid("?fbclid=IwAR0land", 1_700_000_000_000)).toBe("fb.1.1700000000000.IwAR0land");
+    expect(window.sessionStorage.getItem(FBC_SESSION_KEY)).toBe("fb.1.1700000000000.IwAR0land");
+    // Navegou para /orcamento sem query, sem cookies (aceite recusado).
+    const ids = readMetaBrowserIds({ cookies: "", search: "" });
+    expect(ids).toEqual({ fbp: null, fbc: "fb.1.1700000000000.IwAR0land" });
+    // Cookie _fbc real tem prioridade; URL atual vem antes da sessão.
+    expect(readMetaBrowserIds({ cookies: "_fbc=fb.1.1.cookie", search: "" }).fbc).toBe("fb.1.1.cookie");
+    expect(readMetaBrowserIds({ cookies: "", search: "?fbclid=novo", nowMs: 7 }).fbc).toBe("fb.1.7.novo");
+    // Sem fbclid na URL, não mexe no que está guardado.
+    expect(captureFbclid("?utm_source=google")).toBeNull();
+    expect(window.sessionStorage.getItem(FBC_SESSION_KEY)).toBe("fb.1.1700000000000.IwAR0land");
   });
 
   it("descarta cookies fora do formato e devolve null sem fbclid", () => {

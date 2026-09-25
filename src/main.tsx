@@ -26,6 +26,7 @@ import {
 } from "./lib/cookieConsent";
 import { initAnalytics } from "./lib/analytics";
 import { initGa4, trackPageView } from "./lib/ga4";
+import { captureFbclid } from "./lib/metaPixel";
 import { hasThirdPartyTrackers, isSeoAppliedFor, SEO_APPLIED_EVENT } from "./lib/useSeo";
 import { installCrashRecovery, markHealthy } from "./lib/crashRecovery";
 import { renderRoute } from "./router";
@@ -108,6 +109,9 @@ function Root() {
     window.__bwSplashDone?.();
 
     const cleanupAnalytics = initAnalytics();
+    // Meta: guarda o fbclid da entrada para atribuir o lead ao anúncio mesmo
+    // que o formulário seja enviado em outra página (e sem cookies aceitos).
+    captureFbclid();
     // GA4: inicializa agora (se já há consentimento salvo) ou no "Aceitar".
     // O page_view da entrada sai do efeito de página abaixo; no aceite
     // tardio, a página já está montada e com título — envia na hora.

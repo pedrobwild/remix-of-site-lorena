@@ -13,7 +13,9 @@ Como o site conta leads para a Meta e o que precisa estar configurado.
 
 A Meta deduplica `Lead` pelo par (`event_name`, `event_id`): quando o Pixel e a
 CAPI mandam os dois, conta um. Quem recusou cookies não tem Pixel — nesse caso
-só a CAPI poderia enviar, e por padrão ela **não envia** (ver LGPD abaixo).
+só a CAPI envia, e ela **envia mesmo sem aceite** (decisão de 25/09/2026, ver
+LGPD abaixo). A atribuição ao anúncio vem do `fbclid` da URL, convertido em
+`fbc` no browser sem depender de cookie.
 
 `user_data` vai sempre com hash SHA-256 (e-mail, telefone com DDI 55, primeiro e
 último nome, cidade/UF, `external_id` = id do lead) mais `fbp`, `fbc`, IP e
@@ -21,9 +23,10 @@ user-agent — os identificadores do próprio Pixel.
 
 ## Arquivos
 
-- `src/lib/metaPixel.ts` — `newMetaEventId`, `readMetaBrowserIds` (`_fbp`, `_fbc`
-  ou `fb.1.<ts>.<fbclid>`), `trackMetaLead` (gate: consentimento, fora do
-  `/admin`, `fbq` carregado).
+- `src/lib/metaPixel.ts` — `newMetaEventId`, `captureFbclid` (guarda o `fbclid`
+  da entrada em `sessionStorage`, chamado em `main.tsx`), `readMetaBrowserIds`
+  (`_fbp`, `_fbc`, `fbclid` da URL ou o da sessão), `trackMetaLead` (gate:
+  consentimento, fora do `/admin`, `fbq` carregado).
 - `src/lib/useLeadSubmit.ts` — gera o `event_id`, anexa `meta_event_id`, `fbp`,
   `fbc`, `event_source_url`, `ads_consent` ao payload e dispara o `Lead` do Pixel
   junto com o `generate_lead` do GA4.
@@ -47,7 +50,7 @@ user-agent — os identificadores do próprio Pixel.
 | `META_CAPI_ACCESS_TOKEN` | sim* | Token de usuário de sistema com acesso ao dataset/pixel (Events Manager → Configurações → Conversions API → "Gerar token de acesso"). *Na falta, as funções usam `META_ADS_ACCESS_TOKEN` (já existe para `meta-insights`), desde que ele tenha permissão no dataset. |
 | `META_PIXEL_ID` | não | Se ausente, usa `site_settings.meta_pixel_id` — o mesmo id que o front injeta. |
 | `META_CAPI_TEST_EVENT_CODE` | não | Código de "Test events" do Events Manager. Preencher só durante a homologação e **remover** depois; com ele os eventos não entram nos relatórios. |
-| `META_CAPI_REQUIRE_CONSENT` | não | Padrão `true`: `Lead` só vai à Meta quando o visitante aceitou cookies. `false` envia também para quem recusou (decisão de compliance, não de código). |
+| `META_CAPI_REQUIRE_CONSENT` | não | Padrão `false`: `Lead` vai à Meta para todo formulário enviado, com ou sem aceite de cookies. `true` volta a exigir o aceite (`ads_consent`). |
 
 ## Passo a passo de ativação
 
@@ -77,15 +80,20 @@ where created_at >= now() - interval '30 days'
 group by 1 order by 1 desc;
 ```
 
-`leads` sem `meta_lead_sent_at` = visitante recusou cookies, CAPI sem token, ou
-erro (ver logs da função `notify-lead`, prefixo `[notify-lead] meta capi`).
+`leads` sem `meta_lead_sent_at` = CAPI sem token/pixel, lead sem e-mail nem
+telefone válidos, ou erro (ver logs da função `notify-lead`, prefixo
+`[notify-lead] meta capi`).
 
 ## LGPD
 
 - O Pixel só carrega após aceite (inalterado).
-- A CAPI segue a mesma decisão do visitante: `ads_consent` viaja no payload e, por
-  padrão, sem aceite nada vai à Meta. Quem envia o formulário sem aceitar cookies
-  continua sendo atendido normalmente — só não é medido.
+- A CAPI **não** depende do aceite (`META_CAPI_REQUIRE_CONSENT` padrão `false`):
+  todo formulário enviado gera `Lead` server-side. Base jurídica adotada: o
+  visitante forneceu os dados voluntariamente para ser contatado, eles saem só
+  com hash e o objetivo é medir a origem desse contato. Recomenda-se refletir
+  isso na Política de Privacidade (item "medição de campanhas / Meta
+  Conversions API"). `ads_consent` continua no payload para auditoria e para
+  reverter com um secret (`true`) se a política mudar.
 - Dados pessoais vão com hash, nunca em claro. IP e user-agent não são gravados
   no banco; só passam para a Meta no momento do evento.
 - Referência: [Meta — Conversions API: parâmetros de informação do cliente](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters)

@@ -9,10 +9,13 @@
  *    `fbq('track','Lead', …, { eventID })` e no `Lead` que a edge function
  *    `notify-lead` manda pela Conversions API; a Meta deduplica pelo par
  *    (event_name, event_id) e o lead conta uma vez só.
+ *  - `captureFbclid()`: no bootstrap, guarda em `sessionStorage` o `fbclid`
+ *    da URL de entrada já no formato `_fbc` (`fb.1.<unix ms>.<fbclid>`). É o
+ *    que preserva a atribuição de quem chega pelo anúncio na home e só
+ *    preenche o formulário em /orcamento — com ou sem cookies aceitos.
  *  - `readMetaBrowserIds()`: `_fbp` (id do browser) e `_fbc` (clique no
  *    anúncio). Sem cookie `_fbc` (aceite recusado, ou o fbevents ainda não
- *    gravou), o `_fbc` é reconstruído a partir do `fbclid` da URL/sessão no
- *    formato que a Meta documenta: `fb.1.<unix ms>.<fbclid>`.
+ *    gravou), usa o `fbclid` da URL atual ou o guardado na sessão.
  *  - `trackMetaLead()`: dispara o `Lead` no Pixel, só com consentimento aceito,
  *    fora do /admin e com o `fbq` carregado. Nunca lança.
  */
@@ -65,6 +68,35 @@ export function fbcFromFbclid(fbclid: string, nowMs = Date.now()): string {
   return `fb.1.${Math.floor(nowMs)}.${fbclid}`;
 }
 
+/** Chave em `sessionStorage` do `_fbc` reconstruído (dura a aba/sessão). */
+export const FBC_SESSION_KEY = "bw_fbc";
+
+function readSessionFbc(): string | null {
+  try {
+    const v = typeof window !== "undefined" ? window.sessionStorage.getItem(FBC_SESSION_KEY) : null;
+    return v && FBC_RE.test(v) ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Se a URL atual tem `fbclid`, guarda o `_fbc` correspondente na sessão
+ * (sobrescreve: clique novo = atribuição nova). Chamar no bootstrap do app.
+ * Devolve o valor guardado, ou null.
+ */
+export function captureFbclid(search?: string, nowMs?: number): string | null {
+  const fbclid = fbclidFromSearch(search ?? (typeof window !== "undefined" ? window.location.search : ""));
+  if (!fbclid) return null;
+  const fbc = fbcFromFbclid(fbclid, nowMs);
+  try {
+    window.sessionStorage.setItem(FBC_SESSION_KEY, fbc);
+  } catch {
+    /* storage indisponível: o valor da URL ainda vale no readMetaBrowserIds */
+  }
+  return fbc;
+}
+
 /**
  * Identificadores do Pixel para casar o evento server-side com o browser.
  * `search`/`cookies` só para testes; em produção lê `window`/`document`.
@@ -82,6 +114,7 @@ export function readMetaBrowserIds(opts: { search?: string; cookies?: string; no
     const fbclid = fbclidFromSearch(search);
     if (fbclid) fbc = fbcFromFbclid(fbclid, opts.nowMs);
   }
+  if (!fbc) fbc = readSessionFbc();
   return { fbp, fbc };
 }
 

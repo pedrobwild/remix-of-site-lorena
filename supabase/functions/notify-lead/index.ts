@@ -185,10 +185,12 @@ async function metaCapiConfig(admin: SupabaseClient | null): Promise<MetaCapiCon
 /**
  * `Lead` pela Conversions API, com o mesmo `event_id` do Pixel (dedupe).
  *
- * LGPD: por padrão só envia quando o visitante aceitou cookies
- * (`ads_consent`). `META_CAPI_REQUIRE_CONSENT=false` libera o envio para
- * quem recusou — decisão do titular dos dados, não do código. Clientes
- * antigos que não mandam o campo (`null`) são tratados como sem aceite.
+ * Consentimento: por decisão de negócio (25/09/2026) o `Lead` vai à Meta
+ * INDEPENDENTE do aceite de cookies — o visitante enviou o formulário de
+ * propósito, os dados de contato vão com hash e a atribuição do anúncio vem
+ * do `fbclid` da URL (sem cookie). O Pixel continua bloqueado sem aceite; só
+ * o evento server-side passa. `META_CAPI_REQUIRE_CONSENT=true` volta a exigir
+ * o aceite (`ads_consent`), se a política do site mudar.
  */
 async function sendMetaLead(
   admin: SupabaseClient | null,
@@ -197,7 +199,7 @@ async function sendMetaLead(
   leadId: string | null,
   req: Request,
 ): Promise<Outcome> {
-  const requireConsent = (Deno.env.get("META_CAPI_REQUIRE_CONSENT") ?? "true").toLowerCase() !== "false";
+  const requireConsent = (Deno.env.get("META_CAPI_REQUIRE_CONSENT") ?? "false").toLowerCase() === "true";
   if (requireConsent && meta.ads_consent !== true) return "skipped";
 
   const config = await metaCapiConfig(admin);

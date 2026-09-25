@@ -75,8 +75,9 @@ export type LeadPayload = {
   /**
    * Meta Conversions API (ver src/lib/metaPixel.ts). `meta_event_id` é o
    * mesmo id do `Lead` disparado no Pixel, para a Meta deduplicar; `fbp`/`fbc`
-   * casam o evento com o browser; `ads_consent` diz se o visitante aceitou
-   * cookies (a função só envia à Meta com aceite, salvo configuração).
+   * casam o evento com o browser; `ads_consent` registra se o visitante
+   * aceitou cookies (informativo — a função envia à Meta mesmo sem aceite,
+   * salvo `META_CAPI_REQUIRE_CONSENT=true`).
    */
   meta_event_id?: string | null;
   fbp?: string | null;
