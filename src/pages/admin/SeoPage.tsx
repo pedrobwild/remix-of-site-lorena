@@ -310,6 +310,7 @@ export default function SeoPage() {
       </nav>
 
       {tab === "home" && <HomeTab s={s} patch={patch} />}
+      {tab === "pages" && <PagesTab s={s} patch={patch} />}
       {tab === "bastidores" && <BastidoresTab s={s} patch={patch} />}
       {tab === "global" && <GlobalTab s={s} patch={patch} />}
       {tab === "verify" && <VerifyTab s={s} patch={patch} />}
