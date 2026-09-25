@@ -1196,6 +1196,7 @@ export type Database = {
           address_city: string | null
           address_region: string | null
           address_street: string | null
+          bastidores_seo: Json
           bing_site_verification: string | null
           business_founding_year: string | null
           business_opening_hours: string | null
@@ -1251,6 +1252,7 @@ export type Database = {
           address_city?: string | null
           address_region?: string | null
           address_street?: string | null
+          bastidores_seo?: Json
           bing_site_verification?: string | null
           business_founding_year?: string | null
           business_opening_hours?: string | null
@@ -1306,6 +1308,7 @@ export type Database = {
           address_city?: string | null
           address_region?: string | null
           address_street?: string | null
+          bastidores_seo?: Json
           bing_site_verification?: string | null
           business_founding_year?: string | null
           business_opening_hours?: string | null

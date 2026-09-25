@@ -15,9 +15,9 @@ import { fetchSiteSettings } from "@/lib/useSiteSettings";
 import { isExternalHref, safeHref } from "@/lib/safeUrl";
 import { initHomeBwa } from "./home-bwa-script";
 import WorkflowPortalReplica from "@/components/workflow-replica/WorkflowPortalReplica";
-import { bastidoresJsonLd } from "@/lib/bastidoresJsonLd";
+import { bastidoresJsonLd, parseBastidoresPosts } from "@/lib/bastidoresJsonLd";
 
-const BASTIDORES_JSONLD = bastidoresJsonLd();
+const BASTIDORES_POSTS = parseBastidoresPosts();
 
 const TITLE = "Arquitetura, engenharia e reforma de apartamento em SP | Bewild";
 const DESCRIPTION =
@@ -132,7 +132,7 @@ export default function HomePage() {
     canonicalPath: "/",
     ogType: "website",
     // Os 6 posts dos Bastidores: título e descrição próprios em JSON-LD.
-    jsonLd: BASTIDORES_JSONLD,
+    jsonLd: bastidoresJsonLd(BASTIDORES_POSTS, settings?.bastidores_seo ?? {}),
   });
 
   useEffect(() => {

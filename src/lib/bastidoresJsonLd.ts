@@ -34,7 +34,13 @@ export function parseBastidoresPosts(html: string = HOME_BWA_HTML): BastidoresPo
     .filter((p) => p.code && p.name);
 }
 
-export function bastidoresJsonLd(posts: BastidoresPost[] = parseBastidoresPosts()): Record<string, unknown> {
+/** Título/descrição editados no painel, por código do post. Vazio = texto do card. */
+export type BastidoresSeoOverrides = Record<string, { title?: string; description?: string }>;
+
+export function bastidoresJsonLd(
+  posts: BastidoresPost[] = parseBastidoresPosts(),
+  overrides: BastidoresSeoOverrides = {},
+): Record<string, unknown> {
   const org = { "@type": "Organization", name: "Bewild", url: `${BASE_URL}/`, sameAs: [IG_PROFILE] };
   return {
     "@context": "https://schema.org",
@@ -51,8 +57,8 @@ export function bastidoresJsonLd(posts: BastidoresPost[] = parseBastidoresPosts(
       item: {
         "@type": "SocialMediaPosting",
         "@id": `${BASE_URL}/#bastidores-${p.code}`,
-        headline: `${p.name} | Bastidores Bewild`,
-        description: p.description,
+        headline: overrides[p.code]?.title?.trim() || `${p.name} | Bastidores Bewild`,
+        description: overrides[p.code]?.description?.trim() || p.description,
         ...(p.tag ? { keywords: p.tag.replace(/^\d+\s*·\s*/, "") } : {}),
         url: `https://www.instagram.com/p/${p.code}/`,
         sharedContent: { "@type": "WebPage", url: `https://www.instagram.com/p/${p.code}/` },

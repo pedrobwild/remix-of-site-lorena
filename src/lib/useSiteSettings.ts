@@ -68,6 +68,7 @@ export type SiteSettings = {
   home_og_title: string | null;
   home_og_description: string | null;
   home_og_image: string | null;
+  bastidores_seo: Record<string, { title?: string; description?: string }> | null;
 };
 
 const DEFAULTS: SiteSettings = {
@@ -137,6 +138,7 @@ const DEFAULTS: SiteSettings = {
   home_og_title: null,
   home_og_description: null,
   home_og_image: null,
+  bastidores_seo: {},
 };
 
 let cache: SiteSettings | null = null;

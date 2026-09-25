@@ -13,14 +13,16 @@ import {
   type SettingsRow,
 } from "@/lib/adminSiteSettings";
 import { useUnsavedChangesGuard } from "@/lib/useUnsavedChangesGuard";
+import { parseBastidoresPosts } from "@/lib/bastidoresJsonLd";
 
 const SITEMAP_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sitemap`;
 const ROBOTS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/robots`;
 
-type TabKey = "home" | "global" | "verify" | "analytics" | "local" | "sitemap" | "audit" | "guide";
+type TabKey = "home" | "bastidores" | "global" | "verify" | "analytics" | "local" | "sitemap" | "audit" | "guide";
 
 const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "home", label: "Home" },
+  { key: "bastidores", label: "Bastidores" },
   { key: "global", label: "Global" },
   { key: "verify", label: "Verificações" },
   { key: "analytics", label: "Analytics & Pixels" },
@@ -43,6 +45,7 @@ const SEO_FIELDS = [
   "home_og_title",
   "home_og_description",
   "home_og_image",
+  "bastidores_seo",
   // Global
   "seo_default_title",
   "seo_default_description",
@@ -307,6 +310,7 @@ export default function SeoPage() {
       </nav>
 
       {tab === "home" && <HomeTab s={s} patch={patch} />}
+      {tab === "bastidores" && <BastidoresTab s={s} patch={patch} />}
       {tab === "global" && <GlobalTab s={s} patch={patch} />}
       {tab === "verify" && <VerifyTab s={s} patch={patch} />}
       {tab === "analytics" && <AnalyticsTab s={s} patch={patch} />}
@@ -325,6 +329,69 @@ export default function SeoPage() {
       )}
       {tab === "guide" && <GuideTab s={s} />}
     </AdminLayout>
+  );
+}
+
+// =============================================================
+//  Aba: Bastidores — título e descrição de cada post (dados estruturados)
+// =============================================================
+const BASTIDORES_POSTS = parseBastidoresPosts();
+
+function BastidoresTab({
+  s,
+  patch,
+}: {
+  s: SiteSettings;
+  patch: <K extends keyof SiteSettings>(k: K, v: SiteSettings[K]) => void;
+}) {
+  const map = s.bastidores_seo ?? {};
+  const set = (code: string, key: "title" | "description", value: string) => {
+    const next = { ...map, [code]: { ...(map[code] ?? {}), [key]: value } };
+    patch("bastidores_seo", next);
+  };
+  return (
+    <>
+      <p className="mono" style={{ opacity: 0.7, marginBottom: 24, maxWidth: 680 }}>
+        Título e descrição que o Google lê para cada post dos Bastidores na home. Campo vazio usa o
+        texto do card (mostrado em cinza). Os posts não têm endereço próprio, então a prévia ao
+        compartilhar continua sendo a da home (aba Home).
+      </p>
+      {BASTIDORES_POSTS.map((p, i) => {
+        const defTitle = `${p.name} | Bastidores Bewild`;
+        const cur = map[p.code] ?? {};
+        return (
+          <section key={p.code} className="admin-grid-2" style={{ marginBottom: 32 }}>
+            <h3 className="mono" style={{ gridColumn: "1 / -1", margin: 0 }}>
+              Post {i + 1} · {p.name}{" "}
+              <a href={`https://www.instagram.com/p/${p.code}/`} target="_blank" rel="noreferrer">
+                ver no Instagram
+              </a>
+            </h3>
+            <Field label={`Título (≤ 60 caracteres) — post ${i + 1}`} full>
+              <input
+                className="admin-field__input"
+                value={cur.title ?? ""}
+                placeholder={defTitle}
+                onChange={(e) => set(p.code, "title", e.target.value)}
+                maxLength={90}
+              />
+              <Hint count={(cur.title ?? "").length} max={60} />
+            </Field>
+            <Field label={`Descrição (≤ 160 caracteres) — post ${i + 1}`} full>
+              <textarea
+                className="admin-field__input"
+                rows={3}
+                value={cur.description ?? ""}
+                placeholder={p.description}
+                onChange={(e) => set(p.code, "description", e.target.value)}
+                maxLength={220}
+              />
+              <Hint count={(cur.description ?? "").length} max={160} />
+            </Field>
+          </section>
+        );
+      })}
+    </>
   );
 }
 
