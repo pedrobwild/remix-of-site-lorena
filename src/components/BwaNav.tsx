@@ -90,7 +90,7 @@ export default function BwaNav() {
           <nav className="bwa-nav-links" aria-label="Navegação principal">
             <a href="/#certeza">Como trabalhamos</a>
             <a href="/#depoimentos">Depoimentos</a>
-            <a href="/portfolio">Projetos</a>
+            <a href="/portfolio">Portfólio</a>
             <a href="/marcenaria">Marcenaria</a>
             <a href="/conteudos">Blog</a>
             <a href="/guia-do-investidor">Guia do Investidor</a>
@@ -141,7 +141,7 @@ export default function BwaNav() {
         <nav aria-label="Navegação mobile">
           <a href="/#certeza">Como trabalhamos</a>
           <a href="/#depoimentos">Depoimentos</a>
-          <a href="/portfolio">Projetos</a>
+          <a href="/portfolio">Portfólio</a>
           <a href="/marcenaria">Marcenaria</a>
           <a href="/conteudos">Blog</a>
           <a href="/guia-do-investidor">Guia do Investidor</a>
