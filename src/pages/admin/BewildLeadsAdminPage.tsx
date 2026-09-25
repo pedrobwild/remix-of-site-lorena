@@ -57,6 +57,15 @@ type Lead = {
   lives_in_sp: boolean | null;
   status: LeadStatus;
   created_at: string;
+  // Atribuição completa (Fase 1 de conversões). Opcionais: leads antigos não têm.
+  utm_term?: string | null;
+  utm_content?: string | null;
+  first_utm_source?: string | null;
+  first_utm_medium?: string | null;
+  first_utm_campaign?: string | null;
+  gclid?: string | null;
+  fbclid?: string | null;
+  consent_marketing?: boolean | null;
 };
 
 const PAGE_SIZE = 200;
@@ -69,8 +78,23 @@ const STATUS_OPTIONS: { value: "all" | LeadStatus; label: string }[] = [
   { value: "descartado", label: "Descartados" },
 ];
 
-const SELECT_COLS =
-  "id, name, whatsapp, email, location, area_m2, objetivo, chaves, planta, message, utm_source, utm_medium, utm_campaign, referrer, landing_path, form_path, lead_source, lives_in_sp, status, created_at";
+// Todas as colunas: as de atribuição completa aparecem quando existem, e a
+// tela não quebra se a migration delas ainda não tiver rodado no banco.
+const SELECT_COLS = "*";
+
+/** "fonte · meio · campanha", pulando o que estiver vazio. */
+function joinUtm(...parts: (string | null | undefined)[]): string | null {
+  const s = parts.filter(Boolean).join(" · ");
+  return s || null;
+}
+
+/** De onde veio o clique de anúncio (os ids em si não ajudam ninguém na tela). */
+function adClickLabel(lead: Lead): string | null {
+  const out: string[] = [];
+  if (lead.gclid) out.push("Google Ads");
+  if (lead.fbclid) out.push("Meta");
+  return out.length ? out.join(" + ") : null;
+}
 
 function fmtDate(iso: string): string {
   try {
@@ -493,9 +517,28 @@ export default function BewildLeadsAdminPage() {
                               <DetailItem label="Referrer" value={r.referrer} />
                               <DetailItem
                                 label="UTM"
-                                value={[r.utm_source, r.utm_medium, r.utm_campaign]
-                                  .filter(Boolean)
-                                  .join(" · ")}
+                                value={joinUtm(r.utm_source, r.utm_medium, r.utm_campaign)}
+                              />
+                              <DetailItem label="Termo · conteúdo" value={joinUtm(r.utm_term, r.utm_content)} />
+                              <DetailItem
+                                label="1º toque"
+                                value={
+                                  joinUtm(r.first_utm_source, r.first_utm_medium, r.first_utm_campaign) !==
+                                  joinUtm(r.utm_source, r.utm_medium, r.utm_campaign)
+                                    ? joinUtm(r.first_utm_source, r.first_utm_medium, r.first_utm_campaign)
+                                    : null
+                                }
+                              />
+                              <DetailItem label="Clique de anúncio" value={adClickLabel(r)} />
+                              <DetailItem
+                                label="Cookies de marketing"
+                                value={
+                                  r.consent_marketing == null
+                                    ? null
+                                    : r.consent_marketing
+                                      ? "aceitos"
+                                      : "recusados — não vai para Meta nem Google Ads"
+                                }
                               />
                             </dl>
                             {r.message && (
