@@ -1215,6 +1215,11 @@ export type Database = {
           google_maps_url: string | null
           google_site_verification: string | null
           google_tag_manager_id: string | null
+          home_og_description: string | null
+          home_og_image: string | null
+          home_og_title: string | null
+          home_seo_description: string | null
+          home_seo_title: string | null
           hotjar_id: string | null
           id: number
           instagram_url: string | null
@@ -1265,6 +1270,11 @@ export type Database = {
           google_maps_url?: string | null
           google_site_verification?: string | null
           google_tag_manager_id?: string | null
+          home_og_description?: string | null
+          home_og_image?: string | null
+          home_og_title?: string | null
+          home_seo_description?: string | null
+          home_seo_title?: string | null
           hotjar_id?: string | null
           id?: number
           instagram_url?: string | null
@@ -1315,6 +1325,11 @@ export type Database = {
           google_maps_url?: string | null
           google_site_verification?: string | null
           google_tag_manager_id?: string | null
+          home_og_description?: string | null
+          home_og_image?: string | null
+          home_og_title?: string | null
+          home_seo_description?: string | null
+          home_seo_title?: string | null
           hotjar_id?: string | null
           id?: number
           instagram_url?: string | null
