@@ -3,8 +3,8 @@
  * o que o usuário vê fora do canvas — filtros, busca, estado vazio, aviso de
  * ROI e eventos futuros.
  */
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { NEIGHBORHOODS } from "@/guia/data/mapaBairrosData";
 
@@ -26,13 +26,15 @@ const pinos = () =>
 const cards = () =>
   screen.queryAllByRole("button").filter((el) => /^[^:]+: score \d+, diária média R\$/.test(el.getAttribute("aria-label") ?? ""));
 
-describe("MapaBairrosEmbed", () => {
+// O primeiro import dinâmico do mapa passa de 5s em máquinas lentas.
+describe("MapaBairrosEmbed", { timeout: 20000 }, () => {
   beforeAll(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date(2026, 8, 23, 12, 0));
     // Os geojson são opcionais: sem rede, o mapa segue com os pinos.
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
   });
+  afterEach(() => cleanup());
   afterAll(() => {
     vi.useRealTimers();
     vi.unstubAllGlobals();
