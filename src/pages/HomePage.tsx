@@ -144,7 +144,7 @@ export default function HomePage() {
           // quando as seções se aproximam da tela.
           installCatalogPreview(root),
           installInstagramEmbeds(root),
-          // Bastidores: slider com os 6 vídeos do time em obra; o card na tela toca sem som.
+          // Bastidores: slider dos 6 posts do time em obra (embeds montados por installInstagramEmbeds).
           installBastidores(root),
           // Tour virtual 3D (Enscape): 3 cômodos lado a lado; no toque, tela cheia.
           installTour3d(root),
