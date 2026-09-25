@@ -96,6 +96,9 @@
 .admin-analytics__shell {
   display: grid;
   grid-template-rows: auto 1fr;
+  /* Sem isto a coluna implícita cresce até o conteúdo mais largo (abas,
+     tabelas) e a página inteira rola para o lado no celular. */
+  grid-template-columns: minmax(0, 1fr);
   min-height: 100vh;
 }
 
@@ -166,6 +169,21 @@
   padding: 3px;
   border-radius: var(--aa-r);
   border: 1px solid var(--aa-border);
+  /* Sete abas não cabem num celular: a faixa rola na horizontal em vez de
+     empurrar a página para o lado. */
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.admin-analytics__tabs::-webkit-scrollbar {
+  display: none;
+}
+@media (max-width: 720px) {
+  .admin-analytics__tabs {
+    order: 10;
+    width: 100%;
+    margin-left: 0 !important;
+  }
 }
 .admin-analytics__tab {
   appearance: none;
