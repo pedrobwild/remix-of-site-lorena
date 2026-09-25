@@ -17,6 +17,7 @@ export const FORM_PATHS = [
   "/contato",
   "/orcamento",
   "/parceiros",
+  "/parceiros/incorporadoras",
   "/indique-um-amigo",
   "/o",
   "/p",
@@ -28,6 +29,7 @@ const FORM_LABELS: Record<FormPath, string> = {
   "/contato": "Contato",
   "/orcamento": "Orçamento",
   "/parceiros": "Parceria comercial",
+  "/parceiros/incorporadoras": "Parceria incorporadora",
   "/indique-um-amigo": "Indique um amigo",
   "/o": "LP Obra (QR)",
   "/p": "LP Panfleto (QR)",
@@ -59,7 +61,20 @@ export const FIELD_LIMITS = {
   landing_path: 500,
   user_agent: 500,
   lead_source: 80,
+  utm_term: 200,
+  utm_content: 200,
+  first_utm_source: 200,
+  first_utm_medium: 200,
+  first_utm_campaign: 200,
+  gclid: 200,
+  fbclid: 500,
+  fbp: 100,
+  fbc: 600,
+  event_id: 64,
 } as const;
+
+/** Nome usado quando o formulário chega sem nome (nunca vai para o Meta). */
+export const DEFAULT_LEAD_NAME = "Lead sem nome";
 
 /** Teto do corpo cru, antes de qualquer parse. */
 export const MAX_BODY_BYTES = 64 * 1024;
@@ -91,6 +106,18 @@ export const leadSchema = z.object({
   lead_source: looseText,
   lives_in_sp: z.union([z.boolean(), z.null()]).optional(),
   form_path: looseText,
+  // Atribuição completa e dados da API de Conversões (clientes novos).
+  utm_term: looseText,
+  utm_content: looseText,
+  first_utm_source: looseText,
+  first_utm_medium: looseText,
+  first_utm_campaign: looseText,
+  gclid: looseText,
+  fbclid: looseText,
+  fbp: looseText,
+  fbc: looseText,
+  event_id: looseText,
+  consent_marketing: z.union([z.boolean(), z.null()]).optional(),
 });
 
 export type RawLead = z.infer<typeof leadSchema>;
@@ -114,13 +141,55 @@ export type CleanLead = {
   lead_source: string | null;
   lives_in_sp: boolean | null;
   form_path: FormPath | null;
+  utm_term: string | null;
+  utm_content: string | null;
+  first_utm_source: string | null;
+  first_utm_medium: string | null;
+  first_utm_campaign: string | null;
+  gclid: string | null;
+  fbclid: string | null;
+  /** Só com `consent_marketing === true`. */
+  fbp: string | null;
+  fbc: string | null;
+  /** Aceite de cookies no envio: `true` libera a API de Conversões do Meta. */
+  consent_marketing: boolean | null;
+  /** Id compartilhado com o Pixel do navegador (deduplicação no Meta). */
+  event_id: string | null;
 };
+
+/** Colunas que chegaram com a Fase 1 (atribuição/CAPI) — ver insertLead. */
+export const ATTRIBUTION_COLUMNS = [
+  "utm_term",
+  "utm_content",
+  "first_utm_source",
+  "first_utm_medium",
+  "first_utm_campaign",
+  "gclid",
+  "fbclid",
+  "fbp",
+  "fbc",
+  "consent_marketing",
+  "event_id",
+] as const;
 
 function cut(value: unknown, max: number): string | null {
   if (typeof value !== "string" && typeof value !== "number") return null;
   const trimmed = String(value).trim();
   return trimmed ? trimmed.slice(0, max) : null;
 }
+
+/** Valor de texto que só entra se casar com o formato esperado. */
+function matching(value: unknown, max: number, re: RegExp): string | null {
+  const v = cut(value, max);
+  return v && re.test(v) ? v : null;
+}
+
+// Formatos dos identificadores de anúncio. Fora do padrão = descartado (não
+// derruba o lead).
+const CLICK_ID_RE = /^[A-Za-z0-9_.-]+$/;
+const FBP_RE = /^fb\.\d\.\d{10,13}\.\d{1,20}$/;
+const FBC_RE = /^fb\.\d\.\d{10,13}\.[A-Za-z0-9_.-]+$/;
+const EVENT_ID_RE = /^[A-Za-z0-9_-]{8,64}$/;
 
 /** Mesma regra de src/lib/phone.ts: remove DDI 55 e tronco 0 ANTES de cortar. */
 export function normalizeBrPhoneDigits(input: unknown): string {
@@ -156,8 +225,10 @@ export function sanitizeLead(raw: RawLead): CleanLead {
     email = null;
   }
   const formPath = cut(raw.form_path, 40);
+  // Sem aceite de cookies, os identificadores do Pixel não são guardados.
+  const consent = typeof raw.consent_marketing === "boolean" ? raw.consent_marketing : null;
   return {
-    name: cut(raw.name, FIELD_LIMITS.name) || "Lead sem nome",
+    name: cut(raw.name, FIELD_LIMITS.name) || DEFAULT_LEAD_NAME,
     whatsapp: normalizeBrPhoneDigits(raw.whatsapp),
     email,
     location: cut(raw.location, FIELD_LIMITS.location),
@@ -175,6 +246,17 @@ export function sanitizeLead(raw: RawLead): CleanLead {
     lead_source: cut(raw.lead_source, FIELD_LIMITS.lead_source),
     lives_in_sp: typeof raw.lives_in_sp === "boolean" ? raw.lives_in_sp : null,
     form_path: (FORM_PATHS as readonly string[]).includes(formPath ?? "") ? (formPath as FormPath) : null,
+    utm_term: cut(raw.utm_term, FIELD_LIMITS.utm_term),
+    utm_content: cut(raw.utm_content, FIELD_LIMITS.utm_content),
+    first_utm_source: cut(raw.first_utm_source, FIELD_LIMITS.first_utm_source),
+    first_utm_medium: cut(raw.first_utm_medium, FIELD_LIMITS.first_utm_medium),
+    first_utm_campaign: cut(raw.first_utm_campaign, FIELD_LIMITS.first_utm_campaign),
+    gclid: matching(raw.gclid, FIELD_LIMITS.gclid, CLICK_ID_RE),
+    fbclid: matching(raw.fbclid, FIELD_LIMITS.fbclid, CLICK_ID_RE),
+    fbp: consent === true ? matching(raw.fbp, FIELD_LIMITS.fbp, FBP_RE) : null,
+    fbc: consent === true ? matching(raw.fbc, FIELD_LIMITS.fbc, FBC_RE) : null,
+    consent_marketing: consent,
+    event_id: matching(raw.event_id, FIELD_LIMITS.event_id, EVENT_ID_RE),
   };
 }
 
@@ -208,7 +290,7 @@ export function slackEscape(value: string): string {
 const SLACK_FIELD_MAX = 1900;
 const SLACK_TEXT_MAX = 2900;
 
-function formLabel(lead: CleanLead): string {
+export function formLabel(lead: CleanLead): string {
   return lead.form_path ? FORM_LABELS[lead.form_path] : "Site";
 }
 
@@ -219,6 +301,15 @@ function originLines(lead: CleanLead): string[] {
   if (lead.utm_source) origin.push(`utm_source: ${lead.utm_source}`);
   if (lead.utm_medium) origin.push(`utm_medium: ${lead.utm_medium}`);
   if (lead.utm_campaign) origin.push(`utm_campaign: ${lead.utm_campaign}`);
+  if (lead.utm_term) origin.push(`utm_term: ${lead.utm_term}`);
+  if (lead.utm_content) origin.push(`utm_content: ${lead.utm_content}`);
+  const first = [lead.first_utm_source, lead.first_utm_medium, lead.first_utm_campaign];
+  const last = [lead.utm_source, lead.utm_medium, lead.utm_campaign];
+  if (first.some(Boolean) && first.join("|") !== last.join("|")) {
+    origin.push(`1º toque: ${first.map((v) => v ?? "—").join(" / ")}`);
+  }
+  if (lead.gclid) origin.push("clique de anúncio: Google Ads");
+  if (lead.fbclid) origin.push("clique de anúncio: Meta");
   if (lead.referrer) origin.push(`referrer: ${lead.referrer}`);
   if (lead.landing_path) origin.push(`landing_path: ${lead.landing_path}`);
   return origin;
@@ -388,11 +479,18 @@ export function buildCrmPayload(lead: CleanLead, leadId: string | null) {
       lives_in_sp: lead.lives_in_sp,
       form_path: lead.form_path,
       lead_type:
-        lead.form_path === "/parceiros"
+        lead.form_path === "/parceiros" || lead.form_path === "/parceiros/incorporadoras"
           ? "parceiro"
           : lead.form_path === "/indique-um-amigo"
             ? "indicacao"
             : "cliente",
+      utm_term: lead.utm_term,
+      utm_content: lead.utm_content,
+      first_utm_source: lead.first_utm_source,
+      first_utm_medium: lead.first_utm_medium,
+      first_utm_campaign: lead.first_utm_campaign,
+      gclid: lead.gclid,
+      fbclid: lead.fbclid,
       // Só o id gerado pelo banco; nunca um id vindo do cliente.
       lead_id: leadId,
     },

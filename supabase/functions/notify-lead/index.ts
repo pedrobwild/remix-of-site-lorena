@@ -1,17 +1,21 @@
 // Edge function: notify-lead
-// Grava o lead em `leads`, avisa o time comercial no Slack e por e-mail e cria
-// um card de MQL no CRM (Bwild Engine). Os destinos são independentes: a falha
+// Grava o lead em `leads`, avisa o time comercial no Slack e por e-mail, cria
+// um card de MQL no CRM (Bwild Engine) e, com aceite de cookies, manda o Lead
+// para a API de Conversões do Meta. Os destinos são independentes: a falha
 // de um não bloqueia os outros. O cliente decide "entregue" pelo corpo da
 // resposta (ver src/lib/leadDelivery.ts), nunca pelo status HTTP.
 
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.45.4";
 import { sendTemplateEmail } from "../_shared/transactional-email-templates/send-email.ts";
 import {
+  ATTRIBUTION_COLUMNS,
   BWILD_ENGINE_WEBHOOK_URL,
   buildCrmPayload,
   buildLeadEmail,
   buildSlackMessage,
   type CleanLead,
+  DEFAULT_LEAD_NAME,
+  formLabel,
   LEAD_EMAIL_TEMPLATE,
   LEAD_EMAIL_TO,
   leadSchema,
@@ -23,6 +27,15 @@ import {
   sanitizeLead,
   type StepResult,
 } from "./lead.ts";
+import {
+  AD_LEAD_FORMS,
+  buildCapiBody,
+  buildLeadEvent,
+  isValidPixelId,
+  META_GRAPH_VERSION,
+  sanitizeTestEventCode,
+  summarizeCapiResponse,
+} from "./metaCapi.ts";
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -60,16 +73,26 @@ function isMissingColumnError(error: { code?: string; message?: string } | null)
   return error.code === "PGRST204" || error.code === "42703" || /form_path/.test(error.message ?? "");
 }
 
+function omitKeys(row: Record<string, unknown>, keys: readonly string[]): Record<string, unknown> {
+  const out = { ...row };
+  for (const k of keys) delete out[k];
+  return out;
+}
+
 async function insertLead(admin: SupabaseClient, lead: CleanLead): Promise<StepResult> {
-  const row = { ...lead, status: "novo" };
+  const row: Record<string, unknown> = { ...lead, status: "novo" };
   try {
     let { data, error } = await admin.from("leads").insert(row).select("id").single();
-    // `form_path` chega por migration separada; se ainda não existir no banco,
-    // grava sem ela em vez de perder o lead.
+    // Colunas novas chegam por migration separada (atribuição/CAPI; antes,
+    // `form_path`). Se ainda não existirem no banco, grava sem elas em vez de
+    // perder o lead: primeiro sem as de atribuição, depois também sem form_path.
     if (error && isMissingColumnError(error)) {
-      const { form_path: _ignored, ...legacy } = row;
-      void _ignored;
-      ({ data, error } = await admin.from("leads").insert(legacy).select("id").single());
+      const withoutAttribution = omitKeys(row, ATTRIBUTION_COLUMNS);
+      ({ data, error } = await admin.from("leads").insert(withoutAttribution).select("id").single());
+      if (error && isMissingColumnError(error)) {
+        const legacy = omitKeys(withoutAttribution, ["form_path"]);
+        ({ data, error } = await admin.from("leads").insert(legacy).select("id").single());
+      }
     }
     if (error) {
       // Só o código vai para o log: a mensagem do Postgres pode repetir a
@@ -139,6 +162,123 @@ async function sendLeadEmail(lead: CleanLead, leadId: string | null): Promise<Ou
     return "error";
   } finally {
     clearTimeout(timer);
+  }
+}
+
+/** Registro de envio para plataformas externas (sem dados pessoais). */
+async function logIntegration(
+  admin: SupabaseClient | null,
+  row: {
+    integration: string;
+    event_name: string | null;
+    lead_id: string | null;
+    status: Outcome;
+    http_status?: number | null;
+    detail?: Record<string, unknown>;
+  },
+): Promise<void> {
+  if (!admin) return;
+  try {
+    const { error } = await admin.from("integration_log").insert({
+      integration: row.integration,
+      event_name: row.event_name,
+      lead_id: row.lead_id,
+      status: row.status,
+      http_status: row.http_status ?? null,
+      detail: row.detail ?? null,
+    });
+    if (error) console.warn("[notify-lead] integration_log insert failed", error.code ?? "unknown");
+  } catch {
+    /* o registro nunca derruba o lead */
+  }
+}
+
+/**
+ * API de Conversões do Meta: manda o Lead do servidor com o mesmo event_id do
+ * Pixel no navegador (o Meta deduplica). Só com aceite de cookies e só para
+ * formulários de cliente. O token fica no segredo META_CAPI_ACCESS_TOKEN e
+ * nunca vai para log; o Pixel e o código de teste vêm de `site_settings`.
+ */
+async function sendMetaCapiLead(
+  admin: SupabaseClient | null,
+  lead: CleanLead,
+  leadId: string | null,
+  req: Request,
+): Promise<Outcome> {
+  if (lead.consent_marketing !== true) return "skipped";
+  if (!lead.form_path || !AD_LEAD_FORMS.includes(lead.form_path)) return "skipped";
+
+  const base = { integration: "meta_capi", event_name: "Lead", lead_id: leadId };
+  const token = Deno.env.get("META_CAPI_ACCESS_TOKEN");
+  if (!token) {
+    await logIntegration(admin, { ...base, status: "skipped", detail: { reason: "no_token" } });
+    return "skipped";
+  }
+
+  let pixelId: string | null = null;
+  let testCode: string | null = null;
+  if (admin) {
+    try {
+      const { data } = await admin.from("site_settings").select("*").eq("id", 1).maybeSingle();
+      const settings = (data ?? {}) as Record<string, unknown>;
+      const rawPixel = typeof settings.meta_pixel_id === "string" ? settings.meta_pixel_id.trim() : "";
+      pixelId = isValidPixelId(rawPixel) ? rawPixel : null;
+      testCode = sanitizeTestEventCode(
+        typeof settings.meta_capi_test_event_code === "string" ? settings.meta_capi_test_event_code : null,
+      );
+    } catch {
+      pixelId = null;
+    }
+  }
+  if (!pixelId) {
+    await logIntegration(admin, { ...base, status: "skipped", detail: { reason: "no_pixel" } });
+    return "skipped";
+  }
+
+  const userAgent = lead.user_agent ?? req.headers.get("user-agent");
+  if (!userAgent) {
+    await logIntegration(admin, { ...base, status: "skipped", detail: { reason: "no_user_agent" } });
+    return "skipped";
+  }
+
+  const event = await buildLeadEvent({
+    // Cliente antigo (sem event_id): o id do banco ainda identifica o lead.
+    eventId: lead.event_id ?? (leadId ? `lead-${leadId}` : crypto.randomUUID()),
+    eventTimeS: Math.floor(Date.now() / 1000),
+    formPath: lead.form_path,
+    formLabel: formLabel(lead),
+    email: lead.email,
+    phoneDigits: lead.whatsapp || null,
+    name: lead.name === DEFAULT_LEAD_NAME ? null : lead.name,
+    externalId: leadId,
+    clientIp: clientIp(req),
+    userAgent,
+    fbp: lead.fbp,
+    fbc: lead.fbc,
+  });
+
+  try {
+    const res = await fetch(`https://graph.facebook.com/${META_GRAPH_VERSION}/${pixelId}/events`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...buildCapiBody(event, testCode), access_token: token }),
+      signal: AbortSignal.timeout(8_000),
+    });
+    const json = await res.json().catch(() => null);
+    const summary = summarizeCapiResponse(res.status, json);
+    await logIntegration(admin, {
+      ...base,
+      status: summary.status,
+      http_status: res.status,
+      detail: { ...summary.detail, ...(testCode ? { test: true } : {}) },
+    });
+    if (summary.status === "error") console.error("[notify-lead] meta capi rejected", res.status);
+    return summary.status;
+  } catch (err) {
+    const reason = err instanceof Error && err.name === "TimeoutError" ? "timeout" : "network";
+    console.error("[notify-lead] meta capi failed", reason);
+    await logIntegration(admin, { ...base, status: "error", detail: { reason } });
+    return "error";
   }
 }
 
@@ -233,12 +373,13 @@ Deno.serve(async (req) => {
   }
   const leadId = lead_insert.id ?? null;
 
-  // Slack, CRM e e-mail em paralelo; a falha de um não bloqueia os outros.
-  const [slack, crm, email] = await Promise.all([
+  // Slack, CRM, e-mail e Meta em paralelo; a falha de um não bloqueia os outros.
+  const [slack, crm, email, meta] = await Promise.all([
     notifySlack(lead, leadId),
     createCrmCard(lead, leadId),
     sendLeadEmail(lead, leadId),
+    sendMetaCapiLead(admin, lead, leadId, req),
   ]);
 
-  return json(200, { ok: true, lead_insert, slack, crm, email });
+  return json(200, { ok: true, lead_insert, slack, crm, email, meta });
 });

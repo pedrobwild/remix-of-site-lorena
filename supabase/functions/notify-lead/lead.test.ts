@@ -105,6 +105,95 @@ Deno.test("e-mail: rótulo pelo formulário, idempotência pelo id do banco", ()
   assertEquals(buildLeadEmail(lead, null).idempotencyKey, undefined);
 });
 
+Deno.test("atribuição completa: termo, conteúdo, 1º toque e cliques de anúncio", () => {
+  const lead = parse({
+    whatsapp: "11912345678",
+    form_path: "/orcamento",
+    utm_source: "meta",
+    utm_medium: "cpc",
+    utm_campaign: "studios-set",
+    utm_term: "reforma studio",
+    utm_content: "video-a",
+    first_utm_source: "google",
+    first_utm_medium: "organic",
+    gclid: "Cj0KCQjw_abc-123",
+    fbclid: "IwAR3xyz_1-2",
+  });
+  assertEquals(lead.utm_term, "reforma studio");
+  assertEquals(lead.utm_content, "video-a");
+  assertEquals(lead.first_utm_source, "google");
+  assertEquals(lead.first_utm_campaign, null);
+  assertEquals(lead.gclid, "Cj0KCQjw_abc-123");
+  assertEquals(lead.fbclid, "IwAR3xyz_1-2");
+  const origin = buildLeadEmail(lead, null).templateData.origin ?? "";
+  assert(origin.includes("utm_term: reforma studio"));
+  assert(origin.includes("1º toque: google / organic / —"));
+  assert(origin.includes("clique de anúncio: Google Ads"));
+  assert(origin.includes("clique de anúncio: Meta"));
+  const crm = buildCrmPayload(lead, null);
+  assertEquals(crm.extra.gclid, "Cj0KCQjw_abc-123");
+  assertEquals(crm.extra.first_utm_source, "google");
+});
+
+Deno.test("1º toque igual ao último não repete a linha de origem", () => {
+  const lead = parse({
+    whatsapp: "11912345678",
+    utm_source: "meta",
+    utm_medium: "cpc",
+    utm_campaign: "x",
+    first_utm_source: "meta",
+    first_utm_medium: "cpc",
+    first_utm_campaign: "x",
+  });
+  assert(!(buildLeadEmail(lead, null).templateData.origin ?? "").includes("1º toque"));
+});
+
+Deno.test("ids fora do formato são descartados sem derrubar o lead", () => {
+  const lead = parse({
+    whatsapp: "11912345678",
+    gclid: "abc<script>",
+    fbclid: "a b",
+    event_id: "curto",
+    consent_marketing: true,
+    fbp: "fb.1.123.abc",
+    fbc: "qualquer",
+  });
+  assertEquals(lead.gclid, null);
+  assertEquals(lead.fbclid, null);
+  assertEquals(lead.event_id, null);
+  assertEquals(lead.fbp, null);
+  assertEquals(lead.fbc, null);
+});
+
+Deno.test("_fbp/_fbc só com aceite de cookies; event_id válido passa", () => {
+  const body = {
+    whatsapp: "11912345678",
+    fbp: "fb.1.1790000000000.123456789",
+    fbc: "fb.1.1790000000000.IwAR3abc",
+    event_id: "8f0c2b1e-1111-4222-8333-944455556666",
+  };
+  const semAceite = parse({ ...body, consent_marketing: false });
+  assertEquals(semAceite.consent_marketing, false);
+  assertEquals(semAceite.fbp, null);
+  assertEquals(semAceite.fbc, null);
+  assertEquals(semAceite.event_id, "8f0c2b1e-1111-4222-8333-944455556666");
+
+  const semInfo = parse(body); // cliente antigo: não sabemos do aceite
+  assertEquals(semInfo.consent_marketing, null);
+  assertEquals(semInfo.fbp, null);
+
+  const comAceite = parse({ ...body, consent_marketing: true });
+  assertEquals(comAceite.fbp, "fb.1.1790000000000.123456789");
+  assertEquals(comAceite.fbc, "fb.1.1790000000000.IwAR3abc");
+});
+
+Deno.test("incorporadoras: formulário reconhecido e marcado como parceiro", () => {
+  const lead = parse({ name: "Carla", whatsapp: "11912345678", form_path: "/parceiros/incorporadoras" });
+  assertEquals(lead.form_path, "/parceiros/incorporadoras");
+  assertEquals(buildCrmPayload(lead, null).extra.lead_type, "parceiro");
+  assertEquals(buildLeadEmail(lead, null).templateData.formLabel, "Novo lead · Parceria incorporadora");
+});
+
 Deno.test("e-mail: parceria mantém o rótulo próprio", () => {
   const lead = parse({ whatsapp: "11912345678", form_path: "/parceiros", objetivo: "Parceria comercial — Corretor" });
   assertEquals(buildLeadEmail(lead, null).templateData.formLabel, "Nova solicitação de parceria · /parceiros");

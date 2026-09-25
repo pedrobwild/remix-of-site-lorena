@@ -530,6 +530,47 @@ export type Database = {
         }
         Relationships: []
       }
+      integration_log: {
+        Row: {
+          created_at: string
+          detail: Json | null
+          event_name: string | null
+          http_status: number | null
+          id: number
+          integration: string
+          lead_id: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          detail?: Json | null
+          event_name?: string | null
+          http_status?: number | null
+          id?: never
+          integration: string
+          lead_id?: string | null
+          status: string
+        }
+        Update: {
+          created_at?: string
+          detail?: Json | null
+          event_name?: string | null
+          http_status?: number | null
+          id?: never
+          integration?: string
+          lead_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_log_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_qualification_log: {
         Row: {
           changed_by: string | null
@@ -575,9 +616,18 @@ export type Database = {
         Row: {
           area_m2: number | null
           chaves: string | null
+          consent_marketing: boolean | null
           created_at: string
           email: string | null
+          event_id: string | null
+          fbc: string | null
+          fbclid: string | null
+          fbp: string | null
+          first_utm_campaign: string | null
+          first_utm_medium: string | null
+          first_utm_source: string | null
           form_path: string | null
+          gclid: string | null
           id: string
           landing_path: string | null
           lead_source: string | null
@@ -592,16 +642,27 @@ export type Database = {
           updated_at: string
           user_agent: string | null
           utm_campaign: string | null
+          utm_content: string | null
           utm_medium: string | null
           utm_source: string | null
+          utm_term: string | null
           whatsapp: string
         }
         Insert: {
           area_m2?: number | null
           chaves?: string | null
+          consent_marketing?: boolean | null
           created_at?: string
           email?: string | null
+          event_id?: string | null
+          fbc?: string | null
+          fbclid?: string | null
+          fbp?: string | null
+          first_utm_campaign?: string | null
+          first_utm_medium?: string | null
+          first_utm_source?: string | null
           form_path?: string | null
+          gclid?: string | null
           id?: string
           landing_path?: string | null
           lead_source?: string | null
@@ -616,16 +677,27 @@ export type Database = {
           updated_at?: string
           user_agent?: string | null
           utm_campaign?: string | null
+          utm_content?: string | null
           utm_medium?: string | null
           utm_source?: string | null
+          utm_term?: string | null
           whatsapp: string
         }
         Update: {
           area_m2?: number | null
           chaves?: string | null
+          consent_marketing?: boolean | null
           created_at?: string
           email?: string | null
+          event_id?: string | null
+          fbc?: string | null
+          fbclid?: string | null
+          fbp?: string | null
+          first_utm_campaign?: string | null
+          first_utm_medium?: string | null
+          first_utm_source?: string | null
           form_path?: string | null
+          gclid?: string | null
           id?: string
           landing_path?: string | null
           lead_source?: string | null
@@ -640,8 +712,10 @@ export type Database = {
           updated_at?: string
           user_agent?: string | null
           utm_campaign?: string | null
+          utm_content?: string | null
           utm_medium?: string | null
           utm_source?: string | null
+          utm_term?: string | null
           whatsapp?: string
         }
         Relationships: []
@@ -1210,7 +1284,9 @@ export type Database = {
           contact_phone: string | null
           default_og_image: string | null
           facebook_domain_verification: string | null
+          google_ads_contact_label: string | null
           google_ads_conversion_id: string | null
+          google_ads_lead_label: string | null
           google_analytics_id: string | null
           google_business_profile_url: string | null
           google_maps_url: string | null
@@ -1225,6 +1301,7 @@ export type Database = {
           id: number
           instagram_url: string | null
           linkedin_url: string | null
+          meta_capi_test_event_code: string | null
           meta_pixel_id: string | null
           pages_seo: Json
           pinterest_site_verification: string | null
@@ -1267,7 +1344,9 @@ export type Database = {
           contact_phone?: string | null
           default_og_image?: string | null
           facebook_domain_verification?: string | null
+          google_ads_contact_label?: string | null
           google_ads_conversion_id?: string | null
+          google_ads_lead_label?: string | null
           google_analytics_id?: string | null
           google_business_profile_url?: string | null
           google_maps_url?: string | null
@@ -1282,6 +1361,7 @@ export type Database = {
           id?: number
           instagram_url?: string | null
           linkedin_url?: string | null
+          meta_capi_test_event_code?: string | null
           meta_pixel_id?: string | null
           pages_seo?: Json
           pinterest_site_verification?: string | null
@@ -1324,7 +1404,9 @@ export type Database = {
           contact_phone?: string | null
           default_og_image?: string | null
           facebook_domain_verification?: string | null
+          google_ads_contact_label?: string | null
           google_ads_conversion_id?: string | null
+          google_ads_lead_label?: string | null
           google_analytics_id?: string | null
           google_business_profile_url?: string | null
           google_maps_url?: string | null
@@ -1339,6 +1421,7 @@ export type Database = {
           id?: number
           instagram_url?: string | null
           linkedin_url?: string | null
+          meta_capi_test_event_code?: string | null
           meta_pixel_id?: string | null
           pages_seo?: Json
           pinterest_site_verification?: string | null
