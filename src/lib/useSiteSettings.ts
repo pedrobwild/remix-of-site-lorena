@@ -69,6 +69,8 @@ export type SiteSettings = {
   home_og_description: string | null;
   home_og_image: string | null;
   bastidores_seo: Record<string, { title?: string; description?: string }> | null;
+  /** Título/descrição/Open Graph por caminho de página pública (ver publicPages.ts). */
+  pages_seo: PagesSeoMap | null;
 };
 
 const DEFAULTS: SiteSettings = {
