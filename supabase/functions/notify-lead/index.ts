@@ -1,17 +1,21 @@
 // Edge function: notify-lead
-// Grava o lead em `leads`, avisa o time comercial no Slack e por e-mail e cria
-// um card de MQL no CRM (Bwild Engine). Os destinos são independentes: a falha
+// Grava o lead em `leads`, avisa o time comercial no Slack e por e-mail, cria
+// um card de MQL no CRM (Bwild Engine) e, com aceite de cookies, manda o Lead
+// para a API de Conversões do Meta. Os destinos são independentes: a falha
 // de um não bloqueia os outros. O cliente decide "entregue" pelo corpo da
 // resposta (ver src/lib/leadDelivery.ts), nunca pelo status HTTP.
 
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.45.4";
 import { sendTemplateEmail } from "../_shared/transactional-email-templates/send-email.ts";
 import {
+  ATTRIBUTION_COLUMNS,
   BWILD_ENGINE_WEBHOOK_URL,
   buildCrmPayload,
   buildLeadEmail,
   buildSlackMessage,
   type CleanLead,
+  DEFAULT_LEAD_NAME,
+  formLabel,
   LEAD_EMAIL_TEMPLATE,
   LEAD_EMAIL_TO,
   leadSchema,
@@ -23,6 +27,15 @@ import {
   sanitizeLead,
   type StepResult,
 } from "./lead.ts";
+import {
+  AD_LEAD_FORMS,
+  buildCapiBody,
+  buildLeadEvent,
+  isValidPixelId,
+  META_GRAPH_VERSION,
+  sanitizeTestEventCode,
+  summarizeCapiResponse,
+} from "./metaCapi.ts";
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -60,16 +73,26 @@ function isMissingColumnError(error: { code?: string; message?: string } | null)
   return error.code === "PGRST204" || error.code === "42703" || /form_path/.test(error.message ?? "");
 }
 
+function omitKeys(row: Record<string, unknown>, keys: readonly string[]): Record<string, unknown> {
+  const out = { ...row };
+  for (const k of keys) delete out[k];
+  return out;
+}
+
 async function insertLead(admin: SupabaseClient, lead: CleanLead): Promise<StepResult> {
-  const row = { ...lead, status: "novo" };
+  const row: Record<string, unknown> = { ...lead, status: "novo" };
   try {
     let { data, error } = await admin.from("leads").insert(row).select("id").single();
-    // `form_path` chega por migration separada; se ainda não existir no banco,
-    // grava sem ela em vez de perder o lead.
+    // Colunas novas chegam por migration separada (atribuição/CAPI; antes,
+    // `form_path`). Se ainda não existirem no banco, grava sem elas em vez de
+    // perder o lead: primeiro sem as de atribuição, depois também sem form_path.
     if (error && isMissingColumnError(error)) {
-      const { form_path: _ignored, ...legacy } = row;
-      void _ignored;
-      ({ data, error } = await admin.from("leads").insert(legacy).select("id").single());
+      const withoutAttribution = omitKeys(row, ATTRIBUTION_COLUMNS);
+      ({ data, error } = await admin.from("leads").insert(withoutAttribution).select("id").single());
+      if (error && isMissingColumnError(error)) {
+        const legacy = omitKeys(withoutAttribution, ["form_path"]);
+        ({ data, error } = await admin.from("leads").insert(legacy).select("id").single());
+      }
     }
     if (error) {
       // Só o código vai para o log: a mensagem do Postgres pode repetir a
