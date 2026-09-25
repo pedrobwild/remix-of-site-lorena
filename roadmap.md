@@ -14,3 +14,5 @@
 - [x] Guia: link de pular + movimento reduzido
 - [x] Página /acessibilidade com link no rodapé
 - [x] Redesenhar a jornada de 12 etapas e criar as abas Curva S / Relatórios / Cronograma em #workflow; validar e salvar capturas sem publicar
+
+- [ ] Trocar a seção Bastidores pelo slider de vídeos próprios, validar suíte e build; não publicar.
