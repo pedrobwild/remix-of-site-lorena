@@ -55,6 +55,7 @@ const SeoPage = lazy(() => import("./pages/admin/SeoPage"));
 const Seo404Page = lazy(() => import("./pages/admin/Seo404Page"));
 const SeoIndexacaoPage = lazy(() => import("./pages/admin/SeoIndexacaoPage"));
 const RastreamentoPage = lazy(() => import("./pages/admin/RastreamentoPage"));
+const IntegracoesPage = lazy(() => import("./pages/admin/IntegracoesPage"));
 const SettingsPage = lazy(() => import("./pages/admin/SettingsPage"));
 const BewildProjectsListPage = lazy(() => import("./pages/admin/BewildProjectsListPage"));
 const BewildProjectFormPage = lazy(() => import("./pages/admin/BewildProjectFormPage"));
@@ -204,6 +205,14 @@ export function renderRoute(route: Route) {
       <AdminChunk>
         <ProtectedRoute>
           <RastreamentoPage />
+        </ProtectedRoute>
+      </AdminChunk>
+    );
+  if (route.name === "admin-integracoes")
+    return (
+      <AdminChunk>
+        <ProtectedRoute>
+          <IntegracoesPage />
         </ProtectedRoute>
       </AdminChunk>
     );

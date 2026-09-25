@@ -35,6 +35,7 @@ export type Route =
   | { name: "admin-seo-404" }
   | { name: "admin-indexacao" }
   | { name: "admin-rastreamento" }
+  | { name: "admin-integracoes" }
   | { name: "admin-settings" }
   | { name: "admin-bewild" }
   | { name: "admin-bewild-new" }
@@ -130,6 +131,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/admin/seo/404") return { name: "admin-seo-404" };
   if (path === "/admin/indexacao") return { name: "admin-indexacao" };
   if (path === "/admin/rastreamento") return { name: "admin-rastreamento" };
+  if (path === "/admin/integracoes") return { name: "admin-integracoes" };
   if (path === "/admin/settings") return { name: "admin-settings" };
   if (path === "/admin/faq") return { name: "admin-faq" };
   if (path === "/admin/bewild") return { name: "admin-bewild" };
@@ -278,6 +280,7 @@ export const routes = {
   adminSeo404: "/admin/seo/404",
   adminIndexacao: "/admin/indexacao",
   adminRastreamento: "/admin/rastreamento",
+  adminIntegracoes: "/admin/integracoes",
   adminSettings: "/admin/settings",
   adminFaq: "/admin/faq",
   adminTypography: "/admin/typography",
