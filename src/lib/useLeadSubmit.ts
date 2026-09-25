@@ -10,7 +10,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { readPersistedAttribution } from "@/lib/analytics";
 import { resolveLeadAttribution, type LeadAttribution } from "@/lib/campaignParams";
+import { isConsentAccepted } from "@/lib/cookieConsent";
 import { trackEvent } from "@/lib/ga4";
+import { newMetaEventId, readMetaBrowserIds, trackMetaLead } from "@/lib/metaPixel";
 import type { LeadPayload } from "@/lib/leadDelivery";
 import {
   deliveryParam,
@@ -93,12 +95,34 @@ type SubmitOptions = {
 };
 
 /**
+ * Dados que o servidor precisa para mandar o `Lead` à Meta pela Conversions
+ * API e deduplicar com o Pixel. Exportado para os testes.
+ */
+export function collectMetaAttribution(eventId: string): Pick<
+  LeadPayload,
+  "meta_event_id" | "fbp" | "fbc" | "event_source_url" | "ads_consent"
+> {
+  const ids = readMetaBrowserIds();
+  return {
+    meta_event_id: eventId,
+    fbp: ids.fbp,
+    fbc: ids.fbc,
+    event_source_url: typeof window !== "undefined" ? window.location.href.slice(0, 2048) : null,
+    ads_consent: isConsentAccepted(),
+  };
+}
+
+/**
  * Estado e envio de um formulário de lead.
  *
  * GA4: `generate_lead` sai no máximo UMA vez por formulário, com
  * `delivery` = confirmed | timeout | failed — quando o lead chegou, pode ter
  * chegado (timeout) ou já foi entregue ao WhatsApp. Falha sem WhatsApp vira
  * `lead_delivery_failed` (não infla a conversão; reenvio que der certo conta).
+ *
+ * Meta: o `Lead` do Pixel sai junto com o `generate_lead` (mesma regra de
+ * contagem), com um `eventID` que também vai no payload para a edge function
+ * repetir o evento pela Conversions API — a Meta deduplica os dois.
  */
 export function useLeadSubmit({ method, timeoutMs }: { method: string; timeoutMs?: number }) {
   const [sending, setSending] = useState(false);
@@ -123,9 +147,12 @@ export function useLeadSubmit({ method, timeoutMs }: { method: string; timeoutMs
       setSending(true);
       opts.beforeSend?.();
 
+      const metaEventId = newMetaEventId();
+      const enriched: LeadPayload = { ...payload, ...collectMetaAttribution(metaEventId) };
+
       let result: SendLeadResult;
       try {
-        result = await sendLead(payload, timeoutMs ? { timeoutMs } : undefined);
+        result = await sendLead(enriched, timeoutMs ? { timeoutMs } : undefined);
       } catch (err) {
         console.error("[notify-lead] envio falhou", err);
         result = { delivered: false, timedOut: false };
@@ -143,6 +170,7 @@ export function useLeadSubmit({ method, timeoutMs }: { method: string; timeoutMs
       if (counts && !counted.current) {
         counted.current = true;
         trackEvent("generate_lead", eventParams);
+        trackMetaLead({ eventId: metaEventId, formPath: payload.form_path, objetivo: payload.objetivo });
       } else if (!counts) {
         trackEvent("lead_delivery_failed", eventParams);
       }

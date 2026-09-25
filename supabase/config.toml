@@ -10,7 +10,7 @@ project_id = "aamlnkmqvjcowixdgqii"
 #     autenticação — com verify_jwt=true um redeploy pelo CLI derrubaria
 #     analytics e crash reports em silêncio.
 #   - admin (JWT do usuário + public.is_admin() no código): drive-import,
-#     index-tracker, meta-insights, generate-alt-text, seo-audit,
+#     index-tracker, meta-insights, meta-lead-quality, generate-alt-text, seo-audit,
 #     ping-sitemap, search-console-stats.
 #   - e-mail (Lovable): auth-email-hook valida a assinatura do webhook;
 #     preview-transactional-email exige LOVABLE_API_KEY no Authorization.
@@ -46,6 +46,9 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.meta-insights]
+verify_jwt = false
+
+[functions.meta-lead-quality]
 verify_jwt = false
 
 [functions.generate-alt-text]

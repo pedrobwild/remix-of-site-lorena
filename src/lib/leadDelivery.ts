@@ -72,6 +72,17 @@ export type LeadPayload = {
   lead_source?: string | null;
   lives_in_sp?: boolean | null;
   form_path: LeadFormPath;
+  /**
+   * Meta Conversions API (ver src/lib/metaPixel.ts). `meta_event_id` é o
+   * mesmo id do `Lead` disparado no Pixel, para a Meta deduplicar; `fbp`/`fbc`
+   * casam o evento com o browser; `ads_consent` diz se o visitante aceitou
+   * cookies (a função só envia à Meta com aceite, salvo configuração).
+   */
+  meta_event_id?: string | null;
+  fbp?: string | null;
+  fbc?: string | null;
+  event_source_url?: string | null;
+  ads_consent?: boolean | null;
 };
 
 /**

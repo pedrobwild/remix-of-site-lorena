@@ -91,9 +91,38 @@ export const leadSchema = z.object({
   lead_source: looseText,
   lives_in_sp: z.union([z.boolean(), z.null()]).optional(),
   form_path: looseText,
+  // Meta Conversions API (src/lib/metaPixel.ts). Não entram em CleanLead:
+  // não vão para Slack/CRM/e-mail, só para a coluna e para a Meta.
+  meta_event_id: looseText,
+  fbp: looseText,
+  fbc: looseText,
+  event_source_url: looseText,
+  ads_consent: z.union([z.boolean(), z.null()]).optional(),
 });
 
 export type RawLead = z.infer<typeof leadSchema>;
+
+/** Contexto do browser para o evento `Lead` na Conversions API. */
+export type MetaLeadContext = {
+  meta_event_id: string | null;
+  fbp: string | null;
+  fbc: string | null;
+  event_source_url: string | null;
+  /** `null` = cliente antigo que ainda não manda o campo. */
+  ads_consent: boolean | null;
+};
+
+export function extractMetaContext(raw: RawLead): MetaLeadContext {
+  const fbp = cut(raw.fbp, 64);
+  const fbc = cut(raw.fbc, 600);
+  return {
+    meta_event_id: cut(raw.meta_event_id, 64),
+    fbp: fbp && /^fb\.\d\.\d+\.\d+$/.test(fbp) ? fbp : null,
+    fbc: fbc && /^fb\.\d\.\d+\..+/.test(fbc) ? fbc : null,
+    event_source_url: cut(raw.event_source_url, 2048),
+    ads_consent: typeof raw.ads_consent === "boolean" ? raw.ads_consent : null,
+  };
+}
 
 export type CleanLead = {
   name: string;

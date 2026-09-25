@@ -153,7 +153,13 @@ describe("/o — placa de obra (PUB-06)", () => {
     expect(primeiro).toMatchObject({ form_path: "/o", location: "Pinheiros", utm_source: "qr", utm_medium: "placa" });
     sendLeadMock.mockResolvedValueOnce({ delivered: false, timedOut: true });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Tentar enviar de novo" })));
-    expect(sendLeadMock.mock.calls[1][0]).toBe(primeiro);
+    // Reenvio repete os MESMOS dados do lead; só o `meta_event_id` (novo
+    // envio = novo evento na Meta) e o contexto do Pixel podem mudar.
+    const semMeta = ({ meta_event_id, fbp, fbc, event_source_url, ads_consent, ...rest }: LeadPayload) => {
+      void meta_event_id; void fbp; void fbc; void event_source_url; void ads_consent;
+      return rest;
+    };
+    expect(semMeta(sendLeadMock.mock.calls[1][0])).toEqual(semMeta(primeiro));
     expect(screen.getByText("Seu contato pode já ter chegado.")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Tentar enviar de novo" })).toBeNull();
     expect(screen.getByRole("button", { name: "Continuar para o portal" })).toBeInTheDocument();

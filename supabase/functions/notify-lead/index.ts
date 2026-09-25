@@ -6,16 +6,19 @@
 
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.45.4";
 import { sendTemplateEmail } from "../_shared/transactional-email-templates/send-email.ts";
+import { sendMetaEvents, type MetaCapiConfig } from "../_shared/meta-capi.ts";
 import {
   BWILD_ENGINE_WEBHOOK_URL,
   buildCrmPayload,
   buildLeadEmail,
   buildSlackMessage,
   type CleanLead,
+  extractMetaContext,
   LEAD_EMAIL_TEMPLATE,
   LEAD_EMAIL_TO,
   leadSchema,
   MAX_BODY_BYTES,
+  type MetaLeadContext,
   type Outcome,
   RATE_GLOBAL_DAY,
   RATE_PER_IP,
@@ -57,18 +60,33 @@ async function notifySlack(lead: CleanLead, leadId: string | null): Promise<Outc
 
 function isMissingColumnError(error: { code?: string; message?: string } | null): boolean {
   if (!error) return false;
-  return error.code === "PGRST204" || error.code === "42703" || /form_path/.test(error.message ?? "");
+  return (
+    error.code === "PGRST204" ||
+    error.code === "42703" ||
+    /form_path|meta_event_id|fbp|fbc/.test(error.message ?? "")
+  );
 }
 
-async function insertLead(admin: SupabaseClient, lead: CleanLead): Promise<StepResult> {
-  const row = { ...lead, status: "novo" };
+/**
+ * Colunas que chegaram por migrations separadas (`form_path` em 23/09,
+ * `meta_event_id`/`fbp`/`fbc` na migration da Conversions API). Se o banco
+ * ainda não as tiver, grava sem elas em vez de perder o lead.
+ */
+const OPTIONAL_COLUMNS = ["form_path", "meta_event_id", "fbp", "fbc"] as const;
+
+async function insertLead(admin: SupabaseClient, lead: CleanLead, meta: MetaLeadContext): Promise<StepResult> {
+  const row: Record<string, unknown> = {
+    ...lead,
+    status: "novo",
+    meta_event_id: meta.meta_event_id,
+    fbp: meta.fbp,
+    fbc: meta.fbc,
+  };
   try {
     let { data, error } = await admin.from("leads").insert(row).select("id").single();
-    // `form_path` chega por migration separada; se ainda não existir no banco,
-    // grava sem ela em vez de perder o lead.
     if (error && isMissingColumnError(error)) {
-      const { form_path: _ignored, ...legacy } = row;
-      void _ignored;
+      const legacy = { ...row };
+      for (const col of OPTIONAL_COLUMNS) delete legacy[col];
       ({ data, error } = await admin.from("leads").insert(legacy).select("id").single());
     }
     if (error) {
@@ -143,6 +161,97 @@ async function sendLeadEmail(lead: CleanLead, leadId: string | null): Promise<Ou
 }
 
 /**
+ * Configuração da Conversions API. O pixel vem de `META_PIXEL_ID` ou, na
+ * falta, de `site_settings.meta_pixel_id` (o mesmo que o front injeta). O
+ * token é `META_CAPI_ACCESS_TOKEN` (usuário de sistema com acesso ao dataset)
+ * ou, na falta, o `META_ADS_ACCESS_TOKEN` já usado por `meta-insights`.
+ */
+async function metaCapiConfig(admin: SupabaseClient | null): Promise<MetaCapiConfig | null> {
+  const accessToken = Deno.env.get("META_CAPI_ACCESS_TOKEN") || Deno.env.get("META_ADS_ACCESS_TOKEN");
+  if (!accessToken) return null;
+  let pixelId = Deno.env.get("META_PIXEL_ID") ?? "";
+  if (!pixelId && admin) {
+    try {
+      const { data } = await admin.from("site_settings").select("meta_pixel_id").limit(1).maybeSingle();
+      pixelId = typeof data?.meta_pixel_id === "string" ? data.meta_pixel_id.trim() : "";
+    } catch {
+      pixelId = "";
+    }
+  }
+  if (!/^\d{6,20}$/.test(pixelId)) return null;
+  return { pixelId, accessToken, testEventCode: Deno.env.get("META_CAPI_TEST_EVENT_CODE") || null };
+}
+
+/**
+ * `Lead` pela Conversions API, com o mesmo `event_id` do Pixel (dedupe).
+ *
+ * LGPD: por padrão só envia quando o visitante aceitou cookies
+ * (`ads_consent`). `META_CAPI_REQUIRE_CONSENT=false` libera o envio para
+ * quem recusou — decisão do titular dos dados, não do código. Clientes
+ * antigos que não mandam o campo (`null`) são tratados como sem aceite.
+ */
+async function sendMetaLead(
+  admin: SupabaseClient | null,
+  lead: CleanLead,
+  meta: MetaLeadContext,
+  leadId: string | null,
+  req: Request,
+): Promise<Outcome> {
+  const requireConsent = (Deno.env.get("META_CAPI_REQUIRE_CONSENT") ?? "true").toLowerCase() !== "false";
+  if (requireConsent && meta.ads_consent !== true) return "skipped";
+
+  const config = await metaCapiConfig(admin);
+  if (!config) {
+    console.warn("[notify-lead] Meta CAPI não configurada (META_CAPI_ACCESS_TOKEN/META_PIXEL_ID); skipping");
+    return "skipped";
+  }
+
+  const eventId = meta.meta_event_id ?? (leadId ? `${leadId}:lead` : crypto.randomUUID());
+  const result = await sendMetaEvents(config, [
+    {
+      eventName: "Lead",
+      eventId,
+      actionSource: "website",
+      eventSourceUrl: meta.event_source_url,
+      user: {
+        email: lead.email,
+        phone: lead.whatsapp,
+        fullName: lead.name,
+        externalId: leadId,
+        fbp: meta.fbp,
+        fbc: meta.fbc,
+        clientIp: clientIp(req),
+        clientUserAgent: lead.user_agent ?? req.headers.get("user-agent"),
+        city: lead.location,
+      },
+      customData: {
+        content_name: lead.form_path ?? "site",
+        content_category: lead.objetivo,
+        lead_event_source: "bewild.com.br",
+        event_source: "website",
+        utm_source: lead.utm_source,
+        utm_campaign: lead.utm_campaign,
+      },
+    },
+  ]);
+
+  if (result.status === "sent") {
+    if (admin && leadId) {
+      // Marca o envio para a auditoria do painel; falha aqui não é falha do lead.
+      await admin
+        .from("leads")
+        .update({ meta_lead_sent_at: new Date().toISOString() })
+        .eq("id", leadId)
+        .then(() => undefined, () => undefined);
+    }
+    return "sent";
+  }
+  if (result.status === "skipped") return "skipped";
+  console.error("[notify-lead] meta capi failed", result.reason);
+  return "error";
+}
+
+/**
  * IP do cliente para o rate limit. O primeiro item de X-Forwarded-For pode
  * ser forjado pelo cliente; por isso os cabeçalhos definidos pela borda vêm
  * antes. O teto global diário cobre o que escapar daqui.
@@ -204,6 +313,7 @@ Deno.serve(async (req) => {
   }
 
   const lead = sanitizeLead(raw);
+  const meta = extractMetaContext(raw);
   if (!lead.whatsapp && !lead.email) {
     // Sem nenhum meio de contato não há lead — só ruído no CRM.
     return json(400, { error: "missing_contact" });
@@ -226,19 +336,21 @@ Deno.serve(async (req) => {
 
   let lead_insert: StepResult;
   if (admin) {
-    lead_insert = await insertLead(admin, lead);
+    lead_insert = await insertLead(admin, lead, meta);
   } else {
     console.error("[notify-lead] backend service credentials are not available");
     lead_insert = { status: "error", error: "service_unavailable" };
   }
   const leadId = lead_insert.id ?? null;
 
-  // Slack, CRM e e-mail em paralelo; a falha de um não bloqueia os outros.
-  const [slack, crm, email] = await Promise.all([
+  // Slack, CRM, e-mail e Meta em paralelo; a falha de um não bloqueia os
+  // outros. `meta` NÃO conta como entrega para o cliente (leadDelivery.ts).
+  const [slack, crm, email, metaCapi] = await Promise.all([
     notifySlack(lead, leadId),
     createCrmCard(lead, leadId),
     sendLeadEmail(lead, leadId),
+    sendMetaLead(admin, lead, meta, leadId, req),
   ]);
 
-  return json(200, { ok: true, lead_insert, slack, crm, email });
+  return json(200, { ok: true, lead_insert, slack, crm, email, meta: metaCapi });
 });

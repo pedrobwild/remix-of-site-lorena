@@ -577,6 +577,8 @@ export type Database = {
           chaves: string | null
           created_at: string
           email: string | null
+          fbc: string | null
+          fbp: string | null
           form_path: string | null
           id: string
           landing_path: string | null
@@ -584,6 +586,9 @@ export type Database = {
           lives_in_sp: boolean | null
           location: string | null
           message: string | null
+          meta_event_id: string | null
+          meta_lead_sent_at: string | null
+          meta_qualified_sent_at: string | null
           name: string
           objetivo: string | null
           planta: string | null
@@ -601,6 +606,8 @@ export type Database = {
           chaves?: string | null
           created_at?: string
           email?: string | null
+          fbc?: string | null
+          fbp?: string | null
           form_path?: string | null
           id?: string
           landing_path?: string | null
@@ -608,6 +615,9 @@ export type Database = {
           lives_in_sp?: boolean | null
           location?: string | null
           message?: string | null
+          meta_event_id?: string | null
+          meta_lead_sent_at?: string | null
+          meta_qualified_sent_at?: string | null
           name: string
           objetivo?: string | null
           planta?: string | null
@@ -625,6 +635,8 @@ export type Database = {
           chaves?: string | null
           created_at?: string
           email?: string | null
+          fbc?: string | null
+          fbp?: string | null
           form_path?: string | null
           id?: string
           landing_path?: string | null
@@ -632,6 +644,9 @@ export type Database = {
           lives_in_sp?: boolean | null
           location?: string | null
           message?: string | null
+          meta_event_id?: string | null
+          meta_lead_sent_at?: string | null
+          meta_qualified_sent_at?: string | null
           name?: string
           objetivo?: string | null
           planta?: string | null

@@ -12,6 +12,15 @@ vi.mock("@/lib/sendLead", () => ({
 vi.mock("@/lib/ga4", () => ({
   trackEvent: (name: string, params?: Record<string, unknown>) => trackEventMock(name, params),
 }));
+const trackMetaLeadMock = vi.fn();
+vi.mock("@/lib/metaPixel", () => ({
+  newMetaEventId: () => "evt-fixo",
+  readMetaBrowserIds: () => ({ fbp: "fb.1.1700000000000.42", fbc: null }),
+  trackMetaLead: (params: unknown) => trackMetaLeadMock(params),
+}));
+vi.mock("@/lib/cookieConsent", () => ({
+  isConsentAccepted: () => true,
+}));
 
 import { useLeadSubmit } from "../useLeadSubmit";
 
@@ -45,6 +54,7 @@ function deferred<T>() {
 beforeEach(() => {
   sendLeadMock.mockReset();
   trackEventMock.mockReset();
+  trackMetaLeadMock.mockReset();
   vi.spyOn(console, "error").mockImplementation(() => {});
 });
 
@@ -163,5 +173,38 @@ describe("useLeadSubmit", () => {
     d.resolve({ delivered: true, timedOut: false });
     await expect(pending).resolves.toBe("delivered");
     expect(isMounted()).toBe(false);
+  });
+
+  it("Meta: anexa event_id/fbp/consentimento ao payload e dispara o Lead do Pixel com o mesmo id", async () => {
+    sendLeadMock.mockResolvedValue({ delivered: true, timedOut: false });
+    const { result } = renderHook(() => useLeadSubmit({ method: "orcamento_form" }));
+    await act(async () => {
+      await result.current.submit(payload);
+    });
+    const sent = sendLeadMock.mock.calls[0][0];
+    expect(sent).toMatchObject({
+      name: "Ana",
+      meta_event_id: "evt-fixo",
+      fbp: "fb.1.1700000000000.42",
+      fbc: null,
+      ads_consent: true,
+    });
+    expect(typeof sent.event_source_url).toBe("string");
+    expect(trackMetaLeadMock).toHaveBeenCalledTimes(1);
+    expect(trackMetaLeadMock).toHaveBeenCalledWith({
+      eventId: "evt-fixo",
+      formPath: "/diagnostico",
+      objetivo: "Short stay",
+    });
+  });
+
+  it("Meta: falha sem WhatsApp não dispara Lead no Pixel (mesma regra do generate_lead)", async () => {
+    sendLeadMock.mockResolvedValue({ delivered: false, timedOut: false });
+    const { result } = renderHook(() => useLeadSubmit({ method: "orcamento_form" }));
+    await act(async () => {
+      await result.current.submit(payload);
+    });
+    expect(trackEventMock).toHaveBeenCalledWith("lead_delivery_failed", expect.anything());
+    expect(trackMetaLeadMock).not.toHaveBeenCalled();
   });
 });
