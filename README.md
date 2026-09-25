@@ -93,7 +93,9 @@ formulários do Facebook/Instagram com aviso no Slack, e-mail e CRM — ver
 
 Página /admin/integracoes (status de cada integração e registro de envios),
 pixel próprio 1×1 e links rastreados (edge function `px`, sem dados
-pessoais) — ver [docs/INTEGRACOES.md](docs/INTEGRACOES.md).
+pessoais) e exportação para planilha/BI com chaves revogáveis (edge function
+`data-export`, CSV/JSON sem dados pessoais) — ver
+[docs/INTEGRACOES.md](docs/INTEGRACOES.md).
 
 ## Deploy
 

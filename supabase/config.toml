@@ -15,6 +15,8 @@ project_id = "aamlnkmqvjcowixdgqii"
 #     ping-sitemap, search-console-stats.
 #   - cron (x-cron-key === INDEX_TRACKER_CRON_KEY) ou admin: index-tracker,
 #     enviar-nutricao, meta-sync.
+#   - chave de exportação (hash em export_keys, criada no painel): data-export
+#     (planilha/BI — o IMPORTDATA do Google Sheets não manda cabeçalho).
 #   - e-mail (Lovable): auth-email-hook valida a assinatura do webhook;
 #     preview-transactional-email exige LOVABLE_API_KEY no Authorization.
 
@@ -43,6 +45,9 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.px]
+verify_jwt = false
+
+[functions.data-export]
 verify_jwt = false
 
 [functions.drive-import]

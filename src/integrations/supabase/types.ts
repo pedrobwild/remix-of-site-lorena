@@ -476,6 +476,48 @@ export type Database = {
         }
         Relationships: []
       }
+      export_keys: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          created_by_email: string | null
+          datasets: string[]
+          id: string
+          key_hash: string
+          last_used_at: string | null
+          name: string
+          prefix: string
+          revoked_at: string | null
+          use_count: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          datasets: string[]
+          id?: string
+          key_hash: string
+          last_used_at?: string | null
+          name: string
+          prefix: string
+          revoked_at?: string | null
+          use_count?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          datasets?: string[]
+          id?: string
+          key_hash?: string
+          last_used_at?: string | null
+          name?: string
+          prefix?: string
+          revoked_at?: string | null
+          use_count?: number
+        }
+        Relationships: []
+      }
       faq_items: {
         Row: {
           answer: string
@@ -1861,6 +1903,23 @@ export type Database = {
           views: number
         }[]
       }
+      create_export_key: {
+        Args: { p_datasets: string[]; p_name: string }
+        Returns: {
+          id: string
+          prefix: string
+          token: string
+        }[]
+      }
+      export_analytics_daily: {
+        Args: { p_since: string; p_until: string }
+        Returns: Json
+      }
+      export_key_touch: { Args: { p_id: string }; Returns: undefined }
+      export_tracking_daily: {
+        Args: { p_since: string; p_until: string }
+        Returns: Json
+      }
       hit_rate_limit: {
         Args: { p_key: string; p_max: number; p_window_s: number }
         Returns: boolean
@@ -1871,6 +1930,7 @@ export type Database = {
         Returns: undefined
       }
       resolve_404_redirect: { Args: { p_path: string }; Returns: string }
+      revoke_export_key: { Args: { p_id: string }; Returns: undefined }
       top_projects: {
         Args: { p_days?: number; p_limit?: number }
         Returns: {

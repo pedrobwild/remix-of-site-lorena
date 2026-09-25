@@ -2,19 +2,22 @@
  * /admin/integracoes — o que está ligado entre o site, a Meta, o Google e o
  * CRM, e o último sinal de cada integração.
  *
- * Três blocos:
+ * Quatro blocos:
  *  1. Status: Pixel da Meta, API de Conversões, campanhas/formulários da Meta,
  *     Google Ads, GA4/GTM e o pixel próprio (regras em src/lib/integrations.ts).
  *  2. Pixel próprio e links rastreados: monta o pixel 1×1 (e-mail ou página
  *     externa) e o link rastreado para copiar, e mostra o resumo por campanha
  *     dos últimos 30 dias (edge function `px`, tabela `tracking_hits`).
- *  3. Registro: os últimos envios à Meta e rodadas da sincronização
+ *  3. Exportação para planilha e BI: chaves revogáveis da edge function
+ *     `data-export` (src/components/admin/ExportKeysPanel.tsx).
+ *  4. Registro: os últimos envios à Meta e rodadas da sincronização
  *     (`integration_log`, sem dados pessoais).
  */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Copy, RefreshCw } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import AdminAlert from "@/components/admin/AdminAlert";
+import ExportKeysPanel from "@/components/admin/ExportKeysPanel";
 import {
   capiStatus,
   fetchIntegrationLog,
@@ -324,6 +327,8 @@ export default function IntegracoesPage() {
           "robôs" e não entram nas contagens.
         </p>
       </section>
+
+      <ExportKeysPanel />
 
       <section className="bw-admin__section">
         <header className="bw-admin__section-head">
