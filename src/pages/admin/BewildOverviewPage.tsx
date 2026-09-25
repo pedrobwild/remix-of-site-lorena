@@ -10,8 +10,9 @@
  * analytics. "7 dias" = hoje + os 6 dias anteriores (7 dias de calendário).
  * O bloco "Hoje × ontem" (TodayVsYesterdayCard) não segue o seletor: é
  * sempre hoje até agora × ontem até o mesmo horário.
- * Mídia paga fica em estado "Conectar" quando não há integração — nunca
- * exibimos valores fake.
+ * Mídia paga lê `meta_ads_daily`/`meta_leads` (gravados pela edge function
+ * `meta-sync` a cada 30 min) no mesmo período do seletor, e fica em estado
+ * "Conectar" enquanto a Meta não estiver conectada — nunca valores fake.
  *
  * Cada bloco confere o `{ error }` da sua consulta (o supabase-js não lança):
  * antes, um erro de permissão aparecia como "sem tráfego no período".
@@ -33,6 +34,7 @@ import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import TodayVsYesterdayCard from "@/components/admin/TodayVsYesterdayCard";
 import { supabase } from "@/integrations/supabase/client";
 import { aggregateLeadChannels } from "@/lib/leadChannel";
+import { fetchMetaPaidSummary, metaSyncSummary, type MetaPaidSummary } from "@/lib/metaAds";
 
 type Period = 7 | 30 | 90;
 
@@ -50,25 +52,6 @@ type Kpis = {
 type TopPath = { path: string; pageviews: number; sessions: number };
 type Breakdown = { dim: string; sessions: number; conversions: number };
 
-type MetaInsights =
-  | { connected: false; reason: "no_token" | "api_error"; error?: string }
-  | {
-      connected: true;
-      account_id: string;
-      date_preset: string;
-      currency: string;
-      spend: number;
-      impressions: number;
-      clicks: number;
-      ctr: number;
-      cpc: number;
-      cpm: number;
-      leads: number;
-      cpl: number | null;
-      roas: number | null;
-      roas_available: boolean;
-      updated_at: string;
-    };
 type CardKey = "analytics" | "sources" | "paths" | "leads" | "content" | "channels";
 type CardErrors = Partial<Record<CardKey, string>>;
 
@@ -129,18 +112,6 @@ function fmtBRL(n: number | null | undefined): string {
     currency: "BRL",
   }).format(Number(n));
 }
-function fmtDateTime(iso: string): string {
-  try {
-    return new Intl.DateTimeFormat("pt-BR", {
-      day: "2-digit",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(new Date(iso));
-  } catch {
-    return iso;
-  }
-}
 function fmtDate(iso: string): string {
   try {
     return new Intl.DateTimeFormat("pt-BR", {
@@ -170,40 +141,6 @@ export default function BewildOverviewPage() {
   const [projectsPublished, setProjectsPublished] = useState(0);
   const [pagePerf, setPagePerf] = useState<Record<string, TopPath | undefined>>({});
 
-  const [metaLoading, setMetaLoading] = useState(true);
-  const [metaData, setMetaData] = useState<MetaInsights | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    setMetaLoading(true);
-    setMetaData(null);
-    supabase.functions
-      .invoke("meta-insights", { body: { date_preset: "last_30d" } })
-      .then(({ data, error }) => {
-        if (cancelled) return;
-        if (error || !data) {
-          setMetaData({ connected: false, reason: "api_error", error: error?.message });
-        } else {
-          setMetaData(data as MetaInsights);
-        }
-      })
-      .catch((e: unknown) => {
-        if (!cancelled) {
-          setMetaData({
-            connected: false,
-            reason: "api_error",
-            error: e instanceof Error ? e.message : String(e),
-          });
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setMetaLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
   // Janela = hoje + (period − 1) dias anteriores, desde a meia-noite local.
   // Antes era "hoje − period" à meia-noite: o "7 dias" cobria 8 dias.
   const { sinceIso, untilIso } = useMemo(() => {
@@ -212,6 +149,27 @@ export default function BewildOverviewPage() {
     d.setHours(0, 0, 0, 0);
     return { sinceIso: d.toISOString(), untilIso: new Date().toISOString() };
   }, [period]);
+
+  // Mídia paga (Meta): mesmo período do seletor, lido do banco.
+  const [paidLoading, setPaidLoading] = useState(true);
+  const [paid, setPaid] = useState<MetaPaidSummary | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    setPaidLoading(true);
+    fetchMetaPaidSummary(new Date(sinceIso), new Date(untilIso))
+      .then((summary) => {
+        if (!cancelled) setPaid(summary);
+      })
+      .catch(() => {
+        if (!cancelled) setPaid(null);
+      })
+      .finally(() => {
+        if (!cancelled) setPaidLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [sinceIso, untilIso]);
 
   useEffect(() => {
     let cancelled = false;
@@ -718,87 +676,109 @@ export default function BewildOverviewPage() {
         )}
       </section>
 
-      {/* Mídia paga — Meta Marketing API (Insights) */}
-      <section className="bw-admin__section">
-        <header className="bw-admin__section-head">
-          <h2 className="bw-admin__section-title">Mídia paga</h2>
-          <p className="bw-admin__section-desc">
-            {metaData && metaData.connected
-              ? `Meta Ads · últimos 30 dias · atualizado em ${fmtDateTime(metaData.updated_at)}`
-              : "Investimento, CPL, CTR, CPC e ROAS aparecem aqui quando uma fonte real for conectada."}
-          </p>
-        </header>
-
-        {metaLoading ? (
-          <div className="bw-admin__kpi-grid" style={{ marginBottom: 0 }}>
-            {[0, 1, 2, 3, 4].map((i) => (
-              <div key={i} className="bw-admin__kpi-card" aria-hidden>
-                <div>
-                  <p className="bw-admin__kpi-label">Carregando…</p>
-                  <div className="bw-admin__kpi-value bw-admin__kpi-empty">—</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : metaData && metaData.connected ? (
-          <div className="bw-admin__kpi-grid" style={{ marginBottom: 0 }}>
-            <Kpi
-              label="Investimento"
-              value={fmtBRL(metaData.spend)}
-              sub={`${fmtInt(metaData.impressions)} impressões · ${fmtInt(metaData.clicks)} cliques`}
-            />
-            <Kpi
-              label="CPL"
-              value={metaData.cpl != null ? fmtBRL(metaData.cpl) : "—"}
-              sub={
-                metaData.leads > 0
-                  ? `${fmtInt(metaData.leads)} leads na Meta`
-                  : "Sem leads atribuídos no período"
-              }
-            />
-            <Kpi
-              label="CTR"
-              value={`${metaData.ctr.toFixed(2)}%`}
-              sub="Cliques ÷ impressões"
-            />
-            <Kpi
-              label="CPC"
-              value={fmtBRL(metaData.cpc)}
-              sub={`CPM ${fmtBRL(metaData.cpm)}`}
-            />
-            <Kpi
-              label="ROAS"
-              value="—"
-              sub="Requer receita do CRM"
-            />
-          </div>
-        ) : metaData && !metaData.connected && metaData.reason === "api_error" ? (
-          <div className="bw-admin__connect">
-            <div className="bw-admin__connect-text">
-              <strong>Não foi possível consultar a Meta Ads agora</strong>
-              <p>
-                A integração respondeu com erro — os números não foram zerados, só não puderam
-                ser lidos. Tente recarregar a página em alguns minutos.
-              </p>
-              {metaData.error && <CardError message={metaData.error} />}
-            </div>
-            <span className="bw-admin__tag bw-admin__tag--warn">Erro</span>
-          </div>
-        ) : (
-          <div className="bw-admin__connect">
-            <div className="bw-admin__connect-text">
-              <strong>Conectar Google Ads / Meta Ads</strong>
-              <p>
-                Ainda não há integração ativa com GA4, Windsor.ai ou Meta Marketing API.
-                Conecte uma fonte para popular gasto, cliques e custo por lead sem dados estimados.
-              </p>
-            </div>
-            <span className="bw-admin__tag bw-admin__tag--off">Não conectado</span>
-          </div>
-        )}
-      </section>
+      {/* Mídia paga — Meta Ads (meta_ads_daily + meta_leads, via meta-sync) */}
+      <PaidMediaSection loading={paidLoading} paid={paid} periodLabel={PERIODS.find((p) => p.value === period)?.label ?? ""} />
 
     </BewildAdminShell>
+  );
+}
+
+function PaidMediaSection({
+  loading,
+  paid,
+  periodLabel,
+}: {
+  loading: boolean;
+  paid: MetaPaidSummary | null;
+  periodLabel: string;
+}) {
+  const sync = metaSyncSummary(paid?.states ?? []);
+  const t = paid?.totals;
+  const show = !!paid && !!t && (paid.hasRows || sync.connected);
+  const warn = sync.tone === "error" || sync.tone === "warn";
+  return (
+    <section className="bw-admin__section">
+      <header className="bw-admin__section-head">
+        <h2 className="bw-admin__section-title">Mídia paga</h2>
+        <p className="bw-admin__section-desc">
+          {show
+            ? `Meta Ads · ${periodLabel} · ${sync.label}`
+            : "Investimento, leads e custo por lead da Meta aparecem aqui quando a conta estiver conectada."}
+        </p>
+        {show && (
+          <a className="bw-admin__section-link" href="/admin/analytics?tab=paid">
+            ver por campanha
+          </a>
+        )}
+      </header>
+
+      {loading ? (
+        <div className="bw-admin__kpi-grid" style={{ marginBottom: 0 }}>
+          {[0, 1, 2, 3, 4].map((i) => (
+            <div key={i} className="bw-admin__kpi-card" aria-hidden>
+              <div>
+                <p className="bw-admin__kpi-label">Carregando…</p>
+                <div className="bw-admin__kpi-value bw-admin__kpi-empty">—</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : show && t ? (
+        <>
+          <div className="bw-admin__kpi-grid" style={{ marginBottom: warn || paid?.error ? 12 : 0 }}>
+            <Kpi
+              label="Investimento"
+              value={fmtBRL(t.spend)}
+              sub={`${fmtInt(t.impressions)} impressões · ${fmtInt(t.linkClicks)} cliques no link`}
+            />
+            <Kpi
+              label="Leads (Meta)"
+              value={fmtInt(t.leads)}
+              sub={
+                t.leads > 0
+                  ? `${fmtInt(t.formLeads)} de formulário · ${fmtInt(t.siteLeads)} no site`
+                  : "Nenhum lead atribuído no período"
+              }
+            />
+            <Kpi label="CPL" value={t.cpl != null ? fmtBRL(t.cpl) : "—"} sub="Investimento ÷ leads da Meta" />
+            <Kpi
+              label="CTR (link)"
+              value={t.ctr != null ? `${t.ctr.toFixed(2)}%` : "—"}
+              sub={`CPC ${fmtBRL(t.cpc)} · CPM ${fmtBRL(t.cpm)}`}
+            />
+            <Kpi
+              label="Formulários recebidos"
+              value={fmtInt(paid?.formLeads)}
+              sub={
+                paid?.siteLeadsFromMeta != null
+                  ? `+ ${fmtInt(paid.siteLeadsFromMeta)} lead(s) do site vindos da Meta`
+                  : undefined
+              }
+            />
+          </div>
+          {(warn || paid?.error) && (
+            <p className="bw-admin__card-error" role="status" title={paid?.error ?? undefined} style={{ margin: 0 }}>
+              {sync.hint ?? "Parte dos números não pôde ser lida agora."}
+            </p>
+          )}
+        </>
+      ) : (
+        <div className="bw-admin__connect">
+          <div className="bw-admin__connect-text">
+            <strong>Conectar Meta Ads</strong>
+            <p>
+              Falta o token da Meta no projeto (segredo META_ADS_ACCESS_TOKEN, de um usuário do sistema com
+              acesso à conta de anúncios e à Página). Com ele, investimento, cliques e leads por campanha e os
+              formulários do Facebook/Instagram passam a chegar aqui a cada 30 minutos.
+            </p>
+            {sync.hint && sync.tone === "error" && <CardError message={sync.hint} />}
+          </div>
+          <span className={`bw-admin__tag ${sync.tone === "error" ? "bw-admin__tag--warn" : "bw-admin__tag--off"}`}>
+            {sync.tone === "error" ? "Erro" : "Não conectado"}
+          </span>
+        </div>
+      )}
+    </section>
   );
 }
 

@@ -2,7 +2,7 @@
  * AnalyticsShell — layout próprio do painel de Analytics.
  * NÃO reusa AdminLayout (queremos topbar mais denso, tipografia Inter, tema próprio).
  */
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useAuth } from "@/lib/useAuth";
 import { navigate, routes } from "@/lib/useHashRoute";
@@ -21,6 +21,17 @@ export default function AnalyticsShell({ state, children }: Props) {
   const { signOut } = useAuth();
   const [savePromptOpen, setSavePromptOpen] = useState(false);
   const [savedName, setSavedName] = useState("");
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  // No celular a faixa de abas rola na horizontal: centraliza a aba ativa
+  // (ex.: abrir direto em ?tab=paid mostrava só as primeiras abas).
+  useEffect(() => {
+    const box = tabsRef.current;
+    const active = box?.querySelector<HTMLElement>('[data-active="true"]');
+    if (!box || !active || box.scrollWidth <= box.clientWidth) return;
+    const left = active.offsetLeft - box.offsetLeft - (box.clientWidth - active.offsetWidth) / 2;
+    box.scrollLeft = Math.max(0, left);
+  }, [state.tab]);
 
   // atalhos de teclado
   useEffect(() => {
@@ -69,7 +80,7 @@ export default function AnalyticsShell({ state, children }: Props) {
               bewild<b>·</b>analytics
             </span>
 
-            <div role="tablist" className="admin-analytics__tabs" style={{ marginLeft: 12 }}>
+            <div ref={tabsRef} role="tablist" className="admin-analytics__tabs" style={{ marginLeft: 12 }}>
               {ALL_TABS.map((t) => (
                 <button
                   key={t.key}
