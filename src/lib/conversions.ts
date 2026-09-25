@@ -11,7 +11,7 @@
  *
  * Todos passam pelos portões de metaPixel.ts e googleAds.ts (aceite de
  * cookies, fora do /admin). A lista de formulários de cliente é espelhada
- * em supabase/functions/notify-lead/metaCapi.ts (AD_LEAD_FORMS).
+ * em supabase/functions/_shared/meta-capi.ts (AD_LEAD_FORMS).
  */
 import { trackGoogleAdsConversion } from "@/lib/googleAds";
 import { trackMetaEvent } from "@/lib/metaPixel";
