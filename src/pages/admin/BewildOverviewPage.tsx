@@ -10,8 +10,9 @@
  * analytics. "7 dias" = hoje + os 6 dias anteriores (7 dias de calendário).
  * O bloco "Hoje × ontem" (TodayVsYesterdayCard) não segue o seletor: é
  * sempre hoje até agora × ontem até o mesmo horário.
- * Mídia paga fica em estado "Conectar" quando não há integração — nunca
- * exibimos valores fake.
+ * Mídia paga lê `meta_ads_daily`/`meta_leads` (gravados pela edge function
+ * `meta-sync` a cada 30 min) no mesmo período do seletor, e fica em estado
+ * "Conectar" enquanto a Meta não estiver conectada — nunca valores fake.
  *
  * Cada bloco confere o `{ error }` da sua consulta (o supabase-js não lança):
  * antes, um erro de permissão aparecia como "sem tráfego no período".
@@ -33,6 +34,7 @@ import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import TodayVsYesterdayCard from "@/components/admin/TodayVsYesterdayCard";
 import { supabase } from "@/integrations/supabase/client";
 import { aggregateLeadChannels } from "@/lib/leadChannel";
+import { fetchMetaPaidSummary, metaSyncSummary, type MetaPaidSummary } from "@/lib/metaAds";
 
 type Period = 7 | 30 | 90;
 
@@ -50,25 +52,6 @@ type Kpis = {
 type TopPath = { path: string; pageviews: number; sessions: number };
 type Breakdown = { dim: string; sessions: number; conversions: number };
 
-type MetaInsights =
-  | { connected: false; reason: "no_token" | "api_error"; error?: string }
-  | {
-      connected: true;
-      account_id: string;
-      date_preset: string;
-      currency: string;
-      spend: number;
-      impressions: number;
-      clicks: number;
-      ctr: number;
-      cpc: number;
-      cpm: number;
-      leads: number;
-      cpl: number | null;
-      roas: number | null;
-      roas_available: boolean;
-      updated_at: string;
-    };
 type CardKey = "analytics" | "sources" | "paths" | "leads" | "content" | "channels";
 type CardErrors = Partial<Record<CardKey, string>>;
 
@@ -129,18 +112,6 @@ function fmtBRL(n: number | null | undefined): string {
     currency: "BRL",
   }).format(Number(n));
 }
-function fmtDateTime(iso: string): string {
-  try {
-    return new Intl.DateTimeFormat("pt-BR", {
-      day: "2-digit",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(new Date(iso));
-  } catch {
-    return iso;
-  }
-}
 function fmtDate(iso: string): string {
   try {
     return new Intl.DateTimeFormat("pt-BR", {
@@ -170,40 +141,6 @@ export default function BewildOverviewPage() {
   const [projectsPublished, setProjectsPublished] = useState(0);
   const [pagePerf, setPagePerf] = useState<Record<string, TopPath | undefined>>({});
 
-  const [metaLoading, setMetaLoading] = useState(true);
-  const [metaData, setMetaData] = useState<MetaInsights | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    setMetaLoading(true);
-    setMetaData(null);
-    supabase.functions
-      .invoke("meta-insights", { body: { date_preset: "last_30d" } })
-      .then(({ data, error }) => {
-        if (cancelled) return;
-        if (error || !data) {
-          setMetaData({ connected: false, reason: "api_error", error: error?.message });
-        } else {
-          setMetaData(data as MetaInsights);
-        }
-      })
-      .catch((e: unknown) => {
-        if (!cancelled) {
-          setMetaData({
-            connected: false,
-            reason: "api_error",
-            error: e instanceof Error ? e.message : String(e),
-          });
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setMetaLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
   // Janela = hoje + (period − 1) dias anteriores, desde a meia-noite local.
   // Antes era "hoje − period" à meia-noite: o "7 dias" cobria 8 dias.
   const { sinceIso, untilIso } = useMemo(() => {
@@ -212,6 +149,27 @@ export default function BewildOverviewPage() {
     d.setHours(0, 0, 0, 0);
     return { sinceIso: d.toISOString(), untilIso: new Date().toISOString() };
   }, [period]);
+
+  // Mídia paga (Meta): mesmo período do seletor, lido do banco.
+  const [paidLoading, setPaidLoading] = useState(true);
+  const [paid, setPaid] = useState<MetaPaidSummary | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    setPaidLoading(true);
+    fetchMetaPaidSummary(new Date(sinceIso), new Date(untilIso))
+      .then((summary) => {
+        if (!cancelled) setPaid(summary);
+      })
+      .catch(() => {
+        if (!cancelled) setPaid(null);
+      })
+      .finally(() => {
+        if (!cancelled) setPaidLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [sinceIso, untilIso]);
 
   useEffect(() => {
     let cancelled = false;
