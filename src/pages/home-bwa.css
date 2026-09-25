@@ -6,6 +6,7 @@
       --bwa-ink-soft: #5A6472;
       --bwa-navy: #0B2342;
       --bwa-navy-2: #11355B;
+      --bwa-cyan: #2F86B8;
       --bwa-blue-mist: #E4EAF3;
       --bwa-accent: #11355B;
       --bwa-accent-deep: #0B2342;
@@ -473,6 +474,9 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
+      .bwa-nav,
+      .bwa-wordmark,
+      .bwa-nav .bwa-button,
       .bwa-nav-dd-chev,
       .bwa-nav-dd-panel a {
         transition: none;
