@@ -2,8 +2,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { HOME_BWA_HTML } from "../../pages/home-bwa-body";
 import { installBastidores } from "../homeBastidores";
+import { installInstagramEmbeds } from "../homeInstagram";
 
-const EXPECTED_CODES = [
+const BASTIDORES_CODES = [
   "DY27SVWvqoM",
   "DdKezjDRK8h",
   "DczVRdmxaoU",
@@ -11,6 +12,32 @@ const EXPECTED_CODES = [
   "DchdJiqRhOT",
   "Ddm4dnNtNPI",
 ];
+const DEPOIMENTOS_CODES = ["DZbjyUQNaOL", "DVyeOxXjQKI", "DQ2zDmujdso"];
+
+type Entry = { isIntersecting: boolean; target: Element };
+type Observer = { cb: (entries: Entry[]) => void; targets: Element[] };
+
+function stubIntersectionObserver(): Observer[] {
+  const observers: Observer[] = [];
+  class FakeIntersectionObserver {
+    private targets: Element[] = [];
+    constructor(cb: (entries: Entry[]) => void) {
+      observers.push({ cb, targets: this.targets });
+    }
+    observe(el: Element) {
+      this.targets.push(el);
+    }
+    unobserve(el: Element) {
+      const index = this.targets.indexOf(el);
+      if (index >= 0) this.targets.splice(index, 1);
+    }
+    disconnect() {
+      this.targets.length = 0;
+    }
+  }
+  vi.stubGlobal("IntersectionObserver", FakeIntersectionObserver);
+  return observers;
+}
 
 function mountHome(): HTMLElement {
   const root = document.createElement("div");
@@ -20,85 +47,66 @@ function mountHome(): HTMLElement {
 }
 
 describe("seção Bastidores da home", () => {
-  let play: ReturnType<typeof vi.spyOn>;
-  let pause: ReturnType<typeof vi.spyOn>;
-
   beforeEach(() => {
     document.body.innerHTML = "";
-    play = vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
-    pause = vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(() => {});
+    window.localStorage.clear();
   });
 
   afterEach(() => {
     document.body.innerHTML = "";
-    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
-  it("tem 6 cards na ordem esperada, com vídeos preparados sem carregar o arquivo", () => {
+  it("mantém os 6 posts de Bastidores e os 3 depoimentos nas ordens esperadas", () => {
     const root = mountHome();
-    const cards = Array.from(root.querySelectorAll<HTMLElement>("[data-bst-card]"));
+    const bastidores = root.querySelector<HTMLElement>("#bastidores");
+    const depoimentos = root.querySelector<HTMLElement>("#depoimentos");
 
-    expect(cards.map((card) => card.dataset.bstPost)).toEqual(EXPECTED_CODES);
-    cards.forEach((card, index) => {
-      const video = card.querySelector<HTMLVideoElement>("video");
-      expect(video).not.toBeNull();
-      expect(video?.hasAttribute("muted")).toBe(true);
-      expect(video?.loop).toBe(true);
-      expect(video?.hasAttribute("playsinline")).toBe(true);
-      expect(video?.preload).toBe("none");
-      expect(video?.dataset.src).toBe(`/videos/bastidores/${EXPECTED_CODES[index]}.mp4`);
-      expect(video?.hasAttribute("src")).toBe(false);
-    });
+    expect(Array.from(bastidores?.querySelectorAll<HTMLElement>("[data-ig-post]") ?? []).map((post) => post.dataset.igPost)).toEqual(BASTIDORES_CODES);
+    expect(Array.from(depoimentos?.querySelectorAll<HTMLElement>("[data-ig-post]") ?? []).map((post) => post.dataset.igPost)).toEqual(DEPOIMENTOS_CODES);
   });
 
-  it("preserva os 3 posts de depoimentos e não cria iframe", () => {
+  it("monta somente os 6 embeds de Bastidores quando esse bloco se aproxima", () => {
+    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    const observers = stubIntersectionObserver();
     const root = mountHome();
+    const cleanup = installInstagramEmbeds(root);
+    const bastidores = root.querySelector<HTMLElement>("#bastidores");
+    const depoimentos = root.querySelector<HTMLElement>("#depoimentos");
 
-    expect(root.querySelectorAll("[data-ig-post]")).toHaveLength(3);
-    expect(root.querySelector("[data-bastidores] iframe")).toBeNull();
-  });
+    expect(observers).toHaveLength(1);
+    expect(observers[0].targets).toEqual([bastidores, depoimentos]);
+    observers[0].cb([{ isIntersecting: true, target: bastidores as HTMLElement }]);
 
-  it("liga o som de um vídeo e silencia o anterior ao trocar de card", () => {
-    const root = mountHome();
-    root.querySelectorAll<HTMLVideoElement>("video").forEach((video) => {
-      video.muted = true;
-    });
-    const cleanup = installBastidores(root);
-    const cards = Array.from(root.querySelectorAll<HTMLElement>("[data-bst-card]"));
-    const secondVideo = cards[1].querySelector<HTMLVideoElement>("video");
-    const thirdVideo = cards[2].querySelector<HTMLVideoElement>("video");
-    const secondButton = cards[1].querySelector<HTMLButtonElement>("[data-bst-sound]");
-    const thirdButton = cards[2].querySelector<HTMLButtonElement>("[data-bst-sound]");
-
-    secondButton?.click();
-    expect(secondVideo?.muted).toBe(false);
-    expect(secondButton).toHaveAttribute("aria-pressed", "true");
-
-    thirdButton?.click();
-    expect(secondVideo?.muted).toBe(true);
-    expect(secondButton).toHaveAttribute("aria-pressed", "false");
-    expect(thirdVideo?.muted).toBe(false);
-    expect(thirdButton).toHaveAttribute("aria-pressed", "true");
+    const iframes = Array.from(bastidores?.querySelectorAll<HTMLIFrameElement>("iframe") ?? []);
+    expect(iframes.map((iframe) => iframe.getAttribute("src"))).toEqual(
+      BASTIDORES_CODES.map((code) => `https://www.instagram.com/p/${code}/embed/`),
+    );
+    expect(iframes.map((iframe) => iframe.title)).toEqual([
+      "Bastidores Bewild no Instagram: Medição e estudo do espaço",
+      "Bastidores Bewild no Instagram: A obra ganhando forma",
+      "Bastidores Bewild no Instagram: Pintura, organização e limpeza",
+      "Bastidores Bewild no Instagram: Instalações, ajustes e acabamentos",
+      "Bastidores Bewild no Instagram: Finalizações antes da vistoria",
+      "Bastidores Bewild no Instagram: Reta final com o coordenador técnico",
+    ]);
+    expect(depoimentos?.querySelectorAll("iframe")).toHaveLength(0);
 
     cleanup();
   });
 
-  it("o cleanup pausa os vídeos e remove os listeners", () => {
+  it("o cleanup de installBastidores remove os listeners", () => {
     const root = mountHome();
-    root.querySelectorAll<HTMLVideoElement>("video").forEach((video) => {
-      video.muted = true;
-    });
+    const rail = root.querySelector<HTMLElement>("[data-bst-rail]");
+    const next = root.querySelector<HTMLButtonElement>("[data-bst-next]");
+    const scrollBy = vi.fn();
+    if (rail) rail.scrollBy = scrollBy;
     const cleanup = installBastidores(root);
-    const secondCard = root.querySelectorAll<HTMLElement>("[data-bst-card]")[1];
-    const secondVideo = secondCard.querySelector<HTMLVideoElement>("video");
-    const secondButton = secondCard.querySelector<HTMLButtonElement>("[data-bst-sound]");
 
+    next?.click();
+    expect(scrollBy).toHaveBeenCalledTimes(1);
     cleanup();
-    expect(pause).toHaveBeenCalledTimes(6);
-
-    secondButton?.click();
-    expect(secondVideo?.muted).toBe(true);
-    expect(secondButton).toHaveAttribute("aria-pressed", "false");
-    expect(play).not.toHaveBeenCalled();
+    next?.click();
+    expect(scrollBy).toHaveBeenCalledTimes(1);
   });
 });
