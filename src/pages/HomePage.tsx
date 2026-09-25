@@ -26,7 +26,7 @@ const KEYWORDS =
   "escritório de arquitetura em São Paulo, arquitetura e engenharia, projeto arquitetônico, projeto de interiores, engenharia civil São Paulo, reforma de apartamento em SP, bastidores de obra, equipe em obra, custo de reforma, quanto custa reformar um apartamento em SP, empresa de reforma de apartamento SP, reforma turnkey São Paulo, Bewild";
 const THEME_COLOR = "#0B2342";
 const FONTS_HREF =
-  "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&display=swap";
+  "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&family=Sora:wght@500;600;700&display=swap";
 const PRECONNECTS: Array<{ href: string; crossOrigin?: string }> = [
   { href: "https://fonts.googleapis.com" },
   { href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },

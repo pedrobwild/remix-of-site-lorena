@@ -29,17 +29,22 @@
    2. O CTA do header ficava branco sobre papel; na home, quando a nav está
       sobre papel (`.bwa-scrolled`), o botão é navy sólido com texto branco. */
 .bwa-nav.bwa-nav--internal {
-  color: var(--bwa-ink);
-  background: var(--bwa-paper);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
+  color: var(--bwa-white);
+  background: rgba(10, 32, 55, .94);
+  border-color: rgba(247, 245, 241, .18);
+  -webkit-backdrop-filter: blur(22px) saturate(135%);
+  backdrop-filter: blur(22px) saturate(135%);
 }
 .bwa-nav.bwa-nav--internal::after {
   background: var(--bwa-line);
 }
 .bwa-nav.bwa-nav--internal .bwa-wordmark,
 .bwa-nav.bwa-nav--internal .bwa-nav-links a {
-  color: var(--bwa-navy);
+  color: rgba(247, 245, 241, .76);
+}
+.bwa-nav.bwa-nav--internal .bwa-nav-links > a:hover,
+.bwa-nav.bwa-nav--internal .bwa-nav-links > a:focus-visible {
+  color: var(--bwa-white);
 }
 /* Painel do dropdown é navy: os links dele ficam brancos mesmo no header claro. */
 .bwa-nav.bwa-nav--internal .bwa-nav-dd-panel a,
@@ -49,9 +54,15 @@
 }
 
 .bwa-nav.bwa-nav--internal .bwa-button {
+  color: var(--bwa-navy);
+  background: var(--bwa-white);
+  border-color: var(--bwa-white);
+}
+.bwa-nav.bwa-nav--internal .bwa-button:hover,
+.bwa-nav.bwa-nav--internal .bwa-button:focus-visible {
   color: var(--bwa-white);
-  background: var(--bwa-navy);
-  border-color: var(--bwa-navy);
+  background: var(--bwa-cyan);
+  border-color: var(--bwa-cyan);
 }
 
 /* Shell padrão de página interna (respiro top/bottom coerente com .bwa-section). */
