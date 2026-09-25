@@ -18,10 +18,11 @@ import { parseBastidoresPosts } from "@/lib/bastidoresJsonLd";
 const SITEMAP_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sitemap`;
 const ROBOTS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/robots`;
 
-type TabKey = "home" | "bastidores" | "global" | "verify" | "analytics" | "local" | "sitemap" | "audit" | "guide";
+type TabKey = "home" | "pages" | "bastidores" | "global" | "verify" | "analytics" | "local" | "sitemap" | "audit" | "guide";
 
 const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "home", label: "Home" },
+  { key: "pages", label: "Páginas" },
   { key: "bastidores", label: "Bastidores" },
   { key: "global", label: "Global" },
   { key: "verify", label: "Verificações" },
