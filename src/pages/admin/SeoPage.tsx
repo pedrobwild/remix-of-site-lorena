@@ -14,6 +14,7 @@ import {
 } from "@/lib/adminSiteSettings";
 import { useUnsavedChangesGuard } from "@/lib/useUnsavedChangesGuard";
 import { parseBastidoresPosts } from "@/lib/bastidoresJsonLd";
+import { PUBLIC_PAGES, type PageSeoOverride, type PagesSeoMap } from "@/lib/publicPages";
 
 const SITEMAP_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sitemap`;
 const ROBOTS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/robots`;
