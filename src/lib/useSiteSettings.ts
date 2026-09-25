@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { devWarn } from "@/lib/devLog";
+import type { PagesSeoMap } from "@/lib/publicPages";
 
 export type SiteSettings = {
   id: number;
@@ -69,6 +70,8 @@ export type SiteSettings = {
   home_og_description: string | null;
   home_og_image: string | null;
   bastidores_seo: Record<string, { title?: string; description?: string }> | null;
+  /** Título/descrição/Open Graph por caminho de página pública (ver publicPages.ts). */
+  pages_seo: PagesSeoMap | null;
 };
 
 const DEFAULTS: SiteSettings = {
@@ -139,6 +142,7 @@ const DEFAULTS: SiteSettings = {
   home_og_description: null,
   home_og_image: null,
   bastidores_seo: {},
+  pages_seo: {},
 };
 
 let cache: SiteSettings | null = null;

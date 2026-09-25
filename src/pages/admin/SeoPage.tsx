@@ -14,14 +14,16 @@ import {
 } from "@/lib/adminSiteSettings";
 import { useUnsavedChangesGuard } from "@/lib/useUnsavedChangesGuard";
 import { parseBastidoresPosts } from "@/lib/bastidoresJsonLd";
+import { PUBLIC_PAGES, type PageSeoOverride, type PagesSeoMap } from "@/lib/publicPages";
 
 const SITEMAP_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sitemap`;
 const ROBOTS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/robots`;
 
-type TabKey = "home" | "bastidores" | "global" | "verify" | "analytics" | "local" | "sitemap" | "audit" | "guide";
+type TabKey = "home" | "pages" | "bastidores" | "global" | "verify" | "analytics" | "local" | "sitemap" | "audit" | "guide";
 
 const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "home", label: "Home" },
+  { key: "pages", label: "Páginas" },
   { key: "bastidores", label: "Bastidores" },
   { key: "global", label: "Global" },
   { key: "verify", label: "Verificações" },
@@ -46,6 +48,7 @@ const SEO_FIELDS = [
   "home_og_description",
   "home_og_image",
   "bastidores_seo",
+  "pages_seo",
   // Global
   "seo_default_title",
   "seo_default_description",
@@ -310,6 +313,7 @@ export default function SeoPage() {
       </nav>
 
       {tab === "home" && <HomeTab s={s} patch={patch} />}
+      {tab === "pages" && <PagesTab s={s} patch={patch} />}
       {tab === "bastidores" && <BastidoresTab s={s} patch={patch} />}
       {tab === "global" && <GlobalTab s={s} patch={patch} />}
       {tab === "verify" && <VerifyTab s={s} patch={patch} />}
@@ -329,6 +333,96 @@ export default function SeoPage() {
       )}
       {tab === "guide" && <GuideTab s={s} />}
     </AdminLayout>
+  );
+}
+
+// =============================================================
+//  Aba: Páginas — título, descrição e Open Graph de cada página pública
+// =============================================================
+
+function PagesTab({
+  s,
+  patch,
+}: {
+  s: SiteSettings;
+  patch: <K extends keyof SiteSettings>(k: K, v: SiteSettings[K]) => void;
+}) {
+  const map: PagesSeoMap = s.pages_seo ?? {};
+  const set = (path: string, key: keyof PageSeoOverride, value: string) => {
+    const next: PagesSeoMap = { ...map, [path]: { ...(map[path] ?? {}), [key]: value } };
+    patch("pages_seo", next);
+  };
+  return (
+    <>
+      <p className="mono" style={{ opacity: 0.7, marginBottom: 24, maxWidth: 680 }}>
+        Textos de cada página do site. Campo vazio mantém o texto que a página já usa hoje. A home
+        tem aba própria; artigos e projetos têm campos de SEO no próprio editor. Depois de salvar,
+        publique o site para a mudança chegar ao endereço oficial.
+      </p>
+      {PUBLIC_PAGES.map((p) => {
+        const cur = map[p.path] ?? {};
+        return (
+          <section key={p.path} className="admin-grid-2" style={{ marginBottom: 32 }}>
+            <h3 className="mono" style={{ gridColumn: "1 / -1", margin: 0 }}>
+              {p.label}{" "}
+              <a href={`https://bewild.com.br${p.path}`} target="_blank" rel="noreferrer">
+                {p.path}
+              </a>
+            </h3>
+            <Field label="Título no Google (≤ 60 caracteres)" full>
+              <input
+                className="admin-field__input"
+                value={cur.title ?? ""}
+                placeholder="vazio = título atual da página"
+                onChange={(e) => set(p.path, "title", e.target.value)}
+                maxLength={90}
+              />
+              <Hint count={(cur.title ?? "").length} max={60} />
+            </Field>
+            <Field label="Descrição no Google (≤ 160 caracteres)" full>
+              <textarea
+                className="admin-field__input"
+                rows={3}
+                value={cur.description ?? ""}
+                placeholder="vazio = descrição atual da página"
+                onChange={(e) => set(p.path, "description", e.target.value)}
+                maxLength={220}
+              />
+              <Hint count={(cur.description ?? "").length} max={160} />
+            </Field>
+            <Field label="Título ao compartilhar (Open Graph) — vazio usa o do Google" full>
+              <input
+                className="admin-field__input"
+                value={cur.og_title ?? ""}
+                placeholder={cur.title || "vazio = título do Google"}
+                onChange={(e) => set(p.path, "og_title", e.target.value)}
+                maxLength={90}
+              />
+              <Hint count={(cur.og_title ?? "").length} max={60} />
+            </Field>
+            <Field label="Descrição ao compartilhar (Open Graph) — vazio usa a do Google" full>
+              <textarea
+                className="admin-field__input"
+                rows={3}
+                value={cur.og_description ?? ""}
+                placeholder={cur.description || "vazio = descrição do Google"}
+                onChange={(e) => set(p.path, "og_description", e.target.value)}
+                maxLength={220}
+              />
+              <Hint count={(cur.og_description ?? "").length} max={160} />
+            </Field>
+            <Field label="Imagem ao compartilhar — URL pública https, 1200×630" full>
+              <input
+                className="admin-field__input"
+                value={cur.og_image ?? ""}
+                placeholder="vazio = imagem padrão do site"
+                onChange={(e) => set(p.path, "og_image", e.target.value)}
+              />
+            </Field>
+          </section>
+        );
+      })}
+    </>
   );
 }
 
