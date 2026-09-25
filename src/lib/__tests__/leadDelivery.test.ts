@@ -76,6 +76,25 @@ describe("fitLeadPayload — nunca deixa o schema do servidor recusar o lead", (
     expect(out.email).toBeNull();
   });
 
+  it("atribuição completa e dados de envio: cortados no limite, ausentes continuam ausentes", () => {
+    const out = fitLeadPayload({
+      ...base,
+      utm_term: ` ${"t".repeat(300)} `,
+      fbclid: "f".repeat(900),
+      event_id: "e".repeat(100),
+      consent_marketing: true,
+      fbp: "",
+    });
+    expect(out.utm_term).toHaveLength(LEAD_FIELD_LIMITS.utm_term);
+    expect(out.fbclid).toHaveLength(LEAD_FIELD_LIMITS.fbclid);
+    expect(out.event_id).toHaveLength(LEAD_FIELD_LIMITS.event_id);
+    expect(out.consent_marketing).toBe(true);
+    expect(out.fbp).toBeNull();
+    // Campo que não veio não é inventado (versões antigas da função não o conhecem).
+    expect("gclid" in out).toBe(false);
+    expect("first_utm_source" in fitLeadPayload(base)).toBe(false);
+  });
+
   it("isServerAcceptedEmail segue a regra do zod", () => {
     expect(isServerAcceptedEmail("a.b+c@dominio.com.br")).toBe(true);
     expect(isServerAcceptedEmail("a..b@dominio.com")).toBe(false);

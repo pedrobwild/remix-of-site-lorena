@@ -28,12 +28,15 @@ vi.mock("@/lib/useSiteSettings", async () => {
 
 import {
   DEFAULT_OG_IMAGE,
+  hasThirdPartyTrackers,
   refreshSeoEverywhere,
   robotsContent,
   useSeo,
   validTrackerId,
   type SeoInput,
 } from "../useSeo";
+import { __resetGoogleAds, getGoogleAdsConfig } from "../googleAds";
+import { __resetMetaPixelQueue, trackMetaEvent } from "../metaPixel";
 
 const meta = (sel: string) => document.head.querySelector(sel)?.getAttribute("content") ?? null;
 
@@ -209,6 +212,59 @@ describe("trackers de terceiros (CORE-25 / CORE-18)", () => {
     await waitFor(() => expect(script("clarity-loader")).not.toBeNull());
     expect(script("ga4-config")).toBeNull();
     expect(script("ga4-loader")).toBeNull();
+    document.head.querySelectorAll("[data-seo-injected]").forEach((n) => n.remove());
+  });
+
+  it("Google Ads: config da conta + rótulos para as conversões; ID inválido não entra", async () => {
+    __resetGoogleAds();
+    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    remoteSettings = {
+      google_ads_conversion_id: "aw-123456789",
+      google_ads_lead_label: "LeadLabel1",
+      google_ads_contact_label: "x",
+    };
+    render(<Page title="FAQ" canonicalPath="/faq" />);
+    await waitFor(() => expect(script("gads-config")).not.toBeNull());
+    expect(script("gads-config")!.text).toContain("gtag('config', 'AW-123456789')");
+    expect(script("gads-loader")!.src).toBe("https://www.googletagmanager.com/gtag/js?id=AW-123456789");
+    expect(getGoogleAdsConfig()).toEqual({ id: "AW-123456789", leadLabel: "LeadLabel1", contactLabel: null });
+    expect(hasThirdPartyTrackers()).toBe(true);
+    document.head.querySelectorAll("[data-seo-injected]").forEach((n) => n.remove());
+    cleanup();
+
+    __resetGoogleAds();
+    remoteSettings = { google_ads_conversion_id: "AW-1'+alert(1)+'", clarity_id: "abcdef1234" };
+    render(<Page title="FAQ" canonicalPath="/faq" />);
+    await waitFor(() => expect(script("clarity-loader")).not.toBeNull());
+    expect(script("gads-config")).toBeNull();
+    expect(getGoogleAdsConfig()).toBeNull();
+    document.head.querySelectorAll("[data-seo-injected]").forEach((n) => n.remove());
+  });
+
+  it("Google Ads reaproveita o gtag.js do GA4 quando ele já está na página", async () => {
+    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    const ga = document.createElement("script");
+    ga.src = "https://www.googletagmanager.com/gtag/js?id=G-CE7GKKDG4L";
+    document.head.appendChild(ga);
+    remoteSettings = { google_ads_conversion_id: "AW-123456789" };
+    render(<Page title="FAQ" canonicalPath="/faq" />);
+    await waitFor(() => expect(script("gads-config")).not.toBeNull());
+    expect(script("gads-loader")).toBeNull();
+    document.head.querySelectorAll("[data-seo-injected]").forEach((n) => n.remove());
+    ga.remove();
+  });
+
+  it("evento do Pixel pedido antes da injeção sai logo depois dela", async () => {
+    __resetMetaPixelQueue();
+    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    expect(trackMetaEvent("ViewContent", { content_ids: ["x"] })).toBe("queued");
+    const fbq = vi.fn();
+    (window as Window & { fbq?: unknown }).fbq = fbq;
+    remoteSettings = { meta_pixel_id: "123456789012" };
+    render(<Page title="FAQ" canonicalPath="/faq" />);
+    await waitFor(() => expect(script("meta-pixel")).not.toBeNull());
+    expect(fbq).toHaveBeenCalledWith("track", "ViewContent", { content_ids: ["x"] });
+    delete (window as Window & { fbq?: unknown }).fbq;
     document.head.querySelectorAll("[data-seo-injected]").forEach((n) => n.remove());
   });
 

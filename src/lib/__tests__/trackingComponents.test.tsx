@@ -3,7 +3,8 @@
  *  - trackCta (CORE-17/23): não lança com target = document; clique no
  *    WhatsApp não gera evento interno em dobro (analytics.ts já captura).
  *  - MetaPixel (CORE-01/18): PageView só com aceite, fora do /admin, e por
- *    caminho+query (âncora não conta).
+ *    caminho+query (âncora não conta); ViewContent em projeto e Contact no
+ *    clique em WhatsApp/telefone (Fase 1 de conversões).
  *  - ga4 (CORE-06): init não manda page_view; page_view deduplicado.
  *  - CookieBanner (CORE-08/02): ESC só com foco no banner; auditoria sai do clique.
  */
@@ -28,6 +29,7 @@ vi.mock("@/lib/analytics", async () => {
 
 import { useCtaClickTracking } from "@/lib/trackCta";
 import MetaPixel from "@/components/MetaPixel";
+import { __resetMetaPixelQueue, flushMetaPixelQueue } from "@/lib/metaPixel";
 import CookieBanner from "@/components/CookieBanner";
 import { setConsent, openCookiePreferences } from "@/lib/cookieConsent";
 
@@ -113,6 +115,51 @@ describe("MetaPixel", () => {
     window.localStorage.setItem("lal_cookie_consent", "declined"); // retirada
     go("/contato");
     expect(fbq).toHaveBeenCalledTimes(1);
+  });
+
+  it("ViewContent: na entrada direta espera o Pixel; na navegação sai junto do PageView", () => {
+    __resetMetaPixelQueue();
+    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    window.history.replaceState(null, "", "/portfolio/studio-a");
+    render(<MetaPixel />);
+
+    const fbq = vi.fn();
+    (window as Window & { fbq?: unknown }).fbq = fbq;
+    flushMetaPixelQueue(); // o que useSeo faz ao injetar o Pixel
+    expect(fbq.mock.calls).toEqual([
+      ["track", "ViewContent", { content_type: "product", content_ids: ["studio-a"], content_category: "projeto" }],
+    ]);
+
+    go("/portfolio/studio-b");
+    expect(fbq.mock.calls.slice(1)).toEqual([
+      ["track", "PageView"],
+      ["track", "ViewContent", { content_type: "product", content_ids: ["studio-b"], content_category: "projeto" }],
+    ]);
+    go("/portfolio"); // a lista não é projeto
+    expect(fbq).toHaveBeenLastCalledWith("track", "PageView");
+  });
+
+  it("Contact no clique em WhatsApp/telefone, só com aceite", () => {
+    const fbq = vi.fn();
+    (window as Window & { fbq?: unknown }).fbq = fbq;
+    window.history.replaceState(null, "", "/");
+    render(<MetaPixel />);
+    const holder = document.createElement("div");
+    holder.innerHTML =
+      '<a id="w" href="https://wa.me/5511911906183" data-cta="hero">WhatsApp</a><a id="t" href="tel:+5511911906183">Ligar</a><a id="f" href="/faq">FAQ</a>';
+    document.body.appendChild(holder);
+
+    fireEvent.click(document.getElementById("w")!); // sem aceite
+    expect(fbq).not.toHaveBeenCalled();
+
+    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    fireEvent.click(document.getElementById("w")!);
+    fireEvent.click(document.getElementById("t")!);
+    fireEvent.click(document.getElementById("f")!);
+    expect(fbq.mock.calls).toEqual([
+      ["track", "Contact", { content_name: "hero", content_category: "whatsapp" }],
+      ["track", "Contact", { content_name: "link", content_category: "phone" }],
+    ]);
   });
 });
 

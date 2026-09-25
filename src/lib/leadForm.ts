@@ -149,10 +149,12 @@ export type QrUtmDefaults = {
  * página de entrada seguem a regra comum.
  */
 export function resolveQrLeadAttribution(
-  input: Omit<LeadAttributionInput, "sessionUtm" | "firstUtm">,
+  input: Omit<LeadAttributionInput, "sessionUtm" | "firstUtm" | "clickIds">,
   defaults: QrUtmDefaults,
 ): LeadAttribution {
-  const base = resolveLeadAttribution({ ...input, sessionUtm: null, firstUtm: null });
+  // Peça impressa: vale o que está na URL do QR (ou o padrão da peça), nunca
+  // uma campanha ou clique de anúncio guardado de outra visita.
+  const base = resolveLeadAttribution({ ...input, sessionUtm: null, firstUtm: null, clickIds: null });
   return {
     ...base,
     utm_source: base.utm_source ?? defaults.utm_source,

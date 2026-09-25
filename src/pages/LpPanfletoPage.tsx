@@ -10,6 +10,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSeo } from "@/lib/useSeo";
 import { whatsappHref } from "@/components/landing/content";
+import { reportContact } from "@/lib/conversions";
 import { trackEvent } from "@/lib/ga4";
 import type { LeadPayload } from "@/lib/leadDelivery";
 import {
@@ -181,6 +182,7 @@ export default function LpPanfletoPage() {
   const openWhatsRaw = () => {
     const campanha = collectLeadAttribution(UTM_PADRAO).utm_campaign;
     trackEvent("click_whatsapp", { category: "lp_panfleto", label: campanha });
+    reportContact("whatsapp", "lp_panfleto");
     const bairroTxt = bairro ? ` no bairro ${bairro}` : "";
     const msg = `[PANFLETO] Olá! Recebi o panfleto da Bewild e quero o diagnóstico do meu studio${bairroTxt}. (origem: ${campanha})`;
     openWhatsapp(whatsappHref(msg));

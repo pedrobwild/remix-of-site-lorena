@@ -72,6 +72,31 @@ export type LeadPayload = {
   lead_source?: string | null;
   lives_in_sp?: boolean | null;
   form_path: LeadFormPath;
+  // Atribuição completa (vem de `collectLeadAttribution`).
+  utm_term?: string | null;
+  utm_content?: string | null;
+  first_utm_source?: string | null;
+  first_utm_medium?: string | null;
+  first_utm_campaign?: string | null;
+  gclid?: string | null;
+  fbclid?: string | null;
+  // Envio (vem de `collectLeadTracking`, ver LeadTracking).
+  event_id?: string | null;
+  consent_marketing?: boolean | null;
+  fbp?: string | null;
+  fbc?: string | null;
+};
+
+/**
+ * Preenchido por `useLeadSubmit` no envio (não pelos formulários): o id do
+ * evento compartilhado com o Meta Pixel, o aceite de cookies e — só com
+ * aceite — os cookies `_fbp`/`_fbc` do Pixel.
+ */
+export type LeadTracking = {
+  event_id: string;
+  consent_marketing: boolean;
+  fbp: string | null;
+  fbc: string | null;
 };
 
 /**
@@ -94,7 +119,32 @@ export const LEAD_FIELD_LIMITS = {
   landing_path: 500,
   user_agent: 500,
   lead_source: 80,
+  utm_term: 200,
+  utm_content: 200,
+  first_utm_source: 200,
+  first_utm_medium: 200,
+  first_utm_campaign: 200,
+  gclid: 200,
+  fbclid: 500,
+  fbp: 100,
+  fbc: 600,
+  event_id: 64,
 } as const;
+
+/** Campos opcionais de texto cortados só quando vieram no payload. */
+const OPTIONAL_TEXT_FIELDS = [
+  "lead_source",
+  "utm_term",
+  "utm_content",
+  "first_utm_source",
+  "first_utm_medium",
+  "first_utm_campaign",
+  "gclid",
+  "fbclid",
+  "fbp",
+  "fbc",
+  "event_id",
+] as const;
 
 // Mesma regra de e-mail do zod 3 (usada pela função). Um e-mail que o
 // servidor recusaria derrubaria o lead inteiro.
@@ -144,8 +194,8 @@ export function fitLeadPayload(payload: LeadPayload): LeadPayload {
   out.referrer = cut(payload.referrer, LEAD_FIELD_LIMITS.referrer);
   out.landing_path = cut(payload.landing_path, LEAD_FIELD_LIMITS.landing_path);
   out.user_agent = cut(payload.user_agent, LEAD_FIELD_LIMITS.user_agent);
-  if ("lead_source" in payload) {
-    out.lead_source = cut(payload.lead_source, LEAD_FIELD_LIMITS.lead_source);
+  for (const key of OPTIONAL_TEXT_FIELDS) {
+    if (key in payload) out[key] = cut(payload[key], LEAD_FIELD_LIMITS[key]);
   }
   // `leads.area_m2` é INTEGER: 32,5 m² vira 33 em vez de derrubar o insert.
   if (out.area_m2 != null) {

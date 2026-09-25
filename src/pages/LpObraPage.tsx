@@ -15,6 +15,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSeo } from "@/lib/useSeo";
 import { whatsappHref } from "@/components/landing/content";
+import { reportContact } from "@/lib/conversions";
 import { trackEvent } from "@/lib/ga4";
 import type { LeadPayload } from "@/lib/leadDelivery";
 import {
@@ -181,6 +182,7 @@ export default function LpObraPage() {
   const openWhats = () => {
     const campanha = collectLeadAttribution(UTM_PADRAO).utm_campaign;
     trackEvent("click_whatsapp", { category: "lp_obra_gate", label: campanha });
+    reportContact("whatsapp", "lp_obra_gate");
     const bairroTxt = bairro ? ` em ${bairro}` : "";
     const msg = `[PLACA DE OBRA] Olá! Vi a placa da obra da Bewild${bairroTxt} e quero saber como transformar meu studio em renda. (origem: ${campanha})`;
     openWhatsapp(whatsappHref(msg));

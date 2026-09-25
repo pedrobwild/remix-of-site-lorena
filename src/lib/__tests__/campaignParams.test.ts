@@ -75,7 +75,68 @@ describe("resolveLeadAttribution", () => {
 
   it("sem nada, devolve nulos e landing_path = página atual", () => {
     const r = resolveLeadAttribution({ ...base, search: "" });
-    expect(r).toEqual({ utm_source: null, utm_medium: null, utm_campaign: null, referrer: null, landing_path: "/orcamento" });
+    expect(r).toEqual({
+      utm_source: null,
+      utm_medium: null,
+      utm_campaign: null,
+      utm_term: null,
+      utm_content: null,
+      first_utm_source: null,
+      first_utm_medium: null,
+      first_utm_campaign: null,
+      gclid: null,
+      fbclid: null,
+      referrer: null,
+      landing_path: "/orcamento",
+    });
+  });
+
+  it("termo e conteúdo: os da URL; sem eles, os da mesma origem da UTM escolhida", () => {
+    const daUrl = resolveLeadAttribution({
+      ...base,
+      search: "?utm_source=meta&utm_term=studio&utm_content=video-a",
+      sessionUtm: { utm_source: "sessao", utm_term: "outro" },
+    });
+    expect([daUrl.utm_term, daUrl.utm_content]).toEqual(["studio", "video-a"]);
+
+    const daSessao = resolveLeadAttribution({
+      ...base,
+      search: "",
+      sessionUtm: { utm_source: "sessao", utm_term: "reforma", utm_content: "carrossel" },
+      firstUtm: { utm_source: "primeiro", utm_term: "antigo" },
+    });
+    expect([daSessao.utm_source, daSessao.utm_term, daSessao.utm_content]).toEqual(["sessao", "reforma", "carrossel"]);
+
+    // Fonte na URL sem termo: não mistura com o termo guardado da sessão.
+    const semTermo = resolveLeadAttribution({
+      ...base,
+      search: "?utm_source=meta",
+      sessionUtm: { utm_source: "sessao", utm_term: "outro" },
+    });
+    expect(semTermo.utm_term).toBeNull();
+  });
+
+  it("1º toque vem só do que o tracker guardou para o visitante", () => {
+    const r = resolveLeadAttribution({
+      ...base,
+      search: "?utm_source=meta&utm_medium=cpc&utm_campaign=set26",
+      firstUtm: { utm_source: "google", utm_medium: "organic" },
+    });
+    expect([r.utm_source, r.first_utm_source, r.first_utm_medium, r.first_utm_campaign]).toEqual([
+      "meta",
+      "google",
+      "organic",
+      null,
+    ]);
+    expect(resolveLeadAttribution({ ...base, search: "?utm_source=meta" }).first_utm_source).toBeNull();
+  });
+
+  it("clique de anúncio: URL atual tem precedência sobre o guardado", () => {
+    const guardado = { gclid: "Cj0guardado", fbclid: "IwARguardado" };
+    const r = resolveLeadAttribution({ ...base, search: "?fbclid=IwARnovo", clickIds: guardado });
+    expect(r.fbclid).toBe("IwARnovo");
+    expect(r.gclid).toBe("Cj0guardado");
+    expect(resolveLeadAttribution({ ...base, search: "", clickIds: null }).gclid).toBeNull();
   });
 
   it("landing_path e referrer vêm do que foi persistido na sessão quando existem", () => {

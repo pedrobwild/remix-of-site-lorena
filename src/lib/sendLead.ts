@@ -4,6 +4,7 @@ import {
   isLeadDelivered,
   timeoutAfter,
   type LeadPayload,
+  type LeadTracking,
 } from "@/lib/leadDelivery";
 
 export type SendLeadResult = {
@@ -43,12 +44,15 @@ async function invokeWithTimeout(
  * - Se a versão publicada da função ainda não conhece `form_path` (schema
  *   estrito → HTTP 400), reenvia uma vez sem o campo. Cobre a janela entre
  *   publicar o front e a função; depois disso nunca dispara.
+ * - `tracking` (id do evento, aceite, `_fbp`/`_fbc`) vai junto no corpo:
+ *   a função usa para a API de Conversões do Meta. Versões antigas da função
+ *   ignoram chaves desconhecidas.
  */
 export async function sendLead(
   payload: LeadPayload,
-  { timeoutMs = 8000 }: { timeoutMs?: number } = {},
+  { timeoutMs = 8000, tracking }: { timeoutMs?: number; tracking?: LeadTracking } = {},
 ): Promise<SendLeadResult> {
-  const body = fitLeadPayload(payload);
+  const body = fitLeadPayload(tracking ? { ...payload, ...tracking } : payload);
   let result = await invokeWithTimeout(body, timeoutMs);
   if (result === null) return { delivered: false, timedOut: true };
 

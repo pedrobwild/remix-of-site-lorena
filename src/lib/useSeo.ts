@@ -8,6 +8,8 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { isConsentAccepted, onConsentChange } from "./cookieConsent";
 import { GA4_MEASUREMENT_ID } from "./ga4";
+import { configureGoogleAds } from "./googleAds";
+import { flushMetaPixelQueue } from "./metaPixel";
 import { devWarn } from "./devLog";
 import { pageSeoOverride } from "./publicPages";
 
@@ -231,7 +233,7 @@ const TRACKER_ID_RULES = {
   metaPixel: { re: /^\d{5,20}$/, normalize: (v: string) => v },
   clarity: { re: /^[a-z0-9]{6,20}$/, normalize: (v: string) => v.toLowerCase() },
   hotjar: { re: /^\d{4,10}$/, normalize: (v: string) => v },
-  /** Validado para quem vier a usar; hoje nenhum script do Google Ads é injetado. */
+  /** Conta do Google Ads (tag + conversões): ver `injectGoogleAds`. */
   googleAds: { re: /^AW-\d+$/, normalize: (v: string) => v.toUpperCase() },
 } as const;
 
@@ -308,6 +310,32 @@ function injectMetaPixel(id: string) {
     `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
 fbq.disablePushState=true;fbq('init','${id}');fbq('track','PageView');`
   );
+  // Eventos pedidos antes de o Pixel existir (ex.: ViewContent na entrada).
+  flushMetaPixelQueue();
+}
+
+/**
+ * Google Ads: `config` da conta na tag do Google e os rótulos das conversões
+ * para `trackGoogleAdsConversion`. O gtag.js do GA4 principal (ga4.ts) já
+ * atende a outra conta; só carrega um loader próprio se nenhum existir.
+ */
+function injectGoogleAds(id: string, settings: SiteSettings) {
+  configureGoogleAds({
+    id,
+    leadLabel: settings.google_ads_lead_label,
+    contactLabel: settings.google_ads_contact_label,
+  });
+  if (!document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js"]')) {
+    ensureScript("gads-loader", `https://www.googletagmanager.com/gtag/js?id=${id}`);
+  }
+  ensureScript(
+    "gads-config",
+    "",
+    `window.dataLayer = window.dataLayer || [];
+window.gtag = window.gtag || function(){dataLayer.push(arguments);};
+gtag('js', new Date());
+gtag('config', '${id}');`
+  );
 }
 
 /** Microsoft Clarity */
@@ -347,6 +375,8 @@ function injectTrackers(settings: SiteSettings) {
   if (ga4) injectGA4(ga4);
   const pixel = validTrackerId("metaPixel", settings.meta_pixel_id);
   if (pixel) injectMetaPixel(pixel);
+  const googleAds = validTrackerId("googleAds", settings.google_ads_conversion_id);
+  if (googleAds) injectGoogleAds(googleAds, settings);
   const clarity = validTrackerId("clarity", settings.clarity_id);
   if (clarity) injectClarity(clarity);
   const hotjar = validTrackerId("hotjar", settings.hotjar_id);

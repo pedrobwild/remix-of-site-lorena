@@ -5,7 +5,8 @@
  * - visitor_id (localStorage, TTL 365d rolando)
  * - session_id (sessionStorage, renovada após 30 min de inatividade)
  * - Atribuição: 1ª pageview captura utm_*, referrer_host, landing_path
- *   (last-touch por sessão; first-touch persistido por visitante)
+ *   (last-touch por sessão; first-touch persistido por visitante); gclid e
+ *   fbclid da URL ficam 90 dias (`bewild_click`) para atribuir o lead
  * - Engagement time: timer baseado em document.visibilityState,
  *   enviado via sendBeacon no unload/troca de página
  * - Scroll depth: marcos 25/50/75/100 uma vez por página
@@ -62,15 +63,19 @@ const UTM_KEY = "bewild_utm"; // last-touch (sessão)
 const FIRST_UTM_KEY = "bewild_first_utm"; // first-touch (visitante)
 const LANDING_KEY = "bewild_landing";
 const REFERRER_HOST_KEY = "bewild_ref_host";
+/** Último gclid/fbclid visto (clique de anúncio) e quando — para atribuir o lead. */
+const CLICK_KEY = "bewild_click";
 
 const VID_MAX_AGE = 365 * 86_400_000; // 365 dias
 const SID_IDLE = 30 * 60_000; // 30 min
+/** Validade de um clique de anúncio para atribuição (padrão do Google Ads e do Meta). */
+const CLICK_MAX_AGE = 90 * 86_400_000;
 
 /** Campanha da sessão gravada por src/lib/utm.ts (links de orçamento). */
 const LINK_UTM_KEY = "bwa_utm";
 
 /** Chaves que o tracker grava. A chave do consentimento fica de fora. */
-const LOCAL_KEYS = [VID_KEY, VID_TS_KEY, FIRST_UTM_KEY] as const;
+const LOCAL_KEYS = [VID_KEY, VID_TS_KEY, FIRST_UTM_KEY, CLICK_KEY] as const;
 const SESSION_KEYS = [SID_KEY, SID_TS_KEY, UTM_KEY, LANDING_KEY, REFERRER_HOST_KEY, LINK_UTM_KEY] as const;
 
 /**
@@ -214,6 +219,43 @@ function getOrPersistUtms(isNewSession: boolean): Utm {
     /* noop */
   }
   return {};
+}
+
+type StoredClick = { gclid?: string; gclid_ts?: number; fbclid?: string; fbclid_ts?: number };
+
+const CLICK_ID_RE = /^[A-Za-z0-9_.-]{1,500}$/;
+
+function readStoredClick(): StoredClick {
+  try {
+    const raw = localStorage.getItem(CLICK_KEY);
+    const v = raw ? (JSON.parse(raw) as StoredClick) : null;
+    return v && typeof v === "object" ? v : {};
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Guarda gclid/fbclid da URL (clique de anúncio) com o instante em que foram
+ * vistos. Só roda dentro de `buildRow`, ou seja, com aceite de cookies.
+ */
+function persistClickIds(): void {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const now = Date.now();
+    const stored = readStoredClick();
+    let changed = false;
+    for (const k of ["gclid", "fbclid"] as const) {
+      const v = params.get(k);
+      if (!v || !CLICK_ID_RE.test(v) || stored[k] === v) continue;
+      stored[k] = v;
+      stored[`${k}_ts`] = now;
+      changed = true;
+    }
+    if (changed) localStorage.setItem(CLICK_KEY, JSON.stringify(stored));
+  } catch {
+    /* storage indisponível */
+  }
 }
 
 function getReferrerHost(isNewSession: boolean): string | null {
@@ -360,6 +402,7 @@ function buildRow(eventType: EventType, payload?: TrackPayload) {
     payload?.path ??
     (typeof window !== "undefined" ? window.location.pathname || "/" : null);
   const utms = getOrPersistUtms(isNew);
+  persistClickIds();
   const referrer_host = getReferrerHost(isNew);
   const landing_path = path ? getLandingPath(isNew, path) : null;
   const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
@@ -684,11 +727,13 @@ function attachListeners(): () => void {
  * Atribuição persistida pelo tracker (só existe quando o visitante aceitou
  * cookies e o tracker rodou). Usada como fallback pelo formulário de lead.
  */
-export function readPersistedAttribution(): {
+export function readPersistedAttribution(now: number = Date.now()): {
   sessionUtm: Utm | null;
   firstUtm: Utm | null;
   referrerHost: string | null;
   landingPath: string | null;
+  /** gclid/fbclid dos últimos 90 dias, com o instante em que foram vistos. */
+  clickIds: { gclid: string | null; fbclid: string | null; fbclidSeenAt: number | null } | null;
 } {
   const parse = (raw: string | null): Utm | null => {
     if (!raw) return null;
@@ -699,15 +744,21 @@ export function readPersistedAttribution(): {
       return null;
     }
   };
+  const fresh = (ts: number | undefined) => typeof ts === "number" && now - ts >= 0 && now - ts < CLICK_MAX_AGE;
   try {
+    const click = readStoredClick();
+    const gclid = click.gclid && fresh(click.gclid_ts) ? click.gclid : null;
+    const fbclid = click.fbclid && fresh(click.fbclid_ts) ? click.fbclid : null;
     return {
       sessionUtm: parse(sessionStorage.getItem(UTM_KEY)),
       firstUtm: parse(localStorage.getItem(FIRST_UTM_KEY)),
       referrerHost: sessionStorage.getItem(REFERRER_HOST_KEY),
       landingPath: sessionStorage.getItem(LANDING_KEY),
+      clickIds:
+        gclid || fbclid ? { gclid, fbclid, fbclidSeenAt: fbclid ? (click.fbclid_ts ?? null) : null } : null,
     };
   } catch {
-    return { sessionUtm: null, firstUtm: null, referrerHost: null, landingPath: null };
+    return { sessionUtm: null, firstUtm: null, referrerHost: null, landingPath: null, clickIds: null };
   }
 }
 

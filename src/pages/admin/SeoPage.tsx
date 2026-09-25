@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { invalidateSiteSettings, type SiteSettings } from "@/lib/useSiteSettings";
 import { auditPublicPage, type PublicPageAudit } from "@/lib/seoAudit";
 import { downloadSitemap, parseSitemapXml, type SitemapSnapshot } from "@/lib/sitemap";
-import { refreshSeoEverywhere } from "@/lib/useSeo";
+import { refreshSeoEverywhere, validTrackerId } from "@/lib/useSeo";
+import { validAdsLabel } from "@/lib/googleAds";
 import {
   diffSettings,
   loadSettingsRow,
@@ -71,7 +72,10 @@ const SEO_FIELDS = [
   "google_analytics_id",
   "google_tag_manager_id",
   "google_ads_conversion_id",
+  "google_ads_lead_label",
+  "google_ads_contact_label",
   "meta_pixel_id",
+  "meta_capi_test_event_code",
   "hotjar_id",
   "clarity_id",
   // Local business
@@ -836,11 +840,16 @@ function AnalyticsTab({
   s: SiteSettings;
   patch: <K extends keyof SiteSettings>(k: K, v: SiteSettings[K]) => void;
 }) {
+  const adsId = (s.google_ads_conversion_id ?? "").trim();
+  const adsIdInvalid = !!adsId && !validTrackerId("googleAds", adsId);
+  const labelInvalid = (v: string | null) => !!(v ?? "").trim() && !validAdsLabel(v);
+  const testCode = (s.meta_capi_test_event_code ?? "").trim();
+
   return (
     <>
       <p className="mono" style={{ opacity: 0.7, marginBottom: 24, maxWidth: 640 }}>
         Cole os IDs das plataformas de analytics. Os scripts serão carregados automaticamente no
-        site — não é necessário editar código.
+        site — não é necessário editar código. Tudo só roda para quem aceitou os cookies.
       </p>
 
       <div className="admin-grid-2">
@@ -860,12 +869,47 @@ function AnalyticsTab({
             placeholder="GTM-XXXXXXX"
           />
         </Field>
-        <Field label="Google Ads Conversion ID (AW-XXXXXXX)">
+        <Field label="Google Ads — ID da conta (AW-XXXXXXX)">
           <input
             className="admin-field__input"
             value={s.google_ads_conversion_id ?? ""}
             onChange={(e) => patch("google_ads_conversion_id", e.target.value)}
+            placeholder="AW-123456789"
+            aria-invalid={adsIdInvalid || undefined}
           />
+          <FieldHint warn={adsIdInvalid}>
+            {adsIdInvalid
+              ? "Formato inválido: use AW- seguido só de números. Assim a tag não é carregada."
+              : "Carrega a tag do Google Ads no site. Sem os rótulos abaixo, nenhuma conversão é enviada."}
+          </FieldHint>
+        </Field>
+        <Field label="Google Ads — rótulo da conversão de lead">
+          <input
+            className="admin-field__input"
+            value={s.google_ads_lead_label ?? ""}
+            onChange={(e) => patch("google_ads_lead_label", e.target.value)}
+            placeholder="AbC-D_efG-h12"
+            aria-invalid={labelInvalid(s.google_ads_lead_label) || undefined}
+          />
+          <FieldHint warn={labelInvalid(s.google_ads_lead_label)}>
+            {labelInvalid(s.google_ads_lead_label)
+              ? "Rótulo inválido: só letras, números, - e _."
+              : "No Google Ads: Metas › Conversões › a ação de lead › Configuração da tag › a parte depois de \"AW-…/\". Enviada nos formulários de orçamento e contato, com conversões otimizadas (e-mail e telefone)."}
+          </FieldHint>
+        </Field>
+        <Field label="Google Ads — rótulo da conversão de contato (opcional)">
+          <input
+            className="admin-field__input"
+            value={s.google_ads_contact_label ?? ""}
+            onChange={(e) => patch("google_ads_contact_label", e.target.value)}
+            placeholder="XyZ-1_abC-d34"
+            aria-invalid={labelInvalid(s.google_ads_contact_label) || undefined}
+          />
+          <FieldHint warn={labelInvalid(s.google_ads_contact_label)}>
+            {labelInvalid(s.google_ads_contact_label)
+              ? "Rótulo inválido: só letras, números, - e _."
+              : "Clique em WhatsApp ou telefone. Deixe vazio se não quiser contar isso como conversão."}
+          </FieldHint>
         </Field>
         <Field label="Meta Pixel (Facebook)">
           <input
@@ -874,6 +918,24 @@ function AnalyticsTab({
             onChange={(e) => patch("meta_pixel_id", e.target.value)}
             placeholder="1234567890"
           />
+          <FieldHint>
+            Além do PageView: Lead (formulários de cliente), Contact (WhatsApp/telefone) e
+            ViewContent (páginas de projeto). O lead também vai pela API de Conversões, com o mesmo
+            id — o Meta conta uma vez só.
+          </FieldHint>
+        </Field>
+        <Field label="Meta — código de teste da API de Conversões (opcional)">
+          <input
+            className="admin-field__input"
+            value={s.meta_capi_test_event_code ?? ""}
+            onChange={(e) => patch("meta_capi_test_event_code", e.target.value)}
+            placeholder="TEST12345"
+          />
+          <FieldHint warn={!!testCode}>
+            {testCode
+              ? "Modo de teste ligado: os leads enviados pelo servidor aparecem em Gerenciador de Eventos › Testar eventos e NÃO contam nas campanhas. Apague o código quando terminar."
+              : "Só para validar a integração (Gerenciador de Eventos › Testar eventos). Vazio = eventos reais."}
+          </FieldHint>
         </Field>
         <Field label="Microsoft Clarity">
           <input
@@ -1444,10 +1506,30 @@ function Field({
   full?: boolean;
 }) {
   return (
-    <label className={`admin-field ${full ? "admin-field--full" : ""}`}>
+    // `alignContent: start`: um campo com dica mais longa ao lado não estica
+    // a caixa de texto deste.
+    <label className={`admin-field ${full ? "admin-field--full" : ""}`} style={{ alignContent: "start" }}>
       <span className="admin-field__label mono">{label}</span>
       {children}
     </label>
+  );
+}
+
+function FieldHint({ children, warn }: { children: React.ReactNode; warn?: boolean }) {
+  return (
+    <span
+      className="mono"
+      role={warn ? "alert" : undefined}
+      style={{
+        display: "block",
+        fontSize: "var(--admin-fs-xs)",
+        opacity: warn ? 1 : 0.6,
+        marginTop: 4,
+        color: warn ? "#b3261e" : undefined,
+      }}
+    >
+      {children}
+    </span>
   );
 }
 
