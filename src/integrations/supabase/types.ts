@@ -1625,6 +1625,57 @@ export type Database = {
         }
         Relationships: []
       }
+      tracking_hits: {
+        Row: {
+          agent: string | null
+          campaign: string | null
+          content: string | null
+          country: string | null
+          created_at: string
+          id: number
+          is_bot: boolean
+          kind: string
+          medium: string | null
+          referer_host: string | null
+          source: string | null
+          target_host: string | null
+          target_path: string | null
+          term: string | null
+        }
+        Insert: {
+          agent?: string | null
+          campaign?: string | null
+          content?: string | null
+          country?: string | null
+          created_at?: string
+          id?: never
+          is_bot?: boolean
+          kind: string
+          medium?: string | null
+          referer_host?: string | null
+          source?: string | null
+          target_host?: string | null
+          target_path?: string | null
+          term?: string | null
+        }
+        Update: {
+          agent?: string | null
+          campaign?: string | null
+          content?: string | null
+          country?: string | null
+          created_at?: string
+          id?: never
+          is_bot?: boolean
+          kind?: string
+          medium?: string | null
+          referer_host?: string | null
+          source?: string | null
+          target_host?: string | null
+          target_path?: string | null
+          term?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       analytics_daily: {
@@ -1832,6 +1883,21 @@ export type Database = {
           project_type: string
           slug: string
           title: string
+          views: number
+        }[]
+      }
+      tracking_hits_summary: {
+        Args: { p_since: string; p_until: string }
+        Returns: {
+          bots: number
+          campaign: string
+          clicks: number
+          content: string
+          first_at: string
+          last_at: string
+          medium: string
+          opens: number
+          source: string
           views: number
         }[]
       }
