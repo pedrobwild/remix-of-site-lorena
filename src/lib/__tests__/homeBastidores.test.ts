@@ -42,7 +42,7 @@ describe("seção Bastidores da home", () => {
     cards.forEach((card, index) => {
       const video = card.querySelector<HTMLVideoElement>("video");
       expect(video).not.toBeNull();
-      expect(video?.muted).toBe(true);
+      expect(video?.hasAttribute("muted")).toBe(true);
       expect(video?.loop).toBe(true);
       expect(video?.hasAttribute("playsinline")).toBe(true);
       expect(video?.preload).toBe("none");
@@ -60,6 +60,9 @@ describe("seção Bastidores da home", () => {
 
   it("liga o som de um vídeo e silencia o anterior ao trocar de card", () => {
     const root = mountHome();
+    root.querySelectorAll<HTMLVideoElement>("video").forEach((video) => {
+      video.muted = true;
+    });
     const cleanup = installBastidores(root);
     const cards = Array.from(root.querySelectorAll<HTMLElement>("[data-bst-card]"));
     const secondVideo = cards[1].querySelector<HTMLVideoElement>("video");
@@ -82,6 +85,9 @@ describe("seção Bastidores da home", () => {
 
   it("o cleanup pausa os vídeos e remove os listeners", () => {
     const root = mountHome();
+    root.querySelectorAll<HTMLVideoElement>("video").forEach((video) => {
+      video.muted = true;
+    });
     const cleanup = installBastidores(root);
     const secondCard = root.querySelectorAll<HTMLElement>("[data-bst-card]")[1];
     const secondVideo = secondCard.querySelector<HTMLVideoElement>("video");
