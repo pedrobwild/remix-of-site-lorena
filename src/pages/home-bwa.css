@@ -236,15 +236,12 @@
 
     .bwa-nav {
       position: fixed;
-      inset: 14px var(--bwa-gutter) auto;
+      inset: 0 0 auto;
       z-index: 1000;
-      max-width: 1500px;
-      margin-inline: auto;
-      color: var(--bwa-white);
-      background: rgba(10, 32, 55, .88);
-      border: 1px solid rgba(247, 245, 241, .16);
-      border-radius: 24px;
-      box-shadow: 0 18px 54px rgba(10, 32, 55, .2);
+      color: var(--bwa-navy);
+      background: rgba(255, 255, 255, .92);
+      border-bottom: 1px solid var(--bwa-line);
+      box-shadow: 0 8px 30px rgba(10, 32, 55, .06);
       -webkit-backdrop-filter: blur(22px) saturate(135%);
       backdrop-filter: blur(22px) saturate(135%);
       transition:
@@ -261,10 +258,9 @@
 
     .bwa-nav.bwa-scrolled,
     .bwa-nav.bwa-dark-text {
-      color: var(--bwa-white);
-      background: rgba(10, 32, 55, .94);
-      border-color: rgba(247, 245, 241, .22);
-      box-shadow: 0 22px 64px rgba(10, 32, 55, .28);
+      color: var(--bwa-navy);
+      background: rgba(255, 255, 255, .97);
+      box-shadow: 0 12px 36px rgba(10, 32, 55, .1);
     }
 
     .bwa-nav.bwa-scrolled::after,
