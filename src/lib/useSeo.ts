@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { isConsentAccepted, onConsentChange } from "./cookieConsent";
 import { GA4_MEASUREMENT_ID } from "./ga4";
 import { devWarn } from "./devLog";
+import { pageSeoOverride } from "./publicPages";
 
 export const SEO_REFRESH_EVENT = "seo:refresh";
 /** Disparado sempre que uma página aplica o próprio <head> (ver `isSeoAppliedFor`). */
