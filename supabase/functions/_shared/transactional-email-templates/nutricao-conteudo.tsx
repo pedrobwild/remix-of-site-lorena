@@ -39,6 +39,8 @@ interface Props {
   siteUrl?: string
   instagramUrl?: string
   whatsappUrl?: string
+  /** Pixel de abertura (edge function px) — contagem por campanha, sem identificar quem abriu. */
+  pixelUrl?: string
 }
 
 const NAVY = '#102A4F'
@@ -131,6 +133,7 @@ const Email = (p: Props) => {
             </Text>
             <Text style={footerText}>Bewild · São Paulo, SP · CNPJ 47.350.338/0001-37</Text>
           </Section>
+          {p.pixelUrl ? <Img src={p.pixelUrl} width="1" height="1" alt="" style={pixel} /> : null}
         </Container>
       </Body>
     </Html>
@@ -207,3 +210,4 @@ const closingLinks = { fontSize: '14px', lineHeight: '22px', color: STEEL, margi
 const inlineLink = { color: BLUE, textDecoration: 'underline' }
 const footer = { padding: '24px 8px 0' }
 const footerText = { color: STEEL, fontSize: '11px', lineHeight: '18px', margin: '0 0 8px', fontFamily: SANS }
+const pixel = { display: 'block', width: '1px', height: '1px', border: '0', margin: '0', padding: '0' }
