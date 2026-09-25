@@ -5468,3 +5468,97 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
     transition: none;
   }
 }
+
+/* ---------------------------------------------------------------
+   Bastidores (dentro do bloco 02, logo depois das disciplinas e antes da
+   galeria "Atmosferas Bewild"): 6 reels do @bewild.oficial com o time em
+   obra. Desktop: faixa única de 6 capas 9:16, pares levemente abaixo.
+   Celular: trilho horizontal com snap. O embed do Instagram só abre no
+   lightbox (src/lib/homeBastidores.ts).
+   --------------------------------------------------------------- */
+.bwa-bastidores{color:var(--bwa-white);padding-bottom:clamp(64px,8vw,120px)}
+.bwa-bastidores-head{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;margin-bottom:clamp(30px,4vw,52px);padding-left:clamp(20px,3vw,44px);border-left:1px solid var(--bwa-white-line)}
+.bwa-bastidores-kicker{margin:0 0 14px;font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.bwa-bastidores-title{margin:0;max-width:16ch;color:var(--bwa-white);font-family:"Manrope",sans-serif;font-size:clamp(34px,4.6vw,68px);font-weight:300;line-height:1.02;letter-spacing:-.035em}
+.bwa-bastidores-title strong{font-weight:500}
+.bwa-bastidores-lead{margin:18px 0 0;max-width:46ch;font-size:clamp(15px,1.15vw,18px);line-height:1.6;color:rgba(255,255,255,.72)}
+.bwa-bastidores-ig{flex-shrink:0;min-height:48px;display:inline-flex;align-items:center;gap:16px;padding:0 18px;border:1px solid var(--bwa-white-line);color:var(--bwa-white);font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;transition:color .35s var(--bwa-ease),background .35s var(--bwa-ease),border-color .35s var(--bwa-ease)}
+.bwa-bastidores-ig:hover,.bwa-bastidores-ig:focus-visible{color:var(--bwa-ink);background:var(--bwa-white);border-color:var(--bwa-white)}
+
+.bwa-bastidores-rail{list-style:none;margin:0;display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:var(--bwa-gutter);padding:0 var(--bwa-gutter) 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.bwa-bastidores-rail::-webkit-scrollbar{display:none}
+.bwa-bastidores-item{flex:0 0 min(62vw,280px);min-width:0;scroll-snap-align:start}
+
+.bwa-bastidores-tile{display:block;width:100%;padding:0;border:0;background:none;color:inherit;text-align:left;cursor:pointer}
+.bwa-bastidores-tile:focus-visible{outline:2px solid #5FB2DD;outline-offset:3px}
+.bwa-bastidores-media{position:relative;display:block;aspect-ratio:9/16;overflow:hidden;border:1px solid var(--bwa-white-line);background:linear-gradient(160deg,#1E3A5F 0%,var(--bwa-navy) 55%,#0A111E 100%);transition:border-color .4s var(--bwa-ease)}
+.bwa-bastidores-item:nth-child(2) .bwa-bastidores-media{background:linear-gradient(200deg,#2A4E78 0%,var(--bwa-navy-2) 45%,#0A111E 100%)}
+.bwa-bastidores-item:nth-child(3) .bwa-bastidores-media{background:linear-gradient(170deg,#3A4A5E 0%,var(--bwa-ink) 50%,#0A111E 100%)}
+.bwa-bastidores-item:nth-child(4) .bwa-bastidores-media{background:linear-gradient(190deg,#1B4FA0 0%,#102A4F 50%,#0A111E 100%)}
+.bwa-bastidores-item:nth-child(5) .bwa-bastidores-media{background:linear-gradient(165deg,#2E5E8C 0%,#0E1B30 60%,#0A111E 100%)}
+.bwa-bastidores-item:nth-child(6) .bwa-bastidores-media{background:linear-gradient(205deg,#5B6B7F 0%,var(--bwa-ink) 50%,#0A111E 100%)}
+.bwa-bastidores-media::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:22px 22px}
+.bwa-bastidores-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--bwa-ease)}
+.bwa-bastidores-tile:hover .bwa-bastidores-media,.bwa-bastidores-tile:focus-visible .bwa-bastidores-media{border-color:rgba(255,255,255,.6)}
+.bwa-bastidores-tile:hover .bwa-bastidores-media img{transform:scale(1.045)}
+.bwa-bastidores-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,17,30,.35) 0%,rgba(10,17,30,0) 26%,rgba(10,17,30,0) 50%,rgba(10,17,30,.88) 100%)}
+.bwa-bastidores-idx{position:absolute;top:14px;left:14px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;color:rgba(255,255,255,.75)}
+.bwa-bastidores-play{position:absolute;left:50%;top:46%;width:52px;height:52px;margin:-26px 0 0 -26px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.7);border-radius:50%;background:rgba(10,17,30,.25);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);opacity:0;transform:scale(.9);transition:opacity .4s var(--bwa-ease),transform .4s var(--bwa-ease)}
+.bwa-bastidores-play svg{width:14px;height:14px;margin-left:3px;fill:#fff}
+.bwa-bastidores-tile:hover .bwa-bastidores-play,.bwa-bastidores-tile:focus-visible .bwa-bastidores-play{opacity:1;transform:none}
+.bwa-bastidores-cap{position:absolute;left:14px;right:14px;bottom:14px;display:block}
+.bwa-bastidores-cap span{display:block;margin-bottom:6px;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.62)}
+.bwa-bastidores-cap strong{display:block;font-family:"Manrope",sans-serif;font-size:clamp(15px,1.25vw,18px);font-weight:500;line-height:1.2;letter-spacing:-.015em;color:var(--bwa-white)}
+.bwa-bastidores-sub{margin:12px 2px 0;font-size:13px;line-height:1.5;color:rgba(255,255,255,.58)}
+.bwa-bastidores-foot{margin-top:24px;margin-bottom:0;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+
+@media (hover:none){
+  .bwa-bastidores-play{opacity:.9;transform:none}
+}
+@media (min-width:900px){
+  .bwa-bastidores-rail{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(12px,1.4vw,20px);width:min(calc(100% - (var(--bwa-gutter) * 2)),var(--bwa-max));margin-inline:auto;padding:0;overflow:visible}
+  .bwa-bastidores-item:nth-child(even){transform:translateY(clamp(20px,2.4vw,36px))}
+  .bwa-bastidores-sub{display:none}
+  .bwa-bastidores-foot{margin-top:clamp(44px,5vw,64px)}
+}
+@media (max-width:899px){
+  .bwa-bastidores-head{flex-direction:column;align-items:flex-start;gap:20px}
+}
+
+/* Lightbox (criado no <body> por homeBastidores.ts) */
+.bwa-bst-lb{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:20px;background:rgba(10,17,30,.92);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;visibility:hidden;transition:opacity .35s var(--bwa-ease),visibility 0s linear .35s}
+.bwa-bst-lb[data-open]{opacity:1;visibility:visible;transition:opacity .35s var(--bwa-ease)}
+.bwa-bst-lb-box{display:grid;grid-template-columns:min(400px,100%) minmax(220px,320px);gap:clamp(20px,3vw,44px);align-items:end;max-height:100%;color:var(--bwa-white);transform:translateY(12px);transition:transform .45s var(--bwa-ease)}
+.bwa-bst-lb[data-open] .bwa-bst-lb-box{transform:none}
+.bwa-bst-lb-player{position:relative;width:100%;max-height:calc(100vh - 40px);max-height:calc(100dvh - 40px);overflow-y:auto;background:var(--bwa-navy);border:1px solid var(--bwa-white-line)}
+.bwa-bst-lb-player[data-state="loaded"]{background:var(--bwa-white)}
+.bwa-bst-lb-player iframe{display:block;width:100%;border:0;overflow:hidden;background:var(--bwa-white)}
+.bwa-bst-lb-gate{position:relative;aspect-ratio:9/16;max-height:calc(100vh - 42px);display:grid;align-content:end;justify-items:start;gap:14px;padding:22px;background:linear-gradient(160deg,#1E3A5F 0%,var(--bwa-navy) 55%,#0A111E 100%) center/cover no-repeat}
+.bwa-bst-lb-gate::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,17,30,.1) 40%,rgba(10,17,30,.88) 100%)}
+.bwa-bst-lb-gate>*{position:relative;margin:0}
+.bwa-bst-lb-gate p{font-size:14px;line-height:1.5;color:rgba(255,255,255,.8)}
+.bwa-bst-lb-load{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border:1px solid var(--bwa-white);background:transparent;color:var(--bwa-white);font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.bwa-bst-lb-load:hover,.bwa-bst-lb-load:focus-visible{background:var(--bwa-white);color:var(--bwa-ink)}
+.bwa-bst-lb-kicker{margin:0 0 12px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.bwa-bst-lb-title{margin:0 0 14px;font-family:"Manrope",sans-serif;font-size:clamp(24px,2.6vw,36px);font-weight:500;line-height:1.08;letter-spacing:-.03em;color:var(--bwa-white)}
+.bwa-bst-lb-desc{margin:0 0 26px;font-size:15px;line-height:1.6;color:rgba(255,255,255,.72)}
+.bwa-bst-lb-nav{display:flex;gap:10px;margin-top:26px;padding-top:22px;border-top:1px solid var(--bwa-white-line)}
+.bwa-bst-lb-arrow,.bwa-bst-lb-close{width:48px;height:48px;display:grid;place-items:center;padding:0;border:1px solid var(--bwa-white-line);background:transparent;color:var(--bwa-white);cursor:pointer;transition:color .25s ease,background .25s ease,border-color .25s ease}
+.bwa-bst-lb-arrow svg,.bwa-bst-lb-close svg{width:18px;height:18px}
+.bwa-bst-lb-prev svg{transform:rotate(180deg)}
+.bwa-bst-lb-arrow:hover,.bwa-bst-lb-arrow:focus-visible,.bwa-bst-lb-close:hover,.bwa-bst-lb-close:focus-visible{color:var(--bwa-ink);background:var(--bwa-white);border-color:var(--bwa-white)}
+.bwa-bst-lb-close{position:absolute;top:18px;right:18px;width:44px;height:44px}
+@media (max-width:760px){
+  .bwa-bst-lb{padding:64px 16px 16px;align-items:start;overflow-y:auto}
+  .bwa-bst-lb-box{grid-template-columns:1fr;justify-items:center;gap:14px;width:100%}
+  .bwa-bst-lb-player{width:min(100%,400px);max-height:none;overflow:visible}
+  .bwa-bst-lb-gate{max-height:68vh;width:100%}
+  .bwa-bst-lb-aside{width:min(100%,400px)}
+  .bwa-bst-lb-desc{display:none}
+  .bwa-bst-lb-title{font-size:22px;margin-bottom:12px}
+  .bwa-bst-lb-nav{margin-top:14px;padding-top:14px}
+}
+@media (prefers-reduced-motion:reduce){
+  .bwa-bastidores-media,.bwa-bastidores-media img,.bwa-bastidores-play,.bwa-bst-lb,.bwa-bst-lb-box{transition:none}
+  .bwa-bastidores-tile:hover .bwa-bastidores-media img{transform:none}
+}
