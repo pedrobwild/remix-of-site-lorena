@@ -634,6 +634,8 @@ export type Database = {
           lives_in_sp: boolean | null
           location: string | null
           message: string | null
+          meta_lead_sent_at: string | null
+          meta_qualified_sent_at: string | null
           name: string
           objetivo: string | null
           planta: string | null
@@ -669,6 +671,8 @@ export type Database = {
           lives_in_sp?: boolean | null
           location?: string | null
           message?: string | null
+          meta_lead_sent_at?: string | null
+          meta_qualified_sent_at?: string | null
           name: string
           objetivo?: string | null
           planta?: string | null
@@ -704,6 +708,8 @@ export type Database = {
           lives_in_sp?: boolean | null
           location?: string | null
           message?: string | null
+          meta_lead_sent_at?: string | null
+          meta_qualified_sent_at?: string | null
           name?: string
           objetivo?: string | null
           planta?: string | null
