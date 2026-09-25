@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { devWarn } from "@/lib/devLog";
+import type { PagesSeoMap } from "@/lib/publicPages";
 
 export type SiteSettings = {
   id: number;
