@@ -100,7 +100,11 @@ describe("seção Bastidores da home", () => {
     const rail = root.querySelector<HTMLElement>("[data-bst-rail]");
     const next = root.querySelector<HTMLButtonElement>("[data-bst-next]");
     const scrollBy = vi.fn();
-    if (rail) rail.scrollBy = scrollBy;
+    if (rail) {
+      rail.scrollBy = scrollBy;
+      Object.defineProperty(rail, "scrollWidth", { configurable: true, value: 1200 });
+      Object.defineProperty(rail, "clientWidth", { configurable: true, value: 400 });
+    }
     const cleanup = installBastidores(root);
 
     next?.click();
