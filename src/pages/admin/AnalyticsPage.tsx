@@ -8,6 +8,7 @@ import AcquisitionTab from "@/components/admin/analytics/AcquisitionTab";
 import BehaviorTab from "@/components/admin/analytics/BehaviorTab";
 import ConversionTab from "@/components/admin/analytics/ConversionTab";
 import RetentionTab from "@/components/admin/analytics/RetentionTab";
+import PaidMediaTab from "@/components/admin/analytics/PaidMediaTab";
 
 function ComingSoon({ name }: { name: string }) {
   return (
@@ -55,6 +56,9 @@ export default function AnalyticsPage() {
         />
       )}
       {state.tab === "retention" && <RetentionTab range={state.range} segments={state.segments} />}
+      {state.tab === "paid" && (
+        <PaidMediaTab range={state.range} comparePrev={state.comparePrev} segmentsCount={state.segments.length} />
+      )}
       {state.tab === "realtime" && <ComingSoon name="Tempo real" />}
     </AnalyticsShell>
   );
