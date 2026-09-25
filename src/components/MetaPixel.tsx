@@ -1,5 +1,10 @@
 /**
- * MetaPixel — dispara fbq('track','PageView') a cada troca de página na SPA.
+ * MetaPixel — eventos do Pixel ligados à navegação e aos cliques:
+ *  - `PageView` a cada troca de página na SPA;
+ *  - `ViewContent` ao abrir um projeto (/portfolio/<slug>), inclusive na
+ *    entrada direta pela página do projeto;
+ *  - `Contact` (Meta) + conversão de contato (Google Ads) no clique em link
+ *    de WhatsApp/telefone/e-mail — ver src/lib/conversions.ts.
  *
  * O carregador base, o `fbq('init', ...)` e o primeiro PageView **não** estão
  * no index.html (CODE-05). Quem injeta tudo isso é `injectMetaPixel` em
@@ -11,11 +16,14 @@
  *  - consentimento aceito agora (quem retirou o aceite não gera mais nada,
  *    mesmo antes do reload que limpa a página);
  *  - fora do /admin (iframe da auditoria de SEO já cai no gate de consentimento);
- *  - `window.fbq` carregado.
+ *  - `window.fbq` carregado (ViewContent/Contact esperam numa fila curta).
  * Página = caminho + query: âncora (#faq) não é PageView novo.
  */
 import { useEffect, useRef } from "react";
+import { contactEventForHref } from "@/lib/analytics";
+import { projectSlugFromPath, reportContact, reportViewContent } from "@/lib/conversions";
 import { isConsentAccepted } from "@/lib/cookieConsent";
+import { closestElementFrom } from "@/lib/useHashRoute";
 
 declare global {
   interface Window {
@@ -36,6 +44,8 @@ export default function MetaPixel() {
     if (typeof window === "undefined") return;
 
     lastUrlRef.current = pageKey();
+    const entrySlug = projectSlugFromPath(window.location.pathname);
+    if (entrySlug) reportViewContent(entrySlug);
 
     const trackRouteChange = () => {
       const nextUrl = pageKey();
@@ -45,15 +55,32 @@ export default function MetaPixel() {
       if (isAdminPath(window.location.pathname)) return;
       if (typeof window.fbq !== "function") return;
       window.fbq("track", "PageView");
+      const slug = projectSlugFromPath(window.location.pathname);
+      if (slug) reportViewContent(slug);
+    };
+
+    // Captura: o link pode abrir outra aba ou sair do site logo em seguida.
+    const onClick = (e: MouseEvent) => {
+      try {
+        const link = closestElementFrom(e.target)?.closest<HTMLAnchorElement>("a[href]");
+        if (!link) return;
+        const contact = contactEventForHref(link.getAttribute("href") || "");
+        if (!contact) return;
+        reportContact(contact.channel, link.dataset.cta || "link");
+      } catch {
+        /* nunca quebra o clique */
+      }
     };
 
     window.addEventListener("popstate", trackRouteChange);
     window.addEventListener("hashchange", trackRouteChange);
     window.addEventListener("lovable:navigate", trackRouteChange);
+    document.addEventListener("click", onClick, true);
     return () => {
       window.removeEventListener("popstate", trackRouteChange);
       window.removeEventListener("hashchange", trackRouteChange);
       window.removeEventListener("lovable:navigate", trackRouteChange);
+      document.removeEventListener("click", onClick, true);
     };
   }, []);
 

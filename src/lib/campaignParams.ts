@@ -73,6 +73,14 @@ export type Utm = {
   utm_source?: string | null;
   utm_medium?: string | null;
   utm_campaign?: string | null;
+  utm_term?: string | null;
+  utm_content?: string | null;
+};
+
+/** Ids de clique de anúncio persistidos pelo tracker (com aceite). */
+export type PersistedClickIds = {
+  gclid?: string | null;
+  fbclid?: string | null;
 };
 
 export type LeadAttributionInput = {
@@ -82,6 +90,8 @@ export type LeadAttributionInput = {
   sessionUtm?: Utm | null;
   /** First-touch do visitante (localStorage `bewild_first_utm`), se houver. */
   firstUtm?: Utm | null;
+  /** gclid/fbclid vistos antes nesta visita ou em visitas anteriores. */
+  clickIds?: PersistedClickIds | null;
   /** `document.referrer` no momento do envio. */
   referrer?: string | null;
   /** Host do referrer externo persistido na sessão (`bewild_ref_host`). */
@@ -96,6 +106,16 @@ export type LeadAttribution = {
   utm_source: string | null;
   utm_medium: string | null;
   utm_campaign: string | null;
+  /** Termo e conteúdo: os da URL; sem eles, os da mesma origem da UTM acima. */
+  utm_term: string | null;
+  utm_content: string | null;
+  /** Primeiro toque conhecido do visitante (só existe com aceite de cookies). */
+  first_utm_source: string | null;
+  first_utm_medium: string | null;
+  first_utm_campaign: string | null;
+  /** Clique de anúncio: URL atual → o que o tracker guardou. */
+  gclid: string | null;
+  fbclid: string | null;
   referrer: string | null;
   landing_path: string | null;
 };
@@ -103,21 +123,29 @@ export type LeadAttribution = {
 const hasAnyUtm = (u: Utm | null | undefined): u is Utm =>
   !!u && !!(u.utm_source || u.utm_medium || u.utm_campaign);
 
+const clean = (v: string | null | undefined): string | null => {
+  const t = (v ?? "").trim();
+  return t ? t : null;
+};
+
 export function resolveLeadAttribution(input: LeadAttributionInput): LeadAttribution {
   const fromUrl = pickCampaignParams(input.search);
   const urlUtm: Utm = {
     utm_source: fromUrl.get("utm_source"),
     utm_medium: fromUrl.get("utm_medium"),
     utm_campaign: fromUrl.get("utm_campaign"),
+    utm_term: fromUrl.get("utm_term"),
+    utm_content: fromUrl.get("utm_content"),
   };
 
-  const utm = hasAnyUtm(urlUtm)
+  const utm: Utm = hasAnyUtm(urlUtm)
     ? urlUtm
     : hasAnyUtm(input.sessionUtm)
       ? input.sessionUtm
       : hasAnyUtm(input.firstUtm)
         ? input.firstUtm
         : {};
+  const first: Utm = hasAnyUtm(input.firstUtm) ? input.firstUtm : {};
 
   // Referrer: o do documento (pode ser interno após navegação SPA); se
   // vazio, o host externo guardado na entrada da sessão.
@@ -127,6 +155,15 @@ export function resolveLeadAttribution(input: LeadAttributionInput): LeadAttribu
     utm_source: utm.utm_source ?? null,
     utm_medium: utm.utm_medium ?? null,
     utm_campaign: utm.utm_campaign ?? null,
+    // Termo/conteúdo na URL valem mesmo sem fonte/meio/campanha (ex.: QR
+    // impresso com `?utm_content=verso`); senão, os da UTM escolhida.
+    utm_term: clean(urlUtm.utm_term) ?? clean(utm.utm_term),
+    utm_content: clean(urlUtm.utm_content) ?? clean(utm.utm_content),
+    first_utm_source: clean(first.utm_source),
+    first_utm_medium: clean(first.utm_medium),
+    first_utm_campaign: clean(first.utm_campaign),
+    gclid: clean(fromUrl.get("gclid")) ?? clean(input.clickIds?.gclid),
+    fbclid: clean(fromUrl.get("fbclid")) ?? clean(input.clickIds?.fbclid),
     referrer,
     landing_path: (input.landingPath || "").trim() || input.currentPath || null,
   };

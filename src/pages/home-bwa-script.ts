@@ -24,6 +24,7 @@
  */
 import { isIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
 import { withUtm } from "@/lib/utm";
+import { reportContact } from "@/lib/conversions";
 import { trackEvent } from "@/lib/ga4";
 import { prefersReducedMotion } from "@/lib/reducedMotion";
 
@@ -659,6 +660,7 @@ function installWhatsForm(root: HTMLElement, signal: AbortSignal): void {
       const mensagem = (form.querySelector<HTMLTextAreaElement>('textarea[name="mensagem"]')?.value ?? "").trim();
       const text = [`Olá! Me chamo ${nome}.`, mensagem].filter(Boolean).join(" ");
       trackEvent("cta_click", { location: "footer-whatsapp" });
+      reportContact("whatsapp", "footer-whatsapp");
       window.open(`https://wa.me/${WHATS_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
     },
     { signal },

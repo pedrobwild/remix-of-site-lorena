@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { reportContact } from "@/lib/conversions";
 import { trackEvent } from "@/lib/ga4";
 
 /**
@@ -20,6 +21,7 @@ export default function BwaWhatsForm() {
       .filter(Boolean)
       .join(" ");
     trackEvent("cta_click", { location: "footer-whatsapp" });
+    reportContact("whatsapp", "footer-whatsapp");
     window.open(
       `https://wa.me/${WHATS_NUMBER}?text=${encodeURIComponent(text)}`,
       "_blank",
