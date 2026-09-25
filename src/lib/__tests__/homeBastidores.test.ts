@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { HOME_BWA_HTML } from "../../pages/home-bwa-body";
 import { installBastidores } from "../homeBastidores";
 
@@ -20,57 +20,85 @@ function mountHome(): HTMLElement {
 }
 
 describe("seção Bastidores da home", () => {
+  let play: ReturnType<typeof vi.spyOn>;
+  let pause: ReturnType<typeof vi.spyOn>;
+
   beforeEach(() => {
     document.body.innerHTML = "";
-    window.localStorage.clear();
+    play = vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+    pause = vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(() => {});
   });
+
   afterEach(() => {
     document.body.innerHTML = "";
+    vi.restoreAllMocks();
   });
 
-  it("a home tem exatamente 6 [data-bst-post], na ordem esperada, e [data-ig-post] continua com 3", () => {
+  it("tem 6 cards na ordem esperada, com vídeos preparados sem carregar o arquivo", () => {
     const root = mountHome();
-    const codes = Array.from(root.querySelectorAll<HTMLElement>("[data-bst-post]")).map(
-      (el) => el.dataset.bstPost,
-    );
-    expect(codes).toEqual(EXPECTED_CODES);
+    const cards = Array.from(root.querySelectorAll<HTMLElement>("[data-bst-card]"));
+
+    expect(cards.map((card) => card.dataset.bstPost)).toEqual(EXPECTED_CODES);
+    cards.forEach((card, index) => {
+      const video = card.querySelector<HTMLVideoElement>("video");
+      expect(video).not.toBeNull();
+      expect(video?.hasAttribute("muted")).toBe(true);
+      expect(video?.loop).toBe(true);
+      expect(video?.hasAttribute("playsinline")).toBe(true);
+      expect(video?.preload).toBe("none");
+      expect(video?.dataset.src).toBe(`/videos/bastidores/${EXPECTED_CODES[index]}.mp4`);
+      expect(video?.hasAttribute("src")).toBe(false);
+    });
+  });
+
+  it("preserva os 3 posts de depoimentos e não cria iframe", () => {
+    const root = mountHome();
+
     expect(root.querySelectorAll("[data-ig-post]")).toHaveLength(3);
+    expect(root.querySelector("[data-bastidores] iframe")).toBeNull();
   });
 
-  it('sem consentimento, o clique abre o lightbox com "Carregar vídeo aqui" e nenhum iframe; o botão monta o embed', () => {
+  it("liga o som de um vídeo e silencia o anterior ao trocar de card", () => {
     const root = mountHome();
+    root.querySelectorAll<HTMLVideoElement>("video").forEach((video) => {
+      video.muted = true;
+    });
     const cleanup = installBastidores(root);
+    const cards = Array.from(root.querySelectorAll<HTMLElement>("[data-bst-card]"));
+    const secondVideo = cards[1].querySelector<HTMLVideoElement>("video");
+    const thirdVideo = cards[2].querySelector<HTMLVideoElement>("video");
+    const secondButton = cards[1].querySelector<HTMLButtonElement>("[data-bst-sound]");
+    const thirdButton = cards[2].querySelector<HTMLButtonElement>("[data-bst-sound]");
 
-    root.querySelector<HTMLElement>('[data-bst-post="DY27SVWvqoM"]')!.click();
+    secondButton?.click();
+    expect(secondVideo?.muted).toBe(false);
+    expect(secondButton).toHaveAttribute("aria-pressed", "true");
 
-    const lb = document.body.querySelector<HTMLElement>(".bwa-bst-lb");
-    expect(lb).not.toBeNull();
-    expect(lb!.hasAttribute("data-open")).toBe(true);
-    expect(lb!.querySelector("iframe")).toBeNull();
-
-    const load = lb!.querySelector<HTMLButtonElement>(".bwa-bst-lb-load");
-    expect(load?.textContent).toBe("Carregar vídeo aqui");
-
-    load!.click();
-    const iframe = lb!.querySelector("iframe");
-    expect(iframe).not.toBeNull();
-    expect(iframe!.getAttribute("src")).toBe("https://www.instagram.com/p/DY27SVWvqoM/embed/");
+    thirdButton?.click();
+    expect(secondVideo?.muted).toBe(true);
+    expect(secondButton).toHaveAttribute("aria-pressed", "false");
+    expect(thirdVideo?.muted).toBe(false);
+    expect(thirdButton).toHaveAttribute("aria-pressed", "true");
 
     cleanup();
   });
 
-  it("Escape fecha e o cleanup remove o lightbox do body", () => {
+  it("o cleanup pausa os vídeos e remove os listeners", () => {
     const root = mountHome();
+    root.querySelectorAll<HTMLVideoElement>("video").forEach((video) => {
+      video.muted = true;
+    });
     const cleanup = installBastidores(root);
-
-    root.querySelector<HTMLElement>('[data-bst-post="DY27SVWvqoM"]')!.click();
-    expect(document.body.querySelector(".bwa-bst-lb")).not.toBeNull();
-
-    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
-    const lb = document.body.querySelector<HTMLElement>(".bwa-bst-lb");
-    expect(lb!.hasAttribute("data-open")).toBe(false);
+    const secondCard = root.querySelectorAll<HTMLElement>("[data-bst-card]")[1];
+    const secondVideo = secondCard.querySelector<HTMLVideoElement>("video");
+    const secondButton = secondCard.querySelector<HTMLButtonElement>("[data-bst-sound]");
 
     cleanup();
-    expect(document.body.querySelector(".bwa-bst-lb")).toBeNull();
+    expect(pause).toHaveBeenCalledTimes(6);
+
+    secondButton?.click();
+    expect(secondVideo?.muted).toBe(true);
+    expect(secondButton).toHaveAttribute("aria-pressed", "false");
+    expect(play).not.toHaveBeenCalled();
   });
 });
