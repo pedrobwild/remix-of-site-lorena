@@ -726,6 +726,177 @@ export type Database = {
         }
         Relationships: []
       }
+      meta_ads_daily: {
+        Row: {
+          account_id: string
+          campaign_id: string
+          campaign_name: string | null
+          clicks: number
+          conversations: number
+          currency: string | null
+          date: string
+          form_leads: number
+          impressions: number
+          leads: number
+          link_clicks: number
+          objective: string | null
+          site_leads: number
+          spend: number
+          synced_at: string
+        }
+        Insert: {
+          account_id: string
+          campaign_id: string
+          campaign_name?: string | null
+          clicks?: number
+          conversations?: number
+          currency?: string | null
+          date: string
+          form_leads?: number
+          impressions?: number
+          leads?: number
+          link_clicks?: number
+          objective?: string | null
+          site_leads?: number
+          spend?: number
+          synced_at?: string
+        }
+        Update: {
+          account_id?: string
+          campaign_id?: string
+          campaign_name?: string | null
+          clicks?: number
+          conversations?: number
+          currency?: string | null
+          date?: string
+          form_leads?: number
+          impressions?: number
+          leads?: number
+          link_clicks?: number
+          objective?: string | null
+          site_leads?: number
+          spend?: number
+          synced_at?: string
+        }
+        Relationships: []
+      }
+      meta_leads: {
+        Row: {
+          ad_id: string | null
+          ad_name: string | null
+          adset_id: string | null
+          adset_name: string | null
+          answers: Json
+          campaign_id: string | null
+          campaign_name: string | null
+          city: string | null
+          created_time: string
+          deleted_at: string | null
+          email: string | null
+          form_id: string | null
+          form_name: string | null
+          id: string
+          is_organic: boolean | null
+          is_test: boolean
+          meta_lead_id: string
+          name: string | null
+          notified_at: string | null
+          notify: Json | null
+          page_id: string | null
+          phone: string | null
+          platform: string | null
+          status: string
+          synced_at: string
+          updated_at: string
+        }
+        Insert: {
+          ad_id?: string | null
+          ad_name?: string | null
+          adset_id?: string | null
+          adset_name?: string | null
+          answers?: Json
+          campaign_id?: string | null
+          campaign_name?: string | null
+          city?: string | null
+          created_time: string
+          deleted_at?: string | null
+          email?: string | null
+          form_id?: string | null
+          form_name?: string | null
+          id?: string
+          is_organic?: boolean | null
+          is_test?: boolean
+          meta_lead_id: string
+          name?: string | null
+          notified_at?: string | null
+          notify?: Json | null
+          page_id?: string | null
+          phone?: string | null
+          platform?: string | null
+          status?: string
+          synced_at?: string
+          updated_at?: string
+        }
+        Update: {
+          ad_id?: string | null
+          ad_name?: string | null
+          adset_id?: string | null
+          adset_name?: string | null
+          answers?: Json
+          campaign_id?: string | null
+          campaign_name?: string | null
+          city?: string | null
+          created_time?: string
+          deleted_at?: string | null
+          email?: string | null
+          form_id?: string | null
+          form_name?: string | null
+          id?: string
+          is_organic?: boolean | null
+          is_test?: boolean
+          meta_lead_id?: string
+          name?: string | null
+          notified_at?: string | null
+          notify?: Json | null
+          page_id?: string | null
+          phone?: string | null
+          platform?: string | null
+          status?: string
+          synced_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      meta_sync_state: {
+        Row: {
+          cursor: Json
+          key: string
+          last_error: string | null
+          last_run_at: string | null
+          last_success_at: string | null
+          stats: Json
+          updated_at: string
+        }
+        Insert: {
+          cursor?: Json
+          key: string
+          last_error?: string | null
+          last_run_at?: string | null
+          last_success_at?: string | null
+          stats?: Json
+          updated_at?: string
+        }
+        Update: {
+          cursor?: Json
+          key?: string
+          last_error?: string | null
+          last_run_at?: string | null
+          last_success_at?: string | null
+          stats?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       nutricao_envios: {
         Row: {
           created_at: string

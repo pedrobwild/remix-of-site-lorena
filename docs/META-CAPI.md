@@ -1,7 +1,9 @@
 # Meta Pixel + Conversions API — Lead e QualifiedLead
 
 Como o site conta leads para a Meta (e para o Google Ads) e o que precisa estar
-configurado.
+configurado. O caminho inverso — trazer da Meta as métricas das campanhas e os
+leads dos formulários instantâneos para o painel — está em
+[META-SYNC.md](META-SYNC.md).
 
 ## O que sai para a Meta
 

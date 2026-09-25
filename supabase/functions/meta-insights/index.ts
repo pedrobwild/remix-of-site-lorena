@@ -10,6 +10,8 @@
 // da Graph API).
 
 import { createClient } from "npm:@supabase/supabase-js@2.45.4";
+import { META_GRAPH_VERSION, redactSecrets } from "../_shared/meta-capi.ts";
+import { DEFAULT_AD_ACCOUNT_ID, leadsFromActions } from "../_shared/meta-leads.ts";
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -18,8 +20,8 @@ const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
 };
 
-const GRAPH_VERSION = "v22.0";
-const DEFAULT_ACCOUNT_ID = "1274618770498233";
+// A v22.0 saiu do ar; a versão acompanha a da API de Conversões.
+const GRAPH_VERSION = META_GRAPH_VERSION;
 const ALLOWED_PRESETS = new Set([
   "today",
   "last_7d",
@@ -73,11 +75,6 @@ async function requireAdmin(req: Request): Promise<Response | null> {
   return null;
 }
 
-function isLeadAction(t: string | undefined): boolean {
-  if (!t) return false;
-  return t.toLowerCase().includes("lead");
-}
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -107,7 +104,7 @@ Deno.serve(async (req) => {
   if (!token) {
     return json({ connected: false, reason: "no_token" });
   }
-  const accountId = Deno.env.get("META_ADS_ACCOUNT_ID") || DEFAULT_ACCOUNT_ID;
+  const accountId = (Deno.env.get("META_ADS_ACCOUNT_ID") || "").replace(/^act_/i, "") || DEFAULT_AD_ACCOUNT_ID;
 
   const fields = [
     "spend",
@@ -125,11 +122,15 @@ Deno.serve(async (req) => {
   );
   apiUrl.searchParams.set("fields", fields);
   apiUrl.searchParams.set("date_preset", datePreset);
-  apiUrl.searchParams.set("access_token", token);
 
   let res: Response;
   try {
-    res = await fetch(apiUrl.toString(), { method: "GET", signal: AbortSignal.timeout(15_000) });
+    // Token no cabeçalho: na URL ele podia aparecer em logs de proxy.
+    res = await fetch(apiUrl.toString(), {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(15_000),
+    });
   } catch (_e) {
     return json({
       connected: false,
@@ -148,7 +149,7 @@ Deno.serve(async (req) => {
     return json({
       connected: false,
       reason: "api_error",
-      error: String(msg).slice(0, 200),
+      error: redactSecrets(String(msg)).slice(0, 200),
     });
   }
 
@@ -180,14 +181,12 @@ Deno.serve(async (req) => {
   const cpc = num(row.cpc);
   const cpm = num(row.cpm);
 
-  const leads = (row.actions ?? [])
-    .filter((a) => isLeadAction(a.action_type))
-    .reduce((sum, a) => sum + num(a.value), 0);
+  // `lead` já é o total (formulário + site). Somar toda ação com "lead" no
+  // nome contava o mesmo lead duas ou três vezes.
+  const leads = leadsFromActions(row.actions).leads;
 
   let cpl: number | null = null;
-  const leadCost = (row.cost_per_action_type ?? []).find((c) =>
-    isLeadAction(c.action_type),
-  );
+  const leadCost = (row.cost_per_action_type ?? []).find((c) => c.action_type === "lead");
   if (leadCost) {
     cpl = num(leadCost.value);
   } else if (leads > 0) {
