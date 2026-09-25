@@ -8,9 +8,34 @@
  * - Linhas antigas têm `form_path` nulo; para elas só dá para ADIVINHAR o
  *   formulário pelo `landing_path` (que na época era a página do envio).
  * - Toda mudança de status passa por `updateLeadStatus`, que grava também o
- *   histórico em `lead_qualification_log`.
+ *   histórico em `lead_qualification_log` e avisa a Meta (Conversions API)
+ *   quando o lead vira `qualificado`/`descartado` — ver `notifyMetaLeadQuality`.
  */
 import { supabase } from "@/integrations/supabase/client";
+
+/** Status cuja mudança gera evento de qualidade na Meta (QualifiedLead/DisqualifiedLead). */
+export const META_TRACKED_STATUSES: readonly LeadStatus[] = ["qualificado", "descartado"];
+
+/**
+ * Dispara a edge function `meta-lead-quality` (com o JWT do admin). Fire-and-
+ * forget: o painel não espera a Meta e um erro aqui nunca desfaz a mudança de
+ * status. Só `lead_id` e `status` saem do browser; a PII fica no servidor.
+ */
+export function notifyMetaLeadQuality(leadId: string, to: LeadStatus): Promise<void> {
+  if (!META_TRACKED_STATUSES.includes(to)) return Promise.resolve();
+  return supabase.functions
+    .invoke("meta-lead-quality", { body: { lead_id: leadId, status: to } })
+    .then(({ data, error }) => {
+      const meta = (data as { meta?: string; reason?: string } | null)?.meta;
+      if (error || meta === "error") {
+        console.warn("[meta-lead-quality] evento não enviado", { leadId, to, error, data });
+      }
+    })
+    .catch((err: unknown) => {
+      console.warn("[meta-lead-quality] falha ao chamar a função", err);
+    });
+}
+
 
 export type LeadStatus = "novo" | "contatado" | "qualificado" | "descartado";
 
@@ -280,6 +305,8 @@ export async function updateLeadStatus(
         error: "O lead não foi atualizado (não encontrado ou sem permissão). Recarregue a página.",
       };
     }
+    // Status gravado: a Meta recebe QualifiedLead/DisqualifiedLead em segundo plano.
+    void notifyMetaLeadQuality(leadId, to);
   } else if (!observacao) {
     return { ok: false, error: "Nada a registrar: o status é o mesmo e não há observação." };
   }

@@ -78,6 +78,14 @@ npm run preview     # serve o bundle de dist/ localmente
 └── public/                     ativos estáticos servidos como-são
 ```
 
+## Rastreamento de leads na Meta e no Google Ads
+
+Pixel (`Lead`, `Contact`, `ViewContent`) + Conversions API (`Lead`,
+`QualifiedLead`, `DisqualifiedLead`), com deduplicação por `event_id`, só para
+formulários de cliente e só com aceite de cookies; Google Ads com conversões
+otimizadas. Segredos, passo a passo de ativação e SQL de auditoria em
+[docs/META-CAPI.md](docs/META-CAPI.md).
+
 ## Deploy
 
 O site é publicado pelo **hosting da Lovable** (projeto

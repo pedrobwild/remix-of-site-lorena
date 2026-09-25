@@ -7,6 +7,7 @@ vi.mock("@/integrations/supabase/client", async () => {
 
 import {
   calls,
+  functionsInvoke,
   hasOp,
   resetFake,
   setResponder,
@@ -126,6 +127,40 @@ describe("contagens por status", () => {
 });
 
 describe("updateLeadStatus", () => {
+  it("qualificado: avisa a Meta (meta-lead-quality) depois de gravar, só com lead_id e status", async () => {
+    setResponder((call) => (call.table === "leads" ? { data: [{ id: "l-1" }] } : { data: { id: "log-1" } }));
+    const res = await updateLeadStatus("l-1", "contatado", "qualificado");
+    expect(res.ok).toBe(true);
+    expect(functionsInvoke).toHaveBeenCalledTimes(1);
+    expect(functionsInvoke).toHaveBeenCalledWith("meta-lead-quality", {
+      body: { lead_id: "l-1", status: "qualificado" },
+    });
+  });
+
+  it("descartado também gera evento; contatado e falha no update não", async () => {
+    setResponder((call) => (call.table === "leads" ? { data: [{ id: "l-1" }] } : { data: { id: "log-1" } }));
+    await updateLeadStatus("l-1", "novo", "descartado", "sem orçamento");
+    expect(functionsInvoke).toHaveBeenCalledWith("meta-lead-quality", {
+      body: { lead_id: "l-1", status: "descartado" },
+    });
+    functionsInvoke.mockClear();
+
+    await updateLeadStatus("l-1", "novo", "contatado");
+    expect(functionsInvoke).not.toHaveBeenCalled();
+
+    setResponder((call) => (call.table === "leads" ? { error: { message: "permission denied" } } : { data: {} }));
+    await updateLeadStatus("l-1", "novo", "qualificado");
+    expect(functionsInvoke).not.toHaveBeenCalled();
+  });
+
+  it("erro na Meta não desfaz a mudança de status", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    functionsInvoke.mockRejectedValueOnce(new Error("offline"));
+    setResponder((call) => (call.table === "leads" ? { data: [{ id: "l-1" }] } : { data: { id: "log-1" } }));
+    const res = await updateLeadStatus("l-1", "novo", "qualificado");
+    expect(res.ok).toBe(true);
+  });
+
   it("atualiza o lead e grava o histórico com o autor da sessão", async () => {
     setSession({ user: { id: "u-1", email: "dono@bewild.com.br" } });
     setResponder((call) => {
