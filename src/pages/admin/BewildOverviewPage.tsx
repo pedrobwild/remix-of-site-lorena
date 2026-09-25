@@ -8,6 +8,8 @@
  *
  * Seletor de período (7/30/90 dias) propaga em todas as queries de
  * analytics. "7 dias" = hoje + os 6 dias anteriores (7 dias de calendário).
+ * O bloco "Hoje × ontem" (TodayVsYesterdayCard) não segue o seletor: é
+ * sempre hoje até agora × ontem até o mesmo horário.
  * Mídia paga fica em estado "Conectar" quando não há integração — nunca
  * exibimos valores fake.
  *
@@ -28,6 +30,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
+import TodayVsYesterdayCard from "@/components/admin/TodayVsYesterdayCard";
 import { supabase } from "@/integrations/supabase/client";
 import { aggregateLeadChannels } from "@/lib/leadChannel";
 
@@ -366,6 +369,9 @@ export default function BewildOverviewPage() {
       }
     >
       {loading && <p className="bw-admin__loading">Carregando dados…</p>}
+
+      {/* Hoje × ontem — independente do seletor de período (sempre "hoje até agora") */}
+      <TodayVsYesterdayCard />
 
       {/* KPIs principais (resultado + aquisição + engajamento) */}
       <div className="bw-admin__kpi-grid">
