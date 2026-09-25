@@ -1469,6 +1469,28 @@ export type Database = {
           sessions: number
         }[]
       }
+      analytics_timeseries_v2: {
+        Args: {
+          p_country?: string
+          p_device?: string
+          p_grain: string
+          p_landing_path?: string
+          p_referrer_host?: string
+          p_since: string
+          p_tz: string
+          p_until: string
+          p_utm_campaign?: string
+          p_utm_medium?: string
+          p_utm_source?: string
+        }
+        Returns: {
+          bucket: string
+          conversions: number
+          pageviews: number
+          sessions: number
+          visitors: number
+        }[]
+      }
       analytics_top_paths_v2: {
         Args: {
           p_country?: string
