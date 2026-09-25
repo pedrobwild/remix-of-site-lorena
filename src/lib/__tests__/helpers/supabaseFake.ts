@@ -41,6 +41,8 @@ export function resetFake() {
   fakeSupabase.storage.from.mockClear();
   storageRemove.mockReset();
   storageRemove.mockResolvedValue({ data: [], error: null });
+  functionsInvoke.mockReset();
+  functionsInvoke.mockResolvedValue({ data: { ok: true, meta: "skipped" }, error: null });
 }
 
 /**
@@ -81,6 +83,8 @@ function makeBuilder(table: string) {
 }
 
 export const storageRemove = vi.fn();
+/** `supabase.functions.invoke(nome, { body })` — edge functions chamadas pelo painel. */
+export const functionsInvoke = vi.fn();
 
 export const fakeSupabase = {
   from: vi.fn((table: string) => makeBuilder(table)),
@@ -89,5 +93,8 @@ export const fakeSupabase = {
   },
   storage: {
     from: vi.fn(() => ({ remove: storageRemove })),
+  },
+  functions: {
+    invoke: (name: string, opts?: { body?: unknown }) => functionsInvoke(name, opts),
   },
 };
