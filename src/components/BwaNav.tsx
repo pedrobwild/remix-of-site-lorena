@@ -93,7 +93,6 @@ export default function BwaNav() {
             <a href="/#depoimentos">Depoimentos</a>
             <a href="/portfolio">Projetos</a>
             <a href="/marcenaria">Marcenaria</a>
-            <a href="/como-funciona">Como funciona</a>
             <a href="/conteudos">Blog</a>
             <a href="/guia-do-investidor">Guia do Investidor</a>
             <a href="/faq">FAQ</a>
@@ -146,7 +145,6 @@ export default function BwaNav() {
           <a href="/#depoimentos">Depoimentos</a>
           <a href="/portfolio">Projetos</a>
           <a href="/marcenaria">Marcenaria</a>
-          <a href="/como-funciona">Como funciona</a>
           <a href="/conteudos">Blog</a>
           <a href="/guia-do-investidor">Guia do Investidor</a>
           <a href="/faq">FAQ</a>
