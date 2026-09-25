@@ -8,6 +8,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.45.4";
 import { EmailAPIError } from "npm:@lovable.dev/email-js@0.1.0";
 import { sendTemplateEmail } from "../_shared/transactional-email-templates/send-email.ts";
+import { openPixelUrl } from "../_shared/tracking.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -121,6 +122,10 @@ Deno.serve(async (req) => {
     if (!travada || travada.length === 0) continue;
 
     const dados = { ...((linha.template_data ?? {}) as Record<string, unknown>) };
+    // Pixel de abertura por campanha/conteúdo/etapa (dos utm_* do postUrl) —
+    // conta aberturas sem identificar quem abriu (ver _shared/tracking.ts).
+    const pixel = openPixelUrl(`${SUPABASE_URL}/functions/v1`, typeof dados.postUrl === "string" ? dados.postUrl : null);
+    if (pixel) dados.pixelUrl = pixel;
     const capa = typeof dados.coverUrl === "string" ? dados.coverUrl : "";
     if (capa && cacheCapa.get(capa) === false) {
       const alternativa = dados.coverFallbackUrl;

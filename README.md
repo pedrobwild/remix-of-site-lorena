@@ -91,6 +91,10 @@ Campanhas e formulários instantâneos da Meta no painel (edge function
 formulários do Facebook/Instagram com aviso no Slack, e-mail e CRM — ver
 [docs/META-SYNC.md](docs/META-SYNC.md).
 
+Página /admin/integracoes (status de cada integração e registro de envios),
+pixel próprio 1×1 e links rastreados (edge function `px`, sem dados
+pessoais) — ver [docs/INTEGRACOES.md](docs/INTEGRACOES.md).
+
 ## Deploy
 
 O site é publicado pelo **hosting da Lovable** (projeto
