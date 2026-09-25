@@ -4,9 +4,10 @@
  * - Branding "Bewild · Painel" à esquerda.
  * - Abas do dia a dia: Visão geral · Leads · Qualificação · Mensagens ·
  *   Diagnósticos · Projetos · Conteúdos.
- * - Menu "Site" com as telas de configuração que vivem no layout antigo
- *   (Analytics, FAQ, SEO, URLs 404, Indexação, Rastreamento, Configurações) —
- *   antes não havia link para elas a partir deste painel.
+ * - Menu "Site" com as telas de configuração (Analytics, FAQ, SEO, URLs 404,
+ *   Indexação, Rastreamento, Integrações, Configurações) — antes não havia
+ *   link para elas a partir deste painel. Tela deste layout aberta pelo menu
+ *   usa `active="site"` (nenhuma aba principal acesa).
  * - Botão Sair à direita (encerra sessão Supabase).
  * - Sem sidebar. Independente do AdminLayout antigo (legado).
  *
@@ -38,7 +39,8 @@ export type BewildAdminTab =
   | "diagnostico"
   | "mensagens"
   | "projetos"
-  | "conteudos";
+  | "conteudos"
+  | "site";
 
 type Props = {
   children: ReactNode;
@@ -67,6 +69,7 @@ const SITE_LINKS: { label: string; href: string }[] = [
   { label: "URLs 404", href: routes.adminSeo404 },
   { label: "Indexação", href: routes.adminIndexacao },
   { label: "Rastreamento", href: routes.adminRastreamento },
+  { label: "Integrações", href: routes.adminIntegracoes },
   { label: "Configurações", href: routes.adminSettings },
 ];
 
@@ -147,7 +150,7 @@ export default function BewildAdminShell({
               );
             })}
             <details className="bw-admin__more" ref={moreRef}>
-              <summary className="bw-admin__tab bw-admin__more-toggle">
+              <summary className={`bw-admin__tab bw-admin__more-toggle${active === "site" ? " is-active" : ""}`}>
                 <Settings2 aria-hidden />
                 <span>Site</span>
                 <ChevronDown aria-hidden className="bw-admin__more-caret" />
