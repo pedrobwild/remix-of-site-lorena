@@ -655,6 +655,8 @@ export function useSeo(seo: SeoInput) {
     description,
     canonicalPath,
     ogImage,
+    ogTitle,
+    ogDescription,
     ogImageWidth,
     ogImageHeight,
     ogType,
