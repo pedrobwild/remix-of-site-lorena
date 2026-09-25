@@ -9,21 +9,35 @@
  *    7 dias até agora × os 7 dias anteriores até o mesmo horário. Períodos já
  *    encerrados comparam inteiros, como antes.
  *
- * 2. Dias no fuso do usuário. A RPC `analytics_timeseries` agrupa com
- *    `date_trunc` em UTC, então um "dia" do servidor vai das 21h às 21h de
- *    São Paulo. Aqui os buckets HORÁRIOS (que cabem inteiros em qualquer fuso
- *    de offset inteiro) são somados no dia local do navegador — o mesmo dia
- *    que os presets "Hoje"/"Ontem" e as datas da URL usam.
+ * 2. Buckets no fuso do usuário. A RPC `analytics_timeseries_v2` recebe o
+ *    fuso IANA do navegador (`browserTimeZone()`) e devolve cada bucket como
+ *    o INÍCIO do bucket local, em timestamptz. Aqui a grade de buckets é
+ *    montada em horário local (hora, dia, semana ISO, mês) e casada pelo
+ *    instante — o mesmo dia que os presets "Hoje"/"Ontem" e as datas da URL
+ *    usam. Buckets que não caiam na grade são mantidos: nunca descartamos dado.
  *
  * Janelas são semiabertas [from, until), como as RPCs (`started_at < p_until`).
  */
-import { fmtLocalDay, type RawTimeseriesRow } from "./analyticsTimeseries";
+import { fmtLocalDay } from "./analyticsTimeseries";
 
 export type DateRange = { from: Date; to: Date };
 export type Window = { from: Date; until: Date };
-export type Counts = { sessions: number; pageviews: number; conversions: number };
+export type Counts = { sessions: number; visitors: number; pageviews: number; conversions: number };
+export type LocalGrain = "hour" | "day" | "week" | "month";
 
 export const DAY_MS = 86_400_000;
+const HOUR_MS = 3_600_000;
+
+export const EMPTY_COUNTS: Counts = { sessions: 0, visitors: 0, pageviews: 0, conversions: 0 };
+
+/** Fuso IANA do navegador, para a RPC (`America/Sao_Paulo`); "UTC" se indisponível. */
+export function browserTimeZone(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  } catch {
+    return "UTC";
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Janelas
@@ -108,6 +122,116 @@ export function todaySoFarWindow(now: Date = new Date()): Window {
 }
 
 // ---------------------------------------------------------------------------
+// Grade de buckets em horário local
+// ---------------------------------------------------------------------------
+
+/** Início do bucket local que contém `d` (semana ISO: começa na segunda). */
+export function truncLocal(d: Date, grain: LocalGrain): Date {
+  const x = new Date(d.getTime());
+  if (grain === "hour") {
+    x.setMinutes(0, 0, 0);
+    return x;
+  }
+  x.setHours(0, 0, 0, 0);
+  if (grain === "day") return x;
+  if (grain === "week") {
+    const dow = (x.getDay() + 6) % 7;
+    return addLocalDays(x, -dow);
+  }
+  x.setDate(1);
+  return x;
+}
+
+/** `d` deslocado em `n` buckets locais. */
+export function addLocalGrain(d: Date, grain: LocalGrain, n = 1): Date {
+  if (grain === "hour") return new Date(d.getTime() + n * HOUR_MS);
+  if (grain === "day") return addLocalDays(d, n);
+  if (grain === "week") return addLocalDays(d, 7 * n);
+  const x = new Date(d.getTime());
+  x.setMonth(x.getMonth() + n);
+  return x;
+}
+
+/** Inícios de bucket (ms) que tocam [since, until). Limitado para não travar a UI. */
+export function localBucketGrid(
+  since: Date,
+  until: Date,
+  grain: LocalGrain,
+  max = 2_000
+): number[] {
+  const out: number[] = [];
+  let cur = truncLocal(since, grain);
+  while (cur.getTime() < until.getTime() && out.length < max) {
+    out.push(cur.getTime());
+    cur = addLocalGrain(cur, grain, 1);
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// Série da RPC v2
+// ---------------------------------------------------------------------------
+
+/** Linha crua de `analytics_timeseries_v2` (bigint chega como number ou string). */
+export type SeriesV2Row = {
+  bucket: string;
+  sessions?: number | string | null;
+  visitors?: number | string | null;
+  pageviews?: number | string | null;
+  conversions?: number | string | null;
+};
+
+/** Ponto de série em horário local: `t` = início do bucket, em ms. */
+export type LocalPoint = Counts & { t: number };
+
+function num(v: number | string | null | undefined): number {
+  return Number(v ?? 0) || 0;
+}
+
+/**
+ * Série completa de [since, until): buckets sem sessão entram com 0 e os
+ * buckets da RPC são casados pelo instante de início. Um bucket fora da grade
+ * (fuso diferente do pedido, por exemplo) é mantido — nunca descartamos dado.
+ */
+export function fillLocalSeries(
+  rows: readonly SeriesV2Row[],
+  since: Date,
+  until: Date,
+  grain: LocalGrain
+): LocalPoint[] {
+  const map = new Map<number, LocalPoint>();
+  for (const t of localBucketGrid(since, until, grain)) map.set(t, { ...EMPTY_COUNTS, t });
+  for (const r of rows) {
+    const t = new Date(r.bucket).getTime();
+    if (Number.isNaN(t)) continue;
+    const cur = map.get(t) ?? { ...EMPTY_COUNTS, t };
+    cur.sessions += num(r.sessions);
+    cur.visitors += num(r.visitors);
+    cur.pageviews += num(r.pageviews);
+    cur.conversions += num(r.conversions);
+    map.set(t, cur);
+  }
+  return [...map.values()].sort((a, b) => a.t - b.t);
+}
+
+/**
+ * Soma de contagens. Atenção: somar `visitors` de vários buckets conta a mesma
+ * pessoa mais de uma vez — use o total só para sessões, pageviews e conversões
+ * (visitantes únicos do período vêm de `analytics_overview_kpis`).
+ */
+export function sumCounts(items: readonly Counts[]): Counts {
+  return items.reduce(
+    (acc, c) => ({
+      sessions: acc.sessions + c.sessions,
+      visitors: acc.visitors + c.visitors,
+      pageviews: acc.pageviews + c.pageviews,
+      conversions: acc.conversions + c.conversions,
+    }),
+    { ...EMPTY_COUNTS }
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Tendência
 // ---------------------------------------------------------------------------
 
@@ -168,7 +292,7 @@ export function formatWindowLabel(win: Window): string {
     : `${day(win.from)} – ${day(win.until)} ${fmtHourMinute(win.until)}`;
 }
 
-/** "qui 24/09" — rótulo curto de um dia local. */
+/** "qui., 24/09" — rótulo curto de um dia local. */
 export function formatDayLabel(t: number | Date, long = false): string {
   const d = typeof t === "number" ? new Date(t) : t;
   return d.toLocaleDateString("pt-BR", {
@@ -179,69 +303,36 @@ export function formatDayLabel(t: number | Date, long = false): string {
   });
 }
 
-// ---------------------------------------------------------------------------
-// Agregação por dia local
-// ---------------------------------------------------------------------------
-
-export type HourlyRow = RawTimeseriesRow & { conversions?: number | string | null };
-
-export type DayPoint = Counts & {
-  /** "YYYY-MM-DD" local. */
-  day: string;
-  /** Meia-noite local do dia, em ms. */
-  t: number;
-};
-
-/** Meias-noites locais dos dias que tocam [since, until). Limitado para não travar a UI. */
-export function localDayGrid(since: Date, until: Date, max = 1_000): Date[] {
-  const out: Date[] = [];
-  let cur = startOfLocalDay(since);
-  while (cur.getTime() < until.getTime() && out.length < max) {
-    out.push(cur);
-    cur = addLocalDays(cur, 1);
+/** Rótulo de um bucket local na tabela e no tooltip ("qui., 24/09", "sem. 21/09"). */
+export function formatLocalBucketLabel(t: number, grain: LocalGrain, long = false): string {
+  const d = new Date(t);
+  if (grain === "hour") {
+    return long ? `${fmtDayMonth(d)} ${fmtHourMinute(d)}` : fmtHourMinute(d);
   }
-  return out;
+  if (grain === "day") return formatDayLabel(d, long);
+  if (grain === "week") return `sem. ${fmtDayMonth(d, long)}`;
+  return d.toLocaleDateString("pt-BR", { month: "short", year: long ? "numeric" : "2-digit" });
 }
 
 /**
- * Soma buckets horários (UTC, de `analytics_timeseries(..., 'hour')`) por dia
- * do fuso do navegador. Dias sem sessão entram com 0; buckets fora da grade
- * são mantidos (nunca descartamos dado).
+ * Rótulo curto do eixo X ("15:00", "24/09", "set. 26"): até 7 caracteres, para
+ * o primeiro e o último tick caberem nas bordas do gráfico sem corte. O
+ * tooltip e a tabela usam `formatLocalBucketLabel`, com dia da semana.
  */
-export function aggregateHourlyByLocalDay(
-  rows: readonly HourlyRow[],
-  since: Date,
-  until: Date
-): DayPoint[] {
-  const map = new Map<string, DayPoint>();
-  for (const d of localDayGrid(since, until)) {
-    const day = fmtLocalDay(d);
-    map.set(day, { day, t: d.getTime(), sessions: 0, pageviews: 0, conversions: 0 });
-  }
-  for (const r of rows) {
-    const at = new Date(r.bucket);
-    if (Number.isNaN(at.getTime())) continue;
-    const day = fmtLocalDay(at);
-    const cur = map.get(day) ?? {
-      day,
-      t: startOfLocalDay(at).getTime(),
-      sessions: 0,
-      pageviews: 0,
-      conversions: 0,
-    };
-    cur.sessions += Number(r.sessions ?? 0) || 0;
-    cur.pageviews += Number(r.pageviews ?? 0) || 0;
-    cur.conversions += Number(r.conversions ?? 0) || 0;
-    map.set(day, cur);
-  }
-  return [...map.values()].sort((a, b) => a.t - b.t);
+export function formatLocalAxisLabel(t: number, grain: LocalGrain): string {
+  const d = new Date(t);
+  if (grain === "hour") return fmtHourMinute(d);
+  if (grain === "day" || grain === "week") return fmtDayMonth(d);
+  return d.toLocaleDateString("pt-BR", { month: "short", year: "2-digit" });
 }
 
 // ---------------------------------------------------------------------------
 // Tabela por dia
 // ---------------------------------------------------------------------------
 
-export type DayTableRow = DayPoint & {
+export type DayTableRow = LocalPoint & {
+  /** "YYYY-MM-DD" local. */
+  day: string;
   /** Dia em curso: só tem dados até `now`. */
   partial: boolean;
   /**
@@ -252,33 +343,36 @@ export type DayTableRow = DayPoint & {
 };
 
 /**
- * Monta as linhas da tabela por dia. `days` deve começar UM dia antes do
- * período (`leadIn`), usado só como base do 1º dia. O dia em curso usa
- * `todayBase` (ontem até o mesmo horário) em vez do dia anterior inteiro.
+ * Monta as linhas da tabela por dia a partir da série diária. `points` deve
+ * começar UM dia antes do período (lead-in), usado só como base do 1º dia. O
+ * dia em curso usa `todayBase` (ontem até o mesmo horário) em vez do dia
+ * anterior inteiro.
  */
 export function buildDayTable(
-  days: readonly DayPoint[],
+  points: readonly LocalPoint[],
   opts: { from: Date; now: Date; todayBase?: Counts | null }
 ): DayTableRow[] {
   const fromKey = fmtLocalDay(opts.from);
   const todayKey = fmtLocalDay(opts.now);
   const out: DayTableRow[] = [];
-  for (let i = 0; i < days.length; i++) {
-    const d = days[i];
-    if (d.day < fromKey) continue; // lead-in: só serve de base
-    if (d.day > todayKey) continue; // futuro: sem dados
-    const partial = d.day === todayKey;
-    const prevDay = i > 0 ? days[i - 1] : null;
+  for (let i = 0; i < points.length; i++) {
+    const p = points[i];
+    const day = fmtLocalDay(new Date(p.t));
+    if (day < fromKey) continue; // lead-in: só serve de base
+    if (day > todayKey) continue; // futuro: sem dados
+    const partial = day === todayKey;
+    const prev = i > 0 ? points[i - 1] : null;
     const base: Counts | null = partial
       ? (opts.todayBase ?? null)
-      : prevDay
+      : prev
         ? {
-            sessions: prevDay.sessions,
-            pageviews: prevDay.pageviews,
-            conversions: prevDay.conversions,
+            sessions: prev.sessions,
+            visitors: prev.visitors,
+            pageviews: prev.pageviews,
+            conversions: prev.conversions,
           }
         : null;
-    out.push({ ...d, partial, base });
+    out.push({ ...p, day, partial, base });
   }
   return out;
 }

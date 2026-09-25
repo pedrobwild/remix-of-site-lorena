@@ -3,51 +3,46 @@
  *
  * Usa duas RPCs:
  *   - analytics_overview_kpis(since, until, ...filters): KPIs + sparkline (14d)
- *   - analytics_timeseries(since, until, grain): série para o gráfico e a
- *     tabela por dia
+ *   - analytics_timeseries_v2(since, until, grain, tz, ...filters): série para
+ *     o gráfico e para a tabela por dia, com buckets no fuso do navegador,
+ *     filtros de segmento e visitantes únicos por bucket
  *
- * O cliente nunca puxa eventos brutos. Os filtros de segmento são traduzidos
- * em parâmetros nomeados da RPC de KPIs; `analytics_timeseries` ainda NÃO
- * aceita segmentos — com segmento ativo o gráfico e a tabela mostram o
- * tráfego total e a tela avisa.
+ * O cliente nunca puxa eventos brutos. Os segmentos ativos valem para tudo
+ * (KPIs, gráfico e tabela): viram parâmetros nomeados das duas RPCs.
  *
  * Comparação justa (lib/analyticsCompare.ts): um período em curso só tem
  * dados até agora, então o "período anterior" dos KPIs é deslocado pela mesma
  * duração e cortado no mesmo horário (hoje até 15:42 × ontem até 15:42). O
- * gráfico sobrepõe o período anterior inteiro, e a tabela compara cada dia com
- * o anterior — o dia em curso, com ontem até o mesmo horário.
+ * gráfico sobrepõe o período anterior inteiro e marca o bucket em curso; a
+ * tabela compara cada dia com o anterior — o dia em curso, com ontem até o
+ * mesmo horário.
  *
- * Dias no fuso do navegador: até 90 dias a série vem por HORA e é somada por
- * dia local aqui (o `date_trunc('day')` do servidor é em UTC e corta o dia às
- * 21h de São Paulo). Acima disso, semanas/meses do servidor, como antes.
+ * Granularidade pela duração (pickGrain): hora até 2 dias, dia até 90,
+ * semana até 1 ano, mês acima. A tabela é por dia sempre que o gráfico é por
+ * hora ou por dia; por semana/mês nos períodos longos.
  */
 import { useEffect, useMemo, useState } from "react";
-import {
-  alignPrevious,
-  fillTimeseries,
-  fmtLocalDay,
-  formatBucketLabel,
-  pickGrain,
-  truncUtc,
-  type Grain,
-  type SeriesPoint,
-} from "@/lib/analyticsTimeseries";
+import { fmtLocalDay, pickGrain } from "@/lib/analyticsTimeseries";
 import {
   addLocalDays,
-  aggregateHourlyByLocalDay,
   alignedPreviousWindow,
+  browserTimeZone,
   buildDayTable,
   effectiveWindow,
-  formatDayLabel,
+  fillLocalSeries,
+  formatLocalAxisLabel,
+  formatLocalBucketLabel,
   formatWindowLabel,
   fullPreviousWindow,
   invertDir,
-  localDayGrid,
-  startOfLocalDay,
+  sumCounts,
   trend,
+  truncLocal,
   yesterdaySameTimeWindow,
   type Counts,
-  type HourlyRow,
+  type LocalGrain,
+  type LocalPoint,
+  type SeriesV2Row,
   type Window,
 } from "@/lib/analyticsCompare";
 import {
@@ -55,6 +50,7 @@ import {
   AreaChart,
   ComposedChart,
   Line,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -92,12 +88,16 @@ const EMPTY_KPIS: Kpis = {
   spark: [],
 };
 
+type Metric = "sessions" | "visitors" | "pageviews";
+
 /** Ponto do gráfico: `null` nos buckets futuros do período em curso (a linha para em "agora"). */
 type ChartPoint = {
   t: number;
   sessions: number | null;
+  visitors: number | null;
   pageviews: number | null;
   prevSessions?: number;
+  prevVisitors?: number;
   prevPageviews?: number;
 };
 
@@ -107,7 +107,7 @@ type TableRow = Counts & {
   label: string;
   /** Dia/bucket em curso: só tem dados até agora. */
   partial: boolean;
-  /** Base da variação (dia anterior; ontem até o mesmo horário no dia em curso). */
+  /** Base da variação (bucket anterior; ontem até o mesmo horário no dia em curso). */
   base: Counts | null;
 };
 
@@ -117,7 +117,9 @@ type Meta = {
   prev: (Window & { partial: boolean }) | null;
   /** Total do período anterior inteiro (contexto quando o atual está em curso). */
   prevFullTotals: Counts | null;
-  mode: "day" | "week" | "month";
+  /** Início do bucket do gráfico que contém "agora" (só em período em curso). */
+  partialT: number | null;
+  tableGrain: LocalGrain;
 };
 
 type RpcRes<T> = { data: T | null; error: { message: string } | null };
@@ -140,7 +142,7 @@ function fmtTime(d: Date): string {
   return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 }
 
-/** Converte segmentos ativos em parâmetros nomeados da RPC. */
+/** Converte segmentos ativos em parâmetros nomeados das RPCs. */
 function segmentsToRpcArgs(segments: Segment[]): Record<string, string | null> {
   const map: Partial<Record<SegmentDim, string>> = {};
   for (const s of segments) map[s.dim] = s.value;
@@ -168,42 +170,33 @@ function parseKpis(res: RpcRes<Kpis[]>): Kpis {
   return { ...k, spark };
 }
 
-function parseRows(res: RpcRes<HourlyRow[]>): HourlyRow[] {
+function parseRows(res: RpcRes<SeriesV2Row[]>): SeriesV2Row[] {
   if (res.error) throw new Error(res.error.message);
   return res.data ?? [];
 }
 
 function countsOf(k: Kpis): Counts {
-  return { sessions: k.sessions, pageviews: k.pageviews, conversions: k.conversions };
-}
-
-function sumCounts(items: readonly Counts[]): Counts {
-  return items.reduce(
-    (acc, c) => ({
-      sessions: acc.sessions + c.sessions,
-      pageviews: acc.pageviews + c.pageviews,
-      conversions: acc.conversions + c.conversions,
-    }),
-    { sessions: 0, pageviews: 0, conversions: 0 },
-  );
+  return {
+    sessions: k.sessions,
+    visitors: k.unique_visitors,
+    pageviews: k.pageviews,
+    conversions: k.conversions,
+  };
 }
 
 /** Buckets depois do que contém "agora" viram `null`: a linha do gráfico para em agora. */
-function toChart(points: readonly SeriesPoint[], lastLiveBucket: number): ChartPoint[] {
-  return points.map((p) =>
-    p.t > lastLiveBucket ? { ...p, sessions: null, pageviews: null } : { ...p },
-  );
-}
-
-/** Soma dos buckets brutos da RPC (sessões, pageviews, conversões). */
-function sumRows(rows: readonly HourlyRow[]): Counts {
-  return sumCounts(
-    rows.map((r) => ({
-      sessions: Number(r.sessions ?? 0) || 0,
-      pageviews: Number(r.pageviews ?? 0) || 0,
-      conversions: Number(r.conversions ?? 0) || 0,
-    })),
-  );
+function toChart(points: readonly LocalPoint[], lastLiveBucket: number, prev?: readonly LocalPoint[]): ChartPoint[] {
+  return points.map((p, i) => {
+    const future = p.t > lastLiveBucket;
+    const q = prev?.[i];
+    return {
+      t: p.t,
+      sessions: future ? null : p.sessions,
+      visitors: future ? null : p.visitors,
+      pageviews: future ? null : p.pageviews,
+      ...(q ? { prevSessions: q.sessions, prevVisitors: q.visitors, prevPageviews: q.pageviews } : {}),
+    };
+  });
 }
 
 function Delta({ cur, prev, invert = false }: { cur: number; prev: number | null; invert?: boolean }) {
@@ -240,9 +233,9 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
   const [chart, setChart] = useState<ChartPoint[]>([]);
   const [rows, setRows] = useState<TableRow[]>([]);
   const [meta, setMeta] = useState<Meta | null>(null);
-  const [metric, setMetric] = useState<"sessions" | "pageviews">("sessions");
+  const [metric, setMetric] = useState<Metric>("sessions");
   const [refreshKey, setRefreshKey] = useState(0);
-  const grain = useMemo(() => pickGrain(range.from, range.to), [range]);
+  const grain = useMemo<LocalGrain>(() => pickGrain(range.from, range.to), [range]);
 
   useEffect(() => {
     let cancelled = false;
@@ -250,19 +243,39 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
     setError(null);
 
     const now = new Date();
+    const tz = browserTimeZone();
     const cur = effectiveWindow(range, now);
     const prevAligned = comparePrev ? alignedPreviousWindow(range, now) : null;
     const prevFull = comparePrev ? fullPreviousWindow(range) : null;
-    // Até 90 dias: buckets por hora, somados por dia local aqui.
-    const dayMode = grain === "hour" || grain === "day";
-    const seriesGrain: Grain = dayMode ? "hour" : grain;
-    // No modo dia a série começa 1 dia antes: base da variação do 1º dia.
-    const seriesFrom = dayMode ? addLocalDays(range.from, -1) : range.from;
-    const includesToday = dayMode && cur.partial && range.from.getTime() <= now.getTime();
+    // Tabela por dia sempre que o gráfico é por hora ou por dia; em períodos
+    // longos, por semana/mês. No modo dia a série da tabela começa 1 dia
+    // antes: base da variação do 1º dia.
+    const tableGrain: LocalGrain = grain === "hour" ? "day" : grain;
+    const tableFrom = tableGrain === "day" ? addLocalDays(range.from, -1) : range.from;
+    // Mesma granularidade no gráfico e na tabela: uma só consulta serve aos dois.
+    const chartNeedsOwnSeries = grain !== tableGrain;
+    const includesToday =
+      tableGrain === "day" && cur.partial && range.from.getTime() <= now.getTime();
+    // Base do dia em curso: ontem até o mesmo horário. Em "Hoje" é exatamente
+    // a janela do período anterior — reaproveita a consulta dos KPIs.
+    const yesterdayWin = includesToday ? yesterdaySameTimeWindow(now) : null;
+    const todayBaseIsPrev =
+      !!yesterdayWin &&
+      !!prevAligned &&
+      yesterdayWin.from.getTime() === prevAligned.from.getTime() &&
+      yesterdayWin.until.getTime() === prevAligned.until.getTime();
 
     const segArgs = segmentsToRpcArgs(segments);
-    const rpc = (name: "analytics_overview_kpis" | "analytics_timeseries", args: Record<string, unknown>) =>
-      Promise.resolve(supabase.rpc(name, args as never));
+    const rpc = (name: string, args: Record<string, unknown>) =>
+      Promise.resolve(supabase.rpc(name as never, args as never));
+    const series = (win: Window, g: LocalGrain) =>
+      rpc("analytics_timeseries_v2", {
+        p_since: win.from.toISOString(),
+        p_until: win.until.toISOString(),
+        p_grain: g,
+        p_tz: tz,
+        ...segArgs,
+      });
 
     const calls: Promise<unknown>[] = [
       rpc("analytics_overview_kpis", {
@@ -270,11 +283,8 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
         p_until: cur.until.toISOString(),
         ...segArgs,
       }),
-      rpc("analytics_timeseries", {
-        p_since: seriesFrom.toISOString(),
-        p_until: cur.until.toISOString(),
-        p_grain: seriesGrain,
-      }),
+      chartNeedsOwnSeries ? series(cur, grain) : Promise.resolve(null),
+      series({ from: tableFrom, until: cur.until }, tableGrain),
       prevAligned
         ? rpc("analytics_overview_kpis", {
             p_since: prevAligned.from.toISOString(),
@@ -282,23 +292,14 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
             ...segArgs,
           })
         : Promise.resolve(null),
-      prevFull
-        ? rpc("analytics_timeseries", {
-            p_since: prevFull.from.toISOString(),
-            p_until: prevFull.until.toISOString(),
-            p_grain: seriesGrain,
+      prevFull ? series(prevFull, grain) : Promise.resolve(null),
+      // Ontem até o mesmo horário (com os mesmos segmentos): base do dia em curso.
+      yesterdayWin && !todayBaseIsPrev
+        ? rpc("analytics_overview_kpis", {
+            p_since: yesterdayWin.from.toISOString(),
+            p_until: yesterdayWin.until.toISOString(),
+            ...segArgs,
           })
-        : Promise.resolve(null),
-      // Ontem até o mesmo horário, sem segmentos (a tabela também não tem):
-      // base do dia em curso.
-      includesToday
-        ? (() => {
-            const y = yesterdaySameTimeWindow(now);
-            return rpc("analytics_overview_kpis", {
-              p_since: y.from.toISOString(),
-              p_until: y.until.toISOString(),
-            });
-          })()
         : Promise.resolve(null),
     ];
 
@@ -307,94 +308,72 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
         if (cancelled) return;
 
         const k = parseKpis(results[0] as RpcRes<Kpis[]>);
-        const seriesRows = parseRows(results[1] as RpcRes<HourlyRow[]>);
-        const pk = results[2] ? parseKpis(results[2] as RpcRes<Kpis[]>) : EMPTY_KPIS;
-        const prevRows = results[3] ? parseRows(results[3] as RpcRes<HourlyRow[]>) : null;
-        const todayBase = results[4] ? countsOf(parseKpis(results[4] as RpcRes<Kpis[]>)) : null;
+        const tableRowsRaw = parseRows(results[2] as RpcRes<SeriesV2Row[]>);
+        // Sem consulta própria, o gráfico usa a da tabela sem o dia de lead-in.
+        const chartStart = truncLocal(range.from, grain).getTime();
+        const seriesRows = results[1]
+          ? parseRows(results[1] as RpcRes<SeriesV2Row[]>)
+          : tableRowsRaw.filter((r) => new Date(r.bucket).getTime() >= chartStart);
+        const pk = results[3] ? parseKpis(results[3] as RpcRes<Kpis[]>) : EMPTY_KPIS;
+        const prevRows = results[4] ? parseRows(results[4] as RpcRes<SeriesV2Row[]>) : null;
+        const todayBase = results[5]
+          ? countsOf(parseKpis(results[5] as RpcRes<Kpis[]>))
+          : todayBaseIsPrev
+            ? countsOf(pk)
+            : null;
 
         setKpis(k);
         setPrevKpis(pk);
 
         const untilFull = new Date(range.to.getTime() + 1);
-        let nextChart: ChartPoint[];
-        let nextRows: TableRow[];
-        let prevFullTotals: Counts | null = null;
-        const todayKey = fmtLocalDay(now);
+        const lastLive = truncLocal(now, grain).getTime();
 
-        if (dayMode) {
-          const days = aggregateHourlyByLocalDay(seriesRows, seriesFrom, cur.until);
-          const table = buildDayTable(days, { from: range.from, now, todayBase });
+        // Gráfico: grade do período inteiro (futuro = null), período anterior
+        // inteiro alinhado pelo deslocamento do bucket.
+        const main = fillLocalSeries(seriesRows, range.from, untilFull, grain);
+        const prevSeries =
+          prevRows && prevFull ? fillLocalSeries(prevRows, prevFull.from, prevFull.until, grain) : null;
+        const nextChart = toChart(main, lastLive, prevSeries ?? undefined);
+        const prevFullTotals = prevSeries ? sumCounts(prevSeries) : null;
+
+        // Tabela
+        let nextRows: TableRow[];
+        if (tableGrain === "day") {
+          const days = fillLocalSeries(tableRowsRaw, tableFrom, cur.until, "day");
+          const todayKey = fmtLocalDay(now);
           const yesterdayKey = fmtLocalDay(addLocalDays(now, -1));
-          nextRows = table.map((r) => ({
+          nextRows = buildDayTable(days, { from: range.from, now, todayBase }).map((r) => ({
             key: r.day,
             label:
               r.day === todayKey
-                ? `hoje · ${formatDayLabel(r.t)}`
+                ? `hoje · ${formatLocalBucketLabel(r.t, "day")}`
                 : r.day === yesterdayKey
-                  ? `ontem · ${formatDayLabel(r.t)}`
-                  : formatDayLabel(r.t),
+                  ? `ontem · ${formatLocalBucketLabel(r.t, "day")}`
+                  : formatLocalBucketLabel(r.t, "day"),
             sessions: r.sessions,
+            visitors: r.visitors,
             pageviews: r.pageviews,
             conversions: r.conversions,
             partial: r.partial,
             base: r.base,
           }));
-
-          const prevDays = prevRows && prevFull ? aggregateHourlyByLocalDay(prevRows, prevFull.from, prevFull.until) : null;
-          if (prevDays) prevFullTotals = sumCounts(prevDays);
-
-          if (grain === "hour") {
-            // Gráfico por hora: só os buckets do período (a série trouxe 1 dia a mais).
-            const fromMs = range.from.getTime();
-            const own = seriesRows.filter((r) => new Date(r.bucket).getTime() >= fromMs);
-            let main = fillTimeseries(own, range.from, untilFull, "hour");
-            if (prevRows && prevFull) {
-              main = alignPrevious(main, fillTimeseries(prevRows, prevFull.from, prevFull.until, "hour"));
-            }
-            nextChart = toChart(main, truncUtc(now, "hour").getTime());
-          } else {
-            // Gráfico por dia LOCAL, grade até o fim do período (futuro = null).
-            const byDay = new Map(days.map((d) => [d.day, d]));
-            const grid = localDayGrid(range.from, untilFull);
-            const todayStart = startOfLocalDay(now).getTime();
-            nextChart = grid.map((d, i) => {
-              const p = byDay.get(fmtLocalDay(d));
-              const future = d.getTime() > todayStart;
-              const prev = prevDays?.[i];
-              return {
-                t: d.getTime(),
-                sessions: future ? null : (p?.sessions ?? 0),
-                pageviews: future ? null : (p?.pageviews ?? 0),
-                ...(prev ? { prevSessions: prev.sessions, prevPageviews: prev.pageviews } : {}),
-              };
-            });
-          }
         } else {
-          // Semanas/meses do servidor (UTC), como antes.
-          let main = fillTimeseries(seriesRows, range.from, untilFull, grain);
-          if (prevRows && prevFull) {
-            main = alignPrevious(main, fillTimeseries(prevRows, prevFull.from, prevFull.until, grain));
-            prevFullTotals = sumRows(prevRows);
-          }
-          const lastLive = truncUtc(now, grain).getTime();
-          nextChart = toChart(main, lastLive);
-          const conv = new Map<number, number>();
-          for (const r of seriesRows) {
-            const t = new Date(r.bucket).getTime();
-            conv.set(t, (conv.get(t) ?? 0) + (Number(r.conversions ?? 0) || 0));
-          }
-          const live = main.filter((p) => p.t <= lastLive);
+          const lastLiveTable = truncLocal(now, tableGrain).getTime();
+          const live = fillLocalSeries(tableRowsRaw, tableFrom, cur.until, tableGrain).filter(
+            (p) => p.t <= lastLiveTable
+          );
           nextRows = live.map((p, i) => {
             const prev = i > 0 ? live[i - 1] : null;
             return {
               key: String(p.t),
-              label: formatBucketLabel(p.t, grain, true),
+              label: formatLocalBucketLabel(p.t, tableGrain, true),
               sessions: p.sessions,
+              visitors: p.visitors,
               pageviews: p.pageviews,
-              conversions: conv.get(p.t) ?? 0,
-              partial: cur.partial && p.t === lastLive,
+              conversions: p.conversions,
+              partial: cur.partial && p.t === lastLiveTable,
               base: prev
-                ? { sessions: prev.sessions, pageviews: prev.pageviews, conversions: conv.get(prev.t) ?? 0 }
+                ? { sessions: prev.sessions, visitors: prev.visitors, pageviews: prev.pageviews, conversions: prev.conversions }
                 : null,
             };
           });
@@ -407,7 +386,8 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
           cur,
           prev: prevAligned,
           prevFullTotals,
-          mode: dayMode ? "day" : grain === "week" ? "week" : "month",
+          partialT: cur.partial && main.some((p) => p.t === lastLive) ? lastLive : null,
+          tableGrain,
         });
       })
       .catch((err: unknown) => {
@@ -467,10 +447,24 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
     { label: "taxa de conversão",  value: fmtPct(kpis.conversion_rate),    cur: kpis.conversion_rate,    prev: prevKpis.conversion_rate,    sparkKey: "sessions" },
   ];
 
-  const isLocalDayChart = meta?.mode === "day" && grain === "day";
-  const tableTitle = meta?.mode === "day" ? "por dia" : meta?.mode === "week" ? "por semana" : "por mês";
-  const unitLabel = meta?.mode === "day" ? "dia" : meta?.mode === "week" ? "semana" : "mês";
+  const tableGrain = meta?.tableGrain ?? "day";
+  const tableTitle = tableGrain === "day" ? "por dia" : tableGrain === "week" ? "por semana" : "por mês";
+  const unitLabel = tableGrain === "day" ? "dia" : tableGrain === "week" ? "semana" : "mês";
   const tableRows = [...rows].reverse(); // mais recente primeiro
+  const prevKey: Record<Metric, keyof ChartPoint> = {
+    sessions: "prevSessions",
+    visitors: "prevVisitors",
+    pageviews: "prevPageviews",
+  };
+  const metricLabel: Record<Metric, string> = { sessions: "sessões", visitors: "visitantes", pageviews: "pageviews" };
+  // Largura do eixo Y pelo maior valor visível (atual e anterior): com 36px
+  // fixos e margem negativa, 3 dígitos saíam cortados ("685" virava "85").
+  // A folga de 25% cobre o arredondamento dos ticks (ex.: máx. 950 → 1000).
+  const yMax = chart.reduce((m, p) => {
+    const prev = p[prevKey[metric]];
+    return Math.max(m, p[metric] ?? 0, typeof prev === "number" ? prev : 0);
+  }, 0);
+  const yAxisWidth = Math.max(24, String(Math.ceil(yMax * 1.25)).length * 7 + 10);
 
   return (
     <div style={{ display: "grid", gap: 16 }}>
@@ -528,6 +522,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
               {fmtNum(meta.prevFullTotals.pageviews)} pageviews
             </span>
           )}
+          {segments.length > 0 && <span>· segmentos aplicados aos indicadores, ao gráfico e à tabela</span>}
           <button
             type="button"
             className="admin-analytics__btn"
@@ -542,51 +537,27 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
 
       {/* Main chart */}
       <div className="aa-card">
-        {segments.length > 0 && (
-          <div
-            className="aa-faint aa-mono"
-            role="note"
-            style={{
-              fontSize: "var(--aa-text-xs)",
-              padding: "8px 12px",
-              marginBottom: 10,
-              border: "1px dashed var(--aa-border)",
-              borderRadius: 6,
-              background: "var(--aa-bg-soft)",
-            }}
-          >
-            ⓘ série temporal e tabela {tableTitle} com todo o tráfego do período · os segmentos
-            ativos filtram só os indicadores acima (ainda)
-          </div>
-        )}
-        <div className="aa-card__head">
-          <h3 className="aa-card__title">série temporal</h3>
+        <div className="aa-card__head" style={{ flexWrap: "wrap" }}>
+          <h3 className="aa-card__title" style={{ whiteSpace: "nowrap" }}>série temporal</h3>
           <div className="aa-row" style={{ gap: 4 }}>
-            <button
-              type="button"
-              className="admin-analytics__btn"
-              data-variant="ghost"
-              aria-pressed={metric === "sessions"}
-              onClick={() => setMetric("sessions")}
-              style={{ fontSize: "var(--aa-text-xs)", padding: "3px 8px" }}
-            >
-              sessões
-            </button>
-            <button
-              type="button"
-              className="admin-analytics__btn"
-              data-variant="ghost"
-              aria-pressed={metric === "pageviews"}
-              onClick={() => setMetric("pageviews")}
-              style={{ fontSize: "var(--aa-text-xs)", padding: "3px 8px" }}
-            >
-              pageviews
-            </button>
+            {(["sessions", "visitors", "pageviews"] as Metric[]).map((m) => (
+              <button
+                key={m}
+                type="button"
+                className="admin-analytics__btn"
+                data-variant="ghost"
+                aria-pressed={metric === m}
+                onClick={() => setMetric(m)}
+                style={{ fontSize: "var(--aa-text-xs)", padding: "3px 8px" }}
+              >
+                {metricLabel[m]}
+              </button>
+            ))}
           </div>
         </div>
         <div style={{ height: 300, color: "var(--aa-fg)" }}>
           <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={chart} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
+            <ComposedChart data={chart} margin={{ top: 4, right: 20, bottom: 0, left: 0 }}>
               <defs>
                 <linearGradient id="g-cur" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="var(--aa-accent)" stopOpacity={0.32} />
@@ -596,9 +567,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
               <CartesianGrid stroke="var(--aa-border)" vertical={false} />
               <XAxis
                 dataKey="t"
-                tickFormatter={(t: number) =>
-                  isLocalDayChart ? formatDayLabel(Number(t)) : formatBucketLabel(Number(t), grain)
-                }
+                tickFormatter={(t: number) => formatLocalAxisLabel(Number(t), grain)}
                 tick={{ fontSize: "var(--aa-text-2xs)", fontFamily: "var(--aa-font-mono)", fill: "var(--aa-fg-faint)" }}
                 tickLine={false}
                 axisLine={false}
@@ -608,7 +577,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
                 tick={{ fontSize: "var(--aa-text-2xs)", fontFamily: "var(--aa-font-mono)", fill: "var(--aa-fg-faint)" }}
                 tickLine={false}
                 axisLine={false}
-                width={36}
+                width={yAxisWidth}
                 allowDecimals={false}
               />
               <Tooltip
@@ -621,9 +590,25 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
                   color: "var(--aa-fg)",
                 }}
                 labelFormatter={(t) =>
-                  isLocalDayChart ? formatDayLabel(Number(t), true) : formatBucketLabel(Number(t), grain, true)
+                  formatLocalBucketLabel(Number(t), grain, true) +
+                  (meta?.partialT === Number(t) ? ` · em curso (até ${fmtTime(meta.fetchedAt)})` : "")
                 }
               />
+              {/* Bucket em curso: só tem dados até agora — marcado para não parecer queda. */}
+              {meta?.partialT != null && (
+                <ReferenceLine
+                  x={meta.partialT}
+                  stroke="var(--aa-accent-goal)"
+                  strokeDasharray="3 3"
+                  label={{
+                    value: `em curso · até ${fmtTime(meta.fetchedAt)}`,
+                    position: "insideTopRight",
+                    fontSize: 10,
+                    fontFamily: "var(--aa-font-mono)",
+                    fill: "var(--aa-accent-goal)",
+                  }}
+                />
+              )}
               <Area
                 type="monotone"
                 dataKey={metric}
@@ -636,7 +621,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
               {comparePrev && (
                 <Line
                   type="monotone"
-                  dataKey={metric === "sessions" ? "prevSessions" : "prevPageviews"}
+                  dataKey={prevKey[metric]}
                   stroke="var(--aa-fg-faint)"
                   strokeWidth={1.2}
                   strokeDasharray="3 4"
@@ -656,7 +641,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
           <h3 className="aa-card__title" style={{ whiteSpace: "nowrap" }}>{tableTitle}</h3>
           <span className="aa-faint aa-mono" style={{ fontSize: "var(--aa-text-xs)", textAlign: "right" }}>
             Δ vs. {unitLabel} anterior
-            {meta?.mode === "day" && " · hoje vs. ontem até o mesmo horário"}
+            {tableGrain === "day" && " · hoje vs. ontem até o mesmo horário"}
           </span>
         </div>
         {tableRows.length === 0 ? (
@@ -671,6 +656,8 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
                 <tr>
                   <th>{unitLabel}</th>
                   <th className="num">sessões</th>
+                  <th className="num">Δ</th>
+                  <th className="num">visitantes</th>
                   <th className="num">Δ</th>
                   <th className="num">pageviews</th>
                   <th className="num">Δ</th>
@@ -696,6 +683,10 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
                     <td className="num">{fmtNum(r.sessions)}</td>
                     <td className="num" style={{ whiteSpace: "nowrap" }}>
                       <Delta cur={r.sessions} prev={r.base ? r.base.sessions : null} />
+                    </td>
+                    <td className="num">{fmtNum(r.visitors)}</td>
+                    <td className="num" style={{ whiteSpace: "nowrap" }}>
+                      <Delta cur={r.visitors} prev={r.base ? r.base.visitors : null} />
                     </td>
                     <td className="num">{fmtNum(r.pageviews)}</td>
                     <td className="num" style={{ whiteSpace: "nowrap" }}>

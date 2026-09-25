@@ -1,17 +1,23 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import {
   addLocalDays,
-  aggregateHourlyByLocalDay,
+  addLocalGrain,
   alignedPreviousWindow,
+  browserTimeZone,
   buildDayTable,
   effectiveWindow,
+  fillLocalSeries,
+  formatLocalAxisLabel,
+  formatLocalBucketLabel,
   formatWindowLabel,
   fullPreviousWindow,
   invertDir,
-  localDayGrid,
+  localBucketGrid,
   rangeLengthMs,
+  sumCounts,
   todaySoFarWindow,
   trend,
+  truncLocal,
   yesterdayFullWindow,
   yesterdaySameTimeWindow,
 } from "@/lib/analyticsCompare";
@@ -45,6 +51,10 @@ function todayRange(now: Date) {
 }
 function lastNDays(now: Date, n: number) {
   return { from: startOfDay(new Date(now.getTime() - (n - 1) * DAY)), to: endOfDay(now) };
+}
+/** Início de bucket local como a RPC v2 devolve (timestamptz, aqui em ISO UTC). */
+function bucketIso(y: number, m: number, d: number, h = 0) {
+  return new Date(y, m - 1, d, h).toISOString();
 }
 
 describe("janela efetiva e período anterior alinhado", () => {
@@ -116,6 +126,10 @@ describe("janela efetiva e período anterior alinhado", () => {
     expect(addLocalDays(d, -1)).toEqual(new Date(2026, 8, 23, 15, 42, 10));
     expect(addLocalDays(d, 7)).toEqual(new Date(2026, 9, 1, 15, 42, 10));
   });
+
+  it("browserTimeZone devolve o fuso IANA do ambiente", () => {
+    expect(browserTimeZone()).toBe("America/Sao_Paulo");
+  });
 });
 
 describe("tendência", () => {
@@ -143,8 +157,8 @@ describe("tendência", () => {
   });
 });
 
-describe("rótulo da janela", () => {
-  it("dia inteiro, dia parcial e intervalos", () => {
+describe("rótulos", () => {
+  it("janela: dia inteiro, dia parcial e intervalos", () => {
     const d23 = new Date(2026, 8, 23, 0, 0, 0, 0);
     const d24 = new Date(2026, 8, 24, 0, 0, 0, 0);
     expect(formatWindowLabel({ from: d23, until: d24 })).toBe("23/09");
@@ -168,96 +182,177 @@ describe("rótulo da janela", () => {
       "25/12 – 31/12"
     );
   });
-});
 
-describe("agregação por dia local a partir de buckets horários (UTC)", () => {
-  it("sessões das 21h–23h locais ficam no MESMO dia local, não no dia UTC seguinte", () => {
-    // 23/09 22:00 em São Paulo = 24/09 01:00 UTC. Pelo date_trunc('day') do
-    // servidor isso cairia em 24/09; por dia local é 23/09.
-    const rows = [
-      { bucket: "2026-09-24T01:00:00+00:00", sessions: 3, pageviews: 7, conversions: 1 }, // 23/09 22:00 SP
-      { bucket: "2026-09-23T12:00:00+00:00", sessions: 2, pageviews: 2, conversions: 0 }, // 23/09 09:00 SP
-      { bucket: "2026-09-24T03:00:00+00:00", sessions: 1, pageviews: 1, conversions: 0 }, // 24/09 00:00 SP
-    ];
-    const since = new Date(2026, 8, 23, 0, 0, 0, 0);
-    const until = new Date(2026, 8, 24, 15, 42);
-    const days = aggregateHourlyByLocalDay(rows, since, until);
-    expect(days.map((d) => [d.day, d.sessions, d.pageviews, d.conversions])).toEqual([
-      ["2026-09-23", 5, 9, 1],
-      ["2026-09-24", 1, 1, 0],
-    ]);
-    expect(days[0].t).toBe(since.getTime());
+  it("bucket local por granularidade", () => {
+    const t = new Date(2026, 8, 24, 15, 0).getTime();
+    expect(formatLocalBucketLabel(t, "hour")).toBe("15:00");
+    expect(formatLocalBucketLabel(t, "hour", true)).toBe("24/09 15:00");
+    expect(formatLocalBucketLabel(t, "day")).toMatch(/^qui\.?,? 24\/09$/);
+    expect(formatLocalBucketLabel(new Date(2026, 8, 21).getTime(), "week")).toBe("sem. 21/09");
+    expect(formatLocalBucketLabel(new Date(2026, 8, 1).getTime(), "month")).toMatch(
+      /^set\.? de 26$/
+    );
   });
 
-  it("dias sem sessão entram com zero e a grade cobre o período todo", () => {
-    const since = new Date(2026, 8, 20, 0, 0, 0, 0);
-    const until = new Date(2026, 8, 24, 0, 0, 0, 0); // 4 dias inteiros
-    expect(localDayGrid(since, until).map((d) => d.getDate())).toEqual([20, 21, 22, 23]);
-    const days = aggregateHourlyByLocalDay(
-      [{ bucket: "2026-09-21T15:00:00+00:00", sessions: "4", pageviews: "6" }],
-      since,
-      until
-    );
-    expect(days.map((d) => [d.day, d.sessions, d.pageviews, d.conversions])).toEqual([
-      ["2026-09-20", 0, 0, 0],
-      ["2026-09-21", 4, 6, 0],
-      ["2026-09-22", 0, 0, 0],
-      ["2026-09-23", 0, 0, 0],
+  it("eixo X: rótulos curtos (até 7 caracteres) para não cortar nas bordas", () => {
+    const t = new Date(2026, 8, 24, 15, 0).getTime();
+    expect(formatLocalAxisLabel(t, "hour")).toBe("15:00");
+    expect(formatLocalAxisLabel(t, "day")).toBe("24/09");
+    expect(formatLocalAxisLabel(new Date(2026, 8, 21).getTime(), "week")).toBe("21/09");
+    const month = formatLocalAxisLabel(new Date(2026, 8, 1).getTime(), "month");
+    expect(month).toMatch(/^set\.? de 26$/);
+    for (const g of ["hour", "day", "week"] as const) {
+      expect(formatLocalAxisLabel(t, g).length).toBeLessThanOrEqual(7);
+    }
+  });
+});
+
+describe("grade de buckets em horário local", () => {
+  it("truncLocal: hora, dia, semana ISO (segunda) e mês", () => {
+    const d = new Date(2026, 8, 24, 15, 42, 10); // quinta
+    expect(truncLocal(d, "hour")).toEqual(new Date(2026, 8, 24, 15, 0, 0, 0));
+    expect(truncLocal(d, "day")).toEqual(new Date(2026, 8, 24, 0, 0, 0, 0));
+    expect(truncLocal(d, "week")).toEqual(new Date(2026, 8, 21, 0, 0, 0, 0)); // seg 21/09
+    expect(truncLocal(new Date(2026, 8, 21, 3), "week")).toEqual(new Date(2026, 8, 21)); // segunda fica
+    expect(truncLocal(new Date(2026, 8, 20, 23), "week")).toEqual(new Date(2026, 8, 14)); // domingo → segunda anterior
+    expect(truncLocal(d, "month")).toEqual(new Date(2026, 8, 1, 0, 0, 0, 0));
+  });
+
+  it("addLocalGrain anda em calendário local", () => {
+    const d = new Date(2026, 8, 24);
+    expect(addLocalGrain(d, "hour", 2)).toEqual(new Date(2026, 8, 24, 2));
+    expect(addLocalGrain(d, "day", -1)).toEqual(new Date(2026, 8, 23));
+    expect(addLocalGrain(d, "week", 1)).toEqual(new Date(2026, 9, 1));
+    expect(addLocalGrain(new Date(2026, 0, 31), "month", 1)).toEqual(new Date(2026, 2, 3)); // JS: 31/02 → 03/03
+    expect(addLocalGrain(new Date(2026, 8, 1), "month", 1)).toEqual(new Date(2026, 9, 1));
+  });
+
+  it("localBucketGrid cobre [since, until) e começa no bucket que contém since", () => {
+    const since = new Date(2026, 8, 24, 0, 0);
+    const until = new Date(2026, 8, 24, 3, 30); // 03:30 → buckets 00,01,02,03
+    expect(localBucketGrid(since, until, "hour").map((t) => new Date(t).getHours())).toEqual([
+      0, 1, 2, 3,
+    ]);
+    expect(
+      localBucketGrid(new Date(2026, 8, 20), new Date(2026, 8, 24), "day").map((t) =>
+        new Date(t).getDate()
+      )
+    ).toEqual([20, 21, 22, 23]);
+    // 18/09 (sex) → semana começa em 14/09; até 25/09 pega 14/09 e 21/09
+    expect(
+      localBucketGrid(new Date(2026, 8, 18), new Date(2026, 8, 25), "week").map((t) =>
+        new Date(t).getDate()
+      )
+    ).toEqual([14, 21]);
+    expect(localBucketGrid(new Date(2026, 8, 24), new Date(2026, 8, 24), "day")).toEqual([]);
+  });
+});
+
+describe("série da RPC v2 em horário local", () => {
+  it("casa os buckets pelo instante de início e zera os dias sem sessão", () => {
+    const since = new Date(2026, 8, 20);
+    const until = new Date(2026, 8, 24); // 4 dias inteiros
+    const rows = [
+      {
+        bucket: bucketIso(2026, 9, 21),
+        sessions: "4",
+        visitors: "3",
+        pageviews: "6",
+        conversions: "1",
+      },
+      {
+        bucket: bucketIso(2026, 9, 23),
+        sessions: 62,
+        visitors: 30,
+        pageviews: 176,
+        conversions: 1,
+      },
+    ];
+    const s = fillLocalSeries(rows, since, until, "day");
+    expect(
+      s.map((p) => [new Date(p.t).getDate(), p.sessions, p.visitors, p.pageviews, p.conversions])
+    ).toEqual([
+      [20, 0, 0, 0, 0],
+      [21, 4, 3, 6, 1],
+      [22, 0, 0, 0, 0],
+      [23, 62, 30, 176, 1],
+    ]);
+  });
+
+  it("o bucket de 22h locais fica no dia local (a RPC já devolve o início do dia local)", () => {
+    // 23/09 22:00 SP = 24/09 01:00 UTC. A v2 agrupa no fuso pedido, então o
+    // bucket chega como 23/09 00:00 SP (= 2026-09-23T03:00:00Z).
+    const rows = [
+      {
+        bucket: "2026-09-23T03:00:00+00:00",
+        sessions: 5,
+        visitors: 2,
+        pageviews: 9,
+        conversions: 0,
+      },
+    ];
+    const s = fillLocalSeries(rows, new Date(2026, 8, 23), new Date(2026, 8, 25), "day");
+    expect(s.map((p) => [new Date(p.t).getDate(), p.sessions])).toEqual([
+      [23, 5],
+      [24, 0],
     ]);
   });
 
   it("bucket fora da grade é mantido e bucket inválido é ignorado", () => {
-    const since = new Date(2026, 8, 23, 0, 0, 0, 0);
-    const until = new Date(2026, 8, 24, 0, 0, 0, 0);
-    const days = aggregateHourlyByLocalDay(
+    const s = fillLocalSeries(
       [
-        { bucket: "2026-09-19T15:00:00+00:00", sessions: 1, pageviews: 1 },
-        { bucket: "não-é-data", sessions: 9, pageviews: 9 },
+        { bucket: bucketIso(2026, 9, 19), sessions: 1, visitors: 1, pageviews: 1, conversions: 0 },
+        { bucket: "não-é-data", sessions: 9, visitors: 9, pageviews: 9, conversions: 9 },
       ],
-      since,
-      until
+      new Date(2026, 8, 23),
+      new Date(2026, 8, 24),
+      "day"
     );
-    expect(days.map((d) => [d.day, d.sessions])).toEqual([
-      ["2026-09-19", 1],
-      ["2026-09-23", 0],
+    expect(s.map((p) => [new Date(p.t).getDate(), p.sessions])).toEqual([
+      [19, 1],
+      [23, 0],
     ]);
+  });
+
+  it("sumCounts soma as contagens", () => {
+    expect(
+      sumCounts([
+        { sessions: 1, visitors: 1, pageviews: 2, conversions: 0 },
+        { sessions: 2, visitors: 1, pageviews: 3, conversions: 1 },
+      ])
+    ).toEqual({ sessions: 3, visitors: 2, pageviews: 5, conversions: 1 });
   });
 });
 
 describe("tabela por dia", () => {
   const now = new Date(2026, 8, 24, 15, 42, 10);
   const from = new Date(2026, 8, 22, 0, 0, 0, 0); // período 22/09 – hoje
-  const point = (day: string, sessions: number) => ({
-    day,
-    t: new Date(`${day}T00:00:00`).getTime(),
+  const point = (d: number, sessions: number) => ({
+    t: new Date(2026, 8, d).getTime(),
     sessions,
+    visitors: Math.ceil(sessions / 2),
     pageviews: sessions * 2,
     conversions: 0,
   });
 
   it("1º dia usa o lead-in como base; hoje é parcial e usa ontem até o mesmo horário", () => {
-    const days = [
-      point("2026-09-21", 19),
-      point("2026-09-22", 68),
-      point("2026-09-23", 62),
-      point("2026-09-24", 16),
-    ];
-    const rows = buildDayTable(days, {
+    const points = [point(21, 19), point(22, 68), point(23, 62), point(24, 16)];
+    const rows = buildDayTable(points, {
       from,
       now,
-      todayBase: { sessions: 12, pageviews: 30, conversions: 0 },
+      todayBase: { sessions: 12, visitors: 10, pageviews: 30, conversions: 0 },
     });
     expect(rows.map((r) => r.day)).toEqual(["2026-09-22", "2026-09-23", "2026-09-24"]);
     expect(rows[0].base?.sessions).toBe(19); // lead-in, que não aparece como linha
     expect(rows[0].partial).toBe(false);
-    expect(rows[1].base?.sessions).toBe(68);
+    expect(rows[1].base).toEqual({ sessions: 68, visitors: 34, pageviews: 136, conversions: 0 });
     expect(rows[2].partial).toBe(true);
-    expect(rows[2].base).toEqual({ sessions: 12, pageviews: 30, conversions: 0 });
+    expect(rows[2].base).toEqual({ sessions: 12, visitors: 10, pageviews: 30, conversions: 0 });
   });
 
   it("sem lead-in o 1º dia fica sem base; sem todayBase o dia em curso também", () => {
-    const days = [point("2026-09-22", 68), point("2026-09-23", 62), point("2026-09-24", 16)];
-    const rows = buildDayTable(days, { from, now });
+    const points = [point(22, 68), point(23, 62), point(24, 16)];
+    const rows = buildDayTable(points, { from, now });
     expect(rows[0].base).toBeNull();
     expect(rows[1].base?.sessions).toBe(68);
     expect(rows[2].base).toBeNull();
@@ -265,8 +360,8 @@ describe("tabela por dia", () => {
 
   it("período encerrado ('Ontem') não marca nada como parcial", () => {
     const yFrom = new Date(2026, 8, 23, 0, 0, 0, 0);
-    const days = [point("2026-09-22", 68), point("2026-09-23", 62)];
-    const rows = buildDayTable(days, { from: yFrom, now });
+    const points = [point(22, 68), point(23, 62)];
+    const rows = buildDayTable(points, { from: yFrom, now });
     expect(rows).toHaveLength(1);
     expect(rows[0].day).toBe("2026-09-23");
     expect(rows[0].partial).toBe(false);
