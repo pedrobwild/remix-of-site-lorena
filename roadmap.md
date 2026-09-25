@@ -17,4 +17,5 @@
 
 - [x] Trocar a seção Bastidores pelo slider de posts do Instagram, validar suíte e build; não publicar.
 - [x] Aplicar rodada 2 do painel Analytics (arquivos A–G prontos): migration de registro, analyticsCompare v2, OverviewTab, testes, TZ fixo no vitest.config, package-lock regenerado; build + testes sem TZ; não publicar.
-- [ ] Publicar correção da seta "Próximo" do slider Bastidores (setTimeout update 2s/6s) + lastmod da home 2026-09-25 no sitemap — em andamento; depois conferir home publicada (cabeçalho, logos, slider Bastidores).
+- [x] Publicar correção da seta "Próximo" do slider Bastidores (setTimeout update 2s/6s) + lastmod da home 2026-09-25 no sitemap; home publicada e conferida.
+- [x] Atualizar meta description e Open Graph da home para incluir Bastidores e auditar a cobertura das demais páginas públicas; não publicar.
