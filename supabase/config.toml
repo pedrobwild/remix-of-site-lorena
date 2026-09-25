@@ -12,6 +12,8 @@ project_id = "aamlnkmqvjcowixdgqii"
 #   - admin (JWT do usuário + public.is_admin() no código): drive-import,
 #     index-tracker, meta-insights, meta-lead-quality, generate-alt-text, seo-audit,
 #     ping-sitemap, search-console-stats.
+#   - cron (x-cron-key === INDEX_TRACKER_CRON_KEY) ou admin: index-tracker,
+#     enviar-nutricao, meta-sync.
 #   - e-mail (Lovable): auth-email-hook valida a assinatura do webhook;
 #     preview-transactional-email exige LOVABLE_API_KEY no Authorization.
 
@@ -51,6 +53,8 @@ verify_jwt = false
 [functions.meta-lead-quality]
 verify_jwt = false
 
+[functions.meta-sync]
+verify_jwt = false
 
 [functions.generate-alt-text]
 verify_jwt = false

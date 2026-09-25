@@ -86,6 +86,11 @@ formulários de cliente e só com aceite de cookies; Google Ads com conversões
 otimizadas. Segredos, passo a passo de ativação e SQL de auditoria em
 [docs/META-CAPI.md](docs/META-CAPI.md).
 
+Campanhas e formulários instantâneos da Meta no painel (edge function
+`meta-sync`, a cada 30 min): métricas diárias por campanha, leads dos
+formulários do Facebook/Instagram com aviso no Slack, e-mail e CRM — ver
+[docs/META-SYNC.md](docs/META-SYNC.md).
+
 ## Deploy
 
 O site é publicado pelo **hosting da Lovable** (projeto

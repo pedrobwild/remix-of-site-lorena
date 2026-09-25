@@ -17,6 +17,8 @@ import {
 import type { TemplateEntry } from './registry.ts'
 
 interface Props {
+  /** "meta" = lead de formulário instantâneo da Meta (meta-sync). */
+  channel?: string
   formLabel?: string
   name?: string
   whatsapp?: string
@@ -122,6 +124,7 @@ export const template = {
   component: Email,
   subject: (d: Record<string, unknown>) => {
     const nome = typeof d.name === 'string' && d.name.trim() ? d.name.trim() : 'visitante'
+    if (d.channel === 'meta') return `Novo lead do Meta — ${nome}`
     const objetivo = typeof d.objetivo === 'string' ? d.objetivo : ''
     return objetivo.startsWith('Parceria')
       ? `Nova solicitação de parceria — ${nome}`
