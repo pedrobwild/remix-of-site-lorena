@@ -142,6 +142,7 @@ const DEFAULTS: SiteSettings = {
   home_og_description: null,
   home_og_image: null,
   bastidores_seo: {},
+  pages_seo: {},
 };
 
 let cache: SiteSettings | null = null;
