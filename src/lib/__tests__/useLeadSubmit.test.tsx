@@ -1,16 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { act, renderHook } from "@testing-library/react";
-import type { LeadPayload } from "../leadDelivery";
+import type { LeadPayload, LeadTracking } from "../leadDelivery";
 import type { SendLeadResult } from "../sendLead";
 
-const sendLeadMock = vi.fn<(payload: LeadPayload, opts?: { timeoutMs?: number }) => Promise<SendLeadResult>>();
+type SendOpts = { timeoutMs?: number; tracking?: LeadTracking };
+const sendLeadMock = vi.fn<(payload: LeadPayload, opts?: SendOpts) => Promise<SendLeadResult>>();
 const trackEventMock = vi.fn();
+const reportLeadMock = vi.fn();
 
 vi.mock("@/lib/sendLead", () => ({
-  sendLead: (payload: LeadPayload, opts?: { timeoutMs?: number }) => sendLeadMock(payload, opts),
+  sendLead: (payload: LeadPayload, opts?: SendOpts) => sendLeadMock(payload, opts),
 }));
 vi.mock("@/lib/ga4", () => ({
   trackEvent: (name: string, params?: Record<string, unknown>) => trackEventMock(name, params),
+}));
+vi.mock("@/lib/conversions", () => ({
+  reportLead: (...a: unknown[]) => reportLeadMock(...a),
 }));
 
 import { useLeadSubmit } from "../useLeadSubmit";
@@ -45,6 +50,10 @@ function deferred<T>() {
 beforeEach(() => {
   sendLeadMock.mockReset();
   trackEventMock.mockReset();
+  reportLeadMock.mockReset();
+  window.localStorage.clear();
+  document.cookie = "_fbp=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+  window.history.replaceState(null, "", "/orcamento");
   vi.spyOn(console, "error").mockImplementation(() => {});
 });
 
@@ -163,5 +172,55 @@ describe("useLeadSubmit", () => {
     d.resolve({ delivered: true, timedOut: false });
     await expect(pending).resolves.toBe("delivered");
     expect(isMounted()).toBe(false);
+  });
+
+  it("mídia paga: id de evento estável entre reenvios; Lead sai uma vez com esse id", async () => {
+    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    document.cookie = "_fbp=fb.1.1790000000000.123456789; path=/";
+    sendLeadMock.mockResolvedValueOnce({ delivered: false, timedOut: false });
+    sendLeadMock.mockResolvedValueOnce({ delivered: true, timedOut: false });
+    const { result } = renderHook(() => useLeadSubmit({ method: "orcamento_form" }));
+    const p = { ...payload, form_path: "/orcamento" as const, email: "ana@exemplo.com" };
+    await act(async () => {
+      await result.current.submit(p);
+    });
+    await act(async () => {
+      await result.current.submit(p);
+    });
+    const [first, second] = sendLeadMock.mock.calls.map(([, opts]) => opts?.tracking);
+    expect(first?.event_id).toBeTruthy();
+    expect(second?.event_id).toBe(first?.event_id);
+    expect(first).toMatchObject({ consent_marketing: true, fbp: "fb.1.1790000000000.123456789", fbc: null });
+    // O próprio payload do formulário não é alterado (reenvio usa o mesmo objeto).
+    expect(sendLeadMock.mock.calls[0][0]).toBe(p);
+    expect("event_id" in p).toBe(false);
+
+    expect(reportLeadMock).toHaveBeenCalledTimes(1);
+    expect(reportLeadMock).toHaveBeenCalledWith({
+      eventId: first?.event_id,
+      formPath: "/orcamento",
+      method: "orcamento_form",
+      email: "ana@exemplo.com",
+      phoneDigits: "11912345678",
+    });
+  });
+
+  it("sem aceite de cookies: o servidor fica sabendo e não recebe _fbp/_fbc", async () => {
+    document.cookie = "_fbp=fb.1.1790000000000.123456789; path=/";
+    sendLeadMock.mockResolvedValue({ delivered: true, timedOut: false });
+    const { result } = renderHook(() => useLeadSubmit({ method: "contato_form" }));
+    await act(async () => {
+      await result.current.submit(payload);
+    });
+    expect(sendLeadMock.mock.calls[0][1]?.tracking).toMatchObject({ consent_marketing: false, fbp: null, fbc: null });
+  });
+
+  it("falha sem WhatsApp não conta Lead de mídia", async () => {
+    sendLeadMock.mockResolvedValue({ delivered: false, timedOut: false });
+    const { result } = renderHook(() => useLeadSubmit({ method: "orcamento_form" }));
+    await act(async () => {
+      await result.current.submit(payload);
+    });
+    expect(reportLeadMock).not.toHaveBeenCalled();
   });
 });
