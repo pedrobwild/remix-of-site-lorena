@@ -234,6 +234,31 @@ describe("/orcamento", () => {
     expect(screen.getByRole("link", { name: /Enviar pelo WhatsApp/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Tentar de novo/ })).not.toBeDisabled();
   });
+
+  it("atribuição completa: último e 1º toque, termo/conteúdo e clique de anúncio", async () => {
+    window.history.replaceState({}, "", "/orcamento?utm_source=meta&utm_medium=cpc&utm_campaign=set26&utm_content=video-a&fbclid=IwAR3xyz");
+    localStorage.setItem("bewild_first_utm", JSON.stringify({ utm_source: "google", utm_medium: "organic" }));
+    localStorage.setItem("bewild_click", JSON.stringify({ gclid: "Cj0antigo", gclid_ts: Date.now() - 86_400_000 }));
+    sendLeadMock.mockResolvedValue(DELIVERED);
+    render(<OrcamentoPage />);
+    type("orc-nome", "Davi");
+    type("orc-whats", "11912345678");
+    type("orc-bairro", "Moema");
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /Pedir orçamento/ })));
+    expect(sendLeadMock.mock.calls[0][0]).toMatchObject({
+      form_path: "/orcamento",
+      utm_source: "meta",
+      utm_medium: "cpc",
+      utm_campaign: "set26",
+      utm_term: null,
+      utm_content: "video-a",
+      first_utm_source: "google",
+      first_utm_medium: "organic",
+      first_utm_campaign: null,
+      gclid: "Cj0antigo",
+      fbclid: "IwAR3xyz",
+    });
+  });
 });
 
 describe("/parceiros", () => {

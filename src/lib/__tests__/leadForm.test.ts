@@ -106,9 +106,24 @@ describe("resolveQrLeadAttribution — /o e /p", () => {
       utm_source: "qr",
       utm_medium: "placa",
       utm_campaign: "obra-placa",
+      utm_term: null,
+      utm_content: null,
+      first_utm_source: null,
+      first_utm_medium: null,
+      first_utm_campaign: null,
+      gclid: null,
+      fbclid: null,
       referrer: null,
       landing_path: "/o",
     });
+  });
+
+  it("clique de anúncio só da URL do QR (nada guardado de outra visita)", () => {
+    const a = resolveQrLeadAttribution({ ...base, search: "?gclid=Cj0abc&utm_content=verso" }, defaults);
+    expect(a.gclid).toBe("Cj0abc");
+    expect(a.fbclid).toBeNull();
+    expect(a.utm_content).toBe("verso");
+    expect(a.first_utm_source).toBeNull();
   });
 
   it("a campanha do QR sobrescreve campo a campo", () => {

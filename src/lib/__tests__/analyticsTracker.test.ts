@@ -14,7 +14,7 @@ vi.stubGlobal("fetch", fetchMock);
 const beaconMock = vi.fn().mockReturnValue(true);
 Object.defineProperty(navigator, "sendBeacon", { value: beaconMock, configurable: true, writable: true });
 
-import { contactEventForHref, initAnalytics, logConsentAudit } from "@/lib/analytics";
+import { contactEventForHref, initAnalytics, logConsentAudit, readPersistedAttribution } from "@/lib/analytics";
 import { setConsent } from "@/lib/cookieConsent";
 
 type Row = Record<string, unknown> & { event_type: string; value?: Record<string, unknown> | null };
@@ -130,6 +130,39 @@ describe("initAnalytics — ciclo de consentimento", () => {
     vi.advanceTimersByTime(300);
     const views = fetchRows().filter((r) => r.event_type === "pageview");
     expect(views.map((r) => r.path)).toEqual(["/", "/faq"]);
+  });
+});
+
+describe("clique de anúncio (gclid/fbclid) para atribuir o lead", () => {
+  it("com aceite, guarda gclid/fbclid da URL e devolve com o instante do fbclid", () => {
+    window.history.replaceState({}, "", "/?gclid=Cj0abc_1&fbclid=IwAR3xyz");
+    setConsent("accepted");
+    cleanup = initAnalytics();
+    vi.advanceTimersByTime(300);
+    const stored = JSON.parse(window.localStorage.getItem("bewild_click") ?? "{}");
+    expect(stored).toMatchObject({ gclid: "Cj0abc_1", fbclid: "IwAR3xyz" });
+    const click = readPersistedAttribution().clickIds;
+    expect(click).toEqual({ gclid: "Cj0abc_1", fbclid: "IwAR3xyz", fbclidSeenAt: stored.fbclid_ts });
+
+    // Navegação sem parâmetro não apaga; 90 dias depois, não vale mais.
+    window.history.pushState({}, "", "/faq");
+    window.dispatchEvent(new Event("lovable:navigate"));
+    vi.advanceTimersByTime(300);
+    expect(readPersistedAttribution().clickIds?.gclid).toBe("Cj0abc_1");
+    expect(readPersistedAttribution(Date.now() + 91 * 86_400_000).clickIds).toBeNull();
+  });
+
+  it("sem aceite nada é guardado; recusa depois apaga", () => {
+    window.history.replaceState({}, "", "/?gclid=Cj0abc");
+    cleanup = initAnalytics();
+    vi.advanceTimersByTime(300);
+    expect(window.localStorage.getItem("bewild_click")).toBeNull();
+
+    setConsent("accepted");
+    vi.advanceTimersByTime(300);
+    expect(window.localStorage.getItem("bewild_click")).not.toBeNull();
+    setConsent("declined");
+    expect(window.localStorage.getItem("bewild_click")).toBeNull();
   });
 });
 
