@@ -8,7 +8,7 @@ import bwaInternalCssUrl from "../pages/bwa-internal.css?url";
 import { initBwaNav } from "../pages/home-bwa-script";
 
 const FONTS_HREF =
-  "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&display=swap";
+  "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&family=Sora:wght@500;600;700&display=swap";
 
 /**
  * BwaNav — Header .bwa unificado (nav desktop + menu mobile), idêntico ao
@@ -84,7 +84,7 @@ export default function BwaNav() {
       <header className="bwa-nav bwa-nav--internal" data-nav>
         <div className="bwa-shell bwa-nav-inner">
           <a className="bwa-wordmark" href="/" aria-label="Bewild, início">
-            <BewildLogo decorative />
+            <BewildLogo decorative variant="white" />
           </a>
 
           <nav className="bwa-nav-links" aria-label="Navegação principal">
