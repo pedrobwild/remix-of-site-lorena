@@ -24,6 +24,8 @@ A Bewild é uma empresa de reforma completa de apartamentos e studios em São Pa
 ## Conteúdos publicados
 
 <!-- posts:start -->
+- [Estudo de layout: como planejamos um studio de 25 m² antes do 3D](/conteudos/estudo-de-layout-studio-25-m2)
+- [Quem reforma studio em São Paulo em 2026: perfil, medos e dúvidas](/conteudos/quem-reforma-studio-sao-paulo-perfil)
 - [Como escolher empresa de reforma de apartamento em SP: 7 verificações](/conteudos/como-escolher-empresa-de-reforma-sao-paulo)
 - [Reforma de apartamento antigo em SP: o que verificar em 2026](/conteudos/reforma-de-apartamento-antigo-sao-paulo)
 - [O que faz o hóspede escolher o seu studio: 6 fatores e 4 perfis](/conteudos/o-que-move-reservas-studio-airbnb)
