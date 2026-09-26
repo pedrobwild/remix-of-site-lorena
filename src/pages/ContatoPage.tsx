@@ -27,10 +27,17 @@ import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./contato.css";
 
-const ADDRESS = "Rua Pitú, 72, Sala 115, Brooklin, São Paulo-SP";
-const MAP_QUERY = encodeURIComponent(ADDRESS);
-const MAP_EMBED_URL = `https://www.google.com/maps?q=${MAP_QUERY}&output=embed`;
-const MAP_LINK = `https://www.google.com/maps/search/?api=1&query=${MAP_QUERY}`;
+// Endereço padrão; a sincronização semanal com a ficha do Google (gbp-sync)
+// pode sobrescrever via site_settings.address_street.
+const FALLBACK_ADDRESS = "Rua Pitú, 72, Sala 115, Brooklin, São Paulo-SP";
+
+function mapUrls(address: string) {
+  const query = encodeURIComponent(address);
+  return {
+    embed: `https://www.google.com/maps?q=${query}&output=embed`,
+    link: `https://www.google.com/maps/search/?api=1&query=${query}`,
+  };
+}
 
 type Campo = "nome" | "whats" | "mail" | "mensagem";
 const CAMPOS: readonly Campo[] = ["nome", "whats", "mail", "mensagem"];
