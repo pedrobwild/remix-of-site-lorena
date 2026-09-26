@@ -110,6 +110,9 @@ export default function ContatoPage() {
   useCtaClickTracking("contato");
   const { settings } = useSiteSettings();
   const email = settings?.contact_email || CONTACT.email;
+  // Endereço/telefone sincronizados da ficha do Google (gbp-sync semanal).
+  const address = settings?.address_street?.trim() || FALLBACK_ADDRESS;
+  const phone = settings?.contact_phone?.trim() || null;
 
   const [nome, setNome] = useState("");
   const [whats, setWhats] = useState("");
@@ -255,7 +258,8 @@ export default function ContatoPage() {
                 <div>
                   <p className="bwa-label">Escritório</p>
                   <h2>Brooklin</h2>
-                  <address>Rua Pitú, 72, Sala 115<br />Brooklin · São Paulo-SP</address>
+                  <address>{address}</address>
+                  {phone && <p>Telefone: {phone}</p>}
                   <a className="bwa-contact-link" href={routes.mapa}>
                     Ver mapa e como chegar <span aria-hidden="true">→</span>
                   </a>
