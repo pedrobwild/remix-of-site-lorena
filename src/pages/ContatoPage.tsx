@@ -68,9 +68,10 @@ function validar(v: Record<Campo, string>): FieldErrors<Campo> {
  * Mapa do escritório. O embed do Google Maps grava cookies do Google, então
  * só carrega com o consentimento aceito — ou quando o visitante pede.
  */
-function MapaEscritorio() {
+function MapaEscritorio({ address }: { address: string }) {
   const [consentido, setConsentido] = useState(isConsentAccepted);
   const [pedido, setPedido] = useState(false);
+  const urls = mapUrls(address);
 
   useEffect(() => onConsentChange((v) => setConsentido(v === "accepted")), []);
 
@@ -79,7 +80,7 @@ function MapaEscritorio() {
       <iframe
         className="bwa-contact-map"
         title="Mapa do escritório Bewild no Brooklin"
-        src={MAP_EMBED_URL}
+        src={urls.embed}
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
       />
@@ -97,7 +98,7 @@ function MapaEscritorio() {
         <button type="button" className="bwa-button" onClick={() => setPedido(true)}>
           Carregar mapa
         </button>
-        <a className="bwa-contact-link" href={MAP_LINK} target="_blank" rel="noopener noreferrer">
+        <a className="bwa-contact-link" href={urls.link} target="_blank" rel="noopener noreferrer">
           Abrir no Google Maps <span aria-hidden="true">↗</span>
         </a>
       </div>
