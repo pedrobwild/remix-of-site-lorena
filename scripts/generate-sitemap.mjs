@@ -93,7 +93,7 @@ async function main() {
   };
 
   const staticUrls = [
-    { loc: `${BASE_URL}/`, changefreq: "weekly", priority: "1.0" },
+    { loc: `${BASE_URL}/`, lastmod: "2026-09-26", changefreq: "weekly", priority: "1.0" },
     {
       loc: `${BASE_URL}/portfolio`,
       lastmod: newest(projects, "updated_at", "created_at"),
@@ -114,7 +114,7 @@ async function main() {
       priority: "0.7",
     },
     { loc: `${BASE_URL}/autorizacao-condominio`, changefreq: "monthly", priority: "0.7" },
-    { loc: `${BASE_URL}/contato`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/contato`, lastmod: "2026-09-26", changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/mapa`, lastmod: "2026-09-26", changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/escopo`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/como-funciona`, changefreq: "monthly", priority: "0.7" },
