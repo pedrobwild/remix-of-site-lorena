@@ -268,7 +268,7 @@ export default function ContatoPage() {
             </div>
 
             <div className="bwa-contact-map-wrap">
-              <MapaEscritorio />
+              <MapaEscritorio address={address} />
             </div>
           </div>
         </section>
