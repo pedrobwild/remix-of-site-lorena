@@ -26,7 +26,7 @@ import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./contato.css";
 
-const ADDRESS = "Rua Pitú, 72, Sala 115, Vila Olímpia, São Paulo-SP";
+const ADDRESS = "Rua Pitú, 72, Sala 115, Brooklin, São Paulo-SP";
 const MAP_QUERY = encodeURIComponent(ADDRESS);
 const MAP_EMBED_URL = `https://www.google.com/maps?q=${MAP_QUERY}&output=embed`;
 const MAP_LINK = `https://www.google.com/maps/search/?api=1&query=${MAP_QUERY}`;
@@ -70,7 +70,7 @@ function MapaEscritorio() {
     return (
       <iframe
         className="bwa-contact-map"
-        title="Mapa do escritório Bewild na Vila Olímpia"
+        title="Mapa do escritório Bewild no Brooklin"
         src={MAP_EMBED_URL}
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
@@ -80,7 +80,7 @@ function MapaEscritorio() {
 
   return (
     <div className="bwa-contact-map-placeholder">
-      <p className="bwa-label">Mapa · Vila Olímpia</p>
+      <p className="bwa-label">Mapa · Brooklin</p>
       <p>
         O mapa vem do Google Maps, que grava cookies próprios. Por isso ele só carrega se você
         pedir.
@@ -177,7 +177,7 @@ export default function ContatoPage() {
   useSeo({
     title: "Contato: escritório de arquitetura e reforma em SP | Bewild",
     description:
-      "Fale com o time de arquitetura e engenharia da Bewild sobre seu projeto e a reforma do apartamento. WhatsApp, e-mail e escritório na Vila Olímpia, São Paulo-SP.",
+      "Fale com o time de arquitetura e engenharia da Bewild sobre seu projeto e a reforma do apartamento. WhatsApp, e-mail e escritório no Brooklin, São Paulo-SP.",
     canonicalPath: "/contato",
     ogType: "website",
     jsonLd: settings
@@ -245,8 +245,8 @@ export default function ContatoPage() {
                 <span className="bwa-contact-index">03</span>
                 <div>
                   <p className="bwa-label">Escritório</p>
-                  <h2>Vila Olímpia</h2>
-                  <address>Rua Pitú, 72, Sala 115<br />Vila Olímpia · São Paulo-SP</address>
+                  <h2>Brooklin</h2>
+                  <address>Rua Pitú, 72, Sala 115<br />Brooklin · São Paulo-SP</address>
                   <a className="bwa-contact-link" href={MAP_LINK} target="_blank" rel="noopener noreferrer">
                     Como chegar <span aria-hidden="true">↗</span>
                   </a>
