@@ -70,7 +70,7 @@ function MapaEscritorio() {
     return (
       <iframe
         className="bwa-contact-map"
-        title="Mapa do escritório Bewild na Brooklin"
+        title="Mapa do escritório Bewild no Brooklin"
         src={MAP_EMBED_URL}
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
@@ -177,7 +177,7 @@ export default function ContatoPage() {
   useSeo({
     title: "Contato: escritório de arquitetura e reforma em SP | Bewild",
     description:
-      "Fale com o time de arquitetura e engenharia da Bewild sobre seu projeto e a reforma do apartamento. WhatsApp, e-mail e escritório na Brooklin, São Paulo-SP.",
+      "Fale com o time de arquitetura e engenharia da Bewild sobre seu projeto e a reforma do apartamento. WhatsApp, e-mail e escritório no Brooklin, São Paulo-SP.",
     canonicalPath: "/contato",
     ogType: "website",
     jsonLd: settings
