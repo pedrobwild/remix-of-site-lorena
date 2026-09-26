@@ -100,7 +100,7 @@ Deno.serve(async (req: Request) => {
       await logIntegration(supabase, {
         integration: "gbp-sync",
         event_name: "sync",
-        status: "error",
+        status: "error", lead_id: null,
         http_status: res.status,
         detail: { provider_body: body.slice(0, 500) },
       });
@@ -115,7 +115,7 @@ Deno.serve(async (req: Request) => {
       await logIntegration(supabase, {
         integration: "gbp-sync",
         event_name: "sync",
-        status: "skipped",
+        status: "skipped", lead_id: null,
         detail: { reason: "ficha sem endereço nem telefone" },
       });
       return json(200, { ok: true, updated: false, reason: "ficha sem endereço nem telefone" });
@@ -143,7 +143,7 @@ Deno.serve(async (req: Request) => {
     await logIntegration(supabase, {
       integration: "gbp-sync",
       event_name: "sync",
-      status: "ok",
+      status: "sent", lead_id: null,
       detail: {
         changed,
         phone: nextPhone,
@@ -163,7 +163,7 @@ Deno.serve(async (req: Request) => {
     await logIntegration(supabase, {
       integration: "gbp-sync",
       event_name: "sync",
-      status: "error",
+      status: "error", lead_id: null,
       detail: { message },
     }).catch(() => {});
     return json(500, { error: message });
