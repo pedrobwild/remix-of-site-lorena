@@ -5,7 +5,7 @@
 import { useEffect, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
-import { CONTACT, whatsappHref } from "@/components/landing/content";
+import { whatsappHref } from "@/components/landing/content";
 import { isConsentAccepted, onConsentChange } from "@/lib/cookieConsent";
 import { routes } from "@/lib/useHashRoute";
 import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
