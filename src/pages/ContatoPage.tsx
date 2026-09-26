@@ -27,10 +27,17 @@ import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./contato.css";
 
-const ADDRESS = "Rua Pitú, 72, Sala 115, Brooklin, São Paulo-SP";
-const MAP_QUERY = encodeURIComponent(ADDRESS);
-const MAP_EMBED_URL = `https://www.google.com/maps?q=${MAP_QUERY}&output=embed`;
-const MAP_LINK = `https://www.google.com/maps/search/?api=1&query=${MAP_QUERY}`;
+// Endereço padrão; a sincronização semanal com a ficha do Google (gbp-sync)
+// pode sobrescrever via site_settings.address_street.
+const FALLBACK_ADDRESS = "Rua Pitú, 72, Sala 115, Brooklin, São Paulo-SP";
+
+function mapUrls(address: string) {
+  const query = encodeURIComponent(address);
+  return {
+    embed: `https://www.google.com/maps?q=${query}&output=embed`,
+    link: `https://www.google.com/maps/search/?api=1&query=${query}`,
+  };
+}
 
 type Campo = "nome" | "whats" | "mail" | "mensagem";
 const CAMPOS: readonly Campo[] = ["nome", "whats", "mail", "mensagem"];
@@ -61,9 +68,10 @@ function validar(v: Record<Campo, string>): FieldErrors<Campo> {
  * Mapa do escritório. O embed do Google Maps grava cookies do Google, então
  * só carrega com o consentimento aceito — ou quando o visitante pede.
  */
-function MapaEscritorio() {
+function MapaEscritorio({ address }: { address: string }) {
   const [consentido, setConsentido] = useState(isConsentAccepted);
   const [pedido, setPedido] = useState(false);
+  const urls = mapUrls(address);
 
   useEffect(() => onConsentChange((v) => setConsentido(v === "accepted")), []);
 
@@ -72,7 +80,7 @@ function MapaEscritorio() {
       <iframe
         className="bwa-contact-map"
         title="Mapa do escritório Bewild no Brooklin"
-        src={MAP_EMBED_URL}
+        src={urls.embed}
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
       />
@@ -90,7 +98,7 @@ function MapaEscritorio() {
         <button type="button" className="bwa-button" onClick={() => setPedido(true)}>
           Carregar mapa
         </button>
-        <a className="bwa-contact-link" href={MAP_LINK} target="_blank" rel="noopener noreferrer">
+        <a className="bwa-contact-link" href={urls.link} target="_blank" rel="noopener noreferrer">
           Abrir no Google Maps <span aria-hidden="true">↗</span>
         </a>
       </div>
@@ -102,6 +110,9 @@ export default function ContatoPage() {
   useCtaClickTracking("contato");
   const { settings } = useSiteSettings();
   const email = settings?.contact_email || CONTACT.email;
+  // Endereço/telefone sincronizados da ficha do Google (gbp-sync semanal).
+  const address = settings?.address_street?.trim() || FALLBACK_ADDRESS;
+  const phone = settings?.contact_phone?.trim() || null;
 
   const [nome, setNome] = useState("");
   const [whats, setWhats] = useState("");
@@ -247,7 +258,8 @@ export default function ContatoPage() {
                 <div>
                   <p className="bwa-label">Escritório</p>
                   <h2>Brooklin</h2>
-                  <address>Rua Pitú, 72, Sala 115<br />Brooklin · São Paulo-SP</address>
+                  <address>{address}</address>
+                  {phone && <p>Telefone: {phone}</p>}
                   <a className="bwa-contact-link" href={routes.mapa}>
                     Ver mapa e como chegar <span aria-hidden="true">→</span>
                   </a>
@@ -256,7 +268,7 @@ export default function ContatoPage() {
             </div>
 
             <div className="bwa-contact-map-wrap">
-              <MapaEscritorio />
+              <MapaEscritorio address={address} />
             </div>
           </div>
         </section>
