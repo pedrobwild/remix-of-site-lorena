@@ -115,6 +115,7 @@ async function main() {
     },
     { loc: `${BASE_URL}/autorizacao-condominio`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/contato`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/mapa`, lastmod: "2026-09-26", changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/escopo`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/como-funciona`, changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/onde-atuamos`, changefreq: "monthly", priority: "0.7" },
