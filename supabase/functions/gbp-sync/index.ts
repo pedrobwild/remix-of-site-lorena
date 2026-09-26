@@ -51,6 +51,7 @@ type GbpLocation = {
   phoneNumbers?: { primaryPhone?: string };
   storefrontAddress?: {
     addressLines?: string[];
+    sublocality?: string;
     locality?: string;
     administrativeArea?: string;
     postalCode?: string;
