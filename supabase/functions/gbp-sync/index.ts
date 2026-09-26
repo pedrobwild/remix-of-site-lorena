@@ -58,12 +58,14 @@ type GbpLocation = {
   websiteUri?: string;
 };
 
-/** Monta "Rua Pitú, 72, Brooklin, São Paulo-SP" a partir do endereço da ficha. */
+/** Monta "R. Pitu, 72, Brooklin, São Paulo, SP, 04567-060" a partir da ficha. */
 function formatAddress(addr: NonNullable<GbpLocation["storefrontAddress"]>): string {
   const parts = [
     (addr.addressLines ?? []).join(", "),
+    addr.sublocality,
     addr.locality,
     addr.administrativeArea,
+    addr.postalCode,
   ].filter((p) => p && p.trim());
   return parts.join(", ");
 }
