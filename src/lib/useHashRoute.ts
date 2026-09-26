@@ -8,6 +8,7 @@ export type Route =
   | { name: "faq" }
   | { name: "autorizacao-condominio" }
   | { name: "contato" }
+  | { name: "mapa" }
   | { name: "escopo" }
   | { name: "como-funciona" }
   | { name: "onde-atuamos" }
@@ -98,6 +99,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/faq") return { name: "faq" };
   if (path === "/autorizacao-condominio") return { name: "autorizacao-condominio" };
   if (path === "/contato") return { name: "contato" };
+  if (path === "/mapa") return { name: "mapa" };
   if (path === "/escopo") return { name: "escopo" };
   if (path === "/como-funciona") return { name: "como-funciona" };
   if (path === "/onde-atuamos") return { name: "onde-atuamos" };
@@ -255,6 +257,7 @@ export const routes = {
   faq: "/faq",
   autorizacaoCondominio: "/autorizacao-condominio",
   contato: "/contato",
+  mapa: "/mapa",
   escopo: "/escopo",
   comoFunciona: "/como-funciona",
   ondeAtuamos: "/onde-atuamos",
