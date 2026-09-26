@@ -62,7 +62,6 @@ function MapaEscritorio() {
 
 export default function MapaPage() {
   const { settings } = useSiteSettings();
-  const email = settings?.contact_email || CONTACT.email;
 
   useSeo({
     title: "Mapa e endereço: R. Pitu, 72, Brooklin, São Paulo | Bewild",
