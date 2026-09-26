@@ -26,6 +26,7 @@ import { isIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
 import { withUtm } from "@/lib/utm";
 import { reportContact } from "@/lib/conversions";
 import { trackEvent } from "@/lib/ga4";
+import { isConsentAccepted, onConsentChange } from "@/lib/cookieConsent";
 import { prefersReducedMotion } from "@/lib/reducedMotion";
 
 export type Cleanup = () => void;
