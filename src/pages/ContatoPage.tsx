@@ -22,6 +22,7 @@ import {
   openWhatsapp,
   useLeadSubmit,
 } from "@/lib/useLeadSubmit";
+import { routes } from "@/lib/useHashRoute";
 import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./contato.css";
@@ -247,8 +248,8 @@ export default function ContatoPage() {
                   <p className="bwa-label">Escritório</p>
                   <h2>Brooklin</h2>
                   <address>Rua Pitú, 72, Sala 115<br />Brooklin · São Paulo-SP</address>
-                  <a className="bwa-contact-link" href={MAP_LINK} target="_blank" rel="noopener noreferrer">
-                    Como chegar <span aria-hidden="true">↗</span>
+                  <a className="bwa-contact-link" href={routes.mapa}>
+                    Ver mapa e como chegar <span aria-hidden="true">→</span>
                   </a>
                 </div>
               </article>

@@ -15,6 +15,7 @@ import BewildPostPage from "./pages/BewildPostPage";
 import FaqPage from "./pages/FaqPage";
 import AutorizacaoCondominioPage from "./pages/AutorizacaoCondominioPage";
 import ContatoPage from "./pages/ContatoPage";
+import MapaPage from "./pages/MapaPage";
 import OrcamentoPage from "./pages/OrcamentoPage";
 import EscopoPage from "./pages/EscopoPage";
 import ComoFuncionaPage from "./pages/ComoFuncionaPage";
@@ -92,6 +93,7 @@ export function renderRoute(route: Route) {
   if (route.name === "faq") return <FaqPage />;
   if (route.name === "autorizacao-condominio") return <AutorizacaoCondominioPage />;
   if (route.name === "contato") return <ContatoPage />;
+  if (route.name === "mapa") return <MapaPage />;
   if (route.name === "escopo") return <EscopoPage />;
   if (route.name === "como-funciona") return <ComoFuncionaPage />;
   if (route.name === "onde-atuamos") return <OndeAtuamosPage />;
