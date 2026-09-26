@@ -2991,6 +2991,98 @@
       line-height: 1.7;
     }
 
+    .bwa-map {
+      background: var(--bwa-paper);
+      padding-block: clamp(72px, 9vw, 128px);
+      color: var(--bwa-ink);
+    }
+
+    .bwa-map .bwa-label {
+      color: var(--bwa-accent);
+    }
+
+    .bwa-map-head {
+      max-width: 640px;
+      margin-bottom: clamp(32px, 4vw, 52px);
+    }
+
+    .bwa-map-head h2 {
+      margin: 18px 0 14px;
+      font-size: clamp(30px, 4vw, 52px);
+      line-height: var(--bwa-display-lh, 1.05);
+      letter-spacing: -.02em;
+    }
+
+    .bwa-map-head p:not(.bwa-label) {
+      margin: 0;
+      color: var(--bwa-ink-soft);
+      font-size: clamp(15px, 1.15vw, 17px);
+      line-height: 1.65;
+    }
+
+    .bwa-map-frame {
+      position: relative;
+      aspect-ratio: 16 / 8;
+      min-height: 320px;
+      max-height: 560px;
+      border: 1px solid var(--bwa-line);
+      border-radius: var(--bwa-radius, 18px);
+      overflow: hidden;
+      background: var(--bwa-paper-deep);
+    }
+
+    .bwa-map-iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .bwa-map-placeholder {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-content: center;
+      justify-items: center;
+      gap: 18px;
+      padding: 28px;
+      text-align: center;
+    }
+
+    .bwa-map-placeholder p {
+      max-width: 44ch;
+      margin: 0;
+      color: var(--bwa-ink-soft);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .bwa-map-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 14px 22px;
+    }
+
+    .bwa-map-link {
+      color: var(--bwa-accent);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .bwa-map-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 720px) {
+      .bwa-map-frame {
+        aspect-ratio: 4 / 5;
+        max-height: none;
+      }
+    }
+
     .bwa-final {
       min-height: 92svh;
       position: relative;

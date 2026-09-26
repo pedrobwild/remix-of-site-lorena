@@ -26,6 +26,7 @@ import { isIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
 import { withUtm } from "@/lib/utm";
 import { reportContact } from "@/lib/conversions";
 import { trackEvent } from "@/lib/ga4";
+import { isConsentAccepted, onConsentChange } from "@/lib/cookieConsent";
 import { prefersReducedMotion } from "@/lib/reducedMotion";
 
 export type Cleanup = () => void;
@@ -699,6 +700,46 @@ function propagateCampaignToBudgetLinks(root: HTMLElement): void {
   });
 }
 
+/**
+ * Mapa interativo do escritório (seção #mapa da home). O embed do Google
+ * Maps grava cookies próprios, então o iframe só entra no DOM com o
+ * consentimento aceito ou quando o visitante clica em "Carregar mapa".
+ */
+function installHomeMap(root: HTMLElement, signal: AbortSignal): Cleanup {
+  const frame = root.querySelector<HTMLElement>("[data-bwa-map]");
+  if (!frame) return NOOP;
+  const embed = frame.dataset.embed;
+  if (!embed) return NOOP;
+
+  const render = () => {
+    if (frame.dataset.bwaMapLoaded === "1") return;
+    frame.dataset.bwaMapLoaded = "1";
+    const iframe = document.createElement("iframe");
+    iframe.className = "bwa-map-iframe";
+    iframe.title = "Mapa interativo do escritório da Bewild no Brooklin";
+    iframe.src = embed;
+    iframe.loading = "lazy";
+    iframe.referrerPolicy = "no-referrer-when-downgrade";
+    frame.replaceChildren(iframe);
+  };
+
+  frame
+    .querySelector("[data-bwa-map-load]")
+    ?.addEventListener("click", render, { signal });
+
+  if (isConsentAccepted()) {
+    render();
+    return NOOP;
+  }
+  const unsubscribe = onConsentChange((value) => {
+    if (value === "accepted") render();
+  });
+  return () => {
+    unsubscribe();
+    delete frame.dataset.bwaMapLoaded;
+  };
+}
+
 export function initHomeBwa(root: HTMLElement | null): Cleanup {
   if (!root || root.dataset.bwaHomeInited === "1") return NOOP;
   root.dataset.bwaHomeInited = "1";
@@ -712,6 +753,7 @@ export function initHomeBwa(root: HTMLElement | null): Cleanup {
     installFaqAccordion(root, signal),
     installVideoModal(root, signal),
     installReveal(root, reducedMotion),
+    installHomeMap(root, signal),
   ];
   installWhatsForm(root, signal);
   installReclameAquiSeal(root);
