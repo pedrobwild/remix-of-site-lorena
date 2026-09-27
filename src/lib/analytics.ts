@@ -20,7 +20,7 @@
  *   Nada (nem ids no storage) é gravado sem aceite; recusar apaga o que existir.
  * - Resiliência: nunca lança exceção
  */
-import { isConsentAccepted, isFramed, onConsentChange } from "@/lib/cookieConsent";
+import { CONSENT_VERSION, isConsentAccepted, isFramed, onConsentChange } from "@/lib/cookieConsent";
 import { closestElementFrom } from "@/lib/useHashRoute";
 
 type EventType =
@@ -113,6 +113,9 @@ function ensureVisitorId(): string {
     if (!fresh || !vid) {
       vid = uuid();
       localStorage.setItem(VID_KEY, vid);
+      // A primeira origem vive o mesmo tanto que o visitante: 12 meses sem
+      // visita e as duas recomeçam (prazo declarado na política).
+      localStorage.removeItem(FIRST_UTM_KEY);
     }
     // Roll TTL on every access
     localStorage.setItem(VID_TS_KEY, String(Date.now()));
@@ -235,9 +238,13 @@ function readStoredClick(): StoredClick {
   }
 }
 
+const clickIsFresh = (ts: number | undefined, now: number) =>
+  typeof ts === "number" && now - ts >= 0 && now - ts < CLICK_MAX_AGE;
+
 /**
  * Guarda gclid/fbclid da URL (clique de anúncio) com o instante em que foram
- * vistos. Só roda dentro de `buildRow`, ou seja, com aceite de cookies.
+ * vistos, e apaga do navegador o clique com mais de 90 dias (prazo declarado
+ * na política). Só roda dentro de `buildRow`, ou seja, com aceite de cookies.
  */
 function persistClickIds(): void {
   try {
@@ -246,13 +253,21 @@ function persistClickIds(): void {
     const stored = readStoredClick();
     let changed = false;
     for (const k of ["gclid", "fbclid"] as const) {
+      const tsKey = `${k}_ts` as const;
+      if ((stored[k] || stored[tsKey] !== undefined) && !clickIsFresh(stored[tsKey], now)) {
+        delete stored[k];
+        delete stored[tsKey];
+        changed = true;
+      }
       const v = params.get(k);
       if (!v || !CLICK_ID_RE.test(v) || stored[k] === v) continue;
       stored[k] = v;
-      stored[`${k}_ts`] = now;
+      stored[tsKey] = now;
       changed = true;
     }
-    if (changed) localStorage.setItem(CLICK_KEY, JSON.stringify(stored));
+    if (!changed) return;
+    if (stored.gclid || stored.fbclid) localStorage.setItem(CLICK_KEY, JSON.stringify(stored));
+    else localStorage.removeItem(CLICK_KEY);
   } catch {
     /* storage indisponível */
   }
@@ -513,7 +528,8 @@ export function track(eventType: EventType, payload?: TrackPayload): void {
  * evento é o registro da decisão do titular (art. 8º §2º da LGPD: ônus
  * da prova do controlador).
  *
- * Payload mínimo de verdade: tipo, rota e `{action, source, ts}`. Nada de
+ * Payload mínimo de verdade: tipo, rota e `{action, source, version, ts}` —
+ * `version` é a versão do texto do aceite (CONSENT_VERSION). Nada de
  * visitor_id/session_id/UTM/referrer/tela — e nada gravado no storage (antes
  * um "Recusar" criava um visitor_id de 365 dias). Chamado só pela ação
  * explícita no banner, nunca pelo evento `storage` de outras abas (que
@@ -529,7 +545,7 @@ export function logConsentAudit(
     const row = {
       event_type: (action === "accepted" ? "consent_accept" : "consent_decline") satisfies EventType,
       path: window.location.pathname || "/",
-      value: { action, source, ts: new Date().toISOString() },
+      value: { action, source, version: CONSENT_VERSION, ts: new Date().toISOString() },
     };
     sendEvent(row, true);
   } catch {
@@ -744,11 +760,10 @@ export function readPersistedAttribution(now: number = Date.now()): {
       return null;
     }
   };
-  const fresh = (ts: number | undefined) => typeof ts === "number" && now - ts >= 0 && now - ts < CLICK_MAX_AGE;
   try {
     const click = readStoredClick();
-    const gclid = click.gclid && fresh(click.gclid_ts) ? click.gclid : null;
-    const fbclid = click.fbclid && fresh(click.fbclid_ts) ? click.fbclid : null;
+    const gclid = click.gclid && clickIsFresh(click.gclid_ts, now) ? click.gclid : null;
+    const fbclid = click.fbclid && clickIsFresh(click.fbclid_ts, now) ? click.fbclid : null;
     return {
       sessionUtm: parse(sessionStorage.getItem(UTM_KEY)),
       firstUtm: parse(localStorage.getItem(FIRST_UTM_KEY)),

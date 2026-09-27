@@ -131,9 +131,11 @@ type SubmitOptions = {
  * `lead_delivery_failed` (não infla a conversão; reenvio que der certo conta).
  *
  * Mídia paga (conversions.ts): no mesmo momento do `generate_lead`, o Lead
- * do Meta Pixel e a conversão do Google Ads — só para formulários de
- * cliente. Um id de evento por formulário: reenvios usam o mesmo, e o
- * servidor manda esse id à API de Conversões para o Meta deduplicar.
+ * do Meta Pixel e a conversão do Google Ads nos formulários de cliente (o
+ * SubmitApplication nos de parceiro, incorporadora e indicação), com a
+ * correspondência avançada de quem enviou. Um id de evento por formulário:
+ * reenvios usam o mesmo, e o servidor manda esse id à API de Conversões para
+ * o Meta deduplicar.
  */
 export function useLeadSubmit({ method, timeoutMs }: { method: string; timeoutMs?: number }) {
   const [sending, setSending] = useState(false);
@@ -189,6 +191,11 @@ export function useLeadSubmit({ method, timeoutMs }: { method: string; timeoutMs
           method,
           email: payload.email,
           phoneDigits: payload.whatsapp,
+          name: payload.name,
+          objetivo: payload.objetivo,
+          areaM2: payload.area_m2,
+          chaves: payload.chaves,
+          livesInSp: payload.lives_in_sp ?? null,
         });
       } else if (!counts) {
         trackEvent("lead_delivery_failed", eventParams);
