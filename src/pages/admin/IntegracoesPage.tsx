@@ -142,6 +142,7 @@ export default function IntegracoesPage() {
       google_ads_conversion_id: null,
       google_ads_lead_label: null,
       google_ads_contact_label: null,
+      google_ads_application_label: null,
       google_analytics_id: null,
       google_tag_manager_id: null,
     };
