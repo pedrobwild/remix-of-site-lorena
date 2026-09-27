@@ -326,6 +326,7 @@ function injectGoogleAds(id: string, settings: SiteSettings) {
     id,
     leadLabel: settings.google_ads_lead_label,
     contactLabel: settings.google_ads_contact_label,
+    applicationLabel: settings.google_ads_application_label,
   });
   if (!document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js"]')) {
     ensureScript("gads-loader", `https://www.googletagmanager.com/gtag/js?id=${id}`);

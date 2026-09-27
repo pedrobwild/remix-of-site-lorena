@@ -169,7 +169,7 @@ describe("metaPixel.readMetaBrowserIds", () => {
 describe("googleAds", () => {
   it("valida ID e rótulos", () => {
     configureGoogleAds({ id: " aw-123456789 ", leadLabel: "AbC-D_efG-h12", contactLabel: "x y" });
-    expect(getGoogleAdsConfig()).toEqual({ id: "AW-123456789", leadLabel: "AbC-D_efG-h12", contactLabel: null });
+    expect(getGoogleAdsConfig()).toEqual({ id: "AW-123456789", leadLabel: "AbC-D_efG-h12", contactLabel: null, applicationLabel: null });
     configureGoogleAds({ id: "AW-12'+alert(1)+'", leadLabel: "AbCdEf" });
     expect(getGoogleAdsConfig()).toBeNull();
     expect(validAdsLabel("AbC-D_efG-h12")).toBe("AbC-D_efG-h12");
@@ -218,7 +218,8 @@ describe("conversions", () => {
     configureGoogleAds({ id: "AW-123456789", leadLabel: "LeadLabel1" });
 
     // Parceiro, incorporadora e indicação: SubmitApplication, nunca Lead;
-    // no Google entram como evento de público (não como conversão).
+    // no Google entram como evento de público e, com o rótulo de cadastro
+    // configurado, também como conversão própria (ver teste abaixo).
     reportLead({ eventId: "ev-1", formPath: "/parceiros", method: "parceiros_form" });
     reportLead({ eventId: "ev-1b", formPath: "/parceiros/incorporadoras", method: "incorporadoras_form" });
     reportLead({ eventId: "ev-2", formPath: "/indique-um-amigo", method: "indique_um_amigo_form" });
@@ -239,6 +240,47 @@ describe("conversions", () => {
     ]);
     fbq.mockClear();
     gtag.mockClear();
+
+    // Com o rótulo de cadastro configurado, cada segmento vira conversão
+    // própria no Google Ads (send_to com o rótulo + transaction_id).
+    configureGoogleAds({ id: "AW-123456789", leadLabel: "LeadLabel1", applicationLabel: "Cadastro01" });
+    reportLead({ eventId: "ev-app-1", formPath: "/parceiros/incorporadoras", method: "incorporadoras_form" });
+    reportLead({ eventId: "ev-app-2", formPath: "/indique-um-amigo", method: "indique_um_amigo_form" });
+    expect(gtag.mock.calls).toEqual([
+      [
+        "event",
+        "conversion",
+        {
+          send_to: "AW-123456789/Cadastro01",
+          transaction_id: "ev-app-1",
+          content_name: "incorporadoras_form",
+          content_category: "incorporadora",
+        },
+      ],
+      [
+        "event",
+        "submit_application",
+        { send_to: "AW-123456789", content_name: "incorporadoras_form", content_category: "incorporadora" },
+      ],
+      [
+        "event",
+        "conversion",
+        {
+          send_to: "AW-123456789/Cadastro01",
+          transaction_id: "ev-app-2",
+          content_name: "indique_um_amigo_form",
+          content_category: "indicacao",
+        },
+      ],
+      [
+        "event",
+        "submit_application",
+        { send_to: "AW-123456789", content_name: "indique_um_amigo_form", content_category: "indicacao" },
+      ],
+    ]);
+    fbq.mockClear();
+    gtag.mockClear();
+    configureGoogleAds({ id: "AW-123456789", leadLabel: "LeadLabel1" });
 
     reportLead({ eventId: "ev-3", formPath: "/orcamento", method: "orcamento_form", email: "a@b.co", phoneDigits: "11912345678" });
     expect(fbq).toHaveBeenCalledWith(

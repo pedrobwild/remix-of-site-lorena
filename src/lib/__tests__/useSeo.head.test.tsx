@@ -227,7 +227,7 @@ describe("trackers de terceiros (CORE-25 / CORE-18)", () => {
     await waitFor(() => expect(script("gads-config")).not.toBeNull());
     expect(script("gads-config")!.text).toContain("gtag('config', 'AW-123456789')");
     expect(script("gads-loader")!.src).toBe("https://www.googletagmanager.com/gtag/js?id=AW-123456789");
-    expect(getGoogleAdsConfig()).toEqual({ id: "AW-123456789", leadLabel: "LeadLabel1", contactLabel: null });
+    expect(getGoogleAdsConfig()).toEqual({ id: "AW-123456789", leadLabel: "LeadLabel1", contactLabel: null, applicationLabel: null });
     expect(hasThirdPartyTrackers()).toBe(true);
     document.head.querySelectorAll("[data-seo-injected]").forEach((n) => n.remove());
     cleanup();

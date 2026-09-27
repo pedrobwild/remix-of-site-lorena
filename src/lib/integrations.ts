@@ -29,6 +29,7 @@ export type IntegrationSettings = {
   google_ads_conversion_id: string | null;
   google_ads_lead_label: string | null;
   google_ads_contact_label: string | null;
+  google_ads_application_label: string | null;
   google_analytics_id: string | null;
   google_tag_manager_id: string | null;
 };
@@ -157,7 +158,7 @@ export function googleAdsStatus(s: IntegrationSettings): IntegrationStatus {
     ...base,
     tone: "ok",
     value: "Ativo",
-    detail: `Tag ${s.google_ads_conversion_id} · lead ✓ · contato ${filled(s.google_ads_contact_label) ? "✓" : "— (sem rótulo)"}.`,
+    detail: `Tag ${s.google_ads_conversion_id} · lead ✓ · contato ${filled(s.google_ads_contact_label) ? "✓" : "— (sem rótulo)"} · cadastro ${filled(s.google_ads_application_label) ? "✓" : "— (sem rótulo)"}.`,
   };
 }
 
@@ -252,7 +253,7 @@ export async function fetchIntegrationSettings(): Promise<{ settings: Integratio
   const { data, error } = await supabase
     .from("site_settings")
     .select(
-      "meta_pixel_id, meta_capi_test_event_code, google_ads_conversion_id, google_ads_lead_label, google_ads_contact_label, google_analytics_id, google_tag_manager_id",
+      "meta_pixel_id, meta_capi_test_event_code, google_ads_conversion_id, google_ads_lead_label, google_ads_contact_label, google_ads_application_label, google_analytics_id, google_tag_manager_id",
     )
     .eq("id", 1)
     .maybeSingle();

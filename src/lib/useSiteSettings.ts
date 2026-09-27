@@ -45,6 +45,8 @@ export type SiteSettings = {
   google_ads_lead_label: string | null;
   /** Rótulo da conversão de contato (WhatsApp/telefone) no Google Ads. */
   google_ads_contact_label: string | null;
+  /** Rótulo da conversão de cadastro (parceiro, incorporadora, indicação) no Google Ads. */
+  google_ads_application_label: string | null;
   meta_pixel_id: string | null;
   /** Código de teste da API de Conversões do Meta (vazio = eventos reais). */
   meta_capi_test_event_code: string | null;
@@ -123,6 +125,7 @@ const DEFAULTS: SiteSettings = {
   google_ads_conversion_id: null,
   google_ads_lead_label: null,
   google_ads_contact_label: null,
+  google_ads_application_label: null,
   meta_pixel_id: null,
   meta_capi_test_event_code: null,
   hotjar_id: null,

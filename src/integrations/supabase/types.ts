@@ -1503,6 +1503,7 @@ export type Database = {
           contact_phone: string | null
           default_og_image: string | null
           facebook_domain_verification: string | null
+          google_ads_application_label: string | null
           google_ads_contact_label: string | null
           google_ads_conversion_id: string | null
           google_ads_lead_label: string | null
@@ -1563,6 +1564,7 @@ export type Database = {
           contact_phone?: string | null
           default_og_image?: string | null
           facebook_domain_verification?: string | null
+          google_ads_application_label?: string | null
           google_ads_contact_label?: string | null
           google_ads_conversion_id?: string | null
           google_ads_lead_label?: string | null
@@ -1623,6 +1625,7 @@ export type Database = {
           contact_phone?: string | null
           default_og_image?: string | null
           facebook_domain_verification?: string | null
+          google_ads_application_label?: string | null
           google_ads_contact_label?: string | null
           google_ads_conversion_id?: string | null
           google_ads_lead_label?: string | null
