@@ -29,6 +29,17 @@
  */
 import { trackGoogleAdsAudienceEvent, trackGoogleAdsConversion } from "@/lib/googleAds";
 import { metaUserDataFrom, setMetaUserData, trackMetaCustomEvent, trackMetaEvent } from "@/lib/metaPixel";
+import { track } from "@/lib/analytics";
+
+/**
+ * Espelho na medição própria (analytics_events, tipo `ad_event`) de cada
+ * evento de mídia disparado — alimenta o painel /admin/rastreamento.
+ * Sem dado pessoal: só o nome do evento e rótulos de segmentação. O
+ * `track` já impõe os mesmos portões (aceite de cookies, fora do /admin).
+ */
+function logAdEvent(name: string, extra?: Record<string, string | boolean>): void {
+  track("ad_event", { value: { name, ...extra } });
+}
 
 export const AD_LEAD_FORMS: readonly string[] = ["/diagnostico", "/orcamento", "/contato", "/o", "/p"];
 
