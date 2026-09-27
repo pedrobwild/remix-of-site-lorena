@@ -69,6 +69,7 @@ const SITE_LINKS: { label: string; href: string }[] = [
   { label: "URLs 404", href: routes.adminSeo404 },
   { label: "Indexação", href: routes.adminIndexacao },
   { label: "Rastreamento", href: routes.adminRastreamento },
+  { label: "Conversões", href: routes.adminConversoes },
   { label: "Integrações", href: routes.adminIntegracoes },
   { label: "Configurações", href: routes.adminSettings },
 ];
