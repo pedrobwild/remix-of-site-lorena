@@ -439,6 +439,58 @@ export default function FaqPage() {
           </div>
         </section>
 
+        <section className="bwa-faqpage-intro bwa-faqpage-portfolio" aria-labelledby="faq-portfolio-title">
+          <div className="bwa-shell bwa-faq-head bwa-faqpage-head">
+            <p className="bwa-label">Portfólio</p>
+            <div>
+              <h2 className="bwa-title" id="faq-portfolio-title">
+                Obras reais, <em>para ver antes de decidir.</em>
+              </h2>
+              <p className="bwa-faqpage-lead">
+                Dúvidas sobre os projetos entregues: onde ver as fotos, como
+                encontrar obras no seu bairro e quanto custa uma reforma como
+                as do portfólio.
+              </p>
+            </div>
+          </div>
+
+          <div className="bwa-shell">
+            <div className="bwa-faq-list">
+              {PORTFOLIO_ITEMS.map((item, i) => {
+                const open = portfolioAberto === i;
+                return (
+                  <article key={item.q} className={`bwa-faq-item${open ? " bwa-open" : ""}`}>
+                    <h3 className="bwa-faqpage-q">
+                      <button
+                        className="bwa-faq-question"
+                        type="button"
+                        aria-expanded={open}
+                        aria-controls={`faq-portfolio-resposta-${i}`}
+                        onClick={() => {
+                          if (!open) track("faq_question_click", { value: { pergunta: item.q } });
+                          setPortfolioAberto(open ? -1 : i);
+                        }}
+                      >
+                        <span className="bwa-faq-num">{String(i + 1).padStart(2, "0")}</span>
+                        <strong>{item.q}</strong>
+                        <span className="bwa-faq-icon" aria-hidden="true" />
+                      </button>
+                    </h3>
+                    <div id={`faq-portfolio-resposta-${i}`} className="bwa-faq-answer">
+                      <p>{item.a}</p>
+                      {item.href && (
+                        <a className="bwa-faqpage-guia-link" href={item.href}>
+                          {item.linkLabel}
+                        </a>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
         <section className="bwa-faqpage-intro bwa-faqpage-guia" aria-labelledby="faq-guia-title">
           <div className="bwa-shell bwa-faq-head bwa-faqpage-head">
             <p className="bwa-label">Como fazer uma reforma</p>
