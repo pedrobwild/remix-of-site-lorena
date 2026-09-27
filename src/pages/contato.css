@@ -254,6 +254,9 @@
 }
 
 .bwa-contact-form-actions p { margin: 0; font-size: 13px; color: var(--bwa-ink); }
+/* Aviso de privacidade (FormPrivacyNote): ao lado do botão no desktop, embaixo no celular. */
+.bwa-contact-form-actions p[data-privacy-note] { flex: 1 1 280px; max-width: 64ch; line-height: 1.5; }
+.bwa-contact-form-actions p[data-privacy-note] a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 /* Só desabilitado durante o envio (validação aparece no clique). */
 .bwa-contact-form-actions .bwa-button[disabled] { opacity: .5; cursor: progress; }
 

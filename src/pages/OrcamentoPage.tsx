@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
+import FormPrivacyNote from "@/components/FormPrivacyNote";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import type { LeadPayload } from "@/lib/leadDelivery";
 import {
@@ -375,7 +376,7 @@ export default function OrcamentoPage() {
                     {enviando ? "Enviando…" : outcome === "failed" ? "Tentar de novo" : "Pedir orçamento"}
                     <span aria-hidden="true">→</span>
                   </button>
-                  <p>Seus dados são usados apenas para responder ao seu pedido de orçamento.</p>
+                  <FormPrivacyNote platforms="meta-google">Usamos seus dados para responder ao seu pedido de orçamento.</FormPrivacyNote>
                 </div>
               </form>
             )}

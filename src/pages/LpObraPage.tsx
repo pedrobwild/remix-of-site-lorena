@@ -39,6 +39,7 @@ import {
 } from "@/lib/useLeadSubmit";
 import { useVideoAutoplayInView } from "@/lib/useVideoAutoplayInView";
 import BewildLogo from "@/components/BewildLogo";
+import FormPrivacyNote from "@/components/FormPrivacyNote";
 import "@/styles/bw-lp.css";
 
 /**
@@ -265,6 +266,9 @@ export default function LpObraPage() {
                 <span>{submitting ? "Abrindo…" : "Ver portal"}</span><span className="ar" aria-hidden="true">→</span>
               </button>
               <button type="button" className="skip" onClick={openWhats}>Prefiro falar no WhatsApp</button>
+              <FormPrivacyNote platforms="meta-google" className="form-privacy">
+                Usamos seus dados para liberar o portal e para o atendimento da Bewild.
+              </FormPrivacyNote>
             </form>
           ) : stage === "opening" ? (
             <div id="gate-card" className="gate-card" tabIndex={-1} ref={cardRef}>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
+import FormPrivacyNote from "@/components/FormPrivacyNote";
 import BewildLealMoreiraLogos from "@/components/BewildLealMoreiraLogos";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import {
@@ -756,7 +757,7 @@ export default function IncorporadorasPage() {
                         : INCORP_FORM.submit}
                     <span aria-hidden="true">→</span>
                   </button>
-                  <p>{INCORP_FORM.privacy}</p>
+                  <FormPrivacyNote platforms="meta">{INCORP_FORM.privacy}</FormPrivacyNote>
                 </div>
               </form>
             )}
