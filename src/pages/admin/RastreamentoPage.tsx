@@ -226,13 +226,13 @@ export default function RastreamentoPage() {
         p_until: range.until,
         p_dim: "utm_source",
         p_limit: 100,
-      }),
+      } as never),
       supabase.rpc("analytics_breakdown" as never, {
         p_since: range.since,
         p_until: range.until,
         p_dim: "referrer_host",
         p_limit: 100,
-      }),
+      } as never),
     ]);
     if (id !== requestId.current) return;
 
