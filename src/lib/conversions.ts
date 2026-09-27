@@ -29,6 +29,17 @@
  */
 import { trackGoogleAdsAudienceEvent, trackGoogleAdsConversion } from "@/lib/googleAds";
 import { metaUserDataFrom, setMetaUserData, trackMetaCustomEvent, trackMetaEvent } from "@/lib/metaPixel";
+import { track } from "@/lib/analytics";
+
+/**
+ * Espelho na medição própria (analytics_events, tipo `ad_event`) de cada
+ * evento de mídia disparado — alimenta o painel /admin/rastreamento.
+ * Sem dado pessoal: só o nome do evento e rótulos de segmentação. O
+ * `track` já impõe os mesmos portões (aceite de cookies, fora do /admin).
+ */
+function logAdEvent(name: string, extra?: Record<string, string | boolean>): void {
+  track("ad_event", { value: { name, ...extra } });
+}
 
 export const AD_LEAD_FORMS: readonly string[] = ["/diagnostico", "/orcamento", "/contato", "/o", "/p"];
 
@@ -130,6 +141,7 @@ export function reportLead(
     // No Google não é conversão (não é lead de cliente), mas entra nos
     // públicos com a mesma categoria — remarketing vê o mesmo público.
     trackGoogleAdsAudienceEvent("submit_application", { content_name: input.method, content_category: application });
+    logAdEvent("SubmitApplication", { content_category: application });
     return;
   }
 
@@ -146,6 +158,7 @@ export function reportLead(
     name: input.name,
     params: signals,
   });
+  logAdEvent("Lead", { content_category: formPath, ...signals });
 }
 
 export function reportContact(channel: "whatsapp" | "phone" | "email", source: string): void {
@@ -157,6 +170,7 @@ export function reportContact(channel: "whatsapp" | "phone" | "email", source: s
   } else {
     trackGoogleAdsAudienceEvent("contact", { content_name: source, content_category: channel });
   }
+  logAdEvent("Contact", { content_category: channel });
 }
 
 // ---------------------------------------------------------------------------
@@ -205,6 +219,7 @@ export function reportPageContent(content: PageContent | null): void {
   });
   // Espelho no Google: view_item com o mesmo id e categoria (remarketing).
   trackGoogleAdsAudienceEvent("view_item", { items: [{ id: content.id }], content_category: content.category });
+  logAdEvent("ViewContent", { content_category: content.category });
 }
 
 /** Slug do projeto quando o caminho é /portfolio/<slug>; senão `null`. */
@@ -237,6 +252,7 @@ export function reportFormStart(form: string): void {
   if (!form) return;
   trackMetaCustomEvent("IniciouFormulario", { content_category: form });
   trackGoogleAdsAudienceEvent("form_start", { content_category: form });
+  logAdEvent("IniciouFormulario", { content_category: form });
 }
 
 /** Categoria da página para o VisitanteEngajado ("outra" quando não há). */
@@ -252,4 +268,5 @@ export function pageCategoryFor(pathname: string): string {
 export function reportEngaged(reason: "tempo" | "rolagem", pathname: string): void {
   trackMetaCustomEvent("VisitanteEngajado", { motivo: reason, content_category: pageCategoryFor(pathname) });
   trackGoogleAdsAudienceEvent("visitante_engajado", { motivo: reason, content_category: pageCategoryFor(pathname) });
+  logAdEvent("VisitanteEngajado", { content_category: pageCategoryFor(pathname) });
 }

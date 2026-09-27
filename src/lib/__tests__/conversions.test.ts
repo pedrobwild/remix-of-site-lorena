@@ -493,3 +493,64 @@ describe("sinais para públicos", () => {
     ]);
   });
 });
+
+describe("espelho ad_event (medição própria)", () => {
+  function trackCalls(fetchMock: ReturnType<typeof vi.fn>) {
+    return fetchMock.mock.calls
+      .filter(([url]) => String(url).includes("/functions/v1/track"))
+      .map(([, init]) => JSON.parse(String((init as RequestInit).body)));
+  }
+
+  it("Lead com aceite grava ad_event sem dado pessoal; sem aceite não grava", () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200 });
+    vi.stubGlobal("fetch", fetchMock);
+
+    // Sem aceite: nada sai.
+    reportLead({ eventId: "ev-a", formPath: "/orcamento", method: "orcamento_form", email: "a@b.co" });
+    expect(trackCalls(fetchMock)).toEqual([]);
+
+    accept();
+    reportLead({
+      eventId: "ev-b",
+      formPath: "/orcamento",
+      method: "orcamento_form",
+      email: "a@b.co",
+      objetivo: "Locação tradicional",
+      areaM2: 32,
+    });
+    const rows = trackCalls(fetchMock);
+    expect(rows).toHaveLength(1);
+    expect(rows[0].event_type).toBe("ad_event");
+    expect(rows[0].value).toMatchObject({
+      name: "Lead",
+      content_category: "/orcamento",
+      objetivo: "locacao_tradicional",
+      faixa_m2: "31_45",
+    });
+    // Nunca vaza dado pessoal no espelho.
+    expect(JSON.stringify(rows[0])).not.toContain("a@b.co");
+    vi.unstubAllGlobals();
+  });
+
+  it("SubmitApplication, Contact, ViewContent, IniciouFormulario e VisitanteEngajado também espelham", () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200 });
+    vi.stubGlobal("fetch", fetchMock);
+    accept();
+
+    reportLead({ eventId: "ev-c", formPath: "/parceiros", method: "parceiros_form" });
+    reportContact("whatsapp", "rodape");
+    reportViewContent("studio-a");
+    reportFormStart("orcamento");
+    reportEngaged("tempo", "/");
+
+    const names = trackCalls(fetchMock).map((r) => r.value?.name);
+    expect(names).toEqual([
+      "SubmitApplication",
+      "Contact",
+      "ViewContent",
+      "IniciouFormulario",
+      "VisitanteEngajado",
+    ]);
+    vi.unstubAllGlobals();
+  });
+});

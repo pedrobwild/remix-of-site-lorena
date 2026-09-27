@@ -43,6 +43,7 @@ type EventType =
   | "form_submit"
   | "engagement_time"
   | "faq_question_click"
+  | "ad_event"
   | "consent_accept"
   | "consent_decline";
 
