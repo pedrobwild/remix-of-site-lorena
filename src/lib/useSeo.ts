@@ -741,6 +741,36 @@ export async function refreshSeoEverywhere(opts?: { pingSearchEngines?: boolean 
 //  JSON-LD helpers
 // =============================================================
 
+/** LocalBusiness da Bewild — espelho do nó `#local` do index.html (manter em sincronia). */
+export function localBusinessRef(base: string) {
+  return {
+    "@type": "ProfessionalService",
+    "@id": `${base}/#local`,
+    name: "Bewild",
+    url: `${base}/`,
+    telephone: "+55 11 91190-6183",
+    priceRange: "$$",
+    image: `${base}/brand/bewild-logo.png`,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Rua Pitú, 72, Sala 115",
+      addressLocality: "São Paulo",
+      addressRegion: "SP",
+      addressCountry: "BR",
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "09:00",
+        closes: "19:00",
+      },
+      { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "09:00", closes: "17:00" },
+    ],
+    parentOrganization: { "@id": ORG_ID },
+  };
+}
+
 export function projectJsonLd(
   s: SiteSettings,
   project: {
@@ -762,11 +792,10 @@ export function projectJsonLd(
     description: project.summary,
     image: project.cover,
     url: `${base}/portfolio/${project.slug}`,
-    creator: {
-      "@type": "Organization",
-      name: "Bewild",
-      url: base,
-    },
+    // Mesmo nó LocalBusiness (#local) do index.html: endereço e horário
+    // repetidos aqui para o nó da página de projeto ficar completo.
+    creator: localBusinessRef(base),
+    provider: { "@id": `${base}/#local` },
     about: project.tag,
     keywords: [
       "reforma de apartamento",
