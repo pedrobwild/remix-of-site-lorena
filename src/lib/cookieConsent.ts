@@ -21,9 +21,21 @@
  *    SDKs (Consent Mode do Google, `fbq('consent','revoke')`), expira os
  *    cookies first-party dos trackers e recarrega a página — que volta limpa,
  *    porque os trackers só são injetados depois do aceite.
+ *  - Versão das finalidades: quando muda o que o aceite autoriza, sobe
+ *    `CONSENT_VERSION` e a chave muda. Quem tinha ACEITADO vê o banner de
+ *    novo e decide com o texto novo (LGPD, art. 9º, §2º); quem tinha
+ *    RECUSADO continua recusado — ninguém é chamado a aceitar o que já negou.
  */
 
-const STORAGE_KEY = "lal_cookie_consent";
+/**
+ * v1: medição de audiência e de anúncios.
+ * v2 (set/2026): também públicos de anúncio (remarketing, semelhantes) e
+ * contato criptografado às plataformas no envio de formulário.
+ */
+export const CONSENT_VERSION = 2;
+const STORAGE_KEY = `bewild_cookie_consent_v${CONSENT_VERSION}`;
+/** Chaves das versões anteriores: só a recusa delas continua valendo. */
+const LEGACY_KEYS: readonly string[] = ["lal_cookie_consent"];
 const CONSENT_EVENT = "cookie:consent-change";
 export const OPEN_PREFERENCES_EVENT = "cookie:open-preferences";
 
@@ -45,13 +57,35 @@ type ConsentChangeDetail = { value: Consent; previous: Consent | null };
 
 const isConsent = (v: unknown): v is Consent => v === "accepted" || v === "declined";
 
+function legacyChoice(): Consent | null {
+  for (const key of LEGACY_KEYS) {
+    const v = window.localStorage.getItem(key);
+    if (isConsent(v)) return v;
+  }
+  return null;
+}
+
 export function readConsent(): Consent | null {
   try {
     if (typeof window === "undefined") return null;
     const v = window.localStorage.getItem(STORAGE_KEY);
-    return isConsent(v) ? v : null;
+    if (isConsent(v)) return v;
+    // Escolha de uma versão anterior: a recusa vale; o aceite precisa ser
+    // renovado (volta `null` e o banner reaparece).
+    return legacyChoice() === "declined" ? "declined" : null;
   } catch {
     return null;
+  }
+}
+
+/** O visitante tinha aceitado uma versão anterior e ainda não decidiu nesta? */
+export function hadLegacyAcceptance(): boolean {
+  try {
+    if (typeof window === "undefined") return false;
+    if (isConsent(window.localStorage.getItem(STORAGE_KEY))) return false;
+    return legacyChoice() === "accepted";
+  } catch {
+    return false;
   }
 }
 
@@ -59,6 +93,8 @@ export function setConsent(value: Consent): void {
   const previous = readConsent();
   try {
     window.localStorage.setItem(STORAGE_KEY, value);
+    // A escolha nova substitui as das versões anteriores.
+    for (const key of LEGACY_KEYS) window.localStorage.removeItem(key);
   } catch {
     /* modo privado / storage cheio — silencia */
   }
