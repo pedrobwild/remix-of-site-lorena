@@ -5208,6 +5208,11 @@ textarea.admin-field__input {
   max-width: 68ch;
 }
 
+/* Versão curta do aviso: só no celular (ver a media query abaixo). */
+.cookie-banner__desc--short {
+  display: none;
+}
+
 .cookie-banner__link {
   color: #E4EAF3;
   text-decoration: underline;
@@ -5266,11 +5271,30 @@ textarea.admin-field__input {
   .cookie-banner__text {
     flex-basis: auto;
   }
-  /* Texto inteiro visível: para que servem os cookies faz parte do aceite
-     (antes o corte em 2 linhas escondia a finalidade e o link da política). */
+  /* Celular: versão curta do aviso, com as mesmas finalidades (medição e
+     anúncios da Meta e do Google para quem já visitou e perfis parecidos) e
+     os mesmos dois links — sem corte de linha, que escondia a finalidade.
+     A versão completa segue no DOM (aria-describedby) e no desktop.
+     Com o título só para leitores de tela, o banner cai de ~210 px para
+     ~140 px, e o CTA fixo sobe a altura dele (--cookie-banner-h). */
   .cookie-banner__desc {
+    display: none;
+  }
+  .cookie-banner__desc--short {
+    display: block;
     font-size: 12px;
     line-height: 1.4;
+  }
+  .cookie-banner__title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
   }
   .cookie-banner__actions { justify-content: stretch; }
   .cookie-banner__btn { flex: 1 1 0; padding: 10px 12px; }
