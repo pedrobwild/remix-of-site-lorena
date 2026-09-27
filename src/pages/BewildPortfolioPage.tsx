@@ -13,8 +13,8 @@ import BwaFooter from "@/components/BwaFooter";
 import { CONTACT } from "../components/landing/content";
 import { useBewildProjects, bewildTypeLabel } from "@/lib/useBewildProjects";
 import {
-  availablePortfolioFilters,
   PORTFOLIO_SORTS,
+
   ALL_NEIGHBORHOODS,
   applyPortfolioFilter,
   applyNeighborhoodFilter,
