@@ -274,12 +274,15 @@ export default function RastreamentoPage() {
 
   const totalFaq = faq.reduce((acc, r) => acc + r.cliques, 0);
   const totalVisitas = paths.reduce((acc, r) => acc + r.pageviews, 0);
+  const totalLeads = leads.reduce((acc, r) => acc + r.leads, 0);
+  const totalAdEvents = adEvents.reduce((acc, r) => acc + r.quantidade, 0);
+  const totalAdClicks = adClicks.reduce((acc, r) => acc + Number(r.clicks), 0);
 
   return (
     <AdminLayout
       active="rastreamento"
       title="Rastreamento"
-      description="Impressões no Google, cliques no FAQ e visitas por página."
+      description="Impressões no Google, leads enviados, eventos de mídia, cliques de anúncios e visitas por página."
       actions={
         <>
           <nav className="seo-tabs" role="tablist" aria-label="Período">
@@ -311,6 +314,17 @@ export default function RastreamentoPage() {
           label="Posição média"
           value={gsc ? gsc.totals.position.toFixed(1).replace(".", ",") : "—"}
         />
+        <Stat
+          label={leadsTruncado ? `Leads enviados (últimos ${LEADS_LIMIT})` : "Leads enviados"}
+          value={leadsErro ? "—" : totalLeads}
+        />
+        <Stat
+          label={
+            adEventsTruncado ? `Eventos de mídia (últimos ${AD_EVENTS_LIMIT})` : "Eventos de mídia"
+          }
+          value={adEventsErro ? "—" : totalAdEvents}
+        />
+        <Stat label="Cliques em anúncios" value={adClicksErro ? "—" : totalAdClicks} />
         <Stat label="Visitas medidas no site" value={pathsErro ? "—" : totalVisitas} />
         <Stat
           label={faqTruncado ? `Cliques no FAQ (últimos ${FAQ_EVENTS_LIMIT})` : "Cliques no FAQ"}
