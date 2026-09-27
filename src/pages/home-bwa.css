@@ -977,6 +977,11 @@
       font-weight: 400;
     }
 
+    .bwa-shell .bwa-certainty-lead .bwa-lead {
+      max-width: 780px;
+      color: rgba(255, 255, 255, .7);
+    }
+
     .bwa-certainty-statement {
       margin: 0;
       padding-block: clamp(28px, 4vw, 64px) clamp(56px, 7vw, 120px);
