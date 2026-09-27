@@ -141,6 +141,7 @@ export function reportLead(
     // No Google não é conversão (não é lead de cliente), mas entra nos
     // públicos com a mesma categoria — remarketing vê o mesmo público.
     trackGoogleAdsAudienceEvent("submit_application", { content_name: input.method, content_category: application });
+    logAdEvent("SubmitApplication", { content_category: application });
     return;
   }
 
@@ -157,6 +158,7 @@ export function reportLead(
     name: input.name,
     params: signals,
   });
+  logAdEvent("Lead", { content_category: formPath, ...signals });
 }
 
 export function reportContact(channel: "whatsapp" | "phone" | "email", source: string): void {
