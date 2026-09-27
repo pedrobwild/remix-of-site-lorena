@@ -1,0 +1,1 @@
+alter table public.site_settings add column if not exists google_ads_application_label text;
