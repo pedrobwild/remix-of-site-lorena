@@ -11,15 +11,6 @@ import RetentionTab from "@/components/admin/analytics/RetentionTab";
 import PaidMediaTab from "@/components/admin/analytics/PaidMediaTab";
 import RealtimeTab from "@/components/admin/analytics/RealtimeTab";
 
-function ComingSoon({ name }: { name: string }) {
-  return (
-    <div className="aa-empty">
-      <span className="aa-empty__icon">⏳</span>
-      aba <strong style={{ color: "var(--aa-fg)" }}>{name}</strong> em construção · próximas fases
-    </div>
-  );
-}
-
 export default function AnalyticsPage() {
   const state = useAnalyticsState();
 

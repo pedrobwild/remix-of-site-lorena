@@ -127,7 +127,7 @@ export default function RealtimeTab() {
                 <YAxis allowDecimals={false} fontSize={11} width={36} />
                 <Tooltip
                   labelFormatter={(d) => fmtDay(String(d))}
-                  formatter={(v: number, n) => [fmt(v), n === "visitors" ? "Pessoas" : "Páginas vistas"]}
+                  formatter={(v, n) => [fmt(Number(v)), n === "visitors" ? "Pessoas" : "Páginas vistas"]}
                 />
                 <Bar dataKey="visitors" fill="var(--aa-accent, #2F86B8)" radius={[3, 3, 0, 0]} />
               </BarChart>
