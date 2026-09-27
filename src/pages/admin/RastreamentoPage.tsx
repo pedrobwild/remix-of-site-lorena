@@ -202,6 +202,68 @@ export default function RastreamentoPage() {
       );
     }
 
+    if (leadsRes.error) {
+      setLeadsErro(`Não foi possível ler os leads: ${leadsRes.error.message}`);
+      setLeads([]);
+      setLeadsTruncado(false);
+    } else {
+      setLeadsErro(null);
+      const rows = (leadsRes.data ?? []) as Array<{
+        form_path: string | null;
+        gclid: string | null;
+        fbclid: string | null;
+      }>;
+      setLeadsTruncado(rows.length >= LEADS_LIMIT);
+      const porForm = new Map<string, LeadRow>();
+      for (const l of rows) {
+        const key = l.form_path ?? "";
+        const row = porForm.get(key) ?? {
+          formulario: formLabel(l.form_path),
+          leads: 0,
+          viaGoogle: 0,
+          viaMeta: 0,
+        };
+        row.leads += 1;
+        if (l.gclid) row.viaGoogle += 1;
+        if (l.fbclid) row.viaMeta += 1;
+        porForm.set(key, row);
+      }
+      setLeads([...porForm.values()].sort((a, b) => b.leads - a.leads));
+    }
+
+    if (adEventsRes.error) {
+      setAdEventsErro(`Não foi possível ler os eventos de mídia: ${adEventsRes.error.message}`);
+      setAdEvents([]);
+      setAdEventsTruncado(false);
+    } else {
+      setAdEventsErro(null);
+      const eventos = (adEventsRes.data ?? []) as Array<{ value: unknown }>;
+      setAdEventsTruncado(eventos.length >= AD_EVENTS_LIMIT);
+      const contagem = new Map<string, number>();
+      for (const ev of eventos) {
+        const v = (ev.value ?? {}) as { name?: string };
+        const nome = typeof v.name === "string" && v.name ? v.name : "(sem nome)";
+        contagem.set(nome, (contagem.get(nome) ?? 0) + 1);
+      }
+      setAdEvents(
+        [...contagem.entries()]
+          .map(([evento, quantidade]) => ({ evento, quantidade }))
+          .sort((a, b) => b.quantidade - a.quantidade),
+      );
+    }
+
+    if (adClicksRes.error) {
+      setAdClicksErro(`Não foi possível ler os cliques de anúncios: ${adClicksRes.error.message}`);
+      setAdClicks([]);
+    } else {
+      setAdClicksErro(null);
+      // Só campanhas com pelo menos 1 clique (aberturas de e-mail sem clique
+      // não interessam neste bloco).
+      setAdClicks(
+        ((adClicksRes.data ?? []) as AdClickRow[]).filter((r) => Number(r.clicks) > 0),
+      );
+    }
+
     setLoading(false);
   }
 
