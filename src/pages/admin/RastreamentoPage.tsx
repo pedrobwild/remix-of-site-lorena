@@ -426,6 +426,12 @@ export default function RastreamentoPage() {
           value={adEventsErro ? "—" : totalAdEvents}
         />
         <Stat label="Cliques em anúncios" value={adClicksErro ? "—" : totalAdClicks} />
+        <Stat label="Sessões por origem" value={origensErro ? "—" : totalSessoesOrigem} />
+        <Stat label="Conversões por origem" value={origensErro ? "—" : totalConversoesOrigem} />
+        <Stat
+          label="Sessões com aceite de cookies"
+          value={adEventsErro ? "—" : sessoesComAceite}
+        />
         <Stat label="Visitas medidas no site" value={pathsErro ? "—" : totalVisitas} />
         <Stat
           label={faqTruncado ? `Cliques no FAQ (últimos ${FAQ_EVENTS_LIMIT})` : "Cliques no FAQ"}
