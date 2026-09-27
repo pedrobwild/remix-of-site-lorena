@@ -5,7 +5,8 @@
  * RPC e responde conforme a janela pedida; assim o teste confere QUAIS janelas
  * e parâmetros o painel pede (hoje até agora × ontem até o mesmo horário;
  * `analytics_timeseries_v2` com o fuso do navegador e os segmentos; tabela
- * por dia começando um dia antes) e o que aparece na tela.
+ * por dia começando um dia antes; `analytics_consent_daily` na janela da
+ * tabela, sem segmentos) e o que aparece na tela.
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, within } from "@testing-library/react";
@@ -98,11 +99,27 @@ function v2Row(
 ) {
   return { bucket, sessions, visitors, pageviews, conversions };
 }
+/** Linha de analytics_consent_daily: `day` = dia LOCAL ("YYYY-MM-DD"). */
+function consentRow(day: string, accepts: number, declines: number) {
+  return { day, accepts, declines };
+}
 function findCall(name: string, pred: (args: Record<string, unknown>) => boolean) {
   return rpcCalls.find((c) => c.name === name && pred(c.args));
 }
 function seriesCalls() {
   return rpcCalls.filter((c) => c.name === "analytics_timeseries_v2");
+}
+/** Chamadas de sessão (KPIs e séries): as únicas que recebem segmentos. */
+function coreCalls() {
+  return rpcCalls.filter((c) => c.name !== "analytics_consent_daily");
+}
+function consentCalls() {
+  return rpcCalls.filter((c) => c.name === "analytics_consent_daily");
+}
+function kpiCard(label: string): HTMLElement {
+  const el = screen.getByText(label).closest(".aa-kpi");
+  if (!el) throw new Error(`KPI "${label}" não encontrado`);
+  return el as HTMLElement;
 }
 
 describe("OverviewTab — 'Hoje' com comparação", () => {
@@ -204,6 +221,22 @@ describe("OverviewTab — 'Hoje' com comparação", () => {
     expect(rpcCalls.filter((c) => c.name === "analytics_overview_kpis")).toHaveLength(2);
     // Gráfico por hora + tabela por dia + período anterior por hora
     expect(seriesCalls()).toHaveLength(3);
+    // Aceite de cookies: janela da tabela (ontem 00:00 → agora) e período
+    // anterior alinhado, no fuso do navegador e SEM parâmetros de segmento.
+    expect(consentCalls()).toHaveLength(2);
+    const consentCur = findCall(
+      "analytics_consent_daily",
+      (a) => a.p_since === localIso(2026, 9, 23) && a.p_until === NOW.toISOString()
+    );
+    expect(consentCur).toBeTruthy();
+    expect(consentCur?.args.p_tz).toBe("America/Sao_Paulo");
+    expect(consentCur?.args).not.toHaveProperty("p_device");
+    expect(
+      findCall(
+        "analytics_consent_daily",
+        (a) => a.p_since === localIso(2026, 9, 23) && a.p_until === localIso(2026, 9, 23, 15, 42, 10)
+      )
+    ).toBeTruthy();
   });
 
   it("mostra a variação vs. ontem até o mesmo horário e a linha 'hoje' parcial com visitantes", async () => {
@@ -215,6 +248,11 @@ describe("OverviewTab — 'Hoje' com comparação", () => {
     expect(within(kpiSessions).getByText("sessões")).toBeInTheDocument();
     expect(within(kpiSessions).getByText("16")).toBeInTheDocument();
     expect(within(kpiSessions).getByText(/\+33\.3%/)).toBeInTheDocument();
+
+    // Sem registro de consentimento no fake: o card existe e mostra "—"
+    const consentCard = kpiCard("aceite de cookies");
+    expect(within(consentCard).getByText("—", { selector: ".aa-kpi__value" })).toBeInTheDocument();
+    expect(within(consentCard).getByText("0 aceites · 0 recusas")).toBeInTheDocument();
 
     // Nota da comparação
     expect(screen.getByText(/período em curso/)).toBeInTheDocument();
@@ -234,6 +272,9 @@ describe("OverviewTab — 'Hoje' com comparação", () => {
     expect(cells[2]).toHaveTextContent("+33.3%");
     expect(cells[3]).toHaveTextContent("13");
     expect(cells[4]).toHaveTextContent("+30.0%");
+    // colunas de cookies sem registro: "—"
+    expect(cells[10]).toHaveTextContent("—");
+    expect(cells[12]).toHaveTextContent("—");
     // métrica "visitantes" disponível no gráfico
     expect(screen.getByRole("button", { name: "visitantes" })).toBeInTheDocument();
   });
@@ -260,6 +301,20 @@ describe("OverviewTab — 'Últimos 7 dias' em curso com segmento", () => {
         }
         return args.p_grain === "day" ? rows : [];
       }
+      if (name === "analytics_consent_daily") {
+        const since = new Date(String(args.p_since));
+        // Janela atual (começa no lead-in 17/09): o dia de lead-in não entra
+        // no total do período, mas 23/09 e 24/09 entram.
+        if (since.getTime() === new Date(2026, 8, 17).getTime()) {
+          return [
+            consentRow("2026-09-17", 9, 1),
+            consentRow("2026-09-23", 26, 2),
+            consentRow("2026-09-24", 5, 2),
+          ];
+        }
+        // Período anterior (11/09 → 17/09 15:42): 10 de 20 → 50%
+        return [consentRow("2026-09-12", 10, 10)];
+      }
       return [];
     };
   });
@@ -270,10 +325,13 @@ describe("OverviewTab — 'Últimos 7 dias' em curso com segmento", () => {
     );
     const table = await screen.findByTestId("daily-table");
 
-    // Segmento em TODAS as chamadas: KPIs atuais e anteriores, base de hoje,
-    // série da tabela (que também alimenta o gráfico) e série anterior.
-    expect(rpcCalls).toHaveLength(5);
-    for (const c of rpcCalls) expect(c.args).toHaveProperty("p_device", "mobile");
+    // Segmento em TODAS as chamadas de sessão: KPIs atuais e anteriores, base
+    // de hoje, série da tabela (que também alimenta o gráfico) e série anterior.
+    expect(coreCalls()).toHaveLength(5);
+    for (const c of coreCalls()) expect(c.args).toHaveProperty("p_device", "mobile");
+    // Aceite de cookies não tem sessão: nunca recebe segmento.
+    expect(consentCalls()).toHaveLength(2);
+    for (const c of consentCalls()) expect(c.args).not.toHaveProperty("p_device");
 
     // KPIs anteriores: 11/09 00:00 → 17/09 15:42:10
     expect(
@@ -315,12 +373,33 @@ describe("OverviewTab — 'Últimos 7 dias' em curso com segmento", () => {
           a.p_until === localIso(2026, 9, 18)
       )
     ).toBeTruthy();
+    // Consentimento: mesma janela da tabela (17/09 → agora) e o período anterior alinhado
+    expect(
+      findCall(
+        "analytics_consent_daily",
+        (a) => a.p_since === localIso(2026, 9, 17) && a.p_until === NOW.toISOString()
+      )
+    ).toBeTruthy();
+    expect(
+      findCall(
+        "analytics_consent_daily",
+        (a) =>
+          a.p_since === localIso(2026, 9, 11) && a.p_until === localIso(2026, 9, 17, 15, 42, 10)
+      )
+    ).toBeTruthy();
 
     expect(screen.getByText("11/09 – 17/09 15:42")).toBeInTheDocument();
     expect(screen.getByText(/\(até o mesmo horário\)/)).toBeInTheDocument();
     expect(
       screen.getByText(/segmentos aplicados aos indicadores, ao gráfico e à tabela/)
     ).toBeInTheDocument();
+
+    // Card de aceite: 31 de 35 decisões no período (o lead-in 17/09 fica de
+    // fora) → 88.6%; Δ vs 50% do período anterior.
+    const consentCard = kpiCard("aceite de cookies");
+    expect(within(consentCard).getByText("88.6%")).toBeInTheDocument();
+    expect(within(consentCard).getByText("31 aceites · 4 recusas")).toBeInTheDocument();
+    expect(within(consentCard).getByText(/\+77\.1%/)).toBeInTheDocument();
 
     const rows = within(table).getAllByRole("row").slice(1);
     expect(rows).toHaveLength(7);
@@ -332,9 +411,15 @@ describe("OverviewTab — 'Últimos 7 dias' em curso com segmento", () => {
     expect(yCells[2]).toHaveTextContent("+160.0%");
     expect(yCells[3]).toHaveTextContent("12");
     expect(yCells[4]).toHaveTextContent("+140.0%");
+    // ontem: 26 aceites, 2 recusas → 92.9%
+    expect(yCells[10]).toHaveTextContent("26");
+    expect(yCells[11]).toHaveTextContent("2");
+    expect(yCells[12]).toHaveTextContent("92.9%");
     // 18/09 (1º dia) tem base (17/09 veio como lead-in): 10 vs 10 → 0.0%
     expect(rows[6]).toHaveTextContent("18/09");
     expect(within(rows[6]).getAllByRole("cell")[2]).toHaveTextContent("0.0%");
+    // 18/09 sem decisão registrada: "—"
+    expect(within(rows[6]).getAllByRole("cell")[12]).toHaveTextContent("—");
     // 17/09 (lead-in) não aparece como linha
     expect(within(table).queryByText(/17\/09/)).toBeNull();
   });
@@ -344,6 +429,7 @@ describe("OverviewTab — 'Últimos 7 dias' em curso com segmento", () => {
     await screen.findByTestId("daily-table");
     expect(rpcCalls.filter((c) => c.name === "analytics_overview_kpis")).toHaveLength(2); // período + ontem mesmo horário
     expect(seriesCalls()).toHaveLength(1); // tabela por dia, que também alimenta o gráfico
+    expect(consentCalls()).toHaveLength(1); // só a janela da tabela
     const note = screen.getByText(/período em curso/).closest('[role="note"]') as HTMLElement;
     expect(note).not.toHaveTextContent("Δ vs.");
     expect(note).not.toHaveTextContent("período anterior inteiro");
@@ -403,6 +489,10 @@ describe("OverviewTab — período longo (por semana)", () => {
           v2Row(localIso(2026, 9, 21), 200, 90, 450, 3), // semana 21/09 (em curso)
         ];
       }
+      if (name === "analytics_consent_daily") {
+        // Dois dias da semana de 21/09: somam 16 aceites e 9 recusas → 64.0%
+        return [consentRow("2026-09-22", 10, 5), consentRow("2026-09-23", 6, 4)];
+      }
       return [];
     };
   });
@@ -421,5 +511,11 @@ describe("OverviewTab — período longo (por semana)", () => {
     expect(rows[1]).not.toHaveTextContent("até ");
     // Δ da semana em curso vs anterior: 200 vs 300 → -33.3%
     expect(within(rows[0]).getAllByRole("cell")[2]).toHaveTextContent("-33.3%");
+    // Cookies somados por semana local: 16 aceites, 9 recusas → 64.0%; semana anterior sem registro
+    const curCells = within(rows[0]).getAllByRole("cell");
+    expect(curCells[10]).toHaveTextContent("16");
+    expect(curCells[11]).toHaveTextContent("9");
+    expect(curCells[12]).toHaveTextContent("64.0%");
+    expect(within(rows[1]).getAllByRole("cell")[12]).toHaveTextContent("—");
   });
 });
