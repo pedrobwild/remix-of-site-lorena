@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { RefreshCw, ExternalLink } from "lucide-react";
+import BacklinksDisavow from "@/components/admin/BacklinksDisavow";
 
 /**
  * /admin/rastreamento — acompanhamento de tráfego e de mídia paga.
@@ -750,6 +751,10 @@ export default function RastreamentoPage() {
             </table>
           </div>
         )}
+      </Section>
+
+      <Section title="Domínios que apontam para o site (backlinks) e disavow">
+        <BacklinksDisavow />
       </Section>
     </AdminLayout>
   );
