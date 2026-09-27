@@ -317,14 +317,19 @@ export default function RastreamentoPage() {
       setAdEventsTruncado(false);
     } else {
       setAdEventsErro(null);
-      const eventos = (adEventsRes.data ?? []) as Array<{ value: unknown }>;
+      const eventos = (adEventsRes.data ?? []) as Array<{ value: unknown; session_id: string | null }>;
       setAdEventsTruncado(eventos.length >= AD_EVENTS_LIMIT);
       const contagem = new Map<string, number>();
+      // Sessões com aceite de cookies = sessões que dispararam ao menos um
+      // evento de mídia (o Pixel/Google só dispara após o aceite).
+      const sessoesAceite = new Set<string>();
       for (const ev of eventos) {
+        if (ev.session_id) sessoesAceite.add(ev.session_id);
         const v = (ev.value ?? {}) as { name?: string };
         const nome = typeof v.name === "string" && v.name ? v.name : "(sem nome)";
         contagem.set(nome, (contagem.get(nome) ?? 0) + 1);
       }
+      setSessoesComAceite(sessoesAceite.size);
       setAdEvents(
         [...contagem.entries()]
           .map(([evento, quantidade]) => ({ evento, quantidade }))
