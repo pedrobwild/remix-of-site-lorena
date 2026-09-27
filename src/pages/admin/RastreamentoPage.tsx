@@ -37,6 +37,7 @@ type PathRow = { path: string; pageviews: number; sessions: number };
 type FaqRow = { pergunta: string; cliques: number };
 type LeadRow = { formulario: string; leads: number; viaGoogle: number; viaMeta: number };
 type AdEventRow = { evento: string; quantidade: number };
+type SegmentoRow = { segmento: string; eventos: number; conversoes: number };
 type AdClickRow = {
   campaign: string | null;
   source: string | null;
@@ -320,15 +321,41 @@ export default function RastreamentoPage() {
       const eventos = (adEventsRes.data ?? []) as Array<{ value: unknown; session_id: string | null }>;
       setAdEventsTruncado(eventos.length >= AD_EVENTS_LIMIT);
       const contagem = new Map<string, number>();
+      // Públicos por segmento: Lead = imóveis (orçamento/contato/LPs);
+      // SubmitApplication traz a categoria (parceiro, incorporadora, indicação).
+      const SEGMENTO_LABEL: Record<string, string> = {
+        imoveis: "Imóveis (orçamento e contato)",
+        parceiro: "Parceiros",
+        incorporadora: "Incorporadoras",
+        indicacao: "Indicações",
+      };
+      const porSegmento = new Map<string, SegmentoRow>();
       // Sessões com aceite de cookies = sessões que dispararam ao menos um
       // evento de mídia (o Pixel/Google só dispara após o aceite).
       const sessoesAceite = new Set<string>();
       for (const ev of eventos) {
         if (ev.session_id) sessoesAceite.add(ev.session_id);
-        const v = (ev.value ?? {}) as { name?: string };
+        const v = (ev.value ?? {}) as { name?: string; content_category?: string };
         const nome = typeof v.name === "string" && v.name ? v.name : "(sem nome)";
         contagem.set(nome, (contagem.get(nome) ?? 0) + 1);
+        const segKey =
+          nome === "Lead" ? "imoveis" : nome === "SubmitApplication" ? (v.content_category ?? "") : "";
+        const segLabel = SEGMENTO_LABEL[segKey];
+        if (segLabel) {
+          const row = porSegmento.get(segKey) ?? { segmento: segLabel, eventos: 0, conversoes: 0 };
+          row.eventos += 1;
+          row.conversoes += 1;
+          porSegmento.set(segKey, row);
+        } else if (segKey === "" && (nome === "view_item" || nome === "form_start" || nome === "visitante_engajado")) {
+          const cat = v.content_category === "projeto" || v.content_category === "portfolio" ? "imoveis" : "";
+          if (cat) {
+            const row = porSegmento.get(cat) ?? { segmento: SEGMENTO_LABEL[cat], eventos: 0, conversoes: 0 };
+            row.eventos += 1;
+            porSegmento.set(cat, row);
+          }
+        }
       }
+      setSegmentos([...porSegmento.values()].sort((a, b) => b.conversoes - a.conversoes));
       setSessoesComAceite(sessoesAceite.size);
       setAdEvents(
         [...contagem.entries()]
