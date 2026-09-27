@@ -41,6 +41,8 @@ import {
   pageContentFor,
   projectSlugFromPath,
   reportContact,
+  reportEngaged,
+  reportFormStart,
   reportLead,
   reportViewContent,
   slugParam,
