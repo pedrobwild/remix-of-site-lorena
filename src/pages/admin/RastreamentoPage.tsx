@@ -211,7 +211,7 @@ export default function RastreamentoPage() {
         .limit(LEADS_LIMIT),
       supabase
         .from("analytics_events")
-        .select("value, created_at")
+        .select("value, created_at, session_id")
         .eq("event_type", "ad_event")
         .gte("created_at", range.since)
         .lte("created_at", range.until)
@@ -220,6 +220,18 @@ export default function RastreamentoPage() {
       supabase.rpc("tracking_hits_summary", {
         p_since: range.since,
         p_until: range.until,
+      }),
+      supabase.rpc("analytics_breakdown" as never, {
+        p_since: range.since,
+        p_until: range.until,
+        p_dim: "utm_source",
+        p_limit: 100,
+      }),
+      supabase.rpc("analytics_breakdown" as never, {
+        p_since: range.since,
+        p_until: range.until,
+        p_dim: "referrer_host",
+        p_limit: 100,
       }),
     ]);
     if (id !== requestId.current) return;
