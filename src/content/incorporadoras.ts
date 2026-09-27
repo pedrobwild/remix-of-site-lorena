@@ -237,7 +237,7 @@ export const INCORP_FORM = {
   submit: "Enviar para a Bewild",
   sending: "Enviando…",
   retry: "Tentar de novo",
-  privacy: "Seus dados são usados apenas para responder a este contato, conforme a LGPD.",
+  privacy: "Usamos seus dados para responder a este contato, conforme a LGPD.",
   whatsappIntro:
     "Olá, vim pelo site da Bewild e quero conversar sobre uma parceria para o meu empreendimento.",
   done: {

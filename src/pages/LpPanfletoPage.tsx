@@ -39,6 +39,7 @@ import {
 } from "@/lib/useLeadSubmit";
 import { useVideoAutoplayInView } from "@/lib/useVideoAutoplayInView";
 import BewildLogo from "@/components/BewildLogo";
+import FormPrivacyNote from "@/components/FormPrivacyNote";
 import "@/styles/bw-lp.css";
 
 const OBJETIVOS = LEAD_OBJETIVOS;
@@ -355,6 +356,9 @@ export default function LpPanfletoPage() {
                 <span>{sending ? "Enviando…" : "Solicitar orçamento"}</span><span className="ar" aria-hidden="true">→</span>
               </button>
               <p className="guarantee">Sem compromisso · a gente só liga se você pedir</p>
+              <FormPrivacyNote platforms="meta-google" className="form-privacy">
+                Usamos seus dados para responder ao seu pedido de orçamento.
+              </FormPrivacyNote>
 
               <div className="or"><span>ou</span></div>
 

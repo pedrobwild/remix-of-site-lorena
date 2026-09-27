@@ -48,6 +48,9 @@
 .pt-body h3{font-weight:600;font-size:clamp(19px,2vw,24px);line-height:1.2;letter-spacing:-.03em;color:#1A2332;margin:34px 0 12px}
 .pt-body p{margin:0 0 18px}
 .pt-body a{color:#11355B;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
+/* Botão com cara de link no texto (ex.: "Preferências de cookies" na /privacidade). */
+.pt-body .pt-link-button{display:inline;padding:0;margin:0;border:0;background:none;font:inherit;letter-spacing:inherit;color:#11355B;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px;cursor:pointer}
+.pt-body .pt-link-button:focus-visible{outline:2px solid #5FB2DD;outline-offset:2px}
 .pt-body strong{color:#1A2332;font-weight:600}
 .pt-body ul,.pt-body ol{margin:0 0 18px;padding-left:22px}
 .pt-body ul{list-style-type:disc}

@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { isConsentAccepted, onConsentChange } from "./cookieConsent";
 import { GA4_MEASUREMENT_ID } from "./ga4";
 import { configureGoogleAds } from "./googleAds";
-import { flushMetaPixelQueue } from "./metaPixel";
+import { flushMetaPixelQueue, registerMetaPixelId } from "./metaPixel";
 import { devWarn } from "./devLog";
 import { pageSeoOverride } from "./publicPages";
 
@@ -310,7 +310,9 @@ function injectMetaPixel(id: string) {
     `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
 fbq.disablePushState=true;fbq('init','${id}');fbq('track','PageView');`
   );
-  // Eventos pedidos antes de o Pixel existir (ex.: ViewContent na entrada).
+  // Eventos pedidos antes de o Pixel existir (ex.: ViewContent na entrada) e
+  // a correspondência avançada de um formulário enviado antes da injeção.
+  registerMetaPixelId(id);
   flushMetaPixelQueue();
 }
 

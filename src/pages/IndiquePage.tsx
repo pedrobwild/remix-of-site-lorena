@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { z } from "zod";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
+import FormPrivacyNote from "@/components/FormPrivacyNote";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { isServerAcceptedEmail, type LeadPayload } from "@/lib/leadDelivery";
@@ -656,10 +657,9 @@ export default function IndiquePage() {
                     {enviando ? "Enviando…" : "Registrar indicação"}
                     <span aria-hidden="true">→</span>
                   </button>
-                  <p>
-                    Seus dados e os do indicado são usados apenas para atender a indicação,
-                    conforme a LGPD.
-                  </p>
+                  <FormPrivacyNote platforms="meta" contact="o seu nome, e-mail e telefone (nunca os do indicado)">
+                    Seus dados e os do indicado são usados para atender a indicação, conforme a LGPD.
+                  </FormPrivacyNote>
                 </div>
               </form>
             )}

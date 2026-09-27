@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
+import FormPrivacyNote from "@/components/FormPrivacyNote";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import { isConsentAccepted, onConsentChange } from "@/lib/cookieConsent";
 import type { LeadPayload } from "@/lib/leadDelivery";
@@ -416,7 +417,7 @@ export default function ContatoPage() {
                     {enviando ? "Enviando…" : outcome === "failed" ? "Tentar de novo" : "Enviar mensagem"}
                     <span aria-hidden="true">→</span>
                   </button>
-                  <p>Seus dados são usados apenas para responder ao seu contato.</p>
+                  <FormPrivacyNote platforms="meta-google">Usamos seus dados para responder ao seu contato.</FormPrivacyNote>
                 </div>
               </form>
             )}

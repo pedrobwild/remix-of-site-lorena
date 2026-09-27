@@ -11,16 +11,35 @@
  * `eventID`: o Lead do navegador leva o mesmo id que a edge function
  * `notify-lead` manda pela API de Conversões — o Meta junta os dois e conta
  * o lead uma vez só.
+ *
+ * Correspondência avançada manual (`setMetaUserData`): no envio de um
+ * formulário, o e-mail, o telefone e o nome que a própria pessoa digitou
+ * voltam ao Pixel (`fbq('init', id, dados)`), que faz o hash SHA-256 no
+ * navegador antes de mandar à Meta. Só com aceite, só dados de quem enviou o
+ * formulário e com a mesma normalização da API de Conversões
+ * (supabase/functions/_shared/meta-capi.ts).
+ *
+ * Nada de dado sensível em eventos, parâmetros ou nomes de evento (regras da
+ * Meta sobre informações proibidas): sem valores, renda, CPF, saúde,
+ * endereço ou texto livre digitado pela pessoa.
  */
 import { isConsentAccepted } from "@/lib/cookieConsent";
+import { normalizeEmail, normalizeName, normalizePhone } from "../../supabase/functions/_shared/meta-capi";
 
 type Fbq = (...args: unknown[]) => void;
 
-export type MetaStandardEvent = "Lead" | "Contact" | "ViewContent";
+export type MetaStandardEvent = "Lead" | "Contact" | "ViewContent" | "SubmitApplication";
+
+/** Eventos próprios do site (`fbq('trackCustom')`) — nomes sem dado pessoal. */
+export type MetaCustomEvent = "IniciouFormulario" | "VisitanteEngajado";
 
 /** Teto da fila de espera: eventos antigos demais não fazem sentido. */
 const MAX_QUEUE = 20;
 let queue: unknown[][] = [];
+/** Id do Pixel injetado (useSeo) — a correspondência avançada reinicia o mesmo id. */
+let pixelId: string | null = null;
+/** Dados de correspondência pedidos antes de o Pixel existir: saem antes da fila. */
+let pendingUserData: MetaUserData | null = null;
 
 function isAdminPath(): boolean {
   try {
@@ -44,6 +63,17 @@ function allowed(): boolean {
  * Dispara um evento padrão do Pixel. `sent` = entregue ao `fbq`; `queued` =
  * aguardando o Pixel ser injetado; `blocked` = sem aceite, no /admin etc.
  */
+function send(args: unknown[]): "sent" | "queued" {
+  const fbq = currentFbq();
+  if (fbq) {
+    fbq(...args);
+    return "sent";
+  }
+  if (queue.length >= MAX_QUEUE) queue.shift();
+  queue.push(args);
+  return "queued";
+}
+
 export function trackMetaEvent(
   name: MetaStandardEvent,
   params: Record<string, unknown> = {},
@@ -53,17 +83,28 @@ export function trackMetaEvent(
     if (!allowed()) return "blocked";
     const args: unknown[] = ["track", name, params];
     if (opts.eventId) args.push({ eventID: opts.eventId });
-    const fbq = currentFbq();
-    if (fbq) {
-      fbq(...args);
-      return "sent";
-    }
-    if (queue.length >= MAX_QUEUE) queue.shift();
-    queue.push(args);
-    return "queued";
+    return send(args);
   } catch {
     return "blocked";
   }
+}
+
+/** Evento próprio do site (ex.: formulário iniciado), com as mesmas travas. */
+export function trackMetaCustomEvent(
+  name: MetaCustomEvent,
+  params: Record<string, unknown> = {},
+): "sent" | "queued" | "blocked" {
+  try {
+    if (!allowed()) return "blocked";
+    return send(["trackCustom", name, params]);
+  } catch {
+    return "blocked";
+  }
+}
+
+/** useSeo avisa qual Pixel injetou, antes de esvaziar a fila. */
+export function registerMetaPixelId(id: string): void {
+  pixelId = id;
 }
 
 /** Chamado logo depois de o Pixel ser injetado (useSeo). */
@@ -72,8 +113,12 @@ export function flushMetaPixelQueue(): void {
     const fbq = currentFbq();
     if (!fbq) return;
     const pending = queue;
+    const userData = pendingUserData;
     queue = [];
+    pendingUserData = null;
     if (!allowed()) return;
+    // Os dados de correspondência valem para os eventos que estavam na fila.
+    if (userData && pixelId) fbq("init", pixelId, userData);
     for (const args of pending) fbq(...args);
   } catch {
     /* nunca quebra a página */
@@ -83,6 +128,57 @@ export function flushMetaPixelQueue(): void {
 /** Só para testes. */
 export function __resetMetaPixelQueue(): void {
   queue = [];
+  pendingUserData = null;
+  pixelId = null;
+}
+
+// ---------------------------------------------------------------------------
+// Correspondência avançada manual
+// ---------------------------------------------------------------------------
+
+/** Campos aceitos pelo Pixel; o próprio Pixel faz o hash antes de enviar. */
+export type MetaUserData = { em?: string; ph?: string; fn?: string; ln?: string; country?: string };
+
+/**
+ * Dados de quem enviou o formulário, na mesma normalização da API de
+ * Conversões. Sem e-mail nem telefone válidos, não há o que casar → null.
+ */
+export function metaUserDataFrom(input: {
+  email?: string | null;
+  phoneDigits?: string | null;
+  name?: string | null;
+}): MetaUserData | null {
+  const em = normalizeEmail(input.email);
+  const ph = normalizePhone(input.phoneDigits);
+  if (!em && !ph) return null;
+  const out: MetaUserData = {};
+  if (em) out.em = em;
+  if (ph) out.ph = ph;
+  const parts = (normalizeName(input.name) ?? "").split(" ").filter(Boolean);
+  if (parts.length) out.fn = parts[0];
+  if (parts.length > 1) out.ln = parts[parts.length - 1];
+  out.country = "br";
+  return out;
+}
+
+/**
+ * Reinicia o Pixel com os dados de quem enviou o formulário — chamar ANTES do
+ * evento de envio. Sem aceite, no /admin ou sem dados: não faz nada. Antes de
+ * o Pixel existir, os dados esperam e saem antes da fila.
+ */
+export function setMetaUserData(data: MetaUserData | null): "sent" | "queued" | "blocked" {
+  try {
+    if (!data || !allowed()) return "blocked";
+    const fbq = currentFbq();
+    if (fbq && pixelId) {
+      fbq("init", pixelId, data);
+      return "sent";
+    }
+    pendingUserData = data;
+    return "queued";
+  } catch {
+    return "blocked";
+  }
 }
 
 // ---------------------------------------------------------------------------

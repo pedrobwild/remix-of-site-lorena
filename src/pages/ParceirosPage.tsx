@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
+import FormPrivacyNote from "@/components/FormPrivacyNote";
 import BewildLealMoreiraLogos from "@/components/BewildLealMoreiraLogos";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import type { LeadPayload } from "@/lib/leadDelivery";
@@ -1013,9 +1014,9 @@ export default function ParceirosPage() {
                         : "Cadastrar como parceiro"}
                     <span aria-hidden="true">→</span>
                   </button>
-                  <p>
-                    Seus dados são usados apenas para responder ao cadastro, conforme a LGPD.
-                  </p>
+                  <FormPrivacyNote platforms="meta">
+                    Usamos seus dados para responder ao cadastro, conforme a LGPD.
+                  </FormPrivacyNote>
                 </div>
               </form>
             )}

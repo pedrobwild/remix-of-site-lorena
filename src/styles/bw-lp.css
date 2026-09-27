@@ -280,6 +280,9 @@ html:has(.bw-lp),body:has(.bw-lp){background:#0B2342}
 .bw-lp .btn-line{border:1px solid var(--hair-ink);color:var(--navy-deep);width:100%}
 .bw-lp .guarantee{text-align:center;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:#9aa6b2;margin-top:12px}
 .bw-lp .or{display:flex;align-items:center;gap:12px;margin:16px 0;color:#9aa6b2;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+/* Aviso de privacidade (FormPrivacyNote) — vence o `.gate-card p` do /o. */
+.bw-lp .form-privacy,.bw-lp .gate-card .form-privacy{font-size:11.5px;line-height:1.5;color:var(--muted);text-align:center;margin:12px 0 0}
+.bw-lp .form-privacy a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 .bw-lp .or::before,.bw-lp .or::after{content:"";flex:1;height:1px;background:var(--hair-ink)}
 .bw-lp .success{display:none;text-align:center;padding:8px 0}
 .bw-lp .formcard.done .form-body{display:none}.bw-lp .formcard.done .success{display:block}
