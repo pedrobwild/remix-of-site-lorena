@@ -379,6 +379,106 @@ export default function RastreamentoPage() {
         )}
       </Section>
 
+      <Section title="Leads enviados, por formulário">
+        {leadsErro ? (
+          <p className="admin-flash admin-flash--err mono" role="alert">{leadsErro}</p>
+        ) : loading ? (
+          <p className="mono">carregando…</p>
+        ) : leads.length === 0 ? (
+          <p className="mono">nenhum lead enviado neste período.</p>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Formulário</th>
+                  <th>Leads</th>
+                  <th>Vieram de clique no Google</th>
+                  <th>Vieram de clique na Meta</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leads.map((r) => (
+                  <tr key={r.formulario}>
+                    <td>{r.formulario}</td>
+                    <td className="mono">{r.leads}</td>
+                    <td className="mono">{r.viaGoogle}</td>
+                    <td className="mono">{r.viaMeta}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Section>
+
+      <Section title="Eventos de mídia disparados (Pixel da Meta e Google)">
+        {adEventsErro ? (
+          <p className="admin-flash admin-flash--err mono" role="alert">{adEventsErro}</p>
+        ) : loading ? (
+          <p className="mono">carregando…</p>
+        ) : adEvents.length === 0 ? (
+          <p className="mono">
+            nenhum evento registrado neste período. Eventos só contam de visitantes que aceitaram
+            os cookies.
+          </p>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Evento</th>
+                  <th>Quantidade</th>
+                </tr>
+              </thead>
+              <tbody>
+                {adEvents.map((r) => (
+                  <tr key={r.evento}>
+                    <td className="mono">{r.evento}</td>
+                    <td className="mono">{r.quantidade}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Section>
+
+      <Section title="Cliques em links de anúncio (campanhas rastreadas)">
+        {adClicksErro ? (
+          <p className="admin-flash admin-flash--err mono" role="alert">{adClicksErro}</p>
+        ) : loading ? (
+          <p className="mono">carregando…</p>
+        ) : adClicks.length === 0 ? (
+          <p className="mono">nenhum clique em link rastreado neste período.</p>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Campanha</th>
+                  <th>Origem</th>
+                  <th>Meio</th>
+                  <th>Cliques</th>
+                  <th>Aberturas</th>
+                </tr>
+              </thead>
+              <tbody>
+                {adClicks.map((r, i) => (
+                  <tr key={`${r.campaign ?? ""}|${r.source ?? ""}|${r.medium ?? ""}|${i}`}>
+                    <td>{r.campaign ?? "—"}</td>
+                    <td>{r.source ?? "—"}</td>
+                    <td>{r.medium ?? "—"}</td>
+                    <td className="mono">{r.clicks}</td>
+                    <td className="mono">{r.opens}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Section>
+
       <Section title="Cliques nas perguntas do FAQ">
         {faqErro ? (
           <p className="admin-flash admin-flash--err mono" role="alert">{faqErro}</p>
