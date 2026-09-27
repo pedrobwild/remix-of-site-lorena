@@ -21,6 +21,7 @@ import {
   Newspaper,
   Handshake,
   Target,
+  ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "@/lib/useAuth";
 import { navigate, routes } from "@/lib/useHashRoute";
