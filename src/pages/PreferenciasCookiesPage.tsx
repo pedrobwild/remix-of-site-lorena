@@ -179,7 +179,7 @@ export default function PreferenciasCookiesPage() {
               <h2>Mais detalhes</h2>
               <p>
                 A lista completa do que é coletado, para quê, por quanto tempo
-                e como exercer seus direitos está na{" "}
+                e como exercer seus direitos está na&nbsp;
                 <a href={routes.privacidade}>Política de Privacidade</a>.
               </p>
             </div>
