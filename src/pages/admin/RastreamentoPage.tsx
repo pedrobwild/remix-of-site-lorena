@@ -376,6 +376,8 @@ export default function RastreamentoPage() {
   const totalLeads = leads.reduce((acc, r) => acc + r.leads, 0);
   const totalAdEvents = adEvents.reduce((acc, r) => acc + r.quantidade, 0);
   const totalAdClicks = adClicks.reduce((acc, r) => acc + Number(r.clicks), 0);
+  const totalSessoesOrigem = origens.reduce((acc, r) => acc + r.sessoes, 0);
+  const totalConversoesOrigem = origens.reduce((acc, r) => acc + r.conversoes, 0);
 
   return (
     <AdminLayout
