@@ -19,6 +19,7 @@ import {
   ClipboardList,
   Newspaper,
   Handshake,
+  Target,
 } from "lucide-react";
 import { useAuth } from "@/lib/useAuth";
 import { navigate, routes } from "@/lib/useHashRoute";
@@ -37,6 +38,7 @@ type ActiveKey =
   | "seo-404"
   | "seo-indexacao"
   | "rastreamento"
+  | "conversoes"
   | "settings"
   | "faq"
   | "typography";
@@ -67,6 +69,7 @@ const NAV: { key: ActiveKey; label: string; href: string; icon: typeof LayoutDas
   { key: "seo-404", label: "URLs 404", href: routes.adminSeo404, icon: Search },
   { key: "seo-indexacao", label: "Indexação", href: routes.adminIndexacao, icon: Search },
   { key: "rastreamento", label: "Rastreamento", href: routes.adminRastreamento, icon: Activity },
+  { key: "conversoes", label: "Conversões", href: routes.adminConversoes, icon: Target },
   { key: "settings", label: "Configurações", href: routes.adminSettings, icon: Settings },
   { key: "typography", label: "Tipografia", href: routes.adminTypography, icon: Type },
 ];
