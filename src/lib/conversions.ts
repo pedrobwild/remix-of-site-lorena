@@ -27,7 +27,7 @@
  * cookies, fora do /admin). A lista de formulários de cliente é espelhada
  * em supabase/functions/_shared/meta-capi.ts (AD_LEAD_FORMS).
  */
-import { trackGoogleAdsConversion } from "@/lib/googleAds";
+import { trackGoogleAdsAudienceEvent, trackGoogleAdsConversion } from "@/lib/googleAds";
 import { metaUserDataFrom, setMetaUserData, trackMetaCustomEvent, trackMetaEvent } from "@/lib/metaPixel";
 
 export const AD_LEAD_FORMS: readonly string[] = ["/diagnostico", "/orcamento", "/contato", "/o", "/p"];
@@ -127,25 +127,36 @@ export function reportLead(
       { content_name: input.method, content_category: application },
       { eventId: input.eventId },
     );
+    // No Google não é conversão (não é lead de cliente), mas entra nos
+    // públicos com a mesma categoria — remarketing vê o mesmo público.
+    trackGoogleAdsAudienceEvent("submit_application", { content_name: input.method, content_category: application });
     return;
   }
 
+  const signals = leadSignalParams(input);
   trackMetaEvent(
     "Lead",
-    { content_name: input.method, content_category: formPath, ...leadSignalParams(input) },
+    { content_name: input.method, content_category: formPath, ...signals },
     { eventId: input.eventId },
   );
   trackGoogleAdsConversion("lead", {
     transactionId: input.eventId,
     email: input.email,
     phoneDigits: input.phoneDigits,
+    name: input.name,
+    params: signals,
   });
 }
 
 export function reportContact(channel: "whatsapp" | "phone" | "email", source: string): void {
   trackMetaEvent("Contact", { content_name: source, content_category: channel });
-  // Contato por e-mail não é conversão de mídia no Google Ads (só WhatsApp/telefone).
-  if (channel !== "email") trackGoogleAdsConversion("contact");
+  // Contato por e-mail não é conversão de mídia no Google Ads (só WhatsApp/telefone);
+  // como evento de público, entra nos três canais.
+  if (channel !== "email") {
+    trackGoogleAdsConversion("contact", { params: { content_name: source, content_category: channel } });
+  } else {
+    trackGoogleAdsAudienceEvent("contact", { content_name: source, content_category: channel });
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -192,6 +203,8 @@ export function reportPageContent(content: PageContent | null): void {
     content_ids: [content.id],
     content_category: content.category,
   });
+  // Espelho no Google: view_item com o mesmo id e categoria (remarketing).
+  trackGoogleAdsAudienceEvent("view_item", { items: [{ id: content.id }], content_category: content.category });
 }
 
 /** Slug do projeto quando o caminho é /portfolio/<slug>; senão `null`. */
@@ -223,6 +236,7 @@ export function formKeyForPath(pathname: string): string | null {
 export function reportFormStart(form: string): void {
   if (!form) return;
   trackMetaCustomEvent("IniciouFormulario", { content_category: form });
+  trackGoogleAdsAudienceEvent("form_start", { content_category: form });
 }
 
 /** Categoria da página para o VisitanteEngajado ("outra" quando não há). */
@@ -237,4 +251,5 @@ export function pageCategoryFor(pathname: string): string {
 
 export function reportEngaged(reason: "tempo" | "rolagem", pathname: string): void {
   trackMetaCustomEvent("VisitanteEngajado", { motivo: reason, content_category: pageCategoryFor(pathname) });
+  trackGoogleAdsAudienceEvent("visitante_engajado", { motivo: reason, content_category: pageCategoryFor(pathname) });
 }
