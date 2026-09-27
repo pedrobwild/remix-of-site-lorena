@@ -169,7 +169,7 @@ describe("metaPixel.readMetaBrowserIds", () => {
 describe("googleAds", () => {
   it("valida ID e rótulos", () => {
     configureGoogleAds({ id: " aw-123456789 ", leadLabel: "AbC-D_efG-h12", contactLabel: "x y" });
-    expect(getGoogleAdsConfig()).toEqual({ id: "AW-123456789", leadLabel: "AbC-D_efG-h12", contactLabel: null });
+    expect(getGoogleAdsConfig()).toEqual({ id: "AW-123456789", leadLabel: "AbC-D_efG-h12", contactLabel: null, applicationLabel: null });
     configureGoogleAds({ id: "AW-12'+alert(1)+'", leadLabel: "AbCdEf" });
     expect(getGoogleAdsConfig()).toBeNull();
     expect(validAdsLabel("AbC-D_efG-h12")).toBe("AbC-D_efG-h12");
