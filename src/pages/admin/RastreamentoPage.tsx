@@ -4,12 +4,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { RefreshCw, ExternalLink } from "lucide-react";
 
 /**
- * /admin/rastreamento — acompanhamento de tráfego.
+ * /admin/rastreamento — acompanhamento de tráfego e de mídia paga.
  *
- * Três blocos:
+ * Blocos:
  *  1. Impressões e cliques no Google (Search Console, por URL).
- *  2. Cliques no FAQ (eventos `faq_question_click` gravados em analytics_events).
- *  3. Visitas por URL (pageviews da própria medição do site).
+ *  2. Leads enviados (tabela `leads`, por formulário, com origem de clique).
+ *  3. Eventos de mídia disparados (espelho `ad_event` do Pixel/Google em
+ *     analytics_events — sem dado pessoal).
+ *  4. Cliques em links rastreados de anúncio (tracking_hits, via RPC).
+ *  5. Cliques no FAQ (eventos `faq_question_click` gravados em analytics_events).
+ *  6. Visitas por URL (pageviews da própria medição do site).
  */
 
 type GscRow = {
@@ -31,9 +35,38 @@ type GscResponse = {
 
 type PathRow = { path: string; pageviews: number; sessions: number };
 type FaqRow = { pergunta: string; cliques: number };
+type LeadRow = { formulario: string; leads: number; viaGoogle: number; viaMeta: number };
+type AdEventRow = { evento: string; quantidade: number };
+type AdClickRow = {
+  campaign: string | null;
+  source: string | null;
+  medium: string | null;
+  opens: number;
+  views: number;
+  clicks: number;
+};
 
-/** Teto de eventos lidos para o ranking do FAQ (o PostgREST corta em 1000). */
+/** Teto de linhas lidas por bloco (o PostgREST corta em 1000). */
 const FAQ_EVENTS_LIMIT = 1000;
+const LEADS_LIMIT = 1000;
+const AD_EVENTS_LIMIT = 1000;
+
+/** Rótulo amigável do formulário a partir de `leads.form_path`. */
+const FORM_LABELS: Readonly<Record<string, string>> = {
+  "/contato": "Contato",
+  "/orcamento": "Orçamento",
+  "/diagnostico": "Diagnóstico (antigo)",
+  "/o": "LP Obra",
+  "/p": "LP Panfleto",
+  "/parceiros": "Parceiros",
+  "/parceiros/incorporadoras": "Incorporadoras",
+  "/indique-um-amigo": "Indicação",
+};
+
+function formLabel(path: string | null): string {
+  if (!path) return "(sem formulário)";
+  return FORM_LABELS[path] ?? path;
+}
 
 const PERIODS = [
   { days: 7, label: "7 dias" },
