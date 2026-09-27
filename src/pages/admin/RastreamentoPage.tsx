@@ -486,6 +486,49 @@ export default function RastreamentoPage() {
         )}
       </Section>
 
+      <Section title="Origem dos visitantes (Google, Meta e direto)">
+        {origensErro ? (
+          <p className="admin-flash admin-flash--err mono" role="alert">{origensErro}</p>
+        ) : loading ? (
+          <p className="mono">carregando…</p>
+        ) : origens.length === 0 ? (
+          <p className="mono">nenhuma visita registrada neste período.</p>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Origem</th>
+                  <th>Sessões</th>
+                  <th>Conversões</th>
+                  <th>Taxa de conversão</th>
+                  <th>Rejeição</th>
+                </tr>
+              </thead>
+              <tbody>
+                {origens.map((r) => (
+                  <tr key={r.origem}>
+                    <td>{r.origem}</td>
+                    <td className="mono">{r.sessoes}</td>
+                    <td className="mono">{r.conversoes}</td>
+                    <td className="mono">
+                      {r.sessoes > 0 ? pct(r.conversoes / r.sessoes) : "—"}
+                    </td>
+                    <td className="mono">{r.rejeicao == null ? "—" : pct(r.rejeicao)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="mono" style={{ marginTop: 8, opacity: 0.7 }}>
+              Origem lida da campanha (utm) ou do site de referência de cada sessão. “Direto /
+              próprio site” = digitou o endereço ou navegou dentro do site. Sessões com aceite de
+              cookies: {sessoesComAceite} (contadas pelos eventos de mídia, que só disparam após o
+              aceite — o contador começou na publicação do novo rastreamento).
+            </p>
+          </div>
+        )}
+      </Section>
+
       <Section title="Leads enviados, por formulário">
         {leadsErro ? (
           <p className="admin-flash admin-flash--err mono" role="alert">{leadsErro}</p>
