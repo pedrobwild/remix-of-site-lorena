@@ -170,6 +170,7 @@ export function reportContact(channel: "whatsapp" | "phone" | "email", source: s
   } else {
     trackGoogleAdsAudienceEvent("contact", { content_name: source, content_category: channel });
   }
+  logAdEvent("Contact", { content_category: channel });
 }
 
 // ---------------------------------------------------------------------------
@@ -218,6 +219,7 @@ export function reportPageContent(content: PageContent | null): void {
   });
   // Espelho no Google: view_item com o mesmo id e categoria (remarketing).
   trackGoogleAdsAudienceEvent("view_item", { items: [{ id: content.id }], content_category: content.category });
+  logAdEvent("ViewContent", { content_category: content.category });
 }
 
 /** Slug do projeto quando o caminho é /portfolio/<slug>; senão `null`. */
@@ -250,6 +252,7 @@ export function reportFormStart(form: string): void {
   if (!form) return;
   trackMetaCustomEvent("IniciouFormulario", { content_category: form });
   trackGoogleAdsAudienceEvent("form_start", { content_category: form });
+  logAdEvent("IniciouFormulario", { content_category: form });
 }
 
 /** Categoria da página para o VisitanteEngajado ("outra" quando não há). */
@@ -265,4 +268,5 @@ export function pageCategoryFor(pathname: string): string {
 export function reportEngaged(reason: "tempo" | "rolagem", pathname: string): void {
   trackMetaCustomEvent("VisitanteEngajado", { motivo: reason, content_category: pageCategoryFor(pathname) });
   trackGoogleAdsAudienceEvent("visitante_engajado", { motivo: reason, content_category: pageCategoryFor(pathname) });
+  logAdEvent("VisitanteEngajado", { content_category: pageCategoryFor(pathname) });
 }
