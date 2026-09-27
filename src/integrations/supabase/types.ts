@@ -1771,6 +1771,14 @@ export type Database = {
           sessions: number
         }[]
       }
+      analytics_consent_daily: {
+        Args: { p_since: string; p_tz?: string; p_until: string }
+        Returns: {
+          accepts: number
+          day: string
+          declines: number
+        }[]
+      }
       analytics_funnel: {
         Args: { p_since: string; p_steps: string[]; p_until: string }
         Returns: {
