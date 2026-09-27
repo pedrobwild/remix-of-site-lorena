@@ -9,6 +9,7 @@ import { useSiteSettings } from "@/lib/useSiteSettings";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import NotFoundPage from "./NotFoundPage";
+import BairroLeadForm from "@/components/BairroLeadForm";
 import { useBewildProjects, bewildTypeLabel } from "@/lib/useBewildProjects";
 import { neighborhoodPages, neighborhoodSlug } from "@/lib/portfolioFilter";
 import { reportProjectClick } from "@/lib/conversions";
@@ -40,10 +41,10 @@ export default function BairroPage({ slug }: { slug: string }) {
     : null;
 
   useSeo({
-    title: `Reforma de apartamento em ${label || "São Paulo"} | Projetos reais | Bewild`,
+    title: `Reforma de apartamento em ${label || "São Paulo"}: projetos e orçamento | Bewild`,
     description: `${list.length} apartamentos reformados pela Bewild em ${label}, São Paulo${
       faixa ? ` (${faixa})` : ""
-    }: fotos reais, metragem e prazo de cada obra, do imóvel cru à entrega das chaves.`,
+    }: fotos reais de cada obra e orçamento sem custo para o seu imóvel no bairro.`,
     canonicalPath: `/reforma/${slug}`,
     ogType: "website",
     ogImage: list[0]?.cover_url ?? undefined,
@@ -92,7 +93,8 @@ export default function BairroPage({ slug }: { slug: string }) {
               <p className="bwh-lead" style={{ margin: "0 0 32px" }}>
                 {pad(list.length)} apartamentos entregues pela Bewild em {label}
                 {faixa ? `, de ${faixa}` : ""}. Cada um com projeto próprio de layout, marcenaria,
-                iluminação e acabamento — veja as fotos reais e abra a página de cada obra.
+                iluminação e acabamento — veja as fotos reais e abra a página de cada obra.{" "}
+                <a href="#orcamento" style={{ textDecoration: "underline" }}>Pedir orçamento em {label}</a>.
               </p>
             )}
           </div>
@@ -169,14 +171,15 @@ export default function BairroPage({ slug }: { slug: string }) {
           </div>
         </section>
 
-        <section className="bwh-sec bwh-sec--dark">
+        <section className="bwh-sec bwh-sec--dark" id="orcamento">
           <div className="bwh-wrap" style={{ maxWidth: 900, textAlign: "center" }}>
             <h2 className="bwh-h2" style={{ margin: "0 auto 24px", color: "#fff" }}>
               Tem um apartamento em {label || "São Paulo"}? <em>A gente reforma.</em>
             </h2>
-            <a href="/orcamento" className="bwh-btn bwh-btn--invert">
-              Solicitar orçamento <span className="bwh-ar">→</span>
-            </a>
+            <p className="bwh-lead" style={{ margin: "0 auto 32px" }}>
+              Conte a metragem e o que você precisa: a gente devolve escopo, prazo e próximos passos, sem custo.
+            </p>
+            {page && <BairroLeadForm bairro={label} />}
           </div>
         </section>
       </main>
