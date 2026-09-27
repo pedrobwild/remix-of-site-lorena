@@ -72,7 +72,6 @@ export default function BewildPortfolioPage() {
   const withCover = useMemo(() => projects.filter((p) => !!p.cover_url), [projects]);
   const bairroPages = useMemo(() => neighborhoodPages(withCover), [withCover]);
   const places = useMemo(() => neighborhoodOptions(withCover), [withCover]);
-  const chips = useMemo(() => availablePortfolioFilters(withCover), [withCover]);
   const filtered = useMemo(
     () =>
       applyPortfolioSort(
@@ -120,25 +119,6 @@ export default function BewildPortfolioPage() {
               </nav>
             )}
 
-            {showChips && (
-            <div
-              className="bwh-pf-chips"
-              role="group"
-              aria-label="Filtrar projetos"
-            >
-              {chips.map((f) => (
-                <button
-                  key={f.value}
-                  type="button"
-                  className={`bwh-pf-chip${filter === f.value ? " is-on" : ""}`}
-                  aria-pressed={filter === f.value}
-                  onClick={() => setFilter(f.value)}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
-            )}
 
             {showChips && (
               <div className="bwh-pf-controls">
