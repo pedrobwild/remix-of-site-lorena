@@ -45,6 +45,18 @@ type AdClickRow = {
   views: number;
   clicks: number;
 };
+type BreakdownRow = {
+  dim: string | null;
+  sessions: number;
+  conversions: number;
+  bounce_rate: number;
+};
+type OriginRow = {
+  origem: string;
+  sessoes: number;
+  conversoes: number;
+  rejeicao: number | null;
+};
 
 /** Teto de linhas lidas por bloco (o PostgREST corta em 1000). */
 const FAQ_EVENTS_LIMIT = 1000;
@@ -86,6 +98,58 @@ function pct(v: number) {
   return `${(v * 100).toFixed(1)}%`;
 }
 
+/**
+ * Classifica uma dimensão (utm_source ou referrer_host) no balde de origem.
+ * "Direto / próprio site" = sem origem ou referência do próprio domínio.
+ */
+function classifyOrigin(dim: string | null): string {
+  const d = (dim ?? "").toLowerCase().trim();
+  if (!d || d === "bewild.com.br" || d === "www.bewild.com.br" || d === "direct") {
+    return "Direto / próprio site";
+  }
+  if (d.includes("google")) return "Google";
+  if (
+    d.includes("facebook") ||
+    d.includes("instagram") ||
+    d.includes("meta") ||
+    d === "fb" ||
+    d === "ig"
+  ) {
+    return "Meta";
+  }
+  return "Outros";
+}
+
+/** Ordem fixa de exibição dos baldes de origem. */
+const ORIGIN_ORDER = ["Google", "Meta", "Direto / próprio site", "Outros"];
+
+function mergeOrigins(rows: BreakdownRow[]): OriginRow[] {
+  const map = new Map<string, OriginRow>();
+  for (const r of rows) {
+    const origem = classifyOrigin(r.dim);
+    const row = map.get(origem) ?? { origem, sessoes: 0, conversoes: 0, rejeicao: null };
+    row.sessoes += Number(r.sessions);
+    row.conversoes += Number(r.conversions);
+    map.set(origem, row);
+  }
+  // Rejeição ponderada pelas sessões de cada linha de origem.
+  for (const row of map.values()) {
+    let peso = 0;
+    let soma = 0;
+    for (const r of rows) {
+      if (classifyOrigin(r.dim) !== row.origem) continue;
+      const s = Number(r.sessions);
+      if (r.bounce_rate == null || s <= 0) continue;
+      peso += s;
+      soma += Number(r.bounce_rate) * s;
+    }
+    row.rejeicao = peso > 0 ? soma / peso : null;
+  }
+  return [...map.values()].sort(
+    (a, b) => ORIGIN_ORDER.indexOf(a.origem) - ORIGIN_ORDER.indexOf(b.origem),
+  );
+}
+
 export default function RastreamentoPage() {
   const [days, setDays] = useState(28);
   const [loading, setLoading] = useState(true);
@@ -104,6 +168,9 @@ export default function RastreamentoPage() {
   const [adEventsTruncado, setAdEventsTruncado] = useState(false);
   const [adClicks, setAdClicks] = useState<AdClickRow[]>([]);
   const [adClicksErro, setAdClicksErro] = useState<string | null>(null);
+  const [origens, setOrigens] = useState<OriginRow[]>([]);
+  const [origensErro, setOrigensErro] = useState<string | null>(null);
+  const [sessoesComAceite, setSessoesComAceite] = useState(0);
   // Trocar de período rápido disparava cargas concorrentes; só a última vale.
   const requestId = useRef(0);
 
@@ -117,7 +184,8 @@ export default function RastreamentoPage() {
     const id = ++requestId.current;
     setLoading(true);
 
-    const [gscRes, pathsRes, faqRes, leadsRes, adEventsRes, adClicksRes] = await Promise.all([
+    const [gscRes, pathsRes, faqRes, leadsRes, adEventsRes, adClicksRes, utmRes, refRes] =
+      await Promise.all([
       supabase.functions.invoke("search-console-stats", {
         body: { days, dimension: "page", rowLimit: 100 },
       }),
@@ -143,7 +211,7 @@ export default function RastreamentoPage() {
         .limit(LEADS_LIMIT),
       supabase
         .from("analytics_events")
-        .select("value, created_at")
+        .select("value, created_at, session_id")
         .eq("event_type", "ad_event")
         .gte("created_at", range.since)
         .lte("created_at", range.until)
@@ -153,6 +221,18 @@ export default function RastreamentoPage() {
         p_since: range.since,
         p_until: range.until,
       }),
+      supabase.rpc("analytics_breakdown" as never, {
+        p_since: range.since,
+        p_until: range.until,
+        p_dim: "utm_source",
+        p_limit: 100,
+      } as never),
+      supabase.rpc("analytics_breakdown" as never, {
+        p_since: range.since,
+        p_until: range.until,
+        p_dim: "referrer_host",
+        p_limit: 100,
+      } as never),
     ]);
     if (id !== requestId.current) return;
 
@@ -237,14 +317,19 @@ export default function RastreamentoPage() {
       setAdEventsTruncado(false);
     } else {
       setAdEventsErro(null);
-      const eventos = (adEventsRes.data ?? []) as Array<{ value: unknown }>;
+      const eventos = (adEventsRes.data ?? []) as Array<{ value: unknown; session_id: string | null }>;
       setAdEventsTruncado(eventos.length >= AD_EVENTS_LIMIT);
       const contagem = new Map<string, number>();
+      // Sessões com aceite de cookies = sessões que dispararam ao menos um
+      // evento de mídia (o Pixel/Google só dispara após o aceite).
+      const sessoesAceite = new Set<string>();
       for (const ev of eventos) {
+        if (ev.session_id) sessoesAceite.add(ev.session_id);
         const v = (ev.value ?? {}) as { name?: string };
         const nome = typeof v.name === "string" && v.name ? v.name : "(sem nome)";
         contagem.set(nome, (contagem.get(nome) ?? 0) + 1);
       }
+      setSessoesComAceite(sessoesAceite.size);
       setAdEvents(
         [...contagem.entries()]
           .map(([evento, quantidade]) => ({ evento, quantidade }))
@@ -264,6 +349,20 @@ export default function RastreamentoPage() {
       );
     }
 
+    if (utmRes.error || refRes.error) {
+      const msg = (utmRes.error ?? refRes.error)?.message;
+      setOrigensErro(`Não foi possível ler a origem dos visitantes: ${msg}`);
+      setOrigens([]);
+    } else {
+      setOrigensErro(null);
+      setOrigens(
+        mergeOrigins([
+          ...((utmRes.data ?? []) as unknown as BreakdownRow[]),
+          ...((refRes.data ?? []) as unknown as BreakdownRow[]),
+        ]),
+      );
+    }
+
     setLoading(false);
   }
 
@@ -277,12 +376,14 @@ export default function RastreamentoPage() {
   const totalLeads = leads.reduce((acc, r) => acc + r.leads, 0);
   const totalAdEvents = adEvents.reduce((acc, r) => acc + r.quantidade, 0);
   const totalAdClicks = adClicks.reduce((acc, r) => acc + Number(r.clicks), 0);
+  const totalSessoesOrigem = origens.reduce((acc, r) => acc + r.sessoes, 0);
+  const totalConversoesOrigem = origens.reduce((acc, r) => acc + r.conversoes, 0);
 
   return (
     <AdminLayout
       active="rastreamento"
       title="Rastreamento"
-      description="Impressões no Google, leads enviados, eventos de mídia, cliques de anúncios e visitas por página."
+      description="Origem dos visitantes, impressões no Google, leads enviados, eventos de mídia, cliques de anúncios e visitas por página."
       actions={
         <>
           <nav className="seo-tabs" role="tablist" aria-label="Período">
@@ -325,6 +426,12 @@ export default function RastreamentoPage() {
           value={adEventsErro ? "—" : totalAdEvents}
         />
         <Stat label="Cliques em anúncios" value={adClicksErro ? "—" : totalAdClicks} />
+        <Stat label="Sessões por origem" value={origensErro ? "—" : totalSessoesOrigem} />
+        <Stat label="Conversões por origem" value={origensErro ? "—" : totalConversoesOrigem} />
+        <Stat
+          label="Sessões com aceite de cookies"
+          value={adEventsErro ? "—" : sessoesComAceite}
+        />
         <Stat label="Visitas medidas no site" value={pathsErro ? "—" : totalVisitas} />
         <Stat
           label={faqTruncado ? `Cliques no FAQ (últimos ${FAQ_EVENTS_LIMIT})` : "Cliques no FAQ"}
@@ -375,6 +482,49 @@ export default function RastreamentoPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+      </Section>
+
+      <Section title="Origem dos visitantes (Google, Meta e direto)">
+        {origensErro ? (
+          <p className="admin-flash admin-flash--err mono" role="alert">{origensErro}</p>
+        ) : loading ? (
+          <p className="mono">carregando…</p>
+        ) : origens.length === 0 ? (
+          <p className="mono">nenhuma visita registrada neste período.</p>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Origem</th>
+                  <th>Sessões</th>
+                  <th>Conversões</th>
+                  <th>Taxa de conversão</th>
+                  <th>Rejeição</th>
+                </tr>
+              </thead>
+              <tbody>
+                {origens.map((r) => (
+                  <tr key={r.origem}>
+                    <td>{r.origem}</td>
+                    <td className="mono">{r.sessoes}</td>
+                    <td className="mono">{r.conversoes}</td>
+                    <td className="mono">
+                      {r.sessoes > 0 ? pct(r.conversoes / r.sessoes) : "—"}
+                    </td>
+                    <td className="mono">{r.rejeicao == null ? "—" : pct(r.rejeicao)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="mono" style={{ marginTop: 8, opacity: 0.7 }}>
+              Origem lida da campanha (utm) ou do site de referência de cada sessão. “Direto /
+              próprio site” = digitou o endereço ou navegou dentro do site. Sessões com aceite de
+              cookies: {sessoesComAceite} (contadas pelos eventos de mídia, que só disparam após o
+              aceite — o contador começou na publicação do novo rastreamento).
+            </p>
           </div>
         )}
       </Section>
