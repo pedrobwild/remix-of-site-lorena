@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
 import { routes } from "../lib/useHashRoute";
 import {
   hadLegacyAcceptance,
@@ -16,9 +16,20 @@ import { logConsentAudit } from "../lib/analytics";
  *   src/lib/cookieConsent.ts). Quem recusou antes não é perguntado de novo.
  * - O texto diz para que servem os cookies: medição e anúncios da Bewild na
  *   Meta e no Google, inclusive remarketing e públicos semelhantes.
+ * - No celular (≤ 720 px) o aviso aparece em versão curta
+ *   (`.cookie-banner__desc--short`) com as mesmas finalidades — medição e
+ *   anúncios da Meta e do Google para quem já visitou e perfis parecidos —
+ *   e os mesmos dois links; o título fica só para leitores de tela. O banner
+ *   cai de ~210 px para ~140 px de altura. A versão completa continua no DOM
+ *   (é a que `aria-describedby` aponta) e é a única visível no desktop.
+ *   Nada da finalidade fica escondido por corte de linha.
  * - "Recusar" e "Aceitar" têm o mesmo peso visual e nenhum dos dois recebe o
  *   foco: ao abrir, o foco vai para a própria região (leitores de tela
  *   anunciam o título) — sem empurrar o visitante para uma das opções.
+ * - Enquanto está na tela, publica a própria altura em `--cookie-banner-h`
+ *   no `<html>`: os elementos fixos do rodapé (barra "Solicitar orçamento"
+ *   do celular em home-bwa.css, barra do guia) sobem essa medida e nunca
+ *   ficam cobertos. O botão do assistente já se mede sozinho.
  * - Persiste e propaga a decisão via `src/lib/cookieConsent.ts` (localStorage
  *   + evento `cookie:consent-change`). Analytics, GA4, Google Ads, Meta Pixel,
  *   Clarity e Hotjar só rodam com aceite. Recusar depois de aceitar recarrega
@@ -29,6 +40,9 @@ import { logConsentAudit } from "../lib/analytics";
  *   (reabriu pelo rodapé).
  * - Link para /privacidade para detalhes.
  */
+
+/** Variável CSS (no `<html>`) com a altura do banner visível; some quando ele fecha. */
+export const COOKIE_BANNER_HEIGHT_VAR = "--cookie-banner-h";
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
@@ -63,6 +77,33 @@ export default function CookieBanner() {
     regionRef.current?.focus({ preventScroll: true });
     return () => {
       previousFocusRef.current?.focus?.({ preventScroll: true });
+    };
+  }, [visible]);
+
+  // Altura do banner → `--cookie-banner-h` no <html> enquanto visível.
+  // Layout effect: a variável já vale no mesmo commit em que o banner entra
+  // (ou sai) do DOM, antes da pintura — o botão do assistente, que se mede
+  // quando o banner entra/sai, já encontra o CTA na posição final.
+  // ResizeObserver cobre rotação, teclado e a troca curto/longo do texto;
+  // o `resize` da janela é o fallback onde ele não existe. Ao fechar, a
+  // variável some e os elementos fixos voltam ao lugar.
+  useLayoutEffect(() => {
+    if (!visible) return;
+    const el = regionRef.current;
+    const root = document.documentElement;
+    if (!el) return;
+    const apply = () => {
+      const h = Math.round(el.getBoundingClientRect().height);
+      root.style.setProperty(COOKIE_BANNER_HEIGHT_VAR, `${h}px`);
+    };
+    apply();
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(apply) : null;
+    ro?.observe(el);
+    window.addEventListener("resize", apply);
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener("resize", apply);
+      root.style.removeProperty(COOKIE_BANNER_HEIGHT_VAR);
     };
   }, [visible]);
 
@@ -122,6 +163,31 @@ export default function CookieBanner() {
               Preferências de cookies
             </a>
             , também no rodapé. Saiba mais na{" "}
+            <a
+              className="cookie-banner__link"
+              href={routes.privacidade}
+              data-cursor="hover"
+            >
+              Política de Privacidade
+            </a>
+            .
+          </p>
+          {/* Versão curta: a mesma finalidade e os mesmos dois links, em menos
+              linhas. O CSS mostra só uma das duas versões por vez (esta no
+              celular, a completa no desktop); leitores de tela recebem a
+              versão exibida, e `aria-describedby` sempre aponta para a completa. */}
+          <p className="cookie-banner__desc cookie-banner__desc--short">
+            Com o seu aceite, cookies da Meta e do Google medem o uso do site e
+            mostram anúncios da Bewild a quem já visitou e a perfis parecidos.
+            Mude a escolha em{" "}
+            <a
+              className="cookie-banner__link"
+              href={routes.preferenciasCookies}
+              data-cursor="hover"
+            >
+              Preferências de cookies
+            </a>{" "}
+            ·{" "}
             <a
               className="cookie-banner__link"
               href={routes.privacidade}

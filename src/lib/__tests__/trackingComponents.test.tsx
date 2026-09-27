@@ -380,4 +380,42 @@ describe("CookieBanner", () => {
     fireEvent.click(document.querySelector('[data-consent="declined"]')!);
     expect(logConsentAuditMock).toHaveBeenCalledWith("declined", "preferences");
   });
+
+  it("publica a altura em --cookie-banner-h enquanto aberto e tira ao decidir (o CTA fixo sobe e não fica coberto)", () => {
+    const rect = vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue({
+      x: 0,
+      y: 706,
+      top: 706,
+      bottom: 844,
+      left: 0,
+      right: 390,
+      width: 390,
+      height: 138,
+      toJSON: () => ({}),
+    } as DOMRect);
+    try {
+      showBanner();
+      expect(document.documentElement.style.getPropertyValue("--cookie-banner-h")).toBe("138px");
+      fireEvent.click(document.querySelector('[data-consent="accepted"]')!);
+      expect(document.querySelector(".cookie-banner")).toBeNull();
+      expect(document.documentElement.style.getPropertyValue("--cookie-banner-h")).toBe("");
+    } finally {
+      rect.mockRestore();
+    }
+  });
+
+  it("versão curta (celular) mantém as finalidades e os mesmos dois links; a descrição acessível segue completa", () => {
+    showBanner();
+    const full = document.getElementById("cookie-banner-desc")!;
+    const short = document.querySelector(".cookie-banner__desc--short")!;
+    const text = short.textContent ?? "";
+    expect(text).toMatch(/Meta e do Google/);
+    expect(text).toMatch(/anúncios da Bewild/);
+    expect(text).toMatch(/quem já visitou/);
+    expect(text).toMatch(/perfis parecidos/);
+    const hrefs = (el: Element) => Array.from(el.querySelectorAll("a")).map((a) => a.getAttribute("href"));
+    expect(hrefs(short)).toEqual(hrefs(full));
+    expect(document.querySelector(".cookie-banner")!.getAttribute("aria-describedby")).toBe("cookie-banner-desc");
+    expect(full.classList.contains("cookie-banner__desc--short")).toBe(false);
+  });
 });

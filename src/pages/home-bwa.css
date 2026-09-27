@@ -3628,7 +3628,11 @@
         position: fixed;
         left: 12px;
         right: 12px;
-        bottom: calc(12px + env(safe-area-inset-bottom));
+        /* Banner de cookies aberto: sobe a altura dele (--cookie-banner-h,
+           publicada por CookieBanner.tsx; o banner já cobre a área segura).
+           Sem banner, a variável não existe e vale a área segura. */
+        bottom: calc(12px + var(--cookie-banner-h, env(safe-area-inset-bottom, 0px)));
+        transition: bottom .25s cubic-bezier(.22, 1, .36, 1);
         z-index: 60;
         display: flex;
         align-items: center;
@@ -3644,6 +3648,12 @@
         text-transform: uppercase;
         text-decoration: none;
         box-shadow: 0 12px 30px rgba(4, 14, 28, .35);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .bwa-mobile-cta {
+          transition: none;
+        }
       }
 
       .bwa-footer {

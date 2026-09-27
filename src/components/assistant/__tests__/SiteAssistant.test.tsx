@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import SiteAssistant from "../SiteAssistant";
 
@@ -53,6 +53,46 @@ describe("SiteAssistant", () => {
   it.each(["/faq", "/admin/leads", "/diagnostico", "/o", "/p"])("não aparece em %s", (path) => {
     render(<SiteAssistant getPath={() => path} />);
     expect(screen.queryByRole("link", { name: /dúvidas/i })).toBeNull();
+  });
+
+  it("com o banner de cookies aberto, sobe acima da barra 'Solicitar orçamento' (que sobe acima do banner)", () => {
+    // Quadros de animação controlados pelo teste.
+    const frames: FrameRequestCallback[] = [];
+    const raf = vi.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => {
+      frames.push(cb);
+      return frames.length;
+    });
+    const caf = vi.spyOn(window, "cancelAnimationFrame").mockImplementation(() => {});
+    const flush = () => {
+      while (frames.length) frames.shift()!(0);
+    };
+    const h = window.innerHeight;
+    const fixedAt = (className: string, top: number, bottom: number) => {
+      const el = document.createElement("div");
+      el.className = className;
+      el.style.opacity = "1";
+      el.getBoundingClientRect = () =>
+        ({ top, bottom, height: bottom - top, width: 360, left: 12, right: 372, x: 12, y: top, toJSON() {} }) as DOMRect;
+      document.body.appendChild(el);
+      return el;
+    };
+    // Banner com 157 px colado na borda; a barra 12 px acima dele.
+    const banner = fixedAt("cookie-banner", h - 157, h);
+    const cta = fixedAt("bwa-mobile-cta", h - 157 - 12 - 52, h - 157 - 12);
+    try {
+      window.history.replaceState({}, "", "/portfolio");
+      render(<SiteAssistant />);
+      act(() => flush());
+      const wrap = document.querySelector<HTMLElement>(".bwas")!;
+      // Antes: só o banner contava (a barra termina a mais de 120 px da borda)
+      // e o botão parava em cima dela — offset 157.
+      expect(wrap.style.getPropertyValue("--bwas-offset")).toBe(`${157 + 12 + 52}px`);
+    } finally {
+      banner.remove();
+      cta.remove();
+      raf.mockRestore();
+      caf.mockRestore();
+    }
   });
 
   it("volta a aparecer quando o Voltar sai da /faq", () => {

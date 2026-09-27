@@ -8,7 +8,9 @@
  * - Some na própria /faq (lá ele só recarregaria a página) e nas rotas de
  *   HIDDEN_SEGMENTS.
  * - Fica no canto inferior direito e sobe acima dos elementos fixos do rodapé
- *   da tela (banner de cookies, barra "Solicitar orçamento" do celular...).
+ *   da tela (banner de cookies, barra "Solicitar orçamento" do celular...),
+ *   inclusive quando estão empilhados — com o banner aberto, a barra sobe
+ *   acima dele e o botão sobe acima dos dois (ver bottomStack.ts).
  *   A medição é por evento — ResizeObserver nesses elementos, MutationObserver
  *   para saber quando entram/saem do DOM, resize da janela e fim de animação —
  *   e nunca por polling: a versão anterior fazia 15 `elementsFromPoint` +
@@ -22,6 +24,7 @@ import { createPortal } from "react-dom";
 import { trackEvent } from "@/lib/ga4";
 import { navigate } from "@/lib/useHashRoute";
 import { ASSISTANT_ENABLED, MAINTENANCE_MODE } from "@/config/site";
+import { bottomStackTop, type StackRect } from "./bottomStack";
 import "./site-assistant.css";
 
 const FAQ_PATH = "/faq";
@@ -95,15 +98,17 @@ function useBottomObstacle(active: boolean): number {
     const measure = () => {
       measureFrame = 0;
       const h = window.innerHeight;
-      let top = h;
+      const rects: StackRect[] = [];
       for (const el of tracked) {
         const r = el.getBoundingClientRect();
         if (r.width <= 0 || r.height <= 0) continue; // display: none
-        if (r.bottom < h - 120 || r.height > h * 0.6) continue; // não está no rodapé
         const cs = window.getComputedStyle(el);
         if (cs.visibility === "hidden" || Number(cs.opacity) <= 0.05) continue;
-        top = Math.min(top, r.top);
+        rects.push({ top: r.top, bottom: r.bottom, height: r.height });
       }
+      // Pilha a partir da borda de baixo: inclui a barra "Solicitar orçamento"
+      // quando ela sobe acima do banner de cookies (ver bottomStack.ts).
+      const top = bottomStackTop(rects, h);
       const next = top < h ? Math.max(0, Math.round(h - top)) : 0;
       setOffset((prev) => (prev === next ? prev : next));
     };
