@@ -911,6 +911,20 @@ function AnalyticsTab({
               : "Clique em WhatsApp ou telefone. Deixe vazio se não quiser contar isso como conversão."}
           </FieldHint>
         </Field>
+        <Field label="Google Ads — rótulo da conversão de cadastro (opcional)">
+          <input
+            className="admin-field__input"
+            value={s.google_ads_application_label ?? ""}
+            onChange={(e) => patch("google_ads_application_label", e.target.value)}
+            placeholder="CdE-2_ghI-j56"
+            aria-invalid={labelInvalid(s.google_ads_application_label) || undefined}
+          />
+          <FieldHint warn={labelInvalid(s.google_ads_application_label)}>
+            {labelInvalid(s.google_ads_application_label)
+              ? "Rótulo inválido: só letras, números, - e _."
+              : "Cadastros de parceiro, incorporadora e indicação. Crie uma ação de conversão separada no Google Ads (Metas › Conversões) e cole o rótulo aqui — assim cada segmento tem a sua contagem. Vazio = cadastros só alimentam os públicos, sem virar conversão."}
+          </FieldHint>
+        </Field>
         <Field label="Meta Pixel (Facebook)">
           <input
             className="admin-field__input"
