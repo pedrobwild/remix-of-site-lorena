@@ -349,6 +349,20 @@ export default function RastreamentoPage() {
       );
     }
 
+    if (utmRes.error || refRes.error) {
+      const msg = (utmRes.error ?? refRes.error)?.message;
+      setOrigensErro(`Não foi possível ler a origem dos visitantes: ${msg}`);
+      setOrigens([]);
+    } else {
+      setOrigensErro(null);
+      setOrigens(
+        mergeOrigins([
+          ...((utmRes.data ?? []) as unknown as BreakdownRow[]),
+          ...((refRes.data ?? []) as unknown as BreakdownRow[]),
+        ]),
+      );
+    }
+
     setLoading(false);
   }
 
