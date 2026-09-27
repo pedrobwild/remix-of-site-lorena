@@ -45,6 +45,18 @@ type AdClickRow = {
   views: number;
   clicks: number;
 };
+type BreakdownRow = {
+  dim: string | null;
+  sessions: number;
+  conversions: number;
+  bounce_rate: number;
+};
+type OriginRow = {
+  origem: string;
+  sessoes: number;
+  conversoes: number;
+  rejeicao: number | null;
+};
 
 /** Teto de linhas lidas por bloco (o PostgREST corta em 1000). */
 const FAQ_EVENTS_LIMIT = 1000;
