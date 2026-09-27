@@ -127,11 +127,55 @@ const CONTRATO_ITEMS: { q: string; a: string; href?: string; linkLabel?: string 
   },
 ];
 
+/* Bloco "Portfólio": dúvidas sobre as obras entregues, com cada resposta
+ * ligada a um projeto real (/portfolio/...) ou a uma página de bairro
+ * (/reforma/...). Links usam slugs reais do banco — se um projeto sair do
+ * ar, trocar o href aqui. */
+const PORTFOLIO_ITEMS: { q: string; a: string; href?: string; linkLabel?: string }[] = [
+  {
+    q: "Posso ver obras reais entregues pela Bewild?",
+    a: "Sim. O portfólio reúne mais de 160 projetos em São Paulo, cada um com página própria, fotos reais da obra, metragem, bairro e o detalhamento do que foi feito — do desafio ao resultado.",
+    href: "/portfolio",
+    linkLabel: "Ver o portfólio completo →",
+  },
+  {
+    q: "Vocês já reformaram um studio pequeno, de uns 25 m²?",
+    a: "Sim, é a nossa especialidade. Um exemplo é o AB – Península Vila Madalena, um studio de 23 m² reformado para locação, com marcenaria sob medida para aproveitar cada centímetro.",
+    href: "/portfolio/ab-peninsula-vila-madalena",
+    linkLabel: "Ver o projeto na Vila Madalena →",
+  },
+  {
+    q: "Como fica um apartamento reformado para short stay?",
+    a: "Layout, marcenaria e mobília são pensados para alta rotatividade e boas fotos de anúncio. O FG – Nurban Vila Madalena, de 26 m², é um caso real: reforma completa voltada para locação de curta temporada.",
+    href: "/portfolio/fg",
+    linkLabel: "Ver o caso de short stay →",
+  },
+  {
+    q: "Vocês têm obras no meu bairro?",
+    a: "Provavelmente sim: são obras entregues em mais de 27 bairros de São Paulo. Cada região com pelo menos três projetos tem uma página própria, com as fotos e os detalhes de cada obra.",
+    href: "/reforma/vila-madalena",
+    linkLabel: "Exemplo: obras na Vila Madalena →",
+  },
+  {
+    q: "Dá para ver o antes e depois de uma reforma?",
+    a: "Dá. O case do studio de 26 m² na Vila Madalena mostra a obra da medição à entrega, com fotos do antes, da obra e do resultado final — e o passo a passo de cada decisão.",
+    href: "/conteudos/antes-e-depois-studio-26-m2-vila-madalena",
+    linkLabel: "Ler o case de antes e depois →",
+  },
+  {
+    q: "Quanto custa uma reforma como as do portfólio?",
+    a: "Nas obras entregues, apartamentos compactos de 21 a 35 m² ficam em torno de R$ 2.400 por metro quadrado, incluindo projeto, obra, marcenaria e mobília. O valor do seu imóvel sai fechado no diagnóstico, antes de a obra começar.",
+    href: "/orcamento",
+    linkLabel: "Pedir um orçamento →",
+  },
+];
+
 export default function FaqPage() {
   const { settings } = useSiteSettings();
   const [aberto, setAberto] = useState("f-0");
   const [guiaAberto, setGuiaAberto] = useState(-1);
   const [contratoAberto, setContratoAberto] = useState(-1);
+  const [portfolioAberto, setPortfolioAberto] = useState(-1);
   const [pergunta, setPergunta] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [erroIa, setErroIa] = useState<string | null>(null);
