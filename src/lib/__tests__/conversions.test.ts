@@ -215,7 +215,8 @@ describe("conversions", () => {
     w.gtag = gtag;
     configureGoogleAds({ id: "AW-123456789", leadLabel: "LeadLabel1" });
 
-    // Parceiro, incorporadora e indicação: SubmitApplication, nunca Lead nem Google Ads.
+    // Parceiro, incorporadora e indicação: SubmitApplication, nunca Lead;
+    // no Google entram como evento de público (não como conversão).
     reportLead({ eventId: "ev-1", formPath: "/parceiros", method: "parceiros_form" });
     reportLead({ eventId: "ev-1b", formPath: "/parceiros/incorporadoras", method: "incorporadoras_form" });
     reportLead({ eventId: "ev-2", formPath: "/indique-um-amigo", method: "indique_um_amigo_form" });
@@ -225,8 +226,17 @@ describe("conversions", () => {
       ["track", "SubmitApplication", { content_name: "incorporadoras_form", content_category: "incorporadora" }, { eventID: "ev-1b" }],
       ["track", "SubmitApplication", { content_name: "indique_um_amigo_form", content_category: "indicacao" }, { eventID: "ev-2" }],
     ]);
-    expect(gtag).not.toHaveBeenCalled();
+    expect(gtag.mock.calls).toEqual([
+      ["event", "submit_application", { send_to: "AW-123456789", content_name: "parceiros_form", content_category: "parceiro" }],
+      [
+        "event",
+        "submit_application",
+        { send_to: "AW-123456789", content_name: "incorporadoras_form", content_category: "incorporadora" },
+      ],
+      ["event", "submit_application", { send_to: "AW-123456789", content_name: "indique_um_amigo_form", content_category: "indicacao" }],
+    ]);
     fbq.mockClear();
+    gtag.mockClear();
 
     reportLead({ eventId: "ev-3", formPath: "/orcamento", method: "orcamento_form", email: "a@b.co", phoneDigits: "11912345678" });
     expect(fbq).toHaveBeenCalledWith(
@@ -256,17 +266,32 @@ describe("conversions", () => {
       ["track", "Contact", { content_name: "footer-whatsapp", content_category: "whatsapp" }],
       ["track", "Contact", { content_name: "link", content_category: "email" }],
     ]);
-    expect(gtag.mock.calls).toEqual([["event", "conversion", { send_to: "AW-123456789/Contato01" }]]);
+    expect(gtag.mock.calls).toEqual([
+      [
+        "event",
+        "conversion",
+        { send_to: "AW-123456789/Contato01", content_name: "footer-whatsapp", content_category: "whatsapp" },
+      ],
+      ["event", "contact", { send_to: "AW-123456789", content_name: "link", content_category: "email" }],
+    ]);
   });
 
-  it("ViewContent com o slug do projeto", () => {
+  it("ViewContent com o slug do projeto, espelhado no Google como view_item", () => {
     accept();
     const fbq = vi.fn();
+    const gtag = vi.fn();
     w.fbq = fbq;
+    w.gtag = gtag;
+    configureGoogleAds({ id: "AW-123456789" });
     reportViewContent("studio-pinheiros");
     expect(fbq).toHaveBeenCalledWith("track", "ViewContent", {
       content_type: "product",
       content_ids: ["studio-pinheiros"],
+      content_category: "projeto",
+    });
+    expect(gtag).toHaveBeenCalledWith("event", "view_item", {
+      send_to: "AW-123456789",
+      items: [{ id: "studio-pinheiros" }],
       content_category: "projeto",
     });
     expect(projectSlugFromPath("/portfolio/studio-pinheiros")).toBe("studio-pinheiros");
