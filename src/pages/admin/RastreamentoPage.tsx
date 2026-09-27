@@ -134,6 +134,25 @@ export default function RastreamentoPage() {
         .lte("created_at", range.until)
         .order("created_at", { ascending: false })
         .limit(FAQ_EVENTS_LIMIT),
+      supabase
+        .from("leads")
+        .select("form_path, created_at, gclid, fbclid")
+        .gte("created_at", range.since)
+        .lte("created_at", range.until)
+        .order("created_at", { ascending: false })
+        .limit(LEADS_LIMIT),
+      supabase
+        .from("analytics_events")
+        .select("value, created_at")
+        .eq("event_type", "ad_event")
+        .gte("created_at", range.since)
+        .lte("created_at", range.until)
+        .order("created_at", { ascending: false })
+        .limit(AD_EVENTS_LIMIT),
+      supabase.rpc("tracking_hits_summary", {
+        p_since: range.since,
+        p_until: range.until,
+      }),
     ]);
     if (id !== requestId.current) return;
 
