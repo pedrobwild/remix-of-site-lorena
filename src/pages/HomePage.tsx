@@ -25,17 +25,14 @@ const DESCRIPTION =
 const KEYWORDS =
   "escritório de arquitetura em São Paulo, arquitetura e engenharia, projeto arquitetônico, projeto de interiores, engenharia civil São Paulo, reforma de apartamento em SP, bastidores de obra, equipe em obra, custo de reforma, quanto custa reformar um apartamento em SP, empresa de reforma de apartamento SP, reforma turnkey São Paulo, Bewild";
 const THEME_COLOR = "#0B2342";
-const FONTS_HREF =
-  "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&family=Sora:wght@500;600;700&display=swap";
-const PRECONNECTS: Array<{ href: string; crossOrigin?: string }> = [
-  { href: "https://fonts.googleapis.com" },
-  { href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-];
-// Mesmo origin do site (asset store do Lovable, ver src/assets/**/*.asset.json).
-// Antes apontava para o domínio de PREVIEW do projeto — conexão extra no
-// caminho crítico do LCP e dependência de um ambiente que não é produção.
-const HERO_PRELOAD =
-  "/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad3/hero-cozinha.jpg";
+// Fontes e preload do hero não ficam mais aqui:
+//  - a home usa Manrope e JetBrains Mono, que o index.html já carrega. A
+//    segunda folha que esta página injetava pedia Manrope itálica (estilo que
+//    não existe no Google Fonts) e Sora. As demais famílias do site entram
+//    por src/lib/fonts.ts, só nas rotas internas.
+//  - o preload do hero (LCP no desktop) sai do index.html, antes do bundle.
+//    Aqui ele chegava tarde: quando este efeito roda, o <img
+//    fetchpriority="high"> do HTML da home já está no DOM e já pediu a imagem.
 
 function ensureMeta(name: string, content: string, attr: "name" | "property" = "name") {
   let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${name}"]`);
@@ -45,18 +42,6 @@ function ensureMeta(name: string, content: string, attr: "name" | "property" = "
     document.head.appendChild(el);
   }
   el.setAttribute("content", content);
-  return el;
-}
-
-function ensureLink(rel: string, href: string, extra: Record<string, string> = {}) {
-  const selectorParts = [`link[rel="${rel}"][href="${href}"]`];
-  const existing = document.head.querySelector<HTMLLinkElement>(selectorParts[0]);
-  if (existing) return existing;
-  const el = document.createElement("link");
-  el.rel = rel;
-  el.href = href;
-  Object.entries(extra).forEach(([k, v]) => el.setAttribute(k, v));
-  document.head.appendChild(el);
   return el;
 }
 
@@ -137,12 +122,6 @@ export default function HomePage() {
 
   useEffect(() => {
     ensureMeta("theme-color", THEME_COLOR);
-
-    PRECONNECTS.forEach((p) =>
-      ensureLink("preconnect", p.href, p.crossOrigin ? { crossorigin: p.crossOrigin } : {}),
-    );
-    ensureLink("preload", HERO_PRELOAD, { as: "image", fetchpriority: "high" });
-    ensureLink("stylesheet", FONTS_HREF);
 
     const unmountCss = mountHomeStylesheet();
     const root = homeRef.current;

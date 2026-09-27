@@ -7,9 +7,6 @@ import homeBwaCssUrl from "../pages/home-bwa.css?url";
 import bwaInternalCssUrl from "../pages/bwa-internal.css?url";
 import { initBwaNav } from "../pages/home-bwa-script";
 
-const FONTS_HREF =
-  "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&family=Sora:wght@500;600;700&display=swap";
-
 /**
  * BwaNav — Header .bwa unificado (nav desktop + menu mobile), idêntico ao
  * da home. Autoinjeta home-bwa.css + bwa-internal.css como ÚLTIMAS folhas do
@@ -52,14 +49,9 @@ export default function BwaNav() {
     } else {
       document.head.appendChild(intLink);
     }
-    const fontsMarker = "data-bwa-fonts";
-    if (!document.head.querySelector(`link[${fontsMarker}]`)) {
-      const f = document.createElement("link");
-      f.rel = "stylesheet";
-      f.href = FONTS_HREF;
-      f.setAttribute(fontsMarker, "");
-      document.head.appendChild(f);
-    }
+    // Fontes: Manrope e JetBrains Mono vêm do index.html. A folha que ficava
+    // aqui pedia Manrope itálica (estilo que não existe no Google Fonts) e
+    // Sora. As famílias das rotas internas: src/lib/fonts.ts (via main.tsx).
 
     document.documentElement.classList.add("bwa-home-root");
     document.body.classList.add("bwa-home-root");

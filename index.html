@@ -83,15 +83,38 @@
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Tipografia Bewild: Playfair Display (com itálicos reais), Poppins, JetBrains Mono.
-         Manrope/Inter mantidos para compatibilidade com rotas internas legadas. -->
+    <!-- Tipografia do primeiro paint: só as duas famílias que a home e as
+         páginas internas usam — Manrope (texto) e JetBrains Mono (rótulos).
+         Antes eram cinco aqui, e a home e a nav ainda injetavam uma segunda
+         folha que pedia Manrope itálica (estilo que não existe no Google
+         Fonts) e Sora. Playfair Display, Poppins e Inter (guia, painel,
+         fichas de projeto) entram por src/lib/fonts.ts, só nas rotas internas. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Poppins:wght@300;400;500&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@200;300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
 
-    <!-- Preload do hero: feito por rota em src/pages/HomePage.tsx (a imagem
-         /hero-studio-*.webp não é usada por nenhuma página — preload removido). -->
+    <!-- Preload do hero da home (LCP no desktop). Este HTML atende todas as
+         rotas, então o link só é criado em "/" — e só vale em telas ≥ 901 px:
+         no celular o título ocupa a primeira tela (o texto é o LCP) e a
+         imagem fica abaixo da dobra, então ela não disputa banda com o JS e
+         as fontes. Roda antes do bundle: no desktop a imagem começa a baixar
+         junto com o JS, não depois de o React montar a home.
+         A imagem /hero-studio-*.webp não é usada por nenhuma página. -->
+    <script>
+      (function () {
+        try {
+          if (window.location.pathname !== "/") return;
+          var l = document.createElement("link");
+          l.setAttribute("rel", "preload");
+          l.setAttribute("as", "image");
+          l.setAttribute("href", "/__l5e/assets-v1/678d3d65-ecc9-4cb9-84f3-276275a02ad3/hero-cozinha.jpg");
+          l.setAttribute("media", "(min-width: 901px)");
+          l.setAttribute("fetchpriority", "high");
+          document.head.appendChild(l);
+        } catch (e) {}
+      })();
+    </script>
 
     <!-- =========================================================
      JSON-LD — Organization + WebSite + Service (Bewild)
@@ -262,7 +285,7 @@
       #bw-splash{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;
         align-items:center;justify-content:center;gap:26px;background:#FAF8F4;color:#1A2332;
         font-family:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-        opacity:1;transition:opacity .5s cubic-bezier(.22,1,.36,1)}
+        opacity:1;transition:opacity .3s cubic-bezier(.22,1,.36,1)}
       #bw-splash.is-done{opacity:0;pointer-events:none}
       #bw-splash .bw-mark{font-size:clamp(30px,6vw,46px);font-weight:600;letter-spacing:-.055em;line-height:1}
       #bw-splash .bw-track{width:min(240px,60vw);height:1px;background:rgba(23,27,34,.17);overflow:hidden}
@@ -284,6 +307,17 @@
       var el = document.getElementById('bw-splash');
       if (!el) return;
 
+      // Visita vinda de anúncio ou de link marcado (fbclid, gclid, gbraid,
+      // wbraid, msclkid, ttclid ou qualquer utm_*): sem splash. Quem chega
+      // de um anúncio decide em poucos segundos; a tela de abertura só
+      // adiava o primeiro conteúdo.
+      try {
+        if (/[?&](fbclid|gclid|gbraid|wbraid|msclkid|ttclid|utm_[a-z]+)=/i.test(window.location.search)) {
+          el.remove();
+          return;
+        }
+      } catch (e) {}
+
       // Só na primeira carga da sessão: navegação interna da SPA já é instantânea.
       try {
         if (sessionStorage.getItem('bw-splash')) { el.remove(); return; }
@@ -295,7 +329,9 @@
 
       var fill = el.querySelector('.bw-fill');
       var start = Date.now(), pct = 0, done = false;
-      var MIN = reduce ? 0 : 350, MAX = 1400;
+      // Sem tempo mínimo e com teto de 400 ms (antes 350 ms e 1,4 s): o splash
+      // some no primeiro commit do React ou em 400 ms, o que vier antes.
+      var MIN = 0, MAX = 400;
 
       function set(p) { if (p > pct) { pct = p; fill.style.width = p + '%'; } }
       set(15);
@@ -307,7 +343,7 @@
         set(100);
         setTimeout(function () {
           el.classList.add('is-done');
-          setTimeout(function () { el.remove(); }, 550);
+          setTimeout(function () { el.remove(); }, 320);
         }, Math.max(0, MIN - (Date.now() - start)));
       }
 

@@ -36,6 +36,7 @@ import {
   type WorkflowActivity,
   type WorkflowReport,
 } from "./workflowReplicaData";
+import { mountFontSheetAfterLoad } from "@/lib/fonts";
 import "./workflow-portal-replica.css";
 
 type TabId = "schedule" | "curve" | "reports" | "finance" | "documents" | "formalizations" | "issues";
@@ -51,6 +52,7 @@ const TABS = [
 ] as const;
 
 const FONT_URL = "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap";
+const FONT_SHEET_ID = "bw-fonts-wf-replica";
 const DAY = 86_400_000;
 const TODAY = new Date(2026, 8, 19).getTime();
 const PROJECT_START = new Date(2026, 7, 4).getTime();
@@ -230,17 +232,11 @@ export default function WorkflowPortalReplica() {
   const [activeTab, setActiveTab] = useState<TabId>("schedule");
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
-  useEffect(() => {
-    let font = document.head.querySelector<HTMLLinkElement>('link[data-wf-replica-font]');
-    if (!font) {
-      font = document.createElement("link");
-      font.rel = "stylesheet";
-      font.href = FONT_URL;
-      font.dataset.wfReplicaFont = "";
-      document.head.appendChild(font);
-    }
-    return () => font?.remove();
-  }, []);
+  // Inter e Montserrat (desta réplica e do selo de visualizações do Instagram)
+  // não entram no carregamento inicial da home, que fica só com Manrope e
+  // JetBrains Mono (index.html): a folha é pedida depois do `load` da página.
+  // A réplica fica no meio da home, bem abaixo da primeira tela.
+  useEffect(() => mountFontSheetAfterLoad(FONT_SHEET_ID, FONT_URL), []);
 
   const handleTabKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;

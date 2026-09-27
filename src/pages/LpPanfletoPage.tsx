@@ -436,13 +436,13 @@ export default function LpPanfletoPage() {
             <p>A arquiteta vai até o imóvel e decide ali o que muda na diária: circulação, iluminação e o layout que valoriza as fotos do anúncio.</p>
           </div>
           <div className="vframe">
-            <video ref={videoArqRef} src="/videos/arquiteta-medicao.mp4" poster="/videos/arquiteta-medicao-poster.jpg" muted loop playsInline preload="metadata" aria-label="Arquiteta da Bewild fazendo a medição do imóvel" />
+            <video ref={videoArqRef} src="/videos/arquiteta-medicao.mp4" poster="/videos/arquiteta-medicao-poster.jpg" muted loop playsInline preload="none" aria-label="Arquiteta da Bewild fazendo a medição do imóvel" />
           </div>
         </div>
 
         <div className="vblock invertido">
           <div className="vframe">
-            <video ref={videoObraRef} src="/videos/time-obra.mp4" poster="/videos/time-obra-poster.jpg" muted loop playsInline preload="metadata" aria-label="Time de obra da Bewild a caminho da reforma" />
+            <video ref={videoObraRef} src="/videos/time-obra.mp4" poster="/videos/time-obra-poster.jpg" muted loop playsInline preload="none" aria-label="Time de obra da Bewild a caminho da reforma" />
           </div>
           <div className="vtext">
             <p className="vtag">e quem executa tem rosto</p>
