@@ -1794,6 +1794,7 @@ export type Database = {
           sessions: number
         }[]
       }
+      analytics_live_panel: { Args: { p_days?: number }; Returns: Json }
       analytics_overview_kpis: {
         Args: {
           p_country?: string

@@ -9,15 +9,7 @@ import BehaviorTab from "@/components/admin/analytics/BehaviorTab";
 import ConversionTab from "@/components/admin/analytics/ConversionTab";
 import RetentionTab from "@/components/admin/analytics/RetentionTab";
 import PaidMediaTab from "@/components/admin/analytics/PaidMediaTab";
-
-function ComingSoon({ name }: { name: string }) {
-  return (
-    <div className="aa-empty">
-      <span className="aa-empty__icon">⏳</span>
-      aba <strong style={{ color: "var(--aa-fg)" }}>{name}</strong> em construção · próximas fases
-    </div>
-  );
-}
+import RealtimeTab from "@/components/admin/analytics/RealtimeTab";
 
 export default function AnalyticsPage() {
   const state = useAnalyticsState();
@@ -59,7 +51,7 @@ export default function AnalyticsPage() {
       {state.tab === "paid" && (
         <PaidMediaTab range={state.range} comparePrev={state.comparePrev} segmentsCount={state.segments.length} />
       )}
-      {state.tab === "realtime" && <ComingSoon name="Tempo real" />}
+      {state.tab === "realtime" && <RealtimeTab />}
     </AnalyticsShell>
   );
 }
