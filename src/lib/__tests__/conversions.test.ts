@@ -355,6 +355,65 @@ describe("sinais para públicos", () => {
     );
   });
 
+  it("conversão do Google leva os mesmos sinais do Lead e o nome no user_data", () => {
+    accept();
+    const gtag = vi.fn();
+    w.gtag = gtag;
+    configureGoogleAds({ id: "AW-123456789", leadLabel: "LeadLabel1" });
+    reportLead({
+      eventId: "ev-12",
+      formPath: "/orcamento",
+      method: "orcamento_form",
+      email: "ana@exemplo.com",
+      phoneDigits: "11912345678",
+      name: "Ana Souza",
+      objetivo: "Short stay",
+      areaM2: 32.5,
+      chaves: "Sim",
+      livesInSp: true,
+    });
+    expect(gtag.mock.calls).toEqual([
+      [
+        "set",
+        "user_data",
+        {
+          email: "ana@exemplo.com",
+          phone_number: "+5511912345678",
+          address: [{ first_name: "ana", last_name: "souza", country: "br" }],
+        },
+      ],
+      [
+        "event",
+        "conversion",
+        {
+          send_to: "AW-123456789/LeadLabel1",
+          transaction_id: "ev-12",
+          objetivo: "short_stay",
+          faixa_m2: "31_45",
+          etapa_imovel: "com_chaves",
+          mora_em_sp: true,
+        },
+      ],
+    ]);
+  });
+
+  it("form_start e visitante_engajado espelham no Google; sem aceite, nada sai", () => {
+    const gtag = vi.fn();
+    w.gtag = gtag;
+    configureGoogleAds({ id: "AW-123456789" });
+    reportFormStart("orcamento");
+    reportEngaged("tempo", "/");
+    expect(gtag).not.toHaveBeenCalled(); // sem aceite
+
+    accept();
+    reportFormStart("orcamento");
+    reportEngaged("rolagem", "/portfolio/studio-a");
+    expect(gtag.mock.calls).toEqual([
+      ["event", "form_start", { send_to: "AW-123456789", content_category: "orcamento" }],
+      ["event", "visitante_engajado", { send_to: "AW-123456789", motivo: "rolagem", content_category: "projeto" }],
+    ]);
+  });
+
   it("correspondência avançada: normaliza como a API de Conversões e vai ANTES do Lead", () => {
     expect(metaUserDataFrom({ email: " Ana@Exemplo.COM ", phoneDigits: "11912345678", name: "Ána Maria de Souza" })).toEqual({
       em: "ana@exemplo.com",
