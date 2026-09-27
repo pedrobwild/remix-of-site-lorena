@@ -30,6 +30,7 @@
 import { trackGoogleAdsAudienceEvent, trackGoogleAdsConversion } from "@/lib/googleAds";
 import { metaUserDataFrom, setMetaUserData, trackMetaCustomEvent, trackMetaEvent } from "@/lib/metaPixel";
 import { track } from "@/lib/analytics";
+import { trackEvent } from "@/lib/ga4";
 
 /**
  * Espelho na medição própria (analytics_events, tipo `ad_event`) de cada
@@ -208,6 +209,16 @@ export function pageContentFor(pathname: string): PageContent | null {
 export function reportViewContent(slug: string): void {
   if (!slug) return;
   reportPageContent({ category: "projeto", id: slug });
+  // GA4: visualização por projeto (relatório de eventos por project_slug).
+  trackEvent("view_project", { project_slug: slug });
+}
+
+/** Clique num card de projeto do /portfolio — GA4 + Meta (evento próprio). */
+export function reportProjectClick(slug: string, title: string, position: number): void {
+  if (!slug) return;
+  trackEvent("select_content", { content_type: "projeto", content_id: slug, item_id: slug, project_slug: slug, project_title: title, position });
+  trackMetaCustomEvent("CliqueProjeto", { content_ids: [slug], content_name: title, content_category: "projeto" });
+  logAdEvent("CliqueProjeto", { content_category: "projeto", project_slug: slug });
 }
 
 export function reportPageContent(content: PageContent | null): void {

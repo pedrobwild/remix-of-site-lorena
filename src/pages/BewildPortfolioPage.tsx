@@ -25,6 +25,7 @@ import {
 } from "@/lib/portfolioFilter";
 import { hasReadyPhotos, photoKindLabel } from "@/lib/projectPhotos";
 import { useImageAlts } from "@/lib/useImageAlts";
+import { reportProjectClick } from "@/lib/conversions";
 import "@/styles/bwh-tokens.css";
 import "@/styles/bwh-overlays.css";
 import "@/styles/bwh-sol-fusion.css";
@@ -229,6 +230,7 @@ export default function BewildPortfolioPage() {
                       href={`/portfolio/${p.slug}`}
                       className="bwh-proj"
                       aria-label={`Ver projeto ${p.title}`}
+                      onClick={() => reportProjectClick(p.slug, p.title, i + 1)}
                     >
                       <div className="bwh-proj__media">
                         {p.cover_url ? (
