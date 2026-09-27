@@ -40,6 +40,7 @@ type ActiveKey =
   | "seo-indexacao"
   | "rastreamento"
   | "conversoes"
+  | "lgpd"
   | "central"
   | "settings"
   | "faq"
@@ -73,6 +74,7 @@ const NAV: { key: ActiveKey; label: string; href: string; icon: typeof LayoutDas
   { key: "seo-indexacao", label: "Indexação", href: routes.adminIndexacao, icon: Search },
   { key: "rastreamento", label: "Rastreamento", href: routes.adminRastreamento, icon: Activity },
   { key: "conversoes", label: "Conversões", href: routes.adminConversoes, icon: Target },
+  { key: "lgpd", label: "LGPD", href: routes.adminLgpd, icon: ShieldCheck },
   { key: "settings", label: "Configurações", href: routes.adminSettings, icon: Settings },
   { key: "typography", label: "Tipografia", href: routes.adminTypography, icon: Type },
 ];
