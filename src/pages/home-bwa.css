@@ -252,6 +252,16 @@
         transform .35s var(--bwa-ease);
     }
 
+    main section[id] {
+      scroll-margin-top: 84px;
+    }
+
+    @media (max-width: 1180px) {
+      main section[id] {
+        scroll-margin-top: 76px;
+      }
+    }
+
     .bwa-nav::after {
       content: none;
     }
@@ -825,6 +835,19 @@
       background: var(--bwa-ink);
     }
 
+    /* Estes blocos deixaram de ser filhos de #certeza e agora têm fundo próprio. */
+    .bwa-bastidores,
+    .bwa-image-gallery,
+    .bwa-tour3d {
+      background: var(--bwa-ink);
+    }
+
+    @media (min-width: 821px) {
+      .bwa-tour3d {
+        padding-bottom: clamp(56px, 6vw, 88px);
+      }
+    }
+
     .bwa-audience {
       color: var(--bwa-ink);
       background: var(--bwa-paper);
@@ -1021,7 +1044,7 @@
 
     .bwa-image-gallery-kicker {
       margin: 0 0 14px;
-      color: var(--bwa-accent);
+      color: rgba(255, 255, 255, .55);
       font-family: "JetBrains Mono", monospace;
       font-size: 10px;
       letter-spacing: .16em;
