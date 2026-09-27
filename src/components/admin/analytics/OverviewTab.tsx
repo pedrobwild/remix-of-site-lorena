@@ -1,11 +1,15 @@
 /**
  * OverviewTab — aba "Visão executiva" (server-side).
  *
- * Usa duas RPCs:
+ * Usa três RPCs:
  *   - analytics_overview_kpis(since, until, ...filters): KPIs + sparkline (14d)
  *   - analytics_timeseries_v2(since, until, grain, tz, ...filters): série para
  *     o gráfico e para a tabela por dia, com buckets no fuso do navegador,
  *     filtros de segmento e visitantes únicos por bucket
+ *   - analytics_consent_daily(since, until, tz): aceites e recusas do banner
+ *     de cookies por dia local. Esses registros não têm sessão (são a trilha
+ *     de auditoria LGPD), então não passam pelos segmentos. Taxa de aceite =
+ *     aceites ÷ (aceites + recusas): quem sai sem decidir não conta.
  *
  * O cliente nunca puxa eventos brutos. Os segmentos ativos valem para tudo
  * (KPIs, gráfico e tabela): viram parâmetros nomeados das duas RPCs.
@@ -22,7 +26,7 @@
  * hora ou por dia; por semana/mês nos períodos longos.
  */
 import { useEffect, useMemo, useState } from "react";
-import { fmtLocalDay, pickGrain } from "@/lib/analyticsTimeseries";
+import { fmtLocalDay, parseLocalDay, pickGrain } from "@/lib/analyticsTimeseries";
 import {
   addLocalDays,
   alignedPreviousWindow,
@@ -88,6 +92,13 @@ const EMPTY_KPIS: Kpis = {
   spark: [],
 };
 
+/** Linha da RPC analytics_consent_daily: `day` = "YYYY-MM-DD" no fuso pedido. */
+type ConsentRow = { day: string; accepts: number | string | null; declines: number | string | null };
+type ConsentCounts = { accepts: number; declines: number };
+type ConsentSparkPoint = { d: string; accepts: number };
+
+const EMPTY_CONSENT: ConsentCounts = { accepts: 0, declines: 0 };
+
 type Metric = "sessions" | "visitors" | "pageviews";
 
 /** Ponto do gráfico: `null` nos buckets futuros do período em curso (a linha para em "agora"). */
@@ -109,6 +120,8 @@ type TableRow = Counts & {
   partial: boolean;
   /** Base da variação (bucket anterior; ontem até o mesmo horário no dia em curso). */
   base: Counts | null;
+  /** Aceites e recusas do banner de cookies no bucket (`null` = sem registro). */
+  consent: ConsentCounts | null;
 };
 
 type Meta = {
@@ -123,6 +136,19 @@ type Meta = {
 };
 
 type RpcRes<T> = { data: T | null; error: { message: string } | null };
+
+/** Cartão da faixa de KPIs. `prev: null` = sem base (delta vira "—"). */
+type KpiCard = {
+  label: string;
+  value: string;
+  /** Linha pequena sob o valor (ex.: contagens que compõem uma taxa). */
+  hint?: string;
+  cur: number;
+  prev: number | null;
+  spark: Record<string, number | string>[];
+  sparkKey: string;
+  invert?: boolean;
+};
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -173,6 +199,42 @@ function parseKpis(res: RpcRes<Kpis[]>): Kpis {
 function parseRows(res: RpcRes<SeriesV2Row[]>): SeriesV2Row[] {
   if (res.error) throw new Error(res.error.message);
   return res.data ?? [];
+}
+
+/**
+ * Indicador auxiliar: se a RPC ainda não existir no banco (migration
+ * pendente) ou falhar, o painel segue sem ele em vez de cair inteiro.
+ */
+function parseConsent(res: unknown): ConsentRow[] {
+  const r = res as RpcRes<ConsentRow[]> | null | undefined;
+  if (!r) return [];
+  if (r.error) {
+    devError("[analytics overview] analytics_consent_daily", r.error.message);
+    return [];
+  }
+  return Array.isArray(r.data) ? r.data.filter((row) => typeof row?.day === "string") : [];
+}
+
+function num(v: number | string | null | undefined): number {
+  return Number(v ?? 0) || 0;
+}
+
+/** Soma aceites/recusas; `fromDay` ("YYYY-MM-DD") descarta o dia de lead-in da tabela. */
+function sumConsent(rows: readonly ConsentRow[], fromDay?: string): ConsentCounts {
+  let accepts = 0;
+  let declines = 0;
+  for (const r of rows) {
+    if (fromDay && r.day < fromDay) continue;
+    accepts += num(r.accepts);
+    declines += num(r.declines);
+  }
+  return { accepts, declines };
+}
+
+/** Taxa de aceite em %, ou `null` sem nenhuma decisão registrada. */
+function consentRate(c: ConsentCounts): number | null {
+  const total = c.accepts + c.declines;
+  return total > 0 ? (c.accepts * 100) / total : null;
 }
 
 function countsOf(k: Kpis): Counts {
@@ -230,6 +292,9 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [kpis, setKpis] = useState<Kpis>(EMPTY_KPIS);
   const [prevKpis, setPrevKpis] = useState<Kpis>(EMPTY_KPIS);
+  const [consent, setConsent] = useState<ConsentCounts>(EMPTY_CONSENT);
+  const [prevConsent, setPrevConsent] = useState<ConsentCounts | null>(null);
+  const [consentSpark, setConsentSpark] = useState<ConsentSparkPoint[]>([]);
   const [chart, setChart] = useState<ChartPoint[]>([]);
   const [rows, setRows] = useState<TableRow[]>([]);
   const [meta, setMeta] = useState<Meta | null>(null);
@@ -276,6 +341,14 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
         p_tz: tz,
         ...segArgs,
       });
+    // Aceite de cookies: sem sessão, logo sem segmentos. Mesma janela da
+    // tabela (com o dia de lead-in, descartado na soma do período).
+    const consentSeries = (win: Window) =>
+      rpc("analytics_consent_daily", {
+        p_since: win.from.toISOString(),
+        p_until: win.until.toISOString(),
+        p_tz: tz,
+      });
 
     const calls: Promise<unknown>[] = [
       rpc("analytics_overview_kpis", {
@@ -301,6 +374,8 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
             ...segArgs,
           })
         : Promise.resolve(null),
+      consentSeries({ from: tableFrom, until: cur.until }),
+      prevAligned ? consentSeries(prevAligned) : Promise.resolve(null),
     ];
 
     Promise.all(calls)
@@ -322,8 +397,36 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
             ? countsOf(pk)
             : null;
 
+        // Aceite de cookies: total do período (sem o lead-in), base anterior,
+        // sparkline (últimos 14 dias) e soma por bucket da tabela.
+        const consentRows = parseConsent(results[6]);
+        const prevConsentRows = results[7] ? parseConsent(results[7]) : null;
+        const fromDay = fmtLocalDay(range.from);
+        const curConsent = sumConsent(consentRows, fromDay);
+        const prevConsentTotals = prevConsentRows ? sumConsent(prevConsentRows) : null;
+        const consentByKey = new Map<string, ConsentCounts>();
+        for (const r of consentRows) {
+          let key: string | null = r.day;
+          if (tableGrain !== "day") {
+            const d = parseLocalDay(r.day);
+            key = d ? String(truncLocal(d, tableGrain).getTime()) : null;
+          }
+          if (!key) continue;
+          const acc = consentByKey.get(key) ?? { accepts: 0, declines: 0 };
+          acc.accepts += num(r.accepts);
+          acc.declines += num(r.declines);
+          consentByKey.set(key, acc);
+        }
+        const spark: ConsentSparkPoint[] = consentRows
+          .filter((r) => r.day >= fromDay)
+          .slice(-14)
+          .map((r) => ({ d: r.day, accepts: num(r.accepts) }));
+
         setKpis(k);
         setPrevKpis(pk);
+        setConsent(curConsent);
+        setPrevConsent(prevConsentTotals);
+        setConsentSpark(spark);
 
         const untilFull = new Date(range.to.getTime() + 1);
         const lastLive = truncLocal(now, grain).getTime();
@@ -356,6 +459,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
             conversions: r.conversions,
             partial: r.partial,
             base: r.base,
+            consent: consentByKey.get(r.day) ?? null,
           }));
         } else {
           const lastLiveTable = truncLocal(now, tableGrain).getTime();
@@ -375,6 +479,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
               base: prev
                 ? { sessions: prev.sessions, visitors: prev.visitors, pageviews: prev.pageviews, conversions: prev.conversions }
                 : null,
+              consent: consentByKey.get(String(p.t)) ?? null,
             };
           });
         }
@@ -408,7 +513,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
   if (loading) {
     return (
       <div className="aa-grid">
-        {Array.from({ length: 8 }).map((_, i) => (
+        {Array.from({ length: 9 }).map((_, i) => (
           <div key={i} className="aa-col-3 aa-skel" style={{ height: 92 }} />
         ))}
         <div className="aa-col-12 aa-skel" style={{ height: 320 }} />
@@ -435,16 +540,28 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
     );
   }
 
-  const kpiList: { label: string; value: string; cur: number; prev: number; sparkKey: "sessions" | "pageviews"; invert?: boolean }[] = [
-    { label: "sessões",            value: fmtNum(kpis.sessions),           cur: kpis.sessions,           prev: prevKpis.sessions,           sparkKey: "sessions" },
-    { label: "visitantes únicos",  value: fmtNum(kpis.unique_visitors),    cur: kpis.unique_visitors,    prev: prevKpis.unique_visitors,    sparkKey: "sessions" },
-    { label: "pageviews",          value: fmtNum(kpis.pageviews),          cur: kpis.pageviews,          prev: prevKpis.pageviews,          sparkKey: "pageviews" },
-    { label: "pv / sessão",        value: kpis.pages_per_session.toFixed(2), cur: kpis.pages_per_session, prev: prevKpis.pages_per_session, sparkKey: "pageviews" },
-    { label: "tempo engajado",     value: fmtMs(kpis.avg_engagement_ms),   cur: kpis.avg_engagement_ms,  prev: prevKpis.avg_engagement_ms,  sparkKey: "sessions" },
+  const rate = consentRate(consent);
+  const prevRate = prevConsent ? consentRate(prevConsent) : null;
+  const kpiList: KpiCard[] = [
+    { label: "sessões",            value: fmtNum(kpis.sessions),           cur: kpis.sessions,           prev: prevKpis.sessions,           spark: kpis.spark, sparkKey: "sessions" },
+    { label: "visitantes únicos",  value: fmtNum(kpis.unique_visitors),    cur: kpis.unique_visitors,    prev: prevKpis.unique_visitors,    spark: kpis.spark, sparkKey: "sessions" },
+    { label: "pageviews",          value: fmtNum(kpis.pageviews),          cur: kpis.pageviews,          prev: prevKpis.pageviews,          spark: kpis.spark, sparkKey: "pageviews" },
+    { label: "pv / sessão",        value: kpis.pages_per_session.toFixed(2), cur: kpis.pages_per_session, prev: prevKpis.pages_per_session, spark: kpis.spark, sparkKey: "pageviews" },
+    { label: "tempo engajado",     value: fmtMs(kpis.avg_engagement_ms),   cur: kpis.avg_engagement_ms,  prev: prevKpis.avg_engagement_ms,  spark: kpis.spark, sparkKey: "sessions" },
     // bounce rate: cair é bom — inverte a cor do delta
-    { label: "bounce rate",        value: fmtPct(kpis.bounce_rate),        cur: kpis.bounce_rate,        prev: prevKpis.bounce_rate,        sparkKey: "sessions", invert: true },
-    { label: "conversões",         value: fmtNum(kpis.conversions),        cur: kpis.conversions,        prev: prevKpis.conversions,        sparkKey: "sessions" },
-    { label: "taxa de conversão",  value: fmtPct(kpis.conversion_rate),    cur: kpis.conversion_rate,    prev: prevKpis.conversion_rate,    sparkKey: "sessions" },
+    { label: "bounce rate",        value: fmtPct(kpis.bounce_rate),        cur: kpis.bounce_rate,        prev: prevKpis.bounce_rate,        spark: kpis.spark, sparkKey: "sessions", invert: true },
+    { label: "conversões",         value: fmtNum(kpis.conversions),        cur: kpis.conversions,        prev: prevKpis.conversions,        spark: kpis.spark, sparkKey: "sessions" },
+    { label: "taxa de conversão",  value: fmtPct(kpis.conversion_rate),    cur: kpis.conversion_rate,    prev: prevKpis.conversion_rate,    spark: kpis.spark, sparkKey: "sessions" },
+    // aceite de cookies: decisões do banner (aceites ÷ decisões), sem segmento
+    {
+      label: "aceite de cookies",
+      value: rate === null ? "—" : fmtPct(rate),
+      hint: `${fmtNum(consent.accepts)} aceites · ${fmtNum(consent.declines)} recusas`,
+      cur: rate ?? 0,
+      prev: prevRate,
+      spark: consentSpark,
+      sparkKey: "accepts",
+    },
   ];
 
   const tableGrain = meta?.tableGrain ?? "day";
@@ -465,6 +582,11 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
     return Math.max(m, p[metric] ?? 0, typeof prev === "number" ? prev : 0);
   }, 0);
   const yAxisWidth = Math.max(24, String(Math.ceil(yMax * 1.25)).length * 7 + 10);
+  const consentCell = (c: ConsentCounts | null) => {
+    if (!c) return "—";
+    const r = consentRate(c);
+    return r === null ? "—" : fmtPct(r);
+  };
 
   return (
     <div style={{ display: "grid", gap: 16 }}>
@@ -474,10 +596,15 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
           <div key={k.label} className="aa-kpi">
             <span className="aa-kpi__label">{k.label}</span>
             <span className="aa-kpi__value">{k.value}</span>
+            {k.hint && (
+              <span className="aa-kpi__hint aa-faint aa-mono" style={{ fontSize: "var(--aa-text-2xs)" }}>
+                {k.hint}
+              </span>
+            )}
             {comparePrev && <Delta cur={k.cur} prev={k.prev} invert={k.invert} />}
             <div className="aa-kpi__spark">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={kpis.spark}>
+                <AreaChart data={k.spark}>
                   <Area
                     type="monotone"
                     dataKey={k.sparkKey}
@@ -523,6 +650,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
             </span>
           )}
           {segments.length > 0 && <span>· segmentos aplicados aos indicadores, ao gráfico e à tabela</span>}
+          <span>· aceite de cookies = aceites ÷ (aceites + recusas), sem segmento; quem sai sem decidir não conta</span>
           <button
             type="button"
             className="admin-analytics__btn"
@@ -642,6 +770,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
           <span className="aa-faint aa-mono" style={{ fontSize: "var(--aa-text-xs)", textAlign: "right" }}>
             Δ vs. {unitLabel} anterior
             {tableGrain === "day" && " · hoje vs. ontem até o mesmo horário"}
+            {" · cookies = aceites / recusas / taxa de aceite"}
           </span>
         </div>
         {tableRows.length === 0 ? (
@@ -664,6 +793,9 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
                   <th className="num">conversões</th>
                   <th className="num">Δ</th>
                   <th className="num">pv / sessão</th>
+                  <th className="num">aceites</th>
+                  <th className="num">recusas</th>
+                  <th className="num">aceite</th>
                 </tr>
               </thead>
               <tbody>
@@ -697,6 +829,9 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
                       <Delta cur={r.conversions} prev={r.base ? r.base.conversions : null} />
                     </td>
                     <td className="num">{r.sessions ? (r.pageviews / r.sessions).toFixed(2) : "—"}</td>
+                    <td className="num">{r.consent ? fmtNum(r.consent.accepts) : "—"}</td>
+                    <td className="num">{r.consent ? fmtNum(r.consent.declines) : "—"}</td>
+                    <td className="num">{consentCell(r.consent)}</td>
                   </tr>
                 ))}
               </tbody>
