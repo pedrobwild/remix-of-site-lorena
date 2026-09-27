@@ -26,6 +26,7 @@ import {
 } from "./lib/cookieConsent";
 import { initAnalytics } from "./lib/analytics";
 import { initGa4, trackPageView } from "./lib/ga4";
+import { ensureBrandFonts } from "./lib/fonts";
 import { hasThirdPartyTrackers, isSeoAppliedFor, SEO_APPLIED_EVENT } from "./lib/useSeo";
 import { installCrashRecovery, markHealthy } from "./lib/crashRecovery";
 import { renderRoute } from "./router";
@@ -103,8 +104,8 @@ function Root() {
   // Bootstrap único: analytics, consentimento, splash.
   useEffect(() => {
     markHealthy();
-    // Primeiro commit feito: fecha o splash do index.html (a trava de 1,4 s
-    // de lá fica só como segurança).
+    // Primeiro commit feito: fecha o splash do index.html (a trava de 400 ms
+    // de lá fica só como segurança; visitas de anúncio nem têm splash).
     window.__bwSplashDone?.();
 
     const cleanupAnalytics = initAnalytics();
@@ -217,6 +218,14 @@ function Root() {
     if (displayedKey !== currentKey) return;
     return schedulePageView();
   }, [displayed, route, displayedKey, currentKey]);
+
+  // Fontes das rotas internas (Playfair Display, Poppins, Inter): só fora da
+  // home. O index.html carrega apenas Manrope e JetBrains Mono — ver
+  // src/lib/fonts.ts.
+  const isHome = displayed.name === "home";
+  useEffect(() => {
+    if (!isHome) ensureBrandFonts();
+  }, [isHome]);
 
   const adminMode = isAdminRoute(displayed);
 

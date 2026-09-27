@@ -133,12 +133,12 @@ export default function MaintenancePage() {
                 </p>
               </div>
               <div className="video-moldura">
-                <video ref={videoArqRef} src="/videos/arquiteta-medicao.mp4" poster="/videos/arquiteta-medicao-poster.jpg" muted loop playsInline preload="metadata" aria-label="Arquiteta da Bewild fazendo a medição do imóvel" />
+                <video ref={videoArqRef} src="/videos/arquiteta-medicao.mp4" poster="/videos/arquiteta-medicao-poster.jpg" muted loop playsInline preload="none" aria-label="Arquiteta da Bewild fazendo a medição do imóvel" />
               </div>
             </div>
             <div className="video-bloco invertido">
               <div className="video-moldura">
-                <video ref={videoObraRef} src="/videos/time-obra.mp4" poster="/videos/time-obra-poster.jpg" muted loop playsInline preload="metadata" aria-label="Time de obra da Bewild a caminho da reforma" />
+                <video ref={videoObraRef} src="/videos/time-obra.mp4" poster="/videos/time-obra-poster.jpg" muted loop playsInline preload="none" aria-label="Time de obra da Bewild a caminho da reforma" />
               </div>
               <div className="video-texto">
                 <p className="vt-tag">e quem executa tem rosto</p>
