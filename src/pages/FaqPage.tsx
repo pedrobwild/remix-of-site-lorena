@@ -127,11 +127,55 @@ const CONTRATO_ITEMS: { q: string; a: string; href?: string; linkLabel?: string 
   },
 ];
 
+/* Bloco "Portfólio": dúvidas sobre as obras entregues, com cada resposta
+ * ligada a um projeto real (/portfolio/...) ou a uma página de bairro
+ * (/reforma/...). Links usam slugs reais do banco — se um projeto sair do
+ * ar, trocar o href aqui. */
+const PORTFOLIO_ITEMS: { q: string; a: string; href?: string; linkLabel?: string }[] = [
+  {
+    q: "Posso ver obras reais entregues pela Bewild?",
+    a: "Sim. O portfólio reúne mais de 160 projetos em São Paulo, cada um com página própria, fotos reais da obra, metragem, bairro e o detalhamento do que foi feito — do desafio ao resultado.",
+    href: "/portfolio",
+    linkLabel: "Ver o portfólio completo →",
+  },
+  {
+    q: "Vocês já reformaram um studio pequeno, de uns 25 m²?",
+    a: "Sim, é a nossa especialidade. Um exemplo é o AB – Península Vila Madalena, um studio de 23 m² reformado para locação, com marcenaria sob medida para aproveitar cada centímetro.",
+    href: "/portfolio/ab-peninsula-vila-madalena",
+    linkLabel: "Ver o projeto na Vila Madalena →",
+  },
+  {
+    q: "Como fica um apartamento reformado para short stay?",
+    a: "Layout, marcenaria e mobília são pensados para alta rotatividade e boas fotos de anúncio. O FG – Nurban Vila Madalena, de 26 m², é um caso real: reforma completa voltada para locação de curta temporada.",
+    href: "/portfolio/fg",
+    linkLabel: "Ver o caso de short stay →",
+  },
+  {
+    q: "Vocês têm obras no meu bairro?",
+    a: "Provavelmente sim: são obras entregues em mais de 27 bairros de São Paulo. Cada região com pelo menos três projetos tem uma página própria, com as fotos e os detalhes de cada obra.",
+    href: "/reforma/vila-madalena",
+    linkLabel: "Exemplo: obras na Vila Madalena →",
+  },
+  {
+    q: "Dá para ver o antes e depois de uma reforma?",
+    a: "Dá. O case do studio de 26 m² na Vila Madalena mostra a obra da medição à entrega, com fotos do antes, da obra e do resultado final — e o passo a passo de cada decisão.",
+    href: "/conteudos/antes-e-depois-studio-26-m2-vila-madalena",
+    linkLabel: "Ler o case de antes e depois →",
+  },
+  {
+    q: "Quanto custa uma reforma como as do portfólio?",
+    a: "Nas obras entregues, apartamentos compactos de 21 a 35 m² ficam em torno de R$ 2.400 por metro quadrado, incluindo projeto, obra, marcenaria e mobília. O valor do seu imóvel sai fechado no diagnóstico, antes de a obra começar.",
+    href: "/orcamento",
+    linkLabel: "Pedir um orçamento →",
+  },
+];
+
 export default function FaqPage() {
   const { settings } = useSiteSettings();
   const [aberto, setAberto] = useState("f-0");
   const [guiaAberto, setGuiaAberto] = useState(-1);
   const [contratoAberto, setContratoAberto] = useState(-1);
+  const [portfolioAberto, setPortfolioAberto] = useState(-1);
   const [pergunta, setPergunta] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [erroIa, setErroIa] = useState<string | null>(null);
@@ -218,7 +262,7 @@ export default function FaqPage() {
   useSeo({
     title: "Dúvidas sobre arquitetura, engenharia e reforma em SP | Bewild",
     description:
-      "Dúvidas sobre arquitetura, engenharia e reforma de apartamento em SP respondidas: quanto custa, quanto tempo leva, contrato fechado, garantia, comissão de indicações, autorização do condomínio e etapas da obra com a Bewild.",
+      "Dúvidas sobre arquitetura, engenharia e reforma de apartamento em SP respondidas: quanto custa, quanto tempo leva, contrato fechado, garantia, comissão de indicações, autorização do condomínio, etapas da obra e obras reais do portfólio da Bewild, com links para projetos e bairros.",
     keywords:
       "dúvidas sobre arquitetura e engenharia, projeto de arquitetura em São Paulo, dúvidas sobre reforma de apartamento em SP, reforma de apartamento em SP, custo de reforma, prazo de reforma, contrato fechado de reforma, garantia de reforma, comissão de indicação de imóvel, autorização de reforma condomínio, Bewild",
     canonicalPath: "/faq",
@@ -239,6 +283,7 @@ export default function FaqPage() {
             // Blocos fixos exibidos em qualquer cenário (com ou sem o banco).
             ...CONTRATO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
             ...GUIA_ITEMS.map((i) => ({ q: i.q, a: i.a })),
+            ...PORTFOLIO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
           ]),
         ]
       : undefined,
@@ -380,6 +425,58 @@ export default function FaqPage() {
                       </button>
                     </h3>
                     <div id={`faq-contrato-resposta-${i}`} className="bwa-faq-answer">
+                      <p>{item.a}</p>
+                      {item.href && (
+                        <a className="bwa-faqpage-guia-link" href={item.href}>
+                          {item.linkLabel}
+                        </a>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section className="bwa-faqpage-intro bwa-faqpage-portfolio" aria-labelledby="faq-portfolio-title">
+          <div className="bwa-shell bwa-faq-head bwa-faqpage-head">
+            <p className="bwa-label">Portfólio</p>
+            <div>
+              <h2 className="bwa-title" id="faq-portfolio-title">
+                Obras reais, <em>para ver antes de decidir.</em>
+              </h2>
+              <p className="bwa-faqpage-lead">
+                Dúvidas sobre os projetos entregues: onde ver as fotos, como
+                encontrar obras no seu bairro e quanto custa uma reforma como
+                as do portfólio.
+              </p>
+            </div>
+          </div>
+
+          <div className="bwa-shell">
+            <div className="bwa-faq-list">
+              {PORTFOLIO_ITEMS.map((item, i) => {
+                const open = portfolioAberto === i;
+                return (
+                  <article key={item.q} className={`bwa-faq-item${open ? " bwa-open" : ""}`}>
+                    <h3 className="bwa-faqpage-q">
+                      <button
+                        className="bwa-faq-question"
+                        type="button"
+                        aria-expanded={open}
+                        aria-controls={`faq-portfolio-resposta-${i}`}
+                        onClick={() => {
+                          if (!open) track("faq_question_click", { value: { pergunta: item.q } });
+                          setPortfolioAberto(open ? -1 : i);
+                        }}
+                      >
+                        <span className="bwa-faq-num">{String(i + 1).padStart(2, "0")}</span>
+                        <strong>{item.q}</strong>
+                        <span className="bwa-faq-icon" aria-hidden="true" />
+                      </button>
+                    </h3>
+                    <div id={`faq-portfolio-resposta-${i}`} className="bwa-faq-answer">
                       <p>{item.a}</p>
                       {item.href && (
                         <a className="bwa-faqpage-guia-link" href={item.href}>
