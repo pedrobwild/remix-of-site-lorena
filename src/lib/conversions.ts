@@ -139,8 +139,13 @@ export function reportLead(
       { content_name: input.method, content_category: application },
       { eventId: input.eventId },
     );
-    // No Google não é conversão (não é lead de cliente), mas entra nos
-    // públicos com a mesma categoria — remarketing vê o mesmo público.
+    // No Google, cadastro tem conversão própria (rótulo "application",
+    // configurado no admin) — separada do lead de cliente — e também entra
+    // nos públicos com a mesma categoria: remarketing vê o mesmo público.
+    trackGoogleAdsConversion("application", {
+      transactionId: input.eventId,
+      params: { content_name: input.method, content_category: application },
+    });
     trackGoogleAdsAudienceEvent("submit_application", { content_name: input.method, content_category: application });
     logAdEvent("SubmitApplication", { content_category: application });
     return;

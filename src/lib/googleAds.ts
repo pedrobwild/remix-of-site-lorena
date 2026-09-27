@@ -31,6 +31,7 @@ export type GoogleAdsConfig = {
   id: string;
   leadLabel: string | null;
   contactLabel: string | null;
+  applicationLabel: string | null;
 };
 
 /** Rótulo de conversão: letras, dígitos, "-" e "_" (ex.: AbC-D_efG-h12). */
@@ -48,6 +49,7 @@ export function configureGoogleAds(input: {
   id: string;
   leadLabel?: string | null;
   contactLabel?: string | null;
+  applicationLabel?: string | null;
 }): void {
   const id = (input.id ?? "").trim().toUpperCase();
   if (!ADS_ID_RE.test(id)) {
@@ -58,6 +60,7 @@ export function configureGoogleAds(input: {
     id,
     leadLabel: validAdsLabel(input.leadLabel),
     contactLabel: validAdsLabel(input.contactLabel),
+    applicationLabel: validAdsLabel(input.applicationLabel),
   };
 }
 
@@ -99,7 +102,7 @@ function googleReady(): { cfg: GoogleAdsConfig; gtag: Gtag } | null {
  * para os públicos do Google segmentarem igual.
  */
 export function trackGoogleAdsConversion(
-  kind: "lead" | "contact",
+  kind: "lead" | "contact" | "application",
   opts: {
     transactionId?: string | null;
     email?: string | null;
@@ -112,7 +115,8 @@ export function trackGoogleAdsConversion(
     const ready = googleReady();
     if (!ready) return false;
     const { cfg, gtag } = ready;
-    const label = kind === "lead" ? cfg.leadLabel : cfg.contactLabel;
+    const label =
+      kind === "lead" ? cfg.leadLabel : kind === "contact" ? cfg.contactLabel : cfg.applicationLabel;
     if (!label) return false;
 
     if (kind === "lead") {
