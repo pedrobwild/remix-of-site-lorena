@@ -51,7 +51,7 @@ describe("installInstagramEmbeds (DOM)", () => {
   });
 
   it("com cookies aceitos, monta os 3 embeds quando o bloco se aproxima da tela, não card a card", () => {
-    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     const observers = stubIntersectionObserver();
     const root = mountHome();
     const cleanup = installInstagramEmbeds(root);
@@ -78,7 +78,7 @@ describe("installInstagramEmbeds (DOM)", () => {
   });
 
   it("com cookies recusados não monta nada sozinho; o botão carrega só aquele card", () => {
-    window.localStorage.setItem("lal_cookie_consent", "declined");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "declined");
     const observers = stubIntersectionObserver();
     const root = mountHome();
     const cleanup = installInstagramEmbeds(root);

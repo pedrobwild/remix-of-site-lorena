@@ -67,7 +67,7 @@ describe("seção Bastidores da home", () => {
   });
 
   it("monta somente os 6 embeds de Bastidores quando esse bloco se aproxima", () => {
-    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     const observers = stubIntersectionObserver();
     const root = mountHome();
     const cleanup = installInstagramEmbeds(root);

@@ -54,10 +54,10 @@ describe("onConsentChange — valor novo e anterior", () => {
     const handler = vi.fn();
     const off = onConsentChange(handler);
     window.dispatchEvent(
-      new StorageEvent("storage", { key: "lal_cookie_consent", oldValue: "accepted", newValue: "declined" }),
+      new StorageEvent("storage", { key: "bewild_cookie_consent_v2", oldValue: "accepted", newValue: "declined" }),
     );
     window.dispatchEvent(new StorageEvent("storage", { key: "outra", newValue: "declined" }));
-    window.dispatchEvent(new StorageEvent("storage", { key: "lal_cookie_consent", newValue: "lixo" }));
+    window.dispatchEvent(new StorageEvent("storage", { key: "bewild_cookie_consent_v2", newValue: "lixo" }));
     off();
     expect(handler).toHaveBeenCalledTimes(1);
     expect(handler).toHaveBeenCalledWith("declined", "accepted");
@@ -122,7 +122,7 @@ describe("installConsentWithdrawalGuard", () => {
     const reload = vi.fn();
     const off = installConsentWithdrawalGuard(reload);
     window.dispatchEvent(
-      new StorageEvent("storage", { key: "lal_cookie_consent", oldValue: "accepted", newValue: "declined" }),
+      new StorageEvent("storage", { key: "bewild_cookie_consent_v2", oldValue: "accepted", newValue: "declined" }),
     );
     vi.runAllTimers();
     expect(reload).toHaveBeenCalledTimes(1);

@@ -18,7 +18,7 @@ for (const route of ["/faq","/rota-inexistente-xyz","/portfolio"]) {
 }
 // 3) formulário com backend indisponível -> estado de fallback honesto
 { const ctx = await b.newContext({ viewport:{width:390,height:800} }); const p = await ctx.newPage();
-  await p.addInitScript(()=>{try{sessionStorage.setItem("bw-splash","1");localStorage.setItem("lal_cookie_consent","declined")}catch{}});
+  await p.addInitScript(()=>{try{sessionStorage.setItem("bw-splash","1");localStorage.setItem("bewild_cookie_consent_v2","declined")}catch{}});
   await p.goto(B+"/diagnostico",{waitUntil:"networkidle"}).catch(()=>{}); await p.waitForTimeout(500);
   await p.fill("#dg-nome","Teste"); await p.fill("#dg-whats","11999999999"); await p.fill("#dg-local","Pinheiros");
   await p.evaluate(()=>{ for (const g of document.querySelectorAll("[data-group], fieldset, .dg-chips")) g.querySelector("button")?.click(); });

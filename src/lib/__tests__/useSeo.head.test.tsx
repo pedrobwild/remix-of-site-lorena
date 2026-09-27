@@ -36,7 +36,7 @@ import {
   type SeoInput,
 } from "../useSeo";
 import { __resetGoogleAds, getGoogleAdsConfig } from "../googleAds";
-import { __resetMetaPixelQueue, trackMetaEvent } from "../metaPixel";
+import { __resetMetaPixelQueue, metaUserDataFrom, setMetaUserData, trackMetaEvent } from "../metaPixel";
 
 const meta = (sel: string) => document.head.querySelector(sel)?.getAttribute("content") ?? null;
 
@@ -186,7 +186,7 @@ describe("trackers de terceiros (CORE-25 / CORE-18)", () => {
   });
 
   it("com aceite: injeta os válidos, pula os malformados; Pixel com disablePushState antes do init", async () => {
-    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     remoteSettings = {
       meta_pixel_id: "123456789012",
       hotjar_id: "1;alert(document.cookie)",
@@ -206,7 +206,7 @@ describe("trackers de terceiros (CORE-25 / CORE-18)", () => {
   });
 
   it("GA4 do admin igual ao principal (ga4.ts) não gera segundo config", async () => {
-    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     remoteSettings = { google_analytics_id: "G-CE7GKKDG4L", clarity_id: "abcdef1234" };
     render(<Page title="FAQ" canonicalPath="/faq" />);
     await waitFor(() => expect(script("clarity-loader")).not.toBeNull());
@@ -217,7 +217,7 @@ describe("trackers de terceiros (CORE-25 / CORE-18)", () => {
 
   it("Google Ads: config da conta + rótulos para as conversões; ID inválido não entra", async () => {
     __resetGoogleAds();
-    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     remoteSettings = {
       google_ads_conversion_id: "aw-123456789",
       google_ads_lead_label: "LeadLabel1",
@@ -242,7 +242,7 @@ describe("trackers de terceiros (CORE-25 / CORE-18)", () => {
   });
 
   it("Google Ads reaproveita o gtag.js do GA4 quando ele já está na página", async () => {
-    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     const ga = document.createElement("script");
     ga.src = "https://www.googletagmanager.com/gtag/js?id=G-CE7GKKDG4L";
     document.head.appendChild(ga);
@@ -256,14 +256,19 @@ describe("trackers de terceiros (CORE-25 / CORE-18)", () => {
 
   it("evento do Pixel pedido antes da injeção sai logo depois dela", async () => {
     __resetMetaPixelQueue();
-    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
+    expect(setMetaUserData(metaUserDataFrom({ email: "ana@exemplo.com" }))).toBe("queued");
     expect(trackMetaEvent("ViewContent", { content_ids: ["x"] })).toBe("queued");
     const fbq = vi.fn();
     (window as Window & { fbq?: unknown }).fbq = fbq;
     remoteSettings = { meta_pixel_id: "123456789012" };
     render(<Page title="FAQ" canonicalPath="/faq" />);
     await waitFor(() => expect(script("meta-pixel")).not.toBeNull());
-    expect(fbq).toHaveBeenCalledWith("track", "ViewContent", { content_ids: ["x"] });
+    // A correspondência avançada usa o id do Pixel injetado e sai antes da fila.
+    expect(fbq.mock.calls.slice(0, 2)).toEqual([
+      ["init", "123456789012", { em: "ana@exemplo.com", country: "br" }],
+      ["track", "ViewContent", { content_ids: ["x"] }],
+    ]);
     delete (window as Window & { fbq?: unknown }).fbq;
     document.head.querySelectorAll("[data-seo-injected]").forEach((n) => n.remove());
   });
@@ -276,7 +281,7 @@ describe("trackers de terceiros (CORE-25 / CORE-18)", () => {
     expect(document.head.querySelector("[data-seo-injected]")).toBeNull();
     unmount();
 
-    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     window.history.replaceState(null, "", "/admin/leads");
     render(<Page title="Admin" canonicalPath="/admin/leads" />);
     await waitFor(() => expect(document.title).toBe("Admin"));

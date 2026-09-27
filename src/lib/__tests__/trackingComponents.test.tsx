@@ -3,10 +3,13 @@
  *  - trackCta (CORE-17/23): não lança com target = document; clique no
  *    WhatsApp não gera evento interno em dobro (analytics.ts já captura).
  *  - MetaPixel (CORE-01/18): PageView só com aceite, fora do /admin, e por
- *    caminho+query (âncora não conta); ViewContent em projeto e Contact no
- *    clique em WhatsApp/telefone (Fase 1 de conversões).
+ *    caminho+query (âncora não conta); ViewContent em projeto, conteúdo,
+ *    portfólio e serviço; Contact no clique em WhatsApp/telefone;
+ *    IniciouFormulario e VisitanteEngajado (sinais para públicos).
  *  - ga4 (CORE-06): init não manda page_view; page_view deduplicado.
- *  - CookieBanner (CORE-08/02): ESC só com foco no banner; auditoria sai do clique.
+ *  - CookieBanner (CORE-08/02): ESC só com foco no banner; auditoria sai do
+ *    clique; "Recusar" e "Aceitar" com o mesmo peso e foco neutro; aceite de
+ *    versão anterior volta a perguntar (renovação), recusa antiga vale.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, cleanup, fireEvent, render, renderHook } from "@testing-library/react";
@@ -101,25 +104,25 @@ describe("MetaPixel", () => {
     go("/faq"); // sem aceite
     expect(fbq).not.toHaveBeenCalled();
 
-    window.localStorage.setItem("lal_cookie_consent", "accepted");
-    go("/portfolio");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
+    go("/mapa");
     expect(fbq).toHaveBeenCalledTimes(1);
     expect(fbq).toHaveBeenCalledWith("track", "PageView");
 
-    go("/portfolio#projetos", "hashchange"); // âncora: não é página nova
+    go("/mapa#bairros", "hashchange"); // âncora: não é página nova
     expect(fbq).toHaveBeenCalledTimes(1);
 
     go("/admin/leads");
     expect(fbq).toHaveBeenCalledTimes(1);
 
-    window.localStorage.setItem("lal_cookie_consent", "declined"); // retirada
+    window.localStorage.setItem("bewild_cookie_consent_v2", "declined"); // retirada
     go("/contato");
     expect(fbq).toHaveBeenCalledTimes(1);
   });
 
   it("ViewContent: na entrada direta espera o Pixel; na navegação sai junto do PageView", () => {
     __resetMetaPixelQueue();
-    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     window.history.replaceState(null, "", "/portfolio/studio-a");
     render(<MetaPixel />);
 
@@ -135,8 +138,92 @@ describe("MetaPixel", () => {
       ["track", "PageView"],
       ["track", "ViewContent", { content_type: "product", content_ids: ["studio-b"], content_category: "projeto" }],
     ]);
-    go("/portfolio"); // a lista não é projeto
+    go("/portfolio"); // a lista entra como "portfolio"
+    expect(fbq).toHaveBeenLastCalledWith("track", "ViewContent", {
+      content_type: "product",
+      content_ids: ["portfolio"],
+      content_category: "portfolio",
+    });
+    go("/conteudos/quanto-custa-reformar");
+    expect(fbq).toHaveBeenLastCalledWith("track", "ViewContent", {
+      content_type: "product",
+      content_ids: ["quanto-custa-reformar"],
+      content_category: "conteudo",
+    });
+    go("/reforma-de-studio-sao-paulo");
+    expect(fbq).toHaveBeenLastCalledWith("track", "ViewContent", {
+      content_type: "product",
+      content_ids: ["reforma-studio"],
+      content_category: "servico",
+    });
+    go("/faq"); // página sem ViewContent
     expect(fbq).toHaveBeenLastCalledWith("track", "PageView");
+  });
+
+  it("IniciouFormulario: uma vez por página, só em formulário de lead/cadastro e com aceite", () => {
+    const fbq = vi.fn();
+    (window as Window & { fbq?: unknown }).fbq = fbq;
+    window.history.replaceState(null, "", "/orcamento");
+    render(<MetaPixel />);
+    const holder = document.createElement("div");
+    holder.innerHTML =
+      '<form><input id="nome" /><input id="whats" /><input id="h" type="hidden" /><button id="b" type="submit">Enviar</button></form><input id="solto" />';
+    document.body.appendChild(holder);
+
+    fireEvent.focusIn(document.getElementById("nome")!); // sem aceite
+    expect(fbq).not.toHaveBeenCalled();
+
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
+    fireEvent.focusIn(document.getElementById("solto")!); // fora de <form>
+    fireEvent.focusIn(document.getElementById("b")!); // botão não conta
+    expect(fbq).not.toHaveBeenCalled();
+    fireEvent.focusIn(document.getElementById("nome")!);
+    fireEvent.focusIn(document.getElementById("whats")!);
+    expect(fbq.mock.calls).toEqual([["trackCustom", "IniciouFormulario", { content_category: "orcamento" }]]);
+
+    go("/faq"); // página sem formulário de lead
+    fireEvent.focusIn(document.getElementById("nome")!);
+    expect(fbq.mock.calls.filter((c) => c[0] === "trackCustom")).toHaveLength(1);
+
+    go("/orcamento"); // voltou: conta de novo
+    fireEvent.focusIn(document.getElementById("nome")!);
+    expect(fbq.mock.calls.filter((c) => c[0] === "trackCustom")).toHaveLength(2);
+  });
+
+  it("VisitanteEngajado: 60 s de tela ativa, uma vez por sessão e só com aceite", () => {
+    vi.useFakeTimers();
+    try {
+      window.sessionStorage.clear();
+      const fbq = vi.fn();
+      (window as Window & { fbq?: unknown }).fbq = fbq;
+      window.history.replaceState(null, "", "/portfolio/studio-a");
+      render(<MetaPixel />);
+
+      act(() => {
+        vi.advanceTimersByTime(120_000); // sem aceite: não conta
+      });
+      expect(fbq.mock.calls.filter((c) => c[0] === "trackCustom")).toHaveLength(0);
+
+      window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
+      act(() => {
+        vi.advanceTimersByTime(55_000);
+      });
+      expect(fbq.mock.calls.filter((c) => c[0] === "trackCustom")).toHaveLength(0);
+      act(() => {
+        vi.advanceTimersByTime(10_000);
+      });
+      expect(fbq.mock.calls.filter((c) => c[0] === "trackCustom")).toEqual([
+        ["trackCustom", "VisitanteEngajado", { motivo: "tempo", content_category: "projeto" }],
+      ]);
+      act(() => {
+        vi.advanceTimersByTime(300_000);
+      });
+      expect(fbq.mock.calls.filter((c) => c[0] === "trackCustom")).toHaveLength(1);
+      expect(window.sessionStorage.getItem("bewild_meta_engaged")).toBe("1");
+    } finally {
+      vi.useRealTimers();
+      window.sessionStorage.clear();
+    }
   });
 
   it("Contact no clique em WhatsApp/telefone, só com aceite", () => {
@@ -152,7 +239,7 @@ describe("MetaPixel", () => {
     fireEvent.click(document.getElementById("w")!); // sem aceite
     expect(fbq).not.toHaveBeenCalled();
 
-    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     fireEvent.click(document.getElementById("w")!);
     fireEvent.click(document.getElementById("t")!);
     fireEvent.click(document.getElementById("f")!);
@@ -177,7 +264,7 @@ describe("GA4 (ga4.ts)", () => {
     ga4.initGa4(); // sem aceite: no-op
     expect(w.__bewildGa4Inited).toBeFalsy();
 
-    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     ga4.initGa4();
     const pageViews = () =>
       (w.dataLayer ?? []).filter((a) => (a as IArguments)[0] === "event" && (a as IArguments)[1] === "page_view");
@@ -221,24 +308,68 @@ describe("CookieBanner", () => {
     outside.focus();
     fireEvent.keyDown(outside, { key: "Escape" });
     fireEvent.keyDown(window, { key: "Escape" });
-    expect(window.localStorage.getItem("lal_cookie_consent")).toBeNull();
+    expect(window.localStorage.getItem("bewild_cookie_consent_v2")).toBeNull();
     expect(document.querySelector(".cookie-banner")).not.toBeNull();
   });
 
   it("ESC com o foco no banner recusa; a auditoria sai do clique/tecla, não do evento", () => {
     showBanner();
-    const accept = document.querySelector<HTMLButtonElement>(".cookie-banner__btn--solid")!;
-    expect(document.activeElement).toBe(accept);
-    fireEvent.keyDown(accept, { key: "Escape" });
-    expect(window.localStorage.getItem("lal_cookie_consent")).toBe("declined");
+    // Foco neutro: vai para a região, não para "Aceitar" nem "Recusar".
+    const region = document.querySelector<HTMLElement>(".cookie-banner")!;
+    expect(document.activeElement).toBe(region);
+    fireEvent.keyDown(region, { key: "Escape" });
+    expect(window.localStorage.getItem("bewild_cookie_consent_v2")).toBe("declined");
     expect(logConsentAuditMock).toHaveBeenCalledWith("declined", "banner");
     expect(document.querySelector(".cookie-banner")).toBeNull();
+  });
+
+  it("'Recusar' e 'Aceitar' têm o mesmo estilo; o texto diz a finalidade de anúncios", () => {
+    showBanner();
+    const decline = document.querySelector<HTMLButtonElement>('[data-consent="declined"]')!;
+    const accept = document.querySelector<HTMLButtonElement>('[data-consent="accepted"]')!;
+    expect(decline.className).toBe(accept.className);
+    const text = document.querySelector(".cookie-banner__desc")!.textContent ?? "";
+    expect(text).toMatch(/anúncios da Bewild/);
+    expect(text).toMatch(/quem já visitou o site/);
+    expect(text).toMatch(/Preferências de cookies/);
+  });
+
+  it("aceite de versão anterior: o banner volta e a escolha é registrada como renovação", () => {
+    vi.useFakeTimers();
+    try {
+      window.localStorage.setItem("lal_cookie_consent", "accepted");
+      render(<CookieBanner />);
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+      expect(document.querySelector(".cookie-banner")).not.toBeNull();
+      fireEvent.click(document.querySelector('[data-consent="accepted"]')!);
+      expect(logConsentAuditMock).toHaveBeenCalledWith("accepted", "renovacao");
+      expect(window.localStorage.getItem("bewild_cookie_consent_v2")).toBe("accepted");
+      expect(window.localStorage.getItem("lal_cookie_consent")).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("recusa de versão anterior continua valendo: o banner não volta", () => {
+    vi.useFakeTimers();
+    try {
+      window.localStorage.setItem("lal_cookie_consent", "declined");
+      render(<CookieBanner />);
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+      expect(document.querySelector(".cookie-banner")).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("mudança vinda de outra aba (storage) não gera registro de auditoria nesta", () => {
     render(<CookieBanner />);
     window.dispatchEvent(
-      new StorageEvent("storage", { key: "lal_cookie_consent", oldValue: null, newValue: "accepted" }),
+      new StorageEvent("storage", { key: "bewild_cookie_consent_v2", oldValue: null, newValue: "accepted" }),
     );
     expect(logConsentAuditMock).not.toHaveBeenCalled();
   });
@@ -246,7 +377,7 @@ describe("CookieBanner", () => {
   it("reabertura pelas preferências registra a origem 'preferences'", () => {
     setConsent("accepted");
     showBanner();
-    fireEvent.click(document.querySelector(".cookie-banner__btn--ghost")!);
+    fireEvent.click(document.querySelector('[data-consent="declined"]')!);
     expect(logConsentAuditMock).toHaveBeenCalledWith("declined", "preferences");
   });
 });

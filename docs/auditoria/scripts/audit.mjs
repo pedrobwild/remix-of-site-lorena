@@ -132,7 +132,7 @@ for (const route of ROUTES) {
   });
   const popups = [];
   page.on("popup", (p) => popups.push(p.url().slice(0, 160)));
-  await page.addInitScript(() => { try { sessionStorage.setItem("bw-splash", "1"); localStorage.setItem("lal_cookie_consent", "accepted"); } catch {} });
+  await page.addInitScript(() => { try { sessionStorage.setItem("bw-splash", "1"); localStorage.setItem("bewild_cookie_consent_v2", "accepted"); } catch {} });
   await page.goto(BASE + "/diagnostico?utm_source=teste&utm_medium=cpc&utm_campaign=auditoria", { waitUntil: "networkidle" }).catch(() => {});
   await page.waitForTimeout(800);
   const form = await page.evaluate(() => {
