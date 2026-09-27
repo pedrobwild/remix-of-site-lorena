@@ -121,7 +121,7 @@ describe("installTour3d (DOM)", () => {
 
   it("desktop com cookies aceitos: nada antes do bloco chegar perto; depois monta os 3, escalonados", () => {
     vi.useFakeTimers();
-    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     stubPointer(true);
     const observers = stubIntersectionObserver();
     const root = mountHome();
@@ -183,7 +183,7 @@ describe("installTour3d (DOM)", () => {
   });
 
   it("no toque, mesmo com cookies aceitos, nenhum iframe entra na página; o toque abre o diálogo", async () => {
-    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     stubPointer(false);
     const observers = stubIntersectionObserver();
     const root = mountHome();
@@ -240,7 +240,7 @@ describe("installTour3d (DOM)", () => {
 
   it("depois da limpeza não monta mais nada", () => {
     vi.useFakeTimers();
-    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     stubPointer(true);
     const observers = stubIntersectionObserver();
     const root = mountHome();

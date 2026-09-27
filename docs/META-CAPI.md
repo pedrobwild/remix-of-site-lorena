@@ -1,4 +1,4 @@
-# Meta Pixel + Conversions API — Lead e QualifiedLead
+# Meta Pixel + Conversions API — eventos, públicos e qualidade do lead
 
 Como o site conta leads para a Meta (e para o Google Ads) e o que precisa estar
 configurado. O caminho inverso — trazer da Meta as métricas das campanhas e os
@@ -10,17 +10,28 @@ leads dos formulários instantâneos para o painel — está em
 | Evento | Quando | De onde | `event_id` | `action_source` |
 | --- | --- | --- | --- | --- |
 | `PageView` | cada navegação (após aceite de cookies) | Pixel (browser) | — | website |
-| `ViewContent` | abertura de uma página de projeto (`/portfolio/<slug>`) | Pixel | — | website |
+| `ViewContent` | projeto (`/portfolio/<slug>`), conteúdo (`/conteudos/<slug>`), guia do investidor, portfólio e páginas de serviço — `content_category` diz qual | Pixel | — | website |
 | `Contact` | clique em WhatsApp/telefone/e-mail e formulário rápido do rodapé | Pixel | — | website |
+| `IniciouFormulario` (próprio) | primeira interação com um formulário de lead ou cadastro, uma vez por página vista | Pixel | — | website |
+| `VisitanteEngajado` (próprio) | uma vez por sessão: 60 s de tela ativa ou 75% de rolagem numa página longa | Pixel | — | website |
 | `Lead` | formulário de cliente enviado e contado como `generate_lead` | Pixel **e** CAPI (`notify-lead`) | UUID gerado no browser, o mesmo nos dois (reenvio do mesmo formulário repete o id) | website |
+| `SubmitApplication` | cadastro de parceiro, de incorporadora e indicação | Pixel | UUID do envio | website |
 | `QualifiedLead` | admin marca o lead como **qualificado** em `/admin/leads` | CAPI (`meta-lead-quality`) | `<lead_id>:qualifiedlead` | system_generated |
 | `DisqualifiedLead` | admin marca o lead como **descartado** | CAPI (`meta-lead-quality`) | `<lead_id>:disqualifiedlead` | system_generated |
 
+O `Lead` do Pixel leva, além de `content_name`/`content_category`, parâmetros sem
+dado pessoal para segmentar: `objetivo` (slug), `faixa_m2` (`ate_30`, `31_45`,
+`46_70`, `71_100`, `acima_100`), `etapa_imovel` (`com_chaves`, `sem_chaves`,
+`comprando`) e `mora_em_sp`. Nunca vão texto livre de localização, mensagem,
+orçamento pretendido nem dados de terceiros.
+
 Duas regras valem para todos os eventos de lead:
 
-- **Só formulários de cliente** (`/orcamento`, `/contato`, `/diagnostico`, `/o`,
-  `/p`). Parceiros e Indique um amigo continuam como `generate_lead` no GA4, mas
-  não vão à Meta — contar como Lead ensinaria a campanha a buscar o público errado.
+- **Só formulários de cliente viram `Lead`** (`/orcamento`, `/contato`,
+  `/diagnostico`, `/o`, `/p`). Parceiros, incorporadoras e Indique um amigo
+  continuam como `generate_lead` no GA4, mas na Meta viram `SubmitApplication`
+  (só Pixel, sem CAPI e sem Google Ads) — contar como Lead ensinaria a campanha
+  a buscar o público errado.
 - **Só com aceite de cookies.** O Pixel só carrega depois do aceite, e a CAPI só
   envia quando o lead chegou com `consent_marketing = true`.
 
@@ -32,17 +43,38 @@ CAPI mandam os dois, conta um.
 = id do lead) mais `fbp`, `fbc`, IP e user-agent — os identificadores do próprio
 Pixel.
 
+### Correspondência avançada no Pixel (manual)
+
+No envio de qualquer formulário que vira `Lead` ou `SubmitApplication`,
+`reportLead` chama `setMetaUserData` **antes** do evento: `fbq('init', <pixel>,
+{ em, ph, fn, ln, country })` com os dados de **quem enviou** (normalizados como
+na CAPI; o próprio Pixel aplica o hash). Em `/indique-um-amigo`, os campos do
+payload são os de quem indica — nome e WhatsApp do indicado ficam só na mensagem
+e nunca vão à Meta. Se o Pixel ainda não carregou, os dados esperam na fila e o
+`init` sai antes dos eventos pendentes.
+
+**Correspondência avançada automática: deixar DESLIGADA** (Events Manager › Dados
+bwild › Configurações). Ela lê campos de formulário por conta própria e poderia
+capturar o nome e o WhatsApp do indicado em `/indique-um-amigo`; a manual já cobre
+todos os formulários com os dados certos.
+
 ## Arquivos
 
 - `src/lib/metaPixel.ts` — `trackMetaEvent` (gate: aceite, fora do `/admin`; fila
   curta até o Pixel ser injetado), `readMetaBrowserIds` (`_fbp`, `_fbc` ou
   `fb.1.<ts>.<fbclid>`), `newEventId`.
-- `src/lib/conversions.ts` — `reportLead`, `reportContact`, `reportViewContent`
-  (Meta + Google Ads) e a lista de formulários de cliente.
+- `src/lib/conversions.ts` — `reportLead` (Lead/SubmitApplication + parâmetros),
+  `reportContact`, `reportPageContent`/`pageContentFor` (ViewContent),
+  `reportFormStart` e `reportEngaged` (Meta + Google Ads) e as listas de
+  formulários.
 - `src/lib/useLeadSubmit.ts` — um `event_id` por formulário; manda `event_id`,
   `consent_marketing`, `fbp` e `fbc` ao `notify-lead` e dispara o `Lead` do Pixel
   junto com o `generate_lead` do GA4.
-- `src/components/MetaPixel.tsx` — `PageView`, `ViewContent` e `Contact`.
+- `src/components/MetaPixel.tsx` — `PageView`, `ViewContent`, `Contact`,
+  `IniciouFormulario` e `VisitanteEngajado`.
+- `src/components/CookieBanner.tsx`, `src/lib/cookieConsent.ts`
+  (`CONSENT_VERSION`), `src/components/FormPrivacyNote.tsx` e
+  `src/pages/PrivacidadePage.tsx` — o aviso e o aceite (ver LGPD abaixo).
 - `supabase/functions/_shared/meta-capi.ts` — normalização, hash, configuração e
   POST em `graph.facebook.com/v25.0/<pixel>/events`. Módulo puro, testado pelo
   Vitest (`src/lib/__tests__/metaCapi.test.ts`).
@@ -112,7 +144,27 @@ Em `integration_log.detail.reason`: `no_token` (segredo ausente), `no_pixel`,
 
 ## LGPD
 
-- O Pixel só carrega após o aceite (inalterado).
+- O Pixel e a tag do Google só carregam após o aceite do banner.
+- **Versão do aceite.** O texto do banner diz para que servem os cookies: medir o
+  uso do site e mostrar anúncios da Bewild no Facebook, no Instagram e no Google
+  para quem já visitou o site e para pessoas com perfil parecido. Como isso
+  ampliou a finalidade do aceite antigo, `CONSENT_VERSION` passou para 2 (chave
+  `bewild_cookie_consent_v2`): quem tinha **aceitado** a versão anterior
+  (`lal_cookie_consent`) vê o banner de novo e nada rastreia até decidir; quem
+  tinha **recusado** continua recusado. A auditoria (`consent_accept`/`decline`)
+  grava `version` e a origem `banner`, `renovacao` ou `preferences`. Mudou a
+  finalidade de novo → subir a versão e atualizar a `/privacidade`.
+- "Recusar" e "Aceitar" têm o mesmo estilo e o foco inicial vai para a região do
+  banner, não para um dos botões. Retirar o aceite é um clique em "Preferências
+  de cookies" (rodapé e `/privacidade`).
+- **Aviso no formulário** (`FormPrivacyNote`): cada formulário diz para que servem
+  os dados e que, com o aceite, nome, e-mail e telefone seguem criptografados —
+  para Meta e Google nos formulários de cliente, só para a Meta nos cadastros e na
+  indicação (nunca os dados do indicado).
+- A `/privacidade` descreve eventos, dados enviados, públicos (remarketing,
+  exclusão e semelhantes), prazos dos cookies, retenção dos públicos (Meta: até
+  180 dias) e como recusar (Preferências de cookies, Preferências de anúncios da
+  Meta, Minha Central de Anúncios do Google, NAI/DAA).
 - A CAPI segue a mesma decisão do visitante: `consent_marketing` viaja no envio do
   formulário e, sem aceite, nada vai à Meta — nem o `Lead`, nem os eventos de
   qualidade. Quem recusa cookies continua sendo atendido normalmente; só não é
@@ -121,6 +173,23 @@ Em `integration_log.detail.reason`: `no_token` (segredo ausente), `no_pixel`,
   passa para a Meta no momento do evento.
 - Referências: [Meta — parâmetros de informação do cliente](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters)
   e [Meta — deduplicação de eventos Pixel/CAPI](https://developers.facebook.com/docs/marketing-api/conversions-api/deduplicate-pixel-and-server-events).
+
+## Públicos sugeridos (Gerenciador de Anúncios)
+
+Criados a partir do Pixel, depois de publicar o site com estes eventos:
+
+| Público | Regra | Retenção |
+| --- | --- | --- |
+| Visitantes do site | todos os visitantes | 180 dias |
+| Viu projeto ou serviço | `ViewContent` | 90 dias |
+| Começou e não enviou | `IniciouFormulario` **menos** `Lead`/`SubmitApplication` | 30 dias |
+| Engajados | `VisitanteEngajado` | 60 dias |
+| Leads (para excluir da captação) | `Lead` | 180 dias |
+| Semelhantes | 1% Brasil a partir de Leads e, com volume, de `QualifiedLead` | — |
+
+Nenhum público usa dado sensível (saúde, finanças, documentos). Categoria
+especial de anúncio de imóveis só é exigida nos EUA, Canadá e países europeus
+listados pela Meta — não no Brasil.
 
 ## Google Ads
 

@@ -1,5 +1,6 @@
 import { useSeo, breadcrumbJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
+import { openCookiePreferences } from "../lib/cookieConsent";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 /* Só post.css: a página usa exclusivamente as classes .bw-post/.pt-*.
@@ -11,12 +12,21 @@ import "@/styles/post.css";
 /**
  * /privacidade — Política de Privacidade (LGPD), design Bewild.
  * Reaproveita pt-hero / pt-body do design system de posts.
+ *
+ * Manter em sincronia com o que o site faz de verdade:
+ *  - banner e versão do aceite: src/components/CookieBanner.tsx e
+ *    CONSENT_VERSION em src/lib/cookieConsent.ts (mudou a finalidade do
+ *    aceite → sobe a versão e atualiza esta página);
+ *  - eventos e dados que vão à Meta e ao Google: src/lib/conversions.ts,
+ *    src/lib/metaPixel.ts, src/lib/googleAds.ts e
+ *    supabase/functions/_shared/meta-capi.ts;
+ *  - prazos da medição própria: src/lib/analytics.ts.
  */
 export default function PrivacidadePage() {
   const { settings } = useSiteSettings();
 
   const contactEmail = settings?.contact_email || "contato@bewild.com.br";
-  const lastUpdated = "23 de setembro de 2026";
+  const lastUpdated = "27 de setembro de 2026";
 
   useSeo({
     title: "Política de privacidade | Bewild",
@@ -32,6 +42,12 @@ export default function PrivacidadePage() {
         ]
       : undefined,
   });
+
+  const prefsButton = (
+    <button type="button" className="pt-link-button" onClick={openCookiePreferences}>
+      Preferências de cookies
+    </button>
+  );
 
   return (
     <div className="bw-home bw-post">
@@ -56,6 +72,16 @@ export default function PrivacidadePage() {
         <section className="pt-body-section">
           <div className="container">
             <div className="pt-body">
+              <p>
+                <strong>O que mudou nesta versão:</strong> explicamos como
+                usamos o Pixel da Meta e a tag do Google para medir e direcionar
+                anúncios (inclusive para quem já visitou o site e para pessoas
+                com perfil parecido), o envio criptografado do seu contato a
+                essas plataformas quando você envia um formulário, os prazos dos
+                cookies e como recusar. Quem já tinha aceitado os cookies verá o
+                banner de novo, para decidir com essas informações.
+              </p>
+
               <h2>Quem é o controlador dos dados</h2>
               <p>
                 <strong>Bewild</strong>, estabelecida em São
@@ -67,21 +93,31 @@ export default function PrivacidadePage() {
 
               <h2>Quais dados coletamos</h2>
               <p>
-                Coletamos apenas os dados estritamente necessários para
-                oferecer uma experiência consistente e responder às suas
-                solicitações:
+                Coletamos apenas os dados necessários para responder às suas
+                solicitações, oferecer uma experiência consistente e, com o seu
+                aceite, medir e direcionar nossos anúncios:
               </p>
               <ul>
                 <li>
                   <strong>Dados que você envia nos formulários do site:</strong>{" "}
-                  nome, WhatsApp, e-mail, localização do imóvel, metragem,
-                  objetivo da reforma e mensagem, nos formulários de orçamento,
-                  diagnóstico, contato e do programa de parceiros. O pedido de
-                  orçamento também pergunta se você já tem as chaves e a planta
-                  do imóvel, se mora em São Paulo e como conheceu a Bewild.
-                  Junto com o envio, registramos a origem da visita (parâmetros
-                  de campanha, site de referência e página de entrada) e o tipo
-                  de navegador.
+                  conforme o formulário, nome, WhatsApp, e-mail, localização do
+                  imóvel, metragem, objetivo da reforma e mensagem, nos
+                  formulários de orçamento, contato, das páginas de campanha, do
+                  programa de parceiros e do cadastro de incorporadoras. O
+                  pedido de orçamento também pergunta se você já tem as chaves e
+                  a planta do imóvel, se mora em São Paulo e como conheceu a
+                  Bewild. Na indicação de amigos, pedimos também o nome e o
+                  WhatsApp de quem você indica. Junto com o envio, registramos a
+                  origem da visita (parâmetros de campanha, site de referência,
+                  página de entrada e, se você chegou por um anúncio, o código
+                  do clique) e o tipo de navegador.
+                </li>
+                <li>
+                  <strong>Formulários dos anúncios da Meta:</strong> quando você
+                  preenche um formulário de cadastro dentro de um anúncio da
+                  Bewild no Facebook ou no Instagram, a Meta nos repassa as
+                  respostas (como nome, telefone, e-mail e cidade) e a campanha
+                  em que o formulário estava.
                 </li>
                 <li>
                   <strong>Dados de contato voluntários:</strong> nome, e-mail,
@@ -96,17 +132,38 @@ export default function PrivacidadePage() {
                   de escopo.
                 </li>
                 <li>
-                  <strong>Dados de navegação e analytics:</strong> páginas
-                  visitadas, tempo de permanência, eventos de clique, tipo de
-                  dispositivo, referrer e identificadores aleatórios de
-                  visitante e de sessão guardados no seu navegador — coletados
-                  somente depois que você aceita os cookies. Esses dados não
-                  permitem sua identificação pessoal direta.
+                  <strong>Dados de navegação da nossa própria medição:</strong>{" "}
+                  páginas visitadas, tempo de permanência, eventos de clique,
+                  tipo de dispositivo, site de origem e identificadores
+                  aleatórios de visitante e de sessão guardados no seu navegador
+                  — coletados somente depois que você aceita os cookies. Esses
+                  dados não permitem sua identificação pessoal direta.
                 </li>
                 <li>
-                  <strong>Cookies e armazenamento local:</strong> utilizados
-                  para lembrar preferências (como o consentimento desta
-                  política) e manter a coerência da navegação.
+                  <strong>Dados coletados pelo Pixel da Meta e pela tag do
+                  Google (somente com o seu aceite):</strong> as páginas e os
+                  conteúdos que você vê (projetos, serviços, artigos), o início
+                  e o envio de formulários, cliques para falar por WhatsApp,
+                  telefone ou e-mail, sinais de interesse (tempo na página e
+                  rolagem), dados técnicos do aparelho e do navegador, endereço
+                  IP e os identificadores dos cookies dessas empresas. Quando
+                  você envia um formulário, seguem também nome, e-mail e
+                  telefone criptografados por hash (as plataformas só conseguem
+                  compará-los com os dados que já têm, sem ler o original) e
+                  características gerais do pedido: objetivo da reforma, faixa
+                  de metragem, etapa do imóvel e se você mora em São Paulo.
+                  Detalhes em &ldquo;Anúncios e públicos&rdquo;.
+                </li>
+                <li>
+                  <strong>Contagem de campanhas:</strong> aberturas e cliques em
+                  imagens e links rastreados das nossas campanhas (como e-mails
+                  e QR codes de materiais impressos) são contados por campanha,
+                  sem identificar quem abriu ou clicou.
+                </li>
+                <li>
+                  <strong>Cookies e armazenamento local:</strong> para lembrar
+                  sua escolha sobre cookies e, com o seu aceite, para medição e
+                  publicidade — veja &ldquo;Cookies&rdquo;.
                 </li>
               </ul>
 
@@ -123,6 +180,12 @@ export default function PrivacidadePage() {
                   de navegação (analytics agregados);
                 </li>
                 <li>
+                  Com o seu aceite, medir o resultado das nossas campanhas e
+                  exibir anúncios da Bewild no Facebook, no Instagram e no
+                  Google para quem já visitou o site e para pessoas com perfil
+                  parecido (veja &ldquo;Anúncios e públicos&rdquo;);
+                </li>
+                <li>
                   Garantir a segurança e a integridade técnica da plataforma;
                 </li>
                 <li>
@@ -135,12 +198,29 @@ export default function PrivacidadePage() {
               <p>
                 Quando você envia um formulário do site, os dados são gravados
                 no nosso banco de dados, mantido no Supabase (serviço de banco
-                de dados e infraestrutura em nuvem), e encaminhados a dois
-                sistemas internos: o canal da equipe comercial no Slack, que
-                avisa o time sobre o novo contato, e o nosso CRM, onde o
-                atendimento e o orçamento são acompanhados. Esses dados são
-                usados apenas para responder ao seu pedido e dar andamento a
-                ele.
+                de dados e infraestrutura em nuvem), e encaminhados aos nossos
+                canais internos: um aviso à equipe comercial no Slack e por
+                e-mail, e o nosso CRM, onde o atendimento e o orçamento são
+                acompanhados. Os cadastros feitos nos formulários dos anúncios
+                da Meta seguem o mesmo caminho. Esses dados são usados para
+                responder ao seu pedido e dar andamento a ele.
+              </p>
+              <p>
+                Se você aceitou os cookies, nome, e-mail e telefone (e cidade e
+                estado, quando informados) também seguem criptografados para a
+                Meta e o Google, para medir e direcionar nossos anúncios.
+                Quando o atendimento avança (contato qualificado ou não), a
+                Meta também é avisada, com o mesmo contato criptografado, o
+                objetivo da reforma e a campanha de origem — nunca a mensagem.
+                Nos cadastros de parceiros e de incorporadoras e na indicação de
+                amigos, só a Meta recebe o seu contato criptografado — os dados
+                de quem você indica nunca são enviados às plataformas de
+                anúncio. Se você recusou os cookies, nada disso é enviado.
+              </p>
+              <p>
+                Para relatórios internos, levamos às nossas planilhas e
+                ferramentas de análise dados sem nome, telefone, e-mail ou
+                mensagem.
               </p>
 
               <h2>Recursos com inteligência artificial</h2>
@@ -155,12 +235,110 @@ export default function PrivacidadePage() {
                 pessoais.
               </p>
 
+              <h2>Anúncios e públicos</h2>
+              <p>
+                Com o seu aceite, o site carrega o Pixel da Meta e a tag do
+                Google (Google Analytics e Google Ads). A Meta e o Google, como
+                terceiros, usam cookies, pixels e tecnologias parecidas para
+                coletar ou receber informações do nosso site e de outros sites
+                e aplicativos, e usam essas informações para medir resultados e
+                direcionar anúncios, conforme as políticas de privacidade da{" "}
+                <a href="https://www.facebook.com/privacy/policy" target="_blank" rel="noopener noreferrer">
+                  Meta
+                </a>{" "}
+                e do{" "}
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">
+                  Google
+                </a>{" "}
+                (veja também{" "}
+                <a
+                  href="https://policies.google.com/technologies/partner-sites"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  como o Google usa dados de sites parceiros
+                </a>
+                ).
+              </p>
+              <p>Com essas informações, a Bewild pode:</p>
+              <ul>
+                <li>
+                  medir quantas visitas, contatos e pedidos de orçamento vieram
+                  de cada anúncio;
+                </li>
+                <li>
+                  mostrar anúncios da Bewild a quem visitou o site, viu um
+                  projeto ou serviço, começou um formulário ou passou mais
+                  tempo no conteúdo (remarketing);
+                </li>
+                <li>
+                  deixar de mostrar anúncios de captação a quem já pediu
+                  orçamento;
+                </li>
+                <li>
+                  pedir às plataformas que encontrem pessoas com perfil parecido
+                  com o de quem visitou o site ou virou cliente (públicos
+                  semelhantes). Quem monta esses públicos são a Meta e o Google,
+                  com os dados que já têm; a Bewild não recebe nenhuma
+                  informação que identifique essas pessoas.
+                </li>
+              </ul>
+              <p>
+                A Bewild não coleta no site idade, gênero, renda ou interesses.
+                Os relatórios demográficos das plataformas de anúncio são
+                agregados e produzidos por elas, sem identificar ninguém. Não
+                enviamos às plataformas dados sensíveis (como saúde, situação
+                financeira ou documentos), o texto das mensagens, o endereço do
+                imóvel nem os dados de pessoas indicadas.
+              </p>
+
+              <h3>Como recusar ou limitar</h3>
+              <ul>
+                <li>
+                  <strong>No site:</strong> em {prefsButton} (também no rodapé),
+                  escolha &ldquo;Recusar&rdquo;. Os cookies de medição deste
+                  site são apagados e nada mais é enviado às plataformas daí em
+                  diante.
+                </li>
+                <li>
+                  <strong>Na Meta:</strong> em{" "}
+                  <a href="https://www.facebook.com/adpreferences" target="_blank" rel="noopener noreferrer">
+                    Preferências de anúncios
+                  </a>{" "}
+                  você controla os anúncios que vê no Facebook e no Instagram;
+                  na Central de Contas, em &ldquo;Sua atividade fora das
+                  tecnologias da Meta&rdquo;, pode ver e desconectar as
+                  informações que sites como o nosso enviam.
+                </li>
+                <li>
+                  <strong>No Google:</strong> em{" "}
+                  <a href="https://myadcenter.google.com/" target="_blank" rel="noopener noreferrer">
+                    Minha Central de Anúncios
+                  </a>{" "}
+                  você desativa os anúncios personalizados.
+                </li>
+                <li>
+                  <strong>Outras ferramentas:</strong> as páginas de exclusão da{" "}
+                  <a href="https://optout.networkadvertising.org/" target="_blank" rel="noopener noreferrer">
+                    Network Advertising Initiative
+                  </a>{" "}
+                  e da{" "}
+                  <a href="https://optout.aboutads.info/" target="_blank" rel="noopener noreferrer">
+                    Digital Advertising Alliance
+                  </a>{" "}
+                  e as configurações de anúncios do seu celular.
+                </li>
+              </ul>
+
               <h2>Base legal</h2>
               <p>O tratamento de dados pessoais fundamenta-se em:</p>
               <ul>
                 <li>
-                  <strong>Consentimento</strong> (art. 7º, I da LGPD), para
-                  cookies não essenciais e comunicações comerciais;
+                  <strong>Consentimento</strong> (art. 7º, I da LGPD), dado no
+                  banner de cookies, para os cookies não essenciais, a medição,
+                  os anúncios e públicos descritos acima e o envio criptografado
+                  do seu contato às plataformas de anúncio; e para comunicações
+                  comerciais;
                 </li>
                 <li>
                   <strong>
@@ -182,42 +360,91 @@ export default function PrivacidadePage() {
 
               <h2>Compartilhamento com terceiros</h2>
               <p>
-                Não comercializamos dados pessoais. Podemos compartilhar dados
-                apenas com operadores contratados para hospedagem,
-                infraestrutura e banco de dados (Supabase), comunicação interna
-                da equipe (Slack), gestão do atendimento (CRM), processamento
-                dos recursos de inteligência artificial e medição de audiência
-                (Google e Meta, somente com o seu aceite), sempre sob obrigação
-                contratual de confidencialidade e segurança. Também poderemos
-                compartilhar dados mediante obrigação legal ou decisão judicial.
+                Não comercializamos dados pessoais. Compartilhamos dados apenas
+                com operadores contratados para hospedagem, infraestrutura e
+                banco de dados (Supabase), comunicação interna da equipe
+                (Slack e serviço de envio de e-mails), gestão do atendimento
+                (CRM), processamento dos
+                recursos de inteligência artificial e relatórios internos,
+                sempre sob obrigação contratual de confidencialidade e
+                segurança; e, somente com o seu aceite, com a Meta (Facebook e
+                Instagram) e o Google, para medição e publicidade, como descrito
+                em &ldquo;Anúncios e públicos&rdquo;. A Meta e o Google também
+                tratam esses dados para finalidades próprias, conforme as
+                políticas de privacidade deles. Alguns desses serviços
+                armazenam e processam dados em servidores fora do Brasil.
+                Também poderemos compartilhar dados mediante obrigação legal ou
+                decisão judicial.
               </p>
 
               <h2>Cookies</h2>
               <p>
-                Utilizamos cookies e tecnologias de armazenamento local com
-                duas finalidades principais:
+                Utilizamos cookies e o armazenamento local do navegador em duas
+                categorias:
               </p>
               <ul>
                 <li>
-                  <strong>Essenciais:</strong> necessários para o funcionamento
-                  do site, como lembrar seu consentimento a esta política.
+                  <strong>Essenciais:</strong> guardam a sua escolha sobre
+                  cookies, até você mudar de ideia ou limpar os dados do
+                  navegador.
                 </li>
                 <li>
-                  <strong>Analytics e publicidade:</strong> o Google Analytics
-                  (medição de audiência), o Pixel da Meta (medição de anúncios
-                  no Facebook e no Instagram) e a nossa própria medição de
-                  navegação. Eles só são carregados depois que você clica em
-                  &ldquo;Aceitar&rdquo; no banner de cookies; se você recusar,
-                  nenhum deles é carregado. O mesmo vale para qualquer outra
-                  ferramenta de medição configurada no site.
+                  <strong>Medição e publicidade:</strong> só são carregados
+                  depois que você clica em &ldquo;Aceitar&rdquo; no banner de
+                  cookies; se você recusar, nenhum deles é carregado. O mesmo
+                  vale para qualquer outra ferramenta de medição configurada no
+                  site.
                 </li>
               </ul>
+              <table>
+                <caption>Cookies de medição e publicidade (só com aceite)</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Quem grava</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Para quê</th>
+                    <th scope="col">Duração</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Bewild (medição própria)</td>
+                    <td>bewild_vid, bewild_sid e origem da visita</td>
+                    <td>Contar visitas e sessões e saber de onde veio a visita</td>
+                    <td>
+                      Visitante e primeira origem: 12 meses sem visitas; sessão:
+                      30 minutos sem uso; clique de anúncio: 90 dias
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Google Analytics</td>
+                    <td>_ga, _ga_*</td>
+                    <td>Medir o uso do site</td>
+                    <td>Até 2 anos</td>
+                  </tr>
+                  <tr>
+                    <td>Google Ads</td>
+                    <td>_gcl_*</td>
+                    <td>Medir conversões dos anúncios e remarketing</td>
+                    <td>90 dias</td>
+                  </tr>
+                  <tr>
+                    <td>Meta</td>
+                    <td>_fbp, _fbc</td>
+                    <td>Medir anúncios, remarketing e públicos</td>
+                    <td>90 dias</td>
+                  </tr>
+                </tbody>
+              </table>
               <p>
                 Da sua decisão no banner, registramos apenas a escolha (aceite
-                ou recusa), a página e o horário, sem identificador pessoal,
-                para comprovar o consentimento. Você pode mudar sua escolha a
-                qualquer momento pelo link &ldquo;Preferências de
-                cookies&rdquo;, no rodapé do site.
+                ou recusa), a versão do texto, a página e o horário, sem
+                identificador pessoal, para comprovar o consentimento. Você pode
+                mudar sua escolha a qualquer momento em {prefsButton}, também
+                no rodapé do site. Retirar o aceite apaga os cookies de medição
+                deste site e interrompe novos envios; o que já foi enviado à
+                Meta e ao Google segue as ferramentas e os prazos dessas
+                empresas (veja &ldquo;Como recusar ou limitar&rdquo;).
               </p>
 
               <h2>Conteúdos de terceiros</h2>
@@ -251,7 +478,8 @@ export default function PrivacidadePage() {
                 </li>
                 <li>
                   Revogar o consentimento, sempre que o tratamento for baseado
-                  nele;
+                  nele — para cookies e anúncios, a qualquer momento em
+                  &ldquo;Preferências de cookies&rdquo;;
                 </li>
                 <li>
                   Obter informação sobre compartilhamento de seus dados com
@@ -271,9 +499,13 @@ export default function PrivacidadePage() {
               <p>
                 Armazenamos seus dados pelo tempo estritamente necessário às
                 finalidades descritas nesta política, ou pelo prazo exigido
-                por lei. Adotamos medidas técnicas e organizacionais razoáveis
-                para proteger dados pessoais contra acessos não autorizados,
-                perda acidental, alteração ou divulgação indevida.
+                por lei. Os cookies seguem os prazos da tabela acima. Nos
+                públicos de anúncio, cada pessoa fica por prazo limitado — na
+                Meta, no máximo 180 dias desde a última interação com o site —
+                e sai automaticamente depois disso. Adotamos medidas técnicas e
+                organizacionais razoáveis para proteger dados pessoais contra
+                acessos não autorizados, perda acidental, alteração ou
+                divulgação indevida.
               </p>
 
               <h2>Alterações e contato</h2>
@@ -282,7 +514,8 @@ export default function PrivacidadePage() {
                 regulatórias ou nos serviços oferecidos. A data da última
                 revisão é sempre indicada no topo desta página. Em caso de
                 alterações materiais, destacaremos a mudança em lugar visível
-                no site.
+                no site; quando a mudança alterar o que depende do seu aceite,
+                o banner de cookies volta a aparecer para você decidir de novo.
               </p>
               <p>
                 Para dúvidas, solicitações ou reclamações relacionadas a

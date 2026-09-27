@@ -175,7 +175,7 @@ describe("useLeadSubmit", () => {
   });
 
   it("mídia paga: id de evento estável entre reenvios; Lead sai uma vez com esse id", async () => {
-    window.localStorage.setItem("lal_cookie_consent", "accepted");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     document.cookie = "_fbp=fb.1.1790000000000.123456789; path=/";
     sendLeadMock.mockResolvedValueOnce({ delivered: false, timedOut: false });
     sendLeadMock.mockResolvedValueOnce({ delivered: true, timedOut: false });
@@ -202,6 +202,11 @@ describe("useLeadSubmit", () => {
       method: "orcamento_form",
       email: "ana@exemplo.com",
       phoneDigits: "11912345678",
+      name: "Ana",
+      objetivo: "Short stay",
+      areaM2: 32.5,
+      chaves: null,
+      livesInSp: null,
     });
   });
 

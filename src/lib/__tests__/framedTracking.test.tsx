@@ -50,7 +50,7 @@ beforeEach(() => {
   vi.useFakeTimers({ shouldAdvanceTime: true });
   window.localStorage.clear();
   window.sessionStorage.clear();
-  window.localStorage.setItem("lal_cookie_consent", "accepted");
+  window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
   window.history.replaceState(null, "", "/faq");
   fetchMock.mockClear();
   beaconMock.mockClear();
@@ -89,7 +89,7 @@ describe("página dentro de iframe (auditoria de SEO do admin)", () => {
     cleanupAnalytics();
     expect(fetchMock).not.toHaveBeenCalled();
     expect(beaconMock).not.toHaveBeenCalled();
-    expect(Object.keys(window.localStorage)).toEqual(["lal_cookie_consent"]);
+    expect(Object.keys(window.localStorage)).toEqual(["bewild_cookie_consent_v2"]);
   });
 
   it("GA4 não inicializa nem envia page_view", () => {

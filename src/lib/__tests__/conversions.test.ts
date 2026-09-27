@@ -5,14 +5,22 @@
  *    `_fbp`/`_fbc` (com `_fbc` montado a partir do fbclid quando falta).
  *  - googleAds.ts: conversão com rótulo configurado, conversões otimizadas
  *    (user_data antes do evento) e transaction_id = id do lead.
- *  - conversions.ts: só formulários de cliente viram Lead.
+ *  - conversions.ts: só formulários de cliente viram Lead (com parâmetros
+ *    sem dado pessoal); parceiro, incorporadora e indicação viram
+ *    SubmitApplication; ViewContent por tipo de página.
+ *  - Correspondência avançada manual: dados de quem enviou, normalizados como
+ *    na API de Conversões, ANTES do evento; nada sem aceite.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   __resetMetaPixelQueue,
   flushMetaPixelQueue,
+  metaUserDataFrom,
   newEventId,
   readMetaBrowserIds,
+  registerMetaPixelId,
+  setMetaUserData,
+  trackMetaCustomEvent,
   trackMetaEvent,
 } from "../metaPixel";
 import {
@@ -23,7 +31,20 @@ import {
   trackGoogleAdsConversion,
   validAdsLabel,
 } from "../googleAds";
-import { isAdLeadForm, projectSlugFromPath, reportContact, reportLead, reportViewContent } from "../conversions";
+import {
+  areaBucket,
+  etapaImovel,
+  formKeyForPath,
+  isAdLeadForm,
+  leadSignalParams,
+  pageCategoryFor,
+  pageContentFor,
+  projectSlugFromPath,
+  reportContact,
+  reportLead,
+  reportViewContent,
+  slugParam,
+} from "../conversions";
 
 type W = Window & { fbq?: unknown; gtag?: unknown };
 const w = window as W;
@@ -51,7 +72,7 @@ afterEach(() => {
   clearCookies();
 });
 
-const accept = () => window.localStorage.setItem("lal_cookie_consent", "accepted");
+const accept = () => window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
 
 describe("metaPixel.trackMetaEvent", () => {
   it("sem aceite ou no /admin: nada sai nem entra na fila", () => {
@@ -94,7 +115,7 @@ describe("metaPixel.trackMetaEvent", () => {
   it("aceite retirado antes da injeção: a fila é descartada", () => {
     accept();
     trackMetaEvent("ViewContent");
-    window.localStorage.setItem("lal_cookie_consent", "declined");
+    window.localStorage.setItem("bewild_cookie_consent_v2", "declined");
     const fbq = vi.fn();
     w.fbq = fbq;
     flushMetaPixelQueue();
@@ -194,10 +215,18 @@ describe("conversions", () => {
     w.gtag = gtag;
     configureGoogleAds({ id: "AW-123456789", leadLabel: "LeadLabel1" });
 
+    // Parceiro, incorporadora e indicação: SubmitApplication, nunca Lead nem Google Ads.
     reportLead({ eventId: "ev-1", formPath: "/parceiros", method: "parceiros_form" });
+    reportLead({ eventId: "ev-1b", formPath: "/parceiros/incorporadoras", method: "incorporadoras_form" });
     reportLead({ eventId: "ev-2", formPath: "/indique-um-amigo", method: "indique_um_amigo_form" });
-    expect(fbq).not.toHaveBeenCalled();
+    reportLead({ eventId: "ev-x", formPath: "/faq", method: "outro" });
+    expect(fbq.mock.calls).toEqual([
+      ["track", "SubmitApplication", { content_name: "parceiros_form", content_category: "parceiro" }, { eventID: "ev-1" }],
+      ["track", "SubmitApplication", { content_name: "incorporadoras_form", content_category: "incorporadora" }, { eventID: "ev-1b" }],
+      ["track", "SubmitApplication", { content_name: "indique_um_amigo_form", content_category: "indicacao" }, { eventID: "ev-2" }],
+    ]);
     expect(gtag).not.toHaveBeenCalled();
+    fbq.mockClear();
 
     reportLead({ eventId: "ev-3", formPath: "/orcamento", method: "orcamento_form", email: "a@b.co", phoneDigits: "11912345678" });
     expect(fbq).toHaveBeenCalledWith(
@@ -243,5 +272,138 @@ describe("conversions", () => {
     expect(projectSlugFromPath("/portfolio/studio-pinheiros")).toBe("studio-pinheiros");
     expect(projectSlugFromPath("/portfolio")).toBeNull();
     expect(projectSlugFromPath("/admin/projetos/x")).toBeNull();
+  });
+});
+
+describe("sinais para públicos", () => {
+  it("parâmetros do Lead: objetivo, faixa de m², etapa do imóvel e se mora em SP — sem dado pessoal", () => {
+    expect(slugParam("Locação tradicional")).toBe("locacao_tradicional");
+    expect(slugParam("Parceria comercial — Corretor autônomo")).toBe("parceria_comercial_corretor_autonomo");
+    expect(slugParam("  ")).toBeNull();
+    expect([areaBucket(28), areaBucket(32.5), areaBucket(60), areaBucket(100), areaBucket(34800)]).toEqual([
+      "ate_30",
+      "31_45",
+      "46_70",
+      "71_100",
+      "acima_100",
+    ]);
+    expect(areaBucket(0)).toBeNull();
+    expect(areaBucket(null)).toBeNull();
+    expect([etapaImovel("Sim"), etapaImovel("Ainda não"), etapaImovel("Estou comprando"), etapaImovel(null)]).toEqual([
+      "com_chaves",
+      "sem_chaves",
+      "comprando",
+      null,
+    ]);
+    expect(leadSignalParams({ objetivo: "Short stay", areaM2: 32.5, chaves: "Estou comprando", livesInSp: false })).toEqual({
+      objetivo: "short_stay",
+      faixa_m2: "31_45",
+      etapa_imovel: "comprando",
+      mora_em_sp: false,
+    });
+    expect(leadSignalParams({})).toEqual({});
+
+    accept();
+    const fbq = vi.fn();
+    w.fbq = fbq;
+    reportLead({
+      eventId: "ev-9",
+      formPath: "/o",
+      method: "lp_obra_form",
+      objetivo: "Moradia",
+      areaM2: 80,
+      chaves: "Sim",
+      livesInSp: true,
+    });
+    expect(fbq).toHaveBeenCalledWith(
+      "track",
+      "Lead",
+      {
+        content_name: "lp_obra_form",
+        content_category: "/o",
+        objetivo: "moradia",
+        faixa_m2: "71_100",
+        etapa_imovel: "com_chaves",
+        mora_em_sp: true,
+      },
+      { eventID: "ev-9" },
+    );
+  });
+
+  it("correspondência avançada: normaliza como a API de Conversões e vai ANTES do Lead", () => {
+    expect(metaUserDataFrom({ email: " Ana@Exemplo.COM ", phoneDigits: "11912345678", name: "Ána Maria de Souza" })).toEqual({
+      em: "ana@exemplo.com",
+      ph: "5511912345678",
+      fn: "ana",
+      ln: "souza",
+      country: "br",
+    });
+    expect(metaUserDataFrom({ email: "sem-arroba", phoneDigits: "123", name: "Ana" })).toBeNull();
+    expect(metaUserDataFrom({ phoneDigits: "11912345678" })).toEqual({ ph: "5511912345678", country: "br" });
+
+    accept();
+    registerMetaPixelId("644216424824915");
+    const fbq = vi.fn();
+    w.fbq = fbq;
+    reportLead({
+      eventId: "ev-10",
+      formPath: "/orcamento",
+      method: "orcamento_form",
+      email: "ana@exemplo.com",
+      phoneDigits: "11912345678",
+      name: "Ana Souza",
+    });
+    expect(fbq.mock.calls[0]).toEqual([
+      "init",
+      "644216424824915",
+      { em: "ana@exemplo.com", ph: "5511912345678", fn: "ana", ln: "souza", country: "br" },
+    ]);
+    expect(fbq.mock.calls[1][0]).toBe("track");
+    expect(fbq.mock.calls[1][1]).toBe("Lead");
+  });
+
+  it("correspondência avançada: nada sem aceite ou no /admin; antes do Pixel, sai na injeção antes da fila", () => {
+    const fbq = vi.fn();
+    registerMetaPixelId("644216424824915");
+    w.fbq = fbq;
+    expect(setMetaUserData(metaUserDataFrom({ email: "a@b.co" }))).toBe("blocked");
+    accept();
+    window.history.replaceState(null, "", "/admin/leads");
+    expect(setMetaUserData(metaUserDataFrom({ email: "a@b.co" }))).toBe("blocked");
+    expect(fbq).not.toHaveBeenCalled();
+
+    window.history.replaceState(null, "", "/orcamento");
+    delete w.fbq;
+    __resetMetaPixelQueue();
+    expect(setMetaUserData(metaUserDataFrom({ email: "a@b.co" }))).toBe("queued");
+    expect(trackMetaEvent("Lead", { content_name: "x" }, { eventId: "ev-11" })).toBe("queued");
+    expect(trackMetaCustomEvent("IniciouFormulario", { content_category: "orcamento" })).toBe("queued");
+    const later = vi.fn();
+    w.fbq = later;
+    registerMetaPixelId("644216424824915"); // o que injectMetaPixel faz antes do flush
+    flushMetaPixelQueue();
+    expect(later.mock.calls).toEqual([
+      ["init", "644216424824915", { em: "a@b.co", country: "br" }],
+      ["track", "Lead", { content_name: "x" }, { eventID: "ev-11" }],
+      ["trackCustom", "IniciouFormulario", { content_category: "orcamento" }],
+    ]);
+  });
+
+  it("ViewContent e categorias por página; formulários conhecidos", () => {
+    expect(pageContentFor("/portfolio/studio-a")).toEqual({ category: "projeto", id: "studio-a" });
+    expect(pageContentFor("/conteudos/quanto-custa/")).toEqual({ category: "conteudo", id: "quanto-custa" });
+    expect(pageContentFor("/guia-do-investidor")).toEqual({ category: "guia", id: "guia-do-investidor" });
+    expect(pageContentFor("/reforma-de-apartamento-sao-paulo")).toEqual({ category: "servico", id: "reforma-apartamento" });
+    expect(pageContentFor("/faq")).toBeNull();
+    expect(pageContentFor("/admin/projetos")).toBeNull();
+    expect(formKeyForPath("/orcamento")).toBe("orcamento");
+    expect(formKeyForPath("/parceiros/incorporadoras/")).toBe("incorporadoras");
+    expect(formKeyForPath("/faq")).toBeNull();
+    expect([pageCategoryFor("/"), pageCategoryFor("/contato"), pageCategoryFor("/marcenaria"), pageCategoryFor("/faq")]).toEqual([
+      "home",
+      "formulario",
+      "servico",
+      "outra",
+    ]);
   });
 });

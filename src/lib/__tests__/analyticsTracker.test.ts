@@ -15,7 +15,7 @@ const beaconMock = vi.fn().mockReturnValue(true);
 Object.defineProperty(navigator, "sendBeacon", { value: beaconMock, configurable: true, writable: true });
 
 import { contactEventForHref, initAnalytics, logConsentAudit, readPersistedAttribution } from "@/lib/analytics";
-import { setConsent } from "@/lib/cookieConsent";
+import { CONSENT_VERSION, setConsent } from "@/lib/cookieConsent";
 
 type Row = Record<string, unknown> & { event_type: string; value?: Record<string, unknown> | null };
 
@@ -57,7 +57,7 @@ afterEach(() => {
 });
 
 describe("logConsentAudit — payload mínimo, sem ids persistentes (CORE-02)", () => {
-  it("recusa: só event_type, path e {action, source, ts}; nada gravado no storage", async () => {
+  it("recusa: só event_type, path e {action, source, version, ts}; nada gravado no storage", async () => {
     window.history.replaceState({}, "", "/faq?utm_source=google");
     logConsentAudit("declined", "banner");
 
@@ -66,7 +66,8 @@ describe("logConsentAudit — payload mínimo, sem ids persistentes (CORE-02)", 
     expect(Object.keys(row).sort()).toEqual(["event_type", "path", "value"]);
     expect(row.event_type).toBe("consent_decline");
     expect(row.path).toBe("/faq");
-    expect(Object.keys(row.value ?? {}).sort()).toEqual(["action", "source", "ts"]);
+    expect(Object.keys(row.value ?? {}).sort()).toEqual(["action", "source", "ts", "version"]);
+    expect(row.value?.version).toBe(CONSENT_VERSION);
     expect(storageKeys()).toEqual({ local: [], session: [] });
   });
 
@@ -112,7 +113,7 @@ describe("initAnalytics — ciclo de consentimento", () => {
     expect(fetchMock).not.toHaveBeenCalled();
     expect(beaconMock).not.toHaveBeenCalled();
     // Só a chave do próprio consentimento sobrevive.
-    expect(storageKeys()).toEqual({ local: ["lal_cookie_consent"], session: [] });
+    expect(storageKeys()).toEqual({ local: ["bewild_cookie_consent_v2"], session: [] });
   });
 
   it("âncora (#secao) não gera pageview; troca de caminho gera", () => {
@@ -163,6 +164,55 @@ describe("clique de anúncio (gclid/fbclid) para atribuir o lead", () => {
     expect(window.localStorage.getItem("bewild_click")).not.toBeNull();
     setConsent("declined");
     expect(window.localStorage.getItem("bewild_click")).toBeNull();
+  });
+
+  it("clique com mais de 90 dias sai do navegador no próximo evento (prazo da política)", () => {
+    const day = 86_400_000;
+    window.localStorage.setItem(
+      "bewild_click",
+      JSON.stringify({ gclid: "Cj0velho", gclid_ts: Date.now() - 91 * day, fbclid: "IwARnovo", fbclid_ts: Date.now() - day }),
+    );
+    setConsent("accepted");
+    cleanup = initAnalytics();
+    vi.advanceTimersByTime(300);
+    expect(JSON.parse(window.localStorage.getItem("bewild_click") ?? "{}")).toEqual({
+      fbclid: "IwARnovo",
+      fbclid_ts: expect.any(Number),
+    });
+  });
+
+  it("todos os cliques vencidos: a chave some", () => {
+    window.localStorage.setItem("bewild_click", JSON.stringify({ gclid: "Cj0velho", gclid_ts: Date.now() - 91 * 86_400_000 }));
+    setConsent("accepted");
+    cleanup = initAnalytics();
+    vi.advanceTimersByTime(300);
+    expect(window.localStorage.getItem("bewild_click")).toBeNull();
+  });
+});
+
+describe("primeira origem da visita — mesmo prazo do visitante", () => {
+  it("12 meses sem visita: visitante novo e primeira origem recomeçam", () => {
+    window.localStorage.setItem("bewild_vid", "vid-antigo");
+    window.localStorage.setItem("bewild_vid_ts", String(Date.now() - 366 * 86_400_000));
+    window.localStorage.setItem("bewild_first_utm", JSON.stringify({ utm_source: "antiga" }));
+    window.history.replaceState({}, "", "/?utm_source=nova&utm_medium=cpc");
+    setConsent("accepted");
+    cleanup = initAnalytics();
+    vi.advanceTimersByTime(300);
+    expect(window.localStorage.getItem("bewild_vid")).not.toBe("vid-antigo");
+    expect(JSON.parse(window.localStorage.getItem("bewild_first_utm") ?? "null")).toMatchObject({ utm_source: "nova" });
+  });
+
+  it("visitante dentro do prazo mantém a primeira origem", () => {
+    window.localStorage.setItem("bewild_vid", "vid-atual");
+    window.localStorage.setItem("bewild_vid_ts", String(Date.now() - 10 * 86_400_000));
+    window.localStorage.setItem("bewild_first_utm", JSON.stringify({ utm_source: "antiga" }));
+    window.history.replaceState({}, "", "/?utm_source=nova&utm_medium=cpc");
+    setConsent("accepted");
+    cleanup = initAnalytics();
+    vi.advanceTimersByTime(300);
+    expect(window.localStorage.getItem("bewild_vid")).toBe("vid-atual");
+    expect(JSON.parse(window.localStorage.getItem("bewild_first_utm") ?? "null")).toEqual({ utm_source: "antiga" });
   });
 });
 
