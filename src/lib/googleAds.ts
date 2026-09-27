@@ -15,8 +15,15 @@
  *
  * Para as conversões otimizadas valerem, ative no Google Ads: Metas →
  * Configurações → Conversões otimizadas → "Tag do Google".
+ *
+ * Eventos de público (remarketing): `trackGoogleAdsAudienceEvent` manda à
+ * tag AW- os mesmos sinais que o Meta Pixel recebe (ver conversions.ts) —
+ * ViewContent vira `view_item`, formulário iniciado vira `form_start` etc.
+ * Não precisam de rótulo: alimentam as fontes de público da tag, e os
+ * públicos são montados no Google Ads a partir desses parâmetros.
  */
 import { isConsentAccepted } from "@/lib/cookieConsent";
+import { normalizeName } from "../../supabase/functions/_shared/meta-capi";
 
 type Gtag = (...args: unknown[]) => void;
 
