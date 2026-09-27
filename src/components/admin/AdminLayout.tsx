@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import {
+  LayoutGrid,
   LayoutDashboard,
   BarChart3,
   FolderKanban,
@@ -39,6 +40,7 @@ type ActiveKey =
   | "seo-indexacao"
   | "rastreamento"
   | "conversoes"
+  | "central"
   | "settings"
   | "faq"
   | "typography";
@@ -56,6 +58,7 @@ type Props = {
 
 const NAV: { key: ActiveKey; label: string; href: string; icon: typeof LayoutDashboard }[] = [
   { key: "dashboard", label: "Dashboard", href: routes.adminDashboard, icon: LayoutDashboard },
+  { key: "central", label: "Central", href: routes.adminCentral, icon: LayoutGrid },
   { key: "analytics", label: "Analytics", href: routes.adminAnalytics, icon: BarChart3 },
   { key: "leads", label: "Leads", href: routes.adminLeads, icon: Inbox },
   { key: "qualificacao", label: "Qualificação", href: routes.adminQualificacao, icon: ListChecks },
