@@ -113,8 +113,15 @@ export default function CookieBanner() {
             Com o seu aceite, usamos cookies e tecnologias da Meta e do Google
             para medir o uso do site e mostrar anúncios da Bewild no Facebook,
             no Instagram e no Google para quem já visitou o site e para pessoas
-            com perfil parecido. Você pode mudar a escolha quando quiser em
-            &ldquo;Preferências de cookies&rdquo;, no rodapé. Saiba mais na{" "}
+            com perfil parecido. Você pode mudar a escolha quando quiser em{" "}
+            <a
+              className="cookie-banner__link"
+              href={routes.preferenciasCookies}
+              data-cursor="hover"
+            >
+              Preferências de cookies
+            </a>
+            , também no rodapé. Saiba mais na{" "}
             <a
               className="cookie-banner__link"
               href={routes.privacidade}
