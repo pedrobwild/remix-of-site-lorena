@@ -1,6 +1,6 @@
 import { useSeo, breadcrumbJsonLd } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
-import { openCookiePreferences } from "../lib/cookieConsent";
+import { routes } from "../lib/useHashRoute";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 /* Só post.css: a página usa exclusivamente as classes .bw-post/.pt-*.
@@ -43,11 +43,7 @@ export default function PrivacidadePage() {
       : undefined,
   });
 
-  const prefsButton = (
-    <button type="button" className="pt-link-button" onClick={openCookiePreferences}>
-      Preferências de cookies
-    </button>
-  );
+  const prefsButton = <a href={routes.preferenciasCookies}>Preferências de cookies</a>;
 
   return (
     <div className="bw-home bw-post">
