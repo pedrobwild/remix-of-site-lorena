@@ -81,36 +81,78 @@ export function brPhoneToE164(digits: string | null | undefined): string | null 
   return `+55${d}`;
 }
 
+/** Portões comuns: aceite de cookies, fora do /admin, tag e conta no ar. */
+function googleReady(): { cfg: GoogleAdsConfig; gtag: Gtag } | null {
+  if (typeof window === "undefined") return null;
+  if (!isConsentAccepted() || isAdminPath()) return null;
+  const cfg = config;
+  if (!cfg) return null;
+  const gtag = (window as Window & { gtag?: unknown }).gtag;
+  if (typeof gtag !== "function") return null;
+  return { cfg, gtag: gtag as Gtag };
+}
+
 /**
  * Registra uma conversão. `false` quando não saiu: sem aceite, no /admin,
- * sem a tag no ar, sem ID/rótulo configurado.
+ * sem a tag no ar, sem ID/rótulo configurado. `params` leva ao evento os
+ * mesmos sinais do Lead do Meta (objetivo, faixa de m², etapa, mora em SP)
+ * para os públicos do Google segmentarem igual.
  */
 export function trackGoogleAdsConversion(
   kind: "lead" | "contact",
-  opts: { transactionId?: string | null; email?: string | null; phoneDigits?: string | null } = {},
+  opts: {
+    transactionId?: string | null;
+    email?: string | null;
+    phoneDigits?: string | null;
+    name?: string | null;
+    params?: Record<string, unknown>;
+  } = {},
 ): boolean {
   try {
-    if (typeof window === "undefined") return false;
-    if (!isConsentAccepted() || isAdminPath()) return false;
-    const cfg = config;
-    if (!cfg) return false;
+    const ready = googleReady();
+    if (!ready) return false;
+    const { cfg, gtag } = ready;
     const label = kind === "lead" ? cfg.leadLabel : cfg.contactLabel;
     if (!label) return false;
-    const gtag = (window as Window & { gtag?: unknown }).gtag;
-    if (typeof gtag !== "function") return false;
 
     if (kind === "lead") {
       const email = (opts.email ?? "").trim().toLowerCase();
       const phone = brPhoneToE164(opts.phoneDigits);
-      const userData: Record<string, string> = {};
+      const userData: Record<string, unknown> = {};
       if (email.includes("@")) userData.email = email;
       if (phone) userData.phone_number = phone;
-      if (Object.keys(userData).length) (gtag as Gtag)("set", "user_data", userData);
+      // Nome de quem enviou, como na correspondência avançada do Meta.
+      const parts = (normalizeName(opts.name) ?? "").split(" ").filter(Boolean);
+      if (parts.length) {
+        userData.address = [
+          { first_name: parts[0], ...(parts.length > 1 ? { last_name: parts[parts.length - 1] } : {}), country: "br" },
+        ];
+      }
+      if (Object.keys(userData).length) gtag("set", "user_data", userData);
     }
-    (gtag as Gtag)("event", "conversion", {
+    gtag("event", "conversion", {
       send_to: `${cfg.id}/${label}`,
       ...(opts.transactionId ? { transaction_id: opts.transactionId } : {}),
+      ...(opts.params ?? {}),
     });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Eventos de público na tag AW- (espelho dos eventos do Meta Pixel). */
+export type GoogleAudienceEvent = "view_item" | "form_start" | "visitante_engajado" | "submit_application" | "contact";
+
+/**
+ * Evento de remarketing/público: vai à tag AW- sem rótulo de conversão.
+ * `false` nos mesmos bloqueios das conversões (sem aceite, /admin, sem tag).
+ */
+export function trackGoogleAdsAudienceEvent(name: GoogleAudienceEvent, params: Record<string, unknown> = {}): boolean {
+  try {
+    const ready = googleReady();
+    if (!ready) return false;
+    ready.gtag("event", name, { send_to: ready.cfg.id, ...params });
     return true;
   } catch {
     return false;
