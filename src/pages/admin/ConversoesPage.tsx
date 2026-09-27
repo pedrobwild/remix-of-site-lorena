@@ -127,8 +127,8 @@ export default function ConversoesPage() {
       title="Conversões"
       description="Eventos enviados ao Pixel da Meta e ao Google Ads, por mês. Cada evento vale para as duas plataformas — é o que alimenta as conversões e os públicos de remarketing."
     >
-      <section className="admin-section">
-        <h2 className="admin-section-title">Resumo por mês</h2>
+      <section style={{ marginBottom: 32 }}>
+        <h2 style={{ fontSize: 15, fontWeight: 600, marginBottom: 12 }}>Resumo por mês</h2>
         {erro ? (
           <p className="admin-flash admin-flash--err mono" role="alert">{erro}</p>
         ) : loading ? (
@@ -164,8 +164,8 @@ export default function ConversoesPage() {
         )}
       </section>
 
-      <section className="admin-section">
-        <h2 className="admin-section-title">Detalhe por mês e evento</h2>
+      <section style={{ marginBottom: 32 }}>
+        <h2 style={{ fontSize: 15, fontWeight: 600, marginBottom: 12 }}>Detalhe por mês e evento</h2>
         {erro ? null : loading ? null : detalhe.length === 0 ? null : (
           <div style={{ overflowX: "auto" }}>
             <table className="admin-table">
