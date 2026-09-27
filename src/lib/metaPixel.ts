@@ -31,7 +31,7 @@ type Fbq = (...args: unknown[]) => void;
 export type MetaStandardEvent = "Lead" | "Contact" | "ViewContent" | "SubmitApplication";
 
 /** Eventos próprios do site (`fbq('trackCustom')`) — nomes sem dado pessoal. */
-export type MetaCustomEvent = "IniciouFormulario" | "VisitanteEngajado";
+export type MetaCustomEvent = "IniciouFormulario" | "VisitanteEngajado" | "CliqueProjeto";
 
 /** Teto da fila de espera: eventos antigos demais não fazem sentido. */
 const MAX_QUEUE = 20;
