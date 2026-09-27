@@ -70,6 +70,7 @@ const SITE_LINKS: { label: string; href: string }[] = [
   { label: "Indexação", href: routes.adminIndexacao },
   { label: "Rastreamento", href: routes.adminRastreamento },
   { label: "Conversões", href: routes.adminConversoes },
+  { label: "Central", href: routes.adminCentral },
   { label: "Integrações", href: routes.adminIntegracoes },
   { label: "Configurações", href: routes.adminSettings },
 ];

@@ -58,6 +58,7 @@ const SPA_ONLY_ALLOWED = new Set([
   "/admin/indexacao",
   "/admin/rastreamento",
   "/admin/conversoes",
+  "/admin/central",
   "/admin/integracoes",
   "/admin/settings",
   "/admin/bewild",
