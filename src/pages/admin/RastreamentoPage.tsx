@@ -98,6 +98,58 @@ function pct(v: number) {
   return `${(v * 100).toFixed(1)}%`;
 }
 
+/**
+ * Classifica uma dimensão (utm_source ou referrer_host) no balde de origem.
+ * "Direto / próprio site" = sem origem ou referência do próprio domínio.
+ */
+function classifyOrigin(dim: string | null): string {
+  const d = (dim ?? "").toLowerCase().trim();
+  if (!d || d === "bewild.com.br" || d === "www.bewild.com.br" || d === "direct") {
+    return "Direto / próprio site";
+  }
+  if (d.includes("google")) return "Google";
+  if (
+    d.includes("facebook") ||
+    d.includes("instagram") ||
+    d.includes("meta") ||
+    d === "fb" ||
+    d === "ig"
+  ) {
+    return "Meta";
+  }
+  return "Outros";
+}
+
+/** Ordem fixa de exibição dos baldes de origem. */
+const ORIGIN_ORDER = ["Google", "Meta", "Direto / próprio site", "Outros"];
+
+function mergeOrigins(rows: BreakdownRow[]): OriginRow[] {
+  const map = new Map<string, OriginRow>();
+  for (const r of rows) {
+    const origem = classifyOrigin(r.dim);
+    const row = map.get(origem) ?? { origem, sessoes: 0, conversoes: 0, rejeicao: null };
+    row.sessoes += Number(r.sessions);
+    row.conversoes += Number(r.conversions);
+    map.set(origem, row);
+  }
+  // Rejeição ponderada pelas sessões de cada linha de origem.
+  for (const row of map.values()) {
+    let peso = 0;
+    let soma = 0;
+    for (const r of rows) {
+      if (classifyOrigin(r.dim) !== row.origem) continue;
+      const s = Number(r.sessions);
+      if (r.bounce_rate == null || s <= 0) continue;
+      peso += s;
+      soma += Number(r.bounce_rate) * s;
+    }
+    row.rejeicao = peso > 0 ? soma / peso : null;
+  }
+  return [...map.values()].sort(
+    (a, b) => ORIGIN_ORDER.indexOf(a.origem) - ORIGIN_ORDER.indexOf(b.origem),
+  );
+}
+
 export default function RastreamentoPage() {
   const [days, setDays] = useState(28);
   const [loading, setLoading] = useState(true);
