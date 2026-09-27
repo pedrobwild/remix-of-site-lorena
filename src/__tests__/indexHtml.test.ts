@@ -38,7 +38,7 @@ type SplashWindow = Window & { __bwSplashDone?: () => void };
 
 describe("index.html — fontes", () => {
   it("uma folha do Google Fonts no <head>, só com Manrope e JetBrains Mono", () => {
-    const links = HTML.match(/<link[^>]*href="https:\/\/fonts\.googleapis\.com\/css2\?[^”]*"[^>]*>/g) ?? [];
+    const links = HTML.match(/<link[^>]*href="https:\/\/fonts\.googleapis\.com\/css2\?[^\"]*"[^>]*>/g) ?? [];
     expect(links).toHaveLength(1);
     const href = links[0].match(/href="([^"]+)"/)![1];
     expect(href).toContain("family=Manrope:wght@");
