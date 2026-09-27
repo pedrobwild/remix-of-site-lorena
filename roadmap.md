@@ -1,21 +1,5 @@
-- [x] Aplicar as novas logos azul e branca conforme o contraste dos fundos, validar sem publicar.
-- [x] Corrigir gráfico, relatórios, abas móveis e isolamento CSS da réplica do Bwild Workflow; validar e recapturar sem publicar.
-- [x] Recriar a réplica do portal Bwild Workflow na home, validar e capturar em 1280/390/320 sem publicar.
 # Roadmap
 
-- [x] Publicar o site (solicitado — deploy em https://bewild.com.br)
-- [x] Reenviar sitemap ao Google (propriedade https://bewild.com.br/, HTTP 204)
-- [x] Acompanhar indexação de home, /portfolio, /diagnostico e /faq (URL Inspection) — todas "Enviadas e indexadas"
-- [x] Expandir corpo pré-renderizado do /guia-do-investidor (scripts/prerenderGuia.ts): seções com texto real dos componentes, tabela de bairros, MODIFIED = 2026-09-22 — build OK (dist/guia-do-investidor/index.html 50,6 KB); não publicado
-- [ ] Publicar o guia expandido quando o usuário pedir
-- [ ] Avisar o usuário quando as páginas aparecerem nos resultados de busca — indexadas; posição/cliques acompanhar via Search Console (desempenho) ou novo check quando o usuário pedir
-- [ ] Publicar a correção do ícone (aba e celular) — o Matheus publica
-- [x] Rodapé Parceiros (clientes e corretores / incorporadoras)
-- [x] Guia: link de pular + movimento reduzido
-- [x] Página /acessibilidade com link no rodapé
-- [x] Redesenhar a jornada de 12 etapas e criar as abas Curva S / Relatórios / Cronograma em #workflow; validar e salvar capturas sem publicar
-
-- [x] Trocar a seção Bastidores pelo slider de posts do Instagram, validar suíte e build; não publicar.
-- [x] Aplicar rodada 2 do painel Analytics (arquivos A–G prontos): migration de registro, analyticsCompare v2, OverviewTab, testes, TZ fixo no vitest.config, package-lock regenerado; build + testes sem TZ; não publicar.
-- [x] Publicar correção da seta "Próximo" do slider Bastidores (setTimeout update 2s/6s) + lastmod da home 2026-09-25 no sitemap; home publicada e conferida.
-- [x] Atualizar meta description e Open Graph da home para incluir Bastidores e auditar a cobertura das demais páginas públicas; não publicar.
+- [x] Reenviar sitemap ao Search Console e conferir indexação das páginas de projeto (feito 27/09: 16 indexadas, 61 descobertas não indexadas, 85 desconhecidas)
+- [ ] Página listando todos os estúdios do portfólio — /portfolio já lista os 162 projetos com links, título e descrição próprios; confirmar com o usuário se quer uma página filtrada só de estúdios
+- [ ] Pendências antigas: h1 sem texto exato; mensagem de garantia no Google Business incompleta; revisar projetos sem descrição própria no admin
