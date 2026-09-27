@@ -39,6 +39,7 @@ export type Route =
   | { name: "admin-indexacao" }
   | { name: "admin-rastreamento" }
   | { name: "admin-conversoes" }
+  | { name: "admin-lgpd" }
   | { name: "admin-central" }
   | { name: "admin-integracoes" }
   | { name: "admin-settings" }
@@ -142,6 +143,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/admin/indexacao") return { name: "admin-indexacao" };
   if (path === "/admin/rastreamento") return { name: "admin-rastreamento" };
   if (path === "/admin/conversoes") return { name: "admin-conversoes" };
+  if (path === "/admin/lgpd") return { name: "admin-lgpd" };
   if (path === "/admin/central") return { name: "admin-central" };
   if (path === "/admin/integracoes") return { name: "admin-integracoes" };
   if (path === "/admin/settings") return { name: "admin-settings" };
@@ -296,6 +298,7 @@ export const routes = {
   adminIndexacao: "/admin/indexacao",
   adminRastreamento: "/admin/rastreamento",
   adminConversoes: "/admin/conversoes",
+  adminLgpd: "/admin/lgpd",
   adminCentral: "/admin/central",
   adminIntegracoes: "/admin/integracoes",
   adminSettings: "/admin/settings",

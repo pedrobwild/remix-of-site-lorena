@@ -59,6 +59,7 @@ const Seo404Page = lazy(() => import("./pages/admin/Seo404Page"));
 const SeoIndexacaoPage = lazy(() => import("./pages/admin/SeoIndexacaoPage"));
 const RastreamentoPage = lazy(() => import("./pages/admin/RastreamentoPage"));
 const ConversoesPage = lazy(() => import("./pages/admin/ConversoesPage"));
+const LgpdPage = lazy(() => import("./pages/admin/LgpdPage"));
 const CentralPage = lazy(() => import("./pages/admin/CentralPage"));
 const IntegracoesPage = lazy(() => import("./pages/admin/IntegracoesPage"));
 const SettingsPage = lazy(() => import("./pages/admin/SettingsPage"));
@@ -213,6 +214,14 @@ export function renderRoute(route: Route) {
       <AdminChunk>
         <ProtectedRoute>
           <RastreamentoPage />
+        </ProtectedRoute>
+      </AdminChunk>
+    );
+  if (route.name === "admin-lgpd")
+    return (
+      <AdminChunk>
+        <ProtectedRoute>
+          <LgpdPage />
         </ProtectedRoute>
       </AdminChunk>
     );
