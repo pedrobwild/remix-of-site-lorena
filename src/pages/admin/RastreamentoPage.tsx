@@ -184,7 +184,8 @@ export default function RastreamentoPage() {
     const id = ++requestId.current;
     setLoading(true);
 
-    const [gscRes, pathsRes, faqRes, leadsRes, adEventsRes, adClicksRes] = await Promise.all([
+    const [gscRes, pathsRes, faqRes, leadsRes, adEventsRes, adClicksRes, utmRes, refRes] =
+      await Promise.all([
       supabase.functions.invoke("search-console-stats", {
         body: { days, dimension: "page", rowLimit: 100 },
       }),
