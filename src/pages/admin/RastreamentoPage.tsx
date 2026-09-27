@@ -96,6 +96,14 @@ export default function RastreamentoPage() {
   const [faq, setFaq] = useState<FaqRow[]>([]);
   const [faqErro, setFaqErro] = useState<string | null>(null);
   const [faqTruncado, setFaqTruncado] = useState(false);
+  const [leads, setLeads] = useState<LeadRow[]>([]);
+  const [leadsErro, setLeadsErro] = useState<string | null>(null);
+  const [leadsTruncado, setLeadsTruncado] = useState(false);
+  const [adEvents, setAdEvents] = useState<AdEventRow[]>([]);
+  const [adEventsErro, setAdEventsErro] = useState<string | null>(null);
+  const [adEventsTruncado, setAdEventsTruncado] = useState(false);
+  const [adClicks, setAdClicks] = useState<AdClickRow[]>([]);
+  const [adClicksErro, setAdClicksErro] = useState<string | null>(null);
   // Trocar de período rápido disparava cargas concorrentes; só a última vale.
   const requestId = useRef(0);
 
@@ -109,7 +117,7 @@ export default function RastreamentoPage() {
     const id = ++requestId.current;
     setLoading(true);
 
-    const [gscRes, pathsRes, faqRes] = await Promise.all([
+    const [gscRes, pathsRes, faqRes, leadsRes, adEventsRes, adClicksRes] = await Promise.all([
       supabase.functions.invoke("search-console-stats", {
         body: { days, dimension: "page", rowLimit: 100 },
       }),
