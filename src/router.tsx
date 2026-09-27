@@ -41,7 +41,7 @@ import { lazy, Suspense, type ReactNode } from "react";
 // Admin em chunks separados: o visitante público não baixa recharts, dnd-kit
 // e todo o painel (o bundle único tinha ~1,45 MB / 414 kB gzip).
 // O guia carrega framer-motion, recharts e maplibre: fica em chunk próprio.
-const BairroPage = lazy(() => import("./pages/BairroPage"));
+import BairroPage from "./pages/BairroPage";
 const GuiaInvestidorPage = lazy(() => import("./pages/GuiaInvestidorPage"));
 // Página atrás de flag: chunk próprio, baixado só por quem a abre.
 const IncorporadorasPage = lazy(() => import("./pages/IncorporadorasPage"));
