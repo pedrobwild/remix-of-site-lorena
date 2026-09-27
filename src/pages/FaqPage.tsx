@@ -262,7 +262,7 @@ export default function FaqPage() {
   useSeo({
     title: "Dúvidas sobre arquitetura, engenharia e reforma em SP | Bewild",
     description:
-      "Dúvidas sobre arquitetura, engenharia e reforma de apartamento em SP respondidas: quanto custa, quanto tempo leva, contrato fechado, garantia, comissão de indicações, autorização do condomínio e etapas da obra com a Bewild.",
+      "Dúvidas sobre arquitetura, engenharia e reforma de apartamento em SP respondidas: quanto custa, quanto tempo leva, contrato fechado, garantia, comissão de indicações, autorização do condomínio, etapas da obra e obras reais do portfólio da Bewild, com links para projetos e bairros.",
     keywords:
       "dúvidas sobre arquitetura e engenharia, projeto de arquitetura em São Paulo, dúvidas sobre reforma de apartamento em SP, reforma de apartamento em SP, custo de reforma, prazo de reforma, contrato fechado de reforma, garantia de reforma, comissão de indicação de imóvel, autorização de reforma condomínio, Bewild",
     canonicalPath: "/faq",
@@ -283,6 +283,7 @@ export default function FaqPage() {
             // Blocos fixos exibidos em qualquer cenário (com ou sem o banco).
             ...CONTRATO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
             ...GUIA_ITEMS.map((i) => ({ q: i.q, a: i.a })),
+            ...PORTFOLIO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
           ]),
         ]
       : undefined,
