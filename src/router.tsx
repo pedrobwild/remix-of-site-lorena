@@ -29,6 +29,7 @@ import { isIncorporadorasEnabled } from "./lib/incorporadorasFlag";
 import IndiquePage from "./pages/IndiquePage";
 import MarcasParceriasPage from "./pages/MarcasParceriasPage";
 import PrivacidadePage from "./pages/PrivacidadePage";
+import PreferenciasCookiesPage from "./pages/PreferenciasCookiesPage";
 import AcessibilidadePage from "./pages/AcessibilidadePage";
 import LpObraPage from "./pages/LpObraPage";
 import LpPanfletoPage from "./pages/LpPanfletoPage";
@@ -121,6 +122,7 @@ export function renderRoute(route: Route) {
       </Suspense>
     );
   if (route.name === "privacidade") return <PrivacidadePage />;
+  if (route.name === "preferencias-cookies") return <PreferenciasCookiesPage />;
   if (route.name === "acessibilidade") return <AcessibilidadePage />;
   if (route.name === "lp-obra") return <LpObraPage />;
   if (route.name === "lp-panfleto") return <LpPanfletoPage />;
