@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
       .maybeSingle(),
     supabase
       .from("projects")
-      .select("slug, updated_at, created_at")
+      .select("slug, neighborhood, cover_url, updated_at, created_at")
       .eq("published", true)
       .eq("visible", true)
       .order("order_index", { ascending: true }),
@@ -114,6 +114,24 @@ Deno.serve(async (req) => {
     lastmod: validDay(p.updated_at, p.created_at),
   }));
 
+  const hoodSlug = (v: string) =>
+    v.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  const hoods = new Map<string, { n: number; days: Array<string | null> }>();
+  for (const p of projectRows as Array<{ neighborhood?: string | null; cover_url?: string | null; updated_at?: string | null; created_at?: string | null }>) {
+    if (!p.neighborhood || !p.cover_url) continue;
+    const k = hoodSlug(p.neighborhood);
+    if (!k) continue;
+    const h = hoods.get(k) ?? { n: 0, days: [] };
+    h.n++; h.days.push(p.updated_at ?? null, p.created_at ?? null); hoods.set(k, h);
+  }
+  const hoodUrls: UrlEntry[] = [...hoods.entries()].filter(([, h]) => h.n >= 3).map(([k, h]) => ({
+    loc: `${base}/reforma/${k}`,
+    priority: "0.8",
+    changefreq: "monthly",
+    lastmod: validDay(...h.days),
+  }));
+
   const postUrls: UrlEntry[] = postRows.filter((b) => b.slug).map((b) => ({
     loc: `${base}/conteudos/${b.slug}`,
     priority: "0.6",
@@ -121,7 +139,7 @@ Deno.serve(async (req) => {
     lastmod: validDay(b.updated_at, b.published_at, b.created_at),
   }));
 
-  const all = [...staticUrls, ...projectUrls, ...postUrls];
+  const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls];
 
   const urlsXml = all
     .map(

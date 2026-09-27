@@ -72,7 +72,7 @@ async function main() {
   let projects, posts, faqEntries;
   try {
     [projects, posts, faqEntries] = await Promise.all([
-      get("projects?published=eq.true&visible=eq.true&select=slug,updated_at,created_at"),
+      get("projects?published=eq.true&visible=eq.true&select=slug,neighborhood,cover_url,updated_at,created_at"),
       get("bewild_posts?published=eq.true&select=slug,title,updated_at,published_at,created_at"),
       get("assistant_kb?ativo=eq.true&select=updated_at"),
     ]);
@@ -144,6 +144,28 @@ async function main() {
       priority: "0.7",
     }));
 
+  // Páginas por bairro (/reforma/<bairro>): mesma regra de src/lib/portfolioFilter.ts.
+  const hoodSlug = (v) =>
+    String(v).trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  const hoods = new Map();
+  for (const p of projects) {
+    if (!p.neighborhood || !p.cover_url) continue;
+    const s = hoodSlug(p.neighborhood);
+    if (!s) continue;
+    const h = hoods.get(s) ?? { n: 0, rows: [] };
+    h.n++; h.rows.push(p); hoods.set(s, h);
+  }
+  const hoodUrls = [...hoods.entries()]
+    .filter(([, h]) => h.n >= 3)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([s, h]) => ({
+      loc: `${BASE_URL}/reforma/${s}`,
+      lastmod: newest(h.rows, "updated_at", "created_at"),
+      changefreq: "monthly",
+      priority: "0.8",
+    }));
+
   const postUrls = posts
     .filter((p) => p.slug)
     .sort((a, b) => a.slug.localeCompare(b.slug))
@@ -154,7 +176,7 @@ async function main() {
       priority: "0.6",
     }));
 
-  const all = [...staticUrls, ...projectUrls, ...postUrls];
+  const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls];
   const xml = [
     `<?xml version="1.0" encoding="UTF-8"?>`,
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,

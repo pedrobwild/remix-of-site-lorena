@@ -86,6 +86,7 @@ const STATIC_ROUTES_SET = new Set<string>(STATIC_ROUTES);
 const DYNAMIC_PREFIXES: Array<{ prefix: string; table: string; column: string }> = [
   { prefix: "/portfolio/", table: "projects", column: "slug" },
   { prefix: "/conteudos/", table: "bewild_posts", column: "slug" },
+  { prefix: "/reforma/", table: "projects", column: "neighborhood" },
 ];
 
 function normalizePath(raw: string | null): string {
@@ -248,6 +249,19 @@ Deno.serve(async (req: Request) => {
           .eq("visible", true)
           .maybeSingle();
         if (data) return jsonResponse(200, { path, status: "ok", reason: "project_found" });
+      } else if (cfg.prefix === "/reforma/") {
+        const { data } = await supabase
+          .from("projects")
+          .select("neighborhood")
+          .eq("visible", true)
+          .eq("published", true)
+          .not("cover_url", "is", null)
+          .not("neighborhood", "is", null);
+        const toSlug = (v: string) =>
+          v.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+        const n = (data ?? []).filter((r: { neighborhood: string | null }) => r.neighborhood && toSlug(r.neighborhood) === slug).length;
+        if (n >= 3) return jsonResponse(200, { path, status: "ok", reason: "neighborhood_found" });
       } else if (cfg.prefix === "/conteudos/") {
         const { data } = await supabase
           .from("bewild_posts")

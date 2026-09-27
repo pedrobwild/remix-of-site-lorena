@@ -20,6 +20,7 @@ import {
   applyNeighborhoodFilter,
   applyPortfolioSort,
   neighborhoodOptions,
+  neighborhoodPages,
   type PortfolioFilter,
   type PortfolioSort,
 } from "@/lib/portfolioFilter";
@@ -69,6 +70,7 @@ export default function BewildPortfolioPage() {
   });
 
   const withCover = useMemo(() => projects.filter((p) => !!p.cover_url), [projects]);
+  const bairroPages = useMemo(() => neighborhoodPages(withCover), [withCover]);
   const places = useMemo(() => neighborhoodOptions(withCover), [withCover]);
   const chips = useMemo(() => availablePortfolioFilters(withCover), [withCover]);
   const filtered = useMemo(
@@ -106,6 +108,17 @@ export default function BewildPortfolioPage() {
             <p className="bwh-lead" style={{ margin: "0 0 32px" }}>
               Cada projeto aqui recebeu estudo próprio de layout, marcenaria, iluminação e acabamento, pensado pro uso que o apartamento precisa sustentar. Do imóvel cru à entrega das chaves.
             </p>
+
+            {bairroPages.length > 0 && (
+              <nav aria-label="Reformas por bairro" className="bwh-mono" style={{ margin: "0 0 24px", display: "flex", flexWrap: "wrap", gap: "8px 16px" }}>
+                <span>Por bairro:</span>
+                {bairroPages.map((b) => (
+                  <a key={b.slug} href={`/reforma/${b.slug}`} style={{ textDecoration: "underline" }}>
+                    {b.label}
+                  </a>
+                ))}
+              </nav>
+            )}
 
             {showChips && (
             <div

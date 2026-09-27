@@ -132,3 +132,29 @@ export function applyPortfolioSort<T extends Sortable>(list: T[], sort: Portfoli
       return out;
   }
 }
+
+/* ======================== Páginas por bairro ======================== */
+
+/** Mínimo de projetos para um bairro ganhar página própria (/reforma/<bairro>). */
+export const MIN_PROJECTS_PER_NEIGHBORHOOD = 3;
+
+/** "Vila Olímpia" → "vila-olimpia". Mesma regra no sitemap e na checagem de 404. */
+export function neighborhoodSlug(value: string): string {
+  return neighborhoodKey(value)
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/** Bairros (só com `neighborhood` preenchido) com o mínimo de projetos. */
+export function neighborhoodPages<T extends { neighborhood?: string | null }>(
+  list: T[],
+): Array<{ slug: string; label: string; count: number }> {
+  const withHood = list.filter((p) => p.neighborhood && p.neighborhood.trim());
+  return neighborhoodOptions(withHood)
+    .map((label) => {
+      const slug = neighborhoodSlug(label);
+      const count = withHood.filter((p) => neighborhoodSlug(p.neighborhood!) === slug).length;
+      return { slug, label, count };
+    })
+    .filter((n) => n.slug && n.count >= MIN_PROJECTS_PER_NEIGHBORHOOD);
+}

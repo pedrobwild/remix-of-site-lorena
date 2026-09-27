@@ -1,0 +1,186 @@
+/**
+ * BairroPage — /reforma/<bairro>. Lista os projetos reais entregues num
+ * bairro de São Paulo (só bairros com MIN_PROJECTS_PER_NEIGHBORHOOD+).
+ * Bairro abaixo do mínimo ou inexistente → 404 (evita página rala).
+ */
+import { useMemo } from "react";
+import { useSeo, breadcrumbJsonLd, itemListJsonLd } from "@/lib/useSeo";
+import { useSiteSettings } from "@/lib/useSiteSettings";
+import BwaNav from "@/components/BwaNav";
+import BwaFooter from "@/components/BwaFooter";
+import NotFoundPage from "./NotFoundPage";
+import { useBewildProjects, bewildTypeLabel } from "@/lib/useBewildProjects";
+import { neighborhoodPages, neighborhoodSlug } from "@/lib/portfolioFilter";
+import { reportProjectClick } from "@/lib/conversions";
+import "@/styles/bwh-tokens.css";
+import "@/styles/bwh-overlays.css";
+import "@/styles/bwh-sol-fusion.css";
+
+const pad = (n: number) => String(n).padStart(2, "0");
+
+export default function BairroPage({ slug }: { slug: string }) {
+  const { projects, loading, error } = useBewildProjects();
+  const { settings } = useSiteSettings();
+
+  const pages = useMemo(() => neighborhoodPages(projects), [projects]);
+  const page = pages.find((p) => p.slug === slug);
+  const list = useMemo(
+    () =>
+      projects.filter(
+        (p) => p.cover_url && p.neighborhood && neighborhoodSlug(p.neighborhood) === slug,
+      ),
+    [projects, slug],
+  );
+  const label = page?.label ?? "";
+  const areas = list.map((p) => p.area_m2).filter((n): n is number => !!n);
+  const faixa = areas.length
+    ? Math.min(...areas) === Math.max(...areas)
+      ? `${areas[0]} m²`
+      : `${Math.min(...areas)} a ${Math.max(...areas)} m²`
+    : null;
+
+  useSeo({
+    title: `Reforma de apartamento em ${label || "São Paulo"} | Projetos reais | Bewild`,
+    description: `${list.length} apartamentos reformados pela Bewild em ${label}, São Paulo${
+      faixa ? ` (${faixa})` : ""
+    }: fotos reais, metragem e prazo de cada obra, do imóvel cru à entrega das chaves.`,
+    canonicalPath: `/reforma/${slug}`,
+    ogType: "website",
+    ogImage: list[0]?.cover_url ?? undefined,
+    noindex: !loading && !page,
+    jsonLd:
+      settings && page
+        ? [
+            breadcrumbJsonLd(settings, [
+              { name: "Início", path: "/" },
+              { name: "Portfólio", path: "/portfolio" },
+              { name: label, path: `/reforma/${slug}` },
+            ]),
+            itemListJsonLd(
+              settings,
+              list.map((p) => ({
+                name: p.title,
+                path: `/portfolio/${p.slug}`,
+                image: p.cover_url ?? undefined,
+              })),
+            ),
+          ]
+        : undefined,
+  });
+
+  if (!loading && !error && !page) return <NotFoundPage />;
+
+  const others = pages.filter((p) => p.slug !== slug);
+
+  return (
+    <div className="bwh">
+      <BwaNav />
+      <main id="main" tabIndex={-1}>
+        <section className="bwh-sec" style={{ paddingBottom: 0 }}>
+          <div className="bwh-wrap">
+            <nav aria-label="Você está em" className="bwh-mono" style={{ marginBottom: 16 }}>
+              <a href="/portfolio">Portfólio</a> / <span>{label || "…"}</span>
+            </nav>
+            <div className="bwh-srlabel" style={{ borderTop: 0, paddingTop: 0 }}>
+              <span className="bwh-mono bwh-label bwh-label--accent">Reformas no bairro</span>
+              <span className="bwh-mono">{label ? `${label} · São Paulo` : "São Paulo"}</span>
+            </div>
+            <h1 className="bwh-h2" style={{ marginBottom: 24 }}>
+              Reforma de apartamento em <em>{label || "São Paulo"}.</em>
+            </h1>
+            {page && (
+              <p className="bwh-lead" style={{ margin: "0 0 32px" }}>
+                {pad(list.length)} apartamentos entregues pela Bewild em {label}
+                {faixa ? `, de ${faixa}` : ""}. Cada um com projeto próprio de layout, marcenaria,
+                iluminação e acabamento — veja as fotos reais e abra a página de cada obra.
+              </p>
+            )}
+          </div>
+        </section>
+
+        <section className="bwh-sec">
+          <div className="bwh-wrap">
+            {loading && (
+              <div className="bwh-projects" aria-busy="true" aria-live="polite">
+                <div className="bwh-pf-skel" />
+                <div className="bwh-pf-skel" />
+                <div className="bwh-pf-skel" />
+              </div>
+            )}
+            {!loading && error && (
+              <p style={{ color: "var(--ink2)", fontSize: 15 }}>
+                Não conseguimos carregar os projetos agora.{" "}
+                <a href="/portfolio" style={{ textDecoration: "underline" }}>
+                  Ver o portfólio completo
+                </a>
+                .
+              </p>
+            )}
+            {!loading && !error && list.length > 0 && (
+              <div className="bwh-projects">
+                {list.map((p, i) => (
+                  <a
+                    key={p.id}
+                    href={`/portfolio/${p.slug}`}
+                    className="bwh-proj"
+                    aria-label={`Ver projeto ${p.title}`}
+                    onClick={() => reportProjectClick(p.slug, p.title, i + 1)}
+                  >
+                    <div className="bwh-proj__media">
+                      <img
+                        src={p.cover_url!}
+                        alt={`${p.title} — ${bewildTypeLabel(p.project_type)} em ${label}`}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <span className="bwh-proj__count">
+                        {pad(i + 1)} / {pad(list.length)}
+                      </span>
+                      <span className="bwh-proj__go">Ver projeto →</span>
+                    </div>
+                    <div className="bwh-proj__t">
+                      {p.title}
+                      {p.area_m2 ? <em> · {p.area_m2} m²</em> : null}
+                    </div>
+                    <div className="bwh-proj__meta">
+                      {[label, bewildTypeLabel(p.project_type), p.duration].filter(Boolean).join(" · ")}
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )}
+
+            {others.length > 0 && (
+              <div style={{ marginTop: 48 }}>
+                <h2 className="bwh-mono bwh-label" style={{ marginBottom: 16 }}>
+                  Reformas em outros bairros
+                </h2>
+                <ul style={{ display: "flex", flexWrap: "wrap", gap: "8px 20px", listStyle: "none", padding: 0 }}>
+                  {others.map((o) => (
+                    <li key={o.slug}>
+                      <a href={`/reforma/${o.slug}`} style={{ textDecoration: "underline" }}>
+                        {o.label} ({o.count})
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="bwh-sec bwh-sec--dark">
+          <div className="bwh-wrap" style={{ maxWidth: 900, textAlign: "center" }}>
+            <h2 className="bwh-h2" style={{ margin: "0 auto 24px", color: "#fff" }}>
+              Tem um apartamento em {label || "São Paulo"}? <em>A gente reforma.</em>
+            </h2>
+            <a href="/orcamento" className="bwh-btn bwh-btn--invert">
+              Solicitar orçamento <span className="bwh-ar">→</span>
+            </a>
+          </div>
+        </section>
+      </main>
+      <BwaFooter />
+    </div>
+  );
+}
