@@ -46,6 +46,9 @@ const ALLOWED_EVENT_TYPES = new Set<string>([
   "form_submit",
   "engagement_time",
   "faq_question_click",
+  // Evento de mídia (Meta Pixel / Google Ads) disparado no navegador —
+  // espelho sem dado pessoal para o painel de rastreamento.
+  "ad_event",
   // LGPD: registro de auditoria do consentimento (aceite/recusa). Não é
   // tracking do usuário — é o ônus da prova do controlador (art. 8º §2º).
   "consent_accept",
