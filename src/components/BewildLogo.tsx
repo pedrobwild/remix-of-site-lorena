@@ -18,7 +18,7 @@ export default function BewildLogo({
   return (
     <img
       className={className}
-      src={variant === "white" ? BEWILD_LOGO_WHITE_URL : BEWILD_LOGO_URL}
+      src={variant === "white" ? "/images/opt/bewild-logo-white-2026.webp" : "/images/opt/bewild-logo-blue-2026.webp"}
       alt={decorative ? "" : "Bewild"}
       width={variant === "white" ? 1435 : 1607}
       height={variant === "white" ? 458 : 502}
