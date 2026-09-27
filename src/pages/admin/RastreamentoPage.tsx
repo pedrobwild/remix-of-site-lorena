@@ -383,7 +383,7 @@ export default function RastreamentoPage() {
     <AdminLayout
       active="rastreamento"
       title="Rastreamento"
-      description="Impressões no Google, leads enviados, eventos de mídia, cliques de anúncios e visitas por página."
+      description="Origem dos visitantes, impressões no Google, leads enviados, eventos de mídia, cliques de anúncios e visitas por página."
       actions={
         <>
           <nav className="seo-tabs" role="tablist" aria-label="Período">
