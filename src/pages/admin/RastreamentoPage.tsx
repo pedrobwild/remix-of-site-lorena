@@ -165,6 +165,7 @@ export default function RastreamentoPage() {
   const [leadsErro, setLeadsErro] = useState<string | null>(null);
   const [leadsTruncado, setLeadsTruncado] = useState(false);
   const [adEvents, setAdEvents] = useState<AdEventRow[]>([]);
+  const [segmentos, setSegmentos] = useState<SegmentoRow[]>([]);
   const [adEventsErro, setAdEventsErro] = useState<string | null>(null);
   const [adEventsTruncado, setAdEventsTruncado] = useState(false);
   const [adClicks, setAdClicks] = useState<AdClickRow[]>([]);
@@ -315,6 +316,7 @@ export default function RastreamentoPage() {
     if (adEventsRes.error) {
       setAdEventsErro(`Não foi possível ler os eventos de mídia: ${adEventsRes.error.message}`);
       setAdEvents([]);
+      setSegmentos([]);
       setAdEventsTruncado(false);
     } else {
       setAdEventsErro(null);
@@ -613,6 +615,40 @@ export default function RastreamentoPage() {
                   <tr key={r.evento}>
                     <td className="mono">{r.evento}</td>
                     <td className="mono">{r.quantidade}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Section>
+
+      <Section title="Públicos por segmento (Google Ads e Meta)">
+        {adEventsErro ? (
+          <p className="admin-flash admin-flash--err mono" role="alert">{adEventsErro}</p>
+        ) : loading ? (
+          <p className="mono">carregando…</p>
+        ) : segmentos.length === 0 ? (
+          <p className="mono">
+            nenhum evento de segmento neste período. Cada segmento vira um público no Google Ads e
+            na Meta: imóveis (orçamento e contato), parceiros, incorporadoras e indicações.
+          </p>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Segmento</th>
+                  <th>Pessoas no público (eventos)</th>
+                  <th>Conversões</th>
+                </tr>
+              </thead>
+              <tbody>
+                {segmentos.map((r) => (
+                  <tr key={r.segmento}>
+                    <td>{r.segmento}</td>
+                    <td className="mono">{r.eventos}</td>
+                    <td className="mono">{r.conversoes}</td>
                   </tr>
                 ))}
               </tbody>
