@@ -168,6 +168,9 @@ export default function RastreamentoPage() {
   const [adEventsTruncado, setAdEventsTruncado] = useState(false);
   const [adClicks, setAdClicks] = useState<AdClickRow[]>([]);
   const [adClicksErro, setAdClicksErro] = useState<string | null>(null);
+  const [origens, setOrigens] = useState<OriginRow[]>([]);
+  const [origensErro, setOrigensErro] = useState<string | null>(null);
+  const [sessoesComAceite, setSessoesComAceite] = useState(0);
   // Trocar de período rápido disparava cargas concorrentes; só a última vale.
   const requestId = useRef(0);
 
