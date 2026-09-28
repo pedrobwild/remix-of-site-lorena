@@ -10,6 +10,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { fmtLocalDay, parseLocalDay } from "@/lib/analyticsTimeseries";
+import { addLocalDays, previousRange as previousRangeLib } from "@/lib/analyticsCompare";
 import { ALL_TABS } from "./types";
 import type {
   DateRange,
@@ -66,15 +67,13 @@ function endOfDay(d: Date): Date {
 
 export function defaultRange(): DateRange {
   const to = endOfDay(new Date());
-  const from = startOfDay(new Date(Date.now() - 29 * 86400_000));
+  const from = startOfDay(addLocalDays(new Date(), -29));
   return { from, to };
 }
 
+/** Período anterior de calendário (ver lib/analyticsCompare.ts). */
 export function previousRange(range: DateRange): DateRange {
-  const ms = range.to.getTime() - range.from.getTime();
-  const to = new Date(range.from.getTime() - 1);
-  const from = new Date(to.getTime() - ms);
-  return { from, to };
+  return previousRangeLib(range);
 }
 
 // Datas da URL em data LOCAL nos dois sentidos (ver analyticsTimeseries.ts):

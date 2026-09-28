@@ -24,7 +24,7 @@ import {
   YAxis,
 } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
-import { invertDir, trend } from "@/lib/analyticsCompare";
+import { alignedPreviousWindow, invertDir, previousRange, trend } from "@/lib/analyticsCompare";
 import {
   campaignsFromDaily,
   dailyAdsSeries,
@@ -35,7 +35,6 @@ import {
   localDayOf,
   META_SITE_LEAD_FILTER,
   metaSyncSummary,
-  shiftDay,
   sumAdsDaily,
   triggerMetaSync,
   type AdsTotals,
@@ -104,9 +103,12 @@ export default function PaidMediaTab({ range, comparePrev, segmentsCount = 0 }: 
 
   const fromDay = localDayOf(range.from);
   const toDay = localDayOf(range.to);
-  const days = Math.max(1, Math.round((Date.parse(toDay) - Date.parse(fromDay)) / 86_400_000) + 1);
-  const prevToDay = shiftDay(fromDay, -1);
-  const prevFromDay = shiftDay(fromDay, -days);
+  // Período anterior de calendário (mês inteiro → mês anterior inteiro; demais
+  // → os N dias antes). Investimento é diário; leads são cortados no mesmo
+  // horário quando o período está em curso (lib/analyticsCompare.ts).
+  const prevRange = previousRange(range);
+  const prevFromDay = localDayOf(prevRange.from);
+  const prevToDay = localDayOf(prevRange.to);
 
   useEffect(() => {
     let cancelled = false;
@@ -114,7 +116,9 @@ export default function PaidMediaTab({ range, comparePrev, segmentsCount = 0 }: 
     setError(null);
     const sinceIso = range.from.toISOString();
     const untilIso = range.to.toISOString();
-    const prevSince = new Date(range.from.getTime() - days * 86_400_000).toISOString();
+    const prevWin = alignedPreviousWindow(range, new Date());
+    const prevSince = prevWin.from.toISOString();
+    const prevUntil = prevWin.until.toISOString();
 
     Promise.all([
       fetchAdsDaily(fromDay, toDay),
@@ -134,7 +138,7 @@ export default function PaidMediaTab({ range, comparePrev, segmentsCount = 0 }: 
             .is("deleted_at", null)
             .eq("is_test", false)
             .gte("created_time", prevSince)
-            .lt("created_time", sinceIso)
+            .lt("created_time", prevUntil)
         : Promise.resolve({ count: null, error: null }),
       supabase
         .from("leads")
@@ -148,7 +152,7 @@ export default function PaidMediaTab({ range, comparePrev, segmentsCount = 0 }: 
             .from("leads")
             .select("id", { count: "exact", head: true })
             .gte("created_at", prevSince)
-            .lt("created_at", sinceIso)
+            .lt("created_at", prevUntil)
             .or(META_SITE_LEAD_FILTER)
         : Promise.resolve({ count: null, error: null }),
       fetchMetaSyncStates(),
@@ -173,7 +177,7 @@ export default function PaidMediaTab({ range, comparePrev, segmentsCount = 0 }: 
     return () => {
       cancelled = true;
     };
-  }, [range, fromDay, toDay, prevFromDay, prevToDay, days, comparePrev, refreshKey]);
+  }, [range, fromDay, toDay, prevFromDay, prevToDay, comparePrev, refreshKey]);
 
   const totals = useMemo(() => sumAdsDaily(rows), [rows]);
   const prevTotals = useMemo<AdsTotals | null>(() => (comparePrev ? sumAdsDaily(prevRows) : null), [comparePrev, prevRows]);

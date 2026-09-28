@@ -122,7 +122,7 @@ describe("TodayVsYesterdayCard", () => {
     // link para a visão por dia de hoje no Analytics
     expect(screen.getByRole("link", { name: "ver por dia" })).toHaveAttribute(
       "href",
-      "/admin/analytics?tab=overview&from=2026-09-24&to=2026-09-24&cmp=1"
+      "/admin/analytics?tab=overview&from=2026-09-18&to=2026-09-24&cmp=1"
     );
   });
 

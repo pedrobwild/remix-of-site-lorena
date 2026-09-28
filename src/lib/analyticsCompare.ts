@@ -62,27 +62,103 @@ export function effectiveWindow(
   return { from: new Date(range.from.getTime()), until: new Date(until), partial };
 }
 
+/** Último dia (1–31) do mês `month` (0–11; aceita fora da faixa) de `year`. */
+function lastDayOfMonth(year: number, month: number): number {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+/** `d` deslocado em `n` meses de calendário, com o dia limitado ao fim do mês (31/03 − 1 mês = 28/02). */
+export function addLocalMonthsClamped(d: Date, n: number): Date {
+  const y = d.getFullYear();
+  const m = d.getMonth() + n;
+  const day = Math.min(d.getDate(), lastDayOfMonth(y, m));
+  return new Date(y, m, day, d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds());
+}
+
+/** Dias de calendário do período, contando as duas pontas. */
+export function rangeDays(range: DateRange): number {
+  const a = startOfLocalDay(range.from);
+  const b = startOfLocalDay(range.to);
+  return Math.max(1, Math.round((b.getTime() - a.getTime()) / DAY_MS) + 1);
+}
+
 /**
- * Período anterior alinhado: mesma duração, imediatamente antes e — quando o
- * atual ainda está em curso — cortado no mesmo ponto.
+ * Como deslocar o período para achar o anterior:
+ *  - `months`: período que começa no dia 1 e termina no fim de um mês
+ *    (setembro inteiro → agosto inteiro; 3º trimestre → 2º) ou que está em
+ *    curso ("mês até hoje" 01–28/09 → 01–28/08; "ano até hoje" → mesmo
+ *    trecho do ano passado). Deslocar por dias comparava setembro com
+ *    02/08–31/08 e "mês até hoje" com um trecho que começava no meio do mês.
+ *  - `days`: todo o resto (hoje → ontem; 7 dias → os 7 dias antes), em dias
+ *    de calendário.
+ */
+export type PrevShift = { unit: "months" | "days"; n: number };
+
+export function previousShift(range: DateRange, now: Date = new Date()): PrevShift {
+  const days = rangeDays(range);
+  const f = range.from;
+  const t = range.to;
+  const startsOnFirst = f.getDate() === 1 && f.getHours() === 0 && f.getMinutes() === 0;
+  if (startsOnFirst && days >= 2) {
+    const months = (t.getFullYear() - f.getFullYear()) * 12 + (t.getMonth() - f.getMonth()) + 1;
+    const endsOnMonthEnd = t.getDate() === lastDayOfMonth(t.getFullYear(), t.getMonth());
+    const inProgress = t.getTime() + 1 > now.getTime();
+    if (months >= 1 && endsOnMonthEnd) return { unit: "months", n: months };
+    if (months >= 1 && inProgress) {
+      // Em curso, o período "natural" é o ano (desde 1º/jan), o trimestre
+      // (desde o início do trimestre, 2–3 meses) ou os N meses tocados.
+      if (f.getMonth() === 0 && months > 1) return { unit: "months", n: 12 };
+      if (f.getMonth() % 3 === 0 && months > 1 && months <= 3) return { unit: "months", n: 3 };
+      return { unit: "months", n: months };
+    }
+  }
+  return { unit: "days", n: days };
+}
+
+function shiftBack(d: Date, shift: PrevShift): Date {
+  return shift.unit === "months" ? addLocalMonthsClamped(d, -shift.n) : addLocalDays(d, -shift.n);
+}
+
+/** Período anterior (datas inclusivas, como o `DateRange`). */
+export function previousRange(range: DateRange, now: Date = new Date()): DateRange {
+  const shift = previousShift(range, now);
+  const from = shiftBack(range.from, shift);
+  let to = shiftBack(range.to, shift);
+  if (shift.unit === "months") {
+    // Mês inteiro → mês anterior inteiro (30/09 − 1 mês = 30/08, mas agosto vai até 31).
+    const t = range.to;
+    if (t.getDate() === lastDayOfMonth(t.getFullYear(), t.getMonth())) {
+      to = new Date(to.getFullYear(), to.getMonth(), lastDayOfMonth(to.getFullYear(), to.getMonth()), 23, 59, 59, 999);
+    }
+  }
+  return { from, to };
+}
+
+/**
+ * Período anterior alinhado: o período anterior de calendário (ver
+ * `previousShift`) e — quando o atual ainda está em curso — cortado no mesmo
+ * ponto (mesmo dia relativo e mesmo horário).
  */
 export function alignedPreviousWindow(
   range: DateRange,
   now: Date = new Date()
 ): Window & { partial: boolean } {
-  const len = rangeLengthMs(range);
+  const shift = previousShift(range, now);
+  const prev = previousRange(range, now);
   const cur = effectiveWindow(range, now);
+  const fullUntil = prev.to.getTime() + 1;
+  const until = cur.partial ? Math.min(shiftBack(cur.until, shift).getTime(), fullUntil) : fullUntil;
   return {
-    from: new Date(range.from.getTime() - len),
-    until: new Date(cur.until.getTime() - len),
+    from: new Date(prev.from.getTime()),
+    until: new Date(Math.max(prev.from.getTime(), until)),
     partial: cur.partial,
   };
 }
 
 /** Período anterior inteiro (para a linha tracejada do gráfico). */
-export function fullPreviousWindow(range: DateRange): Window {
-  const len = rangeLengthMs(range);
-  return { from: new Date(range.from.getTime() - len), until: new Date(range.from.getTime()) };
+export function fullPreviousWindow(range: DateRange, now: Date = new Date()): Window {
+  const prev = previousRange(range, now);
+  return { from: prev.from, until: new Date(prev.to.getTime() + 1) };
 }
 
 /** Meia-noite local de `d`. */
@@ -234,6 +310,15 @@ export function sumCounts(items: readonly Counts[]): Counts {
 // ---------------------------------------------------------------------------
 // Tendência
 // ---------------------------------------------------------------------------
+
+/** Diferença absoluta com sinal ("+3", "−12", "0"), para acompanhar o %. */
+export function formatAbsDiff(cur: number, prev: number, digits = 0): string {
+  const d = cur - prev;
+  const r = Number(d.toFixed(digits));
+  if (r === 0) return "0";
+  const txt = digits ? Math.abs(r).toFixed(digits) : Math.abs(r).toLocaleString("pt-BR");
+  return `${r > 0 ? "+" : "−"}${txt}`;
+}
 
 export type TrendDir = "up" | "down" | "flat";
 export type Trend = { pct: number | null; dir: TrendDir; label: string };
