@@ -36,6 +36,7 @@ import {
   fillLocalSeries,
   formatLocalAxisLabel,
   formatLocalBucketLabel,
+  formatAbsDiff,
   formatWindowLabel,
   fullPreviousWindow,
   invertDir,
@@ -148,6 +149,8 @@ type KpiCard = {
   spark: Record<string, number | string>[];
   sparkKey: string;
   invert?: boolean;
+  /** Contagem (não taxa): o Δ mostra também a diferença absoluta. */
+  count?: boolean;
 };
 
 // ---------------------------------------------------------------------------
@@ -261,7 +264,18 @@ function toChart(points: readonly LocalPoint[], lastLiveBucket: number, prev?: r
   });
 }
 
-function Delta({ cur, prev, invert = false }: { cur: number; prev: number | null; invert?: boolean }) {
+function Delta({
+  cur,
+  prev,
+  invert = false,
+  showAbs = false,
+}: {
+  cur: number;
+  prev: number | null;
+  invert?: boolean;
+  /** Mostra também a diferença absoluta: com volumes baixos o % sozinho engana (3 → 12 = +300%). */
+  showAbs?: boolean;
+}) {
   if (prev === null) {
     return (
       <span className="aa-kpi__delta" data-dir="flat">
@@ -272,8 +286,13 @@ function Delta({ cur, prev, invert = false }: { cur: number; prev: number | null
   const t = trend(cur, prev);
   const dir = invert ? invertDir(t.dir) : t.dir;
   return (
-    <span className="aa-kpi__delta" data-dir={dir} title={`antes: ${fmtNum(prev)}`}>
+    <span
+      className="aa-kpi__delta"
+      data-dir={dir}
+      title={`antes: ${fmtNum(prev)} · diferença: ${formatAbsDiff(cur, prev, Number.isInteger(cur) && Number.isInteger(prev) ? 0 : 2)}`}
+    >
       {t.dir === "up" ? "↑" : t.dir === "down" ? "↓" : "·"} {t.label}
+      {showAbs && t.pct !== null && ` · ${formatAbsDiff(cur, prev)}`}
     </span>
   );
 }
@@ -311,7 +330,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
     const tz = browserTimeZone();
     const cur = effectiveWindow(range, now);
     const prevAligned = comparePrev ? alignedPreviousWindow(range, now) : null;
-    const prevFull = comparePrev ? fullPreviousWindow(range) : null;
+    const prevFull = comparePrev ? fullPreviousWindow(range, now) : null;
     // Tabela por dia sempre que o gráfico é por hora ou por dia; em períodos
     // longos, por semana/mês. No modo dia a série da tabela começa 1 dia
     // antes: base da variação do 1º dia.
@@ -543,14 +562,14 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
   const rate = consentRate(consent);
   const prevRate = prevConsent ? consentRate(prevConsent) : null;
   const kpiList: KpiCard[] = [
-    { label: "sessões",            value: fmtNum(kpis.sessions),           cur: kpis.sessions,           prev: prevKpis.sessions,           spark: kpis.spark, sparkKey: "sessions" },
-    { label: "visitantes únicos",  value: fmtNum(kpis.unique_visitors),    cur: kpis.unique_visitors,    prev: prevKpis.unique_visitors,    spark: kpis.spark, sparkKey: "sessions" },
-    { label: "pageviews",          value: fmtNum(kpis.pageviews),          cur: kpis.pageviews,          prev: prevKpis.pageviews,          spark: kpis.spark, sparkKey: "pageviews" },
+    { label: "sessões",            value: fmtNum(kpis.sessions),           cur: kpis.sessions,           prev: prevKpis.sessions,           spark: kpis.spark, sparkKey: "sessions", count: true },
+    { label: "visitantes únicos",  value: fmtNum(kpis.unique_visitors),    cur: kpis.unique_visitors,    prev: prevKpis.unique_visitors,    spark: kpis.spark, sparkKey: "sessions", count: true },
+    { label: "pageviews",          value: fmtNum(kpis.pageviews),          cur: kpis.pageviews,          prev: prevKpis.pageviews,          spark: kpis.spark, sparkKey: "pageviews", count: true },
     { label: "pv / sessão",        value: kpis.pages_per_session.toFixed(2), cur: kpis.pages_per_session, prev: prevKpis.pages_per_session, spark: kpis.spark, sparkKey: "pageviews" },
     { label: "tempo engajado",     value: fmtMs(kpis.avg_engagement_ms),   cur: kpis.avg_engagement_ms,  prev: prevKpis.avg_engagement_ms,  spark: kpis.spark, sparkKey: "sessions" },
     // bounce rate: cair é bom — inverte a cor do delta
     { label: "bounce rate",        value: fmtPct(kpis.bounce_rate),        cur: kpis.bounce_rate,        prev: prevKpis.bounce_rate,        spark: kpis.spark, sparkKey: "sessions", invert: true },
-    { label: "conversões",         value: fmtNum(kpis.conversions),        cur: kpis.conversions,        prev: prevKpis.conversions,        spark: kpis.spark, sparkKey: "sessions" },
+    { label: "conversões",         value: fmtNum(kpis.conversions),        cur: kpis.conversions,        prev: prevKpis.conversions,        spark: kpis.spark, sparkKey: "sessions", count: true },
     { label: "taxa de conversão",  value: fmtPct(kpis.conversion_rate),    cur: kpis.conversion_rate,    prev: prevKpis.conversion_rate,    spark: kpis.spark, sparkKey: "sessions" },
     // aceite de cookies: decisões do banner (aceites ÷ decisões), sem segmento
     {
@@ -601,7 +620,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
                 {k.hint}
               </span>
             )}
-            {comparePrev && <Delta cur={k.cur} prev={k.prev} invert={k.invert} />}
+            {comparePrev && <Delta cur={k.cur} prev={k.prev} invert={k.invert} showAbs={k.count} />}
             <div className="aa-kpi__spark">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={k.spark}>
