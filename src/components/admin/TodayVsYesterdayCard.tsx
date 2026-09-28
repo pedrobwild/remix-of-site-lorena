@@ -13,6 +13,8 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { fmtLocalDay } from "@/lib/analyticsTimeseries";
 import {
+  addLocalDays,
+  formatAbsDiff,
   formatWindowLabel,
   invertDir,
   todaySoFarWindow,
@@ -121,8 +123,11 @@ export default function TodayVsYesterdayCard() {
   }, [refreshKey]);
 
   const now = data?.fetchedAt ?? new Date();
+  // "ver por dia": últimos 7 dias (com hoje), para a tabela ter dias a comparar —
+  // o link abria só hoje, com uma linha.
   const todayKey = fmtLocalDay(now);
-  const analyticsHref = `/admin/analytics?tab=overview&from=${todayKey}&to=${todayKey}&cmp=1`;
+  const weekAgoKey = fmtLocalDay(addLocalDays(now, -6));
+  const analyticsHref = `/admin/analytics?tab=overview&from=${weekAgoKey}&to=${todayKey}&cmp=1`;
 
   return (
     <section className="bw-admin__section bw-admin__today" aria-labelledby="bw-today-title">
@@ -181,6 +186,7 @@ export default function TodayVsYesterdayCard() {
                     title="vs. ontem até o mesmo horário"
                   >
                     {t.dir === "up" ? "↑" : t.dir === "down" ? "↓" : "·"} {t.label}
+                    {t.pct !== null && cur != null && base != null && ` (${formatAbsDiff(cur, base)})`}
                   </span>
                 )}
               </div>

@@ -8,9 +8,10 @@
  * Colunas: dim · sessões (com bar) · conversões · bounce % · tempo médio
  * Comparativo com período anterior é exibido como Δ% no número de sessões.
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { devError } from "@/lib/devLog";
+import { alignedPreviousWindow, effectiveWindow, formatWindowLabel } from "@/lib/analyticsCompare";
 import { isFilterableSegmentValue } from "./useAnalyticsState";
 import type { DateRange, Segment, SegmentDim } from "./types";
 
@@ -95,21 +96,20 @@ export default function AcquisitionTab({
   onRemoveSegment,
 }: Props) {
   const [state, setState] = useState<State>({ loading: true, error: null, data: EMPTY_DATA });
-
-  const prevRange = useMemo<DateRange | null>(() => {
-    if (!comparePrev) return null;
-    const ms = range.to.getTime() - range.from.getTime();
-    const to = new Date(range.from.getTime() - 1);
-    const from = new Date(to.getTime() - ms);
-    return { from, to };
-  }, [range, comparePrev]);
+  const [compareLabel, setCompareLabel] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     setState((s) => ({ ...s, loading: true, error: null }));
 
-    const sinceISO = range.from.toISOString();
-    const untilISO = range.to.toISOString();
+    // Comparação justa (lib/analyticsCompare.ts): período em curso vai até
+    // agora e o anterior é cortado no mesmo ponto; antes o anterior entrava
+    // inteiro e o período atual parecia sempre em queda.
+    const now = new Date();
+    const cur = effectiveWindow(range, now);
+    const prevWin = comparePrev ? alignedPreviousWindow(range, now) : null;
+    const sinceISO = cur.from.toISOString();
+    const untilISO = cur.until.toISOString();
 
     const curCalls = GROUPS.map((g) =>
       Promise.resolve(
@@ -121,14 +121,15 @@ export default function AcquisitionTab({
         })
       )
     );
-    const prevCalls = prevRange
+    const prevCalls = prevWin
       ? GROUPS.map((g) =>
           Promise.resolve(
             supabase.rpc("analytics_breakdown", {
-              p_since: prevRange.from.toISOString(),
-              p_until: sinceISO,
+              p_since: prevWin.from.toISOString(),
+              p_until: prevWin.until.toISOString(),
               p_dim: g.dim,
-              p_limit: 25,
+              // Limite maior no anterior: um valor fora do top 25 de antes não vira "novo".
+              p_limit: 200,
             })
           )
         )
@@ -161,6 +162,9 @@ export default function AcquisitionTab({
           next[g.dim] = rows;
         });
         setState({ loading: false, error: null, data: next });
+        setCompareLabel(
+          prevWin ? `${formatWindowLabel(prevWin)}${prevWin.partial ? " (até o mesmo horário)" : ""}` : null
+        );
       })
       .catch((err: unknown) => {
         const msg = err instanceof Error ? err.message : String(err);
@@ -171,7 +175,7 @@ export default function AcquisitionTab({
     return () => {
       cancelled = true;
     };
-  }, [range, prevRange, segments]);
+  }, [range, comparePrev, segments]);
 
   function isActiveSegment(dim: SegmentDim, value: string) {
     return segments.some((s) => s.dim === dim && s.value === value);
@@ -205,6 +209,11 @@ export default function AcquisitionTab({
 
   return (
     <div className="aa-grid">
+      {comparePrev && compareLabel && (
+        <div className="aa-col-12 aa-faint aa-mono" role="note" style={{ fontSize: "var(--aa-text-xs)" }}>
+          Δ de sessões vs. <b style={{ color: "var(--aa-fg)" }}>{compareLabel}</b>
+        </div>
+      )}
       {segments.length > 0 && (
         <div className="aa-col-12">
           <div
