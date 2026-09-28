@@ -10,6 +10,7 @@ import ConversionTab from "@/components/admin/analytics/ConversionTab";
 import RetentionTab from "@/components/admin/analytics/RetentionTab";
 import PaidMediaTab from "@/components/admin/analytics/PaidMediaTab";
 import RealtimeTab from "@/components/admin/analytics/RealtimeTab";
+import GoogleAdsAudiencesTab from "@/components/admin/analytics/GoogleAdsAudiencesTab";
 
 export default function AnalyticsPage() {
   const state = useAnalyticsState();
@@ -51,6 +52,7 @@ export default function AnalyticsPage() {
       {state.tab === "paid" && (
         <PaidMediaTab range={state.range} comparePrev={state.comparePrev} segmentsCount={state.segments.length} />
       )}
+      {state.tab === "gads" && <GoogleAdsAudiencesTab />}
       {state.tab === "realtime" && <RealtimeTab />}
     </AnalyticsShell>
   );
