@@ -13,6 +13,8 @@ import {
   fullPreviousWindow,
   invertDir,
   localBucketGrid,
+  formatAbsDiff,
+  previousRange,
   rangeLengthMs,
   sumCounts,
   todaySoFarWindow,
@@ -55,6 +57,10 @@ function lastNDays(now: Date, n: number) {
 /** Início de bucket local como a RPC v2 devolve (timestamptz, aqui em ISO UTC). */
 function bucketIso(y: number, m: number, d: number, h = 0) {
   return new Date(y, m - 1, d, h).toISOString();
+}
+
+function now2(y: number, m: number, d: number) {
+  return new Date(y, m - 1, d, 12, 0);
 }
 
 describe("janela efetiva e período anterior alinhado", () => {
@@ -127,6 +133,62 @@ describe("janela efetiva e período anterior alinhado", () => {
     expect(addLocalDays(d, 7)).toEqual(new Date(2026, 9, 1, 15, 42, 10));
   });
 
+  it("mês inteiro compara com o mês anterior inteiro (não com os 30 dias antes)", () => {
+    const range = { from: new Date(2026, 8, 1), to: endOfDay(new Date(2026, 8, 30)) };
+    const prev = alignedPreviousWindow(range, now2(2026, 10, 5));
+    expect(prev.partial).toBe(false);
+    expect(prev.from).toEqual(new Date(2026, 7, 1));
+    expect(prev.until).toEqual(new Date(2026, 8, 1));
+    // março inteiro → fevereiro inteiro (28 dias)
+    const mar = previousRange({ from: new Date(2026, 2, 1), to: endOfDay(new Date(2026, 2, 31)) }, now2(2026, 5, 1));
+    expect(mar.from).toEqual(new Date(2026, 1, 1));
+    expect(mar.to).toEqual(endOfDay(new Date(2026, 1, 28)));
+  });
+
+  it("'Mês até hoje' compara com o mesmo trecho do mês anterior, até o mesmo horário", () => {
+    const n = new Date(2026, 8, 28, 19, 47);
+    const range = { from: new Date(2026, 8, 1), to: endOfDay(n) };
+    const prev = alignedPreviousWindow(range, n);
+    expect(prev.partial).toBe(true);
+    expect(prev.from).toEqual(new Date(2026, 7, 1));
+    expect(prev.until).toEqual(new Date(2026, 7, 28, 19, 47));
+    const full = fullPreviousWindow(range, n);
+    expect(full.until).toEqual(new Date(2026, 7, 29));
+    // 31/03 em curso → 28/02 no mesmo horário, sem transbordar para março
+    const m = new Date(2026, 2, 31, 10, 0);
+    const p2 = alignedPreviousWindow({ from: new Date(2026, 2, 1), to: endOfDay(m) }, m);
+    expect(p2.from).toEqual(new Date(2026, 1, 1));
+    expect(p2.until).toEqual(new Date(2026, 1, 28, 10, 0));
+  });
+
+  it("'Ano até hoje' compara com o mesmo trecho do ano passado", () => {
+    const n = new Date(2026, 8, 28, 12, 0);
+    const prev = alignedPreviousWindow({ from: new Date(2026, 0, 1), to: endOfDay(n) }, n);
+    expect(prev.from).toEqual(new Date(2025, 0, 1));
+    expect(prev.until).toEqual(new Date(2025, 8, 28, 12, 0));
+  });
+
+  it("'Trimestre até hoje' compara com o trimestre anterior até o mesmo ponto", () => {
+    const n = new Date(2026, 8, 28, 12, 0);
+    const prev = alignedPreviousWindow({ from: new Date(2026, 6, 1), to: endOfDay(n) }, n);
+    expect(prev.from).toEqual(new Date(2026, 3, 1));
+    expect(prev.until).toEqual(new Date(2026, 5, 28, 12, 0));
+  });
+
+  it("'Hoje' no dia 1º continua comparando com ontem", () => {
+    const n = new Date(2026, 9, 1, 9, 30);
+    const prev = alignedPreviousWindow(todayRange(n), n);
+    expect(prev.from).toEqual(new Date(2026, 8, 30));
+    expect(prev.until).toEqual(new Date(2026, 8, 30, 9, 30));
+  });
+
+  it("intervalo encerrado que não fecha o mês desloca por dias", () => {
+    const range = { from: new Date(2026, 8, 1), to: endOfDay(new Date(2026, 8, 15)) };
+    const prev = previousRange(range, now2(2026, 9, 28));
+    expect(prev.from).toEqual(new Date(2026, 7, 17));
+    expect(prev.to).toEqual(endOfDay(new Date(2026, 7, 31)));
+  });
+
   it("browserTimeZone devolve o fuso IANA do ambiente", () => {
     expect(browserTimeZone()).toBe("America/Sao_Paulo");
   });
@@ -148,6 +210,13 @@ describe("tendência", () => {
   it("sem base: 'novo' se apareceu algo, '—' se continua zerado", () => {
     expect(trend(5, 0)).toEqual({ pct: null, dir: "up", label: "novo" });
     expect(trend(0, 0)).toEqual({ pct: null, dir: "flat", label: "—" });
+  });
+
+  it("formatAbsDiff mostra a diferença com sinal", () => {
+    expect(formatAbsDiff(16, 12)).toBe("+4");
+    expect(formatAbsDiff(9, 1200)).toBe("−1.191");
+    expect(formatAbsDiff(5, 5)).toBe("0");
+    expect(formatAbsDiff(2.5, 2.25, 2)).toBe("+0.25");
   });
 
   it("invertDir troca a cor de métricas em que cair é bom", () => {
