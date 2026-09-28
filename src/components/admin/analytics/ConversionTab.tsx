@@ -5,6 +5,8 @@
  * usando RPC analytics_funnel. Mostra:
  *  - Cards de totais por tipo de conversão
  *  - Visualização do funil com barras proporcionais e taxa de passagem
+ *  - Com "comparar" ativo, Δ de cada etapa vs. o período anterior alinhado
+ *    (em curso: cortado no mesmo horário — lib/analyticsCompare.ts)
  *
  * Observação: analytics_funnel ainda não aceita segmentos como argumentos —
  * por ora a aba mostra dados globais do período. Quando a RPC for estendida,
@@ -12,6 +14,14 @@
  */
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  alignedPreviousWindow,
+  effectiveWindow,
+  formatAbsDiff,
+  formatWindowLabel,
+  trend,
+  type Window,
+} from "@/lib/analyticsCompare";
 import { devError } from "@/lib/devLog";
 import type { DateRange, Segment } from "./types";
 
@@ -38,39 +48,50 @@ function fmtPct(n: number): string {
   return `${n.toFixed(1)}%`;
 }
 
-export default function ConversionTab({ range, segments }: Props) {
+export default function ConversionTab({ range, segments, comparePrev }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [rows, setRows] = useState<FunnelRow[]>([]);
+  const [prevRows, setPrevRows] = useState<FunnelRow[] | null>(null);
+  const [prevWin, setPrevWin] = useState<(Window & { partial: boolean }) | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setError(null);
 
-    const sinceISO = range.from.toISOString();
-    const untilISO = range.to.toISOString();
+    const now = new Date();
+    const cur = effectiveWindow(range, now);
+    const prev = comparePrev ? alignedPreviousWindow(range, now) : null;
     const steps = FUNNEL_STEPS.map((s) => s.key);
-
-    Promise.resolve(
-      supabase.rpc("analytics_funnel", {
-        p_since: sinceISO,
-        p_until: untilISO,
-        p_steps: steps,
-      })
-    )
-      .then((res) => {
-        if (cancelled) return;
-        type RpcRes = { data: FunnelRow[] | null; error: { message: string } | null };
+    type RpcRes = { data: FunnelRow[] | null; error: { message: string } | null };
+    const funnel = (win: Window) =>
+      Promise.resolve(
+        supabase.rpc("analytics_funnel", {
+          p_since: win.from.toISOString(),
+          p_until: win.until.toISOString(),
+          p_steps: steps,
+        })
+      ).then((res) => {
         const r = res as unknown as RpcRes;
         if (r.error) throw new Error(r.error.message);
-        setRows(
-          (r.data ?? []).map((row) => ({
-            step: Number(row.step),
-            event_type: String(row.event_type),
-            sessions: Number(row.sessions ?? 0),
-          }))
-        );
+        return (r.data ?? []).map((row) => ({
+          step: Number(row.step),
+          event_type: String(row.event_type),
+          sessions: Number(row.sessions ?? 0),
+        }));
+      });
+
+    Promise.all([
+      funnel(cur),
+      // Falha no período anterior não derruba a aba: só some o Δ.
+      prev ? funnel(prev).catch((err: unknown) => (devError("[conversion] prev", err), null)) : null,
+    ])
+      .then(([curRows, prevRes]) => {
+        if (cancelled) return;
+        setRows(curRows);
+        setPrevRows(prevRes);
+        setPrevWin(prevRes ? prev : null);
       })
       .catch((err: unknown) => {
         const msg = err instanceof Error ? err.message : String(err);
@@ -84,7 +105,7 @@ export default function ConversionTab({ range, segments }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [range]);
+  }, [range, comparePrev]);
 
   // Mapeia cada step -> sessions (preserva ordem dos FUNNEL_STEPS)
   const stepData = useMemo(() => {
@@ -94,9 +115,10 @@ export default function ConversionTab({ range, segments }: Props) {
         ...def,
         index: idx + 1,
         sessions: found?.sessions ?? 0,
+        prevSessions: prevRows ? (prevRows.find((r) => r.event_type === def.key)?.sessions ?? 0) : null,
       };
     });
-  }, [rows]);
+  }, [rows, prevRows]);
 
   const top = stepData[0]?.sessions ?? 0;
 
@@ -132,6 +154,12 @@ export default function ConversionTab({ range, segments }: Props) {
 
   return (
     <div className="aa-grid">
+      {comparePrev && prevWin && (
+        <div className="aa-col-12 aa-faint aa-mono" role="note" style={{ fontSize: "var(--aa-text-xs)" }}>
+          Δ vs. <b style={{ color: "var(--aa-fg)" }}>{formatWindowLabel(prevWin)}</b>
+          {prevWin.partial && " (até o mesmo horário)"}
+        </div>
+      )}
       {/* Aviso sobre segmentos */}
       {segments.length > 0 && (
         <div className="aa-col-12">
@@ -162,6 +190,15 @@ export default function ConversionTab({ range, segments }: Props) {
               {s.label}
             </div>
             <div className="aa-kpi__value">{fmtNum(s.sessions)}</div>
+            {comparePrev && s.prevSessions !== null && (() => {
+              const t = trend(s.sessions, s.prevSessions);
+              return (
+                <span className="aa-kpi__delta" data-dir={t.dir} title={`antes: ${fmtNum(s.prevSessions)}`}>
+                  {t.dir === "up" ? "↑" : t.dir === "down" ? "↓" : "·"} {t.label}
+                  {t.pct !== null && ` · ${formatAbsDiff(s.sessions, s.prevSessions)}`}
+                </span>
+              );
+            })()}
             <div className="aa-kpi__delta aa-faint" style={{ fontSize: "var(--aa-text-xs)" }}>
               {fmtPct(pctTop)} do topo · {s.description}
             </div>
@@ -192,6 +229,7 @@ type StepView = {
   description: string;
   index: number;
   sessions: number;
+  prevSessions?: number | null;
 };
 
 function FunnelChart({ steps }: { steps: StepView[] }) {

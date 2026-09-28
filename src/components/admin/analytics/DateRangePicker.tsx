@@ -1,10 +1,18 @@
 /**
  * Date range picker com presets + custom calendar (react-day-picker).
+ *
+ * Calendário em pt-BR com semana começando na segunda (a mesma semana ISO da
+ * tabela por semana), sem datas futuras. Com um período já escolhido, o
+ * primeiro clique começa uma seleção nova e o segundo fecha o intervalo (em
+ * qualquer ordem) — antes o clique só esticava ou encolhia o período atual.
+ * Presets andam em dias de calendário, não em blocos de 24h.
  */
 import { useMemo, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import { DayPicker, type DateRange as DPRange } from "react-day-picker";
+import { ptBR } from "date-fns/locale";
 import "react-day-picker/dist/style.css";
+import { addLocalDays } from "@/lib/analyticsCompare";
 import type { DateRange } from "./types";
 
 type Preset = {
@@ -24,7 +32,7 @@ function endOfDay(d: Date) {
   return x;
 }
 function daysAgo(n: number) {
-  return startOfDay(new Date(Date.now() - n * 86400_000));
+  return startOfDay(addLocalDays(new Date(), -n));
 }
 
 const PRESETS: Preset[] = [
@@ -33,7 +41,7 @@ const PRESETS: Preset[] = [
     key: "yesterday",
     label: "Ontem",
     build: () => {
-      const y = new Date(Date.now() - 86400_000);
+      const y = addLocalDays(new Date(), -1);
       return { from: startOfDay(y), to: endOfDay(y) };
     },
   },
@@ -47,6 +55,17 @@ const PRESETS: Preset[] = [
     build: () => {
       const now = new Date();
       return { from: startOfDay(new Date(now.getFullYear(), now.getMonth(), 1)), to: endOfDay(now) };
+    },
+  },
+  {
+    key: "lastmonth",
+    label: "Mês passado",
+    build: () => {
+      const now = new Date();
+      return {
+        from: new Date(now.getFullYear(), now.getMonth() - 1, 1),
+        to: endOfDay(new Date(now.getFullYear(), now.getMonth(), 0)),
+      };
     },
   },
   {
@@ -118,6 +137,21 @@ export default function DateRangePicker({ value, onChange }: Props) {
     from: value.from,
     to: value.to,
   });
+  /** true depois do 1º clique: o próximo fecha o intervalo. */
+  const [pickingEnd, setPickingEnd] = useState(false);
+  const today = endOfDay(new Date());
+
+  function handleDayClick(day: Date) {
+    if (!pickingEnd || !draft?.from) {
+      setDraft({ from: startOfDay(day), to: undefined });
+      setPickingEnd(true);
+      return;
+    }
+    const a = startOfDay(draft.from);
+    const b = startOfDay(day);
+    setDraft(b < a ? { from: b, to: a } : { from: a, to: b });
+    setPickingEnd(false);
+  }
 
   const activePreset = useMemo(() => detectPreset(value), [value]);
   const days = diffDays(value);
@@ -144,7 +178,10 @@ export default function DateRangePicker({ value, onChange }: Props) {
       open={open}
       onOpenChange={(o) => {
         setOpen(o);
-        if (o) setDraft({ from: value.from, to: value.to });
+        if (o) {
+          setDraft({ from: value.from, to: value.to });
+          setPickingEnd(false);
+        }
       }}
     >
       <Popover.Trigger asChild>
@@ -183,16 +220,21 @@ export default function DateRangePicker({ value, onChange }: Props) {
                 mode="range"
                 numberOfMonths={2}
                 selected={draft}
-                onSelect={setDraft}
-                weekStartsOn={0}
-                locale={undefined}
+                onSelect={(_r, day) => handleDayClick(day)}
+                defaultMonth={new Date(value.to.getFullYear(), value.to.getMonth() - 1, 1)}
+                toDate={today}
+                disabled={{ after: today }}
+                weekStartsOn={1}
+                locale={ptBR}
                 className="pointer-events-auto"
               />
               <div className="aa-daterange__foot">
                 <span>
                   {draft?.from && draft?.to
                     ? `${formatRange({ from: draft.from, to: draft.to })} · ${diffDays({ from: draft.from, to: draft.to })}d`
-                    : "selecione 2 datas"}
+                    : draft?.from
+                      ? "clique na data final · ou aplique só este dia"
+                      : "selecione 2 datas"}
                 </span>
                 <button
                   type="button"
