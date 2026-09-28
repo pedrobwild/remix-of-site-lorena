@@ -9,6 +9,7 @@ export type TabKey =
   | "conversion"
   | "retention"
   | "paid"
+  | "gads"
   | "realtime";
 
 export const ALL_TABS: { key: TabKey; label: string; short: string }[] = [
@@ -18,6 +19,7 @@ export const ALL_TABS: { key: TabKey; label: string; short: string }[] = [
   { key: "conversion", label: "Conversão", short: "C" },
   { key: "retention", label: "Retenção", short: "R" },
   { key: "paid", label: "Mídia paga", short: "M" },
+  { key: "gads", label: "Google Ads", short: "G" },
   { key: "realtime", label: "Tempo real", short: "T" },
 ];
 
