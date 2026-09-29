@@ -89,9 +89,11 @@ export function projectSeoTitle(p: ProjectSeoInput | null | undefined): string {
     .filter(Boolean)
     .join(" ");
   const name = projectFriendlyName(p);
-  const withName = `${what} — ${name}${suffix}`;
-  if (name && withName.length <= 65) return withName;
-  return `${truncateTitleBase(what, 65 - suffix.length)}${suffix}`;
+  // Nome do projeto entra no fim, truncado, para cada URL ter um título único.
+  const nameRoom = 78 - (what.length + 3 + suffix.length);
+  if (name && nameRoom >= 8) return `${what} — ${truncateTitleBase(name, nameRoom)}${suffix}`;
+  return `${truncateTitleBase(what, 78 - suffix.length)}${suffix}`;
+
 }
 
 export function projectMetaDescription(
