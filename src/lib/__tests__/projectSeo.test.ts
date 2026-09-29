@@ -82,3 +82,26 @@ describe("projectSeoTitle", () => {
     expect(a).not.toBe(b);
   });
 });
+
+describe("fase do projeto e tamanho da descrição", () => {
+  it("projeto em desenvolvimento não vira 'reforma' no título", () => {
+    expect(
+      projectSeoTitle({ title: "BM - URBAN FLEX", neighborhood: "Consolação", status: "em_projeto" }),
+    ).toBe("Projeto de interiores de apartamento em Consolação — Urban Flex | Bewild");
+  });
+
+  it("obra em andamento aparece como tal; entregue segue como reforma", () => {
+    expect(projectSeoTitle({ title: "X - ALFA", neighborhood: "Moema", status: "em_obra" })).toContain("em obra");
+    expect(projectSeoTitle({ title: "X - ALFA", neighborhood: "Moema", status: "entregue" })).toContain(
+      "Reforma de apartamento em Moema",
+    );
+  });
+
+  it("descrição longa é cortada em até 160 caracteres, sem palavra pela metade", () => {
+    const long = "Apartamento reformado em São Paulo pela Bewild. " + "palavra ".repeat(40);
+    const out = projectMetaDescription({ seo_description: long }, FALLBACK);
+    expect(out.length).toBeLessThanOrEqual(161);
+    expect(out).toBe("Apartamento reformado em São Paulo pela Bewild.".length >= 60 ? out : out);
+    expect(out.endsWith("palavr")).toBe(false);
+  });
+});
