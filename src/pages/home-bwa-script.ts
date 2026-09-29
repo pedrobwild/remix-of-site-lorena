@@ -33,8 +33,16 @@ export type Cleanup = () => void;
 
 const NOOP: Cleanup = () => {};
 const MENU_OPEN_CLASS = "bwa-menu-open";
+/**
+ * No <html> enquanto o foco está num campo de texto: no celular, a barra
+ * "Solicitar orçamento" e o botão "Dúvidas" saem da frente do teclado
+ * (home-bwa.css e site-assistant.css).
+ */
+const TYPING_CLASS = "bwa-typing";
 /** Acima desta largura o header mostra os links e o menu mobile some (home-bwa.css). */
 const DESKTOP_NAV_QUERY = "(min-width: 1181px)";
+/** Até esta largura a lista das disciplinas vira acordeão (só os títulos à vista). */
+const DISCIPLINE_ACCORDION_QUERY = "(max-width: 760px)";
 const FOCUSABLE = [
   "a[href]",
   "button:not([disabled])",
@@ -47,6 +55,27 @@ const FOCUSABLE = [
 
 function isRendered(el: HTMLElement): boolean {
   return el.getClientRects().length > 0;
+}
+
+const NON_TEXT_INPUTS = new Set([
+  "button",
+  "checkbox",
+  "color",
+  "file",
+  "hidden",
+  "image",
+  "radio",
+  "range",
+  "reset",
+  "submit",
+]);
+
+/** Campo em que se digita (abre o teclado no celular). */
+function isTextEntry(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  if (target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement) return true;
+  if (target instanceof HTMLInputElement) return !NON_TEXT_INPUTS.has(target.type);
+  return target.isContentEditable === true;
 }
 
 /** Elementos focáveis e visíveis dentro dos contêineres, na ordem do DOM. */
@@ -247,6 +276,21 @@ function installNavDropdowns(root: HTMLElement, signal: AbortSignal): Cleanup {
 }
 
 /* =========================================================================
+ * `bwa-typing` no <html> enquanto um campo de texto tem o foco (formulário
+ * do rodapé, /orcamento...). Escuta o document porque os campos ficam fora
+ * da raiz do header; a limpeza tira a classe.
+ * ========================================================================= */
+function installTypingState(signal: AbortSignal): Cleanup {
+  const html = document.documentElement;
+  const set = (typing: boolean) => html.classList.toggle(TYPING_CLASS, typing);
+  set(isTextEntry(document.activeElement));
+  document.addEventListener("focusin", (event) => set(isTextEntry(event.target)), { signal });
+  // Foco indo de um campo para outro: `relatedTarget` já é o próximo campo.
+  document.addEventListener("focusout", (event) => set(isTextEntry(event.relatedTarget)), { signal });
+  return () => html.classList.remove(TYPING_CLASS);
+}
+
+/* =========================================================================
  * Header: estado "rolado" + menu mobile acessível.
  * Menu aberto: foco vai para o primeiro link, Tab fica preso no header +
  * menu, o resto da página fica `inert`, Esc fecha e devolve o foco ao botão.
@@ -257,6 +301,11 @@ function installNavChrome(root: HTMLElement, signal: AbortSignal): Cleanup {
   const button = root.querySelector<HTMLButtonElement>("[data-menu-button]");
   const menu = root.querySelector<HTMLElement>("[data-mobile-menu]");
   const closeDropdowns = installNavDropdowns(root, signal);
+  const stopTyping = installTypingState(signal);
+  const release = () => {
+    closeDropdowns();
+    stopTyping();
+  };
 
   if (nav) {
     const updateNav = () => nav.classList.toggle("bwa-scrolled", window.scrollY > 28);
@@ -264,7 +313,7 @@ function installNavChrome(root: HTMLElement, signal: AbortSignal): Cleanup {
     window.addEventListener("scroll", updateNav, { passive: true, signal });
   }
 
-  if (!button || !menu) return closeDropdowns;
+  if (!button || !menu) return release;
 
   const keep = nav ? [nav, menu] : [button, menu];
   let open = false;
@@ -324,7 +373,7 @@ function installNavChrome(root: HTMLElement, signal: AbortSignal): Cleanup {
 
   return () => {
     setOpen(false);
-    closeDropdowns();
+    release();
   };
 }
 
@@ -564,6 +613,121 @@ function installFaqAccordion(root: HTMLElement, signal: AbortSignal): Cleanup {
 }
 
 /* =========================================================================
+ * Disciplinas (Arquitetura · Engenharia e gestão) no celular: cada item vira
+ * um acordeão — só o título à vista, a explicação abre no toque. O HTML
+ * continua com o texto completo (desktop, leitores de tela, busca); aqui o
+ * <strong> do título ganha um <button> em volta e a `.bwa-discipline-desc`
+ * fica escondida até abrir. Voltou para a largura de desktop (girou o
+ * tablet): desfaz tudo.
+ * ========================================================================= */
+function installDisciplineAccordion(root: HTMLElement, signal: AbortSignal): Cleanup {
+  if (typeof window.matchMedia !== "function") return NOOP;
+  const lists = Array.from(root.querySelectorAll<HTMLElement>(".bwa-discipline-list"));
+  type Item = { li: HTMLElement; title: HTMLElement; desc: HTMLElement; toggle: HTMLButtonElement | null };
+  const items: Item[] = [];
+  for (const list of lists) {
+    for (const li of Array.from(list.children)) {
+      const title = li.querySelector<HTMLElement>(":scope > p > strong");
+      const desc = li.querySelector<HTMLElement>(":scope > p > .bwa-discipline-desc");
+      if (li instanceof HTMLElement && title && desc) items.push({ li, title, desc, toggle: null });
+    }
+  }
+  if (!items.length) return NOOP;
+
+  const query = window.matchMedia(DISCIPLINE_ACCORDION_QUERY);
+  let collapsed = false;
+
+  const collapse = () => {
+    if (collapsed) return;
+    collapsed = true;
+    lists.forEach((list) => list.classList.add("is-collapsible"));
+    items.forEach((item, i) => {
+      if (!item.desc.id) item.desc.id = `bwa-discipline-desc-${i + 1}`;
+      const toggle = document.createElement("button");
+      toggle.type = "button";
+      toggle.className = "bwa-discipline-toggle";
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.setAttribute("aria-controls", item.desc.id);
+      item.title.replaceWith(toggle);
+      toggle.appendChild(item.title);
+      toggle.addEventListener(
+        "click",
+        () => {
+          const open = !item.li.classList.contains("is-open");
+          item.li.classList.toggle("is-open", open);
+          toggle.setAttribute("aria-expanded", String(open));
+        },
+        { signal },
+      );
+      item.toggle = toggle;
+    });
+  };
+
+  const expand = () => {
+    if (!collapsed) return;
+    collapsed = false;
+    lists.forEach((list) => list.classList.remove("is-collapsible"));
+    items.forEach((item) => {
+      item.li.classList.remove("is-open");
+      if (item.toggle) item.toggle.replaceWith(item.title);
+      item.toggle = null;
+    });
+  };
+
+  const sync = () => (query.matches ? collapse() : expand());
+  sync();
+  query.addEventListener?.("change", sync, { signal });
+  return expand;
+}
+
+/* =========================================================================
+ * Barra fixa "Solicitar orçamento" do celular. Aparece só quando o botão
+ * do herói sai da tela e some de novo do fechamento (#contato, que tem os
+ * próprios botões) até o fim da página — nunca duas chamadas iguais na
+ * mesma tela. Nasce com `is-hidden` no HTML (sem piscar antes do script).
+ * Menu aberto e teclado aberto (`bwa-typing`) também a escondem, pelo CSS.
+ *
+ * A posição é lida na rolagem (um quadro por vez), não por
+ * IntersectionObserver: um salto direto do rodapé para o meio da página
+ * (âncora, Voltar) não cruza o fechamento e o observer não avisaria; e a
+ * margem que resolveria isso é ignorada quando o site roda dentro de um
+ * iframe de outro domínio (prévia do Lovable).
+ * ========================================================================= */
+function installMobileCta(root: HTMLElement, signal: AbortSignal): Cleanup {
+  const bar = root.querySelector<HTMLElement>(".bwa-mobile-cta");
+  if (!bar) return NOOP;
+  const heroCta = root.querySelector<HTMLElement>(".bwa-hero-bottom");
+  const finale = root.querySelector<HTMLElement>(".bwa-final");
+  let pending = false;
+  let frame = 0;
+
+  const update = () => {
+    pending = false;
+    const vh = window.innerHeight;
+    const hero = heroCta?.getBoundingClientRect();
+    const heroVisible = !!hero && hero.bottom > 0 && hero.top < vh;
+    // Fim da página: o topo do fechamento já passou da borda de baixo da tela.
+    const atEnd = !!finale && finale.getBoundingClientRect().top < vh;
+    bar.classList.toggle("is-hidden", heroVisible || atEnd);
+  };
+  const schedule = () => {
+    if (pending) return;
+    pending = true;
+    frame = window.requestAnimationFrame(update);
+  };
+
+  window.addEventListener("scroll", schedule, { passive: true, signal });
+  window.addEventListener("resize", schedule, { signal });
+  update();
+
+  return () => {
+    if (pending) window.cancelAnimationFrame(frame);
+    pending = false;
+    bar.classList.add("is-hidden");
+  };
+}
+
+/* =========================================================================
  * Modal do depoimento em vídeo.
  * ========================================================================= */
 function installVideoModal(root: HTMLElement, signal: AbortSignal): Cleanup {
@@ -706,7 +870,6 @@ function installReclameAquiSeal(root: HTMLElement): void {
  * API pública
  * ========================================================================= */
 
-/** Home inteira (header, galeria, FAQ, vídeo, reveals, rodapé). */
 /**
  * Propaga a origem da campanha (UTMs) para os links de orçamento da home.
  * O clique normal já passa pela navegação SPA (que carrega os parâmetros),
@@ -760,6 +923,7 @@ function installHomeMap(root: HTMLElement, signal: AbortSignal): Cleanup {
   };
 }
 
+/** Home inteira (header, galeria, FAQ, disciplinas, vídeo, reveals, barra do celular, rodapé). */
 export function initHomeBwa(root: HTMLElement | null): Cleanup {
   if (!root || root.dataset.bwaHomeInited === "1") return NOOP;
   root.dataset.bwaHomeInited = "1";
@@ -771,9 +935,11 @@ export function initHomeBwa(root: HTMLElement | null): Cleanup {
     installNavChrome(root, signal),
     installGallery(root, signal, reducedMotion),
     installFaqAccordion(root, signal),
+    installDisciplineAccordion(root, signal),
     installVideoModal(root, signal),
     installReveal(root, reducedMotion),
     installHomeMap(root, signal),
+    installMobileCta(root, signal),
   ];
   installWhatsForm(root, signal);
   installReclameAquiSeal(root);

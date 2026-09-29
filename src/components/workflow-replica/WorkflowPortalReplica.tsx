@@ -107,7 +107,17 @@ function IdentificationCard() {
   );
 }
 
+/** Atividade em andamento (destacada na tabela e na lista do celular). */
+const CURRENT_ACTIVITY = "08";
+/** Celular: a lista abre com a atividade atual, as 2 anteriores e as 2 seguintes. */
+const MOBILE_AROUND_CURRENT = 2;
+
 function SchedulePanel() {
+  const [showAll, setShowAll] = useState(false);
+  const currentIndex = Math.max(0, activities.findIndex((activity) => activity.number === CURRENT_ACTIVITY));
+  const mobileActivities = showAll
+    ? activities
+    : activities.slice(Math.max(0, currentIndex - MOBILE_AROUND_CURRENT), currentIndex + MOBILE_AROUND_CURRENT + 1);
   return (
     <div>
       <header className="wf-section-head">
@@ -117,16 +127,19 @@ function SchedulePanel() {
       <div className="wf-table-wrap">
         <table className="wf-table">
           <thead><tr><th>Atividade</th><th>Início Prev.</th><th>Término Prev.</th><th>Início Real</th><th>Término Real</th><th>Status</th></tr></thead>
-          <tbody>{activities.map((activity) => <tr className={activity.number === "08" ? "wf-current-row" : ""} key={activity.number}>
+          <tbody>{activities.map((activity) => <tr className={activity.number === CURRENT_ACTIVITY ? "wf-current-row" : ""} key={activity.number}>
             <td><div className="wf-activity-name"><span className="wf-activity-number">{activity.number}</span><div className="wf-activity-copy"><strong>{activity.name}</strong><span className="wf-stage">{activity.stage}</span></div></div></td>
             <td>{activity.plannedStart}</td><td>{activity.plannedEnd}</td><td>{activity.actualStart}</td><td>{activity.actualEnd}</td><td><StatusPill activity={activity} /></td>
           </tr>)}</tbody>
         </table>
       </div>
-      <div className="wf-mobile-activities">{activities.map((activity) => <article className={`wf-mobile-activity ${activity.number === "08" ? "current" : ""}`} key={activity.number}>
+      <div className="wf-mobile-activities" id="wf-mobile-activities">{mobileActivities.map((activity) => <article className={`wf-mobile-activity ${activity.number === CURRENT_ACTIVITY ? "current" : ""}`} key={activity.number}>
         <div className="wf-mobile-activity-head"><span className="wf-activity-number">{activity.number}</span><div><strong>{activity.name}</strong><br /><span className="wf-stage">{activity.stage}</span></div></div>
         <div className="wf-mobile-activity-foot"><span>Prev. {activity.plannedStart} a {activity.plannedEnd}</span><StatusPill activity={activity} /></div>
       </article>)}</div>
+      <button className="wf-button wf-mobile-more" type="button" aria-expanded={showAll} aria-controls="wf-mobile-activities" onClick={() => setShowAll((value) => !value)}>
+        {showAll ? "Mostrar menos" : `Ver as ${activities.length} atividades`}
+      </button>
     </div>
   );
 }
