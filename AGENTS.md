@@ -3,6 +3,7 @@
 - TanStack Start v1 (migrado do SPA em 2026-09-29): `<head>` por rota via `head()` em `src/routes/` (`routeHead.ts`, `seoLoaders.ts`) — Google lê o cabeçalho sem JS.
 - `useSeo.ts` roda no cliente (overrides /admin/seo, trackers, JSON-LD) mas só remove nós com `data-seo-managed` — remover tags do React quebra a reconciliação.
 - `navigate()` legado (`useHashRoute.ts`) delega para `window.__bwRouter` (`src/router.tsx`); interceptador de `<a>` ativo — evita reescrever call sites.
+- `lovable:navigate` (Pixel da Meta, tracker interno, `useHashRoute`, assistente) sai de `installNavigateEventBridge` no Root (`onResolved` do roteador), não do `navigate()` — sem a ponte, PageView/ViewContent só saíam na entrada.
 - `CookieBanner`/`SiteAssistant` montam só após hidratação (`hydrated` no `__root.tsx`) — no SSR divergiam.
 - og:image/og:url/og:title/twitter:* só nas rotas-folha via `seoHead`; root só defaults amplos.
 - Tailwind v4: `src/styles.css` com `@config "../tailwind.config.ts"` (requer `tailwindcss-animate`); design system segue em `src/index.css`.

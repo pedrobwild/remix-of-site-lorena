@@ -56,7 +56,18 @@ e nunca vão à Meta. Se o Pixel ainda não carregou, os dados esperam na fila e
 **Correspondência avançada automática: deixar DESLIGADA** (Events Manager › Dados
 bwild › Configurações). Ela lê campos de formulário por conta própria e poderia
 capturar o nome e o WhatsApp do indicado em `/indique-um-amigo`; a manual já cobre
-todos os formulários com os dados certos.
+todos os formulários com os dados certos. (Desligada em 29/09/2026.)
+
+### Permissões de tráfego
+
+O conjunto **Dados bwild** usa **lista de permissão** de domínios (Events Manager ›
+Dados bwild › Configurações › Permissões de tráfego). Ela precisa ter
+`bewild.com.br` — e `bwild.com.br`, do site antigo. Domínio fora da lista: o
+`fbevents.js` carrega, mas a configuração da Meta chega com `prohibitedPixels`
+(`blockReason: "traffic_permissions"`) e nada é enviado. Sintoma: nenhum evento
+de `bewild.com.br` no Events Manager e leads com aceite chegando sem `fbp`. Foi o
+que aconteceu até 29/09/2026, quando `bewild.com.br` entrou na lista. Domínio
+novo (landing page, subdomínio de outro domínio) → incluir na lista antes.
 
 ## Arquivos
 

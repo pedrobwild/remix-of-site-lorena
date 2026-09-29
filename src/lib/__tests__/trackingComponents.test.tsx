@@ -35,6 +35,7 @@ import MetaPixel from "@/components/MetaPixel";
 import { __resetMetaPixelQueue, flushMetaPixelQueue } from "@/lib/metaPixel";
 import CookieBanner from "@/components/CookieBanner";
 import { setConsent, openCookiePreferences } from "@/lib/cookieConsent";
+import { installNavigateEventBridge } from "@/lib/useHashRoute";
 
 const noNavigation = (e: Event) => e.preventDefault();
 
@@ -164,6 +165,41 @@ describe("MetaPixel", () => {
     });
     go("/faq"); // página sem ViewContent
     expect(fbq).toHaveBeenLastCalledWith("track", "PageView");
+  });
+
+  it("navegação do TanStack Router (ponte do Root) vira PageView + ViewContent; carga inicial e âncora não", () => {
+    __resetMetaPixelQueue();
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
+    window.history.replaceState(null, "", "/");
+    const fbq = vi.fn();
+    (window as Window & { fbq?: unknown }).fbq = fbq;
+    type Loc = { pathname: string; searchStr: string };
+    const bridge: { resolve?: (e: { fromLocation?: Loc; toLocation: Loc }) => void } = {};
+    const off = installNavigateEventBridge({
+      subscribe: (_type, fn) => {
+        bridge.resolve = fn;
+        return () => {
+          bridge.resolve = undefined;
+        };
+      },
+    });
+    render(<MetaPixel />);
+
+    bridge.resolve?.({ toLocation: { pathname: "/", searchStr: "" } }); // hidratação
+    window.history.pushState(null, "", "/#faq");
+    bridge.resolve?.({ fromLocation: { pathname: "/", searchStr: "" }, toLocation: { pathname: "/", searchStr: "" } });
+    expect(fbq).not.toHaveBeenCalled();
+
+    // O roteador faz o pushState e emite onResolved — sem popstate.
+    window.history.pushState(null, "", "/portfolio");
+    bridge.resolve?.({ fromLocation: { pathname: "/", searchStr: "" }, toLocation: { pathname: "/portfolio", searchStr: "" } });
+    expect(fbq.mock.calls).toEqual([
+      ["track", "PageView"],
+      ["track", "ViewContent", { content_type: "product", content_ids: ["portfolio"], content_category: "portfolio" }],
+    ]);
+
+    off();
+    expect(bridge.resolve).toBeUndefined();
   });
 
   it("IniciouFormulario: uma vez por página, só em formulário de lead/cadastro e com aceite", () => {
