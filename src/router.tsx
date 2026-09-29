@@ -12,5 +12,12 @@ export const getRouter = () => {
     defaultPreloadStaleTime: 0,
   });
 
+  // A navegação legada (navigate() em useHashRoute.ts, chamada pelo
+  // interceptador de <a> e por componentes) usa esta referência para
+  // navegar pelo TanStack Router sem import circular.
+  if (typeof window !== "undefined") {
+    (window as unknown as { __bwRouter?: unknown }).__bwRouter = router;
+  }
+
   return router;
 };
