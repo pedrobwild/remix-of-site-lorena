@@ -147,7 +147,9 @@
       /* O link "pular para o conteúdo" é fixo; sem regra ele entra no fluxo
          e empurra o conteúdo por um frame. */
       .bwa-skip { position: fixed; }
-      body { margin: 0; }
+      /* Sem reset, o <main> nasce com a margem padrão do navegador (8 px)
+         e sobe quando o CSS do chunk chega. */
+      body, main { margin: 0; }
     </style>
 
     <!-- Preload do hero da home (LCP no desktop). Este HTML atende todas as
