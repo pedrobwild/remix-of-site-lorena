@@ -21,6 +21,7 @@ import OrcamentoPage from "./pages/OrcamentoPage";
 import EscopoPage from "./pages/EscopoPage";
 import ComoFuncionaPage from "./pages/ComoFuncionaPage";
 import OndeAtuamosPage from "./pages/OndeAtuamosPage";
+import ServicosPage from "./pages/ServicosPage";
 import ReformaApartamentoSpPage from "./pages/ReformaApartamentoSpPage";
 import ReformaStudioSpPage from "./pages/ReformaStudioSpPage";
 import ReformaCoberturaSpPage from "./pages/ReformaCoberturaSpPage";
@@ -97,6 +98,7 @@ export function renderRoute(route: Route) {
   if (route.name === "bewild-post") return <BewildPostPage slug={route.slug} />;
 
   if (route.name === "orcamento") return <OrcamentoPage />;
+  if (route.name === "servicos") return <ServicosPage />;
   if (route.name === "faq") return <FaqPage />;
   if (route.name === "autorizacao-condominio") return <AutorizacaoCondominioPage />;
   if (route.name === "contato") return <ContatoPage />;
