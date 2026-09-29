@@ -197,7 +197,8 @@ export default function DateRangePicker({ value, onChange }: Props) {
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
-          className="admin-analytics__pop"
+          className="admin-analytics admin-analytics__pop"
+          data-theme="light"
           sideOffset={6}
           align="start"
         >

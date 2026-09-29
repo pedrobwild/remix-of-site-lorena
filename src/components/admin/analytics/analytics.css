@@ -280,6 +280,10 @@
   font-size: var(--aa-text-sm);
   color: var(--aa-fg);
   z-index: 60;
+  /* .admin-analytics tem min-height: 100vh; o popover não pode herdar isso. */
+  min-height: 0;
+  max-height: calc(100vh - 24px);
+  overflow: auto;
 }
 
 /* === Date range picker === */
@@ -347,30 +351,51 @@
   color: var(--aa-fg-muted);
 }
 
-/* react-day-picker overrides */
-.admin-analytics .rdp {
-  --rdp-cell-size: 34px;
+/* react-day-picker v9 — o popover vai para um portal fora de .admin-analytics,
+   então o Content carrega a própria classe .admin-analytics (tokens --aa-*). */
+.admin-analytics__pop .rdp-root {
   --rdp-accent-color: var(--aa-accent);
-  --rdp-background-color: var(--aa-bg-soft);
-  --rdp-accent-color-dark: var(--aa-accent);
-  --rdp-background-color-dark: var(--aa-bg-soft);
+  --rdp-accent-background-color: color-mix(in srgb, var(--aa-accent) 14%, transparent);
+  --rdp-day-height: 34px;
+  --rdp-day-width: 34px;
+  --rdp-day_button-height: 32px;
+  --rdp-day_button-width: 32px;
+  --rdp-nav_button-height: 28px;
+  --rdp-nav_button-width: 28px;
+  --rdp-nav-height: 32px;
+  --rdp-months-gap: 16px;
   margin: 0;
   font-family: var(--aa-font-ui);
   font-size: var(--aa-text-sm);
-}
-.admin-analytics .rdp-day_selected,
-.admin-analytics .rdp-day_selected:focus,
-.admin-analytics .rdp-day_selected:hover {
-  background-color: var(--aa-accent);
-  color: #fff;
-}
-.admin-analytics .rdp-day_range_middle {
-  background-color: color-mix(in srgb, var(--aa-accent) 18%, transparent);
   color: var(--aa-fg);
 }
-.admin-analytics .rdp-day_today {
+.admin-analytics__pop .rdp-month_caption {
+  font-family: var(--aa-font-ui);
+  font-size: var(--aa-text-sm);
+  font-weight: var(--aa-fw-semibold);
+  text-transform: capitalize;
+}
+.admin-analytics__pop .rdp-weekday {
+  font-size: var(--aa-text-xs);
+  color: var(--aa-fg-muted);
+  text-transform: capitalize;
+}
+.admin-analytics__pop .rdp-chevron {
+  fill: var(--aa-fg);
+}
+.admin-analytics__pop .rdp-today:not(.rdp-selected) {
   font-weight: var(--aa-fw-bold);
   color: var(--aa-accent);
+}
+.admin-analytics__pop .rdp-selected {
+  font-size: var(--aa-text-sm);
+  font-weight: var(--aa-fw-semibold);
+}
+.admin-analytics__pop .rdp-range_middle {
+  color: var(--aa-fg);
+}
+.admin-analytics__pop .rdp-day_button:hover:not(:disabled) {
+  background: var(--aa-bg-soft);
 }
 
 /* === Segments / chips === */
