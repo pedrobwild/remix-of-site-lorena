@@ -54,6 +54,19 @@ function shortName(title: string): string {
   return title.replace(/\s*[|·—–-]\s*Bewild\s*$/i, "").trim() || title;
 }
 
+/** Nomes curtos da trilha para as páginas principais (em vez do título SEO). */
+const TRAIL_NAMES: Record<string, string> = {
+  "/servicos": "Serviços",
+  "/portfolio": "Portfólio",
+  "/faq": "FAQ",
+  "/onde-atuamos": "Onde atuamos",
+  "/mapa-do-site": "Mapa do site",
+  "/mapa": "Mapa",
+  "/contato": "Contato",
+  "/conteudos": "Conteúdos",
+  "/parceiros": "Parceiros",
+};
+
 /** Trilha de navegação da página (a mesma lógica das páginas no cliente). */
 function trailFor(path: string, name: string): Array<{ name: string; path: string }> {
   const trail = [{ name: "Início", path: "/" }];
@@ -61,7 +74,7 @@ function trailFor(path: string, name: string): Array<{ name: string; path: strin
     trail.push({ name: "Portfólio", path: "/portfolio" });
   else if (path.startsWith("/conteudos/")) trail.push({ name: "Conteúdos", path: "/conteudos" });
   else if (path.startsWith("/parceiros/")) trail.push({ name: "Parceiros", path: "/parceiros" });
-  trail.push({ name, path });
+  trail.push({ name: TRAIL_NAMES[path] ?? name, path });
   return trail;
 }
 
