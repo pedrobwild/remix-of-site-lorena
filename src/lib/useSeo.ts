@@ -715,6 +715,7 @@ export function useSeo(seo: SeoInput) {
     ogImageHeight,
     ogImageAlt,
 
+
     ogType,
     noindex,
     jsonLdKey,
