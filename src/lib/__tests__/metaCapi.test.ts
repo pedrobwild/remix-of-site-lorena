@@ -310,20 +310,20 @@ describe("API de Conversões para CRM (leads dos formulários instantâneos)", (
   });
 
   it("status do painel → estágio; um estágio por status, na ordem do funil", () => {
-    expect(META_CRM_STAGES).toEqual(["lead_recebido", "lead_contatado", "lead_qualificado", "lead_descartado"]);
+    expect(META_CRM_STAGES).toEqual(["initial_lead", "contacted", "qualified", "disqualified"]);
     expect(CRM_STAGE_BY_STATUS).toEqual({
-      novo: "lead_recebido",
-      contatado: "lead_contatado",
-      qualificado: "lead_qualificado",
-      descartado: "lead_descartado",
+      novo: "initial_lead",
+      contatado: "contacted",
+      qualificado: "qualified",
+      descartado: "disqualified",
     });
   });
 
   it("crmStageEvent: system_generated, lead_id, event_source=crm e lead_event_source", async () => {
     const at = new Date("2026-09-30T10:00:00.000Z");
-    const ev = crmStageEvent(lead, "lead_qualificado", at);
-    expect(ev.eventName).toBe("lead_qualificado");
-    expect(ev.eventId).toBe("row-1:lead_qualificado");
+    const ev = crmStageEvent(lead, "qualified", at);
+    expect(ev.eventName).toBe("qualified");
+    expect(ev.eventId).toBe("row-1:qualified");
     expect(ev.actionSource).toBe("system_generated");
     expect(ev.eventTime).toBe(Math.floor(at.getTime() / 1000));
     expect(ev.customData).toMatchObject({
@@ -344,12 +344,12 @@ describe("API de Conversões para CRM (leads dos formulários instantâneos)", (
 
   it("event_time nunca fica antes da criação do lead (a Meta descarta)", () => {
     const created = new Date(lead.createdTime);
-    const ev = crmStageEvent(lead, "lead_recebido", new Date(created.getTime() - 60_000));
+    const ev = crmStageEvent(lead, "initial_lead", new Date(created.getTime() - 60_000));
     expect(ev.eventTime).toBe(Math.floor(created.getTime() / 1000) + 1);
   });
 
   it("lead de teste vai marcado", () => {
-    expect(crmStageEvent({ ...lead, isTest: true }, "lead_recebido").customData).toMatchObject({ is_test: true });
+    expect(crmStageEvent({ ...lead, isTest: true }, "initial_lead").customData).toMatchObject({ is_test: true });
   });
 
   it("só o lead_id já é identificador suficiente", async () => {
@@ -367,7 +367,7 @@ describe("API de Conversões para CRM (leads dos formulários instantâneos)", (
 
   it("sendMetaEvents manda o lead_id inteiro no corpo", async () => {
     const fetchImpl = vi.fn(async () => new Response(JSON.stringify({ events_received: 1 }), { status: 200 }));
-    const r = await sendMetaEvents({ pixelId: "1", accessToken: "t", fetchImpl }, [crmStageEvent(lead, "lead_contatado")]);
+    const r = await sendMetaEvents({ pixelId: "1", accessToken: "t", fetchImpl }, [crmStageEvent(lead, "contacted")]);
     expect(r.status).toBe("sent");
     const [, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
     expect(String(init.body)).toContain('"lead_id":12345678901234567');

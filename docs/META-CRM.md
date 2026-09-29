@@ -16,19 +16,19 @@ painel está em [META-SYNC.md](META-SYNC.md). Esta página cobre só o pedaço
 
 | Evento (`event_name`) | Quando | De onde |
 | --- | --- | --- |
-| `lead_recebido` | o lead do formulário entra no painel (sincronização `meta-sync`, a cada 30 min ou pelo botão) | `meta-sync` |
-| `lead_contatado` | admin muda o status para **contatado** em `/admin/leads › Formulários Meta` | `meta-lead-quality` |
-| `lead_qualificado` | admin muda para **qualificado** | `meta-lead-quality` |
-| `lead_descartado` | admin muda para **descartado** | `meta-lead-quality` |
+| `initial_lead` | o lead do formulário entra no painel (sincronização `meta-sync`, a cada 30 min ou pelo botão) | `meta-sync` |
+| `contacted` | admin muda o status para **contatado** em `/admin/leads › Formulários Meta` | `meta-lead-quality` |
+| `qualified` | admin muda para **qualificado** | `meta-lead-quality` |
+| `disqualified` | admin muda para **descartado** | `meta-lead-quality` |
 
 Formato exigido pela Meta para esta integração (sem qualquer um dos três a Meta
 não registra o evento como *Conversion Leads*):
 
 ```json
 {
-  "event_name": "lead_qualificado",
+  "event_name": "qualified",
   "event_time": 1790000000,
-  "event_id": "<id da linha em meta_leads>:lead_qualificado",
+  "event_id": "<id da linha em meta_leads>:qualified",
   "action_source": "system_generated",
   "user_data": { "lead_id": 1234567890123456, "em": ["<sha256>"], "ph": ["<sha256>"], "external_id": ["<sha256>"] },
   "custom_data": { "event_source": "crm", "lead_event_source": "Bewild Admin", "lead_status": "qualificado", "content_name": "<formulário>", "campaign_name": "<campanha>" }
@@ -42,12 +42,14 @@ não registra o evento como *Conversion Leads*):
   `meta_leads.created_time`, senão a Meta descarta).
 - `event_id` determinístico por (lead, estágio): repetir o mesmo status não
   duplica.
-- Os nomes são próprios (`lead_*`), diferentes dos eventos dos leads do site
-  (`Lead`, `QualifiedLead`): na configuração do funil em Events Manager só
-  entram eventos com `lead_id`, e misturar confundiria o funil.
-- Status **novo** não gera evento pelo painel: o `lead_recebido` sai da
+- `initial_lead` é o nome que a própria Meta usa para o primeiro estágio (o
+  funil pré-configurado em Events Manager já o espera); `contacted`,
+  `qualified` e `disqualified` seguem a convenção. São diferentes dos eventos
+  dos leads do site (`Lead`, `QualifiedLead`) de propósito: na configuração do
+  funil só entram eventos com `lead_id`, e misturar confundiria o funil.
+- Status **novo** não gera evento pelo painel: o `initial_lead` sai da
   sincronização, uma vez por lead. Só leads com aviso ao time (até 72h de idade)
-  recebem `lead_recebido` — a Meta descarta backfill com data alterada e o
+  recebem `initial_lead` — a Meta descarta backfill com data alterada e o
   `event_time` precisa refletir quando o lead entrou no CRM.
 
 ## Arquivos
@@ -58,7 +60,7 @@ não registra o evento como *Conversion Leads*):
   precisão acima de 2^53). Módulo puro, testado em
   `src/lib/__tests__/metaCapi.test.ts`.
 - `supabase/functions/meta-sync/index.ts` — `notifyMetaCapi` dentro de
-  `notifyPending`: manda `lead_recebido` junto com Slack, e-mail e CRM; o
+  `notifyPending`: manda `initial_lead` junto com Slack, e-mail e CRM; o
   resultado fica em `meta_leads.notify.capi` ("Aviso ao time" no detalhe do
   lead mostra "Meta (CAPI) ✓").
 - `supabase/functions/meta-lead-quality/index.ts` — corpo
@@ -92,10 +94,10 @@ Nada novo além do que a CAPI dos leads do site já usa:
    eventos*, copiar o código e colar em `/admin/seo › Analytics & Pixels ›
    código de teste`. Gerar um lead pela [Ferramenta de teste de Lead
    Ads](https://developers.facebook.com/tools/lead-ads-testing), clicar em
-   **Sincronizar agora** na aba Formulários Meta e conferir o `lead_recebido`
+   **Sincronizar agora** na aba Formulários Meta e conferir o `initial_lead`
    em *Testar eventos* com os parâmetros `event_source = crm` e
    `lead_event_source = Bewild Admin` preenchidos. Mudar o status do lead para
-   *qualificado* e conferir o `lead_qualificado`. Apagar o código de teste.
+   *qualificado* e conferir o `qualified`. Apagar o código de teste.
 3. **Ligar a integração**: no card do Gerenciador ("Conecte seu CRM…") clicar em
    **Concluir configuração** — ou em Events Manager › conjunto de dados ›
    *Configurações* › seção **Conversion Leads / API de Conversões para CRM**.
@@ -104,13 +106,13 @@ Nada novo além do que a CAPI dos leads do site já usa:
    evento do CRM" assim que o primeiro estágio chegar.
 4. **Esperar a validação (≈ 7 dias de eventos)**: a Meta exige eventos em pelo
    menos 7 dias (não precisam ser seguidos), com **no mínimo dois estágios,
-   incluindo o inicial** (`lead_recebido` + pelo menos um dos outros; três ou
+   incluindo o inicial** (`initial_lead` + pelo menos um dos outros; três ou
    mais é o recomendado), e cobrindo todos os leads que os formulários geram.
    Erros aparecem em Events Manager › *Diagnóstico*.
 5. **Configurar o funil de vendas** quando o status mudar para "Configurar
-   funil": ordenar `lead_recebido → lead_contatado → lead_qualificado`
-   (`lead_descartado` fica fora do funil, como saída) e escolher o estágio de
-   otimização — `lead_qualificado`. A Meta pede um estágio com taxa de
+   funil": ordenar `initial_lead → contacted → qualified`
+   (`disqualified` fica fora do funil, como saída) e escolher o estágio de
+   otimização — `qualified`. A Meta pede um estágio com taxa de
    conversão entre 1% e 40% dos leads e alcançado em até 28 dias.
 6. **Análise do funil e aprendizado (1–2 meses)**: manter o time marcando o
    status de **todo** lead no painel; sem isso o funil não fecha. Quando Events
@@ -122,17 +124,64 @@ Operação: quem atende precisa mudar o status em `/admin/leads › Formulários
 Meta` (contatado → qualificado ou descartado) em até alguns dias — é isso que
 vira sinal. Lead sem status muda nada na Meta.
 
+## Erros comuns no Events Manager
+
+**"Você configurou um funil com eventos otimizados, mas esses eventos não estão
+sendo enviados" (tabela com `initial_lead`, contagem 0).** O funil foi criado
+antes de qualquer evento chegar. A contagem só sobe quando a Meta recebe
+eventos **de verdade** (sem código de teste — com o código preenchido no admin
+os eventos vão só para *Testar eventos* e não contam). Para resolver:
+
+1. Em `/admin/integracoes`, conferir que "Meta — API de Conversões" não mostra
+   "Falta o token" nem "modo de teste LIGADO".
+2. Fazer o primeiro evento chegar: gerar um lead na
+   [Ferramenta de teste de Lead Ads](https://developers.facebook.com/tools/lead-ads-testing)
+   (ou esperar um lead real) e clicar em **Sincronizar agora** em
+   `/admin/leads › Formulários Meta` → sai o `initial_lead`. Em seguida mudar o
+   status desse lead para *contatado* e depois *qualificado* → saem `contacted`
+   e `qualified`. Em até alguns minutos a contagem aparece em Events Manager ›
+   conjunto de dados › *Visão geral* (filtrar por `initial_lead`).
+3. Voltar à tela do funil e marcar em **Otimizar** o evento `qualified` (não o
+   `initial_lead`: o estágio de otimização precisa ser um que só parte dos leads
+   atinge, entre 1% e 40%). Se `qualified` ainda não aparecer na lista, é porque
+   nenhum lead foi marcado como qualificado ainda — faça o passo 2 e recarregue.
+
+Só leads que chegam ao painel **depois** deste deploy geram `initial_lead`
+(leads antigos entram sem esse evento, mas recebem os estágios seguintes quando
+o status muda). Leads da ferramenta de teste contam como eventos, mas a Meta os
+ignora no treinamento; o que vale para a validação de 7 dias são os leads reais.
+
+**Diagnóstico "Purchase — 100% afetada — Saiba como definir o valor (preço)".**
+O site **nunca** envia `Purchase` (só PageView, ViewContent, Contact, Lead,
+SubmitApplication e os eventos próprios — ver META-CAPI.md). Esse `Purchase`
+sem `value` vinha da **configuração automática** do Pixel, que infere eventos a
+partir do texto de botões ("Contratar", "Fechar", "Comprar"…) e de microdados,
+sem preço. Correção em duas partes:
+
+1. No código, o Pixel agora sobe com `fbq('set','autoConfig',false,<pixel>)`
+   antes do `init` (`src/lib/useSeo.ts`): nenhum evento inferido sai do site.
+2. Em Events Manager › conjunto de dados › **Configurações** › *Configuração de
+   eventos*, desligar **"Rastrear eventos automaticamente sem código"** e, em
+   *Correspondência avançada automática*, manter desligada (já era a orientação
+   do META-CAPI.md). Depois, na aba *Diagnóstico*, marcar o aviso como resolvido
+   — ele some quando o `Purchase` para de chegar (até 48h). Se continuar
+   chegando, o Pixel está em outro site (ex.: loja ou site antigo no Wix):
+   conferir em *Visão geral* › `Purchase` › "URL do evento".
+
+Não faz sentido "definir o valor" como o aviso sugere: a Bewild não fecha venda
+no site, então o certo é o evento não existir.
+
 ## Auditoria
 
 ```sql
 -- Estágios enviados por dia (formulários da Meta)
 select date_trunc('day', created_at) dia, event_name, status, count(*)
 from public.integration_log
-where integration = 'meta_capi' and event_name like 'lead\_%'
+where integration = 'meta_capi' and event_name in ('initial_lead', 'contacted', 'qualified', 'disqualified')
   and created_at >= now() - interval '30 days'
 group by 1, 2, 3 order by 1 desc, 2, 3;
 
--- Cobertura: leads de formulário × lead_recebido aceito
+-- Cobertura: leads de formulário × initial_lead aceito
 select count(*) leads,
        count(*) filter (where notify->>'capi' = 'sent') recebido_na_meta,
        count(*) filter (where notify->>'capi' = 'error') com_erro,
@@ -160,7 +209,7 @@ excluído no painel). Erros trazem `error_code` e `fbtrace_id` da Meta.
   instantâneo**. Para os leads do site, o `QualifiedLead` da CAPI continua sendo
   o sinal de qualidade (conversão personalizada), como em META-CAPI.md.
 - Leads importados na primeira carga ou com mais de 72h não recebem
-  `lead_recebido` (ver acima); os estágios seguintes são enviados normalmente
+  `initial_lead` (ver acima); os estágios seguintes são enviados normalmente
   quando o status muda.
 
 Referências: [Conversions API for CRM](https://developers.facebook.com/docs/marketing-api/conversions-api/guides/conversions-api-for-crm/),

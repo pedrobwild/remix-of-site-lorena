@@ -15,15 +15,26 @@ type RpcCall = { name: string; args: Record<string, unknown> };
 const rpcCalls: RpcCall[] = [];
 let respond: (call: RpcCall) => unknown = () => [];
 
-vi.mock("@/integrations/supabase/client", () => ({
-  supabase: {
-    rpc: (name: string, args: Record<string, unknown>) => {
-      const call = { name, args };
-      rpcCalls.push(call);
-      return Promise.resolve({ data: respond(call), error: null });
+vi.mock("@/integrations/supabase/client", () => {
+  // `LeadsBySourceCard` lê `leads` por `from().select().gte().lte().order().range()`:
+  // uma cadeia encadeável que resolve vazio, para o cartão montar sem rede.
+  const emptyQuery = () => {
+    const q: Record<string, unknown> = {};
+    for (const m of ["select", "gte", "lte", "order", "range", "eq", "is", "limit"]) q[m] = () => q;
+    q.then = (resolve: (v: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(resolve);
+    return q;
+  };
+  return {
+    supabase: {
+      rpc: (name: string, args: Record<string, unknown>) => {
+        const call = { name, args };
+        rpcCalls.push(call);
+        return Promise.resolve({ data: respond(call), error: null });
+      },
+      from: () => emptyQuery(),
     },
-  },
-}));
+  };
+});
 
 import OverviewTab from "../OverviewTab";
 

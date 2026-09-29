@@ -8,10 +8,10 @@
 //    `META_CAPI_REQUIRE_CONSENT=true`. Idempotente por `meta_qualified_sent_at`.
 //
 //  - Lead de FORMULÁRIO INSTANTÂNEO da Meta (`meta_leads`, corpo
-//    `{ source: "meta", lead_id, status }`): estágio do CRM (`lead_contatado`,
-//    `lead_qualificado`, `lead_descartado`) com `user_data.lead_id` = id do lead
+//    `{ source: "meta", lead_id, status }`): estágio do CRM (`contacted`,
+//    `qualified`, `disqualified`) com `user_data.lead_id` = id do lead
 //    na Meta — a "API de Conversões para CRM" (Conversion Leads). O primeiro
-//    estágio (`lead_recebido`) sai da `meta-sync` quando o lead entra no painel.
+//    estágio (`initial_lead`) sai da `meta-sync` quando o lead entra no painel.
 //    Idempotente por (lead, estágio) via `integration_log`; `force: true` reenvia.
 //
 // Chamada por `notifyMetaLeadQuality` (src/lib/adminLeads.ts) com o JWT do
@@ -107,8 +107,8 @@ type LeadRow = {
 
 /**
  * Estágio do CRM para um lead de formulário instantâneo (`meta_leads`).
- * `novo` não é mudança de estágio (o `lead_recebido` sai da meta-sync); os
- * outros três status viram `lead_contatado`/`lead_qualificado`/`lead_descartado`.
+ * `novo` não é mudança de estágio (o `initial_lead` sai da meta-sync); os
+ * outros três status viram `contacted`/`qualified`/`disqualified`.
  */
 async function sendCrmStage(
   admin: SupabaseClient,

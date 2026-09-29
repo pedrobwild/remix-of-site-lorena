@@ -212,6 +212,11 @@ describe("trackers de terceiros (CORE-25 / CORE-18)", () => {
     const pixel = script("meta-pixel")!.text;
     expect(pixel.indexOf("fbq.disablePushState=true")).toBeGreaterThan(-1);
     expect(pixel.indexOf("fbq.disablePushState=true")).toBeLessThan(pixel.indexOf("fbq('init'"));
+    // Configuração automática desligada ANTES do init: sem eventos inferidos
+    // de botões (era a origem do Purchase sem value no Events Manager).
+    const auto = pixel.indexOf("fbq('set','autoConfig',false,'123456789012')");
+    expect(auto).toBeGreaterThan(-1);
+    expect(auto).toBeLessThan(pixel.indexOf("fbq('init'"));
     document.head.querySelectorAll("[data-seo-injected]").forEach((n) => n.remove());
   });
 
