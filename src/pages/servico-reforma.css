@@ -11,7 +11,7 @@
 }
 
 .bwa-servico-intro {
-  padding: clamp(148px, 17vw, 220px) 0 clamp(56px, 7vw, 96px);
+  padding: clamp(97px, 10.56vw, 137px) 0 clamp(46px, 4.99vw, 68px);
 }
 
 .bwa-servico-head {
@@ -34,19 +34,19 @@
   max-width: 62ch;
   margin: clamp(16px, 2.4vw, 28px) 0 0;
   color: var(--bwa-ink-soft);
-  font-size: clamp(16px, 1.4vw, 19px);
+  font-size: clamp(16px, 1.33vw, 18px);
   line-height: 1.65;
 }
 
 .bwa-servico-block {
-  padding: clamp(48px, 6vw, 96px) 0;
+  padding: clamp(42px, 4.28vw, 68px) 0;
   border-top: 1px solid var(--bwa-line);
 }
 
 .bwa-servico-h2 {
   margin: 0 0 clamp(24px, 3vw, 40px);
   font-family: var(--bwa-font-display);
-  font-size: clamp(22px, 2.4vw, 32px);
+  font-size: clamp(19px, 1.95vw, 26px);
   font-weight: 600;
   letter-spacing: -0.01em;
 }
@@ -54,7 +54,7 @@
 .bwa-servico-h3 {
   margin: 0 0 clamp(20px, 2.6vw, 32px);
   font-family: var(--bwa-font-display);
-  font-size: clamp(18px, 1.8vw, 22px);
+  font-size: clamp(17px, 1.55vw, 19px);
   font-weight: 600;
 }
 
@@ -98,7 +98,7 @@
 .bwa-servico-cards h3 {
   margin: 0 0 12px;
   font-family: var(--bwa-font-display);
-  font-size: clamp(18px, 1.6vw, 21px);
+  font-size: clamp(17px, 1.45vw, 19px);
   font-weight: 600;
 }
 
@@ -144,7 +144,7 @@
 
 /* Bloco escuro — reforma à distância */
 .bwa-servico-remoto {
-  padding: clamp(64px, 8vw, 120px) 0;
+  padding: clamp(51px, 5.44vw, 82px) 0;
   background: var(--bwa-navy);
   color: var(--bwa-white);
 }
@@ -223,7 +223,7 @@
   display: flex;
   align-items: center;
   font-family: var(--bwa-font-display);
-  font-size: clamp(16px, 1.4vw, 18px);
+  font-size: clamp(16px, 1.32vw, 17px);
   font-weight: 600;
 }
 
@@ -242,14 +242,14 @@
 
 /* CTA final */
 .bwa-servico-cta {
-  padding: clamp(64px, 8vw, 120px) 0;
+  padding: clamp(51px, 5.44vw, 82px) 0;
   background: var(--bwa-navy-2);
   color: var(--bwa-white);
 }
 
 .bwa-servico-cta-grid {
   display: grid;
-  gap: clamp(28px, 4vw, 56px);
+  gap: clamp(28px, 3.31vw, 46px);
 }
 
 @media (min-width: 900px) {
@@ -262,7 +262,7 @@
 .bwa-servico-cta h2 {
   margin: 0;
   font-family: var(--bwa-font-display);
-  font-size: clamp(28px, 3.6vw, 44px);
+  font-size: clamp(23px, 2.86vw, 35px);
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.12;

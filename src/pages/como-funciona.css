@@ -17,14 +17,14 @@
 }
 
 .bwa-how-intro {
-  padding: clamp(148px, 17vw, 220px) 0 clamp(64px, 8vw, 112px);
+  padding: clamp(97px, 10.56vw, 137px) 0 clamp(51px, 5.51vw, 77px);
   border-bottom: 1px solid var(--bwa-line);
 }
 
 .bwa-how-intro-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr);
-  gap: clamp(40px, 8vw, 120px);
+  gap: clamp(37px, 5.44vw, 82px);
   align-items: end;
 }
 
@@ -32,7 +32,7 @@
   max-width: 900px;
   margin: 20px 0 0;
   font-family: var(--bwa-font-body);
-  font-size: clamp(40px, 5.6vw, 80px);
+  font-size: clamp(30px, 3.6vw, 60px);
   font-weight: 500;
   line-height: 1.02;
   letter-spacing: 0;
@@ -42,12 +42,12 @@
   max-width: 520px;
   margin: 0;
   color: var(--bwa-ink);
-  font-size: clamp(17px, 1.5vw, 21px);
+  font-size: clamp(17px, 1.36vw, 19px);
   line-height: 1.65;
 }
 
 .bwa-how-cards {
-  padding: clamp(72px, 9vw, 132px) 0;
+  padding: clamp(55px, 6.01vw, 88px) 0;
 }
 
 .bwa-how-grid {
@@ -98,7 +98,7 @@
 .bwa-how-card-title {
   margin: 0;
   font-family: "Manrope", sans-serif;
-  font-size: clamp(22px, 1.8vw, 28px);
+  font-size: clamp(19px, 1.48vw, 23px);
   font-weight: 600;
   letter-spacing: -.01em;
   color: var(--bwa-ink);
@@ -146,7 +146,7 @@
 }
 
 .bwa-how-cta {
-  padding: clamp(64px, 8vw, 120px) 0;
+  padding: clamp(51px, 5.44vw, 82px) 0;
   border-top: 1px solid var(--bwa-line);
   background: var(--bwa-navy);
   color: var(--bwa-white);
@@ -155,7 +155,7 @@
 .bwa-how-cta-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: clamp(28px, 4vw, 64px);
+  gap: clamp(28px, 3.17vw, 51px);
   align-items: center;
 }
 
@@ -163,7 +163,7 @@
   margin: 0;
   max-width: 22ch;
   font-family: "Manrope", sans-serif;
-  font-size: clamp(28px, 3.4vw, 48px);
+  font-size: clamp(23px, 2.69vw, 38px);
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -.01em;

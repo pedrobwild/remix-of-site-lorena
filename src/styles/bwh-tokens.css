@@ -51,21 +51,21 @@
 .bwh-label{display:inline-flex;align-items:center;gap:10px;margin:0}
 .bwh-label::before{content:"";width:8px;height:8px;background:currentColor;flex:none}
 .bwh-label--accent{color:var(--navyacc)}
-.bwh-srlabel{display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:36px 0 64px;border-top:1px solid var(--hair)}
+.bwh-srlabel{display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:36px 0 51px;border-top:1px solid var(--hair)}
 .bwh-sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 /* Título de seção — mesma escala/peso/tracking de .bwa-title. */
-.bwh-h2{font-weight:600;font-size:clamp(38px,5.4vw,86px);line-height:1.05;letter-spacing:-.055em;
+.bwh-h2{font-weight:600;font-size:clamp(30px, 3.5vw, 58px);line-height:1.05;letter-spacing:-.055em;
   padding-bottom:.04em;margin:0 0 32px;max-width:900px}
 .bwh-h2 em{font-style:italic;font-weight:300;letter-spacing:-.065em}
 /* Texto de apoio — mesmos tokens de .bwa-lead dentro de .bwa-shell. */
-.bwh-lead{font-size:clamp(18px,1.25vw,20px);line-height:1.5;letter-spacing:-.012em;max-width:34rem;
+.bwh-lead{font-size:clamp(17px, 1.12vw, 18px);line-height:1.5;letter-spacing:-.012em;max-width:34rem;
   margin:clamp(16px,2.4vw,32px) 0 0;color:rgba(26,35,50,.82)}
 .bwh-sec--dark .bwh-lead{color:rgba(255,255,255,.82)}
 /* Ritmo vertical das seções — igual ao da home (inclusive o passe de
    densidade desktop de home-bwa.css, a partir de 821px). */
-.bwh-sec{padding:clamp(100px,12vw,190px) 0}
+.bwh-sec{padding:clamp(71px, 7.59vw, 120px) 0}
 @media (min-width:821px){
-  .bwh-sec{padding:clamp(56px,6vw,88px) 0}
+  .bwh-sec{padding:clamp(46px, 4.36vw, 64px) 0}
 }
 /* A nav é fixa (min-height 76px) e a home só não precisa de folga porque começa
    com o hero de tela cheia. Nas internas o primeiro bloco encostava — e entre
@@ -78,7 +78,7 @@
 .bwh-sec--dark em{color:var(--dink2)}
 
 @media (max-width:600px){
-  .bwh-h2{font-size:clamp(39px,12vw,60px)}
+  .bwh-h2{font-size:clamp(29px, 8.4vw, 42px)}
 }
 
 /* Botões — réplica de .bwa-button (+ variantes light/ghost da home). */
@@ -118,7 +118,7 @@
 .bwh-faq details{border-bottom:1px solid var(--hair);counter-increment:bwhfaq}
 .bwh-faq summary{list-style:none;cursor:pointer;padding:28px 0;
   display:grid;grid-template-columns:58px minmax(0,1fr) 42px;align-items:center;gap:18px;
-  font-weight:500;font-size:clamp(22px,2.4vw,39px);line-height:1.15;letter-spacing:-.04em}
+  font-weight:500;font-size:clamp(19px, 1.91vw, 31px);line-height:1.15;letter-spacing:-.04em}
 .bwh-faq summary::-webkit-details-marker{display:none}
 .bwh-faq summary::before{content:counter(bwhfaq,decimal-leading-zero);
   font-family:var(--fm);font-size:10px;font-weight:400;letter-spacing:.08em;color:var(--navyacc)}
@@ -129,9 +129,9 @@
   transition:background-size .25s ease}
 .bwh-faq details[open] summary::after{background-size:13px 1px,1px 0}
 .bwh-faq details p{padding:0 52px 32px 76px;margin:0;color:var(--ink2);
-  font-size:clamp(16px,1.3vw,20px);line-height:1.7;max-width:900px}
+  font-size:clamp(16px, 1.17vw, 18px);line-height:1.7;max-width:900px}
 @media (max-width:700px){
-  .bwh-faq summary{grid-template-columns:36px minmax(0,1fr) 30px;gap:12px;font-size:20px}
+  .bwh-faq summary{grid-template-columns:36px minmax(0,1fr) 30px;gap:12px;font-size:18px}
   .bwh-faq summary::after{width:30px;height:30px}
   .bwh-faq details p{padding:0 0 28px 48px}
 }
