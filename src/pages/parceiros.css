@@ -11,13 +11,13 @@
 
 /* 01 · Hero */
 .bwa-parc-hero {
-  padding: clamp(64px, 9vw, 128px) 0 0;
+  padding: clamp(51px, 6.05vw, 86px) 0 0;
 }
 
 .bwa-parc-hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: clamp(32px, 5vw, 64px);
+  gap: clamp(32px, 3.97vw, 51px);
   align-items: start;
 }
 
@@ -28,7 +28,7 @@
 }
 
 .bwa-parc-hero h1 {
-  font-size: clamp(30px, 4.6vw, 54px);
+  font-size: clamp(25px, 3.58vw, 42px);
   line-height: 1.08;
   letter-spacing: -0.02em;
   margin: 18px 0 20px;
@@ -41,7 +41,7 @@
 }
 
 .bwa-parc-lead {
-  font-size: clamp(16px, 1.6vw, 19px);
+  font-size: clamp(16px, 1.52vw, 18px);
   line-height: 1.6;
   color: var(--bwa-ink-soft);
   max-width: 56ch;
@@ -78,7 +78,7 @@
 
 .bwa-parc-seal strong {
   display: block;
-  font-size: clamp(19px, 2vw, 23px);
+  font-size: clamp(18px, 1.74vw, 20px);
   letter-spacing: -0.01em;
   margin: 12px 0 10px;
 }
@@ -109,7 +109,7 @@
 /* Faixa de fatos */
 .bwa-parc-facts {
   list-style: none;
-  margin: clamp(40px, 5vw, 64px) 0 0;
+  margin: clamp(37px, 3.97vw, 51px) 0 0;
   padding: clamp(20px, 2.6vw, 32px) 0;
   border-top: 1px solid color-mix(in srgb, var(--bwa-ink) 12%, transparent);
   border-bottom: 1px solid color-mix(in srgb, var(--bwa-ink) 12%, transparent);
@@ -133,32 +133,32 @@
 .bwa-parc-facts strong {
   display: block;
   font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: clamp(20px, 2.2vw, 26px);
+  font-size: clamp(18px, 1.86vw, 22px);
   color: var(--bwa-accent);
   margin-bottom: 4px;
 }
 
 /* Seções genéricas */
 .bwa-parc-section {
-  padding: clamp(64px, 8vw, 112px) 0 0;
+  padding: clamp(51px, 5.51vw, 77px) 0 0;
 }
 
 .bwa-parc-section--alt {
-  margin-top: clamp(64px, 8vw, 112px);
-  padding-top: clamp(56px, 7vw, 96px);
-  padding-bottom: clamp(56px, 7vw, 96px);
+  margin-top: clamp(51px, 5.51vw, 77px);
+  padding-top: clamp(46px, 4.99vw, 68px);
+  padding-bottom: clamp(46px, 4.99vw, 68px);
   background: var(--bwa-paper-deep);
 }
 
 .bwa-parc-section--alt + .bwa-parc-section,
 .bwa-parc-section--alt + .bwa-contact-form-sec {
-  padding-top: clamp(64px, 8vw, 112px);
+  padding-top: clamp(51px, 5.51vw, 77px);
 }
 
 .bwa-parc-section--dark {
-  margin-top: clamp(64px, 8vw, 112px);
-  padding-top: clamp(56px, 7vw, 96px);
-  padding-bottom: clamp(56px, 7vw, 96px);
+  margin-top: clamp(51px, 5.51vw, 77px);
+  padding-top: clamp(46px, 4.99vw, 68px);
+  padding-bottom: clamp(46px, 4.99vw, 68px);
   background: var(--bwa-accent-deep);
   color: var(--bwa-paper);
 }
@@ -169,10 +169,10 @@
 }
 
 .bwa-parc-section h2 {
-  font-size: clamp(24px, 3.2vw, 38px);
+  font-size: clamp(20px, 2.61vw, 31px);
   line-height: 1.15;
   letter-spacing: -0.015em;
-  margin: 14px 0 clamp(28px, 4vw, 44px);
+  margin: 14px 0 clamp(28px, 3.59vw, 40px);
   max-width: 26ch;
 }
 
@@ -208,7 +208,7 @@
 }
 
 .bwa-parc-card h3 {
-  font-size: clamp(19px, 2vw, 23px);
+  font-size: clamp(18px, 1.74vw, 20px);
   letter-spacing: -0.01em;
   margin: 0;
 }

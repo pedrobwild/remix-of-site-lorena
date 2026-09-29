@@ -5730,7 +5730,7 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
 /* Texto embaixo do post */
 .bwa-bastidores-body{padding:20px 2px 0}
 .bwa-bastidores-tag{margin:0 0 8px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55)}
-.bwa-bastidores-name{margin:0 0 8px;font-family:"Manrope",sans-serif;font-size:clamp(18px,1.4vw,21px);font-weight:500;line-height:1.2;letter-spacing:-.015em;color:var(--bwa-white)}
+.bwa-bastidores-name{margin:0 0 8px;font-family:"Manrope",sans-serif;font-size:clamp(17px, 1.27vw, 19px);font-weight:500;line-height:1.2;letter-spacing:-.015em;color:var(--bwa-white)}
 .bwa-bastidores-text{margin:0;font-size:14px;line-height:1.55;color:rgba(255,255,255,.66)}
 
 .bwa-bastidores-foot{display:grid;grid-template-columns:auto minmax(120px,320px) auto;align-items:center;gap:18px;margin-top:32px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5)}
