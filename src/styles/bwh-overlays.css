@@ -38,7 +38,15 @@
   min-height:42px;padding:11px 4px;border:0;background:transparent;text-decoration:underline;cursor:pointer}
 /* skeleton na mesma proporção do card de projeto (4/3, igual à home) */
 .bwh-pf-skel{aspect-ratio:4/3;background:var(--bg-alt);animation:bwh-pulse 1.4s ease-in-out infinite}
+/* card de esqueleto completo: mídia + duas linhas de texto, na altura do card real */
+.bwh-pf-skel-card{display:flex;flex-direction:column;gap:10px}
+.bwh-pf-skel--line{aspect-ratio:auto;height:14px;width:70%}
+.bwh-pf-skel--line.bwh-pf-skel--meta{width:45%;height:12px}
+/* esqueletos de bairros e filtros, na altura dos elementos reais */
+.bwh-pf-skel--inline{display:inline-block;aspect-ratio:auto;width:90px;height:18px}
+.bwh-pf-skel--select{aspect-ratio:auto;height:42px;width:min(100%,240px)}
 @keyframes bwh-pulse{0%,100%{opacity:.6}50%{opacity:.9}}
+@media (prefers-reduced-motion: reduce){.bwh-pf-skel{animation:none}}
 
 /* ============================================================
  * DETALHE DO PROJETO (.bw-detail) — remoção do chrome de prancha

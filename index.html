@@ -94,6 +94,63 @@
       rel="stylesheet"
     />
 
+    <!-- CSS crítico anti-CLS da navegação. O nav compartilhado (.bwa-nav) é
+         fixo, mas o CSS dele vive em chunks lazy (home-bwa / bwa-internal).
+         Sem este bloco, o primeiro paint das páginas internas mostra a nav
+         no fluxo normal com o logo a 1607×502 (~622 px de altura) e todo o
+         conteúdo sobe quando o CSS chega (CLS ~0,34 no /portfolio). Espelha
+         as regras finais de home-bwa.css; os chunks mantêm os mesmos valores. -->
+    <style>
+      .bwa-nav {
+        position: fixed;
+        inset: 0 0 auto;
+        z-index: 1000;
+        color: var(--bwa-navy, #0B2342);
+        background: rgba(255, 255, 255, .92);
+        border-bottom: 1px solid var(--bwa-line, rgba(17, 53, 91, .12));
+      }
+      .bwa-nav-inner {
+        min-height: 68px;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        padding-inline: clamp(20px, 2.2vw, 36px);
+      }
+      .bwa-wordmark {
+        display: block;
+        width: clamp(118px, 10vw, 146px);
+        line-height: 0;
+      }
+      .bwa-wordmark img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      .bwa-nav-links {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(18px, 2.2vw, 40px);
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .bwa-nav-links a {
+        white-space: nowrap;
+      }
+      @media (max-width: 900px) {
+        .bwa-nav-inner { min-height: 60px; }
+      }
+      /* Painel do dropdown fica oculto até o CSS chegar (senão infla o nav
+         no primeiro paint e tudo salta quando ele vira position:absolute). */
+      .bwa-nav-dd-panel { display: none; }
+      .bwa-nav-dd.bwa-open .bwa-nav-dd-panel { display: grid; }
+      /* O link "pular para o conteúdo" e o menu mobile são fixos/ocultos; sem
+         regra eles entram no fluxo e empurram o conteúdo por um frame. */
+      .bwa-skip { position: fixed; }
+      .bwa-mobile-menu { position: fixed; display: none; }
+      body, main { margin: 0; }
+    </style>
+
     <!-- Preload do hero da home (LCP no desktop). Este HTML atende todas as
          rotas, então o link só é criado em "/" — e só vale em telas ≥ 901 px:
          no celular o título ocupa a primeira tela (o texto é o LCP) e a

@@ -136,6 +136,29 @@ export default function BewildPortfolioPage() {
               Cada projeto aqui recebeu estudo próprio de layout, marcenaria, iluminação e acabamento, pensado pro uso que o apartamento precisa sustentar. Do imóvel cru à entrega das chaves.
             </p>
 
+            {/* Reserva de altura para a navegação por bairro + filtros, que só
+                existem depois dos dados — mesmas classes do conteúdo real,
+                então a altura reservada é idêntica por construção. */}
+            {loading && (
+              <div aria-hidden="true">
+                <nav className="bwh-mono" style={{ margin: "0 0 24px", display: "flex", flexWrap: "wrap", gap: "8px 16px" }}>
+                  <span>Por bairro:</span>
+                  {/* 16 itens: os bairros reais quebram em ~2 linhas nessa largura. */}
+                  {Array.from({ length: 16 }, (_, i) => (
+                    <span key={i} className="bwh-pf-skel bwh-pf-skel--inline" />
+                  ))}
+                </nav>
+                <div className="bwh-pf-controls">
+                  {["Bairro", "Ordenar por"].map((label) => (
+                    <div key={label} className="bwh-pf-field">
+                      <span className="bwh-mono bwh-pf-field__label">{label}</span>
+                      <div className="bwh-pf-skel bwh-pf-skel--select" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {bairroPages.length > 0 && (
               <nav aria-label="Reformas por bairro" className="bwh-mono" style={{ margin: "0 0 24px", display: "flex", flexWrap: "wrap", gap: "8px 16px" }}>
                 <span>Por bairro:</span>
@@ -203,10 +226,10 @@ export default function BewildPortfolioPage() {
         {/* LISTA */}
         <section className="bwh-sec">
           <div className="bwh-wrap">
-            {!loading && !error && total > 0 && (
-              <div className="bwh-srlabel">
+            {!error && (loading || total > 0) && (
+              <div className="bwh-srlabel" aria-busy={loading || undefined}>
                 <span className="bwh-mono bwh-label bwh-label--accent">
-                  {pad(total)} · {total === 1 ? "Projeto no índice" : "Projetos no índice"}
+                  {loading ? "\u00A0" : `${pad(total)} · ${total === 1 ? "Projeto no índice" : "Projetos no índice"}`}
                 </span>
               </div>
             )}
@@ -217,9 +240,17 @@ export default function BewildPortfolioPage() {
                 aria-busy="true"
                 aria-live="polite"
               >
-                <div className="bwh-pf-skel" />
-                <div className="bwh-pf-skel" />
-                <div className="bwh-pf-skel" />
+                {/* Um esqueleto por card do primeiro lote, na mesma proporção
+                    do card real (mídia 4/3 + duas linhas de texto): a grade
+                    nasce com a altura final e nada desce quando os projetos
+                    chegam do banco. */}
+                {Array.from({ length: PAGE_SIZE }, (_, i) => (
+                  <div key={i} className="bwh-pf-skel-card" aria-hidden="true">
+                    <div className="bwh-pf-skel" />
+                    <div className="bwh-pf-skel bwh-pf-skel--line" />
+                    <div className="bwh-pf-skel bwh-pf-skel--line bwh-pf-skel--meta" />
+                  </div>
+                ))}
               </div>
             )}
 
