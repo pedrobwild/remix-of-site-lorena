@@ -33,6 +33,7 @@ const KEY_PATHS = [
   "/portfolio",
   "/conteudos",
   "/diagnostico",
+  "/servicos",
   "/como-funciona",
   "/onde-atuamos",
   "/reforma-de-apartamento-sao-paulo",

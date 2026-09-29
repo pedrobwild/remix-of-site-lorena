@@ -189,6 +189,7 @@ export const SERVICE_PAGES: Readonly<Record<string, string>> = {
   "/reforma-de-studio-sao-paulo": "reforma-studio",
   "/reforma-de-cobertura-sao-paulo": "reforma-cobertura",
   "/marcenaria": "marcenaria",
+  "/servicos": "servicos",
   "/como-funciona": "como-funciona",
   "/onde-atuamos": "onde-atuamos",
   "/autorizacao-condominio": "autorizacao-condominio",

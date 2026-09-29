@@ -88,6 +88,7 @@ Deno.serve(async (req) => {
     { loc: `${base}/contato`, priority: "0.7", changefreq: "monthly", lastmod: "2026-09-26" },
     { loc: `${base}/mapa`, priority: "0.7", changefreq: "monthly", lastmod: "2026-09-26" },
     { loc: `${base}/mapa-do-site`, priority: "0.5", changefreq: "weekly" },
+    { loc: `${base}/servicos`, priority: "0.9", changefreq: "monthly" },
     { loc: `${base}/escopo`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/como-funciona`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/onde-atuamos`, priority: "0.7", changefreq: "monthly" },

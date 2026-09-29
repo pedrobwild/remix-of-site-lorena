@@ -49,7 +49,7 @@ export default function BwaFooter() {
           <div className="bwa-footer-column">
             <h3>Navegação</h3>
             <nav>
-              <a href="/#certeza">Como trabalhamos</a>
+              <a href="/servicos">Serviços</a>
               <a href="/marcenaria">Marcenaria</a>
               <a href="/como-funciona">Como funciona</a>
               <a href="/portfolio">Projetos</a>
