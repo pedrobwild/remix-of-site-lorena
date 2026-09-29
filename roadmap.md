@@ -11,4 +11,4 @@
 - [x] Consultar o Search Console sobre a trilha de /servicos.
 
 - [x] Texto do hero da home (60 dias úteis)
-- [ ] /admin/faq: "Mostrar na home" + home lendo do banco
+- [x] /admin/faq: "Mostrar na home" + home lendo do banco
