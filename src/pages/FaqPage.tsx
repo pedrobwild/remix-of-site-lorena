@@ -21,12 +21,24 @@ type RespostaIa = {
 
 /* ============================================================
  * FaqPage — /faq
- * Mesmas perguntas e respostas do bloco "FAQ · 09" da home,
- * com a mesma linguagem visual (.bwa). Copy travada pelo CEO:
- * qualquer mudança de texto precisa acontecer aqui E na home.
+ *
+ * Cada assunto aparece uma vez só na página (consolidação de 29/09/2026):
+ * - Lista principal: tabela `assistant_kb` (/admin/faq → aba "Página /faq"),
+ *   agrupada por tema. Ali ficam os temas centrais: serviço, região, preço,
+ *   pagamento, prazo, atraso, contrato fechado, garantia, projeto, escopo,
+ *   chaves, condomínio, acompanhamento e locação.
+ * - Seções fixas (Portfólio, Como fazer uma reforma, Indicações): só o que é
+ *   exclusivo delas. Não repita nelas assunto que já está no banco.
+ * - FAQ_ITEMS + FAQ_ITEMS_SEM_BANCO: lista principal enquanto o banco não
+ *   carregou (HTML do servidor, leitores sem JavaScript) ou se ele falhar.
+ *   Espelham as respostas do banco: mudou lá, mude aqui.
+ * - FAQ_ITEMS também é o bloco "FAQ · 09" da home (home-bwa-body.ts). Copy
+ *   travada pelo CEO: qualquer mudança de texto acontece aqui E na home.
  * ============================================================ */
 
-const FAQ_ITEMS: { q: string; a: string }[] = [
+type FaqItem = { q: string; a: string; href?: string; linkLabel?: string };
+
+const FAQ_ITEMS: FaqItem[] = [
   {
     q: "O que é uma reforma turnkey?",
     a: "Turnkey quer dizer chave na mão. Você assina um contrato, a gente executa tudo e devolve o imóvel pronto para usar. É o modelo da Bewild desde o primeiro projeto.",
@@ -45,39 +57,63 @@ const FAQ_ITEMS: { q: string; a: string }[] = [
   },
   {
     q: "Quanto tempo leva uma reforma?",
-    a: "A maioria fica pronta em torno de 60 dias úteis. A sua data exata sai definida no contrato, antes de a obra começar.",
+    a: "Cerca de 60 dias úteis de obra para studios e apartamentos compactos de até 30 m²; imóveis maiores ou com integração de varanda levam mais. A sua data exata fica escrita no contrato, antes de a obra começar.",
   },
   {
     q: "Onde vocês atuam?",
-    a: "Atendemos São Paulo capital, com obras entregues em mais de 27 bairros. Seu imóvel está fora dessa região? Manda mesmo assim: a gente avalia caso a caso.",
+    a: "Só em São Paulo capital, com obras entregues em mais de 27 bairros. Não atendemos a Grande São Paulo nem o interior, mas o dono do imóvel pode morar em qualquer cidade: o acompanhamento é todo à distância.",
   },
 ];
 
+/* Complemento da lista principal só enquanto o banco não carregou (ou se
+ * falhar), para o HTML do servidor não perder preço, atraso, garantia,
+ * condomínio e portfólio. Espelha os itens `preco`, `atraso`, `garantia`,
+ * `condominio` e `confianca` do banco. Com o banco no ar, some. */
+const FAQ_ITEMS_SEM_BANCO: FaqItem[] = [
+  {
+    q: "Quanto custa uma reforma?",
+    a: "Nas 58 obras completas da nossa base de 2025 (fevereiro a outubro), em imóveis de 21 a 35 m², a mediana foi de R$ 63.763 por obra, ou R$ 2.389 por metro quadrado, com projeto, obra, marcenaria sob medida, mobília e eletros incluídos. Metade das obras ficou entre R$ 2.107 e R$ 2.716 por m². O valor do seu imóvel sai fechado na proposta, com memorial item a item, antes de a obra começar.",
+    href: "/orcamento",
+    linkLabel: "Pedir um orçamento →",
+  },
+  {
+    q: "E se a obra atrasar?",
+    a: "A data de entrega entra no contrato antes de a obra começar. Se o atraso for por nossa conta, pagamos multa por dia de atraso, prevista em contrato. E cada etapa fica registrada no Bwild Workflow, visível para você do começo ao fim.",
+  },
+  {
+    q: "Qual é a garantia?",
+    a: "São 5 anos de garantia em contrato, para a obra e para a marcenaria. Se algo falhar nesse período, quem resolve é a Bewild.",
+  },
+  {
+    q: "Preciso de autorização do condomínio para reformar?",
+    a: "Sim. A maioria dos condomínios pede comunicado prévio, plano de reforma com ART ou RRT do responsável técnico (NBR 16280) e horários definidos para obra e elevador. Essa documentação e o pedido de liberação ficam com a Bewild, antes de a obra começar: você não precisa tratar com a administradora.",
+    href: "/autorizacao-condominio",
+    linkLabel: "Guia completo: autorização de reforma no condomínio →",
+  },
+  {
+    q: "Posso ver obras que a Bewild já entregou?",
+    a: "Pode. São mais de 160 reformas entregues em mais de 27 bairros de São Paulo, e o portfólio tem uma página para cada projeto, com fotos reais, metragem, bairro e o que foi feito. Para saber se há obra no seu prédio ou uma unidade para visitar, a equipe confere para você.",
+    href: "/portfolio",
+    linkLabel: "Ver o portfólio completo →",
+  },
+];
+
+/** Lista principal quando o banco não está disponível. */
+const FALLBACK_ITEMS: FaqItem[] = [...FAQ_ITEMS, ...FAQ_ITEMS_SEM_BANCO];
+
 /* Bloco de conteúdo (não é copy travada da home): responde a buscas do tipo
- * "como fazer uma reforma de apartamento", "por onde começar uma reforma",
- * "quanto custa reformar apartamento em São Paulo". */
-const GUIA_ITEMS: { q: string; a: string; href?: string; linkLabel?: string }[] = [
+ * "como fazer uma reforma de apartamento" e "por onde começar uma reforma".
+ * Preço, prazo e condomínio ficam só na lista principal. */
+const GUIA_ITEMS: FaqItem[] = [
   {
     q: "Como fazer uma reforma de apartamento, passo a passo?",
-    a: "Na prática são seis etapas: definir o objetivo do imóvel (morar, alugar ou vender), levantar a metragem e o estado atual, aprovar o projeto em 3D, fechar preço e prazo em contrato, executar a obra com marcenaria e mobília, e receber o apartamento pronto para usar. Na Bewild essas seis etapas acontecem dentro de um único contrato, com um só responsável.",
+    a: "Na ordem: pedido de orçamento com a planta e o objetivo do imóvel (morar, alugar ou vender); proposta com preço, prazo e memorial item a item; projeto 3D revisado até a sua aprovação; projeto executivo, ART e liberação no condomínio; obra com equipe e marcenaria próprias, acompanhada pelo Bwild Workflow; e entrega com vistoria final. Na Bewild, tudo isso cabe num contrato só, com um único responsável.",
+    href: "/como-funciona",
+    linkLabel: "Ver como funciona, etapa por etapa →",
   },
   {
     q: "Por onde começar uma reforma de apartamento?",
     a: "Comece pelo objetivo, não pelo acabamento. Um apartamento para short stay pede layout, marcenaria e mobília pensados para alta rotatividade; um para morar pede outra coisa. Definido o objetivo, o passo seguinte é o projeto — decidir tudo no papel e no 3D é o que evita mudança cara no meio da obra.",
-  },
-  {
-    q: "Quanto custa reformar um apartamento em São Paulo?",
-    a: "Depende da metragem, do estado do imóvel e do nível de acabamento. Nas obras que entregamos, apartamentos compactos de 21 a 35 m² ficam em torno de R$ 2.400 por metro quadrado, já incluindo projeto, obra, marcenaria e mobília. O valor do seu imóvel sai fechado no diagnóstico, antes de a obra começar.",
-  },
-  {
-    q: "Quanto tempo demora uma reforma de apartamento?",
-    a: "A maior parte das nossas obras fica pronta em cerca de 60 dias úteis, referência para apartamentos de até 30 m². A data exata entra no contrato antes do início — e se o prazo atrasar por nossa conta, o problema é nosso.",
-  },
-  {
-    q: "Preciso de autorização do condomínio para reformar?",
-    a: "Sim. A maioria dos condomínios pede comunicado prévio, ART ou RRT do responsável técnico e horários definidos para obra e para uso do elevador. Toda essa parte burocrática com o condomínio é conduzida pela nossa equipe, não por você.",
-    href: "/autorizacao-condominio",
-    linkLabel: "Guia completo: autorização de reforma no condomínio →",
   },
   {
     q: "Reforma com empresa única ou contratando profissionais separados?",
@@ -89,22 +125,11 @@ const GUIA_ITEMS: { q: string; a: string; href?: string; linkLabel?: string }[] 
   },
 ];
 
-/* Bloco "Contratos e comissões": regras do contrato fechado e do programa de
- * indicações (parceiros e clientes). Copy segue as decisões travadas do dono:
- * sem percentual público de comissão — o valor é definido no termo individual. */
-const CONTRATO_ITEMS: { q: string; a: string; href?: string; linkLabel?: string }[] = [
-  {
-    q: "Como funciona o contrato fechado da Bewild?",
-    a: "Preço e prazo são definidos e assinados antes de a obra começar, com memorial descritivo item a item. Se o valor final ultrapassar o combinado, a diferença é por nossa conta — sem aditivo surpresa. O contrato cobre projeto, obra, marcenaria, mobiliário e entrega.",
-  },
-  {
-    q: "O que acontece se a obra atrasar?",
-    a: "A data de entrega entra no contrato antes do início da obra. Se o atraso for por nossa conta, a indenização prevista em contrato é aplicada — você não paga por um problema nosso. E tudo fica registrado no Bwild Workflow, visível para você do começo ao fim.",
-  },
-  {
-    q: "Qual é a garantia da reforma?",
-    a: "Cinco anos de garantia, cobrindo a execução da obra e o que está no contrato. Se algo der errado dentro desse período, a Bewild resolve.",
-  },
+/* Bloco "Indicações e comissões": regras do programa de indicações (parceiros
+ * e clientes). Contrato fechado, atraso e garantia ficam na lista principal.
+ * Copy segue as decisões travadas do dono: sem percentual público de
+ * comissão — o valor é definido no termo individual. */
+const INDICACAO_ITEMS: FaqItem[] = [
   {
     q: "Como funciona a comissão para parceiros que indicam?",
     a: "Corretores, imobiliárias, incorporadoras, arquitetos e administradoras de locação recebem comissão por contrato indicado. O percentual não é público: é definido no termo individual, conforme o perfil e o volume de indicações, calculado sobre o valor líquido do contrato e com relatório mensal. O pagamento acontece após o recebimento da Bewild.",
@@ -113,7 +138,7 @@ const CONTRATO_ITEMS: { q: string; a: string; href?: string; linkLabel?: string 
   },
   {
     q: "Como funciona a recompensa para quem indica um amigo?",
-    a: "Qualquer pessoa pode indicar, sem precisar ser do mercado. O valor da recompensa é combinado com você e confirmado por escrito no momento do registro, e o pagamento é feito por Pix após o fechamento do contrato do indicado.",
+    a: "Qualquer pessoa pode indicar, sem precisar ser do mercado. O valor da recompensa é combinado com você e confirmado por escrito no momento do registro, e o pagamento é feito por Pix após o fechamento do contrato e a confirmação do primeiro pagamento do indicado.",
     href: "/indique-um-amigo",
     linkLabel: "Indicar um amigo agora →",
   },
@@ -123,21 +148,15 @@ const CONTRATO_ITEMS: { q: string; a: string; href?: string; linkLabel?: string 
   },
   {
     q: "Meu indicado já estava negociando com a Bewild. Conta?",
-    a: "Não. A indicação só vale para quem ainda não está em negociação com a gente — evita conflito entre indicadores e mantém a regra clara para todo mundo.",
+    a: "Não. A indicação só vale para quem ainda não estava em negociação com a Bewild nem chegou por um canal próprio da empresa. A regra evita disputa entre indicadores e vale para todo mundo.",
   },
 ];
 
-/* Bloco "Portfólio": dúvidas sobre as obras entregues, com cada resposta
- * ligada a um projeto real (/portfolio/...) ou a uma página de bairro
- * (/reforma/...). Links usam slugs reais do banco — se um projeto sair do
- * ar, trocar o href aqui. */
-const PORTFOLIO_ITEMS: { q: string; a: string; href?: string; linkLabel?: string }[] = [
-  {
-    q: "Posso ver obras reais entregues pela Bewild?",
-    a: "Sim. O portfólio reúne mais de 160 projetos em São Paulo, cada um com página própria, fotos reais da obra, metragem, bairro e o detalhamento do que foi feito — do desafio ao resultado.",
-    href: "/portfolio",
-    linkLabel: "Ver o portfólio completo →",
-  },
+/* Bloco "Portfólio": exemplos de obras entregues, cada um ligado a um projeto
+ * ou case real. "Posso ver as obras?", preço e região ficam na lista
+ * principal. Links usam slugs reais do banco — se um projeto sair do ar,
+ * trocar o href aqui. */
+const PORTFOLIO_ITEMS: FaqItem[] = [
   {
     q: "Vocês já reformaram um studio pequeno, de uns 25 m²?",
     a: "Sim, é a nossa especialidade. Um exemplo é o AB – Península Vila Madalena, um studio de 23 m² reformado para locação, com marcenaria sob medida para aproveitar cada centímetro.",
@@ -145,28 +164,10 @@ const PORTFOLIO_ITEMS: { q: string; a: string; href?: string; linkLabel?: string
     linkLabel: "Ver o projeto na Vila Madalena →",
   },
   {
-    q: "Como fica um apartamento reformado para short stay?",
-    a: "Layout, marcenaria e mobília são pensados para alta rotatividade e boas fotos de anúncio. O FG – Nurban Vila Madalena, de 26 m², é um caso real: reforma completa voltada para locação de curta temporada.",
-    href: "/portfolio/fg",
-    linkLabel: "Ver o caso de short stay →",
-  },
-  {
-    q: "Vocês têm obras no meu bairro?",
-    a: "Provavelmente sim: são obras entregues em mais de 27 bairros de São Paulo. Cada região com pelo menos três projetos tem uma página própria, com as fotos e os detalhes de cada obra.",
-    href: "/reforma/vila-madalena",
-    linkLabel: "Exemplo: obras na Vila Madalena →",
-  },
-  {
-    q: "Dá para ver o antes e depois de uma reforma?",
-    a: "Dá. O case do studio de 26 m² na Vila Madalena mostra a obra da medição à entrega, com fotos do antes, da obra e do resultado final — e o passo a passo de cada decisão.",
+    q: "Dá para ver o antes e depois de um studio para short stay?",
+    a: "Dá. O FG – Nurban Vila Madalena é um studio de 26 m² reformado para aluguel de curta temporada, e o case mostra a obra da medição à entrega: fotos do antes, da obra e do resultado, com o passo a passo de cada decisão. Layout, marcenaria e mobília foram pensados para alta rotatividade e boas fotos de anúncio.",
     href: "/conteudos/antes-e-depois-studio-26-m2-vila-madalena",
     linkLabel: "Ler o case de antes e depois →",
-  },
-  {
-    q: "Quanto custa uma reforma como as do portfólio?",
-    a: "Nas obras entregues, apartamentos compactos de 21 a 35 m² ficam em torno de R$ 2.400 por metro quadrado, incluindo projeto, obra, marcenaria e mobília. O valor do seu imóvel sai fechado no diagnóstico, antes de a obra começar.",
-    href: "/orcamento",
-    linkLabel: "Pedir um orçamento →",
   },
 ];
 
@@ -174,7 +175,7 @@ export default function FaqPage() {
   const { settings } = useSiteSettings();
   const [aberto, setAberto] = useState("f-0");
   const [guiaAberto, setGuiaAberto] = useState(-1);
-  const [contratoAberto, setContratoAberto] = useState(-1);
+  const [indicacaoAberto, setIndicacaoAberto] = useState(-1);
   const [portfolioAberto, setPortfolioAberto] = useState(-1);
   const [pergunta, setPergunta] = useState("");
   const [carregando, setCarregando] = useState(false);
@@ -262,14 +263,14 @@ export default function FaqPage() {
   useSeo({
     title: "Dúvidas sobre arquitetura, engenharia e reforma em SP | Bewild",
     description:
-      "Dúvidas sobre arquitetura, engenharia e reforma de apartamento em SP respondidas: quanto custa, quanto tempo leva, contrato fechado, garantia, comissão de indicações, autorização do condomínio, etapas da obra e obras reais do portfólio da Bewild, com links para projetos e bairros.",
+      "Dúvidas sobre arquitetura, engenharia e reforma de apartamento em SP respondidas: quanto custa, quanto tempo leva, contrato fechado, garantia, comissão de indicações, autorização do condomínio, etapas da obra e obras reais do portfólio da Bewild, com links para os projetos.",
     keywords:
       "dúvidas sobre arquitetura e engenharia, projeto de arquitetura em São Paulo, dúvidas sobre reforma de apartamento em SP, reforma de apartamento em SP, custo de reforma, prazo de reforma, contrato fechado de reforma, garantia de reforma, comissão de indicação de imóvel, autorização de reforma condomínio, Bewild",
     canonicalPath: "/faq",
     ogType: "website",
     // Um único FAQPage por página (só JSON-LD, sem microdata duplicada), com
     // exatamente as perguntas visíveis: as do banco (ou a lista fixa) + os
-    // blocos "Contratos e comissões" e "Como fazer uma reforma".
+    // blocos Portfólio, Como fazer uma reforma e Indicações.
     jsonLd: settings
       ? [
           breadcrumbJsonLd(settings, [
@@ -279,11 +280,11 @@ export default function FaqPage() {
           faqJsonLd([
             ...(kb
               ? kb.map((i) => ({ q: i.pergunta, a: i.resposta }))
-              : FAQ_ITEMS.map((i) => ({ q: i.q, a: i.a }))),
+              : FALLBACK_ITEMS.map((i) => ({ q: i.q, a: i.a }))),
             // Blocos fixos exibidos em qualquer cenário (com ou sem o banco).
-            ...CONTRATO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
-            ...GUIA_ITEMS.map((i) => ({ q: i.q, a: i.a })),
             ...PORTFOLIO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
+            ...GUIA_ITEMS.map((i) => ({ q: i.q, a: i.a })),
+            ...INDICACAO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
           ]),
         ]
       : undefined,
@@ -358,7 +359,7 @@ export default function FaqPage() {
               ))
             ) : (
               <div className="bwa-faq-list">
-                {FAQ_ITEMS.map((item, i) => {
+                {FALLBACK_ITEMS.map((item, i) => {
                   const key = `f-${i}`;
                   const open = aberto === key;
                   return (
@@ -378,64 +379,17 @@ export default function FaqPage() {
                       </h2>
                       <div id={`faq-resposta-${i}`} className="bwa-faq-answer">
                         <p>{item.a}</p>
+                        {item.href && (
+                          <a className="bwa-faqpage-guia-link" href={item.href}>
+                            {item.linkLabel}
+                          </a>
+                        )}
                       </div>
                     </article>
                   );
                 })}
               </div>
             )}
-          </div>
-        </section>
-
-        <section className="bwa-faqpage-intro bwa-faqpage-contrato" aria-labelledby="faq-contrato-title">
-          <div className="bwa-shell bwa-faq-head bwa-faqpage-head">
-            <p className="bwa-label">Contratos e comissões</p>
-            <div>
-              <h2 className="bwa-title" id="faq-contrato-title">
-                Contrato fechado e indicações, <em>sem letra miúda.</em>
-              </h2>
-              <p className="bwa-faqpage-lead">
-                Como funciona o contrato fechado, o que acontece se a obra atrasar
-                e as regras do programa de indicações — para parceiros do mercado
-                e para quem só quer indicar um amigo.
-              </p>
-            </div>
-          </div>
-
-          <div className="bwa-shell">
-            <div className="bwa-faq-list">
-              {CONTRATO_ITEMS.map((item, i) => {
-                const open = contratoAberto === i;
-                return (
-                  <article key={item.q} className={`bwa-faq-item${open ? " bwa-open" : ""}`}>
-                    <h3 className="bwa-faqpage-q">
-                      <button
-                        className="bwa-faq-question"
-                        type="button"
-                        aria-expanded={open}
-                        aria-controls={`faq-contrato-resposta-${i}`}
-                        onClick={() => {
-                          if (!open) track("faq_question_click", { value: { pergunta: item.q } });
-                          setContratoAberto(open ? -1 : i);
-                        }}
-                      >
-                        <span className="bwa-faq-num">{String(i + 1).padStart(2, "0")}</span>
-                        <strong>{item.q}</strong>
-                        <span className="bwa-faq-icon" aria-hidden="true" />
-                      </button>
-                    </h3>
-                    <div id={`faq-contrato-resposta-${i}`} className="bwa-faq-answer">
-                      <p>{item.a}</p>
-                      {item.href && (
-                        <a className="bwa-faqpage-guia-link" href={item.href}>
-                          {item.linkLabel}
-                        </a>
-                      )}
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
           </div>
         </section>
 
@@ -447,9 +401,8 @@ export default function FaqPage() {
                 Obras reais, <em>para ver antes de decidir.</em>
               </h2>
               <p className="bwa-faqpage-lead">
-                Dúvidas sobre os projetos entregues: onde ver as fotos, como
-                encontrar obras no seu bairro e quanto custa uma reforma como
-                as do portfólio.
+                Exemplos de obras entregues, com fotos, metragem e o passo a
+                passo de cada decisão, da medição à entrega.
               </p>
             </div>
           </div>
@@ -500,8 +453,8 @@ export default function FaqPage() {
               </h2>
               <p className="bwa-faqpage-lead">
                 O passo a passo de quem vai reformar um apartamento em São
-                Paulo: por onde começar, quanto custa, quanto demora e o que o
-                condomínio exige.
+                Paulo: por onde começar, em que ordem as coisas acontecem e os
+                erros que mais atrasam a obra.
               </p>
             </div>
           </div>
@@ -543,6 +496,57 @@ export default function FaqPage() {
           </div>
         </section>
 
+        <section className="bwa-faqpage-intro bwa-faqpage-contrato" aria-labelledby="faq-indicacoes-title">
+          <div className="bwa-shell bwa-faq-head bwa-faqpage-head">
+            <p className="bwa-label">Indicações e comissões</p>
+            <div>
+              <h2 className="bwa-title" id="faq-indicacoes-title">
+                Indicações, <em>sem letra miúda.</em>
+              </h2>
+              <p className="bwa-faqpage-lead">
+                As regras do programa de indicações — para parceiros do mercado
+                e para quem só quer indicar um amigo.
+              </p>
+            </div>
+          </div>
+
+          <div className="bwa-shell">
+            <div className="bwa-faq-list">
+              {INDICACAO_ITEMS.map((item, i) => {
+                const open = indicacaoAberto === i;
+                return (
+                  <article key={item.q} className={`bwa-faq-item${open ? " bwa-open" : ""}`}>
+                    <h3 className="bwa-faqpage-q">
+                      <button
+                        className="bwa-faq-question"
+                        type="button"
+                        aria-expanded={open}
+                        aria-controls={`faq-indicacao-resposta-${i}`}
+                        onClick={() => {
+                          if (!open) track("faq_question_click", { value: { pergunta: item.q } });
+                          setIndicacaoAberto(open ? -1 : i);
+                        }}
+                      >
+                        <span className="bwa-faq-num">{String(i + 1).padStart(2, "0")}</span>
+                        <strong>{item.q}</strong>
+                        <span className="bwa-faq-icon" aria-hidden="true" />
+                      </button>
+                    </h3>
+                    <div id={`faq-indicacao-resposta-${i}`} className="bwa-faq-answer">
+                      <p>{item.a}</p>
+                      {item.href && (
+                        <a className="bwa-faqpage-guia-link" href={item.href}>
+                          {item.linkLabel}
+                        </a>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
         <section className="bwa-faqpage-ask" aria-labelledby="faq-ask-title">
           <div className="bwa-shell">
             <p className="bwa-label">Pergunte à Bewild</p>
@@ -551,8 +555,8 @@ export default function FaqPage() {
             </h2>
             <p className="bwa-faqpage-lead">
               Escreva com suas palavras e a assistente da Bewild responde na
-              hora, com base em como a gente trabalha. Para preço e prazo do seu
-              imóvel, quem fecha é o time no diagnóstico.
+              hora, com base em como a gente trabalha. Preço e prazo do seu
+              imóvel saem fechados na proposta.
             </p>
 
             <form className="bwa-faqpage-ask-form" onSubmit={perguntar}>
@@ -614,7 +618,7 @@ export default function FaqPage() {
                   </div>
                   <p className="bwa-faqpage-ask-note">
                     Resposta gerada por IA com base nas informações da Bewild.
-                    Preço e prazo do seu imóvel são confirmados no diagnóstico.
+                    Preço e prazo do seu imóvel são confirmados na proposta.
                   </p>
                 </div>
               )}
