@@ -70,6 +70,7 @@ export default function GoogleAdsAudiencesTab() {
     { label: "prontas para anúncios", value: nf.format(eligible) },
     { label: "conversões (30 dias)", value: nf.format(Math.round(totalConv)) },
     { label: "investimento (30 dias)", value: brl.format(spend) },
+    { label: "custo por lead (30 dias)", value: totalConv > 0 ? brl.format(spend / totalConv) : "—" },
   ];
 
   return (
@@ -147,7 +148,7 @@ export default function GoogleAdsAudiencesTab() {
         ) : (
           <div style={{ overflowX: "auto" }}>
             <table className="aa-table">
-              <thead><tr><th>campanha</th><th>status</th><th>cliques</th><th>conversões</th><th>investimento</th></tr></thead>
+              <thead><tr><th>campanha</th><th>status</th><th>cliques</th><th>conversões</th><th>investimento</th><th>custo por lead</th></tr></thead>
               <tbody>
                 {data.campaigns.map((c) => (
                   <tr key={c.id}>
@@ -156,6 +157,7 @@ export default function GoogleAdsAudiencesTab() {
                     <td className="num">{nf.format(c.clicks)}</td>
                     <td className="num">{nf.format(Math.round(c.conversions * 10) / 10)}</td>
                     <td className="num">{brl.format(c.cost)}</td>
+                    <td className="num">{c.conversions > 0 ? brl.format(c.cost / c.conversions) : "—"}</td>
                   </tr>
                 ))}
               </tbody>
