@@ -40,6 +40,7 @@ describe("normalizeLegacyPath", () => {
   it("parsePath já devolve a rota canônica para URLs legadas (sem 404 intermediária)", () => {
     expect(parseRoutePath("/blog/meu-post")).toEqual({ name: "bewild-post", slug: "meu-post" });
     expect(parseRoutePath("/blog")).toEqual({ name: "conteudos" });
+    expect(parseRoutePath("/servicos")).toEqual({ name: "servicos" });
     expect(parseRoutePath("/admin")).toEqual({ name: "admin-dashboard" });
   });
 });
