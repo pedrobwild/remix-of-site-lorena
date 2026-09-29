@@ -21,7 +21,7 @@ const CTA_HREF = "/orcamento";
 
 const TITLE = "Serviços de arquitetura, reforma e marcenaria em SP | Bewild";
 const DESCRIPTION =
-  "Arquitetura, engenharia e obra em um contrato só: projeto 3D, reforma de apartamento, studio e cobertura, marcenaria própria, preço fechado e 5 anos de garantia.";
+  "Arquitetura, engenharia e obra num contrato só: projeto 3D, reforma de apartamento, studio e cobertura, marcenaria própria, preço fechado e 5 anos de garantia.";
 
 const SERVICOS: { nome: string; path: string; texto: string }[] = [
   {

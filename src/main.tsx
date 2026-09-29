@@ -165,10 +165,6 @@ function Root() {
       const saved = popScroll.current;
       popScroll.current = undefined;
       if (typeof saved === "number") return restoreScrollPosition(saved);
-      // /servicos (home com âncora vinda do caminho): rola até a seção.
-      if (saved === undefined && pageChanged && route.name === "home" && route.anchor && !window.location.hash) {
-        return scrollToHashTarget(3000, route.anchor);
-      }
       if (saved === undefined && pageChanged && !window.location.hash) {
         window.scrollTo({ top: 0, left: 0, behavior: "auto" });
       }
