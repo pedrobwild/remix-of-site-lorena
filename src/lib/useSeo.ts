@@ -29,6 +29,9 @@ export type SeoInput = {
   /** Dimensões reais da `ogImage`, quando conhecidas (senão og:image:width/height não saem). */
   ogImageWidth?: number;
   ogImageHeight?: number;
+  /** Texto alternativo da `ogImage` (senão usa o título da página). */
+  ogImageAlt?: string;
+
   ogType?: "website" | "article";
   noindex?: boolean;
   /** Palavras-chave da rota. Sobrepõe `settings.seo_keywords` (global). */
