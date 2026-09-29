@@ -144,6 +144,9 @@
          no primeiro paint e tudo salta quando ele vira position:absolute). */
       .bwa-nav-dd-panel { display: none; }
       .bwa-nav-dd.bwa-open .bwa-nav-dd-panel { display: grid; }
+      /* O link "pular para o conteúdo" é fixo; sem regra ele entra no fluxo
+         e empurra o conteúdo por um frame. */
+      .bwa-skip { position: fixed; }
     </style>
 
     <!-- Preload do hero da home (LCP no desktop). Este HTML atende todas as
