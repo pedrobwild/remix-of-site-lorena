@@ -1,6 +1,6 @@
 .bf-card { max-width: 720px; margin: 0 auto; text-align: left; }
 .bf-card:focus { outline: 2px solid currentColor; outline-offset: 6px; }
-.bf-title { color: #fff; font-size: 22px; margin: 0 0 20px; }
+.bf-title { color: #fff; font-size: 19px; margin: 0 0 20px; }
 .bf-text { color: var(--dink2); margin: 0 0 20px; }
 .bf-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px; }
 @media (min-width: 720px) { .bf-grid { grid-template-columns: 1fr 1fr; } }

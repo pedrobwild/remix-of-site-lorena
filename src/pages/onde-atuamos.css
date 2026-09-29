@@ -10,11 +10,11 @@
 }
 
 .bwa-atuamos-intro {
-  padding: clamp(148px, 17vw, 220px) 0 clamp(72px, 9vw, 132px);
+  padding: clamp(97px, 10.56vw, 137px) 0 clamp(55px, 6.01vw, 88px);
 }
 
 .bwa-atuamos-head {
-  margin-bottom: clamp(48px, 6vw, 88px);
+  margin-bottom: clamp(42px, 4.36vw, 64px);
 }
 
 .bwa-atuamos-head .bwa-title {
@@ -26,14 +26,14 @@
   max-width: 60ch;
   margin: clamp(16px, 2.4vw, 28px) 0 0;
   color: var(--bwa-ink-soft);
-  font-size: clamp(16px, 1.4vw, 19px);
+  font-size: clamp(16px, 1.33vw, 18px);
   line-height: 1.65;
 }
 
 .bwa-atuamos-h2 {
   margin: 0 0 clamp(24px, 3vw, 40px);
   font-family: var(--bwa-font-display);
-  font-size: clamp(22px, 2.4vw, 30px);
+  font-size: clamp(19px, 2vw, 25px);
   font-weight: 600;
   letter-spacing: -0.01em;
 }
@@ -78,7 +78,7 @@
 
 /* Bloco escuro — reforma à distância */
 .bwa-atuamos-remoto {
-  padding: clamp(64px, 8vw, 120px) 0;
+  padding: clamp(51px, 5.44vw, 82px) 0;
   background: var(--bwa-navy);
   color: var(--bwa-white);
 }
@@ -86,7 +86,7 @@
 .bwa-atuamos-remoto-head {
   display: grid;
   gap: clamp(20px, 3vw, 40px);
-  margin-bottom: clamp(40px, 5vw, 72px);
+  margin-bottom: clamp(37px, 3.83vw, 55px);
 }
 
 @media (min-width: 900px) {
@@ -109,14 +109,14 @@
   max-width: 60ch;
   margin: clamp(16px, 2.4vw, 28px) 0 0;
   color: color-mix(in srgb, var(--bwa-white) 82%, transparent);
-  font-size: clamp(16px, 1.4vw, 19px);
+  font-size: clamp(16px, 1.33vw, 18px);
   line-height: 1.65;
 }
 
 .bwa-atuamos-h3 {
   margin: 0 0 clamp(20px, 2.6vw, 32px);
   font-family: var(--bwa-font-display);
-  font-size: clamp(18px, 1.8vw, 22px);
+  font-size: clamp(17px, 1.55vw, 19px);
   font-weight: 600;
 }
 
@@ -154,7 +154,7 @@
 
 /* Fecho em azul-marinho profundo, como o CTA final da home */
 .bwa-atuamos-cta {
-  padding: clamp(64px, 8vw, 120px) 0;
+  padding: clamp(51px, 5.44vw, 82px) 0;
   border-top: 1px solid color-mix(in srgb, var(--bwa-white) 12%, transparent);
   background: var(--bwa-navy-2);
   color: var(--bwa-white);
@@ -162,7 +162,7 @@
 
 .bwa-atuamos-cta-grid {
   display: grid;
-  gap: clamp(28px, 4vw, 56px);
+  gap: clamp(28px, 3.31vw, 46px);
 }
 
 @media (min-width: 900px) {
@@ -175,7 +175,7 @@
 .bwa-atuamos-cta h2 {
   margin: 0;
   font-family: var(--bwa-font-display);
-  font-size: clamp(28px, 3.6vw, 44px);
+  font-size: clamp(23px, 2.86vw, 35px);
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.12;
