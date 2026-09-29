@@ -136,6 +136,15 @@ export default function BewildPortfolioPage() {
               Cada projeto aqui recebeu estudo próprio de layout, marcenaria, iluminação e acabamento, pensado pro uso que o apartamento precisa sustentar. Do imóvel cru à entrega das chaves.
             </p>
 
+            {/* Reserva de altura para a navegação por bairro + filtros, que só
+                existem depois dos dados — sem isso, o hero desce no load. */}
+            {loading && (
+              <div aria-hidden="true" style={{ height: 118, margin: "24px 0 24px" }}>
+                <div className="bwh-pf-skel bwh-pf-skel--line" style={{ width: 260 }} />
+                <div className="bwh-pf-skel bwh-pf-skel--line" style={{ width: 500, maxWidth: "100%", marginTop: 36 }} />
+              </div>
+            )}
+
             {bairroPages.length > 0 && (
               <nav aria-label="Reformas por bairro" className="bwh-mono" style={{ margin: "0 0 24px", display: "flex", flexWrap: "wrap", gap: "8px 16px" }}>
                 <span>Por bairro:</span>
