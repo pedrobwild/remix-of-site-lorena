@@ -26,6 +26,7 @@
  * semana até 1 ano, mês acima. A tabela é por dia sempre que o gráfico é por
  * hora ou por dia; por semana/mês nos períodos longos.
  */
+import LeadsBySourceCard from "./LeadsBySourceCard";
 import { useEffect, useMemo, useState } from "react";
 import { fmtLocalDay, parseLocalDay, pickGrain } from "@/lib/analyticsTimeseries";
 import {
@@ -898,6 +899,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
           </div>
         )}
       </div>
+      <LeadsBySourceCard range={range} />
     </div>
   );
 }
