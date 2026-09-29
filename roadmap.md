@@ -12,3 +12,10 @@
 
 - [x] Texto do hero da home (60 dias úteis)
 - [x] /admin/faq: "Mostrar na home" + home lendo do banco
+
+## Medição unificada (plano aprovado 29/09)
+- [ ] Aba Google Ads no /admin/analytics
+- [ ] Aba Busca do Google (Search Console)
+- [ ] Quadro "Leads por origem" + etiqueta/filtro de origem nos leads
+- [ ] Teste de disparo (Pixel, GA4, conversão Google Ads) no site publicado
+- [ ] Publicar e reindexar /, /servicos, /portfolio, /faq (reindexação: usuário, pela tela do Search Console)
