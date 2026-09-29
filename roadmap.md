@@ -9,3 +9,6 @@
 
 - [x] Publicar o site e conferir no celular barra, menu, acordeão e rodapé.
 - [x] Consultar o Search Console sobre a trilha de /servicos.
+
+- [x] Texto do hero da home (60 dias úteis)
+- [ ] /admin/faq: "Mostrar na home" + home lendo do banco
