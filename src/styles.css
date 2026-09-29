@@ -1,0 +1,130 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Tokens portados de tailwind.config.ts (Tailwind v3 → v4).
+ * As cores semânticas (--border, --background, …) são triplas HSL declaradas
+ * dentro de `.guia-root` (src/pages/guia-investidor.css) — por isso o
+ * embrulho hsl(var(--x)) é preservado aqui, como no config antigo.
+ */
+@theme inline {
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-gold: hsl(var(--gold));
+  --color-gold-light: hsl(var(--gold-light));
+
+  /* Paleta Bewild (valores literais, iguais ao config v3) */
+  --color-bewild-ink: #0a111e;
+  --color-bewild-night: #0e1b30;
+  --color-bewild-navy: #102a4f;
+  --color-bewild-blue: #1e5bb8;
+  --color-bewild-blue-600: #1b4fa0;
+  --color-bewild-blue-400: #3b82c4;
+  --color-bewild-steel: #5b6b7f;
+  --color-bewild-concrete: #8a8f98;
+  --color-bewild-line: #e4e6ea;
+  --color-bewild-bone: #f6f5f2;
+  --color-bewild-paper: #ffffff;
+
+  /* Tipografia */
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: Poppins, Inter, system-ui, sans-serif;
+  --font-sans: Poppins, Inter, system-ui, sans-serif;
+  --font-manrope: Manrope, Inter, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* max-w-wrap */
+  --container-wrap: 76rem;
+
+  /* rounded-xl2 */
+  --radius-xl2: 1.25rem;
+
+  /* Sombras da marca (valores literais) */
+  --shadow-bewild-card: 0 1px 2px rgba(16, 42, 79, 0.04), 0 12px 40px -12px rgba(16, 42, 79, 0.18);
+  --shadow-bewild-float: 0 24px 60px -20px rgba(10, 17, 30, 0.45);
+
+  /* Animações (antes em theme.extend.animation) */
+  --animate-bewild-marquee: bewild-marquee 38s linear infinite;
+  --animate-bewild-float: bewild-float 6s ease-in-out infinite;
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-fade-in: fade-in 0.4s ease-out both;
+  --animate-fade-in-up: fade-in-up 0.5s ease-out both;
+  --animate-scale-in: scale-in 0.3s ease-out both;
+  --animate-slide-in-right: slide-in-right 0.3s ease-out;
+}
+
+/* Sombras do /guia-do-investidor: referenciam variáveis definidas dentro de
+   .guia-root, então precisam de @utility (o @theme colidiria com o nome). */
+@utility shadow-card {
+  box-shadow: var(--shadow-card);
+}
+@utility shadow-card-hover {
+  box-shadow: var(--shadow-card-hover);
+}
+@utility shadow-elevated {
+  box-shadow: var(--shadow-elevated);
+}
+
+@keyframes bewild-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes bewild-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes fade-in {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in-up {
+  0% { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes scale-in {
+  0% { transform: scale(0.96); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes slide-in-right {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(0); }
+}
+
+/* =========================================================================
+   A partir daqui: conteúdo integral do antigo src/index.css (design system
+   legado Bewild), anexado sem alterações na migração para TanStack Start.
+   ========================================================================= */
