@@ -129,6 +129,10 @@
       @media (max-width: 900px) {
         .bwa-nav-inner { min-height: 60px; }
       }
+      /* Painel do dropdown fica oculto até o CSS chegar (senão infla o nav
+         no primeiro paint e tudo salta quando ele vira position:absolute). */
+      .bwa-nav-dd-panel { display: none; }
+      .bwa-nav-dd.bwa-open .bwa-nav-dd-panel { display: grid; }
     </style>
 
     <!-- Preload do hero da home (LCP no desktop). Este HTML atende todas as
