@@ -29,6 +29,9 @@ export type SeoInput = {
   /** Dimensões reais da `ogImage`, quando conhecidas (senão og:image:width/height não saem). */
   ogImageWidth?: number;
   ogImageHeight?: number;
+  /** Texto alternativo da `ogImage` (senão usa o título da página). */
+  ogImageAlt?: string;
+
   ogType?: "website" | "article";
   noindex?: boolean;
   /** Palavras-chave da rota. Sobrepõe `settings.seo_keywords` (global). */
@@ -522,7 +525,7 @@ function applySeo(settings: SiteSettings, seoInput: SeoInput) {
   const isDefaultImage = ogImage === DEFAULT_OG_IMAGE.url;
   const width = seo.ogImage ? seo.ogImageWidth : isDefaultImage ? DEFAULT_OG_IMAGE.width : undefined;
   const height = seo.ogImage ? seo.ogImageHeight : isDefaultImage ? DEFAULT_OG_IMAGE.height : undefined;
-  const imageAlt = isDefaultImage ? DEFAULT_OG_IMAGE.alt : title;
+  const imageAlt = isDefaultImage ? DEFAULT_OG_IMAGE.alt : seo.ogImageAlt?.trim() || title;
   const imageType = imageMimeFromUrl(ogImage);
 
   setMeta('meta[property="og:image"]', { property: "og:image", content: ogImage });
@@ -646,6 +649,8 @@ export function useSeo(seo: SeoInput) {
     ogDescription,
     ogImageWidth,
     ogImageHeight,
+    ogImageAlt,
+
     ogType,
     noindex,
     jsonLd,
@@ -665,6 +670,8 @@ export function useSeo(seo: SeoInput) {
       ogDescription,
       ogImageWidth,
       ogImageHeight,
+      ogImageAlt,
+
       ogType,
       noindex,
       jsonLd,
@@ -706,6 +713,9 @@ export function useSeo(seo: SeoInput) {
     ogDescription,
     ogImageWidth,
     ogImageHeight,
+    ogImageAlt,
+
+
     ogType,
     noindex,
     jsonLdKey,

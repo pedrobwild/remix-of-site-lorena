@@ -45,32 +45,40 @@ describe("projectMetaDescription", () => {
 });
 
 describe("projectSeoTitle", () => {
-  it("gera título local único com o nome real do projeto", () => {
-    expect(projectSeoTitle({ title: "PG Metrocasa Berrini" })).toBe(
-      "PG Metrocasa Berrini | Reforma de apartamento em SP | Bewild",
+  it("põe reforma, metragem e bairro na frente e o nome do projeto no fim", () => {
+    expect(projectSeoTitle({ title: "AB - PENÍNSULA VILA MADALENA", neighborhood: "Vila Madalena", area_m2: 23 })).toBe(
+      "Reforma de apartamento de 23 m² em Vila Madalena — Península | Bewild",
     );
   });
 
-  it("preserva título personalizado local e contextualiza os demais", () => {
+  it("remove o código interno do negócio do nome", () => {
+    const title = projectSeoTitle({ title: "SX - GO BALKON" });
+    expect(title).toBe("Reforma de apartamento em São Paulo — Go Balkon | Bewild");
+    expect(title).not.toContain("SX -");
+  });
+
+  it("ignora o seo_title gerado com o código e respeita o escrito à mão", () => {
     expect(projectSeoTitle({ seo_title: "Reforma de apartamento em São Paulo | Bewild" })).toBe(
       "Reforma de apartamento em São Paulo | Bewild",
     );
-    expect(projectSeoTitle({ seo_title: "Apartamento compacto no Brooklin" })).toBe(
-      "Apartamento compacto no Brooklin | Reforma de apartamento em SP | Bewild",
-    );
+    expect(
+      projectSeoTitle({ seo_title: "SX - GO BALKON | Reforma, São Paulo | Bewild", title: "SX - GO BALKON" }),
+    ).toBe("Reforma de apartamento em São Paulo — Go Balkon | Bewild");
   });
 
-  it("preserva título personalizado sobre apartamento pronto com contexto local", () => {
-    expect(projectSeoTitle({ seo_title: "Apartamento pronto em São Paulo | Bewild" })).toBe(
-      "Apartamento pronto em São Paulo | Bewild",
-    );
-  });
-
-  it("limita títulos gerados sem perder a intenção de busca", () => {
+  it("limita o tamanho sem perder a intenção de busca", () => {
     const title = projectSeoTitle({
       title: "Apartamento completo no empreendimento mais desejado da Vila Olímpia",
+      neighborhood: "Vila Olímpia",
     });
-    expect(title.length).toBeLessThanOrEqual(75);
-    expect(title).toContain("Reforma de apartamento em SP");
+    expect(title.length).toBeLessThanOrEqual(78);
+    expect(title).toContain("Reforma de apartamento");
+    expect(title).toContain("Vila Olímpia");
+  });
+
+  it("gera títulos diferentes para projetos diferentes no mesmo bairro", () => {
+    const a = projectSeoTitle({ title: "AB - MODERN CAMPO BELO", neighborhood: "Campo Belo" });
+    const b = projectSeoTitle({ title: "TB - LATITUDE CAMPO BELO", neighborhood: "Campo Belo" });
+    expect(a).not.toBe(b);
   });
 });
