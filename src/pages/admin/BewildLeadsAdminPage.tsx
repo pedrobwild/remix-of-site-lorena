@@ -24,6 +24,7 @@ import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import AdminAlert from "@/components/admin/AdminAlert";
 import MetaLeadsPanel from "@/components/admin/MetaLeadsPanel";
 import { supabase } from "@/integrations/supabase/client";
+import { LEAD_CANAIS, LEAD_CANAL_LABEL, leadCanal, type LeadCanal } from "@/lib/leadSource";
 import {
   LEAD_ORIGEM_LABEL,
   LEAD_STATUSES,
@@ -174,6 +175,7 @@ export default function BewildLeadsAdminPage() {
   const [actionMsg, setActionMsg] = useState<{ kind: "err" | "warn"; text: string } | null>(null);
   const [status, setStatus] = useState<"all" | LeadStatus>("all");
   const [origem, setOrigem] = useState<"all" | LeadOrigem>("all");
+  const [canal, setCanal] = useState<"all" | LeadCanal>("all");
   const [busy, setBusy] = useState<string | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
 
@@ -252,9 +254,10 @@ export default function BewildLeadsAdminPage() {
       rows.filter(
         (r) =>
           (status === "all" || r.status === status) &&
-          (origem === "all" || leadOrigem(r) === origem),
+          (origem === "all" || leadOrigem(r) === origem) &&
+          (canal === "all" || leadCanal(r) === canal),
       ),
-    [rows, status, origem],
+    [rows, status, origem, canal],
   );
 
   async function changeStatus(lead: Lead, next: string) {
@@ -365,6 +368,20 @@ export default function BewildLeadsAdminPage() {
         ))}
       </div>
 
+      <div className="bw-admin__period" style={{ marginBottom: 10 }} role="group" aria-label="Filtro por canal de origem">
+        {(["all", ...LEAD_CANAIS] as const).map((c) => (
+          <button
+            key={c}
+            type="button"
+            className={canal === c ? "is-active" : ""}
+            onClick={() => setCanal(c)}
+            aria-pressed={canal === c}
+          >
+            {c === "all" ? "Todos os canais" : LEAD_CANAL_LABEL[c]}
+          </button>
+        ))}
+      </div>
+
       <div className="bw-admin__period" style={{ marginBottom: 14 }} role="group" aria-label="Filtro por status">
         {STATUS_OPTIONS.map((opt) => (
           <button
@@ -452,6 +469,7 @@ export default function BewildLeadsAdminPage() {
                         </td>
                         <td className="muted" style={{ whiteSpace: "nowrap" }} title={leadFormLabel(r)}>
                           {LEAD_ORIGEM_LABEL[org]}
+                          <div style={{ fontSize: 12 }}>{LEAD_CANAL_LABEL[leadCanal(r)]}</div>
                         </td>
                         <td className="muted">
                           {org === "contato"
