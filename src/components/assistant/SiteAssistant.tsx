@@ -6,11 +6,16 @@
  * - Navegação pela SPA (`navigate`), sem recarregar a página; Ctrl/⌘+clique
  *   e botão do meio continuam abrindo em nova aba (é um <a href> de verdade).
  * - Some na própria /faq (lá ele só recarregaria a página) e nas rotas de
- *   HIDDEN_SEGMENTS.
+ *   HIDDEN_SEGMENTS. No celular (site-assistant.css) também some em
+ *   /orcamento (MOBILE_HIDDEN_SEGMENTS: a página é o formulário), com o menu
+ *   aberto e com o teclado aberto (`bwa-typing`, de home-bwa-script.ts).
+ * - No celular vira só o ícone, na mesma linha da barra "Solicitar
+ *   orçamento" da home: a barra termina antes dele (`bwas-on` no <html>) e
+ *   os dois sobem juntos acima do banner de cookies. A barra, por isso, não
+ *   é obstáculo para ele.
  * - Fica no canto inferior direito e sobe acima dos elementos fixos do rodapé
- *   da tela (banner de cookies, barra "Solicitar orçamento" do celular...),
- *   inclusive quando estão empilhados — com o banner aberto, a barra sobe
- *   acima dele e o botão sobe acima dos dois (ver bottomStack.ts).
+ *   da tela (banner de cookies, barra do guia...), inclusive quando estão
+ *   empilhados (ver bottomStack.ts).
  *   A medição é por evento — ResizeObserver nesses elementos, MutationObserver
  *   para saber quando entram/saem do DOM, resize da janela e fim de animação —
  *   e nunca por polling: a versão anterior fazia 15 `elementsFromPoint` +
@@ -29,14 +34,19 @@ import "./site-assistant.css";
 
 const FAQ_PATH = "/faq";
 const HIDDEN_SEGMENTS = new Set(["admin", "diagnostico", "o", "p", "bakeoff", "mockups", "faq"]);
+/** Rotas em que o botão some só no celular (o desktop continua igual). */
+const MOBILE_HIDDEN_SEGMENTS = new Set(["orcamento"]);
 const FLAG_KEY = "bw_assistente";
+/** No <html> enquanto o botão está na página: a barra do celular termina antes dele. */
+const ON_CLASS = "bwas-on";
 
 /**
  * Elementos fixos no rodapé da tela que o botão não pode cobrir. A barra do
  * guia do investidor é feita com utilitários Tailwind (`fixed bottom-0`);
- * qualquer elemento novo pode se declarar com `data-bottom-obstacle`.
+ * qualquer elemento novo pode se declarar com `data-bottom-obstacle`. A
+ * barra "Solicitar orçamento" da home não entra: fica ao lado do botão.
  */
-const OBSTACLE_SELECTOR = ".cookie-banner, .bwa-mobile-cta, .fixed.bottom-0, [data-bottom-obstacle]";
+const OBSTACLE_SELECTOR = ".cookie-banner, .fixed.bottom-0, [data-bottom-obstacle]";
 
 function flagOn(): boolean {
   if (typeof window === "undefined") return false;
@@ -56,9 +66,12 @@ function currentPath(): string {
   return (window.location.pathname || "/").replace(/\/+$/, "") || "/";
 }
 
+function firstSegment(path: string): string {
+  return path.split("/")[1] || "";
+}
+
 function isHiddenPath(path: string): boolean {
-  const seg = path.split("/")[1] || "";
-  return HIDDEN_SEGMENTS.has(seg);
+  return HIDDEN_SEGMENTS.has(firstSegment(path));
 }
 
 /** Caminho atual, acompanhando a navegação da SPA (`navigate`) e o Voltar. */
@@ -166,6 +179,7 @@ export default function SiteAssistant({ getPath = currentPath }: Props = {}) {
   const [enabled] = useState(flagOn);
   const path = useCurrentPath(getPath);
   const visible = enabled && !MAINTENANCE_MODE && !isHiddenPath(path);
+  const hiddenOnMobile = MOBILE_HIDDEN_SEGMENTS.has(firstSegment(path));
   const obstacle = useBottomObstacle(visible);
 
   // Evita que o botão flutuante esconda elementos focados perto do rodapé.
@@ -179,6 +193,16 @@ export default function SiteAssistant({ getPath = currentPath }: Props = {}) {
     };
   }, [visible, obstacle]);
 
+  // A barra "Solicitar orçamento" do celular (home-bwa.css) abre espaço para o botão.
+  useEffect(() => {
+    if (!visible) return;
+    const html = document.documentElement;
+    html.classList.add(ON_CLASS);
+    return () => {
+      html.classList.remove(ON_CLASS);
+    };
+  }, [visible]);
+
   const goToFaq = (event: MouseEvent<HTMLAnchorElement>) => {
     trackEvent("assistant_open", { path, destino: FAQ_PATH });
     // Nova aba / janela: deixa o navegador agir.
@@ -191,15 +215,26 @@ export default function SiteAssistant({ getPath = currentPath }: Props = {}) {
 
   return createPortal(
     <div
-      className="bwas"
+      className={hiddenOnMobile ? "bwas bwas--sem-mobile" : "bwas"}
       style={{
         ["--bwas-offset" as string]: `${obstacle}px`,
         ["--bwas-base" as string]: obstacle > 0 ? "12px" : "calc(20px + env(safe-area-inset-bottom, 0px))",
+        // Celular: mesma base da barra "Solicitar orçamento" (12 px + área segura).
+        ["--bwas-base-m" as string]: obstacle > 0 ? "12px" : "calc(12px + env(safe-area-inset-bottom, 0px))",
       }}
     >
       <a href={FAQ_PATH} className="bwas-launcher" onClick={goToFaq}>
         <svg className="bwas-launcher-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M4 5h16v11H9l-5 4z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+          {/* "?" dentro do balão: só aparece no celular, onde o botão fica sem texto. */}
+          <path
+            className="bwas-launcher-q"
+            d="M9.9 8.9a2.1 2.1 0 1 1 3 1.9c-.6.3-.9.7-.9 1.3v.3M12 14.2v.01"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
         </svg>
         <span className="bwas-launcher-long">Dúvidas? Pergunte aqui</span>
         <span className="bwas-launcher-short">Dúvidas</span>

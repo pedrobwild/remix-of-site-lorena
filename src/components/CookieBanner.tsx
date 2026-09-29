@@ -20,7 +20,7 @@ import { logConsentAudit } from "../lib/analytics";
  *   (`.cookie-banner__desc--short`) com as mesmas finalidades — medição e
  *   anúncios da Meta e do Google para quem já visitou e perfis parecidos —
  *   e os mesmos dois links; o título fica só para leitores de tela. O banner
- *   cai de ~210 px para ~140 px de altura. A versão completa continua no DOM
+ *   cai de ~210 px para ~130 px de altura. A versão completa continua no DOM
  *   (é a que `aria-describedby` aponta) e é a única visível no desktop.
  *   Nada da finalidade fica escondido por corte de linha.
  * - "Recusar" e "Aceitar" têm o mesmo peso visual e nenhum dos dois recebe o

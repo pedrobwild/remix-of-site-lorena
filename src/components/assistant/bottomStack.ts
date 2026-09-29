@@ -1,15 +1,16 @@
 /**
- * Pilha de elementos fixos no rodapé da tela (banner de cookies, barra
- * "Solicitar orçamento" do celular, barra do guia...), para o botão "Dúvidas"
- * do SiteAssistant parar logo acima dela.
+ * Pilha de elementos fixos no rodapé da tela (banner de cookies, barra do
+ * guia do investidor...), para o botão "Dúvidas" do SiteAssistant parar logo
+ * acima dela. (A barra "Solicitar orçamento" da home não entra: no celular o
+ * botão fica ao lado dela, na mesma linha.)
  *
  * A pilha começa na borda inferior da tela e vai subindo: um elemento entra
  * quando termina a até STACK_GAP px do topo atual da pilha. Assim também entra
- * o que está empilhado sobre outro elemento. É o caso da barra "Solicitar
- * orçamento": enquanto o banner de cookies está aberto ela sobe a altura dele
- * (`--cookie-banner-h`) e termina a mais de 120 px da borda — pela regra
- * antiga, que só olhava o que termina perto da borda, o botão parava em cima
- * dela. O que está longe da pilha (um cabeçalho fixo, por exemplo) não entra.
+ * o que está empilhado sobre outro elemento. É o caso da barra do guia:
+ * enquanto o banner de cookies está aberto ela sobe a altura dele
+ * (`--cookie-banner-h`) e termina longe da borda — pela regra antiga, que só
+ * olhava o que termina perto da borda, o botão parava em cima dela. O que
+ * está longe da pilha (um cabeçalho fixo, por exemplo) não entra.
  */
 export const STACK_GAP = 120;
 
