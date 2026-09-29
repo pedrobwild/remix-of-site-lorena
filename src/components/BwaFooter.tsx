@@ -82,6 +82,7 @@ export default function BwaFooter() {
               )}
               <a href={`mailto:${CONTACT.email}`}>e-mail</a>
               <a href="/privacidade">Política de privacidade</a>
+              <a href="/mapa-do-site">Mapa do site</a>
               <a href="/acessibilidade" className="bwa-footer-a11y">
                 <Accessibility size={16} aria-hidden="true" />
                 Acessibilidade
