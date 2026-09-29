@@ -44,6 +44,14 @@ jobs:
           node-version: "22"
           cache: "npm"
 
+      - name: Normalize lockfile registry
+        # A sandbox da Lovable regrava parte do package-lock.json apontando para
+        # o cache privado dela (europe-west4-npm.pkg.dev/.../sandbox-npm-cache),
+        # inacessível fora de lá — e o `npm ci` quebrava. Os tarballs são os
+        # mesmos do npm (o `integrity` de cada pacote confere), então basta
+        # trocar a URL antes de instalar.
+        run: sed -i 's#https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/#https://registry.npmjs.org/#g' package-lock.json
+
       - name: Install dependencies
         run: npm ci
 

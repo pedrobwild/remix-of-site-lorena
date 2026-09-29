@@ -2,7 +2,8 @@
  * OverviewTab — aba "Visão executiva" (server-side).
  *
  * Usa três RPCs:
- *   - analytics_overview_kpis(since, until, ...filters): KPIs + sparkline (14d)
+ *   - analytics_overview_kpis(since, until, ...filters): KPIs (o `spark` dela
+ *     agrupa dias em UTC; a sparkline dos cards usa a série local abaixo)
  *   - analytics_timeseries_v2(since, until, grain, tz, ...filters): série para
  *     o gráfico e para a tabela por dia, com buckets no fuso do navegador,
  *     filtros de segmento e visitantes únicos por bucket
@@ -29,6 +30,7 @@ import { useEffect, useMemo, useState } from "react";
 import { fmtLocalDay, parseLocalDay, pickGrain } from "@/lib/analyticsTimeseries";
 import {
   addLocalDays,
+  addLocalMonthsClamped,
   alignedPreviousWindow,
   browserTimeZone,
   buildDayTable,
@@ -240,6 +242,11 @@ function consentRate(c: ConsentCounts): number | null {
   return total > 0 ? (c.accepts * 100) / total : null;
 }
 
+/** `d` recuado um bucket de semana (7 dias) ou mês (dia limitado ao fim do mês). */
+function shiftBucketBack(d: Date, grain: LocalGrain): Date {
+  return grain === "month" ? addLocalMonthsClamped(d, -1) : grain === "week" ? addLocalDays(d, -7) : addLocalDays(d, -1);
+}
+
 function countsOf(k: Kpis): Counts {
   return {
     sessions: k.sessions,
@@ -315,6 +322,8 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
   const [prevConsent, setPrevConsent] = useState<ConsentCounts | null>(null);
   const [consentSpark, setConsentSpark] = useState<ConsentSparkPoint[]>([]);
   const [chart, setChart] = useState<ChartPoint[]>([]);
+  /** Sparkline dos cards: série do gráfico no fuso local, com segmentos, até agora. */
+  const [kpiSpark, setKpiSpark] = useState<LocalPoint[]>([]);
   const [rows, setRows] = useState<TableRow[]>([]);
   const [meta, setMeta] = useState<Meta | null>(null);
   const [metric, setMetric] = useState<Metric>("sessions");
@@ -348,6 +357,18 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
       !!prevAligned &&
       yesterdayWin.from.getTime() === prevAligned.from.getTime() &&
       yesterdayWin.until.getTime() === prevAligned.until.getTime();
+
+    // Tabela por semana/mês com o período em curso: o bucket atual só tem dados
+    // até agora; a base dele é o bucket anterior cortado no mesmo ponto (mesmo
+    // dia da semana/do mês e mesmo horário), não o bucket anterior inteiro.
+    const liveTableBucket = truncLocal(now, tableGrain);
+    const partialBucketBase: Window | null =
+      tableGrain !== "day" && cur.partial && now.getTime() > range.from.getTime()
+        ? {
+            from: shiftBucketBack(new Date(Math.max(liveTableBucket.getTime(), range.from.getTime())), tableGrain),
+            until: shiftBucketBack(now, tableGrain),
+          }
+        : null;
 
     const segArgs = segmentsToRpcArgs(segments);
     const rpc = (name: string, args: Record<string, unknown>) =>
@@ -395,6 +416,13 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
         : Promise.resolve(null),
       consentSeries({ from: tableFrom, until: cur.until }),
       prevAligned ? consentSeries(prevAligned) : Promise.resolve(null),
+      partialBucketBase
+        ? rpc("analytics_overview_kpis", {
+            p_since: partialBucketBase.from.toISOString(),
+            p_until: partialBucketBase.until.toISOString(),
+            ...segArgs,
+          })
+        : Promise.resolve(null),
     ];
 
     Promise.all(calls)
@@ -485,8 +513,15 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
           const live = fillLocalSeries(tableRowsRaw, tableFrom, cur.until, tableGrain).filter(
             (p) => p.t <= lastLiveTable
           );
+          const partialBase = results[8] ? countsOf(parseKpis(results[8] as RpcRes<Kpis[]>)) : null;
+          const fromMs = range.from.getTime();
           nextRows = live.map((p, i) => {
-            const prev = i > 0 ? live[i - 1] : null;
+            const isPartial = cur.partial && p.t === lastLiveTable;
+            // Bucket anterior cortado pelo início do período (semana que começa
+            // numa quarta, por exemplo) não serve de base: comparar com ele
+            // inflaria a variação.
+            const prevPoint = i > 0 && live[i - 1].t >= fromMs ? live[i - 1] : null;
+            const prev = isPartial ? partialBase : prevPoint;
             return {
               key: String(p.t),
               label: formatLocalBucketLabel(p.t, tableGrain, true),
@@ -494,7 +529,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
               visitors: p.visitors,
               pageviews: p.pageviews,
               conversions: p.conversions,
-              partial: cur.partial && p.t === lastLiveTable,
+              partial: isPartial,
               base: prev
                 ? { sessions: prev.sessions, visitors: prev.visitors, pageviews: prev.pageviews, conversions: prev.conversions }
                 : null,
@@ -504,6 +539,9 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
         }
 
         setChart(nextChart);
+        // Sparkline: mesma série do gráfico (hora/dia/semana/mês locais, dias
+        // sem sessão = 0), sem os buckets futuros; últimos 30 pontos.
+        setKpiSpark(main.filter((p) => p.t <= lastLive).slice(-30));
         setRows(nextRows);
         setMeta({
           fetchedAt: now,
@@ -562,15 +600,15 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
   const rate = consentRate(consent);
   const prevRate = prevConsent ? consentRate(prevConsent) : null;
   const kpiList: KpiCard[] = [
-    { label: "sessões",            value: fmtNum(kpis.sessions),           cur: kpis.sessions,           prev: prevKpis.sessions,           spark: kpis.spark, sparkKey: "sessions", count: true },
-    { label: "visitantes únicos",  value: fmtNum(kpis.unique_visitors),    cur: kpis.unique_visitors,    prev: prevKpis.unique_visitors,    spark: kpis.spark, sparkKey: "sessions", count: true },
-    { label: "pageviews",          value: fmtNum(kpis.pageviews),          cur: kpis.pageviews,          prev: prevKpis.pageviews,          spark: kpis.spark, sparkKey: "pageviews", count: true },
-    { label: "pv / sessão",        value: kpis.pages_per_session.toFixed(2), cur: kpis.pages_per_session, prev: prevKpis.pages_per_session, spark: kpis.spark, sparkKey: "pageviews" },
-    { label: "tempo engajado",     value: fmtMs(kpis.avg_engagement_ms),   cur: kpis.avg_engagement_ms,  prev: prevKpis.avg_engagement_ms,  spark: kpis.spark, sparkKey: "sessions" },
+    { label: "sessões",            value: fmtNum(kpis.sessions),           cur: kpis.sessions,           prev: prevKpis.sessions,           spark: kpiSpark, sparkKey: "sessions", count: true },
+    { label: "visitantes únicos",  value: fmtNum(kpis.unique_visitors),    cur: kpis.unique_visitors,    prev: prevKpis.unique_visitors,    spark: kpiSpark, sparkKey: "visitors", count: true },
+    { label: "pageviews",          value: fmtNum(kpis.pageviews),          cur: kpis.pageviews,          prev: prevKpis.pageviews,          spark: kpiSpark, sparkKey: "pageviews", count: true },
+    { label: "pv / sessão",        value: kpis.pages_per_session.toFixed(2), cur: kpis.pages_per_session, prev: prevKpis.pages_per_session, spark: kpiSpark, sparkKey: "pageviews" },
+    { label: "tempo engajado",     value: fmtMs(kpis.avg_engagement_ms),   cur: kpis.avg_engagement_ms,  prev: prevKpis.avg_engagement_ms,  spark: kpiSpark, sparkKey: "sessions" },
     // bounce rate: cair é bom — inverte a cor do delta
-    { label: "bounce rate",        value: fmtPct(kpis.bounce_rate),        cur: kpis.bounce_rate,        prev: prevKpis.bounce_rate,        spark: kpis.spark, sparkKey: "sessions", invert: true },
-    { label: "conversões",         value: fmtNum(kpis.conversions),        cur: kpis.conversions,        prev: prevKpis.conversions,        spark: kpis.spark, sparkKey: "sessions", count: true },
-    { label: "taxa de conversão",  value: fmtPct(kpis.conversion_rate),    cur: kpis.conversion_rate,    prev: prevKpis.conversion_rate,    spark: kpis.spark, sparkKey: "sessions" },
+    { label: "bounce rate",        value: fmtPct(kpis.bounce_rate),        cur: kpis.bounce_rate,        prev: prevKpis.bounce_rate,        spark: kpiSpark, sparkKey: "sessions", invert: true },
+    { label: "conversões",         value: fmtNum(kpis.conversions),        cur: kpis.conversions,        prev: prevKpis.conversions,        spark: kpiSpark, sparkKey: "conversions", count: true },
+    { label: "taxa de conversão",  value: fmtPct(kpis.conversion_rate),    cur: kpis.conversion_rate,    prev: prevKpis.conversion_rate,    spark: kpiSpark, sparkKey: "sessions" },
     // aceite de cookies: decisões do banner (aceites ÷ decisões), sem segmento
     {
       label: "aceite de cookies",
@@ -788,7 +826,9 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
           <h3 className="aa-card__title" style={{ whiteSpace: "nowrap" }}>{tableTitle}</h3>
           <span className="aa-faint aa-mono" style={{ fontSize: "var(--aa-text-xs)", textAlign: "right" }}>
             Δ vs. {unitLabel} anterior
-            {tableGrain === "day" && " · hoje vs. ontem até o mesmo horário"}
+            {tableGrain === "day"
+              ? " · hoje vs. ontem até o mesmo horário"
+              : ` · ${unitLabel} em curso vs. ${unitLabel} anterior até o mesmo ponto`}
             {" · cookies = aceites / recusas / taxa de aceite"}
           </span>
         </div>

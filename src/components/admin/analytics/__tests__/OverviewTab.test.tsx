@@ -482,7 +482,12 @@ describe("OverviewTab — período longo (por semana)", () => {
 
   beforeEach(() => {
     respond = ({ name, args }) => {
-      if (name === "analytics_overview_kpis") return kpiRow(500, 1200, 10);
+      if (name === "analytics_overview_kpis") {
+        // Semana anterior até o mesmo ponto: seg 14/09 00:00 → qui 17/09 15:42:10
+        if (args.p_since === localIso(2026, 9, 14) && args.p_until === localIso(2026, 9, 17, 15, 42, 10))
+          return kpiRow(120, 300, 2, 60);
+        return kpiRow(500, 1200, 10);
+      }
       if (name === "analytics_timeseries_v2" && args.p_grain === "week") {
         return [
           v2Row(localIso(2026, 9, 14), 300, 120, 700, 5), // semana 14/09
@@ -501,21 +506,51 @@ describe("OverviewTab — período longo (por semana)", () => {
     render(<OverviewTab range={range} segments={[]} comparePrev={false} />);
     const table = await screen.findByTestId("daily-table");
     for (const c of seriesCalls()) expect(c.args.p_grain).toBe("week");
-    // sem "ontem até o mesmo horário" (só faz sentido na tabela por dia)
-    expect(rpcCalls.filter((c) => c.name === "analytics_overview_kpis")).toHaveLength(1);
+    // sem "ontem até o mesmo horário" (só na tabela por dia); a semana em curso
+    // tem como base a semana anterior cortada no mesmo ponto
+    const kpiCalls = rpcCalls.filter((c) => c.name === "analytics_overview_kpis");
+    expect(kpiCalls).toHaveLength(2);
+    expect(kpiCalls[1].args).toMatchObject({
+      p_since: localIso(2026, 9, 14),
+      p_until: localIso(2026, 9, 17, 15, 42, 10),
+    });
     expect(screen.getByText("por semana")).toBeInTheDocument();
     const rows = within(table).getAllByRole("row").slice(1);
     expect(rows[0]).toHaveTextContent("sem. 21/09");
     expect(rows[0]).toHaveTextContent("até 15:42");
     expect(rows[1]).toHaveTextContent("sem. 14/09");
     expect(rows[1]).not.toHaveTextContent("até ");
-    // Δ da semana em curso vs anterior: 200 vs 300 → -33.3%
-    expect(within(rows[0]).getAllByRole("cell")[2]).toHaveTextContent("-33.3%");
+    // Δ da semana em curso vs a anterior ATÉ O MESMO PONTO: 200 vs 120 → +66.7%
+    // (vs a semana anterior inteira seria 200 vs 300 → -33.3%, queda falsa)
+    expect(within(rows[0]).getAllByRole("cell")[2]).toHaveTextContent("+66.7%");
+    expect(screen.getByText(/semana em curso vs\. semana anterior até o mesmo ponto/)).toBeInTheDocument();
     // Cookies somados por semana local: 16 aceites, 9 recusas → 64.0%; semana anterior sem registro
     const curCells = within(rows[0]).getAllByRole("cell");
     expect(curCells[10]).toHaveTextContent("16");
     expect(curCells[11]).toHaveTextContent("9");
     expect(curCells[12]).toHaveTextContent("64.0%");
     expect(within(rows[1]).getAllByRole("cell")[12]).toHaveTextContent("—");
+  });
+
+  it("semana cortada pelo início do período não serve de base para a seguinte", async () => {
+    // 02/06/2026 é terça: a 1ª semana (01/06) só tem dados a partir de 02/06
+    const cut = { from: startOfDay(new Date(2026, 5, 2)), to: endOfDay(new Date(2026, 8, 20)) };
+    respond = ({ name, args }) => {
+      if (name === "analytics_overview_kpis") return kpiRow(500);
+      if (name === "analytics_timeseries_v2" && args.p_grain === "week") {
+        return [v2Row(localIso(2026, 6, 1), 10, 5, 20), v2Row(localIso(2026, 6, 8), 40, 20, 80)];
+      }
+      return [];
+    };
+    render(<OverviewTab range={cut} segments={[]} comparePrev={false} />);
+    const table = await screen.findByTestId("daily-table");
+    const rows = within(table).getAllByRole("row").slice(1);
+    const r0608 = rows.find((r) => r.textContent?.includes("sem. 08/06"));
+    const r1506 = rows.find((r) => r.textContent?.includes("sem. 15/06"));
+    expect(r0608).toBeDefined();
+    // 40 vs 10 seria +300%: a semana de 01/06 está cortada, então sem base
+    expect(within(r0608!).getAllByRole("cell")[2]).toHaveTextContent("—");
+    // semana cheia seguinte compara normalmente: 0 vs 40 → -100.0%
+    expect(within(r1506!).getAllByRole("cell")[2]).toHaveTextContent("-100.0%");
   });
 });
