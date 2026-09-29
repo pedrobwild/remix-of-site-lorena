@@ -249,12 +249,18 @@ function RootComponent() {
   const underMaintenance =
     MAINTENANCE_MODE && !adminMode && !MAINTENANCE_EXEMPT.has(pathname);
 
+  // Banner de cookies e assistente só entram após a hidratação: eles dependem
+  // de estado do navegador (consentimento, viewport) e renderizá-los no SSR
+  // causa divergência entre o HTML do servidor e o do cliente.
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <RootErrorBoundary>
         {underMaintenance ? <MaintenancePage /> : <Outlet />}
-        {!adminMode && !underMaintenance && <CookieBanner />}
-        {!adminMode && !underMaintenance && <SiteAssistant />}
+        {hydrated && !adminMode && !underMaintenance && <CookieBanner />}
+        {hydrated && !adminMode && !underMaintenance && <SiteAssistant />}
         {/* Montado sempre (inclusive /admin) para acompanhar a URL; o próprio
             componente não dispara nada em /admin nem sem consentimento. */}
         <MetaPixel />
