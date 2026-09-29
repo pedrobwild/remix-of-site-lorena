@@ -252,18 +252,18 @@ export default function BewildProjectPage({ slug }: Props) {
     ogType: "article",
     ogImage: shareImageOptimized,
     ogImageAlt: shareImageAlt || undefined,
-
     jsonLd:
       settings && project
         ? [
             breadcrumbJsonLd(settings, [
               { name: "Início", path: "/" },
               { name: "Portfólio", path: "/portfolio" },
-              { name: project.title, path: `/portfolio/${project.slug}` },
+              { name: projectFriendlyName(project) || project.title, path: `/portfolio/${project.slug}` },
             ]),
             projectJsonLd(settings, {
               slug: project.slug,
-              title: project.title,
+              title: projectFriendlyName(project) || project.title,
+
               summary: seoDescription,
               cover: project.og_image_url ?? project.cover_url ?? undefined,
               location: project.neighborhood ?? project.location ?? undefined,
