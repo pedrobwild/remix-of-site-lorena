@@ -1,0 +1,1 @@
+ALTER TABLE public.assistant_kb ADD COLUMN IF NOT EXISTS mostrar_na_home boolean NOT NULL DEFAULT false;

@@ -129,6 +129,7 @@ export type Database = {
           exemplos: string[]
           gatilhos: string[]
           id: string
+          mostrar_na_home: boolean
           ordem: number
           palavras: string[]
           palavras_fortes: string[]
@@ -146,6 +147,7 @@ export type Database = {
           exemplos?: string[]
           gatilhos?: string[]
           id: string
+          mostrar_na_home?: boolean
           ordem?: number
           palavras?: string[]
           palavras_fortes?: string[]
@@ -163,6 +165,7 @@ export type Database = {
           exemplos?: string[]
           gatilhos?: string[]
           id?: string
+          mostrar_na_home?: boolean
           ordem?: number
           palavras?: string[]
           palavras_fortes?: string[]
