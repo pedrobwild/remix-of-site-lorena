@@ -99,7 +99,10 @@ export function projectMetaDescription(
   fallback: string,
 ): string {
   if (!p) return fallback;
-  const explicit = stripProjectCode((p.seo_description || p.summary || "").trim());
+  const raw = stripProjectCode((p.seo_description || p.summary || "").trim());
+  // "GO BALKON: reforma de…" → o nome do projeto já está no título, sai da descrição.
+  const explicit = stripProjectCode(raw.replace(/^[^.:]{1,60}:\s*/, ""));
+
   if (explicit) {
     const sentence = explicit.charAt(0).toUpperCase() + explicit.slice(1);
     return hasSearchContext(sentence) ? sentence : `${sentence} ${LOCAL_DESCRIPTION}`;
