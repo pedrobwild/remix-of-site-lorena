@@ -337,7 +337,10 @@ function installGallery(root: HTMLElement, signal: AbortSignal, reducedMotion: b
   const slides = Array.from(rail.querySelectorAll<HTMLElement>(".bwa-image-gallery-slide"));
   const current = root.querySelector<HTMLElement>("[data-gallery-current]");
   const progress = root.querySelector<HTMLElement>("[data-gallery-progress]");
+  const prevButton = root.querySelector<HTMLButtonElement>("[data-gallery-prev]");
+  const nextButton = root.querySelector<HTMLButtonElement>("[data-gallery-next]");
 
+  let lastIndex = -1;
   let statusFrame = 0;
   let momentumFrame = 0;
   let pointerId: number | null = null;
@@ -367,8 +370,12 @@ function installGallery(root: HTMLElement, signal: AbortSignal, reducedMotion: b
   const updateStatus = () => {
     if (!slides.length) return;
     const index = activeIndex();
+    if (index === lastIndex) return;
+    lastIndex = index;
     if (current) current.textContent = String(index + 1).padStart(2, "0");
     if (progress) progress.style.transform = `scaleX(${index + 1})`;
+    prevButton?.setAttribute("aria-disabled", String(index === 0));
+    nextButton?.setAttribute("aria-disabled", String(index === slides.length - 1));
   };
 
   const requestStatus = () => {
@@ -427,8 +434,21 @@ function installGallery(root: HTMLElement, signal: AbortSignal, reducedMotion: b
     });
   };
 
-  root.querySelector("[data-gallery-prev]")?.addEventListener("click", () => move(-1), { signal });
-  root.querySelector("[data-gallery-next]")?.addEventListener("click", () => move(1), { signal });
+  prevButton?.addEventListener("click", () => move(-1), { signal });
+  nextButton?.addEventListener("click", () => move(1), { signal });
+  rail.addEventListener(
+    "keydown",
+    (event) => {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        move(-1);
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        move(1);
+      }
+    },
+    { signal },
+  );
 
   rail.addEventListener(
     "pointerdown",
