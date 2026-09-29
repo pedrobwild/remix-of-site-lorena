@@ -15,7 +15,8 @@ import { useBewildProject } from "@/lib/useBewildProject";
 import { bewildTypeLabel } from "@/lib/useBewildProjects";
 import { readyPhotos, renderPhotos } from "@/lib/projectPhotos";
 import { useImageAlts, type AltMap } from "@/lib/useImageAlts";
-import { projectFriendlyName, projectMetaDescription, projectSeoTitle } from "@/lib/projectSeo";
+import { projectFriendlyName, projectMetaDescription, projectSeoTitleUnique } from "@/lib/projectSeo";
+import { useProjectSeoPeers } from "@/lib/useProjectSeoPeers";
 import { optimizedImageUrl } from "@/lib/imageUrl";
 
 import NotFoundPage from "@/pages/NotFoundPage";
@@ -219,7 +220,12 @@ export default function BewildProjectPage({ slug }: Props) {
   const hasCase = !!(project?.challenge || project?.solution || project?.result_text);
   const hasBA = !!(project?.before_image_url && project?.after_image_url);
   const scopeItems = useMemo(() => (project?.scope ?? []).filter(Boolean), [project]);
-  const seoTitle = projectSeoTitle(project);
+  const seoPeers = useProjectSeoPeers();
+  // Mesmo prédio em mais de uma página: a data de cadastro separa os títulos.
+  const seoTitle = useMemo(() => {
+    const self = project ? seoPeers.find((o) => o.id === project.id) : undefined;
+    return projectSeoTitleUnique(self ? { ...project!, created_at: self.created_at } : project, seoPeers);
+  }, [project, seoPeers]);
   const seoDescription = projectMetaDescription(
     project,
     "Apartamento reformado pela Bewild em São Paulo-SP.",

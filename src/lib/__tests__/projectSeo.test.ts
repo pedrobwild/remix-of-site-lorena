@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { projectMetaDescription, projectSeoTitle } from "../projectSeo";
+import { projectMetaDescription, projectSeoTitle, projectSeoTitleUnique } from "../projectSeo";
 
 const FALLBACK = "texto genérico";
 
@@ -102,5 +102,43 @@ describe("fase do projeto e tamanho da descrição", () => {
     const out = projectMetaDescription({ seo_description: long }, FALLBACK);
     expect(out.length).toBeLessThanOrEqual(161);
     expect(out.endsWith("palavr")).toBe(false);
+  });
+});
+
+describe("projectSeoTitleUnique (data de cadastro só onde ajuda)", () => {
+  const mk = (id: string, created_at: string) => ({
+    id,
+    title: "ZP - ZIP",
+    neighborhood: "Brooklin",
+    area_m2: 25,
+    created_at,
+  });
+
+  it("título único não muda", () => {
+    const a = mk("a", "2026-08-25T00:51:00Z");
+    const b = { ...mk("b", "2026-09-25T21:20:00Z"), title: "XX - OUTRO" };
+    expect(projectSeoTitleUnique(a, [a, b])).toBe(projectSeoTitle(a));
+  });
+
+  it("repetido com datas diferentes ganha a data (fuso de São Paulo)", () => {
+    const a = mk("a", "2026-08-25T00:51:00Z"); // 24/08 21:51 em SP
+    const b = mk("b", "2026-09-25T21:20:00Z");
+    expect(projectSeoTitleUnique(a, [a, b])).toBe(
+      "Reforma de apartamento de 25 m² em Brooklin — Zip (cadastro 24/08/2026) | Bewild",
+    );
+    expect(projectSeoTitleUnique(b, [a, b])).toContain("(cadastro 25/09/2026)");
+  });
+
+  it("irmãs com a mesma data ficam como estão (data não ajuda)", () => {
+    const a = mk("a", "2026-09-05T12:00:00Z");
+    const b = mk("b", "2026-09-05T15:00:00Z");
+    expect(projectSeoTitleUnique(a, [a, b])).toBe(projectSeoTitle(a));
+    expect(projectSeoTitleUnique(b, [a, b])).toBe(projectSeoTitle(b));
+  });
+
+  it("sem data de cadastro mantém o título", () => {
+    const a = { ...mk("a", ""), created_at: null };
+    const b = mk("b", "2026-09-25T21:20:00Z");
+    expect(projectSeoTitleUnique(a, [a, b])).toBe(projectSeoTitle(a));
   });
 });

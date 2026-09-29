@@ -151,3 +151,54 @@ export function projectMetaDescription(
   return `${parts.join(" ")}. Projeto, obra e marcenaria integrados pela Bewild.`;
 }
 
+
+/** Projeto com o mínimo para comparar títulos entre páginas irmãs. */
+export type ProjectSeoPeer = ProjectSeoInput & {
+  id: string;
+  created_at?: string | null;
+};
+
+/** Data de cadastro (dd/mm/aaaa) no fuso de São Paulo; vazio se inválida. */
+export function projectRegistrationDate(value?: string | null): string {
+  if (!value) return "";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    timeZone: "America/Sao_Paulo",
+  }).format(d);
+}
+
+/** Título com data cabe em ~100 caracteres; o essencial vem no começo. */
+const DATED_TITLE_MAX = 100;
+
+/**
+ * Título único entre projetos do mesmo prédio. Quando outra página gera o
+ * mesmo título, acrescenta "cadastro dd/mm/aaaa" (dado real do cadastro) — mas
+ * só se a data realmente separa esta página das irmãs. Se duas irmãs têm a
+ * mesma data, o título fica como está: data repetida não ajuda o Google.
+ */
+export function projectSeoTitleUnique(
+  p: ProjectSeoPeer | null | undefined,
+  peers: ProjectSeoPeer[],
+): string {
+  const base = projectSeoTitle(p);
+  if (!p) return base;
+
+  const group = peers.filter((o) => o.id !== p.id && projectSeoTitle(o) === base);
+  if (group.length === 0) return base;
+
+  const date = projectRegistrationDate(p.created_at);
+  if (!date) return base;
+  if (group.some((o) => projectRegistrationDate(o.created_at) === date)) return base;
+
+  const suffix = " | Bewild";
+  if (!base.endsWith(suffix)) return base;
+  const dated = `${base.slice(0, -suffix.length)} (cadastro ${date})${suffix}`;
+  if (dated.length <= DATED_TITLE_MAX) return dated;
+  // Muito longo: mantém o nome inteiro e tira só a palavra "cadastro".
+  const short = `${base.slice(0, -suffix.length)} (${date})${suffix}`;
+  return short.length <= DATED_TITLE_MAX ? short : base;
+}
