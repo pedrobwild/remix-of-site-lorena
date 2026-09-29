@@ -101,7 +101,7 @@ export function projectMetaDescription(
   if (!p) return fallback;
   const raw = stripProjectCode((p.seo_description || p.summary || "").trim());
   // "GO BALKON: reforma de…" → o nome do projeto já está no título, sai da descrição.
-  const explicit = stripProjectCode(raw.replace(/^[^.:]{1,60}:\s*/, ""));
+  const explicit = stripProjectCode(raw.replace(/^[A-ZÀ-Ú0-9][^.:a-zà-ú]{0,59}:\s*/, ""));
 
   if (explicit) {
     const sentence = explicit.charAt(0).toUpperCase() + explicit.slice(1);
