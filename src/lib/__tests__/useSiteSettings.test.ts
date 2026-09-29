@@ -9,7 +9,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const maybeSingle = vi.fn();
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
-    from: () => ({ select: () => ({ eq: () => ({ maybeSingle: () => maybeSingle() }) }) }),
+    // Leitura pública via RPC get_public_site_settings (tabela é só admin).
+    rpc: () => maybeSingle(),
   },
 }));
 vi.mock("@/lib/devLog", () => ({ devWarn: vi.fn(), devError: vi.fn() }));
