@@ -3,6 +3,7 @@ import { carryCampaignParams } from "./campaignParams";
 
 export type Route =
   | { name: "home"; anchor?: string }
+  | { name: "servicos" }
   | { name: "portfolio" }
   | { name: "orcamento" }
   | { name: "faq" }
@@ -95,9 +96,9 @@ function parsePath(rawPath: string): Route {
   );
 
   if (path === "/" || path === "") return { name: "home" };
-  // /servicos: URL limpa da seção "Serviços" da home. Renderiza a home e rola
-  // até #certeza; o canonical continua "/" (sem conteúdo duplicado).
-  if (path === "/servicos") return { name: "home", anchor: "certeza" };
+  // /servicos: página própria de serviços (canonical próprio, indexável).
+  // O link antigo /#certeza continua rolando até a seção da home.
+  if (path === "/servicos") return { name: "servicos" };
   if (path === "/portfolio") return { name: "portfolio" };
 
   if (path === "/o") return { name: "lp-obra" };

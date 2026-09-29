@@ -156,6 +156,12 @@ describe("MetaPixel", () => {
       content_ids: ["reforma-studio"],
       content_category: "servico",
     });
+    go("/servicos");
+    expect(fbq).toHaveBeenLastCalledWith("track", "ViewContent", {
+      content_type: "product",
+      content_ids: ["servicos"],
+      content_category: "servico",
+    });
     go("/faq"); // página sem ViewContent
     expect(fbq).toHaveBeenLastCalledWith("track", "PageView");
   });

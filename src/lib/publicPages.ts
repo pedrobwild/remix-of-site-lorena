@@ -13,6 +13,7 @@ export type PublicPage = { path: string; label: string };
 export const PUBLIC_PAGES: PublicPage[] = [
   { path: "/portfolio", label: "Portfólio" },
   { path: "/conteudos", label: "Conteúdos (blog)" },
+  { path: "/servicos", label: "Serviços" },
   { path: "/como-funciona", label: "Como funciona" },
   { path: "/escopo", label: "Escopo" },
   { path: "/orcamento", label: "Orçamento" },
