@@ -222,6 +222,13 @@ export default function BewildProjectPage({ slug }: Props) {
     project,
     "Apartamento reformado pela Bewild em São Paulo-SP.",
   );
+  // Imagem do compartilhamento: a mesma capa da página, em versão leve (1200 px).
+  const shareImage = project?.og_image_url || project?.cover_url || undefined;
+  const shareImageOptimized = shareImage ? optimizedImageUrl(shareImage, 1200, 72) : undefined;
+  const shareImageAlt =
+    project?.cover_alt ||
+    (coverSrc ? alts[coverSrc] : "") ||
+    (project ? `${projectFriendlyName(project)} — reforma de apartamento pela Bewild` : "");
 
   useSeo({
     title: seoTitle,
@@ -241,7 +248,9 @@ export default function BewildProjectPage({ slug }: Props) {
       .join(", "),
     canonicalPath: `/portfolio/${slug}`,
     ogType: "article",
-    ogImage: project?.og_image_url || project?.cover_url || undefined,
+    ogImage: shareImageOptimized,
+    ogImageAlt: shareImageAlt || undefined,
+
     jsonLd:
       settings && project
         ? [
