@@ -15,7 +15,9 @@ import { useBewildProject } from "@/lib/useBewildProject";
 import { bewildTypeLabel } from "@/lib/useBewildProjects";
 import { readyPhotos, renderPhotos } from "@/lib/projectPhotos";
 import { useImageAlts, type AltMap } from "@/lib/useImageAlts";
-import { projectMetaDescription, projectSeoTitle } from "@/lib/projectSeo";
+import { projectFriendlyName, projectMetaDescription, projectSeoTitle } from "@/lib/projectSeo";
+import { optimizedImageUrl } from "@/lib/imageUrl";
+
 import NotFoundPage from "@/pages/NotFoundPage";
 import "@/styles/bwh-tokens.css";
 import "@/styles/bwh-overlays.css";
