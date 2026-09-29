@@ -10,7 +10,11 @@ import { GUIA_FAQ, GUIA_MODIFIED, GUIA_TITLE } from "@/guia/data/guiaMeta";
 vi.mock("@/integrations/supabase/client", () => ({
   SUPABASE_URL: "https://test.supabase.co",
   SUPABASE_PUBLISHABLE_KEY: "test-anon-key",
-  supabase: { from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null, error: null }) }) }) }) },
+  supabase: {
+    // Configurações públicas e alts chegam por RPC (as tabelas são só admin).
+    rpc: async () => ({ data: null, error: null }),
+    from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null, error: null }) }) }) }),
+  },
 }));
 
 vi.mock("@/lib/useSiteSettings", async () => {

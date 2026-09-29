@@ -12,6 +12,8 @@ import { cleanup, render, waitFor } from "@testing-library/react";
 const invokeMock = vi.fn();
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
+    // Leitura pública das configurações via RPC (pendente, como antes no .from()).
+    rpc: () => new Promise(() => {}),
     from: () => ({ select: () => ({ eq: () => ({ maybeSingle: () => new Promise(() => {}) }) }) }),
     functions: { invoke: (...a: unknown[]) => invokeMock(...a) },
   },
