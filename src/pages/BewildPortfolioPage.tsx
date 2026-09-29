@@ -45,7 +45,7 @@ export default function BewildPortfolioPage() {
   // Alt text descritivo das capas (gerado a partir da análise de cada foto).
 
   useSeo({
-    title: "Projetos de arquitetura e reforma de apartamento em SP | Bewild",
+    title: "Portfólio: projetos de arquitetura e reforma em SP | Bewild",
     description:
       "Projetos de arquitetura, engenharia e reforma de apartamento em SP: veja apartamentos entregues pela Bewild em São Paulo, prontos para morar ou alugar.",
     keywords:
