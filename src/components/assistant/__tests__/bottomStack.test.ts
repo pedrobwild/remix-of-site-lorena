@@ -3,8 +3,8 @@ import { bottomStackTop, STACK_GAP } from "../bottomStack";
 
 /**
  * Pilha do rodapé (bottomStack.ts): o botão "Dúvidas" para acima de tudo que
- * está empilhado a partir da borda de baixo — inclusive a barra "Solicitar
- * orçamento" quando ela sobe acima do banner de cookies.
+ * está empilhado a partir da borda de baixo — inclusive uma barra fixa (a do
+ * guia do investidor, por exemplo) quando ela sobe acima do banner de cookies.
  */
 const H = 844; // iPhone 14, em px CSS
 const rect = (top: number, bottom: number) => ({ top, bottom, height: bottom - top });
@@ -14,7 +14,7 @@ describe("bottomStackTop", () => {
     expect(bottomStackTop([], H)).toBe(H);
   });
 
-  it("só a barra do celular, colada na borda (12 px)", () => {
+  it("só uma barra fixa, colada na borda (12 px)", () => {
     expect(bottomStackTop([rect(780, 832)], H)).toBe(780);
   });
 

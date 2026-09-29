@@ -233,3 +233,180 @@ describe("initHomeBwa", () => {
     expect(document.body.classList.contains("bwa-menu-open")).toBe(false);
   });
 });
+
+/* ------------------------------------------------------------------------
+ * UX mobile: barra "Solicitar orçamento", acordeão das disciplinas e
+ * `bwa-typing` (teclado aberto).
+ * ---------------------------------------------------------------------- */
+
+/** matchMedia que responde `matches` e deixa o teste disparar a troca. */
+function stubMatchMedia(matches: boolean): { setMatches: (next: boolean) => void; restore: () => void } {
+  const previous = window.matchMedia;
+  const listeners: Array<(event: MediaQueryListEvent) => void> = [];
+  const mql = {
+    matches,
+    media: "",
+    onchange: null,
+    addListener: () => {},
+    removeListener: () => {},
+    addEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) => listeners.push(listener),
+    removeEventListener: () => {},
+    dispatchEvent: () => false,
+  };
+  window.matchMedia = (() => mql) as unknown as typeof window.matchMedia;
+  return {
+    setMatches: (next) => {
+      mql.matches = next;
+      listeners.forEach((listener) => listener({ matches: next } as MediaQueryListEvent));
+    },
+    restore: () => {
+      window.matchMedia = previous;
+    },
+  };
+}
+
+function mountMobileHome(): HTMLElement {
+  document.body.innerHTML = `
+    <div id="home">
+      <main>
+        <section class="bwa-hero"><div class="bwa-hero-bottom"><a href="/orcamento">Solicitar orçamento</a></div></section>
+        <ul class="bwa-discipline-list">
+          <li><b>01</b><p><strong>Consultoria.</strong> <span class="bwa-discipline-desc">Leitura do imóvel.</span></p></li>
+          <li><b>02</b><p><strong>Projeto 3D.</strong> <span class="bwa-discipline-desc">Maquete realista.</span></p></li>
+        </ul>
+        <section class="bwa-final" id="contato"></section>
+        <a class="bwa-mobile-cta is-hidden" href="/orcamento">Solicitar orçamento</a>
+      </main>
+    </div>`;
+  return document.getElementById("home")!;
+}
+
+/** Posição de um elemento na tela (o jsdom não faz layout). */
+function placeAt(el: Element, top: number, height = 60) {
+  el.getBoundingClientRect = () =>
+    ({ top, bottom: top + height, height, left: 0, right: 390, width: 390, x: 0, y: top, toJSON() {} }) as DOMRect;
+}
+
+describe("initHomeBwa — barra 'Solicitar orçamento' do celular", () => {
+  it("aparece só depois do herói e some do fechamento até o fim da página, inclusive em saltos", () => {
+    const root = mountMobileHome();
+    const vh = window.innerHeight;
+    const heroCta = root.querySelector(".bwa-hero-bottom")!;
+    const finale = root.querySelector(".bwa-final")!;
+    const bar = root.querySelector<HTMLElement>(".bwa-mobile-cta")!;
+    const scrollTo = (heroTop: number, finaleTop: number) => {
+      placeAt(heroCta, heroTop);
+      placeAt(finale, finaleTop, 900);
+      window.dispatchEvent(new Event("scroll"));
+    };
+
+    // Topo da página: o botão do herói está na tela, a barra seria repetida.
+    placeAt(heroCta, 400);
+    placeAt(finale, 20000, 900);
+    const cleanup = initHomeBwa(root);
+    let cleaned = false;
+    try {
+      expect(bar).toHaveClass("is-hidden");
+
+      // Rolou além do herói.
+      scrollTo(-100, 15000);
+      expect(bar).not.toHaveClass("is-hidden");
+      // O fechamento entrou por baixo da tela.
+      scrollTo(-9000, vh - 10);
+      expect(bar).toHaveClass("is-hidden");
+      // Rodapé: o fechamento já ficou para trás.
+      scrollTo(-12000, -2500);
+      expect(bar).toHaveClass("is-hidden");
+      // Salto direto do rodapé para o meio (âncora, Voltar): volta a aparecer.
+      scrollTo(-3000, 9000);
+      expect(bar).not.toHaveClass("is-hidden");
+
+      cleanup();
+      cleaned = true;
+      expect(bar).toHaveClass("is-hidden");
+      // Depois da limpeza, a rolagem não mexe mais na barra.
+      scrollTo(-3000, 9000);
+      expect(bar).toHaveClass("is-hidden");
+    } finally {
+      if (!cleaned) cleanup();
+    }
+  });
+});
+
+describe("initHomeBwa — disciplinas em acordeão no celular", () => {
+  it("no celular, cada título vira botão e a explicação abre no toque; no desktop, nada muda", () => {
+    const media = stubMatchMedia(true);
+    try {
+      const root = mountMobileHome();
+      const cleanup = initHomeBwa(root);
+      const list = root.querySelector<HTMLElement>(".bwa-discipline-list")!;
+      const toggles = Array.from(list.querySelectorAll<HTMLButtonElement>("button.bwa-discipline-toggle"));
+      expect(list).toHaveClass("is-collapsible");
+      expect(toggles).toHaveLength(2);
+      expect(toggles[0].textContent).toBe("Consultoria.");
+      expect(toggles[0].getAttribute("aria-expanded")).toBe("false");
+      const desc = document.getElementById(toggles[0].getAttribute("aria-controls")!)!;
+      expect(desc).toHaveClass("bwa-discipline-desc");
+      expect(desc.textContent).toBe("Leitura do imóvel.");
+
+      toggles[0].click();
+      expect(toggles[0].closest("li")).toHaveClass("is-open");
+      expect(toggles[0].getAttribute("aria-expanded")).toBe("true");
+      expect(toggles[1].closest("li")).not.toHaveClass("is-open");
+      toggles[0].click();
+      expect(toggles[0].closest("li")).not.toHaveClass("is-open");
+
+      // Girou o tablet para a largura de desktop: volta ao texto corrido.
+      toggles[1].click();
+      media.setMatches(false);
+      expect(list).not.toHaveClass("is-collapsible");
+      expect(list.querySelector("button")).toBeNull();
+      expect(list.querySelector("li.is-open")).toBeNull();
+      expect(list.querySelector("li > p > strong")!.textContent).toBe("Consultoria.");
+
+      media.setMatches(true);
+      expect(list.querySelectorAll("button.bwa-discipline-toggle")).toHaveLength(2);
+      cleanup();
+      expect(list.querySelector("button")).toBeNull();
+      expect(list).not.toHaveClass("is-collapsible");
+    } finally {
+      media.restore();
+    }
+  });
+
+  it("no desktop o HTML fica como veio", () => {
+    const root = mountMobileHome();
+    const before = root.querySelector(".bwa-discipline-list")!.innerHTML;
+    const cleanup = initHomeBwa(root);
+    expect(root.querySelector(".bwa-discipline-list")!.innerHTML).toBe(before);
+    cleanup();
+  });
+});
+
+describe("bwa-typing — teclado aberto no celular", () => {
+  it("marca o <html> enquanto um campo de texto tem o foco e limpa ao desmontar", () => {
+    const { root } = mountChrome();
+    const form = document.createElement("form");
+    form.innerHTML = `<input name="nome" type="text"><textarea name="mensagem"></textarea><input type="checkbox"><button type="submit">Enviar</button>`;
+    document.body.appendChild(form);
+    const [text, area, check, submit] = Array.from(form.elements) as HTMLElement[];
+    const html = document.documentElement;
+    const cleanup = initBwaNav(root);
+
+    text.focus();
+    expect(html).toHaveClass("bwa-typing");
+    area.focus(); // de um campo para outro: continua
+    expect(html).toHaveClass("bwa-typing");
+    check.focus();
+    expect(html).not.toHaveClass("bwa-typing");
+    text.focus();
+    submit.focus();
+    expect(html).not.toHaveClass("bwa-typing");
+
+    text.focus();
+    cleanup();
+    expect(html).not.toHaveClass("bwa-typing");
+    area.focus();
+    expect(html).not.toHaveClass("bwa-typing");
+  });
+});
