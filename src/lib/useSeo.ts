@@ -104,21 +104,24 @@ function setMeta(selector: string, attrs: Record<string, string>) {
   if (!el) {
     const tag = selector.startsWith("link") ? "link" : "meta";
     el = document.createElement(tag) as HTMLMetaElement | HTMLLinkElement;
+    // Só tags criadas AQUI recebem o carimbo managed. Tags renderizadas pelo
+    // TanStack Start (`head()` das rotas + <HeadContent/>) pertencem ao React:
+    // podemos atualizar atributos delas, mas NUNCA removê-las — remover um nó
+    // do React quebra a reconciliação ("removeChild of null") e congela a
+    // troca de rota. (Migração TanStack, 2026-09)
+    el.setAttribute(MANAGED_ATTR, "true");
     document.head.appendChild(el);
   }
-  // Marca toda tag tocada (criada OU pré-existente do index.html) como
-  // managed. Sem isso, os metas estáticos do index.html ficavam órfãos
-  // do ciclo de aplicação — `clearJsonLd` e checagens equivalentes não
-  // os enxergavam e o "estado" do <head> divergia entre route swaps. (M4)
-  el.setAttribute(MANAGED_ATTR, "true");
   for (const [k, v] of Object.entries(attrs)) {
     el.setAttribute(k, v);
   }
 }
 
-/** Remove a tag (estática do index.html ou criada aqui), se existir. */
+/** Remove a tag, mas apenas se foi criada por este módulo (managed). */
 function removeMeta(selector: string) {
-  document.head.querySelectorAll(selector).forEach((n) => n.remove());
+  document.head.querySelectorAll(selector).forEach((n) => {
+    if (n.getAttribute(MANAGED_ATTR)) n.remove();
+  });
 }
 
 /** Página em que o documento foi carregado (onde vale o JSON-LD do prerender). */
@@ -466,23 +469,27 @@ function applySeo(settings: SiteSettings, seoInput: SeoInput) {
   document.head.querySelector('meta[name="DC.title"]')?.setAttribute("content", title);
 
   // hreflang — pt-BR + x-default apontando para o canonical da rota atual.
-  // Remove duplicatas estáticas do index.html (que apontam só para a home)
-  // e injeta as corretas conforme a página.
+  // Remove só as duplicatas criadas por este módulo; as renderizadas pelo
+  // React (head() das rotas) ficam — e, quando existem, já estão corretas
+  // para a rota atual, então não criamos cópias.
   document.head
-    .querySelectorAll('link[rel="alternate"][hreflang]')
+    .querySelectorAll(`link[rel="alternate"][hreflang][${MANAGED_ATTR}]`)
     .forEach((n) => n.remove());
-  const hrefPt = document.createElement("link");
-  hrefPt.setAttribute("rel", "alternate");
-  hrefPt.setAttribute("hreflang", "pt-BR");
-  hrefPt.setAttribute("href", canonicalUrl);
-  hrefPt.setAttribute(MANAGED_ATTR, "true");
-  document.head.appendChild(hrefPt);
-  const hrefDefault = document.createElement("link");
-  hrefDefault.setAttribute("rel", "alternate");
-  hrefDefault.setAttribute("hreflang", "x-default");
-  hrefDefault.setAttribute("href", canonicalUrl);
-  hrefDefault.setAttribute(MANAGED_ATTR, "true");
-  document.head.appendChild(hrefDefault);
+  const reactHreflang = document.head.querySelectorAll('link[rel="alternate"][hreflang]').length;
+  if (reactHreflang === 0) {
+    const hrefPt = document.createElement("link");
+    hrefPt.setAttribute("rel", "alternate");
+    hrefPt.setAttribute("hreflang", "pt-BR");
+    hrefPt.setAttribute("href", canonicalUrl);
+    hrefPt.setAttribute(MANAGED_ATTR, "true");
+    document.head.appendChild(hrefPt);
+    const hrefDefault = document.createElement("link");
+    hrefDefault.setAttribute("rel", "alternate");
+    hrefDefault.setAttribute("hreflang", "x-default");
+    hrefDefault.setAttribute("href", canonicalUrl);
+    hrefDefault.setAttribute(MANAGED_ATTR, "true");
+    document.head.appendChild(hrefDefault);
+  }
 
   // SEO extras (autor, keywords, geo). Keywords são por rota: sem valor
   // próprio nem global, a tag sai (antes ficava a da rota anterior).
