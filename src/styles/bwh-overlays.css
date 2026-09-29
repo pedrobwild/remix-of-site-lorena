@@ -42,6 +42,9 @@
 .bwh-pf-skel-card{display:flex;flex-direction:column;gap:10px}
 .bwh-pf-skel--line{aspect-ratio:auto;height:14px;width:70%}
 .bwh-pf-skel--line.bwh-pf-skel--meta{width:45%;height:12px}
+/* esqueletos de bairros e filtros, na altura dos elementos reais */
+.bwh-pf-skel--inline{display:inline-block;aspect-ratio:auto;width:90px;height:18px}
+.bwh-pf-skel--select{aspect-ratio:auto;height:42px;width:min(100%,240px)}
 @keyframes bwh-pulse{0%,100%{opacity:.6}50%{opacity:.9}}
 @media (prefers-reduced-motion: reduce){.bwh-pf-skel{animation:none}}
 

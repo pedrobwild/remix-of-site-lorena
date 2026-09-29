@@ -137,11 +137,24 @@ export default function BewildPortfolioPage() {
             </p>
 
             {/* Reserva de altura para a navegação por bairro + filtros, que só
-                existem depois dos dados — sem isso, o hero desce no load. */}
+                existem depois dos dados — mesmas classes do conteúdo real,
+                então a altura reservada é idêntica por construção. */}
             {loading && (
-              <div aria-hidden="true" style={{ height: 118, margin: "24px 0 24px" }}>
-                <div className="bwh-pf-skel bwh-pf-skel--line" style={{ width: 260 }} />
-                <div className="bwh-pf-skel bwh-pf-skel--line" style={{ width: 500, maxWidth: "100%", marginTop: 36 }} />
+              <div aria-hidden="true">
+                <nav className="bwh-mono" style={{ margin: "0 0 24px", display: "flex", flexWrap: "wrap", gap: "8px 16px" }}>
+                  <span>Por bairro:</span>
+                  {Array.from({ length: 6 }, (_, i) => (
+                    <span key={i} className="bwh-pf-skel bwh-pf-skel--inline" />
+                  ))}
+                </nav>
+                <div className="bwh-pf-controls">
+                  {["Bairro", "Ordenar por"].map((label) => (
+                    <div key={label} className="bwh-pf-field">
+                      <span className="bwh-mono bwh-pf-field__label">{label}</span>
+                      <div className="bwh-pf-skel bwh-pf-skel--select" />
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -212,10 +225,10 @@ export default function BewildPortfolioPage() {
         {/* LISTA */}
         <section className="bwh-sec">
           <div className="bwh-wrap">
-            {!loading && !error && total > 0 && (
-              <div className="bwh-srlabel">
+            {!error && (loading || total > 0) && (
+              <div className="bwh-srlabel" aria-busy={loading || undefined}>
                 <span className="bwh-mono bwh-label bwh-label--accent">
-                  {pad(total)} · {total === 1 ? "Projeto no índice" : "Projetos no índice"}
+                  {loading ? "\u00A0" : `${pad(total)} · ${total === 1 ? "Projeto no índice" : "Projetos no índice"}`}
                 </span>
               </div>
             )}
