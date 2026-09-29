@@ -202,16 +202,27 @@ export default function PrivacidadePage() {
                 responder ao seu pedido e dar andamento a ele.
               </p>
               <p>
-                Se você aceitou os cookies, nome, e-mail e telefone (e cidade e
-                estado, quando informados) também seguem criptografados para a
-                Meta e o Google, para medir e direcionar nossos anúncios.
-                Quando o atendimento avança (contato qualificado ou não), a
-                Meta também é avisada, com o mesmo contato criptografado, o
-                objetivo da reforma e a campanha de origem — nunca a mensagem.
-                Nos cadastros de parceiros e de incorporadoras e na indicação de
-                amigos, só a Meta recebe o seu contato criptografado — os dados
-                de quem você indica nunca são enviados às plataformas de
-                anúncio. Se você recusou os cookies, nada disso é enviado.
+                Quando você envia um formulário de orçamento, contato ou
+                diagnóstico, nome, e-mail e telefone (e cidade e estado, quando
+                informados) seguem criptografados por hash para a Meta, para
+                medir o resultado e direcionar nossos anúncios — isso acontece
+                pelo nosso servidor, no envio do formulário, com base no nosso
+                interesse legítimo em medir as campanhas, e independe dos
+                cookies (que controlam apenas o Pixel no seu navegador). Se você
+                aceitou os cookies, o mesmo contato criptografado segue também
+                para o Google. Quando o atendimento avança (contato qualificado
+                ou não), a Meta também é avisada, com o mesmo contato
+                criptografado, o objetivo da reforma e a campanha de origem —
+                nunca a mensagem. Para os cadastros feitos nos formulários dos
+                anúncios da Meta, informamos à Meta o andamento do atendimento
+                (recebido, contatado, qualificado ou descartado) usando o
+                identificador que a própria Meta deu ao seu cadastro. Nos
+                cadastros de parceiros e de incorporadoras e na indicação de
+                amigos, só a Meta recebe o seu contato criptografado, e somente
+                com o seu aceite de cookies — os dados de quem você indica nunca
+                são enviados às plataformas de anúncio. Para se opor a esse
+                envio, escreva para o contato indicado em &ldquo;Seus
+                direitos&rdquo;.
               </p>
               <p>
                 Para relatórios internos, levamos às nossas planilhas e
@@ -333,8 +344,8 @@ export default function PrivacidadePage() {
                   <strong>Consentimento</strong> (art. 7º, I da LGPD), dado no
                   banner de cookies, para os cookies não essenciais, a medição,
                   os anúncios e públicos descritos acima e o envio criptografado
-                  do seu contato às plataformas de anúncio; e para comunicações
-                  comerciais;
+                  do seu contato ao Google e ao Pixel da Meta; e para
+                  comunicações comerciais;
                 </li>
                 <li>
                   <strong>
@@ -345,8 +356,12 @@ export default function PrivacidadePage() {
                 </li>
                 <li>
                   <strong>Legítimo interesse</strong> (art. 7º, IX), para
-                  manutenção e segurança do site, respeitando seus direitos
-                  fundamentais;
+                  manutenção e segurança do site e para medir o resultado das
+                  nossas campanhas na Meta a partir dos formulários de cliente
+                  (envio do contato criptografado por hash pelo servidor e do
+                  andamento do atendimento, como descrito em &ldquo;Para onde
+                  vão os dados dos formulários&rdquo;), respeitando seus
+                  direitos fundamentais e com a possibilidade de oposição;
                 </li>
                 <li>
                   <strong>Cumprimento de obrigação legal</strong> (art. 7º,
@@ -363,9 +378,10 @@ export default function PrivacidadePage() {
                 (CRM), processamento dos
                 recursos de inteligência artificial e relatórios internos,
                 sempre sob obrigação contratual de confidencialidade e
-                segurança; e, somente com o seu aceite, com a Meta (Facebook e
-                Instagram) e o Google, para medição e publicidade, como descrito
-                em &ldquo;Anúncios e públicos&rdquo;. A Meta e o Google também
+                segurança; com a Meta (Facebook e Instagram), para medição e
+                publicidade, como descrito em &ldquo;Anúncios e públicos&rdquo;
+                e em &ldquo;Formulários&rdquo;; e, somente com o seu aceite,
+                com o Google, para as mesmas finalidades. A Meta e o Google também
                 tratam esses dados para finalidades próprias, conforme as
                 políticas de privacidade deles. Alguns desses serviços
                 armazenam e processam dados em servidores fora do Brasil.

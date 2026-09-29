@@ -11,6 +11,7 @@ import { logIntegration } from "../_shared/integration-log.ts";
 import {
   AD_LEAD_FORMS,
   capiLogEntry,
+  capiRequiresConsent,
   resolveMetaCapiConfig,
   sendMetaEvents,
   SITE_URL,
@@ -166,8 +167,8 @@ async function sendLeadEmail(lead: CleanLead, leadId: string | null): Promise<Ou
 
 /**
  * API de Conversões do Meta: manda o Lead do servidor com o mesmo event_id do
- * Pixel no navegador (o Meta deduplica). Só com aceite de cookies e só para
- * formulários de cliente. Token, Pixel e código de teste: ver
+ * Pixel no navegador (o Meta deduplica). Só para formulários de cliente; o
+ * aceite de cookies só é exigido com `META_CAPI_REQUIRE_CONSENT=true`. Token, Pixel e código de teste: ver
  * `resolveMetaCapiConfig` (_shared/meta-capi.ts). Cada tentativa fica em
  * `integration_log`; o envio aceito também marca `leads.meta_lead_sent_at`.
  */
@@ -177,8 +178,19 @@ async function sendMetaCapiLead(
   leadId: string | null,
   req: Request,
 ): Promise<Outcome> {
-  if (lead.consent_marketing !== true) return "skipped";
   if (!lead.form_path || !AD_LEAD_FORMS.includes(lead.form_path)) return "skipped";
+  // Aceite de cookies só é exigido com META_CAPI_REQUIRE_CONSENT=true (padrão:
+  // envia para todo formulário de cliente, PII sempre em hash).
+  if (capiRequiresConsent((n) => Deno.env.get(n)) && lead.consent_marketing !== true) {
+    await logIntegration(admin, {
+      integration: "meta_capi",
+      event_name: "Lead",
+      lead_id: leadId,
+      status: "skipped",
+      detail: { reason: "no_consent" },
+    });
+    return "skipped";
+  }
 
   const base = { integration: "meta_capi", event_name: "Lead", lead_id: leadId };
   let settings: Record<string, unknown> | null = null;

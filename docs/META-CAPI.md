@@ -3,7 +3,9 @@
 Como o site conta leads para a Meta (e para o Google Ads) e o que precisa estar
 configurado. O caminho inverso — trazer da Meta as métricas das campanhas e os
 leads dos formulários instantâneos para o painel — está em
-[META-SYNC.md](META-SYNC.md).
+[META-SYNC.md](META-SYNC.md); os estágios do CRM devolvidos à Meta para os leads
+de formulário instantâneo ("Conecte seu CRM com a API de Conversões") estão em
+[META-CRM.md](META-CRM.md).
 
 ## O que sai para a Meta
 
@@ -18,6 +20,7 @@ leads dos formulários instantâneos para o painel — está em
 | `SubmitApplication` | cadastro de parceiro, de incorporadora e indicação | Pixel | UUID do envio | website |
 | `QualifiedLead` | admin marca o lead como **qualificado** em `/admin/leads` | CAPI (`meta-lead-quality`) | `<lead_id>:qualifiedlead` | system_generated |
 | `DisqualifiedLead` | admin marca o lead como **descartado** | CAPI (`meta-lead-quality`) | `<lead_id>:disqualifiedlead` | system_generated |
+| `lead_recebido`, `lead_contatado`, `lead_qualificado`, `lead_descartado` | leads dos **formulários instantâneos** da Meta: entrada no painel e mudanças de status | CAPI (`meta-sync`, `meta-lead-quality`) com `user_data.lead_id` | `<meta_leads.id>:<estágio>` | system_generated — ver [META-CRM.md](META-CRM.md) |
 
 O `Lead` do Pixel leva, além de `content_name`/`content_category`, parâmetros sem
 dado pessoal para segmentar: `objetivo` (slug), `faixa_m2` (`ate_30`, `31_45`,
@@ -32,8 +35,13 @@ Duas regras valem para todos os eventos de lead:
   continuam como `generate_lead` no GA4, mas na Meta viram `SubmitApplication`
   (só Pixel, sem CAPI e sem Google Ads) — contar como Lead ensinaria a campanha
   a buscar o público errado.
-- **Só com aceite de cookies.** O Pixel só carrega depois do aceite, e a CAPI só
-  envia quando o lead chegou com `consent_marketing = true`.
+- **Pixel só com aceite de cookies; CAPI independe do banner.** O Pixel só
+  carrega depois do aceite. O `Lead` (e `QualifiedLead`/`DisqualifiedLead`) da
+  CAPI sai para **todo** formulário de cliente, com os dados pessoais em hash,
+  mesmo sem aceite — decisão de 25/09/2026 para melhorar a atribuição (base
+  legal: legítimo interesse, descrito na `/privacidade` e no aviso dos
+  formulários). O segredo `META_CAPI_REQUIRE_CONSENT=true` religa a exigência
+  de `consent_marketing = true` para a CAPI.
 
 A Meta deduplica `Lead` pelo par (`event_name`, `event_id`): quando o Pixel e a
 CAPI mandam os dois, conta um.
@@ -113,6 +121,7 @@ novo (landing page, subdomínio de outro domínio) → incluir na lista antes.
 | Segredo | `META_CAPI_ACCESS_TOKEN` | sim* | Token de usuário de sistema com acesso ao Pixel (Events Manager → Configurações → Conversions API → "Gerar token de acesso"). *Na falta, as funções usam `META_ADS_ACCESS_TOKEN` (o de `meta-insights`), se ele tiver acesso ao Pixel. |
 | Segredo | `META_PIXEL_ID` | não | Se ausente, usa o Pixel salvo em `/admin/seo › Analytics & Pixels` (`site_settings.meta_pixel_id`) — o mesmo que o site injeta. |
 | Admin | "Meta — código de teste da API de Conversões" | não | Código de "Testar eventos" do Events Manager. Preencher só na homologação e **apagar** depois: com ele os eventos do servidor não entram nas campanhas. O segredo `META_CAPI_TEST_EVENT_CODE` também funciona. |
+| Segredo | `META_CAPI_REQUIRE_CONSENT` | não | `true`/`1`/`sim` → a CAPI só envia `Lead`/`QualifiedLead`/`DisqualifiedLead` de quem aceitou os cookies (`consent_marketing`). Ausente ou `false` (padrão): envia para todo formulário de cliente. Só vale para leads do site; os leads de formulário da Meta não passam pelo banner. |
 
 ## Passo a passo de ativação
 
@@ -151,7 +160,8 @@ group by 1 order by 1 desc;
 ```
 
 Em `integration_log.detail.reason`: `no_token` (segredo ausente), `no_pixel`,
-`no_user_agent`, `no_user_data`; erros trazem `error_code` e `fbtrace_id` da Meta.
+`no_user_agent`, `no_user_data`, `no_consent` (só com
+`META_CAPI_REQUIRE_CONSENT=true`); erros trazem `error_code` e `fbtrace_id` da Meta.
 
 ## LGPD
 
@@ -176,10 +186,16 @@ Em `integration_log.detail.reason`: `no_token` (segredo ausente), `no_pixel`,
   exclusão e semelhantes), prazos dos cookies, retenção dos públicos (Meta: até
   180 dias) e como recusar (Preferências de cookies, Preferências de anúncios da
   Meta, Minha Central de Anúncios do Google, NAI/DAA).
-- A CAPI segue a mesma decisão do visitante: `consent_marketing` viaja no envio do
-  formulário e, sem aceite, nada vai à Meta — nem o `Lead`, nem os eventos de
-  qualidade. Quem recusa cookies continua sendo atendido normalmente; só não é
-  medido.
+- A CAPI **não** segue o banner (padrão desde 25/09/2026): `consent_marketing`
+  viaja no envio do formulário e fica gravado no lead, mas o `Lead` e os eventos
+  de qualidade saem pelo servidor para todo formulário de cliente, com os dados
+  pessoais em hash — a base legal é o legítimo interesse em medir as campanhas,
+  com direito de oposição pelo contato da `/privacidade`. O aviso de cada
+  formulário (`FormPrivacyNote`) diz isso no ponto de coleta ("Ao enviar, nome,
+  e-mail e telefone seguem criptografados para a Meta…; se você aceitou os
+  cookies, também para o Google"). O Pixel, o Google Ads e os `SubmitApplication`
+  (parceiros/indicação, só Pixel) continuam condicionados ao aceite. Para
+  voltar a exigir o aceite na CAPI: `META_CAPI_REQUIRE_CONSENT=true`.
 - Dados pessoais vão com hash, nunca em claro. O IP não é gravado no banco; só
   passa para a Meta no momento do evento.
 - Referências: [Meta — parâmetros de informação do cliente](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters)

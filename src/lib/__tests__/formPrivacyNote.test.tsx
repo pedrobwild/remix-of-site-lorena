@@ -16,8 +16,8 @@ describe("FormPrivacyNote", () => {
     );
     const p = container.querySelector("p")!;
     expect(p.textContent).toBe(
-      "Usamos seus dados para responder ao seu contato. Se você aceitou os cookies, nome, e-mail e telefone " +
-        "também seguem criptografados para a Meta e o Google medirem e direcionarem nossos anúncios. " +
+      "Usamos seus dados para responder ao seu contato. Ao enviar, nome, e-mail e telefone seguem " +
+        "criptografados para a Meta medir e direcionar nossos anúncios; se você aceitou os cookies, também para o Google. " +
         "Política de privacidade.",
     );
     expect(p.querySelector("a")!.getAttribute("href")).toBe("/privacidade");

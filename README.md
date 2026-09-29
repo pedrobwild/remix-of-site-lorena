@@ -42,16 +42,20 @@ cp .env.example .env
 ## Rodar localmente
 
 ```bash
-npm ci          # instala dependências exatas do package-lock.json
-npm run dev     # Vite dev server em http://localhost:5173
+bun install --frozen-lockfile   # instala dependências exatas do bun.lock
+bun run dev                     # Vite dev server em http://localhost:5173
 ```
 
 ## Testes
 
 ```bash
-npm test            # roda a suíte completa uma vez (vitest run)
-npm run test:watch  # modo watch
+bun run test        # roda a suíte completa uma vez (vitest run)
+bun run test:watch  # modo watch
 ```
+
+A configuração do Vitest fica em `vitest.config.ts` (separada do
+`vite.config.ts`, que carrega o plugin do TanStack Start e não serve para o
+jsdom); o setup compartilhado está em `src/test/setup.ts`.
 
 ## Build de produção
 
@@ -90,6 +94,12 @@ Campanhas e formulários instantâneos da Meta no painel (edge function
 `meta-sync`, a cada 30 min): métricas diárias por campanha, leads dos
 formulários do Facebook/Instagram com aviso no Slack, e-mail e CRM — ver
 [docs/META-SYNC.md](docs/META-SYNC.md).
+
+API de Conversões para CRM ("Conecte seu CRM com a API de Conversões", otimização
+Conversion Leads): cada lead de formulário instantâneo devolve à Meta os estágios
+`lead_recebido` → `lead_contatado` → `lead_qualificado`/`lead_descartado` com o
+`lead_id` do formulário, conforme o status no painel — ver
+[docs/META-CRM.md](docs/META-CRM.md).
 
 Página /admin/integracoes (status de cada integração e registro de envios),
 pixel próprio 1×1 e links rastreados (edge function `px`, sem dados

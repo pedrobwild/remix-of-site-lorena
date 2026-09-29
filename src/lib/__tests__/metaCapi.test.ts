@@ -9,8 +9,15 @@ import {
   buildEventPayload,
   buildUserData,
   capiLogEntry,
+  capiRequiresConsent,
+  CRM_STAGE_BY_STATUS,
+  crmStageEvent,
   hasMatchKeys,
+  isMetaLeadId,
   isValidPixelId,
+  LEAD_EVENT_SOURCE,
+  META_CRM_STAGES,
+  serializeMetaBody,
   META_GRAPH_VERSION,
   normalizeEmail,
   normalizeName,
@@ -277,5 +284,104 @@ describe("helpers", () => {
     const p = await buildEventPayload({ eventName: "Lead", eventId: "e", actionSource: "website", user: { email: "a@b.co" }, customData: { x: null } });
     expect(p.custom_data).toBeUndefined();
     expect(typeof p.event_time).toBe("number");
+  });
+});
+
+describe("API de Conversões para CRM (leads dos formulários instantâneos)", () => {
+  const lead = {
+    rowId: "row-1",
+    metaLeadId: "12345678901234567", // 17 dígitos: acima de 2^53
+    name: "Ana Souza",
+    email: "ana@ex.com",
+    phone: "+5511912345678",
+    city: "São Paulo, SP",
+    formName: "Orçamento studio",
+    campaignName: "Camp A",
+    platform: "ig",
+    createdTime: "2026-09-29T12:00:00.000Z",
+  };
+
+  it("lead_id da Meta: 15–17 dígitos", () => {
+    expect(isMetaLeadId("123456789012345")).toBe(true);
+    expect(isMetaLeadId("12345678901234567")).toBe(true);
+    expect(isMetaLeadId("12345678901234")).toBe(false);
+    expect(isMetaLeadId("abc")).toBe(false);
+    expect(isMetaLeadId(null)).toBe(false);
+  });
+
+  it("status do painel → estágio; um estágio por status, na ordem do funil", () => {
+    expect(META_CRM_STAGES).toEqual(["lead_recebido", "lead_contatado", "lead_qualificado", "lead_descartado"]);
+    expect(CRM_STAGE_BY_STATUS).toEqual({
+      novo: "lead_recebido",
+      contatado: "lead_contatado",
+      qualificado: "lead_qualificado",
+      descartado: "lead_descartado",
+    });
+  });
+
+  it("crmStageEvent: system_generated, lead_id, event_source=crm e lead_event_source", async () => {
+    const at = new Date("2026-09-30T10:00:00.000Z");
+    const ev = crmStageEvent(lead, "lead_qualificado", at);
+    expect(ev.eventName).toBe("lead_qualificado");
+    expect(ev.eventId).toBe("row-1:lead_qualificado");
+    expect(ev.actionSource).toBe("system_generated");
+    expect(ev.eventTime).toBe(Math.floor(at.getTime() / 1000));
+    expect(ev.customData).toMatchObject({
+      event_source: "crm",
+      lead_event_source: LEAD_EVENT_SOURCE,
+      lead_status: "qualificado",
+      content_name: "Orçamento studio",
+      campaign_name: "Camp A",
+    });
+    expect(ev.customData).not.toHaveProperty("is_test");
+    const payload = await buildEventPayload(ev);
+    expect(payload.user_data.lead_id).toBe("__int__12345678901234567");
+    expect(payload.user_data.em).toHaveLength(1);
+    expect(payload.user_data.ph).toHaveLength(1);
+    expect(payload.user_data.external_id).toHaveLength(1);
+    expect(payload.user_data.ct).toBeDefined();
+  });
+
+  it("event_time nunca fica antes da criação do lead (a Meta descarta)", () => {
+    const created = new Date(lead.createdTime);
+    const ev = crmStageEvent(lead, "lead_recebido", new Date(created.getTime() - 60_000));
+    expect(ev.eventTime).toBe(Math.floor(created.getTime() / 1000) + 1);
+  });
+
+  it("lead de teste vai marcado", () => {
+    expect(crmStageEvent({ ...lead, isTest: true }, "lead_recebido").customData).toMatchObject({ is_test: true });
+  });
+
+  it("só o lead_id já é identificador suficiente", async () => {
+    const data = await buildUserData({ leadId: "123456789012345" });
+    expect(hasMatchKeys(data)).toBe(true);
+    expect(await buildUserData({ leadId: "12" })).not.toHaveProperty("lead_id");
+  });
+
+  it("lead_id vai como INTEIRO no JSON, sem perder precisão acima de 2^53", () => {
+    const json = serializeMetaBody({ data: [{ user_data: { lead_id: "__int__12345678901234567" }, custom_data: { lead_id: "row-uuid" } }] });
+    expect(json).toContain('"lead_id":12345678901234567');
+    expect(json).toContain('"lead_id":"row-uuid"');
+    expect(json).not.toContain("__int__");
+  });
+
+  it("sendMetaEvents manda o lead_id inteiro no corpo", async () => {
+    const fetchImpl = vi.fn(async () => new Response(JSON.stringify({ events_received: 1 }), { status: 200 }));
+    const r = await sendMetaEvents({ pixelId: "1", accessToken: "t", fetchImpl }, [crmStageEvent(lead, "lead_contatado")]);
+    expect(r.status).toBe("sent");
+    const [, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
+    expect(String(init.body)).toContain('"lead_id":12345678901234567');
+    expect(String(init.body)).toContain('"action_source":"system_generated"');
+    expect(String(init.body)).toContain('"event_source":"crm"');
+  });
+
+  it("META_CAPI_REQUIRE_CONSENT: padrão não exige aceite; true/1/sim exigem", () => {
+    const env = (v: string | undefined) => () => v;
+    expect(capiRequiresConsent(env(undefined))).toBe(false);
+    expect(capiRequiresConsent(env(""))).toBe(false);
+    expect(capiRequiresConsent(env("false"))).toBe(false);
+    expect(capiRequiresConsent(env("true"))).toBe(true);
+    expect(capiRequiresConsent(env("1"))).toBe(true);
+    expect(capiRequiresConsent(env(" SIM "))).toBe(true);
   });
 });

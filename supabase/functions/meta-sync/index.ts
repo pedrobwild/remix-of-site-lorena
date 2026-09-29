@@ -3,7 +3,8 @@
 //  1. métricas diárias por campanha da conta de anúncios → `meta_ads_daily`;
 //  2. leads dos formulários instantâneos (Lead Ads) → `meta_leads`, avisando
 //     o time de cada lead NOVO pelos mesmos canais dos leads do site (Slack,
-//     e-mail e card no CRM).
+//     e-mail e card no CRM) e devolvendo à Meta o primeiro estágio do CRM
+//     (`lead_recebido`, API de Conversões para CRM — docs/META-CRM.md).
 // A primeira carga importa o histórico que a Meta ainda guarda (90 dias) sem
 // avisar ninguém. O estado de cada parte fica em `meta_sync_state` e cada
 // rodada deixa uma linha em `integration_log` (sem dados pessoais).
@@ -15,6 +16,7 @@
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.45.4";
 import { sendTemplateEmail } from "../_shared/transactional-email-templates/send-email.ts";
 import { logIntegration } from "../_shared/integration-log.ts";
+import { capiLogEntry, crmStageEvent, type MetaCapiConfig, resolveMetaCapiConfig, sendMetaEvents } from "../_shared/meta-capi.ts";
 import { createGraphClient, type GraphClient, GraphApiError } from "../_shared/meta-graph.ts";
 import {
   adsDailyRowFromApi,
@@ -302,6 +304,61 @@ const PENDING_COLUMNS =
   "id, meta_lead_id, created_time, page_id, form_id, form_name, ad_id, ad_name, adset_id, adset_name, campaign_id, campaign_name, platform, is_organic, is_test, name, email, phone, city, answers";
 
 /**
+ * Primeiro estágio do CRM na Meta (`lead_recebido`): diz à Meta que o lead do
+ * formulário chegou ao painel. É obrigatório para a otimização Conversion
+ * Leads (a Meta exige o estágio inicial + pelo menos um seguinte). Só para
+ * leads com aviso (≤ 72h): o `event_time` precisa refletir quando o lead
+ * entrou no CRM, e a Meta descarta backfill com data alterada.
+ */
+async function notifyMetaCapi(
+  admin: SupabaseClient,
+  row: MetaLeadRow,
+  id: string,
+  config: MetaCapiConfig | null,
+): Promise<Outcome> {
+  const base = { integration: "meta_capi", event_name: "lead_recebido", lead_id: null };
+  const detailBase = { source: "meta_leads", meta_lead_row: id };
+  if (!config) {
+    await logIntegration(admin, { ...base, status: "skipped", detail: { ...detailBase, reason: "no_config" } });
+    return "skipped";
+  }
+  const result = await sendMetaEvents(config, [
+    crmStageEvent(
+      {
+        rowId: id,
+        metaLeadId: row.meta_lead_id,
+        name: row.name,
+        email: row.email,
+        phone: row.phone,
+        city: row.city,
+        formName: row.form_name,
+        campaignName: row.campaign_name,
+        platform: row.platform,
+        isTest: row.is_test,
+        createdTime: row.created_time,
+      },
+      "lead_recebido",
+    ),
+  ]);
+  const entry = capiLogEntry(result, { test: !!config.testEventCode || !!row.is_test });
+  await logIntegration(admin, { ...base, ...entry, detail: { ...entry.detail, ...detailBase } });
+  if (result.status === "error") console.error("[meta-sync] meta capi (crm) failed", result.httpStatus ?? result.reason);
+  return result.status;
+}
+
+/** Configuração da CAPI (token + Pixel) uma vez por rodada; null = não configurada. */
+async function loadCapiConfig(admin: SupabaseClient): Promise<MetaCapiConfig | null> {
+  let settings: Record<string, unknown> | null = null;
+  try {
+    const { data } = await admin.from("site_settings").select("*").eq("id", 1).maybeSingle();
+    settings = (data ?? null) as Record<string, unknown> | null;
+  } catch {
+    settings = null;
+  }
+  return resolveMetaCapiConfig((name) => Deno.env.get(name), settings).config;
+}
+
+/**
  * Avisa os leads pendentes (`notify` nulo, até 72h de idade) — os que esta
  * rodada acabou de gravar e os que uma rodada anterior não conseguiu avisar.
  * Cada linha é "reservada" antes do envio (`notify` nulo → "enviando", numa
@@ -322,8 +379,10 @@ async function notifyPending(admin: SupabaseClient, now: Date, deadline: number)
     console.error("[meta-sync] pending select failed", error.code ?? "unknown");
     return 0;
   }
+  const rows = (data ?? []) as (MetaLeadRow & { id: string })[];
+  const capiConfig = rows.length ? await loadCapiConfig(admin) : null;
   let notified = 0;
-  for (const pending of (data ?? []) as (MetaLeadRow & { id: string })[]) {
+  for (const pending of rows) {
     // Reserva o fôlego final da função para gravar o estado.
     if (Date.now() > deadline + 25_000) break;
     const { data: claimed } = await admin
@@ -334,15 +393,16 @@ async function notifyPending(admin: SupabaseClient, now: Date, deadline: number)
       .select("id");
     if (!claimed || claimed.length === 0) continue;
     const row: MetaLeadRow = { ...pending, answers: Array.isArray(pending.answers) ? pending.answers : [] };
-    const [slack, email, crm] = await Promise.all([
+    const [slack, email, crm, capi] = await Promise.all([
       notifySlack(row, pending.id),
       notifyEmail(row),
       notifyCrm(row, pending.id),
+      notifyMetaCapi(admin, row, pending.id, capiConfig),
     ]);
     notified += 1;
     await admin
       .from("meta_leads")
-      .update({ notify: { slack, email, crm }, notified_at: new Date().toISOString() })
+      .update({ notify: { slack, email, crm, capi }, notified_at: new Date().toISOString() })
       .eq("id", pending.id);
   }
   return notified;

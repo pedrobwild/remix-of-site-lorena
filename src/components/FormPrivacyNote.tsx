@@ -4,19 +4,23 @@ import { routes } from "@/lib/useHashRoute";
 /**
  * Aviso de privacidade no ponto de coleta (LGPD, art. 9º), igual em todos os
  * formulários: para que servem os dados e o que segue, criptografado, para as
- * plataformas de anúncio — só com o aceite de cookies.
+ * plataformas de anúncio.
  *
  * `platforms` espelha src/lib/conversions.ts:
- *  - "meta-google": formulários de cliente (Lead no Pixel e na API de
- *    Conversões da Meta + conversão otimizada do Google Ads);
+ *  - "meta-google": formulários de cliente. O Lead vai à Meta pela API de
+ *    Conversões no envio do formulário (contato em hash), independentemente do
+ *    banner de cookies (decisão de 25/09/2026; `META_CAPI_REQUIRE_CONSENT`
+ *    religa a exigência); Pixel e Google Ads continuam só com o aceite.
  *  - "meta": cadastros de parceiro e de incorporadora e indicação
- *    (SubmitApplication, só na Meta).
+ *    (SubmitApplication, só no Pixel da Meta, só com aceite).
  */
 export type FormAdsPlatforms = "meta" | "meta-google";
 
-const RECEIVERS: Record<FormAdsPlatforms, string> = {
-  "meta-google": "a Meta e o Google medirem e direcionarem",
-  meta: "a Meta medir e direcionar",
+const SENTENCE: Record<FormAdsPlatforms, (contact: string) => string> = {
+  "meta-google": (contact) =>
+    `Ao enviar, ${contact} seguem criptografados para a Meta medir e direcionar nossos anúncios; se você aceitou os cookies, também para o Google.`,
+  meta: (contact) =>
+    `Se você aceitou os cookies, ${contact} também seguem criptografados para a Meta medir e direcionar nossos anúncios.`,
 };
 
 type Props = {
@@ -36,8 +40,7 @@ export default function FormPrivacyNote({
 }: Props) {
   return (
     <p className={className} data-privacy-note={platforms}>
-      {children} Se você aceitou os cookies, {contact} também seguem
-      criptografados para {RECEIVERS[platforms]} nossos anúncios.{" "}
+      {children} {SENTENCE[platforms](contact)}{" "}
       <a href={routes.privacidade}>Política de privacidade</a>.
     </p>
   );

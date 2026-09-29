@@ -23,6 +23,7 @@ import {
   leadOrigem,
   mailtoHref,
   moveStatusCount,
+  notifyMetaLeadQuality,
   resolveLeadForm,
   updateLeadStatus,
   waLink,
@@ -146,6 +147,22 @@ describe("updateLeadStatus", () => {
     functionsInvoke.mockClear();
 
     await updateLeadStatus("l-1", "novo", "contatado");
+    expect(functionsInvoke).not.toHaveBeenCalled();
+  });
+
+  it("lead de formulário da Meta (source meta): contatado, qualificado e descartado viram estágio do CRM", async () => {
+    await notifyMetaLeadQuality("m-1", "contatado", { source: "meta" });
+    expect(functionsInvoke).toHaveBeenCalledWith("meta-lead-quality", {
+      body: { lead_id: "m-1", status: "contatado", source: "meta" },
+    });
+    functionsInvoke.mockClear();
+    await notifyMetaLeadQuality("m-1", "descartado", { source: "meta" });
+    expect(functionsInvoke).toHaveBeenCalledWith("meta-lead-quality", {
+      body: { lead_id: "m-1", status: "descartado", source: "meta" },
+    });
+    functionsInvoke.mockClear();
+    // `novo` não é mudança de estágio: o lead_recebido sai da meta-sync.
+    await notifyMetaLeadQuality("m-1", "novo", { source: "meta" });
     expect(functionsInvoke).not.toHaveBeenCalled();
 
     setResponder((call) => (call.table === "leads" ? { error: { message: "permission denied" } } : { data: {} }));

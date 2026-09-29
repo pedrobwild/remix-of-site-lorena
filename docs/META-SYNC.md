@@ -29,7 +29,10 @@ Cada lead de formulário **novo** é avisado como os do site:
 - **CRM** (Bwild Engine, `lead-webhook`) — `source: "meta_ads"` e
   `external_id` = id do lead na Meta. É a mesma chave do webhook de Lead Ads
   do próprio CRM: se ele também receber o lead, vira "duplicate" lá, nunca dois
-  cards.
+  cards;
+- **Meta (API de Conversões para CRM)** — evento `lead_recebido` com o
+  `lead_id` do formulário, o primeiro estágio do funil que a otimização
+  Conversion Leads exige — ver [META-CRM.md](META-CRM.md).
 
 Regras:
 
@@ -42,8 +45,8 @@ Regras:
   (`notify` nulo → `{"state": "sending"}` numa UPDATE condicional), então o
   cron e o botão rodando juntos não duplicam. Aviso que não saiu (função
   interrompida) fica pendente e sai na próxima rodada, até 25 por rodada.
-- O resultado fica em `meta_leads.notify` (`{slack, email, crm}`) e aparece em
-  "Aviso ao time" no detalhe do lead.
+- O resultado fica em `meta_leads.notify` (`{slack, email, crm, capi}`) e
+  aparece em "Aviso ao time" no detalhe do lead.
 
 ## Configuração
 
