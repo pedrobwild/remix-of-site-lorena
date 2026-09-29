@@ -25,10 +25,7 @@ async function fetchAlts(urls: string[]): Promise<AltMap> {
   }
   for (let i = 0; i < missing.length; i += CHUNK) {
     const slice = missing.slice(i, i + CHUNK);
-    const { data, error } = await supabase
-      .from("image_alt_texts")
-      .select("url,alt")
-      .in("url", slice);
+    const { data, error } = await supabase.rpc("get_image_alts", { p_urls: slice });
     if (error) throw error;
     for (const row of data ?? []) {
       if (row.url && row.alt) {

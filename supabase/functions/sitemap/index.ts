@@ -39,10 +39,7 @@ Deno.serve(async (req) => {
 
   const [{ data: settings }, { data: projects }, { data: bewildPosts }] = await Promise.all([
     supabase
-      .from("site_settings")
-      .select("seo_canonical_base, site_title")
-      .eq("id", 1)
-      .maybeSingle(),
+      .rpc("get_public_site_settings"),
     supabase
       .from("projects")
       .select("slug, neighborhood, cover_url, updated_at, created_at")
