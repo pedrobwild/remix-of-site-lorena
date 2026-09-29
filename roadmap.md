@@ -5,4 +5,4 @@
 - [ ] Pendências antigas: h1 sem texto exato; mensagem de garantia no Google Business incompleta; revisar projetos sem descrição própria no admin
 - [ ] Aplicar migração exata analytics_consent_daily (Fase 2, parte final)
 - [ ] Conferir aceite/recusa no painel (bloqueado: sessão admin exige aprovação)
-- [ ] Remover ações de conversão duplicadas 'Lead - Formulário site' e '(1)' no Google Ads (aguardando aprovação no cartão)
+- [x] Removidas as ações duplicadas "Lead - Formulário site" e "(1)" no Google Ads (mantida a "(2)")
