@@ -64,13 +64,14 @@ export default function GoogleAdsAudiencesTab() {
   const eligible = data.lists.filter((l) => l.eligibleDisplay || l.eligibleSearch).length;
   const totalConv = data.conversions.reduce((s, c) => s + c.conversions30d, 0);
   const spend = data.campaigns.reduce((s, c) => s + c.cost, 0);
+  const campConv = data.campaigns.reduce((s, c) => s + c.conversions, 0);
 
   const kpis = [
     { label: "listas de público", value: nf.format(data.lists.length) },
     { label: "prontas para anúncios", value: nf.format(eligible) },
     { label: "conversões (30 dias)", value: nf.format(Math.round(totalConv)) },
     { label: "investimento (30 dias)", value: brl.format(spend) },
-    { label: "custo por lead (30 dias)", value: totalConv > 0 ? brl.format(spend / totalConv) : "—" },
+    { label: "custo por lead (30 dias)", value: campConv > 0 ? brl.format(spend / campConv) : "—" },
   ];
 
   return (
