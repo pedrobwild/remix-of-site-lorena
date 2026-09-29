@@ -126,7 +126,7 @@ export default function HeroSection() {
           <div className="absolute inset-0 bg-gradient-to-r from-background/80 to-transparent pointer-events-none" />
 
           {/* Floating social proof card */}
-          <div className="absolute bottom-8 right-8 bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg">
+          <div className="absolute bottom-8 right-8 bg-white/90 backdrop-blur-xs rounded-xl p-4 shadow-lg">
             <div className="flex items-center gap-5">
               <div className="text-center">
                 <p className="text-xs font-mono font-bold text-foreground">+200</p>

@@ -19,7 +19,7 @@ export default function FinalCTASection() {
       takeaway="Projeto, reforma, marcenaria e mobiliário em um contrato só."
       className="[&_h2]:text-primary-foreground [&_>div>p:first-of-type]:text-primary-foreground/80"
     >
-      <Card className="border-border/30 bg-card/95 backdrop-blur-sm">
+      <Card className="border-border/30 bg-card/95 backdrop-blur-xs">
         <CardContent className="p-8 text-center">
           <p className="text-base md:text-lg text-foreground font-body max-w-2xl mx-auto mb-6">
             A Bewild faz projeto, reforma, marcenaria e mobiliário do studio em um contrato só, com

@@ -1,6 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 /* ---------- Route transition (fade entre páginas) ---------- */
 .route-transition {
@@ -6983,3 +6980,65 @@ textarea.admin-field__input {
   padding: 0.1em 0.35em;
   border-radius: 4px;
 }
+
+/* =========================================================
+   CSS crítico anti-CLS da navegação — portado do <style> do
+   index.html antigo na migração para TanStack Start (o head
+   agora é gerado em src/routes/__root.tsx).
+   ========================================================= */
+.bwa-nav {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 1000;
+  color: var(--bwa-navy, #0B2342);
+  background: rgba(255, 255, 255, .92);
+  border-bottom: 1px solid var(--bwa-line, rgba(17, 53, 91, .12));
+}
+.bwa-nav-inner {
+  min-height: 68px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  padding-inline: clamp(20px, 2.2vw, 36px);
+}
+.bwa-wordmark {
+  display: block;
+  width: clamp(118px, 10vw, 146px);
+  line-height: 0;
+}
+.bwa-wordmark img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.bwa-nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(18px, 2.2vw, 40px);
+  font-size: 12px;
+  font-weight: 600;
+}
+.bwa-nav-links a {
+  white-space: nowrap;
+}
+@media (max-width: 900px) {
+  .bwa-nav-inner { min-height: 60px; }
+}
+.bwa-nav-dd-panel { display: none; }
+.bwa-nav-dd.bwa-open .bwa-nav-dd-panel { display: grid; }
+.bwa-skip {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 9999;
+  padding: 12px 16px;
+  transform: translateY(-150%);
+}
+.bwa-menu-button { display: none; width: 46px; height: 46px; place-items: center; }
+@media (max-width: 1180px) {
+  .bwa-nav-links, .bwa-nav .bwa-button { display: none; }
+  .bwa-menu-button { display: grid; justify-self: end; }
+}
+.bwa-mobile-menu { position: fixed; display: none; }
+body, main { margin: 0; }
