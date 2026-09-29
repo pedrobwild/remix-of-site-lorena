@@ -2,13 +2,16 @@ name: Production build
 
 # Roda o pipeline completo de build em push para a main e em pull requests.
 # Falha o job (exit != 0) se qualquer etapa falhar:
-#   1. routes:check  → paridade de rotas SPA ↔ edge function
+#   1. routes:check  → paridade de rotas ↔ edge function
 #   2. lint          → ESLint (inclui scripts/)
 #   3. test          → suíte Vitest (jsdom), inclusive o guard de src/test/setup.ts
 #                      (setupNoTsExpectError) e os testes dos scripts de build
-#   4. prebuild      → sitemap + paridade de rotas (via npm prebuild hook)
-#   5. tsc -b        → checagem de tipos
-#   6. vite build    → bundle de produção
+#   4. prebuild      → sitemap + paridade de rotas (via hook prebuild)
+#   5. vite build    → bundle de produção (TanStack Start)
+#
+# Gerenciador de pacotes: bun (`bun.lock`, desde a migração para TanStack Start
+# em 29/09/2026). O workflow antigo rodava `npm ci` com um package-lock.json que
+# não existe mais e falhava em todo push.
 #
 # Gatilhos: push só na main + pull_request. Antes era push em qualquer branch
 # E pull_request, então todo commit de PR rodava duas vezes.
@@ -29,7 +32,7 @@ concurrency:
 
 jobs:
   build:
-    name: build (parity + lint + tests + tsc + vite)
+    name: build (parity + lint + tests + vite)
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -37,39 +40,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          # Node 20 saiu de suporte (EOL em 2026-04-30); 22 é a LTS atual.
-          node-version: "22"
-          cache: "npm"
-
-      - name: Normalize lockfile registry
-        # A sandbox da Lovable regrava parte do package-lock.json apontando para
-        # o cache privado dela (europe-west4-npm.pkg.dev/.../sandbox-npm-cache),
-        # inacessível fora de lá — e o `npm ci` quebrava. Os tarballs são os
-        # mesmos do npm (o `integrity` de cada pacote confere), então basta
-        # trocar a URL antes de instalar.
-        run: sed -i 's#https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/#https://registry.npmjs.org/#g' package-lock.json
+          bun-version: latest
 
       - name: Install dependencies
-        run: npm ci
+        # `--frozen-lockfile` falha se o bun.lock não bater com o package.json,
+        # em vez de regravar o lockfile em silêncio no CI.
+        run: bun install --frozen-lockfile
 
       - name: Routes parity check
-        run: npm run routes:check
+        run: bun run routes:check
 
       - name: Lint (eslint)
         # Falha o job se houver erros de ESLint. Warnings são aceitos por
         # enquanto (cleanups incrementais ficam para PRs do plano do audit).
-        run: npm run lint
+        run: bun run lint
 
       - name: Tests (vitest run)
         # Roda a suíte completa antes do build. Regressões de SEO/roteador
         # devem bloquear o merge antes do bundle de produção ser gerado.
-        run: npm test
+        run: bun run test
 
-      - name: Production build (tsc + vite)
-        # `npm run build` aciona o prebuild (sitemap + parity check) novamente,
-        # roda `tsc -b` e em seguida `vite build`. Falha em qualquer
-        # uma das etapas faz o step retornar exit != 0.
-        run: npm run build
+      - name: Production build (vite)
+        # `bun run build` aciona o prebuild (sitemap + parity check) e em
+        # seguida `vite build`. Falha em qualquer etapa faz o step retornar
+        # exit != 0. As chaves públicas do Supabase têm fallback em
+        # vite.config.ts, então o build não precisa de segredos.
+        run: bun run build

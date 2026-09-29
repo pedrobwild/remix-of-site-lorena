@@ -13,18 +13,34 @@
  */
 import { supabase } from "@/integrations/supabase/client";
 
-/** Status cuja mudança gera evento de qualidade na Meta (QualifiedLead/DisqualifiedLead). */
+/** Status de lead DO SITE cuja mudança gera evento de qualidade na Meta (QualifiedLead/DisqualifiedLead). */
 export const META_TRACKED_STATUSES: readonly LeadStatus[] = ["qualificado", "descartado"];
+
+/**
+ * Status de lead de FORMULÁRIO INSTANTÂNEO da Meta que viram estágio do CRM na
+ * Meta (`lead_contatado`, `lead_qualificado`, `lead_descartado`). O estágio
+ * inicial (`lead_recebido`) sai da `meta-sync` quando o lead chega ao painel.
+ */
+export const META_CRM_TRACKED_STATUSES: readonly LeadStatus[] = ["contatado", "qualificado", "descartado"];
+
+export type MetaLeadQualitySource = "site" | "meta";
 
 /**
  * Dispara a edge function `meta-lead-quality` (com o JWT do admin). Fire-and-
  * forget: o painel não espera a Meta e um erro aqui nunca desfaz a mudança de
  * status. Só `lead_id` e `status` saem do browser; a PII fica no servidor.
+ * `source: "meta"` = linha de `meta_leads` (API de Conversões para CRM).
  */
-export function notifyMetaLeadQuality(leadId: string, to: LeadStatus): Promise<void> {
-  if (!META_TRACKED_STATUSES.includes(to)) return Promise.resolve();
+export function notifyMetaLeadQuality(
+  leadId: string,
+  to: LeadStatus,
+  opts: { source?: MetaLeadQualitySource } = {},
+): Promise<void> {
+  const source = opts.source ?? "site";
+  const tracked = source === "meta" ? META_CRM_TRACKED_STATUSES : META_TRACKED_STATUSES;
+  if (!tracked.includes(to)) return Promise.resolve();
   return supabase.functions
-    .invoke("meta-lead-quality", { body: { lead_id: leadId, status: to } })
+    .invoke("meta-lead-quality", { body: { lead_id: leadId, status: to, ...(source === "meta" ? { source } : {}) } })
     .then(({ data, error }) => {
       const meta = (data as { meta?: string; reason?: string } | null)?.meta;
       if (error || meta === "error") {

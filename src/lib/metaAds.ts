@@ -333,7 +333,9 @@ export function leadAnswers(answers: unknown): MetaLeadAnswer[] {
 
 const OUTCOME_LABEL: Record<string, string> = { sent: "✓", skipped: "—", error: "erro" };
 
-/** O que aconteceu com o aviso deste lead (Slack, e-mail, CRM). */
+const NOTIFY_CHANNEL_LABEL: Record<string, string> = { slack: "Slack", email: "e-mail", crm: "CRM", capi: "Meta (CAPI)" };
+
+/** O que aconteceu com o aviso deste lead (Slack, e-mail, CRM e o `lead_recebido` na Meta). */
 export function notifySummary(notify: unknown): string {
   if (notify === null || notify === undefined) return "aviso pendente (sai na próxima sincronização)";
   if (typeof notify !== "object") return "—";
@@ -341,9 +343,9 @@ export function notifySummary(notify: unknown): string {
   if (n.skipped === "backfill") return "importado sem aviso (carga inicial)";
   if (n.skipped === "old") return "importado sem aviso (chegou com mais de 72h)";
   if (n.state === "sending") return "aviso em envio";
-  const parts = (["slack", "email", "crm"] as const)
+  const parts = (["slack", "email", "crm", "capi"] as const)
     .filter((k) => typeof n[k] === "string")
-    .map((k) => `${k === "email" ? "e-mail" : k === "crm" ? "CRM" : "Slack"} ${OUTCOME_LABEL[String(n[k])] ?? String(n[k])}`);
+    .map((k) => `${NOTIFY_CHANNEL_LABEL[k]} ${OUTCOME_LABEL[String(n[k])] ?? String(n[k])}`);
   return parts.length ? parts.join(" · ") : "—";
 }
 

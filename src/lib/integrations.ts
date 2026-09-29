@@ -58,7 +58,7 @@ export function pixelStatus(s: IntegrationSettings): IntegrationStatus {
         label: "Meta — Pixel (navegador)",
         tone: "ok",
         value: "Ativo",
-        detail: `Pixel ${s.meta_pixel_id}: PageView, ViewContent, Contact e Lead, só após o aceite de cookies.`,
+        detail: `Pixel ${s.meta_pixel_id}: PageView, ViewContent, Contact e Lead, só após o aceite de cookies (o Lead do servidor sai pela API de Conversões independentemente do aceite).`,
         href: SEO_PIXELS,
         hrefLabel: "configurar",
       }
@@ -97,17 +97,23 @@ export function capiStatus(s: IntegrationSettings, logs: readonly IntegrationLog
       ...base,
       tone: "off",
       value: "Aguardando",
-      detail: `Nenhum envio ainda: começa no primeiro lead de cliente com cookies aceitos${test}.`,
+      detail: `Nenhum envio ainda: começa no primeiro lead de cliente do site ou no primeiro lead de formulário da Meta sincronizado${test}.`,
     };
   }
   const last = capi[0];
-  const sent30 = capi.filter((l) => l.status === "sent" && now - new Date(l.created_at).getTime() <= 30 * 86_400_000).length;
+  const recent = capi.filter((l) => l.status === "sent" && now - new Date(l.created_at).getTime() <= 30 * 86_400_000);
+  const sent30 = recent.length;
+  // Estágios do CRM (leads dos formulários da Meta, com lead_id) — é o que a
+  // otimização Conversion Leads olha; separar ajuda a ver se o funil está saindo.
+  const crm30 = recent.filter((l) => (l.event_name ?? "").startsWith("lead_")).length;
   if (last.status === "sent") {
     return {
       ...base,
       tone: test ? "warn" : "ok",
       value: "Enviando",
-      detail: `Último envio ${relativeTime(last.created_at, now)} · ${sent30} evento(s) aceito(s) em 30 dias${test}.`,
+      detail: `Último envio ${relativeTime(last.created_at, now)} · ${sent30} evento(s) aceito(s) em 30 dias${
+        crm30 ? `, ${crm30} de estágio do CRM (formulários da Meta)` : ""
+      }${test}.`,
     };
   }
   const reason = String(detailOf(last).reason ?? "");

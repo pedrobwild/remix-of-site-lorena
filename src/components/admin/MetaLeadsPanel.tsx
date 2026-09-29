@@ -13,7 +13,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { MessageCircle, RefreshCw } from "lucide-react";
 import AdminAlert from "@/components/admin/AdminAlert";
 import { supabase } from "@/integrations/supabase/client";
-import { LEAD_STATUSES, isLeadStatus, mailtoHref, type LeadStatus } from "@/lib/adminLeads";
+import { LEAD_STATUSES, isLeadStatus, mailtoHref, notifyMetaLeadQuality, type LeadStatus } from "@/lib/adminLeads";
 import {
   displayMetaPhone,
   fetchMetaSyncStates,
@@ -197,7 +197,11 @@ export default function MetaLeadsPanel() {
         kind: "err",
         text: `Não foi possível atualizar o status: ${error?.message ?? "sem permissão ou lead removido."}`,
       });
+      return;
     }
+    // Estágio do CRM de volta à Meta (API de Conversões para CRM), em segundo
+    // plano: um erro lá nunca desfaz a mudança de status aqui.
+    void notifyMetaLeadQuality(row.id, next, { source: "meta" });
   }
 
   async function remove(row: Row) {

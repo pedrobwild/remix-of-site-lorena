@@ -79,14 +79,17 @@ export default function LgpdPage() {
     const v = new Map<string, { a: number; r: number }>();
     for (const x of rows) {
       const ok = x.event_type === "consent_accept";
-      ok ? a++ : r++;
+      if (ok) a++;
+      else r++;
       const k = dia(x.created_at);
       const cd = d.get(k) ?? { a: 0, r: 0 };
-      ok ? cd.a++ : cd.r++;
+      if (ok) cd.a++;
+      else cd.r++;
       d.set(k, cd);
       const kv = String(x.value?.version ?? "—");
       const cv = v.get(kv) ?? { a: 0, r: 0 };
-      ok ? cv.a++ : cv.r++;
+      if (ok) cv.a++;
+      else cv.r++;
       v.set(kv, cv);
     }
     return {

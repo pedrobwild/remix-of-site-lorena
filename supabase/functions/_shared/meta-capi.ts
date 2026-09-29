@@ -10,10 +10,17 @@
  *   - `Lead` (notify-lead), com o MESMO `event_id` do Lead que o Pixel manda
  *     no navegador — a Meta deduplica pelo par (event_name, event_id);
  *   - `QualifiedLead` / `DisqualifiedLead` (meta-lead-quality), quando o time
- *     muda o status do lead no painel — o sinal de qualidade que alimenta o
- *     algoritmo.
- * Quem chama confere antes as duas regras de negócio: só formulários de
- * cliente (`AD_LEAD_FORMS`) e só com aceite de cookies (`leads.consent_marketing`).
+ *     muda o status de um lead DO SITE no painel — o sinal de qualidade que
+ *     alimenta o algoritmo;
+ *   - estágios do CRM (`lead_recebido`, `lead_contatado`, `lead_qualificado`,
+ *     `lead_descartado`) para leads dos FORMULÁRIOS INSTANTÂNEOS da Meta, com
+ *     `user_data.lead_id` = id do lead na Meta — é a "API de Conversões para
+ *     CRM" (otimização Conversion Leads). Ver `crmStageEvent` e docs/META-CRM.md.
+ * Quem chama confere antes a regra de negócio: só formulários de cliente
+ * (`AD_LEAD_FORMS`). O aceite de cookies (`leads.consent_marketing`) só é
+ * exigido quando o segredo `META_CAPI_REQUIRE_CONSENT` está em `true`
+ * (`capiRequiresConsent`); o padrão é enviar o Lead de todo formulário de
+ * cliente, com os dados pessoais sempre em hash.
  *
  * Privacidade: e-mail, telefone, nome, cidade/UF e external_id vão SEMPRE com
  * SHA-256, como a Meta exige. Em claro só fbp/fbc/IP/user-agent, que são
@@ -38,7 +45,34 @@ export type MetaCapiConfig = {
   graphVersion?: string;
 };
 
-export type MetaEventName = "Lead" | "QualifiedLead" | "DisqualifiedLead";
+/**
+ * Estágios do CRM enviados para leads dos formulários instantâneos (Lead Ads).
+ * Nomes próprios, distintos dos eventos do site: na configuração do funil em
+ * Events Manager só entram eventos com `lead_id`, e misturar com o
+ * `QualifiedLead` dos leads do site (sem `lead_id`) confundiria o funil.
+ * Espelham 1:1 os status do painel (`meta_leads.status`).
+ */
+export type MetaCrmStage = "lead_recebido" | "lead_contatado" | "lead_qualificado" | "lead_descartado";
+
+export const META_CRM_STAGES: readonly MetaCrmStage[] = [
+  "lead_recebido",
+  "lead_contatado",
+  "lead_qualificado",
+  "lead_descartado",
+];
+
+/** Status do painel → estágio do CRM na Meta. `novo` é o lead recém-recebido. */
+export const CRM_STAGE_BY_STATUS: Record<string, MetaCrmStage> = {
+  novo: "lead_recebido",
+  contatado: "lead_contatado",
+  qualificado: "lead_qualificado",
+  descartado: "lead_descartado",
+};
+
+/** Nome do CRM que aparece em `custom_data.lead_event_source` (Events Manager). */
+export const LEAD_EVENT_SOURCE = "Bewild Admin";
+
+export type MetaEventName = "Lead" | "QualifiedLead" | "DisqualifiedLead" | MetaCrmStage;
 
 export type MetaActionSource = "website" | "system_generated";
 
@@ -49,6 +83,12 @@ export type MetaUserInput = {
   fullName?: string | null;
   /** Identificador estável do lead (id da linha em `leads`). */
   externalId?: string | null;
+  /**
+   * Id do lead na Meta (`leadgen_id`, 15–17 dígitos) — só para leads dos
+   * formulários instantâneos. Vai em claro como inteiro em `user_data.lead_id`
+   * e é a chave da API de Conversões para CRM.
+   */
+  leadId?: string | null;
   fbp?: string | null;
   fbc?: string | null;
   clientIp?: string | null;
@@ -71,7 +111,7 @@ export type MetaEventInput = {
 
 export type MetaCapiOutcome =
   | { status: "sent"; eventsReceived: number; traceId: string | null; httpStatus: number }
-  | { status: "skipped"; reason: "no_config" | "no_user_data" }
+  | { status: "skipped"; reason: "no_config" | "no_user_data" | "no_consent" }
   | { status: "error"; reason: string; httpStatus: number | null; detail: Record<string, unknown> };
 
 // ---------------------------------------------------------------------------
@@ -161,6 +201,33 @@ export function isValidPixelId(id: string | null | undefined): id is string {
   return /^\d{5,20}$/.test((id ?? "").trim());
 }
 
+/** Id de lead da Meta (leadgen_id): 15–17 dígitos. */
+export function isMetaLeadId(id: string | null | undefined): id is string {
+  return /^\d{15,17}$/.test((id ?? "").trim());
+}
+
+/**
+ * Marcador para serializar `lead_id` como INTEIRO no JSON sem perder precisão:
+ * ids de 16–17 dígitos passam de 2^53 e `JSON.stringify(Number)` arredondaria.
+ * `serializeMetaBody` troca `"__int__123"` por `123`.
+ */
+const INT_MARK = "__int__";
+
+export function serializeMetaBody(body: unknown): string {
+  return JSON.stringify(body).replace(/"__int__(\d{1,20})"/g, "$1");
+}
+
+/**
+ * `META_CAPI_REQUIRE_CONSENT`: `true`/`1`/`sim` → só envia Lead/qualidade de
+ * quem aceitou os cookies de marketing. Padrão (ausente/`false`): envia para
+ * todo formulário de cliente — decisão de 25/09/2026 para melhorar a
+ * atribuição; a `/privacidade` e o aviso dos formulários descrevem isso.
+ */
+export function capiRequiresConsent(env: (name: string) => string | null | undefined): boolean {
+  const v = (env("META_CAPI_REQUIRE_CONSENT") ?? "").trim().toLowerCase();
+  return v === "true" || v === "1" || v === "sim" || v === "yes";
+}
+
 /** Código da ferramenta "Testar eventos" (ex.: TEST12345); fora do padrão = ignorado. */
 export function sanitizeTestEventCode(code: string | null | undefined): string | null {
   const v = (code ?? "").trim();
@@ -186,6 +253,8 @@ type HashedUserData = {
   st?: string[];
   country?: string[];
   external_id?: string[];
+  /** Marcador `__int__<dígitos>`; vira inteiro em `serializeMetaBody`. */
+  lead_id?: string;
   fbp?: string;
   fbc?: string;
   client_ip_address?: string;
@@ -219,6 +288,7 @@ export async function buildUserData(user: MetaUserInput): Promise<HashedUserData
   if (country) out.country = [await sha256Hex(country)];
 
   if (user.externalId) out.external_id = [await sha256Hex(user.externalId.trim())];
+  if (isMetaLeadId(user.leadId)) out.lead_id = `${INT_MARK}${user.leadId.trim()}`;
   if (user.fbp && FBP_RE.test(user.fbp)) out.fbp = user.fbp;
   if (user.fbc && FBC_RE.test(user.fbc)) out.fbc = user.fbc;
   const ip = validIp(user.clientIp);
@@ -229,7 +299,7 @@ export async function buildUserData(user: MetaUserInput): Promise<HashedUserData
 
 /** Há pelo menos um identificador que permite à Meta casar o evento? */
 export function hasMatchKeys(data: HashedUserData): boolean {
-  return Boolean(data.em || data.ph || data.fbp || data.fbc || data.external_id);
+  return Boolean(data.em || data.ph || data.fbp || data.fbc || data.external_id || data.lead_id);
 }
 
 // ---------------------------------------------------------------------------
@@ -318,7 +388,7 @@ export async function sendMetaEvents(
         "Content-Type": "application/json",
         Authorization: `Bearer ${config.accessToken}`,
       },
-      body: JSON.stringify(body),
+      body: serializeMetaBody(body),
       signal: AbortSignal.timeout(8_000),
     });
     const text = await res.text().catch(() => "");
@@ -359,6 +429,63 @@ export async function sendMetaEvents(
 /** `event_id` determinístico para eventos de status: um por (lead, evento). */
 export function statusEventId(leadId: string, eventName: MetaEventName): string {
   return `${leadId}:${eventName.toLowerCase()}`;
+}
+
+export type CrmStageLead = {
+  /** Id da linha em `meta_leads` (uuid) — base do `event_id`. */
+  rowId: string;
+  /** Id do lead na Meta (`meta_leads.meta_lead_id`). */
+  metaLeadId: string;
+  name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  city?: string | null;
+  formName?: string | null;
+  campaignName?: string | null;
+  platform?: string | null;
+  isTest?: boolean | null;
+  /** `meta_leads.created_time` (ISO) — o `event_time` nunca pode ser anterior a ele. */
+  createdTime?: string | null;
+};
+
+/**
+ * Evento de estágio do CRM para um lead de formulário instantâneo, no formato
+ * que a Meta exige para a otimização Conversion Leads:
+ * `action_source = system_generated`, `user_data.lead_id` = id do lead na Meta,
+ * `custom_data.event_source = "crm"` e `lead_event_source` = nome do CRM.
+ * Sem esses três a Meta não registra o evento como Conversion Leads.
+ * `event_time` = agora (ou `at`), nunca antes de `createdTime`.
+ */
+export function crmStageEvent(lead: CrmStageLead, stage: MetaCrmStage, at: Date = new Date()): MetaEventInput {
+  let eventTime = Math.floor(at.getTime() / 1000);
+  if (lead.createdTime) {
+    const created = Math.floor(new Date(lead.createdTime).getTime() / 1000);
+    if (Number.isFinite(created) && eventTime <= created) eventTime = created + 1;
+  }
+  return {
+    eventName: stage,
+    eventId: statusEventId(lead.rowId, stage),
+    eventTime,
+    actionSource: "system_generated",
+    user: {
+      leadId: lead.metaLeadId,
+      email: lead.email,
+      phone: lead.phone,
+      fullName: lead.name,
+      city: lead.city,
+      externalId: lead.rowId,
+    },
+    customData: {
+      event_source: "crm",
+      lead_event_source: LEAD_EVENT_SOURCE,
+      lead_status: stage.replace(/^lead_/, ""),
+      content_name: lead.formName,
+      content_category: "meta_lead_ads",
+      campaign_name: lead.campaignName,
+      platform: lead.platform,
+      ...(lead.isTest ? { is_test: true } : {}),
+    },
+  };
 }
 
 // ---------------------------------------------------------------------------

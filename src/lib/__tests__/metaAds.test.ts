@@ -188,6 +188,9 @@ describe("leads dos formulários — exibição", () => {
 
   it("resumo do aviso ao time", () => {
     expect(notifySummary({ slack: "sent", email: "sent", crm: "error" })).toBe("Slack ✓ · e-mail ✓ · CRM erro");
+    expect(notifySummary({ slack: "sent", email: "sent", crm: "sent", capi: "skipped" })).toBe(
+      "Slack ✓ · e-mail ✓ · CRM ✓ · Meta (CAPI) —",
+    );
     expect(notifySummary({ skipped: "backfill" })).toBe("importado sem aviso (carga inicial)");
     expect(notifySummary({ skipped: "old" })).toContain("72h");
     expect(notifySummary({ state: "sending" })).toBe("aviso em envio");

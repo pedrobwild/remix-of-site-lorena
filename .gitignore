@@ -29,3 +29,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Build do TanStack Start / nitro (gerado por `bun run build`)
+.output
+.wrangler
