@@ -3,7 +3,9 @@
  * bairro de São Paulo (só bairros com MIN_PROJECTS_PER_NEIGHBORHOOD+).
  * Bairro abaixo do mínimo ou inexistente → 404 (evita página rala).
  */
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { optimizedImageUrl, optimizedSrcSet } from "@/lib/imageUrl";
+import { useImageAlts } from "@/lib/useImageAlts";
 import { useSeo, breadcrumbJsonLd, itemListJsonLd } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import BwaNav from "@/components/BwaNav";
@@ -17,6 +19,8 @@ import "@/styles/bwh-tokens.css";
 import "@/styles/bwh-overlays.css";
 import "@/styles/bwh-sol-fusion.css";
 
+const PAGE_SIZE = 24;
+const GRID_SIZES = "(max-width: 640px) 100vw, (max-width: 980px) 50vw, 33vw";
 const pad = (n: number) => String(n).padStart(2, "0");
 
 export default function BairroPage({ slug }: { slug: string }) {
@@ -32,6 +36,26 @@ export default function BairroPage({ slug }: { slug: string }) {
       ),
     [projects, slug],
   );
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  useEffect(() => setVisibleCount(PAGE_SIZE), [slug]);
+  const visible = useMemo(() => list.slice(0, visibleCount), [list, visibleCount]);
+  const coverAlts = useImageAlts(useMemo(() => visible.map((p) => p.cover_url), [visible]));
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const hasMore = visible.length < list.length;
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || !hasMore || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setVisibleCount((c) => Math.min(c + PAGE_SIZE, list.length));
+        }
+      },
+      { rootMargin: "600px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [hasMore, list.length, visibleCount]);
   const label = page?.label ?? "";
   const areas = list.map((p) => p.area_m2).filter((n): n is number => !!n);
   const faixa = areas.length
@@ -70,6 +94,8 @@ export default function BairroPage({ slug }: { slug: string }) {
   });
 
   if (!loading && !error && !page) return <NotFoundPage />;
+  const remaining = Math.max(0, list.length - visible.length);
+  const loadMore = () => setVisibleCount((c) => Math.min(c + PAGE_SIZE, list.length));
 
   const others = pages.filter((p) => p.slug !== slug);
 
@@ -119,8 +145,9 @@ export default function BairroPage({ slug }: { slug: string }) {
               </p>
             )}
             {!loading && !error && list.length > 0 && (
+              <>
               <div className="bwh-projects">
-                {list.map((p, i) => (
+                {visible.map((p, i) => (
                   <a
                     key={p.id}
                     href={`/portfolio/${p.slug}`}
@@ -130,9 +157,17 @@ export default function BairroPage({ slug }: { slug: string }) {
                   >
                     <div className="bwh-proj__media">
                       <img
-                        src={p.cover_url!}
-                        alt={`${p.title} — ${bewildTypeLabel(p.project_type)} em ${label}`}
-                        loading="lazy"
+                        src={optimizedImageUrl(p.cover_url!, 640, 70)}
+                        srcSet={optimizedSrcSet(p.cover_url!)}
+                        sizes={GRID_SIZES}
+                        width={640}
+                        height={480}
+                        alt={
+                          coverAlts[p.cover_url!] ||
+                          `${p.title} — ${bewildTypeLabel(p.project_type)} em ${label}`
+                        }
+                        loading={i < 3 ? "eager" : "lazy"}
+                        fetchPriority={i < 3 ? "high" : undefined}
                         decoding="async"
                       />
                       <span className="bwh-proj__count">
@@ -150,6 +185,17 @@ export default function BairroPage({ slug }: { slug: string }) {
                   </a>
                 ))}
               </div>
+              {remaining > 0 && (
+                <>
+                  <div ref={sentinelRef} aria-hidden="true" style={{ height: 1 }} />
+                  <div style={{ display: "flex", justifyContent: "center", marginTop: 40 }}>
+                    <button type="button" className="bwh-btn" onClick={loadMore}>
+                      Ver mais projetos ({remaining})
+                    </button>
+                  </div>
+                </>
+              )}
+              </>
             )}
 
             {others.length > 0 && (
