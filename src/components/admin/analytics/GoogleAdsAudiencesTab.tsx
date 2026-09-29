@@ -64,12 +64,14 @@ export default function GoogleAdsAudiencesTab() {
   const eligible = data.lists.filter((l) => l.eligibleDisplay || l.eligibleSearch).length;
   const totalConv = data.conversions.reduce((s, c) => s + c.conversions30d, 0);
   const spend = data.campaigns.reduce((s, c) => s + c.cost, 0);
+  const campConv = data.campaigns.reduce((s, c) => s + c.conversions, 0);
 
   const kpis = [
     { label: "listas de público", value: nf.format(data.lists.length) },
     { label: "prontas para anúncios", value: nf.format(eligible) },
     { label: "conversões (30 dias)", value: nf.format(Math.round(totalConv)) },
     { label: "investimento (30 dias)", value: brl.format(spend) },
+    { label: "custo por lead (30 dias)", value: campConv > 0 ? brl.format(spend / campConv) : "—" },
   ];
 
   return (
@@ -147,7 +149,7 @@ export default function GoogleAdsAudiencesTab() {
         ) : (
           <div style={{ overflowX: "auto" }}>
             <table className="aa-table">
-              <thead><tr><th>campanha</th><th>status</th><th>cliques</th><th>conversões</th><th>investimento</th></tr></thead>
+              <thead><tr><th>campanha</th><th>status</th><th>cliques</th><th>conversões</th><th>investimento</th><th>custo por lead</th></tr></thead>
               <tbody>
                 {data.campaigns.map((c) => (
                   <tr key={c.id}>
@@ -156,6 +158,7 @@ export default function GoogleAdsAudiencesTab() {
                     <td className="num">{nf.format(c.clicks)}</td>
                     <td className="num">{nf.format(Math.round(c.conversions * 10) / 10)}</td>
                     <td className="num">{brl.format(c.cost)}</td>
+                    <td className="num">{c.conversions > 0 ? brl.format(c.cost / c.conversions) : "—"}</td>
                   </tr>
                 ))}
               </tbody>
