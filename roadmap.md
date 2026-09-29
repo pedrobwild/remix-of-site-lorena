@@ -6,3 +6,6 @@
 - [ ] Aplicar migração exata analytics_consent_daily (Fase 2, parte final)
 - [ ] Conferir aceite/recusa no painel (bloqueado: sessão admin exige aprovação)
 - [x] Removidas as ações duplicadas "Lead - Formulário site" e "(1)" no Google Ads (mantida a "(2)")
+
+- [ ] Publicar o site e conferir no celular barra, menu, acordeão e rodapé.
+- [ ] Consultar o Search Console sobre a trilha de /servicos.
