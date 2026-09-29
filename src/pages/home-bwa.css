@@ -5748,3 +5748,280 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
   .bwa-bastidores-rail{scroll-behavior:auto}
   .bwa-bastidores-progress span{transition:none}
 }
+
+/* ===============================================================
+   UX mobile (set/2026) — tudo aqui vale só até 900 px (celular e
+   tablet em pé), exceto o menu (que existe até 1180 px) e o acordeão
+   das disciplinas (ligado pelo script, que decide a largura).
+   =============================================================== */
+
+/* ---- Pé do menu mobile: orçamento em destaque + atalho do WhatsApp,
+   fixo no rodapé do menu enquanto a lista rola (o último link continua
+   alcançável: a barra fica depois dele no fluxo). ---- */
+.bwa-mobile-menu {
+  padding-bottom: 0;
+}
+
+.bwa-menu-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  margin: 20px calc(var(--bwa-gutter) * -1) 0;
+  padding: 12px var(--bwa-gutter) calc(12px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--bwa-white-line);
+  background: #0a2037;
+}
+
+.bwa-mobile-menu .bwa-menu-actions .bwa-button {
+  min-height: 52px;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--bwa-white);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  white-space: nowrap;
+}
+
+/* Cores explícitas: nas páginas internas `.bwh a { color: inherit }` vence
+   `.bwa-button-light` e o texto ficava branco sobre branco. */
+.bwa-mobile-menu .bwa-menu-actions .bwa-button-light {
+  color: var(--bwa-navy);
+  background: var(--bwa-white);
+}
+
+.bwa-mobile-menu .bwa-menu-actions .bwa-button-wa {
+  color: var(--bwa-white);
+  background: transparent;
+}
+
+.bwa-mobile-menu .bwa-menu-actions .bwa-button:hover,
+.bwa-mobile-menu .bwa-menu-actions .bwa-button:focus-visible {
+  color: var(--bwa-white);
+  background: var(--bwa-accent);
+  border-color: var(--bwa-accent);
+}
+
+/* Telas de 320–359 px: os dois botões ainda cabem na mesma linha. */
+@media (max-width: 359px) {
+  .bwa-mobile-menu .bwa-menu-actions .bwa-button {
+    padding-inline: 12px;
+    letter-spacing: .05em;
+  }
+}
+
+/* ---- Disciplinas em acordeão (celular): título à vista, explicação no
+   toque. Classes postas por installDisciplineAccordion. ---- */
+.bwa-discipline-list.is-collapsible li {
+  align-items: start;
+  padding-block: 0;
+}
+
+/* Número alinhado à 1ª linha do título (botão de 44 px de altura mínima). */
+.bwa-discipline-list.is-collapsible b {
+  line-height: 44px;
+}
+
+.bwa-discipline-toggle {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 0;
+  padding: 10px 0;
+  border: 0;
+  border-radius: 0;
+  color: inherit;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bwa-discipline-toggle::after {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  margin-right: 4px;
+  content: "";
+  border-right: 1.5px solid rgba(255, 255, 255, .72);
+  border-bottom: 1.5px solid rgba(255, 255, 255, .72);
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform .25s var(--bwa-ease);
+}
+
+.bwa-discipline-list li.is-open .bwa-discipline-toggle::after {
+  transform: translateY(2px) rotate(-135deg);
+}
+
+.bwa-discipline-toggle:focus-visible {
+  outline: 2px solid #5FB2DD;
+  outline-offset: 2px;
+}
+
+.bwa-discipline-list.is-collapsible .bwa-discipline-desc {
+  display: block;
+  padding-bottom: 14px;
+}
+
+.bwa-discipline-list.is-collapsible li:not(.is-open) .bwa-discipline-desc {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bwa-discipline-toggle::after {
+    transition: none;
+  }
+}
+
+@media (max-width: 900px) {
+  /* ---- Barra "Solicitar orçamento": aparece depois do herói e some no
+     fechamento/rodapé (is-hidden, do script), com o menu aberto e com o
+     teclado aberto (bwa-typing). Com o botão "Dúvidas" na página
+     (bwas-on), termina antes dele: os dois na mesma linha. ---- */
+  .bwa-mobile-cta {
+    font-size: 12px;
+    transition:
+      bottom .25s var(--bwa-ease),
+      transform .3s var(--bwa-ease),
+      opacity .3s var(--bwa-ease),
+      visibility .3s;
+  }
+
+  .bwas-on .bwa-mobile-cta {
+    right: 72px;
+  }
+
+  .bwa-mobile-cta.is-hidden,
+  .bwa-menu-open .bwa-mobile-cta,
+  .bwa-typing .bwa-mobile-cta {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(16px);
+    pointer-events: none;
+  }
+
+  /* ---- Números do herói em 3 colunas (eram 3 linhas empilhadas). ---- */
+  .bwa-hero-facts-inner {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .bwa-hero-fact {
+    min-height: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 14px 10px 16px;
+    border-right: 1px solid var(--bwa-line);
+    border-bottom: 0;
+  }
+
+  .bwa-hero-fact:first-child {
+    padding-left: 0;
+  }
+
+  .bwa-hero-fact:last-child {
+    padding-right: 0;
+    border-right: 0;
+  }
+
+  .bwa-hero-fact-glyph {
+    width: 22px;
+    height: 22px;
+    flex-basis: auto;
+  }
+
+  .bwa-hero-fact-copy {
+    gap: 4px;
+  }
+
+  .bwa-hero-fact strong {
+    font-size: clamp(15px, 4.4vw, 20px);
+    line-height: 1.15;
+  }
+
+  .bwa-hero-fact span {
+    font-size: 11px;
+    line-height: 1.3;
+    letter-spacing: .05em;
+  }
+
+  /* ---- Formulário do rodapé em 16 px: abaixo disso o iPhone dá zoom
+     na página ao tocar no campo. ---- */
+  .bwa-fw-field input,
+  .bwa-fw-field textarea {
+    font-size: 16px;
+  }
+
+  /* ---- Alvos de toque: links soltos ganham altura de dedo; links no
+     meio do texto ganham área de toque maior sem mudar a linha (padding
+     vertical em elemento inline não altera o layout). ---- */
+  .bwa-marcenaria-open {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    /* Em flex o espaço antes da seta sumia: o gap o repõe. */
+    gap: .6em;
+  }
+
+  .bwa-home-root p > a:not([class]) {
+    padding-block: 6px;
+  }
+
+  /* ---- Legibilidade: rótulos de 8–10 px sobem para 10–11 px. ---- */
+  .bwa-home-root :is(
+    .bwa-faq-num,
+    .bwa-footer-column h3,
+    .bwa-footer-tech,
+    .bwa-footer-copy,
+    .bwa-discipline-kicker,
+    .bwa-discipline-list b,
+    .bwa-process-step-number,
+    .bwa-process-phase h3,
+    .bwa-process-phase h3 span,
+    .bwa-process-step-heading a,
+    .bwa-image-gallery-kicker,
+    .bwa-image-gallery-caption span,
+    .bwa-image-gallery-foot,
+    .bwa-bastidores-kicker,
+    .bwa-bastidores-tag,
+    .bwa-bastidores-foot,
+    .bwa-proof-card-label span,
+    .bwa-proof-print figcaption,
+    .bwa-hero-objectives span,
+    .bwa-pgrid-data,
+    .bwa-pgrid-link,
+    .bwa-wf2-tabs dt,
+    .bwa-portal-caption,
+    .bwa-wf2-close span,
+    .bwa-imprensa-veiculo,
+    .bwa-tour3d-hint
+  ) {
+    font-size: 11px;
+  }
+
+  .bwa-home-root .bwa-tour3d-tag {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 900px) and (prefers-reduced-motion: reduce) {
+  .bwa-mobile-cta {
+    transition: none;
+  }
+}
+
+/* Toque em qualquer largura (iPad): mesmo motivo dos 16 px acima. */
+@media (pointer: coarse) {
+  .bwa-fw-field input,
+  .bwa-fw-field textarea {
+    font-size: 16px;
+  }
+}

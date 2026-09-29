@@ -184,6 +184,11 @@
   margin: -12px 0 32px;
 }
 
+/* Na faixa escura o cinza do texto ficava com contraste 2,6:1 sobre o navy. */
+.bwa-parc-section--dark .bwa-parc-lead2 {
+  color: color-mix(in srgb, var(--bwa-paper) 82%, transparent);
+}
+
 /* 02 · Dois caminhos / 08 · Prova */
 .bwa-parc-two {
   display: grid;

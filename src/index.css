@@ -5259,13 +5259,17 @@ textarea.admin-field__input {
 }
 
 @media (max-width: 720px) {
+  /* Celular: o texto usa a largura toda (a caixa de .bwa-shell somava a
+     margem da página ao respiro do banner) e os respiros ficam menores —
+     o banner cobre menos da primeira tela, sem mudar uma palavra. */
   .cookie-banner {
-    padding: 10px 12px calc(10px + env(safe-area-inset-bottom)) 12px;
+    padding: 8px 16px calc(8px + env(safe-area-inset-bottom)) 16px;
   }
   .cookie-banner__inner {
+    width: 100%;
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 8px;
   }
   /* Em coluna, o flex-basis de 320px do bloco de texto vira ALTURA e o
      banner passa a ocupar ~50% da viewport no celular. Volta para auto. */
@@ -5277,7 +5281,7 @@ textarea.admin-field__input {
      os mesmos dois links — sem corte de linha, que escondia a finalidade.
      A versão completa segue no DOM (aria-describedby) e no desktop.
      Com o título só para leitores de tela, o banner cai de ~210 px para
-     ~140 px, e o CTA fixo sobe a altura dele (--cookie-banner-h). */
+     ~130 px, e o CTA fixo sobe a altura dele (--cookie-banner-h). */
   .cookie-banner__desc {
     display: none;
   }
@@ -5298,7 +5302,9 @@ textarea.admin-field__input {
     border: 0;
   }
   .cookie-banner__actions { justify-content: stretch; }
-  .cookie-banner__btn { flex: 1 1 0; padding: 10px 12px; }
+  .cookie-banner__btn { flex: 1 1 0; min-height: 40px; padding: 8px 12px; }
+  /* Links no meio do texto: área de toque maior sem mudar a linha. */
+  .cookie-banner__link { padding-block: 6px; }
 }
 
 /* ---------- Sobre Page (/sobre) ---------- */

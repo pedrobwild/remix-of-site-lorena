@@ -8,6 +8,8 @@
   --wf-secondary: #f0f2f4;
   --wf-accent: #ecf4f9;
   --wf-success: #1d8755;
+  /* Texto verde sobre o fundo verde-claro das pílulas: #1d8755 dava 4:1; este, 4,9:1. */
+  --wf-success-text: #18774a;
   --wf-info: #0a5eb8;
   --wf-warning: #ce7209;
   --wf-destructive: #d32222;
@@ -84,10 +86,11 @@
 .wf-replica .wf-activity-copy strong { display: block; font-size: 10px; font-weight: 600; line-height: 1.25; }
 .wf-replica .wf-stage { display: inline-flex; margin-top: 3px; padding: 2px 5px; border-radius: 6px; color: var(--wf-primary); background: var(--wf-accent); font-size: 8px; font-weight: 600; }
 .wf-replica .wf-status { display: inline-flex; align-items: center; gap: 4px; padding: 4px 7px; border: 1px solid; border-radius: 999px; font-size: 10px; font-weight: 600; white-space: nowrap; }
-.wf-replica .wf-status.done { color: var(--wf-success); border-color: color-mix(in srgb, var(--wf-success) 30%, transparent); background: color-mix(in srgb, var(--wf-success) 10%, transparent); }
+.wf-replica .wf-status.done { color: var(--wf-success-text); border-color: color-mix(in srgb, var(--wf-success) 30%, transparent); background: color-mix(in srgb, var(--wf-success) 10%, transparent); }
 .wf-replica .wf-status.progress { color: var(--wf-info); border-color: color-mix(in srgb, var(--wf-info) 30%, transparent); background: color-mix(in srgb, var(--wf-info) 10%, transparent); }
 .wf-replica .wf-status.pending { color: var(--wf-muted-foreground); border-color: var(--wf-border); background: var(--wf-secondary); }
 .wf-replica .wf-mobile-activities { display: none; }
+.wf-replica .wf-mobile-more { display: none; }
 .wf-replica .wf-date-chip { padding: 5px 8px; border-radius: 6px; color: var(--wf-muted-foreground); background: var(--wf-secondary); font-size: 10px; }
 .wf-replica .wf-chart-frame { height: 360px; padding: 16px 10px 2px 0; border: 1px solid color-mix(in srgb, var(--wf-border) 50%, transparent); border-radius: 12px; background: color-mix(in srgb, var(--wf-secondary) 30%, transparent); }
 .wf-replica .wf-chart-legend { display: flex; justify-content: center; gap: 24px; margin-top: 10px; color: var(--wf-muted-foreground); font-size: 11px; }
@@ -170,8 +173,13 @@
   .wf-replica .wf-mobile-activity { padding: 10px; border: 1px solid var(--wf-border); border-radius: 8px; background: var(--wf-card); }
   .wf-replica .wf-mobile-activity.current { border-color: color-mix(in srgb, var(--wf-primary) 30%, var(--wf-border)); background: color-mix(in srgb, var(--wf-primary) 4%, transparent); }
   .wf-replica .wf-mobile-activity-head { display: grid; grid-template-columns: 24px minmax(0,1fr); gap: 8px; align-items: start; }
-  .wf-replica .wf-mobile-activity strong { font-size: 11px; line-height: 1.35; }
-  .wf-replica .wf-mobile-activity-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; margin-top: 8px; color: var(--wf-muted-foreground); font-size: 10px; }
+  .wf-replica .wf-mobile-activity strong { font-size: 12px; line-height: 1.35; }
+  .wf-replica .wf-mobile-activity-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; margin-top: 8px; color: var(--wf-muted-foreground); font-size: 11px; }
+  /* Celular: a lista mostra só as atividades em volta da etapa atual; o botão abre as 12. */
+  .wf-replica .wf-mobile-more { width: 100%; min-height: 44px; display: flex; margin-top: 8px; }
+  /* Legibilidade no celular: rótulos de 8–10 px sobem para 10–11 px. */
+  .wf-replica .wf-stage, .wf-replica .wf-activity-number, .wf-replica .wf-progress-months { font-size: 10px; }
+  .wf-replica .wf-status, .wf-replica .wf-label { font-size: 11px; }
   .wf-replica .wf-chart-frame { height: 200px; padding-left: 0; }
   .wf-replica .wf-date-chip { display: none; }
   .wf-replica .wf-reports-layout { grid-template-columns: 1fr; }
