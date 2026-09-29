@@ -280,6 +280,10 @@
   font-size: var(--aa-text-sm);
   color: var(--aa-fg);
   z-index: 60;
+  /* .admin-analytics tem min-height: 100vh; o popover não pode herdar isso. */
+  min-height: 0;
+  max-height: calc(100vh - 24px);
+  overflow: auto;
 }
 
 /* === Date range picker === */
@@ -384,7 +388,11 @@
   color: var(--aa-accent);
 }
 .admin-analytics__pop .rdp-selected {
+  font-size: var(--aa-text-sm);
   font-weight: var(--aa-fw-semibold);
+}
+.admin-analytics__pop .rdp-range_middle {
+  color: var(--aa-fg);
 }
 .admin-analytics__pop .rdp-day_button:hover:not(:disabled) {
   background: var(--aa-bg-soft);
