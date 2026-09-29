@@ -1,0 +1,7 @@
+{
+  "customizations": [
+    { "token": "src/index.css (design system Bewild completo, 6,9k linhas)", "source": "src/index.css", "reappliedIn": "src/styles.css via @import \"./index.css\" (arquivo preservado; diretivas @tailwind v3 removidas)" },
+    { "token": "tailwind.config.ts (tokens da marca: bewild.*, gold, shadcn hsl vars, darkMode class)", "source": "tailwind.config.ts", "reappliedIn": "src/styles.css via @config \"../tailwind.config.ts\" (config legado mantido no disco)" },
+    { "token": "CSS crítico anti-CLS da navegação (.bwa-nav, .bwa-skip, .bwa-menu-button…)", "source": "index.html <style>", "reappliedIn": "src/index.css (bloco final)" }
+  ]
+}
