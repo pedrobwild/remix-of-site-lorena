@@ -4,7 +4,7 @@
 //  2. leads dos formulários instantâneos (Lead Ads) → `meta_leads`, avisando
 //     o time de cada lead NOVO pelos mesmos canais dos leads do site (Slack,
 //     e-mail e card no CRM) e devolvendo à Meta o primeiro estágio do CRM
-//     (`lead_recebido`, API de Conversões para CRM — docs/META-CRM.md).
+//     (`initial_lead`, API de Conversões para CRM — docs/META-CRM.md).
 // A primeira carga importa o histórico que a Meta ainda guarda (90 dias) sem
 // avisar ninguém. O estado de cada parte fica em `meta_sync_state` e cada
 // rodada deixa uma linha em `integration_log` (sem dados pessoais).
@@ -304,7 +304,7 @@ const PENDING_COLUMNS =
   "id, meta_lead_id, created_time, page_id, form_id, form_name, ad_id, ad_name, adset_id, adset_name, campaign_id, campaign_name, platform, is_organic, is_test, name, email, phone, city, answers";
 
 /**
- * Primeiro estágio do CRM na Meta (`lead_recebido`): diz à Meta que o lead do
+ * Primeiro estágio do CRM na Meta (`initial_lead`): diz à Meta que o lead do
  * formulário chegou ao painel. É obrigatório para a otimização Conversion
  * Leads (a Meta exige o estágio inicial + pelo menos um seguinte). Só para
  * leads com aviso (≤ 72h): o `event_time` precisa refletir quando o lead
@@ -316,7 +316,7 @@ async function notifyMetaCapi(
   id: string,
   config: MetaCapiConfig | null,
 ): Promise<Outcome> {
-  const base = { integration: "meta_capi", event_name: "lead_recebido", lead_id: null };
+  const base = { integration: "meta_capi", event_name: "initial_lead", lead_id: null };
   const detailBase = { source: "meta_leads", meta_lead_row: id };
   if (!config) {
     await logIntegration(admin, { ...base, status: "skipped", detail: { ...detailBase, reason: "no_config" } });
@@ -337,7 +337,7 @@ async function notifyMetaCapi(
         isTest: row.is_test,
         createdTime: row.created_time,
       },
-      "lead_recebido",
+      "initial_lead",
     ),
   ]);
   const entry = capiLogEntry(result, { test: !!config.testEventCode || !!row.is_test });

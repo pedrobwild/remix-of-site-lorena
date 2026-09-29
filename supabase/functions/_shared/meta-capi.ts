@@ -12,8 +12,8 @@
  *   - `QualifiedLead` / `DisqualifiedLead` (meta-lead-quality), quando o time
  *     muda o status de um lead DO SITE no painel — o sinal de qualidade que
  *     alimenta o algoritmo;
- *   - estágios do CRM (`lead_recebido`, `lead_contatado`, `lead_qualificado`,
- *     `lead_descartado`) para leads dos FORMULÁRIOS INSTANTÂNEOS da Meta, com
+ *   - estágios do CRM (`initial_lead`, `contacted`, `qualified`,
+ *     `disqualified`) para leads dos FORMULÁRIOS INSTANTÂNEOS da Meta, com
  *     `user_data.lead_id` = id do lead na Meta — é a "API de Conversões para
  *     CRM" (otimização Conversion Leads). Ver `crmStageEvent` e docs/META-CRM.md.
  * Quem chama confere antes a regra de negócio: só formulários de cliente
@@ -47,26 +47,35 @@ export type MetaCapiConfig = {
 
 /**
  * Estágios do CRM enviados para leads dos formulários instantâneos (Lead Ads).
- * Nomes próprios, distintos dos eventos do site: na configuração do funil em
- * Events Manager só entram eventos com `lead_id`, e misturar com o
- * `QualifiedLead` dos leads do site (sem `lead_id`) confundiria o funil.
- * Espelham 1:1 os status do painel (`meta_leads.status`).
+ * `initial_lead` é o nome que a própria Meta usa para o primeiro estágio (é o
+ * que o funil em Events Manager já espera); os demais seguem a mesma
+ * convenção. São distintos dos eventos do site (`Lead`, `QualifiedLead`, sem
+ * `lead_id`) de propósito: no funil do Events Manager só entram eventos com
+ * `lead_id`. Espelham 1:1 os status do painel (`meta_leads.status`).
  */
-export type MetaCrmStage = "lead_recebido" | "lead_contatado" | "lead_qualificado" | "lead_descartado";
+export type MetaCrmStage = "initial_lead" | "contacted" | "qualified" | "disqualified";
 
 export const META_CRM_STAGES: readonly MetaCrmStage[] = [
-  "lead_recebido",
-  "lead_contatado",
-  "lead_qualificado",
-  "lead_descartado",
+  "initial_lead",
+  "contacted",
+  "qualified",
+  "disqualified",
 ];
 
 /** Status do painel → estágio do CRM na Meta. `novo` é o lead recém-recebido. */
 export const CRM_STAGE_BY_STATUS: Record<string, MetaCrmStage> = {
-  novo: "lead_recebido",
-  contatado: "lead_contatado",
-  qualificado: "lead_qualificado",
-  descartado: "lead_descartado",
+  novo: "initial_lead",
+  contatado: "contacted",
+  qualificado: "qualified",
+  descartado: "disqualified",
+};
+
+/** Estágio → status do painel (vai em `custom_data.lead_status`). */
+export const CRM_STATUS_BY_STAGE: Record<MetaCrmStage, string> = {
+  initial_lead: "novo",
+  contacted: "contatado",
+  qualified: "qualificado",
+  disqualified: "descartado",
 };
 
 /** Nome do CRM que aparece em `custom_data.lead_event_source` (Events Manager). */
@@ -478,7 +487,7 @@ export function crmStageEvent(lead: CrmStageLead, stage: MetaCrmStage, at: Date 
     customData: {
       event_source: "crm",
       lead_event_source: LEAD_EVENT_SOURCE,
-      lead_status: stage.replace(/^lead_/, ""),
+      lead_status: CRM_STATUS_BY_STAGE[stage],
       content_name: lead.formName,
       content_category: "meta_lead_ads",
       campaign_name: lead.campaignName,

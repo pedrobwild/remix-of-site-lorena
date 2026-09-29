@@ -18,8 +18,8 @@ export const META_TRACKED_STATUSES: readonly LeadStatus[] = ["qualificado", "des
 
 /**
  * Status de lead de FORMULÁRIO INSTANTÂNEO da Meta que viram estágio do CRM na
- * Meta (`lead_contatado`, `lead_qualificado`, `lead_descartado`). O estágio
- * inicial (`lead_recebido`) sai da `meta-sync` quando o lead chega ao painel.
+ * Meta (`contacted`, `qualified`, `disqualified`). O estágio
+ * inicial (`initial_lead`) sai da `meta-sync` quando o lead chega ao painel.
  */
 export const META_CRM_TRACKED_STATUSES: readonly LeadStatus[] = ["contatado", "qualificado", "descartado"];
 

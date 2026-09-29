@@ -20,7 +20,7 @@ de formulário instantâneo ("Conecte seu CRM com a API de Conversões") estão 
 | `SubmitApplication` | cadastro de parceiro, de incorporadora e indicação | Pixel | UUID do envio | website |
 | `QualifiedLead` | admin marca o lead como **qualificado** em `/admin/leads` | CAPI (`meta-lead-quality`) | `<lead_id>:qualifiedlead` | system_generated |
 | `DisqualifiedLead` | admin marca o lead como **descartado** | CAPI (`meta-lead-quality`) | `<lead_id>:disqualifiedlead` | system_generated |
-| `lead_recebido`, `lead_contatado`, `lead_qualificado`, `lead_descartado` | leads dos **formulários instantâneos** da Meta: entrada no painel e mudanças de status | CAPI (`meta-sync`, `meta-lead-quality`) com `user_data.lead_id` | `<meta_leads.id>:<estágio>` | system_generated — ver [META-CRM.md](META-CRM.md) |
+| `initial_lead`, `contacted`, `qualified`, `disqualified` | leads dos **formulários instantâneos** da Meta: entrada no painel e mudanças de status | CAPI (`meta-sync`, `meta-lead-quality`) com `user_data.lead_id` | `<meta_leads.id>:<estágio>` | system_generated — ver [META-CRM.md](META-CRM.md) |
 
 O `Lead` do Pixel leva, além de `content_name`/`content_category`, parâmetros sem
 dado pessoal para segmentar: `objetivo` (slug), `faixa_m2` (`ate_30`, `31_45`,

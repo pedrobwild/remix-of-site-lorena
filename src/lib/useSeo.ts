@@ -309,14 +309,18 @@ function injectGTM(id: string) {
  * fbevents rastreia sozinho cada pushState da SPA e o PageView saía em dobro
  * com o de src/components/MetaPixel.tsx. `allowDuplicatePageViews`: sem ele o
  * fbevents descarta todo PageView manual depois do primeiro da carga, e as
- * trocas de página da SPA nunca chegavam à Meta.
+ * trocas de página da SPA nunca chegavam à Meta. `autoConfig=false`: desliga a
+ * "configuração automática" do Pixel (eventos inferidos de cliques em botões e
+ * de microdados) — era ela que gerava um `Purchase` sem `value` no Events
+ * Manager a partir de botões como "Contratar"/"Fechar", que o site nunca
+ * envia; só os eventos explícitos de src/lib/conversions.ts saem daqui.
  */
 function injectMetaPixel(id: string) {
   ensureScript(
     "meta-pixel",
     "",
     `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-fbq.disablePushState=true;fbq.allowDuplicatePageViews=true;fbq('init','${id}');fbq('track','PageView');`
+fbq.disablePushState=true;fbq.allowDuplicatePageViews=true;fbq('set','autoConfig',false,'${id}');fbq('init','${id}');fbq('track','PageView');`
   );
   // Eventos pedidos antes de o Pixel existir (ex.: ViewContent na entrada) e
   // a correspondência avançada de um formulário enviado antes da injeção.

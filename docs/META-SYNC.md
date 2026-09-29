@@ -30,7 +30,7 @@ Cada lead de formulário **novo** é avisado como os do site:
   `external_id` = id do lead na Meta. É a mesma chave do webhook de Lead Ads
   do próprio CRM: se ele também receber o lead, vira "duplicate" lá, nunca dois
   cards;
-- **Meta (API de Conversões para CRM)** — evento `lead_recebido` com o
+- **Meta (API de Conversões para CRM)** — evento `initial_lead` com o
   `lead_id` do formulário, o primeiro estágio do funil que a otimização
   Conversion Leads exige — ver [META-CRM.md](META-CRM.md).
 

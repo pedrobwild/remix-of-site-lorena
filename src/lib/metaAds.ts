@@ -335,7 +335,7 @@ const OUTCOME_LABEL: Record<string, string> = { sent: "✓", skipped: "—", err
 
 const NOTIFY_CHANNEL_LABEL: Record<string, string> = { slack: "Slack", email: "e-mail", crm: "CRM", capi: "Meta (CAPI)" };
 
-/** O que aconteceu com o aviso deste lead (Slack, e-mail, CRM e o `lead_recebido` na Meta). */
+/** O que aconteceu com o aviso deste lead (Slack, e-mail, CRM e o `initial_lead` na Meta). */
 export function notifySummary(notify: unknown): string {
   if (notify === null || notify === undefined) return "aviso pendente (sai na próxima sincronização)";
   if (typeof notify !== "object") return "—";

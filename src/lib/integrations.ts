@@ -77,6 +77,9 @@ function detailOf(row: IntegrationLogRow): Record<string, unknown> {
   return row.detail && typeof row.detail === "object" ? (row.detail as Record<string, unknown>) : {};
 }
 
+/** Estágios do CRM (mesmos nomes de MetaCrmStage em supabase/functions/_shared/meta-capi.ts). */
+const CRM_STAGE_EVENTS = new Set(["initial_lead", "contacted", "qualified", "disqualified"]);
+
 const CAPI_SKIP_REASON: Record<string, string> = {
   no_token: "Falta o token: salve META_CAPI_ACCESS_TOKEN (ou META_ADS_ACCESS_TOKEN) nos segredos do projeto.",
   no_pixel: "Falta o ID do Pixel em SEO › Analytics & Pixels.",
@@ -105,7 +108,7 @@ export function capiStatus(s: IntegrationSettings, logs: readonly IntegrationLog
   const sent30 = recent.length;
   // Estágios do CRM (leads dos formulários da Meta, com lead_id) — é o que a
   // otimização Conversion Leads olha; separar ajuda a ver se o funil está saindo.
-  const crm30 = recent.filter((l) => (l.event_name ?? "").startsWith("lead_")).length;
+  const crm30 = recent.filter((l) => CRM_STAGE_EVENTS.has(l.event_name ?? "")).length;
   if (last.status === "sent") {
     return {
       ...base,

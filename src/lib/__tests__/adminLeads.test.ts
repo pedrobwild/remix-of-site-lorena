@@ -161,7 +161,7 @@ describe("updateLeadStatus", () => {
       body: { lead_id: "m-1", status: "descartado", source: "meta" },
     });
     functionsInvoke.mockClear();
-    // `novo` não é mudança de estágio: o lead_recebido sai da meta-sync.
+    // `novo` não é mudança de estágio: o initial_lead sai da meta-sync.
     await notifyMetaLeadQuality("m-1", "novo", { source: "meta" });
     expect(functionsInvoke).not.toHaveBeenCalled();
 

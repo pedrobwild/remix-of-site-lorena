@@ -97,7 +97,7 @@ formulários do Facebook/Instagram com aviso no Slack, e-mail e CRM — ver
 
 API de Conversões para CRM ("Conecte seu CRM com a API de Conversões", otimização
 Conversion Leads): cada lead de formulário instantâneo devolve à Meta os estágios
-`lead_recebido` → `lead_contatado` → `lead_qualificado`/`lead_descartado` com o
+`initial_lead` → `contacted` → `qualified`/`disqualified` com o
 `lead_id` do formulário, conforme o status no painel — ver
 [docs/META-CRM.md](docs/META-CRM.md).
 
