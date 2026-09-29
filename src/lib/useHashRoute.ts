@@ -485,6 +485,15 @@ export function navigate(href: string, opts: { replace?: boolean } = {}) {
   // A posição da página que fica para trás vai para o histórico dela.
   cancelPendingScrollSave();
   saveScrollPosition();
+  // Migração TanStack Start: a navegação passa pelo roteador (referência
+  // global definida em src/router.tsx), que troca a rota e o <head>.
+  const w = window as unknown as {
+    __bwRouter?: { navigate: (o: { href: string; replace?: boolean }) => void };
+  };
+  if (w.__bwRouter) {
+    w.__bwRouter.navigate({ href: target, replace: !!opts.replace });
+    return;
+  }
   if (opts.replace) window.history.replaceState({}, "", target);
   else window.history.pushState({}, "", target);
   window.dispatchEvent(new Event("lovable:navigate"));

@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import type { QueryClient } from "@tanstack/react-query";
 import { QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -92,23 +92,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "ICBM", content: "-23.5505, -46.6333" },
       { name: "DC.title", content: HOME_TITLE },
       { name: "language", content: "Portuguese" },
+      // og:*/twitter:* específicos de página (title, description, url,
+      // image) ficam nas rotas-folha via seoHead — root só carrega os
+      // defaults amplos, senão sobrepõe a prévia social das páginas.
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "pt_BR" },
       { property: "og:site_name", content: "Bewild" },
-      { property: "og:url", content: `${SITE_BASE}/` },
-      { property: "og:title", content: HOME_TITLE },
-      { property: "og:description", content: HOME_DESCRIPTION },
-      { property: "og:image", content: DEFAULT_OG_IMAGE_URL },
-      { property: "og:image:secure_url", content: DEFAULT_OG_IMAGE_URL },
       { property: "og:image:type", content: "image/jpeg" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { property: "og:image:alt", content: DEFAULT_OG_IMAGE_ALT },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: HOME_TITLE },
-      { name: "twitter:description", content: HOME_DESCRIPTION },
-      { name: "twitter:image", content: DEFAULT_OG_IMAGE_URL },
-      { name: "twitter:image:alt", content: DEFAULT_OG_IMAGE_ALT },
       { name: "apple-mobile-web-app-title", content: "Bewild" },
       { name: "application-name", content: "Bewild" },
     ],
@@ -255,12 +249,18 @@ function RootComponent() {
   const underMaintenance =
     MAINTENANCE_MODE && !adminMode && !MAINTENANCE_EXEMPT.has(pathname);
 
+  // Banner de cookies e assistente só entram após a hidratação: eles dependem
+  // de estado do navegador (consentimento, viewport) e renderizá-los no SSR
+  // causa divergência entre o HTML do servidor e o do cliente.
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <RootErrorBoundary>
         {underMaintenance ? <MaintenancePage /> : <Outlet />}
-        {!adminMode && !underMaintenance && <CookieBanner />}
-        {!adminMode && !underMaintenance && <SiteAssistant />}
+        {hydrated && !adminMode && !underMaintenance && <CookieBanner />}
+        {hydrated && !adminMode && !underMaintenance && <SiteAssistant />}
         {/* Montado sempre (inclusive /admin) para acompanhar a URL; o próprio
             componente não dispara nada em /admin nem sem consentimento. */}
         <MetaPixel />
