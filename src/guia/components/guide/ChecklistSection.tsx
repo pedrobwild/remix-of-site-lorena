@@ -131,7 +131,7 @@ export default function ChecklistSection() {
                   quadrado aciona o mesmo checkbox, uma única vez. */}
               <label
                 htmlFor={id}
-                className={`block rounded-lg border bg-card text-card-foreground shadow-sm border-border cursor-pointer transition-all duration-300 ${
+                className={`block rounded-lg border bg-card text-card-foreground shadow-xs border-border cursor-pointer transition-all duration-300 ${
                   checked[i] ? "bg-primary/5 border-primary/30" : ""
                 } ${flashIndex === i ? "!bg-emerald-500/10" : ""}`}
               >
@@ -201,7 +201,7 @@ export default function ChecklistSection() {
             {Array.from({ length: total }, (_, i) => (
               <div
                 key={i}
-                className={`h-2 flex-1 rounded-sm transition-all duration-500 ${
+                className={`h-2 flex-1 rounded-xs transition-all duration-500 ${
                   i < score ? tierColor : "bg-muted"
                 }`}
               />

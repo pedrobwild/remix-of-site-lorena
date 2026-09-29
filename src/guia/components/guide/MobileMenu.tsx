@@ -94,7 +94,7 @@ export default function MobileMenu({ activeId, sectionIndex, sectionCount }: Pro
                       aria-current={isActive ? "location" : undefined}
                       className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-all min-h-[44px] ${
                         isActive
-                          ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                          ? "bg-primary text-primary-foreground font-semibold shadow-xs"
                           : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
                       }`}
                     >

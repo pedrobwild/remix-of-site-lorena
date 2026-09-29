@@ -13,7 +13,7 @@ export default function DecoracaoSection() {
 
   return (
     <SectionBlock id="decoracao" title="Decoração Estratégica" takeaway="Design que converte: estética + funcionalidade + rentabilidade.">
-      <div className="rounded-2xl overflow-hidden mb-8 shadow-sm ring-1 ring-border"><img src={sectionDecoracao} alt="Studio decorado com design estratégico" className="w-full h-40 md:h-64 object-cover" loading="lazy" width={800} height={256} /></div>
+      <div className="rounded-2xl overflow-hidden mb-8 shadow-xs ring-1 ring-border"><img src={sectionDecoracao} alt="Studio decorado com design estratégico" className="w-full h-40 md:h-64 object-cover" loading="lazy" width={800} height={256} /></div>
       <h3 className="font-display text-xl font-bold text-foreground mb-4">Os 5 Pilares</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-8">{pilares.map((p) => <Card key={p.title} className="border-border"><CardContent className="p-4 flex items-start gap-3"><div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0"><p.icon className="text-primary" size={18} /></div><div><p className="font-semibold text-foreground text-sm">{p.title}</p><p className="text-xs text-muted-foreground mt-0.5">{p.desc}</p></div></CardContent></Card>)}</div>
       <h3 className="font-display text-xl font-bold text-foreground mb-4">O Flywheel da Rentabilidade</h3>

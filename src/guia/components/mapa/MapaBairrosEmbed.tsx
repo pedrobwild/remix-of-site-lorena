@@ -622,7 +622,7 @@ export default function MapaBairrosEmbed() {
                 onClick={() => togglePOI(cat.key)}
                 className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-all whitespace-nowrap flex-shrink-0 ${
                   active
-                    ? "border-primary/50 shadow-sm"
+                    ? "border-primary/50 shadow-xs"
                     : "bg-card text-muted-foreground border-border hover:border-primary/30 hover:text-foreground"
                 }`}
                 style={active ? { backgroundColor: `${cat.color}18`, color: cat.color, borderColor: `${cat.color}60` } : undefined}
