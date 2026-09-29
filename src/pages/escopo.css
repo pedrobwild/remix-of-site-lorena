@@ -6,7 +6,7 @@
 }
 
 .bwa-scope-intro {
-  padding: clamp(148px, 17vw, 220px) 0 clamp(48px, 6vw, 80px);
+  padding: clamp(97px, 10.56vw, 137px) 0 clamp(42px, 4.47vw, 60px);
   border-bottom: 1px solid var(--bwa-line);
 }
 
@@ -14,7 +14,7 @@
   max-width: 900px;
   margin: 20px 0 0;
   font-family: var(--bwa-font-body);
-  font-size: clamp(38px, 5.2vw, 72px);
+  font-size: clamp(30px, 3.6vw, 60px);
   font-weight: 500;
   line-height: 1.02;
 }
@@ -23,18 +23,18 @@
   max-width: 620px;
   margin: 22px 0 0;
   color: var(--bwa-ink);
-  font-size: clamp(16px, 1.4vw, 20px);
+  font-size: clamp(16px, 1.26vw, 18px);
   line-height: 1.65;
 }
 
 .bwa-scope-content {
-  padding: clamp(56px, 7vw, 104px) 0 clamp(72px, 9vw, 120px);
+  padding: clamp(46px, 4.9vw, 73px) 0 clamp(55px, 6.12vw, 82px);
 }
 
 .bwa-scope-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(32px, 5vw, 72px);
+  gap: clamp(32px, 3.83vw, 55px);
   align-items: start;
 }
 
@@ -138,7 +138,7 @@
 .bwa-scope-result h2 {
   margin: 0 0 10px;
   font-family: var(--bwa-font-body);
-  font-size: clamp(24px, 2.4vw, 34px);
+  font-size: clamp(20px, 1.98vw, 28px);
   font-weight: 600;
   line-height: 1.15;
 }
@@ -169,7 +169,7 @@
 .bwa-scope-meta strong {
   display: block;
   margin-top: 6px;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
   color: var(--bwa-navy-2, var(--bwa-navy));
 }
@@ -189,7 +189,7 @@
 
 .bwa-scope-item h3 {
   margin: 0 0 6px;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
 }
 
