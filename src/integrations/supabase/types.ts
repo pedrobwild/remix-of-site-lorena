@@ -1932,6 +1932,29 @@ export type Database = {
         Args: { p_since: string; p_until: string }
         Returns: Json
       }
+      get_image_alts: {
+        Args: { p_urls: string[] }
+        Returns: {
+          alt: string
+          url: string
+        }[]
+      }
+      get_partner_case: {
+        Args: { p_slug: string }
+        Returns: {
+          partner_name: string
+          project_slugs: string[]
+          published: boolean
+          quote_author: string
+          quote_role: string
+          quote_text: string
+          slug: string
+          stats: Json
+          timeline: Json
+          updated_on: string
+        }[]
+      }
+      get_public_site_settings: { Args: never; Returns: Json }
       hit_rate_limit: {
         Args: { p_key: string; p_max: number; p_window_s: number }
         Returns: boolean
