@@ -153,23 +153,26 @@ ignora no treinamento; o que vale para a validação de 7 dias são os leads rea
 
 **Diagnóstico "Purchase — 100% afetada — Saiba como definir o valor (preço)".**
 O site **nunca** envia `Purchase` (só PageView, ViewContent, Contact, Lead,
-SubmitApplication e os eventos próprios — ver META-CAPI.md). Esse `Purchase`
-sem `value` vinha da **configuração automática** do Pixel, que infere eventos a
-partir do texto de botões ("Contratar", "Fechar", "Comprar"…) e de microdados,
-sem preço. Correção em duas partes:
+SubmitApplication e os eventos próprios — ver META-CAPI.md). Verificado em
+29/09/2026 no Events Manager (conjunto "Dados bwild", 644216424824915): o
+`Purchase` chega pela **API de Conversões com origem "Gerado pelo sistema"**
+(2 eventos, 13/09 e 22/09), junto com um `proposta_enviada` (29 eventos) — ou
+seja, vem do **CRM Bwild Engine**, que envia `value`/`currency` mas com valor
+inválido (0 ou não numérico). A correção é lá, não no site: enviar
+`custom_data.value` numérico > 0 (ex.: `12500.00`) e `currency: "BRL"` no
+`Purchase`; ou, se o fechamento não tiver valor, não enviar `Purchase` (usar um
+evento próprio, ex. `contrato_assinado`).
 
-1. No código, o Pixel agora sobe com `fbq('set','autoConfig',false,<pixel>)`
-   antes do `init` (`src/lib/useSeo.ts`): nenhum evento inferido sai do site.
-2. Em Events Manager › conjunto de dados › **Configurações** › *Configuração de
-   eventos*, desligar **"Rastrear eventos automaticamente sem código"** e, em
-   *Correspondência avançada automática*, manter desligada (já era a orientação
-   do META-CAPI.md). Depois, na aba *Diagnóstico*, marcar o aviso como resolvido
-   — ele some quando o `Purchase` para de chegar (até 48h). Se continuar
-   chegando, o Pixel está em outro site (ex.: loja ou site antigo no Wix):
-   conferir em *Visão geral* › `Purchase` › "URL do evento".
+No lado do site, por precaução, o Pixel sobe com
+`fbq('set','autoConfig',false,<pixel>)` antes do `init` (`src/lib/useSeo.ts`):
+nenhum evento inferido de botões/microdados sai daqui. Em Events Manager ›
+Configurações, "Eventos automáticos" e "Rastrear eventos automaticamente sem
+código" já estavam desligados; "Incluir automaticamente informações mais
+detalhadas de páginas e produtos" foi desligado em 29/09/2026.
 
-Não faz sentido "definir o valor" como o aviso sugere: a Bewild não fecha venda
-no site, então o certo é o evento não existir.
+Não faz sentido "definir o valor" no site como o aviso sugere: a Bewild não
+fecha venda no site. O aviso some sozinho quando o CRM passar a mandar `value`
+válido (ou parar de mandar `Purchase`), em até 48h.
 
 ## Auditoria
 
