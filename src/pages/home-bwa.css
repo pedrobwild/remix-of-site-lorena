@@ -6025,3 +6025,16 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
     font-size: 16px;
   }
 }
+
+/* Botão de ação das perguntas da FAQ vindas do painel (/admin/faq). */
+.bwa-home .bwa-home-faq-link,
+.bwa-home-faq-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 4px;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

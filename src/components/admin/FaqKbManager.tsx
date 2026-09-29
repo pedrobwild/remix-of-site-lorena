@@ -17,6 +17,7 @@ type Row = {
   resposta: string;
   ordem: number;
   ativo: boolean;
+  mostrar_na_home: boolean;
   acoes: Acao[];
 };
 
@@ -26,6 +27,7 @@ type Draft = {
   resposta: string;
   ordem: number;
   ativo: boolean;
+  home: boolean;
   acaoTipo: "nenhuma" | "whatsapp" | "link";
   acaoRotulo: string;
   acaoUrl: string;
@@ -37,6 +39,7 @@ const EMPTY_DRAFT: Draft = {
   resposta: "",
   ordem: 100,
   ativo: true,
+  home: false,
   acaoTipo: "whatsapp",
   acaoRotulo: "Falar no WhatsApp",
   acaoUrl: "",
@@ -60,6 +63,7 @@ function draftFromRow(r: Row): Draft {
     resposta: r.resposta,
     ordem: r.ordem,
     ativo: r.ativo,
+    home: r.mostrar_na_home,
     acaoTipo: acao ? acao.tipo : "nenhuma",
     acaoRotulo: acao?.rotulo ?? "",
     acaoUrl: acao?.url ?? "",
@@ -150,7 +154,7 @@ export default function FaqKbManager() {
     setCarregando(true);
     const { data, error } = await supabase
       .from("assistant_kb")
-      .select("id, tema, pergunta, resposta, ordem, ativo, acoes")
+      .select("id, tema, pergunta, resposta, ordem, ativo, mostrar_na_home, acoes")
       .order("tema", { ascending: true })
       .order("ordem", { ascending: true });
     setCarregando(false);
@@ -225,6 +229,7 @@ export default function FaqKbManager() {
         resposta: draft.resposta.trim(),
         ordem: Number(draft.ordem) || 100,
         ativo: draft.ativo,
+        mostrar_na_home: draft.home,
         acoes: montado.acoes,
         updated_at: new Date().toISOString(),
       })
@@ -265,6 +270,7 @@ export default function FaqKbManager() {
       resposta: novo.resposta.trim(),
       ordem: Number(novo.ordem) || 100,
       ativo: novo.ativo,
+      mostrar_na_home: novo.home,
       acoes: montado.acoes as unknown as never,
       updated_at: new Date().toISOString(),
     });
@@ -429,6 +435,14 @@ export default function FaqKbManager() {
           />
           <span className="mono">publicada em /faq</span>
         </label>
+        <label className="admin-field" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <input
+            type="checkbox"
+            checked={d.home}
+            onChange={(e) => set((p) => ({ ...p, home: e.target.checked }))}
+          />
+          <span className="mono">mostrar na home (se estiver publicada)</span>
+        </label>
       </>
     );
   }
@@ -436,7 +450,7 @@ export default function FaqKbManager() {
   return (
     <>
       <p className="mono admin-hint">
-        Estas perguntas alimentam a página pública /faq e os dados estruturados
+        Estas perguntas alimentam a página pública /faq, a FAQ da home (as marcadas “mostrar na home”) e os dados estruturados
         (FAQ) enviados ao Google. A atualização é automática.
       </p>
 

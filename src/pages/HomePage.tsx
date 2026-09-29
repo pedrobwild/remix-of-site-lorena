@@ -14,6 +14,7 @@ import { installTour3d } from "@/lib/homeTour3d";
 import { fetchSiteSettings } from "@/lib/useSiteSettings";
 import { isExternalHref, safeHref } from "@/lib/safeUrl";
 import { initHomeBwa } from "./home-bwa-script";
+import { hydrateHomeFaq } from "./homeFaq";
 import WorkflowPortalReplica from "@/components/workflow-replica/WorkflowPortalReplica";
 import { bastidoresJsonLd, parseBastidoresPosts } from "@/lib/bastidoresJsonLd";
 
@@ -141,6 +142,8 @@ export default function HomePage() {
           // Tour virtual 3D (Enscape): 3 cômodos lado a lado; no toque, tela cheia.
           installTour3d(root),
           installFooterLinkedin(root),
+          // FAQ: perguntas marcadas "Mostrar na home" em /admin/faq.
+          hydrateHomeFaq(root),
         ]
       : [];
     // Vitrine "Projetos": troca os cards estáticos pelos mais acessados.

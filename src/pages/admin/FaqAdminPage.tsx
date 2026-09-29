@@ -223,7 +223,7 @@ export default function FaqAdminPage() {
     <AdminLayout
       active="faq"
       title="FAQ"
-      description="Gerencie as perguntas frequentes da home e da página /faq."
+      description="Edite perguntas, respostas e ações da /faq e da home. Marque “mostrar na home” para levar a pergunta à página inicial."
     >
       <div className="admin-toolbar" style={{ gap: 8 }}>
         <button
@@ -232,13 +232,6 @@ export default function FaqAdminPage() {
           onClick={() => setAba("site")}
         >
           Página /faq
-        </button>
-        <button
-          type="button"
-          className={`admin-btn${aba === "home" ? " admin-btn--primary" : ""}`}
-          onClick={() => setAba("home")}
-        >
-          FAQ da home
         </button>
       </div>
 
