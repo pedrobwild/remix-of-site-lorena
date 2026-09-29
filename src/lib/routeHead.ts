@@ -38,7 +38,6 @@ const WEBSITE_ID = `${SITE_BASE}/#website`;
 function pageTypeFor(path: string): string {
   if (path === "/contato" || path === "/mapa") return "ContactPage";
   if (path === "/como-funciona" || path === "/marcas-e-parcerias") return "AboutPage";
-  if (path === "/faq") return "FAQPage";
   if (
     path === "/portfolio" ||
     path === "/conteudos" ||
