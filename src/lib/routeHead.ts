@@ -31,6 +31,73 @@ function absoluteUrl(url: string): string {
   return `${SITE_BASE}${u.startsWith("/") ? "" : "/"}${u}`;
 }
 
+const ORG_ID = `${SITE_BASE}/#org`;
+const WEBSITE_ID = `${SITE_BASE}/#website`;
+
+/** Tipo schema.org mais específico para páginas que não são "WebPage" genérica. */
+function pageTypeFor(path: string): string {
+  if (path === "/contato" || path === "/mapa") return "ContactPage";
+  if (path === "/como-funciona" || path === "/marcas-e-parcerias") return "AboutPage";
+  if (path === "/faq") return "FAQPage";
+  if (
+    path === "/portfolio" ||
+    path === "/conteudos" ||
+    path === "/mapa-do-site" ||
+    path === "/onde-atuamos" ||
+    path.startsWith("/reforma/")
+  )
+    return "CollectionPage";
+  return "WebPage";
+}
+
+/** Nome curto da página (título sem o sufixo da marca). */
+function shortName(title: string): string {
+  return title.replace(/\s*[|·—–-]\s*Bewild\s*$/i, "").trim() || title;
+}
+
+/** Trilha de navegação da página (a mesma lógica das páginas no cliente). */
+function trailFor(path: string, name: string): Array<{ name: string; path: string }> {
+  const trail = [{ name: "Início", path: "/" }];
+  if (path.startsWith("/portfolio/") || path.startsWith("/reforma/"))
+    trail.push({ name: "Portfólio", path: "/portfolio" });
+  else if (path.startsWith("/conteudos/")) trail.push({ name: "Conteúdos", path: "/conteudos" });
+  else if (path.startsWith("/parceiros/")) trail.push({ name: "Parceiros", path: "/parceiros" });
+  trail.push({ name, path });
+  return trail;
+}
+
+/**
+ * JSON-LD da página no HTML do servidor: WebPage (ou subtipo) com o mesmo
+ * endereço do canonical, ligada ao WebSite/Organization do root, e a trilha
+ * de navegação aninhada em `breadcrumb` (sem BreadcrumbList solta, para não
+ * duplicar a que a própria página publica no cliente).
+ */
+function pageJsonLd(input: SeoHeadInput, path: string, canonical: string, image: string) {
+  const name = shortName(input.title);
+  return {
+    "@context": "https://schema.org",
+    "@type": pageTypeFor(path),
+    "@id": `${canonical}#webpage`,
+    url: canonical,
+    name: input.title,
+    description: input.description,
+    inLanguage: "pt-BR",
+    isPartOf: { "@id": WEBSITE_ID },
+    about: { "@id": ORG_ID },
+    publisher: { "@id": ORG_ID },
+    primaryImageOfPage: { "@type": "ImageObject", url: image },
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: trailFor(path, name).map((t, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: t.name,
+        item: t.path === "/" ? `${SITE_BASE}/` : `${SITE_BASE}${t.path}`,
+      })),
+    },
+  };
+}
+
 export function seoHead(input: SeoHeadInput) {
   const cleanPath = (input.path.split("#")[0].split("?")[0] || "/").replace(/\/+$/, "") || "/";
   const canonical = cleanPath === "/" ? `${SITE_BASE}/` : `${SITE_BASE}${cleanPath}`;
@@ -65,5 +132,16 @@ export function seoHead(input: SeoHeadInput) {
         { rel: "alternate", hrefLang: "x-default", href: canonical },
       ];
 
-  return { meta, links };
+  // Home: o JSON-LD completo (Organization/WebSite) já vem do __root.
+  const scripts =
+    input.noindex || cleanPath === "/"
+      ? []
+      : [
+          {
+            type: "application/ld+json",
+            children: JSON.stringify(pageJsonLd(input, cleanPath, canonical, og)),
+          },
+        ];
+
+  return { meta, links, scripts };
 }
