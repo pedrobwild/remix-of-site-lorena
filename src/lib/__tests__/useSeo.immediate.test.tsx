@@ -11,16 +11,10 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, cleanup } from "@testing-library/react";
 
-// Backend que NUNCA responde: simula site_settings pendurado.
+// Backend que NUNCA responde: simula get_public_site_settings pendurada.
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
-    from: () => ({
-      select: () => ({
-        eq: () => ({
-          maybeSingle: () => new Promise(() => {}),
-        }),
-      }),
-    }),
+    rpc: () => new Promise(() => {}),
   },
 }));
 
