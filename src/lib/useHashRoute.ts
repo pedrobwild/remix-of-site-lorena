@@ -440,12 +440,28 @@ export function scrollToHashTarget(timeoutMs = 3000): () => void {
   } catch {
     /* hash malformado: tenta literal */
   }
+  // Depois do primeiro scroll a página ainda pode crescer acima do alvo
+  // (imagens lazy, vídeo, seções montadas tarde) e empurrar a seção para
+  // longe — por isso o alvo é realinhado a cada frame até ficar estável por
+  // ~0,7 s. O usuário interagindo cancela (retryEachFrame).
+  const SETTLE_FRAMES = 42;
+  const started = Date.now();
+  let aligned = false;
+  let stableFrames = 0;
   return retryEachFrame(() => {
     const el = document.getElementById(id);
-    if (!el) return false;
-    el.scrollIntoView({ behavior: "auto", block: "start" });
-    return true;
-  }, timeoutMs);
+    if (!el) return Date.now() - started > timeoutMs;
+    const margin = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+    const off = Math.abs(el.getBoundingClientRect().top - margin);
+    if (!aligned || off > 2) {
+      el.scrollIntoView({ behavior: "auto", block: "start" });
+      aligned = true;
+      stableFrames = 0;
+      return false;
+    }
+    stableFrames += 1;
+    return stableFrames >= SETTLE_FRAMES;
+  }, timeoutMs + 3000);
 }
 
 // Navega programaticamente sem recarregar a página. Preserva o hash quando
