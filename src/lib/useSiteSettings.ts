@@ -180,12 +180,12 @@ export async function fetchSiteSettings(force = false): Promise<SiteSettings> {
   if (inflight) return inflight;
   inflight = (async () => {
     try {
-      const { data, error } = await supabase.from("site_settings").select("*").eq("id", 1).maybeSingle();
+      const { data, error } = await supabase.rpc("get_public_site_settings");
       if (error) {
         devWarn("[useSiteSettings] leitura falhou (não cacheado):", error);
         return cache ?? DEFAULTS;
       }
-      cache = { ...DEFAULTS, ...(data ?? {}) } as SiteSettings;
+      cache = { ...DEFAULTS, ...((data as Record<string, unknown> | null) ?? {}) } as SiteSettings;
       return cache;
     } catch (err) {
       devWarn("[useSiteSettings] leitura lançou (não cacheado):", err);

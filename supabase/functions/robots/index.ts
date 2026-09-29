@@ -18,10 +18,7 @@ Deno.serve(async (req) => {
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   const { data: settings } = await supabase
-    .from("site_settings")
-    .select("seo_canonical_base, seo_robots")
-    .eq("id", 1)
-    .maybeSingle();
+    .rpc("get_public_site_settings");
 
   const base = (settings?.seo_canonical_base || "https://bewild.com.br").replace(/\/$/, "");
   const robotsDirective = (settings?.seo_robots || "index, follow").toLowerCase();

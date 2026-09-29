@@ -76,10 +76,7 @@ Deno.serve(async (req) => {
 
   try {
     const { data: settings } = await supabase
-      .from("site_settings")
-      .select("seo_canonical_base")
-      .eq("id", 1)
-      .maybeSingle();
+      .rpc("get_public_site_settings");
 
     const base = (settings?.seo_canonical_base || "https://bewild.com.br").replace(/\/$/, "");
     const sitemapStatic = `${base}/sitemap.xml`;

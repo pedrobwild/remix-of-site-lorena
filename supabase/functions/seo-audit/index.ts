@@ -399,12 +399,12 @@ function summarizeExpected(checked: ExpectedTag[]) {
 
 async function loadSettings(): Promise<Settings> {
   const url = Deno.env.get("SUPABASE_URL");
-  // site_settings tem leitura pública: a service role não é necessária aqui.
+  // Leitura pública via RPC get_public_site_settings (tabela é só admin).
   const key = Deno.env.get("SUPABASE_ANON_KEY");
   if (!url || !key) return null;
   try {
     const sb = createClient(url, key);
-    const { data } = await sb.from("site_settings").select("*").eq("id", 1).maybeSingle();
+    const { data } = await sb.rpc("get_public_site_settings");
     return (data as Settings) ?? null;
   } catch {
     return null;

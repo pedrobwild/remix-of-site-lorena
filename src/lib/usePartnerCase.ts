@@ -59,11 +59,7 @@ export function usePartnerCase(slug: string, enabled = true) {
     let mounted = true;
     void (async () => {
       const { data: row, error } = await supabase
-        .from("partner_cases")
-        .select(
-          "slug, partner_name, stats, timeline, project_slugs, quote_text, quote_author, quote_role, updated_on, published",
-        )
-        .eq("slug", slug)
+        .rpc("get_partner_case", { p_slug: slug })
         .maybeSingle();
       if (!mounted) return;
       if (error) {
