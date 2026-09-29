@@ -88,7 +88,12 @@ export function projectSeoTitle(p: ProjectSeoInput | null | undefined): string {
   const what = ["Reforma de apartamento", area ? `de ${area}` : "", `em ${place || "São Paulo"}`]
     .filter(Boolean)
     .join(" ");
-  const name = projectFriendlyName(p);
+  let name = projectFriendlyName(p);
+  // Bairro já aparece antes; repetir no nome só gasta espaço no resultado.
+  if (place) {
+    const rx = new RegExp(`\\s*[-–—]?\\s*${place.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*$`, "i");
+    name = name.replace(rx, "").trim() || name;
+  }
   // Nome do projeto entra no fim, truncado, para cada URL ter um título único.
   const nameRoom = 78 - (what.length + 3 + suffix.length);
   if (name && nameRoom >= 8) return `${what} — ${truncateTitleBase(name, nameRoom)}${suffix}`;

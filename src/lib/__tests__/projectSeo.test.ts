@@ -47,8 +47,7 @@ describe("projectMetaDescription", () => {
 describe("projectSeoTitle", () => {
   it("põe reforma, metragem e bairro na frente e o nome do projeto no fim", () => {
     expect(projectSeoTitle({ title: "AB - PENÍNSULA VILA MADALENA", neighborhood: "Vila Madalena", area_m2: 23 })).toBe(
-      "Reforma de apartamento de 23 m² em Vila Madalena — Península Vila Madalena | Bewild".slice(0, 0) ||
-        "Reforma de apartamento de 23 m² em Vila Madalena — Península | Bewild",
+      "Reforma de apartamento de 23 m² em Vila Madalena — Península | Bewild",
     );
   });
 
