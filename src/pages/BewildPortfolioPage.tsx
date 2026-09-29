@@ -5,7 +5,8 @@
  * qualquer alteração — apenas troca de pele para o design system da home.
  * Grid segue o padrão .bwh-proj (foto 4/5 + contador + "ver projeto →").
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { optimizedImageUrl, optimizedSrcSet } from "@/lib/imageUrl";
 import { useSeo, breadcrumbJsonLd, itemListJsonLd } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import BwaNav from "@/components/BwaNav";
@@ -31,6 +32,8 @@ import "@/styles/bwh-tokens.css";
 import "@/styles/bwh-overlays.css";
 import "@/styles/bwh-sol-fusion.css";
 
+const PAGE_SIZE = 24;
+const GRID_SIZES = "(max-width: 640px) 100vw, (max-width: 980px) 50vw, 33vw";
 const pad = (n: number) => String(n).padStart(2, "0");
 
 export default function BewildPortfolioPage() {
@@ -40,7 +43,6 @@ export default function BewildPortfolioPage() {
   const [place, setPlace] = useState<string>(ALL_NEIGHBORHOODS);
   const [sort, setSort] = useState<PortfolioSort>("curadoria");
   // Alt text descritivo das capas (gerado a partir da análise de cada foto).
-  const coverAlts = useImageAlts(useMemo(() => projects.map((p) => p.cover_url), [projects]));
 
   useSeo({
     title: "Projetos de arquitetura e reforma de apartamento em SP | Bewild",
@@ -88,6 +90,32 @@ export default function BewildPortfolioPage() {
   )}`;
 
   const total = filtered.length;
+
+  // Carregamento incremental: lotes de 24; volta a 24 ao mudar filtro/bairro/ordem.
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  useEffect(() => setVisibleCount(PAGE_SIZE), [filter, place, sort]);
+  const visible = useMemo(() => filtered.slice(0, visibleCount), [filtered, visibleCount]);
+  const remaining = Math.max(0, total - visible.length);
+  const loadMore = () => setVisibleCount((c) => Math.min(c + PAGE_SIZE, total));
+
+  // Alt texts só dos cards renderizados (chave = cover_url original).
+  const coverAlts = useImageAlts(useMemo(() => visible.map((p) => p.cover_url), [visible]));
+
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || remaining === 0 || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setVisibleCount((c) => Math.min(c + PAGE_SIZE, total));
+        }
+      },
+      { rootMargin: "600px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [remaining, total, visibleCount]);
 
   return (
     <div className="bwh">
@@ -214,8 +242,9 @@ export default function BewildPortfolioPage() {
             )}
 
             {!loading && !error && total > 0 && (
+              <>
               <div className="bwh-projects">
-                {filtered.map((p, i) => {
+                {visible.map((p, i) => {
                   const where = p.neighborhood || p.location || "São Paulo";
                   return (
                     <a
@@ -228,12 +257,17 @@ export default function BewildPortfolioPage() {
                       <div className="bwh-proj__media">
                         {p.cover_url ? (
                           <img
-                            src={p.cover_url}
+                            src={optimizedImageUrl(p.cover_url, 640, 70)}
+                            srcSet={optimizedSrcSet(p.cover_url)}
+                            sizes={GRID_SIZES}
+                            width={640}
+                            height={480}
                             alt={
                               coverAlts[p.cover_url] ||
                               `${p.title} — ${bewildTypeLabel(p.project_type)} em ${where}`
                             }
-                            loading="lazy"
+                            loading={i < 3 ? "eager" : "lazy"}
+                            fetchPriority={i < 3 ? "high" : undefined}
                             decoding="async"
                           />
                         ) : (
@@ -274,6 +308,17 @@ export default function BewildPortfolioPage() {
                   );
                 })}
               </div>
+              {remaining > 0 && (
+                <>
+                  <div ref={sentinelRef} aria-hidden="true" style={{ height: 1 }} />
+                  <div style={{ display: "flex", justifyContent: "center", marginTop: 40 }}>
+                    <button type="button" className="bwh-btn" onClick={loadMore}>
+                      Ver mais projetos ({remaining})
+                    </button>
+                  </div>
+                </>
+              )}
+              </>
             )}
           </div>
         </section>

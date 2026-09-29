@@ -17,3 +17,19 @@ export function optimizedImageUrl(url: string, width = 1200, quality = 70): stri
   const sep = rendered.includes("?") ? "&" : "?";
   return `${rendered}${sep}width=${width}&quality=${quality}`;
 }
+
+/** Larguras usadas no srcSet das capas do grid do portfólio. */
+export const THUMB_WIDTHS = [480, 640, 960, 1280] as const;
+
+/**
+ * Monta o `srcSet` com o endpoint de transformação para URLs do bucket
+ * `project-images`. Para outras URLs devolve `undefined` (sem srcSet).
+ */
+export function optimizedSrcSet(
+  url: string,
+  widths: readonly number[] = THUMB_WIDTHS,
+  quality = 70,
+): string | undefined {
+  if (!url || optimizedImageUrl(url, widths[0], quality) === url) return undefined;
+  return widths.map((w) => `${optimizedImageUrl(url, w, quality)} ${w}w`).join(", ");
+}
