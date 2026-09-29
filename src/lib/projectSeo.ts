@@ -27,6 +27,33 @@ const TYPE_NOUN: Record<string, string> = {
 const LOCAL_DESCRIPTION =
   "Reforma de apartamento em São Paulo pela Bewild, com entrega do apartamento pronto para morar ou rentabilizar.";
 
+/** Código interno do negócio no começo do nome: "AB - ", "B&F — ", "SX -". */
+const CODE_PREFIX = /^[A-ZÀ-Ú][A-ZÀ-Ú&0-9]{0,4}\s*[-–—]\s*/;
+
+/** Remove o código interno: ele não diz nada para quem vê o resultado no Google. */
+export function stripProjectCode(value: string): string {
+  return value.replace(CODE_PREFIX, "").trim();
+}
+
+const LOWER_WORDS = new Set(["de", "da", "do", "das", "dos", "e", "em", "no", "na"]);
+
+/** Nomes vêm em CAIXA ALTA no admin; no título do Google fica melhor capitalizado. */
+function humanizeName(value: string): string {
+  const clean = stripProjectCode(value);
+  if (!clean) return "";
+  if (clean !== clean.toUpperCase()) return clean;
+  return clean
+    .toLowerCase()
+    .split(/\s+/)
+    .map((w, i) => (i > 0 && LOWER_WORDS.has(w) ? w : w.charAt(0).toUpperCase() + w.slice(1)))
+    .join(" ");
+}
+
+/** Nome do projeto sem o código interno, pronto para leitura. */
+export function projectFriendlyName(p: ProjectSeoInput | null | undefined): string {
+  return humanizeName((p?.title || "").trim());
+}
+
 const hasSearchContext = (value: string) =>
   /s[aã]o paulo|\bsp\b/i.test(value) &&
   /reforma|apartamento pronto|apartamentos prontos/i.test(value);
@@ -37,14 +64,34 @@ const truncateTitleBase = (value: string, maxLength: number) => {
   return shortened || value.slice(0, maxLength).trim();
 };
 
+const areaLabel = (p: ProjectSeoInput) =>
+  typeof p.area_m2 === "number" && Number.isFinite(p.area_m2) && p.area_m2 > 0
+    ? `${Math.round(p.area_m2)} m²`
+    : "";
+
+const placeLabel = (p: ProjectSeoInput) => (p.neighborhood || p.location || "").trim();
+
+/**
+ * Título do Google: o que interessa primeiro (reforma + metragem + bairro) e,
+ * quando couber, o nome do projeto — nunca o código interno do negócio.
+ */
 export function projectSeoTitle(p: ProjectSeoInput | null | undefined): string {
   if (!p) return "Reforma de apartamento em São Paulo | Bewild";
-  const explicit = (p.seo_title || "").trim();
-  if (explicit && hasSearchContext(explicit)) return explicit;
 
-  const base = explicit || (p.title || "Projeto").trim();
-  const suffix = " | Reforma de apartamento em SP | Bewild";
-  return `${truncateTitleBase(base, 75 - suffix.length)}${suffix}`;
+  const explicit = stripProjectCode((p.seo_title || "").trim());
+  // Título escrito à mão (sem o código gerado) e já com contexto de busca: respeita.
+  if (explicit && explicit === (p.seo_title || "").trim() && hasSearchContext(explicit)) return explicit;
+
+  const suffix = " | Bewild";
+  const area = areaLabel(p);
+  const place = placeLabel(p);
+  const what = ["Reforma de apartamento", area ? `de ${area}` : "", `em ${place || "São Paulo"}`]
+    .filter(Boolean)
+    .join(" ");
+  const name = projectFriendlyName(p);
+  const withName = `${what} — ${name}${suffix}`;
+  if (name && withName.length <= 65) return withName;
+  return `${truncateTitleBase(what, 65 - suffix.length)}${suffix}`;
 }
 
 export function projectMetaDescription(
@@ -52,17 +99,17 @@ export function projectMetaDescription(
   fallback: string,
 ): string {
   if (!p) return fallback;
-  const explicit = (p.seo_description || p.summary || "").trim();
-  if (explicit) return hasSearchContext(explicit) ? explicit : `${explicit} ${LOCAL_DESCRIPTION}`;
+  const explicit = stripProjectCode((p.seo_description || p.summary || "").trim());
+  if (explicit) {
+    const sentence = explicit.charAt(0).toUpperCase() + explicit.slice(1);
+    return hasSearchContext(sentence) ? sentence : `${sentence} ${LOCAL_DESCRIPTION}`;
+  }
 
   const noun =
     (p.project_type && TYPE_NOUN[p.project_type]) ||
     "Apartamento pronto após reforma completa";
-  const area =
-    typeof p.area_m2 === "number" && Number.isFinite(p.area_m2) && p.area_m2 > 0
-      ? `${Math.round(p.area_m2)} m²`
-      : "";
-  const bairro = (p.neighborhood || p.location || "").trim();
+  const area = areaLabel(p);
+  const bairro = placeLabel(p);
 
   if (!area && !bairro) return `${fallback} ${LOCAL_DESCRIPTION}`;
 
@@ -71,3 +118,4 @@ export function projectMetaDescription(
   if (bairro) parts.push(`em ${bairro}, São Paulo-SP`);
   return `${parts.join(" ")}. Projeto, obra e marcenaria integrados pela Bewild.`;
 }
+
