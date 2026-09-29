@@ -13,9 +13,7 @@ import { describe, expect, it, vi } from "vitest";
 // o site publica enquanto a coluna `cnpj` não existir em produção.
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
-    from: () => ({
-      select: () => ({ eq: () => ({ maybeSingle: () => new Promise(() => {}) }) }),
-    }),
+    rpc: () => new Promise(() => {}),
   },
 }));
 
