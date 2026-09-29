@@ -670,6 +670,8 @@ export function useSeo(seo: SeoInput) {
       ogDescription,
       ogImageWidth,
       ogImageHeight,
+      ogImageAlt,
+
       ogType,
       noindex,
       jsonLd,
