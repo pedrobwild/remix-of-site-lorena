@@ -48,13 +48,10 @@ import "@/styles/bw-lp.css";
  * encaminha pro mesmo demo público. O link dos orçamentos do Pedro vai direto
  * pro /auth, sem vitrine, então lá o CTA não aparece.
  *
- * ⚠️ GO-LIVE: hoje aponta pro PREVIEW do Workflow (funciona sem publicar).
- * Antes de publicar o site em produção: (1) publique o app do Workflow e
- * (2) troque esta URL pela de produção abaixo.
- *   Produção: https://bwildworkflow.com/vitrine/ecf601c3-87f9-4824-9fb3-26a96d120761
+ * Aponta para a produção do Workflow (bwildworkflow.com).
  */
 const WORKFLOW_DEMO_URL =
-  "https://id-preview--c9754542-d1f4-4007-9ead-4212e17bb44e.lovable.app/vitrine/ecf601c3-87f9-4824-9fb3-26a96d120761";
+  "https://bwildworkflow.com/vitrine/ecf601c3-87f9-4824-9fb3-26a96d120761";
 
 /** Atribuição padrão da placa (a URL do QR pode sobrescrever campo a campo). */
 const UTM_PADRAO: QrUtmDefaults = { utm_source: "qr", utm_medium: "placa", utm_campaign: "obra-placa" };
