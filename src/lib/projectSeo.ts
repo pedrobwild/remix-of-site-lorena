@@ -16,6 +16,8 @@ export type ProjectSeoInput = {
   seo_description?: string | null;
   summary?: string | null;
   seo_title?: string | null;
+  /** Fase: "em_projeto", "em_obra" ou vazio/"entregue". */
+  status?: string | null;
 };
 
 const TYPE_NOUN: Record<string, string> = {
@@ -69,6 +71,26 @@ const areaLabel = (p: ProjectSeoInput) =>
     ? `${Math.round(p.area_m2)} m²`
     : "";
 
+/** Só o que o cadastro diz: projeto ainda não executado não é "reforma". */
+const titleNoun = (p: ProjectSeoInput) =>
+  p.status === "em_projeto"
+    ? "Projeto de interiores de apartamento"
+    : p.status === "em_obra"
+      ? "Reforma de apartamento em obra"
+      : "Reforma de apartamento";
+
+/** Google corta em ~160 caracteres: fecha em frase ou palavra inteira. */
+const DESCRIPTION_MAX = 160;
+export function clampDescription(value: string, max = DESCRIPTION_MAX): string {
+  const text = value.replace(/\s+/g, " ").trim();
+  if (text.length <= max) return text;
+  const head = text.slice(0, max);
+  const sentence = head.match(/^(.{60,}[.!?])\s/);
+  if (sentence) return sentence[1];
+  const cut = head.slice(0, head.lastIndexOf(" ")).replace(/[\s,;:.\-–—]+$/, "");
+  return `${cut}…`;
+}
+
 const placeLabel = (p: ProjectSeoInput) => (p.neighborhood || p.location || "").trim();
 
 /**
@@ -85,7 +107,7 @@ export function projectSeoTitle(p: ProjectSeoInput | null | undefined): string {
   const suffix = " | Bewild";
   const area = areaLabel(p);
   const place = placeLabel(p);
-  const what = ["Reforma de apartamento", area ? `de ${area}` : "", `em ${place || "São Paulo"}`]
+  const what = [titleNoun(p), area ? `de ${area}` : "", `em ${place || "São Paulo"}`]
     .filter(Boolean)
     .join(" ");
   let name = projectFriendlyName(p);
@@ -112,7 +134,7 @@ export function projectMetaDescription(
 
   if (explicit) {
     const sentence = explicit.charAt(0).toUpperCase() + explicit.slice(1);
-    return hasSearchContext(sentence) ? sentence : `${sentence} ${LOCAL_DESCRIPTION}`;
+    return clampDescription(hasSearchContext(sentence) ? sentence : `${sentence} ${LOCAL_DESCRIPTION}`);
   }
 
   const noun =
