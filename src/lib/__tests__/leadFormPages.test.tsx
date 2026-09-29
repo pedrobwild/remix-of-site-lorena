@@ -24,8 +24,15 @@ const fromMock = vi.hoisted(() =>
     insert: insertMock,
   })),
 );
+// rpc: consultas limitadas (get_public_site_settings, get_partner_case) que
+// nunca respondem — o mesmo "backend pendurado" do select acima.
+const rpcMock = vi.hoisted(() =>
+  vi.fn((_fn: string, _args?: Record<string, unknown>) =>
+    Object.assign(new Promise(() => {}), { maybeSingle: () => new Promise(() => {}) }),
+  ),
+);
 vi.mock("@/integrations/supabase/client", () => ({
-  supabase: { from: fromMock },
+  supabase: { from: fromMock, rpc: rpcMock },
 }));
 vi.mock("@/components/BwaNav", () => ({ default: () => null }));
 vi.mock("@/components/BwaFooter", () => ({ default: () => null }));
