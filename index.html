@@ -144,11 +144,10 @@
          no primeiro paint e tudo salta quando ele vira position:absolute). */
       .bwa-nav-dd-panel { display: none; }
       .bwa-nav-dd.bwa-open .bwa-nav-dd-panel { display: grid; }
-      /* O link "pular para o conteúdo" é fixo; sem regra ele entra no fluxo
-         e empurra o conteúdo por um frame. */
+      /* O link "pular para o conteúdo" e o menu mobile são fixos/ocultos; sem
+         regra eles entram no fluxo e empurram o conteúdo por um frame. */
       .bwa-skip { position: fixed; }
-      /* Sem reset, o <main> nasce com a margem padrão do navegador (8 px)
-         e sobe quando o CSS do chunk chega. */
+      .bwa-mobile-menu { position: fixed; display: none; }
       body, main { margin: 0; }
     </style>
 
