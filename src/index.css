@@ -73,6 +73,10 @@ html {
   font-size: 16px;
   background: var(--ink);
   scroll-behavior: auto;
+  /* Reserva o espaço da barra de rolagem desde o primeiro paint: sem isso,
+     páginas longas (ex. /portfolio) mudam a largura útil quando o conteúdo
+     passa da dobra e todo o layout desloca (CLS). */
+  scrollbar-gutter: stable;
 }
 
 body {

@@ -143,7 +143,8 @@ export default function BewildPortfolioPage() {
               <div aria-hidden="true">
                 <nav className="bwh-mono" style={{ margin: "0 0 24px", display: "flex", flexWrap: "wrap", gap: "8px 16px" }}>
                   <span>Por bairro:</span>
-                  {Array.from({ length: 6 }, (_, i) => (
+                  {/* 16 itens: os bairros reais quebram em ~2 linhas nessa largura. */}
+                  {Array.from({ length: 16 }, (_, i) => (
                     <span key={i} className="bwh-pf-skel bwh-pf-skel--inline" />
                   ))}
                 </nav>
