@@ -1,0 +1,14 @@
+/*
+ * Entrada de CSS do TanStack Start (Tailwind v4).
+ *
+ * O design system inteiro da Bewild vive em `src/index.css` (6,9k linhas) e
+ * nos CSS por página (`src/pages/*.css`), preservados na migração. Aqui só:
+ *  1. carregamos o runtime do Tailwind v4;
+ *  2. apontamos para o config legado (tokens da marca em tailwind.config.ts);
+ *  3. importamos o design system legado (sem as diretivas @tailwind v3,
+ *     removidas de index.css na migração).
+ */
+@import "tailwindcss";
+@import "./index.css";
+
+@config "../tailwind.config.ts";
