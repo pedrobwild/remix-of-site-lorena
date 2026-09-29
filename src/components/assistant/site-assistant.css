@@ -66,6 +66,19 @@
   display: none;
 }
 
+/* "?" dentro do balão: só no celular, onde o botão fica sem texto. */
+.bwas-launcher-q {
+  display: none;
+}
+
+/* Menu mobile aberto (classe no <body>, de home-bwa-script.ts): o botão
+   ficava por cima dele, sem poder ser tocado. */
+.bwa-menu-open .bwas-launcher {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* Celular, zoom alto e telas baixas: rótulo curto. */
 @media (max-width: 767px), (max-height: 560px) {
   .bwas-launcher {
@@ -79,6 +92,64 @@
 
   .bwas-launcher-short {
     display: inline;
+  }
+}
+
+/* Celular e tablet em pé: só o ícone, 52 × 52 — a altura da barra
+   "Solicitar orçamento" da home, que fica na mesma linha e termina antes
+   dele. Base = a da barra (12 px + área segura, --bwas-base-m); com o banner
+   de cookies aberto, os dois sobem a altura dele. O nome "Dúvidas" continua
+   no link para leitores de tela. */
+@media (max-width: 900px) {
+  .bwas-launcher {
+    right: 12px;
+    bottom: calc(var(--bwas-base-m, 12px) + var(--bwas-offset, 0px));
+    width: 52px;
+    height: 52px;
+    min-height: 52px;
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+    transition:
+      bottom 0.25s var(--bwas-ease),
+      background-color 0.2s ease,
+      opacity 0.2s ease,
+      visibility 0.2s ease;
+  }
+
+  .bwas-launcher-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .bwas-launcher-q {
+    display: inline;
+  }
+
+  .bwas-launcher-long {
+    display: none;
+  }
+
+  .bwas-launcher-short {
+    display: inline;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Teclado aberto (campo com foco: `bwa-typing` no <html>) e /orcamento,
+     onde a página é o próprio formulário. */
+  .bwa-typing .bwas-launcher,
+  .bwas--sem-mobile .bwas-launcher {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
   }
 }
 
