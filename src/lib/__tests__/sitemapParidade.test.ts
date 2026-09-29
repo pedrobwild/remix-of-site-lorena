@@ -61,6 +61,14 @@ const NAO_INDEXAVEIS: Record<string, string> = {
 };
 
 /**
+ * Aliases da home: renderizam a home (rolando até uma seção) e têm canonical
+ * "/", então não entram no sitemap — evita conteúdo duplicado.
+ */
+const ALIAS_DA_HOME: Record<string, string> = {
+  "/servicos": "src/pages/HomePage.tsx",
+};
+
+/**
  * Exceção explícita e temporária: /parceiros/incorporadoras existe no roteador,
  * mas fica fora do sitemap enquanto `INCORPORADORAS_PAGE_ENABLED` for false
  * (rota responde 404 para o público; prévia interna é noindex).
@@ -79,6 +87,7 @@ const indexaveisDoRoteador = rotasDoRoteador.filter(
   (r) =>
     !r.startsWith("/admin") &&
     !(r in NAO_INDEXAVEIS) &&
+    !(r in ALIAS_DA_HOME) &&
     !FORA_DO_SITEMAP_POR_FLAG.includes(r),
 );
 /** Rotas estáticas listadas em cada gerador (`${BASE_URL}/x` / `${base}/x` seguidos de crase). */
@@ -96,6 +105,10 @@ describe("rotas do roteador ↔ geradores de sitemap", () => {
 
   it("a tabela de prioridades deste teste cobre exatamente as rotas indexáveis", () => {
     expect(unicos(ROTAS_INDEXAVEIS.map((r) => r.path))).toEqual(indexaveisDoRoteador);
+  });
+
+  it.each(Object.entries(ALIAS_DA_HOME))("%s fica fora do sitemap porque é alias da home (canonical /)", (_rota, arquivo) => {
+    expect(read(arquivo)).toMatch(/canonicalPath:\s*"\/"/);
   });
 
   it.each(Object.entries(NAO_INDEXAVEIS))("%s fica fora do sitemap porque a página é noindex", (_rota, arquivo) => {
