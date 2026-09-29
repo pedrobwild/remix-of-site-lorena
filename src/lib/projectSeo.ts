@@ -171,8 +171,8 @@ export function projectRegistrationDate(value?: string | null): string {
   }).format(d);
 }
 
-/** Título com data cabe em ~90 caracteres; o essencial vem no começo. */
-const DATED_TITLE_MAX = 90;
+/** Título com data cabe em ~100 caracteres; o essencial vem no começo. */
+const DATED_TITLE_MAX = 100;
 
 /**
  * Título único entre projetos do mesmo prédio. Quando outra página gera o
