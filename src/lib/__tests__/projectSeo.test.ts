@@ -101,7 +101,6 @@ describe("fase do projeto e tamanho da descrição", () => {
     const long = "Apartamento reformado em São Paulo pela Bewild. " + "palavra ".repeat(40);
     const out = projectMetaDescription({ seo_description: long }, FALLBACK);
     expect(out.length).toBeLessThanOrEqual(161);
-    expect(out).toBe("Apartamento reformado em São Paulo pela Bewild.".length >= 60 ? out : out);
     expect(out.endsWith("palavr")).toBe(false);
   });
 });
