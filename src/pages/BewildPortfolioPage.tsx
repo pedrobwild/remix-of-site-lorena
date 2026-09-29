@@ -226,9 +226,17 @@ export default function BewildPortfolioPage() {
                 aria-busy="true"
                 aria-live="polite"
               >
-                <div className="bwh-pf-skel" />
-                <div className="bwh-pf-skel" />
-                <div className="bwh-pf-skel" />
+                {/* Um esqueleto por card do primeiro lote, na mesma proporção
+                    do card real (mídia 4/3 + duas linhas de texto): a grade
+                    nasce com a altura final e nada desce quando os projetos
+                    chegam do banco. */}
+                {Array.from({ length: PAGE_SIZE }, (_, i) => (
+                  <div key={i} className="bwh-pf-skel-card" aria-hidden="true">
+                    <div className="bwh-pf-skel" />
+                    <div className="bwh-pf-skel bwh-pf-skel--line" />
+                    <div className="bwh-pf-skel bwh-pf-skel--line bwh-pf-skel--meta" />
+                  </div>
+                ))}
               </div>
             )}
 
