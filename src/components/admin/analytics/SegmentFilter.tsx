@@ -57,7 +57,8 @@ export default function SegmentFilter({ segments, onAdd, onRemove, onClear }: Pr
         </Popover.Trigger>
         <Popover.Portal>
           <Popover.Content
-            className="admin-analytics__pop"
+            className="admin-analytics admin-analytics__pop"
+            data-theme="light"
             align="start"
             sideOffset={6}
           >
