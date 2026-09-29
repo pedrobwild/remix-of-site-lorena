@@ -9,4 +9,3 @@
 - Rotas `/admin/*`: `<AdminChunk><ProtectedRoute>` no arquivo de rota; login livre; AdminChunk não é guarda de auth.
 - 24 edge functions ficam no Supabase (URLs fixas + segredos lá); front chama via `functions.invoke` e `/functions/v1/*`.
 - Vitest: config removida na migração; script `test` precisa ser religado antes de rodar.
-- `.env` (só chaves públicas VITE_*) é versionado: sem ele o build publicado quebra com 'supabaseUrl is required'.
