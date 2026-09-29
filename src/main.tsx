@@ -165,6 +165,10 @@ function Root() {
       const saved = popScroll.current;
       popScroll.current = undefined;
       if (typeof saved === "number") return restoreScrollPosition(saved);
+      // /servicos (home com âncora vinda do caminho): rola até a seção.
+      if (saved === undefined && pageChanged && route.name === "home" && route.anchor && !window.location.hash) {
+        return scrollToHashTarget(3000, route.anchor);
+      }
       if (saved === undefined && pageChanged && !window.location.hash) {
         window.scrollTo({ top: 0, left: 0, behavior: "auto" });
       }
@@ -206,7 +210,7 @@ function Root() {
     const saved = displayed === initialDisplayed.current ? initialScroll : popScroll.current;
     popScroll.current = undefined;
     if (typeof saved === "number") return restoreScrollPosition(saved);
-    return scrollToHashTarget();
+    return scrollToHashTarget(3000, displayed.name === "home" ? displayed.anchor : undefined);
   }, [displayed, initialScroll]);
 
   // page_view do GA4 — só quando a página exibida é a da URL (fora do fade)

@@ -95,6 +95,9 @@ function parsePath(rawPath: string): Route {
   );
 
   if (path === "/" || path === "") return { name: "home" };
+  // /servicos: URL limpa da seção "Serviços" da home. Renderiza a home e rola
+  // até #certeza; o canonical continua "/" (sem conteúdo duplicado).
+  if (path === "/servicos") return { name: "home", anchor: "certeza" };
   if (path === "/portfolio") return { name: "portfolio" };
 
   if (path === "/o") return { name: "lp-obra" };
@@ -266,6 +269,7 @@ export function useHashRoute(): Route {
 // Helper para construir links de forma consistente — URLs limpas.
 export const routes = {
   home: "/",
+  servicos: "/servicos",
   portfolio: "/portfolio",
   orcamento: "/orcamento",
   faq: "/faq",
@@ -431,8 +435,8 @@ export function restoreScrollPosition(y: number, timeoutMs = 2500): () => void {
  * (chunks lazy, conteúdo vindo do banco). Hash de rota legado (`#/x`) e hash
  * vazio são ignorados. Devolve a função que cancela.
  */
-export function scrollToHashTarget(timeoutMs = 3000): () => void {
-  const raw = window.location.hash.replace(/^#/, "");
+export function scrollToHashTarget(timeoutMs = 3000, fallbackId?: string): () => void {
+  const raw = window.location.hash.replace(/^#/, "") || fallbackId || "";
   if (!raw || raw.startsWith("/")) return () => undefined;
   let id = raw;
   try {
