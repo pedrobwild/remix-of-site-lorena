@@ -499,6 +499,36 @@ export function navigate(href: string, opts: { replace?: boolean } = {}) {
   window.dispatchEvent(new Event("lovable:navigate"));
 }
 
+/** O que a ponte usa do TanStack Router (tipo mínimo, para o teste). */
+type ResolvedNavigation = {
+  fromLocation?: { pathname: string; searchStr: string };
+  toLocation: { pathname: string; searchStr: string };
+};
+type ResolvedNavigationSource = {
+  subscribe: (eventType: "onResolved", fn: (e: ResolvedNavigation) => void) => () => void;
+};
+
+/**
+ * Ponte TanStack Router → `lovable:navigate`. Com a migração, `navigate()`
+ * entrega a navegação ao roteador e retorna antes de disparar o evento (e os
+ * `<Link>` do TanStack nunca disparam). Quem escuta o evento — Pixel da Meta
+ * (PageView/ViewContent), tracker interno (pageview), `useHashRoute`,
+ * assistente e menus da home — ficava sem saber da troca de página: só a
+ * entrada era medida. O evento sai quando a navegação resolve (já depois de
+ * redirects) e só se caminho ou query mudaram — âncora não é página nova.
+ * Voltar/avançar também chegam pelo `popstate`; os ouvintes deduplicam pela
+ * URL. Instalado uma vez no Root (`__root.tsx`). Retorna o cleanup.
+ */
+export function installNavigateEventBridge(router: ResolvedNavigationSource): () => void {
+  return router.subscribe("onResolved", (e) => {
+    const from = e.fromLocation;
+    if (!from) return; // carga inicial: a página de entrada já é medida no mount
+    const to = e.toLocation;
+    if (from.pathname === to.pathname && from.searchStr === to.searchStr) return;
+    window.dispatchEvent(new Event("lovable:navigate"));
+  });
+}
+
 /**
  * Resolve o `event.target` para o Element mais próximo que responda a
  * `closest`. `event.target` é tipado como `EventTarget` e nem sempre é um

@@ -36,6 +36,7 @@ import { installCrashRecovery, markHealthy } from "@/lib/crashRecovery";
 import {
   closestElementFrom,
   installLinkInterceptor,
+  installNavigateEventBridge,
   normalizeInitialUrl,
   scrollToHashTarget,
 } from "@/lib/useHashRoute";
@@ -212,16 +213,19 @@ function RootComponent() {
     };
   }, []);
 
-  // page_view do GA4 a cada navegação resolvida (deduplicado em ga4.ts).
+  // page_view do GA4 a cada navegação resolvida (deduplicado em ga4.ts) e o
+  // `lovable:navigate` que o Pixel da Meta e o tracker interno escutam.
   useEffect(() => {
     let cancel = schedulePageView();
     const unsub = router.subscribe("onResolved", () => {
       cancel();
       cancel = schedulePageView();
     });
+    const offNavigateBridge = installNavigateEventBridge(router);
     return () => {
       cancel();
       unsub();
+      offNavigateBridge();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
