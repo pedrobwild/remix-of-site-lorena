@@ -93,12 +93,13 @@ const SELECT_COLS =
  * useBewildPosts — lê posts do blog Bewild (`bewild_posts.published = true`).
  * Independente do `useBlog` antigo (legado).
  */
-export function useBewildPosts() {
-  const [posts, setPosts] = useState<BewildPost[]>([]);
-  const [loading, setLoading] = useState(true);
+export function useBewildPosts(initial?: BewildPost[] | null) {
+  const [posts, setPosts] = useState<BewildPost[]>(initial ?? []);
+  const [loading, setLoading] = useState(!initial);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (initial) return; // dados do loader: não refaz a busca
     let mounted = true;
     supabase
       .from("bewild_posts" as never)
@@ -121,6 +122,7 @@ export function useBewildPosts() {
     return () => {
       mounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- só na montagem
   }, []);
 
   // Destaque: post mais recente com featured=true; resto vai pra grade.

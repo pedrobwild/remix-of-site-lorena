@@ -36,18 +36,20 @@ export function bewildTypeLabel(t: BewildProjectType | null | undefined): string
  * useBewildProjects — lê apenas projetos do novo portfólio Bewild
  * (published = true). Independente do `useProjects` antigo (legado).
  */
-export function useBewildProjects() {
-  const [projects, setProjects] = useState<BewildProject[]>([]);
-  const [loading, setLoading] = useState(true);
+export const PROJECTS_LIST_COLUMNS =
+  "id, slug, title, cover_url, project_type, neighborhood, location, area_m2, duration, sort_order, created_at, ready_gallery_urls";
+
+export function useBewildProjects(initial?: BewildProject[] | null) {
+  const [projects, setProjects] = useState<BewildProject[]>(initial ?? []);
+  const [loading, setLoading] = useState(!initial);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (initial) return; // dados do loader: não refaz a busca
     let mounted = true;
     supabase
       .from("projects")
-      .select(
-        "id, slug, title, cover_url, project_type, neighborhood, location, area_m2, duration, sort_order, created_at, ready_gallery_urls"
-      )
+      .select(PROJECTS_LIST_COLUMNS)
       .eq("published", true)
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false })
@@ -65,6 +67,7 @@ export function useBewildProjects() {
     return () => {
       mounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- só na montagem
   }, []);
 
   return { projects, loading, error };

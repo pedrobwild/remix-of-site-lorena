@@ -11,11 +11,11 @@ import { useSiteSettings } from "@/lib/useSiteSettings";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import { whatsappHref } from "@/components/landing/content";
-import { useBewildProject } from "@/lib/useBewildProject";
+import { useBewildProject, type BewildProjectFull } from "@/lib/useBewildProject";
 import { bewildTypeLabel } from "@/lib/useBewildProjects";
 import { readyPhotos, renderPhotos } from "@/lib/projectPhotos";
 import { useImageAlts, type AltMap } from "@/lib/useImageAlts";
-import { projectFriendlyName, projectMetaDescription, projectSeoTitleUnique } from "@/lib/projectSeo";
+import { projectFriendlyName, projectMetaDescription, projectSeoTitleUnique, type ProjectSeoPeer } from "@/lib/projectSeo";
 import { useProjectSeoPeers } from "@/lib/useProjectSeoPeers";
 import { optimizedImageUrl } from "@/lib/imageUrl";
 
@@ -26,6 +26,9 @@ import "@/styles/portfolio-detail.css";
 
 interface Props {
   slug: string;
+  /** Dados do loader (SSR); ausente = busca no cliente como antes. */
+  initial?: { project: BewildProjectFull | null } | null;
+  initialPeers?: ProjectSeoPeer[] | null;
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -185,8 +188,11 @@ function GallerySection({
   );
 }
 
-export default function BewildProjectPage({ slug }: Props) {
-  const { project, loading, error, notFound } = useBewildProject(slug);
+export default function BewildProjectPage({ slug, initial, initialPeers }: Props) {
+  const { project, loading, error, notFound } = useBewildProject(
+    slug,
+    initial ? { slug, project: initial.project } : null,
+  );
   const { settings } = useSiteSettings();
   // Lightbox: qual galeria (renders ou obra pronta) e o índice dentro dela.
   const [lb, setLb] = useState<{ set: "render" | "ready"; index: number } | null>(null);
@@ -220,7 +226,7 @@ export default function BewildProjectPage({ slug }: Props) {
   const hasCase = !!(project?.challenge || project?.solution || project?.result_text);
   const hasBA = !!(project?.before_image_url && project?.after_image_url);
   const scopeItems = useMemo(() => (project?.scope ?? []).filter(Boolean), [project]);
-  const seoPeers = useProjectSeoPeers();
+  const seoPeers = useProjectSeoPeers(initialPeers);
   // Mesmo prédio em mais de uma página: a data de cadastro separa os títulos.
   const seoTitle = useMemo(() => {
     const self = project ? seoPeers.find((o) => o.id === project.id) : undefined;

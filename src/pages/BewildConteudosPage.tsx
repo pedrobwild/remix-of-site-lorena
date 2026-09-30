@@ -49,8 +49,8 @@ function PostMeta({ post, long }: { post: BewildPost; long?: boolean }) {
   );
 }
 
-export default function BewildConteudosPage() {
-  const { featured, grid, posts, loading, error } = useBewildPosts();
+export default function BewildConteudosPage({ initialPosts }: { initialPosts?: BewildPost[] | null } = {}) {
+  const { featured, grid, posts, loading, error } = useBewildPosts(initialPosts);
   const [filter, setFilter] = useState<FilterValue>("all");
 
   useSeo({

@@ -6,7 +6,7 @@ import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { PUBLIC_PAGES } from "@/lib/publicPages";
 import { projectFriendlyName } from "@/lib/projectSeo";
-import { useBewildProjects } from "@/lib/useBewildProjects";
+import { useBewildProjects, type BewildProject } from "@/lib/useBewildProjects";
 import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import { routes } from "@/lib/useHashRoute";
@@ -14,9 +14,9 @@ import "./mapa-do-site.css";
 
 const SEM_BAIRRO = "Outros projetos em São Paulo";
 
-export default function MapaDoSitePage() {
+export default function MapaDoSitePage({ initialProjects }: { initialProjects?: BewildProject[] | null } = {}) {
   const { settings } = useSiteSettings();
-  const { projects, loading, error } = useBewildProjects();
+  const { projects, loading, error } = useBewildProjects(initialProjects);
 
   const groups = useMemo(() => {
     const map = new Map<string, { slug: string; name: string }[]>();

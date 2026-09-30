@@ -8,17 +8,19 @@ import type { ProjectSeoPeer } from "@/lib/projectSeo";
  * de uma página se repete em outra (ver projectSeoTitleUnique). Falha em
  * silêncio: sem a lista, a página usa o título normal.
  */
-export function useProjectSeoPeers(): ProjectSeoPeer[] {
-  const [peers, setPeers] = useState<ProjectSeoPeer[]>([]);
+export const PEER_COLUMNS =
+  "id, title, neighborhood, location, area_m2, project_type, status, seo_title, created_at";
+
+export function useProjectSeoPeers(initial?: ProjectSeoPeer[] | null): ProjectSeoPeer[] {
+  const [peers, setPeers] = useState<ProjectSeoPeer[]>(initial ?? []);
 
   useEffect(() => {
+    if (initial) return; // dados do loader: não refaz a busca
     let mounted = true;
     Promise.resolve(
       supabase
         .from("projects")
-        .select(
-          "id, title, neighborhood, location, area_m2, project_type, status, seo_title, created_at",
-        )
+        .select(PEER_COLUMNS)
         .eq("published", true)
         .limit(1000),
     )
@@ -34,6 +36,7 @@ export function useProjectSeoPeers(): ProjectSeoPeer[] {
     return () => {
       mounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- só na montagem
   }, []);
 
   return peers;

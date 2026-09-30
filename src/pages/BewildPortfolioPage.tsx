@@ -12,7 +12,7 @@ import { useSiteSettings } from "@/lib/useSiteSettings";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import { CONTACT } from "../components/landing/content";
-import { useBewildProjects, bewildTypeLabel } from "@/lib/useBewildProjects";
+import { useBewildProjects, bewildTypeLabel, type BewildProject } from "@/lib/useBewildProjects";
 import {
   PORTFOLIO_SORTS,
 
@@ -36,8 +36,8 @@ const PAGE_SIZE = 24;
 const GRID_SIZES = "(max-width: 640px) 100vw, (max-width: 980px) 50vw, 33vw";
 const pad = (n: number) => String(n).padStart(2, "0");
 
-export default function BewildPortfolioPage() {
-  const { projects, loading, error } = useBewildProjects();
+export default function BewildPortfolioPage({ initialProjects }: { initialProjects?: BewildProject[] | null } = {}) {
+  const { projects, loading, error } = useBewildProjects(initialProjects);
   const { settings } = useSiteSettings();
   const [filter, setFilter] = useState<PortfolioFilter>("all");
   const [place, setPlace] = useState<string>(ALL_NEIGHBORHOODS);
@@ -339,6 +339,19 @@ export default function BewildPortfolioPage() {
                   );
                 })}
               </div>
+              {/* Sem JS (Bing, robôs de IA): links dos projetos que ainda não
+                  entraram na grade. Invisível para quem tem JavaScript. */}
+              {remaining > 0 && (
+                <noscript>
+                  <ul>
+                    {filtered.slice(visibleCount).map((p) => (
+                      <li key={p.id}>
+                        <a href={`/portfolio/${p.slug}`}>{p.title}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </noscript>
+              )}
               {remaining > 0 && (
                 <>
                   <div ref={sentinelRef} aria-hidden="true" style={{ height: 1 }} />
