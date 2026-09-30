@@ -21,7 +21,7 @@ export type RouteSeoData = {
   notFound?: boolean;
 };
 
-const NOT_FOUND_SEO: RouteSeoData = {
+export const NOT_FOUND_SEO: RouteSeoData = {
   title: "404 · Página não encontrada · Bewild",
   description:
     "A página solicitada não existe ou foi movida. Conheça o portfólio de reformas de apartamentos e imóveis prontos da Bewild em São Paulo.",
@@ -127,4 +127,71 @@ export async function loadBairroSeo(slug: string): Promise<RouteSeoData> {
         "Apartamentos reformados pela Bewild em São Paulo: fotos reais de cada obra e orçamento sem custo.",
     };
   }
+}
+
+// --- Versões puras (sem ida ao banco), usadas por contentLoaders.ts --------
+
+type ProjectSeoRow = ProjectSeoPeer & {
+  seo_description: string | null;
+  summary: string | null;
+  og_image_url: string | null;
+  cover_url: string | null;
+};
+
+export function projectSeoFrom(p: ProjectSeoRow | null, peers: ProjectSeoPeer[], failed = false): RouteSeoData {
+  if (failed || !p) {
+    if (!failed) return NOT_FOUND_SEO;
+    return {
+      title: "Reforma de apartamento em São Paulo | Bewild",
+      description: "Projeto, obra e marcenaria integrados pela Bewild em São Paulo.",
+    };
+  }
+  return {
+    title: projectSeoTitleUnique(p, peers),
+    description: projectMetaDescription(
+      p,
+      "Reforma de apartamento em São Paulo com projeto, obra e marcenaria pela Bewild.",
+    ),
+    ogImage: p.og_image_url || p.cover_url || null,
+  };
+}
+
+export function postSeoFrom(post: PostSeoRow | null, failed = false): RouteSeoData {
+  if (failed || !post) {
+    if (!failed) return NOT_FOUND_SEO;
+    return {
+      title: "Conteúdos | Bewild",
+      description:
+        "Guias práticos da Bewild sobre arquitetura, engenharia e reforma de apartamento em São Paulo.",
+      ogType: "article",
+    };
+  }
+  return {
+    title: post.meta_title || `${post.title ?? "Conteúdo"} | Bewild`,
+    description:
+      post.meta_description ||
+      post.excerpt ||
+      "Guias práticos da Bewild sobre arquitetura, engenharia e reforma de apartamento em São Paulo.",
+    ogImage: post.cover_image,
+    ogType: "article",
+  };
+}
+
+export function bairroSeoFrom(
+  slug: string,
+  list: Array<{ neighborhood: string | null; cover_url: string | null }> | null,
+): RouteSeoData {
+  if (!list) {
+    return {
+      title: "Reforma de apartamento em São Paulo: projetos e orçamento | Bewild",
+      description:
+        "Apartamentos reformados pela Bewild em São Paulo: fotos reais de cada obra e orçamento sem custo.",
+    };
+  }
+  const page = neighborhoodPages(list).find((n) => n.slug === slug);
+  if (!page) return NOT_FOUND_SEO;
+  return {
+    title: `Reforma de apartamento em ${page.label}: projetos e orçamento | Bewild`,
+    description: `${page.count} apartamentos reformados pela Bewild em ${page.label}, São Paulo: fotos reais de cada obra e orçamento sem custo para o seu imóvel no bairro.`,
+  };
 }

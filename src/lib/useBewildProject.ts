@@ -33,7 +33,7 @@ export type BewildProjectFull = {
   seo_description: string | null;
 };
 
-const COLUMNS =
+export const PROJECT_COLUMNS =
   "id, slug, title, project_type, status, neighborhood, location, area_m2, duration, " +
   "summary, challenge, solution, result_text, scope, testimonial, testimonial_author, " +
   "cover_url, cover_alt, before_image_url, after_image_url, gallery_urls, ready_gallery_urls, " +
@@ -43,13 +43,25 @@ const COLUMNS =
  * useBewildProject — carrega um projeto Bewild pelo slug, somente publicado.
  * Retorna `notFound = true` quando não existe ou está em rascunho.
  */
-export function useBewildProject(slug: string) {
-  const [project, setProject] = useState<BewildProjectFull | null>(null);
-  const [loading, setLoading] = useState(true);
+export function useBewildProject(
+  slug: string,
+  initial?: { slug: string; project: BewildProjectFull | null } | null,
+) {
+  const hasInitial = !!initial && initial.slug === slug;
+  const [project, setProject] = useState<BewildProjectFull | null>(hasInitial ? initial!.project : null);
+  const [loading, setLoading] = useState(!hasInitial);
   const [error, setError] = useState<string | null>(null);
-  const [notFound, setNotFound] = useState(false);
+  const [notFound, setNotFound] = useState(hasInitial ? initial!.project === null : false);
 
   useEffect(() => {
+    // Dados do loader para este slug: não refaz a busca.
+    if (initial && initial.slug === slug) {
+      setProject(initial.project);
+      setNotFound(initial.project === null);
+      setError(null);
+      setLoading(false);
+      return;
+    }
     let mounted = true;
     setLoading(true);
     setNotFound(false);
@@ -58,7 +70,7 @@ export function useBewildProject(slug: string) {
 
     supabase
       .from("projects")
-      .select(COLUMNS)
+      .select(PROJECT_COLUMNS)
       .eq("slug", slug)
       .eq("published", true)
       .maybeSingle()
@@ -82,6 +94,7 @@ export function useBewildProject(slug: string) {
     return () => {
       mounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `initial` acompanha o slug
   }, [slug]);
 
   return { project, loading, error, notFound };
