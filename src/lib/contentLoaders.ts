@@ -186,3 +186,13 @@ export async function loadPostList(): Promise<PostListLoaderData> {
     return { posts: null };
   }
 }
+
+// --- /mapa-do-site ----------------------------------------------------------
+
+export type SiteMapLoaderData = { projects: BewildProject[] | null; posts: BewildPost[] | null };
+
+/** Projetos + posts em paralelo: o mapa do site linka /portfolio/*, /reforma/* e /conteudos/* no HTML do servidor. */
+export async function loadSiteMapContent(): Promise<SiteMapLoaderData> {
+  const [{ projects }, { posts }] = await Promise.all([loadProjectList(), loadPostList()]);
+  return { projects, posts };
+}
