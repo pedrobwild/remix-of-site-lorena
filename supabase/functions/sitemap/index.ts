@@ -37,15 +37,32 @@ Deno.serve(async (req) => {
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  // Projetos: lastmod = content_updated_at (edição real de conteúdo, migration
+  // 20260930120000) com fallback em created_at — nunca updated_at, que o
+  // trigger set_updated_at carimba em qualquer update (lote de 27/09/2026
+  // marcou os 162 projetos no mesmo dia). Sem a migration a coluna não existe
+  // e a consulta cai para created_at.
+  const PROJECT_COLS = "slug, neighborhood, cover_url, created_at";
+  const loadProjects = async () => {
+    const withContent = await supabase
+      .from("projects")
+      .select(`${PROJECT_COLS}, content_updated_at`)
+      .eq("published", true)
+      .eq("visible", true)
+      .order("order_index", { ascending: true });
+    if (!withContent.error) return withContent;
+    return await supabase
+      .from("projects")
+      .select(PROJECT_COLS)
+      .eq("published", true)
+      .eq("visible", true)
+      .order("order_index", { ascending: true });
+  };
+
   const [{ data: settings }, { data: projects }, { data: bewildPosts }] = await Promise.all([
     supabase
       .rpc("get_public_site_settings"),
-    supabase
-      .from("projects")
-      .select("slug, neighborhood, cover_url, updated_at, created_at")
-      .eq("published", true)
-      .eq("visible", true)
-      .order("order_index", { ascending: true }),
+    loadProjects(),
     supabase
       .from("bewild_posts")
       .select("slug, updated_at, published_at, created_at")
@@ -64,7 +81,7 @@ Deno.serve(async (req) => {
 
   const projectRows = (projects ?? []) as Array<{
     slug: string;
-    updated_at: string | null;
+    content_updated_at?: string | null;
     created_at: string | null;
   }>;
   const postRows = (bewildPosts ?? []) as Array<{
@@ -73,7 +90,7 @@ Deno.serve(async (req) => {
     published_at: string | null;
     created_at: string | null;
   }>;
-  const projectLastmod = validDay(...projectRows.flatMap((row) => [row.updated_at, row.created_at]));
+  const projectLastmod = validDay(...projectRows.flatMap((row) => [row.content_updated_at, row.created_at]));
   const postLastmod = validDay(
     ...postRows.flatMap((row) => [row.updated_at, row.published_at, row.created_at]),
   );
@@ -110,19 +127,19 @@ Deno.serve(async (req) => {
     loc: `${base}/portfolio/${p.slug}`,
     priority: "0.7",
     changefreq: "monthly",
-    lastmod: validDay(p.updated_at, p.created_at),
+    lastmod: validDay(p.content_updated_at, p.created_at),
   }));
 
   const hoodSlug = (v: string) =>
     v.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
       .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   const hoods = new Map<string, { n: number; days: Array<string | null> }>();
-  for (const p of projectRows as Array<{ neighborhood?: string | null; cover_url?: string | null; updated_at?: string | null; created_at?: string | null }>) {
+  for (const p of projectRows as Array<{ neighborhood?: string | null; cover_url?: string | null; content_updated_at?: string | null; created_at?: string | null }>) {
     if (!p.neighborhood || !p.cover_url) continue;
     const k = hoodSlug(p.neighborhood);
     if (!k) continue;
     const h = hoods.get(k) ?? { n: 0, days: [] };
-    h.n++; h.days.push(p.updated_at ?? null, p.created_at ?? null); hoods.set(k, h);
+    h.n++; h.days.push(p.content_updated_at ?? null, p.created_at ?? null); hoods.set(k, h);
   }
   const hoodUrls: UrlEntry[] = [...hoods.entries()].filter(([, h]) => h.n >= 3).map(([k, h]) => ({
     loc: `${base}/reforma/${k}`,
