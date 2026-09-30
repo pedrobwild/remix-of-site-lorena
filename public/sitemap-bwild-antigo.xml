@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Sitemap do dominio antigo (www.bwild.com.br, Wix) hospedado em bewild.com.br
+     (envio cruzado: as duas propriedades pertencem a mesma conta no Search Console).
+     Serve para o Google rastrear os 301 do vercel.json mais rapido depois da
+     Alteracao de endereco. Fonte: vercel.json (redirects sem curinga). 30/09/2026. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://www.bwild.com.br/</loc></url>
+  <url><loc>https://www.bwild.com.br/accessibility-statement</loc></url>
+  <url><loc>https://www.bwild.com.br/arquitetura-studio-apartamento-bwild</loc></url>
+  <url><loc>https://www.bwild.com.br/blank</loc></url>
+  <url><loc>https://www.bwild.com.br/blank-1</loc></url>
+  <url><loc>https://www.bwild.com.br/blog</loc></url>
+  <url><loc>https://www.bwild.com.br/home</loc></url>
+  <url><loc>https://www.bwild.com.br/manifesto</loc></url>
+  <url><loc>https://www.bwild.com.br/marcenaria-bwild</loc></url>
+  <url><loc>https://www.bwild.com.br/obrigado</loc></url>
+  <url><loc>https://www.bwild.com.br/online-store</loc></url>
+  <url><loc>https://www.bwild.com.br/or%C3%A7amento-reforma</loc></url>
+  <url><loc>https://www.bwild.com.br/orcamento</loc></url>
+  <url><loc>https://www.bwild.com.br/politica-de-privacidade</loc></url>
+  <url><loc>https://www.bwild.com.br/politicas-de-acessibilidade</loc></url>
+  <url><loc>https://www.bwild.com.br/portfolio</loc></url>
+  <url><loc>https://www.bwild.com.br/portfolio-projetos-studios</loc></url>
+  <url><loc>https://www.bwild.com.br/post/5-estrat%C3%A9gias-essenciais-para-reformar-seu-studio-e-maximizar-seu-investimento</loc></url>
+  <url><loc>https://www.bwild.com.br/post/5-motivos-para-investir-em-short-stay-em-2025</loc></url>
+  <url><loc>https://www.bwild.com.br/post/as-prefer%C3%AAncias-dos-h%C3%B3spedes-que-buscam-por-loca%C3%A7%C3%B5es-de-curta-temporada-short-stay</loc></url>
+  <url><loc>https://www.bwild.com.br/post/bem-vindo-ao-nosso-blog-inspira%C3%A7%C3%A3o-e-dicas-para-seu-novo-apartamento-studio</loc></url>
+  <url><loc>https://www.bwild.com.br/post/blog-projeto-arquitetonico-personalizado-studios</loc></url>
+  <url><loc>https://www.bwild.com.br/post/como-a-gest%C3%A3o-turnkey-facilita-reformas-de-apartamentos-em-s%C3%A3o-paulo</loc></url>
+  <url><loc>https://www.bwild.com.br/post/como-a-valoriza%C3%A7%C3%A3o-imobili%C3%A1ria-em-s%C3%A3o-paulo-impacta-seu-retorno-de-investimento</loc></url>
+  <url><loc>https://www.bwild.com.br/post/como-aumentar-o-valor-da-di%C3%A1ria-do-seu-short-stay-em-at%C3%A9-30-com-reforma-inteligente</loc></url>
+  <url><loc>https://www.bwild.com.br/post/como-economizar-de-forma-inteligente-na-reforma-do-seu-studio-sem-perder-valor-de-mercado</loc></url>
+  <url><loc>https://www.bwild.com.br/post/como-fazer-o-or%C3%A7amento-de-uma-reforma-de-studio-ou-apartamento</loc></url>
+  <url><loc>https://www.bwild.com.br/post/decora%C3%A7%C3%A3o-estrat%C3%A9gica-o-que-realmente-faz-diferen%C3%A7a-na-rentabilidade-do-seu-im%C3%B3vel-de-short-stay</loc></url>
+  <url><loc>https://www.bwild.com.br/post/di%C3%A1ria-m%C3%A9dia-de-airbnb-em-s%C3%A3o-paulo-por-bairro-guia-pr%C3%A1tico-para-precificar-seu-ap%C3%AA-em-2025</loc></url>
+  <url><loc>https://www.bwild.com.br/post/entenda-o-que-%C3%A9-o-short-stay-oportunidade-de-investimento-e-tend%C3%AAncia-no-mercado-imobili%C3%A1rio</loc></url>
+  <url><loc>https://www.bwild.com.br/post/estudo-de-mercado-bwild-studios-airbnb-ch%C3%A1cara-klabin-sp</loc></url>
+  <url><loc>https://www.bwild.com.br/post/estudo-de-mercado-bwild-studios-airbnb-moema-sp</loc></url>
+  <url><loc>https://www.bwild.com.br/post/estudo-de-mercado-studios-na-vila-ol%C3%ADmpia-s%C3%A3o-paulo</loc></url>
+  <url><loc>https://www.bwild.com.br/post/estudo-de-mercado-studios-no-butant%C3%A3-s%C3%A3o-paulo</loc></url>
+  <url><loc>https://www.bwild.com.br/post/estudo-de-mercado-studios-para-short-stay-em-pinheiros-s%C3%A3o-paulo</loc></url>
+  <url><loc>https://www.bwild.com.br/post/estudo-de-mercado-studios-para-short-stay-na-vila-madalena</loc></url>
+  <url><loc>https://www.bwild.com.br/post/estudo-de-mercado-studios-para-short-stay-no-para%C3%ADso-s%C3%A3o-paulo</loc></url>
+  <url><loc>https://www.bwild.com.br/post/financiar-ou-comprar-%C3%A0-vista-qual-a-melhor-op%C3%A7%C3%A3o-para-adquirir-um-im%C3%B3vel</loc></url>
+  <url><loc>https://www.bwild.com.br/post/guia-do-investidor-reformar-para-loca%C3%A7%C3%A3o-em-pinheiros-dados-e-padr%C3%B5es-que-funcionam</loc></url>
+  <url><loc>https://www.bwild.com.br/post/materiais-para-servi%C3%A7o-completo-de-reforma-e-decora%C3%A7%C3%A3o-para-im%C3%B3veis-voltados-ao-airbnb</loc></url>
+  <url><loc>https://www.bwild.com.br/post/o-guia-definitivo-para-a-reforma-de-um-apartamento-ou-studio</loc></url>
+  <url><loc>https://www.bwild.com.br/post/o-que-considerar-na-reforma-do-seu-studio-para-reduzir-os-custos-de-manuten%C3%A7%C3%A3o-para-loca%C3%A7%C3%A3o-no-airbn</loc></url>
+  <url><loc>https://www.bwild.com.br/post/quais-cuidados-tomar-antes-de-comprar-um-studio-ou-apartamento-para-loca%C3%A7%C3%A3o-no-airbnb</loc></url>
+  <url><loc>https://www.bwild.com.br/post/quais-s%C3%A3o-os-documentos-necess%C3%A1rios-para-a-compra-de-um-im%C3%B3vel</loc></url>
+  <url><loc>https://www.bwild.com.br/post/qual-%C3%A9-o-valor-de-obra-por-metro-quadrado-studios-para-airbnb</loc></url>
+  <url><loc>https://www.bwild.com.br/post/quanto-custa-a-reforma-de-um-studio-para-loca%C3%A7%C3%A3o-no-airbnb-analisamos-100-or%C3%A7amentos-da-bwild</loc></url>
+  <url><loc>https://www.bwild.com.br/post/quanto-custa-reformar-um-studio-ou-apartamento-para-loca%C3%A7%C3%A3o-short-stay</loc></url>
+  <url><loc>https://www.bwild.com.br/post/quem-faz-reforma-e-decora%C3%A7%C3%A3o-para-aumentar-o-retorno-financeiro-de-im%C3%B3veis-em-s%C3%A3o-paulo</loc></url>
+  <url><loc>https://www.bwild.com.br/post/reforma-airbnb-sao-paulo-cuidados</loc></url>
+  <url><loc>https://www.bwild.com.br/post/reforma-de-studio-para-short-stay-sao-paulo</loc></url>
+  <url><loc>https://www.bwild.com.br/post/reformas-r%C3%A1pidas-como-minimizar-o-tempo-fora-do-mercado-de-loca%C3%A7%C3%A3o</loc></url>
+  <url><loc>https://www.bwild.com.br/post/studios-para-loca%C3%A7%C3%A3o-short-stay-o-crescimento-exponencial-deste-mercado-no-brasil</loc></url>
+  <url><loc>https://www.bwild.com.br/post/tend%C3%AAncias-de-design-para-studios-em-2025-o-que-atrai-mais-h%C3%B3spedes</loc></url>
+  <url><loc>https://www.bwild.com.br/privacy-policy</loc></url>
+  <url><loc>https://www.bwild.com.br/projects</loc></url>
+  <url><loc>https://www.bwild.com.br/projetos-modelo</loc></url>
+  <url><loc>https://www.bwild.com.br/projetos-modelo-studio</loc></url>
+  <url><loc>https://www.bwild.com.br/search</loc></url>
+  <url><loc>https://www.bwild.com.br/servicos-reforma-studio-apartamento</loc></url>
+</urlset>
