@@ -1167,6 +1167,7 @@ export type Database = {
           area_m2: number | null
           before_image_url: string | null
           before_text: string | null
+          budget_range: string | null
           challenge: string | null
           cover_alt: string | null
           cover_blur_data_url: string | null
@@ -1219,6 +1220,7 @@ export type Database = {
           area_m2?: number | null
           before_image_url?: string | null
           before_text?: string | null
+          budget_range?: string | null
           challenge?: string | null
           cover_alt?: string | null
           cover_blur_data_url?: string | null
@@ -1271,6 +1273,7 @@ export type Database = {
           area_m2?: number | null
           before_image_url?: string | null
           before_text?: string | null
+          budget_range?: string | null
           challenge?: string | null
           cover_alt?: string | null
           cover_blur_data_url?: string | null
