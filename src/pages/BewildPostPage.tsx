@@ -29,7 +29,7 @@ import {
   type BewildPostCategory,
 } from "@/lib/useBewildPosts";
 import { useBewildPost, useBewildRelatedPosts } from "@/lib/useBewildPost";
-import { postAuthorByline, postAuthorJsonLd, postDates, postTitleFromSlug } from "@/lib/postSeo";
+import { postAuthorByline, postDates, postTitleFromSlug } from "@/lib/postSeo";
 import { navigate } from "@/lib/useHashRoute";
 import { keywordsForPost } from "@/lib/postKeywords";
 import { internalLinksForPost } from "@/lib/postInternalLinks";
@@ -178,8 +178,6 @@ export default function BewildPostPage({ slug, initial }: Props) {
     }
   }, [post?.body, initial]);
 
-  const baseUrl = "https://bewild.com.br";
-  const articleUrl = post ? `${baseUrl}/conteudos/${post.slug}` : `${baseUrl}/conteudos/${slug}`;
   const dates = postDates(post);
   const dateIso = dates.published;
   // Enquanto o banco não responde, título e H1 saem do slug (SEO-14): o

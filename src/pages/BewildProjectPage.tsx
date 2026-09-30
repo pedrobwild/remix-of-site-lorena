@@ -8,7 +8,6 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useSeo } from "@/lib/useSeo";
 import { projectPageJsonLd } from "@/lib/contentJsonLd";
-import { useSiteSettings } from "@/lib/useSiteSettings";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import { whatsappHref } from "@/components/landing/content";
@@ -194,7 +193,6 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
     slug,
     initial ? { slug, project: initial.project } : null,
   );
-  const { settings } = useSiteSettings();
   // Lightbox: qual galeria (renders ou obra pronta) e o índice dentro dela.
   const [lb, setLb] = useState<{ set: "render" | "ready"; index: number } | null>(null);
 

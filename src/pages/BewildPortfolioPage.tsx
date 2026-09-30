@@ -9,7 +9,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { optimizedImageUrl, optimizedSrcSet } from "@/lib/imageUrl";
 import { useSeo } from "@/lib/useSeo";
 import { projectListJsonLd } from "@/lib/contentJsonLd";
-import { useSiteSettings } from "@/lib/useSiteSettings";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import { CONTACT } from "../components/landing/content";
@@ -39,7 +38,6 @@ const pad = (n: number) => String(n).padStart(2, "0");
 
 export default function BewildPortfolioPage({ initialProjects }: { initialProjects?: BewildProject[] | null } = {}) {
   const { projects, loading, error } = useBewildProjects(initialProjects);
-  const { settings } = useSiteSettings();
   const [filter, setFilter] = useState<PortfolioFilter>("all");
   const [place, setPlace] = useState<string>(ALL_NEIGHBORHOODS);
   const [sort, setSort] = useState<PortfolioSort>("curadoria");

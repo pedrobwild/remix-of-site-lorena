@@ -8,7 +8,6 @@ import { optimizedImageUrl, optimizedSrcSet } from "@/lib/imageUrl";
 import { useImageAlts } from "@/lib/useImageAlts";
 import { useSeo } from "@/lib/useSeo";
 import { projectListJsonLd } from "@/lib/contentJsonLd";
-import { useSiteSettings } from "@/lib/useSiteSettings";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import NotFoundPage from "./NotFoundPage";
@@ -32,7 +31,6 @@ export default function BairroPage({
   initialProjects?: BewildProject[] | null;
 }) {
   const { projects, loading, error } = useBewildProjects(initialProjects);
-  const { settings } = useSiteSettings();
 
   const pages = useMemo(() => neighborhoodPages(projects), [projects]);
   const page = pages.find((p) => p.slug === slug);
