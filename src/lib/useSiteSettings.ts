@@ -135,7 +135,9 @@ const DEFAULTS: SiteSettings = {
   seo_author: "Bewild",
   seo_geo_region: "BR-SP",
   seo_geo_placename: "São Paulo, SP",
-  seo_geo_position: "-23.5505;-46.6333",
+  // Sem coordenada padrão: o valor antigo (-23.5505;-46.6333) era o centro de SP,
+  // não o escritório. Só publicar se o admin informar a coordenada real.
+  seo_geo_position: null,
 
   business_type: "ProfessionalService",
   business_founding_year: null,
