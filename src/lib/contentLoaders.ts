@@ -5,9 +5,14 @@
  *
  * Cada loader devolve `{ seo, ...dados }`. Falha de rede nunca derruba a
  * página: os dados voltam `null` e o hook da página busca no cliente como
- * antes. `notFound` continua como hoje (noindex + 404 do componente).
+ * antes. Quando o banco confirma que NÃO existe, o loader segue o
+ * redirecionamento ativo (`seo_404_log`) com 301 ou lança `notFound()` para o
+ * servidor responder 404 de verdade (a página de 404 registra no cliente).
  */
 import { marked } from "marked";
+import { notFound, redirect } from "@tanstack/react-router";
+import { lookupActiveRedirect } from "@/lib/notFoundLog";
+import { isSafeRedirectTarget } from "@/lib/seoRedirects";
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeBlogHtml } from "@/lib/sanitizeHtml";
 import { NOT_FOUND_SEO, postSeoFrom, projectSeoFrom, bairroSeoFrom, type RouteSeoData } from "@/lib/seoLoaders";
@@ -35,6 +40,18 @@ function renderBody(body: string | null | undefined): string | null {
   }
 }
 
+/**
+ * Conteúdo inexistente confirmado pelo banco: 301 para o redirecionamento
+ * ativo (se houver destino seguro) ou 404. Nunca chamado em falha de rede.
+ */
+export async function notFoundOrRedirect(path: string): Promise<never> {
+  const target = await lookupActiveRedirect(path);
+  if (target && isSafeRedirectTarget(target) && target !== path) {
+    throw redirect({ href: target, statusCode: 301 });
+  }
+  throw notFound();
+}
+
 // --- /conteudos/$slug -------------------------------------------------------
 
 export type PostLoaderData = {
@@ -46,6 +63,12 @@ export type PostLoaderData = {
 };
 
 export async function loadPostContent(slug: string): Promise<PostLoaderData> {
+  const res = await fetchPostContent(slug);
+  if (res.post === null) return notFoundOrRedirect(`/conteudos/${slug}`);
+  return res;
+}
+
+async function fetchPostContent(slug: string): Promise<PostLoaderData> {
   try {
     const { data, error } = await supabase
       .from("bewild_posts" as never)
@@ -90,6 +113,12 @@ export type ProjectLoaderData = {
 };
 
 export async function loadProjectContent(slug: string): Promise<ProjectLoaderData> {
+  const res = await fetchProjectContent(slug);
+  if (res.project === null) return notFoundOrRedirect(`/portfolio/${slug}`);
+  return res;
+}
+
+async function fetchProjectContent(slug: string): Promise<ProjectLoaderData> {
   try {
     const [projectRes, peersRes] = await Promise.all([
       supabase.from("projects").select(PROJECT_COLUMNS).eq("slug", slug).eq("published", true).maybeSingle(),
@@ -132,7 +161,10 @@ export type BairroLoaderData = { seo: RouteSeoData; projects: BewildProject[] | 
 
 export async function loadBairroContent(slug: string): Promise<BairroLoaderData> {
   const projects = await fetchProjectList();
-  return { seo: bairroSeoFrom(slug, projects), projects };
+  const seo = bairroSeoFrom(slug, projects);
+  // Lista carregada e bairro inexistente = 404 (falha de rede: lista null, segue 200).
+  if (projects !== null && seo.notFound) return notFoundOrRedirect(`/reforma/${slug}`);
+  return { seo, projects };
 }
 
 // --- /conteudos -------------------------------------------------------------

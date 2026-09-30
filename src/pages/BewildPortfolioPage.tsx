@@ -7,8 +7,8 @@
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { optimizedImageUrl, optimizedSrcSet } from "@/lib/imageUrl";
-import { useSeo, breadcrumbJsonLd, itemListJsonLd } from "@/lib/useSeo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { useSeo } from "@/lib/useSeo";
+import { projectListJsonLd } from "@/lib/contentJsonLd";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import { CONTACT } from "../components/landing/content";
@@ -38,7 +38,6 @@ const pad = (n: number) => String(n).padStart(2, "0");
 
 export default function BewildPortfolioPage({ initialProjects }: { initialProjects?: BewildProject[] | null } = {}) {
   const { projects, loading, error } = useBewildProjects(initialProjects);
-  const { settings } = useSiteSettings();
   const [filter, setFilter] = useState<PortfolioFilter>("all");
   const [place, setPlace] = useState<string>(ALL_NEIGHBORHOODS);
   const [sort, setSort] = useState<PortfolioSort>("curadoria");
@@ -53,22 +52,8 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
     canonicalPath: "/portfolio",
     ogType: "website",
     ogImage: projects.find((p) => p.cover_url)?.cover_url ?? undefined,
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Portfólio", path: "/portfolio" },
-          ]),
-          itemListJsonLd(
-            settings,
-            projects.map((p) => ({
-              name: p.title,
-              path: `/portfolio/${p.slug}`,
-              image: p.cover_url ?? undefined,
-            })),
-          ),
-        ]
-      : undefined,
+    // ItemList sai no head() da rota; aqui só se o loader falhou.
+    jsonLd: !initialProjects && projects.length ? projectListJsonLd(projects) : undefined,
   });
 
   const withCover = useMemo(() => projects.filter((p) => !!p.cover_url), [projects]);

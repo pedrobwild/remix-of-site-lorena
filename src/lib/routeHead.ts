@@ -21,6 +21,8 @@ export type SeoHeadInput = {
   keywords?: string;
   ogImage?: string | null;
   ogType?: "website" | "article";
+  /** Blocos JSON-LD extras da página (Article, FAQPage, ItemList…), um <script> cada. */
+  jsonLd?: Array<Record<string, unknown>> | null;
 };
 
 function absoluteUrl(url: string): string {
@@ -154,6 +156,10 @@ export function seoHead(input: SeoHeadInput) {
             type: "application/ld+json",
             children: JSON.stringify(pageJsonLd(input, cleanPath, canonical, og)),
           },
+          ...(input.jsonLd ?? []).map((node) => ({
+            type: "application/ld+json",
+            children: JSON.stringify(node),
+          })),
         ];
 
   return { meta, links, scripts };

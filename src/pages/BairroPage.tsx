@@ -6,8 +6,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { optimizedImageUrl, optimizedSrcSet } from "@/lib/imageUrl";
 import { useImageAlts } from "@/lib/useImageAlts";
-import { useSeo, breadcrumbJsonLd, itemListJsonLd } from "@/lib/useSeo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { useSeo } from "@/lib/useSeo";
+import { projectListJsonLd } from "@/lib/contentJsonLd";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import NotFoundPage from "./NotFoundPage";
@@ -31,7 +31,6 @@ export default function BairroPage({
   initialProjects?: BewildProject[] | null;
 }) {
   const { projects, loading, error } = useBewildProjects(initialProjects);
-  const { settings } = useSiteSettings();
 
   const pages = useMemo(() => neighborhoodPages(projects), [projects]);
   const page = pages.find((p) => p.slug === slug);
@@ -79,24 +78,8 @@ export default function BairroPage({
     ogType: "website",
     ogImage: list[0]?.cover_url ?? undefined,
     noindex: !loading && !page,
-    jsonLd:
-      settings && page
-        ? [
-            breadcrumbJsonLd(settings, [
-              { name: "Início", path: "/" },
-              { name: "Portfólio", path: "/portfolio" },
-              { name: label, path: `/reforma/${slug}` },
-            ]),
-            itemListJsonLd(
-              settings,
-              list.map((p) => ({
-                name: p.title,
-                path: `/portfolio/${p.slug}`,
-                image: p.cover_url ?? undefined,
-              })),
-            ),
-          ]
-        : undefined,
+    // ItemList sai no head() da rota; aqui só se o loader falhou.
+    jsonLd: !initialProjects && page ? projectListJsonLd(list) : undefined,
   });
 
   if (!loading && !error && !page) return <NotFoundPage />;

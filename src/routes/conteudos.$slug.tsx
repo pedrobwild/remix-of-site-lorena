@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import BewildPostPage from "@/pages/BewildPostPage";
 import { seoHead } from "@/lib/routeHead";
 import { loadPostContent } from "@/lib/contentLoaders";
+import { postJsonLd } from "@/lib/contentJsonLd";
 
 export const Route = createFileRoute("/conteudos/$slug")({
   loader: ({ params }) => loadPostContent(params.slug),
@@ -16,7 +17,9 @@ export const Route = createFileRoute("/conteudos/$slug")({
       path: `/conteudos/${params.slug}`,
       ogImage: loaderData?.ogImage,
       ogType: "article",
-      noindex: loaderData?.notFound,
+      // Sem loaderData = loader lançou notFound() (404).
+      noindex: !ld || loaderData?.notFound,
+      jsonLd: ld?.post ? postJsonLd(ld.post) : null,
     });
   },
 });

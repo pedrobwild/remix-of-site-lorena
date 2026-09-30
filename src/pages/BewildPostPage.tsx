@@ -16,6 +16,7 @@
 import { useEffect, useMemo, type ReactNode } from "react";
 import { marked } from "marked";
 import { useSeo } from "@/lib/useSeo";
+import { postJsonLd } from "@/lib/contentJsonLd";
 import { optimizedImageUrl } from "@/lib/imageUrl";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
@@ -28,7 +29,7 @@ import {
   type BewildPostCategory,
 } from "@/lib/useBewildPosts";
 import { useBewildPost, useBewildRelatedPosts } from "@/lib/useBewildPost";
-import { postAuthorByline, postAuthorJsonLd, postDates, postTitleFromSlug } from "@/lib/postSeo";
+import { postAuthorByline, postDates, postTitleFromSlug } from "@/lib/postSeo";
 import { navigate } from "@/lib/useHashRoute";
 import { keywordsForPost } from "@/lib/postKeywords";
 import { internalLinksForPost } from "@/lib/postInternalLinks";
@@ -177,81 +178,15 @@ export default function BewildPostPage({ slug, initial }: Props) {
     }
   }, [post?.body, initial]);
 
-  const baseUrl = "https://bewild.com.br";
-  const articleUrl = post ? `${baseUrl}/conteudos/${post.slug}` : `${baseUrl}/conteudos/${slug}`;
   const dates = postDates(post);
   const dateIso = dates.published;
   // Enquanto o banco não responde, título e H1 saem do slug (SEO-14): o
   // snapshot do Googlebot nunca vê "Carregando" sem H1.
   const slugTitle = postTitleFromSlug(slug);
 
-  const jsonLd = useMemo(() => {
-    if (!post) return undefined;
-    const arr: Array<Record<string, unknown>> = [
-      {
-        "@context": "https://schema.org",
-        "@type": "Article",
-        headline: post.title,
-        description:
-          post.meta_description ||
-          post.excerpt ||
-          `${post.title}. Conteúdo Bewild sobre reformas de apartamentos e imóveis prontos.`,
-        image: post.cover_image ? [post.cover_image] : undefined,
-        author: postAuthorJsonLd(post.author),
-        // Mesma entidade do nó Organization do index.html (`#org`). O logo
-        // antigo (/images/og-bewild.jpg) não existe em public/.
-        publisher: {
-          "@type": "Organization",
-          "@id": `${baseUrl}/#org`,
-          name: "Bewild",
-          url: `${baseUrl}/`,
-          logo: { "@type": "ImageObject", url: `${baseUrl}/brand/bewild-logo.png` },
-        },
-        datePublished: dateIso,
-        dateModified: dates.modified,
-        mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
-        inLanguage: "pt-BR",
-        articleSection: bewildCategoryLabel(post.category),
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Início", item: `${baseUrl}/` },
-          { "@type": "ListItem", position: 2, name: "Conteúdos", item: `${baseUrl}/conteudos` },
-          { "@type": "ListItem", position: 3, name: post.title, item: articleUrl },
-        ],
-      },
-    ];
-    if (post.faq && post.faq.length > 0) {
-      arr.push({
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: post.faq.map((q) => ({
-          "@type": "Question",
-          name: q.question,
-          acceptedAnswer: { "@type": "Answer", text: q.answer },
-        })),
-      });
-    }
-    return arr;
-  }, [post, articleUrl, dateIso, dates.modified]);
-
-  // Breadcrumb estático durante o carregamento: não depende de rede.
-  const loadingJsonLd = useMemo(
-    () => [
-      {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Início", item: `${baseUrl}/` },
-          { "@type": "ListItem", position: 2, name: "Conteúdos", item: `${baseUrl}/conteudos` },
-          { "@type": "ListItem", position: 3, name: slugTitle, item: articleUrl },
-        ],
-      },
-    ],
-    [articleUrl, slugTitle],
-  );
+  // JSON-LD (Article/FAQPage) sai no head() da rota, no HTML do servidor.
+  // Só quando o loader falhou (sem `initial`) a página publica no cliente.
+  const fallbackJsonLd = useMemo(() => (!initial && post ? postJsonLd(post) : undefined), [initial, post]);
 
   useSeo({
     title: post
@@ -268,7 +203,7 @@ export default function BewildPostPage({ slug, initial }: Props) {
     ogType: "article",
     ogImage: post?.cover_image ? optimizedImageUrl(post.cover_image) : undefined,
     noindex: notFound,
-    jsonLd: post ? jsonLd : notFound ? undefined : loadingJsonLd,
+    jsonLd: fallbackJsonLd,
   });
 
   // Post inexistente: segue o redirect cadastrado no admin (é o que o painel
