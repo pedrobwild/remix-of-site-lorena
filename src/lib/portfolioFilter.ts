@@ -41,6 +41,58 @@ export function applyPortfolioFilter<T extends Filterable>(list: T[], filter: Po
   return list.filter((p) => p.project_type === filter);
 }
 
+/* ===================== Tipo, área e investimento ===================== */
+
+/** Tipos de projeto que têm ao menos um projeto na lista (mais "Obra pronta", se houver). */
+export function availableTypeFilters<T extends WithGalleries & { project_type: BewildProjectType | null }>(
+  list: T[],
+): { value: PortfolioFilter; label: string }[] {
+  const types = new Set(list.map((p) => p.project_type).filter(Boolean));
+  const temObraPronta = list.some((p) => hasReadyPhotos(p));
+  return PORTFOLIO_FILTERS.filter((f) => {
+    if (f.value === "all") return false;
+    if (f.value === "obra_pronta") return temObraPronta;
+    return types.has(f.value as BewildProjectType);
+  });
+}
+
+export const ALL_OPTION = "__all__";
+
+export type AreaBand = "ate_25" | "26_35" | "acima_35";
+
+export const AREA_BANDS: { value: AreaBand; label: string; test: (m2: number) => boolean }[] = [
+  { value: "ate_25", label: "Até 25 m²", test: (m) => m <= 25 },
+  { value: "26_35", label: "26 a 35 m²", test: (m) => m > 25 && m <= 35 },
+  { value: "acima_35", label: "Acima de 35 m²", test: (m) => m > 35 },
+];
+
+export function availableAreaBands<T extends { area_m2?: number | null }>(list: T[]) {
+  return AREA_BANDS.filter((b) => list.some((p) => p.area_m2 != null && b.test(p.area_m2)));
+}
+
+export function applyAreaFilter<T extends { area_m2?: number | null }>(list: T[], value: string): T[] {
+  const band = AREA_BANDS.find((b) => b.value === value);
+  if (!band) return list;
+  return list.filter((p) => p.area_m2 != null && band.test(p.area_m2));
+}
+
+/** Faixas de investimento (valores gravados em `projects.budget_range`). */
+export const BUDGET_RANGES: { value: string; label: string }[] = [
+  { value: "ate_40k", label: "Até R$ 40 mil" },
+  { value: "40k_60k", label: "R$ 40 a 60 mil" },
+  { value: "60k_80k", label: "R$ 60 a 80 mil" },
+  { value: "acima_80k", label: "Acima de R$ 80 mil" },
+];
+
+export function availableBudgetRanges<T extends { budget_range?: string | null }>(list: T[]) {
+  return BUDGET_RANGES.filter((b) => list.some((p) => p.budget_range === b.value));
+}
+
+export function applyBudgetFilter<T extends { budget_range?: string | null }>(list: T[], value: string): T[] {
+  if (!value || value === ALL_OPTION) return list;
+  return list.filter((p) => p.budget_range === value);
+}
+
 /* ============================ Bairro ============================ */
 
 export const ALL_NEIGHBORHOODS = "__all__";

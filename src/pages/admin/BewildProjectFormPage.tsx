@@ -29,6 +29,7 @@ type FormState = {
   neighborhood: string;
   area_m2: string;
   duration: string;
+  budget_range: string;
   summary: string;
   challenge: string;
   solution: string;
@@ -54,6 +55,7 @@ const EMPTY: FormState = {
   neighborhood: "",
   area_m2: "",
   duration: "",
+  budget_range: "",
   summary: "",
   challenge: "",
   solution: "",
@@ -284,7 +286,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
     supabase
       .from("projects")
       .select(
-        "id, title, slug, project_type, neighborhood, area_m2, duration, summary, challenge, solution, result_text, scope, testimonial, testimonial_author, cover_url, before_image_url, after_image_url, gallery_urls, ready_gallery_urls, published, sort_order",
+        "id, title, slug, project_type, neighborhood, area_m2, duration, budget_range, summary, challenge, solution, result_text, scope, testimonial, testimonial_author, cover_url, before_image_url, after_image_url, gallery_urls, ready_gallery_urls, published, sort_order",
       )
       .eq("slug", slug)
       .maybeSingle()
@@ -309,6 +311,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
           neighborhood: data.neighborhood ?? "",
           area_m2: data.area_m2 != null ? String(data.area_m2) : "",
           duration: data.duration ?? "",
+          budget_range: data.budget_range ?? "",
           summary: data.summary ?? "",
           challenge: data.challenge ?? "",
           solution: data.solution ?? "",
@@ -412,6 +415,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
       neighborhood: form.neighborhood.trim() || null,
       area_m2: area,
       duration: form.duration.trim() || null,
+      budget_range: form.budget_range || null,
       summary: form.summary.trim() || null,
       challenge: form.challenge.trim() || null,
       solution: form.solution.trim() || null,
@@ -686,6 +690,25 @@ export default function BewildProjectFormPage({ slug }: Props) {
               onChange={(e) => set("duration", e.target.value)}
               placeholder="60 dias úteis"
             />
+          </div>
+
+          <div className="admin-field admin-field--full">
+            <label className="admin-field__label" htmlFor="pf-budget">Faixa de investimento — opcional</label>
+            <select
+              id="pf-budget"
+              className="admin-field__input"
+              value={form.budget_range}
+              onChange={(e) => set("budget_range", e.target.value)}
+            >
+              <option value="">— não informar —</option>
+              <option value="ate_40k">Até R$ 40 mil</option>
+              <option value="40k_60k">R$ 40 a 60 mil</option>
+              <option value="60k_80k">R$ 60 a 80 mil</option>
+              <option value="acima_80k">Acima de R$ 80 mil</option>
+            </select>
+            <p className="mono admin-hint" style={{ marginTop: 6 }}>
+              Usada só no filtro "Investimento" do portfólio; o valor exato não aparece no site.
+            </p>
           </div>
         </section>
 
