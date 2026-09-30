@@ -1169,6 +1169,7 @@ export type Database = {
           before_text: string | null
           budget_range: string | null
           challenge: string | null
+          content_updated_at: string | null
           cover_alt: string | null
           cover_blur_data_url: string | null
           cover_url: string | null
@@ -1222,6 +1223,7 @@ export type Database = {
           before_text?: string | null
           budget_range?: string | null
           challenge?: string | null
+          content_updated_at?: string | null
           cover_alt?: string | null
           cover_blur_data_url?: string | null
           cover_url?: string | null
@@ -1275,6 +1277,7 @@ export type Database = {
           before_text?: string | null
           budget_range?: string | null
           challenge?: string | null
+          content_updated_at?: string | null
           cover_alt?: string | null
           cover_blur_data_url?: string | null
           cover_url?: string | null
