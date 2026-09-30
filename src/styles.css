@@ -8,6 +8,7 @@
  *  3. importamos o design system legado (sem as diretivas @tailwind v3,
  *     removidas de index.css na migração).
  */
+@import "./fonts.css";
 @import "tailwindcss";
 @import "./index.css";
 

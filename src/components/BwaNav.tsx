@@ -53,9 +53,7 @@ export default function BwaNav() {
     } else {
       document.head.appendChild(intLink);
     }
-    // Fontes: Manrope e JetBrains Mono vêm do index.html. A folha que ficava
-    // aqui pedia Manrope itálica (estilo que não existe no Google Fonts) e
-    // Sora. As famílias das rotas internas: src/lib/fonts.ts (via main.tsx).
+    // Fontes: Manrope e JetBrains Mono, hospedadas no site (src/fonts.css).
 
     document.documentElement.classList.add("bwa-home-root");
     document.body.classList.add("bwa-home-root");

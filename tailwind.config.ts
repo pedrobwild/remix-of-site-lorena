@@ -50,12 +50,13 @@ export default {
         },
       },
       fontFamily: {
-        // Bewild brand: Playfair (serif) para títulos, Poppins (sans light) para corpo.
-        display: ["'Playfair Display'", "Georgia", "serif"],
-        body: ["Poppins", "Inter", "system-ui", "sans-serif"],
-        // Compat com rotas internas legadas que ainda chamam font-sans/Manrope.
-        sans: ["Poppins", "Inter", "system-ui", "sans-serif"],
-        manrope: ["Manrope", "Inter", "system-ui", "sans-serif"],
+        // Duas famílias no site inteiro, hospedadas em src/assets/fonts
+        // (ver src/fonts.css): Manrope para títulos e texto, JetBrains Mono
+        // para rótulos. Playfair Display e Poppins saíram em 30/09/2026.
+        display: ["Manrope", "system-ui", "sans-serif"],
+        body: ["Manrope", "system-ui", "sans-serif"],
+        sans: ["Manrope", "system-ui", "sans-serif"],
+        manrope: ["Manrope", "system-ui", "sans-serif"],
         mono: ["'JetBrains Mono'", "ui-monospace", "monospace"],
       },
       maxWidth: {

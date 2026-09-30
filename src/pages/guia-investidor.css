@@ -6,10 +6,9 @@
  * para o restante do site (home, portfólio, conteúdos, FAQ…).
  * ============================================================ */
 
-/* Fontes (DM Sans, Playfair Display, JetBrains Mono, Manrope): carregadas por
- * <link> em GuiaInvestidorPage.tsx, NÃO por @import. Um @import que falha
- * (bloqueador de fontes, rede corporativa) fazia o Chromium marcar este CSS
- * inteiro como erro — e o preload do Vite derrubava a página do guia. */
+/* Fontes: Manrope e JetBrains Mono, hospedadas no site (src/fonts.css).
+ * Nada de @import de fontes externas aqui: um @import que falha fazia o
+ * Chromium marcar este CSS inteiro como erro e derrubava a página do guia. */
 
 .guia-root {
   --background: 210 20% 97%;
@@ -47,8 +46,8 @@
   --gold: 200 65% 45%;
   --gold-light: 200 40% 92%;
 
-  --font-display: "Playfair Display", Georgia, serif;
-  --font-body: "DM Sans", "Inter", system-ui, sans-serif;
+  --font-display: "Manrope", system-ui, sans-serif;
+  --font-body: "Manrope", system-ui, sans-serif;
 
   --shadow-card: 0 1px 3px 0 hsl(210 15% 10% / 0.04), 0 1px 2px -1px hsl(210 15% 10% / 0.04);
   --shadow-card-hover: 0 4px 12px -2px hsl(210 15% 10% / 0.08), 0 2px 6px -2px hsl(210 15% 10% / 0.05);
@@ -208,12 +207,12 @@
   --radius: 0.75rem;
   --gold: 200 65% 45%;
   --gold-light: 200 40% 92%;
-  font-family: "DM Sans", "Inter", system-ui, sans-serif;
+  font-family: "Manrope", system-ui, sans-serif;
   color: hsl(var(--foreground));
 }
 .guia-portal .rounded-lg { border-radius: var(--radius); }
 .guia-portal h1, .guia-portal h2, .guia-portal h3, .guia-portal h4 {
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: "Manrope", system-ui, sans-serif;
 }
 
 /* ============================================================
