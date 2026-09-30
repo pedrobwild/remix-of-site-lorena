@@ -22,6 +22,12 @@ import {
   applyPortfolioSort,
   neighborhoodOptions,
   neighborhoodPages,
+  availableTypeFilters,
+  availableAreaBands,
+  availableBudgetRanges,
+  applyAreaFilter,
+  applyBudgetFilter,
+  ALL_OPTION,
   type PortfolioFilter,
   type PortfolioSort,
 } from "@/lib/portfolioFilter";
@@ -41,6 +47,8 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
   const [filter, setFilter] = useState<PortfolioFilter>("all");
   const [place, setPlace] = useState<string>(ALL_NEIGHBORHOODS);
   const [sort, setSort] = useState<PortfolioSort>("curadoria");
+  const [area, setArea] = useState<string>(ALL_OPTION);
+  const [budget, setBudget] = useState<string>(ALL_OPTION);
   // Alt text descritivo das capas (gerado a partir da análise de cada foto).
 
   useSeo({
@@ -59,16 +67,30 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
   const withCover = useMemo(() => projects.filter((p) => !!p.cover_url), [projects]);
   const bairroPages = useMemo(() => neighborhoodPages(withCover), [withCover]);
   const places = useMemo(() => neighborhoodOptions(withCover), [withCover]);
+  const typeOptions = useMemo(() => availableTypeFilters(withCover), [withCover]);
+  const areaOptions = useMemo(() => availableAreaBands(withCover), [withCover]);
+  const budgetOptions = useMemo(() => availableBudgetRanges(withCover), [withCover]);
   const filtered = useMemo(
     () =>
       applyPortfolioSort(
-        applyNeighborhoodFilter(applyPortfolioFilter(withCover, filter), place),
+        applyBudgetFilter(
+          applyAreaFilter(
+            applyNeighborhoodFilter(applyPortfolioFilter(withCover, filter), place),
+            area,
+          ),
+          budget,
+        ),
         sort,
       ),
-    [withCover, filter, place, sort],
+    [withCover, filter, place, area, budget, sort],
   );
   const showChips = withCover.length >= 4;
-  const hasFilters = filter !== "all" || place !== ALL_NEIGHBORHOODS || sort !== "curadoria";
+  const hasFilters =
+    filter !== "all" ||
+    place !== ALL_NEIGHBORHOODS ||
+    sort !== "curadoria" ||
+    area !== ALL_OPTION ||
+    budget !== ALL_OPTION;
 
   const waUrl = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
     "Olá! Vim pelo portfólio e quero um diagnóstico do meu studio.",
@@ -78,7 +100,7 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
 
   // Carregamento incremental: lotes de 24; volta a 24 ao mudar filtro/bairro/ordem.
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  useEffect(() => setVisibleCount(PAGE_SIZE), [filter, place, sort]);
+  useEffect(() => setVisibleCount(PAGE_SIZE), [filter, place, sort, area, budget]);
   const visible = useMemo(() => filtered.slice(0, visibleCount), [filtered, visibleCount]);
   const remaining = Math.max(0, total - visible.length);
   const loadMore = () => setVisibleCount((c) => Math.min(c + PAGE_SIZE, total));
@@ -134,7 +156,7 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
                   ))}
                 </nav>
                 <div className="bwh-pf-controls">
-                  {["Bairro", "Ordenar por"].map((label) => (
+                  {["Bairro", "Tipo", "Tamanho", "Ordenar por"].map((label) => (
                     <div key={label} className="bwh-pf-field">
                       <span className="bwh-mono bwh-pf-field__label">{label}</span>
                       <div className="bwh-pf-skel bwh-pf-skel--select" />
@@ -174,6 +196,60 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
                   </select>
                 </label>
 
+                {typeOptions.length > 0 && (
+                  <label className="bwh-pf-field">
+                    <span className="bwh-mono bwh-pf-field__label">Tipo de projeto</span>
+                    <select
+                      className="bwh-pf-select"
+                      value={filter}
+                      onChange={(e) => setFilter(e.target.value as PortfolioFilter)}
+                    >
+                      <option value="all">Todos os tipos</option>
+                      {typeOptions.map((t) => (
+                        <option key={t.value} value={t.value}>
+                          {t.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
+
+                {areaOptions.length > 0 && (
+                  <label className="bwh-pf-field">
+                    <span className="bwh-mono bwh-pf-field__label">Tamanho</span>
+                    <select
+                      className="bwh-pf-select"
+                      value={area}
+                      onChange={(e) => setArea(e.target.value)}
+                    >
+                      <option value={ALL_OPTION}>Qualquer tamanho</option>
+                      {areaOptions.map((a) => (
+                        <option key={a.value} value={a.value}>
+                          {a.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
+
+                {budgetOptions.length > 0 && (
+                  <label className="bwh-pf-field">
+                    <span className="bwh-mono bwh-pf-field__label">Investimento</span>
+                    <select
+                      className="bwh-pf-select"
+                      value={budget}
+                      onChange={(e) => setBudget(e.target.value)}
+                    >
+                      <option value={ALL_OPTION}>Qualquer faixa</option>
+                      {budgetOptions.map((b) => (
+                        <option key={b.value} value={b.value}>
+                          {b.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
+
                 <label className="bwh-pf-field">
                   <span className="bwh-mono bwh-pf-field__label">Ordenar por</span>
                   <select
@@ -197,6 +273,8 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
                       setFilter("all");
                       setPlace(ALL_NEIGHBORHOODS);
                       setSort("curadoria");
+                      setArea(ALL_OPTION);
+                      setBudget(ALL_OPTION);
                     }}
                   >
                     Limpar filtros
