@@ -85,8 +85,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "robots",
         content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
       },
-      { name: "rating", content: "general" },
-      { name: "revisit-after", content: "7 days" },
+      // rating e revisit-after removidos em 2026-09-30: nenhum buscador atual
+      // lê essas metas; eram ruído no head de todas as páginas.
       { name: "geo.region", content: "BR-SP" },
       { name: "geo.placename", content: "São Paulo, Brasil" },
       // geo.position/ICBM removidos em 2026-09-30: apontavam para o centro da

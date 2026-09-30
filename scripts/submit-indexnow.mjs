@@ -1,6 +1,10 @@
 // Envia as URLs do sitemap ao IndexNow (Bing, Yandex etc.).
 // A chave precisa estar acessível em https://bewild.com.br/<KEY>.txt (arquivo em public/).
 // Uso: node scripts/submit-indexnow.mjs   (ou: bun scripts/submit-indexnow.mjs)
+//   Lê public/sitemap.xml. Com INDEXNOW_SITEMAP_URL definido (ex.:
+//   https://bewild.com.br/sitemap.xml) baixa o sitemap publicado em vez do
+//   arquivo local — é o que o workflow .github/workflows/indexnow.yml usa,
+//   porque o sitemap servido vem da edge function e não do arquivo commitado.
 //
 // Sai com código ≠ 0 se o IndexNow recusar o envio — assim uma chave inválida
 // (403), payload rejeitado (400/422) ou limite de taxa (429) não passa como
@@ -22,7 +26,20 @@ const MOTIVOS = {
   429: "muitas requisições (limite de taxa) — tente mais tarde",
 };
 
-const xml = readFileSync(resolve("public/sitemap.xml"), "utf8");
+const SITEMAP_URL = process.env.INDEXNOW_SITEMAP_URL;
+let xml;
+if (SITEMAP_URL) {
+  try {
+    const r = await fetch(SITEMAP_URL, { signal: AbortSignal.timeout(30_000) });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    xml = await r.text();
+  } catch (err) {
+    console.error(`IndexNow: falha ao baixar ${SITEMAP_URL} — ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+  }
+} else {
+  xml = readFileSync(resolve("public/sitemap.xml"), "utf8");
+}
 const urlList = [...new Set([...xml.matchAll(/<loc>(https:\/\/bewild\.com\.br[^<]*)<\/loc>/g)].map((m) => m[1]))];
 
 if (urlList.length === 0) {

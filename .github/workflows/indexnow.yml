@@ -1,0 +1,46 @@
+name: IndexNow
+
+# Avisa Bing/Yandex (protocolo IndexNow) das URLs do sitemap publicado a cada
+# push na main. Antes o script scripts/submit-indexnow.mjs existia mas nada o
+# executava; o envio era manual (checklist de 30/09/2026).
+#
+# O site oficial (bewild.com.br) é publicado pelo hosting do Lovable alguns
+# minutos depois do push, por isso o job espera antes de baixar o sitemap —
+# senão enviaria a lista anterior. A chave fica em public/<KEY>.txt, servida
+# em https://bewild.com.br/<KEY>.txt; sem segredo no repositório além dela
+# (a chave do IndexNow é pública por desenho do protocolo).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: indexnow-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  submit:
+    name: Enviar sitemap ao IndexNow
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Aguardar publicação do site (5 min)
+        if: github.event_name == 'push'
+        run: sleep 300
+
+      - name: Enviar URLs do sitemap publicado
+        env:
+          INDEXNOW_SITEMAP_URL: https://bewild.com.br/sitemap.xml
+        run: node scripts/submit-indexnow.mjs

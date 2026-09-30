@@ -22,6 +22,8 @@ import { PROJECT_COLUMNS, type BewildProjectFull } from "@/lib/useBewildProject"
 import { PROJECTS_LIST_COLUMNS, type BewildProject } from "@/lib/useBewildProjects";
 import { PEER_COLUMNS } from "@/lib/useProjectSeoPeers";
 import type { ProjectSeoPeer } from "@/lib/projectSeo";
+import { neighborhoodPages } from "@/lib/portfolioFilter";
+import type { BairroPageLink } from "@/lib/bairrosSp";
 
 marked.setOptions({ gfm: true, breaks: false });
 
@@ -195,4 +197,13 @@ export type SiteMapLoaderData = { projects: BewildProject[] | null; posts: Bewil
 export async function loadSiteMapContent(): Promise<SiteMapLoaderData> {
   const [{ projects }, { posts }] = await Promise.all([loadProjectList(), loadPostList()]);
   return { projects, posts };
+}
+
+/** Links das páginas de bairro para as listas estáticas de bairros (serviço e /onde-atuamos). */
+export type BairroLinksLoaderData = { bairroPages: BairroPageLink[] | null };
+
+export async function loadBairroLinks(): Promise<BairroLinksLoaderData> {
+  const { projects } = await loadProjectList();
+  if (!projects) return { bairroPages: null };
+  return { bairroPages: neighborhoodPages(projects).map(({ slug, label }) => ({ slug, label })) };
 }
