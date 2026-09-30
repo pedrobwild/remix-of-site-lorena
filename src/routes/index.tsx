@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import HomePage from "@/pages/HomePage";
 import { seoHead } from "@/lib/routeHead";
+import homeBwaCssUrl from "@/pages/home-bwa.css?url";
 
 /**
  * Imagem do hero (LCP): WebP responsivo em public/images/opt/hero, gerado do
@@ -18,6 +19,11 @@ function homeHead() {
     ...head,
     links: [
       ...head.links,
+      // Folha da home no HTML do servidor. Antes ela só entrava pelo JS
+      // (mountHomeStylesheet, depois da hidratação): até lá a biblioteca de
+      // SVG ocupava 150 px no topo e o <main> pulava para cima quando a folha
+      // chegava — CLS 1,0 no desktop e 0,19 no celular (PageSpeed, 30/09).
+      { rel: "stylesheet", href: homeBwaCssUrl, "data-bwa-home-ssr": "" },
       {
         rel: "preload",
         as: "image",
