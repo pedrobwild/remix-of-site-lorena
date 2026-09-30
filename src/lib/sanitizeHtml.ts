@@ -1,5 +1,9 @@
 import DOMPurify from "dompurify";
-import { FilterXSS, escapeAttrValue, friendlyAttrValue } from "xss";
+import xssPkg from "xss";
+
+// xss é CommonJS: usa o export default (named exports quebram no SSR do Vite).
+const { FilterXSS, escapeAttrValue, friendlyAttrValue } = xssPkg;
+type FilterXSS = InstanceType<typeof xssPkg.FilterXSS>;
 
 /**
  * Sanitiza HTML do editor de blog antes de inserir no DOM ou persistir no banco.
