@@ -44,12 +44,33 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
+// HTML público sai com cache de borda curto: o CDN guarda no máximo 60s (mais 5 min
+// servindo a cópia velha enquanto revalida), então uma publicação nova aparece em todos
+// os PoPs em poucos minutos. O navegador sempre revalida (max-age=0).
+const PUBLIC_HTML_CACHE_CONTROL = "public, max-age=0, s-maxage=60, stale-while-revalidate=300";
+
+function withShortEdgeCache(request: Request, response: Response): Response {
+  if (request.method !== "GET" && request.method !== "HEAD") return response;
+  if (response.status !== 200) return response;
+  if (!(response.headers.get("content-type") ?? "").includes("text/html")) return response;
+  if (response.headers.has("set-cookie")) return response;
+  const { pathname } = new URL(request.url);
+  if (pathname.startsWith("/admin") || pathname.startsWith("/api/")) return response;
+  const headers = new Headers(response.headers);
+  headers.set("cache-control", PUBLIC_HTML_CACHE_CONTROL);
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      return withShortEdgeCache(request, await normalizeCatastrophicSsrResponse(response));
     } catch (error) {
       console.error(error);
       return new Response(renderErrorPage(), {
