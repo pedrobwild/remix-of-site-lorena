@@ -19,6 +19,8 @@ export type BewildProject = {
   created_at: string | null;
   /** Fotos da obra pronta; define a tag "Obra pronta" e o filtro (projectPhotos.ts). */
   ready_gallery_urls: string[] | null;
+  /** Faixa de investimento (filtro do portfólio); null = não informada. */
+  budget_range?: string | null;
 };
 
 const PROJECT_TYPE_LABEL: Record<BewildProjectType, string> = {
@@ -37,7 +39,7 @@ export function bewildTypeLabel(t: BewildProjectType | null | undefined): string
  * (published = true). Independente do `useProjects` antigo (legado).
  */
 export const PROJECTS_LIST_COLUMNS =
-  "id, slug, title, cover_url, project_type, neighborhood, location, area_m2, duration, sort_order, created_at, ready_gallery_urls";
+  "id, slug, title, cover_url, project_type, neighborhood, location, area_m2, duration, sort_order, created_at, ready_gallery_urls, budget_range";
 
 export function useBewildProjects(initial?: BewildProject[] | null) {
   const [projects, setProjects] = useState<BewildProject[]>(initial ?? []);
