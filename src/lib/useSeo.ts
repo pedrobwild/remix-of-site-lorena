@@ -765,12 +765,16 @@ export async function refreshSeoEverywhere(opts?: { pingSearchEngines?: boolean 
 //  JSON-LD helpers
 // =============================================================
 
-/** LocalBusiness da Bewild — espelho do nó `#local` do index.html (manter em sincronia). */
+/** Link canônico do Perfil da Empresa no Google (cid da ficha "Bewild Reformas e Arquitetura"). */
+export const GOOGLE_BUSINESS_PROFILE_URL = "https://maps.google.com/maps?cid=16329162499474686119";
+
+/** LocalBusiness da Bewild — espelho do nó `#local` de orgJsonLd.ts (manter em sincronia). */
 export function localBusinessRef(base: string) {
   return {
     "@type": "ProfessionalService",
     "@id": `${base}/#local`,
     name: "Bewild",
+    alternateName: "Bewild Reformas e Arquitetura",
     url: `${base}/`,
     telephone: "+55 11 91190-6183",
     priceRange: "$$",
@@ -780,8 +784,15 @@ export function localBusinessRef(base: string) {
       streetAddress: "Rua Pitú, 72, Sala 115",
       addressLocality: "São Paulo",
       addressRegion: "SP",
+      postalCode: "04567-060",
       addressCountry: "BR",
     },
+    hasMap: GOOGLE_BUSINESS_PROFILE_URL,
+    sameAs: [
+      "https://instagram.com/bewild.oficial",
+      "https://www.linkedin.com/company/bewild-reformas/",
+      GOOGLE_BUSINESS_PROFILE_URL,
+    ],
     openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",
@@ -935,7 +946,7 @@ export function organizationJsonLd(s: SiteSettings) {
         s.instagram_url,
         s.linkedin_url,
         s.pinterest_url,
-        s.google_business_profile_url,
+        s.google_business_profile_url || GOOGLE_BUSINESS_PROFILE_URL,
         s.google_maps_url,
       ]
         .filter((x): x is string => Boolean(x))
@@ -960,7 +971,8 @@ export function organizationJsonLd(s: SiteSettings) {
     "@type": "Organization",
     "@id": ORG_ID,
     name: "Bewild",
-    legalName: "Bewild",
+    legalName: "Bwild Reformas LTDA",
+    alternateName: ["Bewild Reformas e Arquitetura", "Bewild Reformas", "Bwild Reformas", "Bwild"],
     url: `${base}/`,
     logo: {
       "@type": "ImageObject",
