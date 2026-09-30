@@ -6,7 +6,8 @@
  * CSS isolado em .bw-detail (src/styles/portfolio-detail.css).
  */
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import { useSeo, breadcrumbJsonLd, projectJsonLd } from "@/lib/useSeo";
+import { useSeo } from "@/lib/useSeo";
+import { projectPageJsonLd } from "@/lib/contentJsonLd";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
@@ -264,25 +265,8 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
     ogType: "article",
     ogImage: shareImageOptimized,
     ogImageAlt: shareImageAlt || undefined,
-    jsonLd:
-      settings && project
-        ? [
-            breadcrumbJsonLd(settings, [
-              { name: "Início", path: "/" },
-              { name: "Portfólio", path: "/portfolio" },
-              { name: projectFriendlyName(project) || project.title, path: `/portfolio/${project.slug}` },
-            ]),
-            projectJsonLd(settings, {
-              slug: project.slug,
-              title: projectFriendlyName(project) || project.title,
-
-              summary: seoDescription,
-              cover: project.og_image_url ?? project.cover_url ?? undefined,
-              location: project.neighborhood ?? project.location ?? undefined,
-              tag: project.project_type ?? undefined,
-            }),
-          ]
-        : undefined,
+    // CreativeWork sai no head() da rota; aqui só se o loader falhou.
+    jsonLd: !initial && project ? projectPageJsonLd(project) : undefined,
   });
 
   const closeLb = useCallback(() => setLb(null), []);
