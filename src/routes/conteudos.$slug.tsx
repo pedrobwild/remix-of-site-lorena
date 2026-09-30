@@ -1,12 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import BewildPostPage from "@/pages/BewildPostPage";
 import { seoHead } from "@/lib/routeHead";
-import { loadPostSeo } from "@/lib/seoLoaders";
+import { loadPostContent } from "@/lib/contentLoaders";
 
 export const Route = createFileRoute("/conteudos/$slug")({
-  loader: ({ params }) => loadPostSeo(params.slug),
+  loader: ({ params }) => loadPostContent(params.slug),
   component: RouteComponent,
-  head: ({ loaderData, params }) =>
+  head: ({ loaderData: ld, params }) => {
+    const loaderData = ld?.seo;
+    return
     seoHead({
       title: loaderData?.title ?? "Conteúdos | Bewild",
       description:
@@ -16,10 +18,17 @@ export const Route = createFileRoute("/conteudos/$slug")({
       ogImage: loaderData?.ogImage,
       ogType: "article",
       noindex: loaderData?.notFound,
-    }),
+    });
+  },
 });
 
 function RouteComponent() {
   const { slug } = Route.useParams();
-  return <BewildPostPage slug={slug} />;
+  const data = Route.useLoaderData();
+  return (
+    <BewildPostPage
+      slug={slug}
+      initial={data.post === undefined ? null : { post: data.post, related: data.related ?? null, bodyHtml: data.bodyHtml ?? null }}
+    />
+  );
 }
