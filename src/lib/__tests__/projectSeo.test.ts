@@ -4,9 +4,9 @@ import { projectMetaDescription, projectSeoTitle, projectSeoTitleUnique } from "
 const FALLBACK = "texto genérico";
 
 describe("projectMetaDescription", () => {
-  it("preserva textos personalizados e acrescenta o contexto local quando necessário", () => {
+  it("preserva a descrição editorial e usa contexto local no fallback", () => {
     expect(projectMetaDescription({ seo_description: "  Desc própria " }, FALLBACK)).toBe(
-      "Desc própria Reforma de apartamento em São Paulo pela Bewild, com entrega do apartamento pronto para morar ou rentabilizar.",
+      "Desc própria",
     );
     expect(projectMetaDescription({ summary: "Reforma de apartamento em São Paulo com entrega completa." }, FALLBACK)).toBe(
       "Reforma de apartamento em São Paulo com entrega completa.",
@@ -106,6 +106,14 @@ describe("fase do projeto e tamanho da descrição", () => {
 });
 
 describe("projectSeoTitleUnique (data de cadastro só onde ajuda)", () => {
+  it("mantém título editorial com bairro, sem exigir SP nem acrescentar cadastro", () => {
+    const title = "Studio de 27 m² no Campo Belo — Latitude | Bewild";
+    const a = { id: "a", seo_title: title, created_at: "2026-08-25T12:00:00Z" };
+    const b = { id: "b", seo_title: title, created_at: "2026-09-25T12:00:00Z" };
+    expect(projectSeoTitle(a)).toBe(title);
+    expect(projectSeoTitleUnique(a, [a, b])).toBe(title);
+  });
+
   const mk = (id: string, created_at: string) => ({
     id,
     title: "ZP - ZIP",

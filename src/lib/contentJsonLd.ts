@@ -104,7 +104,9 @@ export function projectPageJsonLd(project: ProjectLd): JsonLdNode[] {
     projectJsonLd(null as never, {
       slug: project.slug,
       title: projectFriendlyName(project) || project.title,
-      summary: projectMetaDescription(project, "Apartamento reformado pela Bewild em São Paulo-SP."),
+      summary:
+        [project.summary, project.intro].filter((text) => text?.trim()).join(" ").replace(/\s+/g, " ").trim() ||
+        projectMetaDescription(project, "Projeto de arquitetura e interiores da Bewild em São Paulo-SP."),
       cover: project.og_image_url ?? project.cover_url ?? undefined,
       location: project.neighborhood ?? project.location ?? undefined,
       tag: project.project_type ?? undefined,
