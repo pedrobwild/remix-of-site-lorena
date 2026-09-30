@@ -1,4 +1,17 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
+
+// contentJsonLd importa useBewildPosts, que instancia o cliente do Supabase no
+// carregamento do módulo. Sem VITE_SUPABASE_URL no ambiente de teste (CI e
+// sandbox não têm .env) o import quebra com "supabaseUrl is required". Mesmo
+// mock dos demais testes de SEO (identidadeOficial, useSeo.head): este teste
+// só exercita JSON-LD puro, nunca o backend.
+vi.mock("@/integrations/supabase/client", () => ({
+  supabase: {
+    rpc: () => new Promise(() => {}),
+    from: () => ({ select: () => new Promise(() => {}) }),
+  },
+}));
+
 import { seoHead } from "../routeHead";
 import { postJsonLd, postListJsonLd } from "../contentJsonLd";
 import type { BewildPost } from "../useBewildPosts";
