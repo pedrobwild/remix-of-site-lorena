@@ -11,11 +11,11 @@ import { useSiteSettings } from "@/lib/useSiteSettings";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import { whatsappHref } from "@/components/landing/content";
-import { useBewildProject } from "@/lib/useBewildProject";
+import { useBewildProject, type BewildProjectFull } from "@/lib/useBewildProject";
 import { bewildTypeLabel } from "@/lib/useBewildProjects";
 import { readyPhotos, renderPhotos } from "@/lib/projectPhotos";
 import { useImageAlts, type AltMap } from "@/lib/useImageAlts";
-import { projectFriendlyName, projectMetaDescription, projectSeoTitleUnique } from "@/lib/projectSeo";
+import { projectFriendlyName, projectMetaDescription, projectSeoTitleUnique, type ProjectSeoPeer } from "@/lib/projectSeo";
 import { useProjectSeoPeers } from "@/lib/useProjectSeoPeers";
 import { optimizedImageUrl } from "@/lib/imageUrl";
 
