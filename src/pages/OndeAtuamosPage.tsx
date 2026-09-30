@@ -2,7 +2,7 @@ import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
-import { BAIRROS, REMOTO_ITEMS } from "@/lib/bairrosSp";
+import { BAIRROS, REMOTO_ITEMS, bairroHref, type BairroPageLink } from "@/lib/bairrosSp";
 import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./onde-atuamos.css";
@@ -15,7 +15,12 @@ import "./onde-atuamos.css";
  * reforma à distância atende clientes de outras cidades.
  * ============================================================ */
 
-export default function OndeAtuamosPage() {
+type Props = {
+  /** Páginas de bairro existentes (loader da rota); null = sem dados → links para /portfolio. */
+  bairroPages?: BairroPageLink[] | null;
+};
+
+export default function OndeAtuamosPage({ bairroPages = null }: Props = {}) {
   const { settings } = useSiteSettings();
 
   useSeo({
@@ -68,7 +73,7 @@ export default function OndeAtuamosPage() {
             <ul className="bwa-atuamos-bairros">
               {BAIRROS.map((b) => (
                 <li key={b}>
-                  <a href="/portfolio">{b}</a>
+                  <a href={bairroHref(b, bairroPages)}>{b}</a>
                 </li>
               ))}
             </ul>

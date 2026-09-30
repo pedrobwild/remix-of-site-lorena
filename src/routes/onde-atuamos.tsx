@@ -1,8 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import OndeAtuamosPage from "@/pages/OndeAtuamosPage";
 import { seoHead } from "@/lib/routeHead";
+import { loadBairroLinks } from "@/lib/contentLoaders";
 
 export const Route = createFileRoute("/onde-atuamos")({
-  component: OndeAtuamosPage,
+  loader: () => loadBairroLinks(),
+  component: RouteComponent,
   head: () => seoHead({ title: "Onde atuamos: arquitetura e reforma em São Paulo | Bewild", description: "A Bewild projeta e reforma apartamentos em São Paulo capital, em mais de 27 bairros, e atende à distância clientes de outras cidades.", path: "/onde-atuamos" }),
 });
+
+function RouteComponent() {
+  const data = Route.useLoaderData();
+  return <OndeAtuamosPage bairroPages={data?.bairroPages ?? null} />;
+}

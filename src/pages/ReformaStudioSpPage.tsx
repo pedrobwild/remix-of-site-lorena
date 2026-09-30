@@ -3,7 +3,7 @@ import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
-import { BAIRROS, REMOTO_ITEMS } from "@/lib/bairrosSp";
+import { BAIRROS, REMOTO_ITEMS, bairroHref, type BairroPageLink } from "@/lib/bairrosSp";
 import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import { useCtaClickTracking } from "@/lib/trackCta";
@@ -110,7 +110,12 @@ const FAQ: { q: string; a: string; node?: ReactNode }[] = [
   },
 ];
 
-export default function ReformaStudioSpPage() {
+type Props = {
+  /** Páginas de bairro existentes (loader da rota); null = sem dados → links para /portfolio. */
+  bairroPages?: BairroPageLink[] | null;
+};
+
+export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) {
   const { settings } = useSiteSettings();
   useCtaClickTracking("reforma-studio-sp");
 
@@ -269,7 +274,7 @@ export default function ReformaStudioSpPage() {
             <ul className="bwa-servico-bairros">
               {BAIRROS.map((b) => (
                 <li key={b}>
-                  <a href="/portfolio">{b}</a>
+                  <a href={bairroHref(b, bairroPages)}>{b}</a>
                 </li>
               ))}
             </ul>
