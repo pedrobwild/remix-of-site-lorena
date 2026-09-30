@@ -105,7 +105,7 @@ export default function BwaFooter() {
 
         <div className="bwa-footer-bottom">
           <p className="bwa-footer-tech">
-            BEWILD · SÃO PAULO, BRASIL · CNPJ 47.350.338/0001-37 · RESP. TÉCNICO · THIAGO DANTAS DO AMOR · CAU A162437-7
+            RUA PITÚ,72 - BROOKLIN, SÃO PAULO - SP, 04567-060 - BRASIL · CNPJ 47.350.338/0001-37 · RESP. TÉCNICO · THIAGO DANTAS DO AMOR · CAU A162437-7
           </p>
           <span className="bwa-footer-copy">© 2026 Bewild</span>
         </div>
