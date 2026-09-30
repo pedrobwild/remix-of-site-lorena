@@ -8,8 +8,7 @@ export const Route = createFileRoute("/portfolio/$slug")({
   component: RouteComponent,
   head: ({ loaderData: ld, params }) => {
     const loaderData = ld?.seo;
-    return
-    seoHead({
+    return seoHead({
       title: loaderData?.title ?? "Reforma de apartamento em São Paulo | Bewild",
       description:
         loaderData?.description ??
@@ -23,7 +22,7 @@ export const Route = createFileRoute("/portfolio/$slug")({
 
 function RouteComponent() {
   const { slug } = Route.useParams();
-  const data = Route.useLoaderData();
+  const data = Route.useLoaderData() ?? {};
   return (
     <BewildProjectPage
       slug={slug}

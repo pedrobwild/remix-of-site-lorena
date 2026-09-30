@@ -8,8 +8,7 @@ export const Route = createFileRoute("/conteudos/$slug")({
   component: RouteComponent,
   head: ({ loaderData: ld, params }) => {
     const loaderData = ld?.seo;
-    return
-    seoHead({
+    return seoHead({
       title: loaderData?.title ?? "Conteúdos | Bewild",
       description:
         loaderData?.description ??
@@ -24,7 +23,7 @@ export const Route = createFileRoute("/conteudos/$slug")({
 
 function RouteComponent() {
   const { slug } = Route.useParams();
-  const data = Route.useLoaderData();
+  const data = Route.useLoaderData() ?? {};
   return (
     <BewildPostPage
       slug={slug}

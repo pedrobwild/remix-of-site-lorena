@@ -10,6 +10,6 @@ export const Route = createFileRoute("/mapa-do-site")({
 });
 
 function RouteComponent() {
-  const { projects } = Route.useLoaderData();
+  const projects = Route.useLoaderData()?.projects ?? null;
   return <MapaDoSitePage initialProjects={projects} />;
 }

@@ -8,8 +8,7 @@ export const Route = createFileRoute("/reforma/$slug")({
   component: RouteComponent,
   head: ({ loaderData: ld, params }) => {
     const loaderData = ld?.seo;
-    return
-    seoHead({
+    return seoHead({
       title:
         loaderData?.title ??
         "Reforma de apartamento em São Paulo: projetos e orçamento | Bewild",
@@ -24,6 +23,6 @@ export const Route = createFileRoute("/reforma/$slug")({
 
 function RouteComponent() {
   const { slug } = Route.useParams();
-  const { projects } = Route.useLoaderData();
+  const projects = Route.useLoaderData()?.projects ?? null;
   return <BairroPage slug={slug} initialProjects={projects} />;
 }

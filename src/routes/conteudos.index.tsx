@@ -10,6 +10,6 @@ export const Route = createFileRoute("/conteudos/")({
 });
 
 function RouteComponent() {
-  const { posts } = Route.useLoaderData();
+  const posts = Route.useLoaderData()?.posts ?? null;
   return <BewildConteudosPage initialPosts={posts} />;
 }

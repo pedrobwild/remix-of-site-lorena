@@ -10,6 +10,6 @@ export const Route = createFileRoute("/portfolio/")({
 });
 
 function RouteComponent() {
-  const { projects } = Route.useLoaderData();
+  const projects = Route.useLoaderData()?.projects ?? null;
   return <BewildPortfolioPage initialProjects={projects} />;
 }
