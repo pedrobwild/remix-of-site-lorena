@@ -1,11 +1,15 @@
-// Página /mapa-do-site — índice HTML de todas as páginas públicas e dos projetos
-// do portfólio. Objetivo de SEO: dar ao Google (e a pessoas) um caminho de links
-// internos rastreáveis até cada /portfolio/<slug>, complementando o sitemap.xml.
+// Página /mapa-do-site — índice HTML de todas as páginas públicas, das páginas de
+// bairro (/reforma/<bairro>), dos projetos do portfólio e dos conteúdos. Objetivo
+// de SEO: dar ao Google (e a pessoas) um caminho de links internos rastreáveis até
+// cada /portfolio/<slug>, /reforma/<bairro> e /conteudos/<slug>, complementando o
+// sitemap.xml. Os dados chegam do loader da rota (SSR); os hooks só buscam sem eles.
 import { useMemo } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { PUBLIC_PAGES } from "@/lib/publicPages";
+import { neighborhoodPages } from "@/lib/portfolioFilter";
 import { projectFriendlyName } from "@/lib/projectSeo";
+import { useBewildPosts, type BewildPost } from "@/lib/useBewildPosts";
 import { useBewildProjects, type BewildProject } from "@/lib/useBewildProjects";
 import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
@@ -14,9 +18,16 @@ import "./mapa-do-site.css";
 
 const SEM_BAIRRO = "Outros projetos em São Paulo";
 
-export default function MapaDoSitePage({ initialProjects }: { initialProjects?: BewildProject[] | null } = {}) {
+export default function MapaDoSitePage({
+  initialProjects,
+  initialPosts,
+}: { initialProjects?: BewildProject[] | null; initialPosts?: BewildPost[] | null } = {}) {
   const { settings } = useSiteSettings();
   const { projects, loading, error } = useBewildProjects(initialProjects);
+  const { posts, loading: postsLoading, error: postsError } = useBewildPosts(initialPosts);
+
+  // Mesma regra do sitemap e de /reforma/$slug: só bairros com projetos suficientes.
+  const bairros = useMemo(() => neighborhoodPages(projects), [projects]);
 
   const groups = useMemo(() => {
     const map = new Map<string, { slug: string; name: string }[]>();
@@ -39,9 +50,9 @@ export default function MapaDoSitePage({ initialProjects }: { initialProjects?: 
   }, [projects]);
 
   useSeo({
-    title: "Mapa do site: páginas e projetos de reforma | Bewild",
+    title: "Mapa do site: páginas, bairros, projetos e conteúdos | Bewild",
     description:
-      "Índice com todas as páginas da Bewild e os projetos de reforma de apartamentos e studios em São Paulo, organizados por bairro.",
+      "Índice com todas as páginas da Bewild, as páginas de reforma por bairro, os projetos de apartamentos e studios reformados em São Paulo e os guias de conteúdo.",
     canonicalPath: "/mapa-do-site",
     ogType: "website",
     jsonLd: settings
@@ -61,10 +72,11 @@ export default function MapaDoSitePage({ initialProjects }: { initialProjects?: 
         <section className="bwa-msite-intro">
           <div className="bwa-shell">
             <p className="bwa-label">Mapa do site</p>
-            <h1>Todas as páginas e projetos da Bewild.</h1>
+            <h1>Todas as páginas, projetos e conteúdos da Bewild.</h1>
             <p className="bwa-msite-lead">
-              Um índice para você chegar direto ao que procura: páginas do site e{" "}
-              {loading ? "os projetos" : `${projects.length} projetos`} de reforma, por bairro.
+              Um índice para você chegar direto ao que procura: páginas do site, reforma por bairro,{" "}
+              {loading ? "os projetos" : `${projects.length} projetos`} de reforma e{" "}
+              {postsLoading ? "os guias" : `${posts.length} guias`} de conteúdo.
             </p>
           </div>
         </section>
@@ -80,6 +92,24 @@ export default function MapaDoSitePage({ initialProjects }: { initialProjects?: 
             </ul>
           </div>
         </section>
+
+        {bairros.length > 0 && (
+          <section className="bwa-msite-section" aria-labelledby="msite-bairros">
+            <div className="bwa-shell">
+              <h2 id="msite-bairros">Reforma de apartamento por bairro</h2>
+              <ul className="bwa-msite-list">
+                {bairros.map((b) => (
+                  <li key={b.slug}>
+                    <a href={routes.bairro(b.slug)}>
+                      Reforma de apartamento em {b.label}{" "}
+                      <span className="bwa-msite-count">({b.count})</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        )}
 
         <section className="bwa-msite-section" aria-labelledby="msite-projetos">
           <div className="bwa-shell">
@@ -110,6 +140,33 @@ export default function MapaDoSitePage({ initialProjects }: { initialProjects?: 
                 </ul>
               </div>
             ))}
+          </div>
+        </section>
+
+        <section className="bwa-msite-section" aria-labelledby="msite-conteudos">
+          <div className="bwa-shell">
+            <h2 id="msite-conteudos">Conteúdos e guias</h2>
+            {postsLoading && <p className="bwa-msite-state" role="status">Carregando conteúdos…</p>}
+            {!postsLoading && postsError && (
+              <p className="bwa-msite-state" role="alert">
+                Não foi possível carregar os conteúdos agora. Veja todos em{" "}
+                <a href={routes.conteudos}>Conteúdos</a>.
+              </p>
+            )}
+            {!postsLoading && !postsError && posts.length === 0 && (
+              <p className="bwa-msite-state">
+                Nenhum conteúdo publicado no momento. Veja <a href={routes.conteudos}>Conteúdos</a>.
+              </p>
+            )}
+            {posts.length > 0 && (
+              <ul className="bwa-msite-list">
+                {posts.map((p) => (
+                  <li key={p.slug}>
+                    <a href={routes.conteudosPost(p.slug)}>{p.title}</a>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </section>
       </main>
