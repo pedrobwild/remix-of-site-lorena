@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import BewildProjectPage from "@/pages/BewildProjectPage";
 import { seoHead } from "@/lib/routeHead";
 import { loadProjectContent } from "@/lib/contentLoaders";
+import { projectPageJsonLd } from "@/lib/contentJsonLd";
 
 export const Route = createFileRoute("/portfolio/$slug")({
   loader: ({ params }) => loadProjectContent(params.slug),
@@ -15,7 +16,8 @@ export const Route = createFileRoute("/portfolio/$slug")({
         "Projeto, obra e marcenaria integrados pela Bewild em São Paulo.",
       path: `/portfolio/${params.slug}`,
       ogImage: loaderData?.ogImage,
-      noindex: loaderData?.notFound,
+      noindex: !ld || loaderData?.notFound,
+      jsonLd: ld?.project ? projectPageJsonLd(ld.project) : null,
     });
   },
 });

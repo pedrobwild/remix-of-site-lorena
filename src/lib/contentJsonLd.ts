@@ -8,6 +8,7 @@
 import { bewildCategoryLabel, type BewildPost } from "@/lib/useBewildPosts";
 import { postAuthorJsonLd, postDates } from "@/lib/postSeo";
 import { itemListJsonLd, projectJsonLd } from "@/lib/useSeo";
+import { neighborhoodSlug } from "@/lib/portfolioFilter";
 import { projectFriendlyName, projectMetaDescription, type ProjectSeoInput } from "@/lib/projectSeo";
 
 export type JsonLdNode = Record<string, unknown>;
@@ -65,6 +66,14 @@ export function postListJsonLd(posts: Array<Pick<BewildPost, "slug" | "title" | 
       posts.map((p) => ({ name: p.title, path: `/conteudos/${p.slug}`, image: p.cover_image ?? undefined })),
     ),
   ];
+}
+
+/** Projetos de um bairro (mesmo filtro da BairroPage). */
+export function bairroProjects<T extends { cover_url?: string | null; neighborhood?: string | null }>(
+  projects: T[],
+  slug: string,
+): T[] {
+  return projects.filter((p) => p.cover_url && p.neighborhood && neighborhoodSlug(p.neighborhood) === slug);
 }
 
 /** ItemList dos projetos (/portfolio e /reforma/$slug). */
