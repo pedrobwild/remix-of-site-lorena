@@ -1,79 +1,78 @@
 /**
- * Fontes por rota (src/lib/fonts.ts): as famílias das rotas internas
- * (Playfair Display, Poppins, Inter) entram numa folha só, uma única vez, e
- * nunca pedem estilo inexistente (a Manrope não tem itálico no Google Fonts).
+ * Fontes (src/lib/fonts.ts + src/fonts.css): duas famílias, hospedadas no
+ * site, com preload — e nenhuma chamada ao Google Fonts no código.
  */
-import { afterEach, describe, expect, it } from "vitest";
-import { BRAND_FONTS_HREF, ensureBrandFonts, mountFontSheetAfterLoad } from "@/lib/fonts";
+import { readFileSync, readdirSync, statSync } from "node:fs";
+import { join, resolve } from "node:path";
+import { describe, expect, it } from "vitest";
+import { FONT_PRELOADS } from "@/lib/fonts";
 
-afterEach(() => {
-  document.head.querySelectorAll("#bw-fonts-brand").forEach((n) => n.remove());
-});
+const ROOT = resolve(__dirname, "../../..");
+const SRC = join(ROOT, "src");
 
-describe("ensureBrandFonts", () => {
-  it("injeta a folha das famílias internas uma vez só", () => {
-    expect(ensureBrandFonts()).toBe(true);
-    expect(ensureBrandFonts()).toBe(false);
-    const links = document.head.querySelectorAll<HTMLLinkElement>("#bw-fonts-brand");
-    expect(links).toHaveLength(1);
-    expect(links[0].rel).toBe("stylesheet");
-    expect(links[0].getAttribute("href")).toBe(BRAND_FONTS_HREF);
-  });
-
-  it("traz Playfair Display, Poppins e Inter com display=swap — e não as famílias do index.html", () => {
-    expect(BRAND_FONTS_HREF).toContain("family=Playfair+Display");
-    expect(BRAND_FONTS_HREF).toContain("family=Poppins");
-    expect(BRAND_FONTS_HREF).toContain("family=Inter");
-    expect(BRAND_FONTS_HREF).toContain("display=swap");
-    expect(BRAND_FONTS_HREF).not.toMatch(/Manrope|JetBrains|Sora/);
-  });
-
-  it("sem document não faz nada", () => {
-    expect(ensureBrandFonts(null)).toBe(false);
-  });
-});
-
-describe("mountFontSheetAfterLoad (Inter e Montserrat da réplica, na home)", () => {
-  const ID = "bw-fonts-test";
-  const HREF = "https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap";
-  const sheet = () => document.getElementById(ID);
-  function setReadyState(state: DocumentReadyState) {
-    Object.defineProperty(document, "readyState", { configurable: true, get: () => state });
+function walk(dir: string, out: string[] = []): string[] {
+  for (const name of readdirSync(dir)) {
+    const full = join(dir, name);
+    if (statSync(full).isDirectory()) {
+      if (name === "__tests__" || name === "node_modules") continue;
+      walk(full, out);
+    } else if (/\.(css|tsx?|html)$/.test(name)) {
+      out.push(full);
+    }
   }
+  return out;
+}
 
-  afterEach(() => {
-    // Volta ao getter do protótipo.
-    delete (document as { readyState?: DocumentReadyState }).readyState;
-    sheet()?.remove();
+describe("preload das fontes", () => {
+  it("pede os dois arquivos latin como font/woff2 com crossorigin", () => {
+    expect(FONT_PRELOADS).toHaveLength(2);
+    for (const link of FONT_PRELOADS) {
+      expect(link.rel).toBe("preload");
+      expect(link.as).toBe("font");
+      expect(link.type).toBe("font/woff2");
+      expect(link.crossOrigin).toBe("anonymous");
+      expect(link.href).toMatch(/woff2/);
+    }
+  });
+});
+
+describe("fonts.css", () => {
+  const css = readFileSync(join(SRC, "fonts.css"), "utf8");
+  const families = new Set(
+    [...css.matchAll(/font-family:\s*"([^"]+)"/g)].map((m) => m[1]),
+  );
+
+  it("declara só Manrope e JetBrains Mono", () => {
+    expect([...families].sort()).toEqual(["JetBrains Mono", "Manrope"]);
   });
 
-  it("com a página ainda carregando, espera o load para pedir a folha", () => {
-    setReadyState("interactive");
-    const cleanup = mountFontSheetAfterLoad(ID, HREF);
-    expect(sheet()).toBeNull();
-    window.dispatchEvent(new Event("load"));
-    expect(sheet()).not.toBeNull();
-    expect(sheet()!.getAttribute("href")).toBe(HREF);
-    expect((sheet() as HTMLLinkElement).rel).toBe("stylesheet");
-    cleanup();
-    expect(sheet()).toBeNull();
+  it("usa font-display: swap em todo @font-face e aponta para arquivos locais", () => {
+    const faces = css.match(/@font-face\s*{[^}]*}/g) ?? [];
+    expect(faces.length).toBe(4);
+    for (const face of faces) {
+      expect(face).toContain("font-display: swap");
+      expect(face).toMatch(/url\("\.\/assets\/fonts\/[a-z-]+\.woff2"\)/);
+    }
   });
 
-  it("depois do load (navegação pela SPA), pede na hora — e uma vez só", () => {
-    setReadyState("complete");
-    const a = mountFontSheetAfterLoad(ID, HREF);
-    const b = mountFontSheetAfterLoad(ID, HREF);
-    expect(document.querySelectorAll(`#${ID}`)).toHaveLength(1);
-    b();
-    a();
-    expect(sheet()).toBeNull();
+  it("entra no CSS principal", () => {
+    expect(readFileSync(join(SRC, "styles.css"), "utf8")).toContain('@import "./fonts.css";');
+  });
+});
+
+describe("sem Google Fonts", () => {
+  it("nenhum arquivo de src/ pede fonts.googleapis.com ou fonts.gstatic.com", () => {
+    const offenders = walk(SRC).filter((f) =>
+      /fonts\.(googleapis|gstatic)\.com/.test(readFileSync(f, "utf8")),
+    );
+    expect(offenders).toEqual([]);
   });
 
-  it("sair da página antes do load cancela o pedido", () => {
-    setReadyState("loading");
-    const cleanup = mountFontSheetAfterLoad(ID, HREF);
-    cleanup();
-    window.dispatchEvent(new Event("load"));
-    expect(sheet()).toBeNull();
+  it("nenhum CSS usa as famílias retiradas", () => {
+    const retired = /font-family:[^;}]*("|')(Playfair Display|Poppins|Inter|Montserrat|DM Sans|Sora)\1/;
+    const offenders = walk(SRC)
+      .filter((f) => f.endsWith(".css"))
+      .filter((f) => retired.test(readFileSync(f, "utf8")));
+    expect(offenders).toEqual([]);
   });
 });

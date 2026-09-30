@@ -28,6 +28,7 @@ import { reportContact } from "@/lib/conversions";
 import { trackEvent } from "@/lib/ga4";
 import { isConsentAccepted, onConsentChange } from "@/lib/cookieConsent";
 import { prefersReducedMotion } from "@/lib/reducedMotion";
+import { mountReclameAquiSealWhenVisible } from "@/lib/reclameAquiSeal";
 
 export type Cleanup = () => void;
 
@@ -852,18 +853,10 @@ function installWhatsForm(root: HTMLElement, signal: AbortSignal): void {
   );
 }
 
-/* Selo Reclame Aqui no rodapé (uma vez por contêiner). */
-function installReclameAquiSeal(root: HTMLElement): void {
-  const holder = root.querySelector<HTMLElement>("#ra-verified-seal");
-  if (!holder || holder.querySelector("script")) return;
-  const script = document.createElement("script");
-  script.type = "text/javascript";
-  script.id = "ra-embed-verified-seal";
-  script.src = "https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js";
-  script.setAttribute("data-id", "SEpqak1Mcm9aM09nMm0wbDpid2lsZC1yZWZvcm1hcw==");
-  script.setAttribute("data-target", "ra-verified-seal");
-  script.setAttribute("data-model", "horizontal_1");
-  holder.appendChild(script);
+/* Selo Reclame Aqui no rodapé: só quando o rodapé chega perto da tela
+ * (src/lib/reclameAquiSeal.ts). */
+function installReclameAquiSeal(root: HTMLElement): Cleanup {
+  return mountReclameAquiSealWhenVisible(root.querySelector<HTMLElement>("#ra-verified-seal"));
 }
 
 /* =========================================================================
@@ -940,9 +933,9 @@ export function initHomeBwa(root: HTMLElement | null): Cleanup {
     installReveal(root, reducedMotion),
     installHomeMap(root, signal),
     installMobileCta(root, signal),
+    installReclameAquiSeal(root),
   ];
   installWhatsForm(root, signal);
-  installReclameAquiSeal(root);
   propagateCampaignToBudgetLinks(root);
 
   return () => {

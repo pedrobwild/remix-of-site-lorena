@@ -27,10 +27,8 @@ const KEYWORDS =
   "escritório de arquitetura em São Paulo, arquitetura e engenharia, projeto arquitetônico, projeto de interiores, engenharia civil São Paulo, reforma de apartamento em SP, bastidores de obra, equipe em obra, custo de reforma, quanto custa reformar um apartamento em SP, empresa de reforma de apartamento SP, reforma turnkey São Paulo, Bewild";
 const THEME_COLOR = "#0B2342";
 // Fontes e preload do hero não ficam mais aqui:
-//  - a home usa Manrope e JetBrains Mono, que o index.html já carrega. A
-//    segunda folha que esta página injetava pedia Manrope itálica (estilo que
-//    não existe no Google Fonts) e Sora. As demais famílias do site entram
-//    por src/lib/fonts.ts, só nas rotas internas.
+//  - o site inteiro usa só Manrope e JetBrains Mono, hospedadas no próprio
+//    site (src/fonts.css) com preload no <head> (src/lib/fonts.ts).
 //  - o preload do hero (LCP no desktop) sai do index.html, antes do bundle.
 //    Aqui ele chegava tarde: quando este efeito roda, o <img
 //    fetchpriority="high"> do HTML da home já está no DOM e já pediu a imagem.

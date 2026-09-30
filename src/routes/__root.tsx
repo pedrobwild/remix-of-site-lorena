@@ -26,7 +26,7 @@ import {
 } from "@/lib/cookieConsent";
 import { initAnalytics } from "@/lib/analytics";
 import { initGa4, trackPageView } from "@/lib/ga4";
-import { ensureBrandFonts } from "@/lib/fonts";
+import { FONT_PRELOADS } from "@/lib/fonts";
 import {
   hasThirdPartyTrackers,
   isSeoAppliedFor,
@@ -115,14 +115,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "apple-touch-icon", sizes: "180x180", href: `/favicon-180.png${FAVICON_V}` },
       { rel: "manifest", href: "/site.webmanifest" },
       { rel: "preconnect", href: "https://aamlnkmqvjcowixdgqii.supabase.co", crossOrigin: "anonymous" },
-      { rel: "dns-prefetch", href: "https://fonts.googleapis.com" },
-      { rel: "dns-prefetch", href: "https://fonts.gstatic.com" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap",
-      },
+      // Fontes hospedadas no site (src/fonts.css): preload só do subconjunto
+      // latin das duas famílias, que é o que o primeiro paint usa.
+      ...FONT_PRELOADS,
     ],
     scripts: [{ type: "application/ld+json", children: ORG_JSONLD }],
   }),
@@ -236,12 +231,6 @@ function RootComponent() {
   useEffect(() => {
     if (adminMode && hasThirdPartyTrackers()) window.location.reload();
   }, [adminMode]);
-
-  // Fontes das rotas internas (Playfair Display, Poppins, Inter): só fora da home.
-  const isHome = pathname === "/";
-  useEffect(() => {
-    if (!isHome) ensureBrandFonts();
-  }, [isHome]);
 
   // Deep link com âncora (/guia-do-investidor#faq, /#certeza): rola até a
   // seção, esperando seções montadas tarde (chunks lazy, dados do banco).

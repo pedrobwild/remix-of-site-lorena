@@ -22,7 +22,7 @@
   grid-template-columns: 1fr;
   background: var(--paper);
   color: var(--ink);
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: "Manrope", system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -91,7 +91,7 @@
 }
 
 .bw-login__headline {
-  font-family: "Poppins", "Inter", sans-serif;
+  font-family: "Manrope", sans-serif;
   font-weight: 600;
   font-size: 30px;
   line-height: 1.15;
@@ -143,7 +143,7 @@
 }
 
 .bw-login__title {
-  font-family: "Poppins", "Inter", sans-serif;
+  font-family: "Manrope", sans-serif;
   font-weight: 600;
   font-size: 22px;
   line-height: 1.2;

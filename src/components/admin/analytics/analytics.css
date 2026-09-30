@@ -7,7 +7,7 @@
 
 .admin-analytics {
   /* === Tokens === */
-  --aa-font-ui: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --aa-font-ui: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
   --aa-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* radii */

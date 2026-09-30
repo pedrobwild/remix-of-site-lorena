@@ -7,6 +7,7 @@ import { useSiteSettings } from "@/lib/useSiteSettings";
 import { isExternalHref, safeHref } from "@/lib/safeUrl";
 import { useIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
 import BewildLogo from "@/components/BewildLogo";
+import { mountReclameAquiSealWhenVisible } from "@/lib/reclameAquiSeal";
 
 /**
  * BwaFooter — Footer .bwa unificado, idêntico ao da home. Usado em toda
@@ -20,18 +21,9 @@ export default function BwaFooter() {
   const { settings } = useSiteSettings();
   const linkedinHref = safeHref(settings?.linkedin_url) ?? CONTACT.linkedin;
 
-  useEffect(() => {
-    const container = raRef.current;
-    if (!container || container.querySelector("script")) return;
-    const s = document.createElement("script");
-    s.type = "text/javascript";
-    s.id = "ra-embed-verified-seal";
-    s.src = "https://s3.amazonaws.com/raichu-beta/ra-verified/bundle.js";
-    s.setAttribute("data-id", "SEpqak1Mcm9aM09nMm0wbDpid2lsZC1yZWZvcm1hcw==");
-    s.setAttribute("data-target", "ra-verified-seal");
-    s.setAttribute("data-model", "horizontal_1");
-    container.appendChild(s);
-  }, []);
+  // Selo do Reclame Aqui só quando o rodapé chega perto da tela: o script
+  // dele traz Open Sans e Inter Tight do Google Fonts (src/lib/reclameAquiSeal.ts).
+  useEffect(() => mountReclameAquiSealWhenVisible(raRef.current), []);
 
   return (
     <footer className="bwa-footer">
