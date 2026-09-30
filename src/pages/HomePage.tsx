@@ -77,6 +77,16 @@ function installFooterLinkedin(root: HTMLElement): () => void {
 
 function mountHomeStylesheet(): () => void {
   const marker = "data-bwa-home-css";
+  // A folha já veio no HTML do servidor (head da rota "/", src/routes/index.tsx):
+  // o <head> é do roteador, então aqui só marcamos as classes.
+  if (document.head.querySelector("link[data-bwa-home-ssr]")) {
+    document.documentElement.classList.add("bwa-home-root");
+    document.body.classList.add("bwa-home-root");
+    return () => {
+      document.documentElement.classList.remove("bwa-home-root");
+      document.body.classList.remove("bwa-home-root");
+    };
+  }
   let link = document.head.querySelector<HTMLLinkElement>(`link[${marker}]`);
   if (!link) {
     link = document.createElement("link");
