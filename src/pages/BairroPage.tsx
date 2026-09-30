@@ -12,7 +12,7 @@ import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import NotFoundPage from "./NotFoundPage";
 import BairroLeadForm from "@/components/BairroLeadForm";
-import { useBewildProjects, bewildTypeLabel } from "@/lib/useBewildProjects";
+import { useBewildProjects, bewildTypeLabel, type BewildProject } from "@/lib/useBewildProjects";
 import { neighborhoodPages, neighborhoodSlug } from "@/lib/portfolioFilter";
 import { reportProjectClick } from "@/lib/conversions";
 import "@/styles/bwh-tokens.css";
@@ -23,8 +23,14 @@ const PAGE_SIZE = 24;
 const GRID_SIZES = "(max-width: 640px) 100vw, (max-width: 980px) 50vw, 33vw";
 const pad = (n: number) => String(n).padStart(2, "0");
 
-export default function BairroPage({ slug }: { slug: string }) {
-  const { projects, loading, error } = useBewildProjects();
+export default function BairroPage({
+  slug,
+  initialProjects,
+}: {
+  slug: string;
+  initialProjects?: BewildProject[] | null;
+}) {
+  const { projects, loading, error } = useBewildProjects(initialProjects);
   const { settings } = useSiteSettings();
 
   const pages = useMemo(() => neighborhoodPages(projects), [projects]);

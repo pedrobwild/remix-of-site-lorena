@@ -36,7 +36,11 @@ import { logNotFound, lookupActiveRedirect } from "@/lib/notFoundLog";
 import "@/styles/post.css";
 import "@/styles/conteudos.css";
 
-type Props = { slug: string };
+type Props = {
+  slug: string;
+  /** Dados do loader (SSR); ausente = busca no cliente como antes. */
+  initial?: { post: BewildPost | null; related: BewildPost[] | null; bodyHtml: string | null } | null;
+};
 
 // Configuração estável do marked (sem opções deprecadas em v18).
 marked.setOptions({ gfm: true, breaks: false });
@@ -140,9 +144,17 @@ function RelatedCard({ p }: { p: BewildPost }) {
   );
 }
 
-export default function BewildPostPage({ slug }: Props) {
-  const { post, loading, notFound, error, retry } = useBewildPost(slug);
-  const { related } = useBewildRelatedPosts(post?.category, post?.id, 3);
+export default function BewildPostPage({ slug, initial }: Props) {
+  const { post, loading, notFound, error, retry } = useBewildPost(
+    slug,
+    initial ? { slug, post: initial.post } : null,
+  );
+  const { related } = useBewildRelatedPosts(
+    post?.category,
+    post?.id,
+    3,
+    initial?.post && initial.related ? { excludeId: initial.post.id, related: initial.related } : null,
+  );
 
   const cta = useMemo(() => getCtaContent(post?.category), [post?.category]);
   // Link interno SEM utm_*: UTM fixo aqui sobrescrevia a campanha real do
@@ -153,13 +165,17 @@ export default function BewildPostPage({ slug }: Props) {
 
   const bodyHtml = useMemo(() => {
     if (!post?.body) return "";
+    // 1º render: HTML já sanitizado pelo loader (evita diferença de hidratação).
+    if (initial?.post && initial.bodyHtml != null && initial.post.body === post.body) {
+      return initial.bodyHtml;
+    }
     try {
       const raw = marked.parse(post.body, { async: false }) as string;
       return sanitizeBlogHtml(raw);
     } catch {
       return "";
     }
-  }, [post?.body]);
+  }, [post?.body, initial]);
 
   const baseUrl = "https://bewild.com.br";
   const articleUrl = post ? `${baseUrl}/conteudos/${post.slug}` : `${baseUrl}/conteudos/${slug}`;
