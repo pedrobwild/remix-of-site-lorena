@@ -148,6 +148,7 @@ const SAFE_URL = /^(https?:|mailto:|tel:|\/(?!\/)|\.{1,2}\/|#|\?|[^:/?#\s]+(?:[/
 
 function isSafeUrl(raw: string): boolean {
   // Decodifica entidades (&#106;avascript:) e remove brancos/controles antes de checar.
+  // eslint-disable-next-line no-control-regex -- remove controles que o navegador ignora em URLs
   const v = friendlyAttrValue(raw).replace(/[\u0000-\u0020\u007f]+/g, "");
   if (!v) return false;
   return SAFE_URL.test(v);
