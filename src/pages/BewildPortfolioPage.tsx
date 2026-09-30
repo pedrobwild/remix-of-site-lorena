@@ -339,6 +339,19 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
                   );
                 })}
               </div>
+              {/* Sem JS (Bing, robôs de IA): links dos projetos que ainda não
+                  entraram na grade. Invisível para quem tem JavaScript. */}
+              {remaining > 0 && (
+                <noscript>
+                  <ul>
+                    {filtered.slice(visibleCount).map((p) => (
+                      <li key={p.id}>
+                        <a href={`/portfolio/${p.slug}`}>{p.title}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </noscript>
+              )}
               {remaining > 0 && (
                 <>
                   <div ref={sentinelRef} aria-hidden="true" style={{ height: 1 }} />
