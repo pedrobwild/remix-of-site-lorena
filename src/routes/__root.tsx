@@ -89,8 +89,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "revisit-after", content: "7 days" },
       { name: "geo.region", content: "BR-SP" },
       { name: "geo.placename", content: "São Paulo, Brasil" },
-      { name: "geo.position", content: "-23.5505;-46.6333" },
-      { name: "ICBM", content: "-23.5505, -46.6333" },
+      // geo.position/ICBM removidos em 2026-09-30: apontavam para o centro da
+      // cidade (Sé), não para o escritório (Rua Pitú, 72, Brooklin). A posição
+      // oficial fica no Perfil da Empresa no Google (sameAs/hasMap do JSON-LD).
       { name: "DC.title", content: HOME_TITLE },
       { name: "language", content: "Portuguese" },
       // og:*/twitter:* específicos de página (title, description, url,
