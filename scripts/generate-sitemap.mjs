@@ -69,10 +69,25 @@ async function main() {
     return res.json();
   };
 
+  // Projetos: lastmod = content_updated_at (edição real de conteúdo, migration
+  // 20260930120000) com fallback em created_at. NUNCA updated_at: o trigger
+  // set_updated_at carimba qualquer update, e o lote de 27/09/2026 marcou os
+  // 162 projetos com a mesma data. Enquanto a migration não estiver aplicada a
+  // coluna não existe (HTTP 400) e a consulta cai para created_at.
+  const PROJECT_COLS = "slug,neighborhood,cover_url,created_at";
+  const getProjects = async () => {
+    try {
+      return await get(`projects?published=eq.true&visible=eq.true&select=${PROJECT_COLS},content_updated_at`);
+    } catch {
+      console.warn("[sitemap] projects.content_updated_at ausente (migration 20260930120000 não aplicada); lastmod dos projetos usa created_at.");
+      return get(`projects?published=eq.true&visible=eq.true&select=${PROJECT_COLS}`);
+    }
+  };
+
   let projects, posts, faqEntries;
   try {
     [projects, posts, faqEntries] = await Promise.all([
-      get("projects?published=eq.true&visible=eq.true&select=slug,neighborhood,cover_url,updated_at,created_at"),
+      getProjects(),
       get("bewild_posts?published=eq.true&select=slug,title,updated_at,published_at,created_at"),
       get("assistant_kb?ativo=eq.true&select=updated_at"),
     ]);
@@ -96,7 +111,7 @@ async function main() {
     { loc: `${BASE_URL}/`, lastmod: "2026-09-26", changefreq: "weekly", priority: "1.0" },
     {
       loc: `${BASE_URL}/portfolio`,
-      lastmod: newest(projects, "updated_at", "created_at"),
+      lastmod: newest(projects, "content_updated_at", "created_at"),
       changefreq: "weekly",
       priority: "0.9",
     },
@@ -141,7 +156,7 @@ async function main() {
     .sort((a, b) => a.slug.localeCompare(b.slug))
     .map((p) => ({
       loc: `${BASE_URL}/portfolio/${p.slug}`,
-      lastmod: day(p.updated_at, p.created_at),
+      lastmod: day(p.content_updated_at, p.created_at),
       changefreq: "monthly",
       priority: "0.7",
     }));
@@ -163,7 +178,7 @@ async function main() {
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([s, h]) => ({
       loc: `${BASE_URL}/reforma/${s}`,
-      lastmod: newest(h.rows, "updated_at", "created_at"),
+      lastmod: newest(h.rows, "content_updated_at", "created_at"),
       changefreq: "monthly",
       priority: "0.8",
     }));
