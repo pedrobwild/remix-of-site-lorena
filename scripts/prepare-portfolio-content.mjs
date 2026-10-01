@@ -11,11 +11,12 @@ const { values } = parseArgs({
     review: { type: "string" },
     report: { type: "string" },
     keywords: { type: "string" },
+    facts: { type: "string" },
   },
 });
 if (!values.input || !values.source) {
   throw new Error(
-    "Use --input textos.json --source cadastro.json [--sql lote.sql --review revisao.md --report validacao.json --keywords palavras-chave.csv]"
+    "Use --input textos.json --source cadastro.json [--facts dados-editoriais.json --sql lote.sql --review revisao.md --report validacao.json --keywords palavras-chave.csv]"
   );
 }
 const entries = JSON.parse(await readFile(values.input, "utf8"));
@@ -24,6 +25,11 @@ if (!Array.isArray(entries) || !entries.length || !Array.isArray(source)) {
   throw new Error("Os textos devem ser uma lista não vazia, e o cadastro deve ser uma lista.");
 }
 const bySlug = new Map(source.map((p) => [p.slug, p]));
+// Dados da planilha revisados por projeto, sem informação pessoal.
+const facts = values.facts ? JSON.parse(await readFile(values.facts, "utf8")) : [];
+if (!Array.isArray(facts) || new Set(facts.map((f) => f.slug)).size !== facts.length)
+  throw new Error("Dados editoriais devem ser uma lista com slugs únicos.");
+const factsBySlug = new Map(facts.map((f) => [f.slug, f]));
 const bodyFields = ["summary", "intro", "challenge", "solution", "result_text"];
 const columns = [...bodyFields, "scope", "seo_title", "seo_description", "cover_alt"];
 const ranges = {
@@ -53,6 +59,7 @@ const paragraphs = new Map();
 for (const entry of entries) {
   const initialErrors = errors.length;
   const p = bySlug.get(entry.slug);
+  const fact = factsBySlug.get(entry.slug);
   if (!p || seen.has(entry.slug)) {
     errors.push(`Slug ausente no cadastro ou repetido: ${entry.slug}`);
     continue;
@@ -68,8 +75,32 @@ for (const entry of entries) {
   const publicText = columns
     .map((field) => (Array.isArray(entry[field]) ? entry[field].join(" ") : entry[field]))
     .join(" ");
-  if (/R\$|\b(?:reais|BDI|markup)\b|São Paulo, São Paulo/i.test(publicText))
-    errors.push(`${entry.slug}: dado financeiro ou duplicação de local`);
+  if (/\b(?:BDI|markup)\b|São Paulo, São Paulo/i.test(publicText))
+    errors.push(`${entry.slug}: dado restrito ou duplicação de local`);
+  const costs = publicText.match(/R\$\s*[\d.]+,\d{2}(?:\s*\/\s*m²)?/g) || [];
+  if (fact) {
+    if (!Number.isFinite(fact.area_m2) || fact.area_m2 <= 0 || !fact.origem)
+      errors.push(`${entry.slug}: área ou origem inválida nos dados editoriais`);
+    const expectedPurpose = fact.finalidade_origem === "planilha"
+      ? fact.finalidade
+      : fact.area_m2 > 32 ? "moradia" : "locação";
+    if (!["moradia", "locação"].includes(fact.finalidade) ||
+        fact.finalidade !== expectedPurpose || entry.finalidade_editorial !== fact.finalidade)
+      errors.push(`${entry.slug}: finalidade diverge dos dados ou da regra de área aprovada`);
+    if (fact.custo_pendente === true) {
+      if (fact.custo_por_m2 != null || /R\$|\breais\b/i.test(publicText))
+        errors.push(`${entry.slug}: custo pendente não pode aparecer no texto público`);
+      warnings.push(`${entry.slug}: custo pendente; registro excluído do SQL de aplicação`);
+    } else if (fact.custo_publico_autorizado !== true ||
+        !/^R\$\s*[\d.]+,\d{2}\/m²$/.test(fact.custo_por_m2 || "") ||
+        costs.length !== 1 || costs[0] !== fact.custo_por_m2)
+      errors.push(`${entry.slug}: custo por m² sem autorização ou diferente da planilha revisada`);
+    if (/R\$|\breais\b/i.test(publicText.replace(fact.custo_por_m2 || "", "")))
+      errors.push(`${entry.slug}: dado financeiro além do custo autorizado`);
+    for (const pending of fact.pendencias || []) warnings.push(`${entry.slug}: ${pending}`);
+  } else if (/R\$|\breais\b/i.test(publicText)) {
+    errors.push(`${entry.slug}: dado financeiro sem planilha revisada e autorização`);
+  }
   if (/\b[A-ZÀ-Ú&0-9]{1,5}\s[-–—]\s/.test(publicText))
     errors.push(`${entry.slug}: possível código interno no texto público`);
   if (
@@ -80,8 +111,10 @@ for (const entry of entries) {
   const areas = [...publicText.matchAll(/(\d+(?:[,.]\d+)?)\s*m²/g)].map((m) =>
     Number(m[1].replace(",", "."))
   );
-  if (areas.some((area) => area !== p.area_m2))
+  if (areas.some((area) => area !== (fact ? fact.area_m2 : p.area_m2)))
     errors.push(`${entry.slug}: metragem sem respaldo no cadastro`);
+  if (fact && !areas.includes(fact.area_m2))
+    errors.push(`${entry.slug}: falta metragem confirmada no texto`);
   const count = words(text).length;
   const min = entry.pouca_variacao_visual ? 150 : 250;
   if (count < min || count > 450)
@@ -163,7 +196,8 @@ if (errors.length) {
         ? `ARRAY[${v.map(literal).join(", ")}]::text[]`
         : `'${String(v).replaceAll("'", "''")}'`;
   if (values.sql) {
-    const updates = entries.map((e) => {
+    const eligible = entries.filter((e) => factsBySlug.get(e.slug)?.custo_pendente !== true);
+    const updates = eligible.map((e) => {
       const old = bySlug.get(e.slug);
       const evidenceFields = [
         "title",
@@ -182,7 +216,7 @@ if (errors.length) {
     });
     await save(
       values.sql,
-      `-- PILOTO PARA REVISÃO DE PEDRO. NÃO APLICADO AO BANCO.\n-- Aplicar somente após aprovação editorial e publicação coordenada por Matheus.\n-- Atualiza apenas os nove campos editoriais; aborta se os textos ou suas evidências divergirem do snapshot fornecido.\nBEGIN;\nDO $portfolio_pilot$\nDECLARE affected integer;\nBEGIN\n${updates.join("\n\n")}\nEND;\n$portfolio_pilot$;\nCOMMIT;\n`
+      `-- PILOTO PARA REVISÃO DE PEDRO. NÃO APLICADO AO BANCO.\n-- Aplicar somente após aprovação editorial, conciliação das pendências do cadastro e publicação coordenada por Matheus.\n-- ${eligible.length} registros elegíveis; ${entries.length - eligible.length} excluído(s) por custo sem correspondência confirmada.\n-- Atualiza apenas os nove campos editoriais; aborta se os textos ou suas evidências divergirem do snapshot fornecido.\nBEGIN;\nDO $portfolio_pilot$\nDECLARE affected integer;\nBEGIN\n${updates.join("\n\n")}\nEND;\n$portfolio_pilot$;\nCOMMIT;\n`
     );
   }
   if (values.review) {
@@ -203,7 +237,7 @@ if (errors.length) {
     });
     await save(
       values.review,
-      `# Bewild: piloto editorial do portfólio\n\nPreparado em 30/09/2026. ${entries.length} projetos para revisão de Pedro; os textos ainda não foram publicados. Bairro e área somente quando constam no cadastro. Materiais são descritos pela aparência quando a especificação não está confirmada.\n\n${blocks.join("\n---\n\n")}\n`
+      `# Bewild: piloto editorial do portfólio\n\nRevisado em 01/10/2026. ${entries.length} projetos para revisão de Pedro; os textos ainda não foram publicados. A narrativa conecta cores, marcenaria e layout à finalidade do imóvel. ${facts.length ? "Área exata e custo por m² vêm da planilha anexada, com publicação do custo autorizada por Pedro. Regra atual: até 32 m², locação; acima de 32 m², moradia. Uma finalidade explícita posterior na planilha prevalece. A correspondência do APSA2 foi confirmada pelo usuário." : "Bairro e área somente quando constam no cadastro."} Materiais são descritos pela aparência quando a especificação não está confirmada.\n\n${facts.length ? "## Dados relacionados aos projetos\n\n| Empreendimento | Área | Custo informado da reforma | Finalidade |\n|---|---:|---:|---|\n" + entries.map(e => { const f = factsBySlug.get(e.slug); return f ? `| ${f.empreendimento_publico} | ${String(f.area_m2).replace(".", ",")} m² | ${f.custo_por_m2 || "A confirmar"} | ${f.finalidade} |` : ""; }).join("\n") + "\n\n## Pendências do cadastro antes da publicação\n\n" + entries.flatMap(e => (factsBySlug.get(e.slug)?.pendencias || []).map(p => `- **${factsBySlug.get(e.slug).empreendimento_publico}:** ${p}`)).join("\n") + "\n\nA planilha não substitui automaticamente as áreas e identificadores do banco. O SQL desta entrega altera somente os nove campos editoriais e deve aguardar a conciliação dessas pendências, aprovação dos textos e aplicação coordenada por Matheus. Valores são informações destes projetos, não preços atuais de contratação.\n\n" : ""}${blocks.join("\n---\n\n")}\n`
     );
   }
   if (values.keywords) {
