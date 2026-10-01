@@ -7,3 +7,9 @@
 - [x] Confirmar que nenhuma alteração externa ao rascunho e roadmap foi feita
 - [x] Informar a versão atual do repositório sem criar commit
 - [x] Preservar o artigo turnkey sem alterações
+- [x] Remover códigos de cliente de todos os campos públicos dos 162 registros
+- [x] Corrigir destinação atribuída quando a área não está confirmada
+- [x] Reescrever preenchimentos artificiais, parágrafos e escopos repetidos
+- [x] Corrigir materiais, serviços e estados de execução não comprovados
+- [x] Conferir cada cover_alt contra a capa efetiva, incluindo os casos apontados
+- [x] Validar novamente os 162 registros e documentar limitações visuais reais
