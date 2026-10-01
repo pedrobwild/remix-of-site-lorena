@@ -79,14 +79,19 @@ for (const entry of entries) {
     errors.push(`${entry.slug}: dado restrito ou duplicação de local`);
   const costs = publicText.match(/R\$\s*[\d.]+,\d{2}(?:\s*\/\s*m²)?/g) || [];
   if (fact) {
-    if (!Number.isFinite(fact.area_m2) || fact.area_m2 <= 0 || !fact.origem)
+    const knownArea = Number.isFinite(fact.area_m2) && fact.area_m2 > 0;
+    const pendingArea = fact.area_m2 == null && fact.finalidade === "não informada" &&
+      fact.custo_pendente === true && fact.pendencias?.length > 0;
+    if ((!knownArea && !pendingArea) || !fact.origem)
       errors.push(`${entry.slug}: área ou origem inválida nos dados editoriais`);
     const expectedPurpose = fact.finalidade_origem === "planilha"
       ? fact.finalidade
-      : fact.area_m2 > 32 ? "moradia" : "locação";
-    if (!["moradia", "locação"].includes(fact.finalidade) ||
+      : knownArea ? fact.area_m2 > 32 ? "moradia" : "locação" : "não informada";
+    if (!["moradia", "locação", "não informada"].includes(fact.finalidade) ||
         fact.finalidade !== expectedPurpose || entry.finalidade_editorial !== fact.finalidade)
       errors.push(`${entry.slug}: finalidade diverge dos dados ou da regra de área aprovada`);
+    if (pendingArea && /Airbnb|locação|hóspede|moradia/i.test(publicText))
+      errors.push(`${entry.slug}: finalidade sem área ou confirmação da planilha`);
     if (fact.custo_pendente === true) {
       if (fact.custo_por_m2 != null || /R\$|\breais\b/i.test(publicText))
         errors.push(`${entry.slug}: custo pendente não pode aparecer no texto público`);
@@ -113,7 +118,7 @@ for (const entry of entries) {
   );
   if (areas.some((area) => area !== (fact ? fact.area_m2 : p.area_m2)))
     errors.push(`${entry.slug}: metragem sem respaldo no cadastro`);
-  if (fact && !areas.includes(fact.area_m2))
+  if (fact && fact.area_m2 != null && !areas.includes(fact.area_m2))
     errors.push(`${entry.slug}: falta metragem confirmada no texto`);
   const count = words(text).length;
   const min = entry.pouca_variacao_visual ? 150 : 250;
