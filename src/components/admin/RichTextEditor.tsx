@@ -98,8 +98,10 @@ export default function RichTextEditor({ value, onChange, onReady, onRequestImag
     };
     editor.on("update", check);
     editor.on("selectionUpdate", check);
-    editor.on("blur", () => setSlash(null));
+    const close = () => setSlash(null);
+    editor.on("blur", close);
     return () => {
+      editor.off("blur", close);
       editor.off("update", check);
       editor.off("selectionUpdate", check);
     };
