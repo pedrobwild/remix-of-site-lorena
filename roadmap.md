@@ -1,9 +1,9 @@
-- [ ] Inventariar os 162 projetos publicados, dados, capas, galerias e descrições existentes
-- [ ] Redigir conteúdo editorial individual para os 162 projetos
-- [ ] Criar content/portfolio/portfolio-editorial-162.json
-- [ ] Validar contagem, limites, campos, unicidade e ausência de dados proibidos
-- [ ] Confirmar que nenhuma alteração externa ao rascunho e roadmap foi feita
-- [ ] Reaproveitar os lotes prontos e concluir 04, 08 e 09
-- [ ] Conferir capas/galerias quando descrições visuais contradisserem os textos
-- [ ] Informar a versão atual do repositório sem criar commit
-- [ ] Preservar o artigo turnkey sem alterações
+- [x] Inventariar os 162 projetos publicados, dados, capas, galerias e descrições existentes
+- [x] Redigir conteúdo editorial individual para os 162 projetos
+- [x] Criar content/portfolio/portfolio-editorial-162.json
+- [x] Validar contagem, limites, campos, unicidade e ausência de dados proibidos
+- [x] Confirmar que nenhuma alteração externa ao rascunho e roadmap foi feita
+- [x] Reaproveitar os lotes prontos e concluir 04, 08 e 09
+- [x] Conferir capas/galerias quando descrições visuais contradisserem os textos
+- [x] Informar a versão atual do repositório sem criar commit
+- [x] Preservar o artigo turnkey sem alterações
