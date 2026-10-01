@@ -672,7 +672,7 @@ export default function BewildPostFormPage({ slug }: Props) {
                 {uploading ? "Enviando…" : "Inserir imagem"}
               </button>
               <span className="hint">
-                Você também pode colar (Ctrl+V) ou arrastar a imagem para dentro do texto.
+                No texto, digite "/" e escolha Upload de imagem; ou cole (Ctrl+V) / arraste a imagem.
               </span>
               <input
                 ref={bodyFileRef}

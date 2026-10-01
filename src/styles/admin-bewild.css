@@ -886,7 +886,7 @@
 /* Editor visual de artigos */
 .bw-rte__modes { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
 .bw-rte__modes .is-active { background: var(--bw-ink, #0f1b2d); color: #fff; }
-.bw-rte { border: 1px solid var(--bw-line); border-radius: 8px; background: #fff; }
+.bw-rte { border: 1px solid var(--bw-line); border-radius: 8px; background: #fff; position: relative; }
 .bw-rte__toolbar { display: flex; flex-wrap: wrap; gap: 2px; padding: 6px; border-bottom: 1px solid var(--bw-line); position: sticky; top: 0; background: #fff; z-index: 2; border-radius: 8px 8px 0 0; }
 .bw-rte__btn { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border: 0; background: transparent; border-radius: 6px; cursor: pointer; color: inherit; }
 .bw-rte__btn:hover { background: #F0F2F4; }
@@ -901,6 +901,11 @@
 .bw-rte__content ol { list-style: decimal; padding-left: 1.4em; }
 .bw-rte__content blockquote { border-left: 3px solid #004C7F; padding-left: 12px; color: #555; }
 .bw-rte__content a { color: #004C7F; text-decoration: underline; }
-.bw-rte__content img { max-width: 100%; height: auto; border-radius: 6px; }
+.bw-rte__content img { display: block; max-width: 100%; height: auto; margin: 1em auto; border-radius: 6px; }
+.bw-rte__slash { position: absolute; z-index: 5; min-width: 260px; background: #fff; border: 1px solid var(--bw-line); border-radius: 8px; box-shadow: 0 8px 24px rgba(15,27,45,.14); padding: 4px; }
+.bw-rte__slash-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px; border: 0; background: #F0F2F4; border-radius: 6px; cursor: pointer; text-align: left; color: inherit; }
+.bw-rte__slash-item:hover, .bw-rte__slash-item:focus-visible { background: #E3ECF5; outline: none; }
+.bw-rte__slash-item strong { display: block; font-size: 14px; }
+.bw-rte__slash-item small { display: block; font-size: 12px; color: #555; }
 .bw-rte__content img.ProseMirror-selectednode { outline: 3px solid #004C7F; }
 .bw-rte__content hr { margin: 1.5em 0; }
