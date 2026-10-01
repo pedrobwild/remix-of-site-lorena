@@ -15,7 +15,9 @@ export function optimizedImageUrl(url: string, width = 1200, quality = 70): stri
 
   const rendered = url.replace(marker, "/storage/v1/render/image/public/project-images/");
   const sep = rendered.includes("?") ? "&" : "?";
-  return `${rendered}${sep}width=${width}&quality=${quality}`;
+  // Sem contain, o Storage pode cortar a largura e manter a altura original.
+  // O enquadramento do grid continua definido por object-fit no CSS.
+  return `${rendered}${sep}width=${width}&quality=${quality}&resize=contain`;
 }
 
 /** Larguras usadas no srcSet das capas do grid do portfólio. */

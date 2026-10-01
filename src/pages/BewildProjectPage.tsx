@@ -18,6 +18,7 @@ import { useImageAlts, type AltMap } from "@/lib/useImageAlts";
 import { projectFriendlyName, projectMetaDescription, projectSeoTitleUnique, type ProjectSeoPeer } from "@/lib/projectSeo";
 import { useProjectSeoPeers } from "@/lib/useProjectSeoPeers";
 import { optimizedImageUrl } from "@/lib/imageUrl";
+import PortfolioImage, { DETAIL_IMAGE_WIDTHS } from "@/components/PortfolioImage";
 
 import NotFoundPage from "@/pages/NotFoundPage";
 import "@/styles/bwh-tokens.css";
@@ -32,6 +33,10 @@ interface Props {
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");
+
+// Mesma largura da .pd-wrap: 18px no celular, 4vw e máximo de 1540px.
+const PAGE_IMAGE_SIZES = "(max-width: 560px) calc(100vw - 36px), (min-width: 1680px) 1540px, 92vw";
+const GALLERY_IMAGE_SIZES = "(max-width: 480px) calc(100vw - 36px), (max-width: 780px) 45vw, (min-width: 1680px) 503px, 30vw";
 
 function IconArrow() {
   return (
@@ -128,7 +133,7 @@ function Lightbox({
       aria-label="Visualizar imagem"
       onClick={onClose}
     >
-      <img className="bw-lightbox__img" src={images[index]} alt={altOf(index)} onClick={(e) => e.stopPropagation()} />
+      <PortfolioImage className="bw-lightbox__img" src={images[index]} alt={altOf(index)} imageWidth={1920} widths={DETAIL_IMAGE_WIDTHS} quality={82} sizes="92vw" onClick={(e) => e.stopPropagation()} />
       <button ref={closeRef} type="button" className="bw-lightbox__btn bw-lightbox__close" aria-label="Fechar" onClick={(e) => { e.stopPropagation(); onClose(); }}>×</button>
       {images.length > 1 && (
         <>
@@ -178,7 +183,16 @@ function GallerySection({
             onClick={() => onOpen(i)}
             aria-label={`${openLabel} ${i + 1}`}
           >
-            <img src={src} alt={alts[src] || `${altPrefix} ${i + 1}`} loading="lazy" decoding="async" />
+            <PortfolioImage
+              src={src}
+              alt={alts[src] || `${altPrefix} ${i + 1}`}
+              imageWidth={i % 5 === 0 && i > 0 ? 1440 : 640}
+              widths={i % 5 === 0 && i > 0 ? DETAIL_IMAGE_WIDTHS : undefined}
+              sizes={i % 5 === 0 && i > 0 ? PAGE_IMAGE_SIZES : GALLERY_IMAGE_SIZES}
+              width={i % 5 === 0 && i > 0 ? 1600 : 800}
+              height={600}
+              loading="lazy"
+            />
             <span className="gno">{pad(i + 1)}</span>
             <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
           </button>
@@ -340,7 +354,7 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
               {hasReady && <span className="pd-pill pd-pill--ready">Obra pronta</span>}
             </div>
           )}
-          <h1>{project.title}</h1>
+          <h1>{projectFriendlyName(project) || project.title}</h1>
           {metaParts.length > 0 && (
             <div className="pd-metaline">{metaParts.map((m, i) => <span key={i}>{m}</span>)}</div>
           )}
@@ -351,16 +365,32 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
       {coverSrc && (
         <div className="pd-coverwrap"><div className="pd-wrap">
           <div className="pd-cover">
-            <img src={coverSrc} alt={project.cover_alt || alts[coverSrc] || `${project.title} — foto principal`} loading="eager" decoding="async" />
+            <PortfolioImage
+              src={coverSrc}
+              alt={project.cover_alt || alts[coverSrc] || `${projectFriendlyName(project)} — imagem principal`}
+              imageWidth={1440}
+              widths={DETAIL_IMAGE_WIDTHS}
+              sizes={PAGE_IMAGE_SIZES}
+              width={1600}
+              height={900}
+              loading="eager"
+              fetchPriority="high"
+            />
             <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
           </div>
         </div></div>
       )}
 
       {/* SUMÁRIO + CASE */}
-      {(project.summary || hasCase) && (
+      {(project.summary || project.intro || hasCase) && (
         <section className="pd-sec"><div className="pd-wrap">
           {project.summary && <p className="pd-intro">{project.summary}</p>}
+          {project.intro && (
+            <div className="pd-description">
+              <h2>Arquitetura e interiores do {projectFriendlyName(project)}</h2>
+              {project.intro.split(/\n\s*\n/).filter((text) => text.trim()).map((text, i) => <p key={i}>{text}</p>)}
+            </div>
+          )}
           {hasCase && (
             <div className="pd-case">
               {project.challenge && (
@@ -382,8 +412,8 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
         <section className="pd-sec pd-sec--tight"><div className="pd-wrap">
           <div className="pd-sechead"><span className="n">A/D</span><h2>Antes e depois</h2><span className="ln" /></div>
           <div className="pd-ba">
-            <div className="pd-ba__frame"><span className="pd-ba__badge">Antes</span><img src={project.before_image_url!} alt={alts[project.before_image_url!] || `Antes da reforma — ${project.title}`} loading="lazy" /></div>
-            <div className="pd-ba__frame"><span className="pd-ba__badge">Depois</span><img src={project.after_image_url!} alt={alts[project.after_image_url!] || `Depois da reforma — ${project.title}`} loading="lazy" /></div>
+            <div className="pd-ba__frame"><span className="pd-ba__badge">Antes</span><PortfolioImage src={project.before_image_url!} alt={alts[project.before_image_url!] || `Antes da reforma — ${projectFriendlyName(project)}`} sizes="(max-width: 680px) 92vw, 45vw" width={800} height={600} loading="lazy" /></div>
+            <div className="pd-ba__frame"><span className="pd-ba__badge">Depois</span><PortfolioImage src={project.after_image_url!} alt={alts[project.after_image_url!] || `Depois da reforma — ${projectFriendlyName(project)}`} sizes="(max-width: 680px) 92vw, 45vw" width={800} height={600} loading="lazy" /></div>
           </div>
         </div></section>
       )}
@@ -416,15 +446,15 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
       {scopeItems.length > 0 && (
         <section className="pd-sec pd-scope-wrap"><div className="pd-wrap">
           <div className="pd-sechead"><span className="n">{pad(scopeItems.length)}</span><h2>{escopoTitulo}</h2><span className="ln" /></div>
-          <div className="pd-scope">
+          <ul className="pd-scope">
             {scopeItems.map((item, i) => (
-              <div className="pd-scope__item" key={item + i}>
+              <li className="pd-scope__item" key={item + i}>
                 <span className="pd-scope__n">{pad(i + 1)}</span>
                 <IconCheck />
                 <span>{item}</span>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </div></section>
       )}
 

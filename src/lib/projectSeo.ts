@@ -15,6 +15,7 @@ export type ProjectSeoInput = {
   project_type?: string | null;
   seo_description?: string | null;
   summary?: string | null;
+  intro?: string | null;
   seo_title?: string | null;
   /** Fase: "em_projeto", "em_obra" ou vazio/"entregue". */
   status?: string | null;
@@ -93,6 +94,12 @@ export function clampDescription(value: string, max = DESCRIPTION_MAX): string {
 
 const placeLabel = (p: ProjectSeoInput) => (p.neighborhood || p.location || "").trim();
 
+/** Texto editorial sem prefixo interno tem prioridade sobre os modelos legados. */
+function editorialTitle(p: ProjectSeoInput): string {
+  const raw = (p.seo_title || "").trim();
+  return raw && stripProjectCode(raw) === raw ? raw : "";
+}
+
 /**
  * Título do Google: o que interessa primeiro (reforma + metragem + bairro) e,
  * quando couber, o nome do projeto — nunca o código interno do negócio.
@@ -100,9 +107,8 @@ const placeLabel = (p: ProjectSeoInput) => (p.neighborhood || p.location || "").
 export function projectSeoTitle(p: ProjectSeoInput | null | undefined): string {
   if (!p) return "Reforma de apartamento em São Paulo | Bewild";
 
-  const explicit = stripProjectCode((p.seo_title || "").trim());
-  // Título escrito à mão (sem o código gerado) e já com contexto de busca: respeita.
-  if (explicit && explicit === (p.seo_title || "").trim() && hasSearchContext(explicit)) return explicit;
+  const explicit = editorialTitle(p);
+  if (explicit) return explicit;
 
   const suffix = " | Bewild";
   const area = areaLabel(p);
@@ -128,6 +134,9 @@ export function projectMetaDescription(
   fallback: string,
 ): string {
   if (!p) return fallback;
+  // Uma descrição escrita para esta página não recebe frases genéricas extras.
+  const editorial = (p.seo_description || "").trim();
+  if (editorial && stripProjectCode(editorial) === editorial) return clampDescription(editorial);
   const raw = stripProjectCode((p.seo_description || p.summary || "").trim());
   // "GO BALKON: reforma de…" → o nome do projeto já está no título, sai da descrição.
   const explicit = stripProjectCode(raw.replace(/^[A-ZÀ-Ú0-9][^.:a-zà-ú]{0,59}:\s*/, ""));
@@ -186,6 +195,7 @@ export function projectSeoTitleUnique(
 ): string {
   const base = projectSeoTitle(p);
   if (!p) return base;
+  if (editorialTitle(p)) return base;
 
   const group = peers.filter((o) => o.id !== p.id && projectSeoTitle(o) === base);
   if (group.length === 0) return base;

@@ -15,6 +15,7 @@ export type BewildProjectFull = {
   area_m2: number | null;
   duration: string | null;
   summary: string | null;
+  intro?: string | null;
   challenge: string | null;
   solution: string | null;
   result_text: string | null;
@@ -35,7 +36,7 @@ export type BewildProjectFull = {
 
 export const PROJECT_COLUMNS =
   "id, slug, title, project_type, status, neighborhood, location, area_m2, duration, " +
-  "summary, challenge, solution, result_text, scope, testimonial, testimonial_author, " +
+  "summary, intro, challenge, solution, result_text, scope, testimonial, testimonial_author, " +
   "cover_url, cover_alt, before_image_url, after_image_url, gallery_urls, ready_gallery_urls, " +
   "og_image_url, seo_title, seo_description";
 

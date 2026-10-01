@@ -13,7 +13,7 @@ vi.mock("@/integrations/supabase/client", () => ({
 }));
 
 import { seoHead } from "../routeHead";
-import { postJsonLd, postListJsonLd } from "../contentJsonLd";
+import { postJsonLd, postListJsonLd, projectPageJsonLd } from "../contentJsonLd";
 import type { BewildPost } from "../useBewildPosts";
 
 const post = {
@@ -36,6 +36,14 @@ function typesOf(scripts: Array<{ children: string }>) {
 }
 
 describe("JSON-LD no head() sem duplicação", () => {
+  it("projeto usa o conteúdo visível completo, sem limitar à meta description", () => {
+    const summary = "Studio com armários verdes e cabeceira de madeira.";
+    const intro = "Cozinha linear com bancada escura. " + "Descrição arquitetônica do espaço. ".repeat(6);
+    const [ld] = projectPageJsonLd({ slug: "studio", title: "AB - STUDIO", summary, intro, seo_description: "Meta curta." });
+    expect(ld["@type"]).toBe("CreativeWork");
+    expect(ld.description).toBe(`${summary} ${intro}`.trim());
+    expect(ld.name).toBe("Studio");
+  });
   it("post: WebPage + Article (Person) + FAQPage, cada @type uma vez, sem BreadcrumbList solta", () => {
     const { scripts } = seoHead({ title: "T | Bewild", description: "D", path: "/conteudos/o-que-e-short-stay", jsonLd: postJsonLd(post) });
     const types = typesOf(scripts);
