@@ -25,6 +25,7 @@ A Bewild é uma empresa de reforma completa de apartamentos e studios em São Pa
 ## Conteúdos publicados
 
 <!-- posts:start -->
+- [Quanto custa reformar um apartamento ou studio de até 50 m²: análise de 188 contratos de clientes Bewild](/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2)
 - [Reformar apartamento morando nele: dá para ficar durante a obra?](/conteudos/reformar-apartamento-morando-nele)
 - [Antes e depois: um studio de 26 m² na Vila Madalena, da medição à entrega](/conteudos/antes-e-depois-studio-26-m2-vila-madalena)
 - [Estudo de layout: como planejamos um studio de 25 m² antes do 3D](/conteudos/estudo-de-layout-studio-25-m2)
