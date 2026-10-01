@@ -3,3 +3,7 @@
 - [ ] Criar content/portfolio/portfolio-editorial-162.json
 - [ ] Validar contagem, limites, campos, unicidade e ausência de dados proibidos
 - [ ] Confirmar que nenhuma alteração externa ao rascunho e roadmap foi feita
+- [ ] Reaproveitar os lotes prontos e concluir 04, 08 e 09
+- [ ] Conferir capas/galerias quando descrições visuais contradisserem os textos
+- [ ] Informar a versão atual do repositório sem criar commit
+- [ ] Preservar o artigo turnkey sem alterações
