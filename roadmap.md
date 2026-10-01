@@ -1,9 +1,9 @@
 - [x] Inventariar os 162 projetos publicados, dados, capas, galerias e descrições existentes
 - [x] Redigir conteúdo editorial individual para os 162 projetos
 - [x] Criar content/portfolio/portfolio-editorial-162.json
-- [ ] Auditar capas e variedade das galerias reais contra cada texto
-- [ ] Corrigir divergências visuais, linguagem técnica indevida e frases de preenchimento
-- [ ] Validar 162 slugs, limites, unicidade, privacidade e ausência de repetições
-- [ ] Confirmar que nenhuma alteração externa ao rascunho e roadmap foi feita
-- [ ] Informar a versão atual do repositório sem criar commit
+- [x] Auditar capas e variedade das galerias reais contra cada texto
+- [x] Corrigir divergências visuais, linguagem técnica indevida e frases de preenchimento
+- [x] Validar 162 slugs, limites, unicidade, privacidade e ausência de repetições
+- [x] Confirmar que nenhuma alteração externa ao rascunho e roadmap foi feita
+- [x] Informar a versão atual do repositório sem criar commit
 - [x] Preservar o artigo turnkey sem alterações
