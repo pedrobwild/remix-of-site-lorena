@@ -9,6 +9,7 @@ import {
   Scripts,
   useLocation,
   useRouter,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 
 import CookieBanner from "@/components/CookieBanner";
@@ -263,7 +264,7 @@ function RootComponent() {
   );
 }
 
-function RootErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function RootErrorComponent({ error, reset }: ErrorComponentProps) {
   const router = useRouter();
   useEffect(() => {
     console.error(error);
