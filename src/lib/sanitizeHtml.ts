@@ -77,10 +77,17 @@ const ALLOWED_TAGS = [
   "tr",
   "u",
   "ul",
+  "video",
 ];
 
 const ALLOWED_ATTR = [
   "alt",
+  "aria-label",
+  "controls",
+  "muted",
+  "playsinline",
+  "poster",
+  "preload",
   "colspan",
   "decoding",
   "fetchpriority",
@@ -166,7 +173,7 @@ function getServerFilter(): FilterXSS {
     allowCommentTag: false,
     css: false,
     safeAttrValue(_tag: string, name: string, value: string) {
-      if (name === "href" || name === "src") {
+      if (name === "href" || name === "src" || name === "poster") {
         return isSafeUrl(value) ? escapeAttrValue(friendlyAttrValue(value)) : "";
       }
       if (name === "srcset") {

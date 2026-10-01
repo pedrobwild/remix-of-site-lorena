@@ -120,3 +120,35 @@ describe("sanitizeBlogHtml — reverse tabnabbing", () => {
     expect(out).not.toMatch(/rel=/);
   });
 });
+
+describe("sanitizeBlogHtml — vídeo", () => {
+  const VIDEO = `<figure>
+  <video controls playsinline preload="none" poster="/videos/quanto-custa-reformar-ate-50m2-poster.jpg" width="1920" height="1080" aria-label="Vídeo: resumo da análise">
+    <source src="/videos/quanto-custa-reformar-ate-50m2.mp4" type="video/mp4">
+  </video>
+  <figcaption>legenda</figcaption>
+</figure>`;
+  it("mantém o vídeo com controls, playsinline, preload, poster e source", () => {
+    const out = sanitizeBlogHtml(VIDEO);
+    expect(out).toMatch(/<video\b[^>]*\scontrols\b/);
+    expect(out).toMatch(/\splaysinline\b/);
+    expect(out).toContain('preload="none"');
+    expect(out).toContain('poster="/videos/quanto-custa-reformar-ate-50m2-poster.jpg"');
+    expect(out).toContain('aria-label="Vídeo: resumo da análise"');
+    expect(out).toContain('<source src="/videos/quanto-custa-reformar-ate-50m2.mp4" type="video/mp4">');
+    expect(out).toContain("<figcaption>legenda</figcaption>");
+  });
+  it("remove autoplay e loop", () => {
+    const out = sanitizeBlogHtml('<video autoplay loop muted controls src="/v.mp4"></video>');
+    expect(out).not.toMatch(/autoplay|loop/);
+    expect(out).toMatch(/\smuted\b/);
+  });
+  it("remove poster javascript:", () => {
+    const out = sanitizeBlogHtml('<video poster="javascript:alert(1)"></video>');
+    expect(out).not.toMatch(/javascript:/i);
+    expect(out).not.toMatch(/poster="[^"]+"/);
+  });
+  it("continua removendo iframe", () => {
+    expect(sanitizeBlogHtml('<p>a</p><iframe src="https://x.com"></iframe>')).not.toMatch(/<iframe/i);
+  });
+});
