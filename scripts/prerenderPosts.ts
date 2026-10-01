@@ -48,11 +48,12 @@ export const POST_ALLOWED_TAGS = [
   "del", "em", "figcaption", "figure", "h2", "h3", "h4", "h5", "h6", "hr", "i", "img",
   "ins", "kbd", "li", "mark", "ol", "p", "picture", "pre", "q", "s", "small", "source",
   "span", "strong", "sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr",
-  "u", "ul",
+  "u", "ul", "video",
 ];
 
 export const POST_ALLOWED_ATTR = [
-  "alt", "colspan", "decoding", "fetchpriority", "height", "href", "loading", "media",
+  "alt", "aria-label", "controls", "muted", "playsinline", "poster", "preload",
+  "colspan", "decoding", "fetchpriority", "height", "href", "loading", "media",
   "rel", "rowspan", "scope", "sizes", "src", "span", "srcset", "target", "title", "type",
   "width",
 ];
