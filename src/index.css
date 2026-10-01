@@ -58,14 +58,6 @@
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 html {
   font-size: 16px;
   background: var(--ink);
@@ -93,6 +85,19 @@ body {
   color: var(--ink);
 }
 
+/* Resets de elemento ficam em @layer base: com o Tailwind v4 (camadas nativas)
+   CSS fora de camada vence QUALQUER utilitário, e este reset zerava p-*, m-*,
+   bg-*, text-* em todo o site (ex.: /guia-do-investidor). Na camada base o
+   utilitário volta a vencer, como era no Tailwind v3 por especificidade. */
+@layer base {
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 img, video { max-width: 100%; display: block; }
 
 a {
@@ -106,6 +111,7 @@ button {
   background: none;
   border: none;
   color: inherit;
+}
 }
 
 /* ---------- Skip link (acessibilidade) ---------- */
@@ -2255,11 +2261,13 @@ main:focus { outline: none; }
    Padrão WCAG 2.4.7: foco visível em TODOS elementos interativos, com contraste
    suficiente (>=3:1) tanto no fundo escuro (--ink) quanto sobre imagens/overlays.
    Mantemos o ring branco com halo escuro para visibilidade universal. */
+@layer base {
 :focus-visible {
   outline: 2px solid var(--bone);
   outline-offset: 3px;
   box-shadow: 0 0 0 4px rgba(10, 10, 10, 0.55);
   border-radius: 2px;
+}
 }
 
 
@@ -2400,11 +2408,16 @@ main:focus { outline: none; }
   .footer__bottom { flex-direction: column; align-items: flex-start; gap: 0.75rem; padding-top: 2rem; font-size: 0.72rem; }
 
   /* ---------- Touch targets minimums ---------- */
-  a, button { min-height: 44px; }
   .footer__col a, .nav__brand, .project-card a { min-height: unset; } /* inline text links */
 
   /* ---------- Prevent accidental horizontal scroll ---------- */
   html, body { max-width: 100vw; overflow-x: clip; }
+}
+
+@layer base {
+  @media (max-width: 768px) {
+    a, button { min-height: 44px; } /* toque mínimo (camada base: utilitários vencem) */
+  }
 }
 
 /* Extra tight viewports */
@@ -7047,4 +7060,4 @@ textarea.admin-field__input {
   .bwa-menu-button { display: grid; justify-self: end; }
 }
 .bwa-mobile-menu { position: fixed; display: none; }
-body, main { margin: 0; }
+@layer base { body, main { margin: 0; } }

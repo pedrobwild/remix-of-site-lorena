@@ -37,6 +37,7 @@ import NeighborhoodComparison from "@/guia/components/mapa/NeighborhoodCompariso
 import ReactMap, { Marker, Popup, NavigationControl, Source, Layer, MapRef } from "react-map-gl/maplibre";
 import type { MapLayerMouseEvent, GeoJSONSource, ExpressionSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import "@/guia/lib/maplibreWorker";
 
 /* ─── Configuração ─── */
 

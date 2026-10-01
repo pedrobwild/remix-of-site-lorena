@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
-import bewildLogo from "@/guia/assets/bewild-logo.png.asset.json";
 import { SECTIONS, PHASES } from "@/guia/data/guide-data";
 
 interface Props {
@@ -65,24 +64,10 @@ export default function TableOfContents({ activeId, visitedSections }: Props) {
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setExpanded(false);
       }}
-      className={`hidden lg:flex flex-col fixed left-0 top-0 h-screen overflow-y-auto overflow-x-hidden border-r border-border/60 bg-card/95 backdrop-blur-md z-30 scrollbar-thin py-5 transition-all duration-300 ease-in-out ${
+      className={`hidden lg:flex flex-col fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden border-r border-border/60 bg-card/95 backdrop-blur-md z-30 scrollbar-thin py-5 transition-all duration-300 ease-in-out ${
         expanded ? "w-60 px-3" : "w-[60px] px-2"
       }`}
     >
-      {/* Logo */}
-      <div className={`mb-5 flex items-center ${expanded ? "px-2" : "justify-center"}`}>
-        {expanded ? (
-          <img src={bewildLogo.url} alt="Bewild" className="h-7 w-auto" />
-        ) : (
-          <img
-            src={bewildLogo.url}
-            alt="Bewild"
-            className="h-6 w-6 object-contain object-left"
-            style={{ clipPath: "inset(0 60% 0 0)" }}
-          />
-        )}
-      </div>
-
       <ul className="space-y-0.5 flex-1">
         {/* Hero */}
         {heroSections.map((s) => {

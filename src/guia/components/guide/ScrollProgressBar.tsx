@@ -36,7 +36,7 @@ export default function ScrollProgressBar({ onProgress }: { onProgress?: (percen
   }, []);
 
   return (
-    <div className="fixed top-0 lg:left-[60px] left-0 right-0 h-1 bg-muted z-40 overflow-hidden" aria-hidden="true">
+    <div className="fixed top-0 left-0 right-0 h-1 bg-muted z-50 overflow-hidden" aria-hidden="true">
       <div
         ref={barRef}
         className="h-full w-full origin-left bg-primary will-change-transform"
