@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/guia/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/guia/components/ui/sheet";
 import { Menu, ChevronDown } from "lucide-react";
-import bewildLogo from "@/guia/assets/bewild-logo.png.asset.json";
+import BewildLogo from "@/components/BewildLogo";
 import { SECTIONS, PHASES } from "@/guia/data/guide-data";
 
 interface Props {
@@ -52,7 +52,7 @@ export default function MobileMenu({ activeId, sectionIndex, sectionCount }: Pro
   return (
     <div className="lg:hidden fixed top-0 left-0 right-0 z-40 glass-nav px-4 py-3 flex items-center justify-between">
       <a href="/" aria-label="Bewild — voltar para o site" className="shrink-0">
-        <img src={bewildLogo.url} alt="Bewild" className="h-7 w-auto" />
+        <BewildLogo className="h-7 w-auto" />
       </a>
       <div className="flex items-center gap-2">
         <span className="text-xs text-muted-foreground bg-muted/60 rounded-full px-2.5 py-0.5" aria-label={`Seção ${sectionIndex} de ${sectionCount}`}>
@@ -76,7 +76,7 @@ export default function MobileMenu({ activeId, sectionIndex, sectionCount }: Pro
           <SheetHeader className="px-4 pt-5 pb-3 border-b border-border/60">
             <SheetTitle className="flex items-center gap-2">
               <a href="/" onClick={() => setOpen(false)} aria-label="Bewild — voltar para o site">
-                <img src={bewildLogo.url} alt="Bewild" className="h-7 w-auto" />
+                <BewildLogo className="h-7 w-auto" />
               </a>
             </SheetTitle>
           </SheetHeader>

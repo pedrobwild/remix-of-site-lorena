@@ -14,6 +14,7 @@ vi.mock("react-map-gl/maplibre", () => {
   return { default: Passa, Marker: Passa, Popup: Nada, NavigationControl: Nada, Source: Nada, Layer: Nada };
 });
 vi.mock("maplibre-gl/dist/maplibre-gl.css", () => ({}));
+vi.mock("@/guia/lib/maplibreWorker", () => ({}));
 
 /** Nomes dos pinos do mapa (botões "Nome, score N. Selecionar bairro"), em ordem alfabética. */
 const pinos = () =>
