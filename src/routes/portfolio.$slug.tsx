@@ -3,13 +3,14 @@ import BewildProjectPage from "@/pages/BewildProjectPage";
 import { seoHead } from "@/lib/routeHead";
 import { loadProjectContent } from "@/lib/contentLoaders";
 import { projectPageJsonLd } from "@/lib/contentJsonLd";
+import { projectCoverImage, WIDE_SIZES } from "@/lib/imageUrl";
 
 export const Route = createFileRoute("/portfolio/$slug")({
   loader: ({ params }) => loadProjectContent(params.slug),
   component: RouteComponent,
   head: ({ loaderData: ld, params }) => {
     const loaderData = ld?.seo;
-    return seoHead({
+    const head = seoHead({
       title: loaderData?.title ?? "Reforma de apartamento em São Paulo | Bewild",
       description:
         loaderData?.description ??
@@ -19,6 +20,23 @@ export const Route = createFileRoute("/portfolio/$slug")({
       noindex: !ld || loaderData?.notFound,
       jsonLd: ld?.project ? projectPageJsonLd(ld.project) : null,
     });
+    // Capa = maior elemento visível (LCP): o navegador começa a baixá-la junto
+    // com o HTML, antes do JS. Mesma regra de fallback da página (1ª da galeria).
+    const cover = ld?.project?.cover_url || ld?.project?.gallery_urls?.find((u) => !!u?.trim());
+    if (cover) {
+      const { src, srcSet } = projectCoverImage(cover);
+      head.links = [
+        ...head.links,
+        {
+          rel: "preload",
+          as: "image",
+          href: src,
+          ...(srcSet ? { imageSrcSet: srcSet, imageSizes: WIDE_SIZES } : {}),
+          fetchPriority: "high",
+        },
+      ];
+    }
+    return head;
   },
 });
 

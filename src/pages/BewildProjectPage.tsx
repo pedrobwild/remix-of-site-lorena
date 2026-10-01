@@ -17,7 +17,17 @@ import { readyPhotos, renderPhotos } from "@/lib/projectPhotos";
 import { useImageAlts, type AltMap } from "@/lib/useImageAlts";
 import { projectFriendlyName, projectMetaDescription, projectSeoTitleUnique, type ProjectSeoPeer } from "@/lib/projectSeo";
 import { useProjectSeoPeers } from "@/lib/useProjectSeoPeers";
-import { optimizedImageUrl } from "@/lib/imageUrl";
+import {
+  optimizedImageUrl,
+  responsiveImage,
+  GALLERY_WIDTHS,
+  GALLERY_SIZES,
+  WIDE_WIDTHS,
+  WIDE_SIZES,
+  HALF_SIZES,
+  LIGHTBOX_WIDTHS,
+  projectCoverImage,
+} from "@/lib/imageUrl";
 
 import NotFoundPage from "@/pages/NotFoundPage";
 import "@/styles/bwh-tokens.css";
@@ -32,6 +42,12 @@ interface Props {
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");
+
+/** Item largo da galeria (ocupa a linha toda): a cada 5, exceto o 1º. */
+const isWide = (i: number) => i % 5 === 0 && i > 0;
+
+/** Foto em tela cheia: versão grande, mas ainda redimensionada (q 80). */
+const lightboxImage = (url: string) => responsiveImage(url, LIGHTBOX_WIDTHS, 1920, 80);
 
 function IconArrow() {
   return (
@@ -73,6 +89,18 @@ function Lightbox({
 }) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+
+  // Pré-carrega a anterior e a próxima: as setas trocam de foto sem espera.
+  useEffect(() => {
+    if (images.length < 2) return;
+    for (const i of [index + 1, index - 1]) {
+      const { src, srcSet } = lightboxImage(images[(i + images.length) % images.length]);
+      const img = new Image();
+      img.sizes = "100vw";
+      if (srcSet) img.srcset = srcSet;
+      img.src = src;
+    }
+  }, [images, index]);
 
   // Rolagem da página travada enquanto aberto; foco entra e depois volta.
   useEffect(() => {
@@ -128,7 +156,14 @@ function Lightbox({
       aria-label="Visualizar imagem"
       onClick={onClose}
     >
-      <img className="bw-lightbox__img" src={images[index]} alt={altOf(index)} onClick={(e) => e.stopPropagation()} />
+      <img
+        className="bw-lightbox__img"
+        {...lightboxImage(images[index])}
+        sizes="100vw"
+        alt={altOf(index)}
+        decoding="async"
+        onClick={(e) => e.stopPropagation()}
+      />
       <button ref={closeRef} type="button" className="bw-lightbox__btn bw-lightbox__close" aria-label="Fechar" onClick={(e) => { e.stopPropagation(); onClose(); }}>×</button>
       {images.length > 1 && (
         <>
@@ -174,11 +209,19 @@ function GallerySection({
           <button
             key={src + i}
             type="button"
-            className={"pd-gitem" + (i % 5 === 0 && i > 0 ? " pd-gitem--wide" : "")}
+            className={"pd-gitem" + (isWide(i) ? " pd-gitem--wide" : "")}
             onClick={() => onOpen(i)}
             aria-label={`${openLabel} ${i + 1}`}
           >
-            <img src={src} alt={alts[src] || `${altPrefix} ${i + 1}`} loading="lazy" decoding="async" />
+            <img
+              {...(isWide(i)
+                ? responsiveImage(src, WIDE_WIDTHS, 1280)
+                : responsiveImage(src, GALLERY_WIDTHS, 640))}
+              sizes={isWide(i) ? WIDE_SIZES : GALLERY_SIZES}
+              alt={alts[src] || `${altPrefix} ${i + 1}`}
+              loading="lazy"
+              decoding="async"
+            />
             <span className="gno">{pad(i + 1)}</span>
             <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
           </button>
@@ -351,7 +394,14 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
       {coverSrc && (
         <div className="pd-coverwrap"><div className="pd-wrap">
           <div className="pd-cover">
-            <img src={coverSrc} alt={project.cover_alt || alts[coverSrc] || `${project.title} — foto principal`} loading="eager" decoding="async" />
+            <img
+              {...projectCoverImage(coverSrc)}
+              sizes={WIDE_SIZES}
+              alt={project.cover_alt || alts[coverSrc] || `${project.title} — foto principal`}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+            />
             <i className="tk tl" /><i className="tk tr" /><i className="tk bl" /><i className="tk br" />
           </div>
         </div></div>
@@ -382,8 +432,8 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
         <section className="pd-sec pd-sec--tight"><div className="pd-wrap">
           <div className="pd-sechead"><span className="n">A/D</span><h2>Antes e depois</h2><span className="ln" /></div>
           <div className="pd-ba">
-            <div className="pd-ba__frame"><span className="pd-ba__badge">Antes</span><img src={project.before_image_url!} alt={alts[project.before_image_url!] || `Antes da reforma — ${project.title}`} loading="lazy" /></div>
-            <div className="pd-ba__frame"><span className="pd-ba__badge">Depois</span><img src={project.after_image_url!} alt={alts[project.after_image_url!] || `Depois da reforma — ${project.title}`} loading="lazy" /></div>
+            <div className="pd-ba__frame"><span className="pd-ba__badge">Antes</span><img {...responsiveImage(project.before_image_url!, GALLERY_WIDTHS, 960)} sizes={HALF_SIZES} decoding="async" alt={alts[project.before_image_url!] || `Antes da reforma — ${project.title}`} loading="lazy" /></div>
+            <div className="pd-ba__frame"><span className="pd-ba__badge">Depois</span><img {...responsiveImage(project.after_image_url!, GALLERY_WIDTHS, 960)} sizes={HALF_SIZES} decoding="async" alt={alts[project.after_image_url!] || `Depois da reforma — ${project.title}`} loading="lazy" /></div>
           </div>
         </div></section>
       )}

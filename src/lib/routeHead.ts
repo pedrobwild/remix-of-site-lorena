@@ -139,7 +139,7 @@ export function seoHead(input: SeoHeadInput) {
 
   // Canonical + hreflang só em páginas indexáveis (o __root não emite
   // canonical: <link> não deduplica entre root e rota).
-  const links = input.noindex
+  const links: Array<Record<string, string>> = input.noindex
     ? []
     : [
         { rel: "canonical", href: canonical },
