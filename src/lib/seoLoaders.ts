@@ -1,3 +1,4 @@
+import { optimizedImageUrl } from "./imageUrl";
 /**
  * Loaders de SEO das rotas dinâmicas (projeto, artigo, bairro): buscam o
  * mínimo no banco para o `head()` sair certo no HTML bruto (SSR). As páginas
@@ -152,7 +153,8 @@ export function projectSeoFrom(p: ProjectSeoRow | null, peers: ProjectSeoPeer[],
       p,
       "Reforma de apartamento em São Paulo com projeto, obra e marcenaria pela Bewild.",
     ),
-    ogImage: p.og_image_url || p.cover_url || null,
+    // Capa original tem ~3 MB; redes sociais recebem a versão de 1200 px.
+    ogImage: p.og_image_url || (p.cover_url ? optimizedImageUrl(p.cover_url, 1200, 80) : null),
   };
 }
 

@@ -31,7 +31,7 @@ const LOCAL_DESCRIPTION =
   "Reforma de apartamento em São Paulo pela Bewild, com entrega do apartamento pronto para morar ou rentabilizar.";
 
 /** Código interno do negócio no começo do nome: "AB - ", "B&F — ", "SX -". */
-const CODE_PREFIX = /^[A-ZÀ-Ú][A-ZÀ-Ú&0-9]{0,4}\s*[-–—]\s*/;
+const CODE_PREFIX = /^(?:[A-ZÀ-Ú][A-ZÀ-Ú&0-9]{0,4}\s*[-–—]|[A-ZÀ-Ú][A-Za-zÀ-ú&0-9()]{0,4}\s*·)\s*/;
 
 /** Remove o código interno: ele não diz nada para quem vê o resultado no Google. */
 export function stripProjectCode(value: string): string {
@@ -133,6 +133,11 @@ export function projectMetaDescription(
 
   if (explicit) {
     const sentence = explicit.charAt(0).toUpperCase() + explicit.slice(1);
+    // Metragem exata do cadastro (ex.: 28,21 m²) abre a descrição quando o texto não a cita.
+    const area = areaLabel(p);
+    if (area && !/m²|m2\b/i.test(sentence)) {
+      return clampDescription(`Projeto de ${area}. ${sentence}`);
+    }
     return clampDescription(hasSearchContext(sentence) ? sentence : `${sentence} ${LOCAL_DESCRIPTION}`);
   }
 
