@@ -4,22 +4,24 @@
 
 - `portfolio-bewild-162-revisado.json`: os nove campos editoriais por slug, nome público do empreendimento, finalidade e palavras-chave. Contém somente conteúdo destinado ao site; notas internas e dados privados ficam fora deste arquivo.
 - `palavras-chave-portfolio-162.csv`: sugestões editoriais para validação no Google Ads; não são resultados de pesquisa de volume nem campanhas ativadas.
-- `aplicacao-editorial-141-REVISAR.sql`: aplicação transacional preparada para revisão, **não executada**. Altera somente os nove campos editoriais de 141 registros com custo confirmado. Guardas de integridade impedem sobrescrever cadastro, imagens ou textos alterados desde a preparação.
-- `../blog/artigo-turnkey-rascunho-cms.json`: versão corrigida do artigo com base na planilha XLSX. O artigo existente já foi publicado por Matheus; esta cópia mantém `published=false` para revisão e não deve criar outro artigo nem alterar o estado de publicação. As correções de números ainda não foram aplicadas ao CMS publicado.
+- `aplicacao-editorial-141-REVISAR.sql`: **arquivo histórico obsoleto, não executar**. Não foi executado: a aplicação definitiva utilizou um snapshot novo, novas guardas e reconciliação de áreas. As guardas deste arquivo antecedem as alterações já realizadas.
+- `../blog/artigo-turnkey-rascunho-cms.json`: cópia editorial do artigo corrigido com base na planilha XLSX. O corpo e o FAQ foram aplicados ao artigo existente em 02/10/2026, preservando sua publicação. Esta cópia mantém `published=false` como marca de revisão; não criar outro artigo nem alterar o estado de publicação a partir dela.
 
-## Conferências necessárias para publicação
+## Aplicação concluída em 02/10/2026
 
 Fonte financeira: planilha `valores_contratos_clientes_completo.xlsx` enviada por Pedro em 01/10/2026, aba Contratos. Os textos incluem apenas custo de reforma por m² autorizado, sem orçamento total, dados de clientes ou composição comercial. 141 custos estão validados e 148 áreas estão informadas: 142 áreas de contratos associados, duas com área coincidente nos contratos candidatos e quatro ainda provenientes do cadastro; 21 custos e 14 áreas aguardam identificação/conferência. Nessas lacunas, os textos omitem os dados. Finalidade segue a regra definida por Pedro: até 32 m², locação; acima de 32 m², moradia. Uma finalidade explícita futura na planilha prevalece.
 
-135 registros possuem área ausente ou diferente no cadastro atual (80 ausentes e 55 diferentes): reconciliar o cadastro com a planilha antes de publicar, para que cartões, filtros, dados estruturados e narrativa concordem. O SQL não realiza essa conciliação. Depois de alterar o cadastro, regenerar as guardas com um snapshot atual e repetir a validação, pois as guardas anteriores devem bloquear a aplicação.
+135 metragens foram reconciliadas com a planilha (80 antes ausentes e 55 diferentes). O cadastro aceita duas casas decimais e a exibição usa o formato pt-BR. As 144 áreas corroboradas pela base conferem após a aplicação; quatro áreas do cadastro foram preservadas e 14 continuam ausentes.
 
-Apenas nove campos editoriais são atualizados pelo SQL: summary, intro, challenge, solution, result_text, scope, seo_title, seo_description e cover_alt. A aplicação pode preencher páginas existentes; não cria uma camada de rascunhos no CMS de projetos. Matheus deve coordenar a aplicação com a publicação após a revisão. Nenhuma alteração de banco de projetos, artigo publicado, estado de publicação, deploy ou ativação de campanha foi realizada nesta revisão.
+Pedro autorizou a aplicação diretamente. A transação definitiva atualizou apenas diferenças nos nove campos editoriais (summary, intro, challenge, solution, result_text, scope, seo_title, seo_description e cover_alt) e nas metragens corroboradas: 140 registros precisaram de atualização, com complementação editorial em 66 e correção de área em 135. Após a aplicação, os 1.458 campos editoriais dos 162 projetos conferem com o conteúdo aprovado. Imagens, títulos públicos e flags de publicação e visibilidade foram preservados. Nenhuma campanha foi ativada.
+
+O artigo existente recebeu os números e o FAQ corrigidos. O ajuste técnico que exibe a introdução arquitetônica e mantém as casas decimais foi publicado pelo Lovable; o HTML público de uma ficha foi conferido com os novos parágrafos, a área de 27,75 m² e o custo de R$ 2.882,88/m². Commit técnico: `4f23ebdf64f754986b690802331bd2aee7c68725`. Validações: 969 testes aprovados, cinco previamente ignorados, typecheck e lint sem erros.
 
 ## Validação
 
 162 slugs únicos e correspondentes ao portfólio; todos os nove campos preenchidos; nenhum parágrafo integral repetido, título de SEO idêntico ou escopo integral duplicado. Corpos de 288–397 palavras. Títulos de SEO até 65 caracteres; descrições de 120–158; alternativas das capas de 80–140. Custos e áreas conferidos contra os dados editoriais confirmados, fases de obra respeitadas e campos financeiros não autorizados ausentes. Os alertas remanescentes são conferências de cadastro, dados pendentes e referências de extensão por seção, sem erros bloqueantes.
 
-A publicação e os resultados de SEO dependem da aplicação no site e da indexação posterior pelos buscadores.
+Os resultados de SEO dependem da indexação posterior pelos buscadores; a aplicação não garante posição nas buscas.
 
 ## Correções com a base XLSX
 
