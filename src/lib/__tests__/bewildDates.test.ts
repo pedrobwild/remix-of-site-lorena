@@ -69,7 +69,7 @@ describe("formatAreaM2", () => {
   it("formata em pt-BR", () => {
     expect(formatAreaM2(27.5)).toBe("27,5 m²");
     expect(formatAreaM2(42)).toBe("42 m²");
-    expect(formatAreaM2(33.333)).toBe("33,3 m²");
+    expect(formatAreaM2(33.333)).toBe("33,33 m²");
   });
 
   it("ausente/inválido → null", () => {

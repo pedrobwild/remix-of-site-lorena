@@ -1,3 +1,4 @@
+import { formatAreaM2 } from "@/lib/formatArea";
 /**
  * BairroPage — /reforma/<bairro>. Lista os projetos reais entregues num
  * bairro de São Paulo (só bairros com MIN_PROJECTS_PER_NEIGHBORHOOD+).
@@ -166,7 +167,7 @@ export default function BairroPage({
                     </div>
                     <div className="bwh-proj__t">
                       {p.title}
-                      {p.area_m2 ? <em> · {p.area_m2} m²</em> : null}
+                      {formatAreaM2(p.area_m2) ? <em> · {formatAreaM2(p.area_m2)}</em> : null}
                     </div>
                     <div className="bwh-proj__meta">
                       {[label, bewildTypeLabel(p.project_type), p.duration].filter(Boolean).join(" · ")}

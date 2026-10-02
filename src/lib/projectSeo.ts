@@ -1,3 +1,4 @@
+import { formatAreaM2 } from "./formatArea";
 /**
  * Meta description derivada dos DADOS REAIS do projeto.
  *
@@ -67,9 +68,7 @@ const truncateTitleBase = (value: string, maxLength: number) => {
 };
 
 const areaLabel = (p: ProjectSeoInput) =>
-  typeof p.area_m2 === "number" && Number.isFinite(p.area_m2) && p.area_m2 > 0
-    ? `${Math.round(p.area_m2)} m²`
-    : "";
+  formatAreaM2(p.area_m2) ?? "";
 
 /** Só o que o cadastro diz: projeto ainda não executado não é "reforma". */
 const titleNoun = (p: ProjectSeoInput) =>

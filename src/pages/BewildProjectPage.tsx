@@ -1,3 +1,4 @@
+import { formatAreaM2 } from "@/lib/formatArea";
 /**
  * BewildProjectPage — /portfolio/:slug (Bewild).
  * "Ficha de obra" (prancha do caderno 003): a página completa de um studio
@@ -265,6 +266,7 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
   );
   const alts = useImageAlts(altUrls);
 
+  const introParas = (project?.intro ?? "").split(/\n\s*\n/).map((t) => t.trim()).filter(Boolean);
   const hasCase = !!(project?.challenge || project?.solution || project?.result_text);
   const hasBA = !!(project?.before_image_url && project?.after_image_url);
   const scopeItems = useMemo(() => (project?.scope ?? []).filter(Boolean), [project]);
@@ -353,7 +355,7 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
   }
 
   const where = project.neighborhood || project.location || "São Paulo";
-  const metaParts = [where, project.area_m2 ? `${project.area_m2} m²` : null, project.duration].filter(Boolean) as string[];
+  const metaParts = [where, formatAreaM2(project.area_m2), project.duration].filter(Boolean) as string[];
   const hasReady = readyImgs.length > 0;
   // Fase da obra: só projetos ainda não entregues ganham pílula e título próprios.
   const faseLabel =
@@ -408,9 +410,15 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
       )}
 
       {/* SUMÁRIO + CASE */}
-      {(project.summary || hasCase) && (
+      {(project.summary || introParas.length > 0 || hasCase) && (
         <section className="pd-sec"><div className="pd-wrap">
           {project.summary && <p className="pd-intro">{project.summary}</p>}
+          {introParas.length > 0 && (
+            <div className="pd-arch">
+              <h2 className="pd-arch__title">Arquitetura e interiores</h2>
+              {introParas.map((t, i) => <p key={i}>{t}</p>)}
+            </div>
+          )}
           {hasCase && (
             <div className="pd-case">
               {project.challenge && (

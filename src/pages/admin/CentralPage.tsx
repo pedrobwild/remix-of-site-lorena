@@ -250,10 +250,11 @@ export default function CentralPage() {
                         aria-label={`Metragem de ${p.title}`}
                         type="number"
                         min={1}
+                        step="0.01"
                         defaultValue={p.area_m2 ?? ""}
                         style={inputStyle}
                         onBlur={(e) => {
-                          const v = e.target.value ? Math.round(Number(e.target.value)) : null;
+                          const v = e.target.value ? Math.round(Number(e.target.value) * 100) / 100 : null;
                           if (v !== p.area_m2) void salvarProjeto(p, { area_m2: v });
                         }}
                       />
