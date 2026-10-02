@@ -1,3 +1,4 @@
+import { optimizedImageUrl } from "./imageUrl";
 /**
  * Loaders de SEO das rotas dinâmicas (projeto, artigo, bairro): buscam o
  * mínimo no banco para o `head()` sair certo no HTML bruto (SSR). As páginas
