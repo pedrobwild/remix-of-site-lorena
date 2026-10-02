@@ -212,3 +212,4 @@
   .bw-lightbox__counter{ bottom:14px; font-size:10.5px; }
   .bw-lightbox__img{ max-height:calc(100vh - 96px); }
 }
+.bw-detail .pd-arch{margin-top:28px;max-width:44rem}.bw-detail .pd-arch__title{font-size:clamp(20px,1.6vw,24px);line-height:1.25;letter-spacing:-.015em;margin:0 0 12px;font-weight:500}.bw-detail .pd-arch p{line-height:1.65;color:rgba(26,35,50,.82);margin:0 0 14px}

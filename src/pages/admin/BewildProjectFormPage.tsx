@@ -384,14 +384,14 @@ export default function BewildProjectFormPage({ slug }: Props) {
       setError("Slug inválido. Use só letras minúsculas, números e hífens.");
       return;
     }
-    // Aceita "45", "45,5", "45.5 m²" etc. — arredonda para inteiro.
+    // Aceita "45", "28,21", "45.5 m²" etc. — guarda até 2 casas decimais.
     const areaRaw = form.area_m2.replace(/[^\d,.-]/g, "").replace(",", ".").trim();
     const areaNum = areaRaw ? Number(areaRaw) : null;
     if (areaRaw && (!Number.isFinite(areaNum as number) || (areaNum as number) <= 0)) {
       setError("Informe a área em metros quadrados, por exemplo 45. Deixe em branco se ainda não souber.");
       return;
     }
-    const area = areaNum === null ? null : Math.round(areaNum);
+    const area = areaNum === null ? null : Math.round(areaNum * 100) / 100;
     // Tag (legado) é NOT NULL com CHECK — preenchemos um valor padrão para
     // projetos Bewild novos, já que esta área não usa o campo "tag" antigo.
     const TAG_FALLBACK = "Interiores";
@@ -674,7 +674,7 @@ export default function BewildProjectFormPage({ slug }: Props) {
               className="admin-field__input"
               value={form.area_m2}
               onChange={(e) => set("area_m2", e.target.value)}
-              placeholder="ex: 45"
+              placeholder="ex: 28,21"
             />
             <p className="mono admin-hint" style={{ marginTop: 6 }}>
               Deixe em branco se ainda não souber a metragem.

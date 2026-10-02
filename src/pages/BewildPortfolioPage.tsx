@@ -1,3 +1,4 @@
+import { formatAreaM2 } from "@/lib/hydrateHomeProjects";
 /**
  * BewildPortfolioPage — /portfolio (Bewild) · reskin sob o DS `bwh-`.
  *
@@ -391,7 +392,7 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
                       </div>
                       <div className="bwh-proj__t">
                         {p.title}
-                        {p.area_m2 ? <em> · {p.area_m2} m²</em> : null}
+                        {formatAreaM2(p.area_m2) ? <em> · {formatAreaM2(p.area_m2)}</em> : null}
                       </div>
                       <div className="bwh-proj__meta">
                         {[where, bewildTypeLabel(p.project_type), p.duration]

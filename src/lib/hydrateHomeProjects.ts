@@ -38,7 +38,7 @@ function esc(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-const AREA_FORMAT = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
+const AREA_FORMAT = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 2 });
 
 /** "27,5 m²" (pt-BR) — antes saía "27.5 m²". `null` para área ausente/inválida. */
 export function formatAreaM2(area: number | null | undefined): string | null {
