@@ -26,7 +26,7 @@ describe("projectMetaDescription", () => {
       "Apartamento pronto após reforma completa em Moema, São Paulo-SP. Projeto, obra e marcenaria integrados pela Bewild.",
     );
     expect(projectMetaDescription({ area_m2: 30.4 }, FALLBACK)).toBe(
-      "Apartamento pronto após reforma completa de 30 m². Projeto, obra e marcenaria integrados pela Bewild.",
+      "Apartamento pronto após reforma completa de 30,4 m². Projeto, obra e marcenaria integrados pela Bewild.",
     );
   });
 
