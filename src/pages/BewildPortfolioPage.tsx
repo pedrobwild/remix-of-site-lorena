@@ -1,4 +1,4 @@
-import { formatAreaM2 } from "@/lib/hydrateHomeProjects";
+import { formatAreaM2 } from "@/lib/formatArea";
 /**
  * BewildPortfolioPage — /portfolio (Bewild) · reskin sob o DS `bwh-`.
  *

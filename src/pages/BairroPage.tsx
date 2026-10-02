@@ -1,4 +1,4 @@
-import { formatAreaM2 } from "@/lib/hydrateHomeProjects";
+import { formatAreaM2 } from "@/lib/formatArea";
 /**
  * BairroPage — /reforma/<bairro>. Lista os projetos reais entregues num
  * bairro de São Paulo (só bairros com MIN_PROJECTS_PER_NEIGHBORHOOD+).

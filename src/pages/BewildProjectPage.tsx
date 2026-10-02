@@ -1,4 +1,4 @@
-import { formatAreaM2 } from "@/lib/hydrateHomeProjects";
+import { formatAreaM2 } from "@/lib/formatArea";
 /**
  * BewildProjectPage — /portfolio/:slug (Bewild).
  * "Ficha de obra" (prancha do caderno 003): a página completa de um studio

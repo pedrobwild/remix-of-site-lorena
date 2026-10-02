@@ -1,4 +1,4 @@
-import { formatAreaM2 } from "./hydrateHomeProjects";
+import { formatAreaM2 } from "./formatArea";
 /**
  * Meta description derivada dos DADOS REAIS do projeto.
  *
