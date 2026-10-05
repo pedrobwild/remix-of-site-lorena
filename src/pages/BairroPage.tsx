@@ -6,6 +6,7 @@ import { formatAreaM2 } from "@/lib/formatArea";
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { optimizedImageUrl, optimizedSrcSet } from "@/lib/imageUrl";
+import { projectFriendlyName } from "@/lib/projectSeo";
 import { useImageAlts } from "@/lib/useImageAlts";
 import { useSeo } from "@/lib/useSeo";
 import { projectListJsonLd } from "@/lib/contentJsonLd";
@@ -64,10 +65,12 @@ export default function BairroPage({
   }, [hasMore, list.length, visibleCount]);
   const label = page?.label ?? "";
   const areas = list.map((p) => p.area_m2).filter((n): n is number => !!n);
+  // Metragem sempre por formatAreaM2 (pt-BR, vírgula decimal): "24,5 a 35,12 m²".
+  const areaNum = (n: number) => (formatAreaM2(n) ?? "").replace(/\s*m²$/, "");
   const faixa = areas.length
     ? Math.min(...areas) === Math.max(...areas)
-      ? `${areas[0]} m²`
-      : `${Math.min(...areas)} a ${Math.max(...areas)} m²`
+      ? formatAreaM2(areas[0])
+      : `${areaNum(Math.min(...areas))} a ${areaNum(Math.max(...areas))} m²`
     : null;
 
   useSeo({
@@ -142,7 +145,7 @@ export default function BairroPage({
                     key={p.id}
                     href={`/portfolio/${p.slug}`}
                     className="bwh-proj"
-                    aria-label={`Ver projeto ${p.title}`}
+                    aria-label={`Ver projeto ${projectFriendlyName(p) || p.title}`}
                     onClick={() => reportProjectClick(p.slug, p.title, i + 1)}
                   >
                     <div className="bwh-proj__media">
@@ -154,7 +157,7 @@ export default function BairroPage({
                         height={480}
                         alt={
                           coverAlts[p.cover_url!] ||
-                          `${p.title} — ${bewildTypeLabel(p.project_type)} em ${label}`
+                          `${projectFriendlyName(p) || p.title} — ${bewildTypeLabel(p.project_type)} em ${label}`
                         }
                         loading={i < 3 ? "eager" : "lazy"}
                         fetchPriority={i < 3 ? "high" : undefined}
@@ -166,7 +169,7 @@ export default function BairroPage({
                       <span className="bwh-proj__go">Ver projeto →</span>
                     </div>
                     <div className="bwh-proj__t">
-                      {p.title}
+                      {projectFriendlyName(p) || p.title}
                       {formatAreaM2(p.area_m2) ? <em> · {formatAreaM2(p.area_m2)}</em> : null}
                     </div>
                     <div className="bwh-proj__meta">

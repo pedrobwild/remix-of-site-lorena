@@ -26,7 +26,7 @@ export default function OndeAtuamosPage({ bairroPages = null }: Props = {}) {
   useSeo({
     title: "Onde atuamos: arquitetura e reforma em São Paulo | Bewild",
     description:
-      "Procura arquitetura, engenharia e reforma de apartamento em SP? A Bewild projeta e reforma apartamentos em São Paulo capital, em mais de 27 bairros, e atende à distância clientes de outras cidades.",
+      "A Bewild projeta e reforma apartamentos em São Paulo capital, em mais de 27 bairros, e atende à distância clientes de outras cidades.",
     canonicalPath: "/onde-atuamos",
     ogType: "website",
     jsonLd: settings

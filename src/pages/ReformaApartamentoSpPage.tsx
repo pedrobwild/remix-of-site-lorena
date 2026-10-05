@@ -104,7 +104,7 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
     title:
       "Reforma de apartamento em São Paulo | Projeto, obra e mobília — Bewild",
     description:
-      "Reforma de apartamento em São Paulo com arquitetura e engenharia próprias, preço fechado e prazo em contrato: projeto arquitetônico 3D, obra, marcenaria e mobília em um único contrato. Studios e apartamentos de qualquer metragem, com 5 anos de garantia.",
+      "Reforma de apartamento em SP com arquitetura e engenharia próprias: projeto 3D, obra, marcenaria e mobília num contrato, preço fechado e 5 anos de garantia.",
     canonicalPath: CANONICAL,
     ogType: "website",
     jsonLd: settings

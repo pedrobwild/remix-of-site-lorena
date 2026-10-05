@@ -8,6 +8,7 @@ import { formatAreaM2 } from "@/lib/formatArea";
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { optimizedImageUrl, optimizedSrcSet } from "@/lib/imageUrl";
+import { projectFriendlyName } from "@/lib/projectSeo";
 import { useSeo } from "@/lib/useSeo";
 import { projectListJsonLd } from "@/lib/contentJsonLd";
 import BwaNav from "@/components/BwaNav";
@@ -341,12 +342,14 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
               <div className="bwh-projects">
                 {visible.map((p, i) => {
                   const where = p.neighborhood || p.location || "São Paulo";
+                  // Nome sem o código interno do cliente ("AB - …").
+                  const name = projectFriendlyName(p) || p.title;
                   return (
                     <a
                       key={p.id}
                       href={`/portfolio/${p.slug}`}
                       className="bwh-proj"
-                      aria-label={`Ver projeto ${p.title}`}
+                      aria-label={`Ver projeto ${name}`}
                       onClick={() => reportProjectClick(p.slug, p.title, i + 1)}
                     >
                       <div className="bwh-proj__media">
@@ -359,7 +362,7 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
                             height={480}
                             alt={
                               coverAlts[p.cover_url] ||
-                              `${p.title} — ${bewildTypeLabel(p.project_type)} em ${where}`
+                              `${name} — ${bewildTypeLabel(p.project_type)} em ${where}`
                             }
                             loading={i < 3 ? "eager" : "lazy"}
                             fetchPriority={i < 3 ? "high" : undefined}
@@ -391,7 +394,7 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
                         <span className="bwh-proj__go">Ver projeto →</span>
                       </div>
                       <div className="bwh-proj__t">
-                        {p.title}
+                        {name}
                         {formatAreaM2(p.area_m2) ? <em> · {formatAreaM2(p.area_m2)}</em> : null}
                       </div>
                       <div className="bwh-proj__meta">
@@ -410,7 +413,7 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
                   <ul>
                     {filtered.slice(visibleCount).map((p) => (
                       <li key={p.id}>
-                        <a href={`/portfolio/${p.slug}`}>{p.title}</a>
+                        <a href={`/portfolio/${p.slug}`}>{projectFriendlyName(p) || p.title}</a>
                       </li>
                     ))}
                   </ul>

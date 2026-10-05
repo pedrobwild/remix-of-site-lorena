@@ -75,7 +75,7 @@ export default function ComoFuncionaPage() {
   useSeo({
     title: "Arquitetura, engenharia e obra em um contrato só em SP | Bewild",
     description:
-      "Arquitetura e engenharia sob um único contrato: projeto arquitetônico 3D, documentação técnica (ART/RRT), obra com equipe própria e entrega do apartamento pronto em São Paulo.",
+      "Arquitetura e engenharia num contrato só: projeto 3D, documentação técnica (ART/RRT), obra com equipe própria e apartamento entregue pronto em São Paulo.",
     canonicalPath: "/como-funciona",
     ogType: "website",
     jsonLd: settings

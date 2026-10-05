@@ -180,7 +180,7 @@ export default function MarcenariaPage() {
   useSeo({
     title: "Marcenaria sob medida em São Paulo | Fábrica própria — Bewild",
     description:
-      "Marcenaria planejada sob medida em São Paulo com fábrica própria: MDF certificado, estruturas em 25 mm, ferragens FGVTN, mais de 40 modelos e cores e 5 anos de garantia, dentro do mesmo contrato da reforma.",
+      "Marcenaria planejada sob medida em São Paulo, com fábrica própria: MDF certificado, mais de 40 modelos e cores e 5 anos de garantia, no contrato da reforma.",
     keywords:
       "marcenaria sob medida São Paulo, marcenaria planejada SP, móveis planejados apartamento, armário sob medida, cozinha planejada São Paulo, Bewild",
     canonicalPath: CANONICAL,
