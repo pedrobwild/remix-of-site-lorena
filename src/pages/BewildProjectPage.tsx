@@ -355,6 +355,9 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
   }
 
   const where = project.neighborhood || project.location || "São Paulo";
+  // Nome exibido sem o código interno do cliente ("AB - …"), o mesmo do
+  // <title> e do JSON-LD; o campo `title` do banco continua com o código.
+  const displayName = projectFriendlyName(project) || project.title;
   const metaParts = [where, formatAreaM2(project.area_m2), project.duration].filter(Boolean) as string[];
   const hasReady = readyImgs.length > 0;
   // Fase da obra: só projetos ainda não entregues ganham pílula e título próprios.
@@ -385,7 +388,7 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
               {hasReady && <span className="pd-pill pd-pill--ready">Obra pronta</span>}
             </div>
           )}
-          <h1>{project.title}</h1>
+          <h1>{displayName}</h1>
           {metaParts.length > 0 && (
             <div className="pd-metaline">{metaParts.map((m, i) => <span key={i}>{m}</span>)}</div>
           )}
@@ -399,7 +402,7 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
             <img
               {...projectCoverImage(coverSrc)}
               sizes={WIDE_SIZES}
-              alt={project.cover_alt || alts[coverSrc] || `${project.title} — foto principal`}
+              alt={project.cover_alt || alts[coverSrc] || `${displayName} — foto principal`}
               loading="eager"
               fetchPriority="high"
               decoding="async"
@@ -440,8 +443,8 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
         <section className="pd-sec pd-sec--tight"><div className="pd-wrap">
           <div className="pd-sechead"><span className="n">A/D</span><h2>Antes e depois</h2><span className="ln" /></div>
           <div className="pd-ba">
-            <div className="pd-ba__frame"><span className="pd-ba__badge">Antes</span><img {...responsiveImage(project.before_image_url!, GALLERY_WIDTHS, 960)} sizes={HALF_SIZES} decoding="async" alt={alts[project.before_image_url!] || `Antes da reforma — ${project.title}`} loading="lazy" /></div>
-            <div className="pd-ba__frame"><span className="pd-ba__badge">Depois</span><img {...responsiveImage(project.after_image_url!, GALLERY_WIDTHS, 960)} sizes={HALF_SIZES} decoding="async" alt={alts[project.after_image_url!] || `Depois da reforma — ${project.title}`} loading="lazy" /></div>
+            <div className="pd-ba__frame"><span className="pd-ba__badge">Antes</span><img {...responsiveImage(project.before_image_url!, GALLERY_WIDTHS, 960)} sizes={HALF_SIZES} decoding="async" alt={alts[project.before_image_url!] || `Antes da reforma — ${displayName}`} loading="lazy" /></div>
+            <div className="pd-ba__frame"><span className="pd-ba__badge">Depois</span><img {...responsiveImage(project.after_image_url!, GALLERY_WIDTHS, 960)} sizes={HALF_SIZES} decoding="async" alt={alts[project.after_image_url!] || `Depois da reforma — ${displayName}`} loading="lazy" /></div>
           </div>
         </div></section>
       )}
@@ -453,7 +456,7 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
           note="Imagens do projeto de arquitetura e interiores (renders)"
           images={galleryImgs}
           alts={alts}
-          altPrefix={`${project.title} — projeto 3D, imagem`}
+          altPrefix={`${displayName} — projeto 3D, imagem`}
           openLabel="Abrir imagem do projeto 3D"
           onOpen={(i) => setLb({ set: "render", index: i })}
         />
@@ -464,7 +467,7 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
           note="Fotos do apartamento entregue"
           images={readyImgs}
           alts={alts}
-          altPrefix={`${project.title} — obra pronta, foto`}
+          altPrefix={`${displayName} — obra pronta, foto`}
           openLabel="Abrir foto da obra pronta"
           onOpen={(i) => setLb({ set: "ready", index: i })}
         />
@@ -522,8 +525,8 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
             // existir; senão, título + posição na série.
             alts[lbImages[i]] ||
             (lb.set === "ready"
-              ? `${project.title} — obra pronta, foto ${i + 1}`
-              : `${project.title} — projeto 3D, imagem ${i + 1}`)
+              ? `${displayName} — obra pronta, foto ${i + 1}`
+              : `${displayName} — projeto 3D, imagem ${i + 1}`)
           }
           onClose={closeLb}
           onPrev={prevLb}

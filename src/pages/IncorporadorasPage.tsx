@@ -35,6 +35,7 @@ import {
 import { formatBrPhone, isValidBrPhone, normalizeBrPhoneDigits } from "@/lib/phone";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import { useImageAlts } from "@/lib/useImageAlts";
+import { optimizedImageUrl, optimizedSrcSet } from "@/lib/imageUrl";
 import {
   browserUserAgent,
   collectLeadAttribution,
@@ -348,7 +349,11 @@ export default function IncorporadorasPage() {
                           {p.cover_url && (
                             <figure>
                               <img
-                                src={p.cover_url}
+                                // Capa original do bucket = PNG de ~2,7 MB: usa a
+                                // versão redimensionada (grade de 3/2/1 colunas).
+                                src={optimizedImageUrl(p.cover_url, 640)}
+                                srcSet={optimizedSrcSet(p.cover_url, [480, 640, 960])}
+                                sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 400px"
                                 alt={
                                   p.cover_alt ||
                                   alts[p.cover_url] ||

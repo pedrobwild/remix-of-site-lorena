@@ -55,7 +55,7 @@ export default function EscopoPage() {
   useSeo({
     title: "Escopo de arquitetura e reforma para apartamento em SP | Bewild",
     description:
-      "Descreva seu apartamento e seu objetivo e receba na hora uma recomendação de escopo de arquitetura, engenharia e reforma, prazo de referência e próximos passos com a Bewild.",
+      "Descreva seu apartamento e seu objetivo e receba na hora uma recomendação de escopo, prazo de referência e próximos passos com a Bewild.",
     canonicalPath: "/escopo",
     ogType: "website",
     jsonLd: settings

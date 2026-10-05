@@ -50,7 +50,7 @@ export default function AutorizacaoCondominioPage() {
   useSeo({
     title: "Autorização de reforma em condomínio: guia completo | Bewild",
     description:
-      "Autorização de reforma condomínio sem dor de cabeça: documentos exigidos pelo síndico (ART, seguro, cronograma), prazo de aprovação, horários de obra e quem resolve a burocracia em SP.",
+      "Autorização de reforma em condomínio: documentos que o síndico pede (ART, seguro, cronograma), prazo de aprovação, horários de obra e quem cuida da burocracia.",
     keywords:
       "autorização de reforma condomínio, ART de engenharia para reforma, responsável técnico de obra, autorização de reforma em condomínio, autorização de obra em condomínio, documentos para reforma em condomínio, ART de reforma, regras de reforma em apartamento, síndico autorização reforma, Bewild",
     canonicalPath: "/autorizacao-condominio",

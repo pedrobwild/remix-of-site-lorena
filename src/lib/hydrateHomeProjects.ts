@@ -12,6 +12,17 @@
 import { supabase } from "@/integrations/supabase/client";
 import { devWarn } from "@/lib/devLog";
 import { formatAreaM2 } from "@/lib/formatArea";
+import { optimizedImageUrl, optimizedSrcSet } from "@/lib/imageUrl";
+import { projectFriendlyName } from "@/lib/projectSeo";
+
+/**
+ * Larguras da capa nos cards da home: o slider usa 78vw no celular e até
+ * 320 px no desktop (home-bwa.css, .bwa-pslider-track .bwa-pgrid-card).
+ * As capas originais do bucket são PNG de ~2,7 MB (até ~11 MB): o card pede
+ * a versão redimensionada do endpoint de render, como o /portfolio já faz.
+ */
+const CARD_WIDTHS = [480, 640, 960] as const;
+const CARD_SIZES = "(max-width: 820px) 78vw, 400px";
 
 type TopProject = {
   slug: string;
@@ -43,6 +54,11 @@ export { formatAreaM2 };
 
 function cardHtml(p: TopProject): string {
   const where = p.neighborhood || p.location || "São Paulo";
+  // Nome sem o código interno do cliente ("AB - …"), como no <title> do projeto.
+  const name = projectFriendlyName(p) || p.title;
+  const cover = p.cover_url ?? "";
+  const srcset = cover ? optimizedSrcSet(cover, CARD_WIDTHS) : undefined;
+  const srcsetAttrs = srcset ? ` srcset="${esc(srcset)}" sizes="${CARD_SIZES}"` : "";
   const meta = [
     formatAreaM2(p.area_m2),
     p.project_type ? (TYPE_LABEL[p.project_type] ?? "Reforma completa") : "Reforma completa",
@@ -52,10 +68,10 @@ function cardHtml(p: TopProject): string {
     .join(" · ");
 
   return `<article class="bwa-pgrid-card">
-      <a href="/portfolio/${esc(p.slug)}" aria-label="Ver projeto ${esc(p.title)}">
-        <span class="bwa-pgrid-media"><img src="${esc(p.cover_url ?? "")}" alt="${esc(p.title)} — ${esc(where)}" loading="lazy" decoding="async"></span>
+      <a href="/portfolio/${esc(p.slug)}" aria-label="Ver projeto ${esc(name)}">
+        <span class="bwa-pgrid-media"><img src="${esc(cover ? optimizedImageUrl(cover, 640) : "")}"${srcsetAttrs} alt="${esc(name)} — ${esc(where)}" loading="lazy" decoding="async"></span>
         <span class="bwa-pgrid-meta">
-          <strong>${esc(p.title)}</strong>
+          <strong>${esc(name)}</strong>
           <span class="bwa-pgrid-data">${esc(meta)}</span>
           <span class="bwa-pgrid-link">ver projeto →</span>
         </span>
