@@ -40,6 +40,7 @@ const KNOWN_AUTHORS: PostAuthor[] = [
     name: "Thiago Dantas do Amor",
     jobTitle: "Arquiteto e urbanista, responsável técnico da Bewild",
     credential: "CAU A162437-7",
+    url: `${BASE_URL}/conteudos/thiago-dantas-arquiteto-responsavel-tecnico-bewild`,
     sameAs: ["https://www.linkedin.com/in/thiago-dantas-do-amor-73817b134/"],
   },
   {
