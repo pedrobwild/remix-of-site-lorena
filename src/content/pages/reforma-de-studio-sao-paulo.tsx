@@ -12,6 +12,16 @@ import { faqJsonLd } from "@/lib/useSeo";
 
 export const CANONICAL = "/reforma-de-studio-sao-paulo";
 
+/** Seção "Reforma de studio para Airbnb e short stay" (rodada 3, 06/10/2026). */
+export const AIRBNB_CHECK: { n: string; t: string }[] = [
+  { n: "01", t: "Cama de casal de qualidade, blackout e isolamento de ruído: a avaliação de sono pesa mais que qualquer acabamento." },
+  { n: "02", t: "Ar-condicionado dimensionado pela tabela de BTU e infraestrutura aprovada pelo condomínio." },
+  { n: "03", t: "Wi-fi rápido, bancada de trabalho e tomadas onde o hóspede usa: a demanda de semana é de quem trabalha." },
+  { n: "04", t: "Cozinha compacta com o que o anúncio promete (micro-ondas, cooktop, frigobar ou geladeira) e enxoval completo." },
+  { n: "05", t: "Materiais de limpeza fácil e marcenaria fechada: a faxina entre reservas precisa caber em poucas horas." },
+  { n: "06", t: "Iluminação em camadas e paleta pensada para a foto do anúncio, que é o que decide a reserva." },
+];
+
 export const FAQ: { q: string; a: string; node?: ReactNode }[] = [
   {
     q: "Vale a pena reformar um studio para Airbnb?",
@@ -64,6 +74,21 @@ export const FAQ: { q: string; a: string; node?: ReactNode }[] = [
         assim que o imóvel for entregue — o que adiantar está em{" "}
         <a href="/conteudos/comprou-studio-na-planta-antes-das-chaves">
           comprou studio na planta: o que fazer antes das chaves
+        </a>
+        .
+      </>
+    ),
+  },
+  {
+    q: "Quanto custa a reforma de um studio para Airbnb?",
+    a: "Nos 188 contratos de reforma completa de até 50 m² analisados pela Bewild, a mediana foi R$ 71.850 (R$ 2.744 por m²), com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Para short stay, o enxoval e os eletros entram no escopo; o que mais muda o valor é a metragem e o padrão de acabamento.",
+    node: (
+      <>
+        Nos 188 contratos de reforma completa de até 50 m² analisados pela Bewild, a mediana
+        foi R$ 71.850 (R$ 2.744 por m²), com projeto, obra, marcenaria, mobiliário e
+        eletrodomésticos. A tabela por metragem está em{" "}
+        <a href="/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo">
+          quanto custa reformar um studio para short stay em São Paulo
         </a>
         .
       </>
