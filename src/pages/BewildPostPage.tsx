@@ -29,7 +29,7 @@ import {
   type BewildPostCategory,
 } from "@/lib/useBewildPosts";
 import { useBewildPost, useBewildRelatedPosts } from "@/lib/useBewildPost";
-import { postAuthorByline, postDates, postTitleFromSlug } from "@/lib/postSeo";
+import { postAuthorByline, postAuthorHref, postDates, postTitleFromSlug } from "@/lib/postSeo";
 import { navigate } from "@/lib/useHashRoute";
 import { keywordsForPost } from "@/lib/postKeywords";
 import { internalLinksForPost } from "@/lib/postInternalLinks";
@@ -180,6 +180,7 @@ export default function BewildPostPage({ slug, initial }: Props) {
 
   const dates = postDates(post);
   const dateIso = dates.published;
+  const authorHref = postAuthorHref(post?.author);
   // Enquanto o banco não responde, título e H1 saem do slug (SEO-14): o
   // snapshot do Googlebot nunca vê "Carregando" sem H1.
   const slugTitle = postTitleFromSlug(slug);
@@ -315,7 +316,11 @@ export default function BewildPostPage({ slug, initial }: Props) {
             <h1 className="pt-title">{post.title}</h1>
             {post.excerpt ? <p className="pt-excerpt">{post.excerpt}</p> : null}
             <div className="pt-meta">
-              <span>{postAuthorByline(post.author)}</span>
+              {authorHref && authorHref !== `/conteudos/${post.slug}` ? (
+                <a href={authorHref} rel="author">{postAuthorByline(post.author)}</a>
+              ) : (
+                <span>{postAuthorByline(post.author)}</span>
+              )}
               {dateIso ? <span className="pt-dot">·</span> : null}
               {dateIso ? <time dateTime={dateIso}>{formatBewildDate(dateIso)}</time> : null}
               {post.reading_time ? <span className="pt-dot">·</span> : null}
