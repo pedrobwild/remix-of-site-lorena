@@ -51,6 +51,7 @@ Páginas com os projetos entregues em cada bairro de São Paulo (só bairros com
 ## Conteúdos publicados
 
 <!-- posts:start -->
+- [Como reformar um studio gastando menos e sem perder valor de mercado: as 4 decisões que separam economia de prejuízo](/conteudos/como-reformar-studio-gastando-menos-sem-perder-valor)
 - [Pedro Henrique Alves: quem é o CEO da Bewild e por que ele trata imóvel como negócio](/conteudos/pedro-henrique-alves-ceo-bewild)
 - [Orçamento de reforma de studio: case de 25 m² item a item](/conteudos/orcamento-reforma-studio-25-m2-item-a-item)
 - [Quanto custa reformar um apartamento ou studio de até 50 m²: análise de 188 contratos de clientes Bewild](/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2)
