@@ -6,7 +6,7 @@ import { BAIRROS, REMOTO_ITEMS, bairroHref, type BairroPageLink } from "@/lib/ba
 import { useSeo } from "@/lib/useSeo";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
-import { CANONICAL, FAQ } from "@/content/pages/reforma-de-studio-sao-paulo";
+import { AIRBNB_CHECK, CANONICAL, FAQ } from "@/content/pages/reforma-de-studio-sao-paulo";
 
 /* ============================================================
  * ReformaStudioSpPage — /reforma-de-studio-sao-paulo
@@ -50,9 +50,9 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
   useCtaClickTracking("reforma-studio-sp");
 
   useSeo({
-    title: "Reforma de studio em São Paulo para morar ou alugar | Bewild",
+    title: "Reforma de studios em SP: morar, alugar ou Airbnb | Bewild",
     description:
-      "Reforma de studio em São Paulo, pronto para morar ou para short stay: projeto, obra, marcenaria e mobília em um contrato, preço fechado e 5 anos de garantia.",
+      "Reforma de studios em São Paulo para morar, alugar ou anunciar no Airbnb: projeto 3D, obra, marcenaria e mobília em um contrato, preço fechado, 60 dias úteis e 5 anos de garantia.",
     canonicalPath: CANONICAL,
     ogType: "website",
   });
@@ -67,8 +67,8 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
             <p className="bwa-label">Reforma de studio em São Paulo</p>
             <div>
               <h1 className="bwa-title">
-                Reforma de studio em São Paulo,{" "}
-                <em>entregue pronto para morar ou anunciar.</em>
+                Reforma de studios em São Paulo,{" "}
+                <em>entregues prontos para morar, alugar ou anunciar no Airbnb.</em>
               </h1>
               <p className="bwa-servico-lead">
                 A Bewild é especialista em reforma completa de studios e
@@ -121,6 +121,39 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
                 reforma de apartamento em São Paulo
               </a>
               .
+            </p>
+          </div>
+        </section>
+
+        <section className="bwa-servico-block" aria-labelledby="airbnb">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="airbnb">
+              Reforma de studio para Airbnb e short stay
+            </h2>
+            <p className="bwa-servico-text">
+              A maior parte dos studios que a Bewild reforma vai para locação por temporada. A
+              reforma para Airbnb muda prioridades: o hóspede avalia foto, cama, chuveiro, wi-fi,
+              ar-condicionado e limpeza fácil — não o acabamento mais caro. O projeto é feito para a
+              foto do anúncio, para a rotina da faxina entre reservas e para durar com uso intenso.
+            </p>
+            <ul className="bwa-servico-list">
+              {AIRBNB_CHECK.map((item) => (
+                <li key={item.n}>
+                  <span className="bwa-servico-num">{item.n}</span>
+                  <span>{item.t}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="bwa-servico-text" style={{ marginTop: 24 }}>
+              Antes de reformar, confira se a unidade pode operar: apartamentos HIS e HMP não podem
+              fazer short stay em São Paulo, e a convenção do prédio precisa permitir locação por
+              temporada. O checklist completo está em{" "}
+              <a href="/conteudos/preparar-studio-airbnb-checklist">preparar o studio para o Airbnb</a>;
+              o que não vale a pena trocar num studio novo, em{" "}
+              <a href="/conteudos/o-que-nao-reformar-no-studio-short-stay">o que não reformar no studio para short stay</a>;
+              e a conta de quanto rende, em{" "}
+              <a href="/conteudos/quanto-rende-studio-short-stay-sao-paulo">quanto rende um studio no short stay</a>.
+              A Bewild entrega o studio pronto para anunciar e não faz a gestão do anúncio.
             </p>
           </div>
         </section>

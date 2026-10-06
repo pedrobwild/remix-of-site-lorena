@@ -28,6 +28,14 @@ import {
 import { useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./contato.css";
+import "./servico-reforma.css";
+import {
+  BLOCOS_ORCAMENTO,
+  DADOS_ORCAMENTO,
+  FAQ,
+  PASSOS_ORCAMENTO,
+  PILAR_CUSTO,
+} from "@/content/pages/orcamento";
 
 /**
  * O VALOR enviado é o canônico do CRM (o mesmo de /diagnostico); o rótulo é
@@ -144,9 +152,9 @@ export default function OrcamentoPage() {
   }
 
   useSeo({
-    title: "Orçamento de projeto de arquitetura e reforma em SP | Bewild",
+    title: "Orçamento de reforma turnkey em São Paulo | Bewild",
     description:
-      "Peça o orçamento de arquitetura, engenharia e reforma do seu studio ou apartamento em São Paulo e receba faixa de custo e prazo em contrato fechado.",
+      "Peça o orçamento da reforma turnkey do seu studio ou apartamento em São Paulo: faixa de investimento em 1 dia útil, projeto 3D, preço fechado e prazo em contrato.",
     keywords:
       "orçamento de projeto de arquitetura, quanto custa um projeto de arquitetura em São Paulo, orçamento de reforma de studio, quanto custa reformar um studio em São Paulo, custo de reforma de studio, prazo de reforma de studio, orçamento de reforma de apartamento, orçamento de reforma em SP, preço e prazo de reforma São Paulo, reforma de studio para short stay, Bewild",
     canonicalPath: "/orcamento",
@@ -164,11 +172,12 @@ export default function OrcamentoPage() {
           <div className="bwa-shell bwa-contact-intro-grid">
             <div>
               <p className="bwa-label">Orçamento · São Paulo</p>
-              <h1>Orçamento de reforma de apartamento em SP.</h1>
+              <h1>Orçamento de reforma turnkey de apartamento em SP.</h1>
             </div>
             <p className="bwa-contact-lead">
-              Conte o essencial sobre o imóvel e devolvemos uma faixa de investimento e prazo para
-              a reforma completa — projeto, obra, marcenaria e mobília em um único contrato.
+              Conte o essencial sobre o imóvel e devolvemos, em até um dia útil, uma faixa de
+              investimento e prazo para a reforma completa — projeto, obra, marcenaria e mobília em um
+              único contrato, com preço fechado e data de entrega em contrato.
             </p>
           </div>
         </section>
@@ -372,6 +381,124 @@ export default function OrcamentoPage() {
                 </div>
               </form>
             )}
+          </div>
+        </section>
+
+        <section className="bwa-servico-block" aria-labelledby="como-orcamos">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="como-orcamos">
+              Como funciona o orçamento turnkey
+            </h2>
+            <ul className="bwa-servico-list">
+              {PASSOS_ORCAMENTO.map((item) => (
+                <li key={item.n}>
+                  <span className="bwa-servico-num">{item.n}</span>
+                  <span>{item.t}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="bwa-servico-text" style={{ marginTop: 24 }}>
+              Turnkey quer dizer um contrato só, do projeto à entrega das chaves, em vez de cinco
+              fornecedores para coordenar. A conta linha a linha entre os dois modelos está em{" "}
+              <a href="/conteudos/reforma-turn-key-ou-tradicional">reforma turnkey ou tradicional</a>; as 12
+              etapas, em <a href="/como-funciona">como funciona</a>.
+            </p>
+          </div>
+        </section>
+
+        <section className="bwa-servico-block" aria-labelledby="quanto-custa">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="quanto-custa">
+              Quanto custa uma reforma turnkey em São Paulo
+            </h2>
+            <p className="bwa-servico-text">
+              Nos 188 contratos de reforma completa de até 50 m² analisados pela Bewild, a mediana foi{" "}
+              <strong>R$ 71.850</strong>, ou <strong>R$ 2.744 por m²</strong>, com projeto, obra, marcenaria,
+              mobiliário e eletrodomésticos dentro. Quatro em cada dez contratos ficaram entre R$ 65 mil e
+              R$ 75 mil; nenhum abaixo de R$ 55 mil. Para studios de 21 a 35 m², a fórmula de bolso é cerca
+              de R$ 38 mil de base mais R$ 1.217 por metro quadrado.
+            </p>
+            <p className="bwa-servico-text">
+              O que mais muda o valor é a metragem e o padrão de acabamento, não o bairro. A tabela por
+              metragem e a anatomia de um orçamento real estão em{" "}
+              <a href={PILAR_CUSTO}>quanto custa reformar um apartamento ou studio de até 50 m²</a> e em{" "}
+              <a href="/conteudos/orcamento-reforma-studio-25-m2-item-a-item">
+                o orçamento de um studio de 25 m², item a item
+              </a>
+              .
+            </p>
+          </div>
+        </section>
+
+        <section className="bwa-servico-block" aria-labelledby="o-que-vem">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="o-que-vem">
+              O que vem escrito no orçamento
+            </h2>
+            <ul className="bwa-servico-list">
+              {BLOCOS_ORCAMENTO.map((item) => (
+                <li key={item.n}>
+                  <span className="bwa-servico-num">{item.n}</span>
+                  <span>{item.t}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="bwa-servico-text" style={{ marginTop: 24 }}>
+              Dois orçamentos com o mesmo total podem cobrir escopos diferentes: a linha que mais muda o
+              preço é "marca definida" ou "similar". Os cinco critérios para comparar propostas estão em{" "}
+              <a href="/conteudos/como-comparar-orcamentos-de-reforma">como comparar orçamentos de reforma</a>{" "}
+              e os dez itens que costumam virar extra, em{" "}
+              <a href="/conteudos/o-que-esta-incluso-orcamento-reforma-studio">
+                o que está incluso no orçamento de reforma de um studio
+              </a>
+              .
+            </p>
+          </div>
+        </section>
+
+        <section className="bwa-servico-block" aria-labelledby="o-que-precisamos">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="o-que-precisamos">
+              O que precisamos saber para orçar
+            </h2>
+            <ul className="bwa-servico-list">
+              {DADOS_ORCAMENTO.map((item) => (
+                <li key={item.n}>
+                  <span className="bwa-servico-num">{item.n}</span>
+                  <span>{item.t}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="bwa-servico-text" style={{ marginTop: 24 }}>
+              Studios e apartamentos compactos são a maior parte das nossas obras — veja{" "}
+              <a href="/reforma-de-studio-sao-paulo">reforma de studio em São Paulo</a>; metragens maiores e
+              coberturas, em <a href="/reforma-de-apartamento-sao-paulo">reforma de apartamento</a> e{" "}
+              <a href="/reforma-de-cobertura-sao-paulo">reforma de cobertura</a>. Obras entregues por bairro
+              estão no <a href="/portfolio">portfólio</a>.
+            </p>
+          </div>
+        </section>
+
+        <section className="bwa-servico-block" aria-labelledby="faq-orcamento">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="faq-orcamento">
+              Perguntas frequentes sobre o orçamento
+            </h2>
+            <div className="bwa-servico-faq">
+              {FAQ.map((item) => (
+                <details key={item.q}>
+                  <summary>{item.q}</summary>
+                  <p>{item.a}</p>
+                </details>
+              ))}
+            </div>
+            <p className="bwa-servico-text" style={{ marginTop: 24 }}>
+              Pronto para pedir? <a href="#formulario">Volte ao formulário</a> ou{" "}
+              <a href={whatsappHref("Olá, quero um orçamento de reforma para meu apartamento")} target="_blank" rel="noopener noreferrer">
+                fale no WhatsApp
+              </a>
+              .
+            </p>
           </div>
         </section>
       </main>
