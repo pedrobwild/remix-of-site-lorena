@@ -49,6 +49,17 @@ describe("JSON-LD no head() sem duplicação", () => {
     expect(faq.mainEntity.map((q: { name: string }) => q.name)).toEqual(["P1?", "P2?"]);
   });
 
+  it("post com vídeo do YouTube: emite VideoObject com miniatura e embedUrl", () => {
+    const body = '<p>x</p><iframe src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" title="Tour pelo studio"></iframe>';
+    const { scripts } = seoHead({ title: "T | Bewild", description: "D", path: "/conteudos/o-que-e-short-stay", jsonLd: postJsonLd({ ...post, body }) });
+    expect(typesOf(scripts)).toEqual(["WebPage", "Article", "VideoObject", "FAQPage"]);
+    const video = JSON.parse(scripts[2].children);
+    expect(video.name).toBe("Tour pelo studio");
+    expect(video.embedUrl).toBe("https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ");
+    expect(video.thumbnailUrl[0]).toBe("https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg");
+    expect(video.uploadDate).toBeTruthy();
+  });
+
   it("índice: CollectionPage + ItemList com um item por post", () => {
     const { scripts } = seoHead({ title: "C | Bewild", description: "D", path: "/conteudos", jsonLd: postListJsonLd([post, { ...post, slug: "b" }]) });
     expect(typesOf(scripts)).toEqual(["CollectionPage", "ItemList"]);
