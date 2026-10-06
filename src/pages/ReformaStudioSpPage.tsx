@@ -1,12 +1,12 @@
-import type { ReactNode } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { BAIRROS, REMOTO_ITEMS, bairroHref, type BairroPageLink } from "@/lib/bairrosSp";
-import { faqJsonLd, useSeo } from "@/lib/useSeo";
+import { useSeo } from "@/lib/useSeo";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
+import { CANONICAL, FAQ } from "@/content/pages/reforma-de-studio-sao-paulo";
 
 /* ============================================================
  * ReformaStudioSpPage — /reforma-de-studio-sao-paulo
@@ -14,7 +14,6 @@ import "./servico-reforma.css";
  * em São Paulo"). Mesma estrutura de ReformaApartamentoSpPage.
  * ============================================================ */
 
-const CANONICAL = "/reforma-de-studio-sao-paulo";
 // Link interno SEM utm_*: UTM em link interno sobrescreve a campanha paga real
 // (e o gclid/fbclid) com que o visitante chegou. A navegação da SPA já carrega
 // os parâmetros de campanha da URL atual (carryCampaignParams), e o clique no
@@ -42,92 +41,10 @@ const PASSOS: { n: string; t: string }[] = [
   { n: "06", t: "Vistoria e entrega das chaves" },
 ];
 
-const FAQ: { q: string; a: string; node?: ReactNode }[] = [
-  {
-    q: "Vale a pena reformar um studio para Airbnb?",
-    a: "Depende de bairro, convenção do condomínio e operação. A Bewild não garante renda nem ocupação.",
-    node: (
-      <>
-        Depende de bairro, convenção do condomínio e operação. A Bewild não
-        garante renda nem ocupação — as contas linha a linha estão em{" "}
-        <a href="/conteudos/quanto-rende-studio-short-stay-sao-paulo">
-          quanto rende um studio no short stay em São Paulo
-        </a>
-        .
-      </>
-    ),
-  },
-  {
-    q: "O condomínio pode proibir Airbnb?",
-    a: "Pode: a convenção e as decisões em assembleia mandam, e é preciso checar antes de comprar.",
-    node: (
-      <>
-        Pode: a convenção e as decisões em assembleia mandam, e é preciso checar
-        antes de comprar. O que a lei permite hoje está em{" "}
-        <a href="/conteudos/studios-airbnb-sao-paulo-o-que-a-lei-permite">
-          studios e Airbnb em São Paulo: o que a lei permite
-        </a>
-        .
-      </>
-    ),
-  },
-  {
-    q: "Quanto tempo demora a reforma de um studio?",
-    a: "A referência é cerca de 60 dias úteis de obra. A data exata sai no contrato.",
-    node: (
-      <>
-        A referência é cerca de 60 dias úteis de obra, e a data exata sai no
-        contrato. Semana a semana em{" "}
-        <a href="/conteudos/cronograma-reforma-studio-60-dias-uteis">
-          cronograma de uma reforma de studio
-        </a>
-        .
-      </>
-    ),
-  },
-  {
-    q: "Comprei na planta e ainda não tenho as chaves, já posso começar?",
-    a: "Sim. Projeto e proposta são feitos antes das chaves, para a obra começar assim que o imóvel for entregue.",
-    node: (
-      <>
-        Sim. Projeto e proposta são feitos antes das chaves, para a obra começar
-        assim que o imóvel for entregue — o que adiantar está em{" "}
-        <a href="/conteudos/comprou-studio-na-planta-antes-das-chaves">
-          comprou studio na planta: o que fazer antes das chaves
-        </a>
-        .
-      </>
-    ),
-  },
-  {
-    q: "Vocês fazem a gestão do Airbnb?",
-    a: "Não. Entregamos o studio pronto para anunciar; a operação é sua ou de quem você escolher, sem exclusividade.",
-  },
-  {
-    q: "Moro fora de São Paulo?",
-    a: "Sim, dá para reformar. Vistoria por procuração, energia, internet e emergências ficam com a Bewild, e você acompanha tudo pelo Bwild Workflow.",
-  },
-];
-
 type Props = {
   /** Páginas de bairro existentes (loader da rota); null = sem dados → links para /portfolio. */
   bairroPages?: BairroPageLink[] | null;
 };
-
-/** JSON-LD da página no HTML do servidor (head() da rota) — Service/FAQ; a trilha já vai no WebPage. */
-// eslint-disable-next-line react-refresh/only-export-components -- constante lida pela rota, não muda o fast refresh
-export const STUDIO_SP_JSONLD: Array<Record<string, unknown>> = [
-  {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    name: "Reforma completa de studios em São Paulo",
-    serviceType: "Reforma de apartamento",
-    provider: { "@id": "https://bewild.com.br/#org" },
-    areaServed: { "@type": "City", name: "São Paulo" },
-    url: `https://bewild.com.br${CANONICAL}`,
-  },
-  faqJsonLd(FAQ.map((f) => ({ q: f.q, a: f.a }))),
-];
 
 export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) {
   useCtaClickTracking("reforma-studio-sp");

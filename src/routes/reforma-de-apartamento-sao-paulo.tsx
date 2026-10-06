@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import ReformaApartamentoSpPage, { APARTAMENTO_SP_JSONLD } from "@/pages/ReformaApartamentoSpPage";
+import ReformaApartamentoSpPage from "@/pages/ReformaApartamentoSpPage";
+import { APARTAMENTO_SP_JSONLD } from "@/content/pages/reforma-de-apartamento-sao-paulo";
 import { seoHead } from "@/lib/routeHead";
 import { loadBairroLinks } from "@/lib/contentLoaders";
 

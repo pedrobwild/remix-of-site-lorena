@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import ReformaCoberturaSpPage, { COBERTURA_SP_JSONLD } from "@/pages/ReformaCoberturaSpPage";
+import ReformaCoberturaSpPage from "@/pages/ReformaCoberturaSpPage";
+import { COBERTURA_SP_JSONLD } from "@/content/pages/reforma-de-cobertura-sao-paulo";
 import { seoHead } from "@/lib/routeHead";
 
 export const Route = createFileRoute("/reforma-de-cobertura-sao-paulo")({

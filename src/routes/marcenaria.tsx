@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import MarcenariaPage, { MARCENARIA_JSONLD } from "@/pages/MarcenariaPage";
+import MarcenariaPage from "@/pages/MarcenariaPage";
+import { MARCENARIA_JSONLD } from "@/content/pages/marcenaria";
 import { seoHead } from "@/lib/routeHead";
 
 export const Route = createFileRoute("/marcenaria")({

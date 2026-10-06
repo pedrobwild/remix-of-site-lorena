@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import OndeAtuamosPage, { ONDE_ATUAMOS_JSONLD } from "@/pages/OndeAtuamosPage";
+import OndeAtuamosPage from "@/pages/OndeAtuamosPage";
+import { ONDE_ATUAMOS_JSONLD } from "@/content/pages/onde-atuamos";
 import { seoHead } from "@/lib/routeHead";
 import { loadBairroLinks } from "@/lib/contentLoaders";
 

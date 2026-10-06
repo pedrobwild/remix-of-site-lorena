@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import ReformaStudioSpPage, { STUDIO_SP_JSONLD } from "@/pages/ReformaStudioSpPage";
+import ReformaStudioSpPage from "@/pages/ReformaStudioSpPage";
+import { STUDIO_SP_JSONLD } from "@/content/pages/reforma-de-studio-sao-paulo";
 import { seoHead } from "@/lib/routeHead";
 import { loadBairroLinks } from "@/lib/contentLoaders";
 

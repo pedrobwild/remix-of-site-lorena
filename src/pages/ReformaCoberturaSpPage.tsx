@@ -1,12 +1,12 @@
-import type { ReactNode } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { BAIRROS, REMOTO_ITEMS } from "@/lib/bairrosSp";
-import { faqJsonLd, useSeo } from "@/lib/useSeo";
+import { useSeo } from "@/lib/useSeo";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
+import { CANONICAL, FAQ } from "@/content/pages/reforma-de-cobertura-sao-paulo";
 
 /* ============================================================
  * ReformaCoberturaSpPage — /reforma-de-cobertura-sao-paulo
@@ -15,7 +15,6 @@ import "./servico-reforma.css";
  * ReformaApartamentoSpPage e ReformaStudioSpPage.
  * ============================================================ */
 
-const CANONICAL = "/reforma-de-cobertura-sao-paulo";
 // Link interno SEM utm_*: UTM em link interno sobrescreve a campanha paga real
 // (e o gclid/fbclid) com que o visitante chegou. A navegação da SPA já carrega
 // os parâmetros de campanha da URL atual (carryCampaignParams), e o clique no
@@ -41,73 +40,6 @@ const PASSOS: { n: string; t: string }[] = [
   { n: "04", t: "Proposta e contrato" },
   { n: "05", t: "Obra acompanhada pelo Bwild Workflow, com prazo em contrato" },
   { n: "06", t: "Vistoria e entrega das chaves" },
-];
-
-const FAQ: { q: string; a: string; node?: ReactNode }[] = [
-  {
-    q: "Vocês reformam coberturas duplex e com terraço?",
-    a: "Sim. O projeto considera os dois pavimentos, a área externa, a impermeabilização e as regras do condomínio antes de qualquer demolição.",
-  },
-  {
-    q: "O terraço e a área externa entram no escopo?",
-    a: "Entram, quando você quiser: piso, impermeabilização, churrasqueira, iluminação e marcenaria para a área externa fazem parte do projeto e do contrato.",
-  },
-  {
-    q: "Quanto tempo demora a reforma de uma cobertura?",
-    a: "Depende da metragem e do escopo — coberturas costumam levar mais do que os 60 dias úteis de referência de um studio. A data exata sai em contrato.",
-    node: (
-      <>
-        Depende da metragem e do escopo — coberturas costumam levar mais do que
-        os 60 dias úteis de referência de um studio, e a data exata sai em
-        contrato. Os fatores que movem o prazo estão em{" "}
-        <a href="/conteudos/quanto-tempo-demora-reforma-apartamento">
-          quanto tempo demora uma reforma de apartamento
-        </a>
-        .
-      </>
-    ),
-  },
-  {
-    q: "A obra em cobertura precisa de autorização do condomínio?",
-    a: "Sim, como em qualquer apartamento — e em coberturas o síndico costuma olhar com mais atenção para fachada, área externa e horários. A Bewild prepara a documentação técnica exigida.",
-    node: (
-      <>
-        Sim, como em qualquer apartamento — e em coberturas o síndico costuma
-        olhar com mais atenção para fachada, área externa e horários. A Bewild
-        prepara a documentação técnica exigida; o passo a passo está em{" "}
-        <a href="/autorizacao-condominio">
-          autorização de obra em condomínio
-        </a>
-        .
-      </>
-    ),
-  },
-  {
-    q: "O preço pode mudar durante a obra?",
-    a: "Só se você mudar o escopo, e você aprova antes. Sem mudança de escopo, a diferença é por nossa conta.",
-  },
-  {
-    q: "Moro em outra cidade, consigo reformar?",
-    a: "Sim. Vistoria por procuração, energia, internet e emergências ficam com a Bewild, e você acompanha tudo pelo Bwild Workflow.",
-  },
-];
-
-/** JSON-LD da página no HTML do servidor (head() da rota) — Service/FAQ; a trilha já vai no WebPage. */
-// eslint-disable-next-line react-refresh/only-export-components -- constante lida pela rota, não muda o fast refresh
-export const COBERTURA_SP_JSONLD: Array<Record<string, unknown>> = [
-  {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    name: "Reforma completa de coberturas em São Paulo",
-    alternateName: "Reforma de cobertura em SP",
-    serviceType: "Reforma de apartamento",
-    description:
-      "Projeto 3D, obra, área externa e terraço, marcenaria sob medida, mobília e entrega das chaves em um único contrato, com preço fechado e prazo em contrato.",
-    provider: { "@id": "https://bewild.com.br/#org" },
-    areaServed: { "@type": "City", name: "São Paulo" },
-    url: `https://bewild.com.br${CANONICAL}`,
-  },
-  faqJsonLd(FAQ.map((f) => ({ q: f.q, a: f.a }))),
 ];
 
 export default function ReformaCoberturaSpPage() {

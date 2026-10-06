@@ -13,6 +13,8 @@ export const Route = createFileRoute("/guia-do-investidor")({
   ),
   head: () =>
     seoHead({
+      // O guia não usa BwaNav (CSS global conflita com o dele).
+      bwaCss: false,
       title: GUIA_TITLE,
       description: GUIA_DESCRIPTION,
       keywords: GUIA_KEYWORDS,

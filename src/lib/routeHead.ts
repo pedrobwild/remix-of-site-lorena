@@ -5,7 +5,18 @@
  * título, descrição, robots, canonical + hreflang e Open Graph por página.
  */
 
+import homeBwaCssUrl from "@/pages/home-bwa.css?url";
+import bwaInternalCssUrl from "@/pages/bwa-internal.css?url";
+
 export const SITE_BASE = "https://bewild.com.br";
+
+/**
+ * Marcadores dos <link> das folhas .bwa. BwaNav procura por eles no cliente e,
+ * se já existirem (vindos do servidor), apenas os move para o fim do <head>
+ * em vez de criar outros — sem segunda requisição nem duplicata.
+ */
+export const BWA_HOME_CSS_MARKER = "data-bwa-home-css";
+export const BWA_INTERNAL_CSS_MARKER = "data-bwa-internal-css";
 
 export const DEFAULT_OG_IMAGE_URL = `${SITE_BASE}/og_final_v2.jpg`;
 export const DEFAULT_OG_IMAGE_ALT = "Bewild — reformas de apartamentos em São Paulo";
@@ -55,6 +66,15 @@ export type SeoHeadInput = {
    * com `mainEntity` na página de autor). Entram por cima do WebPage padrão.
    */
   pageJsonLd?: Record<string, unknown> | null;
+  /**
+   * Emite no HTML do servidor as folhas do cabeçalho/rodapé .bwa (home-bwa.css
+   * + bwa-internal.css), usadas por toda página pública com <BwaNav />. Até
+   * 06/10/2026 elas só entravam no cliente, depois da hidratação: a página
+   * pintava sem a caixa `.bwa-shell` e depois saltava (CLS 0,15 em
+   * /reforma-de-studio-sao-paulo). Desligar (`false`) só nas rotas sem BwaNav:
+   * home (tem a própria folha), /guia-do-investidor e as LPs /o e /p.
+   */
+  bwaCss?: boolean;
 };
 
 function absoluteUrl(url: string): string {
@@ -179,6 +199,12 @@ export function seoHead(input: SeoHeadInput) {
         { rel: "alternate", hrefLang: "pt-BR", href: canonical },
         { rel: "alternate", hrefLang: "x-default", href: canonical },
       ];
+  if (input.bwaCss !== false) {
+    links.push(
+      { rel: "stylesheet", href: homeBwaCssUrl, [BWA_HOME_CSS_MARKER]: "" },
+      { rel: "stylesheet", href: bwaInternalCssUrl, [BWA_INTERNAL_CSS_MARKER]: "" },
+    );
+  }
 
   // Home: o JSON-LD completo (Organization/WebSite) já vem do __root.
   const scripts =

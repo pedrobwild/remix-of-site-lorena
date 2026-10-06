@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import IndiquePage, { INDIQUE_JSONLD } from "@/pages/IndiquePage";
+import IndiquePage from "@/pages/IndiquePage";
+import { INDIQUE_JSONLD } from "@/content/pages/indique-um-amigo";
 import { seoHead } from "@/lib/routeHead";
 
 export const Route = createFileRoute("/indique-um-amigo")({

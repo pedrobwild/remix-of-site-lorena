@@ -1,12 +1,12 @@
-import type { ReactNode } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { BAIRROS, REMOTO_ITEMS, bairroHref, type BairroPageLink } from "@/lib/bairrosSp";
-import { faqJsonLd, useSeo } from "@/lib/useSeo";
+import { useSeo } from "@/lib/useSeo";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
+import { CANONICAL, FAQ } from "@/content/pages/reforma-de-apartamento-sao-paulo";
 
 /* ============================================================
  * ReformaApartamentoSpPage — /reforma-de-apartamento-sao-paulo
@@ -15,7 +15,6 @@ import "./servico-reforma.css";
  * BwaNav, BwaFooter, useSeo, breadcrumb + Service + FAQPage.
  * ============================================================ */
 
-const CANONICAL = "/reforma-de-apartamento-sao-paulo";
 // Link interno SEM utm_*: UTM em link interno sobrescreve a campanha paga real
 // (e o gclid/fbclid) com que o visitante chegou. A navegação da SPA já carrega
 // os parâmetros de campanha da URL atual (carryCampaignParams), e o clique no
@@ -43,92 +42,10 @@ const PASSOS: { n: string; t: string }[] = [
   { n: "06", t: "Vistoria e entrega das chaves" },
 ];
 
-const FAQ: { q: string; a: string; node?: ReactNode }[] = [
-  {
-    q: "Vocês reformam apartamentos de qualquer tamanho?",
-    a: "Sim: studios e apartamentos de qualquer metragem em São Paulo capital, e também escritórios. O escopo e a proposta são definidos após a leitura do imóvel.",
-  },
-  {
-    q: "Quanto tempo demora?",
-    a: "A referência é cerca de 60 dias úteis de obra. A data exata sai no contrato.",
-    node: (
-      <>
-        A referência é cerca de 60 dias úteis de obra. A data exata sai no
-        contrato — veja o detalhamento em{" "}
-        <a href="/conteudos/quanto-tempo-demora-reforma-apartamento">
-          quanto tempo demora uma reforma de apartamento
-        </a>
-        .
-      </>
-    ),
-  },
-  {
-    q: "O preço pode mudar durante a obra?",
-    a: "Só se você mudar o escopo, e você aprova antes. Sem mudança de escopo, a diferença é por nossa conta.",
-    node: (
-      <>
-        Só se você mudar o escopo, e você aprova antes. Sem mudança de escopo, a
-        diferença é por nossa conta. Para comparar propostas, veja{" "}
-        <a href="/conteudos/como-comparar-orcamentos-de-reforma">
-          como comparar orçamentos de reforma
-        </a>
-        .
-      </>
-    ),
-  },
-  {
-    q: "Moro em outra cidade, consigo reformar?",
-    a: "Sim. Vistoria por procuração, energia, internet e emergências ficam com a Bewild, e você acompanha tudo pelo Bwild Workflow.",
-  },
-  {
-    q: "Vocês fazem só reforma completa?",
-    a: "O modelo é reforma completa: projeto, obra, marcenaria e mobília em um contrato.",
-  },
-  {
-    q: "Que garantia eu tenho?",
-    a: "5 anos de garantia sobre a mão de obra, em termo contratual, mais manutenção preventiva e chamados de emergência conforme o contrato.",
-  },
-];
-
 type Props = {
   /** Páginas de bairro existentes (loader da rota); null = sem dados → links para /portfolio. */
   bairroPages?: BairroPageLink[] | null;
 };
-
-/** JSON-LD da página no HTML do servidor (head() da rota) — Service/FAQ; a trilha já vai no WebPage. */
-// eslint-disable-next-line react-refresh/only-export-components -- constante lida pela rota, não muda o fast refresh
-export const APARTAMENTO_SP_JSONLD: Array<Record<string, unknown>> = [
-  {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    name: "Reforma de apartamento em São Paulo",
-    alternateName: "Empresa de reforma de apartamento em São Paulo",
-    serviceType: "Reforma de apartamento",
-    description:
-      "Reforma completa de apartamentos e studios em São Paulo: projeto aprovado em 3D, obra, marcenaria e mobília em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia sobre a mão de obra.",
-    provider: { "@id": "https://bewild.com.br/#org" },
-    areaServed: {
-      "@type": "City",
-      name: "São Paulo",
-      containedInPlace: { "@type": "State", name: "São Paulo" },
-    },
-    url: `https://bewild.com.br${CANONICAL}`,
-    hasOfferCatalog: {
-      "@type": "OfferCatalog",
-      name: "Escopo da reforma",
-      itemListElement: [
-        "Projeto aprovado em 3D antes da obra",
-        "Obra com preço fechado e prazo em contrato",
-        "Marcenaria, mobília e eletrodomésticos",
-        "Vistoria e entrega das chaves",
-      ].map((item) => ({
-        "@type": "Offer",
-        itemOffered: { "@type": "Service", name: item },
-      })),
-    },
-  },
-  faqJsonLd(FAQ.map((f) => ({ q: f.q, a: f.a }))),
-];
 
 export default function ReformaApartamentoSpPage({ bairroPages = null }: Props = {}) {
   useCtaClickTracking("reforma-apartamento-sp");

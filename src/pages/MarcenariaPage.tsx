@@ -10,11 +10,12 @@ import {
   CATALOG_FULL_URL,
   type CatalogItem,
 } from "@/lib/homeCatalog";
-import { faqJsonLd, useSeo } from "@/lib/useSeo";
+import { useSeo } from "@/lib/useSeo";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
 import "./marcenaria.css";
+import { CANONICAL, FAQ } from "@/content/pages/marcenaria";
 
 /* ============================================================
  * MarcenariaPage — /marcenaria
@@ -22,7 +23,6 @@ import "./marcenaria.css";
  * ferragens, ambientes (fotos do Catálogo Bewild) e garantia.
  * ============================================================ */
 
-const CANONICAL = "/marcenaria";
 // Link interno SEM utm_*: UTM em link interno sobrescreve a campanha paga real
 // (e o gclid/fbclid) com que o visitante chegou. A navegação da SPA já carrega
 // os parâmetros de campanha da URL atual (carryCampaignParams), e o clique no
@@ -45,33 +45,6 @@ const PASSOS: { n: string; t: string }[] = [
   { n: "04", t: "Produção na fábrica própria, no cronograma da obra" },
   { n: "05", t: "Instalação pela equipe da casa, depois dos acabamentos" },
   { n: "06", t: "Vistoria de engenheiro, regulagem e entrega das chaves" },
-];
-
-const FAQ: { q: string; a: string }[] = [
-  {
-    q: "A marcenaria é feita pela própria Bewild?",
-    a: "Sim. A marcenaria é desenhada no nosso projeto executivo e produzida em fábrica própria, o que mantém prazo, preço e responsabilidade no mesmo contrato da obra.",
-  },
-  {
-    q: "Quais materiais e ferragens vocês usam?",
-    a: "MDF de procedência certificada, estruturas em 25 mm, prateleiras e aéreos reforçados em 36 mm e ferragens FGVTN com amortecimento em portas e gavetas.",
-  },
-  {
-    q: "Posso contratar só a marcenaria, sem a reforma?",
-    a: "Nosso contrato padrão é a reforma completa, com projeto, obra, marcenaria e mobília juntos. Casos de marcenaria isolada são avaliados um a um — fale com a gente no WhatsApp.",
-  },
-  {
-    q: "Quantos modelos e cores posso escolher?",
-    a: "Mais de 40 combinações de modelos e cores, todas no Catálogo Bewild, organizadas por ambiente: sala, cozinha, dormitório, banheiros e armários abertos.",
-  },
-  {
-    q: "Qual é a garantia da marcenaria?",
-    a: "5 anos, com assistência prestada pela própria Bewild — o mesmo prazo de garantia da reforma.",
-  },
-  {
-    q: "Quanto tempo leva para ficar pronta?",
-    a: "A produção acontece em paralelo à obra e a instalação entra depois dos acabamentos, dentro do prazo de entrega que está no seu contrato.",
-  },
 ];
 
 function RoomGallery() {
@@ -171,24 +144,6 @@ function RoomGallery() {
     </>
   );
 }
-
-/** JSON-LD da página no HTML do servidor (head() da rota) — Service/FAQ; a trilha já vai no WebPage. */
-// eslint-disable-next-line react-refresh/only-export-components -- constante lida pela rota, não muda o fast refresh
-export const MARCENARIA_JSONLD: Array<Record<string, unknown>> = [
-  {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    name: "Marcenaria sob medida em São Paulo",
-    alternateName: "Móveis planejados sob medida em SP",
-    serviceType: "Marcenaria sob medida",
-    description:
-      "Marcenaria planejada desenhada no projeto executivo e produzida em fábrica própria: MDF certificado, estruturas em 25 mm, ferragens FGVTN e 5 anos de garantia.",
-    provider: { "@id": "https://bewild.com.br/#org" },
-    areaServed: { "@type": "City", name: "São Paulo" },
-    url: `https://bewild.com.br${CANONICAL}`,
-  },
-  faqJsonLd(FAQ.map((f) => ({ q: f.q, a: f.a }))),
-];
 
 export default function MarcenariaPage() {
   useCtaClickTracking("marcenaria");

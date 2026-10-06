@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import AutorizacaoCondominioPage, { AUTORIZACAO_JSONLD } from "@/pages/AutorizacaoCondominioPage";
+import AutorizacaoCondominioPage from "@/pages/AutorizacaoCondominioPage";
+import { AUTORIZACAO_JSONLD } from "@/content/pages/autorizacao-condominio";
 import { seoHead } from "@/lib/routeHead";
 
 export const Route = createFileRoute("/autorizacao-condominio")({

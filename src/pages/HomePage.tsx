@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import homeBwaCssUrl from "./home-bwa.css?url";
 import { HOME_BWA_HTML } from "./home-bwa-body";
@@ -15,7 +15,10 @@ import { fetchSiteSettings } from "@/lib/useSiteSettings";
 import { isExternalHref, safeHref } from "@/lib/safeUrl";
 import { initHomeBwa } from "./home-bwa-script";
 import { hydrateHomeFaq } from "./homeFaq";
-import WorkflowPortalReplica from "@/components/workflow-replica/WorkflowPortalReplica";
+// Réplica do portal do cliente (recharts, ~92 KB gz): só é montada no cliente,
+// dentro de um portal, e agora só quando a seção se aproxima da tela — fora do
+// caminho crítico da home (auditoria 06/10: 467 KB de JS na home).
+const WorkflowPortalReplica = lazy(() => import("@/components/workflow-replica/WorkflowPortalReplica"));
 import { bastidoresJsonLd, parseBastidoresPosts } from "@/lib/bastidoresJsonLd";
 
 const BASTIDORES_POSTS = parseBastidoresPosts();
@@ -107,6 +110,29 @@ function mountHomeStylesheet(): () => void {
   };
 }
 
+/**
+ * Chama `mount` quando a seção do portal está a ~600 px da tela (ou de
+ * imediato onde não há IntersectionObserver). Devolve a limpeza.
+ */
+function mountPortalWhenNear(target: HTMLElement | null, mount: () => void): () => void {
+  if (!target) return () => {};
+  if (typeof IntersectionObserver === "undefined") {
+    mount();
+    return () => {};
+  }
+  const io = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        io.disconnect();
+        mount();
+      }
+    },
+    { rootMargin: "600px 0px" },
+  );
+  io.observe(target);
+  return () => io.disconnect();
+}
+
 export default function HomePage() {
   const homeRef = useRef<HTMLDivElement>(null);
   const [workflowPortalRoot, setWorkflowPortalRoot] = useState<HTMLElement | null>(null);
@@ -156,7 +182,8 @@ export default function HomePage() {
       : [];
     // Vitrine "Projetos": troca os cards estáticos pelos mais acessados.
     void hydrateHomeProjects();
-    setWorkflowPortalRoot(root?.querySelector<HTMLElement>("#workflow-portal-root") ?? null);
+    const portalRoot = root?.querySelector<HTMLElement>("#workflow-portal-root") ?? null;
+    cleanups.push(mountPortalWhenNear(portalRoot, () => setWorkflowPortalRoot(portalRoot)));
 
     return () => {
       setWorkflowPortalRoot(null);
@@ -184,7 +211,14 @@ export default function HomePage() {
   return (
     <>
       <div ref={homeRef} dangerouslySetInnerHTML={{ __html: HOME_BWA_HTML }} />
-      {workflowPortalRoot ? createPortal(<WorkflowPortalReplica />, workflowPortalRoot) : null}
+      {workflowPortalRoot
+        ? createPortal(
+            <Suspense fallback={null}>
+              <WorkflowPortalReplica />
+            </Suspense>,
+            workflowPortalRoot,
+          )
+        : null}
       {/* Rodapé único do site — mesmo componente de todas as páginas. */}
       <BwaFooter />
     </>
