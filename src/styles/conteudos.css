@@ -105,3 +105,12 @@
   .ct-grid{grid-template-columns:1fr}
   .ct-toolbar{flex-direction:column;align-items:flex-start}
 }
+
+/* BUSCA (/buscar) */
+.ct-search{max-width:720px;margin-top:8px}
+.ct-search__label{display:block;font-family:var(--ct-mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5A6472;margin-bottom:10px}
+.ct-search__row{display:flex;gap:8px;align-items:stretch}
+.ct-search__input{flex:1;min-width:0;min-height:52px;padding:12px 16px;font:inherit;font-size:16px;color:#1A2332;background:#fff;border:1px solid var(--ct-hair);border-radius:0;-webkit-appearance:none;appearance:none}
+.ct-search__input:focus-visible{outline:2px solid #11355B;outline-offset:2px;border-color:#0B2342}
+.ct-search__row .ct-chip{min-height:52px}
+a.ct-chip{display:inline-flex;align-items:center;text-decoration:none}
