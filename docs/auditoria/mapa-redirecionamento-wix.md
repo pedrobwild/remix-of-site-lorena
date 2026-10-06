@@ -41,7 +41,7 @@ Legenda: **P** = destino já publicado · **R** = rascunho no novo site (publica
 | 21 | `/post/5-estratégias-essenciais-para-reformar-seu-studio-e-maximizar-seu-investimento` | `/conteudos/preparar-studio-airbnb-checklist` | P (22/09) |
 | 22 | `/post/quanto-custa-a-reforma-de-um-studio-para-locação-no-airbnb-analisamos-100-orçamentos-da-bwild` | `/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo` | P (22/09) |
 | 23 | `/post/studios-para-locação-short-stay-o-crescimento-exponencial-deste-mercado-no-brasil` | `/conteudos/short-stay-ou-long-stay-studio-compacto` | P |
-| 24 | `/post/entenda-o-que-é-o-short-stay-oportunidade-de-investimento-e-tendência-no-mercado-imobiliário` | `/conteudos/short-stay-ou-long-stay-studio-compacto` | P |
+| 24 | `/post/entenda-o-que-é-o-short-stay-oportunidade-de-investimento-e-tendência-no-mercado-imobiliário` | `/conteudos/o-que-e-short-stay` | P |
 | 25 | `/post/financiar-ou-comprar-à-vista-qual-a-melhor-opção-para-adquirir-um-imóvel` | `/conteudos` | I |
 | 26 | `/post/quais-são-os-documentos-necessários-para-a-compra-de-um-imóvel` | `/conteudos` | I |
 | 27 | `/post/as-preferências-dos-hóspedes-que-buscam-por-locações-de-curta-temporada-short-stay` | `/conteudos/preparar-studio-airbnb-checklist` | P (22/09) |
