@@ -79,6 +79,26 @@ describe("JSON-LD no head() sem duplicação", () => {
     expect(postJsonLd({ ...post, body: "<p>só texto</p>" } as unknown as BewildPost).some((n) => n["@type"] === "VideoObject")).toBe(false);
   });
 
+  it("página de autor: ProfilePage com a Person no lugar do WebPage, sem Article, FAQ mantido", () => {
+    const authorPost = { ...post, slug: "pedro-henrique-alves-ceo-bewild", author: "Equipe Bewild" } as unknown as BewildPost;
+    const nodes = postJsonLd(authorPost);
+    expect(nodes.map((n) => n["@type"])).toEqual(["FAQPage"]);
+    const { scripts } = seoHead({
+      title: "Pedro | Bewild",
+      description: "D",
+      path: "/conteudos/pedro-henrique-alves-ceo-bewild",
+      ogType: "profile",
+      jsonLd: nodes,
+      pageJsonLd: { "@type": "ProfilePage", mainEntity: { "@type": "Person", name: "Pedro Henrique Alves" } },
+    });
+    expect(typesOf(scripts)).toEqual(["ProfilePage", "FAQPage"]);
+    const page = JSON.parse(scripts[0].children);
+    expect(page.mainEntity.name).toBe("Pedro Henrique Alves");
+    // O resto do nó da página continua lá (endereço, trilha).
+    expect(page["@id"]).toBe("https://bewild.com.br/conteudos/pedro-henrique-alves-ceo-bewild#webpage");
+    expect(page.breadcrumb.itemListElement).toHaveLength(3);
+  });
+
   it("índice: CollectionPage + ItemList com um item por post", () => {
     const { scripts } = seoHead({ title: "C | Bewild", description: "D", path: "/conteudos", jsonLd: postListJsonLd([post, { ...post, slug: "b" }]) });
     expect(typesOf(scripts)).toEqual(["CollectionPage", "ItemList"]);

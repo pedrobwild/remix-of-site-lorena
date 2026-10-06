@@ -47,9 +47,14 @@ export type SeoHeadInput = {
   noindex?: boolean;
   keywords?: string;
   ogImage?: string | null;
-  ogType?: "website" | "article";
+  ogType?: "website" | "article" | "profile";
   /** Blocos JSON-LD extras da página (Article, FAQPage, ItemList…), um <script> cada. */
   jsonLd?: Array<Record<string, unknown>> | null;
+  /**
+   * Propriedades que se sobrepõem ao nó da página (ex.: `@type: "ProfilePage"`
+   * com `mainEntity` na página de autor). Entram por cima do WebPage padrão.
+   */
+  pageJsonLd?: Record<string, unknown> | null;
 };
 
 function absoluteUrl(url: string): string {
@@ -137,6 +142,7 @@ function pageJsonLd(input: SeoHeadInput, path: string, canonical: string, image:
         item: t.path === "/" ? `${SITE_BASE}/` : `${SITE_BASE}${t.path}`,
       })),
     },
+    ...(input.pageJsonLd ?? {}),
   };
 }
 

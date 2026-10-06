@@ -13,7 +13,7 @@
 - [x] Corrigir materiais, serviços e estados de execução não comprovados
 - [x] Conferir cada cover_alt contra a capa efetiva, incluindo os casos apontados
 - [x] Validar novamente os 162 registros e documentar limitações visuais reais
-- [x] Publicar robots.txt apontando o sitemap pela URL www
+- [x] robots.txt com o sitemap na URL canônica (bewild.com.br; o www responde 302 para ela)
 - [x] Conferir llms.txt (45 artigos, 16 bairros) incluído na publicação
-- [x] Adicionar /.well-known/llms.txt (cópia idêntica) para descoberta por robôs de IA
+- [x] Adicionar /.well-known/llms.txt (cópia idêntica, sincronizada pelo scripts/generate-sitemap.mjs no build) para descoberta por robôs de IA
 - [x] Publicar /.well-known/llms.txt e confirmar no domínio próprio
