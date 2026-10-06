@@ -168,7 +168,9 @@ async function main() {
   try {
     [projects, posts, faqEntries] = await Promise.all([
       getProjects(),
-      get("bewild_posts?published=eq.true&select=slug,title,updated_at,published_at,created_at,body,meta_description,excerpt"),
+      // Posts: content_updated_at (edição real) — nunca updated_at (lote 06/10/2026).
+      get("bewild_posts?published=eq.true&select=slug,title,content_updated_at,published_at,created_at,body,meta_description,excerpt").catch(() =>
+        get("bewild_posts?published=eq.true&select=slug,title,published_at,created_at,body,meta_description,excerpt")),
       get("assistant_kb?ativo=eq.true&select=updated_at"),
     ]);
   } catch (err) {
@@ -205,7 +207,7 @@ async function main() {
     },
     {
       loc: `${BASE_URL}/conteudos`,
-      lastmod: day("2026-09-23", posts.length ? newest(posts, "updated_at", "published_at", "created_at") : null),
+      lastmod: day("2026-09-23", posts.length ? newest(posts, "content_updated_at", "published_at", "created_at") : null),
       changefreq: "weekly",
       priority: "0.8",
     },
@@ -281,7 +283,7 @@ async function main() {
     .sort((a, b) => a.slug.localeCompare(b.slug))
     .map((p) => ({
       loc: `${BASE_URL}/conteudos/${p.slug}`,
-      lastmod: day(p.updated_at, p.published_at, p.created_at),
+      lastmod: day(p.content_updated_at, p.published_at, p.created_at),
       changefreq: "monthly",
       priority: "0.6",
       videos: postVideos(p),
