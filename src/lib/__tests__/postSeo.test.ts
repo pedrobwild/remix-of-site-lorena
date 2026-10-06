@@ -58,8 +58,12 @@ describe("resolvePostAuthor / postAuthorJsonLd", () => {
     expect(postAuthorHref("Equipe Bewild")).toBeNull();
     // "Thiago" sozinho não basta para casar o registro
     expect(postAuthorJsonLd("Thiago")).not.toHaveProperty("identifier");
-    // Sem página própria, sem @id (nada a consolidar)
-    expect(postAuthorJsonLd("Thiago Dantas")).not.toHaveProperty("@id");
+    // Com página de autor (06/10/2026), @id e url apontam para ela e rel=author aparece
+    expect(postAuthorJsonLd("Thiago Dantas")).toMatchObject({
+      "@id": "https://bewild.com.br/conteudos/thiago-dantas-arquiteto-responsavel-tecnico-bewild#person",
+      url: "https://bewild.com.br/conteudos/thiago-dantas-arquiteto-responsavel-tecnico-bewild",
+    });
+    expect(postAuthorHref("Thiago Dantas")).toBe("/conteudos/thiago-dantas-arquiteto-responsavel-tecnico-bewild");
   });
 });
 
