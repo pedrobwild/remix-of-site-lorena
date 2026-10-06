@@ -35,6 +35,7 @@ import { Route as ReformaDeApartamentoSaoPauloRouteImport } from './routes/refor
 import { Route as ReformaDeCoberturaSaoPauloRouteImport } from './routes/reforma-de-cobertura-sao-paulo'
 import { Route as ReformaDeStudioSaoPauloRouteImport } from './routes/reforma-de-studio-sao-paulo'
 import { Route as ServicosRouteImport } from './routes/servicos'
+import { Route as ZzCalcTestRouteImport } from './routes/zz-calc-test'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminCentralRouteImport } from './routes/admin.central'
@@ -206,6 +207,11 @@ const ReformaDeStudioSaoPauloRoute = ReformaDeStudioSaoPauloRouteImport.update({
 const ServicosRoute = ServicosRouteImport.update({
   id: '/servicos',
   path: '/servicos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ZzCalcTestRoute = ZzCalcTestRouteImport.update({
+  id: '/zz-calc-test',
+  path: '/zz-calc-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -436,6 +442,7 @@ export interface FileRoutesByFullPath {
   '/reforma-de-cobertura-sao-paulo': typeof ReformaDeCoberturaSaoPauloRoute
   '/reforma-de-studio-sao-paulo': typeof ReformaDeStudioSaoPauloRoute
   '/servicos': typeof ServicosRoute
+  '/zz-calc-test': typeof ZzCalcTestRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
   '/admin/conversoes': typeof AdminConversoesRoute
@@ -504,6 +511,7 @@ export interface FileRoutesByTo {
   '/reforma-de-cobertura-sao-paulo': typeof ReformaDeCoberturaSaoPauloRoute
   '/reforma-de-studio-sao-paulo': typeof ReformaDeStudioSaoPauloRoute
   '/servicos': typeof ServicosRoute
+  '/zz-calc-test': typeof ZzCalcTestRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
   '/admin/conversoes': typeof AdminConversoesRoute
@@ -573,6 +581,7 @@ export interface FileRoutesById {
   '/reforma-de-cobertura-sao-paulo': typeof ReformaDeCoberturaSaoPauloRoute
   '/reforma-de-studio-sao-paulo': typeof ReformaDeStudioSaoPauloRoute
   '/servicos': typeof ServicosRoute
+  '/zz-calc-test': typeof ZzCalcTestRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
   '/admin/conversoes': typeof AdminConversoesRoute
@@ -643,6 +652,7 @@ export interface FileRouteTypes {
     | '/reforma-de-cobertura-sao-paulo'
     | '/reforma-de-studio-sao-paulo'
     | '/servicos'
+    | '/zz-calc-test'
     | '/admin/analytics'
     | '/admin/central'
     | '/admin/conversoes'
@@ -711,6 +721,7 @@ export interface FileRouteTypes {
     | '/reforma-de-cobertura-sao-paulo'
     | '/reforma-de-studio-sao-paulo'
     | '/servicos'
+    | '/zz-calc-test'
     | '/admin/analytics'
     | '/admin/central'
     | '/admin/conversoes'
@@ -779,6 +790,7 @@ export interface FileRouteTypes {
     | '/reforma-de-cobertura-sao-paulo'
     | '/reforma-de-studio-sao-paulo'
     | '/servicos'
+    | '/zz-calc-test'
     | '/admin/analytics'
     | '/admin/central'
     | '/admin/conversoes'
@@ -848,6 +860,7 @@ export interface RootRouteChildren {
   ReformaDeCoberturaSaoPauloRoute: typeof ReformaDeCoberturaSaoPauloRoute
   ReformaDeStudioSaoPauloRoute: typeof ReformaDeStudioSaoPauloRoute
   ServicosRoute: typeof ServicosRoute
+  ZzCalcTestRoute: typeof ZzCalcTestRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminCentralRoute: typeof AdminCentralRoute
   AdminConversoesRoute: typeof AdminConversoesRoute
@@ -1072,6 +1085,13 @@ declare module '@tanstack/react-router' {
       path: '/servicos'
       fullPath: '/servicos'
       preLoaderRoute: typeof ServicosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/zz-calc-test': {
+      id: '/zz-calc-test'
+      path: '/zz-calc-test'
+      fullPath: '/zz-calc-test'
+      preLoaderRoute: typeof ZzCalcTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -1384,6 +1404,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReformaDeCoberturaSaoPauloRoute: ReformaDeCoberturaSaoPauloRoute,
   ReformaDeStudioSaoPauloRoute: ReformaDeStudioSaoPauloRoute,
   ServicosRoute: ServicosRoute,
+  ZzCalcTestRoute: ZzCalcTestRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminCentralRoute: AdminCentralRoute,
   AdminConversoesRoute: AdminConversoesRoute,
