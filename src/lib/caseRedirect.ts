@@ -32,11 +32,14 @@ export function lowercasePathRedirect(request: Request): Response | null {
  * o servidor devolve o permanente.
  */
 export const CANONICAL_HOST = "bewild.com.br";
+// Também o endereço publicado do Lovable: só o domínio próprio deve aparecer no Google.
+// Os hosts de preview (id-preview--…) ficam de fora de propósito.
+const REDIRECTED_HOSTS = [`www.${CANONICAL_HOST}`, "bewild.lovable.app"];
 
 export function canonicalHostRedirect(request: Request): Response | null {
   if (request.method !== "GET" && request.method !== "HEAD") return null;
   const url = new URL(request.url);
-  if (url.hostname !== `www.${CANONICAL_HOST}`) return null;
+  if (!REDIRECTED_HOSTS.includes(url.hostname)) return null;
   url.hostname = CANONICAL_HOST;
   return new Response(null, { status: 301, headers: { location: url.toString() } });
 }
