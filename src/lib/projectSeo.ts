@@ -35,10 +35,19 @@ const CODE_PREFIX = /^(?:[A-ZÀ-Ú][A-ZÀ-Ú&0-9]{0,4}\s*[-–—]|[A-ZÀ-Ú][A-
 
 /** Remove o código interno: ele não diz nada para quem vê o resultado no Google. */
 export function stripProjectCode(value: string): string {
-  return value.replace(CODE_PREFIX, "").trim();
+  const match = value.match(CODE_PREFIX);
+  if (!match) return value.trim();
+  let rest = value.slice(match[0].length).trim();
+  // "LM - LM URBAN FLEX": o código repetido no começo do nome também sai.
+  const code = match[0].replace(/[-–—·\s]+$/, "");
+  if (code && rest.startsWith(`${code} `)) rest = rest.slice(code.length).trim();
+  return rest;
 }
 
 const LOWER_WORDS = new Set(["de", "da", "do", "das", "dos", "e", "em", "no", "na"]);
+
+/** Sigla sem vogal ("SP", "JK", "PJM") continua em caixa alta. */
+const ACRONYM = /^[b-df-hj-np-tv-xz]{2,4}$/;
 
 /** Nomes vêm em CAIXA ALTA no admin; no título do Google fica melhor capitalizado. */
 function humanizeName(value: string): string {
@@ -48,7 +57,13 @@ function humanizeName(value: string): string {
   return clean
     .toLowerCase()
     .split(/\s+/)
-    .map((w, i) => (i > 0 && LOWER_WORDS.has(w) ? w : w.charAt(0).toUpperCase() + w.slice(1)))
+    .map((w, i) =>
+      ACRONYM.test(w)
+        ? w.toUpperCase()
+        : i > 0 && LOWER_WORDS.has(w)
+          ? w
+          : w.charAt(0).toUpperCase() + w.slice(1),
+    )
     .join(" ");
 }
 
@@ -64,19 +79,45 @@ const hasSearchContext = (value: string) =>
 const truncateTitleBase = (value: string, maxLength: number) => {
   if (value.length <= maxLength) return value;
   const shortened = value.slice(0, maxLength + 1).replace(/\s+\S*$/, "").trim();
-  return shortened || value.slice(0, maxLength).trim();
+  return shortened && shortened.length <= maxLength ? shortened : value.slice(0, maxLength).trim();
 };
 
 const areaLabel = (p: ProjectSeoInput) =>
   formatAreaM2(p.area_m2) ?? "";
 
-/** Só o que o cadastro diz: projeto ainda não executado não é "reforma". */
-const titleNoun = (p: ProjectSeoInput) =>
-  p.status === "em_projeto"
-    ? "Projeto de interiores de apartamento"
-    : p.status === "em_obra"
-      ? "Reforma de apartamento em obra"
-      : "Reforma de apartamento";
+/**
+ * O que foi feito, logo depois do nome: "reforma de 28,21 m²". Só o que o
+ * cadastro diz: projeto ainda não executado não é "reforma".
+ */
+const titleWhat = (p: ProjectSeoInput, area: string) => {
+  if (p.status === "em_projeto") return area ? `projeto de interiores de ${area}` : "projeto de interiores";
+  const base = area ? `reforma de ${area}` : "reforma de apartamento";
+  return p.status === "em_obra" ? `${base} em obra` : base;
+};
+
+/** Conectivo ou traço que sobra no fim do nome depois de tirar o bairro ou cortar. */
+const TRAILING_FILLER = /(?:\s+(?:de|da|do|das|dos|e|em|no|na|nos|nas)|\s*[-–—·,:;&/|])+$/;
+const tidyName = (value: string) => value.replace(TRAILING_FILLER, "").trim();
+
+/**
+ * Palavra que costuma abrir nome de lugar: "Jardim Paulista", "Alto do
+ * Ipiranga", "Dom Brás". Se o nome termina nela antes do bairro, o bairro é
+ * parte do nome próprio e fica.
+ */
+const PLACE_GLUE = /(?:^|\s)(?:de|da|do|das|dos|jardim|vila|alto|parque|ch[aá]cara|cidade|dom|santa|santo|s[aã]o)$/i;
+
+const escapeRx = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/** Comparação sem acento nem caixa: "Vila Olimpia" = "Vila Olímpia". */
+const fold = (value: string) =>
+  value.toLocaleLowerCase("pt-BR").normalize("NFD").replace(/[̀-ͯ]/g, "");
+
+/** O nome já cita o bairro ("Brooklin Studio")? Então "em Brooklin" não se repete. */
+const nameHasPlace = (name: string, place: string) =>
+  new RegExp(`(^|[^a-z0-9])${escapeRx(fold(place))}([^a-z0-9]|$)`).test(fold(name));
+
+/** Teto do título gerado (o Google exibe uns 60 caracteres e corta o resto). */
+const TITLE_MAX = 78;
 
 /** Google corta em ~160 caracteres: fecha em frase ou palavra inteira. */
 const DESCRIPTION_MAX = 160;
@@ -90,11 +131,20 @@ export function clampDescription(value: string, max = DESCRIPTION_MAX): string {
   return `${cut}…`;
 }
 
-const placeLabel = (p: ProjectSeoInput) => (p.neighborhood || p.location || "").trim();
+/** Bairro → cidade. Valor sem nenhuma letra (ex.: "31", erro de cadastro) não conta. */
+const placeLabel = (p: ProjectSeoInput) =>
+  [p.neighborhood, p.location].map((v) => (v || "").trim()).find((v) => /\p{L}/u.test(v)) ?? "";
 
 /**
- * Título do Google: o que interessa primeiro (reforma + metragem + bairro) e,
- * quando couber, o nome do projeto — nunca o código interno do negócio.
+ * Título do Google: o nome do prédio primeiro, depois o bairro e o que foi
+ * feito — "The Collection em Moema: reforma de 28,21 m² | Bewild". Nunca o
+ * código interno do negócio.
+ *
+ * O nome vem na frente porque a busca que esta página atende é a do prédio
+ * ("the collection moema"). "Reforma de apartamento em <bairro>" é da página
+ * do bairro (/reforma/<bairro>) e do guia de SP: com 160 projetos abrindo o
+ * título com essa frase, eles disputavam a mesma busca entre si (CONT-01 da
+ * auditoria de 05/10/2026).
  */
 export function projectSeoTitle(p: ProjectSeoInput | null | undefined): string {
   if (!p) return "Reforma de apartamento em São Paulo | Bewild";
@@ -105,21 +155,37 @@ export function projectSeoTitle(p: ProjectSeoInput | null | undefined): string {
 
   const suffix = " | Bewild";
   const area = areaLabel(p);
-  const place = placeLabel(p);
-  const what = [titleNoun(p), area ? `de ${area}` : "", `em ${place || "São Paulo"}`]
-    .filter(Boolean)
-    .join(" ");
+  const place = placeLabel(p) || "São Paulo";
+  const what = titleWhat(p, area);
   let name = projectFriendlyName(p);
-  // Bairro já aparece antes; repetir no nome só gasta espaço no resultado.
-  if (place) {
-    const rx = new RegExp(`\\s*[-–—]?\\s*${place.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*$`, "i");
-    name = name.replace(rx, "").trim() || name;
+  // "Latitude Campo Belo" em Campo Belo → "Latitude em Campo Belo": o bairro não
+  // se repete. Só sai como palavra inteira ("Solapa" em Lapa fica) e nunca de
+  // um nome próprio ("Alto do Ipiranga").
+  if (name) {
+    const atEnd = new RegExp(`\\s*[-–—]?\\s*(?<![\\p{L}\\p{N}])${escapeRx(place)}\\s*$`, "iu");
+    const rest = name.replace(atEnd, "");
+    if (rest !== name && !PLACE_GLUE.test(rest)) name = tidyName(rest) || name;
   }
-  // Nome do projeto entra no fim, truncado, para cada URL ter um título único.
-  const nameRoom = 78 - (what.length + 3 + suffix.length);
-  if (name && nameRoom >= 8) return `${what} — ${truncateTitleBase(name, nameRoom)}${suffix}`;
-  return `${truncateTitleBase(what, 78 - suffix.length)}${suffix}`;
+  if (!name) {
+    const head = `${what.charAt(0).toUpperCase()}${what.slice(1)} em ${place}`;
+    return `${truncateTitleBase(head, TITLE_MAX - suffix.length)}${suffix}`;
+  }
 
+  const build = (n: string) => `${n}${nameHasPlace(n, place) ? "" : ` em ${place}`}: ${what}${suffix}`;
+  const full = build(name);
+  if (full.length <= TITLE_MAX) return full;
+  // Sem bairro no cadastro, "em São Paulo" sai antes de cortar o nome do prédio.
+  const noPlace = `${name}: ${what}${suffix}`;
+  if (!placeLabel(p) && noPlace.length <= TITLE_MAX) return noPlace;
+  // Nome longo é cortado em palavra inteira; bairro e metragem ficam inteiros.
+  const room = TITLE_MAX - build("").length;
+  if (room >= 8 && /\s/.test(name.slice(1, room + 1))) {
+    const cut = truncateTitleBase(name, room);
+    return build(tidyName(cut) || cut);
+  }
+  // Sem espaço para isso: corta o conjunto no fim, em palavra inteira.
+  const cut = truncateTitleBase(full.slice(0, -suffix.length), TITLE_MAX - suffix.length);
+  return `${tidyName(cut) || cut}${suffix}`;
 }
 
 export function projectMetaDescription(

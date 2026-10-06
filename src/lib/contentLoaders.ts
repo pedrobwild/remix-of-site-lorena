@@ -130,7 +130,11 @@ async function fetchProjectContent(slug: string): Promise<ProjectLoaderData> {
     const peers = peersRes.error ? null : ((peersRes.data ?? []) as unknown as ProjectSeoPeer[]);
     const project = (projectRes.data ?? null) as unknown as BewildProjectFull | null;
     if (!project) return { seo: NOT_FOUND_SEO, project: null, peers };
-    return { seo: projectSeoFrom(project, peers ?? []), project, peers };
+    // created_at não está em PROJECT_COLUMNS: vem da lista de pares, como na
+    // página, para o <title> do servidor sair com a mesma data do navegador.
+    const self = peers?.find((o) => o.id === project.id);
+    const seoRow = self ? { ...project, created_at: self.created_at } : project;
+    return { seo: projectSeoFrom(seoRow, peers ?? []), project, peers };
   } catch {
     return { seo: projectSeoFrom(null, [], true) };
   }

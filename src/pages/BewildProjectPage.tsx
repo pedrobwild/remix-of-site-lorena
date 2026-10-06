@@ -18,6 +18,7 @@ import { readyPhotos, renderPhotos } from "@/lib/projectPhotos";
 import { useImageAlts, type AltMap } from "@/lib/useImageAlts";
 import { projectFriendlyName, projectMetaDescription, projectSeoTitleUnique, type ProjectSeoPeer } from "@/lib/projectSeo";
 import { useProjectSeoPeers } from "@/lib/useProjectSeoPeers";
+import { neighborhoodPages, neighborhoodSlug } from "@/lib/portfolioFilter";
 import {
   optimizedImageUrl,
   responsiveImage,
@@ -276,6 +277,15 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
     const self = project ? seoPeers.find((o) => o.id === project.id) : undefined;
     return projectSeoTitleUnique(self ? { ...project!, created_at: self.created_at } : project, seoPeers);
   }, [project, seoPeers]);
+  // Página do bairro (/reforma/<bairro>, só com 3+ projetos): quem chegou pelo
+  // nome do prédio segue para as outras reformas do bairro, e a busca
+  // "reforma de apartamento em <bairro>" fica com a página do bairro.
+  const bairroHub = useMemo(() => {
+    const hood = project?.neighborhood?.trim();
+    if (!hood) return null;
+    const hubSlug = neighborhoodSlug(hood);
+    return neighborhoodPages(seoPeers).find((n) => n.slug === hubSlug) ?? null;
+  }, [project, seoPeers]);
   const seoDescription = projectMetaDescription(
     project,
     "Apartamento reformado pela Bewild em São Paulo-SP.",
@@ -380,7 +390,14 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
       {/* HEADER */}
       <section className="pd-head">
         <div className="pd-wrap">
-          <a className="pd-back" href="/portfolio">← Portfólio</a>
+          <nav className="pd-crumbs" aria-label="Navegação do portfólio">
+            <a className="pd-back" href="/portfolio">← Portfólio</a>
+            {bairroHub && (
+              <a className="pd-back" href={`/reforma/${bairroHub.slug}`}>
+                Mais reformas em {bairroHub.label} →
+              </a>
+            )}
+          </nav>
           {(project.project_type || hasReady || faseLabel) && (
             <div>
               {project.project_type && <span className="pd-pill">{bewildTypeLabel(project.project_type)}</span>}

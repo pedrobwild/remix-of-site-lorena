@@ -4,5 +4,5 @@ import { seoHead } from "@/lib/routeHead";
 
 export const Route = createFileRoute("/como-funciona")({
   component: ComoFuncionaPage,
-  head: () => seoHead({ title: "Arquitetura, engenharia e obra em um contrato só em SP | Bewild", description: "Arquitetura e engenharia num contrato só: projeto 3D, documentação técnica (ART/RRT), obra com equipe própria e apartamento entregue pronto em São Paulo.", path: "/como-funciona" }),
+  head: () => seoHead({ title: "Como funciona a reforma turnkey: etapas e contrato | Bewild", description: "Como funciona a reforma turnkey da Bewild: consultoria, projeto 3D e executivo, ART e liberação do condomínio, obra com equipe própria e apartamento pronto.", path: "/como-funciona" }),
 });

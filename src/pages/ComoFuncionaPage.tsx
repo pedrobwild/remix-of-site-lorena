@@ -73,9 +73,9 @@ export default function ComoFuncionaPage() {
   const { settings } = useSiteSettings();
 
   useSeo({
-    title: "Arquitetura, engenharia e obra em um contrato só em SP | Bewild",
+    title: "Como funciona a reforma turnkey: etapas e contrato | Bewild",
     description:
-      "Arquitetura e engenharia num contrato só: projeto 3D, documentação técnica (ART/RRT), obra com equipe própria e apartamento entregue pronto em São Paulo.",
+      "Como funciona a reforma turnkey da Bewild: consultoria, projeto 3D e executivo, ART e liberação do condomínio, obra com equipe própria e apartamento pronto.",
     canonicalPath: "/como-funciona",
     ogType: "website",
     jsonLd: settings
