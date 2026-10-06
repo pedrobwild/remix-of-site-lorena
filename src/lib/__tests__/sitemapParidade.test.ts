@@ -61,6 +61,8 @@ const NAO_INDEXAVEIS: Record<string, string> = {
   "/mapa": "src/pages/MapaPage.tsx",
   // Página de configuração de cookies: nada a indexar.
   "/preferencias-de-cookies": "src/pages/PreferenciasCookiesPage.tsx",
+  // Resultado de busca: noindex, nunca entra no sitemap.
+  "/buscar": "src/pages/BewildBuscaPage.tsx",
 };
 
 /**
