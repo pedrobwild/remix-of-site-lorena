@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="246" viewBox="0 0 720 246" role="img" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif">
+<rect width="720" height="246" fill="#FFFFFF"/>
+<text x="20" y="34" font-size="19" font-weight="700" fill="#1F2937">Imposto sobre ganho de capital: a reforma comprovada muda a conta</text>
+<text x="20" y="58" font-size="13" fill="#4B5563">Exemplo hipotético: compra por R$ 500 mil, venda por R$ 605.475 (45 m² × FipeZap Perdizes),</text>
+<text x="20" y="76" font-size="13" fill="#4B5563">corretagem de 6% e alíquota de 15%; sem fatores de redução e sem isenções</text>
+<text x="170" y="119" font-size="13" text-anchor="end" fill="#1F2937">Sem reforma comprovada</text>
+<rect x="178" y="106" width="350" height="18" rx="2" fill="#E07A1F"/>
+<text x="534" y="120" font-size="13" font-weight="600" fill="#1F2937">R$ 10.372</text>
+<text x="170" y="153" font-size="13" text-anchor="end" fill="#1F2937">Com reforma comprovada</text>
+<rect x="178" y="140" width="0" height="18" rx="2" fill="#0F4C5C"/>
+<text x="184" y="154" font-size="13" font-weight="600" fill="#1F2937">R$ 0</text>
+<text x="20" y="214" font-size="12" fill="#9CA3AF">Regras: Instrução Normativa SRF 84/2001 (custo de aquisição e benfeitorias); Lei 13.259/2016 (alíquotas).</text>
+<text x="20" y="232" font-size="12" fill="#9CA3AF">Simulação simplificada; não substitui a orientação de um contador.</text>
+</svg>
