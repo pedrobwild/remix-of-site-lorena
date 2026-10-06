@@ -197,7 +197,7 @@ function attrOf(tag: string, name: string): string {
 }
 
 /** `<iframe>` do servidor: só player do YouTube, reescrito como no cliente. */
-function serverIframe(tag: string, html: string, options: { isClosing: boolean }): string | undefined {
+function serverIframe(tag: string, html: string, options: { isClosing?: boolean }): string | undefined {
   if (tag !== "iframe") return undefined;
   if (options.isClosing) {
     if (!validIframeOpen) return undefined;
