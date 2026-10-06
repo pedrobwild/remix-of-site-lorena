@@ -7,7 +7,8 @@
  */
 import { bewildCategoryLabel, type BewildPost } from "@/lib/useBewildPosts";
 import { bewildTypeLabel, type BewildProjectType } from "@/lib/useBewildProjects";
-import { authorForPage, postAuthorJsonLd, postDates } from "@/lib/postSeo";
+import { authorForPage, postAuthorJsonLd, postDates, resolvePostAuthor } from "@/lib/postSeo";
+import { keywordsForPost } from "@/lib/postKeywords";
 import { itemListJsonLd, projectJsonLd } from "@/lib/useSeo";
 import { extractYouTubeEmbeds, youtubeEmbedUrl, youtubeThumbnailUrl } from "@/lib/youtube";
 import videoMeta from "@/content/videoMeta.json";
@@ -66,7 +67,12 @@ export function postVideoJsonLd(post: Pick<BewildPost, "body" | "title" | "meta_
  * A página de autor não é um artigo: sai sem Article (o nó da página vira
  * ProfilePage no head() da rota), só com os blocos restantes.
  */
-export function postJsonLd(post: BewildPost): JsonLdNode[] {
+export type PostJsonLdExtras = {
+  /** Palavras do corpo visível (Article.wordCount). */
+  wordCount?: number;
+};
+
+export function postJsonLd(post: BewildPost, extras: PostJsonLdExtras = {}): JsonLdNode[] {
   const articleUrl = `${BASE}/conteudos/${post.slug}`;
   const dates = postDates(post);
   const arr: JsonLdNode[] = [];
@@ -74,6 +80,7 @@ export function postJsonLd(post: BewildPost): JsonLdNode[] {
     arr.push({
       "@context": "https://schema.org",
       "@type": "Article",
+      "@id": `${articleUrl}#article`,
       headline: post.title,
       description:
         post.meta_description ||
@@ -90,9 +97,15 @@ export function postJsonLd(post: BewildPost): JsonLdNode[] {
       },
       datePublished: dates.published,
       dateModified: dates.modified,
-      mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
+      // Mesmo @id do WebPage que o seoHead publica: um grafo só, não dois nós soltos.
+      mainEntityOfPage: { "@id": `${articleUrl}#webpage` },
+      isPartOf: { "@id": `${BASE}/#website` },
+      url: articleUrl,
       inLanguage: "pt-BR",
       articleSection: bewildCategoryLabel(post.category),
+      keywords: keywordsForPost(post.slug),
+      ...(extras.wordCount ? { wordCount: extras.wordCount } : {}),
+      isAccessibleForFree: true,
     });
   }
   // Vídeos do YouTube no corpo: VideoObject é o que leva o Google a indexar o vídeo da página.
@@ -143,6 +156,27 @@ export function postJsonLd(post: BewildPost): JsonLdNode[] {
     });
   }
   return arr;
+}
+
+/**
+ * Propriedades do WebPage de um post: `reviewedBy` com o revisor citado no
+ * próprio texto ("Revisão técnica: Thiago Dantas") e `lastReviewed`. Só sai
+ * quando o revisor é uma pessoa diferente do autor; nada é inventado.
+ */
+export function postPageJsonLd(
+  post: Pick<BewildPost, "author" | "published_at" | "created_at" | "updated_at"> & { content_updated_at?: string | null },
+  reviewer: string | null | undefined,
+): JsonLdNode | null {
+  if (!reviewer) return null;
+  const rev = resolvePostAuthor(reviewer);
+  if (!rev) return null;
+  const author = resolvePostAuthor(post.author);
+  if (author && author.name === rev.name) return null;
+  const dates = postDates(post);
+  return {
+    reviewedBy: postAuthorJsonLd(rev.name),
+    ...(dates.modified ? { lastReviewed: dates.modified } : {}),
+  };
 }
 
 /** ItemList dos posts de /conteudos. */
