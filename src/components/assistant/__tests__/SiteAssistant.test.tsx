@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import SiteAssistant from "../SiteAssistant";
+import { assistantShowsOn } from "../assistantPaths";
 
 /**
  * PUB-10: o assistente virou só o botão que leva à /faq — navegação pela SPA
@@ -98,14 +99,114 @@ describe("SiteAssistant", () => {
     }
   });
 
-  it("marca o <html> com bwas-on enquanto aparece (a barra do celular termina antes do botão)", () => {
+  it("marca o <html> com data-bwas enquanto aparece (a barra do celular termina antes do botão)", () => {
+    const html = document.documentElement;
+    const classBefore = html.className;
     const { unmount } = render(<SiteAssistant getPath={() => "/portfolio"} />);
-    expect(document.documentElement).toHaveClass("bwas-on");
+    expect(html).toHaveAttribute("data-bwas");
+    // Atributo, não classe: mexer na classe do <html> recalcula o estilo do
+    // documento inteiro (MOB-03).
+    expect(html.className).toBe(classBefore);
     unmount();
-    expect(document.documentElement).not.toHaveClass("bwas-on");
+    expect(html).not.toHaveAttribute("data-bwas");
 
     render(<SiteAssistant getPath={() => "/faq"} />);
-    expect(document.documentElement).not.toHaveClass("bwas-on");
+    expect(html).not.toHaveAttribute("data-bwas");
+  });
+
+  it("assistantShowsOn segue a mesma regra do componente (o servidor usa para mandar data-bwas no HTML)", () => {
+    for (const path of ["/", "/portfolio", "/orcamento", "/conteudos/um-artigo"]) expect(assistantShowsOn(path)).toBe(true);
+    for (const path of ["/faq", "/admin/leads", "/diagnostico", "/o", "/p"]) expect(assistantShowsOn(path)).toBe(false);
+  });
+
+  it("com data-bwas já vindo do servidor, montar não escreve nada no <html>", () => {
+    const html = document.documentElement;
+    html.setAttribute("data-bwas", "");
+    const setAttribute = vi.spyOn(html, "setAttribute");
+    try {
+      const { unmount } = render(<SiteAssistant getPath={() => "/portfolio"} />);
+      expect(setAttribute).not.toHaveBeenCalled();
+      // A folga de rolagem vem do CSS (html[data-bwas]); nada de style inline.
+      expect(html.style.scrollPaddingBottom).toBe("");
+      unmount();
+      expect(html).not.toHaveAttribute("data-bwas");
+    } finally {
+      setAttribute.mockRestore();
+      html.removeAttribute("data-bwas");
+    }
+  });
+
+  it("data-bwas vindo do servidor numa rota em que o botão não aparece é retirado", () => {
+    const html = document.documentElement;
+    html.setAttribute("data-bwas", "");
+    try {
+      render(<SiteAssistant getPath={() => "/faq"} />);
+      expect(html).not.toHaveAttribute("data-bwas");
+    } finally {
+      html.removeAttribute("data-bwas");
+    }
+  });
+
+  it("folga de rolagem: o banner de cookies entra pelo CSS; outro obstáculo vira style no <html>", () => {
+    const frames: FrameRequestCallback[] = [];
+    const raf = vi.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => {
+      frames.push(cb);
+      return frames.length;
+    });
+    const caf = vi.spyOn(window, "cancelAnimationFrame").mockImplementation(() => {});
+    const flush = () => {
+      while (frames.length) frames.shift()!(0);
+    };
+    const html = document.documentElement;
+    const h = window.innerHeight;
+    const fixedAt = (className: string, height: number) => {
+      const el = document.createElement("div");
+      el.className = className;
+      el.style.opacity = "1";
+      el.getBoundingClientRect = () =>
+        ({ top: h - height, bottom: h, height, width: 360, left: 0, right: 360, x: 0, y: h - height, toJSON() {} }) as DOMRect;
+      document.body.appendChild(el);
+      return el;
+    };
+    try {
+      // 1) Só o banner, com a altura publicada por ele em --cookie-banner-h:
+      //    o CSS já soma (96px + var), o componente não escreve.
+      const banner = fixedAt("cookie-banner", 138);
+      html.style.setProperty("--cookie-banner-h", "138px");
+      const first = render(<SiteAssistant getPath={() => "/portfolio"} />);
+      act(() => flush());
+      expect(document.querySelector<HTMLElement>(".bwas")!.style.getPropertyValue("--bwas-offset")).toBe("138px");
+      expect(html.style.scrollPaddingBottom).toBe("");
+      first.unmount();
+      banner.remove();
+
+      // 1b) Banner ainda entrando na tela (translateY): só 40 px dele aparecem,
+      //     mas a altura publicada já é a final. A folga do CSS cobre — nada de
+      //     escrever um valor menor no <html> para desfazer logo depois.
+      const entering = fixedAt("cookie-banner", 40);
+      const mid = render(<SiteAssistant getPath={() => "/portfolio"} />);
+      act(() => flush());
+      expect(document.querySelector<HTMLElement>(".bwas")!.style.getPropertyValue("--bwas-offset")).toBe("40px");
+      expect(html.style.scrollPaddingBottom).toBe("");
+      mid.unmount();
+      entering.remove();
+      html.style.removeProperty("--cookie-banner-h");
+
+      // 2) Outro obstáculo (barra do guia, 64 px), sem banner: 96 + 64.
+      const bar = fixedAt("fixed bottom-0", 64);
+      const second = render(<SiteAssistant getPath={() => "/guia-do-investidor"} />);
+      act(() => flush());
+      expect(html.style.scrollPaddingBottom).toBe("160px");
+      second.unmount();
+      expect(html.style.scrollPaddingBottom).toBe("");
+      bar.remove();
+    } finally {
+      html.style.removeProperty("--cookie-banner-h");
+      html.style.scrollPaddingBottom = "";
+      document.querySelectorAll(".cookie-banner, .fixed.bottom-0").forEach((el) => el.remove());
+      raf.mockRestore();
+      caf.mockRestore();
+    }
   });
 
   it("em /orcamento continua no desktop e some só no celular (bwas--sem-mobile)", () => {

@@ -66,15 +66,31 @@
 .pt-body figure{margin:26px 0}
 .pt-body figcaption{font-family:var(--pt-mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#5A6472;margin-top:8px}
 .pt-body hr{border:0;border-top:1px solid var(--pt-hair);margin:34px 0}
-.pt-body table{width:100%;min-width:520px;border-collapse:collapse;margin:26px 0;font-size:15px;line-height:1.5}
+.pt-body table{width:100%;border-collapse:collapse;margin:26px 0;font-size:15px;line-height:1.5}
 .pt-body th,.pt-body td{border-bottom:1px solid var(--pt-hair);padding:12px 14px;text-align:left;vertical-align:top}
 .pt-body th{font-weight:600;color:#1A2332}
 .pt-body thead th{font-family:var(--pt-mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#5A6472}
 .pt-body tbody tr:last-child td{border-bottom:1px solid var(--pt-hair)}
 .pt-body caption{caption-side:top;text-align:left;font-family:var(--pt-mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#5A6472;padding-bottom:8px}
-/* Rolagem horizontal no mobile: a tabela não estoura a largura da prancha. */
-.pt-body .pt-table-wrap,.pt-body table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
-@media (min-width:700px){.pt-body table{display:table;min-width:0;overflow-x:visible}}
+/* Tabelas no celular (MOB-07): cada <table> vem dentro de `.pt-table-wrap`
+   (src/lib/articleTables.ts). A REGIÃO tem a largura da coluna de texto e rola
+   para o lado; a TABELA mantém 520 px de largura mínima de leitura. Antes o
+   `min-width` ficava na própria tabela com `display:block`: ela estourava a
+   coluna e o `overflow-x:hidden` da página cortava as últimas colunas.
+   Grade de uma célula: a tabela e a sombra de "tem mais para o lado" ocupam o
+   mesmo lugar, e a sombra fica presa na borda direita da região. */
+.pt-body .pt-table-wrap{display:grid;overflow-x:auto;margin:26px 0;container-type:scroll-state}
+.pt-body .pt-table-wrap>table{grid-area:1/1;display:table;min-width:520px;margin:0}
+.pt-body .pt-table-wrap::after{content:"";grid-area:1/1;justify-self:end;position:sticky;right:0;width:28px;pointer-events:none;opacity:0;transition:opacity .2s ease;background:linear-gradient(to left,rgba(11,35,66,.16),rgba(11,35,66,0))}
+/* A sombra só aparece enquanto há coluna escondida à direita. Onde o navegador
+   ainda não lê o estado de rolagem (Safari, Firefox) ela não aparece — a
+   coluna cortada na borda já indica a rolagem. */
+@container scroll-state(scrollable: right){.pt-body .pt-table-wrap::after{opacity:1}}
+.pt-body .pt-table-wrap:focus-visible{outline:2px solid #11355B;outline-offset:2px}
+/* Tabela sem a região (HTML antigo): encolhe para caber, sem estourar. */
+.pt-body table{display:block;overflow-x:auto}
+@media (min-width:700px){.pt-body table,.pt-body .pt-table-wrap>table{display:table;min-width:0;overflow-x:visible}}
+@media (prefers-reduced-motion:reduce){.pt-body .pt-table-wrap::after{transition:none}}
 .pt-body code{font-family:var(--pt-mono);font-size:.9em;background:#F3EEE5;padding:2px 6px}
 
 /* FAQ do artigo */

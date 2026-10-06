@@ -29,9 +29,13 @@
   overflow-x:hidden;
 }
 /* O body global (index.css) ainda usa a paleta escura legada (#0A0A0A). Nas
-   demais rotas home-bwa.css é injetado e sobrescreve isso; as LPs não carregam
-   aquela folha, então a área de overscroll aparecia preta. Fixa o navy da marca. */
-html:has(.bw-lp),body:has(.bw-lp){background:#0B2342}
+   demais rotas home-bwa.css é carregado e sobrescreve isso; as LPs não carregam
+   aquela folha, então a área de overscroll aparecia preta. Fixa o navy da marca.
+   `data-bw-lp` vem no <html> do servidor (RootShell, src/routes/__root.tsx).
+   Não voltar para `html:has(.bw-lp)`: com `:has()` ancorado no <html>/<body> o
+   navegador reavalia a raiz a cada alteração do DOM, e recalcular o <html>
+   recalcula o estilo do documento inteiro (MOB-03). */
+html[data-bw-lp],html[data-bw-lp] body{background:#0B2342}
 
 .bw-lp *{box-sizing:border-box}
 .bw-lp a{color:inherit;text-decoration:none}

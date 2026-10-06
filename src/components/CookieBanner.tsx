@@ -92,17 +92,30 @@ export default function CookieBanner() {
     const el = regionRef.current;
     const root = document.documentElement;
     if (!el) return;
+    let last = -1;
+    let frame = 0;
     const apply = () => {
+      frame = 0;
       const h = Math.round(el.getBoundingClientRect().height);
+      // Mesma altura = nada a publicar (evita recalcular estilos à toa).
+      if (h === last) return;
+      last = h;
       root.style.setProperty(COOKIE_BANNER_HEIGHT_VAR, `${h}px`);
     };
+    // Dentro do ResizeObserver a escrita vai para o próximo quadro: mudar o
+    // layout no meio da entrega das notificações gerava o aviso "ResizeObserver
+    // loop completed with undelivered notifications" no Safari do iPhone.
+    const schedule = () => {
+      if (!frame) frame = window.requestAnimationFrame(apply);
+    };
     apply();
-    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(apply) : null;
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(schedule) : null;
     ro?.observe(el);
-    window.addEventListener("resize", apply);
+    window.addEventListener("resize", schedule);
     return () => {
       ro?.disconnect();
-      window.removeEventListener("resize", apply);
+      window.removeEventListener("resize", schedule);
+      if (frame) window.cancelAnimationFrame(frame);
       root.style.removeProperty(COOKIE_BANNER_HEIGHT_VAR);
     };
   }, [visible]);

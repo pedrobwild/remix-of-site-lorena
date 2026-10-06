@@ -17,10 +17,18 @@ import { useEffect, useMemo, type ReactNode } from "react";
 import { marked } from "marked";
 import { useSeo } from "@/lib/useSeo";
 import { postJsonLd } from "@/lib/contentJsonLd";
-import { optimizedImageUrl } from "@/lib/imageUrl";
+import {
+  CONTENT_CARD_SIZES,
+  POST_COVER_SIZES,
+  POST_COVER_WIDTHS,
+  THUMB_WIDTHS,
+  optimizedImageUrl,
+  responsiveImageProps,
+} from "@/lib/imageUrl";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import { sanitizeBlogHtml } from "@/lib/sanitizeHtml";
+import { wrapArticleTables } from "@/lib/articleTables";
 import { whatsappHref } from "@/components/landing/content";
 import {
   bewildCategoryLabel,
@@ -127,7 +135,12 @@ function RelatedCard({ p }: { p: BewildPost }) {
     <a href={`/conteudos/${p.slug}`} className="ct-card" aria-label={`Ler: ${p.title}`}>
       <div className={"ct-card__media" + (!p.cover_image ? " ct-card__media--empty" : "")}>
         {p.cover_image ? (
-          <img src={p.cover_image} alt={p.title} loading="lazy" decoding="async" />
+          <img
+            {...responsiveImageProps(p.cover_image, THUMB_WIDTHS, 640, CONTENT_CARD_SIZES)}
+            alt={p.title}
+            loading="lazy"
+            decoding="async"
+          />
         ) : (
           <span>Capa em breve</span>
         )}
@@ -172,7 +185,7 @@ export default function BewildPostPage({ slug, initial }: Props) {
     }
     try {
       const raw = marked.parse(post.body, { async: false }) as string;
-      return sanitizeBlogHtml(raw);
+      return wrapArticleTables(sanitizeBlogHtml(raw));
     } catch {
       return "";
     }
@@ -341,7 +354,7 @@ export default function BewildPostPage({ slug, initial }: Props) {
             <div className="container">
               <figure className="pt-cover">
                 <img
-                  src={optimizedImageUrl(post.cover_image)}
+                  {...responsiveImageProps(post.cover_image, POST_COVER_WIDTHS, 1200, POST_COVER_SIZES)}
                   alt={post.title}
                   loading="eager"
                   decoding="sync"

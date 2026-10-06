@@ -1,0 +1,25 @@
+/*
+ * admin-font-scope.css — só no painel (/admin).
+ *
+ * Complemento da regra "Família + features uniformes em todo o escopo do
+ * admin" de src/index.css: os descendentes de qualquer elemento com classe
+ * `admin-*` usam a família do painel, mesmo fora de `.admin` (molduras
+ * `bw-admin`, telas de carregamento).
+ *
+ * Fica fora da folha global de propósito (MOB-03, 06/10/2026). Um seletor de
+ * atributo sobre `class` seguido de `*` faz o navegador invalidar a subárvore
+ * inteira de qualquer elemento que troque de classe — no site público, cada
+ * abertura do menu do celular (classe no <body>) recalculava o estilo do
+ * documento inteiro. Carregada por ProtectedRoute, AdminLayout e
+ * BewildAdminShell; o teste src/__tests__/rootStyleInvalidation.test.ts
+ * impede que a regra volte para as folhas do site.
+ *
+ * As declarações são as mesmas da regra de origem.
+ */
+[class^="admin-"] *,
+[class*=" admin-"] * {
+  font-family: var(--font-admin) !important;
+  font-feature-settings: "ss01", "cv11", "tnum";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

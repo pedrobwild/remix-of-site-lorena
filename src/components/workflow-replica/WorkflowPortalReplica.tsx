@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState, type ComponentType } from "react";
 import {
   AlertCircle,
   Bell,
@@ -17,18 +17,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  ReferenceLine,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
-import {
   activities,
-  curveData,
   milestones,
   project,
   reportPhotos,
@@ -36,7 +25,22 @@ import {
   type WorkflowActivity,
   type WorkflowReport,
 } from "./workflowReplicaData";
+import type { WorkflowCurveChartProps } from "./WorkflowCurveChart";
 import "./workflow-portal-replica.css";
+
+/**
+ * O gráfico da aba "Evolução de Obra" (recharts, ~360 kB) só é baixado quando
+ * a aba é aberta — ou um instante antes, quando o dedo/mouse chega nela.
+ *
+ * Se o download falhar (rede caiu, publicação nova trocou os arquivos), a
+ * moldura fica vazia: sem o `catch`, o erro subia até a tela de erro do site,
+ * que recarrega a página inteira — por causa de um gráfico decorativo.
+ */
+const loadCurveChart = () => import("./WorkflowCurveChart");
+const ChartUnavailable = (): null => null;
+const WorkflowCurveChart = lazy<ComponentType<WorkflowCurveChartProps>>(() =>
+  loadCurveChart().catch(() => ({ default: ChartUnavailable })),
+);
 
 type TabId = "schedule" | "curve" | "reports" | "finance" | "documents" | "formalizations" | "issues";
 
@@ -54,10 +58,6 @@ const DAY = 86_400_000;
 const TODAY = new Date(2026, 8, 19).getTime();
 const PROJECT_START = new Date(2026, 7, 4).getTime();
 const PROJECT_END = new Date(2026, 9, 10).getTime();
-
-function formatChartDate(timestamp: number) {
-  return new Date(timestamp).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
-}
 
 function StatusPill({ activity }: { activity: WorkflowActivity }) {
   const done = activity.status === "Concluído";
@@ -141,34 +141,8 @@ function SchedulePanel() {
   );
 }
 
-function CurveTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ name?: string; value?: number }>; label?: number }) {
-  if (!active || !payload?.length) return null;
-  return <div className="wf-tooltip"><strong>{typeof label === "number" ? formatChartDate(label) : ""}</strong><span>Etapa em execução</span>{payload.map((item) => item.value === undefined ? null : <span key={item.name}>{item.name}: {item.value}%</span>)}</div>;
-}
-
-function TodayLabel({ viewBox }: { viewBox?: { x?: number } }) {
-  const x = viewBox?.x;
-  const textRef = useRef<SVGTextElement | null>(null);
-  const [pillWidth, setPillWidth] = useState(78);
-
-  // A pílula acompanha o texto medido (getComputedTextLength) + 6px de respiro em cada lado.
-  useEffect(() => {
-    if (textRef.current) {
-      const measured = Math.ceil(textRef.current.getComputedTextLength());
-      if (measured > 0) setPillWidth(measured + 12);
-    }
-  }, []);
-
-  if (typeof x !== "number") return null;
-  return (
-    <g transform={`translate(${x - pillWidth / 2},8)`}>
-      <rect className="wf-reference-pill" width={pillWidth} height={18} rx={9} />
-      <text ref={textRef} className="wf-reference-label" x={pillWidth / 2} y={12} textAnchor="middle">52% Execução</text>
-    </g>
-  );
-}
-
-function CurvePanel() {
+/** `opened`: a aba já foi aberta alguma vez (só então o gráfico é carregado). */
+function CurvePanel({ opened }: { opened: boolean }) {
   const [showAll, setShowAll] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const domain: [number, number] = showAll ? [PROJECT_START, PROJECT_END] : [TODAY - 30 * DAY, TODAY + 15 * DAY];
@@ -188,19 +162,11 @@ function CurvePanel() {
         <div><span className="wf-date-chip">04/08/2026 a 10/10/2026</span> <button className="wf-button" type="button" onClick={() => setShowAll((value) => !value)}>{showAll ? "30 dias" : "Ver tudo"}</button></div>
       </header>
       <div className="wf-chart-frame">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={curveData} margin={{ top: 27, right: 15, left: -16, bottom: 28 }}>
-            <CartesianGrid vertical={false} stroke="var(--wf-border)" strokeDasharray="3 3" />
-            <XAxis dataKey="timestamp" type="number" domain={domain} allowDataOverflow tickFormatter={formatChartDate} tick={{ fontSize: 8, fill: "var(--wf-muted-foreground)" }} angle={-45} textAnchor="end" height={42} axisLine={false} tickLine={false} tickCount={7} />
-            <YAxis domain={[0,100]} ticks={[0,25,50,75,100]} tickFormatter={(value) => `${value}%`} tick={{ fontSize: 9, fill: "var(--wf-muted-foreground)" }} axisLine={false} tickLine={false} />
-            <Tooltip content={<CurveTooltip />} />
-            <ReferenceLine x={PROJECT_START} stroke="var(--wf-muted-foreground)" strokeDasharray="4 4" label={{ value: "Início", position: "insideTopLeft", fill: "var(--wf-muted-foreground)", fontSize: 9 }} />
-            <ReferenceLine x={TODAY} stroke="var(--wf-primary)" strokeDasharray="4 4" label={<TodayLabel />} />
-            <ReferenceLine x={PROJECT_END} stroke="var(--wf-success)" strokeDasharray="4 4" label={{ value: "Entrega", position: "insideTopRight", fill: "var(--wf-success)", fontSize: 9 }} />
-            <Line type="monotone" dataKey="previsto" name="Previsto" stroke="var(--wf-primary)" strokeWidth={2} strokeOpacity={0.5} strokeDasharray="6 4" dot={{ r: 2, fill: "var(--wf-primary)" }} isAnimationActive={false} />
-            <Line type="monotone" dataKey="realizado" name="Realizado" stroke="#22c55e" strokeWidth={3.5} connectNulls={false} dot={{ r: isMobile ? 2 : 4, fill: "#22c55e", stroke: "#fff", strokeWidth: isMobile ? 1 : 2 }} isAnimationActive={false} />
-          </LineChart>
-        </ResponsiveContainer>
+        {opened ? (
+          <Suspense fallback={null}>
+            <WorkflowCurveChart domain={domain} isMobile={isMobile} projectStart={PROJECT_START} today={TODAY} projectEnd={PROJECT_END} />
+          </Suspense>
+        ) : null}
       </div>
       <div className="wf-chart-legend"><span><i />Previsto</span><span><i className="real" />Realizado</span></div>
     </div>
@@ -240,7 +206,17 @@ function EmptyPanel() {
 
 export default function WorkflowPortalReplica() {
   const [activeTab, setActiveTab] = useState<TabId>("schedule");
+  const [curveOpened, setCurveOpened] = useState(false);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  useEffect(() => {
+    if (activeTab === "curve") setCurveOpened(true);
+  }, [activeTab]);
+
+  /** Dedo ou mouse chegando na aba: adianta o download do gráfico. */
+  const preloadCurve = (id: TabId) => {
+    if (id === "curve") void loadCurveChart().catch(() => undefined);
+  };
 
   const handleTabKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
@@ -259,10 +235,10 @@ export default function WorkflowPortalReplica() {
       <IdentificationCard />
       <section className="wf-card wf-tabs-card">
         <div className="wf-tablist" role="tablist" aria-label="Áreas do portal">
-          {TABS.map((tab, index) => { const Icon = tab.icon; return <button ref={(node) => { tabRefs.current[index] = node; }} className="wf-tab" type="button" role="tab" id={`wf-tab-${tab.id}`} aria-controls={`wf-panel-${tab.id}`} aria-selected={activeTab === tab.id} tabIndex={activeTab === tab.id ? 0 : -1} onClick={() => setActiveTab(tab.id)} onKeyDown={(event) => handleTabKeyDown(event, index)} key={tab.id}><Icon size={14} /><span className={tab.id === "curve" ? "wf-tab-label-long" : undefined}>{tab.label}</span>{tab.id === "curve" ? <span className="wf-tab-label-short">Evolução</span> : null}</button>; })}
+          {TABS.map((tab, index) => { const Icon = tab.icon; return <button ref={(node) => { tabRefs.current[index] = node; }} className="wf-tab" type="button" role="tab" id={`wf-tab-${tab.id}`} aria-controls={`wf-panel-${tab.id}`} aria-selected={activeTab === tab.id} tabIndex={activeTab === tab.id ? 0 : -1} onClick={() => setActiveTab(tab.id)} onPointerEnter={() => preloadCurve(tab.id)} onFocus={() => preloadCurve(tab.id)} onKeyDown={(event) => handleTabKeyDown(event, index)} key={tab.id}><Icon size={14} /><span className={tab.id === "curve" ? "wf-tab-label-long" : undefined}>{tab.label}</span>{tab.id === "curve" ? <span className="wf-tab-label-short">Evolução</span> : null}</button>; })}
         </div>
         {TABS.map((tab) => <section className="wf-panel" role="tabpanel" id={`wf-panel-${tab.id}`} aria-labelledby={`wf-tab-${tab.id}`} hidden={activeTab !== tab.id} key={tab.id}>
-          {tab.id === "schedule" ? <SchedulePanel /> : tab.id === "curve" ? <CurvePanel /> : tab.id === "reports" ? <ReportsPanel /> : <EmptyPanel />}
+          {tab.id === "schedule" ? <SchedulePanel /> : tab.id === "curve" ? <CurvePanel opened={curveOpened} /> : tab.id === "reports" ? <ReportsPanel /> : <EmptyPanel />}
         </section>)}
       </section>
     </div>

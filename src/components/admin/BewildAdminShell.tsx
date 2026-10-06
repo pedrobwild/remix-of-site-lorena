@@ -31,6 +31,7 @@ import {
 import { useAuth } from "@/lib/useAuth";
 import { navigate, routes } from "@/lib/useHashRoute";
 import "@/styles/admin-bewild.css";
+import "@/styles/admin-font-scope.css";
 
 export type BewildAdminTab =
   | "overview"

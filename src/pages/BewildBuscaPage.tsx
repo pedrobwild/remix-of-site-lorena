@@ -8,6 +8,7 @@ import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import { useSeo } from "@/lib/useSeo";
 import { searchPosts } from "@/lib/postSearch";
+import { CONTENT_CARD_SIZES, THUMB_WIDTHS, responsiveImageProps } from "@/lib/imageUrl";
 import {
   useBewildPosts,
   bewildCategoryLabel,
@@ -102,7 +103,14 @@ export default function BewildBuscaPage({ initialPosts, query, onQueryChange }: 
                     <a key={p.id} href={`/conteudos/${p.slug}`} className="ct-card" aria-label={`Ler: ${p.title}`}>
                       <div className={"ct-card__media" + (!p.cover_image ? " is-empty" : "")}>
                         {p.cover_image ? (
-                          <img src={p.cover_image} alt="" loading="lazy" decoding="async" />
+                          // Mesma grade de /conteudos: capa na largura do card, não o
+                          // original do bucket (MOB-06) — sem busca, a página lista todos.
+                          <img
+                            {...responsiveImageProps(p.cover_image, THUMB_WIDTHS, 640, CONTENT_CARD_SIZES)}
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                          />
                         ) : (
                           <span>Capa em breve</span>
                         )}

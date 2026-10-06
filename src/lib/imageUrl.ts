@@ -53,6 +53,31 @@ export const WIDE_SIZES = "min(100vw, 1540px)";
 /** `sizes` do antes/depois (2 colunas acima de 680 px). */
 export const HALF_SIZES = "(max-width: 680px) 100vw, min(50vw, 770px)";
 
+/**
+ * Capas de /conteudos e do artigo. As capas são os originais do bucket (PNG de
+ * 3 MB em média, até 10 MB): os cards as pediam inteiras — rolar a lista no
+ * celular baixava dezenas de MB (MOB-06, 06/10/2026).
+ */
+/** `sizes` dos cards (3, 2 ou 1 coluna — `.ct-grid` em conteudos.css, `.pt-related__grid` em post.css). */
+export const CONTENT_CARD_SIZES =
+  "(max-width: 640px) calc(100vw - 40px), (max-width: 960px) 50vw, min(33vw, 500px)";
+/** Card em destaque de /conteudos: largura total até 960 px; depois, ~55% do miolo. */
+export const CONTENT_FEATURED_WIDTHS = [640, 960, 1280, 1600] as const;
+export const CONTENT_FEATURED_SIZES = "(max-width: 960px) calc(100vw - 40px), min(55vw, 830px)";
+/**
+ * Capa do artigo: coluna de leitura de 880 px (`--pt-measure` em post.css).
+ *
+ * Até 700 px a moldura é 4:3 com `object-fit: cover`: uma capa 16:9 é
+ * desenhada ~1,33× mais larga que a moldura. O `sizes` declara a largura da
+ * moldura mesmo assim, de propósito: com o fator, quase todo celular atual
+ * (densidade 2,6–3) pularia para o arquivo de 1760 px — mais pesado que os
+ * 1200 px fixos de antes, na imagem principal da página. Do jeito que está,
+ * nenhum celular baixa mais do que baixava, e só telas de 360 px com densidade
+ * 2 ficam com o arquivo de 640 px (~1,5 px de imagem por px de tela).
+ */
+export const POST_COVER_WIDTHS = [640, 960, 1200, 1760] as const;
+export const POST_COVER_SIZES = "(max-width: 920px) calc(100vw - 40px), 880px";
+
 export type ResponsiveImage = { src: string; srcSet?: string };
 
 /**
@@ -69,6 +94,22 @@ export function responsiveImage(
     src: optimizedImageUrl(url, fallbackWidth, quality),
     srcSet: optimizedSrcSet(url, widths, quality),
   };
+}
+
+/**
+ * `src` + `srcSet` + `sizes` para um <img>. `sizes` só acompanha `srcSet`: em
+ * imagem fora do bucket (arquivo do site, outro bucket) não há variantes, e
+ * um `sizes` solto só sujaria o HTML e o preload que o React gera.
+ */
+export function responsiveImageProps(
+  url: string,
+  widths: readonly number[],
+  fallbackWidth: number,
+  sizes: string,
+  quality = 70,
+): ResponsiveImage & { sizes?: string } {
+  const image = responsiveImage(url, widths, fallbackWidth, quality);
+  return image.srcSet ? { ...image, sizes } : { src: image.src };
 }
 
 /**

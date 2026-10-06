@@ -6,11 +6,11 @@
  * - Navegação pela SPA (`navigate`), sem recarregar a página; Ctrl/⌘+clique
  *   e botão do meio continuam abrindo em nova aba (é um <a href> de verdade).
  * - Some na própria /faq (lá ele só recarregaria a página) e nas rotas de
- *   HIDDEN_SEGMENTS. No celular (site-assistant.css) também some em
+ *   HIDDEN_SEGMENTS (./assistantPaths). No celular (site-assistant.css) também some em
  *   /orcamento (MOBILE_HIDDEN_SEGMENTS: a página é o formulário), com o menu
- *   aberto e com o teclado aberto (`bwa-typing`, de home-bwa-script.ts).
+ *   aberto e com o teclado aberto (`data-bwa-typing`, de home-bwa-script.ts).
  * - No celular vira só o ícone, na mesma linha da barra "Solicitar
- *   orçamento" da home: a barra termina antes dele (`bwas-on` no <html>) e
+ *   orçamento" da home: a barra termina antes dele (`data-bwas` no <html>) e
  *   os dois sobem juntos acima do banner de cookies. A barra, por isso, não
  *   é obstáculo para ele.
  * - Fica no canto inferior direito e sobe acima dos elementos fixos do rodapé
@@ -29,16 +29,24 @@ import { createPortal } from "react-dom";
 import { trackEvent } from "@/lib/ga4";
 import { navigate } from "@/lib/useHashRoute";
 import { ASSISTANT_ENABLED, MAINTENANCE_MODE } from "@/config/site";
+import { COOKIE_BANNER_HEIGHT_VAR } from "@/components/CookieBanner";
+import { isHiddenPath, isMobileHiddenPath } from "./assistantPaths";
 import { bottomStackTop, type StackRect } from "./bottomStack";
 import "./site-assistant.css";
 
 const FAQ_PATH = "/faq";
-const HIDDEN_SEGMENTS = new Set(["admin", "diagnostico", "o", "p", "bakeoff", "mockups", "faq"]);
-/** Rotas em que o botão some só no celular (o desktop continua igual). */
-const MOBILE_HIDDEN_SEGMENTS = new Set(["orcamento"]);
 const FLAG_KEY = "bw_assistente";
-/** No <html> enquanto o botão está na página: a barra do celular termina antes dele. */
-const ON_CLASS = "bwas-on";
+/**
+ * No <html> enquanto o botão está na página: a barra do celular termina antes
+ * dele e a página ganha folga de rolagem (site-assistant.css). Atributo, não
+ * classe: trocar uma classe no <html> recalcula o estilo do documento inteiro
+ * (MOB-03). Na carga direta ele já vem no HTML do servidor (RootShell, via
+ * `assistantShowsOn` de ./assistantPaths), então a hidratação não escreve nada
+ * no <html>.
+ */
+const ON_ATTR = "data-bwas";
+/** Folga de rolagem para o botão, em px. Espelhada em site-assistant.css (`html[data-bwas]`). */
+const SCROLL_PADDING_BASE = 96;
 
 /**
  * Elementos fixos no rodapé da tela que o botão não pode cobrir. A barra do
@@ -64,14 +72,6 @@ function flagOn(): boolean {
 function currentPath(): string {
   if (typeof window === "undefined") return "/";
   return (window.location.pathname || "/").replace(/\/+$/, "") || "/";
-}
-
-function firstSegment(path: string): string {
-  return path.split("/")[1] || "";
-}
-
-function isHiddenPath(path: string): boolean {
-  return HIDDEN_SEGMENTS.has(firstSegment(path));
 }
 
 /** Caminho atual, acompanhando a navegação da SPA (`navigate`) e o Voltar. */
@@ -179,27 +179,40 @@ export default function SiteAssistant({ getPath = currentPath }: Props = {}) {
   const [enabled] = useState(flagOn);
   const path = useCurrentPath(getPath);
   const visible = enabled && !MAINTENANCE_MODE && !isHiddenPath(path);
-  const hiddenOnMobile = MOBILE_HIDDEN_SEGMENTS.has(firstSegment(path));
+  const hiddenOnMobile = isMobileHiddenPath(path);
   const obstacle = useBottomObstacle(visible);
 
   // Evita que o botão flutuante esconda elementos focados perto do rodapé.
+  // O valor normal vem do CSS (`html[data-bwas]`: 96 px + a altura do banner de
+  // cookies, pela variável que o próprio banner publica). Só há escrita no
+  // <html> quando outro obstáculo PASSA dessa conta: cada escrita ali faz o
+  // navegador recalcular o estilo do documento inteiro (MOB-03). Obstáculo
+  // menor que o banner é o próprio banner ainda entrando na tela (ele sobe com
+  // translateY) — a folga do CSS já cobre.
   useEffect(() => {
     if (!visible) return;
     const html = document.documentElement;
+    const banner = Math.round(parseFloat(html.style.getPropertyValue(COOKIE_BANNER_HEIGHT_VAR)) || 0);
+    if (obstacle <= banner) return;
     const prev = html.style.scrollPaddingBottom;
-    html.style.scrollPaddingBottom = `${96 + obstacle}px`;
+    html.style.scrollPaddingBottom = `${SCROLL_PADDING_BASE + obstacle}px`;
     return () => {
       html.style.scrollPaddingBottom = prev;
     };
   }, [visible, obstacle]);
 
   // A barra "Solicitar orçamento" do celular (home-bwa.css) abre espaço para o botão.
+  // O atributo normalmente já veio do servidor; aqui só é escrito quando o
+  // navegador discorda dele (ex.: URL antiga `/#/faq`, corrigida antes da hidratação).
   useEffect(() => {
-    if (!visible) return;
     const html = document.documentElement;
-    html.classList.add(ON_CLASS);
+    if (!visible) {
+      if (html.hasAttribute(ON_ATTR)) html.removeAttribute(ON_ATTR);
+      return;
+    }
+    if (!html.hasAttribute(ON_ATTR)) html.setAttribute(ON_ATTR, "");
     return () => {
-      html.classList.remove(ON_CLASS);
+      html.removeAttribute(ON_ATTR);
     };
   }, [visible]);
 

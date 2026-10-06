@@ -1,12 +1,17 @@
 /** @vitest-environment jsdom */
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   TOUR3D_IFRAME_ALLOW,
   TOUR3D_INLINE_QUERY,
+  TOUR3D_COVERS_ATTR,
+  TOUR3D_OPEN_ATTR,
   TOUR3D_ROOMS,
   TOUR3D_STAGGER_MS,
   enscapeViewUrl,
   installTour3d,
+  installTour3dCovers,
 } from "../homeTour3d";
 import { setConsent } from "../cookieConsent";
 import { HOME_BWA_HTML } from "@/pages/home-bwa-body";
@@ -199,22 +204,31 @@ describe("installTour3d (DOM)", () => {
     expect(dialog.querySelector(".bwa-tour3d-dialog-title")?.textContent).toBe("Banho");
     expect(dialog.querySelector("iframe")?.getAttribute("src")).toBe(expected[2]);
     expect(srcs(root)).toEqual([null, null, null]);
+    // A página atrás fica travada por atributo no <html> (regra em home-bwa.css).
+    expect(document.documentElement.hasAttribute(TOUR3D_OPEN_ATTR)).toBe(true);
 
     // Fechar tira o iframe (o WebGL não fica rodando atrás da página).
     dialog.querySelector<HTMLButtonElement>("[data-tour3d-close]")!.click();
     await new Promise((r) => setTimeout(r, 0));
     expect(dialog.hasAttribute("open")).toBe(false);
     expect(dialog.querySelector("iframe")).toBeNull();
+    expect(document.documentElement.hasAttribute(TOUR3D_OPEN_ATTR)).toBe(false);
 
     // Esc também fecha (caminho sem <dialog> nativo, como no jsdom).
     startButtons(root)[0].click();
     expect(dialog.querySelector("iframe")?.getAttribute("src")).toBe(expected[0]);
+    expect(document.documentElement.hasAttribute(TOUR3D_OPEN_ATTR)).toBe(true);
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
     expect(dialog.hasAttribute("open")).toBe(false);
     expect(dialog.querySelector("iframe")).toBeNull();
+    expect(document.documentElement.hasAttribute(TOUR3D_OPEN_ATTR)).toBe(false);
 
+    // Sair da home com o tour aberto também devolve a rolagem.
+    startButtons(root)[1].click();
+    expect(document.documentElement.hasAttribute(TOUR3D_OPEN_ATTR)).toBe(true);
     cleanup();
     expect(document.querySelector("dialog.bwa-tour3d-dialog")).toBeNull();
+    expect(document.documentElement.hasAttribute(TOUR3D_OPEN_ATTR)).toBe(false);
   });
 
   it("mover o mouse para fora do card devolve a capa", () => {
@@ -256,5 +270,38 @@ describe("installTour3d (DOM)", () => {
   it("sem o bloco, não faz nada e a limpeza é inofensiva", () => {
     stubIntersectionObserver();
     expect(() => installTour3d(document.createElement("div"))()).not.toThrow();
+  });
+});
+
+describe("installTour3dCovers — fotos de capa só perto da tela", () => {
+  it("o bloco só ganha data-tour3d-covers quando se aproxima da tela, com ou sem cookies", () => {
+    const observers = stubIntersectionObserver();
+    const root = mountHome();
+    const block = root.querySelector<HTMLElement>("[data-tour3d]")!;
+    const cleanup = installTour3dCovers(root);
+
+    expect(observers).toHaveLength(1);
+    expect(observers[0].targets).toEqual([block]);
+    expect(block.hasAttribute(TOUR3D_COVERS_ATTR)).toBe(false);
+
+    observers[0].cb([{ isIntersecting: false, target: block }]);
+    expect(block.hasAttribute(TOUR3D_COVERS_ATTR)).toBe(false);
+    observers[0].cb([{ isIntersecting: true, target: block }]);
+    expect(block.hasAttribute(TOUR3D_COVERS_ATTR)).toBe(true);
+    cleanup();
+  });
+
+  it("sem IntersectionObserver as fotos entram na hora", () => {
+    vi.stubGlobal("IntersectionObserver", undefined);
+    const root = mountHome();
+    installTour3dCovers(root)();
+    expect(root.querySelector("[data-tour3d]")!.hasAttribute(TOUR3D_COVERS_ATTR)).toBe(true);
+  });
+
+  it("o CSS só cita as fotos sob data-tour3d-covers", () => {
+    const css = readFileSync(resolve(__dirname, "../../pages/home-bwa.css"), "utf8");
+    const withPhoto = css.split("\n").filter((line) => line.includes("/images/opt/tour3d-capa"));
+    expect(withPhoto).toHaveLength(3);
+    for (const line of withPhoto) expect(line.startsWith("[data-tour3d-covers] ")).toBe(true);
   });
 });

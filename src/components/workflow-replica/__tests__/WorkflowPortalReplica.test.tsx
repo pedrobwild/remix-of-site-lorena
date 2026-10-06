@@ -1,5 +1,5 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import WorkflowPortalReplica from "../WorkflowPortalReplica";
 
 /**
@@ -7,8 +7,8 @@ import WorkflowPortalReplica from "../WorkflowPortalReplica";
  * atual e as vizinhas (2 antes, 2 depois); o botão mostra as 12.
  */
 
-// O gráfico da aba "Evolução de Obra" fica montado (escondido) e, sem layout
-// no jsdom, o recharts avisa que mediu 0 × 0: ruído, não erro.
+// O gráfico da aba "Evolução de Obra" só entra quando a aba é aberta; sem
+// layout no jsdom, o recharts avisa que mediu 0 × 0: ruído, não erro.
 const warn = console.warn;
 let warnSpy: ReturnType<typeof vi.spyOn> | undefined;
 
@@ -63,5 +63,26 @@ describe("WorkflowPortalReplica — cronograma no celular", () => {
     expect(
       document.querySelector(".wf-table tbody tr.wf-current-row .wf-activity-number")?.textContent
     ).toBe("08");
+  });
+});
+
+describe("WorkflowPortalReplica — gráfico da aba Evolução", () => {
+  it("o gráfico (recharts) só é carregado quando a aba é aberta", async () => {
+    render(<WorkflowPortalReplica />);
+    const frame = document.querySelector(".wf-chart-frame");
+    expect(frame).not.toBeNull();
+    // Aba fechada: a moldura existe (altura fixa no CSS), sem gráfico dentro.
+    expect(frame?.childElementCount).toBe(0);
+
+    fireEvent.click(screen.getByRole("tab", { name: /Evolução/ }));
+    await waitFor(() => {
+      expect(document.querySelector(".wf-chart-frame .recharts-responsive-container")).not.toBeNull();
+    });
+    // Cabeçalho e legenda do painel não dependem do gráfico.
+    expect(screen.getByRole("heading", { name: "Cronograma Previsto x Realizado" })).toBeInTheDocument();
+
+    // Voltar para o cronograma não desmonta o gráfico já carregado.
+    fireEvent.click(screen.getByRole("tab", { name: "Cronograma" }));
+    expect(document.querySelector(".wf-chart-frame .recharts-responsive-container")).not.toBeNull();
   });
 });

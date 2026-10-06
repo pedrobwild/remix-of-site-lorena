@@ -10,6 +10,13 @@ import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import { whatsappHref } from "@/components/landing/content";
 import {
+  CONTENT_CARD_SIZES,
+  CONTENT_FEATURED_SIZES,
+  CONTENT_FEATURED_WIDTHS,
+  THUMB_WIDTHS,
+  responsiveImageProps,
+} from "@/lib/imageUrl";
+import {
   useBewildPosts,
   bewildCategoryLabel,
   BEWILD_CATEGORIES,
@@ -103,7 +110,12 @@ export default function BewildConteudosPage({ initialPosts }: { initialPosts?: B
                 <a href={`/conteudos/${featured.slug}`} className="ct-featured" aria-label={`Ler: ${featured.title}`}>
                   <div className={"ct-featured__media" + (!featured.cover_image ? " is-empty" : "")}>
                     {featured.cover_image ? (
-                      <img src={featured.cover_image} alt={featured.title} loading="lazy" decoding="async" />
+                      <img
+                        {...responsiveImageProps(featured.cover_image, CONTENT_FEATURED_WIDTHS, 960, CONTENT_FEATURED_SIZES)}
+                        alt={featured.title}
+                        loading="lazy"
+                        decoding="async"
+                      />
                     ) : (
                       <span className="ct-soon">Capa em breve</span>
                     )}
@@ -164,7 +176,12 @@ export default function BewildConteudosPage({ initialPosts }: { initialPosts?: B
                   <a key={p.id} href={`/conteudos/${p.slug}`} className="ct-card" aria-label={`Ler: ${p.title}`}>
                     <div className={"ct-card__media" + (!p.cover_image ? " is-empty" : "")}>
                       {p.cover_image ? (
-                        <img src={p.cover_image} alt={p.title} loading="lazy" decoding="async" />
+                        <img
+                          {...responsiveImageProps(p.cover_image, THUMB_WIDTHS, 640, CONTENT_CARD_SIZES)}
+                          alt={p.title}
+                          loading="lazy"
+                          decoding="async"
+                        />
                       ) : (
                         <span className="ct-soon">Capa em breve</span>
                       )}

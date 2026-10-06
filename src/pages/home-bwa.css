@@ -585,7 +585,11 @@
       transform: translateY(8px);
     }
 
-    .bwa-menu-open .bwa-menu-button span {
+    /* Estado lido do próprio botão (aria-expanded, que o script já atualiza
+       junto com `bwa-menu-open`), não do <body>: com `.bwa-menu-open … span`
+       o navegador recalculava TODOS os <span> da página a cada abertura do
+       menu (MOB-05). Mesmo peso de seletor. */
+    .bwa-menu-button[aria-expanded="true"] span {
       opacity: 0;
     }
 
@@ -5072,9 +5076,16 @@
 @media (min-width:821px){.bwa-tour3d-frame{aspect-ratio:4/3}}
 .bwa-tour3d-frame iframe{position:absolute;inset:0;display:block;width:100%;height:100%;border:0;background:var(--bwa-navy)}
 .bwa-tour3d-frame:fullscreen{border:0}
-.bwa-tour3d-cover{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;gap:clamp(12px,8cqi,24px);width:100%;margin:0;padding:12px;border:0;border-radius:0;color:var(--bwa-white);background-color:var(--bwa-navy);background-image:linear-gradient(rgba(11,35,66,.74),rgba(11,35,66,.8)),url("/images/opt/tour3d-capa.webp");background-size:cover,cover;background-position:center,center;background-repeat:no-repeat,no-repeat;font:inherit;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
-[data-tour3d-room="dormitorio"] .bwa-tour3d-cover{background-image:linear-gradient(rgba(11,35,66,.74),rgba(11,35,66,.8)),url("/images/opt/tour3d-capa-dormitorio.webp")}
-[data-tour3d-room="banho"] .bwa-tour3d-cover{background-image:linear-gradient(rgba(11,35,66,.74),rgba(11,35,66,.8)),url("/images/opt/tour3d-capa-banho.webp")}
+.bwa-tour3d-cover{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;gap:clamp(12px,8cqi,24px);width:100%;margin:0;padding:12px;border:0;border-radius:0;color:var(--bwa-white);background-color:var(--bwa-navy);background-image:linear-gradient(rgba(11,35,66,.74),rgba(11,35,66,.8)),var(--bwa-tour3d-capa,none);background-size:cover,cover;background-position:center,center;background-repeat:no-repeat,no-repeat;font:inherit;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+/* Fotos de capa (3 imagens, 126 kB) só quando o bloco chega perto da tela:
+   `data-tour3d-covers` é posto por installTour3dCovers (homeTour3d.ts). Imagem
+   de fundo em CSS é baixada assim que o elemento é desenhado, esteja onde
+   estiver na página — e este bloco fica bem abaixo da primeira tela (MOB-08).
+   A foto entra por variável para o seletor da capa continuar com o mesmo peso
+   (a regra de "tour carregado", abaixo, precisa continuar vencendo). */
+[data-tour3d-covers] [data-tour3d-view]{--bwa-tour3d-capa:url("/images/opt/tour3d-capa.webp")}
+[data-tour3d-covers] [data-tour3d-room="dormitorio"]{--bwa-tour3d-capa:url("/images/opt/tour3d-capa-dormitorio.webp")}
+[data-tour3d-covers] [data-tour3d-room="banho"]{--bwa-tour3d-capa:url("/images/opt/tour3d-capa-banho.webp")}
 .bwa-tour3d-cover:focus-visible{outline:2px solid var(--bwa-white);outline-offset:-6px}
 .bwa-tour3d-glyph{width:64px;height:64px;width:clamp(40px,26cqi,92px);height:clamp(40px,26cqi,92px);color:rgba(255,255,255,.92);transition:transform .5s var(--bwa-ease)}
 .bwa-tour3d-cover:hover .bwa-tour3d-glyph{transform:translateY(-3px)}
@@ -5111,7 +5122,11 @@
 @media (max-width:820px){.bwa-tour3d{padding-bottom:clamp(46px, 8.94vw, 60px)}}
 @media (prefers-reduced-motion:reduce){[data-tour3d-state="loading"] .bwa-tour3d-loading{animation:none}.bwa-tour3d-glyph,.bwa-tour3d-chip{transition:none}.bwa-tour3d-cover:hover .bwa-tour3d-glyph{transform:none}}
 /* Tela cheia em <dialog> (toque/tela estreita), criado por homeTour3d.ts no <body>. */
-html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
+/* A trava de rolagem é um atributo que homeTour3d.ts põe no <html> ao abrir.
+   Não usar `html:has(...)`: com ele o navegador reavalia o <html> a cada nó
+   inserido ou texto trocado em qualquer ponto da página, e recalcular o <html>
+   recalcula o estilo do documento inteiro (MOB-03). */
+html[data-bwa-tour3d-open]{overflow:hidden}
 .bwa-tour3d-dialog{position:fixed;inset:0;z-index:2147483000;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;color:var(--bwa-white);background:var(--bwa-ink);overscroll-behavior:contain}
 .bwa-tour3d-dialog[open]{display:flex;flex-direction:column}
 .bwa-tour3d-dialog::backdrop{background:var(--bwa-ink)}
@@ -5926,8 +5941,11 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
 @media (max-width: 900px) {
   /* ---- Barra "Solicitar orçamento": aparece depois do herói e some no
      fechamento/rodapé (is-hidden, do script), com o menu aberto e com o
-     teclado aberto (bwa-typing). Com o botão "Dúvidas" na página
-     (bwas-on), termina antes dele: os dois na mesma linha. ---- */
+     teclado aberto (data-bwa-typing). Com o botão "Dúvidas" na página
+     (data-bwas), termina antes dele: os dois na mesma linha.
+     Os dois estados são ATRIBUTOS no <html>, não classes: trocar uma classe
+     no <html> recalcula o estilo do documento inteiro; um atributo só
+     atinge quem o seletor cita (MOB-03). ---- */
   .bwa-mobile-cta {
     font-size: 12px;
     transition:
@@ -5937,13 +5955,13 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
       visibility .3s;
   }
 
-  .bwas-on .bwa-mobile-cta {
+  [data-bwas] .bwa-mobile-cta {
     right: 72px;
   }
 
   .bwa-mobile-cta.is-hidden,
   .bwa-menu-open .bwa-mobile-cta,
-  .bwa-typing .bwa-mobile-cta {
+  [data-bwa-typing] .bwa-mobile-cta {
     visibility: hidden;
     opacity: 0;
     transform: translateY(16px);
@@ -6014,12 +6032,22 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
     gap: .6em;
   }
 
-  .bwa-home-root p > a:not([class]) {
+  /* `:root` (e não uma classe posta no <html> pelo JavaScript) dá o mesmo peso
+     de seletor e já vale no HTML do servidor: antes estas três regras só
+     entravam depois da hidratação — os rótulos mudavam de tamanho com a página
+     na tela e a troca de classe no <html> recalculava o estilo do documento
+     inteiro (MOB-03).
+     Efeito colateral aceito: as regras valem enquanto esta folha estiver no
+     documento, e ela fica no <head> depois de uma navegação interna para
+     páginas sem o header .bwa (guia, LPs, painel). Lá só a primeira alcança
+     algo — links sem classe dentro de parágrafo ganham 6 px de área de toque,
+     sem mexer no layout (padding vertical em elemento em linha). */
+  :root p > a:not([class]) {
     padding-block: 6px;
   }
 
   /* ---- Legibilidade: rótulos de 8–10 px sobem para 10–11 px. ---- */
-  .bwa-home-root :is(
+  :root :is(
     .bwa-faq-num,
     .bwa-footer-column h3,
     .bwa-footer-tech,
@@ -6050,7 +6078,7 @@ html:has(.bwa-tour3d-dialog[open]){overflow:hidden}
     font-size: 11px;
   }
 
-  .bwa-home-root .bwa-tour3d-tag {
+  :root .bwa-tour3d-tag {
     font-size: 10px;
   }
 }
