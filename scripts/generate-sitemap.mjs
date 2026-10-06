@@ -209,7 +209,6 @@ async function main() {
       changefreq: "weekly",
       priority: "0.8",
     },
-    { loc: `${BASE_URL}/buscar`, lastmod: page("src/routes/buscar.tsx", ["BewildBuscaPage.tsx"]), changefreq: "monthly", priority: "0.5" },
     { loc: `${BASE_URL}/orcamento`, lastmod: page("src/routes/orcamento.tsx", ["OrcamentoPage.tsx"]), changefreq: "monthly", priority: "0.9" },
     {
       loc: `${BASE_URL}/faq`,
