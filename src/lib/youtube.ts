@@ -93,13 +93,16 @@ export const YOUTUBE_IFRAME_ALLOW =
 export const YOUTUBE_IFRAME_REFERRER = "strict-origin-when-cross-origin";
 
 /** Vídeos do YouTube presentes num corpo (HTML/markdown), sem repetir ID. */
-export function extractYouTubeEmbeds(body: string | null | undefined): Array<{ id: string; title: string }> {
-  const out: Array<{ id: string; title: string }> = [];
+export function extractYouTubeEmbeds(
+  body: string | null | undefined,
+): Array<{ id: string; title: string; start: number | null }> {
+  const out: Array<{ id: string; title: string; start: number | null }> = [];
   const seen = new Set<string>();
   for (const m of (body ?? "").matchAll(/<iframe\b[^>]*>/gi)) {
     const tag = m[0];
     const src = /\ssrc\s*=\s*(?:"([^"]*)"|'([^']*)')/i.exec(tag);
-    const id = parseYouTubeEmbedSrc((src?.[1] ?? src?.[2] ?? "").replace(/&amp;/g, "&"));
+    const srcUrl = (src?.[1] ?? src?.[2] ?? "").replace(/&amp;/g, "&");
+    const id = parseYouTubeEmbedSrc(srcUrl);
     if (!id || seen.has(id)) continue;
     seen.add(id);
     const t = /\stitle\s*=\s*(?:"([^"]*)"|'([^']*)')/i.exec(tag);
@@ -108,7 +111,7 @@ export function extractYouTubeEmbeds(body: string | null | undefined): Array<{ i
       .replace(/&#39;/g, "'")
       .replace(/&amp;/g, "&")
       .trim();
-    out.push({ id, title });
+    out.push({ id, title, start: parseYouTubeStart(srcUrl) });
   }
   return out;
 }
