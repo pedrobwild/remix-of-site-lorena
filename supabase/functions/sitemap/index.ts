@@ -59,15 +59,31 @@ Deno.serve(async (req) => {
       .order("order_index", { ascending: true });
   };
 
+  // Posts: lastmod = content_updated_at (edição real de conteúdo, migration
+  // 20261006150000) com fallback em published_at/created_at — nunca
+  // updated_at, que o trigger set_updated_at carimba em qualquer update (lote
+  // de 06/10/2026 02:29 UTC marcou 43 posts no mesmo segundo). Sem a migration
+  // a coluna não existe e a consulta cai para updated_at.
+  const POST_COLS = "slug, updated_at, published_at, created_at";
+  const loadPosts = async () => {
+    const withContent = await supabase
+      .from("bewild_posts")
+      .select(`${POST_COLS}, content_updated_at`)
+      .eq("published", true)
+      .order("published_at", { ascending: false, nullsFirst: false });
+    if (!withContent.error) return withContent;
+    return supabase
+      .from("bewild_posts")
+      .select(POST_COLS)
+      .eq("published", true)
+      .order("published_at", { ascending: false, nullsFirst: false });
+  };
+
   const [{ data: settings }, { data: projects }, { data: bewildPosts }] = await Promise.all([
     supabase
       .rpc("get_public_site_settings"),
     loadProjects(),
-    supabase
-      .from("bewild_posts")
-      .select("slug, updated_at, published_at, created_at")
-      .eq("published", true)
-      .order("published_at", { ascending: false, nullsFirst: false }),
+    loadPosts(),
   ]);
 
   const base = "https://bewild.com.br";
@@ -86,14 +102,18 @@ Deno.serve(async (req) => {
   }>;
   const postRows = (bewildPosts ?? []) as Array<{
     slug: string;
+    content_updated_at?: string | null;
     updated_at: string | null;
     published_at: string | null;
     created_at: string | null;
   }>;
+  // Com a coluna presente (mesmo NULL = nunca editado), updated_at não entra.
+  const postDays = (row: (typeof postRows)[number]) =>
+    "content_updated_at" in row
+      ? [row.content_updated_at, row.published_at, row.created_at]
+      : [row.updated_at, row.published_at, row.created_at];
   const projectLastmod = validDay(...projectRows.flatMap((row) => [row.content_updated_at, row.created_at]));
-  const postLastmod = validDay(
-    ...postRows.flatMap((row) => [row.updated_at, row.published_at, row.created_at]),
-  );
+  const postLastmod = validDay(...postRows.flatMap(postDays));
 
   const staticUrls: UrlEntry[] = [
     { loc: `${base}/`, priority: "1.0", changefreq: "weekly", lastmod: "2026-09-26" },
@@ -150,7 +170,7 @@ Deno.serve(async (req) => {
     loc: `${base}/conteudos/${b.slug}`,
     priority: "0.6",
     changefreq: "monthly",
-    lastmod: validDay(b.updated_at, b.published_at, b.created_at),
+    lastmod: validDay(...postDays(b)),
   }));
 
   const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls];

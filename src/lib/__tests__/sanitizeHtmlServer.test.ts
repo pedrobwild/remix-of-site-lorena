@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { sanitizeBlogHtmlServer } from "@/lib/sanitizeHtml";
+import { sanitizeBlogHtmlServer, stripInternalUtm } from "@/lib/sanitizeHtml";
 
 const VECTORS = [
   "<img src=x onerror=alert(1)>",
@@ -58,5 +58,30 @@ describe("sanitizeBlogHtmlServer — vídeo", () => {
   });
   it("continua removendo iframe", () => {
     expect(sanitizeBlogHtmlServer('<p>a</p><iframe src="https://x.com"></iframe>')).not.toMatch(/<iframe/i);
+  });
+});
+
+describe("stripInternalUtm — UTM em link interno (auditoria 06/10/2026)", () => {
+  it("remove utm_* de links relativos e absolutos do próprio site, mantendo outros parâmetros e âncora", () => {
+    const html =
+      '<p><a href="/orcamento?utm_source=conteudo&amp;utm_medium=post&amp;utm_campaign=x">Orçamento</a> ' +
+      '<a href="https://bewild.com.br/orcamento?tipo=studio&amp;utm_source=conteudo#form">A</a> ' +
+      '<a href="https://www.bewild.com.br/contato?utm_source=a">B</a></p>';
+    const out = stripInternalUtm(html);
+    expect(out).toContain('<a href="/orcamento">Orçamento</a>');
+    expect(out).toContain('<a href="https://bewild.com.br/orcamento?tipo=studio#form">A</a>');
+    expect(out).toContain('<a href="https://www.bewild.com.br/contato">B</a>');
+    expect(out).not.toMatch(/utm_/);
+  });
+
+  it("não mexe em links externos nem em href sem UTM", () => {
+    const html = '<a href="https://example.com/?utm_source=bewild" target="_blank" rel="noopener noreferrer">x</a><a href="/faq?x=1">y</a>';
+    expect(stripInternalUtm(html)).toBe(html);
+  });
+
+  it("sanitizador do servidor já devolve o link limpo", () => {
+    const out = sanitizeBlogHtmlServer('<p><a href="/orcamento?utm_source=conteudo&utm_medium=post">Peça</a></p>');
+    expect(out).toContain('href="/orcamento"');
+    expect(out).not.toMatch(/utm_/);
   });
 });

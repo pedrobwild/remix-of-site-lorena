@@ -123,6 +123,32 @@ describe("postDates", () => {
     expect(d.showUpdated).toBe(false);
   });
 
+  it("content_updated_at presente manda: NULL = nunca editado, mesmo com updated_at carimbado em lote", () => {
+    // Lote de 06/10/2026 02:29 UTC: updated_at de 43 posts no mesmo segundo.
+    const d = postDates({
+      published_at: "2026-09-22T05:28:17Z",
+      updated_at: "2026-10-06T02:29:06Z",
+      content_updated_at: null,
+    });
+    expect(d.modified).toBe("2026-09-22T05:28:17Z");
+    expect(d.showUpdated).toBe(false);
+  });
+
+  it("content_updated_at posterior em outro dia: é ele que aparece, não updated_at", () => {
+    const d = postDates({
+      published_at: "2026-09-22T09:33:10Z",
+      updated_at: "2026-10-06T02:29:06Z",
+      content_updated_at: "2026-09-24T23:30:23Z",
+    });
+    expect(d.modified).toBe("2026-09-24T23:30:23Z");
+    expect(d.showUpdated).toBe(true);
+  });
+
+  it("sem a coluna (banco antigo) continua lendo updated_at", () => {
+    const d = postDates({ published_at: "2026-06-15T10:00:00Z", updated_at: "2026-09-22T12:00:00Z" });
+    expect(d.modified).toBe("2026-09-22T12:00:00Z");
+  });
+
   it("updated_at posterior em outro dia: modified = updated_at e linha visível", () => {
     const d = postDates({ published_at: "2026-06-15T10:00:00Z", updated_at: "2026-09-22T12:00:00Z" });
     expect(d.published).toBe("2026-06-15T10:00:00Z");

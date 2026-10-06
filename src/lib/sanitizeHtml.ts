@@ -162,7 +162,7 @@ if (domPurifyReady) DOMPurify.addHook("afterSanitizeAttributes", (node) => {
 export function sanitizeBlogHtml(html: string): string {
   if (!html) return "";
   if (!domPurifyReady) return sanitizeBlogHtmlServer(html);
-  return DOMPurify.sanitize(html, {
+  return stripInternalUtm(DOMPurify.sanitize(html, {
     ALLOWED_TAGS: [...ALLOWED_TAGS, "iframe"],
     ALLOWED_ATTR,
     // Não permite `<form>`/`<input>` mesmo que apareçam no input —
@@ -172,6 +172,39 @@ export function sanitizeBlogHtml(html: string): string {
     // Mantém estrutura adicional do editor (figure/figcaption) sem mexer
     // em entidades já escapadas no HTML salvo.
     KEEP_CONTENT: true,
+  }));
+}
+
+// ---------------------------------------------------------------------------
+// Links internos sem UTM (auditoria de SEO 06/10/2026, item 11).
+// ---------------------------------------------------------------------------
+const INTERNAL_HREF = /^(?:\/(?!\/)|https?:\/\/(?:www\.)?bewild\.com\.br(?:[/?#]|$))/i;
+
+/**
+ * Tira `utm_*` de links para o próprio site. UTM em link interno abre uma
+ * nova sessão no GA4 e apaga a origem real do visitante (orgânico vira
+ * "conteudo / post"); a origem do lead já fica em `leadSource`. Links
+ * externos e demais parâmetros ficam como estão. Opera no HTML já
+ * sanitizado, onde `&` do href está escapado como `&amp;`.
+ */
+export function stripInternalUtm(html: string): string {
+  if (!html || !/utm_/i.test(html)) return html;
+  return html.replace(/<a\b([^>]*?)\shref=("([^"]*)"|'([^']*)')/gi, (tag, before: string, _q, dq?: string, sq?: string) => {
+    const href = dq ?? sq ?? "";
+    if (!INTERNAL_HREF.test(href) || !/[?&](?:amp;)?utm_/i.test(href)) return tag;
+    const hashAt = href.indexOf("#");
+    const hash = hashAt >= 0 ? href.slice(hashAt) : "";
+    const noHash = hashAt >= 0 ? href.slice(0, hashAt) : href;
+    const qAt = noHash.indexOf("?");
+    if (qAt < 0) return tag;
+    const path = noHash.slice(0, qAt);
+    const kept = noHash
+      .slice(qAt + 1)
+      .split(/&amp;|&/)
+      .filter((pair) => pair && !/^utm_/i.test(pair));
+    const clean = `${path}${kept.length ? `?${kept.join("&amp;")}` : ""}${hash}`;
+    const quote = dq !== undefined ? '"' : "'";
+    return `<a${before} href=${quote}${clean}${quote}`;
   });
 }
 
@@ -264,5 +297,5 @@ function forceNoopener(html: string): string {
 export function sanitizeBlogHtmlServer(html: string): string {
   if (!html) return "";
   validIframeOpen = false;
-  return forceNoopener(getServerFilter().process(html));
+  return stripInternalUtm(forceNoopener(getServerFilter().process(html)));
 }

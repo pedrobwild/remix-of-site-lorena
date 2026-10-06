@@ -185,7 +185,10 @@ export function postTitleFromSlug(slug: string | null | undefined): string {
 export type PostDates = {
   /** ISO da publicação (published_at, senão created_at). */
   published: string | null;
-  /** ISO da última alteração: updated_at quando é posterior à publicação. */
+  /**
+   * ISO da última alteração de conteúdo: `content_updated_at` (quando a coluna
+   * veio do banco) ou, sem ela, `updated_at` — sempre só se posterior à publicação.
+   */
   modified: string | null;
   /** true quando o dia de `modified` é posterior ao dia de `published` (dias em São Paulo). */
   showUpdated: boolean;
@@ -230,12 +233,23 @@ export function bewildCalendarDay(iso: string | null | undefined): string | null
 
 const day = bewildCalendarDay;
 
-export function postDates(
-  post: { published_at?: string | null; created_at?: string | null; updated_at?: string | null } | null | undefined,
-): PostDates {
+export type PostDateFields = {
+  published_at?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+  /**
+   * Última edição de CONTEÚDO (migration 20261006150000). `null` = nunca
+   * editado após publicar; `undefined` = coluna não veio (banco antigo),
+   * e aí vale `updated_at`. Nunca misturar: `updated_at` é carimbado por
+   * qualquer update (lote de 06/10/2026 marcou 43 posts no mesmo segundo).
+   */
+  content_updated_at?: string | null;
+};
+
+export function postDates(post: PostDateFields | null | undefined): PostDates {
   if (!post) return { published: null, modified: null, showUpdated: false };
   const published = post.published_at ?? post.created_at ?? null;
-  const updated = post.updated_at ?? null;
+  const updated = post.content_updated_at !== undefined ? post.content_updated_at : (post.updated_at ?? null);
   const later = !!(published && updated && Date.parse(updated) > Date.parse(published));
   const modified = later ? updated : published;
   const showUpdated = later && day(updated) !== day(published);

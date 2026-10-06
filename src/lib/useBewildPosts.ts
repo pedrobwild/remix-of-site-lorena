@@ -30,8 +30,10 @@ export type BewildPost = {
   published: boolean;
   published_at: string | null;
   created_at: string;
-  /** Última alteração (trigger set_updated_at). Alimenta dateModified e a linha "Atualizado em". */
+  /** Último update de qualquer coluna (trigger set_updated_at). Só vale como data quando `content_updated_at` não veio. */
   updated_at?: string | null;
+  /** Última edição de CONTEÚDO (migration 20261006150000). Alimenta dateModified e "Atualizado em". */
+  content_updated_at?: string | null;
 };
 
 /**

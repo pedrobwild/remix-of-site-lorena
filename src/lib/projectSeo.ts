@@ -1,3 +1,4 @@
+import { brandTitle } from "@/lib/seoTitle";
 import { formatAreaM2 } from "./formatArea";
 /**
  * Meta description derivada dos DADOS REAIS do projeto.
@@ -147,6 +148,14 @@ const placeLabel = (p: ProjectSeoInput) =>
  * auditoria de 05/10/2026).
  */
 export function projectSeoTitle(p: ProjectSeoInput | null | undefined): string {
+  return brandTitle(projectSeoTitleFull(p));
+}
+
+/**
+ * Título completo, sempre com " | Bewild" (teto `TITLE_MAX`). `projectSeoTitle`
+ * aplica `brandTitle` por cima: a marca sai quando o conjunto passa de 60.
+ */
+function projectSeoTitleFull(p: ProjectSeoInput | null | undefined): string {
   if (!p) return "Reforma de apartamento em São Paulo | Bewild";
 
   const explicit = stripProjectCode((p.seo_title || "").trim());
@@ -254,25 +263,19 @@ export function projectSeoTitleUnique(
   p: ProjectSeoPeer | null | undefined,
   peers: ProjectSeoPeer[],
 ): string {
-  const base = projectSeoTitle(p);
-  if (!p) return base;
+  const full = projectSeoTitleFull(p);
+  if (!p) return brandTitle(full);
 
-  const group = peers.filter((o) => o.id !== p.id && projectSeoTitle(o) === base);
-  if (group.length === 0) return base;
+  const group = peers.filter((o) => o.id !== p.id && projectSeoTitleFull(o) === full);
+  if (group.length === 0) return brandTitle(full);
 
   const suffix = " | Bewild";
-  if (!base.endsWith(suffix)) return base;
-  const date = projectRegistrationDate(p.created_at);
-  if (!date || group.some((o) => projectRegistrationDate(o.created_at) === date)) {
-    // Data não separa: numera as irmãs em ordem estável (cadastro, depois id).
-    const key = (o: ProjectSeoPeer) => `${o.created_at ?? ""}|${o.id}`;
-    const n = [p, ...group].map(key).sort().indexOf(key(p)) + 1;
-    return `${base.slice(0, -suffix.length)} (projeto ${n})${suffix}`;
-  }
-
-  const dated = `${base.slice(0, -suffix.length)} (cadastro ${date})${suffix}`;
-  if (dated.length <= DATED_TITLE_MAX) return dated;
-  // Muito longo: mantém o nome inteiro e tira só a palavra "cadastro".
-  const short = `${base.slice(0, -suffix.length)} (${date})${suffix}`;
-  return short.length <= DATED_TITLE_MAX ? short : base;
+  if (!full.endsWith(suffix)) return brandTitle(full);
+  // Numera as irmãs em ordem estável (cadastro, depois id): "(projeto 2)".
+  // A data de cadastro, usada antes, não diz nada a quem busca o prédio e
+  // levava o título a 80 caracteres (auditoria de 06/10/2026).
+  const key = (o: ProjectSeoPeer) => `${o.created_at ?? ""}|${o.id}`;
+  const n = [p, ...group].map(key).sort().indexOf(key(p)) + 1;
+  const numbered = `${full.slice(0, -suffix.length)} (projeto ${n})`;
+  return numbered.length <= DATED_TITLE_MAX ? brandTitle(numbered) : brandTitle(full);
 }
