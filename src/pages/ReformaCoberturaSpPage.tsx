@@ -4,8 +4,7 @@ import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { BAIRROS, REMOTO_ITEMS } from "@/lib/bairrosSp";
-import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { faqJsonLd, useSeo } from "@/lib/useSeo";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
 
@@ -93,8 +92,25 @@ const FAQ: { q: string; a: string; node?: ReactNode }[] = [
   },
 ];
 
+/** JSON-LD da página no HTML do servidor (head() da rota) — Service/FAQ; a trilha já vai no WebPage. */
+// eslint-disable-next-line react-refresh/only-export-components -- constante lida pela rota, não muda o fast refresh
+export const COBERTURA_SP_JSONLD: Array<Record<string, unknown>> = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Reforma completa de coberturas em São Paulo",
+    alternateName: "Reforma de cobertura em SP",
+    serviceType: "Reforma de apartamento",
+    description:
+      "Projeto 3D, obra, área externa e terraço, marcenaria sob medida, mobília e entrega das chaves em um único contrato, com preço fechado e prazo em contrato.",
+    provider: { "@id": "https://bewild.com.br/#org" },
+    areaServed: { "@type": "City", name: "São Paulo" },
+    url: `https://bewild.com.br${CANONICAL}`,
+  },
+  faqJsonLd(FAQ.map((f) => ({ q: f.q, a: f.a }))),
+];
+
 export default function ReformaCoberturaSpPage() {
-  const { settings } = useSiteSettings();
   useCtaClickTracking("reforma-cobertura-sp");
 
   useSeo({
@@ -103,27 +119,6 @@ export default function ReformaCoberturaSpPage() {
       "Reforma completa de cobertura em São Paulo: projeto 3D, obra, terraço, marcenaria e mobília em um contrato, com preço fechado, prazo e 5 anos de garantia.",
     canonicalPath: CANONICAL,
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Reforma de cobertura em São Paulo", path: CANONICAL },
-          ]),
-          {
-            "@context": "https://schema.org",
-            "@type": "Service",
-            name: "Reforma completa de coberturas em São Paulo",
-            alternateName: "Reforma de cobertura em SP",
-            serviceType: "Reforma de apartamento",
-            description:
-              "Projeto 3D, obra, área externa e terraço, marcenaria sob medida, mobília e entrega das chaves em um único contrato, com preço fechado e prazo em contrato.",
-            provider: { "@id": "https://bewild.com.br/#org" },
-            areaServed: { "@type": "City", name: "São Paulo" },
-            url: `https://bewild.com.br${CANONICAL}`,
-          },
-          faqJsonLd(FAQ.map((f) => ({ q: f.q, a: f.a }))),
-        ]
-      : undefined,
   });
 
   return (
@@ -143,7 +138,7 @@ export default function ReformaCoberturaSpPage() {
                 A Bewild faz a reforma completa da sua cobertura em São Paulo:
                 projeto 3D, obra, terraço e área externa, marcenaria sob medida
                 e mobília em um único contrato, com preço fechado, prazo em
-                contrato e 5 anos de garantia. Mais de 160 reformas entregues
+                contrato e 5 anos de garantia. Mais de 188 reformas entregues
                 em apartamentos e studios de todos os tamanhos.
               </p>
             </div>
@@ -218,8 +213,11 @@ export default function ReformaCoberturaSpPage() {
               ))}
             </ul>
             <p className="bwa-servico-text" style={{ marginTop: 24 }}>
-              Cada etapa está detalhada em{" "}
-              <a href="/como-funciona">como funciona a reforma da Bewild</a>.
+              As 12 etapas, do briefing à entrega, estão detalhadas em{" "}
+              <a href="/como-funciona">como funciona a reforma turnkey da Bewild</a>. Numa cobertura, a
+              varanda e o terraço entram no projeto desde o briefing: o que o condomínio permite no
+              fechamento está em{" "}
+              <a href="/conteudos/fechar-varanda-em-vidro-studio-condominio">fechar varanda com vidro</a>.
             </p>
           </div>
         </section>
@@ -300,7 +298,7 @@ export default function ReformaCoberturaSpPage() {
                 Falar no WhatsApp <span aria-hidden="true">→</span>
               </a>
               <p className="bwa-servico-cta-note">
-                +160 reformas entregues · +200 projetos
+                +188 reformas entregues · +200 projetos
               </p>
             </div>
           </div>

@@ -4,8 +4,7 @@ import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { BAIRROS, REMOTO_ITEMS, bairroHref, type BairroPageLink } from "@/lib/bairrosSp";
-import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { faqJsonLd, useSeo } from "@/lib/useSeo";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
 
@@ -96,8 +95,42 @@ type Props = {
   bairroPages?: BairroPageLink[] | null;
 };
 
+/** JSON-LD da página no HTML do servidor (head() da rota) — Service/FAQ; a trilha já vai no WebPage. */
+// eslint-disable-next-line react-refresh/only-export-components -- constante lida pela rota, não muda o fast refresh
+export const APARTAMENTO_SP_JSONLD: Array<Record<string, unknown>> = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Reforma de apartamento em São Paulo",
+    alternateName: "Empresa de reforma de apartamento em São Paulo",
+    serviceType: "Reforma de apartamento",
+    description:
+      "Reforma completa de apartamentos e studios em São Paulo: projeto aprovado em 3D, obra, marcenaria e mobília em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia sobre a mão de obra.",
+    provider: { "@id": "https://bewild.com.br/#org" },
+    areaServed: {
+      "@type": "City",
+      name: "São Paulo",
+      containedInPlace: { "@type": "State", name: "São Paulo" },
+    },
+    url: `https://bewild.com.br${CANONICAL}`,
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Escopo da reforma",
+      itemListElement: [
+        "Projeto aprovado em 3D antes da obra",
+        "Obra com preço fechado e prazo em contrato",
+        "Marcenaria, mobília e eletrodomésticos",
+        "Vistoria e entrega das chaves",
+      ].map((item) => ({
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: item },
+      })),
+    },
+  },
+  faqJsonLd(FAQ.map((f) => ({ q: f.q, a: f.a }))),
+];
+
 export default function ReformaApartamentoSpPage({ bairroPages = null }: Props = {}) {
-  const { settings } = useSiteSettings();
   useCtaClickTracking("reforma-apartamento-sp");
 
   useSeo({
@@ -106,44 +139,6 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
       "Reforma de apartamento em SP com arquitetura e engenharia próprias: projeto 3D, obra, marcenaria e mobília num contrato, preço fechado e 5 anos de garantia.",
     canonicalPath: CANONICAL,
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Reforma de apartamento em São Paulo", path: CANONICAL },
-          ]),
-          {
-            "@context": "https://schema.org",
-            "@type": "Service",
-            name: "Reforma de apartamento em São Paulo",
-            alternateName: "Empresa de reforma de apartamento em São Paulo",
-            serviceType: "Reforma de apartamento",
-            description:
-              "Reforma completa de apartamentos e studios em São Paulo: projeto aprovado em 3D, obra, marcenaria e mobília em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia sobre a mão de obra.",
-            provider: { "@id": "https://bewild.com.br/#org" },
-            areaServed: {
-              "@type": "City",
-              name: "São Paulo",
-              containedInPlace: { "@type": "State", name: "São Paulo" },
-            },
-            url: `https://bewild.com.br${CANONICAL}`,
-            hasOfferCatalog: {
-              "@type": "OfferCatalog",
-              name: "Escopo da reforma",
-              itemListElement: [
-                "Projeto aprovado em 3D antes da obra",
-                "Obra com preço fechado e prazo em contrato",
-                "Marcenaria, mobília e eletrodomésticos",
-                "Vistoria e entrega das chaves",
-              ].map((item) => ({
-                "@type": "Offer",
-                itemOffered: { "@type": "Service", name: item },
-              })),
-            },
-          },
-          faqJsonLd(FAQ.map((f) => ({ q: f.q, a: f.a }))),
-        ]
-      : undefined,
   });
 
   return (
@@ -164,7 +159,7 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
                 studios em São Paulo. Entregamos projeto, obra, marcenaria e
                 mobília em um único contrato, com preço fechado antes de a obra
                 começar, prazo em contrato e 5 anos de garantia sobre a mão de
-                obra. Mais de 160 reformas entregues em mais de 27 bairros da
+                obra. Mais de 188 reformas entregues em mais de 27 bairros da
                 capital, para donos que moram em São Paulo ou em qualquer outra
                 cidade.
               </p>
@@ -241,8 +236,17 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
               ))}
             </ul>
             <p className="bwa-servico-text" style={{ marginTop: 24 }}>
-              Cada etapa está detalhada em{" "}
-              <a href="/como-funciona">como funciona a reforma da Bewild</a>.
+              As 12 etapas, do briefing à entrega, estão detalhadas em{" "}
+              <a href="/como-funciona">como funciona a reforma turnkey da Bewild</a>.
+            </p>
+            <p className="bwa-servico-text" style={{ marginTop: 16 }}>
+              Antes da obra, o condomínio recebe o plano de reforma e a ART que a{" "}
+              <a href="/conteudos/nbr-16280-reforma-studio-condominio">NBR 16280</a> exige; o que entra
+              nessa documentação e quanto custa cada etapa estão em{" "}
+              <a href="/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2">
+                quanto custa reformar um apartamento ou studio de até 50 m²
+              </a>
+              .
             </p>
           </div>
         </section>
@@ -323,7 +327,7 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
                 Falar no WhatsApp <span aria-hidden="true">→</span>
               </a>
               <p className="bwa-servico-cta-note">
-                +160 reformas entregues · +200 projetos
+                +188 reformas entregues · +200 projetos
               </p>
             </div>
           </div>

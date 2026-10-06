@@ -3,8 +3,7 @@ import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { BAIRROS, REMOTO_ITEMS, bairroHref, type BairroPageLink } from "@/lib/bairrosSp";
-import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { useSeo } from "@/lib/useSeo";
 import "./onde-atuamos.css";
 
 /* ============================================================
@@ -20,30 +19,25 @@ type Props = {
   bairroPages?: BairroPageLink[] | null;
 };
 
-export default function OndeAtuamosPage({ bairroPages = null }: Props = {}) {
-  const { settings } = useSiteSettings();
+/** JSON-LD da página no HTML do servidor (head() da rota) — Service/FAQ; a trilha já vai no WebPage. */
+// eslint-disable-next-line react-refresh/only-export-components -- constante lida pela rota, não muda o fast refresh
+export const ONDE_ATUAMOS_JSONLD: Array<Record<string, unknown>> = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Reforma completa de studios e apartamentos",
+    provider: { "@type": "Organization", name: "Bewild", url: "https://bewild.com.br" },
+    areaServed: { "@type": "City", name: "São Paulo" },
+  },
+];
 
+export default function OndeAtuamosPage({ bairroPages = null }: Props = {}) {
   useSeo({
     title: "Onde atuamos: arquitetura e reforma em São Paulo | Bewild",
     description:
       "A Bewild projeta e reforma apartamentos em São Paulo capital, em mais de 27 bairros, e atende à distância clientes de outras cidades.",
     canonicalPath: "/onde-atuamos",
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Onde atuamos", path: "/onde-atuamos" },
-          ]),
-          {
-            "@context": "https://schema.org",
-            "@type": "Service",
-            name: "Reforma completa de studios e apartamentos",
-            provider: { "@type": "Organization", name: "Bewild", url: "https://bewild.com.br" },
-            areaServed: { "@type": "City", name: "São Paulo" },
-          },
-        ]
-      : undefined,
   });
 
   return (
@@ -60,7 +54,7 @@ export default function OndeAtuamosPage({ bairroPages = null }: Props = {}) {
               </h1>
               <p className="bwa-atuamos-lead">
                 As obras da Bewild acontecem em São Paulo capital — são mais de
-                160 reformas entregues em mais de 27 bairros. E você não precisa
+                188 reformas entregues em mais de 27 bairros. E você não precisa
                 estar na cidade: clientes de Uberlândia, Salvador, Curitiba e
                 Brasília acompanham tudo à distância, do projeto à entrega das
                 chaves.
@@ -126,7 +120,7 @@ export default function OndeAtuamosPage({ bairroPages = null }: Props = {}) {
               >
                 Falar no WhatsApp <span aria-hidden="true">→</span>
               </a>
-              <p className="bwa-atuamos-cta-note">+160 reformas entregues · +200 projetos</p>
+              <p className="bwa-atuamos-cta-note">+188 reformas entregues · +200 projetos</p>
             </div>
           </div>
         </section>

@@ -1,4 +1,4 @@
-import { useSeo, breadcrumbJsonLd } from "../lib/useSeo";
+import { useSeo } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
 import { routes } from "../lib/useHashRoute";
 import BwaFooter from "@/components/BwaFooter";
@@ -33,14 +33,6 @@ export default function PrivacidadePage() {
     description: "Como a Bewild coleta, usa e protege os dados de clientes e interessados em projetos e reformas de apartamentos.",
     canonicalPath: "/privacidade",
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Política de Privacidade", path: "/privacidade" },
-          ]),
-        ]
-      : undefined,
   });
 
   const prefsButton = <a href={routes.preferenciasCookies}>Preferências de cookies</a>;

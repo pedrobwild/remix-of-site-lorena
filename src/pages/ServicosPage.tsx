@@ -1,8 +1,7 @@
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
-import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { faqJsonLd, useSeo } from "@/lib/useSeo";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
 
@@ -143,8 +142,35 @@ const FAQ: { q: string; a: string }[] = [
   },
 ];
 
+/** JSON-LD da página no HTML do servidor (head() da rota) — Service/FAQ; a trilha já vai no WebPage. */
+// eslint-disable-next-line react-refresh/only-export-components -- constante lida pela rota, não muda o fast refresh
+export const SERVICOS_JSONLD: Array<Record<string, unknown>> = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Arquitetura, reforma e marcenaria em São Paulo",
+    serviceType: "Reforma de apartamento",
+    description: DESCRIPTION,
+    provider: { "@id": "https://bewild.com.br/#org" },
+    areaServed: { "@type": "City", name: "São Paulo" },
+    url: `https://bewild.com.br${CANONICAL}`,
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Serviços Bewild",
+      itemListElement: SERVICOS.map((s) => ({
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: s.nome,
+          url: `https://bewild.com.br${s.path}`,
+        },
+      })),
+    },
+  },
+  faqJsonLd(FAQ),
+];
+
 export default function ServicosPage() {
-  const { settings } = useSiteSettings();
   useCtaClickTracking("servicos");
 
   useSeo({
@@ -152,37 +178,6 @@ export default function ServicosPage() {
     description: DESCRIPTION,
     canonicalPath: CANONICAL,
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Serviços", path: CANONICAL },
-          ]),
-          {
-            "@context": "https://schema.org",
-            "@type": "Service",
-            name: "Arquitetura, reforma e marcenaria em São Paulo",
-            serviceType: "Reforma de apartamento",
-            description: DESCRIPTION,
-            provider: { "@id": "https://bewild.com.br/#org" },
-            areaServed: { "@type": "City", name: "São Paulo" },
-            url: `https://bewild.com.br${CANONICAL}`,
-            hasOfferCatalog: {
-              "@type": "OfferCatalog",
-              name: "Serviços Bewild",
-              itemListElement: SERVICOS.map((s) => ({
-                "@type": "Offer",
-                itemOffered: {
-                  "@type": "Service",
-                  name: s.nome,
-                  url: `https://bewild.com.br${s.path}`,
-                },
-              })),
-            },
-          },
-          faqJsonLd(FAQ),
-        ]
-      : undefined,
   });
 
   return (
