@@ -2,8 +2,7 @@ import { useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
-import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { faqJsonLd, useSeo } from "@/lib/useSeo";
 import "./faq-page.css";
 
 /* ============================================================
@@ -43,8 +42,13 @@ const ITENS: { q: string; a: string }[] = [
   },
 ];
 
+/** JSON-LD da página no HTML do servidor (head() da rota) — Service/FAQ; a trilha já vai no WebPage. */
+// eslint-disable-next-line react-refresh/only-export-components -- constante lida pela rota, não muda o fast refresh
+export const AUTORIZACAO_JSONLD: Array<Record<string, unknown>> = [
+  faqJsonLd(ITENS.map((i) => ({ q: i.q, a: i.a }))),
+];
+
 export default function AutorizacaoCondominioPage() {
-  const { settings } = useSiteSettings();
   const [aberto, setAberto] = useState(0);
 
   useSeo({
@@ -55,15 +59,6 @@ export default function AutorizacaoCondominioPage() {
       "autorização de reforma condomínio, ART de engenharia para reforma, responsável técnico de obra, autorização de reforma em condomínio, autorização de obra em condomínio, documentos para reforma em condomínio, ART de reforma, regras de reforma em apartamento, síndico autorização reforma, Bewild",
     canonicalPath: "/autorizacao-condominio",
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Autorização de reforma no condomínio", path: "/autorizacao-condominio" },
-          ]),
-          faqJsonLd(ITENS.map((i) => ({ q: i.q, a: i.a }))),
-        ]
-      : undefined,
   });
 
   return (
@@ -133,7 +128,7 @@ export default function AutorizacaoCondominioPage() {
               >
                 Falar no WhatsApp <span aria-hidden="true">→</span>
               </a>
-              <p className="bwa-faqpage-cta-note">+160 reformas entregues · +200 projetos</p>
+              <p className="bwa-faqpage-cta-note">+188 reformas entregues · +200 projetos</p>
             </div>
           </div>
         </section>

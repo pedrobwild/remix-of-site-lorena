@@ -10,7 +10,7 @@ import { buildLeadMessage } from "@/lib/leadForm";
 import { formatBrPhone, isValidBrPhone, normalizeBrPhoneDigits } from "@/lib/phone";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import { browserUserAgent, collectLeadAttribution, openWhatsapp, useLeadSubmit } from "@/lib/useLeadSubmit";
-import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
+import { faqJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./faq-page.css";
 import "./contato.css";
@@ -127,6 +127,12 @@ const indicadorSchema = z.object({
   relacao: z.enum(RELACOES as [string, ...string[]]),
   mensagem: z.string().trim().max(600),
 });
+
+/** JSON-LD da página no HTML do servidor (head() da rota) — Service/FAQ; a trilha já vai no WebPage. */
+// eslint-disable-next-line react-refresh/only-export-components -- constante lida pela rota, não muda o fast refresh
+export const INDIQUE_JSONLD: Array<Record<string, unknown>> = [
+  faqJsonLd(FAQ_INDICADOR.map((i) => ({ q: i.q, a: i.a }))),
+];
 
 export default function IndiquePage() {
   useCtaClickTracking("indique-um-amigo");
@@ -267,15 +273,6 @@ export default function IndiquePage() {
       "indique e ganhe reforma, programa de indicação reforma São Paulo, recompensa por indicação apartamento, reforma de studio São Paulo, reforma de apartamento SP, Bewild indicações",
     canonicalPath: "/indique-um-amigo",
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Indique um amigo", path: "/indique-um-amigo" },
-          ]),
-          faqJsonLd(FAQ_INDICADOR.map((i) => ({ q: i.q, a: i.a }))),
-        ]
-      : undefined,
   });
 
   return (

@@ -4,8 +4,7 @@ import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
-import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { useSeo } from "@/lib/useSeo";
 import { scrollBehavior } from "@/lib/reducedMotion";
 import "./escopo.css";
 
@@ -41,7 +40,6 @@ type Recomendacao = {
 };
 
 export default function EscopoPage() {
-  const { settings } = useSiteSettings();
   const [descricao, setDescricao] = useState("");
   const [objetivo, setObjetivo] = useState(OBJETIVOS[0]);
   const [area, setArea] = useState("");
@@ -58,14 +56,6 @@ export default function EscopoPage() {
       "Descreva seu apartamento e seu objetivo e receba na hora uma recomendação de escopo, prazo de referência e próximos passos com a Bewild.",
     canonicalPath: "/escopo",
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Escopo com IA", path: "/escopo" },
-          ]),
-        ]
-      : undefined,
   });
 
   async function onSubmit(e: React.FormEvent) {

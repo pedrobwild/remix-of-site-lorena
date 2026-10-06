@@ -5,8 +5,7 @@ import { whatsappHref } from "@/components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/ga4";
 import { track } from "@/lib/analytics";
-import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { faqJsonLd, useSeo } from "@/lib/useSeo";
 import { safeKbActions, type KbItem } from "@/lib/assistant/assistantEngine";
 import { isExternalHref } from "@/lib/safeUrl";
 import { scrollBehavior } from "@/lib/reducedMotion";
@@ -92,7 +91,7 @@ const FAQ_ITEMS_SEM_BANCO: FaqItem[] = [
   },
   {
     q: "Posso ver obras que a Bewild já entregou?",
-    a: "Pode. São mais de 160 reformas entregues em mais de 27 bairros de São Paulo, e o portfólio tem uma página para cada projeto, com fotos reais, metragem, bairro e o que foi feito. Para saber se há obra no seu prédio ou uma unidade para visitar, a equipe confere para você.",
+    a: "Pode. São mais de 188 reformas entregues em mais de 27 bairros de São Paulo, e o portfólio tem uma página para cada projeto, com fotos reais, metragem, bairro e o que foi feito. Para saber se há obra no seu prédio ou uma unidade para visitar, a equipe confere para você.",
     href: "/portfolio",
     linkLabel: "Ver o portfólio completo →",
   },
@@ -172,7 +171,6 @@ const PORTFOLIO_ITEMS: FaqItem[] = [
 ];
 
 export default function FaqPage() {
-  const { settings } = useSiteSettings();
   const [aberto, setAberto] = useState("f-0");
   const [guiaAberto, setGuiaAberto] = useState(-1);
   const [indicacaoAberto, setIndicacaoAberto] = useState(-1);
@@ -271,23 +269,17 @@ export default function FaqPage() {
     // Um único FAQPage por página (só JSON-LD, sem microdata duplicada), com
     // exatamente as perguntas visíveis: as do banco (ou a lista fixa) + os
     // blocos Portfólio, Como fazer uma reforma e Indicações.
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Perguntas frequentes", path: "/faq" },
-          ]),
-          faqJsonLd([
-            ...(kb
-              ? kb.map((i) => ({ q: i.pergunta, a: i.resposta }))
-              : FALLBACK_ITEMS.map((i) => ({ q: i.q, a: i.a }))),
-            // Blocos fixos exibidos em qualquer cenário (com ou sem o banco).
-            ...PORTFOLIO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
-            ...GUIA_ITEMS.map((i) => ({ q: i.q, a: i.a })),
-            ...INDICACAO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
-          ]),
-        ]
-      : undefined,
+    jsonLd: [
+      faqJsonLd([
+        ...(kb
+          ? kb.map((i) => ({ q: i.pergunta, a: i.resposta }))
+          : FALLBACK_ITEMS.map((i) => ({ q: i.q, a: i.a }))),
+        // Blocos fixos exibidos em qualquer cenário (com ou sem o banco).
+        ...PORTFOLIO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
+        ...GUIA_ITEMS.map((i) => ({ q: i.q, a: i.a })),
+        ...INDICACAO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
+      ]),
+    ],
   });
 
   return (
@@ -643,7 +635,7 @@ export default function FaqPage() {
               >
                 Falar no WhatsApp <span aria-hidden="true">→</span>
               </a>
-              <p className="bwa-faqpage-cta-note">+160 reformas entregues · +200 projetos</p>
+              <p className="bwa-faqpage-cta-note">+188 reformas entregues · +200 projetos</p>
             </div>
           </div>
         </section>

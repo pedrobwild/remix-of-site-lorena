@@ -1,7 +1,7 @@
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
-import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { useSeo } from "@/lib/useSeo";
+import { FASES } from "@/content/etapas";
 import "./como-funciona.css";
 
 /* ============================================================
@@ -70,7 +70,6 @@ function HowCard({
 }
 
 export default function ComoFuncionaPage() {
-  const { settings } = useSiteSettings();
 
   useSeo({
     title: "Como funciona a reforma turnkey: etapas e contrato | Bewild",
@@ -78,14 +77,6 @@ export default function ComoFuncionaPage() {
       "Como funciona a reforma turnkey da Bewild: consultoria, projeto 3D e executivo, ART e liberação do condomínio, obra com equipe própria e apartamento pronto.",
     canonicalPath: "/como-funciona",
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Como funciona", path: "/como-funciona" },
-          ]),
-        ]
-      : undefined,
   });
 
   return (
@@ -188,6 +179,53 @@ export default function ComoFuncionaPage() {
               sub="Engenharia que entrega no prazo, no orçamento e no padrão."
               itens={ENGENHARIA}
             />
+          </div>
+        </section>
+
+        <section className="bwa-how-steps" aria-labelledby="bwa-how-steps-title">
+          <div className="bwa-shell">
+            <header className="bwa-how-steps-head">
+              <p className="bwa-label">O processo · do briefing à entrega</p>
+              <h2 id="bwa-how-steps-title">As 12 etapas da reforma turnkey, na ordem em que acontecem.</h2>
+              <p className="bwa-how-lead">
+                O contrato é um só, com preço e prazo fechados: cerca de 60 dias úteis de obra para studios
+                e apartamentos compactos de até 30 m²; metragens maiores levam mais, com a data em contrato.
+                Cada etapa tem um responsável e fica registrada no
+                Bwild Workflow, o portal onde você acompanha a reforma. Quem mora fora de São Paulo
+                recebe o apartamento pronto sem precisar vir à obra.
+              </p>
+            </header>
+            <div className="bwa-how-phases">
+              {FASES.map((fase) => (
+                <section className="bwa-how-phase" key={fase.n} aria-labelledby={`bwa-how-phase-${fase.n}`}>
+                  <h3 id={`bwa-how-phase-${fase.n}`}>
+                    <span>{fase.n}</span> {fase.nome}
+                  </h3>
+                  <p className="bwa-how-phase-resumo">{fase.resumo}</p>
+                  <ol className="bwa-how-steps-list" start={Number(fase.etapas[0].n)}>
+                    {fase.etapas.map((e) => (
+                      <li key={e.n}>
+                        <b>{e.n}</b>
+                        <div>
+                          <strong>{e.nome}</strong>
+                          <p>{e.detalhe}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              ))}
+            </div>
+            <p className="bwa-how-steps-foot">
+              O que cada etapa custa está em{" "}
+              <a href="/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2">
+                quanto custa reformar um apartamento ou studio de até 50 m²
+              </a>
+              ; o que o condomínio pede antes da obra, em{" "}
+              <a href="/conteudos/nbr-16280-reforma-studio-condominio">NBR 16280: o que é e o que exige</a>; e o
+              prazo de cada frente, em{" "}
+              <a href="/conteudos/cronograma-reforma-studio-60-dias-uteis">cronograma de reforma em 60 dias úteis</a>.
+            </p>
           </div>
         </section>
 

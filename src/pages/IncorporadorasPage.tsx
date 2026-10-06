@@ -43,7 +43,7 @@ import {
   openWhatsapp,
   useLeadSubmit,
 } from "@/lib/useLeadSubmit";
-import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
+import { faqJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./faq-page.css";
 import "./contato.css";
@@ -249,12 +249,7 @@ export default function IncorporadorasPage() {
     ogType: "website",
     // Prévia interna nunca entra em buscador.
     noindex: preview,
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, INCORP_SEO.breadcrumb),
-          faqJsonLd(INCORP_FAQ.items.map((i) => ({ q: i.q, a: i.a }))),
-        ]
-      : undefined,
+    jsonLd: [faqJsonLd(INCORP_FAQ.items.map((i) => ({ q: i.q, a: i.a })))],
   });
 
   const primeiroNome = nome.trim().split(" ")[0];
