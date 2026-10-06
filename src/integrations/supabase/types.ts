@@ -205,6 +205,7 @@ export type Database = {
           author: string
           body: string
           category: string | null
+          content_updated_at: string | null
           cover_image: string | null
           created_at: string
           excerpt: string | null
@@ -226,6 +227,7 @@ export type Database = {
           author?: string
           body?: string
           category?: string | null
+          content_updated_at?: string | null
           cover_image?: string | null
           created_at?: string
           excerpt?: string | null
@@ -247,6 +249,7 @@ export type Database = {
           author?: string
           body?: string
           category?: string | null
+          content_updated_at?: string | null
           cover_image?: string | null
           created_at?: string
           excerpt?: string | null
