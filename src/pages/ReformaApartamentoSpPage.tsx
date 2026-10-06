@@ -101,8 +101,7 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
   useCtaClickTracking("reforma-apartamento-sp");
 
   useSeo({
-    title:
-      "Reforma de apartamento em São Paulo | Projeto, obra e mobília — Bewild",
+    title: "Empresa de reforma de apartamento em São Paulo | Bewild",
     description:
       "Reforma de apartamento em SP com arquitetura e engenharia próprias: projeto 3D, obra, marcenaria e mobília num contrato, preço fechado e 5 anos de garantia.",
     canonicalPath: CANONICAL,

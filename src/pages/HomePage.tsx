@@ -20,7 +20,7 @@ import { bastidoresJsonLd, parseBastidoresPosts } from "@/lib/bastidoresJsonLd";
 
 const BASTIDORES_POSTS = parseBastidoresPosts();
 
-const TITLE = "Arquitetura, engenharia e reforma de apartamento em SP | Bewild";
+const TITLE = "Bewild | Reforma turnkey de apartamentos e studios em SP";
 const DESCRIPTION =
   "Reforma completa de apartamentos em São Paulo: projeto, obra, marcenaria e mobília, com preço e prazo fechados. Veja os bastidores da equipe em obra.";
 const KEYWORDS =

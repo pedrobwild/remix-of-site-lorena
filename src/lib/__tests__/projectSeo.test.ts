@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { projectMetaDescription, projectSeoTitle, projectSeoTitleUnique } from "../projectSeo";
+import {
+  projectFriendlyName,
+  projectMetaDescription,
+  projectSeoTitle,
+  projectSeoTitleUnique,
+} from "../projectSeo";
 
 const FALLBACK = "texto genérico";
 
@@ -45,15 +50,24 @@ describe("projectMetaDescription", () => {
 });
 
 describe("projectSeoTitle", () => {
-  it("põe reforma, metragem e bairro na frente e o nome do projeto no fim", () => {
+  it("põe o nome do prédio na frente, depois o bairro e a metragem", () => {
     expect(projectSeoTitle({ title: "AB - PENÍNSULA VILA MADALENA", neighborhood: "Vila Madalena", area_m2: 23 })).toBe(
-      "Reforma de apartamento de 23 m² em Vila Madalena — Península | Bewild",
+      "Península em Vila Madalena: reforma de 23 m² | Bewild",
     );
+    expect(projectSeoTitle({ title: "AB - THE COLLECTION MOEMA", neighborhood: "Moema", area_m2: 28.21 })).toBe(
+      "The Collection em Moema: reforma de 28,21 m² | Bewild",
+    );
+  });
+
+  it("não abre com 'Reforma de apartamento': essa busca é da página do bairro", () => {
+    const title = projectSeoTitle({ title: "CS - LATITUDE CAMPO BELO", neighborhood: "Campo Belo", area_m2: 26.42 });
+    expect(title.startsWith("Reforma de apartamento")).toBe(false);
+    expect(title.startsWith("Latitude")).toBe(true);
   });
 
   it("remove o código interno do negócio do nome", () => {
     const title = projectSeoTitle({ title: "SX - GO BALKON" });
-    expect(title).toBe("Reforma de apartamento em São Paulo — Go Balkon | Bewild");
+    expect(title).toBe("Go Balkon em São Paulo: reforma de apartamento | Bewild");
     expect(title).not.toContain("SX -");
   });
 
@@ -63,17 +77,60 @@ describe("projectSeoTitle", () => {
     );
     expect(
       projectSeoTitle({ seo_title: "SX - GO BALKON | Reforma, São Paulo | Bewild", title: "SX - GO BALKON" }),
-    ).toBe("Reforma de apartamento em São Paulo — Go Balkon | Bewild");
+    ).toBe("Go Balkon em São Paulo: reforma de apartamento | Bewild");
   });
 
-  it("limita o tamanho sem perder a intenção de busca", () => {
+  it("limita o tamanho cortando o nome, sem perder o bairro", () => {
     const title = projectSeoTitle({
       title: "Apartamento completo no empreendimento mais desejado da Vila Olímpia",
       neighborhood: "Vila Olímpia",
     });
     expect(title.length).toBeLessThanOrEqual(78);
-    expect(title).toContain("Reforma de apartamento");
-    expect(title).toContain("Vila Olímpia");
+    expect(title).toBe("Apartamento completo em Vila Olímpia: reforma de apartamento | Bewild");
+  });
+
+  it("não repete o bairro que já está no nome, com ou sem acento", () => {
+    expect(projectSeoTitle({ title: "AL - NURBAN SANTA CECILIA", neighborhood: "Santa Cecília", area_m2: 26.12 })).toBe(
+      "Nurban Santa Cecilia: reforma de 26,12 m² | Bewild",
+    );
+  });
+
+  it("mantém nome próprio que termina no bairro ('Alto do Ipiranga')", () => {
+    expect(projectSeoTitle({ title: "KC - VIVAZ PRIME ALTO DO IPIRANGA", neighborhood: "Ipiranga" })).toBe(
+      "Vivaz Prime Alto do Ipiranga: reforma de apartamento | Bewild",
+    );
+  });
+
+  it("só tira o bairro do nome como palavra inteira e fora de nome próprio", () => {
+    expect(projectSeoTitle({ title: "EDIFÍCIO SOLAPA", neighborhood: "Lapa" })).toBe(
+      "Edifício Solapa em Lapa: reforma de apartamento | Bewild",
+    );
+    expect(projectSeoTitle({ title: "METROCASA JARDIM PAULISTA", neighborhood: "Paulista" })).toBe(
+      "Metrocasa Jardim Paulista: reforma de apartamento | Bewild",
+    );
+  });
+
+  it("nunca passa de 78 caracteres nem corta palavra no meio", () => {
+    const title = projectSeoTitle({
+      title: "LC - HIGHLIGHTS PINHEIROS",
+      neighborhood: "Avenida Salgado Filho",
+      status: "em_projeto",
+      area_m2: 23.61,
+    });
+    expect(title).toBe("Highlights Pinheiros em Avenida Salgado Filho: projeto de interiores | Bewild");
+    expect(title.length).toBeLessThanOrEqual(78);
+  });
+
+  it("sem bairro, o nome longo fica inteiro e 'em São Paulo' sai", () => {
+    expect(
+      projectSeoTitle({ title: "LM - LM URBAN FLEX FLATS BELA CINTRA", status: "em_projeto", area_m2: 21.3 }),
+    ).toBe("Urban Flex Flats Bela Cintra: projeto de interiores de 21,3 m² | Bewild");
+  });
+
+  it("ignora bairro sem letras (erro de cadastro) no título e na descrição", () => {
+    const p = { title: "JC - EXALT IBIRAPUERA BY EZ", neighborhood: "31", area_m2: 31.58 };
+    expect(projectSeoTitle(p)).toBe("Exalt Ibirapuera By Ez em São Paulo: reforma de 31,58 m² | Bewild");
+    expect(projectMetaDescription(p, FALLBACK)).not.toContain("em 31");
   });
 
   it("gera títulos diferentes para projetos diferentes no mesmo bairro", () => {
@@ -87,13 +144,18 @@ describe("fase do projeto e tamanho da descrição", () => {
   it("projeto em desenvolvimento não vira 'reforma' no título", () => {
     expect(
       projectSeoTitle({ title: "BM - URBAN FLEX", neighborhood: "Consolação", status: "em_projeto" }),
-    ).toBe("Projeto de interiores de apartamento em Consolação — Urban Flex | Bewild");
+    ).toBe("Urban Flex em Consolação: projeto de interiores | Bewild");
+    expect(
+      projectSeoTitle({ title: "BM - URBAN FLEX", neighborhood: "Consolação", status: "em_projeto", area_m2: 17.23 }),
+    ).toBe("Urban Flex em Consolação: projeto de interiores de 17,23 m² | Bewild");
   });
 
   it("obra em andamento aparece como tal; entregue segue como reforma", () => {
-    expect(projectSeoTitle({ title: "X - ALFA", neighborhood: "Moema", status: "em_obra" })).toContain("em obra");
-    expect(projectSeoTitle({ title: "X - ALFA", neighborhood: "Moema", status: "entregue" })).toContain(
-      "Reforma de apartamento em Moema",
+    expect(projectSeoTitle({ title: "X - ALFA", neighborhood: "Moema", status: "em_obra" })).toBe(
+      "Alfa em Moema: reforma de apartamento em obra | Bewild",
+    );
+    expect(projectSeoTitle({ title: "X - ALFA", neighborhood: "Moema", status: "entregue" })).toBe(
+      "Alfa em Moema: reforma de apartamento | Bewild",
     );
   });
 
@@ -124,7 +186,7 @@ describe("projectSeoTitleUnique (data de cadastro só onde ajuda)", () => {
     const a = mk("a", "2026-08-25T00:51:00Z"); // 24/08 21:51 em SP
     const b = mk("b", "2026-09-25T21:20:00Z");
     expect(projectSeoTitleUnique(a, [a, b])).toBe(
-      "Reforma de apartamento de 25 m² em Brooklin — Zip (cadastro 24/08/2026) | Bewild",
+      "Zip em Brooklin: reforma de 25 m² (cadastro 24/08/2026) | Bewild",
     );
     expect(projectSeoTitleUnique(b, [a, b])).toContain("(cadastro 25/09/2026)");
   });
@@ -140,5 +202,20 @@ describe("projectSeoTitleUnique (data de cadastro só onde ajuda)", () => {
     const a = { ...mk("a", ""), created_at: null };
     const b = mk("b", "2026-09-25T21:20:00Z");
     expect(projectSeoTitleUnique(a, [a, b])).toBe(projectSeoTitle(a));
+  });
+});
+
+describe("projectFriendlyName", () => {
+  it("capitaliza o nome em caixa alta e mantém siglas sem vogal", () => {
+    expect(projectFriendlyName({ title: "LB - GALERIA SP" })).toBe("Galeria SP");
+    expect(projectFriendlyName({ title: "FF - MERCURE JK" })).toBe("Mercure JK");
+    expect(projectFriendlyName({ title: "GF - PJM SINGLE LIVING" })).toBe("PJM Single Living");
+    expect(projectFriendlyName({ title: "KC - VIVAZ PRIME ALTO DO IPIRANGA" })).toBe("Vivaz Prime Alto do Ipiranga");
+    expect(projectFriendlyName({ title: "AG - YBY" })).toBe("Yby");
+  });
+
+  it("tira o código repetido no começo do nome ('LM - LM …')", () => {
+    expect(projectFriendlyName({ title: "LM - LM URBAN FLEX FLATS BELA CINTRA" })).toBe("Urban Flex Flats Bela Cintra");
+    expect(projectFriendlyName({ title: "AB - ABC TOWER" })).toBe("Abc Tower");
   });
 });
