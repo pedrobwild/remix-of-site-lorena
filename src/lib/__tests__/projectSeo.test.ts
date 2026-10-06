@@ -191,17 +191,17 @@ describe("projectSeoTitleUnique (data de cadastro só onde ajuda)", () => {
     expect(projectSeoTitleUnique(b, [a, b])).toContain("(cadastro 25/09/2026)");
   });
 
-  it("irmãs com a mesma data ficam como estão (data não ajuda)", () => {
+  it("irmãs com a mesma data são numeradas em ordem de cadastro", () => {
     const a = mk("a", "2026-09-05T12:00:00Z");
     const b = mk("b", "2026-09-05T15:00:00Z");
-    expect(projectSeoTitleUnique(a, [a, b])).toBe(projectSeoTitle(a));
-    expect(projectSeoTitleUnique(b, [a, b])).toBe(projectSeoTitle(b));
+    expect(projectSeoTitleUnique(a, [a, b])).toBe("Zip em Brooklin: reforma de 25 m² (projeto 1) | Bewild");
+    expect(projectSeoTitleUnique(b, [a, b])).toBe("Zip em Brooklin: reforma de 25 m² (projeto 2) | Bewild");
   });
 
-  it("sem data de cadastro mantém o título", () => {
+  it("sem data de cadastro numera em vez de repetir o título", () => {
     const a = { ...mk("a", ""), created_at: null };
     const b = mk("b", "2026-09-25T21:20:00Z");
-    expect(projectSeoTitleUnique(a, [a, b])).toBe(projectSeoTitle(a));
+    expect(projectSeoTitleUnique(a, [a, b])).not.toBe(projectSeoTitleUnique(b, [a, b]));
   });
 });
 
