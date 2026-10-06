@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { postAuthorByline, postAuthorJsonLd, postDates, postTitleFromSlug, resolvePostAuthor } from "../postSeo";
+import { postAuthorByline, postAuthorHref, postAuthorJsonLd, postDates, postTitleFromSlug, resolvePostAuthor } from "../postSeo";
 
 describe("resolvePostAuthor / postAuthorJsonLd", () => {
   it("'Equipe Bewild' (ou vazio) assina como Organization", () => {
@@ -16,12 +16,32 @@ describe("resolvePostAuthor / postAuthorJsonLd", () => {
     expect(postAuthorByline("Thiago Dantas")).toBe("Thiago Dantas do Amor · CAU A162437-7");
   });
 
-  it("nome desconhecido vira Person só com o nome (nada inventado)", () => {
+  it("Pedro casa pelo alias curto e ganha nome completo, página de autor e LinkedIn", () => {
     const p = postAuthorJsonLd("Pedro Alves");
-    expect(p).toMatchObject({ "@type": "Person", name: "Pedro Alves" });
+    expect(p).toMatchObject({
+      "@type": "Person",
+      name: "Pedro Henrique Alves",
+      jobTitle: "Engenheiro, cofundador e CEO da Bewild",
+      url: "https://bewild.com.br/conteudos/pedro-henrique-alves-ceo-bewild",
+      sameAs: ["https://www.linkedin.com/in/pedro-henrique-alves-872b0245"],
+    });
+    expect(p).not.toHaveProperty("identifier");
+    expect(postAuthorJsonLd("pedro henrique alves")).toMatchObject({ name: "Pedro Henrique Alves" });
+    expect(postAuthorByline("Pedro Alves")).toBe("Pedro Henrique Alves");
+    expect(postAuthorHref("Pedro Alves")).toBe("/conteudos/pedro-henrique-alves-ceo-bewild");
+    // "Pedro" sozinho não casa (poderia ser outra pessoa)
+    expect(postAuthorJsonLd("Pedro")).not.toHaveProperty("jobTitle");
+  });
+
+  it("nome desconhecido vira Person só com o nome (nada inventado)", () => {
+    const p = postAuthorJsonLd("Maria Souza");
+    expect(p).toMatchObject({ "@type": "Person", name: "Maria Souza" });
     expect(p).not.toHaveProperty("identifier");
     expect(p).not.toHaveProperty("jobTitle");
-    expect(postAuthorByline("Pedro Alves")).toBe("Pedro Alves");
+    expect(p).not.toHaveProperty("url");
+    expect(postAuthorByline("Maria Souza")).toBe("Maria Souza");
+    expect(postAuthorHref("Maria Souza")).toBeNull();
+    expect(postAuthorHref("Equipe Bewild")).toBeNull();
     // "Thiago" sozinho não basta para casar o registro
     expect(postAuthorJsonLd("Thiago")).not.toHaveProperty("identifier");
   });

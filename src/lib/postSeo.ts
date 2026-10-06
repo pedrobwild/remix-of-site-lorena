@@ -20,6 +20,12 @@ export type PostAuthor = {
   jobTitle?: string;
   /** Registro profissional público (ex.: CAU). */
   credential?: string;
+  /** Formas curtas aceitas no campo "Autor" do admin (ex.: "Pedro Alves"). */
+  aliases?: string[];
+  /** Página de autor no próprio site (Person.url e link do byline). */
+  url?: string;
+  /** Perfis públicos do autor (Person.sameAs). */
+  sameAs?: string[];
 };
 
 const ORG_NAME = "Bewild";
@@ -30,6 +36,16 @@ const KNOWN_AUTHORS: PostAuthor[] = [
     name: "Thiago Dantas do Amor",
     jobTitle: "Arquiteto e urbanista, responsável técnico da Bewild",
     credential: "CAU A162437-7",
+    sameAs: ["https://www.linkedin.com/in/thiago-dantas-do-amor-73817b134/"],
+  },
+  {
+    // Nome completo em todo lugar (LinkedIn, imprensa, página de autor);
+    // os posts antigos assinam "Pedro Alves" e continuam casando pelo alias.
+    name: "Pedro Henrique Alves",
+    jobTitle: "Engenheiro, cofundador e CEO da Bewild",
+    aliases: ["Pedro Alves"],
+    url: `${BASE_URL}/conteudos/pedro-henrique-alves-ceo-bewild`,
+    sameAs: ["https://www.linkedin.com/in/pedro-henrique-alves-872b0245"],
   },
 ];
 
@@ -56,7 +72,8 @@ export function resolvePostAuthor(author: string | null | undefined): PostAuthor
   const words = key.split(" ").length;
   const known = KNOWN_AUTHORS.find((k) => {
     const kn = norm(k.name);
-    return kn === key || (words >= 2 && kn.startsWith(key + " "));
+    if (kn === key || (words >= 2 && kn.startsWith(key + " "))) return true;
+    return (k.aliases ?? []).some((a) => norm(a) === key);
   });
   return known ?? { name: raw };
 }
@@ -70,8 +87,20 @@ export function postAuthorJsonLd(author: string | null | undefined): Record<stri
     name: person.name,
     ...(person.jobTitle ? { jobTitle: person.jobTitle } : {}),
     ...(person.credential ? { identifier: person.credential } : {}),
+    ...(person.url ? { url: person.url } : {}),
+    ...(person.sameAs?.length ? { sameAs: person.sameAs } : {}),
     worksFor: org,
   };
+}
+
+/**
+ * Caminho interno da página de autor (sem domínio), para o byline virar link.
+ * `null` quando a organização assina ou o autor não tem página.
+ */
+export function postAuthorHref(author: string | null | undefined): string | null {
+  const person = resolvePostAuthor(author);
+  if (!person?.url) return null;
+  return person.url.startsWith(BASE_URL) ? person.url.slice(BASE_URL.length) : person.url;
 }
 
 /** Linha de assinatura visível: "Thiago Dantas do Amor · CAU A162437-7" ou "Equipe Bewild". */
