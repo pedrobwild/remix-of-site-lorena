@@ -904,8 +904,10 @@
 .bw-rte__content img { display: block; max-width: 100%; height: auto; margin: 1em auto; border-radius: 6px; }
 .bw-rte__slash { position: absolute; z-index: 5; min-width: 260px; background: #fff; border: 1px solid var(--bw-line); border-radius: 8px; box-shadow: 0 8px 24px rgba(15,27,45,.14); padding: 4px; }
 .bw-rte__slash-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px; border: 0; background: #F0F2F4; border-radius: 6px; cursor: pointer; text-align: left; color: inherit; }
-.bw-rte__slash-item:hover, .bw-rte__slash-item:focus-visible { background: #E3ECF5; outline: none; }
+.bw-rte__slash-item.is-active, .bw-rte__slash-item:hover, .bw-rte__slash-item:focus-visible { background: #E3ECF5; outline: none; }
 .bw-rte__slash-item strong { display: block; font-size: 14px; }
 .bw-rte__slash-item small { display: block; font-size: 12px; color: #555; }
+.bw-rte__content iframe { display: block; width: 100%; aspect-ratio: 16 / 9; height: auto; border: 0; margin: 1em 0; background: #0F1B2D; }
+.bw-rte__content iframe.ProseMirror-selectednode { outline: 3px solid #004C7F; }
 .bw-rte__content img.ProseMirror-selectednode { outline: 3px solid #004C7F; }
 .bw-rte__content hr { margin: 1.5em 0; }

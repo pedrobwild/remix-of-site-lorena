@@ -62,6 +62,7 @@
 .pt-body img{max-width:100%;height:auto;display:block;margin:26px auto;border-radius:0;border:1px solid var(--pt-hair)}
 .pt-body video{width:100%;max-width:100%;height:auto;display:block;margin:26px auto;border:1px solid var(--pt-hair);background:#f3f2f2;aspect-ratio:16/9}
 .pt-body figure video{margin:0 auto}
+.pt-body iframe{display:block;width:100%;max-width:100%;height:auto;aspect-ratio:16/9;margin:26px auto;border:1px solid var(--pt-hair);background:#0F1B2D}
 .pt-body figure{margin:26px 0}
 .pt-body figcaption{font-family:var(--pt-mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#5A6472;margin-top:8px}
 .pt-body hr{border:0;border-top:1px solid var(--pt-hair);margin:34px 0}
