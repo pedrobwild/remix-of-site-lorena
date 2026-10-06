@@ -111,10 +111,13 @@ script só compara literais estáticos.
 | Pública dinâmica (ex.: `/projeto/:slug`) | sim (regex) | não — usa lookup de DB | não |
 | `/admin/*` | sim | **não** | sim, em `SPA_ONLY_ALLOWED` |
 | Canônica só da edge (raro) | não | sim | sim, em `EDGE_ONLY_ALLOWED` |
+| Pública **noindex** (ex.: `/buscar`, `/mapa`) | sim | sim | não — mas `noindex: true` no `seoHead` e em `NAO_INDEXAVEIS` do teste `sitemapParidade`; **fora** do sitemap |
 
 Também atualize, quando aplicável:
-- `public/sitemap.xml` e `supabase/functions/sitemap/index.ts` (rotas públicas
-  indexáveis).
+- `public/sitemap.xml`, `scripts/generate-sitemap.mjs` e
+  `supabase/functions/sitemap/index.ts` (SÓ rotas públicas indexáveis — página
+  `noindex` nunca entra no sitemap; o teste `sitemapParidade` quebra o CI se
+  entrar, como aconteceu com `/buscar` em 06/10/2026).
 - `src/router.tsx` (componente da página).
 - `src/lib/useHashRoute.ts → routes` (helper de URL).
 
