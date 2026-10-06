@@ -28,6 +28,7 @@ import {
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import { chartSetForSlug, chartsPagePath } from "@/content/chartSets";
+import ReformaCalculadora from "@/components/ReformaCalculadora";
 import { sanitizeBlogHtml } from "@/lib/sanitizeHtml";
 import { wrapArticleTables } from "@/lib/articleTables";
 import { whatsappHref } from "@/components/landing/content";
@@ -405,6 +406,9 @@ export default function BewildPostPage({ slug, initial }: Props) {
             <div className="pt-body" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
           </div>
         </section>
+
+        {/* CALCULADORA (só no artigo de reforma para vender ou alugar) */}
+        {post.slug === "reformar-apartamento-para-vender-ou-alugar-sp" ? <ReformaCalculadora /> : null}
 
         {/* GRÁFICOS REUTILIZÁVEIS */}
         {chartSetForSlug(post.slug) ? (
