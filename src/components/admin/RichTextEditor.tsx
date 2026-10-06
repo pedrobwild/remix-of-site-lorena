@@ -4,7 +4,7 @@
  * sanitizeBlogHtml limpa antes de exibir).
  */
 import { useEffect, useRef, useState } from "react";
-import { EditorContent, useEditor, type Editor } from "@tiptap/react";
+import { EditorContent, Node, useEditor, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
@@ -12,8 +12,55 @@ import Underline from "@tiptap/extension-underline";
 import {
   Bold, Italic, Underline as UIcon, Strikethrough, Heading2, Heading3, List, ListOrdered,
   Quote, Link as LinkIcon, Unlink, Minus, Undo2, Redo2,
-  Pilcrow, ImagePlus,
+  Pilcrow, ImagePlus, Youtube,
 } from "lucide-react";
+import {
+  YOUTUBE_IFRAME_ALLOW,
+  YOUTUBE_IFRAME_REFERRER,
+  parseYouTubeEmbedSrc,
+  parseYouTubeId,
+  youtubeEmbedUrl,
+} from "@/lib/youtube";
+
+/**
+ * Player do YouTube como bloco do editor. Grava `<iframe>` no formato que o
+ * sanitizador aceita (youtube-nocookie, atributos fixos) — ver sanitizeHtml.ts.
+ */
+const YouTubeEmbed = Node.create({
+  name: "youtube",
+  group: "block",
+  atom: true,
+  draggable: true,
+  addAttributes() {
+    return { videoId: { default: null }, title: { default: "" } };
+  },
+  parseHTML() {
+    return [
+      {
+        tag: "iframe[src]",
+        getAttrs: (el) => {
+          const node = el as HTMLElement;
+          const videoId = parseYouTubeEmbedSrc(node.getAttribute("src"));
+          return videoId ? { videoId, title: node.getAttribute("title") ?? "" } : false;
+        },
+      },
+    ];
+  },
+  renderHTML({ node }) {
+    const attrs: Record<string, string> = { src: youtubeEmbedUrl(String(node.attrs.videoId)) };
+    if (node.attrs.title) attrs.title = String(node.attrs.title);
+    return [
+      "iframe",
+      {
+        ...attrs,
+        loading: "lazy",
+        allow: YOUTUBE_IFRAME_ALLOW,
+        allowfullscreen: "",
+        referrerpolicy: YOUTUBE_IFRAME_REFERRER,
+      },
+    ];
+  },
+});
 
 type Props = {
   value: string;
@@ -22,6 +69,8 @@ type Props = {
   onRequestImage?: () => void;
   onFiles?: (files: File[]) => void;
 };
+
+const SLASH_ITEMS = 2;
 
 type SlashState = { from: number; to: number; top: number; left: number };
 
@@ -33,6 +82,10 @@ export default function RichTextEditor({ value, onChange, onReady, onRequestImag
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const requestImageRef = useRef(onRequestImage);
   requestImageRef.current = onRequestImage;
+  const [slashIdx, setSlashIdx] = useState(0);
+  const slashIdxRef = useRef(0);
+  slashIdxRef.current = slashIdx;
+  const insertYouTubeRef = useRef<() => void>(() => {});
 
   const editor = useEditor({
     extensions: [
@@ -40,6 +93,7 @@ export default function RichTextEditor({ value, onChange, onReady, onRequestImag
       Underline,
       Link.configure({ openOnClick: false, autolink: true }),
       Image.configure({ inline: false }),
+      YouTubeEmbed,
     ],
     content: value,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
@@ -52,11 +106,17 @@ export default function RichTextEditor({ value, onChange, onReady, onRequestImag
           setSlash(null);
           return true;
         }
-        if (e.key === "Enter" && requestImageRef.current) {
+        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+          e.preventDefault();
+          setSlashIdx((i) => (i + (e.key === "ArrowDown" ? 1 : SLASH_ITEMS - 1)) % SLASH_ITEMS);
+          return true;
+        }
+        if (e.key === "Enter") {
           e.preventDefault();
           view.dispatch(view.state.tr.delete(st.from, st.to));
           setSlash(null);
-          requestImageRef.current();
+          if (slashIdxRef.current === 1) insertYouTubeRef.current();
+          else requestImageRef.current?.();
           return true;
         }
         return false;
@@ -85,7 +145,7 @@ export default function RichTextEditor({ value, onChange, onReady, onRequestImag
     if (!editor) return;
     const check = () => {
       const { selection } = editor.state;
-      if (!selection.empty || !requestImageRef.current) return setSlash(null);
+      if (!selection.empty) return setSlash(null);
       const { $from } = selection;
       if (!$from.parent.isTextblock || $from.parent.type.name === "codeBlock") return setSlash(null);
       const before = $from.parent.textBetween(0, $from.parentOffset, undefined, "\ufffc");
@@ -94,6 +154,7 @@ export default function RichTextEditor({ value, onChange, onReady, onRequestImag
       const coords = editor.view.coordsAtPos(to);
       const box = wrapRef.current?.getBoundingClientRect();
       if (!box) return setSlash(null);
+      setSlashIdx(0);
       setSlash({ from: to - 1, to, top: coords.bottom - box.top + 4, left: Math.max(0, coords.left - box.left) });
     };
     editor.on("update", check);
@@ -112,6 +173,35 @@ export default function RichTextEditor({ value, onChange, onReady, onRequestImag
     editor.chain().focus().deleteRange({ from: slash.from, to: slash.to }).run();
     setSlash(null);
     onRequestImage();
+  };
+
+  const insertYouTube = () => {
+    if (!editor) return;
+    const url = window.prompt("Link do vídeo no YouTube (https://www.youtube.com/watch?v=…)", "https://");
+    if (url === null) return;
+    const videoId = parseYouTubeId(url);
+    if (!videoId) {
+      window.alert("Não reconheci esse link. Cole o endereço de um vídeo do YouTube.");
+      return;
+    }
+    const title = window.prompt(
+      "Título do vídeo (lido por leitores de tela e usado pelo Google)",
+      "",
+    );
+    if (title === null) return;
+    editor
+      .chain()
+      .focus()
+      .insertContent({ type: "youtube", attrs: { videoId, title: title.trim() || "Vídeo do YouTube" } })
+      .run();
+  };
+  insertYouTubeRef.current = insertYouTube;
+
+  const pickYouTubeFromSlash = () => {
+    if (!editor || !slash) return;
+    editor.chain().focus().deleteRange({ from: slash.from, to: slash.to }).run();
+    setSlash(null);
+    insertYouTube();
   };
 
   useEffect(() => {
@@ -170,24 +260,40 @@ export default function RichTextEditor({ value, onChange, onReady, onRequestImag
         {btn("Inserir link", editor.isActive("link"), setLink, LinkIcon)}
         {btn("Remover link", false, () => c().unsetLink().run(), Unlink)}
         {onRequestImage && btn("Inserir imagem", false, onRequestImage, ImagePlus)}
+        {btn("Inserir vídeo do YouTube", false, insertYouTube, Youtube)}
         <span className="bw-rte__sep" />
         {btn("Desfazer", false, () => c().undo().run(), Undo2)}
         {btn("Refazer", false, () => c().redo().run(), Redo2)}
       </div>
       <EditorContent editor={editor} />
-      {slash && onRequestImage && (
+      {slash && (
         <div className="bw-rte__slash" role="menu" aria-label="Inserir bloco" style={{ top: slash.top, left: slash.left }}>
+          {onRequestImage && (
+            <button
+              type="button"
+              role="menuitem"
+              className={`bw-rte__slash-item${slashIdx === 0 ? " is-active" : ""}`}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={pickImageFromSlash}
+            >
+              <ImagePlus size={16} aria-hidden />
+              <span>
+                <strong>Upload de imagem</strong>
+                <small>Escolher do seu computador</small>
+              </span>
+            </button>
+          )}
           <button
             type="button"
             role="menuitem"
-            className="bw-rte__slash-item"
+            className={`bw-rte__slash-item${slashIdx === 1 ? " is-active" : ""}`}
             onMouseDown={(e) => e.preventDefault()}
-            onClick={pickImageFromSlash}
+            onClick={pickYouTubeFromSlash}
           >
-            <ImagePlus size={16} aria-hidden />
+            <Youtube size={16} aria-hidden />
             <span>
-              <strong>Upload de imagem</strong>
-              <small>Escolher do seu computador (Enter)</small>
+              <strong>Vídeo do YouTube</strong>
+              <small>Colar o link do vídeo</small>
             </span>
           </button>
         </div>
