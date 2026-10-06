@@ -13,6 +13,10 @@
       --bwa-line: rgba(23, 27, 34, .17);
       --bwa-white-line: rgba(255, 255, 255, .22);
       --bwa-white: #fff;
+      --bwa-menu-glass: color-mix(in srgb, var(--bwa-white) 72%, transparent);
+      --bwa-menu-glass-active: color-mix(in srgb, var(--bwa-white) 90%, transparent);
+      --bwa-menu-border: color-mix(in srgb, var(--bwa-navy) 14%, transparent);
+      --bwa-menu-shadow: 0 2px 8px color-mix(in srgb, var(--bwa-navy) 8%, transparent);
       --bwa-max: 1540px;
       --bwa-gutter: clamp(20px, 4vw, 72px);
       --bwa-radius: 0px;
@@ -527,25 +531,58 @@
       height: 46px;
       display: none;
       place-items: center;
+      position: relative;
+      padding: 0;
       color: var(--bwa-navy);
-      border: 1px solid rgba(11, 35, 66, .24);
+      border: 1px solid var(--bwa-menu-border);
       border-radius: 50%;
-      background: rgba(11, 35, 66, .05);
+      background: var(--bwa-menu-glass);
+      box-shadow: var(--bwa-menu-shadow);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      transition: background .2s ease, box-shadow .2s ease, transform .2s ease;
       cursor: pointer;
+    }
+
+    .bwa-menu-button:hover,
+    .bwa-menu-button:active {
+      background: var(--bwa-menu-glass-active);
+    }
+
+    .bwa-menu-button:active {
+      transform: scale(.95);
+    }
+
+    .bwa-menu-button:focus-visible {
+      outline: 2px solid var(--bwa-cyan);
+      outline-offset: 3px;
     }
 
     .bwa-menu-button span,
     .bwa-menu-button::before,
     .bwa-menu-button::after {
-      width: 20px;
-      height: 1px;
+      position: absolute;
+      top: calc(50% - 1px);
+      left: calc(50% - 12px);
+      width: 24px;
+      height: 2px;
+      border-radius: 2px;
       content: "";
       background: currentColor;
       transition: transform .25s ease, opacity .25s ease;
     }
 
-    .bwa-menu-button {
-      gap: 5px;
+    .bwa-menu-button span {
+      width: 19px;
+      left: calc(50% - 9.5px);
+    }
+
+    .bwa-menu-button::before {
+      transform: translateY(-8px);
+    }
+
+    .bwa-menu-button::after {
+      transform: translateY(8px);
     }
 
     .bwa-menu-open .bwa-menu-button span {
@@ -553,11 +590,11 @@
     }
 
     .bwa-menu-open .bwa-menu-button::before {
-      transform: translateY(6px) rotate(45deg);
+      transform: rotate(45deg);
     }
 
     .bwa-menu-open .bwa-menu-button::after {
-      transform: translateY(-6px) rotate(-45deg);
+      transform: rotate(-45deg);
     }
 
     .bwa-mobile-menu {
