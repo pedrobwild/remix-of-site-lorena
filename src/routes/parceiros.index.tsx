@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import ParceirosPage, { PARCEIROS_JSONLD } from "@/pages/ParceirosPage";
+import ParceirosPage from "@/pages/ParceirosPage";
+import { PARCEIROS_JSONLD } from "@/content/pages/parceiros";
 import { seoHead } from "@/lib/routeHead";
 
 export const Route = createFileRoute("/parceiros/")({

@@ -19,18 +19,6 @@ type Props = {
   bairroPages?: BairroPageLink[] | null;
 };
 
-/** JSON-LD da página no HTML do servidor (head() da rota) — Service/FAQ; a trilha já vai no WebPage. */
-// eslint-disable-next-line react-refresh/only-export-components -- constante lida pela rota, não muda o fast refresh
-export const ONDE_ATUAMOS_JSONLD: Array<Record<string, unknown>> = [
-  {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    name: "Reforma completa de studios e apartamentos",
-    provider: { "@type": "Organization", name: "Bewild", url: "https://bewild.com.br" },
-    areaServed: { "@type": "City", name: "São Paulo" },
-  },
-];
-
 export default function OndeAtuamosPage({ bairroPages = null }: Props = {}) {
   useSeo({
     title: "Onde atuamos: arquitetura e reforma em São Paulo | Bewild",

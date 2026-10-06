@@ -10,11 +10,12 @@ import { buildLeadMessage } from "@/lib/leadForm";
 import { formatBrPhone, isValidBrPhone, normalizeBrPhoneDigits } from "@/lib/phone";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import { browserUserAgent, collectLeadAttribution, openWhatsapp, useLeadSubmit } from "@/lib/useLeadSubmit";
-import { faqJsonLd, useSeo } from "@/lib/useSeo";
+import { useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./faq-page.css";
 import "./contato.css";
 import "./parceiros.css";
+import { FAQ_INDICADOR } from "@/content/pages/indique-um-amigo";
 
 /* ============================================================
  * IndiquePage — /indique-um-amigo
@@ -90,33 +91,6 @@ const REGRAS = [
   },
 ];
 
-const FAQ_INDICADOR = [
-  {
-    q: "Quanto eu ganho por indicação?",
-    a: "O valor da recompensa é combinado individualmente e confirmado por escrito no registro da indicação, antes de qualquer conversa com o indicado. Você sabe exatamente quanto recebe antes de indicar — nada de descobrir depois.",
-  },
-  {
-    q: "Quando e como recebo?",
-    a: "Em Pix, após o fechamento do contrato e a confirmação do primeiro pagamento do cliente indicado. Não pedimos nota fiscal e não exigimos CNPJ — é um programa para clientes, não para empresas.",
-  },
-  {
-    q: "Preciso ser cliente da Bewild para indicar?",
-    a: "Não. Qualquer pessoa física pode indicar — cliente, ex-cliente ou alguém que conhece o nosso trabalho. Profissionais do mercado imobiliário (corretores, imobiliárias, arquitetos) têm um programa próprio, com comissão, na página de parceiros.",
-  },
-  {
-    q: "Como registro a indicação e por quanto tempo ela vale?",
-    a: "No formulário desta página: 2 minutos, com seus dados e os do indicado. O registro vale por 12 meses — se a pessoa fechar contrato nesse período, a recompensa é sua, mesmo que ela retome o contato meses depois.",
-  },
-  {
-    q: "E se a pessoa que eu indiquei já estiver falando com a Bewild?",
-    a: "Indicados já em negociação ou vindos de canal próprio não geram recompensa — essa regra evita disputa de origem. Por isso o registro formal da indicação vem sempre antes da primeira conversa.",
-  },
-  {
-    q: "O que acontece depois que eu indico?",
-    a: "Nossa equipe chama o indicado em até 1 dia útil, se apresenta como Bewild e conduz o diagnóstico do imóvel. Você é avisado do andamento e, se o contrato fechar, combina o Pix da recompensa.",
-  },
-];
-
 // Telefone e e-mail com as mesmas regras dos outros formulários (e do servidor).
 const indicadorSchema = z.object({
   nome: z.string().trim().min(2).max(120),
@@ -127,12 +101,6 @@ const indicadorSchema = z.object({
   relacao: z.enum(RELACOES as [string, ...string[]]),
   mensagem: z.string().trim().max(600),
 });
-
-/** JSON-LD da página no HTML do servidor (head() da rota) — Service/FAQ; a trilha já vai no WebPage. */
-// eslint-disable-next-line react-refresh/only-export-components -- constante lida pela rota, não muda o fast refresh
-export const INDIQUE_JSONLD: Array<Record<string, unknown>> = [
-  faqJsonLd(FAQ_INDICADOR.map((i) => ({ q: i.q, a: i.a }))),
-];
 
 export default function IndiquePage() {
   useCtaClickTracking("indique-um-amigo");

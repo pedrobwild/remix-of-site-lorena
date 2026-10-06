@@ -1,0 +1,93 @@
+/**
+ * Dados e JSON-LD de /reforma-de-studio-sao-paulo — módulo sem componentes nem CSS.
+ *
+ * O `head()` da rota (src/routes/reforma-de-studio-sao-paulo.tsx) precisa do JSON-LD de forma
+ * síncrona e fica no grafo carregado em TODA página (routeTree). Enquanto a
+ * constante morava em src/pages/ReformaStudioSpPage.tsx, o CSS e os componentes da
+ * página inteira iam junto para todas as rotas (auditoria de SEO 06/10/2026,
+ * item 3: 9–11 folhas de estilo bloqueantes por página).
+ */
+import type { ReactNode } from "react";
+import { faqJsonLd } from "@/lib/useSeo";
+
+export const CANONICAL = "/reforma-de-studio-sao-paulo";
+
+export const FAQ: { q: string; a: string; node?: ReactNode }[] = [
+  {
+    q: "Vale a pena reformar um studio para Airbnb?",
+    a: "Depende de bairro, convenção do condomínio e operação. A Bewild não garante renda nem ocupação.",
+    node: (
+      <>
+        Depende de bairro, convenção do condomínio e operação. A Bewild não
+        garante renda nem ocupação — as contas linha a linha estão em{" "}
+        <a href="/conteudos/quanto-rende-studio-short-stay-sao-paulo">
+          quanto rende um studio no short stay em São Paulo
+        </a>
+        .
+      </>
+    ),
+  },
+  {
+    q: "O condomínio pode proibir Airbnb?",
+    a: "Pode: a convenção e as decisões em assembleia mandam, e é preciso checar antes de comprar.",
+    node: (
+      <>
+        Pode: a convenção e as decisões em assembleia mandam, e é preciso checar
+        antes de comprar. O que a lei permite hoje está em{" "}
+        <a href="/conteudos/studios-airbnb-sao-paulo-o-que-a-lei-permite">
+          studios e Airbnb em São Paulo: o que a lei permite
+        </a>
+        .
+      </>
+    ),
+  },
+  {
+    q: "Quanto tempo demora a reforma de um studio?",
+    a: "A referência é cerca de 60 dias úteis de obra. A data exata sai no contrato.",
+    node: (
+      <>
+        A referência é cerca de 60 dias úteis de obra, e a data exata sai no
+        contrato. Semana a semana em{" "}
+        <a href="/conteudos/cronograma-reforma-studio-60-dias-uteis">
+          cronograma de uma reforma de studio
+        </a>
+        .
+      </>
+    ),
+  },
+  {
+    q: "Comprei na planta e ainda não tenho as chaves, já posso começar?",
+    a: "Sim. Projeto e proposta são feitos antes das chaves, para a obra começar assim que o imóvel for entregue.",
+    node: (
+      <>
+        Sim. Projeto e proposta são feitos antes das chaves, para a obra começar
+        assim que o imóvel for entregue — o que adiantar está em{" "}
+        <a href="/conteudos/comprou-studio-na-planta-antes-das-chaves">
+          comprou studio na planta: o que fazer antes das chaves
+        </a>
+        .
+      </>
+    ),
+  },
+  {
+    q: "Vocês fazem a gestão do Airbnb?",
+    a: "Não. Entregamos o studio pronto para anunciar; a operação é sua ou de quem você escolher, sem exclusividade.",
+  },
+  {
+    q: "Moro fora de São Paulo?",
+    a: "Sim, dá para reformar. Vistoria por procuração, energia, internet e emergências ficam com a Bewild, e você acompanha tudo pelo Bwild Workflow.",
+  },
+];
+
+export const STUDIO_SP_JSONLD: Array<Record<string, unknown>> = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Reforma completa de studios em São Paulo",
+    serviceType: "Reforma de apartamento",
+    provider: { "@id": "https://bewild.com.br/#org" },
+    areaServed: { "@type": "City", name: "São Paulo" },
+    url: `https://bewild.com.br${CANONICAL}`,
+  },
+  faqJsonLd(FAQ.map((f) => ({ q: f.q, a: f.a }))),
+];

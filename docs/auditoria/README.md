@@ -22,3 +22,22 @@ Primeira rodada com produção, Search Console, GA4 e Perfil da Empresa acessív
 - **Fora do código:** Mudança de endereço no Search Console (`sc-domain:bwild.com.br` → `https://bewild.com.br/`), responder as 50 avaliações no Perfil da Empresa, revisar edições sugeridas pelo Google e serviços listados, tráfego interno no GA4.
 
 **Migrations escritas à mão não são aplicadas pelo deploy** (a `20260930120000` só valeu quando a Lovable a reaplicou como `20260930130146`). Aplique `20261006150000_bewild_posts_content_updated_at.sql` pelo SQL Editor do Supabase ou peça à Lovable; o código funciona antes e depois (consulta cai para `updated_at` enquanto a coluna não existe).
+
+### Rodada 2 — desempenho (PR de 06/10/2026, tarde)
+
+Diagnóstico (build `.output/server/_tanstack-start-manifest_*.mjs` + laboratório):
+
+1. **CSS de todas as páginas em toda rota.** O `head()` de 9 rotas importava a constante `*_JSONLD` de dentro de `src/pages/*Page.tsx`. Como `head()` não é dividido pelo TanStack Start (fica no `routeTree`), a página inteira — CSS e componentes — entrava no grafo raiz. Correção: dados + JSON-LD movidos para `src/content/pages/<rota>.ts(x)` (sem componentes nem CSS); rota e página importam de lá. CSS da raiz: 8 → 2 arquivos (`index`, `post` — este via `NotFoundPage` no `__root`).
+2. **Home carregava recharts (~92 kB gz).** `WorkflowPortalReplica` (réplica do portal do cliente) passou a `lazy()` + `Suspense`, montado só quando `#workflow-portal-root` chega a 600 px da tela (`mountPortalWhenNear`).
+3. **CLS 0,15 nas internas.** `home-bwa.css` e `bwa-internal.css` (caixa `.bwa-shell`, cabeçalho) só entravam no cliente, pela `useEffect` de `BwaNav`. Agora `seoHead()` as emite no HTML do servidor (`bwaCss` padrão `true`; `false` na home, `/guia-do-investidor`, `/o`, `/p`), e `BwaNav` só move os `<link>` para o fim do `<head>`.
+
+Medições (390 px, 1,6 Mbps/150 ms, CPU 4×; antes = produção 06/10 15:00 UTC, depois = build local):
+
+| Rota | CSS (arquivos, KB gz) | JS pré-carregado (arquivos, KB gz) | CLS |
+|---|---|---|---|
+| `/` | 11 → 5 · 69 → 62 | 39 → 32 · 426 → 381 (+ recharts fora do caminho crítico) | — |
+| `/faq` | 9 → 4 · 47 → 41 | 29 → 20 · 303 → 254 | — |
+| `/reforma-de-studio-sao-paulo` | 9 → 5 · 47 → 41 | 27 → 20 · 296 → 198 | 0,149 → 0 |
+| `/conteudos/:slug` | 10 → 4 · 49 → 41 | 28 → 18 · 315 → 213 | — |
+
+Pendente para outra rodada: `styles.css` (199 kB bruto) ainda carrega o design system inteiro (admin, analytics, blog legado) em toda página; `post.css` entra na raiz por causa de `NotFoundPage`; `generateCategoricalChart` continua na home abaixo da dobra.

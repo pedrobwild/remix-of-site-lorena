@@ -6,6 +6,7 @@ import { useIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
 import { withUtm } from "@/lib/utm";
 import homeBwaCssUrl from "../pages/home-bwa.css?url";
 import bwaInternalCssUrl from "../pages/bwa-internal.css?url";
+import { BWA_HOME_CSS_MARKER, BWA_INTERNAL_CSS_MARKER } from "@/lib/routeHead";
 import { initBwaNav } from "../pages/home-bwa-script";
 
 /** Mesma mensagem do atalho do WhatsApp no menu da home (home-bwa-body.ts). */
@@ -31,8 +32,10 @@ export default function BwaNav() {
   const itensParceiros = NAV_PARCEIROS.items.filter((item) => !item.gated || incorporadorasOn);
 
   useEffect(() => {
-    const marker1 = "data-bwa-home-css";
-    const marker2 = "data-bwa-internal-css";
+    // Os <link> normalmente já vêm do servidor (seoHead em src/lib/routeHead.ts);
+    // aqui só garantimos que existam e que fiquem por último no <head>.
+    const marker1 = BWA_HOME_CSS_MARKER;
+    const marker2 = BWA_INTERNAL_CSS_MARKER;
     let homeLink = document.head.querySelector<HTMLLinkElement>(`link[${marker1}]`);
     if (!homeLink) {
       homeLink = document.createElement("link");
