@@ -10,6 +10,8 @@ import { execSync } from "node:child_process";
 const BASE_URL = "https://bewild.com.br";
 const OUT = resolve("public/sitemap.xml");
 const LLMS = resolve("public/llms.txt");
+// Cópia servida em /.well-known/llms.txt: sempre idêntica à de cima (teste em llmsTxt.test.ts).
+const LLMS_COPY = resolve("public/.well-known/llms.txt");
 
 function warn(msg) {
   console.warn(`[sitemap] ${msg} — public/sitemap.xml mantido como está.`);
@@ -269,6 +271,11 @@ function updateLlmsTxt(posts, hoodUrls = []) {
   if (next !== txt) {
     writeFileSync(LLMS, next);
     console.log(`[sitemap] public/llms.txt: ${postLines.length} posts e ${hoodLines.length} bairros listados.`);
+  }
+  // A cópia em .well-known não é editada à mão: segue o llms.txt principal.
+  if (existsSync(LLMS_COPY) && readFileSync(LLMS_COPY, "utf8") !== next) {
+    writeFileSync(LLMS_COPY, next);
+    console.log("[sitemap] public/.well-known/llms.txt sincronizado com public/llms.txt.");
   }
 }
 

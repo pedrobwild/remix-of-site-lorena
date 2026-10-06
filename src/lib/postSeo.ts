@@ -26,6 +26,10 @@ export type PostAuthor = {
   url?: string;
   /** Perfis públicos do autor (Person.sameAs). */
   sameAs?: string[];
+  /** Foto do autor (Person.image), URL absoluta. */
+  image?: string;
+  /** Instituição de formação (Person.alumniOf). */
+  alumniOf?: string;
 };
 
 const ORG_NAME = "Bewild";
@@ -45,7 +49,12 @@ const KNOWN_AUTHORS: PostAuthor[] = [
     jobTitle: "Engenheiro, cofundador e CEO da Bewild",
     aliases: ["Pedro Alves"],
     url: `${BASE_URL}/conteudos/pedro-henrique-alves-ceo-bewild`,
-    sameAs: ["https://www.linkedin.com/in/pedro-henrique-alves-872b0245"],
+    sameAs: [
+      "https://www.linkedin.com/in/pedro-henrique-alves-872b0245",
+      "https://www.allaroundworlds.com/top-list/global-business-icons-2026/pedro-henrique-alves/",
+    ],
+    image: `${BASE_URL}/images/imprensa/allaroundworlds-pedro.webp`,
+    alumniOf: "Universidade de São Paulo",
   },
 ];
 
@@ -78,18 +87,67 @@ export function resolvePostAuthor(author: string | null | undefined): PostAuthor
   return known ?? { name: raw };
 }
 
+/** `@id` estável da Person de um autor com página própria (a mesma em todos os posts e na ProfilePage). */
+function authorPersonId(person: PostAuthor): string | null {
+  return person.url ? `${person.url}#person` : null;
+}
+
 export function postAuthorJsonLd(author: string | null | undefined): Record<string, unknown> {
   const org = { "@type": "Organization", name: ORG_NAME, url: `${BASE_URL}/` };
   const person = resolvePostAuthor(author);
   if (!person) return org;
+  const id = authorPersonId(person);
   return {
     "@type": "Person",
+    ...(id ? { "@id": id } : {}),
     name: person.name,
     ...(person.jobTitle ? { jobTitle: person.jobTitle } : {}),
     ...(person.credential ? { identifier: person.credential } : {}),
     ...(person.url ? { url: person.url } : {}),
     ...(person.sameAs?.length ? { sameAs: person.sameAs } : {}),
     worksFor: org,
+  };
+}
+
+/**
+ * Autor cuja página própria é o post `/conteudos/<slug>` (ex.: o artigo
+ * "quem é o CEO"), ou `null` para os posts comuns.
+ */
+export function authorForPage(slug: string | null | undefined): PostAuthor | null {
+  if (!slug) return null;
+  const url = `${BASE_URL}/conteudos/${slug}`;
+  return KNOWN_AUTHORS.find((k) => k.url === url) ?? null;
+}
+
+/**
+ * Propriedades que transformam o WebPage da página de autor numa ProfilePage
+ * (formato que o Google documenta para páginas de perfil): `mainEntity` é a
+ * Person completa, com o mesmo `@id` que assina os posts dela. A foto cai na
+ * capa do post quando o autor não tem imagem fixa.
+ */
+export function authorProfileJsonLd(
+  person: PostAuthor,
+  opts: { image?: string | null; dateCreated?: string | null; dateModified?: string | null } = {},
+): Record<string, unknown> {
+  const id = authorPersonId(person);
+  const image = person.image || opts.image || undefined;
+  return {
+    "@type": "ProfilePage",
+    ...(opts.dateCreated ? { dateCreated: opts.dateCreated } : {}),
+    ...(opts.dateModified ? { dateModified: opts.dateModified } : {}),
+    ...(id ? { about: { "@id": id } } : {}),
+    mainEntity: {
+      "@type": "Person",
+      ...(id ? { "@id": id } : {}),
+      name: person.name,
+      ...(person.jobTitle ? { jobTitle: person.jobTitle } : {}),
+      ...(person.credential ? { identifier: person.credential } : {}),
+      ...(person.url ? { url: person.url } : {}),
+      ...(image ? { image } : {}),
+      ...(person.sameAs?.length ? { sameAs: person.sameAs } : {}),
+      ...(person.alumniOf ? { alumniOf: { "@type": "CollegeOrUniversity", name: person.alumniOf } } : {}),
+      worksFor: { "@type": "Organization", "@id": `${BASE_URL}/#org`, name: ORG_NAME, url: `${BASE_URL}/` },
+    },
   };
 }
 

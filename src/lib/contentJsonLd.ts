@@ -7,7 +7,7 @@
  */
 import { bewildCategoryLabel, type BewildPost } from "@/lib/useBewildPosts";
 import { bewildTypeLabel, type BewildProjectType } from "@/lib/useBewildProjects";
-import { postAuthorJsonLd, postDates } from "@/lib/postSeo";
+import { authorForPage, postAuthorJsonLd, postDates } from "@/lib/postSeo";
 import { itemListJsonLd, projectJsonLd } from "@/lib/useSeo";
 import { extractYouTubeEmbeds, youtubeEmbedUrl, youtubeThumbnailUrl } from "@/lib/youtube";
 import { neighborhoodSlug } from "@/lib/portfolioFilter";
@@ -53,12 +53,17 @@ export function postVideoJsonLd(post: Pick<BewildPost, "body" | "title" | "meta_
   };
 }
 
-/** Article (+ FAQPage quando o post tem FAQ, + VideoObject quando tem vídeo). */
+/**
+ * Article (+ FAQPage quando o post tem FAQ, + VideoObject quando tem vídeo).
+ * A página de autor não é um artigo: sai sem Article (o nó da página vira
+ * ProfilePage no head() da rota), só com os blocos restantes.
+ */
 export function postJsonLd(post: BewildPost): JsonLdNode[] {
   const articleUrl = `${BASE}/conteudos/${post.slug}`;
   const dates = postDates(post);
-  const arr: JsonLdNode[] = [
-    {
+  const arr: JsonLdNode[] = [];
+  if (!authorForPage(post.slug)) {
+    arr.push({
       "@context": "https://schema.org",
       "@type": "Article",
       headline: post.title,
@@ -80,8 +85,8 @@ export function postJsonLd(post: BewildPost): JsonLdNode[] {
       mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
       inLanguage: "pt-BR",
       articleSection: bewildCategoryLabel(post.category),
-    },
-  ];
+    });
+  }
   // Vídeos do YouTube no corpo: VideoObject é o que leva o Google a indexar o vídeo da página.
   for (const v of extractYouTubeEmbeds(post.body)) {
     const name = v.title || post.title;
