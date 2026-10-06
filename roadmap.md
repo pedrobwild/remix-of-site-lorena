@@ -13,3 +13,7 @@
 - [x] Corrigir materiais, serviços e estados de execução não comprovados
 - [x] Conferir cada cover_alt contra a capa efetiva, incluindo os casos apontados
 - [x] Validar novamente os 162 registros e documentar limitações visuais reais
+- [x] Publicar robots.txt apontando o sitemap pela URL www
+- [x] Conferir llms.txt (45 artigos, 16 bairros) incluído na publicação
+- [x] Adicionar /.well-known/llms.txt (cópia idêntica) para descoberta por robôs de IA
+- [ ] Publicar /.well-known/llms.txt e confirmar no domínio próprio

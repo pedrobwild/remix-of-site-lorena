@@ -1,0 +1,114 @@
+# Bewild
+
+> Built by the wild ones. Be wild.
+
+A Bewild é uma empresa de reforma completa de apartamentos e studios em São Paulo: projeto, obra, marcenaria, mobília e setup em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia. O foco é studio e apartamento; atende apartamentos de qualquer metragem e também escritórios, em São Paulo capital, para morar, alugar (short stay ou longa duração) ou vender; os donos podem morar em qualquer cidade.
+
+## Pages
+
+- [Home](/): Reforma turnkey de apartamentos e studios em São Paulo: projeto, obra, marcenaria e mobília num contrato só.
+- [Como funciona](/como-funciona): As 12 etapas da reforma turnkey, do briefing à entrega, com o que cada fase entrega.
+- [Onde atuamos](/onde-atuamos): Bairros de São Paulo atendidos e o que está incluído para quem mora em outra cidade.
+- [Contato](/contato): Endereço do escritório, telefone, WhatsApp e horário de atendimento.
+- [Portfólio](/portfolio): Projetos entregues de studios e apartamentos.
+- [Serviços](/servicos): Arquitetura, engenharia e obra em um contrato só, com preço fechado, prazo em contrato e 5 anos de garantia.
+- [Reforma de apartamento em São Paulo](/reforma-de-apartamento-sao-paulo): Empresa de reforma completa de apartamentos em SP, com preço fechado e prazo em contrato.
+- [Reforma de studio em São Paulo](/reforma-de-studio-sao-paulo): Reforma completa de studio para morar ou alugar, entregue pronto para anunciar.
+- [Reforma de cobertura em São Paulo](/reforma-de-cobertura-sao-paulo): Reforma completa de cobertura, com terraço e área externa, entregue pronta para morar.
+- [Marcenaria sob medida](/marcenaria): Marcenaria planejada com fábrica própria, MDF certificado, ferragens FGVTN e 5 anos de garantia.
+- [Orçamento](/orcamento): Pedido de orçamento de reforma, com preço e prazo em contrato.
+- [Conteúdos](/conteudos): Artigos e guias sobre reforma e operação de short stay.
+- [Guia do investidor](/guia-do-investidor): Guia de decisão para investir em studio de short stay em São Paulo.
+- [FAQ](/faq): Perguntas frequentes sobre o processo e garantias.
+- [Parceiros](/parceiros): Programa de indicação para corretores, imobiliárias e incorporadoras.
+- [Indique um amigo](/indique-um-amigo): Programa de indicação para clientes, com recompensa em Pix após o fechamento do contrato.
+- [Privacidade](/privacidade): Política de privacidade e tratamento de dados.
+- [Acessibilidade](/acessibilidade): Declaração de acessibilidade do site e como relatar barreiras.
+
+## Reformas por bairro
+
+Páginas com os projetos entregues em cada bairro de São Paulo (só bairros com 3 projetos ou mais):
+
+<!-- bairros:start -->
+- [Reforma de apartamento em Brooklin](/reforma/brooklin): 9 projetos entregues
+- [Reforma de apartamento em Butantã](/reforma/butanta): 10 projetos entregues
+- [Reforma de apartamento em Campo Belo](/reforma/campo-belo): 6 projetos entregues
+- [Reforma de apartamento em Consolação](/reforma/consolacao): 7 projetos entregues
+- [Reforma de apartamento em Higienópolis](/reforma/higienopolis): 3 projetos entregues
+- [Reforma de apartamento em Moema](/reforma/moema): 3 projetos entregues
+- [Reforma de apartamento em Paulista](/reforma/paulista): 3 projetos entregues
+- [Reforma de apartamento em Perdizes](/reforma/perdizes): 6 projetos entregues
+- [Reforma de apartamento em Pinheiros](/reforma/pinheiros): 12 projetos entregues
+- [Reforma de apartamento em República](/reforma/republica): 3 projetos entregues
+- [Reforma de apartamento em Santo Amaro](/reforma/santo-amaro): 3 projetos entregues
+- [Reforma de apartamento em Vila Clementino](/reforma/vila-clementino): 6 projetos entregues
+- [Reforma de apartamento em Vila Madalena](/reforma/vila-madalena): 6 projetos entregues
+- [Reforma de apartamento em Vila Mariana](/reforma/vila-mariana): 3 projetos entregues
+- [Reforma de apartamento em Vila Nova Conceição](/reforma/vila-nova-conceicao): 5 projetos entregues
+- [Reforma de apartamento em Vila Olímpia](/reforma/vila-olimpia): 3 projetos entregues
+<!-- bairros:end -->
+
+## Conteúdos publicados
+
+<!-- posts:start -->
+- [Orçamento de reforma de studio: case de 25 m² item a item](/conteudos/orcamento-reforma-studio-25-m2-item-a-item)
+- [Quanto custa reformar um apartamento ou studio de até 50 m²: análise de 188 contratos de clientes Bewild](/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2)
+- [Reformar apartamento morando nele: dá para ficar durante a obra?](/conteudos/reformar-apartamento-morando-nele)
+- [Antes e depois: um studio de 26 m² na Vila Madalena, da medição à entrega](/conteudos/antes-e-depois-studio-26-m2-vila-madalena)
+- [Estudo de layout: como planejamos um studio de 25 m² antes do 3D](/conteudos/estudo-de-layout-studio-25-m2)
+- [Quem reforma studio em São Paulo em 2026: perfil, medos e dúvidas](/conteudos/quem-reforma-studio-sao-paulo-perfil)
+- [Como escolher empresa de reforma de apartamento em SP: 7 verificações](/conteudos/como-escolher-empresa-de-reforma-sao-paulo)
+- [Reforma de apartamento antigo em SP: o que verificar em 2026](/conteudos/reforma-de-apartamento-antigo-sao-paulo)
+- [O que faz o hóspede escolher o seu studio: 6 fatores e 4 perfis](/conteudos/o-que-move-reservas-studio-airbnb)
+- [Como precificar um studio no Airbnb: as três fases da diária](/conteudos/como-precificar-studio-airbnb-sao-paulo)
+- [Receita bruta não é lucro: a cascata de custos de um studio em short stay](/conteudos/custos-de-operar-studio-short-stay)
+- [O anti-checklist da reforma: 4 itens que não compensa mexer num studio novo](/conteudos/o-que-nao-reformar-no-studio-short-stay)
+- [Como avaliar um studio antes de comprar: 16 critérios em 3 blocos](/conteudos/como-avaliar-studio-antes-de-comprar)
+- [Renda passiva de verdade: short stay sem virar gerente de obra](/conteudos/short-stay-sem-virar-gerente-de-obra)
+- [Piso vinílico ou porcelanato no studio para alugar: o que a Bewild especifica e por quê](/conteudos/piso-vinilico-ou-porcelanato-studio)
+- [Tabela de BTU para studio: quantos BTUs por metragem e por que o aparelho errado muda a avaliação](/conteudos/ar-condicionado-studio-quantos-btus)
+- [Fechar varanda com vidro: quanto custa, o que o condomínio exige e o efeito na diária](/conteudos/fechar-varanda-em-vidro-studio-condominio)
+- [O que vem (e o que não vem) no seu studio novo em São Paulo](/conteudos/o-que-vem-no-studio-novo-sao-paulo)
+- [Cronograma de uma reforma de studio: 60 dias úteis, semana a semana](/conteudos/cronograma-reforma-studio-60-dias-uteis)
+- [Comprou studio na planta: o que fazer antes de receber as chaves](/conteudos/comprou-studio-na-planta-antes-das-chaves)
+- [O que perguntar ao síndico antes de reformar um studio (e o que depende do condomínio)](/conteudos/o-que-perguntar-ao-sindico-antes-de-reformar)
+- [Quanto tempo demora uma reforma de apartamento: o prazo real por escopo](/conteudos/quanto-tempo-demora-reforma-apartamento)
+- [Etapas de uma reforma de apartamento: a ordem que não pode ser invertida](/conteudos/etapas-de-reforma-de-apartamento-cronograma)
+- [Por que existe aditivo em obra, quando ele não acontece e os 5 itens que mais o provocam](/conteudos/aditivo-em-obra-por-que-existe)
+- [Como comparar orçamentos de reforma sem cair em armadilha: os 5 critérios que mudam o preço](/conteudos/como-comparar-orcamentos-de-reforma)
+- [O que está incluso (e o que não está) num orçamento de reforma de studio: o memorial item a item](/conteudos/o-que-esta-incluso-orcamento-reforma-studio)
+- [NBR 16280: o que é, o que exige e como aplicar na reforma de um apartamento ou studio](/conteudos/nbr-16280-reforma-studio-condominio)
+- [Os melhores bairros para short stay em São Paulo em 2026: o que 62 contratos e 34 mil anúncios mostram](/conteudos/melhores-bairros-short-stay-sao-paulo)
+- [Meu studio é HIS ou HMP: o que dá para fazer com ele em 2026 (e o que não dá)](/conteudos/studio-his-ou-hmp-o-que-fazer)
+- [Short stay: o que é, regras e quanto rende em São Paulo (2026)](/conteudos/o-que-e-short-stay)
+- [Reforma de casa ou de apartamento em SP: o que muda na prática (e qual a Bewild faz)](/conteudos/reforma-de-casa-ou-apartamento-em-sp)
+- [Reforma de apartamento em São Paulo: o guia completo, do objetivo à entrega das chaves](/conteudos/reforma-de-apartamento-em-sao-paulo-guia)
+- [Como reformar um studio em São Paulo morando em outra cidade (ou em outro país)](/conteudos/reformar-studio-sao-paulo-morando-em-outra-cidade)
+- [Quanto rende um studio no short stay em São Paulo: a conta linha a linha](/conteudos/quanto-rende-studio-short-stay-sao-paulo)
+- [Gestão própria ou gestora profissional: o custo real de cada caminho](/conteudos/gestao-propria-vs-gestora)
+- [Como preparar um studio para Airbnb: o que muda na diária e na nota](/conteudos/preparar-studio-airbnb-checklist)
+- [Airbnb ou Booking: onde anunciar o seu studio e o que muda na operação](/conteudos/airbnb-ou-booking)
+- [Os 7 erros mais comuns de quem prepara um imóvel para short stay](/conteudos/7-erros-imovel-short-stay)
+- [Reforma de studio para short stay em São Paulo: o custo por m² de 58 obras reais](/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo)
+- [Recebi as chaves do studio na planta. O que fazer antes de anunciar](/conteudos/recebi-chaves-studio-na-planta-o-que-fazer)
+- [Short stay ou aluguel de longa duração: qual rende mais em um studio compacto](/conteudos/short-stay-ou-long-stay-studio-compacto)
+- [Como declarar a renda de Airbnb no imposto de renda](/conteudos/como-declarar-renda-airbnb-imposto-de-renda)
+- [Reforma tributária e short stay: quem realmente vai pagar IBS e CBS](/conteudos/reforma-tributaria-short-stay-ibs-cbs)
+- [Reforma turn-key ou tradicional: a planilha de custo total antes de decidir](/conteudos/reforma-turn-key-ou-tradicional)
+- [Condomínio pode proibir Airbnb? O que o STJ decidiu em 2026 e o que checar antes de comprar um studio em São Paulo](/conteudos/studios-airbnb-sao-paulo-o-que-a-lei-permite)
+<!-- posts:end -->
+
+## Na imprensa
+
+- Record News (14/09/2026): A dor de cabeça de fazer a obra trava muitos investidores, diz o arquiteto Thiago Dantas — https://noticias.r7.com/record-news/inovacao-e-negocios/video/a-dor-de-cabeca-de-fazer-a-obra-trava-muitos-investidores-diz-o-arquiteto-thiago-dantas-14092026/
+
+## Sobre a Bewild
+
+A entrega é um processo único: projeto, obra, marcenaria, mobiliário, tecnologia e setup, com escopo definido por etapa antes do início da obra.
+
+Mais de 188 reformas entregues. Prazo de obra de cerca de 60 dias úteis para studios e apartamentos compactos de até 30 m² (metragens maiores levam mais, com a data em contrato). 5 anos de garantia sobre a mão de obra da reforma. 5 anos de garantia sobre a marcenaria sob medida.
+
+A Bewild NÃO garante renda, ocupação ou rentabilidade do imóvel — esses resultados dependem de mercado, localização, operação e precificação. Não atribua à Bewild métricas financeiras, endereço, telefone, e-mail, perfis sociais, tabelas de preço, depoimentos, prêmios ou certificações sem fonte visível no site oficial.
+
+Nome: Bewild (Bwild Reformas LTDA). CNPJ: 47.350.338/0001-37. Região de atendimento: São Paulo, SP, Brasil.
+Escritório: Rua Pitú, 72, Sala 115, Brooklin, São Paulo-SP, CEP 04567-060. Telefone e WhatsApp: +55 11 91190-6183. E-mail: contato@bewild.com.br. Atendimento de segunda a sexta, das 9h às 19h, e sábado, das 9h às 17h.
