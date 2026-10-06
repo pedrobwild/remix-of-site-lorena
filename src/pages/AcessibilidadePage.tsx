@@ -1,4 +1,4 @@
-import { useSeo, breadcrumbJsonLd } from "../lib/useSeo";
+import { useSeo } from "../lib/useSeo";
 import { useSiteSettings } from "../lib/useSiteSettings";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
@@ -32,14 +32,6 @@ export default function AcessibilidadePage() {
       "Como o site da Bewild atende pessoas com deficiência, o que ainda falta e como avisar a equipe sobre uma barreira de acesso.",
     canonicalPath: "/acessibilidade",
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Acessibilidade", path: "/acessibilidade" },
-          ]),
-        ]
-      : undefined,
   });
 
   return (

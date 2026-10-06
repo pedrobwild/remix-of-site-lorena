@@ -8,8 +8,7 @@ import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { isConsentAccepted, onConsentChange } from "@/lib/cookieConsent";
 import { routes } from "@/lib/useHashRoute";
-import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { useSeo } from "@/lib/useSeo";
 import "./mapa.css";
 
 const ADDRESS = "Rua Pitú, 72, Sala 115, Brooklin, São Paulo-SP";
@@ -61,22 +60,13 @@ function MapaEscritorio() {
 }
 
 export default function MapaPage() {
-  const { settings } = useSiteSettings();
-
   useSeo({
     title: "Mapa e endereço: R. Pitu, 72, Brooklin, São Paulo | Bewild",
     description:
       "Como chegar à Bewild: Rua Pitú, 72, Sala 115, Brooklin, São Paulo-SP. Mapa, horários (seg–sex 9h–19h, sáb 9h–17h) e rota pelo aplicativo.",
     canonicalPath: "/mapa",
+    noindex: true,
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Mapa e endereço", path: "/mapa" },
-          ]),
-        ]
-      : undefined,
   });
 
   return (

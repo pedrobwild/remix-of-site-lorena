@@ -12,7 +12,8 @@ import {
   projectSeoTitleUnique,
   type ProjectSeoPeer,
 } from "@/lib/projectSeo";
-import { neighborhoodPages } from "@/lib/portfolioFilter";
+import { neighborhoodPages, neighborhoodSlug } from "@/lib/portfolioFilter";
+import { bairroAreaRange, bairroDescription } from "@/lib/bairroSeo";
 
 export type RouteSeoData = {
   title: string;
@@ -182,7 +183,7 @@ export function postSeoFrom(post: PostSeoRow | null, failed = false): RouteSeoDa
 
 export function bairroSeoFrom(
   slug: string,
-  list: Array<{ neighborhood: string | null; cover_url: string | null }> | null,
+  list: Array<{ neighborhood: string | null; cover_url: string | null; area_m2?: number | null }> | null,
 ): RouteSeoData {
   if (!list) {
     return {
@@ -193,8 +194,10 @@ export function bairroSeoFrom(
   }
   const page = neighborhoodPages(list).find((n) => n.slug === slug);
   if (!page) return NOT_FOUND_SEO;
+  // Mesma lista e mesma faixa que a página mostra (bairroProjects + bairroAreaRange).
+  const shown = list.filter((p) => p.cover_url && p.neighborhood && neighborhoodSlug(p.neighborhood) === slug);
   return {
     title: `Reforma de apartamento em ${page.label}: projetos e orçamento | Bewild`,
-    description: `${page.count} apartamentos reformados pela Bewild em ${page.label}, São Paulo: fotos reais de cada obra e orçamento sem custo para o seu imóvel no bairro.`,
+    description: bairroDescription(shown.length, page.label, bairroAreaRange(shown)),
   };
 }

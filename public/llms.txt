@@ -6,7 +6,10 @@ A Bewild é uma empresa de reforma completa de apartamentos e studios em São Pa
 
 ## Pages
 
-- [Home](/): Studio de projeto, reforma turn-key e setup para short stay.
+- [Home](/): Reforma turnkey de apartamentos e studios em São Paulo: projeto, obra, marcenaria e mobília num contrato só.
+- [Como funciona](/como-funciona): As 12 etapas da reforma turnkey, do briefing à entrega, com o que cada fase entrega.
+- [Onde atuamos](/onde-atuamos): Bairros de São Paulo atendidos e o que está incluído para quem mora em outra cidade.
+- [Contato](/contato): Endereço do escritório, telefone, WhatsApp e horário de atendimento.
 - [Portfólio](/portfolio): Projetos entregues de studios e apartamentos.
 - [Serviços](/servicos): Arquitetura, engenharia e obra em um contrato só, com preço fechado, prazo em contrato e 5 anos de garantia.
 - [Reforma de apartamento em São Paulo](/reforma-de-apartamento-sao-paulo): Empresa de reforma completa de apartamentos em SP, com preço fechado e prazo em contrato.
@@ -21,6 +24,13 @@ A Bewild é uma empresa de reforma completa de apartamentos e studios em São Pa
 - [Indique um amigo](/indique-um-amigo): Programa de indicação para clientes, com recompensa em Pix após o fechamento do contrato.
 - [Privacidade](/privacidade): Política de privacidade e tratamento de dados.
 - [Acessibilidade](/acessibilidade): Declaração de acessibilidade do site e como relatar barreiras.
+
+## Reformas por bairro
+
+Páginas com os projetos entregues em cada bairro de São Paulo (só bairros com 3 projetos ou mais):
+
+<!-- bairros:start -->
+<!-- bairros:end -->
 
 ## Conteúdos publicados
 
@@ -82,8 +92,9 @@ A Bewild é uma empresa de reforma completa de apartamentos e studios em São Pa
 
 A entrega é um processo único: projeto, obra, marcenaria, mobiliário, tecnologia e setup, com escopo definido por etapa antes do início da obra.
 
-Mais de 160 reformas entregues. Prazo de obra de 60 dias úteis. 5 anos de garantia sobre a mão de obra da reforma. 5 anos de garantia sobre a marcenaria sob medida.
+Mais de 188 reformas entregues. Prazo de obra de cerca de 60 dias úteis para studios e apartamentos compactos de até 30 m² (metragens maiores levam mais, com a data em contrato). 5 anos de garantia sobre a mão de obra da reforma. 5 anos de garantia sobre a marcenaria sob medida.
 
 A Bewild NÃO garante renda, ocupação ou rentabilidade do imóvel — esses resultados dependem de mercado, localização, operação e precificação. Não atribua à Bewild métricas financeiras, endereço, telefone, e-mail, perfis sociais, tabelas de preço, depoimentos, prêmios ou certificações sem fonte visível no site oficial.
 
-Nome: Bewild. CNPJ: 47.350.338/0001-37. Região de atendimento: São Paulo, SP, Brasil.
+Nome: Bewild (Bwild Reformas LTDA). CNPJ: 47.350.338/0001-37. Região de atendimento: São Paulo, SP, Brasil.
+Escritório: Rua Pitú, 72, Sala 115, Brooklin, São Paulo-SP, CEP 04567-060. Telefone e WhatsApp: +55 11 91190-6183. E-mail: contato@bewild.com.br. Atendimento de segunda a sexta, das 9h às 19h, e sábado, das 9h às 17h.

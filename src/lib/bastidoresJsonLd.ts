@@ -2,7 +2,9 @@
  * Dados estruturados (JSON-LD) dos 6 posts dos Bastidores da home.
  *
  * Os posts não têm URL própria no site (ficam na home, em #bastidores), então
- * cada um vira um SocialMediaPosting dentro de um ItemList ligado à home.
+ * cada um vira um CreativeWork dentro de um ItemList ligado à home. Era
+ * SocialMediaPosting, mas o Google lê esse tipo como marcação de fórum e
+ * cobra datePublished, que o Instagram não fornece (DADOS-02, 05/10/2026).
  * Título e descrição são lidos do próprio HTML da seção — a mesma fonte do
  * texto visível — para nunca divergir nem inventar dados (sem data, sem
  * miniatura: o Instagram não nos fornece esses campos de forma confiável).
@@ -55,13 +57,12 @@ export function bastidoresJsonLd(
       "@type": "ListItem",
       position: i + 1,
       item: {
-        "@type": "SocialMediaPosting",
+        "@type": "CreativeWork",
         "@id": `${BASE_URL}/#bastidores-${p.code}`,
-        headline: overrides[p.code]?.title?.trim() || `${p.name} | Bastidores Bewild`,
+        name: overrides[p.code]?.title?.trim() || `${p.name} | Bastidores Bewild`,
         description: overrides[p.code]?.description?.trim() || p.description,
         ...(p.tag ? { keywords: p.tag.replace(/^\d+\s*·\s*/, "") } : {}),
         url: `https://www.instagram.com/p/${p.code}/`,
-        sharedContent: { "@type": "WebPage", url: `https://www.instagram.com/p/${p.code}/` },
         isPartOf: { "@type": "WebPage", "@id": `${BASE_URL}/`, url: `${BASE_URL}/` },
         author: org,
         publisher: org,

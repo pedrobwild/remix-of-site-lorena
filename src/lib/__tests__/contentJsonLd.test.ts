@@ -60,6 +60,25 @@ describe("JSON-LD no head() sem duplicação", () => {
     expect(video.uploadDate).toBeTruthy();
   });
 
+  it("post com vídeo incorporado ganha um VideoObject com capa, arquivo e data do post", () => {
+    const withVideo = {
+      ...post,
+      meta_description: "Resumo do pilar",
+      body:
+        '<p>Intro</p>\n<figure>\n  <video controls poster="/videos/pilar-poster.jpg" aria-label="Vídeo: resumo da análise">\n    <source src="/videos/pilar.mp4" type="video/mp4">\n  </video>\n  <figcaption>A análise em 2 minutos</figcaption>\n</figure>',
+    } as unknown as BewildPost;
+    const nodes = postJsonLd(withVideo);
+    const video = nodes.find((n) => n["@type"] === "VideoObject") as Record<string, unknown>;
+    expect(video).toBeTruthy();
+    expect(video.name).toBe("resumo da análise");
+    expect(video.description).toBe("Resumo do pilar");
+    expect(video.thumbnailUrl).toEqual(["https://bewild.com.br/videos/pilar-poster.jpg"]);
+    expect(video.contentUrl).toBe("https://bewild.com.br/videos/pilar.mp4");
+    expect(video.uploadDate).toBe("2026-09-01T00:00:00Z");
+    // Sem vídeo no corpo, nada de VideoObject.
+    expect(postJsonLd({ ...post, body: "<p>só texto</p>" } as unknown as BewildPost).some((n) => n["@type"] === "VideoObject")).toBe(false);
+  });
+
   it("índice: CollectionPage + ItemList com um item por post", () => {
     const { scripts } = seoHead({ title: "C | Bewild", description: "D", path: "/conteudos", jsonLd: postListJsonLd([post, { ...post, slug: "b" }]) });
     expect(typesOf(scripts)).toEqual(["CollectionPage", "ItemList"]);

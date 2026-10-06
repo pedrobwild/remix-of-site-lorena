@@ -11,8 +11,7 @@ import { neighborhoodPages } from "@/lib/portfolioFilter";
 import { projectFriendlyName } from "@/lib/projectSeo";
 import { useBewildPosts, type BewildPost } from "@/lib/useBewildPosts";
 import { useBewildProjects, type BewildProject } from "@/lib/useBewildProjects";
-import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { useSeo } from "@/lib/useSeo";
 import { routes } from "@/lib/useHashRoute";
 import "./mapa-do-site.css";
 
@@ -22,7 +21,6 @@ export default function MapaDoSitePage({
   initialProjects,
   initialPosts,
 }: { initialProjects?: BewildProject[] | null; initialPosts?: BewildPost[] | null } = {}) {
-  const { settings } = useSiteSettings();
   const { projects, loading, error } = useBewildProjects(initialProjects);
   const { posts, loading: postsLoading, error: postsError } = useBewildPosts(initialPosts);
 
@@ -55,14 +53,6 @@ export default function MapaDoSitePage({
       "Índice com todas as páginas da Bewild, as páginas de reforma por bairro, os projetos de apartamentos e studios reformados em São Paulo e os guias de conteúdo.",
     canonicalPath: "/mapa-do-site",
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Mapa do site", path: "/mapa-do-site" },
-          ]),
-        ]
-      : undefined,
   });
 
   return (

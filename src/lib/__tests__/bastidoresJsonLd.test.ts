@@ -13,10 +13,11 @@ describe("JSON-LD dos Bastidores", () => {
     });
   });
 
-  it("gera um ItemList com um SocialMediaPosting por post", () => {
+  it("gera um ItemList com um CreativeWork por post", () => {
     const ld = bastidoresJsonLd() as { itemListElement: Array<{ item: Record<string, string> }> };
     expect(ld.itemListElement).toHaveLength(6);
-    expect(ld.itemListElement[0].item.headline).toBe("Medição e estudo do espaço | Bastidores Bewild");
+    expect(ld.itemListElement[0].item["@type"]).toBe("CreativeWork");
+    expect(ld.itemListElement[0].item.name).toBe("Medição e estudo do espaço | Bastidores Bewild");
     expect(ld.itemListElement[0].item.url).toBe("https://www.instagram.com/p/DY27SVWvqoM/");
   });
 });

@@ -3,8 +3,7 @@ import BwaNav from "@/components/BwaNav";
 import BewildLealMoreiraLogos from "@/components/BewildLealMoreiraLogos";
 import { PARCEIROS_WHEN_INCORP_ON } from "@/content/incorporadoras";
 import { useIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
-import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { useSeo } from "@/lib/useSeo";
 import "./marcas-parcerias.css";
 
 const MIDIA = [
@@ -27,7 +26,6 @@ const MIDIA = [
 ];
 
 export default function MarcasParceriasPage() {
-  const { settings } = useSiteSettings();
   const incorporadorasOn = useIncorporadorasEnabled();
 
   useSeo({
@@ -36,12 +34,6 @@ export default function MarcasParceriasPage() {
       "Conheça as parcerias institucionais da Bewild e as matérias publicadas sobre arquitetura, reforma e imóveis como ativos de renda.",
     canonicalPath: "/marcas-e-parcerias",
     ogType: "website",
-    jsonLd: settings
-      ? breadcrumbJsonLd(settings, [
-          { name: "Início", path: "/" },
-          { name: "Marcas e parcerias", path: "/marcas-e-parcerias" },
-        ])
-      : undefined,
   });
 
   return (

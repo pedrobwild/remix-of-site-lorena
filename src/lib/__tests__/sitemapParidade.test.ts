@@ -28,7 +28,6 @@ const ROTAS_INDEXAVEIS = [
   { path: "/faq", priority: "0.7", changefreq: "monthly" },
   { path: "/autorizacao-condominio", priority: "0.7", changefreq: "monthly" },
   { path: "/contato", priority: "0.7", changefreq: "monthly" },
-  { path: "/mapa", priority: "0.7", changefreq: "monthly" },
   { path: "/mapa-do-site", priority: "0.5", changefreq: "weekly" },
   { path: "/servicos", priority: "0.9", changefreq: "monthly" },
   { path: "/escopo", priority: "0.7", changefreq: "monthly" },
@@ -44,7 +43,6 @@ const ROTAS_INDEXAVEIS = [
   { path: "/marcas-e-parcerias", priority: "0.7", changefreq: "monthly" },
   { path: "/guia-do-investidor", priority: "0.8", changefreq: "monthly" },
   { path: "/privacidade", priority: "0.3", changefreq: "yearly" },
-  { path: "/preferencias-de-cookies", priority: "0.3", changefreq: "yearly" },
   { path: "/acessibilidade", priority: "0.3", changefreq: "yearly" },
 ];
 
@@ -59,6 +57,10 @@ const router = read("src/lib/useHashRoute.ts");
 const NAO_INDEXAVEIS: Record<string, string> = {
   "/o": "src/pages/LpObraPage.tsx",
   "/p": "src/pages/LpPanfletoPage.tsx",
+  // Repete o endereço e o mapa de /contato (TEC-05, auditoria de 05/10/2026).
+  "/mapa": "src/pages/MapaPage.tsx",
+  // Página de configuração de cookies: nada a indexar.
+  "/preferencias-de-cookies": "src/pages/PreferenciasCookiesPage.tsx",
 };
 
 /**

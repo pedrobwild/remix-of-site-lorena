@@ -476,7 +476,7 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
               className="bwh-mono"
               style={{ color: "var(--dink2)", marginTop: 24 }}
             >
-              +160 reformas entregues · +200 projetos
+              +188 reformas entregues · +200 projetos
             </div>
           </div>
         </section>

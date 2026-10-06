@@ -6,6 +6,7 @@
  * `seoHead` (sem BreadcrumbList solta).
  */
 import { bewildCategoryLabel, type BewildPost } from "@/lib/useBewildPosts";
+import { bewildTypeLabel, type BewildProjectType } from "@/lib/useBewildProjects";
 import { postAuthorJsonLd, postDates } from "@/lib/postSeo";
 import { itemListJsonLd, projectJsonLd } from "@/lib/useSeo";
 import { extractYouTubeEmbeds, youtubeEmbedUrl, youtubeThumbnailUrl } from "@/lib/youtube";
@@ -16,7 +17,43 @@ export type JsonLdNode = Record<string, unknown>;
 
 const BASE = "https://bewild.com.br";
 
-/** Article (+ FAQPage quando o post tem FAQ). */
+const abs = (u: string) => (u.startsWith("http") ? u : `${BASE}${u.startsWith("/") ? u : `/${u}`}`);
+
+/**
+ * VideoObject para o vídeo que o post incorpora (`<video poster … ><source src …>`),
+ * só quando ele existe no corpo: o Google exige que o vídeo esteja na página.
+ * Nome = legenda da figura ou aria-label do vídeo; data = publicação do post.
+ */
+export function postVideoJsonLd(post: Pick<BewildPost, "body" | "title" | "meta_description" | "excerpt" | "slug" | "published_at" | "created_at">): JsonLdNode | null {
+  const body = post.body || "";
+  const video = body.match(/<video\b[^>]*>[\s\S]*?<\/video>/i)?.[0];
+  if (!video) return null;
+  const src = video.match(/<source\b[^>]*\bsrc="([^"]+)"/i)?.[1] || video.match(/\bsrc="([^"]+)"/i)?.[1];
+  const poster = video.match(/\bposter="([^"]+)"/i)?.[1];
+  if (!src || !poster) return null;
+  const end = body.indexOf(video) + video.length;
+  const caption = body
+    .slice(end, end + 400)
+    .match(/^\s*<figcaption>([\s\S]*?)<\/figcaption>/i)?.[1]
+    ?.replace(/<[^>]+>/g, "")
+    .trim();
+  const label = video.match(/\baria-label="([^"]+)"/i)?.[1]?.replace(/^V[ií]deo:\s*/i, "").trim();
+  const dates = postDates(post);
+  return {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: label || caption || post.title,
+    description: post.meta_description || post.excerpt || post.title,
+    thumbnailUrl: [abs(poster)],
+    contentUrl: abs(src),
+    uploadDate: dates.published,
+    inLanguage: "pt-BR",
+    publisher: { "@id": `${BASE}/#org` },
+    url: `${BASE}/conteudos/${post.slug}`,
+  };
+}
+
+/** Article (+ FAQPage quando o post tem FAQ, + VideoObject quando tem vídeo). */
 export function postJsonLd(post: BewildPost): JsonLdNode[] {
   const articleUrl = `${BASE}/conteudos/${post.slug}`;
   const dates = postDates(post);
@@ -60,6 +97,9 @@ export function postJsonLd(post: BewildPost): JsonLdNode[] {
       isPartOf: { "@type": "WebPage", "@id": articleUrl },
     });
   }
+  // Vídeo próprio (<video poster><source src>) no corpo: mesmo VideoObject, com o arquivo.
+  const video = postVideoJsonLd(post);
+  if (video) arr.push(video);
   if (post.faq && post.faq.length > 0) {
     arr.push({
       "@context": "https://schema.org",
@@ -99,7 +139,12 @@ export function projectListJsonLd(
   return [
     itemListJsonLd(
       null as never,
-      projects.map((p) => ({ name: p.title, path: `/portfolio/${p.slug}`, image: p.cover_url ?? undefined })),
+      // Nome sem o código interno do cliente, como no <title> e no H1 do projeto.
+      projects.map((p) => ({
+        name: projectFriendlyName(p) || p.title,
+        path: `/portfolio/${p.slug}`,
+        image: p.cover_url ?? undefined,
+      })),
     ),
   ];
 }
@@ -123,7 +168,8 @@ export function projectPageJsonLd(project: ProjectLd): JsonLdNode[] {
       summary: projectMetaDescription(project, "Apartamento reformado pela Bewild em São Paulo-SP."),
       cover: project.og_image_url ?? project.cover_url ?? undefined,
       location: project.neighborhood ?? project.location ?? undefined,
-      tag: project.project_type ?? undefined,
+      // Rótulo legível ("Short stay"), não o código do banco ("short_stay").
+      tag: project.project_type ? bewildTypeLabel(project.project_type as BewildProjectType) : undefined,
     }),
   ];
 }

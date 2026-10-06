@@ -1,4 +1,6 @@
 import { formatAreaM2 } from "@/lib/formatArea";
+import { bairroAreaRange, bairroDescription } from "@/lib/bairroSeo";
+import { bairroContent } from "@/content/bairros";
 /**
  * BairroPage — /reforma/<bairro>. Lista os projetos reais entregues num
  * bairro de São Paulo (só bairros com MIN_PROJECTS_PER_NEIGHBORHOOD+).
@@ -64,20 +66,13 @@ export default function BairroPage({
     return () => io.disconnect();
   }, [hasMore, list.length, visibleCount]);
   const label = page?.label ?? "";
-  const areas = list.map((p) => p.area_m2).filter((n): n is number => !!n);
   // Metragem sempre por formatAreaM2 (pt-BR, vírgula decimal): "24,5 a 35,12 m²".
-  const areaNum = (n: number) => (formatAreaM2(n) ?? "").replace(/\s*m²$/, "");
-  const faixa = areas.length
-    ? Math.min(...areas) === Math.max(...areas)
-      ? formatAreaM2(areas[0])
-      : `${areaNum(Math.min(...areas))} a ${areaNum(Math.max(...areas))} m²`
-    : null;
+  const faixa = bairroAreaRange(list);
+  const content = bairroContent(slug);
 
   useSeo({
     title: `Reforma de apartamento em ${label || "São Paulo"}: projetos e orçamento | Bewild`,
-    description: `${list.length} apartamentos reformados pela Bewild em ${label}, São Paulo${
-      faixa ? ` (${faixa})` : ""
-    }: fotos reais de cada obra e orçamento sem custo para o seu imóvel no bairro.`,
+    description: bairroDescription(list.length, label, faixa),
     canonicalPath: `/reforma/${slug}`,
     ogType: "website",
     ogImage: list[0]?.cover_url ?? undefined,
@@ -189,6 +184,44 @@ export default function BairroPage({
                 </>
               )}
               </>
+            )}
+
+            {content && page && (
+              <div className="bwh-bairro-texto" style={{ marginTop: 56, maxWidth: 820 }}>
+                <h2 className="bwh-h2" style={{ marginBottom: 20 }}>
+                  Reformar em <em>{label}</em>: o que muda
+                </h2>
+                {content.intro.map((t, i) => (
+                  <p key={i} style={{ margin: "0 0 16px", fontSize: 17, lineHeight: 1.65 }}>
+                    {t}
+                  </p>
+                ))}
+
+                <h2 className="bwh-mono bwh-label" style={{ margin: "40px 0 16px" }}>
+                  Perguntas frequentes sobre reforma em {label}
+                </h2>
+                <dl style={{ margin: 0 }}>
+                  {content.faq.map((f) => (
+                    <div key={f.q} style={{ marginBottom: 18 }}>
+                      <dt style={{ fontWeight: 600, marginBottom: 6 }}>{f.q}</dt>
+                      <dd style={{ margin: 0, fontSize: 16, lineHeight: 1.6 }}>{f.a}</dd>
+                    </div>
+                  ))}
+                </dl>
+
+                <h2 className="bwh-mono bwh-label" style={{ margin: "40px 0 16px" }}>
+                  Leia também
+                </h2>
+                <ul style={{ margin: 0, paddingLeft: 20, display: "grid", gap: 8 }}>
+                  {content.posts.map((l) => (
+                    <li key={l.href}>
+                      <a href={l.href} style={{ textDecoration: "underline" }}>
+                        {l.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
 
             {others.length > 0 && (

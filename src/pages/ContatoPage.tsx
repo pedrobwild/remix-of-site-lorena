@@ -24,7 +24,7 @@ import {
   useLeadSubmit,
 } from "@/lib/useLeadSubmit";
 import { routes } from "@/lib/useHashRoute";
-import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
+import { useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./contato.css";
 
@@ -193,14 +193,6 @@ export default function ContatoPage() {
       "Fale com o time de arquitetura e engenharia da Bewild sobre seu projeto e a reforma do apartamento. WhatsApp, e-mail e escritório no Brooklin, São Paulo-SP.",
     canonicalPath: "/contato",
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Contato", path: "/contato" },
-          ]),
-        ]
-      : undefined,
   });
 
   const primeiroNome = nome.trim().split(" ")[0];
