@@ -47,4 +47,4 @@ User-agent: BLEXBot
 Disallow: /
 
 # Sitemap
-Sitemap: https://www.bewild.com.br/sitemap.xml
+Sitemap: https://bewild.com.br/sitemap.xml
