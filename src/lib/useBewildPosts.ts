@@ -18,6 +18,7 @@ export type BewildPost = {
   title: string;
   meta_title: string | null;
   meta_description: string | null;
+  og_image?: string | null;
   category: BewildPostCategory | null;
   excerpt: string | null;
   cover_image: string | null;

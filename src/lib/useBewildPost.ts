@@ -11,7 +11,7 @@ import { devWarn } from "@/lib/devLog";
 import { normalizeBewildPost, type BewildPost, type BewildPostCategory } from "@/lib/useBewildPosts";
 
 export const POST_SELECT_COLS =
-  "id, slug, title, meta_title, meta_description, category, excerpt, cover_image, body, faq, reading_time, author, featured, published, published_at, created_at, updated_at";
+  "id, slug, title, meta_title, meta_description, og_image, category, excerpt, cover_image, body, faq, reading_time, author, featured, published, published_at, created_at, updated_at";
 
 /**
  * Estado sempre coerente com o `slug` ATUAL: a troca de slug zera o post na

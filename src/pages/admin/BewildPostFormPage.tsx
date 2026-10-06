@@ -33,6 +33,8 @@ type PostRow = {
   title: string;
   meta_title: string | null;
   meta_description: string | null;
+  og_image: string | null;
+  focus_keyword: string | null;
   category: string | null;
   excerpt: string | null;
   cover_image: string | null;
@@ -116,6 +118,8 @@ type PostSnapshot = {
   author: string;
   metaTitle: string;
   metaDescription: string;
+  ogImage: string;
+  focusKeyword: string;
   featured: boolean;
   published: boolean;
   faq: FaqItem[];
@@ -131,6 +135,8 @@ const EMPTY_SNAPSHOT: PostSnapshot = {
   author: "Equipe Bewild",
   metaTitle: "",
   metaDescription: "",
+  ogImage: "",
+  focusKeyword: "",
   featured: false,
   published: false,
   faq: [],
@@ -194,6 +200,9 @@ export default function BewildPostFormPage({ slug }: Props) {
   const [author, setAuthor] = useState("Equipe Bewild");
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
+  const [ogImage, setOgImage] = useState("");
+  const [focusKeyword, setFocusKeyword] = useState("");
+  const [uploadingOg, setUploadingOg] = useState(false);
   const [featured, setFeatured] = useState(false);
   const [published, setPublished] = useState(false);
   const [publishedAt, setPublishedAt] = useState<string | null>(null);
@@ -285,6 +294,22 @@ export default function BewildPostFormPage({ slug }: Props) {
     });
   }
 
+  async function handleOgFile(file: File | undefined) {
+    if (!file) return;
+    setError(null);
+    setUploadingOg(true);
+    try {
+      const up = await uploadImageGeneric(file, "blog-images", folder);
+      setOgImage(up.jpeg.lg);
+    } catch (err) {
+      setError(
+        `Falha ao enviar a imagem de compartilhamento: ${err instanceof Error ? err.message : String(err)}`
+      );
+    } finally {
+      setUploadingOg(false);
+    }
+  }
+
   async function handleCoverFile(file: File | undefined) {
     if (!file) return;
     setError(null);
@@ -342,6 +367,8 @@ export default function BewildPostFormPage({ slug }: Props) {
       setAuthor(p.author ?? "Equipe Bewild");
       setMetaTitle(p.meta_title ?? "");
       setMetaDescription(p.meta_description ?? "");
+      setOgImage(p.og_image ?? "");
+      setFocusKeyword(p.focus_keyword ?? "");
       setFeatured(!!p.featured);
       setPublished(!!p.published);
       setPublishedAt(p.published_at);
@@ -358,6 +385,8 @@ export default function BewildPostFormPage({ slug }: Props) {
           author: p.author ?? "Equipe Bewild",
           metaTitle: p.meta_title ?? "",
           metaDescription: p.meta_description ?? "",
+          ogImage: p.og_image ?? "",
+          focusKeyword: p.focus_keyword ?? "",
           featured: !!p.featured,
           published: !!p.published,
           faq: toFaqList(p.faq),
@@ -390,11 +419,13 @@ export default function BewildPostFormPage({ slug }: Props) {
         author,
         metaTitle,
         metaDescription,
+        ogImage,
+        focusKeyword,
         featured,
         published,
         faq,
       } satisfies PostSnapshot),
-    [title, currentSlug, category, excerpt, coverImage, body, author, metaTitle, metaDescription, featured, published, faq],
+    [title, currentSlug, category, excerpt, coverImage, body, author, metaTitle, metaDescription, ogImage, focusKeyword, featured, published, faq],
   );
   const dirty = !loading && !loadError && snapshot !== baseline;
   useUnsavedChangesGuard(dirty && !saving);
@@ -438,6 +469,8 @@ export default function BewildPostFormPage({ slug }: Props) {
       author: author.trim() || "Equipe Bewild",
       meta_title: metaTitle.trim() || null,
       meta_description: metaDescription.trim() || null,
+      og_image: ogImage.trim() || null,
+      focus_keyword: focusKeyword.trim() || null,
       featured,
       published,
       reading_time: readingTime,
@@ -901,6 +934,78 @@ export default function BewildPostFormPage({ slug }: Props) {
                 <span className="hint">{metaDescription.length}/170 — usa o resumo se vazio.</span>
               </div>
             </div>
+
+            <SeoPreview
+              title={metaTitle.trim() || `${title.trim() || "Título do post"} | Bewild`}
+              description={
+                metaDescription.trim() ||
+                excerpt.trim() ||
+                "Guias práticos da Bewild sobre arquitetura, engenharia e reforma de apartamento em São Paulo."
+              }
+              slug={currentSlug || "endereco-do-post"}
+            />
+
+            <div className="bw-admin__field" style={{ marginTop: 16 }}>
+              <label htmlFor="post-focus-kw">Palavra-chave principal</label>
+              <input
+                id="post-focus-kw"
+                className="bw-admin__input"
+                type="text"
+                value={focusKeyword}
+                onChange={(e) => setFocusKeyword(e.target.value)}
+                maxLength={80}
+                placeholder="ex.: reforma de studio"
+              />
+              <KeywordChecks
+                keyword={focusKeyword}
+                checks={[
+                  { label: "Meta title", text: metaTitle || title },
+                  { label: "Meta description", text: metaDescription || excerpt },
+                  { label: "Endereço (slug)", text: currentSlug.replace(/-/g, " ") },
+                  { label: "Texto do post", text: body.replace(/<[^>]+>/g, " ") },
+                ]}
+              />
+            </div>
+
+            <div className="bw-admin__field" style={{ marginTop: 16 }}>
+              <label htmlFor="post-og-image">Imagem de compartilhamento (WhatsApp e redes)</label>
+              <input
+                id="post-og-image"
+                className="bw-admin__input"
+                type="url"
+                value={ogImage}
+                onChange={(e) => setOgImage(e.target.value)}
+                placeholder="https://… (vazio = usa a capa)"
+              />
+              <div style={{ display: "flex", gap: 10, alignItems: "center", marginTop: 8, flexWrap: "wrap" }}>
+                <label className="bw-admin__btn" style={{ cursor: uploadingOg ? "wait" : "pointer" }}>
+                  {uploadingOg ? "Enviando…" : "Enviar imagem"}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    disabled={uploadingOg}
+                    onChange={(e) => {
+                      void handleOgFile(e.target.files?.[0]);
+                      e.target.value = "";
+                    }}
+                  />
+                </label>
+                {ogImage && (
+                  <button type="button" className="bw-admin__btn" onClick={() => setOgImage("")}>
+                    Remover
+                  </button>
+                )}
+              </div>
+              <span className="hint">Ideal 1200×630 px. Se vazio, usa a imagem de capa.</span>
+              {(ogImage || coverImage) && (
+                <img
+                  src={ogImage || coverImage}
+                  alt="Prévia da imagem de compartilhamento"
+                  style={{ marginTop: 8, width: 300, maxWidth: "100%", aspectRatio: "1200/630", objectFit: "cover", borderRadius: 6, border: "1px solid var(--bw-line, #ddd)" }}
+                />
+              )}
+            </div>
           </details>
 
           <div className="bw-admin__form-foot">
@@ -933,5 +1038,60 @@ export default function BewildPostFormPage({ slug }: Props) {
         </form>
       )}
     </BewildAdminShell>
+  );
+}
+
+/** Prévia aproximada do resultado na busca do Google. */
+function SeoPreview({ title, description, slug }: { title: string; description: string; slug: string }) {
+  const tLen = title.length;
+  const dLen = description.length;
+  const cut = (v: string, n: number) => (v.length > n ? v.slice(0, n - 1).trimEnd() + "…" : v);
+  return (
+    <div style={{ marginTop: 16 }}>
+      <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Prévia no Google</div>
+      <div
+        style={{
+          border: "1px solid var(--bw-line, #ddd)",
+          borderRadius: 8,
+          padding: "12px 14px",
+          background: "var(--bw-white, #fff)",
+          maxWidth: 600,
+          fontFamily: "Arial, sans-serif",
+        }}
+      >
+        <div style={{ fontSize: 12, color: "#4d5156", overflowWrap: "anywhere" }}>
+          bewild.com.br › conteudos › {slug}
+        </div>
+        <div style={{ fontSize: 18, color: "#1a0dab", lineHeight: 1.3, margin: "4px 0" }}>{cut(title, 62)}</div>
+        <div style={{ fontSize: 13, color: "#4d5156", lineHeight: 1.5 }}>{cut(description, 158)}</div>
+      </div>
+      <span className="hint">
+        Título: {tLen} caracteres {tLen > 62 ? "— pode ser cortado (ideal até 60)" : tLen < 30 ? "— curto (ideal 30 a 60)" : "— ok"}
+        {" · "}
+        Descrição: {dLen} caracteres {dLen > 158 ? "— pode ser cortada (ideal 120 a 158)" : dLen < 120 ? "— curta (ideal 120 a 158)" : "— ok"}
+      </span>
+    </div>
+  );
+}
+
+function foldText(v: string) {
+  return v.toLocaleLowerCase("pt-BR").normalize("NFD").replace(/\p{M}/gu, "");
+}
+
+/** Mostra onde a palavra-chave principal aparece (ignora acentos e caixa). */
+function KeywordChecks({ keyword, checks }: { keyword: string; checks: Array<{ label: string; text: string }> }) {
+  const kw = foldText(keyword.trim());
+  if (!kw) return <span className="hint">Opcional — usada só para conferir o texto; não aparece no site.</span>;
+  return (
+    <ul style={{ listStyle: "none", padding: 0, margin: "8px 0 0", fontSize: 13, display: "grid", gap: 4 }}>
+      {checks.map((c) => {
+        const ok = foldText(c.text).includes(kw);
+        return (
+          <li key={c.label}>
+            <span aria-hidden>{ok ? "✓" : "✗"}</span> {c.label}: {ok ? "contém a palavra-chave" : "não contém"}
+          </li>
+        );
+      })}
+    </ul>
   );
 }

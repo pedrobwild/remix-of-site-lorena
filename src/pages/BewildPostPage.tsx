@@ -201,7 +201,11 @@ export default function BewildPostPage({ slug, initial }: Props) {
     keywords: post ? keywordsForPost(post.slug) : undefined,
     canonicalPath: post ? `/conteudos/${post.slug}` : `/conteudos/${slug}`,
     ogType: "article",
-    ogImage: post?.cover_image ? optimizedImageUrl(post.cover_image) : undefined,
+    ogImage: post?.og_image
+      ? post.og_image
+      : post?.cover_image
+        ? optimizedImageUrl(post.cover_image)
+        : undefined,
     noindex: notFound,
     jsonLd: fallbackJsonLd,
   });
