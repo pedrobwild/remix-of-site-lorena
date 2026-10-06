@@ -65,6 +65,18 @@ type FullscreenCapable = HTMLElement & { webkitRequestFullscreen?: () => void };
 
 const ACTIVE_ATTR = "data-tour3d-active";
 
+/**
+ * Atributo no `<html>` enquanto o tour está aberto em tela cheia: é ele que
+ * trava a rolagem da página atrás do diálogo (regra em home-bwa.css).
+ *
+ * Era `html:has(.bwa-tour3d-dialog[open])` no CSS. Com `:has()` ancorado no
+ * `<html>`, o navegador reavalia o `<html>` a cada nó inserido ou texto
+ * trocado em QUALQUER ponto da página — e, no Chrome, recalcular o estilo do
+ * `<html>` recalcula o documento inteiro. Medido na home (celular intermediário
+ * simulado): ~85 ms por alteração do DOM, do menu ao acordeão (MOB-03).
+ */
+export const TOUR3D_OPEN_ATTR = "data-bwa-tour3d-open";
+
 function createTourIframe(card: Card, eager: boolean, onLoad: () => void): HTMLIFrameElement {
   const iframe = document.createElement("iframe");
   // `loading` antes do `src`: o pedido só sai quando o iframe entra no DOM.
@@ -82,6 +94,35 @@ function createTourIframe(card: Card, eager: boolean, onLoad: () => void): HTMLI
 function isFullscreen(el: Element): boolean {
   const doc = document as Document & { webkitFullscreenElement?: Element | null };
   return (document.fullscreenElement ?? doc.webkitFullscreenElement ?? null) === el;
+}
+
+/** No bloco `[data-tour3d]` quando as fotos de capa já podem ser baixadas (home-bwa.css). */
+export const TOUR3D_COVERS_ATTR = "data-tour3d-covers";
+
+/**
+ * Fotos de capa dos 3 cards (imagens de fundo, 126 kB): liberadas quando o
+ * bloco chega a uma tela de distância. Antes eram baixadas no carregamento da
+ * home por todo visitante, mesmo por quem nunca rola até o tour (MOB-08).
+ * Instalador separado do `installTour3d` — não depende de consentimento.
+ */
+export function installTour3dCovers(root: HTMLElement): Cleanup {
+  const block = root.querySelector<HTMLElement>("[data-tour3d]");
+  if (!block) return () => {};
+  const show = () => block.setAttribute(TOUR3D_COVERS_ATTR, "");
+  if (typeof IntersectionObserver === "undefined") {
+    show();
+    return () => {};
+  }
+  const io = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      io.disconnect();
+      show();
+    },
+    { rootMargin: "800px 0px" }
+  );
+  io.observe(block);
+  return () => io.disconnect();
 }
 
 export function installTour3d(root: HTMLElement): Cleanup {
@@ -170,15 +211,25 @@ export function installTour3d(root: HTMLElement): Cleanup {
     dialogStage?.removeAttribute("data-tour3d-state");
   };
 
+  const setPageLocked = (locked: boolean) => {
+    document.documentElement.toggleAttribute(TOUR3D_OPEN_ATTR, locked);
+  };
+
+  /** Diálogo fechado (botão, Esc, voltar): tira o iframe e devolve a rolagem. */
+  const onDialogClosed = () => {
+    releaseDialogFrame();
+    setPageLocked(false);
+  };
+
   const closeDialog = () => {
     if (!dialog) return;
     if (typeof dialog.close === "function") {
-      if (dialog.open) dialog.close(); // dispara "close" → releaseDialogFrame
+      if (dialog.open) dialog.close(); // dispara "close" → onDialogClosed
       return;
     }
     // Navegador sem <dialog> nativo.
     dialog.removeAttribute("open");
-    releaseDialogFrame();
+    onDialogClosed();
     fallbackReturnFocus?.focus({ preventScroll: true });
     fallbackReturnFocus = null;
   };
@@ -199,7 +250,7 @@ export function installTour3d(root: HTMLElement): Cleanup {
       '<p class="bwa-tour3d-dialog-hint">Arraste para olhar em volta</p>';
     dialogTitle = el.querySelector<HTMLElement>(".bwa-tour3d-dialog-title");
     dialogStage = el.querySelector<HTMLElement>("[data-tour3d-stage]");
-    el.addEventListener("close", releaseDialogFrame, { signal });
+    el.addEventListener("close", onDialogClosed, { signal });
     el.addEventListener(
       "click",
       (event) => {
@@ -231,11 +282,13 @@ export function installTour3d(root: HTMLElement): Cleanup {
       // Top layer: foco preso no diálogo, resto da página inerte, Esc fecha e
       // o foco volta sozinho para o botão que abriu.
       if (!el.open) el.showModal();
+      setPageLocked(true);
       return;
     }
     fallbackReturnFocus =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
     el.setAttribute("open", "");
+    setPageLocked(true);
     el.querySelector<HTMLElement>("[data-tour3d-close]")?.focus({ preventScroll: true });
   };
 
@@ -357,5 +410,7 @@ export function installTour3d(root: HTMLElement): Cleanup {
       dialog.remove();
       dialog = null;
     }
+    // O "close" do diálogo não chega mais aqui (listeners já abortados).
+    setPageLocked(false);
   };
 }

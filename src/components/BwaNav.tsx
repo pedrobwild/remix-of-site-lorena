@@ -4,9 +4,8 @@ import { whatsappHref } from "@/components/landing/content";
 import { NAV_PARCEIROS } from "@/content/incorporadoras";
 import { useIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
 import { withUtm } from "@/lib/utm";
-import homeBwaCssUrl from "../pages/home-bwa.css?url";
-import bwaInternalCssUrl from "../pages/bwa-internal.css?url";
-import { BWA_HOME_CSS_MARKER, BWA_INTERNAL_CSS_MARKER } from "@/lib/routeHead";
+import { BwaInternalStylesheets } from "@/components/BwaStylesheets";
+import { keepBwaStylesheetsLast } from "@/lib/bwaStylesheetOrder";
 import { initBwaNav } from "../pages/home-bwa-script";
 
 /** Mesma mensagem do atalho do WhatsApp no menu da home (home-bwa-body.ts). */
@@ -14,10 +13,17 @@ const MENU_WHATSAPP_TEXT = "Olá, quero falar com a Bewild sobre meu apartamento
 
 /**
  * BwaNav — Header .bwa unificado (nav desktop + menu mobile), idêntico ao
- * da home. Autoinjeta home-bwa.css + bwa-internal.css como ÚLTIMAS folhas do
+ * da home. Carrega home-bwa.css + bwa-internal.css como ÚLTIMAS folhas do
  * <head> (para vencer preflight/temas legados) e inicializa initBwaNav
  * (idempotente, restrito a este componente). Usado em toda página pública
  * fora da home.
+ *
+ * As duas folhas saem no HTML do servidor por dois caminhos que apontam para
+ * o mesmo recurso (o React não duplica): o `seoHead()` de cada rota
+ * (src/lib/routeHead.ts) e este componente (BwaStylesheets.tsx), que cobre a
+ * página 404 e qualquer rota cujo `head` não passe pelo `seoHead`. Antes
+ * eram criadas num efeito, depois da hidratação, e a página aparecia primeiro
+ * no tema escuro legado para só então trocar de tema e de layout.
  *
  * Menu mobile acessível (em home-bwa-script.ts): ao abrir, o foco vai para
  * o primeiro link, o Tab fica preso no header + menu e o resto da página
@@ -32,50 +38,24 @@ export default function BwaNav() {
   const itensParceiros = NAV_PARCEIROS.items.filter((item) => !item.gated || incorporadorasOn);
 
   useEffect(() => {
-    // Os <link> normalmente já vêm do servidor (seoHead em src/lib/routeHead.ts);
-    // aqui só garantimos que existam e que fiquem por último no <head>.
-    const marker1 = BWA_HOME_CSS_MARKER;
-    const marker2 = BWA_INTERNAL_CSS_MARKER;
-    let homeLink = document.head.querySelector<HTMLLinkElement>(`link[${marker1}]`);
-    if (!homeLink) {
-      homeLink = document.createElement("link");
-      homeLink.rel = "stylesheet";
-      homeLink.href = homeBwaCssUrl;
-      homeLink.setAttribute(marker1, "");
-      document.head.appendChild(homeLink);
-    } else {
-      document.head.appendChild(homeLink);
-    }
-    let intLink = document.head.querySelector<HTMLLinkElement>(`link[${marker2}]`);
-    if (!intLink) {
-      intLink = document.createElement("link");
-      intLink.rel = "stylesheet";
-      intLink.href = bwaInternalCssUrl;
-      intLink.setAttribute(marker2, "");
-      document.head.appendChild(intLink);
-    } else {
-      document.head.appendChild(intLink);
-    }
-    // Fontes: Manrope e JetBrains Mono, hospedadas no site (src/fonts.css).
-
-    document.documentElement.classList.add("bwa-home-root");
-    document.body.classList.add("bwa-home-root");
+    // Navegação interna: o CSS da página nova entra no fim do <head>, depois
+    // das folhas .bwa; elas voltam para o fim (na carga direta já estão lá).
+    keepBwaStylesheetsLast();
     const cleanupNav = initBwaNav(ref.current);
 
     return () => {
       cleanupNav();
-      document.documentElement.classList.remove("bwa-home-root");
-      document.body.classList.remove("bwa-home-root");
       // As folhas .bwa são mantidas de propósito no <head>: remover e recriar o
       // <link> a cada navegação entre internas abre uma janela de repaint sem
       // estilo. O vazamento de paleta que isso poderia causar está coberto na
       // origem — /diagnostico injeta a própria folha por último e as LPs
-      // definem o fundo com `body:has(.bw-lp)`, de especificidade maior.
+      // definem o próprio fundo (ver src/styles/bw-lp.css).
     };
   }, []);
 
   return (
     <div ref={ref}>
+      <BwaInternalStylesheets />
       <a className="bwa-skip" href="#main">Pular para o conteúdo</a>
 
       <header className="bwa-nav bwa-nav--internal" data-nav>

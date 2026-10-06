@@ -38,8 +38,11 @@ const MENU_OPEN_CLASS = "bwa-menu-open";
  * No <html> enquanto o foco está num campo de texto: no celular, a barra
  * "Solicitar orçamento" e o botão "Dúvidas" saem da frente do teclado
  * (home-bwa.css e site-assistant.css).
+ *
+ * É um atributo, não uma classe: trocar uma classe no <html> fazia o Chrome
+ * recalcular o estilo do documento inteiro a cada toque num campo (MOB-03).
  */
-const TYPING_CLASS = "bwa-typing";
+const TYPING_ATTR = "data-bwa-typing";
 /** Acima desta largura o header mostra os links e o menu mobile some (home-bwa.css). */
 const DESKTOP_NAV_QUERY = "(min-width: 1181px)";
 /** Até esta largura a lista das disciplinas vira acordeão (só os títulos à vista). */
@@ -277,18 +280,21 @@ function installNavDropdowns(root: HTMLElement, signal: AbortSignal): Cleanup {
 }
 
 /* =========================================================================
- * `bwa-typing` no <html> enquanto um campo de texto tem o foco (formulário
- * do rodapé, /orcamento...). Escuta o document porque os campos ficam fora
- * da raiz do header; a limpeza tira a classe.
+ * `data-bwa-typing` no <html> enquanto um campo de texto tem o foco
+ * (formulário do rodapé, /orcamento...). Escuta o document porque os campos
+ * ficam fora da raiz do header; a limpeza tira o atributo.
  * ========================================================================= */
 function installTypingState(signal: AbortSignal): Cleanup {
   const html = document.documentElement;
-  const set = (typing: boolean) => html.classList.toggle(TYPING_CLASS, typing);
+  const set = (typing: boolean) => {
+    // Só escreve quando muda: de um campo para o outro nada é tocado.
+    if (html.hasAttribute(TYPING_ATTR) !== typing) html.toggleAttribute(TYPING_ATTR, typing);
+  };
   set(isTextEntry(document.activeElement));
   document.addEventListener("focusin", (event) => set(isTextEntry(event.target)), { signal });
   // Foco indo de um campo para outro: `relatedTarget` já é o próximo campo.
   document.addEventListener("focusout", (event) => set(isTextEntry(event.relatedTarget)), { signal });
-  return () => html.classList.remove(TYPING_CLASS);
+  return () => html.removeAttribute(TYPING_ATTR);
 }
 
 /* =========================================================================
@@ -318,7 +324,32 @@ function installNavChrome(root: HTMLElement, signal: AbortSignal): Cleanup {
 
   const keep = nav ? [nav, menu] : [button, menu];
   let open = false;
-  let releaseInert: Cleanup = NOOP;
+
+  /*
+   * `inert` no resto da página entra (e sai) um quadro DEPOIS de o menu
+   * aparecer (ou sumir). Marcar a página inteira como inerte obriga o
+   * navegador a recalcular o estilo de quase todos os elementos; feito dentro
+   * do toque, isso segurava a abertura do menu (~100 ms num celular
+   * intermediário — MOB-05). O foco já está no menu e o Tab já está preso
+   * (trapTab) antes disso; a limpeza do componente desfaz na hora.
+   */
+  let undoInert: Cleanup | null = null;
+  let inertSeq = 0;
+  /** Devolve a função que leva o `inert` ao estado pedido — só a última pedida vale. */
+  const inertSync = (wanted: boolean): (() => void) => {
+    const seq = ++inertSeq;
+    return () => {
+      if (seq !== inertSeq) return;
+      if (wanted && !undoInert) undoInert = inertOutside(keep);
+      else if (!wanted && undoInert) {
+        undoInert();
+        undoInert = null;
+      }
+    };
+  };
+  const afterPaint = (run: () => void) => {
+    window.requestAnimationFrame(() => window.requestAnimationFrame(run));
+  };
 
   const setOpen = (next: boolean, restoreFocus = false) => {
     if (next === open) return;
@@ -326,14 +357,9 @@ function installNavChrome(root: HTMLElement, signal: AbortSignal): Cleanup {
     body.classList.toggle(MENU_OPEN_CLASS, next);
     button.setAttribute("aria-expanded", String(next));
     button.setAttribute("aria-label", next ? "Fechar menu" : "Abrir menu");
-    if (next) {
-      releaseInert = inertOutside(keep);
-      (focusablesIn([menu])[0] ?? button).focus({ preventScroll: true });
-    } else {
-      releaseInert();
-      releaseInert = NOOP;
-      if (restoreFocus) button.focus({ preventScroll: true });
-    }
+    afterPaint(inertSync(next));
+    if (next) (focusablesIn([menu])[0] ?? button).focus({ preventScroll: true });
+    else if (restoreFocus) button.focus({ preventScroll: true });
   };
 
   // Estado inicial coerente: menu fechado.
@@ -374,6 +400,8 @@ function installNavChrome(root: HTMLElement, signal: AbortSignal): Cleanup {
 
   return () => {
     setOpen(false);
+    // Desmontando: nada de esperar o próximo quadro para soltar a página.
+    inertSync(false)();
     release();
   };
 }
@@ -686,7 +714,7 @@ function installDisciplineAccordion(root: HTMLElement, signal: AbortSignal): Cle
  * do herói sai da tela e some de novo do fechamento (#contato, que tem os
  * próprios botões) até o fim da página — nunca duas chamadas iguais na
  * mesma tela. Nasce com `is-hidden` no HTML (sem piscar antes do script).
- * Menu aberto e teclado aberto (`bwa-typing`) também a escondem, pelo CSS.
+ * Menu aberto e teclado aberto (`data-bwa-typing`) também a escondem, pelo CSS.
  *
  * A posição é lida na rolagem (um quadro por vez), não por
  * IntersectionObserver: um salto direto do rodapé para o meio da página

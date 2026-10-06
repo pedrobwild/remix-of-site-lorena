@@ -90,6 +90,61 @@ describe("initBwaNav — menu mobile", () => {
     cleanup();
   });
 
+  it("o inert entra e sai um quadro depois do toque (não segura a abertura do menu) e a limpeza desfaz na hora", () => {
+    // Quadros controlados pelo teste (o beforeEach roda os callbacks na hora).
+    const frames: FrameRequestCallback[] = [];
+    vi.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => {
+      frames.push(cb);
+      return frames.length;
+    });
+    const frame = () => frames.splice(0).forEach((cb) => cb(0));
+    const { root, button, links, main } = mountChrome();
+    const cleanup = initBwaNav(root);
+
+    button.click();
+    // No toque: menu aberto e foco dentro dele; a página ainda não está inerte.
+    expect(document.body.classList.contains("bwa-menu-open")).toBe(true);
+    expect(document.activeElement).toBe(links[0]);
+    expect(document.querySelectorAll("[inert]")).toHaveLength(0);
+    frame(); // quadro em que o menu é pintado
+    expect(document.querySelectorAll("[inert]")).toHaveLength(0);
+    frame(); // quadro seguinte
+    expect(main.hasAttribute("inert")).toBe(true);
+
+    // Fechar: some na hora; o inert sai dois quadros depois.
+    button.click();
+    expect(document.body.classList.contains("bwa-menu-open")).toBe(false);
+    expect(main.hasAttribute("inert")).toBe(true);
+    frame();
+    frame();
+    expect(document.querySelectorAll("[inert]")).toHaveLength(0);
+
+    // Abrir e fechar antes do quadro: nada fica inerte.
+    button.click();
+    button.click();
+    frame();
+    frame();
+    expect(document.querySelectorAll("[inert]")).toHaveLength(0);
+
+    // Fechar e reabrir antes de o inert sair: continua inerte e ainda dá para desfazer.
+    button.click();
+    frame();
+    frame();
+    expect(main.hasAttribute("inert")).toBe(true);
+    button.click(); // fecha
+    button.click(); // reabre antes dos quadros
+    frame();
+    frame();
+    expect(main.hasAttribute("inert")).toBe(true);
+
+    // Desmontar com o menu aberto solta a página sem esperar quadro nenhum.
+    cleanup();
+    expect(document.querySelectorAll("[inert]")).toHaveLength(0);
+    frame();
+    frame();
+    expect(document.querySelectorAll("[inert]")).toHaveLength(0);
+  });
+
   it("clicar num link fecha o menu", () => {
     const { root, button, links } = mountChrome();
     const cleanup = initBwaNav(root);
@@ -236,7 +291,7 @@ describe("initHomeBwa", () => {
 
 /* ------------------------------------------------------------------------
  * UX mobile: barra "Solicitar orçamento", acordeão das disciplinas e
- * `bwa-typing` (teclado aberto).
+ * `data-bwa-typing` (teclado aberto).
  * ---------------------------------------------------------------------- */
 
 /** matchMedia que responde `matches` e deixa o teste disparar a troca. */
@@ -383,7 +438,7 @@ describe("initHomeBwa — disciplinas em acordeão no celular", () => {
   });
 });
 
-describe("bwa-typing — teclado aberto no celular", () => {
+describe("data-bwa-typing — teclado aberto no celular", () => {
   it("marca o <html> enquanto um campo de texto tem o foco e limpa ao desmontar", () => {
     const { root } = mountChrome();
     const form = document.createElement("form");
@@ -391,22 +446,25 @@ describe("bwa-typing — teclado aberto no celular", () => {
     document.body.appendChild(form);
     const [text, area, check, submit] = Array.from(form.elements) as HTMLElement[];
     const html = document.documentElement;
+    const classBefore = html.className;
     const cleanup = initBwaNav(root);
 
     text.focus();
-    expect(html).toHaveClass("bwa-typing");
+    expect(html).toHaveAttribute("data-bwa-typing");
     area.focus(); // de um campo para outro: continua
-    expect(html).toHaveClass("bwa-typing");
+    expect(html).toHaveAttribute("data-bwa-typing");
+    // Atributo, não classe: a classe do <html> não é tocada (MOB-03).
+    expect(html.className).toBe(classBefore);
     check.focus();
-    expect(html).not.toHaveClass("bwa-typing");
+    expect(html).not.toHaveAttribute("data-bwa-typing");
     text.focus();
     submit.focus();
-    expect(html).not.toHaveClass("bwa-typing");
+    expect(html).not.toHaveAttribute("data-bwa-typing");
 
     text.focus();
     cleanup();
-    expect(html).not.toHaveClass("bwa-typing");
+    expect(html).not.toHaveAttribute("data-bwa-typing");
     area.focus();
-    expect(html).not.toHaveClass("bwa-typing");
+    expect(html).not.toHaveAttribute("data-bwa-typing");
   });
 });

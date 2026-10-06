@@ -9,12 +9,11 @@
  * redirecionamento ativo (`seo_404_log`) com 301 ou lança `notFound()` para o
  * servidor responder 404 de verdade (a página de 404 registra no cliente).
  */
-import { marked } from "marked";
 import { notFound, redirect } from "@tanstack/react-router";
 import { lookupActiveRedirect } from "@/lib/notFoundLog";
 import { isSafeRedirectTarget } from "@/lib/seoRedirects";
 import { supabase } from "@/integrations/supabase/client";
-import { sanitizeBlogHtml } from "@/lib/sanitizeHtml";
+import { wrapArticleTables } from "@/lib/articleTables";
 import { NOT_FOUND_SEO, postSeoFrom, projectSeoFrom, bairroSeoFrom, type RouteSeoData } from "@/lib/seoLoaders";
 import { normalizeBewildPost, type BewildPost } from "@/lib/useBewildPosts";
 import { withPostCols } from "@/lib/useBewildPost";
@@ -25,18 +24,27 @@ import type { ProjectSeoPeer } from "@/lib/projectSeo";
 import { neighborhoodPages } from "@/lib/portfolioFilter";
 import type { BairroPageLink } from "@/lib/bairrosSp";
 
-marked.setOptions({ gfm: true, breaks: false });
-
 /** Lista de posts sem `body` (o índice /conteudos não usa o corpo). */
 const POST_LIST_COLS =
   "id, slug, title, meta_title, meta_description, og_image, category, excerpt, cover_image, faq, reading_time, author, featured, published, published_at, created_at";
 
-/** `null` = sanitizador falhou: a página sai só com título e resumo. */
-function renderBody(body: string | null | undefined): string | null {
+/**
+ * `null` = sanitizador falhou: a página sai só com título e resumo.
+ *
+ * `marked` e o sanitizador (dompurify + xss, ~90 kB juntos) entram por import
+ * dinâmico: este arquivo é carregado por toda rota com loader, então o import
+ * estático levava os dois para o pacote inicial de TODAS as páginas — a home
+ * no celular incluída —, quando só o artigo usa.
+ */
+async function renderBody(body: string | null | undefined): Promise<string | null> {
   if (!body) return "";
   try {
-    const raw = marked.parse(body, { async: false }) as string;
-    return sanitizeBlogHtml(raw);
+    const [{ marked }, { sanitizeBlogHtml }] = await Promise.all([
+      import("marked"),
+      import("@/lib/sanitizeHtml"),
+    ]);
+    const raw = marked.parse(body, { async: false, gfm: true, breaks: false }) as string;
+    return wrapArticleTables(sanitizeBlogHtml(raw));
   } catch {
     return null;
   }
@@ -100,7 +108,7 @@ async function fetchPostContent(slug: string): Promise<PostLoaderData> {
       related = [];
     }
 
-    return { seo: postSeoFrom(post), post, related, bodyHtml: renderBody(post.body) };
+    return { seo: postSeoFrom(post), post, related, bodyHtml: await renderBody(post.body) };
   } catch {
     return { seo: postSeoFrom(null, true) };
   }

@@ -43,3 +43,29 @@ describe("imagens da página do projeto", () => {
     expect(r.srcSet).toContain("2400w");
   });
 });
+
+describe("capas de /conteudos e do artigo (MOB-06)", () => {
+  it("capa do bucket: src redimensionado, srcSet e sizes — nunca o original", async () => {
+    const { responsiveImageProps, CONTENT_CARD_SIZES, THUMB_WIDTHS, POST_COVER_WIDTHS, POST_COVER_SIZES } = await import("@/lib/imageUrl");
+    const card = responsiveImageProps(base, THUMB_WIDTHS, 640, CONTENT_CARD_SIZES);
+    expect(card.src).toContain("/render/image/public/project-images/a/b.jpg?width=640&quality=70");
+    expect(card.srcSet!.split(", ")).toHaveLength(THUMB_WIDTHS.length);
+    expect(card.srcSet).not.toContain("/object/public/");
+    expect(card.sizes).toBe(CONTENT_CARD_SIZES);
+
+    // Capa do artigo: o src continua sendo a variante de 1200 px de sempre.
+    const cover = responsiveImageProps(base, POST_COVER_WIDTHS, 1200, POST_COVER_SIZES);
+    expect(cover.src).toContain("width=1200&quality=70");
+    expect(cover.srcSet).toContain("width=1200&quality=70 1200w");
+  });
+
+  it("imagem fora do bucket: só o src, sem srcSet nem sizes soltos", async () => {
+    const { responsiveImageProps, CONTENT_CARD_SIZES, THUMB_WIDTHS } = await import("@/lib/imageUrl");
+    for (const url of [
+      "https://bewild.com.br/images/blog/capa.png",
+      "https://x.supabase.co/storage/v1/object/public/blog-images/a/capa-lg.jpg",
+    ]) {
+      expect(responsiveImageProps(url, THUMB_WIDTHS, 640, CONTENT_CARD_SIZES)).toEqual({ src: url });
+    }
+  });
+});

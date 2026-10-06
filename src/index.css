@@ -6664,13 +6664,20 @@ textarea.admin-field__input {
 }
 
 /* Família + features uniformes em todo o escopo do admin.
-   Não força weight/size aqui — papéis abaixo cuidam disso. */
+   Não força weight/size aqui — papéis abaixo cuidam disso.
+
+   Os dois seletores "descendente de qualquer admin-*" (`[class^="admin-"] *` e
+   `[class*=" admin-"] *`) saíram desta folha, que é a do site inteiro, e
+   foram para src/styles/admin-font-scope.css, carregada só no painel
+   (ProtectedRoute e as duas molduras do admin). Motivo (MOB-03): com um
+   seletor de atributo sobre `class` seguido de `*`, o navegador passa a tratar
+   QUALQUER troca de classe, em qualquer elemento do site, como "todos os
+   descendentes podem ter mudado" — abrir o menu do celular (classe no <body>)
+   recalculava o estilo da página inteira. Não trazer de volta para cá. */
 .admin,
 .admin *,
 [class^="admin-"],
-[class*=" admin-"],
-[class^="admin-"] *,
-[class*=" admin-"] * {
+[class*=" admin-"] {
   font-family: var(--font-admin) !important;
   font-feature-settings: "ss01", "cv11", "tnum";
   -webkit-font-smoothing: antialiased;

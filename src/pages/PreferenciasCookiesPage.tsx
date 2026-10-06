@@ -12,6 +12,7 @@ import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 /* Mesmo design de /privacidade: exclusivamente as classes .bw-post/.pt-*. */
 import "@/styles/post.css";
+import { TABLE_REGION_CLASS } from "@/lib/articleTables";
 
 /**
  * /preferencias-de-cookies — página de Preferências de Cookies (LGPD).
@@ -126,46 +127,51 @@ export default function PreferenciasCookiesPage() {
               </ul>
 
               <h2>Cookies de medição e publicidade (só com aceite)</h2>
-              <table>
-                <caption>Cookies de medição e publicidade (só com aceite)</caption>
-                <thead>
-                  <tr>
-                    <th scope="col">Quem grava</th>
-                    <th scope="col">Nome</th>
-                    <th scope="col">Para quê</th>
-                    <th scope="col">Duração</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Bewild (medição própria)</td>
-                    <td>bewild_vid, bewild_sid e origem da visita</td>
-                    <td>Contar visitas e sessões e saber de onde veio a visita</td>
-                    <td>
-                      Visitante e primeira origem: 12 meses sem visitas; sessão:
-                      30 minutos sem uso; clique de anúncio: 90 dias
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Google Analytics</td>
-                    <td>_ga, _ga_*</td>
-                    <td>Medir o uso do site</td>
-                    <td>Até 2 anos</td>
-                  </tr>
-                  <tr>
-                    <td>Google Ads</td>
-                    <td>_gcl_*</td>
-                    <td>Medir conversões dos anúncios e remarketing</td>
-                    <td>90 dias</td>
-                  </tr>
-                  <tr>
-                    <td>Meta</td>
-                    <td>_fbp, _fbc</td>
-                    <td>Medir anúncios, remarketing e públicos</td>
-                    <td>90 dias</td>
-                  </tr>
-                </tbody>
-              </table>
+              {/* Região rolável: no celular a tabela tem 4 colunas e a última ("Duração")
+                  ficava cortada, sem como alcançá-la (MOB-07, ver src/lib/articleTables.ts).
+                  O nome da região é a própria legenda da tabela. */}
+              <div className={TABLE_REGION_CLASS} tabIndex={0} role="region" aria-labelledby="tabela-cookies-aceite">
+                <table>
+                  <caption id="tabela-cookies-aceite">Cookies de medição e publicidade (só com aceite)</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Quem grava</th>
+                      <th scope="col">Nome</th>
+                      <th scope="col">Para quê</th>
+                      <th scope="col">Duração</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Bewild (medição própria)</td>
+                      <td>bewild_vid, bewild_sid e origem da visita</td>
+                      <td>Contar visitas e sessões e saber de onde veio a visita</td>
+                      <td>
+                        Visitante e primeira origem: 12 meses sem visitas; sessão:
+                        30 minutos sem uso; clique de anúncio: 90 dias
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Google Analytics</td>
+                      <td>_ga, _ga_*</td>
+                      <td>Medir o uso do site</td>
+                      <td>Até 2 anos</td>
+                    </tr>
+                    <tr>
+                      <td>Google Ads</td>
+                      <td>_gcl_*</td>
+                      <td>Medir conversões dos anúncios e remarketing</td>
+                      <td>90 dias</td>
+                    </tr>
+                    <tr>
+                      <td>Meta</td>
+                      <td>_fbp, _fbc</td>
+                      <td>Medir anúncios, remarketing e públicos</td>
+                      <td>90 dias</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
               <h2>Mais detalhes</h2>
               <p>

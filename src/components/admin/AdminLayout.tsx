@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/useAuth";
 import { navigate, routes } from "@/lib/useHashRoute";
+import "@/styles/admin-font-scope.css";
 
 type ActiveKey =
   | "dashboard"

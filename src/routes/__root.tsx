@@ -9,6 +9,7 @@ import {
   Scripts,
   useLocation,
   useRouter,
+  useRouterState,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
 
@@ -16,6 +17,8 @@ import CookieBanner from "@/components/CookieBanner";
 import MetaPixel from "@/components/MetaPixel";
 import RootErrorBoundary from "@/components/RootErrorBoundary";
 import SiteAssistant from "@/components/assistant/SiteAssistant";
+import { assistantShowsOn } from "@/components/assistant/assistantPaths";
+import { installBwaStylesheetPreinit } from "@/lib/bwaStylesheetOrder";
 import MaintenancePage from "@/pages/MaintenancePage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import { MAINTENANCE_MODE } from "@/config/site";
@@ -128,9 +131,33 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: RootErrorComponent,
 });
 
+/** Landing pages do QR (placa de obra e panfleto): layout próprio, fundo navy. */
+const LP_PATHS = new Set(["/o", "/p"]);
+
 function RootShell({ children }: { children: ReactNode }) {
+  // Fundo navy das LPs no <html>/<body> (src/styles/bw-lp.css), marcado por
+  // atributo já no HTML do servidor. A regra antiga, `html:has(.bw-lp)`, fazia
+  // o navegador reavaliar o <html> a cada alteração do DOM — e a folha das LPs
+  // continua carregada depois que o visitante segue para o resto do site (MOB-03).
+  //
+  // O caminho é o da página que está NA TELA (`resolvedLocation`), não o do
+  // destino de uma navegação em andamento: `location` muda no clique, antes de
+  // a página nova aparecer, e os atributos trocariam com a página antiga ainda
+  // visível (a barra "Solicitar orçamento" do celular esticava por baixo do
+  // botão "Dúvidas" no caminho para a /faq). No servidor e na primeira
+  // renderização do navegador os dois caminhos são o mesmo.
+  const pathname =
+    useRouterState({ select: (s) => (s.resolvedLocation ?? s.location).pathname }).replace(/\/+$/, "") || "/";
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html
+      lang="pt-BR"
+      data-bw-lp={LP_PATHS.has(pathname) ? "" : undefined}
+      // Botão "Dúvidas" presente nesta rota: a folga de rolagem e o recuo da
+      // barra do celular (site-assistant.css, home-bwa.css) já valem no HTML
+      // do servidor, sem o SiteAssistant escrever no <html> ao montar.
+      data-bwas={assistantShowsOn(pathname) ? "" : undefined}
+      suppressHydrationWarning
+    >
       <head>
         <HeadContent />
       </head>
@@ -219,10 +246,13 @@ function RootComponent() {
       cancel = schedulePageView();
     });
     const offNavigateBridge = installNavigateEventBridge(router);
+    // Folhas .bwa pedidas já no clique, junto com o código da página nova.
+    const offBwaPreinit = installBwaStylesheetPreinit(router);
     return () => {
       cancel();
       unsub();
       offNavigateBridge();
+      offBwaPreinit();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -20,11 +20,12 @@ function homeHead() {
     ...head,
     links: [
       ...head.links,
-      // Folha da home no HTML do servidor. Antes ela só entrava pelo JS
-      // (mountHomeStylesheet, depois da hidratação): até lá a biblioteca de
-      // SVG ocupava 150 px no topo e o <main> pulava para cima quando a folha
-      // chegava — CLS 1,0 no desktop e 0,19 no celular (PageSpeed, 30/09).
-      { rel: "stylesheet", href: homeBwaCssUrl, "data-bwa-home-ssr": "" },
+      // Folha da home no HTML do servidor. Antes ela só entrava pelo JS,
+      // depois da hidratação: até lá a biblioteca de SVG ocupava 150 px no
+      // topo e o <main> pulava para cima quando a folha chegava — CLS 1,0 no
+      // desktop e 0,19 no celular (PageSpeed, 30/09). As páginas internas
+      // recebem as folhas .bwa pelo seoHead() (src/lib/routeHead.ts).
+      { rel: "stylesheet", href: homeBwaCssUrl },
       {
         rel: "preload",
         as: "image",

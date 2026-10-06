@@ -1,6 +1,5 @@
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import homeBwaCssUrl from "./home-bwa.css?url";
 import { HOME_BWA_HTML } from "./home-bwa-body";
 import BwaFooter from "@/components/BwaFooter";
 import { useSeo } from "@/lib/useSeo";
@@ -10,7 +9,7 @@ import { trackEvent } from "@/lib/ga4";
 import { installCatalogPreview } from "@/lib/homeCatalog";
 import { installInstagramEmbeds } from "@/lib/homeInstagram";
 import { installBastidores } from "@/lib/homeBastidores";
-import { installTour3d } from "@/lib/homeTour3d";
+import { installTour3d, installTour3dCovers } from "@/lib/homeTour3d";
 import { fetchSiteSettings } from "@/lib/useSiteSettings";
 import { isExternalHref, safeHref } from "@/lib/safeUrl";
 import { initHomeBwa } from "./home-bwa-script";
@@ -48,12 +47,6 @@ function ensureMeta(name: string, content: string, attr: "name" | "property" = "
 }
 
 /**
- * Injeta a folha aprovada da home APÓS todos os CSS globais (index.css,
- * bwh-*, etc.) para que suas regras vençam por ordem de cascata, sem
- * precisar editar valores. Ao desmontar, remove — assim não vaza a
- * paleta clara para outras rotas.
- */
-/**
  * LinkedIn do rodapé (mesma regra do BwaFooter): só aparece com a URL real
  * configurada no admin (`site_settings.linkedin_url`), validada por safeHref.
  * O HTML estático não traz o link — antes ele apontava para linkedin.com.
@@ -75,38 +68,6 @@ function installFooterLinkedin(root: HTMLElement): () => void {
   });
   return () => {
     alive = false;
-  };
-}
-
-function mountHomeStylesheet(): () => void {
-  const marker = "data-bwa-home-css";
-  // A folha já veio no HTML do servidor (head da rota "/", src/routes/index.tsx):
-  // o <head> é do roteador, então aqui só marcamos as classes.
-  if (document.head.querySelector("link[data-bwa-home-ssr]")) {
-    document.documentElement.classList.add("bwa-home-root");
-    document.body.classList.add("bwa-home-root");
-    return () => {
-      document.documentElement.classList.remove("bwa-home-root");
-      document.body.classList.remove("bwa-home-root");
-    };
-  }
-  let link = document.head.querySelector<HTMLLinkElement>(`link[${marker}]`);
-  if (!link) {
-    link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = homeBwaCssUrl;
-    link.setAttribute(marker, "");
-    document.head.appendChild(link);
-  } else {
-    // reordena para ficar por último
-    document.head.appendChild(link);
-  }
-  document.documentElement.classList.add("bwa-home-root");
-  document.body.classList.add("bwa-home-root");
-  return () => {
-    document.documentElement.classList.remove("bwa-home-root");
-    document.body.classList.remove("bwa-home-root");
-    link?.parentNode?.removeChild(link);
   };
 }
 
@@ -158,7 +119,6 @@ export default function HomePage() {
   useEffect(() => {
     ensureMeta("theme-color", THEME_COLOR);
 
-    const unmountCss = mountHomeStylesheet();
     const root = homeRef.current;
     // Comportamento do HTML aprovado (menu, galeria, FAQ, vídeo, reveals),
     // restrito a esta raiz. A limpeza fecha modal/menu abertos e devolve a
@@ -175,6 +135,7 @@ export default function HomePage() {
           installBastidores(root),
           // Tour virtual 3D (Enscape): 3 cômodos lado a lado; no toque, tela cheia.
           installTour3d(root),
+          installTour3dCovers(root),
           installFooterLinkedin(root),
           // FAQ: perguntas marcadas "Mostrar na home" em /admin/faq.
           hydrateHomeFaq(root),
@@ -188,7 +149,6 @@ export default function HomePage() {
     return () => {
       setWorkflowPortalRoot(null);
       cleanups.forEach((cleanup) => cleanup());
-      unmountCss();
     };
   }, []);
 
@@ -210,6 +170,9 @@ export default function HomePage() {
 
   return (
     <>
+      {/* home-bwa.css vem pelo `head` da rota "/" (src/routes/index.tsx): no
+          HTML do servidor na carga direta e, numa navegação interna, inserido
+          pelo roteador antes de a home aparecer. Nada de criar <link> aqui. */}
       <div ref={homeRef} dangerouslySetInnerHTML={{ __html: HOME_BWA_HTML }} />
       {workflowPortalRoot
         ? createPortal(

@@ -11,12 +11,24 @@ import bwaInternalCssUrl from "@/pages/bwa-internal.css?url";
 export const SITE_BASE = "https://bewild.com.br";
 
 /**
- * Marcadores dos <link> das folhas .bwa. BwaNav procura por eles no cliente e,
- * se já existirem (vindos do servidor), apenas os move para o fim do <head>
- * em vez de criar outros — sem segunda requisição nem duplicata.
+ * Grupo de precedência das folhas .bwa. O React ordena as folhas do `<head>`
+ * por grupo, na ordem em que cada grupo aparece: as do roteador (CSS global e
+ * CSS da página) usam "default"; "bwa" vem depois e fica por último — a ordem
+ * que o BwaNav sempre montou ("últimas folhas do <head>"). Com "default" as
+ * duas saíam ANTES do CSS da página no HTML do servidor e o BwaNav as movia
+ * para o fim na hidratação: a cascata mudava com a página na tela (em /faq,
+ * /onde-atuamos e /autorizacao-condominio o conteúdo descia 7 px; em outras
+ * quatro páginas a diferença ficava mais abaixo) e o navegador recalculava o
+ * estilo do documento inteiro. Mesmo valor em BwaStylesheets.tsx.
+ *
+ * Custo conhecido: em HTTP/1.1 (6 conexões por host) as duas passam a ser as
+ * últimas folhas pedidas, e nas rotas com 7 folhas ou mais a primeira pintura
+ * atrasa ~0,3 s com 4G lenta simulada. Em HTTP/2 e HTTP/3 todas são pedidas
+ * de uma vez e a ordem não pesa — é o caso da hospedagem (o build de produção
+ * sai para Cloudflare Workers, preset do @lovable.dev/vite-tanstack-config).
+ * Se um dia o site for servido em HTTP/1.1, vale rever.
  */
-export const BWA_HOME_CSS_MARKER = "data-bwa-home-css";
-export const BWA_INTERNAL_CSS_MARKER = "data-bwa-internal-css";
+export const BWA_CSS_PRECEDENCE = "bwa";
 
 export const DEFAULT_OG_IMAGE_URL = `${SITE_BASE}/og_final_v2.jpg`;
 export const DEFAULT_OG_IMAGE_ALT = "Bewild — reformas de apartamentos em São Paulo";
@@ -201,8 +213,8 @@ export function seoHead(input: SeoHeadInput) {
       ];
   if (input.bwaCss !== false) {
     links.push(
-      { rel: "stylesheet", href: homeBwaCssUrl, [BWA_HOME_CSS_MARKER]: "" },
-      { rel: "stylesheet", href: bwaInternalCssUrl, [BWA_INTERNAL_CSS_MARKER]: "" },
+      { rel: "stylesheet", href: homeBwaCssUrl, precedence: BWA_CSS_PRECEDENCE },
+      { rel: "stylesheet", href: bwaInternalCssUrl, precedence: BWA_CSS_PRECEDENCE },
     );
   }
 

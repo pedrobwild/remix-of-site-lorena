@@ -16,6 +16,16 @@
   box-sizing: border-box;
 }
 
+/* Folga de rolagem enquanto o botão está na página: campo com foco ou âncora
+   perto do rodapé não fica atrás dele. 96 px (SCROLL_PADDING_BASE em
+   SiteAssistant.tsx) + a altura do banner de cookies, lida da variável que o
+   próprio banner publica no <html>. `data-bwas` já vem no HTML do servidor;
+   era um `style` escrito no <html> a cada montagem, e toda escrita ali
+   recalcula o estilo do documento inteiro (MOB-03). */
+html[data-bwas] {
+  scroll-padding-bottom: calc(96px + var(--cookie-banner-h, 0px));
+}
+
 .bwas-launcher {
   position: fixed;
   right: 20px;
@@ -143,9 +153,9 @@
     border: 0;
   }
 
-  /* Teclado aberto (campo com foco: `bwa-typing` no <html>) e /orcamento,
+  /* Teclado aberto (campo com foco: `data-bwa-typing` no <html>) e /orcamento,
      onde a página é o próprio formulário. */
-  .bwa-typing .bwas-launcher,
+  [data-bwa-typing] .bwas-launcher,
   .bwas--sem-mobile .bwas-launcher {
     visibility: hidden;
     opacity: 0;

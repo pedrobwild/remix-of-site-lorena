@@ -30,7 +30,7 @@ export default function BwaFooter() {
       <div className="bwa-shell">
         <div className="bwa-footer-main">
           <div className="bwa-footer-brand">
-            <BewildLogo variant="white" className="bwa-footer-wordmark" />
+            <BewildLogo variant="white" className="bwa-footer-wordmark" loading="lazy" />
             <p>Seu desejo é uma obra.</p>
             <p>
               Reforma completa de apartamentos em São Paulo. Projeto, obra,

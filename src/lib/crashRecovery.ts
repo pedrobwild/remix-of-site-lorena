@@ -5,8 +5,9 @@
  *
  *  1. **Captura**: erros do React (via RootErrorBoundary), erros globais
  *     (`window.onerror`), promises rejeitadas sem catch
- *     (`unhandledrejection`) e um watchdog que detecta `#root` vazio
- *     poucos segundos após o boot.
+ *     (`unhandledrejection`) e um watchdog que detecta página sem conteúdo
+ *     (`hasRenderedContent`) poucos segundos após o boot. Erros que não são
+ *     do site (`isIgnorableError`) ficam de fora.
  *
  *  2. **Registro**: cada crash vai para `localStorage` (ring buffer de
  *     20 entradas — chave `lvbl:crash-log`) com timestamp, mensagem,
@@ -321,6 +322,62 @@ export function markHealthy(): void {
   appMarkedHealthy = true;
 }
 
+/** Elementos do <body> que não são conteúdo visível. */
+const NON_CONTENT_TAGS = new Set(["SCRIPT", "STYLE", "LINK", "NOSCRIPT", "TEMPLATE", "META"]);
+
+/**
+ * A página tem conteúdo na tela? Desde a migração para SSR (TanStack Start,
+ * 29/09/2026) o HTML já chega pronto do servidor e não existe mais `#root`:
+ * o teste antigo (`#root` com filhos) dava sempre "vazio", e o watchdog
+ * recarregava a página de quem ainda estava hidratando depois de 12 s —
+ * justamente os celulares e as redes mais lentas, que já viam o site inteiro.
+ * Hidratação lenta não é tela em branco; tela em branco é <body> sem nada.
+ */
+export function hasRenderedContent(doc: Document = document): boolean {
+  const legacyRoot = doc.getElementById("root");
+  if (legacyRoot && legacyRoot.childElementCount > 0) return true;
+  const body = doc.body;
+  if (!body) return false;
+  for (const el of Array.from(body.children)) {
+    if (NON_CONTENT_TAGS.has(el.tagName)) continue;
+    if (el.childElementCount > 0) return true;
+    if ((el.textContent ?? "").trim().length > 0) return true;
+  }
+  return false;
+}
+
+/**
+ * Erros que não são do site e não derrubam nada — hoje eram ~95% dos
+ * registros (um POST por erro, a maioria no navegador interno do Instagram e
+ * do Facebook):
+ *  - "ResizeObserver loop…": aviso do navegador; a notificação pendente é
+ *    entregue no quadro seguinte.
+ *  - "Script error.": erro de script de OUTRA origem, sem detalhe nenhum
+ *    (o navegador esconde mensagem e pilha).
+ *  - "Java object is gone" / `window.webkit.messageHandlers` /
+ *    `_AutofillCallbackHandler`: pontes que os apps da Meta injetam no
+ *    navegador interno (Android e iOS) e que falham quando a página sai.
+ */
+const IGNORED_ERROR_PATTERNS: readonly RegExp[] = [
+  /ResizeObserver loop (limit exceeded|completed with undelivered notifications)/i,
+  /^Script error\.?$/i,
+  /Java object is gone/i,
+  /window\.webkit\.messageHandlers/i,
+  /_AutofillCallbackHandler/i,
+];
+
+export function isIgnorableError(error: unknown): boolean {
+  const message =
+    error instanceof Error
+      ? error.message
+      : typeof error === "string"
+        ? error
+        : String((error as { message?: unknown } | null)?.message ?? "");
+  const text = message.trim();
+  if (!text) return false;
+  return IGNORED_ERROR_PATTERNS.some((re) => re.test(text));
+}
+
 let installed = false;
 
 /**
@@ -334,9 +391,7 @@ export function installCrashRecovery(): void {
   const checkBlankScreen = () => {
     if (appMarkedHealthy) return;
 
-    const root = document.getElementById("root");
-    const hasContent = !!root && root.childElementCount > 0;
-    if (hasContent) return;
+    if (hasRenderedContent()) return;
 
     // Em conexões lentas, o documento pode ainda estar carregando módulos,
     // CSS ou imagens. Rechecar após o load evita falso positivo que causava
@@ -349,7 +404,7 @@ export function installCrashRecovery(): void {
     const reloaded = tryAutoReload();
     recordCrash(
       "blank-screen",
-      new Error("Root element vazio após boot"),
+      new Error("Página sem conteúdo após o boot"),
       reloaded
     );
   };
@@ -358,12 +413,15 @@ export function installCrashRecovery(): void {
     // Filtra erros de recurso (img, script) — não derrubam a app e
     // já são logados pelo browser. Só nos interessam erros JS.
     if (event.error || event.message) {
+      const error = event.error ?? event.message;
+      if (isIgnorableError(error)) return;
       const triedReload = false; // erros pontuais não devem reloadar sozinhos
-      recordCrash("window-error", event.error ?? event.message, triedReload);
+      recordCrash("window-error", error, triedReload);
     }
   });
 
   window.addEventListener("unhandledrejection", (event) => {
+    if (isIgnorableError(event.reason)) return;
     recordCrash("unhandled-rejection", event.reason, false);
   });
 
@@ -373,7 +431,7 @@ export function installCrashRecovery(): void {
     void flushQueue();
   });
 
-  // Watchdog: se depois de N segundos o #root continuar vazio, é
+  // Watchdog: se depois de N segundos a página continuar sem conteúdo, é
   // tela em branco — registra e tenta recarregar (com guarda anti-loop).
   window.setTimeout(checkBlankScreen, BLANK_SCREEN_TIMEOUT_MS);
 
