@@ -1,0 +1,80 @@
+/**
+ * Utilitários de YouTube para o corpo dos artigos.
+ *
+ * O editor do admin aceita qualquer link comum do YouTube e grava SEMPRE o
+ * player no formato `https://www.youtube-nocookie.com/embed/<ID>` — único
+ * formato de `<iframe>` que o sanitizador deixa passar (ver sanitizeHtml.ts).
+ * O mesmo ID alimenta o VideoObject do JSON-LD, que é o que o Google usa para
+ * indexar o vídeo na página.
+ */
+
+const ID = /^[A-Za-z0-9_-]{11}$/;
+
+export const YOUTUBE_EMBED_ORIGIN = "https://www.youtube-nocookie.com";
+
+/** Só aceita `src` de embed do YouTube (youtube.com ou youtube-nocookie.com). */
+const EMBED_SRC = /^https:\/\/(?:www\.)?(?:youtube-nocookie\.com|youtube\.com)\/embed\/([A-Za-z0-9_-]{11})(?:[?#].*)?$/i;
+
+/** Extrai o ID de um link do YouTube (watch, youtu.be, shorts, live, embed). */
+export function parseYouTubeId(input: string | null | undefined): string | null {
+  const raw = (input ?? "").trim();
+  if (!raw) return null;
+  if (ID.test(raw)) return raw;
+  let url: URL;
+  try {
+    url = new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`);
+  } catch {
+    return null;
+  }
+  if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+  const host = url.hostname.toLowerCase().replace(/^(www|m)\./, "");
+  let candidate: string | null = null;
+  if (host === "youtu.be") {
+    candidate = url.pathname.split("/")[1] ?? null;
+  } else if (host === "youtube.com" || host === "youtube-nocookie.com" || host === "music.youtube.com") {
+    const parts = url.pathname.split("/").filter(Boolean);
+    if (parts[0] === "watch") candidate = url.searchParams.get("v");
+    else if (["embed", "shorts", "live", "v"].includes(parts[0] ?? "")) candidate = parts[1] ?? null;
+  }
+  return candidate && ID.test(candidate) ? candidate : null;
+}
+
+/** ID de um `src` de iframe já no formato de embed; null se não for do YouTube. */
+export function parseYouTubeEmbedSrc(src: string | null | undefined): string | null {
+  const m = EMBED_SRC.exec((src ?? "").trim());
+  return m ? m[1] : null;
+}
+
+export function youtubeEmbedUrl(id: string): string {
+  return `${YOUTUBE_EMBED_ORIGIN}/embed/${id}`;
+}
+
+export function youtubeThumbnailUrl(id: string): string {
+  return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+}
+
+/** Atributos do player gravados no corpo (mesma lista no cliente e no servidor). */
+export const YOUTUBE_IFRAME_ALLOW =
+  "accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+export const YOUTUBE_IFRAME_REFERRER = "strict-origin-when-cross-origin";
+
+/** Vídeos do YouTube presentes num corpo (HTML/markdown), sem repetir ID. */
+export function extractYouTubeEmbeds(body: string | null | undefined): Array<{ id: string; title: string }> {
+  const out: Array<{ id: string; title: string }> = [];
+  const seen = new Set<string>();
+  for (const m of (body ?? "").matchAll(/<iframe\b[^>]*>/gi)) {
+    const tag = m[0];
+    const src = /\ssrc\s*=\s*(?:"([^"]*)"|'([^']*)')/i.exec(tag);
+    const id = parseYouTubeEmbedSrc((src?.[1] ?? src?.[2] ?? "").replace(/&amp;/g, "&"));
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    const t = /\stitle\s*=\s*(?:"([^"]*)"|'([^']*)')/i.exec(tag);
+    const title = (t?.[1] ?? t?.[2] ?? "")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&amp;/g, "&")
+      .trim();
+    out.push({ id, title });
+  }
+  return out;
+}

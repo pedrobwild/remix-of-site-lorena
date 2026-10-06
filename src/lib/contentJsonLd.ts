@@ -8,6 +8,7 @@
 import { bewildCategoryLabel, type BewildPost } from "@/lib/useBewildPosts";
 import { postAuthorJsonLd, postDates } from "@/lib/postSeo";
 import { itemListJsonLd, projectJsonLd } from "@/lib/useSeo";
+import { extractYouTubeEmbeds, youtubeEmbedUrl, youtubeThumbnailUrl } from "@/lib/youtube";
 import { neighborhoodSlug } from "@/lib/portfolioFilter";
 import { projectFriendlyName, projectMetaDescription, type ProjectSeoInput } from "@/lib/projectSeo";
 
@@ -44,6 +45,21 @@ export function postJsonLd(post: BewildPost): JsonLdNode[] {
       articleSection: bewildCategoryLabel(post.category),
     },
   ];
+  // Vídeos do YouTube no corpo: VideoObject é o que leva o Google a indexar o vídeo da página.
+  for (const v of extractYouTubeEmbeds(post.body)) {
+    const name = v.title || post.title;
+    arr.push({
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      name,
+      description: post.meta_description || post.excerpt || name,
+      thumbnailUrl: [youtubeThumbnailUrl(v.id)],
+      uploadDate: dates.published,
+      embedUrl: youtubeEmbedUrl(v.id),
+      inLanguage: "pt-BR",
+      isPartOf: { "@type": "WebPage", "@id": articleUrl },
+    });
+  }
   if (post.faq && post.faq.length > 0) {
     arr.push({
       "@context": "https://schema.org",
