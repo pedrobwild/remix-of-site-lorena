@@ -91,6 +91,7 @@ export default function BwaNav() {
             <a href="/portfolio">Portfólio</a>
             <a href="/marcenaria">Marcenaria</a>
             <a href="/conteudos">Blog</a>
+            <a href="/buscar">Buscar</a>
             <a href="/guia-do-investidor">Guia do Investidor</a>
             <a href="/faq">FAQ</a>
             {/* Disclosure, não role="menu": são links de navegação comuns. */}
@@ -143,6 +144,7 @@ export default function BwaNav() {
           <a href="/portfolio">Portfólio</a>
           <a href="/marcenaria">Marcenaria</a>
           <a href="/conteudos">Blog</a>
+          <a href="/buscar">Buscar</a>
           <a href="/guia-do-investidor">Guia do Investidor</a>
           <a href="/faq">FAQ</a>
           <p className="bwa-menu-group-label">{NAV_PARCEIROS.label}</p>
