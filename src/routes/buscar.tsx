@@ -9,7 +9,7 @@ export const Route = createFileRoute("/buscar")({
   }),
   loader: () => loadPostList(),
   component: RouteComponent,
-  head: () => seoHead({ title: "Buscar artigos | Bewild", description: "Pesquise os guias da Bewild sobre reforma, custo de obra, investimento e short stay em São Paulo pelo título ou pela descrição.", path: "/buscar", noindex: true }),
+  head: () => seoHead({ title: "Buscar artigos | Bewild", description: "Pesquise os guias da Bewild sobre reforma, custo de obra, investimento e short stay em São Paulo pelo título ou pela descrição.", path: "/buscar" }),
 });
 
 function RouteComponent() {
