@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="470" viewBox="0 0 420 470" role="img" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif">
+<rect width="420" height="470" fill="#FFFFFF"/>
+<text x="20" y="34" font-size="19" font-weight="700" fill="#1F2937">Em 12 meses: preço do imóvel,</text>
+<text x="20" y="58" font-size="19" font-weight="700" fill="#1F2937">custo de obra e juros</text>
+<text x="20" y="82" font-size="13" fill="#4B5563">Variação acumulada em 12 meses e taxa Selic</text>
+<text x="20" y="100" font-size="13" fill="#4B5563">vigente, em %</text>
+<text x="20" y="140" font-size="13" fill="#1F2937">Preço de venda em SP</text>
+<rect x="20" y="146" width="71" height="18" rx="2" fill="#E07A1F"/>
+<text x="97" y="160" font-size="13" font-weight="600" fill="#1F2937">3,64%</text>
+<text x="20" y="190" font-size="13" fill="#1F2937">Inflação (IPCA)</text>
+<rect x="20" y="196" width="86" height="18" rx="2" fill="#0F4C5C"/>
+<text x="112" y="210" font-size="13" font-weight="600" fill="#1F2937">4,45%</text>
+<text x="20" y="240" font-size="13" fill="#1F2937">Aluguel em SP</text>
+<rect x="20" y="246" width="111" height="18" rx="2" fill="#0F4C5C"/>
+<text x="137" y="260" font-size="13" font-weight="600" fill="#1F2937">5,74%</text>
+<text x="20" y="290" font-size="13" fill="#1F2937">Custo da construção</text>
+<rect x="20" y="296" width="128" height="18" rx="2" fill="#0F4C5C"/>
+<text x="154" y="310" font-size="13" font-weight="600" fill="#1F2937">6,61%</text>
+<text x="20" y="340" font-size="13" fill="#1F2937">Selic (ao ano)</text>
+<rect x="20" y="346" width="267" height="18" rx="2" fill="#0F4C5C"/>
+<text x="293" y="360" font-size="13" font-weight="600" fill="#1F2937">13,75%</text>
+<text x="20" y="420" font-size="12" fill="#9CA3AF">FipeZap venda set/2026; IPCA 12m citado pela</text>
+<text x="20" y="438" font-size="12" fill="#9CA3AF">FipeZap; FipeZap locação ago/2026; INCC ago/2026</text>
+<text x="20" y="456" font-size="12" fill="#9CA3AF">(FGV); Selic: Copom, 16/09/2026.</text>
+</svg>

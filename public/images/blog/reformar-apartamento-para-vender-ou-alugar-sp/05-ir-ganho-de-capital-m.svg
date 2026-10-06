@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="302" viewBox="0 0 420 302" role="img" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif">
+<rect width="420" height="302" fill="#FFFFFF"/>
+<text x="20" y="34" font-size="19" font-weight="700" fill="#1F2937">Imposto sobre ganho de capital:</text>
+<text x="20" y="58" font-size="19" font-weight="700" fill="#1F2937">reforma comprovada muda a conta</text>
+<text x="20" y="82" font-size="13" fill="#4B5563">Exemplo hipotético: compra por R$ 500 mil, venda</text>
+<text x="20" y="100" font-size="13" fill="#4B5563">por R$ 605 mil, corretagem de 6%, alíquota de 15%</text>
+<text x="20" y="140" font-size="13" fill="#1F2937">Sem reforma comprovada</text>
+<rect x="20" y="146" width="244" height="18" rx="2" fill="#E07A1F"/>
+<text x="270" y="160" font-size="13" font-weight="600" fill="#1F2937">R$ 10.372</text>
+<text x="20" y="190" font-size="13" fill="#1F2937">Com reforma comprovada</text>
+<rect x="20" y="196" width="0" height="18" rx="2" fill="#0F4C5C"/>
+<text x="26" y="210" font-size="13" font-weight="600" fill="#1F2937">R$ 0</text>
+<text x="20" y="270" font-size="12" fill="#9CA3AF">Regras: IN SRF 84/2001; Lei 13.259/2016.</text>
+<text x="20" y="288" font-size="12" fill="#9CA3AF">Simulação simplificada, não substitui contador.</text>
+</svg>
