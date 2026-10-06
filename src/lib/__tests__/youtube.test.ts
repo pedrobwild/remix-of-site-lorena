@@ -78,3 +78,19 @@ describe("extractYouTubeEmbeds", () => {
     expect(extractYouTubeEmbeds(undefined)).toEqual([]);
   });
 });
+
+import { parseYouTubeStart as _start, youtubeEmbedUrl as _embed } from "@/lib/youtube";
+import { sanitizeBlogHtmlServer as _srv } from "@/lib/sanitizeHtml";
+describe("início do vídeo (t=)", () => {
+  it("lê t= em segundos e em h/m/s", () => {
+    expect(_start("https://www.youtube.com/watch?v=pQjZeD8nYEE&t=467s")).toBe(467);
+    expect(_start("https://youtu.be/pQjZeD8nYEE?t=7m47s")).toBe(467);
+    expect(_start("https://www.youtube.com/embed/pQjZeD8nYEE?start=467")).toBe(467);
+    expect(_start("https://www.youtube.com/watch?v=pQjZeD8nYEE")).toBeNull();
+  });
+  it("gera e preserva start no player", () => {
+    expect(_embed("pQjZeD8nYEE", 467)).toBe("https://www.youtube-nocookie.com/embed/pQjZeD8nYEE?start=467");
+    const out = _srv('<iframe src="https://www.youtube-nocookie.com/embed/pQjZeD8nYEE?start=467"></iframe>');
+    expect(out).toContain("embed/pQjZeD8nYEE?start=467");
+  });
+});
