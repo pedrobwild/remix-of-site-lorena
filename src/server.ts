@@ -1,6 +1,7 @@
 import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
+import { lowercasePathRedirect } from "./lib/caseRedirect";
 import { renderErrorPage } from "./lib/error-page";
 
 type ServerEntry = {
@@ -67,6 +68,8 @@ function withShortEdgeCache(request: Request, response: Response): Response {
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    const caseRedirect = lowercasePathRedirect(request);
+    if (caseRedirect) return caseRedirect;
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
