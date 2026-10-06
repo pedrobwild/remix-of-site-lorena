@@ -43,6 +43,9 @@ describe("canonicalHostRedirect", () => {
   });
   it("não mexe no domínio canônico nem na prévia", () => {
     expect(canonicalHostRedirect(new Request("https://bewild.com.br/"))).toBeNull();
+    const lov = canonicalHostRedirect(new Request("https://bewild.lovable.app/portfolio?x=1"))!;
+    expect(lov.status).toBe(301);
+    expect(lov.headers.get("location")).toBe("https://bewild.com.br/portfolio?x=1");
     expect(canonicalHostRedirect(new Request("https://id-preview--x.lovable.app/servicos"))).toBeNull();
   });
 });
