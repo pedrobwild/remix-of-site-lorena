@@ -74,7 +74,7 @@ describe("cliente e servidor geram o mesmo HTML", () => {
 describe("extractYouTubeEmbeds", () => {
   it("lista ID e título sem repetir", () => {
     const html = sanitizeBlogHtmlServer(good + good);
-    expect(extractYouTubeEmbeds(html)).toEqual([{ id: ID, title: "Tour pelo studio" }]);
+    expect(extractYouTubeEmbeds(html)).toEqual([{ id: ID, title: "Tour pelo studio", start: null }]);
     expect(extractYouTubeEmbeds(undefined)).toEqual([]);
   });
 });
