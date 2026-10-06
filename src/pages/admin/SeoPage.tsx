@@ -496,9 +496,9 @@ function BastidoresTab({
 // =============================================================
 //  Aba: Home — título, descrição e Open Graph da página inicial
 // =============================================================
-const HOME_DEFAULT_TITLE = "Bewild | Reforma turnkey de apartamentos e studios em SP";
+const HOME_DEFAULT_TITLE = "Reforma de apartamentos e studios em São Paulo | Bewild";
 const HOME_DEFAULT_DESC =
-  "Reforma completa de apartamentos em São Paulo: projeto, obra, marcenaria e mobília, com preço e prazo fechados. Veja os bastidores da equipe em obra.";
+  "Reforma completa de apartamentos e studios em São Paulo: projeto, obra, marcenaria e mobília em um só contrato, preço e prazo fechados, 5 anos de garantia.";
 
 function HomeTab({
   s,
