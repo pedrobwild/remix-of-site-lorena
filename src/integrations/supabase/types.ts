@@ -210,9 +210,11 @@ export type Database = {
           excerpt: string | null
           faq: Json
           featured: boolean
+          focus_keyword: string | null
           id: string
           meta_description: string | null
           meta_title: string | null
+          og_image: string | null
           published: boolean
           published_at: string | null
           reading_time: number
@@ -229,9 +231,11 @@ export type Database = {
           excerpt?: string | null
           faq?: Json
           featured?: boolean
+          focus_keyword?: string | null
           id?: string
           meta_description?: string | null
           meta_title?: string | null
+          og_image?: string | null
           published?: boolean
           published_at?: string | null
           reading_time?: number
@@ -248,9 +252,11 @@ export type Database = {
           excerpt?: string | null
           faq?: Json
           featured?: boolean
+          focus_keyword?: string | null
           id?: string
           meta_description?: string | null
           meta_title?: string | null
+          og_image?: string | null
           published?: boolean
           published_at?: string | null
           reading_time?: number
