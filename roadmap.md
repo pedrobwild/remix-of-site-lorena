@@ -17,4 +17,3 @@
 - [x] Conferir llms.txt (45 artigos, 16 bairros) incluído na publicação
 - [x] Adicionar /.well-known/llms.txt (cópia idêntica, sincronizada pelo scripts/generate-sitemap.mjs no build) para descoberta por robôs de IA
 - [x] Publicar /.well-known/llms.txt e confirmar no domínio próprio
-- [ ] (08:44) Patch auditoria SEO — página de autor (ProfilePage JSON-LD), robots.txt com sitemap sem www, sync .well-known/llms.txt; NÃO publicar.
