@@ -110,7 +110,7 @@ const escapeRx = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 
 /** Comparação sem acento nem caixa: "Vila Olimpia" = "Vila Olímpia". */
 const fold = (value: string) =>
-  value.toLocaleLowerCase("pt-BR").normalize("NFD").replace(/[̀-ͯ]/g, "");
+  value.toLocaleLowerCase("pt-BR").normalize("NFD").replace(/\p{M}/gu, "");
 
 /** O nome já cita o bairro ("Brooklin Studio")? Então "em Brooklin" não se repete. */
 const nameHasPlace = (name: string, place: string) =>
