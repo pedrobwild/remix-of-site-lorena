@@ -15,7 +15,7 @@ export const HERO_IMAGE_MOBILE = "/images/home/hero-studio-828.webp";
 export const HERO_MOBILE_MEDIA = "(max-width: 760px)";
 
 function homeHead() {
-  const head = seoHead({ bwaCss: false, title: "Bewild | Reforma turnkey de apartamentos e studios em SP", description: "Reforma completa de apartamentos em São Paulo: projeto, obra, marcenaria e mobília, com preço e prazo fechados. Veja os bastidores da equipe em obra.", path: "/", keywords: "escritório de arquitetura em São Paulo, arquitetura e engenharia, projeto arquitetônico, projeto de interiores, engenharia civil São Paulo, reforma de apartamento em SP, bastidores de obra, equipe em obra, custo de reforma, empresa de reforma de apartamento SP, reforma turnkey São Paulo, Bewild" });
+  const head = seoHead({ bwaCss: false, title: "Reforma de apartamentos e studios em São Paulo | Bewild", description: "Reforma completa de apartamentos e studios em São Paulo: projeto, obra, marcenaria e mobília em um só contrato, preço e prazo fechados, 5 anos de garantia.", path: "/", keywords: "escritório de arquitetura em São Paulo, arquitetura e engenharia, projeto arquitetônico, projeto de interiores, engenharia civil São Paulo, reforma de apartamento em SP, bastidores de obra, equipe em obra, custo de reforma, empresa de reforma de apartamento SP, reforma turnkey São Paulo, Bewild" });
   return {
     ...head,
     links: [
