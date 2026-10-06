@@ -4,8 +4,7 @@ import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { BAIRROS, REMOTO_ITEMS, bairroHref, type BairroPageLink } from "@/lib/bairrosSp";
-import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { faqJsonLd, useSeo } from "@/lib/useSeo";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
 
@@ -115,8 +114,22 @@ type Props = {
   bairroPages?: BairroPageLink[] | null;
 };
 
+/** JSON-LD da página no HTML do servidor (head() da rota) — Service/FAQ; a trilha já vai no WebPage. */
+// eslint-disable-next-line react-refresh/only-export-components -- constante lida pela rota, não muda o fast refresh
+export const STUDIO_SP_JSONLD: Array<Record<string, unknown>> = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Reforma completa de studios em São Paulo",
+    serviceType: "Reforma de apartamento",
+    provider: { "@id": "https://bewild.com.br/#org" },
+    areaServed: { "@type": "City", name: "São Paulo" },
+    url: `https://bewild.com.br${CANONICAL}`,
+  },
+  faqJsonLd(FAQ.map((f) => ({ q: f.q, a: f.a }))),
+];
+
 export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) {
-  const { settings } = useSiteSettings();
   useCtaClickTracking("reforma-studio-sp");
 
   useSeo({
@@ -125,24 +138,6 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
       "Reforma de studio em São Paulo, pronto para morar ou para short stay: projeto, obra, marcenaria e mobília em um contrato, preço fechado e 5 anos de garantia.",
     canonicalPath: CANONICAL,
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Reforma de studio em São Paulo", path: CANONICAL },
-          ]),
-          {
-            "@context": "https://schema.org",
-            "@type": "Service",
-            name: "Reforma completa de studios em São Paulo",
-            serviceType: "Reforma de apartamento",
-            provider: { "@id": "https://bewild.com.br/#org" },
-            areaServed: { "@type": "City", name: "São Paulo" },
-            url: `https://bewild.com.br${CANONICAL}`,
-          },
-          faqJsonLd(FAQ.map((f) => ({ q: f.q, a: f.a }))),
-        ]
-      : undefined,
   });
 
   return (
@@ -163,7 +158,7 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
                 apartamentos em São Paulo, para morar ou para locação
                 (short stay e longa duração). Projeto, obra, marcenaria sob
                 medida e mobília em um único contrato, com preço fechado, prazo
-                em contrato e 5 anos de garantia. Mais de 160 reformas
+                em contrato e 5 anos de garantia. Mais de 188 reformas
                 entregues, a maioria em studios de 20 a 35 m².
               </p>
             </div>
@@ -197,10 +192,14 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
               Atendemos studios e apartamentos de qualquer metragem em São Paulo
               capital — veja obras entregues no{" "}
               <a href="/portfolio">portfólio</a>, o detalhamento de custo em{" "}
-              <a href="/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo">
-                quanto custa reformar um studio em São Paulo
+              <a href="/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2">
+                quanto custa reformar um apartamento ou studio de até 50 m²
               </a>{" "}
-              e, para metragens maiores, a{" "}
+              (e o{" "}
+              <a href="/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo">
+                custo por m² de um studio para short stay
+              </a>
+              ) e, para metragens maiores, a{" "}
               <a href="/reforma-de-apartamento-sao-paulo">
                 reforma de apartamento em São Paulo
               </a>
@@ -239,8 +238,14 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
               ))}
             </ul>
             <p className="bwa-servico-text" style={{ marginTop: 24 }}>
-              Cada etapa está detalhada em{" "}
-              <a href="/como-funciona">como funciona a reforma da Bewild</a>.
+              As 12 etapas, do briefing à entrega, estão detalhadas em{" "}
+              <a href="/como-funciona">como funciona a reforma turnkey da Bewild</a>.
+            </p>
+            <p className="bwa-servico-text" style={{ marginTop: 16 }}>
+              Três decisões que mudam o orçamento de um studio e valem ser tomadas antes do escopo:{" "}
+              <a href="/conteudos/o-que-e-short-stay">o que é short stay e o que o anúncio exige</a>,{" "}
+              <a href="/conteudos/ar-condicionado-studio-quantos-btus">quantos BTUs o ar-condicionado precisa (tabela de BTU)</a>{" "}
+              e <a href="/conteudos/fechar-varanda-em-vidro-studio-condominio">fechar a varanda com vidro</a>, que depende do condomínio.
             </p>
           </div>
         </section>
@@ -321,7 +326,7 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
                 Falar no WhatsApp <span aria-hidden="true">→</span>
               </a>
               <p className="bwa-servico-cta-note">
-                +160 reformas entregues · +200 projetos
+                +188 reformas entregues · +200 projetos
               </p>
             </div>
           </div>

@@ -10,9 +10,8 @@ import {
   CATALOG_FULL_URL,
   type CatalogItem,
 } from "@/lib/homeCatalog";
-import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
+import { faqJsonLd, useSeo } from "@/lib/useSeo";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
-import { useSiteSettings } from "@/lib/useSiteSettings";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
 import "./marcenaria.css";
@@ -173,8 +172,25 @@ function RoomGallery() {
   );
 }
 
+/** JSON-LD da página no HTML do servidor (head() da rota) — Service/FAQ; a trilha já vai no WebPage. */
+// eslint-disable-next-line react-refresh/only-export-components -- constante lida pela rota, não muda o fast refresh
+export const MARCENARIA_JSONLD: Array<Record<string, unknown>> = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Marcenaria sob medida em São Paulo",
+    alternateName: "Móveis planejados sob medida em SP",
+    serviceType: "Marcenaria sob medida",
+    description:
+      "Marcenaria planejada desenhada no projeto executivo e produzida em fábrica própria: MDF certificado, estruturas em 25 mm, ferragens FGVTN e 5 anos de garantia.",
+    provider: { "@id": "https://bewild.com.br/#org" },
+    areaServed: { "@type": "City", name: "São Paulo" },
+    url: `https://bewild.com.br${CANONICAL}`,
+  },
+  faqJsonLd(FAQ.map((f) => ({ q: f.q, a: f.a }))),
+];
+
 export default function MarcenariaPage() {
-  const { settings } = useSiteSettings();
   useCtaClickTracking("marcenaria");
 
   useSeo({
@@ -185,27 +201,6 @@ export default function MarcenariaPage() {
       "marcenaria sob medida São Paulo, marcenaria planejada SP, móveis planejados apartamento, armário sob medida, cozinha planejada São Paulo, Bewild",
     canonicalPath: CANONICAL,
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Marcenaria sob medida", path: CANONICAL },
-          ]),
-          {
-            "@context": "https://schema.org",
-            "@type": "Service",
-            name: "Marcenaria sob medida em São Paulo",
-            alternateName: "Móveis planejados sob medida em SP",
-            serviceType: "Marcenaria sob medida",
-            description:
-              "Marcenaria planejada desenhada no projeto executivo e produzida em fábrica própria: MDF certificado, estruturas em 25 mm, ferragens FGVTN e 5 anos de garantia.",
-            provider: { "@id": "https://bewild.com.br/#org" },
-            areaServed: { "@type": "City", name: "São Paulo" },
-            url: `https://bewild.com.br${CANONICAL}`,
-          },
-          faqJsonLd(FAQ.map((f) => ({ q: f.q, a: f.a }))),
-        ]
-      : undefined,
   });
 
   return (
@@ -328,7 +323,7 @@ export default function MarcenariaPage() {
                 Falar com a gente <span aria-hidden="true">→</span>
               </a>
               <p className="bwa-servico-cta-note">
-                +160 reformas entregues · +200 projetos
+                +188 reformas entregues · +200 projetos
               </p>
               <p className="bwa-servico-cta-note">
                 <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>

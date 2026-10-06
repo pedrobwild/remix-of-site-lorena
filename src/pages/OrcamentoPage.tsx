@@ -25,7 +25,7 @@ import {
   focusField,
   useLeadSubmit,
 } from "@/lib/useLeadSubmit";
-import { breadcrumbJsonLd, useSeo } from "@/lib/useSeo";
+import { useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./contato.css";
 
@@ -151,14 +151,6 @@ export default function OrcamentoPage() {
       "orçamento de projeto de arquitetura, quanto custa um projeto de arquitetura em São Paulo, orçamento de reforma de studio, quanto custa reformar um studio em São Paulo, custo de reforma de studio, prazo de reforma de studio, orçamento de reforma de apartamento, orçamento de reforma em SP, preço e prazo de reforma São Paulo, reforma de studio para short stay, Bewild",
     canonicalPath: "/orcamento",
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Orçamento", path: "/orcamento" },
-          ]),
-        ]
-      : undefined,
   });
 
   const primeiroNome = nome.trim().split(" ")[0];

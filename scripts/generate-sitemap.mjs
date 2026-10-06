@@ -5,6 +5,7 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { execSync } from "node:child_process";
 
 const BASE_URL = "https://bewild.com.br";
 const OUT = resolve("public/sitemap.xml");
@@ -36,6 +37,23 @@ function day(...candidates) {
     .filter((t) => Number.isFinite(t));
   if (!times.length) return null;
   return new Date(Math.max(...times)).toISOString().slice(0, 10);
+}
+
+/**
+ * Data do último commit que tocou os arquivos de uma página fixa (YYYY-MM-DD).
+ * Antes o lastmod era escrito à mão e ficava velho (TEC-05). Sem git no
+ * ambiente de build, cai no valor de reserva informado.
+ */
+export function gitLastmod(files, fallback = null) {
+  try {
+    const args = files.map((f) => JSON.stringify(f)).join(" ");
+    const out = execSync(`git log -1 --format=%cs -- ${args}`, { stdio: ["ignore", "pipe", "ignore"] })
+      .toString()
+      .trim();
+    return /^\d{4}-\d{2}-\d{2}$/.test(out) ? out : fallback;
+  } catch {
+    return fallback;
+  }
 }
 
 /** Escapa texto para XML (slug vindo do banco não pode quebrar o sitemap). */
@@ -107,8 +125,16 @@ async function main() {
     return days.length ? days[days.length - 1] : null;
   };
 
+  const page = (route, pages, fallback = null) =>
+    gitLastmod([route, ...pages].map((f) => (f.startsWith("src/") ? f : `src/pages/${f}`)), fallback);
+
   const staticUrls = [
-    { loc: `${BASE_URL}/`, lastmod: "2026-09-26", changefreq: "weekly", priority: "1.0" },
+    {
+      loc: `${BASE_URL}/`,
+      lastmod: page("src/routes/index.tsx", ["HomePage.tsx", "home-bwa-body.ts"], "2026-10-02"),
+      changefreq: "weekly",
+      priority: "1.0",
+    },
     {
       loc: `${BASE_URL}/portfolio`,
       lastmod: newest(projects, "content_updated_at", "created_at"),
@@ -121,34 +147,34 @@ async function main() {
       changefreq: "weekly",
       priority: "0.8",
     },
-    { loc: `${BASE_URL}/orcamento`, changefreq: "monthly", priority: "0.9" },
+    { loc: `${BASE_URL}/orcamento`, lastmod: page("src/routes/orcamento.tsx", ["OrcamentoPage.tsx"]), changefreq: "monthly", priority: "0.9" },
     {
       loc: `${BASE_URL}/faq`,
       lastmod: Array.isArray(faqEntries) ? newest(faqEntries, "updated_at") : null,
       changefreq: "monthly",
       priority: "0.7",
     },
-    { loc: `${BASE_URL}/autorizacao-condominio`, changefreq: "monthly", priority: "0.7" },
-    { loc: `${BASE_URL}/contato`, lastmod: "2026-09-26", changefreq: "monthly", priority: "0.7" },
-    { loc: `${BASE_URL}/mapa`, lastmod: "2026-09-26", changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/autorizacao-condominio`, lastmod: page("src/routes/autorizacao-condominio.tsx", ["AutorizacaoCondominioPage.tsx"]), changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/contato`, lastmod: page("src/routes/contato.tsx", ["ContatoPage.tsx"], "2026-09-26"), changefreq: "monthly", priority: "0.7" },
+    // /mapa repete o endereço e o mapa de /contato: noindex, fora do sitemap (TEC-05).
     { loc: `${BASE_URL}/mapa-do-site`, changefreq: "weekly", priority: "0.5" },
-    { loc: `${BASE_URL}/servicos`, lastmod: "2026-09-29", changefreq: "monthly", priority: "0.9" },
-    { loc: `${BASE_URL}/escopo`, changefreq: "monthly", priority: "0.7" },
-    { loc: `${BASE_URL}/como-funciona`, changefreq: "monthly", priority: "0.7" },
-    { loc: `${BASE_URL}/onde-atuamos`, changefreq: "monthly", priority: "0.7" },
-    { loc: `${BASE_URL}/reforma-de-apartamento-sao-paulo`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.9" },
-    { loc: `${BASE_URL}/reforma-de-studio-sao-paulo`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.9" },
-    { loc: `${BASE_URL}/reforma-de-cobertura-sao-paulo`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.9" },
-    { loc: `${BASE_URL}/marcenaria`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.9" },
-    { loc: `${BASE_URL}/parceiros`, changefreq: "monthly", priority: "0.7" },
-    { loc: `${BASE_URL}/parceiros/incorporadoras`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.8" },
-    { loc: `${BASE_URL}/indique-um-amigo`, changefreq: "monthly", priority: "0.7" },
-    { loc: `${BASE_URL}/marcas-e-parcerias`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/servicos`, lastmod: page("src/routes/servicos.tsx", ["ServicosPage.tsx"], "2026-09-29"), changefreq: "monthly", priority: "0.9" },
+    { loc: `${BASE_URL}/escopo`, lastmod: page("src/routes/escopo.tsx", ["EscopoPage.tsx"]), changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/como-funciona`, lastmod: page("src/routes/como-funciona.tsx", ["ComoFuncionaPage.tsx", "src/content/etapas.ts"]), changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/onde-atuamos`, lastmod: page("src/routes/onde-atuamos.tsx", ["OndeAtuamosPage.tsx", "src/lib/bairrosSp.ts"]), changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/reforma-de-apartamento-sao-paulo`, lastmod: page("src/routes/reforma-de-apartamento-sao-paulo.tsx", ["ReformaApartamentoSpPage.tsx"], "2026-09-23"), changefreq: "monthly", priority: "0.9" },
+    { loc: `${BASE_URL}/reforma-de-studio-sao-paulo`, lastmod: page("src/routes/reforma-de-studio-sao-paulo.tsx", ["ReformaStudioSpPage.tsx"], "2026-09-23"), changefreq: "monthly", priority: "0.9" },
+    { loc: `${BASE_URL}/reforma-de-cobertura-sao-paulo`, lastmod: page("src/routes/reforma-de-cobertura-sao-paulo.tsx", ["ReformaCoberturaSpPage.tsx"], "2026-09-23"), changefreq: "monthly", priority: "0.9" },
+    { loc: `${BASE_URL}/marcenaria`, lastmod: page("src/routes/marcenaria.tsx", ["MarcenariaPage.tsx"], "2026-09-23"), changefreq: "monthly", priority: "0.9" },
+    { loc: `${BASE_URL}/parceiros`, lastmod: page("src/routes/parceiros.index.tsx", ["ParceirosPage.tsx"]), changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/parceiros/incorporadoras`, lastmod: page("src/routes/parceiros.incorporadoras.tsx", ["IncorporadorasPage.tsx", "src/content/incorporadoras.ts"], "2026-09-23"), changefreq: "monthly", priority: "0.8" },
+    { loc: `${BASE_URL}/indique-um-amigo`, lastmod: page("src/routes/indique-um-amigo.tsx", ["IndiquePage.tsx"]), changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/marcas-e-parcerias`, lastmod: page("src/routes/marcas-e-parcerias.tsx", ["MarcasParceriasPage.tsx"], "2026-09-23"), changefreq: "monthly", priority: "0.7" },
     // lastmod = GUIA_MODIFIED de src/guia/data/guiaMeta.ts (conferido em teste).
     { loc: `${BASE_URL}/guia-do-investidor`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.8" },
-    { loc: `${BASE_URL}/privacidade`, changefreq: "yearly", priority: "0.3" },
-    { loc: `${BASE_URL}/preferencias-de-cookies`, changefreq: "yearly", priority: "0.3" },
-    { loc: `${BASE_URL}/acessibilidade`, changefreq: "yearly", priority: "0.3" },
+    { loc: `${BASE_URL}/privacidade`, lastmod: page("src/routes/privacidade.tsx", ["PrivacidadePage.tsx"]), changefreq: "yearly", priority: "0.3" },
+    // /preferencias-de-cookies é página de configuração: noindex, fora do sitemap (TEC-05).
+    { loc: `${BASE_URL}/acessibilidade`, lastmod: page("src/routes/acessibilidade.tsx", ["AcessibilidadePage.tsx"]), changefreq: "yearly", priority: "0.3" },
   ];
 
   const projectUrls = projects
@@ -165,6 +191,8 @@ async function main() {
   const hoodSlug = (v) =>
     String(v).trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
       .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  const mostCommon = (values) =>
+    [...values.reduce((m, v) => m.set(v, (m.get(v) ?? 0) + 1), new Map()).entries()].sort((a, b) => b[1] - a[1])[0][0];
   const hoods = new Map();
   for (const p of projects) {
     if (!p.neighborhood || !p.cover_url) continue;
@@ -181,6 +209,9 @@ async function main() {
       lastmod: newest(h.rows, "content_updated_at", "created_at"),
       changefreq: "monthly",
       priority: "0.8",
+      // Grafia mais usada do bairro e contagem: só para o llms.txt (urlTag ignora).
+      label: mostCommon(h.rows.map((p) => String(p.neighborhood).trim())),
+      count: h.n,
     }));
 
   const postUrls = posts
@@ -204,7 +235,7 @@ async function main() {
 
   writeFileSync(OUT, xml);
   console.log(`[sitemap] public/sitemap.xml escrito (${all.length} URLs).`);
-  updateLlmsTxt(posts);
+  updateLlmsTxt(posts, hoodUrls);
 }
 
 /**
@@ -212,25 +243,32 @@ async function main() {
  * SEO + IA: os posts precisam estar listados para os crawlers de IA). Só
  * mexe no trecho entre os marcadores; sem marcadores, não toca no arquivo.
  */
-function updateLlmsTxt(posts) {
-  if (!existsSync(LLMS)) return;
-  const start = "<!-- posts:start -->";
-  const end = "<!-- posts:end -->";
-  const txt = readFileSync(LLMS, "utf8");
+function replaceBetween(txt, start, end, lines, what) {
   const a = txt.indexOf(start);
   const b = txt.indexOf(end);
   if (a === -1 || b === -1 || b < a) {
-    warn("llms.txt sem marcadores posts:start/posts:end; lista de posts não atualizada");
-    return;
+    warn(`llms.txt sem marcadores ${what}; lista não atualizada`);
+    return txt;
   }
-  const lines = posts
+  return `${txt.slice(0, a + start.length)}\n${lines.join("\n")}\n${txt.slice(b)}`;
+}
+
+function updateLlmsTxt(posts, hoodUrls = []) {
+  if (!existsSync(LLMS)) return;
+  const txt = readFileSync(LLMS, "utf8");
+  const postLines = posts
     .filter((p) => p.slug && p.title)
     .sort((x, y) => String(y.published_at || y.created_at || "").localeCompare(String(x.published_at || x.created_at || "")))
     .map((p) => `- [${String(p.title).replace(/[[\]]/g, "")}](/conteudos/${p.slug})`);
-  const next = `${txt.slice(0, a + start.length)}\n${lines.join("\n")}\n${txt.slice(b)}`;
+  // Páginas de bairro (/reforma/<bairro>): mesma lista do sitemap, com a contagem.
+  const hoodLines = hoodUrls.map(
+    (h) => `- [Reforma de apartamento em ${h.label}](${h.loc.replace(BASE_URL, "")}): ${h.count} projetos entregues`,
+  );
+  let next = replaceBetween(txt, "<!-- posts:start -->", "<!-- posts:end -->", postLines, "posts:start/posts:end");
+  next = replaceBetween(next, "<!-- bairros:start -->", "<!-- bairros:end -->", hoodLines, "bairros:start/bairros:end");
   if (next !== txt) {
     writeFileSync(LLMS, next);
-    console.log(`[sitemap] public/llms.txt: ${lines.length} posts listados.`);
+    console.log(`[sitemap] public/llms.txt: ${postLines.length} posts e ${hoodLines.length} bairros listados.`);
   }
 }
 

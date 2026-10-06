@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SplatRouteImport } from './routes/$'
 import { Route as AcessibilidadeRouteImport } from './routes/acessibilidade'
 import { Route as AutorizacaoCondominioRouteImport } from './routes/autorizacao-condominio'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
@@ -76,6 +77,11 @@ import { Route as AdminSeo404RouteImport } from './routes/admin.seo.404'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SplatRoute = SplatRouteImport.update({
+  id: '/$',
+  path: '/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AcessibilidadeRoute = AcessibilidadeRouteImport.update({
@@ -393,6 +399,7 @@ const AdminSeo404Route = AdminSeo404RouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
   '/acessibilidade': typeof AcessibilidadeRoute
   '/autorizacao-condominio': typeof AutorizacaoCondominioRoute
   '/como-funciona': typeof ComoFuncionaRoute
@@ -458,6 +465,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
   '/acessibilidade': typeof AcessibilidadeRoute
   '/autorizacao-condominio': typeof AutorizacaoCondominioRoute
   '/como-funciona': typeof ComoFuncionaRoute
@@ -524,6 +532,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
   '/acessibilidade': typeof AcessibilidadeRoute
   '/autorizacao-condominio': typeof AutorizacaoCondominioRoute
   '/como-funciona': typeof ComoFuncionaRoute
@@ -591,6 +600,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/$'
     | '/acessibilidade'
     | '/autorizacao-condominio'
     | '/como-funciona'
@@ -656,6 +666,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/$'
     | '/acessibilidade'
     | '/autorizacao-condominio'
     | '/como-funciona'
@@ -721,6 +732,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/$'
     | '/acessibilidade'
     | '/autorizacao-condominio'
     | '/como-funciona'
@@ -787,6 +799,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SplatRoute: typeof SplatRoute
   AcessibilidadeRoute: typeof AcessibilidadeRoute
   AutorizacaoCondominioRoute: typeof AutorizacaoCondominioRoute
   ComoFuncionaRoute: typeof ComoFuncionaRoute
@@ -858,6 +871,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$': {
+      id: '/$'
+      path: '/$'
+      fullPath: '/$'
+      preLoaderRoute: typeof SplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/acessibilidade': {
@@ -1299,6 +1319,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SplatRoute: SplatRoute,
   AcessibilidadeRoute: AcessibilidadeRoute,
   AutorizacaoCondominioRoute: AutorizacaoCondominioRoute,
   ComoFuncionaRoute: ComoFuncionaRoute,

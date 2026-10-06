@@ -3,6 +3,8 @@ import BairroPage from "@/pages/BairroPage";
 import { seoHead } from "@/lib/routeHead";
 import { loadBairroContent } from "@/lib/contentLoaders";
 import { bairroProjects, projectListJsonLd } from "@/lib/contentJsonLd";
+import { faqJsonLd } from "@/lib/useSeo";
+import { bairroContent } from "@/content/bairros";
 
 export const Route = createFileRoute("/reforma/$slug")({
   loader: ({ params }) => loadBairroContent(params.slug),
@@ -18,7 +20,13 @@ export const Route = createFileRoute("/reforma/$slug")({
         "Apartamentos reformados pela Bewild em São Paulo: fotos reais de cada obra e orçamento sem custo.",
       path: `/reforma/${params.slug}`,
       noindex: !ld || loaderData?.notFound,
-      jsonLd: ld?.projects ? projectListJsonLd(bairroProjects(ld.projects, params.slug)) : null,
+      jsonLd: ld?.projects
+        ? [
+            ...projectListJsonLd(bairroProjects(ld.projects, params.slug)),
+            // FAQ do bairro (src/content/bairros.ts): só nos bairros com texto próprio.
+            ...(bairroContent(params.slug) ? [faqJsonLd(bairroContent(params.slug)!.faq)] : []),
+          ]
+        : null,
     });
   },
 });

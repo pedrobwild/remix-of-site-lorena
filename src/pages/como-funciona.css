@@ -187,3 +187,116 @@
     transition: none;
   }
 }
+
+/* As 12 etapas (CONT-04): a mesma lista da home, aqui com o resumo de cada fase */
+.bwa-how-steps {
+  padding: clamp(55px, 6.01vw, 88px) 0;
+  border-top: 1px solid var(--bwa-line);
+}
+
+.bwa-how-steps-head {
+  max-width: 820px;
+  margin-bottom: clamp(32px, 3.5vw, 48px);
+}
+
+.bwa-how-steps-head h2 {
+  margin: 16px 0 18px;
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(26px, 2.8vw, 42px);
+  font-weight: 500;
+  line-height: 1.08;
+}
+
+.bwa-how-steps-head .bwa-how-lead {
+  max-width: 720px;
+}
+
+.bwa-how-phases {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 3vw, 40px);
+  align-items: start;
+}
+
+.bwa-how-phase {
+  background: var(--bwa-white);
+  border: 1px solid var(--bwa-line);
+  border-radius: 14px;
+  padding: 26px clamp(20px, 2.4vw, 30px);
+}
+
+.bwa-how-phase h3 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+
+.bwa-how-phase h3 span {
+  margin-right: 8px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--bwa-ink);
+}
+
+.bwa-how-phase-resumo {
+  margin: 0 0 18px;
+  color: var(--bwa-ink);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.bwa-how-steps-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 14px;
+}
+
+.bwa-how-steps-list li {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.bwa-how-steps-list b {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--bwa-navy-2);
+  padding-top: 3px;
+}
+
+.bwa-how-steps-list strong {
+  display: block;
+  font-weight: 600;
+  color: var(--bwa-navy);
+}
+
+.bwa-how-steps-list p {
+  margin: 2px 0 0;
+  color: var(--bwa-ink);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.bwa-how-steps-foot {
+  max-width: 820px;
+  margin: clamp(28px, 3vw, 40px) 0 0;
+  color: var(--bwa-ink);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.bwa-how-steps-foot a {
+  color: var(--bwa-navy);
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .bwa-how-phases {
+    grid-template-columns: 1fr;
+  }
+}

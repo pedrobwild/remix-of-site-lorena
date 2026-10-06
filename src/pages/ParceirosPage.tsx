@@ -27,7 +27,7 @@ import {
   openWhatsapp,
   useLeadSubmit,
 } from "@/lib/useLeadSubmit";
-import { breadcrumbJsonLd, faqJsonLd, useSeo } from "@/lib/useSeo";
+import { faqJsonLd, useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./faq-page.css";
 import "./contato.css";
@@ -228,6 +228,12 @@ function validar(v: Record<Campo, string>): FieldErrors<Campo> {
   return e;
 }
 
+/** JSON-LD da página no HTML do servidor (head() da rota) — Service/FAQ; a trilha já vai no WebPage. */
+// eslint-disable-next-line react-refresh/only-export-components -- constante lida pela rota, não muda o fast refresh
+export const PARCEIROS_JSONLD: Array<Record<string, unknown>> = [
+  faqJsonLd(FAQ_PARCEIRO.map((i) => ({ q: i.q, a: i.a }))),
+];
+
 export default function ParceirosPage() {
   useCtaClickTracking("parceiros");
   const { settings } = useSiteSettings();
@@ -371,15 +377,6 @@ export default function ParceirosPage() {
       "escritório de arquitetura e engenharia em SP, reforma de apartamento em SP, parceria corretor reforma, indicação reforma comissão, reforma de studio para investidor, reforma apartamento compacto São Paulo, incorporadora reforma pós-chaves, custo de reforma, Bewild parceiros",
     canonicalPath: "/parceiros",
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Programa de indicações", path: "/parceiros" },
-          ]),
-          faqJsonLd(FAQ_PARCEIRO.map((i) => ({ q: i.q, a: i.a }))),
-        ]
-      : undefined,
   });
 
   return (
@@ -435,7 +432,7 @@ export default function ParceirosPage() {
           </div>
           <div className="bwa-shell">
             <ul className="bwa-parc-facts">
-              <li><strong>+160</strong> reformas entregues</li>
+              <li><strong>+188</strong> reformas entregues</li>
               <li><strong>20 a 35 m²</strong> studios como centro</li>
               <li><strong>~60 dias úteis</strong> da obra à entrega</li>
               <li><strong>5 anos</strong> de garantia</li>

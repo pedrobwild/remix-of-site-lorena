@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSeo, breadcrumbJsonLd } from "../lib/useSeo";
-import { useSiteSettings } from "../lib/useSiteSettings";
+import { useSeo } from "../lib/useSeo";
 import { routes } from "../lib/useHashRoute";
 import {
   readConsent,
@@ -27,7 +26,6 @@ import "@/styles/post.css";
  * em src/lib/cookieConsent.ts e a tabela de cookies de /privacidade.
  */
 export default function PreferenciasCookiesPage() {
-  const { settings } = useSiteSettings();
   const [choice, setChoice] = useState<Consent | null>(null);
 
   useEffect(() => {
@@ -40,15 +38,8 @@ export default function PreferenciasCookiesPage() {
     description:
       "Veja e mude sua escolha sobre cookies de medição e publicidade do site da Bewild a qualquer momento.",
     canonicalPath: "/preferencias-de-cookies",
+    noindex: true,
     ogType: "website",
-    jsonLd: settings
-      ? [
-          breadcrumbJsonLd(settings, [
-            { name: "Início", path: "/" },
-            { name: "Preferências de Cookies", path: "/preferencias-de-cookies" },
-          ]),
-        ]
-      : undefined,
   });
 
   function handle(value: Consent) {

@@ -103,7 +103,6 @@ Deno.serve(async (req) => {
     { loc: `${base}/faq`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/autorizacao-condominio`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/contato`, priority: "0.7", changefreq: "monthly", lastmod: "2026-09-26" },
-    { loc: `${base}/mapa`, priority: "0.7", changefreq: "monthly", lastmod: "2026-09-26" },
     { loc: `${base}/mapa-do-site`, priority: "0.5", changefreq: "weekly" },
     { loc: `${base}/servicos`, priority: "0.9", changefreq: "monthly" },
     { loc: `${base}/escopo`, priority: "0.7", changefreq: "monthly" },
@@ -119,7 +118,6 @@ Deno.serve(async (req) => {
     { loc: `${base}/marcas-e-parcerias`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/guia-do-investidor`, priority: "0.8", changefreq: "monthly" },
     { loc: `${base}/privacidade`, priority: "0.3", changefreq: "yearly" },
-    { loc: `${base}/preferencias-de-cookies`, priority: "0.3", changefreq: "yearly" },
     { loc: `${base}/acessibilidade`, priority: "0.3", changefreq: "yearly" },
   ];
 
