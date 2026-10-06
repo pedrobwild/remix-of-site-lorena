@@ -10,6 +10,33 @@ export const SITE_BASE = "https://bewild.com.br";
 export const DEFAULT_OG_IMAGE_URL = `${SITE_BASE}/og_final_v2.jpg`;
 export const DEFAULT_OG_IMAGE_ALT = "Bewild — reformas de apartamentos em São Paulo";
 
+/**
+ * Foto real de obra por página fixa, para cada URL do sitemap ter uma imagem
+ * de compartilhamento ligada ao assunto (em vez da arte genérica da marca).
+ * Fotos 1280×720 já servidas pelo site. Página fora da lista usa a padrão.
+ */
+const H = (name: string) => `${SITE_BASE}/images/hero-slides/${name}-md.jpg`;
+export const PAGE_OG_IMAGES: Record<string, string> = {
+  "/reforma-de-studio-sao-paulo": H("rodrigo-1-1"),
+  "/reforma-de-apartamento-sao-paulo": H("premium-7-4"),
+  "/reforma-de-cobertura-sao-paulo": H("premium-11-2"),
+  "/marcenaria": H("marcos-6-2"),
+  "/servicos": H("erik-03-11"),
+  "/como-funciona": H("marcos-10-4"),
+  "/escopo": H("rodrigo-15-1"),
+  "/orcamento": H("rodrigo-8"),
+  "/portfolio": H("erik-03-8-1"),
+  "/guia-do-investidor": H("rodrigo-1-1"),
+  "/onde-atuamos": H("premium-7-4"),
+  "/autorizacao-condominio": H("marcos-10-4"),
+  "/faq": H("rodrigo-15-1"),
+  "/conteudos": H("erik-03-11"),
+  "/parceiros": H("premium-11-2"),
+  "/parceiros/incorporadoras": H("erik-03-8-1"),
+  "/indique-um-amigo": H("rodrigo-8"),
+  "/contato": H("marcos-6-2"),
+};
+
 const PREVIEW_DIRECTIVES = "max-image-preview:large, max-snippet:-1, max-video-preview:-1";
 
 export type SeoHeadInput = {
@@ -116,7 +143,7 @@ function pageJsonLd(input: SeoHeadInput, path: string, canonical: string, image:
 export function seoHead(input: SeoHeadInput) {
   const cleanPath = (input.path.split("#")[0].split("?")[0] || "/").replace(/\/+$/, "") || "/";
   const canonical = cleanPath === "/" ? `${SITE_BASE}/` : `${SITE_BASE}${cleanPath}`;
-  const og = absoluteUrl(input.ogImage || DEFAULT_OG_IMAGE_URL);
+  const og = absoluteUrl(input.ogImage || PAGE_OG_IMAGES[cleanPath] || DEFAULT_OG_IMAGE_URL);
 
   const meta: Array<Record<string, string>> = [
     { title: input.title },

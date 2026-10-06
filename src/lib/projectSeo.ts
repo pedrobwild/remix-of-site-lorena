@@ -260,12 +260,16 @@ export function projectSeoTitleUnique(
   const group = peers.filter((o) => o.id !== p.id && projectSeoTitle(o) === base);
   if (group.length === 0) return base;
 
-  const date = projectRegistrationDate(p.created_at);
-  if (!date) return base;
-  if (group.some((o) => projectRegistrationDate(o.created_at) === date)) return base;
-
   const suffix = " | Bewild";
   if (!base.endsWith(suffix)) return base;
+  const date = projectRegistrationDate(p.created_at);
+  if (!date || group.some((o) => projectRegistrationDate(o.created_at) === date)) {
+    // Data não separa: numera as irmãs em ordem estável (cadastro, depois id).
+    const key = (o: ProjectSeoPeer) => `${o.created_at ?? ""}|${o.id}`;
+    const n = [p, ...group].map(key).sort().indexOf(key(p)) + 1;
+    return `${base.slice(0, -suffix.length)} (projeto ${n})${suffix}`;
+  }
+
   const dated = `${base.slice(0, -suffix.length)} (cadastro ${date})${suffix}`;
   if (dated.length <= DATED_TITLE_MAX) return dated;
   // Muito longo: mantém o nome inteiro e tira só a palavra "cadastro".
