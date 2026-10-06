@@ -1,0 +1,10 @@
+.bw-conteudos .gf-lead{max-width:640px;margin:0 0 20px;font-size:17px;line-height:1.5;color:#374151}
+.bw-conteudos .gf-list{list-style:none;margin:0;padding:0;display:grid;gap:clamp(28px,4vw,48px)}
+.bw-conteudos .gf-item{min-width:0}
+.bw-conteudos .gf-fig{margin:0;border:1px solid #E5E7EB;border-radius:8px;background:#fff;overflow:hidden}
+.bw-conteudos .gf-fig picture,.bw-conteudos .gf-fig img{display:block;width:100%;height:auto;max-width:100%}
+.bw-conteudos .gf-fig figcaption{padding:12px 16px;border-top:1px solid #E5E7EB;font-size:14px;line-height:1.4;color:#374151}
+.bw-conteudos .gf-num{font-weight:600;color:#11355B;margin-right:6px}
+.bw-conteudos .gf-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+.bw-conteudos .gf-actions .ct-chip{min-height:44px;display:inline-flex;align-items:center;cursor:pointer;text-decoration:none}
+.bw-conteudos .gf-live{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}

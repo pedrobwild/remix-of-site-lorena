@@ -58,6 +58,7 @@ import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ConteudosIndexRouteImport } from './routes/conteudos.index'
 import { Route as ConteudosSlugRouteImport } from './routes/conteudos.$slug'
+import { Route as GraficosSlugRouteImport } from './routes/graficos.$slug'
 import { Route as ParceirosIndexRouteImport } from './routes/parceiros.index'
 import { Route as ParceirosIncorporadorasRouteImport } from './routes/parceiros.incorporadoras'
 import { Route as PortfolioIndexRouteImport } from './routes/portfolio.index'
@@ -322,6 +323,11 @@ const ConteudosSlugRoute = ConteudosSlugRouteImport.update({
   path: '/conteudos/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GraficosSlugRoute = GraficosSlugRouteImport.update({
+  id: '/graficos/$slug',
+  path: '/graficos/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ParceirosIndexRoute = ParceirosIndexRouteImport.update({
   id: '/parceiros/',
   path: '/parceiros/',
@@ -450,6 +456,7 @@ export interface FileRoutesByFullPath {
   '/admin/typography': typeof AdminTypographyRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/conteudos/$slug': typeof ConteudosSlugRoute
+  '/graficos/$slug': typeof GraficosSlugRoute
   '/parceiros/incorporadoras': typeof ParceirosIncorporadorasRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
   '/reforma/$slug': typeof ReformaSlugRoute
@@ -517,6 +524,7 @@ export interface FileRoutesByTo {
   '/admin/typography': typeof AdminTypographyRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/conteudos/$slug': typeof ConteudosSlugRoute
+  '/graficos/$slug': typeof GraficosSlugRoute
   '/parceiros/incorporadoras': typeof ParceirosIncorporadorasRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
   '/reforma/$slug': typeof ReformaSlugRoute
@@ -585,6 +593,7 @@ export interface FileRoutesById {
   '/admin/typography': typeof AdminTypographyRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/conteudos/$slug': typeof ConteudosSlugRoute
+  '/graficos/$slug': typeof GraficosSlugRoute
   '/parceiros/incorporadoras': typeof ParceirosIncorporadorasRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
   '/reforma/$slug': typeof ReformaSlugRoute
@@ -654,6 +663,7 @@ export interface FileRouteTypes {
     | '/admin/typography'
     | '/blog/$slug'
     | '/conteudos/$slug'
+    | '/graficos/$slug'
     | '/parceiros/incorporadoras'
     | '/portfolio/$slug'
     | '/reforma/$slug'
@@ -721,6 +731,7 @@ export interface FileRouteTypes {
     | '/admin/typography'
     | '/blog/$slug'
     | '/conteudos/$slug'
+    | '/graficos/$slug'
     | '/parceiros/incorporadoras'
     | '/portfolio/$slug'
     | '/reforma/$slug'
@@ -788,6 +799,7 @@ export interface FileRouteTypes {
     | '/admin/typography'
     | '/blog/$slug'
     | '/conteudos/$slug'
+    | '/graficos/$slug'
     | '/parceiros/incorporadoras'
     | '/portfolio/$slug'
     | '/reforma/$slug'
@@ -856,6 +868,7 @@ export interface RootRouteChildren {
   AdminTypographyRoute: typeof AdminTypographyRoute
   BlogSlugRoute: typeof BlogSlugRoute
   ConteudosSlugRoute: typeof ConteudosSlugRoute
+  GraficosSlugRoute: typeof GraficosSlugRoute
   ParceirosIncorporadorasRoute: typeof ParceirosIncorporadorasRoute
   PortfolioSlugRoute: typeof PortfolioSlugRoute
   ReformaSlugRoute: typeof ReformaSlugRoute
@@ -1222,6 +1235,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConteudosSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/graficos/$slug': {
+      id: '/graficos/$slug'
+      path: '/graficos/$slug'
+      fullPath: '/graficos/$slug'
+      preLoaderRoute: typeof GraficosSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/parceiros/': {
       id: '/parceiros/'
       path: '/parceiros'
@@ -1384,6 +1404,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminTypographyRoute: AdminTypographyRoute,
   BlogSlugRoute: BlogSlugRoute,
   ConteudosSlugRoute: ConteudosSlugRoute,
+  GraficosSlugRoute: GraficosSlugRoute,
   ParceirosIncorporadorasRoute: ParceirosIncorporadorasRoute,
   PortfolioSlugRoute: PortfolioSlugRoute,
   ReformaSlugRoute: ReformaSlugRoute,

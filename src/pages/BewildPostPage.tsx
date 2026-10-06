@@ -27,6 +27,7 @@ import {
 } from "@/lib/imageUrl";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
+import { chartSetForSlug, chartsPagePath } from "@/content/chartSets";
 import { sanitizeBlogHtml } from "@/lib/sanitizeHtml";
 import { wrapArticleTables } from "@/lib/articleTables";
 import { whatsappHref } from "@/components/landing/content";
@@ -404,6 +405,20 @@ export default function BewildPostPage({ slug, initial }: Props) {
             <div className="pt-body" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
           </div>
         </section>
+
+        {/* GRÁFICOS REUTILIZÁVEIS */}
+        {chartSetForSlug(post.slug) ? (
+          <section className="pt-links">
+            <div className="container">
+              <p>
+                <a href={chartsPagePath(post.slug)}>
+                  <strong>Ver todos os gráficos deste artigo</strong>
+                </a>{" "}
+                — versão larga e para celular, prontas para baixar e reutilizar.
+              </p>
+            </div>
+          </section>
+        ) : null}
 
         {/* FAQ */}
         {post.faq && post.faq.length > 0 ? (
