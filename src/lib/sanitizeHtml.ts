@@ -1,5 +1,11 @@
 import DOMPurify from "dompurify";
 import * as xssNs from "xss";
+import {
+  YOUTUBE_IFRAME_ALLOW,
+  YOUTUBE_IFRAME_REFERRER,
+  parseYouTubeEmbedSrc,
+  youtubeEmbedUrl,
+} from "@/lib/youtube";
 
 // xss é CommonJS: no SSR do Vite os named exports ficam só no `default`.
 type XssModule = typeof xssNs;
@@ -21,7 +27,10 @@ type FilterXSS = InstanceType<XssModule["FilterXSS"]>;
  *  - Permite tabelas (`table`/`thead`/`tbody`/`tfoot`/`tr`/`th`/`td`/`caption`/
  *    `colgroup`/`col`) com `colspan`, `rowspan`, `scope` e `span` — o `marked`
  *    com `gfm: true` gera esse HTML e ele não é vetor de XSS.
- *  - Remove `<script>`, `<style>`, `<iframe>`, `<object>`, handlers `on*=`
+ *  - Permite `<iframe>` SOMENTE de player do YouTube (`/embed/<ID>`), que é
+ *    reescrito para `youtube-nocookie.com` com atributos fixos; qualquer outro
+ *    iframe é removido.
+ *  - Remove `<script>`, `<style>`, outros `<iframe>`, `<object>`, handlers `on*=`
  *    e qualquer URL `javascript:` — vetores típicos de XSS armazenado.
  *
  * Use sempre antes de:
@@ -121,6 +130,23 @@ const domPurifyReady =
   typeof DOMPurify.sanitize === "function";
 
 if (domPurifyReady) DOMPurify.addHook("afterSanitizeAttributes", (node) => {
+  if (node.tagName === "IFRAME") {
+    const id = parseYouTubeEmbedSrc(node.getAttribute("src"));
+    if (!id) {
+      node.remove();
+      return;
+    }
+    const title = node.getAttribute("title") ?? "";
+    for (const name of Array.from(node.getAttributeNames())) node.removeAttribute(name);
+    node.textContent = "";
+    node.setAttribute("src", youtubeEmbedUrl(id));
+    if (title) node.setAttribute("title", title);
+    node.setAttribute("loading", "lazy");
+    node.setAttribute("allow", YOUTUBE_IFRAME_ALLOW);
+    node.setAttribute("allowfullscreen", "");
+    node.setAttribute("referrerpolicy", YOUTUBE_IFRAME_REFERRER);
+    return;
+  }
   // O keyword `_blank` é case-insensitive no HTML, então normaliza o valor
   // antes de comparar — `_Blank`/`_BLANK` também abrem nova aba.
   if (
@@ -135,11 +161,11 @@ export function sanitizeBlogHtml(html: string): string {
   if (!html) return "";
   if (!domPurifyReady) return sanitizeBlogHtmlServer(html);
   return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS,
+    ALLOWED_TAGS: [...ALLOWED_TAGS, "iframe"],
     ALLOWED_ATTR,
     // Não permite `<form>`/`<input>` mesmo que apareçam no input —
     // posts não devem coletar dados do leitor.
-    FORBID_TAGS: ["script", "style", "iframe", "object", "embed", "form", "input"],
+    FORBID_TAGS: ["script", "style", "object", "embed", "form", "input"],
     FORBID_ATTR: ["style"],
     // Mantém estrutura adicional do editor (figure/figcaption) sem mexer
     // em entidades já escapadas no HTML salvo.
@@ -161,6 +187,34 @@ function isSafeUrl(raw: string): boolean {
   return SAFE_URL.test(v);
 }
 
+// Estado do `onTag` abaixo: o `</iframe>` de um player válido já foi emitido
+// junto com a abertura, então o fechamento original é descartado.
+let validIframeOpen = false;
+
+function attrOf(tag: string, name: string): string {
+  const m = new RegExp(`\\s${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)')`, "i").exec(tag);
+  return friendlyAttrValue(m?.[1] ?? m?.[2] ?? "");
+}
+
+/** `<iframe>` do servidor: só player do YouTube, reescrito como no cliente. */
+function serverIframe(tag: string, html: string, options: { isClosing: boolean }): string | undefined {
+  if (tag !== "iframe") return undefined;
+  if (options.isClosing) {
+    if (!validIframeOpen) return undefined;
+    validIframeOpen = false;
+    return "";
+  }
+  const id = parseYouTubeEmbedSrc(attrOf(html, "src"));
+  if (!id) return undefined;
+  validIframeOpen = true;
+  const title = attrOf(html, "title");
+  return (
+    `<iframe src="${youtubeEmbedUrl(id)}"` +
+    (title ? ` title="${escapeAttrValue(title)}"` : "") +
+    ` loading="lazy" allow="${YOUTUBE_IFRAME_ALLOW}" allowfullscreen="" referrerpolicy="${YOUTUBE_IFRAME_REFERRER}"></iframe>`
+  );
+}
+
 let serverFilter: FilterXSS | null = null;
 function getServerFilter(): FilterXSS {
   if (serverFilter) return serverFilter;
@@ -168,6 +222,7 @@ function getServerFilter(): FilterXSS {
   for (const tag of ALLOWED_TAGS) whiteList[tag] = ALLOWED_ATTR;
   serverFilter = new FilterXSS({
     whiteList,
+    onTag: serverIframe,
     stripIgnoreTag: true,
     stripIgnoreTagBody: FORBIDDEN_BODY_TAGS,
     allowCommentTag: false,
@@ -204,5 +259,6 @@ function forceNoopener(html: string): string {
  */
 export function sanitizeBlogHtmlServer(html: string): string {
   if (!html) return "";
+  validIframeOpen = false;
   return forceNoopener(getServerFilter().process(html));
 }
