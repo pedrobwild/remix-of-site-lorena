@@ -4,6 +4,7 @@ import {
   YOUTUBE_IFRAME_ALLOW,
   YOUTUBE_IFRAME_REFERRER,
   parseYouTubeEmbedSrc,
+  parseYouTubeStart,
   youtubeEmbedUrl,
 } from "@/lib/youtube";
 
@@ -136,10 +137,11 @@ if (domPurifyReady) DOMPurify.addHook("afterSanitizeAttributes", (node) => {
       node.remove();
       return;
     }
+    const start = parseYouTubeStart(node.getAttribute("src"));
     const title = node.getAttribute("title") ?? "";
     for (const name of Array.from(node.getAttributeNames())) node.removeAttribute(name);
     node.textContent = "";
-    node.setAttribute("src", youtubeEmbedUrl(id));
+    node.setAttribute("src", youtubeEmbedUrl(id, start));
     if (title) node.setAttribute("title", title);
     node.setAttribute("loading", "lazy");
     node.setAttribute("allow", YOUTUBE_IFRAME_ALLOW);
@@ -204,12 +206,14 @@ function serverIframe(tag: string, html: string, options: { isClosing?: boolean 
     validIframeOpen = false;
     return "";
   }
-  const id = parseYouTubeEmbedSrc(attrOf(html, "src"));
+  const src = attrOf(html, "src");
+  const id = parseYouTubeEmbedSrc(src);
   if (!id) return undefined;
+  const start = parseYouTubeStart(src);
   validIframeOpen = true;
   const title = attrOf(html, "title");
   return (
-    `<iframe src="${youtubeEmbedUrl(id)}"` +
+    `<iframe src="${escapeAttrValue(youtubeEmbedUrl(id, start))}"` +
     (title ? ` title="${escapeAttrValue(title)}"` : "") +
     ` loading="lazy" allow="${YOUTUBE_IFRAME_ALLOW}" allowfullscreen="" referrerpolicy="${YOUTUBE_IFRAME_REFERRER}"></iframe>`
   );

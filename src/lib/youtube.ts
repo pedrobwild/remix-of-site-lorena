@@ -45,8 +45,42 @@ export function parseYouTubeEmbedSrc(src: string | null | undefined): string | n
   return m ? m[1] : null;
 }
 
-export function youtubeEmbedUrl(id: string): string {
-  return `${YOUTUBE_EMBED_ORIGIN}/embed/${id}`;
+/** Converte "467", "467s", "7m47s", "1h2m3s" ou "7:47" em segundos inteiros. */
+export function parseYouTubeTime(raw: string | null | undefined): number | null {
+  const v = (raw ?? "").trim().toLowerCase();
+  if (!v) return null;
+  let total: number | null = null;
+  if (/^\d+s?$/.test(v)) total = parseInt(v, 10);
+  else if (/^(?:\d+h)?(?:\d+m)?(?:\d+s)?$/.test(v)) {
+    const h = /(\d+)h/.exec(v), m = /(\d+)m/.exec(v), sec = /(\d+)s/.exec(v);
+    total = (h ? +h[1] * 3600 : 0) + (m ? +m[1] * 60 : 0) + (sec ? +sec[1] : 0);
+  } else if (/^\d+(?::\d{1,2}){1,2}$/.test(v)) {
+    total = v.split(":").reduce((acc, n) => acc * 60 + parseInt(n, 10), 0);
+  }
+  return total && total > 0 && total < 86400 ? total : null;
+}
+
+/** Segundo inicial de um link comum do YouTube (`t=`, `start=` ou `#t=`). */
+export function parseYouTubeStart(input: string | null | undefined): number | null {
+  const raw = (input ?? "").trim();
+  if (!raw) return null;
+  let url: URL;
+  try {
+    url = new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`);
+  } catch {
+    return null;
+  }
+  const hash = new URLSearchParams(url.hash.replace(/^#/, ""));
+  return (
+    parseYouTubeTime(url.searchParams.get("start")) ??
+    parseYouTubeTime(url.searchParams.get("t")) ??
+    parseYouTubeTime(hash.get("t"))
+  );
+}
+
+export function youtubeEmbedUrl(id: string, start?: number | null): string {
+  const base = `${YOUTUBE_EMBED_ORIGIN}/embed/${id}`;
+  return start && start > 0 ? `${base}?start=${Math.floor(start)}` : base;
 }
 
 export function youtubeThumbnailUrl(id: string): string {

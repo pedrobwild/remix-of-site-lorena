@@ -19,6 +19,7 @@ import {
   YOUTUBE_IFRAME_REFERRER,
   parseYouTubeEmbedSrc,
   parseYouTubeId,
+  parseYouTubeStart,
   youtubeEmbedUrl,
 } from "@/lib/youtube";
 
@@ -32,7 +33,7 @@ const YouTubeEmbed = Node.create({
   atom: true,
   draggable: true,
   addAttributes() {
-    return { videoId: { default: null }, title: { default: "" } };
+    return { videoId: { default: null }, title: { default: "" }, start: { default: null } };
   },
   parseHTML() {
     return [
@@ -41,13 +42,17 @@ const YouTubeEmbed = Node.create({
         getAttrs: (el) => {
           const node = el as HTMLElement;
           const videoId = parseYouTubeEmbedSrc(node.getAttribute("src"));
-          return videoId ? { videoId, title: node.getAttribute("title") ?? "" } : false;
+          return videoId
+            ? { videoId, title: node.getAttribute("title") ?? "", start: parseYouTubeStart(node.getAttribute("src")) }
+            : false;
         },
       },
     ];
   },
   renderHTML({ node }) {
-    const attrs: Record<string, string> = { src: youtubeEmbedUrl(String(node.attrs.videoId)) };
+    const attrs: Record<string, string> = {
+      src: youtubeEmbedUrl(String(node.attrs.videoId), node.attrs.start ? Number(node.attrs.start) : null),
+    };
     if (node.attrs.title) attrs.title = String(node.attrs.title);
     return [
       "iframe",
@@ -184,6 +189,7 @@ export default function RichTextEditor({ value, onChange, onReady, onRequestImag
       window.alert("Não reconheci esse link. Cole o endereço de um vídeo do YouTube.");
       return;
     }
+    const start = parseYouTubeStart(url);
     const title = window.prompt(
       "Título do vídeo (lido por leitores de tela e usado pelo Google)",
       "",
@@ -192,7 +198,7 @@ export default function RichTextEditor({ value, onChange, onReady, onRequestImag
     editor
       .chain()
       .focus()
-      .insertContent({ type: "youtube", attrs: { videoId, title: title.trim() || "Vídeo do YouTube" } })
+      .insertContent({ type: "youtube", attrs: { videoId, start, title: title.trim() || "Vídeo do YouTube" } })
       .run();
   };
   insertYouTubeRef.current = insertYouTube;
