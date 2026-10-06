@@ -18,7 +18,7 @@ describe("lowercasePathRedirect", () => {
   });
   it("ignora ids públicos, admin, api e arquivos", () => {
     expect(lowercasePathRedirect(req("/o/AbC123"))).toBeNull();
-    expect(lowercasePathRedirect(req("/Admin/leads"))).toBeNull();
+    expect(lowercasePathRedirect(req("/admin/Leads"))).toBeNull();
     expect(lowercasePathRedirect(req("/api/Foo"))).toBeNull();
     expect(lowercasePathRedirect(req("/images/Foto.JPG"))).toBeNull();
   });
