@@ -90,6 +90,20 @@ export function postJsonLd(post: BewildPost): JsonLdNode[] {
   // Vídeos do YouTube no corpo: VideoObject é o que leva o Google a indexar o vídeo da página.
   for (const v of extractYouTubeEmbeds(post.body)) {
     const name = v.title || post.title;
+    // Trecho indicado no artigo (?start=): Clip diz ao Google onde o momento começa,
+    // com link direto para ele (key moments). Sem início, só o vídeo.
+    const clip = v.start
+      ? {
+          hasPart: [
+            {
+              "@type": "Clip",
+              name: `${name} — trecho citado no artigo`,
+              startOffset: v.start,
+              url: `https://www.youtube.com/watch?v=${v.id}&t=${v.start}s`,
+            },
+          ],
+        }
+      : {};
     arr.push({
       "@context": "https://schema.org",
       "@type": "VideoObject",
@@ -97,9 +111,11 @@ export function postJsonLd(post: BewildPost): JsonLdNode[] {
       description: post.meta_description || post.excerpt || name,
       thumbnailUrl: [youtubeThumbnailUrl(v.id)],
       uploadDate: dates.published,
-      embedUrl: youtubeEmbedUrl(v.id),
+      embedUrl: youtubeEmbedUrl(v.id, v.start ?? undefined),
+      url: `https://www.youtube.com/watch?v=${v.id}`,
       inLanguage: "pt-BR",
       isPartOf: { "@type": "WebPage", "@id": articleUrl },
+      ...clip,
     });
   }
   // Vídeo próprio (<video poster><source src>) no corpo: mesmo VideoObject, com o arquivo.
