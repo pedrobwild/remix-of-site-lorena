@@ -1,41 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://bewild.com.br/</loc><lastmod>2026-09-26</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://bewild.com.br/portfolio</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://bewild.com.br/conteudos</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://bewild.com.br/orcamento</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://bewild.com.br/</loc><lastmod>2026-10-06</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://bewild.com.br/portfolio</loc><lastmod>2026-10-06</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://bewild.com.br/conteudos</loc><lastmod>2026-10-06</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bewild.com.br/orcamento</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://bewild.com.br/faq</loc><lastmod>2026-09-29</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://bewild.com.br/autorizacao-condominio</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://bewild.com.br/contato</loc><lastmod>2026-09-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/autorizacao-condominio</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/contato</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/mapa-do-site</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://bewild.com.br/servicos</loc><lastmod>2026-09-29</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://bewild.com.br/escopo</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://bewild.com.br/como-funciona</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://bewild.com.br/onde-atuamos</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://bewild.com.br/reforma-de-apartamento-sao-paulo</loc><lastmod>2026-09-23</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://bewild.com.br/reforma-de-studio-sao-paulo</loc><lastmod>2026-09-23</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://bewild.com.br/reforma-de-cobertura-sao-paulo</loc><lastmod>2026-09-23</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://bewild.com.br/marcenaria</loc><lastmod>2026-09-23</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://bewild.com.br/parceiros</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://bewild.com.br/parceiros/incorporadoras</loc><lastmod>2026-09-23</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://bewild.com.br/indique-um-amigo</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://bewild.com.br/marcas-e-parcerias</loc><lastmod>2026-09-23</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/servicos</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://bewild.com.br/escopo</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/como-funciona</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/onde-atuamos</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/reforma-de-apartamento-sao-paulo</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://bewild.com.br/reforma-de-studio-sao-paulo</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://bewild.com.br/reforma-de-cobertura-sao-paulo</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://bewild.com.br/marcenaria</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://bewild.com.br/parceiros</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/parceiros/incorporadoras</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bewild.com.br/indique-um-amigo</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/marcas-e-parcerias</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/guia-do-investidor</loc><lastmod>2026-09-23</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://bewild.com.br/privacidade</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://bewild.com.br/acessibilidade</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://bewild.com.br/privacidade</loc><lastmod>2026-10-06</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://bewild.com.br/acessibilidade</loc><lastmod>2026-10-06</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://bewild.com.br/reforma/brooklin</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://bewild.com.br/reforma/butanta</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://bewild.com.br/reforma/campo-belo</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://bewild.com.br/reforma/consolacao</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://bewild.com.br/reforma/higienopolis</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://bewild.com.br/reforma/jardim-paulista</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://bewild.com.br/reforma/moema</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://bewild.com.br/reforma/paulista</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://bewild.com.br/reforma/perdizes</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://bewild.com.br/reforma/pinheiros</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://bewild.com.br/reforma/republica</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://bewild.com.br/reforma/santo-amaro</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://bewild.com.br/reforma/vila-clementino</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bewild.com.br/reforma/vila-clementino</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://bewild.com.br/reforma/vila-madalena</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://bewild.com.br/reforma/vila-mariana</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://bewild.com.br/reforma/vila-nova-conceicao</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
@@ -97,7 +96,6 @@
   <url><loc>https://bewild.com.br/portfolio/fc-think-tanabi-perdizes</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/fd-balkon-campo-belo</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/fd-do-it-faria-lima</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://bewild.com.br/portfolio/fd-nex-one-vila-nova</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/fd-next-one-vila-nova</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/ff</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/fg</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -111,7 +109,7 @@
   <url><loc>https://bewild.com.br/portfolio/gm-vila-olimpia-passarelli</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/hr-rem-id-alta-romana</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/il-mobi-tucuruvi</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://bewild.com.br/portfolio/jc-exalt-ibirapuera-by-ez</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/jc-exalt-ibirapuera-by-ez</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/jg-nex-one-vila-nova</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/jl-soma-perdizes</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/jn-pinheiros-by-passareli-92</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -153,11 +151,10 @@
   <url><loc>https://bewild.com.br/portfolio/mz-ari-studios-butanta</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/ne-urban-flex</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/nl-high-line-tatuape</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://bewild.com.br/portfolio/pg-metrocasa-berrini</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/pi-lm-urbanflex</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://bewild.com.br/portfolio/pp-via-alameda</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/pp-via-alameda</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/pr-composite-moema</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://bewild.com.br/portfolio/prg-metrocasa-berrini</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bewild.com.br/portfolio/prg-metrocasa-berrini</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/ps-edificio-fortune-residence</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/r-tbg</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/ra-soma-perdizes</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -174,7 +171,6 @@
   <url><loc>https://bewild.com.br/portfolio/rs-metro-casa-9-de-julho</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/rs-my-one-estacao-japao-liberdade</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/rs-nex-one-jurupis</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://bewild.com.br/portfolio/rs-sergipe-boutique</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/rs-sergipe-boutique-apartments-by-you</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/rs-spotlights-pinheiros</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/rt</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -190,7 +186,6 @@
   <url><loc>https://bewild.com.br/portfolio/ta-metrocasa-berrini</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/tb-latitude-campo-belo</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/tb-urban-flex</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://bewild.com.br/portfolio/tbcf-latitude-campo-belo</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/to-think-tanabi-perdizes</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/tr-metrocasa-berrini</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/tv-s-level-brooklin</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -202,51 +197,49 @@
   <url><loc>https://bewild.com.br/portfolio/vl-nex-one-pereira</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/vt-nex-one-pereira-coutinho</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/vv-casa-ibirapuera-cyrela</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/7-erros-imovel-short-stay</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/aditivo-em-obra-por-que-existe</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/airbnb-ou-booking</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/antes-e-depois-studio-26-m2-vila-madalena</loc><lastmod>2026-09-27</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/ar-condicionado-studio-quantos-btus</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/como-avaliar-studio-antes-de-comprar</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/como-comparar-orcamentos-de-reforma</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/como-declarar-renda-airbnb-imposto-de-renda</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/como-escolher-empresa-de-reforma-sao-paulo</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/como-precificar-studio-airbnb-sao-paulo</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/comprou-studio-na-planta-antes-das-chaves</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/cronograma-reforma-studio-60-dias-uteis</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/custos-de-operar-studio-short-stay</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/estudo-de-layout-studio-25-m2</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/etapas-de-reforma-de-apartamento-cronograma</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/fechar-varanda-em-vidro-studio-condominio</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/gestao-propria-vs-gestora</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/melhores-bairros-short-stay-sao-paulo</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/nbr-16280-reforma-studio-condominio</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/o-que-e-short-stay</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/o-que-esta-incluso-orcamento-reforma-studio</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/o-que-move-reservas-studio-airbnb</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/o-que-nao-reformar-no-studio-short-stay</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/o-que-perguntar-ao-sindico-antes-de-reformar</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/o-que-vem-no-studio-novo-sao-paulo</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/orcamento-reforma-studio-25-m2-item-a-item</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/piso-vinilico-ou-porcelanato-studio</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/preparar-studio-airbnb-checklist</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/quanto-custa-reformar-apartamento-sao-paulo-2026</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/quanto-custa-reformar-apartamento-turnkey</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/quanto-rende-studio-short-stay-sao-paulo</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/quanto-tempo-demora-reforma-apartamento</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/quem-reforma-studio-sao-paulo-perfil</loc><lastmod>2026-09-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/recebi-chaves-studio-na-planta-o-que-fazer</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/reforma-de-apartamento-antigo-sao-paulo</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/reforma-de-apartamento-em-sao-paulo-guia</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/reforma-de-casa-ou-apartamento-em-sp</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/reforma-tributaria-short-stay-ibs-cbs</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/reforma-turn-key-ou-tradicional</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/reformar-apartamento-morando-nele</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/reformar-studio-sao-paulo-morando-em-outra-cidade</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/short-stay-ou-long-stay-studio-compacto</loc><lastmod>2026-09-27</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/7-erros-imovel-short-stay</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/aditivo-em-obra-por-que-existe</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/airbnb-ou-booking</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/antes-e-depois-studio-26-m2-vila-madalena</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/ar-condicionado-studio-quantos-btus</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/como-avaliar-studio-antes-de-comprar</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/como-comparar-orcamentos-de-reforma</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/como-declarar-renda-airbnb-imposto-de-renda</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/como-escolher-empresa-de-reforma-sao-paulo</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/como-precificar-studio-airbnb-sao-paulo</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/comprou-studio-na-planta-antes-das-chaves</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/cronograma-reforma-studio-60-dias-uteis</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/custos-de-operar-studio-short-stay</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/estudo-de-layout-studio-25-m2</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/etapas-de-reforma-de-apartamento-cronograma</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/fechar-varanda-em-vidro-studio-condominio</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/gestao-propria-vs-gestora</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/melhores-bairros-short-stay-sao-paulo</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/nbr-16280-reforma-studio-condominio</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/o-que-e-short-stay</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/o-que-esta-incluso-orcamento-reforma-studio</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/o-que-move-reservas-studio-airbnb</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/o-que-nao-reformar-no-studio-short-stay</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/o-que-perguntar-ao-sindico-antes-de-reformar</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/o-que-vem-no-studio-novo-sao-paulo</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/orcamento-reforma-studio-25-m2-item-a-item</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/piso-vinilico-ou-porcelanato-studio</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/preparar-studio-airbnb-checklist</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/quanto-rende-studio-short-stay-sao-paulo</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/quanto-tempo-demora-reforma-apartamento</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/quem-reforma-studio-sao-paulo-perfil</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/recebi-chaves-studio-na-planta-o-que-fazer</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/reforma-de-apartamento-antigo-sao-paulo</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/reforma-de-apartamento-em-sao-paulo-guia</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/reforma-de-casa-ou-apartamento-em-sp</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/reforma-tributaria-short-stay-ibs-cbs</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/reforma-turn-key-ou-tradicional</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/reformar-apartamento-morando-nele</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/reformar-studio-sao-paulo-morando-em-outra-cidade</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/short-stay-ou-long-stay-studio-compacto</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://bewild.com.br/conteudos/short-stay-sem-virar-gerente-de-obra</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/studio-his-ou-hmp-o-que-fazer</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/studios-airbnb-sao-paulo-o-que-a-lei-permite</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/studio-his-ou-hmp-o-que-fazer</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/studios-airbnb-sao-paulo-o-que-a-lei-permite</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
 </urlset>
