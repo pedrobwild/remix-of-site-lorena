@@ -76,13 +76,14 @@ type PostSeoRow = {
   meta_description: string | null;
   excerpt: string | null;
   cover_image: string | null;
+  og_image?: string | null;
 };
 
 export async function loadPostSeo(slug: string): Promise<RouteSeoData> {
   try {
     const { data } = await supabase
       .from("bewild_posts" as never)
-      .select("title, meta_title, meta_description, excerpt, cover_image")
+      .select("title, meta_title, meta_description, excerpt, cover_image, og_image")
       .eq("slug", slug)
       .eq("published", true)
       .maybeSingle();
@@ -94,7 +95,7 @@ export async function loadPostSeo(slug: string): Promise<RouteSeoData> {
         post.meta_description ||
         post.excerpt ||
         "Guias práticos da Bewild sobre arquitetura, engenharia e reforma de apartamento em São Paulo.",
-      ogImage: post.cover_image,
+      ogImage: post.og_image || post.cover_image,
       ogType: "article",
     };
   } catch {
@@ -174,7 +175,7 @@ export function postSeoFrom(post: PostSeoRow | null, failed = false): RouteSeoDa
       post.meta_description ||
       post.excerpt ||
       "Guias práticos da Bewild sobre arquitetura, engenharia e reforma de apartamento em São Paulo.",
-    ogImage: post.cover_image,
+    ogImage: post.og_image || post.cover_image,
     ogType: "article",
   };
 }

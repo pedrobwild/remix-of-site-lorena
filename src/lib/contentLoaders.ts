@@ -29,7 +29,7 @@ marked.setOptions({ gfm: true, breaks: false });
 
 /** Lista de posts sem `body` (o índice /conteudos não usa o corpo). */
 const POST_LIST_COLS =
-  "id, slug, title, meta_title, meta_description, category, excerpt, cover_image, faq, reading_time, author, featured, published, published_at, created_at";
+  "id, slug, title, meta_title, meta_description, og_image, category, excerpt, cover_image, faq, reading_time, author, featured, published, published_at, created_at";
 
 /** `null` = sanitizador falhou: a página sai só com título e resumo. */
 function renderBody(body: string | null | undefined): string | null {
