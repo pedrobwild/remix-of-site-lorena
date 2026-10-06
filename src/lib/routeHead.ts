@@ -75,7 +75,18 @@ export type SeoHeadInput = {
    * home (tem a própria folha), /guia-do-investidor e as LPs /o e /p.
    */
   bwaCss?: boolean;
+  /** Texto alternativo da imagem de compartilhamento (padrão: o do root). */
+  ogImageAlt?: string;
+  /** Metas extras da rota (ex.: `article:published_time`, `author`). */
+  extraMeta?: Array<Record<string, string>> | null;
 };
+
+/** MIME da og:image pela extensão; `null` quando não dá para saber (o root diz jpeg). */
+export function ogImageType(url: string): string | null {
+  const ext = url.split(/[?#]/)[0].toLowerCase().match(/\.(jpe?g|png|webp|avif|gif)$/)?.[1];
+  if (!ext) return null;
+  return ext === "jpg" || ext === "jpeg" ? "image/jpeg" : `image/${ext}`;
+}
 
 function absoluteUrl(url: string): string {
   const u = url.trim();
@@ -189,6 +200,14 @@ export function seoHead(input: SeoHeadInput) {
     { name: "DC.title", content: input.title },
   ];
   if (input.keywords) meta.push({ name: "keywords", content: input.keywords });
+  // O root declara og:image:type "image/jpeg"; capas de post são png/webp.
+  const imgType = ogImageType(og);
+  if (imgType) meta.push({ property: "og:image:type", content: imgType });
+  if (input.ogImageAlt) {
+    meta.push({ property: "og:image:alt", content: input.ogImageAlt });
+    meta.push({ name: "twitter:image:alt", content: input.ogImageAlt });
+  }
+  for (const m of input.extraMeta ?? []) if (m.content) meta.push(m);
 
   // Canonical + hreflang só em páginas indexáveis (o __root não emite
   // canonical: <link> não deduplica entre root e rota).

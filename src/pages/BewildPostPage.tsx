@@ -33,6 +33,7 @@ import { postAuthorByline, postAuthorHref, postDates, postTitleFromSlug } from "
 import { navigate } from "@/lib/useHashRoute";
 import { keywordsForPost } from "@/lib/postKeywords";
 import { internalLinksForPost } from "@/lib/postInternalLinks";
+import { structurePostBody, TOC_MIN_SECTIONS } from "@/lib/postStructure";
 import { logNotFound, lookupActiveRedirect } from "@/lib/notFoundLog";
 import "@/styles/post.css";
 import "@/styles/conteudos.css";
@@ -164,7 +165,7 @@ export default function BewildPostPage({ slug, initial }: Props) {
   const ctaHref = "/orcamento";
   const ctaWhatsHref = post ? whatsappHref(`Vim do artigo "${post.title}" no site.`) : whatsappHref();
 
-  const bodyHtml = useMemo(() => {
+  const sanitizedBody = useMemo(() => {
     if (!post?.body) return "";
     // 1º render: HTML já sanitizado pelo loader (evita diferença de hidratação).
     if (initial?.post && initial.bodyHtml != null && initial.post.body === post.body) {
@@ -177,6 +178,14 @@ export default function BewildPostPage({ slug, initial }: Props) {
       return "";
     }
   }, [post?.body, initial]);
+  // Linha "Autor/Revisão" sai do corpo (vira dado no cabeçalho) e H2/H3 ganham
+  // âncora para o sumário. Função pura: servidor e cliente geram o mesmo HTML.
+  const structured = useMemo(() => structurePostBody(sanitizedBody), [sanitizedBody]);
+  const bodyHtml = structured.html;
+  const tocItems = structured.toc.filter((t) => t.level === 2);
+  const reviewer = structured.credits.reviewer;
+  const reviewerHref = reviewer ? postAuthorHref(reviewer) : null;
+  const reviewerLabel = reviewer && postAuthorByline(reviewer) !== postAuthorByline(post?.author) ? postAuthorByline(reviewer) : null;
 
   const dates = postDates(post);
   const dateIso = dates.published;
@@ -331,6 +340,17 @@ export default function BewildPostPage({ slug, initial }: Props) {
                   Atualizado em <time dateTime={dates.modified}>{formatBewildDate(dates.modified)}</time>
                 </span>
               ) : null}
+              {reviewerLabel ? <span className="pt-dot">·</span> : null}
+              {reviewerLabel ? (
+                <span className="pt-reviewer">
+                  Revisão{structured.credits.reviewKind ? ` ${structured.credits.reviewKind}` : ""}:{" "}
+                  {reviewerHref && reviewerHref !== `/conteudos/${post.slug}` ? (
+                    <a href={reviewerHref}>{reviewerLabel}</a>
+                  ) : (
+                    reviewerLabel
+                  )}
+                </span>
+              ) : null}
             </div>
           </div>
         </section>
@@ -356,6 +376,18 @@ export default function BewildPostPage({ slug, initial }: Props) {
         {/* BODY */}
         <section className="pt-body-section">
           <div className="container">
+            {tocItems.length >= TOC_MIN_SECTIONS ? (
+              <nav className="pt-toc" aria-label="Neste artigo">
+                <p className="pt-toc__title">Neste artigo</p>
+                <ol>
+                  {tocItems.map((t) => (
+                    <li key={t.id}>
+                      <a href={`#${t.id}`}>{t.text}</a>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+            ) : null}
             <div className="pt-body" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
           </div>
         </section>
