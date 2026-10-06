@@ -1,3 +1,4 @@
+import { brandTitle } from "@/lib/seoTitle";
 import { formatAreaM2 } from "@/lib/formatArea";
 import { bairroAreaRange, bairroDescription } from "@/lib/bairroSeo";
 import { bairroContent } from "@/content/bairros";
@@ -71,7 +72,7 @@ export default function BairroPage({
   const content = bairroContent(slug);
 
   useSeo({
-    title: `Reforma de apartamento em ${label || "São Paulo"}: projetos e orçamento | Bewild`,
+    title: brandTitle(`Reforma de apartamento em ${label || "São Paulo"}: projetos e orçamento`),
     description: bairroDescription(list.length, label, faixa),
     canonicalPath: `/reforma/${slug}`,
     ogType: "website",

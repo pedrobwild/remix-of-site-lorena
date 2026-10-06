@@ -17,7 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { sanitizeBlogHtml } from "@/lib/sanitizeHtml";
 import { NOT_FOUND_SEO, postSeoFrom, projectSeoFrom, bairroSeoFrom, type RouteSeoData } from "@/lib/seoLoaders";
 import { normalizeBewildPost, type BewildPost } from "@/lib/useBewildPosts";
-import { POST_SELECT_COLS } from "@/lib/useBewildPost";
+import { withPostCols } from "@/lib/useBewildPost";
 import { PROJECT_COLUMNS, type BewildProjectFull } from "@/lib/useBewildProject";
 import { PROJECTS_LIST_COLUMNS, type BewildProject } from "@/lib/useBewildProjects";
 import { PEER_COLUMNS } from "@/lib/useProjectSeoPeers";
@@ -72,27 +72,27 @@ export async function loadPostContent(slug: string): Promise<PostLoaderData> {
 
 async function fetchPostContent(slug: string): Promise<PostLoaderData> {
   try {
-    const { data, error } = await supabase
-      .from("bewild_posts" as never)
-      .select(POST_SELECT_COLS)
-      .eq("slug", slug)
-      .eq("published", true)
-      .maybeSingle();
+    const { data, error } = await withPostCols((cols) =>
+      supabase.from("bewild_posts" as never).select(cols).eq("slug", slug).eq("published", true).maybeSingle(),
+    );
     if (error) throw error;
     if (!data) return { seo: NOT_FOUND_SEO, post: null, related: [] };
     const post = normalizeBewildPost(data as unknown as BewildPost) as BewildPost;
 
     let related: BewildPost[] | null = null;
     if (post.category) {
-      const rel = await supabase
-        .from("bewild_posts" as never)
-        .select(POST_SELECT_COLS)
-        .eq("published", true)
-        .eq("category", post.category)
-        .neq("id", post.id)
-        .order("published_at", { ascending: false, nullsFirst: false })
-        .order("created_at", { ascending: false })
-        .limit(3);
+      const category = post.category;
+      const rel = await withPostCols((cols) =>
+        supabase
+          .from("bewild_posts" as never)
+          .select(cols)
+          .eq("published", true)
+          .eq("category", category)
+          .neq("id", post.id)
+          .order("published_at", { ascending: false, nullsFirst: false })
+          .order("created_at", { ascending: false })
+          .limit(3),
+      );
       if (!rel.error) {
         related = ((rel.data ?? []) as unknown as BewildPost[]).map(normalizeBewildPost) as BewildPost[];
       }

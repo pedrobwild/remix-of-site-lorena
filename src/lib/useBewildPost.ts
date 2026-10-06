@@ -14,6 +14,36 @@ export const POST_SELECT_COLS =
   "id, slug, title, meta_title, meta_description, og_image, category, excerpt, cover_image, body, faq, reading_time, author, featured, published, published_at, created_at, updated_at";
 
 /**
+ * Mesmas colunas + `content_updated_at` (migration 20261006150000): a data
+ * real da última edição de conteúdo, que alimenta "Atualizado em",
+ * `dateModified` e o sitemap no lugar de `updated_at` (carimbado por qualquer
+ * update em lote).
+ */
+export const POST_SELECT_COLS_FULL = `${POST_SELECT_COLS}, content_updated_at`;
+
+type PostgrestLikeError = { code?: string | null; message?: string | null } | null;
+
+/** PostgREST 42703 = coluna inexistente (banco ainda sem a migration). */
+export function isMissingContentUpdatedAt(error: PostgrestLikeError): boolean {
+  if (!error) return false;
+  if (error.code === "42703") return true;
+  return /content_updated_at/i.test(error.message ?? "");
+}
+
+/**
+ * Executa a consulta com `POST_SELECT_COLS_FULL` e, se o banco ainda não tem
+ * `content_updated_at`, repete com `POST_SELECT_COLS`. Assim o deploy não
+ * depende da ordem entre código e migration.
+ */
+export async function withPostCols<T extends { error: PostgrestLikeError }>(
+  run: (cols: string) => PromiseLike<T>,
+): Promise<T> {
+  const first = await run(POST_SELECT_COLS_FULL);
+  if (first.error && isMissingContentUpdatedAt(first.error)) return run(POST_SELECT_COLS);
+  return first;
+}
+
+/**
  * Estado sempre coerente com o `slug` ATUAL: a troca de slug zera o post na
  * hora (antes o post A continuava na tela — com title/canonical de A — sob a
  * URL de B até a resposta chegar) e erro também zera (antes: post antigo ou
@@ -49,12 +79,14 @@ export function useBewildPost(slug: string | undefined, initial?: InitialPost | 
     setLoading(true);
     setNotFound(false);
 
-    supabase
-      .from("bewild_posts" as never)
-      .select(POST_SELECT_COLS)
-      .eq("slug", slug)
-      .eq("published", true)
-      .maybeSingle()
+    withPostCols((cols) =>
+      supabase
+        .from("bewild_posts" as never)
+        .select(cols)
+        .eq("slug", slug)
+        .eq("published", true)
+        .maybeSingle(),
+    )
       .then(
         ({ data, error }) => {
           if (!mounted) return;
@@ -118,15 +150,17 @@ export function useBewildRelatedPosts(
     let mounted = true;
     setLoading(true);
 
-    supabase
-      .from("bewild_posts" as never)
-      .select(POST_SELECT_COLS)
-      .eq("published", true)
-      .eq("category", category)
-      .neq("id", excludeId)
-      .order("published_at", { ascending: false, nullsFirst: false })
-      .order("created_at", { ascending: false })
-      .limit(limit)
+    withPostCols((cols) =>
+      supabase
+        .from("bewild_posts" as never)
+        .select(cols)
+        .eq("published", true)
+        .eq("category", category)
+        .neq("id", excludeId)
+        .order("published_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false })
+        .limit(limit),
+    )
       .then(({ data, error }) => {
         if (!mounted) return;
         if (error) {
