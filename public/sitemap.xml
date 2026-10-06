@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
   <url><loc>https://bewild.com.br/</loc><lastmod>2026-10-06</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
   <url><loc>https://bewild.com.br/portfolio</loc><lastmod>2026-10-06</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://bewild.com.br/conteudos</loc><lastmod>2026-10-06</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
@@ -198,7 +198,7 @@
   <url><loc>https://bewild.com.br/portfolio/vt-nex-one-pereira-coutinho</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/portfolio/vv-casa-ibirapuera-cyrela</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://bewild.com.br/conteudos/7-erros-imovel-short-stay</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/aditivo-em-obra-por-que-existe</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/aditivo-em-obra-por-que-existe</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority><video:video><video:thumbnail_loc>https://i.ytimg.com/vi/pQjZeD8nYEE/maxresdefault.jpg</video:thumbnail_loc><video:title>Aditivo em obra: por que o orçamento estoura e quem paga a conta</video:title><video:description>A obra começa com um valor e termina com outro, bem maior. Nesta entrevista, Pedro Alves, engenheiro e CEO da Bewild, explica por que o aditivo em obra acontece, quando ele é legítimo, as três causas que explicam quase todo aditivo e o que conferir no contrato antes de assinar.</video:description><video:player_loc>https://www.youtube-nocookie.com/embed/pQjZeD8nYEE?start=467</video:player_loc><video:duration>589</video:duration><video:publication_date>2026-09-22T05:45:27.877Z</video:publication_date><video:family_friendly>yes</video:family_friendly></video:video></url>
   <url><loc>https://bewild.com.br/conteudos/airbnb-ou-booking</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://bewild.com.br/conteudos/antes-e-depois-studio-26-m2-vila-madalena</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://bewild.com.br/conteudos/ar-condicionado-studio-quantos-btus</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
@@ -226,7 +226,7 @@
   <url><loc>https://bewild.com.br/conteudos/pedro-henrique-alves-ceo-bewild</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://bewild.com.br/conteudos/piso-vinilico-ou-porcelanato-studio</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://bewild.com.br/conteudos/preparar-studio-airbnb-checklist</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://bewild.com.br/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bewild.com.br/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority><video:video><video:thumbnail_loc>https://bewild.com.br/videos/quanto-custa-reformar-ate-50m2-v2-poster.jpg</video:thumbnail_loc><video:title>Quanto custa reformar um apartamento ou studio de até 50 m²</video:title><video:description>Resumo em vídeo da análise de 188 contratos de clientes Bewild sobre quanto custa reformar um apartamento ou studio de até 50 m².</video:description><video:content_loc>https://bewild.com.br/videos/quanto-custa-reformar-ate-50m2-v2.mp4</video:content_loc><video:duration>176</video:duration><video:publication_date>2026-10-01T04:15:06.098Z</video:publication_date><video:family_friendly>yes</video:family_friendly></video:video></url>
   <url><loc>https://bewild.com.br/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://bewild.com.br/conteudos/quanto-rende-studio-short-stay-sao-paulo</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://bewild.com.br/conteudos/quanto-tempo-demora-reforma-apartamento</loc><lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
