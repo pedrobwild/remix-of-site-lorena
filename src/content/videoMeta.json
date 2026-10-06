@@ -5,13 +5,13 @@
       "description": "A obra começa com um valor e termina com outro, bem maior. Nesta entrevista, Pedro Alves, engenheiro e CEO da Bewild, explica por que o aditivo em obra acontece, quando ele é legítimo, as três causas que explicam quase todo aditivo e o que conferir no contrato antes de assinar.",
       "thumbnailUrl": "https://i.ytimg.com/vi/pQjZeD8nYEE/maxresdefault.jpg",
       "duration": "PT9M49S"
+    },
+    "-igd5cs666c": {
+      "name": "Quanto custa reformar apartamento ou studio de até 50 m² em SP? 188 contratos analisados",
+      "description": "Quanto custa reformar um studio ou apartamento de até 50 m² em São Paulo? Abrimos os números de 188 contratos de reforma turnkey de clientes da Bewild para trocar o \"depende\" por números.",
+      "thumbnailUrl": "https://i.ytimg.com/vi/-igd5cs666c/maxresdefault.jpg",
+      "duration": "PT1M55S"
     }
   },
-  "files": {
-    "/videos/quanto-custa-reformar-ate-50m2-v2.mp4": {
-      "name": "Quanto custa reformar um apartamento ou studio de até 50 m²",
-      "description": "Resumo em vídeo da análise de 188 contratos de clientes Bewild sobre quanto custa reformar um apartamento ou studio de até 50 m².",
-      "duration": "PT2M56S"
-    }
-  }
+  "files": {}
 }
