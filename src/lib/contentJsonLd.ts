@@ -10,12 +10,18 @@ import { bewildTypeLabel, type BewildProjectType } from "@/lib/useBewildProjects
 import { authorForPage, postAuthorJsonLd, postDates } from "@/lib/postSeo";
 import { itemListJsonLd, projectJsonLd } from "@/lib/useSeo";
 import { extractYouTubeEmbeds, youtubeEmbedUrl, youtubeThumbnailUrl } from "@/lib/youtube";
+import videoMeta from "@/content/videoMeta.json";
 import { neighborhoodSlug } from "@/lib/portfolioFilter";
 import { projectFriendlyName, projectMetaDescription, type ProjectSeoInput } from "@/lib/projectSeo";
 
 export type JsonLdNode = Record<string, unknown>;
 
 const BASE = "https://bewild.com.br";
+
+type VideoMeta = { name?: string; description?: string; thumbnailUrl?: string; duration?: string };
+/** Dados reais do vídeo (título/descrição/miniatura/duração do próprio vídeo), quando cadastrados. */
+const ytMeta = (id: string): VideoMeta => (videoMeta.youtube as Record<string, VideoMeta>)[id] ?? {};
+const fileMeta = (src: string): VideoMeta => (videoMeta.files as Record<string, VideoMeta>)[src] ?? {};
 
 const abs = (u: string) => (u.startsWith("http") ? u : `${BASE}${u.startsWith("/") ? u : `/${u}`}`);
 
@@ -31,6 +37,7 @@ export function postVideoJsonLd(post: Pick<BewildPost, "body" | "title" | "meta_
   const src = video.match(/<source\b[^>]*\bsrc="([^"]+)"/i)?.[1] || video.match(/\bsrc="([^"]+)"/i)?.[1];
   const poster = video.match(/\bposter="([^"]+)"/i)?.[1];
   if (!src || !poster) return null;
+  const meta = fileMeta(src);
   const end = body.indexOf(video) + video.length;
   const caption = body
     .slice(end, end + 400)
@@ -42,9 +49,10 @@ export function postVideoJsonLd(post: Pick<BewildPost, "body" | "title" | "meta_
   return {
     "@context": "https://schema.org",
     "@type": "VideoObject",
-    name: label || caption || post.title,
-    description: post.meta_description || post.excerpt || post.title,
-    thumbnailUrl: [abs(poster)],
+    name: meta.name || label || caption || post.title,
+    description: meta.description || post.meta_description || post.excerpt || post.title,
+    thumbnailUrl: [abs(meta.thumbnailUrl || poster)],
+    ...(meta.duration ? { duration: meta.duration } : {}),
     contentUrl: abs(src),
     uploadDate: dates.published,
     inLanguage: "pt-BR",
@@ -89,7 +97,8 @@ export function postJsonLd(post: BewildPost): JsonLdNode[] {
   }
   // Vídeos do YouTube no corpo: VideoObject é o que leva o Google a indexar o vídeo da página.
   for (const v of extractYouTubeEmbeds(post.body)) {
-    const name = v.title || post.title;
+    const meta = ytMeta(v.id);
+    const name = meta.name || v.title || post.title;
     // Trecho indicado no artigo (?start=): Clip diz ao Google onde o momento começa,
     // com link direto para ele (key moments). Sem início, só o vídeo.
     const clip = v.start
@@ -108,8 +117,9 @@ export function postJsonLd(post: BewildPost): JsonLdNode[] {
       "@context": "https://schema.org",
       "@type": "VideoObject",
       name,
-      description: post.meta_description || post.excerpt || name,
-      thumbnailUrl: [youtubeThumbnailUrl(v.id)],
+      description: meta.description || post.meta_description || post.excerpt || name,
+      thumbnailUrl: [meta.thumbnailUrl || youtubeThumbnailUrl(v.id)],
+      ...(meta.duration ? { duration: meta.duration } : {}),
       uploadDate: dates.published,
       embedUrl: youtubeEmbedUrl(v.id, v.start ?? undefined),
       url: `https://www.youtube.com/watch?v=${v.id}`,
