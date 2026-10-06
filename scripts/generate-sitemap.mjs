@@ -68,9 +68,69 @@ export function xmlEscape(s) {
     .replace(/'/g, "&apos;");
 }
 
-export function urlTag({ loc, lastmod, changefreq, priority }) {
+export function urlTag({ loc, lastmod, changefreq, priority, videos }) {
   const lm = lastmod ? `<lastmod>${xmlEscape(lastmod)}</lastmod>` : "";
-  return `  <url><loc>${xmlEscape(loc)}</loc>${lm}<changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
+  const vids = (videos ?? []).map(videoTag).join("");
+  return `  <url><loc>${xmlEscape(loc)}</loc>${lm}<changefreq>${changefreq}</changefreq><priority>${priority}</priority>${vids}</url>`;
+}
+
+// Dados reais dos vídeos (mesma fonte do VideoObject em src/lib/contentJsonLd.ts).
+const videoMeta = JSON.parse(readFileSync(new URL("../src/content/videoMeta.json", import.meta.url), "utf8"));
+const isoSecs = (d) => {
+  const m = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(d || "");
+  return m ? +(m[1] || 0) * 3600 + +(m[2] || 0) * 60 + +(m[3] || 0) : null;
+};
+const absUrl = (u) => (/^https?:/i.test(u) ? u : `${BASE_URL}${u.startsWith("/") ? u : `/${u}`}`);
+const plain = (s) => String(s ?? "").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+
+/** Vídeos que estão no corpo do post (YouTube e <video> próprio), para o sitemap de vídeo. */
+export function postVideos(post) {
+  const body = post.body || "";
+  const desc = plain(post.meta_description || post.excerpt || post.title).slice(0, 2048);
+  const date = post.published_at || post.created_at;
+  const out = [];
+  for (const m of body.matchAll(/<iframe\b[^>]*>/gi)) {
+    const tag = m[0];
+    const src = tag.match(/\bsrc="([^"]+)"/i)?.[1]?.replace(/&amp;/g, "&");
+    const id = src?.match(/youtube(?:-nocookie)?\.com\/embed\/([\w-]{11})/i)?.[1];
+    if (!id) continue;
+    const start = src.match(/[?&]start=(\d+)/)?.[1];
+    const meta = videoMeta.youtube[id] ?? {};
+    out.push({
+      thumb: meta.thumbnailUrl || `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+      title: plain(meta.name || tag.match(/\btitle="([^"]+)"/i)?.[1] || post.title),
+      desc: meta.description || desc,
+      player: `https://www.youtube-nocookie.com/embed/${id}${start ? `?start=${start}` : ""}`,
+      secs: isoSecs(meta.duration),
+      date,
+    });
+  }
+  for (const m of body.matchAll(/<video\b[^>]*>[\s\S]*?<\/video>/gi)) {
+    const v = m[0];
+    const src = v.match(/<source\b[^>]*\bsrc="([^"]+)"/i)?.[1] || v.match(/\bsrc="([^"]+)"/i)?.[1];
+    const poster = v.match(/\bposter="([^"]+)"/i)?.[1];
+    if (!src || !poster) continue;
+    const meta = videoMeta.files[src] ?? {};
+    const label = v.match(/\baria-label="([^"]+)"/i)?.[1]?.replace(/^V[ií]deo:\s*/i, "");
+    out.push({
+      thumb: absUrl(meta.thumbnailUrl || poster),
+      title: plain(meta.name || label || post.title),
+      desc: meta.description || desc,
+      content: absUrl(src),
+      secs: isoSecs(meta.duration),
+      date,
+    });
+  }
+  return out;
+}
+
+function videoTag(v) {
+  const loc = v.content
+    ? `<video:content_loc>${xmlEscape(v.content)}</video:content_loc>`
+    : `<video:player_loc>${xmlEscape(v.player)}</video:player_loc>`;
+  const dur = v.secs ? `<video:duration>${v.secs}</video:duration>` : "";
+  const pd = v.date ? `<video:publication_date>${xmlEscape(new Date(v.date).toISOString())}</video:publication_date>` : "";
+  return `<video:video><video:thumbnail_loc>${xmlEscape(v.thumb)}</video:thumbnail_loc><video:title>${xmlEscape(v.title.slice(0, 100))}</video:title><video:description>${xmlEscape(v.desc)}</video:description>${loc}${dur}${pd}<video:family_friendly>yes</video:family_friendly></video:video>`;
 }
 
 async function main() {
@@ -108,7 +168,7 @@ async function main() {
   try {
     [projects, posts, faqEntries] = await Promise.all([
       getProjects(),
-      get("bewild_posts?published=eq.true&select=slug,title,updated_at,published_at,created_at"),
+      get("bewild_posts?published=eq.true&select=slug,title,updated_at,published_at,created_at,body,meta_description,excerpt"),
       get("assistant_kb?ativo=eq.true&select=updated_at"),
     ]);
   } catch (err) {
@@ -224,12 +284,13 @@ async function main() {
       lastmod: day(p.updated_at, p.published_at, p.created_at),
       changefreq: "monthly",
       priority: "0.6",
+      videos: postVideos(p),
     }));
 
   const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls];
   const xml = [
     `<?xml version="1.0" encoding="UTF-8"?>`,
-    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">`,
     ...all.map(urlTag),
     `</urlset>`,
     ``,
