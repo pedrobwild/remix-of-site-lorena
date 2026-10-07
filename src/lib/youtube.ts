@@ -78,6 +78,26 @@ export function parseYouTubeStart(input: string | null | undefined): number | nu
   );
 }
 
+/** Segundo final de um embed do YouTube (`end=`), quando o trecho tem fim marcado. */
+export function parseYouTubeEnd(input: string | null | undefined): number | null {
+  const raw = (input ?? "").trim();
+  if (!raw) return null;
+  try {
+    const url = new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`);
+    return parseYouTubeTime(url.searchParams.get("end"));
+  } catch {
+    return null;
+  }
+}
+
+/** Duração ISO 8601 (`PT9M49S`) em segundos; null se vier vazia ou fora do formato. */
+export function isoDurationSeconds(iso: string | null | undefined): number | null {
+  const m = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec((iso ?? "").trim());
+  if (!m || (!m[1] && !m[2] && !m[3])) return null;
+  const total = +(m[1] || 0) * 3600 + +(m[2] || 0) * 60 + +(m[3] || 0);
+  return total > 0 ? total : null;
+}
+
 export function youtubeEmbedUrl(id: string, start?: number | null): string {
   const base = `${YOUTUBE_EMBED_ORIGIN}/embed/${id}`;
   return start && start > 0 ? `${base}?start=${Math.floor(start)}` : base;
@@ -95,8 +115,8 @@ export const YOUTUBE_IFRAME_REFERRER = "strict-origin-when-cross-origin";
 /** Vídeos do YouTube presentes num corpo (HTML/markdown), sem repetir ID. */
 export function extractYouTubeEmbeds(
   body: string | null | undefined,
-): Array<{ id: string; title: string; start: number | null }> {
-  const out: Array<{ id: string; title: string; start: number | null }> = [];
+): Array<{ id: string; title: string; start: number | null; end: number | null }> {
+  const out: Array<{ id: string; title: string; start: number | null; end: number | null }> = [];
   const seen = new Set<string>();
   for (const m of (body ?? "").matchAll(/<iframe\b[^>]*>/gi)) {
     const tag = m[0];
@@ -111,7 +131,7 @@ export function extractYouTubeEmbeds(
       .replace(/&#39;/g, "'")
       .replace(/&amp;/g, "&")
       .trim();
-    out.push({ id, title, start: parseYouTubeStart(srcUrl) });
+    out.push({ id, title, start: parseYouTubeStart(srcUrl), end: parseYouTubeEnd(srcUrl) });
   }
   return out;
 }

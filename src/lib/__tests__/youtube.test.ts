@@ -74,12 +74,12 @@ describe("cliente e servidor geram o mesmo HTML", () => {
 describe("extractYouTubeEmbeds", () => {
   it("lista ID e título sem repetir", () => {
     const html = sanitizeBlogHtmlServer(good + good);
-    expect(extractYouTubeEmbeds(html)).toEqual([{ id: ID, title: "Tour pelo studio", start: null }]);
+    expect(extractYouTubeEmbeds(html)).toEqual([{ id: ID, title: "Tour pelo studio", start: null, end: null }]);
     expect(extractYouTubeEmbeds(undefined)).toEqual([]);
   });
 });
 
-import { parseYouTubeStart as _start, youtubeEmbedUrl as _embed } from "@/lib/youtube";
+import { isoDurationSeconds, parseYouTubeEnd, parseYouTubeStart as _start, youtubeEmbedUrl as _embed } from "@/lib/youtube";
 import { sanitizeBlogHtmlServer as _srv } from "@/lib/sanitizeHtml";
 describe("início do vídeo (t=)", () => {
   it("lê t= em segundos e em h/m/s", () => {
@@ -87,6 +87,14 @@ describe("início do vídeo (t=)", () => {
     expect(_start("https://youtu.be/pQjZeD8nYEE?t=7m47s")).toBe(467);
     expect(_start("https://www.youtube.com/embed/pQjZeD8nYEE?start=467")).toBe(467);
     expect(_start("https://www.youtube.com/watch?v=pQjZeD8nYEE")).toBeNull();
+  });
+  it("lê end= e duração ISO", () => {
+    expect(parseYouTubeEnd("https://www.youtube-nocookie.com/embed/pQjZeD8nYEE?start=467&end=520")).toBe(520);
+    expect(parseYouTubeEnd("https://www.youtube-nocookie.com/embed/pQjZeD8nYEE?start=467")).toBeNull();
+    expect(isoDurationSeconds("PT9M49S")).toBe(589);
+    expect(isoDurationSeconds("PT1H2M3S")).toBe(3723);
+    expect(isoDurationSeconds("PT")).toBeNull();
+    expect(isoDurationSeconds(undefined)).toBeNull();
   });
   it("gera e preserva start no player", () => {
     expect(_embed("pQjZeD8nYEE", 467)).toBe("https://www.youtube-nocookie.com/embed/pQjZeD8nYEE?start=467");
