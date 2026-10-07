@@ -211,7 +211,7 @@ async function main() {
       changefreq: "weekly",
       priority: "0.8",
     },
-    { loc: `${BASE_URL}/orcamento`, lastmod: page("src/routes/orcamento.tsx", ["OrcamentoPage.tsx"]), changefreq: "monthly", priority: "0.9" },
+    { loc: `${BASE_URL}/orcamento`, lastmod: page("src/routes/orcamento.tsx", ["OrcamentoPage.tsx"]), changefreq: "monthly", priority: "1.0" },
     {
       loc: `${BASE_URL}/faq`,
       lastmod: Array.isArray(faqEntries) ? newest(faqEntries, "updated_at") : null,
