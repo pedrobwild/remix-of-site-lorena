@@ -531,6 +531,7 @@ function HomeTab({
             maxLength={90}
           />
           <Hint count={(s.home_seo_title ?? "").length} max={60} />
+          <SizeWarn text={title} min={30} max={60} usingDefault={!s.home_seo_title?.trim()} />
         </Field>
         <Field label="Descrição no Google (≤ 160 caracteres)" full>
           <textarea
@@ -542,6 +543,7 @@ function HomeTab({
             maxLength={220}
           />
           <Hint count={(s.home_seo_description ?? "").length} max={160} />
+          <SizeWarn text={desc} min={110} max={160} usingDefault={!s.home_seo_description?.trim()} />
         </Field>
         <Field label="Título ao compartilhar (Open Graph) — vazio usa o do Google" full>
           <input
@@ -1543,6 +1545,22 @@ function FieldHint({ children, warn }: { children: React.ReactNode; warn?: boole
       }}
     >
       {children}
+    </span>
+  );
+}
+
+/** Aviso de tamanho: conta o texto que vai de fato ao Google (o padrão, se o campo estiver vazio). */
+function SizeWarn({ text, min, max, usingDefault }: { text: string; min: number; max: number; usingDefault: boolean }) {
+  const n = text.length;
+  const ok = n >= min && n <= max;
+  const msg = ok
+    ? `Tamanho bom: ${n} caracteres (ideal ${min}–${max}).`
+    : n < min
+      ? `Curto: ${n} caracteres. O ideal é entre ${min} e ${max}.`
+      : `Longo: ${n} caracteres. O Google pode cortar depois de ${max}.`;
+  return (
+    <span style={{ fontSize: "var(--admin-fs-xs)", marginTop: 4, display: "block", color: ok ? "#15803d" : "#b45309" }}>
+      {msg}{usingDefault ? " (texto padrão)" : ""}
     </span>
   );
 }
