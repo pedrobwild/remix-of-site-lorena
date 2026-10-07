@@ -36,6 +36,21 @@ function typesOf(scripts: Array<{ children: string }>) {
 }
 
 describe("JSON-LD no head() sem duplicação", () => {
+  it("vídeo de abertura sai no head SSR junto do Article, sem iframe no corpo", () => {
+    const p = { ...post, body: "<p>Texto</p>", youtube_video_id: "El1Dxf7RBRk" };
+    const { scripts } = seoHead({ title: "T", description: "D", path: `/conteudos/${p.slug}`, jsonLd: postJsonLd(p) });
+    const nodes = scripts.map((s) => JSON.parse(s.children));
+    const video = nodes.find((n) => n["@type"] === "VideoObject");
+    expect(video.name).toBe("Como reformar um studio gastando menos: 4 obras que raramente se pagam");
+    expect(video.description).toBe(p.excerpt);
+    expect(video.uploadDate).toBe(p.published_at);
+    expect(video.embedUrl).toBe("https://www.youtube.com/embed/El1Dxf7RBRk");
+    expect(video.contentUrl).toBe("https://www.youtube.com/watch?v=El1Dxf7RBRk");
+    expect(video.publisher.name).toBe("Bewild Arquitetura & Reformas");
+    expect(nodes.find((n) => n["@type"] === "Article").video["@id"]).toBe(video["@id"]);
+    expect(postJsonLd({ ...p, body: '<iframe src="https://www.youtube-nocookie.com/embed/El1Dxf7RBRk"></iframe>' }).filter((n) => n["@type"] === "VideoObject")).toHaveLength(1);
+    expect(postJsonLd({ ...p, youtube_video_id: "inválido" }).some((n) => n["@type"] === "VideoObject")).toBe(false);
+  });
   it("post: WebPage + Article (Person) + FAQPage, cada @type uma vez, sem BreadcrumbList solta", () => {
     const { scripts } = seoHead({ title: "T | Bewild", description: "D", path: "/conteudos/o-que-e-short-stay", jsonLd: postJsonLd(post) });
     const types = typesOf(scripts);

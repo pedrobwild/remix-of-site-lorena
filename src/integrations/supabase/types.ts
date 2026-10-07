@@ -222,6 +222,7 @@ export type Database = {
           slug: string
           title: string
           updated_at: string
+          youtube_video_id: string | null
         }
         Insert: {
           author?: string
@@ -244,6 +245,7 @@ export type Database = {
           slug: string
           title: string
           updated_at?: string
+          youtube_video_id?: string | null
         }
         Update: {
           author?: string
@@ -266,6 +268,7 @@ export type Database = {
           slug?: string
           title?: string
           updated_at?: string
+          youtube_video_id?: string | null
         }
         Relationships: []
       }

@@ -19,7 +19,7 @@ export const POST_SELECT_COLS =
  * `dateModified` e o sitemap no lugar de `updated_at` (carimbado por qualquer
  * update em lote).
  */
-export const POST_SELECT_COLS_FULL = `${POST_SELECT_COLS}, content_updated_at`;
+export const POST_SELECT_COLS_FULL = `${POST_SELECT_COLS}, content_updated_at, youtube_video_id`;
 
 type PostgrestLikeError = { code?: string | null; message?: string | null } | null;
 

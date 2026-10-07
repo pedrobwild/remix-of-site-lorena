@@ -23,6 +23,8 @@ export type BewildPost = {
   excerpt: string | null;
   cover_image: string | null;
   body: string;
+  /** Vídeo opcional de abertura. */
+  youtube_video_id?: string | null;
   faq: BewildFaqItem[] | null;
   reading_time: number | null;
   author: string | null;
