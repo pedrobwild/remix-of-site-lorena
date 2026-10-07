@@ -10,7 +10,7 @@ import { bewildTypeLabel, type BewildProjectType } from "@/lib/useBewildProjects
 import { authorForPage, postAuthorJsonLd, postDates, resolvePostAuthor } from "@/lib/postSeo";
 import { keywordsForPost } from "@/lib/postKeywords";
 import { itemListJsonLd, projectJsonLd } from "@/lib/useSeo";
-import { extractYouTubeEmbeds, youtubeEmbedUrl, youtubeThumbnailUrl } from "@/lib/youtube";
+import { extractYouTubeEmbeds, isoDurationSeconds, youtubeEmbedUrl, youtubeThumbnailUrl } from "@/lib/youtube";
 import videoMeta from "@/content/videoMeta.json";
 import { postYouTubeVideo } from "@/lib/postYouTubeVideo";
 import { neighborhoodSlug } from "@/lib/portfolioFilter";
@@ -129,15 +129,27 @@ export function postJsonLd(post: BewildPost, extras: PostJsonLdExtras = {}): Jso
     if (v.id === leadingVideo?.id) continue;
     const meta = ytMeta(v.id);
     const name = meta.name || v.title || post.title;
-    // Trecho indicado no artigo (?start=): Clip diz ao Google onde o momento começa,
-    // com link direto para ele (key moments). Sem início, só o vídeo.
-    const clip = v.start
+    // Trecho indicado no artigo (?start=): Clip diz ao Google onde o momento começa
+    // e termina, com link direto para ele (key moments). O fim vem do `end=` do embed
+    // ou, sem ele, da duração cadastrada em videoMeta.json (trecho vai até o fim).
+    // Sem início ou sem fim conhecido, só o vídeo: Clip sem endOffset gera aviso
+    // no Search Console ("endOffset" não encontrado em "hasPart").
+    const total = isoDurationSeconds(meta.duration);
+    const end = v.start
+      ? v.end && v.end > v.start
+        ? v.end
+        : total && total > v.start
+          ? total
+          : null
+      : null;
+    const clip = v.start && end
       ? {
           hasPart: [
             {
               "@type": "Clip",
               name: `${name} — trecho citado no artigo`,
               startOffset: v.start,
+              endOffset: end,
               url: `https://www.youtube.com/watch?v=${v.id}&t=${v.start}s`,
             },
           ],

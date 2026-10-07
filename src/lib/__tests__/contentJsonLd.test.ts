@@ -75,6 +75,22 @@ describe("JSON-LD no head() sem duplicação", () => {
     expect(video.uploadDate).toBeTruthy();
   });
 
+  it("trecho citado (?start=) vira Clip com startOffset e endOffset", () => {
+    const clipOf = (src: string, id: string) => {
+      const nodes = postJsonLd({ ...post, body: `<iframe src="${src}" title="Trecho"></iframe>` });
+      const v = nodes.find((n) => n["@type"] === "VideoObject" && String(n.url).includes(id)) as Record<string, unknown>;
+      return (v.hasPart as Array<Record<string, unknown>> | undefined)?.[0];
+    };
+    // Sem end= no embed: fim = duração cadastrada (pQjZeD8nYEE tem PT9M49S = 589 s).
+    const real = clipOf("https://www.youtube-nocookie.com/embed/pQjZeD8nYEE?start=467", "pQjZeD8nYEE");
+    expect(real).toMatchObject({ "@type": "Clip", startOffset: 467, endOffset: 589 });
+    expect(real?.url).toBe("https://www.youtube.com/watch?v=pQjZeD8nYEE&t=467s");
+    // Com end= no embed: o fim marcado tem prioridade.
+    expect(clipOf("https://www.youtube-nocookie.com/embed/pQjZeD8nYEE?start=467&end=520", "pQjZeD8nYEE")).toMatchObject({ startOffset: 467, endOffset: 520 });
+    // Sem duração cadastrada e sem end=: nada de Clip (evita o aviso de endOffset ausente).
+    expect(clipOf("https://www.youtube-nocookie.com/embed/El1Dxf7RBRk?start=30", "El1Dxf7RBRk")).toBeUndefined();
+  });
+
   it("post com vídeo incorporado ganha um VideoObject com capa, arquivo e data do post", () => {
     const withVideo = {
       ...post,
