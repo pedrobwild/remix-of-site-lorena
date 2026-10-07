@@ -24,7 +24,7 @@ const ROTAS_INDEXAVEIS = [
   { path: "/", priority: "1.0", changefreq: "weekly" },
   { path: "/portfolio", priority: "0.9", changefreq: "weekly" },
   { path: "/conteudos", priority: "0.8", changefreq: "weekly" },
-  { path: "/orcamento", priority: "0.9", changefreq: "monthly" },
+  { path: "/orcamento", priority: "1.0", changefreq: "monthly" },
   { path: "/faq", priority: "0.7", changefreq: "monthly" },
   { path: "/autorizacao-condominio", priority: "0.7", changefreq: "monthly" },
   { path: "/contato", priority: "0.7", changefreq: "monthly" },
