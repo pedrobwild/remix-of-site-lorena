@@ -218,28 +218,117 @@ describe("/contato", () => {
   });
 });
 
-describe("/orcamento", () => {
-  it("objetivo canônico, metragem decimal e fallback com WhatsApp (PUB-03/08)", async () => {
-    sendLeadMock.mockResolvedValue(FAILED);
-    render(<OrcamentoPage />);
+describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
+  const continuar = () => fireEvent.click(screen.getByRole("button", { name: /Continuar/ }));
+
+  /** Percorre as etapas 01–03 e preenche o contato da 04. */
+  function preencher({ objetivo = /Morar/, chaves = "Ainda não", estado = "9 a 15 anos de uso", area = "32" } = {}) {
+    type("orc-bairro", "Moema");
+    type("orc-area", area);
+    continuar();
+    fireEvent.click(screen.getByRole("radio", { name: objetivo }));
+    continuar();
+    if (chaves) fireEvent.click(screen.getByRole("radio", { name: chaves }));
+    if (estado) fireEvent.click(screen.getByRole("radio", { name: estado }));
+    continuar();
     type("orc-nome", "Davi");
     type("orc-whats", "11912345678");
+    type("orc-mail", "davi@exemplo.com");
+  }
+
+  it("etapa 01 valida o bairro antes de avançar e foca o campo", () => {
+    render(<OrcamentoPage />);
+    continuar();
+    const bairro = byId("orc-bairro");
+    expect(document.activeElement).toBe(bairro);
+    expect(bairro).toHaveAttribute("aria-invalid", "true");
+    expect(document.getElementById(bairro.getAttribute("aria-describedby")!)).toHaveTextContent("Informe o bairro.");
+    expect(trackEventMock).not.toHaveBeenCalledWith("orcamento_step", expect.anything());
+    expect(screen.queryByRole("button", { name: /Voltar/ })).toBeNull();
+  });
+
+  it("etapa 04 exige o e-mail: vazio mostra o erro e foca o campo", async () => {
+    render(<OrcamentoPage />);
+    preencher();
+    type("orc-mail", "");
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /Pedir orçamento/ })));
+    expect(sendLeadMock).not.toHaveBeenCalled();
+    const mail = byId("orc-mail");
+    expect(document.activeElement).toBe(mail);
+    expect(mail).toHaveAttribute("aria-invalid", "true");
+    expect(document.getElementById(mail.getAttribute("aria-describedby")!)).toHaveTextContent("Informe seu e-mail.");
+    expect(trackEventMock).not.toHaveBeenCalledWith("orcamento_step", { step: 4 });
+  });
+
+  it("troca de etapa foca o H2, Voltar preserva o preenchido e o progresso volta", () => {
+    render(<OrcamentoPage />);
     type("orc-bairro", "Moema");
-    type("orc-area", "32,5");
-    fireEvent.change(byId<HTMLSelectElement>("orc-objetivo"), { target: { value: "Moradia" } });
-    expect(screen.getByRole("option", { name: "Morar" })).toHaveAttribute("value", "Moradia");
+    type("orc-area", "40");
+    continuar();
+    expect(document.activeElement).toHaveTextContent("Para que é a reforma?");
+    expect(trackEventMock).toHaveBeenCalledWith("orcamento_step", { step: 1 });
+    // Padrão: short stay.
+    expect(screen.getByRole("radio", { name: /Short stay/ })).toBeChecked();
+
+    fireEvent.click(screen.getByRole("button", { name: /Voltar/ }));
+    expect(byId("orc-bairro").value).toBe("Moema");
+    expect(byId("orc-area").value).toBe("40");
+    expect(byId("orc-area")).toHaveAttribute("aria-valuetext", "40 m²");
+
+    continuar();
+    continuar();
+    expect(screen.getByRole("heading", { name: /Em que pé está o imóvel/ })).toBeInTheDocument();
+    // Etapa 04 ainda não foi vista: não dá para pular para ela.
+    expect(screen.getByRole("button", { name: /04\s*Contato/ })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: /01\s*Imóvel/ }));
+    expect(screen.getByRole("heading", { name: /Onde fica e qual o tamanho/ })).toBeInTheDocument();
+  });
+
+  it("payload canônico com chaves e estado; falha mostra WhatsApp e 'Tentar de novo' (PUB-03/08)", async () => {
+    sendLeadMock.mockResolvedValue(FAILED);
+    render(<OrcamentoPage />);
+    preencher();
+    expect(screen.getByRole("heading", { name: /Dados para contato/ })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("checkbox", { name: "Desejo atendimento prioritário, tenho urgência" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Gosto de atendimento por ligação" }));
     await act(async () => fireEvent.click(screen.getByRole("button", { name: /Pedir orçamento/ })));
 
     expect(openSpy).not.toHaveBeenCalled();
     expect(sendLeadMock.mock.calls[0][0]).toMatchObject({
       objetivo: "Moradia",
-      area_m2: 32.5,
+      area_m2: 32,
+      location: "Moema",
+      chaves: "Ainda não",
+      message:
+        "Estado: 9 a 15 anos de uso\nAtendimento prioritário: tem urgência\nPrefere atendimento por ligação",
       form_path: "/orcamento",
       landing_path: "/",
+      email: "davi@exemplo.com",
     });
+    for (const step of [1, 2, 3, 4]) {
+      expect(trackEventMock).toHaveBeenCalledWith("orcamento_step", { step });
+    }
     expect(screen.getByRole("alert")).toHaveTextContent("Não conseguimos enviar seu pedido");
-    expect(screen.getByRole("link", { name: /Enviar pelo WhatsApp/ })).toBeInTheDocument();
+    const wa = screen.getByRole("link", { name: /Enviar pelo WhatsApp/ });
+    expect(decodeURIComponent(wa.getAttribute("href")!)).toContain("Chaves: Ainda não");
+    expect(decodeURIComponent(wa.getAttribute("href")!)).toContain("Estado: 9 a 15 anos de uso");
+    expect(decodeURIComponent(wa.getAttribute("href")!)).toContain("Atendimento prioritário: sim, tenho urgência");
+    expect(decodeURIComponent(wa.getAttribute("href")!)).toContain("Prefere ligação: sim");
     expect(screen.getByRole("button", { name: /Tentar de novo/ })).not.toBeDisabled();
+  });
+
+  it("entregue: agradece com o número e 'Refazer simulação' volta à etapa 01 com os dados", async () => {
+    sendLeadMock.mockResolvedValue(DELIVERED);
+    render(<OrcamentoPage />);
+    preencher({ chaves: "", estado: "" });
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /Pedir orçamento/ })));
+    expect(sendLeadMock.mock.calls[0][0]).toMatchObject({ chaves: null, message: null });
+    expect(screen.getByRole("heading", { name: "Obrigado, Davi." })).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("(11) 91234-5678");
+    expect(screen.queryByRole("button", { name: /Continuar/ })).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "Refazer simulação" }));
+    expect(byId("orc-bairro").value).toBe("Moema");
   });
 
   it("atribuição completa: último e 1º toque, termo/conteúdo e clique de anúncio", async () => {
@@ -248,11 +337,11 @@ describe("/orcamento", () => {
     localStorage.setItem("bewild_click", JSON.stringify({ gclid: "Cj0antigo", gclid_ts: Date.now() - 86_400_000 }));
     sendLeadMock.mockResolvedValue(DELIVERED);
     render(<OrcamentoPage />);
-    type("orc-nome", "Davi");
-    type("orc-whats", "11912345678");
-    type("orc-bairro", "Moema");
+    // Rótulo da tela × valor canônico do CRM.
+    preencher({ chaves: "Estou comprando o imóvel" });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: /Pedir orçamento/ })));
     expect(sendLeadMock.mock.calls[0][0]).toMatchObject({
+      chaves: "Estou comprando",
       form_path: "/orcamento",
       utm_source: "meta",
       utm_medium: "cpc",
