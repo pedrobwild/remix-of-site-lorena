@@ -1,3 +1,4 @@
+import { PROVA_CURTA } from "@/content/provas";
 import { formatAreaM2 } from "@/lib/formatArea";
 /**
  * BewildProjectPage — /portfolio/:slug (Bewild).
@@ -526,7 +527,7 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
             <a href="/orcamento" className="pd-btn cyan">Solicitar orçamento <span className="ar"><IconArrow /></span></a>
             <a href={whatsappHref()} className="pd-btn ghost" target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a>
           </div>
-          <div className="pd-cta__rea">+188 reformas entregues · +200 projetos</div>
+          <div className="pd-cta__rea">{PROVA_CURTA}</div>
         </div>
       </section>
       </main>

@@ -6,6 +6,7 @@ import {
   Package, BadgeCheck, Clock,
   Calculator, Building2, PieChart, Megaphone,
 } from "lucide-react";
+import { PROJETOS, PROVA_REFORMAS } from "@/content/provas";
 import { gravarJSON, lerJSON } from "@/guia/lib/browser";
 import { fmtInt } from "@/guia/lib/format";
 
@@ -206,9 +207,10 @@ export function persistScenarios(scenarios: SavedScenario[]): boolean {
 /** Inteiro pt-BR (9225 → "9.225"). */
 export const fmt = fmtInt;
 
+/** Só provas com origem declarada (src/content/provas.ts) — nada de nota ou tempo de mercado sem fonte. */
 export const TRUST_SIGNALS_DATA = [
-  { label: "+200 studios", icon: Package },
-  { label: "4,9 nota média", icon: Star },
+  { label: PROVA_REFORMAS, icon: Package },
+  { label: `+${PROJETOS} projetos`, icon: BadgeCheck },
   { label: "Operação própria", icon: BadgeCheck },
-  { label: "+5 anos no mercado", icon: Clock },
+  { label: "~60 dias úteis de obra", icon: Clock },
 ];

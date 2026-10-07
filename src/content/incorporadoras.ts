@@ -1,3 +1,4 @@
+import { PROVA_FRASE } from "@/content/provas";
 /* ============================================================
  * Conteúdo da página /parceiros/incorporadoras e do menu Parceiros.
  * Texto aprovado no escopo de 23/09/2026 (Matheus).
@@ -146,7 +147,7 @@ export const INCORP_BENEFITS = {
     },
     {
       t: "Execução com garantia em contrato",
-      d: "Preço e prazo em contrato e obra a partir de 60 dias úteis para unidades de até 30 m². São 5 anos de garantia na mão de obra, 5 anos na marcenaria e mais de 188 reformas entregues.",
+      d: `Preço e prazo em contrato e obra a partir de 60 dias úteis para unidades de até 30 m². São 5 anos de garantia na mão de obra, 5 anos na marcenaria e ${PROVA_FRASE}.`,
     },
   ],
 };

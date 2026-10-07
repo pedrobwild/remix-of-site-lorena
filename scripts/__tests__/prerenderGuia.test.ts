@@ -42,7 +42,7 @@ describe("pré-render do /guia-do-investidor", () => {
     const linhas = tabela.match(/<th scope="row">/g) ?? [];
     expect(linhas).toHaveLength(BAIRROS.length);
     // pt-BR e "—" onde não há recorte por metragem
-    expect(tabela).toContain("<th scope=\"row\">Pinheiros</th><td>R$ 320</td><td>R$ 480</td><td>82%</td>");
+    expect(tabela).toContain("<th scope=\"row\">Pinheiros</th><td>R$ 320</td><td>R$ 480</td><td>62%</td>");
     expect(tabela).toContain("<th scope=\"row\">Itaquera</th>");
     expect(tabela).toContain("<td>—</td>");
   });

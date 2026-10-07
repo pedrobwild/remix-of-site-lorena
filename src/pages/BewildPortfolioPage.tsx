@@ -1,3 +1,4 @@
+import { PROVA_CURTA } from "@/content/provas";
 import { formatAreaM2 } from "@/lib/formatArea";
 /**
  * BewildPortfolioPage — /portfolio (Bewild) · reskin sob o DS `bwh-`.
@@ -476,7 +477,7 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
               className="bwh-mono"
               style={{ color: "var(--dink2)", marginTop: 24 }}
             >
-              +188 reformas entregues · +200 projetos
+              {PROVA_CURTA}
             </div>
           </div>
         </section>

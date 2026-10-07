@@ -1,3 +1,4 @@
+import { PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
 import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
@@ -70,7 +71,7 @@ export default function ReformaCoberturaSpPage() {
                 A Bewild faz a reforma completa da sua cobertura em São Paulo:
                 projeto 3D, obra, terraço e área externa, marcenaria sob medida
                 e mobília em um único contrato, com preço fechado, prazo em
-                contrato e 5 anos de garantia. Mais de 188 reformas entregues
+                contrato e 5 anos de garantia. Mais de {REFORMAS_ENTREGUES} reformas entregues
                 em apartamentos e studios de todos os tamanhos.
               </p>
             </div>
@@ -230,7 +231,7 @@ export default function ReformaCoberturaSpPage() {
                 Falar no WhatsApp <span aria-hidden="true">→</span>
               </a>
               <p className="bwa-servico-cta-note">
-                +188 reformas entregues · +200 projetos
+                {PROVA_CURTA}
               </p>
             </div>
           </div>

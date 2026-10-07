@@ -51,6 +51,13 @@ export interface BairroMercado {
   diariaMedia?: number;
   /** Ocupação média observada (%). */
   ocupacao: number;
+  /**
+   * Origem da ocupação quando difere de `fonte`. "guestfavorites-2026" =
+   * ocupação mediana do levantamento GuestFavorites jan–ago/2026, a mesma
+   * citada no post "melhores bairros para short stay" e nas páginas
+   * /reforma/<bairro> — o guia não pode mostrar outro número para o bairro.
+   */
+  ocupacaoFonte?: "guestfavorites-2026";
   /** Diária média por faixa de metragem; null quando a base não tem o recorte. */
   diariaPorMetragem: Readonly<Record<FaixaMetragem, number>> | null;
   fonte: FonteDados;
@@ -61,7 +68,7 @@ export interface BairroPerfil {
   score: number;
   chips: readonly ChipDemanda[];
   concorrencia: Concorrencia;
-  /** Número aproximado de studios anunciados no bairro. */
+  /** Anúncios ativos no bairro (GuestFavorites jan–ago/2026 quando a ocupação vem de lá). */
   anunciosAtivos: number;
   /**
    * ROI anual estimado (%). Estimativa ilustrativa — só pode aparecer na tela
@@ -101,8 +108,8 @@ export const BAIRROS: readonly Bairro[] = [
     id: "bela-vista",
     nome: "Bela Vista",
     centro: { lat: -23.558, lng: -46.6442 },
-    mercado: { diariaMin: 240, diariaMax: 370, ocupacao: 74, diariaPorMetragem: porMetragem(220, 290, 360), fonte: "guia" },
-    perfil: { score: 82, chips: ["Turismo", "Próximo ao metrô"], concorrencia: "Alta", anunciosAtivos: 2100, roiEstimado: 15.4, fonte: "seed" },
+    mercado: { diariaMin: 240, diariaMax: 370, ocupacao: 64, ocupacaoFonte: "guestfavorites-2026", diariaPorMetragem: porMetragem(220, 290, 360), fonte: "guia" },
+    perfil: { score: 82, chips: ["Turismo", "Próximo ao metrô"], concorrencia: "Alta", anunciosAtivos: 1981, roiEstimado: 15.4, fonte: "seed" },
   },
   {
     id: "brooklin",
@@ -116,22 +123,22 @@ export const BAIRROS: readonly Bairro[] = [
     id: "campo-belo",
     nome: "Campo Belo",
     centro: { lat: -23.62, lng: -46.665 },
-    mercado: { diariaMin: 300, diariaMax: 460, diariaMedia: 370, ocupacao: 69, diariaPorMetragem: null, fonte: "seed" },
-    perfil: { score: 84, chips: ["Corporativo"], concorrencia: "Média", anunciosAtivos: 1100, roiEstimado: 15.0, fonte: "seed" },
+    mercado: { diariaMin: 300, diariaMax: 460, diariaMedia: 370, ocupacao: 60, ocupacaoFonte: "guestfavorites-2026", diariaPorMetragem: null, fonte: "seed" },
+    perfil: { score: 84, chips: ["Corporativo"], concorrencia: "Média", anunciosAtivos: 1077, roiEstimado: 15.0, fonte: "seed" },
   },
   {
     id: "consolacao",
     nome: "Consolação",
     centro: { lat: -23.553, lng: -46.6562 },
-    mercado: { diariaMin: 260, diariaMax: 390, ocupacao: 76, diariaPorMetragem: porMetragem(240, 310, 380), fonte: "guia" },
-    perfil: { score: 86, chips: ["Turismo", "Próximo ao metrô"], concorrencia: "Alta", anunciosAtivos: 2400, roiEstimado: 16.6, fonte: "seed" },
+    mercado: { diariaMin: 260, diariaMax: 390, ocupacao: 63, ocupacaoFonte: "guestfavorites-2026", diariaPorMetragem: porMetragem(240, 310, 380), fonte: "guia" },
+    perfil: { score: 86, chips: ["Turismo", "Próximo ao metrô"], concorrencia: "Alta", anunciosAtivos: 1612, roiEstimado: 16.6, fonte: "seed" },
   },
   {
     id: "itaim-bibi",
     nome: "Itaim Bibi",
     centro: { lat: -23.5863, lng: -46.6762 },
-    mercado: { diariaMin: 350, diariaMax: 520, ocupacao: 78, diariaPorMetragem: porMetragem(330, 420, 510), fonte: "guia" },
-    perfil: { score: 91, chips: ["Corporativo", "Próximo ao metrô"], concorrencia: "Alta", anunciosAtivos: 2600, roiEstimado: 18.1, fonte: "bewild-airdna-2025" },
+    mercado: { diariaMin: 350, diariaMax: 520, ocupacao: 59, ocupacaoFonte: "guestfavorites-2026", diariaPorMetragem: porMetragem(330, 420, 510), fonte: "guia" },
+    perfil: { score: 91, chips: ["Corporativo", "Próximo ao metrô"], concorrencia: "Alta", anunciosAtivos: 3884, roiEstimado: 18.1, fonte: "bewild-airdna-2025" },
   },
   {
     id: "itaquera",
@@ -144,8 +151,8 @@ export const BAIRROS: readonly Bairro[] = [
     id: "jardim-paulista",
     nome: "Jardim Paulista",
     centro: { lat: -23.5636, lng: -46.6682 },
-    mercado: { diariaMin: 360, diariaMax: 520, diariaMedia: 440, ocupacao: 70, diariaPorMetragem: null, fonte: "bewild-airdna-2025" },
-    perfil: { score: 87, chips: ["Turismo Premium", "Turismo", "Próximo ao metrô"], concorrencia: "Alta", anunciosAtivos: 2800, roiEstimado: 17.4, fonte: "bewild-airdna-2025" },
+    mercado: { diariaMin: 360, diariaMax: 520, diariaMedia: 440, ocupacao: 62, ocupacaoFonte: "guestfavorites-2026", diariaPorMetragem: null, fonte: "bewild-airdna-2025" },
+    perfil: { score: 87, chips: ["Turismo Premium", "Turismo", "Próximo ao metrô"], concorrencia: "Alta", anunciosAtivos: 3147, roiEstimado: 17.4, fonte: "bewild-airdna-2025" },
   },
   {
     id: "liberdade",
@@ -158,15 +165,15 @@ export const BAIRROS: readonly Bairro[] = [
     id: "moema",
     nome: "Moema",
     centro: { lat: -23.6013, lng: -46.6662 },
-    mercado: { diariaMin: 300, diariaMax: 450, ocupacao: 77, diariaPorMetragem: porMetragem(280, 360, 440), fonte: "guia" },
-    perfil: { score: 85, chips: ["Misto", "Próximo ao metrô"], concorrencia: "Média", anunciosAtivos: 1800, roiEstimado: 15.8, fonte: "seed" },
+    mercado: { diariaMin: 300, diariaMax: 450, ocupacao: 61, ocupacaoFonte: "guestfavorites-2026", diariaPorMetragem: porMetragem(280, 360, 440), fonte: "guia" },
+    perfil: { score: 85, chips: ["Misto", "Próximo ao metrô"], concorrencia: "Média", anunciosAtivos: 2621, roiEstimado: 15.8, fonte: "seed" },
   },
   {
     id: "pinheiros",
     nome: "Pinheiros",
     centro: { lat: -23.5613, lng: -46.6917 },
-    mercado: { diariaMin: 320, diariaMax: 480, ocupacao: 82, diariaPorMetragem: porMetragem(300, 380, 470), fonte: "guia" },
-    perfil: { score: 92, chips: ["Misto", "Turismo", "Próximo ao metrô"], concorrencia: "Alta", anunciosAtivos: 3200, roiEstimado: 19.2, fonte: "bewild-airdna-2025" },
+    mercado: { diariaMin: 320, diariaMax: 480, ocupacao: 62, ocupacaoFonte: "guestfavorites-2026", diariaPorMetragem: porMetragem(300, 380, 470), fonte: "guia" },
+    perfil: { score: 92, chips: ["Misto", "Turismo", "Próximo ao metrô"], concorrencia: "Alta", anunciosAtivos: 2424, roiEstimado: 19.2, fonte: "bewild-airdna-2025" },
   },
   {
     id: "republica",
@@ -186,8 +193,8 @@ export const BAIRROS: readonly Bairro[] = [
     id: "vila-mariana",
     nome: "Vila Mariana",
     centro: { lat: -23.589, lng: -46.635 },
-    mercado: { diariaMin: 280, diariaMax: 420, ocupacao: 80, diariaPorMetragem: porMetragem(260, 330, 410), fonte: "guia" },
-    perfil: { score: 83, chips: ["Hospitais", "Universidades", "Próximo ao metrô"], concorrencia: "Média", anunciosAtivos: 1600, roiEstimado: 15.2, fonte: "seed" },
+    mercado: { diariaMin: 280, diariaMax: 420, ocupacao: 60, ocupacaoFonte: "guestfavorites-2026", diariaPorMetragem: porMetragem(260, 330, 410), fonte: "guia" },
+    perfil: { score: 83, chips: ["Hospitais", "Universidades", "Próximo ao metrô"], concorrencia: "Média", anunciosAtivos: 2238, roiEstimado: 15.2, fonte: "seed" },
   },
   {
     id: "vila-olimpia",

@@ -1,3 +1,4 @@
+import { BAIRROS_ATENDIDOS, PROVA_CURTA, PROVA_FRASE } from "@/content/provas";
 import { useEffect, useMemo, useRef, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
@@ -95,7 +96,7 @@ const FAQ_ITEMS_SEM_BANCO: FaqItem[] = [
   },
   {
     q: "Posso ver obras que a Bewild já entregou?",
-    a: "Pode. São mais de 188 reformas entregues em mais de 27 bairros de São Paulo, e o portfólio tem uma página para cada projeto, com fotos reais, metragem, bairro e o que foi feito. Para saber se há obra no seu prédio ou uma unidade para visitar, a equipe confere para você.",
+    a: `Pode. São ${PROVA_FRASE} em mais de ${BAIRROS_ATENDIDOS} bairros de São Paulo, e o portfólio tem uma página para cada projeto, com fotos reais, metragem, bairro e o que foi feito. Para saber se há obra no seu prédio ou uma unidade para visitar, a equipe confere para você.`,
     href: "/portfolio",
     linkLabel: "Ver o portfólio completo →",
   },
@@ -639,7 +640,7 @@ export default function FaqPage() {
               >
                 Falar no WhatsApp <span aria-hidden="true">→</span>
               </a>
-              <p className="bwa-faqpage-cta-note">+188 reformas entregues · +200 projetos</p>
+              <p className="bwa-faqpage-cta-note">{PROVA_CURTA}</p>
             </div>
           </div>
         </section>
