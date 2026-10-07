@@ -1,3 +1,4 @@
+import { PROVA_CURTA } from "@/content/provas";
 import { useEffect, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
@@ -278,7 +279,7 @@ export default function MarcenariaPage() {
                 Falar com a gente <span aria-hidden="true">→</span>
               </a>
               <p className="bwa-servico-cta-note">
-                +188 reformas entregues · +200 projetos
+                {PROVA_CURTA}
               </p>
               <p className="bwa-servico-cta-note">
                 <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>

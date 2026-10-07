@@ -1,3 +1,4 @@
+import { BAIRROS_ATENDIDOS, PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
 import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
@@ -42,7 +43,7 @@ export default function OndeAtuamosPage({ bairroPages = null }: Props = {}) {
               </h1>
               <p className="bwa-atuamos-lead">
                 As obras da Bewild acontecem em São Paulo capital — são mais de
-                188 reformas entregues em mais de 27 bairros. E você não precisa
+                {REFORMAS_ENTREGUES} reformas entregues em mais de {BAIRROS_ATENDIDOS} bairros. E você não precisa
                 estar na cidade: clientes de Uberlândia, Salvador, Curitiba e
                 Brasília acompanham tudo à distância, do projeto à entrega das
                 chaves.
@@ -108,7 +109,7 @@ export default function OndeAtuamosPage({ bairroPages = null }: Props = {}) {
               >
                 Falar no WhatsApp <span aria-hidden="true">→</span>
               </a>
-              <p className="bwa-atuamos-cta-note">+188 reformas entregues · +200 projetos</p>
+              <p className="bwa-atuamos-cta-note">{PROVA_CURTA}</p>
             </div>
           </div>
         </section>

@@ -1,3 +1,4 @@
+import { PROVA_CURTA } from "@/content/provas";
 import { useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
@@ -92,7 +93,7 @@ export default function AutorizacaoCondominioPage() {
               >
                 Falar no WhatsApp <span aria-hidden="true">→</span>
               </a>
-              <p className="bwa-faqpage-cta-note">+188 reformas entregues · +200 projetos</p>
+              <p className="bwa-faqpage-cta-note">{PROVA_CURTA}</p>
             </div>
           </div>
         </section>

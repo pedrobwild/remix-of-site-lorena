@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/guia/components/ui/button";
 import { Calculator, MapPin, Sparkles, BookOpen, BarChart3, Target, Lightbulb } from "lucide-react";
+import { PROJETOS, REFORMAS_ENTREGUES } from "@/content/provas";
 import sectionHeroStudio from "@/guia/assets/section-hero-studio.jpg";
 
 export default function HeroSection() {
@@ -129,18 +130,18 @@ export default function HeroSection() {
           <div className="absolute bottom-8 right-8 bg-white/90 backdrop-blur-xs rounded-xl p-4 shadow-lg">
             <div className="flex items-center gap-5">
               <div className="text-center">
-                <p className="text-xs font-mono font-bold text-foreground">+200</p>
-                <p className="text-[10px] text-muted-foreground font-body">studios</p>
+                <p className="text-xs font-mono font-bold text-foreground">+{REFORMAS_ENTREGUES}</p>
+                <p className="text-[10px] text-muted-foreground font-body">reformas entregues</p>
               </div>
               <div className="w-px h-8 bg-border" />
               <div className="text-center">
-                <p className="text-xs font-mono font-bold text-foreground">4,9</p>
-                <p className="text-[10px] text-muted-foreground font-body">nota</p>
+                <p className="text-xs font-mono font-bold text-foreground">+{PROJETOS}</p>
+                <p className="text-[10px] text-muted-foreground font-body">projetos</p>
               </div>
               <div className="w-px h-8 bg-border" />
               <div className="text-center">
-                <p className="text-xs font-mono font-bold text-foreground">R$ 400</p>
-                <p className="text-[10px] text-muted-foreground font-body">diária média</p>
+                <p className="text-xs font-mono font-bold text-foreground">~60</p>
+                <p className="text-[10px] text-muted-foreground font-body">dias úteis de obra</p>
               </div>
             </div>
           </div>

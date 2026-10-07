@@ -1,3 +1,4 @@
+import { PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
 import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
@@ -75,7 +76,7 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
                 apartamentos em São Paulo, para morar ou para locação
                 (short stay e longa duração). Projeto, obra, marcenaria sob
                 medida e mobília em um único contrato, com preço fechado, prazo
-                em contrato e 5 anos de garantia. Mais de 188 reformas
+                em contrato e 5 anos de garantia. Mais de {REFORMAS_ENTREGUES} reformas
                 entregues, a maioria em studios de 20 a 35 m².
               </p>
             </div>
@@ -276,7 +277,7 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
                 Falar no WhatsApp <span aria-hidden="true">→</span>
               </a>
               <p className="bwa-servico-cta-note">
-                +188 reformas entregues · +200 projetos
+                {PROVA_CURTA}
               </p>
             </div>
           </div>

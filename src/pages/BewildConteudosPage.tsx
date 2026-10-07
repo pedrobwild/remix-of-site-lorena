@@ -4,6 +4,7 @@
  * prancheta. Destaque automático (featured), filtros por categoria, e cada
  * card abre o post em /conteudos/:slug. CSS isolado em .bw-conteudos.
  */
+import { PROVA_REFORMAS } from "@/content/provas";
 import { useMemo, useState } from "react";
 import { useSeo } from "@/lib/useSeo";
 import BwaNav from "@/components/BwaNav";
@@ -211,7 +212,7 @@ export default function BewildConteudosPage({ initialPosts }: { initialPosts?: B
               <a href="/orcamento" className="ct-btn cyan">Solicitar orçamento <span className="ar"><IconArrow /></span></a>
               <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="ct-btn ghost">Falar no WhatsApp</a>
             </div>
-            <div className="ct-cta__rea">+188 reformas entregues · São Paulo capital</div>
+            <div className="ct-cta__rea">{PROVA_REFORMAS} · São Paulo capital</div>
           </div>
         </section>
         </main>

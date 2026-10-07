@@ -12,6 +12,7 @@
  *    abortava a requisição). Sem confirmação, o visitante vê um aviso com o
  *    WhatsApp já preenchido em vez de ser levado embora em silêncio.
  */
+import { PROJETOS, PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
 import { useEffect, useRef, useState } from "react";
 import { useSeo } from "@/lib/useSeo";
 import { whatsappHref } from "@/components/landing/content";
@@ -313,10 +314,10 @@ export default function LpObraPage() {
         <div className="sec-mark"><span className="n">01</span><span className="t">Quem faz essa obra</span><span className="ln" /></div>
         <div className="lp-quem-head">
           <h2>A Bewild constrói studios pra render. <i>Este é um deles.</i></h2>
-          <p className="lead">Projeto, obra, marcenaria, mobília e decoração em um único contrato. Já somamos +188 reformas entregues · +200 projetos, prontos para receber hóspedes.</p>
+          <p className="lead">Projeto, obra, marcenaria, mobília e decoração em um único contrato. Já somamos {PROVA_CURTA}, prontos para receber hóspedes.</p>
         </div>
         <div className="lp-quem-data">
-          <div className="cell"><b>+188</b><span>reformas entregues · +200 projetos</span></div>
+          <div className="cell"><b>+{REFORMAS_ENTREGUES}</b><span>reformas entregues · +{PROJETOS} projetos</span></div>
           <div className="cell"><b>60</b><span>dias úteis · a partir de</span></div>
           <div className="cell"><b>05</b><span>anos de garantia</span></div>
         </div>

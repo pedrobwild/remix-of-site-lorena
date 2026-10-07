@@ -1,3 +1,4 @@
+import { BAIRROS_ATENDIDOS, PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
 import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
@@ -76,7 +77,7 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
                 studios em São Paulo. Entregamos projeto, obra, marcenaria e
                 mobília em um único contrato, com preço fechado antes de a obra
                 começar, prazo em contrato e 5 anos de garantia sobre a mão de
-                obra. Mais de 188 reformas entregues em mais de 27 bairros da
+                obra. Mais de {REFORMAS_ENTREGUES} reformas entregues em mais de {BAIRROS_ATENDIDOS} bairros da
                 capital, para donos que moram em São Paulo ou em qualquer outra
                 cidade.
               </p>
@@ -244,7 +245,7 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
                 Falar no WhatsApp <span aria-hidden="true">→</span>
               </a>
               <p className="bwa-servico-cta-note">
-                +188 reformas entregues · +200 projetos
+                {PROVA_CURTA}
               </p>
             </div>
           </div>

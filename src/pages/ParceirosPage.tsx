@@ -1,3 +1,4 @@
+import { REFORMAS_ENTREGUES } from "@/content/provas";
 import { useEffect, useRef, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
@@ -392,7 +393,7 @@ export default function ParceirosPage() {
           </div>
           <div className="bwa-shell">
             <ul className="bwa-parc-facts">
-              <li><strong>+188</strong> reformas entregues</li>
+              <li><strong>+{REFORMAS_ENTREGUES}</strong> reformas entregues</li>
               <li><strong>20 a 35 m²</strong> studios como centro</li>
               <li><strong>~60 dias úteis</strong> da obra à entrega</li>
               <li><strong>5 anos</strong> de garantia</li>

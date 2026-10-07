@@ -111,7 +111,7 @@ export default function MercadoSection() {
         </AccordionItem>
         <AccordionItem value="coleta">
           <AccordionTrigger className="text-primary font-semibold">Como os dados são coletados</AccordionTrigger>
-          <AccordionContent><p className="text-sm text-muted-foreground leading-relaxed">Dados de mercado coletados e cruzados pela Bewild a partir de bases do setor (AirDNA, plataformas de reserva, dados públicos de anúncios ativos). Os valores representam médias trimestrais e são atualizados periodicamente para refletir a dinâmica real do mercado paulistano.</p></AccordionContent>
+          <AccordionContent><p className="text-sm text-muted-foreground leading-relaxed">A ocupação e o número de anúncios ativos de Bela Vista, Campo Belo, Consolação, Itaim Bibi, Jardim Paulista, Moema, Pinheiros e Vila Mariana são a mediana do levantamento GuestFavorites de janeiro a agosto de 2026, a mesma base dos artigos da Bewild. As faixas de diária e os demais bairros vêm de bases do setor (AirDNA, plataformas de reserva, dados públicos de anúncios) cruzadas pela Bewild e são referências para simulação, não garantia de resultado.</p></AccordionContent>
         </AccordionItem>
         <AccordionItem value="limitacoes">
           <AccordionTrigger className="text-primary font-semibold">Limitações</AccordionTrigger>

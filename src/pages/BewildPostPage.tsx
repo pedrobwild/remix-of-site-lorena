@@ -13,6 +13,7 @@
  * `useBewildPost` zera o estado na troca: nunca há post A sob a URL de B.
  * Falha de leitura mostra erro com "Tentar novamente" (antes: skeleton eterno).
  */
+import { PROVA_CURTA } from "@/content/provas";
 import { useEffect, useMemo, type ReactNode } from "react";
 import { marked } from "marked";
 import { useSeo } from "@/lib/useSeo";
@@ -495,7 +496,7 @@ export default function BewildPostPage({ slug, initial }: Props) {
               <a href={ctaHref} className="pt-btn cyan">{cta.buttonLabel} <span className="ar">→</span></a>
               <a href={ctaWhatsHref} target="_blank" rel="noopener noreferrer" className="pt-btn ghost">Falar no WhatsApp</a>
             </div>
-            <div className="pt-cta__rea">+188 reformas entregues · +200 projetos</div>
+            <div className="pt-cta__rea">{PROVA_CURTA}</div>
           </div>
         </div>
       </section>
