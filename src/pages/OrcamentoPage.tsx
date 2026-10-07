@@ -342,6 +342,8 @@ export default function OrcamentoPage() {
                           value={bairro}
                           maxLength={120}
                           placeholder="Vila Olímpia, São Paulo-SP"
+                          autoComplete="address-level2"
+                          enterKeyHint="next"
                           required
                           onChange={(e) => setBairro(e.target.value)}
                           onBlur={() => touch("bairro")}
@@ -448,6 +450,7 @@ export default function OrcamentoPage() {
                           value={nome}
                           maxLength={120}
                           autoComplete="name"
+                          enterKeyHint="next"
                           required
                           onChange={(e) => setNome(e.target.value)}
                           onBlur={() => touch("nome")}
@@ -461,6 +464,7 @@ export default function OrcamentoPage() {
                           id="orc-whats"
                           type="tel"
                           inputMode="tel"
+                          enterKeyHint="next"
                           value={whats}
                           autoComplete="tel"
                           placeholder="(11) 90000-0000"
@@ -479,6 +483,8 @@ export default function OrcamentoPage() {
                           value={mail}
                           maxLength={180}
                           autoComplete="email"
+                          inputMode="email"
+                          enterKeyHint="send"
                           required
                           onChange={(e) => setMail(e.target.value)}
                           onBlur={() => touch("mail")}
