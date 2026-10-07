@@ -51,8 +51,8 @@ Páginas com os projetos entregues em cada bairro de São Paulo (só bairros com
 ## Conteúdos publicados
 
 <!-- posts:start -->
-- [Reformar apartamento para vender ou alugar em SP: o que a conta de 204 contratos mostra](/conteudos/reformar-apartamento-para-vender-ou-alugar-sp)
 - [Studio como degrau: comprar para morar 2 anos e revender vale a pena em SP?](/conteudos/studio-como-degrau-comprar-morar-revender-sp)
+- [Reformar apartamento para vender ou alugar em SP: o que a conta de 204 contratos mostra](/conteudos/reformar-apartamento-para-vender-ou-alugar-sp)
 - [Thiago Dantas: quem é o arquiteto responsável técnico da Bewild e o que ele assina](/conteudos/thiago-dantas-arquiteto-responsavel-tecnico-bewild)
 - [Como reformar um studio gastando menos e sem perder valor de mercado: as 4 decisões que separam economia de prejuízo](/conteudos/como-reformar-studio-gastando-menos-sem-perder-valor)
 - [Pedro Henrique Alves: quem é o CEO da Bewild e por que ele trata imóvel como negócio](/conteudos/pedro-henrique-alves-ceo-bewild)
@@ -74,10 +74,10 @@ Páginas com os projetos entregues em cada bairro de São Paulo (só bairros com
 - [Tabela de BTU para studio: quantos BTUs por metragem e por que o aparelho errado muda a avaliação](/conteudos/ar-condicionado-studio-quantos-btus)
 - [Fechar varanda com vidro: quanto custa, o que o condomínio exige e o efeito na diária](/conteudos/fechar-varanda-em-vidro-studio-condominio)
 - [O que vem (e o que não vem) no seu studio novo em São Paulo](/conteudos/o-que-vem-no-studio-novo-sao-paulo)
-- [Cronograma de uma reforma de studio: 60 dias úteis, semana a semana](/conteudos/cronograma-reforma-studio-60-dias-uteis)
+- [Cronograma de uma reforma de studio: 60 dias úteis, etapa por etapa](/conteudos/cronograma-reforma-studio-60-dias-uteis)
 - [Comprou studio na planta: o que fazer antes de receber as chaves](/conteudos/comprou-studio-na-planta-antes-das-chaves)
 - [O que perguntar ao síndico antes de reformar um studio (e o que depende do condomínio)](/conteudos/o-que-perguntar-ao-sindico-antes-de-reformar)
-- [Quanto tempo demora uma reforma de apartamento: o prazo real por escopo](/conteudos/quanto-tempo-demora-reforma-apartamento)
+- [Quanto tempo demora uma reforma de apartamento: o prazo por metragem em contrato](/conteudos/quanto-tempo-demora-reforma-apartamento)
 - [Etapas de uma reforma de apartamento: a ordem que não pode ser invertida](/conteudos/etapas-de-reforma-de-apartamento-cronograma)
 - [Por que existe aditivo em obra, quando ele não acontece e os 5 itens que mais o provocam](/conteudos/aditivo-em-obra-por-que-existe)
 - [Como comparar orçamentos de reforma sem cair em armadilha: os 5 critérios que mudam o preço](/conteudos/como-comparar-orcamentos-de-reforma)
