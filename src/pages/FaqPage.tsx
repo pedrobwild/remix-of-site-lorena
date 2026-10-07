@@ -52,10 +52,6 @@ const FAQ_ITEMS: FaqItem[] = [
     a: "Não. Reformamos para morar, para alugar em curta ou longa temporada e para vender. O projeto muda conforme o objetivo.",
   },
   {
-    q: "Vocês fazem a gestão do Airbnb?",
-    a: "Sim. Além de entregar o studio pronto para anunciar, a Bewild faz a gestão do Airbnb. Se preferir, a operação pode ficar com você ou com quem você escolher, sem exclusividade.",
-  },
-  {
     q: "Preciso ir à obra?",
     a: "Só se você quiser. Todo o acompanhamento acontece pelo Bwild Workflow. E moradores de fora de São Paulo contam com vistoria por procuração, ligação de energia e instalação de internet feitas pela gente.",
   },
@@ -74,6 +70,10 @@ const FAQ_ITEMS: FaqItem[] = [
  * condomínio e portfólio. Espelha os itens `preco`, `atraso`, `garantia`,
  * `condominio` e `confianca` do banco. Com o banco no ar, some. */
 const FAQ_ITEMS_SEM_BANCO: FaqItem[] = [
+  {
+    q: "Vocês fazem a gestão do Airbnb depois da obra?",
+    a: "Sim. Além de entregar o imóvel pronto para fotografar e anunciar, a Bewild faz a gestão do Airbnb. Se preferir, a operação pode ficar com você ou com quem você escolher, e o blog compara gestão própria e gestora profissional.",
+  },
   {
     q: "Quanto custa uma reforma?",
     a: "Nas 58 obras completas da nossa base de 2025 (fevereiro a outubro), em imóveis de 21 a 35 m², a mediana foi de R$ 63.763 por obra, ou R$ 2.389 por metro quadrado, com projeto, obra, marcenaria sob medida, mobília e eletros incluídos. Metade das obras ficou entre R$ 2.107 e R$ 2.716 por m². O valor do seu imóvel sai fechado na proposta, com memorial item a item, antes de a obra começar.",
