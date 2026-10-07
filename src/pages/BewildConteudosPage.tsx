@@ -80,7 +80,7 @@ export default function BewildConteudosPage({ initialPosts, query = "", onQueryC
     return source.filter((p) => p.category === filter);
   }, [grid, posts, filter, query]);
 
-  const showFeatured = !query.trim() && featured && (filter === "all" || featured.category === filter);
+  const showFeatured = featured && (filter === "all" || featured.category === filter);
 
   return (
     <>
