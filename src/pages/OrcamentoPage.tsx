@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import FormPrivacyNote from "@/components/FormPrivacyNote";
-import { whatsappHref } from "@/components/landing/content";
+import { CONTACT, whatsappHref } from "@/components/landing/content";
 import { trackEvent } from "@/lib/ga4";
 import { useNeighborhoodInterest } from "@/hooks/useNeighborhoodInterest";
 import type { LeadPayload } from "@/lib/leadDelivery";
@@ -73,6 +73,9 @@ const CAMPO_ID: Record<Campo, string> = {
 /** Campos validados em cada etapa (só a etapa 03 não tem obrigatório). */
 const CAMPOS_DA_ETAPA: ReadonlyArray<readonly Campo[]> = [["bairro"], ["objetivo"], [], ["nome", "whats", "mail"]];
 const ULTIMA = ETAPAS.length - 1;
+
+/** WhatsApp da Bewild em "(11) 91190-6183", tirado do contato oficial (sem o 55). */
+const WHATSAPP_BEWILD = formatBrPhone(CONTACT.whatsappNumber.replace(/^55/, ""));
 
 function validar(v: Record<Campo, string>): FieldErrors<Campo> {
   const e: FieldErrors<Campo> = {};
@@ -353,8 +356,8 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
                   <p className="bwa-orc-kicker bwa-orc-kicker--ok">Pedido recebido</p>
                   <h2 className="bwa-orc-h2">Obrigado, {primeiroNome}. Guardamos o seu contato.</h2>
                   <p>
-                    Nosso time analisa o apartamento e responde pelo WhatsApp {whats} em até um dia
-                    útil. Se quiser adiantar, fale com a gente agora.
+                    Nosso time analisa o apartamento e entra em contato pelo WhatsApp{" "}
+                    {WHATSAPP_BEWILD} em até um dia útil. Se quiser adiantar, fale com a gente agora.
                   </p>
                   <dl className="bwa-orc-saved" aria-label="Contato salvo">
                     <div>

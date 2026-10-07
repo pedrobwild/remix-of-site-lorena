@@ -453,6 +453,8 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     expect(
       screen.getByRole("heading", { name: "Obrigado, Davi. Guardamos o seu contato." })
     ).toBeInTheDocument();
+    // O texto cita o WhatsApp da Bewild; o número do cliente fica em "Contato salvo".
+    expect(screen.getByRole("status")).toHaveTextContent("WhatsApp (11) 91190-6183");
     expect(screen.getByRole("status")).toHaveTextContent("(11) 91234-5678");
     expect(screen.queryByRole("button", { name: /Continuar/ })).toBeNull();
 
