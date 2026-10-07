@@ -69,7 +69,8 @@ function validar(v: Record<Campo, string>): FieldErrors<Campo> {
   if (v.bairro.trim().length < 2) e.bairro = "Informe o bairro.";
   if (v.nome.trim().length < 2) e.nome = "Informe seu nome.";
   if (!isValidBrPhone(v.whats)) e.whats = "Informe um número com DDD.";
-  if (v.mail.trim() && !isValidEmail(v.mail)) e.mail = "Confira o e-mail digitado.";
+  if (!v.mail.trim()) e.mail = "Informe seu e-mail.";
+  else if (!isValidEmail(v.mail)) e.mail = "Confira o e-mail digitado.";
   return e;
 }
 
@@ -208,7 +209,7 @@ export default function OrcamentoPage() {
     const payload: LeadPayload = {
       name: nome.trim(),
       whatsapp: normalizeBrPhoneDigits(whats),
-      email: mail.trim() || null,
+      email: mail.trim(),
       // Estado do imóvel, urgência e preferência por ligação não têm coluna no CRM; vão na mensagem.
       message:
         [
@@ -477,13 +478,14 @@ export default function OrcamentoPage() {
                         {erro("whats") && <em id={fieldErrorId("orc-whats")}>{erro("whats")}</em>}
                       </div>
                       <div className="bwa-orc-field">
-                        <label htmlFor="orc-mail">E-mail (opcional)</label>
+                        <label htmlFor="orc-mail">E-mail</label>
                         <input
                           id="orc-mail"
                           type="email"
                           value={mail}
                           maxLength={180}
                           autoComplete="email"
+                          required
                           onChange={(e) => setMail(e.target.value)}
                           onBlur={() => touch("mail")}
                           {...fieldErrorProps("orc-mail", erro("mail"))}

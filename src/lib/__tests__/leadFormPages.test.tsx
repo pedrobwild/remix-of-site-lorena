@@ -233,6 +233,7 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     continuar();
     type("orc-nome", "Davi");
     type("orc-whats", "11912345678");
+    type("orc-mail", "davi@exemplo.com");
   }
 
   it("etapa 01 valida o bairro antes de avançar e foca o campo", () => {
@@ -244,6 +245,19 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     expect(document.getElementById(bairro.getAttribute("aria-describedby")!)).toHaveTextContent("Informe o bairro.");
     expect(trackEventMock).not.toHaveBeenCalledWith("orcamento_step", expect.anything());
     expect(screen.queryByRole("button", { name: /Voltar/ })).toBeNull();
+  });
+
+  it("etapa 04 exige o e-mail: vazio mostra o erro e foca o campo", async () => {
+    render(<OrcamentoPage />);
+    preencher();
+    type("orc-mail", "");
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /Pedir orçamento/ })));
+    expect(sendLeadMock).not.toHaveBeenCalled();
+    const mail = byId("orc-mail");
+    expect(document.activeElement).toBe(mail);
+    expect(mail).toHaveAttribute("aria-invalid", "true");
+    expect(document.getElementById(mail.getAttribute("aria-describedby")!)).toHaveTextContent("Informe seu e-mail.");
+    expect(trackEventMock).not.toHaveBeenCalledWith("orcamento_step", { step: 4 });
   });
 
   it("troca de etapa foca o H2, Voltar preserva o preenchido e o progresso volta", () => {
@@ -289,6 +303,7 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
         "Estado: 9 a 15 anos de uso\nAtendimento prioritário: tem urgência\nPrefere atendimento por ligação",
       form_path: "/orcamento",
       landing_path: "/",
+      email: "davi@exemplo.com",
     });
     for (const step of [1, 2, 3, 4]) {
       expect(trackEventMock).toHaveBeenCalledWith("orcamento_step", { step });
