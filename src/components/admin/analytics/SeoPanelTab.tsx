@@ -89,6 +89,13 @@ const COUNTRY: Record<string, string> = {
   bra: "Brasil", usa: "Estados Unidos", prt: "Portugal", gbr: "Reino Unido", esp: "Espanha",
   ita: "Itália", fra: "França", deu: "Alemanha", can: "Canadá", arg: "Argentina", jpn: "Japão",
   che: "Suíça", irl: "Irlanda", aus: "Austrália", nld: "Países Baixos", mex: "México",
+  ago: "Angola", moz: "Moçambique", cpv: "Cabo Verde", ind: "Índia", bgd: "Bangladesh", chn: "China",
+  chl: "Chile", col: "Colômbia", per: "Peru", ury: "Uruguai", pry: "Paraguai", bol: "Bolívia",
+  bel: "Bélgica", aut: "Áustria", swe: "Suécia", nor: "Noruega", dnk: "Dinamarca", pol: "Polônia",
+  are: "Emirados Árabes", isr: "Israel", zaf: "África do Sul", kor: "Coreia do Sul", sgp: "Singapura",
+  phl: "Filipinas", idn: "Indonésia", pak: "Paquistão", nga: "Nigéria", tur: "Turquia", rus: "Rússia",
+  ukr: "Ucrânia", vnm: "Vietnã", tha: "Tailândia", mys: "Malásia", egy: "Egito", sau: "Arábia Saudita",
+  nzl: "Nova Zelândia", ven: "Venezuela", ecu: "Equador", cri: "Costa Rica", pan: "Panamá", dom: "República Dominicana",
 };
 
 function Delta({ cur, prev, lowerIsBetter = false, kind = "pct" }: {
@@ -632,7 +639,7 @@ export function SeoPanelView({ data, loading, onReload }: { data: Data; loading:
         />
         {opp === "quase" &&
           (striking.length === 0 ? (
-            <Empty>nenhuma busca fora da marca entre a posição 4 e a 20 com 10+ impressões</Empty>
+            <Empty>nenhuma busca fora da marca entre a posição 4 e a 20 com 3+ impressões</Empty>
           ) : (
             <Table
               rows={striking}
