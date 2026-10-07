@@ -30,6 +30,8 @@ import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 import { chartSetForSlug, chartsPagePath } from "@/content/chartSets";
 import ReformaCalculadora from "@/components/ReformaCalculadora";
+import PostYouTubeVideo from "@/components/PostYouTubeVideo";
+import { postYouTubeVideo } from "@/lib/postYouTubeVideo";
 import { sanitizeBlogHtml } from "@/lib/sanitizeHtml";
 import { wrapArticleTables } from "@/lib/articleTables";
 import { whatsappHref } from "@/components/landing/content";
@@ -204,6 +206,7 @@ export default function BewildPostPage({ slug, initial }: Props) {
   const reviewerLabel = reviewer && postAuthorByline(reviewer) !== postAuthorByline(post?.author) ? postAuthorByline(reviewer) : null;
 
   const dates = postDates(post);
+  const leadingVideo = post ? postYouTubeVideo(post) : null;
   const dateIso = dates.published;
   const authorHref = postAuthorHref(post?.author);
   // Enquanto o banco não responde, título e H1 saem do slug (SEO-14): o
@@ -370,6 +373,12 @@ export default function BewildPostPage({ slug, initial }: Props) {
             </div>
           </div>
         </section>
+
+        {leadingVideo ? (
+          <section className="pt-leading-video-section">
+            <div className="container"><PostYouTubeVideo key={leadingVideo.id} {...leadingVideo} /></div>
+          </section>
+        ) : null}
 
         {/* COVER */}
         {post.cover_image ? (

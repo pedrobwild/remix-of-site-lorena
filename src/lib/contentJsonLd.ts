@@ -12,6 +12,7 @@ import { keywordsForPost } from "@/lib/postKeywords";
 import { itemListJsonLd, projectJsonLd } from "@/lib/useSeo";
 import { extractYouTubeEmbeds, youtubeEmbedUrl, youtubeThumbnailUrl } from "@/lib/youtube";
 import videoMeta from "@/content/videoMeta.json";
+import { postYouTubeVideo } from "@/lib/postYouTubeVideo";
 import { neighborhoodSlug } from "@/lib/portfolioFilter";
 import { projectFriendlyName, projectMetaDescription, type ProjectSeoInput } from "@/lib/projectSeo";
 
@@ -76,6 +77,7 @@ export function postJsonLd(post: BewildPost, extras: PostJsonLdExtras = {}): Jso
   const articleUrl = `${BASE}/conteudos/${post.slug}`;
   const dates = postDates(post);
   const arr: JsonLdNode[] = [];
+  const leadingVideo = postYouTubeVideo(post);
   if (!authorForPage(post.slug)) {
     arr.push({
       "@context": "https://schema.org",
@@ -106,10 +108,25 @@ export function postJsonLd(post: BewildPost, extras: PostJsonLdExtras = {}): Jso
       keywords: keywordsForPost(post.slug),
       ...(extras.wordCount ? { wordCount: extras.wordCount } : {}),
       isAccessibleForFree: true,
+      ...(leadingVideo ? { video: { "@id": `${articleUrl}#video-${leadingVideo.id}` } } : {}),
+    });
+  }
+  if (leadingVideo) {
+    arr.push({
+      "@context": "https://schema.org", "@type": "VideoObject",
+      "@id": `${articleUrl}#video-${leadingVideo.id}`,
+      name: leadingVideo.title,
+      description: post.excerpt || post.meta_description || post.title,
+      thumbnailUrl: [leadingVideo.thumbnail], uploadDate: dates.published,
+      embedUrl: `https://www.youtube.com/embed/${leadingVideo.id}`,
+      contentUrl: `https://www.youtube.com/watch?v=${leadingVideo.id}`,
+      publisher: { "@type": "Organization", "@id": `${BASE}/#org`, name: "Bewild Arquitetura & Reformas", url: `${BASE}/` },
+      inLanguage: "pt-BR", isPartOf: { "@id": `${articleUrl}#webpage` },
     });
   }
   // Vídeos do YouTube no corpo: VideoObject é o que leva o Google a indexar o vídeo da página.
   for (const v of extractYouTubeEmbeds(post.body)) {
+    if (v.id === leadingVideo?.id) continue;
     const meta = ytMeta(v.id);
     const name = meta.name || v.title || post.title;
     // Trecho indicado no artigo (?start=): Clip diz ao Google onde o momento começa,
