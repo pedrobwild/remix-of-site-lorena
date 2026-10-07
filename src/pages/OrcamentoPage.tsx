@@ -108,6 +108,8 @@ export default function OrcamentoPage() {
   const [nome, setNome] = useState("");
   const [whats, setWhats] = useState("");
   const [mail, setMail] = useState("");
+  const [urgente, setUrgente] = useState(false);
+  const [ligacao, setLigacao] = useState(false);
   const [touched, setTouched] = useState<Partial<Record<Campo, boolean>>>({});
   // Estado final mostrado no lugar das etapas ("Refazer simulação" limpa).
   const [final, setFinal] = useState<"delivered" | "timedOut" | null>(null);
@@ -197,6 +199,8 @@ export default function OrcamentoPage() {
           ["Objetivo", OBJETIVOS.find((o) => o.value === objetivo)?.label ?? objetivo],
           ["Chaves", chaves],
           ["Estado", estado],
+          ["Atendimento prioritário", urgente ? "sim, tenho urgência" : ""],
+          ["Prefere ligação", ligacao ? "sim" : ""],
         ]),
       ),
     );
@@ -205,8 +209,15 @@ export default function OrcamentoPage() {
       name: nome.trim(),
       whatsapp: normalizeBrPhoneDigits(whats),
       email: mail.trim() || null,
-      // O estado do imóvel não tem coluna no CRM; vai na mensagem.
-      message: estado ? `Estado: ${estado}` : null,
+      // Estado do imóvel, urgência e preferência por ligação não têm coluna no CRM; vão na mensagem.
+      message:
+        [
+          estado && `Estado: ${estado}`,
+          urgente && "Atendimento prioritário: tem urgência",
+          ligacao && "Prefere atendimento por ligação",
+        ]
+          .filter(Boolean)
+          .join("\n") || null,
       location: bairro.trim(),
       area_m2: area,
       objetivo,
@@ -478,6 +489,26 @@ export default function OrcamentoPage() {
                           {...fieldErrorProps("orc-mail", erro("mail"))}
                         />
                         {erro("mail") && <em id={fieldErrorId("orc-mail")}>{erro("mail")}</em>}
+                      </div>
+                      <div className="bwa-orc-checks">
+                        <label className="bwa-orc-check">
+                          <input
+                            id="orc-urgente"
+                            type="checkbox"
+                            checked={urgente}
+                            onChange={(e) => setUrgente(e.target.checked)}
+                          />
+                          <span>Desejo atendimento prioritário, tenho urgência</span>
+                        </label>
+                        <label className="bwa-orc-check">
+                          <input
+                            id="orc-ligacao"
+                            type="checkbox"
+                            checked={ligacao}
+                            onChange={(e) => setLigacao(e.target.checked)}
+                          />
+                          <span>Gosto de atendimento por ligação</span>
+                        </label>
                       </div>
                       <FormPrivacyNote platforms="meta-google" className="bwa-orc-privacy">
                         Usamos seus dados para responder ao seu pedido de orçamento.

@@ -255,6 +255,26 @@
   outline-offset: 2px;
 }
 
+/* Checkboxes (urgência, preferência por ligação) */
+.bwa-orc-checks { display: grid; gap: 4px; }
+.bwa-orc-check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  font-size: 15.5px;
+  cursor: pointer;
+}
+.bwa-orc-check input {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--orc-cyan);
+  cursor: pointer;
+}
+.bwa-orc-check input:focus-visible { outline: 2px solid var(--orc-cyan); outline-offset: 3px; }
+
 .bwa-orc-note {
   max-width: 56ch;
   margin: 0;

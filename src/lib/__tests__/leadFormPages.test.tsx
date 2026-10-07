@@ -274,6 +274,9 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     sendLeadMock.mockResolvedValue(FAILED);
     render(<OrcamentoPage />);
     preencher();
+    expect(screen.getByRole("heading", { name: /Dados para contato/ })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("checkbox", { name: "Desejo atendimento prioritário, tenho urgência" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Gosto de atendimento por ligação" }));
     await act(async () => fireEvent.click(screen.getByRole("button", { name: /Pedir orçamento/ })));
 
     expect(openSpy).not.toHaveBeenCalled();
@@ -282,7 +285,8 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
       area_m2: 32,
       location: "Moema",
       chaves: "Ainda não",
-      message: "Estado: 9 a 15 anos de uso",
+      message:
+        "Estado: 9 a 15 anos de uso\nAtendimento prioritário: tem urgência\nPrefere atendimento por ligação",
       form_path: "/orcamento",
       landing_path: "/",
     });
@@ -293,6 +297,8 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     const wa = screen.getByRole("link", { name: /Enviar pelo WhatsApp/ });
     expect(decodeURIComponent(wa.getAttribute("href")!)).toContain("Chaves: Ainda não");
     expect(decodeURIComponent(wa.getAttribute("href")!)).toContain("Estado: 9 a 15 anos de uso");
+    expect(decodeURIComponent(wa.getAttribute("href")!)).toContain("Atendimento prioritário: sim, tenho urgência");
+    expect(decodeURIComponent(wa.getAttribute("href")!)).toContain("Prefere ligação: sim");
     expect(screen.getByRole("button", { name: /Tentar de novo/ })).not.toBeDisabled();
   });
 

@@ -27,7 +27,7 @@ export const ETAPAS: ReadonlyArray<{ rotulo: string; pergunta: string }> = [
   { rotulo: "Imóvel", pergunta: "Onde fica e qual o tamanho?" },
   { rotulo: "Objetivo", pergunta: "Para que é a reforma?" },
   { rotulo: "Situação", pergunta: "Em que pé está o imóvel?" },
-  { rotulo: "Contato", pergunta: "Para onde mandamos a faixa?" },
+  { rotulo: "Contato", pergunta: "Dados para contato" },
 ];
 
 /**
