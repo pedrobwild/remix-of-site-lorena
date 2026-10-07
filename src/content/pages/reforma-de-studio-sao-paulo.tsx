@@ -96,7 +96,7 @@ export const FAQ: { q: string; a: string; node?: ReactNode }[] = [
   },
   {
     q: "Vocês fazem a gestão do Airbnb?",
-    a: "Não. Entregamos o studio pronto para anunciar; a operação é sua ou de quem você escolher, sem exclusividade.",
+    a: "Sim. Além de entregar o studio pronto para anunciar, a Bewild faz a gestão do Airbnb. Se preferir, a operação pode ficar com você ou com quem você escolher, sem exclusividade.",
   },
   {
     q: "Moro fora de São Paulo?",

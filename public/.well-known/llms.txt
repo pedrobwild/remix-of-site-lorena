@@ -52,6 +52,7 @@ Páginas com os projetos entregues em cada bairro de São Paulo (só bairros com
 
 <!-- posts:start -->
 - [Reformar apartamento para vender ou alugar em SP: o que a conta de 204 contratos mostra](/conteudos/reformar-apartamento-para-vender-ou-alugar-sp)
+- [Studio como degrau: comprar para morar 2 anos e revender vale a pena em SP?](/conteudos/studio-como-degrau-comprar-morar-revender-sp)
 - [Thiago Dantas: quem é o arquiteto responsável técnico da Bewild e o que ele assina](/conteudos/thiago-dantas-arquiteto-responsavel-tecnico-bewild)
 - [Como reformar um studio gastando menos e sem perder valor de mercado: as 4 decisões que separam economia de prejuízo](/conteudos/como-reformar-studio-gastando-menos-sem-perder-valor)
 - [Pedro Henrique Alves: quem é o CEO da Bewild e por que ele trata imóvel como negócio](/conteudos/pedro-henrique-alves-ceo-bewild)
