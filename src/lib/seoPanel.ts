@@ -35,7 +35,7 @@ export function isBrandQuery(q: string): boolean {
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
-  return /\b(be ?wild|bwild|bewild|b ?wild|bewilde|bwil)\b/.test(n);
+  return /\b(be ?wild|bwild|bewild|b ?wild|bewilde|bwil|bewuld|be ?wil)\b/.test(n);
 }
 
 /** Variação relativa; null quando não há base (anterior = 0). */
@@ -101,7 +101,7 @@ export type Opportunity = KeyRow & { potentialClicks: number };
  * "Quase na primeira página": buscas entre a posição 4 e a 20 com volume.
  * Potencial = cliques extras se a página subisse para a posição 3.
  */
-export function strikingDistance(rows: KeyRow[], minImpressions = 10): Opportunity[] {
+export function strikingDistance(rows: KeyRow[], minImpressions = 3): Opportunity[] {
   return rows
     .filter((r) => r.position >= 4 && r.position <= 20 && r.impressions >= minImpressions)
     .map((r) => ({

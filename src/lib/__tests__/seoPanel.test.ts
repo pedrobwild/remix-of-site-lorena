@@ -33,6 +33,7 @@ describe("básicos", () => {
     expect(isBrandQuery("Bewild reforma")).toBe(true);
     expect(isBrandQuery("bwild studio")).toBe(true);
     expect(isBrandQuery("be wild sp")).toBe(true);
+    expect(isBrandQuery("bewuld")).toBe(true);
     expect(isBrandQuery("quanto custa reformar studio")).toBe(false);
     expect(isBrandQuery("wild")).toBe(false);
   });
@@ -74,7 +75,7 @@ describe("oportunidades", () => {
     expect(expectedCtr(0)).toBe(0);
   });
   it("strikingDistance pega posições 4 a 20 com volume", () => {
-    const out = strikingDistance([row("a", 100, 1, 8), row("b", 100, 20, 2), row("c", 5, 0, 9), row("d", 50, 0, 25)]);
+    const out = strikingDistance([row("a", 100, 1, 8), row("b", 100, 20, 2), row("c", 2, 0, 9), row("d", 50, 0, 25)]);
     expect(out.map((r) => r.key)).toEqual(["a"]);
     expect(out[0].potentialClicks).toBe(9);
   });
