@@ -932,6 +932,26 @@ export default function BewildPostFormPage({ slug }: Props) {
                   maxLength={170}
                 />
                 <span className="hint">{metaDescription.length}/170 — usa o resumo se vazio.</span>
+                {(() => {
+                  const n = (metaDescription.trim() || excerpt.trim()).length;
+                  const aviso =
+                    n === 0
+                      ? "Sem descrição nem resumo: o Google vai escolher um trecho qualquer."
+                      : n < 110
+                        ? `Curta demais (${n}). Mire entre 110 e 160 caracteres.`
+                        : n > 160
+                          ? `Longa demais (${n}). O Google corta depois de uns 160 caracteres.`
+                          : null;
+                  return aviso ? (
+                    <span className="hint" role="status" style={{ color: "#b45309" }}>
+                      Atenção: {aviso}
+                    </span>
+                  ) : (
+                    <span className="hint" role="status" style={{ color: "#15803d" }}>
+                      Tamanho bom ({n} caracteres).
+                    </span>
+                  );
+                })()}
               </div>
             </div>
 
