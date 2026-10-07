@@ -8,13 +8,20 @@ import { cleanup, fireEvent, render, screen, within } from "@testing-library/rea
 import type { ReactNode } from "react";
 import { NEIGHBORHOODS } from "@/guia/data/mapaBairrosData";
 
+/** Props recebidas pelo <Map> (o stub guarda a última renderização). */
+const { propsDoMapa } = vi.hoisted(() => ({ propsDoMapa: { atual: null as Record<string, unknown> | null } }));
+
 vi.mock("react-map-gl/maplibre", () => {
   const Passa = ({ children }: { children?: ReactNode }) => <>{children}</>;
+  const Mapa = (props: { children?: ReactNode } & Record<string, unknown>) => {
+    propsDoMapa.atual = props;
+    return <>{props.children}</>;
+  };
   const Nada = () => null;
-  return { default: Passa, Marker: Passa, Popup: Nada, NavigationControl: Nada, Source: Nada, Layer: Nada };
+  return { default: Mapa, Marker: Passa, Popup: Nada, NavigationControl: Nada, Source: Nada, Layer: Nada };
 });
 vi.mock("maplibre-gl/dist/maplibre-gl.css", () => ({}));
-vi.mock("@/guia/lib/maplibreWorker", () => ({}));
+vi.mock("@/guia/lib/maplibreWorker", () => ({ MAPLIBRE_WORKER_URL: "/assets/maplibre-gl-worker-teste.js" }));
 
 /** Nomes dos pinos do mapa (botões "Nome, score N. Selecionar bairro"), em ordem alfabética. */
 const pinos = () =>
@@ -88,5 +95,11 @@ describe("MapaBairrosEmbed", { timeout: 20000 }, () => {
     render(<MapaBairrosEmbed />);
     const pino = screen.getByRole("button", { name: "Brooklin, score 80. Selecionar bairro" });
     expect(pino.tagName).toBe("BUTTON");
+  });
+
+  it("entrega ao MapLibre a URL do worker gerada pelo build (sem ela o mapa publicado não carrega)", async () => {
+    const { default: MapaBairrosEmbed } = await import("@/guia/components/mapa/MapaBairrosEmbed");
+    render(<MapaBairrosEmbed />);
+    expect(propsDoMapa.atual?.workerUrl).toBe("/assets/maplibre-gl-worker-teste.js");
   });
 });

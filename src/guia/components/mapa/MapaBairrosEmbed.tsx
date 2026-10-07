@@ -37,7 +37,7 @@ import NeighborhoodComparison from "@/guia/components/mapa/NeighborhoodCompariso
 import ReactMap, { Marker, Popup, NavigationControl, Source, Layer, MapRef } from "react-map-gl/maplibre";
 import type { MapLayerMouseEvent, GeoJSONSource, ExpressionSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import "@/guia/lib/maplibreWorker";
+import { MAPLIBRE_WORKER_URL } from "@/guia/lib/maplibreWorker";
 
 /* ─── Configuração ─── */
 
@@ -237,6 +237,9 @@ function InteractiveMap({
         initialViewState={{ longitude: -46.6333, latitude: -23.5505, zoom: 11 }}
         style={{ width: "100%", height: "100%" }}
         mapStyle={MAP_STYLE}
+        // Sem isto o MapLibre procura o worker num arquivo que o build não gera
+        // e o mapa publicado mostra "O mapa não carregou" (ver maplibreWorker.ts).
+        workerUrl={MAPLIBRE_WORKER_URL}
         minZoom={10} maxZoom={17} maxBounds={MAP_BOUNDS}
         interactiveLayerIds={["neighborhood-fill", "cluster-circles", "poi-unclustered", "poi-clusters"]}
         onLoad={() => { loadedRef.current = true; setMapError(false); }}
