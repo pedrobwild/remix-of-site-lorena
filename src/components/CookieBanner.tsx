@@ -215,20 +215,20 @@ export default function CookieBanner() {
           <button
             type="button"
             className="cookie-banner__btn"
-            data-consent="declined"
-            onClick={() => handle("declined")}
-            data-cursor="hover"
-          >
-            Recusar
-          </button>
-          <button
-            type="button"
-            className="cookie-banner__btn"
             data-consent="accepted"
             onClick={() => handle("accepted")}
             data-cursor="hover"
           >
             Aceitar
+          </button>
+          <button
+            type="button"
+            className="cookie-banner__btn"
+            data-consent="declined"
+            onClick={() => handle("declined")}
+            data-cursor="hover"
+          >
+            Recusar
           </button>
         </div>
       </div>
