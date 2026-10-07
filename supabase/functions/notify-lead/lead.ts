@@ -295,8 +295,36 @@ export function formLabel(lead: CleanLead): string {
 }
 
 /** Atribuição do lead, uma linha por item — usada no Slack e no e-mail. */
+/**
+ * Canal do negócio — mesma regra de src/lib/leadSource.ts (clique de anúncio >
+ * UTM paga > buscador sem anúncio). Só Google Ads e busca orgânica ganham
+ * linha própria; o resto segue nas linhas de UTM/referrer.
+ */
+export function leadCanalLabel(lead: CleanLead): "Google Ads" | "Busca orgânica" | null {
+  if (lead.gclid) return "Google Ads";
+  if (lead.fbclid) return null;
+  const src = (lead.utm_source || lead.first_utm_source || "").toLowerCase().trim();
+  const med = (lead.utm_medium || lead.first_utm_medium || "").toLowerCase().trim();
+  if (src) {
+    const paid = /^(cpc|ppc|paid|paidsearch|cpm|ads?)$/.test(med);
+    if (/google|adwords/.test(src) && paid) return "Google Ads";
+    if (/google|bing/.test(src) && (med === "organic" || !med)) return "Busca orgânica";
+    return null;
+  }
+  let host = "";
+  try {
+    host = lead.referrer ? new URL(lead.referrer).hostname.toLowerCase() : "";
+  } catch {
+    host = "";
+  }
+  if (host && /(^|\.)(google|bing|yahoo|duckduckgo|ecosia|yandex)\./.test(host)) return "Busca orgânica";
+  return null;
+}
+
 function originLines(lead: CleanLead): string[] {
   const origin: string[] = [];
+  const canal = leadCanalLabel(lead);
+  if (canal) origin.push(`origem do negócio: ${canal}`);
   if (lead.form_path) origin.push(`formulário: ${lead.form_path}`);
   if (lead.utm_source) origin.push(`utm_source: ${lead.utm_source}`);
   if (lead.utm_medium) origin.push(`utm_medium: ${lead.utm_medium}`);
