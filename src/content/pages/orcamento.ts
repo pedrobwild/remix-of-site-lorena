@@ -71,7 +71,7 @@ export const DADOS_ORCAMENTO: { n: string; t: string }[] = [
   { n: "01", t: "Bairro e prédio — a convenção e o padrão da construtora mudam o escopo." },
   { n: "02", t: "Metragem privativa e se há varanda ou terraço." },
   { n: "03", t: "Objetivo: morar, short stay, locação tradicional ou uso misto." },
-  { n: "04", t: "Estado do imóvel: novo na planta, entregue pela construtora ou usado." },
+  { n: "04", t: "Estado do imóvel: no contrapiso, com 2 a 8 anos de uso ou com 9 a 15 anos de uso." },
   { n: "05", t: "Prazo desejado e se você já tem as chaves." },
 ];
 
