@@ -19,3 +19,4 @@
 - [x] Publicar /.well-known/llms.txt e confirmar no domínio próprio
 - [x] Adicionar vídeo opcional de abertura ao artigo de studio, com player ao clicar e VideoObject SSR
 - [x] Validar posição, reprodução e ausência de regressões; não publicar
+- [x] Integrar busca ao blog e remover atalho separado dos menus; preservar endereço antigo por redirecionamento
