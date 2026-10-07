@@ -249,7 +249,7 @@ export default function OrcamentoPage() {
               <p className="bwa-orc-sub">
                 <strong>São só as informações iniciais para conhecermos o seu imóvel.</strong> Com elas, um
                 especialista da Bewild entra em contato pelo WhatsApp em até um dia útil para entender o
-                projeto e passar uma primeira faixa de investimento e prazo — sem custo e sem compromisso.
+                projeto mais a fundo para que seu orçamento personalizado seja elaborado.
               </p>
 
               {final === "delivered" ? (
