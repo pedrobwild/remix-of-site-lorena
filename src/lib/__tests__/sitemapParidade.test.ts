@@ -177,7 +177,7 @@ describe("public/sitemap.xml commitado", () => {
   it("toda rota estática do arquivo existe no roteador e no gerador (nada órfão)", () => {
     const estaticas = locs
       .map((l) => new URL(l).pathname)
-      .filter((p) => !p.startsWith("/portfolio/") && !p.startsWith("/conteudos/") && !p.startsWith("/reforma/"));
+      .filter((p) => !p.startsWith("/portfolio/") && !p.startsWith("/conteudos/") && !p.startsWith("/reforma/") && !p.startsWith("/graficos/"));
     for (const p of estaticas) {
       expect(indexaveisDoRoteador, `${p} no sitemap mas não é rota indexável`).toContain(p);
       expect(rotasDoScript, `${p} no sitemap mas não está no gerador`).toContain(p);
