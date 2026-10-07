@@ -1,6 +1,6 @@
 /**
  * Conjuntos de gráficos reutilizáveis dos artigos. Cada conjunto vira a página
- * /graficos/<slug> (noindex) e o artigo com o mesmo slug ganha um link para ela.
+ * /graficos/<slug> (indexável, no sitemap) e o artigo com o mesmo slug ganha um link para ela.
  * Os SVGs ficam em public/images/blog/<slug>/ (versão larga e versão -m para celular).
  */
 export type ChartItem = {

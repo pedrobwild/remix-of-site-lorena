@@ -68,6 +68,8 @@ export function xmlEscape(s) {
     .replace(/'/g, "&apos;");
 }
 
+const CHART_SLUGS = ["reformar-apartamento-para-vender-ou-alugar-sp"];
+
 export function urlTag({ loc, lastmod, changefreq, priority, videos }) {
   const lm = lastmod ? `<lastmod>${xmlEscape(lastmod)}</lastmod>` : "";
   const vids = (videos ?? []).map(videoTag).join("");
@@ -287,7 +289,18 @@ async function main() {
       videos: postVideos(p),
     }));
 
-  const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls];
+  // Páginas de gráficos (/graficos/<slug>): mantenha em sincronia com src/content/chartSets.ts.
+  const chartUrls = CHART_SLUGS.map((slug) => {
+    const post = posts.find((p) => p.slug === slug);
+    return {
+      loc: `${BASE_URL}/graficos/${slug}`,
+      lastmod: day(post?.content_updated_at, post?.published_at, post?.created_at),
+      changefreq: "monthly",
+      priority: "0.5",
+    };
+  });
+
+  const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls, ...chartUrls];
   const xml = [
     `<?xml version="1.0" encoding="UTF-8"?>`,
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">`,
