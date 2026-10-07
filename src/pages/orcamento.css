@@ -407,6 +407,7 @@
   .bwa-orc-progress button:not([aria-current="step"]) > span:last-child { display: none; }
   .bwa-orc-progress-bar { display: block; width: 100%; }
 
+  .bwa-orc-form { scroll-margin-top: 76px; }
   .bwa-orc-h2 { margin-top: 20px; font-size: 24px; }
   .bwa-orc-fields { gap: 22px; margin-top: 20px; }
   .bwa-orc-area-value { font-size: 36px; }

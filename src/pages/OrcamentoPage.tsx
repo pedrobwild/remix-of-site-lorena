@@ -112,6 +112,7 @@ export default function OrcamentoPage() {
   const [whatsLink, setWhatsLink] = useState<string | null>(null);
 
   const topoRef = useRef<HTMLDivElement | null>(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
   const perguntaRef = useRef<HTMLHeadingElement | null>(null);
   const resultadoRef = useRef<HTMLDivElement | null>(null);
   // Troca de etapa pedida pelo visitante: foco no H2 (ou no campo inválido).
@@ -129,9 +130,9 @@ export default function OrcamentoPage() {
     focoPendente.current = null;
     if (alvo === "pergunta") {
       perguntaRef.current?.focus({ preventScroll: true });
-      // No celular a etapa nova começa fora da tela: volta ao topo do formulário.
+      // No celular a etapa nova começa fora da tela: volta ao início do formulário (progresso), sem repetir a abertura.
       if (typeof window !== "undefined" && window.matchMedia?.("(max-width: 820px)").matches) {
-        topoRef.current?.scrollIntoView?.({ block: "start", behavior: scrollBehavior() });
+        (formRef.current ?? topoRef.current)?.scrollIntoView?.({ block: "start", behavior: scrollBehavior() });
       }
     } else {
       focusField(CAMPO_ID[alvo]);
@@ -306,7 +307,7 @@ export default function OrcamentoPage() {
                   )}
                 </div>
               ) : (
-                <form className="bwa-orc-form" onSubmit={continuar} noValidate aria-label="Pedido de orçamento">
+                <form className="bwa-orc-form" ref={formRef} onSubmit={continuar} noValidate aria-label="Pedido de orçamento">
                   <ol className="bwa-orc-progress">
                     {ETAPAS.map((et, i) => (
                       <li key={et.rotulo}>
