@@ -7,11 +7,47 @@
  * são os publicados nos posts da Bewild (188 contratos analisados) — se os
  * posts mudarem, mude aqui também.
  */
+import { CONTRATOS_ANALISADOS } from "@/content/provas";
 import { faqJsonLd } from "@/lib/useSeo";
+import type { LeadObjetivo } from "@/lib/leadForm";
 
 export const CANONICAL = "/orcamento";
 
 export const PILAR_CUSTO = "/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2";
+
+/**
+ * Números do bloco "Quanto custa" ao lado do formulário. Fixos (não mudam
+ * conforme o preenchimento) e os mesmos dos posts de custo — se os posts
+ * mudarem, mude aqui. A contagem de contratos vem de provas.ts.
+ */
+export const CUSTO = { contratos: CONTRATOS_ANALISADOS, mediana: 71850, m2: 2744 } as const;
+
+/** Formulário em etapas: rótulo curto (barra de progresso) e pergunta (H2). */
+export const ETAPAS: ReadonlyArray<{ rotulo: string; pergunta: string }> = [
+  { rotulo: "Imóvel", pergunta: "Onde fica e qual o tamanho?" },
+  { rotulo: "Objetivo", pergunta: "Para que é a reforma?" },
+  { rotulo: "Situação", pergunta: "Em que pé está o imóvel?" },
+  { rotulo: "Contato", pergunta: "Para onde mandamos a faixa?" },
+];
+
+/**
+ * O VALOR enviado é o canônico do CRM (o mesmo de /diagnostico); o rótulo e a
+ * dica são o texto amigável desta página.
+ */
+export const OBJETIVOS: ReadonlyArray<{ value: LeadObjetivo; label: string; dica?: string }> = [
+  { value: "Short stay", label: "Short stay (curta temporada)", dica: "Airbnb e afins" },
+  { value: "Locação tradicional", label: "Locação tradicional", dica: "contrato de 30 meses" },
+  { value: "Moradia", label: "Morar", dica: "para você ou a família" },
+  { value: "Uso misto", label: "Uso misto", dica: "morar parte do ano" },
+  { value: "Ainda avaliando", label: "Ainda avaliando" },
+];
+
+/** Estado do imóvel — não tem coluna no CRM; segue no `message` do lead. */
+export const ESTADOS_IMOVEL = ["Novo", "Entregue pela construtora", "Usado"] as const;
+export type EstadoImovel = (typeof ESTADOS_IMOVEL)[number];
+
+/** Slider de metragem (m²). */
+export const AREA_SLIDER = { min: 15, max: 120, padrao: 28 } as const;
 
 /** Como o orçamento turnkey é construído, do pedido ao contrato. */
 export const PASSOS_ORCAMENTO: { n: string; t: string }[] = [
