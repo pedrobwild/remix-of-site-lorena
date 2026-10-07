@@ -43,7 +43,7 @@ export const OBJETIVOS: ReadonlyArray<{ value: LeadObjetivo; label: string; dica
 ];
 
 /** Estado do imóvel — não tem coluna no CRM; segue no `message` do lead. */
-export const ESTADOS_IMOVEL = ["Novo", "Entregue pela construtora", "Usado"] as const;
+export const ESTADOS_IMOVEL = ["No contrapiso", "2 a 8 anos de uso", "9 a 15 anos de uso"] as const;
 export type EstadoImovel = (typeof ESTADOS_IMOVEL)[number];
 
 /** Slider de metragem (m²). */

@@ -46,6 +46,13 @@ import {
 type Campo = "bairro" | "nome" | "whats" | "mail";
 type Chaves = (typeof LEAD_CHAVES)[number];
 
+/** O valor enviado é o canônico do CRM (LEAD_CHAVES); só o rótulo muda aqui. */
+const ROTULO_CHAVES: Record<Chaves, string> = {
+  Sim: "Sim",
+  "Ainda não": "Ainda não",
+  "Estou comprando": "Estou comprando o imóvel",
+};
+
 const CAMPO_ID: Record<Campo, string> = {
   bairro: "orc-bairro",
   nome: "orc-nome",
@@ -396,7 +403,7 @@ export default function OrcamentoPage() {
                                 checked={chaves === c}
                                 onChange={() => setChaves(c)}
                               />
-                              <span>{c}</span>
+                              <span>{ROTULO_CHAVES[c]}</span>
                             </label>
                           ))}
                         </div>

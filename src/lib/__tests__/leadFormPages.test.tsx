@@ -222,7 +222,7 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
   const continuar = () => fireEvent.click(screen.getByRole("button", { name: /Continuar/ }));
 
   /** Percorre as etapas 01–03 e preenche o contato da 04. */
-  function preencher({ objetivo = /Morar/, chaves = "Ainda não", estado = "Usado", area = "32" } = {}) {
+  function preencher({ objetivo = /Morar/, chaves = "Ainda não", estado = "9 a 15 anos de uso", area = "32" } = {}) {
     type("orc-bairro", "Moema");
     type("orc-area", area);
     continuar();
@@ -282,7 +282,7 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
       area_m2: 32,
       location: "Moema",
       chaves: "Ainda não",
-      message: "Estado: Usado",
+      message: "Estado: 9 a 15 anos de uso",
       form_path: "/orcamento",
       landing_path: "/",
     });
@@ -292,7 +292,7 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("Não conseguimos enviar seu pedido");
     const wa = screen.getByRole("link", { name: /Enviar pelo WhatsApp/ });
     expect(decodeURIComponent(wa.getAttribute("href")!)).toContain("Chaves: Ainda não");
-    expect(decodeURIComponent(wa.getAttribute("href")!)).toContain("Estado: Usado");
+    expect(decodeURIComponent(wa.getAttribute("href")!)).toContain("Estado: 9 a 15 anos de uso");
     expect(screen.getByRole("button", { name: /Tentar de novo/ })).not.toBeDisabled();
   });
 
@@ -316,9 +316,11 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     localStorage.setItem("bewild_click", JSON.stringify({ gclid: "Cj0antigo", gclid_ts: Date.now() - 86_400_000 }));
     sendLeadMock.mockResolvedValue(DELIVERED);
     render(<OrcamentoPage />);
-    preencher();
+    // Rótulo da tela × valor canônico do CRM.
+    preencher({ chaves: "Estou comprando o imóvel" });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: /Pedir orçamento/ })));
     expect(sendLeadMock.mock.calls[0][0]).toMatchObject({
+      chaves: "Estou comprando",
       form_path: "/orcamento",
       utm_source: "meta",
       utm_medium: "cpc",
