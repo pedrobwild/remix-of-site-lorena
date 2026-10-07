@@ -9,8 +9,11 @@
  */
 import { faqJsonLd } from "@/lib/useSeo";
 import type { LeadObjetivo } from "@/lib/leadForm";
+import { CONTACT } from "@/components/landing/content";
 
 export const CANONICAL = "/orcamento";
+
+const BASE = "https://bewild.com.br";
 
 export const PILAR_CUSTO = "/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2";
 
