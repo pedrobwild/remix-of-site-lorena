@@ -173,7 +173,18 @@ Deno.serve(async (req) => {
     lastmod: validDay(...postDays(b)),
   }));
 
-  const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls];
+  // Páginas de gráficos (/graficos/<slug>): mantenha em sincronia com src/content/chartSets.ts.
+  const chartUrls: UrlEntry[] = ["reformar-apartamento-para-vender-ou-alugar-sp"].map((slug) => {
+    const post = postRows.find((b) => b.slug === slug);
+    return {
+      loc: `${base}/graficos/${slug}`,
+      priority: "0.5",
+      changefreq: "monthly",
+      lastmod: post ? validDay(...postDays(post)) : undefined,
+    };
+  });
+
+  const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls, ...chartUrls];
 
   const urlsXml = all
     .map(
