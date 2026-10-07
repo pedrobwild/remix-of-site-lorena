@@ -6,6 +6,8 @@
  */
 import { PROVA_REFORMAS } from "@/content/provas";
 import { useMemo, useState } from "react";
+import { Search } from "lucide-react";
+import { searchPosts } from "@/lib/postSearch";
 import { useSeo } from "@/lib/useSeo";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
@@ -57,7 +59,7 @@ function PostMeta({ post, long }: { post: BewildPost; long?: boolean }) {
   );
 }
 
-export default function BewildConteudosPage({ initialPosts }: { initialPosts?: BewildPost[] | null } = {}) {
+export default function BewildConteudosPage({ initialPosts, query = "", onQueryChange }: { initialPosts?: BewildPost[] | null; query?: string; onQueryChange?: (q: string) => void } = {}) {
   const { featured, grid, posts, loading, error } = useBewildPosts(initialPosts);
   const [filter, setFilter] = useState<FilterValue>("all");
 
@@ -73,11 +75,12 @@ export default function BewildConteudosPage({ initialPosts }: { initialPosts?: B
   });
 
   const filteredGrid = useMemo(() => {
-    if (filter === "all") return grid;
-    return grid.filter((p) => p.category === filter);
-  }, [grid, filter]);
+    const source = query.trim() ? searchPosts(posts, query) : grid;
+    if (filter === "all") return source;
+    return source.filter((p) => p.category === filter);
+  }, [grid, posts, filter, query]);
 
-  const showFeatured = featured && (filter === "all" || featured.category === filter);
+  const showFeatured = !query.trim() && featured && (filter === "all" || featured.category === filter);
 
   return (
     <>
@@ -97,6 +100,13 @@ export default function BewildConteudosPage({ initialPosts }: { initialPosts?: B
             <p className="ct-eyb">Conteúdos · inteligência de short stay</p>
             <h1>Quem reforma decide <span className="accent">melhor informado.</span></h1>
             <p className="ct-lead">Mercado, regras, reforma e operação de short stay em São Paulo, explicados pra quem investe e não quer errar a compra.</p>
+            <form className="ct-search" role="search" onSubmit={(e) => e.preventDefault()}>
+              <label htmlFor="ct-search-input" className="ct-search__label">Buscar artigos</label>
+              <div className="ct-search__row">
+                <Search size={22} aria-hidden="true" />
+                <input id="ct-search-input" className="ct-search__input" type="search" name="q" value={query} onChange={(e) => onQueryChange?.(e.target.value)} placeholder="Buscar por título ou descrição" autoComplete="off" enterKeyHint="search" maxLength={120} />
+              </div>
+            </form>
           </div>
         </section>
 
@@ -149,8 +159,8 @@ export default function BewildConteudosPage({ initialPosts }: { initialPosts?: B
                   </button>
                 ))}
               </div>
-              {!loading && !error && filteredGrid.length > 0 && (
-                <span className="ct-count">{pad(filteredGrid.length)} {filteredGrid.length === 1 ? "artigo" : "artigos"} no índice</span>
+              {!loading && !error && (
+                <span className="ct-count" role="status" aria-live="polite">{pad(filteredGrid.length)} {query.trim() ? (filteredGrid.length === 1 ? "resultado" : "resultados") : `${filteredGrid.length === 1 ? "artigo" : "artigos"} no índice`}</span>
               )}
             </div>
 
@@ -167,7 +177,7 @@ export default function BewildConteudosPage({ initialPosts }: { initialPosts?: B
 
             {!loading && !error && filteredGrid.length === 0 && (
               <div className="ct-state">
-                {posts.length === 0 ? "Em breve, novos conteúdos publicados." : "Nenhum conteúdo nessa categoria ainda."}
+                {posts.length === 0 ? "Em breve, novos conteúdos publicados." : query.trim() ? `Nenhum artigo encontrado para “${query.trim()}” nessa seleção.` : "Nenhum conteúdo nessa categoria ainda."}
               </div>
             )}
 
