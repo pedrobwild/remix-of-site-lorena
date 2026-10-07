@@ -72,5 +72,35 @@ export const FAQ: { q: string; a: string }[] = [
   },
 ];
 
-/** JSON-LD da página no HTML do servidor (head() da rota): FAQ. */
+/**
+ * JSON-LD da página no HTML do servidor (head() da rota): FAQ + as propriedades
+ * que transformam o WebPage em ContactPage de leads — o ContactPoint do
+ * orçamento (o mesmo contato oficial do site) e a ação de pedir orçamento.
+ * O `@type` "ContactPage" vem do `pageTypeFor` do routeHead; aqui entram só as
+ * propriedades extras, sobrepostas ao nó da página.
+ */
+export const ORCAMENTO_PAGE_JSONLD: Record<string, unknown> = {
+  mainEntity: {
+    "@type": "ContactPoint",
+    name: "Pedido de orçamento de reforma",
+    contactType: "sales",
+    url: `${BASE}/orcamento`,
+    telephone: `+${CONTACT.whatsappNumber}`,
+    email: CONTACT.email,
+    areaServed: "BR",
+    availableLanguage: "Portuguese",
+  },
+  potentialAction: {
+    "@type": "QuoteAction",
+    name: "Pedir orçamento de reforma turnkey",
+    target: `${BASE}/orcamento`,
+    result: {
+      "@type": "Quote",
+      name: "Faixa de investimento da reforma (preço fechado)",
+    },
+    recipient: { "@id": `${BASE}/#org` },
+  },
+};
+
+/** JSON-LD extra da página: FAQ. */
 export const ORCAMENTO_JSONLD: Array<Record<string, unknown>> = [faqJsonLd(FAQ)];

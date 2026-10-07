@@ -113,7 +113,7 @@ const WEBSITE_ID = `${SITE_BASE}/#website`;
 
 /** Tipo schema.org mais específico para páginas que não são "WebPage" genérica. */
 function pageTypeFor(path: string): string {
-  if (path === "/contato" || path === "/mapa") return "ContactPage";
+  if (path === "/contato" || path === "/mapa" || path === "/orcamento") return "ContactPage";
   if (path === "/como-funciona" || path === "/marcas-e-parcerias") return "AboutPage";
   if (
     path === "/portfolio" ||
