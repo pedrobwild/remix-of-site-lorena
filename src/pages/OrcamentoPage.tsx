@@ -31,14 +31,11 @@ import "./servico-reforma.css";
 import "./orcamento.css";
 import {
   AREA_SLIDER,
-  BLOCOS_ORCAMENTO,
   CUSTO,
-  DADOS_ORCAMENTO,
   ESTADOS_IMOVEL,
   ETAPAS,
   FAQ,
   OBJETIVOS,
-  PASSOS_ORCAMENTO,
   PILAR_CUSTO,
   type EstadoImovel,
 } from "@/content/pages/orcamento";
@@ -591,77 +588,6 @@ export default function OrcamentoPage() {
                 <li>Eletros</li>
               </ul>
             </aside>
-          </div>
-        </section>
-
-        <section className="bwa-servico-block" aria-labelledby="como-orcamos">
-          <div className="bwa-shell">
-            <h2 className="bwa-servico-h2" id="como-orcamos">
-              Como funciona o orçamento turnkey
-            </h2>
-            <ul className="bwa-servico-list">
-              {PASSOS_ORCAMENTO.map((item) => (
-                <li key={item.n}>
-                  <span className="bwa-servico-num">{item.n}</span>
-                  <span>{item.t}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="bwa-servico-text" style={{ marginTop: 24 }}>
-              Turnkey quer dizer um contrato só, do projeto à entrega das chaves, em vez de cinco
-              fornecedores para coordenar. A conta linha a linha entre os dois modelos está em{" "}
-              <a href="/conteudos/reforma-turn-key-ou-tradicional">reforma turnkey ou tradicional</a>; as 12
-              etapas, em <a href="/como-funciona">como funciona</a>.
-            </p>
-          </div>
-        </section>
-
-        <section className="bwa-servico-block" aria-labelledby="o-que-vem">
-          <div className="bwa-shell">
-            <h2 className="bwa-servico-h2" id="o-que-vem">
-              O que vem escrito no orçamento
-            </h2>
-            <ul className="bwa-servico-list">
-              {BLOCOS_ORCAMENTO.map((item) => (
-                <li key={item.n}>
-                  <span className="bwa-servico-num">{item.n}</span>
-                  <span>{item.t}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="bwa-servico-text" style={{ marginTop: 24 }}>
-              Dois orçamentos com o mesmo total podem cobrir escopos diferentes: a linha que mais muda o
-              preço é "marca definida" ou "similar". Os cinco critérios para comparar propostas estão em{" "}
-              <a href="/conteudos/como-comparar-orcamentos-de-reforma">como comparar orçamentos de reforma</a>{" "}
-              e os dez itens que costumam virar extra, em{" "}
-              <a href="/conteudos/o-que-esta-incluso-orcamento-reforma-studio">
-                o que está incluso no orçamento de reforma de um studio
-              </a>
-              .
-            </p>
-          </div>
-        </section>
-
-        <section className="bwa-servico-block" aria-labelledby="o-que-precisamos">
-          <div className="bwa-shell">
-            <h2 className="bwa-servico-h2" id="o-que-precisamos">
-              O que precisamos saber para orçar
-            </h2>
-            <ul className="bwa-servico-list">
-              {DADOS_ORCAMENTO.map((item) => (
-                <li key={item.n}>
-                  <span className="bwa-servico-num">{item.n}</span>
-                  <span>{item.t}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="bwa-servico-text" style={{ marginTop: 24 }}>
-              Studios e apartamentos compactos são a maior parte das nossas obras — veja{" "}
-              <a href="/reforma-de-studio-sao-paulo">reforma de studio em São Paulo</a>; metragens maiores e
-              coberturas, em <a href="/reforma-de-apartamento-sao-paulo">reforma de apartamento</a> e{" "}
-              <a href="/reforma-de-cobertura-sao-paulo">reforma de cobertura</a>. Obras entregues por bairro
-              estão no <a href="/portfolio">portfólio</a>.
-            </p>
           </div>
         </section>
 
