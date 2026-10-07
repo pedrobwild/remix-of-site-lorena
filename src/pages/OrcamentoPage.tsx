@@ -244,11 +244,12 @@ export default function OrcamentoPage() {
           <div className="bwa-shell bwa-orc-grid">
             <div className="bwa-orc-main" ref={topoRef}>
               <p className="bwa-orc-kicker">Orçamento · São Paulo</p>
-              {/* H1 com a palavra-chave (rodada 3 de SEO); a promessa do modelo 1b vira o subtítulo. */}
+              {/* H1 com a palavra-chave (rodada 3 de SEO). */}
               <h1 className="bwa-orc-h1">Orçamento de reforma turnkey de apartamento em SP.</h1>
               <p className="bwa-orc-sub">
-                <strong>Quatro perguntas, uma faixa honesta.</strong> Responda em um minuto. A faixa de
-                investimento e prazo chega pelo WhatsApp em até um dia útil, sem custo e sem compromisso.
+                <strong>São só as informações iniciais para conhecermos o seu imóvel.</strong> Com elas, um
+                especialista da Bewild entra em contato pelo WhatsApp em até um dia útil para entender o
+                projeto e passar uma primeira faixa de investimento e prazo — sem custo e sem compromisso.
               </p>
 
               {final === "delivered" ? (
