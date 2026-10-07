@@ -29,14 +29,13 @@ import { useSeo } from "@/lib/useSeo";
 import "./contato.css";
 import "./servico-reforma.css";
 import "./orcamento.css";
+import fotoObra from "@/assets/orcamento/obra-bewild.webp";
 import {
   AREA_SLIDER,
-  CUSTO,
   ESTADOS_IMOVEL,
   ETAPAS,
   FAQ,
   OBJETIVOS,
-  PILAR_CUSTO,
   type EstadoImovel,
 } from "@/content/pages/orcamento";
 
@@ -79,14 +78,12 @@ function etapaInvalida(errors: FieldErrors<Campo>, de: number, ate: number): num
   return null;
 }
 
-/** "R$ 71.850" — sem toLocaleString, para servidor e navegador escreverem igual. */
-const brl = (n: number) => `R$ ${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
 
 /**
  * OrcamentoPage — /orcamento
  *
  * Pedido de orçamento em 4 etapas curtas (imóvel, objetivo, situação,
- * contato), com o bloco fixo "Quanto custa" ao lado. Entrega no mesmo canal
+ * contato), com a foto da obra ao lado. Entrega no mesmo canal
  * do /contato (edge function `notify-lead`, via `sendLead`), marcado com
  * `form_path: "/orcamento"`; `landing_path` segue a atribuição da sessão.
  *
@@ -562,32 +559,10 @@ export default function OrcamentoPage() {
               )}
             </div>
 
-            <aside className="bwa-orc-custo" aria-labelledby="quanto-custa">
-              <h2 id="quanto-custa">Quanto custa uma reforma turnkey em São Paulo</h2>
-              <p>
-                Nos {CUSTO.contratos} contratos de reforma completa de até 50 m² analisados pela Bewild, a
-                mediana foi <strong>{brl(CUSTO.mediana)}</strong>, ou <strong>{brl(CUSTO.m2)} por m²</strong>,
-                com projeto, obra, marcenaria, mobiliário e eletrodomésticos dentro. Quatro em cada dez
-                contratos ficaram entre R$ 65 mil e R$ 75 mil; nenhum abaixo de R$ 55 mil.
-              </p>
-              <p>
-                O que mais muda o valor é a metragem e o padrão de acabamento, não o bairro. A tabela por
-                metragem está em{" "}
-                <a href={PILAR_CUSTO}>quanto custa reformar um apartamento ou studio de até 50 m²</a>; a
-                anatomia de um orçamento real, em{" "}
-                <a href="/conteudos/orcamento-reforma-studio-25-m2-item-a-item">
-                  o orçamento de um studio de 25 m², item a item
-                </a>
-                .
-              </p>
-              <ul className="bwa-orc-tags" aria-label="O que entra no escopo">
-                <li>Projeto 3D</li>
-                <li>Obra</li>
-                <li>Marcenaria própria</li>
-                <li>Mobília</li>
-                <li>Eletros</li>
-              </ul>
-            </aside>
+            {/* Foto decorativa da coluna da direita; no celular some (o formulário vem primeiro). */}
+            <div className="bwa-orc-foto" aria-hidden="true">
+              <img src={fotoObra} alt="" width={712} height={1400} decoding="async" />
+            </div>
           </div>
         </section>
 
