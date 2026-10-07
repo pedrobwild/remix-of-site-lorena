@@ -51,6 +51,10 @@ const FAQ_ITEMS: FaqItem[] = [
     a: "Não. Reformamos para morar, para alugar em curta ou longa temporada e para vender. O projeto muda conforme o objetivo.",
   },
   {
+    q: "Vocês fazem a gestão do Airbnb?",
+    a: "Sim. Além de entregar o studio pronto para anunciar, a Bewild faz a gestão do Airbnb. Se preferir, a operação pode ficar com você ou com quem você escolher, sem exclusividade.",
+  },
+  {
     q: "Preciso ir à obra?",
     a: "Só se você quiser. Todo o acompanhamento acontece pelo Bwild Workflow. E moradores de fora de São Paulo contam com vistoria por procuração, ligação de energia e instalação de internet feitas pela gente.",
   },
