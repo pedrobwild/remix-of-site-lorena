@@ -381,7 +381,7 @@ function PagesTab({
                 onChange={(e) => set(p.path, "title", e.target.value)}
                 maxLength={90}
               />
-              <Hint count={(cur.title ?? "").length} max={60} />
+              {cur.title ? <SizeWarn text={cur.title} min={30} max={60} usingDefault={false} /> : <FieldHint>Vazio: a página mantém o texto atual.</FieldHint>}
             </Field>
             <Field label="Descrição no Google (≤ 160 caracteres)" full>
               <textarea
@@ -392,7 +392,7 @@ function PagesTab({
                 onChange={(e) => set(p.path, "description", e.target.value)}
                 maxLength={220}
               />
-              <Hint count={(cur.description ?? "").length} max={160} />
+              {cur.description ? <SizeWarn text={cur.description} min={110} max={160} usingDefault={false} /> : <FieldHint>Vazio: a página mantém o texto atual.</FieldHint>}
             </Field>
             <Field label="Título ao compartilhar (Open Graph) — vazio usa o do Google" full>
               <input
@@ -402,7 +402,7 @@ function PagesTab({
                 onChange={(e) => set(p.path, "og_title", e.target.value)}
                 maxLength={90}
               />
-              <Hint count={(cur.og_title ?? "").length} max={60} />
+              {cur.og_title ? <SizeWarn text={cur.og_title} min={30} max={60} usingDefault={false} /> : <FieldHint>Vazio: a página mantém o texto atual.</FieldHint>}
             </Field>
             <Field label="Descrição ao compartilhar (Open Graph) — vazio usa a do Google" full>
               <textarea
@@ -413,7 +413,7 @@ function PagesTab({
                 onChange={(e) => set(p.path, "og_description", e.target.value)}
                 maxLength={220}
               />
-              <Hint count={(cur.og_description ?? "").length} max={160} />
+              {cur.og_description ? <SizeWarn text={cur.og_description} min={110} max={160} usingDefault={false} /> : <FieldHint>Vazio: a página mantém o texto atual.</FieldHint>}
             </Field>
             <Field label="Imagem ao compartilhar — URL pública https, 1200×630" full>
               <input
@@ -473,7 +473,7 @@ function BastidoresTab({
                 onChange={(e) => set(p.code, "title", e.target.value)}
                 maxLength={90}
               />
-              <Hint count={(cur.title ?? "").length} max={60} />
+              <SizeWarn text={cur.title || defTitle} min={30} max={60} usingDefault={!cur.title} />
             </Field>
             <Field label={`Descrição (≤ 160 caracteres) — post ${i + 1}`} full>
               <textarea
@@ -484,7 +484,7 @@ function BastidoresTab({
                 onChange={(e) => set(p.code, "description", e.target.value)}
                 maxLength={220}
               />
-              <Hint count={(cur.description ?? "").length} max={160} />
+              <SizeWarn text={cur.description || p.description} min={110} max={160} usingDefault={!cur.description} />
             </Field>
           </section>
         );
