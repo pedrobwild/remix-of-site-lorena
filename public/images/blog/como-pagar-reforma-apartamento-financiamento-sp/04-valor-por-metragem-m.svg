@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="484" viewBox="0 0 420 484" role="img" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif">
+<rect width="420" height="484" fill="#FFFFFF"/>
+<text x="20" y="34" font-size="19" font-weight="700" fill="#1F2937">Valor do contrato por faixa</text>
+<text x="20" y="58" font-size="19" font-weight="700" fill="#1F2937">de metragem</text>
+<text x="20" y="82" font-size="13" fill="#4B5563">Mediana em R$ mil (nº de contratos)</text>
+<text x="20" y="122" font-size="13" fill="#1F2937">Até 24 m² (47)</text>
+<rect x="20" y="128" width="107" height="18" rx="2" fill="#0F4C5C"/>
+<text x="133" y="142" font-size="13" font-weight="600" fill="#1F2937">R$ 71 mil</text>
+<text x="20" y="172" font-size="13" fill="#1F2937">24 a 28 m² (61)</text>
+<rect x="20" y="178" width="104" height="18" rx="2" fill="#0F4C5C"/>
+<text x="130" y="192" font-size="13" font-weight="600" fill="#1F2937">R$ 70 mil</text>
+<text x="20" y="222" font-size="13" fill="#1F2937">28 a 32 m² (66)</text>
+<rect x="20" y="228" width="111" height="18" rx="2" fill="#0F4C5C"/>
+<text x="137" y="242" font-size="13" font-weight="600" fill="#1F2937">R$ 74 mil</text>
+<text x="20" y="272" font-size="13" fill="#1F2937">32 a 38 m² (10)</text>
+<rect x="20" y="278" width="150" height="18" rx="2" fill="#0F4C5C"/>
+<text x="176" y="292" font-size="13" font-weight="600" fill="#1F2937">R$ 100 mil</text>
+<text x="20" y="322" font-size="13" fill="#1F2937">38 a 46 m² (18)</text>
+<rect x="20" y="328" width="165" height="18" rx="2" fill="#0F4C5C"/>
+<text x="191" y="342" font-size="13" font-weight="600" fill="#1F2937">R$ 110 mil</text>
+<text x="20" y="372" font-size="13" fill="#1F2937">46 m² ou mais (2)</text>
+<rect x="20" y="378" width="243" height="18" rx="2" fill="#0F4C5C"/>
+<text x="269" y="392" font-size="13" font-weight="600" fill="#1F2937">R$ 162 mil</text>
+<text x="20" y="452" font-size="12" fill="#9CA3AF">Fonte: base Bewild, 204 contratos.</text>
+<text x="20" y="470" font-size="12" fill="#9CA3AF">Faixa ≥ 46 m² com só 2 contratos.</text>
+</svg>
