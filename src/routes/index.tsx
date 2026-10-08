@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import HomePage from "@/pages/HomePage";
 import { seoHead } from "@/lib/routeHead";
+import { HOME_DEFAULT_DESCRIPTION, HOME_DEFAULT_TITLE, loadHomeSeo, type HomeSeo } from "@/lib/homeSeo";
 import homeBwaCssUrl from "@/pages/home-bwa.css?url";
 
 /** Imagem principal da home, carregada antecipadamente para reduzir o tempo de exibição. */
@@ -14,8 +15,9 @@ export const HERO_IMAGE =
 export const HERO_IMAGE_MOBILE = "/images/home/hero-studio-828.webp";
 export const HERO_MOBILE_MEDIA = "(max-width: 760px)";
 
-function homeHead() {
-  const head = seoHead({ bwaCss: false, title: "Reforma de apartamentos e studios em São Paulo | Bewild", description: "Reforma completa de apartamentos e studios em São Paulo: projeto, obra, marcenaria e mobília em um só contrato, preço e prazo fechados, 5 anos de garantia.", path: "/", keywords: "escritório de arquitetura em São Paulo, arquitetura e engenharia, projeto arquitetônico, projeto de interiores, engenharia civil São Paulo, reforma de apartamento em SP, bastidores de obra, equipe em obra, custo de reforma, empresa de reforma de apartamento SP, reforma turnkey São Paulo, Bewild" });
+function homeHead(seo?: HomeSeo) {
+  // Título/descrição/Open Graph salvos em /admin/seo (loader); sem eles, o texto padrão.
+  const head = seoHead({ bwaCss: false, title: seo?.title ?? HOME_DEFAULT_TITLE, description: seo?.description ?? HOME_DEFAULT_DESCRIPTION, ogTitle: seo?.ogTitle, ogDescription: seo?.ogDescription, ogImage: seo?.ogImage, path: "/", keywords: "escritório de arquitetura em São Paulo, arquitetura e engenharia, projeto arquitetônico, projeto de interiores, engenharia civil São Paulo, reforma de apartamento em SP, bastidores de obra, equipe em obra, custo de reforma, empresa de reforma de apartamento SP, reforma turnkey São Paulo, Bewild" });
   return {
     ...head,
     links: [
@@ -48,5 +50,6 @@ function homeHead() {
 
 export const Route = createFileRoute("/")({
   component: HomePage,
-  head: homeHead,
+  loader: () => loadHomeSeo(),
+  head: ({ loaderData }) => homeHead(loaderData),
 });

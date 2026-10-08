@@ -87,6 +87,9 @@ export type SeoHeadInput = {
    * home (tem a própria folha), /guia-do-investidor e as LPs /o e /p.
    */
   bwaCss?: boolean;
+  /** Título/descrição só da prévia de compartilhamento (padrão: os do Google). */
+  ogTitle?: string;
+  ogDescription?: string;
   /** Texto alternativo da imagem de compartilhamento (padrão: o do root). */
   ogImageAlt?: string;
   /** Metas extras da rota (ex.: `article:published_time`, `author`). */
@@ -194,6 +197,9 @@ export function seoHead(input: SeoHeadInput) {
   const canonical = cleanPath === "/" ? `${SITE_BASE}/` : `${SITE_BASE}${cleanPath}`;
   const og = absoluteUrl(input.ogImage || PAGE_OG_IMAGES[cleanPath] || DEFAULT_OG_IMAGE_URL);
 
+  const ogTitle = input.ogTitle || input.title;
+  const ogDescription = input.ogDescription || input.description;
+
   const meta: Array<Record<string, string>> = [
     { title: input.title },
     { name: "description", content: input.description },
@@ -201,13 +207,13 @@ export function seoHead(input: SeoHeadInput) {
       name: "robots",
       content: input.noindex ? "noindex, nofollow" : `index, follow, ${PREVIEW_DIRECTIVES}`,
     },
-    { property: "og:title", content: input.title },
-    { property: "og:description", content: input.description },
+    { property: "og:title", content: ogTitle },
+    { property: "og:description", content: ogDescription },
     { property: "og:url", content: canonical },
     { property: "og:type", content: input.ogType ?? "website" },
     { property: "og:image", content: og },
-    { name: "twitter:title", content: input.title },
-    { name: "twitter:description", content: input.description },
+    { name: "twitter:title", content: ogTitle },
+    { name: "twitter:description", content: ogDescription },
     { name: "twitter:image", content: og },
     { name: "DC.title", content: input.title },
   ];
