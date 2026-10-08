@@ -51,6 +51,7 @@ Páginas com os projetos entregues em cada bairro de São Paulo (só bairros com
 ## Conteúdos publicados
 
 <!-- posts:start -->
+- [Como pagar a reforma do apartamento: juros de cada opção sobre 204 contratos](/conteudos/como-pagar-reforma-apartamento-financiamento-sp)
 - [Studio como degrau: comprar para morar 2 anos e revender vale a pena em SP?](/conteudos/studio-como-degrau-comprar-morar-revender-sp)
 - [Reformar apartamento para vender ou alugar em SP: o que a conta de 204 contratos mostra](/conteudos/reformar-apartamento-para-vender-ou-alugar-sp)
 - [Thiago Dantas: quem é o arquiteto responsável técnico da Bewild e o que ele assina](/conteudos/thiago-dantas-arquiteto-responsavel-tecnico-bewild)
