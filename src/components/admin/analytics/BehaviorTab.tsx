@@ -3,7 +3,7 @@
  *
  * 3 cartões:
  *  - Top páginas (analytics_top_paths_v2) com sessões + pageviews
- *  - Top projetos (analytics_top_projects_v2) com views + sessões
+ *  - Top projetos: pageviews de /portfolio/<slug> (analytics_top_paths_v2)
  *  - Heatmap hora × dia da semana (analytics_hours_dow), TZ São Paulo
  *
  * Todos os 3 respeitam os segmentos ativos do shell. Clique em uma linha
@@ -12,7 +12,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { devError } from "@/lib/devLog";
+import { buildContentRows } from "@/lib/contentViews";
 import type { DateRange, Segment, SegmentDim } from "./types";
+import { ALL_PATHS_LIMIT, segArgs } from "./segmentArgs";
 
 type PathRow = { path: string; pageviews: number; sessions: number };
 type ProjRow = { project_slug: string; views: number; sessions: number };
@@ -29,21 +31,6 @@ const DAYS = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
 
 function fmtNum(n: number): string {
   return Math.round(n).toLocaleString("pt-BR");
-}
-
-/** Converte segmentos ativos em parâmetros nomeados das RPCs. */
-function segArgs(segments: Segment[]): Record<string, string | null> {
-  const map: Partial<Record<SegmentDim, string>> = {};
-  for (const s of segments) map[s.dim] = s.value;
-  return {
-    p_device: map.device ?? null,
-    p_country: map.country ?? null,
-    p_utm_source: map.utm_source ?? null,
-    p_utm_medium: map.utm_medium ?? null,
-    p_utm_campaign: map.utm_campaign ?? null,
-    p_landing_path: map.landing_path ?? null,
-    p_referrer_host: map.referrer_host ?? null,
-  };
 }
 
 export default function BehaviorTab({ range, segments, onAddSegment, onRemoveSegment }: Props) {
@@ -66,8 +53,10 @@ export default function BehaviorTab({ range, segments, onAddSegment, onRemoveSeg
       Promise.resolve(
         supabase.rpc("analytics_top_paths_v2", { p_since: sinceISO, p_until: untilISO, p_limit: 25, ...sa })
       ),
+      // Projetos: pageviews em /portfolio/<slug>. O evento project_view (fonte
+      // antiga deste cartão) não é mais emitido pelo site.
       Promise.resolve(
-        supabase.rpc("analytics_top_projects_v2", { p_since: sinceISO, p_until: untilISO, p_limit: 15, ...sa })
+        supabase.rpc("analytics_top_paths_v2", { p_since: sinceISO, p_until: untilISO, p_limit: ALL_PATHS_LIMIT, ...sa })
       ),
       Promise.resolve(
         supabase.rpc("analytics_hours_dow", { p_since: sinceISO, p_until: untilISO, ...sa })
@@ -77,7 +66,7 @@ export default function BehaviorTab({ range, segments, onAddSegment, onRemoveSeg
         if (cancelled) return;
         type RpcRes<T> = { data: T | null; error: { message: string } | null };
         const a = pRes as unknown as RpcRes<PathRow[]>;
-        const b = prRes as unknown as RpcRes<ProjRow[]>;
+        const b = prRes as unknown as RpcRes<PathRow[]>;
         const c = hRes as unknown as RpcRes<HourCell[]>;
         if (a.error) throw new Error(a.error.message);
         if (b.error) throw new Error(b.error.message);
@@ -87,11 +76,19 @@ export default function BehaviorTab({ range, segments, onAddSegment, onRemoveSeg
           pageviews: Number(r.pageviews ?? 0),
           sessions: Number(r.sessions ?? 0),
         })));
-        setProjects((b.data ?? []).map((r) => ({
-          project_slug: r.project_slug,
-          views: Number(r.views ?? 0),
-          sessions: Number(r.sessions ?? 0),
-        })));
+        setProjects(
+          buildContentRows(
+            "project",
+            [],
+            (b.data ?? []).map((r) => ({
+              path: r.path,
+              pageviews: Number(r.pageviews ?? 0),
+              sessions: Number(r.sessions ?? 0),
+            })),
+          )
+            .slice(0, 15)
+            .map((r) => ({ project_slug: r.slug, views: r.pageviews, sessions: r.sessions })),
+        );
         setHours((c.data ?? []).map((r) => ({
           dow: Number(r.dow),
           hour: Number(r.hour),
@@ -198,7 +195,7 @@ export default function BehaviorTab({ range, segments, onAddSegment, onRemoveSeg
       <div className="aa-col-6 aa-card">
         <div className="aa-card__head">
           <h3 className="aa-card__title">top projetos</h3>
-          <span className="aa-card__action aa-faint">eventos project_view</span>
+          <span className="aa-card__action aa-faint">pageviews em /portfolio · lista completa na aba Conteúdo</span>
         </div>
         {projects.length === 0 ? (
           <Empty />
@@ -208,7 +205,7 @@ export default function BehaviorTab({ range, segments, onAddSegment, onRemoveSeg
               <thead>
                 <tr>
                   <th>projeto</th>
-                  <th className="num">views</th>
+                  <th className="num">pv</th>
                   <th className="num">sessões</th>
                 </tr>
               </thead>

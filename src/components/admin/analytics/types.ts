@@ -6,6 +6,7 @@ export type TabKey =
   | "overview"
   | "acquisition"
   | "behavior"
+  | "content"
   | "conversion"
   | "retention"
   | "paid"
@@ -17,6 +18,7 @@ export const ALL_TABS: { key: TabKey; label: string; short: string }[] = [
   { key: "overview", label: "Visão", short: "V" },
   { key: "acquisition", label: "Aquisição", short: "A" },
   { key: "behavior", label: "Comportamento", short: "B" },
+  { key: "content", label: "Conteúdo", short: "U" },
   { key: "conversion", label: "Conversão", short: "C" },
   { key: "retention", label: "Retenção", short: "R" },
   { key: "paid", label: "Mídia paga", short: "M" },

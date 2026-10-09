@@ -6,6 +6,7 @@ import AnalyticsShell from "@/components/admin/analytics/AnalyticsShell";
 import OverviewTab from "@/components/admin/analytics/OverviewTab";
 import AcquisitionTab from "@/components/admin/analytics/AcquisitionTab";
 import BehaviorTab from "@/components/admin/analytics/BehaviorTab";
+import ContentTab from "@/components/admin/analytics/ContentTab";
 import ConversionTab from "@/components/admin/analytics/ConversionTab";
 import RetentionTab from "@/components/admin/analytics/RetentionTab";
 import PaidMediaTab from "@/components/admin/analytics/PaidMediaTab";
@@ -41,6 +42,9 @@ export default function AnalyticsPage() {
           onAddSegment={state.addSegment}
           onRemoveSegment={state.removeSegment}
         />
+      )}
+      {state.tab === "content" && (
+        <ContentTab range={state.range} segments={state.segments} comparePrev={state.comparePrev} />
       )}
       {state.tab === "conversion" && (
         <ConversionTab
