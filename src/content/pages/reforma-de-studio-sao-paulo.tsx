@@ -57,9 +57,9 @@ export const FAQ: { q: string; a: string; node?: ReactNode }[] = [
     node: (
       <>
         A referência é cerca de 60 dias úteis de obra, e a data exata sai no
-        contrato. Semana a semana em{" "}
-        <a href="/conteudos/cronograma-reforma-studio-60-dias-uteis">
-          cronograma de uma reforma de studio
+        contrato. Data a data em{" "}
+        <a href="/conteudos/quanto-tempo-demora-reforma-apartamento">
+          quanto tempo demora uma reforma de apartamento
         </a>
         .
       </>

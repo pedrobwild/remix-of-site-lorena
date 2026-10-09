@@ -29,7 +29,7 @@ const BAIRROS_POST = {
 };
 const SHORT_STAY = { href: "/conteudos/o-que-e-short-stay", label: "Short stay: o que é, regras e quanto rende" };
 const NBR = { href: "/conteudos/nbr-16280-reforma-studio-condominio", label: "NBR 16280: o que o condomínio exige antes da obra" };
-const PRAZO = { href: "/conteudos/cronograma-reforma-studio-60-dias-uteis", label: "Cronograma de reforma de studio em 60 dias úteis" };
+const PRAZO = { href: "/conteudos/quanto-tempo-demora-reforma-apartamento", label: "Quanto tempo demora a reforma: prazo por metragem e cronograma" };
 const FORA_SP = {
   href: "/conteudos/reformar-studio-sao-paulo-morando-em-outra-cidade",
   label: "Reformar um studio em São Paulo morando em outra cidade",

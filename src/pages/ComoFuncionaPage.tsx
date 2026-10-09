@@ -224,7 +224,7 @@ export default function ComoFuncionaPage() {
               ; o que o condomínio pede antes da obra, em{" "}
               <a href="/conteudos/nbr-16280-reforma-studio-condominio">NBR 16280: o que é e o que exige</a>; e o
               prazo de cada frente, em{" "}
-              <a href="/conteudos/cronograma-reforma-studio-60-dias-uteis">cronograma de reforma em 60 dias úteis</a>.
+              <a href="/conteudos/quanto-tempo-demora-reforma-apartamento">quanto tempo demora uma reforma de apartamento</a>.
             </p>
           </div>
         </section>

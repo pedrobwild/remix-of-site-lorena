@@ -5,7 +5,7 @@ project_id = "aamlnkmqvjcowixdgqii"
 # Todas validam o chamador no próprio código; o gateway não acrescenta
 # proteção porque a chave anon do site é um JWT público. O que importa:
 #   - públicas (anônimas por natureza): track, report-crash, sitemap, robots,
-#     not-found-check, notify-lead, faq-answer, scope-plan, px (pixel 1×1 e
+#     not-found-check, notify-lead, faq-answer e scope-plan (stubs 410), px (pixel 1×1 e
 #     links rastreados — carregados por <img> e cliques, sem cabeçalho). `track` e
 #     `report-crash` são chamadas por fetch/sendBeacon SEM cabeçalho de
 #     autenticação — com verify_jwt=true um redeploy pelo CLI derrubaria

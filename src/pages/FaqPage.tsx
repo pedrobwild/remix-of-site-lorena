@@ -1,24 +1,14 @@
 import { BAIRROS_ATENDIDOS, PROVA_CURTA, PROVA_FRASE } from "@/content/provas";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/lib/useAuth";
-import { trackEvent } from "@/lib/ga4";
 import { track } from "@/lib/analytics";
 import { faqJsonLd, useSeo } from "@/lib/useSeo";
 import { safeKbActions, type KbItem } from "@/lib/assistant/assistantEngine";
 import { isExternalHref } from "@/lib/safeUrl";
-import { scrollBehavior } from "@/lib/reducedMotion";
 import "./faq-page.css";
-
-type RespostaIa = {
-  resposta: string;
-  pontos: string[];
-  proximo_passo: string;
-  fora_do_escopo: boolean;
-};
 
 /* ============================================================
  * FaqPage — /faq
@@ -181,13 +171,6 @@ export default function FaqPage() {
   const [guiaAberto, setGuiaAberto] = useState(-1);
   const [indicacaoAberto, setIndicacaoAberto] = useState(-1);
   const [portfolioAberto, setPortfolioAberto] = useState(-1);
-  // A pergunta com IA gasta créditos: só aparece para quem está logado.
-  const { user: usuarioLogado } = useAuth();
-  const [pergunta, setPergunta] = useState("");
-  const [carregando, setCarregando] = useState(false);
-  const [erroIa, setErroIa] = useState<string | null>(null);
-  const [respostaIa, setRespostaIa] = useState<RespostaIa | null>(null);
-  const respostaRef = useRef<HTMLDivElement>(null);
 
   // Dúvidas do assistente (tabela assistant_kb): quando existem, substituem a
   // lista fixa abaixo, agrupadas por tema. Se o banco estiver vazio ou a
@@ -228,43 +211,6 @@ export default function FaqPage() {
     }
     return [...mapa.entries()];
   }, [kb]);
-
-  async function perguntar(e: React.FormEvent) {
-    e.preventDefault();
-    if (carregando) return;
-    const texto = pergunta.trim();
-    if (texto.length < 8) {
-      setErroIa("Escreva sua pergunta com um pouco mais de detalhe.");
-      return;
-    }
-    setErroIa(null);
-    setCarregando(true);
-    trackEvent("faq_ai_question", { location: "faq" });
-
-    try {
-      const { data, error } = await supabase.functions.invoke("faq-answer", {
-        body: { pergunta: texto },
-      });
-      const payload = data as { resposta?: RespostaIa; error?: string } | null;
-      if (error || !payload?.resposta) {
-        setErroIa(
-          payload?.error ||
-            "Não conseguimos responder agora. Tente de novo em instantes ou fale com a gente no WhatsApp.",
-        );
-        return;
-      }
-      setRespostaIa(payload.resposta);
-      trackEvent("faq_ai_answer", { location: "faq" });
-      window.setTimeout(() => {
-        respostaRef.current?.scrollIntoView({ behavior: scrollBehavior(), block: "nearest" });
-      }, 60);
-    } catch {
-      setErroIa("Não conseguimos responder agora. Tente de novo em instantes.");
-    } finally {
-      setCarregando(false);
-    }
-  }
-
 
   useSeo({
     title: "Dúvidas sobre reforma e arquitetura em SP | Bewild",
@@ -551,96 +497,26 @@ export default function FaqPage() {
           <div className="bwa-shell">
             <p className="bwa-label">Pergunte à Bewild</p>
             <h2 className="bwa-faqpage-ask-title" id="faq-ask-title">
-              Sua dúvida não está na lista? <em>{usuarioLogado ? "Pergunte aqui." : "Fale com a gente."}</em>
+              Sua dúvida não está na lista? <em>Fale com a gente.</em>
             </h2>
             <p className="bwa-faqpage-lead">
-              {usuarioLogado
-                ? "Escreva com suas palavras e a assistente da Bewild responde na hora, com base em como a gente trabalha. Preço e prazo do seu imóvel saem fechados na proposta."
-                : "Fale com o time da Bewild pelo WhatsApp ou peça um orçamento. Preço e prazo do seu imóvel saem fechados na proposta."}
+              Fale com o time da Bewild pelo WhatsApp ou peça um orçamento. Preço e prazo do seu
+              imóvel saem fechados na proposta.
             </p>
 
-            {usuarioLogado ? (
-              <>
-            <form className="bwa-faqpage-ask-form" onSubmit={perguntar}>
-              <label className="bwa-faqpage-ask-label" htmlFor="faq-pergunta">
-                Sua pergunta
-              </label>
-              <textarea
-                id="faq-pergunta"
-                className="bwa-faqpage-ask-input"
-                rows={3}
-                maxLength={1000}
-                aria-describedby="faq-pergunta-aviso"
-                placeholder="Ex.: moro em Curitiba e comprei um studio de 28 m² na Vila Olímpia. Como funciona o acompanhamento?"
-                value={pergunta}
-                onChange={(e) => setPergunta(e.target.value)}
-              />
-              <button className="bwa-button" type="submit" disabled={carregando}>
-                {carregando ? "Pensando…" : "Perguntar"} <span aria-hidden="true">→</span>
-              </button>
-            </form>
-            {/* faq-page.css é compartilhado com /parceiros: ajuste local inline. */}
-            <p className="bwa-faqpage-ask-note" id="faq-pergunta-aviso" style={{ maxWidth: "62ch" }}>
-              Sua pergunta é enviada a um provedor de inteligência artificial só para gerar a
-              resposta. Não escreva nome, telefone ou outros dados pessoais.{" "}
-              <a href="/privacidade" style={{ textDecoration: "underline", textUnderlineOffset: 3 }}>
-                Política de privacidade
+            <div className="bwa-faqpage-ask-actions">
+              <a className="bwa-button" href="/orcamento" data-cta="faq-diagnostico">
+                Solicitar orçamento <span aria-hidden="true">→</span>
               </a>
-              .
-            </p>
-
-            <div aria-live="polite" ref={respostaRef}>
-              {erroIa && <p className="bwa-faqpage-ask-erro">{erroIa}</p>}
-
-              {respostaIa && (
-                <div className="bwa-faqpage-ask-answer">
-                  <p className="bwa-faqpage-ask-text">{respostaIa.resposta}</p>
-                  {respostaIa.pontos?.length > 0 && (
-                    <ul className="bwa-faqpage-ask-list">
-                      {respostaIa.pontos.map((p) => (
-                        <li key={p}>{p}</li>
-                      ))}
-                    </ul>
-                  )}
-                  {respostaIa.proximo_passo && (
-                    <p className="bwa-faqpage-ask-next">{respostaIa.proximo_passo}</p>
-                  )}
-                  <div className="bwa-faqpage-ask-actions">
-                    <a className="bwa-button" href="/orcamento" data-cta="faq-ia-diagnostico">
-                      Solicitar orçamento <span aria-hidden="true">→</span>
-                    </a>
-                    <a
-                      className="bwa-faqpage-ask-whats"
-                      href={whatsappHref()}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Falar no WhatsApp <span aria-hidden="true">→</span>
-                    </a>
-                  </div>
-                  <p className="bwa-faqpage-ask-note">
-                    Resposta gerada por IA com base nas informações da Bewild.
-                    Preço e prazo do seu imóvel são confirmados na proposta.
-                  </p>
-                </div>
-              )}
+              <a
+                className="bwa-faqpage-ask-whats"
+                href={whatsappHref()}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Falar no WhatsApp <span aria-hidden="true">→</span>
+              </a>
             </div>
-              </>
-            ) : (
-              <div className="bwa-faqpage-ask-actions">
-                <a className="bwa-button" href="/orcamento" data-cta="faq-diagnostico">
-                  Solicitar orçamento <span aria-hidden="true">→</span>
-                </a>
-                <a
-                  className="bwa-faqpage-ask-whats"
-                  href={whatsappHref()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Falar no WhatsApp <span aria-hidden="true">→</span>
-                </a>
-              </div>
-            )}
           </div>
         </section>
 
