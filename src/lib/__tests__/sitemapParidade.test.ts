@@ -30,7 +30,6 @@ const ROTAS_INDEXAVEIS = [
   { path: "/contato", priority: "0.7", changefreq: "monthly" },
   { path: "/mapa-do-site", priority: "0.5", changefreq: "weekly" },
   { path: "/servicos", priority: "0.9", changefreq: "monthly" },
-  { path: "/escopo", priority: "0.7", changefreq: "monthly" },
   { path: "/como-funciona", priority: "0.7", changefreq: "monthly" },
   { path: "/onde-atuamos", priority: "0.7", changefreq: "monthly" },
   { path: "/reforma-de-apartamento-sao-paulo", priority: "0.9", changefreq: "monthly" },

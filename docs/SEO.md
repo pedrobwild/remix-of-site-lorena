@@ -121,7 +121,7 @@ inclui:
 
 - as rotas estáticas indexáveis (`/`, `/portfolio`, `/diagnostico`,
   `/orcamento`, `/conteudos`, `/guia-do-investidor`, `/faq`,
-  `/autorizacao-condominio`, `/contato`, `/escopo`, `/como-funciona`,
+  `/autorizacao-condominio`, `/contato`, `/como-funciona`,
   `/onde-atuamos`, `/parceiros`, `/privacidade`) — `/contato` entrou em
   18/09/2026 e `/guia-do-investidor` (página pilar, prioridade 0.8) em
   22/09/2026;

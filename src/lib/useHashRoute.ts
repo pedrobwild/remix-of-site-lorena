@@ -12,7 +12,6 @@ export type Route =
   | { name: "mapa" }
   | { name: "mapa-do-site" }
   | { name: "buscar" }
-  | { name: "escopo" }
   | { name: "como-funciona" }
   | { name: "onde-atuamos" }
   | { name: "reforma-apartamento-sp" }
@@ -74,12 +73,13 @@ export type Route =
  *  - `/blog*` → `/conteudos*` (blog legado removido; URL canônica nova)
  *  - `/diagnostico` → `/orcamento` (página removida; o pedido de orçamento
  *    é a única entrada de lead)
+ *  - `/escopo` → `/orcamento` ("Escopo com IA" tirada do ar em 09/10/2026)
  */
 export function normalizeLegacyPath(pathname: string): string {
   if (/^\/admin\/?$/.test(pathname)) return "/admin/dashboard";
   const blog = pathname.match(/^\/blog(\/.*)?$/);
   if (blog) return "/conteudos" + (blog[1] && blog[1] !== "/" ? blog[1] : "");
-  if (pathname === "/diagnostico") return "/orcamento";
+  if (pathname === "/diagnostico" || pathname === "/escopo") return "/orcamento";
   return pathname;
 }
 
@@ -113,7 +113,6 @@ function parsePath(rawPath: string): Route {
   if (path === "/mapa") return { name: "mapa" };
   if (path === "/mapa-do-site") return { name: "mapa-do-site" };
   if (path === "/buscar") return { name: "buscar" };
-  if (path === "/escopo") return { name: "escopo" };
   if (path === "/como-funciona") return { name: "como-funciona" };
   if (path === "/onde-atuamos") return { name: "onde-atuamos" };
   if (path === "/reforma-de-apartamento-sao-paulo") return { name: "reforma-apartamento-sp" };
@@ -281,7 +280,6 @@ export const routes = {
   mapa: "/mapa",
   mapaDoSite: "/mapa-do-site",
   buscar: "/buscar",
-  escopo: "/escopo",
   comoFunciona: "/como-funciona",
   ondeAtuamos: "/onde-atuamos",
   reformaApartamentoSp: "/reforma-de-apartamento-sao-paulo",

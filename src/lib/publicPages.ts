@@ -15,7 +15,6 @@ export const PUBLIC_PAGES: PublicPage[] = [
   { path: "/conteudos", label: "Conteúdos (blog)" },
   { path: "/servicos", label: "Serviços" },
   { path: "/como-funciona", label: "Como funciona" },
-  { path: "/escopo", label: "Escopo" },
   { path: "/orcamento", label: "Orçamento" },
   { path: "/contato", label: "Contato" },
   { path: "/mapa", label: "Mapa e endereço" },
