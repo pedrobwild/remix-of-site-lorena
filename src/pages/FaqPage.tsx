@@ -554,9 +554,9 @@ export default function FaqPage() {
               Sua dúvida não está na lista? <em>Pergunte aqui.</em>
             </h2>
             <p className="bwa-faqpage-lead">
-              Escreva com suas palavras e a assistente da Bewild responde na
-              hora, com base em como a gente trabalha. Preço e prazo do seu
-              imóvel saem fechados na proposta.
+              {usuarioLogado
+                ? "Escreva com suas palavras e a assistente da Bewild responde na hora, com base em como a gente trabalha. Preço e prazo do seu imóvel saem fechados na proposta."
+                : "Fale com o time da Bewild pelo WhatsApp ou peça um orçamento. Preço e prazo do seu imóvel saem fechados na proposta."}
             </p>
 
             {usuarioLogado ? (
