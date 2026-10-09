@@ -94,6 +94,21 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
 
+  // Cada chamada gasta créditos de IA: só quem está logado (JWT de usuário
+  // válido; a chave anônima do site NÃO passa) pode perguntar.
+  const bearer = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "").trim();
+  const sbUrl = Deno.env.get("SUPABASE_URL");
+  const sbKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? Deno.env.get("SUPABASE_ANON_KEY");
+  const naoAutorizado = () => json({ error: "Faça login para usar a pergunta com IA." }, 401);
+  if (!bearer || !sbUrl || !sbKey) return naoAutorizado();
+  try {
+    const authClient = createClient(sbUrl, sbKey, { auth: { persistSession: false, autoRefreshToken: false } });
+    const { data: userData, error: userErr } = await authClient.auth.getUser(bearer);
+    if (userErr || !userData?.user) return naoAutorizado();
+  } catch {
+    return naoAutorizado();
+  }
+
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
   if (!LOVABLE_API_KEY) return json({ error: "LOVABLE_API_KEY não configurada" }, 500);
 

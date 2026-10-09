@@ -4,6 +4,7 @@ import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/useAuth";
 import { trackEvent } from "@/lib/ga4";
 import { track } from "@/lib/analytics";
 import { faqJsonLd, useSeo } from "@/lib/useSeo";
@@ -180,6 +181,8 @@ export default function FaqPage() {
   const [guiaAberto, setGuiaAberto] = useState(-1);
   const [indicacaoAberto, setIndicacaoAberto] = useState(-1);
   const [portfolioAberto, setPortfolioAberto] = useState(-1);
+  // A pergunta com IA gasta créditos: só aparece para quem está logado.
+  const { user: usuarioLogado } = useAuth();
   const [pergunta, setPergunta] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [erroIa, setErroIa] = useState<string | null>(null);
@@ -556,6 +559,8 @@ export default function FaqPage() {
               imóvel saem fechados na proposta.
             </p>
 
+            {usuarioLogado ? (
+              <>
             <form className="bwa-faqpage-ask-form" onSubmit={perguntar}>
               <label className="bwa-faqpage-ask-label" htmlFor="faq-pergunta">
                 Sua pergunta
@@ -620,6 +625,22 @@ export default function FaqPage() {
                 </div>
               )}
             </div>
+              </>
+            ) : (
+              <div className="bwa-faqpage-ask-actions">
+                <a className="bwa-button" href="/orcamento" data-cta="faq-diagnostico">
+                  Solicitar orçamento <span aria-hidden="true">→</span>
+                </a>
+                <a
+                  className="bwa-faqpage-ask-whats"
+                  href={whatsappHref()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Falar no WhatsApp <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            )}
           </div>
         </section>
 
