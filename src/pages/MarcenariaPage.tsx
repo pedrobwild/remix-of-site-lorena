@@ -227,7 +227,7 @@ export default function MarcenariaPage() {
             <p className="bwa-servico-text" style={{ marginTop: 24 }}>
               Veja a marcenaria instalada nas obras entregues no{" "}
               <a href="/portfolio">portfólio</a> ou entenda o contrato completo
-              em <a href="/escopo">o que está incluso</a>.
+              em <a href="/conteudos/o-que-esta-incluso-orcamento-reforma-studio">o que está incluso</a>.
             </p>
           </div>
         </section>

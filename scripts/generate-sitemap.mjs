@@ -223,7 +223,6 @@ async function main() {
     // /mapa repete o endereço e o mapa de /contato: noindex, fora do sitemap (TEC-05).
     { loc: `${BASE_URL}/mapa-do-site`, changefreq: "weekly", priority: "0.5" },
     { loc: `${BASE_URL}/servicos`, lastmod: page("src/routes/servicos.tsx", ["ServicosPage.tsx"], "2026-09-29"), changefreq: "monthly", priority: "0.9" },
-    { loc: `${BASE_URL}/escopo`, lastmod: page("src/routes/escopo.tsx", ["EscopoPage.tsx"]), changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/como-funciona`, lastmod: page("src/routes/como-funciona.tsx", ["ComoFuncionaPage.tsx", "src/content/etapas.ts"]), changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/onde-atuamos`, lastmod: page("src/routes/onde-atuamos.tsx", ["OndeAtuamosPage.tsx", "src/lib/bairrosSp.ts"]), changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/reforma-de-apartamento-sao-paulo`, lastmod: page("src/routes/reforma-de-apartamento-sao-paulo.tsx", ["ReformaApartamentoSpPage.tsx"], "2026-09-23"), changefreq: "monthly", priority: "0.9" },

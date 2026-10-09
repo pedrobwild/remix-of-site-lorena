@@ -46,7 +46,7 @@ listas. O CI quebra se uma estiver e a outra não.
 
 Rotas públicas estáticas indexáveis hoje (14): `/`, `/portfolio`,
 `/diagnostico`, `/orcamento`, `/conteudos`, `/guia-do-investidor`, `/faq`,
-`/autorizacao-condominio`, `/contato`, `/escopo`, `/como-funciona`,
+`/autorizacao-condominio`, `/contato`, `/como-funciona`,
 `/onde-atuamos`, `/parceiros`, `/privacidade`. A página pilar
 `/guia-do-investidor` entrou em 22/09/2026 e está nas duas listas, no
 sitemap (prioridade 0.8) e no `public/llms.txt` — não vai a nenhuma

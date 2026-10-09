@@ -193,7 +193,6 @@ export const SERVICE_PAGES: Readonly<Record<string, string>> = {
   "/como-funciona": "como-funciona",
   "/onde-atuamos": "onde-atuamos",
   "/autorizacao-condominio": "autorizacao-condominio",
-  "/escopo": "escopo",
 };
 
 export type PageContent = { category: "projeto" | "conteudo" | "guia" | "portfolio" | "servico"; id: string };

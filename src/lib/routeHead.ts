@@ -46,7 +46,6 @@ export const PAGE_OG_IMAGES: Record<string, string> = {
   "/marcenaria": H("marcos-6-2"),
   "/servicos": H("erik-03-11"),
   "/como-funciona": H("marcos-10-4"),
-  "/escopo": H("rodrigo-15-1"),
   "/orcamento": H("rodrigo-8"),
   "/portfolio": H("erik-03-8-1"),
   "/guia-do-investidor": H("rodrigo-1-1"),
