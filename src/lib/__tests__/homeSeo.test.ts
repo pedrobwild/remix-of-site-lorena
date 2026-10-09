@@ -1,5 +1,13 @@
-import { describe, expect, it } from "vitest";
-import { HOME_DEFAULT_DESCRIPTION, HOME_DEFAULT_TITLE, resolveHomeSeo } from "@/lib/homeSeo";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+// homeSeo.ts importa o cliente do Supabase no topo do módulo. Sem mock, o
+// `createClient` real roda na importação e quebra a suíte inteira no CI, onde
+// não existe VITE_SUPABASE_URL ("supabaseUrl is required"). Mesmo padrão dos
+// demais testes que tocam em "@/integrations/supabase/client".
+const rpc = vi.fn();
+vi.mock("@/integrations/supabase/client", () => ({ supabase: { rpc: (...a: unknown[]) => rpc(...a) } }));
+
+import { HOME_DEFAULT_DESCRIPTION, HOME_DEFAULT_TITLE, loadHomeSeo, resolveHomeSeo } from "@/lib/homeSeo";
 
 describe("resolveHomeSeo", () => {
   it("sem configuração usa o texto padrão", () => {
@@ -22,5 +30,30 @@ describe("resolveHomeSeo", () => {
   it("repassa Open Graph próprio", () => {
     const s = resolveHomeSeo({ home_og_title: "OG", home_og_description: "OGD", home_og_image: "/a.jpg" });
     expect(s).toMatchObject({ ogTitle: "OG", ogDescription: "OGD", ogImage: "/a.jpg" });
+  });
+});
+
+describe("loadHomeSeo", () => {
+  beforeEach(() => {
+    rpc.mockReset();
+  });
+
+  it("usa as configurações devolvidas pelo banco", async () => {
+    rpc.mockResolvedValue({ data: { home_seo_title: "Do banco" }, error: null });
+    const s = await loadHomeSeo();
+    expect(rpc).toHaveBeenCalledWith("get_public_site_settings");
+    expect(s.title).toBe("Do banco");
+  });
+
+  it("erro do banco cai no texto padrão, sem rejeitar", async () => {
+    rpc.mockResolvedValue({ data: null, error: new Error("boom") });
+    await expect(loadHomeSeo()).resolves.toMatchObject({ title: HOME_DEFAULT_TITLE });
+  });
+
+  it("exceção síncrona do cliente também cai no texto padrão", async () => {
+    rpc.mockImplementation(() => {
+      throw new Error("cliente indisponível");
+    });
+    await expect(loadHomeSeo()).resolves.toMatchObject({ title: HOME_DEFAULT_TITLE });
   });
 });
