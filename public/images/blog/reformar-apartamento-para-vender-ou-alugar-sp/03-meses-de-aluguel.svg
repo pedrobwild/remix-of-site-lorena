@@ -4,20 +4,20 @@
 <text x="20" y="58" font-size="13" fill="#4B5563">Custo mediano por m² da reforma ÷ aluguel anunciado por m² ao mês</text>
 <text x="20" y="76" font-size="13" fill="#4B5563">Antes de vacância, administração, IR, condomínio e IPTU. Traço = metade central dos contratos</text>
 <text x="170" y="119" font-size="13" text-anchor="end" fill="#1F2937">Pinheiros</text>
-<rect x="178" y="106" width="211" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M368 115H426M368 110v10M426 110v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="432" y="120" font-size="13" font-weight="600" fill="#1F2937">28 meses</text>
+<rect x="178" y="106" width="208" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M364 115H414M364 110v10M414 110v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="420" y="120" font-size="13" font-weight="600" fill="#1F2937">28 meses</text>
 <text x="170" y="153" font-size="13" text-anchor="end" fill="#1F2937">Itaim Bibi</text>
-<rect x="178" y="140" width="223" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M380 149H441M380 144v10M441 144v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="447" y="154" font-size="13" font-weight="600" fill="#1F2937">29 meses</text>
+<rect x="178" y="140" width="224" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M379 149H434M379 144v10M434 144v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="440" y="154" font-size="13" font-weight="600" fill="#1F2937">29 meses</text>
 <text x="170" y="187" font-size="13" text-anchor="end" fill="#1F2937">Moema</text>
-<rect x="178" y="174" width="248" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M402 183H470M402 178v10M470 178v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="476" y="188" font-size="13" font-weight="600" fill="#1F2937">33 meses</text>
+<rect x="178" y="174" width="243" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M396 183H455M396 178v10M455 178v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="461" y="188" font-size="13" font-weight="600" fill="#1F2937">32 meses</text>
 <text x="170" y="221" font-size="13" text-anchor="end" fill="#1F2937">Média de SP</text>
 <rect x="178" y="208" width="321" height="18" rx="2" fill="#E07A1F"/>
-<path d="M468 217H556M468 212v10M556 212v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="562" y="222" font-size="13" font-weight="600" fill="#1F2937">42 meses</text>
-<text x="20" y="282" font-size="12" fill="#9CA3AF">Fontes: base Bewild, 204 contratos (06/10/2026); Índice FipeZap de locação residencial, agosto de 2026.</text>
+<path d="M465 217H543M465 212v10M543 212v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="549" y="222" font-size="13" font-weight="600" fill="#1F2937">42 meses</text>
+<text x="20" y="282" font-size="12" fill="#9CA3AF">Fontes: base Bewild, 188 contratos; Índice FipeZap de locação residencial, agosto de 2026.</text>
 </svg>

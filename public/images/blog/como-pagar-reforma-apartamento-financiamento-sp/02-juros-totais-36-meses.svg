@@ -1,26 +1,26 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="382" viewBox="0 0 720 382" role="img" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif">
 <rect width="720" height="382" fill="#FFFFFF"/>
-<text x="20" y="34" font-size="19" font-weight="700" fill="#1F2937">Quanto custa a mais pagar uma reforma de R$ 72.584</text>
+<text x="20" y="34" font-size="19" font-weight="700" fill="#1F2937">Quanto custa a mais pagar uma reforma de R$ 71.850</text>
 <text x="20" y="58" font-size="13" fill="#4B5563">Juros totais em 36 parcelas fixas (tabela Price), sem IOF, seguros e tarifas</text>
-<text x="20" y="76" font-size="13" fill="#4B5563">R$ 72.584 = valor mediano de 204 contratos de reforma completa Bewild</text>
+<text x="20" y="76" font-size="13" fill="#4B5563">R$ 71.850 = valor mediano de 188 contratos de reforma completa Bewild</text>
 <text x="255" y="119" font-size="13" text-anchor="end" fill="#1F2937">Crédito pessoal não consignado</text>
-<rect x="263" y="106" width="273" height="18" rx="2" fill="#E07A1F"/>
-<text x="542" y="120" font-size="13" font-weight="600" fill="#1F2937">R$ 114.508</text>
+<rect x="263" y="106" width="270" height="18" rx="2" fill="#E07A1F"/>
+<text x="539" y="120" font-size="13" font-weight="600" fill="#1F2937">R$ 113.350</text>
 <text x="255" y="153" font-size="13" text-anchor="end" fill="#1F2937">Consignado</text>
 <rect x="263" y="140" width="75" height="18" rx="2" fill="#0F4C5C"/>
-<text x="344" y="154" font-size="13" font-weight="600" fill="#1F2937">R$ 31.702</text>
+<text x="344" y="154" font-size="13" font-weight="600" fill="#1F2937">R$ 31.382</text>
 <text x="255" y="187" font-size="13" text-anchor="end" fill="#1F2937">Garantia de imóvel a 1,95% a.m.</text>
 <rect x="263" y="174" width="69" height="18" rx="2" fill="#0F4C5C"/>
-<text x="338" y="188" font-size="13" font-weight="600" fill="#1F2937">R$ 29.111</text>
+<text x="338" y="188" font-size="13" font-weight="600" fill="#1F2937">R$ 28.817</text>
 <text x="255" y="221" font-size="13" text-anchor="end" fill="#1F2937">Garantia de imóvel a 1,33% a.m.</text>
-<rect x="263" y="208" width="46" height="18" rx="2" fill="#0F4C5C"/>
-<text x="315" y="222" font-size="13" font-weight="600" fill="#1F2937">R$ 19.231</text>
+<rect x="263" y="208" width="45" height="18" rx="2" fill="#0F4C5C"/>
+<text x="314" y="222" font-size="13" font-weight="600" fill="#1F2937">R$ 19.036</text>
 <text x="255" y="255" font-size="13" text-anchor="end" fill="#1F2937">Esperar 12 meses (alta do INCC)</text>
-<rect x="263" y="242" width="12" height="18" rx="2" fill="#0F4C5C"/>
-<text x="281" y="256" font-size="13" font-weight="600" fill="#1F2937">R$ 4.834</text>
+<rect x="263" y="242" width="11" height="18" rx="2" fill="#0F4C5C"/>
+<text x="280" y="256" font-size="13" font-weight="600" fill="#1F2937">R$ 4.785</text>
 <text x="255" y="289" font-size="13" text-anchor="end" fill="#1F2937">Entrada + 12x sem juros no cartão</text>
 <rect x="263" y="276" width="2" height="18" rx="2" fill="#0F4C5C"/>
 <text x="271" y="290" font-size="13" font-weight="600" fill="#1F2937">R$ 0</text>
 <text x="20" y="350" font-size="12" fill="#9CA3AF">Taxas: Banco Central, crédito pessoal (ago/2026) e consignado (jul/2026); Caixa, Reforma com Garantia (nov/2025);</text>
-<text x="20" y="368" font-size="12" fill="#9CA3AF">INCC-DI 12 meses até set/2026 (FGV). Base Bewild de 204 contratos (planilha de 27/09/2026).</text>
+<text x="20" y="368" font-size="12" fill="#9CA3AF">INCC-DI 12 meses até set/2026 (FGV). Base Bewild de 188 contratos.</text>
 </svg>

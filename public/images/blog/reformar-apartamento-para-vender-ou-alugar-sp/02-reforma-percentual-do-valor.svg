@@ -1,52 +1,52 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="552" viewBox="0 0 720 552" role="img" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif">
 <rect width="720" height="552" fill="#FFFFFF"/>
 <text x="20" y="34" font-size="19" font-weight="700" fill="#1F2937">Quanto a reforma completa pesa no preço do apartamento</text>
-<text x="20" y="58" font-size="13" fill="#4B5563">Custo mediano por m² da reforma (R$ 2.758) ÷ preço de venda por m² do bairro</text>
-<text x="20" y="76" font-size="13" fill="#4B5563">Barra = mediana; traço = metade central dos contratos (R$ 2.490 a R$ 3.247 por m²)</text>
+<text x="20" y="58" font-size="13" fill="#4B5563">Custo mediano por m² da reforma (R$ 2.744) ÷ preço de venda por m² do bairro</text>
+<text x="20" y="76" font-size="13" fill="#4B5563">Barra = mediana; traço = metade central dos contratos (R$ 2.457 a R$ 3.125 por m²)</text>
 <text x="170" y="119" font-size="13" text-anchor="end" fill="#1F2937">Itaim Bibi</text>
-<rect x="178" y="106" width="155" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M318 115H361M318 110v10M361 110v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="367" y="120" font-size="13" font-weight="600" fill="#1F2937">13,8%</text>
+<rect x="178" y="106" width="154" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M316 115H354M316 110v10M354 110v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="360" y="120" font-size="13" font-weight="600" fill="#1F2937">13,7%</text>
 <text x="170" y="153" font-size="13" text-anchor="end" fill="#1F2937">Pinheiros</text>
-<rect x="178" y="140" width="170" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M331 149H378M331 144v10M378 144v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="384" y="154" font-size="13" font-weight="600" fill="#1F2937">15,1%</text>
+<rect x="178" y="140" width="169" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M329 149H371M329 144v10M371 144v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="377" y="154" font-size="13" font-weight="600" fill="#1F2937">15,0%</text>
 <text x="170" y="187" font-size="13" text-anchor="end" fill="#1F2937">Jardins</text>
-<rect x="178" y="174" width="172" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M333 183H380M333 178v10M380 178v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="386" y="188" font-size="13" font-weight="600" fill="#1F2937">15,3%</text>
+<rect x="178" y="174" width="171" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M331 183H373M331 178v10M373 178v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="379" y="188" font-size="13" font-weight="600" fill="#1F2937">15,2%</text>
 <text x="170" y="221" font-size="13" text-anchor="end" fill="#1F2937">Moema</text>
-<rect x="178" y="208" width="188" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M347 217H399M347 212v10M399 212v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="405" y="222" font-size="13" font-weight="600" fill="#1F2937">16,7%</text>
+<rect x="178" y="208" width="187" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M345 217H391M345 212v10M391 212v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="397" y="222" font-size="13" font-weight="600" fill="#1F2937">16,6%</text>
 <text x="170" y="255" font-size="13" text-anchor="end" fill="#1F2937">Vila Mariana</text>
-<rect x="178" y="242" width="208" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M366 251H423M366 246v10M423 246v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="429" y="256" font-size="13" font-weight="600" fill="#1F2937">18,5%</text>
+<rect x="178" y="242" width="207" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M364 251H414M364 246v10M414 246v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="420" y="256" font-size="13" font-weight="600" fill="#1F2937">18,4%</text>
 <text x="170" y="289" font-size="13" text-anchor="end" fill="#1F2937">Paraíso</text>
-<rect x="178" y="276" width="220" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M376 285H437M376 280v10M437 280v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="443" y="290" font-size="13" font-weight="600" fill="#1F2937">19,5%</text>
+<rect x="178" y="276" width="219" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M374 285H428M374 280v10M428 280v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="434" y="290" font-size="13" font-weight="600" fill="#1F2937">19,4%</text>
 <text x="170" y="323" font-size="13" text-anchor="end" fill="#1F2937">Perdizes</text>
-<rect x="178" y="310" width="230" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M386 319H449M386 314v10M449 314v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="455" y="324" font-size="13" font-weight="600" fill="#1F2937">20,5%</text>
+<rect x="178" y="310" width="229" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M383 319H439M383 314v10M439 314v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="445" y="324" font-size="13" font-weight="600" fill="#1F2937">20,4%</text>
 <text x="170" y="357" font-size="13" text-anchor="end" fill="#1F2937">Bela Vista</text>
-<rect x="178" y="344" width="244" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M398 353H465M398 348v10M465 348v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="471" y="358" font-size="13" font-weight="600" fill="#1F2937">21,7%</text>
+<rect x="178" y="344" width="243" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M395 353H455M395 348v10M455 348v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="461" y="358" font-size="13" font-weight="600" fill="#1F2937">21,6%</text>
 <text x="170" y="391" font-size="13" text-anchor="end" fill="#1F2937">Média de SP</text>
-<rect x="178" y="378" width="254" height="18" rx="2" fill="#E07A1F"/>
-<path d="M407 387H477M407 382v10M477 382v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="483" y="392" font-size="13" font-weight="600" fill="#1F2937">22,6%</text>
+<rect x="178" y="378" width="253" height="18" rx="2" fill="#E07A1F"/>
+<path d="M404 387H466M404 382v10M466 382v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="472" y="392" font-size="13" font-weight="600" fill="#1F2937">22,5%</text>
 <text x="170" y="425" font-size="13" text-anchor="end" fill="#1F2937">Santana</text>
-<rect x="178" y="412" width="334" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M479 421H571M479 416v10M571 416v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="577" y="426" font-size="13" font-weight="600" fill="#1F2937">29,7%</text>
+<rect x="178" y="412" width="332" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M475 421H556M475 416v10M556 416v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="562" y="426" font-size="13" font-weight="600" fill="#1F2937">29,5%</text>
 <text x="170" y="459" font-size="13" text-anchor="end" fill="#1F2937">Vila Andrade</text>
-<rect x="178" y="446" width="370" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M512 455H614M512 450v10M614 450v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="620" y="460" font-size="13" font-weight="600" fill="#1F2937">32,9%</text>
-<text x="20" y="520" font-size="12" fill="#9CA3AF">Fontes: base Bewild, 204 contratos de reforma completa (planilha lida em 06/10/2026);</text>
+<rect x="178" y="446" width="369" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M508 455H598M508 450v10M598 450v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="604" y="460" font-size="13" font-weight="600" fill="#1F2937">32,8%</text>
+<text x="20" y="520" font-size="12" fill="#9CA3AF">Fontes: base Bewild, 188 contratos de reforma completa;</text>
 <text x="20" y="538" font-size="12" fill="#9CA3AF">Índice FipeZap de venda residencial, setembro de 2026.</text>
 </svg>

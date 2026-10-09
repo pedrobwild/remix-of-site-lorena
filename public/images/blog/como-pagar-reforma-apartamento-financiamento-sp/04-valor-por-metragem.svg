@@ -2,23 +2,23 @@
 <rect width="720" height="346" fill="#FFFFFF"/>
 <text x="20" y="34" font-size="19" font-weight="700" fill="#1F2937">Quanto você precisa pagar: contrato por faixa de metragem</text>
 <text x="20" y="58" font-size="13" fill="#4B5563">Valor mediano do contrato de reforma completa, em R$ mil, com o número de contratos entre parênteses</text>
-<text x="255" y="101" font-size="13" text-anchor="end" fill="#1F2937">Até 24 m² (47)</text>
+<text x="255" y="101" font-size="13" text-anchor="end" fill="#1F2937">Até 20 m² (13)</text>
 <rect x="263" y="88" width="128" height="18" rx="2" fill="#0F4C5C"/>
 <text x="397" y="102" font-size="13" font-weight="600" fill="#1F2937">R$ 71 mil</text>
-<text x="255" y="135" font-size="13" text-anchor="end" fill="#1F2937">24 a 28 m² (61)</text>
-<rect x="263" y="122" width="124" height="18" rx="2" fill="#0F4C5C"/>
-<text x="393" y="136" font-size="13" font-weight="600" fill="#1F2937">R$ 70 mil</text>
-<text x="255" y="169" font-size="13" text-anchor="end" fill="#1F2937">28 a 32 m² (66)</text>
-<rect x="263" y="156" width="132" height="18" rx="2" fill="#0F4C5C"/>
-<text x="401" y="170" font-size="13" font-weight="600" fill="#1F2937">R$ 74 mil</text>
-<text x="255" y="203" font-size="13" text-anchor="end" fill="#1F2937">32 a 38 m² (10)</text>
-<rect x="263" y="190" width="178" height="18" rx="2" fill="#0F4C5C"/>
-<text x="447" y="204" font-size="13" font-weight="600" fill="#1F2937">R$ 100 mil</text>
-<text x="255" y="237" font-size="13" text-anchor="end" fill="#1F2937">38 a 46 m² (18)</text>
-<rect x="263" y="224" width="196" height="18" rx="2" fill="#0F4C5C"/>
-<text x="465" y="238" font-size="13" font-weight="600" fill="#1F2937">R$ 110 mil</text>
-<text x="255" y="271" font-size="13" text-anchor="end" fill="#1F2937">46 m² ou mais (2)</text>
-<rect x="263" y="258" width="289" height="18" rx="2" fill="#0F4C5C"/>
-<text x="558" y="272" font-size="13" font-weight="600" fill="#1F2937">R$ 162 mil</text>
-<text x="20" y="332" font-size="12" fill="#9CA3AF">Fonte: base Bewild, 204 contratos de reforma completa (planilha de 27/09/2026). Faixa de 46 m² ou mais tem só 2 contratos.</text>
+<text x="255" y="135" font-size="13" text-anchor="end" fill="#1F2937">20 a 24 m² (29)</text>
+<rect x="263" y="122" width="121" height="18" rx="2" fill="#0F4C5C"/>
+<text x="390" y="136" font-size="13" font-weight="600" fill="#1F2937">R$ 68 mil</text>
+<text x="255" y="169" font-size="13" text-anchor="end" fill="#1F2937">24 a 28 m² (70)</text>
+<rect x="263" y="156" width="128" height="18" rx="2" fill="#0F4C5C"/>
+<text x="397" y="170" font-size="13" font-weight="600" fill="#1F2937">R$ 71 mil</text>
+<text x="255" y="203" font-size="13" text-anchor="end" fill="#1F2937">28 a 32 m² (48)</text>
+<rect x="263" y="190" width="134" height="18" rx="2" fill="#0F4C5C"/>
+<text x="403" y="204" font-size="13" font-weight="600" fill="#1F2937">R$ 75 mil</text>
+<text x="255" y="237" font-size="13" text-anchor="end" fill="#1F2937">32 a 40 m² (17)</text>
+<rect x="263" y="224" width="190" height="18" rx="2" fill="#0F4C5C"/>
+<text x="459" y="238" font-size="13" font-weight="600" fill="#1F2937">R$ 107 mil</text>
+<text x="255" y="271" font-size="13" text-anchor="end" fill="#1F2937">Mais de 40 m² (11)</text>
+<rect x="263" y="258" width="253" height="18" rx="2" fill="#0F4C5C"/>
+<text x="522" y="272" font-size="13" font-weight="600" fill="#1F2937">R$ 142 mil</text>
+<text x="20" y="332" font-size="12" fill="#9CA3AF">Fonte: base Bewild, 188 contratos de reforma completa de compactos em SP. Faixas acima de 32 m² têm amostra menor.</text>
 </svg>

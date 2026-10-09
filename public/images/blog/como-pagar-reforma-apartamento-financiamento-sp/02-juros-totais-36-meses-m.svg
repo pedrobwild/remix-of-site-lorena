@@ -1,24 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="420" height="502" viewBox="0 0 420 502" role="img" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif">
 <rect width="420" height="502" fill="#FFFFFF"/>
 <text x="20" y="34" font-size="19" font-weight="700" fill="#1F2937">Quanto custa a mais pagar</text>
-<text x="20" y="58" font-size="19" font-weight="700" fill="#1F2937">R$ 72.584 de reforma</text>
+<text x="20" y="58" font-size="19" font-weight="700" fill="#1F2937">R$ 71.850 de reforma</text>
 <text x="20" y="82" font-size="13" fill="#4B5563">Juros totais em 36 parcelas fixas (Price),</text>
 <text x="20" y="100" font-size="13" fill="#4B5563">sem IOF e tarifas; valor = mediana da base</text>
 <text x="20" y="140" font-size="13" fill="#1F2937">Crédito pessoal não consignado</text>
-<rect x="20" y="146" width="229" height="18" rx="2" fill="#E07A1F"/>
-<text x="255" y="160" font-size="13" font-weight="600" fill="#1F2937">R$ 114.508</text>
+<rect x="20" y="146" width="227" height="18" rx="2" fill="#E07A1F"/>
+<text x="253" y="160" font-size="13" font-weight="600" fill="#1F2937">R$ 113.350</text>
 <text x="20" y="190" font-size="13" fill="#1F2937">Consignado</text>
 <rect x="20" y="196" width="63" height="18" rx="2" fill="#0F4C5C"/>
-<text x="89" y="210" font-size="13" font-weight="600" fill="#1F2937">R$ 31.702</text>
+<text x="89" y="210" font-size="13" font-weight="600" fill="#1F2937">R$ 31.382</text>
 <text x="20" y="240" font-size="13" fill="#1F2937">Garantia de imóvel a 1,95% a.m.</text>
 <rect x="20" y="246" width="58" height="18" rx="2" fill="#0F4C5C"/>
-<text x="84" y="260" font-size="13" font-weight="600" fill="#1F2937">R$ 29.111</text>
+<text x="84" y="260" font-size="13" font-weight="600" fill="#1F2937">R$ 28.817</text>
 <text x="20" y="290" font-size="13" fill="#1F2937">Garantia de imóvel a 1,33% a.m.</text>
 <rect x="20" y="296" width="38" height="18" rx="2" fill="#0F4C5C"/>
-<text x="64" y="310" font-size="13" font-weight="600" fill="#1F2937">R$ 19.231</text>
+<text x="64" y="310" font-size="13" font-weight="600" fill="#1F2937">R$ 19.036</text>
 <text x="20" y="340" font-size="13" fill="#1F2937">Esperar 12 meses (alta do INCC)</text>
 <rect x="20" y="346" width="10" height="18" rx="2" fill="#0F4C5C"/>
-<text x="36" y="360" font-size="13" font-weight="600" fill="#1F2937">R$ 4.834</text>
+<text x="36" y="360" font-size="13" font-weight="600" fill="#1F2937">R$ 4.785</text>
 <text x="20" y="390" font-size="13" fill="#1F2937">Entrada + 12x sem juros no cartão</text>
 <rect x="20" y="396" width="2" height="18" rx="2" fill="#0F4C5C"/>
 <text x="28" y="410" font-size="13" font-weight="600" fill="#1F2937">R$ 0</text>
