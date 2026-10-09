@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import BewildPostPage from "@/pages/BewildPostPage";
 import { seoHead } from "@/lib/routeHead";
 import { bewildCategoryLabel } from "@/lib/useBewildPosts";
@@ -7,8 +7,14 @@ import { postJsonLd, postPageJsonLd } from "@/lib/contentJsonLd";
 import { authorForPage, authorProfileJsonLd, postAuthorJsonLd, postDates } from "@/lib/postSeo";
 import { keywordsForPost } from "@/lib/postKeywords";
 import { bodyWordCount, structurePostBody } from "@/lib/postStructure";
+import { destinoDoPostFundido } from "@/lib/postsFundidos";
 
 export const Route = createFileRoute("/conteudos/$slug")({
+  // Artigo fundido em outro: 301 no servidor, antes de carregar o post.
+  beforeLoad: ({ params }) => {
+    const destino = destinoDoPostFundido(params.slug);
+    if (destino) throw redirect({ to: "/conteudos/$slug", params: { slug: destino }, statusCode: 301 });
+  },
   loader: ({ params }) => loadPostContent(params.slug),
   component: RouteComponent,
   head: ({ loaderData: ld, params }) => {

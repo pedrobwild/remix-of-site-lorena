@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { carryCampaignParams } from "./campaignParams";
+import { destinoDoPostFundido } from "./postsFundidos";
 
 export type Route =
   | { name: "home"; anchor?: string }
@@ -74,12 +75,19 @@ export type Route =
  *  - `/diagnostico` → `/orcamento` (página removida; o pedido de orçamento
  *    é a única entrada de lead)
  *  - `/escopo` → `/orcamento` ("Escopo com IA" tirada do ar em 09/10/2026)
+ *  - `/conteudos/<slug fundido>` → artigo que absorveu o conteúdo
+ *    (`POSTS_FUNDIDOS`, em `postsFundidos.ts`)
  */
 export function normalizeLegacyPath(pathname: string): string {
   if (/^\/admin\/?$/.test(pathname)) return "/admin/dashboard";
   const blog = pathname.match(/^\/blog(\/.*)?$/);
   if (blog) return "/conteudos" + (blog[1] && blog[1] !== "/" ? blog[1] : "");
   if (pathname === "/diagnostico" || pathname === "/escopo") return "/orcamento";
+  const conteudo = pathname.match(/^\/conteudos\/([^/]+)\/?$/);
+  if (conteudo) {
+    const destino = destinoDoPostFundido(conteudo[1]);
+    if (destino) return `/conteudos/${destino}`;
+  }
   return pathname;
 }
 

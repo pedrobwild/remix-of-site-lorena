@@ -15,8 +15,7 @@ export const POST_KEYWORDS: Record<string, string> = {
   // --- Reforma: custo e prazo ---
   "quanto-custa-reformar-apartamento-sao-paulo-2026": `quanto custa reformar um apartamento em SP, custo de reforma, preço de reforma por m², custo de reforma de apartamento 2026, ${REFORMA}`,
   "quanto-custa-reformar-studio-short-stay-sao-paulo": `custo de reforma de studio, quanto custa reformar um studio, ${REFORMA_STUDIO}, valor por m² de reforma`,
-  "quanto-tempo-demora-reforma-apartamento": `quanto tempo demora uma reforma de apartamento, prazo de reforma de apartamento em SP, tempo de obra em apartamento, ${REFORMA}`,
-  "cronograma-reforma-studio-60-dias-uteis": `cronograma de reforma de studio, prazo de reforma de studio em SP, reforma em 60 dias úteis, ${REFORMA_STUDIO}`,
+  "quanto-tempo-demora-reforma-apartamento": `quanto tempo demora uma reforma de apartamento, prazo de reforma de apartamento em SP, tempo de obra em apartamento, cronograma de reforma de studio, reforma em 60 dias úteis, ${REFORMA}`,
   "etapas-de-reforma-de-apartamento-cronograma": `etapas de reforma de apartamento, passo a passo de uma reforma, ordem das etapas de obra, cronograma de reforma, ${REFORMA}`,
 
   // --- Reforma: orçamento e contrato ---

@@ -426,7 +426,7 @@ const SECOES: Secao[] = [
         itens: [
           { href: "/conteudos/piso-vinilico-ou-porcelanato-studio", label: "Piso vinílico ou porcelanato no studio para alugar: o que a conta diz" },
           { href: "/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo", label: "Quanto custa reformar um studio em São Paulo em 2026" },
-          { href: "/conteudos/cronograma-reforma-studio-60-dias-uteis", label: "Cronograma de uma reforma de studio: 60 dias úteis, semana a semana" },
+          { href: "/conteudos/quanto-tempo-demora-reforma-apartamento", label: "Quanto tempo demora uma reforma: prazo por metragem e cronograma data a data" },
         ],
       },
     ],
