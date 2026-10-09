@@ -697,6 +697,19 @@
       letter-spacing: -.025em;
     }
 
+    .bwa-hero h2 {
+      max-width: 980px;
+      margin: 14px 0 0;
+      font-size: clamp(20px, 2vw, 30px);
+      font-weight: 500;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+    }
+
+    .bwa-hero h3.bwa-hero-sub {
+      font-weight: 400;
+    }
+
     .bwa-hero-bottom {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
