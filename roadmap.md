@@ -20,5 +20,5 @@
 - [x] Adicionar vídeo opcional de abertura ao artigo de studio, com player ao clicar e VideoObject SSR
 - [x] Validar posição, reprodução e ausência de regressões; não publicar
 - [x] Integrar busca ao blog e remover atalho separado dos menus; preservar endereço antigo por redirecionamento
-- [ ] Salvar títulos e descrições das cinco páginas solicitadas e emitir os textos no HTML inicial
-- [ ] Validar os cinco cabeçalhos e solicitar publicação
+- [x] Salvar títulos e descrições das cinco páginas solicitadas e emitir os textos no HTML inicial
+- [x] Validar os cinco cabeçalhos e solicitar publicação
