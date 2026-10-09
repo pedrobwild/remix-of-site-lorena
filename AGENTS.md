@@ -23,4 +23,5 @@
 <!-- LOVABLE:BEGIN -->
 - Article opening videos use the optional `bewild_posts.youtube_video_id` and shared metadata resolver; SSR emits VideoObject while playback loads only after a click.
 - Home title/description/Open Graph saved in /admin/seo are read by the `/` route loader (`src/lib/homeSeo.ts`, no module cache) so the raw SSR HTML carries them; the Páginas tab wins over the Home tab, same as `useSeo`.
+- The five main editable page routes read SEO overrides through a public, sanitized server function with per-field defaults, so panel edits appear in SSR without exposing other site settings.
 <!-- LOVABLE:END -->
