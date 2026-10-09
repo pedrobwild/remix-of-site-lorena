@@ -2,29 +2,29 @@
 <rect width="720" height="346" fill="#FFFFFF"/>
 <text x="20" y="34" font-size="19" font-weight="700" fill="#1F2937">Valor do contrato de reforma completa por faixa de metragem</text>
 <text x="20" y="58" font-size="13" fill="#4B5563">Mediana em R$ mil, com o número de contratos entre parênteses; traço = metade central dos contratos</text>
-<text x="170" y="101" font-size="13" text-anchor="end" fill="#1F2937">Até 24 m² (47)</text>
+<text x="170" y="101" font-size="13" text-anchor="end" fill="#1F2937">Até 20 m² (13)</text>
 <rect x="178" y="88" width="169" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M331 97H362M331 92v10M362 92v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="368" y="102" font-size="13" font-weight="600" fill="#1F2937">R$ 71 mil</text>
-<text x="170" y="135" font-size="13" text-anchor="end" fill="#1F2937">24 a 28 m² (61)</text>
-<rect x="178" y="122" width="164" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M331 131H347M331 126v10M347 126v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="353" y="136" font-size="13" font-weight="600" fill="#1F2937">R$ 70 mil</text>
-<text x="170" y="169" font-size="13" text-anchor="end" fill="#1F2937">28 a 32 m² (66)</text>
-<rect x="178" y="156" width="175" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M339 165H374M339 160v10M374 160v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="380" y="170" font-size="13" font-weight="600" fill="#1F2937">R$ 74 mil</text>
-<text x="170" y="203" font-size="13" text-anchor="end" fill="#1F2937">32 a 38 m² (10)</text>
-<rect x="178" y="190" width="236" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M368 199H433M368 194v10M433 194v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="439" y="204" font-size="13" font-weight="600" fill="#1F2937">R$ 100 mil</text>
-<text x="170" y="237" font-size="13" text-anchor="end" fill="#1F2937">38 a 46 m² (18)</text>
-<rect x="178" y="224" width="260" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M414 233H512M414 228v10M512 228v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="518" y="238" font-size="13" font-weight="600" fill="#1F2937">R$ 110 mil</text>
-<text x="170" y="271" font-size="13" text-anchor="end" fill="#1F2937">46 m² ou mais (2)</text>
-<rect x="178" y="258" width="382" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M546 267H574M546 262v10M574 262v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="580" y="272" font-size="13" font-weight="600" fill="#1F2937">R$ 162 mil</text>
-<text x="20" y="332" font-size="12" fill="#9CA3AF">Fonte: base Bewild, 204 contratos de reforma completa (planilha lida em 06/10/2026). Valor na assinatura, sem aditivos.</text>
+<path d="M336 97H357M336 92v10M357 92v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="363" y="102" font-size="13" font-weight="600" fill="#1F2937">R$ 71 mil</text>
+<text x="170" y="135" font-size="13" text-anchor="end" fill="#1F2937">20 a 24 m² (29)</text>
+<rect x="178" y="122" width="160" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M329 131H360M329 126v10M360 126v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="366" y="136" font-size="13" font-weight="600" fill="#1F2937">R$ 68 mil</text>
+<text x="170" y="169" font-size="13" text-anchor="end" fill="#1F2937">24 a 28 m² (70)</text>
+<rect x="178" y="156" width="169" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M331 165H350M331 160v10M350 160v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="356" y="170" font-size="13" font-weight="600" fill="#1F2937">R$ 71 mil</text>
+<text x="170" y="203" font-size="13" text-anchor="end" fill="#1F2937">28 a 32 m² (48)</text>
+<rect x="178" y="190" width="177" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M336 199H376M336 194v10M376 194v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="382" y="204" font-size="13" font-weight="600" fill="#1F2937">R$ 75 mil</text>
+<text x="170" y="237" font-size="13" text-anchor="end" fill="#1F2937">32 a 40 m² (17)</text>
+<rect x="178" y="224" width="251" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M379 233H449M379 228v10M449 228v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="455" y="238" font-size="13" font-weight="600" fill="#1F2937">R$ 107 mil</text>
+<text x="170" y="271" font-size="13" text-anchor="end" fill="#1F2937">Mais de 40 m² (11)</text>
+<rect x="178" y="258" width="335" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M433 267H534M433 262v10M534 262v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="540" y="272" font-size="13" font-weight="600" fill="#1F2937">R$ 142 mil</text>
+<text x="20" y="332" font-size="12" fill="#9CA3AF">Fonte: base Bewild, 188 contratos de reforma completa de compactos em SP. Valor na assinatura, sem aditivos.</text>
 </svg>

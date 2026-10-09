@@ -4,29 +4,29 @@
 <text x="20" y="58" font-size="19" font-weight="700" fill="#1F2937">de metragem</text>
 <text x="20" y="82" font-size="13" fill="#4B5563">Mediana em R$ mil (nº de contratos);</text>
 <text x="20" y="100" font-size="13" fill="#4B5563">traço = metade central dos contratos</text>
-<text x="20" y="140" font-size="13" fill="#1F2937">Até 24 m² (47)</text>
+<text x="20" y="140" font-size="13" fill="#1F2937">Até 20 m² (13)</text>
 <rect x="20" y="146" width="118" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M127 155H149M127 150v10M149 150v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="155" y="160" font-size="13" font-weight="600" fill="#1F2937">R$ 71 mil</text>
-<text x="20" y="190" font-size="13" fill="#1F2937">24 a 28 m² (61)</text>
-<rect x="20" y="196" width="115" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M127 205H138M127 200v10M138 200v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="144" y="210" font-size="13" font-weight="600" fill="#1F2937">R$ 70 mil</text>
-<text x="20" y="240" font-size="13" fill="#1F2937">28 a 32 m² (66)</text>
-<rect x="20" y="246" width="122" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M132 255H157M132 250v10M157 250v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="163" y="260" font-size="13" font-weight="600" fill="#1F2937">R$ 74 mil</text>
-<text x="20" y="290" font-size="13" fill="#1F2937">32 a 38 m² (10)</text>
-<rect x="20" y="296" width="165" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M153 305H199M153 300v10M199 300v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="205" y="310" font-size="13" font-weight="600" fill="#1F2937">R$ 100 mil</text>
-<text x="20" y="340" font-size="13" fill="#1F2937">38 a 46 m² (18)</text>
-<rect x="20" y="346" width="182" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M185 355H253M185 350v10M253 350v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="259" y="360" font-size="13" font-weight="600" fill="#1F2937">R$ 110 mil</text>
-<text x="20" y="390" font-size="13" fill="#1F2937">46 m² ou mais (2)</text>
-<rect x="20" y="396" width="267" height="18" rx="2" fill="#0F4C5C"/>
-<path d="M277 405H297M277 400v10M297 400v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
-<text x="303" y="410" font-size="13" font-weight="600" fill="#1F2937">R$ 162 mil</text>
-<text x="20" y="470" font-size="12" fill="#9CA3AF">Fonte: base Bewild, 204 contratos (06/10/2026).</text>
+<path d="M131 155H145M131 150v10M145 150v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="151" y="160" font-size="13" font-weight="600" fill="#1F2937">R$ 71 mil</text>
+<text x="20" y="190" font-size="13" fill="#1F2937">20 a 24 m² (29)</text>
+<rect x="20" y="196" width="112" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M126 205H147M126 200v10M147 200v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="153" y="210" font-size="13" font-weight="600" fill="#1F2937">R$ 68 mil</text>
+<text x="20" y="240" font-size="13" fill="#1F2937">24 a 28 m² (70)</text>
+<rect x="20" y="246" width="118" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M127 255H140M127 250v10M140 250v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="146" y="260" font-size="13" font-weight="600" fill="#1F2937">R$ 71 mil</text>
+<text x="20" y="290" font-size="13" fill="#1F2937">28 a 32 m² (48)</text>
+<rect x="20" y="296" width="124" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M131 305H159M131 300v10M159 300v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="165" y="310" font-size="13" font-weight="600" fill="#1F2937">R$ 75 mil</text>
+<text x="20" y="340" font-size="13" fill="#1F2937">32 a 40 m² (17)</text>
+<rect x="20" y="346" width="176" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M160 355H210M160 350v10M210 350v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="216" y="360" font-size="13" font-weight="600" fill="#1F2937">R$ 107 mil</text>
+<text x="20" y="390" font-size="13" fill="#1F2937">Mais de 40 m² (11)</text>
+<rect x="20" y="396" width="234" height="18" rx="2" fill="#0F4C5C"/>
+<path d="M198 405H269M198 400v10M269 400v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
+<text x="275" y="410" font-size="13" font-weight="600" fill="#1F2937">R$ 142 mil</text>
+<text x="20" y="470" font-size="12" fill="#9CA3AF">Fonte: base Bewild, 188 contratos.</text>
 </svg>

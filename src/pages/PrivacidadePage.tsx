@@ -27,7 +27,7 @@ export default function PrivacidadePage() {
   const { settings } = useSiteSettings();
 
   const contactEmail = settings?.contact_email || "contato@bewild.com.br";
-  const lastUpdated = "27 de setembro de 2026";
+  const lastUpdated = "9 de outubro de 2026";
 
   useSeo({
     title: "Política de privacidade | Bewild",
@@ -114,13 +114,6 @@ export default function PrivacidadePage() {
                   WhatsApp, e-mail ou outros canais indicados no site.
                 </li>
                 <li>
-                  <strong>Textos digitados nos recursos de inteligência
-                  artificial:</strong> a pergunta livre da página de perguntas
-                  frequentes e a descrição do imóvel (com metragem, bairro,
-                  objetivo e investimento pretendido, se informados) na página
-                  de escopo.
-                </li>
-                <li>
                   <strong>Dados de navegação da nossa própria medição:</strong>{" "}
                   páginas visitadas, tempo de permanência, eventos de clique,
                   tipo de dispositivo, site de origem e identificadores
@@ -160,10 +153,6 @@ export default function PrivacidadePage() {
               <p>Utilizamos os dados coletados para:</p>
               <ul>
                 <li>Responder a pedidos de orçamento, dúvidas e contatos;</li>
-                <li>
-                  Gerar, na hora, as respostas e recomendações pedidas nos
-                  recursos de inteligência artificial do site;
-                </li>
                 <li>
                   Compreender o desempenho do site e aprimorar a experiência
                   de navegação (analytics agregados);
@@ -221,18 +210,6 @@ export default function PrivacidadePage() {
                 Para relatórios internos, levamos às nossas planilhas e
                 ferramentas de análise dados sem nome, telefone, e-mail ou
                 mensagem.
-              </p>
-
-              <h2>Recursos com inteligência artificial</h2>
-              <p>
-                A pergunta livre da página de perguntas frequentes
-                (&ldquo;Pergunte à Bewild&rdquo;) e a descrição do imóvel na
-                página de escopo são enviadas a um provedor de inteligência
-                artificial contratado, que processa o texto somente para gerar
-                a resposta exibida na tela. Não gravamos esse texto no nosso
-                banco de dados. Por isso, pedimos que você não inclua nesses
-                campos nome, telefone, endereço completo ou outros dados
-                pessoais.
               </p>
 
               <h2>Anúncios e públicos</h2>
@@ -368,8 +345,7 @@ export default function PrivacidadePage() {
                 com operadores contratados para hospedagem, infraestrutura e
                 banco de dados (Supabase), comunicação interna da equipe
                 (Slack e serviço de envio de e-mails), gestão do atendimento
-                (CRM), processamento dos
-                recursos de inteligência artificial e relatórios internos,
+                (CRM) e relatórios internos,
                 sempre sob obrigação contratual de confidencialidade e
                 segurança; com a Meta (Facebook e Instagram), para medição e
                 publicidade, como descrito em &ldquo;Anúncios e públicos&rdquo;
