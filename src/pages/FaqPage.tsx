@@ -551,7 +551,7 @@ export default function FaqPage() {
           <div className="bwa-shell">
             <p className="bwa-label">Pergunte à Bewild</p>
             <h2 className="bwa-faqpage-ask-title" id="faq-ask-title">
-              Sua dúvida não está na lista? <em>Pergunte aqui.</em>
+              Sua dúvida não está na lista? <em>{usuarioLogado ? "Pergunte aqui." : "Fale com a gente."}</em>
             </h2>
             <p className="bwa-faqpage-lead">
               {usuarioLogado
