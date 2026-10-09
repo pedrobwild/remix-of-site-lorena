@@ -4,6 +4,7 @@ import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/useAuth";
 import { trackEvent } from "@/lib/ga4";
 import { track } from "@/lib/analytics";
 import { faqJsonLd, useSeo } from "@/lib/useSeo";
@@ -180,6 +181,8 @@ export default function FaqPage() {
   const [guiaAberto, setGuiaAberto] = useState(-1);
   const [indicacaoAberto, setIndicacaoAberto] = useState(-1);
   const [portfolioAberto, setPortfolioAberto] = useState(-1);
+  // A pergunta com IA gasta créditos: só aparece para quem está logado.
+  const { user: usuarioLogado } = useAuth();
   const [pergunta, setPergunta] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [erroIa, setErroIa] = useState<string | null>(null);
@@ -548,14 +551,16 @@ export default function FaqPage() {
           <div className="bwa-shell">
             <p className="bwa-label">Pergunte à Bewild</p>
             <h2 className="bwa-faqpage-ask-title" id="faq-ask-title">
-              Sua dúvida não está na lista? <em>Pergunte aqui.</em>
+              Sua dúvida não está na lista? <em>{usuarioLogado ? "Pergunte aqui." : "Fale com a gente."}</em>
             </h2>
             <p className="bwa-faqpage-lead">
-              Escreva com suas palavras e a assistente da Bewild responde na
-              hora, com base em como a gente trabalha. Preço e prazo do seu
-              imóvel saem fechados na proposta.
+              {usuarioLogado
+                ? "Escreva com suas palavras e a assistente da Bewild responde na hora, com base em como a gente trabalha. Preço e prazo do seu imóvel saem fechados na proposta."
+                : "Fale com o time da Bewild pelo WhatsApp ou peça um orçamento. Preço e prazo do seu imóvel saem fechados na proposta."}
             </p>
 
+            {usuarioLogado ? (
+              <>
             <form className="bwa-faqpage-ask-form" onSubmit={perguntar}>
               <label className="bwa-faqpage-ask-label" htmlFor="faq-pergunta">
                 Sua pergunta
@@ -620,6 +625,22 @@ export default function FaqPage() {
                 </div>
               )}
             </div>
+              </>
+            ) : (
+              <div className="bwa-faqpage-ask-actions">
+                <a className="bwa-button" href="/orcamento" data-cta="faq-diagnostico">
+                  Solicitar orçamento <span aria-hidden="true">→</span>
+                </a>
+                <a
+                  className="bwa-faqpage-ask-whats"
+                  href={whatsappHref()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Falar no WhatsApp <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            )}
           </div>
         </section>
 
