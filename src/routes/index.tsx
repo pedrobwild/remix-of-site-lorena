@@ -6,7 +6,7 @@ import homeBwaCssUrl from "@/pages/home-bwa.css?url";
 
 /** Imagem principal da home, carregada antecipadamente para reduzir o tempo de exibição. */
 export const HERO_IMAGE =
-  "/__l5e/assets-v1/ebfb0e6b-1fec-4bfe-9cc7-e08776e6e674/apartamento-studio-quarto-realista.jpg";
+  "/__l5e/assets-v1/0a137ddd-c159-4221-b4e0-bcd229dad905/apartamento-pronto-foto-realista-1.jpg";
 /**
  * Versão para celular (828 px, WebP) da mesma imagem: o <picture> da home a
  * usa até 760 px de largura, e o preload segue a mesma regra, para o celular
