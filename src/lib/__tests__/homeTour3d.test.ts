@@ -15,6 +15,7 @@ import {
 } from "../homeTour3d";
 import { setConsent } from "../cookieConsent";
 import { HOME_BWA_HTML } from "@/pages/home-bwa-body";
+import { GALERIA_HTML, SERVICOS_SVG_LIBRARY, TOUR3D_HTML } from "@/pages/servicos-bwa-sections";
 
 type Entry = { isIntersecting: boolean; target: Element };
 type Observer = { cb: (entries: Entry[]) => void; targets: Element[] };
@@ -50,11 +51,11 @@ function stubPointer(desktop: boolean) {
   }));
 }
 
-/** O bloco real da home, recortado do HTML aprovado (home-bwa-body.ts). */
+/** O bloco real de /servicos (HTML aprovado em servicos-bwa-sections.ts; veio da home em 10/10/2026). */
 function tourBlockHtml(): string {
-  const doc = new DOMParser().parseFromString(HOME_BWA_HTML, "text/html");
+  const doc = new DOMParser().parseFromString(TOUR3D_HTML, "text/html");
   const block = doc.querySelector("[data-tour3d]");
-  if (!block) throw new Error("bloco #tour-3d não encontrado no HTML da home");
+  if (!block) throw new Error("bloco #tour-3d não encontrado em TOUR3D_HTML");
   return block.outerHTML;
 }
 
@@ -89,15 +90,16 @@ describe("enscapeViewUrl", () => {
   });
 });
 
-describe("HTML da home — bloco Tour 3D", () => {
-  it('fica entre a galeria "Atmosferas Bewild" e os depoimentos', () => {
-    const doc = new DOMParser().parseFromString(HOME_BWA_HTML, "text/html");
-    const all = Array.from(doc.querySelectorAll("[data-image-gallery], #tour-3d, #depoimentos"));
-    expect(all.map((el) => el.id || "galeria")).toEqual(["galeria", "tour-3d", "depoimentos"]);
+describe("HTML de /servicos — bloco Tour 3D", () => {
+  it("saiu da home (com a galeria) e mora em servicos-bwa-sections.ts, um bloco por constante", () => {
+    const home = new DOMParser().parseFromString(HOME_BWA_HTML, "text/html");
+    expect(home.querySelector("#tour-3d, [data-image-gallery], #bastidores")).toBeNull();
+    expect(new DOMParser().parseFromString(TOUR3D_HTML, "text/html").querySelectorAll("section")).toHaveLength(1);
+    expect(new DOMParser().parseFromString(GALERIA_HTML, "text/html").querySelector("#galeria[data-image-gallery]")).not.toBeNull();
   });
 
   it("traz os 3 cômodos na ordem, com os mesmos ids do TOUR3D_ROOMS e glifo existente", () => {
-    const doc = new DOMParser().parseFromString(HOME_BWA_HTML, "text/html");
+    const doc = new DOMParser().parseFromString(SERVICOS_SVG_LIBRARY + TOUR3D_HTML, "text/html");
     const cards = Array.from(doc.querySelectorAll<HTMLElement>("#tour-3d [data-tour3d-view]"));
     expect(
       cards.map((c) => ({

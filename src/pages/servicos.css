@@ -1,0 +1,507 @@
+/* /servicos — camada da página sobre servico-reforma.css (que as páginas de
+   serviço compartilham) e sobre o sistema .bwa (home-bwa.css chega pelo
+   BwaNav). Só esta página importa este arquivo. Prefixo: .bwa-svcs-.
+
+   Ordem da página (10/10/2026): intro com provas → atalhos → o que fazemos
+   (4 cards com foto) → Bastidores (escuro) → Arquitetura → Tour 3D (escuro)
+   → Engenharia e gestão → galeria Atmosferas (escuro) → FAQ → orçamento.
+   Os três blocos escuros vieram da home e usam as regras de home-bwa.css. */
+
+/* ---------- Intro ---------- */
+.bwa-svcs-hero {
+  padding-bottom: 0;
+}
+
+.bwa-svcs-hero-grid {
+  display: grid;
+  gap: clamp(28px, 4vw, 56px);
+  align-items: center;
+}
+
+@media (min-width: 1000px) {
+  .bwa-svcs-hero-grid {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+  }
+}
+
+.bwa-svcs-hero-copy .bwa-label {
+  margin-bottom: clamp(18px, 2vw, 26px);
+}
+
+.bwa-svcs-hero-copy .bwa-title {
+  margin: 0;
+  max-width: 22ch;
+  text-wrap: pretty;
+}
+
+.bwa-svcs-hero-copy .bwa-title em {
+  color: var(--bwa-accent);
+}
+
+.bwa-svcs-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
+  margin-top: clamp(24px, 2.6vw, 34px);
+}
+
+.bwa-svcs-hero-secondary {
+  color: var(--bwa-ink);
+  font-size: 15px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.bwa-svcs-hero-secondary:hover,
+.bwa-svcs-hero-secondary:focus-visible {
+  color: var(--bwa-accent);
+}
+
+.bwa-svcs-hero-media {
+  margin: 0;
+}
+
+.bwa-svcs-hero-media img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  background: var(--bwa-paper-deep);
+  filter: saturate(.9);
+}
+
+@media (min-width: 1000px) {
+  .bwa-svcs-hero-media img {
+    aspect-ratio: 5 / 4;
+  }
+}
+
+/* Provas: fonte única em src/content/provas.ts. */
+.bwa-svcs-provas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: clamp(32px, 4vw, 56px) 0 0;
+  border-top: 1px solid var(--bwa-line);
+  border-bottom: 1px solid var(--bwa-line);
+}
+
+@media (min-width: 760px) {
+  .bwa-svcs-provas {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.bwa-svcs-provas > div {
+  display: grid;
+  gap: 6px;
+  padding: clamp(18px, 2vw, 26px) clamp(14px, 1.6vw, 24px);
+  border-right: 1px solid var(--bwa-line);
+}
+
+.bwa-svcs-provas > div:nth-child(2n) {
+  border-right: 0;
+}
+
+@media (max-width: 759px) {
+  .bwa-svcs-provas > div:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--bwa-line);
+  }
+}
+
+@media (min-width: 760px) {
+  .bwa-svcs-provas > div:nth-child(2n) {
+    border-right: 1px solid var(--bwa-line);
+  }
+
+  .bwa-svcs-provas > div:last-child {
+    border-right: 0;
+  }
+}
+
+.bwa-svcs-provas dt {
+  margin: 0;
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(26px, 2.4vw, 36px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -.04em;
+  color: var(--bwa-navy);
+}
+
+.bwa-svcs-provas dd {
+  margin: 0;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--bwa-ink-soft);
+}
+
+/* ---------- Atalhos "Nesta página" ----------
+   No desktop a fila gruda logo abaixo do cabeçalho fixo (68 px + hairline,
+   .bwa-nav-inner); no celular e no tablet fica no fluxo (o cabeçalho já ocupa
+   60 px da tela e a fila rolaria junto com os blocos). */
+.bwa-svcs-nav {
+  background: var(--bwa-paper);
+  border-bottom: 1px solid var(--bwa-line);
+}
+
+@media (min-width: 1000px) {
+  .bwa-svcs-nav {
+    position: sticky;
+    top: 69px;
+    z-index: 5;
+    background: color-mix(in srgb, var(--bwa-paper) 92%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+}
+
+.bwa-svcs-nav ul {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 0;
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bwa-svcs-nav ul::-webkit-scrollbar {
+  display: none;
+}
+
+/* Abaixo do desktop a fila sangra até a borda da tela e esmaece à direita:
+   sinal de que há mais atalhos escondidos. */
+@media (max-width: 999px) {
+  .bwa-svcs-nav ul {
+    margin-inline: calc(var(--bwa-gutter) * -1);
+    padding-inline: var(--bwa-gutter) 56px;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent);
+  }
+}
+
+.bwa-svcs-nav li {
+  flex: none;
+}
+
+.bwa-svcs-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1px solid var(--bwa-line);
+  border-radius: 999px;
+  color: var(--bwa-ink);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color .2s ease, background .2s ease, color .2s ease;
+}
+
+.bwa-svcs-nav a:hover {
+  border-color: var(--bwa-navy);
+  background: color-mix(in srgb, var(--bwa-navy) 6%, transparent);
+}
+
+/* Bloco na tela (installSectionSpy, src/lib/sectionSpy.ts). */
+.bwa-svcs-nav a[aria-current] {
+  border-color: var(--bwa-navy);
+  background: var(--bwa-navy);
+  color: var(--bwa-white);
+}
+
+.bwa-svcs-nav a:focus-visible {
+  outline: 2px solid var(--bwa-navy-2);
+  outline-offset: 2px;
+}
+
+/* Âncoras param abaixo do cabeçalho (69 px) e da fila de atalhos (61 px). */
+@media (min-width: 1000px) {
+  .bwa-servicos main section[id] {
+    scroll-margin-top: 134px;
+  }
+}
+
+/* ---------- Blocos de texto ---------- */
+.bwa-svcs-block {
+  border-top: 0;
+}
+
+.bwa-svcs-block--deep {
+  background: var(--bwa-paper-deep);
+}
+
+.bwa-svcs-block-head {
+  display: grid;
+  gap: 14px;
+  max-width: 64ch;
+  margin-bottom: clamp(26px, 3vw, 40px);
+}
+
+.bwa-svcs-block-head .bwa-label {
+  margin: 0;
+}
+
+.bwa-svcs-h2 {
+  margin: 0;
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(24px, 2.4vw, 36px);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -.03em;
+  text-wrap: pretty;
+}
+
+.bwa-svcs-block-head .bwa-servico-text {
+  margin: 0;
+}
+
+.bwa-svcs-after {
+  margin-top: clamp(20px, 2.4vw, 28px);
+}
+
+/* ---------- Cards "O que fazemos" ---------- */
+.bwa-svcs-cards {
+  display: grid;
+  gap: clamp(16px, 2vw, 24px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 800px) {
+  .bwa-svcs-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* No desktop largo os 4 serviços cabem numa fila só: a seção inteira entra
+   numa tela, sem rolar (em 2 colunas eram 1.400 px de altura em 1440). */
+@media (min-width: 1180px) {
+  .bwa-svcs-cards {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .bwa-svcs-card-media img {
+    aspect-ratio: 4 / 3;
+  }
+
+  .bwa-svcs-card-body {
+    padding: clamp(18px, 1.6vw, 24px);
+  }
+}
+
+.bwa-svcs-card {
+  display: grid;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid var(--bwa-line);
+  background: var(--bwa-white);
+  transition: border-color .3s var(--bwa-ease), transform .3s var(--bwa-ease);
+}
+
+.bwa-svcs-card:hover,
+.bwa-svcs-card:focus-visible {
+  border-color: var(--bwa-navy);
+  transform: translateY(-2px);
+}
+
+.bwa-svcs-card:focus-visible {
+  outline: 2px solid var(--bwa-navy-2);
+  outline-offset: 2px;
+}
+
+.bwa-svcs-card-media {
+  margin: 0;
+  overflow: hidden;
+}
+
+.bwa-svcs-card-media img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+  background: var(--bwa-paper-deep);
+  filter: saturate(.85);
+  transition: transform .9s var(--bwa-ease);
+}
+
+.bwa-svcs-card:hover .bwa-svcs-card-media img {
+  transform: scale(1.03);
+}
+
+.bwa-svcs-card-body {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  padding: clamp(20px, 2.4vw, 30px);
+}
+
+.bwa-svcs-card-body h3 {
+  margin: 0;
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(18px, 1.5vw, 21px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -.02em;
+}
+
+.bwa-svcs-card-body p {
+  margin: 0;
+  color: var(--bwa-ink-soft);
+  font-size: clamp(15px, 1.2vw, 16px);
+  line-height: 1.6;
+}
+
+.bwa-svcs-card-link {
+  margin-top: 6px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--bwa-accent);
+}
+
+/* ---------- Os 12 itens (Arquitetura · Engenharia e gestão) ---------- */
+.bwa-svcs-itens {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--bwa-line);
+  background: var(--bwa-line);
+}
+
+@media (min-width: 640px) {
+  .bwa-svcs-itens {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1100px) {
+  .bwa-svcs-itens {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.bwa-svcs-itens li {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  padding: clamp(20px, 2.4vw, 30px);
+  background: var(--bwa-white);
+}
+
+.bwa-svcs-block--deep .bwa-svcs-itens li {
+  background: var(--bwa-paper);
+}
+
+.bwa-svcs-item-num {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  color: var(--bwa-accent);
+}
+
+.bwa-svcs-itens h3 {
+  margin: 0;
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(17px, 1.35vw, 19px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+}
+
+.bwa-svcs-itens p {
+  margin: 0;
+  color: var(--bwa-ink-soft);
+  font-size: clamp(15px, 1.15vw, 16px);
+  line-height: 1.6;
+}
+
+/* ---------- Blocos vindos da home ---------- */
+/* Na home, Bastidores vinha depois de um bloco escuro e não precisava de
+   respiro em cima; aqui vem depois dos cards, sobre papel. */
+.bwa-servicos .bwa-bastidores {
+  padding-top: clamp(46px, 4.36vw, 64px);
+}
+
+/* ---------- FAQ ---------- */
+.bwa-svcs-faq-grid {
+  display: grid;
+  gap: clamp(24px, 3vw, 48px);
+  align-items: start;
+}
+
+@media (min-width: 1000px) {
+  .bwa-svcs-faq-grid {
+    grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  }
+
+  .bwa-svcs-faq-grid .bwa-svcs-block-head {
+    position: sticky;
+    top: 158px; /* cabeçalho 69 + atalhos 61 + respiro */
+    margin-bottom: 0;
+  }
+}
+
+.bwa-svcs-faq details {
+  background: var(--bwa-white);
+}
+
+.bwa-svcs-faq summary {
+  gap: 16px;
+  justify-content: space-between;
+  list-style: none;
+}
+
+.bwa-svcs-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.bwa-svcs-faq summary::after {
+  width: 9px;
+  height: 9px;
+  flex: none;
+  margin-right: 4px;
+  content: "";
+  border-right: 1.5px solid var(--bwa-ink-soft);
+  border-bottom: 1.5px solid var(--bwa-ink-soft);
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform .25s var(--bwa-ease);
+}
+
+.bwa-svcs-faq details[open] summary::after {
+  transform: translateY(2px) rotate(-135deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bwa-svcs-nav a,
+  .bwa-svcs-card,
+  .bwa-svcs-card-media img,
+  .bwa-svcs-faq summary::after {
+    transition: none;
+  }
+
+  .bwa-svcs-card:hover,
+  .bwa-svcs-card:focus-visible {
+    transform: none;
+  }
+
+  .bwa-svcs-card:hover .bwa-svcs-card-media img {
+    transform: none;
+  }
+}

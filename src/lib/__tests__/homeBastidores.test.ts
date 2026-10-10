@@ -1,6 +1,7 @@
 /** @vitest-environment jsdom */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { HOME_BWA_HTML } from "../../pages/home-bwa-body";
+import { BASTIDORES_HTML } from "../../pages/servicos-bwa-sections";
 import { installBastidores } from "../homeBastidores";
 import { installInstagramEmbeds } from "../homeInstagram";
 
@@ -39,14 +40,19 @@ function stubIntersectionObserver(): Observer[] {
   return observers;
 }
 
+/**
+ * Bastidores mora em /servicos desde 10/10/2026 e os depoimentos seguem na
+ * home. Os dois blocos [data-instagram] são montados na mesma raiz para
+ * garantir que cada um só carrega os próprios embeds.
+ */
 function mountHome(): HTMLElement {
   const root = document.createElement("div");
-  root.innerHTML = HOME_BWA_HTML;
+  root.innerHTML = BASTIDORES_HTML + HOME_BWA_HTML;
   document.body.appendChild(root);
   return root;
 }
 
-describe("seção Bastidores da home", () => {
+describe("seção Bastidores (/servicos) e depoimentos (home)", () => {
   beforeEach(() => {
     document.body.innerHTML = "";
     window.localStorage.clear();
@@ -59,6 +65,10 @@ describe("seção Bastidores da home", () => {
 
   it("mantém os 6 posts de Bastidores e os 3 depoimentos nas ordens esperadas", () => {
     const root = mountHome();
+    // A home não traz mais os Bastidores (nem a galeria e o tour 3D).
+    expect(HOME_BWA_HTML).not.toContain('id="bastidores"');
+    expect(HOME_BWA_HTML).not.toContain("bwa-image-gallery");
+    expect(HOME_BWA_HTML).not.toContain('id="tour-3d"');
     const bastidores = root.querySelector<HTMLElement>("#bastidores");
     const depoimentos = root.querySelector<HTMLElement>("#depoimentos");
 

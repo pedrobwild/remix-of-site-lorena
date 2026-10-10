@@ -1091,6 +1091,23 @@ export function initHomeBwa(root: HTMLElement | null): Cleanup {
   };
 }
 
+/**
+ * Galeria "Atmosferas Bewild" fora da home (/servicos, desde 10/10/2026): só o
+ * trilho com arrasto, inércia e contador — o HTML vem de
+ * servicos-bwa-sections.ts. Mesmo contrato dos outros `init*`.
+ */
+export function initBwaGallery(root: HTMLElement | null): Cleanup {
+  if (!root || root.dataset.bwaGalleryInited === "1") return NOOP;
+  root.dataset.bwaGalleryInited = "1";
+  const controller = new AbortController();
+  const cleanup = installGallery(root, controller.signal, prefersReducedMotion());
+  return () => {
+    controller.abort();
+    cleanup();
+    delete root.dataset.bwaGalleryInited;
+  };
+}
+
 /** Header .bwa das páginas internas (BwaNav). */
 export function initBwaNav(root: HTMLElement | null): Cleanup {
   if (!root || root.dataset.bwaNavInited === "1") return NOOP;
