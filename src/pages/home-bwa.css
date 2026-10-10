@@ -666,27 +666,41 @@
       z-index: 3;
     }
 
+    /* UX do herói (09/10/2026): o texto fica centrado na altura da primeira
+       tela. Com `flex-end` ele descia para o pé e sobrava uma faixa vazia logo
+       abaixo do cabeçalho (≈230 px em 1440×900, ≈400 px em 1920×1080). O topo
+       desconta o cabeçalho fixo (68 px), por isso é maior que o pé. Em telas
+       largas a margem esquerda segue a coluna do site (.bwa-shell, até
+       1540 px), como as seções abaixo; antes o texto ficava colado à esquerda
+       (x = 72 px em 1920, contra ≈ 182 px do resto da página). */
     .bwa-hero-copy {
       min-height: var(--bwa-hero-min, 100svh);
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
-      padding: clamp(80px, 11vh, 92px) 6vw clamp(28px, 4.5vh, 41px) var(--bwa-gutter);
+      justify-content: center;
+      padding:
+        clamp(96px, 13vh, 124px)
+        6vw
+        clamp(40px, 6vh, 64px)
+        max(var(--bwa-gutter), calc((100vw - var(--bwa-max)) / 2));
       background: var(--bwa-navy);
     }
 
     .bwa-hero-copy .bwa-label {
-      margin-bottom: clamp(16px, 2.6vh, 40px);
+      margin-bottom: clamp(16px, 2.4vh, 24px);
       color: rgba(255, 255, 255, .72);
     }
 
+    /* Tracking de -.068em colava as palavras ("desejoé", "umaobra"). */
     .bwa-hero h1 {
       max-width: 980px;
       margin: 0;
       font-size: clamp(33px, 3.6vw, 64px);
       font-weight: 500;
       line-height: 1.05;
-      letter-spacing: -.068em;
+      letter-spacing: -.05em;
+      word-spacing: .04em;
+      text-wrap: balance;
       padding-bottom: .04em;
     }
 
@@ -696,16 +710,21 @@
       letter-spacing: -.025em;
     }
 
+    /* Subtítulo: segundo nível, mais leve que o H1. Em 29 px/500 ele pesava
+       quase como o título, ocupava 3 linhas e deixava "apartamento." sozinho
+       na última. `balance` divide as linhas por igual. */
     .bwa-hero h2 {
-      max-width: 980px;
-      margin: 14px 0 0;
-      font-size: clamp(20px, 2vw, 30px);
-      font-weight: 500;
-      line-height: 1.15;
-      letter-spacing: -.02em;
+      max-width: 30em;
+      margin: clamp(14px, 1.3vw, 20px) 0 0;
+      color: rgba(255, 255, 255, .92);
+      font-size: clamp(19px, 1.6vw, 25px);
+      font-weight: 400;
+      line-height: 1.3;
+      letter-spacing: -.015em;
+      text-wrap: balance;
     }
 
-    .bwa-hero h3.bwa-hero-sub {
+    .bwa-hero .bwa-hero-sub {
       font-weight: 400;
     }
 
@@ -714,19 +733,34 @@
       grid-template-columns: minmax(0, 1fr) auto;
       align-items: end;
       gap: 40px;
-      margin-top: clamp(20px, 3vh, 44px);
+      margin-top: clamp(24px, 3.4vh, 36px);
+    }
+
+    /* Botão principal do herói um pouco maior que o padrão (11 px → 12 px). */
+    .bwa-hero-bottom .bwa-button {
+      min-height: 56px;
+      padding-inline: 26px;
+      font-size: 12px;
     }
 
     .bwa-hero-sub {
       max-width: 34rem;
-      margin: clamp(18px, 1.6vw, 26px) 0 0;
-      color: rgba(255, 255, 255, .82);
+      margin: clamp(16px, 1.4vw, 22px) 0 0;
+      color: rgba(255, 255, 255, .8);
       font-size: clamp(17px, 1.12vw, 18px);
       line-height: 1.5;
       letter-spacing: -.012em;
+      text-wrap: pretty;
     }
 
     .bwa-hero-visual {
+      /* Glifo (.bwa-hero-signature) e lista "Morar / Alugar / Vender" no canto
+         superior direito: a lista vem logo abaixo do glifo. Antes as duas
+         posições eram independentes e o traço do glifo cortava "Morar" no
+         desktop e "Vender" no celular. */
+      --bwa-sig-top: clamp(110px, 7.5vw, 124px); /* abaixo da moldura (98 px) */
+      --bwa-sig-right: clamp(18px, 3vw, 52px);
+      --bwa-sig-size: clamp(88px, 9vw, 140px);
       min-height: var(--bwa-hero-min, 100svh);
       position: relative;
       isolation: isolate;
@@ -791,20 +825,25 @@
 
     .bwa-hero-objectives {
       position: absolute;
-      top: 116px;
-      right: 40px;
+      top: calc(var(--bwa-sig-top) + var(--bwa-sig-size) + 14px);
+      /* O desenho do glifo não encosta na borda da caixa (sobra ~11% à
+         direita no viewBox): a lista termina onde o traço termina. */
+      right: calc(var(--bwa-sig-right) + var(--bwa-sig-size) * .11);
       z-index: 5;
       display: grid;
       justify-items: end;
       gap: 6px;
       font-family: "JetBrains Mono", monospace;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 600;
       letter-spacing: .13em;
       text-transform: uppercase;
       text-shadow: 0 1px 12px rgba(0, 0, 0, .34);
     }
 
+    /* Legenda alinhada à esquerda em todas as larguras: quando o slogan
+       quebrava em duas linhas ele ia para a direita e "Studio de 28,21 m²"
+       ficava à esquerda, cada um num lado. */
     .bwa-hero-caption {
       position: absolute;
       right: 40px;
@@ -814,11 +853,11 @@
       display: flex;
       flex-wrap: wrap;
       align-items: flex-end;
-      justify-content: flex-end;
+      justify-content: flex-start;
       gap: 24px;
       color: var(--bwa-white);
       pointer-events: none;
-      text-align: right;
+      text-align: left;
     }
 
     .bwa-hero-caption > * {
@@ -844,7 +883,7 @@
       font-size: 10px;
       letter-spacing: .1em;
       text-transform: uppercase;
-      text-align: right;
+      text-align: left;
     }
 
     .bwa-hero-caption .bwa-hero-caption-area {
@@ -3302,9 +3341,13 @@
         display: block;
       }
 
+      /* Celular e tablet em pé: o texto ocupa só a própria altura (sem a
+         faixa vazia sob o cabeçalho que o min-height + flex-end criavam) e a
+         foto entra mais cedo na primeira tela. */
       .bwa-hero-copy {
-        min-height: 60svh;
-        padding: 82px var(--bwa-gutter) 36px;
+        min-height: 0;
+        justify-content: flex-start;
+        padding: 104px var(--bwa-gutter) 44px;
       }
 
       .bwa-hero h1 {
@@ -3317,17 +3360,17 @@
         gap: 26px;
       }
 
+      /* Aqui a foto fica abaixo do texto, não sob o cabeçalho: o glifo sobe
+         para o canto da moldura, dentro dela, e a lista vem logo abaixo. */
       .bwa-hero-visual {
+        --bwa-sig-top: 36px;
+        --bwa-sig-right: 36px;
+        --bwa-sig-size: 84px;
         min-height: 50svh;
       }
 
       .bwa-hero-frame {
         inset: 20px;
-      }
-
-      .bwa-hero-objectives {
-        top: 36px;
-        right: 36px;
       }
 
       .bwa-hero-caption {
@@ -3555,15 +3598,11 @@
         font-size: clamp(29px, 8.4vw, 42px);
       }
 
-      .bwa-hero-copy {
-        min-height: 74svh;
-      }
-
       .bwa-hero-caption {
         flex-direction: column;
-        align-items: flex-end;
+        align-items: flex-start;
         gap: 14px;
-        text-align: right;
+        text-align: left;
       }
 
       .bwa-hero-caption strong {
@@ -3571,7 +3610,7 @@
       }
 
       .bwa-hero-caption span {
-        text-align: right;
+        text-align: left;
       }
 
       .bwa-story-aperture {
@@ -3777,11 +3816,13 @@
       color: var(--bwa-navy-2);
     }
 
+    /* Posição e tamanho vêm de .bwa-hero-visual (--bwa-sig-*), os mesmos
+       valores que posicionam a lista "Morar / Alugar / Vender" abaixo dele. */
     .bwa-hero-signature {
-      width: clamp(88px, 9vw, 140px);
+      width: var(--bwa-sig-size);
       position: absolute;
-      top: clamp(80px, 7vw, 112px);
-      right: clamp(18px, 3vw, 52px);
+      top: var(--bwa-sig-top);
+      right: var(--bwa-sig-right);
       z-index: 3;
       color: rgba(250, 248, 244, .88);
       filter: drop-shadow(0 8px 26px rgba(11, 35, 66, .2));
@@ -4291,12 +4332,6 @@
     }
 
     @media (max-width: 760px) {
-      .bwa-hero-signature {
-        width: 88px;
-        top: 84px;
-        right: 16px;
-      }
-
       .bwa-hero-fact {
         min-height: 76px;
         gap: 15px;
