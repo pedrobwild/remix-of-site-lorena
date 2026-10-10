@@ -55,9 +55,19 @@ export default function AnalyticsPage() {
       )}
       {state.tab === "retention" && <RetentionTab range={state.range} segments={state.segments} />}
       {state.tab === "paid" && (
-        <PaidMediaTab range={state.range} comparePrev={state.comparePrev} segmentsCount={state.segments.length} />
+        <PaidMediaTab
+          range={state.range}
+          comparePrev={state.comparePrev}
+          segmentsCount={state.segments.length}
+        />
       )}
-      {state.tab === "gads" && <GoogleAdsAudiencesTab />}
+      {state.tab === "gads" && (
+        <GoogleAdsAudiencesTab
+          range={state.range}
+          segments={state.segments}
+          comparePrev={state.comparePrev}
+        />
+      )}
       {state.tab === "search" && <SeoPanelTab range={state.range} />}
       {state.tab === "realtime" && <RealtimeTab />}
     </AnalyticsShell>
