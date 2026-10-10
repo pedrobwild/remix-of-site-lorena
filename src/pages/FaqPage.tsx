@@ -166,7 +166,7 @@ const PORTFOLIO_ITEMS: FaqItem[] = [
   },
 ];
 
-export default function FaqPage() {
+export default function FaqPage({ initialKb = null }: { initialKb?: KbItem[] | null } = {}) {
   const [aberto, setAberto] = useState("f-0");
   const [guiaAberto, setGuiaAberto] = useState(-1);
   const [indicacaoAberto, setIndicacaoAberto] = useState(-1);
@@ -175,8 +175,11 @@ export default function FaqPage() {
   // Dúvidas do assistente (tabela assistant_kb): quando existem, substituem a
   // lista fixa abaixo, agrupadas por tema. Se o banco estiver vazio ou a
   // leitura falhar, a lista fixa continua no ar.
-  const [kb, setKb] = useState<KbItem[] | null>(null);
+  // `initialKb` vem do loader da rota (SSR): o HTML que o Google lê já traz as
+  // perguntas do banco. Sem ele, a leitura acontece no cliente como antes.
+  const [kb, setKb] = useState<KbItem[] | null>(initialKb && initialKb.length > 0 ? initialKb : null);
   useEffect(() => {
+    if (initialKb && initialKb.length > 0) return;
     let alive = true;
     supabase
       .from("assistant_kb")
@@ -193,7 +196,7 @@ export default function FaqPage() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [initialKb]);
 
   /** Registra o clique na pergunta (só na abertura) para o painel de rastreamento. */
   function abrirPergunta(key: string, aberta: boolean, pergunta: string) {
