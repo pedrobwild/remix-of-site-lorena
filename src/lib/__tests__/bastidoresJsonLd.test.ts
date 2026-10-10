@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { bastidoresJsonLd, parseBastidoresPosts } from "../bastidoresJsonLd";
 
 describe("JSON-LD dos Bastidores", () => {
-  it("lê os 6 posts com título e descrição do HTML da home", () => {
+  it("lê os 6 posts com título e descrição do HTML do bloco de /servicos", () => {
     const posts = parseBastidoresPosts();
     expect(posts.map((p) => p.code)).toEqual([
       "DY27SVWvqoM", "DdKezjDRK8h", "DczVRdmxaoU", "Dcj1_8wRuta", "DchdJiqRhOT", "Ddm4dnNtNPI",
@@ -14,7 +14,8 @@ describe("JSON-LD dos Bastidores", () => {
   });
 
   it("gera um ItemList com um CreativeWork por post", () => {
-    const ld = bastidoresJsonLd() as { itemListElement: Array<{ item: Record<string, string> }> };
+    const ld = bastidoresJsonLd() as { url: string; itemListElement: Array<{ item: Record<string, string> }> };
+    expect(ld.url).toBe("https://bewild.com.br/servicos#bastidores");
     expect(ld.itemListElement).toHaveLength(6);
     expect(ld.itemListElement[0].item["@type"]).toBe("CreativeWork");
     expect(ld.itemListElement[0].item.name).toBe("Medição e estudo do espaço | Bastidores Bewild");

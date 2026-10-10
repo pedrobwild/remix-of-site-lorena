@@ -1,17 +1,20 @@
 /**
- * Dados estruturados (JSON-LD) dos 6 posts dos Bastidores da home.
+ * Dados estruturados (JSON-LD) dos 6 posts dos Bastidores (/servicos#bastidores;
+ * ficavam na home até 10/10/2026).
  *
- * Os posts não têm URL própria no site (ficam na home, em #bastidores), então
- * cada um vira um CreativeWork dentro de um ItemList ligado à home. Era
+ * Os posts não têm URL própria no site (ficam em /servicos, em #bastidores),
+ * então cada um vira um CreativeWork dentro de um ItemList ligado à página. Era
  * SocialMediaPosting, mas o Google lê esse tipo como marcação de fórum e
  * cobra datePublished, que o Instagram não fornece (DADOS-02, 05/10/2026).
  * Título e descrição são lidos do próprio HTML da seção — a mesma fonte do
  * texto visível — para nunca divergir nem inventar dados (sem data, sem
  * miniatura: o Instagram não nos fornece esses campos de forma confiável).
  */
-import { HOME_BWA_HTML } from "@/pages/home-bwa-body";
+import { BASTIDORES_HTML } from "@/pages/servicos-bwa-sections";
 
 const BASE_URL = "https://bewild.com.br";
+/** Página que hospeda o bloco (âncora #bastidores). */
+const PAGE_URL = `${BASE_URL}/servicos`;
 const IG_PROFILE = "https://www.instagram.com/bewild.oficial/";
 
 export type BastidoresPost = { code: string; name: string; description: string; tag: string };
@@ -19,7 +22,7 @@ export type BastidoresPost = { code: string; name: string; description: string; 
 const decode = (s: string) =>
   s.replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
 
-export function parseBastidoresPosts(html: string = HOME_BWA_HTML): BastidoresPost[] {
+export function parseBastidoresPosts(html: string = BASTIDORES_HTML): BastidoresPost[] {
   const start = html.indexOf('id="bastidores"');
   if (start < 0) return [];
   const section = html.slice(start, html.indexOf("</section>", start));
@@ -47,23 +50,23 @@ export function bastidoresJsonLd(
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "@id": `${BASE_URL}/#bastidores`,
+    "@id": `${PAGE_URL}#bastidores`,
     name: "Bastidores Bewild: o time em obra",
     description:
       "Arquitetas, engenheiros e equipe de execução da Bewild em campo, em posts do Instagram @bewild.oficial.",
-    url: `${BASE_URL}/#bastidores`,
+    url: `${PAGE_URL}#bastidores`,
     numberOfItems: posts.length,
     itemListElement: posts.map((p, i) => ({
       "@type": "ListItem",
       position: i + 1,
       item: {
         "@type": "CreativeWork",
-        "@id": `${BASE_URL}/#bastidores-${p.code}`,
+        "@id": `${PAGE_URL}#bastidores-${p.code}`,
         name: overrides[p.code]?.title?.trim() || `${p.name} | Bastidores Bewild`,
         description: overrides[p.code]?.description?.trim() || p.description,
         ...(p.tag ? { keywords: p.tag.replace(/^\d+\s*·\s*/, "") } : {}),
         url: `https://www.instagram.com/p/${p.code}/`,
-        isPartOf: { "@type": "WebPage", "@id": `${BASE_URL}/`, url: `${BASE_URL}/` },
+        isPartOf: { "@type": "WebPage", "@id": PAGE_URL, url: PAGE_URL },
         author: org,
         publisher: org,
         inLanguage: "pt-BR",

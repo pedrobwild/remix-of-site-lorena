@@ -450,9 +450,10 @@ function BastidoresTab({
   return (
     <>
       <p className="mono" style={{ opacity: 0.7, marginBottom: 24, maxWidth: 680 }}>
-        Título e descrição que o Google lê para cada post dos Bastidores na home. Campo vazio usa o
-        texto do card (mostrado em cinza). Os posts não têm endereço próprio, então a prévia ao
-        compartilhar continua sendo a da home (aba Home).
+        Título e descrição que o Google lê para cada post dos Bastidores na página de serviços
+        (/servicos#bastidores; ficavam na home até 10/10/2026). Campo vazio usa o texto do card
+        (mostrado em cinza). Os posts não têm endereço próprio, então a prévia ao compartilhar
+        continua sendo a da página de serviços (aba Páginas).
       </p>
       {BASTIDORES_POSTS.map((p, i) => {
         const defTitle = `${p.name} | Bastidores Bewild`;

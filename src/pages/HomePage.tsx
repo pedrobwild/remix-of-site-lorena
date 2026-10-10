@@ -8,8 +8,6 @@ import { hydrateHomeProjects } from "@/lib/hydrateHomeProjects";
 import { trackEvent } from "@/lib/ga4";
 import { installCatalogPreview } from "@/lib/homeCatalog";
 import { installInstagramEmbeds } from "@/lib/homeInstagram";
-import { installBastidores } from "@/lib/homeBastidores";
-import { installTour3d, installTour3dCovers } from "@/lib/homeTour3d";
 import { fetchSiteSettings } from "@/lib/useSiteSettings";
 import { isExternalHref, safeHref } from "@/lib/safeUrl";
 import { initHomeBwa } from "./home-bwa-script";
@@ -18,9 +16,6 @@ import { hydrateHomeFaq } from "./homeFaq";
 // dentro de um portal, e agora só quando a seção se aproxima da tela — fora do
 // caminho crítico da home (auditoria 06/10: 467 KB de JS na home).
 const WorkflowPortalReplica = lazy(() => import("@/components/workflow-replica/WorkflowPortalReplica"));
-import { bastidoresJsonLd, parseBastidoresPosts } from "@/lib/bastidoresJsonLd";
-
-const BASTIDORES_POSTS = parseBastidoresPosts();
 
 const TITLE = "Reforma de apartamentos e studios em São Paulo | Bewild";
 const DESCRIPTION =
@@ -112,8 +107,6 @@ export default function HomePage() {
     keywords: KEYWORDS,
     canonicalPath: "/",
     ogType: "website",
-    // Os 6 posts dos Bastidores: título e descrição próprios em JSON-LD.
-    jsonLd: bastidoresJsonLd(BASTIDORES_POSTS, settings?.bastidores_seo ?? {}),
   });
 
   useEffect(() => {
@@ -128,14 +121,10 @@ export default function HomePage() {
       ? [
           initHomeBwa(root),
           // Marcenaria (Catálogo Bwild) e depoimentos (Instagram): carregam
-          // quando as seções se aproximam da tela.
+          // quando as seções se aproximam da tela. (Bastidores, galeria e tour
+          // 3D foram para /servicos em 10/10/2026.)
           installCatalogPreview(root),
           installInstagramEmbeds(root),
-          // Bastidores: slider dos 6 posts do time em obra (embeds montados por installInstagramEmbeds).
-          installBastidores(root),
-          // Tour virtual 3D (Enscape): 3 cômodos lado a lado; no toque, tela cheia.
-          installTour3d(root),
-          installTour3dCovers(root),
           installFooterLinkedin(root),
           // FAQ: perguntas marcadas "Mostrar na home" em /admin/faq.
           hydrateHomeFaq(root),
