@@ -21,6 +21,8 @@
 - Provas numéricas (reformas entregues, projetos, contratos, bairros) vivem só em `src/content/provas.ts`; nenhuma página escreve o número à mão. 188 é a base de CONTRATOS do estudo de custo, nunca "reformas entregues" (erro de 06/10/2026, corrigido em 07/10). Ocupação do guia nos bairros do levantamento GuestFavorites usa a mesma mediana dos artigos (`ocupacaoFonte`). Guardado por `src/__tests__/provasUnicas.test.ts`.
 
 <!-- LOVABLE:BEGIN -->
+- Serviços · 02 da home (`#certeza`, 10/10/2026, mockup 1b): o HTML do servidor traz os 12 itens com texto completo em linha (`.bwa-services-item-detail`, figura + parágrafo); `installServicesIndex` (home-bwa-script.ts) envolve cada título num `<button>` e monta índice + painel de detalhe a partir de 761 px ou acordeão até 760 px. Copy da seção é travada (ver docs/internal/gpt-knowledge/03); imagens só de material já usado no site, render legendado como "Projeto 3D".
+
 - Article opening videos use the optional `bewild_posts.youtube_video_id` and shared metadata resolver; SSR emits VideoObject while playback loads only after a click.
 - Home title/description/Open Graph saved in /admin/seo are read by the `/` route loader (`src/lib/homeSeo.ts`, no module cache) so the raw SSR HTML carries them; the Páginas tab wins over the Home tab, same as `useSeo`.
 - The five main editable page routes read SEO overrides through a public, sanitized server function with per-field defaults, so panel edits appear in SSR without exposing other site settings.

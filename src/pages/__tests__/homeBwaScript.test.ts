@@ -290,45 +290,38 @@ describe("initHomeBwa", () => {
 });
 
 /* ------------------------------------------------------------------------
- * UX mobile: barra "Solicitar orçamento", acordeão das disciplinas e
- * `data-bwa-typing` (teclado aberto).
+ * UX mobile: barra "Solicitar orçamento", Serviços · 02 (índice + detalhe no
+ * desktop, acordeão no celular) e `data-bwa-typing` (teclado aberto).
  * ---------------------------------------------------------------------- */
-
-/** matchMedia que responde `matches` e deixa o teste disparar a troca. */
-function stubMatchMedia(matches: boolean): { setMatches: (next: boolean) => void; restore: () => void } {
-  const previous = window.matchMedia;
-  const listeners: Array<(event: MediaQueryListEvent) => void> = [];
-  const mql = {
-    matches,
-    media: "",
-    onchange: null,
-    addListener: () => {},
-    removeListener: () => {},
-    addEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) => listeners.push(listener),
-    removeEventListener: () => {},
-    dispatchEvent: () => false,
-  };
-  window.matchMedia = (() => mql) as unknown as typeof window.matchMedia;
-  return {
-    setMatches: (next) => {
-      mql.matches = next;
-      listeners.forEach((listener) => listener({ matches: next } as MediaQueryListEvent));
-    },
-    restore: () => {
-      window.matchMedia = previous;
-    },
-  };
-}
 
 function mountMobileHome(): HTMLElement {
   document.body.innerHTML = `
     <div id="home">
       <main>
         <section class="bwa-hero"><div class="bwa-hero-bottom"><a href="/orcamento">Solicitar orçamento</a></div></section>
-        <ul class="bwa-discipline-list">
-          <li><b>01</b><p><strong>Consultoria.</strong> <span class="bwa-discipline-desc">Leitura do imóvel.</span></p></li>
-          <li><b>02</b><p><strong>Projeto 3D.</strong> <span class="bwa-discipline-desc">Maquete realista.</span></p></li>
-        </ul>
+        <section class="bwa-services" id="certeza" data-services>
+          <div class="bwa-services-grid">
+            <div class="bwa-services-index">
+              <ol class="bwa-services-list" data-services-list data-discipline="Arquitetura">
+                <li class="bwa-services-item" data-services-item>
+                  <p class="bwa-services-item-title"><b>01</b> <strong>Consultoria.</strong></p>
+                  <div class="bwa-services-item-detail">
+                    <figure class="bwa-services-figure"><img src="/images/a.jpg" alt="A" loading="lazy"><figcaption>Projeto 3D</figcaption></figure>
+                    <p class="bwa-services-item-text">Leitura do imóvel.</p>
+                  </div>
+                </li>
+                <li class="bwa-services-item" data-services-item>
+                  <p class="bwa-services-item-title"><b>02</b> <strong>Projeto 3D.</strong></p>
+                  <div class="bwa-services-item-detail">
+                    <figure class="bwa-services-figure"><img src="/images/b.jpg" alt="B" loading="lazy"><figcaption>Obra entregue</figcaption></figure>
+                    <p class="bwa-services-item-text">Maquete realista.</p>
+                  </div>
+                </li>
+              </ol>
+            </div>
+            <div class="bwa-services-detail" data-services-detail hidden></div>
+          </div>
+        </section>
         <section class="bwa-final" id="contato"></section>
         <a class="bwa-mobile-cta is-hidden" href="/orcamento">Solicitar orçamento</a>
       </main>
@@ -388,53 +381,166 @@ describe("initHomeBwa — barra 'Solicitar orçamento' do celular", () => {
   });
 });
 
-describe("initHomeBwa — disciplinas em acordeão no celular", () => {
-  it("no celular, cada título vira botão e a explicação abre no toque; no desktop, nada muda", () => {
-    const media = stubMatchMedia(true);
+/** matchMedia com resposta por consulta (acordeão × hover com mouse). */
+function stubMediaQueries(initial: Record<string, boolean>): {
+  set: (query: string, matches: boolean) => void;
+  restore: () => void;
+} {
+  const previous = window.matchMedia;
+  const state = { ...initial };
+  const listeners: Record<string, Array<(event: MediaQueryListEvent) => void>> = {};
+  window.matchMedia = ((query: string) => {
+    const mql = {
+      get matches() {
+        return !!state[query];
+      },
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) => {
+        (listeners[query] ??= []).push(listener);
+      },
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    };
+    return mql;
+  }) as unknown as typeof window.matchMedia;
+  return {
+    set: (query, matches) => {
+      state[query] = matches;
+      (listeners[query] ?? []).forEach((listener) => listener({ matches } as MediaQueryListEvent));
+    },
+    restore: () => {
+      window.matchMedia = previous;
+    },
+  };
+}
+
+const ACCORDION = "(max-width: 760px)";
+const HOVER = "(hover: hover) and (pointer: fine)";
+
+describe("initHomeBwa — Serviços · 02: índice + detalhe (desktop) e acordeão (celular)", () => {
+  it("no celular, cada título vira botão e o detalhe abre no toque; o painel fica escondido", () => {
+    const media = stubMediaQueries({ [ACCORDION]: true, [HOVER]: false });
     try {
       const root = mountMobileHome();
       const cleanup = initHomeBwa(root);
-      const list = root.querySelector<HTMLElement>(".bwa-discipline-list")!;
-      const toggles = Array.from(list.querySelectorAll<HTMLButtonElement>("button.bwa-discipline-toggle"));
-      expect(list).toHaveClass("is-collapsible");
-      expect(toggles).toHaveLength(2);
-      expect(toggles[0].textContent).toBe("Consultoria.");
-      expect(toggles[0].getAttribute("aria-expanded")).toBe("false");
-      const desc = document.getElementById(toggles[0].getAttribute("aria-controls")!)!;
-      expect(desc).toHaveClass("bwa-discipline-desc");
-      expect(desc.textContent).toBe("Leitura do imóvel.");
+      const section = root.querySelector<HTMLElement>("[data-services]")!;
+      const panel = root.querySelector<HTMLElement>("[data-services-detail]")!;
+      const triggers = Array.from(section.querySelectorAll<HTMLButtonElement>("button.bwa-services-trigger"));
+      expect(section).toHaveClass("is-accordion");
+      expect(section).not.toHaveClass("is-indexed");
+      expect(panel.hidden).toBe(true);
+      expect(triggers).toHaveLength(2);
+      expect(triggers[0].textContent).toBe("01 Consultoria.");
+      expect(triggers[0].closest("p")).toHaveClass("has-trigger");
+      expect(triggers[0].getAttribute("aria-expanded")).toBe("false");
+      const detail = document.getElementById(triggers[0].getAttribute("aria-controls")!)!;
+      expect(detail).toHaveClass("bwa-services-item-detail");
+      expect(detail.textContent).toContain("Leitura do imóvel.");
 
-      toggles[0].click();
-      expect(toggles[0].closest("li")).toHaveClass("is-open");
-      expect(toggles[0].getAttribute("aria-expanded")).toBe("true");
-      expect(toggles[1].closest("li")).not.toHaveClass("is-open");
-      toggles[0].click();
-      expect(toggles[0].closest("li")).not.toHaveClass("is-open");
-
-      // Girou o tablet para a largura de desktop: volta ao texto corrido.
-      toggles[1].click();
-      media.setMatches(false);
-      expect(list).not.toHaveClass("is-collapsible");
-      expect(list.querySelector("button")).toBeNull();
-      expect(list.querySelector("li.is-open")).toBeNull();
-      expect(list.querySelector("li > p > strong")!.textContent).toBe("Consultoria.");
-
-      media.setMatches(true);
-      expect(list.querySelectorAll("button.bwa-discipline-toggle")).toHaveLength(2);
+      triggers[0].click();
+      expect(triggers[0].closest("li")).toHaveClass("is-open");
+      expect(triggers[0].getAttribute("aria-expanded")).toBe("true");
+      expect(triggers[1].closest("li")).not.toHaveClass("is-open");
+      triggers[0].click();
+      expect(triggers[0].closest("li")).not.toHaveClass("is-open");
       cleanup();
-      expect(list.querySelector("button")).toBeNull();
-      expect(list).not.toHaveClass("is-collapsible");
     } finally {
       media.restore();
     }
   });
 
-  it("no desktop o HTML fica como veio", () => {
-    const root = mountMobileHome();
-    const before = root.querySelector(".bwa-discipline-list")!.innerHTML;
-    const cleanup = initHomeBwa(root);
-    expect(root.querySelector(".bwa-discipline-list")!.innerHTML).toBe(before);
-    cleanup();
+  it("no desktop, o painel mostra o item 01 e troca por clique ou hover; girar o tablet troca de modo", () => {
+    vi.useFakeTimers();
+    const media = stubMediaQueries({ [ACCORDION]: false, [HOVER]: true });
+    try {
+      const root = mountMobileHome();
+      const titlesBefore = Array.from(root.querySelectorAll(".bwa-services-item-title")).map((p) => p.innerHTML);
+      const cleanup = initHomeBwa(root);
+      const section = root.querySelector<HTMLElement>("[data-services]")!;
+      const panel = root.querySelector<HTMLElement>("[data-services-detail]")!;
+      const triggers = Array.from(section.querySelectorAll<HTMLButtonElement>("button.bwa-services-trigger"));
+      const items = triggers.map((t) => t.closest("li")!);
+
+      expect(section).toHaveClass("is-indexed");
+      expect(panel.hidden).toBe(false);
+      expect(panel.getAttribute("aria-live")).toBe("polite");
+      expect(triggers[0].getAttribute("aria-controls")).toBe(panel.id);
+      expect(triggers[0].hasAttribute("aria-expanded")).toBe(false);
+      // Abre no item 01: figura (com a disciplina), número + título e texto.
+      expect(items[0]).toHaveClass("is-active");
+      expect(triggers[0].getAttribute("aria-current")).toBe("true");
+      expect(panel.querySelector(".bwa-services-figure img")!.getAttribute("src")).toBe("/images/a.jpg");
+      expect(panel.querySelector(".bwa-services-figure-tag")!.textContent).toBe("Arquitetura");
+      expect(panel.querySelector(".bwa-services-detail-head")!.textContent).toBe("01Consultoria.");
+      expect(panel.querySelector(".bwa-services-item-text")!.textContent).toBe("Leitura do imóvel.");
+      // O detalhe em linha continua no HTML (quem esconde é o CSS).
+      expect(items[0].querySelector(".bwa-services-item-text")).not.toBeNull();
+
+      triggers[1].click();
+      expect(items[1]).toHaveClass("is-active");
+      expect(items[0]).not.toHaveClass("is-active");
+      expect(triggers[0].hasAttribute("aria-current")).toBe(false);
+      expect(panel.querySelector(".bwa-services-item-text")!.textContent).toBe("Maquete realista.");
+      expect(panel.querySelectorAll(".bwa-services-detail-inner")).toHaveLength(1);
+
+      // Hover com mouse: troca depois da pausa; sair antes cancela.
+      triggers[0].dispatchEvent(new MouseEvent("mouseenter"));
+      triggers[0].dispatchEvent(new MouseEvent("mouseleave"));
+      vi.advanceTimersByTime(200);
+      expect(items[1]).toHaveClass("is-active");
+      triggers[0].dispatchEvent(new MouseEvent("mouseenter"));
+      vi.advanceTimersByTime(200);
+      expect(items[0]).toHaveClass("is-active");
+      expect(panel.querySelector(".bwa-services-item-text")!.textContent).toBe("Leitura do imóvel.");
+
+      // Girou para a largura de celular: acordeão, painel vazio.
+      media.set(ACCORDION, true);
+      expect(section).toHaveClass("is-accordion");
+      expect(section).not.toHaveClass("is-indexed");
+      expect(panel.hidden).toBe(true);
+      expect(panel.childNodes).toHaveLength(0);
+      expect(items[0]).not.toHaveClass("is-active");
+      expect(triggers[0].getAttribute("aria-expanded")).toBe("false");
+      // Sem mouse, o hover não faz nada no celular.
+      triggers[1].dispatchEvent(new MouseEvent("mouseenter"));
+      vi.advanceTimersByTime(200);
+      expect(items[1]).not.toHaveClass("is-open");
+
+      // E de volta ao desktop: índice de novo, no item 01.
+      media.set(ACCORDION, false);
+      expect(section).toHaveClass("is-indexed");
+      expect(items[0]).toHaveClass("is-active");
+
+      cleanup();
+      expect(section.querySelector("button")).toBeNull();
+      expect(section).not.toHaveClass("is-indexed");
+      expect(section.querySelector(".has-trigger, .is-active, .is-open")).toBeNull();
+      expect(panel.hidden).toBe(true);
+      expect(panel.childNodes).toHaveLength(0);
+      // Os títulos voltam ao HTML de origem (número + <strong>).
+      expect(Array.from(section.querySelectorAll(".bwa-services-item-title")).map((p) => p.innerHTML)).toEqual(titlesBefore);
+    } finally {
+      media.restore();
+      vi.useRealTimers();
+    }
+  });
+
+  it("sem matchMedia (navegador antigo), o HTML fica como veio", () => {
+    const previous = window.matchMedia;
+    window.matchMedia = undefined as unknown as typeof window.matchMedia;
+    try {
+      const root = mountMobileHome();
+      const before = root.querySelector("[data-services]")!.innerHTML;
+      const cleanup = initHomeBwa(root);
+      // Só a classe de entrada suave (installReveal) entra; nada de botões nem painel.
+      expect(root.querySelector("[data-services]")!.innerHTML.replaceAll(" bwa-reveal", "")).toBe(before);
+      cleanup();
+    } finally {
+      window.matchMedia = previous;
+    }
   });
 });
 

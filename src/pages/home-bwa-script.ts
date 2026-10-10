@@ -45,8 +45,12 @@ const MENU_OPEN_CLASS = "bwa-menu-open";
 const TYPING_ATTR = "data-bwa-typing";
 /** Acima desta largura o header mostra os links e o menu mobile some (home-bwa.css). */
 const DESKTOP_NAV_QUERY = "(min-width: 1181px)";
-/** Até esta largura a lista das disciplinas vira acordeão (só os títulos à vista). */
-const DISCIPLINE_ACCORDION_QUERY = "(max-width: 760px)";
+/** Até esta largura, Serviços · 02 vira acordeão; acima, índice + painel de detalhe. */
+const SERVICES_ACCORDION_QUERY = "(max-width: 760px)";
+/** Só com mouse (não no toque) o hover no índice troca o painel. */
+const SERVICES_HOVER_QUERY = "(hover: hover) and (pointer: fine)";
+/** Pausa antes de o hover trocar o painel: atravessar a lista não pisca 12 itens. */
+const SERVICES_HOVER_DELAY_MS = 90;
 const FOCUSABLE = [
   "a[href]",
   "button:not([disabled])",
@@ -642,71 +646,185 @@ function installFaqAccordion(root: HTMLElement, signal: AbortSignal): Cleanup {
 }
 
 /* =========================================================================
- * Disciplinas (Arquitetura · Engenharia e gestão) no celular: cada item vira
- * um acordeão — só o título à vista, a explicação abre no toque. O HTML
- * continua com o texto completo (desktop, leitores de tela, busca); aqui o
- * <strong> do título ganha um <button> em volta e a `.bwa-discipline-desc`
- * fica escondida até abrir. Voltou para a largura de desktop (girou o
- * tablet): desfaz tudo.
+ * Serviços · 02 (#certeza) — mockup 1b (10/10/2026): índice + detalhe.
+ *
+ * HTML do servidor: cada item é <p class="bwa-services-item-title"><b>01</b>
+ * <strong>Título.</strong></p> + <div class="bwa-services-item-detail"> com a
+ * figura e o texto completo — legível sem JS e pela busca. Aqui o conteúdo do
+ * título ganha um <button class="bwa-services-trigger"> em volta e:
+ *  - ≥ 761 px (`is-indexed`): o painel [data-services-detail] recebe uma
+ *    cópia da figura e do texto do item ativo (clique, Enter ou hover com
+ *    mouse); os detalhes em linha somem pelo CSS. Abre no item 01.
+ *  - ≤ 760 px (`is-accordion`): o toque abre e fecha o detalhe em linha
+ *    (aria-expanded + aria-controls), como o acordeão anterior.
+ * Girou o tablet: sai de um modo e entra no outro. A limpeza devolve o HTML
+ * como veio.
  * ========================================================================= */
-function installDisciplineAccordion(root: HTMLElement, signal: AbortSignal): Cleanup {
+function installServicesIndex(root: HTMLElement, signal: AbortSignal): Cleanup {
   if (typeof window.matchMedia !== "function") return NOOP;
-  const lists = Array.from(root.querySelectorAll<HTMLElement>(".bwa-discipline-list"));
-  type Item = { li: HTMLElement; title: HTMLElement; desc: HTMLElement; toggle: HTMLButtonElement | null };
+  const section = root.querySelector<HTMLElement>("[data-services]");
+  const panel = section?.querySelector<HTMLElement>("[data-services-detail]");
+  if (!section || !panel) return NOOP;
+
+  type Item = {
+    li: HTMLElement;
+    title: HTMLElement;
+    detail: HTMLElement;
+    discipline: string;
+    trigger: HTMLButtonElement;
+  };
   const items: Item[] = [];
-  for (const list of lists) {
-    for (const li of Array.from(list.children)) {
-      const title = li.querySelector<HTMLElement>(":scope > p > strong");
-      const desc = li.querySelector<HTMLElement>(":scope > p > .bwa-discipline-desc");
-      if (li instanceof HTMLElement && title && desc) items.push({ li, title, desc, toggle: null });
-    }
-  }
+  section.querySelectorAll<HTMLElement>("[data-services-list]").forEach((list) => {
+    const discipline = list.dataset.discipline ?? "";
+    list.querySelectorAll<HTMLElement>(":scope > [data-services-item]").forEach((li) => {
+      const title = li.querySelector<HTMLElement>(":scope > .bwa-services-item-title");
+      const detail = li.querySelector<HTMLElement>(":scope > .bwa-services-item-detail");
+      if (!title || !detail) return;
+      const trigger = document.createElement("button");
+      trigger.type = "button";
+      trigger.className = "bwa-services-trigger";
+      items.push({ li, title, detail, discipline, trigger });
+    });
+  });
   if (!items.length) return NOOP;
 
-  const query = window.matchMedia(DISCIPLINE_ACCORDION_QUERY);
-  let collapsed = false;
+  if (!panel.id) panel.id = "bwa-services-panel";
+  items.forEach((item, i) => {
+    if (!item.detail.id) item.detail.id = `bwa-services-item-${i + 1}`;
+    item.trigger.append(...Array.from(item.title.childNodes));
+    item.title.appendChild(item.trigger);
+    item.title.classList.add("has-trigger");
+  });
 
-  const collapse = () => {
-    if (collapsed) return;
-    collapsed = true;
-    lists.forEach((list) => list.classList.add("is-collapsible"));
-    items.forEach((item, i) => {
-      if (!item.desc.id) item.desc.id = `bwa-discipline-desc-${i + 1}`;
-      const toggle = document.createElement("button");
-      toggle.type = "button";
-      toggle.className = "bwa-discipline-toggle";
-      toggle.setAttribute("aria-expanded", "false");
-      toggle.setAttribute("aria-controls", item.desc.id);
-      item.title.replaceWith(toggle);
-      toggle.appendChild(item.title);
-      toggle.addEventListener(
-        "click",
-        () => {
-          const open = !item.li.classList.contains("is-open");
-          item.li.classList.toggle("is-open", open);
-          toggle.setAttribute("aria-expanded", String(open));
-        },
-        { signal },
-      );
-      item.toggle = toggle;
-    });
+  const accordionQuery = window.matchMedia(SERVICES_ACCORDION_QUERY);
+  const hoverQuery = window.matchMedia(SERVICES_HOVER_QUERY);
+  let mode: "indexed" | "accordion" | null = null;
+  let active = -1;
+  let hoverTimer = 0;
+
+  const cancelHover = () => {
+    if (hoverTimer) window.clearTimeout(hoverTimer);
+    hoverTimer = 0;
   };
 
-  const expand = () => {
-    if (!collapsed) return;
-    collapsed = false;
-    lists.forEach((list) => list.classList.remove("is-collapsible"));
+  /** Painel = figura (com a disciplina em cima) + número e título + texto do item. */
+  const select = (index: number) => {
+    const item = items[index];
+    if (!item || mode !== "indexed" || index === active) return;
+    active = index;
+    items.forEach((it, i) => {
+      it.li.classList.toggle("is-active", i === index);
+      if (i === index) it.trigger.setAttribute("aria-current", "true");
+      else it.trigger.removeAttribute("aria-current");
+    });
+
+    const inner = document.createElement("div");
+    inner.className = "bwa-services-detail-inner";
+    const figure = item.detail.querySelector<HTMLElement>(".bwa-services-figure");
+    if (figure) {
+      const copy = figure.cloneNode(true) as HTMLElement;
+      const tag = document.createElement("span");
+      tag.className = "bwa-services-figure-tag";
+      tag.textContent = item.discipline;
+      copy.appendChild(tag);
+      inner.appendChild(copy);
+    }
+    const head = document.createElement("p");
+    head.className = "bwa-services-detail-head";
+    const number = item.title.querySelector("b");
+    const name = item.title.querySelector("strong");
+    if (number) head.appendChild(number.cloneNode(true));
+    if (name) head.appendChild(name.cloneNode(true));
+    inner.appendChild(head);
+    const text = item.detail.querySelector(".bwa-services-item-text");
+    if (text) inner.appendChild(text.cloneNode(true));
+    panel.replaceChildren(inner);
+  };
+
+  const toggle = (index: number) => {
+    const item = items[index];
+    if (!item || mode !== "accordion") return;
+    const open = !item.li.classList.contains("is-open");
+    item.li.classList.toggle("is-open", open);
+    item.trigger.setAttribute("aria-expanded", String(open));
+  };
+
+  const enterIndexed = () => {
+    cancelHover();
+    mode = "indexed";
+    active = -1;
+    section.classList.add("is-indexed");
+    section.classList.remove("is-accordion");
+    panel.hidden = false;
+    panel.setAttribute("aria-live", "polite");
     items.forEach((item) => {
       item.li.classList.remove("is-open");
-      if (item.toggle) item.toggle.replaceWith(item.title);
-      item.toggle = null;
+      item.trigger.removeAttribute("aria-expanded");
+      item.trigger.setAttribute("aria-controls", panel.id);
+    });
+    select(0);
+  };
+
+  const enterAccordion = () => {
+    cancelHover();
+    mode = "accordion";
+    active = -1;
+    section.classList.add("is-accordion");
+    section.classList.remove("is-indexed");
+    panel.hidden = true;
+    panel.replaceChildren();
+    panel.removeAttribute("aria-live");
+    items.forEach((item) => {
+      item.li.classList.remove("is-active", "is-open");
+      item.trigger.removeAttribute("aria-current");
+      item.trigger.setAttribute("aria-expanded", "false");
+      item.trigger.setAttribute("aria-controls", item.detail.id);
     });
   };
 
-  const sync = () => (query.matches ? collapse() : expand());
+  items.forEach((item, index) => {
+    item.trigger.addEventListener(
+      "click",
+      () => {
+        cancelHover();
+        if (mode === "indexed") select(index);
+        else toggle(index);
+      },
+      { signal },
+    );
+    item.trigger.addEventListener(
+      "mouseenter",
+      () => {
+        if (mode !== "indexed" || !hoverQuery.matches || index === active) return;
+        cancelHover();
+        hoverTimer = window.setTimeout(() => {
+          hoverTimer = 0;
+          select(index);
+        }, SERVICES_HOVER_DELAY_MS);
+      },
+      { signal },
+    );
+    item.trigger.addEventListener("mouseleave", cancelHover, { signal });
+  });
+
+  const sync = () => (accordionQuery.matches ? enterAccordion() : enterIndexed());
   sync();
-  query.addEventListener?.("change", sync, { signal });
-  return expand;
+  accordionQuery.addEventListener?.("change", sync, { signal });
+
+  return () => {
+    cancelHover();
+    mode = null;
+    section.classList.remove("is-indexed", "is-accordion");
+    panel.hidden = true;
+    panel.replaceChildren();
+    panel.removeAttribute("aria-live");
+    items.forEach((item) => {
+      item.li.classList.remove("is-active", "is-open");
+      item.title.append(...Array.from(item.trigger.childNodes));
+      item.trigger.remove();
+      item.title.classList.remove("has-trigger");
+    });
+  };
 }
 
 /* =========================================================================
@@ -832,7 +950,7 @@ function installVideoModal(root: HTMLElement, signal: AbortSignal): Cleanup {
  * Entrada suave dos blocos (desligada com prefers-reduced-motion).
  * ========================================================================= */
 const REVEAL_SELECTOR =
-  ".bwa-title, .bwa-lead, .bwa-project-card, .bwa-proof-card, .bwa-objective, .bwa-audience-card, .bwa-discipline";
+  ".bwa-title, .bwa-lead, .bwa-project-card, .bwa-proof-card, .bwa-objective, .bwa-audience-card, .bwa-services-list, .bwa-services-detail";
 
 function installReveal(root: HTMLElement, reducedMotion: boolean): Cleanup {
   const elements = Array.from(root.querySelectorAll<HTMLElement>(REVEAL_SELECTOR));
@@ -944,7 +1062,7 @@ function installHomeMap(root: HTMLElement, signal: AbortSignal): Cleanup {
   };
 }
 
-/** Home inteira (header, galeria, FAQ, disciplinas, vídeo, reveals, barra do celular, rodapé). */
+/** Home inteira (header, galeria, FAQ, serviços, vídeo, reveals, barra do celular, rodapé). */
 export function initHomeBwa(root: HTMLElement | null): Cleanup {
   if (!root || root.dataset.bwaHomeInited === "1") return NOOP;
   root.dataset.bwaHomeInited = "1";
@@ -956,7 +1074,7 @@ export function initHomeBwa(root: HTMLElement | null): Cleanup {
     installNavChrome(root, signal),
     installGallery(root, signal, reducedMotion),
     installFaqAccordion(root, signal),
-    installDisciplineAccordion(root, signal),
+    installServicesIndex(root, signal),
     installVideoModal(root, signal),
     installReveal(root, reducedMotion),
     installHomeMap(root, signal),
