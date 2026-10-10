@@ -963,6 +963,12 @@
       transform: scale(1.04);
     }
 
+    // Rótulos "01 · Para alugar" e "02 · Para morar": fonte maior que a
+    // padrão de .bwa-label (11px), sem afetar as outras seções.
+    .bwa-audience-card .bwa-label {
+      font-size: 14px;
+    }
+
     .bwa-audience-card h3 {
       margin: 0;
       font-family: "Manrope", sans-serif;
