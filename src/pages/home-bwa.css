@@ -494,7 +494,6 @@
     }
 
 
-
     .bwa-nav .bwa-button {
       min-height: 46px;
       padding: 12px 20px;
@@ -894,11 +893,6 @@
       text-transform: uppercase;
     }
 
-    .bwa-certainty {
-      color: var(--bwa-white);
-      background: var(--bwa-ink);
-    }
-
     /* Estes blocos deixaram de ser filhos de #certeza e agora têm fundo próprio. */
     .bwa-bastidores,
     .bwa-image-gallery,
@@ -1043,57 +1037,6 @@
         min-height: 180px;
       }
     }
-
-    .bwa-certainty-head {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: clamp(37px, 4.28vw, 68px);
-      align-items: start;
-      padding-block: clamp(46px, 4.84vw, 76px) clamp(35px, 3.73vw, 46px);
-    }
-
-    .bwa-certainty-lead {
-      position: sticky;
-      top: 96px;
-      display: grid;
-      align-content: start;
-      gap: 28px;
-    }
-
-    .bwa-certainty-title {
-      max-width: 980px;
-    }
-
-    .bwa-certainty-title strong {
-      color: var(--bwa-accent);
-      font-family: "Manrope", sans-serif;
-      font-weight: 400;
-    }
-
-    .bwa-shell .bwa-certainty-lead .bwa-lead {
-      max-width: 780px;
-      color: rgba(255, 255, 255, .7);
-    }
-
-    .bwa-certainty-statement {
-      margin: 0;
-      padding-block: clamp(28px, 3.17vw, 51px) clamp(46px, 4.76vw, 82px);
-      padding-inline: var(--bwa-gutter);
-      color: var(--bwa-white);
-      font-family: "Manrope", sans-serif;
-      font-size: clamp(25px, 3.51vw, 58px);
-      font-weight: 400;
-      line-height: 1.04;
-      letter-spacing: -.03em;
-      text-wrap: balance;
-    }
-
-    .bwa-certainty-cards {
-      display: grid;
-      gap: 20px;
-    }
-
-
 
 
     .bwa-image-gallery {
@@ -1299,146 +1242,6 @@
       background: var(--bwa-white);
       transform-origin: left center;
       transition: transform .35s var(--bwa-ease);
-    }
-
-    .bwa-certainty-list {
-      border-top: 1px solid var(--bwa-white-line);
-    }
-
-    .bwa-certainty-item {
-      position: relative;
-      border-bottom: 1px solid var(--bwa-white-line);
-      overflow: hidden;
-    }
-
-    .bwa-certainty-item::before {
-      position: absolute;
-      inset: 0;
-      content: "";
-      background: var(--bwa-navy);
-      transform: translateX(-101%);
-      transition: transform .6s var(--bwa-ease);
-      pointer-events: none;
-    }
-
-    .bwa-certainty-item:hover::before,
-    .bwa-certainty-item:focus-within::before,
-    .bwa-certainty-item.bwa-open::before {
-      transform: translateX(0);
-    }
-
-    .bwa-certainty-toggle {
-      width: 100%;
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: 90px minmax(0, 1fr) minmax(220px, .75fr) 44px;
-      align-items: center;
-      gap: 24px;
-      padding: 28px var(--bwa-gutter);
-      border: 0;
-      color: inherit;
-      background: transparent;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    .bwa-certainty-num,
-    .bwa-certainty-outcome {
-      font-family: "JetBrains Mono", monospace;
-      font-size: 10px;
-      line-height: 1.35;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    .bwa-certainty-num {
-      color: rgba(255, 255, 255, .42);
-    }
-
-    .bwa-certainty-name {
-      font-size: clamp(21px, 2.35vw, 40px);
-      font-weight: 500;
-      line-height: 1.05;
-      letter-spacing: -.045em;
-    }
-
-    .bwa-certainty-outcome {
-      color: rgba(255, 255, 255, .58);
-    }
-
-    .bwa-certainty-icon {
-      width: 38px;
-      height: 38px;
-      position: relative;
-      border: 1px solid rgba(255, 255, 255, .4);
-    }
-
-    .bwa-certainty-icon::before,
-    .bwa-certainty-icon::after {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      content: "";
-      background: var(--bwa-white);
-      transform: translate(-50%, -50%);
-      transition: transform .3s ease;
-    }
-
-    .bwa-certainty-icon::before {
-      width: 14px;
-      height: 1px;
-    }
-
-    .bwa-certainty-icon::after {
-      width: 1px;
-      height: 14px;
-    }
-
-    .bwa-certainty-item.bwa-open .bwa-certainty-icon::after {
-      transform: translate(-50%, -50%) rotate(90deg);
-    }
-
-    .bwa-certainty-detail {
-      max-height: 0;
-      position: relative;
-      z-index: 1;
-      overflow: hidden;
-      transition: max-height .5s var(--bwa-ease);
-    }
-
-    .bwa-certainty-detail-inner {
-      display: grid;
-      grid-template-columns: 90px minmax(0, 1fr) minmax(220px, .75fr) 44px;
-      gap: 24px;
-      padding: 0 var(--bwa-gutter) 34px;
-    }
-
-    .bwa-certainty-detail p {
-      grid-column: 2 / 4;
-      max-width: 940px;
-      margin: 0;
-      color: rgba(255, 255, 255, .72);
-      font-size: clamp(16px, 1.12vw, 18px);
-      line-height: 1.6;
-    }
-
-    .bwa-certainty-close {
-      padding-block: 46px 65px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 28px;
-    }
-
-    .bwa-certainty-close p {
-      max-width: 760px;
-      margin: 0;
-      font-family: "Manrope", sans-serif;
-      font-size: clamp(25px, 3.09vw, 51px);
-      line-height: 1;
-      letter-spacing: -.025em;
     }
 
     .bwa-story {
@@ -3434,7 +3237,6 @@
       }
 
 
-
       .bwa-nav-inner {
         grid-template-columns: auto 1fr auto;
       }
@@ -3548,7 +3350,6 @@
         border-bottom: 0;
       }
 
-      .bwa-certainty-head,
       .bwa-audience-head,
       .bwa-story-head,
       .bwa-projects-head,
@@ -3570,11 +3371,6 @@
         gap: 34px;
       }
 
-      .bwa-certainty-lead {
-        position: static;
-        top: auto;
-      }
-
       .bwa-audience-grid {
         grid-template-columns: 1fr;
       }
@@ -3589,27 +3385,6 @@
 
       .bwa-image-gallery-slide {
         width: 86vw;
-      }
-
-
-      .bwa-certainty-toggle {
-        grid-template-columns: 46px minmax(0, 1fr) 38px;
-        gap: 14px;
-        padding-inline: var(--bwa-gutter);
-      }
-
-      .bwa-certainty-outcome {
-        display: none;
-      }
-
-      .bwa-certainty-detail-inner {
-        grid-template-columns: 46px minmax(0, 1fr) 38px;
-        gap: 14px;
-        padding-inline: var(--bwa-gutter);
-      }
-
-      .bwa-certainty-detail p {
-        grid-column: 2 / 4;
       }
 
       .bwa-story-layout {
@@ -3799,18 +3574,6 @@
         text-align: right;
       }
 
-      .bwa-certainty-name {
-        font-size: 20px;
-      }
-
-      .bwa-certainty-close {
-        align-items: stretch;
-      }
-
-      .bwa-certainty-close .bwa-button {
-        width: 100%;
-      }
-
       .bwa-story-aperture {
         height: 58svh;
         min-height: 430px;
@@ -3997,7 +3760,6 @@
 
     .bwa-manifesto-copy p,
     .bwa-objective h3,
-    .bwa-certainty-close p,
     .bwa-included-head h3,
     .bwa-modal-card h2 {
       font-family: "Manrope", sans-serif;
@@ -4006,13 +3768,6 @@
 
     .bwa-manifesto-copy p {
       font-weight: 500;
-    }
-
-    .bwa-certainty-title strong {
-      color: var(--bwa-blue-mist);
-      font-family: "Manrope", sans-serif;
-      font-style: italic;
-      font-weight: 300;
     }
 
     .bwa-label-accent,
@@ -4065,38 +3820,6 @@
 
     .bwa-hero-fact-copy span {
       display: block;
-    }
-
-    .bwa-certainty-num {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .bwa-certainty-num i {
-      font: inherit;
-      font-style: normal;
-    }
-
-    .bwa-certainty-glyph {
-      width: 46px;
-      height: 46px;
-      flex: 0 0 46px;
-      color: var(--bwa-blue-mist);
-      opacity: .92;
-      transition: transform .5s var(--bwa-ease), color .35s ease;
-    }
-
-    .bwa-certainty-item:hover .bwa-certainty-glyph,
-    .bwa-certainty-item:focus-within .bwa-certainty-glyph,
-    .bwa-certainty-item.bwa-open .bwa-certainty-glyph {
-      color: var(--bwa-white);
-      transform: translateX(4px);
-    }
-
-    .bwa-certainty-toggle,
-    .bwa-certainty-detail-inner {
-      grid-template-columns: 132px minmax(0, 1fr) minmax(220px, .75fr) 44px;
     }
 
     .bwa-story-aperture {
@@ -4585,32 +4308,6 @@
         flex-basis: 36px;
       }
 
-      .bwa-certainty-toggle,
-      .bwa-certainty-detail-inner {
-        grid-template-columns: minmax(0, 1fr) 38px;
-      }
-
-      .bwa-certainty-num,
-      .bwa-certainty-name,
-      .bwa-certainty-outcome {
-        grid-column: 1;
-      }
-
-      .bwa-certainty-icon {
-        grid-column: 2;
-        grid-row: 1;
-      }
-
-      .bwa-certainty-detail p {
-        grid-column: 1 / -1;
-      }
-
-      .bwa-certainty-glyph {
-        width: 38px;
-        height: 38px;
-        flex-basis: 38px;
-      }
-
       .bwa-story-linework {
         width: 105%;
         right: -36%;
@@ -4818,7 +4515,6 @@
     }
 
 
-
 /* ===== Fusão 23/jul: slogan no hero, comparador, CTAs intermediários, contato legível ===== */
 .bwa-hero-visual{position:relative}
 .bwa-hero-visual::after{content:"";position:absolute;left:0;right:0;bottom:0;height:52%;background:linear-gradient(180deg,rgba(6,16,30,0),rgba(6,16,30,.78));pointer-events:none;z-index:1}
@@ -4868,10 +4564,9 @@
 
 /* === Passe de densidade desktop — ritmo final entre seções (Parte 1) === */
 @media (min-width:821px){
-  .bwa-audience,.bwa-certainty,.bwa-story,.bwa-projects,.bwa-responsibility,.bwa-workflow,.bwa-proof,.bwa-objectives,.bwa-manifesto,.bwa-faq{padding-top:clamp(46px, 4.36vw, 64px) !important;padding-bottom:clamp(46px, 4.36vw, 64px) !important}
-  .bwa-audience-head,.bwa-certainty-head,.bwa-story-head,.bwa-projects-head,.bwa-proof-head,.bwa-objectives-head,.bwa-faq-head,.bwa-wf2-head{margin-bottom:clamp(32px, 3.5vw, 42px) !important;min-height:0 !important}
+  .bwa-audience,.bwa-story,.bwa-projects,.bwa-responsibility,.bwa-workflow,.bwa-proof,.bwa-objectives,.bwa-manifesto,.bwa-faq{padding-top:clamp(46px, 4.36vw, 64px) !important;padding-bottom:clamp(46px, 4.36vw, 64px) !important}
+  .bwa-audience-head,.bwa-story-head,.bwa-projects-head,.bwa-proof-head,.bwa-objectives-head,.bwa-faq-head,.bwa-wf2-head{margin-bottom:clamp(32px, 3.5vw, 42px) !important;min-height:0 !important}
   .bwa-story-resolution{margin-top:clamp(37px, 3.97vw, 51px) !important}
-  .bwa-certainty-close{margin-top:clamp(35px, 3.31vw, 46px) !important}
   .bwa-projects-foot{margin-top:clamp(28px,3vw,40px) !important}
 }
 
