@@ -4669,7 +4669,7 @@
 }
 
 .bwa-services-discipline {
-  margin: 0;
+  margin: 0 0 14px;
   font-family: "Manrope", sans-serif;
   font-size: clamp(20px, 1.6vw, 24px);
   font-weight: 600;
@@ -4678,18 +4678,22 @@
   color: var(--bwa-ink);
 }
 
-.bwa-services-sub {
-  max-width: 40ch;
-  margin: 8px 0 14px;
-  color: var(--bwa-ink-soft);
-  font-size: 14px;
-  line-height: 1.5;
-}
-
 .bwa-services-list {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+/* Fecho da seção: o botão vem depois dos 12 itens, no fluxo de leitura.
+   No celular ocupa a largura toda, como os botões de "Para quem". */
+.bwa-services-foot {
+  margin-top: clamp(28px, 3vw, 40px);
+}
+
+@media (max-width: 900px) {
+  .bwa-services-foot .bwa-button {
+    width: 100%;
+  }
 }
 
 .bwa-services-item {
