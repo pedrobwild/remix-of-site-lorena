@@ -22,3 +22,4 @@
 - [x] Integrar busca ao blog e remover atalho separado dos menus; preservar endereço antigo por redirecionamento
 - [x] Salvar títulos e descrições das cinco páginas solicitadas e emitir os textos no HTML inicial
 - [x] Validar os cinco cabeçalhos e solicitar publicação
+- [x] Reduzir fonte do texto 'Projeto, obra, marcenaria...' do herói no celular (home-bwa.css)
