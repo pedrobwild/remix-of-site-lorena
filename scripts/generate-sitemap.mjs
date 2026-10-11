@@ -231,6 +231,7 @@ async function main() {
     { loc: `${BASE_URL}/marcenaria`, lastmod: page("src/routes/marcenaria.tsx", ["MarcenariaPage.tsx"], "2026-09-23"), changefreq: "monthly", priority: "0.9" },
     { loc: `${BASE_URL}/parceiros`, lastmod: page("src/routes/parceiros.index.tsx", ["ParceirosPage.tsx"]), changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/parceiros/incorporadoras`, lastmod: page("src/routes/parceiros.incorporadoras.tsx", ["IncorporadorasPage.tsx", "src/content/incorporadoras.ts"], "2026-09-23"), changefreq: "monthly", priority: "0.8" },
+    { loc: `${BASE_URL}/parceiros/leal-moreira`, lastmod: page("src/routes/parceiros.leal-moreira.tsx", ["LealMoreiraPage.tsx", "src/content/lealMoreira.ts"], "2026-10-11"), changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/indique-um-amigo`, lastmod: page("src/routes/indique-um-amigo.tsx", ["IndiquePage.tsx"]), changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/marcas-e-parcerias`, lastmod: page("src/routes/marcas-e-parcerias.tsx", ["MarcasParceriasPage.tsx"], "2026-09-23"), changefreq: "monthly", priority: "0.7" },
     // lastmod = GUIA_MODIFIED de src/guia/data/guiaMeta.ts (conferido em teste).

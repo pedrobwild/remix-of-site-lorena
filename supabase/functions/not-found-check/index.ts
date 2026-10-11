@@ -70,6 +70,8 @@ export const STATIC_ROUTES: ReadonlyArray<string> = [
   "/marcenaria",
   "/parceiros",
   "/parceiros/incorporadoras",
+  "/parceiros/leal-moreira",
+
   "/indique-um-amigo",
   "/marcas-e-parcerias",
   "/guia-do-investidor",

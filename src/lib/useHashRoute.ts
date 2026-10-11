@@ -21,6 +21,7 @@ export type Route =
   | { name: "marcenaria" }
   | { name: "parceiros" }
   | { name: "incorporadoras" }
+  | { name: "leal-moreira" }
   | { name: "indique-um-amigo" }
   | { name: "marcas-e-parcerias" }
   | { name: "guia-do-investidor" }
@@ -131,6 +132,7 @@ function parsePath(rawPath: string): Route {
   // Página atrás de flag (INCORPORADORAS_PAGE_ENABLED): o router decide entre
   // a página e a 404. A rota existe aqui para manter a paridade de rotas.
   if (path === "/parceiros/incorporadoras") return { name: "incorporadoras" };
+  if (path === "/parceiros/leal-moreira") return { name: "leal-moreira" };
   if (path === "/indique-um-amigo") return { name: "indique-um-amigo" };
   if (path === "/marcas-e-parcerias") return { name: "marcas-e-parcerias" };
   if (path === "/guia-do-investidor") return { name: "guia-do-investidor" };
@@ -296,6 +298,7 @@ export const routes = {
   marcenaria: "/marcenaria",
   parceiros: "/parceiros",
   incorporadoras: "/parceiros/incorporadoras",
+  lealMoreira: "/parceiros/leal-moreira",
   indiqueUmAmigo: "/indique-um-amigo",
   marcasEParcerias: "/marcas-e-parcerias",
   guiaDoInvestidor: "/guia-do-investidor",
