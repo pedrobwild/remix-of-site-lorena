@@ -257,23 +257,55 @@ export default function OrcamentoPage() {
         <section className="bwa-orc" id="formulario">
           <div className="bwa-shell bwa-orc-grid">
             <div className="bwa-orc-main" ref={topoRef}>
-              <p className="bwa-orc-kicker">Orçamento · São Paulo</p>
-              {/* H1 com a palavra-chave (rodada 3 de SEO). */}
-              <h1 className="bwa-orc-h1">Orçamento de reforma turnkey de apartamento em SP.</h1>
-              <p className="bwa-orc-sub">
-                <strong>São só as informações iniciais para conhecermos o seu imóvel.</strong> Com elas, um
-                especialista da Bewild entra em contato pelo WhatsApp em até um dia útil para entender o
-                projeto mais a fundo para que seu orçamento personalizado seja elaborado.
-              </p>
+              {final === "delivered" ? (
+                <h1 className="bwa-orc-h1">Pedido de orçamento recebido.</h1>
+              ) : (
+                <>
+                  <p className="bwa-orc-kicker">Orçamento · São Paulo</p>
+                  {/* H1 com a palavra-chave (rodada 3 de SEO). */}
+                  <h1 className="bwa-orc-h1">Orçamento de reforma turnkey de apartamento em SP.</h1>
+                  <p className="bwa-orc-sub">
+                    <strong>São só as informações iniciais para conhecermos o seu imóvel.</strong> Com elas, um
+                    especialista da Bewild entra em contato pelo WhatsApp em até um dia útil para entender o
+                    projeto mais a fundo para que seu orçamento personalizado seja elaborado.
+                  </p>
+                </>
+              )}
 
               {final === "delivered" ? (
                 <div className="bwa-orc-done" role="status" tabIndex={-1} ref={resultadoRef}>
                   <p className="bwa-orc-kicker bwa-orc-kicker--ok">Pedido recebido</p>
-                  <h2 className="bwa-orc-h2">Obrigado, {primeiroNome}.</h2>
+                  <h2 className="bwa-orc-h2">Obrigado, {primeiroNome}. Guardamos o seu contato.</h2>
                   <p>
                     Nosso time analisa o apartamento e responde pelo WhatsApp {whats} em até um dia
                     útil. Se quiser adiantar, fale com a gente agora.
                   </p>
+                  <dl className="bwa-orc-saved" aria-label="Contato salvo">
+                    <div>
+                      <dt>Nome</dt>
+                      <dd>{nome.trim()}</dd>
+                    </div>
+                    <div>
+                      <dt>WhatsApp</dt>
+                      <dd>{whats}</dd>
+                    </div>
+                    <div>
+                      <dt>E-mail</dt>
+                      <dd>{mail.trim()}</dd>
+                    </div>
+                    <div>
+                      <dt>Bairro</dt>
+                      <dd>{bairro.trim()}</dd>
+                    </div>
+                    <div>
+                      <dt>Metragem</dt>
+                      <dd>{area} m²</dd>
+                    </div>
+                    <div>
+                      <dt>Objetivo</dt>
+                      <dd>{OBJETIVOS.find((o) => o.value === objetivo)?.label ?? objetivo}</dd>
+                    </div>
+                  </dl>
                   <div className="bwa-orc-actions">
                     <a
                       className="bwa-orc-btn"
