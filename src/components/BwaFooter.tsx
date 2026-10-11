@@ -58,6 +58,7 @@ export default function BwaFooter() {
               {incorporadorasOn && (
                 <a href="/parceiros/incorporadoras">Parceiros: incorporadoras</a>
               )}
+              <a href="/parceiros/leal-moreira">Parceria Leal Moreira</a>
               <a href="/marcas-e-parcerias">Marcas e parcerias</a>
             </nav>
           </div>

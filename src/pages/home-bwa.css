@@ -2871,6 +2871,39 @@
       }
     }
 
+    /* Sessão 09 — parceria Leal Moreira (card único, foto + texto) */
+    .bwa-parceria-home {
+      background: var(--bwa-paper);
+    }
+
+    .bwa-parceria-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      align-items: stretch;
+      gap: clamp(20px, 2.6vw, 36px);
+    }
+
+    .bwa-parceria-body {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      justify-content: center;
+    }
+
+    .bwa-parceria-texto {
+      font-family: "Manrope", sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      color: rgba(11, 35, 66, .78);
+    }
+
+    @media (max-width: 860px) {
+      .bwa-parceria-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
 
     .bwa-faq {
       padding-block: clamp(71px, 7.59vw, 120px);
