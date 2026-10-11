@@ -323,7 +323,9 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     preencher({ chaves: "", estado: "" });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: /Pedir orçamento/ })));
     expect(sendLeadMock.mock.calls[0][0]).toMatchObject({ chaves: null, message: null });
-    expect(screen.getByRole("heading", { name: "Obrigado, Davi." })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Obrigado, Davi. Guardamos o seu contato." })
+    ).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("(11) 91234-5678");
     expect(screen.queryByRole("button", { name: /Continuar/ })).toBeNull();
 
@@ -405,4 +407,3 @@ describe("/parceiros", () => {
     expect(screen.getByText("Cadastro recebido")).toBeInTheDocument();
   });
 });
-
