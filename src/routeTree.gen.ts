@@ -61,6 +61,7 @@ import { Route as ConteudosSlugRouteImport } from './routes/conteudos.$slug'
 import { Route as GraficosSlugRouteImport } from './routes/graficos.$slug'
 import { Route as ParceirosIndexRouteImport } from './routes/parceiros.index'
 import { Route as ParceirosIncorporadorasRouteImport } from './routes/parceiros.incorporadoras'
+import { Route as ParceirosLealMoreiraRouteImport } from './routes/parceiros.leal-moreira'
 import { Route as PortfolioIndexRouteImport } from './routes/portfolio.index'
 import { Route as PortfolioSlugRouteImport } from './routes/portfolio.$slug'
 import { Route as ReformaSlugRouteImport } from './routes/reforma.$slug'
@@ -338,6 +339,11 @@ const ParceirosIncorporadorasRoute = ParceirosIncorporadorasRouteImport.update({
   path: '/parceiros/incorporadoras',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ParceirosLealMoreiraRoute = ParceirosLealMoreiraRouteImport.update({
+  id: '/parceiros/leal-moreira',
+  path: '/parceiros/leal-moreira',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PortfolioIndexRoute = PortfolioIndexRouteImport.update({
   id: '/portfolio/',
   path: '/portfolio/',
@@ -458,6 +464,7 @@ export interface FileRoutesByFullPath {
   '/conteudos/$slug': typeof ConteudosSlugRoute
   '/graficos/$slug': typeof GraficosSlugRoute
   '/parceiros/incorporadoras': typeof ParceirosIncorporadorasRoute
+  '/parceiros/leal-moreira': typeof ParceirosLealMoreiraRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
   '/reforma/$slug': typeof ReformaSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -526,6 +533,7 @@ export interface FileRoutesByTo {
   '/conteudos/$slug': typeof ConteudosSlugRoute
   '/graficos/$slug': typeof GraficosSlugRoute
   '/parceiros/incorporadoras': typeof ParceirosIncorporadorasRoute
+  '/parceiros/leal-moreira': typeof ParceirosLealMoreiraRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
   '/reforma/$slug': typeof ReformaSlugRoute
   '/admin': typeof AdminIndexRoute
@@ -595,6 +603,7 @@ export interface FileRoutesById {
   '/conteudos/$slug': typeof ConteudosSlugRoute
   '/graficos/$slug': typeof GraficosSlugRoute
   '/parceiros/incorporadoras': typeof ParceirosIncorporadorasRoute
+  '/parceiros/leal-moreira': typeof ParceirosLealMoreiraRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
   '/reforma/$slug': typeof ReformaSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -665,6 +674,7 @@ export interface FileRouteTypes {
     | '/conteudos/$slug'
     | '/graficos/$slug'
     | '/parceiros/incorporadoras'
+    | '/parceiros/leal-moreira'
     | '/portfolio/$slug'
     | '/reforma/$slug'
     | '/admin/'
@@ -733,6 +743,7 @@ export interface FileRouteTypes {
     | '/conteudos/$slug'
     | '/graficos/$slug'
     | '/parceiros/incorporadoras'
+    | '/parceiros/leal-moreira'
     | '/portfolio/$slug'
     | '/reforma/$slug'
     | '/admin'
@@ -801,6 +812,7 @@ export interface FileRouteTypes {
     | '/conteudos/$slug'
     | '/graficos/$slug'
     | '/parceiros/incorporadoras'
+    | '/parceiros/leal-moreira'
     | '/portfolio/$slug'
     | '/reforma/$slug'
     | '/admin/'
@@ -870,6 +882,7 @@ export interface RootRouteChildren {
   ConteudosSlugRoute: typeof ConteudosSlugRoute
   GraficosSlugRoute: typeof GraficosSlugRoute
   ParceirosIncorporadorasRoute: typeof ParceirosIncorporadorasRoute
+  ParceirosLealMoreiraRoute: typeof ParceirosLealMoreiraRoute
   PortfolioSlugRoute: typeof PortfolioSlugRoute
   ReformaSlugRoute: typeof ReformaSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -1256,6 +1269,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ParceirosIncorporadorasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/parceiros/leal-moreira': {
+      id: '/parceiros/leal-moreira'
+      path: '/parceiros/leal-moreira'
+      fullPath: '/parceiros/leal-moreira'
+      preLoaderRoute: typeof ParceirosLealMoreiraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/portfolio/': {
       id: '/portfolio/'
       path: '/portfolio'
@@ -1406,6 +1426,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConteudosSlugRoute: ConteudosSlugRoute,
   GraficosSlugRoute: GraficosSlugRoute,
   ParceirosIncorporadorasRoute: ParceirosIncorporadorasRoute,
+  ParceirosLealMoreiraRoute: ParceirosLealMoreiraRoute,
   PortfolioSlugRoute: PortfolioSlugRoute,
   ReformaSlugRoute: ReformaSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
