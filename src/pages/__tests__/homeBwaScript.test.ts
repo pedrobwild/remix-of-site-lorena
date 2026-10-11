@@ -306,20 +306,21 @@ function mountMobileHome(): HTMLElement {
                 <li class="bwa-services-item" data-services-item>
                   <p class="bwa-services-item-title"><b>01</b> <strong>Consultoria.</strong></p>
                   <div class="bwa-services-item-detail">
-                    <figure class="bwa-services-figure"><img src="/images/a.jpg" alt="A" loading="lazy"><figcaption>Projeto 3D</figcaption></figure>
                     <p class="bwa-services-item-text">Leitura do imóvel.</p>
                   </div>
                 </li>
                 <li class="bwa-services-item" data-services-item>
                   <p class="bwa-services-item-title"><b>02</b> <strong>Projeto 3D.</strong></p>
                   <div class="bwa-services-item-detail">
-                    <figure class="bwa-services-figure"><img src="/images/b.jpg" alt="B" loading="lazy"><figcaption>Obra entregue</figcaption></figure>
                     <p class="bwa-services-item-text">Maquete realista.</p>
                   </div>
                 </li>
               </ol>
             </div>
-            <div class="bwa-services-detail" data-services-detail hidden></div>
+            <div class="bwa-services-media">
+              <figure class="bwa-services-figure bwa-services-figure-fixed"><img src="/images/equipe.jpg" alt="Equipe Bewild em obra" loading="lazy"><figcaption>Equipe própria Bewild em obra</figcaption></figure>
+              <div class="bwa-services-detail" data-services-detail hidden></div>
+            </div>
           </div>
         </section>
         <section class="bwa-final" id="contato"></section>
