@@ -166,10 +166,10 @@ export default function MarcenariaPage() {
       <main id="main" tabIndex={-1}>
         <section className="bwa-servico-intro">
           <div className="bwa-shell bwa-servico-head">
-            <p className="bwa-label">Marcenaria sob medida em São Paulo</p>
+            <p className="bwa-label">Móveis planejados sob medida</p>
             <div>
               <h1 className="bwa-title">
-                Marcenaria sob medida, <em>feita na nossa fábrica.</em>
+                Marcenaria sob medida em São Paulo, <em>feita na nossa fábrica.</em>
               </h1>
               <p className="bwa-servico-lead">
                 Cada armário, painel e bancada da sua reforma sai do mesmo
@@ -195,6 +195,23 @@ export default function MarcenariaPage() {
                 </li>
               ))}
             </ul>
+          </div>
+        </section>
+
+        <section className="bwa-servico-block" aria-labelledby="compactos">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="compactos">
+              Móveis planejados para studio e apartamento pequeno
+            </h2>
+            <p className="bwa-servico-text">
+              Num studio ou apartamento pequeno, a marcenaria não é o último acabamento: é ela que
+              define a circulação, o armazenamento e a separação entre os usos do espaço. Por isso os
+              móveis planejados da Bewild são desenhados junto com o layout, sob medida para espaços
+              compactos, e aprovados em 3D antes de a fábrica produzir. Veja como isso entra na{" "}
+              <a href="/reforma-de-studio-sao-paulo">reforma de studio em São Paulo</a> e, para
+              metragens maiores, na{" "}
+              <a href="/reforma-de-apartamento-sao-paulo">reforma de apartamento em São Paulo</a>.
+            </p>
           </div>
         </section>
 

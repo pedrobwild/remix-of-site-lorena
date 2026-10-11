@@ -1,4 +1,3 @@
-import { brandTitle } from "@/lib/seoTitle";
 import { optimizedImageUrl } from "./imageUrl";
 /**
  * Loaders de SEO das rotas dinâmicas (projeto, artigo, bairro): buscam o
@@ -14,7 +13,7 @@ import {
   type ProjectSeoPeer,
 } from "@/lib/projectSeo";
 import { neighborhoodPages, neighborhoodSlug } from "@/lib/portfolioFilter";
-import { bairroAreaRange, bairroDescription } from "@/lib/bairroSeo";
+import { bairroAreaRange, bairroDescription, bairroTitle } from "@/lib/bairroSeo";
 
 export type RouteSeoData = {
   title: string;
@@ -121,12 +120,12 @@ export async function loadBairroSeo(slug: string): Promise<RouteSeoData> {
     const page = neighborhoodPages(list).find((n) => n.slug === slug);
     if (!page) return NOT_FOUND_SEO;
     return {
-      title: brandTitle(`Reforma de apartamento em ${page.label}: projetos e orçamento`),
+      title: bairroTitle(page.label),
       description: `${page.count} apartamentos reformados pela Bewild em ${page.label}, São Paulo: fotos reais de cada obra e orçamento sem custo para o seu imóvel no bairro.`,
     };
   } catch {
     return {
-      title: brandTitle("Reforma de apartamento em São Paulo: projetos e orçamento"),
+      title: bairroTitle(),
       description:
         "Apartamentos reformados pela Bewild em São Paulo: fotos reais de cada obra e orçamento sem custo.",
     };
@@ -188,7 +187,7 @@ export function bairroSeoFrom(
 ): RouteSeoData {
   if (!list) {
     return {
-      title: brandTitle("Reforma de apartamento em São Paulo: projetos e orçamento"),
+      title: bairroTitle(),
       description:
         "Apartamentos reformados pela Bewild em São Paulo: fotos reais de cada obra e orçamento sem custo.",
     };
@@ -198,7 +197,7 @@ export function bairroSeoFrom(
   // Mesma lista e mesma faixa que a página mostra (bairroProjects + bairroAreaRange).
   const shown = list.filter((p) => p.cover_url && p.neighborhood && neighborhoodSlug(p.neighborhood) === slug);
   return {
-    title: brandTitle(`Reforma de apartamento em ${page.label}: projetos e orçamento`),
+    title: bairroTitle(page.label),
     description: bairroDescription(shown.length, page.label, bairroAreaRange(shown)),
   };
 }

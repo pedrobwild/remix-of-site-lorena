@@ -6,6 +6,7 @@ import { bairroProjects, projectListJsonLd } from "@/lib/contentJsonLd";
 import { faqJsonLd } from "@/lib/useSeo";
 import { bairroContent } from "@/content/bairros";
 import { optimizedImageUrl } from "@/lib/imageUrl";
+import { bairroTitle } from "@/lib/bairroSeo";
 
 export const Route = createFileRoute("/reforma/$slug")({
   loader: ({ params }) => loadBairroContent(params.slug),
@@ -13,9 +14,7 @@ export const Route = createFileRoute("/reforma/$slug")({
   head: ({ loaderData: ld, params }) => {
     const loaderData = ld?.seo;
     return seoHead({
-      title:
-        loaderData?.title ??
-        "Reforma de apartamento em São Paulo: projetos e orçamento | Bewild",
+      title: loaderData?.title ?? bairroTitle(),
       description:
         loaderData?.description ??
         "Apartamentos reformados pela Bewild em São Paulo: fotos reais de cada obra e orçamento sem custo.",

@@ -9,7 +9,15 @@
  */
 import { faqJsonLd } from "@/lib/useSeo";
 
-export const ITENS: { q: string; a: string }[] = [
+/**
+ * `href` + `linkLabel`: leitura complementar mostrada abaixo da resposta (mesmo
+ * padrão do /faq). Esta página responde por "autorização de reforma em
+ * condomínio"; a busca "NBR 16280" é do artigo da norma, por isso o link com
+ * essa âncora sai daqui para lá (análise de palavras-chave de 11/10/2026).
+ */
+export type AutorizacaoItem = { q: string; a: string; href?: string; linkLabel?: string };
+
+export const ITENS: AutorizacaoItem[] = [
   {
     q: "Preciso de autorização do condomínio para reformar meu apartamento?",
     a: "Sim. Em praticamente todos os condomínios de São Paulo, obra interna depende de comunicado prévio ao síndico ou à administradora — mesmo quando não há alteração de estrutura. A regra vem da convenção do prédio e do regimento interno, e reformar sem avisar pode gerar multa, embargo da obra e até ação do condomínio.",
@@ -17,14 +25,20 @@ export const ITENS: { q: string; a: string }[] = [
   {
     q: "O que o condomínio costuma exigir para liberar a reforma?",
     a: "Os pedidos mais comuns são: comunicado prévio com datas de início e fim, ART ou RRT do responsável técnico, comprovante de seguro de responsabilidade civil, definição de horários de obra, uso do elevador de serviço com proteção e forma de retirada de entulho. Alguns prédios pedem também descrição do escopo, com o que será demolido e o que permanece.",
+    href: "/conteudos/nbr-16280-reforma-studio-condominio",
+    linkLabel: "NBR 16280: o que a norma exige do plano de reforma →",
   },
   {
     q: "Como pedir a autorização de reforma ao condomínio?",
     a: "O caminho é o protocolo na administradora: ofício ou formulário próprio do condomínio, com anexos técnicos (ART/RRT, seguro, cronograma) e, em alguns prédios, ciência dos vizinhos ao imóvel. Aprovado o pedido, a obra passa a valer dentro das condições combinadas — horários, rota de entulho e cuidados com áreas comuns.",
+    href: "/conteudos/o-que-perguntar-ao-sindico-antes-de-reformar",
+    linkLabel: "O que perguntar ao síndico antes de reformar →",
   },
   {
     q: "Quanto tempo demora a aprovação do condomínio?",
     a: "Depende do regimento. Condomínios administrados costumam responder entre 3 e 15 dias úteis; alguns prédios só deliberam em assembleia ou exigem assinatura de mais de um responsável, o que alonga o prazo. Por isso a autorização entra no cronograma antes de a obra começar, nunca em paralelo a ela.",
+    href: "/conteudos/quanto-tempo-demora-reforma-apartamento",
+    linkLabel: "Quanto tempo demora uma reforma de apartamento →",
   },
   {
     q: "Posso começar a obra antes da autorização do condomínio?",

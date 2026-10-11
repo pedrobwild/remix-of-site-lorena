@@ -691,8 +691,12 @@
       color: rgba(255, 255, 255, .72);
     }
 
-    /* Tracking de -.068em colava as palavras ("desejoé", "umaobra"). */
-    .bwa-hero h1 {
+    /* Slogan do herói ("Seu desejo é uma obra."). Desde 11/10/2026 ele é um
+       <p class="bwa-hero-title">: o <h1> da home passou a ser a linha acima,
+       com a palavra-chave ("Reforma completa de studios e apartamentos · São
+       Paulo"), que mantém a aparência de rótulo (.bwa-label). Nada muda na tela.
+       Tracking de -.068em colava as palavras ("desejoé", "umaobra"). */
+    .bwa-hero .bwa-hero-title {
       max-width: 980px;
       margin: 0;
       font-size: clamp(33px, 3.6vw, 64px);
@@ -704,7 +708,7 @@
       padding-bottom: .04em;
     }
 
-    .bwa-hero h1 em {
+    .bwa-hero .bwa-hero-title em {
       font-family: "Manrope", sans-serif;
       font-weight: 400;
       letter-spacing: -.025em;
@@ -1070,6 +1074,15 @@
       color: var(--bwa-navy-2);
       text-decoration: underline;
       text-underline-offset: 3px;
+    }
+
+    /* Segunda linha da nota: links para as páginas de serviço e para o pilar
+       de short stay (links internos com a palavra-chave no texto, 11/10/2026).
+       Sem o fio superior, para ler como continuação da nota acima. */
+    .bwa-audience-more {
+      margin-top: 12px;
+      padding-top: 0;
+      border-top: 0;
     }
 
     /* Faixa de renders entre #para-quem e #certeza — imagem 2000×600, largura total */
@@ -3336,7 +3349,7 @@
         grid-template-columns: 1fr .78fr;
       }
 
-      .bwa-hero h1 {
+      .bwa-hero .bwa-hero-title {
         font-size: clamp(30px, 4.1vw, 50px);
       }
 
@@ -3398,7 +3411,7 @@
         padding: 104px var(--bwa-gutter) 44px;
       }
 
-      .bwa-hero h1 {
+      .bwa-hero .bwa-hero-title {
         font-size: clamp(31px, 8.03vw, 52px);
       }
 
@@ -3818,7 +3831,7 @@
 
     .bwa-display,
     .bwa-title,
-    .bwa-hero h1 {
+    .bwa-hero .bwa-hero-title {
       font-family: "Manrope", sans-serif;
       font-weight: 600;
     }
@@ -3826,7 +3839,7 @@
     .bwa-display em,
     .bwa-title em,
     .bwa-title-serif,
-    .bwa-hero h1 em {
+    .bwa-hero .bwa-hero-title em {
       font-family: "Manrope", sans-serif;
       font-style: italic;
       font-weight: 300;
@@ -5213,6 +5226,12 @@ html[data-bwa-tour3d-open]{overflow:hidden}
 .bwa-marcenaria-status:empty{display:none}
 .bwa-marcenaria-retry{display:inline-block;min-height:44px;padding:0 4px;background:none;border:0;font:inherit;color:var(--bwa-white);text-decoration:underline;text-underline-offset:4px;cursor:pointer}
 .bwa-marcenaria-actions{margin:clamp(18px,2.5vw,28px) 0 0}
+/* Dois links na mesma linha (catálogo + página /marcenaria): o respiro fica à
+   direita do primeiro, para não recuar o segundo quando ele quebra de linha. */
+.bwa-marcenaria-actions .bwa-marcenaria-open:not(:last-child){margin-right:28px}
+/* No celular cada link ocupa a própria linha: sem o respiro, o primeiro não
+   perde largura em telas de 320 px. */
+@media (max-width:560px){.bwa-marcenaria-actions .bwa-marcenaria-open:not(:last-child){margin-right:0}}
 .bwa-marcenaria-open{color:var(--bwa-white);font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;text-decoration:underline;text-underline-offset:4px}
 @media (prefers-reduced-motion:reduce){.bwa-marcenaria-ph{animation:none}.bwa-marcenaria-item:hover img{transform:none}}
 @media (max-width:900px){
