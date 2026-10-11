@@ -25,6 +25,21 @@ type VideoMeta = { name?: string; description?: string; thumbnailUrl?: string; d
 const ytMeta = (id: string): VideoMeta => (videoMeta.youtube as Record<string, VideoMeta>)[id] ?? {};
 const fileMeta = (src: string): VideoMeta => (videoMeta.files as Record<string, VideoMeta>)[src] ?? {};
 
+/**
+ * uploadDate do VideoObject: o Google exige ISO 8601 com fuso. Data sem hora vira
+ * meia-noite de São Paulo (-03:00); data e hora sem fuso é lida como UTC (Z);
+ * com fuso, só é mantida. Valor ausente ou inválido não sai (melhor que data errada).
+ */
+export function videoUploadDate(value: string | null | undefined): string | undefined {
+  const v = (value ?? "").trim();
+  if (!v) return undefined;
+  let iso = v;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(v)) iso = `${v}T00:00:00-03:00`;
+  else if (/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?$/.test(v)) iso = `${v.replace(" ", "T")}Z`;
+  else if (/^\d{4}-\d{2}-\d{2} \d/.test(v)) iso = v.replace(" ", "T");
+  return Number.isNaN(Date.parse(iso)) ? undefined : iso;
+}
+
 const abs = (u: string) => (u.startsWith("http") ? u : `${BASE}${u.startsWith("/") ? u : `/${u}`}`);
 
 /**
@@ -56,7 +71,7 @@ export function postVideoJsonLd(post: Pick<BewildPost, "body" | "title" | "meta_
     thumbnailUrl: [abs(meta.thumbnailUrl || poster)],
     ...(meta.duration ? { duration: meta.duration } : {}),
     contentUrl: abs(src),
-    uploadDate: dates.published,
+    uploadDate: videoUploadDate(dates.published),
     inLanguage: "pt-BR",
     publisher: { "@id": `${BASE}/#org` },
     url: `${BASE}/conteudos/${post.slug}`,
@@ -117,7 +132,7 @@ export function postJsonLd(post: BewildPost, extras: PostJsonLdExtras = {}): Jso
       "@id": `${articleUrl}#video-${leadingVideo.id}`,
       name: leadingVideo.title,
       description: post.excerpt || post.meta_description || post.title,
-      thumbnailUrl: [leadingVideo.thumbnail], uploadDate: dates.published,
+      thumbnailUrl: [leadingVideo.thumbnail], uploadDate: videoUploadDate(dates.published),
       embedUrl: `https://www.youtube.com/embed/${leadingVideo.id}`,
       contentUrl: `https://www.youtube.com/watch?v=${leadingVideo.id}`,
       publisher: { "@type": "Organization", "@id": `${BASE}/#org`, name: "Bewild Arquitetura & Reformas", url: `${BASE}/` },
@@ -162,8 +177,9 @@ export function postJsonLd(post: BewildPost, extras: PostJsonLdExtras = {}): Jso
       description: meta.description || post.meta_description || post.excerpt || name,
       thumbnailUrl: [meta.thumbnailUrl || youtubeThumbnailUrl(v.id)],
       ...(meta.duration ? { duration: meta.duration } : {}),
-      uploadDate: dates.published,
+      uploadDate: videoUploadDate(dates.published),
       embedUrl: youtubeEmbedUrl(v.id, v.start ?? undefined),
+      contentUrl: `https://www.youtube.com/watch?v=${v.id}`,
       url: `https://www.youtube.com/watch?v=${v.id}`,
       inLanguage: "pt-BR",
       isPartOf: { "@type": "WebPage", "@id": articleUrl },
