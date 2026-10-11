@@ -753,6 +753,14 @@
       text-wrap: pretty;
     }
 
+    /* Celular: o texto longo do herói cabe em menos linhas. */
+    @media (max-width: 699px) {
+      .bwa-hero .bwa-hero-sub {
+        font-size: 14px;
+        line-height: 1.45;
+      }
+    }
+
     .bwa-hero-visual {
       /* Glifo (.bwa-hero-signature) e lista "Morar / Alugar / Vender" no canto
          superior direito: a lista vem logo abaixo do glifo. Antes as duas
