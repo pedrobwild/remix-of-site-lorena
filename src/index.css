@@ -5219,7 +5219,8 @@ textarea.admin-field__input {
   line-height: 1.4;
   color: rgba(255, 255, 255, 0.82);
   margin: 0;
-  max-width: 68ch;
+  /* Ocupa a largura útil ao lado dos botões: menos linhas, banner mais baixo. */
+  max-width: 118ch;
 }
 
 /* Versão curta do aviso: só no celular (ver a media query abaixo). */
