@@ -1,10 +1,17 @@
 // Edge function: google-ads-audiences
 // Lê da conta Google Ads conectada (GOOGLE_ADS_CUSTOMER_ID) as listas de
-// público (user_list), as ações de conversão e as conversões dos últimos
-// 30 dias, para a aba "Google Ads" do /admin/analytics. Somente admin.
+// público (catálogo atual), conversões e campanhas do período/página pedidos.
+// As datas seguem o fuso da conta. Somente admin.
 // Só leitura (googleAds:search). Nunca retorna chaves.
 
 import { createClient } from "npm:@supabase/supabase-js@2.45.4";
+import {
+  accountDay,
+  InvalidFilter,
+  normalizeLandingPath,
+  parseRequest,
+  readPeriod,
+} from "./report.ts";
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -57,24 +64,50 @@ async function gaql(query: string): Promise<Row[]> {
     if (!res.ok) throw new Error(`Google Ads ${res.status}: ${JSON.stringify(body).slice(0, 400)}`);
     out.push(...(body.results ?? []));
     pageToken = body.nextPageToken;
-    if (!pageToken) break;
+    if (!pageToken) return out;
   }
-  return out;
+  // Never quietly present a truncated set of landing URLs as complete totals.
+  throw new Error("Google Ads pagination limit reached");
 }
 
 const n = (v: unknown) => (Number.isFinite(Number(v)) ? Number(v) : 0);
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method !== "GET" && req.method !== "POST")
+    return json({ error: "método não permitido" }, 405);
   const denied = await requireAdmin(req);
   if (denied) return denied;
 
-  if (!Deno.env.get("GOOGLE_ADS_CUSTOMER_ID") || !Deno.env.get("GOOGLE_ADS_API_KEY") || !Deno.env.get("LOVABLE_API_KEY")) {
+  if (
+    !Deno.env.get("GOOGLE_ADS_CUSTOMER_ID") ||
+    !Deno.env.get("GOOGLE_ADS_API_KEY") ||
+    !Deno.env.get("LOVABLE_API_KEY")
+  ) {
     return json({ connected: false, reason: "Google Ads não está conectado ao projeto." });
   }
 
   try {
-    const [lists, actions, perAction, campaigns] = await Promise.all([
+    let input: unknown = {};
+    if (req.method === "POST") {
+      try {
+        const text = await req.text();
+        input = text ? JSON.parse(text) : {};
+      } catch {
+        throw new InvalidFilter("Envie filtros em JSON válido.");
+      }
+    } else {
+      input = Object.fromEntries(new URL(req.url).searchParams);
+    }
+    const account = await gaql("SELECT customer.currency_code, customer.time_zone FROM customer");
+    const timeZone = account[0]?.customer?.timeZone ?? "America/Sao_Paulo";
+    const currency = account[0]?.customer?.currencyCode ?? "BRL";
+    const today = accountDay(new Date(), timeZone);
+    const filters = parseRequest(input, today);
+    const landingPath = filters.segments.length
+      ? normalizeLandingPath(filters.segments[0].value)
+      : null;
+    const [lists, actions] = await Promise.all([
       gaql(`SELECT user_list.id, user_list.name, user_list.type, user_list.membership_status,
               user_list.size_for_search, user_list.size_for_display, user_list.membership_life_span,
               user_list.eligible_for_search, user_list.eligible_for_display
@@ -82,66 +115,39 @@ Deno.serve(async (req) => {
       gaql(`SELECT conversion_action.id, conversion_action.name, conversion_action.category,
               conversion_action.type, conversion_action.status, conversion_action.primary_for_goal
             FROM conversion_action WHERE conversion_action.status != 'REMOVED'`),
-      gaql(`SELECT segments.conversion_action_name, metrics.conversions, metrics.conversions_value
-            FROM customer WHERE segments.date DURING LAST_30_DAYS`),
-      gaql(`SELECT campaign.id, campaign.name, campaign.status, campaign.advertising_channel_type,
-              metrics.impressions, metrics.clicks, metrics.conversions, metrics.cost_micros
-            FROM campaign WHERE campaign.status != 'REMOVED' AND segments.date DURING LAST_30_DAYS`),
     ]);
-
-    const convByName = new Map<string, { conversions: number; value: number }>();
-    for (const r of perAction) {
-      const name = r.segments?.conversionActionName ?? "";
-      const cur = convByName.get(name) ?? { conversions: 0, value: 0 };
-      cur.conversions += n(r.metrics?.conversions);
-      cur.value += n(r.metrics?.conversionsValue);
-      convByName.set(name, cur);
-    }
-
-    const campMap = new Map<string, Row>();
-    for (const r of campaigns) {
-      const id = String(r.campaign?.id);
-      const cur = campMap.get(id) ?? {
-        id, name: r.campaign?.name, status: r.campaign?.status, channel: r.campaign?.advertisingChannelType,
-        impressions: 0, clicks: 0, conversions: 0, cost: 0,
-      };
-      cur.impressions += n(r.metrics?.impressions);
-      cur.clicks += n(r.metrics?.clicks);
-      cur.conversions += n(r.metrics?.conversions);
-      cur.cost += n(r.metrics?.costMicros) / 1_000_000;
-      campMap.set(id, cur);
-    }
+    const [current, previous] = await Promise.all([
+      readPeriod(gaql, filters, landingPath, actions),
+      filters.previous
+        ? readPeriod(gaql, filters.previous, landingPath, actions)
+        : Promise.resolve(null),
+    ]);
 
     return json({
       connected: true,
+      version: 2,
+      request: filters,
+      scope: { landingPath, lists: "account_current", timeZone, currency, today },
       fetchedAt: new Date().toISOString(),
-      lists: lists.map((r) => ({
-        id: String(r.userList?.id),
-        name: r.userList?.name ?? "",
-        type: r.userList?.type ?? "",
-        sizeSearch: n(r.userList?.sizeForSearch),
-        sizeDisplay: n(r.userList?.sizeForDisplay),
-        lifeSpanDays: n(r.userList?.membershipLifeSpan),
-        eligibleSearch: !!r.userList?.eligibleForSearch,
-        eligibleDisplay: !!r.userList?.eligibleForDisplay,
-      })).sort((a, b) => b.sizeDisplay - a.sizeDisplay),
-      conversions: actions.map((r) => {
-        const name = r.conversionAction?.name ?? "";
-        const c = convByName.get(name);
-        return {
-          id: String(r.conversionAction?.id),
-          name,
-          category: r.conversionAction?.category ?? "",
-          status: r.conversionAction?.status ?? "",
-          primary: !!r.conversionAction?.primaryForGoal,
-          conversions30d: c?.conversions ?? 0,
-          value30d: c?.value ?? 0,
-        };
-      }).sort((a, b) => b.conversions30d - a.conversions30d),
-      campaigns: [...campMap.values()].sort((a, b) => b.cost - a.cost),
+      ...current,
+      previous,
+      lists: lists
+        .map((r) => ({
+          id: String(r.userList?.id),
+          name: r.userList?.name ?? "",
+          type: r.userList?.type ?? "",
+          sizeSearch: r.userList?.sizeForSearch == null ? null : n(r.userList?.sizeForSearch),
+          sizeDisplay: r.userList?.sizeForDisplay == null ? null : n(r.userList?.sizeForDisplay),
+          lifeSpanDays: n(r.userList?.membershipLifeSpan),
+          eligibleSearch: !!r.userList?.eligibleForSearch,
+          eligibleDisplay: !!r.userList?.eligibleForDisplay,
+        }))
+        .sort((a, b) => (b.sizeDisplay ?? 0) - (a.sizeDisplay ?? 0)),
     });
   } catch (e) {
-    console.error("google-ads-audiences", e instanceof Error ? e.message : e);
+    if (e instanceof InvalidFilter) return json({ connected: false, reason: e.message }, 400);
+    // Gateway error bodies can contain sensitive details; do not log them.
+    console.error("google-ads-audiences: report failed");
     return json({ connected: false, reason: "Não foi possível ler a conta do Google Ads agora." });
   }
 });
