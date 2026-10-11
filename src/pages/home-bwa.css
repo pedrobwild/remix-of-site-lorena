@@ -1010,6 +1010,13 @@
       font-size: 14px;
     }
 
+    /* No celular, volta a rótulo menor para os mesmos dois cards. */
+    @media (max-width: 767px) {
+      .bwa-audience-card .bwa-label {
+        font-size: 11px;
+      }
+    }
+
     .bwa-audience-card h3 {
       margin: 0;
       font-family: "Manrope", sans-serif;
