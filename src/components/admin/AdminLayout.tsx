@@ -66,7 +66,7 @@ const NAV: { key: ActiveKey; label: string; href: string; icon: typeof LayoutDas
   { key: "leads", label: "Leads", href: routes.adminLeads, icon: Inbox },
   { key: "qualificacao", label: "Qualificação", href: routes.adminQualificacao, icon: ListChecks },
   { key: "mensagens", label: "Mensagens", href: routes.adminMensagens, icon: MessagesSquare },
-  { key: "diagnostico", label: "Diagnósticos", href: routes.adminDiagnostico, icon: ClipboardList },
+  { key: "diagnostico", label: "Orçamentos", href: routes.adminDiagnostico, icon: ClipboardList },
   { key: "indicacoes", label: "Indicações", href: routes.adminIndicacoes, icon: Handshake },
   { key: "bewild", label: "Portfólio Bewild", href: "/admin/projetos", icon: FolderKanban },
   { key: "conteudos", label: "Conteúdos", href: "/admin/conteudos", icon: Newspaper },
