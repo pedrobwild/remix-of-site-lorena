@@ -356,6 +356,21 @@
 .bwa-orc-done { margin-top: 48px; }
 .bwa-orc-done:focus { outline: none; }
 .bwa-orc-done .bwa-orc-h2 { margin-top: 12px; }
+.bwa-orc-saved {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 24px;
+  max-width: 56ch;
+  margin: 24px 0 0;
+  padding: 20px 0;
+  border-top: 1px solid var(--orc-gray-300);
+  border-bottom: 1px solid var(--orc-gray-300);
+}
+.bwa-orc-saved dt { font-size: 13px; color: var(--orc-muted); }
+.bwa-orc-saved dd { margin: 2px 0 0; font-size: 16px; color: var(--orc-ink); overflow-wrap: anywhere; }
+@media (max-width: 480px) {
+  .bwa-orc-saved { grid-template-columns: minmax(0, 1fr); }
+}
 .bwa-orc-done p:not(.bwa-orc-kicker) {
   max-width: 56ch;
   margin: 16px 0 0;
