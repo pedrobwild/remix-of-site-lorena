@@ -4884,10 +4884,32 @@
   color: var(--bwa-ink-soft);
 }
 
-/* Sem JS (nem índice, nem acordeão): texto corrido; as figuras só entram
-   com o script, para a página não crescer 12 imagens. */
-.bwa-services:not(.is-indexed):not(.is-accordion) .bwa-services-figure {
+/* Sem JS (nem índice, nem acordeão): texto corrido. As figuras por tópico
+   saíram (11/10/2026): a seção tem uma imagem fixa, que fica visível
+   também sem JS. */
+.bwa-services:not(.is-indexed):not(.is-accordion)
+  .bwa-services-figure:not(.bwa-services-figure-fixed) {
   display: none;
+}
+
+/* Coluna do detalhe: imagem fixa (equipe em obra) + painel do tópico ativo.
+   O painel continua sticky; a imagem fica acima dele, fora do sticky. */
+.bwa-services-media {
+  display: grid;
+  gap: 22px;
+  min-width: 0;
+}
+
+.bwa-services-figure-fixed img {
+  aspect-ratio: 4 / 3;
+  filter: saturate(.92);
+}
+
+/* No celular a imagem fixa abre a seção, entre o rótulo e o título. */
+@media (max-width: 760px) {
+  .bwa-services-media {
+    order: -1;
+  }
 }
 
 /* ---- Índice + detalhe (≥ 761 px, `is-indexed`) ---- */
