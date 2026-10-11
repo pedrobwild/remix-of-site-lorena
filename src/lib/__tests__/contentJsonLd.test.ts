@@ -43,7 +43,8 @@ describe("JSON-LD no head() sem duplicação", () => {
     const video = nodes.find((n) => n["@type"] === "VideoObject");
     expect(video.name).toBe("Como reformar um studio gastando menos: 4 obras que raramente se pagam");
     expect(video.description).toBe(p.excerpt);
-    expect(video.uploadDate).toBe(p.published_at);
+    expect(video.uploadDate).toBe(videoUploadDate(p.published_at));
+    expect(video.uploadDate).toMatch(/(Z|[+-]\d{2}:\d{2})$/);
     expect(video.embedUrl).toBe("https://www.youtube.com/embed/El1Dxf7RBRk");
     expect(video.contentUrl).toBe("https://www.youtube.com/watch?v=El1Dxf7RBRk");
     expect(video.publisher.name).toBe("Bewild Arquitetura & Reformas");
@@ -72,7 +73,8 @@ describe("JSON-LD no head() sem duplicação", () => {
     expect(video.name).toBe("Tour pelo studio");
     expect(video.embedUrl).toBe("https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ");
     expect(video.thumbnailUrl[0]).toBe("https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg");
-    expect(video.uploadDate).toBeTruthy();
+    expect(video.uploadDate).toMatch(/(Z|[+-]\d{2}:\d{2})$/);
+    expect(video.contentUrl).toBe("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
   });
 
   it("trecho citado (?start=) vira Clip com startOffset e endOffset", () => {
@@ -138,5 +140,16 @@ describe("JSON-LD no head() sem duplicação", () => {
 
   it("noindex (404) não emite JSON-LD", () => {
     expect(seoHead({ title: "x", description: "y", path: "/conteudos/x", noindex: true, jsonLd: postJsonLd(post) }).scripts).toEqual([]);
+  });
+});
+
+describe("videoUploadDate", () => {
+  it("sempre devolve ISO com fuso ou nada", () => {
+    expect(videoUploadDate("2026-09-01")).toBe("2026-09-01T00:00:00-03:00");
+    expect(videoUploadDate("2026-09-01T10:00:00")).toBe("2026-09-01T10:00:00Z");
+    expect(videoUploadDate("2026-09-01T10:00:00+00:00")).toBe("2026-09-01T10:00:00+00:00");
+    expect(videoUploadDate("2026-09-01T00:00:00Z")).toBe("2026-09-01T00:00:00Z");
+    expect(videoUploadDate(null)).toBeUndefined();
+    expect(videoUploadDate("lixo")).toBeUndefined();
   });
 });
