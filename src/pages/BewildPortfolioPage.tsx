@@ -96,7 +96,7 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
     budget !== ALL_OPTION;
 
   const waUrl = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
-    "Olá! Vim pelo portfólio e quero um diagnóstico do meu studio.",
+    "Olá! Vim pelo portfólio e quero um orçamento para a reforma do meu studio.",
   )}`;
 
   const total = filtered.length;

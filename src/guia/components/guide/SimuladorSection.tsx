@@ -369,7 +369,7 @@ export default function SimuladorSection() {
           <AccordionTrigger className="text-primary font-semibold min-h-[48px]">O que o payback considera</AccordionTrigger>
           <AccordionContent>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              O cálculo de payback é simplificado: <strong className="text-foreground">Payback = Orçamento de reforma ÷ Receita incremental mensal</strong> (diferença entre o cenário com aumento de diária e o cenário base, com a mesma ocupação e o mesmo objetivo). Sem aumento de diária não há receita incremental, e o payback não é calculado. Não inclui custos operacionais como limpeza (~R$ 80–120/virada), taxa da plataforma (~15%), condomínio, IPTU ou imposto de renda. Para uma projeção completa, solicite um diagnóstico personalizado.
+              O cálculo de payback é simplificado: <strong className="text-foreground">Payback = Orçamento de reforma ÷ Receita incremental mensal</strong> (diferença entre o cenário com aumento de diária e o cenário base, com a mesma ocupação e o mesmo objetivo). Sem aumento de diária não há receita incremental, e o payback não é calculado. Não inclui custos operacionais como limpeza (~R$ 80–120/virada), taxa da plataforma (~15%), condomínio, IPTU ou imposto de renda. Para uma projeção completa, solicite um orçamento.
             </p>
           </AccordionContent>
         </AccordionItem>

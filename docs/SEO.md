@@ -63,7 +63,7 @@ Os blocos dinâmicos ficam nas rotas internas, via os helpers de
 
 | Rota | Blocos |
 |---|---|
-| `/diagnostico` | `Organization` (helper `organizationJsonLd`) + `BreadcrumbList` |
+| `/orcamento` | `ContactPage` com `ContactPoint` e `QuoteAction` (`ORCAMENTO_PAGE_JSONLD`) + `FAQPage` |
 | `/portfolio` | `BreadcrumbList` + `ItemList` |
 | `/portfolio/:slug` | `CreativeWork` + `BreadcrumbList` |
 | `/conteudos/:slug` | `Article` (autor `Person` ou `Organization`, `datePublished`/`dateModified` reais) + `BreadcrumbList` + `FAQPage` quando o post tem FAQ; durante o carregamento, `BreadcrumbList` estático e título por slug |
@@ -102,7 +102,7 @@ Os blocos dinâmicos ficam nas rotas internas, via os helpers de
 Resposta em 2–3 frases no primeiro parágrafo, com número; um dado próprio com
 origem e período declarados; uma tabela; subtítulos em forma de pergunta; FAQ
 com 4–6 perguntas; autor com nome e registro; 3–5 links internos (pilar do
-cluster, portfólio do bairro, `/diagnostico` uma vez no fim) e 2–3 externos para
+cluster, portfólio do bairro, `/orcamento` uma vez no fim) e 2–3 externos para
 fonte primária; ano no título quando o tema é preço, lei ou mercado; um único
 CTA no fim. Nunca prometer renda ou ocupação; "Bewild", nunca "BeWild".
 
@@ -119,7 +119,7 @@ Ele é **regenerado automaticamente no `prebuild`** pelo script
 `scripts/generate-sitemap.mjs`, que consulta o banco via REST (chave pública) e
 inclui:
 
-- as rotas estáticas indexáveis (`/`, `/portfolio`, `/diagnostico`,
+- as rotas estáticas indexáveis (`/`, `/portfolio`,
   `/orcamento`, `/conteudos`, `/guia-do-investidor`, `/faq`,
   `/autorizacao-condominio`, `/contato`, `/como-funciona`,
   `/onde-atuamos`, `/parceiros`, `/privacidade`) — `/contato` entrou em

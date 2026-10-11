@@ -4,7 +4,7 @@
  * Requisitos críticos:
  *  - noindex (robots), sem nav global, sem footer global.
  *  - Acessível apenas via URL direta (QR).
- *  - Mesmo pipeline de lead da DiagnosticoPage (`sendLead` → notify-lead,
+ *  - Mesmo pipeline de lead do /orcamento (`sendLead` → notify-lead,
  *    `form_path: "/p"`), com o WhatsApp aberto dentro do gesto do envio.
  */
 import { PROJETOS, PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
@@ -85,8 +85,8 @@ export default function LpPanfletoPage() {
   const videoObraRef = useVideoAutoplayInView();
 
   useSeo({
-    title: "Bewild · diagnóstico do seu studio",
-    description: "Página do panfleto Bewild. Solicite o diagnóstico do seu studio.",
+    title: "Bewild · orçamento da reforma do seu studio",
+    description: "Página do panfleto Bewild. Solicite o orçamento da reforma do seu studio.",
     canonicalPath: "/p",
     noindex: true,
   });
@@ -117,7 +117,7 @@ export default function LpPanfletoPage() {
 
   const messageText = useMemo(
     () =>
-      buildLeadMessage("[PANFLETO] Olá! Quero o diagnóstico do meu studio.", [
+      buildLeadMessage("[PANFLETO] Olá! Quero um orçamento para a reforma do meu studio.", [
         ["Nome", nome],
         ["WhatsApp", whats],
         ["E-mail", email],
@@ -186,14 +186,14 @@ export default function LpPanfletoPage() {
     trackEvent("click_whatsapp", { category: "lp_panfleto", label: campanha });
     reportContact("whatsapp", "lp_panfleto");
     const bairroTxt = bairro ? ` no bairro ${bairro}` : "";
-    const msg = `[PANFLETO] Olá! Recebi o panfleto da Bewild e quero o diagnóstico do meu studio${bairroTxt}. (origem: ${campanha})`;
+    const msg = `[PANFLETO] Olá! Recebi o panfleto da Bewild e quero um orçamento para a reforma do meu studio${bairroTxt}. (origem: ${campanha})`;
     openWhatsapp(whatsappHref(msg));
   };
 
   const scrollToForm = (e: React.MouseEvent) => {
     e.preventDefault();
     document
-      .getElementById("diagnostico")
+      .getElementById("orcamento")
       ?.scrollIntoView({ behavior: scrollBehavior() });
   };
 
@@ -235,7 +235,7 @@ export default function LpPanfletoPage() {
             Você acompanha tudo pelo portal. O trabalho fica com a gente.
           </p>
           <div className="cta">
-            <a className="btn btn-cyan" href="#diagnostico" onClick={scrollToForm}>
+            <a className="btn btn-cyan" href="#orcamento" onClick={scrollToForm}>
               <span>Solicitar orçamento</span><span className="ar">→</span>
             </a>
             <button className="btn btn-ghost" type="button" onClick={openWhatsRaw}>
@@ -260,13 +260,13 @@ export default function LpPanfletoPage() {
         </div>
       </div>
 
-      {/* 01 — DIAGNÓSTICO */}
-      <section className="paper" id="diagnostico" aria-label="Diagnóstico do studio">
-        <div className="sec-mark"><span className="n">01</span><span className="t">Diagnóstico</span><span className="ln" /></div>
+      {/* 01 — ORÇAMENTO */}
+      <section className="paper" id="orcamento" aria-label="Orçamento da reforma do studio">
+        <div className="sec-mark"><span className="n">01</span><span className="t">Orçamento</span><span className="ln" /></div>
 
         <div className="form-wrap">
           <div className="pitch">
-            <h2>Começa com um <i>diagnóstico.</i></h2>
+            <h2>Começa com um <i>orçamento.</i></h2>
             <p>
               Você manda os dados do imóvel. A gente devolve uma leitura de escopo,
               projeto e próximos passos. Sem compromisso.
@@ -278,9 +278,9 @@ export default function LpPanfletoPage() {
             className={`formcard${outcome ? " done" : ""}`}
             onSubmit={onSubmit}
             noValidate
-            aria-label="Diagnóstico Bewild"
+            aria-label="Pedido de orçamento Bewild"
           >
-            <div className="eye">Diagnóstico Bewild</div>
+            <div className="eye">Orçamento Bewild</div>
             <div className="form-body">
               <div className="fld">
                 <label htmlFor="p-nome">Nome <span className="req" aria-hidden="true">*</span></label>
@@ -453,7 +453,7 @@ export default function LpPanfletoPage() {
         </div>
 
         <div className="lp-quem-cta">
-          <a className="btn btn-cyan" href="#diagnostico" onClick={scrollToForm}>
+          <a className="btn btn-cyan" href="#orcamento" onClick={scrollToForm}>
             <span>Solicitar orçamento</span><span className="ar">→</span>
           </a>
         </div>
@@ -472,7 +472,7 @@ export default function LpPanfletoPage() {
       <div className={`sticky${showSticky ? " show" : ""}`} aria-hidden={!showSticky}>
         <a
           className="btn btn-cyan"
-          href="#diagnostico"
+          href="#orcamento"
           tabIndex={showSticky ? 0 : -1}
           onClick={scrollToForm}
         >

@@ -32,7 +32,7 @@ export const FAQ_INDICADOR = [
   },
   {
     q: "O que acontece depois que eu indico?",
-    a: "Nossa equipe chama o indicado em até 1 dia útil, se apresenta como Bewild e conduz o diagnóstico do imóvel. Você é avisado do andamento e, se o contrato fechar, combina o Pix da recompensa.",
+    a: "Nossa equipe chama o indicado em até 1 dia útil, se apresenta como Bewild e inicia o orçamento da reforma. Você é avisado do andamento e, se o contrato fechar, combina o Pix da recompensa.",
   },
 ];
 

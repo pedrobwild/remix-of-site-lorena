@@ -44,10 +44,15 @@ fontes de verdade em todo build e em todo CI.
 **Regra padrão:** toda rota pública estática precisa existir nas *duas*
 listas. O CI quebra se uma estiver e a outra não.
 
-Rotas públicas estáticas indexáveis hoje (14): `/`, `/portfolio`,
-`/diagnostico`, `/orcamento`, `/conteudos`, `/guia-do-investidor`, `/faq`,
+Rotas públicas estáticas indexáveis (lista de 22/09/2026; a lista viva é
+`ROTAS_INDEXAVEIS` em `src/lib/__tests__/sitemapParidade.test.ts`): `/`,
+`/portfolio`, `/orcamento`, `/conteudos`, `/guia-do-investidor`, `/faq`,
 `/autorizacao-condominio`, `/contato`, `/como-funciona`,
-`/onde-atuamos`, `/parceiros`, `/privacidade`. A página pilar
+`/onde-atuamos`, `/parceiros`, `/privacidade`. `/diagnostico` não é mais
+página: responde 301 para `/orcamento` (`src/routes/diagnostico.tsx` e
+`normalizeLegacyPath`), fora das duas listas e do sitemap; o "diagnóstico"
+deixou de existir como oferta e só há o pedido de orçamento
+(`diagnosticoRemovida.test.ts`). A página pilar
 `/guia-do-investidor` entrou em 22/09/2026 e está nas duas listas, no
 sitemap (prioridade 0.8) e no `public/llms.txt` — não vai a nenhuma
 allowlist.

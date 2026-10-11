@@ -87,7 +87,9 @@ const PERIODS: { value: Period; label: string }[] = [
   { value: 90, label: "90 dias" },
 ];
 
-const TARGET_PATHS = ["/", "/diagnostico", "/portfolio", "/conteudos"];
+// "/orcamento" no lugar de "/diagnostico": a página do diagnóstico saiu do ar
+// (301 para /orcamento) e não recebe mais visitas.
+const TARGET_PATHS = ["/", "/orcamento", "/portfolio", "/conteudos"];
 
 function fmtInt(n: number | null | undefined): string {
   if (n == null) return "—";
@@ -476,7 +478,7 @@ export default function BewildOverviewPage() {
         <header className="bw-admin__section-head">
           <h2 className="bw-admin__section-title">Performance das páginas-chave</h2>
           <p className="bw-admin__section-desc">
-            Tráfego para Home, Diagnóstico, Portfólio e Conteúdos.
+            Tráfego para Home, Orçamento, Portfólio e Conteúdos.
           </p>
         </header>
         {errors.paths && <CardError message={errors.paths} />}

@@ -27,7 +27,7 @@ export default function PrivacidadePage() {
   const { settings } = useSiteSettings();
 
   const contactEmail = settings?.contact_email || "contato@bewild.com.br";
-  const lastUpdated = "9 de outubro de 2026";
+  const lastUpdated = "11 de outubro de 2026";
 
   useSeo({
     title: "Política de privacidade | Bewild",
@@ -184,9 +184,9 @@ export default function PrivacidadePage() {
                 responder ao seu pedido e dar andamento a ele.
               </p>
               <p>
-                Quando você envia um formulário de orçamento, contato ou
-                diagnóstico, nome, e-mail e telefone (e cidade e estado, quando
-                informados) seguem criptografados por hash para a Meta, para
+                Quando você envia um formulário de orçamento ou de contato,
+                nome, e-mail e telefone (e cidade e estado, quando informados)
+                seguem criptografados por hash para a Meta, para
                 medir o resultado e direcionar nossos anúncios — isso acontece
                 pelo nosso servidor, no envio do formulário, com base no nosso
                 interesse legítimo em medir as campanhas, e independe dos
