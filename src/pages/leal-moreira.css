@@ -37,6 +37,7 @@
 }
 
 .bwa-leal-card-title {
-  margin: 6px 0 4px;
-  font-size: 1.05rem;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.3;
 }
