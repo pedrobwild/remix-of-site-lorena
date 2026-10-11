@@ -47,3 +47,13 @@ A validação local usa respostas simuladas para a interface e para as agregaç�
 - QA da prévia com o componente real: alteração de início/fim, troca e limpeza de página, comparação ligada/desligada, atualização, ausência de anúncios, filtro não suportado, erro com recuperação e proteção contra backend antigo.
 - Capturas revisadas em 1365×900 e 375×812, com conferência adicional de tema escuro; nenhum erro JavaScript ou overflow horizontal global observado.
 - Produção: não publicada. Falta a implantação autorizada da função e a conferência autenticada de GAQL antes de liberar o frontend.
+
+### Atualização em 11/10/2026
+
+- Publicação autorizada pelo responsável: a branch foi atualizada sobre `main` (`0ccbcae`) e o [PR #69](https://github.com/pedrobwild/remix-of-site-lorena/pull/69) foi aberto em rascunho, sem integração na `main`.
+- A repetição da suíte na base atual teve 1.255 testes aprovados, nove ignorados e uma falha em `src/lib/__tests__/leadFormPages.test.tsx:326`. Os 31 testes específicos da correção continuam aprovados.
+- A mesma falha foi reproduzida em uma cópia independente de `origin/main`, sem esta correção: o teste espera o título “Obrigado, Davi.” após o envio do formulário. Não foi alterado código de orçamento para resolver um problema fora do escopo.
+- TypeScript e build de produção passaram novamente na base atual.
+- O conector Supabase foi consultado novamente: o projeto `aamlnkmqvjcowixdgqii` não aparece entre os projetos disponíveis e a leitura da função retornou falta de permissão. Nenhuma implantação foi tentada em projetos diferentes.
+- O pedido inicial de implantação no Lovable foi interrompido pelo próprio serviço porque a branch não estava disponível no ambiente sincronizado. Nenhum arquivo foi implantado; a alternativa de enviar os dois arquivos foi cancelada antes do envio, após a orientação para usar conectores.
+- Backend e frontend continuam sem publicação desta correção. Para retomar por conectores, é necessário acesso administrativo ao projeto correto; o PR deve continuar em rascunho até a validação autenticada do backend e a resolução ou avaliação do teste preexistente.
