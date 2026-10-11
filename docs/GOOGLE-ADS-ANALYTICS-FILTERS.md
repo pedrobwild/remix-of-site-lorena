@@ -2,7 +2,7 @@
 
 ## Situação atual
 
-Em 11/10/2026, a função `google-ads-audiences` foi publicada pelo Lovable Cloud com os dois arquivos autorizados. O código sincronizado em `main` (`f452417`) foi comparado com o código testado: `index.ts` e `report.ts` são idênticos. A validação autenticada no painel publicado confirmou o contrato v2 e as consultas filtradas. O frontend continua sem integração/publicação; o PR #69 permanece em rascunho.
+Em 11/10/2026, a função `google-ads-audiences` foi publicada pelo Lovable Cloud com os dois arquivos autorizados. O código sincronizado em `main` (`f452417`) foi comparado com o código testado: `index.ts` e `report.ts` são idênticos. A validação autenticada no painel publicado confirmou o contrato v2 e as consultas filtradas. O frontend aguarda a conclusão do processo de integração/publicação do PR #69. O teste desatualizado de agradecimento foi ajustado com autorização; a suíte local completa passou.
 
 O backend `aamlnkmqvjcowixdgqii` é **Lovable Cloud**, administrado em More → Cloud do projeto Remix of Site Lorena. Não é um projeto da conta Supabase conectada. Não existe uma simples reconexão para torná-lo um Supabase próprio: seria necessário planejar uma migração separada, conforme a [distinção oficial entre Cloud e Supabase](https://docs.lovable.dev/integrations/supabase). Não foram criados projetos, migrados dados ou alteradas credenciais.
 
@@ -74,3 +74,10 @@ A validação local usa respostas simuladas para a interface e para as agregaç�
 - Proteções: filtro `device` não suportado recusado com HTTP 400; chamada sem autenticação recusada com HTTP 401. `requireAdmin`, JWT, segredos e RLS foram preservados.
 - Os 31 testes específicos passaram novamente, assim como Deno check. Valores financeiros e de desempenho obtidos na validação não foram incluídos nesta documentação pública.
 - Frontend ainda não integrado nem publicado. O CI do PR continua bloqueado por um teste preexistente de `/orcamento`: espera “Obrigado, Davi.”, enquanto a interface atual exibe “Obrigado, Davi. Guardamos o seu contato.”. O diagnóstico não demonstra, por si só, falha funcional no formulário; o ajuste do teste está fora desta etapa de backend.
+
+### Ajuste autorizado do teste em 11/10/2026
+
+- Foi alterada somente a expectativa do título no teste `leadFormPages.test.tsx`, de “Obrigado, Davi.” para “Obrigado, Davi. Guardamos o seu contato.”. O código do formulário não foi alterado e nenhum pedido real foi enviado.
+- Nova execução local: 1.256 testes aprovados, nove ignorados, nenhuma falha; TypeScript e build de produção também concluídos.
+- A tela de publicação do Lovable ainda sinalizou um achado crítico antigo para `scope-plan`. A função publicada foi consultada sem autenticação e respondeu HTTP 410 com `error: gone`; o código no repositório é um stub sem chamada de IA. Nenhum achado foi ignorado, removido ou marcado como resolvido.
+- O Lovable publica o estado atual do projeto, que contém outras alterações anteriores desta equipe. A liberação do frontend deve respeitar o escopo autorizado para essa versão completa, sem reverter ou descartar alterações de outras tarefas.
