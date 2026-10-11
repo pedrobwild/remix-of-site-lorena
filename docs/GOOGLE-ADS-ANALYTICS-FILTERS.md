@@ -1,5 +1,11 @@
 # Google Ads Analytics: filtros de período e destino
 
+## Situação atual
+
+Em 11/10/2026, a função `google-ads-audiences` foi publicada pelo Lovable Cloud com os dois arquivos autorizados. O código sincronizado em `main` (`f452417`) foi comparado com o código testado: `index.ts` e `report.ts` são idênticos. A validação autenticada no painel publicado confirmou o contrato v2 e as consultas filtradas. O frontend continua sem integração/publicação; o PR #69 permanece em rascunho.
+
+O backend `aamlnkmqvjcowixdgqii` é **Lovable Cloud**, administrado em More → Cloud do projeto Remix of Site Lorena. Não é um projeto da conta Supabase conectada. Não existe uma simples reconexão para torná-lo um Supabase próprio: seria necessário planejar uma migração separada, conforme a [distinção oficial entre Cloud e Supabase](https://docs.lovable.dev/integrations/supabase). Não foram criados projetos, migrados dados ou alteradas credenciais.
+
 ## Contrato e semântica
 
 O frontend envia `from` e `to` em datas locais `YYYY-MM-DD`, `segments` e o período anterior quando a comparação está ligada. A função consulta os limites inclusivos no fuso da conta, confirma o pedido em `request` e retorna `version: 2`; respostas antigas ou de outro recorte não são exibidas como dados filtrados.
@@ -16,7 +22,7 @@ A compatibilidade dos campos e a agregação por destino estão documentadas pel
 
 ## Publicação segura
 
-O backend deste repositório é o projeto `aamlnkmqvjcowixdgqii`, configurado em `supabase/config.toml`. A conexão Supabase disponível nesta execução não permite administrar esse projeto; a função não foi publicada.
+O backend deste repositório é o projeto `aamlnkmqvjcowixdgqii`, configurado em `supabase/config.toml`. O conector Supabase não permite administrar esse projeto Cloud; a função foi publicada pelo ambiente autorizado do Lovable. A sequência abaixo documenta a ordem segura de implantação; as etapas do backend já foram executadas, conforme o registro final desta nota.
 
 1. Publicar pelo ambiente autorizado do projeto Lovable **Remix of Site Lorena** a função `google-ads-audiences`, incluindo **index.ts e report.ts**, antes de publicar o frontend.
 2. Manter os segredos já existentes. Não substituir credenciais, não expor chaves ao navegador e não mudar políticas RLS.
@@ -57,3 +63,14 @@ A validação local usa respostas simuladas para a interface e para as agregaç�
 - O conector Supabase foi consultado novamente: o projeto `aamlnkmqvjcowixdgqii` não aparece entre os projetos disponíveis e a leitura da função retornou falta de permissão. Nenhuma implantação foi tentada em projetos diferentes.
 - O pedido inicial de implantação no Lovable foi interrompido pelo próprio serviço porque a branch não estava disponível no ambiente sincronizado. Nenhum arquivo foi implantado; a alternativa de enviar os dois arquivos foi cancelada antes do envio, após a orientação para usar conectores.
 - Backend e frontend continuam sem publicação desta correção. Para retomar por conectores, é necessário acesso administrativo ao projeto correto; o PR deve continuar em rascunho até a validação autenticada do backend e a resolução ou avaliação do teste preexistente.
+
+### Publicação do backend e validação autenticada em 11/10/2026
+
+- Após nova autorização, os dois arquivos foram fornecidos no chat do projeto Lovable e a função foi publicada. A comparação com o código sincronizado no GitHub confirmou apenas os dois arquivos do backend alterados nesta publicação.
+- O Lovable não tinha uma sessão administrativa para concluir os testes. A validação foi realizada em seguida pelo cliente já autenticado do painel da Bewild no navegador, sem extrair credenciais e sem utilizar service role.
+- Período 11/09–10/10/2026: respostas `connected: true`, `version: 2`, eco exato das datas/segmentos e escopo correto para a conta sem segmento, `/guia-do-investidor` e `/orcamento`.
+- Comparação de 12/08–10/09/2026: intervalo anterior correto retornado tanto no relatório geral quanto no recorte do guia.
+- Caminho de teste sem destino cadastrado: lista de campanhas vazia e totais zerados; não houve substituição pelos totais gerais.
+- Proteções: filtro `device` não suportado recusado com HTTP 400; chamada sem autenticação recusada com HTTP 401. `requireAdmin`, JWT, segredos e RLS foram preservados.
+- Os 31 testes específicos passaram novamente, assim como Deno check. Valores financeiros e de desempenho obtidos na validação não foram incluídos nesta documentação pública.
+- Frontend ainda não integrado nem publicado. O CI do PR continua bloqueado por um teste preexistente de `/orcamento`: espera “Obrigado, Davi.”, enquanto a interface atual exibe “Obrigado, Davi. Guardamos o seu contato.”. O diagnóstico não demonstra, por si só, falha funcional no formulário; o ajuste do teste está fora desta etapa de backend.
