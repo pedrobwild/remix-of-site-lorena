@@ -720,15 +720,6 @@ function installServicesIndex(root: HTMLElement, signal: AbortSignal): Cleanup {
 
     const inner = document.createElement("div");
     inner.className = "bwa-services-detail-inner";
-    const figure = item.detail.querySelector<HTMLElement>(".bwa-services-figure");
-    if (figure) {
-      const copy = figure.cloneNode(true) as HTMLElement;
-      const tag = document.createElement("span");
-      tag.className = "bwa-services-figure-tag";
-      tag.textContent = item.discipline;
-      copy.appendChild(tag);
-      inner.appendChild(copy);
-    }
     const head = document.createElement("p");
     head.className = "bwa-services-detail-head";
     const number = item.title.querySelector("b");
