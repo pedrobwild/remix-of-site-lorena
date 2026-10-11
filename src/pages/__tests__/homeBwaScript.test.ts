@@ -469,11 +469,12 @@ describe("initHomeBwa — Serviços · 02: índice + detalhe (desktop) e acorde�
       expect(panel.getAttribute("aria-live")).toBe("polite");
       expect(triggers[0].getAttribute("aria-controls")).toBe(panel.id);
       expect(triggers[0].hasAttribute("aria-expanded")).toBe(false);
-      // Abre no item 01: figura (com a disciplina), número + título e texto.
+      // Abre no item 01: número + título e texto. A imagem da seção é fixa
+      // (equipe em obra) e fica fora do painel.
       expect(items[0]).toHaveClass("is-active");
       expect(triggers[0].getAttribute("aria-current")).toBe("true");
-      expect(panel.querySelector(".bwa-services-figure img")!.getAttribute("src")).toBe("/images/a.jpg");
-      expect(panel.querySelector(".bwa-services-figure-tag")!.textContent).toBe("Arquitetura");
+      expect(panel.querySelector(".bwa-services-figure")).toBeNull();
+      expect(section.querySelector(".bwa-services-figure-fixed img")).not.toBeNull();
       expect(panel.querySelector(".bwa-services-detail-head")!.textContent).toBe("01Consultoria.");
       expect(panel.querySelector(".bwa-services-item-text")!.textContent).toBe("Leitura do imóvel.");
       // O detalhe em linha continua no HTML (quem esconde é o CSS).
