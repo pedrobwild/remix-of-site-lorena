@@ -646,15 +646,16 @@ function installFaqAccordion(root: HTMLElement, signal: AbortSignal): Cleanup {
 }
 
 /* =========================================================================
- * Serviços · 02 (#certeza) — mockup 1b (10/10/2026): índice + detalhe.
+ * Serviços · 02 (#certeza) — mockup 1b (10/10/2026), imagem fixa (11/10/2026).
  *
  * HTML do servidor: cada item é <p class="bwa-services-item-title"><b>01</b>
- * <strong>Título.</strong></p> + <div class="bwa-services-item-detail"> com a
- * figura e o texto completo — legível sem JS e pela busca. Aqui o conteúdo do
- * título ganha um <button class="bwa-services-trigger"> em volta e:
- *  - ≥ 761 px (`is-indexed`): o painel [data-services-detail] recebe uma
- *    cópia da figura e do texto do item ativo (clique, Enter ou hover com
- *    mouse); os detalhes em linha somem pelo CSS. Abre no item 01.
+ * <strong>Título.</strong></p> + <div class="bwa-services-item-detail"> com o
+ * texto completo — legível sem JS e pela busca. A seção tem UMA imagem fixa
+ * (equipe em obra) na coluna do detalhe; o clique no tópico só troca o texto.
+ * O conteúdo do título ganha um <button class="bwa-services-trigger"> e:
+ *  - ≥ 761 px (`is-indexed`): o painel [data-services-detail] recebe número,
+ *    título e texto do item ativo (clique, Enter ou hover com mouse); os
+ *    detalhes em linha somem pelo CSS. Abre no item 01.
  *  - ≤ 760 px (`is-accordion`): o toque abre e fecha o detalhe em linha
  *    (aria-expanded + aria-controls), como o acordeão anterior.
  * Girou o tablet: sai de um modo e entra no outro. A limpeza devolve o HTML
@@ -720,15 +721,6 @@ function installServicesIndex(root: HTMLElement, signal: AbortSignal): Cleanup {
 
     const inner = document.createElement("div");
     inner.className = "bwa-services-detail-inner";
-    const figure = item.detail.querySelector<HTMLElement>(".bwa-services-figure");
-    if (figure) {
-      const copy = figure.cloneNode(true) as HTMLElement;
-      const tag = document.createElement("span");
-      tag.className = "bwa-services-figure-tag";
-      tag.textContent = item.discipline;
-      copy.appendChild(tag);
-      inner.appendChild(copy);
-    }
     const head = document.createElement("p");
     head.className = "bwa-services-detail-head";
     const number = item.title.querySelector("b");
