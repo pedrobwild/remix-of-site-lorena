@@ -13,7 +13,7 @@ vi.mock("@/integrations/supabase/client", () => ({
 }));
 
 import { seoHead } from "../routeHead";
-import { postJsonLd, postListJsonLd } from "../contentJsonLd";
+import { postJsonLd, postListJsonLd, videoUploadDate } from "../contentJsonLd";
 import type { BewildPost } from "../useBewildPosts";
 
 const post = {
