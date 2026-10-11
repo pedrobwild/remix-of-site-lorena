@@ -133,6 +133,8 @@ Deno.serve(async (req) => {
     { loc: `${base}/marcenaria`, priority: "0.9", changefreq: "monthly" },
     { loc: `${base}/parceiros`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/parceiros/incorporadoras`, priority: "0.8", changefreq: "monthly" },
+    { loc: `${base}/parceiros/leal-moreira`, priority: "0.7", changefreq: "monthly" },
+
     { loc: `${base}/indique-um-amigo`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/marcas-e-parcerias`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/guia-do-investidor`, priority: "0.8", changefreq: "monthly" },

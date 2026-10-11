@@ -1,0 +1,43 @@
+/* /parceiros/leal-moreira — só o que a página tem de novo (prefixo .bwa-leal-). */
+.bwa-leal-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 56px);
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .bwa-leal-hero-grid {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  }
+}
+
+.bwa-leal-lead2 {
+  margin-top: 14px;
+}
+
+.bwa-leal-hero-fig {
+  margin: 0;
+  min-width: 0;
+}
+
+.bwa-leal-hero-fig img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.bwa-leal-hero-fig figcaption {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+.bwa-leal-card-title {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.3;
+}

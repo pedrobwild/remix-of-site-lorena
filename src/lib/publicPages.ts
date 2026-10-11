@@ -28,6 +28,7 @@ export const PUBLIC_PAGES: PublicPage[] = [
   { path: "/guia-do-investidor", label: "Guia do investidor" },
   { path: "/parceiros", label: "Clientes e corretores" },
   { path: "/parceiros/incorporadoras", label: "Incorporadoras" },
+  { path: "/parceiros/leal-moreira", label: "Parceria Leal Moreira" },
   { path: "/indique-um-amigo", label: "Indique um amigo" },
   { path: "/marcas-e-parcerias", label: "Marcas e parcerias" },
   { path: "/autorizacao-condominio", label: "Autorização de condomínio" },

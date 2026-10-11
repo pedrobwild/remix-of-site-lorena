@@ -390,6 +390,12 @@ export default function IncorporadorasPage() {
               </>
             )}
 
+            <p className="bwa-parc-lead2">
+              <a href="/parceiros/leal-moreira" data-cta="incorporadoras-case-pagina">
+                Ver a página da parceria com a Leal Moreira <span aria-hidden="true">→</span>
+              </a>
+            </p>
+
             <aside className="bwa-incorp-buyer">
               <h3>{INCORP_CASE.buyer.title}</h3>
               <p>{INCORP_CASE.buyer.text}</p>

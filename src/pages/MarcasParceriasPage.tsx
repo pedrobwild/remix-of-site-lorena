@@ -110,6 +110,9 @@ export default function MarcasParceriasPage() {
                       Conhecer o programa de parceiros <span aria-hidden="true">→</span>
                     </a>
                   )}
+                  <a className="bwa-marcas-text-link" href="/parceiros/leal-moreira">
+                    Ver a parceria com a Leal Moreira <span aria-hidden="true">→</span>
+                  </a>
                   <a className="bwa-marcas-text-link" href="/contato">
                     Falar com a Bewild <span aria-hidden="true">→</span>
                   </a>
