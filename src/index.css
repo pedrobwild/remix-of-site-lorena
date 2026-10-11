@@ -5172,7 +5172,7 @@ textarea.admin-field__input {
   /* Z-index abaixo do header (bwa-nav: 1000) e do menu mobile (990),
      e acima do CTA fixo (60). */
   z-index: 80;
-  padding: 12px 16px calc(12px + env(safe-area-inset-bottom)) 16px;
+  padding: 8px 16px calc(8px + env(safe-area-inset-bottom)) 16px;
   background: #0B2342;
   color: #fff;
   border-top: 1px solid var(--bwa-white-line, rgba(255, 255, 255, 0.22));
@@ -5206,17 +5206,17 @@ textarea.admin-field__input {
 .cookie-banner__title {
   font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: .15em;
   text-transform: uppercase;
   color: #fff;
-  margin: 0 0 4px;
+  margin: 0 0 3px;
 }
 
 .cookie-banner__desc {
   font-family: "Manrope", system-ui, sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 12.5px;
+  line-height: 1.4;
   color: rgba(255, 255, 255, 0.82);
   margin: 0;
   max-width: 68ch;
@@ -5247,12 +5247,12 @@ textarea.admin-field__input {
 .cookie-banner__btn {
   font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: .08em;
   text-transform: uppercase;
-  padding: 11px 16px;
-  min-width: 112px;
-  min-height: 42px;
+  padding: 8px 14px;
+  min-width: 96px;
+  min-height: 38px;
   border: 1px solid #fff;
   background: #fff;
   color: #0B2342;
@@ -5276,13 +5276,13 @@ textarea.admin-field__input {
      margem da página ao respiro do banner) e os respiros ficam menores —
      o banner cobre menos da primeira tela, sem mudar uma palavra. */
   .cookie-banner {
-    padding: 8px 16px calc(8px + env(safe-area-inset-bottom)) 16px;
+    padding: 6px 14px calc(6px + env(safe-area-inset-bottom)) 14px;
   }
   .cookie-banner__inner {
     width: 100%;
     flex-direction: column;
     align-items: stretch;
-    gap: 8px;
+    gap: 6px;
   }
   /* Em coluna, o flex-basis de 320px do bloco de texto vira ALTURA e o
      banner passa a ocupar ~50% da viewport no celular. Volta para auto. */
@@ -5300,8 +5300,8 @@ textarea.admin-field__input {
   }
   .cookie-banner__desc--short {
     display: block;
-    font-size: 12px;
-    line-height: 1.4;
+    font-size: 11px;
+    line-height: 1.35;
   }
   .cookie-banner__title {
     position: absolute;
@@ -5315,7 +5315,7 @@ textarea.admin-field__input {
     border: 0;
   }
   .cookie-banner__actions { justify-content: stretch; }
-  .cookie-banner__btn { flex: 1 1 0; min-height: 40px; padding: 8px 12px; }
+  .cookie-banner__btn { flex: 1 1 0; min-height: 38px; padding: 6px 10px; }
   /* Links no meio do texto: área de toque maior sem mudar a linha. */
   .cookie-banner__link { padding-block: 6px; }
 }
