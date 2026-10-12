@@ -338,7 +338,14 @@ function updateLlmsTxt(posts, hoodUrls = []) {
   const txt = readFileSync(LLMS, "utf8");
   const postLines = posts
     .filter((p) => p.slug && p.title)
-    .sort((x, y) => String(y.published_at || y.created_at || "").localeCompare(String(x.published_at || x.created_at || "")))
+    // Mais recentes primeiro; no empate de data (posts publicados no mesmo lote),
+    // ordem alfabética do slug — sem isso a ordem dependia da ordem em que o
+    // banco devolvia as linhas e o arquivo mudava a cada geração.
+    .sort(
+      (x, y) =>
+        String(y.published_at || y.created_at || "").localeCompare(String(x.published_at || x.created_at || "")) ||
+        String(x.slug).localeCompare(String(y.slug)),
+    )
     .map((p) => `- [${String(p.title).replace(/[[\]]/g, "")}](/conteudos/${p.slug})`);
   // Páginas de bairro (/reforma/<bairro>): mesma lista do sitemap, com a contagem.
   // O rótulo acompanha o título da página (bairroTitle em src/lib/bairroSeo.ts).
