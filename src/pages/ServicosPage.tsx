@@ -52,7 +52,7 @@ const NAV: { href: string; label: string }[] = [
 const PROVAS: { valor: string; rotulo: string }[] = [
   { valor: `+${REFORMAS_ENTREGUES}`, rotulo: "obras entregues" },
   { valor: `+${PROJETOS}`, rotulo: "projetos" },
-  { valor: `+${BAIRROS_ATENDIDOS}`, rotulo: "bairros de São Paulo" },
+  { valor: `${BAIRROS_ATENDIDOS}`, rotulo: "bairros de São Paulo" },
   { valor: "5 anos", rotulo: "de garantia em contrato" },
 ];
 

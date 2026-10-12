@@ -31,7 +31,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     q: "Onde vocês atuam?",
-    a: "Só em São Paulo capital, com obras entregues em mais de 27 bairros. Não atendemos a Grande São Paulo nem o interior, mas o dono do imóvel pode morar em qualquer cidade: o acompanhamento é todo à distância.",
+    a: `Só em São Paulo capital, com obras entregues em ${BAIRROS_ATENDIDOS} bairros. Não atendemos a Grande São Paulo nem o interior, mas o dono do imóvel pode morar em qualquer cidade: o acompanhamento é todo à distância.`,
   },
 ];
 
@@ -66,7 +66,7 @@ export const FAQ_ITEMS_SEM_BANCO: FaqItem[] = [
   },
   {
     q: "Posso ver obras que a Bewild já entregou?",
-    a: `Pode. São ${PROVA_FRASE} em mais de ${BAIRROS_ATENDIDOS} bairros de São Paulo, e o portfólio tem uma página para cada projeto, com fotos reais, metragem, bairro e o que foi feito. Para saber se há obra no seu prédio ou uma unidade para visitar, a equipe confere para você.`,
+    a: `Pode. São ${PROVA_FRASE} em ${BAIRROS_ATENDIDOS} bairros de São Paulo, e o portfólio tem uma página para cada projeto, com fotos reais, metragem, bairro e o que foi feito. Para saber se há obra no seu prédio ou uma unidade para visitar, a equipe confere para você.`,
     href: "/portfolio",
     linkLabel: "Ver o portfólio completo →",
   },

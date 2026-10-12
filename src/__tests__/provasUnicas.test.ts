@@ -40,6 +40,15 @@ describe("provas numéricas", () => {
     expect(achados).toEqual([]);
   });
 
+  // BAIRROS_ATENDIDOS é o número exato de bairros com obra entregue (27).
+  // Até 12/10/2026 o site dizia "mais de 27 bairros" e "+27" em seis arquivos.
+  it("bairros com obra entregue: número exato de provas.ts, sem 'mais de' nem '+'", () => {
+    const proibido =
+      /mais de\s*(\$\{\s*BAIRROS_ATENDIDOS|\{\s*BAIRROS_ATENDIDOS|"\s*\+\s*BAIRROS_ATENDIDOS|27\b)|\+\$\{\s*BAIRROS_ATENDIDOS|\b27\s+bairros/i;
+    const achados = FONTES.filter((f) => proibido.test(readFileSync(f, "utf8"))).map((f) => relative(SRC, f));
+    expect(achados).toEqual([]);
+  });
+
   it("o guia não mostra nota, studios ou tempo de mercado sem fonte", () => {
     const guia = arquivos(join(SRC, "guia")).map((f) => readFileSync(f, "utf8")).join("\n");
     expect(guia).not.toMatch(/4,9 nota|\+200 studios|\+5 anos no mercado/);

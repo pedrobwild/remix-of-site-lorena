@@ -5,6 +5,7 @@ import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { BAIRROS, REMOTO_ITEMS, bairroHref, type BairroPageLink } from "@/lib/bairrosSp";
 import { useSeo } from "@/lib/useSeo";
+import { ONDE_ATUAMOS_DESCRIPTION, ONDE_ATUAMOS_TITLE } from "@/content/pages/onde-atuamos";
 import "./onde-atuamos.css";
 
 /* ============================================================
@@ -22,9 +23,8 @@ type Props = {
 
 export default function OndeAtuamosPage({ bairroPages = null }: Props = {}) {
   useSeo({
-    title: "Onde atuamos: arquitetura e reforma em São Paulo | Bewild",
-    description:
-      "A Bewild projeta e reforma apartamentos em São Paulo capital, em mais de 27 bairros, e atende à distância clientes de outras cidades.",
+    title: ONDE_ATUAMOS_TITLE,
+    description: ONDE_ATUAMOS_DESCRIPTION,
     canonicalPath: "/onde-atuamos",
     ogType: "website",
   });
@@ -43,7 +43,7 @@ export default function OndeAtuamosPage({ bairroPages = null }: Props = {}) {
               </h1>
               <p className="bwa-atuamos-lead">
                 As obras da Bewild acontecem em São Paulo capital — são mais de
-                {REFORMAS_ENTREGUES} reformas entregues em mais de {BAIRROS_ATENDIDOS} bairros. E você não precisa
+                {REFORMAS_ENTREGUES} reformas entregues em {BAIRROS_ATENDIDOS} bairros. E você não precisa
                 estar na cidade: clientes de Uberlândia, Salvador, Curitiba e
                 Brasília acompanham tudo à distância, do projeto à entrega das
                 chaves.

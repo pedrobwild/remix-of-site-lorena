@@ -77,7 +77,7 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
                 studios em São Paulo. Entregamos projeto, obra, marcenaria e
                 mobília em um único contrato, com preço fechado antes de a obra
                 começar, prazo em contrato e 5 anos de garantia sobre a mão de
-                obra. Mais de {REFORMAS_ENTREGUES} reformas entregues em mais de {BAIRROS_ATENDIDOS} bairros da
+                obra. Mais de {REFORMAS_ENTREGUES} reformas entregues em {BAIRROS_ATENDIDOS} bairros da
                 capital, para donos que moram em São Paulo ou em qualquer outra
                 cidade.
               </p>
