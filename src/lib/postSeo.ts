@@ -155,7 +155,6 @@ export function authorProfileJsonLd(
       ...(person.sameAs?.length ? { sameAs: person.sameAs } : {}),
       ...(person.alumniOf ? { alumniOf: { "@type": "CollegeOrUniversity", name: person.alumniOf } } : {}),
       worksFor: { "@type": "Organization", "@id": `${BASE_URL}/#org`, name: ORG_NAME, url: `${BASE_URL}/` },
-      ...(id === PEDRO_NODE["@id"] || id === THIAGO_NODE["@id"] ? { founderOf: { "@id": `${BASE_URL}/#org` } } : {}),
     },
   };
 }
