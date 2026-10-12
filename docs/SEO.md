@@ -53,39 +53,83 @@ Tudo explicado passo-a-passo na aba **Guia Google** do admin.
 
 ## Schema.org emitido automaticamente
 
-**A home não injeta JSON-LD via `useSeo`.** O JSON-LD dela é estático, escrito
-direto no `index.html` (`Organization`, `WebSite`, `Service`, `City`) — o
-`HomePage.tsx` chama `useSeo` sem a chave `jsonLd`. Corrigido em 22/09/2026;
-este documento descrevia o comportamento antigo.
+**Regra: JSON-LD só no servidor.** Todo bloco sai no HTML bruto que o Google,
+o Bing e os robôs de IA leem (eles não executam JavaScript):
 
-Os blocos dinâmicos ficam nas rotas internas, via os helpers de
-`src/lib/useSeo.ts`:
+- **Grafo global** (`Organization #org`, `ProfessionalService #local`,
+  `WebSite #website`, `Service #servico-reforma`): fonte única em
+  `src/lib/orgJsonLd.ts` (`ORG_NODE`, `LOCAL_NODE`, `WEBSITE_NODE`,
+  `SERVICE_NODE`, pessoas `PEDRO_NODE`/`THIAGO_NODE`), publicado pelo
+  `__root.tsx` como `ORG_JSONLD`. `organizationJsonLd`/`localBusinessRef`
+  (`useSeo.ts`) e os autores (`postSeo.ts`) reaproveitam esses objetos.
+- **JSON-LD de página**: `seoHead({ jsonLd, pageJsonLd })` em
+  `src/lib/routeHead.ts`, no `head()` de cada rota. Sempre sai um `WebPage`
+  (ou subtipo) com a trilha de navegação aninhada em `breadcrumb` — nunca
+  `BreadcrumbList` solta. Dado do banco vem do loader SSR
+  (`src/lib/contentLoaders.ts`).
+- **`useSeo({ jsonLd })` está obsoleto**: só serve de fallback no navegador
+  nas páginas de projeto, artigo, lista do portfólio e bairro quando o loader
+  do servidor não trouxe o conteúdo. Usa as mesmas funções de
+  `src/lib/contentJsonLd.ts`, então o resultado é igual ao do servidor.
 
-| Rota | Blocos |
+| Rota | Blocos de página (além do grafo global) |
 |---|---|
-| `/orcamento` | `ContactPage` com `ContactPoint` e `QuoteAction` (`ORCAMENTO_PAGE_JSONLD`) + `FAQPage` |
-| `/portfolio` | `BreadcrumbList` + `ItemList` |
-| `/portfolio/:slug` | `CreativeWork` + `BreadcrumbList` |
-| `/conteudos/:slug` | `Article` (autor `Person` ou `Organization`, `datePublished`/`dateModified` reais) + `BreadcrumbList` + `FAQPage` quando o post tem FAQ; durante o carregamento, `BreadcrumbList` estático e título por slug |
-| `/faq` | `FAQPage` |
-| `/contato` | `BreadcrumbList` |
+| `/` | — (só o grafo global) |
+| `/servicos` | `WebPage`, `Service #service`, `FAQPage`, `ItemList` (bastidores) |
+| `/reforma-de-studio-sao-paulo`, `/reforma-de-apartamento-sao-paulo`, `/reforma-de-cobertura-sao-paulo`, `/marcenaria` | `WebPage`, `Service #service` (nome = H1, descrição = texto de abertura), `FAQPage` |
+| `/orcamento` | `ContactPage` (com `ContactPoint` e `QuoteAction`), `FAQPage` |
+| `/faq` | `WebPage`, `FAQPage` (perguntas do banco ou lista fixa + blocos fixos, as mesmas da tela) |
+| `/guia-do-investidor` | `WebPage`, `Article`, `FAQPage` |
+| `/parceiros`, `/indique-um-amigo`, `/autorizacao-condominio` | `WebPage`, `FAQPage` |
+| `/parceiros/incorporadoras` | `WebPage`, `FAQPage` (só com a flag ligada) |
+| `/portfolio` | `CollectionPage`, `ItemList` (só projetos com capa, na ordem da tela) |
+| `/portfolio/:slug` | `WebPage`, `CreativeWork #projeto` (creator/provider = `#local`) |
+| `/reforma/:bairro` | `CollectionPage`, `ItemList`, `FAQPage` |
+| `/conteudos` | `CollectionPage`, `ItemList` (destaque primeiro, depois a grade) |
+| `/conteudos/:slug` | `WebPage` (ou `ProfilePage` na página de autor), `Article`, `VideoObject` (quando há vídeo), `FAQPage` (quando há FAQ) |
+| `/videos` | `CollectionPage`, `ItemList` |
+| `/videos/:slug` | `WebPage` (mainEntity = vídeo), `VideoObject` |
+| rotas `noindex` (`/o`, `/p`, `/mapa`, `/buscar`, `/preferencias-de-cookies`) | nenhum |
 
-> `organizationJsonLd` e `professionalServiceJsonLd` publicam CNPJ e CAU a
-> partir de `site_settings`. Como as colunas `cnpj`/`cau` ainda **não existem**
-> no banco de produção (ver `docs/auditoria/rodada-2026-09-22.md`, DB-02), o
-> valor que vai ao ar é o de `DEFAULTS` em `src/lib/useSiteSettings.ts`. Esses
-> números estão travados por teste em
-> `src/lib/__tests__/identidadeOficial.test.ts` — não altere sem atualizar o
-> teste.
+**Regras**
+
+- Um `@type` de primeiro nível por rota (um único `FAQPage`, um único `Service`…).
+- URLs absolutas em `https://bewild.com.br` (`url`, `image`, `logo`, `item`,
+  `thumbnailUrl`, `contentUrl`, `embedUrl`); caminho relativo do banco é
+  convertido (`absoluteSiteUrl`). `@id` sempre no domínio oficial.
+- Datas com fuso: `datePublished`/`dateModified` dos artigos em -03:00
+  (`saoPauloIso`), `uploadDate` dos vídeos via `videoUploadDate`.
+- `publisher`/`provider` por referência (`{"@id": ".../#org"}` ou `#local`);
+  Pedro (`#pedro-henrique-alves`) e Thiago (`#thiago-dantas`) por `@id` como
+  autores, fundadores e na página de autor.
+- Dados oficiais: Pedro "Fundador e CEO"; Thiago "Cofundador, VP e arquiteto
+  responsável técnico"; o CAU A162437-7 é registro pessoal do Thiago e fica só
+  no `Person` dele, nunca na Organization; endereço "Rua Pitú, 72, Sala 115",
+  Brooklin, 04567-060.
+- Nada de `review`/`aggregateRating` escrito pela própria empresa.
+- `FAQPage` com o texto idêntico ao visível na página.
+- Nenhum número à mão: contagens só de `src/content/provas.ts`.
+
+**Testes que travam isso**
+
+- `src/lib/__tests__/jsonLdIntegridade.test.ts`: monta o `head()` de cada rota
+  de `ROTAS_INDEXAVEIS` (+ um projeto e um post de exemplo) e falha com JSON
+  inválido, `@type` repetido, URL relativa, `@id` fora do domínio ou data sem
+  fuso; rotas de `NAO_INDEXAVEIS` não podem ter JSON-LD de página.
+- `src/lib/__tests__/jsonLdServidor.test.ts`: guia, incorporadoras e bastidores
+  no servidor.
+- `src/lib/__tests__/identidadeOficial.test.ts`: CNPJ, fonte única do grafo,
+  cargos, fundadores, CAU só no Thiago.
+- `src/lib/__tests__/contentJsonLd.test.ts`: Article, VideoObject, Clip e FAQ
+  dos posts.
 
 ### Posts: autor, datas e FAQ (`src/lib/postSeo.ts`)
 
 - **Autor.** O campo "Autor" do admin é texto livre. `Equipe Bewild` (ou vazio)
   publica `Organization`; um nome de pessoa publica `Person`. Nomes com registro
-  conhecido ganham cargo e registro (hoje só Thiago Dantas do Amor, CAU
-  A162437-7, fonte: rodapé oficial). Para acrescentar alguém, edite
-  `KNOWN_AUTHORS` com uma fonte verificável — nada de número de registro de
-  memória.
+  conhecido ganham cargo, registro e `@id` (Pedro e Thiago, dados em
+  `src/lib/orgJsonLd.ts`). Para acrescentar alguém, edite `KNOWN_AUTHORS` com
+  uma fonte verificável — nada de número de registro de memória.
 - **Datas.** `datePublished` = `published_at`; `dateModified` = `updated_at`
   quando é posterior. A linha "Atualizado em" aparece só quando a alteração foi
   em outro dia. Editar o post no admin já atualiza tudo (trigger `set_updated_at`).
