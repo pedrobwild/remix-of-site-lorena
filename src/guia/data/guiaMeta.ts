@@ -99,7 +99,7 @@ export function guiaJsonLd(opts: { image?: string; breadcrumb?: boolean } = {}):
       author: org,
       publisher: {
         ...org,
-        logo: { "@type": "ImageObject", url: `${GUIA_BASE_URL}/brand/bewild-logo.png` },
+        logo: { "@type": "ImageObject", url: `${GUIA_BASE_URL}/brand/bewild-logo-512.png` },
       },
       // ISO 8601 com fuso de São Paulo (o Google pede fuso nas datas).
       datePublished: `${GUIA_PUBLISHED}T00:00:00-03:00`,

@@ -99,7 +99,9 @@ describe("JSON-LD no head() sem duplicação", () => {
     // Com end= no embed: o fim marcado tem prioridade.
     expect(clipOf("https://www.youtube-nocookie.com/embed/pQjZeD8nYEE?start=467&end=520", "pQjZeD8nYEE")).toMatchObject({ startOffset: 467, endOffset: 520 });
     // Sem duração cadastrada e sem end=: nada de Clip (evita o aviso de endOffset ausente).
-    expect(clipOf("https://www.youtube-nocookie.com/embed/El1Dxf7RBRk?start=30", "El1Dxf7RBRk")).toBeUndefined();
+    expect(clipOf("https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?start=30", "dQw4w9WgXcQ")).toBeUndefined();
+    // El1Dxf7RBRk tem PT59S: o trecho vai até 59 s.
+    expect(clipOf("https://www.youtube-nocookie.com/embed/El1Dxf7RBRk?start=30", "El1Dxf7RBRk")).toMatchObject({ startOffset: 30, endOffset: 59 });
   });
 
   it("post com vídeo incorporado ganha um VideoObject com capa, arquivo e data do post", () => {

@@ -13,7 +13,8 @@ export default function FAQSection() {
         {GUIA_FAQ.map((item, i) => (
           <AccordionItem key={item.q} value={String(i)}>
             <AccordionTrigger className="text-foreground font-semibold text-left">{item.q}</AccordionTrigger>
-            <AccordionContent>
+            {/* forceMount: a resposta já sai no HTML do servidor (fechada fica com hidden). */}
+            <AccordionContent forceMount>
               <p className="text-sm text-muted-foreground leading-relaxed">{item.a}</p>
             </AccordionContent>
           </AccordionItem>

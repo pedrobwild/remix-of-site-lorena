@@ -13,12 +13,15 @@ describe("JSON-LD dos Bastidores", () => {
     });
   });
 
-  it("gera um ItemList com um CreativeWork por post", () => {
-    const ld = bastidoresJsonLd() as { url: string; itemListElement: Array<{ item: Record<string, string> }> };
+  it("gera um ItemList com um ListItem simples por post (sem CreativeWork: não há imagem)", () => {
+    const ld = bastidoresJsonLd() as { url: string; itemListElement: Array<Record<string, unknown>> };
     expect(ld.url).toBe("https://bewild.com.br/servicos#bastidores");
     expect(ld.itemListElement).toHaveLength(6);
-    expect(ld.itemListElement[0].item["@type"]).toBe("CreativeWork");
-    expect(ld.itemListElement[0].item.name).toBe("Medição e estudo do espaço | Bastidores Bewild");
-    expect(ld.itemListElement[0].item.url).toBe("https://www.instagram.com/p/DY27SVWvqoM/");
+    expect(ld.itemListElement[0]).toEqual({
+      "@type": "ListItem",
+      position: 1,
+      name: "Medição e estudo do espaço | Bastidores Bewild",
+      url: "https://www.instagram.com/p/DY27SVWvqoM/",
+    });
   });
 });

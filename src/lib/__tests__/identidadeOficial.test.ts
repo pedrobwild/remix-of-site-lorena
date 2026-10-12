@@ -53,7 +53,7 @@ describe("identidade oficial da Bewild nos defaults de site_settings", () => {
   it("organizationJsonLd usa o mesmo @id (#org) e o logo do nó estático do index.html", () => {
     const ld = organizationJsonLd(getCachedSiteSettings()) as Record<string, unknown>;
     expect(ld["@id"]).toBe("https://bewild.com.br/#org");
-    expect((ld.logo as { url: string }).url).toBe("https://bewild.com.br/brand/bewild-logo.png");
+    expect((ld.logo as { url: string }).url).toBe("https://bewild.com.br/brand/bewild-logo-512.png");
     // Sem referência a nó que nenhuma página publica.
     expect(ld).not.toHaveProperty("subOrganization");
     expect(JSON.stringify(ld)).not.toMatch(/#organization|#business/);

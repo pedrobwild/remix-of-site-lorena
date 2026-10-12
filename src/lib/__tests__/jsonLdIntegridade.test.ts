@@ -106,7 +106,11 @@ function problemas(nodes: unknown[]): string[] {
       if (DATE_KEYS.has(key) && !TZ.test(v)) out.push(`${key} sem fuso: ${v}`);
       return;
     }
-    if (v && typeof v === "object") for (const [k, x] of Object.entries(v)) visit(x, k);
+    if (v && typeof v === "object") {
+      const o = v as Record<string, unknown>;
+      if (o["@type"] === "VideoObject" && !o.duration) out.push(`VideoObject sem duration: ${String(o.name ?? o["@id"])}`);
+      for (const [k, x] of Object.entries(o)) visit(x, k);
+    }
   };
   nodes.forEach((n) => visit(n, ""));
   const types = nodes.flatMap((n) => {
@@ -131,6 +135,18 @@ describe("JSON-LD no HTML do servidor: integridade", () => {
   it("grafo geral do root é válido", () => {
     const graph = JSON.parse(ORG_JSONLD)["@graph"];
     expect(problemas(graph)).toEqual([]);
+  });
+
+  it("logo da Organization: PNG/SVG/WebP; PNG termina em -512.png e é quadrado", () => {
+    const org = JSON.parse(ORG_JSONLD)["@graph"].find((n: Record<string, unknown>) => n["@type"] === "Organization");
+    const logo = String(org.logo);
+    expect(logo).toMatch(/\.(png|svg|webp)$/);
+    if (logo.endsWith(".png")) {
+      expect(logo).toMatch(/-512\.png$/);
+      // Cabeçalho IHDR do PNG: largura e altura em big-endian nos bytes 16–23.
+      const buf = readFileSync(path.join(__dirname, "../../../public", new URL(logo).pathname));
+      expect([buf.readUInt32BE(16), buf.readUInt32BE(20)]).toEqual([512, 512]);
+    }
   });
 
   it.each(ROTAS_INDEXAVEIS)("%s", { timeout: 60_000 }, async (rota) => {

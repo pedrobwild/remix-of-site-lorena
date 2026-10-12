@@ -15,7 +15,6 @@ import { BASTIDORES_HTML } from "@/pages/servicos-bwa-sections";
 const BASE_URL = "https://bewild.com.br";
 /** Página que hospeda o bloco (âncora #bastidores). */
 const PAGE_URL = `${BASE_URL}/servicos`;
-const IG_PROFILE = "https://www.instagram.com/bewild.oficial/";
 
 export type BastidoresPost = { code: string; name: string; description: string; tag: string };
 
@@ -46,7 +45,6 @@ export function bastidoresJsonLd(
   posts: BastidoresPost[] = parseBastidoresPosts(),
   overrides: BastidoresSeoOverrides = {},
 ): Record<string, unknown> {
-  const org = { "@type": "Organization", name: "Bewild", url: `${BASE_URL}/`, sameAs: [IG_PROFILE] };
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -56,21 +54,12 @@ export function bastidoresJsonLd(
       "Arquitetas, engenheiros e equipe de execução da Bewild em campo, em posts do Instagram @bewild.oficial.",
     url: `${PAGE_URL}#bastidores`,
     numberOfItems: posts.length,
+    // Sem imagem confiável dos posts (Instagram): só ListItem com posição, nome e endereço.
     itemListElement: posts.map((p, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      item: {
-        "@type": "CreativeWork",
-        "@id": `${PAGE_URL}#bastidores-${p.code}`,
-        name: overrides[p.code]?.title?.trim() || `${p.name} | Bastidores Bewild`,
-        description: overrides[p.code]?.description?.trim() || p.description,
-        ...(p.tag ? { keywords: p.tag.replace(/^\d+\s*·\s*/, "") } : {}),
-        url: `https://www.instagram.com/p/${p.code}/`,
-        isPartOf: { "@type": "WebPage", "@id": PAGE_URL, url: PAGE_URL },
-        author: org,
-        publisher: org,
-        inLanguage: "pt-BR",
-      },
+      name: overrides[p.code]?.title?.trim() || `${p.name} | Bastidores Bewild`,
+      url: `https://www.instagram.com/p/${p.code}/`,
     })),
   };
 }

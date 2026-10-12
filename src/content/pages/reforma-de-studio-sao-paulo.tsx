@@ -18,6 +18,9 @@ export const CANONICAL = "/reforma-de-studio-sao-paulo";
  * atende é "reforma de studio" (Search Console e Semrush, out/2026); o plural
  * "reforma de studios" fica com a home.
  */
+/** Resposta do prazo: mesmo texto na página e no FAQPage. */
+const PRAZO_STUDIO = "A referência é cerca de 60 dias úteis de obra. A data exata sai no contrato.";
+
 export const SEO_TITLE = "Reforma de studio em SP: morar, alugar ou Airbnb | Bewild";
 export const SEO_DESCRIPTION =
   "Reforma de studio em São Paulo para morar, alugar ou anunciar no Airbnb: projeto 3D, obra, marcenaria e mobília em um contrato, preço fechado, 60 dias úteis e 5 anos de garantia.";
@@ -63,11 +66,10 @@ export const FAQ: { q: string; a: string; node?: ReactNode }[] = [
   },
   {
     q: "Quanto tempo demora a reforma de um studio?",
-    a: "A referência é cerca de 60 dias úteis de obra. A data exata sai no contrato.",
+    a: PRAZO_STUDIO,
     node: (
       <>
-        A referência é cerca de 60 dias úteis de obra, e a data exata sai no
-        contrato. Data a data em{" "}
+        {PRAZO_STUDIO} Data a data em{" "}
         <a href="/conteudos/quanto-tempo-demora-reforma-apartamento">
           quanto tempo demora uma reforma de apartamento
         </a>
