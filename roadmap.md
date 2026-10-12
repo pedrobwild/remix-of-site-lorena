@@ -23,3 +23,4 @@
 - [x] Salvar títulos e descrições das cinco páginas solicitadas e emitir os textos no HTML inicial
 - [x] Validar os cinco cabeçalhos e solicitar publicação
 - [x] Reduzir fonte do texto 'Projeto, obra, marcenaria...' do herói no celular (home-bwa.css)
+- [x] Atualizar /privacidade para LGPD, conferir metadados próprios e presença única nos sitemaps; não publicar
