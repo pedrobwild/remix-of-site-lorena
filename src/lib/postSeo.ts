@@ -15,8 +15,12 @@
  * Nomes sem registro conhecido viram Person só com o nome. Nada é inventado.
  */
 
+import { PEDRO_NODE, THIAGO_NODE } from "@/lib/orgJsonLd";
+
 export type PostAuthor = {
   name: string;
+  /** `@id` da Person no grafo do site (o mesmo do employee/founder em orgJsonLd.ts). */
+  id?: string;
   jobTitle?: string;
   /** Registro profissional público (ex.: CAU). */
   credential?: string;
@@ -37,21 +41,24 @@ const BASE_URL = "https://bewild.com.br";
 
 const KNOWN_AUTHORS: PostAuthor[] = [
   {
-    name: "Thiago Dantas do Amor",
-    jobTitle: "Arquiteto e urbanista, responsável técnico da Bewild",
-    credential: "CAU A162437-7",
-    url: `${BASE_URL}/conteudos/thiago-dantas-arquiteto-responsavel-tecnico-bewild`,
-    sameAs: ["https://www.linkedin.com/in/thiago-dantas-do-amor-73817b134/"],
+    // Cargo, CAU, página e perfis vêm do nó Person do root (fonte única).
+    name: THIAGO_NODE.name,
+    id: THIAGO_NODE["@id"],
+    jobTitle: THIAGO_NODE.jobTitle,
+    credential: THIAGO_NODE.identifier,
+    url: THIAGO_NODE.url,
+    sameAs: THIAGO_NODE.sameAs,
   },
   {
     // Nome completo em todo lugar (LinkedIn, imprensa, página de autor);
     // os posts antigos assinam "Pedro Alves" e continuam casando pelo alias.
-    name: "Pedro Henrique Alves",
-    jobTitle: "Engenheiro, cofundador e CEO da Bewild",
+    name: PEDRO_NODE.name,
+    id: PEDRO_NODE["@id"],
+    jobTitle: PEDRO_NODE.jobTitle,
     aliases: ["Pedro Alves"],
-    url: `${BASE_URL}/conteudos/pedro-henrique-alves-ceo-bewild`,
+    url: PEDRO_NODE.url,
     sameAs: [
-      "https://www.linkedin.com/in/pedro-henrique-alves-872b0245",
+      ...PEDRO_NODE.sameAs,
       "https://www.allaroundworlds.com/top-list/global-business-icons-2026/pedro-henrique-alves/",
     ],
     image: `${BASE_URL}/images/imprensa/allaroundworlds-pedro.webp`,
@@ -90,7 +97,7 @@ export function resolvePostAuthor(author: string | null | undefined): PostAuthor
 
 /** `@id` estável da Person de um autor com página própria (a mesma em todos os posts e na ProfilePage). */
 function authorPersonId(person: PostAuthor): string | null {
-  return person.url ? `${person.url}#person` : null;
+  return person.id ?? (person.url ? `${person.url}#person` : null);
 }
 
 export function postAuthorJsonLd(author: string | null | undefined): Record<string, unknown> {
@@ -148,6 +155,7 @@ export function authorProfileJsonLd(
       ...(person.sameAs?.length ? { sameAs: person.sameAs } : {}),
       ...(person.alumniOf ? { alumniOf: { "@type": "CollegeOrUniversity", name: person.alumniOf } } : {}),
       worksFor: { "@type": "Organization", "@id": `${BASE_URL}/#org`, name: ORG_NAME, url: `${BASE_URL}/` },
+      ...(id === PEDRO_NODE["@id"] || id === THIAGO_NODE["@id"] ? { founderOf: { "@id": `${BASE_URL}/#org` } } : {}),
     },
   };
 }
