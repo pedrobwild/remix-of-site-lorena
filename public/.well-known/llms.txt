@@ -31,22 +31,22 @@ A Bewild é uma empresa de reforma completa de apartamentos e studios em São Pa
 Páginas com os projetos entregues em cada bairro de São Paulo (só bairros com 3 projetos ou mais):
 
 <!-- bairros:start -->
-- [Reforma de apartamento em Brooklin](/reforma/brooklin): 9 projetos entregues
-- [Reforma de apartamento em Butantã](/reforma/butanta): 10 projetos entregues
-- [Reforma de apartamento em Campo Belo](/reforma/campo-belo): 6 projetos entregues
-- [Reforma de apartamento em Consolação](/reforma/consolacao): 7 projetos entregues
-- [Reforma de apartamento em Higienópolis](/reforma/higienopolis): 3 projetos entregues
-- [Reforma de apartamento em Moema](/reforma/moema): 3 projetos entregues
-- [Reforma de apartamento em Paulista](/reforma/paulista): 3 projetos entregues
-- [Reforma de apartamento em Perdizes](/reforma/perdizes): 6 projetos entregues
-- [Reforma de apartamento em Pinheiros](/reforma/pinheiros): 12 projetos entregues
-- [Reforma de apartamento em República](/reforma/republica): 3 projetos entregues
-- [Reforma de apartamento em Santo Amaro](/reforma/santo-amaro): 3 projetos entregues
-- [Reforma de apartamento em Vila Clementino](/reforma/vila-clementino): 6 projetos entregues
-- [Reforma de apartamento em Vila Madalena](/reforma/vila-madalena): 6 projetos entregues
-- [Reforma de apartamento em Vila Mariana](/reforma/vila-mariana): 3 projetos entregues
-- [Reforma de apartamento em Vila Nova Conceição](/reforma/vila-nova-conceicao): 5 projetos entregues
-- [Reforma de apartamento em Vila Olímpia](/reforma/vila-olimpia): 3 projetos entregues
+- [Reforma de apartamento e studio em Brooklin](/reforma/brooklin): 9 projetos entregues
+- [Reforma de apartamento e studio em Butantã](/reforma/butanta): 10 projetos entregues
+- [Reforma de apartamento e studio em Campo Belo](/reforma/campo-belo): 6 projetos entregues
+- [Reforma de apartamento e studio em Consolação](/reforma/consolacao): 7 projetos entregues
+- [Reforma de apartamento e studio em Higienópolis](/reforma/higienopolis): 3 projetos entregues
+- [Reforma de apartamento e studio em Moema](/reforma/moema): 3 projetos entregues
+- [Reforma de apartamento e studio em Paulista](/reforma/paulista): 3 projetos entregues
+- [Reforma de apartamento e studio em Perdizes](/reforma/perdizes): 6 projetos entregues
+- [Reforma de apartamento e studio em Pinheiros](/reforma/pinheiros): 12 projetos entregues
+- [Reforma de apartamento e studio em República](/reforma/republica): 3 projetos entregues
+- [Reforma de apartamento e studio em Santo Amaro](/reforma/santo-amaro): 3 projetos entregues
+- [Reforma de apartamento e studio em Vila Clementino](/reforma/vila-clementino): 6 projetos entregues
+- [Reforma de apartamento e studio em Vila Madalena](/reforma/vila-madalena): 6 projetos entregues
+- [Reforma de apartamento e studio em Vila Mariana](/reforma/vila-mariana): 3 projetos entregues
+- [Reforma de apartamento e studio em Vila Nova Conceição](/reforma/vila-nova-conceicao): 5 projetos entregues
+- [Reforma de apartamento e studio em Vila Olímpia](/reforma/vila-olimpia): 3 projetos entregues
 <!-- bairros:end -->
 
 ## Conteúdos publicados

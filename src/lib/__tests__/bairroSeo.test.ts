@@ -74,4 +74,20 @@ describe("página de bairro: servidor e navegador dizem o mesmo", () => {
     // O H1 acompanha o título.
     expect(read("src/pages/BairroPage.tsx")).toMatch(/Reforma de apartamento e studio em <em>/);
   });
+
+  it("o llms.txt lista os bairros com o mesmo rótulo do título", () => {
+    const read = (p: string) => readFileSync(path.resolve(__dirname, "../../..", p), "utf8");
+    // O build regrava o trecho entre os marcadores a partir deste modelo.
+    expect(read("scripts/generate-sitemap.mjs")).toContain("- [Reforma de apartamento e studio em ${h.label}]");
+    const llms = read("public/llms.txt");
+    const bloco = llms.slice(llms.indexOf("<!-- bairros:start -->"), llms.indexOf("<!-- bairros:end -->"));
+    const linhas = bloco.split("\n").filter((l) => l.startsWith("- ["));
+    expect(linhas.length).toBeGreaterThan(0);
+    const prefixo = "Reforma de apartamento e studio em ";
+    for (const linha of linhas) {
+      const [, label = ""] = linha.match(/^- \[([^\]]+)\]\(\/reforma\//) ?? [];
+      expect(label.startsWith(prefixo), linha).toBe(true);
+      expect(bairroTitle(label.slice(prefixo.length)).startsWith(label), linha).toBe(true);
+    }
+  });
 });
