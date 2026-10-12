@@ -26,7 +26,7 @@ export const GOOGLE_BUSINESS_PROFILE_URL = "https://maps.google.com/maps?cid=163
 
 export const ORG_SAME_AS = [
   "https://instagram.com/bewild.oficial",
-  "https://www.linkedin.com/company/bewild-reformas/",
+  "https://www.linkedin.com/company/bwil-d/",
   GOOGLE_BUSINESS_PROFILE_URL,
 ];
 export const ORG_CNPJ = "47.350.338/0001-37";
