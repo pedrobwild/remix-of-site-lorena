@@ -73,7 +73,7 @@ Deno.test("home devolve HTTP 200", async () => {
 const CANONICAL_PUBLIC_ROUTES = [
   "/",
   "/portfolio",
-  "/diagnostico",
+  "/orcamento",
   "/faq",
   "/contato",
   "/privacidade",

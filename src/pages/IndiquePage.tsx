@@ -41,7 +41,7 @@ const PASSOS = [
   {
     n: "02",
     t: "A Bewild chama o indicado",
-    d: "Nossa equipe fala com a pessoa indicada em até 1 dia útil, se apresenta como Bewild e agenda o diagnóstico do imóvel. Você é avisado.",
+    d: "Nossa equipe fala com a pessoa indicada em até 1 dia útil, se apresenta como Bewild e inicia o orçamento da reforma. Você é avisado.",
     tempo: "até 1 dia útil",
   },
   {

@@ -86,12 +86,12 @@ export default function MapaDoSitePage({
         {bairros.length > 0 && (
           <section className="bwa-msite-section" aria-labelledby="msite-bairros">
             <div className="bwa-shell">
-              <h2 id="msite-bairros">Reforma de apartamento por bairro</h2>
+              <h2 id="msite-bairros">Reforma de apartamento e studio por bairro</h2>
               <ul className="bwa-msite-list">
                 {bairros.map((b) => (
                   <li key={b.slug}>
                     <a href={routes.bairro(b.slug)}>
-                      Reforma de apartamento em {b.label}{" "}
+                      Reforma de apartamento e studio em {b.label}{" "}
                       <span className="bwa-msite-count">({b.count})</span>
                     </a>
                   </li>

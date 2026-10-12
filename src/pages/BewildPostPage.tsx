@@ -68,7 +68,7 @@ type CtaContent = {
 };
 
 const CTA_FALLBACK: CtaContent = {
-  eyebrow: "Diagnóstico gratuito · sem compromisso",
+  eyebrow: "Orçamento · sem custo, sem compromisso",
   title: (
     <>
       Da leitura à decisão: <i>avalie o seu studio.</i>
@@ -90,17 +90,17 @@ const CTA_BY_CATEGORY: Record<BewildPostCategory, CtaContent> = {
     buttonLabel: "Avaliar meu studio",
   },
   investimento: {
-    eyebrow: "Diagnóstico gratuito · sem compromisso",
+    eyebrow: "Orçamento · sem custo, sem compromisso",
     title: (
       <>
         Da leitura à decisão: <i>avalie o seu studio.</i>
       </>
     ),
     body: "Envie os dados do imóvel e receba uma análise inicial de escopo, projeto e próximos passos.",
-    buttonLabel: "Solicitar diagnóstico",
+    buttonLabel: "Solicitar orçamento",
   },
   mercado: {
-    eyebrow: "Diagnóstico gratuito · sem compromisso",
+    eyebrow: "Orçamento · sem custo, sem compromisso",
     title: (
       <>
         Média de mercado não paga conta. <i>A do seu imóvel, sim.</i>
@@ -120,7 +120,7 @@ const CTA_BY_CATEGORY: Record<BewildPostCategory, CtaContent> = {
     buttonLabel: "Solicitar orçamento",
   },
   operacao: {
-    eyebrow: "Diagnóstico gratuito · sem compromisso",
+    eyebrow: "Orçamento · sem custo, sem compromisso",
     title: (
       <>
         Operar bem começa <i>antes de anunciar.</i>

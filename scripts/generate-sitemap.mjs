@@ -337,8 +337,9 @@ function updateLlmsTxt(posts, hoodUrls = []) {
     .sort((x, y) => String(y.published_at || y.created_at || "").localeCompare(String(x.published_at || x.created_at || "")))
     .map((p) => `- [${String(p.title).replace(/[[\]]/g, "")}](/conteudos/${p.slug})`);
   // Páginas de bairro (/reforma/<bairro>): mesma lista do sitemap, com a contagem.
+  // O rótulo acompanha o título da página (bairroTitle em src/lib/bairroSeo.ts).
   const hoodLines = hoodUrls.map(
-    (h) => `- [Reforma de apartamento em ${h.label}](${h.loc.replace(BASE_URL, "")}): ${h.count} projetos entregues`,
+    (h) => `- [Reforma de apartamento e studio em ${h.label}](${h.loc.replace(BASE_URL, "")}): ${h.count} projetos entregues`,
   );
   let next = replaceBetween(txt, "<!-- posts:start -->", "<!-- posts:end -->", postLines, "posts:start/posts:end");
   next = replaceBetween(next, "<!-- bairros:start -->", "<!-- bairros:end -->", hoodLines, "bairros:start/bairros:end");

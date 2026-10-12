@@ -7,7 +7,13 @@ import { BAIRROS, REMOTO_ITEMS, bairroHref, type BairroPageLink } from "@/lib/ba
 import { useSeo } from "@/lib/useSeo";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
-import { AIRBNB_CHECK, CANONICAL, FAQ } from "@/content/pages/reforma-de-studio-sao-paulo";
+import {
+  AIRBNB_CHECK,
+  CANONICAL,
+  FAQ,
+  SEO_DESCRIPTION,
+  SEO_TITLE,
+} from "@/content/pages/reforma-de-studio-sao-paulo";
 
 /* ============================================================
  * ReformaStudioSpPage — /reforma-de-studio-sao-paulo
@@ -51,9 +57,8 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
   useCtaClickTracking("reforma-studio-sp");
 
   useSeo({
-    title: "Reforma de studios em SP: morar, alugar ou Airbnb | Bewild",
-    description:
-      "Reforma de studios em São Paulo para morar, alugar ou anunciar no Airbnb: projeto 3D, obra, marcenaria e mobília em um contrato, preço fechado, 60 dias úteis e 5 anos de garantia.",
+    title: SEO_TITLE,
+    description: SEO_DESCRIPTION,
     canonicalPath: CANONICAL,
     ogType: "website",
   });
@@ -67,9 +72,10 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
           <div className="bwa-shell bwa-servico-head">
             <p className="bwa-label">Reforma de studio em São Paulo</p>
             <div>
+              {/* Singular de propósito: "reforma de studio" é a busca desta página. */}
               <h1 className="bwa-title">
-                Reforma de studios em São Paulo,{" "}
-                <em>entregues prontos para morar, alugar ou anunciar no Airbnb.</em>
+                Reforma de studio em São Paulo,{" "}
+                <em>entregue pronto para morar, alugar ou anunciar no Airbnb.</em>
               </h1>
               <p className="bwa-servico-lead">
                 A Bewild é especialista em reforma completa de studios e
@@ -154,7 +160,13 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
               <a href="/conteudos/o-que-nao-reformar-no-studio-short-stay">o que não reformar no studio para short stay</a>;
               e a conta de quanto rende, em{" "}
               <a href="/conteudos/quanto-rende-studio-short-stay-sao-paulo">quanto rende um studio no short stay</a>.
-              A Bewild entrega o studio pronto para anunciar e não faz a gestão do anúncio.
+            </p>
+            {/* Mesma resposta do FAQ desta página e do /faq: a Bewild faz a gestão. */}
+            <p className="bwa-servico-text" style={{ marginTop: 16 }}>
+              A Bewild entrega o studio pronto para anunciar e também faz a gestão do Airbnb. Se
+              preferir, a operação pode ficar com você ou com quem você escolher, sem exclusividade:
+              a comparação está em{" "}
+              <a href="/conteudos/gestao-propria-vs-gestora">gestão própria ou gestora profissional</a>.
             </p>
           </div>
         </section>
@@ -172,6 +184,10 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
                 </li>
               ))}
             </ul>
+            <p className="bwa-servico-text" style={{ marginTop: 24 }}>
+              A marcenaria é desenhada no projeto executivo e produzida em fábrica própria: materiais,
+              ferragens e modelos estão em <a href="/marcenaria">marcenaria sob medida</a>.
+            </p>
           </div>
         </section>
 

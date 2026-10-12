@@ -12,6 +12,16 @@ import { faqJsonLd } from "@/lib/useSeo";
 
 export const CANONICAL = "/reforma-de-studio-sao-paulo";
 
+/**
+ * Título e descrição da página, iguais no `head()` da rota (HTML do servidor)
+ * e no `useSeo` da página. No singular desde 11/10/2026: a busca que a página
+ * atende é "reforma de studio" (Search Console e Semrush, out/2026); o plural
+ * "reforma de studios" fica com a home.
+ */
+export const SEO_TITLE = "Reforma de studio em SP: morar, alugar ou Airbnb | Bewild";
+export const SEO_DESCRIPTION =
+  "Reforma de studio em São Paulo para morar, alugar ou anunciar no Airbnb: projeto 3D, obra, marcenaria e mobília em um contrato, preço fechado, 60 dias úteis e 5 anos de garantia.";
+
 /** Seção "Reforma de studio para Airbnb e short stay" (rodada 3, 06/10/2026). */
 export const AIRBNB_CHECK: { n: string; t: string }[] = [
   { n: "01", t: "Cama de casal de qualidade, blackout e isolamento de ruído: a avaliação de sono pesa mais que qualquer acabamento." },
@@ -108,8 +118,9 @@ export const STUDIO_SP_JSONLD: Array<Record<string, unknown>> = [
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "Reforma completa de studios em São Paulo",
-    serviceType: "Reforma de apartamento",
+    name: "Reforma de studio em São Paulo",
+    alternateName: "Reforma completa de studios em São Paulo",
+    serviceType: "Reforma de studio",
     provider: { "@id": "https://bewild.com.br/#org" },
     areaServed: { "@type": "City", name: "São Paulo" },
     url: `https://bewild.com.br${CANONICAL}`,

@@ -225,7 +225,7 @@ export default function ChecklistSection() {
                   </p>
                 </div>
                 <Button size="sm" className="bg-primary text-primary-foreground font-body min-h-[44px]" asChild>
-                  <a href="#cta-final">Solicitar diagnóstico gratuito</a>
+                  <a href="#cta-final">Solicitar orçamento</a>
                 </Button>
               </motion.div>
             )}

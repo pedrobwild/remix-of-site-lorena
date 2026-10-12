@@ -205,8 +205,8 @@ export default function BewildDiagnosticoAdminPage() {
     <BewildAdminShell
       active="diagnostico"
       eyebrow="Painel"
-      title="Diagnósticos e orçamentos"
-      description="Pedidos enviados pelos formulários de /diagnostico e /orcamento e pelas LPs /o e /p, mais recentes primeiro."
+      title="Orçamentos"
+      description="Pedidos enviados pelo formulário de /orcamento e pelas LPs /o e /p (e os antigos, do /diagnostico), mais recentes primeiro."
     >
       {actionMsg && (
         <AdminAlert kind={actionMsg.kind} onClose={() => setActionMsg(null)}>
@@ -270,7 +270,7 @@ export default function BewildDiagnosticoAdminPage() {
         ) : filtered.length === 0 ? (
           <p className="bw-admin__empty">
             {totalCount === 0
-              ? "Nenhum pedido ainda. Quando alguém enviar o /diagnostico, o /orcamento ou as LPs /o e /p, ele aparece aqui."
+              ? "Nenhum pedido ainda. Quando alguém enviar o /orcamento ou as LPs /o e /p, ele aparece aqui."
               : hasMore
                 ? "Nenhum pedido com esse status entre os carregados. Use “Carregar mais” para ver os mais antigos."
                 : "Nenhum pedido com esse status."}

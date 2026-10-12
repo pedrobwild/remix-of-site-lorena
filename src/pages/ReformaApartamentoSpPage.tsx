@@ -137,6 +137,10 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
                 </li>
               ))}
             </ul>
+            <p className="bwa-servico-text" style={{ marginTop: 24 }}>
+              A marcenaria é desenhada no projeto executivo e produzida em fábrica própria: materiais,
+              ferragens e modelos estão em <a href="/marcenaria">marcenaria sob medida</a>.
+            </p>
           </div>
         </section>
 

@@ -1,0 +1,93 @@
+/**
+ * Título e descrição das páginas de bairro (/reforma/<bairro>). Uma função só
+ * para o HTML do servidor (seoLoaders) e para o navegador (BairroPage): antes o
+ * texto era escrito em quatro lugares.
+ */
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { describe, expect, it, vi } from "vitest";
+
+// seoLoaders e useSeo instanciam o cliente do Supabase ao carregar o módulo; sem
+// VITE_SUPABASE_URL (CI e sandbox não têm .env) o import quebra. Mesmo mock dos
+// demais testes de SEO: aqui só rodam funções puras, nunca o backend.
+vi.mock("@/integrations/supabase/client", () => ({
+  supabase: {
+    rpc: () => new Promise(() => {}),
+    from: () => ({ select: () => new Promise(() => {}) }),
+  },
+}));
+
+import { bairroAreaRange, bairroDescription, bairroTitle } from "@/lib/bairroSeo";
+import { bairroSeoFrom } from "@/lib/seoLoaders";
+import { VISIBLE_TITLE_MAX } from "@/lib/seoTitle";
+
+describe("bairroTitle", () => {
+  it("cita apartamento, studio, o bairro e o orçamento", () => {
+    expect(bairroTitle("Moema")).toBe("Reforma de apartamento e studio em Moema: orçamento | Bewild");
+    expect(bairroTitle("Pinheiros")).toBe("Reforma de apartamento e studio em Pinheiros: orçamento");
+  });
+
+  it("a marca só entra quando o título inteiro cabe no que o Google mostra", () => {
+    for (const label of ["Moema", "Butantã", "Brooklin", "Vila Olímpia", "Vila Nova Conceição"]) {
+      const title = bairroTitle(label);
+      if (title.endsWith(" | Bewild")) expect(title.length, label).toBeLessThanOrEqual(VISIBLE_TITLE_MAX);
+      expect(title, label).toContain(`em ${label}`);
+    }
+  });
+
+  it("sem bairro, fala de São Paulo", () => {
+    expect(bairroTitle()).toBe("Reforma de apartamento e studio em São Paulo: orçamento");
+    expect(bairroTitle("  ")).toBe(bairroTitle(null));
+  });
+});
+
+describe("página de bairro: servidor e navegador dizem o mesmo", () => {
+  const projetos = [
+    { neighborhood: "Vila Olímpia", cover_url: "a.jpg", area_m2: 25 },
+    { neighborhood: "Vila Olímpia", cover_url: "b.jpg", area_m2: 28 },
+    { neighborhood: "Vila Olimpia", cover_url: "c.jpg", area_m2: 25 },
+    { neighborhood: "Moema", cover_url: "d.jpg", area_m2: 30 },
+  ];
+
+  it("o loader usa bairroTitle e bairroDescription", () => {
+    const seo = bairroSeoFrom("vila-olimpia", projetos);
+    expect(seo.title).toBe(bairroTitle("Vila Olímpia"));
+    expect(seo.description).toBe(bairroDescription(3, "Vila Olímpia", bairroAreaRange(projetos.slice(0, 3))));
+    expect(seo.notFound).toBeUndefined();
+  });
+
+  it("bairro com menos de 3 projetos não tem página", () => {
+    expect(bairroSeoFrom("moema", projetos).notFound).toBe(true);
+  });
+
+  it("falha de rede cai no título genérico de São Paulo", () => {
+    expect(bairroSeoFrom("moema", null).title).toBe(bairroTitle());
+  });
+
+  it("a página e a rota não escrevem o título à mão", () => {
+    const read = (p: string) => readFileSync(path.resolve(__dirname, "../../..", p), "utf8");
+    for (const f of ["src/pages/BairroPage.tsx", "src/routes/reforma.$slug.tsx", "src/lib/seoLoaders.ts"]) {
+      const fonte = read(f);
+      expect(fonte, f).toContain("bairroTitle(");
+      expect(fonte, f).not.toMatch(/projetos e orçamento/);
+    }
+    // O H1 acompanha o título.
+    expect(read("src/pages/BairroPage.tsx")).toMatch(/Reforma de apartamento e studio em <em>/);
+  });
+
+  it("o llms.txt lista os bairros com o mesmo rótulo do título", () => {
+    const read = (p: string) => readFileSync(path.resolve(__dirname, "../../..", p), "utf8");
+    // O build regrava o trecho entre os marcadores a partir deste modelo.
+    expect(read("scripts/generate-sitemap.mjs")).toContain("- [Reforma de apartamento e studio em ${h.label}]");
+    const llms = read("public/llms.txt");
+    const bloco = llms.slice(llms.indexOf("<!-- bairros:start -->"), llms.indexOf("<!-- bairros:end -->"));
+    const linhas = bloco.split("\n").filter((l) => l.startsWith("- ["));
+    expect(linhas.length).toBeGreaterThan(0);
+    const prefixo = "Reforma de apartamento e studio em ";
+    for (const linha of linhas) {
+      const [, label = ""] = linha.match(/^- \[([^\]]+)\]\(\/reforma\//) ?? [];
+      expect(label.startsWith(prefixo), linha).toBe(true);
+      expect(bairroTitle(label.slice(prefixo.length)).startsWith(label), linha).toBe(true);
+    }
+  });
+});

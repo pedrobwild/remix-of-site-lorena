@@ -1,4 +1,5 @@
 import { formatAreaM2 } from "./formatArea";
+import { brandTitle } from "./seoTitle";
 
 /**
  * Faixa de metragem dos projetos de um bairro, em pt-BR: "24,5 a 35,12 m²"
@@ -13,6 +14,19 @@ export function bairroAreaRange(list: ReadonlyArray<{ area_m2?: number | null }>
   if (min === max) return formatAreaM2(min);
   const num = (n: number) => (formatAreaM2(n) ?? "").replace(/\s*m²$/, "");
   return `${num(min)} a ${num(max)} m²`;
+}
+
+/**
+ * <title> da página de bairro, o mesmo no HTML do servidor e no navegador.
+ *
+ * "Apartamento e studio" desde 11/10/2026: a maior parte das obras desses
+ * bairros é em studio, e quem busca "reforma de studio em <bairro>" não achava
+ * a palavra no título. "Orçamento" fica porque é como a busca chega ("orçamento
+ * de reforma de apartamento em Pinheiros", Search Console de out/2026). Sem
+ * bairro (falha de rede no loader), o título fala de São Paulo.
+ */
+export function bairroTitle(label?: string | null): string {
+  return brandTitle(`Reforma de apartamento e studio em ${(label ?? "").trim() || "São Paulo"}: orçamento`);
 }
 
 /** Meta description da página de bairro: a mesma no HTML do servidor e no navegador. */

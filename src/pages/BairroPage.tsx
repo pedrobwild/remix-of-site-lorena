@@ -1,6 +1,5 @@
-import { brandTitle } from "@/lib/seoTitle";
 import { formatAreaM2 } from "@/lib/formatArea";
-import { bairroAreaRange, bairroDescription } from "@/lib/bairroSeo";
+import { bairroAreaRange, bairroDescription, bairroTitle } from "@/lib/bairroSeo";
 import { bairroContent } from "@/content/bairros";
 /**
  * BairroPage — /reforma/<bairro>. Lista os projetos reais entregues num
@@ -72,7 +71,7 @@ export default function BairroPage({
   const content = bairroContent(slug);
 
   useSeo({
-    title: brandTitle(`Reforma de apartamento em ${label || "São Paulo"}: projetos e orçamento`),
+    title: bairroTitle(label),
     description: bairroDescription(list.length, label, faixa),
     canonicalPath: `/reforma/${slug}`,
     ogType: "website",
@@ -102,7 +101,7 @@ export default function BairroPage({
               <span className="bwh-mono">{label ? `${label} · São Paulo` : "São Paulo"}</span>
             </div>
             <h1 className="bwh-h2" style={{ marginBottom: 24 }}>
-              Reforma de apartamento em <em>{label || "São Paulo"}.</em>
+              Reforma de apartamento e studio em <em>{label || "São Paulo"}.</em>
             </h1>
             {page && (
               <p className="bwh-lead" style={{ margin: "0 0 32px" }}>

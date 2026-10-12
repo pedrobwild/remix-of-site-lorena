@@ -7,7 +7,7 @@
  * renderizado no app do Workflow só quando esse flag está presente).
  *  - noindex, sem nav/footer global, acessível só por URL direta (QR).
  *  - Lead via `sendLead` (notify-lead, `form_path: "/o"`), mesmo pipeline
- *    da DiagnosticoPage.
+ *    do /orcamento.
  *  - O redirecionamento só acontece DEPOIS que o envio termina (navegar antes
  *    abortava a requisição). Sem confirmação, o visitante vê um aviso com o
  *    WhatsApp já preenchido em vez de ser levado embora em silêncio.

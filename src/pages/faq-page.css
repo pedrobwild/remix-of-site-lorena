@@ -38,14 +38,44 @@
   font: inherit;
 }
 
-/* Link interno dentro da resposta do guia (ex.: → /autorizacao-condominio) */
+/* Link interno abaixo da resposta (ex.: → /autorizacao-condominio), usado no
+   /faq e em /autorizacao-condominio. Fica alinhado ao texto da resposta: o <p>
+   acima tem 76 px de recuo e termina com 32 px de respiro, então o primeiro
+   link sobe 20 px (12 px abaixo do texto) e o último devolve os 32 px. Antes
+   o link saía colado à margem esquerda e à linha da pergunta seguinte. Um por
+   linha quando a resposta tem mais de um. */
 .bwa-faqpage-guia-link {
-  display: inline-block;
-  margin-top: 12px;
+  display: block;
+  width: fit-content;
+  margin: 8px 52px 0 76px;
   color: var(--bwa-navy-2);
   font-size: 15px;
   text-decoration: underline;
   text-underline-offset: 4px;
+}
+
+.bwa-faq-answer p + .bwa-faqpage-guia-link {
+  margin-top: -20px;
+}
+
+.bwa-faqpage-guia-link:last-child {
+  margin-bottom: 32px;
+}
+
+/* Celular: mesmo recuo do texto (46 px) e área de toque de 44 px. */
+@media (max-width: 600px) {
+  .bwa-faqpage-guia-link {
+    margin: 0 0 0 46px;
+    padding-block: 11px;
+  }
+
+  .bwa-faq-answer p + .bwa-faqpage-guia-link {
+    margin-top: -31px;
+  }
+
+  .bwa-faqpage-guia-link:last-child {
+    margin-bottom: 21px;
+  }
 }
 
 .bwa-faqpage-guia-link:focus-visible {

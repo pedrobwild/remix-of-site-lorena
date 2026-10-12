@@ -68,6 +68,11 @@ export default function AutorizacaoCondominioPage() {
                     </h2>
                     <div id={`autorizacao-resposta-${i}`} className="bwa-faq-answer">
                       <p>{item.a}</p>
+                      {item.href && (
+                        <a className="bwa-faqpage-guia-link" href={item.href}>
+                          {item.linkLabel}
+                        </a>
+                      )}
                     </div>
                   </article>
                 );

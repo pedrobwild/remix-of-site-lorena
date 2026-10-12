@@ -21,6 +21,10 @@ export const FAQ: { q: string; a: string }[] = [
     a: "MDF de procedência certificada, estruturas em 25 mm, prateleiras e aéreos reforçados em 36 mm e ferragens FGVTN com amortecimento em portas e gavetas.",
   },
   {
+    q: "Vocês fazem móveis planejados para studio e apartamento pequeno?",
+    a: "Sim, é o caso mais comum. Os móveis planejados são desenhados junto com o layout, sob medida para espaços compactos, aprovados em 3D e produzidos na fábrica da própria Bewild.",
+  },
+  {
     q: "Posso contratar só a marcenaria, sem a reforma?",
     a: "Nosso contrato padrão é a reforma completa, com projeto, obra, marcenaria e mobília juntos. Casos de marcenaria isolada são avaliados um a um — fale com a gente no WhatsApp.",
   },

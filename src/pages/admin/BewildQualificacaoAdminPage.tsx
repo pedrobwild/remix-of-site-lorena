@@ -201,7 +201,7 @@ export default function BewildQualificacaoAdminPage() {
       active="qualificacao"
       eyebrow="Painel"
       title="Qualificação"
-      description="Classifique cada lead como qualificado, em andamento ou descartado. Toda mudança — aqui ou nas telas de Leads, Mensagens e Diagnósticos — fica registrada no histórico, com observação, autor e data."
+      description="Classifique cada lead como qualificado, em andamento ou descartado. Toda mudança — aqui ou nas telas de Leads, Mensagens e Orçamentos — fica registrada no histórico, com observação, autor e data."
     >
       {actionMsg && (
         <AdminAlert kind={actionMsg.kind} onClose={() => setActionMsg(null)}>
