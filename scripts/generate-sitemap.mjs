@@ -320,6 +320,7 @@ async function main() {
     { loc: `${BASE_URL}/politica-de-cookies`, lastmod: page("src/routes/politica-de-cookies.tsx", ["PoliticaCookiesPage.tsx"]), changefreq: "yearly", priority: "0.3" },
     // /preferencias-de-cookies é página de configuração: noindex, fora do sitemap (TEC-05).
     { loc: `${BASE_URL}/acessibilidade`, lastmod: page("src/routes/acessibilidade.tsx", ["AcessibilidadePage.tsx"]), changefreq: "yearly", priority: "0.3" },
+    { loc: `${BASE_URL}/autores`, lastmod: page("src/routes/autores.tsx", ["AutoresPage.tsx", "src/lib/orgJsonLd.ts"]), changefreq: "monthly", priority: "0.5" },
   ];
 
   const projectUrls = projects

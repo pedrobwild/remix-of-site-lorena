@@ -30,6 +30,7 @@ export type Route =
   | { name: "preferencias-cookies" }
   | { name: "politica-cookies" }
   | { name: "acessibilidade" }
+  | { name: "autores" }
   | { name: "bewild-project"; slug: string }
   | { name: "bairro"; slug: string }
   | { name: "conteudos" }
@@ -145,6 +146,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/preferencias-de-cookies") return { name: "preferencias-cookies" };
   if (path === "/politica-de-cookies") return { name: "politica-cookies" };
   if (path === "/acessibilidade") return { name: "acessibilidade" };
+  if (path === "/autores") return { name: "autores" };
 
   const bewildProjMatch = path.match(/^\/portfolio\/([a-z0-9-]+)$/);
   if (bewildProjMatch) return { name: "bewild-project", slug: bewildProjMatch[1] };
@@ -318,6 +320,7 @@ export const routes = {
   preferenciasCookies: "/preferencias-de-cookies",
   politicaCookies: "/politica-de-cookies",
   acessibilidade: "/acessibilidade",
+  autores: "/autores",
   bewildProject: (slug: string) => `/portfolio/${slug}`,
   bairro: (slug: string) => `/reforma/${slug}`,
   blog: "/conteudos",

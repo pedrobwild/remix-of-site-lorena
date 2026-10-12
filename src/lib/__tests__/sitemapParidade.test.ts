@@ -47,6 +47,7 @@ const ROTAS_INDEXAVEIS = [
   { path: "/privacidade", priority: "0.3", changefreq: "yearly" },
   { path: "/politica-de-cookies", priority: "0.3", changefreq: "yearly" },
   { path: "/acessibilidade", priority: "0.3", changefreq: "yearly" },
+  { path: "/autores", priority: "0.5", changefreq: "monthly" },
 ];
 
 const script = read("scripts/generate-sitemap.mjs");
