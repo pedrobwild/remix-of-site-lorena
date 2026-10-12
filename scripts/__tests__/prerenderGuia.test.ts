@@ -32,7 +32,7 @@ describe("pré-render do /guia-do-investidor", () => {
     expect(blocos).toHaveLength(3);
     for (const [, atributos] of blocos) expect(atributos).toContain('data-seo-managed="true"');
     const article = JSON.parse(blocos[0][2]);
-    expect(article.dateModified).toBe(GUIA_MODIFIED);
+    expect(article.dateModified).toBe(`${GUIA_MODIFIED}T00:00:00-03:00`);
     const faq = JSON.parse(blocos[2][2]);
     expect(faq.mainEntity).toHaveLength(GUIA_FAQ.length);
   });
