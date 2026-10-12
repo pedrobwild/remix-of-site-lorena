@@ -209,7 +209,7 @@ export default function EscopoPage() {
               <h3>De onde vem a faixa?</h3>
               <p>
                 Dos contratos de reforma completa da Bewild: projeto, obra, marcenaria, mobiliário e eletrodomésticos. A
-                faixa vai do primeiro ao terceiro quartil por m², a metade central dos contratos.
+                faixa por m² é a metade central desses contratos.
               </p>
               <h3>Por que a metragem pesa tanto?</h3>
               <p>
