@@ -21,7 +21,8 @@ export const SERVICE_ID = `${SITE_URL}/#servico-reforma`;
 export const PEDRO_ID = `${SITE_URL}/#pedro-henrique-alves`;
 export const THIAGO_ID = `${SITE_URL}/#thiago-dantas`;
 
-export const ORG_LOGO = `${SITE_URL}/brand/bewild-logo.png`;
+// Quadrado 512×512, fundo branco, marca azul atual (o bewild-logo.png antigo fica por links externos).
+export const ORG_LOGO = `${SITE_URL}/brand/bewild-logo-512.png`;
 export const LOCAL_PHOTO = `${SITE_URL}/images/hero-slides/rodrigo-1-lg.jpg`;
 export const GOOGLE_BUSINESS_PROFILE_URL = "https://maps.google.com/maps?cid=16329162499474686119";
 
