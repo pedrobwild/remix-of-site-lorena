@@ -26,6 +26,6 @@ describe("JSON-LD no HTML do servidor", () => {
   });
   it("bastidores aplica o título editado no painel", () => {
     const ld = bastidoresJsonLd(undefined, { DY27SVWvqoM: { title: "Editado" } }) as { itemListElement: Array<{ item: { name: string } }> };
-    expect(ld.itemListElement[0].item.name).toBe("Editado");
+    expect(ld.itemListElement[0].name).toBe("Editado");
   });
 });
