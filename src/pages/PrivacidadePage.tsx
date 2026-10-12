@@ -444,12 +444,9 @@ export default function PrivacidadePage() {
                 identificador pessoal, para comprovar o consentimento. Você pode
                 mudar sua escolha a qualquer momento em {prefsButton}, também
                 no rodapé do site. Retirar o aceite apaga os cookies de medição
-                deste site e interrompe os envios pelo navegador. O envio pelo
-                servidor descrito em &ldquo;Para onde vão os dados dos
-                formulários&rdquo; independe dessa escolha; você pode se opor a
-                ele pelo canal abaixo. O que já foi enviado à Meta e ao Google
-                segue as ferramentas e os prazos dessas empresas (veja
-                &ldquo;Como recusar ou limitar&rdquo;).
+                deste site e interrompe novos envios; o que já foi enviado à
+                Meta e ao Google segue as ferramentas e os prazos dessas
+                empresas (veja &ldquo;Como recusar ou limitar&rdquo;).
               </p>
 
               <h2>Conteúdos de terceiros</h2>
