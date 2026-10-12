@@ -15,7 +15,7 @@ export type AltMap = Record<string, string>;
 const CHUNK = 150;
 const cache = new Map<string, string>();
 
-async function fetchAlts(urls: string[]): Promise<AltMap> {
+export async function fetchAlts(urls: string[]): Promise<AltMap> {
   const map: AltMap = {};
   const missing: string[] = [];
   for (const url of urls) {
@@ -37,7 +37,7 @@ async function fetchAlts(urls: string[]): Promise<AltMap> {
   return map;
 }
 
-export function useImageAlts(urls: (string | null | undefined)[]): AltMap {
+export function useImageAlts(urls: (string | null | undefined)[], initial?: AltMap): AltMap {
   const key = useMemo(
     () =>
       Array.from(
@@ -47,7 +47,7 @@ export function useImageAlts(urls: (string | null | undefined)[]): AltMap {
         .join("|"),
     [urls],
   );
-  const [alts, setAlts] = useState<AltMap>({});
+  const [alts, setAlts] = useState<AltMap>(initial ?? {});
 
   useEffect(() => {
     if (!key) {
@@ -67,5 +67,5 @@ export function useImageAlts(urls: (string | null | undefined)[]): AltMap {
     };
   }, [key]);
 
-  return alts;
+  return { ...initial, ...alts };
 }
