@@ -1,4 +1,4 @@
-import { BAIRROS_ATENDIDOS, PROVA_CURTA, PROVA_FRASE } from "@/content/provas";
+import { PROVA_CURTA } from "@/content/provas";
 import { useEffect, useMemo, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
@@ -9,7 +9,7 @@ import { useSeo } from "@/lib/useSeo";
 import { safeKbActions, type KbItem } from "@/lib/assistant/assistantEngine";
 import { isExternalHref } from "@/lib/safeUrl";
 import "./faq-page.css";
-import { FAQ_ITEMS, FAQ_ITEMS_SEM_BANCO, FALLBACK_ITEMS, GUIA_ITEMS, INDICACAO_ITEMS, PORTFOLIO_ITEMS, type FaqItem } from "@/content/faqPage";
+import { FALLBACK_ITEMS, GUIA_ITEMS, INDICACAO_ITEMS, PORTFOLIO_ITEMS } from "@/content/faqPage";
 
 /* ============================================================
  * FaqPage — /faq
