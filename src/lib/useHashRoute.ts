@@ -7,6 +7,7 @@ export type Route =
   | { name: "servicos" }
   | { name: "portfolio" }
   | { name: "orcamento" }
+  | { name: "escopo" }
   | { name: "faq" }
   | { name: "autorizacao-condominio" }
   | { name: "contato" }
@@ -78,7 +79,7 @@ export type Route =
  *  - `/blog*` → `/conteudos*` (blog legado removido; URL canônica nova)
  *  - `/diagnostico` → `/orcamento` (página removida; o pedido de orçamento
  *    é a única entrada de lead)
- *  - `/escopo` → `/orcamento` ("Escopo com IA" tirada do ar em 09/10/2026)
+ *  - `/escopo` volta a ser página própria (sem IA), em 12/10/2026
  *  - `/conteudos/<slug fundido>` → artigo que absorveu o conteúdo
  *    (`POSTS_FUNDIDOS`, em `postsFundidos.ts`)
  */
@@ -86,7 +87,7 @@ export function normalizeLegacyPath(pathname: string): string {
   if (/^\/admin\/?$/.test(pathname)) return "/admin/dashboard";
   const blog = pathname.match(/^\/blog(\/.*)?$/);
   if (blog) return "/conteudos" + (blog[1] && blog[1] !== "/" ? blog[1] : "");
-  if (pathname === "/diagnostico" || pathname === "/escopo") return "/orcamento";
+  if (pathname === "/diagnostico") return "/orcamento";
   const conteudo = pathname.match(/^\/conteudos\/([^/]+)\/?$/);
   if (conteudo) {
     const destino = destinoDoPostFundido(conteudo[1]);
@@ -119,6 +120,7 @@ function parsePath(rawPath: string): Route {
   // Página de pedido de orçamento (entrega no mesmo canal do /contato).
   // /diagnostico foi removida e virou redirect legado para /orcamento.
   if (path === "/orcamento") return { name: "orcamento" };
+  if (path === "/escopo") return { name: "escopo" };
   if (path === "/faq") return { name: "faq" };
   if (path === "/autorizacao-condominio") return { name: "autorizacao-condominio" };
   if (path === "/contato") return { name: "contato" };
@@ -293,6 +295,7 @@ export const routes = {
   servicos: "/servicos",
   portfolio: "/portfolio",
   orcamento: "/orcamento",
+  escopo: "/escopo",
   faq: "/faq",
   autorizacaoCondominio: "/autorizacao-condominio",
   contato: "/contato",

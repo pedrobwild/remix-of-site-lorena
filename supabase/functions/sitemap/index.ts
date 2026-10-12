@@ -121,6 +121,7 @@ Deno.serve(async (req) => {
     { loc: `${base}/conteudos`, priority: "0.8", changefreq: "weekly", lastmod: postLastmod },
     { loc: `${base}/videos`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/orcamento`, priority: "1.0", changefreq: "monthly" },
+    { loc: `${base}/escopo`, priority: "0.8", changefreq: "monthly" },
     { loc: `${base}/faq`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/autorizacao-condominio`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/contato`, priority: "0.7", changefreq: "monthly", lastmod: "2026-09-26" },

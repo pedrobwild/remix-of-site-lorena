@@ -1,7 +1,7 @@
 /**
- * /escopo ("Escopo com IA") saiu do ar em 09/10/2026: o endereço faz 301 para
- * /orcamento e a edge function `scope-plan` não chama mais a IA paga
- * (achado crítico do scan de segurança do Lovable).
+ * /escopo: o "Escopo com IA" saiu do ar em 09/10/2026 (a função scope-plan
+ * chamava a IA paga sem login). Em 12/10/2026 a rota voltou como página própria,
+ * sem IA: perguntas + faixa por m² calculada no navegador.
  */
 import { readFileSync } from "node:fs";
 import path from "node:path";
@@ -11,27 +11,23 @@ import { normalizeLegacyPath } from "@/lib/useHashRoute";
 const root = path.resolve(__dirname, "../../..");
 const read = (p: string) => readFileSync(path.join(root, p), "utf8");
 
-describe("/escopo removida", () => {
-  it("SPA normaliza /escopo para /orcamento", () => {
-    expect(normalizeLegacyPath("/escopo")).toBe("/orcamento");
-  });
-
-  it("rota do servidor responde 301 para /orcamento", () => {
+describe("/escopo", () => {
+  it("é página própria, não redireciona mais para /orcamento", () => {
+    expect(normalizeLegacyPath("/escopo")).toBe("/escopo");
     const route = read("src/routes/escopo.tsx");
-    expect(route).toMatch(/redirect\(\{\s*to:\s*"\/orcamento",\s*statusCode:\s*301\s*\}\)/);
-    expect(route).not.toMatch(/component:/);
+    expect(route).toMatch(/component:\s*EscopoPage/);
+    expect(route).not.toMatch(/redirect\(/);
   });
 
-  it("scope-plan não chama a IA nem lê o segredo", () => {
+  it("scope-plan segue sem chamar a IA nem ler o segredo", () => {
     const fn = read("supabase/functions/scope-plan/index.ts");
     expect(fn).not.toMatch(/ai\.gateway\.lovable\.dev/);
     expect(fn).not.toMatch(/LOVABLE_API_KEY/);
     expect(fn).toMatch(/status:\s*410/);
   });
 
-  it("nenhum link do site aponta para /escopo", () => {
-    for (const f of ["src/components/BwaFooter.tsx", "src/pages/MarcenariaPage.tsx", "src/lib/publicPages.ts", "public/sitemap.xml"]) {
-      expect(read(f)).not.toMatch(/\/escopo\b/);
-    }
+  it("a página não chama função nem IA", () => {
+    const page = read("src/pages/EscopoPage.tsx") + read("src/lib/escopoCalc.ts");
+    expect(page).not.toMatch(/scope-plan|functions\.invoke|\/functions\/v1|fetch\(/);
   });
 });

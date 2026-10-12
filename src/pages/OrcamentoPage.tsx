@@ -26,6 +26,7 @@ import {
   useLeadSubmit,
 } from "@/lib/useLeadSubmit";
 import { useSeo } from "@/lib/useSeo";
+import { lerEscopoDaQuery, rotuloItens, type ItemEscopoId } from "@/lib/escopoCalc";
 import "./contato.css";
 import "./servico-reforma.css";
 import "./orcamento.css";
@@ -105,6 +106,8 @@ export default function OrcamentoPage() {
   const [mail, setMail] = useState("");
   const [urgente, setUrgente] = useState(false);
   const [ligacao, setLigacao] = useState(false);
+  // Itens escolhidos em /escopo (vêm na URL; só os ids conhecidos passam).
+  const [escopoItens, setEscopoItens] = useState<ItemEscopoId[]>([]);
   const [touched, setTouched] = useState<Partial<Record<Campo, boolean>>>({});
   // Estado final mostrado no lugar das etapas ("Refazer simulação" limpa).
   const [final, setFinal] = useState<"delivered" | "timedOut" | null>(null);
@@ -138,6 +141,18 @@ export default function OrcamentoPage() {
       focusField(CAMPO_ID[alvo]);
     }
   }, [step]);
+
+  // Respostas de /escopo: preenche metragem, estado, objetivo e itens (após a hidratação).
+  useEffect(() => {
+    const q = lerEscopoDaQuery(window.location.search, {
+      estados: ESTADOS_IMOVEL,
+      objetivos: OBJETIVOS.map((o) => o.value),
+    });
+    if (q.area !== undefined) setArea(Math.min(AREA_SLIDER.max, Math.max(AREA_SLIDER.min, Math.round(q.area))));
+    if (q.estado) setEstado(q.estado as EstadoImovel);
+    if (q.objetivo) setObjetivo(q.objetivo as LeadObjetivo);
+    if (q.itens.length) setEscopoItens(q.itens);
+  }, []);
 
   useEffect(() => {
     if (final) resultadoRef.current?.focus();
@@ -195,6 +210,7 @@ export default function OrcamentoPage() {
           ["Objetivo", OBJETIVOS.find((o) => o.value === objetivo)?.label ?? objetivo],
           ["Chaves", chaves],
           ["Estado", estado],
+          ["Escopo escolhido em /escopo", rotuloItens(escopoItens)],
           ["Atendimento prioritário", urgente ? "sim, tenho urgência" : ""],
           ["Prefere ligação", ligacao ? "sim" : ""],
         ]),
@@ -209,6 +225,7 @@ export default function OrcamentoPage() {
       message:
         [
           estado && `Estado: ${estado}`,
+          escopoItens.length > 0 && `Escopo escolhido em /escopo: ${rotuloItens(escopoItens)}`,
           urgente && "Atendimento prioritário: tem urgência",
           ligacao && "Prefere atendimento por ligação",
         ]
