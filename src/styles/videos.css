@@ -2,12 +2,14 @@
  * (.ct-wrap), mesmos cartões (.ct-card) e as cores do sistema .bwa (tokens
  * --bwa-* do home-bwa.css, que toda página com <BwaNav /> carrega).
  *
- * Largura do player: no máximo 960 px e nunca mais alto que a tela menos o
- * cabeçalho e o título, para o vídeo aparecer inteiro ao abrir a página.
+ * Tamanho do player: a altura vai até 540 px e nunca passa da tela menos o
+ * cabeçalho e o título, para o vídeo aparecer inteiro ao abrir a página; a
+ * largura sai da proporção do vídeo (--vd-ratio, escrita pela página: 1.7778
+ * num vídeo 16:9, 0.5625 num vídeo gravado em pé).
  */
-.bw-videos{--vd-player-w:960px}
+.bw-videos{--vd-ratio:1.7778;--vd-player-h:540px}
 @supports (height:100svh){
-  .bw-videos{--vd-player-w:min(960px,max(480px,calc((100svh - 290px) * 1.7778)))}
+  .bw-videos{--vd-player-h:clamp(270px,calc(100svh - 290px),540px)}
 }
 
 /* Índice: "em vídeo." não se parte em duas linhas. */
@@ -21,11 +23,11 @@
 
 .bw-videos .vd-stage{padding:0 0 clamp(40px,4.6vw,64px)}
 .bw-videos .vd-stage__grid{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(20px,2.4vw,36px);align-items:start}
-.bw-videos .vd-player{position:relative;width:min(100%,var(--vd-player-w));aspect-ratio:16/9;overflow:hidden;background:var(--bwa-navy);border:1px solid var(--ct-hair)}
+.bw-videos .vd-player{position:relative;width:min(100%,calc(var(--vd-player-h) * var(--vd-ratio)));aspect-ratio:var(--vd-ratio);overflow:hidden;background:var(--bwa-navy);border:1px solid var(--ct-hair)}
 .bw-videos .vd-player iframe,
 .bw-videos .vd-player video{position:absolute;inset:0;display:block;width:100%;height:100%;border:0}
-/* Vídeo próprio em outra proporção (ex.: gravado na vertical) cabe inteiro na caixa. */
-.bw-videos .vd-player video{object-fit:contain;background:var(--bwa-navy)}
+/* A caixa já tem a proporção do vídeo; "cover" só recorta a capa quando ela é de outra proporção. */
+.bw-videos .vd-player video{object-fit:cover;background:var(--bwa-navy)}
 
 .bw-videos .vd-info{min-width:0}
 .bw-videos .vd-meta{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0 0 14px;font-family:var(--ct-mono);font-size:11px;font-weight:600;letter-spacing:.1em;line-height:1.5;text-transform:uppercase;color:var(--bwa-ink-soft)}
@@ -38,7 +40,7 @@
 .bw-videos .vd-actions .ct-chip{min-height:44px}
 
 @media (min-width:1180px){
-  .bw-videos .vd-stage__grid{grid-template-columns:minmax(0,var(--vd-player-w)) minmax(280px,1fr)}
+  .bw-videos .vd-stage__grid{grid-template-columns:minmax(0,calc(var(--vd-player-h) * var(--vd-ratio))) minmax(280px,1fr)}
   .bw-videos .vd-player{width:100%}
 }
 

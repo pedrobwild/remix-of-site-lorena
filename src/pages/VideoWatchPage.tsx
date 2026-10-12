@@ -22,10 +22,12 @@ import {
   formatVideoDuration,
   videoEmbedUrl,
   videoPagePath,
+  videoPlayerSize,
   videoYouTubeUrl,
   type VideoPage,
 } from "@/lib/videoPages";
 import { YOUTUBE_IFRAME_ALLOW, YOUTUBE_IFRAME_REFERRER } from "@/lib/youtube";
+import type { CSSProperties } from "react";
 import "@/styles/conteudos.css";
 import "@/styles/videos.css";
 
@@ -40,6 +42,9 @@ export default function VideoWatchPage({ video }: { video: VideoPage }) {
   });
 
   const embedUrl = videoEmbedUrl(video);
+  // A caixa do player nasce na proporção do vídeo (16:9 ou em pé), já no HTML.
+  const size = videoPlayerSize(video);
+  const playerStyle = { "--vd-ratio": size.ratio } as CSSProperties;
   const youtubeUrl = videoYouTubeUrl(video);
   const duration = formatVideoDuration(video.duration);
   const day = formatVideoDay(video.uploadDate);
@@ -64,14 +69,14 @@ export default function VideoWatchPage({ video }: { video: VideoPage }) {
             </section>
 
             <section className="vd-stage">
-              <div className="ct-wrap vd-stage__grid">
+              <div className="ct-wrap vd-stage__grid" style={playerStyle}>
                 <div className="vd-player">
                   {embedUrl ? (
                     <iframe
                       src={embedUrl}
                       title={video.name}
-                      width={960}
-                      height={540}
+                      width={size.width}
+                      height={size.height}
                       allow={YOUTUBE_IFRAME_ALLOW}
                       referrerPolicy={YOUTUBE_IFRAME_REFERRER}
                       allowFullScreen
@@ -82,8 +87,8 @@ export default function VideoWatchPage({ video }: { video: VideoPage }) {
                       playsInline
                       preload="none"
                       poster={video.thumbnailSrc || undefined}
-                      width={960}
-                      height={540}
+                      width={size.width}
+                      height={size.height}
                       aria-label={video.name}
                     >
                       <source src={video.file} type="video/mp4" />

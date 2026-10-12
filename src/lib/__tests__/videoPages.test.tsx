@@ -49,6 +49,7 @@ import {
   videoPageForPost,
   videoPageNodeJsonLd,
   videoPagePath,
+  videoPlayerSize,
 } from "@/lib/videoPages";
 import { isoDurationSeconds } from "@/lib/youtube";
 // O gerador do sitemap é um script .mjs (roda no prebuild, fora do bundle).
@@ -113,6 +114,18 @@ describe("cadastro dos vídeos", () => {
     expect(vivian?.captions && home.includes(vivian.captions)).toBe(true);
   });
 
+  it("o player segue a proporção de cada vídeo", () => {
+    // YouTube: 16:9. Sem tamanho no cadastro, vale o mesmo padrão.
+    expect(videoPlayerSize({ width: 1280, height: 720 })).toEqual({ width: 960, height: 540, ratio: 1.7778 });
+    for (const v of VIDEO_PAGES.filter((p) => p.youtubeId)) expect(videoPlayerSize(v).ratio).toBe(1.7778);
+    // Depoimento da Vivian: gravado em pé. O arquivo tem 1024 × 576 com rotação de
+    // 90° e 111,11 s (ffprobe no site publicado em 12/10/2026): na tela, 576 × 1024.
+    const vivian = videoPageBySlug("depoimento-vivian")!;
+    expect([vivian.width, vivian.height]).toEqual([576, 1024]);
+    expect(videoPlayerSize(vivian)).toEqual({ width: 304, height: 540, ratio: 0.5625 });
+    expect(vivian.duration).toBe("PT1M51S");
+  });
+
   it("formata duração e data como a página mostra", () => {
     expect(formatVideoDuration("PT9M49S")).toBe("9 min 49 s");
     expect(formatVideoDuration("PT1H2M")).toBe("1 h 2 min");
@@ -144,8 +157,13 @@ describe("HTML da página do vídeo", () => {
       if (v.captions) expect(html).toContain(`src="${v.captions}"`);
     }
     expect(html).not.toMatch(/Reproduzir vídeo/);
-    // Largura e altura no player: o Google precisa saber o tamanho e a posição.
-    expect((iframes[0] ?? videos[0]) as string).toMatch(/width="960"/);
+    // Largura e altura no player, na proporção do vídeo: o Google precisa saber o
+    // tamanho e a posição, e a caixa não pode mudar de tamanho depois de carregar.
+    const size = videoPlayerSize(v);
+    const player = (iframes[0] ?? videos[0]) as string;
+    expect(player).toContain(`width="${size.width}"`);
+    expect(player).toContain(`height="${size.height}"`);
+    expect(html).toContain(`style="--vd-ratio:${size.ratio}"`);
     // O vídeo é o assunto da página: H1 com o nome dele, antes do player.
     const h1 = html.match(/<h1[^>]*>(.*?)<\/h1>/)?.[1] ?? "";
     expect(h1.replace(/&quot;/g, '"')).toBe(v.name);

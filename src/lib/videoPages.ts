@@ -38,6 +38,12 @@ type RegistryEntry = {
   file?: string;
   /** Legendas (.vtt) do vídeo hospedado no site. */
   captions?: string;
+  /**
+   * Tamanho do vídeo como ele aparece na tela (já com a rotação aplicada).
+   * Sem isso a página assume 16:9 (1280 × 720), o padrão do YouTube.
+   */
+  width?: number;
+  height?: number;
   /** Artigo de /conteudos que trata do mesmo assunto. */
   post?: { slug: string; label: string };
 };
@@ -59,6 +65,9 @@ export type VideoPage = {
   thumbnail: string;
   /** Miniatura como a página carrega (caminho relativo quando é do próprio site). */
   thumbnailSrc: string;
+  /** Largura e altura do vídeo na tela; a caixa do player segue essa proporção. */
+  width: number;
+  height: number;
   /** ISO 8601 ("PT9M49S") ou null quando a duração não está cadastrada. */
   duration: string | null;
   /** ISO 8601 com fuso ou null quando a data não está cadastrada. */
@@ -83,6 +92,8 @@ function build(entry: RegistryEntry): VideoPage {
     about: meta.description || entry.description,
     thumbnail: thumb ? abs(thumb) : "",
     thumbnailSrc: thumb,
+    width: entry.width && entry.height ? entry.width : 1280,
+    height: entry.width && entry.height ? entry.height : 720,
     duration: meta.duration ?? null,
     uploadDate: videoUploadDate(meta.uploadDate) ?? null,
   };
@@ -115,6 +126,16 @@ export function videoEmbedUrl(video: VideoPage): string | null {
 /** Endereço do vídeo no YouTube, para quem prefere assistir lá. */
 export function videoYouTubeUrl(video: VideoPage): string | null {
   return video.youtubeId ? `https://www.youtube.com/watch?v=${video.youtubeId}` : null;
+}
+
+/**
+ * Tamanho do player no HTML: a proporção do vídeo, com no máximo 960 px no lado
+ * maior de um vídeo deitado e 540 px de altura num vídeo em pé (o CSS ajusta à tela).
+ */
+export function videoPlayerSize(video: Pick<VideoPage, "width" | "height">): { width: number; height: number; ratio: number } {
+  const ratio = video.width / video.height;
+  const height = Math.min(540, video.height);
+  return { width: Math.round(height * ratio), height, ratio: Math.round(ratio * 10000) / 10000 };
 }
 
 /** "9 min 49 s", "1 min 55 s", "45 s"; vazio quando a duração não é conhecida. */
