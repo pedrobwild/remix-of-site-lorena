@@ -265,12 +265,16 @@ async function main() {
     const h = hoods.get(s) ?? { n: 0, rows: [] };
     h.n++; h.rows.push(p); hoods.set(s, h);
   }
+  // Título, H1 e descrição da página de bairro saem do código (BairroPage e
+  // bairroSeo): mudança ali também é mudança da página. Sem isto, a troca do
+  // título em 11/10/2026 não aparecia no lastmod de nenhum bairro.
+  const hoodPageLastmod = page("src/pages/BairroPage.tsx", ["src/lib/bairroSeo.ts"]);
   const hoodUrls = [...hoods.entries()]
     .filter(([, h]) => h.n >= 3)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([s, h]) => ({
       loc: `${BASE_URL}/reforma/${s}`,
-      lastmod: newest(h.rows, "content_updated_at", "created_at"),
+      lastmod: day(newest(h.rows, "content_updated_at", "created_at"), hoodPageLastmod),
       changefreq: "monthly",
       priority: "0.8",
       // Grafia mais usada do bairro e contagem: só para o llms.txt (urlTag ignora).
@@ -334,7 +338,14 @@ function updateLlmsTxt(posts, hoodUrls = []) {
   const txt = readFileSync(LLMS, "utf8");
   const postLines = posts
     .filter((p) => p.slug && p.title)
-    .sort((x, y) => String(y.published_at || y.created_at || "").localeCompare(String(x.published_at || x.created_at || "")))
+    // Mais recentes primeiro; no empate de data (posts publicados no mesmo lote),
+    // ordem alfabética do slug — sem isso a ordem dependia da ordem em que o
+    // banco devolvia as linhas e o arquivo mudava a cada geração.
+    .sort(
+      (x, y) =>
+        String(y.published_at || y.created_at || "").localeCompare(String(x.published_at || x.created_at || "")) ||
+        String(x.slug).localeCompare(String(y.slug)),
+    )
     .map((p) => `- [${String(p.title).replace(/[[\]]/g, "")}](/conteudos/${p.slug})`);
   // Páginas de bairro (/reforma/<bairro>): mesma lista do sitemap, com a contagem.
   // O rótulo acompanha o título da página (bairroTitle em src/lib/bairroSeo.ts).
