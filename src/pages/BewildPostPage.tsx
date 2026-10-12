@@ -46,6 +46,7 @@ import { postAuthorByline, postAuthorHref, postDates, postTitleFromSlug } from "
 import { navigate } from "@/lib/useHashRoute";
 import { keywordsForPost } from "@/lib/postKeywords";
 import { internalLinksForPost } from "@/lib/postInternalLinks";
+import { videoPageForPost, videoPagePath } from "@/lib/videoPages";
 import { structurePostBody, TOC_MIN_SECTIONS } from "@/lib/postStructure";
 import { logNotFound, lookupActiveRedirect } from "@/lib/notFoundLog";
 import "@/styles/post.css";
@@ -207,6 +208,8 @@ export default function BewildPostPage({ slug, initial }: Props) {
 
   const dates = postDates(post);
   const leadingVideo = post ? postYouTubeVideo(post) : null;
+  // Página própria do vídeo deste artigo (/videos/<slug>), a que o Google indexa como vídeo.
+  const videoPage = post ? videoPageForPost(post.slug) : null;
   const dateIso = dates.published;
   const authorHref = postAuthorHref(post?.author);
   // Enquanto o banco não responde, título e H1 saem do slug (SEO-14): o
@@ -429,6 +432,20 @@ export default function BewildPostPage({ slug, initial }: Props) {
                   <strong>Ver todos os gráficos deste artigo</strong>
                 </a>{" "}
                 — versão larga e para celular, prontas para baixar e reutilizar.
+              </p>
+            </div>
+          </section>
+        ) : null}
+
+        {/* VÍDEO DO ARTIGO EM PÁGINA PRÓPRIA */}
+        {videoPage ? (
+          <section className="pt-links">
+            <div className="container">
+              <p>
+                <a href={videoPagePath(videoPage.slug)}>
+                  <strong>Assistir ao vídeo deste artigo em página própria</strong>
+                </a>{" "}
+                — {videoPage.name}
               </p>
             </div>
           </section>

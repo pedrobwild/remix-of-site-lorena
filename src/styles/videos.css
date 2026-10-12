@@ -1,0 +1,68 @@
+/* Vídeos (/videos e /videos/<slug>). Complementa conteudos.css: mesma caixa
+ * (.ct-wrap), mesmos cartões (.ct-card) e as cores do sistema .bwa (tokens
+ * --bwa-* do home-bwa.css, que toda página com <BwaNav /> carrega).
+ *
+ * Largura do player: no máximo 960 px e nunca mais alto que a tela menos o
+ * cabeçalho e o título, para o vídeo aparecer inteiro ao abrir a página.
+ */
+.bw-videos{--vd-player-w:960px}
+@supports (height:100svh){
+  .bw-videos{--vd-player-w:min(960px,max(480px,calc((100svh - 290px) * 1.7778)))}
+}
+
+/* Índice: "em vídeo." não se parte em duas linhas. */
+.bw-videos .ct-hero h1 .accent{display:inline-block}
+
+/* Página do vídeo: título compacto para o player subir na tela. */
+.bw-videos .vd-hero{padding-bottom:clamp(16px,1.8vw,24px)}
+.bw-videos .vd-hero h1{max-width:960px;margin:0;font-size:clamp(26px,2.5vw,40px);line-height:1.12;letter-spacing:-.04em}
+.bw-videos .vd-crumb{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 6px;font-family:var(--ct-mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--bwa-ink-soft)}
+.bw-videos .vd-crumb a{display:inline-flex;align-items:center;min-height:44px;color:var(--bwa-accent);text-decoration:underline;text-underline-offset:4px}
+
+.bw-videos .vd-stage{padding:0 0 clamp(40px,4.6vw,64px)}
+.bw-videos .vd-stage__grid{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(20px,2.4vw,36px);align-items:start}
+.bw-videos .vd-player{position:relative;width:min(100%,var(--vd-player-w));aspect-ratio:16/9;overflow:hidden;background:var(--bwa-navy);border:1px solid var(--ct-hair)}
+.bw-videos .vd-player iframe,
+.bw-videos .vd-player video{position:absolute;inset:0;display:block;width:100%;height:100%;border:0}
+/* Vídeo próprio em outra proporção (ex.: gravado na vertical) cabe inteiro na caixa. */
+.bw-videos .vd-player video{object-fit:contain;background:var(--bwa-navy)}
+
+.bw-videos .vd-info{min-width:0}
+.bw-videos .vd-meta{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0 0 14px;font-family:var(--ct-mono);font-size:11px;font-weight:600;letter-spacing:.1em;line-height:1.5;text-transform:uppercase;color:var(--bwa-ink-soft)}
+.bw-videos .vd-meta .k{color:var(--bwa-accent)}
+.bw-videos .vd-desc{max-width:44rem;margin:0 0 22px;font-size:17px;line-height:1.6;color:var(--bwa-ink)}
+.bw-videos .vd-post{max-width:44rem;margin:0 0 22px;padding:18px 0 0;border-top:1px solid var(--ct-hair)}
+.bw-videos .vd-post__eyb{display:block;margin:0 0 6px;font-family:var(--ct-mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--bwa-ink-soft)}
+.bw-videos .vd-post a{display:inline-flex;align-items:center;min-height:44px;font-size:18px;font-weight:600;line-height:1.3;letter-spacing:-.02em;color:var(--bwa-accent);text-decoration:underline;text-underline-offset:4px}
+.bw-videos .vd-actions{display:flex;flex-wrap:wrap;gap:10px}
+.bw-videos .vd-actions .ct-chip{min-height:44px}
+
+@media (min-width:1180px){
+  .bw-videos .vd-stage__grid{grid-template-columns:minmax(0,var(--vd-player-w)) minmax(280px,1fr)}
+  .bw-videos .vd-player{width:100%}
+}
+
+/* Cartões (índice: duas colunas; "Mais vídeos": três). */
+.bw-videos .vd-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(24px,2.6vw,40px)}
+.bw-videos .vd-grid--3{grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.bw-videos .vd-grid li{min-width:0}
+.bw-videos .vd-card__media{aspect-ratio:16/9;background:var(--bwa-navy)}
+.bw-videos .vd-card__play{position:absolute;left:14px;bottom:14px;display:grid;place-items:center;width:44px;height:44px;background:var(--bwa-navy);color:var(--bwa-white)}
+.bw-videos .vd-card__play svg{width:20px;height:20px;fill:currentColor}
+.bw-videos .vd-card__dur{position:absolute;right:14px;bottom:14px;padding:6px 9px;background:var(--bwa-navy);color:var(--bwa-white);font-family:var(--ct-mono);font-size:10px;font-weight:600;letter-spacing:.08em;line-height:1.2;text-transform:uppercase}
+.bw-videos .vd-more{border-top:1px solid var(--ct-hair)}
+.bw-videos .ct-secmark h2{margin:0}
+
+/* Foco visível nos links e cartões da seção. */
+.bw-videos .vd-card:focus-visible,
+.bw-videos .vd-crumb a:focus-visible,
+.bw-videos .vd-post a:focus-visible,
+.bw-videos .vd-actions .ct-chip:focus-visible{outline:2px solid var(--bwa-accent);outline-offset:3px}
+
+@media (max-width:960px){
+  .bw-videos .vd-grid--3{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:640px){
+  .bw-videos .vd-grid,
+  .bw-videos .vd-grid--3{grid-template-columns:minmax(0,1fr)}
+}

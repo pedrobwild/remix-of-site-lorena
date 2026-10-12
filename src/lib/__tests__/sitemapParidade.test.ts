@@ -24,6 +24,7 @@ const ROTAS_INDEXAVEIS = [
   { path: "/", priority: "1.0", changefreq: "weekly" },
   { path: "/portfolio", priority: "0.9", changefreq: "weekly" },
   { path: "/conteudos", priority: "0.8", changefreq: "weekly" },
+  { path: "/videos", priority: "0.7", changefreq: "monthly" },
   { path: "/orcamento", priority: "1.0", changefreq: "monthly" },
   { path: "/faq", priority: "0.7", changefreq: "monthly" },
   { path: "/autorizacao-condominio", priority: "0.7", changefreq: "monthly" },
@@ -178,7 +179,8 @@ describe("public/sitemap.xml commitado", () => {
   it("toda rota estática do arquivo existe no roteador e no gerador (nada órfão)", () => {
     const estaticas = locs
       .map((l) => new URL(l).pathname)
-      .filter((p) => !p.startsWith("/portfolio/") && !p.startsWith("/conteudos/") && !p.startsWith("/reforma/") && !p.startsWith("/graficos/"));
+      // /videos/<slug> vem do cadastro de vídeos (conferido em videoPages.test.tsx).
+      .filter((p) => !p.startsWith("/portfolio/") && !p.startsWith("/conteudos/") && !p.startsWith("/reforma/") && !p.startsWith("/graficos/") && !p.startsWith("/videos/"));
     for (const p of estaticas) {
       expect(indexaveisDoRoteador, `${p} no sitemap mas não é rota indexável`).toContain(p);
       expect(rotasDoScript, `${p} no sitemap mas não está no gerador`).toContain(p);

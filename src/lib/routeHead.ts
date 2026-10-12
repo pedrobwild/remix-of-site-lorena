@@ -120,6 +120,7 @@ function pageTypeFor(path: string): string {
   if (
     path === "/portfolio" ||
     path === "/conteudos" ||
+    path === "/videos" ||
     path === "/mapa-do-site" ||
     path === "/onde-atuamos" ||
     path.startsWith("/reforma/")
@@ -143,6 +144,7 @@ const TRAIL_NAMES: Record<string, string> = {
   "/mapa": "Mapa",
   "/contato": "Contato",
   "/conteudos": "Conteúdos",
+  "/videos": "Vídeos",
   "/parceiros": "Parceiros",
   "/orcamento": "Orçamento",
 };
@@ -153,6 +155,7 @@ function trailFor(path: string, name: string): Array<{ name: string; path: strin
   if (path.startsWith("/portfolio/") || path.startsWith("/reforma/"))
     trail.push({ name: "Portfólio", path: "/portfolio" });
   else if (path.startsWith("/conteudos/")) trail.push({ name: "Conteúdos", path: "/conteudos" });
+  else if (path.startsWith("/videos/")) trail.push({ name: "Vídeos", path: "/videos" });
   else if (path.startsWith("/parceiros/")) trail.push({ name: "Parceiros", path: "/parceiros" });
   trail.push({ name: TRAIL_NAMES[path] ?? name, path });
   return trail;

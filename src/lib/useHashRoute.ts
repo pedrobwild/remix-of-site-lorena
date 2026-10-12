@@ -33,6 +33,8 @@ export type Route =
   | { name: "bairro"; slug: string }
   | { name: "conteudos" }
   | { name: "bewild-post"; slug: string }
+  | { name: "videos" }
+  | { name: "video"; slug: string }
   | { name: "lp-obra" }
   | { name: "lp-panfleto" }
 
@@ -152,6 +154,11 @@ function parsePath(rawPath: string): Route {
   if (path === "/conteudos") return { name: "conteudos" };
   const conteudosMatch = path.match(/^\/conteudos\/([a-z0-9-]+)$/);
   if (conteudosMatch) return { name: "bewild-post", slug: conteudosMatch[1] };
+
+  // Vídeos: índice e a página de cada vídeo (cadastro em src/content/videoPages.json).
+  if (path === "/videos") return { name: "videos" };
+  const videoMatch = path.match(/^\/videos\/([a-z0-9-]+)$/);
+  if (videoMatch) return { name: "video", slug: videoMatch[1] };
 
   // Admin
   if (path === "/admin/login") return { name: "admin-login" };
@@ -313,6 +320,8 @@ export const routes = {
   blog: "/conteudos",
   conteudos: "/conteudos",
   conteudosPost: (slug: string) => `/conteudos/${slug}`,
+  videos: "/videos",
+  video: (slug: string) => `/videos/${slug}`,
   adminLogin: "/admin/login",
   adminDashboard: "/admin/dashboard",
   adminAnalytics: "/admin/analytics",

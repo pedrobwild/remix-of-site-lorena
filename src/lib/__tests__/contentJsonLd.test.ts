@@ -42,9 +42,16 @@ describe("JSON-LD no head() sem duplicação", () => {
     const nodes = scripts.map((s) => JSON.parse(s.children));
     const video = nodes.find((n) => n["@type"] === "VideoObject");
     expect(video.name).toBe("Como reformar um studio gastando menos: 4 obras que raramente se pagam");
-    expect(video.description).toBe(p.excerpt);
-    expect(video.uploadDate).toBe(videoUploadDate(p.published_at));
+    // Vídeo cadastrado em videoMeta.json: descrição e data são as do vídeo, as
+    // mesmas da página /videos/<slug> (não o resumo nem a data do artigo).
+    expect(video.description).toMatch(/^Nem sempre gastar mais na reforma significa alugar por mais\./);
+    expect(video.description).not.toBe(p.excerpt);
+    expect(video.uploadDate).toBe(videoUploadDate("2026-10-07"));
     expect(video.uploadDate).toMatch(/(Z|[+-]\d{2}:\d{2})$/);
+    // Vídeo sem cadastro: valem o resumo e a data do artigo.
+    const semCadastro = postJsonLd({ ...p, youtube_video_id: "dQw4w9WgXcQ" }).find((n) => n["@type"] === "VideoObject") as Record<string, unknown>;
+    expect(semCadastro.description).toBe(p.excerpt);
+    expect(semCadastro.uploadDate).toBe(videoUploadDate(p.published_at));
     expect(video.embedUrl).toBe("https://www.youtube.com/embed/El1Dxf7RBRk");
     expect(video.contentUrl).toBe("https://www.youtube.com/watch?v=El1Dxf7RBRk");
     expect(video.publisher.name).toBe("Bewild Arquitetura & Reformas");

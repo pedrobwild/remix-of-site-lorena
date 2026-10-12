@@ -1,0 +1,43 @@
+[
+  {
+    "slug": "como-reformar-studio-gastando-menos",
+    "youtube": "El1Dxf7RBRk",
+    "kind": "Guia",
+    "title": "Vídeo: como reformar um studio gastando menos",
+    "description": "As quatro obras que raramente se pagam na reforma de um studio para alugar: bancada, varanda, banheiro e demolições. Assista ao vídeo e leia o artigo completo.",
+    "post": {
+      "slug": "como-reformar-studio-gastando-menos-sem-perder-valor",
+      "label": "Como reformar um studio gastando menos e sem perder valor de mercado"
+    }
+  },
+  {
+    "slug": "aditivo-em-obra",
+    "youtube": "pQjZeD8nYEE",
+    "kind": "Entrevista",
+    "title": "Vídeo: aditivo em obra, por que o orçamento estoura",
+    "description": "Entrevista com Pedro Alves, engenheiro e CEO da Bewild: por que o aditivo em obra acontece, quando é legítimo e o que conferir no contrato antes de assinar.",
+    "post": {
+      "slug": "aditivo-em-obra-por-que-existe",
+      "label": "Por que existe aditivo em obra e os 5 itens que mais o provocam"
+    }
+  },
+  {
+    "slug": "quanto-custa-reformar-ate-50-m2",
+    "youtube": "-igd5cs666c",
+    "kind": "Estudo de custo",
+    "title": "Vídeo: quanto custa reformar até 50 m² em São Paulo",
+    "description": "Em menos de 2 minutos, os números de 188 contratos da Bewild: quanto custa reformar um studio ou apartamento de até 50 m² em São Paulo.",
+    "post": {
+      "slug": "quanto-custa-reformar-apartamento-studio-ate-50-m2",
+      "label": "Quanto custa reformar um apartamento ou studio de até 50 m²"
+    }
+  },
+  {
+    "slug": "depoimento-vivian",
+    "file": "/__l5e/assets-v1/c8276d15-9cdd-42ff-ae7d-306216c9f685/depoimento-cliente.mp4",
+    "captions": "/videos/depoimento-cliente.vtt",
+    "kind": "Depoimento",
+    "title": "Depoimento em vídeo: a reforma do studio da Vivian",
+    "description": "A Vivian reformou o studio dela com a Bewild e contou como foi acompanhar tudo sem entrar na obra. Depoimento em vídeo, gravado sem roteiro."
+  }
+]

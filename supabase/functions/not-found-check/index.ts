@@ -80,12 +80,25 @@ export const STATIC_ROUTES: ReadonlyArray<string> = [
   "/politica-de-cookies",
   "/acessibilidade",
   "/conteudos",
+  "/videos",
   "/o",
   "/p",
   "/404",
 ];
 
 const STATIC_ROUTES_SET = new Set<string>(STATIC_ROUTES);
+
+/**
+ * Páginas de vídeo (/videos/<slug>). Espelha src/content/videoPages.json: os
+ * vídeos vêm de um cadastro no código, não do banco (paridade conferida em
+ * src/lib/__tests__/videoPages.test.tsx).
+ */
+export const VIDEO_SLUGS: ReadonlyArray<string> = [
+  "como-reformar-studio-gastando-menos",
+  "aditivo-em-obra",
+  "quanto-custa-reformar-ate-50-m2",
+  "depoimento-vivian",
+];
 
 /** Prefixos dinâmicos cuja existência precisa ser checada no banco. */
 const DYNAMIC_PREFIXES: Array<{ prefix: string; table: string; column: string }> = [
@@ -193,6 +206,11 @@ Deno.serve(async (req: Request) => {
   // 2) Rota estática conhecida.
   if (STATIC_ROUTES_SET.has(path)) {
     return jsonResponse(200, { path, status: "ok", reason: "static_route" });
+  }
+
+  // 2b) Página de vídeo cadastrada.
+  if (path.startsWith("/videos/") && VIDEO_SLUGS.includes(path.slice("/videos/".length))) {
+    return jsonResponse(200, { path, status: "ok", reason: "video_route" });
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");

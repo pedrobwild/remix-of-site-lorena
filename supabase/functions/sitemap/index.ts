@@ -119,6 +119,7 @@ Deno.serve(async (req) => {
     { loc: `${base}/`, priority: "1.0", changefreq: "weekly", lastmod: "2026-09-26" },
     { loc: `${base}/portfolio`, priority: "0.9", changefreq: "weekly", lastmod: projectLastmod },
     { loc: `${base}/conteudos`, priority: "0.8", changefreq: "weekly", lastmod: postLastmod },
+    { loc: `${base}/videos`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/orcamento`, priority: "1.0", changefreq: "monthly" },
     { loc: `${base}/faq`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/autorizacao-condominio`, priority: "0.7", changefreq: "monthly" },
@@ -186,7 +187,17 @@ Deno.serve(async (req) => {
     };
   });
 
-  const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls, ...chartUrls];
+  // Páginas de vídeo (/videos/<slug>): mantenha em sincronia com src/content/videoPages.json
+  // (paridade conferida em src/lib/__tests__/videoPages.test.tsx). As entradas <video:video>
+  // só saem no sitemap publicado (scripts/generate-sitemap.mjs).
+  const videoUrls: UrlEntry[] = [
+    "como-reformar-studio-gastando-menos",
+    "aditivo-em-obra",
+    "quanto-custa-reformar-ate-50-m2",
+    "depoimento-vivian",
+  ].map((slug) => ({ loc: `${base}/videos/${slug}`, priority: "0.6", changefreq: "monthly" }));
+
+  const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls, ...chartUrls, ...videoUrls];
 
   const urlsXml = all
     .map(

@@ -100,6 +100,7 @@ export default function BewildConteudosPage({ initialPosts, query = "", onQueryC
             <p className="ct-eyb">Conteúdos · inteligência de short stay</p>
             <h1>Quem reforma decide <span className="accent">melhor informado.</span></h1>
             <p className="ct-lead">Mercado, regras, reforma e operação de short stay em São Paulo, explicados pra quem investe e não quer errar a compra.</p>
+            <p className="ct-videos-link"><a className="ct-chip" href="/videos">Prefere assistir? Ver os vídeos</a></p>
             <form className="ct-search" role="search" onSubmit={(e) => e.preventDefault()}>
               <label htmlFor="ct-search-input" className="ct-search__label">Buscar artigos</label>
               <div className="ct-search__row">
