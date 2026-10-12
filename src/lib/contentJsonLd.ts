@@ -25,6 +25,28 @@ const BASE = "https://bewild.com.br";
 // das páginas de vídeo (/videos/<slug>). Reexportado para quem já importava daqui.
 export { videoUploadDate };
 
+/**
+ * Data ISO 8601 no fuso de São Paulo (-03:00; sem horário de verão desde 2019).
+ * "2026-09-01T00:00:00Z" → "2026-08-31T21:00:00-03:00"; só a data → meia-noite
+ * de SP. Valor inválido não sai.
+ */
+export function saoPauloIso(value: string | null | undefined): string | undefined {
+  const v = (value ?? "").trim();
+  if (!v) return undefined;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return `${v}T00:00:00-03:00`;
+  const hasTz = /(Z|[+-]\d{2}:?\d{2})$/i.test(v);
+  const ms = Date.parse(hasTz ? v.replace(" ", "T") : `${v.replace(" ", "T")}Z`);
+  if (Number.isNaN(ms)) return undefined;
+  return `${new Date(ms - 3 * 3600_000).toISOString().slice(0, 19)}-03:00`;
+}
+
+/** Autor do Article: Pedro e Thiago só por @id (o nó completo está no root). */
+function articleAuthor(author: string | null | undefined): JsonLdNode {
+  const person = resolvePostAuthor(author);
+  if (person?.id) return { "@type": "Person", "@id": person.id, name: person.name };
+  return postAuthorJsonLd(author);
+}
+
 const abs = (u: string) => (u.startsWith("http") ? u : `${BASE}${u.startsWith("/") ? u : `/${u}`}`);
 
 /**
@@ -88,19 +110,13 @@ export function postJsonLd(post: BewildPost, extras: PostJsonLdExtras = {}): Jso
         post.meta_description ||
         post.excerpt ||
         `${post.title}. Conteúdo Bewild sobre reformas de apartamentos e imóveis prontos.`,
-      image: post.cover_image ? [post.cover_image] : undefined,
-      author: postAuthorJsonLd(post.author),
-      publisher: {
-        "@type": "Organization",
-        "@id": `${BASE}/#org`,
-        name: "Bewild",
-        url: `${BASE}/`,
-        logo: { "@type": "ImageObject", url: `${BASE}/brand/bewild-logo.png` },
-      },
-      datePublished: dates.published,
-      dateModified: dates.modified,
-      // Mesmo @id do WebPage que o seoHead publica: um grafo só, não dois nós soltos.
-      mainEntityOfPage: { "@id": `${articleUrl}#webpage` },
+      image: post.cover_image ? [abs(post.cover_image)] : undefined,
+      author: articleAuthor(post.author),
+      // O nó completo da Organization já sai no grafo do root.
+      publisher: { "@id": `${BASE}/#org` },
+      datePublished: saoPauloIso(dates.published),
+      dateModified: saoPauloIso(dates.modified),
+      mainEntityOfPage: articleUrl,
       isPartOf: { "@id": `${BASE}/#website` },
       url: articleUrl,
       inLanguage: "pt-BR",
@@ -120,12 +136,12 @@ export function postJsonLd(post: BewildPost, extras: PostJsonLdExtras = {}): Jso
       "@id": `${articleUrl}#video-${leadingVideo.id}`,
       name: leadingVideo.title,
       description: meta.description || post.excerpt || post.meta_description || post.title,
-      thumbnailUrl: [leadingVideo.thumbnail], uploadDate: videoUploadDate(meta.uploadDate ?? dates.published),
+      thumbnailUrl: [abs(leadingVideo.thumbnail)], uploadDate: videoUploadDate(meta.uploadDate ?? dates.published),
       ...(meta.duration ? { duration: meta.duration } : {}),
       // Só o endereço do player (o mesmo do <iframe>). contentUrl é para arquivo de
       // mídia; a página do YouTube não é um arquivo e não entra.
       embedUrl: youtubeEmbedUrl(leadingVideo.id),
-      publisher: { "@type": "Organization", "@id": `${BASE}/#org`, name: "Bewild Arquitetura & Reformas", url: `${BASE}/` },
+      publisher: { "@id": `${BASE}/#org` },
       inLanguage: "pt-BR", isPartOf: { "@id": `${articleUrl}#webpage` },
     });
   }
@@ -165,12 +181,13 @@ export function postJsonLd(post: BewildPost, extras: PostJsonLdExtras = {}): Jso
       "@type": "VideoObject",
       name,
       description: meta.description || post.meta_description || post.excerpt || name,
-      thumbnailUrl: [meta.thumbnailUrl || youtubeThumbnailUrl(v.id)],
+      thumbnailUrl: [abs(meta.thumbnailUrl || youtubeThumbnailUrl(v.id))],
       ...(meta.duration ? { duration: meta.duration } : {}),
       uploadDate: videoUploadDate(meta.uploadDate ?? dates.published),
       embedUrl: youtubeEmbedUrl(v.id, v.start ?? undefined),
       url: `https://www.youtube.com/watch?v=${v.id}`,
       inLanguage: "pt-BR",
+      publisher: { "@id": `${BASE}/#org` },
       isPartOf: { "@type": "WebPage", "@id": articleUrl },
       ...clip,
     });
@@ -209,16 +226,21 @@ export function postPageJsonLd(
   const dates = postDates(post);
   return {
     reviewedBy: postAuthorJsonLd(rev.name),
-    ...(dates.modified ? { lastReviewed: dates.modified } : {}),
+    ...(dates.modified ? { lastReviewed: saoPauloIso(dates.modified) } : {}),
   };
 }
 
 /** ItemList dos posts de /conteudos. */
-export function postListJsonLd(posts: Array<Pick<BewildPost, "slug" | "title" | "cover_image">>): JsonLdNode[] {
+export function postListJsonLd(
+  posts: Array<Pick<BewildPost, "slug" | "title" | "cover_image"> & { featured?: boolean | null }>,
+): JsonLdNode[] {
+  // Mesma ordem da tela: o destaque (primeiro com featured) vem antes da grade.
+  const featured = posts.find((p) => p.featured);
+  const ordered = featured ? [featured, ...posts.filter((p) => p !== featured)] : posts;
   return [
     itemListJsonLd(
       null as never,
-      posts.map((p) => ({ name: p.title, path: `/conteudos/${p.slug}`, image: p.cover_image ?? undefined })),
+      ordered.map((p) => ({ name: p.title, path: `/conteudos/${p.slug}`, image: p.cover_image ?? undefined })),
     ),
   ];
 }
@@ -238,8 +260,9 @@ export function projectListJsonLd(
   return [
     itemListJsonLd(
       null as never,
+      // Só os que a tela mostra (com capa), na mesma ordem (curadoria = ordem do banco).
       // Nome sem o código interno do cliente, como no <title> e no H1 do projeto.
-      projects.map((p) => ({
+      projects.filter((p) => !!p.cover_url).map((p) => ({
         name: projectFriendlyName(p) || p.title,
         path: `/portfolio/${p.slug}`,
         image: p.cover_url ?? undefined,
