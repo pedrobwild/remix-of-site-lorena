@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import FaqPage, { faqPageJsonLd } from "@/pages/FaqPage";
+import FaqPage from "@/pages/FaqPage";
+import { faqPageJsonLd } from "@/content/faqPage";
 import { seoHead } from "@/lib/routeHead";
 import { supabase } from "@/integrations/supabase/client";
 import type { KbItem } from "@/lib/assistant/assistantEngine";

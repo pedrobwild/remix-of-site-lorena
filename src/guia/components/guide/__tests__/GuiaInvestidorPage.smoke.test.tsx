@@ -49,8 +49,8 @@ describe("GuiaInvestidorPage", () => {
     const ld = [...document.head.querySelectorAll('script[type="application/ld+json"][data-seo-managed]')].map((s) =>
       JSON.parse(s.textContent || "{}"),
     );
-    expect(ld.find((o) => o["@type"] === "Article")?.dateModified).toBe(GUIA_MODIFIED);
-    expect(ld.find((o) => o["@type"] === "FAQPage")?.mainEntity).toHaveLength(GUIA_FAQ.length);
+    // JSON-LD sai só no head() da rota (HTML do servidor); o navegador não repete.
+    expect(ld).toEqual([]);
 
     // Tabela de bairros: uma linha por bairro da base única, sem texto de placeholder.
     const tabela = screen.getByRole("table", { name: /Faixas observadas de diária/ });
