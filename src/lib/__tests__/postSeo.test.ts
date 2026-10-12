@@ -30,7 +30,7 @@ describe("resolvePostAuthor / postAuthorJsonLd", () => {
     expect(p).toMatchObject({
       "@type": "Person",
       name: "Pedro Henrique Alves",
-      jobTitle: "Engenheiro, cofundador e CEO da Bewild",
+      jobTitle: "Fundador e CEO",
       url: "https://bewild.com.br/conteudos/pedro-henrique-alves-ceo-bewild",
       sameAs: [
         "https://www.linkedin.com/in/pedro-henrique-alves-872b0245",
@@ -38,7 +38,7 @@ describe("resolvePostAuthor / postAuthorJsonLd", () => {
       ],
     });
     // O mesmo @id em todos os posts e na ProfilePage: o Google junta tudo numa entidade só.
-    expect(p["@id"]).toBe("https://bewild.com.br/conteudos/pedro-henrique-alves-ceo-bewild#person");
+    expect(p["@id"]).toBe("https://bewild.com.br/#pedro-henrique-alves");
     expect(p).not.toHaveProperty("identifier");
     expect(postAuthorJsonLd("pedro henrique alves")).toMatchObject({ name: "Pedro Henrique Alves" });
     expect(postAuthorByline("Pedro Alves")).toBe("Pedro Henrique Alves");
@@ -60,7 +60,7 @@ describe("resolvePostAuthor / postAuthorJsonLd", () => {
     expect(postAuthorJsonLd("Thiago")).not.toHaveProperty("identifier");
     // Com página de autor (06/10/2026), @id e url apontam para ela e rel=author aparece
     expect(postAuthorJsonLd("Thiago Dantas")).toMatchObject({
-      "@id": "https://bewild.com.br/conteudos/thiago-dantas-arquiteto-responsavel-tecnico-bewild#person",
+      "@id": "https://bewild.com.br/#thiago-dantas",
       url: "https://bewild.com.br/conteudos/thiago-dantas-arquiteto-responsavel-tecnico-bewild",
     });
     expect(postAuthorHref("Thiago Dantas")).toBe("/conteudos/thiago-dantas-arquiteto-responsavel-tecnico-bewild");
@@ -85,14 +85,14 @@ describe("authorForPage / authorProfileJsonLd (página de autor)", () => {
       "@type": "ProfilePage",
       dateCreated: "2026-10-06T08:10:48Z",
       dateModified: "2026-10-06T08:27:04Z",
-      about: { "@id": "https://bewild.com.br/conteudos/pedro-henrique-alves-ceo-bewild#person" },
+      about: { "@id": "https://bewild.com.br/#pedro-henrique-alves" },
     });
     const main = page.mainEntity as Record<string, unknown>;
     expect(main).toMatchObject({
       "@type": "Person",
-      "@id": "https://bewild.com.br/conteudos/pedro-henrique-alves-ceo-bewild#person",
+      "@id": "https://bewild.com.br/#pedro-henrique-alves",
       name: "Pedro Henrique Alves",
-      jobTitle: "Engenheiro, cofundador e CEO da Bewild",
+      jobTitle: "Fundador e CEO",
       url: "https://bewild.com.br/conteudos/pedro-henrique-alves-ceo-bewild",
       // Foto fixa do autor vence a capa do post.
       image: "https://bewild.com.br/images/imprensa/allaroundworlds-pedro.webp",
