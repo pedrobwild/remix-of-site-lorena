@@ -143,6 +143,7 @@ Deno.serve(async (req) => {
     { loc: `${base}/privacidade`, priority: "0.3", changefreq: "yearly" },
     { loc: `${base}/politica-de-cookies`, priority: "0.3", changefreq: "yearly" },
     { loc: `${base}/acessibilidade`, priority: "0.3", changefreq: "yearly" },
+    { loc: `${base}/autores`, priority: "0.5", changefreq: "monthly" },
   ];
 
   const projectUrls: UrlEntry[] = projectRows.filter((p) => p.slug).map((p) => ({

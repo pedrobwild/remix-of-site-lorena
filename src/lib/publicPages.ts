@@ -35,6 +35,7 @@ export const PUBLIC_PAGES: PublicPage[] = [
   { path: "/marcas-e-parcerias", label: "Marcas e parcerias" },
   { path: "/autorizacao-condominio", label: "Autorização de condomínio" },
   { path: "/acessibilidade", label: "Acessibilidade" },
+  { path: "/autores", label: "Autores" },
   { path: "/privacidade", label: "Privacidade" },
   { path: "/politica-de-cookies", label: "Política de cookies" },
 ];
