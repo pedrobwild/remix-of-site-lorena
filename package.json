@@ -20,7 +20,8 @@
     "test:setup-guard": "vitest run src/test/__tests__/setupNoTsExpectError.test.ts"
   },
   "overrides": {
-    "rolldown": "1.2.1"
+    "rolldown": "1.2.1",
+    "source-map-js": "^1.2.2"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
