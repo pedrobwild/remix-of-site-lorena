@@ -5,8 +5,7 @@ import { CheckSquare } from "lucide-react";
 import BewildLogo from "@/components/BewildLogo";
 import BwaFooter from "@/components/BwaFooter";
 import "@/styles/bwa-footer-shared.css";
-import { getCanonicalBase, useSeo } from "@/lib/useSeo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
+import { useSeo } from "@/lib/useSeo";
 
 import { BairroProvider } from "@/guia/hooks/useBairroData";
 import { GuideDecisionProvider } from "@/guia/hooks/useGuideDecision";
@@ -15,7 +14,7 @@ import { useReadingProgress } from "@/guia/hooks/useReadingProgress";
 import { useScrollspy } from "@/guia/hooks/useScrollspy";
 import { PHASES, SECTION_IDS } from "@/guia/data/guide-data";
 import {
-  GUIA_DESCRIPTION, GUIA_KEYWORDS, GUIA_PATH, GUIA_TITLE, guiaJsonLd,
+  GUIA_DESCRIPTION, GUIA_KEYWORDS, GUIA_PATH, GUIA_TITLE,
 } from "@/guia/data/guiaMeta";
 
 import LazyMapaBairrosEmbed from "@/guia/components/mapa/LazyMapaBairrosEmbed";
@@ -131,26 +130,14 @@ export default function GuiaInvestidorPage() {
   );
 }
 
-/** <head> da rota: título, descrição, canonical e JSON-LD (Article + Breadcrumb + FAQ). */
+/** <head> no cliente: título, descrição e canonical. O JSON-LD sai no head() da rota. */
 function GuiaSeo() {
-  const { settings } = useSiteSettings();
-  const base = getCanonicalBase(settings);
-  const ogImage = settings?.seo_og_image || settings?.default_og_image || undefined;
-  const absOg = ogImage
-    ? /^https?:\/\//i.test(ogImage)
-      ? ogImage
-      : `${base}${ogImage.startsWith("/") ? "" : "/"}${ogImage}`
-    : undefined;
-
   useSeo({
     title: GUIA_TITLE,
     description: GUIA_DESCRIPTION,
     canonicalPath: GUIA_PATH,
     ogType: "article",
     keywords: GUIA_KEYWORDS,
-    // Sempre presente (não espera o banco): o JSON-LD do pré-render é
-    // substituído no primeiro apply, sem janela sem dados estruturados.
-    jsonLd: guiaJsonLd({ image: absOg }),
   });
 
   return null;

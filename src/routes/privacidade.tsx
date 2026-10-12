@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import PrivacidadePage, { PRIVACIDADE_SEO } from "@/pages/PrivacidadePage";
+import PrivacidadePage from "@/pages/PrivacidadePage";
+import { PRIVACIDADE_SEO } from "@/content/pages/privacidade";
 import { seoHead } from "@/lib/routeHead";
 
 export const Route = createFileRoute("/privacidade")({

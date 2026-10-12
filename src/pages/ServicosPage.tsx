@@ -3,13 +3,11 @@ import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { useSeo } from "@/lib/useSeo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import { installBastidores } from "@/lib/homeBastidores";
 import { installInstagramEmbeds } from "@/lib/homeInstagram";
 import { installTour3d, installTour3dCovers } from "@/lib/homeTour3d";
 import { installSectionSpy } from "@/lib/sectionSpy";
-import { bastidoresJsonLd, parseBastidoresPosts } from "@/lib/bastidoresJsonLd";
 import { BAIRROS_ATENDIDOS, PROJETOS, REFORMAS_ENTREGUES } from "@/content/provas";
 import { initBwaGallery } from "./home-bwa-script";
 import { BASTIDORES_HTML, GALERIA_HTML, SERVICOS_SVG_LIBRARY, TOUR3D_HTML } from "./servicos-bwa-sections";
@@ -38,7 +36,6 @@ const CTA_HREF = "/orcamento";
 
 const TITLE = "Serviços de arquitetura, reforma e marcenaria em SP | Bewild";
 
-const BASTIDORES_POSTS = parseBastidoresPosts();
 
 /** Atalhos para os blocos da página, na ordem em que aparecem. */
 const NAV: { href: string; label: string }[] = [
@@ -180,14 +177,12 @@ export default function ServicosPage() {
   useCtaClickTracking("servicos");
   const mainRef = useRef<HTMLElement>(null);
 
-  // Título e descrição dos 6 posts dos Bastidores editáveis em /admin/seo.
-  const { settings } = useSiteSettings();
   useSeo({
     title: TITLE,
     description: DESCRIPTION,
     canonicalPath: CANONICAL,
     ogType: "website",
-    jsonLd: bastidoresJsonLd(BASTIDORES_POSTS, settings?.bastidores_seo ?? {}),
+    // ItemList dos Bastidores sai no head() da rota (HTML do servidor).
   });
 
   // Comportamento dos blocos vindos da home, restrito ao <main> desta página

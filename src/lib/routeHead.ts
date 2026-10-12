@@ -147,6 +147,7 @@ const TRAIL_NAMES: Record<string, string> = {
   "/videos": "Vídeos",
   "/parceiros": "Parceiros",
   "/orcamento": "Orçamento",
+  "/guia-do-investidor": "Guia do investidor",
 };
 
 /** Trilha de navegação da página (a mesma lógica das páginas no cliente). */

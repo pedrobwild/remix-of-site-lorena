@@ -43,7 +43,7 @@ import {
   openWhatsapp,
   useLeadSubmit,
 } from "@/lib/useLeadSubmit";
-import { faqJsonLd, useSeo } from "@/lib/useSeo";
+import { useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./faq-page.css";
 import "./contato.css";
@@ -249,7 +249,6 @@ export default function IncorporadorasPage() {
     ogType: "website",
     // Prévia interna nunca entra em buscador.
     noindex: preview,
-    jsonLd: [faqJsonLd(INCORP_FAQ.items.map((i) => ({ q: i.q, a: i.a })))],
   });
 
   const primeiroNome = nome.trim().split(" ")[0];
@@ -471,7 +470,7 @@ export default function IncorporadorasPage() {
           <div className="bwa-shell">
             <p className="bwa-label">{INCORP_FAQ.label}</p>
             <h2>{INCORP_FAQ.title}</h2>
-            {/* Dados estruturados só pelo JSON-LD (faqJsonLd no useSeo). */}
+            {/* Dados estruturados só pelo JSON-LD (FAQPage no head() da rota). */}
             <div className="bwa-faq-list">
               {INCORP_FAQ.items.map((item, i) => {
                 const open = faqAberto === i;

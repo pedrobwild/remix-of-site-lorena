@@ -36,6 +36,12 @@ export type SeoInput = {
   noindex?: boolean;
   /** Palavras-chave da rota. Sobrepõe `settings.seo_keywords` (global). */
   keywords?: string;
+  /**
+   * @deprecated JSON-LD de página sai no HTML do servidor, pelo `head()` da rota
+   * (`seoHead({ jsonLd })` em src/lib/routeHead.ts). Fica só para o fallback do
+   * navegador nas páginas de projeto, artigo, lista do portfólio e bairro,
+   * quando o loader do servidor não trouxe o conteúdo. Não usar em página nova.
+   */
   jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
 };
 
