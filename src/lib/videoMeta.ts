@@ -16,7 +16,8 @@ export type VideoMeta = {
   duration?: string;
   /**
    * Dia em que o vídeo foi publicado. Sem a data de envio do YouTube em mãos,
-   * vale o dia em que o vídeo entrou no site (histórico do repositório).
+   * vale o dia em que o vídeo entrou no site (histórico do repositório). O de
+   * custo entrou em 01/10/2026 como arquivo do site e foi para o YouTube em 06/10.
    */
   uploadDate?: string;
 };

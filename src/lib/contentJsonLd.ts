@@ -122,8 +122,9 @@ export function postJsonLd(post: BewildPost, extras: PostJsonLdExtras = {}): Jso
       description: meta.description || post.excerpt || post.meta_description || post.title,
       thumbnailUrl: [leadingVideo.thumbnail], uploadDate: videoUploadDate(meta.uploadDate ?? dates.published),
       ...(meta.duration ? { duration: meta.duration } : {}),
-      embedUrl: `https://www.youtube.com/embed/${leadingVideo.id}`,
-      contentUrl: `https://www.youtube.com/watch?v=${leadingVideo.id}`,
+      // Só o endereço do player (o mesmo do <iframe>). contentUrl é para arquivo de
+      // mídia; a página do YouTube não é um arquivo e não entra.
+      embedUrl: youtubeEmbedUrl(leadingVideo.id),
       publisher: { "@type": "Organization", "@id": `${BASE}/#org`, name: "Bewild Arquitetura & Reformas", url: `${BASE}/` },
       inLanguage: "pt-BR", isPartOf: { "@id": `${articleUrl}#webpage` },
     });
@@ -168,7 +169,6 @@ export function postJsonLd(post: BewildPost, extras: PostJsonLdExtras = {}): Jso
       ...(meta.duration ? { duration: meta.duration } : {}),
       uploadDate: videoUploadDate(meta.uploadDate ?? dates.published),
       embedUrl: youtubeEmbedUrl(v.id, v.start ?? undefined),
-      contentUrl: `https://www.youtube.com/watch?v=${v.id}`,
       url: `https://www.youtube.com/watch?v=${v.id}`,
       inLanguage: "pt-BR",
       isPartOf: { "@type": "WebPage", "@id": articleUrl },

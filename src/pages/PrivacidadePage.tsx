@@ -450,9 +450,10 @@ export default function PrivacidadePage() {
                 cookies ou quando você clica para exibi-los. A exceção são os
                 vídeos do YouTube das páginas de vídeo e de alguns artigos:
                 eles carregam junto com a página, pelo endereço
-                youtube-nocookie.com, e ao carregar o YouTube (Google) pode
-                registrar dados técnicos do acesso, como endereço IP e
-                navegador. As fontes
+                youtube-nocookie.com, e as miniaturas deles, pelo endereço
+                i.ytimg.com. Ao carregar, o YouTube (Google) pode registrar
+                dados técnicos do acesso, como endereço IP e navegador. As
+                fontes
                 tipográficas (Google Fonts) e o selo do Reclame Aqui, no
                 rodapé, também são carregados a partir dos servidores desses
                 serviços.

@@ -77,9 +77,24 @@ export function urlTag({ loc, lastmod, changefreq, priority, videos }) {
 }
 
 // Dados reais dos vídeos (mesma fonte do VideoObject em src/lib/contentJsonLd.ts).
-// Caminho a partir da raiz do projeto, como OUT e LLMS acima: o script sempre roda
-// dali (npm run sitemap, prebuild, CI) e assim o teste consegue importá-lo.
-const videoMeta = JSON.parse(readFileSync(resolve("src/content/videoMeta.json"), "utf8"));
+// Lido ao lado do script; no teste (vitest) import.meta.url não é um arquivo, então
+// vale o caminho a partir da raiz do projeto. Sem o arquivo, segue com cadastro vazio:
+// este script nunca pode quebrar o build.
+function readContentJson(name, fallback) {
+  for (const candidate of [
+    () => fileURLToPath(new URL(`../src/content/${name}`, import.meta.url)),
+    () => resolve("src/content", name),
+  ]) {
+    try {
+      return JSON.parse(readFileSync(candidate(), "utf8"));
+    } catch {
+      /* tenta o próximo caminho */
+    }
+  }
+  console.warn(`[sitemap] src/content/${name} não encontrado; seguindo sem ele.`);
+  return fallback;
+}
+const videoMeta = readContentJson("videoMeta.json", { youtube: {}, files: {} });
 const isoSecs = (d) => {
   const m = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(d || "");
   return m ? +(m[1] || 0) * 3600 + +(m[2] || 0) * 60 + +(m[3] || 0) : null;
@@ -90,7 +105,7 @@ const plain = (s) => String(s ?? "").replace(/<[^>]+>/g, "").replace(/\s+/g, " "
 // Páginas de vídeo (/videos/<slug>): o Google só indexa vídeo que está na página
 // própria dele, então é nela que a entrada <video:video> vai. Mesmo cadastro e a
 // mesma junção de src/lib/videoPages.ts (paridade em videoPages.test.tsx).
-const videoPages = JSON.parse(readFileSync(resolve("src/content/videoPages.json"), "utf8"));
+const videoPages = readContentJson("videoPages.json", []);
 const pagedYouTube = new Set(videoPages.map((p) => p.youtube).filter(Boolean));
 const pagedFiles = new Set(videoPages.map((p) => p.file).filter(Boolean));
 
@@ -131,7 +146,7 @@ export function videoPageEntries() {
 }
 
 /**
- * Vídeos do post (abertura, YouTube no corpo e <video> próprio) para o sitemap de
+ * Vídeos que estão no corpo do post (YouTube e <video> próprio) para o sitemap de
  * vídeo. Vídeo que já tem página própria em /videos NÃO entra aqui: a entrada dele
  * fica na página do vídeo, a única que o Google aceita indexar como vídeo. O que
  * sobra é o vídeo ainda sem página (aviso no fim da geração).
@@ -142,21 +157,6 @@ export function postVideos(post) {
   const postDate = post.published_at || post.created_at;
   const out = [];
   const seen = new Set();
-  // Vídeo de abertura (bewild_posts.youtube_video_id): não está no corpo.
-  const lead = String(post.youtube_video_id ?? "").trim();
-  if (/^[\w-]{11}$/.test(lead) && !pagedYouTube.has(lead)) {
-    const meta = videoMeta.youtube[lead] ?? {};
-    seen.add(lead);
-    out.push({
-      id: lead,
-      thumb: meta.thumbnailUrl || `https://i.ytimg.com/vi/${lead}/hqdefault.jpg`,
-      title: plain(meta.name || post.title),
-      desc: meta.description || desc,
-      player: `https://www.youtube-nocookie.com/embed/${lead}`,
-      secs: isoSecs(meta.duration),
-      date: videoDate(meta.uploadDate) || postDate,
-    });
-  }
   for (const m of body.matchAll(/<iframe\b[^>]*>/gi)) {
     const tag = m[0];
     const src = tag.match(/\bsrc="([^"]+)"/i)?.[1]?.replace(/&amp;/g, "&");
@@ -193,6 +193,14 @@ export function postVideos(post) {
     });
   }
   return out;
+}
+
+/** IDs/arquivos de vídeo de um post que ainda não têm página em /videos (abertura e corpo). */
+export function unpagedPostVideoIds(post) {
+  const ids = postVideos(post).map((v) => v.id);
+  const lead = String(post.youtube_video_id ?? "").trim();
+  if (/^[\w-]{11}$/.test(lead) && !pagedYouTube.has(lead) && !ids.includes(lead)) ids.unshift(lead);
+  return ids;
 }
 
 function videoTag(v) {
@@ -395,9 +403,11 @@ async function main() {
   }));
 
   // Vídeo publicado num artigo e ainda sem página própria: o Google não o indexa.
-  for (const p of postUrls) {
-    for (const v of p.videos ?? []) {
-      console.warn(`[sitemap] vídeo ${v.id} de ${p.loc.replace(BASE_URL, "")} ainda não tem página em /videos: cadastre em src/content/videoPages.json.`);
+  // O de abertura (youtube_video_id) só toca com clique, então nem entra no sitemap.
+  for (const post of posts) {
+    const ids = unpagedPostVideoIds(post);
+    if (ids.length) {
+      console.warn(`[sitemap] /conteudos/${post.slug}: vídeo ${ids.join(", ")} ainda sem página em /videos; cadastre em src/content/videoPages.json.`);
     }
   }
 

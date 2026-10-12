@@ -146,7 +146,8 @@ export default function PoliticaCookiesPage() {
                 cookies próprios. Por isso eles só carregam depois do seu aceite
                 ou quando você clica para exibi-los. A exceção são os vídeos do
                 YouTube das páginas de vídeo e de alguns artigos, que carregam
-                junto com a página, pelo endereço youtube-nocookie.com.
+                junto com a página, pelo endereço youtube-nocookie.com (e as
+                miniaturas deles, pelo endereço i.ytimg.com).
               </p>
 
               <h2>Registro da sua escolha</h2>

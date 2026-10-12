@@ -207,7 +207,7 @@ export function videoListJsonLd(videos: VideoPage[] = VIDEO_PAGES): JsonLdNode {
 
 /** Título e descrição do índice /videos (servidor e navegador usam o mesmo). */
 export const VIDEOS_HUB_SEO = {
-  title: "Vídeos sobre reforma de studio e apartamento em SP",
+  title: "Vídeos de reforma de studios e apartamentos em SP",
   description:
-    "Entrevistas, estudos de custo e depoimentos de clientes da Bewild sobre reforma de studios e apartamentos em São Paulo. Assista e leia o artigo de cada tema.",
+    "Entrevistas, estudos de custo e depoimentos de clientes da Bewild sobre reforma de studios e apartamentos em São Paulo, cada vídeo em página própria.",
 } as const;

@@ -24,36 +24,35 @@ vi.mock("@/integrations/supabase/client", () => ({
 }));
 vi.mock("@/components/BwaNav", () => ({ default: () => null }));
 vi.mock("@/components/BwaFooter", () => ({ default: () => null }));
+// useSeo vira um espião: o que a página pede ao <head> no navegador é conferido abaixo.
+const useSeoSpy = vi.hoisted(() => vi.fn());
 vi.mock("@/lib/useSeo", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/useSeo")>()),
-  useSeo: () => {},
+  useSeo: useSeoSpy,
 }));
 
 import VideoWatchPage from "@/pages/VideoWatchPage";
 import VideosPage from "@/pages/VideosPage";
 import { postJsonLd } from "@/lib/contentJsonLd";
-import { seoHead } from "@/lib/routeHead";
+import { Route as VideoRoute } from "@/routes/videos.$slug";
+import { Route as VideosIndexRoute } from "@/routes/videos.index";
 import { brandTitle, VISIBLE_TITLE_MAX } from "@/lib/seoTitle";
 import type { BewildPost } from "@/lib/useBewildPosts";
 import { parseRoutePath } from "@/lib/useHashRoute";
-import { videoUploadDate } from "@/lib/videoMeta";
 import {
   VIDEO_PAGES,
   VIDEOS_HUB_SEO,
   formatVideoDay,
   formatVideoDuration,
   videoEmbedUrl,
-  videoListJsonLd,
-  videoObjectJsonLd,
   videoPageBySlug,
   videoPageForPost,
-  videoPageNodeJsonLd,
   videoPagePath,
   videoPlayerSize,
 } from "@/lib/videoPages";
 import { isoDurationSeconds } from "@/lib/youtube";
 // O gerador do sitemap é um script .mjs (roda no prebuild, fora do bundle).
-import { urlTag, videoLlmsLines, videoPageEntries } from "../../../scripts/generate-sitemap.mjs";
+import { postVideos, unpagedPostVideoIds, urlTag, videoLlmsLines, videoPageEntries } from "../../../scripts/generate-sitemap.mjs";
 
 const root = path.resolve(__dirname, "../../..");
 const read = (p: string) => readFileSync(path.join(root, p), "utf8");
@@ -193,17 +192,21 @@ describe("HTML da página do vídeo", () => {
 });
 
 describe("dados estruturados", () => {
+  type Head = {
+    meta: Array<Record<string, string>>;
+    links: Array<Record<string, string>>;
+    scripts: Array<{ children: string }>;
+  };
+  // O head() de verdade de cada rota: é ele que escreve o HTML que o Google lê.
+  const headDoVideo = (slug: string, achou = true) =>
+    (VideoRoute.options.head as unknown as (ctx: unknown) => Head)({ params: { slug }, loaderData: achou ? { slug } : undefined });
+  const headDoIndice = () => (VideosIndexRoute.options.head as unknown as (ctx: unknown) => Head)({});
   const types = (scripts: Array<{ children: string }>) => scripts.map((s) => JSON.parse(s.children)["@type"] as string);
 
   it.each(VIDEO_PAGES.map((v) => [v.slug, v] as const))("%s: WebPage + VideoObject, com o vídeo como entidade principal", (_slug, v) => {
-    const head = seoHead({
-      title: brandTitle(v.title),
-      description: v.description,
-      path: videoPagePath(v.slug),
-      ogImage: v.thumbnail,
-      jsonLd: [videoObjectJsonLd(v)],
-      pageJsonLd: videoPageNodeJsonLd(v),
-    });
+    const head = headDoVideo(v.slug);
+    expect(head.meta.find((m) => "title" in m)?.title).toBe(brandTitle(v.title));
+    expect(head.meta.find((m) => m.name === "description")?.content).toBe(v.description);
     expect(types(head.scripts)).toEqual(["WebPage", "VideoObject"]);
     const [page, video] = head.scripts.map((s) => JSON.parse(s.children));
     expect(video["@id"]).toBe(`${BASE}${videoPagePath(v.slug)}#video`);
@@ -228,8 +231,34 @@ describe("dados estruturados", () => {
     expect(head.links.find((l) => l.rel === "canonical")?.href).toBe(`${BASE}${videoPagePath(v.slug)}`);
   });
 
+  it("endereço fora do cadastro (404) não publica VideoObject e sai noindex", () => {
+    const head = headDoVideo("nao-existe", false);
+    expect(head.scripts).toEqual([]);
+    expect(head.meta.find((m) => m.name === "robots")?.content).toBe("noindex, nofollow");
+  });
+
+  it("no navegador a página pede o mesmo endereço e continua indexável", () => {
+    for (const v of VIDEO_PAGES) {
+      useSeoSpy.mockClear();
+      renderToStaticMarkup(<VideoWatchPage video={v} />);
+      const pedido = useSeoSpy.mock.calls[0][0] as Record<string, unknown>;
+      expect(pedido.canonicalPath).toBe(videoPagePath(v.slug));
+      expect(pedido.title).toBe(brandTitle(v.title));
+      expect(pedido.ogImage).toBe(v.thumbnail);
+      expect(pedido.noindex).toBeFalsy();
+    }
+    useSeoSpy.mockClear();
+    renderToStaticMarkup(<VideosPage />);
+    const indice = useSeoSpy.mock.calls[0][0] as Record<string, unknown>;
+    expect(indice.canonicalPath).toBe("/videos");
+    expect(indice.noindex).toBeFalsy();
+  });
+
   it("o índice é CollectionPage + ItemList, sem VideoObject", () => {
-    const head = seoHead({ title: brandTitle(VIDEOS_HUB_SEO.title), description: VIDEOS_HUB_SEO.description, path: "/videos", jsonLd: [videoListJsonLd()] });
+    const head = headDoIndice();
+    expect(head.meta.find((m) => "title" in m)?.title).toBe(brandTitle(VIDEOS_HUB_SEO.title));
+    expect(head.meta.find((m) => m.name === "robots")?.content).toMatch(/^index, follow/);
+    expect(head.links.find((l) => l.rel === "canonical")?.href).toBe(`${BASE}/videos`);
     expect(types(head.scripts)).toEqual(["CollectionPage", "ItemList"]);
     const lista = JSON.parse(head.scripts[1].children);
     expect(lista.itemListElement.map((i: { url: string }) => i.url)).toEqual(VIDEO_PAGES.map((v) => `${BASE}${videoPagePath(v.slug)}`));
@@ -258,8 +287,8 @@ describe("dados estruturados", () => {
     const comVideo = readdirSync(dir)
       .filter((f) => f.endsWith(".tsx"))
       // Quem monta um VideoObject: videoObjectJsonLd, postVideoJsonLd, imprensaVideoJsonLd…
-      // (videoListJsonLd, do índice, é só a lista de páginas e não entra).
-      .filter((f) => /VideoObject|[Vv]ideoObjectJsonLd|VideoJsonLd\b/.test(readFileSync(path.join(dir, f), "utf8")));
+      // (videoListJsonLd, do índice, é só a lista de páginas e não entra). Comentários fora.
+      .filter((f) => /VideoObject|[Vv]ideoObjectJsonLd|VideoJsonLd\b/.test(readFileSync(path.join(dir, f), "utf8").replace(/^\s*\/\/.*$/gm, "")));
     expect(comVideo).toEqual(["videos.$slug.tsx"]);
   });
 });
@@ -310,6 +339,11 @@ describe("sitemap, rotas e links", () => {
     for (const u of urls.filter((x) => x.includes("<video:video>") && !locDe(x).startsWith(`${BASE}/videos/`))) {
       for (const id of ids) expect(u.includes(id), `${locDe(u)} repete o vídeo ${id}`).toBe(false);
     }
+    // O artigo que cada página de vídeo indica existe (está publicado no sitemap).
+    const locs = new Set(urls.map(locDe));
+    for (const v of VIDEO_PAGES.filter((p) => p.post)) {
+      expect(locs.has(`${BASE}/conteudos/${v.post!.slug}`), `artigo de ${v.slug}`).toBe(true);
+    }
     // Toda URL /videos/<slug> do arquivo existe no cadastro.
     const noArquivo = urls.map(locDe).filter((l) => l.startsWith(`${BASE}/videos/`)).sort();
     expect(noArquivo).toEqual(entries.map((e) => e.loc).sort());
@@ -324,8 +358,15 @@ describe("sitemap, rotas e links", () => {
       const bloco = fonte.slice(m.index + m[0].length);
       return [...bloco.slice(0, bloco.indexOf("]")).matchAll(/"([a-z0-9-]+)"/g)].map((x) => x[1]);
     };
-    expect(lista(read("supabase/functions/not-found-check/index.ts"), /VIDEO_SLUGS[^=]*=\s*\[/)).toEqual(slugs);
-    expect(lista(read("supabase/functions/sitemap/index.ts"), /const videoUrls[^=]*=\s*\[/)).toEqual(slugs);
+    const naoEncontrada = read("supabase/functions/not-found-check/index.ts");
+    const sitemapDaBorda = read("supabase/functions/sitemap/index.ts");
+    expect(lista(naoEncontrada, /VIDEO_SLUGS[^=]*=\s*\[/)).toEqual(slugs);
+    expect(lista(sitemapDaBorda, /const videoUrls[^=]*=\s*\[/)).toEqual(slugs);
+    // E usam a lista: a checagem responde 200 para a página e o sitemap a inclui.
+    expect(naoEncontrada).toMatch(/path\.startsWith\("\/videos\/"\) && VIDEO_SLUGS\.includes\(/);
+    expect(naoEncontrada).toContain('reason: "video_route"');
+    expect(sitemapDaBorda).toMatch(/const all = \[[^\]]*\.\.\.videoUrls\]/);
+    expect(sitemapDaBorda).toContain("loc: `${base}/videos/${slug}`");
   });
 
   it("o llms.txt lista as páginas de vídeo como o gerador escreve", () => {
@@ -343,9 +384,11 @@ describe("sitemap, rotas e links", () => {
   it("artigo, rodapé e mapa do site levam às páginas de vídeo", () => {
     for (const v of VIDEO_PAGES.filter((p) => p.post)) expect(videoPageForPost(v.post!.slug)?.slug).toBe(v.slug);
     expect(videoPageForPost("artigo-sem-video")).toBeNull();
-    expect(read("src/pages/BewildPostPage.tsx")).toContain("videoPagePath(videoPage.slug)");
+    const artigo = read("src/pages/BewildPostPage.tsx");
+    expect(artigo).toContain("const videoPage = post ? videoPageForPost(post.slug) : null;");
+    expect(artigo).toMatch(/\{videoPage \? \([\s\S]{0,200}<a href=\{videoPagePath\(videoPage\.slug\)\}>/);
     expect(read("src/components/BwaFooter.tsx")).toContain('<a href="/videos">Vídeos</a>');
-    expect(read("src/pages/MapaDoSitePage.tsx")).toContain("routes.video(v.slug)");
+    expect(read("src/pages/MapaDoSitePage.tsx")).toMatch(/VIDEO_PAGES\.map\(\(v\) => \([\s\S]{0,120}<a href=\{routes\.video\(v\.slug\)\}>\{v\.name\}<\/a>/);
   });
 
   it("as políticas dizem que o vídeo do YouTube carrega com a página", () => {
@@ -357,7 +400,19 @@ describe("sitemap, rotas e links", () => {
     }
   });
 
-  it("a data de envio sai no mesmo formato em todo lugar", () => {
-    for (const v of VIDEO_PAGES) expect(videoUploadDate(v.uploadDate)).toBe(v.uploadDate);
+  it("vídeo de artigo: com página própria sai do artigo; sem página, o gerador avisa", () => {
+    const comPagina = VIDEO_PAGES.find((v) => v.youtubeId)!;
+    const base = { slug: "artigo", title: "Artigo", published_at: "2026-09-01T00:00:00Z" };
+    const iframe = (id: string) => `<iframe src="https://www.youtube-nocookie.com/embed/${id}" title="Vídeo"></iframe>`;
+    // Com página: nada no artigo (a entrada fica em /videos/<slug>) e nenhum aviso.
+    expect(postVideos({ ...base, body: iframe(comPagina.youtubeId!) })).toEqual([]);
+    expect(unpagedPostVideoIds({ ...base, body: iframe(comPagina.youtubeId!), youtube_video_id: comPagina.youtubeId })).toEqual([]);
+    // Sem página: o do corpo continua no artigo (como era) e os dois entram no aviso.
+    const semPagina = postVideos({ ...base, body: iframe("dQw4w9WgXcQ") }) as Array<{ id: string; player: string }>;
+    expect(semPagina.map((v) => v.id)).toEqual(["dQw4w9WgXcQ"]);
+    expect(semPagina[0].player).toBe("https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ");
+    // O de abertura só toca com clique: não entra no sitemap, só no aviso.
+    expect(postVideos({ ...base, body: "<p>x</p>", youtube_video_id: "aaaaaaaaaaa" })).toEqual([]);
+    expect(unpagedPostVideoIds({ ...base, body: iframe("dQw4w9WgXcQ"), youtube_video_id: "aaaaaaaaaaa" })).toEqual(["aaaaaaaaaaa", "dQw4w9WgXcQ"]);
   });
 });

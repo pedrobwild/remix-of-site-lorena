@@ -108,7 +108,7 @@ Páginas com os projetos entregues em cada bairro de São Paulo (só bairros com
 
 ## Vídeos
 
-Cada vídeo tem página própria, com o player e o link para o artigo do mesmo assunto:
+Cada vídeo tem página própria, com o player e, quando existe, o link para o artigo do mesmo assunto:
 
 <!-- videos:start -->
 - [Como reformar um studio gastando menos: 4 obras que raramente se pagam](/videos/como-reformar-studio-gastando-menos): Guia
