@@ -423,6 +423,10 @@ export default function PrivacidadePage() {
                 </table>
               </div>
               <p>
+                Um resumo só sobre cookies está na{" "}
+                <a href={routes.politicaCookies}>Política de cookies</a>.
+              </p>
+              <p>
                 Da sua decisão no banner, registramos apenas a escolha (aceite
                 ou recusa), a versão do texto, a página e o horário, sem
                 identificador pessoal, para comprovar o consentimento. Você pode

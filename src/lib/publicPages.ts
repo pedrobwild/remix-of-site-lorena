@@ -34,6 +34,7 @@ export const PUBLIC_PAGES: PublicPage[] = [
   { path: "/autorizacao-condominio", label: "Autorização de condomínio" },
   { path: "/acessibilidade", label: "Acessibilidade" },
   { path: "/privacidade", label: "Privacidade" },
+  { path: "/politica-de-cookies", label: "Política de cookies" },
 ];
 
 export type PageSeoOverride = {

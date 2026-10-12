@@ -237,6 +237,7 @@ async function main() {
     // lastmod = GUIA_MODIFIED de src/guia/data/guiaMeta.ts (conferido em teste).
     { loc: `${BASE_URL}/guia-do-investidor`, lastmod: "2026-09-23", changefreq: "monthly", priority: "0.8" },
     { loc: `${BASE_URL}/privacidade`, lastmod: page("src/routes/privacidade.tsx", ["PrivacidadePage.tsx"]), changefreq: "yearly", priority: "0.3" },
+    { loc: `${BASE_URL}/politica-de-cookies`, lastmod: page("src/routes/politica-de-cookies.tsx", ["PoliticaCookiesPage.tsx"]), changefreq: "yearly", priority: "0.3" },
     // /preferencias-de-cookies é página de configuração: noindex, fora do sitemap (TEC-05).
     { loc: `${BASE_URL}/acessibilidade`, lastmod: page("src/routes/acessibilidade.tsx", ["AcessibilidadePage.tsx"]), changefreq: "yearly", priority: "0.3" },
   ];

@@ -29,6 +29,7 @@ import { Route as ORouteImport } from './routes/o'
 import { Route as OndeAtuamosRouteImport } from './routes/onde-atuamos'
 import { Route as OrcamentoRouteImport } from './routes/orcamento'
 import { Route as PRouteImport } from './routes/p'
+import { Route as PoliticaDeCookiesRouteImport } from './routes/politica-de-cookies'
 import { Route as PreferenciasDeCookiesRouteImport } from './routes/preferencias-de-cookies'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as ReformaDeApartamentoSaoPauloRouteImport } from './routes/reforma-de-apartamento-sao-paulo'
@@ -175,6 +176,11 @@ const OrcamentoRoute = OrcamentoRouteImport.update({
 const PRoute = PRouteImport.update({
   id: '/p',
   path: '/p',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoliticaDeCookiesRoute = PoliticaDeCookiesRouteImport.update({
+  id: '/politica-de-cookies',
+  path: '/politica-de-cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PreferenciasDeCookiesRoute = PreferenciasDeCookiesRouteImport.update({
@@ -436,6 +442,7 @@ export interface FileRoutesByFullPath {
   '/onde-atuamos': typeof OndeAtuamosRoute
   '/orcamento': typeof OrcamentoRoute
   '/p': typeof PRoute
+  '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/preferencias-de-cookies': typeof PreferenciasDeCookiesRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reforma-de-apartamento-sao-paulo': typeof ReformaDeApartamentoSaoPauloRoute
@@ -505,6 +512,7 @@ export interface FileRoutesByTo {
   '/onde-atuamos': typeof OndeAtuamosRoute
   '/orcamento': typeof OrcamentoRoute
   '/p': typeof PRoute
+  '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/preferencias-de-cookies': typeof PreferenciasDeCookiesRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reforma-de-apartamento-sao-paulo': typeof ReformaDeApartamentoSaoPauloRoute
@@ -575,6 +583,7 @@ export interface FileRoutesById {
   '/onde-atuamos': typeof OndeAtuamosRoute
   '/orcamento': typeof OrcamentoRoute
   '/p': typeof PRoute
+  '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/preferencias-de-cookies': typeof PreferenciasDeCookiesRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reforma-de-apartamento-sao-paulo': typeof ReformaDeApartamentoSaoPauloRoute
@@ -646,6 +655,7 @@ export interface FileRouteTypes {
     | '/onde-atuamos'
     | '/orcamento'
     | '/p'
+    | '/politica-de-cookies'
     | '/preferencias-de-cookies'
     | '/privacidade'
     | '/reforma-de-apartamento-sao-paulo'
@@ -715,6 +725,7 @@ export interface FileRouteTypes {
     | '/onde-atuamos'
     | '/orcamento'
     | '/p'
+    | '/politica-de-cookies'
     | '/preferencias-de-cookies'
     | '/privacidade'
     | '/reforma-de-apartamento-sao-paulo'
@@ -784,6 +795,7 @@ export interface FileRouteTypes {
     | '/onde-atuamos'
     | '/orcamento'
     | '/p'
+    | '/politica-de-cookies'
     | '/preferencias-de-cookies'
     | '/privacidade'
     | '/reforma-de-apartamento-sao-paulo'
@@ -854,6 +866,7 @@ export interface RootRouteChildren {
   OndeAtuamosRoute: typeof OndeAtuamosRoute
   OrcamentoRoute: typeof OrcamentoRoute
   PRoute: typeof PRoute
+  PoliticaDeCookiesRoute: typeof PoliticaDeCookiesRoute
   PreferenciasDeCookiesRoute: typeof PreferenciasDeCookiesRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   ReformaDeApartamentoSaoPauloRoute: typeof ReformaDeApartamentoSaoPauloRoute
@@ -1043,6 +1056,13 @@ declare module '@tanstack/react-router' {
       path: '/p'
       fullPath: '/p'
       preLoaderRoute: typeof PRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politica-de-cookies': {
+      id: '/politica-de-cookies'
+      path: '/politica-de-cookies'
+      fullPath: '/politica-de-cookies'
+      preLoaderRoute: typeof PoliticaDeCookiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/preferencias-de-cookies': {
@@ -1398,6 +1418,7 @@ const rootRouteChildren: RootRouteChildren = {
   OndeAtuamosRoute: OndeAtuamosRoute,
   OrcamentoRoute: OrcamentoRoute,
   PRoute: PRoute,
+  PoliticaDeCookiesRoute: PoliticaDeCookiesRoute,
   PreferenciasDeCookiesRoute: PreferenciasDeCookiesRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   ReformaDeApartamentoSaoPauloRoute: ReformaDeApartamentoSaoPauloRoute,
