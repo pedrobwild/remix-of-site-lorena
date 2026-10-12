@@ -5,7 +5,7 @@
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import { BAIRROS } from "@/guia/data/bairros";
-import { GUIA_FAQ, GUIA_MODIFIED, GUIA_TITLE } from "@/guia/data/guiaMeta";
+import { GUIA_TITLE } from "@/guia/data/guiaMeta";
 
 vi.mock("@/integrations/supabase/client", () => ({
   SUPABASE_URL: "https://test.supabase.co",
