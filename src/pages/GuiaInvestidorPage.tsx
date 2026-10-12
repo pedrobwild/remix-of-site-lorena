@@ -6,7 +6,6 @@ import BewildLogo from "@/components/BewildLogo";
 import BwaFooter from "@/components/BwaFooter";
 import "@/styles/bwa-footer-shared.css";
 import { useSeo } from "@/lib/useSeo";
-import { useSiteSettings } from "@/lib/useSiteSettings";
 
 import { BairroProvider } from "@/guia/hooks/useBairroData";
 import { GuideDecisionProvider } from "@/guia/hooks/useGuideDecision";
