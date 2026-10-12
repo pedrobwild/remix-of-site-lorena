@@ -15,12 +15,12 @@ export const PAGE_SEO_DEFAULTS = {
     description: "Projeto 3D, engenharia, obra e marcenaria sob medida em um único contrato. Conheça os serviços da Bewild para reformar seu apartamento em São Paulo.",
   },
   "/orcamento": {
-    title: "Orçamento de reforma em São Paulo | Bewild",
-    description: "Peça seu orçamento de reforma de studio ou apartamento em São Paulo. Informe imóvel e objetivo para receber uma faixa de investimento em até um dia útil.",
+    title: "Orçamento de reforma de studio e apartamento em SP | Bewild",
+    description: "Peça o orçamento da reforma do seu studio ou apartamento em São Paulo: faixa de investimento em 1 dia útil, projeto 3D, preço fechado e prazo em contrato.",
   },
   "/contato": {
     title: "Contato: arquitetura e reforma em São Paulo | Bewild",
-    description: "Fale com a equipe da Bewild por WhatsApp, e-mail ou pelo formulário. Conheça nosso escritório no Brooklin e converse sobre a reforma do seu apartamento.",
+    description: "Fale com a Bewild por WhatsApp, e-mail ou formulário e converse sobre a reforma do seu studio ou apartamento. Escritório no Brooklin, São Paulo-SP.",
   },
 } as const;
 

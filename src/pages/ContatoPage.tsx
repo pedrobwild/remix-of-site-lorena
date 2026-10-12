@@ -188,9 +188,9 @@ export default function ContatoPage() {
   }
 
   useSeo({
-    title: "Contato: escritório de arquitetura e reforma em SP | Bewild",
+    title: "Contato: arquitetura e reforma em São Paulo | Bewild",
     description:
-      "Fale com o time de arquitetura e engenharia da Bewild sobre seu projeto e a reforma do apartamento. WhatsApp, e-mail e escritório no Brooklin, São Paulo-SP.",
+      "Fale com a Bewild por WhatsApp, e-mail ou formulário e converse sobre a reforma do seu studio ou apartamento. Escritório no Brooklin, São Paulo-SP.",
     canonicalPath: "/contato",
     ogType: "website",
   });
