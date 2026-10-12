@@ -25,3 +25,4 @@
 - [x] Reduzir fonte do texto 'Projeto, obra, marcenaria...' do herói no celular (home-bwa.css)
 - [x] Atualizar /privacidade para LGPD, conferir metadados próprios e presença única nos sitemaps; não publicar
 - [x] Revisar direitos do titular e links de cookies em /privacidade; conferir HTML sem JavaScript, sem publicar
+- [ ] geo no LOCAL_NODE + teste identidadeOficial (não publicar)
