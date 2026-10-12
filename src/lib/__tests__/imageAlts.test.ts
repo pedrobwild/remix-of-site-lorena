@@ -5,7 +5,7 @@ vi.mock("@/integrations/supabase/client", () => ({ supabase: { rpc } }));
 import { fetchAlts } from "../useImageAlts";
 
 describe("descrições por URL das imagens", () => {
-  beforeEach(() => rpc.mockReset());
+  beforeEach(() => { rpc.mockReset(); });
 
   it("lê a descrição pública pela URL original e a reutiliza sem nova consulta", async () => {
     const url = "https://bewild.com.br/images/teste-render.png";
