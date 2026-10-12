@@ -46,11 +46,13 @@ export const MARCENARIA_JSONLD: Array<Record<string, unknown>> = [
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "Marcenaria sob medida em São Paulo",
+    "@id": `https://bewild.com.br${CANONICAL}#service`,
+    // name = H1 da página; description = texto de abertura visível.
+    name: "Marcenaria sob medida em São Paulo, feita na nossa fábrica.",
     alternateName: "Móveis planejados sob medida em SP",
     serviceType: "Marcenaria sob medida",
     description:
-      "Marcenaria planejada desenhada no projeto executivo e produzida em fábrica própria: MDF certificado, estruturas em 25 mm, ferragens FGVTN e 5 anos de garantia.",
+      "Cada armário, painel e bancada da sua reforma sai do mesmo projeto executivo que orienta a obra — desenhado pela nossa equipe de arquitetura, produzido em fábrica própria e instalado pelo nosso time.",
     provider: { "@id": "https://bewild.com.br/#org" },
     areaServed: { "@type": "City", name: "São Paulo" },
     url: `https://bewild.com.br${CANONICAL}`,

@@ -47,7 +47,9 @@ describe("reforma de studio: palavra-chave no singular", () => {
     const pagina = read("pages/ReformaStudioSpPage.tsx");
     expect(pagina).toMatch(/Reforma de studio em São Paulo,\{" "\}/);
     expect(pagina).not.toMatch(/Reforma de studios em São Paulo,/);
-    expect(STUDIO_SP_JSONLD[0]).toMatchObject({ "@type": "Service", name: "Reforma de studio em São Paulo" });
+    expect(STUDIO_SP_JSONLD[0]).toMatchObject({ "@type": "Service" });
+    // name = H1 da página (palavra-chave no singular no começo).
+    expect(String(STUDIO_SP_JSONLD[0].name)).toMatch(/^Reforma de studio em São Paulo,/);
   });
 });
 

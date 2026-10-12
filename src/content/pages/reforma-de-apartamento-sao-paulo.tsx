@@ -63,17 +63,15 @@ export const APARTAMENTO_SP_JSONLD: Array<Record<string, unknown>> = [
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "Reforma de apartamento em São Paulo",
+    "@id": `https://bewild.com.br${CANONICAL}#service`,
+    // name = H1 da página; description = texto de abertura visível (sem contagens).
+    name: "Empresa de reforma de apartamento em São Paulo. Você não vira gerente de obra.",
     alternateName: "Empresa de reforma de apartamento em São Paulo",
     serviceType: "Reforma de apartamento",
     description:
-      "Reforma completa de apartamentos e studios em São Paulo: projeto aprovado em 3D, obra, marcenaria e mobília em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia sobre a mão de obra.",
+      "A Bewild é uma empresa de reforma completa de apartamentos e studios em São Paulo. Entregamos projeto, obra, marcenaria e mobília em um único contrato, com preço fechado antes de a obra começar, prazo em contrato e 5 anos de garantia sobre a mão de obra.",
     provider: { "@id": "https://bewild.com.br/#org" },
-    areaServed: {
-      "@type": "City",
-      name: "São Paulo",
-      containedInPlace: { "@type": "State", name: "São Paulo" },
-    },
+    areaServed: { "@type": "City", name: "São Paulo" },
     url: `https://bewild.com.br${CANONICAL}`,
     hasOfferCatalog: {
       "@type": "OfferCatalog",

@@ -18,7 +18,8 @@ vi.mock("@/integrations/supabase/client", () => ({
 }));
 
 import { getCachedSiteSettings } from "@/lib/useSiteSettings";
-import { organizationJsonLd } from "@/lib/useSeo";
+import { localBusinessRef, organizationJsonLd } from "@/lib/useSeo";
+import { LOCAL_NODE, ORG_JSONLD, ORG_NODE, SERVICE_NODE, THIAGO_NODE } from "@/lib/orgJsonLd";
 
 const CNPJ_OFICIAL = "47.350.338/0001-37";
 const CAU_OFICIAL = "A162437-7";
@@ -44,7 +45,9 @@ describe("identidade oficial da Bewild nos defaults de site_settings", () => {
 
     const serialized = JSON.stringify(ld);
     expect(serialized).not.toContain(CNPJ_ANTIGO);
-    expect(serialized).toContain(CAU_OFICIAL);
+    // CAU é registro pessoal do Thiago: fica só no Person dele, nunca na Organization.
+    expect(serialized.replace(JSON.stringify(THIAGO_NODE), "")).not.toContain(CAU_OFICIAL);
+    expect(ld.identifier).toEqual([{ "@type": "PropertyValue", propertyID: "CNPJ", value: CNPJ_OFICIAL }]);
   });
 
   it("organizationJsonLd usa o mesmo @id (#org) e o logo do nó estático do index.html", () => {
@@ -59,5 +62,31 @@ describe("identidade oficial da Bewild nos defaults de site_settings", () => {
   it("DEFAULTS não trazem o WhatsApp do site anterior", () => {
     const s = getCachedSiteSettings();
     expect(s.whatsapp_number).not.toBe(WHATSAPP_ANTIGO);
+  });
+});
+
+describe("Organization com fonte única (orgJsonLd.ts)", () => {
+  const graph = JSON.parse(ORG_JSONLD)["@graph"] as Array<Record<string, unknown>>;
+  it("ORG_JSONLD é derivado dos nós exportados", () => {
+    expect(graph.map((n) => n["@type"])).toEqual(["Organization", "ProfessionalService", "WebSite", "Service"]);
+    expect(graph[0]).toEqual(ORG_NODE);
+  });
+  it("organizationJsonLd e localBusinessRef não divergem do root", () => {
+    const ld = organizationJsonLd(getCachedSiteSettings()) as Record<string, unknown>;
+    for (const k of ["legalName", "sameAs", "taxID", "founder", "employee"]) expect(ld[k]).toEqual((ORG_NODE as Record<string, unknown>)[k]);
+    expect(ld.email).toBe(LOCAL_NODE.email);
+    expect(ld.telephone).toBe(LOCAL_NODE.telephone);
+    expect(ld.address).toEqual(LOCAL_NODE.address);
+    expect(localBusinessRef("https://bewild.com.br")).toEqual(LOCAL_NODE);
+  });
+  it("decisões do dono: cargos, fundadores, CAU só no Thiago, foto real no #local, @id do serviço", () => {
+    const people = ORG_NODE.employee as Array<Record<string, string>>;
+    expect(people.find((p) => p.name === "Pedro Henrique Alves")?.jobTitle).toBe("Fundador e CEO");
+    expect(THIAGO_NODE.jobTitle).toBe("Cofundador, VP e arquiteto responsável técnico");
+    expect(THIAGO_NODE.identifier).toBe(`CAU ${CAU_OFICIAL}`);
+    expect(ORG_NODE.founder).toEqual([{ "@id": "https://bewild.com.br/#pedro-henrique-alves" }, { "@id": "https://bewild.com.br/#thiago-dantas" }]);
+    expect(LOCAL_NODE.image[0]).toBe("https://bewild.com.br/images/hero-slides/rodrigo-1-lg.jpg");
+    expect(LOCAL_NODE).not.toHaveProperty("geo");
+    expect(SERVICE_NODE["@id"]).toBe("https://bewild.com.br/#servico-reforma");
   });
 });

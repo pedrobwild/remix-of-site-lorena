@@ -118,9 +118,13 @@ export const STUDIO_SP_JSONLD: Array<Record<string, unknown>> = [
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "Reforma de studio em São Paulo",
+    "@id": `https://bewild.com.br${CANONICAL}#service`,
+    // name = H1 da página; description = texto de abertura visível (sem contagens).
+    name: "Reforma de studio em São Paulo, entregue pronto para morar, alugar ou anunciar no Airbnb.",
     alternateName: "Reforma completa de studios em São Paulo",
     serviceType: "Reforma de studio",
+    description:
+      "A Bewild é especialista em reforma completa de studios e apartamentos em São Paulo, para morar ou para locação (short stay e longa duração). Projeto, obra, marcenaria sob medida e mobília em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia.",
     provider: { "@id": "https://bewild.com.br/#org" },
     areaServed: { "@type": "City", name: "São Paulo" },
     url: `https://bewild.com.br${CANONICAL}`,

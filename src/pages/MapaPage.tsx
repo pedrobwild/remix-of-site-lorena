@@ -61,7 +61,7 @@ function MapaEscritorio() {
 
 export default function MapaPage() {
   useSeo({
-    title: "Mapa e endereço: R. Pitu, 72, Brooklin, São Paulo | Bewild",
+    title: "Mapa e endereço: Rua Pitú, 72, Brooklin, São Paulo | Bewild",
     description:
       "Como chegar à Bewild: Rua Pitú, 72, Sala 115, Brooklin, São Paulo-SP. Mapa, horários (seg–sex 9h–19h, sáb 9h–17h) e rota pelo aplicativo.",
     canonicalPath: "/mapa",

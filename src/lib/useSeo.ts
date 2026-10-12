@@ -1,5 +1,16 @@
 import { useEffect, useMemo } from "react";
 import {
+  GOOGLE_BUSINESS_PROFILE_URL,
+  LOCAL_NODE,
+  ORG_ADDRESS,
+  ORG_CNPJ,
+  ORG_EMAIL,
+  ORG_ID as ORG_NODE_ID,
+  ORG_LOGO,
+  ORG_NODE,
+  ORG_TELEPHONE,
+} from "@/lib/orgJsonLd";
+import {
   fetchSiteSettings,
   getCachedSiteSettings,
   invalidateSiteSettings,
@@ -771,45 +782,12 @@ export async function refreshSeoEverywhere(opts?: { pingSearchEngines?: boolean 
 //  JSON-LD helpers
 // =============================================================
 
-/** Link canônico do Perfil da Empresa no Google (cid da ficha "Bewild Reformas e Arquitetura"). */
-export const GOOGLE_BUSINESS_PROFILE_URL = "https://maps.google.com/maps?cid=16329162499474686119";
+/** Link canônico do Perfil da Empresa no Google (fonte: orgJsonLd.ts). */
+export { GOOGLE_BUSINESS_PROFILE_URL };
 
-/** LocalBusiness da Bewild — espelho do nó `#local` de orgJsonLd.ts (manter em sincronia). */
-export function localBusinessRef(base: string) {
-  return {
-    "@type": "ProfessionalService",
-    "@id": `${base}/#local`,
-    name: "Bewild",
-    alternateName: "Bewild Reformas e Arquitetura",
-    url: `${base}/`,
-    telephone: "+55 11 91190-6183",
-    priceRange: "$$",
-    image: `${base}/brand/bewild-logo.png`,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: "Rua Pitú, 72, Sala 115",
-      addressLocality: "São Paulo",
-      addressRegion: "SP",
-      postalCode: "04567-060",
-      addressCountry: "BR",
-    },
-    hasMap: GOOGLE_BUSINESS_PROFILE_URL,
-    sameAs: [
-      "https://instagram.com/bewild.oficial",
-      "https://www.linkedin.com/company/bewild-reformas/",
-      GOOGLE_BUSINESS_PROFILE_URL,
-    ],
-    openingHoursSpecification: [
-      {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        opens: "09:00",
-        closes: "19:00",
-      },
-      { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "09:00", closes: "17:00" },
-    ],
-    parentOrganization: { "@id": ORG_ID },
-  };
+/** LocalBusiness da Bewild — o mesmo nó `#local` de orgJsonLd.ts (fonte única). */
+export function localBusinessRef(_base?: string) {
+  return { ...LOCAL_NODE };
 }
 
 export function projectJsonLd(
@@ -923,94 +901,38 @@ export function faqJsonLd(items: Array<{ q: string; a: string }>) {
   };
 }
 
-/** Logo oficial — o mesmo do nó Organization estático do index.html. */
-export const ORG_LOGO_URL = `${BEWILD_CANONICAL_BASE}/brand/bewild-logo.png`;
-/** `@id` único da Organization (index.html, páginas de serviço, posts). */
-export const ORG_ID = `${BEWILD_CANONICAL_BASE}/#org`;
+/** Logo oficial — o mesmo do nó Organization de orgJsonLd.ts. */
+export const ORG_LOGO_URL = ORG_LOGO;
+/** `@id` único da Organization (root, páginas de serviço, posts). */
+export const ORG_ID = ORG_NODE_ID;
 
 /**
- * Organization JSON-LD — reforça entidade para o Knowledge Graph.
- *
- * Mesmo `@id` (`#org`) do nó estático do index.html e dos `provider` das
- * páginas de serviço: é UMA entidade, enriquecida aqui com CNPJ/CAU/contato.
- * (Antes era `#organization`, com `subOrganization` apontando para um
- * `#business` que nenhuma página publicava — duas Organizations e um nó órfão.)
+ * Organization JSON-LD — o mesmo nó `#org` de orgJsonLd.ts (fonte única), com
+ * logo como ImageObject e contato/endereço do #local. CAU não entra: é
+ * registro pessoal do Thiago (fica no Person dele). `s` só define a imagem.
  */
 export function organizationJsonLd(s: SiteSettings) {
   const base = getCanonicalBase(s);
-
-  const absUrl = (u: string | null | undefined) => {
-    if (!u) return undefined;
-    if (/^https?:\/\//i.test(u)) return u;
-    return `${base}${u.startsWith("/") ? "" : "/"}${u}`;
-  };
-  const imageUrl = absUrl(s.seo_og_image || s.default_og_image);
-
-  const sameAs = Array.from(
-    new Set(
-      [
-        s.instagram_url,
-        s.linkedin_url,
-        s.pinterest_url,
-        s.google_business_profile_url || GOOGLE_BUSINESS_PROFILE_URL,
-        s.google_maps_url,
-      ]
-        .filter((x): x is string => Boolean(x))
-        .map((x) => x.trim())
-    )
-  );
-
-  const address =
-    s.address_street || s.address_city
-      ? {
-          "@type": "PostalAddress",
-          streetAddress: s.address_street || undefined,
-          addressLocality: s.address_city || undefined,
-          addressRegion: s.address_region || undefined,
-          postalCode: s.business_postal_code || undefined,
-          addressCountry: "BR",
-        }
-      : undefined;
-
+  const og = s.seo_og_image || s.default_og_image;
+  const imageUrl = og ? (/^https?:\/\//i.test(og) ? og : `${base}${og.startsWith("/") ? "" : "/"}${og}`) : undefined;
   return {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    "@id": ORG_ID,
-    name: "Bewild",
-    legalName: "Bwild Reformas LTDA",
-    alternateName: ["Bewild Reformas e Arquitetura", "Bewild Reformas", "Bwild Reformas", "Bwild"],
-    url: `${base}/`,
-    logo: {
-      "@type": "ImageObject",
-      url: ORG_LOGO_URL,
-      caption: "Bewild",
-    },
+    ...ORG_NODE,
+    logo: { "@type": "ImageObject", url: ORG_LOGO, caption: "Bewild" },
     image: imageUrl,
-    email: s.contact_email || undefined,
-    telephone: s.contact_phone || undefined,
+    email: ORG_EMAIL,
+    telephone: ORG_TELEPHONE,
     foundingDate: s.business_founding_year || undefined,
-    taxID: s.cnpj || undefined,
-    vatID: s.cnpj || undefined,
-    iso6523Code: s.cnpj ? `0007:${s.cnpj.replace(/\D/g, "")}` : undefined,
-    identifier: [
-      s.cnpj
-        ? { "@type": "PropertyValue", propertyID: "CNPJ", value: s.cnpj }
-        : null,
-      s.cau
-        ? { "@type": "PropertyValue", propertyID: "CAU", value: s.cau }
-        : null,
-    ].filter(Boolean),
-    address,
-    contactPoint: s.contact_phone
-      ? {
-          "@type": "ContactPoint",
-          contactType: "customer service",
-          telephone: s.contact_phone,
-          email: s.contact_email || undefined,
-          areaServed: "BR",
-          availableLanguage: ["Portuguese", "pt-BR"],
-        }
-      : undefined,
-    sameAs: sameAs.length ? sameAs : undefined,
+    vatID: ORG_CNPJ,
+    iso6523Code: `0007:${ORG_CNPJ.replace(/\D/g, "")}`,
+    address: ORG_ADDRESS,
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer service",
+      telephone: ORG_TELEPHONE,
+      email: ORG_EMAIL,
+      areaServed: "BR",
+      availableLanguage: ["Portuguese", "pt-BR"],
+    },
   };
 }

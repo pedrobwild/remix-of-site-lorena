@@ -72,9 +72,12 @@ export const SERVICOS_JSONLD: Array<Record<string, unknown>> = [
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "Arquitetura, reforma e marcenaria em São Paulo",
+    "@id": `https://bewild.com.br${CANONICAL}#service`,
+    // name = H1 da página; description = texto de abertura visível.
+    name: "Arquitetura, engenharia e obra sob a mesma responsabilidade. Um contrato, com preço, prazo e garantia por escrito.",
     serviceType: "Reforma de apartamento",
-    description: DESCRIPTION,
+    description:
+      "A Bewild reforma apartamentos, studios e coberturas em São Paulo, do projeto à entrega das chaves. Cada item abaixo fica registrado em contrato antes de a obra começar: uma responsabilidade só, para morar, alugar ou vender.",
     provider: { "@id": "https://bewild.com.br/#org" },
     areaServed: { "@type": "City", name: "São Paulo" },
     url: `https://bewild.com.br${CANONICAL}`,
