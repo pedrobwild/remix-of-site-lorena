@@ -86,7 +86,7 @@ describe("Organization com fonte única (orgJsonLd.ts)", () => {
     expect(THIAGO_NODE.identifier).toBe(`CAU ${CAU_OFICIAL}`);
     expect(ORG_NODE.founder).toEqual([{ "@id": "https://bewild.com.br/#pedro-henrique-alves" }, { "@id": "https://bewild.com.br/#thiago-dantas" }]);
     expect(LOCAL_NODE.image[0]).toBe("https://bewild.com.br/images/hero-slides/rodrigo-1-lg.jpg");
-    expect(LOCAL_NODE).not.toHaveProperty("geo");
+    expect(LOCAL_NODE.geo).toEqual({ "@type": "GeoCoordinates", latitude: -23.6147497, longitude: -46.6886285 });
     expect(SERVICE_NODE["@id"]).toBe("https://bewild.com.br/#servico-reforma");
   });
 });
