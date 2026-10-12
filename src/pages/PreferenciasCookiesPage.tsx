@@ -177,7 +177,9 @@ export default function PreferenciasCookiesPage() {
               <p>
                 A lista completa do que é coletado, para quê, por quanto tempo
                 e como exercer seus direitos está na&nbsp;
-                <a href={routes.privacidade}>Política de Privacidade</a>.
+                <a href={routes.privacidade}>Política de Privacidade</a> e um
+                resumo só sobre cookies na{" "}
+                <a href={routes.politicaCookies}>Política de cookies</a>.
               </p>
             </div>
           </div>
