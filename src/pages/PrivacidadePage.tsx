@@ -10,6 +10,13 @@ import BwaNav from "@/components/BwaNav";
 import "@/styles/post.css";
 import { TABLE_REGION_CLASS } from "@/lib/articleTables";
 
+export const PRIVACIDADE_SEO = {
+  title: "Política de privacidade e LGPD | Bewild",
+  description: "Saiba como a Bewild trata e protege seus dados pessoais, quais são seus direitos pela LGPD e como solicitar acesso, correção ou exclusão de dados.",
+  ogTitle: "Privacidade e proteção de dados | Bewild",
+  ogDescription: "Conheça a política de privacidade da Bewild: dados coletados, finalidades, compartilhamento, cookies e canais para exercer seus direitos pela LGPD.",
+};
+
 /**
  * /privacidade — Política de Privacidade (LGPD), design Bewild.
  * Reaproveita pt-hero / pt-body do design system de posts.
@@ -33,8 +40,7 @@ export default function PrivacidadePage() {
   const lastUpdated = "12 de outubro de 2026";
 
   useSeo({
-    title: "Política de privacidade | Bewild",
-    description: "Como a Bewild coleta, usa e protege os dados de clientes e interessados em projetos e reformas de apartamentos.",
+    ...PRIVACIDADE_SEO,
     canonicalPath: "/privacidade",
     ogType: "website",
   });
@@ -49,7 +55,7 @@ export default function PrivacidadePage() {
         <section className="pt-hero">
           <div className="container">
             <div className="pt-cat">Política · Bewild</div>
-            <h1 className="pt-title">Política de privacidade.</h1>
+            <h1 className="pt-title">Política de privacidade e LGPD.</h1>
             <p className="pt-excerpt">
               A Bewild respeita sua privacidade e está comprometida com a
               transparência no tratamento de dados pessoais, em conformidade
@@ -178,7 +184,7 @@ export default function PrivacidadePage() {
               <h2>Para onde vão os dados dos formulários</h2>
               <p>
                 Quando você envia um formulário do site, os dados são gravados
-                no nosso banco de dados, mantido no Supabase (serviço de banco
+                no nosso banco de dados, mantido no Lovable Cloud (serviço de banco
                 de dados e infraestrutura em nuvem), e encaminhados aos nossos
                 canais internos: um aviso à equipe comercial no Slack e por
                 e-mail, e o nosso CRM, onde o atendimento e o orçamento são
@@ -277,8 +283,11 @@ export default function PrivacidadePage() {
                 <li>
                   <strong>No site:</strong> em {prefsButton} (também no rodapé),
                   escolha &ldquo;Recusar&rdquo;. Os cookies de medição deste
-                  site são apagados e nada mais é enviado às plataformas daí em
-                  diante.
+                  site são apagados e os envios de medição e publicidade pelo
+                  navegador são interrompidos. O envio pelo servidor descrito em
+                  &ldquo;Para onde vão os dados dos formulários&rdquo; independe
+                  dessa escolha; para se opor a ele, use o contato em
+                  &ldquo;Seus direitos&rdquo;.
                 </li>
                 <li>
                   <strong>Na Meta:</strong> em{" "}
@@ -346,7 +355,7 @@ export default function PrivacidadePage() {
               <p>
                 Não comercializamos dados pessoais. Compartilhamos dados apenas
                 com operadores contratados para hospedagem, infraestrutura e
-                banco de dados (Supabase), comunicação interna da equipe
+                banco de dados (Lovable Cloud), comunicação interna da equipe
                 (Slack e serviço de envio de e-mails), gestão do atendimento
                 (CRM) e relatórios internos,
                 sempre sob obrigação contratual de confidencialidade e
@@ -453,10 +462,9 @@ export default function PrivacidadePage() {
                 youtube-nocookie.com, e as miniaturas deles, pelo endereço
                 i.ytimg.com. Ao carregar, o YouTube (Google) pode registrar
                 dados técnicos do acesso, como endereço IP e navegador. As
-                fontes
-                tipográficas (Google Fonts) e o selo do Reclame Aqui, no
-                rodapé, também são carregados a partir dos servidores desses
-                serviços.
+                fontes tipográficas do site são hospedadas pela própria Bewild,
+                sem solicitar fontes ao Google. O selo do Reclame Aqui, perto do
+                rodapé, carrega recursos a partir dos servidores desse serviço.
               </p>
 
               <h2>Seus direitos</h2>
