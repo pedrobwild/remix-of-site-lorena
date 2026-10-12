@@ -14,7 +14,7 @@ export default function FAQSection() {
           <AccordionItem key={item.q} value={String(i)}>
             <AccordionTrigger className="text-foreground font-semibold text-left">{item.q}</AccordionTrigger>
             {/* forceMount: a resposta já sai no HTML do servidor (fechada fica com hidden). */}
-            <AccordionContent forceMount className="data-[state=closed]:hidden">
+            <AccordionContent forceMount>
               <p className="text-sm text-muted-foreground leading-relaxed">{item.a}</p>
             </AccordionContent>
           </AccordionItem>
