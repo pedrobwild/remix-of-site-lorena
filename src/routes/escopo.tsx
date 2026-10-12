@@ -1,11 +1,17 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import EscopoPage from "@/pages/EscopoPage";
+import { seoHead } from "@/lib/routeHead";
 
-// /escopo ("Escopo com IA") foi tirada do ar em 09/10/2026: quase sem uso
-// (1 visita em 90 dias) e a edge function `scope-plan` chamava a IA paga sem
-// login (achado crítico do scan de segurança do Lovable). O endereço antigo
-// segue com 301 para o pedido de orçamento, como /diagnostico.
+// /escopo: página de escopo com perguntas e faixa de investimento por m².
+// Substitui o "Escopo com IA" (tirado do ar em 09/10/2026): esta versão não usa
+// IA, não chama função nenhuma e só calcula no navegador com números publicados.
 export const Route = createFileRoute("/escopo")({
-  beforeLoad: () => {
-    throw redirect({ to: "/orcamento", statusCode: 301 });
-  },
+  component: EscopoPage,
+  head: () =>
+    seoHead({
+      title: "Escopo da reforma e faixa de investimento por m² | Bewild",
+      description:
+        "Responda 4 perguntas, monte o escopo da reforma do seu studio ou apartamento em São Paulo e veja a faixa de investimento por metragem, com base nos contratos da Bewild.",
+      path: "/escopo",
+    }),
 });
