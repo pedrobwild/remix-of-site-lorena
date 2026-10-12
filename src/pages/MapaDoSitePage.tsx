@@ -13,6 +13,7 @@ import { useBewildPosts, type BewildPost } from "@/lib/useBewildPosts";
 import { useBewildProjects, type BewildProject } from "@/lib/useBewildProjects";
 import { useSeo } from "@/lib/useSeo";
 import { routes } from "@/lib/useHashRoute";
+import { VIDEO_PAGES } from "@/lib/videoPages";
 import "./mapa-do-site.css";
 
 const SEM_BAIRRO = "Outros projetos em São Paulo";
@@ -159,6 +160,21 @@ export default function MapaDoSitePage({
             )}
           </div>
         </section>
+
+        {VIDEO_PAGES.length > 0 && (
+          <section className="bwa-msite-section" aria-labelledby="msite-videos">
+            <div className="bwa-shell">
+              <h2 id="msite-videos">Vídeos</h2>
+              <ul className="bwa-msite-list">
+                {VIDEO_PAGES.map((v) => (
+                  <li key={v.slug}>
+                    <a href={routes.video(v.slug)}>{v.name}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        )}
       </main>
       <BwaFooter />
     </div>

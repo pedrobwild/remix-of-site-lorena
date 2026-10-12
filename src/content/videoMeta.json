@@ -4,18 +4,30 @@
       "name": "Aditivo em obra: por que o orçamento estoura e quem paga a conta",
       "description": "A obra começa com um valor e termina com outro, bem maior. Nesta entrevista, Pedro Alves, engenheiro e CEO da Bewild, explica por que o aditivo em obra acontece, quando ele é legítimo, as três causas que explicam quase todo aditivo e o que conferir no contrato antes de assinar.",
       "thumbnailUrl": "https://i.ytimg.com/vi/pQjZeD8nYEE/maxresdefault.jpg",
-      "duration": "PT9M49S"
+      "duration": "PT9M49S",
+      "uploadDate": "2026-10-06"
     },
     "-igd5cs666c": {
       "name": "Quanto custa reformar apartamento ou studio de até 50 m² em SP? 188 contratos analisados",
       "description": "Quanto custa reformar um studio ou apartamento de até 50 m² em São Paulo? Abrimos os números de 188 contratos de reforma turnkey de clientes da Bewild para trocar o \"depende\" por números.",
       "thumbnailUrl": "https://i.ytimg.com/vi/-igd5cs666c/maxresdefault.jpg",
-      "duration": "PT1M55S"
+      "duration": "PT1M55S",
+      "uploadDate": "2026-10-01"
     },
     "El1Dxf7RBRk": {
       "name": "Como reformar um studio gastando menos: 4 obras que raramente se pagam",
-      "thumbnailUrl": "https://i.ytimg.com/vi/El1Dxf7RBRk/hqdefault.jpg"
+      "description": "Nem sempre gastar mais na reforma significa alugar por mais. As quatro obras que raramente se pagam num studio para locação: trocar a bancada, integrar a varanda, refazer o banheiro e demolir paredes ou mudar pontos de instalação.",
+      "thumbnailUrl": "https://i.ytimg.com/vi/El1Dxf7RBRk/hqdefault.jpg",
+      "uploadDate": "2026-10-07"
     }
   },
-  "files": {}
+  "files": {
+    "/__l5e/assets-v1/c8276d15-9cdd-42ff-ae7d-306216c9f685/depoimento-cliente.mp4": {
+      "name": "Depoimento da Vivian: como foi reformar o studio com a Bewild",
+      "description": "A Vivian reformou o studio dela com a Bewild e contou como foi acompanhar tudo sem entrar na obra. Depoimento gravado sem roteiro.",
+      "thumbnailUrl": "/images/hero-slides/marcos-6-2-lg.jpg",
+      "duration": "PT1M51S",
+      "uploadDate": "2026-06-15T21:27:27Z"
+    }
+  }
 }

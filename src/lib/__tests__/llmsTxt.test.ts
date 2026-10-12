@@ -16,7 +16,7 @@ describe("llms.txt", () => {
 
   it("mantém os marcadores que o build preenche", () => {
     const main = readFileSync(resolve("public/llms.txt"), "utf8");
-    for (const marker of ["<!-- posts:start -->", "<!-- posts:end -->", "<!-- bairros:start -->", "<!-- bairros:end -->"]) {
+    for (const marker of ["<!-- posts:start -->", "<!-- posts:end -->", "<!-- bairros:start -->", "<!-- bairros:end -->", "<!-- videos:start -->", "<!-- videos:end -->"]) {
       expect(main).toContain(marker);
     }
   });

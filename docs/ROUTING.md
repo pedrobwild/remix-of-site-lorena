@@ -116,6 +116,7 @@ script só compara literais estáticos.
 | Pública dinâmica (ex.: `/projeto/:slug`) | sim (regex) | não — usa lookup de DB | não |
 | `/admin/*` | sim | **não** | sim, em `SPA_ONLY_ALLOWED` |
 | Canônica só da edge (raro) | não | sim | sim, em `EDGE_ONLY_ALLOWED` |
+| Pública por cadastro no código (ex.: `/videos/<slug>`) | sim (regex) | não — a edge tem a lista `VIDEO_SLUGS`, espelho de `src/content/videoPages.json` | não |
 | Pública **noindex** (ex.: `/buscar`, `/mapa`) | sim | sim | não — mas `noindex: true` no `seoHead` e em `NAO_INDEXAVEIS` do teste `sitemapParidade`; **fora** do sitemap |
 
 Também atualize, quando aplicável:
@@ -124,6 +125,10 @@ Também atualize, quando aplicável:
   `noindex` nunca entra no sitemap; o teste `sitemapParidade` quebra o CI se
   entrar, como aconteceu com `/buscar` em 06/10/2026).
 - `src/router.tsx` (componente da página).
+- Página de vídeo nova (`/videos/<slug>`): `src/content/videoPages.json` e
+  `src/content/videoMeta.json`, mais as listas de slugs em
+  `supabase/functions/sitemap/index.ts` e `not-found-check/index.ts`
+  (o teste `videoPages.test.tsx` quebra se uma ficar para trás).
 - `src/lib/useHashRoute.ts → routes` (helper de URL).
 
 ## O que acontece se eu esquecer

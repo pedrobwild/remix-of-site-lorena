@@ -77,7 +77,24 @@ export function urlTag({ loc, lastmod, changefreq, priority, videos }) {
 }
 
 // Dados reais dos vídeos (mesma fonte do VideoObject em src/lib/contentJsonLd.ts).
-const videoMeta = JSON.parse(readFileSync(new URL("../src/content/videoMeta.json", import.meta.url), "utf8"));
+// Lido ao lado do script; no teste (vitest) import.meta.url não é um arquivo, então
+// vale o caminho a partir da raiz do projeto. Sem o arquivo, segue com cadastro vazio:
+// este script nunca pode quebrar o build.
+function readContentJson(name, fallback) {
+  for (const candidate of [
+    () => fileURLToPath(new URL(`../src/content/${name}`, import.meta.url)),
+    () => resolve("src/content", name),
+  ]) {
+    try {
+      return JSON.parse(readFileSync(candidate(), "utf8"));
+    } catch {
+      /* tenta o próximo caminho */
+    }
+  }
+  console.warn(`[sitemap] src/content/${name} não encontrado; seguindo sem ele.`);
+  return fallback;
+}
+const videoMeta = readContentJson("videoMeta.json", { youtube: {}, files: {} });
 const isoSecs = (d) => {
   const m = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(d || "");
   return m ? +(m[1] || 0) * 3600 + +(m[2] || 0) * 60 + +(m[3] || 0) : null;
@@ -85,45 +102,105 @@ const isoSecs = (d) => {
 const absUrl = (u) => (/^https?:/i.test(u) ? u : `${BASE_URL}${u.startsWith("/") ? u : `/${u}`}`);
 const plain = (s) => String(s ?? "").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
 
-/** Vídeos que estão no corpo do post (YouTube e <video> próprio), para o sitemap de vídeo. */
+// Páginas de vídeo (/videos/<slug>): o Google só indexa vídeo que está na página
+// própria dele, então é nela que a entrada <video:video> vai. Mesmo cadastro e a
+// mesma junção de src/lib/videoPages.ts (paridade em videoPages.test.tsx).
+const videoPages = readContentJson("videoPages.json", []);
+const pagedYouTube = new Set(videoPages.map((p) => p.youtube).filter(Boolean));
+const pagedFiles = new Set(videoPages.map((p) => p.file).filter(Boolean));
+
+/** Data do vídeo com fuso (mesma regra de videoUploadDate em src/lib/videoMeta.ts). */
+export function videoDate(value) {
+  const v = String(value ?? "").trim();
+  if (!v) return null;
+  let iso = v;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(v)) iso = `${v}T00:00:00-03:00`;
+  else if (/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?$/.test(v)) iso = `${v.replace(" ", "T")}Z`;
+  else if (/^\d{4}-\d{2}-\d{2} \d/.test(v)) iso = v.replace(" ", "T");
+  return Number.isNaN(Date.parse(iso)) ? null : iso;
+}
+
+/** Uma entrada por página de vídeo: endereço da página e os dados do vídeo dela. */
+export function videoPageEntries() {
+  return videoPages.map((p) => {
+    const meta = (p.youtube ? videoMeta.youtube[p.youtube] : videoMeta.files[p.file]) ?? {};
+    const thumb = meta.thumbnailUrl || (p.youtube ? `https://i.ytimg.com/vi/${p.youtube}/hqdefault.jpg` : "");
+    return {
+      slug: p.slug,
+      loc: `${BASE_URL}/videos/${p.slug}`,
+      name: plain(meta.name || p.title),
+      kind: p.kind,
+      duration: meta.duration ?? null,
+      video: {
+        thumb: absUrl(thumb),
+        title: plain(meta.name || p.title),
+        desc: plain(meta.description || p.description).slice(0, 2048),
+        ...(p.youtube
+          ? { player: `https://www.youtube-nocookie.com/embed/${p.youtube}` }
+          : { content: absUrl(p.file) }),
+        secs: isoSecs(meta.duration),
+        date: videoDate(meta.uploadDate),
+      },
+    };
+  });
+}
+
+/**
+ * Vídeos que estão no corpo do post (YouTube e <video> próprio) para o sitemap de
+ * vídeo. Vídeo que já tem página própria em /videos NÃO entra aqui: a entrada dele
+ * fica na página do vídeo, a única que o Google aceita indexar como vídeo. O que
+ * sobra é o vídeo ainda sem página (aviso no fim da geração).
+ */
 export function postVideos(post) {
   const body = post.body || "";
   const desc = plain(post.meta_description || post.excerpt || post.title).slice(0, 2048);
-  const date = post.published_at || post.created_at;
+  const postDate = post.published_at || post.created_at;
   const out = [];
+  const seen = new Set();
   for (const m of body.matchAll(/<iframe\b[^>]*>/gi)) {
     const tag = m[0];
     const src = tag.match(/\bsrc="([^"]+)"/i)?.[1]?.replace(/&amp;/g, "&");
     const id = src?.match(/youtube(?:-nocookie)?\.com\/embed\/([\w-]{11})/i)?.[1];
-    if (!id) continue;
+    if (!id || pagedYouTube.has(id) || seen.has(id)) continue;
+    seen.add(id);
     const start = src.match(/[?&]start=(\d+)/)?.[1];
     const meta = videoMeta.youtube[id] ?? {};
     out.push({
+      id,
       thumb: meta.thumbnailUrl || `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
       title: plain(meta.name || tag.match(/\btitle="([^"]+)"/i)?.[1] || post.title),
       desc: meta.description || desc,
       player: `https://www.youtube-nocookie.com/embed/${id}${start ? `?start=${start}` : ""}`,
       secs: isoSecs(meta.duration),
-      date,
+      date: videoDate(meta.uploadDate) || postDate,
     });
   }
   for (const m of body.matchAll(/<video\b[^>]*>[\s\S]*?<\/video>/gi)) {
     const v = m[0];
     const src = v.match(/<source\b[^>]*\bsrc="([^"]+)"/i)?.[1] || v.match(/\bsrc="([^"]+)"/i)?.[1];
     const poster = v.match(/\bposter="([^"]+)"/i)?.[1];
-    if (!src || !poster) continue;
+    if (!src || !poster || pagedFiles.has(src)) continue;
     const meta = videoMeta.files[src] ?? {};
     const label = v.match(/\baria-label="([^"]+)"/i)?.[1]?.replace(/^V[ií]deo:\s*/i, "");
     out.push({
+      id: src,
       thumb: absUrl(meta.thumbnailUrl || poster),
       title: plain(meta.name || label || post.title),
       desc: meta.description || desc,
       content: absUrl(src),
       secs: isoSecs(meta.duration),
-      date,
+      date: videoDate(meta.uploadDate) || postDate,
     });
   }
   return out;
+}
+
+/** IDs/arquivos de vídeo de um post que ainda não têm página em /videos (abertura e corpo). */
+export function unpagedPostVideoIds(post) {
+  const ids = postVideos(post).map((v) => v.id);
+  const lead = String(post.youtube_video_id ?? "").trim();
+  if (/^[\w-]{11}$/.test(lead) && !pagedYouTube.has(lead) && !ids.includes(lead)) ids.unshift(lead);
+  return ids;
 }
 
 function videoTag(v) {
@@ -170,7 +247,7 @@ async function main() {
   try {
     [projects, posts, faqEntries] = await Promise.all([
       getProjects(),
-      get("bewild_posts?published=eq.true&select=slug,title,content_updated_at,published_at,created_at,body,meta_description,excerpt"),
+      get("bewild_posts?published=eq.true&select=slug,title,content_updated_at,published_at,created_at,body,meta_description,excerpt,youtube_video_id"),
       get("assistant_kb?ativo=eq.true&select=updated_at"),
     ]);
   } catch (err) {
@@ -211,6 +288,8 @@ async function main() {
       changefreq: "weekly",
       priority: "0.8",
     },
+    // Índice dos vídeos; as páginas de cada vídeo saem mais abaixo, com <video:video>.
+    { loc: `${BASE_URL}/videos`, lastmod: page("src/routes/videos.index.tsx", ["VideosPage.tsx", "src/content/videoPages.json"]), changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/orcamento`, lastmod: page("src/routes/orcamento.tsx", ["OrcamentoPage.tsx"]), changefreq: "monthly", priority: "1.0" },
     {
       loc: `${BASE_URL}/faq`,
@@ -305,7 +384,34 @@ async function main() {
     };
   });
 
-  const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls, ...chartUrls];
+  // Páginas de vídeo (/videos/<slug>): uma por vídeo, com a entrada <video:video>.
+  // lastmod = último commit na página ou nos dois cadastros (o arquivo da rota tem "$"
+  // no nome, que o shell do git log expandiria; por isso ele não entra na lista).
+  const videoLastmod = gitLastmod([
+    "src/pages/VideoWatchPage.tsx",
+    "src/lib/videoPages.ts",
+    "src/content/videoPages.json",
+    "src/content/videoMeta.json",
+  ]);
+  const videoEntries = videoPageEntries();
+  const videoUrls = videoEntries.map((v) => ({
+    loc: v.loc,
+    lastmod: videoLastmod,
+    changefreq: "monthly",
+    priority: "0.6",
+    videos: [v.video],
+  }));
+
+  // Vídeo publicado num artigo e ainda sem página própria: o Google não o indexa.
+  // O de abertura (youtube_video_id) só toca com clique, então nem entra no sitemap.
+  for (const post of posts) {
+    const ids = unpagedPostVideoIds(post);
+    if (ids.length) {
+      console.warn(`[sitemap] /conteudos/${post.slug}: vídeo ${ids.join(", ")} ainda sem página em /videos; cadastre em src/content/videoPages.json.`);
+    }
+  }
+
+  const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls, ...chartUrls, ...videoUrls];
   const xml = [
     `<?xml version="1.0" encoding="UTF-8"?>`,
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">`,
@@ -316,7 +422,7 @@ async function main() {
 
   writeFileSync(OUT, xml);
   console.log(`[sitemap] public/sitemap.xml escrito (${all.length} URLs).`);
-  updateLlmsTxt(posts, hoodUrls);
+  updateLlmsTxt(posts, hoodUrls, videoEntries);
 }
 
 /**
@@ -334,7 +440,23 @@ function replaceBetween(txt, start, end, lines, what) {
   return `${txt.slice(0, a + start.length)}\n${lines.join("\n")}\n${txt.slice(b)}`;
 }
 
-function updateLlmsTxt(posts, hoodUrls = []) {
+/** "9 min 49 s" a partir de "PT9M49S" (vazio quando a duração não é conhecida). */
+function durationLabel(iso) {
+  const total = isoSecs(iso);
+  if (!total) return "";
+  const h = Math.floor(total / 3600), m = Math.floor((total % 3600) / 60), s = total % 60;
+  return [h ? `${h} h` : "", m ? `${m} min` : "", s ? `${s} s` : ""].filter(Boolean).join(" ");
+}
+
+/** Linhas do llms.txt para as páginas de vídeo (também conferidas em videoPages.test.tsx). */
+export function videoLlmsLines(entries = videoPageEntries()) {
+  return entries.map((v) => {
+    const dur = durationLabel(v.duration);
+    return `- [${v.name.replace(/[[\]]/g, "")}](/videos/${v.slug}): ${v.kind}${dur ? `, ${dur}` : ""}`;
+  });
+}
+
+function updateLlmsTxt(posts, hoodUrls = [], videoEntries = []) {
   if (!existsSync(LLMS)) return;
   const txt = readFileSync(LLMS, "utf8");
   const postLines = posts
@@ -355,9 +477,10 @@ function updateLlmsTxt(posts, hoodUrls = []) {
   );
   let next = replaceBetween(txt, "<!-- posts:start -->", "<!-- posts:end -->", postLines, "posts:start/posts:end");
   next = replaceBetween(next, "<!-- bairros:start -->", "<!-- bairros:end -->", hoodLines, "bairros:start/bairros:end");
+  next = replaceBetween(next, "<!-- videos:start -->", "<!-- videos:end -->", videoLlmsLines(videoEntries), "videos:start/videos:end");
   if (next !== txt) {
     writeFileSync(LLMS, next);
-    console.log(`[sitemap] public/llms.txt: ${postLines.length} posts e ${hoodLines.length} bairros listados.`);
+    console.log(`[sitemap] public/llms.txt: ${postLines.length} posts, ${hoodLines.length} bairros e ${videoEntries.length} vídeos listados.`);
   }
   // A cópia em .well-known não é editada à mão: segue o llms.txt principal.
   if (existsSync(LLMS_COPY) && readFileSync(LLMS_COPY, "utf8") !== next) {

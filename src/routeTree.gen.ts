@@ -66,6 +66,8 @@ import { Route as ParceirosLealMoreiraRouteImport } from './routes/parceiros.lea
 import { Route as PortfolioIndexRouteImport } from './routes/portfolio.index'
 import { Route as PortfolioSlugRouteImport } from './routes/portfolio.$slug'
 import { Route as ReformaSlugRouteImport } from './routes/reforma.$slug'
+import { Route as VideosIndexRouteImport } from './routes/videos.index'
+import { Route as VideosSlugRouteImport } from './routes/videos.$slug'
 import { Route as AdminBewildIndexRouteImport } from './routes/admin.bewild.index'
 import { Route as AdminBewildSlugRouteImport } from './routes/admin.bewild.$slug'
 import { Route as AdminBewildNewRouteImport } from './routes/admin.bewild.new'
@@ -365,6 +367,16 @@ const ReformaSlugRoute = ReformaSlugRouteImport.update({
   path: '/reforma/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VideosIndexRoute = VideosIndexRouteImport.update({
+  id: '/videos/',
+  path: '/videos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VideosSlugRoute = VideosSlugRouteImport.update({
+  id: '/videos/$slug',
+  path: '/videos/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminBewildIndexRoute = AdminBewildIndexRouteImport.update({
   id: '/admin/bewild/',
   path: '/admin/bewild/',
@@ -474,11 +486,13 @@ export interface FileRoutesByFullPath {
   '/parceiros/leal-moreira': typeof ParceirosLealMoreiraRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
   '/reforma/$slug': typeof ReformaSlugRoute
+  '/videos/$slug': typeof VideosSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/conteudos/': typeof ConteudosIndexRoute
   '/parceiros/': typeof ParceirosIndexRoute
   '/portfolio/': typeof PortfolioIndexRoute
+  '/videos/': typeof VideosIndexRoute
   '/admin/bewild/$slug': typeof AdminBewildSlugRoute
   '/admin/bewild/new': typeof AdminBewildNewRoute
   '/admin/conteudos/$slug': typeof AdminConteudosSlugRoute
@@ -544,11 +558,13 @@ export interface FileRoutesByTo {
   '/parceiros/leal-moreira': typeof ParceirosLealMoreiraRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
   '/reforma/$slug': typeof ReformaSlugRoute
+  '/videos/$slug': typeof VideosSlugRoute
   '/admin': typeof AdminIndexRoute
   '/blog': typeof BlogIndexRoute
   '/conteudos': typeof ConteudosIndexRoute
   '/parceiros': typeof ParceirosIndexRoute
   '/portfolio': typeof PortfolioIndexRoute
+  '/videos': typeof VideosIndexRoute
   '/admin/bewild/$slug': typeof AdminBewildSlugRoute
   '/admin/bewild/new': typeof AdminBewildNewRoute
   '/admin/conteudos/$slug': typeof AdminConteudosSlugRoute
@@ -615,11 +631,13 @@ export interface FileRoutesById {
   '/parceiros/leal-moreira': typeof ParceirosLealMoreiraRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
   '/reforma/$slug': typeof ReformaSlugRoute
+  '/videos/$slug': typeof VideosSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/conteudos/': typeof ConteudosIndexRoute
   '/parceiros/': typeof ParceirosIndexRoute
   '/portfolio/': typeof PortfolioIndexRoute
+  '/videos/': typeof VideosIndexRoute
   '/admin/bewild/$slug': typeof AdminBewildSlugRoute
   '/admin/bewild/new': typeof AdminBewildNewRoute
   '/admin/conteudos/$slug': typeof AdminConteudosSlugRoute
@@ -687,11 +705,13 @@ export interface FileRouteTypes {
     | '/parceiros/leal-moreira'
     | '/portfolio/$slug'
     | '/reforma/$slug'
+    | '/videos/$slug'
     | '/admin/'
     | '/blog/'
     | '/conteudos/'
     | '/parceiros/'
     | '/portfolio/'
+    | '/videos/'
     | '/admin/bewild/$slug'
     | '/admin/bewild/new'
     | '/admin/conteudos/$slug'
@@ -757,11 +777,13 @@ export interface FileRouteTypes {
     | '/parceiros/leal-moreira'
     | '/portfolio/$slug'
     | '/reforma/$slug'
+    | '/videos/$slug'
     | '/admin'
     | '/blog'
     | '/conteudos'
     | '/parceiros'
     | '/portfolio'
+    | '/videos'
     | '/admin/bewild/$slug'
     | '/admin/bewild/new'
     | '/admin/conteudos/$slug'
@@ -827,11 +849,13 @@ export interface FileRouteTypes {
     | '/parceiros/leal-moreira'
     | '/portfolio/$slug'
     | '/reforma/$slug'
+    | '/videos/$slug'
     | '/admin/'
     | '/blog/'
     | '/conteudos/'
     | '/parceiros/'
     | '/portfolio/'
+    | '/videos/'
     | '/admin/bewild/$slug'
     | '/admin/bewild/new'
     | '/admin/conteudos/$slug'
@@ -898,11 +922,13 @@ export interface RootRouteChildren {
   ParceirosLealMoreiraRoute: typeof ParceirosLealMoreiraRoute
   PortfolioSlugRoute: typeof PortfolioSlugRoute
   ReformaSlugRoute: typeof ReformaSlugRoute
+  VideosSlugRoute: typeof VideosSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
   BlogIndexRoute: typeof BlogIndexRoute
   ConteudosIndexRoute: typeof ConteudosIndexRoute
   ParceirosIndexRoute: typeof ParceirosIndexRoute
   PortfolioIndexRoute: typeof PortfolioIndexRoute
+  VideosIndexRoute: typeof VideosIndexRoute
   AdminBewildSlugRoute: typeof AdminBewildSlugRoute
   AdminBewildNewRoute: typeof AdminBewildNewRoute
   AdminConteudosSlugRoute: typeof AdminConteudosSlugRoute
@@ -1317,6 +1343,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReformaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/videos/': {
+      id: '/videos/'
+      path: '/videos'
+      fullPath: '/videos/'
+      preLoaderRoute: typeof VideosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/videos/$slug': {
+      id: '/videos/$slug'
+      path: '/videos/$slug'
+      fullPath: '/videos/$slug'
+      preLoaderRoute: typeof VideosSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/bewild/': {
       id: '/admin/bewild/'
       path: '/admin/bewild'
@@ -1450,11 +1490,13 @@ const rootRouteChildren: RootRouteChildren = {
   ParceirosLealMoreiraRoute: ParceirosLealMoreiraRoute,
   PortfolioSlugRoute: PortfolioSlugRoute,
   ReformaSlugRoute: ReformaSlugRoute,
+  VideosSlugRoute: VideosSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
   BlogIndexRoute: BlogIndexRoute,
   ConteudosIndexRoute: ConteudosIndexRoute,
   ParceirosIndexRoute: ParceirosIndexRoute,
   PortfolioIndexRoute: PortfolioIndexRoute,
+  VideosIndexRoute: VideosIndexRoute,
   AdminBewildSlugRoute: AdminBewildSlugRoute,
   AdminBewildNewRoute: AdminBewildNewRoute,
   AdminConteudosSlugRoute: AdminConteudosSlugRoute,
