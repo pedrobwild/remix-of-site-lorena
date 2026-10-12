@@ -112,7 +112,7 @@ Páginas com os projetos entregues em cada bairro de São Paulo (só bairros com
 Cada vídeo tem página própria, com o player e, quando existe, o link para o artigo do mesmo assunto:
 
 <!-- videos:start -->
-- [Como reformar um studio gastando menos: 4 obras que raramente se pagam](/videos/como-reformar-studio-gastando-menos): Guia
+- [Como reformar um studio gastando menos: 4 obras que raramente se pagam](/videos/como-reformar-studio-gastando-menos): Guia, 59 s
 - [Aditivo em obra: por que o orçamento estoura e quem paga a conta](/videos/aditivo-em-obra): Entrevista, 9 min 49 s
 - [Quanto custa reformar apartamento ou studio de até 50 m² em SP? 188 contratos analisados](/videos/quanto-custa-reformar-ate-50-m2): Estudo de custo, 1 min 55 s
 - [Depoimento da Vivian: como foi reformar o studio com a Bewild](/videos/depoimento-vivian): Depoimento, 1 min 51 s
