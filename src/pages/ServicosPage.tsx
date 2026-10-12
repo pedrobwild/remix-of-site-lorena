@@ -187,7 +187,6 @@ export default function ServicosPage() {
     description: DESCRIPTION,
     canonicalPath: CANONICAL,
     ogType: "website",
-    jsonLd: bastidoresJsonLd(BASTIDORES_POSTS, settings?.bastidores_seo ?? {}),
   });
 
   // Comportamento dos blocos vindos da home, restrito ao <main> desta página

@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { seoHead } from "@/lib/routeHead";
-import { GUIA_DESCRIPTION, GUIA_KEYWORDS, GUIA_PATH, GUIA_TITLE } from "@/guia/data/guiaMeta";
+import { GUIA_DESCRIPTION, GUIA_KEYWORDS, GUIA_PATH, GUIA_TITLE, guiaJsonLd } from "@/guia/data/guiaMeta";
 
 const GuiaInvestidorPage = lazy(() => import("@/pages/GuiaInvestidorPage"));
 
@@ -20,5 +20,6 @@ export const Route = createFileRoute("/guia-do-investidor")({
       keywords: GUIA_KEYWORDS,
       path: GUIA_PATH,
       ogType: "article",
+      jsonLd: guiaJsonLd({ breadcrumb: false }),
     }),
 });

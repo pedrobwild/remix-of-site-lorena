@@ -82,13 +82,13 @@ export const GUIA_FAQ: readonly GuiaFaqItem[] = [
  * pré-render e na SPA. `image` absoluta opcional (og:image vinda do banco);
  * sem ela, usa a imagem padrão do site.
  */
-export function guiaJsonLd(opts: { image?: string } = {}): Array<Record<string, unknown>> {
+export function guiaJsonLd(opts: { image?: string; breadcrumb?: boolean } = {}): Array<Record<string, unknown>> {
   const org = {
     "@type": "Organization",
     name: "Bewild",
     url: `${GUIA_BASE_URL}/`,
   };
-  return [
+  const nodes: Array<Record<string, unknown>> = [
     {
       "@context": "https://schema.org",
       "@type": "Article",
@@ -123,4 +123,6 @@ export function guiaJsonLd(opts: { image?: string } = {}): Array<Record<string, 
       })),
     },
   ];
+  // No head() da rota a trilha vai aninhada no WebPage do seoHead.
+  return opts.breadcrumb === false ? nodes.filter((n) => n["@type"] !== "BreadcrumbList") : nodes;
 }

@@ -166,6 +166,20 @@ const PORTFOLIO_ITEMS: FaqItem[] = [
   },
 ];
 
+/**
+ * FAQPage único de /faq, com exatamente as perguntas visíveis: as do banco (ou
+ * a lista fixa) + os blocos Portfólio, Como fazer uma reforma e Indicações.
+ * Usado no head() da rota (HTML do servidor).
+ */
+export function faqPageJsonLd(kb: KbItem[] | null) {
+  return faqJsonLd([
+    ...(kb ? kb.map((i) => ({ q: i.pergunta, a: i.resposta })) : FALLBACK_ITEMS.map((i) => ({ q: i.q, a: i.a }))),
+    ...PORTFOLIO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
+    ...GUIA_ITEMS.map((i) => ({ q: i.q, a: i.a })),
+    ...INDICACAO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
+  ]);
+}
+
 export default function FaqPage({ initialKb = null }: { initialKb?: KbItem[] | null } = {}) {
   const [aberto, setAberto] = useState("f-0");
   const [guiaAberto, setGuiaAberto] = useState(-1);
@@ -223,20 +237,7 @@ export default function FaqPage({ initialKb = null }: { initialKb?: KbItem[] | n
       "dúvidas sobre arquitetura e engenharia, projeto de arquitetura em São Paulo, dúvidas sobre reforma de apartamento em SP, reforma de apartamento em SP, custo de reforma, prazo de reforma, contrato fechado de reforma, garantia de reforma, comissão de indicação de imóvel, autorização de reforma condomínio, Bewild",
     canonicalPath: "/faq",
     ogType: "website",
-    // Um único FAQPage por página (só JSON-LD, sem microdata duplicada), com
-    // exatamente as perguntas visíveis: as do banco (ou a lista fixa) + os
-    // blocos Portfólio, Como fazer uma reforma e Indicações.
-    jsonLd: [
-      faqJsonLd([
-        ...(kb
-          ? kb.map((i) => ({ q: i.pergunta, a: i.resposta }))
-          : FALLBACK_ITEMS.map((i) => ({ q: i.q, a: i.a }))),
-        // Blocos fixos exibidos em qualquer cenário (com ou sem o banco).
-        ...PORTFOLIO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
-        ...GUIA_ITEMS.map((i) => ({ q: i.q, a: i.a })),
-        ...INDICACAO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
-      ]),
-    ],
+    // FAQPage sai só no HTML do servidor (faqPageJsonLd no head() de /faq).
   });
 
   return (
