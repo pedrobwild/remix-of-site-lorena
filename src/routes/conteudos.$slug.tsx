@@ -3,7 +3,7 @@ import BewildPostPage from "@/pages/BewildPostPage";
 import { seoHead } from "@/lib/routeHead";
 import { bewildCategoryLabel } from "@/lib/useBewildPosts";
 import { loadPostContent } from "@/lib/contentLoaders";
-import { postJsonLd, postPageJsonLd } from "@/lib/contentJsonLd";
+import { postJsonLd, postPageJsonLd, saoPauloIso } from "@/lib/contentJsonLd";
 import { authorForPage, authorProfileJsonLd, postAuthorJsonLd, postDates } from "@/lib/postSeo";
 import { keywordsForPost } from "@/lib/postKeywords";
 import { bodyWordCount, structurePostBody } from "@/lib/postStructure";
@@ -51,8 +51,8 @@ export const Route = createFileRoute("/conteudos/$slug")({
       pageJsonLd: author
         ? authorProfileJsonLd(author, {
             image: ld?.post?.cover_image,
-            dateCreated: dates?.published,
-            dateModified: dates?.modified,
+            dateCreated: saoPauloIso(dates?.published),
+            dateModified: saoPauloIso(dates?.modified),
           })
         : ld?.post
           ? postPageJsonLd(ld.post, body?.credits.reviewer)

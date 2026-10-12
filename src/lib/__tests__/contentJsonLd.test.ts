@@ -55,7 +55,7 @@ describe("JSON-LD no head() sem duplicação", () => {
     // O endereço do player que a página usa; a página do YouTube não é arquivo de mídia.
     expect(video.embedUrl).toBe("https://www.youtube-nocookie.com/embed/El1Dxf7RBRk");
     expect(video.contentUrl).toBeUndefined();
-    expect(video.publisher.name).toBe("Bewild Arquitetura & Reformas");
+    expect(video.publisher).toEqual({ "@id": "https://bewild.com.br/#org" });
     expect(nodes.find((n) => n["@type"] === "Article").video["@id"]).toBe(video["@id"]);
     expect(postJsonLd({ ...p, body: '<iframe src="https://www.youtube-nocookie.com/embed/El1Dxf7RBRk"></iframe>' }).filter((n) => n["@type"] === "VideoObject")).toHaveLength(1);
     expect(postJsonLd({ ...p, youtube_video_id: "inválido" }).some((n) => n["@type"] === "VideoObject")).toBe(false);

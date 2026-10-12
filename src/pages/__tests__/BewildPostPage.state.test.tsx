@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, cleanup, render, renderHook, screen, waitFor } from "@testing-library/react";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
+import { ORG_NODE } from "@/lib/orgJsonLd";
 
 type Resp = { data: unknown; error: { message: string } | null };
 const pending = new Map<string, (r: Resp) => void>();
@@ -132,9 +133,9 @@ describe("BewildPostPage", () => {
         .map((n) => JSON.parse(n.textContent || "{}") as Record<string, unknown>)
         .find((ld) => ld["@type"] === "Article");
       expect(article).toBeTruthy();
-      const publisher = article!.publisher as { "@id": string; logo: { url: string } };
-      expect(publisher["@id"]).toBe("https://bewild.com.br/#org");
-      const logoPath = new URL(publisher.logo.url).pathname;
+      // publisher só por referência; o logo está no nó #org do root (orgJsonLd.ts).
+      expect(article!.publisher).toEqual({ "@id": "https://bewild.com.br/#org" });
+      const logoPath = new URL(ORG_NODE.logo).pathname;
       expect(existsSync(resolve(process.cwd(), "public", `.${logoPath}`))).toBe(true);
     });
   });

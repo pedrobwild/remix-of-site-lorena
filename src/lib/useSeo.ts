@@ -804,16 +804,17 @@ export function projectJsonLd(
   }
 ) {
   const base = getCanonicalBase(s);
+  const url = `${base}/portfolio/${project.slug}`;
   return {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
+    "@id": `${url}#projeto`,
     name: `${project.title} ${project.em ?? ""}`.trim(),
     description: project.summary,
-    image: project.cover,
-    url: `${base}/portfolio/${project.slug}`,
-    // Mesmo nó LocalBusiness (#local) do index.html: endereço e horário
-    // repetidos aqui para o nó da página de projeto ficar completo.
-    creator: localBusinessRef(base),
+    image: absoluteSiteUrl(project.cover, base),
+    url,
+    // O nó completo do #local já sai no grafo do root: aqui só a referência.
+    creator: { "@id": `${base}/#local` },
     provider: { "@id": `${base}/#local` },
     about: project.tag,
     keywords: [
@@ -848,6 +849,15 @@ export function projectJsonLd(
   };
 }
 
+/** Caminho relativo do banco ("/images/x.jpg") vira URL absoluta do site. */
+export function absoluteSiteUrl(u: string | null | undefined, base: string = BEWILD_CANONICAL_BASE): string | undefined {
+  const v = (u ?? "").trim();
+  if (!v) return undefined;
+  if (/^https?:\/\//i.test(v)) return v;
+  if (v.startsWith("//")) return `https:${v}`;
+  return `${base}${v.startsWith("/") ? "" : "/"}${v}`;
+}
+
 /** BreadcrumbList JSON-LD para melhorar exibição em SERP. */
 export function breadcrumbJsonLd(
   s: SiteSettings,
@@ -880,7 +890,7 @@ export function itemListJsonLd(
       position: i + 1,
       url: `${base}${it.path.startsWith("/") ? it.path : `/${it.path}`}`,
       name: it.name,
-      image: it.image,
+      image: absoluteSiteUrl(it.image, base),
     })),
   };
 }

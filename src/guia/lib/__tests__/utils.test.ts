@@ -132,7 +132,7 @@ describe("guiaMeta", () => {
 
   it("JSON-LD traz as mesmas datas e a FAQ inteira", () => {
     const [article, breadcrumb, faq] = guiaJsonLd();
-    expect(article).toMatchObject({ "@type": "Article", datePublished: GUIA_PUBLISHED, dateModified: GUIA_MODIFIED });
+    expect(article).toMatchObject({ "@type": "Article", datePublished: `${GUIA_PUBLISHED}T00:00:00-03:00`, dateModified: `${GUIA_MODIFIED}T00:00:00-03:00` });
     expect(breadcrumb["@type"]).toBe("BreadcrumbList");
     expect((faq.mainEntity as unknown[]).length).toBe(GUIA_FAQ.length);
     expect(guiaJsonLd({ image: "https://x/y.jpg" })[0].image).toEqual(["https://x/y.jpg"]);

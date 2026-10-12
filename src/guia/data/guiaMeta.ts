@@ -101,8 +101,9 @@ export function guiaJsonLd(opts: { image?: string; breadcrumb?: boolean } = {}):
         ...org,
         logo: { "@type": "ImageObject", url: `${GUIA_BASE_URL}/brand/bewild-logo.png` },
       },
-      datePublished: GUIA_PUBLISHED,
-      dateModified: GUIA_MODIFIED,
+      // ISO 8601 com fuso de São Paulo (o Google pede fuso nas datas).
+      datePublished: `${GUIA_PUBLISHED}T00:00:00-03:00`,
+      dateModified: `${GUIA_MODIFIED}T00:00:00-03:00`,
       mainEntityOfPage: { "@type": "WebPage", "@id": GUIA_URL },
     },
     {
