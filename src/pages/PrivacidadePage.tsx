@@ -21,13 +21,16 @@ import { TABLE_REGION_CLASS } from "@/lib/articleTables";
  *  - eventos e dados que vão à Meta e ao Google: src/lib/conversions.ts,
  *    src/lib/metaPixel.ts, src/lib/googleAds.ts e
  *    supabase/functions/_shared/meta-capi.ts;
- *  - prazos da medição própria: src/lib/analytics.ts.
+ *  - prazos da medição própria: src/lib/analytics.ts;
+ *  - vídeos do YouTube: as páginas /videos/<slug> e os vídeos no corpo dos
+ *    artigos carregam o player com a página (src/pages/VideoWatchPage.tsx);
+ *    o vídeo de abertura dos artigos só carrega com clique.
  */
 export default function PrivacidadePage() {
   const { settings } = useSiteSettings();
 
   const contactEmail = settings?.contact_email || "contato@bewild.com.br";
-  const lastUpdated = "11 de outubro de 2026";
+  const lastUpdated = "12 de outubro de 2026";
 
   useSeo({
     title: "Política de privacidade | Bewild",
@@ -444,7 +447,12 @@ export default function PrivacidadePage() {
                 e da Meta, que podem registrar dados técnicos do acesso (como
                 endereço IP e navegador) e gravar cookies próprios. Por isso,
                 esses conteúdos só são carregados depois que você aceita os
-                cookies ou quando você clica para exibi-los. As fontes
+                cookies ou quando você clica para exibi-los. A exceção são os
+                vídeos do YouTube das páginas de vídeo e de alguns artigos:
+                eles carregam junto com a página, pelo endereço
+                youtube-nocookie.com, e ao carregar o YouTube (Google) pode
+                registrar dados técnicos do acesso, como endereço IP e
+                navegador. As fontes
                 tipográficas (Google Fonts) e o selo do Reclame Aqui, no
                 rodapé, também são carregados a partir dos servidores desses
                 serviços.
