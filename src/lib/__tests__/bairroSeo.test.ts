@@ -90,4 +90,12 @@ describe("página de bairro: servidor e navegador dizem o mesmo", () => {
       expect(bairroTitle(label.slice(prefixo.length)).startsWith(label), linha).toBe(true);
     }
   });
+
+  it("o sitemap data a página de bairro também pelo código dela", () => {
+    // Título, H1 e descrição saem de BairroPage/bairroSeo: quando eles mudam, o
+    // lastmod do bairro acompanha (antes só mudava com edição de projeto).
+    const gerador = readFileSync(path.resolve(__dirname, "../../..", "scripts/generate-sitemap.mjs"), "utf8");
+    expect(gerador).toContain('const hoodPageLastmod = page("src/pages/BairroPage.tsx", ["src/lib/bairroSeo.ts"]);');
+    expect(gerador).toContain('lastmod: day(newest(h.rows, "content_updated_at", "created_at"), hoodPageLastmod),');
+  });
 });

@@ -265,12 +265,16 @@ async function main() {
     const h = hoods.get(s) ?? { n: 0, rows: [] };
     h.n++; h.rows.push(p); hoods.set(s, h);
   }
+  // Título, H1 e descrição da página de bairro saem do código (BairroPage e
+  // bairroSeo): mudança ali também é mudança da página. Sem isto, a troca do
+  // título em 11/10/2026 não aparecia no lastmod de nenhum bairro.
+  const hoodPageLastmod = page("src/pages/BairroPage.tsx", ["src/lib/bairroSeo.ts"]);
   const hoodUrls = [...hoods.entries()]
     .filter(([, h]) => h.n >= 3)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([s, h]) => ({
       loc: `${BASE_URL}/reforma/${s}`,
-      lastmod: newest(h.rows, "content_updated_at", "created_at"),
+      lastmod: day(newest(h.rows, "content_updated_at", "created_at"), hoodPageLastmod),
       changefreq: "monthly",
       priority: "0.8",
       // Grafia mais usada do bairro e contagem: só para o llms.txt (urlTag ignora).
