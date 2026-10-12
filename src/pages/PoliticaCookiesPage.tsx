@@ -17,7 +17,7 @@ import { TABLE_REGION_CLASS } from "@/lib/articleTables";
  * em src/lib/cookieConsent.ts e a tabela de cookies de /privacidade e
  * /preferencias-de-cookies (mesmos nomes e prazos).
  */
-export const COOKIE_POLICY_UPDATED = "12 de outubro de 2026";
+const COOKIE_POLICY_UPDATED = "12 de outubro de 2026";
 
 export default function PoliticaCookiesPage() {
   useSeo({
