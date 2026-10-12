@@ -40,7 +40,7 @@ import "@/styles/portfolio-detail.css";
 interface Props {
   slug: string;
   /** Dados do loader (SSR); ausente = busca no cliente como antes. */
-  initial?: { project: BewildProjectFull | null } | null;
+  initial?: { project: BewildProjectFull | null; alts?: AltMap } | null;
   initialPeers?: ProjectSeoPeer[] | null;
 }
 
@@ -266,7 +266,7 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
     ],
     [project, galleryAll, readyImgs],
   );
-  const alts = useImageAlts(altUrls);
+  const alts = useImageAlts(altUrls, initial?.alts);
 
   const introParas = (project?.intro ?? "").split(/\n\s*\n/).map((t) => t.trim()).filter(Boolean);
   const hasCase = !!(project?.challenge || project?.solution || project?.result_text);

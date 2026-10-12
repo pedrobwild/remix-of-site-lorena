@@ -26,3 +26,6 @@
 - [x] Atualizar /privacidade para LGPD, conferir metadados próprios e presença única nos sitemaps; não publicar
 - [x] Revisar direitos do titular e links de cookies em /privacidade; conferir HTML sem JavaScript, sem publicar
 - [x] geo no LOCAL_NODE + teste identidadeOficial (não publicar)
+- [x] Revisar visualmente os alts das galerias LM Urban Flex e usar fonte única por imagem no HTML inicial
+- [x] Encurtar alts SVG dos três artigos no conteúdo existente, preservando os números nas legendas
+- [x] Validar testes, lint e HTML das páginas; entregar lista antigo → novo, sem publicar

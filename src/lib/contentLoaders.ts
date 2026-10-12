@@ -23,6 +23,8 @@ import { PEER_COLUMNS } from "@/lib/useProjectSeoPeers";
 import type { ProjectSeoPeer } from "@/lib/projectSeo";
 import { neighborhoodPages } from "@/lib/portfolioFilter";
 import type { BairroPageLink } from "@/lib/bairrosSp";
+import { fetchAlts, type AltMap } from "@/lib/useImageAlts";
+import { readyPhotos, renderPhotos } from "@/lib/projectPhotos";
 
 /** Lista de posts sem `body` (o índice /conteudos não usa o corpo). */
 const POST_LIST_COLS =
@@ -120,6 +122,7 @@ export type ProjectLoaderData = {
   seo: RouteSeoData;
   project?: BewildProjectFull | null;
   peers?: ProjectSeoPeer[] | null;
+  alts?: AltMap;
 };
 
 export async function loadProjectContent(slug: string): Promise<ProjectLoaderData> {
@@ -142,7 +145,11 @@ async function fetchProjectContent(slug: string): Promise<ProjectLoaderData> {
     // página, para o <title> do servidor sair com a mesma data do navegador.
     const self = peers?.find((o) => o.id === project.id);
     const seoRow = self ? { ...project, created_at: self.created_at } : project;
-    return { seo: projectSeoFrom(seoRow, peers ?? []), project, peers };
+    const urls = [project.cover_url, project.before_image_url, project.after_image_url,
+      ...renderPhotos(project), ...readyPhotos(project)].filter((url): url is string => !!url);
+    // A mesma descrição por URL já sai no HTML inicial; falha de alt não oculta o projeto.
+    const alts = await fetchAlts(Array.from(new Set(urls))).catch(() => ({}));
+    return { seo: projectSeoFrom(seoRow, peers ?? []), project, peers, alts };
   } catch {
     return { seo: projectSeoFrom(null, [], true) };
   }
