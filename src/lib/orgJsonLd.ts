@@ -9,7 +9,8 @@
  * Google ("Bewild Reformas e Arquitetura"), sameAs/hasMap com o link do Perfil
  * (cid) e CEP. 2026-10-12 (decisão do dono): cargos de Pedro e Thiago,
  * founder na Organization, CAU só no Person do Thiago (registro pessoal),
- * foto real no #local. `geo` aguarda as coordenadas do dono.
+ * foto real no #local. `geo` = pino do Perfil da Empresa no Google
+ * (conferido pelo dono em 12/10/2026).
  */
 
 export const SITE_URL = "https://bewild.com.br";
@@ -114,6 +115,8 @@ export const LOCAL_NODE = {
   alternateName: "Bewild Reformas e Arquitetura",
   url: `${SITE_URL}/`,
   image: [LOCAL_PHOTO, ORG_LOGO],
+  // Pino do Perfil da Empresa no Google (cid 16329162499474686119), conferido pelo dono.
+  geo: { "@type": "GeoCoordinates", latitude: -23.6147497, longitude: -46.6886285 },
   description:
     "Escritório de arquitetura e engenharia em São Paulo: reforma completa de apartamentos e studios, do projeto à entrega pronta para morar, alugar ou vender.",
   telephone: ORG_TELEPHONE,
