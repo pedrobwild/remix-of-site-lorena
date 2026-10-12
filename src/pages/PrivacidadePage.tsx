@@ -444,9 +444,12 @@ export default function PrivacidadePage() {
                 identificador pessoal, para comprovar o consentimento. Você pode
                 mudar sua escolha a qualquer momento em {prefsButton}, também
                 no rodapé do site. Retirar o aceite apaga os cookies de medição
-                deste site e interrompe novos envios; o que já foi enviado à
-                Meta e ao Google segue as ferramentas e os prazos dessas
-                empresas (veja &ldquo;Como recusar ou limitar&rdquo;).
+                deste site e interrompe os envios pelo navegador. O envio pelo
+                servidor descrito em &ldquo;Para onde vão os dados dos
+                formulários&rdquo; independe dessa escolha; você pode se opor a
+                ele pelo canal abaixo. O que já foi enviado à Meta e ao Google
+                segue as ferramentas e os prazos dessas empresas (veja
+                &ldquo;Como recusar ou limitar&rdquo;).
               </p>
 
               <h2>Conteúdos de terceiros</h2>
@@ -467,7 +470,7 @@ export default function PrivacidadePage() {
                 rodapé, carrega recursos a partir dos servidores desse serviço.
               </p>
 
-              <h2>Seus direitos</h2>
+              <h2>Direitos do titular de dados pessoais</h2>
               <p>Como titular, a LGPD lhe assegura o direito de:</p>
               <ul>
                 <li>Confirmar a existência de tratamento de seus dados;</li>
@@ -484,9 +487,17 @@ export default function PrivacidadePage() {
                   regulamentação;
                 </li>
                 <li>
+                  Solicitar a eliminação dos dados tratados com seu
+                  consentimento, ressalvadas as hipóteses de conservação
+                  previstas na LGPD;
+                </li>
+                <li>
+                  Saber se é possível não fornecer consentimento e quais são
+                  as consequências dessa escolha;
+                </li>
+                <li>
                   Revogar o consentimento, sempre que o tratamento for baseado
-                  nele — para cookies e anúncios, a qualquer momento em
-                  &ldquo;Preferências de cookies&rdquo;;
+                  nele — para cookies, a qualquer momento em {prefsButton};
                 </li>
                 <li>
                   Obter informação sobre compartilhamento de seus dados com
@@ -495,11 +506,29 @@ export default function PrivacidadePage() {
                 <li>
                   Opor-se a tratamento realizado em desacordo com a LGPD.
                 </li>
+                <li>
+                  Solicitar a revisão de decisões tomadas unicamente com base
+                  em tratamento automatizado de dados pessoais que afetem seus
+                  interesses, quando houver;
+                </li>
               </ul>
               <p>
                 Para exercer qualquer desses direitos, entre em contato pelo
                 e-mail{" "}
                 <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.
+              </p>
+              <p>
+                Informe qual direito deseja exercer. Para proteger seus dados,
+                podemos solicitar as informações necessárias para confirmar
+                sua identidade antes de atender ao pedido. Você também pode
+                apresentar uma petição à Autoridade Nacional de Proteção de
+                Dados (ANPD), nos termos da LGPD.
+              </p>
+              <p>
+                Para saber quais cookies usamos, consulte a{" "}
+                <a href={routes.politicaCookies}>Política de cookies</a>.
+                Para aceitar ou recusar cookies de medição e publicidade, acesse{" "}
+                {prefsButton}.
               </p>
 
               <h2>Retenção e segurança</h2>
