@@ -65,11 +65,13 @@ export const COBERTURA_SP_JSONLD: Array<Record<string, unknown>> = [
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "Reforma completa de coberturas em São Paulo",
+    "@id": `https://bewild.com.br${CANONICAL}#service`,
+    // name = H1 da página; description = texto de abertura visível (sem contagens).
+    name: "Reforma de cobertura em São Paulo, entregue pronta para morar.",
     alternateName: "Reforma de cobertura em SP",
     serviceType: "Reforma de apartamento",
     description:
-      "Projeto 3D, obra, área externa e terraço, marcenaria sob medida, mobília e entrega das chaves em um único contrato, com preço fechado e prazo em contrato.",
+      "A Bewild faz a reforma completa da sua cobertura em São Paulo: projeto 3D, obra, terraço e área externa, marcenaria sob medida e mobília em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia.",
     provider: { "@id": "https://bewild.com.br/#org" },
     areaServed: { "@type": "City", name: "São Paulo" },
     url: `https://bewild.com.br${CANONICAL}`,
