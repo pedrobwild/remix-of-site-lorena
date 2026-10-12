@@ -13,7 +13,7 @@ export const CONTACT = {
   whatsappText: "Olá! Quero um orçamento para o meu apartamento.",
   email: "contato@bewild.com.br",
   instagram: "https://instagram.com/bewild.oficial",
-  linkedin: "https://www.linkedin.com/company/bewild-reformas/",
+  linkedin: "https://www.linkedin.com/company/bwil-d/",
   city: "São Paulo, Brasil",
 };
 
