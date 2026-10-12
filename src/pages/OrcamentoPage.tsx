@@ -253,9 +253,9 @@ export default function OrcamentoPage() {
   }
 
   useSeo({
-    title: "Orçamento de reforma turnkey em São Paulo | Bewild",
+    title: "Orçamento de reforma de studio e apartamento em SP | Bewild",
     description:
-      "Peça o orçamento da reforma turnkey do seu studio ou apartamento em São Paulo: faixa de investimento em 1 dia útil, projeto 3D, preço fechado e prazo em contrato.",
+      "Peça o orçamento da reforma do seu studio ou apartamento em São Paulo: faixa de investimento em 1 dia útil, projeto 3D, preço fechado e prazo em contrato.",
     keywords:
       "orçamento de projeto de arquitetura, quanto custa um projeto de arquitetura em São Paulo, orçamento de reforma de studio, quanto custa reformar um studio em São Paulo, custo de reforma de studio, prazo de reforma de studio, orçamento de reforma de apartamento, orçamento de reforma em SP, preço e prazo de reforma São Paulo, reforma de studio para short stay, Bewild",
     canonicalPath: "/orcamento",
