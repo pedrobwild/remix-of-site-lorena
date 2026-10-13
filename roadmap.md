@@ -29,3 +29,4 @@
 - [x] Revisar visualmente os alts das galerias LM Urban Flex e usar fonte única por imagem no HTML inicial
 - [x] Encurtar alts SVG dos três artigos no conteúdo existente, preservando os números nas legendas
 - [x] Validar testes, lint e HTML das páginas; entregar lista antigo → novo, sem publicar
+- [x] Bug: galeria 3D com "imagem N" no SSR: causa checada, retry no loader, contagem feita (não publicar)
