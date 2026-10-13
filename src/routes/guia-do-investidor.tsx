@@ -21,7 +21,7 @@ export const Route = createFileRoute("/guia-do-investidor")({
       path: GUIA_PATH,
       ogType: "article",
       jsonLd: guiaJsonLd({ breadcrumb: false }),
-      // Em produção o vercel.json responde 301 para https://radar.bewild.com.br/
+      // Em produção o vercel.json responde 301 para https://radarbewild.com.br/
       // antes de chegar aqui; a rota fica só como fallback, fora do índice.
       noindex: true,
     }),

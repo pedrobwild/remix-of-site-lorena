@@ -65,7 +65,7 @@ const NAO_INDEXAVEIS: Record<string, string> = {
   "/preferencias-de-cookies": "src/pages/PreferenciasCookiesPage.tsx",
   // Resultado de busca: noindex, nunca entra no sitemap.
   "/buscar": "src/pages/BewildBuscaPage.tsx",
-  // O guia mudou para https://radar.bewild.com.br (12/10/2026): produção responde
+  // O guia mudou para https://radarbewild.com.br (12/10/2026): produção responde
   // 301 pelo vercel.json; a rota antiga fica só como fallback noindex.
   "/guia-do-investidor": "src/routes/guia-do-investidor.tsx",
 };
@@ -112,7 +112,7 @@ describe("rotas do roteador ↔ geradores de sitemap", () => {
     expect(read(arquivo)).toMatch(/noindex:\s*true/);
   });
 
-  it("o guia saiu do sitemap: mora em https://radar.bewild.com.br", () => {
+  it("o guia saiu do sitemap: mora em https://radarbewild.com.br", () => {
     expect(script).not.toMatch(/\/guia-do-investidor`/);
     expect(edge).not.toMatch(/\/guia-do-investidor`/);
   });

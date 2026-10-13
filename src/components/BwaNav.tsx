@@ -71,7 +71,7 @@ export default function BwaNav() {
             <a href="/portfolio">Portfólio</a>
             <a href="/marcenaria">Marcenaria</a>
             <a href="/conteudos">Blog</a>
-            <a href="https://radar.bewild.com.br/">Guia do Investidor</a>
+            <a href="https://radarbewild.com.br/">Guia do Investidor</a>
             <a href="/faq">FAQ</a>
             {/* Disclosure, não role="menu": são links de navegação comuns. */}
             <div className="bwa-nav-dd" data-nav-dd>
@@ -123,7 +123,7 @@ export default function BwaNav() {
           <a href="/portfolio">Portfólio</a>
           <a href="/marcenaria">Marcenaria</a>
           <a href="/conteudos">Blog</a>
-          <a href="https://radar.bewild.com.br/">Guia do Investidor</a>
+          <a href="https://radarbewild.com.br/">Guia do Investidor</a>
           <a href="/faq">FAQ</a>
           <p className="bwa-menu-group-label">{NAV_PARCEIROS.label}</p>
           {itensParceiros.map((item) => (
