@@ -58,3 +58,38 @@ export const loadBastidoresSeo = createServerFn({ method: "GET" }).handler(async
     return {};
   }
 });
+
+/**
+ * Mapa completo da aba Páginas de /admin/seo, lido no servidor pelo loader do
+ * root para cada rota aplicar no `head()` (HTML que o Google lê). Falha = {}.
+ */
+export const loadPagesSeoMap = createServerFn({ method: "GET" }).handler(async () => {
+  try {
+    const url = process.env["SUPABASE_URL"];
+    const key = process.env["SUPABASE_PUBLISHABLE_KEY"];
+    if (!url || !key) return {} as PagesSeoMap;
+    const response = await fetch(`${url}/rest/v1/rpc/get_public_site_settings`, {
+      method: "POST",
+      headers: { apikey: key, "Content-Type": "application/json" },
+      body: "{}",
+      signal: AbortSignal.timeout(2500),
+    });
+    if (!response.ok) return {} as PagesSeoMap;
+    const settings = (await response.json()) as { pages_seo?: unknown };
+    const raw = settings.pages_seo;
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {} as PagesSeoMap;
+    const out: PagesSeoMap = {};
+    for (const [path, v] of Object.entries(raw as Record<string, unknown>)) {
+      if (!v || typeof v !== "object") continue;
+      const o = v as Record<string, unknown>;
+      const entry: Record<string, string> = {};
+      for (const k of ["title", "description", "og_title", "og_description", "og_image", "keywords"]) {
+        if (typeof o[k] === "string" && (o[k] as string).trim()) entry[k] = (o[k] as string).trim();
+      }
+      out[path] = entry;
+    }
+    return out;
+  } catch {
+    return {} as PagesSeoMap;
+  }
+});

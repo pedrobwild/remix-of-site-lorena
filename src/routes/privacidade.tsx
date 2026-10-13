@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import PrivacidadePage from "@/pages/PrivacidadePage";
 import { PRIVACIDADE_SEO } from "@/content/pages/privacidade";
-import { seoHead } from "@/lib/routeHead";
+import { seoHead , rootPagesSeo } from "@/lib/routeHead";
 
 export const Route = createFileRoute("/privacidade")({
   component: PrivacidadePage,
-  head: () => seoHead({
+  head: ({ matches }) => seoHead({ pagesSeo: rootPagesSeo(matches),
     ...PRIVACIDADE_SEO,
     path: "/privacidade",
     ogType: "website",

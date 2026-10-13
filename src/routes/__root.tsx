@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 import { useEffect, useState, type ReactNode } from "react";
+import { loadPagesSeoMap } from "@/lib/pageSeo.functions";
 import type { QueryClient } from "@tanstack/react-query";
 import { QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -67,6 +68,9 @@ const HOME_KEYWORDS =
 const FAVICON_V = "?v=20260923";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  // Textos da aba Páginas de /admin/seo: cada rota aplica no próprio head().
+  loader: async () => ({ pagesSeo: await loadPagesSeoMap() }),
+  staleTime: 5 * 60_000,
   head: () => ({
     meta: [
       { charSet: "utf-8" },
