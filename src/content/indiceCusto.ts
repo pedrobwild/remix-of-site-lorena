@@ -10,7 +10,7 @@
  * arquivo) e a data em INDICE_ATUALIZADO_EM. Nenhum número novo nasce aqui.
  * O total da base vem de CONTRATOS_ANALISADOS (src/content/provas.ts).
  */
-import { CONTRATOS_ANALISADOS } from "@/content/provas";
+import { BASE_CUSTO } from "@/content/baseCusto";
 import { PILAR_CUSTO } from "@/content/pages/orcamento";
 import { faqJsonLd } from "@/lib/useSeo";
 
@@ -34,17 +34,7 @@ export const EXCLUSOES: { n: number; motivo: string }[] = [
 ];
 
 /** Números de cabeçalho (R$ e m²). */
-export const INDICE = {
-  contratos: CONTRATOS_ANALISADOS,
-  orcamentoMediano: 71_850,
-  orcamentoMedio: 80_054,
-  m2Mediano: 2_744,
-  m2P25: 2_457,
-  m2P75: 3_125,
-  areaMediana: 27.5,
-  /** Nenhum contrato da base ficou abaixo deste valor. */
-  orcamentoMinimo: 55_000,
-} as const;
+export const INDICE = BASE_CUSTO;
 
 /** Orçamento por faixa de metragem (tabela do artigo). */
 export type FaixaMetragem = {

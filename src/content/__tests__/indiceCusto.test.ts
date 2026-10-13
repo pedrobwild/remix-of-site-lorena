@@ -69,3 +69,10 @@ describe("Índice Bewild de custo de reforma", () => {
     expect(String(ds.isBasedOn)).toContain("/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2");
   });
 });
+
+describe("uma base de custo só no site", () => {
+  it("calculadora, /escopo e Índice usam o mesmo custo por m²", async () => {
+    const { CUSTO_M2 } = await import("@/lib/reformaCalc");
+    expect(CUSTO_M2).toEqual({ baixo: INDICE.m2P25, mediano: INDICE.m2Mediano, alto: INDICE.m2P75 });
+  });
+});
