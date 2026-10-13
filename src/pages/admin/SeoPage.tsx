@@ -6,6 +6,7 @@ import { auditPublicPage, type PublicPageAudit } from "@/lib/seoAudit";
 import { downloadSitemap, parseSitemapXml, type SitemapSnapshot } from "@/lib/sitemap";
 import { refreshSeoEverywhere, validTrackerId } from "@/lib/useSeo";
 import { validAdsLabel } from "@/lib/googleAds";
+import { HOME_DEFAULT_DESCRIPTION, HOME_DEFAULT_TITLE } from "@/lib/homeSeo";
 import {
   diffSettings,
   loadSettingsRow,
@@ -506,8 +507,7 @@ function BastidoresTab({
 // =============================================================
 //  Aba: Home — título, descrição e Open Graph da página inicial
 // =============================================================
-const HOME_DEFAULT_TITLE = HOME_SEO_TITLE;
-const HOME_DEFAULT_DESC = HOME_SEO_DESCRIPTION;
+const HOME_DEFAULT_DESC = HOME_DEFAULT_DESCRIPTION;
 
 function HomeTab({
   s,

@@ -27,6 +27,21 @@ describe("resolveHomeSeo", () => {
     });
     expect(s.title).toBe("Da aba Páginas");
   });
+  it("título padrão começa pela marca", () => {
+    expect(HOME_DEFAULT_TITLE).toBe("Bewild Reformas | Reforma de apartamentos e studios em São Paulo");
+  });
+  it("prefere pages_seo['/'] (título, descrição e Open Graph) e cai no padrão quando tudo está vazio", () => {
+    const s = resolveHomeSeo({
+      pages_seo: { "/": { title: "T", description: "D", og_title: "OT", og_description: "OD", og_image: "/i.jpg" } },
+      home_seo_title: "H",
+      home_seo_description: "HD",
+    });
+    expect(s).toMatchObject({ title: "T", description: "D", ogTitle: "OT", ogDescription: "OD", ogImage: "/i.jpg" });
+    expect(resolveHomeSeo({ pages_seo: { "/": {} }, home_seo_title: "", home_seo_description: " " })).toMatchObject({
+      title: HOME_DEFAULT_TITLE,
+      description: HOME_DEFAULT_DESCRIPTION,
+    });
+  });
   it("repassa Open Graph próprio", () => {
     const s = resolveHomeSeo({ home_og_title: "OG", home_og_description: "OGD", home_og_image: "/a.jpg" });
     expect(s).toMatchObject({ ogTitle: "OG", ogDescription: "OGD", ogImage: "/a.jpg" });
