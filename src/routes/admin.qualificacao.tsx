@@ -1,26 +1,9 @@
-import { lazy } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import AdminChunk from "@/components/admin/AdminChunk";
-import ProtectedRoute from "@/components/admin/ProtectedRoute";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-const Page = lazy(() => import("@/pages/admin/BewildQualificacaoAdminPage"));
-
+// A qualificação passou a vir do funil do Bwild Engine e mora em /admin/leads.
 export const Route = createFileRoute("/admin/qualificacao")({
-  component: RouteComponent,
-  head: () => ({
-    meta: [
-      { title: "Painel · Bewild" },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
-  }),
+  beforeLoad: () => {
+    throw redirect({ to: "/admin/leads", statusCode: 301 });
+  },
+  head: () => ({ meta: [{ name: "robots", content: "noindex, nofollow" }] }),
 });
-
-function RouteComponent() {
-  return (
-    <AdminChunk>
-      <ProtectedRoute>
-        <Page />
-      </ProtectedRoute>
-    </AdminChunk>
-  );
-}

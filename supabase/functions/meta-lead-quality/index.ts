@@ -20,18 +20,15 @@
 
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.45.4";
 import { logIntegration } from "../_shared/integration-log.ts";
+import { sendSiteLeadQuality } from "../_shared/lead-quality.ts";
 import {
-  AD_LEAD_FORMS,
   capiLogEntry,
-  capiRequiresConsent,
   CRM_STAGE_BY_STATUS,
   crmStageEvent,
   isMetaLeadId,
   type MetaCrmStage,
-  type MetaEventName,
   resolveMetaCapiConfig,
   sendMetaEvents,
-  statusEventId,
 } from "../_shared/meta-capi.ts";
 
 const corsHeaders: Record<string, string> = {
@@ -65,11 +62,6 @@ async function requireAdmin(req: Request): Promise<Response | null> {
   return null;
 }
 
-const STATUS_EVENTS: Record<string, MetaEventName> = {
-  qualificado: "QualifiedLead",
-  descartado: "DisqualifiedLead",
-};
-
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 type MetaLeadRow = {
@@ -85,24 +77,6 @@ type MetaLeadRow = {
   phone: string | null;
   city: string | null;
   deleted_at: string | null;
-};
-
-type LeadRow = {
-  id: string;
-  name: string | null;
-  whatsapp: string | null;
-  email: string | null;
-  location: string | null;
-  objetivo: string | null;
-  form_path: string | null;
-  utm_source: string | null;
-  utm_campaign: string | null;
-  user_agent: string | null;
-  fbp: string | null;
-  fbc: string | null;
-  consent_marketing: boolean | null;
-  created_at: string | null;
-  meta_qualified_sent_at: string | null;
 };
 
 /**
@@ -217,90 +191,9 @@ Deno.serve(async (req) => {
 
   if (source === "meta") return await sendCrmStage(admin, leadId, status, body.force === true);
 
-  const eventName = STATUS_EVENTS[status];
-  if (!eventName) return json(200, { ok: true, meta: "skipped", reason: "status_not_tracked" });
-
-  const { data: lead, error } = await admin
-    .from("leads")
-    .select(
-      "id, name, whatsapp, email, location, objetivo, form_path, utm_source, utm_campaign, user_agent, fbp, fbc, consent_marketing, created_at, meta_qualified_sent_at",
-    )
-    .eq("id", leadId)
-    .maybeSingle<LeadRow>();
-  if (error) {
-    console.error("[meta-lead-quality] lead select failed", error.code ?? "unknown");
-    return json(500, { error: "lead_lookup_failed" });
+  const res = await sendSiteLeadQuality(admin, (n) => Deno.env.get(n), leadId, status, { force: body.force === true });
+  if (!res.ok && (res.reason === "lead_lookup_failed" || res.reason === "lead_not_found")) {
+    return json(res.httpStatus ?? 500, { error: res.reason });
   }
-  if (!lead) return json(404, { error: "lead_not_found" });
-
-  // Mesmas regras do Lead: parceiro/indicação não é lead de cliente; e o aceite
-  // de cookies só é exigido com META_CAPI_REQUIRE_CONSENT=true.
-  if (capiRequiresConsent((n) => Deno.env.get(n)) && lead.consent_marketing !== true) {
-    return json(200, { ok: true, meta: "skipped", reason: "no_consent" });
-  }
-  if (!lead.form_path || !AD_LEAD_FORMS.includes(lead.form_path)) {
-    return json(200, { ok: true, meta: "skipped", reason: "not_ad_form" });
-  }
-  if (eventName === "QualifiedLead" && lead.meta_qualified_sent_at && body.force !== true) {
-    return json(200, { ok: true, meta: "skipped", reason: "already_sent", sent_at: lead.meta_qualified_sent_at });
-  }
-
-  const base = { integration: "meta_capi", event_name: eventName, lead_id: lead.id };
-  const { data: settings } = await admin.from("site_settings").select("*").eq("id", 1).maybeSingle();
-  const resolved = resolveMetaCapiConfig((name) => Deno.env.get(name), settings as Record<string, unknown> | null);
-  if (!resolved.config) {
-    await logIntegration(admin, { ...base, status: "skipped", detail: { reason: resolved.reason } });
-    console.warn("[meta-lead-quality] Meta CAPI não configurada:", resolved.reason);
-    return json(200, { ok: true, meta: "skipped", reason: resolved.reason });
-  }
-  const config = resolved.config;
-
-  const result = await sendMetaEvents(config, [
-    {
-      eventName,
-      eventId: statusEventId(lead.id, eventName),
-      // Evento gerado pelo CRM/painel, não por uma ação do visitante no site.
-      actionSource: "system_generated",
-      user: {
-        email: lead.email,
-        phone: lead.whatsapp,
-        fullName: lead.name,
-        externalId: lead.id,
-        fbp: lead.fbp,
-        fbc: lead.fbc,
-        clientUserAgent: lead.user_agent,
-        city: lead.location,
-      },
-      customData: {
-        lead_id: lead.id,
-        lead_status: status,
-        lead_event_source: "Bewild Admin",
-        event_source: "crm",
-        content_name: lead.form_path ?? "site",
-        content_category: lead.objetivo,
-        utm_source: lead.utm_source,
-        utm_campaign: lead.utm_campaign,
-        lead_created_at: lead.created_at,
-      },
-    },
-  ]);
-
-  await logIntegration(admin, { ...base, ...capiLogEntry(result, { test: !!config.testEventCode }) });
-  if (result.status === "sent" && eventName === "QualifiedLead") {
-    await admin
-      .from("leads")
-      .update({ meta_qualified_sent_at: new Date().toISOString() })
-      .eq("id", lead.id)
-      .then(() => undefined, () => undefined);
-  }
-  if (result.status === "error") {
-    console.error("[meta-lead-quality] meta capi failed", result.httpStatus ?? result.reason);
-    return json(200, { ok: false, meta: "error", reason: result.reason });
-  }
-  return json(200, {
-    ok: true,
-    meta: result.status,
-    event: eventName,
-    ...(result.status === "skipped" ? { reason: result.reason } : {}),
-  });
+  return json(200, res);
 });

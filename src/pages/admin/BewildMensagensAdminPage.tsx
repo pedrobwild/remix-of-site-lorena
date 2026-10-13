@@ -14,14 +14,12 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { MessageCircle, Mail } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import AdminAlert from "@/components/admin/AdminAlert";
+import { LeadCrmStatus } from "@/components/admin/LeadCrmStatus";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  LEAD_STATUSES,
   MENSAGEM_FORMS,
-  isLeadStatus,
   leadFormOrFilter,
   mailtoHref,
-  updateLeadStatus,
   waLink,
   type LeadStatus,
 } from "@/lib/adminLeads";
@@ -35,6 +33,10 @@ type Mensagem = {
   form_path: string | null;
   landing_path: string | null;
   status: LeadStatus;
+  crm_stage_name?: string | null;
+  crm_won?: boolean | null;
+  crm_lost?: boolean | null;
+  crm_deal_count?: number | null;
   created_at: string;
 };
 
@@ -48,7 +50,7 @@ const STATUS_OPTIONS: { value: "all" | LeadStatus; label: string }[] = [
   { value: "descartado", label: "Descartadas" },
 ];
 
-const SELECT_COLS = "id, name, whatsapp, email, message, form_path, landing_path, status, created_at";
+const SELECT_COLS = "id, name, whatsapp, email, message, form_path, landing_path, status, created_at, crm_stage_name, crm_won, crm_lost, crm_deal_count";
 const FORM_FILTER = leadFormOrFilter(MENSAGEM_FORMS);
 
 function fmtDate(iso: string): string {
@@ -135,31 +137,6 @@ export default function BewildMensagensAdminPage() {
     if (status === "all") return rows;
     return rows.filter((r) => r.status === status);
   }, [rows, status]);
-
-  async function changeStatus(item: Mensagem, next: string) {
-    if (!isLeadStatus(next)) return;
-    const previous = item.status;
-    if (next === previous) return;
-    setRows((prev) => prev.map((r) => (r.id === item.id ? { ...r, status: next } : r)));
-    setNovas((n) => (n === null ? n : n + (next === "novo" ? 1 : 0) - (previous === "novo" ? 1 : 0)));
-    setBusy(item.id);
-    setActionMsg(null);
-    const result = await updateLeadStatus(item.id, isLeadStatus(previous) ? previous : null, next);
-    setBusy(null);
-    if (!result.ok) {
-      console.error("[admin/mensagens] falha ao atualizar status:", result.error);
-      setRows((prev) => prev.map((r) => (r.id === item.id ? { ...r, status: previous } : r)));
-      setNovas((n) => (n === null ? n : n - (next === "novo" ? 1 : 0) + (previous === "novo" ? 1 : 0)));
-      setActionMsg({ kind: "err", text: `Não foi possível atualizar o status: ${result.error}` });
-      return;
-    }
-    if (result.logError) {
-      setActionMsg({
-        kind: "warn",
-        text: `Status salvo, mas o histórico de qualificação não foi registrado: ${result.logError}`,
-      });
-    }
-  }
 
   async function deleteItem(item: Mensagem) {
     const label = item.name?.trim() || "esta mensagem";
@@ -290,31 +267,7 @@ export default function BewildMensagensAdminPage() {
                         {r.message ?? <span className="muted">(sem mensagem)</span>}
                       </td>
                       <td style={{ verticalAlign: "top" }}>
-                        <select
-                          value={r.status}
-                          onChange={(e) => void changeStatus(r, e.target.value)}
-                          disabled={busy === r.id}
-                          aria-label={`Mudar status de ${r.name ?? "mensagem"}`}
-                          style={{
-                            padding: "6px 28px 6px 10px",
-                            borderRadius: 6,
-                            border: "1px solid var(--bw-border, #d6d3cc)",
-                            background: "#fff",
-                            fontSize: 13,
-                            cursor: busy === r.id ? "wait" : "pointer",
-                          }}
-                        >
-                          {!isLeadStatus(r.status) && (
-                            <option value={r.status} disabled>
-                              {r.status}
-                            </option>
-                          )}
-                          {LEAD_STATUSES.map((s) => (
-                            <option key={s} value={s}>
-                              {s}
-                            </option>
-                          ))}
-                        </select>
+                        <LeadCrmStatus lead={r} />
                       </td>
                       <td className="muted" style={{ whiteSpace: "nowrap", verticalAlign: "top" }}>
                         {fmtDate(r.created_at)}
