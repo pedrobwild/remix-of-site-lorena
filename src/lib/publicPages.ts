@@ -26,6 +26,7 @@ export const PUBLIC_PAGES: PublicPage[] = [
   { path: "/reforma-de-apartamento-sao-paulo", label: "Reforma de apartamento em SP" },
   { path: "/reforma-de-studio-sao-paulo", label: "Reforma de studio em SP" },
   { path: "/reforma-de-cobertura-sao-paulo", label: "Reforma de cobertura em SP" },
+  { path: "/indice-de-custo-de-reforma", label: "Índice Bewild de custo de reforma" },
   { path: "/marcenaria", label: "Marcenaria" },
   { path: "/parceiros", label: "Clientes e corretores" },
   { path: "/parceiros/incorporadoras", label: "Incorporadoras" },

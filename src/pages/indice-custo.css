@@ -1,0 +1,185 @@
+/* /indice-de-custo-de-reforma — complementa servico-reforma.css.
+   Só tokens --bwa-* (vêm do home-bwa.css injetado pelo BwaNav). */
+
+.bwa-indice-meta {
+  margin: 16px 0 0;
+  color: var(--bwa-ink-soft);
+  font-size: 15px;
+}
+
+.bwa-indice-meta a,
+.bwa-indice a {
+  color: var(--bwa-navy);
+  text-underline-offset: 3px;
+}
+
+.bwa-indice-meta a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.bwa-indice-stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  margin: 0 0 clamp(20px, 2.4vw, 28px);
+  background: var(--bwa-line);
+  border: 1px solid var(--bwa-line);
+}
+
+@media (min-width: 640px) {
+  .bwa-indice-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1000px) {
+  .bwa-indice-stats {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.bwa-indice-stats > div {
+  padding: clamp(18px, 2vw, 26px);
+  background: var(--bwa-paper);
+}
+
+.bwa-indice-stats dt {
+  color: var(--bwa-ink-soft);
+  font-size: 14px;
+}
+
+.bwa-indice-stats dd {
+  margin: 8px 0 0;
+  font-family: var(--bwa-font-display);
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 600;
+  color: var(--bwa-navy);
+}
+
+.bwa-indice-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--bwa-line);
+}
+
+.bwa-indice-table-wrap:focus-visible {
+  outline: 2px solid var(--bwa-navy);
+  outline-offset: 2px;
+}
+
+.bwa-indice-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.bwa-indice-table th,
+.bwa-indice-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--bwa-line);
+  white-space: nowrap;
+}
+
+.bwa-indice-table thead th {
+  font-family: var(--bwa-font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--bwa-ink-soft);
+}
+
+.bwa-indice-table tbody tr:last-child th,
+.bwa-indice-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.bwa-indice-bars {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bwa-indice-bars li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 16px;
+  align-items: center;
+}
+
+.bwa-indice-bar-label {
+  font-size: 15px;
+}
+
+.bwa-indice-bar-value {
+  font-family: var(--bwa-font-mono);
+  font-size: 14px;
+  color: var(--bwa-ink-soft);
+  text-align: right;
+  grid-row: 1;
+  grid-column: 2;
+}
+
+.bwa-indice-bar {
+  grid-row: 2;
+  grid-column: 1 / -1;
+  display: block;
+  height: 8px;
+  background: var(--bwa-line);
+}
+
+.bwa-indice-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--bwa-navy);
+}
+
+@media (min-width: 900px) {
+  .bwa-indice-bars li {
+    grid-template-columns: minmax(220px, 1fr) 2fr minmax(150px, auto);
+  }
+
+  .bwa-indice-bar,
+  .bwa-indice-bar-value {
+    grid-row: auto;
+    grid-column: auto;
+  }
+}
+
+.bwa-indice-formula {
+  margin: 0 0 16px;
+  padding: clamp(16px, 2vw, 24px);
+  border-left: 3px solid var(--bwa-navy);
+  background: var(--bwa-white);
+  font-family: var(--bwa-font-mono);
+  font-size: clamp(15px, 1.5vw, 18px);
+  overflow-wrap: anywhere;
+}
+
+.bwa-indice-notes {
+  display: grid;
+  gap: 14px;
+  max-width: 72ch;
+  margin: 0;
+  padding-left: 1.1em;
+  line-height: 1.65;
+}
+
+.bwa-indice-cite {
+  max-width: 72ch;
+  margin: 0 0 16px;
+  padding: clamp(16px, 2vw, 24px);
+  background: var(--bwa-white);
+  border: 1px solid var(--bwa-line);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.bwa-indice-nowrap {
+  white-space: nowrap;
+}

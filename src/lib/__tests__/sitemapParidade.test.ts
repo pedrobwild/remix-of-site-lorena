@@ -36,6 +36,7 @@ const ROTAS_INDEXAVEIS = [
   { path: "/reforma-de-apartamento-sao-paulo", priority: "0.9", changefreq: "monthly" },
   { path: "/reforma-de-studio-sao-paulo", priority: "0.9", changefreq: "monthly" },
   { path: "/reforma-de-cobertura-sao-paulo", priority: "0.9", changefreq: "monthly" },
+  { path: "/indice-de-custo-de-reforma", priority: "0.8", changefreq: "monthly" },
   { path: "/marcenaria", priority: "0.9", changefreq: "monthly" },
   { path: "/parceiros", priority: "0.7", changefreq: "monthly" },
   { path: "/parceiros/incorporadoras", priority: "0.8", changefreq: "monthly" },
