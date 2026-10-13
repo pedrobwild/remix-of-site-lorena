@@ -17,7 +17,7 @@ import { useBewildProject, type BewildProjectFull } from "@/lib/useBewildProject
 import { bewildTypeLabel } from "@/lib/useBewildProjects";
 import { readyPhotos, renderPhotos } from "@/lib/projectPhotos";
 import { useImageAlts, type AltMap } from "@/lib/useImageAlts";
-import { projectFriendlyName, projectMetaDescription, projectSeoTitleUnique, type ProjectSeoPeer } from "@/lib/projectSeo";
+import { projectFriendlyName, projectKeywords, projectMetaDescription, projectSeoTitleUnique, type ProjectSeoPeer } from "@/lib/projectSeo";
 import { useProjectSeoPeers } from "@/lib/useProjectSeoPeers";
 import { neighborhoodPages, neighborhoodSlug } from "@/lib/portfolioFilter";
 import {
@@ -304,17 +304,7 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
     // Sem seo_description/summary no admin, monta a frase com bairro/metragem/tipo
     // reais do projeto (evita ~100 URLs com a mesma description genérica).
     description: seoDescription,
-    keywords: [
-      "reforma de apartamento em SP",
-      "reforma de apartamento São Paulo",
-      project?.neighborhood ? `reforma de apartamento ${project.neighborhood}` : null,
-      project?.project_type ? `${project.project_type} reformado em SP` : null,
-      "antes e depois reforma apartamento",
-      "custo de reforma",
-      "Bewild",
-    ]
-      .filter(Boolean)
-      .join(", "),
+    keywords: projectKeywords(project),
     canonicalPath: `/portfolio/${slug}`,
     ogType: "article",
     ogImage: shareImageOptimized,

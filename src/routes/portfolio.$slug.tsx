@@ -3,6 +3,7 @@ import BewildProjectPage from "@/pages/BewildProjectPage";
 import { seoHead } from "@/lib/routeHead";
 import { loadProjectContent } from "@/lib/contentLoaders";
 import { projectPageJsonLd } from "@/lib/contentJsonLd";
+import { projectKeywords } from "@/lib/projectSeo";
 import { projectCoverImage, WIDE_SIZES } from "@/lib/imageUrl";
 
 export const Route = createFileRoute("/portfolio/$slug")({
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/portfolio/$slug")({
         loaderData?.description ??
         "Projeto, obra e marcenaria integrados pela Bewild em São Paulo.",
       path: `/portfolio/${params.slug}`,
+      keywords: ld?.project ? projectKeywords(ld.project) : undefined,
       ogImage: loaderData?.ogImage,
       noindex: !ld || loaderData?.notFound,
       jsonLd: ld?.project ? projectPageJsonLd(ld.project) : null,
