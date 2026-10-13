@@ -4,7 +4,7 @@
  * 06/10/2026, os outros 11 bairros do sitemap. Só
  * fatos publicados: contagens e metragens do portfólio, os números de
  * mercado e de contrato citados no post "melhores bairros para short stay"
- * (GuestFavorites jan–ago/2026 e base Bewild fev–out/2025) e a geografia do
+ * (GuestFavorites jan–set/2026 — Pinheiros, Moema e Vila Mariana conferidos em 13/10/2026; demais jan–ago/2026 e base Bewild fev–out/2025) e a geografia do
  * bairro. Bairro sem entrada aqui mostra só a lista de projetos.
  *
  * As contagens de projetos vêm do banco na hora de renderizar; aqui ficam só
@@ -62,7 +62,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
       },
       {
         q: "Pinheiros vale para short stay?",
-        a: "No levantamento da GuestFavorites (janeiro a agosto de 2026), o bairro tem 62% de ocupação mediana e diária média de R$ 300, com demanda de quem trabalha na Faria Lima durante a semana e de turistas no fim de semana. O que decide é o prédio: a convenção precisa permitir locação por temporada.",
+        a: "No levantamento da GuestFavorites (janeiro a setembro de 2026), o bairro tem 62% de ocupação mediana e diária média de R$ 300, com demanda de quem trabalha na Faria Lima durante a semana e de turistas no fim de semana. O que decide é o prédio: a convenção precisa permitir locação por temporada.",
       },
       { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
     ],
@@ -180,7 +180,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
       { q: "Quanto custa reformar um apartamento em Moema?", a: CUSTO_FAQ_CIDADE },
       {
         q: "Moema vale para short stay?",
-        a: "No levantamento da GuestFavorites (janeiro a agosto de 2026), o bairro tem 61% de ocupação mediana, diária média de R$ 263 e 2.621 anúncios ativos. Há demanda o ano inteiro, mas também muita oferta: o anúncio precisa se destacar em foto, layout e avaliações. A convenção do prédio precisa permitir locação por temporada.",
+        a: "No levantamento da GuestFavorites (janeiro a setembro de 2026), o bairro tem 61% de ocupação mediana, diária média de R$ 263 e 2.621 anúncios ativos. Há demanda o ano inteiro, mas também muita oferta: o anúncio precisa se destacar em foto, layout e avaliações. A convenção do prédio precisa permitir locação por temporada.",
       },
       { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
     ],
@@ -297,7 +297,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
       { q: "Quanto custa reformar um apartamento na Vila Mariana?", a: CUSTO_FAQ_CIDADE },
       {
         q: "Vila Mariana vale para short stay?",
-        a: "No levantamento da GuestFavorites (janeiro a agosto de 2026), o bairro tem 60% de ocupação mediana, diária média de R$ 226 e 2.238 anúncios ativos, com demanda de hospitais, metrô e Ibirapuera. Confira antes se a unidade não é HIS ou HMP e se a convenção permite locação por temporada.",
+        a: "No levantamento da GuestFavorites (janeiro a setembro de 2026), o bairro tem 60% de ocupação mediana, diária média de R$ 226 e 2.238 anúncios ativos, com demanda de hospitais, metrô e Ibirapuera. Confira antes se a unidade não é HIS ou HMP e se a convenção permite locação por temporada.",
       },
       { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
     ],
