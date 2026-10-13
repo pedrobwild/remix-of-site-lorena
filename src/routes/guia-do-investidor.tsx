@@ -1,11 +1,19 @@
 import { lazy, Suspense } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { seoHead } from "@/lib/routeHead";
 import { GUIA_DESCRIPTION, GUIA_KEYWORDS, GUIA_PATH, GUIA_TITLE, guiaJsonLd } from "@/guia/data/guiaMeta";
 
 const GuiaInvestidorPage = lazy(() => import("@/pages/GuiaInvestidorPage"));
 
+/** Endereço oficial do guia desde 12/10/2026 (Radar Bewild). */
+const RADAR_URL = "https://radarbewild.com.br/";
+
 export const Route = createFileRoute("/guia-do-investidor")({
+  // O site é servido pela hospedagem da Lovable, que não lê o vercel.json:
+  // o 301 para o Radar sai daqui, no servidor (mesmo padrão de /diagnostico).
+  beforeLoad: () => {
+    throw redirect({ href: RADAR_URL, statusCode: 301 });
+  },
   component: () => (
     <Suspense fallback={null}>
       <GuiaInvestidorPage />
@@ -21,8 +29,7 @@ export const Route = createFileRoute("/guia-do-investidor")({
       path: GUIA_PATH,
       ogType: "article",
       jsonLd: guiaJsonLd({ breadcrumb: false }),
-      // Em produção o vercel.json responde 301 para https://radarbewild.com.br/
-      // antes de chegar aqui; a rota fica só como fallback, fora do índice.
+      // Nunca chega a renderizar (beforeLoad redireciona); fica noindex por garantia.
       noindex: true,
     }),
 });
