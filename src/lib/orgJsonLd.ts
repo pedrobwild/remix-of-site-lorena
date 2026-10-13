@@ -34,7 +34,7 @@ export const ORG_SAME_AS = [
 ];
 export const ORG_CNPJ = "47.350.338/0001-37";
 export const ORG_LEGAL_NAME = "Bwild Reformas LTDA";
-export const ORG_ALTERNATE_NAMES = ["Bwild", "Be Wild", "Bewild Reformas", "Bewild Reformas e Arquitetura", "Bwild Reformas"];
+export const ORG_ALTERNATE_NAMES = ["Bwild", "Bewild Reformas", "Bewild Reformas e Arquitetura", "Bwild Reformas", "Be Wild"];
 export const ORG_TELEPHONE = "+55 11 91190-6183";
 export const ORG_EMAIL = "contato@bewild.com.br";
 
@@ -137,8 +137,8 @@ export const WEBSITE_NODE = {
   "@id": WEBSITE_ID,
   url: `${SITE_URL}/`,
   name: "Bewild",
-  // Campo que o Google lê para o nome do site no resultado de busca.
-  alternateName: ["Bwild", "Be Wild", "Bewild Reformas"],
+  // Nome que o Google usa para o site no resultado de busca.
+  alternateName: ["Bewild Reformas", "Bwild"],
   description: "Reforma de apartamento em São Paulo, com entrega do imóvel pronto para morar ou rentabilizar.",
   inLanguage: "pt-BR",
   publisher: { "@id": ORG_ID },

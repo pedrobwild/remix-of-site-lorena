@@ -103,13 +103,13 @@ describe("Organization com fonte única (orgJsonLd.ts)", () => {
 
 describe("nomes alternativos e canais oficiais no JSON-LD de entidade", () => {
   it("ORG_ALTERNATE_NAMES é exatamente a lista decidida e vale para Organization e LocalBusiness", () => {
-    const lista = ["Bwild", "Be Wild", "Bewild Reformas", "Bewild Reformas e Arquitetura", "Bwild Reformas"];
+    const lista = ["Bwild", "Bewild Reformas", "Bewild Reformas e Arquitetura", "Bwild Reformas", "Be Wild"];
     expect(ORG_ALTERNATE_NAMES).toEqual(lista);
     expect(ORG_NODE.alternateName).toEqual(lista);
     expect(LOCAL_NODE.alternateName).toEqual(lista);
   });
   it("WebSite traz o nome alternativo que o Google usa para o nome do site", () => {
-    expect(WEBSITE_NODE.alternateName).toEqual(["Bwild", "Be Wild", "Bewild Reformas"]);
+    expect(WEBSITE_NODE.alternateName).toEqual(["Bewild Reformas", "Bwild"]);
   });
   it("sameAs inclui o canal do YouTube sem perder Instagram, LinkedIn e Perfil da Empresa", () => {
     expect(ORG_SAME_AS).toEqual([
