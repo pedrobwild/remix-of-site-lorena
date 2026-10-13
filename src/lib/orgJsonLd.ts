@@ -10,7 +10,9 @@
  * (cid) e CEP. 2026-10-12 (decisão do dono): cargos de Pedro e Thiago,
  * founder na Organization, CAU só no Person do Thiago (registro pessoal),
  * foto real no #local. `geo` = pino do Perfil da Empresa no Google
- * (conferido pelo dono em 12/10/2026).
+ * (conferido pelo dono em 12/10/2026). 2026-10-13: "Be Wild" vai para o
+ * fim de ORG_ALTERNATE_NAMES e WebSite ganha alternateName próprio
+ * (["Bewild Reformas", "Bwild"]); o canal do YouTube segue em ORG_SAME_AS.
  */
 
 export const SITE_URL = "https://bewild.com.br";
@@ -34,7 +36,7 @@ export const ORG_SAME_AS = [
 ];
 export const ORG_CNPJ = "47.350.338/0001-37";
 export const ORG_LEGAL_NAME = "Bwild Reformas LTDA";
-export const ORG_ALTERNATE_NAMES = ["Bwild", "Be Wild", "Bewild Reformas", "Bewild Reformas e Arquitetura", "Bwild Reformas"];
+export const ORG_ALTERNATE_NAMES = ["Bwild", "Bewild Reformas", "Bewild Reformas e Arquitetura", "Bwild Reformas", "Be Wild"];
 export const ORG_TELEPHONE = "+55 11 91190-6183";
 export const ORG_EMAIL = "contato@bewild.com.br";
 
@@ -137,8 +139,8 @@ export const WEBSITE_NODE = {
   "@id": WEBSITE_ID,
   url: `${SITE_URL}/`,
   name: "Bewild",
-  // Campo que o Google lê para o nome do site no resultado de busca.
-  alternateName: ["Bwild", "Be Wild", "Bewild Reformas"],
+  // Nome que o Google usa para o site no resultado de busca.
+  alternateName: ["Bewild Reformas", "Bwild"],
   description: "Reforma de apartamento em São Paulo, com entrega do imóvel pronto para morar ou rentabilizar.",
   inLanguage: "pt-BR",
   publisher: { "@id": ORG_ID },
