@@ -74,6 +74,7 @@ export default function BwaFooter() {
               {linkedinHref && isExternalHref(linkedinHref) && (
                 <a href={linkedinHref} target="_blank" rel="noopener noreferrer">LinkedIn</a>
               )}
+              <a href={CONTACT.youtube} target="_blank" rel="noopener noreferrer">YouTube</a>
               <a href={`mailto:${CONTACT.email}`}>e-mail</a>
               <a href="/privacidade">Política de privacidade</a>
               <a href="/politica-de-cookies">Política de cookies</a>

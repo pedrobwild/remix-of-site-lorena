@@ -14,6 +14,7 @@ export const CONTACT = {
   email: "contato@bewild.com.br",
   instagram: "https://instagram.com/bewild.oficial",
   linkedin: "https://www.linkedin.com/company/bwil-d/",
+  youtube: "https://www.youtube.com/@bewild.oficial",
   city: "São Paulo, Brasil",
 };
 
