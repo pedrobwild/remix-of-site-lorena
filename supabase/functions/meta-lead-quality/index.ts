@@ -191,7 +191,7 @@ Deno.serve(async (req) => {
 
   if (source === "meta") return await sendCrmStage(admin, leadId, status, body.force === true);
 
-  const res = await sendSiteLeadQuality(admin, leadId, status, { force: body.force === true });
+  const res = await sendSiteLeadQuality(admin, (n) => Deno.env.get(n), leadId, status, { force: body.force === true });
   if (!res.ok && (res.reason === "lead_lookup_failed" || res.reason === "lead_not_found")) {
     return json(res.httpStatus ?? 500, { error: res.reason });
   }

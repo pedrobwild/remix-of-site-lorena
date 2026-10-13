@@ -675,6 +675,14 @@ export type Database = {
           chaves: string | null
           consent_marketing: boolean | null
           created_at: string
+          crm_deal_count: number | null
+          crm_last_change_at: string | null
+          crm_lost: boolean | null
+          crm_max_stage_key: string | null
+          crm_stage_key: string | null
+          crm_stage_name: string | null
+          crm_synced_at: string | null
+          crm_won: boolean | null
           email: string | null
           event_id: string | null
           fbc: string | null
@@ -712,6 +720,14 @@ export type Database = {
           chaves?: string | null
           consent_marketing?: boolean | null
           created_at?: string
+          crm_deal_count?: number | null
+          crm_last_change_at?: string | null
+          crm_lost?: boolean | null
+          crm_max_stage_key?: string | null
+          crm_stage_key?: string | null
+          crm_stage_name?: string | null
+          crm_synced_at?: string | null
+          crm_won?: boolean | null
           email?: string | null
           event_id?: string | null
           fbc?: string | null
@@ -749,6 +765,14 @@ export type Database = {
           chaves?: string | null
           consent_marketing?: boolean | null
           created_at?: string
+          crm_deal_count?: number | null
+          crm_last_change_at?: string | null
+          crm_lost?: boolean | null
+          crm_max_stage_key?: string | null
+          crm_stage_key?: string | null
+          crm_stage_name?: string | null
+          crm_synced_at?: string | null
+          crm_won?: boolean | null
           email?: string | null
           event_id?: string | null
           fbc?: string | null
