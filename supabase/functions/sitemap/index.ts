@@ -132,6 +132,7 @@ Deno.serve(async (req) => {
     { loc: `${base}/reforma-de-apartamento-sao-paulo`, priority: "0.9", changefreq: "monthly" },
     { loc: `${base}/reforma-de-studio-sao-paulo`, priority: "0.9", changefreq: "monthly" },
     { loc: `${base}/reforma-de-cobertura-sao-paulo`, priority: "0.9", changefreq: "monthly" },
+    { loc: `${base}/indice-de-custo-de-reforma`, priority: "0.8", changefreq: "monthly" },
     { loc: `${base}/marcenaria`, priority: "0.9", changefreq: "monthly" },
     { loc: `${base}/parceiros`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/parceiros/incorporadoras`, priority: "0.8", changefreq: "monthly" },

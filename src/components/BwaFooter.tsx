@@ -51,6 +51,7 @@ export default function BwaFooter() {
               <a href="/reforma-de-cobertura-sao-paulo">Reforma de cobertura em SP</a>
               <a href="/conteudos">Conteúdos</a>
               <a href="/videos">Vídeos</a>
+              <a href="/indice-de-custo-de-reforma">Índice de custo de reforma</a>
               <a href="https://radarbewild.com.br/">Guia do investidor</a>
               <a href="/faq">FAQ</a>
               <a href="/contato">Contato</a>

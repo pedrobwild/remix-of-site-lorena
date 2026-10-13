@@ -1,0 +1,8 @@
+indicador,recorte,contratos,orcamento_mediano_brl,orcamento_metade_do_meio_min_brl,orcamento_metade_do_meio_max_brl,custo_m2_mediano_brl,custo_m2_p25_brl,custo_m2_p75_brl,area_mediana_m2
+geral,todos,188,71850,,,2744,2457,3125,27.5
+faixa_metragem,ate_20_m2,13,71432,67000,76000,4077,,,
+faixa_metragem,20_a_24_m2,29,68000,64000,77000,2980,,,
+faixa_metragem,24_a_28_m2,70,71432,65000,73000,2645,,,
+faixa_metragem,28_a_32_m2,48,75000,67000,84000,2524,,,
+faixa_metragem,32_a_40_m2,17,106559,85000,115000,2826,,,
+faixa_metragem,acima_de_40_m2,11,141769,108000,151000,2740,,,

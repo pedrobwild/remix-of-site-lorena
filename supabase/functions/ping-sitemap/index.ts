@@ -39,6 +39,7 @@ const KEY_PATHS = [
   "/reforma-de-apartamento-sao-paulo",
   "/reforma-de-studio-sao-paulo",
   "/reforma-de-cobertura-sao-paulo",
+  "/indice-de-custo-de-reforma",
   "/marcenaria",
   "/faq",
   "/contato",

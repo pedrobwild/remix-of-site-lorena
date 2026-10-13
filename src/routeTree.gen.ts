@@ -21,6 +21,7 @@ import { Route as DiagnosticoRouteImport } from './routes/diagnostico'
 import { Route as EscopoRouteImport } from './routes/escopo'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as GuiaDoInvestidorRouteImport } from './routes/guia-do-investidor'
+import { Route as IndiceDeCustoDeReformaRouteImport } from './routes/indice-de-custo-de-reforma'
 import { Route as IndiqueUmAmigoRouteImport } from './routes/indique-um-amigo'
 import { Route as MapaRouteImport } from './routes/mapa'
 import { Route as MapaDoSiteRouteImport } from './routes/mapa-do-site'
@@ -139,6 +140,11 @@ const FaqRoute = FaqRouteImport.update({
 const GuiaDoInvestidorRoute = GuiaDoInvestidorRouteImport.update({
   id: '/guia-do-investidor',
   path: '/guia-do-investidor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndiceDeCustoDeReformaRoute = IndiceDeCustoDeReformaRouteImport.update({
+  id: '/indice-de-custo-de-reforma',
+  path: '/indice-de-custo-de-reforma',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndiqueUmAmigoRoute = IndiqueUmAmigoRouteImport.update({
@@ -452,6 +458,7 @@ export interface FileRoutesByFullPath {
   '/escopo': typeof EscopoRoute
   '/faq': typeof FaqRoute
   '/guia-do-investidor': typeof GuiaDoInvestidorRoute
+  '/indice-de-custo-de-reforma': typeof IndiceDeCustoDeReformaRoute
   '/indique-um-amigo': typeof IndiqueUmAmigoRoute
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
@@ -525,6 +532,7 @@ export interface FileRoutesByTo {
   '/escopo': typeof EscopoRoute
   '/faq': typeof FaqRoute
   '/guia-do-investidor': typeof GuiaDoInvestidorRoute
+  '/indice-de-custo-de-reforma': typeof IndiceDeCustoDeReformaRoute
   '/indique-um-amigo': typeof IndiqueUmAmigoRoute
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
@@ -599,6 +607,7 @@ export interface FileRoutesById {
   '/escopo': typeof EscopoRoute
   '/faq': typeof FaqRoute
   '/guia-do-investidor': typeof GuiaDoInvestidorRoute
+  '/indice-de-custo-de-reforma': typeof IndiceDeCustoDeReformaRoute
   '/indique-um-amigo': typeof IndiqueUmAmigoRoute
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
@@ -674,6 +683,7 @@ export interface FileRouteTypes {
     | '/escopo'
     | '/faq'
     | '/guia-do-investidor'
+    | '/indice-de-custo-de-reforma'
     | '/indique-um-amigo'
     | '/mapa'
     | '/mapa-do-site'
@@ -747,6 +757,7 @@ export interface FileRouteTypes {
     | '/escopo'
     | '/faq'
     | '/guia-do-investidor'
+    | '/indice-de-custo-de-reforma'
     | '/indique-um-amigo'
     | '/mapa'
     | '/mapa-do-site'
@@ -820,6 +831,7 @@ export interface FileRouteTypes {
     | '/escopo'
     | '/faq'
     | '/guia-do-investidor'
+    | '/indice-de-custo-de-reforma'
     | '/indique-um-amigo'
     | '/mapa'
     | '/mapa-do-site'
@@ -894,6 +906,7 @@ export interface RootRouteChildren {
   EscopoRoute: typeof EscopoRoute
   FaqRoute: typeof FaqRoute
   GuiaDoInvestidorRoute: typeof GuiaDoInvestidorRoute
+  IndiceDeCustoDeReformaRoute: typeof IndiceDeCustoDeReformaRoute
   IndiqueUmAmigoRoute: typeof IndiqueUmAmigoRoute
   MapaRoute: typeof MapaRoute
   MapaDoSiteRoute: typeof MapaDoSiteRoute
@@ -1039,6 +1052,13 @@ declare module '@tanstack/react-router' {
       path: '/guia-do-investidor'
       fullPath: '/guia-do-investidor'
       preLoaderRoute: typeof GuiaDoInvestidorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/indice-de-custo-de-reforma': {
+      id: '/indice-de-custo-de-reforma'
+      path: '/indice-de-custo-de-reforma'
+      fullPath: '/indice-de-custo-de-reforma'
+      preLoaderRoute: typeof IndiceDeCustoDeReformaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/indique-um-amigo': {
@@ -1470,6 +1490,7 @@ const rootRouteChildren: RootRouteChildren = {
   EscopoRoute: EscopoRoute,
   FaqRoute: FaqRoute,
   GuiaDoInvestidorRoute: GuiaDoInvestidorRoute,
+  IndiceDeCustoDeReformaRoute: IndiceDeCustoDeReformaRoute,
   IndiqueUmAmigoRoute: IndiqueUmAmigoRoute,
   MapaRoute: MapaRoute,
   MapaDoSiteRoute: MapaDoSiteRoute,

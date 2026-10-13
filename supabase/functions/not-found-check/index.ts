@@ -68,6 +68,7 @@ export const STATIC_ROUTES: ReadonlyArray<string> = [
   "/reforma-de-apartamento-sao-paulo",
   "/reforma-de-studio-sao-paulo",
   "/reforma-de-cobertura-sao-paulo",
+  "/indice-de-custo-de-reforma",
   "/marcenaria",
   "/parceiros",
   "/parceiros/incorporadoras",
