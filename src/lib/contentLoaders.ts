@@ -148,7 +148,12 @@ async function fetchProjectContent(slug: string): Promise<ProjectLoaderData> {
     const urls = [project.cover_url, project.before_image_url, project.after_image_url,
       ...renderPhotos(project), ...readyPhotos(project)].filter((url): url is string => !!url);
     // A mesma descrição por URL já sai no HTML inicial; falha de alt não oculta o projeto.
-    const alts = await fetchAlts(Array.from(new Set(urls))).catch(() => ({}));
+    // Uma segunda tentativa cobre falha passageira da consulta: sem ela a
+    // página sairia do servidor com o texto numerado até o navegador reabrir.
+    const altUrls = Array.from(new Set(urls));
+    const alts = await fetchAlts(altUrls)
+      .catch(() => fetchAlts(altUrls))
+      .catch(() => ({}));
     return { seo: projectSeoFrom(seoRow, peers ?? []), project, peers, alts };
   } catch {
     return { seo: projectSeoFrom(null, [], true) };
