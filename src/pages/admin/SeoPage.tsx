@@ -361,7 +361,7 @@ function PagesTab({
       <p className="mono" style={{ opacity: 0.7, marginBottom: 24, maxWidth: 680 }}>
         Textos de cada página do site. Campo vazio mantém o texto que a página já usa hoje. A home
         tem aba própria; artigos e projetos têm campos de SEO no próprio editor. Depois de salvar,
-        publique o site para a mudança chegar ao endereço oficial.
+        o HTML da página já sai com o texto novo (em até 5 minutos), sem publicar.
       </p>
       {PUBLIC_PAGES.map((p) => {
         const cur = map[p.path] ?? {};
@@ -414,6 +414,15 @@ function PagesTab({
                 maxLength={220}
               />
               {cur.og_description ? <SizeWarn text={cur.og_description} min={110} max={160} usingDefault={false} /> : <FieldHint>Vazio: a página mantém o texto atual.</FieldHint>}
+            </Field>
+            <Field label="Palavras-chave (separadas por vírgula)" full>
+              <input
+                className="admin-field__input"
+                value={cur.keywords ?? ""}
+                placeholder="vazio = palavras-chave atuais da página"
+                onChange={(e) => set(p.path, "keywords", e.target.value)}
+                maxLength={400}
+              />
             </Field>
             <Field label="Imagem ao compartilhar — URL pública https, 1200×630" full>
               <input
