@@ -20,7 +20,6 @@ import { LeadCrmStatus } from "@/components/admin/LeadCrmStatus";
 import { supabase } from "@/integrations/supabase/client";
 import {
   DIAGNOSTICO_FORMS,
-  isLeadStatus,
   leadFormLabel,
   leadFormOrFilter,
   mailtoHref,

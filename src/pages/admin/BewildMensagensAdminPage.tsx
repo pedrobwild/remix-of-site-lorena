@@ -18,7 +18,6 @@ import { LeadCrmStatus } from "@/components/admin/LeadCrmStatus";
 import { supabase } from "@/integrations/supabase/client";
 import {
   MENSAGEM_FORMS,
-  isLeadStatus,
   leadFormOrFilter,
   mailtoHref,
   waLink,
