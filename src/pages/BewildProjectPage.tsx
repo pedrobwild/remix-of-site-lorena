@@ -17,7 +17,7 @@ import { useBewildProject, type BewildProjectFull } from "@/lib/useBewildProject
 import { bewildTypeLabel } from "@/lib/useBewildProjects";
 import { readyPhotos, renderPhotos } from "@/lib/projectPhotos";
 import { useImageAlts, type AltMap } from "@/lib/useImageAlts";
-import { projectFriendlyName, projectMetaDescription, projectSeoTitleUnique, type ProjectSeoPeer } from "@/lib/projectSeo";
+import { projectFriendlyName, projectKeywords, projectMetaDescription, projectSeoTitleUnique, type ProjectSeoPeer } from "@/lib/projectSeo";
 import { useProjectSeoPeers } from "@/lib/useProjectSeoPeers";
 import { neighborhoodPages, neighborhoodSlug } from "@/lib/portfolioFilter";
 import {
