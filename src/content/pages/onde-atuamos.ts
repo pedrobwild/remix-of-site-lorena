@@ -8,6 +8,12 @@
  * item 3: 9–11 folhas de estilo bloqueantes por página).
  */
 
+import { BAIRROS_ATENDIDOS } from "@/content/provas";
+
+/** Título e descrição de /onde-atuamos: os mesmos no head() da rota (HTML do servidor) e no useSeo da página. */
+export const ONDE_ATUAMOS_TITLE = "Onde atuamos: arquitetura e reforma em São Paulo | Bewild";
+export const ONDE_ATUAMOS_DESCRIPTION = `A Bewild projeta e reforma apartamentos em São Paulo capital, com obras entregues em ${BAIRROS_ATENDIDOS} bairros, e atende à distância clientes de outras cidades.`;
+
 export const ONDE_ATUAMOS_JSONLD: Array<Record<string, unknown>> = [
   {
     "@context": "https://schema.org",
