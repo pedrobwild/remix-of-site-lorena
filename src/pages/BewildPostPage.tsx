@@ -1,3 +1,4 @@
+import { rewriteGuiaLinksInHtml } from "@/lib/radarLinks";
 import { NEW_TAB_SUFFIX, RADAR_LINK_ATTRS, RADAR_URL } from "@/config/site";
 /**
  * BewildPostPage — /conteudos/:slug (Bewild).
@@ -193,7 +194,7 @@ export default function BewildPostPage({ slug, initial }: Props) {
     }
     try {
       const raw = marked.parse(post.body, { async: false }) as string;
-      return wrapArticleTables(sanitizeBlogHtml(raw));
+      return wrapArticleTables(rewriteGuiaLinksInHtml(sanitizeBlogHtml(raw)));
     } catch {
       return "";
     }

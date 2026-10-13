@@ -1,3 +1,5 @@
+import { isRadarHref } from "@/lib/radarLinks";
+import { NEW_TAB_SUFFIX, RADAR_LINK_ATTRS } from "@/config/site";
 import { PROVA_CURTA } from "@/content/provas";
 import { useEffect, useMemo, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
@@ -138,14 +140,19 @@ export default function FaqPage({ initialKb = null }: { initialKb?: KbItem[] | n
                               const href = acao.tipo === "whatsapp" ? whatsappHref() : acao.url;
                               if (!href) return null;
                               const external = isExternalHref(href);
+                              const radar = isRadarHref(href);
                               return (
                                 <a
                                   key={`${acao.tipo}-${j}`}
                                   className="bwa-faqpage-guia-link"
                                   href={href}
-                                  {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                                  {...(radar
+                                    ? { ...RADAR_LINK_ATTRS, "aria-label": `${acao.rotulo}${NEW_TAB_SUFFIX}` }
+                                    : external
+                                      ? { target: "_blank", rel: "noopener noreferrer" }
+                                      : {})}
                                 >
-                                  {acao.rotulo || "Falar no WhatsApp"} →
+                                  {acao.rotulo || "Falar no WhatsApp"} {radar ? <span aria-hidden="true">↗</span> : "→"}
                                 </a>
                               );
                             })}

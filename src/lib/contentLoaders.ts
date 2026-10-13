@@ -1,3 +1,4 @@
+import { rewriteGuiaLinksInHtml } from "@/lib/radarLinks";
 /**
  * Loaders de CONTEÚDO das rotas públicas: buscam no servidor (SSR) os dados
  * completos que as páginas antes só carregavam no cliente, para o HTML bruto
@@ -46,7 +47,7 @@ async function renderBody(body: string | null | undefined): Promise<string | nul
       import("@/lib/sanitizeHtml"),
     ]);
     const raw = marked.parse(body, { async: false, gfm: true, breaks: false }) as string;
-    return wrapArticleTables(sanitizeBlogHtml(raw));
+    return wrapArticleTables(rewriteGuiaLinksInHtml(sanitizeBlogHtml(raw)));
   } catch {
     return null;
   }

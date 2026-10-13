@@ -1,3 +1,4 @@
+import { toRadarHref } from "@/lib/radarLinks";
 /**
  * assistantEngine.ts: motor do Assistente Bewild.
  *
@@ -34,7 +35,8 @@ export function safeKbActions(acoes: unknown): KbAction[] {
       out.push({ tipo: "whatsapp", rotulo });
       continue;
     }
-    const url = safeHref(a.url);
+    const safe = safeHref(a.url);
+    const url = safe ? toRadarHref(safe) : safe;
     if (a.tipo === "link" && url && rotulo) out.push({ tipo: "link", rotulo, url });
   }
   return out;
