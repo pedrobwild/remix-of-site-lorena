@@ -1,3 +1,4 @@
+import { csvCell } from "@/lib/csvSafe";
 /**
  * /admin/lgpd — auditoria de consentimento de cookies (LGPD).
  *
@@ -115,7 +116,9 @@ export default function LgpdPage() {
           x.path ?? "",
           x.value?.version ?? "",
           x.value?.source ?? "",
-        ].join(";"),
+        ]
+          .map(csvCell)
+          .join(";"),
       ),
     ];
     const blob = new Blob([linhas.join("\n")], { type: "text/csv;charset=utf-8" });

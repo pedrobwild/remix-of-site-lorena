@@ -1,3 +1,4 @@
+import { csvCell } from "@/lib/csvSafe";
 /**
  * Acessos por artigo do blog e por projeto do portfólio (aba "Conteúdo" do
  * /admin/analytics e cartão "top projetos" da aba Comportamento).
@@ -167,10 +168,7 @@ export function contentTotals(rows: ContentRow[]): { pageviews: number; sessions
 
 /** CSV (separador `;`, como o Excel em pt-BR abre direto). */
 export function contentRowsToCsv(rows: ContentRow[], origin = "https://bewild.com.br"): string {
-  const esc = (v: string | number) => {
-    const s = String(v);
-    return /[;"\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-  };
+  const esc = csvCell;
   const head = ["titulo", "slug", "url", "pageviews", "sessoes", "pageviews_periodo_anterior", "situacao"];
   const lines = rows.map((r) =>
     [
