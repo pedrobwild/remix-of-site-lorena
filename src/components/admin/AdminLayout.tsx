@@ -15,7 +15,6 @@ import {
   Type,
   Inbox,
   Activity,
-  ListChecks,
   MessagesSquare,
   ClipboardList,
   Newspaper,

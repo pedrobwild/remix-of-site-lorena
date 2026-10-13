@@ -1,6 +1,7 @@
 /**
  * Regras compartilhadas pelas telas de leads do painel (/admin/leads,
- * /admin/qualificacao, /admin/mensagens, /admin/diagnostico).
+ * /admin/mensagens, /admin/diagnostico). Status é preenchido pelo funil do
+ * Bwild Engine (src/lib/crmStageSync.server.ts) e é só leitura nas telas.
  *
  * - `landing_path` é ATRIBUIÇÃO (primeira página da sessão). O formulário que
  *   gerou o lead fica em `form_path`. Filtrar tela por `landing_path` perdia
