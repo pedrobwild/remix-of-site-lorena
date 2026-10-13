@@ -23,19 +23,17 @@ import { MessageCircle } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import AdminAlert from "@/components/admin/AdminAlert";
 import MetaLeadsPanel from "@/components/admin/MetaLeadsPanel";
+import { CrmSyncBar, LeadCrmStatus, LeadFunnelHistory } from "@/components/admin/LeadCrmStatus";
 import { supabase } from "@/integrations/supabase/client";
 import { LEAD_CANAIS, LEAD_CANAL_LABEL, leadCanal, type LeadCanal } from "@/lib/leadSource";
 import {
   LEAD_ORIGEM_LABEL,
-  LEAD_STATUSES,
   ZERO_STATUS_COUNTS,
   fetchLeadStatusCounts,
   isLeadStatus,
   leadFormLabel,
   leadOrigem,
   mailtoHref,
-  moveStatusCount,
-  updateLeadStatus,
   waLink,
   type LeadOrigem,
   type LeadStatus,
@@ -72,6 +70,13 @@ type Lead = {
   gclid?: string | null;
   fbclid?: string | null;
   consent_marketing?: boolean | null;
+  // Funil do Bwild Engine (sincronizado; status é só leitura).
+  crm_stage_key?: string | null;
+  crm_stage_name?: string | null;
+  crm_won?: boolean | null;
+  crm_lost?: boolean | null;
+  crm_deal_count?: number | null;
+  crm_synced_at?: string | null;
 };
 
 const PAGE_SIZE = 200;
@@ -79,7 +84,7 @@ const PAGE_SIZE = 200;
 const STATUS_OPTIONS: { value: "all" | LeadStatus; label: string }[] = [
   { value: "all", label: "Todos" },
   { value: "novo", label: "Novos" },
-  { value: "contatado", label: "Contatados" },
+  { value: "contatado", label: "Em andamento" },
   { value: "qualificado", label: "Qualificados" },
   { value: "descartado", label: "Descartados" },
 ];
@@ -167,6 +172,8 @@ export default function BewildLeadsAdminPage() {
   const [rows, setRows] = useState<Lead[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [counts, setCounts] = useState<LeadStatusCounts>(ZERO_STATUS_COUNTS);
+  const [wonCount, setWonCount] = useState<number | null>(null);
+  const [etapa, setEtapa] = useState<string>("all");
   const [lateCount, setLateCount] = useState<number | null>(null);
   const [countsError, setCountsError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -185,7 +192,7 @@ export default function BewildLeadsAdminPage() {
     const lateCutoff = new Date(Date.now() - SLA_HOURS * 3_600_000).toISOString();
     // Página 1 + contagens exatas (uma consulta `head` por status: o antigo
     // `select("status")` era cortado em 1000 linhas pelo PostgREST).
-    const [listRes, countsRes, lateRes] = await Promise.all([
+    const [listRes, countsRes, lateRes, wonRes] = await Promise.all([
       supabase
         .from("leads")
         .select(SELECT_COLS, { count: "exact" })
@@ -197,6 +204,7 @@ export default function BewildLeadsAdminPage() {
         .select("id", { count: "exact", head: true })
         .eq("status", "novo")
         .lt("created_at", lateCutoff),
+      supabase.from("leads").select("id", { count: "exact", head: true }).eq("crm_won", true),
     ]);
 
     if (listRes.error) {
@@ -214,6 +222,7 @@ export default function BewildLeadsAdminPage() {
     setTotalCount(listRes.count ?? listRes.data?.length ?? 0);
     setCounts(countsRes.counts);
     setLateCount(lateRes.error ? null : (lateRes.count ?? 0));
+    setWonCount(wonRes.error ? null : (wonRes.count ?? 0));
     setCountsError(countsRes.error ?? lateRes.error?.message ?? null);
     setLoading(false);
   }, []);
@@ -255,38 +264,21 @@ export default function BewildLeadsAdminPage() {
         (r) =>
           (status === "all" || r.status === status) &&
           (origem === "all" || leadOrigem(r) === origem) &&
-          (canal === "all" || leadCanal(r) === canal),
+          (canal === "all" || leadCanal(r) === canal) &&
+          (etapa === "all" || (etapa === "none" ? !r.crm_stage_key : r.crm_stage_key === etapa)),
       ),
-    [rows, status, origem, canal],
+    [rows, status, origem, canal, etapa],
   );
 
-  async function changeStatus(lead: Lead, next: string) {
-    if (!isLeadStatus(next)) return;
-    const previous = lead.status;
-    if (next === previous) return;
-    // Status fora da lista (dado antigo/manual) não entra nas contagens.
-    const known = isLeadStatus(previous);
-    // Otimista: UI atualiza imediatamente; rollback em caso de erro.
-    setRows((prev) => prev.map((r) => (r.id === lead.id ? { ...r, status: next } : r)));
-    if (known) setCounts((prev) => moveStatusCount(prev, previous, next));
-    setBusy(lead.id);
-    setActionMsg(null);
-    const result = await updateLeadStatus(lead.id, known ? previous : null, next);
-    setBusy(null);
-    if (!result.ok) {
-      console.error("[admin/leads] falha ao atualizar status:", result.error);
-      setRows((prev) => prev.map((r) => (r.id === lead.id ? { ...r, status: previous } : r)));
-      if (known) setCounts((prev) => moveStatusCount(prev, next, previous));
-      setActionMsg({ kind: "err", text: `Não foi possível atualizar o status: ${result.error}` });
-      return;
-    }
-    if (result.logError) {
-      setActionMsg({
-        kind: "warn",
-        text: `Status salvo, mas o histórico de qualificação não foi registrado: ${result.logError}`,
-      });
-    }
-  }
+  // Etapas do CRM presentes nos leads carregados (ordem de aparição).
+  const etapas = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const r of rows) if (r.crm_stage_key) m.set(r.crm_stage_key, r.crm_stage_name ?? r.crm_stage_key);
+    return [...m.entries()];
+  }, [rows]);
+
+  const saidosDeNovo = counts.contatado + counts.qualificado + counts.descartado;
+  const taxaQualificacao = saidosDeNovo > 0 ? Math.round((counts.qualificado / saidosDeNovo) * 1000) / 10 : null;
 
   async function deleteLead(lead: Lead) {
     const label = lead.name?.trim() || "este lead";
@@ -334,6 +326,7 @@ export default function BewildLeadsAdminPage() {
   return (
     <BewildAdminShell {...shellProps}>
       <LeadsTabs tab={tab} onChange={switchTab} />
+      <CrmSyncBar onSynced={() => void load()} />
 
       {actionMsg && (
         <AdminAlert kind={actionMsg.kind} onClose={() => setActionMsg(null)}>
@@ -343,9 +336,14 @@ export default function BewildLeadsAdminPage() {
 
       <div className="bw-admin__kpi-grid">
         <KpiSimple label="Novos" value={counts.novo} />
-        <KpiSimple label="Contatados" value={counts.contatado} />
+        <KpiSimple label="Em andamento" value={counts.contatado} />
         <KpiSimple label="Qualificados" value={counts.qualificado} />
         <KpiSimple label="Descartados" value={counts.descartado} />
+        <KpiSimple label="Ganhos" value={wonCount} />
+        <KpiSimple
+          label="Taxa de qualificação"
+          value={taxaQualificacao === null ? null : `${taxaQualificacao.toLocaleString("pt-BR")}%`}
+        />
         <KpiSimple label="Fora do prazo" value={lateCount} />
       </div>
       {countsError && !loading && (
@@ -394,6 +392,20 @@ export default function BewildLeadsAdminPage() {
             {opt.label}
           </button>
         ))}
+      </div>
+
+      <div className="bw-admin__period" style={{ marginBottom: 14 }} role="group" aria-label="Filtro por etapa do CRM">
+        <button type="button" className={etapa === "all" ? "is-active" : ""} onClick={() => setEtapa("all")} aria-pressed={etapa === "all"}>
+          Todas as etapas do CRM
+        </button>
+        {etapas.map(([key, name]) => (
+          <button key={key} type="button" className={etapa === key ? "is-active" : ""} onClick={() => setEtapa(key)} aria-pressed={etapa === key}>
+            {name}
+          </button>
+        ))}
+        <button type="button" className={etapa === "none" ? "is-active" : ""} onClick={() => setEtapa("none")} aria-pressed={etapa === "none"}>
+          Sem negócio no CRM
+        </button>
       </div>
 
       <div className="bw-admin__section" style={{ padding: 0 }}>
@@ -481,31 +493,7 @@ export default function BewildLeadsAdminPage() {
                               "—"}
                         </td>
                         <td>
-                          <select
-                            value={r.status}
-                            onChange={(e) => void changeStatus(r, e.target.value)}
-                            disabled={busy === r.id}
-                            aria-label={`Mudar status de ${r.name ?? "lead"}`}
-                            style={{
-                              padding: "6px 28px 6px 10px",
-                              borderRadius: 6,
-                              border: "1px solid var(--bw-border, #d6d3cc)",
-                              background: "#fff",
-                              fontSize: 13,
-                              cursor: busy === r.id ? "wait" : "pointer",
-                            }}
-                          >
-                            {!isLeadStatus(r.status) && (
-                              <option value={r.status} disabled>
-                                {r.status}
-                              </option>
-                            )}
-                            {LEAD_STATUSES.map((s) => (
-                              <option key={s} value={s}>
-                                {s}
-                              </option>
-                            ))}
-                          </select>
+                          <LeadCrmStatus lead={r} />
                         </td>
                         <td style={{ whiteSpace: "nowrap" }}>
                           <span
@@ -615,6 +603,7 @@ export default function BewildLeadsAdminPage() {
                                 <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>{r.message}</p>
                               </div>
                             )}
+                            <LeadFunnelHistory leadId={r.id} dealCount={r.crm_deal_count} syncedAt={r.crm_synced_at} />
                           </td>
                         </tr>
                       )}
@@ -667,7 +656,7 @@ function LeadsTabs({ tab, onChange }: { tab: LeadsTab; onChange: (t: LeadsTab) =
   );
 }
 
-function KpiSimple({ label, value }: { label: string; value: number | null }) {
+function KpiSimple({ label, value }: { label: string; value: number | string | null }) {
   return (
     <div className="bw-admin__kpi-card">
       <p className="bw-admin__kpi-label">{label}</p>
