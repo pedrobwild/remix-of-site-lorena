@@ -102,6 +102,8 @@ describe("links internos dos artigos", () => {
       }
     }
     for (const href of destinos) {
+      // O guia do investidor mora no Radar Bewild (subdomínio próprio, sitemap próprio).
+      if (href.startsWith("https://radarbewild.com.br")) continue;
       expect(sitemap, href).toContain(`<loc>https://bewild.com.br${href}</loc>`);
     }
   });

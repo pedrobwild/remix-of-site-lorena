@@ -14,7 +14,6 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { GUIA_MODIFIED } from "@/guia/data/guiaMeta";
 
 const root = path.resolve(__dirname, "../../..");
 const read = (p: string) => readFileSync(path.join(root, p), "utf8");
@@ -43,7 +42,6 @@ const ROTAS_INDEXAVEIS = [
   { path: "/parceiros/leal-moreira", priority: "0.7", changefreq: "monthly" },
   { path: "/indique-um-amigo", priority: "0.7", changefreq: "monthly" },
   { path: "/marcas-e-parcerias", priority: "0.7", changefreq: "monthly" },
-  { path: "/guia-do-investidor", priority: "0.8", changefreq: "monthly" },
   { path: "/privacidade", priority: "0.3", changefreq: "yearly" },
   { path: "/politica-de-cookies", priority: "0.3", changefreq: "yearly" },
   { path: "/acessibilidade", priority: "0.3", changefreq: "yearly" },
@@ -67,6 +65,9 @@ const NAO_INDEXAVEIS: Record<string, string> = {
   "/preferencias-de-cookies": "src/pages/PreferenciasCookiesPage.tsx",
   // Resultado de busca: noindex, nunca entra no sitemap.
   "/buscar": "src/pages/BewildBuscaPage.tsx",
+  // O guia mudou para https://radarbewild.com.br (12/10/2026): produção responde
+  // 301 pelo vercel.json; a rota antiga fica só como fallback noindex.
+  "/guia-do-investidor": "src/routes/guia-do-investidor.tsx",
 };
 
 /**
@@ -111,8 +112,9 @@ describe("rotas do roteador ↔ geradores de sitemap", () => {
     expect(read(arquivo)).toMatch(/noindex:\s*true/);
   });
 
-  it("lastmod do guia no script = GUIA_MODIFIED (src/guia/data/guiaMeta.ts)", () => {
-    expect(script).toMatch(new RegExp(`\\$\\{BASE_URL\\}/guia-do-investidor\`, lastmod: "${GUIA_MODIFIED}"`));
+  it("o guia saiu do sitemap: mora em https://radarbewild.com.br", () => {
+    expect(script).not.toMatch(/\/guia-do-investidor`/);
+    expect(edge).not.toMatch(/\/guia-do-investidor`/);
   });
 
   it("os dois geradores escapam o <loc> para XML", () => {
@@ -172,7 +174,7 @@ describe("public/sitemap.xml commitado", () => {
   });
 
   it("traz as rotas estáticas principais, no domínio oficial", () => {
-    for (const rota of ["/", "/portfolio", "/conteudos", "/orcamento", "/faq", "/guia-do-investidor"]) {
+    for (const rota of ["/", "/portfolio", "/conteudos", "/orcamento", "/faq"]) {
       expect(locs).toContain(`https://bewild.com.br${rota}`);
     }
     expect(locs.every((l) => l.startsWith("https://bewild.com.br/"))).toBe(true);

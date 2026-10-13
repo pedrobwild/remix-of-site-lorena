@@ -40,7 +40,6 @@ const KEY_PATHS = [
   "/reforma-de-studio-sao-paulo",
   "/reforma-de-cobertura-sao-paulo",
   "/marcenaria",
-  "/guia-do-investidor",
   "/faq",
   "/contato",
 ];
