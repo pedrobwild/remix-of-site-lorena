@@ -20,18 +20,15 @@
 
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.45.4";
 import { logIntegration } from "../_shared/integration-log.ts";
+import { sendSiteLeadQuality } from "../_shared/lead-quality.ts";
 import {
-  AD_LEAD_FORMS,
   capiLogEntry,
-  capiRequiresConsent,
   CRM_STAGE_BY_STATUS,
   crmStageEvent,
   isMetaLeadId,
   type MetaCrmStage,
-  type MetaEventName,
   resolveMetaCapiConfig,
   sendMetaEvents,
-  statusEventId,
 } from "../_shared/meta-capi.ts";
 
 const corsHeaders: Record<string, string> = {
@@ -65,11 +62,6 @@ async function requireAdmin(req: Request): Promise<Response | null> {
   return null;
 }
 
-const STATUS_EVENTS: Record<string, MetaEventName> = {
-  qualificado: "QualifiedLead",
-  descartado: "DisqualifiedLead",
-};
-
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 type MetaLeadRow = {
@@ -85,24 +77,6 @@ type MetaLeadRow = {
   phone: string | null;
   city: string | null;
   deleted_at: string | null;
-};
-
-type LeadRow = {
-  id: string;
-  name: string | null;
-  whatsapp: string | null;
-  email: string | null;
-  location: string | null;
-  objetivo: string | null;
-  form_path: string | null;
-  utm_source: string | null;
-  utm_campaign: string | null;
-  user_agent: string | null;
-  fbp: string | null;
-  fbc: string | null;
-  consent_marketing: boolean | null;
-  created_at: string | null;
-  meta_qualified_sent_at: string | null;
 };
 
 /**
