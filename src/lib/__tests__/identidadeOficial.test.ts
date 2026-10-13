@@ -19,7 +19,17 @@ vi.mock("@/integrations/supabase/client", () => ({
 
 import { getCachedSiteSettings } from "@/lib/useSiteSettings";
 import { localBusinessRef, organizationJsonLd } from "@/lib/useSeo";
-import { LOCAL_NODE, ORG_JSONLD, ORG_NODE, SERVICE_NODE, THIAGO_NODE } from "@/lib/orgJsonLd";
+import {
+  GOOGLE_BUSINESS_PROFILE_URL,
+  LOCAL_NODE,
+  ORG_ALTERNATE_NAMES,
+  ORG_JSONLD,
+  ORG_NODE,
+  ORG_SAME_AS,
+  SERVICE_NODE,
+  THIAGO_NODE,
+  WEBSITE_NODE,
+} from "@/lib/orgJsonLd";
 
 const CNPJ_OFICIAL = "47.350.338/0001-37";
 const CAU_OFICIAL = "A162437-7";
@@ -88,5 +98,25 @@ describe("Organization com fonte única (orgJsonLd.ts)", () => {
     expect(LOCAL_NODE.image[0]).toBe("https://bewild.com.br/images/hero-slides/rodrigo-1-lg.jpg");
     expect(LOCAL_NODE.geo).toEqual({ "@type": "GeoCoordinates", latitude: -23.6147497, longitude: -46.6886285 });
     expect(SERVICE_NODE["@id"]).toBe("https://bewild.com.br/#servico-reforma");
+  });
+});
+
+describe("nomes alternativos e canais oficiais no JSON-LD de entidade", () => {
+  it("ORG_ALTERNATE_NAMES é exatamente a lista decidida e vale para Organization e LocalBusiness", () => {
+    const lista = ["Bwild", "Be Wild", "Bewild Reformas", "Bewild Reformas e Arquitetura", "Bwild Reformas"];
+    expect(ORG_ALTERNATE_NAMES).toEqual(lista);
+    expect(ORG_NODE.alternateName).toEqual(lista);
+    expect(LOCAL_NODE.alternateName).toEqual(lista);
+  });
+  it("WebSite traz o nome alternativo que o Google usa para o nome do site", () => {
+    expect(WEBSITE_NODE.alternateName).toEqual(["Bwild", "Be Wild", "Bewild Reformas"]);
+  });
+  it("sameAs inclui o canal do YouTube sem perder Instagram, LinkedIn e Perfil da Empresa", () => {
+    expect(ORG_SAME_AS).toEqual([
+      "https://instagram.com/bewild.oficial",
+      "https://www.linkedin.com/company/bwil-d/",
+      GOOGLE_BUSINESS_PROFILE_URL,
+      "https://www.youtube.com/@bewild.oficial",
+    ]);
   });
 });
