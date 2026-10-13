@@ -23,7 +23,8 @@ export function toRadarHref(href: string): string {
 /** HTML já sanitizado: link para o endereço antigo do guia vira link do Radar em nova aba. */
 export function rewriteGuiaLinksInHtml(html: string): string {
   return html.replace(/<a\b([^>]*?)\shref=(["'])([^"']*)\2([^>]*)>/gi, (tag, before, _q, href, after) => {
-    if (!isGuiaHref(href)) return tag;
+    // Também o link que o banco já guarda com o endereço do Radar: sem isso abriria na mesma aba.
+    if (!isGuiaHref(href) && !isRadarHref(href)) return tag;
     const rest = `${before}${after}`.replace(/\s(?:target|rel|data-outbound)=(["'])[^"']*\1/gi, "");
     return `<a${rest} href="${RADAR_URL}" target="_blank" rel="noopener" data-outbound="radarbewild">`;
   }).replace(/(<a [^>]*data-outbound="radarbewild"[^>]*>)([\s\S]*?)<\/a>/g, (_m, open, text) =>
