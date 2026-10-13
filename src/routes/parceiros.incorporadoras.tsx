@@ -30,7 +30,7 @@ export const Route = createFileRoute("/parceiros/incorporadoras")({
           path: INCORP_PATH,
           jsonLd: [faqJsonLd(INCORP_FAQ.items.map((i) => ({ q: i.q, a: i.a })))],
         })
-      : seoHead({
+      : seoHead({ pagesSeo: rootPagesSeo(matches),
           title: "Reforma pós-chaves para incorporadoras | Bewild",
           description: "Prévia interna do programa da Bewild para incorporadoras.",
           path: INCORP_PATH,
