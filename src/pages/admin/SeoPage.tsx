@@ -506,9 +506,8 @@ function BastidoresTab({
 // =============================================================
 //  Aba: Home — título, descrição e Open Graph da página inicial
 // =============================================================
-const HOME_DEFAULT_TITLE = "Reforma de apartamentos e studios em São Paulo | Bewild";
-const HOME_DEFAULT_DESC =
-  "Reforma completa de apartamentos e studios em São Paulo: projeto, obra, marcenaria e mobília em um só contrato, preço e prazo fechados, 5 anos de garantia.";
+const HOME_DEFAULT_TITLE = HOME_SEO_TITLE;
+const HOME_DEFAULT_DESC = HOME_SEO_DESCRIPTION;
 
 function HomeTab({
   s,

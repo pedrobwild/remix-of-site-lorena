@@ -30,10 +30,11 @@ export const ORG_SAME_AS = [
   "https://instagram.com/bewild.oficial",
   "https://www.linkedin.com/company/bwil-d/",
   GOOGLE_BUSINESS_PROFILE_URL,
+  "https://www.youtube.com/@bewild.oficial",
 ];
 export const ORG_CNPJ = "47.350.338/0001-37";
 export const ORG_LEGAL_NAME = "Bwild Reformas LTDA";
-export const ORG_ALTERNATE_NAMES = ["Bewild Reformas e Arquitetura", "Bewild Reformas", "Bwild Reformas", "Bwild"];
+export const ORG_ALTERNATE_NAMES = ["Bwild", "Be Wild", "Bewild Reformas", "Bewild Reformas e Arquitetura", "Bwild Reformas"];
 export const ORG_TELEPHONE = "+55 11 91190-6183";
 export const ORG_EMAIL = "contato@bewild.com.br";
 
@@ -113,7 +114,7 @@ export const LOCAL_NODE = {
   "@type": "ProfessionalService",
   "@id": LOCAL_ID,
   name: "Bewild",
-  alternateName: "Bewild Reformas e Arquitetura",
+  alternateName: ORG_ALTERNATE_NAMES,
   url: `${SITE_URL}/`,
   image: [LOCAL_PHOTO, ORG_LOGO],
   // Pino do Perfil da Empresa no Google (cid 16329162499474686119), conferido pelo dono.
@@ -136,6 +137,8 @@ export const WEBSITE_NODE = {
   "@id": WEBSITE_ID,
   url: `${SITE_URL}/`,
   name: "Bewild",
+  // Campo que o Google lê para o nome do site no resultado de busca.
+  alternateName: ["Bwild", "Be Wild", "Bewild Reformas"],
   description: "Reforma de apartamento em São Paulo, com entrega do imóvel pronto para morar ou rentabilizar.",
   inLanguage: "pt-BR",
   publisher: { "@id": ORG_ID },

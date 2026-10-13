@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { HOME_BWA_HTML } from "./home-bwa-body";
 import BwaFooter from "@/components/BwaFooter";
 import { useSeo } from "@/lib/useSeo";
+import { resolveHomeSeo } from "@/lib/homeSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import { hydrateHomeProjects } from "@/lib/hydrateHomeProjects";
 import { trackEvent } from "@/lib/ga4";
@@ -17,9 +18,6 @@ import { hydrateHomeFaq } from "./homeFaq";
 // caminho crítico da home (auditoria 06/10: 467 KB de JS na home).
 const WorkflowPortalReplica = lazy(() => import("@/components/workflow-replica/WorkflowPortalReplica"));
 
-const TITLE = "Reforma de apartamentos e studios em São Paulo | Bewild";
-const DESCRIPTION =
-  "Reforma completa de apartamentos e studios em São Paulo: projeto, obra, marcenaria e mobília em um só contrato, preço e prazo fechados, 5 anos de garantia.";
 const KEYWORDS =
   "escritório de arquitetura em São Paulo, arquitetura e engenharia, projeto arquitetônico, projeto de interiores, engenharia civil São Paulo, reforma de apartamento em SP, bastidores de obra, equipe em obra, custo de reforma, quanto custa reformar um apartamento em SP, empresa de reforma de apartamento SP, reforma turnkey São Paulo, Bewild";
 const THEME_COLOR = "#0B2342";
@@ -97,13 +95,14 @@ export default function HomePage() {
   // Título, descrição e Open Graph editáveis em /admin/seo (aba Home);
   // vazio no painel = texto padrão abaixo.
   const { settings } = useSiteSettings();
-  const clean = (v?: string | null) => (v ?? "").trim() || undefined;
+  // Mesma regra do loader do servidor (aba Páginas vence a aba Home).
+  const homeSeo = resolveHomeSeo(settings);
   useSeo({
-    title: clean(settings?.home_seo_title) ?? TITLE,
-    description: clean(settings?.home_seo_description) ?? DESCRIPTION,
-    ogTitle: clean(settings?.home_og_title),
-    ogDescription: clean(settings?.home_og_description),
-    ogImage: clean(settings?.home_og_image),
+    title: homeSeo.title,
+    description: homeSeo.description,
+    ogTitle: homeSeo.ogTitle,
+    ogDescription: homeSeo.ogDescription,
+    ogImage: homeSeo.ogImage,
     keywords: KEYWORDS,
     canonicalPath: "/",
     ogType: "website",
