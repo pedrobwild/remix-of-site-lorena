@@ -58,6 +58,32 @@ export const POST_KEYWORDS: Record<string, string> = {
   "studio-his-ou-hmp-o-que-fazer": `studio HIS, studio HMP, regras de São Paulo, ${SHORT_STAY}`,
   "reforma-tributaria-short-stay-ibs-cbs": `reforma tributária short stay, IBS e CBS, ${SHORT_STAY}`,
   "como-declarar-renda-airbnb-imposto-de-renda": `declarar renda de Airbnb, carnê-leão, imposto de renda de aluguel por temporada`,
+
+  // --- Reforma: guias de decisão e casos ---
+  "como-reformar-studio-gastando-menos-sem-perder-valor": `reformar studio gastando menos, como economizar na reforma de studio, reforma de studio sem perder valor de mercado, ${REFORMA_STUDIO}`,
+  "orcamento-reforma-studio-25-m2-item-a-item": `orçamento de reforma de studio de 25 m², orçamento item a item, custo de reforma de studio, ${REFORMA_STUDIO}`,
+  "estudo-de-layout-studio-25-m2": `estudo de layout de studio, layout de studio de 25 m², projeto de interiores de studio, ${REFORMA_STUDIO}`,
+  "reforma-de-apartamento-antigo-sao-paulo": `reforma de apartamento antigo em SP, o que verificar antes de reformar apartamento antigo, instalações antigas, ${REFORMA}`,
+  "como-escolher-empresa-de-reforma-sao-paulo": `como escolher empresa de reforma em SP, empresa de reforma de apartamento em São Paulo, o que verificar antes de contratar reforma, ${REFORMA}`,
+  "reformar-apartamento-morando-nele": `reformar apartamento morando nele, ficar ou sair durante a obra, reforma com morador no apartamento, ${REFORMA}`,
+  "antes-e-depois-studio-26-m2-vila-madalena": `antes e depois de reforma de studio, reforma de studio de 26 m² na Vila Madalena, ${REFORMA_STUDIO}`,
+  "quanto-custa-reformar-apartamento-studio-ate-50-m2": `quanto custa reformar apartamento de até 50 m², custo de reforma de studio, custo de reforma por m², ${REFORMA}`,
+  "o-que-nao-reformar-no-studio-short-stay": `o que não reformar em studio novo, reforma de studio para short stay, checklist de reforma de studio, ${REFORMA_STUDIO}`,
+
+  // --- Investimento: compra, venda e financiamento ---
+  "como-pagar-reforma-apartamento-financiamento-sp": `financiamento de reforma de apartamento, como pagar a reforma, juros de financiamento de reforma, ${REFORMA}`,
+  "reformar-apartamento-para-vender-ou-alugar-sp": `reformar apartamento para vender ou alugar, vale a pena reformar para vender, retorno da reforma, ${REFORMA}`,
+  "studio-como-degrau-comprar-morar-revender-sp": `studio como degrau, comprar studio para morar e revender, studio em São Paulo, ${REFORMA_STUDIO}`,
+  "como-avaliar-studio-antes-de-comprar": `como avaliar um studio antes de comprar, critérios para comprar studio, studio para short stay, ${SHORT_STAY}`,
+  "custos-de-operar-studio-short-stay": `custos de um studio em short stay, lucro de short stay, receita bruta e lucro líquido, ${SHORT_STAY}`,
+  "short-stay-sem-virar-gerente-de-obra": `renda passiva com studio, short stay sem gerenciar obra, investir em studio, ${SHORT_STAY}`,
+
+  // --- Operação e mercado ---
+  "como-precificar-studio-airbnb-sao-paulo": `como precificar studio no Airbnb, diária de studio em São Paulo, precificação de Airbnb, ${SHORT_STAY}`,
+  "o-que-move-reservas-studio-airbnb": `o que faz o hóspede reservar no Airbnb, reservas de studio no Airbnb, perfil de hóspede, ${SHORT_STAY}`,
+  "quem-reforma-studio-sao-paulo-perfil": `quem reforma studio em São Paulo, perfil de quem reforma studio, dúvidas sobre reforma de studio, ${REFORMA_STUDIO}`,
+  "pedro-henrique-alves-ceo-bewild": `Pedro Henrique Alves, CEO da Bewild, fundador da Bewild, imóvel como negócio`,
+  "thiago-dantas-arquiteto-responsavel-tecnico-bewild": `Thiago Dantas, arquiteto responsável técnico, cofundador da Bewild, arquiteto em São Paulo`,
 };
 
 export const DEFAULT_POST_KEYWORDS =

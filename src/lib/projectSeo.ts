@@ -279,3 +279,24 @@ export function projectSeoTitleUnique(
   const numbered = `${full.slice(0, -suffix.length)} (projeto ${n})`;
   return numbered.length <= DATED_TITLE_MAX ? brandTitle(numbered) : brandTitle(full);
 }
+
+/**
+ * Palavras-chave da página de projeto, com o bairro e o tipo reais do
+ * cadastro. Fonte única: a rota (HTML do servidor) e a página (navegador)
+ * usam a mesma lista, senão o servidor herdava as da home.
+ */
+export function projectKeywords(
+  p: Pick<ProjectSeoInput, "neighborhood" | "project_type"> | null | undefined,
+): string {
+  return [
+    "reforma de apartamento em SP",
+    "reforma de apartamento São Paulo",
+    p?.neighborhood ? `reforma de apartamento ${p.neighborhood}` : null,
+    p?.project_type ? `${p.project_type} reformado em SP` : null,
+    "antes e depois reforma apartamento",
+    "custo de reforma",
+    "Bewild",
+  ]
+    .filter(Boolean)
+    .join(", ");
+}
