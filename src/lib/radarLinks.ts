@@ -20,7 +20,7 @@ export function toRadarHref(href: string): string {
   return isGuiaHref(href) ? RADAR_URL : href;
 }
 
-/** HTML já sanitizado: <a href="/guia-do-investidor…"> vira link do Radar em nova aba. */
+/** HTML já sanitizado: link para o endereço antigo do guia vira link do Radar em nova aba. */
 export function rewriteGuiaLinksInHtml(html: string): string {
   return html.replace(/<a\b([^>]*?)\shref=(["'])([^"']*)\2([^>]*)>/gi, (tag, before, _q, href, after) => {
     if (!isGuiaHref(href)) return tag;
