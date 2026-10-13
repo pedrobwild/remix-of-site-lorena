@@ -13,3 +13,14 @@ export const ASSISTANT_ENABLED = true;
 //         Prévia interna com ?incorporadoras=1 na URL (vale para a sessão; ?incorporadoras=0 desliga).
 // true = publicada para todos.
 export const INCORPORADORAS_PAGE_ENABLED = true;
+
+// Radar Bewild: endereço oficial do guia do investidor desde 12/10/2026.
+// Todo link do site aponta direto para cá, em nova aba (rel sem noreferrer
+// para o Radar ver a origem). /guia-do-investidor só responde 301 para cá.
+export const RADAR_URL = "https://radarbewild.com.br/";
+export const RADAR_LINK_ATTRS = {
+  target: "_blank",
+  rel: "noopener",
+  "data-outbound": "radarbewild",
+} as const;
+export const NEW_TAB_SUFFIX = " (abre em nova aba)";

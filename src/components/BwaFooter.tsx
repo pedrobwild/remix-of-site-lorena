@@ -1,3 +1,4 @@
+import { RadarLink } from "@/components/RadarLink";
 import { useEffect, useRef } from "react";
 import { Accessibility } from "lucide-react";
 import { openCookiePreferences } from "@/lib/cookieConsent";
@@ -52,7 +53,7 @@ export default function BwaFooter() {
               <a href="/conteudos">Conteúdos</a>
               <a href="/videos">Vídeos</a>
               <a href="/indice-de-custo-de-reforma">Índice de custo de reforma</a>
-              <a href="https://radarbewild.com.br/">Guia do investidor</a>
+              <RadarLink label="Guia do investidor" />
               <a href="/faq">FAQ</a>
               <a href="/contato">Contato</a>
               <a href="/orcamento">Orçamento</a>

@@ -1,3 +1,4 @@
+import { RadarLink } from "@/components/RadarLink";
 import { PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
 import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
@@ -108,7 +109,7 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
                   Projeto pensado para a foto do anúncio, ocupação e manutenção
                   simples, com entrega pronta para anunciar. O contexto de
                   mercado está no{" "}
-                  <a href="https://radarbewild.com.br/">Radar Bewild</a>.
+                  <RadarLink label="Radar Bewild" />.
                 </p>
               </li>
             </ul>

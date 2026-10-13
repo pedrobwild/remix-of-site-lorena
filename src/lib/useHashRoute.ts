@@ -1,3 +1,4 @@
+import { trackEvent } from "@/lib/ga4";
 import { useEffect, useState } from "react";
 import { carryCampaignParams } from "./campaignParams";
 import { destinoDoPostFundido } from "./postsFundidos";
@@ -602,6 +603,9 @@ export function installLinkInterceptor() {
     if (!target) return;
     const a = target as HTMLAnchorElement;
     if (!a.href) return;
+    // Clique de saída (ex.: Radar Bewild em nova aba): registra e deixa o navegador abrir.
+    const outbound = a.getAttribute("data-outbound");
+    if (outbound) trackEvent("outbound_click", { destino: outbound, path: window.location.pathname });
     if (a.target && a.target !== "_self") return;
     if (a.hasAttribute("download")) return;
     const rel = a.getAttribute("rel");
