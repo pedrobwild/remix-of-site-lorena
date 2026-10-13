@@ -11,7 +11,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { pageSeoOverride, type PagesSeoMap } from "@/lib/publicPages";
 
-export const HOME_DEFAULT_TITLE = "Bewild Reformas | Reforma de apartamentos e studios em São Paulo";
+export const HOME_DEFAULT_TITLE = "Bewild Reformas | Reforma de apartamentos e studios em SP";
 export const HOME_DEFAULT_DESCRIPTION =
   "Reforma completa de apartamentos e studios em São Paulo: projeto, obra, marcenaria e mobília em um só contrato, preço e prazo fechados, 5 anos de garantia.";
 
