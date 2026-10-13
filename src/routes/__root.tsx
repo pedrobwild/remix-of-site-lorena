@@ -37,6 +37,7 @@ import {
   isSeoAppliedFor,
   SEO_APPLIED_EVENT,
 } from "@/lib/useSeo";
+import { HOME_DEFAULT_DESCRIPTION, HOME_DEFAULT_TITLE } from "@/lib/homeSeo";
 import { installCrashRecovery, markHealthy } from "@/lib/crashRecovery";
 import {
   closestElementFrom,
@@ -60,9 +61,6 @@ if (typeof window !== "undefined") {
   installLinkInterceptor();
 }
 
-const HOME_TITLE = "Reforma de apartamentos e studios em São Paulo | Bewild";
-const HOME_DESCRIPTION =
-  "Reforma completa de apartamentos e studios em São Paulo: projeto, obra, marcenaria e mobília em um só contrato, preço e prazo fechados, 5 anos de garantia.";
 const HOME_KEYWORDS =
   "escritório de arquitetura em São Paulo, arquitetura e engenharia, projeto arquitetônico, projeto de interiores, engenharia civil São Paulo, reforma de apartamento em SP, bastidores de obra, equipe em obra, custo de reforma, empresa de reforma de apartamento SP, reforma turnkey São Paulo, Bewild";
 const FAVICON_V = "?v=20260923";
@@ -83,8 +81,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "width=device-width, initial-scale=1.0, viewport-fit=cover",
       },
       { name: "theme-color", content: "#FAF8F4" },
-      { title: HOME_TITLE },
-      { name: "description", content: HOME_DESCRIPTION },
+      { title: HOME_DEFAULT_TITLE },
+      { name: "description", content: HOME_DEFAULT_DESCRIPTION },
       { name: "keywords", content: HOME_KEYWORDS },
       { name: "author", content: "Bewild" },
       { name: "facebook-domain-verification", content: "83dfecxxe1w9isb98jjbyeodjqncb4" },
@@ -100,7 +98,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       // geo.position/ICBM removidos em 2026-09-30: apontavam para o centro da
       // cidade (Sé), não para o escritório (Rua Pitú, 72, Brooklin). A posição
       // oficial fica no Perfil da Empresa no Google (sameAs/hasMap do JSON-LD).
-      { name: "DC.title", content: HOME_TITLE },
+      { name: "DC.title", content: HOME_DEFAULT_TITLE },
       { name: "language", content: "Portuguese" },
       // og:*/twitter:* específicos de página (title, description, url,
       // image) ficam nas rotas-folha via seoHead — root só carrega os
