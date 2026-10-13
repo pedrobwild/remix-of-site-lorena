@@ -81,6 +81,7 @@ import { Route as AdminProjetosSlugRouteImport } from './routes/admin.projetos.$
 import { Route as AdminProjetosNovoRouteImport } from './routes/admin.projetos.novo'
 import { Route as AdminSeoIndexRouteImport } from './routes/admin.seo.index'
 import { Route as AdminSeo404RouteImport } from './routes/admin.seo.404'
+import { Route as ApiPublicCrmStageSyncRouteImport } from './routes/api/public/crm-stage-sync'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -444,6 +445,11 @@ const AdminSeo404Route = AdminSeo404RouteImport.update({
   path: '/admin/seo/404',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCrmStageSyncRoute = ApiPublicCrmStageSyncRouteImport.update({
+  id: '/api/public/crm-stage-sync',
+  path: '/api/public/crm-stage-sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -514,6 +520,7 @@ export interface FileRoutesByFullPath {
   '/admin/projetos/$slug': typeof AdminProjetosSlugRoute
   '/admin/projetos/novo': typeof AdminProjetosNovoRoute
   '/admin/seo/404': typeof AdminSeo404Route
+  '/api/public/crm-stage-sync': typeof ApiPublicCrmStageSyncRoute
   '/admin/bewild/': typeof AdminBewildIndexRoute
   '/admin/conteudos/': typeof AdminConteudosIndexRoute
   '/admin/projetos/': typeof AdminProjetosIndexRoute
@@ -588,6 +595,7 @@ export interface FileRoutesByTo {
   '/admin/projetos/$slug': typeof AdminProjetosSlugRoute
   '/admin/projetos/novo': typeof AdminProjetosNovoRoute
   '/admin/seo/404': typeof AdminSeo404Route
+  '/api/public/crm-stage-sync': typeof ApiPublicCrmStageSyncRoute
   '/admin/bewild': typeof AdminBewildIndexRoute
   '/admin/conteudos': typeof AdminConteudosIndexRoute
   '/admin/projetos': typeof AdminProjetosIndexRoute
@@ -663,6 +671,7 @@ export interface FileRoutesById {
   '/admin/projetos/$slug': typeof AdminProjetosSlugRoute
   '/admin/projetos/novo': typeof AdminProjetosNovoRoute
   '/admin/seo/404': typeof AdminSeo404Route
+  '/api/public/crm-stage-sync': typeof ApiPublicCrmStageSyncRoute
   '/admin/bewild/': typeof AdminBewildIndexRoute
   '/admin/conteudos/': typeof AdminConteudosIndexRoute
   '/admin/projetos/': typeof AdminProjetosIndexRoute
@@ -739,6 +748,7 @@ export interface FileRouteTypes {
     | '/admin/projetos/$slug'
     | '/admin/projetos/novo'
     | '/admin/seo/404'
+    | '/api/public/crm-stage-sync'
     | '/admin/bewild/'
     | '/admin/conteudos/'
     | '/admin/projetos/'
@@ -813,6 +823,7 @@ export interface FileRouteTypes {
     | '/admin/projetos/$slug'
     | '/admin/projetos/novo'
     | '/admin/seo/404'
+    | '/api/public/crm-stage-sync'
     | '/admin/bewild'
     | '/admin/conteudos'
     | '/admin/projetos'
@@ -887,6 +898,7 @@ export interface FileRouteTypes {
     | '/admin/projetos/$slug'
     | '/admin/projetos/novo'
     | '/admin/seo/404'
+    | '/api/public/crm-stage-sync'
     | '/admin/bewild/'
     | '/admin/conteudos/'
     | '/admin/projetos/'
@@ -962,6 +974,7 @@ export interface RootRouteChildren {
   AdminProjetosSlugRoute: typeof AdminProjetosSlugRoute
   AdminProjetosNovoRoute: typeof AdminProjetosNovoRoute
   AdminSeo404Route: typeof AdminSeo404Route
+  ApiPublicCrmStageSyncRoute: typeof ApiPublicCrmStageSyncRoute
   AdminBewildIndexRoute: typeof AdminBewildIndexRoute
   AdminConteudosIndexRoute: typeof AdminConteudosIndexRoute
   AdminProjetosIndexRoute: typeof AdminProjetosIndexRoute
@@ -1474,6 +1487,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSeo404RouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/crm-stage-sync': {
+      id: '/api/public/crm-stage-sync'
+      path: '/api/public/crm-stage-sync'
+      fullPath: '/api/public/crm-stage-sync'
+      preLoaderRoute: typeof ApiPublicCrmStageSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1546,6 +1566,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminProjetosSlugRoute: AdminProjetosSlugRoute,
   AdminProjetosNovoRoute: AdminProjetosNovoRoute,
   AdminSeo404Route: AdminSeo404Route,
+  ApiPublicCrmStageSyncRoute: ApiPublicCrmStageSyncRoute,
   AdminBewildIndexRoute: AdminBewildIndexRoute,
   AdminConteudosIndexRoute: AdminConteudosIndexRoute,
   AdminProjetosIndexRoute: AdminProjetosIndexRoute,
