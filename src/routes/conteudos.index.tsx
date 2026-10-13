@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import BewildConteudosPage from "@/pages/BewildConteudosPage";
-import { seoHead } from "@/lib/routeHead";
+import { seoHead , rootPagesSeo } from "@/lib/routeHead";
 import { loadPageSeo } from "@/lib/pageSeo.functions";
 import { resolvePageSeo } from "@/lib/pageSeo";
 import { loadPostList } from "@/lib/contentLoaders";
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/conteudos/")({
     return { ...content, seo };
   },
   component: RouteComponent,
-  head: ({ loaderData }) => seoHead({ jsonLd: loaderData?.posts ? postListJsonLd(loaderData.posts) : null, ...(loaderData?.seo ?? resolvePageSeo("/conteudos")), path: "/conteudos", keywords: "projeto de arquitetura, arquitetura e engenharia, engenharia civil, custo de reforma, quanto custa reformar um apartamento, custo de reforma de apartamento em SP, etapas de uma reforma, prazo de reforma de apartamento, reforma de apartamento em SP, Bewild" }),
+  head: ({ loaderData, matches }) => seoHead({ pagesSeo: rootPagesSeo(matches), jsonLd: loaderData?.posts ? postListJsonLd(loaderData.posts) : null, ...(loaderData?.seo ?? resolvePageSeo("/conteudos")), path: "/conteudos", keywords: "projeto de arquitetura, arquitetura e engenharia, engenharia civil, custo de reforma, quanto custa reformar um apartamento, custo de reforma de apartamento em SP, etapas de uma reforma, prazo de reforma de apartamento, reforma de apartamento em SP, Bewild" }),
 });
 
 function RouteComponent() {

@@ -467,6 +467,7 @@ function applySeo(settings: SiteSettings, seoInput: SeoInput) {
     ogTitle: ov.og_title || seoInput.ogTitle,
     ogDescription: ov.og_description || seoInput.ogDescription,
     ogImage: ov.og_image || seoInput.ogImage,
+    keywords: ov.keywords || seoInput.keywords,
     ...(ov.og_image ? { ogImageWidth: undefined, ogImageHeight: undefined } : null),
   };
 

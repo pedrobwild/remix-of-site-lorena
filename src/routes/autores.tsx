@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import AutoresPage from "@/pages/AutoresPage";
-import { seoHead } from "@/lib/routeHead";
+import { seoHead , rootPagesSeo } from "@/lib/routeHead";
 import { PEDRO_ID, THIAGO_ID } from "@/lib/orgJsonLd";
 
 export const Route = createFileRoute("/autores")({
   component: AutoresPage,
-  head: () =>
-    seoHead({
+  head: ({ matches }) =>
+    seoHead({ pagesSeo: rootPagesSeo(matches),
       title: "Autores: Pedro Henrique Alves e Thiago Dantas | Bewild",
       description:
         "Quem escreve os conteúdos da Bewild: Pedro Henrique Alves, fundador e CEO, e Thiago Dantas do Amor, cofundador, VP e arquiteto responsável técnico.",

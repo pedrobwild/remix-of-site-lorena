@@ -46,6 +46,8 @@ export type PageSeoOverride = {
   og_title?: string;
   og_description?: string;
   og_image?: string;
+  /** Palavras-chave (meta keywords), separadas por vírgula. */
+  keywords?: string;
 };
 
 export type PagesSeoMap = Record<string, PageSeoOverride>;
@@ -65,7 +67,7 @@ export function pageSeoOverride(
   const entry = map?.[normalizePagePath(path)];
   if (!entry || typeof entry !== "object") return {};
   const out: PageSeoOverride = {};
-  for (const k of ["title", "description", "og_title", "og_description", "og_image"] as const) {
+  for (const k of ["title", "description", "og_title", "og_description", "og_image", "keywords"] as const) {
     const v = typeof entry[k] === "string" ? entry[k]!.trim() : "";
     if (v) out[k] = v;
   }

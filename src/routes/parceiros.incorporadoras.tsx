@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import IncorporadorasPage from "@/pages/IncorporadorasPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import { isIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
-import { seoHead } from "@/lib/routeHead";
+import { seoHead , rootPagesSeo } from "@/lib/routeHead";
 import { INCORPORADORAS_PAGE_ENABLED } from "@/config/site";
 import { INCORP_FAQ, INCORP_PATH, INCORP_SEO } from "@/content/incorporadoras";
 import { faqJsonLd } from "@/lib/useSeo";
@@ -21,16 +21,16 @@ export const Route = createFileRoute("/parceiros/incorporadoras")({
   // sitemap), então sai indexável com o mesmo título/descrição do useSeo.
   // O Google não renderiza página que chega com noindex no HTML bruto — a troca
   // para index feita no navegador não adiantava. Flag desligada: noindex.
-  head: () =>
+  head: ({ matches }) =>
     INCORPORADORAS_PAGE_ENABLED
-      ? seoHead({
+      ? seoHead({ pagesSeo: rootPagesSeo(matches),
           title: INCORP_SEO.title,
           description: INCORP_SEO.description,
           keywords: INCORP_SEO.keywords,
           path: INCORP_PATH,
           jsonLd: [faqJsonLd(INCORP_FAQ.items.map((i) => ({ q: i.q, a: i.a })))],
         })
-      : seoHead({
+      : seoHead({ pagesSeo: rootPagesSeo(matches),
           title: "Reforma pós-chaves para incorporadoras | Bewild",
           description: "Prévia interna do programa da Bewild para incorporadoras.",
           path: INCORP_PATH,

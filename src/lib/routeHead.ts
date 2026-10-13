@@ -7,6 +7,7 @@
 
 import homeBwaCssUrl from "@/pages/home-bwa.css?url";
 import bwaInternalCssUrl from "@/pages/bwa-internal.css?url";
+import { pageSeoOverride, type PagesSeoMap } from "@/lib/publicPages";
 
 export const SITE_BASE = "https://bewild.com.br";
 
@@ -68,6 +69,8 @@ export type SeoHeadInput = {
   path: string;
   noindex?: boolean;
   keywords?: string;
+  /** Textos salvos em /admin/seo (aba Páginas); vencem os da rota. */
+  pagesSeo?: PagesSeoMap | null;
   ogImage?: string | null;
   ogType?: "website" | "article" | "profile";
   /** Blocos JSON-LD extras da página (Article, FAQPage, ItemList…), um <script> cada. */
@@ -195,8 +198,9 @@ function pageJsonLd(input: SeoHeadInput, path: string, canonical: string, image:
   };
 }
 
-export function seoHead(input: SeoHeadInput) {
-  const cleanPath = (input.path.split("#")[0].split("?")[0] || "/").replace(/\/+$/, "") || "/";
+export function seoHead(rawInput: SeoHeadInput) {
+  const cleanPath = (rawInput.path.split("#")[0].split("?")[0] || "/").replace(/\/+$/, "") || "/";
+  const input = applyPageSeoOverride(rawInput, cleanPath);
   const canonical = cleanPath === "/" ? `${SITE_BASE}/` : `${SITE_BASE}${cleanPath}`;
   const og = absoluteUrl(input.ogImage || PAGE_OG_IMAGES[cleanPath] || DEFAULT_OG_IMAGE_URL);
 
@@ -262,4 +266,25 @@ export function seoHead(input: SeoHeadInput) {
         ];
 
   return { meta, links, scripts };
+}
+
+/** Aplica os textos da aba Páginas de /admin/seo (só campos preenchidos). */
+export function applyPageSeoOverride(input: SeoHeadInput, cleanPath: string): SeoHeadInput {
+  if (!input.pagesSeo) return input;
+  const ov = pageSeoOverride(input.pagesSeo, cleanPath);
+  return {
+    ...input,
+    title: ov.title || input.title,
+    description: ov.description || input.description,
+    ogTitle: ov.og_title || (ov.title ? undefined : input.ogTitle),
+    ogDescription: ov.og_description || (ov.description ? undefined : input.ogDescription),
+    ogImage: ov.og_image || input.ogImage,
+    keywords: ov.keywords || input.keywords,
+  };
+}
+
+/** Mapa de SEO das páginas lido pelo loader do root (ver __root.tsx). */
+export function rootPagesSeo(matches: ReadonlyArray<{ loaderData?: unknown }>): PagesSeoMap | null {
+  const data = matches[0]?.loaderData as { pagesSeo?: PagesSeoMap | null } | undefined;
+  return data?.pagesSeo ?? null;
 }
