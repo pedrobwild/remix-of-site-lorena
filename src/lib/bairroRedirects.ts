@@ -7,6 +7,8 @@
 export const BAIRRO_REDIRECTS: Record<string, string> = {
   // 13/10/2026: Santo Amaro caiu de 3 para 2 projetos após a correção de bairros.
   "santo-amaro": "/reforma/brooklin",
+  // 13/10/2026: decisão do dono — Brooklin Paulista passa a ser Brooklin. A página chegou a existir no ar.
+  "brooklin-paulista": "/reforma/brooklin",
 };
 
 export function bairroRedirectTarget(slug: string): string | null {

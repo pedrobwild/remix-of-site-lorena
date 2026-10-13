@@ -36,8 +36,7 @@ Páginas com os projetos entregues em cada bairro de São Paulo (só bairros com
 
 <!-- bairros:start -->
 - [Reforma de apartamento e studio em Bela Vista](/reforma/bela-vista): 3 projetos entregues
-- [Reforma de apartamento e studio em Brooklin](/reforma/brooklin): 15 projetos entregues
-- [Reforma de apartamento e studio em Brooklin Paulista](/reforma/brooklin-paulista): 4 projetos entregues
+- [Reforma de apartamento e studio em Brooklin](/reforma/brooklin): 19 projetos entregues
 - [Reforma de apartamento e studio em Butantã](/reforma/butanta): 11 projetos entregues
 - [Reforma de apartamento e studio em Campo Belo](/reforma/campo-belo): 7 projetos entregues
 - [Reforma de apartamento e studio em Consolação](/reforma/consolacao): 13 projetos entregues
