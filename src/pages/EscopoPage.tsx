@@ -1,5 +1,6 @@
 import { useId, useMemo, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
+import { BASE_CUSTO } from "@/content/baseCusto";
 import BwaNav from "@/components/BwaNav";
 import { ESTADOS_IMOVEL, OBJETIVOS } from "@/content/pages/orcamento";
 import {
@@ -194,8 +195,8 @@ export default function EscopoPage() {
             </div>
 
             <p className="rc-note">
-              Estimativa, não é orçamento: usa a mediana por m² da base de contratos de reforma completa da Bewild (lida em
-              06/10/2026), a mesma da{" "}
+              Estimativa, não é orçamento: usa a mediana por m² dos {BASE_CUSTO.contratos} contratos de reforma completa da Bewild (out/2026), a mesma
+              do <a href="/indice-de-custo-de-reforma">Índice Bewild de custo de reforma</a> e da{" "}
               <a href="/conteudos/reformar-apartamento-para-vender-ou-alugar-sp">calculadora do artigo</a>. O valor final
               fecha no contrato, com preço e prazo por escrito.
             </p>

@@ -1,11 +1,13 @@
 /**
  * Cálculos da calculadora do artigo "Reformar apartamento para vender ou alugar
- * em SP". Só usa números já publicados nos gráficos do artigo (base Bewild,
- * 204 contratos de reforma completa, lida em 06/10/2026). Função pura, sem React.
+ * em SP". Só usa números já publicados no artigo: custo por m² da base de 188
+ * contratos de reforma completa (src/content/baseCusto.ts, a mesma do Índice e
+ * do artigo pilar). Função pura, sem React.
  */
+import { BASE_CUSTO } from "@/content/baseCusto";
 
 /** Custo mediano por m² da reforma completa e a metade central dos contratos (R$/m²). */
-export const CUSTO_M2 = { baixo: 2490, mediano: 2758, alto: 3247 } as const;
+export const CUSTO_M2 = { baixo: BASE_CUSTO.m2P25, mediano: BASE_CUSTO.m2Mediano, alto: BASE_CUSTO.m2P75 } as const;
 
 export type BairroId = "pinheiros" | "itaim-bibi" | "moema" | "media-sp";
 

@@ -284,7 +284,9 @@ export function applyPageSeoOverride(input: SeoHeadInput, cleanPath: string): Se
 }
 
 /** Mapa de SEO das páginas lido pelo loader do root (ver __root.tsx). */
-export function rootPagesSeo(matches: ReadonlyArray<{ loaderData?: unknown }>): PagesSeoMap | null {
-  const data = matches[0]?.loaderData as { pagesSeo?: PagesSeoMap | null } | undefined;
+export function rootPagesSeo(matches: ReadonlyArray<{ loaderData?: unknown }> | null | undefined): PagesSeoMap | null {
+  // `matches` pode chegar indefinido (testes que chamam head() direto e
+  // renderizações sem roteador): sem dado do root, vale o padrão da rota.
+  const data = matches?.[0]?.loaderData as { pagesSeo?: PagesSeoMap | null } | undefined;
   return data?.pagesSeo ?? null;
 }

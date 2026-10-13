@@ -16,6 +16,7 @@ import {
   type BairroId,
 } from "@/lib/reformaCalc";
 import "@/styles/calculadora.css";
+import { BASE_CUSTO } from "@/content/baseCusto";
 
 const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
 const num1 = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 });
@@ -77,7 +78,7 @@ export default function ReformaCalculadora() {
         <h2 id={`${uid}-titulo`} className="rc-title">Calculadora: obra, aluguel e imposto</h2>
         <p className="rc-lead">
           Simule o custo da reforma, quantos meses de aluguel bruto ela leva para se pagar e o imposto de ganho de capital
-          na venda. Usa a mediana dos 204 contratos da base Bewild e os bairros do artigo.
+          na venda. Usa a mediana dos {BASE_CUSTO.contratos} contratos da base Bewild e os bairros do artigo.
         </p>
 
         <form className="rc-form" onSubmit={(e) => e.preventDefault()} noValidate>
@@ -146,7 +147,7 @@ export default function ReformaCalculadora() {
         </div>
 
         <p className="rc-note">
-          Simulação simplificada, não é orçamento nem orientação tributária: usa a mediana da base Bewild (204 contratos, lida em 06/10/2026),
+          Simulação simplificada, não é orçamento nem orientação tributária: usa a mediana da base Bewild ({BASE_CUSTO.contratos} contratos de reforma completa, out/2026),
           o aluguel anunciado por m² do Índice FipeZap (ago/2026) e as alíquotas da Lei 13.259/2016 (15% a 22,5% por faixa de ganho),
           sem fatores de redução nem isenções (Instrução Normativa SRF 84/2001). Confirme com um contador antes de decidir.
         </p>
