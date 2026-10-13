@@ -151,7 +151,7 @@ export function CrmSyncBar({ onSynced }: { onSynced?: () => void }) {
       className="muted"
     >
       <span>
-        Status preenchido automaticamente pelo funil do Bwild Engine · última sincronização{" "}
+        Status preenchido automaticamente pelo funil do Bwild Engine, uma vez por dia · última sincronização{" "}
         {last ? fmtDateTime(last) : "—"}
       </span>
       <button
