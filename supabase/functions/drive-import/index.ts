@@ -187,7 +187,7 @@ Deno.serve(async (req) => {
             q: [
               "mimeType = 'application/vnd.google-apps.folder'",
               "trashed = false",
-              `'${parentId.replace(/'/g, "\\'")}' in parents`,
+              `'${driveQ(parentId)}' in parents`,
             ].join(" and "),
             ...common,
           },
@@ -208,7 +208,7 @@ Deno.serve(async (req) => {
       if (!folderId) return json({ error: "folderId é obrigatório." }, 400);
       const files = (await driveListAll(
         {
-          q: `'${folderId.replace(/'/g, "\\'")}' in parents and mimeType contains 'image/' and trashed = false`,
+          q: `'${driveQ(folderId)}' in parents and mimeType contains 'image/' and trashed = false`,
           orderBy: "name",
           supportsAllDrives: "true",
           includeItemsFromAllDrives: "true",
@@ -334,7 +334,7 @@ Deno.serve(async (req) => {
       const listImages = async (parent: string): Promise<DriveImg[]> =>
         (await driveListAll(
           {
-            q: `'${parent.replace(/'/g, "\\'")}' in parents and mimeType contains 'image/' and trashed = false`,
+            q: `'${driveQ(parent)}' in parents and mimeType contains 'image/' and trashed = false`,
             orderBy: "name",
             supportsAllDrives: "true",
             includeItemsFromAllDrives: "true",
@@ -345,7 +345,7 @@ Deno.serve(async (req) => {
       const listSubfolders = async (parent: string): Promise<{ id: string; name?: string }[]> =>
         (await driveListAll(
           {
-            q: `'${parent.replace(/'/g, "\\'")}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+            q: `'${driveQ(parent)}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
             orderBy: "name",
             supportsAllDrives: "true",
             includeItemsFromAllDrives: "true",
