@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { bairroRedirectTarget } from "@/lib/bairroRedirects";
 import BairroPage from "@/pages/BairroPage";
 import { seoHead } from "@/lib/routeHead";
 import { loadBairroContent } from "@/lib/contentLoaders";
@@ -9,6 +10,10 @@ import { optimizedImageUrl } from "@/lib/imageUrl";
 import { bairroTitle } from "@/lib/bairroSeo";
 
 export const Route = createFileRoute("/reforma/$slug")({
+  beforeLoad: ({ params }) => {
+    const target = bairroRedirectTarget(params.slug);
+    if (target) throw redirect({ href: target, statusCode: 301 });
+  },
   loader: ({ params }) => loadBairroContent(params.slug),
   component: RouteComponent,
   head: ({ loaderData: ld, params }) => {
