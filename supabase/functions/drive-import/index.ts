@@ -10,6 +10,10 @@ const corsHeaders = {
 
 const GATEWAY = "https://connector-gateway.lovable.dev/google_drive";
 const BUCKET = "project-images";
+// Teto por imagem importada (evita encher o armazenamento).
+const MAX_IMAGE_BYTES = 15 * 1024 * 1024;
+// Escapa barra invertida E apóstrofo para a busca do Drive (q=...).
+const driveQ = (v: string) => String(v).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -134,7 +138,7 @@ Deno.serve(async (req) => {
             q: [
               "mimeType = 'application/vnd.google-apps.folder'",
               "trashed = false",
-              `name contains '${search.replace(/'/g, "\\'")}'`,
+              `name contains '${driveQ(search)}'`,
             ].join(" and "),
             ...common,
           },
@@ -252,6 +256,7 @@ Deno.serve(async (req) => {
             supportsAllDrives: "true",
           });
           const bytes = new Uint8Array(await mediaRes.arrayBuffer());
+          if (bytes.byteLength > MAX_IMAGE_BYTES) throw new Error("imagem acima de 15 MB");
 
           const name: string = meta.name || "foto.jpg";
           const dot = name.lastIndexOf(".");
@@ -417,6 +422,7 @@ Deno.serve(async (req) => {
             supportsAllDrives: "true",
           });
           const bytes = new Uint8Array(await mediaRes.arrayBuffer());
+          if (bytes.byteLength > MAX_IMAGE_BYTES) throw new Error("imagem acima de 15 MB");
           const name = f.name || "foto.jpg";
           const dot = name.lastIndexOf(".");
           const ext = dot >= 0 ? name.slice(dot).toLowerCase() : ".jpg";
