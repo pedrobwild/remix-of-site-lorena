@@ -89,8 +89,8 @@ const L = {
     description: "Locação por temporada em São Paulo e o que o studio precisa ter.",
   },
   guiaInvestidor: {
-    href: "/guia-do-investidor",
-    label: "Guia do investidor em studios para short stay",
+    href: "https://radar.bewild.com.br/",
+    label: "Radar Bewild: guia do investidor em studios para short stay",
     description: "Guia de decisão para investir em studio de short stay em São Paulo.",
   },
   nbr16280: {

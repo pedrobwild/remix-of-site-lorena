@@ -27,7 +27,6 @@ export const PUBLIC_PAGES: PublicPage[] = [
   { path: "/reforma-de-studio-sao-paulo", label: "Reforma de studio em SP" },
   { path: "/reforma-de-cobertura-sao-paulo", label: "Reforma de cobertura em SP" },
   { path: "/marcenaria", label: "Marcenaria" },
-  { path: "/guia-do-investidor", label: "Guia do investidor" },
   { path: "/parceiros", label: "Clientes e corretores" },
   { path: "/parceiros/incorporadoras", label: "Incorporadoras" },
   { path: "/parceiros/leal-moreira", label: "Parceria Leal Moreira" },

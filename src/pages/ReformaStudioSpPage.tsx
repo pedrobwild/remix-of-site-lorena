@@ -108,7 +108,7 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
                   Projeto pensado para a foto do anúncio, ocupação e manutenção
                   simples, com entrega pronta para anunciar. O contexto de
                   mercado está no{" "}
-                  <a href="/guia-do-investidor">guia do investidor</a>.
+                  <a href="https://radar.bewild.com.br/">Radar Bewild</a>.
                 </p>
               </li>
             </ul>
