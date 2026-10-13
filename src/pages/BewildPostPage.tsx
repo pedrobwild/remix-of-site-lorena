@@ -1,3 +1,4 @@
+import { NEW_TAB_SUFFIX, RADAR_LINK_ATTRS, RADAR_URL } from "@/config/site";
 /**
  * BewildPostPage — /conteudos/:slug (Bewild).
  *
@@ -483,7 +484,7 @@ export default function BewildPostPage({ slug, initial }: Props) {
             <ul className="pt-links__grid">
               {internalLinksForPost(post.slug, post.category).map((l) => (
                 <li key={l.href}>
-                  <a href={l.href}>
+                  <a href={l.href} {...(l.href === RADAR_URL ? { ...RADAR_LINK_ATTRS, "aria-label": `${l.label}${NEW_TAB_SUFFIX}` } : {})}>
                     <strong>{l.label}</strong>
                     <span>{l.description}</span>
                   </a>

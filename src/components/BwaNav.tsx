@@ -1,3 +1,4 @@
+import { RadarLink } from "@/components/RadarLink";
 import { useEffect, useRef } from "react";
 import BewildLogo from "@/components/BewildLogo";
 import { whatsappHref } from "@/components/landing/content";
@@ -71,7 +72,7 @@ export default function BwaNav() {
             <a href="/portfolio">Portfólio</a>
             <a href="/marcenaria">Marcenaria</a>
             <a href="/conteudos">Blog</a>
-            <a href="https://radarbewild.com.br/">Guia do Investidor</a>
+            <RadarLink label="Guia do Investidor" />
             <a href="/faq">FAQ</a>
             {/* Disclosure, não role="menu": são links de navegação comuns. */}
             <div className="bwa-nav-dd" data-nav-dd>
@@ -123,7 +124,7 @@ export default function BwaNav() {
           <a href="/portfolio">Portfólio</a>
           <a href="/marcenaria">Marcenaria</a>
           <a href="/conteudos">Blog</a>
-          <a href="https://radarbewild.com.br/">Guia do Investidor</a>
+          <RadarLink label="Guia do Investidor" />
           <a href="/faq">FAQ</a>
           <p className="bwa-menu-group-label">{NAV_PARCEIROS.label}</p>
           {itensParceiros.map((item) => (

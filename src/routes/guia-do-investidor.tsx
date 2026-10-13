@@ -1,12 +1,11 @@
 import { lazy, Suspense } from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { RADAR_URL } from "@/config/site";
 import { seoHead } from "@/lib/routeHead";
 import { GUIA_DESCRIPTION, GUIA_KEYWORDS, GUIA_PATH, GUIA_TITLE, guiaJsonLd } from "@/guia/data/guiaMeta";
 
 const GuiaInvestidorPage = lazy(() => import("@/pages/GuiaInvestidorPage"));
 
-/** Endereço oficial do guia desde 12/10/2026 (Radar Bewild). */
-const RADAR_URL = "https://radarbewild.com.br/";
 
 export const Route = createFileRoute("/guia-do-investidor")({
   // O site é servido pela hospedagem da Lovable, que não lê o vercel.json:
