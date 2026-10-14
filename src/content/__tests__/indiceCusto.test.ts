@@ -92,11 +92,12 @@ describe("Índice Bewild de custo de reforma", () => {
   });
   it("expõe a licença e a atribuição no HTML do servidor", () => {
     const doc = new DOMParser().parseFromString(html, "text/html");
-    const link = doc.querySelector('a[rel="license noopener"]');
+    const link = doc.querySelector('a[rel="license"]');
     expect(link?.parentElement?.textContent).toBe("Dados sob licença CC BY 4.0: use à vontade citando a Bewild");
-    expect(link?.getAttribute("href")).toBe(`${INDICE_LICENCA_URL}deed.pt-br`);
-    expect(link?.getAttribute("target")).toBe("_blank");
-    expect(link?.getAttribute("aria-label")).toBe(`${INDICE_LICENCA_NOME} (abre em nova aba)`);
+    // O "CC BY 4.0" do texto aponta para a página própria da licença, no
+    // mesmo site; o deed oficial fica dentro dela.
+    expect(link?.getAttribute("href")).toBe("/licenca-cc-by-4-0");
+    expect(link?.getAttribute("target")).toBeNull();
     expect(doc.body.textContent).toContain(INDICE.contratos.toString());
     expect(doc.body.textContent).toContain("R$ 2.744");
   });

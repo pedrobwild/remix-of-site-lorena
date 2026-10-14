@@ -1,5 +1,5 @@
 import { PROVA_CURTA } from "@/content/provas";
-import { NEW_TAB_SUFFIX } from "@/config/site";
+import { LICENCA_CANONICAL } from "@/content/pages/licenca";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
@@ -25,7 +25,6 @@ import {
   INDICE_EDICAO,
   INDICE_FAQ,
   INDICE_LICENCA_NOME,
-  INDICE_LICENCA_URL,
   INDICE_TITLE,
   LIMITES,
   PROPOSTA_REAL_VALOR,
@@ -268,7 +267,9 @@ export default function IndiceCustoPage() {
             <p className="bwa-indice-cite">{COMO_CITAR}</p>
             <p className="bwa-servico-text">
               Dados sob licença{" "}
-              <a href={`${INDICE_LICENCA_URL}deed.pt-br`} target="_blank" rel="license noopener" aria-label={`${INDICE_LICENCA_NOME}${NEW_TAB_SUFFIX}`}>
+              {/* "CC BY 4.0" leva à página própria da licença (mesmo site, sem
+                  nova aba); o deed e o texto legal oficiais ficam lá. */}
+              <a href={LICENCA_CANONICAL} rel="license">
                 {INDICE_LICENCA_NOME}
               </a>
               : use à vontade citando a Bewild
