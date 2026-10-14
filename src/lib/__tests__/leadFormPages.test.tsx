@@ -357,9 +357,8 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
       fbclid: "IwAR3xyz",
     });
   });
-});
 
-describe("/orcamento — GCLID", () => {
+  // GCLID: fica neste bloco porque usa preencher(), definida acima.
   it("o gclid da URL do anúncio vai junto com o lead, mesmo sem cookies aceitos", async () => {
     localStorage.clear();
     window.history.replaceState({}, "", "/orcamento?gclid=Cj0KCQjw_abc-123");

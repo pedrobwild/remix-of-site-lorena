@@ -24,8 +24,12 @@ const comFuso = (d: string) => `${d}T00:00:00-03:00`;
 export const INDICE_CSV_PATH = "/dados/indice-custo-reforma-bewild-2026-10.csv";
 export const INDICE_LICENCA_URL = "https://creativecommons.org/licenses/by/4.0/";
 export const INDICE_LICENCA_NOME = "CC BY 4.0";
-/** Período ainda não informado; omitir do Dataset até a confirmação. */
-export const INDICE_PERIODO: string | null = null;
+/**
+ * Período dos contratos (temporalCoverage, ISO 8601). Decisão do dono em
+ * 13/10/2026: contratos assinados até outubro de 2026, início em aberto ("..").
+ * null omite o campo do Dataset.
+ */
+export const INDICE_PERIODO: string | null = "../2026-10";
 
 /** Registros da planilha antes das exclusões (17 saíram da análise). */
 export const REGISTROS_INICIAIS = 205;

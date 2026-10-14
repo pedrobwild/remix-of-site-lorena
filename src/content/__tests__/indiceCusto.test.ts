@@ -83,12 +83,12 @@ describe("Índice Bewild de custo de reforma", () => {
     expect(JSON.stringify(ds.distribution)).toContain(INDICE_CSV_PATH);
     expect(String(ds.isBasedOn)).toContain("/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2");
   });
-  it("publica a licença CC BY 4.0 no Dataset sem inventar o período", () => {
+  it("publica a licença CC BY 4.0 e o período informado pelo dono no Dataset", () => {
     const ds = INDICE_JSONLD.find((n) => n["@type"] === "Dataset");
     expect(INDICE_LICENCA_URL).toBe("https://creativecommons.org/licenses/by/4.0/");
     expect(ds?.license).toBe(INDICE_LICENCA_URL);
-    expect(INDICE_PERIODO).toBeNull();
-    expect(ds).not.toHaveProperty("temporalCoverage");
+    expect(INDICE_PERIODO).toBe("../2026-10");
+    expect(ds?.temporalCoverage).toBe(INDICE_PERIODO);
   });
   it("expõe a licença e a atribuição no HTML do servidor", () => {
     const doc = new DOMParser().parseFromString(html, "text/html");
