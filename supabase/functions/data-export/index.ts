@@ -5,8 +5,10 @@
 //       [&sep=comma|semicolon] [&dec=comma|dot]
 //
 // Conjuntos: leads, meta_leads, meta_ads_daily, analytics_daily e
-// tracking_daily — todos SEM dados pessoais (colunas em
-// _shared/data-export.ts; uso em docs/INTEGRACOES.md › Exportação).
+// tracking_daily — todos SEM dados pessoais — e google_ads_offline
+// (conversões offline do Google Ads: e-mail e telefone SÓ em hash SHA-256,
+// gclid como está). Colunas em _shared/data-export.ts; uso em
+// docs/INTEGRACOES.md › Exportação.
 //
 // Pública (verify_jwt = false): quem autoriza é a chave criada no painel
 // (/admin/integracoes), guardada só como hash SHA-256 em `export_keys`. A
@@ -22,7 +24,11 @@ import {
   type ExportDataset,
   type ExportRecord,
   type ExportRequest,
+  buildGoogleAdsOfflineRows,
   exportFilename,
+  GOOGLE_ADS_GCLID_WINDOW_DAYS,
+  GOOGLE_ADS_OFFLINE_SELECT,
+  keyAllowsDataset,
   LEADS_SELECT,
   MAX_ROWS,
   META_ADS_SELECT,
@@ -132,6 +138,8 @@ async function readDataset(db: SupabaseClient, r: ExportRequest): Promise<{ rows
           .order("campaign_id", { ascending: true })
           .range(a, b),
       );
+    case "google_ads_offline":
+      return readGoogleAdsOffline(db, r);
     case "analytics_daily":
     case "tracking_daily": {
       const fn = r.dataset === "analytics_daily" ? "export_analytics_daily" : "export_tracking_daily";
@@ -140,6 +148,44 @@ async function readDataset(db: SupabaseClient, r: ExportRequest): Promise<{ rows
       return { rows: Array.isArray(data) ? (data as ExportRecord[]) : [], error: null };
     }
   }
+}
+
+/**
+ * Leads qualificados ou ganhos (até 90 dias, o máximo que o Google aceita e
+ * dentro do período pedido) + a primeira passagem de cada um para
+ * `qualificado`. O hash e as regras ficam em buildGoogleAdsOfflineRows.
+ */
+async function readGoogleAdsOffline(db: SupabaseClient, r: ExportRequest): Promise<{ rows: ExportRecord[]; error: string | null }> {
+  const floor = new Date(Date.now() - GOOGLE_ADS_GCLID_WINDOW_DAYS * 86_400_000).toISOString();
+  const since = r.since > floor ? r.since : floor;
+  const leads = await readPaged((a, b) =>
+    db
+      .from("leads")
+      .select(GOOGLE_ADS_OFFLINE_SELECT)
+      .or("status.eq.qualificado,crm_won.eq.true")
+      .gte("created_at", since)
+      .lt("created_at", r.until)
+      .order("created_at", { ascending: true })
+      .order("id", { ascending: true })
+      .range(a, b),
+  );
+  if (leads.error) return leads;
+
+  const qualifiedAt = new Map<string, string>();
+  const ids = leads.rows.filter((l) => l.status === "qualificado").map((l) => String(l.id));
+  for (let i = 0; i < ids.length; i += 200) {
+    const { data, error } = await db
+      .from("lead_qualification_log")
+      .select("lead_id, created_at")
+      .in("lead_id", ids.slice(i, i + 200))
+      .eq("to_status", "qualificado")
+      .order("created_at", { ascending: true });
+    if (error) return { rows: [], error: error.message };
+    for (const row of (data ?? []) as { lead_id: string; created_at: string }[]) {
+      if (!qualifiedAt.has(row.lead_id)) qualifiedAt.set(row.lead_id, row.created_at);
+    }
+  }
+  return { rows: await buildGoogleAdsOfflineRows({ leads: leads.rows, qualifiedAt }), error: null };
 }
 
 /** Marca o uso depois de responder, quando o runtime permite. */
@@ -188,7 +234,7 @@ Deno.serve(async (req) => {
   const parsed = parseExportRequest(url);
   if (!parsed.ok) return fail(400, parsed.error, json);
   const r = parsed.value;
-  if (!keyRow.datasets.includes(r.dataset)) {
+  if (!keyAllowsDataset(keyRow.datasets, r.dataset)) {
     return fail(403, `Esta chave não dá acesso a "${DATASETS[r.dataset].label}" (${r.dataset}).`, json);
   }
   if (!(await allowed(db, `export:key:${keyRow.id}`, KEY_LIMIT_PER_HOUR))) {

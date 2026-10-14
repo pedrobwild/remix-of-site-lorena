@@ -98,6 +98,33 @@ JSON para Google Sheets, Looker Studio, Excel e Power BI. Quem autoriza é uma
 As colunas de cada conjunto estão em `supabase/functions/_shared/data-export.ts`
 (`DATASETS`); os testes garantem que nenhuma coluna de dado pessoal entra.
 
+### Conversões offline do Google Ads (`google_ads_offline`)
+
+Exceção à regra acima, feita para o **Google Ads Data Manager** (Google Sheets
+com `IMPORTDATA` → Data Manager → importação diária). Colunas, com os nomes
+que o Google espera:
+
+`Google Click ID, Email, Phone Number, Conversion Name, Conversion Time, Conversion Value, Conversion Currency`
+
+- `Email` e `Phone Number` saem **só em hash SHA-256** (hex), depois de
+  normalizar: e-mail sem espaços e em minúsculas; telefone em E.164
+  (`+55DDDNÚMERO`). E-mail e telefone em texto puro nunca saem. O gclid sai
+  como está (é o que liga a conversão ao clique).
+- `Conversion Name` é o nome exato da ação no Google Ads:
+  - **Lead qualificado investidor**: lead com status `qualificado` e objetivo
+    `Short stay`, `Locação tradicional` ou `Uso misto` (decisão do Pedro,
+    14/10/2026: investidor = locação, uso misto conta; `Moradia` e
+    `Ainda avaliando` não). Hora = primeira passagem para `qualificado` em
+    `lead_qualification_log`.
+  - **Contrato assinado**: `crm_won = true`, qualquer objetivo. Hora =
+    `crm_last_change_at`. Valor vazio por enquanto.
+- `Conversion Time` = `yyyy-MM-dd HH:mm:ss-03:00` (São Paulo, fuso explícito).
+- Só leads com gclid, e-mail ou telefone; até 90 dias do lead com gclid e 63
+  dias sem (limites do Google). Parcerias comerciais ficam fora.
+- Chaves que já têm `leads` também leem este conjunto (para funcionar antes
+  da migração `20261014040000_export_keys_google_ads_offline.sql`, que libera
+  marcar o conjunto ao criar a chave).
+
 ### Endereço e parâmetros
 
 ```
@@ -106,7 +133,7 @@ As colunas de cada conjunto estão em `supabase/functions/_shared/data-export.ts
 
 | Parâmetro | Valores | Padrão |
 | --- | --- | --- |
-| `dataset` | `leads`, `meta_leads`, `meta_ads_daily`, `analytics_daily`, `tracking_daily` | obrigatório |
+| `dataset` | `leads`, `meta_leads`, `meta_ads_daily`, `analytics_daily`, `tracking_daily`, `google_ads_offline` | obrigatório |
 | `days` | 1 a 731 (os últimos N dias, hoje incluído) | 90 |
 | `from`, `to` | `AAAA-MM-DD` (inclusive; `to` padrão = hoje) — substituem `days` | — |
 | `format` | `csv`, `json` | `csv` |

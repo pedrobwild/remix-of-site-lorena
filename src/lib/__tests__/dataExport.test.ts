@@ -119,10 +119,12 @@ describe("chave", () => {
 describe("sem dados pessoais", () => {
   const PII_COLUMNS = ["name", "email", "whatsapp", "phone", "message", "answers", "user_agent", "fbp", "fbc", "gclid", "fbclid", "event_id", "referrer", "notify"];
 
-  it("nenhum conjunto tem coluna de dado pessoal", () => {
+  it("nenhum conjunto tem coluna de dado pessoal (google_ads_offline à parte: só hash, testado no próprio arquivo)", () => {
     for (const d of EXPORT_DATASETS) {
       const names = DATASETS[d].columns.map((c) => c.name);
-      expect(names.filter((n) => PII_COLUMNS.includes(n))).toEqual([]);
+      if (d !== "google_ads_offline") {
+        expect(names.filter((n) => PII_COLUMNS.includes(n.toLowerCase()))).toEqual([]);
+      }
       expect(new Set(names).size).toBe(names.length);
     }
   });

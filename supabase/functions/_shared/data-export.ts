@@ -2,12 +2,19 @@
 // usadas pela função (Deno) e pelo painel/testes (Vite/Vitest). Sem nada de
 // Deno aqui.
 //
-// Só conjuntos SEM dados pessoais:
+// Conjuntos SEM dados pessoais:
 //   - leads: sem nome, WhatsApp, e-mail, mensagem, navegador, cookies (_fbp,
 //     _fbc) nem ids de clique (gclid/fbclid viram só "tem/não tem"); o
 //     referrer vira só o host.
 //   - meta_leads: sem nome, e-mail, telefone nem respostas do formulário.
 //   - meta_ads_daily, analytics_daily e tracking_daily: só números agregados.
+//
+// A única exceção é google_ads_offline (conversões offline do Google Ads,
+// lidas pelo Data Manager): e-mail e telefone saem SÓ como hash SHA-256 (o
+// formato que o Google pede para as conversões otimizadas para leads) e o
+// gclid sai como está, porque é ele que liga a conversão ao clique. Nunca
+// sai e-mail ou telefone em texto puro. Regras em
+// buildGoogleAdsOfflineRows, mais abaixo.
 //
 // Formatos (docs/INTEGRACOES.md › Exportação):
 //   - CSV (padrão): separador vírgula e decimal com vírgula (planilhas e BI em
@@ -22,7 +29,14 @@ export const DEFAULT_DAYS = 90;
 export const MAX_DAYS = 731;
 export const MAX_ROWS = 50_000;
 
-export const EXPORT_DATASETS = ["leads", "meta_leads", "meta_ads_daily", "analytics_daily", "tracking_daily"] as const;
+export const EXPORT_DATASETS = [
+  "leads",
+  "meta_leads",
+  "meta_ads_daily",
+  "analytics_daily",
+  "tracking_daily",
+  "google_ads_offline",
+] as const;
 export type ExportDataset = (typeof EXPORT_DATASETS)[number];
 
 export type ColumnKind = "text" | "int" | "decimal" | "bool" | "date" | "datetime";
@@ -149,6 +163,21 @@ export const DATASETS: Record<ExportDataset, DatasetInfo> = {
       col("term"),
       col("hits", "int"),
       col("bots", "int"),
+    ],
+  },
+  google_ads_offline: {
+    label: "Conversões offline do Google Ads",
+    description:
+      "Lead qualificado investidor (Short stay, Locação tradicional ou Uso misto) e Contrato assinado, no formato do Data Manager. E-mail e telefone só em hash SHA-256.",
+    period: "created_at",
+    columns: [
+      col("Google Click ID"),
+      col("Email"),
+      col("Phone Number"),
+      col("Conversion Name"),
+      col("Conversion Time"),
+      col("Conversion Value", "decimal"),
+      col("Conversion Currency"),
     ],
   },
 };
@@ -390,6 +419,134 @@ export function toExportRecord(dataset: ExportDataset, row: ExportRecord): Expor
   const out: ExportRecord = {};
   for (const c of DATASETS[dataset].columns) out[c.name] = source[c.name] ?? null;
   return out;
+}
+
+// ---------------------------------------------------------------------------
+// Conversões offline do Google Ads (google_ads_offline)
+// ---------------------------------------------------------------------------
+//
+// Duas conversões, com os nomes EXATOS das ações criadas no Google Ads:
+//   - "Lead qualificado investidor": status `qualificado` E objetivo de
+//     locação (Short stay, Locação tradicional ou Uso misto). Moradia e
+//     Ainda avaliando não entram. Hora = primeira passagem para `qualificado`
+//     em lead_qualification_log (sem registro, updated_at).
+//   - "Contrato assinado": crm_won = true, qualquer objetivo. Hora =
+//     crm_last_change_at (sem ela, updated_at). Valor vazio por enquanto (o
+//     lead não guarda o valor do contrato).
+// O Google só aceita conversão até 90 dias depois do clique (com gclid) e até
+// 63 dias quando o casamento é só por e-mail/telefone; conta-se do created_at
+// do lead. Leads de parceria comercial ficam fora.
+
+export const GOOGLE_ADS_QUALIFIED_CONVERSION = "Lead qualificado investidor";
+export const GOOGLE_ADS_WON_CONVERSION = "Contrato assinado";
+/** Objetivos que contam como investidor (locação). Valores de LEAD_OBJETIVOS. */
+export const GOOGLE_ADS_INVESTOR_OBJETIVOS: readonly string[] = ["Short stay", "Locação tradicional", "Uso misto"];
+export const GOOGLE_ADS_GCLID_WINDOW_DAYS = 90;
+export const GOOGLE_ADS_HASH_WINDOW_DAYS = 63;
+
+/** Colunas lidas do banco para este conjunto (só dentro da função; o CSV leva hash). */
+export const GOOGLE_ADS_OFFLINE_SELECT =
+  "id, created_at, updated_at, status, objetivo, gclid, email, whatsapp, crm_won, crm_last_change_at";
+
+/** E-mail como o Google pede antes do hash: sem espaços nas pontas e em minúsculas. */
+export function normalizeEmailForHash(raw: unknown): string | null {
+  const v = typeof raw === "string" ? raw.trim().toLowerCase() : "";
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? v : null;
+}
+
+/** Telefone BR → E.164 (+55DDDNÚMERO). Aceita só dígitos com ou sem o 55. */
+export function normalizePhoneForHash(raw: unknown): string | null {
+  let d = (typeof raw === "string" || typeof raw === "number" ? String(raw) : "").replace(/\D/g, "").replace(/^0+/, "");
+  if ((d.length === 12 || d.length === 13) && d.startsWith("55")) d = d.slice(2);
+  if (d.length < 10 || d.length > 11) return null;
+  return `+55${d}`;
+}
+
+/** "yyyy-MM-dd HH:mm:ss-03:00" — hora de São Paulo com o fuso explícito, como o Google pede. */
+export function googleAdsConversionTime(value: unknown): string | null {
+  if (value == null || value === "") return null;
+  const at = new Date(String(value));
+  if (Number.isNaN(at.getTime())) return null;
+  const p = tzParts(at);
+  const asUtc = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
+  const offsetMin = Math.round((asUtc - Math.floor(at.getTime() / 1000) * 1000) / 60_000);
+  const sign = offsetMin < 0 ? "-" : "+";
+  const abs = Math.abs(offsetMin);
+  return `${pad(p.year, 4)}-${pad(p.month)}-${pad(p.day)} ${pad(p.hour)}:${pad(p.minute)}:${pad(p.second)}${sign}${pad(Math.floor(abs / 60))}:${pad(abs % 60)}`;
+}
+
+function isPartnerLead(objetivo: unknown): boolean {
+  return typeof objetivo === "string" && objetivo.trim().toLowerCase().startsWith("parceria comercial");
+}
+
+function isTrue(v: unknown): boolean {
+  return v === true || v === "true" || v === "t";
+}
+
+export type GoogleAdsOfflineInput = {
+  leads: readonly ExportRecord[];
+  /** Primeira passagem para `qualificado`, por lead (ISO). */
+  qualifiedAt: ReadonlyMap<string, string>;
+  now?: Date;
+};
+
+/** Linhas do CSV, já com hash. Ordenadas pela hora da conversão. */
+export async function buildGoogleAdsOfflineRows(input: GoogleAdsOfflineInput): Promise<ExportRecord[]> {
+  const now = (input.now ?? new Date()).getTime();
+  const out: { at: number; row: ExportRecord }[] = [];
+  for (const lead of input.leads) {
+    if (isPartnerLead(lead.objetivo)) continue;
+    const created = Date.parse(String(lead.created_at ?? ""));
+    if (Number.isNaN(created)) continue;
+
+    const gclid = typeof lead.gclid === "string" && lead.gclid.trim() ? lead.gclid.trim() : null;
+    const email = normalizeEmailForHash(lead.email);
+    const phone = normalizePhoneForHash(lead.whatsapp);
+    if (!gclid && !email && !phone) continue;
+
+    const windowDays = gclid ? GOOGLE_ADS_GCLID_WINDOW_DAYS : GOOGLE_ADS_HASH_WINDOW_DAYS;
+    if (now - created > windowDays * DAY_MS) continue;
+
+    const conversions: { name: string; when: unknown }[] = [];
+    const objetivo = typeof lead.objetivo === "string" ? lead.objetivo.trim() : "";
+    if (lead.status === "qualificado" && GOOGLE_ADS_INVESTOR_OBJETIVOS.includes(objetivo)) {
+      conversions.push({ name: GOOGLE_ADS_QUALIFIED_CONVERSION, when: input.qualifiedAt.get(String(lead.id)) ?? lead.updated_at });
+    }
+    if (isTrue(lead.crm_won)) {
+      conversions.push({ name: GOOGLE_ADS_WON_CONVERSION, when: lead.crm_last_change_at ?? lead.updated_at });
+    }
+    if (!conversions.length) continue;
+
+    const emailHash = email ? await sha256Hex(email) : null;
+    const phoneHash = phone ? await sha256Hex(phone) : null;
+    for (const c of conversions) {
+      const time = googleAdsConversionTime(c.when);
+      if (!time) continue;
+      out.push({
+        at: Date.parse(String(c.when)),
+        row: {
+          "Google Click ID": gclid,
+          Email: emailHash,
+          "Phone Number": phoneHash,
+          "Conversion Name": c.name,
+          "Conversion Time": time,
+          "Conversion Value": null,
+          "Conversion Currency": "BRL",
+        },
+      });
+    }
+  }
+  out.sort((a, b) => a.at - b.at);
+  return out.map((o) => o.row);
+}
+
+/**
+ * A chave lê este conjunto se o tiver OU se tiver "leads" (as chaves antigas
+ * não podem ganhar o conjunto novo antes da migração que amplia a lista).
+ */
+export function keyAllowsDataset(keyDatasets: readonly string[], dataset: ExportDataset): boolean {
+  if (keyDatasets.includes(dataset)) return true;
+  return dataset === "google_ads_offline" && keyDatasets.includes("leads");
 }
 
 // ---------------------------------------------------------------------------
