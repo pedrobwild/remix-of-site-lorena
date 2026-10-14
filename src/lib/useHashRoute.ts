@@ -35,6 +35,7 @@ export type Route =
   | { name: "autores" }
   | { name: "licenca" }
   | { name: "licenca-sa" }
+  | { name: "atribuicao" }
   | { name: "admin-licencas" }
   | { name: "bewild-project"; slug: string }
   | { name: "bairro"; slug: string }
@@ -156,6 +157,8 @@ function parsePath(rawPath: string): Route {
   // Página da licença CC BY 4.0 dos dados do Índice (citável por imprensa).
   if (path === "/licenca-cc-by-4-0") return { name: "licenca" };
   if (path === "/licenca-cc-by-sa-4-0") return { name: "licenca-sa" };
+  // Página de atribuição para reportagens e estudos citarem a Bewild.
+  if (path === "/atribuicao") return { name: "atribuicao" };
 
   const bewildProjMatch = path.match(/^\/portfolio\/([a-z0-9-]+)$/);
   if (bewildProjMatch) return { name: "bewild-project", slug: bewildProjMatch[1] };
@@ -334,6 +337,7 @@ export const routes = {
   autores: "/autores",
   licenca: "/licenca-cc-by-4-0",
   licencaSa: "/licenca-cc-by-sa-4-0",
+  atribuicao: "/atribuicao",
   bewildProject: (slug: string) => `/portfolio/${slug}`,
   bairro: (slug: string) => `/reforma/${slug}`,
   blog: "/conteudos",

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as AcessibilidadeRouteImport } from './routes/acessibilidade'
+import { Route as AtribuicaoRouteImport } from './routes/atribuicao'
 import { Route as AutoresRouteImport } from './routes/autores'
 import { Route as AutorizacaoCondominioRouteImport } from './routes/autorizacao-condominio'
 import { Route as BuscarRouteImport } from './routes/buscar'
@@ -99,6 +100,11 @@ const SplatRoute = SplatRouteImport.update({
 const AcessibilidadeRoute = AcessibilidadeRouteImport.update({
   id: '/acessibilidade',
   path: '/acessibilidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AtribuicaoRoute = AtribuicaoRouteImport.update({
+  id: '/atribuicao',
+  path: '/atribuicao',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AutoresRoute = AutoresRouteImport.update({
@@ -473,6 +479,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/acessibilidade': typeof AcessibilidadeRoute
+  '/atribuicao': typeof AtribuicaoRoute
   '/autores': typeof AutoresRoute
   '/autorizacao-condominio': typeof AutorizacaoCondominioRoute
   '/buscar': typeof BuscarRoute
@@ -551,6 +558,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/acessibilidade': typeof AcessibilidadeRoute
+  '/atribuicao': typeof AtribuicaoRoute
   '/autores': typeof AutoresRoute
   '/autorizacao-condominio': typeof AutorizacaoCondominioRoute
   '/buscar': typeof BuscarRoute
@@ -630,6 +638,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/acessibilidade': typeof AcessibilidadeRoute
+  '/atribuicao': typeof AtribuicaoRoute
   '/autores': typeof AutoresRoute
   '/autorizacao-condominio': typeof AutorizacaoCondominioRoute
   '/buscar': typeof BuscarRoute
@@ -710,6 +719,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/acessibilidade'
+    | '/atribuicao'
     | '/autores'
     | '/autorizacao-condominio'
     | '/buscar'
@@ -788,6 +798,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/acessibilidade'
+    | '/atribuicao'
     | '/autores'
     | '/autorizacao-condominio'
     | '/buscar'
@@ -866,6 +877,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/acessibilidade'
+    | '/atribuicao'
     | '/autores'
     | '/autorizacao-condominio'
     | '/buscar'
@@ -945,6 +957,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   AcessibilidadeRoute: typeof AcessibilidadeRoute
+  AtribuicaoRoute: typeof AtribuicaoRoute
   AutoresRoute: typeof AutoresRoute
   AutorizacaoCondominioRoute: typeof AutorizacaoCondominioRoute
   BuscarRoute: typeof BuscarRoute
@@ -1041,6 +1054,13 @@ declare module '@tanstack/react-router' {
       path: '/acessibilidade'
       fullPath: '/acessibilidade'
       preLoaderRoute: typeof AcessibilidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/atribuicao': {
+      id: '/atribuicao'
+      path: '/atribuicao'
+      fullPath: '/atribuicao'
+      preLoaderRoute: typeof AtribuicaoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/autores': {
@@ -1561,6 +1581,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   AcessibilidadeRoute: AcessibilidadeRoute,
+  AtribuicaoRoute: AtribuicaoRoute,
   AutoresRoute: AutoresRoute,
   AutorizacaoCondominioRoute: AutorizacaoCondominioRoute,
   BuscarRoute: BuscarRoute,
