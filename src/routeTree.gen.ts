@@ -24,6 +24,7 @@ import { Route as GuiaDoInvestidorRouteImport } from './routes/guia-do-investido
 import { Route as IndiceDeCustoDeReformaRouteImport } from './routes/indice-de-custo-de-reforma'
 import { Route as IndiqueUmAmigoRouteImport } from './routes/indique-um-amigo'
 import { Route as LicencaCcBy40RouteImport } from './routes/licenca-cc-by-4-0'
+import { Route as LicencaCcBySa40RouteImport } from './routes/licenca-cc-by-sa-4-0'
 import { Route as MapaRouteImport } from './routes/mapa'
 import { Route as MapaDoSiteRouteImport } from './routes/mapa-do-site'
 import { Route as MarcasEParceriasRouteImport } from './routes/marcas-e-parcerias'
@@ -51,6 +52,7 @@ import { Route as AdminIndicacoesRouteImport } from './routes/admin.indicacoes'
 import { Route as AdminIntegracoesRouteImport } from './routes/admin.integracoes'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLgpdRouteImport } from './routes/admin.lgpd'
+import { Route as AdminLicencasRouteImport } from './routes/admin.licencas'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminMensagensRouteImport } from './routes/admin.mensagens'
 import { Route as AdminOrcamentosRouteImport } from './routes/admin.orcamentos'
@@ -157,6 +159,11 @@ const IndiqueUmAmigoRoute = IndiqueUmAmigoRouteImport.update({
 const LicencaCcBy40Route = LicencaCcBy40RouteImport.update({
   id: '/licenca-cc-by-4-0',
   path: '/licenca-cc-by-4-0',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LicencaCcBySa40Route = LicencaCcBySa40RouteImport.update({
+  id: '/licenca-cc-by-sa-4-0',
+  path: '/licenca-cc-by-sa-4-0',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapaRoute = MapaRouteImport.update({
@@ -294,6 +301,11 @@ const AdminLeadsRoute = AdminLeadsRouteImport.update({
 const AdminLgpdRoute = AdminLgpdRouteImport.update({
   id: '/admin/lgpd',
   path: '/admin/lgpd',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLicencasRoute = AdminLicencasRouteImport.update({
+  id: '/admin/licencas',
+  path: '/admin/licencas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
@@ -473,6 +485,7 @@ export interface FileRoutesByFullPath {
   '/indice-de-custo-de-reforma': typeof IndiceDeCustoDeReformaRoute
   '/indique-um-amigo': typeof IndiqueUmAmigoRoute
   '/licenca-cc-by-4-0': typeof LicencaCcBy40Route
+  '/licenca-cc-by-sa-4-0': typeof LicencaCcBySa40Route
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
   '/marcas-e-parcerias': typeof MarcasEParceriasRoute
@@ -499,6 +512,7 @@ export interface FileRoutesByFullPath {
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/lgpd': typeof AdminLgpdRoute
+  '/admin/licencas': typeof AdminLicencasRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
@@ -549,6 +563,7 @@ export interface FileRoutesByTo {
   '/indice-de-custo-de-reforma': typeof IndiceDeCustoDeReformaRoute
   '/indique-um-amigo': typeof IndiqueUmAmigoRoute
   '/licenca-cc-by-4-0': typeof LicencaCcBy40Route
+  '/licenca-cc-by-sa-4-0': typeof LicencaCcBySa40Route
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
   '/marcas-e-parcerias': typeof MarcasEParceriasRoute
@@ -575,6 +590,7 @@ export interface FileRoutesByTo {
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/lgpd': typeof AdminLgpdRoute
+  '/admin/licencas': typeof AdminLicencasRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
@@ -626,6 +642,7 @@ export interface FileRoutesById {
   '/indice-de-custo-de-reforma': typeof IndiceDeCustoDeReformaRoute
   '/indique-um-amigo': typeof IndiqueUmAmigoRoute
   '/licenca-cc-by-4-0': typeof LicencaCcBy40Route
+  '/licenca-cc-by-sa-4-0': typeof LicencaCcBySa40Route
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
   '/marcas-e-parcerias': typeof MarcasEParceriasRoute
@@ -652,6 +669,7 @@ export interface FileRoutesById {
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/lgpd': typeof AdminLgpdRoute
+  '/admin/licencas': typeof AdminLicencasRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
@@ -704,6 +722,7 @@ export interface FileRouteTypes {
     | '/indice-de-custo-de-reforma'
     | '/indique-um-amigo'
     | '/licenca-cc-by-4-0'
+    | '/licenca-cc-by-sa-4-0'
     | '/mapa'
     | '/mapa-do-site'
     | '/marcas-e-parcerias'
@@ -730,6 +749,7 @@ export interface FileRouteTypes {
     | '/admin/integracoes'
     | '/admin/leads'
     | '/admin/lgpd'
+    | '/admin/licencas'
     | '/admin/login'
     | '/admin/mensagens'
     | '/admin/orcamentos'
@@ -780,6 +800,7 @@ export interface FileRouteTypes {
     | '/indice-de-custo-de-reforma'
     | '/indique-um-amigo'
     | '/licenca-cc-by-4-0'
+    | '/licenca-cc-by-sa-4-0'
     | '/mapa'
     | '/mapa-do-site'
     | '/marcas-e-parcerias'
@@ -806,6 +827,7 @@ export interface FileRouteTypes {
     | '/admin/integracoes'
     | '/admin/leads'
     | '/admin/lgpd'
+    | '/admin/licencas'
     | '/admin/login'
     | '/admin/mensagens'
     | '/admin/orcamentos'
@@ -856,6 +878,7 @@ export interface FileRouteTypes {
     | '/indice-de-custo-de-reforma'
     | '/indique-um-amigo'
     | '/licenca-cc-by-4-0'
+    | '/licenca-cc-by-sa-4-0'
     | '/mapa'
     | '/mapa-do-site'
     | '/marcas-e-parcerias'
@@ -882,6 +905,7 @@ export interface FileRouteTypes {
     | '/admin/integracoes'
     | '/admin/leads'
     | '/admin/lgpd'
+    | '/admin/licencas'
     | '/admin/login'
     | '/admin/mensagens'
     | '/admin/orcamentos'
@@ -933,6 +957,7 @@ export interface RootRouteChildren {
   IndiceDeCustoDeReformaRoute: typeof IndiceDeCustoDeReformaRoute
   IndiqueUmAmigoRoute: typeof IndiqueUmAmigoRoute
   LicencaCcBy40Route: typeof LicencaCcBy40Route
+  LicencaCcBySa40Route: typeof LicencaCcBySa40Route
   MapaRoute: typeof MapaRoute
   MapaDoSiteRoute: typeof MapaDoSiteRoute
   MarcasEParceriasRoute: typeof MarcasEParceriasRoute
@@ -959,6 +984,7 @@ export interface RootRouteChildren {
   AdminIntegracoesRoute: typeof AdminIntegracoesRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLgpdRoute: typeof AdminLgpdRoute
+  AdminLicencasRoute: typeof AdminLicencasRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMensagensRoute: typeof AdminMensagensRoute
   AdminOrcamentosRoute: typeof AdminOrcamentosRoute
@@ -1099,6 +1125,13 @@ declare module '@tanstack/react-router' {
       path: '/licenca-cc-by-4-0'
       fullPath: '/licenca-cc-by-4-0'
       preLoaderRoute: typeof LicencaCcBy40RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/licenca-cc-by-sa-4-0': {
+      id: '/licenca-cc-by-sa-4-0'
+      path: '/licenca-cc-by-sa-4-0'
+      fullPath: '/licenca-cc-by-sa-4-0'
+      preLoaderRoute: typeof LicencaCcBySa40RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mapa': {
@@ -1288,6 +1321,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/lgpd'
       fullPath: '/admin/lgpd'
       preLoaderRoute: typeof AdminLgpdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/licencas': {
+      id: '/admin/licencas'
+      path: '/admin/licencas'
+      fullPath: '/admin/licencas'
+      preLoaderRoute: typeof AdminLicencasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/login': {
@@ -1533,6 +1573,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndiceDeCustoDeReformaRoute: IndiceDeCustoDeReformaRoute,
   IndiqueUmAmigoRoute: IndiqueUmAmigoRoute,
   LicencaCcBy40Route: LicencaCcBy40Route,
+  LicencaCcBySa40Route: LicencaCcBySa40Route,
   MapaRoute: MapaRoute,
   MapaDoSiteRoute: MapaDoSiteRoute,
   MarcasEParceriasRoute: MarcasEParceriasRoute,
@@ -1559,6 +1600,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIntegracoesRoute: AdminIntegracoesRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLgpdRoute: AdminLgpdRoute,
+  AdminLicencasRoute: AdminLicencasRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMensagensRoute: AdminMensagensRoute,
   AdminOrcamentosRoute: AdminOrcamentosRoute,
