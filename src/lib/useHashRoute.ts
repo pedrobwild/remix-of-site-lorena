@@ -33,6 +33,7 @@ export type Route =
   | { name: "politica-cookies" }
   | { name: "acessibilidade" }
   | { name: "autores" }
+  | { name: "licenca" }
   | { name: "bewild-project"; slug: string }
   | { name: "bairro"; slug: string }
   | { name: "conteudos" }
@@ -150,6 +151,8 @@ function parsePath(rawPath: string): Route {
   if (path === "/politica-de-cookies") return { name: "politica-cookies" };
   if (path === "/acessibilidade") return { name: "acessibilidade" };
   if (path === "/autores") return { name: "autores" };
+  // Página da licença CC BY 4.0 dos dados do Índice (citável por imprensa).
+  if (path === "/licenca-cc-by-4-0") return { name: "licenca" };
 
   const bewildProjMatch = path.match(/^\/portfolio\/([a-z0-9-]+)$/);
   if (bewildProjMatch) return { name: "bewild-project", slug: bewildProjMatch[1] };
@@ -325,6 +328,7 @@ export const routes = {
   politicaCookies: "/politica-de-cookies",
   acessibilidade: "/acessibilidade",
   autores: "/autores",
+  licenca: "/licenca-cc-by-4-0",
   bewildProject: (slug: string) => `/portfolio/${slug}`,
   bairro: (slug: string) => `/reforma/${slug}`,
   blog: "/conteudos",

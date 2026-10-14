@@ -23,6 +23,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as GuiaDoInvestidorRouteImport } from './routes/guia-do-investidor'
 import { Route as IndiceDeCustoDeReformaRouteImport } from './routes/indice-de-custo-de-reforma'
 import { Route as IndiqueUmAmigoRouteImport } from './routes/indique-um-amigo'
+import { Route as LicencaCcBy40RouteImport } from './routes/licenca-cc-by-4-0'
 import { Route as MapaRouteImport } from './routes/mapa'
 import { Route as MapaDoSiteRouteImport } from './routes/mapa-do-site'
 import { Route as MarcasEParceriasRouteImport } from './routes/marcas-e-parcerias'
@@ -151,6 +152,11 @@ const IndiceDeCustoDeReformaRoute = IndiceDeCustoDeReformaRouteImport.update({
 const IndiqueUmAmigoRoute = IndiqueUmAmigoRouteImport.update({
   id: '/indique-um-amigo',
   path: '/indique-um-amigo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LicencaCcBy40Route = LicencaCcBy40RouteImport.update({
+  id: '/licenca-cc-by-4-0',
+  path: '/licenca-cc-by-4-0',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapaRoute = MapaRouteImport.update({
@@ -466,6 +472,7 @@ export interface FileRoutesByFullPath {
   '/guia-do-investidor': typeof GuiaDoInvestidorRoute
   '/indice-de-custo-de-reforma': typeof IndiceDeCustoDeReformaRoute
   '/indique-um-amigo': typeof IndiqueUmAmigoRoute
+  '/licenca-cc-by-4-0': typeof LicencaCcBy40Route
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
   '/marcas-e-parcerias': typeof MarcasEParceriasRoute
@@ -541,6 +548,7 @@ export interface FileRoutesByTo {
   '/guia-do-investidor': typeof GuiaDoInvestidorRoute
   '/indice-de-custo-de-reforma': typeof IndiceDeCustoDeReformaRoute
   '/indique-um-amigo': typeof IndiqueUmAmigoRoute
+  '/licenca-cc-by-4-0': typeof LicencaCcBy40Route
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
   '/marcas-e-parcerias': typeof MarcasEParceriasRoute
@@ -617,6 +625,7 @@ export interface FileRoutesById {
   '/guia-do-investidor': typeof GuiaDoInvestidorRoute
   '/indice-de-custo-de-reforma': typeof IndiceDeCustoDeReformaRoute
   '/indique-um-amigo': typeof IndiqueUmAmigoRoute
+  '/licenca-cc-by-4-0': typeof LicencaCcBy40Route
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
   '/marcas-e-parcerias': typeof MarcasEParceriasRoute
@@ -694,6 +703,7 @@ export interface FileRouteTypes {
     | '/guia-do-investidor'
     | '/indice-de-custo-de-reforma'
     | '/indique-um-amigo'
+    | '/licenca-cc-by-4-0'
     | '/mapa'
     | '/mapa-do-site'
     | '/marcas-e-parcerias'
@@ -769,6 +779,7 @@ export interface FileRouteTypes {
     | '/guia-do-investidor'
     | '/indice-de-custo-de-reforma'
     | '/indique-um-amigo'
+    | '/licenca-cc-by-4-0'
     | '/mapa'
     | '/mapa-do-site'
     | '/marcas-e-parcerias'
@@ -844,6 +855,7 @@ export interface FileRouteTypes {
     | '/guia-do-investidor'
     | '/indice-de-custo-de-reforma'
     | '/indique-um-amigo'
+    | '/licenca-cc-by-4-0'
     | '/mapa'
     | '/mapa-do-site'
     | '/marcas-e-parcerias'
@@ -920,6 +932,7 @@ export interface RootRouteChildren {
   GuiaDoInvestidorRoute: typeof GuiaDoInvestidorRoute
   IndiceDeCustoDeReformaRoute: typeof IndiceDeCustoDeReformaRoute
   IndiqueUmAmigoRoute: typeof IndiqueUmAmigoRoute
+  LicencaCcBy40Route: typeof LicencaCcBy40Route
   MapaRoute: typeof MapaRoute
   MapaDoSiteRoute: typeof MapaDoSiteRoute
   MarcasEParceriasRoute: typeof MarcasEParceriasRoute
@@ -1079,6 +1092,13 @@ declare module '@tanstack/react-router' {
       path: '/indique-um-amigo'
       fullPath: '/indique-um-amigo'
       preLoaderRoute: typeof IndiqueUmAmigoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/licenca-cc-by-4-0': {
+      id: '/licenca-cc-by-4-0'
+      path: '/licenca-cc-by-4-0'
+      fullPath: '/licenca-cc-by-4-0'
+      preLoaderRoute: typeof LicencaCcBy40RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mapa': {
@@ -1512,6 +1532,7 @@ const rootRouteChildren: RootRouteChildren = {
   GuiaDoInvestidorRoute: GuiaDoInvestidorRoute,
   IndiceDeCustoDeReformaRoute: IndiceDeCustoDeReformaRoute,
   IndiqueUmAmigoRoute: IndiqueUmAmigoRoute,
+  LicencaCcBy40Route: LicencaCcBy40Route,
   MapaRoute: MapaRoute,
   MapaDoSiteRoute: MapaDoSiteRoute,
   MarcasEParceriasRoute: MarcasEParceriasRoute,
