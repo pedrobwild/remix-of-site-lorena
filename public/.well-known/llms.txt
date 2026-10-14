@@ -19,6 +19,7 @@ A Bewild é uma empresa de reforma completa de apartamentos e studios em São Pa
 - [Orçamento](/orcamento): Pedido de orçamento de reforma, com preço e prazo em contrato.
 - [Escopo](/escopo): Perguntas sobre metragem, estado, objetivo e itens da reforma, com a faixa de investimento por m² da reforma completa.
 - [Índice Bewild de custo de reforma](/indice-de-custo-de-reforma): Custo de reforma completa por m² em São Paulo a partir de 188 contratos da Bewild (mediana, quartis e tabela por metragem), com metodologia, como citar e CSV.
+- [Licença CC BY 4.0](/licenca-cc-by-4-0): Condições para reutilizar os dados do Índice Bewild, com o resumo oficial da licença e como citar.
 - [Conteúdos](/conteudos): Artigos e guias sobre reforma e operação de short stay.
 - [Vídeos](/videos): Entrevistas, estudos de custo e depoimentos de clientes, cada vídeo em página própria.
 - [Guia do investidor](https://radarbewild.com.br/): Guia de decisão para investir em studio de short stay em São Paulo.
