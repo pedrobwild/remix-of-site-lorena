@@ -19,7 +19,6 @@ vi.mock("@/lib/useSeo", async (importOriginal) => ({ ...await importOriginal<typ
 import LicencaPage from "@/pages/LicencaPage";
 import { COMO_CITAR } from "@/content/indiceCusto";
 import {
-  LICENCA_CANONICAL,
   LICENCA_CC_DEED_PTBR,
   LICENCA_CC_LEGALCODE,
   LICENCA_CC_URL,
