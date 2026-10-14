@@ -1529,6 +1529,36 @@ export type Database = {
         }
         Relationships: []
       }
+      site_licenses: {
+        Row: {
+          body: string | null
+          intro: string | null
+          name: string
+          slug: string
+          title: string | null
+          updated_at: string
+          updated_by_email: string | null
+        }
+        Insert: {
+          body?: string | null
+          intro?: string | null
+          name: string
+          slug: string
+          title?: string | null
+          updated_at?: string
+          updated_by_email?: string | null
+        }
+        Update: {
+          body?: string | null
+          intro?: string | null
+          name?: string
+          slug?: string
+          title?: string | null
+          updated_at?: string
+          updated_by_email?: string | null
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           address_city: string | null
