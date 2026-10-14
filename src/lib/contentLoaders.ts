@@ -232,3 +232,21 @@ export async function loadBairroLinks(): Promise<BairroLinksLoaderData> {
   if (!projects) return { bairroPages: null };
   return { bairroPages: neighborhoodPages(projects).map(({ slug, label }) => ({ slug, label })) };
 }
+
+// --- /licenca-* (painel /admin/licencas) ------------------------------------
+
+export type LicencaLoaderData = { title: string; intro: string; bodyHtml: string | null };
+
+/** Texto da licença no HTML do servidor; banco vazio ou fora do ar = texto padrão. */
+export async function loadLicenca(slug: import("@/content/pages/licencas").LicencaSlug): Promise<LicencaLoaderData> {
+  const { mergeLicenca } = await import("@/content/pages/licencas");
+  let row: { title: string | null; intro: string | null; body: string | null } | null = null;
+  try {
+    const { data } = await supabase.from("site_licenses").select("title, intro, body").eq("slug", slug).maybeSingle();
+    row = data ?? null;
+  } catch {
+    row = null;
+  }
+  const merged = mergeLicenca(slug, row);
+  return { title: merged.title, intro: merged.intro, bodyHtml: await renderBody(merged.body) };
+}

@@ -8,6 +8,13 @@
       "when": 1791867516747,
       "tag": "0000_leads_crm_stage_columns",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791947983860,
+      "tag": "0001_site_licenses",
+      "breakpoints": true
     }
   ]
 }

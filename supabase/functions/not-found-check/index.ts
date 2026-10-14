@@ -83,6 +83,7 @@ export const STATIC_ROUTES: ReadonlyArray<string> = [
   "/acessibilidade",
   "/autores",
   "/licenca-cc-by-4-0",
+  "/licenca-cc-by-sa-4-0",
   "/conteudos",
   "/videos",
   "/o",

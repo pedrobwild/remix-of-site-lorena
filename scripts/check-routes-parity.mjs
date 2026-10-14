@@ -65,6 +65,7 @@ const SPA_ONLY_ALLOWED = new Set([
   "/admin/bewild",
   "/admin/bewild/new",
   "/admin/faq",
+  "/admin/licencas",
   "/admin/typography",
   "/admin/leads",
   "/admin/indicacoes",
