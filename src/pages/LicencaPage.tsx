@@ -186,8 +186,11 @@ export default function LicencaPage({
                 Em uma reportagem, um crédito como “Fonte: Bewild — Índice
                 Bewild de custo de reforma (out. 2026),
                 https://bewild.com.br/indice-de-custo-de-reforma. Licença CC BY
-                4.0.” já atende aos termos. Em trabalhos acadêmicos, use o
-                formato de citação da sua instituição, incluindo a licença.
+                4.0.” já atende aos termos. A{" "}
+                <a href="/atribuicao">página de atribuição</a> reúne nome,
+                endereço e uma linha de crédito pronta para copiar. Em
+                trabalhos acadêmicos, use o formato de citação da sua
+                instituição, incluindo a licença.
               </p>
               <p>
                 Se você adaptar os dados (por exemplo, recalcular, agrupar ou
