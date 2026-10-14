@@ -10,7 +10,6 @@ import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { DOMParser } from "@xmldom/xmldom";
 
 vi.mock("@/integrations/supabase/client", () => ({ supabase: {} }));
 vi.mock("@/components/BwaNav", () => ({ default: () => null }));
@@ -46,8 +45,8 @@ describe("página da licença CC BY 4.0", () => {
 
   it("usa o mesmo COMO_CITAR do Índice e volta para a página dos dados", () => {
     expect(doc.documentElement.textContent).toContain(COMO_CITAR);
-    expect(doc.querySelector(`a[href="${LICENCA_CANONICAL.replace("/licenca", "")}/indice-de-custo-de-reforma"]`)).not.toBeNull();
-    expect(doc.querySelector(`a[href="${LICENCA_CC_URL.replace(LICENCA_CC_URL, "/indice-de-custo-de-reforma")}"]`)).not.toBeNull();
+    expect(doc.querySelector('a[href="/indice-de-custo-de-reforma"]')).not.toBeNull();
+    expect(doc.querySelector('a[href="/dados/indice-custo-reforma-bewild-2026-10.csv"]')).not.toBeNull();
   });
 
   it("não estende a licença ao resto do site (textos, fotos, projetos e marca)", () => {
