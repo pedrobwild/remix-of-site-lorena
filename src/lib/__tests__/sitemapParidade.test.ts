@@ -39,6 +39,7 @@ const ROTAS_INDEXAVEIS = [
   { path: "/indice-de-custo-de-reforma", priority: "0.8", changefreq: "monthly" },
   { path: "/licenca-cc-by-4-0", priority: "0.4", changefreq: "monthly" },
   { path: "/licenca-cc-by-sa-4-0", priority: "0.4", changefreq: "monthly" },
+  { path: "/atribuicao", priority: "0.4", changefreq: "monthly" },
   { path: "/marcenaria", priority: "0.9", changefreq: "monthly" },
   { path: "/parceiros", priority: "0.7", changefreq: "monthly" },
   { path: "/parceiros/incorporadoras", priority: "0.8", changefreq: "monthly" },
