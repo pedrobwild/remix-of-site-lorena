@@ -82,6 +82,7 @@ export const STATIC_ROUTES: ReadonlyArray<string> = [
   "/politica-de-cookies",
   "/acessibilidade",
   "/autores",
+  "/licenca-cc-by-4-0",
   "/conteudos",
   "/videos",
   "/o",

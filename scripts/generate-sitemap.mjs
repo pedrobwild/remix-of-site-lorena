@@ -309,6 +309,7 @@ async function main() {
     { loc: `${BASE_URL}/reforma-de-studio-sao-paulo`, lastmod: page("src/routes/reforma-de-studio-sao-paulo.tsx", ["ReformaStudioSpPage.tsx"], "2026-09-23"), changefreq: "monthly", priority: "0.9" },
     { loc: `${BASE_URL}/reforma-de-cobertura-sao-paulo`, lastmod: page("src/routes/reforma-de-cobertura-sao-paulo.tsx", ["ReformaCoberturaSpPage.tsx"], "2026-09-23"), changefreq: "monthly", priority: "0.9" },
     { loc: `${BASE_URL}/indice-de-custo-de-reforma`, lastmod: page("src/routes/indice-de-custo-de-reforma.tsx", ["IndiceCustoPage.tsx", "src/content/indiceCusto.ts"], "2026-10-13"), changefreq: "monthly", priority: "0.8" },
+    { loc: `${BASE_URL}/licenca-cc-by-4-0`, lastmod: page("src/routes/licenca-cc-by-4-0.tsx", ["LicencaPage.tsx", "src/content/pages/licenca.ts"], "2026-10-13"), changefreq: "monthly", priority: "0.4" },
     { loc: `${BASE_URL}/marcenaria`, lastmod: page("src/routes/marcenaria.tsx", ["MarcenariaPage.tsx"], "2026-09-23"), changefreq: "monthly", priority: "0.9" },
     { loc: `${BASE_URL}/parceiros`, lastmod: page("src/routes/parceiros.index.tsx", ["ParceirosPage.tsx"]), changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/parceiros/incorporadoras`, lastmod: page("src/routes/parceiros.incorporadoras.tsx", ["IncorporadorasPage.tsx", "src/content/incorporadoras.ts"], "2026-09-23"), changefreq: "monthly", priority: "0.8" },
