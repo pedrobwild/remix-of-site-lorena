@@ -12,6 +12,7 @@ import {
   PanelLeftOpen,
   Menu,
   HelpCircle,
+  Scale,
   Type,
   Inbox,
   Activity,
@@ -45,6 +46,7 @@ type ActiveKey =
   | "central"
   | "settings"
   | "faq"
+  | "licencas"
   | "typography";
 
 type Props = {
@@ -69,6 +71,7 @@ const NAV: { key: ActiveKey; label: string; href: string; icon: typeof LayoutDas
   { key: "bewild", label: "Portfólio Bewild", href: "/admin/projetos", icon: FolderKanban },
   { key: "conteudos", label: "Conteúdos", href: "/admin/conteudos", icon: Newspaper },
   { key: "faq", label: "FAQ", href: routes.adminFaq, icon: HelpCircle },
+  { key: "licencas", label: "Licenças", href: routes.adminLicencas, icon: Scale },
   { key: "seo", label: "SEO", href: routes.adminSeo, icon: Search },
   { key: "seo-404", label: "URLs 404", href: routes.adminSeo404, icon: Search },
   { key: "seo-indexacao", label: "Indexação", href: routes.adminIndexacao, icon: Search },

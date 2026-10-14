@@ -9,6 +9,8 @@ import {
   LICENCA_SEO,
 } from "@/content/pages/licenca";
 import { useSeo } from "@/lib/useSeo";
+import { LICENCAS, type LicencaSlug } from "@/content/pages/licencas";
+import type { LicencaLoaderData } from "@/lib/contentLoaders";
 /* Só post.css: a página usa exclusivamente as classes .bw-post/.pt-*
    (mesmo padrão de /privacidade e /politica-de-cookies). */
 import "@/styles/post.css";
@@ -19,12 +21,42 @@ import "@/styles/post.css";
  * (creativecommons.org/licenses/by/4.0/deed.pt-br); a licença em si é o
  * Legal Code, linkado aqui. O COMO_CITAR é o mesmo texto do Índice.
  */
-export default function LicencaPage() {
+export default function LicencaPage({
+  slug = "cc-by-4-0",
+  content,
+}: { slug?: LicencaSlug; content?: LicencaLoaderData } = {}) {
+  const padrao = LICENCAS[slug];
   useSeo({
-    ...LICENCA_SEO,
-    canonicalPath: LICENCA_CANONICAL,
+    ...(slug === "cc-by-4-0" ? LICENCA_SEO : padrao.seo),
+    canonicalPath: slug === "cc-by-4-0" ? LICENCA_CANONICAL : padrao.path,
     ogType: "website",
   });
+
+  // Texto editado no painel /admin/licencas (ou o padrão), já renderizado no servidor.
+  if (content && content.bodyHtml !== null) {
+    return (
+      <div className="bw-home bw-post">
+        <BwaNav />
+        <main id="main" tabIndex={-1}>
+          <section className="pt-hero">
+            <div className="container">
+              <div className="pt-cat">{padrao.eyebrow}</div>
+              <h1 className="pt-title">{content.title}</h1>
+              {content.intro.split(/\n\s*\n/).map((t, i) => (
+                <p key={i} className="pt-excerpt">{t}</p>
+              ))}
+            </div>
+          </section>
+          <section className="pt-body-section">
+            <div className="container">
+              <div className="pt-body" dangerouslySetInnerHTML={{ __html: content.bodyHtml }} />
+            </div>
+          </section>
+        </main>
+        <BwaFooter />
+      </div>
+    );
+  }
 
   return (
     <div className="bw-home bw-post">

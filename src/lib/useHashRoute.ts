@@ -34,6 +34,8 @@ export type Route =
   | { name: "acessibilidade" }
   | { name: "autores" }
   | { name: "licenca" }
+  | { name: "licenca-sa" }
+  | { name: "admin-licencas" }
   | { name: "bewild-project"; slug: string }
   | { name: "bairro"; slug: string }
   | { name: "conteudos" }
@@ -153,6 +155,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/autores") return { name: "autores" };
   // Página da licença CC BY 4.0 dos dados do Índice (citável por imprensa).
   if (path === "/licenca-cc-by-4-0") return { name: "licenca" };
+  if (path === "/licenca-cc-by-sa-4-0") return { name: "licenca-sa" };
 
   const bewildProjMatch = path.match(/^\/portfolio\/([a-z0-9-]+)$/);
   if (bewildProjMatch) return { name: "bewild-project", slug: bewildProjMatch[1] };
@@ -184,6 +187,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/admin/integracoes") return { name: "admin-integracoes" };
   if (path === "/admin/settings") return { name: "admin-settings" };
   if (path === "/admin/faq") return { name: "admin-faq" };
+  if (path === "/admin/licencas") return { name: "admin-licencas" };
   if (path === "/admin/bewild") return { name: "admin-bewild" };
   if (path === "/admin/bewild/new") return { name: "admin-bewild-new" };
   const adminBewildEdit = path.match(/^\/admin\/bewild\/([a-z0-9-]+)$/);
@@ -329,6 +333,7 @@ export const routes = {
   acessibilidade: "/acessibilidade",
   autores: "/autores",
   licenca: "/licenca-cc-by-4-0",
+  licencaSa: "/licenca-cc-by-sa-4-0",
   bewildProject: (slug: string) => `/portfolio/${slug}`,
   bairro: (slug: string) => `/reforma/${slug}`,
   blog: "/conteudos",
@@ -349,6 +354,7 @@ export const routes = {
   adminIntegracoes: "/admin/integracoes",
   adminSettings: "/admin/settings",
   adminFaq: "/admin/faq",
+  adminLicencas: "/admin/licencas",
   adminTypography: "/admin/typography",
   adminLeads: "/admin/leads",
   adminIndicacoes: "/admin/indicacoes",
