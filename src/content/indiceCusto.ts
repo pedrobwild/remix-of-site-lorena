@@ -22,6 +22,10 @@ export const INDICE_PUBLICADO_EM = "2026-10-01";
 /** Mesmas datas com fuso de São Paulo, para o JSON-LD (o Google pede fuso). */
 const comFuso = (d: string) => `${d}T00:00:00-03:00`;
 export const INDICE_CSV_PATH = "/dados/indice-custo-reforma-bewild-2026-10.csv";
+export const INDICE_LICENCA_URL = "https://creativecommons.org/licenses/by/4.0/";
+export const INDICE_LICENCA_NOME = "CC BY 4.0";
+/** Período ainda não informado; omitir do Dataset até a confirmação. */
+export const INDICE_PERIODO: string | null = null;
 
 /** Registros da planilha antes das exclusões (17 saíram da análise). */
 export const REGISTROS_INICIAIS = 205;
@@ -132,7 +136,7 @@ export const INDICE_FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Posso usar os números do índice em uma reportagem ou estudo?",
-    a: `Sim, citando a fonte: ${COMO_CITAR} A tabela agregada pode ser baixada em CSV na própria página.`,
+    a: `Sim, citando a fonte: ${COMO_CITAR} A tabela agregada pode ser baixada em CSV na própria página. Os dados estão sob a licença ${INDICE_LICENCA_NOME}.`,
   },
 ];
 
@@ -155,6 +159,8 @@ export const INDICE_JSONLD: Array<Record<string, unknown>> = [
     ],
     inLanguage: "pt-BR",
     isAccessibleForFree: true,
+    license: INDICE_LICENCA_URL,
+    ...(INDICE_PERIODO !== null ? { temporalCoverage: INDICE_PERIODO } : {}),
     creator: { "@id": "https://bewild.com.br/#org" },
     publisher: { "@id": "https://bewild.com.br/#org" },
     datePublished: comFuso(INDICE_PUBLICADO_EM),

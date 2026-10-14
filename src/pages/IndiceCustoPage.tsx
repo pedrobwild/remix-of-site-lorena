@@ -1,4 +1,5 @@
 import { PROVA_CURTA } from "@/content/provas";
+import { NEW_TAB_SUFFIX } from "@/config/site";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
@@ -23,6 +24,8 @@ import {
   INDICE_DESCRIPTION,
   INDICE_EDICAO,
   INDICE_FAQ,
+  INDICE_LICENCA_NOME,
+  INDICE_LICENCA_URL,
   INDICE_TITLE,
   LIMITES,
   PROPOSTA_REAL_VALOR,
@@ -263,6 +266,13 @@ export default function IndiceCustoPage() {
               Como citar
             </h2>
             <p className="bwa-indice-cite">{COMO_CITAR}</p>
+            <p className="bwa-servico-text">
+              Dados sob licença{" "}
+              <a href={`${INDICE_LICENCA_URL}deed.pt-br`} target="_blank" rel="license noopener" aria-label={`${INDICE_LICENCA_NOME}${NEW_TAB_SUFFIX}`}>
+                {INDICE_LICENCA_NOME}
+              </a>
+              : use à vontade citando a Bewild
+            </p>
             <p className="bwa-servico-text">
               Os números podem ser usados livremente com a citação da fonte. A tabela agregada está em{" "}
               <a href={INDICE_CSV_PATH} download>
