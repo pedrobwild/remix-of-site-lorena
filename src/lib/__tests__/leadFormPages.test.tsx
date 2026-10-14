@@ -359,6 +359,18 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
   });
 });
 
+describe("/orcamento — GCLID", () => {
+  it("o gclid da URL do anúncio vai junto com o lead, mesmo sem cookies aceitos", async () => {
+    localStorage.clear();
+    window.history.replaceState({}, "", "/orcamento?gclid=Cj0KCQjw_abc-123");
+    sendLeadMock.mockResolvedValue(DELIVERED);
+    render(<OrcamentoPage />);
+    preencher({ chaves: "Estou comprando o imóvel" });
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /Pedir orçamento/ })));
+    expect(sendLeadMock.mock.calls[0][0]).toMatchObject({ form_path: "/orcamento", gclid: "Cj0KCQjw_abc-123" });
+  });
+});
+
 describe("/parceiros", () => {
   it("e-mail que o servidor recusaria mostra erro (antes o clique não fazia nada)", () => {
     render(<ParceirosPage />);
