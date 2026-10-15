@@ -13,7 +13,7 @@
  *    obras de verdade, com dados de clientes. Até 15/10/2026 o gate mandava
  *    para a "vitrine" do portal, que entrava sozinha numa conta de
  *    demonstração e abria uma obra completa. Guardado por
- *    `src/__tests__/lpObraSemPortalReal.test.ts`.
+ *    `src/__tests__/sitePublicoSemPortalReal.test.ts`.
  */
 import { PROJETOS, PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
