@@ -311,6 +311,14 @@ html[data-bw-lp],html[data-bw-lp] body{background:#0B2342}
 .bw-lp .lp-portal-cta .btn-cyan{padding:16px 30px;font-size:15px}
 .bw-lp .lp-portal-cta .rea{margin-top:22px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-cool)}
 .bw-lp .lp-portal-cta .rea b{color:var(--sky);font-weight:500}
+/* /o — demonstração do portal (réplica com dados fictícios, 15/10/2026). */
+.bw-lp .lp-portalview{padding:clamp(56px,9vh,96px) var(--mx) clamp(72px,11vh,120px);background:var(--ink-deep);color:#fff;outline:none}
+.bw-lp .lp-demo-head,.bw-lp .lp-demo-frame{width:min(100%,1120px);margin-inline:auto}
+.bw-lp .lp-demo-head{margin-bottom:clamp(24px,4vh,40px)}
+.bw-lp .lp-demo-head .tag{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--sky)}
+.bw-lp .lp-demo-head h2{margin-top:14px;font-family:var(--display);font-weight:600;font-size:clamp(26px,3.6vw,46px);line-height:1.06;letter-spacing:-.05em;color:#fff;max-width:24ch}
+.bw-lp .lp-demo-head .lead{margin-top:14px;font-size:clamp(15px,1.25vw,17px);line-height:1.55;color:rgba(255,255,255,.82);max-width:46ch}
+.bw-lp .lp-demo-note{margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-cool)}
 
 /* ===== /o gate — centralizar no desktop + CTA mais forte ===== */
 @media(min-width:761px){

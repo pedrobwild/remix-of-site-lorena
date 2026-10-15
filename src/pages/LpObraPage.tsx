@@ -1,19 +1,22 @@
 /**
  * LpObraPage — /o · página fantasma (destino do QR da placa de obra).
- * Fluxo (definido com o Rodrigo): gate (nome + telefone + e-mail) ->
- * salva o lead -> redireciona pro PORTAL NAVEGÁVEL real (Bwild Workflow),
- * o mesmo demo linkado no orçamento público, com o sufixo ?cta=placa pra
- * diferenciar do link usado nos orçamentos do Pedro (o CTA no portal é
- * renderizado no app do Workflow só quando esse flag está presente).
+ * Fluxo: gate (nome + telefone + e-mail) -> salva o lead -> abre, NESTA
+ * página, a demonstração do portal: a mesma réplica ilustrativa da home, com
+ * dados fictícios (`src/components/workflow-replica`).
  *  - noindex, sem nav/footer global, acessível só por URL direta (QR).
  *  - Lead via `sendLead` (notify-lead, `form_path: "/o"`), mesmo pipeline
  *    do /orcamento.
- *  - O redirecionamento só acontece DEPOIS que o envio termina (navegar antes
- *    abortava a requisição). Sem confirmação, o visitante vê um aviso com o
- *    WhatsApp já preenchido em vez de ser levado embora em silêncio.
+ *  - A demonstração só abre DEPOIS que o envio termina. Sem confirmação, o
+ *    visitante vê um aviso com o WhatsApp já preenchido e pode seguir para a
+ *    demonstração mesmo assim.
+ *  - NUNCA levar o visitante ao portal real (bwildworkflow.com): lá só há
+ *    obras de verdade, com dados de clientes. Até 15/10/2026 o gate mandava
+ *    para a "vitrine" do portal, que entrava sozinha numa conta de
+ *    demonstração e abria uma obra completa. Guardado por
+ *    `src/__tests__/lpObraSemPortalReal.test.ts`.
  */
 import { PROJETOS, PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useSeo } from "@/lib/useSeo";
 import { whatsappHref } from "@/components/landing/content";
 import { reportContact } from "@/lib/conversions";
@@ -44,15 +47,10 @@ import FormPrivacyNote from "@/components/FormPrivacyNote";
 import "@/styles/bw-lp.css";
 
 /**
- * Vitrine dedicada do portal (Bwild Workflow) — rota /vitrine/:projectId.
- * Marca a sessão como "vitrine da placa" (ativa o CTA comercial no portal) e
- * encaminha pro mesmo demo público. O link dos orçamentos do Pedro vai direto
- * pro /auth, sem vitrine, então lá o CTA não aparece.
- *
- * Aponta para a produção do Workflow (bwildworkflow.com).
+ * Demonstração do portal: réplica com dados fictícios (a mesma da home).
+ * Carrega só depois do gate, para não pesar a primeira tela do QR.
  */
-const WORKFLOW_DEMO_URL =
-  "https://bwildworkflow.com/vitrine/ecf601c3-87f9-4824-9fb3-26a96d120761";
+const WorkflowPortalReplica = lazy(() => import("@/components/workflow-replica/WorkflowPortalReplica"));
 
 /** Atribuição padrão da placa (a URL do QR pode sobrescrever campo a campo). */
 const UTM_PADRAO: QrUtmDefaults = { utm_source: "qr", utm_medium: "placa", utm_campaign: "obra-placa" };
@@ -60,6 +58,15 @@ const UTM_PADRAO: QrUtmDefaults = { utm_source: "qr", utm_medium: "placa", utm_c
 type Campo = "nome" | "whats" | "email";
 const CAMPOS: readonly Campo[] = ["nome", "whats", "email"];
 const CAMPO_ID: Record<Campo, string> = { nome: "g-nome", whats: "g-whats", email: "g-email" };
+
+/** Leva foco e rolagem até a demonstração (jsdom não tem scrollIntoView). */
+function focarDemo(alvo: HTMLElement | null) {
+  if (!alvo) return;
+  alvo.focus({ preventScroll: true });
+  if (typeof alvo.scrollIntoView === "function") {
+    alvo.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
+  }
+}
 
 function validar(v: Record<Campo, string>): FieldErrors<Campo> {
   const e: FieldErrors<Campo> = {};
@@ -85,8 +92,8 @@ export default function LpObraPage() {
     noindex: true,
   });
 
-  // form → (envio) → opening (entregue: redireciona) | fallback (sem confirmação)
-  const [stage, setStage] = useState<"form" | "opening" | "fallback">("form");
+  // form → (envio) → portal (entregue: abre a demonstração aqui) | fallback (sem confirmação)
+  const [stage, setStage] = useState<"form" | "portal" | "fallback">("form");
   const [nome, setNome] = useState("");
   const [whats, setWhats] = useState("");
   const [email, setEmail] = useState("");
@@ -95,25 +102,32 @@ export default function LpObraPage() {
   const [waLeadUrl, setWaLeadUrl] = useState<string | null>(null);
   const lastPayload = useRef<LeadPayload | null>(null);
   const cardRef = useRef<HTMLDivElement | null>(null);
+  const portalRef = useRef<HTMLElement | null>(null);
   const { sending: submitting, outcome, submit, isMounted } = useLeadSubmit({ method: "lp_obra_gate" });
 
   const errors = validar({ nome, whats, email });
   const erro = (k: Campo) => (touched[k] ? errors[k] : undefined);
   const touch = (k: Campo) => setTouched((t) => ({ ...t, [k]: true }));
 
-  // O formulário é trocado pelo aviso: o foco vai junto.
+  // O formulário é trocado pelo aviso: o foco vai junto. Quando a
+  // demonstração abre, foco e rolagem vão para ela.
   useEffect(() => {
-    if (stage !== "form") cardRef.current?.focus();
+    if (stage === "portal") focarDemo(portalRef.current);
+    else if (stage !== "form") cardRef.current?.focus();
   }, [stage]);
 
-  const goPortal = () => {
-    window.location.assign(WORKFLOW_DEMO_URL);
+  const irParaDemo = (e: React.MouseEvent) => {
+    e.preventDefault();
+    focarDemo(portalRef.current);
   };
 
-  const continuarParaPortal = () => {
-    trackEvent("open_portal_demo", { category: "lp_obra", label: lastPayload.current?.utm_campaign });
-    goPortal();
+  /** Abre a demonstração (dados fictícios) nesta página — nunca o portal real. */
+  const abrirDemo = (campanha: LeadPayload["utm_campaign"] | undefined) => {
+    trackEvent("open_portal_demo", { category: "lp_obra", label: campanha });
+    setStage("portal");
   };
+
+  const continuarParaPortal = () => abrirDemo(lastPayload.current?.utm_campaign);
 
   async function enviar(payload: LeadPayload) {
     const result = await submit(payload, { params: { location: bairro || undefined } });
@@ -121,10 +135,7 @@ export default function LpObraPage() {
     // (voltar do navegador) e não deve ser arrastado para o portal.
     if (!result || !isMounted()) return;
     if (result === "delivered") {
-      trackEvent("open_portal_demo", { category: "lp_obra", label: payload.utm_campaign });
-      setStage("opening");
-      // A requisição já terminou: navegar agora não aborta a gravação do lead.
-      goPortal();
+      abrirDemo(payload.utm_campaign);
     } else {
       setStage("fallback");
     }
@@ -217,12 +228,12 @@ export default function LpObraPage() {
           </div>
           <h1>
             Você parou em frente a uma obra.
-            <span className="lo">Veja como ela anda por dentro.</span>
+            <span className="lo">Veja como a Bewild acompanha cada uma.</span>
           </h1>
           <p className="sub">
             Atrás dessa placa, um studio está virando renda, sem o dono entrar na
-            obra. Deixe seu contato pra abrir o portal navegável que o cliente
-            Bewild usa pra acompanhar a obra, do primeiro dia à entrega.
+            obra. Deixe seu contato pra abrir uma demonstração do portal que o
+            cliente Bewild usa pra acompanhar a obra, do primeiro dia à entrega.
           </p>
           <p className="sub">
             A Bewild transforma studios crus em imóveis prontos para alugar por
@@ -236,8 +247,8 @@ export default function LpObraPage() {
           {stage === "form" ? (
             <form id="gate-card" className="gate-card" onSubmit={onGateSubmit} noValidate aria-label="Acesso ao portal de acompanhamento">
               <div className="eye">Acesso ao portal de acompanhamento</div>
-              <h3>Veja a obra por dentro</h3>
-              <p>Deixe seu contato para abrir o portal navegável que nossos clientes usam para acompanhar a obra, do primeiro dia até a entrega.</p>
+              <h3>Veja o portal por dentro</h3>
+              <p>Deixe seu contato para abrir uma demonstração do portal que nossos clientes usam para acompanhar a obra, do primeiro dia até a entrega.</p>
               <div className="fld">
                 <label htmlFor="g-nome">Nome <span className="req" aria-hidden="true">*</span></label>
                 <input id="g-nome" type="text" autoComplete="name" value={nome} maxLength={120}
@@ -261,21 +272,21 @@ export default function LpObraPage() {
               </div>
               {/* Habilitado com campos pendentes: o clique mostra os erros e leva o foco ao primeiro. */}
               <button type="submit" className="btn btn-cyan submit" disabled={submitting}>
-                <span>{submitting ? "Abrindo…" : "Ver portal"}</span><span className="ar" aria-hidden="true">→</span>
+                <span>{submitting ? "Abrindo…" : "Ver demonstração"}</span><span className="ar" aria-hidden="true">→</span>
               </button>
               <button type="button" className="skip" onClick={openWhats}>Prefiro falar no WhatsApp</button>
               <FormPrivacyNote platforms="meta-google" className="form-privacy">
-                Usamos seus dados para liberar o portal e para o atendimento da Bewild.
+                Usamos seus dados para liberar a demonstração e para o atendimento da Bewild.
               </FormPrivacyNote>
             </form>
-          ) : stage === "opening" ? (
-            <div id="gate-card" className="gate-card" tabIndex={-1} ref={cardRef}>
+          ) : stage === "portal" ? (
+            <div id="gate-card" className="gate-card">
               <div className="eye">Portal de acompanhamento</div>
-              <h3>Abrindo o portal…</h3>
-              <p>Você está sendo levado pro portal navegável da Bewild. Se não abrir em alguns segundos, use o botão abaixo.</p>
-              <button type="button" className="btn btn-cyan submit" onClick={goPortal}>
-                <span>Abrir o portal</span><span className="ar" aria-hidden="true">→</span>
-              </button>
+              <h3>Demonstração liberada.</h3>
+              <p>Logo abaixo está uma demonstração do portal que o cliente Bewild usa para acompanhar a obra, com dados fictícios.</p>
+              <a className="btn btn-cyan submit" href="#portal-demo" onClick={irParaDemo}>
+                <span>Ver a demonstração</span><span className="ar" aria-hidden="true">→</span>
+              </a>
             </div>
           ) : (
             <div id="gate-card" className="gate-card" tabIndex={-1} ref={cardRef}>
@@ -288,7 +299,7 @@ export default function LpObraPage() {
               ) : (
                 <>
                   <h3>Não conseguimos registrar seu contato.</h3>
-                  <p>Mande seus dados pelo WhatsApp — a mensagem já vai pronta — ou tente de novo. O portal continua liberado.</p>
+                  <p>Mande seus dados pelo WhatsApp — a mensagem já vai pronta — ou tente de novo. A demonstração continua liberada.</p>
                 </>
               )}
               {waLeadUrl && (
@@ -302,12 +313,44 @@ export default function LpObraPage() {
                 </button>
               )}
               <button type="button" className="skip" onClick={continuarParaPortal}>
-                {outcome === "failed" ? "Ver o portal mesmo assim" : "Continuar para o portal"}
+                {outcome === "failed" ? "Ver a demonstração mesmo assim" : "Continuar para a demonstração"}
               </button>
             </div>
           )}
         </div>
       </section>
+
+      {/* DEMONSTRAÇÃO — réplica com dados fictícios, só depois do gate */}
+      {stage === "portal" && (
+        <section
+          id="portal-demo"
+          className="lp-portalview"
+          ref={portalRef}
+          tabIndex={-1}
+          aria-labelledby="portal-demo-titulo"
+        >
+          <div className="lp-demo-head">
+            <p className="mono tag">Demonstração · dados fictícios</p>
+            <h2 id="portal-demo-titulo">O portal que o cliente Bewild usa para acompanhar a obra.</h2>
+            <p className="lead">Cronograma, evolução e relatórios semanais, do primeiro dia à entrega. Navegue pelas abas.</p>
+          </div>
+          <div className="lp-demo-frame">
+            <Suspense fallback={<p className="lp-demo-note">Carregando a demonstração…</p>}>
+              <WorkflowPortalReplica />
+            </Suspense>
+            <p className="lp-demo-note">Interface ilustrativa do portal de acompanhamento, com dados fictícios.</p>
+          </div>
+          <div className="lp-portal-cta">
+            <h3>Quer acompanhar a sua obra assim?</h3>
+            <p>Fale com a Bewild pelo WhatsApp e peça o orçamento do seu studio ou apartamento.</p>
+            <div className="act">
+              <button type="button" className="btn btn-cyan" onClick={openWhats}>
+                <span>Falar no WhatsApp</span><span className="ar" aria-hidden="true">→</span>
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* 01 — QUEM FAZ */}
       <section className="lp-quem" aria-label="Quem faz essa obra">
@@ -346,7 +389,7 @@ export default function LpObraPage() {
 
         <div className="lp-quem-cta">
           <a className="btn btn-cyan" href="#gate-card" onClick={scrollToGate}>
-            <span>Ver esta obra por dentro</span><span className="ar">→</span>
+            <span>Ver o portal por dentro</span><span className="ar">→</span>
           </a>
           <button type="button" className="btn btn-ghost" onClick={openWhats}>
             <span>Falar no WhatsApp</span>

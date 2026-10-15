@@ -149,7 +149,7 @@ describe("/o — placa de obra (PUB-06)", () => {
     preencher();
     await act(async () => submit());
 
-    expect(screen.queryByText("Abrindo o portal…")).toBeNull();
+    expect(document.getElementById("portal-demo")).toBeNull();
     expect(screen.getByText("Não conseguimos registrar seu contato.")).toBeInTheDocument();
     const wa = screen.getByRole("link", { name: /Enviar pelo WhatsApp/ });
     expect(decodeURIComponent(wa.getAttribute("href")!)).toContain("Nome: Bruno");
@@ -163,7 +163,36 @@ describe("/o — placa de obra (PUB-06)", () => {
     expect(sendLeadMock.mock.calls[1][0]).toBe(primeiro);
     expect(screen.getByText("Seu contato pode já ter chegado.")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Tentar enviar de novo" })).toBeNull();
-    expect(screen.getByRole("button", { name: "Continuar para o portal" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Continuar para a demonstração" })).toBeInTheDocument();
+  });
+
+  it("com confirmação abre a demonstração fictícia na própria página, sem ir ao portal real", async () => {
+    window.history.replaceState({}, "", "/o?bairro=Pinheiros");
+    const enderecoAntes = window.location.href;
+    sendLeadMock.mockResolvedValueOnce(DELIVERED);
+    render(<LpObraPage />);
+    preencher();
+    await act(async () => submit());
+
+    expect(screen.getByText("Demonstração liberada.")).toBeInTheDocument();
+    expect(document.getElementById("portal-demo")).not.toBeNull();
+    expect(await screen.findByLabelText("Interface ilustrativa do Bwild Workflow")).toBeInTheDocument();
+    expect(window.location.href).toBe(enderecoAntes);
+    expect(document.querySelector('a[href*="bwildworkflow"], a[href*="/vitrine/"], a[href*="/auth?"]')).toBeNull();
+    expect(trackEventMock).toHaveBeenCalledWith("open_portal_demo", expect.objectContaining({ category: "lp_obra" }));
+  });
+
+  it("sem confirmação, 'continuar' também abre só a demonstração", async () => {
+    window.history.replaceState({}, "", "/o");
+    sendLeadMock.mockResolvedValueOnce(FAILED);
+    render(<LpObraPage />);
+    preencher();
+    await act(async () => submit());
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Ver a demonstração mesmo assim" })));
+
+    expect(document.getElementById("portal-demo")).not.toBeNull();
+    expect(await screen.findByLabelText("Interface ilustrativa do Bwild Workflow")).toBeInTheDocument();
+    expect(document.querySelector('a[href*="bwildworkflow"], a[href*="/vitrine/"], a[href*="/auth?"]')).toBeNull();
   });
 });
 
