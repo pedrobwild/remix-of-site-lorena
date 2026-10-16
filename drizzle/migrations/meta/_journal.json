@@ -15,6 +15,13 @@
       "when": 1791947983860,
       "tag": "0001_site_licenses",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792194850974,
+      "tag": "0002_protect_license_editor_metadata",
+      "breakpoints": true
     }
   ]
 }

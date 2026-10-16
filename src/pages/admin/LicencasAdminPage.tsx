@@ -35,14 +35,12 @@ export default function LicencasAdminPage() {
   async function salvar(valores: Draft | null) {
     setBusy(true);
     setMsg(null);
-    const { data: u } = await supabase.auth.getUser();
     const { error } = await supabase
       .from("site_licenses")
       .update({
         title: valores?.title ?? null,
         intro: valores?.intro ?? null,
         body: valores?.body ?? null,
-        updated_by_email: u.user?.email ?? null,
       })
       .eq("slug", slug);
     setBusy(false);
