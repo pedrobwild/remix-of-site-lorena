@@ -242,7 +242,7 @@ export async function loadLicenca(slug: import("@/content/pages/licencas").Licen
   const { mergeLicenca } = await import("@/content/pages/licencas");
   let row: { title: string | null; intro: string | null; body: string | null } | null = null;
   try {
-    const { data } = await supabase.from("site_licenses").select("title, intro, body").eq("slug", slug).maybeSingle();
+    const { data } = await supabase.rpc("get_public_license", { p_slug: slug }).maybeSingle();
     row = data ?? null;
   } catch {
     row = null;
