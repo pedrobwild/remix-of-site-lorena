@@ -2029,6 +2029,14 @@ export type Database = {
           updated_on: string
         }[]
       }
+      get_public_license: {
+        Args: { p_slug: string }
+        Returns: {
+          body: string
+          intro: string
+          title: string
+        }[]
+      }
       get_public_site_settings: { Args: never; Returns: Json }
       hit_rate_limit: {
         Args: { p_key: string; p_max: number; p_window_s: number }
