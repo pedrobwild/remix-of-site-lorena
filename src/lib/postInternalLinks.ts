@@ -19,6 +19,10 @@ import { RADAR_URL } from "@/config/site";
  *    pilar no corpo do texto.
  *  - "NBR 16280" → o artigo da norma; /autorizacao-condominio fica com
  *    "autorização de reforma em condomínio".
+ *  - "quanto tempo demora uma reforma de apartamento" → o artigo de prazo.
+ *    Em 16/10/2026 o artigo de etapas também aparecia para essa busca (posição
+ *    70, contra 15,9 do de prazo); etapas e cronogramas apontam para o de prazo
+ *    com essa âncora para o Google saber qual dos dois responde.
  */
 import type { BewildPostCategory } from "@/lib/useBewildPosts";
 
@@ -99,6 +103,11 @@ const L = {
     label: "NBR 16280: o que o condomínio exige na reforma",
     description: "Plano de reforma, ART ou RRT e o que o síndico pode pedir.",
   },
+  prazo: {
+    href: "/conteudos/quanto-tempo-demora-reforma-apartamento",
+    label: "Quanto tempo demora uma reforma de apartamento",
+    description: "O prazo de obra por metragem, como vai no contrato.",
+  },
 } satisfies Record<string, InternalLink>;
 
 /** Artigos de reforma: as duas páginas de serviço primeiro, depois o caminho de compra. */
@@ -149,6 +158,7 @@ const TEMA = {
   studio: /studio/,
   apartamento: /apartamento/,
   shortStay: /short-stay|airbnb/,
+  prazo: /etapas|cronograma/,
 };
 
 const MAX_LINKS = 6;
@@ -170,6 +180,8 @@ export function internalLinksForPost(
   const lead: InternalLink[] = [];
   // Condomínio e obra: a norma (artigo) e a página de autorização, nessa ordem.
   if (TEMA.condominio.test(slug)) lead.push(L.nbr16280, L.autorizacao);
+  // Etapas e cronograma: o prazo da obra mora no artigo de prazo.
+  if (TEMA.prazo.test(slug)) lead.push(L.prazo);
   // A página de serviço do imóvel de que o artigo trata vem primeiro.
   if (studio && apartamento) {
     const [first, second] =
