@@ -25,7 +25,7 @@ describe("privacidade da edição de licença", () => {
     await waitFor(() => expect(screen.getByLabelText("Título")).toHaveValue("Licença"));
     fireEvent.change(screen.getByLabelText("Título"), { target: { value: "Licença revisada" } });
     fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
-    await waitFor(() => expect(mocks.update).toHaveBeenCalledWith({ title: "Licença revisada", intro: "Abertura", body: "Texto" }));
+    await waitFor(() => expect(mocks.update).toHaveBeenCalledWith({ title: "Licença revisada", intro: "Abertura", body: "Texto", citation_model: expect.any(String) }));
     expect(mocks.getUser).not.toHaveBeenCalled();
   });
 });
