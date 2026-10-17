@@ -9,6 +9,8 @@
  */
 import type { ReactNode } from "react";
 import { faqJsonLd } from "@/lib/useSeo";
+import { CONTRATOS_ANALISADOS } from "@/content/provas";
+import { CUSTO_M2_MEDIANO, ORCAMENTO_MEDIANO } from "@/content/baseCusto";
 
 export const CANONICAL = "/reforma-de-studio-sao-paulo";
 
@@ -93,11 +95,11 @@ export const FAQ: { q: string; a: string; node?: ReactNode }[] = [
   },
   {
     q: "Quanto custa a reforma de um studio para Airbnb?",
-    a: "Nos 188 contratos de reforma completa de até 50 m² analisados pela Bewild, a mediana foi R$ 71.850 (R$ 2.744 por m²), com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Para short stay, o enxoval e os eletros entram no escopo; o que mais muda o valor é a metragem e o padrão de acabamento.",
+    a: `Nos ${CONTRATOS_ANALISADOS} contratos de reforma completa de até 50 m² analisados pela Bewild, a mediana foi ${ORCAMENTO_MEDIANO} (${CUSTO_M2_MEDIANO} por m²), com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Para short stay, o enxoval e os eletros entram no escopo; o que mais muda o valor é a metragem e o padrão de acabamento.`,
     node: (
       <>
-        Nos 188 contratos de reforma completa de até 50 m² analisados pela Bewild, a mediana
-        foi R$ 71.850 (R$ 2.744 por m²), com projeto, obra, marcenaria, mobiliário e
+        Nos {CONTRATOS_ANALISADOS} contratos de reforma completa de até 50 m² analisados pela Bewild, a mediana
+        foi {ORCAMENTO_MEDIANO} ({CUSTO_M2_MEDIANO} por m²), com projeto, obra, marcenaria, mobiliário e
         eletrodomésticos. A tabela por metragem está em{" "}
         <a href="/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo">
           quanto custa reformar um studio para short stay em São Paulo

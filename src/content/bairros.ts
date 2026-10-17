@@ -10,6 +10,9 @@
  * As contagens de projetos vêm do banco na hora de renderizar; aqui ficam só
  * as frases que não mudam quando um projeto entra ou sai.
  */
+import { CONTRATOS_ANALISADOS } from "@/content/provas";
+import { CUSTO_M2_MEDIANO, ORCAMENTO_MEDIANO } from "@/content/baseCusto";
+
 export type BairroFaq = { q: string; a: string };
 export type BairroPost = { href: string; label: string };
 export type BairroContent = {
@@ -39,7 +42,7 @@ const PRAZO_FAQ =
   "Cerca de 60 dias úteis de obra para studios e apartamentos compactos de até 30 m², com a data de entrega em contrato e multa por dia de atraso. Metragens maiores ou integração de varanda levam mais; o cronograma por etapa é definido antes de a obra começar.";
 
 const CUSTO_FAQ_CIDADE =
-  "Nos 188 contratos analisados pela Bewild, a reforma completa de até 50 m² custa R$ 2.744 por m² na mediana (R$ 71.850 por reforma), com projeto, obra, marcenaria, mobiliário e eletrodomésticos. O bairro pesa menos no preço do que a metragem e o padrão de acabamento; a tabela por metragem e a fórmula de bolso estão no guia de custo da Bewild.";
+  `Nos ${CONTRATOS_ANALISADOS} contratos analisados pela Bewild, a reforma completa de até 50 m² custa ${CUSTO_M2_MEDIANO} por m² na mediana (${ORCAMENTO_MEDIANO} por reforma), com projeto, obra, marcenaria, mobiliário e eletrodomésticos. O bairro pesa menos no preço do que a metragem e o padrão de acabamento; a tabela por metragem e a fórmula de bolso estão no guia de custo da Bewild.`;
 const CONDOMINIO_FAQ =
   "Antes de a obra começar, a Bewild entrega ao síndico o plano de reforma exigido pela NBR 16280, com ART ou RRT do responsável técnico, cronograma e horários de trabalho dentro do que a convenção permite. Em prédio novo, também conferimos o padrão de envidraçamento da varanda e a infraestrutura de ar-condicionado prevista pela construtora.";
 const HIS_HMP = { href: "/conteudos/studio-his-ou-hmp-o-que-fazer", label: "Studio HIS ou HMP: o que fazer" };
@@ -144,7 +147,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
     faq: [
       {
         q: "Quanto custa reformar um studio na Consolação?",
-        a: "Nos 188 contratos analisados pela Bewild, a reforma completa de até 50 m² custa R$ 2.744 por m² na mediana (R$ 71.850 por reforma), com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Em studios de 17 a 25 m² o valor por m² tende a ficar acima disso, porque cozinha e banheiro custam o mesmo em qualquer metragem.",
+        a: `Nos ${CONTRATOS_ANALISADOS} contratos analisados pela Bewild, a reforma completa de até 50 m² custa ${CUSTO_M2_MEDIANO} por m² na mediana (${ORCAMENTO_MEDIANO} por reforma), com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Em studios de 17 a 25 m² o valor por m² tende a ficar acima disso, porque cozinha e banheiro custam o mesmo em qualquer metragem.`,
       },
       {
         q: "Prédio antigo na Consolação: dá para reformar para short stay?",

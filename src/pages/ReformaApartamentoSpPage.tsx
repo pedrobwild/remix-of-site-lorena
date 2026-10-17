@@ -1,4 +1,5 @@
 import { BAIRROS_ATENDIDOS, CONTRATOS_ANALISADOS, PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
+import { CUSTO_M2_MEDIANO } from "@/content/baseCusto";
 import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
@@ -160,7 +161,7 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
             <h2 className="bwa-servico-h2" id="custo">Quanto custa reformar um apartamento em São Paulo</h2>
             <p className="bwa-servico-text">
               A mediana dos {CONTRATOS_ANALISADOS} contratos de reforma completa de até
-              50 m² analisados pela Bewild é R$ 2.744 por m², com projeto, obra,
+              50 m² analisados pela Bewild é {CUSTO_M2_MEDIANO} por m², com projeto, obra,
               marcenaria, mobília e eletros. Acima de 50 m², o valor sai da visita
               técnica e do projeto. A tabela por metragem está em{" "}
               <a href={PILAR_CUSTO}>quanto custa reformar um apartamento ou studio de até 50 m²</a>.
