@@ -3,6 +3,7 @@
  * Campo vazio no banco = usa o texto padrão daqui; o corpo é Markdown.
  */
 import { COMO_CITAR, INDICE_CANONICAL } from "@/content/indiceCusto";
+import { ATRIBUICAO_LINHA } from "@/content/pages/atribuicao";
 
 export type LicencaSlug = "cc-by-4-0" | "cc-by-sa-4-0";
 
@@ -14,6 +15,8 @@ export type LicencaPadrao = {
   title: string;
   intro: string;
   body: string;
+  /** Linha de crédito pronta para copiar (editável no painel). */
+  citationModel: string;
   seo: { title: string; description: string; ogTitle: string; ogDescription: string };
 };
 
@@ -78,6 +81,7 @@ Se você adaptar os dados (por exemplo, recalcular, agrupar ou converter), indiq
 
 Mais sobre os dados: [Índice Bewild de custo de reforma](${INDICE_CANONICAL}).
 `,
+    citationModel: ATRIBUICAO_LINHA,
     seo: {
       title: "Licença CC BY 4.0 dos dados do Índice Bewild | Bewild",
       description:
@@ -124,6 +128,8 @@ ${SEM_VALOR_LEGAL}
 - [Legal Code](https://creativecommons.org/licenses/by-sa/4.0/legalcode) — o texto legal completo, em inglês, que prevalece em caso de divergência;
 - [Resumo em português (deed pt-BR)](https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br) — tradução oficial do Creative Commons.
 `,
+    citationModel:
+      "Fonte: Bewild (https://bewild.com.br), licença CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/).",
     seo: {
       title: "Licença CC BY-SA 4.0 | Bewild",
       description:
@@ -140,9 +146,14 @@ export const LICENCA_SLUGS = Object.keys(LICENCAS) as LicencaSlug[];
 /** Texto do banco quando preenchido; senão o padrão. */
 export function mergeLicenca(
   slug: LicencaSlug,
-  row: { title?: string | null; intro?: string | null; body?: string | null } | null,
+  row: { title?: string | null; intro?: string | null; body?: string | null; citation_model?: string | null } | null,
 ) {
   const p = LICENCAS[slug];
   const pick = (v: string | null | undefined, d: string) => (v && v.trim() ? v : d);
-  return { title: pick(row?.title, p.title), intro: pick(row?.intro, p.intro), body: pick(row?.body, p.body) };
+  return {
+    title: pick(row?.title, p.title),
+    intro: pick(row?.intro, p.intro),
+    body: pick(row?.body, p.body),
+    citationModel: pick(row?.citation_model, p.citationModel),
+  };
 }

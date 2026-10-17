@@ -235,12 +235,12 @@ export async function loadBairroLinks(): Promise<BairroLinksLoaderData> {
 
 // --- /licenca-* (painel /admin/licencas) ------------------------------------
 
-export type LicencaLoaderData = { title: string; intro: string; bodyHtml: string | null };
+export type LicencaLoaderData = { title: string; intro: string; bodyHtml: string | null; citationModel: string };
 
 /** Texto da licença no HTML do servidor; banco vazio ou fora do ar = texto padrão. */
 export async function loadLicenca(slug: import("@/content/pages/licencas").LicencaSlug): Promise<LicencaLoaderData> {
   const { mergeLicenca } = await import("@/content/pages/licencas");
-  let row: { title: string | null; intro: string | null; body: string | null } | null = null;
+  let row: { title: string | null; intro: string | null; body: string | null; citation_model: string | null } | null = null;
   try {
     const { data } = await supabase.rpc("get_public_license", { p_slug: slug }).maybeSingle();
     row = data ?? null;
@@ -248,5 +248,5 @@ export async function loadLicenca(slug: import("@/content/pages/licencas").Licen
     row = null;
   }
   const merged = mergeLicenca(slug, row);
-  return { title: merged.title, intro: merged.intro, bodyHtml: await renderBody(merged.body) };
+  return { title: merged.title, intro: merged.intro, bodyHtml: await renderBody(merged.body), citationModel: merged.citationModel };
 }
