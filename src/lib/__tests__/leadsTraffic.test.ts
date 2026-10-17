@@ -52,8 +52,9 @@ describe("buildBairroData", () => {
     const data = buildBairroData(rows, 3);
     expect(data[0]).toEqual({ bairro: "Pinheiros", leads: 3 });
     expect(data[1]).toEqual({ bairro: "Moema", leads: 2 });
-    // corte em 3: Itaim e Perdizes (1 cada) viram "Outros"; sem bairro vai por último
-    expect(data).toContainEqual({ bairro: "Outros", leads: 2 });
+    // corte em 3: Perdizes (1) fica de fora e vira "Outros"; sem bairro vai por último
+    expect(data[2]).toEqual({ bairro: "Itaim Bibi", leads: 1 });
+    expect(data).toContainEqual({ bairro: "Outros", leads: 1 });
     expect(data[data.length - 1]).toEqual({ bairro: "Não informado", leads: 1 });
   });
 
