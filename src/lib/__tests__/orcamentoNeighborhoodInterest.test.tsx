@@ -4,6 +4,12 @@ import OrcamentoPage from "@/pages/OrcamentoPage";
 import { setConsent } from "@/lib/cookieConsent";
 
 const record = vi.hoisted(() => vi.fn());
+vi.mock("@/integrations/supabase/client", () => ({
+  supabase: {
+    rpc: () => new Promise(() => {}),
+    from: () => ({ select: () => new Promise(() => {}) }),
+  },
+}));
 vi.mock("@/lib/analytics", () => ({ trackNeighborhoodInterest: record }));
 vi.mock("@/components/BwaNav", () => ({ default: () => null }));
 vi.mock("@/components/BwaFooter", () => ({ default: () => null }));

@@ -37,10 +37,6 @@ export const AIRBNB_CHECK: { n: string; t: string }[] = [
 
 export const FAQ: { q: string; a: string; node?: ReactNode }[] = [
   {
-    q: "A Bewild faz o projeto de arquitetura ou só a obra?",
-    a: "As duas coisas, no mesmo contrato: arquitetura, engenharia e empreita sob a mesma responsabilidade. Quem projeta responde pela obra, e o preço fechado vale para os dois.",
-  },
-  {
     q: "Vale a pena reformar um studio para Airbnb?",
     a: "Depende de bairro, convenção do condomínio e operação. A Bewild não garante renda nem ocupação.",
     node: (
@@ -117,6 +113,10 @@ export const FAQ: { q: string; a: string; node?: ReactNode }[] = [
   {
     q: "Moro fora de São Paulo?",
     a: "Sim, dá para reformar. Vistoria por procuração, energia, internet e emergências ficam com a Bewild, e você acompanha tudo pelo Bwild Workflow.",
+  },
+  {
+    q: "A Bewild faz o projeto de arquitetura ou só a obra?",
+    a: "As duas coisas, no mesmo contrato: arquitetura, engenharia e empreita sob a mesma responsabilidade. Quem projeta responde pela obra, e o preço fechado vale para os dois.",
   },
 ];
 

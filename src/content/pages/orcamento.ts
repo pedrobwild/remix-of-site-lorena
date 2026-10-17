@@ -88,14 +88,6 @@ export const AREA_SLIDER = { min: 15, max: 120, padrao: 28 } as const;
 
 export const FAQ: { q: string; a: string }[] = [
   {
-    q: "Vocês fazem o projeto de arquitetura e a decoração?",
-    a: "Sim. Layout, marcenaria, iluminação, acabamentos e mobília saem de um projeto da Bewild, com arquiteto como responsável técnico, aprovado em 3D antes da obra. Projeto e obra ficam no mesmo contrato.",
-  },
-  {
-    q: "Quem cuida da ART e do plano de reforma para o condomínio?",
-    a: "A Bewild. Antes de a obra começar, entregamos ao síndico o plano de reforma exigido pela NBR 16280, com a ART ou RRT do responsável técnico, o cronograma e os horários de trabalho.",
-  },
-  {
     q: "Quanto custa uma reforma turnkey em São Paulo?",
     a: `Nos ${CONTRATOS_ANALISADOS} contratos de reforma completa de até 50 m² analisados pela Bewild, a mediana foi R$ 71.850, ou R$ 2.744 por m², com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Quatro em cada dez contratos ficaram entre R$ 65 mil e R$ 75 mil, e nenhum abaixo de R$ 55 mil. A tabela por metragem está no guia de custo da Bewild.`,
   },
@@ -122,6 +114,14 @@ export const FAQ: { q: string; a: string }[] = [
   {
     q: "Moro fora de São Paulo. Como funciona?",
     a: "Vistoria por procuração, ligação de energia, instalação de internet e emergências ficam com a Bewild, e você acompanha projeto, obra e entrega pelo Bwild Workflow, com relatórios semanais e fotos.",
+  },
+  {
+    q: "Vocês fazem o projeto de arquitetura e a decoração?",
+    a: "Sim. Layout, marcenaria, iluminação, acabamentos e mobília saem de um projeto da Bewild, com arquiteto como responsável técnico, aprovado em 3D antes da obra. Projeto e obra ficam no mesmo contrato.",
+  },
+  {
+    q: "Quem cuida da ART e do plano de reforma para o condomínio?",
+    a: "A Bewild. Antes de a obra começar, entregamos ao síndico o plano de reforma exigido pela NBR 16280, com a ART ou RRT do responsável técnico, o cronograma e os horários de trabalho.",
   },
 ];
 

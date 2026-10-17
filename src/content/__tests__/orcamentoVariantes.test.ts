@@ -1,4 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("@/integrations/supabase/client", () => ({
+  supabase: {
+    rpc: () => new Promise(() => {}),
+    from: () => ({ select: () => new Promise(() => {}) }),
+  },
+}));
+
 import { topoVarianteDaBusca } from "@/content/pages/orcamento";
 import { CLIENTES_FORA_DA_CAPITAL_PCT, CLIENTES_SHORT_STAY_PCT } from "@/content/provas";
 
