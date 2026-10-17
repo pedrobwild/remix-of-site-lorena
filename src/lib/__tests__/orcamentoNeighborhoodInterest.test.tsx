@@ -7,7 +7,10 @@ const record = vi.hoisted(() => vi.fn());
 vi.mock("@/lib/analytics", () => ({ trackNeighborhoodInterest: record }));
 vi.mock("@/components/BwaNav", () => ({ default: () => null }));
 vi.mock("@/components/BwaFooter", () => ({ default: () => null }));
-vi.mock("@/lib/useSeo", () => ({ useSeo: () => {} }));
+vi.mock("@/lib/useSeo", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/useSeo")>()),
+  useSeo: () => {},
+}));
 vi.mock("@/lib/trackCta", () => ({ useCtaClickTracking: () => {} }));
 vi.mock("@/lib/ga4", () => ({ trackEvent: () => {} }));
 vi.mock("@/lib/useLeadSubmit", () => ({
