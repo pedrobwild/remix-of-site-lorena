@@ -27,3 +27,26 @@ it("compartilha os avisos INSERT/UPDATE, agrupa a coleta e encerra ao fechar tod
   expect(second).toHaveBeenCalledTimes(2);
   expect(mocks.remove).toHaveBeenCalledWith(channel);
 });
+it("relê durante falha de conexão e ao voltar online, mas encerra tudo no unmount", () => {
+  vi.useFakeTimers();
+  const channel = { on: vi.fn(() => channel), subscribe: vi.fn((callback) => { mocks.subscribed = callback; return channel; }) };
+  mocks.create.mockReturnValue({ channel: vi.fn(() => channel), removeChannel: mocks.remove });
+  const listener = vi.fn();
+  const stop = subscribeRadarCollections(listener);
+  mocks.subscribed?.("CHANNEL_ERROR");
+  vi.advanceTimersByTime(30_300);
+  expect(listener).toHaveBeenCalledTimes(1);
+  mocks.subscribed?.("SUBSCRIBED");
+  vi.advanceTimersByTime(300);
+  expect(listener).toHaveBeenCalledTimes(2);
+  vi.advanceTimersByTime(30_000);
+  expect(listener).toHaveBeenCalledTimes(2);
+  window.dispatchEvent(new Event("online"));
+  vi.advanceTimersByTime(300);
+  expect(listener).toHaveBeenCalledTimes(3);
+  stop();
+  mocks.subscribed?.("SUBSCRIBED");
+  window.dispatchEvent(new Event("online"));
+  vi.advanceTimersByTime(60_000);
+  expect(listener).toHaveBeenCalledTimes(3);
+});

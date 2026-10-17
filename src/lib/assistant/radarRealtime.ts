@@ -12,15 +12,38 @@ export function subscribeRadarCollections(listener: () => void) {
   if (!close) {
     const client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
     let timer: ReturnType<typeof setTimeout> | undefined;
+    let connected = false;
+    let stopped = false;
     const notify = () => {
+      if (stopped) return;
       clearTimeout(timer);
       timer = setTimeout(() => { for (const callback of listeners) callback(); }, 300);
     };
+    // Releitura da fonte pública, nunca cópia local, se o canal estiver indisponível.
+    const fallback = setInterval(() => {
+      if (!connected && document.visibilityState === "visible" && navigator.onLine) notify();
+    }, 30_000);
+    const resume = () => {
+      if (document.visibilityState === "visible" && navigator.onLine) notify();
+    };
+    window.addEventListener("online", resume);
+    document.addEventListener("visibilitychange", resume);
     const channel = client.channel("radar-coletas-abertas")
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "radar_observacoes", filter: "cidade=eq.São Paulo" }, notify)
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "radar_observacoes", filter: "cidade=eq.São Paulo" }, notify)
-      .subscribe((status) => { if (status === "SUBSCRIBED") notify(); });
-    close = () => { clearTimeout(timer); void client.removeChannel(channel); };
+      .subscribe((status) => {
+        if (stopped) return;
+        connected = status === "SUBSCRIBED";
+        if (connected) notify();
+      });
+    close = () => {
+      stopped = true;
+      clearTimeout(timer);
+      clearInterval(fallback);
+      window.removeEventListener("online", resume);
+      document.removeEventListener("visibilitychange", resume);
+      void client.removeChannel(channel);
+    };
   }
   return () => {
     listeners.delete(listener);

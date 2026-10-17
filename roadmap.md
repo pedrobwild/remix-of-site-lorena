@@ -56,3 +56,4 @@
 
 - [x] Mostrar origens individuais de chegadas consentidas a /orcamento no SEO sem vínculo com pedidos; 10 testes passam, painel autenticado conferido com 181 chegadas / 140 visitantes e paginação, sem overflow em 320/414 px; não publicado
 - [x] Registrar bairros informados em /coletas-por-bairro e /orcamento, inclusive após aceitar cookies na página aberta; captura conferida no navegador sem inserir visitas artificiais, agregação do painel coberta por testes; não publicado
+- [x] Conectar histórico público aos avisos existentes do Radar e incluir recuperação por releitura a cada 30 segundos durante falhas; 5 testes passam e releitura da fonte real conferida no navegador; solicitar publicação
