@@ -118,6 +118,7 @@ export const leadSchema = z.object({
   fbc: looseText,
   event_id: looseText,
   consent_marketing: z.union([z.boolean(), z.null()]).optional(),
+  privacy_visited_before_submit: z.boolean().nullable().optional(),
 });
 
 export type RawLead = z.infer<typeof leadSchema>;
@@ -155,6 +156,7 @@ export type CleanLead = {
   consent_marketing: boolean | null;
   /** Id compartilhado com o Pixel do navegador (deduplicação no Meta). */
   event_id: string | null;
+  privacy_visited_before_submit: boolean | null;
 };
 
 /** Colunas que chegaram com a Fase 1 (atribuição/CAPI) — ver insertLead. */
@@ -170,6 +172,7 @@ export const ATTRIBUTION_COLUMNS = [
   "fbc",
   "consent_marketing",
   "event_id",
+  "privacy_visited_before_submit",
 ] as const;
 
 function cut(value: unknown, max: number): string | null {
@@ -257,6 +260,7 @@ export function sanitizeLead(raw: RawLead): CleanLead {
     fbc: consent === true ? matching(raw.fbc, FIELD_LIMITS.fbc, FBC_RE) : null,
     consent_marketing: consent,
     event_id: matching(raw.event_id, FIELD_LIMITS.event_id, EVENT_ID_RE),
+    privacy_visited_before_submit: consent === true && formPath === "/orcamento" && typeof raw.privacy_visited_before_submit === "boolean" ? raw.privacy_visited_before_submit : null,
   };
 }
 

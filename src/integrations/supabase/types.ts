@@ -704,6 +704,7 @@ export type Database = {
           name: string
           objetivo: string | null
           planta: string | null
+          privacy_visited_before_submit: boolean | null
           referrer: string | null
           status: string
           updated_at: string
@@ -749,6 +750,7 @@ export type Database = {
           name: string
           objetivo?: string | null
           planta?: string | null
+          privacy_visited_before_submit?: boolean | null
           referrer?: string | null
           status?: string
           updated_at?: string
@@ -794,6 +796,7 @@ export type Database = {
           name?: string
           objetivo?: string | null
           planta?: string | null
+          privacy_visited_before_submit?: boolean | null
           referrer?: string | null
           status?: string
           updated_at?: string

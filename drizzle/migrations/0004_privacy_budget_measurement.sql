@@ -1,0 +1,4 @@
+ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS privacy_visited_before_submit boolean;
+COMMENT ON COLUMN public.leads.privacy_visited_before_submit IS 'Visita a /privacidade na mesma sessão antes do envio de /orcamento, somente com consentimento; NULL = não medido. Não inferir histórico.';
+CREATE OR REPLACE FUNCTION public.guard_lead_privacy_measurement() RETURNS trigger LANGUAGE plpgsql SET search_path = public AS $$ BEGIN IF NEW.consent_marketing IS DISTINCT FROM true OR NEW.form_path IS DISTINCT FROM '/orcamento' THEN NEW.privacy_visited_before_submit := NULL; END IF; RETURN NEW; END $$;
+CREATE TRIGGER guard_lead_privacy_measurement BEFORE INSERT OR UPDATE OF consent_marketing, form_path, privacy_visited_before_submit ON public.leads FOR EACH ROW EXECUTE FUNCTION public.guard_lead_privacy_measurement();

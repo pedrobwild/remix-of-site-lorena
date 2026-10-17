@@ -9,7 +9,12 @@ export const Route = createFileRoute("/admin/seo/")({
   component: RouteComponent,
   head: () => ({
     meta: [
-      { title: "Painel · Bewild" },
+      { title: "SEO e privacidade · Painel Bewild" },
+      { name: "description", content: "Configurações de SEO, privacidade e origens dos pedidos de orçamento da Bewild." },
+      { property: "og:title", content: "SEO e privacidade · Painel Bewild" },
+      { property: "og:description", content: "Configurações de SEO, privacidade e origens dos pedidos de orçamento da Bewild." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),

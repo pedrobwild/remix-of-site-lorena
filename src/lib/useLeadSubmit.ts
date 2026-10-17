@@ -9,7 +9,7 @@
  * mesmo sem entrega, `setState` depois de sair da página).
  */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { readPersistedAttribution } from "@/lib/analytics";
+import { readPersistedAttribution, readPrivacyVisitForLead } from "@/lib/analytics";
 import { resolveLeadAttribution, type LeadAttribution } from "@/lib/campaignParams";
 import { reportLead } from "@/lib/conversions";
 import { isConsentAccepted } from "@/lib/cookieConsent";
@@ -164,7 +164,7 @@ export function useLeadSubmit({ method, timeoutMs }: { method: string; timeoutMs
       const eventId = eventIdRef.current ?? (eventIdRef.current = newEventId());
       let result: SendLeadResult;
       try {
-        result = await sendLead(payload, {
+        result = await sendLead({ ...payload, privacy_visited_before_submit: payload.form_path === "/orcamento" ? readPrivacyVisitForLead() : null }, {
           ...(timeoutMs ? { timeoutMs } : {}),
           tracking: collectLeadTracking(eventId),
         });

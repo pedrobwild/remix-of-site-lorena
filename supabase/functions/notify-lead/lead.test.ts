@@ -19,6 +19,12 @@ const parse = (body: unknown) => {
   return sanitizeLead(parsed.data);
 };
 
+Deno.test("visita à privacidade somente para orçamento consentido", () => {
+  assertEquals(parse({ form_path: "/orcamento", consent_marketing: true, privacy_visited_before_submit: true }).privacy_visited_before_submit, true);
+  assertEquals(parse({ form_path: "/orcamento", consent_marketing: false, privacy_visited_before_submit: true }).privacy_visited_before_submit, null);
+  assertEquals(parse({ form_path: "/contato", consent_marketing: true, privacy_visited_before_submit: true }).privacy_visited_before_submit, null);
+});
+
 Deno.test("campos longos são cortados, não derrubam o lead", () => {
   const lead = parse({ name: "n".repeat(500), whatsapp: "11912345678", message: "m".repeat(9000) });
   assertEquals(lead.name.length, FIELD_LIMITS.name);

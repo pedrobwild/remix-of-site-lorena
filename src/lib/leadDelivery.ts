@@ -85,6 +85,7 @@ export type LeadPayload = {
   consent_marketing?: boolean | null;
   fbp?: string | null;
   fbc?: string | null;
+  privacy_visited_before_submit?: boolean | null;
 };
 
 /**

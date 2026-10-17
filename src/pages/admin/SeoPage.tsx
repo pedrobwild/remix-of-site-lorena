@@ -17,11 +17,12 @@ import {
 import { useUnsavedChangesGuard } from "@/lib/useUnsavedChangesGuard";
 import { parseBastidoresPosts } from "@/lib/bastidoresJsonLd";
 import { PUBLIC_PAGES, type PageSeoOverride, type PagesSeoMap } from "@/lib/publicPages";
+import PrivacySeoPanel from "@/components/admin/PrivacySeoPanel";
 
 const SITEMAP_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sitemap`;
 const ROBOTS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/robots`;
 
-type TabKey = "home" | "pages" | "bastidores" | "global" | "verify" | "analytics" | "local" | "sitemap" | "audit" | "guide";
+type TabKey = "home" | "pages" | "bastidores" | "global" | "verify" | "analytics" | "privacy" | "local" | "sitemap" | "audit" | "guide";
 
 const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "home", label: "Home" },
@@ -30,6 +31,7 @@ const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "global", label: "Global" },
   { key: "verify", label: "Verificações" },
   { key: "analytics", label: "Analytics & Pixels" },
+  { key: "privacy", label: "Privacidade e termos" },
   { key: "local", label: "Negócio local" },
   { key: "sitemap", label: "Sitemap & Robots" },
   { key: "audit", label: "Auditoria" },
@@ -323,6 +325,7 @@ export default function SeoPage() {
       {tab === "global" && <GlobalTab s={s} patch={patch} />}
       {tab === "verify" && <VerifyTab s={s} patch={patch} />}
       {tab === "analytics" && <AnalyticsTab s={s} patch={patch} />}
+      {tab === "privacy" && <PrivacySeoPanel />}
       {tab === "local" && <LocalTab s={s} patch={patch} />}
       {tab === "sitemap" && (
         <SitemapTab s={s} onMarkSubmitted={markSubmitted} />
