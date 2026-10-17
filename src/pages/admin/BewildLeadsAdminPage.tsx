@@ -23,6 +23,7 @@ import { MessageCircle } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import AdminAlert from "@/components/admin/AdminAlert";
 import MetaLeadsPanel from "@/components/admin/MetaLeadsPanel";
+import LeadsTrafficPanel from "@/components/admin/LeadsTrafficPanel";
 import { CrmSyncBar, LeadCrmStatus, LeadFunnelHistory } from "@/components/admin/LeadCrmStatus";
 import { supabase } from "@/integrations/supabase/client";
 import { LEAD_CANAIS, LEAD_CANAL_LABEL, leadCanal, type LeadCanal } from "@/lib/leadSource";
@@ -130,12 +131,13 @@ const ORIGEM_OPTIONS: { value: "all" | LeadOrigem; label: string }[] = [
   { value: "outro", label: "Não identificado" },
 ];
 
-type LeadsTab = "site" | "meta";
+type LeadsTab = "site" | "meta" | "trafego";
 
-/** Aba inicial pela URL: `/admin/leads?aba=meta` abre os formulários da Meta. */
+/** Aba inicial pela URL: `/admin/leads?aba=meta` abre os formulários da Meta; `?aba=trafego` abre os gráficos. */
 function readTab(): LeadsTab {
   try {
-    return new URLSearchParams(window.location.search).get("aba") === "meta" ? "meta" : "site";
+    const aba = new URLSearchParams(window.location.search).get("aba");
+    return aba === "meta" || aba === "trafego" ? aba : "site";
   } catch {
     return "site";
   }
@@ -145,8 +147,8 @@ function readTab(): LeadsTab {
 function writeTab(tab: LeadsTab) {
   try {
     const url = new URL(window.location.href);
-    if (tab === "meta") url.searchParams.set("aba", "meta");
-    else url.searchParams.delete("aba");
+    if (tab === "site") url.searchParams.delete("aba");
+    else url.searchParams.set("aba", tab);
     window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
   } catch {
     /* sem History API: a aba só não fica na URL */
@@ -319,6 +321,15 @@ export default function BewildLeadsAdminPage() {
       <BewildAdminShell {...shellProps}>
         <LeadsTabs tab={tab} onChange={switchTab} />
         <MetaLeadsPanel />
+      </BewildAdminShell>
+    );
+  }
+
+  if (tab === "trafego") {
+    return (
+      <BewildAdminShell {...shellProps}>
+        <LeadsTabs tab={tab} onChange={switchTab} />
+        <LeadsTrafficPanel />
       </BewildAdminShell>
     );
   }
@@ -651,6 +662,15 @@ function LeadsTabs({ tab, onChange }: { tab: LeadsTab; onChange: (t: LeadsTab) =
         onClick={() => onChange("meta")}
       >
         Formulários Meta
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={tab === "trafego"}
+        className={tab === "trafego" ? "is-active" : ""}
+        onClick={() => onChange("trafego")}
+      >
+        Tráfego
       </button>
     </div>
   );
