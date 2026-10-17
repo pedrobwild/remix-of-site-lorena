@@ -76,16 +76,25 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
               {/* Singular de propósito: "reforma de studio" é a busca desta página. */}
               <h1 className="bwa-title">
                 Reforma de studio em São Paulo,{" "}
-                <em>entregue pronto para morar, alugar ou anunciar no Airbnb.</em>
+                <em>entregue pronto para alugar, anunciar no Airbnb ou morar.</em>
               </h1>
               <p className="bwa-servico-lead">
-                A Bewild é especialista em reforma completa de studios e
-                apartamentos em São Paulo, para morar ou para locação
-                (short stay e longa duração). Projeto, obra, marcenaria sob
+                A Bewild é uma empresa de arquitetura e reforma especializada em
+                studios e apartamentos pequenos em São Paulo, para locação
+                (short stay e longa duração) ou para morar. Projeto, obra, marcenaria sob
                 medida e mobília em um único contrato, com preço fechado, prazo
                 em contrato e 5 anos de garantia. Mais de {REFORMAS_ENTREGUES} reformas
                 entregues, a maioria em studios de 20 a 35 m².
               </p>
+              <div className="bwa-servico-cta-actions bwa-servico-top-actions">
+                <a className="bwa-button" href={CTA_HREF} data-cta="servico-reforma-studio-sp-topo">
+                  Peça seu orçamento <span aria-hidden="true">→</span>
+                </a>
+                <a className="bwa-servico-whats" href={whatsappHref()} target="_blank" rel="noopener noreferrer">
+                  Falar no WhatsApp <span aria-hidden="true">→</span>
+                </a>
+                <p className="bwa-servico-cta-note">Sem custo e sem compromisso</p>
+              </div>
             </div>
           </div>
         </section>
@@ -97,19 +106,19 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
             </h2>
             <ul className="bwa-servico-cards">
               <li>
-                <h3>Para morar</h3>
-                <p>
-                  Você define layout, materiais e marcenaria com o arquiteto,
-                  aprova em 3D e recebe o studio com tudo instalado.
-                </p>
-              </li>
-              <li>
                 <h3>Para alugar ou vender</h3>
                 <p>
                   Projeto pensado para a foto do anúncio, ocupação e manutenção
                   simples, com entrega pronta para anunciar. O contexto de
                   mercado está no{" "}
                   <RadarLink label="Radar Bewild" />.
+                </p>
+              </li>
+              <li>
+                <h3>Para morar</h3>
+                <p>
+                  Você define layout, materiais e marcenaria com o arquiteto,
+                  aprova em 3D e recebe o studio com tudo instalado.
                 </p>
               </li>
             </ul>
@@ -129,6 +138,22 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
                 reforma de apartamento em São Paulo
               </a>
               .
+            </p>
+          </div>
+        </section>
+
+        <section className="bwa-servico-block" aria-labelledby="apartamento-pequeno">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="apartamento-pequeno">Reforma de apartamento pequeno, kitnet e studio</h2>
+            <p className="bwa-servico-text">
+              Num studio de 25 m², cama, bancada e circulação disputam os mesmos metros.
+              Por isso o layout vem antes do acabamento: o estudo de layout define onde
+              ficam marcenaria, tomadas e pontos de água, e só então sai o orçamento item
+              a item. No studio para alugar, é esse estudo que decide quantos hóspedes
+              cabem e o que aparece na foto do anúncio. A maioria das obras da Bewild é
+              em studios e apartamentos compactos de 20 a 35 m², o que muita gente chama
+              de kitnet; veja um <a href="/conteudos/estudo-de-layout-studio-25-m2">estudo de layout de 25 m²</a>{" "}
+              e o <a href="/conteudos/antes-e-depois-studio-26-m2-vila-madalena">antes e depois de um studio de 26 m² na Vila Madalena</a>.
             </p>
           </div>
         </section>
@@ -168,6 +193,19 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
               preferir, a operação pode ficar com você ou com quem você escolher, sem exclusividade:
               a comparação está em{" "}
               <a href="/conteudos/gestao-propria-vs-gestora">gestão própria ou gestora profissional</a>.
+            </p>
+          </div>
+        </section>
+
+        <section className="bwa-servico-block" aria-labelledby="arquitetura">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="arquitetura">Arquitetura e reforma no mesmo contrato</h2>
+            <p className="bwa-servico-text">
+              O projeto é da equipe de arquitetura da Bewild, com o arquiteto Thiago
+              Dantas (CAU A162437-7) como responsável técnico, e a obra é executada por
+              time próprio. O projeto aprovado em 3D vira o escopo do contrato, e o que
+              está nele tem preço fechado. O plano de reforma da NBR 16280, com ART ou
+              RRT, vai ao síndico antes da obra.
             </p>
           </div>
         </section>

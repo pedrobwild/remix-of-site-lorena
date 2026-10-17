@@ -21,9 +21,9 @@ export const CANONICAL = "/reforma-de-studio-sao-paulo";
 /** Resposta do prazo: mesmo texto na página e no FAQPage. */
 const PRAZO_STUDIO = "A referência é cerca de 60 dias úteis de obra. A data exata sai no contrato.";
 
-export const SEO_TITLE = "Reforma de studio em SP: morar, alugar ou Airbnb | Bewild";
+export const SEO_TITLE = "Reforma de studio e apartamento pequeno em SP | Bewild";
 export const SEO_DESCRIPTION =
-  "Reforma de studio em São Paulo para morar, alugar ou anunciar no Airbnb: projeto 3D, obra, marcenaria e mobília em um contrato, preço fechado, 60 dias úteis e 5 anos de garantia.";
+  "Reforma de studio em São Paulo e apartamento pequeno para alugar, Airbnb ou morar: projeto 3D, obra, marcenaria e mobília num contrato, com preço fechado.";
 
 /** Seção "Reforma de studio para Airbnb e short stay" (rodada 3, 06/10/2026). */
 export const AIRBNB_CHECK: { n: string; t: string }[] = [
@@ -36,6 +36,10 @@ export const AIRBNB_CHECK: { n: string; t: string }[] = [
 ];
 
 export const FAQ: { q: string; a: string; node?: ReactNode }[] = [
+  {
+    q: "A Bewild faz o projeto de arquitetura ou só a obra?",
+    a: "As duas coisas, no mesmo contrato: arquitetura, engenharia e empreita sob a mesma responsabilidade. Quem projeta responde pela obra, e o preço fechado vale para os dois.",
+  },
   {
     q: "Vale a pena reformar um studio para Airbnb?",
     a: "Depende de bairro, convenção do condomínio e operação. A Bewild não garante renda nem ocupação.",
@@ -122,11 +126,11 @@ export const STUDIO_SP_JSONLD: Array<Record<string, unknown>> = [
     "@type": "Service",
     "@id": `https://bewild.com.br${CANONICAL}#service`,
     // name = H1 da página; description = texto de abertura visível (sem contagens).
-    name: "Reforma de studio em São Paulo, entregue pronto para morar, alugar ou anunciar no Airbnb.",
+    name: "Reforma de studio em São Paulo, entregue pronto para alugar, anunciar no Airbnb ou morar.",
     alternateName: "Reforma completa de studios em São Paulo",
     serviceType: "Reforma de studio",
     description:
-      "A Bewild é especialista em reforma completa de studios e apartamentos em São Paulo, para morar ou para locação (short stay e longa duração). Projeto, obra, marcenaria sob medida e mobília em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia.",
+      "A Bewild é uma empresa de arquitetura e reforma especializada em studios e apartamentos pequenos em São Paulo, para locação (short stay e longa duração) ou para morar. Projeto, obra, marcenaria sob medida e mobília em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia.",
     provider: { "@id": "https://bewild.com.br/#org" },
     areaServed: { "@type": "City", name: "São Paulo" },
     url: `https://bewild.com.br${CANONICAL}`,
