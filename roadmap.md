@@ -50,4 +50,6 @@
 - [x] Aba SEO de contratos fechados com bairro, status e data do pedido; leitura autenticada de 1 pedido ganho, filtro, atualização e 9 testes conferidos; não publicado
 - [ ] Integrar valor e data de fechamento reais do Bwild Engine à aba Contratos fechados — bloqueado na origem: site-lead-stages responde HTTP 200, mas só expõe etapas; requer ampliar API protegida no projeto Bwild Visual Budgets (snapshot aqui é somente leitura), com dados por negócio/version_group_id, closed_at e valor canônico; preservar múltiplos contratos e nunca inferir recebimentos
 - [x] Implementar atualização do histórico aberto pelos avisos INSERT/UPDATE existentes do Radar, sem cópias ou auditoria privada; 17 testes passam, histórico real de Pinheiros conferido; não publicado
-- [ ] Conferir aviso real de nova coleta até a atualização na tela — conexão de avisos do Radar falhou no navegador de teste; requer conexão disponível e nova coleta legítima na origem, sem inserir dados artificiais
+- [ ] Conferir aviso real de nova coleta até a atualização na tela — nova tentativa após solicitar publicação em 17/10 também falhou na conexão de avisos do Radar (nenhum aviso recebido em um minuto); requer conexão disponível e nova coleta legítima na origem, sem inserir dados artificiais
+
+- [x] Solicitar publicação da atualização automática do histórico; testes específicos passam e painel autenticado lê coleta real de Pinheiros de 13/10/2026
