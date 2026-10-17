@@ -4,10 +4,11 @@ name: Production build
 # Falha o job (exit != 0) se qualquer etapa falhar:
 #   1. routes:check  → paridade de rotas ↔ edge function
 #   2. lint          → ESLint (inclui scripts/)
-#   3. test          → suíte Vitest (jsdom), inclusive o guard de src/test/setup.ts
+#   3. verify-types  → tsc --noEmit (o vite build não checa tipos)
+#   4. test          → suíte Vitest (jsdom), inclusive o guard de src/test/setup.ts
 #                      (setupNoTsExpectError) e os testes dos scripts de build
-#   4. prebuild      → sitemap + paridade de rotas (via hook prebuild)
-#   5. vite build    → bundle de produção (TanStack Start)
+#   5. prebuild      → sitemap + paridade de rotas (via hook prebuild)
+#   6. vite build    → bundle de produção (TanStack Start)
 #
 # Gerenciador de pacotes: bun (`bun.lock`, desde a migração para TanStack Start
 # em 29/09/2026). O workflow antigo rodava `npm ci` com um package-lock.json que
@@ -57,6 +58,11 @@ jobs:
         # Falha o job se houver erros de ESLint. Warnings são aceitos por
         # enquanto (cleanups incrementais ficam para PRs do plano do audit).
         run: bun run lint
+
+      - name: Typecheck (tsc --noEmit)
+        # O vite build só transpila; erro de tipo passaria direto sem este
+        # passo. O sandbox da Lovable não roda tsc, então o CI é quem garante.
+        run: bun run verify-types
 
       - name: Tests (vitest run)
         # Roda a suíte completa antes do build. Regressões de SEO/roteador

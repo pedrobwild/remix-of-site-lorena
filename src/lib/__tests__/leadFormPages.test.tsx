@@ -160,7 +160,10 @@ describe("/o — placa de obra (PUB-06)", () => {
     expect(primeiro).toMatchObject({ form_path: "/o", location: "Pinheiros", utm_source: "qr", utm_medium: "placa" });
     sendLeadMock.mockResolvedValueOnce({ delivered: false, timedOut: true });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Tentar enviar de novo" })));
-    expect(sendLeadMock.mock.calls[1][0]).toBe(primeiro);
+    // Reenvio manda exatamente os mesmos dados. Compara por valor: o
+    // useLeadSubmit monta uma cópia do payload a cada envio (acrescenta
+    // privacy_visited_before_submit), então a referência do objeto muda.
+    expect(sendLeadMock.mock.calls[1][0]).toStrictEqual(primeiro);
     expect(screen.getByText("Seu contato pode já ter chegado.")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Tentar enviar de novo" })).toBeNull();
     expect(screen.getByRole("button", { name: "Continuar para a demonstração" })).toBeInTheDocument();
