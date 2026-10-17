@@ -8,11 +8,10 @@ import { useRadarCollectionsUpdates } from "@/hooks/useRadarCollectionsUpdates";
 export default function RadarCollectionsPanel() {
   const [bairro, setBairro] = useState("");
   const [refresh, setRefresh] = useState(0);
-  const revision = useRadarCollectionsUpdates(Boolean(bairro));
+  const revision = useRadarCollectionsUpdates();
   const [data, setData] = useState<RadarColetasPage | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [checkedAt, setCheckedAt] = useState<Date | null>(null);
   useEffect(() => {
     let active = true;
     setLoading(true); setError(false); setData(null);
@@ -20,7 +19,7 @@ export default function RadarCollectionsPanel() {
       if (!active) return;
       setData(result);
       setError(result.bairros === null || (Boolean(result.bairro) && result.coletas === null));
-      setCheckedAt(new Date()); setLoading(false);
+      setLoading(false);
     }).catch(() => { if (active) { setError(true); setLoading(false); } });
     return () => { active = false; };
   }, [bairro, refresh, revision]);
@@ -40,7 +39,6 @@ export default function RadarCollectionsPanel() {
       </select>
     </label>
     {loading ? <p role="status">Consultando histórico do Radar…</p> : error ? <p role="alert">O histórico de coletas está indisponível agora.</p> : <div aria-live="polite" className="space-y-4">
-      {checkedAt && <p className="text-sm text-muted-foreground">Consulta atualizada em {checkedAt.toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })} · São Paulo</p>}
       {!bairro ? <p>Selecione um bairro.</p> : !data?.bairro ? <p>Este bairro não está disponível na base atual do Radar.</p> : <>
         <h3>{data.bairro}</h3>
         <ul className="grid min-w-0 gap-4 lg:grid-cols-2">{blocks.map((block, index) => <li key={index} className="min-w-0 whitespace-pre-line break-words border-t border-border pt-4">{index === 0 ? block.split("\n").slice(1).join("\n") : block}</li>)}</ul>

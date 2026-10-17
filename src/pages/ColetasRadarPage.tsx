@@ -13,11 +13,11 @@ import "@/styles/post.css";
 export default function ColetasRadarPage({ data: initialData }: { data: RadarColetasPage }) {
   const [liveData, setLiveData] = useState<{ initial: RadarColetasPage; value: RadarColetasPage } | null>(null);
   const data = liveData?.initial === initialData ? liveData.value : initialData;
-  const revision = useRadarCollectionsUpdates(Boolean(initialData.bairro));
+  const revision = useRadarCollectionsUpdates();
   useEffect(() => {
-    if (!revision || !initialData.bairro) return;
+    if (!revision) return;
     let active = true;
-    void getRadarColetas({ data: { bairro: initialData.bairro } }).then((value) => {
+    void getRadarColetas({ data: { bairro: initialData.bairro ?? undefined } }).then((value) => {
       if (active) setLiveData({ initial: initialData, value });
     }).catch(() => {
       if (active) setLiveData({ initial: initialData, value: { ...initialData, coletas: null } });

@@ -54,6 +54,7 @@ const SPA_ONLY_ALLOWED = new Set([
   "/admin/login",
   "/admin/analytics",
   "/admin/seo",
+  "/admin/coletas-radar",
   "/admin/seo/404",
   "/admin/indexacao",
   "/admin/rastreamento",
