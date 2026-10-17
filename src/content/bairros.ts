@@ -11,7 +11,7 @@
  * as frases que não mudam quando um projeto entra ou sai.
  */
 import { CONTRATOS_ANALISADOS } from "@/content/provas";
-import { CUSTO_M2_MEDIANO, ORCAMENTO_MEDIANO } from "@/content/baseCusto";
+import { BASE_2025, CUSTO_M2_MEDIANO, CUSTO_M2_MEDIANO_2025, ORCAMENTO_MEDIANO } from "@/content/baseCusto";
 
 export type BairroFaq = { q: string; a: string };
 export type BairroPost = { href: string; label: string };
@@ -56,7 +56,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
     intro: [
       "Pinheiros é o bairro onde a Bewild mais reformou: são studios e apartamentos compactos de 21,43 a 41,14 m², em prédios como Do It Pinheiros, Highlights Pinheiros, My One Estação Fradique Coutinho, Spotlights Pinheiros e Pinheiros by Passarelli. Dos nove contratos de 2025 no bairro, sete foram para short stay, e cinco clientes moram fora da capital: acompanharam a obra pelo Bwild Workflow e receberam o apartamento pronto.",
       "O bairro junta metrô (estações Faria Lima, Fradique Coutinho e Pinheiros, da Linha 4-Amarela, além da CPTM), os escritórios da Faria Lima e a gastronomia da Rua dos Pinheiros e da Vila Madalena, ao lado. No levantamento da GuestFavorites de 2026, Pinheiros tem 62% de ocupação mediana, diária média de R$ 300 e 2.424 anúncios ativos: a combinação mais equilibrada entre diária, ocupação e demanda o ano inteiro.",
-      "Nos contratos Bewild de 2025, a reforma completa em Pinheiros teve mediana de R$ 2.628 por m², acima da mediana da cidade (R$ 2.389): o padrão de acabamento sobe junto com a diária. Em prédio novo, vale conferir na convenção duas coisas antes de fechar o escopo: o padrão de envidraçamento da varanda e a infraestrutura de ar-condicionado.",
+      `Nos contratos Bewild de 2025, a reforma completa em Pinheiros teve mediana de R$ 2.628 por m², acima da mediana da cidade na mesma base (${CUSTO_M2_MEDIANO_2025} por m², nas ${BASE_2025.obras} obras completas de 2025): o padrão de acabamento sobe junto com a diária. Em prédio novo, vale conferir na convenção duas coisas antes de fechar o escopo: o padrão de envidraçamento da varanda e a infraestrutura de ar-condicionado.`,
     ],
     faq: [
       {
@@ -209,7 +209,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
     intro: [
       "Em Perdizes a Bewild reformou studios de 24 a 29,73 m² em prédios como Cyrela by You Perdizes, Soma Perdizes, Think Tanabi, The Collection PUC e Nex One Estação Perdizes. O bairro tem a PUC-SP, o Allianz Parque e a Avenida Sumaré, e faz divisa com Pompeia, Vila Madalena e Pacaembu.",
       "No levantamento da GuestFavorites de 2026, Perdizes teve a menor ocupação mediana entre os bairros acompanhados, 53%, com diária média de R$ 254 e 1.752 anúncios ativos. Mesmo assim, foi o terceiro bairro em contratos Bewild em 2025: sete, seis deles para short stay. É um bairro em que a qualidade do anúncio separa quem reserva de quem não reserva.",
-      "Nos contratos Bewild de 2025, a reforma completa em Perdizes teve mediana de R$ 2.493 por m², acima da mediana da cidade (R$ 2.389). Parte dos lançamentos da região é HIS ou HMP, classificações que não permitem locação por temporada; isso precisa ser conferido na documentação antes da compra.",
+      `Nos contratos Bewild de 2025, a reforma completa em Perdizes teve mediana de R$ 2.493 por m², acima da mediana da cidade na mesma base (${CUSTO_M2_MEDIANO_2025} por m², nas ${BASE_2025.obras} obras completas de 2025). Parte dos lançamentos da região é HIS ou HMP, classificações que não permitem locação por temporada; isso precisa ser conferido na documentação antes da compra.`,
     ],
     faq: [
       {

@@ -1,6 +1,8 @@
 import { formatAreaM2 } from "@/lib/formatArea";
 import { bairroAreaRange, bairroDescription, bairroTitle } from "@/lib/bairroSeo";
 import { bairroContent } from "@/content/bairros";
+import { radarBairroLink } from "@/lib/radarLinks";
+import { NEW_TAB_SUFFIX, RADAR_LINK_ATTRS } from "@/config/site";
 /**
  * BairroPage — /reforma/<bairro>. Lista os projetos reais entregues num
  * bairro de São Paulo (só bairros com MIN_PROJECTS_PER_NEIGHBORHOOD+).
@@ -196,6 +198,21 @@ export default function BairroPage({
                     {t}
                   </p>
                 ))}
+                {(() => {
+                  // Dado de mercado do bairro fica no Radar; aqui fica a reforma.
+                  const radar = radarBairroLink(slug, label);
+                  return (
+                    <p style={{ margin: "0 0 16px", fontSize: 17, lineHeight: 1.65 }}>
+                      Vai alugar?{" "}
+                      <a href={radar.href} {...RADAR_LINK_ATTRS} style={{ textDecoration: "underline" }}>
+                        {radar.label}
+                        <span className="sr-only">{NEW_TAB_SUFFIX}</span>
+                        <span aria-hidden="true"> ↗</span>
+                      </a>
+                      .
+                    </p>
+                  );
+                })()}
 
                 <h2 className="bwh-mono bwh-label" style={{ margin: "40px 0 16px" }}>
                   Perguntas frequentes sobre reforma em {label}
