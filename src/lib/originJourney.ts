@@ -1,7 +1,7 @@
 import { leadCanal, LEAD_CANAIS, type LeadSourceInput } from "@/lib/leadSource";
 
 export type JourneyEvent = LeadSourceInput & {
-  id?: string; created_at?: string; utm_campaign?: string | null; landing_path?: string | null;
+  id?: string; created_at?: string | null; utm_campaign?: string | null; landing_path?: string | null;
   event_type: string; path: string | null; session_id: string | null;
   visitor_id: string | null; scroll_depth: number | null; duration_ms: number | null;
   value?: unknown;
