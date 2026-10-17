@@ -23,6 +23,7 @@ import { MessageCircle } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import AdminAlert from "@/components/admin/AdminAlert";
 import MetaLeadsPanel from "@/components/admin/MetaLeadsPanel";
+import BudgetRequestsPanel from "@/components/admin/BudgetRequestsPanel";
 import { CrmSyncBar, LeadCrmStatus, LeadFunnelHistory } from "@/components/admin/LeadCrmStatus";
 import { supabase } from "@/integrations/supabase/client";
 import { LEAD_CANAIS, LEAD_CANAL_LABEL, leadCanal, type LeadCanal } from "@/lib/leadSource";
@@ -130,12 +131,13 @@ const ORIGEM_OPTIONS: { value: "all" | LeadOrigem; label: string }[] = [
   { value: "outro", label: "Não identificado" },
 ];
 
-type LeadsTab = "site" | "meta";
+type LeadsTab = "site" | "meta" | "orcamentos";
 
 /** Aba inicial pela URL: `/admin/leads?aba=meta` abre os formulários da Meta. */
 function readTab(): LeadsTab {
   try {
-    return new URLSearchParams(window.location.search).get("aba") === "meta" ? "meta" : "site";
+    const value = new URLSearchParams(window.location.search).get("aba");
+    return value === "meta" || value === "orcamentos" ? value : "site";
   } catch {
     return "site";
   }
@@ -145,7 +147,7 @@ function readTab(): LeadsTab {
 function writeTab(tab: LeadsTab) {
   try {
     const url = new URL(window.location.href);
-    if (tab === "meta") url.searchParams.set("aba", "meta");
+    if (tab !== "site") url.searchParams.set("aba", tab);
     else url.searchParams.delete("aba");
     window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
   } catch {
@@ -321,6 +323,13 @@ export default function BewildLeadsAdminPage() {
         <MetaLeadsPanel />
       </BewildAdminShell>
     );
+  }
+
+  if (tab === "orcamentos") {
+    return <BewildAdminShell {...shellProps}>
+      <LeadsTabs tab={tab} onChange={switchTab} />
+      <BudgetRequestsPanel />
+    </BewildAdminShell>;
   }
 
   return (
@@ -633,7 +642,7 @@ export default function BewildLeadsAdminPage() {
 
 function LeadsTabs({ tab, onChange }: { tab: LeadsTab; onChange: (t: LeadsTab) => void }) {
   return (
-    <div className="bw-admin__period" style={{ marginBottom: 18 }} role="tablist" aria-label="Origem dos leads">
+    <div className="bw-admin__period bw-leads-tabs" role="tablist" aria-label="Origem dos leads">
       <button
         type="button"
         role="tab"
@@ -642,6 +651,9 @@ function LeadsTabs({ tab, onChange }: { tab: LeadsTab; onChange: (t: LeadsTab) =
         onClick={() => onChange("site")}
       >
         Site
+      </button>
+      <button type="button" role="tab" aria-selected={tab === "orcamentos"} className={tab === "orcamentos" ? "is-active" : ""} onClick={() => onChange("orcamentos")}>
+        Orçamentos
       </button>
       <button
         type="button"
