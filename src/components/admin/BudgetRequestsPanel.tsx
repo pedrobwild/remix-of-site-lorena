@@ -12,7 +12,7 @@ async function loadRequests() {
   const rows = await collectRequestPages<BudgetRequest>((from, to) => supabase.from("leads")
     .select("id,name,location,status,created_at,form_path,landing_path,crm_stage_name,crm_won,crm_lost,crm_deal_count")
     .or(leadFormOrFilter(["/orcamento"]))
-    .order("created_at", { ascending: false }).order("id", { ascending: false }).range(from, to));
+    .order("created_at", { ascending: false }).order("id", { ascending: false }).range(from, to).returns<BudgetRequest[]>());
   return selectBudgetRequests(rows);
 }
 
@@ -31,8 +31,8 @@ export default function BudgetRequestsPanel() {
       <button type="button" className="bw-admin__btn" onClick={() => void refetch()} disabled={isFetching} aria-label="Atualizar pedidos"><RefreshCw aria-hidden />Atualizar</button>
     </div>
     <div className="bw-requests__filters">
-      <label>Bairro<select value={bairro} onChange={(event) => setBairro(event.target.value)}><option value="all">Todos os bairros</option>{neighborhoods.map((group) => <option key={group.key} value={group.key}>{group.name}</option>)}</select></label>
-      <label>Status<select value={status} onChange={(event) => setStatus(event.target.value as "all" | LeadStatus)}><option value="all">Todos os status</option>{LEAD_STATUSES.map((value) => <option key={value} value={value}>{LEAD_STATUS_LABEL[value]}</option>)}</select></label>
+      <label>Bairro<select aria-label="Bairro" value={bairro} onChange={(event) => setBairro(event.target.value)}><option value="all">Todos os bairros</option>{neighborhoods.map((group) => <option key={group.key} value={group.key}>{group.name}</option>)}</select></label>
+      <label>Status<select aria-label="Status" value={status} onChange={(event) => setStatus(event.target.value as "all" | LeadStatus)}><option value="all">Todos os status</option>{LEAD_STATUSES.map((value) => <option key={value} value={value}>{LEAD_STATUS_LABEL[value]}</option>)}</select></label>
     </div>
     {isPending ? <p className="bw-admin__empty" role="status">Carregando pedidos…</p> : isError ? <div role="alert"><p>Não foi possível carregar os pedidos.</p><button type="button" className="bw-admin__btn" onClick={() => void refetch()}>Tentar novamente</button></div> : <>
       <p className="bw-requests__total" role="status"><strong>{filtered.length.toLocaleString("pt-BR")}</strong> pedidos{filtered.length !== rows.length ? ` de ${rows.length.toLocaleString("pt-BR")}` : ""}</p>
