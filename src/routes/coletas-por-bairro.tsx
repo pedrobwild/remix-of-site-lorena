@@ -14,7 +14,6 @@ export const Route = createFileRoute("/coletas-por-bairro")({
       description: "Histórico público das coletas de diária média do Radar Bewild em cada bairro de São Paulo: data, período, fonte, amostra e status.",
       path: "/coletas-por-bairro",
       ogType: "website",
-      noindex: true,
       extraMeta: [{ name: "twitter:card", content: "summary" }],
     }),
   component: RouteComponent,

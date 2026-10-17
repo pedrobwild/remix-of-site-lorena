@@ -290,6 +290,7 @@ async function main() {
     },
     // Índice dos vídeos; as páginas de cada vídeo saem mais abaixo, com <video:video>.
     { loc: `${BASE_URL}/videos`, lastmod: page("src/routes/videos.index.tsx", ["VideosPage.tsx", "src/content/videoPages.json"]), changefreq: "monthly", priority: "0.7" },
+    { loc: `${BASE_URL}/coletas-por-bairro`, changefreq: "weekly", priority: "0.5" },
     { loc: `${BASE_URL}/orcamento`, lastmod: page("src/routes/orcamento.tsx", ["OrcamentoPage.tsx"]), changefreq: "monthly", priority: "1.0" },
     { loc: `${BASE_URL}/escopo`, lastmod: page("src/routes/escopo.tsx", ["EscopoPage.tsx", "src/lib/escopoCalc.ts"]), changefreq: "monthly", priority: "0.8" },
     {

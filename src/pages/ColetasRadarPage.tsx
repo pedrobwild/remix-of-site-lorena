@@ -6,14 +6,13 @@ import type { RadarColetasPage } from "@/lib/assistant/radarColetas.functions";
 import { useSeo } from "@/lib/useSeo";
 import "@/styles/post.css";
 
-/** /coletas-por-bairro — mesmo histórico público do assistente (noindex). */
+/** /coletas-por-bairro — mesmo histórico público do assistente. */
 export default function ColetasRadarPage({ data }: { data: RadarColetasPage }) {
   useSeo({
     title: "Coletas do Radar Bewild por bairro | Bewild",
     description: "Histórico público das coletas de diária média do Radar Bewild em cada bairro de São Paulo.",
     canonicalPath: "/coletas-por-bairro",
     ogType: "website",
-    noindex: true,
   });
   const navigate = useNavigate();
   const blocks = data.bairro && data.coletas
