@@ -63,3 +63,4 @@
 - [x] Corrigir leitura permanente dos 12 serviços no toque/abaixo de lg e foco no desktop, preservando copy SSR; rótulos 02–10 em ordem visual idêntica nos seis cenários conferidos, sem overflow; 23 testes específicos passam, lint sem erros, build automático OK; suíte completa tem somente a falha preexistente de leadFormPages; verify-types não existe; sem publicar.
 
 - [x] Remover Vai vender e bloco hidden da home; 20 links originais visíveis antes do FAQ, 197 testes passam, lint sem erros (9 avisos), SSR e foco/alvos ≥44px conferidos em 320/414/1280 sem overflow; compilação automática OK; typecheck manual não executado por restrição do ambiente; sem publicar.
+- [ ] Disponibilizar /admin/coletas-radar protegido e conferir /coletas com leitura pública direta e avisos existentes do Radar, sem cópias, dados privados ou publicação.
