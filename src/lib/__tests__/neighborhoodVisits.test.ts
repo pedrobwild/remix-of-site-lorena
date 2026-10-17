@@ -28,6 +28,14 @@ describe("Visitas por bairro de interesse", () => {
     const [report] = summarizeNeighborhoodVisits([{ ...event("/coletas-por-bairro", "s", "v", "Mooca"), visitor_id: null }]);
     expect(report.visitors).toBe(0);
   });
+  it("mostra seleção das coletas mesmo sem uma nova pageview na troca de bairro", () => {
+    const [report] = summarizeNeighborhoodVisits([
+      event("/coletas-por-bairro", "s1", "v1"),
+      event("/coletas-por-bairro", "s1", "v1", "Pinheiros", "click_cta"),
+      event("/coletas-por-bairro", "s1", "v1", "pinheiros", "click_cta"),
+    ]);
+    expect(report).toMatchObject({ visitors: 1, pageviews: 1, unknown: 0, bairros: [{ bairro: "pinheiros", visitors: 1 }] });
+  });
   it("rejeita dados livres que não são nomes de bairros", () => {
     expect(interestNeighborhood("nome@example.com")).toBeNull();
     expect(interestNeighborhood("11999999999")).toBeNull();
