@@ -83,7 +83,7 @@ export const loadPagesSeoMap = createServerFn({ method: "GET" }).handler(async (
       if (!v || typeof v !== "object") continue;
       const o = v as Record<string, unknown>;
       const entry: PageSeoOverride = {};
-      for (const k of ["title", "description", "og_title", "og_description", "og_image", "keywords"]) {
+      for (const k of ["title", "description", "og_title", "og_description", "og_image", "keywords"] as const) {
         if (typeof o[k] === "string" && (o[k] as string).trim()) entry[k] = (o[k] as string).trim();
       }
       if (o.noindex === true) entry.noindex = true;
