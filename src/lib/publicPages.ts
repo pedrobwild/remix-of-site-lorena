@@ -1,5 +1,5 @@
 /**
- * Páginas públicas editáveis na aba "Páginas" de /admin/seo.
+ * Páginas públicas editáveis na aba "Metas" de /admin/seo.
  *
  * A home fica de fora: tem aba própria (campos `home_seo_*`). Rotas
  * dinâmicas (artigos, projetos) também ficam de fora — cada registro já

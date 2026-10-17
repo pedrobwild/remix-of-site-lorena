@@ -26,7 +26,7 @@ type TabKey = "home" | "pages" | "bastidores" | "global" | "verify" | "analytics
 
 const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "home", label: "Home" },
-  { key: "pages", label: "Páginas" },
+  { key: "pages", label: "Metas" },
   { key: "bastidores", label: "Bastidores" },
   { key: "global", label: "Global" },
   { key: "verify", label: "Verificações" },
@@ -345,7 +345,7 @@ export default function SeoPage() {
 }
 
 // =============================================================
-//  Aba: Páginas — título, descrição e Open Graph de cada página pública
+//  Aba: Metas — título, descrição e Open Graph de cada página pública
 // =============================================================
 
 function PagesTab({
@@ -362,6 +362,7 @@ function PagesTab({
   };
   return (
     <>
+      <h2 className="admin-section__title">Metas por página</h2>
       <p className="mono" style={{ opacity: 0.7, marginBottom: 24, maxWidth: 680 }}>
         Textos de cada página do site. Campo vazio mantém o texto que a página já usa hoje. A home
         tem aba própria; artigos e projetos têm campos de SEO no próprio editor. Depois de salvar,
