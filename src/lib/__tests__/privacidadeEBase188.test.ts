@@ -20,7 +20,8 @@ function svgs(dir: string): string[] {
 }
 
 describe("política de privacidade", () => {
-  const page = readFileSync(path.join(root, "src/pages/PrivacidadePage.tsx"), "utf8");
+  // Texto padrão editável (painel /admin/privacidade-termos) desde out/2026.
+  const page = readFileSync(path.join(root, "src/content/pages/legal.ts"), "utf8");
 
   it("não descreve recursos de IA que não existem mais", () => {
     expect(page).not.toMatch(/Pergunte à Bewild/);
