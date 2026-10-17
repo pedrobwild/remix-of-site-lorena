@@ -14,7 +14,7 @@ vi.stubGlobal("fetch", fetchMock);
 const beaconMock = vi.fn().mockReturnValue(true);
 Object.defineProperty(navigator, "sendBeacon", { value: beaconMock, configurable: true, writable: true });
 
-import { contactEventForHref, initAnalytics, logConsentAudit, readPersistedAttribution } from "@/lib/analytics";
+import { contactEventForHref, initAnalytics, logConsentAudit, readPersistedAttribution, trackNeighborhoodInterest } from "@/lib/analytics";
 import { CONSENT_VERSION, setConsent } from "@/lib/cookieConsent";
 
 type Row = Record<string, unknown> & { event_type: string; value?: Record<string, unknown> | null };
@@ -80,6 +80,25 @@ describe("logConsentAudit — payload mínimo, sem ids persistentes (CORE-02)", 
 });
 
 describe("initAnalytics — ciclo de consentimento", () => {
+  it("registra bairro consultado nas coletas somente com consentimento", () => {
+    window.history.replaceState({}, "", "/coletas-por-bairro?bairro=Pinheiros");
+    setConsent("accepted");
+    cleanup = initAnalytics();
+    vi.advanceTimersByTime(300);
+    expect(fetchRows().find((r) => r.event_type === "pageview")?.value?.bairro_interesse).toBe("Pinheiros");
+  });
+  it("bairro informado no orçamento não envia evento nem cria ids sem consentimento", () => {
+    window.history.replaceState({}, "", "/orcamento");
+    trackNeighborhoodInterest("Mooca");
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(storageKeys()).toEqual({ local: [], session: [] });
+  });
+  it("com consentimento envia apenas bairro de interesse no evento do orçamento", () => {
+    window.history.replaceState({}, "", "/orcamento");
+    setConsent("accepted");
+    trackNeighborhoodInterest("Mooca");
+    expect(fetchRows()[0].value).toEqual({ action: "bairro_interesse", bairro_interesse: "Mooca" });
+  });
   it("sem aceite: nenhum evento e nenhum id gravado", () => {
     cleanup = initAnalytics();
     vi.advanceTimersByTime(1000);

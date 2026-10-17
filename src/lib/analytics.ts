@@ -23,6 +23,7 @@
 import { CONSENT_VERSION, isConsentAccepted, isFramed, onConsentChange } from "@/lib/cookieConsent";
 import { closestElementFrom } from "@/lib/useHashRoute";
 import { PRIVACY_VISIT_KEY, privacyVisitState } from "@/lib/privacyMeasurement";
+import { interestNeighborhood } from "@/lib/neighborhoodVisits";
 
 type EventType =
   | "pageview"
@@ -511,6 +512,12 @@ function sendEvent(row: Record<string, unknown>, preferBeacon: boolean) {
 }
 
 // ---------- public API ----------
+export function trackNeighborhoodInterest(bairro: string): void {
+  const value = interestNeighborhood(bairro);
+  if (!value || window.location.pathname !== "/orcamento") return;
+  track("click_cta", { value: { action: "bairro_interesse", bairro_interesse: value } });
+}
+
 export function track(eventType: EventType, payload?: TrackPayload): void {
   try {
     if (isDntEnabled()) return;
@@ -587,10 +594,12 @@ function emitPageview() {
       engagementFlush(false);
     }
 
+    const bairro = path === "/coletas-por-bairro"
+      ? interestNeighborhood(new URLSearchParams(window.location.search).get("bairro")) : null;
     track("pageview", {
       path,
       duration_ms: pendingDurationMs ?? undefined,
-      value: lastPageviewPath ? { from: lastPageviewPath } : undefined,
+      value: { ...(lastPageviewPath ? { from: lastPageviewPath } : {}), ...(bairro ? { bairro_interesse: bairro } : {}) },
     });
 
     lastPageviewPath = path;
