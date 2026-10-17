@@ -16,6 +16,7 @@ import { Route as AtribuicaoRouteImport } from './routes/atribuicao'
 import { Route as AutoresRouteImport } from './routes/autores'
 import { Route as AutorizacaoCondominioRouteImport } from './routes/autorizacao-condominio'
 import { Route as BuscarRouteImport } from './routes/buscar'
+import { Route as ColetasPorBairroRouteImport } from './routes/coletas-por-bairro'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as DiagnosticoRouteImport } from './routes/diagnostico'
@@ -120,6 +121,11 @@ const AutorizacaoCondominioRoute = AutorizacaoCondominioRouteImport.update({
 const BuscarRoute = BuscarRouteImport.update({
   id: '/buscar',
   path: '/buscar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ColetasPorBairroRoute = ColetasPorBairroRouteImport.update({
+  id: '/coletas-por-bairro',
+  path: '/coletas-por-bairro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ComoFuncionaRoute = ComoFuncionaRouteImport.update({
@@ -483,6 +489,7 @@ export interface FileRoutesByFullPath {
   '/autores': typeof AutoresRoute
   '/autorizacao-condominio': typeof AutorizacaoCondominioRoute
   '/buscar': typeof BuscarRoute
+  '/coletas-por-bairro': typeof ColetasPorBairroRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/contato': typeof ContatoRoute
   '/diagnostico': typeof DiagnosticoRoute
@@ -562,6 +569,7 @@ export interface FileRoutesByTo {
   '/autores': typeof AutoresRoute
   '/autorizacao-condominio': typeof AutorizacaoCondominioRoute
   '/buscar': typeof BuscarRoute
+  '/coletas-por-bairro': typeof ColetasPorBairroRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/contato': typeof ContatoRoute
   '/diagnostico': typeof DiagnosticoRoute
@@ -642,6 +650,7 @@ export interface FileRoutesById {
   '/autores': typeof AutoresRoute
   '/autorizacao-condominio': typeof AutorizacaoCondominioRoute
   '/buscar': typeof BuscarRoute
+  '/coletas-por-bairro': typeof ColetasPorBairroRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/contato': typeof ContatoRoute
   '/diagnostico': typeof DiagnosticoRoute
@@ -723,6 +732,7 @@ export interface FileRouteTypes {
     | '/autores'
     | '/autorizacao-condominio'
     | '/buscar'
+    | '/coletas-por-bairro'
     | '/como-funciona'
     | '/contato'
     | '/diagnostico'
@@ -802,6 +812,7 @@ export interface FileRouteTypes {
     | '/autores'
     | '/autorizacao-condominio'
     | '/buscar'
+    | '/coletas-por-bairro'
     | '/como-funciona'
     | '/contato'
     | '/diagnostico'
@@ -881,6 +892,7 @@ export interface FileRouteTypes {
     | '/autores'
     | '/autorizacao-condominio'
     | '/buscar'
+    | '/coletas-por-bairro'
     | '/como-funciona'
     | '/contato'
     | '/diagnostico'
@@ -961,6 +973,7 @@ export interface RootRouteChildren {
   AutoresRoute: typeof AutoresRoute
   AutorizacaoCondominioRoute: typeof AutorizacaoCondominioRoute
   BuscarRoute: typeof BuscarRoute
+  ColetasPorBairroRoute: typeof ColetasPorBairroRoute
   ComoFuncionaRoute: typeof ComoFuncionaRoute
   ContatoRoute: typeof ContatoRoute
   DiagnosticoRoute: typeof DiagnosticoRoute
@@ -1082,6 +1095,13 @@ declare module '@tanstack/react-router' {
       path: '/buscar'
       fullPath: '/buscar'
       preLoaderRoute: typeof BuscarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coletas-por-bairro': {
+      id: '/coletas-por-bairro'
+      path: '/coletas-por-bairro'
+      fullPath: '/coletas-por-bairro'
+      preLoaderRoute: typeof ColetasPorBairroRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/como-funciona': {
@@ -1585,6 +1605,7 @@ const rootRouteChildren: RootRouteChildren = {
   AutoresRoute: AutoresRoute,
   AutorizacaoCondominioRoute: AutorizacaoCondominioRoute,
   BuscarRoute: BuscarRoute,
+  ColetasPorBairroRoute: ColetasPorBairroRoute,
   ComoFuncionaRoute: ComoFuncionaRoute,
   ContatoRoute: ContatoRoute,
   DiagnosticoRoute: DiagnosticoRoute,

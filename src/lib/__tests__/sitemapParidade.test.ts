@@ -69,6 +69,8 @@ const NAO_INDEXAVEIS: Record<string, string> = {
   "/preferencias-de-cookies": "src/pages/PreferenciasCookiesPage.tsx",
   // Resultado de busca: noindex, nunca entra no sitemap.
   "/buscar": "src/pages/BewildBuscaPage.tsx",
+  // Histórico público das coletas do Radar: consulta, não conteúdo.
+  "/coletas-por-bairro": "src/pages/ColetasRadarPage.tsx",
   // O guia mudou para https://radarbewild.com.br (12/10/2026): produção responde
   // 301 pelo vercel.json; a rota antiga fica só como fallback noindex.
   "/guia-do-investidor": "src/routes/guia-do-investidor.tsx",

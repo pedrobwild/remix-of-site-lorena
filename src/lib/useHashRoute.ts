@@ -15,6 +15,7 @@ export type Route =
   | { name: "mapa" }
   | { name: "mapa-do-site" }
   | { name: "buscar" }
+  | { name: "coletas-por-bairro" }
   | { name: "como-funciona" }
   | { name: "onde-atuamos" }
   | { name: "reforma-apartamento-sp" }
@@ -134,6 +135,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/mapa") return { name: "mapa" };
   if (path === "/mapa-do-site") return { name: "mapa-do-site" };
   if (path === "/buscar") return { name: "buscar" };
+  if (path === "/coletas-por-bairro") return { name: "coletas-por-bairro" };
   if (path === "/como-funciona") return { name: "como-funciona" };
   if (path === "/onde-atuamos") return { name: "onde-atuamos" };
   if (path === "/reforma-de-apartamento-sao-paulo") return { name: "reforma-apartamento-sp" };
@@ -317,6 +319,7 @@ export const routes = {
   mapa: "/mapa",
   mapaDoSite: "/mapa-do-site",
   buscar: "/buscar",
+  "coletas-por-bairro": "/coletas-por-bairro",
   comoFunciona: "/como-funciona",
   ondeAtuamos: "/onde-atuamos",
   reformaApartamentoSp: "/reforma-de-apartamento-sao-paulo",
