@@ -209,6 +209,36 @@ describe("googleAds", () => {
 });
 
 describe("conversions", () => {
+  it.each(["Short stay", "Locação tradicional", "Uso misto"])("Google Ads: %s pesa 5000 BRL, sem mudar Meta ou transaction_id", (objetivo) => {
+    accept();
+    const gtag = vi.fn();
+    const fbq = vi.fn();
+    w.gtag = gtag;
+    w.fbq = fbq;
+    configureGoogleAds({ id: "AW-123456789", leadLabel: "LeadLabel1" });
+    reportLead({ eventId: "ev-valor", formPath: "/orcamento", method: "orcamento_form", objetivo });
+    expect(gtag).toHaveBeenCalledWith("event", "conversion", expect.objectContaining({ transaction_id: "ev-valor", value: 5000, currency: "BRL" }));
+    expect(fbq).toHaveBeenCalledWith("track", "Lead", { content_name: "orcamento_form", content_category: "/orcamento", ...leadSignalParams({ objetivo }) }, { eventID: "ev-valor" });
+  });
+
+  it.each(["Moradia", "Ainda avaliando"])("Google Ads: %s pesa 1000 BRL", (objetivo) => {
+    accept();
+    const gtag = vi.fn();
+    w.gtag = gtag;
+    configureGoogleAds({ id: "AW-123456789", leadLabel: "LeadLabel1" });
+    reportLead({ eventId: "ev-moradia", formPath: "/orcamento", method: "orcamento_form", objetivo });
+    expect(gtag).toHaveBeenCalledWith("event", "conversion", expect.objectContaining({ transaction_id: "ev-moradia", value: 1000, currency: "BRL" }));
+  });
+
+  it("Google Ads: sem objetivo não envia value ou currency", () => {
+    accept();
+    const gtag = vi.fn();
+    w.gtag = gtag;
+    configureGoogleAds({ id: "AW-123456789", leadLabel: "LeadLabel1" });
+    reportLead({ eventId: "ev-sem-objetivo", formPath: "/orcamento", method: "orcamento_form" });
+    expect(gtag).toHaveBeenCalledWith("event", "conversion", { send_to: "AW-123456789/LeadLabel1", transaction_id: "ev-sem-objetivo" });
+  });
+
   it("Lead só para formulários de cliente, com o mesmo id no Meta e no Google Ads", () => {
     accept();
     const fbq = vi.fn();
@@ -432,6 +462,8 @@ describe("sinais para públicos", () => {
         {
           send_to: "AW-123456789/LeadLabel1",
           transaction_id: "ev-12",
+          value: 5000,
+          currency: "BRL",
           objetivo: "short_stay",
           faixa_m2: "31_45",
           etapa_imovel: "com_chaves",
