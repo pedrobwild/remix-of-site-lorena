@@ -22,6 +22,7 @@
  */
 import { CONSENT_VERSION, isConsentAccepted, isFramed, onConsentChange } from "@/lib/cookieConsent";
 import { closestElementFrom } from "@/lib/useHashRoute";
+import { PRIVACY_VISIT_KEY, privacyVisitState } from "@/lib/privacyMeasurement";
 
 type EventType =
   | "pageview"
@@ -77,7 +78,7 @@ const LINK_UTM_KEY = "bwa_utm";
 
 /** Chaves que o tracker grava. A chave do consentimento fica de fora. */
 const LOCAL_KEYS = [VID_KEY, VID_TS_KEY, FIRST_UTM_KEY, CLICK_KEY] as const;
-const SESSION_KEYS = [SID_KEY, SID_TS_KEY, UTM_KEY, LANDING_KEY, REFERRER_HOST_KEY, LINK_UTM_KEY] as const;
+const SESSION_KEYS = [SID_KEY, SID_TS_KEY, UTM_KEY, LANDING_KEY, REFERRER_HOST_KEY, LINK_UTM_KEY, PRIVACY_VISIT_KEY] as const;
 
 /**
  * Apaga ids e atribuição persistidos pelo tracker (LGPD: recusa/retirada do
@@ -517,10 +518,22 @@ export function track(eventType: EventType, payload?: TrackPayload): void {
     // LGPD: sem aceite explícito do banner, nenhum evento sai. Cobre tanto
     // o caso "usuário ainda não decidiu" quanto "recusou".
     if (!isConsentAccepted()) return;
-    sendEvent(buildRow(eventType, payload), false);
+    const row = buildRow(eventType, payload);
+    if (eventType === "pageview" && row.path?.split("?")[0].replace(/\/$/, "") === "/privacidade") {
+      try { sessionStorage.setItem(PRIVACY_VISIT_KEY, row.session_id); } catch { /* storage indisponível */ }
+    }
+    sendEvent(row, false);
   } catch {
     /* never throw */
   }
+}
+
+export function readPrivacyVisitForLead(): boolean | null {
+  try {
+    if (!isConsentAccepted() || isDntEnabled() || isAdminContext() || isFramed()) return null;
+    const { id } = getSessionId();
+    return privacyVisitState(true, id, sessionStorage.getItem(PRIVACY_VISIT_KEY));
+  } catch { return null; }
 }
 
 /**
