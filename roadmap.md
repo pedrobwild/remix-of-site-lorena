@@ -53,3 +53,5 @@
 - [ ] Conferir aviso real de nova coleta até a atualização na tela — nova tentativa após solicitar publicação em 17/10 também falhou na conexão de avisos do Radar (nenhum aviso recebido em um minuto); requer conexão disponível e nova coleta legítima na origem, sem inserir dados artificiais
 
 - [x] Solicitar publicação da atualização automática do histórico; testes específicos passam e painel autenticado lê coleta real de Pinheiros de 13/10/2026
+
+- [ ] Mostrar origens individuais de chegadas consentidas a /orcamento no SEO, sem vínculo com pedidos; validar painel real e dispositivos
