@@ -38,6 +38,7 @@ export type Route =
   | { name: "licenca-sa" }
   | { name: "atribuicao" }
   | { name: "admin-licencas" }
+  | { name: "admin-privacidade-termos" }
   | { name: "bewild-project"; slug: string }
   | { name: "bairro"; slug: string }
   | { name: "conteudos" }
