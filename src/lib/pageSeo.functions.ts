@@ -82,10 +82,11 @@ export const loadPagesSeoMap = createServerFn({ method: "GET" }).handler(async (
     for (const [path, v] of Object.entries(raw as Record<string, unknown>)) {
       if (!v || typeof v !== "object") continue;
       const o = v as Record<string, unknown>;
-      const entry: Record<string, string> = {};
+      const entry: Record<string, string | boolean> = {};
       for (const k of ["title", "description", "og_title", "og_description", "og_image", "keywords"]) {
         if (typeof o[k] === "string" && (o[k] as string).trim()) entry[k] = (o[k] as string).trim();
       }
+      if (o.noindex === true) entry.noindex = true;
       out[path] = entry;
     }
     return out;
