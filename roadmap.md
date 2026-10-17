@@ -46,4 +46,4 @@
 - [ ] Publicar termos de uso — página /termos-de-uso ausente nesta versão; aguarda texto aprovado ou recuperação
 - [x] Adicionar aba SEO Bairros de interesse com visitantes das duas páginas; captura consentida, históricos sem inferência, paginação e 34 testes específicos passando; painel autenticado e 320/414 px conferidos; não publicar
 - [x] Adicionar aba SEO de origens: visitantes e comportamento no orçamento, pedidos e situação no CRM até contrato, sem vínculo individual inferido; 11 testes, painel autenticado com 66 pedidos e 1 contrato, filtros e ausência de overflow conferidos; não publicado
-- [ ] Adicionar histórico de coletas por bairro no SEO com atualização manual pela base pública do Radar
+- [x] Adicionar histórico de coletas por bairro no SEO com atualização manual pela base pública do Radar; 15 testes passam, seleção de Pinheiros e releitura manual conferidas com dados reais; não publicado
