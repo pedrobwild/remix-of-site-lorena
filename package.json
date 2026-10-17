@@ -13,6 +13,7 @@
     "sitemap": "node scripts/generate-sitemap.mjs",
     "routes:check": "node scripts/check-routes-parity.mjs",
     "lint": "eslint .",
+    "verify-types": "tsc --noEmit",
     "format": "prettier --write .",
     "format:write": "prettier --write .",
     "test": "vitest run",
