@@ -19,8 +19,8 @@ export default function OriginJourneyPanel() {
       const rows: JourneyEvent[] = [];
       for (let offset = 0; ; offset += 1000) {
         const result = await supabase.from("analytics_events")
-          .select("event_type,path,session_id,visitor_id,scroll_depth,duration_ms,utm_source,utm_medium,referrer")
-          .eq("path", "/orcamento").in("event_type", ["pageview", "scroll_depth", "click_whatsapp", "form_submit", "engagement_time"])
+          .select("event_type,path,session_id,visitor_id,scroll_depth,duration_ms,value,utm_source,utm_medium,referrer")
+          .eq("path", "/orcamento").in("event_type", ["pageview", "scroll_depth", "click_whatsapp", "form_submit", "ad_event", "engagement_time"])
           .gte("created_at", since).lte("created_at", until)
           .order("created_at").order("id").range(offset, offset + 999);
         if (result.error) throw result.error;
@@ -71,7 +71,7 @@ export default function OriginJourneyPanel() {
           <dl className="grid grid-cols-2 gap-4 text-sm">
             {[
               ["Visitantes identificados", row.visitors], ["Sessões", row.sessions], ["Visualizações", row.pageviews],
-              ["Sessões com leitura de 50%", row.scroll50], ["Sessões com clique no WhatsApp", row.whatsapp], ["Sessões com envio medido", row.submissions],
+              ["Sessões com leitura de 50%", row.scroll50], ["Sessões com clique no WhatsApp", row.whatsapp], ["Sessões que iniciaram formulário", row.starts], ["Sessões com sinal de lead", row.submissions],
               ["Tempo ativo médio / sessão (s)", row.engagementSeconds], ["Pedidos recebidos", row.requests], ["Qualificados, não ganhos", row.qualified],
               ["Perdidos / descartados", row.lost], ["Contratos confirmados", row.contracts], ["Pedidos que viraram contrato (%)", row.contractRate],
             ].map(([label, value]) => <div key={label}><dt className="break-words text-muted-foreground">{label}</dt><dd className="num font-semibold">{number(Number(value))}</dd></div>)}
@@ -79,7 +79,7 @@ export default function OriginJourneyPanel() {
           <h4>Etapa atual dos pedidos</h4>
           {row.stages.length === 0 ? <p className="text-sm text-muted-foreground">Nenhum pedido desta origem.</p> : <ul className="space-y-2 text-sm">{row.stages.map((stage) => <li key={stage.name} className="flex justify-between gap-3"><span className="min-w-0 break-words">{stage.name}</span><strong className="num shrink-0">{number(stage.count)}</strong></li>)}</ul>}
         </article>)}</div>
-        <p className="text-sm text-muted-foreground">Sem aceite de cookies, o pedido ainda pode ser recebido, mas o comportamento não é medido. Visitantes sem identificador usam a sessão; a mesma pessoa pode aparecer em mais de uma origem. Tempo ativo e envios dependem dos eventos registrados. As etapas refletem a última sincronização do CRM, não uma sequência de passagens pelo funil.</p>
+        <p className="text-sm text-muted-foreground">Sem aceite de cookies, o pedido ainda pode ser recebido, mas o comportamento não é medido. Visitantes sem identificador usam a sessão; a mesma pessoa pode aparecer em mais de uma origem. O sinal de lead também pode ser uma passagem para o WhatsApp: pedidos recebidos vêm dos registros de pedidos. As etapas refletem a última sincronização do CRM, não uma sequência de passagens pelo funil.</p>
       </>}
   </section>;
 }

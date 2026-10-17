@@ -29,4 +29,8 @@ describe("origins and contract cohorts", () => {
     const row = summarizeOriginJourney([event(), event({ event_type: "form_submit" })], [])[4];
     expect(row).toMatchObject({ submissions: 1, requests: 0, contracts: 0, contractRate: 0 });
   });
+  it("reads the existing form-start and lead ad_event signals without treating them as saved requests", () => {
+    const row = summarizeOriginJourney([event(), event({ event_type: "ad_event", value: { name: "IniciouFormulario" } }), event({ event_type: "ad_event", value: { name: "Lead" } })], [])[4];
+    expect(row).toMatchObject({ starts: 1, submissions: 1, requests: 0 });
+  });
 });

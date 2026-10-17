@@ -3,6 +3,7 @@ import { leadCanal, LEAD_CANAIS, type LeadSourceInput } from "@/lib/leadSource";
 export type JourneyEvent = LeadSourceInput & {
   event_type: string; path: string | null; session_id: string | null;
   visitor_id: string | null; scroll_depth: number | null; duration_ms: number | null;
+  value?: unknown;
 };
 export type JourneyLead = LeadSourceInput & {
   id: string; form_path: string | null; status: string; crm_won: boolean | null;
@@ -34,7 +35,8 @@ export function summarizeOriginJourney(events: JourneyEvent[], leads: JourneyLea
       pageviews: visits.filter((visit) => visit.session_id && sessionIds.has(visit.session_id)).length,
       scroll50: countSessions((event) => event.event_type === "scroll_depth" && (event.scroll_depth ?? 0) >= 50),
       whatsapp: countSessions((event) => event.event_type === "click_whatsapp"),
-      submissions: countSessions((event) => event.event_type === "form_submit"),
+      starts: countSessions((event) => event.event_type === "ad_event" && event.value !== null && typeof event.value === "object" && "name" in event.value && event.value.name === "IniciouFormulario"),
+      submissions: countSessions((event) => event.event_type === "form_submit" || (event.event_type === "ad_event" && event.value !== null && typeof event.value === "object" && "name" in event.value && event.value.name === "Lead")),
       engagementSeconds: selected.length ? behavior.reduce((sum, event) => sum + (event.event_type === "engagement_time" ? Math.max(0, event.duration_ms ?? 0) : 0), 0) / selected.length / 1000 : 0,
       requests: requests.length, contracts,
       lost: requests.filter((lead) => lead.crm_won !== true && (lead.crm_lost === true || lead.status === "descartado")).length,
