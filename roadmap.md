@@ -66,3 +66,4 @@
 
 - [x] Remover Vai vender e bloco hidden da home; 20 links originais visíveis antes do FAQ, 197 testes passam, lint sem erros (9 avisos), SSR e foco/alvos ≥44px conferidos em 320/414/1280 sem overflow; compilação automática OK; typecheck manual não executado por restrição do ambiente; sem publicar.
 - [x] Disponibilizar /admin/coletas-radar protegido e conferir /coletas com leitura pública direta e avisos existentes do Radar; 47 testes passam, lint sem erros (9 avisos), compilação automática OK, leitura real de Pinheiros e atualização manual autenticada conferidas, conexão real dos avisos aceita. Sem cópias, dados privados ou publicação; novo evento real continua aguardando coleta legítima na origem.
+- [ ] Disponibilizar aba API somente leitura em Integrações, gestão de chaves existente, acesso na navegação e consulta no domínio Bewild; validar criação, consulta e revogação sem publicar.
