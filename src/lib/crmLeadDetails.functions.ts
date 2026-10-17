@@ -16,9 +16,11 @@ export const getCrmLeadDetails = createServerFn({ method: "POST" })
     if (!key) throw new Error("Chave do BWild Engine não configurada.");
     const { fetchEngineStages } = await import("@/lib/crmStageSync.server");
     const { readCrmProposals } = await import("@/lib/crmProposals.server");
-    const [stages, proposals] = await Promise.allSettled([
+    const { readCrmProfiles } = await import("@/lib/crmProfiles.server");
+    const [stages, proposals, profiles] = await Promise.allSettled([
       fetchEngineStages(key, { lead_ids: [data.leadId] }),
       readCrmProposals(key, [data.leadId]),
+      readCrmProfiles(key, [data.leadId]),
     ]);
     const item = stages.status === "fulfilled" ? stages.value.leads.find((row) => row.lead_id === data.leadId) : null;
     return {
@@ -26,5 +28,7 @@ export const getCrmLeadDetails = createServerFn({ method: "POST" })
       stagesAvailable: stages.status === "fulfilled",
       proposals: proposals.status === "fulfilled" ? proposals.value[data.leadId] ?? [] : [],
       proposalsAvailable: proposals.status === "fulfilled",
+      profile: profiles.status === "fulfilled" ? profiles.value.leads.find((row) => row.lead_id === data.leadId) ?? null : null,
+      profilesAvailable: profiles.status === "fulfilled",
     };
   });

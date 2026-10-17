@@ -23,6 +23,7 @@ import { MessageCircle } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import AdminAlert from "@/components/admin/AdminAlert";
 import MetaLeadsPanel from "@/components/admin/MetaLeadsPanel";
+import { CrmProfileSummary } from "@/components/admin/CrmProfileSummary";
 import { CrmSyncBar, LeadCrmStatus, LeadFunnelHistory } from "@/components/admin/LeadCrmStatus";
 import { supabase } from "@/integrations/supabase/client";
 import { LEAD_CANAIS, LEAD_CANAL_LABEL, leadCanal, type LeadCanal } from "@/lib/leadSource";
@@ -327,6 +328,7 @@ export default function BewildLeadsAdminPage() {
     <BewildAdminShell {...shellProps}>
       <LeadsTabs tab={tab} onChange={switchTab} />
       <CrmSyncBar onSynced={() => void load()} />
+      <CrmProfileSummary />
 
       {actionMsg && (
         <AdminAlert kind={actionMsg.kind} onClose={() => setActionMsg(null)}>
