@@ -96,6 +96,7 @@ export function normalizeLegacyPath(pathname: string): string {
   const blog = pathname.match(/^\/blog(\/.*)?$/);
   if (blog) return "/conteudos" + (blog[1] && blog[1] !== "/" ? blog[1] : "");
   if (pathname === "/diagnostico") return "/orcamento";
+  if (/^\/coletas\/?$/.test(pathname)) return "/coletas-por-bairro";
   const conteudo = pathname.match(/^\/conteudos\/([^/]+)\/?$/);
   if (conteudo) {
     const destino = destinoDoPostFundido(conteudo[1]);

@@ -31,6 +31,8 @@ describe("normalizeLegacyPath", () => {
     ["/blog/", "/conteudos"],
     ["/blog/quanto-custa-reformar", "/conteudos/quanto-custa-reformar"],
     ["/blogueiro", "/blogueiro"],
+    ["/coletas", "/coletas-por-bairro"],
+    ["/coletas/", "/coletas-por-bairro"],
     ["/admin/leads", "/admin/leads"],
     ["/portfolio", "/portfolio"],
   ])("%s → %s", (input, out) => {
@@ -46,6 +48,14 @@ describe("normalizeLegacyPath", () => {
 });
 
 describe("normalizeInitialUrl", () => {
+  it("preserva o bairro informado ao abrir o endereço curto das coletas", () => {
+    window.history.replaceState(null, "", "/coletas?bairro=Pinheiros");
+    normalizeInitialUrl();
+    expect(window.location.pathname).toBe("/coletas-por-bairro");
+    expect(window.location.search).toBe("?bairro=Pinheiros");
+    expect(parseRoutePath("/coletas")).toEqual({ name: "coletas-por-bairro" });
+  });
+
   it("reescreve /blog/x?utm... com replaceState, preservando query e hash", () => {
     window.history.replaceState(null, "", "/blog/meu-post?utm_source=ig#faq");
     const before = window.history.length;
