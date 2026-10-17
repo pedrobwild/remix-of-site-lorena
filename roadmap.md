@@ -47,4 +47,5 @@
 - [x] Adicionar aba SEO Bairros de interesse com visitantes das duas páginas; captura consentida, históricos sem inferência, paginação e 34 testes específicos passando; painel autenticado e 320/414 px conferidos; não publicar
 - [x] Adicionar aba SEO de origens: visitantes e comportamento no orçamento, pedidos e situação no CRM até contrato, sem vínculo individual inferido; 11 testes, painel autenticado com 66 pedidos e 1 contrato, filtros e ausência de overflow conferidos; não publicado
 - [x] Adicionar histórico de coletas por bairro no SEO com atualização manual pela base pública do Radar; 15 testes passam, seleção de Pinheiros e releitura manual conferidas com dados reais; não publicado
-- [ ] Aba SEO de contratos fechados com bairro, data, valor e status; conferir fonte financeira antes de somar faturamento
+- [x] Aba SEO de contratos fechados com bairro, status e data do pedido; leitura autenticada de 1 pedido ganho, filtro, atualização e 9 testes conferidos; não publicado
+- [ ] Exibir valor, data de fechamento e faturamento nos contratos — bloqueado: integração atual do Bwild Engine não fornece esses dados; não substituir por datas do pedido/sincronização nem inventar valores
