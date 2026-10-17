@@ -85,6 +85,7 @@ const SEO_FIELDS = [
   "google_ads_conversion_id",
   "google_ads_lead_label",
   "google_ads_contact_label",
+  "google_ads_application_label",
   "meta_pixel_id",
   "meta_capi_test_event_code",
   "hotjar_id",
