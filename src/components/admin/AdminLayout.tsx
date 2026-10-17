@@ -73,7 +73,7 @@ const NAV: { key: ActiveKey; label: string; href: string; icon: typeof LayoutDas
   { key: "bewild", label: "Portfólio Bewild", href: "/admin/projetos", icon: FolderKanban },
   { key: "conteudos", label: "Conteúdos", href: "/admin/conteudos", icon: Newspaper },
   { key: "faq", label: "FAQ", href: routes.adminFaq, icon: HelpCircle },
-  { key: "licencas", label: "Licenças", href: routes.adminLicencas, icon: Scale },
+  { key: "licencas", label: "Citações e licenças", href: routes.adminCitacoes, icon: Scale },
   { key: "privacidade-termos", label: "Privacidade e termos", href: routes.adminPrivacidadeTermos, icon: FileText },
   { key: "seo", label: "SEO", href: routes.adminSeo, icon: Search },
   { key: "seo-404", label: "URLs 404", href: routes.adminSeo404, icon: Search },
