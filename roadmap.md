@@ -34,4 +34,5 @@
 - [x] Remover e-mails de edição das licenças e restringir registros do painel, mantendo os textos públicos; validar sem publicar
 
 - [x] Reenviar o sitemap ao Google para privacidade e termos
-- [ ] Criar aba Privacidade e termos no SEO; definir medição das visitas ligadas aos pedidos de orçamento
+- [x] Criar aba Privacidade e termos no SEO e medir novos pedidos consentidos na mesma sessão; testes e navegação pública validados
+- [ ] Conferir a aba autenticada de SEO — bloqueado até entrar no painel pela prévia
