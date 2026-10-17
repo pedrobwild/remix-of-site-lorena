@@ -4694,8 +4694,8 @@
    por vez aparece no painel à direita, com imagem, por clique ou hover.
    O HTML do servidor traz o texto inteiro de cada item em linha (busca,
    leitores de tela, sem JS). Estados postos por installServicesIndex
-   (home-bwa-script.ts): `is-indexed` (≥ 761 px: painel) ou `is-accordion`
-   (≤ 760 px: só os títulos, a explicação abre no toque) na seção;
+   (home-bwa-script.ts): `is-indexed` (≥ lg com mouse: painel) ou `is-readable`
+   (abaixo de lg ou no toque: explicações sempre visíveis) na seção;
    `is-active` / `is-open` no item. */
 .bwa-services {
   color: var(--bwa-ink);
@@ -4926,7 +4926,7 @@
 }
 
 /* ---- Índice + detalhe (≥ 761 px, `is-indexed`) ---- */
-@media (min-width: 761px) {
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
   .bwa-services.is-indexed .bwa-services-grid {
     grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
   }
@@ -4952,7 +4952,8 @@
     transition: opacity .25s var(--bwa-ease), transform .25s var(--bwa-ease);
   }
 
-  .bwa-services.is-indexed .bwa-services-item.is-active .bwa-services-trigger::after {
+  .bwa-services.is-indexed .bwa-services-item.is-active .bwa-services-trigger::after,
+  .bwa-services.is-indexed .bwa-services-item:focus-within .bwa-services-trigger::after {
     opacity: 1;
     transform: none;
   }
@@ -5033,36 +5034,12 @@
   }
 }
 
-/* ---- Acordeão (≤ 760 px, `is-accordion`): título à vista, explicação e
-   imagem no toque. ---- */
-.bwa-services.is-accordion .bwa-services-trigger::after {
-  width: 8px;
-  height: 8px;
-  align-self: center;
-  justify-self: end;
-  margin-right: 4px;
-  content: "";
-  border-right: 1.5px solid var(--bwa-ink-soft);
-  border-bottom: 1.5px solid var(--bwa-ink-soft);
-  transform: translateY(-2px) rotate(45deg);
-  transition: transform .25s var(--bwa-ease);
-}
-
-.bwa-services.is-accordion .bwa-services-item.is-open .bwa-services-trigger::after {
-  transform: translateY(2px) rotate(-135deg);
-}
-
-.bwa-services.is-accordion .bwa-services-item:not(.is-open) .bwa-services-item-detail {
-  display: none;
-}
-
-.bwa-services.is-accordion .bwa-services-item-detail {
-  padding-left: 0;
-}
-
-/* No toque, a explicação vem antes da imagem: é o que a pessoa quis ler. */
-.bwa-services.is-accordion .bwa-services-item-text {
-  order: -1;
+/* Leitura permanente no toque e abaixo de lg, inclusive antes da hidratação. */
+@media (hover: none), (pointer: coarse), (max-width: 1023px) {
+  .bwa-services .bwa-services-list .bwa-services-item-detail {
+    display: grid;
+    padding-left: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

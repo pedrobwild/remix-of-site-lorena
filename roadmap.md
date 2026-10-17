@@ -59,3 +59,5 @@
 - [x] Conectar histórico público aos avisos existentes do Radar e incluir recuperação por releitura a cada 30 segundos durante falhas; 5 testes passam e releitura da fonte real conferida no navegador; solicitar publicação
 - [x] Ampliar Bairros de interesse com origem e horário de São Paulo das visitas consentidas, sem vínculo com pedidos; 20 testes passam, painel autenticado conferido com 181 chegadas reais, filtro e paginação funcionando, sem overflow em 320/414 px; não publicado.
 - [x] Disponibilizar /coletas como endereço curto do histórico público existente; 76 testes passam e Pinheiros conferido com dados reais, preservando bairro, leitura direta e atualização automática existente, sem dados privados ou publicação; confirmação de um novo aviso real continua bloqueada pela conexão na origem.
+
+- [x] Corrigir leitura permanente dos 12 serviços no toque/abaixo de lg e foco no desktop, preservando copy SSR; rótulos 02–10 em ordem visual idêntica nos seis cenários conferidos, sem overflow; 23 testes específicos passam, lint sem erros, build automático OK; suíte completa tem somente a falha preexistente de leadFormPages; verify-types não existe; sem publicar.
