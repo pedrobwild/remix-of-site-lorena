@@ -41,6 +41,7 @@ import { Route as ReformaDeApartamentoSaoPauloRouteImport } from './routes/refor
 import { Route as ReformaDeCoberturaSaoPauloRouteImport } from './routes/reforma-de-cobertura-sao-paulo'
 import { Route as ReformaDeStudioSaoPauloRouteImport } from './routes/reforma-de-studio-sao-paulo'
 import { Route as ServicosRouteImport } from './routes/servicos'
+import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminCentralRouteImport } from './routes/admin.central'
@@ -247,6 +248,11 @@ const ReformaDeStudioSaoPauloRoute = ReformaDeStudioSaoPauloRouteImport.update({
 const ServicosRoute = ServicosRouteImport.update({
   id: '/servicos',
   path: '/servicos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
+  id: '/termos-de-uso',
+  path: '/termos-de-uso',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -508,6 +514,7 @@ export interface FileRoutesByFullPath {
   '/reforma-de-cobertura-sao-paulo': typeof ReformaDeCoberturaSaoPauloRoute
   '/reforma-de-studio-sao-paulo': typeof ReformaDeStudioSaoPauloRoute
   '/servicos': typeof ServicosRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
   '/admin/conversoes': typeof AdminConversoesRoute
@@ -587,6 +594,7 @@ export interface FileRoutesByTo {
   '/reforma-de-cobertura-sao-paulo': typeof ReformaDeCoberturaSaoPauloRoute
   '/reforma-de-studio-sao-paulo': typeof ReformaDeStudioSaoPauloRoute
   '/servicos': typeof ServicosRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
   '/admin/conversoes': typeof AdminConversoesRoute
@@ -667,6 +675,7 @@ export interface FileRoutesById {
   '/reforma-de-cobertura-sao-paulo': typeof ReformaDeCoberturaSaoPauloRoute
   '/reforma-de-studio-sao-paulo': typeof ReformaDeStudioSaoPauloRoute
   '/servicos': typeof ServicosRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
   '/admin/conversoes': typeof AdminConversoesRoute
@@ -748,6 +757,7 @@ export interface FileRouteTypes {
     | '/reforma-de-cobertura-sao-paulo'
     | '/reforma-de-studio-sao-paulo'
     | '/servicos'
+    | '/termos-de-uso'
     | '/admin/analytics'
     | '/admin/central'
     | '/admin/conversoes'
@@ -827,6 +837,7 @@ export interface FileRouteTypes {
     | '/reforma-de-cobertura-sao-paulo'
     | '/reforma-de-studio-sao-paulo'
     | '/servicos'
+    | '/termos-de-uso'
     | '/admin/analytics'
     | '/admin/central'
     | '/admin/conversoes'
@@ -906,6 +917,7 @@ export interface FileRouteTypes {
     | '/reforma-de-cobertura-sao-paulo'
     | '/reforma-de-studio-sao-paulo'
     | '/servicos'
+    | '/termos-de-uso'
     | '/admin/analytics'
     | '/admin/central'
     | '/admin/conversoes'
@@ -986,6 +998,7 @@ export interface RootRouteChildren {
   ReformaDeCoberturaSaoPauloRoute: typeof ReformaDeCoberturaSaoPauloRoute
   ReformaDeStudioSaoPauloRoute: typeof ReformaDeStudioSaoPauloRoute
   ServicosRoute: typeof ServicosRoute
+  TermosDeUsoRoute: typeof TermosDeUsoRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminCentralRoute: typeof AdminCentralRoute
   AdminConversoesRoute: typeof AdminConversoesRoute
@@ -1257,6 +1270,13 @@ declare module '@tanstack/react-router' {
       path: '/servicos'
       fullPath: '/servicos'
       preLoaderRoute: typeof ServicosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/termos-de-uso': {
+      id: '/termos-de-uso'
+      path: '/termos-de-uso'
+      fullPath: '/termos-de-uso'
+      preLoaderRoute: typeof TermosDeUsoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -1610,6 +1630,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReformaDeCoberturaSaoPauloRoute: ReformaDeCoberturaSaoPauloRoute,
   ReformaDeStudioSaoPauloRoute: ReformaDeStudioSaoPauloRoute,
   ServicosRoute: ServicosRoute,
+  TermosDeUsoRoute: TermosDeUsoRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminCentralRoute: AdminCentralRoute,
   AdminConversoesRoute: AdminConversoesRoute,
