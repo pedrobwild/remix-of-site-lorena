@@ -28,6 +28,7 @@
 - Portal real (incidente de 15/10/2026): demonstração do Bwild Workflow no site é sempre a réplica com dados fictícios (`src/components/workflow-replica`). Nenhuma página pública (QR `/o`, `/p`, LPs, home, artigos) tem link para o portal real (bwildworkflow.com, portal-bwild.lovable.app, preview do projeto do portal), para `/vitrine/` nem login por URL (`/auth?email=…&password=…`). Até 15/10/2026 o `/o` mandava o visitante para a vitrine do portal, que entrava sozinha numa conta e abria uma obra com dados de cliente. Guardado por `src/__tests__/sitePublicoSemPortalReal.test.ts`.
 
 <!-- LOVABLE:BEGIN -->
+- The SEO closed-contract tab reads paginated won leads only; it never substitutes lead timestamps or stage changes for closing dates, or counts contract flags as revenue without authoritative financial data.
 - SEO origin reporting keeps consented analytics sessions separate from request cohorts; reuse leadCanal, paginate both sources, and count contracts only from crm_won without inferred visitor-to-lead links.
 - Neighborhood-interest reporting reuses consent-gated analytics event values and paginated admin reads; visitor counts are deduplicated by page and neighborhood, with no lead join or inferred physical location.
 - Market questions in the existing FAQ assistant use a public TanStack server function reading the Radar view on every request; deterministic per-indicator formatting preserves source-provided confidence and prevents stale KB numbers or model hallucinations.
