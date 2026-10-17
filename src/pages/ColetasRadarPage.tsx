@@ -4,6 +4,7 @@ import BwaNav from "@/components/BwaNav";
 import { formatRadarCollections } from "@/lib/assistant/radarData";
 import type { RadarColetasPage } from "@/lib/assistant/radarColetas.functions";
 import { useSeo } from "@/lib/useSeo";
+import { useNeighborhoodInterest } from "@/hooks/useNeighborhoodInterest";
 import "@/styles/post.css";
 
 /** /coletas-por-bairro — mesmo histórico público do assistente. */
@@ -15,6 +16,7 @@ export default function ColetasRadarPage({ data }: { data: RadarColetasPage }) {
     ogType: "website",
   });
   const navigate = useNavigate();
+  useNeighborhoodInterest(data.bairro);
   const blocks = data.bairro && data.coletas
     ? formatRadarCollections(data.bairro, data.coletas).split("\n\n")
     : [];
