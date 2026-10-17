@@ -40,6 +40,7 @@ export default function LegalAdminPage() {
       .upsert(
         {
           slug,
+          name: LEGAL_PAGES[slug].nome,
           title: valores?.title ?? null,
           intro: valores?.intro ?? null,
           body: valores?.body ?? null,
