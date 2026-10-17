@@ -23,7 +23,7 @@
 import { CONSENT_VERSION, isConsentAccepted, isFramed, onConsentChange } from "@/lib/cookieConsent";
 import { closestElementFrom } from "@/lib/useHashRoute";
 import { PRIVACY_VISIT_KEY, privacyVisitState } from "@/lib/privacyMeasurement";
-import { interestNeighborhood } from "@/lib/neighborhoodVisits";
+import { interestNeighborhood, VISIT_PATHS } from "@/lib/neighborhoodVisits";
 
 type EventType =
   | "pageview"
@@ -512,10 +512,20 @@ function sendEvent(row: Record<string, unknown>, preferBeacon: boolean) {
 }
 
 // ---------- public API ----------
+const recordedNeighborhoods = new Set<string>();
+
 export function trackNeighborhoodInterest(bairro: string): void {
-  const value = interestNeighborhood(bairro);
-  if (!value || window.location.pathname !== "/orcamento") return;
-  track("click_cta", { value: { action: "bairro_interesse", bairro_interesse: value } });
+  try {
+    const value = interestNeighborhood(bairro);
+    const path = window.location.pathname;
+    if (!value || !VISIT_PATHS.some((allowed) => allowed === path)) return;
+    if (!isConsentAccepted() || isDntEnabled() || isAdminContext()) return;
+    const { id } = getSessionId();
+    const key = `${id}:${path}:${value.toLocaleLowerCase("pt-BR")}`;
+    if (recordedNeighborhoods.has(key)) return;
+    recordedNeighborhoods.add(key);
+    track("click_cta", { path, value: { action: "bairro_interesse", bairro_interesse: value } });
+  } catch { /* medição nunca interrompe o formulário */ }
 }
 
 export function track(eventType: EventType, payload?: TrackPayload): void {
@@ -734,6 +744,7 @@ function resetTrackerState() {
   engagementTickStart = null;
   currentPageForEngagement = null;
   scrollDepthFired.clear();
+  recordedNeighborhoods.clear();
 }
 
 function attachListeners(): () => void {

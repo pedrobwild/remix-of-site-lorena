@@ -4,7 +4,7 @@ import BwaNav from "@/components/BwaNav";
 import FormPrivacyNote from "@/components/FormPrivacyNote";
 import { whatsappHref } from "@/components/landing/content";
 import { trackEvent } from "@/lib/ga4";
-import { trackNeighborhoodInterest } from "@/lib/analytics";
+import { useNeighborhoodInterest } from "@/hooks/useNeighborhoodInterest";
 import type { LeadPayload } from "@/lib/leadDelivery";
 import {
   LEAD_CHAVES,
@@ -127,6 +127,7 @@ export default function OrcamentoPage() {
   const errors = validar({ bairro, nome, whats, mail });
   const erro = (k: Campo) => (touched[k] ? errors[k] : undefined);
   const touch = (k: Campo) => setTouched((t) => ({ ...t, [k]: true }));
+  useNeighborhoodInterest(bairro, Boolean(touched.bairro) || step > 0);
 
   useEffect(() => {
     const alvo = focoPendente.current;
@@ -194,7 +195,6 @@ export default function OrcamentoPage() {
       if (parada !== null) return void conferir(parada);
     }
     trackEvent("orcamento_step", { step: step + 1 });
-    if (step === 0) trackNeighborhoodInterest(bairro);
     if (step < ULTIMA) irPara(step + 1);
     else void enviar();
   }
@@ -398,7 +398,7 @@ export default function OrcamentoPage() {
                           enterKeyHint="next"
                           required
                           onChange={(e) => setBairro(e.target.value)}
-                          onBlur={() => { touch("bairro"); trackNeighborhoodInterest(bairro); }}
+                          onBlur={() => touch("bairro")}
                           {...fieldErrorProps("orc-bairro", erro("bairro"))}
                         />
                         {erro("bairro") && <em id={fieldErrorId("orc-bairro")}>{erro("bairro")}</em>}

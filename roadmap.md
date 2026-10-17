@@ -55,3 +55,4 @@
 - [x] Solicitar publicação da atualização automática do histórico; testes específicos passam e painel autenticado lê coleta real de Pinheiros de 13/10/2026
 
 - [x] Mostrar origens individuais de chegadas consentidas a /orcamento no SEO sem vínculo com pedidos; 10 testes passam, painel autenticado conferido com 181 chegadas / 140 visitantes e paginação, sem overflow em 320/414 px; não publicado
+- [x] Registrar bairros informados em /coletas-por-bairro e /orcamento, inclusive após aceitar cookies na página aberta; captura conferida no navegador sem inserir visitas artificiais, agregação do painel coberta por testes; não publicado

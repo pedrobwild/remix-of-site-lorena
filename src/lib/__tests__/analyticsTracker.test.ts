@@ -99,6 +99,36 @@ describe("initAnalytics — ciclo de consentimento", () => {
     trackNeighborhoodInterest("Mooca");
     expect(fetchRows()[0].value).toEqual({ action: "bairro_interesse", bairro_interesse: "Mooca" });
   });
+  it.each(["/coletas-por-bairro", "/orcamento"])("registra escolha em %s uma vez por sessão e bairro", (path) => {
+    window.history.replaceState({}, "", path);
+    setConsent("accepted");
+    cleanup = initAnalytics();
+    vi.advanceTimersByTime(300);
+    fetchMock.mockClear();
+    trackNeighborhoodInterest("Pinheiros");
+    trackNeighborhoodInterest("pinheiros");
+    trackNeighborhoodInterest("Mooca");
+    expect(fetchRows().map((row) => [row.path, row.value?.bairro_interesse])).toEqual([[path, "Pinheiros"], [path, "Mooca"]]);
+  });
+  it("escolha sem aceite pode ser registrada após aceitar, sem recuperar bairros anteriores", () => {
+    window.history.replaceState({}, "", "/coletas-por-bairro");
+    trackNeighborhoodInterest("Pinheiros");
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(storageKeys()).toEqual({ local: [], session: [] });
+    setConsent("accepted");
+    cleanup = initAnalytics();
+    trackNeighborhoodInterest("Mooca");
+    expect(fetchRows().map((row) => row.value?.bairro_interesse)).toEqual(["Mooca"]);
+  });
+  it("não registra bairro em outra página ou com Do-Not-Track", () => {
+    setConsent("accepted");
+    trackNeighborhoodInterest("Mooca");
+    window.history.replaceState({}, "", "/orcamento");
+    Object.defineProperty(navigator, "doNotTrack", { value: "1", configurable: true });
+    trackNeighborhoodInterest("Mooca");
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(sessionStorage.length).toBe(0);
+  });
   it("sem aceite: nenhum evento e nenhum id gravado", () => {
     cleanup = initAnalytics();
     vi.advanceTimersByTime(1000);
