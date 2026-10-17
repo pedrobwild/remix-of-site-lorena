@@ -48,8 +48,9 @@
 - [x] Adicionar aba SEO de origens: visitantes e comportamento no orçamento, pedidos e situação no CRM até contrato, sem vínculo individual inferido; 11 testes, painel autenticado com 66 pedidos e 1 contrato, filtros e ausência de overflow conferidos; não publicado
 - [x] Adicionar histórico de coletas por bairro no SEO com atualização manual pela base pública do Radar; 15 testes passam, seleção de Pinheiros e releitura manual conferidas com dados reais; não publicado
 - [x] Aba SEO de contratos fechados com bairro, status e data do pedido; leitura autenticada de 1 pedido ganho, filtro, atualização e 9 testes conferidos; não publicado
-- [ ] Atualizar a integração de contratos no CRM indicado (pedrobwild/envision-build-guide), preservando múltiplos negócios e retornando somente valor canônico e data real; conferir acesso de escrita e disponibilidade na origem.
-- [ ] Integrar valor e data de fechamento reais do CRM à aba Contratos fechados e validar a leitura autenticada, sem estimativas nem publicação.
+- [x] Preparar exportação privada e paginada de contratos no CRM indicado; alteração em https://github.com/pedrobwild/envision-build-guide/pull/355, sem merge ou implantação.
+- [x] Preparar aba Contratos fechados para valor canônico e fechamento real; 24 testes passam, lint sem erros (9 avisos), acesso administrativo e atualização conferidos com contrato existente e sem estimativas; não publicado.
+- [ ] Ativar e conferir valores e datas reais ponta a ponta — depende da aprovação e implantação da alteração #355 no CRM; origem ainda devolve somente leads e etapas.
 - [x] Implementar atualização do histórico aberto pelos avisos INSERT/UPDATE existentes do Radar, sem cópias ou auditoria privada; 17 testes passam, histórico real de Pinheiros conferido; não publicado
 - [ ] Conferir aviso real de nova coleta até a atualização na tela — em 17/10 a conexão real foi aceita sem rejeição após corrigir a configuração compartilhada; falta uma nova coleta legítima na origem, sem inserir dados artificiais.
 
