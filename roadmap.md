@@ -32,3 +32,8 @@
 - [x] Bug: galeria 3D com "imagem N" no SSR: causa checada, retry no loader, contagem feita (não publicar)
 - [x] Aplicar CC BY 4.0 ao índice, página e CSV; validar HTML e checks sem publicar
 - [x] Remover e-mails de edição das licenças e restringir registros do painel, mantendo os textos públicos; validar sem publicar
+
+## 17/10/2026 — Painel SEO: noindex por página
+- [x] Caixa "Não mostrar no Google (noindex)" por página na aba Páginas de /admin/seo (pages_seo[path].noindex), aplicada no SSR (routeHead), no cliente (useSeo) e no loader (pageSeo.functions)
+- [x] Páginas de licença (/licenca-cc-by-4-0, /licenca-cc-by-sa-4-0, /atribuicao) confirmadas na aba Páginas
+- [x] Testes em pageSeo.test.ts; tsc + eslint + 1.509 testes OK; não publicado

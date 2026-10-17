@@ -51,6 +51,8 @@ export type PageSeoOverride = {
   og_image?: string;
   /** Palavras-chave (meta keywords), separadas por vírgula. */
   keywords?: string;
+  /** true = a página sai com "noindex, nofollow" (não aparecer no Google). */
+  noindex?: boolean;
 };
 
 export type PagesSeoMap = Record<string, PageSeoOverride>;
@@ -74,5 +76,6 @@ export function pageSeoOverride(
     const v = typeof entry[k] === "string" ? entry[k]!.trim() : "";
     if (v) out[k] = v;
   }
+  if (entry.noindex === true) out.noindex = true;
   return out;
 }

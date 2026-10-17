@@ -357,6 +357,10 @@ function PagesTab({
     const next: PagesSeoMap = { ...map, [path]: { ...(map[path] ?? {}), [key]: value } };
     patch("pages_seo", next);
   };
+  const setNoindex = (path: string, value: boolean) => {
+    const next: PagesSeoMap = { ...map, [path]: { ...(map[path] ?? {}), noindex: value } };
+    patch("pages_seo", next);
+  };
   return (
     <>
       <p className="mono" style={{ opacity: 0.7, marginBottom: 24, maxWidth: 680 }}>
@@ -432,6 +436,20 @@ function PagesTab({
                 placeholder="vazio = imagem padrão do site"
                 onChange={(e) => set(p.path, "og_image", e.target.value)}
               />
+            </Field>
+            <Field label="Mostrar no Google" full>
+              <label className="mono" style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
+                <input
+                  type="checkbox"
+                  checked={cur.noindex === true}
+                  onChange={(e) => setNoindex(p.path, e.target.checked)}
+                />
+                Não mostrar esta página no Google (noindex)
+              </label>
+              <FieldHint>
+                Marcado: a página sai do Google (o endereço continua abrindo para quem tem o link).
+                Desmarcado: volta ao normal. Vale em até 5 minutos após salvar, sem publicar.
+              </FieldHint>
             </Field>
           </section>
         );

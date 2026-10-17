@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { resolvePageSeo } from "@/lib/pageSeo";
-import type { PagesSeoMap } from "@/lib/publicPages";
+import type { PageSeoOverride, PagesSeoMap } from "@/lib/publicPages";
 
 /** Leitura pública sanitizada: nunca devolve outras configurações do site. */
 export const loadPageSeo = createServerFn({ method: "GET" })
@@ -82,10 +82,11 @@ export const loadPagesSeoMap = createServerFn({ method: "GET" }).handler(async (
     for (const [path, v] of Object.entries(raw as Record<string, unknown>)) {
       if (!v || typeof v !== "object") continue;
       const o = v as Record<string, unknown>;
-      const entry: Record<string, string> = {};
-      for (const k of ["title", "description", "og_title", "og_description", "og_image", "keywords"]) {
+      const entry: PageSeoOverride = {};
+      for (const k of ["title", "description", "og_title", "og_description", "og_image", "keywords"] as const) {
         if (typeof o[k] === "string" && (o[k] as string).trim()) entry[k] = (o[k] as string).trim();
       }
+      if (o.noindex === true) entry.noindex = true;
       out[path] = entry;
     }
     return out;

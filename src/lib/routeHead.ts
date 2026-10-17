@@ -280,6 +280,8 @@ export function applyPageSeoOverride(input: SeoHeadInput, cleanPath: string): Se
     ogDescription: ov.og_description || (ov.description ? undefined : input.ogDescription),
     ogImage: ov.og_image || input.ogImage,
     keywords: ov.keywords || input.keywords,
+    // O painel só liga o noindex; desligar volta ao padrão da rota.
+    noindex: ov.noindex === true ? true : input.noindex,
   };
 }
 
