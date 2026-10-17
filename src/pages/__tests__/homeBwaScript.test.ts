@@ -418,37 +418,27 @@ function stubMediaQueries(initial: Record<string, boolean>): {
   };
 }
 
-const ACCORDION = "(max-width: 760px)";
+const ACCORDION = "(max-width: 1023px)";
 const HOVER = "(hover: hover) and (pointer: fine)";
 
-describe("initHomeBwa — Serviços · 02: índice + detalhe (desktop) e acordeão (celular)", () => {
-  it("no celular, cada título vira botão e o detalhe abre no toque; o painel fica escondido", () => {
-    const media = stubMediaQueries({ [ACCORDION]: true, [HOVER]: false });
+describe("initHomeBwa — Serviços · 02: leitura permanente e índice acessível", () => {
+  it.each([
+    ["abaixo de lg mesmo com mouse", true, true],
+    ["toque inclusive acima de lg", false, false],
+  ])("mantém todos os detalhes sem interação: %s", (_label, small, hover) => {
+    const media = stubMediaQueries({ [ACCORDION]: small, [HOVER]: hover });
+    const root = mountMobileHome();
+    const cleanup = initHomeBwa(root);
     try {
-      const root = mountMobileHome();
-      const cleanup = initHomeBwa(root);
-      const section = root.querySelector<HTMLElement>("[data-services]")!;
-      const panel = root.querySelector<HTMLElement>("[data-services-detail]")!;
-      const triggers = Array.from(section.querySelectorAll<HTMLButtonElement>("button.bwa-services-trigger"));
-      expect(section).toHaveClass("is-accordion");
-      expect(section).not.toHaveClass("is-indexed");
+      const panel = root.querySelector<HTMLElement>("[data-services-detail]");
+      const section = root.querySelector<HTMLElement>("[data-services]");
+      if (!section || !panel) throw new Error("Serviços ausentes");
       expect(panel.hidden).toBe(true);
-      expect(triggers).toHaveLength(2);
-      expect(triggers[0].textContent).toBe("01 Consultoria.");
-      expect(triggers[0].closest("p")).toHaveClass("has-trigger");
-      expect(triggers[0].getAttribute("aria-expanded")).toBe("false");
-      const detail = document.getElementById(triggers[0].getAttribute("aria-controls")!)!;
-      expect(detail).toHaveClass("bwa-services-item-detail");
-      expect(detail.textContent).toContain("Leitura do imóvel.");
-
-      triggers[0].click();
-      expect(triggers[0].closest("li")).toHaveClass("is-open");
-      expect(triggers[0].getAttribute("aria-expanded")).toBe("true");
-      expect(triggers[1].closest("li")).not.toHaveClass("is-open");
-      triggers[0].click();
-      expect(triggers[0].closest("li")).not.toHaveClass("is-open");
-      cleanup();
+      expect(section.querySelectorAll("button")).toHaveLength(0);
+      expect(section.querySelectorAll(".bwa-services-item-text")).toHaveLength(2);
+      expect(section.classList.contains("is-indexed")).toBe(false);
     } finally {
+      cleanup();
       media.restore();
     }
   });
@@ -469,7 +459,7 @@ describe("initHomeBwa — Serviços · 02: índice + detalhe (desktop) e acorde�
       expect(panel.hidden).toBe(false);
       expect(panel.getAttribute("aria-live")).toBe("polite");
       expect(triggers[0].getAttribute("aria-controls")).toBe(panel.id);
-      expect(triggers[0].hasAttribute("aria-expanded")).toBe(false);
+      expect(triggers[0].getAttribute("aria-expanded")).toBe("true");
       // Abre no item 01: número + título e texto. A imagem da seção é fixa
       // (equipe em obra) e fica fora do painel.
       expect(items[0]).toHaveClass("is-active");
@@ -481,7 +471,9 @@ describe("initHomeBwa — Serviços · 02: índice + detalhe (desktop) e acorde�
       // O detalhe em linha continua no HTML (quem esconde é o CSS).
       expect(items[0].querySelector(".bwa-services-item-text")).not.toBeNull();
 
-      triggers[1].click();
+      triggers[1].focus();
+      expect(triggers[1].getAttribute("aria-expanded")).toBe("true");
+      expect(triggers[0].getAttribute("aria-expanded")).toBe("false");
       expect(items[1]).toHaveClass("is-active");
       expect(items[0]).not.toHaveClass("is-active");
       expect(triggers[0].hasAttribute("aria-current")).toBe(false);
@@ -500,12 +492,12 @@ describe("initHomeBwa — Serviços · 02: índice + detalhe (desktop) e acorde�
 
       // Girou para a largura de celular: acordeão, painel vazio.
       media.set(ACCORDION, true);
-      expect(section).toHaveClass("is-accordion");
+      expect(section).toHaveClass("is-readable");
       expect(section).not.toHaveClass("is-indexed");
       expect(panel.hidden).toBe(true);
       expect(panel.childNodes).toHaveLength(0);
       expect(items[0]).not.toHaveClass("is-active");
-      expect(triggers[0].getAttribute("aria-expanded")).toBe("false");
+      expect(section.querySelector("button")).toBeNull();
       // Sem mouse, o hover não faz nada no celular.
       triggers[1].dispatchEvent(new MouseEvent("mouseenter"));
       vi.advanceTimersByTime(200);
@@ -515,6 +507,12 @@ describe("initHomeBwa — Serviços · 02: índice + detalhe (desktop) e acorde�
       media.set(ACCORDION, false);
       expect(section).toHaveClass("is-indexed");
       expect(items[0]).toHaveClass("is-active");
+
+      media.set(HOVER, false);
+      expect(section.querySelector("button")).toBeNull();
+      expect(panel.hidden).toBe(true);
+      media.set(HOVER, true);
+      expect(panel.hidden).toBe(false);
 
       cleanup();
       expect(section.querySelector("button")).toBeNull();
