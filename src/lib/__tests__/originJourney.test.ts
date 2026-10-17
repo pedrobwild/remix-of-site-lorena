@@ -1,10 +1,27 @@
 import { describe, expect, it } from "vitest";
-import { summarizeOriginJourney, type JourneyEvent, type JourneyLead } from "@/lib/originJourney";
+import { budgetVisitorArrivals, summarizeOriginJourney, type JourneyEvent, type JourneyLead } from "@/lib/originJourney";
 
 const event = (overrides: Partial<JourneyEvent> = {}): JourneyEvent => ({ event_type: "pageview", path: "/orcamento", session_id: "s1", visitor_id: "v1", scroll_depth: null, duration_ms: null, ...overrides });
 const lead = (overrides: Partial<JourneyLead> = {}): JourneyLead => ({ id: "l1", form_path: "/orcamento", status: "novo", crm_won: false, crm_lost: false, crm_stage_name: null, ...overrides });
 
 describe("origins and contract cohorts", () => {
+  it("lists /orcamento arrivals from visitors alone, without requests or submit signals", () => {
+    const rows = budgetVisitorArrivals([event({ utm_source: "google", utm_medium: "cpc" }), event({ event_type: "form_submit" }), event({ path: "/contato", session_id: "s2" })]);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ visitor: "Visitante 1", canal: "google_ads", source: "google", medium: "cpc" });
+    expect(rows[0]).not.toHaveProperty("requests");
+  });
+  it("keeps first arrival source per session and anonymous visitor identity across sessions", () => {
+    const rows = budgetVisitorArrivals([event({ created_at: "2026-10-17T01:00:00Z", utm_source: "google", utm_medium: "organic" }), event({ created_at: "2026-10-17T02:00:00Z", utm_source: "instagram" }), event({ session_id: "s2", created_at: "2026-10-17T03:00:00Z" })]);
+    expect(rows).toHaveLength(2);
+    expect(rows.map((row) => row.visitor)).toEqual(["Visitante 1", "Visitante 1"]);
+    expect(rows[1].source).toBe("google");
+  });
+  it("does not merge or identify visits without session or visitor identifiers", () => {
+    const rows = budgetVisitorArrivals([event({ id: "a", session_id: null, visitor_id: null }), event({ id: "b", session_id: null, visitor_id: null })]);
+    expect(rows).toHaveLength(2);
+    expect(rows.every((row) => row.visitor === "Sem identificador")).toBe(true);
+  });
   it("counts repeat pageviews separately from visitors and sessions", () => {
     const row = summarizeOriginJourney([event(), event(), event({ session_id: "s2" })], [])[4];
     expect(row).toMatchObject({ visitors: 1, sessions: 2, pageviews: 3 });

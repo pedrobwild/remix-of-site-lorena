@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { LEAD_CANAL_LABEL } from "@/lib/leadSource";
 import { summarizeOriginJourney, type JourneyEvent, type JourneyLead } from "@/lib/originJourney";
+import BudgetVisitorOrigins from "@/components/admin/BudgetVisitorOrigins";
 
 const number = (value: number) => value.toLocaleString("pt-BR", { maximumFractionDigits: 1 });
 
@@ -19,7 +20,7 @@ export default function OriginJourneyPanel() {
       const rows: JourneyEvent[] = [];
       for (let offset = 0; ; offset += 1000) {
         const result = await supabase.from("analytics_events")
-          .select("event_type,path,session_id,visitor_id,scroll_depth,duration_ms,value,utm_source,utm_medium,referrer")
+          .select("id,created_at,event_type,path,session_id,visitor_id,scroll_depth,duration_ms,value,utm_source,utm_medium,utm_campaign,referrer")
           .eq("path", "/orcamento").in("event_type", ["pageview", "scroll_depth", "click_whatsapp", "form_submit", "ad_event", "engagement_time"])
           .gte("created_at", since).lte("created_at", until)
           .order("created_at").order("id").range(offset, offset + 999);
@@ -58,6 +59,7 @@ export default function OriginJourneyPanel() {
     {error ? <p role="alert">Não foi possível carregar as origens. Selecione o período novamente para tentar outra vez.</p>
       : !data ? <p role="status">Carregando origens e contratos…</p>
       : <>
+        <BudgetVisitorOrigins events={data.events} />
         <dl className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <div><dt>Sessões no orçamento</dt><dd className="num text-2xl font-semibold">{number(reports.reduce((sum, row) => sum + row.sessions, 0))}</dd></div>
           <div><dt>Pedidos recebidos</dt><dd className="num text-2xl font-semibold">{number(data.leads.length)}</dd></div>
