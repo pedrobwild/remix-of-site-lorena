@@ -1,9 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { collectRequestPages, groupRequestsByNeighborhood, selectBudgetRequests, type BudgetRequest } from "@/lib/budgetRequests";
+import { collectRequestPages, groupRequestsByNeighborhood, selectBudgetRequests, selectConfirmedRequests, type BudgetRequest } from "@/lib/budgetRequests";
 
 const request = (id: string, location: string | null, status: BudgetRequest["status"]): BudgetRequest => ({ id, location, status, name: null, created_at: "2026-10-17T00:00:00Z", form_path: "/orcamento", crm_stage_name: null, crm_won: null, crm_lost: null, crm_deal_count: null });
 
 describe("pedidos do /orcamento", () => {
+  it("confirma somente contratos ganhos, não leads apenas qualificados", () => {
+    const rows = [
+      { ...request("ganho", "Brooklin", "qualificado"), crm_won: true },
+      { ...request("qualificado", "Brooklin", "qualificado"), crm_won: false },
+      { ...request("sem-crm", null, "novo"), crm_won: null },
+    ];
+    expect(selectConfirmedRequests(rows).map((row) => row.id)).toEqual(["ganho"]);
+  });
   it("inclui só o formulário de orçamento, independente da página de entrada", () => {
     const rows = [{ id: "pedido", form_path: "/orcamento", landing_path: "/" }, { id: "contato", form_path: "/contato", landing_path: "/orcamento" }, { id: "antigo", form_path: null, landing_path: "/orcamento" }, { id: "lp", form_path: "/o" }, { id: "diagnostico", form_path: "/diagnostico" }];
     expect(selectBudgetRequests(rows).map((row) => row.id)).toEqual(["pedido", "antigo"]);

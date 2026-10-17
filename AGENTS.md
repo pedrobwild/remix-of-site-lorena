@@ -28,6 +28,7 @@
 - Portal real (incidente de 15/10/2026): demonstração do Bwild Workflow no site é sempre a réplica com dados fictícios (`src/components/workflow-replica`). Nenhuma página pública (QR `/o`, `/p`, LPs, home, artigos) tem link para o portal real (bwildworkflow.com, portal-bwild.lovable.app, preview do projeto do portal), para `/vitrine/` nem login por URL (`/auth?email=…&password=…`). Até 15/10/2026 o `/o` mandava o visitante para a vitrine do portal, que entrava sozinha numa conta e abria uma obra com dados de cliente. Guardado por `src/__tests__/sitePublicoSemPortalReal.test.ts`.
 
 <!-- LOVABLE:BEGIN -->
+- The confirmed budgets page reuses the paginated budget requests panel and the CRM won flag; qualification alone never counts as a contract, and the original all-requests page remains accessible.
 - The budget requests tab in the lead hub uses the existing form resolver and CRM status, paginates with created_at/id ordering, and aggregates in a shared helper so neighborhood totals never depend on the first list page.
 - License records are admin-only; public pages read only title, intro and body through `get_public_license`, and writes never retain editor email, preserving public content without exposing panel metadata.
 - `/admin/citacoes` and `/admin/licencas` share one license/citation editor and stored records; the sidebar exposes one entry so edits remain consistent without changing public URLs or sitemaps.

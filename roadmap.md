@@ -36,3 +36,5 @@
 - [x] Validar filtros, dados reais e apresentação da aba; não publicar
 - [x] Criar acesso Citações no admin reutilizando o editor de licenças e modelos; manter sitemap intacto
 - [x] Verificar edição, proteção e navegação de Citações; não publicar
+- [x] Mostrar contratos confirmados nos Orçamentos do painel e verificar dados reais
+- [ ] Publicar o site após conferir segurança

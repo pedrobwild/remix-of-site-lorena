@@ -55,7 +55,7 @@ const TABS: { key: BewildAdminTab; label: string; href: string; icon: typeof Lay
   { key: "overview", label: "Visão geral", href: "/admin/dashboard", icon: LayoutDashboard },
   { key: "leads", label: "Leads", href: "/admin/leads", icon: Inbox },
   { key: "mensagens", label: "Mensagens", href: "/admin/mensagens", icon: MessagesSquare },
-  { key: "diagnostico", label: "Orçamentos", href: "/admin/diagnostico", icon: ClipboardList },
+  { key: "diagnostico", label: "Orçamentos", href: "/admin/orcamentos", icon: ClipboardList },
   { key: "projetos", label: "Projetos", href: "/admin/projetos", icon: FolderKanban },
   { key: "conteudos", label: "Conteúdos", href: "/admin/conteudos", icon: Newspaper },
 ];
