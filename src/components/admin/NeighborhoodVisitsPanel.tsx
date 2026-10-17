@@ -21,7 +21,7 @@ export default function NeighborhoodVisitsPanel() {
       const rows: NeighborhoodEvent[] = [];
       for (let offset = 0; ; offset += 1000) {
         const { data, error: queryError } = await supabase.from("analytics_events")
-          .select("id,created_at,event_type,path,session_id,visitor_id,value,utm_source,utm_medium,referrer,gclid,fbclid")
+          .select("id,created_at,event_type,path,session_id,visitor_id,value,utm_source,utm_medium,referrer")
           .in("path", [...VISIT_PATHS]).in("event_type", ["pageview", "click_cta"])
           .gte("created_at", since.toISOString()).lte("created_at", until.toISOString())
           .order("created_at", { ascending: true }).order("id", { ascending: true })
