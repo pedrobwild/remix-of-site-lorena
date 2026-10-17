@@ -21,11 +21,12 @@ import PrivacySeoPanel from "@/components/admin/PrivacySeoPanel";
 import NeighborhoodVisitsPanel from "@/components/admin/NeighborhoodVisitsPanel";
 import OriginJourneyPanel from "@/components/admin/OriginJourneyPanel";
 import RadarCollectionsPanel from "@/components/admin/RadarCollectionsPanel";
+import ClosedContractsPanel from "@/components/admin/ClosedContractsPanel";
 
 const SITEMAP_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sitemap`;
 const ROBOTS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/robots`;
 
-type TabKey = "home" | "pages" | "bastidores" | "global" | "verify" | "analytics" | "privacy" | "neighborhoods" | "origins" | "collections" | "local" | "sitemap" | "audit" | "guide";
+type TabKey = "home" | "pages" | "bastidores" | "global" | "verify" | "analytics" | "privacy" | "neighborhoods" | "origins" | "contracts" | "collections" | "local" | "sitemap" | "audit" | "guide";
 
 const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "home", label: "Home" },
@@ -37,6 +38,7 @@ const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "privacy", label: "Privacidade e termos" },
   { key: "neighborhoods", label: "Bairros de interesse" },
   { key: "origins", label: "Origens e contratos" },
+  { key: "contracts", label: "Contratos fechados" },
   { key: "collections", label: "Histórico de coletas" },
   { key: "local", label: "Negócio local" },
   { key: "sitemap", label: "Sitemap & Robots" },
@@ -334,6 +336,7 @@ export default function SeoPage() {
       {tab === "privacy" && <PrivacySeoPanel />}
       {tab === "neighborhoods" && <NeighborhoodVisitsPanel />}
       {tab === "origins" && <OriginJourneyPanel />}
+      {tab === "contracts" && <ClosedContractsPanel />}
       {tab === "collections" && <RadarCollectionsPanel />}
       {tab === "local" && <LocalTab s={s} patch={patch} />}
       {tab === "sitemap" && (
