@@ -1532,6 +1532,7 @@ export type Database = {
       site_licenses: {
         Row: {
           body: string | null
+          citation_model: string | null
           intro: string | null
           name: string
           slug: string
@@ -1541,6 +1542,7 @@ export type Database = {
         }
         Insert: {
           body?: string | null
+          citation_model?: string | null
           intro?: string | null
           name: string
           slug: string
@@ -1550,6 +1552,7 @@ export type Database = {
         }
         Update: {
           body?: string | null
+          citation_model?: string | null
           intro?: string | null
           name?: string
           slug?: string
@@ -2033,6 +2036,7 @@ export type Database = {
         Args: { p_slug: string }
         Returns: {
           body: string
+          citation_model: string
           intro: string
           title: string
         }[]
