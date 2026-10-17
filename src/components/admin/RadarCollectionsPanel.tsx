@@ -3,10 +3,12 @@ import { RefreshCw } from "lucide-react";
 import { Button } from "@/guia/components/ui/button";
 import { getRadarColetas, type RadarColetasPage } from "@/lib/assistant/radarColetas.functions";
 import { formatRadarCollections } from "@/lib/assistant/radarData";
+import { useRadarCollectionsUpdates } from "@/hooks/useRadarCollectionsUpdates";
 
 export default function RadarCollectionsPanel() {
   const [bairro, setBairro] = useState("");
   const [refresh, setRefresh] = useState(0);
+  const revision = useRadarCollectionsUpdates(Boolean(bairro));
   const [data, setData] = useState<RadarColetasPage | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -21,7 +23,7 @@ export default function RadarCollectionsPanel() {
       setCheckedAt(new Date()); setLoading(false);
     }).catch(() => { if (active) { setError(true); setLoading(false); } });
     return () => { active = false; };
-  }, [bairro, refresh]);
+  }, [bairro, refresh, revision]);
   const blocks = data?.bairro && data.coletas ? formatRadarCollections(data.bairro, data.coletas).split("\n\n") : [];
   return <section aria-label="Histórico de coletas" className="min-w-0 space-y-6">
     <div className="flex flex-wrap items-center justify-between gap-4">

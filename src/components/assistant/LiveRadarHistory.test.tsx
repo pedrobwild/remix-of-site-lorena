@@ -1,0 +1,20 @@
+import { act, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, expect, it, vi } from "vitest";
+const mocks = vi.hoisted(() => ({ read: vi.fn(), callback: undefined as undefined | (() => void), close: vi.fn() }));
+vi.mock("@/lib/assistant/radarColetas.functions", () => ({ getRadarColetas: mocks.read }));
+vi.mock("@/lib/assistant/radarRealtime", () => ({ subscribeRadarCollections: (callback: () => void) => { mocks.callback = callback; return mocks.close; } }));
+import LiveRadarHistory from "./LiveRadarHistory";
+beforeEach(() => { mocks.read.mockReset(); mocks.close.mockClear(); });
+it("relê o bairro aberto ao receber aviso e usa os estados ativos da fonte, sem cópias ou auditoria", async () => {
+  const observation = { coletado_em: "2026-10-17", periodo_inicio: "2026-01-01", periodo_fim: "2026-09-30", fonte_nome: "GuestFavorites", amostra_n: 100, ativo: true };
+  mocks.read.mockResolvedValue({ bairros: ["Pinheiros"], bairro: "Pinheiros", coletas: [observation, { ...observation, coletado_em: "2026-10-13", ativo: false }] });
+  const view = render(<LiveRadarHistory bairros={["Pinheiros"]} initialAnswer="Histórico anterior" />);
+  expect(mocks.read).not.toHaveBeenCalled();
+  act(() => mocks.callback?.());
+  await waitFor(() => expect(mocks.read).toHaveBeenCalledWith({ data: { bairro: "Pinheiros" } }));
+  await waitFor(() => expect(screen.getByText(/17\/10\/2026/)).toHaveTextContent("Status: ativa"));
+  expect(screen.getByText(/17\/10\/2026/)).toHaveTextContent("Status: substituída");
+  mocks.read.mockRejectedValue(new Error("falha")); act(() => mocks.callback?.());
+  await screen.findByText("O histórico de coletas do Radar Bewild está indisponível agora.");
+  view.unmount(); expect(mocks.close).toHaveBeenCalledTimes(1);
+});
