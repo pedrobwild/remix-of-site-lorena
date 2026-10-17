@@ -1,5 +1,9 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { LICENCAS, mergeLicenca } from "@/content/pages/licencas";
+
+// licencas → indiceCusto → useSeo importa o cliente do Supabase, que exige
+// VITE_SUPABASE_URL (ausente no CI). Mesmo mock dos testes vizinhos.
+vi.mock("@/integrations/supabase/client", () => ({ supabase: {} }));
 
 describe("licenças editáveis no painel", () => {
   it("campo vazio no banco usa o texto padrão", () => {
