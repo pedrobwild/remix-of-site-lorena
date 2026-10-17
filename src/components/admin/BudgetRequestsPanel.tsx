@@ -4,7 +4,7 @@ import { RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { LEAD_STATUSES, leadFormOrFilter, type LeadStatus } from "@/lib/adminLeads";
 import { LEAD_STATUS_LABEL } from "@/lib/crmStage";
-import { collectRequestPages, groupRequestsByNeighborhood, neighborhoodKey, requestNeighborhood, selectBudgetRequests, type BudgetRequest } from "@/lib/budgetRequests";
+import { collectRequestPages, groupRequestsByNeighborhood, neighborhoodKey, requestNeighborhood, selectBudgetRequests, selectConfirmedRequests, type BudgetRequest } from "@/lib/budgetRequests";
 import { LeadCrmStatus, fmtCrmDateTime } from "@/components/admin/LeadCrmStatus";
 import "@/styles/budget-requests.css";
 
@@ -16,18 +16,18 @@ async function loadRequests() {
   return selectBudgetRequests(rows);
 }
 
-export default function BudgetRequestsPanel() {
+export default function BudgetRequestsPanel({ confirmedOnly = false }: { confirmedOnly?: boolean }) {
   const [bairro, setBairro] = useState("all");
   const [status, setStatus] = useState<"all" | LeadStatus>("all");
   const { data, isPending, isError, isFetching, refetch } = useQuery({ queryKey: ["admin", "budget-requests"], queryFn: loadRequests });
-  const rows = data ?? [];
-  const neighborhoods = useMemo(() => groupRequestsByNeighborhood(data ?? []), [data]);
+  const rows = useMemo(() => confirmedOnly ? selectConfirmedRequests(data ?? []) : data ?? [], [data, confirmedOnly]);
+  const neighborhoods = useMemo(() => groupRequestsByNeighborhood(rows), [rows]);
   const filtered = rows.filter((row) => (bairro === "all" || neighborhoodKey(row.location) === bairro) && (status === "all" || row.status === status));
   const groups = groupRequestsByNeighborhood(filtered);
 
   return <section className="bw-requests" aria-label="Pedidos de orçamento">
     <div className="bw-requests__head">
-      <h2>Orçamentos · /orcamento</h2>
+      <h2>{confirmedOnly ? "Pedidos confirmados · Contratos ganhos" : "Orçamentos · /orcamento"}</h2>
       <button type="button" className="bw-admin__btn" onClick={() => void refetch()} disabled={isFetching} aria-label="Atualizar pedidos"><RefreshCw aria-hidden />Atualizar</button>
     </div>
     <div className="bw-requests__filters">
@@ -36,13 +36,13 @@ export default function BudgetRequestsPanel() {
     </div>
     {isPending ? <p className="bw-admin__empty" role="status">Carregando pedidos…</p> : isError ? <div role="alert"><p>Não foi possível carregar os pedidos.</p><button type="button" className="bw-admin__btn" onClick={() => void refetch()}>Tentar novamente</button></div> : <>
       <p className="bw-requests__total" role="status"><strong>{filtered.length.toLocaleString("pt-BR")}</strong> pedidos{filtered.length !== rows.length ? ` de ${rows.length.toLocaleString("pt-BR")}` : ""}</p>
-      {filtered.length === 0 ? <p className="bw-admin__empty">{rows.length === 0 ? "Nenhum pedido recebido pelo /orcamento ainda." : "Nenhum pedido com estes filtros."}</p> : <>
+      {filtered.length === 0 ? <p className="bw-admin__empty">{rows.length === 0 ? confirmedOnly ? "Nenhum pedido do /orcamento marcado como ganho no Bwild Engine ainda." : "Nenhum pedido recebido pelo /orcamento ainda." : "Nenhum pedido com estes filtros."}</p> : <>
         <h3>Pedidos por bairro e status</h3>
         <div className="bw-requests__neighborhoods">{groups.map((group) => <article key={group.key} className="bw-requests__neighborhood">
           <h4>{group.name}<span className="num">{group.total}</span></h4>
           <dl>{LEAD_STATUSES.map((value) => <div key={value}><dt>{LEAD_STATUS_LABEL[value]}</dt><dd className="num">{group[value]}</dd></div>)}</dl>
         </article>)}</div>
-        <h3>Pedidos recebidos</h3>
+        <h3>{confirmedOnly ? "Leads que viraram contrato" : "Pedidos recebidos"}</h3>
         <ul className="bw-requests__list">{filtered.map((row) => <li key={row.id}>
           <div><strong>{row.name || "Sem nome"}</strong><p>{requestNeighborhood(row.location)}</p></div>
           <LeadCrmStatus lead={row} />

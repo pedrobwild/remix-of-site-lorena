@@ -24,6 +24,11 @@ export function selectBudgetRequests<T extends LeadFormSource>(rows: T[]): T[] {
   return rows.filter((row) => resolveLeadForm(row).form === "/orcamento");
 }
 
+/** Qualificação não confirma contrato: apenas negócio ganho no CRM. */
+export function selectConfirmedRequests<T extends { crm_won: boolean | null }>(rows: T[]): T[] {
+  return rows.filter((row) => row.crm_won === true);
+}
+
 export function groupRequestsByNeighborhood(rows: BudgetRequest[]) {
   const groups = new Map<string, { key: string; name: string; total: number; novo: number; contatado: number; qualificado: number; descartado: number }>();
   for (const row of rows) {
