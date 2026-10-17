@@ -11,6 +11,7 @@ import { faqJsonLd } from "@/lib/useSeo";
 import type { LeadObjetivo } from "@/lib/leadForm";
 import { CONTACT } from "@/components/landing/content";
 import { CLIENTES_SHORT_STAY_PCT, CONTRATOS_ANALISADOS } from "@/content/provas";
+import { CUSTO_M2_MEDIANO, ORCAMENTO_MEDIANO } from "@/content/baseCusto";
 
 export const CANONICAL = "/orcamento";
 
@@ -33,7 +34,7 @@ export const TOPO_VARIANTES = {
   },
   custo: {
     h1: "Quanto custa reformar seu apartamento em SP?",
-    subtitulo: `A mediana dos ${CONTRATOS_ANALISADOS} contratos de reforma completa de até 50 m² da Bewild é R$ 2.744 por m², com projeto, obra, marcenaria, mobília e eletros, e o studio sai pronto para alugar. Informe bairro e metragem e receba a faixa do seu imóvel em até um dia útil.`,
+    subtitulo: `A mediana dos ${CONTRATOS_ANALISADOS} contratos de reforma completa de até 50 m² da Bewild é ${CUSTO_M2_MEDIANO} por m², com projeto, obra, marcenaria, mobília e eletros, e o studio sai pronto para alugar. Informe bairro e metragem e receba a faixa do seu imóvel em até um dia útil.`,
   },
   investidor: {
     h1: "Orçamento de reforma de studio para alugar ou Airbnb.",
@@ -89,7 +90,7 @@ export const AREA_SLIDER = { min: 15, max: 120, padrao: 28 } as const;
 export const FAQ: { q: string; a: string }[] = [
   {
     q: "Quanto custa uma reforma turnkey em São Paulo?",
-    a: `Nos ${CONTRATOS_ANALISADOS} contratos de reforma completa de até 50 m² analisados pela Bewild, a mediana foi R$ 71.850, ou R$ 2.744 por m², com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Quatro em cada dez contratos ficaram entre R$ 65 mil e R$ 75 mil, e nenhum abaixo de R$ 55 mil. A tabela por metragem está no guia de custo da Bewild.`,
+    a: `Nos ${CONTRATOS_ANALISADOS} contratos de reforma completa de até 50 m² analisados pela Bewild, a mediana foi ${ORCAMENTO_MEDIANO}, ou ${CUSTO_M2_MEDIANO} por m², com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Quatro em cada dez contratos ficaram entre R$ 65 mil e R$ 75 mil, e nenhum abaixo de R$ 55 mil. A tabela por metragem está no guia de custo da Bewild.`,
   },
   {
     q: "O orçamento é gratuito?",

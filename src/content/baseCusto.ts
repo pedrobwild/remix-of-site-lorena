@@ -25,3 +25,21 @@ export const BASE_CUSTO = {
   /** Nenhum contrato da base ficou abaixo deste valor (R$). */
   orcamentoMinimo: 55_000,
 } as const;
+
+/**
+ * Reais sem centavos no formato do site ("R$ 2.744"). O separador de milhar é
+ * montado aqui, sem `toLocaleString`, para o texto sair igual no servidor e no
+ * navegador, qualquer que seja o ICU do runtime.
+ */
+export function brl(valor: number): string {
+  return `R$ ${String(Math.round(valor)).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+}
+
+/**
+ * Custo da base nos textos do site. Desde 17/10/2026 a mediana por m² é o número
+ * de custo dos anúncios, do /orcamento e das páginas de serviço (decisão do
+ * Pedro). Nenhuma página escreve "R$ 2.744" ou "R$ 71.850" à mão: usa estas
+ * constantes (guardado por src/__tests__/provasUnicas.test.ts).
+ */
+export const CUSTO_M2_MEDIANO = brl(BASE_CUSTO.m2Mediano);
+export const ORCAMENTO_MEDIANO = brl(BASE_CUSTO.orcamentoMediano);

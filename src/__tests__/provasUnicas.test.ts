@@ -13,6 +13,7 @@ import { join, relative } from "node:path";
 import { describe, expect, it } from "vitest";
 import { BAIRROS } from "@/guia/data/bairros";
 import { BAIRROS_CONTENT } from "@/content/bairros";
+import { CUSTO_M2_MEDIANO, ORCAMENTO_MEDIANO, brl } from "@/content/baseCusto";
 
 const SRC = join(__dirname, "..");
 
@@ -47,6 +48,21 @@ describe("provas numéricas", () => {
       /mais de\s*(\$\{\s*BAIRROS_ATENDIDOS|\{\s*BAIRROS_ATENDIDOS|"\s*\+\s*BAIRROS_ATENDIDOS|27\b)|\+\$\{\s*BAIRROS_ATENDIDOS|\b27\s+bairros/i;
     const achados = FONTES.filter((f) => proibido.test(readFileSync(f, "utf8"))).map((f) => relative(SRC, f));
     expect(achados).toEqual([]);
+  });
+
+  // Custo da base de contratos: desde 17/10/2026 a mediana por m² é o número
+  // dos anúncios, do /orcamento e das páginas de serviço. Ele vive em
+  // src/content/baseCusto.ts; trocar o número é mudar uma linha lá.
+  it("custo mediano (por m² e por reforma) só sai de baseCusto.ts", () => {
+    const proibido = /R\$\s*2\.744|R\$\s*71\.850/;
+    const achados = FONTES.filter((f) => !f.endsWith(join("content", "baseCusto.ts")))
+      .filter((f) => proibido.test(readFileSync(f, "utf8")))
+      .map((f) => relative(SRC, f));
+    expect(achados).toEqual([]);
+    expect(CUSTO_M2_MEDIANO).toBe("R$ 2.744");
+    expect(ORCAMENTO_MEDIANO).toBe("R$ 71.850");
+    expect(brl(1_234_567)).toBe("R$ 1.234.567");
+    expect(brl(950)).toBe("R$ 950");
   });
 
   it("o guia não mostra nota, studios ou tempo de mercado sem fonte", () => {
