@@ -1,14 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import PrivacidadePage from "@/pages/PrivacidadePage";
-import { PRIVACIDADE_SEO } from "@/content/pages/privacidade";
-import { seoHead , rootPagesSeo } from "@/lib/routeHead";
+import LegalPage from "@/pages/LegalPage";
+import { LEGAL_PAGES } from "@/content/pages/legal";
+import { loadLegalPage } from "@/lib/contentLoaders";
+import { seoHead, rootPagesSeo } from "@/lib/routeHead";
 
 export const Route = createFileRoute("/privacidade")({
-  component: PrivacidadePage,
+  loader: () => loadLegalPage("privacidade"),
+  component: RouteComponent,
   head: ({ matches }) => seoHead({ pagesSeo: rootPagesSeo(matches),
-    ...PRIVACIDADE_SEO,
+    ...LEGAL_PAGES.privacidade.seo,
     path: "/privacidade",
     ogType: "website",
     extraMeta: [{ name: "twitter:card", content: "summary_large_image" }],
   }),
 });
+
+function RouteComponent() {
+  return <LegalPage slug="privacidade" content={Route.useLoaderData()} />;
+}
