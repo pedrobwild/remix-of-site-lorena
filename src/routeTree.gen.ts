@@ -89,6 +89,7 @@ import { Route as AdminProjetosNovoRouteImport } from './routes/admin.projetos.n
 import { Route as AdminSeoIndexRouteImport } from './routes/admin.seo.index'
 import { Route as AdminSeo404RouteImport } from './routes/admin.seo.404'
 import { Route as ApiPublicCrmStageSyncRouteImport } from './routes/api/public/crm-stage-sync'
+import { Route as ApiPublicExportRouteImport } from './routes/api/public/export'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -492,6 +493,11 @@ const ApiPublicCrmStageSyncRoute = ApiPublicCrmStageSyncRouteImport.update({
   path: '/api/public/crm-stage-sync',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicExportRoute = ApiPublicExportRouteImport.update({
+  id: '/api/public/export',
+  path: '/api/public/export',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -570,6 +576,7 @@ export interface FileRoutesByFullPath {
   '/admin/projetos/novo': typeof AdminProjetosNovoRoute
   '/admin/seo/404': typeof AdminSeo404Route
   '/api/public/crm-stage-sync': typeof ApiPublicCrmStageSyncRoute
+  '/api/public/export': typeof ApiPublicExportRoute
   '/admin/bewild/': typeof AdminBewildIndexRoute
   '/admin/conteudos/': typeof AdminConteudosIndexRoute
   '/admin/projetos/': typeof AdminProjetosIndexRoute
@@ -652,6 +659,7 @@ export interface FileRoutesByTo {
   '/admin/projetos/novo': typeof AdminProjetosNovoRoute
   '/admin/seo/404': typeof AdminSeo404Route
   '/api/public/crm-stage-sync': typeof ApiPublicCrmStageSyncRoute
+  '/api/public/export': typeof ApiPublicExportRoute
   '/admin/bewild': typeof AdminBewildIndexRoute
   '/admin/conteudos': typeof AdminConteudosIndexRoute
   '/admin/projetos': typeof AdminProjetosIndexRoute
@@ -735,6 +743,7 @@ export interface FileRoutesById {
   '/admin/projetos/novo': typeof AdminProjetosNovoRoute
   '/admin/seo/404': typeof AdminSeo404Route
   '/api/public/crm-stage-sync': typeof ApiPublicCrmStageSyncRoute
+  '/api/public/export': typeof ApiPublicExportRoute
   '/admin/bewild/': typeof AdminBewildIndexRoute
   '/admin/conteudos/': typeof AdminConteudosIndexRoute
   '/admin/projetos/': typeof AdminProjetosIndexRoute
@@ -819,6 +828,7 @@ export interface FileRouteTypes {
     | '/admin/projetos/novo'
     | '/admin/seo/404'
     | '/api/public/crm-stage-sync'
+    | '/api/public/export'
     | '/admin/bewild/'
     | '/admin/conteudos/'
     | '/admin/projetos/'
@@ -901,6 +911,7 @@ export interface FileRouteTypes {
     | '/admin/projetos/novo'
     | '/admin/seo/404'
     | '/api/public/crm-stage-sync'
+    | '/api/public/export'
     | '/admin/bewild'
     | '/admin/conteudos'
     | '/admin/projetos'
@@ -983,6 +994,7 @@ export interface FileRouteTypes {
     | '/admin/projetos/novo'
     | '/admin/seo/404'
     | '/api/public/crm-stage-sync'
+    | '/api/public/export'
     | '/admin/bewild/'
     | '/admin/conteudos/'
     | '/admin/projetos/'
@@ -1066,6 +1078,7 @@ export interface RootRouteChildren {
   AdminProjetosNovoRoute: typeof AdminProjetosNovoRoute
   AdminSeo404Route: typeof AdminSeo404Route
   ApiPublicCrmStageSyncRoute: typeof ApiPublicCrmStageSyncRoute
+  ApiPublicExportRoute: typeof ApiPublicExportRoute
   AdminBewildIndexRoute: typeof AdminBewildIndexRoute
   AdminConteudosIndexRoute: typeof AdminConteudosIndexRoute
   AdminProjetosIndexRoute: typeof AdminProjetosIndexRoute
@@ -1634,6 +1647,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCrmStageSyncRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/export': {
+      id: '/api/public/export'
+      path: '/api/public/export'
+      fullPath: '/api/public/export'
+      preLoaderRoute: typeof ApiPublicExportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1714,6 +1734,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminProjetosNovoRoute: AdminProjetosNovoRoute,
   AdminSeo404Route: AdminSeo404Route,
   ApiPublicCrmStageSyncRoute: ApiPublicCrmStageSyncRoute,
+  ApiPublicExportRoute: ApiPublicExportRoute,
   AdminBewildIndexRoute: AdminBewildIndexRoute,
   AdminConteudosIndexRoute: AdminConteudosIndexRoute,
   AdminProjetosIndexRoute: AdminProjetosIndexRoute,
