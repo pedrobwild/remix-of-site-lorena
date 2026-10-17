@@ -28,6 +28,7 @@
 - Portal real (incidente de 15/10/2026): demonstração do Bwild Workflow no site é sempre a réplica com dados fictícios (`src/components/workflow-replica`). Nenhuma página pública (QR `/o`, `/p`, LPs, home, artigos) tem link para o portal real (bwildworkflow.com, portal-bwild.lovable.app, preview do projeto do portal), para `/vitrine/` nem login por URL (`/auth?email=…&password=…`). Até 15/10/2026 o `/o` mandava o visitante para a vitrine do portal, que entrava sozinha numa conta e abria uma obra com dados de cliente. Guardado por `src/__tests__/sitePublicoSemPortalReal.test.ts`.
 
 <!-- LOVABLE:BEGIN -->
+- Market questions in the existing FAQ assistant use a public TanStack server function reading the Radar view on every request; deterministic per-indicator formatting preserves source-provided confidence and prevents stale KB numbers or model hallucinations.
 - Privacy-to-budget attribution stores only a nullable same-session visit flag, not visitor identifiers; consent gates browser collection and server persistence to minimize personal data and prevent historical inference.
 - License records are admin-only; public pages read only title, intro and body through `get_public_license`, and writes never retain editor email, preserving public content without exposing panel metadata.
 - Portfolio image descriptions are keyed by original URL in `image_alt_texts`; the public RPC supplies SSR loader data and client reuse so shared images have identical descriptions before hydration.

@@ -298,3 +298,15 @@
 /* Título de tema das dúvidas do assistente (assistant_kb) */
 .bwa-faqpage-tema { margin: 40px 0 16px; }
 .bwa-faqpage-intro > .bwa-shell > div:first-child > .bwa-faqpage-tema:first-child { margin-top: 0; }
+
+.bwa-radar-answer-text {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  margin: 16px 0;
+  color: var(--bwa-ink-soft);
+  font-size: 16px;
+  line-height: 1.65;
+}
+.bwa-faqpage-ask-answer { border-radius: 8px; }
+.bwa-faqpage-ask-input { border-radius: 8px; }
+.bwa-faqpage-ask-form .bwa-button:disabled { opacity: .6; cursor: not-allowed; }
