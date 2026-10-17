@@ -44,3 +44,4 @@
 - [x] Página pública de coletas por bairro (mesmo histórico do assistente)
 - [x] Incluir Coletas por bairro nos sitemaps e permitir indexação; 66 testes passam e histórico público conferido
 - [ ] Publicar termos de uso — página /termos-de-uso ausente nesta versão; aguarda texto aprovado ou recuperação
+- [ ] Adicionar aba SEO com visitantes de /coletas-por-bairro e /orcamento por bairro, usando somente evidências reais
