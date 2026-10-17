@@ -10,12 +10,50 @@
 import { faqJsonLd } from "@/lib/useSeo";
 import type { LeadObjetivo } from "@/lib/leadForm";
 import { CONTACT } from "@/components/landing/content";
+import { CLIENTES_SHORT_STAY_PCT, CONTRATOS_ANALISADOS } from "@/content/provas";
 
 export const CANONICAL = "/orcamento";
 
 const BASE = "https://bewild.com.br";
 
 export const PILAR_CUSTO = "/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2";
+
+export const TOPO_VARIANTES = {
+  padrao: {
+    h1: "Orçamento de reforma de apartamento e studio em SP.",
+    subtitulo: "Reforma completa turnkey de studios e compactos recém-entregues, no contrapiso, para alugar, anunciar no Airbnb ou morar: projeto, obra, marcenaria, mobília e eletros em um contrato, com preço fechado e 5 anos de garantia.",
+  },
+  studio: {
+    h1: "Orçamento de reforma de studio e apartamento pequeno em SP.",
+    subtitulo: `Do contrapiso ao studio pronto para alugar ou anunciar no Airbnb. A maioria das obras da Bewild é em studios de 20 a 35 m², e ${CLIENTES_SHORT_STAY_PCT}% dos clientes reformam para short stay.`,
+  },
+  arquitetura: {
+    h1: "Orçamento de arquitetura e reforma em SP.",
+    subtitulo: "Projeto de arquitetura e obra no mesmo contrato, para studios e compactos que vão para aluguel, Airbnb ou moradia. O projeto aprovado em 3D vira o escopo do contrato, e o que está nele tem preço fechado.",
+  },
+  custo: {
+    h1: "Quanto custa reformar seu apartamento em SP?",
+    subtitulo: `A mediana dos ${CONTRATOS_ANALISADOS} contratos de reforma completa de até 50 m² da Bewild é R$ 2.744 por m², com projeto, obra, marcenaria, mobília e eletros, e o studio sai pronto para alugar. Informe bairro e metragem e receba a faixa do seu imóvel em até um dia útil.`,
+  },
+  investidor: {
+    h1: "Orçamento de reforma de studio para alugar ou Airbnb.",
+    subtitulo: "Projeto, obra, marcenaria, mobília e eletros: o studio sai pronto para fotografar e anunciar. A gestão do Airbnb também pode ficar com a Bewild, ou com quem você escolher.",
+  },
+} as const;
+
+export type TopoVariante = keyof typeof TOPO_VARIANTES;
+
+/** Busca crua preserva o primeiro valor repetido e trata IDs numéricos como texto. */
+export function topoVarianteDaBusca(searchStr: string): TopoVariante {
+  const params = new URLSearchParams(searchStr);
+  const content = params.get("utm_content") ?? "";
+  const campaign = params.get("utm_campaign") ?? "";
+  if (content.endsWith("investidor") || content.startsWith("airbnb") || content.startsWith("aluguel") || campaign === "sea_investidor") return "investidor";
+  if (content === "studio-ape-pequeno") return "studio";
+  if (content === "arquitetura-reforma") return "arquitetura";
+  if (content === "custo-orcamento") return "custo";
+  return "padrao";
+}
 
 /** Formulário em etapas: rótulo curto (barra de progresso) e pergunta (H2). */
 export const ETAPAS: ReadonlyArray<{ rotulo: string; pergunta: string }> = [
@@ -46,8 +84,16 @@ export const AREA_SLIDER = { min: 15, max: 120, padrao: 28 } as const;
 
 export const FAQ: { q: string; a: string }[] = [
   {
+    q: "Vocês fazem o projeto de arquitetura e a decoração?",
+    a: "Sim. Layout, marcenaria, iluminação, acabamentos e mobília saem de um projeto da Bewild, com arquiteto como responsável técnico, aprovado em 3D antes da obra. Projeto e obra ficam no mesmo contrato.",
+  },
+  {
+    q: "Quem cuida da ART e do plano de reforma para o condomínio?",
+    a: "A Bewild. Antes de a obra começar, entregamos ao síndico o plano de reforma exigido pela NBR 16280, com a ART ou RRT do responsável técnico, o cronograma e os horários de trabalho.",
+  },
+  {
     q: "Quanto custa uma reforma turnkey em São Paulo?",
-    a: "Nos 188 contratos de reforma completa de até 50 m² analisados pela Bewild, a mediana foi R$ 71.850, ou R$ 2.744 por m², com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Quatro em cada dez contratos ficaram entre R$ 65 mil e R$ 75 mil, e nenhum abaixo de R$ 55 mil. A tabela por metragem está no guia de custo da Bewild.",
+    a: `Nos ${CONTRATOS_ANALISADOS} contratos de reforma completa de até 50 m² analisados pela Bewild, a mediana foi R$ 71.850, ou R$ 2.744 por m², com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Quatro em cada dez contratos ficaram entre R$ 65 mil e R$ 75 mil, e nenhum abaixo de R$ 55 mil. A tabela por metragem está no guia de custo da Bewild.`,
   },
   {
     q: "O orçamento é gratuito?",

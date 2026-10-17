@@ -1,3 +1,4 @@
+- [ ] Tarefa 1/2 de copy para investidor: topo SSR por anúncio, provas, escopo, FAQ e pesos Google Ads; preservar formulário e atribuição, validar suíte e não publicar.
 - [x] Inventariar os 162 projetos publicados, dados, capas, galerias e descrições existentes
 - [x] Redigir conteúdo editorial individual para os 162 projetos
 - [x] Criar content/portfolio/portfolio-editorial-162.json
