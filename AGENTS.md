@@ -32,6 +32,7 @@
 - Neighborhood-interest reporting reuses consent-gated analytics event values and paginated admin reads; visitor counts are deduplicated by page and neighborhood, with no lead join or inferred physical location.
 - Market questions in the existing FAQ assistant use a public TanStack server function reading the Radar view on every request; deterministic per-indicator formatting preserves source-provided confidence and prevents stale KB numbers or model hallucinations.
 - Collection-history questions use a separate explicit public observation projection in the same Radar server boundary; history context is preserved across neighborhood follow-ups without requesting private metadata.
+- The SEO collection-history tab reuses getRadarColetas for fresh read-only neighborhood selection and manual refresh; it never stores copies or writes to the Radar.
 - Privacy-to-budget attribution stores only a nullable same-session visit flag, not visitor identifiers; consent gates browser collection and server persistence to minimize personal data and prevent historical inference.
 - License records are admin-only; public pages read only title, intro and body through `get_public_license`, and writes never retain editor email, preserving public content without exposing panel metadata.
 - Portfolio image descriptions are keyed by original URL in `image_alt_texts`; the public RPC supplies SSR loader data and client reuse so shared images have identical descriptions before hydration.
