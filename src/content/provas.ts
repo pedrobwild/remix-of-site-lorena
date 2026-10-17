@@ -26,6 +26,12 @@ export const CONTRATOS_ANALISADOS = 188;
 /** Bairros de São Paulo com obra entregue. */
 export const BAIRROS_ATENDIDOS = 27;
 
+/** Clientes que reformam para short stay — base de clientes da Bewild, publicação aprovada pelo Pedro em 17/10/2026. */
+export const CLIENTES_SHORT_STAY_PCT = 79;
+
+/** Clientes que moram fora da capital — base de clientes da Bewild, publicação aprovada pelo Pedro em 17/10/2026. */
+export const CLIENTES_FORA_DA_CAPITAL_PCT = 48;
+
 /** "+160 reformas entregues" */
 export const PROVA_REFORMAS = `+${REFORMAS_ENTREGUES} reformas entregues`;
 

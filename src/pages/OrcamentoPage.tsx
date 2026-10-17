@@ -32,12 +32,16 @@ import "./contato.css";
 import "./servico-reforma.css";
 import "./orcamento.css";
 import fotoObra from "@/assets/orcamento/obra-bewild.webp";
+import { BAIRROS_ATENDIDOS, CLIENTES_FORA_DA_CAPITAL_PCT, CLIENTES_SHORT_STAY_PCT, CONTRATOS_ANALISADOS, PROVA_REFORMAS } from "@/content/provas";
 import {
   AREA_SLIDER,
   ESTADOS_IMOVEL,
   ETAPAS,
   FAQ,
   OBJETIVOS,
+  PILAR_CUSTO,
+  TOPO_VARIANTES,
+  type TopoVariante,
   type EstadoImovel,
 } from "@/content/pages/orcamento";
 
@@ -92,7 +96,8 @@ function etapaInvalida(errors: FieldErrors<Campo>, de: number, ate: number): num
  * GA4: `orcamento_step` (step 1–4) a cada etapa concluída, para ver onde o
  * visitante desiste; `generate_lead` continua saindo do `useLeadSubmit`.
  */
-export default function OrcamentoPage() {
+export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariante?: TopoVariante }) {
+  const topo = TOPO_VARIANTES[topoVariante];
   useCtaClickTracking("orcamento");
 
   const [step, setStep] = useState(0);
@@ -288,13 +293,9 @@ export default function OrcamentoPage() {
               ) : (
                 <>
                   <p className="bwa-orc-kicker">Orçamento · São Paulo</p>
-                  {/* H1 com a palavra-chave (rodada 3 de SEO). */}
-                  <h1 className="bwa-orc-h1">Orçamento de reforma turnkey de apartamento em SP.</h1>
-                  <p className="bwa-orc-sub">
-                    <strong>São só as informações iniciais para conhecermos o seu imóvel.</strong> Com elas, um
-                    especialista da Bewild entra em contato pelo WhatsApp em até um dia útil para entender o
-                    projeto mais a fundo para que seu orçamento personalizado seja elaborado.
-                  </p>
+                  <h1 className="bwa-orc-h1">{topo.h1}</h1>
+                  <p className="bwa-orc-sub">{topo.subtitulo}</p>
+                  <p className="bwa-orc-sub">São só as informações iniciais para conhecermos o seu imóvel: um especialista da Bewild responde pelo WhatsApp em até um dia útil.</p>
                 </>
               )}
 
@@ -634,6 +635,27 @@ export default function OrcamentoPage() {
             <div className="bwa-orc-foto" aria-hidden="true">
               <img src={fotoObra} alt="" width={712} height={1400} decoding="async" />
             </div>
+          </div>
+        </section>
+
+        <section className="bwa-servico-block" aria-labelledby="escopo-orcamento">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="escopo-orcamento">O que entra no orçamento da Bewild</h2>
+            <p className="bwa-servico-text">Uma empresa de arquitetura e reforma para studios e apartamentos compactos em São Paulo capital, entregues prontos para alugar, anunciar no Airbnb ou morar: projeto, obra com time próprio, marcenaria própria, mobília, eletros e decoração em um único contrato.</p>
+            <ul className="bwa-servico-text">
+              <li>Projeto de reforma em 3D, aprovado antes da obra.</li>
+              <li>Preço fechado: se a obra custar mais do que o combinado, a diferença é da Bewild.</li>
+              <li>Prazo em contrato, com multa por dia de atraso. Studio simples: cerca de 60 dias úteis de obra.</li>
+              <li>Plano de reforma da NBR 16280, com ART ou RRT do responsável técnico, entregue ao síndico antes da obra.</li>
+              <li>Obra acompanhada de qualquer cidade no Bwild Workflow: cronograma, fotos e decisões.</li>
+              <li>5 anos de garantia, em contrato.</li>
+            </ul>
+            <p className="bwa-servico-text">{PROVA_REFORMAS} em {BAIRROS_ATENDIDOS} bairros de São Paulo, como Pinheiros, Bela Vista, Vila Olímpia e Brooklin.</p>
+            <h3 className="bwa-servico-h3">Para quem é</h3>
+            <p className="bwa-servico-text">A Bewild reforma unidades recém-entregues, ainda no contrapiso, na cidade de São Paulo. {CLIENTES_SHORT_STAY_PCT}% dos clientes reformam para short stay e {CLIENTES_FORA_DA_CAPITAL_PCT}% moram fora da capital: a maior parte das obras é em studios e apartamentos compactos de 20 a 35 m², entregues prontos para o Airbnb ou para contrato longo, e a gestão do Airbnb também pode ficar com a Bewild. Também reformamos para morar, apartamentos maiores e escritórios. Mora fora de São Paulo? Vistoria por procuração, ligação de energia, internet e emergências ficam com a Bewild.</p>
+            <h3 className="bwa-servico-h3">Quanto custa</h3>
+            <p className="bwa-servico-text">A mediana dos {CONTRATOS_ANALISADOS} contratos de reforma completa de até 50 m² analisados pela Bewild é R$ 2.744 por m², com projeto, obra, marcenaria, mobília e eletros.</p>
+            <p className="bwa-servico-text">A tabela por metragem está no <a href={PILAR_CUSTO}>guia de custo</a>.</p>
           </div>
         </section>
 

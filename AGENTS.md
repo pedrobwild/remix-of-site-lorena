@@ -28,6 +28,7 @@
 - Portal real (incidente de 15/10/2026): demonstração do Bwild Workflow no site é sempre a réplica com dados fictícios (`src/components/workflow-replica`). Nenhuma página pública (QR `/o`, `/p`, LPs, home, artigos) tem link para o portal real (bwildworkflow.com, portal-bwild.lovable.app, preview do projeto do portal), para `/vitrine/` nem login por URL (`/auth?email=…&password=…`). Até 15/10/2026 o `/o` mandava o visitante para a vitrine do portal, que entrava sozinha numa conta e abria uma obra com dados de cliente. Guardado por `src/__tests__/sitePublicoSemPortalReal.test.ts`.
 
 <!-- LOVABLE:BEGIN -->
+- The orçamento route computes campaign copy from loader location.search, taking the first array entry and treating numeric IDs as text; it passes the variant to the page without rewriting URLs or lead attribution.
 - External credentials stay encrypted and server-only; Engine reads prefer the shared environment key, and qualitative profiles stay admin-only without free text, preventing exposure.
 - Published CRM proposals are fetched server-side only for an admin-authorized existing lead and displayed in its details; validate response links and project only public proposal fields, preventing cross-lead exposure without copying or publishing budgets.
 - The admin integration API tab reuses export_keys and its server-authorized create/revoke RPCs; /api/public/export forwards only read parameters and caller export credentials to the existing sanitized exporter, never adding privileged credentials or enabling writes.

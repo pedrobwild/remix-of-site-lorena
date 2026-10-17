@@ -1,3 +1,4 @@
+- [x] Tarefa 1/2 de copy para investidor: topo SSR por anúncio, provas, escopo, FAQ e pesos Google Ads; formulário e atribuição preservados. Suíte: 162 arquivos, 1650 testes passam e 5 ignorados; lint específico sem erros. Cinco variantes SSR, canonical e URL intactos, quatro etapas sem envio e 320/414 px sem overflow conferidos; não publicado.
 - [x] Inventariar os 162 projetos publicados, dados, capas, galerias e descrições existentes
 - [x] Redigir conteúdo editorial individual para os 162 projetos
 - [x] Criar content/portfolio/portfolio-editorial-162.json
