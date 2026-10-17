@@ -45,3 +45,4 @@
 - [x] Incluir Coletas por bairro nos sitemaps e permitir indexação; 66 testes passam e histórico público conferido
 - [ ] Publicar termos de uso — página /termos-de-uso ausente nesta versão; aguarda texto aprovado ou recuperação
 - [x] Adicionar aba SEO Bairros de interesse com visitantes das duas páginas; captura consentida, históricos sem inferência, paginação e 34 testes específicos passando; painel autenticado e 320/414 px conferidos; não publicar
+- [ ] Adicionar aba SEO de origens: visitantes e comportamento no orçamento, pedidos e situação no CRM até contrato, sem vínculo individual inferido
