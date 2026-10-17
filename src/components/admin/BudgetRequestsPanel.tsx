@@ -35,7 +35,7 @@ export default function BudgetRequestsPanel({ confirmedOnly = false }: { confirm
       <label>Status<select aria-label="Status" value={status} onChange={(event) => setStatus(event.target.value as "all" | LeadStatus)}><option value="all">Todos os status</option>{LEAD_STATUSES.map((value) => <option key={value} value={value}>{LEAD_STATUS_LABEL[value]}</option>)}</select></label>
     </div>
     {isPending ? <p className="bw-admin__empty" role="status">Carregando pedidos…</p> : isError ? <div role="alert"><p>Não foi possível carregar os pedidos.</p><button type="button" className="bw-admin__btn" onClick={() => void refetch()}>Tentar novamente</button></div> : <>
-      <p className="bw-requests__total" role="status"><strong>{filtered.length.toLocaleString("pt-BR")}</strong> pedidos{filtered.length !== rows.length ? ` de ${rows.length.toLocaleString("pt-BR")}` : ""}</p>
+      <p className="bw-requests__total" role="status"><strong>{filtered.length.toLocaleString("pt-BR")}</strong> {filtered.length === 1 ? "pedido" : "pedidos"}{filtered.length !== rows.length ? ` de ${rows.length.toLocaleString("pt-BR")}` : ""}</p>
       {filtered.length === 0 ? <p className="bw-admin__empty">{rows.length === 0 ? confirmedOnly ? "Nenhum pedido do /orcamento marcado como ganho no Bwild Engine ainda." : "Nenhum pedido recebido pelo /orcamento ainda." : "Nenhum pedido com estes filtros."}</p> : <>
         <h3>Pedidos por bairro e status</h3>
         <div className="bw-requests__neighborhoods">{groups.map((group) => <article key={group.key} className="bw-requests__neighborhood">
