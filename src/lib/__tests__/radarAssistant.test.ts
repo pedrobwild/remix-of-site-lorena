@@ -14,7 +14,7 @@ describe("assistente Radar", () => {
     expect(await readRadarCollections("Pinheiros", fetcher)).toEqual([]);
     const url = new URL(fetcher.mock.calls[0][0]);
     expect(url.pathname).toBe("/rest/v1/radar_observacoes");
-    expect(Object.fromEntries(url.searchParams)).toEqual({ select: "coletado_em,periodo_inicio,periodo_fim,fonte_nome,amostra_n,ativo", cidade: "eq.São Paulo", bairro: "eq.Pinheiros", indicador: "eq.adr_medio_brl", order: "coletado_em.desc", limit: "20" });
+    expect(Object.fromEntries(url.searchParams)).toEqual({ select: "coletado_em,periodo_inicio,periodo_fim,radar_fontes(nome),amostra_n,ativo", cidade: "eq.São Paulo", bairro: "eq.Pinheiros", indicador: "eq.adr_medio_brl", order: "coletado_em.desc", limit: "20" });
   });
   it("ativo true é ativa e false é substituída; metadados privados são descartados", () => {
     const observation = radarObservationSchema.parse({ ...row(), ativo: true, autor: "privado", registrado_em: "privado", utm_source: "privado" });
@@ -29,7 +29,7 @@ describe("assistente Radar", () => {
     expect(text).not.toContain("privado");
   });
   it("histórico limita a 20 observações mesmo com resposta maior", async () => {
-    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify(Array.from({ length: 21 }, () => ({ ...row(), ativo: true })))));
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify(Array.from({ length: 21 }, () => ({ ...row(), radar_fontes: { nome: "GuestFavorites" }, ativo: true })))));
     expect(await readRadarCollections("Mooca", fetcher)).toHaveLength(20);
   });
   it("falhas e dados inválidos deixam o histórico indisponível, vazio não é falha", async () => {

@@ -23,7 +23,7 @@ export async function readRadar(fetcher: typeof fetch = fetch): Promise<RadarRow
 export async function readRadarCollections(bairro: string, fetcher: typeof fetch = fetch): Promise<RadarObservation[] | null> {
   try {
     const url = new URL(`${RADAR_URL}/rest/v1/radar_observacoes`);
-    url.searchParams.set("select", "coletado_em,periodo_inicio,periodo_fim,fonte_nome,amostra_n,ativo");
+    url.searchParams.set("select", "coletado_em,periodo_inicio,periodo_fim,radar_fontes(nome),amostra_n,ativo");
     url.searchParams.set("cidade", "eq.São Paulo");
     url.searchParams.set("bairro", `eq.${bairro}`);
     url.searchParams.set("indicador", "eq.adr_medio_brl");
@@ -34,7 +34,8 @@ export async function readRadarCollections(bairro: string, fetcher: typeof fetch
       signal: AbortSignal.timeout(8000),
     });
     if (!response.ok) return null;
-    const parsed = z.array(radarObservationSchema).safeParse(await response.json());
-    return parsed.success ? parsed.data.slice(0, 20) : null;
+    const wireSchema = radarObservationSchema.omit({ fonte_nome: true }).extend({ radar_fontes: z.object({ nome: z.string() }) });
+    const parsed = z.array(wireSchema).safeParse(await response.json());
+    return parsed.success ? parsed.data.slice(0, 20).map(({ radar_fontes, ...row }) => ({ ...row, fonte_nome: radar_fontes.nome })) : null;
   } catch { return null; }
 }
