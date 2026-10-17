@@ -65,6 +65,16 @@ describe("provas numéricas", () => {
     expect(brl(950)).toBe("R$ 950");
   });
 
+  // Base de 2025 (58 obras): a mediana da cidade aparece nas páginas de bairro e
+  // no /faq. Até 17/10/2026 ela estava escrita à mão e sem dizer de qual base vinha.
+  it("mediana da base de 2025 só sai de baseCusto.ts", () => {
+    const proibido = /R\$\s*2\.389|R\$\s*63\.763/;
+    const achados = FONTES.filter((f) => !f.endsWith(join("content", "baseCusto.ts")))
+      .filter((f) => proibido.test(readFileSync(f, "utf8")))
+      .map((f) => relative(SRC, f));
+    expect(achados).toEqual([]);
+  });
+
   it("o guia não mostra nota, studios ou tempo de mercado sem fonte", () => {
     const guia = arquivos(join(SRC, "guia")).map((f) => readFileSync(f, "utf8")).join("\n");
     expect(guia).not.toMatch(/4,9 nota|\+200 studios|\+5 anos no mercado/);

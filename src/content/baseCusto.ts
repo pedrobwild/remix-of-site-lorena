@@ -43,3 +43,21 @@ export function brl(valor: number): string {
  */
 export const CUSTO_M2_MEDIANO = brl(BASE_CUSTO.m2Mediano);
 export const ORCAMENTO_MEDIANO = brl(BASE_CUSTO.orcamentoMediano);
+
+/**
+ * Base de 2025: 58 obras completas dos contratos de fevereiro a outubro de 2025,
+ * em imóveis de 21 a 35 m² (projeto, obra, marcenaria, mobília e eletros).
+ * É a base das medianas por bairro das páginas /reforma/<bairro> ("contratos
+ * Bewild de 2025") e da resposta de custo do /faq. Não misturar com a base de
+ * 188 contratos acima: são estudos diferentes, e cada texto diz qual usa.
+ */
+export const BASE_2025 = {
+  obras: 58,
+  m2P25: 2_107,
+  m2Mediano: 2_389,
+  m2P75: 2_716,
+  obraMediana: 63_763,
+} as const;
+
+/** "R$ 2.389" — mediana por m² da base de 2025 (cidade). */
+export const CUSTO_M2_MEDIANO_2025 = brl(BASE_2025.m2Mediano);
