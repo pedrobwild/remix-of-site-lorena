@@ -98,6 +98,7 @@ export default function OrcamentoPage() {
   const [step, setStep] = useState(0);
   const [vista, setVista] = useState(0); // etapa mais avançada já aberta
   const [bairro, setBairro] = useState("");
+  const [bairroConfirmado, setBairroConfirmado] = useState<string | null>(null);
   const [area, setArea] = useState<number>(AREA_SLIDER.padrao);
   const [objetivo, setObjetivo] = useState<LeadObjetivo>("Short stay");
   const [chaves, setChaves] = useState<Chaves | "">("");
@@ -127,7 +128,7 @@ export default function OrcamentoPage() {
   const errors = validar({ bairro, nome, whats, mail });
   const erro = (k: Campo) => (touched[k] ? errors[k] : undefined);
   const touch = (k: Campo) => setTouched((t) => ({ ...t, [k]: true }));
-  useNeighborhoodInterest(bairro, Boolean(touched.bairro) || step > 0);
+  useNeighborhoodInterest(bairroConfirmado);
 
   useEffect(() => {
     const alvo = focoPendente.current;
@@ -170,7 +171,10 @@ export default function OrcamentoPage() {
   function conferir(i: number): boolean {
     const campos = CAMPOS_DA_ETAPA[i];
     const primeiro = firstInvalidField(campos, errors);
-    if (!primeiro) return true;
+    if (!primeiro) {
+      if (i === 0) setBairroConfirmado(bairro.trim());
+      return true;
+    }
     setTouched((t) => ({ ...t, ...touchAll(campos) }));
     if (i === step) focusField(CAMPO_ID[primeiro]);
     else irPara(i, primeiro);
@@ -183,7 +187,10 @@ export default function OrcamentoPage() {
     if (i < step) return irPara(i);
     const parada = etapaInvalida(errors, step, i);
     if (parada !== null) conferir(parada);
-    else irPara(i);
+    else {
+      if (step === 0) setBairroConfirmado(bairro.trim());
+      irPara(i);
+    }
   }
 
   function continuar(e: React.FormEvent) {
@@ -397,8 +404,14 @@ export default function OrcamentoPage() {
                           autoComplete="address-level2"
                           enterKeyHint="next"
                           required
-                          onChange={(e) => setBairro(e.target.value)}
-                          onBlur={() => touch("bairro")}
+                          onChange={(e) => {
+                            setBairro(e.target.value);
+                            setBairroConfirmado(null);
+                          }}
+                          onBlur={() => {
+                            touch("bairro");
+                            setBairroConfirmado(errors.bairro ? null : bairro.trim());
+                          }}
                           {...fieldErrorProps("orc-bairro", erro("bairro"))}
                         />
                         {erro("bairro") && <em id={fieldErrorId("orc-bairro")}>{erro("bairro")}</em>}
