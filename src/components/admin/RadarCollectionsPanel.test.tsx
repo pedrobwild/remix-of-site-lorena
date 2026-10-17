@@ -4,6 +4,7 @@ import RadarCollectionsPanel from "./RadarCollectionsPanel";
 
 const read = vi.hoisted(() => vi.fn());
 vi.mock("@/lib/assistant/radarColetas.functions", () => ({ getRadarColetas: read }));
+vi.mock("@/hooks/useRadarCollectionsUpdates", () => ({ useRadarCollectionsUpdates: () => 0 }));
 beforeEach(() => { read.mockReset(); });
 it("requests the selected neighborhood again on manual refresh without writing to the Radar", async () => {
   read.mockImplementation(async ({ data }: { data: { bairro?: string } }) => ({ bairros: ["Pinheiros"], bairro: data.bairro ?? null, coletas: [] }));
