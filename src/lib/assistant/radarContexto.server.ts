@@ -18,3 +18,23 @@ export async function readRadar(fetcher: typeof fetch = fetch): Promise<RadarRow
     return parsed.success && parsed.data.length ? parsed.data : null;
   } catch { return null; }
 }
+
+/** Projeção explícita: nenhum metadado privado é solicitado. */
+export async function readRadarCollections(bairro: string, fetcher: typeof fetch = fetch): Promise<RadarObservation[] | null> {
+  try {
+    const url = new URL(`${RADAR_URL}/rest/v1/radar_observacoes`);
+    url.searchParams.set("select", "coletado_em,periodo_inicio,periodo_fim,fonte_nome,amostra_n,ativo");
+    url.searchParams.set("cidade", "eq.São Paulo");
+    url.searchParams.set("bairro", `eq.${bairro}`);
+    url.searchParams.set("indicador", "eq.adr_medio_brl");
+    url.searchParams.set("order", "coletado_em.desc");
+    url.searchParams.set("limit", "20");
+    const response = await fetcher(url, {
+      headers: { apikey: RADAR_ANON_KEY, Authorization: `Bearer ${RADAR_ANON_KEY}` },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!response.ok) return null;
+    const parsed = z.array(radarObservationSchema).safeParse(await response.json());
+    return parsed.success ? parsed.data.slice(0, 20) : null;
+  } catch { return null; }
+}
