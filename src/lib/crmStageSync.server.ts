@@ -88,7 +88,8 @@ export async function runCrmStageSync(
   };
 
   try {
-    const key = env("BWILD_ENGINE_INTEGRATION_KEY");
+    const { resolveEngineKey } = await import("@/lib/externalApi.server");
+    const key = await resolveEngineKey(env("BWILD_ENGINE_INTEGRATION_KEY"), env("EXTERNAL_API_ENCRYPTION_KEY"));
     if (!key) throw new Error("engine_key_missing");
 
     if (!opts.full) {

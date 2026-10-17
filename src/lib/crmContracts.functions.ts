@@ -18,9 +18,10 @@ export const getClosedContracts = createServerFn({ method: "POST" })
       leads.push(...(data ?? []));
       if (!data || data.length < 1000) break;
     }
-    const key = process.env["BWILD_ENGINE_INTEGRATION_KEY"];
-    if (!key) return { contracts: mergeClosedContracts(leads, null), available: false };
     try {
+      const { resolveEngineKey } = await import("@/lib/externalApi.server");
+      const key = await resolveEngineKey(process.env["BWILD_ENGINE_INTEGRATION_KEY"], process.env["EXTERNAL_API_ENCRYPTION_KEY"]);
+      if (!key) return { contracts: mergeClosedContracts(leads, null), available: false };
       const { readCrmContracts } = await import("@/lib/crmContracts.server");
       const contracts = await readCrmContracts(key, leads.map((lead) => lead.id));
       return { contracts: mergeClosedContracts(leads, contracts), available: true };

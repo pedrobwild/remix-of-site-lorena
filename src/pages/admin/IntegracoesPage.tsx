@@ -18,6 +18,7 @@ import { Copy, RefreshCw } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import AdminAlert from "@/components/admin/AdminAlert";
 import ExportKeysPanel from "@/components/admin/ExportKeysPanel";
+import ExternalApiConnectionsPanel from "@/components/admin/ExternalApiConnectionsPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/guia/components/ui/tabs";
 import {
   capiStatus,
@@ -102,7 +103,7 @@ async function copy(text: string): Promise<boolean> {
 }
 
 export default function IntegracoesPage() {
-  const [tab, setTab] = useState("api");
+  const [tab, setTab] = useState("external");
   const [loading, setLoading] = useState(true);
   const [settings, setSettings] = useState<IntegrationSettings | null>(null);
   const [logs, setLogs] = useState<IntegrationLogRow[]>([]);
@@ -183,9 +184,13 @@ export default function IntegracoesPage() {
     >
       <Tabs value={tab} onValueChange={setTab} className="min-w-0">
         <TabsList className="mb-6 flex h-auto flex-wrap justify-start">
+          <TabsTrigger value="external" className="min-h-11 whitespace-normal">Sistemas externos</TabsTrigger>
           <TabsTrigger value="api" className="min-h-11">API · Consulta de dados</TabsTrigger>
           <TabsTrigger value="connections" className="min-h-11">Conexões e registros</TabsTrigger>
         </TabsList>
+        <TabsContent value="external" className="min-w-0">
+          <ExternalApiConnectionsPanel />
+        </TabsContent>
         <TabsContent value="api" className="min-w-0">
           <ExportKeysPanel />
         </TabsContent>
