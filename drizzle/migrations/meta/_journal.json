@@ -29,6 +29,13 @@
       "when": 1792196376491,
       "tag": "0003_license_citation_model",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792197798515,
+      "tag": "0004_legal_pages_public_rpc",
+      "breakpoints": true
     }
   ]
 }
