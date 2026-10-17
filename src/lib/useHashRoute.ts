@@ -193,6 +193,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/admin/settings") return { name: "admin-settings" };
   if (path === "/admin/faq") return { name: "admin-faq" };
   if (path === "/admin/licencas") return { name: "admin-licencas" };
+  if (path === "/admin/privacidade-termos") return { name: "admin-privacidade-termos" };
   if (path === "/admin/bewild") return { name: "admin-bewild" };
   if (path === "/admin/bewild/new") return { name: "admin-bewild-new" };
   const adminBewildEdit = path.match(/^\/admin\/bewild\/([a-z0-9-]+)$/);
