@@ -88,6 +88,7 @@ Deno.test("CRM recebe o lead saneado e só o id gerado pelo banco", () => {
   assertEquals(crm.name, "Ana");
   assertEquals(crm.phone, "+5511912345678");
   assertEquals(crm.extra.lead_id, "db-id");
+  assertEquals(crm.source, "site_form");
   assertEquals(crm.extra.lead_type, "parceiro");
   assertEquals(crm.extra.form_path, "/parceiros");
 });

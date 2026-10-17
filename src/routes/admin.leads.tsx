@@ -9,7 +9,12 @@ export const Route = createFileRoute("/admin/leads")({
   component: RouteComponent,
   head: () => ({
     meta: [
-      { title: "Painel · Bewild" },
+      { title: "Leads e propostas · Painel Bewild" },
+      { name: "description", content: "Contatos do site, etapas do CRM e propostas publicadas no painel Bewild." },
+      { property: "og:title", content: "Leads e propostas · Painel Bewild" },
+      { property: "og:description", content: "Contatos do site, etapas do CRM e propostas publicadas no painel Bewild." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
