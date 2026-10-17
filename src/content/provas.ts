@@ -32,6 +32,9 @@ export const CLIENTES_SHORT_STAY_PCT = 79;
 /** Clientes que moram fora da capital — base de clientes da Bewild, publicação aprovada pelo Pedro em 17/10/2026. */
 export const CLIENTES_FORA_DA_CAPITAL_PCT = 48;
 
+/** Clientes que chegam por indicação — base de clientes da Bewild, publicação aprovada pelo Pedro em 17/10/2026 (o número já estava nos anúncios do Google). */
+export const CLIENTES_INDICACAO_PCT = 40;
+
 /** "+160 reformas entregues" */
 export const PROVA_REFORMAS = `+${REFORMAS_ENTREGUES} reformas entregues`;
 

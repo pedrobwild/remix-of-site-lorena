@@ -42,6 +42,7 @@ import { Route } from "@/routes/orcamento";
 import OrcamentoPage from "@/pages/OrcamentoPage";
 import { TOPO_VARIANTES, type TopoVariante } from "@/content/pages/orcamento";
 import { CUSTO_M2_MEDIANO } from "@/content/baseCusto";
+import { CLIENTES_INDICACAO_PCT } from "@/content/provas";
 
 type DadosDoLoader = { seo: { title: string; description: string }; topoVariante: TopoVariante };
 const loader = Route.options.loader as unknown as (ctx: { location: { search: unknown } }) => Promise<DadosDoLoader>;
@@ -82,10 +83,12 @@ describe("/orcamento: H1 do anúncio no HTML do servidor", () => {
     expect(html.match(/<h1\b/g)).toHaveLength(1);
   });
 
-  it("o bloco fixo traz o custo mediano da base de contratos", async () => {
+  it("o bloco fixo traz o custo mediano da base de contratos e a % de indicação", async () => {
     const { html } = await servidor("");
     expect(html).toContain("O que entra no orçamento da Bewild");
     expect(html).toContain(`é ${CUSTO_M2_MEDIANO} por m², com projeto, obra, marcenaria, mobília e eletros.`);
+    // A prova dos anúncios "40% dos clientes: indicação" também está na página.
+    expect(html).toContain(`${CLIENTES_INDICACAO_PCT}% dos clientes chegam por indicação.`);
   });
 });
 
