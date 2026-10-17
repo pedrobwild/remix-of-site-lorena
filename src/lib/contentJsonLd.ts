@@ -14,6 +14,8 @@ import { extractYouTubeEmbeds, isoDurationSeconds, youtubeEmbedUrl, youtubeThumb
 import { fileMeta, videoUploadDate, ytMeta } from "@/lib/videoMeta";
 import { postYouTubeVideo } from "@/lib/postYouTubeVideo";
 import { neighborhoodSlug } from "@/lib/portfolioFilter";
+import { articleImageSet } from "@/lib/imageUrl";
+import { VIDEO_CREATOR } from "@/lib/orgJsonLd";
 import { projectFriendlyName, projectMetaDescription, type ProjectSeoInput } from "@/lib/projectSeo";
 
 export type JsonLdNode = Record<string, unknown>;
@@ -81,6 +83,7 @@ export function postVideoJsonLd(post: Pick<BewildPost, "body" | "title" | "meta_
     uploadDate: videoUploadDate(meta.uploadDate ?? dates.published),
     inLanguage: "pt-BR",
     publisher: { "@id": `${BASE}/#org` },
+    creator: VIDEO_CREATOR,
     url: `${BASE}/conteudos/${post.slug}`,
   };
 }
@@ -110,7 +113,8 @@ export function postJsonLd(post: BewildPost, extras: PostJsonLdExtras = {}): Jso
         post.meta_description ||
         post.excerpt ||
         `${post.title}. Conteúdo Bewild sobre reformas de apartamentos e imóveis prontos.`,
-      image: post.cover_image ? [abs(post.cover_image)] : undefined,
+      // 16:9, 4:3 e 1:1 da mesma capa (o Google escolhe o formato de cada tela).
+      image: post.cover_image ? articleImageSet(abs(post.cover_image)) : undefined,
       author: articleAuthor(post.author),
       // O nó completo da Organization já sai no grafo do root.
       publisher: { "@id": `${BASE}/#org` },
@@ -142,6 +146,7 @@ export function postJsonLd(post: BewildPost, extras: PostJsonLdExtras = {}): Jso
       // mídia; a página do YouTube não é um arquivo e não entra.
       embedUrl: youtubeEmbedUrl(leadingVideo.id),
       publisher: { "@id": `${BASE}/#org` },
+      creator: VIDEO_CREATOR,
       inLanguage: "pt-BR", isPartOf: { "@id": `${articleUrl}#webpage` },
     });
   }
@@ -188,6 +193,7 @@ export function postJsonLd(post: BewildPost, extras: PostJsonLdExtras = {}): Jso
       url: `https://www.youtube.com/watch?v=${v.id}`,
       inLanguage: "pt-BR",
       publisher: { "@id": `${BASE}/#org` },
+      creator: VIDEO_CREATOR,
       isPartOf: { "@type": "WebPage", "@id": articleUrl },
       ...clip,
     });

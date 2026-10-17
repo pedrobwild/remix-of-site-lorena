@@ -81,6 +81,18 @@ export const PEDRO_NODE = {
   sameAs: ["https://www.linkedin.com/in/pedro-henrique-alves-872b0245"],
 };
 
+/**
+ * Autor (`creator`) de todo VideoObject do site — artigos e /videos/<slug>.
+ * Decisão do dono em 16/10/2026: os vídeos saem em nome do Pedro. Mesmo @id
+ * do nó completo da pessoa no grafo do root.
+ */
+export const VIDEO_CREATOR = {
+  "@type": "Person",
+  "@id": PEDRO_ID,
+  name: PEDRO_NODE.name,
+  url: PEDRO_NODE.url,
+};
+
 export const ORG_NODE = {
   "@type": "Organization",
   "@id": ORG_ID,

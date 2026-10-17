@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import {
   optimizedSrcSet,
+  articleImageSet,
+  ARTICLE_IMAGE_SIZES,
   responsiveImage,
   projectCoverImage,
   GALLERY_WIDTHS,
@@ -67,5 +69,27 @@ describe("capas de /conteudos e do artigo (MOB-06)", () => {
     ]) {
       expect(responsiveImageProps(url, THUMB_WIDTHS, 640, CONTENT_CARD_SIZES)).toEqual({ src: url });
     }
+  });
+});
+
+describe("articleImageSet (imagem do Article em 16:9, 4:3 e 1:1)", () => {
+  it("recorta a capa do Storage nos três formatos", () => {
+    const set = articleImageSet("https://x.supabase.co/storage/v1/object/public/project-images/a/b.png");
+    expect(set).toEqual([
+      "https://x.supabase.co/storage/v1/render/image/public/project-images/a/b.png?width=1200&height=675&resize=cover&quality=80",
+      "https://x.supabase.co/storage/v1/render/image/public/project-images/a/b.png?width=1200&height=900&resize=cover&quality=80",
+      "https://x.supabase.co/storage/v1/render/image/public/project-images/a/b.png?width=1200&height=1200&resize=cover&quality=80",
+    ]);
+    // Cada formato com pelo menos 50 mil pixels, como o Google pede.
+    for (const [w, h] of ARTICLE_IMAGE_SIZES) expect(w * h).toBeGreaterThanOrEqual(50_000);
+  });
+  it("vale para outros buckets do Storage (blog-images)", () => {
+    expect(articleImageSet("https://x.supabase.co/storage/v1/object/public/blog-images/c.jpg")[1]).toBe(
+      "https://x.supabase.co/storage/v1/render/image/public/blog-images/c.jpg?width=1200&height=900&resize=cover&quality=80",
+    );
+  });
+  it("arquivo do próprio site ou externo segue só no original; vazio não sai", () => {
+    expect(articleImageSet("https://bewild.com.br/images/blog/capa.jpg")).toEqual(["https://bewild.com.br/images/blog/capa.jpg"]);
+    expect(articleImageSet("")).toEqual([]);
   });
 });
