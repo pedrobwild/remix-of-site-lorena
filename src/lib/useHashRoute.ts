@@ -29,6 +29,7 @@ export type Route =
   | { name: "marcas-e-parcerias" }
   | { name: "guia-do-investidor" }
   | { name: "privacidade" }
+  | { name: "termos-de-uso" }
   | { name: "preferencias-cookies" }
   | { name: "politica-cookies" }
   | { name: "acessibilidade" }
@@ -150,6 +151,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/marcas-e-parcerias") return { name: "marcas-e-parcerias" };
   if (path === "/guia-do-investidor") return { name: "guia-do-investidor" };
   if (path === "/privacidade") return { name: "privacidade" };
+  if (path === "/termos-de-uso") return { name: "termos-de-uso" };
   if (path === "/preferencias-de-cookies") return { name: "preferencias-cookies" };
   if (path === "/politica-de-cookies") return { name: "politica-cookies" };
   if (path === "/acessibilidade") return { name: "acessibilidade" };
@@ -331,6 +333,7 @@ export const routes = {
   marcasEParcerias: "/marcas-e-parcerias",
   guiaDoInvestidor: "/guia-do-investidor",
   privacidade: "/privacidade",
+  termosDeUso: "/termos-de-uso",
   preferenciasCookies: "/preferencias-de-cookies",
   politicaCookies: "/politica-de-cookies",
   acessibilidade: "/acessibilidade",
@@ -359,6 +362,7 @@ export const routes = {
   adminSettings: "/admin/settings",
   adminFaq: "/admin/faq",
   adminLicencas: "/admin/licencas",
+  adminPrivacidadeTermos: "/admin/privacidade-termos",
   adminTypography: "/admin/typography",
   adminLeads: "/admin/leads",
   adminIndicacoes: "/admin/indicacoes",

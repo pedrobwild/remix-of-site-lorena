@@ -22,6 +22,7 @@ import {
   Handshake,
   Target,
   ShieldCheck,
+  FileText,
 } from "lucide-react";
 import { useAuth } from "@/lib/useAuth";
 import { navigate, routes } from "@/lib/useHashRoute";
