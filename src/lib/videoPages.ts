@@ -21,6 +21,7 @@ import registry from "@/content/videoPages.json";
 import { bewildCalendarDay } from "@/lib/postSeo";
 import { fileMeta, videoUploadDate, ytMeta } from "@/lib/videoMeta";
 import { isoDurationSeconds, youtubeEmbedUrl, youtubeThumbnailUrl } from "@/lib/youtube";
+import { VIDEO_CREATOR } from "@/lib/orgJsonLd";
 
 const BASE = "https://bewild.com.br";
 
@@ -181,6 +182,7 @@ export function videoObjectJsonLd(video: VideoPage): JsonLdNode {
     inLanguage: "pt-BR",
     isFamilyFriendly: true,
     publisher: { "@id": `${BASE}/#org` },
+    creator: VIDEO_CREATOR,
     mainEntityOfPage: { "@id": `${url}#webpage` },
   };
 }

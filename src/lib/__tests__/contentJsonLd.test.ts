@@ -56,6 +56,8 @@ describe("JSON-LD no head() sem duplicação", () => {
     expect(video.embedUrl).toBe("https://www.youtube-nocookie.com/embed/El1Dxf7RBRk");
     expect(video.contentUrl).toBeUndefined();
     expect(video.publisher).toEqual({ "@id": "https://bewild.com.br/#org" });
+    // Autor de todo vídeo do site: o Pedro (decisão de 16/10/2026).
+    expect(video.creator).toMatchObject({ "@type": "Person", "@id": "https://bewild.com.br/#pedro-henrique-alves", name: "Pedro Henrique Alves" });
     expect(nodes.find((n) => n["@type"] === "Article").video["@id"]).toBe(video["@id"]);
     expect(postJsonLd({ ...p, body: '<iframe src="https://www.youtube-nocookie.com/embed/El1Dxf7RBRk"></iframe>' }).filter((n) => n["@type"] === "VideoObject")).toHaveLength(1);
     expect(postJsonLd({ ...p, youtube_video_id: "inválido" }).some((n) => n["@type"] === "VideoObject")).toBe(false);

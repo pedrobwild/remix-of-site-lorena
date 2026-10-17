@@ -120,3 +120,23 @@ export function responsiveImageProps(
 export function projectCoverImage(url: string): ResponsiveImage {
   return responsiveImage(url, WIDE_WIDTHS, 1280);
 }
+
+/**
+ * Formatos que o Google recomenda para a imagem de um Article: 16:9, 4:3 e 1:1
+ * (mínimo de 50 mil pixels cada). Para imagens do Storage, recorta a mesma foto
+ * pelo endpoint de transformação (`resize=cover`, centro da imagem). Outras
+ * URLs (arquivos do próprio site, externas) seguem só no formato original.
+ */
+export const ARTICLE_IMAGE_SIZES = [
+  [1200, 675],
+  [1200, 900],
+  [1200, 1200],
+] as const;
+
+export function articleImageSet(url: string): string[] {
+  if (!url) return [];
+  const marker = "/storage/v1/object/public/";
+  if (!url.includes(marker)) return [url];
+  const base = url.split("?")[0].replace(marker, "/storage/v1/render/image/public/");
+  return ARTICLE_IMAGE_SIZES.map(([w, h]) => `${base}?width=${w}&height=${h}&resize=cover&quality=80`);
+}
