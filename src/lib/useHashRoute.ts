@@ -51,6 +51,7 @@ export type Route =
   | { name: "admin-dashboard" }
   | { name: "admin-analytics" }
   | { name: "admin-seo" }
+  | { name: "admin-coletas-radar" }
   | { name: "admin-seo-404" }
   | { name: "admin-indexacao" }
   | { name: "admin-rastreamento" }
@@ -184,6 +185,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/admin/dashboard") return { name: "admin-dashboard" };
   if (path === "/admin/analytics") return { name: "admin-analytics" };
   if (path === "/admin/seo") return { name: "admin-seo" };
+  if (path === "/admin/coletas-radar") return { name: "admin-coletas-radar" };
   if (path === "/admin/seo/404") return { name: "admin-seo-404" };
   if (path === "/admin/indexacao") return { name: "admin-indexacao" };
   if (path === "/admin/rastreamento") return { name: "admin-rastreamento" };
@@ -353,6 +355,7 @@ export const routes = {
   adminDashboard: "/admin/dashboard",
   adminAnalytics: "/admin/analytics",
   adminSeo: "/admin/seo",
+  adminColetasRadar: "/admin/coletas-radar",
   adminSeo404: "/admin/seo/404",
   adminIndexacao: "/admin/indexacao",
   adminRastreamento: "/admin/rastreamento",

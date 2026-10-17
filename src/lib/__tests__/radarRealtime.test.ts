@@ -2,6 +2,7 @@ import { afterEach, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({ create: vi.fn(), remove: vi.fn(), callbacks: [] as Array<() => void>, subscribed: undefined as undefined | ((status: string) => void) }));
 vi.mock("@supabase/supabase-js", () => ({ createClient: mocks.create }));
 import { subscribeRadarCollections } from "@/lib/assistant/radarRealtime";
+import { RADAR_URL, RADAR_ANON_KEY } from "@/lib/assistant/radarConnection";
 afterEach(() => { vi.useRealTimers(); vi.clearAllMocks(); mocks.callbacks = []; });
 it("compartilha os avisos INSERT/UPDATE, agrupa a coleta e encerra ao fechar todos os históricos", () => {
   vi.useFakeTimers();
@@ -13,6 +14,8 @@ it("compartilha os avisos INSERT/UPDATE, agrupa a coleta e encerra ao fechar tod
   const first = vi.fn(); const second = vi.fn();
   const stopFirst = subscribeRadarCollections(first); const stopSecond = subscribeRadarCollections(second);
   expect(mocks.create).toHaveBeenCalledTimes(1);
+  expect(mocks.create).toHaveBeenCalledWith(RADAR_URL, RADAR_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
+  expect(JSON.parse(atob(RADAR_ANON_KEY.split(".")[1])).iss).toBe("supabase");
   expect(channel.on.mock.calls.map((call) => call[1])).toEqual([
     { event: "INSERT", schema: "public", table: "radar_observacoes", filter: "cidade=eq.São Paulo" },
     { event: "UPDATE", schema: "public", table: "radar_observacoes", filter: "cidade=eq.São Paulo" },

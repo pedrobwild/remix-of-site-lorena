@@ -50,7 +50,7 @@
 - [x] Aba SEO de contratos fechados com bairro, status e data do pedido; leitura autenticada de 1 pedido ganho, filtro, atualização e 9 testes conferidos; não publicado
 - [ ] Integrar valor e data de fechamento reais do Bwild Engine à aba Contratos fechados — reconferido em 17/10/2026 às 04:35 UTC: integração protegida responde HTTP 200, mas retorna apenas leads/stages, sem contratos, valores ou datas de fechamento; código atual do CRM confirma essa limitação. Bloqueado na origem: ampliar site-lead-stages no projeto Bwild Visual Budgets (snapshot aqui é somente leitura), com dados por negócio/version_group_id, closed_at e valor canônico; preservar múltiplos contratos e nunca inferir recebimentos.
 - [x] Implementar atualização do histórico aberto pelos avisos INSERT/UPDATE existentes do Radar, sem cópias ou auditoria privada; 17 testes passam, histórico real de Pinheiros conferido; não publicado
-- [ ] Conferir aviso real de nova coleta até a atualização na tela — nova tentativa após solicitar publicação em 17/10 também falhou na conexão de avisos do Radar (nenhum aviso recebido em um minuto); requer conexão disponível e nova coleta legítima na origem, sem inserir dados artificiais
+- [ ] Conferir aviso real de nova coleta até a atualização na tela — em 17/10 a conexão real foi aceita sem rejeição após corrigir a configuração compartilhada; falta uma nova coleta legítima na origem, sem inserir dados artificiais.
 
 - [x] Solicitar publicação da atualização automática do histórico; testes específicos passam e painel autenticado lê coleta real de Pinheiros de 13/10/2026
 
@@ -63,3 +63,4 @@
 - [x] Corrigir leitura permanente dos 12 serviços no toque/abaixo de lg e foco no desktop, preservando copy SSR; rótulos 02–10 em ordem visual idêntica nos seis cenários conferidos, sem overflow; 23 testes específicos passam, lint sem erros, build automático OK; suíte completa tem somente a falha preexistente de leadFormPages; verify-types não existe; sem publicar.
 
 - [x] Remover Vai vender e bloco hidden da home; 20 links originais visíveis antes do FAQ, 197 testes passam, lint sem erros (9 avisos), SSR e foco/alvos ≥44px conferidos em 320/414/1280 sem overflow; compilação automática OK; typecheck manual não executado por restrição do ambiente; sem publicar.
+- [x] Disponibilizar /admin/coletas-radar protegido e conferir /coletas com leitura pública direta e avisos existentes do Radar; 47 testes passam, lint sem erros (9 avisos), compilação automática OK, leitura real de Pinheiros e atualização manual autenticada conferidas, conexão real dos avisos aceita. Sem cópias, dados privados ou publicação; novo evento real continua aguardando coleta legítima na origem.

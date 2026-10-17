@@ -46,6 +46,7 @@ import { Route as ServicosRouteImport } from './routes/servicos'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminCentralRouteImport } from './routes/admin.central'
+import { Route as AdminColetasRadarRouteImport } from './routes/admin.coletas-radar'
 import { Route as AdminConversoesRouteImport } from './routes/admin.conversoes'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminDiagnosticoRouteImport } from './routes/admin.diagnostico'
@@ -274,6 +275,11 @@ const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
 const AdminCentralRoute = AdminCentralRouteImport.update({
   id: '/admin/central',
   path: '/admin/central',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminColetasRadarRoute = AdminColetasRadarRouteImport.update({
+  id: '/admin/coletas-radar',
+  path: '/admin/coletas-radar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminConversoesRoute = AdminConversoesRouteImport.update({
@@ -524,6 +530,7 @@ export interface FileRoutesByFullPath {
   '/servicos': typeof ServicosRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
+  '/admin/coletas-radar': typeof AdminColetasRadarRoute
   '/admin/conversoes': typeof AdminConversoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/diagnostico': typeof AdminDiagnosticoRoute
@@ -605,6 +612,7 @@ export interface FileRoutesByTo {
   '/servicos': typeof ServicosRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
+  '/admin/coletas-radar': typeof AdminColetasRadarRoute
   '/admin/conversoes': typeof AdminConversoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/diagnostico': typeof AdminDiagnosticoRoute
@@ -687,6 +695,7 @@ export interface FileRoutesById {
   '/servicos': typeof ServicosRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
+  '/admin/coletas-radar': typeof AdminColetasRadarRoute
   '/admin/conversoes': typeof AdminConversoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/diagnostico': typeof AdminDiagnosticoRoute
@@ -770,6 +779,7 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/admin/analytics'
     | '/admin/central'
+    | '/admin/coletas-radar'
     | '/admin/conversoes'
     | '/admin/dashboard'
     | '/admin/diagnostico'
@@ -851,6 +861,7 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/admin/analytics'
     | '/admin/central'
+    | '/admin/coletas-radar'
     | '/admin/conversoes'
     | '/admin/dashboard'
     | '/admin/diagnostico'
@@ -932,6 +943,7 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/admin/analytics'
     | '/admin/central'
+    | '/admin/coletas-radar'
     | '/admin/conversoes'
     | '/admin/dashboard'
     | '/admin/diagnostico'
@@ -1014,6 +1026,7 @@ export interface RootRouteChildren {
   ServicosRoute: typeof ServicosRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminCentralRoute: typeof AdminCentralRoute
+  AdminColetasRadarRoute: typeof AdminColetasRadarRoute
   AdminConversoesRoute: typeof AdminConversoesRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminDiagnosticoRoute: typeof AdminDiagnosticoRoute
@@ -1318,6 +1331,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/central'
       fullPath: '/admin/central'
       preLoaderRoute: typeof AdminCentralRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/coletas-radar': {
+      id: '/admin/coletas-radar'
+      path: '/admin/coletas-radar'
+      fullPath: '/admin/coletas-radar'
+      preLoaderRoute: typeof AdminColetasRadarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/conversoes': {
@@ -1654,6 +1674,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicosRoute: ServicosRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminCentralRoute: AdminCentralRoute,
+  AdminColetasRadarRoute: AdminColetasRadarRoute,
   AdminConversoesRoute: AdminConversoesRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminDiagnosticoRoute: AdminDiagnosticoRoute,
