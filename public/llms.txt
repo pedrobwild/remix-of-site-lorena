@@ -30,6 +30,7 @@ A Bewild é uma empresa de reforma completa de apartamentos e studios em São Pa
 - [Parceria Leal Moreira](/parceiros/leal-moreira): Parceria com a Leal Moreira para reformar os studios do LM Urban Flex Bela Cintra, com os projetos em 3D das unidades.
 - [Indique um amigo](/indique-um-amigo): Programa de indicação para clientes, com recompensa em Pix após o fechamento do contrato.
 - [Privacidade](/privacidade): Política de privacidade e tratamento de dados.
+- [Termos de uso](/termos-de-uso): Condições gerais de uso do site, propriedade intelectual e responsabilidades.
 - [Política de cookies](/politica-de-cookies): Quais cookies o site usa, para quê, por quanto tempo e como mudar a escolha.
 - [Acessibilidade](/acessibilidade): Declaração de acessibilidade do site e como relatar barreiras.
 

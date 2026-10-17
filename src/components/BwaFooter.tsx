@@ -78,6 +78,7 @@ export default function BwaFooter() {
               <a href={CONTACT.youtube} target="_blank" rel="noopener noreferrer">YouTube</a>
               <a href={`mailto:${CONTACT.email}`}>e-mail</a>
               <a href="/privacidade">Política de privacidade</a>
+              <a href="/termos-de-uso">Termos de uso</a>
               <a href="/politica-de-cookies">Política de cookies</a>
               <a href="/mapa-do-site">Mapa do site</a>
               <a href="/acessibilidade" className="bwa-footer-a11y">
