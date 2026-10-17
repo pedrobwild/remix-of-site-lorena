@@ -1,10 +1,32 @@
 import { leadCanal, LEAD_CANAIS, type LeadSourceInput } from "@/lib/leadSource";
 
 export type JourneyEvent = LeadSourceInput & {
+  id?: string; created_at?: string; utm_campaign?: string | null; landing_path?: string | null;
   event_type: string; path: string | null; session_id: string | null;
   visitor_id: string | null; scroll_depth: number | null; duration_ms: number | null;
   value?: unknown;
 };
+
+/** Uma chegada por sessão; sem sessão, preservar o registro sem inferir identidade. */
+export function budgetVisitorArrivals(events: JourneyEvent[]) {
+  const arrivals = new Map<string, JourneyEvent>();
+  const ordered = events.filter((event) => event.path === "/orcamento" && event.event_type === "pageview")
+    .sort((a, b) => (a.created_at ?? "").localeCompare(b.created_at ?? "") || (a.id ?? "").localeCompare(b.id ?? ""));
+  for (const [index, event] of ordered.entries()) {
+    const key = event.session_id ? `session:${event.session_id}` : `event:${event.id ?? index}`;
+    if (!arrivals.has(key)) arrivals.set(key, event);
+  }
+  const visitors = new Map<string, number>();
+  return [...arrivals.entries()].map(([key, event]) => {
+    const identity = event.visitor_id || event.session_id;
+    if (identity && !visitors.has(identity)) visitors.set(identity, visitors.size + 1);
+    let reference = "Não informada";
+    try { if (event.referrer) reference = new URL(event.referrer).hostname; } catch { /* Não exibir URL inválida. */ }
+    return { key, visitor: identity ? `Visitante ${visitors.get(identity)}` : "Sem identificador", createdAt: event.created_at,
+      canal: leadCanal(event), source: event.utm_source || "Não informada", medium: event.utm_medium || "Não informado",
+      campaign: event.utm_campaign || "Não informada", reference };
+  }).reverse();
+}
 export type JourneyLead = LeadSourceInput & {
   id: string; form_path: string | null; status: string; crm_won: boolean | null;
   crm_lost: boolean | null; crm_stage_name: string | null;
