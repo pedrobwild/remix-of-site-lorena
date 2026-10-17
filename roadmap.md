@@ -32,5 +32,5 @@
 - [x] Bug: galeria 3D com "imagem N" no SSR: causa checada, retry no loader, contagem feita (não publicar)
 - [x] Aplicar CC BY 4.0 ao índice, página e CSV; validar HTML e checks sem publicar
 - [x] Remover e-mails de edição das licenças e restringir registros do painel, mantendo os textos públicos; validar sem publicar
-- [ ] Adicionar aba Orçamentos aos leads, com pedidos de /orcamento por bairro e status
-- [ ] Validar filtros, dados reais e apresentação da aba; não publicar
+- [x] Adicionar aba Orçamentos aos leads, com pedidos de /orcamento por bairro e status
+- [x] Validar filtros, dados reais e apresentação da aba; não publicar
