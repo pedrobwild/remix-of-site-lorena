@@ -50,4 +50,5 @@
 - Home title/description/Open Graph saved in /admin/seo are read by the `/` route loader (`src/lib/homeSeo.ts`, no module cache) so the raw SSR HTML carries them; the Páginas tab wins over the Home tab, same as `useSeo`.
 - The five main editable page routes read SEO overrides through a public, sanitized server function with per-field defaults, so panel edits appear in SSR without exposing other site settings.
 - Página /parceiros/leal-moreira: texto em `src/content/lealMoreira.ts` (reaproveita `INCORP_CASE`), projetos lidos no loader da rota (`lealMoreiraLoader.ts`, timeout 2,5 s) para as fotos saírem no HTML do servidor; nada de dado novo inventado — fatos e números só do case e de `partner_cases`.
+- Home related links remain inline in HOME_BWA_HTML in a single unnumbered navigation near FAQ; this preserves SSR discovery without duplicating mobile and desktop content.
 <!-- LOVABLE:END -->
