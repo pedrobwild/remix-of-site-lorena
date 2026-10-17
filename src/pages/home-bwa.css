@@ -1056,35 +1056,6 @@
       font-weight: 600;
     }
 
-    .bwa-audience-note {
-      max-width: 70ch;
-      margin: clamp(28px, 3.5vw, 42px) 0 0;
-      padding-top: 18px;
-      border-top: 1px solid var(--bwa-line);
-      color: var(--bwa-ink-soft);
-      font-size: 15px;
-      line-height: 1.6;
-    }
-
-    .bwa-audience-note strong {
-      color: var(--bwa-ink);
-    }
-
-    .bwa-audience-note a {
-      color: var(--bwa-navy-2);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-
-    /* Segunda linha da nota: links para as páginas de serviço e para o pilar
-       de short stay (links internos com a palavra-chave no texto, 11/10/2026).
-       Sem o fio superior, para ler como continuação da nota acima. */
-    .bwa-audience-more {
-      margin-top: 12px;
-      padding-top: 0;
-      border-top: 0;
-    }
-
     /* Faixa de renders entre #para-quem e #certeza — imagem 2000×600, largura total */
     .bwa-faixa {
       margin: 0;
@@ -2917,6 +2888,60 @@
     }
 
 
+
+    .bwa-related {
+      background: var(--bwa-paper);
+      color: var(--bwa-ink-soft);
+      font-size: 14px;
+      line-height: 1.6;
+      letter-spacing: 0;
+    }
+
+    .bwa-related-inner {
+      padding-block: 32px;
+      border-block: 1px solid var(--bwa-line);
+    }
+
+    .bwa-related h2 {
+      margin: 0 0 16px;
+      color: var(--bwa-ink);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+
+    .bwa-related-group + .bwa-related-group {
+      margin-top: 16px;
+    }
+
+    .bwa-related-group p {
+      margin: 0;
+    }
+
+    .bwa-related-links {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      column-gap: 20px;
+      row-gap: 4px;
+    }
+
+    .bwa-related-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      max-width: 100%;
+      padding-block: 10px;
+      color: var(--bwa-navy-2);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      overflow-wrap: anywhere;
+    }
+
+    .bwa-related-links a:focus-visible {
+      outline: 2px solid var(--bwa-cyan);
+      outline-offset: 3px;
+    }
 
     .bwa-faq {
       padding-block: clamp(71px, 7.59vw, 120px);

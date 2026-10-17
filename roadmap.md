@@ -61,3 +61,5 @@
 - [x] Disponibilizar /coletas como endereço curto do histórico público existente; 76 testes passam e Pinheiros conferido com dados reais, preservando bairro, leitura direta e atualização automática existente, sem dados privados ou publicação; confirmação de um novo aviso real continua bloqueada pela conexão na origem.
 
 - [x] Corrigir leitura permanente dos 12 serviços no toque/abaixo de lg e foco no desktop, preservando copy SSR; rótulos 02–10 em ordem visual idêntica nos seis cenários conferidos, sem overflow; 23 testes específicos passam, lint sem erros, build automático OK; suíte completa tem somente a falha preexistente de leadFormPages; verify-types não existe; sem publicar.
+
+- [ ] Remover Vai vender e bloco hidden da home; preservar os 20 links em bloco visível perto do FAQ, validar home/lint e layout sem publicar.
