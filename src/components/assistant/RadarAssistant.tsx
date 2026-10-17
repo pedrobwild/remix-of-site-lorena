@@ -4,7 +4,7 @@ import { askRadar } from "@/lib/assistant/radar.functions";
 import { isMarketQuestion } from "@/lib/assistant/radarData";
 import { reply, type KbItem } from "@/lib/assistant/assistantEngine";
 import { whatsappHref } from "@/components/landing/content";
-import RadarLink from "@/components/RadarLink";
+import { RadarLink } from "@/components/RadarLink";
 
 export default function RadarAssistant({ kb }: { kb: KbItem[] | null }) {
   const ask = useServerFn(askRadar);
@@ -55,7 +55,7 @@ export default function RadarAssistant({ kb }: { kb: KbItem[] | null }) {
           <article className="bwa-faqpage-ask-answer" key={index}>
             <h3 className="bwa-faqpage-ask-text">{message.question}</h3>
             <p className="bwa-radar-answer-text">{message.answer}</p>
-            {message.market && <RadarLink className="bwa-faqpage-ask-whats">Consultar Radar Bewild</RadarLink>}
+            {message.market && <RadarLink label="Consultar Radar Bewild" className="bwa-faqpage-ask-whats" />}
           </article>
         ))}
       </div>
