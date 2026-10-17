@@ -35,7 +35,7 @@
 
 - [x] Reenviar o sitemap ao Google para privacidade e termos
 - [x] Criar aba Privacidade e termos no SEO e medir novos pedidos consentidos na mesma sessão; testes e navegação pública validados
-- [ ] Conferir a aba autenticada de SEO — bloqueado até entrar no painel pela prévia
+- [x] Conferir a aba autenticada de SEO — sessão administrativa recuperada e nova aba conferida com dados reais
 - [x] Integrar perguntas de mercado ao Radar ao vivo, preservar o assistente e conferir respostas e falhas sem publicar
 - [ ] Corrigir falha independente no teste de reenvio de formulário (`leadFormPages.test.tsx`) — fora do escopo do assistente
 - [x] Incluir histórico público de coletas no assistente Radar, validar filtros, privacidade e respostas sem publicar
@@ -44,4 +44,4 @@
 - [x] Página pública de coletas por bairro (mesmo histórico do assistente)
 - [x] Incluir Coletas por bairro nos sitemaps e permitir indexação; 66 testes passam e histórico público conferido
 - [ ] Publicar termos de uso — página /termos-de-uso ausente nesta versão; aguarda texto aprovado ou recuperação
-- [ ] Adicionar aba SEO com visitantes de /coletas-por-bairro e /orcamento por bairro, usando somente evidências reais
+- [x] Adicionar aba SEO Bairros de interesse com visitantes das duas páginas; captura consentida, históricos sem inferência, paginação e 34 testes específicos passando; painel autenticado e 320/414 px conferidos; não publicar
