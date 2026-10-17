@@ -40,4 +40,4 @@
 - [ ] Corrigir falha independente no teste de reenvio de formulário (`leadFormPages.test.tsx`) — fora do escopo do assistente
 - [x] Incluir histórico público de coletas no assistente Radar, validar filtros, privacidade e respostas sem publicar
 - [x] Solicitar publicação de Metas, privacidade, termos e orçamento; entregar /orcamento para divulgação
-- [ ] Reenviar o sitemap ao Google após o pedido de publicação
+- [x] Reenviar o sitemap ao Google após o pedido de publicação (HTTP 204)
