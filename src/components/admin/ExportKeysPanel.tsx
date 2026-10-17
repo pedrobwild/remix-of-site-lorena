@@ -1,46 +1,7 @@
-/**
- * Exportação para planilha e BI — bloco de /admin/integracoes.
- *
- * Cria chaves (nome + conjuntos), mostra a chave UMA vez com os endereços
- * prontos (fórmula do Google Sheets, CSV e JSON) e lista as chaves com o
- * último uso, para revogar. Quem entrega os dados é a edge function
- * `data-export` (docs/INTEGRACOES.md › Exportação); nenhum conjunto tem dado
- * pessoal.
- */
 import { useCallback, useEffect, useState, type FormEvent } from "react";
-import { Copy, KeyRound } from "lucide-react";
-import AdminAlert from "@/components/admin/AdminAlert";
-import {
-  buildExportUrl,
-  createExportKey,
-  datasetLabel,
-  DATASETS,
-  EXPORT_DATASETS,
-  fetchExportKeys,
-  importDataFormula,
-  revokeExportKey,
-  type CreatedExportKey,
-  type ExportDataset,
-  type ExportKeyRow,
-} from "@/lib/dataExport";
-import { relativeTime } from "@/lib/metaAds";
-
-function fmtDate(iso: string): string {
-  try {
-    return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(iso));
-  } catch {
-    return iso;
-  }
-}
-
-async function copyText(text: string): Promise<boolean> {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch {
-    return false;
-  }
-}
+import { Copy, KeyRound, RefreshCw, ShieldCheck, Trash2 } from "lucide-react";
+import { Button } from "@/guia/components/ui/button";
+import { buildExportUrl, createExportKey, datasetLabel, DATASETS, EXPORT_DATASETS, fetchExportKeys, revokeExportKey, exportBase, type CreatedExportKey, type ExportDataset, type ExportKeyRow } from "@/lib/dataExport";
 
 export default function ExportKeysPanel() {
   const [keys, setKeys] = useState<ExportKeyRow[]>([]);
@@ -52,296 +13,61 @@ export default function ExportKeysPanel() {
   const [created, setCreated] = useState<CreatedExportKey | null>(null);
   const [revoking, setRevoking] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
-
   const load = useCallback(async () => {
     setLoading(true);
-    const res = await fetchExportKeys();
-    setKeys(res.keys);
-    if (res.error) setError(`Não foi possível ler as chaves: ${res.error}`);
-    setLoading(false);
+    try {
+      const res = await fetchExportKeys();
+      setKeys(res.keys); setError(res.error ? "Não foi possível consultar as chaves." : null);
+    } catch { setError("Não foi possível consultar as chaves."); }
+    finally { setLoading(false); }
   }, []);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
-
-  function toggle(d: ExportDataset) {
-    setPicked((cur) => (cur.includes(d) ? cur.filter((x) => x !== d) : [...cur, d]));
+  useEffect(() => { void load(); }, [load]);
+  async function submit(e: FormEvent) {
+    e.preventDefault(); setCreating(true); setError(null);
+    try {
+      const res = await createExportKey(name, picked);
+      if (!res.key || res.error) { setError(res.error ?? "Não foi possível criar a chave."); return; }
+      setCreated(res.key); setName(""); setPicked([]); await load();
+    } catch { setError("Não foi possível criar a chave."); }
+    finally { setCreating(false); }
   }
-
-  async function onSubmit(e: FormEvent) {
-    e.preventDefault();
-    setCreating(true);
-    setError(null);
-    const res = await createExportKey(name, picked);
-    setCreating(false);
-    if (res.error || !res.key) {
-      setError(res.error ?? "Não foi possível criar a chave.");
-      return;
-    }
-    setCreated(res.key);
-    setName("");
-    setPicked([]);
-    void load();
+  async function revoke(key: ExportKeyRow) {
+    if (!window.confirm(`Revogar o acesso de “${key.name}”? O sistema deixará de consultar os dados.`)) return;
+    setRevoking(key.id); setError(null);
+    try {
+      const res = await revokeExportKey(key.id);
+      if (res.error) { setError("Não foi possível revogar a chave."); return; }
+      if (created?.id === key.id) setCreated(null);
+      await load();
+    } catch { setError("Não foi possível revogar a chave."); }
+    finally { setRevoking(null); }
   }
-
-  async function onRevoke(k: ExportKeyRow) {
-    const ok = window.confirm(
-      `Revogar a chave "${k.name}" (${k.prefix}…)?\n\nAs planilhas e painéis que usam esta chave param de atualizar na hora. Não dá para desfazer.`,
-    );
-    if (!ok) return;
-    setRevoking(k.id);
-    setError(null);
-    const res = await revokeExportKey(k.id);
-    setRevoking(null);
-    if (res.error) {
-      setError(`Não foi possível revogar: ${res.error}`);
-      return;
-    }
-    if (created?.id === k.id) setCreated(null);
-    void load();
+  async function copy(id: string, value: string) {
+    try { await navigator.clipboard.writeText(value); setCopied(id); }
+    catch { setError("Não foi possível copiar. Selecione o campo e copie manualmente."); }
   }
-
-  async function onCopy(id: string, text: string) {
-    const ok = await copyText(text);
-    setCopied(ok ? id : null);
-    if (ok) window.setTimeout(() => setCopied((c) => (c === id ? null : c)), 2000);
-  }
-
-  const active = keys.filter((k) => !k.revoked_at);
-  const revoked = keys.filter((k) => k.revoked_at);
-
-  return (
-    <section className="bw-admin__section" data-testid="export-keys">
-      <header className="bw-admin__section-head">
-        <h2 className="bw-admin__section-title">Exportação para planilha e BI</h2>
-        <p className="bw-admin__section-desc">
-          Leads, formulários e campanhas da Meta, visitas e pixel próprio — sem dados pessoais — em CSV ou JSON para Google
-          Sheets, Looker Studio, Excel e Power BI. Cada chave vale só para os conjuntos escolhidos e pode ser revogada.
-        </p>
-      </header>
-
-      {error && (
-        <AdminAlert kind="err" onClose={() => setError(null)}>
-          {error}
-        </AdminAlert>
-      )}
-
-      {created && (
-        <div
-          role="status"
-          data-testid="created-key"
-          style={{
-            border: "1px solid #BFD7EA",
-            background: "#F3F8FC",
-            borderRadius: 3,
-            padding: 16,
-            display: "grid",
-            gap: 14,
-            marginBottom: 18,
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
-            <strong style={{ fontSize: 14.5 }}>Chave “{created.name}” criada — copie agora</strong>
-            <button type="button" className="bw-admin__btn bw-admin__btn--sm" onClick={() => setCreated(null)}>
-              Já copiei
-            </button>
-          </div>
-          <p className="muted" style={{ margin: 0, fontSize: 12.5 }}>
-            Ela não aparece de novo: o banco guarda só uma impressão digital (hash). Quem tiver a chave ou um destes endereços
-            lê os conjuntos escolhidos até você revogar — use uma chave por planilha ou painel.
-          </p>
-          <CopyField id="token" label="Chave" value={created.token} copied={copied === "token"} onCopy={onCopy} />
-          {created.datasets.map((d) => {
-            const csv = buildExportUrl(d, created.token, "csv");
-            return (
-              <div key={d} style={{ display: "grid", gap: 8, paddingTop: 10, borderTop: "1px solid #D6E6F2" }}>
-                <span style={{ fontWeight: 600, fontSize: 13.5 }}>{DATASETS[d].label}</span>
-                <CopyField
-                  id={`${d}-sheets`}
-                  label="Google Sheets — cole numa célula vazia"
-                  value={importDataFormula(csv)}
-                  copied={copied === `${d}-sheets`}
-                  onCopy={onCopy}
-                />
-                <CopyField
-                  id={`${d}-csv`}
-                  label="CSV — Excel e Power BI (Obter dados › Da Web)"
-                  value={csv}
-                  copied={copied === `${d}-csv`}
-                  onCopy={onCopy}
-                />
-                <CopyField
-                  id={`${d}-json`}
-                  label="JSON"
-                  value={buildExportUrl(d, created.token, "json")}
-                  copied={copied === `${d}-json`}
-                  onCopy={onCopy}
-                />
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      <form className="bw-admin__form" onSubmit={(e) => void onSubmit(e)} aria-label="Nova chave de exportação">
-        <div className="bw-admin__field">
-          <label htmlFor="export-key-name">Nome da chave</label>
-          <input
-            id="export-key-name"
-            className="bw-admin__input"
-            type="text"
-            value={name}
-            maxLength={80}
-            placeholder="ex.: Planilha de marketing"
-            onChange={(e) => setName(e.target.value)}
-          />
-          <span className="hint">Para quem ou para qual planilha — ajuda a saber o que revogar depois.</span>
-        </div>
-        <fieldset style={{ border: 0, padding: 0, margin: 0, display: "grid", gap: 10, minWidth: 0 }}>
-          <legend
-            style={{
-              fontFamily: "var(--bw-mono)",
-              fontSize: 10.5,
-              fontWeight: 500,
-              color: "var(--bw-navy)",
-              textTransform: "uppercase",
-              letterSpacing: ".1em",
-              marginBottom: 8,
-              padding: 0,
-            }}
-          >
-            Conjuntos de dados
-          </legend>
-          {EXPORT_DATASETS.map((d) => (
-            <label key={d} className="bw-admin__check" style={{ alignItems: "flex-start" }}>
-              <input type="checkbox" checked={picked.includes(d)} onChange={() => toggle(d)} style={{ marginTop: 3, flex: "none" }} />
-              <span style={{ minWidth: 0 }}>
-                <strong>{DATASETS[d].label}</strong>
-                <span className="muted" style={{ display: "block", fontSize: 12.5, fontWeight: 400 }}>
-                  {DATASETS[d].description}
-                </span>
-              </span>
-            </label>
-          ))}
-        </fieldset>
-        <div className="bw-admin__form-foot">
-          <span className="muted" style={{ fontSize: 12.5 }}>
-            A chave completa aparece uma vez só, logo depois de criada.
-          </span>
-          <button type="submit" className="bw-admin__btn bw-admin__btn--primary" disabled={creating || !name.trim() || !picked.length}>
-            <KeyRound aria-hidden /> {creating ? "Criando…" : "Criar chave"}
-          </button>
-        </div>
-      </form>
-
-      <h3 style={{ fontSize: 15, margin: "26px 0 8px" }}>Chaves</h3>
-      {loading ? (
-        <p className="bw-admin__empty">Carregando…</p>
-      ) : keys.length === 0 ? (
-        <p className="bw-admin__empty">Nenhuma chave criada ainda.</p>
-      ) : (
-        <div style={{ overflowX: "auto" }}>
-          <table className="bw-admin__table" data-testid="export-keys-table">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Chave</th>
-                <th>Conjuntos</th>
-                <th>Criada</th>
-                <th>Último uso</th>
-                <th className="num">Usos</th>
-                <th aria-label="Ações" />
-              </tr>
-            </thead>
-            <tbody>
-              {[...active, ...revoked].map((k) => (
-                <tr key={k.id} className={k.revoked_at ? "muted" : undefined}>
-                  <td>{k.name}</td>
-                  <td style={{ fontFamily: "var(--bw-mono, monospace)", fontSize: 12.5, whiteSpace: "nowrap" }}>{k.prefix}…</td>
-                  <td style={{ fontSize: 12.5 }}>{k.datasets.map(datasetLabel).join(", ")}</td>
-                  <td className="muted" style={{ fontSize: 12.5, whiteSpace: "nowrap" }}>
-                    {fmtDate(k.created_at)}
-                    {k.created_by_email ? <span style={{ display: "block" }}>{k.created_by_email}</span> : null}
-                  </td>
-                  <td className="muted" style={{ whiteSpace: "nowrap" }}>
-                    {k.last_used_at ? relativeTime(k.last_used_at) : "nunca"}
-                  </td>
-                  <td className="num">{k.use_count}</td>
-                  <td style={{ whiteSpace: "nowrap", textAlign: "right" }}>
-                    {k.revoked_at ? (
-                      <span className="bw-admin__tag bw-admin__tag--off">revogada {fmtDate(k.revoked_at)}</span>
-                    ) : (
-                      <button
-                        type="button"
-                        className="bw-admin__btn bw-admin__btn--sm bw-admin__btn--danger"
-                        onClick={() => void onRevoke(k)}
-                        disabled={revoking === k.id}
-                      >
-                        {revoking === k.id ? "Revogando…" : "Revogar"}
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      <div className="muted" style={{ fontSize: 12.5, marginTop: 12, display: "grid", gap: 6 }}>
-        <p style={{ margin: 0 }}>
-          <strong>Google Sheets:</strong> a fórmula traz os dados e atualiza sozinha (mais ou menos a cada hora). Looker
-          Studio: conecte essa planilha. <strong>Excel e Power BI:</strong> Obter dados › Da Web, com o endereço CSV ou
-          JSON. Para baixar um arquivo e abrir direto no Excel, acrescente <code>&amp;sep=semicolon</code> ao endereço CSV.
-        </p>
-        <p style={{ margin: 0 }}>
-          Período: os últimos 90 dias. Acrescente <code>&amp;days=365</code> (até 731) ou{" "}
-          <code>&amp;from=2026-01-01&amp;to=2026-06-30</code>. Datas e horas no fuso de São Paulo; decimal com vírgula
-          (planilha em inglês: <code>&amp;dec=dot</code>).
-        </p>
-      </div>
+  return <section aria-label="Integração via API" className="min-w-0 space-y-8" data-testid="export-keys">
+    <header className="flex flex-wrap items-start justify-between gap-4">
+      <div><h2 className="bw-admin__section-title">Chaves de API</h2><p className="text-sm text-muted-foreground">Consulta somente leitura · permissões por conjunto de dados</p></div>
+      <Button variant="outline" className="min-h-11" disabled={loading} onClick={() => void load()}><RefreshCw aria-hidden="true" />Atualizar chaves</Button>
+    </header>
+    {error && <p role="alert" className="text-destructive">{error}</p>}
+    {created && <div data-testid="created-key" className="min-w-0 space-y-4 border border-border bg-muted p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3"><strong>Chave criada — copie agora</strong><Button variant="outline" className="min-h-11" onClick={() => setCreated(null)}>Já copiei</Button></div>
+      <p className="text-sm">A chave completa aparece apenas uma vez. Guarde-a no sistema autorizado; não compartilhe em mensagens ou endereços públicos.</p>
+      <label className="grid gap-2">Chave API<div className="flex min-w-0 gap-2"><input aria-label="Chave API" readOnly value={created.token} type="password" className="min-h-11 min-w-0 flex-1 border border-border bg-background px-3" /><Button variant="outline" className="min-h-11" onClick={() => void copy("key", created.token)}><Copy aria-hidden="true" />{copied === "key" ? "Copiado" : "Copiar"}</Button></div></label>
+      {created.datasets.map(d => <div key={d} className="min-w-0 space-y-2 border-t border-border pt-3"><strong>{DATASETS[d].label}</strong><div className="flex flex-wrap gap-2"><Button variant="outline" className="min-h-11" onClick={() => void copy(d, buildExportUrl(d, created.token, "json"))}><Copy aria-hidden="true" />{copied === d ? "Copiado" : "Copiar endereço JSON"}</Button><Button variant="outline" className="min-h-11" onClick={() => void copy(`${d}-csv`, buildExportUrl(d, created.token, "csv"))}><Copy aria-hidden="true" />{copied === `${d}-csv` ? "Copiado" : "Copiar endereço CSV"}</Button></div></div>)}
+    </div>}
+    <form onSubmit={e => void submit(e)} aria-label="Nova chave de API" className="grid min-w-0 gap-5 border-t border-border pt-6">
+      <label className="grid gap-2">Nome do sistema<input className="min-h-11 w-full min-w-0 border border-border bg-background px-3" value={name} maxLength={80} onChange={e => setName(e.target.value)} placeholder="Ex.: Painel de indicadores" required /></label>
+      <fieldset className="grid min-w-0 gap-3"><legend className="mb-3 font-semibold">Dados autorizados</legend>
+        {EXPORT_DATASETS.map(d => <label key={d} className="flex min-h-11 min-w-0 items-start gap-3"><input type="checkbox" className="mt-1" checked={picked.includes(d)} onChange={() => setPicked(current => current.includes(d) ? current.filter(x => x !== d) : [...current, d])} /><span className="min-w-0"><strong className="block">{DATASETS[d].label}</strong><span className="block text-sm text-muted-foreground">{DATASETS[d].description}</span></span></label>)}
+      </fieldset>
+      <div><Button type="submit" className="min-h-11" disabled={creating || !name.trim() || !picked.length}><KeyRound aria-hidden="true" />{creating ? "Criando…" : "Criar chave API"}</Button></div>
+    </form>
+    <section aria-label="Chaves cadastradas" className="min-w-0 border-t border-border pt-6"><h3 className="mb-4 font-semibold">Acessos cadastrados</h3>
+      {loading ? <p role="status">Consultando chaves…</p> : keys.length === 0 ? <p>Nenhuma chave cadastrada.</p> : <ul className="grid min-w-0 gap-4">{keys.map(key => <li key={key.id} className="min-w-0 border-b border-border pb-4"><div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><strong className="break-words">{key.name}</strong><p className="text-sm">{key.revoked_at ? "Revogada" : "Ativa"} · Somente leitura</p></div>{!key.revoked_at && <Button variant="outline" className="min-h-11" disabled={revoking === key.id} onClick={() => void revoke(key)}><Trash2 aria-hidden="true" />{revoking === key.id ? "Revogando…" : "Revogar"}</Button>}</div><p className="mt-2 break-words text-sm text-muted-foreground">{key.datasets.map(datasetLabel).join(" · ")}</p><p className="mt-2 text-sm tabular-nums">Último uso: {key.last_used_at ? new Date(key.last_used_at).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" }) : "Nunca"} · {key.use_count} consultas</p></li>)}</ul>}
     </section>
-  );
-}
-
-function CopyField({
-  id,
-  label,
-  value,
-  copied,
-  onCopy,
-}: {
-  id: string;
-  label: string;
-  value: string;
-  copied: boolean;
-  onCopy: (id: string, value: string) => void;
-}) {
-  return (
-    <div style={{ display: "grid", gap: 4, fontSize: 13 }}>
-      <span style={{ fontWeight: 600 }}>{label}</span>
-      <div style={{ display: "flex", gap: 8, alignItems: "stretch", minWidth: 0 }}>
-        <input
-          readOnly
-          value={value}
-          onFocus={(e) => e.currentTarget.select()}
-          aria-label={label}
-          style={{
-            flex: 1,
-            minWidth: 0,
-            padding: "8px 10px",
-            borderRadius: 6,
-            border: "1px solid var(--bw-border, #d6d3cc)",
-            fontFamily: "var(--bw-mono, monospace)",
-            fontSize: 12.5,
-            background: "#fff",
-          }}
-        />
-        <button type="button" className="bw-admin__btn bw-admin__btn--sm" onClick={() => onCopy(id, value)}>
-          <Copy aria-hidden /> {copied ? "Copiado" : "Copiar"}
-        </button>
-      </div>
-    </div>
-  );
+    <section aria-label="Consulta externa" className="min-w-0 space-y-3 border-t border-border pt-6"><h3 className="flex items-center gap-2 font-semibold"><ShieldCheck aria-hidden="true" />Consulta externa</h3><dl className="grid min-w-0 gap-3 text-sm"><div><dt className="font-semibold">Método e endereço</dt><dd className="break-all font-mono">GET {exportBase()}?dataset=leads&amp;format=json</dd></div><div><dt className="font-semibold">Autorização</dt><dd className="break-all font-mono">Authorization: Bearer SUA_CHAVE_API</dd></div><div><dt className="font-semibold">Formato</dt><dd>JSON ou CSV</dd></div><div><dt className="font-semibold">Webhook</dt><dd>Não habilitado: esta integração permite consultar, não enviar nem alterar dados.</dd></div></dl><p className="text-sm text-muted-foreground">Contatos pessoais não são exportados em texto puro. Conversões do Google Ads incluem identificadores de clique e contatos protegidos por hash; autorize esse conjunto apenas para essa finalidade.</p></section>
+  </section>;
 }

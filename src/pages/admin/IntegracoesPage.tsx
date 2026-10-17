@@ -18,6 +18,7 @@ import { Copy, RefreshCw } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import AdminAlert from "@/components/admin/AdminAlert";
 import ExportKeysPanel from "@/components/admin/ExportKeysPanel";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/guia/components/ui/tabs";
 import {
   capiStatus,
   fetchIntegrationLog,
@@ -101,6 +102,7 @@ async function copy(text: string): Promise<boolean> {
 }
 
 export default function IntegracoesPage() {
+  const [tab, setTab] = useState("api");
   const [loading, setLoading] = useState(true);
   const [settings, setSettings] = useState<IntegrationSettings | null>(null);
   const [logs, setLogs] = useState<IntegrationLogRow[]>([]);
@@ -172,13 +174,22 @@ export default function IntegracoesPage() {
       active="site"
       eyebrow="Site"
       title="Integrações"
-      description="O que está ligado entre o site, a Meta, o Google e o CRM — e o último sinal de cada integração. Tokens e chaves ficam nos segredos do projeto, nunca aqui."
+      description="Acessos de outros sistemas e conexões do site."
       actions={
         <button type="button" className="bw-admin__btn bw-admin__btn--sm" onClick={() => void load()} disabled={loading}>
           <RefreshCw aria-hidden /> {loading ? "Carregando…" : "Atualizar"}
         </button>
       }
     >
+      <Tabs value={tab} onValueChange={setTab} className="min-w-0">
+        <TabsList className="mb-6 flex h-auto flex-wrap justify-start">
+          <TabsTrigger value="api" className="min-h-11">API · Consulta de dados</TabsTrigger>
+          <TabsTrigger value="connections" className="min-h-11">Conexões e registros</TabsTrigger>
+        </TabsList>
+        <TabsContent value="api" className="min-w-0">
+          <ExportKeysPanel />
+        </TabsContent>
+        <TabsContent value="connections" className="min-w-0">
       {errors.length > 0 && !loading && (
         <AdminAlert kind="warn">Parte das informações não pôde ser lida: {errors.join(" · ")}</AdminAlert>
       )}
@@ -329,8 +340,6 @@ export default function IntegracoesPage() {
         </p>
       </section>
 
-      <ExportKeysPanel />
-
       <section className="bw-admin__section">
         <header className="bw-admin__section-head">
           <h2 className="bw-admin__section-title">Registro das integrações</h2>
@@ -374,6 +383,8 @@ export default function IntegracoesPage() {
           </div>
         )}
       </section>
+        </TabsContent>
+      </Tabs>
     </BewildAdminShell>
   );
 }

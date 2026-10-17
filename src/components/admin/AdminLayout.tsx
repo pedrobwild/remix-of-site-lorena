@@ -48,6 +48,7 @@ type ActiveKey =
   | "faq"
   | "licencas"
   | "coletas-radar"
+  | "integracoes"
   | "typography";
 
 type Props = {
@@ -75,6 +76,7 @@ const NAV: { key: ActiveKey; label: string; href: string; icon: typeof LayoutDas
   { key: "licencas", label: "Licenças", href: routes.adminLicencas, icon: Scale },
   { key: "seo", label: "SEO", href: routes.adminSeo, icon: Search },
   { key: "coletas-radar", label: "Coletas do Radar", href: routes.adminColetasRadar, icon: Activity },
+  { key: "integracoes", label: "Integrações", href: routes.adminIntegracoes, icon: Settings },
   { key: "seo-404", label: "URLs 404", href: routes.adminSeo404, icon: Search },
   { key: "seo-indexacao", label: "Indexação", href: routes.adminIndexacao, icon: Search },
   { key: "rastreamento", label: "Rastreamento", href: routes.adminRastreamento, icon: Activity },

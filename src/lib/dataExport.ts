@@ -26,8 +26,9 @@ export type ExportKeyRow = {
 export type CreatedExportKey = { id: string; token: string; prefix: string; name: string; datasets: ExportDataset[] };
 
 /** Endereço da função `data-export` neste projeto. */
-export function exportBase(supabaseUrl: string | undefined = import.meta.env.VITE_SUPABASE_URL): string {
-  return `${(supabaseUrl ?? "").replace(/\/+$/, "")}/functions/v1/data-export`;
+export function exportBase(supabaseUrl?: string): string {
+  if (supabaseUrl) return `${supabaseUrl.replace(/\/+$/, "")}/functions/v1/data-export`;
+  return "https://bewild.com.br/api/public/export";
 }
 
 export type ExportLinkKind = "csv" | "excel" | "json";
