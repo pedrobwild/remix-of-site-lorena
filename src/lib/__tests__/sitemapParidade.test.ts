@@ -24,6 +24,7 @@ const ROTAS_INDEXAVEIS = [
   { path: "/portfolio", priority: "0.9", changefreq: "weekly" },
   { path: "/conteudos", priority: "0.8", changefreq: "weekly" },
   { path: "/videos", priority: "0.7", changefreq: "monthly" },
+  { path: "/coletas-por-bairro", priority: "0.5", changefreq: "weekly" },
   { path: "/orcamento", priority: "1.0", changefreq: "monthly" },
   { path: "/escopo", priority: "0.8", changefreq: "monthly" },
   { path: "/faq", priority: "0.7", changefreq: "monthly" },
@@ -69,8 +70,6 @@ const NAO_INDEXAVEIS: Record<string, string> = {
   "/preferencias-de-cookies": "src/pages/PreferenciasCookiesPage.tsx",
   // Resultado de busca: noindex, nunca entra no sitemap.
   "/buscar": "src/pages/BewildBuscaPage.tsx",
-  // Histórico público das coletas do Radar: consulta, não conteúdo.
-  "/coletas-por-bairro": "src/pages/ColetasRadarPage.tsx",
   // O guia mudou para https://radarbewild.com.br (12/10/2026): produção responde
   // 301 pelo vercel.json; a rota antiga fica só como fallback noindex.
   "/guia-do-investidor": "src/routes/guia-do-investidor.tsx",
@@ -171,6 +170,12 @@ describe("paridade entre as duas fontes de sitemap", () => {
 describe("public/sitemap.xml commitado", () => {
   const xml = read("public/sitemap.xml");
   const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+
+  it("inclui o histórico público de coletas e permite indexação", () => {
+    expect(locs).toContain("https://bewild.com.br/coletas-por-bairro");
+    expect(read("src/routes/coletas-por-bairro.tsx")).not.toMatch(/noindex:\s*true/);
+    expect(read("src/pages/ColetasRadarPage.tsx")).not.toMatch(/noindex:\s*true/);
+  });
 
   it("é XML bem formado e sem URL repetida", () => {
     expect(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>')).toBe(true);

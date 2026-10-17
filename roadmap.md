@@ -42,3 +42,5 @@
 - [x] Solicitar publicação de Metas, privacidade, termos e orçamento; entregar /orcamento para divulgação
 - [x] Reenviar o sitemap ao Google após o pedido de publicação (HTTP 204)
 - [x] Página pública de coletas por bairro (mesmo histórico do assistente)
+- [x] Incluir Coletas por bairro nos sitemaps e permitir indexação; 66 testes passam e histórico público conferido
+- [ ] Publicar termos de uso — página /termos-de-uso ausente nesta versão; aguarda texto aprovado ou recuperação
