@@ -23,6 +23,7 @@ import { MessageCircle } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import AdminAlert from "@/components/admin/AdminAlert";
 import MetaLeadsPanel from "@/components/admin/MetaLeadsPanel";
+import LeadsTrafficPanel from "@/components/admin/LeadsTrafficPanel";
 import { CrmSyncBar, LeadCrmStatus, LeadFunnelHistory } from "@/components/admin/LeadCrmStatus";
 import { supabase } from "@/integrations/supabase/client";
 import { LEAD_CANAIS, LEAD_CANAL_LABEL, leadCanal, type LeadCanal } from "@/lib/leadSource";
@@ -320,6 +321,15 @@ export default function BewildLeadsAdminPage() {
       <BewildAdminShell {...shellProps}>
         <LeadsTabs tab={tab} onChange={switchTab} />
         <MetaLeadsPanel />
+      </BewildAdminShell>
+    );
+  }
+
+  if (tab === "trafego") {
+    return (
+      <BewildAdminShell {...shellProps}>
+        <LeadsTabs tab={tab} onChange={switchTab} />
+        <LeadsTrafficPanel />
       </BewildAdminShell>
     );
   }
