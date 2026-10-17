@@ -41,6 +41,7 @@ import { Route as ReformaDeApartamentoSaoPauloRouteImport } from './routes/refor
 import { Route as ReformaDeCoberturaSaoPauloRouteImport } from './routes/reforma-de-cobertura-sao-paulo'
 import { Route as ReformaDeStudioSaoPauloRouteImport } from './routes/reforma-de-studio-sao-paulo'
 import { Route as ServicosRouteImport } from './routes/servicos'
+import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminCentralRouteImport } from './routes/admin.central'
@@ -57,6 +58,7 @@ import { Route as AdminLicencasRouteImport } from './routes/admin.licencas'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminMensagensRouteImport } from './routes/admin.mensagens'
 import { Route as AdminOrcamentosRouteImport } from './routes/admin.orcamentos'
+import { Route as AdminPrivacidadeTermosRouteImport } from './routes/admin.privacidade-termos'
 import { Route as AdminQualificacaoRouteImport } from './routes/admin.qualificacao'
 import { Route as AdminRastreamentoRouteImport } from './routes/admin.rastreamento'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
@@ -249,6 +251,11 @@ const ServicosRoute = ServicosRouteImport.update({
   path: '/servicos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
+  id: '/termos-de-uso',
+  path: '/termos-de-uso',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
@@ -327,6 +334,11 @@ const AdminMensagensRoute = AdminMensagensRouteImport.update({
 const AdminOrcamentosRoute = AdminOrcamentosRouteImport.update({
   id: '/admin/orcamentos',
   path: '/admin/orcamentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPrivacidadeTermosRoute = AdminPrivacidadeTermosRouteImport.update({
+  id: '/admin/privacidade-termos',
+  path: '/admin/privacidade-termos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminQualificacaoRoute = AdminQualificacaoRouteImport.update({
@@ -508,6 +520,7 @@ export interface FileRoutesByFullPath {
   '/reforma-de-cobertura-sao-paulo': typeof ReformaDeCoberturaSaoPauloRoute
   '/reforma-de-studio-sao-paulo': typeof ReformaDeStudioSaoPauloRoute
   '/servicos': typeof ServicosRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
   '/admin/conversoes': typeof AdminConversoesRoute
@@ -523,6 +536,7 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
+  '/admin/privacidade-termos': typeof AdminPrivacidadeTermosRoute
   '/admin/qualificacao': typeof AdminQualificacaoRoute
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -587,6 +601,7 @@ export interface FileRoutesByTo {
   '/reforma-de-cobertura-sao-paulo': typeof ReformaDeCoberturaSaoPauloRoute
   '/reforma-de-studio-sao-paulo': typeof ReformaDeStudioSaoPauloRoute
   '/servicos': typeof ServicosRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
   '/admin/conversoes': typeof AdminConversoesRoute
@@ -602,6 +617,7 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
+  '/admin/privacidade-termos': typeof AdminPrivacidadeTermosRoute
   '/admin/qualificacao': typeof AdminQualificacaoRoute
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -667,6 +683,7 @@ export interface FileRoutesById {
   '/reforma-de-cobertura-sao-paulo': typeof ReformaDeCoberturaSaoPauloRoute
   '/reforma-de-studio-sao-paulo': typeof ReformaDeStudioSaoPauloRoute
   '/servicos': typeof ServicosRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
   '/admin/conversoes': typeof AdminConversoesRoute
@@ -682,6 +699,7 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
+  '/admin/privacidade-termos': typeof AdminPrivacidadeTermosRoute
   '/admin/qualificacao': typeof AdminQualificacaoRoute
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -748,6 +766,7 @@ export interface FileRouteTypes {
     | '/reforma-de-cobertura-sao-paulo'
     | '/reforma-de-studio-sao-paulo'
     | '/servicos'
+    | '/termos-de-uso'
     | '/admin/analytics'
     | '/admin/central'
     | '/admin/conversoes'
@@ -763,6 +782,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/mensagens'
     | '/admin/orcamentos'
+    | '/admin/privacidade-termos'
     | '/admin/qualificacao'
     | '/admin/rastreamento'
     | '/admin/settings'
@@ -827,6 +847,7 @@ export interface FileRouteTypes {
     | '/reforma-de-cobertura-sao-paulo'
     | '/reforma-de-studio-sao-paulo'
     | '/servicos'
+    | '/termos-de-uso'
     | '/admin/analytics'
     | '/admin/central'
     | '/admin/conversoes'
@@ -842,6 +863,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/mensagens'
     | '/admin/orcamentos'
+    | '/admin/privacidade-termos'
     | '/admin/qualificacao'
     | '/admin/rastreamento'
     | '/admin/settings'
@@ -906,6 +928,7 @@ export interface FileRouteTypes {
     | '/reforma-de-cobertura-sao-paulo'
     | '/reforma-de-studio-sao-paulo'
     | '/servicos'
+    | '/termos-de-uso'
     | '/admin/analytics'
     | '/admin/central'
     | '/admin/conversoes'
@@ -921,6 +944,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/mensagens'
     | '/admin/orcamentos'
+    | '/admin/privacidade-termos'
     | '/admin/qualificacao'
     | '/admin/rastreamento'
     | '/admin/settings'
@@ -986,6 +1010,7 @@ export interface RootRouteChildren {
   ReformaDeCoberturaSaoPauloRoute: typeof ReformaDeCoberturaSaoPauloRoute
   ReformaDeStudioSaoPauloRoute: typeof ReformaDeStudioSaoPauloRoute
   ServicosRoute: typeof ServicosRoute
+  TermosDeUsoRoute: typeof TermosDeUsoRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminCentralRoute: typeof AdminCentralRoute
   AdminConversoesRoute: typeof AdminConversoesRoute
@@ -1001,6 +1026,7 @@ export interface RootRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMensagensRoute: typeof AdminMensagensRoute
   AdminOrcamentosRoute: typeof AdminOrcamentosRoute
+  AdminPrivacidadeTermosRoute: typeof AdminPrivacidadeTermosRoute
   AdminQualificacaoRoute: typeof AdminQualificacaoRoute
   AdminRastreamentoRoute: typeof AdminRastreamentoRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
@@ -1259,6 +1285,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/termos-de-uso': {
+      id: '/termos-de-uso'
+      path: '/termos-de-uso'
+      fullPath: '/termos-de-uso'
+      preLoaderRoute: typeof TermosDeUsoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/': {
       id: '/admin/'
       path: '/admin'
@@ -1369,6 +1402,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/orcamentos'
       fullPath: '/admin/orcamentos'
       preLoaderRoute: typeof AdminOrcamentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/privacidade-termos': {
+      id: '/admin/privacidade-termos'
+      path: '/admin/privacidade-termos'
+      fullPath: '/admin/privacidade-termos'
+      preLoaderRoute: typeof AdminPrivacidadeTermosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/qualificacao': {
@@ -1610,6 +1650,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReformaDeCoberturaSaoPauloRoute: ReformaDeCoberturaSaoPauloRoute,
   ReformaDeStudioSaoPauloRoute: ReformaDeStudioSaoPauloRoute,
   ServicosRoute: ServicosRoute,
+  TermosDeUsoRoute: TermosDeUsoRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminCentralRoute: AdminCentralRoute,
   AdminConversoesRoute: AdminConversoesRoute,
@@ -1625,6 +1666,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   AdminMensagensRoute: AdminMensagensRoute,
   AdminOrcamentosRoute: AdminOrcamentosRoute,
+  AdminPrivacidadeTermosRoute: AdminPrivacidadeTermosRoute,
   AdminQualificacaoRoute: AdminQualificacaoRoute,
   AdminRastreamentoRoute: AdminRastreamentoRoute,
   AdminSettingsRoute: AdminSettingsRoute,

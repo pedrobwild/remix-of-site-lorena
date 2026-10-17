@@ -1,0 +1,251 @@
+/**
+ * Textos de /privacidade e /termos-de-uso, editáveis no painel
+ * /admin/privacidade-termos (tabela `site_licenses`, RPC `get_public_license`).
+ * Campo vazio no banco = usa o texto padrão daqui; o corpo é Markdown.
+ *
+ * Manter o padrão de /privacidade em sincronia com o que o site faz de
+ * verdade (banner de cookies, Pixel da Meta, tag do Google, formulários):
+ * mudou a prática → atualize o texto aqui e no painel.
+ */
+
+export type LegalSlug = "privacidade" | "termos-de-uso";
+
+export type LegalPagePadrao = {
+  slug: LegalSlug;
+  nome: string;
+  path: string;
+  eyebrow: string;
+  title: string;
+  intro: string;
+  /** Corpo em Markdown (## subtítulo, - lista, **negrito**, [texto](url)). */
+  body: string;
+  /** Data exibida no topo da página. */
+  updatedAt: string;
+  seo: { title: string; description: string; ogTitle: string; ogDescription: string };
+};
+
+const PRIVACIDADE_BODY = `**O que mudou nesta versão:** explicamos como usamos o Pixel da Meta e a tag do Google para medir e direcionar anúncios (inclusive para quem já visitou o site e para pessoas com perfil parecido), o envio criptografado do seu contato a essas plataformas quando você envia um formulário, os prazos dos cookies e como recusar. Quem já tinha aceitado os cookies verá o banner de novo, para decidir com essas informações.
+
+## Quem é o controlador dos dados
+
+**Bewild**, estabelecida em São Paulo/SP, é a controladora dos dados pessoais tratados por meio deste site, sendo responsável pelas decisões sobre o tratamento desses dados.
+
+## Quais dados coletamos
+
+Coletamos apenas os dados necessários para responder às suas solicitações, oferecer uma experiência consistente e, com o seu aceite, medir e direcionar nossos anúncios:
+
+- **Dados que você envia nos formulários do site:** conforme o formulário, nome, WhatsApp, e-mail, localização do imóvel, metragem, objetivo da reforma e mensagem, nos formulários de orçamento, contato, das páginas de campanha, do programa de parceiros e do cadastro de incorporadoras. O pedido de orçamento também pergunta se você já tem as chaves e a planta do imóvel, se mora em São Paulo e como conheceu a Bewild. Na indicação de amigos, pedimos também o nome e o WhatsApp de quem você indica. Junto com o envio, registramos a origem da visita (parâmetros de campanha, site de referência, página de entrada e, se você chegou por um anúncio, o código do clique) e o tipo de navegador.
+- **Formulários dos anúncios da Meta:** quando você preenche um formulário de cadastro dentro de um anúncio da Bewild no Facebook ou no Instagram, a Meta nos repassa as respostas (como nome, telefone, e-mail e cidade) e a campanha em que o formulário estava.
+- **Dados de contato voluntários:** nome, e-mail, telefone e mensagem, quando você escolhe nos contatar por WhatsApp, e-mail ou outros canais indicados no site.
+- **Dados de navegação da nossa própria medição:** páginas visitadas, tempo de permanência, eventos de clique, tipo de dispositivo, site de origem e identificadores aleatórios de visitante e de sessão guardados no seu navegador — coletados somente depois que você aceita os cookies. Esses dados não permitem sua identificação pessoal direta.
+- **Dados coletados pelo Pixel da Meta e pela tag do Google (somente com o seu aceite):** as páginas e os conteúdos que você vê (projetos, serviços, artigos), o início e o envio de formulários, cliques para falar por WhatsApp, telefone ou e-mail, sinais de interesse (tempo na página e rolagem), dados técnicos do aparelho e do navegador, endereço IP e os identificadores dos cookies dessas empresas. Quando você envia um formulário, seguem também nome, e-mail e telefone criptografados por hash (as plataformas só conseguem compará-los com os dados que já têm, sem ler o original) e características gerais do pedido: objetivo da reforma, faixa de metragem, etapa do imóvel e se você mora em São Paulo. Detalhes em "Anúncios e públicos".
+- **Contagem de campanhas:** aberturas e cliques em imagens e links rastreados das nossas campanhas (como e-mails e QR codes de materiais impressos) são contados por campanha, sem identificar quem abriu ou clicou.
+- **Cookies e armazenamento local:** para lembrar sua escolha sobre cookies e, com o seu aceite, para medição e publicidade — veja "Cookies".
+
+## Finalidade do tratamento
+
+Utilizamos os dados coletados para:
+
+- Responder a pedidos de orçamento, dúvidas e contatos;
+- Compreender o desempenho do site e aprimorar a experiência de navegação (analytics agregados);
+- Com o seu aceite, medir o resultado das nossas campanhas e exibir anúncios da Bewild no Facebook, no Instagram e no Google para quem já visitou o site e para pessoas com perfil parecido (veja "Anúncios e públicos");
+- Garantir a segurança e a integridade técnica da plataforma;
+- Cumprir obrigações legais, regulatórias e fiscais aplicáveis à atividade da empresa.
+
+## Para onde vão os dados dos formulários
+
+Quando você envia um formulário do site, os dados são gravados no nosso banco de dados, mantido no Lovable Cloud (serviço de banco de dados e infraestrutura em nuvem), e encaminhados aos nossos canais internos: um aviso à equipe comercial no Slack e por e-mail, e o nosso CRM, onde o atendimento e o orçamento são acompanhados. Os cadastros feitos nos formulários dos anúncios da Meta seguem o mesmo caminho. Esses dados são usados para responder ao seu pedido e dar andamento a ele.
+
+Quando você envia um formulário de orçamento ou de contato, nome, e-mail e telefone (e cidade e estado, quando informados) seguem criptografados por hash para a Meta, para medir o resultado e direcionar nossos anúncios — isso acontece pelo nosso servidor, no envio do formulário, com base no nosso interesse legítimo em medir as campanhas, e independe dos cookies (que controlam apenas o Pixel no seu navegador). Se você aceitou os cookies, o mesmo contato criptografado segue também para o Google. Quando o atendimento avança (contato qualificado ou não), a Meta também é avisada, com o mesmo contato criptografado, o objetivo da reforma e a campanha de origem — nunca a mensagem. Para os cadastros feitos nos formulários dos anúncios da Meta, informamos à Meta o andamento do atendimento (recebido, contatado, qualificado ou descartado) usando o identificador que a própria Meta deu ao seu cadastro. Nos cadastros de parceiros e de incorporadoras e na indicação de amigos, só a Meta recebe o seu contato criptografado, e somente com o seu aceite de cookies — os dados de quem você indica nunca são enviados às plataformas de anúncio. Para se opor a esse envio, escreva para o contato indicado em "Seus direitos".
+
+Para relatórios internos, levamos às nossas planilhas e ferramentas de análise dados sem nome, telefone, e-mail ou mensagem.
+
+## Anúncios e públicos
+
+Com o seu aceite, o site carrega o Pixel da Meta e a tag do Google (Google Analytics e Google Ads). A Meta e o Google, como terceiros, usam cookies, pixels e tecnologias parecidas para coletar ou receber informações do nosso site e de outros sites e aplicativos, e usam essas informações para medir resultados e direcionar anúncios, conforme as políticas de privacidade da [Meta](https://www.facebook.com/privacy/policy) e do [Google](https://policies.google.com/privacy) (veja também [como o Google usa dados de sites parceiros](https://policies.google.com/technologies/partner-sites)).
+
+Com essas informações, a Bewild pode:
+
+- medir quantas visitas, contatos e pedidos de orçamento vieram de cada anúncio;
+- mostrar anúncios da Bewild a quem visitou o site, viu um projeto ou serviço, começou um formulário ou passou mais tempo no conteúdo (remarketing);
+- deixar de mostrar anúncios de captação a quem já pediu orçamento;
+- pedir às plataformas que encontrem pessoas com perfil parecido com o de quem visitou o site ou virou cliente (públicos semelhantes). Quem monta esses públicos são a Meta e o Google, com os dados que já têm; a Bewild não recebe nenhuma informação que identifique essas pessoas.
+
+A Bewild não coleta no site idade, gênero, renda ou interesses. Os relatórios demográficos das plataformas de anúncio são agregados e produzidos por elas, sem identificar ninguém. Não enviamos às plataformas dados sensíveis (como saúde, situação financeira ou documentos), o texto das mensagens, o endereço do imóvel nem os dados de pessoas indicadas.
+
+### Como recusar ou limitar
+
+- **No site:** em [Preferências de cookies](/preferencias-de-cookies) (também no rodapé), escolha "Recusar". Os cookies de medição deste site são apagados e os envios de medição e publicidade pelo navegador são interrompidos. O envio pelo servidor descrito em "Para onde vão os dados dos formulários" independe dessa escolha; para se opor a ele, use o contato em "Seus direitos".
+- **Na Meta:** em [Preferências de anúncios](https://www.facebook.com/adpreferences) você controla os anúncios que vê no Facebook e no Instagram; na Central de Contas, em "Sua atividade fora das tecnologias da Meta", pode ver e desconectar as informações que sites como o nosso enviam.
+- **No Google:** em [Minha Central de Anúncios](https://myadcenter.google.com/) você desativa os anúncios personalizados.
+- **Outras ferramentas:** as páginas de exclusão da [Network Advertising Initiative](https://optout.networkadvertising.org/) e da [Digital Advertising Alliance](https://optout.aboutads.info/) e as configurações de anúncios do seu celular.
+
+## Base legal
+
+O tratamento de dados pessoais fundamenta-se em:
+
+- **Consentimento** (art. 7º, I da LGPD), dado no banner de cookies, para os cookies não essenciais, a medição, os anúncios e públicos descritos acima e o envio criptografado do seu contato ao Google e ao Pixel da Meta; e para comunicações comerciais;
+- **Execução de contrato ou procedimentos preliminares** (art. 7º, V), quando você nos contata para contratar serviços;
+- **Legítimo interesse** (art. 7º, IX), para manutenção e segurança do site e para medir o resultado das nossas campanhas na Meta a partir dos formulários de cliente (envio do contato criptografado por hash pelo servidor e do andamento do atendimento, como descrito em "Para onde vão os dados dos formulários"), respeitando seus direitos fundamentais e com a possibilidade de oposição;
+- **Cumprimento de obrigação legal** (art. 7º, II), quando aplicável.
+
+## Compartilhamento com terceiros
+
+Não comercializamos dados pessoais. Compartilhamos dados apenas com operadores contratados para hospedagem, infraestrutura e banco de dados (Lovable Cloud), comunicação interna da equipe (Slack e serviço de envio de e-mails), gestão do atendimento (CRM) e relatórios internos, sempre sob obrigação contratual de confidencialidade e segurança; com a Meta (Facebook e Instagram), para medição e publicidade, como descrito em "Anúncios e públicos" e em "Formulários"; e, somente com o seu aceite, com o Google, para as mesmas finalidades. A Meta e o Google também tratam esses dados para finalidades próprias, conforme as políticas de privacidade deles. Alguns desses serviços armazenam e processam dados em servidores fora do Brasil. Também poderemos compartilhar dados mediante obrigação legal ou decisão judicial.
+
+## Cookies
+
+Utilizamos cookies e o armazenamento local do navegador em duas categorias:
+
+- **Essenciais:** guardam a sua escolha sobre cookies, até você mudar de ideia ou limpar os dados do navegador.
+- **Medição e publicidade:** só são carregados depois que você clica em "Aceitar" no banner de cookies; se você recusar, nenhum deles é carregado. O mesmo vale para qualquer outra ferramenta de medição configurada no site.
+
+Cookies de medição e publicidade (só com aceite):
+
+- **Bewild (medição própria)** — bewild_vid, bewild_sid e origem da visita: contar visitas e sessões e saber de onde veio a visita. Visitante e primeira origem: 12 meses sem visitas; sessão: 30 minutos sem uso; clique de anúncio: 90 dias.
+- **Google Analytics** — _ga, _ga_*: medir o uso do site. Duração: até 2 anos.
+- **Google Ads** — _gcl_*: medir conversões dos anúncios e remarketing. Duração: 90 dias.
+- **Meta** — _fbp, _fbc: medir anúncios, remarketing e públicos. Duração: 90 dias.
+
+Um resumo só sobre cookies está na [Política de cookies](/politica-de-cookies).
+
+Da sua decisão no banner, registramos apenas a escolha (aceite ou recusa), a versão do texto, a página e o horário, sem identificador pessoal, para comprovar o consentimento. Você pode mudar sua escolha a qualquer momento em [Preferências de cookies](/preferencias-de-cookies), também no rodapé do site. Retirar o aceite apaga os cookies de medição deste site e interrompe novos envios; o que já foi enviado à Meta e ao Google segue as ferramentas e os prazos dessas empresas (veja "Como recusar ou limitar").
+
+## Conteúdos de terceiros
+
+O mapa do Google Maps, na página de contato, e as postagens do Instagram exibidas na página inicial vêm diretamente do Google e da Meta, que podem registrar dados técnicos do acesso (como endereço IP e navegador) e gravar cookies próprios. Por isso, esses conteúdos só são carregados depois que você aceita os cookies ou quando você clica para exibi-los. A exceção são os vídeos do YouTube das páginas de vídeo e de alguns artigos: eles carregam junto com a página, pelo endereço youtube-nocookie.com, e as miniaturas deles, pelo endereço i.ytimg.com. Ao carregar, o YouTube (Google) pode registrar dados técnicos do acesso, como endereço IP e navegador. As fontes tipográficas do site são hospedadas pela própria Bewild, sem solicitar fontes ao Google. O selo do Reclame Aqui, perto do rodapé, carrega recursos a partir dos servidores desse serviço.
+
+## Direitos do titular de dados pessoais
+
+Como titular, a LGPD lhe assegura o direito de:
+
+- Confirmar a existência de tratamento de seus dados;
+- Acessar os dados tratados;
+- Corrigir dados incompletos, inexatos ou desatualizados;
+- Solicitar anonimização, bloqueio ou eliminação de dados desnecessários ou tratados em desconformidade;
+- Solicitar a portabilidade de seus dados, nos termos da regulamentação;
+- Solicitar a eliminação dos dados tratados com seu consentimento, ressalvadas as hipóteses de conservação previstas na LGPD;
+- Saber se é possível não fornecer consentimento e quais são as consequências dessa escolha;
+- Revogar o consentimento, sempre que o tratamento for baseado nele — para cookies, a qualquer momento em [Preferências de cookies](/preferencias-de-cookies);
+- Obter informação sobre compartilhamento de seus dados com terceiros;
+- Opor-se a tratamento realizado em desacordo com a LGPD;
+- Solicitar a revisão de decisões tomadas unicamente com base em tratamento automatizado de dados pessoais que afetem seus interesses, quando houver.
+
+Para exercer qualquer desses direitos, entre em contato pelo e-mail [contato@bewild.com.br](mailto:contato@bewild.com.br).
+
+Informe qual direito deseja exercer. Para proteger seus dados, podemos solicitar as informações necessárias para confirmar sua identidade antes de atender ao pedido. Você também pode apresentar uma petição à Autoridade Nacional de Proteção de Dados (ANPD), nos termos da LGPD.
+
+Para saber quais cookies usamos, consulte a [Política de cookies](/politica-de-cookies). Para aceitar ou recusar cookies de medição e publicidade, acesse [Preferências de cookies](/preferencias-de-cookies).
+
+## Retenção e segurança
+
+Armazenamos seus dados pelo tempo estritamente necessário às finalidades descritas nesta política, ou pelo prazo exigido por lei. Os cookies seguem os prazos da lista acima. Nos públicos de anúncio, cada pessoa fica por prazo limitado — na Meta, no máximo 180 dias desde a última interação com o site — e sai automaticamente depois disso. Adotamos medidas técnicas e organizacionais razoáveis para proteger dados pessoais contra acessos não autorizados, perda acidental, alteração ou divulgação indevida.
+
+## Alterações e contato
+
+Esta política pode ser atualizada para refletir mudanças regulatórias ou nos serviços oferecidos. A data da última revisão é sempre indicada no topo desta página. Em caso de alterações materiais, destacaremos a mudança em lugar visível no site; quando a mudança alterar o que depende do seu aceite, o banner de cookies volta a aparecer para você decidir de novo.
+
+Para dúvidas, solicitações ou reclamações relacionadas a dados pessoais, o canal oficial é o e-mail [contato@bewild.com.br](mailto:contato@bewild.com.br).
+`;
+
+const TERMOS_BODY = `## Quem somos
+
+Este site é mantido pela **Bewild**, empresa de arquitetura e construção estabelecida em São Paulo/SP, especializada em reforma completa de studios e apartamentos. Os canais de contato estão na página de [contato](/contato).
+
+## O que o site oferece
+
+O site apresenta os serviços da Bewild, projetos já realizados, artigos e materiais informativos (como o [Índice Bewild de custo de reforma](/indice-de-custo-de-reforma)) e formulários para pedido de orçamento e contato. O conteúdo tem caráter informativo e não constitui proposta comercial, orçamento ou compromisso de contratação.
+
+## Orçamentos e propostas
+
+Os valores, prazos e condições mencionados no site são estimativas gerais, baseadas em projetos anteriores, e podem variar conforme o imóvel, o escopo e as condições de cada obra. Um orçamento só é válido quando enviado formalmente pela Bewild, com escopo e condições próprios, dentro do prazo de validade nele indicado.
+
+## Propriedade intelectual
+
+Os textos, fotografias, projetos, imagens 3D, logotipos e a marca Bewild são protegidos por direitos autorais e não podem ser reproduzidos sem autorização, salvo nos casos em que uma licença específica for indicada — como os dados do Índice Bewild, disponíveis sob a [licença CC BY 4.0](/licenca-cc-by-4-0), com as condições de crédito da página de [atribuição](/atribuicao).
+
+## Uso permitido
+
+Você pode navegar, ler e compartilhar os links das páginas. Não é permitido:
+
+- usar o site para fins ilegais ou que violem direitos de terceiros;
+- tentar acessar áreas restritas, interferir no funcionamento do site ou extrair dados de forma automatizada e massiva (robôs, raspagem), ressalvados os mecanismos de busca que respeitem o robots.txt;
+- enviar pelos formulários conteúdo falso, ofensivo ou de terceiros sem autorização.
+
+## Dados pessoais
+
+O tratamento de dados pessoais segue a nossa [Política de privacidade](/privacidade) e a [Política de cookies](/politica-de-cookies), em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018).
+
+## Links para sites de terceiros
+
+O site contém links para serviços de terceiros (como WhatsApp, Instagram, LinkedIn, YouTube e Google Maps). A Bewild não responde pelo conteúdo nem pelas políticas desses sites.
+
+## Limitação de responsabilidade
+
+A Bewild se esforça para manter as informações do site corretas e atualizadas, mas não garante ausência de erros ou interrupções. Decisões de contratação, investimento ou obra devem se basear no orçamento e no contrato formais, não apenas no conteúdo do site.
+
+## Alterações destes termos
+
+Estes termos podem ser atualizados a qualquer momento. A data da última revisão é indicada no topo desta página. O uso continuado do site após uma alteração significa ciência da nova versão.
+
+## Foro e legislação
+
+Estes termos são regidos pelas leis brasileiras. Fica eleito o foro da comarca de São Paulo/SP para dirimir eventuais controvérsias, salvo disposição legal em contrário.
+`;
+
+export const LEGAL_PAGES: Record<LegalSlug, LegalPagePadrao> = {
+  privacidade: {
+    slug: "privacidade",
+    nome: "Privacidade",
+    path: "/privacidade",
+    eyebrow: "Política · Bewild",
+    title: "Política de privacidade e LGPD.",
+    intro:
+      "A Bewild respeita sua privacidade e está comprometida com a transparência no tratamento de dados pessoais, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018).",
+    body: PRIVACIDADE_BODY,
+    updatedAt: "12 de outubro de 2026",
+    seo: {
+      title: "Política de privacidade e LGPD | Bewild",
+      description:
+        "Saiba como a Bewild trata e protege seus dados pessoais, quais são seus direitos pela LGPD e como solicitar acesso, correção ou exclusão de dados.",
+      ogTitle: "Privacidade e proteção de dados | Bewild",
+      ogDescription:
+        "Conheça a política de privacidade da Bewild: dados coletados, finalidades, compartilhamento, cookies e canais para exercer seus direitos pela LGPD.",
+    },
+  },
+  "termos-de-uso": {
+    slug: "termos-de-uso",
+    nome: "Termos de uso",
+    path: "/termos-de-uso",
+    eyebrow: "Termos · Bewild",
+    title: "Termos de uso do site.",
+    intro:
+      "As condições gerais para navegar e usar o site da Bewild: o que o site oferece, o que é permitido, propriedade intelectual e responsabilidades.",
+    body: TERMOS_BODY,
+    updatedAt: "17 de outubro de 2026",
+    seo: {
+      title: "Termos de uso | Bewild",
+      description:
+        "Condições gerais de uso do site da Bewild: conteúdo informativo, orçamentos, propriedade intelectual, uso permitido e responsabilidades.",
+      ogTitle: "Termos de uso | Bewild",
+      ogDescription:
+        "As condições gerais para navegar e usar o site da Bewild, incluindo propriedade intelectual e limites de responsabilidade.",
+    },
+  },
+};
+
+export const LEGAL_SLUGS = Object.keys(LEGAL_PAGES) as LegalSlug[];
+
+/** Texto do banco quando preenchido; senão o padrão. */
+export function mergeLegalPage(
+  slug: LegalSlug,
+  row: { title?: string | null; intro?: string | null; body?: string | null } | null,
+) {
+  const p = LEGAL_PAGES[slug];
+  const pick = (v: string | null | undefined, d: string) => (v && v.trim() ? v : d);
+  return {
+    title: pick(row?.title, p.title),
+    intro: pick(row?.intro, p.intro),
+    body: pick(row?.body, p.body),
+  };
+}

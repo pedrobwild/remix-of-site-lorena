@@ -395,7 +395,8 @@ describe("sitemap, rotas e links", () => {
     // O player aberto é exigência do Google para indexar; em troca, as políticas
     // precisam dizer isso (as outras incorporações só carregam com aceite ou clique).
     expect(VIDEO_PAGES.some((v) => v.youtubeId)).toBe(true);
-    for (const pagina of ["src/pages/PrivacidadePage.tsx", "src/pages/PoliticaCookiesPage.tsx"]) {
+    // Privacidade virou texto editável: o padrão mora em content/pages/legal.ts.
+    for (const pagina of ["src/content/pages/legal.ts", "src/pages/PoliticaCookiesPage.tsx"]) {
       expect(read(pagina).replace(/\s+/g, " "), pagina).toMatch(/vídeos do YouTube das páginas de vídeo[^.]*youtube-nocookie\.com/);
     }
   });

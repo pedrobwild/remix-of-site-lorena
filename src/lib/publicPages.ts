@@ -40,6 +40,7 @@ export const PUBLIC_PAGES: PublicPage[] = [
   { path: "/acessibilidade", label: "Acessibilidade" },
   { path: "/autores", label: "Autores" },
   { path: "/privacidade", label: "Privacidade" },
+  { path: "/termos-de-uso", label: "Termos de uso" },
   { path: "/politica-de-cookies", label: "Política de cookies" },
 ];
 

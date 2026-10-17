@@ -250,3 +250,21 @@ export async function loadLicenca(slug: import("@/content/pages/licencas").Licen
   const merged = mergeLicenca(slug, row);
   return { title: merged.title, intro: merged.intro, bodyHtml: await renderBody(merged.body), citationModel: merged.citationModel };
 }
+
+// --- /privacidade e /termos-de-uso (painel /admin/privacidade-termos) -------
+
+export type LegalLoaderData = { title: string; intro: string; bodyHtml: string | null };
+
+/** Texto da página legal no HTML do servidor; banco vazio ou fora do ar = texto padrão. */
+export async function loadLegalPage(slug: import("@/content/pages/legal").LegalSlug): Promise<LegalLoaderData> {
+  const { mergeLegalPage } = await import("@/content/pages/legal");
+  let row: { title: string | null; intro: string | null; body: string | null } | null = null;
+  try {
+    const { data } = await supabase.rpc("get_public_license", { p_slug: slug }).maybeSingle();
+    row = data ?? null;
+  } catch {
+    row = null;
+  }
+  const merged = mergeLegalPage(slug, row);
+  return { title: merged.title, intro: merged.intro, bodyHtml: await renderBody(merged.body) };
+}
