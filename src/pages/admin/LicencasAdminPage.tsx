@@ -3,8 +3,8 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { LICENCAS, LICENCA_SLUGS, mergeLicenca, type LicencaSlug } from "@/content/pages/licencas";
 
-type Draft = { title: string; intro: string; body: string };
-type Row = { slug: string; title: string | null; intro: string | null; body: string | null; updated_at: string };
+type Draft = { title: string; intro: string; body: string; citationModel: string };
+type Row = { slug: string; title: string | null; intro: string | null; body: string | null; citation_model: string | null; updated_at: string };
 
 function dataBr(iso: string) {
   return new Date(iso).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", timeStyle: "short" });
@@ -20,7 +20,7 @@ export default function LicencasAdminPage() {
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
   const load = useCallback(async () => {
-    const { data, error } = await supabase.from("site_licenses").select("slug, title, intro, body, updated_at");
+    const { data, error } = await supabase.from("site_licenses").select("slug, title, intro, body, citation_model, updated_at");
     if (error) {
       setLoadError("Não foi possível carregar as licenças. Tente de novo em instantes.");
       return;
@@ -41,6 +41,7 @@ export default function LicencasAdminPage() {
         title: valores?.title ?? null,
         intro: valores?.intro ?? null,
         body: valores?.body ?? null,
+        citation_model: valores?.citationModel ?? null,
       })
       .eq("slug", slug);
     setBusy(false);
@@ -97,6 +98,13 @@ export default function LicencasAdminPage() {
               Linha começando com “## ” vira subtítulo; “- ” vira item de lista; **texto** fica em negrito; [texto](endereço) vira link. Deixe uma linha em branco entre parágrafos.
             </span>
             <textarea rows={24} className="w-full rounded-md border border-border bg-background p-3 font-mono text-sm" value={draft.body} onChange={(e) => setDraft({ ...draft, body: e.target.value })} />
+          </label>
+          <label className="block">
+            <span className="block text-sm font-medium mb-1">Modelo de citação</span>
+            <span className="block text-xs text-muted-foreground mb-2">
+              Linha de crédito pronta para copiar, exibida no bloco “Modelo de citação” da página da licença.
+            </span>
+            <textarea rows={3} className="w-full rounded-md border border-border bg-background p-3" value={draft.citationModel} onChange={(e) => setDraft({ ...draft, citationModel: e.target.value })} />
           </label>
           {msg && <p role="status" className={msg.kind === "ok" ? "text-sm text-success" : "text-sm text-destructive"}>{msg.text}</p>}
           <div className="flex flex-wrap gap-2">

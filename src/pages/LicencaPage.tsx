@@ -50,6 +50,12 @@ export default function LicencaPage({
           <section className="pt-body-section">
             <div className="container">
               <div className="pt-body" dangerouslySetInnerHTML={{ __html: content.bodyHtml }} />
+              {content.citationModel && (
+                <div className="pt-body">
+                  <h2>Modelo de citação</h2>
+                  <p>{content.citationModel}</p>
+                </div>
+              )}
             </div>
           </section>
         </main>

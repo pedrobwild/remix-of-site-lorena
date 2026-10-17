@@ -16,6 +16,13 @@ describe("licenças editáveis no painel", () => {
     expect(mergeLicenca("cc-by-sa-4-0", { title: "Novo título", intro: null, body: null }).title).toBe("Novo título");
   });
 
+  it("modelo de citação: vazio usa o padrão, preenchido vence", () => {
+    expect(mergeLicenca("cc-by-4-0", null).citationModel).toBe(LICENCAS["cc-by-4-0"].citationModel);
+    expect(mergeLicenca("cc-by-4-0", { citation_model: "Fonte: X" }).citationModel).toBe("Fonte: X");
+    expect(LICENCAS["cc-by-4-0"].citationModel).toContain("bewild.com.br/indice-de-custo-de-reforma");
+    expect(LICENCAS["cc-by-sa-4-0"].citationModel).toContain("by-sa/4.0");
+  });
+
   it("CC BY-SA traz o termo CompartilhaIgual e o link oficial", () => {
     expect(LICENCAS["cc-by-sa-4-0"].body).toContain("CompartilhaIgual");
     expect(LICENCAS["cc-by-sa-4-0"].body).toContain("https://creativecommons.org/licenses/by-sa/4.0/legalcode");
