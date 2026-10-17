@@ -43,11 +43,15 @@ export const TOPO_VARIANTES = {
 
 export type TopoVariante = keyof typeof TOPO_VARIANTES;
 
-/** Busca crua preserva o primeiro valor repetido e trata IDs numéricos como texto. */
-export function topoVarianteDaBusca(searchStr: string): TopoVariante {
-  const params = new URLSearchParams(searchStr);
-  const content = params.get("utm_content") ?? "";
-  const campaign = params.get("utm_campaign") ?? "";
+/** O roteador normaliza repetições como listas; a busca crua usa get. IDs continuam texto. */
+export function topoVarianteDaBusca(search: string | Record<string, unknown>): TopoVariante {
+  const first = (value: unknown): string => {
+    const v = Array.isArray(value) ? value[0] : value;
+    return typeof v === "string" || typeof v === "number" ? String(v) : "";
+  };
+  const params = typeof search === "string" ? new URLSearchParams(search) : null;
+  const content = params ? params.get("utm_content") ?? "" : first(typeof search === "object" ? search.utm_content : null);
+  const campaign = params ? params.get("utm_campaign") ?? "" : first(typeof search === "object" ? search.utm_campaign : null);
   if (content.endsWith("investidor") || content.startsWith("airbnb") || content.startsWith("aluguel") || campaign === "sea_investidor") return "investidor";
   if (content === "studio-ape-pequeno") return "studio";
   if (content === "arquitetura-reforma") return "arquitetura";

@@ -3,6 +3,11 @@ import { topoVarianteDaBusca } from "@/content/pages/orcamento";
 import { CLIENTES_FORA_DA_CAPITAL_PCT, CLIENTES_SHORT_STAY_PCT } from "@/content/provas";
 
 describe("Variante do orçamento pela busca crua", () => {
+  it("a normalização do roteador preserva o primeiro valor e aceita números e parâmetros inesperados", () => {
+    expect(topoVarianteDaBusca({ utm_content: ["custo-orcamento", 123456], gclid: "teste" })).toBe("custo");
+    expect(topoVarianteDaBusca({ utm_content: 123456, utm_campaign: 123456 })).toBe("padrao");
+    expect(topoVarianteDaBusca({ utm_content: { unexpected: true } })).toBe("padrao");
+  });
   it.each([
     ["?utm_content=anuncio-investidor", "investidor"],
     ["?utm_content=airbnb-studio", "investidor"],
