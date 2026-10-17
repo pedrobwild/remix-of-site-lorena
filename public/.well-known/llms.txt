@@ -30,6 +30,7 @@ A Bewild é uma empresa de reforma completa de apartamentos e studios em São Pa
 - [Parceria Leal Moreira](/parceiros/leal-moreira): Parceria com a Leal Moreira para reformar os studios do LM Urban Flex Bela Cintra, com os projetos em 3D das unidades.
 - [Indique um amigo](/indique-um-amigo): Programa de indicação para clientes, com recompensa em Pix após o fechamento do contrato.
 - [Privacidade](/privacidade): Política de privacidade e tratamento de dados.
+- [Termos de uso](/termos-de-uso): Condições gerais de uso do site, propriedade intelectual e responsabilidades.
 - [Política de cookies](/politica-de-cookies): Quais cookies o site usa, para quê, por quanto tempo e como mudar a escolha.
 - [Acessibilidade](/acessibilidade): Declaração de acessibilidade do site e como relatar barreiras.
 
@@ -59,6 +60,7 @@ Páginas com os projetos entregues em cada bairro de São Paulo (só bairros com
 ## Conteúdos publicados
 
 <!-- posts:start -->
+- [Reforma de studio por empreendimento em SP: Urban Flex, Nex One e MetroCasa em 198 contratos](/conteudos/reforma-de-studio-por-empreendimento-sao-paulo)
 - [Reforma de apartamento em São Paulo por bairro: o que 198 contratos da Bewild mostram](/conteudos/reforma-de-apartamento-sao-paulo-por-bairro)
 - [Como pagar a reforma do apartamento: juros de cada opção sobre 188 contratos](/conteudos/como-pagar-reforma-apartamento-financiamento-sp)
 - [Studio como degrau: comprar para morar 2 anos e revender vale a pena em SP?](/conteudos/studio-como-degrau-comprar-morar-revender-sp)
