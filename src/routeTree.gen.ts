@@ -45,6 +45,7 @@ import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminCentralRouteImport } from './routes/admin.central'
+import { Route as AdminCitacoesRouteImport } from './routes/admin.citacoes'
 import { Route as AdminConversoesRouteImport } from './routes/admin.conversoes'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminDiagnosticoRouteImport } from './routes/admin.diagnostico'
@@ -269,6 +270,11 @@ const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
 const AdminCentralRoute = AdminCentralRouteImport.update({
   id: '/admin/central',
   path: '/admin/central',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCitacoesRoute = AdminCitacoesRouteImport.update({
+  id: '/admin/citacoes',
+  path: '/admin/citacoes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminConversoesRoute = AdminConversoesRouteImport.update({
@@ -523,6 +529,7 @@ export interface FileRoutesByFullPath {
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
+  '/admin/citacoes': typeof AdminCitacoesRoute
   '/admin/conversoes': typeof AdminConversoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/diagnostico': typeof AdminDiagnosticoRoute
@@ -604,6 +611,7 @@ export interface FileRoutesByTo {
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
+  '/admin/citacoes': typeof AdminCitacoesRoute
   '/admin/conversoes': typeof AdminConversoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/diagnostico': typeof AdminDiagnosticoRoute
@@ -686,6 +694,7 @@ export interface FileRoutesById {
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
+  '/admin/citacoes': typeof AdminCitacoesRoute
   '/admin/conversoes': typeof AdminConversoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/diagnostico': typeof AdminDiagnosticoRoute
@@ -769,6 +778,7 @@ export interface FileRouteTypes {
     | '/termos-de-uso'
     | '/admin/analytics'
     | '/admin/central'
+    | '/admin/citacoes'
     | '/admin/conversoes'
     | '/admin/dashboard'
     | '/admin/diagnostico'
@@ -850,6 +860,7 @@ export interface FileRouteTypes {
     | '/termos-de-uso'
     | '/admin/analytics'
     | '/admin/central'
+    | '/admin/citacoes'
     | '/admin/conversoes'
     | '/admin/dashboard'
     | '/admin/diagnostico'
@@ -931,6 +942,7 @@ export interface FileRouteTypes {
     | '/termos-de-uso'
     | '/admin/analytics'
     | '/admin/central'
+    | '/admin/citacoes'
     | '/admin/conversoes'
     | '/admin/dashboard'
     | '/admin/diagnostico'
@@ -1013,6 +1025,7 @@ export interface RootRouteChildren {
   TermosDeUsoRoute: typeof TermosDeUsoRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminCentralRoute: typeof AdminCentralRoute
+  AdminCitacoesRoute: typeof AdminCitacoesRoute
   AdminConversoesRoute: typeof AdminConversoesRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminDiagnosticoRoute: typeof AdminDiagnosticoRoute
@@ -1311,6 +1324,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/central'
       fullPath: '/admin/central'
       preLoaderRoute: typeof AdminCentralRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/citacoes': {
+      id: '/admin/citacoes'
+      path: '/admin/citacoes'
+      fullPath: '/admin/citacoes'
+      preLoaderRoute: typeof AdminCitacoesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/conversoes': {
@@ -1653,6 +1673,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermosDeUsoRoute: TermosDeUsoRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminCentralRoute: AdminCentralRoute,
+  AdminCitacoesRoute: AdminCitacoesRoute,
   AdminConversoesRoute: AdminConversoesRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminDiagnosticoRoute: AdminDiagnosticoRoute,
