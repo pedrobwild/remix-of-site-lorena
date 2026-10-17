@@ -192,7 +192,9 @@ describe("useLeadSubmit", () => {
     expect(second?.event_id).toBe(first?.event_id);
     expect(first).toMatchObject({ consent_marketing: true, fbp: "fb.1.1790000000000.123456789", fbc: null });
     // O próprio payload do formulário não é alterado (reenvio usa o mesmo objeto).
-    expect(sendLeadMock.mock.calls[0][0]).toBe(p);
+    expect(sendLeadMock.mock.calls[0][0]).toMatchObject(p);
+    expect(sendLeadMock.mock.calls[0][0].privacy_visited_before_submit).toBe(false);
+    expect("privacy_visited_before_submit" in p).toBe(false);
     expect("event_id" in p).toBe(false);
 
     expect(reportLeadMock).toHaveBeenCalledTimes(1);
@@ -218,6 +220,7 @@ describe("useLeadSubmit", () => {
       await result.current.submit(payload);
     });
     expect(sendLeadMock.mock.calls[0][1]?.tracking).toMatchObject({ consent_marketing: false, fbp: null, fbc: null });
+    expect(sendLeadMock.mock.calls[0][0].privacy_visited_before_submit).toBeNull();
   });
 
   it("falha sem WhatsApp não conta Lead de mídia", async () => {
