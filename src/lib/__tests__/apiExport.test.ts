@@ -12,13 +12,13 @@ describe("consulta externa somente leitura", () => {
     expect(options.headers.has("cookie")).toBe(false);
     expect(options.headers.has("apikey")).toBe(false);
   });
-  it("préserve refus de clé et empêche le cache partagé", async () => {
+  it("preserva a recusa de chave e impede cache compartilhado", async () => {
     const response = await proxyExport(new Request("https://bewild.com.br/api/public/export?dataset=leads"), "https://backend.example", vi.fn().mockResolvedValue(Response.json({ error: "unauthorized" }, { status: 401 })));
     expect(response.status).toBe(401);
     expect(response.headers.get("cache-control")).toBe("no-store");
     expect(await response.json()).toEqual({ error: "unauthorized" });
   });
-  it("préserve le refus d’un jeu de données non autorisé", async () => {
+  it("preserva a recusa de conjunto não autorizado", async () => {
     const response = await proxyExport(new Request("https://bewild.com.br/api/public/export?dataset=analytics_daily"), "https://backend.example", vi.fn().mockResolvedValue(new Response("Forbidden", { status: 403 })));
     expect(response.status).toBe(403);
   });
