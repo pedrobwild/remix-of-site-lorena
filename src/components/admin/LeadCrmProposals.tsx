@@ -12,6 +12,12 @@ export function LeadCrmProposals({ leadId }: { leadId: string }) {
   const [busy, setBusy] = useState(true);
   const [revision, setRevision] = useState(0);
   useEffect(() => {
+    const timer = window.setInterval(() => {
+      if (document.visibilityState === "visible" && navigator.onLine) setRevision((value) => value + 1);
+    }, 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
+  useEffect(() => {
     let alive = true;
     setBusy(true);
     setError(false);
@@ -33,6 +39,8 @@ export function LeadCrmProposals({ leadId }: { leadId: string }) {
     {busy ? <p role="status">Consultando o BWild Engine…</p>
       : error ? <p role="alert" className="text-destructive">Não foi possível consultar o CRM.</p>
       : details && <>
+        <h3 className="font-semibold">Perfil qualitativo</h3>
+        <p>{details.profilesAvailable ? details.profile?.profile_name ?? "Sem perfil vinculado no CRM" : "Consulta de perfil indisponível"}</p>
         <p className="text-muted-foreground">Etapa atual: {details.stagesAvailable ? details.stage ?? "Sem negócio no CRM" : "Consulta indisponível"}</p>
         {!details.proposalsAvailable ? <p role="alert" className="text-destructive">Consulta de propostas indisponível.</p>
           : !details.proposals.length ? <p className="text-muted-foreground">Nenhuma proposta publicada para este pedido.</p>
