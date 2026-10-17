@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/guia/components/ui/button";
 import { selectClosedContracts, type ClosedContract } from "@/lib/closedContracts";
 import { getClosedContracts } from "@/lib/crmContracts.functions";
 
 export default function ClosedContractsPanel() {
+  const readContracts = useServerFn(getClosedContracts);
   const [rows, setRows] = useState<ClosedContract[] | null>(null);
   const [available, setAvailable] = useState(false);
   const [error, setError] = useState(false);
@@ -14,12 +16,12 @@ export default function ClosedContractsPanel() {
     let active = true;
     setRows(null); setError(false);
     async function read() {
-      const result = await getClosedContracts();
+      const result = await readContracts();
       if (active) { setRows(result.contracts); setAvailable(result.available); }
     }
     void read().catch(() => { if (active) setError(true); });
     return () => { active = false; };
-  }, [refresh]);
+  }, [refresh, readContracts]);
   const neighborhoods = useMemo(() => [...new Set((rows ?? []).map((row) => row.location).filter((value): value is string => Boolean(value)))].sort((a, b) => a.localeCompare(b, "pt-BR")), [rows]);
   const contracts = selectClosedContracts(rows ?? [], bairro) as ClosedContract[];
   const loading = rows === null && !error;
