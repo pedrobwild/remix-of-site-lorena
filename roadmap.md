@@ -33,4 +33,4 @@
 - [x] Aplicar CC BY 4.0 ao índice, página e CSV; validar HTML e checks sem publicar
 - [x] Remover e-mails de edição das licenças e restringir registros do painel, mantendo os textos públicos; validar sem publicar
 
-- [ ] Reenviar o sitemap ao Google para privacidade e termos
+- [x] Reenviar o sitemap ao Google para privacidade e termos
