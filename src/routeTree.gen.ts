@@ -58,6 +58,7 @@ import { Route as AdminLicencasRouteImport } from './routes/admin.licencas'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminMensagensRouteImport } from './routes/admin.mensagens'
 import { Route as AdminOrcamentosRouteImport } from './routes/admin.orcamentos'
+import { Route as AdminPrivacidadeTermosRouteImport } from './routes/admin.privacidade-termos'
 import { Route as AdminQualificacaoRouteImport } from './routes/admin.qualificacao'
 import { Route as AdminRastreamentoRouteImport } from './routes/admin.rastreamento'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
@@ -335,6 +336,11 @@ const AdminOrcamentosRoute = AdminOrcamentosRouteImport.update({
   path: '/admin/orcamentos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminPrivacidadeTermosRoute = AdminPrivacidadeTermosRouteImport.update({
+  id: '/admin/privacidade-termos',
+  path: '/admin/privacidade-termos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminQualificacaoRoute = AdminQualificacaoRouteImport.update({
   id: '/admin/qualificacao',
   path: '/admin/qualificacao',
@@ -530,6 +536,7 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
+  '/admin/privacidade-termos': typeof AdminPrivacidadeTermosRoute
   '/admin/qualificacao': typeof AdminQualificacaoRoute
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -610,6 +617,7 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
+  '/admin/privacidade-termos': typeof AdminPrivacidadeTermosRoute
   '/admin/qualificacao': typeof AdminQualificacaoRoute
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -691,6 +699,7 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
+  '/admin/privacidade-termos': typeof AdminPrivacidadeTermosRoute
   '/admin/qualificacao': typeof AdminQualificacaoRoute
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -773,6 +782,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/mensagens'
     | '/admin/orcamentos'
+    | '/admin/privacidade-termos'
     | '/admin/qualificacao'
     | '/admin/rastreamento'
     | '/admin/settings'
@@ -853,6 +863,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/mensagens'
     | '/admin/orcamentos'
+    | '/admin/privacidade-termos'
     | '/admin/qualificacao'
     | '/admin/rastreamento'
     | '/admin/settings'
@@ -933,6 +944,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/mensagens'
     | '/admin/orcamentos'
+    | '/admin/privacidade-termos'
     | '/admin/qualificacao'
     | '/admin/rastreamento'
     | '/admin/settings'
@@ -1014,6 +1026,7 @@ export interface RootRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMensagensRoute: typeof AdminMensagensRoute
   AdminOrcamentosRoute: typeof AdminOrcamentosRoute
+  AdminPrivacidadeTermosRoute: typeof AdminPrivacidadeTermosRoute
   AdminQualificacaoRoute: typeof AdminQualificacaoRoute
   AdminRastreamentoRoute: typeof AdminRastreamentoRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
@@ -1391,6 +1404,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOrcamentosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/privacidade-termos': {
+      id: '/admin/privacidade-termos'
+      path: '/admin/privacidade-termos'
+      fullPath: '/admin/privacidade-termos'
+      preLoaderRoute: typeof AdminPrivacidadeTermosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/qualificacao': {
       id: '/admin/qualificacao'
       path: '/admin/qualificacao'
@@ -1646,6 +1666,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   AdminMensagensRoute: AdminMensagensRoute,
   AdminOrcamentosRoute: AdminOrcamentosRoute,
+  AdminPrivacidadeTermosRoute: AdminPrivacidadeTermosRoute,
   AdminQualificacaoRoute: AdminQualificacaoRoute,
   AdminRastreamentoRoute: AdminRastreamentoRoute,
   AdminSettingsRoute: AdminSettingsRoute,
