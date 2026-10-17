@@ -38,3 +38,4 @@
 - [ ] Conferir a aba autenticada de SEO — bloqueado até entrar no painel pela prévia
 - [x] Integrar perguntas de mercado ao Radar ao vivo, preservar o assistente e conferir respostas e falhas sem publicar
 - [ ] Corrigir falha independente no teste de reenvio de formulário (`leadFormPages.test.tsx`) — fora do escopo do assistente
+- [x] Incluir histórico público de coletas no assistente Radar, validar filtros, privacidade e respostas sem publicar

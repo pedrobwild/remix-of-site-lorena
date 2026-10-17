@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { askRadar } from "@/lib/assistant/radar.functions";
-import { isMarketQuestion } from "@/lib/assistant/radarData";
+import { isCollectionQuestion, isMarketQuestion } from "@/lib/assistant/radarData";
 import { reply, type KbItem } from "@/lib/assistant/assistantEngine";
 import { whatsappHref } from "@/components/landing/content";
 import { RadarLink } from "@/components/RadarLink";
@@ -12,7 +12,7 @@ export default function RadarAssistant({ kb }: { kb: KbItem[] | null }) {
   const [messages, setMessages] = useState<Array<{ question: string; answer: string; market: boolean }>>([]);
   const [loading, setLoading] = useState(false);
   const busy = useRef(false);
-  const previous = useRef<{ market: boolean; bairros: string[] }>({ market: false, bairros: [] });
+  const previous = useRef<{ market: boolean; bairros: string[]; history?: boolean }>({ market: false, bairros: [] });
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -25,9 +25,9 @@ export default function RadarAssistant({ kb }: { kb: KbItem[] | null }) {
     try {
       let answer: string;
       if (market) {
-        const result = await ask({ data: { question: input, previousBairros: previous.current.bairros } });
+        const result = await ask({ data: { question: input, previousBairros: previous.current.bairros, previousHistory: previous.current.history ?? false } });
         answer = result.text;
-        previous.current = { market: true, bairros: result.bairros };
+        previous.current = { market: true, bairros: result.bairros, history: result.history };
       } else {
         answer = reply(input, kb ?? [], { path: "/faq", waHref: (text) => whatsappHref(text) }).texto;
         previous.current = { market: false, bairros: [] };
@@ -35,7 +35,7 @@ export default function RadarAssistant({ kb }: { kb: KbItem[] | null }) {
       setMessages((old) => [...old, { question: input, answer, market }]);
     } catch {
       setMessages((old) => [...old, { question: input, market, answer: market
-        ? "Os dados de mercado do Radar Bewild estão indisponíveis agora. Não posso informar números sem a base atual."
+        ? (isCollectionQuestion(input) || previous.current.history ? "O histórico de coletas do Radar Bewild está indisponível agora." : "Os dados de mercado do Radar Bewild estão indisponíveis agora. Não posso informar números sem a base atual.")
         : "Não foi possível responder agora. Fale com a equipe pelo WhatsApp." }]);
     } finally {
       busy.current = false;
