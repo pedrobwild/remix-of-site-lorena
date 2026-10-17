@@ -45,8 +45,8 @@ const MENU_OPEN_CLASS = "bwa-menu-open";
 const TYPING_ATTR = "data-bwa-typing";
 /** Acima desta largura o header mostra os links e o menu mobile some (home-bwa.css). */
 const DESKTOP_NAV_QUERY = "(min-width: 1181px)";
-/** Até esta largura, Serviços · 02 vira acordeão; acima, índice + painel de detalhe. */
-const SERVICES_ACCORDION_QUERY = "(max-width: 760px)";
+/** Abaixo de lg, as descrições ficam sempre legíveis em linha. */
+const SERVICES_ACCORDION_QUERY = "(max-width: 1023px)";
 /** Só com mouse (não no toque) o hover no índice troca o painel. */
 const SERVICES_HOVER_QUERY = "(hover: hover) and (pointer: fine)";
 /** Pausa antes de o hover trocar o painel: atravessar a lista não pisca 12 itens. */
@@ -653,11 +653,11 @@ function installFaqAccordion(root: HTMLElement, signal: AbortSignal): Cleanup {
  * texto completo — legível sem JS e pela busca. A seção tem UMA imagem fixa
  * (equipe em obra) na coluna do detalhe; o clique no tópico só troca o texto.
  * O conteúdo do título ganha um <button class="bwa-services-trigger"> e:
- *  - ≥ 761 px (`is-indexed`): o painel [data-services-detail] recebe número,
- *    título e texto do item ativo (clique, Enter ou hover com mouse); os
+ *  - ≥ lg com mouse (`is-indexed`): o painel recebe número,
+ *    título e texto do item ativo (clique, foco ou hover); os
  *    detalhes em linha somem pelo CSS. Abre no item 01.
- *  - ≤ 760 px (`is-accordion`): o toque abre e fecha o detalhe em linha
- *    (aria-expanded + aria-controls), como o acordeão anterior.
+ *  - abaixo de lg ou sem mouse (`is-readable`): todos os detalhes em linha
+ *    permanecem visíveis, sem controles que dependam de interação.
  * Girou o tablet: sai de um modo e entra no outro. A limpeza devolve o HTML
  * como veio.
  * ========================================================================= */
@@ -699,7 +699,7 @@ function installServicesIndex(root: HTMLElement, signal: AbortSignal): Cleanup {
 
   const accordionQuery = window.matchMedia(SERVICES_ACCORDION_QUERY);
   const hoverQuery = window.matchMedia(SERVICES_HOVER_QUERY);
-  let mode: "indexed" | "accordion" | null = null;
+  let mode: "indexed" | "readable" | null = null;
   let active = -1;
   let hoverTimer = 0;
 
@@ -715,6 +715,7 @@ function installServicesIndex(root: HTMLElement, signal: AbortSignal): Cleanup {
     active = index;
     items.forEach((it, i) => {
       it.li.classList.toggle("is-active", i === index);
+      it.trigger.setAttribute("aria-expanded", String(i === index));
       if (i === index) it.trigger.setAttribute("aria-current", "true");
       else it.trigger.removeAttribute("aria-current");
     });
@@ -733,35 +734,32 @@ function installServicesIndex(root: HTMLElement, signal: AbortSignal): Cleanup {
     panel.replaceChildren(inner);
   };
 
-  const toggle = (index: number) => {
-    const item = items[index];
-    if (!item || mode !== "accordion") return;
-    const open = !item.li.classList.contains("is-open");
-    item.li.classList.toggle("is-open", open);
-    item.trigger.setAttribute("aria-expanded", String(open));
-  };
-
   const enterIndexed = () => {
     cancelHover();
     mode = "indexed";
     active = -1;
     section.classList.add("is-indexed");
-    section.classList.remove("is-accordion");
+    section.classList.remove("is-readable");
     panel.hidden = false;
     panel.setAttribute("aria-live", "polite");
     items.forEach((item) => {
       item.li.classList.remove("is-open");
-      item.trigger.removeAttribute("aria-expanded");
+      if (!item.title.contains(item.trigger)) {
+        item.trigger.append(...Array.from(item.title.childNodes));
+        item.title.appendChild(item.trigger);
+        item.title.classList.add("has-trigger");
+      }
+      item.trigger.setAttribute("aria-expanded", "false");
       item.trigger.setAttribute("aria-controls", panel.id);
     });
     select(0);
   };
 
-  const enterAccordion = () => {
+  const enterReadable = () => {
     cancelHover();
-    mode = "accordion";
+    mode = "readable";
     active = -1;
-    section.classList.add("is-accordion");
+    section.classList.add("is-readable");
     section.classList.remove("is-indexed");
     panel.hidden = true;
     panel.replaceChildren();
@@ -769,8 +767,13 @@ function installServicesIndex(root: HTMLElement, signal: AbortSignal): Cleanup {
     items.forEach((item) => {
       item.li.classList.remove("is-active", "is-open");
       item.trigger.removeAttribute("aria-current");
-      item.trigger.setAttribute("aria-expanded", "false");
-      item.trigger.setAttribute("aria-controls", item.detail.id);
+      item.trigger.removeAttribute("aria-expanded");
+      item.trigger.removeAttribute("aria-controls");
+      if (item.title.contains(item.trigger)) {
+        item.title.append(...Array.from(item.trigger.childNodes));
+        item.trigger.remove();
+        item.title.classList.remove("has-trigger");
+      }
     });
   };
 
@@ -780,7 +783,6 @@ function installServicesIndex(root: HTMLElement, signal: AbortSignal): Cleanup {
       () => {
         cancelHover();
         if (mode === "indexed") select(index);
-        else toggle(index);
       },
       { signal },
     );
@@ -797,16 +799,21 @@ function installServicesIndex(root: HTMLElement, signal: AbortSignal): Cleanup {
       { signal },
     );
     item.trigger.addEventListener("mouseleave", cancelHover, { signal });
+    item.li.addEventListener("focusin", () => {
+      cancelHover();
+      select(index);
+    }, { signal });
   });
 
-  const sync = () => (accordionQuery.matches ? enterAccordion() : enterIndexed());
+  const sync = () => (accordionQuery.matches || !hoverQuery.matches ? enterReadable() : enterIndexed());
   sync();
   accordionQuery.addEventListener?.("change", sync, { signal });
+  hoverQuery.addEventListener?.("change", sync, { signal });
 
   return () => {
     cancelHover();
     mode = null;
-    section.classList.remove("is-indexed", "is-accordion");
+    section.classList.remove("is-indexed", "is-readable");
     panel.hidden = true;
     panel.replaceChildren();
     panel.removeAttribute("aria-live");
