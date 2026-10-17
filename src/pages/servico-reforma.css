@@ -295,3 +295,25 @@
     transition: none;
   }
 }
+
+/* Ações da abertura sobre o fundo claro, sem alterar o CTA final. */
+.bwa-servico-top-actions {
+  margin-top: 24px;
+}
+
+.bwa-servico-top-actions .bwa-servico-whats {
+  color: var(--bwa-ink);
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.bwa-servico-top-actions .bwa-servico-cta-note {
+  color: var(--bwa-ink-soft);
+  margin-top: 0;
+}
+
+.bwa-servico-top-actions a:focus-visible {
+  outline: 2px solid var(--bwa-navy-2);
+  outline-offset: 4px;
+}

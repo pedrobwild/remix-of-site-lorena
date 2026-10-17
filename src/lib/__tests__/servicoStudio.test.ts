@@ -28,7 +28,7 @@ const read = (p: string) => readFileSync(path.join(SRC, p), "utf8");
 
 describe("reforma de studio: palavra-chave no singular", () => {
   it("título e descrição", () => {
-    expect(SEO_TITLE).toBe("Reforma de studio em SP: morar, alugar ou Airbnb | Bewild");
+    expect(SEO_TITLE).toBe("Reforma de studio e apartamento pequeno em SP | Bewild");
     expect(SEO_TITLE.length).toBeLessThanOrEqual(60);
     expect(SEO_DESCRIPTION.startsWith("Reforma de studio em São Paulo")).toBe(true);
     expect(`${SEO_TITLE} ${SEO_DESCRIPTION}`).not.toMatch(/reforma de studios/i);

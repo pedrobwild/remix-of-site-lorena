@@ -1,4 +1,4 @@
-import { BAIRROS_ATENDIDOS, PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
+import { BAIRROS_ATENDIDOS, CONTRATOS_ANALISADOS, PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
 import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
@@ -7,6 +7,7 @@ import { BAIRROS, REMOTO_ITEMS, bairroHref, type BairroPageLink } from "@/lib/ba
 import { useSeo } from "@/lib/useSeo";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
+import { PILAR_CUSTO } from "@/content/pages/orcamento";
 import { CANONICAL, FAQ } from "@/content/pages/reforma-de-apartamento-sao-paulo";
 
 /* ============================================================
@@ -73,14 +74,24 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
                 <em>Você não vira gerente de obra.</em>
               </h1>
               <p className="bwa-servico-lead">
-                A Bewild é uma empresa de reforma completa de apartamentos e
-                studios em São Paulo. Entregamos projeto, obra, marcenaria e
-                mobília em um único contrato, com preço fechado antes de a obra
-                começar, prazo em contrato e 5 anos de garantia sobre a mão de
-                obra. Mais de {REFORMAS_ENTREGUES} reformas entregues em {BAIRROS_ATENDIDOS} bairros da
+                A Bewild é uma empresa de reforma especializada em apartamentos e
+                studios recém-entregues em São Paulo, para alugar, anunciar no Airbnb
+                ou morar, com arquitetura, engenharia e empreita sob a mesma
+                responsabilidade. Entregamos projeto, obra, marcenaria e mobília em
+                um único contrato, com preço fechado antes de a obra começar, prazo
+                em contrato e 5 anos de garantia. Mais de {REFORMAS_ENTREGUES} reformas entregues em {BAIRROS_ATENDIDOS} bairros da
                 capital, para donos que moram em São Paulo ou em qualquer outra
                 cidade.
               </p>
+              <div className="bwa-servico-cta-actions bwa-servico-top-actions">
+                <a className="bwa-button" href={CTA_HREF} data-cta="servico-reforma-apartamento-sp-topo">
+                  Peça seu orçamento <span aria-hidden="true">→</span>
+                </a>
+                <a className="bwa-servico-whats" href={whatsappHref()} target="_blank" rel="noopener noreferrer">
+                  Falar no WhatsApp <span aria-hidden="true">→</span>
+                </a>
+                <p className="bwa-servico-cta-note">Sem custo e sem compromisso</p>
+              </div>
             </div>
           </div>
         </section>
@@ -92,13 +103,6 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
             </h2>
             <ul className="bwa-servico-cards">
               <li>
-                <h3>Para morar</h3>
-                <p>
-                  Você define layout, materiais e marcenaria com o arquiteto,
-                  aprova em 3D e recebe o apartamento com tudo instalado.
-                </p>
-              </li>
-              <li>
                 <h3>Para alugar ou vender</h3>
                 <p>
                   Projeto pensado para a foto do anúncio, ocupação e manutenção
@@ -108,6 +112,13 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
                     reforma de studio em São Paulo
                   </a>
                   .
+                </p>
+              </li>
+              <li>
+                <h3>Para morar</h3>
+                <p>
+                  Você define layout, materiais e marcenaria com o arquiteto,
+                  aprova em 3D e recebe o apartamento com tudo instalado.
                 </p>
               </li>
             </ul>
@@ -140,6 +151,19 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
             <p className="bwa-servico-text" style={{ marginTop: 24 }}>
               A marcenaria é desenhada no projeto executivo e produzida em fábrica própria: materiais,
               ferragens e modelos estão em <a href="/marcenaria">marcenaria sob medida</a>.
+            </p>
+          </div>
+        </section>
+
+        <section className="bwa-servico-block" aria-labelledby="custo">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="custo">Quanto custa reformar um apartamento em São Paulo</h2>
+            <p className="bwa-servico-text">
+              A mediana dos {CONTRATOS_ANALISADOS} contratos de reforma completa de até
+              50 m² analisados pela Bewild é R$ 2.744 por m², com projeto, obra,
+              marcenaria, mobília e eletros. Acima de 50 m², o valor sai da visita
+              técnica e do projeto. A tabela por metragem está em{" "}
+              <a href={PILAR_CUSTO}>quanto custa reformar um apartamento ou studio de até 50 m²</a>.
             </p>
           </div>
         </section>
