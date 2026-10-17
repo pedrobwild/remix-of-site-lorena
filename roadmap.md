@@ -41,4 +41,4 @@
 - [x] Incluir histórico público de coletas no assistente Radar, validar filtros, privacidade e respostas sem publicar
 - [x] Solicitar publicação de Metas, privacidade, termos e orçamento; entregar /orcamento para divulgação
 - [x] Reenviar o sitemap ao Google após o pedido de publicação (HTTP 204)
-- [ ] Página pública de coletas por bairro (mesmo histórico do assistente)
+- [x] Página pública de coletas por bairro (mesmo histórico do assistente)
