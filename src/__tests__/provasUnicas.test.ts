@@ -75,6 +75,15 @@ describe("provas numéricas", () => {
     expect(achados).toEqual([]);
   });
 
+  // Clientes por indicação: desde 17/10/2026 o número dos anúncios do Google
+  // ("40% dos clientes: indicação") está no /orcamento e na página de
+  // apartamento, e sai só de CLIENTES_INDICACAO_PCT.
+  it("% de clientes por indicação só sai de provas.ts", () => {
+    const proibido = /\b\d{1,2}\s*%\s*(dos\s+(nossos\s+)?clientes\s+(chegam|vêm|vem)|chegam\s+por\s+indica)/i;
+    const achados = FONTES.filter((f) => proibido.test(readFileSync(f, "utf8"))).map((f) => relative(SRC, f));
+    expect(achados).toEqual([]);
+  });
+
   it("o guia não mostra nota, studios ou tempo de mercado sem fonte", () => {
     const guia = arquivos(join(SRC, "guia")).map((f) => readFileSync(f, "utf8")).join("\n");
     expect(guia).not.toMatch(/4,9 nota|\+200 studios|\+5 anos no mercado/);

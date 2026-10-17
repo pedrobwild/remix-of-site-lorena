@@ -32,7 +32,7 @@ import "./contato.css";
 import "./servico-reforma.css";
 import "./orcamento.css";
 import fotoObra from "@/assets/orcamento/obra-bewild.webp";
-import { BAIRROS_ATENDIDOS, CLIENTES_FORA_DA_CAPITAL_PCT, CLIENTES_SHORT_STAY_PCT, CONTRATOS_ANALISADOS, PROVA_REFORMAS } from "@/content/provas";
+import { BAIRROS_ATENDIDOS, CLIENTES_FORA_DA_CAPITAL_PCT, CLIENTES_INDICACAO_PCT, CLIENTES_SHORT_STAY_PCT, CONTRATOS_ANALISADOS, PROVA_REFORMAS } from "@/content/provas";
 import { CUSTO_M2_MEDIANO } from "@/content/baseCusto";
 import {
   AREA_SLIDER,
@@ -651,7 +651,7 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
               <li>Obra acompanhada de qualquer cidade no Bwild Workflow: cronograma, fotos e decisões.</li>
               <li>5 anos de garantia, em contrato.</li>
             </ul>
-            <p className="bwa-servico-text">{PROVA_REFORMAS} em {BAIRROS_ATENDIDOS} bairros de São Paulo, como Pinheiros, Bela Vista, Vila Olímpia e Brooklin.</p>
+            <p className="bwa-servico-text">{PROVA_REFORMAS} em {BAIRROS_ATENDIDOS} bairros de São Paulo, como Pinheiros, Bela Vista, Vila Olímpia e Brooklin. {CLIENTES_INDICACAO_PCT}% dos clientes chegam por indicação.</p>
             <h3 className="bwa-servico-h3">Para quem é</h3>
             <p className="bwa-servico-text">A Bewild reforma unidades recém-entregues, ainda no contrapiso, na cidade de São Paulo. {CLIENTES_SHORT_STAY_PCT}% dos clientes reformam para short stay e {CLIENTES_FORA_DA_CAPITAL_PCT}% moram fora da capital: a maior parte das obras é em studios e apartamentos compactos de 20 a 35 m², entregues prontos para o Airbnb ou para contrato longo, e a gestão do Airbnb também pode ficar com a Bewild. Também reformamos para morar, apartamentos maiores e escritórios. Mora fora de São Paulo? Vistoria por procuração, ligação de energia, internet e emergências ficam com a Bewild.</p>
             <h3 className="bwa-servico-h3">Quanto custa</h3>

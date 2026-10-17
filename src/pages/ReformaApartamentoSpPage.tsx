@@ -1,4 +1,4 @@
-import { BAIRROS_ATENDIDOS, CONTRATOS_ANALISADOS, PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
+import { BAIRROS_ATENDIDOS, CLIENTES_INDICACAO_PCT, CONTRATOS_ANALISADOS, PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
 import { CUSTO_M2_MEDIANO } from "@/content/baseCusto";
 import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
@@ -82,7 +82,7 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
                 um único contrato, com preço fechado antes de a obra começar, prazo
                 em contrato e 5 anos de garantia. Mais de {REFORMAS_ENTREGUES} reformas entregues em {BAIRROS_ATENDIDOS} bairros da
                 capital, para donos que moram em São Paulo ou em qualquer outra
-                cidade.
+                cidade. {CLIENTES_INDICACAO_PCT}% dos clientes chegam por indicação.
               </p>
               <div className="bwa-servico-cta-actions bwa-servico-top-actions">
                 <a className="bwa-button" href={CTA_HREF} data-cta="servico-reforma-apartamento-sp-topo">
