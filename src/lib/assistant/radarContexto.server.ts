@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { radarRowSchema, type RadarRow } from "./radarData";
+import { radarRowSchema, radarObservationSchema, type RadarObservation, type RadarRow } from "./radarData";
 
 // Chave pública fornecida pelo Radar; permite somente leitura de dados públicos.
 const RADAR_URL = "https://zxdjgifncmkvjbjmrjss.supabase.co";

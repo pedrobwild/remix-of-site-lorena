@@ -7,22 +7,45 @@ export const radarRowSchema = z.object({
   confianca: z.enum(["alta", "media", "baixa"]), idade_dias: z.number().nullable(),
 });
 export type RadarRow = z.infer<typeof radarRowSchema>;
-export type RadarAnswer = { text: string; market: boolean; bairros: string[] };
+export type RadarAnswer = { text: string; market: boolean; bairros: string[]; history?: boolean };
+
+export const radarObservationSchema = z.object({
+  coletado_em: z.string(), periodo_inicio: z.string().nullable(), periodo_fim: z.string().nullable(),
+  fonte_nome: z.string(), amostra_n: z.number().nullable(), ativo: z.boolean(),
+});
+export type RadarObservation = z.infer<typeof radarObservationSchema>;
+export function isCollectionQuestion(question: string): boolean {
+  return /\b(coleta|coletas|historico)\b/.test(normalize(question));
+}
 
 const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 export function isMarketQuestion(question: string, previousMarket = false): boolean {
   const text = normalize(question);
-  return /\b(diaria|diarias|ocupacao|adr|receita|rendimento|rentabilidade|mercado|anuncios|radar|airbnb|short stay|mediana|percentil)\b/.test(text)
+  return isCollectionQuestion(question) || /\b(diaria|diarias|ocupacao|adr|receita|rendimento|rentabilidade|mercado|anuncios|radar|airbnb|short stay|mediana|percentil)\b/.test(text)
     || (previousMarket && /^(e |e$|na |no |em |quanto |qual |como |compar)/.test(text));
 }
 const nf = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 2 });
 const date = (iso: string) => iso.slice(0, 10).split("-").reverse().join("/");
 const months = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-function period(row: RadarRow): string {
+function period(row: Pick<RadarRow, "periodo_inicio" | "periodo_fim">): string {
   if (!row.periodo_inicio || !row.periodo_fim) return "período não informado";
   const [a, m] = row.periodo_inicio.split("-").map(Number);
   const [b, n] = row.periodo_fim.split("-").map(Number);
   return a === b ? `${months[m - 1]}–${months[n - 1]}/${b}` : `${months[m - 1]}/${a}–${months[n - 1]}/${b}`;
+}
+export function resolveRadarBairros(question: string, available: string[], previousBairros: string[] = [], history = false): string[] {
+  const text = ` ${normalize(question)} `;
+  const explicit = available.filter((bairro) => text.includes(` ${normalize(bairro)} `));
+  if (explicit.length) return explicit;
+  if (/\b(la|nesse bairro|neste bairro|ali)\b/.test(text) || (history && !/\b(em|na|no|do bairro|da)\b/.test(text)))
+    return previousBairros.filter((bairro) => available.includes(bairro));
+  return [];
+}
+export function formatRadarCollections(bairro: string, rows: RadarObservation[]): string {
+  if (!rows.length) return `${bairro}\nNão há coletas disponíveis no Radar Bewild para este bairro.`;
+  return `${bairro}\n${rows.slice(0, 20).map((row) =>
+    `Coleta: ${date(row.coletado_em)}\nPeríodo: ${period(row)}\nFonte: ${row.fonte_nome}\nAmostra: n=${row.amostra_n === null ? "não informado" : nf.format(row.amostra_n)}\nStatus: ${row.ativo ? "ativa" : "substituída"}`
+  ).join("\n\n")}`;
 }
 export function radarLabels(row: RadarRow): string[] {
   const labels: string[] = [];
@@ -53,8 +76,7 @@ function formatRow(row: RadarRow): string {
 export function answerFromRadar(question: string, rows: RadarRow[], previousBairros: string[] = []): RadarAnswer {
   const text = ` ${normalize(question)} `;
   const available = [...new Set(rows.map((row) => row.bairro))];
-  let bairros = available.filter((bairro) => text.includes(` ${normalize(bairro)} `));
-  if (!bairros.length && /\b(la|nesse bairro|neste bairro|ali)\b/.test(text)) bairros = previousBairros.filter((b) => available.includes(b));
+  const bairros = resolveRadarBairros(question, available, previousBairros);
   if (!bairros.length) return { market: true, bairros: [], text: "Não há dado no Radar Bewild para o bairro informado. Qual bairro você quer consultar?" };
   let wanted = ["adr_medio_brl", "ocupacao_media_pct"];
   if (/receita|rendimento|rentabilidade/.test(text)) wanted = ["receita_anual_brl"];
