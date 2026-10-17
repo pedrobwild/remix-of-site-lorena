@@ -318,7 +318,8 @@ async function main() {
     { loc: `${BASE_URL}/parceiros/leal-moreira`, lastmod: page("src/routes/parceiros.leal-moreira.tsx", ["LealMoreiraPage.tsx", "src/content/lealMoreira.ts"], "2026-10-11"), changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/indique-um-amigo`, lastmod: page("src/routes/indique-um-amigo.tsx", ["IndiquePage.tsx"]), changefreq: "monthly", priority: "0.7" },
     { loc: `${BASE_URL}/marcas-e-parcerias`, lastmod: page("src/routes/marcas-e-parcerias.tsx", ["MarcasParceriasPage.tsx"], "2026-09-23"), changefreq: "monthly", priority: "0.7" },
-    { loc: `${BASE_URL}/privacidade`, lastmod: page("src/routes/privacidade.tsx", ["PrivacidadePage.tsx"]), changefreq: "yearly", priority: "0.3" },
+    { loc: `${BASE_URL}/privacidade`, lastmod: page("src/routes/privacidade.tsx", ["LegalPage.tsx", "legal.ts"]), changefreq: "yearly", priority: "0.3" },
+    { loc: `${BASE_URL}/termos-de-uso`, lastmod: page("src/routes/termos-de-uso.tsx", ["LegalPage.tsx", "legal.ts"]), changefreq: "yearly", priority: "0.3" },
     { loc: `${BASE_URL}/politica-de-cookies`, lastmod: page("src/routes/politica-de-cookies.tsx", ["PoliticaCookiesPage.tsx"]), changefreq: "yearly", priority: "0.3" },
     // /preferencias-de-cookies é página de configuração: noindex, fora do sitemap (TEC-05).
     { loc: `${BASE_URL}/acessibilidade`, lastmod: page("src/routes/acessibilidade.tsx", ["AcessibilidadePage.tsx"]), changefreq: "yearly", priority: "0.3" },

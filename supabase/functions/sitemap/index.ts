@@ -144,6 +144,7 @@ Deno.serve(async (req) => {
     { loc: `${base}/indique-um-amigo`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/marcas-e-parcerias`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/privacidade`, priority: "0.3", changefreq: "yearly" },
+    { loc: `${base}/termos-de-uso`, priority: "0.3", changefreq: "yearly" },
     { loc: `${base}/politica-de-cookies`, priority: "0.3", changefreq: "yearly" },
     { loc: `${base}/acessibilidade`, priority: "0.3", changefreq: "yearly" },
     { loc: `${base}/autores`, priority: "0.5", changefreq: "monthly" },
