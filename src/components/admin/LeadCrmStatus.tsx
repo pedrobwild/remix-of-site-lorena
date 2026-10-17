@@ -9,6 +9,7 @@ import { RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { LEAD_LOG_COLUMNS, isLeadStatus, type LeadLogRow } from "@/lib/adminLeads";
 import { LEAD_STATUS_LABEL } from "@/lib/crmStage";
+import { LeadCrmProposals } from "@/components/admin/LeadCrmProposals";
 
 export type LeadCrmFields = {
   status: string;
@@ -205,6 +206,7 @@ export function LeadFunnelHistory({
 
   return (
     <div style={{ marginTop: 12 }}>
+      <LeadCrmProposals leadId={leadId} />
       <strong style={{ display: "block", fontSize: 12, color: "var(--bw-muted)", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 4 }}>
         Histórico no funil
       </strong>
