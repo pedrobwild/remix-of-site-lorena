@@ -533,6 +533,39 @@ export type Database = {
         }
         Relationships: []
       }
+      external_api_connections: {
+        Row: {
+          created_at: string
+          created_by: string
+          encrypted_key: string
+          id: string
+          name: string
+          provider: string
+          updated_at: string
+          website_url: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          encrypted_key: string
+          id?: string
+          name: string
+          provider?: string
+          updated_at?: string
+          website_url: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          encrypted_key?: string
+          id?: string
+          name?: string
+          provider?: string
+          updated_at?: string
+          website_url?: string
+        }
+        Relationships: []
+      }
       faq_items: {
         Row: {
           answer: string
