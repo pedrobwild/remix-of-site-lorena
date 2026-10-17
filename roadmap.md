@@ -34,3 +34,5 @@
 - [x] Remover e-mails de edição das licenças e restringir registros do painel, mantendo os textos públicos; validar sem publicar
 - [x] Adicionar aba Orçamentos aos leads, com pedidos de /orcamento por bairro e status
 - [x] Validar filtros, dados reais e apresentação da aba; não publicar
+- [x] Criar acesso Citações no admin reutilizando o editor de licenças e modelos; manter sitemap intacto
+- [x] Verificar edição, proteção e navegação de Citações; não publicar

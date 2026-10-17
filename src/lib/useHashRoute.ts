@@ -38,6 +38,7 @@ export type Route =
   | { name: "licenca-sa" }
   | { name: "atribuicao" }
   | { name: "admin-licencas" }
+  | { name: "admin-citacoes" }
   | { name: "admin-privacidade-termos" }
   | { name: "bewild-project"; slug: string }
   | { name: "bairro"; slug: string }
@@ -194,6 +195,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/admin/settings") return { name: "admin-settings" };
   if (path === "/admin/faq") return { name: "admin-faq" };
   if (path === "/admin/licencas") return { name: "admin-licencas" };
+  if (path === "/admin/citacoes") return { name: "admin-citacoes" };
   if (path === "/admin/privacidade-termos") return { name: "admin-privacidade-termos" };
   if (path === "/admin/bewild") return { name: "admin-bewild" };
   if (path === "/admin/bewild/new") return { name: "admin-bewild-new" };
@@ -364,6 +366,7 @@ export const routes = {
   adminSettings: "/admin/settings",
   adminFaq: "/admin/faq",
   adminLicencas: "/admin/licencas",
+  adminCitacoes: "/admin/citacoes",
   adminPrivacidadeTermos: "/admin/privacidade-termos",
   adminTypography: "/admin/typography",
   adminLeads: "/admin/leads",

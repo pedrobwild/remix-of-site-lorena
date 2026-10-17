@@ -11,7 +11,7 @@ function dataBr(iso: string) {
 }
 
 /** /admin/licencas — edita o texto das páginas de licença (vai ao ar em minutos, sem publicar o site). */
-export default function LicencasAdminPage() {
+export default function LicencasAdminPage({ citations = false }: { citations?: boolean }) {
   const [slug, setSlug] = useState<LicencaSlug>("cc-by-4-0");
   const [rows, setRows] = useState<Record<string, Row>>({});
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -57,7 +57,7 @@ export default function LicencasAdminPage() {
   const row = rows[slug];
 
   return (
-    <AdminLayout active="licencas" title="Licenças" description="Texto das páginas de licença do site. Salvar já atualiza a página no ar — não precisa publicar.">
+    <AdminLayout active="licencas" title={citations ? "Citações" : "Licenças"} description="Licenças e modelos de citação da Bewild.">
       <div className="flex flex-wrap gap-2 mb-4" role="tablist" aria-label="Licenças">
         {LICENCA_SLUGS.map((s) => (
           <button
@@ -93,7 +93,7 @@ export default function LicencasAdminPage() {
             <textarea rows={4} className="w-full rounded-md border border-border bg-background p-3" value={draft.intro} onChange={(e) => setDraft({ ...draft, intro: e.target.value })} />
           </label>
           <label className="block">
-            <span className="block text-sm font-medium mb-1">Texto da página</span>
+            <span className="block text-sm font-medium mb-1">Texto da licença</span>
             <span className="block text-xs text-muted-foreground mb-2">
               Linha começando com “## ” vira subtítulo; “- ” vira item de lista; **texto** fica em negrito; [texto](endereço) vira link. Deixe uma linha em branco entre parágrafos.
             </span>

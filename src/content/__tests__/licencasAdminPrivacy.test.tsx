@@ -28,4 +28,14 @@ describe("privacidade da edição de licença", () => {
     await waitFor(() => expect(mocks.update).toHaveBeenCalledWith({ title: "Licença revisada", intro: "Abertura", body: "Texto", citation_model: expect.any(String) }));
     expect(mocks.getUser).not.toHaveBeenCalled();
   });
+
+  it("a página de citações salva a licença e o modelo no mesmo registro, sem e-mail", async () => {
+    render(<LicencasAdminPage citations />);
+    await waitFor(() => expect(screen.getByLabelText("Título")).toHaveValue("Licença"));
+    fireEvent.change(screen.getByLabelText(/Texto da licença/), { target: { value: "Licença revisada" } });
+    fireEvent.change(screen.getByLabelText(/Modelo de citação/), { target: { value: "Fonte: Bewild. Licença CC BY 4.0." } });
+    fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
+    await waitFor(() => expect(mocks.update).toHaveBeenCalledWith({ title: "Licença", intro: "Abertura", body: "Licença revisada", citation_model: "Fonte: Bewild. Licença CC BY 4.0." }));
+    expect(mocks.getUser).not.toHaveBeenCalled();
+  });
 });
