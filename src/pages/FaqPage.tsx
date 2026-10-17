@@ -12,6 +12,7 @@ import { safeKbActions, type KbItem } from "@/lib/assistant/assistantEngine";
 import { isExternalHref } from "@/lib/safeUrl";
 import "./faq-page.css";
 import { FALLBACK_ITEMS, GUIA_ITEMS, INDICACAO_ITEMS, PORTFOLIO_ITEMS } from "@/content/faqPage";
+import RadarAssistant from "@/components/assistant/RadarAssistant";
 
 /* ============================================================
  * FaqPage — /faq
@@ -363,6 +364,8 @@ export default function FaqPage({ initialKb = null }: { initialKb?: KbItem[] | n
               Fale com o time da Bewild pelo WhatsApp ou peça um orçamento. Preço e prazo do seu
               imóvel saem fechados na proposta.
             </p>
+
+            <RadarAssistant kb={kb} />
 
             <div className="bwa-faqpage-ask-actions">
               <a className="bwa-button" href="/orcamento" data-cta="faq-diagnostico">

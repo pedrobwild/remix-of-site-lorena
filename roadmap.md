@@ -36,3 +36,5 @@
 - [x] Reenviar o sitemap ao Google para privacidade e termos
 - [x] Criar aba Privacidade e termos no SEO e medir novos pedidos consentidos na mesma sessão; testes e navegação pública validados
 - [ ] Conferir a aba autenticada de SEO — bloqueado até entrar no painel pela prévia
+- [x] Integrar perguntas de mercado ao Radar ao vivo, preservar o assistente e conferir respostas e falhas sem publicar
+- [ ] Corrigir falha independente no teste de reenvio de formulário (`leadFormPages.test.tsx`) — fora do escopo do assistente
