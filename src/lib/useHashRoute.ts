@@ -66,6 +66,7 @@ export type Route =
   | { name: "admin-faq" }
   | { name: "admin-typography" }
   | { name: "admin-leads" }
+  | { name: "admin-leads-formulario" }
   | { name: "admin-indicacoes" }
   | { name: "admin-qualificacao" }
   | { name: "admin-mensagens" }
@@ -202,6 +203,7 @@ function parsePath(rawPath: string): Route {
   if (adminBewildEdit) return { name: "admin-bewild-edit", slug: adminBewildEdit[1] };
   if (path === "/admin/typography") return { name: "admin-typography" };
   if (path === "/admin/leads") return { name: "admin-leads" };
+  if (path === "/admin/leads-formulario") return { name: "admin-leads-formulario" };
   if (path === "/admin/indicacoes") return { name: "admin-indicacoes" };
   if (path === "/admin/qualificacao") return { name: "admin-qualificacao" };
   if (path === "/admin/mensagens") return { name: "admin-mensagens" };
