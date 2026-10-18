@@ -136,3 +136,23 @@ describe("google_ads_offline — acesso pela chave", () => {
     expect(keyAllowsDataset(["leads"], "meta_leads")).toBe(false);
   });
 });
+
+describe("Contrato assinado com valor real do CRM", () => {
+  const won = lead({ status: "novo", crm_won: true, crm_last_change_at: daysAgo(1) });
+  it("usa o total e a data do contrato informados pelo CRM", async () => {
+    const rows = await buildGoogleAdsOfflineRows({ leads: [won], qualifiedAt: new Map(), now: NOW,
+      contracts: new Map([["l1", [{ total: 71850, closed_at: daysAgo(3) }]]]) });
+    expect(rows).toHaveLength(1);
+    expect(rows[0]["Conversion Value"]).toBe(71850);
+    expect(rows[0]["Conversion Time"]).toBe(googleAdsConversionTime(daysAgo(3)));
+  });
+  it("sem leitura do CRM o valor fica vazio, nunca R$ 5.000 ou R$ 1.000", async () => {
+    const rows = await build([won]);
+    expect(rows[0]["Conversion Value"]).toBeNull();
+  });
+  it("contrato sem valor no CRM também fica vazio", async () => {
+    const rows = await buildGoogleAdsOfflineRows({ leads: [won], qualifiedAt: new Map(), now: NOW,
+      contracts: new Map([["l1", [{ total: null, closed_at: null }]]]) });
+    expect(rows[0]["Conversion Value"]).toBeNull();
+  });
+});

@@ -116,8 +116,10 @@ que o Google espera:
     14/10/2026: investidor = locação, uso misto conta; `Moradia` e
     `Ainda avaliando` não). Hora = primeira passagem para `qualificado` em
     `lead_qualification_log`.
-  - **Contrato assinado**: `crm_won = true`, qualquer objetivo. Hora =
-    `crm_last_change_at`. Valor vazio por enquanto.
+  - **Contrato assinado**: `crm_won = true`, qualquer objetivo. Uma linha por
+    contrato do CRM, com valor (`total`) e hora (`closed_at`) reais. Sem
+    leitura do CRM ou sem valor informado, o valor fica vazio — nunca peso
+    de lance nem estimativa.
 - `Conversion Time` = `yyyy-MM-dd HH:mm:ss-03:00` (São Paulo, fuso explícito).
 - Só leads com gclid, e-mail ou telefone; até 90 dias do lead com gclid e 63
   dias sem (limites do Google). Parcerias comerciais ficam fora.
