@@ -4,6 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { attachCrmAuth } from "@/lib/crmAuth";
 import { SERVICE_PAGES } from "@/lib/conversions";
 import { summarizeServiceAds, type ServiceClickEvent, type ServiceLead } from "@/lib/googleAdsServiceReport";
+import { isQualityAdsLead, type QualityLead } from "@/lib/googleAdsQualityReport";
 
 const schema = z.object({ from: z.string().datetime(), until: z.string().datetime() })
   .refine(data => Date.parse(data.from) <= Date.parse(data.until), "Período inválido.");
@@ -26,16 +27,17 @@ export const getGoogleAdsServiceReport = createServerFn({ method: "POST" })
       clicks.push(...((result.data ?? []) as ServiceClickEvent[]));
       if (!result.data || result.data.length < 1000) break;
     }
-    const leads: ServiceLead[] = [];
+    const qualityLeads: QualityLead[] = [];
     for (let offset = 0; ; offset += 1000) {
       const result = await context.supabase.from("leads")
-        .select("id,landing_path,objetivo,utm_source,utm_medium,utm_campaign,utm_content,gclid")
-        .in("landing_path", paths).gte("created_at", data.from).lte("created_at", data.until)
+        .select("id,landing_path,objetivo,utm_source,utm_medium,utm_campaign,utm_content,gclid,status,crm_synced_at,location,area_m2,chaves")
+        .eq("form_path", "/orcamento").gte("created_at", data.from).lte("created_at", data.until)
         .order("created_at").order("id").range(offset, offset + 999);
       if (result.error) throw new Error("Não foi possível carregar os pedidos.");
-      leads.push(...(result.data ?? []));
+      qualityLeads.push(...(result.data ?? []));
       if (!result.data || result.data.length < 1000) break;
     }
+    const leads: ServiceLead[] = qualityLeads.filter(lead => paths.includes((lead.landing_path ?? "").split(/[?#]/)[0]));
     const checked = new Set<string>();
     const confirmed = new Set<string>();
     const { resolveEngineKey } = await import("@/lib/externalApi.server");
@@ -52,5 +54,5 @@ export const getGoogleAdsServiceReport = createServerFn({ method: "POST" })
         } catch { /* Leitura falhou: indisponível, nunca zero confirmado. */ }
       }
     }
-    return { rows: summarizeServiceAds(clicks, leads, confirmed, checked), checkedAt: new Date().toISOString() };
+    return { rows: summarizeServiceAds(clicks, leads, confirmed, checked), qualityLeads: qualityLeads.filter(isQualityAdsLead).map(lead => ({ ...lead, gclid: null })), checkedAt: new Date().toISOString() };
   });

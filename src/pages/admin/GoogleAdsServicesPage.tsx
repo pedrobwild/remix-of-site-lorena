@@ -7,6 +7,7 @@ import { Button } from "@/guia/components/ui/button";
 import { getGoogleAdsServiceReport } from "@/lib/googleAdsServiceReport.functions";
 import { GOOGLE_ADS_WEIGHTS } from "@/lib/googleAdsServiceReport";
 import { SERVICE_VARIANT_LABELS } from "@/lib/buttonClickReport";
+import GoogleAdsQualityPanel from "@/components/admin/GoogleAdsQualityPanel";
 import "@/styles/form-leads.css";
 
 const money = (value: number) => value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
@@ -53,6 +54,7 @@ export default function GoogleAdsServicesPage() {
             </dl>
           </div>)}
         </article>)}
+      {report.data && !report.isError && <GoogleAdsQualityPanel leads={report.data.qualityLeads} />}
     </section>
   </BewildAdminShell>;
 }
