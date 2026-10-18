@@ -69,6 +69,7 @@ export type Route =
   | { name: "admin-leads-formulario" }
   | { name: "admin-google-ads" }
   | { name: "admin-valor-leads" }
+  | { name: "admin-retorno-google-ads" }
   | { name: "admin-indicacoes" }
   | { name: "admin-qualificacao" }
   | { name: "admin-mensagens" }
@@ -208,6 +209,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/admin/leads-formulario") return { name: "admin-leads-formulario" };
   if (path === "/admin/google-ads") return { name: "admin-google-ads" };
   if (path === "/admin/valor-leads") return { name: "admin-valor-leads" };
+  if (path === "/admin/retorno-google-ads") return { name: "admin-retorno-google-ads" };
   if (path === "/admin/indicacoes") return { name: "admin-indicacoes" };
   if (path === "/admin/qualificacao") return { name: "admin-qualificacao" };
   if (path === "/admin/mensagens") return { name: "admin-mensagens" };
