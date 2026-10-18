@@ -25,6 +25,7 @@ import {
 import { devError } from "@/lib/devLog";
 import type { DateRange, Segment } from "./types";
 import QuoteCrmPanel from "./QuoteCrmPanel";
+import AdsRevenuePanel from "./AdsRevenuePanel";
 
 type FunnelRow = { step: number; event_type: string; sessions: number };
 
@@ -50,7 +51,7 @@ function fmtPct(n: number): string {
 }
 
 export default function ConversionTab({ range, segments, comparePrev }: Props) {
-  return <><QuoteCrmPanel range={range} segments={segments} /><ExistingConversionFunnel range={range} segments={segments} comparePrev={comparePrev} /></>;
+  return <><AdsRevenuePanel /><QuoteCrmPanel range={range} segments={segments} /><ExistingConversionFunnel range={range} segments={segments} comparePrev={comparePrev} /></>;
 }
 
 function ExistingConversionFunnel({ range, segments, comparePrev }: Props) {
