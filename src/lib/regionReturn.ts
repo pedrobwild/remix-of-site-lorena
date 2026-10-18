@@ -1,0 +1,22 @@
+import type { FormLeadRow } from "@/lib/formLeads";
+
+export type RegionReturnRow = { bairro: string; campaign: string; leads: number; contratos: number; semLeitura: number };
+
+const NI = "Não informado";
+const norm = (v: string | null) => v?.trim() || NI;
+
+/** Agrupa leads por bairro × campanha; contrato assinado = status "Contrato fechado" do CRM. Sem leitura do CRM nunca conta como zero. */
+export function summarizeRegionReturn(rows: Pick<FormLeadRow, "bairro" | "campaign" | "status">[]): RegionReturnRow[] {
+  const map = new Map<string, RegionReturnRow>();
+  for (const row of rows) {
+    const bairro = norm(row.bairro);
+    const campaign = row.campaign?.trim() || "Sem campanha";
+    const key = `${bairro.toLocaleLowerCase("pt-BR")}|${campaign}`;
+    const entry = map.get(key) ?? { bairro, campaign, leads: 0, contratos: 0, semLeitura: 0 };
+    entry.leads += 1;
+    if (row.status === "Contrato fechado") entry.contratos += 1;
+    if (row.status === "CRM indisponível") entry.semLeitura += 1;
+    map.set(key, entry);
+  }
+  return [...map.values()].sort((a, b) => b.contratos - a.contratos || b.leads - a.leads || a.bairro.localeCompare(b.bairro, "pt-BR"));
+}
