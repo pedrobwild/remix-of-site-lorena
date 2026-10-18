@@ -67,6 +67,7 @@ import { Route as AdminPerfilLeadsRouteImport } from './routes/admin.perfil-lead
 import { Route as AdminQualificacaoRouteImport } from './routes/admin.qualificacao'
 import { Route as AdminRastreamentoRouteImport } from './routes/admin.rastreamento'
 import { Route as AdminRetornoGoogleAdsRouteImport } from './routes/admin.retorno-google-ads'
+import { Route as AdminRetornoRegiaoRouteImport } from './routes/admin.retorno-regiao'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminTypographyRouteImport } from './routes/admin.typography'
 import { Route as AdminValorLeadsRouteImport } from './routes/admin.valor-leads'
@@ -389,6 +390,11 @@ const AdminRetornoGoogleAdsRoute = AdminRetornoGoogleAdsRouteImport.update({
   path: '/admin/retorno-google-ads',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRetornoRegiaoRoute = AdminRetornoRegiaoRouteImport.update({
+  id: '/admin/retorno-regiao',
+  path: '/admin/retorno-regiao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/admin/settings',
   path: '/admin/settings',
@@ -593,6 +599,7 @@ export interface FileRoutesByFullPath {
   '/admin/qualificacao': typeof AdminQualificacaoRoute
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/retorno-google-ads': typeof AdminRetornoGoogleAdsRoute
+  '/admin/retorno-regiao': typeof AdminRetornoRegiaoRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/typography': typeof AdminTypographyRoute
   '/admin/valor-leads': typeof AdminValorLeadsRoute
@@ -682,6 +689,7 @@ export interface FileRoutesByTo {
   '/admin/qualificacao': typeof AdminQualificacaoRoute
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/retorno-google-ads': typeof AdminRetornoGoogleAdsRoute
+  '/admin/retorno-regiao': typeof AdminRetornoRegiaoRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/typography': typeof AdminTypographyRoute
   '/admin/valor-leads': typeof AdminValorLeadsRoute
@@ -772,6 +780,7 @@ export interface FileRoutesById {
   '/admin/qualificacao': typeof AdminQualificacaoRoute
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/retorno-google-ads': typeof AdminRetornoGoogleAdsRoute
+  '/admin/retorno-regiao': typeof AdminRetornoRegiaoRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/typography': typeof AdminTypographyRoute
   '/admin/valor-leads': typeof AdminValorLeadsRoute
@@ -863,6 +872,7 @@ export interface FileRouteTypes {
     | '/admin/qualificacao'
     | '/admin/rastreamento'
     | '/admin/retorno-google-ads'
+    | '/admin/retorno-regiao'
     | '/admin/settings'
     | '/admin/typography'
     | '/admin/valor-leads'
@@ -952,6 +962,7 @@ export interface FileRouteTypes {
     | '/admin/qualificacao'
     | '/admin/rastreamento'
     | '/admin/retorno-google-ads'
+    | '/admin/retorno-regiao'
     | '/admin/settings'
     | '/admin/typography'
     | '/admin/valor-leads'
@@ -1041,6 +1052,7 @@ export interface FileRouteTypes {
     | '/admin/qualificacao'
     | '/admin/rastreamento'
     | '/admin/retorno-google-ads'
+    | '/admin/retorno-regiao'
     | '/admin/settings'
     | '/admin/typography'
     | '/admin/valor-leads'
@@ -1131,6 +1143,7 @@ export interface RootRouteChildren {
   AdminQualificacaoRoute: typeof AdminQualificacaoRoute
   AdminRastreamentoRoute: typeof AdminRastreamentoRoute
   AdminRetornoGoogleAdsRoute: typeof AdminRetornoGoogleAdsRoute
+  AdminRetornoRegiaoRoute: typeof AdminRetornoRegiaoRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminTypographyRoute: typeof AdminTypographyRoute
   AdminValorLeadsRoute: typeof AdminValorLeadsRoute
@@ -1571,6 +1584,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRetornoGoogleAdsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/retorno-regiao': {
+      id: '/admin/retorno-regiao'
+      path: '/admin/retorno-regiao'
+      fullPath: '/admin/retorno-regiao'
+      preLoaderRoute: typeof AdminRetornoRegiaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/admin/settings'
@@ -1835,6 +1855,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminQualificacaoRoute: AdminQualificacaoRoute,
   AdminRastreamentoRoute: AdminRastreamentoRoute,
   AdminRetornoGoogleAdsRoute: AdminRetornoGoogleAdsRoute,
+  AdminRetornoRegiaoRoute: AdminRetornoRegiaoRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminTypographyRoute: AdminTypographyRoute,
   AdminValorLeadsRoute: AdminValorLeadsRoute,
