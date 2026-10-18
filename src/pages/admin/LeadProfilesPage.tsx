@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import { Button } from "@/guia/components/ui/button";
 import { getFormLeads } from "@/lib/formLeads.functions";
+import { bairroAgrupado } from "@/lib/bairroAgrupado";
 import { formatAreaM2 } from "@/lib/formatArea";
 import "@/styles/form-leads.css";
 
@@ -17,22 +18,24 @@ export default function LeadProfilesPage() {
   const report = useQuery({ queryKey: ["form-leads-crm"], queryFn: () => fetchLeads(), refetchInterval: 60_000 });
   const [search, setSearch] = useState("");
   const [finalidade, setFinalidade] = useState("");
+  const [bairro, setBairro] = useState("");
   const [chaves, setChaves] = useState("");
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(0);
-  const rows = report.data?.rows;
+  const rows = useMemo(() => report.data?.rows.map(r => ({ ...r, grupo: bairroAgrupado(r.bairro) })), [report.data]);
   const filtered = useMemo(() => (rows ?? []).filter(row =>
-    (!search || `${row.name} ${row.bairro ?? ""}`.toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR")))
-    && (!finalidade || (row.objetivo ?? NI) === finalidade) && (!chaves || (row.chaves ?? NI) === chaves) && (!status || row.status === status)
-  ), [rows, search, finalidade, chaves, status]);
+    (!search || `${row.name} ${row.bairro ?? ""} ${row.grupo ?? ""}`.toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR")))
+    && (!bairro || (row.grupo ?? NI) === bairro) && (!finalidade || (row.objetivo ?? NI) === finalidade) && (!chaves || (row.chaves ?? NI) === chaves) && (!status || row.status === status)
+  ), [rows, search, bairro, finalidade, chaves, status]);
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const current = Math.min(page, pages - 1);
-  const options = (pick: (r: NonNullable<typeof rows>[number]) => string) => [...new Set((rows ?? []).map(pick))].sort();
+  const options = (pick: (r: NonNullable<typeof rows>[number]) => string) => [...new Set((rows ?? []).map(pick))].sort((a, b) => a.localeCompare(b, "pt-BR"));
   function change(setter: (v: string) => void, v: string) { setter(v); setPage(0); }
   return <BewildAdminShell active="perfilleads" title="Perfil dos leads" actions={<Button variant="outline" className="min-h-11" disabled={report.isFetching} onClick={() => void report.refetch()}><RefreshCw aria-hidden />Atualizar</Button>}>
     <section className="form-leads" aria-label="Perfil do imóvel de cada lead">
       <div className="form-leads__filters">
         <label>Nome ou bairro<input type="search" value={search} onChange={e => change(setSearch, e.target.value)} /></label>
+        <label>Bairro<select value={bairro} onChange={e => change(setBairro, e.target.value)}><option value="">Todos</option>{options(r => r.grupo ?? NI).map(v => <option key={v}>{v}</option>)}</select></label>
         <label>Finalidade<select value={finalidade} onChange={e => change(setFinalidade, e.target.value)}><option value="">Todas</option>{options(r => r.objetivo ?? NI).map(v => <option key={v}>{v}</option>)}</select></label>
         <label>Situação das chaves<select value={chaves} onChange={e => change(setChaves, e.target.value)}><option value="">Todas</option>{options(r => r.chaves ?? NI).map(v => <option key={v}>{v}</option>)}</select></label>
         <label>Status no CRM<select value={status} onChange={e => change(setStatus, e.target.value)}><option value="">Todos</option>{options(r => r.status).map(v => <option key={v}>{v}</option>)}</select></label>
@@ -44,7 +47,7 @@ export default function LeadProfilesPage() {
           {filtered.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE).map(row => <article key={row.id} className="form-leads__row">
             <div><h2>{row.name}</h2><time dateTime={row.createdAt}>{date(row.createdAt)}</time><p>{row.origin}</p></div>
             <div><span className="form-leads__mobile-label">Finalidade</span>{row.objetivo ?? NI}</div>
-            <div><span className="form-leads__mobile-label">Bairro / metragem</span>{row.bairro ?? NI}<p className="num">{row.areaM2 != null ? `${formatAreaM2(row.areaM2)}` : `Metragem: ${NI}`}</p></div>
+            <div><span className="form-leads__mobile-label">Bairro / metragem</span>{row.grupo ?? NI}{row.grupo && row.bairro && row.bairro.trim() !== row.grupo ? <p>Escrito: “{row.bairro}”</p> : null}<p className="num">{row.areaM2 != null ? `${formatAreaM2(row.areaM2)}` : `Metragem: ${NI}`}</p></div>
             <div><span className="form-leads__mobile-label">Chaves / status no CRM</span>{row.chaves ?? NI}<p><strong>{row.status}</strong></p></div>
           </article>)}
           <nav className="form-leads__pagination" aria-label="Paginação de leads"><Button variant="outline" size="icon" className="min-h-11 min-w-11" aria-label="Página anterior" disabled={current === 0} onClick={() => setPage(current - 1)}><ChevronLeft /></Button><span>Página {current + 1} de {pages}</span><Button variant="outline" size="icon" className="min-h-11 min-w-11" aria-label="Próxima página" disabled={current + 1 >= pages} onClick={() => setPage(current + 1)}><ChevronRight /></Button></nav>
