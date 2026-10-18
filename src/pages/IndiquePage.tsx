@@ -316,7 +316,7 @@ export default function IndiquePage() {
               <article className="bwa-parc-reason">
                 <h3>Mora fora de São Paulo</h3>
                 <p>
-                  Quase metade dos nossos clientes mora fora da capital e acompanha tudo à
+                  Seis em cada dez clientes nossos moram fora da capital e acompanham tudo à
                   distância, com foto e registro de cada etapa no Bwild Workflow. Indicar alguém
                   de longe não é problema — é o nosso dia a dia.
                 </p>

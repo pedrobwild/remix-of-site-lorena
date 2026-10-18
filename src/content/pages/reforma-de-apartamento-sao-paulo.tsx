@@ -15,7 +15,7 @@ export const CANONICAL = "/reforma-de-apartamento-sao-paulo";
 export const FAQ: { q: string; a: string; node?: ReactNode }[] = [
   {
     q: "Vocês reformam apartamentos de qualquer tamanho?",
-    a: "Sim: studios e apartamentos de qualquer metragem em São Paulo capital, e também escritórios. O escopo e a proposta são definidos após a leitura do imóvel.",
+    a: "Sim: studios e apartamentos recém-entregues, no contrapiso, de até 140 m², em São Paulo capital. O escopo e a proposta são definidos após a leitura do imóvel.",
   },
   {
     q: "Quanto tempo demora?",
