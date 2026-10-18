@@ -54,5 +54,19 @@ export const getGoogleAdsServiceReport = createServerFn({ method: "POST" })
         } catch { /* Leitura falhou: indisponível, nunca zero confirmado. */ }
       }
     }
-    return { rows: summarizeServiceAds(clicks, leads, confirmed, checked), qualityLeads: qualityLeads.filter(lead => lead.form_path === "/orcamento" && isQualityAdsLead(lead)).map(lead => ({ ...lead, gclid: null, attributedToGoogleAds: true })), checkedAt: new Date().toISOString() };
+    const adsLeads = qualityLeads.filter(lead => lead.form_path === "/orcamento" && isQualityAdsLead(lead));
+    const discarded = adsLeads.filter(lead => lead.status === "descartado");
+    const reasons: Record<string, string> = {};
+    const reasonChecked = new Set<string>();
+    if (key && discarded.length) {
+      const { readCrmDiscardReasons } = await import("@/lib/crmDiscardReasons.server");
+      for (let offset = 0; offset < discarded.length; offset += 100) {
+        const ids = discarded.slice(offset, offset + 100).map(lead => lead.id);
+        try {
+          Object.assign(reasons, await readCrmDiscardReasons(key, ids));
+          for (const id of ids) reasonChecked.add(id);
+        } catch { /* Falha da origem é distinta de campo não exportado. */ }
+      }
+    }
+    return { rows: summarizeServiceAds(clicks, leads, confirmed, checked), qualityLeads: adsLeads.map(lead => ({ ...lead, gclid: null, attributedToGoogleAds: true, discard_reason: reasons[lead.id] ?? null, discard_reason_unavailable: lead.status === "descartado" && !reasonChecked.has(lead.id) })), checkedAt: new Date().toISOString() };
   });
