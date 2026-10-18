@@ -12,6 +12,6 @@ describe("bairroAgrupado", () => {
   });
   it("vazio continua sem bairro", () => {
     expect(bairroAgrupado("  ")).toBeNull();
-    expect(bairroAgrupado("São Paulo- SP")).toBe("Sao Paulo");
+    expect(bairroAgrupado("São Paulo- SP")).toBe("São Paulo");
   });
 });

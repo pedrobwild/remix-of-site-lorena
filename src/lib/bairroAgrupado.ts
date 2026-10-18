@@ -8,7 +8,7 @@ export function chaveBairro(texto: string): string {
     .replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ").trim();
 }
 
-const CATALOGO = new Map(BAIRROS.map((b) => [chaveBairro(b), b]));
+const CATALOGO = new Map([...BAIRROS, "São Paulo"].map((b) => [chaveBairro(b), b]));
 
 /**
  * Nome único para grafias diferentes do mesmo bairro ("lapa", "Lapa ", "LAPA - SP").
