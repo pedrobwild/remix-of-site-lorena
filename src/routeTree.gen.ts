@@ -63,6 +63,7 @@ import { Route as AdminLicencasRouteImport } from './routes/admin.licencas'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminMensagensRouteImport } from './routes/admin.mensagens'
 import { Route as AdminOrcamentosRouteImport } from './routes/admin.orcamentos'
+import { Route as AdminPerfilLeadsRouteImport } from './routes/admin.perfil-leads'
 import { Route as AdminQualificacaoRouteImport } from './routes/admin.qualificacao'
 import { Route as AdminRastreamentoRouteImport } from './routes/admin.rastreamento'
 import { Route as AdminRetornoGoogleAdsRouteImport } from './routes/admin.retorno-google-ads'
@@ -368,6 +369,11 @@ const AdminOrcamentosRoute = AdminOrcamentosRouteImport.update({
   path: '/admin/orcamentos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminPerfilLeadsRoute = AdminPerfilLeadsRouteImport.update({
+  id: '/admin/perfil-leads',
+  path: '/admin/perfil-leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminQualificacaoRoute = AdminQualificacaoRouteImport.update({
   id: '/admin/qualificacao',
   path: '/admin/qualificacao',
@@ -583,6 +589,7 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
+  '/admin/perfil-leads': typeof AdminPerfilLeadsRoute
   '/admin/qualificacao': typeof AdminQualificacaoRoute
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/retorno-google-ads': typeof AdminRetornoGoogleAdsRoute
@@ -671,6 +678,7 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
+  '/admin/perfil-leads': typeof AdminPerfilLeadsRoute
   '/admin/qualificacao': typeof AdminQualificacaoRoute
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/retorno-google-ads': typeof AdminRetornoGoogleAdsRoute
@@ -760,6 +768,7 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
+  '/admin/perfil-leads': typeof AdminPerfilLeadsRoute
   '/admin/qualificacao': typeof AdminQualificacaoRoute
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/retorno-google-ads': typeof AdminRetornoGoogleAdsRoute
@@ -850,6 +859,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/mensagens'
     | '/admin/orcamentos'
+    | '/admin/perfil-leads'
     | '/admin/qualificacao'
     | '/admin/rastreamento'
     | '/admin/retorno-google-ads'
@@ -938,6 +948,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/mensagens'
     | '/admin/orcamentos'
+    | '/admin/perfil-leads'
     | '/admin/qualificacao'
     | '/admin/rastreamento'
     | '/admin/retorno-google-ads'
@@ -1026,6 +1037,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/mensagens'
     | '/admin/orcamentos'
+    | '/admin/perfil-leads'
     | '/admin/qualificacao'
     | '/admin/rastreamento'
     | '/admin/retorno-google-ads'
@@ -1115,6 +1127,7 @@ export interface RootRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMensagensRoute: typeof AdminMensagensRoute
   AdminOrcamentosRoute: typeof AdminOrcamentosRoute
+  AdminPerfilLeadsRoute: typeof AdminPerfilLeadsRoute
   AdminQualificacaoRoute: typeof AdminQualificacaoRoute
   AdminRastreamentoRoute: typeof AdminRastreamentoRoute
   AdminRetornoGoogleAdsRoute: typeof AdminRetornoGoogleAdsRoute
@@ -1530,6 +1543,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOrcamentosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/perfil-leads': {
+      id: '/admin/perfil-leads'
+      path: '/admin/perfil-leads'
+      fullPath: '/admin/perfil-leads'
+      preLoaderRoute: typeof AdminPerfilLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/qualificacao': {
       id: '/admin/qualificacao'
       path: '/admin/qualificacao'
@@ -1811,6 +1831,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   AdminMensagensRoute: AdminMensagensRoute,
   AdminOrcamentosRoute: AdminOrcamentosRoute,
+  AdminPerfilLeadsRoute: AdminPerfilLeadsRoute,
   AdminQualificacaoRoute: AdminQualificacaoRoute,
   AdminRastreamentoRoute: AdminRastreamentoRoute,
   AdminRetornoGoogleAdsRoute: AdminRetornoGoogleAdsRoute,

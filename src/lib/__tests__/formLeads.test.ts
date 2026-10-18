@@ -20,3 +20,10 @@ describe("Leads do formulário", () => {
     expect(formLeadRow(lead, { ...item, all_closed_lost: true }, true).status).toBe("Perdido");
   });
 });
+describe("perfil do imóvel", () => {
+  it("repassa bairro, metragem e chaves como preenchidos e deixa vazio quando ausente", () => {
+    const base = { id: "l", name: "A", created_at: "2026-10-18T00:00:00Z", utm_campaign: null, utm_content: null, objetivo: "Moradia" } as FormLead;
+    expect(formLeadRow({ ...base, location: " Brás ", area_m2: 85, chaves: "Já tem" }, undefined, false)).toMatchObject({ bairro: "Brás", areaM2: 85, chaves: "Já tem", objetivo: "Moradia" });
+    expect(formLeadRow(base, undefined, false)).toMatchObject({ bairro: null, areaM2: null, chaves: null });
+  });
+});
