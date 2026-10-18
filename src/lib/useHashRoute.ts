@@ -71,6 +71,7 @@ export type Route =
   | { name: "admin-desqualificacoes" }
   | { name: "admin-perfil-leads" }
   | { name: "admin-retorno-regiao" }
+  | { name: "admin-contratos-abertos" }
   | { name: "admin-perfis-campanha" }
   | { name: "admin-valor-leads" }
   | { name: "admin-retorno-google-ads" }
@@ -215,6 +216,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/admin/desqualificacoes") return { name: "admin-desqualificacoes" };
   if (path === "/admin/perfil-leads") return { name: "admin-perfil-leads" };
   if (path === "/admin/retorno-regiao") return { name: "admin-retorno-regiao" };
+  if (path === "/admin/contratos-abertos") return { name: "admin-contratos-abertos" };
   if (path === "/admin/perfis-campanha") return { name: "admin-perfis-campanha" };
   if (path === "/admin/valor-leads") return { name: "admin-valor-leads" };
   if (path === "/admin/retorno-google-ads") return { name: "admin-retorno-google-ads" };
