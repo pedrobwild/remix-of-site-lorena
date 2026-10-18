@@ -61,7 +61,7 @@ export const POST_KEYWORDS: Record<string, string> = {
 
   // --- Reforma: guias de decisão e casos ---
   "como-reformar-studio-gastando-menos-sem-perder-valor": `reformar studio gastando menos, como economizar na reforma de studio, reforma de studio sem perder valor de mercado, ${REFORMA_STUDIO}`,
-  "orcamento-reforma-studio-25-m2-item-a-item": `orçamento de reforma de studio de 25 m², orçamento item a item, custo de reforma de studio, ${REFORMA_STUDIO}`,
+  "orcamento-reforma-studio-25-m2-item-a-item": `orçamento de reforma de studio de 24 m², orçamento item a item, orçamento de reforma de studio para Airbnb, custo de reforma de studio, ${REFORMA_STUDIO}`,
   "estudo-de-layout-studio-25-m2": `estudo de layout de studio, layout de studio de 25 m², projeto de interiores de studio, ${REFORMA_STUDIO}`,
   "reforma-de-apartamento-antigo-sao-paulo": `reforma de apartamento antigo em SP, o que verificar antes de reformar apartamento antigo, instalações antigas, ${REFORMA}`,
   "como-escolher-empresa-de-reforma-sao-paulo": `como escolher empresa de reforma em SP, empresa de reforma de apartamento em São Paulo, o que verificar antes de contratar reforma, ${REFORMA}`,
