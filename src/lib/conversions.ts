@@ -31,6 +31,7 @@ import { trackGoogleAdsAudienceEvent, trackGoogleAdsConversion } from "@/lib/goo
 import { metaUserDataFrom, setMetaUserData, trackMetaCustomEvent, trackMetaEvent } from "@/lib/metaPixel";
 import { track } from "@/lib/analytics";
 import { trackEvent } from "@/lib/ga4";
+import { googleAdsLeadValue } from "@/lib/googleAdsLeadValue";
 
 /**
  * Espelho na medição própria (analytics_events, tipo `ad_event`) de cada
@@ -98,21 +99,6 @@ export type LeadSignalInput = {
   chaves?: string | null;
   livesInSp?: boolean | null;
 };
-
-/** Peso relativo para o lance por valor, não receita. Proporção das taxas de fechamento do CRM (short stay 12,2%, moradia 2,4%), proposta da avaliação de Google Ads de 17/10/2026. */
-const GOOGLE_ADS_LEAD_VALOR_INVESTIDOR = 5000;
-const GOOGLE_ADS_LEAD_VALOR_MORADIA = 1000;
-const GOOGLE_ADS_LEAD_MOEDA = "BRL";
-
-function googleAdsLeadValue(objetivo: string | null | undefined): Record<string, string | number> {
-  if (objetivo === "Short stay" || objetivo === "Locação tradicional" || objetivo === "Uso misto") {
-    return { value: GOOGLE_ADS_LEAD_VALOR_INVESTIDOR, currency: GOOGLE_ADS_LEAD_MOEDA };
-  }
-  if (objetivo === "Moradia" || objetivo === "Ainda avaliando") {
-    return { value: GOOGLE_ADS_LEAD_VALOR_MORADIA, currency: GOOGLE_ADS_LEAD_MOEDA };
-  }
-  return {};
-}
 
 /** Parâmetros extras do Lead; só entram os que existem. */
 export function leadSignalParams(input: LeadSignalInput): Record<string, string | boolean> {
