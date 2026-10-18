@@ -34,6 +34,7 @@ type ActiveKey =
   | "formulario"
   | "googleads"
   | "desqualificacoes"
+  | "perfilleads"
   | "valorleads"
   | "retornoads"
   | "qualificacao"
@@ -75,6 +76,7 @@ const NAV: { key: ActiveKey; label: string; href: string; icon: typeof LayoutDas
   { key: "formulario", label: "Leads do formulário", href: "/admin/leads-formulario", icon: ClipboardList },
   { key: "googleads", label: "Google Ads por serviço", href: "/admin/google-ads", icon: ClipboardList },
   { key: "desqualificacoes", label: "Desqualificações", href: "/admin/desqualificacoes", icon: ClipboardList },
+  { key: "perfilleads", label: "Perfil dos leads", href: "/admin/perfil-leads", icon: ClipboardList },
   { key: "valorleads", label: "Valor dos leads", href: "/admin/valor-leads", icon: ClipboardList },
   { key: "retornoads", label: "Retorno do Google Ads", href: "/admin/retorno-google-ads", icon: ClipboardList },
   { key: "mensagens", label: "Mensagens", href: routes.adminMensagens, icon: MessagesSquare },

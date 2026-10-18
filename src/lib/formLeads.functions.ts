@@ -12,7 +12,7 @@ export const getFormLeads = createServerFn({ method: "POST" })
     const leads: FormLead[] = [];
     for (let offset = 0; ; offset += 1000) {
       const result = await context.supabase.from("leads")
-        .select("id,name,created_at,objetivo,gclid,fbclid,utm_source,utm_medium,utm_campaign,utm_content,first_utm_source,first_utm_medium,referrer")
+        .select("id,name,created_at,objetivo,gclid,fbclid,utm_source,utm_medium,utm_campaign,utm_content,first_utm_source,first_utm_medium,referrer,location,area_m2,chaves")
         .eq("form_path", "/orcamento")
         .order("created_at", { ascending: false }).order("id")
         .range(offset, offset + 999);

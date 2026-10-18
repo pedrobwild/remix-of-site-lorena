@@ -9,6 +9,9 @@ export type FormLead = LeadSourceInput & {
   utm_campaign: string | null;
   utm_content: string | null;
   objetivo: string | null;
+  location?: string | null;
+  area_m2?: number | null;
+  chaves?: string | null;
 };
 
 export function formLeadRow(lead: FormLead, item: CrmLeadItem | undefined, checked: boolean) {
@@ -23,6 +26,7 @@ export function formLeadRow(lead: FormLead, item: CrmLeadItem | undefined, check
     variant: canal === "google_ads" ? topoVarianteDaBusca({ utm_campaign: lead.utm_campaign, utm_content: lead.utm_content }) : "sem-atribuicao" as const,
     origin: LEAD_CANAL_LABEL[canal], campaign: lead.utm_campaign,
     objetivo: lead.objetivo, status,
+    bairro: lead.location?.trim() || null, areaM2: typeof lead.area_m2 === "number" ? lead.area_m2 : null, chaves: lead.chaves?.trim() || null,
   };
 }
 
