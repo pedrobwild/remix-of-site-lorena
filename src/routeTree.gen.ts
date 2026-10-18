@@ -64,6 +64,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminMensagensRouteImport } from './routes/admin.mensagens'
 import { Route as AdminOrcamentosRouteImport } from './routes/admin.orcamentos'
 import { Route as AdminPerfilLeadsRouteImport } from './routes/admin.perfil-leads'
+import { Route as AdminPerfisCampanhaRouteImport } from './routes/admin.perfis-campanha'
 import { Route as AdminQualificacaoRouteImport } from './routes/admin.qualificacao'
 import { Route as AdminRastreamentoRouteImport } from './routes/admin.rastreamento'
 import { Route as AdminRetornoGoogleAdsRouteImport } from './routes/admin.retorno-google-ads'
@@ -375,6 +376,11 @@ const AdminPerfilLeadsRoute = AdminPerfilLeadsRouteImport.update({
   path: '/admin/perfil-leads',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminPerfisCampanhaRoute = AdminPerfisCampanhaRouteImport.update({
+  id: '/admin/perfis-campanha',
+  path: '/admin/perfis-campanha',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminQualificacaoRoute = AdminQualificacaoRouteImport.update({
   id: '/admin/qualificacao',
   path: '/admin/qualificacao',
@@ -596,6 +602,7 @@ export interface FileRoutesByFullPath {
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
   '/admin/perfil-leads': typeof AdminPerfilLeadsRoute
+  '/admin/perfis-campanha': typeof AdminPerfisCampanhaRoute
   '/admin/qualificacao': typeof AdminQualificacaoRoute
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/retorno-google-ads': typeof AdminRetornoGoogleAdsRoute
@@ -686,6 +693,7 @@ export interface FileRoutesByTo {
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
   '/admin/perfil-leads': typeof AdminPerfilLeadsRoute
+  '/admin/perfis-campanha': typeof AdminPerfisCampanhaRoute
   '/admin/qualificacao': typeof AdminQualificacaoRoute
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/retorno-google-ads': typeof AdminRetornoGoogleAdsRoute
@@ -777,6 +785,7 @@ export interface FileRoutesById {
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
   '/admin/perfil-leads': typeof AdminPerfilLeadsRoute
+  '/admin/perfis-campanha': typeof AdminPerfisCampanhaRoute
   '/admin/qualificacao': typeof AdminQualificacaoRoute
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/retorno-google-ads': typeof AdminRetornoGoogleAdsRoute
@@ -869,6 +878,7 @@ export interface FileRouteTypes {
     | '/admin/mensagens'
     | '/admin/orcamentos'
     | '/admin/perfil-leads'
+    | '/admin/perfis-campanha'
     | '/admin/qualificacao'
     | '/admin/rastreamento'
     | '/admin/retorno-google-ads'
@@ -959,6 +969,7 @@ export interface FileRouteTypes {
     | '/admin/mensagens'
     | '/admin/orcamentos'
     | '/admin/perfil-leads'
+    | '/admin/perfis-campanha'
     | '/admin/qualificacao'
     | '/admin/rastreamento'
     | '/admin/retorno-google-ads'
@@ -1049,6 +1060,7 @@ export interface FileRouteTypes {
     | '/admin/mensagens'
     | '/admin/orcamentos'
     | '/admin/perfil-leads'
+    | '/admin/perfis-campanha'
     | '/admin/qualificacao'
     | '/admin/rastreamento'
     | '/admin/retorno-google-ads'
@@ -1140,6 +1152,7 @@ export interface RootRouteChildren {
   AdminMensagensRoute: typeof AdminMensagensRoute
   AdminOrcamentosRoute: typeof AdminOrcamentosRoute
   AdminPerfilLeadsRoute: typeof AdminPerfilLeadsRoute
+  AdminPerfisCampanhaRoute: typeof AdminPerfisCampanhaRoute
   AdminQualificacaoRoute: typeof AdminQualificacaoRoute
   AdminRastreamentoRoute: typeof AdminRastreamentoRoute
   AdminRetornoGoogleAdsRoute: typeof AdminRetornoGoogleAdsRoute
@@ -1563,6 +1576,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPerfilLeadsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/perfis-campanha': {
+      id: '/admin/perfis-campanha'
+      path: '/admin/perfis-campanha'
+      fullPath: '/admin/perfis-campanha'
+      preLoaderRoute: typeof AdminPerfisCampanhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/qualificacao': {
       id: '/admin/qualificacao'
       path: '/admin/qualificacao'
@@ -1852,6 +1872,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminMensagensRoute: AdminMensagensRoute,
   AdminOrcamentosRoute: AdminOrcamentosRoute,
   AdminPerfilLeadsRoute: AdminPerfilLeadsRoute,
+  AdminPerfisCampanhaRoute: AdminPerfisCampanhaRoute,
   AdminQualificacaoRoute: AdminQualificacaoRoute,
   AdminRastreamentoRoute: AdminRastreamentoRoute,
   AdminRetornoGoogleAdsRoute: AdminRetornoGoogleAdsRoute,

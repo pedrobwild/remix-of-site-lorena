@@ -74,6 +74,7 @@ const SPA_ONLY_ALLOWED = new Set([
   "/admin/desqualificacoes",
   "/admin/perfil-leads",
   "/admin/retorno-regiao",
+  "/admin/perfis-campanha",
   "/admin/valor-leads",
   "/admin/retorno-google-ads",
   "/admin/indicacoes",
