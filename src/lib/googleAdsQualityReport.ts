@@ -1,6 +1,6 @@
 import type { ServiceLead } from "@/lib/googleAdsServiceReport";
 
-export type QualityLead = ServiceLead & { status: string; crm_synced_at: string | null; location: string | null; area_m2: number | null; chaves: string | null; property_age?: string | null; attributedToGoogleAds?: boolean; form_path?: string | null };
+export type QualityLead = ServiceLead & { status: string; crm_synced_at: string | null; location: string | null; area_m2: number | null; chaves: string | null; property_age?: string | null; attributedToGoogleAds?: boolean; form_path?: string | null; discard_reason?: string | null; discard_reason_unavailable?: boolean };
 export type QualityDimension = "objetivo" | "bairro" | "metragem" | "chaves" | "idade";
 export const QUALITY_DIMENSIONS: Record<QualityDimension, string> = { objetivo: "Finalidade", bairro: "Bairro/local", metragem: "Metragem", chaves: "Situação das chaves", idade: "Idade do imóvel" };
 export type QualityRow = { dimension: QualityDimension; value: string; leads: number; disqualified: number; other: number; unavailable: number; rate: number | null };
