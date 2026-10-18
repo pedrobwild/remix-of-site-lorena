@@ -99,6 +99,7 @@ import { Route as AdminSeoIndexRouteImport } from './routes/admin.seo.index'
 import { Route as AdminSeo404RouteImport } from './routes/admin.seo.404'
 import { Route as ApiPublicCrmStageSyncRouteImport } from './routes/api/public/crm-stage-sync'
 import { Route as ApiPublicExportRouteImport } from './routes/api/public/export'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -552,6 +553,12 @@ const ApiPublicExportRoute = ApiPublicExportRouteImport.update({
   path: '/api/public/export',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -644,6 +651,7 @@ export interface FileRoutesByFullPath {
   '/admin/conteudos/': typeof AdminConteudosIndexRoute
   '/admin/projetos/': typeof AdminProjetosIndexRoute
   '/admin/seo/': typeof AdminSeoIndexRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -736,6 +744,7 @@ export interface FileRoutesByTo {
   '/admin/conteudos': typeof AdminConteudosIndexRoute
   '/admin/projetos': typeof AdminProjetosIndexRoute
   '/admin/seo': typeof AdminSeoIndexRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -829,6 +838,7 @@ export interface FileRoutesById {
   '/admin/conteudos/': typeof AdminConteudosIndexRoute
   '/admin/projetos/': typeof AdminProjetosIndexRoute
   '/admin/seo/': typeof AdminSeoIndexRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -923,6 +933,7 @@ export interface FileRouteTypes {
     | '/admin/conteudos/'
     | '/admin/projetos/'
     | '/admin/seo/'
+    | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1015,6 +1026,7 @@ export interface FileRouteTypes {
     | '/admin/conteudos'
     | '/admin/projetos'
     | '/admin/seo'
+    | '/lovable/email/transactional/preview'
   id:
     | '__root__'
     | '/'
@@ -1107,6 +1119,7 @@ export interface FileRouteTypes {
     | '/admin/conteudos/'
     | '/admin/projetos/'
     | '/admin/seo/'
+    | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1200,6 +1213,7 @@ export interface RootRouteChildren {
   AdminConteudosIndexRoute: typeof AdminConteudosIndexRoute
   AdminProjetosIndexRoute: typeof AdminProjetosIndexRoute
   AdminSeoIndexRoute: typeof AdminSeoIndexRoute
+  LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1834,6 +1848,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicExportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1928,6 +1949,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminConteudosIndexRoute: AdminConteudosIndexRoute,
   AdminProjetosIndexRoute: AdminProjetosIndexRoute,
   AdminSeoIndexRoute: AdminSeoIndexRoute,
+  LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
