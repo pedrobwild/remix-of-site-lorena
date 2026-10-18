@@ -192,6 +192,7 @@ export function useLeadSubmit({ method, timeoutMs }: { method: string; timeoutMs
           email: payload.email,
           phoneDigits: payload.whatsapp,
           name: payload.name,
+          bairro: payload.location,
           objetivo: payload.objetivo,
           areaM2: payload.area_m2,
           chaves: payload.chaves,
