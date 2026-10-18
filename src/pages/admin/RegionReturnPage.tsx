@@ -31,7 +31,7 @@ export default function RegionReturnPage() {
         <label>Campanha<select value={campaign} onChange={e => setCampaign(e.target.value)}><option value="">Todas</option>{campaigns.map(c => <option key={c}>{c}</option>)}</select></label>
       </div>
       {loading ? <p role="status">Consultando leads e CRM…</p> : report.isError ? <p role="alert">Não foi possível carregar os leads. Tente atualizar.</p> : <>
-        <div className="form-leads__summary"><strong className="num">{totals.contratos} {realContracts === null ? "leads com contrato confirmado" : "contratos assinados"} de {totals.leads} leads</strong>{realContracts !== null && <strong className="num">Valor informado: {money(filtered.reduce((sum, r) => sum + (r.valorReal ?? 0), 0))}</strong>}</div>
+        <div className="form-leads__summary"><strong className="num">{totals.contratos} {realContracts === null ? (totals.contratos === 1 ? "lead com contrato confirmado" : "leads com contrato confirmado") : (totals.contratos === 1 ? "contrato assinado" : "contratos assinados")} de {totals.leads} leads</strong>{realContracts !== null && <strong className="num">Valor informado: {money(filtered.reduce((sum, r) => sum + (r.valorReal ?? 0), 0))}</strong>}</div>
         {realContracts === null && <p role="status">Consulta de contratos detalhados indisponível no CRM. A contagem vem das etapas; valor e data de assinatura não informados.</p>}
         {totals.semLeitura > 0 && <p>{totals.semLeitura} leads sem leitura das etapas do CRM.</p>}
         {!filtered.length ? <p>Nenhum lead encontrado.</p> : <>

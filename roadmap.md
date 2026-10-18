@@ -64,8 +64,8 @@
 - [x] Aba SEO de contratos fechados com bairro, status e data do pedido; leitura autenticada de 1 pedido ganho, filtro, atualização e 9 testes conferidos; não publicado
 - [x] Preparar exportação privada e paginada de contratos no CRM indicado; alteração em https://github.com/pedrobwild/envision-build-guide/pull/355, sem merge ou implantação.
 - [x] Preparar aba Contratos fechados para valor canônico e fechamento real; 24 testes passam, lint sem erros (9 avisos), acesso administrativo e atualização conferidos com contrato existente e sem estimativas; não publicado.
-- [ ] Incorporar a mudança #355 no Bwild Engine — verificar snapshot atualizado; este chat não pode alterar ou publicar o outro projeto.
-- [ ] Preparar Retorno por região para valor real por contrato e data de assinatura, validar testes e leitura administrativa; manter ausências explícitas enquanto o Engine não exporta os dados.
+- [ ] Incorporar a mudança #355 no Bwild Engine — bloqueado na origem: snapshot 6c5712fb de 18/10 ainda não exporta mode contracts/total/closed_at. Este chat não pode alterar ou publicar o outro projeto; incorporar e publicar no chat do Engine.
+- [x] Preparar Retorno por região para valor real por contrato e data de assinatura usando a leitura administrativa existente; 20 testes passam e compilação automática OK. Página autenticada conferida com 71 leads e 1 contrato confirmado, sem valor/data exportados; atualização e 320px sem overflow conferidos. Não publicado, valores reais continuam bloqueados na origem.
 - [x] Implementar atualização do histórico aberto pelos avisos INSERT/UPDATE existentes do Radar, sem cópias ou auditoria privada; 17 testes passam, histórico real de Pinheiros conferido; não publicado
 - [ ] Conferir aviso real de nova coleta até a atualização na tela — em 17/10 a conexão real foi aceita sem rejeição após corrigir a configuração compartilhada; falta uma nova coleta legítima na origem, sem inserir dados artificiais.
 
