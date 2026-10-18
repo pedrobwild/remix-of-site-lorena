@@ -71,6 +71,7 @@ const SPA_ONLY_ALLOWED = new Set([
   "/admin/leads",
   "/admin/leads-formulario",
   "/admin/google-ads",
+  "/admin/valor-leads",
   "/admin/indicacoes",
   "/admin/qualificacao",
   "/admin/mensagens",

@@ -66,6 +66,7 @@ import { Route as AdminQualificacaoRouteImport } from './routes/admin.qualificac
 import { Route as AdminRastreamentoRouteImport } from './routes/admin.rastreamento'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminTypographyRouteImport } from './routes/admin.typography'
+import { Route as AdminValorLeadsRouteImport } from './routes/admin.valor-leads'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ConteudosIndexRouteImport } from './routes/conteudos.index'
@@ -380,6 +381,11 @@ const AdminTypographyRoute = AdminTypographyRouteImport.update({
   path: '/admin/typography',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminValorLeadsRoute = AdminValorLeadsRouteImport.update({
+  id: '/admin/valor-leads',
+  path: '/admin/valor-leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
@@ -568,6 +574,7 @@ export interface FileRoutesByFullPath {
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/typography': typeof AdminTypographyRoute
+  '/admin/valor-leads': typeof AdminValorLeadsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/conteudos/$slug': typeof ConteudosSlugRoute
   '/graficos/$slug': typeof GraficosSlugRoute
@@ -653,6 +660,7 @@ export interface FileRoutesByTo {
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/typography': typeof AdminTypographyRoute
+  '/admin/valor-leads': typeof AdminValorLeadsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/conteudos/$slug': typeof ConteudosSlugRoute
   '/graficos/$slug': typeof GraficosSlugRoute
@@ -739,6 +747,7 @@ export interface FileRoutesById {
   '/admin/rastreamento': typeof AdminRastreamentoRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/typography': typeof AdminTypographyRoute
+  '/admin/valor-leads': typeof AdminValorLeadsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/conteudos/$slug': typeof ConteudosSlugRoute
   '/graficos/$slug': typeof GraficosSlugRoute
@@ -826,6 +835,7 @@ export interface FileRouteTypes {
     | '/admin/rastreamento'
     | '/admin/settings'
     | '/admin/typography'
+    | '/admin/valor-leads'
     | '/blog/$slug'
     | '/conteudos/$slug'
     | '/graficos/$slug'
@@ -911,6 +921,7 @@ export interface FileRouteTypes {
     | '/admin/rastreamento'
     | '/admin/settings'
     | '/admin/typography'
+    | '/admin/valor-leads'
     | '/blog/$slug'
     | '/conteudos/$slug'
     | '/graficos/$slug'
@@ -996,6 +1007,7 @@ export interface FileRouteTypes {
     | '/admin/rastreamento'
     | '/admin/settings'
     | '/admin/typography'
+    | '/admin/valor-leads'
     | '/blog/$slug'
     | '/conteudos/$slug'
     | '/graficos/$slug'
@@ -1082,6 +1094,7 @@ export interface RootRouteChildren {
   AdminRastreamentoRoute: typeof AdminRastreamentoRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminTypographyRoute: typeof AdminTypographyRoute
+  AdminValorLeadsRoute: typeof AdminValorLeadsRoute
   BlogSlugRoute: typeof BlogSlugRoute
   ConteudosSlugRoute: typeof ConteudosSlugRoute
   GraficosSlugRoute: typeof GraficosSlugRoute
@@ -1512,6 +1525,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTypographyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/valor-leads': {
+      id: '/admin/valor-leads'
+      path: '/admin/valor-leads'
+      fullPath: '/admin/valor-leads'
+      preLoaderRoute: typeof AdminValorLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/': {
       id: '/blog/'
       path: '/blog'
@@ -1754,6 +1774,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRastreamentoRoute: AdminRastreamentoRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminTypographyRoute: AdminTypographyRoute,
+  AdminValorLeadsRoute: AdminValorLeadsRoute,
   BlogSlugRoute: BlogSlugRoute,
   ConteudosSlugRoute: ConteudosSlugRoute,
   GraficosSlugRoute: GraficosSlugRoute,
