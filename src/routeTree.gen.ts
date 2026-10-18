@@ -47,6 +47,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminCentralRouteImport } from './routes/admin.central'
 import { Route as AdminColetasRadarRouteImport } from './routes/admin.coletas-radar'
+import { Route as AdminContratosAbertosRouteImport } from './routes/admin.contratos-abertos'
 import { Route as AdminConversoesRouteImport } from './routes/admin.conversoes'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminDesqualificacoesRouteImport } from './routes/admin.desqualificacoes'
@@ -289,6 +290,11 @@ const AdminCentralRoute = AdminCentralRouteImport.update({
 const AdminColetasRadarRoute = AdminColetasRadarRouteImport.update({
   id: '/admin/coletas-radar',
   path: '/admin/coletas-radar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminContratosAbertosRoute = AdminContratosAbertosRouteImport.update({
+  id: '/admin/contratos-abertos',
+  path: '/admin/contratos-abertos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminConversoesRoute = AdminConversoesRouteImport.update({
@@ -585,6 +591,7 @@ export interface FileRoutesByFullPath {
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
   '/admin/coletas-radar': typeof AdminColetasRadarRoute
+  '/admin/contratos-abertos': typeof AdminContratosAbertosRoute
   '/admin/conversoes': typeof AdminConversoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/desqualificacoes': typeof AdminDesqualificacoesRoute
@@ -676,6 +683,7 @@ export interface FileRoutesByTo {
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
   '/admin/coletas-radar': typeof AdminColetasRadarRoute
+  '/admin/contratos-abertos': typeof AdminContratosAbertosRoute
   '/admin/conversoes': typeof AdminConversoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/desqualificacoes': typeof AdminDesqualificacoesRoute
@@ -768,6 +776,7 @@ export interface FileRoutesById {
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
   '/admin/coletas-radar': typeof AdminColetasRadarRoute
+  '/admin/contratos-abertos': typeof AdminContratosAbertosRoute
   '/admin/conversoes': typeof AdminConversoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/desqualificacoes': typeof AdminDesqualificacoesRoute
@@ -861,6 +870,7 @@ export interface FileRouteTypes {
     | '/admin/analytics'
     | '/admin/central'
     | '/admin/coletas-radar'
+    | '/admin/contratos-abertos'
     | '/admin/conversoes'
     | '/admin/dashboard'
     | '/admin/desqualificacoes'
@@ -952,6 +962,7 @@ export interface FileRouteTypes {
     | '/admin/analytics'
     | '/admin/central'
     | '/admin/coletas-radar'
+    | '/admin/contratos-abertos'
     | '/admin/conversoes'
     | '/admin/dashboard'
     | '/admin/desqualificacoes'
@@ -1043,6 +1054,7 @@ export interface FileRouteTypes {
     | '/admin/analytics'
     | '/admin/central'
     | '/admin/coletas-radar'
+    | '/admin/contratos-abertos'
     | '/admin/conversoes'
     | '/admin/dashboard'
     | '/admin/desqualificacoes'
@@ -1135,6 +1147,7 @@ export interface RootRouteChildren {
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminCentralRoute: typeof AdminCentralRoute
   AdminColetasRadarRoute: typeof AdminColetasRadarRoute
+  AdminContratosAbertosRoute: typeof AdminContratosAbertosRoute
   AdminConversoesRoute: typeof AdminConversoesRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminDesqualificacoesRoute: typeof AdminDesqualificacoesRoute
@@ -1455,6 +1468,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/coletas-radar'
       fullPath: '/admin/coletas-radar'
       preLoaderRoute: typeof AdminColetasRadarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/contratos-abertos': {
+      id: '/admin/contratos-abertos'
+      path: '/admin/contratos-abertos'
+      fullPath: '/admin/contratos-abertos'
+      preLoaderRoute: typeof AdminContratosAbertosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/conversoes': {
@@ -1855,6 +1875,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminCentralRoute: AdminCentralRoute,
   AdminColetasRadarRoute: AdminColetasRadarRoute,
+  AdminContratosAbertosRoute: AdminContratosAbertosRoute,
   AdminConversoesRoute: AdminConversoesRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminDesqualificacoesRoute: AdminDesqualificacoesRoute,
