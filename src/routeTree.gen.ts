@@ -49,6 +49,7 @@ import { Route as AdminCentralRouteImport } from './routes/admin.central'
 import { Route as AdminColetasRadarRouteImport } from './routes/admin.coletas-radar'
 import { Route as AdminConversoesRouteImport } from './routes/admin.conversoes'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminDesqualificacoesRouteImport } from './routes/admin.desqualificacoes'
 import { Route as AdminDiagnosticoRouteImport } from './routes/admin.diagnostico'
 import { Route as AdminFaqRouteImport } from './routes/admin.faq'
 import { Route as AdminGoogleAdsRouteImport } from './routes/admin.google-ads'
@@ -295,6 +296,11 @@ const AdminConversoesRoute = AdminConversoesRouteImport.update({
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/admin/dashboard',
   path: '/admin/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminDesqualificacoesRoute = AdminDesqualificacoesRouteImport.update({
+  id: '/admin/desqualificacoes',
+  path: '/admin/desqualificacoes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminDiagnosticoRoute = AdminDiagnosticoRouteImport.update({
@@ -563,6 +569,7 @@ export interface FileRoutesByFullPath {
   '/admin/coletas-radar': typeof AdminColetasRadarRoute
   '/admin/conversoes': typeof AdminConversoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/desqualificacoes': typeof AdminDesqualificacoesRoute
   '/admin/diagnostico': typeof AdminDiagnosticoRoute
   '/admin/faq': typeof AdminFaqRoute
   '/admin/google-ads': typeof AdminGoogleAdsRoute
@@ -650,6 +657,7 @@ export interface FileRoutesByTo {
   '/admin/coletas-radar': typeof AdminColetasRadarRoute
   '/admin/conversoes': typeof AdminConversoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/desqualificacoes': typeof AdminDesqualificacoesRoute
   '/admin/diagnostico': typeof AdminDiagnosticoRoute
   '/admin/faq': typeof AdminFaqRoute
   '/admin/google-ads': typeof AdminGoogleAdsRoute
@@ -738,6 +746,7 @@ export interface FileRoutesById {
   '/admin/coletas-radar': typeof AdminColetasRadarRoute
   '/admin/conversoes': typeof AdminConversoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/desqualificacoes': typeof AdminDesqualificacoesRoute
   '/admin/diagnostico': typeof AdminDiagnosticoRoute
   '/admin/faq': typeof AdminFaqRoute
   '/admin/google-ads': typeof AdminGoogleAdsRoute
@@ -827,6 +836,7 @@ export interface FileRouteTypes {
     | '/admin/coletas-radar'
     | '/admin/conversoes'
     | '/admin/dashboard'
+    | '/admin/desqualificacoes'
     | '/admin/diagnostico'
     | '/admin/faq'
     | '/admin/google-ads'
@@ -914,6 +924,7 @@ export interface FileRouteTypes {
     | '/admin/coletas-radar'
     | '/admin/conversoes'
     | '/admin/dashboard'
+    | '/admin/desqualificacoes'
     | '/admin/diagnostico'
     | '/admin/faq'
     | '/admin/google-ads'
@@ -1001,6 +1012,7 @@ export interface FileRouteTypes {
     | '/admin/coletas-radar'
     | '/admin/conversoes'
     | '/admin/dashboard'
+    | '/admin/desqualificacoes'
     | '/admin/diagnostico'
     | '/admin/faq'
     | '/admin/google-ads'
@@ -1089,6 +1101,7 @@ export interface RootRouteChildren {
   AdminColetasRadarRoute: typeof AdminColetasRadarRoute
   AdminConversoesRoute: typeof AdminConversoesRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminDesqualificacoesRoute: typeof AdminDesqualificacoesRoute
   AdminDiagnosticoRoute: typeof AdminDiagnosticoRoute
   AdminFaqRoute: typeof AdminFaqRoute
   AdminGoogleAdsRoute: typeof AdminGoogleAdsRoute
@@ -1417,6 +1430,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/dashboard'
       fullPath: '/admin/dashboard'
       preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/desqualificacoes': {
+      id: '/admin/desqualificacoes'
+      path: '/admin/desqualificacoes'
+      fullPath: '/admin/desqualificacoes'
+      preLoaderRoute: typeof AdminDesqualificacoesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/diagnostico': {
@@ -1777,6 +1797,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminColetasRadarRoute: AdminColetasRadarRoute,
   AdminConversoesRoute: AdminConversoesRoute,
   AdminDashboardRoute: AdminDashboardRoute,
+  AdminDesqualificacoesRoute: AdminDesqualificacoesRoute,
   AdminDiagnosticoRoute: AdminDiagnosticoRoute,
   AdminFaqRoute: AdminFaqRoute,
   AdminGoogleAdsRoute: AdminGoogleAdsRoute,

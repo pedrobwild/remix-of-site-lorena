@@ -31,6 +31,7 @@
 
 <!-- LOVABLE:BEGIN -->
 - Google Ads profile quality reuses the admin-only paginated quote cohort and synchronized CRM status; pure aggregation separates unread leads from discard rates and never infers property age or joins anonymous visits, preserving campaign operations unchanged.
+- The dedicated admin disqualification route reuses the existing Google Ads quality panel and report cache, keeping profile definitions consistent with the service report without duplicating business rules.
 - Browser and ingestion telemetry share a pure privacy sanitizer under functions/_shared: URL queries/fragments/credentials and contact destinations are removed, external referrers keep only origins, and private value fields are discarded; commercial lead attribution remains separate.
 - Lead admission evaluates the existing IP check before the shared daily quota, so already rejected requests cannot exhaust the budget for legitimate submissions; no new rate-limit primitive is introduced.
 - The admin form-lead list reads quote submissions through an admin-authorized server function, projects only necessary identity/attribution fields, and checks Engine stages live; unavailable reads remain distinct from absent deals, without joining anonymous visits or editing the form.
