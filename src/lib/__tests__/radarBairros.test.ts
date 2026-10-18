@@ -6,7 +6,7 @@
  */
 import { describe, expect, it } from "vitest";
 import { BAIRROS_CONTENT } from "@/content/bairros";
-import { CUSTO_M2_MEDIANO_2025 } from "@/content/baseCusto";
+import { BASE_CUSTO } from "@/content/baseCusto";
 import { RADAR_URL } from "@/config/site";
 import { RADAR_RANKING_URL, radarBairroLink, rewriteGuiaLinksInHtml } from "@/lib/radarLinks";
 
@@ -43,11 +43,13 @@ describe("links do Radar dentro dos artigos", () => {
 });
 
 describe("custo nas páginas de bairro", () => {
-  it("a comparação com a cidade diz a base (contratos de 2025)", () => {
-    for (const slug of ["pinheiros", "perdizes"]) {
-      const texto = BAIRROS_CONTENT[slug].intro.join(" ");
-      expect(texto, slug).toContain(`mediana da cidade na mesma base (${CUSTO_M2_MEDIANO_2025} por m²`);
-      expect(texto, slug).toContain("obras completas de 2025");
-    }
+  it.each(Object.entries(BAIRROS_CONTENT))("%s usa apenas os valores da base única de contratos", (slug, content) => {
+    const custo = content.faq.find(faq => faq.q.startsWith("Quanto custa"))?.a ?? "";
+    const reais = [...custo.matchAll(/R\$\s*([\d.]+)/g)].map(match => Number(match[1].replaceAll(".", "")));
+    expect(reais, slug).toEqual([BASE_CUSTO.m2Mediano, BASE_CUSTO.orcamentoMediano]);
+    const contratos = custo.match(/analisa (\d+) contratos/);
+    expect(Number(contratos?.[1]), slug).toBe(BASE_CUSTO.contratos);
+    const valoresIntro = [...content.intro.join(" ").matchAll(/R\$\s*([\d.]+) por m²/g)].map(match => Number(match[1].replaceAll(".", "")));
+    for (const valor of valoresIntro) expect(valor, slug).toBe(BASE_CUSTO.m2Mediano);
   });
 });

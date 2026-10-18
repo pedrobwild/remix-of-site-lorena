@@ -4,14 +4,13 @@
  * 06/10/2026, os outros 11 bairros do sitemap. Só
  * fatos publicados: contagens e metragens do portfólio, os números de
  * mercado e de contrato citados no post "melhores bairros para short stay"
- * (GuestFavorites jan–set/2026 — Pinheiros, Moema e Vila Mariana conferidos em 13/10/2026; demais jan–ago/2026 e base Bewild fev–out/2025) e a geografia do
+ * (GuestFavorites jan–set/2026 — Pinheiros, Moema e Vila Mariana conferidos em 13/10/2026; demais jan–ago/2026), o Índice Bewild de outubro de 2026 para custo e a geografia do
  * bairro. Bairro sem entrada aqui mostra só a lista de projetos.
  *
  * As contagens de projetos vêm do banco na hora de renderizar; aqui ficam só
  * as frases que não mudam quando um projeto entra ou sai.
  */
-import { CONTRATOS_ANALISADOS } from "@/content/provas";
-import { BASE_2025, CUSTO_M2_MEDIANO, CUSTO_M2_MEDIANO_2025, ORCAMENTO_MEDIANO } from "@/content/baseCusto";
+import { REFERENCIA_CUSTO_BAIRROS } from "@/content/baseCusto";
 
 export type BairroFaq = { q: string; a: string };
 export type BairroPost = { href: string; label: string };
@@ -42,7 +41,7 @@ const PRAZO_FAQ =
   "Cerca de 60 dias úteis de obra para studios e apartamentos compactos de até 30 m², com a data de entrega em contrato e multa por dia de atraso. Metragens maiores ou integração de varanda levam mais; o cronograma por etapa é definido antes de a obra começar.";
 
 const CUSTO_FAQ_CIDADE =
-  `Nos ${CONTRATOS_ANALISADOS} contratos analisados pela Bewild, a reforma completa de até 50 m² custa ${CUSTO_M2_MEDIANO} por m² na mediana (${ORCAMENTO_MEDIANO} por reforma), com projeto, obra, marcenaria, mobiliário e eletrodomésticos. O bairro pesa menos no preço do que a metragem e o padrão de acabamento; a tabela por metragem e a fórmula de bolso estão no guia de custo da Bewild.`;
+  `${REFERENCIA_CUSTO_BAIRROS} O bairro pesa menos no preço do que a metragem e o padrão de acabamento; a tabela por metragem e a fórmula de bolso estão no guia de custo da Bewild.`;
 const CONDOMINIO_FAQ =
   "Antes de a obra começar, a Bewild entrega ao síndico o plano de reforma exigido pela NBR 16280, com ART ou RRT do responsável técnico, cronograma e horários de trabalho dentro do que a convenção permite. Em prédio novo, também conferimos o padrão de envidraçamento da varanda e a infraestrutura de ar-condicionado prevista pela construtora.";
 const HIS_HMP = { href: "/conteudos/studio-his-ou-hmp-o-que-fazer", label: "Studio HIS ou HMP: o que fazer" };
@@ -56,12 +55,12 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
     intro: [
       "Pinheiros é o bairro onde a Bewild mais reformou: são studios e apartamentos compactos de 21,43 a 41,14 m², em prédios como Do It Pinheiros, Highlights Pinheiros, My One Estação Fradique Coutinho, Spotlights Pinheiros e Pinheiros by Passarelli. Dos nove contratos de 2025 no bairro, sete foram para short stay, e cinco clientes moram fora da capital: acompanharam a obra pelo Bwild Workflow e receberam o apartamento pronto.",
       "O bairro junta metrô (estações Faria Lima, Fradique Coutinho e Pinheiros, da Linha 4-Amarela, além da CPTM), os escritórios da Faria Lima e a gastronomia da Rua dos Pinheiros e da Vila Madalena, ao lado. No levantamento da GuestFavorites de 2026, Pinheiros tem 62% de ocupação mediana, diária média de R$ 300 e 2.424 anúncios ativos: a combinação mais equilibrada entre diária, ocupação e demanda o ano inteiro.",
-      `Nos contratos Bewild de 2025, a reforma completa em Pinheiros teve mediana de R$ 2.628 por m², acima da mediana da cidade na mesma base (${CUSTO_M2_MEDIANO_2025} por m², nas ${BASE_2025.obras} obras completas de 2025): o padrão de acabamento sobe junto com a diária. Em prédio novo, vale conferir na convenção duas coisas antes de fechar o escopo: o padrão de envidraçamento da varanda e a infraestrutura de ar-condicionado.`,
+      `${REFERENCIA_CUSTO_BAIRROS} Em prédio novo, vale conferir na convenção duas coisas antes de fechar o escopo: o padrão de envidraçamento da varanda e a infraestrutura de ar-condicionado.`,
     ],
     faq: [
       {
         q: "Quanto custa reformar um studio em Pinheiros?",
-        a: "Nos contratos Bewild de 2025, a mediana em Pinheiros foi R$ 2.628 por m², com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Num studio de 28 m², algo em torno de R$ 74 mil. A tabela por metragem está no guia de custo da Bewild, com 188 contratos analisados.",
+        a: CUSTO_FAQ_CIDADE,
       },
       {
         q: "Pinheiros vale para short stay?",
@@ -75,12 +74,12 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
     intro: [
       "No Butantã, a Bewild entregou studios de 23,61 a 29,35 m² em prédios como Ari Studios, Green View, Modern Estação Butantã e Now Butantã, quase todos a poucas quadras das estações Butantã e São Paulo–Morumbi, da Linha 4-Amarela.",
       "É o bairro com a demanda mais constante e a menor oferta entre os que a Bewild atende: 61% de ocupação mediana, diária média de R$ 276 e só 373 anúncios ativos no levantamento da GuestFavorites de 2026, puxados pela USP e pelo polo hospitalar da região. Foi aqui que um studio reformado pela Bewild fechou novembro com 70% de ocupação no Airbnb.",
-      "Dois cuidados antes de comprar ou reformar: parte dos lançamentos da região é HIS ou HMP, classificações que não permitem locação por temporada, e isso precisa ser conferido na documentação do imóvel antes da compra; e a reforma completa teve a mediana mais baixa da cidade nos contratos de 2025, R$ 1.915 por m², o que mantém a conta do investimento favorável.",
+      `Antes de comprar ou reformar, confira a documentação: parte dos lançamentos da região é HIS ou HMP, classificações que não permitem locação por temporada. ${REFERENCIA_CUSTO_BAIRROS}`,
     ],
     faq: [
       {
         q: "Quanto custa reformar um studio no Butantã?",
-        a: "Nos contratos Bewild de 2025, a mediana no Butantã foi R$ 1.915 por m², a mais baixa entre os bairros atendidos, com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Num studio de 26 m², cerca de R$ 50 mil. A tabela por metragem está no guia de custo da Bewild.",
+        a: CUSTO_FAQ_CIDADE,
       },
       {
         q: "Meu studio no Butantã pode operar short stay?",
@@ -99,12 +98,12 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
     intro: [
       "No Brooklin a Bewild entregou apartamentos de 21,59 a 37,38 m² em prédios como Hub Brooklin by EZ, Level Brooklin, My One Brooklin, Zip Brooklin e Brooklin Noventa. É também o bairro do escritório da Bewild, na Rua Pitú.",
       "A região da Berrini e da Chucri Zaidan é o eixo corporativo da zona sul, com a estação Brooklin da Linha 5-Lilás e a Berrini da CPTM; a demanda vem de quem trabalha ali durante a semana. O levantamento de mercado da GuestFavorites não tem página para o Brooklin, então o que a Bewild sabe vem dos próprios contratos: nove em 2025, todos para short stay, o mesmo número de Pinheiros.",
-      "Foi a reforma mais econômica da base de 2025: mediana de R$ 2.096 por m² em studios de 24 m², com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Os prédios são novos e as plantas, parecidas entre si; o projeto de interiores é o que diferencia o anúncio.",
+      `${REFERENCIA_CUSTO_BAIRROS} Os prédios são novos e as plantas, parecidas entre si; o projeto de interiores é o que diferencia o anúncio.`,
     ],
     faq: [
       {
         q: "Quanto custa reformar um studio no Brooklin?",
-        a: "Nos contratos Bewild de 2025, a mediana no Brooklin foi R$ 2.096 por m², com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Num studio de 24 m², cerca de R$ 50 mil. A tabela por metragem está no guia de custo da Bewild.",
+        a: CUSTO_FAQ_CIDADE,
       },
       {
         q: "Dá para reformar no Brooklin morando em outra cidade?",
@@ -117,13 +116,13 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
   "campo-belo": {
     intro: [
       "Em Campo Belo a Bewild entregou studios de 22 a 28 m² em prédios como Latitude Campo Belo, Balkon Campo Belo, Modern Campo Belo e Oriz by Plano&Plano. O bairro fica entre Moema e o aeroporto de Congonhas, com a estação Campo Belo da Linha 5-Lilás.",
-      "No levantamento da GuestFavorites de 2026, Campo Belo tem 60% de ocupação mediana, diária média de R$ 233 e 1.077 anúncios ativos: diária mais baixa que a de Moema, com a mesma proximidade do aeroporto e do Parque Ibirapuera. Os três contratos Bewild no bairro em 2025 foram para short stay, com reforma mediana de R$ 2.198 por m².",
+      "No levantamento da GuestFavorites de 2026, Campo Belo tem 60% de ocupação mediana, diária média de R$ 233 e 1.077 anúncios ativos: diária mais baixa que a de Moema, com a mesma proximidade do aeroporto e do Parque Ibirapuera. Os três contratos Bewild no bairro em 2025 foram para short stay.",
       "Nos studios de 22 a 28 m² entregues aqui, o projeto resolve cozinha, trabalho e descanso numa planta só, com marcenaria sob medida. O que mais pesa no orçamento é o padrão de acabamento e a metragem, não o bairro.",
     ],
     faq: [
       {
         q: "Quanto custa reformar um studio em Campo Belo?",
-        a: "Nos contratos Bewild de 2025, a mediana em Campo Belo foi R$ 2.198 por m², com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Num studio de 26 m², cerca de R$ 57 mil. A tabela por metragem está no guia de custo da Bewild.",
+        a: CUSTO_FAQ_CIDADE,
       },
       {
         q: "Campo Belo vale para short stay?",
@@ -147,7 +146,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
     faq: [
       {
         q: "Quanto custa reformar um studio na Consolação?",
-        a: `Nos ${CONTRATOS_ANALISADOS} contratos analisados pela Bewild, a reforma completa de até 50 m² custa ${CUSTO_M2_MEDIANO} por m² na mediana (${ORCAMENTO_MEDIANO} por reforma), com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Em studios de 17 a 25 m² o valor por m² tende a ficar acima disso, porque cozinha e banheiro custam o mesmo em qualquer metragem.`,
+        a: `${REFERENCIA_CUSTO_BAIRROS} Em studios de 17 a 25 m² o valor por m² tende a ficar acima disso, porque cozinha e banheiro custam o mesmo em qualquer metragem.`,
       },
       {
         q: "Prédio antigo na Consolação: dá para reformar para short stay?",
@@ -209,12 +208,12 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
     intro: [
       "Em Perdizes a Bewild reformou studios de 24 a 29,73 m² em prédios como Cyrela by You Perdizes, Soma Perdizes, Think Tanabi, The Collection PUC e Nex One Estação Perdizes. O bairro tem a PUC-SP, o Allianz Parque e a Avenida Sumaré, e faz divisa com Pompeia, Vila Madalena e Pacaembu.",
       "No levantamento da GuestFavorites de 2026, Perdizes teve a menor ocupação mediana entre os bairros acompanhados, 53%, com diária média de R$ 254 e 1.752 anúncios ativos. Mesmo assim, foi o terceiro bairro em contratos Bewild em 2025: sete, seis deles para short stay. É um bairro em que a qualidade do anúncio separa quem reserva de quem não reserva.",
-      `Nos contratos Bewild de 2025, a reforma completa em Perdizes teve mediana de R$ 2.493 por m², acima da mediana da cidade na mesma base (${CUSTO_M2_MEDIANO_2025} por m², nas ${BASE_2025.obras} obras completas de 2025). Parte dos lançamentos da região é HIS ou HMP, classificações que não permitem locação por temporada; isso precisa ser conferido na documentação antes da compra.`,
+      `${REFERENCIA_CUSTO_BAIRROS} Parte dos lançamentos da região é HIS ou HMP, classificações que não permitem locação por temporada; isso precisa ser conferido na documentação antes da compra.`,
     ],
     faq: [
       {
         q: "Quanto custa reformar um studio em Perdizes?",
-        a: "Nos contratos Bewild de 2025, a mediana em Perdizes foi R$ 2.493 por m², com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Num studio de 28 m², algo em torno de R$ 70 mil. A tabela por metragem está no guia de custo da Bewild.",
+        a: CUSTO_FAQ_CIDADE,
       },
       {
         q: "Perdizes vale para short stay?",
@@ -326,12 +325,12 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
     intro: [
       "Na Vila Olímpia a Bewild reformou studios de 25 a 28 m² em prédios como Do It Vila Olímpia, Vibe Vila Olímpia e Today Faria Lima. O bairro fica entre a Faria Lima e a Berrini, com a estação Vila Olímpia da Linha 9-Esmeralda da CPTM e o Shopping Vila Olímpia.",
       "É, com o Brooklin, o bairro corporativo da zona sul: a demanda vem de quem trabalha nos escritórios da região durante a semana e procura um studio pronto, silencioso e com boa internet. O levantamento de mercado da GuestFavorites não tem página para a Vila Olímpia; o que a Bewild sabe vem dos próprios contratos: três em 2025, todos para short stay.",
-      "Nos contratos Bewild de 2025, a reforma completa na Vila Olímpia teve mediana de R$ 2.539 por m², com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Os prédios são novos e as plantas, parecidas entre si; o projeto de interiores é o que diferencia o anúncio.",
+      `${REFERENCIA_CUSTO_BAIRROS} Os prédios são novos e as plantas, parecidas entre si; o projeto de interiores é o que diferencia o anúncio.`,
     ],
     faq: [
       {
         q: "Quanto custa reformar um studio na Vila Olímpia?",
-        a: "Nos contratos Bewild de 2025, a mediana na Vila Olímpia foi R$ 2.539 por m², com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Num studio de 26 m², cerca de R$ 66 mil. A tabela por metragem está no guia de custo da Bewild.",
+        a: CUSTO_FAQ_CIDADE,
       },
       {
         q: "Vila Olímpia vale para short stay?",
