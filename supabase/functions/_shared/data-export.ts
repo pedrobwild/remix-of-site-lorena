@@ -545,7 +545,7 @@ export async function buildGoogleAdsOfflineRows(input: GoogleAdsOfflineInput): P
           "Phone Number": phoneHash,
           "Conversion Name": c.name,
           "Conversion Time": time,
-          "Conversion Value": null,
+          "Conversion Value": c.value ?? null,
           "Conversion Currency": "BRL",
         },
       });

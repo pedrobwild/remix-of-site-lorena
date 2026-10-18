@@ -185,7 +185,55 @@ async function readGoogleAdsOffline(db: SupabaseClient, r: ExportRequest): Promi
       if (!qualifiedAt.has(row.lead_id)) qualifiedAt.set(row.lead_id, row.created_at);
     }
   }
-  return { rows: await buildGoogleAdsOfflineRows({ leads: leads.rows, qualifiedAt }), error: null };
+  const wonIds = leads.rows.filter((l) => l.crm_won === true).map((l) => String(l.id));
+  const contracts = await readCrmContractValues(wonIds);
+  return { rows: await buildGoogleAdsOfflineRows({ leads: leads.rows, qualifiedAt, contracts: contracts ?? undefined }), error: null };
+}
+
+const ENGINE_STAGES_URL = "https://pieenhgjulsrjlioozsy.supabase.co/functions/v1/site-lead-stages";
+type RealContract = { total: number | null; closed_at: string | null };
+
+/** Valor e data reais dos contratos no CRM. Qualquer falha → null (valor fica vazio). */
+async function readCrmContractValues(leadIds: string[]): Promise<Map<string, RealContract[]> | null> {
+  const key = Deno.env.get("BWILD_ENGINE_INTEGRATION_KEY");
+  if (!key || !leadIds.length) return null;
+  const out = new Map<string, RealContract[]>();
+  try {
+    for (let i = 0; i < leadIds.length; i += 500) {
+      const ids = leadIds.slice(i, i + 500);
+      const allowed = new Set(ids);
+      const seen = new Set<string>();
+      let cursor: string | null = null;
+      do {
+        const res = await fetch(ENGINE_STAGES_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-integration-key": key },
+          body: JSON.stringify({ mode: "contracts", lead_ids: ids, cursor }),
+          signal: AbortSignal.timeout(30_000),
+        });
+        if (!res.ok) {
+          console.error("[data-export] crm contracts non-2xx", res.status);
+          return null;
+        }
+        const body = (await res.json()) as { contracts?: unknown; next_cursor?: unknown };
+        if (!Array.isArray(body.contracts)) return null;
+        for (const raw of body.contracts as Record<string, unknown>[]) {
+          const leadId = String(raw.lead_id ?? "");
+          if (!allowed.has(leadId)) return null;
+          const total = typeof raw.total === "number" && Number.isFinite(raw.total) ? raw.total : null;
+          const closed = typeof raw.closed_at === "string" ? raw.closed_at : null;
+          out.set(leadId, [...(out.get(leadId) ?? []), { total, closed_at: closed }]);
+        }
+        cursor = typeof body.next_cursor === "string" ? body.next_cursor : null;
+        if (cursor && seen.has(cursor)) return null;
+        if (cursor) seen.add(cursor);
+      } while (cursor);
+    }
+    return out;
+  } catch (err) {
+    console.error("[data-export] crm contracts failed", err instanceof Error ? err.name : "unknown");
+    return null;
+  }
 }
 
 /** Marca o uso depois de responder, quando o runtime permite. */
