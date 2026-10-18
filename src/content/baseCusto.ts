@@ -44,11 +44,15 @@ export function brl(valor: number): string {
 export const CUSTO_M2_MEDIANO = brl(BASE_CUSTO.m2Mediano);
 export const ORCAMENTO_MEDIANO = brl(BASE_CUSTO.orcamentoMediano);
 
+/** Referência municipal: não é uma mediana específica de cada bairro. */
+export const REFERENCIA_CUSTO_BAIRROS =
+  `Como referência para São Paulo, o Índice Bewild de custo de reforma, edição de outubro de 2026, analisa ${BASE_CUSTO.contratos} contratos de reforma completa de studios e apartamentos compactos. A mediana é ${CUSTO_M2_MEDIANO} por m² (${ORCAMENTO_MEDIANO} por reforma), com projeto, obra, marcenaria, mobiliário e eletrodomésticos. São valores dos contratos na assinatura, sem aditivos posteriores; esta é a base da cidade, não uma mediana específica do bairro.`;
+
 /**
  * Base de 2025: 58 obras completas dos contratos de fevereiro a outubro de 2025,
  * em imóveis de 21 a 35 m² (projeto, obra, marcenaria, mobília e eletros).
- * É a base das medianas por bairro das páginas /reforma/<bairro> ("contratos
- * Bewild de 2025") e da resposta de custo do /faq. Não misturar com a base de
+ * É a base histórica da resposta de custo do /faq. As páginas /reforma/<bairro>
+ * usam agora somente BASE_CUSTO. Não misturar com a base de
  * 188 contratos acima: são estudos diferentes, e cada texto diz qual usa.
  */
 export const BASE_2025 = {
