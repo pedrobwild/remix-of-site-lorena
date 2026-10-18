@@ -69,6 +69,7 @@ const SPA_ONLY_ALLOWED = new Set([
   "/admin/licencas",
   "/admin/typography",
   "/admin/leads",
+  "/admin/leads-formulario",
   "/admin/indicacoes",
   "/admin/qualificacao",
   "/admin/mensagens",
