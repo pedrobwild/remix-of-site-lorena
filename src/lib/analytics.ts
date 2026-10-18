@@ -26,6 +26,7 @@ import { PRIVACY_VISIT_KEY, privacyVisitState } from "@/lib/privacyMeasurement";
 import { interestNeighborhood, VISIT_PATHS } from "@/lib/neighborhoodVisits";
 import { BUTTON_CLICK_SELECTOR, buttonClickDetails, claimButtonClick } from "@/lib/buttonClicks";
 import { trackEvent } from "@/lib/ga4";
+import { telemetryUrl, telemetryValue, telemetryText } from "@/../supabase/functions/_shared/telemetry-privacy";
 
 type EventType =
   | "pageview"
@@ -418,21 +419,21 @@ function engagementResetForPage(path: string) {
 function buildRow(eventType: EventType, payload?: TrackPayload) {
   const visitor_id = ensureVisitorId();
   const { id: session_id, isNew } = getSessionId();
-  const path =
+  const rawPath =
     payload?.path ??
     (typeof window !== "undefined" ? window.location.pathname || "/" : null);
+  const path = rawPath ? telemetryUrl(rawPath) : null;
   const utms = getOrPersistUtms(isNew);
   persistClickIds();
   const referrer_host = getReferrerHost(isNew);
-  const landing_path = path ? getLandingPath(isNew, path) : null;
+  const landing_path = path ? telemetryUrl(getLandingPath(isNew, path)) : null;
   const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
 
   // anonimiza referrer (remove querystring)
   let referrer: string | null = null;
   try {
     if (typeof document !== "undefined" && document.referrer) {
-      const u = new URL(document.referrer);
-      referrer = `${u.origin}${u.pathname}`;
+      referrer = telemetryUrl(document.referrer, true);
     }
   } catch {
     /* noop */
@@ -455,12 +456,12 @@ function buildRow(eventType: EventType, payload?: TrackPayload) {
     project_slug: payload?.project_slug ?? null,
     scroll_depth: payload?.scroll_depth ?? null,
     duration_ms: payload?.duration_ms ?? null,
-    value: payload?.value ?? null,
-    utm_source: utms.utm_source ?? null,
-    utm_medium: utms.utm_medium ?? null,
-    utm_campaign: utms.utm_campaign ?? null,
-    utm_term: utms.utm_term ?? null,
-    utm_content: utms.utm_content ?? null,
+    value: telemetryValue(payload?.value),
+    utm_source: utms.utm_source ? telemetryText(utms.utm_source) : null,
+    utm_medium: utms.utm_medium ? telemetryText(utms.utm_medium) : null,
+    utm_campaign: utms.utm_campaign ? telemetryText(utms.utm_campaign) : null,
+    utm_term: utms.utm_term ? telemetryText(utms.utm_term) : null,
+    utm_content: utms.utm_content ? telemetryText(utms.utm_content) : null,
   };
 }
 
@@ -714,7 +715,7 @@ function onClick(e: MouseEvent) {
     // no WhatsApp é conversão, não abandono).
     const contact = contactEventForHref(href);
     if (contact) {
-      track(contact.type, { value: { href, channel: contact.channel, ...(cta ? { cta } : {}) } });
+      track(contact.type, { value: { channel: contact.channel, ...(cta ? { cta } : {}) } });
       return;
     }
 

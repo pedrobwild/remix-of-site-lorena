@@ -314,6 +314,7 @@ describe("cliques — um evento por clique (CORE-17)", () => {
     const rows = clickRows('<a href="https://wa.me/5511911906183?text=oi" data-cta="hero">Fale</a>');
     expect(rows.map((r) => r.event_type)).toEqual(["click_whatsapp"]);
     expect(rows[0].value).toMatchObject({ channel: "whatsapp", cta: "hero" });
+    expect(rows[0].value).not.toHaveProperty("href");
   });
 
   it("tel: → click_phone, não click_whatsapp", () => {
@@ -325,6 +326,11 @@ describe("cliques — um evento por clique (CORE-17)", () => {
   it("link externo comum → outbound_click", () => {
     const rows = clickRows('<a href="https://www.instagram.com/bewild.oficial/">IG</a>');
     expect(rows.map((r) => r.event_type)).toEqual(["outbound_click"]);
+  });
+
+  it("link externo não transmite parâmetros pessoais nem fragmento", () => {
+    const rows = clickRows('<a href="https://example.com/oferta?email=ana@example.com&token=private#private">Oferta</a>');
+    expect(rows[0].value).toEqual({ href: "https://example.com/oferta" });
   });
 
   it("clique sintético no próprio document não lança (FE-01)", () => {

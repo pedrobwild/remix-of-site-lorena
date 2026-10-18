@@ -8,6 +8,7 @@
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.45.4";
 import { sendTemplateEmail } from "../_shared/transactional-email-templates/send-email.ts";
 import { logIntegration } from "../_shared/integration-log.ts";
+import { admitLead } from "./admission.ts";
 import {
   AD_LEAD_FORMS,
   capiLogEntry,
@@ -58,12 +59,11 @@ async function notifySlack(lead: CleanLead, leadId: string | null): Promise<Outc
       signal: AbortSignal.timeout(10_000),
     });
     if (!res.ok) {
-      const body = await res.text().catch(() => "");
-      throw new Error(`HTTP ${res.status} ${body.slice(0, 200)}`);
+      throw new Error(`HTTP ${res.status}`);
     }
     return "sent";
   } catch (err) {
-    console.error("[notify-lead] slack post failed", err instanceof Error ? err.message : String(err));
+    console.error("[notify-lead] slack post failed", err instanceof Error ? err.name : "unknown");
     return "error";
   }
 }
@@ -125,13 +125,12 @@ async function createCrmCard(lead: CleanLead, leadId: string | null): Promise<Ou
       signal: AbortSignal.timeout(10_000),
     });
     if (!res.ok) {
-      const body = (await res.text().catch(() => "")).slice(0, 200);
-      console.error("[notify-lead] crm hook non-2xx", res.status, body);
+      console.error("[notify-lead] crm hook non-2xx", res.status);
       return "error";
     }
     return "sent";
   } catch (err) {
-    console.error("[notify-lead] crm hook failed", err instanceof Error ? err.message : String(err));
+    console.error("[notify-lead] crm hook failed", err instanceof Error ? err.name : "unknown");
     return "error";
   }
 }
@@ -158,7 +157,7 @@ async function sendLeadEmail(lead: CleanLead, leadId: string | null): Promise<Ou
     // Destinatário suprimido (bounce/descadastro) não é entrega.
     return result.sent ? "sent" : "skipped";
   } catch (err) {
-    console.error("[notify-lead] email send failed", err instanceof Error ? err.message : String(err));
+    console.error("[notify-lead] email send failed", err instanceof Error ? err.name : "unknown");
     return "error";
   } finally {
     clearTimeout(timer);
@@ -325,11 +324,11 @@ Deno.serve(async (req) => {
 
   if (admin) {
     const day = new Date().toISOString().slice(0, 10);
-    const [ipOk, dayOk] = await Promise.all([
-      withinRateLimit(admin, `notify-lead:ip:${clientIp(req)}`, RATE_PER_IP.windowS, RATE_PER_IP.max),
-      withinRateLimit(admin, `notify-lead:day:${day}`, RATE_GLOBAL_DAY.windowS, RATE_GLOBAL_DAY.max),
-    ]);
-    if (!ipOk || !dayOk) return json(429, { error: "rate_limited" });
+    const admitted = await admitLead(
+      () => withinRateLimit(admin, `notify-lead:ip:${clientIp(req)}`, RATE_PER_IP.windowS, RATE_PER_IP.max),
+      () => withinRateLimit(admin, `notify-lead:day:${day}`, RATE_GLOBAL_DAY.windowS, RATE_GLOBAL_DAY.max),
+    );
+    if (!admitted) return json(429, { error: "rate_limited" });
   }
 
   let lead_insert: StepResult;

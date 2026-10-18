@@ -17,6 +17,7 @@
  * do "Aceitar".
  */
 import { isConsentAccepted } from "@/lib/cookieConsent";
+import { telemetryUrl, telemetryValue } from "@/../supabase/functions/_shared/telemetry-privacy";
 
 export const GA4_MEASUREMENT_ID = "G-CE7GKKDG4L";
 
@@ -63,7 +64,11 @@ export function initGa4(): void {
   gtag("js", new Date());
   // send_page_view:false — disparamos manualmente a cada página exibida,
   // para evitar duplicidade / falsos negativos.
-  gtag("config", GA4_MEASUREMENT_ID, { send_page_view: false });
+  gtag("config", GA4_MEASUREMENT_ID, {
+    send_page_view: false,
+    page_location: telemetryUrl(window.location.href),
+    page_referrer: document.referrer ? telemetryUrl(document.referrer, true) : "",
+  });
 
   const s = document.createElement("script");
   s.async = true;
@@ -84,14 +89,14 @@ export function trackPageView(path: string): void {
   if (!isConsentAccepted()) return;
   if (isAdminPath()) return;
   if (path === lastPageViewKey) return;
-  const location = window.location.href;
+  const location = telemetryUrl(window.location.href);
   w.gtag("event", "page_view", {
-    page_path: path,
+    page_path: telemetryUrl(path),
     page_location: location,
     page_title: document.title,
     // Numa SPA o document.referrer fica congelado no referrer externo da
     // entrada; a partir da 2ª página, o referrer real é a página anterior.
-    ...(lastPageLocation ? { page_referrer: lastPageLocation } : {}),
+    page_referrer: lastPageLocation ?? (document.referrer ? telemetryUrl(document.referrer, true) : ""),
   });
   lastPageViewKey = path;
   lastPageLocation = location;
@@ -103,7 +108,11 @@ export function trackEvent(name: string, params?: Record<string, unknown>): void
   if (!w.__bewildGa4Inited || !w.gtag) return;
   if (!isConsentAccepted()) return;
   if (isAdminPath()) return;
-  w.gtag("event", name, params || {});
+  w.gtag("event", name, {
+    ...telemetryValue(params),
+    page_location: telemetryUrl(window.location.href),
+    page_referrer: lastPageLocation ?? (document.referrer ? telemetryUrl(document.referrer, true) : ""),
+  });
 }
 
 /** Só para testes: esquece o último page_view enviado. */

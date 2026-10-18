@@ -295,6 +295,27 @@ describe("MetaPixel", () => {
 });
 
 describe("GA4 (ga4.ts)", () => {
+  it("configuração e eventos não enviam query, fragmento ou dados de contato", async () => {
+    const ga4 = await vi.importActual<typeof import("@/lib/ga4")>("@/lib/ga4");
+    const w = window as Window & { gtag?: (...args: unknown[]) => void; __bewildGa4Inited?: boolean };
+    delete w.__bewildGa4Inited;
+    const gtag = vi.fn();
+    w.gtag = gtag;
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
+    window.history.replaceState(null, "", "/orcamento?utm_campaign=sea_investidor&email=ana@example.com#private");
+    ga4.__resetGa4PageViewDedupe();
+    ga4.initGa4();
+    ga4.trackPageView(window.location.pathname + window.location.search);
+    ga4.trackEvent("cta_click", { email: "ana@example.com", href: "mailto:ana@example.com", utm_campaign: "sea_investidor" });
+    expect(gtag).toHaveBeenCalledWith("event", "cta_click", expect.objectContaining({
+      href: "mailto:", utm_campaign: "sea_investidor", page_location: "http://localhost:3000/orcamento",
+    }));
+    expect(JSON.stringify(gtag.mock.calls)).not.toMatch(/ana@example|#private|\?utm|email=/);
+    document.head.querySelectorAll('script[src*="googletagmanager"]').forEach((n) => n.remove());
+    delete w.__bewildGa4Inited;
+    delete w.gtag;
+    ga4.__resetGa4PageViewDedupe();
+  });
   it("initGa4 não envia page_view; trackPageView deduplica por caminho+query", async () => {
     const ga4 = await vi.importActual<typeof import("@/lib/ga4")>("@/lib/ga4");
     type G = Window & { dataLayer?: unknown[]; gtag?: unknown; __bewildGa4Inited?: boolean };
