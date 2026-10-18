@@ -12,3 +12,14 @@ describe("retorno por região", () => {
     expect(out[1]).toEqual({ bairro: "Não informado", campaign: "Sem campanha", leads: 1, contratos: 0, semLeitura: 1 });
   });
 });
+
+describe("summarizeRegionReturn · grafias", () => {
+  it("une Brooklin e brooklin na mesma linha", () => {
+    const out = summarizeRegionReturn([
+      { bairro: "Brooklin", campaign: "c", status: "Perdido" },
+      { bairro: "brooklin ", campaign: "c", status: "Contrato fechado" },
+    ] as never);
+    expect(out).toHaveLength(1);
+    expect(out[0]).toMatchObject({ bairro: "Brooklin", leads: 2, contratos: 1 });
+  });
+});

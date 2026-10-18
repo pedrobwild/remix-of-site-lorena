@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import { Button } from "@/guia/components/ui/button";
 import { getFormLeads } from "@/lib/formLeads.functions";
-import { bairroAgrupado } from "@/lib/bairroAgrupado";
+import { criarAgrupadorBairros } from "@/lib/bairroAgrupado";
 import { formatAreaM2 } from "@/lib/formatArea";
 import "@/styles/form-leads.css";
 
@@ -22,7 +22,7 @@ export default function LeadProfilesPage() {
   const [chaves, setChaves] = useState("");
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(0);
-  const rows = useMemo(() => report.data?.rows.map(r => ({ ...r, grupo: bairroAgrupado(r.bairro) })), [report.data]);
+  const rows = useMemo(() => { const all = report.data?.rows; if (!all) return undefined; const agrupar = criarAgrupadorBairros(all.map(r => r.bairro)); return all.map(r => ({ ...r, grupo: agrupar(r.bairro) })); }, [report.data]);
   const filtered = useMemo(() => (rows ?? []).filter(row =>
     (!search || `${row.name} ${row.bairro ?? ""} ${row.grupo ?? ""}`.toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR")))
     && (!bairro || (row.grupo ?? NI) === bairro) && (!finalidade || (row.objetivo ?? NI) === finalidade) && (!chaves || (row.chaves ?? NI) === chaves) && (!status || row.status === status)

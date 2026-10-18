@@ -25,7 +25,7 @@ export default function RegionReturnPage() {
         <label>Campanha<select value={campaign} onChange={e => setCampaign(e.target.value)}><option value="">Todas</option>{campaigns.map(c => <option key={c}>{c}</option>)}</select></label>
       </div>
       {report.isPending ? <p role="status">Consultando leads e CRM…</p> : report.isError ? <p role="alert">Não foi possível carregar os leads. Tente atualizar.</p> : <>
-        <div className="form-leads__summary"><strong className="num">{totals.contratos} contratos assinados de {totals.leads} leads</strong><span>Contrato assinado = negócio ganho no CRM. Bairro como o cliente escreveu. {totals.semLeitura > 0 && `${totals.semLeitura} leads sem leitura do CRM (não contam como zero).`}</span></div>
+        <div className="form-leads__summary"><strong className="num">{totals.contratos} contratos assinados de {totals.leads} leads</strong><span>Contrato assinado = negócio ganho no CRM. Grafias diferentes do mesmo bairro aparecem juntas. {totals.semLeitura > 0 && `${totals.semLeitura} leads sem leitura do CRM (não contam como zero).`}</span></div>
         {!filtered.length ? <p>Nenhum lead encontrado.</p> : <>
           <div className="form-leads__header" aria-hidden><span>Bairro</span><span>Campanha</span><span>Leads</span><span>Contratos assinados</span></div>
           {filtered.map(r => <article key={`${r.bairro}|${r.campaign}`} className="form-leads__row">
