@@ -138,6 +138,10 @@ export default function PrivacidadePage() {
                   compará-los com os dados que já têm, sem ler o original) e
                   características gerais do pedido: objetivo da reforma, faixa
                   de metragem, etapa do imóvel e se você mora em São Paulo.
+                  No Google Ads, o envio do orçamento também inclui categorias
+                  de finalidade, faixa de metragem e bairro reconhecido, para
+                  comparar os resultados das campanhas, sem endereço completo
+                  nem texto livre do campo de bairro. A idade do imóvel não é inferida.
                   Detalhes em &ldquo;Anúncios e públicos&rdquo;.
                 </li>
                 <li>

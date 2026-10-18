@@ -32,6 +32,7 @@ import { metaUserDataFrom, setMetaUserData, trackMetaCustomEvent, trackMetaEvent
 import { track } from "@/lib/analytics";
 import { trackEvent } from "@/lib/ga4";
 import { googleAdsLeadValue } from "@/lib/googleAdsLeadValue";
+import { googleAdsProfileVariables } from "@/lib/googleAdsProfileVariables";
 
 /**
  * Espelho na medição própria (analytics_events, tipo `ad_event`) de cada
@@ -94,6 +95,7 @@ export function etapaImovel(chaves: string | null | undefined): string | null {
 }
 
 export type LeadSignalInput = {
+  bairro?: string | null;
   objetivo?: string | null;
   areaM2?: number | null;
   chaves?: string | null;
@@ -163,7 +165,11 @@ export function reportLead(
     email: input.email,
     phoneDigits: input.phoneDigits,
     name: input.name,
-    params: { ...signals, ...googleAdsLeadValue(input.objetivo) },
+    params: {
+      ...signals,
+      ...googleAdsLeadValue(input.objetivo),
+      ...(formPath === "/orcamento" ? googleAdsProfileVariables(input) : {}),
+    },
   });
   logAdEvent("Lead", { content_category: formPath, ...signals });
 }

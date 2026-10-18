@@ -468,6 +468,8 @@ describe("sinais para públicos", () => {
           faixa_m2: "31_45",
           etapa_imovel: "com_chaves",
           mora_em_sp: true,
+          imovel_finalidade: "short_stay",
+          imovel_faixa_m2: "ate_35",
         },
       ],
     ]);
