@@ -24,6 +24,7 @@ import {
 } from "@/lib/analyticsCompare";
 import { devError } from "@/lib/devLog";
 import type { DateRange, Segment } from "./types";
+import QuoteCrmPanel from "./QuoteCrmPanel";
 
 type FunnelRow = { step: number; event_type: string; sessions: number };
 
@@ -49,6 +50,10 @@ function fmtPct(n: number): string {
 }
 
 export default function ConversionTab({ range, segments, comparePrev }: Props) {
+  return <><QuoteCrmPanel range={range} segments={segments} /><ExistingConversionFunnel range={range} segments={segments} comparePrev={comparePrev} /></>;
+}
+
+function ExistingConversionFunnel({ range, segments, comparePrev }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [rows, setRows] = useState<FunnelRow[]>([]);
