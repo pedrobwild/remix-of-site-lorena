@@ -15,6 +15,7 @@ import { devError } from "@/lib/devLog";
 import { buildContentRows } from "@/lib/contentViews";
 import type { DateRange, Segment, SegmentDim } from "./types";
 import { ALL_PATHS_LIMIT, segArgs } from "./segmentArgs";
+import ButtonClicksPanel from "./ButtonClicksPanel";
 
 type PathRow = { path: string; pageviews: number; sessions: number };
 type ProjRow = { project_slug: string; views: number; sessions: number };
@@ -229,6 +230,7 @@ export default function BehaviorTab({ range, segments, onAddSegment, onRemoveSeg
       </div>
 
       {/* Heatmap */}
+      <ButtonClicksPanel range={range} segments={segments} />
       <div className="aa-col-12 aa-card">
         <div className="aa-card__head">
           <h3 className="aa-card__title">hora × dia da semana</h3>

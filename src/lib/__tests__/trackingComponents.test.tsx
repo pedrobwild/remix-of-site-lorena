@@ -20,12 +20,14 @@ vi.mock("@/lib/ga4", async () => {
   return { ...actual, trackEvent: (...a: unknown[]) => trackEventMock(...a) };
 });
 const trackMock = vi.fn();
+const reportButtonClickMock = vi.fn();
 const logConsentAuditMock = vi.fn();
 vi.mock("@/lib/analytics", async () => {
   const actual = await vi.importActual<typeof import("@/lib/analytics")>("@/lib/analytics");
   return {
     ...actual,
     track: (...a: unknown[]) => trackMock(...a),
+    reportButtonClick: (...a: unknown[]) => reportButtonClickMock(...a),
     logConsentAudit: (...a: unknown[]) => logConsentAuditMock(...a),
   };
 });
@@ -45,6 +47,7 @@ beforeEach(() => {
   document.body.innerHTML = "";
   trackEventMock.mockReset();
   trackMock.mockReset();
+  reportButtonClickMock.mockReset();
   logConsentAuditMock.mockReset();
   document.addEventListener("click", noNavigation);
 });
@@ -78,15 +81,14 @@ describe("useCtaClickTracking", () => {
     expect(trackMock).not.toHaveBeenCalled();
   });
 
-  it("submit e data-cta: GA4 + click_cta interno", () => {
+  it("submit e data-cta delegam à medição global sem repetir GA4 nem evento interno", () => {
     renderHook(() => useCtaClickTracking("contato"));
     document.body.innerHTML = '<form><button type="submit">Enviar</button></form><a href="/faq" data-cta="faq">FAQ</a>';
     fireEvent.click(document.querySelector("button")!);
     fireEvent.click(document.querySelector("a")!);
-    expect(trackMock.mock.calls.map(([type, p]) => [type, (p as { value: { cta: string } }).value.cta])).toEqual([
-      ["click_cta", "enviar-formulario"],
-      ["click_cta", "faq"],
-    ]);
+    expect(reportButtonClickMock).toHaveBeenCalledTimes(2);
+    expect(trackMock).not.toHaveBeenCalled();
+    expect(trackEventMock).not.toHaveBeenCalled();
   });
 });
 

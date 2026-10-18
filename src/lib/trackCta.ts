@@ -15,7 +15,7 @@
  */
 import { useEffect } from "react";
 import { trackEvent } from "@/lib/ga4";
-import { contactEventForHref, track } from "@/lib/analytics";
+import { contactEventForHref, reportButtonClick, track } from "@/lib/analytics";
 import { closestElementFrom } from "@/lib/useHashRoute";
 
 export function trackCtaClick(
@@ -44,6 +44,11 @@ export function useCtaClickTracking(page: string): void {
 
       const href = el.getAttribute("href") ?? "";
       const contact = href ? contactEventForHref(href) : null;
+      // Botões e data-cta são medidos globalmente; o mesmo evento é deduplicado.
+      if (!contact && !el.dataset.track) {
+        reportButtonClick(ev);
+        return;
+      }
       let cta = el.dataset.cta;
       if (!cta) {
         if (contact) cta = contact.channel === "phone" ? "telefone" : contact.channel;
