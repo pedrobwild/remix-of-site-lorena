@@ -13,6 +13,12 @@
 .form-leads__row p { margin-top: 5px; }
 .form-leads__mobile-label { display: none; }
 .form-leads__pagination { display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 24px; }
+.form-leads--region .form-leads__header, .form-leads--region .form-leads__row { grid-template-columns: 1fr 1.2fr .5fr .6fr 1fr 1.3fr; }
+@media (max-width: 1099px) {
+  .form-leads--region .form-leads__header { display: none; }
+  .form-leads--region .form-leads__row { grid-template-columns: 1fr; gap: 12px; }
+  .form-leads--region .form-leads__mobile-label { display: block; font-size: 12px; color: var(--bw-muted); margin-bottom: 3px; }
+}
 @media (max-width: 767px) {
   .form-leads__filters { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .form-leads__header { display: none; }
