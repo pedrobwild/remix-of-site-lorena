@@ -51,6 +51,7 @@ import { Route as AdminConversoesRouteImport } from './routes/admin.conversoes'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminDiagnosticoRouteImport } from './routes/admin.diagnostico'
 import { Route as AdminFaqRouteImport } from './routes/admin.faq'
+import { Route as AdminGoogleAdsRouteImport } from './routes/admin.google-ads'
 import { Route as AdminIndexacaoRouteImport } from './routes/admin.indexacao'
 import { Route as AdminIndicacoesRouteImport } from './routes/admin.indicacoes'
 import { Route as AdminIntegracoesRouteImport } from './routes/admin.integracoes'
@@ -304,6 +305,11 @@ const AdminFaqRoute = AdminFaqRouteImport.update({
   path: '/admin/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminGoogleAdsRoute = AdminGoogleAdsRouteImport.update({
+  id: '/admin/google-ads',
+  path: '/admin/google-ads',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIndexacaoRoute = AdminIndexacaoRouteImport.update({
   id: '/admin/indexacao',
   path: '/admin/indexacao',
@@ -547,6 +553,7 @@ export interface FileRoutesByFullPath {
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/diagnostico': typeof AdminDiagnosticoRoute
   '/admin/faq': typeof AdminFaqRoute
+  '/admin/google-ads': typeof AdminGoogleAdsRoute
   '/admin/indexacao': typeof AdminIndexacaoRoute
   '/admin/indicacoes': typeof AdminIndicacoesRoute
   '/admin/integracoes': typeof AdminIntegracoesRoute
@@ -631,6 +638,7 @@ export interface FileRoutesByTo {
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/diagnostico': typeof AdminDiagnosticoRoute
   '/admin/faq': typeof AdminFaqRoute
+  '/admin/google-ads': typeof AdminGoogleAdsRoute
   '/admin/indexacao': typeof AdminIndexacaoRoute
   '/admin/indicacoes': typeof AdminIndicacoesRoute
   '/admin/integracoes': typeof AdminIntegracoesRoute
@@ -716,6 +724,7 @@ export interface FileRoutesById {
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/diagnostico': typeof AdminDiagnosticoRoute
   '/admin/faq': typeof AdminFaqRoute
+  '/admin/google-ads': typeof AdminGoogleAdsRoute
   '/admin/indexacao': typeof AdminIndexacaoRoute
   '/admin/indicacoes': typeof AdminIndicacoesRoute
   '/admin/integracoes': typeof AdminIntegracoesRoute
@@ -802,6 +811,7 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/admin/diagnostico'
     | '/admin/faq'
+    | '/admin/google-ads'
     | '/admin/indexacao'
     | '/admin/indicacoes'
     | '/admin/integracoes'
@@ -886,6 +896,7 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/admin/diagnostico'
     | '/admin/faq'
+    | '/admin/google-ads'
     | '/admin/indexacao'
     | '/admin/indicacoes'
     | '/admin/integracoes'
@@ -970,6 +981,7 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/admin/diagnostico'
     | '/admin/faq'
+    | '/admin/google-ads'
     | '/admin/indexacao'
     | '/admin/indicacoes'
     | '/admin/integracoes'
@@ -1055,6 +1067,7 @@ export interface RootRouteChildren {
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminDiagnosticoRoute: typeof AdminDiagnosticoRoute
   AdminFaqRoute: typeof AdminFaqRoute
+  AdminGoogleAdsRoute: typeof AdminGoogleAdsRoute
   AdminIndexacaoRoute: typeof AdminIndexacaoRoute
   AdminIndicacoesRoute: typeof AdminIndicacoesRoute
   AdminIntegracoesRoute: typeof AdminIntegracoesRoute
@@ -1394,6 +1407,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminFaqRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/google-ads': {
+      id: '/admin/google-ads'
+      path: '/admin/google-ads'
+      fullPath: '/admin/google-ads'
+      preLoaderRoute: typeof AdminGoogleAdsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/indexacao': {
       id: '/admin/indexacao'
       path: '/admin/indexacao'
@@ -1719,6 +1739,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminDashboardRoute: AdminDashboardRoute,
   AdminDiagnosticoRoute: AdminDiagnosticoRoute,
   AdminFaqRoute: AdminFaqRoute,
+  AdminGoogleAdsRoute: AdminGoogleAdsRoute,
   AdminIndexacaoRoute: AdminIndexacaoRoute,
   AdminIndicacoesRoute: AdminIndicacoesRoute,
   AdminIntegracoesRoute: AdminIntegracoesRoute,

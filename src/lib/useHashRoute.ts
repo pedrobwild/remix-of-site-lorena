@@ -67,6 +67,7 @@ export type Route =
   | { name: "admin-typography" }
   | { name: "admin-leads" }
   | { name: "admin-leads-formulario" }
+  | { name: "admin-google-ads" }
   | { name: "admin-indicacoes" }
   | { name: "admin-qualificacao" }
   | { name: "admin-mensagens" }
@@ -204,6 +205,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/admin/typography") return { name: "admin-typography" };
   if (path === "/admin/leads") return { name: "admin-leads" };
   if (path === "/admin/leads-formulario") return { name: "admin-leads-formulario" };
+  if (path === "/admin/google-ads") return { name: "admin-google-ads" };
   if (path === "/admin/indicacoes") return { name: "admin-indicacoes" };
   if (path === "/admin/qualificacao") return { name: "admin-qualificacao" };
   if (path === "/admin/mensagens") return { name: "admin-mensagens" };
