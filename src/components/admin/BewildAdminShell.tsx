@@ -40,6 +40,7 @@ export type BewildAdminTab =
   | "desqualificacoes"
   | "perfilleads"
   | "retornoregiao"
+  | "perfiscampanha"
   | "valorleads"
   | "retornoads"
   | "qualificacao"
@@ -66,6 +67,7 @@ const TABS: { key: BewildAdminTab; label: string; href: string; icon: typeof Lay
   { key: "desqualificacoes", label: "Desqualificações", href: "/admin/desqualificacoes", icon: ClipboardList },
   { key: "perfilleads", label: "Perfil dos leads", href: "/admin/perfil-leads", icon: ClipboardList },
   { key: "retornoregiao", label: "Retorno por região", href: "/admin/retorno-regiao", icon: ClipboardList },
+  { key: "perfiscampanha", label: "Perfis por campanha", href: "/admin/perfis-campanha", icon: ClipboardList },
   { key: "valorleads", label: "Valor dos leads", href: "/admin/valor-leads", icon: ClipboardList },
   { key: "retornoads", label: "Retorno do Google Ads", href: "/admin/retorno-google-ads", icon: ClipboardList },
   { key: "mensagens", label: "Mensagens", href: "/admin/mensagens", icon: MessagesSquare },
