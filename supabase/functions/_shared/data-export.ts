@@ -487,6 +487,11 @@ export type GoogleAdsOfflineInput = {
   leads: readonly ExportRecord[];
   /** Primeira passagem para `qualificado`, por lead (ISO). */
   qualifiedAt: ReadonlyMap<string, string>;
+  /**
+   * Contratos reais do CRM por lead (valor e data de fechamento). Ausente =
+   * CRM não respondeu: valor vazio, nunca estimado nem trocado por peso de lance.
+   */
+  contracts?: ReadonlyMap<string, readonly { total: number | null; closed_at: string | null }[]>;
   now?: Date;
 };
 
@@ -507,13 +512,23 @@ export async function buildGoogleAdsOfflineRows(input: GoogleAdsOfflineInput): P
     const windowDays = gclid ? GOOGLE_ADS_GCLID_WINDOW_DAYS : GOOGLE_ADS_HASH_WINDOW_DAYS;
     if (now - created > windowDays * DAY_MS) continue;
 
-    const conversions: { name: string; when: unknown }[] = [];
+    const conversions: { name: string; when: unknown; value?: number | null }[] = [];
     const objetivo = typeof lead.objetivo === "string" ? lead.objetivo.trim() : "";
     if (lead.status === "qualificado" && GOOGLE_ADS_INVESTOR_OBJETIVOS.includes(objetivo)) {
       conversions.push({ name: GOOGLE_ADS_QUALIFIED_CONVERSION, when: input.qualifiedAt.get(String(lead.id)) ?? lead.updated_at });
     }
     if (isTrue(lead.crm_won)) {
-      conversions.push({ name: GOOGLE_ADS_WON_CONVERSION, when: lead.crm_last_change_at ?? lead.updated_at });
+      const real = input.contracts?.get(String(lead.id)) ?? [];
+      const fallback = lead.crm_last_change_at ?? lead.updated_at;
+      if (real.length) {
+        // Um contrato = uma conversão, com valor e data informados pelo CRM.
+        for (const c of real) {
+          const value = typeof c.total === "number" && Number.isFinite(c.total) && c.total > 0 ? c.total : null;
+          conversions.push({ name: GOOGLE_ADS_WON_CONVERSION, when: c.closed_at ?? fallback, value });
+        }
+      } else {
+        conversions.push({ name: GOOGLE_ADS_WON_CONVERSION, when: fallback });
+      }
     }
     if (!conversions.length) continue;
 
