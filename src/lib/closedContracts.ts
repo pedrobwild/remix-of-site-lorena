@@ -12,6 +12,7 @@ export function selectClosedContracts(leads: ContractLead[], neighborhood = "") 
 }
 
 export type ClosedContract = ContractLead & {
+  lead_id: string;
   budget_id: string | null;
   closed_at: string | null;
   total: number | null;
@@ -23,13 +24,13 @@ export function mergeClosedContracts(leads: ContractLead[], contracts: Array<{
   closed_at: string | null; total: number | null; neighborhood: string | null;
 }> | null): ClosedContract[] {
   if (contracts === null) return selectClosedContracts(leads).map((lead) => ({
-    ...lead, budget_id: null, closed_at: null, total: null,
+    ...lead, lead_id: lead.id, budget_id: null, closed_at: null, total: null,
   }));
   const byId = new Map(leads.map((lead) => [lead.id, lead]));
   return contracts.flatMap((contract) => {
     const lead = byId.get(contract.lead_id);
     if (!lead) return [];
-    return [{ ...lead, id: contract.version_group_id, crm_won: true,
+    return [{ ...lead, lead_id: lead.id, id: contract.version_group_id, crm_won: true,
       location: contract.neighborhood ?? lead.location,
       budget_id: contract.budget_id, closed_at: contract.closed_at, total: contract.total }];
   });
