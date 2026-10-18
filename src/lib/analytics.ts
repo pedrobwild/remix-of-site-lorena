@@ -24,6 +24,8 @@ import { CONSENT_VERSION, isConsentAccepted, isFramed, onConsentChange } from "@
 import { closestElementFrom } from "@/lib/useHashRoute";
 import { PRIVACY_VISIT_KEY, privacyVisitState } from "@/lib/privacyMeasurement";
 import { interestNeighborhood, VISIT_PATHS } from "@/lib/neighborhoodVisits";
+import { BUTTON_CLICK_SELECTOR, buttonClickDetails, claimButtonClick } from "@/lib/buttonClicks";
+import { trackEvent } from "@/lib/ga4";
 
 type EventType =
   | "pageview"
@@ -673,11 +675,26 @@ export function contactEventForHref(
   return null;
 }
 
+/** Única medição de botão, compartilhada com hooks locais, por evento DOM. */
+export function reportButtonClick(e: MouseEvent): void {
+  try {
+    if (!isConsentAccepted() || isDntEnabled() || isAdminContext()) return;
+    const element = closestElementFrom(e.target)?.closest<HTMLElement>(BUTTON_CLICK_SELECTOR);
+    if (!element || element.dataset.track || contactEventForHref(element.getAttribute("href") || "")) return;
+    const details = buttonClickDetails(element);
+    if (!details || !claimButtonClick(e)) return;
+    const value = { page: window.location.pathname, ...details };
+    track("click_cta", { value });
+    trackEvent("cta_click", value);
+  } catch { /* medição nunca interrompe o clique */ }
+}
+
 function onClick(e: MouseEvent) {
   try {
+    reportButtonClick(e);
     // `closestElementFrom`: o target pode ser o próprio `document` ou um nó
     // de texto (ver FE-01) — `closest` direto lançava.
-    const link = closestElementFrom(e.target)?.closest<HTMLElement>("a, button");
+    const link = closestElementFrom(e.target)?.closest<HTMLElement>(`a, ${BUTTON_CLICK_SELECTOR}`);
     if (!link) return;
 
     const trackAttr = link.dataset.track;
