@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { RefreshCw } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import GoogleAdsQualityPanel from "@/components/admin/GoogleAdsQualityPanel";
+import DiscardedLeadsList from "@/components/admin/DiscardedLeadsList";
 import { Button } from "@/guia/components/ui/button";
 import { getGoogleAdsServiceReport } from "@/lib/googleAdsServiceReport.functions";
 import "@/styles/form-leads.css";
@@ -19,7 +20,7 @@ export default function GoogleAdsDisqualificationsPage() {
   return <BewildAdminShell active="desqualificacoes" title="Desqualificações · Google Ads" actions={<Button variant="outline" className="min-h-11" disabled={report.isFetching} onClick={() => void report.refetch()}><RefreshCw aria-hidden />Atualizar</Button>}>
     <section className="form-leads" aria-label="Desqualificações de leads do Google Ads">
       <div className="form-leads__filters"><label>Período<select value={days} onChange={event => setDays(Number(event.target.value))}>{[7, 30, 90].map(value => <option key={value} value={value}>{value} dias</option>)}</select></label></div>
-      {report.isPending ? <p role="status">Carregando desqualificações…</p> : report.isError ? <p role="alert">Não foi possível carregar as desqualificações. Tente atualizar.</p> : report.data && <GoogleAdsQualityPanel leads={report.data.qualityLeads} />}
+      {report.isPending ? <p role="status">Carregando desqualificações…</p> : report.isError ? <p role="alert">Não foi possível carregar as desqualificações. Tente atualizar.</p> : report.data && <><GoogleAdsQualityPanel leads={report.data.qualityLeads} /><DiscardedLeadsList leads={report.data.qualityLeads} /></>}
     </section>
   </BewildAdminShell>;
 }
