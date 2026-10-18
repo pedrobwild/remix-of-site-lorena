@@ -36,6 +36,7 @@ export type BewildAdminTab =
   | "overview"
   | "leads"
   | "formulario"
+  | "googleads"
   | "qualificacao"
   | "diagnostico"
   | "mensagens"
@@ -56,6 +57,7 @@ const TABS: { key: BewildAdminTab; label: string; href: string; icon: typeof Lay
   { key: "overview", label: "Visão geral", href: "/admin/dashboard", icon: LayoutDashboard },
   { key: "leads", label: "Leads", href: "/admin/leads", icon: Inbox },
   { key: "formulario", label: "Leads do formulário", href: "/admin/leads-formulario", icon: ClipboardList },
+  { key: "googleads", label: "Google Ads por serviço", href: "/admin/google-ads", icon: ClipboardList },
   { key: "mensagens", label: "Mensagens", href: "/admin/mensagens", icon: MessagesSquare },
   { key: "diagnostico", label: "Orçamentos", href: "/admin/diagnostico", icon: ClipboardList },
   { key: "projetos", label: "Projetos", href: "/admin/projetos", icon: FolderKanban },

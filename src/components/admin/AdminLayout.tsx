@@ -32,6 +32,7 @@ type ActiveKey =
   | "bewild"
   | "leads"
   | "formulario"
+  | "googleads"
   | "qualificacao"
   | "mensagens"
   | "diagnostico"
@@ -69,6 +70,7 @@ const NAV: { key: ActiveKey; label: string; href: string; icon: typeof LayoutDas
   { key: "analytics", label: "Analytics", href: routes.adminAnalytics, icon: BarChart3 },
   { key: "leads", label: "Leads", href: routes.adminLeads, icon: Inbox },
   { key: "formulario", label: "Leads do formulário", href: "/admin/leads-formulario", icon: ClipboardList },
+  { key: "googleads", label: "Google Ads por serviço", href: "/admin/google-ads", icon: ClipboardList },
   { key: "mensagens", label: "Mensagens", href: routes.adminMensagens, icon: MessagesSquare },
   { key: "diagnostico", label: "Orçamentos", href: routes.adminDiagnostico, icon: ClipboardList },
   { key: "indicacoes", label: "Indicações", href: routes.adminIndicacoes, icon: Handshake },
