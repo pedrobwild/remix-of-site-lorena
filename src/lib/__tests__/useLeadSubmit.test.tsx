@@ -205,6 +205,7 @@ describe("useLeadSubmit", () => {
       email: "ana@exemplo.com",
       phoneDigits: "11912345678",
       name: "Ana",
+      bairro: "Pinheiros",
       objetivo: "Short stay",
       areaM2: 32.5,
       chaves: null,
