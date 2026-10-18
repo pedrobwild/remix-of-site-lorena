@@ -24,7 +24,8 @@ export const getLeadValueReport = createServerFn({ method: "POST" })
       const { readCrmContracts } = await import("@/lib/crmContracts.server");
       const contracts = await readCrmContracts(key, leads.map(l => l.id));
       return { available: true as const, rows: summarizeLeadValues(leads, contracts), checkedAt: new Date().toISOString() };
-    } catch {
+    } catch (error) {
+      console.error("lead-values: leitura de contratos falhou", error instanceof Error ? error.message : "erro");
       return { available: false as const, rows: [], checkedAt: new Date().toISOString() };
     }
   });
