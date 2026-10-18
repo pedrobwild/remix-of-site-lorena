@@ -55,6 +55,7 @@ import { Route as AdminIndexacaoRouteImport } from './routes/admin.indexacao'
 import { Route as AdminIndicacoesRouteImport } from './routes/admin.indicacoes'
 import { Route as AdminIntegracoesRouteImport } from './routes/admin.integracoes'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
+import { Route as AdminLeadsFormularioRouteImport } from './routes/admin.leads-formulario'
 import { Route as AdminLgpdRouteImport } from './routes/admin.lgpd'
 import { Route as AdminLicencasRouteImport } from './routes/admin.licencas'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
@@ -323,6 +324,11 @@ const AdminLeadsRoute = AdminLeadsRouteImport.update({
   path: '/admin/leads',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLeadsFormularioRoute = AdminLeadsFormularioRouteImport.update({
+  id: '/admin/leads-formulario',
+  path: '/admin/leads-formulario',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminLgpdRoute = AdminLgpdRouteImport.update({
   id: '/admin/lgpd',
   path: '/admin/lgpd',
@@ -545,6 +551,7 @@ export interface FileRoutesByFullPath {
   '/admin/indicacoes': typeof AdminIndicacoesRoute
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/leads-formulario': typeof AdminLeadsFormularioRoute
   '/admin/lgpd': typeof AdminLgpdRoute
   '/admin/licencas': typeof AdminLicencasRoute
   '/admin/login': typeof AdminLoginRoute
@@ -628,6 +635,7 @@ export interface FileRoutesByTo {
   '/admin/indicacoes': typeof AdminIndicacoesRoute
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/leads-formulario': typeof AdminLeadsFormularioRoute
   '/admin/lgpd': typeof AdminLgpdRoute
   '/admin/licencas': typeof AdminLicencasRoute
   '/admin/login': typeof AdminLoginRoute
@@ -712,6 +720,7 @@ export interface FileRoutesById {
   '/admin/indicacoes': typeof AdminIndicacoesRoute
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/leads-formulario': typeof AdminLeadsFormularioRoute
   '/admin/lgpd': typeof AdminLgpdRoute
   '/admin/licencas': typeof AdminLicencasRoute
   '/admin/login': typeof AdminLoginRoute
@@ -797,6 +806,7 @@ export interface FileRouteTypes {
     | '/admin/indicacoes'
     | '/admin/integracoes'
     | '/admin/leads'
+    | '/admin/leads-formulario'
     | '/admin/lgpd'
     | '/admin/licencas'
     | '/admin/login'
@@ -880,6 +890,7 @@ export interface FileRouteTypes {
     | '/admin/indicacoes'
     | '/admin/integracoes'
     | '/admin/leads'
+    | '/admin/leads-formulario'
     | '/admin/lgpd'
     | '/admin/licencas'
     | '/admin/login'
@@ -963,6 +974,7 @@ export interface FileRouteTypes {
     | '/admin/indicacoes'
     | '/admin/integracoes'
     | '/admin/leads'
+    | '/admin/leads-formulario'
     | '/admin/lgpd'
     | '/admin/licencas'
     | '/admin/login'
@@ -1047,6 +1059,7 @@ export interface RootRouteChildren {
   AdminIndicacoesRoute: typeof AdminIndicacoesRoute
   AdminIntegracoesRoute: typeof AdminIntegracoesRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
+  AdminLeadsFormularioRoute: typeof AdminLeadsFormularioRoute
   AdminLgpdRoute: typeof AdminLgpdRoute
   AdminLicencasRoute: typeof AdminLicencasRoute
   AdminLoginRoute: typeof AdminLoginRoute
@@ -1409,6 +1422,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLeadsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/leads-formulario': {
+      id: '/admin/leads-formulario'
+      path: '/admin/leads-formulario'
+      fullPath: '/admin/leads-formulario'
+      preLoaderRoute: typeof AdminLeadsFormularioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/lgpd': {
       id: '/admin/lgpd'
       path: '/admin/lgpd'
@@ -1703,6 +1723,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIndicacoesRoute: AdminIndicacoesRoute,
   AdminIntegracoesRoute: AdminIntegracoesRoute,
   AdminLeadsRoute: AdminLeadsRoute,
+  AdminLeadsFormularioRoute: AdminLeadsFormularioRoute,
   AdminLgpdRoute: AdminLgpdRoute,
   AdminLicencasRoute: AdminLicencasRoute,
   AdminLoginRoute: AdminLoginRoute,
