@@ -12,6 +12,7 @@ import type { LeadObjetivo } from "@/lib/leadForm";
 import { CONTACT } from "@/components/landing/content";
 import { CLIENTES_SHORT_STAY_PCT, CONTRATOS_ANALISADOS } from "@/content/provas";
 import { CUSTO_M2_MEDIANO, ORCAMENTO_MEDIANO } from "@/content/baseCusto";
+export { topoVarianteDaBusca, type TopoVariante } from "@/lib/googleAdsVariant";
 
 export const CANONICAL = "/orcamento";
 
@@ -41,24 +42,6 @@ export const TOPO_VARIANTES = {
     subtitulo: "Projeto, obra, marcenaria, mobília e eletros: o studio sai pronto para fotografar e anunciar. A gestão do Airbnb também pode ficar com a Bewild, ou com quem você escolher.",
   },
 } as const;
-
-export type TopoVariante = keyof typeof TOPO_VARIANTES;
-
-/** O roteador normaliza repetições como listas; a busca crua usa get. IDs continuam texto. */
-export function topoVarianteDaBusca(search: string | Record<string, unknown>): TopoVariante {
-  const first = (value: unknown): string => {
-    const v = Array.isArray(value) ? value[0] : value;
-    return typeof v === "string" || typeof v === "number" ? String(v) : "";
-  };
-  const params = typeof search === "string" ? new URLSearchParams(search) : null;
-  const content = params ? params.get("utm_content") ?? "" : first(typeof search === "object" ? search.utm_content : null);
-  const campaign = params ? params.get("utm_campaign") ?? "" : first(typeof search === "object" ? search.utm_campaign : null);
-  if (content.endsWith("investidor") || content.startsWith("airbnb") || content.startsWith("aluguel") || campaign === "sea_investidor") return "investidor";
-  if (content === "studio-ape-pequeno") return "studio";
-  if (content === "arquitetura-reforma") return "arquitetura";
-  if (content === "custo-orcamento") return "custo";
-  return "padrao";
-}
 
 /** Formulário em etapas: rótulo curto (barra de progresso) e pergunta (H2). */
 export const ETAPAS: ReadonlyArray<{ rotulo: string; pergunta: string }> = [
