@@ -17,6 +17,7 @@
 
 import "jsr:@supabase/functions-js@2/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.45.4";
+import { telemetryUrl, telemetryValue, telemetryText } from "../_shared/telemetry-privacy.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -89,7 +90,7 @@ function extractClientIp(req: Request): string {
   const edge = req.headers.get("cf-connecting-ip") ?? req.headers.get("x-real-ip");
   if (edge) return edge.trim();
   const xff = req.headers.get("x-forwarded-for");
-  return (xff ? xff.split(",")[0]!.trim() : "") || "unknown";
+  return (xff?.split(",")[0]?.trim() ?? "") || "unknown";
 }
 
 /** Teto do corpo cru e do campo livre `value` (a service role passa por cima das policies). */
@@ -100,7 +101,7 @@ const MAX_VALUE_BYTES = 2000;
 function sanitizeValue(v: unknown): Record<string, unknown> | null {
   if (!v || typeof v !== "object" || Array.isArray(v)) return null;
   try {
-    return JSON.stringify(v).length <= MAX_VALUE_BYTES ? (v as Record<string, unknown>) : null;
+    return JSON.stringify(v).length <= MAX_VALUE_BYTES ? telemetryValue(v) : null;
   } catch {
     return null;
   }
@@ -125,7 +126,10 @@ function extractCountry(req: Request): string | null {
 
 type StringOrNull = string | null;
 function str(v: unknown): StringOrNull {
-  return typeof v === "string" && v.length > 0 ? v.slice(0, 1024) : null;
+  return typeof v === "string" && v.length > 0 ? telemetryText(v).slice(0, 1024) : null;
+}
+function urlField(v: unknown, originOnly = false): StringOrNull {
+  return typeof v === "string" && v ? telemetryUrl(v, originOnly).slice(0, 1024) || null : null;
 }
 function num(v: unknown): number | null {
   return typeof v === "number" && Number.isFinite(v) ? v : null;
@@ -180,16 +184,16 @@ Deno.serve(async (req) => {
   const row = consent
     ? {
         event_type,
-        path: str(body.path),
+        path: urlField(body.path),
         value: sanitizeValue(body.value),
       }
     : {
         event_type,
         session_id: str(body.session_id),
         visitor_id: str(body.visitor_id),
-        path: str(body.path),
-        landing_path: str(body.landing_path),
-        referrer: str(body.referrer),
+        path: urlField(body.path),
+        landing_path: urlField(body.landing_path),
+        referrer: urlField(body.referrer, true),
         referrer_host: str(body.referrer_host),
         user_agent: ua ? ua.slice(0, 1024) : null,
         device: str(body.device),
