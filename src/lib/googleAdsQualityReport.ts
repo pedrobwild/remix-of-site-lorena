@@ -1,14 +1,14 @@
 import type { ServiceLead } from "@/lib/googleAdsServiceReport";
 
-export type QualityLead = ServiceLead & { status: string; crm_synced_at: string | null; location: string | null; area_m2: number | null; chaves: string | null; property_age?: string | null };
+export type QualityLead = ServiceLead & { status: string; crm_synced_at: string | null; location: string | null; area_m2: number | null; chaves: string | null; property_age?: string | null; attributedToGoogleAds?: boolean; form_path?: string | null };
 export type QualityDimension = "objetivo" | "bairro" | "metragem" | "chaves" | "idade";
 export const QUALITY_DIMENSIONS: Record<QualityDimension, string> = { objetivo: "Finalidade", bairro: "Bairro/local", metragem: "Metragem", chaves: "Situação das chaves", idade: "Idade do imóvel" };
 export type QualityRow = { dimension: QualityDimension; value: string; leads: number; disqualified: number; other: number; unavailable: number; rate: number | null };
 const missing = "Não informado";
 const text = (value: string | null | undefined) => value?.trim().replace(/\s+/g, " ") || missing;
 const paid = /^(cpc|ppc|paid|paid_search|paidsearch)$/i;
-export function isQualityAdsLead(lead: ServiceLead) {
-  return !!lead.gclid || (lead.utm_source?.trim().toLowerCase() === "google" && paid.test(lead.utm_medium?.trim() ?? ""));
+export function isQualityAdsLead(lead: ServiceLead & { attributedToGoogleAds?: boolean }) {
+  return lead.attributedToGoogleAds === true || !!lead.gclid || (lead.utm_source?.trim().toLowerCase() === "google" && paid.test(lead.utm_medium?.trim() ?? ""));
 }
 
 /** Coorte de pedidos atribuídos; sem associação com visitas anônimas. */

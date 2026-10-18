@@ -30,8 +30,8 @@ export const getGoogleAdsServiceReport = createServerFn({ method: "POST" })
     const qualityLeads: QualityLead[] = [];
     for (let offset = 0; ; offset += 1000) {
       const result = await context.supabase.from("leads")
-        .select("id,landing_path,objetivo,utm_source,utm_medium,utm_campaign,utm_content,gclid,status,crm_synced_at,location,area_m2,chaves")
-        .eq("form_path", "/orcamento").gte("created_at", data.from).lte("created_at", data.until)
+        .select("id,form_path,landing_path,objetivo,utm_source,utm_medium,utm_campaign,utm_content,gclid,status,crm_synced_at,location,area_m2,chaves")
+        .gte("created_at", data.from).lte("created_at", data.until)
         .order("created_at").order("id").range(offset, offset + 999);
       if (result.error) throw new Error("Não foi possível carregar os pedidos.");
       qualityLeads.push(...(result.data ?? []));
@@ -54,5 +54,5 @@ export const getGoogleAdsServiceReport = createServerFn({ method: "POST" })
         } catch { /* Leitura falhou: indisponível, nunca zero confirmado. */ }
       }
     }
-    return { rows: summarizeServiceAds(clicks, leads, confirmed, checked), qualityLeads: qualityLeads.filter(isQualityAdsLead).map(lead => ({ ...lead, gclid: null })), checkedAt: new Date().toISOString() };
+    return { rows: summarizeServiceAds(clicks, leads, confirmed, checked), qualityLeads: qualityLeads.filter(lead => lead.form_path === "/orcamento" && isQualityAdsLead(lead)).map(lead => ({ ...lead, gclid: null, attributedToGoogleAds: true })), checkedAt: new Date().toISOString() };
   });
