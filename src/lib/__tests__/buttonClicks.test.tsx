@@ -56,6 +56,18 @@ describe("todos os botões públicos", () => {
     expect(rows()).toHaveLength(1); expect(gtag).toHaveBeenCalledTimes(1);
     click(); expect(rows()).toHaveLength(2); expect(gtag).toHaveBeenCalledTimes(2);
   });
+  it.each([
+    ["/reforma-de-studio-sao-paulo", "servico-reforma-studio-sp-topo"],
+    ["/reforma-de-apartamento-sao-paulo", "servico-reforma-apartamento-sp-topo"],
+  ])("preserva campanha e identifica o pedido em %s", (path, cta) => {
+    window.history.replaceState({}, "", `${path}?utm_source=google&utm_medium=cpc&utm_content=studio-ape-pequeno`);
+    start(); renderHook(() => useCtaClickTracking(path));
+    document.body.innerHTML = `<a class="bwa-button" href="/orcamento" data-cta="${cta}">Peça seu orçamento</a>`;
+    click();
+    expect(rows()).toHaveLength(1);
+    expect(rows()[0]).toMatchObject({ path, utm_source: "google", utm_medium: "cpc", utm_content: "studio-ape-pequeno", value: { cta } });
+    expect(document.querySelector("a")?.getAttribute("href")).toBe("/orcamento");
+  });
   it.each(["sem aceite", "recusa", "admin", "DNT"])("não mede: %s", reason => {
     if (reason !== "sem aceite") start(); else stop = initAnalytics();
     if (reason === "recusa") setConsent("declined");
