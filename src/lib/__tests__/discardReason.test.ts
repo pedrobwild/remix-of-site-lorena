@@ -5,8 +5,8 @@ describe("motivo de descarte", () => {
   it("mostra só o texto registrado pelo CRM", () => {
     expect(discardReasonLabel("Fora da área atendida")).toBe("Fora da área atendida");
   });
-  it("sem registro mostra 'Não enviado pelo CRM'", () => {
-    expect(discardReasonLabel(null)).toBe("Não enviado pelo CRM");
-    expect(discardReasonLabel("  ")).toBe("Não enviado pelo CRM");
+  it("sem registro mantém o aviso de envio pendente", () => {
+    expect(discardReasonLabel(null)).toBe("Aguardando envio");
+    expect(discardReasonLabel("  ")).toBe("Aguardando envio");
   });
 });
