@@ -10,7 +10,8 @@
   --pt-hair:var(--bwa-line,rgba(23,27,34,.17));
   --pt-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --pt-measure:880px;
-  background:#FAF8F4;color:#1A2332;
+  --pt-paper:#FAF8F4;
+  background:var(--pt-paper);color:#1A2332;
   font-family:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   -webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:60vh;
 }
@@ -76,21 +77,35 @@
    (src/lib/articleTables.ts). A REGIÃO tem a largura da coluna de texto e rola
    para o lado; a TABELA mantém 520 px de largura mínima de leitura. Antes o
    `min-width` ficava na própria tabela com `display:block`: ela estourava a
-   coluna e o `overflow-x:hidden` da página cortava as últimas colunas.
-   Grade de uma célula: a tabela e a sombra de "tem mais para o lado" ocupam o
-   mesmo lugar, e a sombra fica presa na borda direita da região. */
-.pt-body .pt-table-wrap{display:grid;overflow-x:auto;margin:26px 0;container-type:scroll-state}
-.pt-body .pt-table-wrap>table{grid-area:1/1;display:table;min-width:520px;margin:0}
-.pt-body .pt-table-wrap::after{content:"";grid-area:1/1;justify-self:end;position:sticky;right:0;width:28px;pointer-events:none;opacity:0;transition:opacity .2s ease;background:linear-gradient(to left,rgba(11,35,66,.16),rgba(11,35,66,0))}
-/* A sombra só aparece enquanto há coluna escondida à direita. Onde o navegador
-   ainda não lê o estado de rolagem (Safari, Firefox) ela não aparece — a
-   coluna cortada na borda já indica a rolagem. */
-@container scroll-state(scrollable: right){.pt-body .pt-table-wrap::after{opacity:1}}
+   coluna e o `overflow-x:hidden` da página cortava as últimas colunas. */
+.pt-body .pt-table-wrap{display:block;overflow-x:auto;margin:26px 0;
+  /* Sombra de "tem mais para o lado" (19/10/2026), em qualquer navegador e sem JS:
+     as duas camadas `scroll` são sombras presas às bordas da região; as duas
+     `local` são faixas da cor do papel presas às pontas da tabela, que cobrem a
+     sombra quando aquela ponta está à vista. Resultado: sombra à direita só
+     enquanto há coluna escondida à direita, e à esquerda depois que se rola.
+     Substitui o `@container scroll-state()` no ::after da própria região, que
+     nunca acendia (a região não consulta o próprio estado) e só existe no
+     Chrome. Pede células sem fundo próprio — as do artigo são transparentes. */
+  background:
+    linear-gradient(to right,var(--pt-paper) 30%,rgb(250 248 244/0)) left center/40px 100% no-repeat local,
+    linear-gradient(to left,var(--pt-paper) 30%,rgb(250 248 244/0)) right center/40px 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%,rgb(17 53 91/.28),rgb(17 53 91/0)) left center/18px 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%,rgb(17 53 91/.28),rgb(17 53 91/0)) right center/18px 100% no-repeat scroll,
+    var(--pt-paper)}
+.pt-body .pt-table-wrap>table{display:table;min-width:520px;margin:0}
+/* Duas colunas (rótulo e valor) cabem na coluna do celular: sem largura mínima, sem rolagem. */
+.pt-body .pt-table-wrap>table:not(:has(tr>:nth-child(3))){min-width:0}
 .pt-body .pt-table-wrap:focus-visible{outline:2px solid #11355B;outline-offset:2px}
+/* Bloco = dica + região. É ele que se mede: a dica só aparece quando a tabela
+   tem 3 colunas ou mais e o bloco é mais estreito que os 520 px da tabela. */
+.pt-body .pt-table{margin:26px 0;container-type:inline-size}
+.pt-body .pt-table>.pt-table-wrap{margin:0}
+.pt-body .pt-table-hint{display:none;margin:0 0 8px;font-family:var(--pt-mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#5A6472}
+@container (max-width:519.98px){.pt-body .pt-table:has(>.pt-table-wrap>table tr>:nth-child(3))>.pt-table-hint{display:block}}
 /* Tabela sem a região (HTML antigo): encolhe para caber, sem estourar. */
 .pt-body table{display:block;overflow-x:auto}
 @media (min-width:700px){.pt-body table,.pt-body .pt-table-wrap>table{display:table;min-width:0;overflow-x:visible}}
-@media (prefers-reduced-motion:reduce){.pt-body .pt-table-wrap::after{transition:none}}
 .pt-body code{font-family:var(--pt-mono);font-size:.9em;background:#F3EEE5;padding:2px 6px}
 
 /* FAQ do artigo */

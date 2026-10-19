@@ -15,8 +15,15 @@
  * mesmo custando uma parada do Tab a mais onde a tabela cabe inteira).
  *
  * O nome é neutro — "Tabela 1", "Tabela 2"… na ordem do artigo — porque vale
- * em qualquer largura: em tela larga não há nada para rolar. Quem enxerga tem
- * a sombra na borda direita enquanto houver coluna escondida.
+ * em qualquer largura: em tela larga não há nada para rolar.
+ *
+ * Indicação de rolagem (19/10/2026): a região fica num bloco `.pt-table` com
+ * uma dica em texto antes dela ("Deslize para o lado…"). O CSS só mostra a
+ * dica quando a tabela tem 3 colunas ou mais e o bloco é mais estreito que a
+ * largura mínima da tabela — ou seja, quando há mesmo o que rolar. A dica é
+ * `aria-hidden`: quem usa leitor de tela navega a tabela pelas células, e a
+ * região já é anunciada e alcançável pelo teclado. A sombra nas bordas sai do
+ * fundo da própria região (ver src/styles/post.css), em qualquer navegador.
  *
  * É aplicado depois do sanitizador (que removeria `tabindex`), nos dois pontos
  * em que o corpo vira HTML: o loader (src/lib/contentLoaders.ts) e a reserva
@@ -25,10 +32,19 @@
 /** Classe da região rolável — também usada no JSX das páginas com tabela fixa (/privacidade, /preferencias-de-cookies). */
 export const TABLE_REGION_CLASS = "pt-table-wrap";
 
-/** Abertura da região da n-ésima tabela do artigo (n começa em 1). */
+/** Bloco que agrupa a dica e a região (é ele que o CSS mede para decidir se mostra a dica). */
+export const TABLE_BLOCK_CLASS = "pt-table";
+/** Dica em texto para quem enxerga; só aparece quando a tabela não cabe (CSS). */
+export const TABLE_HINT_CLASS = "pt-table-hint";
+export const TABLE_HINT_TEXT = "Deslize para o lado para ver todas as colunas →";
+
+/** Abertura do bloco da n-ésima tabela do artigo (n começa em 1): bloco, dica e região. */
 export const tableWrapOpen = (n: number): string =>
+  `<div class="${TABLE_BLOCK_CLASS}">` +
+  `<p class="${TABLE_HINT_CLASS}" aria-hidden="true">${TABLE_HINT_TEXT}</p>` +
   `<div class="${TABLE_REGION_CLASS}" tabindex="0" role="region" aria-label="Tabela ${n}">`;
-const TABLE_WRAP_CLOSE = "</div>";
+/** Fecha a região e o bloco. */
+export const TABLE_WRAP_CLOSE = "</div></div>";
 
 /**
  * Qualquer tag, com os valores entre aspas lidos inteiros: um `<table` ou um
@@ -63,6 +79,6 @@ export function wrapArticleTables(html: string): string {
       }
     }
   }
-  // Tabela sem fechamento (HTML truncado): fecha a região para não engolir o resto.
+  // Tabela sem fechamento (HTML truncado): fecha a região e o bloco para não engolir o resto.
   return out + html.slice(last) + (depth > 0 ? TABLE_WRAP_CLOSE : "");
 }
