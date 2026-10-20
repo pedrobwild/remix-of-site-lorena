@@ -15,6 +15,7 @@
   --bw-sky: #2F5E85;
   --bw-sand: #F3EEE5;         /* bg-alt */
   --bw-paper: #FAF8F4;        /* bg */
+  --bw-on-action: #fff;
   --bw-ink: #0B2342;
   --bw-muted: #5A6472;
   --bw-line: #E5DFD2;
@@ -377,6 +378,21 @@
   color: #fff;
 }
 .bw-admin__btn--primary:hover { background: #2b79a6; border-color: #2b79a6; }
+.bw-admin .bw-admin__qualification-btn {
+  background: transparent;
+  color: var(--bw-navy);
+  border-color: var(--bw-line-strong);
+}
+.bw-admin .bw-admin__qualification-btn[aria-pressed="true"] {
+  background: var(--bw-navy);
+  border-color: var(--bw-navy);
+  color: var(--bw-on-action);
+  opacity: 1;
+}
+.bw-admin .bw-admin__qualification-btn:focus-visible {
+  outline: 2px solid var(--bw-navy);
+  outline-offset: 3px;
+}
 .bw-admin__btn--danger {
   color: #B0303A;
   border-color: rgba(176, 48, 58, .25);

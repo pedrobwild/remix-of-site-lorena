@@ -46,7 +46,7 @@ const STATUS_LABEL: Record<LeadStatus, string> = {
   novo: "Novo",
   contatado: "Contatado",
   qualificado: "Qualificado",
-  descartado: "Descartado",
+  descartado: "Não qualificado",
 };
 
 const dataBR = (iso: string) => new Date(iso).toLocaleDateString("pt-BR");
