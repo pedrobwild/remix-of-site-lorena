@@ -58,7 +58,7 @@ const STATUS_OPTIONS: { value: "all" | LeadStatus; label: string }[] = [
   { value: "novo", label: "Novos" },
   { value: "contatado", label: "Contatados" },
   { value: "qualificado", label: "Qualificados" },
-  { value: "descartado", label: "Descartados" },
+  { value: "descartado", label: "Não qualificados" },
 ];
 
 type Counts = Record<LeadStatus, number>;

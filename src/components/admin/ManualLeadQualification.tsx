@@ -25,9 +25,10 @@ export function ManualLeadQualification({ leadId, name, value, onSaved }: {
   }
   return <div className="grid gap-2 mt-2" aria-label={`Qualificação manual de ${name ?? "lead"}`} aria-busy={busy}>
     <span className="muted text-xs">{value ? "Qualificação manual" : "Qualificação automática"}</span>
-    <div className="flex flex-wrap gap-2">
-      <Button size="sm" variant={value === "qualificado" ? "default" : "outline"} className="min-h-11" disabled={busy || value === "qualificado"} aria-pressed={value === "qualificado"} onClick={() => void qualify("qualificado")}><Check aria-hidden />Qualificado</Button>
-      <Button size="sm" variant={value === "descartado" ? "default" : "outline"} className="min-h-11" disabled={busy || value === "descartado"} aria-pressed={value === "descartado"} onClick={() => void qualify("descartado")}><X aria-hidden />Não qualificado</Button>
+    <div className="flex flex-wrap items-center gap-2">
+      <Button size="sm" variant="outline" className="min-h-11 bw-admin__qualification-btn" disabled={busy || value === "qualificado"} aria-pressed={value === "qualificado"} onClick={() => void qualify("qualificado")}><Check aria-hidden />Qualificado</Button>
+      <Button size="sm" variant="outline" className="min-h-11 bw-admin__qualification-btn" disabled={busy || value === "descartado"} aria-pressed={value === "descartado"} onClick={() => void qualify("descartado")}><X aria-hidden />Não qualificado</Button>
+      {(value === "qualificado" || value === "descartado") && <span className="text-xs" aria-live="polite">Marcado: {value === "qualificado" ? "Qualificado" : "Não qualificado"}</span>}
     </div>
     {message && <span className="text-xs" role={message.error ? "alert" : "status"}>{message.text}</span>}
   </div>;

@@ -56,7 +56,7 @@ const STATUS_OPTIONS: { value: "all" | LeadStatus; label: string }[] = [
   { value: "novo", label: "Novos" },
   { value: "contatado", label: "Em andamento" },
   { value: "qualificado", label: "Qualificados" },
-  { value: "descartado", label: "Descartados" },
+  { value: "descartado", label: "Não qualificados" },
 ];
 
 const SELECT_COLS =

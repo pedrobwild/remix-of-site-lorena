@@ -47,7 +47,7 @@ const STATUS_OPTIONS: { value: "all" | LeadStatus; label: string }[] = [
   { value: "novo", label: "Novas" },
   { value: "contatado", label: "Contatadas" },
   { value: "qualificado", label: "Qualificadas" },
-  { value: "descartado", label: "Descartadas" },
+  { value: "descartado", label: "Não qualificados" },
 ];
 
 const SELECT_COLS = "id, name, whatsapp, email, message, form_path, landing_path, status, created_at, crm_stage_name, crm_won, crm_lost, crm_deal_count";
