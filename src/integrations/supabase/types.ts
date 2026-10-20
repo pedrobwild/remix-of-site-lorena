@@ -731,6 +731,7 @@ export type Database = {
           lead_source: string | null
           lives_in_sp: boolean | null
           location: string | null
+          manual_qualification: string | null
           message: string | null
           meta_lead_sent_at: string | null
           meta_qualified_sent_at: string | null
@@ -777,6 +778,7 @@ export type Database = {
           lead_source?: string | null
           lives_in_sp?: boolean | null
           location?: string | null
+          manual_qualification?: string | null
           message?: string | null
           meta_lead_sent_at?: string | null
           meta_qualified_sent_at?: string | null
@@ -823,6 +825,7 @@ export type Database = {
           lead_source?: string | null
           lives_in_sp?: boolean | null
           location?: string | null
+          manual_qualification?: string | null
           message?: string | null
           meta_lead_sent_at?: string | null
           meta_qualified_sent_at?: string | null
@@ -2089,6 +2092,10 @@ export type Database = {
       }
       resolve_404_redirect: { Args: { p_path: string }; Returns: string }
       revoke_export_key: { Args: { p_id: string }; Returns: undefined }
+      set_manual_lead_qualification: {
+        Args: { p_lead_id: string; p_status: string }
+        Returns: string
+      }
       top_projects: {
         Args: { p_days?: number; p_limit?: number }
         Returns: {
