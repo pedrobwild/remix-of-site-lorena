@@ -25,6 +25,7 @@ import {
   type ExportRecord,
   type ExportRequest,
   buildGoogleAdsOfflineRows,
+  canExportGoogleAdsLead,
   exportFilename,
   GOOGLE_ADS_GCLID_WINDOW_DAYS,
   GOOGLE_ADS_OFFLINE_SELECT,
@@ -162,6 +163,7 @@ async function readGoogleAdsOffline(db: SupabaseClient, r: ExportRequest): Promi
     db
       .from("leads")
       .select(GOOGLE_ADS_OFFLINE_SELECT)
+      .eq("consent_marketing", true)
       .or("status.eq.qualificado,crm_won.eq.true")
       .gte("created_at", since)
       .lt("created_at", r.until)
@@ -171,8 +173,15 @@ async function readGoogleAdsOffline(db: SupabaseClient, r: ExportRequest): Promi
   );
   if (leads.error) return leads;
 
+  // O esquema atual guarda apenas consent_marketing, sem evidência de aceite
+  // nem retirada vinculada ao lead. Nenhum desses registros pode ser enviado.
+  // O builder também exige evidência persistida na captura e no envio; nunca
+  // usar o flag legado como substituto, nem reexportar eventos antes bloqueados.
+  const consentedLeads = leads.rows.filter((lead) => canExportGoogleAdsLead(lead, undefined, Date.now()));
+  if (!consentedLeads.length) return { rows: [], error: null };
+
   const qualifiedAt = new Map<string, string>();
-  const ids = leads.rows.filter((l) => l.status === "qualificado").map((l) => String(l.id));
+  const ids = consentedLeads.filter((l) => l.status === "qualificado").map((l) => String(l.id));
   for (let i = 0; i < ids.length; i += 200) {
     const { data, error } = await db
       .from("lead_qualification_log")
@@ -185,9 +194,9 @@ async function readGoogleAdsOffline(db: SupabaseClient, r: ExportRequest): Promi
       if (!qualifiedAt.has(row.lead_id)) qualifiedAt.set(row.lead_id, row.created_at);
     }
   }
-  const wonIds = leads.rows.filter((l) => l.crm_won === true).map((l) => String(l.id));
+  const wonIds = consentedLeads.filter((l) => l.crm_won === true).map((l) => String(l.id));
   const contracts = await readCrmContractValues(wonIds);
-  return { rows: await buildGoogleAdsOfflineRows({ leads: leads.rows, qualifiedAt, contracts: contracts ?? undefined }), error: null };
+  return { rows: await buildGoogleAdsOfflineRows({ leads: consentedLeads, qualifiedAt, contracts: contracts ?? undefined }), error: null };
 }
 
 const ENGINE_STAGES_URL = "https://pieenhgjulsrjlioozsy.supabase.co/functions/v1/site-lead-stages";
