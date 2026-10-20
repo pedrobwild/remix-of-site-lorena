@@ -52,6 +52,15 @@ describe("google_ads_offline — quem entra", () => {
     for (const status of ["novo", "contatado", "descartado"]) expect(await build([lead({ status })])).toEqual([]);
   });
 
+  it("qualificado manual entra com data registrada e não qualificado manual fica fora", async () => {
+    const at = "2026-10-14T14:00:00Z";
+    const rows = await build([lead({ manual_qualification: "qualificado" })], new Map([["l1", at]]));
+    expect(rows).toHaveLength(1);
+    expect(rows[0]["Conversion Name"]).toBe(GOOGLE_ADS_QUALIFIED_CONVERSION);
+    expect(rows[0]["Conversion Time"]).toBe("2026-10-14 11:00:00-03:00");
+    expect(await build([lead({ status: "descartado", manual_qualification: "descartado" })])).toEqual([]);
+  });
+
   it("contrato ganho entra com qualquer objetivo, e o lead investidor ganho gera as duas conversões", async () => {
     const moradia = await build([lead({ objetivo: "Moradia", status: "contatado", crm_won: true, crm_last_change_at: daysAgo(1) })]);
     expect(moradia.map((r) => r["Conversion Name"])).toEqual([GOOGLE_ADS_WON_CONVERSION]);

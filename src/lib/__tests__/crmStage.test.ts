@@ -101,6 +101,21 @@ describe("plano de atualização e histórico", () => {
     expect(p.logs[0]).toMatchObject({ from_status: "novo", to_status: "contatado" });
   });
 
+  it("qualificação manual permanece mesmo sem negócio no CRM", () => {
+    const p = planCrmLeadUpdate({ ...row, status: "qualificado", manual_qualification: "qualificado" }, null, STAGES, [], "2026-10-20T09:42:00Z");
+    expect(p.to).toBe("qualificado");
+    expect(p.patch).not.toHaveProperty("status");
+    expect(p.statusChanged).toBe(false);
+  });
+
+  it("não qualificado manual permanece e CRM continua atualizando ganho", () => {
+    const p = planCrmLeadUpdate({ ...row, status: "descartado", manual_qualification: "descartado" }, item("fechado", { won: true }), STAGES, [], "2026-10-20T09:42:00Z");
+    expect(p.to).toBe("descartado");
+    expect(p.patch).not.toHaveProperty("status");
+    expect(p.patch.crm_won).toBe(true);
+    expect(shouldSendMetaQuality(p, "2026-10-20T09:00:00Z", Date.parse("2026-10-20T09:42:00Z"))).toBe(false);
+  });
+
   it("Meta só para qualificado/descartado com mudança nos últimos 7 dias", () => {
     const p = planCrmLeadUpdate(row, it1, STAGES, [], "2026-10-13T00:00:00Z");
     const now = Date.parse("2026-10-13T00:00:00Z");
