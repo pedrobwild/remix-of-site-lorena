@@ -90,7 +90,7 @@ const STATUS_OPTIONS: { value: "all" | LeadStatus; label: string }[] = [
   { value: "novo", label: "Novos" },
   { value: "contatado", label: "Em andamento" },
   { value: "qualificado", label: "Qualificados" },
-  { value: "descartado", label: "Descartados" },
+  { value: "descartado", label: "Não qualificados" },
 ];
 
 // Todas as colunas: as de atribuição completa aparecem quando existem, e a
@@ -343,7 +343,7 @@ export default function BewildLeadsAdminPage() {
         <KpiSimple label="Novos" value={counts.novo} />
         <KpiSimple label="Em andamento" value={counts.contatado} />
         <KpiSimple label="Qualificados" value={counts.qualificado} />
-        <KpiSimple label="Descartados" value={counts.descartado} />
+        <KpiSimple label="Não qualificados" value={counts.descartado} />
         <KpiSimple label="Ganhos" value={wonCount} />
         <KpiSimple
           label="Taxa de qualificação"
