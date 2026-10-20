@@ -100,6 +100,17 @@ As colunas de cada conjunto estão em `supabase/functions/_shared/data-export.ts
 
 ### Conversões offline do Google Ads (`google_ads_offline`)
 
+**Proteção de consentimento (20/10/2026):** a exportação exige aceite
+publicitário comprovado na captura e escolha atual vinculados ao lead,
+incluindo referência do registro, data e versão do aviso. O flag
+`consent_marketing` sozinho não basta. O esquema atual não dispõe desses
+registros nem sincroniza a retirada de cookies com o lead: por segurança,
+o conjunto retorna zero linhas, inclusive sem GCLID ou hashes. As demais
+exportações permanecem iguais. Não reexportar eventos antes bloqueados.
+A retirada pelo visitante continua disponível em Preferências de cookies;
+antes de retomar os envios, seu registro deve ser consultável no servidor.
+Isso não retira dados já importados nem apaga cópias antigas de planilhas.
+
 Exceção à regra acima, feita para o **Google Ads Data Manager** (Google Sheets
 com `IMPORTDATA` → Data Manager → importação diária). Colunas, com os nomes
 que o Google espera:

@@ -25,6 +25,7 @@ import {
   type ExportRecord,
   type ExportRequest,
   buildGoogleAdsOfflineRows,
+  canExportGoogleAdsLead,
   exportFilename,
   GOOGLE_ADS_GCLID_WINDOW_DAYS,
   GOOGLE_ADS_OFFLINE_SELECT,

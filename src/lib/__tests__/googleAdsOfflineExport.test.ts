@@ -6,6 +6,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildGoogleAdsOfflineRows,
+  type GoogleAdsExportConsent,
   DATASETS,
   GOOGLE_ADS_QUALIFIED_CONVERSION,
   GOOGLE_ADS_WON_CONVERSION,
@@ -32,11 +33,56 @@ const lead = (over: Record<string, unknown> = {}) => ({
   whatsapp: "11987654321",
   crm_won: false,
   crm_last_change_at: null,
+  consent_marketing: true,
   ...over,
 });
 
+const consent = (): GoogleAdsExportConsent => ({
+  event: { recordId: "acceptance-1", noticeVersion: "ads-v2", acceptedAt: daysAgo(12), advertising: true },
+  current: { recordId: "acceptance-1", noticeVersion: "ads-v2", acceptedAt: daysAgo(12), advertising: true },
+});
+const consentByLead = (leads: Record<string, unknown>[]) => new Map(leads.map((row) => {
+  const evidence = consent();
+  evidence.event.acceptedAt = String(row.created_at);
+  evidence.current.acceptedAt = String(row.created_at);
+  return [String(row.id), evidence] as const;
+}));
+
 const build = (leads: Record<string, unknown>[], qualifiedAt = new Map<string, string>()) =>
-  buildGoogleAdsOfflineRows({ leads, qualifiedAt, now: NOW });
+  buildGoogleAdsOfflineRows({ leads, qualifiedAt, now: NOW, consentByLead: consentByLead(leads) });
+
+describe("google_ads_offline — autorização publicitária", () => {
+  it.each([false, null, undefined, "true"])("bloqueia consent_marketing=%s mesmo com evidência", async (value) => {
+    expect(await build([lead({ consent_marketing: value })])).toEqual([]);
+  });
+  it("flag verdadeiro sem registros de aceite bloqueia qualificação e contrato, inclusive GCLID e hashes", async () => {
+    expect(await buildGoogleAdsOfflineRows({ leads: [lead({ crm_won: true })], qualifiedAt: new Map(), now: NOW })).toEqual([]);
+  });
+  it("retirada atual bloqueia mesmo preservando aceite na captura", async () => {
+    const evidence = consent();
+    evidence.current = { ...evidence.current, advertising: false };
+    expect(await buildGoogleAdsOfflineRows({ leads: [lead()], qualifiedAt: new Map(), now: NOW,
+      consentByLead: new Map([["l1", evidence]]) })).toEqual([]);
+  });
+  it("aceite posterior não autoriza retroativamente captura recusada", async () => {
+    const evidence = consent();
+    evidence.event.advertising = false;
+    expect(await buildGoogleAdsOfflineRows({ leads: [lead()], qualifiedAt: new Map(), now: NOW,
+      consentByLead: new Map([["l1", evidence]]) })).toEqual([]);
+  });
+  it.each(["event", "current"] as const)("evidência %s sem versão do aviso bloqueia", async (key) => {
+    const evidence = consent();
+    evidence[key].noticeVersion = "";
+    expect(await buildGoogleAdsOfflineRows({ leads: [lead()], qualifiedAt: new Map(), now: NOW,
+      consentByLead: new Map([["l1", evidence]]) })).toEqual([]);
+  });
+  it("aceite na captura com data posterior ao formulário bloqueia", async () => {
+    const evidence = consent();
+    evidence.event.acceptedAt = daysAgo(1);
+    expect(await buildGoogleAdsOfflineRows({ leads: [lead()], qualifiedAt: new Map(), now: NOW,
+      consentByLead: new Map([["l1", evidence]]) })).toEqual([]);
+  });
+});
 
 describe("google_ads_offline — quem entra", () => {
   it.each(["Short stay", "Locação tradicional", "Uso misto"])("qualificado com objetivo %s vira Lead qualificado investidor", async (objetivo) => {
@@ -149,7 +195,7 @@ describe("google_ads_offline — acesso pela chave", () => {
 describe("Contrato assinado com valor real do CRM", () => {
   const won = lead({ status: "novo", crm_won: true, crm_last_change_at: daysAgo(1) });
   it("usa o total e a data do contrato informados pelo CRM", async () => {
-    const rows = await buildGoogleAdsOfflineRows({ leads: [won], qualifiedAt: new Map(), now: NOW,
+    const rows = await buildGoogleAdsOfflineRows({ leads: [won], qualifiedAt: new Map(), now: NOW, consentByLead: consentByLead([won]),
       contracts: new Map([["l1", [{ total: 71850, closed_at: daysAgo(3) }]]]) });
     expect(rows).toHaveLength(1);
     expect(rows[0]["Conversion Value"]).toBe(71850);
@@ -160,7 +206,7 @@ describe("Contrato assinado com valor real do CRM", () => {
     expect(rows[0]["Conversion Value"]).toBeNull();
   });
   it("contrato sem valor no CRM também fica vazio", async () => {
-    const rows = await buildGoogleAdsOfflineRows({ leads: [won], qualifiedAt: new Map(), now: NOW,
+    const rows = await buildGoogleAdsOfflineRows({ leads: [won], qualifiedAt: new Map(), now: NOW, consentByLead: consentByLead([won]),
       contracts: new Map([["l1", [{ total: null, closed_at: null }]]]) });
     expect(rows[0]["Conversion Value"]).toBeNull();
   });
