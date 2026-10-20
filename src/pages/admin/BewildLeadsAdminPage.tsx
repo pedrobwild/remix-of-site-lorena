@@ -10,7 +10,7 @@
  * `landing_path` é só atribuição: a primeira página da sessão.
  *
  * Esta é a tela do DONO para conferir os leads. A operação comercial
- * (responder, qualificar de verdade, etc.) acontece no Bwild Engine —
+ * acontece no Bwild Engine; a qualidade também pode ser definida manualmente —
  * por isso aqui não há mensagem pré-preenchida no WhatsApp nem features
  * de score/realtime.
  *
@@ -23,6 +23,7 @@ import { MessageCircle } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import AdminAlert from "@/components/admin/AdminAlert";
 import MetaLeadsPanel from "@/components/admin/MetaLeadsPanel";
+import { ManualLeadQualification } from "@/components/admin/ManualLeadQualification";
 import { CrmProfileSummary } from "@/components/admin/CrmProfileSummary";
 import { CrmSyncBar, LeadCrmStatus, LeadFunnelHistory } from "@/components/admin/LeadCrmStatus";
 import { supabase } from "@/integrations/supabase/client";
@@ -35,6 +36,7 @@ import {
   leadFormLabel,
   leadOrigem,
   mailtoHref,
+  moveStatusCount,
   waLink,
   type LeadOrigem,
   type LeadStatus,
@@ -61,6 +63,7 @@ type Lead = {
   lead_source: string | null;
   lives_in_sp: boolean | null;
   status: LeadStatus;
+  manual_qualification?: "qualificado" | "descartado" | null;
   created_at: string;
   // Atribuição completa (Fase 1 de conversões). Opcionais: leads antigos não têm.
   utm_term?: string | null;
@@ -496,6 +499,10 @@ export default function BewildLeadsAdminPage() {
                         </td>
                         <td>
                           <LeadCrmStatus lead={r} />
+                          <ManualLeadQualification leadId={r.id} name={r.name} value={r.manual_qualification} onSaved={next => {
+                            setRows(prev => prev.map(lead => lead.id === r.id ? { ...lead, status: next, manual_qualification: next } : lead));
+                            setCounts(prev => moveStatusCount(prev, r.status, next));
+                          }} />
                         </td>
                         <td style={{ whiteSpace: "nowrap" }}>
                           <span

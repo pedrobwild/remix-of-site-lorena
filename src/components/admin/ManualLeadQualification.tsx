@@ -1,0 +1,34 @@
+import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { Check, X } from "lucide-react";
+import { Button } from "@/guia/components/ui/button";
+import { setManualLeadQualification } from "@/lib/manualLeadQualification.functions";
+
+type Quality = "qualificado" | "descartado";
+
+export function ManualLeadQualification({ leadId, name, value, onSaved }: {
+  leadId: string; name: string | null; value?: string | null; onSaved: (status: Quality) => void;
+}) {
+  const save = useServerFn(setManualLeadQualification);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<{ error: boolean; text: string } | null>(null);
+  async function qualify(status: Quality) {
+    setBusy(true);
+    setMessage(null);
+    try {
+      const result = await save({ data: { leadId, status } });
+      onSaved(result.status);
+      setMessage({ error: false, text: "Qualificação salva." });
+    } catch (error) {
+      setMessage({ error: true, text: error instanceof Error ? error.message : "Não foi possível salvar. Tente novamente." });
+    } finally { setBusy(false); }
+  }
+  return <div className="grid gap-2 mt-2" aria-label={`Qualificação manual de ${name ?? "lead"}`} aria-busy={busy}>
+    <span className="muted text-xs">{value ? "Qualificação manual" : "Qualificação automática"}</span>
+    <div className="flex flex-wrap gap-2">
+      <Button size="sm" variant={value === "qualificado" ? "default" : "outline"} className="min-h-11" disabled={busy || value === "qualificado"} aria-pressed={value === "qualificado"} onClick={() => void qualify("qualificado")}><Check aria-hidden />Qualificado</Button>
+      <Button size="sm" variant={value === "descartado" ? "default" : "outline"} className="min-h-11" disabled={busy || value === "descartado"} aria-pressed={value === "descartado"} onClick={() => void qualify("descartado")}><X aria-hidden />Não qualificado</Button>
+    </div>
+    {message && <span className="text-xs" role={message.error ? "alert" : "status"}>{message.text}</span>}
+  </div>;
+}

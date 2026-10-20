@@ -81,6 +81,7 @@ export function crmLeadStatus(item: CrmLeadItem | null | undefined, stages: CrmS
 export type CrmLeadRow = {
   id: string;
   status: string;
+  manual_qualification?: "qualificado" | "descartado" | null;
   crm_stage_key: string | null;
   crm_stage_name: string | null;
   crm_max_stage_key: string | null;
@@ -136,6 +137,7 @@ export function planCrmLeadUpdate(
   nowIso: string,
 ): CrmLeadPlan {
   const r = crmLeadStatus(item, stages);
+  const effectiveStatus = lead.manual_qualification ?? r.status;
   const next = {
     crm_stage_key: item?.current_stage_key ?? null,
     crm_stage_name: item?.current_stage_name ?? null,
@@ -152,8 +154,8 @@ export function planCrmLeadUpdate(
     const equal = k === "crm_last_change_at" ? sameTs(cur as string | null, val as string | null) : cur === val;
     if (!equal) patch[k] = val;
   });
-  const statusChanged = lead.status !== r.status;
-  if (statusChanged) patch.status = r.status;
+  const statusChanged = lead.status !== effectiveStatus;
+  if (statusChanged) patch.status = effectiveStatus;
   if (Object.keys(patch).length) patch.crm_synced_at = nowIso;
 
   const seen = new Set(existingLogs.map((l) => logKey(l.note, l.created_at)));
@@ -170,8 +172,8 @@ export function planCrmLeadUpdate(
   const base = { lead_id: lead.id, changed_by: null, changed_by_email: CRM_ENGINE_AUTHOR } as const;
   const logs: PlannedLog[] = fresh.map((t) => ({
     ...base,
-    from_status: r.status,
-    to_status: r.status,
+    from_status: effectiveStatus,
+    to_status: effectiveStatus,
     note: transitionNote(t),
     created_at: new Date(Date.parse(t.at)).toISOString(),
   }));
@@ -184,13 +186,13 @@ export function planCrmLeadUpdate(
       logs.push({
         ...base,
         from_status: lead.status,
-        to_status: r.status,
+        to_status: effectiveStatus,
         note: `CRM: status atualizado (etapa atual: ${where})`,
         created_at: nowIso,
       });
     }
   }
-  return { patch, logs, statusChanged, from: lead.status, to: r.status, noDeal: r.noDeal };
+  return { patch, logs, statusChanged, from: lead.status, to: effectiveStatus, noDeal: r.noDeal };
 }
 
 /** A Meta recusa eventos com mais de 7 dias. */
