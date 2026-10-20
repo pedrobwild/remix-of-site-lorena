@@ -213,5 +213,5 @@ export const LEAD_STATUS_LABEL: Record<LeadStatus, string> = {
   novo: "Novo",
   contatado: "Em andamento",
   qualificado: "Qualificado",
-  descartado: "Descartado",
+  descartado: "Não qualificado",
 };
