@@ -1,4 +1,4 @@
-- [ ] Permitir qualificação manual em /admin/leads, preservar a decisão durante sincronizações e disponibilizá-la na exportação Google Ads; validar sem publicar.
+- [x] Permitir qualificação manual em /admin/leads e preservar a decisão durante sincronizações; 58 testes do escopo passam e compilação automática OK. Gravação conferida na página autenticada e restaurada após teste. Exportação existente lê o status efetivo; recebimento no Google Ads não confirmado, sem upload automático novo e sem publicar.
 - [x] Enviar links de Perfil dos leads, Desqualificações e Retorno por região para pedro@bewild.com.br; serviço aceitou o envio com aviso de análise profunda pendente. Não confirma recebimento/leitura nem acesso pela equipe.
 - [ ] Conferir os links com a equipe de vendas — depende de retorno dos destinatários; análise profunda depende de Segurança → Run deep scan.
 - [x] Mostrar “Aguardando envio” para motivo ausente e conferir Desqualificações com dados reais: 13 descartes, 13 motivos pendentes, nenhuma falha de consulta; 7 testes passam. Solicitar publicação do painel.
