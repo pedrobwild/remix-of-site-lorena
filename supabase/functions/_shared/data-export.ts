@@ -446,7 +446,7 @@ export const GOOGLE_ADS_HASH_WINDOW_DAYS = 63;
 
 /** Colunas lidas do banco para este conjunto (só dentro da função; o CSV leva hash). */
 export const GOOGLE_ADS_OFFLINE_SELECT =
-  "id, created_at, updated_at, status, objetivo, gclid, email, whatsapp, crm_won, crm_last_change_at";
+  "id, created_at, updated_at, status, objetivo, gclid, email, whatsapp, crm_won, crm_last_change_at, consent_marketing";
 
 /** E-mail como o Google pede antes do hash: sem espaços nas pontas e em minúsculas. */
 export function normalizeEmailForHash(raw: unknown): string | null {
@@ -483,8 +483,34 @@ function isTrue(v: unknown): boolean {
   return v === true || v === "true" || v === "t";
 }
 
+/** Evidência resolvida no servidor, nunca deduzida do flag do formulário. */
+export type GoogleAdsExportConsent = {
+  event: { recordId: string; noticeVersion: string; acceptedAt: string; advertising: boolean };
+  current: { recordId: string; noticeVersion: string; acceptedAt: string; advertising: boolean };
+};
+
+/** Ausência de autorização atual ou na captura bloqueia inclusive o GCLID. */
+export function canExportGoogleAdsLead(
+  lead: ExportRecord,
+  consent: GoogleAdsExportConsent | undefined,
+  now: number,
+): boolean {
+  if (lead.consent_marketing !== true || !consent) return false;
+  const created = Date.parse(String(lead.created_at ?? ""));
+  if (!Number.isFinite(created)) return false;
+  return [consent.event, consent.current].every((record, index) => {
+    const at = Date.parse(record.acceptedAt);
+    return record.advertising === true && record.recordId.trim().length > 0 &&
+      record.noticeVersion.trim().length > 0 && Number.isFinite(at) &&
+      at <= (index === 0 ? created : now);
+  });
+}
+
 export type GoogleAdsOfflineInput = {
   leads: readonly ExportRecord[];
+  /** Aceite na captura e escolha mais recente, resolvidos de registros persistidos.
+   * Sem essa fonte, a exportação fica bloqueada; não inferir do flag legado. */
+  consentByLead?: ReadonlyMap<string, GoogleAdsExportConsent>;
   /** Primeira passagem para `qualificado`, por lead (ISO). */
   qualifiedAt: ReadonlyMap<string, string>;
   /**
@@ -500,6 +526,7 @@ export async function buildGoogleAdsOfflineRows(input: GoogleAdsOfflineInput): P
   const now = (input.now ?? new Date()).getTime();
   const out: { at: number; row: ExportRecord }[] = [];
   for (const lead of input.leads) {
+    if (!canExportGoogleAdsLead(lead, input.consentByLead?.get(String(lead.id)), now)) continue;
     if (isPartnerLead(lead.objetivo)) continue;
     const created = Date.parse(String(lead.created_at ?? ""));
     if (Number.isNaN(created)) continue;
