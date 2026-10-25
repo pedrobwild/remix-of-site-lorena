@@ -20,7 +20,7 @@ export const Route = createFileRoute("/reforma/$slug")({
   loader: async ({ params }) => {
     const data = await contentLoaders().then((m) => m.loadBairroContent(params.slug));
     if (!data.projects) return { ...data, jsonLd: null, coverUrl: null };
-    const { bairroProjects, projectListJsonLd } = await import("@/lib/contentJsonLd");
+    const { bairroProjects, projectListJsonLd } = await import("@/lib/routeHeadData");
     const doBairro = bairroProjects(data.projects, params.slug);
     return { ...data, jsonLd: projectListJsonLd(doBairro), coverUrl: doBairro[0]?.cover_url ?? null };
   },

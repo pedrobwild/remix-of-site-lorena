@@ -12,7 +12,7 @@ import { projectCoverImage, WIDE_SIZES } from "@/lib/imageUrl";
 export const Route = createFileRoute("/portfolio/$slug")({
   loader: async ({ params }) => {
     const data = await contentLoaders().then((m) => m.loadProjectContent(params.slug));
-    const jsonLd = data.project ? (await import("@/lib/contentJsonLd")).projectPageJsonLd(data.project) : null;
+    const jsonLd = data.project ? (await import("@/lib/routeHeadData")).projectPageJsonLd(data.project) : null;
     return { ...data, jsonLd };
   },
   component: RouteComponent,

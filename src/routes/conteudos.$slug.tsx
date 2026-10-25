@@ -17,45 +17,8 @@ export const Route = createFileRoute("/conteudos/$slug")({
   loader: async ({ params }) => {
     const ld = await contentLoaders().then((m) => m.loadPostContent(params.slug));
     if (!ld?.post) return { ...ld, head: null };
-    const [{ postJsonLd, postPageJsonLd, saoPauloIso }, { authorForPage, authorProfileJsonLd, postAuthorJsonLd, postDates }, { keywordsForPost }, { bodyWordCount, structurePostBody }, { bewildCategoryLabel }] =
-      await Promise.all([
-        import("@/lib/contentJsonLd"),
-        import("@/lib/postSeo"),
-        import("@/lib/postKeywords"),
-        import("@/lib/postStructure"),
-        import("@/lib/useBewildPosts"),
-      ]);
-    const post = ld.post;
-    // Página de autor (ex.: "quem é o CEO"): WebPage vira ProfilePage com a Person.
-    const author = authorForPage(post.slug);
-    const dates = postDates(post);
-    const body = ld.bodyHtml ? structurePostBody(ld.bodyHtml) : null;
-    const authorNode = postAuthorJsonLd(post.author);
-    const authorUrl = typeof authorNode?.url === "string" ? authorNode.url : null;
-    return {
-      ...ld,
-      head: {
-        isAuthor: !!author,
-        keywords: keywordsForPost(post.slug),
-        extraMeta: (author
-          ? null
-          : [
-              { name: "author", content: String(authorNode?.name ?? "Bewild") },
-              { property: "article:published_time", content: dates?.published ?? "" },
-              { property: "article:modified_time", content: dates?.modified ?? "" },
-              { property: "article:section", content: bewildCategoryLabel(post.category) },
-              { property: "article:author", content: authorUrl ?? "" },
-            ]) as Record<string, string>[] | null,
-        jsonLd: postJsonLd(post, { wordCount: bodyWordCount(body?.html) }),
-        pageJsonLd: author
-          ? authorProfileJsonLd(author, {
-              image: post.cover_image,
-              dateCreated: saoPauloIso(dates?.published),
-              dateModified: saoPauloIso(dates?.modified),
-            })
-          : postPageJsonLd(post, body?.credits.reviewer),
-      },
-    };
+    const { postHeadData } = await import("@/lib/routeHeadData");
+    return { ...ld, head: postHeadData(ld.post, ld.bodyHtml) };
   },
   component: RouteComponent,
   head: ({ loaderData: ld, params }) => {

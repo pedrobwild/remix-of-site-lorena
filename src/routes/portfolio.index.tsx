@@ -12,7 +12,7 @@ const contentLoaders = () => import("@/lib/contentLoaders");
 export const Route = createFileRoute("/portfolio/")({
   loader: async () => {
     const [content, seo] = await Promise.all([contentLoaders().then((m) => m.loadProjectList()), loadPageSeo({ data: "/portfolio" })]);
-    const jsonLd = content.projects ? (await import("@/lib/contentJsonLd")).projectListJsonLd(content.projects) : null;
+    const jsonLd = content.projects ? (await import("@/lib/routeHeadData")).projectListJsonLd(content.projects) : null;
     return { ...content, seo, jsonLd };
   },
   component: RouteComponent,

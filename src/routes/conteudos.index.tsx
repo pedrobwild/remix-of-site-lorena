@@ -15,7 +15,7 @@ export const Route = createFileRoute("/conteudos/")({
   }),
   loader: async () => {
     const [content, seo] = await Promise.all([contentLoaders().then((m) => m.loadPostList()), loadPageSeo({ data: "/conteudos" })]);
-    const jsonLd = content.posts ? (await import("@/lib/contentJsonLd")).postListJsonLd(content.posts) : null;
+    const jsonLd = content.posts ? (await import("@/lib/routeHeadData")).postListJsonLd(content.posts) : null;
     return { ...content, seo, jsonLd };
   },
   component: RouteComponent,
