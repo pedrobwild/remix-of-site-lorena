@@ -1,7 +1,6 @@
 import { useEffect, type ReactNode } from "react";
 import { useAuth } from "@/lib/useAuth";
 import { navigate, routes } from "@/lib/useHashRoute";
-import "@/styles/admin-font-scope.css";
 
 type Props = { children: ReactNode };
 

@@ -10,9 +10,12 @@
  * atributo sobre `class` seguido de `*` faz o navegador invalidar a subárvore
  * inteira de qualquer elemento que troque de classe — no site público, cada
  * abertura do menu do celular (classe no <body>) recalculava o estilo do
- * documento inteiro. Carregada por ProtectedRoute, AdminLayout e
- * BewildAdminShell; o teste src/__tests__/rootStyleInvalidation.test.ts
- * impede que a regra volte para as folhas do site.
+ * documento inteiro. Carregada só pelo AdminChunk (invólucro de toda rota
+ * /admin) como <link precedence> a partir de `?url` — um `import "…css"` em
+ * ProtectedRoute/AdminLayout caía no chunk compartilhado `index-*.css`, que
+ * toda página pública carrega (25/10/2026). O teste
+ * src/__tests__/rootStyleInvalidation.test.ts impede que a regra volte para
+ * as folhas do site e que a folha seja importada de outro jeito.
  *
  * As declarações são as mesmas da regra de origem.
  */

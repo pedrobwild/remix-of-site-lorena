@@ -5,7 +5,7 @@
  * título, descrição, robots, canonical + hreflang e Open Graph por página.
  */
 
-import homeBwaCssUrl from "@/pages/home-bwa.css?url";
+import bwaShellCssUrl from "@/pages/bwa-shell.css?url";
 import bwaInternalCssUrl from "@/pages/bwa-internal.css?url";
 import { pageSeoOverride, type PagesSeoMap } from "@/lib/publicPages";
 
@@ -245,7 +245,7 @@ export function seoHead(rawInput: SeoHeadInput) {
       ];
   if (input.bwaCss !== false) {
     links.push(
-      { rel: "stylesheet", href: homeBwaCssUrl, precedence: BWA_CSS_PRECEDENCE },
+      { rel: "stylesheet", href: bwaShellCssUrl, precedence: BWA_CSS_PRECEDENCE },
       { rel: "stylesheet", href: bwaInternalCssUrl, precedence: BWA_CSS_PRECEDENCE },
     );
   }

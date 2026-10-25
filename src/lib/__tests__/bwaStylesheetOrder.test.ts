@@ -1,5 +1,5 @@
 /**
- * MOB-04 — home-bwa.css + bwa-internal.css continuam sendo as últimas folhas do
+ * MOB-04 — bwa-shell.css + bwa-internal.css continuam sendo as últimas folhas do
  * <head> depois de uma navegação interna (o CSS da página nova entra no fim),
  * e na carga direta — em que o servidor já as manda por último — nada é movido.
  * No início de uma navegação para página com header .bwa, as duas são pedidas
@@ -10,7 +10,7 @@ import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 // No Vitest um import `*.css?url` vem vazio: dá endereços de verdade às duas folhas.
-vi.mock("../../pages/home-bwa.css?url", () => ({ default: "/assets/home-bwa.css" }));
+vi.mock("../../pages/bwa-shell.css?url", () => ({ default: "/assets/bwa-shell.css" }));
 vi.mock("../../pages/bwa-internal.css?url", () => ({ default: "/assets/bwa-internal.css" }));
 
 const preinit = vi.hoisted(() => vi.fn());
@@ -18,6 +18,8 @@ vi.mock("react-dom", async (original) => ({ ...(await original<typeof import("re
 
 import { installBwaStylesheetPreinit, keepBwaStylesheetsLast, usesBwaStylesheets } from "../bwaStylesheetOrder";
 
+const bwaShellCssUrl = "/assets/bwa-shell.css";
+/** A home carrega home-bwa.css inteiro pelo head da rota "/"; vindo dela, o link fica onde está. */
 const homeBwaCssUrl = "/assets/home-bwa.css";
 const bwaInternalCssUrl = "/assets/bwa-internal.css";
 
@@ -43,7 +45,7 @@ describe("keepBwaStylesheetsLast", () => {
   it("carga direta (já estão por último): não mexe em nada", () => {
     sheet("/assets/styles.css");
     sheet("/assets/contato.css");
-    const home = sheet(homeBwaCssUrl);
+    const shell = sheet(bwaShellCssUrl);
     const internal = sheet(bwaInternalCssUrl);
     const observer = new MutationObserver(() => {});
     observer.observe(document.head, { childList: true });
@@ -51,44 +53,45 @@ describe("keepBwaStylesheetsLast", () => {
     expect(observer.takeRecords()).toHaveLength(0);
     observer.disconnect();
     expect(document.head.lastElementChild).toBe(internal);
-    expect(internal.previousElementSibling).toBe(home);
+    expect(internal.previousElementSibling).toBe(shell);
   });
 
   it("navegação interna: o CSS da página nova entrou depois — as duas voltam para o fim, na ordem", () => {
     sheet("/assets/styles.css");
-    const home = sheet(homeBwaCssUrl);
+    const shell = sheet(bwaShellCssUrl);
     const internal = sheet(bwaInternalCssUrl);
     sheet("/assets/portfolio.css"); // anexado pelo Vite ao carregar a página
     keepBwaStylesheetsLast();
-    expect(order()).toEqual(["/assets/styles.css", "/assets/portfolio.css", homeBwaCssUrl, bwaInternalCssUrl]);
+    expect(order()).toEqual(["/assets/styles.css", "/assets/portfolio.css", bwaShellCssUrl, bwaInternalCssUrl]);
     // Os mesmos elementos (sem duplicar nem recriar).
     expect(document.head.lastElementChild).toBe(internal);
-    expect(internal.previousElementSibling).toBe(home);
+    expect(internal.previousElementSibling).toBe(shell);
   });
 
-  it("vindo da home: home-bwa.css está no começo (link da rota) e vai para o fim, sem duplicar", () => {
+  it("vindo da home: home-bwa.css (inteiro) fica onde está; o shell e a interna vão para o fim, sem duplicar", () => {
     sheet("/assets/styles.css");
     sheet(homeBwaCssUrl);
     sheet("/assets/routes.css");
+    sheet(bwaShellCssUrl);
     sheet("/assets/contato.css");
     sheet(bwaInternalCssUrl);
     keepBwaStylesheetsLast();
-    expect(order()).toEqual(["/assets/styles.css", "/assets/routes.css", "/assets/contato.css", homeBwaCssUrl, bwaInternalCssUrl]);
+    expect(order()).toEqual(["/assets/styles.css", homeBwaCssUrl, "/assets/routes.css", "/assets/contato.css", bwaShellCssUrl, bwaInternalCssUrl]);
   });
 
   it("um <style> depois delas também conta como folha", () => {
-    sheet(homeBwaCssUrl);
+    sheet(bwaShellCssUrl);
     sheet(bwaInternalCssUrl);
     document.head.appendChild(document.createElement("style"));
     keepBwaStylesheetsLast();
-    expect(order()).toEqual(["<style>", homeBwaCssUrl, bwaInternalCssUrl]);
+    expect(order()).toEqual(["<style>", bwaShellCssUrl, bwaInternalCssUrl]);
   });
 
   it("sem as duas folhas no documento, não faz nada", () => {
     sheet("/assets/styles.css");
-    sheet(homeBwaCssUrl);
+    sheet(bwaShellCssUrl);
     keepBwaStylesheetsLast();
-    expect(order()).toEqual(["/assets/styles.css", homeBwaCssUrl]);
+    expect(order()).toEqual(["/assets/styles.css", bwaShellCssUrl]);
   });
 });
 
@@ -137,7 +140,7 @@ describe("installBwaStylesheetPreinit", () => {
     installBwaStylesheetPreinit(router);
     navigate("/", "/faq");
     expect(preinit.mock.calls).toEqual([
-      [homeBwaCssUrl, { as: "style", precedence: "bwa" }],
+      [bwaShellCssUrl, { as: "style", precedence: "bwa" }],
       [bwaInternalCssUrl, { as: "style", precedence: "bwa" }],
     ]);
   });

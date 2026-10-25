@@ -220,11 +220,15 @@ describe("CSS: nada de `[class…] *` fora do painel", () => {
     expect(hasClassAttrOverUniversal('[data-state="open"] *')).toBe(false);
   });
 
-  it("a folha do painel entra por ProtectedRoute e pelas duas molduras do admin — e só pelo admin", () => {
-    const IMPORT = /import\s+["']@\/styles\/admin-font-scope\.css["']/;
-    for (const file of ["components/admin/ProtectedRoute.tsx", "components/admin/AdminLayout.tsx", "components/admin/BewildAdminShell.tsx"]) {
-      expect(IMPORT.test(readFileSync(path.join(SRC, file), "utf8")), file).toBe(true);
-    }
+  it("a folha do painel entra só pelo AdminChunk, como `?url` (nunca por `import \"…css\"`)", () => {
+    // `import "@/styles/admin-font-scope.css"` em ProtectedRoute/AdminLayout caía no chunk
+    // compartilhado `index-*.css`, que toda página pública carrega (25/10/2026).
+    const URL_IMPORT = /import\s+\w+\s+from\s+["']@\/styles\/admin-font-scope\.css\?url["']/;
+    expect(URL_IMPORT.test(readFileSync(path.join(SRC, "components/admin/AdminChunk.tsx"), "utf8"))).toBe(true);
+    const plainImporters = files
+      .filter((f) => /\.(ts|tsx)$/.test(f))
+      .filter((f) => /import\s+["']@\/styles\/admin-font-scope\.css["']/.test(stripComments(readFileSync(f, "utf8"))));
+    expect(plainImporters.map(rel)).toEqual([]);
     // Fora do admin ninguém pode carregá-la (citar num comentário, como o index.css faz, pode).
     const outsideAdmin = files
       .filter((f) => /\.(ts|tsx|css)$/.test(f) && !/(^|\/)admin\//.test(rel(f)) && rel(f) !== ADMIN_FONT_SCOPE)

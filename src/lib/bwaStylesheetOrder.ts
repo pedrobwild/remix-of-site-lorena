@@ -1,17 +1,18 @@
 import { preinit } from "react-dom";
-import homeBwaCssUrl from "../pages/home-bwa.css?url";
+import bwaShellCssUrl from "../pages/bwa-shell.css?url";
 import bwaInternalCssUrl from "../pages/bwa-internal.css?url";
 import { BWA_CSS_PRECEDENCE } from "@/lib/routeHead";
 
 /**
- * Mantém home-bwa.css + bwa-internal.css como as ÚLTIMAS folhas do `<head>`.
+ * Mantém bwa-shell.css + bwa-internal.css como as ÚLTIMAS folhas do `<head>`.
  *
  * No HTML do servidor elas já saem por último (grupo de precedência "bwa", ver
  * BWA_CSS_PRECEDENCE em src/lib/routeHead.ts). O que muda a ordem é a
  * navegação interna: o CSS do pedaço da página nova é anexado pelo Vite no fim
- * do `<head>`, depois delas; e, vindo da home, home-bwa.css está no começo
- * (link do `head` da rota "/"). Nesses casos os dois `<link>` voltam para o
- * fim — o que o BwaNav sempre fez a cada montagem.
+ * do `<head>`, depois delas. Nesses casos os dois `<link>` voltam para o
+ * fim — o que o BwaNav sempre fez a cada montagem. Vindo da home, home-bwa.css
+ * (inteiro, link do `head` da rota "/") fica onde está: o shell repete as
+ * mesmas regras depois dele, então a cascata nas internas não muda.
  *
  * Quando já estão por último (toda carga direta), não toca em nada: antes os
  * dois links eram reanexados em toda montagem, inclusive na hidratação, e cada
@@ -28,12 +29,12 @@ export function keepBwaStylesheetsLast(doc: Document = document): void {
     }
     return null;
   };
-  const home = last(homeBwaCssUrl);
+  const shell = last(bwaShellCssUrl);
   const internal = last(bwaInternalCssUrl);
-  if (!home || !internal) return;
+  if (!shell || !internal) return;
   const n = sheets.length;
-  if (sheets[n - 2] === home && sheets[n - 1] === internal) return;
-  doc.head.appendChild(home);
+  if (sheets[n - 2] === shell && sheets[n - 1] === internal) return;
+  doc.head.appendChild(shell);
   doc.head.appendChild(internal);
 }
 
@@ -63,7 +64,7 @@ type NavigationStartSource = {
  * que usa o header `.bwa`, em vez de só na hora de mostrar a página.
  *
  * O caso que importa: quem entra pela home e toca no primeiro link. A home só
- * tem home-bwa.css; bwa-internal.css (1 kB) era pedida quando a página nova já
+ * tem home-bwa.css; bwa-shell.css e bwa-internal.css eram pedidas quando a página nova já
  * estava pronta — e, como o `<link>` do BwaNav segura a troca de página até a
  * folha carregar (para a página nunca aparecer sem o header estilizado), o
  * visitante via a página antiga parada, já rolada para o topo, por uma ida e
@@ -72,8 +73,9 @@ type NavigationStartSource = {
  *
  * `preinit` é a forma do React de inserir uma folha fora da renderização: o
  * `<link>` entra no grupo de precedência "bwa" e o React não o duplica quando
- * a página renderiza o mesmo recurso. A home com bwa-internal.css carregada é
- * idêntica, pixel a pixel (a folha só tem regras das páginas internas).
+ * a página renderiza o mesmo recurso. A home com as duas carregadas é
+ * idêntica, pixel a pixel (o shell é um subconjunto de home-bwa.css, na mesma
+ * ordem; bwa-internal.css só tem regras das páginas internas).
  *
  * Instalado uma vez no Root (`__root.tsx`). Retorna o cleanup.
  */
@@ -83,7 +85,7 @@ export function installBwaStylesheetPreinit(router: NavigationStartSource): () =
     if (!from) return; // carga inicial: as folhas já vieram no HTML do servidor
     if (from.pathname === e.toLocation.pathname) return; // âncora ou query: mesma página
     if (!usesBwaStylesheets(e.toLocation.pathname)) return;
-    for (const href of [homeBwaCssUrl, bwaInternalCssUrl]) {
+    for (const href of [bwaShellCssUrl, bwaInternalCssUrl]) {
       if (href) preinit(href, { as: "style", precedence: BWA_CSS_PRECEDENCE });
     }
   });

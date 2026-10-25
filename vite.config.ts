@@ -7,6 +7,7 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { loadEnv } from "vite";
 import path from "node:path";
+import { bwaShellPlugin } from "./scripts/bwaShell";
 
 Object.assign(process.env, loadEnv(process.env.NODE_ENV || "development", process.cwd(), ""));
 
@@ -19,6 +20,9 @@ const SUPABASE_KEY =
 const SUPABASE_PROJECT_ID = process.env.VITE_SUPABASE_PROJECT_ID || "aamlnkmqvjcowixdgqii";
 
 export default defineConfig({
+  // Deriva src/pages/bwa-shell.css (parte de home-bwa.css que as páginas
+  // internas usam) no início de cada build/dev — ver scripts/bwaShell.ts.
+  plugins: [bwaShellPlugin(process.cwd())],
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this

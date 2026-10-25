@@ -1,13 +1,15 @@
-import homeBwaCssUrl from "../pages/home-bwa.css?url";
+import bwaShellCssUrl from "../pages/bwa-shell.css?url";
 import bwaInternalCssUrl from "../pages/bwa-internal.css?url";
 import { BWA_CSS_PRECEDENCE } from "@/lib/routeHead";
 
 /** Sem URL não há o que carregar (nos testes o `?url` do Vite vem vazio, e o React reclama de `href=""`). */
-const SHEETS = [homeBwaCssUrl, bwaInternalCssUrl].filter(Boolean);
+const SHEETS = [bwaShellCssUrl, bwaInternalCssUrl].filter(Boolean);
 
 /**
  * Folhas do sistema `.bwa` (header, menu, rodapé, tokens `--bwa-*`) como
- * `<link>` renderizado pelo React dentro do BwaNav.
+ * `<link>` renderizado pelo React dentro do BwaNav. Desde 25/10/2026 as
+ * páginas internas carregam bwa-shell.css — a parte de home-bwa.css que elas
+ * usam, derivada no build (scripts/bwaShell.ts) — e não home-bwa.css inteiro.
  *
  * As rotas já mandam as duas folhas no HTML do servidor pelo `seoHead()`
  * (src/lib/routeHead.ts, rodada de SEO de 06/10). Este componente declara o
@@ -25,8 +27,8 @@ const SHEETS = [homeBwaCssUrl, bwaInternalCssUrl].filter(Boolean);
  *  - numa navegação interna (uma transição do React), segura a troca de página
  *    até a folha carregar.
  *
- * A home não usa este componente: lá home-bwa.css entra pelo `head` da rota
- * "/" (src/routes/index.tsx) e bwa-internal.css não é carregada.
+ * A home não usa este componente: lá home-bwa.css (inteiro) entra pelo `head`
+ * da rota "/" (src/routes/index.tsx) e bwa-internal.css não é carregada.
  */
 export function BwaInternalStylesheets() {
   return (
