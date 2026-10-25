@@ -1,13 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import BewildProjectPage from "@/pages/BewildProjectPage";
 import { seoHead } from "@/lib/routeHead";
-import { loadProjectContent } from "@/lib/contentLoaders";
-import { projectPageJsonLd } from "@/lib/contentJsonLd";
+// Import tardio: o loader da rota entra no pacote de TODA página; assim os
+// carregadores de conteúdo (posts, projetos, vídeos…) só baixam quando usados.
+const contentLoaders = () => import("@/lib/contentLoaders");
+// Os dados estruturados são montados no loader (import tardio): o head() roda
+// no pacote de toda página, e o montador puxa vídeos, posts e projetos.
 import { projectKeywords } from "@/lib/projectSeo";
 import { projectCoverImage, WIDE_SIZES } from "@/lib/imageUrl";
 
 export const Route = createFileRoute("/portfolio/$slug")({
-  loader: ({ params }) => loadProjectContent(params.slug),
+  loader: async ({ params }) => {
+    const data = await contentLoaders().then((m) => m.loadProjectContent(params.slug));
+    const jsonLd = data.project ? (await import("@/lib/routeHeadData")).projectPageJsonLd(data.project) : null;
+    return { ...data, jsonLd };
+  },
   component: RouteComponent,
   head: ({ loaderData: ld, params }) => {
     const loaderData = ld?.seo;
@@ -20,7 +27,7 @@ export const Route = createFileRoute("/portfolio/$slug")({
       keywords: ld?.project ? projectKeywords(ld.project) : undefined,
       ogImage: loaderData?.ogImage,
       noindex: !ld || loaderData?.notFound,
-      jsonLd: ld?.project ? projectPageJsonLd(ld.project) : null,
+      jsonLd: ld?.jsonLd ?? null,
     });
     // Capa = maior elemento visível (LCP): o navegador começa a baixá-la junto
     // com o HTML, antes do JS. Mesma regra de fallback da página (1ª da galeria).

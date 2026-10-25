@@ -1,0 +1,3 @@
+# src/guia
+
+- Radar Bewild (12/10/2026): o guia do investidor passou a morar em `https://radarbewild.com.br` (app próprio, repo `pedrobwild/shortstay-guide`). o site publicado é servido pela hospedagem da Lovable (Cloudflare), que NÃO lê o `vercel.json`, então o 301 de `/guia-do-investidor` sai do `beforeLoad` da rota (como `/diagnostico`); os redirecionamentos do `vercel.json` (`/radar`, `/dados`) só valem nos domínios servidos pelo Vercel; a rota antiga e `src/guia/` ficam só como fallback `noindex`, fora dos sitemaps. Links do menu, rodapé, home e artigos apontam para o Radar com URL absoluta.

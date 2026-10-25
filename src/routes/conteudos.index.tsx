@@ -3,19 +3,23 @@ import BewildConteudosPage from "@/pages/BewildConteudosPage";
 import { seoHead , rootPagesSeo } from "@/lib/routeHead";
 import { loadPageSeo } from "@/lib/pageSeo.functions";
 import { resolvePageSeo } from "@/lib/pageSeo";
-import { loadPostList } from "@/lib/contentLoaders";
-import { postListJsonLd } from "@/lib/contentJsonLd";
+// Import tardio: o loader da rota entra no pacote de TODA página; assim os
+// carregadores de conteúdo (posts, projetos, vídeos…) só baixam quando usados.
+const contentLoaders = () => import("@/lib/contentLoaders");
+// Os dados estruturados são montados no loader (import tardio): o head() roda
+// no pacote de toda página, e o montador puxa vídeos, posts e projetos.
 
 export const Route = createFileRoute("/conteudos/")({
   validateSearch: (s: Record<string, unknown>): { q?: string } => ({
     q: typeof s.q === "string" && s.q ? s.q.slice(0, 120) : undefined,
   }),
   loader: async () => {
-    const [content, seo] = await Promise.all([loadPostList(), loadPageSeo({ data: "/conteudos" })]);
-    return { ...content, seo };
+    const [content, seo] = await Promise.all([contentLoaders().then((m) => m.loadPostList()), loadPageSeo({ data: "/conteudos" })]);
+    const jsonLd = content.posts ? (await import("@/lib/routeHeadData")).postListJsonLd(content.posts) : null;
+    return { ...content, seo, jsonLd };
   },
   component: RouteComponent,
-  head: ({ loaderData, matches }) => seoHead({ pagesSeo: rootPagesSeo(matches), jsonLd: loaderData?.posts ? postListJsonLd(loaderData.posts) : null, ...(loaderData?.seo ?? resolvePageSeo("/conteudos")), path: "/conteudos", keywords: "projeto de arquitetura, arquitetura e engenharia, engenharia civil, custo de reforma, quanto custa reformar um apartamento, custo de reforma de apartamento em SP, etapas de uma reforma, prazo de reforma de apartamento, reforma de apartamento em SP, Bewild" }),
+  head: ({ loaderData, matches }) => seoHead({ pagesSeo: rootPagesSeo(matches), jsonLd: loaderData?.jsonLd ?? null, ...(loaderData?.seo ?? resolvePageSeo("/conteudos")), path: "/conteudos", keywords: "projeto de arquitetura, arquitetura e engenharia, engenharia civil, custo de reforma, quanto custa reformar um apartamento, custo de reforma de apartamento em SP, etapas de uma reforma, prazo de reforma de apartamento, reforma de apartamento em SP, Bewild" }),
 });
 
 function RouteComponent() {

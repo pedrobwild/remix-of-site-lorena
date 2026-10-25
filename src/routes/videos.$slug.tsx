@@ -3,7 +3,9 @@ import VideoWatchPage from "@/pages/VideoWatchPage";
 import { seoHead } from "@/lib/routeHead";
 import { brandTitle } from "@/lib/seoTitle";
 import { NOT_FOUND_SEO } from "@/lib/seoLoaders";
-import { notFoundOrRedirect } from "@/lib/contentLoaders";
+// Import tardio: o loader da rota entra no pacote de TODA página; assim os
+// carregadores de conteúdo (posts, projetos, vídeos…) só baixam quando usados.
+const contentLoaders = () => import("@/lib/contentLoaders");
 import { videoObjectJsonLd, videoPageBySlug, videoPageNodeJsonLd, videoPagePath } from "@/lib/videoPages";
 
 // Página de um vídeo: o player sai no HTML do servidor e o VideoObject no head.
@@ -11,7 +13,7 @@ import { videoObjectJsonLd, videoPageBySlug, videoPageNodeJsonLd, videoPagePath 
 // endereço fora do cadastro segue o redirecionamento do painel ou responde 404.
 export const Route = createFileRoute("/videos/$slug")({
   loader: async ({ params }) => {
-    if (!videoPageBySlug(params.slug)) return notFoundOrRedirect(videoPagePath(params.slug));
+    if (!videoPageBySlug(params.slug)) return contentLoaders().then((m) => m.notFoundOrRedirect(videoPagePath(params.slug)));
     return { slug: params.slug };
   },
   component: RouteComponent,

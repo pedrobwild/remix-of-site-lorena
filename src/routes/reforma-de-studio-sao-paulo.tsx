@@ -2,10 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import ReformaStudioSpPage from "@/pages/ReformaStudioSpPage";
 import { SEO_DESCRIPTION, SEO_TITLE, STUDIO_SP_JSONLD } from "@/content/pages/reforma-de-studio-sao-paulo";
 import { seoHead , rootPagesSeo } from "@/lib/routeHead";
-import { loadBairroLinks } from "@/lib/contentLoaders";
+// Import tardio: o loader da rota entra no pacote de TODA página; assim os
+// carregadores de conteúdo (posts, projetos, vídeos…) só baixam quando usados.
+const contentLoaders = () => import("@/lib/contentLoaders");
 
 export const Route = createFileRoute("/reforma-de-studio-sao-paulo")({
-  loader: () => loadBairroLinks(),
+  loader: () => contentLoaders().then((m) => m.loadBairroLinks()),
   component: RouteComponent,
   head: ({ matches }) => seoHead({ pagesSeo: rootPagesSeo(matches), title: SEO_TITLE, description: SEO_DESCRIPTION, path: "/reforma-de-studio-sao-paulo", jsonLd: STUDIO_SP_JSONLD }),
 });
