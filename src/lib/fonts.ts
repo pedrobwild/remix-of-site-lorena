@@ -24,7 +24,9 @@ export const FONT_FILES = {
   jetbrainsMonoLatin,
 } as const;
 
-export const FONT_PRELOADS = [manropeLatin, jetbrainsMonoLatin].map((href) => ({
+// Só a Manrope: é a fonte do H1 e do parágrafo de abertura. A JetBrains Mono
+// (rótulos) não aparece no primeiro bloco e não disputa banda com ele.
+export const FONT_PRELOADS = [manropeLatin].map((href) => ({
   rel: "preload",
   href,
   as: "font",
