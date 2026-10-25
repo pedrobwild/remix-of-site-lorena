@@ -125,3 +125,30 @@ describe("plano de atualização e histórico", () => {
     expect(shouldSendMetaQuality(c, "2026-10-12T12:00:00Z", now)).toBe(false);
   });
 });
+
+describe("qualificação vinda do Engine", () => {
+  const STG = [
+    { stage_key: "mql", stage_name: "MQL", stage_position: 1, stage_is_terminal: false },
+    { stage_key: "qualificacao", stage_name: "Qualificação", stage_position: 2, stage_is_terminal: false },
+    { stage_key: "lead", stage_name: "Lead", stage_position: 3, stage_is_terminal: false },
+  ];
+  const lead = { id: "l1", status: "novo", manual_qualification: null, manual_qualification_at: null, crm_stage_key: "mql", crm_stage_name: "MQL", crm_max_stage_key: "mql", crm_won: false, crm_lost: false, crm_deal_count: 1, crm_last_change_at: null };
+  const item = (qualification: unknown) => ({ lead_id: "l1", current_stage_key: "mql", current_stage_name: "MQL", current_stage_position: 1, max_stage_key: "mql", max_stage_position: 1, won: false, all_closed_lost: false, deal_count: 1, last_change_at: null, qualification }) as never;
+  it("desqualificado vira descartado com origem engine e motivo, sem Meta", () => {
+    const p = planCrmLeadUpdate(lead, item({ decision: "desqualificado", marked_at: "2026-10-25T14:00:00Z", reason_category: "fora_regiao" }), STG, [], "2026-10-25T15:00:00Z");
+    expect(p.patch).toMatchObject({ status: "descartado", manual_qualification: "descartado", manual_qualification_source: "engine", manual_qualification_reason: "fora_regiao" });
+    expect(p.patch.crm_stage_key).toBeUndefined();
+    expect(shouldSendMetaQuality(p, new Date().toISOString(), Date.now())).toBe(false);
+  });
+  it("null não desqualifica", () => {
+    const p = planCrmLeadUpdate(lead, item(null), STG, [], "2026-10-25T15:00:00Z");
+    expect(p.patch.manual_qualification).toBeUndefined();
+    expect(p.to).toBe("novo");
+  });
+  it("não sobrescreve marcação do site mais nova", () => {
+    const site = { ...lead, status: "qualificado", manual_qualification: "qualificado" as const, manual_qualification_at: "2026-10-25T16:00:00Z" };
+    const p = planCrmLeadUpdate(site, item({ decision: "desqualificado", marked_at: "2026-10-25T14:00:00Z" }), STG, [], "2026-10-25T17:00:00Z");
+    expect(p.to).toBe("qualificado");
+    expect(p.patch.manual_qualification).toBeUndefined();
+  });
+});

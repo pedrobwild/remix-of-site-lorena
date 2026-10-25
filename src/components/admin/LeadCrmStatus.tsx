@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { LEAD_LOG_COLUMNS, isLeadStatus, type LeadLogRow } from "@/lib/adminLeads";
-import { LEAD_STATUS_LABEL } from "@/lib/crmStage";
+import { ENGINE_REASON_LABEL, LEAD_STATUS_LABEL, type EngineReason } from "@/lib/crmStage";
 import { LeadCrmProposals } from "@/components/admin/LeadCrmProposals";
 
 export type LeadCrmFields = {
@@ -17,6 +17,9 @@ export type LeadCrmFields = {
   crm_won?: boolean | null;
   crm_lost?: boolean | null;
   crm_deal_count?: number | null;
+  manual_qualification?: string | null;
+  manual_qualification_source?: string | null;
+  manual_qualification_reason?: string | null;
 };
 
 const TONE: Record<string, { bg: string; fg: string }> = {
@@ -55,6 +58,18 @@ export function LeadCrmStatus({ lead }: { lead: LeadCrmFields }) {
               ? "aguardando sincronização"
               : "—"}
       </span>
+      {lead.manual_qualification_source === "engine" && lead.manual_qualification && (
+        <span style={{ display: "grid", gap: 2 }}>
+          <span style={pill(lead.manual_qualification === "qualificado" ? "#E6F4EA" : "#FDECEC", lead.manual_qualification === "qualificado" ? "#15603A" : "#9B1C1C")}>
+            {lead.manual_qualification === "qualificado" ? "Qualificado" : "Desqualificado"} · via Engine
+          </span>
+          {lead.manual_qualification === "descartado" && lead.manual_qualification_reason && (
+            <span className="muted" style={{ fontSize: 12 }}>
+              Motivo: {ENGINE_REASON_LABEL[lead.manual_qualification_reason as EngineReason] ?? "Outro motivo"}
+            </span>
+          )}
+        </span>
+      )}
       {(lead.crm_won || lead.crm_lost) && (
         <span style={{ display: "flex", gap: 4 }}>
           {lead.crm_won && <span style={pill("#E6F4EA", "#15603A")}>ganho</span>}

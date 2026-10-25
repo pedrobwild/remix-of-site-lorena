@@ -116,7 +116,7 @@ export async function runCrmStageSync(
     const rows = await fetchAll<CrmLeadRow>((from, to) =>
       admin
         .from("leads")
-        .select("id, status, manual_qualification, crm_stage_key, crm_stage_name, crm_max_stage_key, crm_won, crm_lost, crm_deal_count, crm_last_change_at")
+        .select("id, status, manual_qualification, manual_qualification_source, manual_qualification_at, manual_qualification_reason, crm_stage_key, crm_stage_name, crm_max_stage_key, crm_won, crm_lost, crm_deal_count, crm_last_change_at")
         .order("created_at", { ascending: true })
         .order("id", { ascending: true })
         .range(from, to),
