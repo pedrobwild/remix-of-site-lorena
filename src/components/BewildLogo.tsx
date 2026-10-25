@@ -1,5 +1,10 @@
 import bewildLogoBlue from "@/assets/bewild-logo-blue-2026.png.asset.json";
 import bewildLogoWhite from "@/assets/bewild-logo-white-2026.png.asset.json";
+// Versões pequenas, empacotadas: nome com hash = cache de 1 ano no navegador.
+import blue240 from "@/assets/bewild-logo-blue-240.webp";
+import blue480 from "@/assets/bewild-logo-blue-480.webp";
+import white240 from "@/assets/bewild-logo-white-240.webp";
+import white480 from "@/assets/bewild-logo-white-480.webp";
 
 type BewildLogoProps = {
   className?: string;
@@ -26,10 +31,12 @@ export default function BewildLogo({
   return (
     <img
       className={className}
-      src={variant === "white" ? "/images/opt/bewild-logo-white-2026.webp" : "/images/opt/bewild-logo-blue-2026.webp"}
+      src={variant === "white" ? white240 : blue240}
+      srcSet={variant === "white" ? `${white240} 240w, ${white480} 480w` : `${blue240} 240w, ${blue480} 480w`}
+      sizes="118px"
       alt={decorative ? "" : "Bewild"}
-      width={variant === "white" ? 1435 : 1607}
-      height={variant === "white" ? 458 : 502}
+      width={variant === "white" ? 640 : 640}
+      height={variant === "white" ? 204 : 200}
       loading={loading}
       decoding="async"
     />

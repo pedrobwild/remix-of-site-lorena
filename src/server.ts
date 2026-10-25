@@ -48,7 +48,7 @@ function isH3SwallowedErrorBody(body: string): boolean {
 // HTML público sai com cache de borda curto: o CDN guarda no máximo 60s (mais 5 min
 // servindo a cópia velha enquanto revalida), então uma publicação nova aparece em todos
 // os PoPs em poucos minutos. O navegador sempre revalida (max-age=0).
-const PUBLIC_HTML_CACHE_CONTROL = "public, max-age=0, s-maxage=60, stale-while-revalidate=300";
+const PUBLIC_HTML_CACHE_CONTROL = "public, max-age=0, s-maxage=600, stale-while-revalidate=86400";
 
 function withShortEdgeCache(request: Request, response: Response): Response {
   if (request.method !== "GET" && request.method !== "HEAD") return response;

@@ -24,8 +24,9 @@ function walk(dir: string, out: string[] = []): string[] {
 }
 
 describe("preload das fontes", () => {
-  it("pede os dois arquivos latin como font/woff2 com crossorigin", () => {
-    expect(FONT_PRELOADS).toHaveLength(2);
+  it("pede só o arquivo latin da Manrope como font/woff2 com crossorigin", () => {
+    expect(FONT_PRELOADS).toHaveLength(1);
+    expect(FONT_PRELOADS[0].href).toMatch(/manrope/);
     for (const link of FONT_PRELOADS) {
       expect(link.rel).toBe("preload");
       expect(link.as).toBe("font");
