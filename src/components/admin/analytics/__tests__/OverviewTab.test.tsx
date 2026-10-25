@@ -527,9 +527,9 @@ describe("OverviewTab — período longo (por semana)", () => {
     });
     expect(screen.getByText("por semana")).toBeInTheDocument();
     const rows = within(table).getAllByRole("row").slice(1);
-    expect(rows[0]).toHaveTextContent("sem. 21/09");
+    expect(rows[0]).toHaveTextContent("sem. 21–24/09");
     expect(rows[0]).toHaveTextContent("até 15:42");
-    expect(rows[1]).toHaveTextContent("sem. 14/09");
+    expect(rows[1]).toHaveTextContent("sem. 14–20/09");
     expect(rows[1]).not.toHaveTextContent("até ");
     // Δ da semana em curso vs a anterior ATÉ O MESMO PONTO: 200 vs 120 → +66.7%
     // (vs a semana anterior inteira seria 200 vs 300 → -33.3%, queda falsa)
@@ -556,8 +556,8 @@ describe("OverviewTab — período longo (por semana)", () => {
     render(<OverviewTab range={cut} segments={[]} comparePrev={false} />);
     const table = await screen.findByTestId("daily-table");
     const rows = within(table).getAllByRole("row").slice(1);
-    const r0608 = rows.find((r) => r.textContent?.includes("sem. 08/06"));
-    const r1506 = rows.find((r) => r.textContent?.includes("sem. 15/06"));
+    const r0608 = rows.find((r) => r.textContent?.includes("sem. 08–14/06"));
+    const r1506 = rows.find((r) => r.textContent?.includes("sem. 15–21/06"));
     expect(r0608).toBeDefined();
     // 40 vs 10 seria +300%: a semana de 01/06 está cortada, então sem base
     expect(within(r0608!).getAllByRole("cell")[2]).toHaveTextContent("—");

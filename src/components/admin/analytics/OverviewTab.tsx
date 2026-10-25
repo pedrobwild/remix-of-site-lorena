@@ -330,6 +330,11 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
   const [metric, setMetric] = useState<Metric>("sessions");
   const [refreshKey, setRefreshKey] = useState(0);
   const grain = useMemo<LocalGrain>(() => pickGrain(range.from, range.to), [range]);
+  /** A semana do rótulo não passa do período: a última termina no dia final escolhido. */
+  const labelBounds = useMemo(
+    () => ({ from: range.from.getTime(), to: range.to.getTime() }),
+    [range],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -525,7 +530,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
             const prev = isPartial ? partialBase : prevPoint;
             return {
               key: String(p.t),
-              label: formatLocalBucketLabel(p.t, tableGrain, true),
+              label: formatLocalBucketLabel(p.t, tableGrain, true, labelBounds),
               sessions: p.sessions,
               visitors: p.visitors,
               pageviews: p.pageviews,
@@ -565,7 +570,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [range, segments, grain, comparePrev, refreshKey]);
+  }, [range, segments, grain, comparePrev, refreshKey, labelBounds]);
 
   // ----- render -----
   if (loading) {
@@ -753,7 +758,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
               <CartesianGrid stroke="var(--aa-border)" vertical={false} />
               <XAxis
                 dataKey="t"
-                tickFormatter={(t: number) => formatLocalAxisLabel(Number(t), grain)}
+                tickFormatter={(t: number) => formatLocalAxisLabel(Number(t), grain, labelBounds)}
                 tick={{ fontSize: "var(--aa-text-2xs)", fontFamily: "var(--aa-font-mono)", fill: "var(--aa-fg-faint)" }}
                 tickLine={false}
                 axisLine={false}
@@ -776,7 +781,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
                   color: "var(--aa-fg)",
                 }}
                 labelFormatter={(t) =>
-                  formatLocalBucketLabel(Number(t), grain, true) +
+                  formatLocalBucketLabel(Number(t), grain, true, labelBounds) +
                   (meta?.partialT === Number(t) ? ` · em curso (até ${fmtTime(meta.fetchedAt)})` : "")
                 }
               />
