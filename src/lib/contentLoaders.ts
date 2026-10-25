@@ -15,6 +15,7 @@ import { lookupActiveRedirect } from "@/lib/notFoundLog";
 import { isSafeRedirectTarget } from "@/lib/seoRedirects";
 import { supabase } from "@/integrations/supabase/client";
 import { wrapArticleTables } from "@/lib/articleTables";
+import { linkServicePagesInHtml } from "@/lib/articleServiceLinks";
 import { NOT_FOUND_SEO, postSeoFrom, projectSeoFrom, bairroSeoFrom, type RouteSeoData } from "@/lib/seoLoaders";
 import { normalizeBewildPost, type BewildPost } from "@/lib/useBewildPosts";
 import { withPostCols } from "@/lib/useBewildPost";
@@ -40,7 +41,7 @@ const POST_LIST_COLS =
  * estático levava os dois para o pacote inicial de TODAS as páginas — a home
  * no celular incluída —, quando só o artigo usa.
  */
-async function renderBody(body: string | null | undefined): Promise<string | null> {
+async function renderBody(body: string | null | undefined, serviceLinks = false): Promise<string | null> {
   if (!body) return "";
   try {
     const [{ marked }, { sanitizeBlogHtml }] = await Promise.all([
@@ -48,7 +49,8 @@ async function renderBody(body: string | null | undefined): Promise<string | nul
       import("@/lib/sanitizeHtml"),
     ]);
     const raw = marked.parse(body, { async: false, gfm: true, breaks: false }) as string;
-    return wrapArticleTables(rewriteGuiaLinksInHtml(sanitizeBlogHtml(raw)));
+    const clean = rewriteGuiaLinksInHtml(sanitizeBlogHtml(raw));
+    return wrapArticleTables(serviceLinks ? linkServicePagesInHtml(clean) : clean);
   } catch {
     return null;
   }
@@ -139,7 +141,7 @@ async function fetchPostContent(slug: string): Promise<PostLoaderData> {
       related = [];
     }
 
-    return { seo: postSeoFrom(post), post, related, bodyHtml: await renderBody(post.body) };
+    return { seo: postSeoFrom(post), post, related, bodyHtml: await renderBody(post.body, true) };
   } catch {
     return { seo: postSeoFrom(null, true) };
   }

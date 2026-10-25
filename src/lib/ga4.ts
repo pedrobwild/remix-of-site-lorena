@@ -18,6 +18,7 @@
  */
 import { isConsentAccepted } from "@/lib/cookieConsent";
 import { telemetryUrl, telemetryValue } from "@/../supabase/functions/_shared/telemetry-privacy";
+import { ensureGoogleTagScript } from "@/lib/whenIdle";
 
 export const GA4_MEASUREMENT_ID = "G-CE7GKKDG4L";
 
@@ -70,10 +71,12 @@ export function initGa4(): void {
     page_referrer: document.referrer ? telemetryUrl(document.referrer, true) : "",
   });
 
-  const s = document.createElement("script");
-  s.async = true;
-  s.src = `https://www.googletagmanager.com/gtag/js?id=${GA4_MEASUREMENT_ID}`;
-  document.head.appendChild(s);
+  // gtag.js (~150 KB) entra depois do `load` e de um momento ocioso, como o
+  // fbevents do Pixel (useSeo.ts): os comandos acima ficam na fila do
+  // dataLayer e saem quando o script chega. Assim ele não disputa a rede e a
+  // linha principal com a imagem do topo e com o primeiro toque (INP de
+  // 212 ms no CrUX de out/2026).
+  ensureGoogleTagScript("ga4-primary-loader", GA4_MEASUREMENT_ID);
 
   w.__bewildGa4Inited = true;
 }

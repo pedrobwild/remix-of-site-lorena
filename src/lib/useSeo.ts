@@ -23,6 +23,7 @@ import { configureGoogleAds } from "./googleAds";
 import { reportGoogleAdsArrival } from "./googleAdsArrival";
 import { flushMetaPixelQueue, registerMetaPixelId } from "./metaPixel";
 import { devWarn } from "./devLog";
+import { ensureGoogleTagScript, whenIdleAfterLoad } from "./whenIdle";
 import { pageSeoOverride } from "./publicPages";
 
 export const SEO_REFRESH_EVENT = "seo:refresh";
@@ -280,17 +281,35 @@ export function validTrackerId(kind: TrackerKind, raw: string | null | undefined
 }
 
 /** Carrega script externo uma única vez (idempotente via id). */
+/** Scripts externos já pedidos e esperando o momento ocioso (evita duplicar). */
+const pendingScripts = new Set<string>();
+
 function ensureScript(id: string, src: string, inline?: string) {
-  if (document.getElementById(id)) return;
-  const s = document.createElement("script");
-  s.id = id;
-  s.setAttribute(INJECTED_ATTR, "true");
-  if (src) {
-    s.src = src;
-    s.async = true;
+  if (document.getElementById(id) || pendingScripts.has(id)) return;
+  const build = () => {
+    const s = document.createElement("script");
+    s.id = id;
+    s.setAttribute(INJECTED_ATTR, "true");
+    if (src) {
+      s.src = src;
+      s.async = true;
+    }
+    if (inline) s.text = inline;
+    return s;
+  };
+  if (!src && id !== "gtm-loader") {
+    document.head.appendChild(build());
+    return;
   }
-  if (inline) s.text = inline;
-  document.head.appendChild(s);
+  // Script externo (GTM, GA4 extra, Google Ads): o download começa depois do
+  // `load` e de um momento ocioso, como o gtag.js principal (ga4.ts) e o
+  // fbevents do Pixel. As chamadas `gtag()` feitas antes ficam na fila do dataLayer.
+  pendingScripts.add(id);
+  whenIdleAfterLoad(() => {
+    pendingScripts.delete(id);
+    if (!isConsentAccepted() || isAdminLocation()) return;
+    if (!document.getElementById(id)) document.head.appendChild(build());
+  });
 }
 
 /**
@@ -301,7 +320,7 @@ function ensureScript(id: string, src: string, inline?: string) {
  */
 function injectGA4(id: string) {
   if (id === GA4_MEASUREMENT_ID) return;
-  ensureScript("ga4-loader", `https://www.googletagmanager.com/gtag/js?id=${id}`);
+  ensureGoogleTagScript("ga4-loader", id);
   ensureScript(
     "ga4-config",
     "",
@@ -360,9 +379,7 @@ function injectGoogleAds(id: string, settings: SiteSettings) {
     contactLabel: settings.google_ads_contact_label,
     applicationLabel: settings.google_ads_application_label,
   });
-  if (!document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js"]')) {
-    ensureScript("gads-loader", `https://www.googletagmanager.com/gtag/js?id=${id}`);
-  }
+  ensureGoogleTagScript("gads-loader", id);
   ensureScript(
     "gads-config",
     "",

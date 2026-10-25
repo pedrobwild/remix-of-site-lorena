@@ -1,9 +1,9 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { z } from "zod";
+import { searchBairro } from "@/lib/lightValidators";
 
 /** Endereço curto do histórico público, sem duplicar a página ou a base. */
 export const Route = createFileRoute("/coletas")({
-  validateSearch: z.object({ bairro: z.string().max(100).optional() }),
+  validateSearch: searchBairro,
   beforeLoad: ({ search }) => {
     throw redirect({
       to: "/coletas-por-bairro",

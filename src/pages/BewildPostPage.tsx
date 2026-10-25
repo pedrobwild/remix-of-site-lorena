@@ -36,6 +36,7 @@ import PostYouTubeVideo from "@/components/PostYouTubeVideo";
 import { postYouTubeVideo } from "@/lib/postYouTubeVideo";
 import { sanitizeBlogHtml } from "@/lib/sanitizeHtml";
 import { wrapArticleTables } from "@/lib/articleTables";
+import { linkServicePagesInHtml } from "@/lib/articleServiceLinks";
 import { whatsappHref } from "@/components/landing/content";
 import {
   bewildCategoryLabel,
@@ -194,7 +195,7 @@ export default function BewildPostPage({ slug, initial }: Props) {
     }
     try {
       const raw = marked.parse(post.body, { async: false }) as string;
-      return wrapArticleTables(rewriteGuiaLinksInHtml(sanitizeBlogHtml(raw)));
+      return wrapArticleTables(linkServicePagesInHtml(rewriteGuiaLinksInHtml(sanitizeBlogHtml(raw))));
     } catch {
       return "";
     }

@@ -1,5 +1,5 @@
 import { formatAreaM2 } from "@/lib/formatArea";
-import { bairroAreaRange, bairroDescription, bairroTitle } from "@/lib/bairroSeo";
+import { bairroAreaRange, bairroDescription, bairroPreposicao, bairroTitle, noBairro } from "@/lib/bairroSeo";
 import { bairroContent } from "@/content/bairros";
 import { radarBairroLink } from "@/lib/radarLinks";
 import { NEW_TAB_SUFFIX, RADAR_LINK_ATTRS } from "@/config/site";
@@ -103,14 +103,14 @@ export default function BairroPage({
               <span className="bwh-mono">{label ? `${label} · São Paulo` : "São Paulo"}</span>
             </div>
             <h1 className="bwh-h2" style={{ marginBottom: 24 }}>
-              Reforma de apartamento e studio em <em>{label || "São Paulo"}.</em>
+              Reforma de apartamento e studio {label ? bairroPreposicao(label) : "em"} <em>{label || "São Paulo"}.</em>
             </h1>
             {page && (
               <p className="bwh-lead" style={{ margin: "0 0 32px" }}>
-                {pad(list.length)} apartamentos entregues pela Bewild em {label}
+                {pad(list.length)} apartamentos entregues pela Bewild {noBairro(label)}
                 {faixa ? `, de ${faixa}` : ""}. Cada um com projeto próprio de layout, marcenaria,
                 iluminação e acabamento — veja as fotos reais e abra a página de cada obra.{" "}
-                <a href="#orcamento" style={{ textDecoration: "underline" }}>Pedir orçamento em {label}</a>.
+                <a href="#orcamento" style={{ textDecoration: "underline" }}>Pedir orçamento {noBairro(label)}</a>.
               </p>
             )}
           </div>
@@ -147,14 +147,14 @@ export default function BairroPage({
                   >
                     <div className="bwh-proj__media">
                       <img
-                        src={optimizedImageUrl(p.cover_url!, 640, 70)}
-                        srcSet={optimizedSrcSet(p.cover_url!)}
+                        src={optimizedImageUrl(p.cover_url ?? "", 640, 70)}
+                        srcSet={optimizedSrcSet(p.cover_url ?? "")}
                         sizes={GRID_SIZES}
                         width={640}
                         height={480}
                         alt={
-                          coverAlts[p.cover_url!] ||
-                          `${projectFriendlyName(p) || p.title} — ${bewildTypeLabel(p.project_type)} em ${label}`
+                          coverAlts[p.cover_url ?? ""] ||
+                          `${projectFriendlyName(p) || p.title} — ${bewildTypeLabel(p.project_type)} ${noBairro(label)}`
                         }
                         loading={i < 3 ? "eager" : "lazy"}
                         fetchPriority={i < 3 ? "high" : undefined}
@@ -191,7 +191,7 @@ export default function BairroPage({
             {content && page && (
               <div className="bwh-bairro-texto" style={{ marginTop: 56, maxWidth: 820 }}>
                 <h2 className="bwh-h2" style={{ marginBottom: 20 }}>
-                  Reformar em <em>{label}</em>: o que muda
+                  Reformar {bairroPreposicao(label)} <em>{label}</em>: o que muda
                 </h2>
                 {content.intro.map((t, i) => (
                   <p key={i} style={{ margin: "0 0 16px", fontSize: 17, lineHeight: 1.65 }}>
@@ -215,7 +215,7 @@ export default function BairroPage({
                 })()}
 
                 <h2 className="bwh-mono bwh-label" style={{ margin: "40px 0 16px" }}>
-                  Perguntas frequentes sobre reforma em {label}
+                  Perguntas frequentes sobre reforma {noBairro(label)}
                 </h2>
                 <dl style={{ margin: 0 }}>
                   {content.faq.map((f) => (
@@ -263,7 +263,7 @@ export default function BairroPage({
         <section className="bwh-sec bwh-sec--dark" id="orcamento">
           <div className="bwh-wrap" style={{ maxWidth: 900, textAlign: "center" }}>
             <h2 className="bwh-h2" style={{ margin: "0 auto 24px", color: "#fff" }}>
-              Tem um apartamento em {label || "São Paulo"}? <em>A gente reforma.</em>
+              Tem um apartamento {noBairro(label)}? <em>A gente reforma.</em>
             </h2>
             <p className="bwh-lead" style={{ margin: "0 auto 32px" }}>
               Conte a metragem e o que você precisa: a gente devolve escopo, prazo e próximos passos, sem custo.

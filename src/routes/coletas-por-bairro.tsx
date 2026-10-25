@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { z } from "zod";
+import { searchBairro } from "@/lib/lightValidators";
 import ColetasRadarPage from "@/pages/ColetasRadarPage";
 import { getRadarColetas } from "@/lib/assistant/radarColetas.functions";
 import { seoHead } from "@/lib/routeHead";
 
 export const Route = createFileRoute("/coletas-por-bairro")({
-  validateSearch: z.object({ bairro: z.string().max(100).optional() }),
+  validateSearch: searchBairro,
   loaderDeps: ({ search }) => ({ bairro: search.bairro }),
   loader: ({ deps }) => getRadarColetas({ data: { bairro: deps.bairro } }),
   head: () =>

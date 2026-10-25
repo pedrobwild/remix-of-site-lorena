@@ -1,12 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
+import { oneOf } from "@/lib/lightValidators";
 import { resolvePageSeo } from "@/lib/pageSeo";
 import type { PagesSeoMap } from "@/lib/publicPages";
 import { readPublicSiteSettings } from "@/lib/siteSettingsServer";
 
 /** Leitura pública sanitizada: nunca devolve outras configurações do site. */
 export const loadPageSeo = createServerFn({ method: "GET" })
-  .inputValidator(z.enum(["/portfolio", "/conteudos", "/servicos", "/orcamento", "/contato"]))
+  .inputValidator(oneOf(["/portfolio", "/conteudos", "/servicos", "/orcamento", "/contato"] as const))
   .handler(async ({ data: path }) => {
     try {
       const settings = await readPublicSiteSettings();

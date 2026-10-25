@@ -17,13 +17,32 @@ vi.mock("@/integrations/supabase/client", () => ({
   },
 }));
 
-import { bairroAreaRange, bairroDescription, bairroTitle } from "@/lib/bairroSeo";
+import { bairroAreaRange, bairroDescription, bairroTitle, noBairro } from "@/lib/bairroSeo";
 import { bairroSeoFrom } from "@/lib/seoLoaders";
 import { VISIBLE_TITLE_MAX } from "@/lib/seoTitle";
+
+describe("noBairro", () => {
+  it("usa a preposição que se escreve em português", () => {
+    expect(noBairro("Brooklin")).toBe("no Brooklin");
+    expect(noBairro("Butantã")).toBe("no Butantã");
+    expect(noBairro("Campo Belo")).toBe("no Campo Belo");
+    expect(noBairro("Vila Madalena")).toBe("na Vila Madalena");
+    expect(noBairro("Vila Nova Conceição")).toBe("na Vila Nova Conceição");
+    expect(noBairro("Bela Vista")).toBe("na Bela Vista");
+    expect(noBairro("Consolação")).toBe("na Consolação");
+    expect(noBairro("República")).toBe("na República");
+    expect(noBairro("Pinheiros")).toBe("em Pinheiros");
+    expect(noBairro("Moema")).toBe("em Moema");
+    expect(noBairro("Higienópolis")).toBe("em Higienópolis");
+    expect(noBairro("Campos Elíseos")).toBe("nos Campos Elíseos");
+    expect(noBairro("")).toBe("em São Paulo");
+  });
+});
 
 describe("bairroTitle", () => {
   it("cita apartamento, studio, o bairro e o orçamento", () => {
     expect(bairroTitle("Moema")).toBe("Reforma de apartamento e studio em Moema: orçamento | Bewild");
+    expect(bairroTitle("Brooklin")).toBe("Reforma de apartamento e studio no Brooklin: orçamento");
     expect(bairroTitle("Pinheiros")).toBe("Reforma de apartamento e studio em Pinheiros: orçamento");
   });
 
@@ -31,7 +50,7 @@ describe("bairroTitle", () => {
     for (const label of ["Moema", "Butantã", "Brooklin", "Vila Olímpia", "Vila Nova Conceição"]) {
       const title = bairroTitle(label);
       if (title.endsWith(" | Bewild")) expect(title.length, label).toBeLessThanOrEqual(VISIBLE_TITLE_MAX);
-      expect(title, label).toContain(`em ${label}`);
+      expect(title, label).toContain(noBairro(label));
     }
   });
 
@@ -72,22 +91,22 @@ describe("página de bairro: servidor e navegador dizem o mesmo", () => {
       expect(fonte, f).not.toMatch(/projetos e orçamento/);
     }
     // O H1 acompanha o título.
-    expect(read("src/pages/BairroPage.tsx")).toMatch(/Reforma de apartamento e studio em <em>/);
+    expect(read("src/pages/BairroPage.tsx")).toMatch(/Reforma de apartamento e studio \{label \? bairroPreposicao\(label\) : "em"\} <em>/);
   });
 
   it("o llms.txt lista os bairros com o mesmo rótulo do título", () => {
     const read = (p: string) => readFileSync(path.resolve(__dirname, "../../..", p), "utf8");
     // O build regrava o trecho entre os marcadores a partir deste modelo.
-    expect(read("scripts/generate-sitemap.mjs")).toContain("- [Reforma de apartamento e studio em ${h.label}]");
+    expect(read("scripts/generate-sitemap.mjs")).toContain("- [Reforma de apartamento e studio ${noBairro(h.label)}]");
     const llms = read("public/llms.txt");
     const bloco = llms.slice(llms.indexOf("<!-- bairros:start -->"), llms.indexOf("<!-- bairros:end -->"));
     const linhas = bloco.split("\n").filter((l) => l.startsWith("- ["));
     expect(linhas.length).toBeGreaterThan(0);
-    const prefixo = "Reforma de apartamento e studio em ";
+    const prefixo = /^Reforma de apartamento e studio (?:no|na|nos|em) /;
     for (const linha of linhas) {
       const [, label = ""] = linha.match(/^- \[([^\]]+)\]\(\/reforma\//) ?? [];
-      expect(label.startsWith(prefixo), linha).toBe(true);
-      expect(bairroTitle(label.slice(prefixo.length)).startsWith(label), linha).toBe(true);
+      expect(prefixo.test(label), linha).toBe(true);
+      expect(bairroTitle(label.replace(prefixo, "")).startsWith(label), linha).toBe(true);
     }
   });
 

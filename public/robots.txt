@@ -38,9 +38,9 @@ Allow: /*.png$
 Allow: /*.ico$
 Allow: /*.woff2$
 
-# SEO scrapers agressivos — bloqueados por completo
-User-agent: AhrefsBot
-User-agent: SemrushBot
+# SEO scrapers agressivos — bloqueados por completo.
+# AhrefsBot e SemrushBot liberados em 25/10/2026 (pedido do Pedro): auditoria
+# de site e dados de backlink dessas ferramentas. Seguem o grupo "*" acima.
 User-agent: MJ12bot
 User-agent: DotBot
 User-agent: BLEXBot

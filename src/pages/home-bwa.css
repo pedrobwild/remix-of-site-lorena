@@ -2612,6 +2612,9 @@
 
     .bwa-proof-print img {
       width: 100%;
+      /* height:auto: o <img> declara width/height (reserva o espaço antes de a
+         foto chegar); sem isto o atributo height="1856" viraria a altura. */
+      height: auto;
       aspect-ratio: 4 / 5;
       object-fit: cover;
       border: 1px solid var(--bwa-line);

@@ -1,5 +1,6 @@
 import { brandTitle } from "@/lib/seoTitle";
 import { formatAreaM2 } from "./formatArea";
+import { noBairro } from "@/lib/bairroSeo";
 /**
  * Meta description derivada dos DADOS REAIS do projeto.
  *
@@ -176,11 +177,12 @@ function projectSeoTitleFull(p: ProjectSeoInput | null | undefined): string {
     if (rest !== name && !PLACE_GLUE.test(rest)) name = tidyName(rest) || name;
   }
   if (!name) {
-    const head = `${what.charAt(0).toUpperCase()}${what.slice(1)} em ${place}`;
+    const head = `${what.charAt(0).toUpperCase()}${what.slice(1)} ${noBairro(place)}`;
     return `${truncateTitleBase(head, TITLE_MAX - suffix.length)}${suffix}`;
   }
 
-  const build = (n: string) => `${n}${nameHasPlace(n, place) ? "" : ` em ${place}`}: ${what}${suffix}`;
+  // "no Brooklin", "na Vila Olímpia", "em Pinheiros" (bairroSeo.ts), não "em Brooklin".
+  const build = (n: string) => `${n}${nameHasPlace(n, place) ? "" : ` ${noBairro(place)}`}: ${what}${suffix}`;
   const full = build(name);
   if (full.length <= TITLE_MAX) return full;
   // Sem bairro no cadastro, "em São Paulo" sai antes de cortar o nome do prédio.
