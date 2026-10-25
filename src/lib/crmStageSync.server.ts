@@ -2,6 +2,7 @@
  * Sincronização do status dos leads do site com o funil do Bwild Engine.
  * Chamada por /api/public/crm-stage-sync (agendamento ou admin no painel).
  *
+ * - Antes, envia ao Engine as marcações manuais do painel na fila (`engine_quality_outbox`).
  * - Lê `site-lead-stages` do Engine (header x-integration-key).
  * - Aplica `planCrmLeadUpdate` (regra pura em src/lib/crmStage.ts).
  * - Grava colunas `crm_*`/`status` e o histórico em `lead_qualification_log`.
@@ -35,6 +36,8 @@ export type CrmSyncSummary = {
   sem_negocio: number;
   meta_enviados: number;
   erros: number;
+  /** Marcações do painel levadas ao Engine nesta rodada. */
+  engine_fila?: { enviados: number; pendentes: number; falhas: number };
   error?: string;
 };
 
@@ -103,6 +106,16 @@ export async function runCrmStageSync(
       const last = (data as { crm_synced_at?: string } | null)?.crm_synced_at;
       if (last) summary.updated_since = new Date(Date.parse(last) - 3_600_000).toISOString();
       else summary.mode = "full";
+    }
+
+    // Primeiro leva ao Engine as marcações do painel que ainda estão na fila,
+    // para a leitura abaixo já voltar com elas.
+    try {
+      const { drainEngineQualityOutbox } = await import("@/lib/engineQualityOutbox.server");
+      const drained = await drainEngineQualityOutbox(admin, env, { fetchImpl: opts.fetchImpl, now });
+      summary.engine_fila = { enviados: drained.enviados, pendentes: drained.reenvio, falhas: drained.falhas };
+    } catch {
+      /* a fila nunca derruba a sincronização */
     }
 
     const engine = await fetchEngineStages(

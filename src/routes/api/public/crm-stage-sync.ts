@@ -2,8 +2,10 @@
  * POST /api/public/crm-stage-sync — status dos leads a partir do funil do Bwild Engine.
  * Acesso: agendamento (header `x-crm-sync-secret` === CRM_SYNC_CRON_SECRET)
  * ou admin logado do painel (Bearer do usuário + public.is_admin()).
- * Agendamento: uma vez por dia (03:47 de São Paulo), job pg_cron `crm-stage-sync-full`,
- * com `{ full: true }`. O botão "Sincronizar agora" do painel segue disponível.
+ * Agendamento (pg_cron): `crm-stage-sync-hourly` de hora em hora (minuto 17), incremental,
+ * e `crm-stage-sync-full` uma vez por dia (03:47 de São Paulo) com `{ full: true }`.
+ * Cada rodada primeiro envia ao Engine as marcações do painel na fila.
+ * O botão "Sincronizar agora" do painel segue disponível.
  * Corpo opcional `{ full: true }` = varredura completa (sem updated_since).
  * Resposta só com contagens — nunca dados pessoais.
  */

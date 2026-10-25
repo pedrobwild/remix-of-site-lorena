@@ -18,7 +18,7 @@ export function ManualLeadQualification({ leadId, name, value, onSaved }: {
     try {
       const result = await save({ data: { leadId, status } });
       onSaved(result.status);
-      setMessage({ error: false, text: "Qualificação salva." });
+      setMessage({ error: false, text: result.engine === "enviado" ? "Qualificação salva no site e no Engine." : "Qualificação salva no site. O Engine recebe na próxima sincronização (até 1 hora)." });
     } catch (error) {
       setMessage({ error: true, text: error instanceof Error ? error.message : "Não foi possível salvar. Tente novamente." });
     } finally { setBusy(false); }
