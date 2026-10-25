@@ -26,6 +26,7 @@ import { neighborhoodPages } from "@/lib/portfolioFilter";
 import type { BairroPageLink } from "@/lib/bairrosSp";
 import { fetchAlts, type AltMap } from "@/lib/useImageAlts";
 import { readyPhotos, renderPhotos } from "@/lib/projectPhotos";
+import { serverMemo } from "@/lib/serverMemo";
 
 /** Lista de posts sem `body` (o índice /conteudos não usa o corpo). */
 const POST_LIST_COLS =
@@ -102,7 +103,8 @@ export type PostLoaderData = {
 };
 
 export async function loadPostContent(slug: string): Promise<PostLoaderData> {
-  const res = await fetchPostContent(slug);
+  // Memo de 60 s no servidor (src/lib/serverMemo.ts): só artigo encontrado.
+  const res = await serverMemo(`post:${slug}`, () => fetchPostContent(slug), { keep: (r) => !!r.post });
   if (res.post === null) return notFoundOrRedirect(`/conteudos/${slug}`);
   return res;
 }
@@ -153,7 +155,7 @@ export type ProjectLoaderData = {
 };
 
 export async function loadProjectContent(slug: string): Promise<ProjectLoaderData> {
-  const res = await fetchProjectContent(slug);
+  const res = await serverMemo(`project:${slug}`, () => fetchProjectContent(slug), { keep: (r) => !!r.project });
   if (res.project === null) return notFoundOrRedirect(`/portfolio/${slug}`);
   return res;
 }
@@ -189,7 +191,12 @@ async function fetchProjectContent(slug: string): Promise<ProjectLoaderData> {
 
 // --- listas de projetos (/portfolio, /mapa-do-site, /reforma/$slug) --------
 
-async function fetchProjectList(): Promise<BewildProject[] | null> {
+/** Lista de projetos publicados; no servidor, memo de 60 s (só lista carregada). */
+function fetchProjectList(): Promise<BewildProject[] | null> {
+  return serverMemo("projects:list", fetchProjectListUncached, { keep: (v) => v !== null });
+}
+
+async function fetchProjectListUncached(): Promise<BewildProject[] | null> {
   try {
     const { data, error } = await supabase
       .from("projects")
@@ -224,7 +231,11 @@ export async function loadBairroContent(slug: string): Promise<BairroLoaderData>
 
 export type PostListLoaderData = { posts: BewildPost[] | null };
 
-export async function loadPostList(): Promise<PostListLoaderData> {
+export function loadPostList(): Promise<PostListLoaderData> {
+  return serverMemo("posts:list", loadPostListUncached, { keep: (v) => v.posts !== null });
+}
+
+async function loadPostListUncached(): Promise<PostListLoaderData> {
   try {
     const { data, error } = await supabase
       .from("bewild_posts" as never)

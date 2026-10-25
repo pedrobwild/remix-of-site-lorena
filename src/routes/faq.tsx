@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { serverMemo } from "@/lib/serverMemo";
 import FaqPage from "@/pages/FaqPage";
 import { faqPageJsonLd } from "@/content/faqPage";
 import { seoHead , rootPagesSeo } from "@/lib/routeHead";
@@ -32,7 +33,8 @@ function FaqRoute() {
 }
 
 export const Route = createFileRoute("/faq")({
-  loader: () => loadFaqKb(),
+  // Memo de 60 s no servidor (src/lib/serverMemo.ts): a lista vinha do banco a cada visita.
+  loader: () => serverMemo("faq:kb", loadFaqKb, { keep: (v) => v !== null }),
   component: FaqRoute,
   head: ({ loaderData, matches }) => seoHead({ pagesSeo: rootPagesSeo(matches), jsonLd: [faqPageJsonLd(loaderData ?? null)], title: "Perguntas frequentes sobre reforma em SP | Bewild", description: "Perguntas e respostas sobre reforma de apartamento em SP: quanto custa, prazo, contrato fechado, garantia, autorização do condomínio e etapas da obra.", path: "/faq", keywords: "dúvidas sobre arquitetura e engenharia, projeto de arquitetura em São Paulo, dúvidas sobre reforma de apartamento em SP, reforma de apartamento em SP, custo de reforma, prazo de reforma, contrato fechado de reforma, garantia de reforma, comissão de indicação de imóvel, autorização de reforma condomínio, Bewild" }),
 });
