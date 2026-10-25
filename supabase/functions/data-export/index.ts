@@ -209,7 +209,7 @@ async function readGoogleAdsOffline(db: SupabaseClient, r: ExportRequest): Promi
   }
   const wonIds = consentedLeads.filter((l) => l.crm_won === true).map((l) => String(l.id));
   const contracts = await readCrmContractValues(wonIds);
-  return { rows: await buildGoogleAdsOfflineRows({ leads: consentedLeads, qualifiedAt, contracts: contracts ?? undefined }), error: null };
+  return { rows: await buildGoogleAdsOfflineRows({ leads: consentedLeads, consentByLead, qualifiedAt, contracts: contracts ?? undefined }), error: null };
 }
 
 const ENGINE_STAGES_URL = "https://pieenhgjulsrjlioozsy.supabase.co/functions/v1/site-lead-stages";
