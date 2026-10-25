@@ -332,11 +332,13 @@ function injectGTM(id: string) {
  * Manager a partir de botões como "Contratar"/"Fechar", que o site nunca
  * envia; só os eventos explícitos de src/lib/conversions.ts saem daqui.
  */
+// O fbq provisório nasce na hora (PageView/Lead ficam na fila dele); só o
+// fbevents.js (~190 KiB) espera o `load` + um momento ocioso do navegador.
 function injectMetaPixel(id: string) {
   ensureScript(
     "meta-pixel",
     "",
-    `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];var L=function(){t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)};var I=function(){f.requestIdleCallback?f.requestIdleCallback(L,{timeout:3000}):setTimeout(L,1)};b.readyState==='complete'?I():f.addEventListener('load',I,{once:!0})}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
 fbq.disablePushState=true;fbq.allowDuplicatePageViews=true;fbq('set','autoConfig',false,'${id}');fbq('init','${id}');fbq('track','PageView');`
   );
   // Eventos pedidos antes de o Pixel existir (ex.: ViewContent na entrada) e
