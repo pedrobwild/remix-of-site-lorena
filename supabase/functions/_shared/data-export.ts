@@ -439,6 +439,8 @@ export function toExportRecord(dataset: ExportDataset, row: ExportRecord): Expor
 
 export const GOOGLE_ADS_QUALIFIED_CONVERSION = "Lead qualificado investidor";
 export const GOOGLE_ADS_WON_CONVERSION = "Contrato assinado";
+/** Secundária (fora dos lances, criada em 25/10/2026): o Google vê quem não serve sem passar a buscar mais desses. */
+export const GOOGLE_ADS_DISQUALIFIED_CONVERSION = "Lead desqualificado";
 /** Objetivos que contam como investidor (locação). Valores de LEAD_OBJETIVOS. */
 export const GOOGLE_ADS_INVESTOR_OBJETIVOS: readonly string[] = ["Short stay", "Locação tradicional", "Uso misto"];
 export const GOOGLE_ADS_GCLID_WINDOW_DAYS = 90;
@@ -446,7 +448,7 @@ export const GOOGLE_ADS_HASH_WINDOW_DAYS = 63;
 
 /** Colunas lidas do banco para este conjunto (só dentro da função; o CSV leva hash). */
 export const GOOGLE_ADS_OFFLINE_SELECT =
-  "id, created_at, updated_at, status, objetivo, gclid, email, whatsapp, crm_won, crm_last_change_at, consent_marketing, consent_record_id, consent_visitor_key";
+  "id, created_at, updated_at, status, manual_qualification_at, objetivo, gclid, email, whatsapp, crm_won, crm_last_change_at, consent_marketing, consent_record_id, consent_visitor_key";
 
 type ConsentRow = { id: string; visitor_key: string; advertising: boolean; notice_version: string; created_at: string };
 
@@ -572,6 +574,9 @@ export async function buildGoogleAdsOfflineRows(input: GoogleAdsOfflineInput): P
     const objetivo = typeof lead.objetivo === "string" ? lead.objetivo.trim() : "";
     if (lead.status === "qualificado" && GOOGLE_ADS_INVESTOR_OBJETIVOS.includes(objetivo)) {
       conversions.push({ name: GOOGLE_ADS_QUALIFIED_CONVERSION, when: input.qualifiedAt.get(String(lead.id)) ?? lead.updated_at });
+    }
+    if (lead.status === "descartado" && !isTrue(lead.crm_won)) {
+      conversions.push({ name: GOOGLE_ADS_DISQUALIFIED_CONVERSION, when: lead.manual_qualification_at ?? lead.updated_at });
     }
     if (isTrue(lead.crm_won)) {
       const real = input.contracts?.get(String(lead.id)) ?? [];
