@@ -20,6 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { isConsentAccepted, onConsentChange } from "./cookieConsent";
 import { GA4_MEASUREMENT_ID } from "./ga4";
 import { configureGoogleAds } from "./googleAds";
+import { reportGoogleAdsArrival } from "./googleAdsArrival";
 import { flushMetaPixelQueue, registerMetaPixelId } from "./metaPixel";
 import { devWarn } from "./devLog";
 import { pageSeoOverride } from "./publicPages";
@@ -370,6 +371,7 @@ window.gtag = window.gtag || function(){dataLayer.push(arguments);};
 gtag('js', new Date());
 gtag('config', '${id}');`
   );
+  reportGoogleAdsArrival(id);
 }
 
 /** Microsoft Clarity */
