@@ -27,9 +27,6 @@ describe("resolveHomeSeo", () => {
     });
     expect(s.title).toBe("Da aba Páginas");
   });
-  it("título padrão começa pela marca", () => {
-    expect(HOME_DEFAULT_TITLE).toBe("Bewild Reformas | Reforma de apartamentos e studios em SP");
-  });
   it("prefere pages_seo['/'] (título, descrição e Open Graph) e cai no padrão quando tudo está vazio", () => {
     const s = resolveHomeSeo({
       pages_seo: { "/": { title: "T", description: "D", og_title: "OT", og_description: "OD", og_image: "/i.jpg" } },

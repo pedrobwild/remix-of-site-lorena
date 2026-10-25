@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import HomePage from "@/pages/HomePage";
 import { seoHead } from "@/lib/routeHead";
-import { HOME_DEFAULT_DESCRIPTION, HOME_DEFAULT_TITLE, loadHomeSeo, type HomeSeo } from "@/lib/homeSeo";
+import { HOME_DEFAULT_DESCRIPTION, HOME_DEFAULT_TITLE, HOME_KEYWORDS, loadHomeSeo, type HomeSeo } from "@/lib/homeSeo";
 import homeCriticalCssUrl from "@/pages/home-critical.css?url";
 import homeDeferredCssUrl from "@/pages/home-deferred.css?url";
 
@@ -18,7 +18,7 @@ export const HERO_MOBILE_MEDIA = "(max-width: 760px)";
 
 function homeHead(seo?: HomeSeo) {
   // Título/descrição/Open Graph salvos em /admin/seo (loader); sem eles, o texto padrão.
-  const head = seoHead({ bwaCss: false, title: seo?.title ?? HOME_DEFAULT_TITLE, description: seo?.description ?? HOME_DEFAULT_DESCRIPTION, ogTitle: seo?.ogTitle, ogDescription: seo?.ogDescription, ogImage: seo?.ogImage, path: "/", keywords: "escritório de arquitetura em São Paulo, arquitetura e engenharia, projeto arquitetônico, projeto de interiores, engenharia civil São Paulo, reforma de apartamento em SP, bastidores de obra, equipe em obra, custo de reforma, empresa de reforma de apartamento SP, reforma turnkey São Paulo, Bewild" });
+  const head = seoHead({ bwaCss: false, title: seo?.title ?? HOME_DEFAULT_TITLE, description: seo?.description ?? HOME_DEFAULT_DESCRIPTION, ogTitle: seo?.ogTitle, ogDescription: seo?.ogDescription, ogImage: seo?.ogImage, path: "/", keywords: HOME_KEYWORDS });
   return {
     ...head,
     links: [
