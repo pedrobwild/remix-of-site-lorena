@@ -518,6 +518,56 @@ export type Database = {
         }
         Relationships: []
       }
+      engine_quality_outbox: {
+        Row: {
+          attempts: number
+          created_at: string
+          decision: string
+          id: string
+          last_error: string | null
+          lead_id: string
+          marked_at: string
+          next_attempt_at: string
+          outcome: string | null
+          sent_at: string | null
+          status: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          decision: string
+          id?: string
+          last_error?: string | null
+          lead_id: string
+          marked_at: string
+          next_attempt_at?: string
+          outcome?: string | null
+          sent_at?: string | null
+          status?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          decision?: string
+          id?: string
+          last_error?: string | null
+          lead_id?: string
+          marked_at?: string
+          next_attempt_at?: string
+          outcome?: string | null
+          sent_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "engine_quality_outbox_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       export_keys: {
         Row: {
           created_at: string
