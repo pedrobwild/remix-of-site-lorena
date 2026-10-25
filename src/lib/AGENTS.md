@@ -1,3 +1,5 @@
 # src/lib
 
+- Home search metadata and keywords share homeSeo exports between SSR and the client hook; preserve admin overrides to avoid divergent tags after hydration.
+
 - Folhas `.bwa` (`home-bwa.css` + `bwa-internal.css`) saem no HTML do servidor pelo `seoHead()` e pelo `BwaNav` (mesmo recurso, grupo de precedência `bwa` = últimas do `<head>`); `keepBwaStylesheetsLast` só as move numa navegação interna, quando o CSS da página nova entrou depois. O `<link>` do BwaNav segura a troca de página até a folha carregar, então `installBwaStylesheetPreinit` (Root) já as pede no início da navegação (`onBeforeNavigate` + `preinit` do React) — sem isso o primeiro clique a partir da home esperava uma ida e volta de rede a mais. Tudo em `src/lib/bwaStylesheetOrder.ts`.
