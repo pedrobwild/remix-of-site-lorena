@@ -165,7 +165,7 @@ async function readGoogleAdsOffline(db: SupabaseClient, r: ExportRequest): Promi
       .from("leads")
       .select(GOOGLE_ADS_OFFLINE_SELECT)
       .eq("consent_marketing", true)
-      .or("status.eq.qualificado,crm_won.eq.true")
+      .or("status.eq.qualificado,status.eq.descartado,crm_won.eq.true")
       .gte("created_at", since)
       .lt("created_at", r.until)
       .order("created_at", { ascending: true })

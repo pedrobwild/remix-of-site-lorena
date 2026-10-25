@@ -94,17 +94,23 @@ describe("google_ads_offline — quem entra", () => {
     expect(await build([lead({ objetivo })])).toEqual([]);
   });
 
-  it("só qualificado conta (novo/contatado/descartado ficam fora)", async () => {
-    for (const status of ["novo", "contatado", "descartado"]) expect(await build([lead({ status })])).toEqual([]);
+  it("novo e contatado ficam fora", async () => {
+    for (const status of ["novo", "contatado"]) expect(await build([lead({ status })])).toEqual([]);
   });
 
-  it("qualificado manual entra com data registrada e não qualificado manual fica fora", async () => {
+  it("não qualificado vai como \"Lead desqualificado\", na hora da marcação", async () => {
+    const rows = await build([lead({ status: "descartado", manual_qualification: "descartado", manual_qualification_at: "2026-10-14T14:00:00Z" })]);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]["Conversion Name"]).toBe("Lead desqualificado");
+    expect(rows[0]["Conversion Time"]).toBe("2026-10-14 11:00:00-03:00");
+  });
+
+  it("qualificado manual entra com data registrada", async () => {
     const at = "2026-10-14T14:00:00Z";
     const rows = await build([lead({ manual_qualification: "qualificado" })], new Map([["l1", at]]));
     expect(rows).toHaveLength(1);
     expect(rows[0]["Conversion Name"]).toBe(GOOGLE_ADS_QUALIFIED_CONVERSION);
     expect(rows[0]["Conversion Time"]).toBe("2026-10-14 11:00:00-03:00");
-    expect(await build([lead({ status: "descartado", manual_qualification: "descartado" })])).toEqual([]);
   });
 
   it("contrato ganho entra com qualquer objetivo, e o lead investidor ganho gera as duas conversões", async () => {
