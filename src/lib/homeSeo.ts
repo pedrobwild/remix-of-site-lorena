@@ -11,9 +11,11 @@
 import { supabase } from "@/integrations/supabase/client";
 import { pageSeoOverride, type PagesSeoMap } from "@/lib/publicPages";
 
-export const HOME_DEFAULT_TITLE = "Bewild Reformas | Reforma de apartamentos e studios em SP";
+export const HOME_DEFAULT_TITLE = "Reforma de studios e apartamentos compactos em SP | Bewild";
 export const HOME_DEFAULT_DESCRIPTION =
-  "Reforma completa de apartamentos e studios em São Paulo: projeto, obra, marcenaria e mobília em um só contrato, preço e prazo fechados, 5 anos de garantia.";
+  "Reforma de studios e apartamentos compactos em São Paulo para alugar ou morar. Projeto e obra em um só contrato, preço e prazo fechados. Peça seu orçamento.";
+export const HOME_KEYWORDS =
+  "reforma de compactos, reforma de studio SP, reforma de studios em São Paulo, reforma de apartamento compacto, reforma de apartamento pequeno em SP, reforma para Airbnb, reforma para aluguel, empresa de reforma em São Paulo, Bewild";
 
 export type HomeSeoSettings = {
   home_seo_title?: string | null;

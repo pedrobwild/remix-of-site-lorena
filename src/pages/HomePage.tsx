@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { HOME_BWA_HTML } from "./home-bwa-body";
 import BwaFooter from "@/components/BwaFooter";
 import { useSeo } from "@/lib/useSeo";
-import { resolveHomeSeo } from "@/lib/homeSeo";
+import { HOME_KEYWORDS, resolveHomeSeo } from "@/lib/homeSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import { hydrateHomeProjects } from "@/lib/hydrateHomeProjects";
 import { trackEvent } from "@/lib/ga4";
@@ -18,8 +18,6 @@ import { hydrateHomeFaq } from "./homeFaq";
 // caminho crítico da home (auditoria 06/10: 467 KB de JS na home).
 const WorkflowPortalReplica = lazy(() => import("@/components/workflow-replica/WorkflowPortalReplica"));
 
-const KEYWORDS =
-  "escritório de arquitetura em São Paulo, arquitetura e engenharia, projeto arquitetônico, projeto de interiores, engenharia civil São Paulo, reforma de apartamento em SP, bastidores de obra, equipe em obra, custo de reforma, quanto custa reformar um apartamento em SP, empresa de reforma de apartamento SP, reforma turnkey São Paulo, Bewild";
 const THEME_COLOR = "#0B2342";
 // Fontes e preload do hero não ficam mais aqui:
 //  - o site inteiro usa só Manrope e JetBrains Mono, hospedadas no próprio
@@ -103,7 +101,7 @@ export default function HomePage() {
     ogTitle: homeSeo.ogTitle,
     ogDescription: homeSeo.ogDescription,
     ogImage: homeSeo.ogImage,
-    keywords: KEYWORDS,
+    keywords: HOME_KEYWORDS,
     canonicalPath: "/",
     ogType: "website",
   });
