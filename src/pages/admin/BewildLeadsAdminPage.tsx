@@ -64,6 +64,8 @@ type Lead = {
   lives_in_sp: boolean | null;
   status: LeadStatus;
   manual_qualification?: "qualificado" | "descartado" | null;
+  manual_qualification_source?: string | null;
+  manual_qualification_reason?: string | null;
   created_at: string;
   // Atribuição completa (Fase 1 de conversões). Opcionais: leads antigos não têm.
   utm_term?: string | null;
@@ -500,7 +502,7 @@ export default function BewildLeadsAdminPage() {
                         <td>
                           <LeadCrmStatus lead={r} />
                           <ManualLeadQualification leadId={r.id} name={r.name} value={r.manual_qualification} onSaved={next => {
-                            setRows(prev => prev.map(lead => lead.id === r.id ? { ...lead, status: next, manual_qualification: next } : lead));
+                            setRows(prev => prev.map(lead => lead.id === r.id ? { ...lead, status: next, manual_qualification: next, manual_qualification_source: "site", manual_qualification_reason: null } : lead));
                             setCounts(prev => moveStatusCount(prev, r.status, next));
                           }} />
                         </td>
