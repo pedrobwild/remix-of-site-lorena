@@ -17,6 +17,11 @@ vi.mock("@/lib/ga4", () => ({
 vi.mock("@/lib/conversions", () => ({
   reportLead: (...a: unknown[]) => reportLeadMock(...a),
 }));
+// adConsentRecord importa o cliente do Supabase, que exige VITE_SUPABASE_URL
+// (ausente no CI). Aqui só importa a prova do aceite: sem registro, ela é nula.
+vi.mock("@/lib/adConsentRecord", () => ({
+  currentAdConsentProof: () => ({ consent_record_id: null, consent_visitor_key: null }),
+}));
 
 import { useLeadSubmit } from "../useLeadSubmit";
 
