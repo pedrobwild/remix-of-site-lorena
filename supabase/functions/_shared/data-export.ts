@@ -446,7 +446,36 @@ export const GOOGLE_ADS_HASH_WINDOW_DAYS = 63;
 
 /** Colunas lidas do banco para este conjunto (só dentro da função; o CSV leva hash). */
 export const GOOGLE_ADS_OFFLINE_SELECT =
-  "id, created_at, updated_at, status, objetivo, gclid, email, whatsapp, crm_won, crm_last_change_at, consent_marketing";
+  "id, created_at, updated_at, status, objetivo, gclid, email, whatsapp, crm_won, crm_last_change_at, consent_marketing, consent_record_id, consent_visitor_key";
+
+type ConsentRow = { id: string; visitor_key: string; advertising: boolean; notice_version: string; created_at: string };
+
+/**
+ * Aceite na captura (registro ligado ao lead) + escolha mais recente do mesmo
+ * aparelho. Lead sem registro, registro de outro aparelho ou retirada
+ * posterior ficam fora do mapa — e fora do envio.
+ */
+export function buildConsentByLead(
+  leads: readonly ExportRecord[],
+  records: readonly ConsentRow[],
+): Map<string, GoogleAdsExportConsent> {
+  const byId = new Map(records.map((r) => [r.id, r]));
+  const latest = new Map<string, ConsentRow>();
+  for (const r of records) {
+    const prev = latest.get(r.visitor_key);
+    if (!prev || Date.parse(r.created_at) > Date.parse(prev.created_at)) latest.set(r.visitor_key, r);
+  }
+  const out = new Map<string, GoogleAdsExportConsent>();
+  for (const lead of leads) {
+    const event = byId.get(String(lead.consent_record_id ?? ""));
+    if (!event || event.visitor_key !== lead.consent_visitor_key) continue;
+    const current = latest.get(event.visitor_key);
+    if (!current) continue;
+    const pack = (r: ConsentRow) => ({ recordId: r.id, noticeVersion: r.notice_version, acceptedAt: r.created_at, advertising: r.advertising });
+    out.set(String(lead.id), { event: pack(event), current: pack(current) });
+  }
+  return out;
+}
 
 /** E-mail como o Google pede antes do hash: sem espaços nas pontas e em minúsculas. */
 export function normalizeEmailForHash(raw: unknown): string | null {
