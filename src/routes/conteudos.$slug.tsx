@@ -37,7 +37,7 @@ export const Route = createFileRoute("/conteudos/$slug")({
       head: {
         isAuthor: !!author,
         keywords: keywordsForPost(post.slug),
-        extraMeta: author
+        extraMeta: (author
           ? null
           : [
               { name: "author", content: String(authorNode?.name ?? "Bewild") },
@@ -45,7 +45,7 @@ export const Route = createFileRoute("/conteudos/$slug")({
               { property: "article:modified_time", content: dates?.modified ?? "" },
               { property: "article:section", content: bewildCategoryLabel(post.category) },
               { property: "article:author", content: authorUrl ?? "" },
-            ],
+            ]) as Record<string, string>[] | null,
         jsonLd: postJsonLd(post, { wordCount: bodyWordCount(body?.html) }),
         pageJsonLd: author
           ? authorProfileJsonLd(author, {
