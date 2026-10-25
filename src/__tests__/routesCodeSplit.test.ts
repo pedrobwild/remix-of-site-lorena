@@ -55,3 +55,16 @@ describe("rotas: páginas ficam fora do pacote inicial", () => {
     expect(pinnedPageImports('import { PAGINA_JSONLD } from "@/content/pages/pagina";')).toEqual([]);
   });
 });
+
+/**
+ * Rodada 2 de velocidade (25/10/2026): head() e loader de toda rota entram no
+ * pacote inicial de qualquer página. Os carregadores de conteúdo e os
+ * montadores de JSON-LD só podem chegar por import dinâmico no loader.
+ */
+describe("montadores pesados fora do pacote inicial", () => {
+  const PESADOS = /^import\s+(?!type\s)[^;]*from\s+["']@\/lib\/(contentLoaders|contentJsonLd|routeHeadData)["']/m;
+  const arquivos = readdirSync(ROUTES_DIR).filter((f) => f.endsWith(".tsx") && !f.startsWith("admin"));
+  it.each(arquivos)("%s não importa contentLoaders/contentJsonLd/routeHeadData de forma estática", (f) => {
+    expect(readFileSync(path.join(ROUTES_DIR, f), "utf8")).not.toMatch(PESADOS);
+  });
+});
