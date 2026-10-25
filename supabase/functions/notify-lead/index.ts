@@ -361,12 +361,22 @@ Deno.serve(async (req) => {
   const leadId = lead_insert.id ?? null;
 
   // Slack, CRM, e-mail e Meta em paralelo; a falha de um não bloqueia os outros.
-  const [slack, crm, email, meta] = await Promise.all([
+  const others = Promise.all([
     notifySlack(lead, leadId),
     createCrmCard(lead, leadId),
     sendLeadEmail(lead, leadId),
     sendMetaCapiLead(admin, lead, leadId, req),
   ]);
 
+  // Lead gravado = entregue: responde já e termina os avisos em segundo plano.
+  // Esperar CRM/Slack/e-mail estourava o limite de 8 s do site e mostrava
+  // "Envio sem confirmação" para um pedido que já tinha chegado.
+  const runtime = (globalThis as { EdgeRuntime?: { waitUntil(p: Promise<unknown>): void } }).EdgeRuntime;
+  if (lead_insert.status === "sent" && runtime?.waitUntil) {
+    runtime.waitUntil(others.catch((e) => console.error("[notify-lead] avisos falharam", e)));
+    return json(200, { ok: true, lead_insert, slack: "pending", crm: "pending", email: "pending", meta: "pending" });
+  }
+
+  const [slack, crm, email, meta] = await others;
   return json(200, { ok: true, lead_insert, slack, crm, email, meta });
 });
