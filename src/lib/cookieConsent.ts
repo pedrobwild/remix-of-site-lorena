@@ -105,10 +105,6 @@ export function setConsent(value: Consent): void {
       .catch(() => undefined);
   }
   try {
-  } catch {
-    /* modo privado / storage cheio — silencia */
-  }
-  try {
     window.dispatchEvent(
       new CustomEvent<ConsentChangeDetail>(CONSENT_EVENT, { detail: { value, previous } })
     );
