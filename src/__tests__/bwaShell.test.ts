@@ -7,7 +7,8 @@
 import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { buildBwaShell, classesOf, isShellRule, SHELL_PATH } from "../../scripts/bwaShell";
+import { buildBwaShell, buildHomeSplit, classesOf, homeTokens, isShellRule, HOME_CRITICAL_PATH, HOME_DEFERRED_PATH, SHELL_PATH } from "../../scripts/bwaShell";
+import { HOME_FOLD_MARKER, withDeferredStylesheet } from "../pages/home-bwa-body";
 
 const ROOT = path.resolve(__dirname, "../..");
 const committed = readFileSync(path.join(ROOT, SHELL_PATH), "utf8");
@@ -44,7 +45,7 @@ describe("bwa-shell.css", () => {
     expect(classesOf(".bwa-faq-item.bwa-open:hover > .bwa-faq-answer").classes).toEqual(["bwa-faq-item", "bwa-faq-answer"]);
   });
 
-  it("fora da rota '/', ninguém carrega home-bwa.css", () => {
+  it("ninguém carrega home-bwa.css inteiro: a rota '/' usa home-critical.css e o corpo da home, home-deferred.css", () => {
     const files: string[] = [];
     (function walk(dir: string) {
       for (const e of readdirSync(dir, { withFileTypes: true })) {
@@ -53,9 +54,54 @@ describe("bwa-shell.css", () => {
         else if (/\.(ts|tsx)$/.test(e.name) && !/\.test\./.test(e.name)) files.push(p);
       }
     })(path.join(ROOT, "src"));
-    const importers = files
-      .filter((f) => /home-bwa\.css\?url/.test(readFileSync(f, "utf8")))
-      .map((f) => path.relative(ROOT, f));
-    expect(importers).toEqual(["src/routes/index.tsx"]);
+    const importers = (re: RegExp) => files.filter((f) => re.test(readFileSync(f, "utf8"))).map((f) => path.relative(ROOT, f)).sort();
+    expect(importers(/home-bwa\.css\?url/)).toEqual([]);
+    expect(importers(/home-critical\.css\?url/)).toEqual(["src/routes/index.tsx"]);
+    expect(importers(/home-deferred\.css\?url/)).toEqual(["src/pages/home-bwa-body.ts", "src/routes/index.tsx"]);
+  });
+});
+
+describe("home-critical.css + home-deferred.css (dobra da home)", () => {
+  const critical = readFileSync(path.join(ROOT, HOME_CRITICAL_PATH), "utf8");
+  const deferred = readFileSync(path.join(ROOT, HOME_DEFERRED_PATH), "utf8");
+
+  it("os arquivos commitados são exatamente os gerados a partir de home-bwa.css", () => {
+    const built = buildHomeSplit(ROOT);
+    expect(critical).toBe(built.critical);
+    expect(deferred).toBe(built.deferred);
+  });
+
+  it("o crítico tem tokens, cabeçalho, menu mobile e hero, e é pequeno; não tem o índice de serviços nem o FAQ", () => {
+    for (const sel of [":root", ".bwa-nav", ".bwa-mobile-menu", ".bwa-hero-title", ".bwa-hero-facts", ".bwa-mobile-cta"]) {
+      expect(critical, sel).toMatch(new RegExp(sel.replace(/[.[\]]/g, "\\$&") + "[\\s,{.:>\\[]"));
+    }
+    for (const sel of [".bwa-services-index", ".bwa-services-trigger", ".bwa-faq-item", ".bwa-final-grid"]) {
+      expect(critical, sel).not.toMatch(new RegExp(sel.replace(/[.[\]]/g, "\\$&") + "[\\s,{.:>\\[]"));
+    }
+    const home = readFileSync(path.join(ROOT, "src/pages/home-bwa.css"), "utf8");
+    expect(critical.length).toBeLessThan(home.length * 0.3);
+  });
+
+  it("o adiado repete as regras críticas que alcançam as seções de baixo (.bwa-title, .bwa-lead, body), na ordem original", () => {
+    // Sem isso a cascata mudava: .bwa-services-title ficava com peso 500 em vez de 600
+    // e .bwa-lead herdava a cor do hero (regressão de estilos computados, 25/10/2026).
+    for (const sel of [".bwa-title", ".bwa-lead", ".bwa-button", ".bwa-services-index"]) {
+      expect(deferred, sel).toMatch(new RegExp(sel.replace(/[.[\]]/g, "\\$&") + "[\\s,{.:>\\[]"));
+    }
+    expect(deferred).not.toMatch(/\.bwa-hero-facts-inner[\s,{.:>[]/);
+  });
+
+  it("a marca da dobra existe no HTML e o <link> do adiado entra logo antes dela", () => {
+    const body = readFileSync(path.join(ROOT, "src/pages/home-bwa-body.ts"), "utf8");
+    const { fold, below } = homeTokens(body);
+    expect(fold.has("bwa-hero")).toBe(true);
+    expect(fold.has("bwa-mobile-cta")).toBe(true);
+    expect(fold.has("bwa-faq-item")).toBe(false);
+    expect(below.has("bwa-faq-item")).toBe(true);
+    const html = `<header class="bwa-nav"></header><section class="bwa-hero"></section>\n\n    ${HOME_FOLD_MARKER} id="para-quem"></section>`;
+    const out = withDeferredStylesheet(html, "/assets/home-deferred-abc.css");
+    expect(out.indexOf('<link rel="stylesheet" href="/assets/home-deferred-abc.css">')).toBeGreaterThan(out.indexOf("</section>"));
+    expect(out.indexOf('<link rel="stylesheet"')).toBeLessThan(out.indexOf(HOME_FOLD_MARKER));
+    expect(withDeferredStylesheet(html, "")).toBe(html);
   });
 });

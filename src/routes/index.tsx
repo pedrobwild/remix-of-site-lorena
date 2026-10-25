@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import HomePage from "@/pages/HomePage";
 import { seoHead } from "@/lib/routeHead";
 import { HOME_DEFAULT_DESCRIPTION, HOME_DEFAULT_TITLE, loadHomeSeo, type HomeSeo } from "@/lib/homeSeo";
-import homeBwaCssUrl from "@/pages/home-bwa.css?url";
+import homeCriticalCssUrl from "@/pages/home-critical.css?url";
+import homeDeferredCssUrl from "@/pages/home-deferred.css?url";
 
 /** Imagem principal da home, carregada antecipadamente para reduzir o tempo de exibição. */
 export const HERO_IMAGE =
@@ -28,7 +29,12 @@ function homeHead(seo?: HomeSeo) {
       // topo e o <main> pulava para cima quando a folha chegava — CLS 1,0 no
       // desktop e 0,19 no celular (PageSpeed, 30/09). As páginas internas
       // recebem as folhas .bwa pelo seoHead() (src/lib/routeHead.ts).
-      { rel: "stylesheet", href: homeBwaCssUrl },
+      // 25/10/2026: só a parte da primeira tela (home-critical.css, derivada
+      // de home-bwa.css no build) bloqueia aqui; o resto (home-deferred.css)
+      // é só pré-carregado e entra como <link> no corpo, depois do hero
+      // (home-bwa-body.ts) — ver scripts/bwaShell.ts.
+      { rel: "stylesheet", href: homeCriticalCssUrl },
+      ...(homeDeferredCssUrl ? [{ rel: "preload", as: "style", href: homeDeferredCssUrl }] : []),
       {
         rel: "preload",
         as: "image",

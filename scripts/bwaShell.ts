@@ -153,11 +153,130 @@ export function bwaShellPlugin(repoRoot: string) {
     enforce: "pre" as const,
     buildStart() {
       writeBwaShell(repoRoot);
+      writeHomeSplit(repoRoot);
     },
     configureServer(server: { watcher: { on: (ev: string, fn: (file: string) => void) => void } }) {
       server.watcher.on("change", (file: string) => {
-        if (path.resolve(file) === homeCss) writeBwaShell(repoRoot);
+        const f = path.resolve(file);
+        if (f === homeCss || f === path.join(repoRoot, HOME_BODY_PATH)) {
+          writeBwaShell(repoRoot);
+          writeHomeSplit(repoRoot);
+        }
       });
     },
   };
+}
+
+/* ------------------------------------------------------------------------ */
+/* Home: acima × abaixo da dobra                                              */
+/* ------------------------------------------------------------------------ */
+
+export const HOME_BODY_PATH = "src/pages/home-bwa-body.ts";
+export const HOME_CRITICAL_PATH = "src/pages/home-critical.css";
+export const HOME_DEFERRED_PATH = "src/pages/home-deferred.css";
+
+/** Marca, no HTML da home, onde a dobra termina (início da primeira seção depois do hero). */
+export const FOLD_END_MARKER = '<section class=\\"bwa-audience\\"';
+
+/**
+ * Classes que o HTML acima da dobra usa: tudo de HOME_BWA_HTML até o fim do
+ * hero (biblioteca SVG, skip link, cabeçalho com menu mobile e dropdowns,
+ * hero com fatos) mais a barra fixa "Solicitar orçamento" do celular, que
+ * fica depois do <main> mas é visível na primeira tela.
+ */
+export function foldTokens(repoRoot: string, body = fs.readFileSync(path.join(repoRoot, HOME_BODY_PATH), "utf8")): Set<string> {
+  return homeTokens(body).fold;
+}
+
+/** Classes do HTML da home: acima da dobra (`fold`) e no resto da página (`below`). */
+export function homeTokens(body: string): { fold: Set<string>; below: Set<string> } {
+  const start = body.indexOf("const HOME_BWA_HTML_RAW = ");
+  const html = body.slice(start);
+  const end = html.indexOf(FOLD_END_MARKER);
+  if (start < 0 || end < 0) throw new Error("home-bwa-body.ts: não achei HOME_BWA_HTML_RAW ou a seção .bwa-audience (marca da dobra)");
+  const cta = html.indexOf("bwa-mobile-cta");
+  const classesIn = (chunk: string): Set<string> => {
+    const tokens = new Set<string>();
+    for (const m of chunk.matchAll(/class=\\"([^"\\]*)\\"/g)) for (const c of m[1].split(/\s+/)) if (c) tokens.add(c);
+    return tokens;
+  };
+  const fold = classesIn(html.slice(0, end) + (cta >= 0 ? html.slice(cta - 40, cta + 400) : ""));
+  const below = classesIn(html.slice(end));
+  return { fold, below };
+}
+
+export function isCriticalRule(selector: string, fold: Set<string>): boolean {
+  const { classes, bare } = classesOf(selector);
+  if (bare || classes.length === 0) return true;
+  return classes.some((c) => fold.has(c));
+}
+
+const CRITICAL_HEADER = `/* GERADO por scripts/bwaShell.ts a partir de src/pages/home-bwa.css — NÃO EDITE.
+ * Parte de home-bwa.css que a primeira tela da home usa (tokens, base,
+ * cabeçalho, menu mobile, hero, barra fixa do celular): entra no <head> da
+ * rota "/" e bloqueia a renderização só do que precisa. O resto está em
+ * home-deferred.css, carregado no corpo da página logo depois do hero. */
+`;
+const DEFERRED_HEADER = `/* GERADO por scripts/bwaShell.ts a partir de src/pages/home-bwa.css — NÃO EDITE.
+ * Regras de home-bwa.css que só as seções abaixo do hero usam. O <link> deste
+ * arquivo fica no corpo da home (HOME_BWA_HTML), depois do hero: o navegador
+ * pinta cabeçalho e hero sem esperar por ele e só segura o que vem depois. */
+`;
+
+/** Divide home-bwa.css em crítico (dobra) e adiado, preservando a ordem em cada um. */
+export function buildHomeSplit(repoRoot: string, homeCss = fs.readFileSync(path.join(repoRoot, HOME_CSS_PATH), "utf8")): { critical: string; deferred: string } {
+  const { fold, below } = homeTokens(fs.readFileSync(path.join(repoRoot, HOME_BODY_PATH), "utf8"));
+  // Crítico: regra que pode casar algo da primeira tela. Adiado: as demais E, de novo, as
+  // críticas que também alcançam elementos abaixo da dobra (`.bwa-title`, `.bwa-lead`,
+  // `body`…), na ordem original — assim a cascata nas seções de baixo é a de sempre:
+  // uma regra do hero que vinha DEPOIS de uma regra de seção continua vencendo lá.
+  const goes = (selector: string): { critical: boolean; deferred: boolean } => {
+    const { classes, bare } = classesOf(selector);
+    const critical = bare || classes.length === 0 || classes.some((c) => fold.has(c));
+    const reachesBelow = bare || classes.length === 0 || classes.some((c) => below.has(c));
+    return { critical, deferred: !critical || reachesBelow };
+  };
+  const parts: Record<"critical" | "deferred", postcss.Root> = { critical: postcss.parse(homeCss), deferred: postcss.parse(homeCss) };
+  for (const which of ["critical", "deferred"] as const) {
+    const keepKeyframes = new Set<string>();
+    const prune = (container: postcss.Container): void => {
+      for (const node of [...(container.nodes ?? [])]) {
+        if (node.type === "comment") node.remove();
+        else if (node.type === "rule") {
+          if (goes(node.selector)[which]) {
+            node.walkDecls((d) => {
+              if (/^animation(-name)?$/.test(d.prop)) for (const n of d.value.split(/[\s,]+/)) keepKeyframes.add(n);
+            });
+          } else node.remove();
+        } else if (node.type === "atrule") {
+          if (/keyframes$/.test(node.name) || node.name === "font-face" || node.name === "import" || node.name === "charset") continue;
+          if (node.nodes) {
+            prune(node);
+            if (!node.nodes.length) node.remove();
+          }
+        }
+      }
+    };
+    prune(parts[which]);
+    parts[which].walkAtRules(/keyframes$/, (kf) => {
+      if (!keepKeyframes.has(kf.params.trim())) kf.remove();
+    });
+  }
+  const tidy = (root: postcss.Root) => root.toString().replace(/\n{3,}/g, "\n\n").trim();
+  return { critical: `${CRITICAL_HEADER}\n${tidy(parts.critical)}\n`, deferred: `${DEFERRED_HEADER}\n${tidy(parts.deferred)}\n` };
+}
+
+/** Escreve home-critical.css e home-deferred.css se mudaram. */
+export function writeHomeSplit(repoRoot: string): boolean {
+  const { critical, deferred } = buildHomeSplit(repoRoot);
+  let wrote = false;
+  for (const [rel, next] of [[HOME_CRITICAL_PATH, critical], [HOME_DEFERRED_PATH, deferred]] as const) {
+    const target = path.join(repoRoot, rel);
+    const current = fs.existsSync(target) ? fs.readFileSync(target, "utf8") : "";
+    if (current !== next) {
+      fs.writeFileSync(target, next);
+      wrote = true;
+    }
+  }
+  return wrote;
 }
