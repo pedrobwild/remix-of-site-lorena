@@ -79,8 +79,28 @@ function omitKeys(row: Record<string, unknown>, keys: readonly string[]): Record
   return out;
 }
 
+/**
+ * Mantém a prova do aceite só se o registro existe, é um aceite publicitário
+ * e pertence ao mesmo aparelho. Qualquer dúvida → sem prova (envio bloqueado).
+ */
+async function verifiedConsentProof(admin: SupabaseClient, lead: CleanLead): Promise<{ consent_record_id: string | null; consent_visitor_key: string | null }> {
+  const none = { consent_record_id: null, consent_visitor_key: null };
+  if (lead.consent_marketing !== true || !lead.consent_record_id || !lead.consent_visitor_key) return none;
+  try {
+    const { data, error } = await admin
+      .from("ad_consent_records")
+      .select("id, visitor_key, advertising")
+      .eq("id", lead.consent_record_id)
+      .maybeSingle();
+    if (error || !data || data.visitor_key !== lead.consent_visitor_key || data.advertising !== true) return none;
+    return { consent_record_id: data.id, consent_visitor_key: data.visitor_key };
+  } catch {
+    return none;
+  }
+}
+
 async function insertLead(admin: SupabaseClient, lead: CleanLead): Promise<StepResult> {
-  const row: Record<string, unknown> = { ...lead, status: "novo" };
+  const row: Record<string, unknown> = { ...lead, ...(await verifiedConsentProof(admin, lead)), status: "novo" };
   try {
     let { data, error } = await admin.from("leads").insert(row).select("id").single();
     // Colunas novas chegam por migration separada (atribuição/CAPI; antes,

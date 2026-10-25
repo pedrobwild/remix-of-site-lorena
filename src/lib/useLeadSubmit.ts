@@ -13,6 +13,7 @@ import { readPersistedAttribution, readPrivacyVisitForLead } from "@/lib/analyti
 import { resolveLeadAttribution, type LeadAttribution } from "@/lib/campaignParams";
 import { reportLead } from "@/lib/conversions";
 import { isConsentAccepted } from "@/lib/cookieConsent";
+import { currentAdConsentProof } from "@/lib/adConsentRecord";
 import { trackEvent } from "@/lib/ga4";
 import type { LeadPayload, LeadTracking } from "@/lib/leadDelivery";
 import {
@@ -71,7 +72,7 @@ export function collectLeadTracking(eventId: string): LeadTracking {
     fbclid = click?.fbclid ?? null;
     fbclidSeenAt = click?.fbclidSeenAt ?? null;
   }
-  return { event_id: eventId, consent_marketing: true, ...readMetaBrowserIds({ fbclid, fbclidSeenAt }) };
+  return { event_id: eventId, consent_marketing: true, ...readMetaBrowserIds({ fbclid, fbclidSeenAt }), ...currentAdConsentProof() };
 }
 
 export function browserUserAgent(): string | null {

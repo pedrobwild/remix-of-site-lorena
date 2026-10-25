@@ -86,6 +86,8 @@ export type LeadPayload = {
   fbp?: string | null;
   fbc?: string | null;
   privacy_visited_before_submit?: boolean | null;
+  consent_record_id?: string | null;
+  consent_visitor_key?: string | null;
 };
 
 /**
@@ -98,6 +100,9 @@ export type LeadTracking = {
   consent_marketing: boolean;
   fbp: string | null;
   fbc: string | null;
+  /** Prova do aceite publicitário (registro do aviso de cookies). */
+  consent_record_id?: string | null;
+  consent_visitor_key?: string | null;
 };
 
 /**

@@ -25,6 +25,7 @@ import {
   type ExportRecord,
   type ExportRequest,
   buildGoogleAdsOfflineRows,
+  buildConsentByLead,
   canExportGoogleAdsLead,
   exportFilename,
   GOOGLE_ADS_GCLID_WINDOW_DAYS,
@@ -173,11 +174,24 @@ async function readGoogleAdsOffline(db: SupabaseClient, r: ExportRequest): Promi
   );
   if (leads.error) return leads;
 
-  // O esquema atual guarda apenas consent_marketing, sem evidência de aceite
-  // nem retirada vinculada ao lead. Nenhum desses registros pode ser enviado.
-  // O builder também exige evidência persistida na captura e no envio; nunca
-  // usar o flag legado como substituto, nem reexportar eventos antes bloqueados.
-  const consentedLeads = leads.rows.filter((lead) => canExportGoogleAdsLead(lead, undefined, Date.now()));
+  // Prova do aceite: registro do aviso de cookies ligado ao lead (captura) e a
+  // escolha mais recente do mesmo aparelho (atual). Nunca usar o flag legado
+  // como substituto, nem reexportar eventos antes bloqueados.
+  const keys = [...new Set(leads.rows.map((l) => l.consent_visitor_key).filter((k): k is string => typeof k === "string" && k.length > 0))];
+  const records: { id: string; visitor_key: string; advertising: boolean; notice_version: string; created_at: string }[] = [];
+  for (let i = 0; i < keys.length; i += 200) {
+    const { data, error } = await db
+      .from("ad_consent_records")
+      .select("id, visitor_key, advertising, notice_version, created_at")
+      .in("visitor_key", keys.slice(i, i + 200))
+      .order("created_at", { ascending: true })
+      .order("id", { ascending: true })
+      .limit(1000);
+    if (error) return { rows: [], error: error.message };
+    records.push(...((data ?? []) as typeof records));
+  }
+  const consentByLead = buildConsentByLead(leads.rows, records);
+  const consentedLeads = leads.rows.filter((lead) => canExportGoogleAdsLead(lead, consentByLead.get(String(lead.id)), Date.now()));
   if (!consentedLeads.length) return { rows: [], error: null };
 
   const qualifiedAt = new Map<string, string>();
@@ -196,7 +210,7 @@ async function readGoogleAdsOffline(db: SupabaseClient, r: ExportRequest): Promi
   }
   const wonIds = consentedLeads.filter((l) => l.crm_won === true).map((l) => String(l.id));
   const contracts = await readCrmContractValues(wonIds);
-  return { rows: await buildGoogleAdsOfflineRows({ leads: consentedLeads, qualifiedAt, contracts: contracts ?? undefined }), error: null };
+  return { rows: await buildGoogleAdsOfflineRows({ leads: consentedLeads, consentByLead, qualifiedAt, contracts: contracts ?? undefined }), error: null };
 }
 
 const ENGINE_STAGES_URL = "https://pieenhgjulsrjlioozsy.supabase.co/functions/v1/site-lead-stages";

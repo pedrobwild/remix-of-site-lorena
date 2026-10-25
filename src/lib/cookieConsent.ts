@@ -98,6 +98,12 @@ export function setConsent(value: Consent): void {
   } catch {
     /* modo privado / storage cheio — silencia */
   }
+  // Prova da escolha no servidor (aceite ou retirada), ligada ao pedido depois.
+  if (!isFramed() && import.meta.env.MODE !== "test") {
+    void import("./adConsentRecord")
+      .then((m) => m.recordAdConsent(value, CONSENT_VERSION))
+      .catch(() => undefined);
+  }
   try {
     window.dispatchEvent(
       new CustomEvent<ConsentChangeDetail>(CONSENT_EVENT, { detail: { value, previous } })
