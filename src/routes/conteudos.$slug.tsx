@@ -2,7 +2,9 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import BewildPostPage from "@/pages/BewildPostPage";
 import { seoHead } from "@/lib/routeHead";
 import { bewildCategoryLabel } from "@/lib/useBewildPosts";
-import { loadPostContent } from "@/lib/contentLoaders";
+// Import tardio: o loader da rota entra no pacote de TODA página; assim os
+// carregadores de conteúdo (posts, projetos, vídeos…) só baixam quando usados.
+const contentLoaders = () => import("@/lib/contentLoaders");
 import { postJsonLd, postPageJsonLd, saoPauloIso } from "@/lib/contentJsonLd";
 import { authorForPage, authorProfileJsonLd, postAuthorJsonLd, postDates } from "@/lib/postSeo";
 import { keywordsForPost } from "@/lib/postKeywords";
@@ -15,7 +17,7 @@ export const Route = createFileRoute("/conteudos/$slug")({
     const destino = destinoDoPostFundido(params.slug);
     if (destino) throw redirect({ to: "/conteudos/$slug", params: { slug: destino }, statusCode: 301 });
   },
-  loader: ({ params }) => loadPostContent(params.slug),
+  loader: ({ params }) => contentLoaders().then((m) => m.loadPostContent(params.slug)),
   component: RouteComponent,
   head: ({ loaderData: ld, params }) => {
     const loaderData = ld?.seo;

@@ -1,13 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import BewildProjectPage from "@/pages/BewildProjectPage";
 import { seoHead } from "@/lib/routeHead";
-import { loadProjectContent } from "@/lib/contentLoaders";
+// Import tardio: o loader da rota entra no pacote de TODA página; assim os
+// carregadores de conteúdo (posts, projetos, vídeos…) só baixam quando usados.
+const contentLoaders = () => import("@/lib/contentLoaders");
 import { projectPageJsonLd } from "@/lib/contentJsonLd";
 import { projectKeywords } from "@/lib/projectSeo";
 import { projectCoverImage, WIDE_SIZES } from "@/lib/imageUrl";
 
 export const Route = createFileRoute("/portfolio/$slug")({
-  loader: ({ params }) => loadProjectContent(params.slug),
+  loader: ({ params }) => contentLoaders().then((m) => m.loadProjectContent(params.slug)),
   component: RouteComponent,
   head: ({ loaderData: ld, params }) => {
     const loaderData = ld?.seo;

@@ -3,12 +3,14 @@ import BewildPortfolioPage from "@/pages/BewildPortfolioPage";
 import { seoHead , rootPagesSeo } from "@/lib/routeHead";
 import { loadPageSeo } from "@/lib/pageSeo.functions";
 import { resolvePageSeo } from "@/lib/pageSeo";
-import { loadProjectList } from "@/lib/contentLoaders";
+// Import tardio: o loader da rota entra no pacote de TODA página; assim os
+// carregadores de conteúdo (posts, projetos, vídeos…) só baixam quando usados.
+const contentLoaders = () => import("@/lib/contentLoaders");
 import { projectListJsonLd } from "@/lib/contentJsonLd";
 
 export const Route = createFileRoute("/portfolio/")({
   loader: async () => {
-    const [content, seo] = await Promise.all([loadProjectList(), loadPageSeo({ data: "/portfolio" })]);
+    const [content, seo] = await Promise.all([contentLoaders().then((m) => m.loadProjectList()), loadPageSeo({ data: "/portfolio" })]);
     return { ...content, seo };
   },
   component: RouteComponent,

@@ -2,7 +2,9 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { bairroRedirectTarget } from "@/lib/bairroRedirects";
 import BairroPage from "@/pages/BairroPage";
 import { seoHead } from "@/lib/routeHead";
-import { loadBairroContent } from "@/lib/contentLoaders";
+// Import tardio: o loader da rota entra no pacote de TODA página; assim os
+// carregadores de conteúdo (posts, projetos, vídeos…) só baixam quando usados.
+const contentLoaders = () => import("@/lib/contentLoaders");
 import { bairroProjects, projectListJsonLd } from "@/lib/contentJsonLd";
 import { faqJsonLd } from "@/lib/useSeo";
 import { bairroContent } from "@/content/bairros";
@@ -14,7 +16,7 @@ export const Route = createFileRoute("/reforma/$slug")({
     const target = bairroRedirectTarget(params.slug);
     if (target) throw redirect({ href: target, statusCode: 301 });
   },
-  loader: ({ params }) => loadBairroContent(params.slug),
+  loader: ({ params }) => contentLoaders().then((m) => m.loadBairroContent(params.slug)),
   component: RouteComponent,
   head: ({ loaderData: ld, params }) => {
     const loaderData = ld?.seo;

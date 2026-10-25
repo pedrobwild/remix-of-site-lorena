@@ -3,7 +3,9 @@ import BewildConteudosPage from "@/pages/BewildConteudosPage";
 import { seoHead , rootPagesSeo } from "@/lib/routeHead";
 import { loadPageSeo } from "@/lib/pageSeo.functions";
 import { resolvePageSeo } from "@/lib/pageSeo";
-import { loadPostList } from "@/lib/contentLoaders";
+// Import tardio: o loader da rota entra no pacote de TODA página; assim os
+// carregadores de conteúdo (posts, projetos, vídeos…) só baixam quando usados.
+const contentLoaders = () => import("@/lib/contentLoaders");
 import { postListJsonLd } from "@/lib/contentJsonLd";
 
 export const Route = createFileRoute("/conteudos/")({
@@ -11,7 +13,7 @@ export const Route = createFileRoute("/conteudos/")({
     q: typeof s.q === "string" && s.q ? s.q.slice(0, 120) : undefined,
   }),
   loader: async () => {
-    const [content, seo] = await Promise.all([loadPostList(), loadPageSeo({ data: "/conteudos" })]);
+    const [content, seo] = await Promise.all([contentLoaders().then((m) => m.loadPostList()), loadPageSeo({ data: "/conteudos" })]);
     return { ...content, seo };
   },
   component: RouteComponent,
