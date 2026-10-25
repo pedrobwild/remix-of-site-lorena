@@ -6,14 +6,13 @@ import homeCriticalCssUrl from "@/pages/home-critical.css?url";
 import homeDeferredCssUrl from "@/pages/home-deferred.css?url";
 
 /** Imagem principal da home, carregada antecipadamente para reduzir o tempo de exibição. */
-export const HERO_IMAGE =
-  "/__l5e/assets-v1/0a137ddd-c159-4221-b4e0-bcd229dad905/apartamento-pronto-foto-realista-1.jpg";
+export { HERO_IMAGE_DESKTOP as HERO_IMAGE } from "@/content/homeHero";
 /**
  * Versão para celular (828 px, WebP) da mesma imagem: o <picture> da home a
  * usa até 760 px de largura, e o preload segue a mesma regra, para o celular
  * não baixar o JPEG de 1920 px (PERF-02, auditoria de 05/10/2026).
  */
-import { HERO_IMAGE_MOBILE } from "@/content/homeHero";
+import { HERO_IMAGE_MOBILE, HERO_IMAGE_DESKTOP, HERO_DESKTOP_SRCSET, HERO_DESKTOP_SIZES } from "@/content/homeHero";
 export { HERO_IMAGE_MOBILE };
 export const HERO_MOBILE_MEDIA = "(max-width: 760px)";
 
@@ -46,8 +45,10 @@ function homeHead(seo?: HomeSeo) {
       {
         rel: "preload",
         as: "image",
-        type: "image/jpeg",
-        href: HERO_IMAGE,
+        type: "image/webp",
+        href: HERO_IMAGE_DESKTOP,
+        imageSrcSet: HERO_DESKTOP_SRCSET,
+        imageSizes: HERO_DESKTOP_SIZES,
         media: "(min-width: 761px)",
         fetchPriority: "high" as const,
       },
