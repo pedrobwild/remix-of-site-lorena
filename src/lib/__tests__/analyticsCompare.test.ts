@@ -257,9 +257,30 @@ describe("rótulos", () => {
     expect(formatLocalBucketLabel(t, "hour")).toBe("15:00");
     expect(formatLocalBucketLabel(t, "hour", true)).toBe("24/09 15:00");
     expect(formatLocalBucketLabel(t, "day")).toMatch(/^qui\.?,? 24\/09$/);
-    expect(formatLocalBucketLabel(new Date(2026, 8, 21).getTime(), "week")).toBe("sem. 21/09");
+    expect(formatLocalBucketLabel(new Date(2026, 8, 21).getTime(), "week")).toBe("sem. 21–27/09");
     expect(formatLocalBucketLabel(new Date(2026, 8, 1).getTime(), "month")).toMatch(
       /^set\.? de 26$/
+    );
+  });
+
+  it("semana: intervalo de dias, recortado pelo período", () => {
+    const seg19 = new Date(2026, 9, 19).getTime();
+    const domingo25Fim = new Date(2026, 9, 25, 23, 59, 59, 999).getTime();
+    const quarta21Fim = new Date(2026, 9, 21, 23, 59, 59, 999).getTime();
+    // Semana em curso até domingo 25/10 (caso do painel em 25/10/2026).
+    expect(formatLocalBucketLabel(seg19, "week", true, { to: domingo25Fim })).toBe("sem. 19–25/10/26");
+    // Período que termina na quarta: a semana para na quarta.
+    expect(formatLocalBucketLabel(seg19, "week", false, { to: quarta21Fim })).toBe("sem. 19–21/10");
+    // Semana que vira o mês e a que começa antes do período (01/07).
+    expect(formatLocalBucketLabel(new Date(2026, 8, 28).getTime(), "week")).toBe("sem. 28/09–04/10");
+    expect(
+      formatLocalBucketLabel(new Date(2026, 5, 29).getTime(), "week", false, {
+        from: new Date(2026, 6, 1).getTime(),
+      })
+    ).toBe("sem. 01–05/07");
+    // Semana que vira o ano, com ano.
+    expect(formatLocalBucketLabel(new Date(2025, 11, 29).getTime(), "week", true)).toBe(
+      "sem. 29/12/25–04/01/26"
     );
   });
 
@@ -267,7 +288,14 @@ describe("rótulos", () => {
     const t = new Date(2026, 8, 24, 15, 0).getTime();
     expect(formatLocalAxisLabel(t, "hour")).toBe("15:00");
     expect(formatLocalAxisLabel(t, "day")).toBe("24/09");
-    expect(formatLocalAxisLabel(new Date(2026, 8, 21).getTime(), "week")).toBe("21/09");
+    // Semana: último dia da semana, não a segunda.
+    expect(formatLocalAxisLabel(new Date(2026, 8, 21).getTime(), "week")).toBe("27/09");
+    // Última semana de um período até domingo 25/10: o eixo termina em 25/10.
+    const fim = new Date(2026, 9, 25, 23, 59, 59, 999).getTime();
+    expect(formatLocalAxisLabel(new Date(2026, 9, 19).getTime(), "week", { to: fim })).toBe("25/10");
+    // Período até quarta 21/10: termina em 21/10.
+    const quarta = new Date(2026, 9, 21, 23, 59, 59, 999).getTime();
+    expect(formatLocalAxisLabel(new Date(2026, 9, 19).getTime(), "week", { to: quarta })).toBe("21/10");
     const month = formatLocalAxisLabel(new Date(2026, 8, 1).getTime(), "month");
     expect(month).toMatch(/^set\.? de 26$/);
     for (const g of ["hour", "day", "week"] as const) {

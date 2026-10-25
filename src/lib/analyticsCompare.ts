@@ -388,26 +388,76 @@ export function formatDayLabel(t: number | Date, long = false): string {
   });
 }
 
-/** Rótulo de um bucket local na tabela e no tooltip ("qui., 24/09", "sem. 21/09"). */
-export function formatLocalBucketLabel(t: number, grain: LocalGrain, long = false): string {
+/** Limites do período (ms): o rótulo de uma semana não passa deles. */
+export type LabelBounds = { from?: number; to?: number };
+
+/**
+ * Primeiro e último dia (início do dia local) de um bucket de semana que
+ * começa em `t` (segunda), recortados pelo período. A semana em curso de um
+ * período que termina no domingo 25/10 vai de 19/10 a 25/10; se o período
+ * termina na quarta 21/10, de 19/10 a 21/10.
+ */
+export function weekBucketDays(t: number, bounds?: LabelBounds): { first: Date; last: Date } {
+  let first = startOfLocalDay(new Date(t));
+  let last = new Date(first.getTime());
+  last.setDate(last.getDate() + 6);
+  if (bounds?.from != null && bounds.from > first.getTime()) {
+    const from = startOfLocalDay(new Date(bounds.from));
+    if (from.getTime() <= last.getTime()) first = from;
+  }
+  if (bounds?.to != null && bounds.to < last.getTime()) {
+    const to = startOfLocalDay(new Date(bounds.to));
+    if (to.getTime() >= first.getTime()) last = to;
+  }
+  return { first, last };
+}
+
+/** "19–25/10", "29/09–05/10"; com ano: "19–25/10/26", "29/12/25–04/01/26". */
+function fmtDayRange(first: Date, last: Date, withYear: boolean): string {
+  if (first.getTime() === last.getTime()) return fmtDayMonth(first, withYear);
+  const sameYear = first.getFullYear() === last.getFullYear();
+  const sameMonth = sameYear && first.getMonth() === last.getMonth();
+  const start = sameMonth
+    ? String(first.getDate()).padStart(2, "0")
+    : fmtDayMonth(first, withYear && !sameYear);
+  return `${start}–${fmtDayMonth(last, withYear)}`;
+}
+
+/**
+ * Rótulo de um bucket local na tabela e no tooltip ("qui., 24/09",
+ * "sem. 19–25/10"). A semana mostra o intervalo de dias, recortado pelo
+ * período (`bounds`), para a semana em curso não parecer terminar na segunda.
+ */
+export function formatLocalBucketLabel(
+  t: number,
+  grain: LocalGrain,
+  long = false,
+  bounds?: LabelBounds,
+): string {
   const d = new Date(t);
   if (grain === "hour") {
     return long ? `${fmtDayMonth(d)} ${fmtHourMinute(d)}` : fmtHourMinute(d);
   }
   if (grain === "day") return formatDayLabel(d, long);
-  if (grain === "week") return `sem. ${fmtDayMonth(d, long)}`;
+  if (grain === "week") {
+    const { first, last } = weekBucketDays(t, bounds);
+    return `sem. ${fmtDayRange(first, last, long)}`;
+  }
   return d.toLocaleDateString("pt-BR", { month: "short", year: long ? "numeric" : "2-digit" });
 }
 
 /**
  * Rótulo curto do eixo X ("15:00", "24/09", "set. 26"): até 7 caracteres, para
- * o primeiro e o último tick caberem nas bordas do gráfico sem corte. O
- * tooltip e a tabela usam `formatLocalBucketLabel`, com dia da semana.
+ * o primeiro e o último tick caberem nas bordas do gráfico sem corte. A semana
+ * leva o ÚLTIMO dia (recortado pelo período): num período até 25/10, o último
+ * ponto diz "25/10", não a segunda "19/10". O tooltip e a tabela usam
+ * `formatLocalBucketLabel`, com o intervalo da semana.
  */
-export function formatLocalAxisLabel(t: number, grain: LocalGrain): string {
+export function formatLocalAxisLabel(t: number, grain: LocalGrain, bounds?: LabelBounds): string {
   const d = new Date(t);
   if (grain === "hour") return fmtHourMinute(d);
-  if (grain === "day" || grain === "week") return fmtDayMonth(d);
+  if (grain === "day") return fmtDayMonth(d);
+  if (grain === "week") return fmtDayMonth(weekBucketDays(t, bounds).last);
   return d.toLocaleDateString("pt-BR", { month: "short", year: "2-digit" });
 }
 
