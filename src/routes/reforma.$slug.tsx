@@ -5,7 +5,8 @@ import { seoHead } from "@/lib/routeHead";
 // Import tardio: o loader da rota entra no pacote de TODA página; assim os
 // carregadores de conteúdo (posts, projetos, vídeos…) só baixam quando usados.
 const contentLoaders = () => import("@/lib/contentLoaders");
-import { bairroProjects, projectListJsonLd } from "@/lib/contentJsonLd";
+// Os dados estruturados são montados no loader (import tardio): o head() roda
+// no pacote de toda página, e o montador puxa vídeos, posts e projetos.
 import { faqJsonLd } from "@/lib/useSeo";
 import { bairroContent } from "@/content/bairros";
 import { optimizedImageUrl } from "@/lib/imageUrl";
@@ -16,7 +17,13 @@ export const Route = createFileRoute("/reforma/$slug")({
     const target = bairroRedirectTarget(params.slug);
     if (target) throw redirect({ href: target, statusCode: 301 });
   },
-  loader: ({ params }) => contentLoaders().then((m) => m.loadBairroContent(params.slug)),
+  loader: async ({ params }) => {
+    const data = await contentLoaders().then((m) => m.loadBairroContent(params.slug));
+    if (!data.projects) return { ...data, jsonLd: null, coverUrl: null };
+    const { bairroProjects, projectListJsonLd } = await import("@/lib/contentJsonLd");
+    const doBairro = bairroProjects(data.projects, params.slug);
+    return { ...data, jsonLd: projectListJsonLd(doBairro), coverUrl: doBairro[0]?.cover_url ?? null };
+  },
   component: RouteComponent,
   head: ({ loaderData: ld, params }) => {
     const loaderData = ld?.seo;
@@ -29,12 +36,12 @@ export const Route = createFileRoute("/reforma/$slug")({
       noindex: !ld || loaderData?.notFound,
       // Capa do primeiro projeto entregue no bairro: imagem própria da página.
       ogImage: (() => {
-        const cover = ld?.projects ? bairroProjects(ld.projects, params.slug)[0]?.cover_url : null;
+        const cover = ld?.coverUrl;
         return cover ? optimizedImageUrl(cover, 1200, 80) : null;
       })(),
       jsonLd: ld?.projects
         ? [
-            ...projectListJsonLd(bairroProjects(ld.projects, params.slug)),
+            ...(ld.jsonLd ?? []),
             // FAQ do bairro (src/content/bairros.ts): só nos bairros com texto próprio.
             ...(bairroContent(params.slug) ? [faqJsonLd(bairroContent(params.slug)!.faq)] : []),
           ]
