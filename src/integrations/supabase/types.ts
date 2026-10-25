@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_consent_records: {
+        Row: {
+          advertising: boolean
+          choice: string
+          created_at: string
+          id: string
+          notice_version: string
+          visitor_key: string
+        }
+        Insert: {
+          advertising: boolean
+          choice: string
+          created_at?: string
+          id?: string
+          notice_version: string
+          visitor_key: string
+        }
+        Update: {
+          advertising?: boolean
+          choice?: string
+          created_at?: string
+          id?: string
+          notice_version?: string
+          visitor_key?: string
+        }
+        Relationships: []
+      }
       admin_users: {
         Row: {
           created_at: string | null
@@ -707,6 +734,8 @@ export type Database = {
           area_m2: number | null
           chaves: string | null
           consent_marketing: boolean | null
+          consent_record_id: string | null
+          consent_visitor_key: string | null
           created_at: string
           crm_deal_count: number | null
           crm_last_change_at: string | null
@@ -754,6 +783,8 @@ export type Database = {
           area_m2?: number | null
           chaves?: string | null
           consent_marketing?: boolean | null
+          consent_record_id?: string | null
+          consent_visitor_key?: string | null
           created_at?: string
           crm_deal_count?: number | null
           crm_last_change_at?: string | null
@@ -801,6 +832,8 @@ export type Database = {
           area_m2?: number | null
           chaves?: string | null
           consent_marketing?: boolean | null
+          consent_record_id?: string | null
+          consent_visitor_key?: string | null
           created_at?: string
           crm_deal_count?: number | null
           crm_last_change_at?: string | null
@@ -844,7 +877,15 @@ export type Database = {
           utm_term?: string | null
           whatsapp?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "leads_consent_record_id_fkey"
+            columns: ["consent_record_id"]
+            isOneToOne: false
+            referencedRelation: "ad_consent_records"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       meta_ads_daily: {
         Row: {
@@ -2089,6 +2130,14 @@ export type Database = {
       log_404: {
         Args: { p_path: string; p_reason?: string; p_referrer?: string }
         Returns: undefined
+      }
+      record_ad_consent: {
+        Args: {
+          p_choice: string
+          p_notice_version: string
+          p_visitor_key: string
+        }
+        Returns: string
       }
       resolve_404_redirect: { Args: { p_path: string }; Returns: string }
       revoke_export_key: { Args: { p_id: string }; Returns: undefined }
