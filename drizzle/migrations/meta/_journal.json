@@ -50,6 +50,13 @@
       "when": 1792489484704,
       "tag": "0006_manual_lead_qualification",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792940183227,
+      "tag": "0007_lead_insert_status_novo",
+      "breakpoints": true
     }
   ]
 }
