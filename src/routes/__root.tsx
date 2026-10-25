@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-import { useEffect, useState, type ReactNode } from "react";
+import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 import { loadPagesSeoMap } from "@/lib/pageSeo.functions";
 import type { QueryClient } from "@tanstack/react-query";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -17,10 +17,8 @@ import {
 import CookieBanner from "@/components/CookieBanner";
 import MetaPixel from "@/components/MetaPixel";
 import RootErrorBoundary from "@/components/RootErrorBoundary";
-import SiteAssistant from "@/components/assistant/SiteAssistant";
 import { assistantShowsOn } from "@/components/assistant/assistantPaths";
 import { installBwaStylesheetPreinit } from "@/lib/bwaStylesheetOrder";
-import MaintenancePage from "@/pages/MaintenancePage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import { MAINTENANCE_MODE } from "@/config/site";
 import {
@@ -51,6 +49,12 @@ import { DEFAULT_OG_IMAGE_ALT, DEFAULT_OG_IMAGE_URL, SITE_BASE } from "@/lib/rou
 import { reportLovableError } from "@/lib/lovable-error-reporting";
 
 import appCss from "../styles.css?url";
+
+// O assistente já montava só após hidratação; seu código e CSS também ficam
+// fora do pacote inicial. O banner permanece imediato para não perder uma
+// abertura de preferências enquanto um download estiver pendente.
+const SiteAssistant = lazy(() => import("@/components/assistant/SiteAssistant"));
+const MaintenancePage = lazy(() => import("@/pages/MaintenancePage"));
 
 // ported from main.tsx — bootstrap que precisava rodar antes do primeiro
 // render: recuperação de crash, normalização de URLs legadas (#/rota,
@@ -285,9 +289,11 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <RootErrorBoundary>
-        {underMaintenance ? <MaintenancePage /> : <Outlet />}
+        {underMaintenance ? <Suspense fallback={null}><MaintenancePage /></Suspense> : <Outlet />}
         {hydrated && !adminMode && !underMaintenance && <CookieBanner />}
-        {hydrated && !adminMode && !underMaintenance && <SiteAssistant />}
+        {hydrated && !adminMode && !underMaintenance && (
+          <Suspense fallback={null}><SiteAssistant /></Suspense>
+        )}
         {/* Montado sempre (inclusive /admin) para acompanhar a URL; o próprio
             componente não dispara nada em /admin nem sem consentimento. */}
         <MetaPixel />
