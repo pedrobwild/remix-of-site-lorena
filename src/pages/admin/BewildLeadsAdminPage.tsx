@@ -24,6 +24,7 @@ import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import AdminAlert from "@/components/admin/AdminAlert";
 import MetaLeadsPanel from "@/components/admin/MetaLeadsPanel";
 import { ManualLeadQualification } from "@/components/admin/ManualLeadQualification";
+import { LeadQualityDailyChart } from "@/components/admin/LeadQualityDailyChart";
 import { CrmProfileSummary } from "@/components/admin/CrmProfileSummary";
 import { CrmSyncBar, LeadCrmStatus, LeadFunnelHistory } from "@/components/admin/LeadCrmStatus";
 import { supabase } from "@/integrations/supabase/client";
@@ -191,6 +192,7 @@ export default function BewildLeadsAdminPage() {
   const [canal, setCanal] = useState<"all" | LeadCanal>("all");
   const [busy, setBusy] = useState<string | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [qualityRevision, setQualityRevision] = useState(0);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -332,8 +334,9 @@ export default function BewildLeadsAdminPage() {
   return (
     <BewildAdminShell {...shellProps}>
       <LeadsTabs tab={tab} onChange={switchTab} />
-      <CrmSyncBar onSynced={() => void load()} />
+      <CrmSyncBar onSynced={() => { void load(); setQualityRevision(value => value + 1); }} />
       <CrmProfileSummary />
+      <LeadQualityDailyChart revision={qualityRevision} />
 
       {actionMsg && (
         <AdminAlert kind={actionMsg.kind} onClose={() => setActionMsg(null)}>
@@ -502,6 +505,7 @@ export default function BewildLeadsAdminPage() {
                         <td>
                           <LeadCrmStatus lead={r} />
                           <ManualLeadQualification leadId={r.id} name={r.name} value={r.manual_qualification} onSaved={next => {
+                            setQualityRevision(value => value + 1);
                             setRows(prev => prev.map(lead => lead.id === r.id ? { ...lead, status: next, manual_qualification: next, manual_qualification_source: "site", manual_qualification_reason: null } : lead));
                             setCounts(prev => moveStatusCount(prev, r.status, next));
                           }} />
