@@ -13,6 +13,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
+import { postHeadData, postListJsonLd, projectListJsonLd, projectPageJsonLd } from "@/lib/routeHeadData";
 
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
@@ -74,9 +75,11 @@ const POST = {
 const SEO = { title: "T | Bewild", description: "D" };
 
 /** loaderData de exemplo por rota (o resto usa undefined → textos padrão). */
+// O JSON-LD agora é montado no loader (src/lib/routeHeadData.ts): as fixtures
+// passam pelo mesmo montador que o loader usa.
 const FIXTURES: Record<string, unknown> = {
-  "/portfolio": { projects: [PROJETO] },
-  "/conteudos": { posts: [POST, { ...POST, id: "2", slug: "outro", featured: false }] },
+  "/portfolio": { projects: [PROJETO], jsonLd: projectListJsonLd([PROJETO] as never) },
+  "/conteudos": { jsonLd: postListJsonLd([POST, { ...POST, id: "2", slug: "outro", featured: false }] as never) },
   "/faq": null,
 };
 
@@ -156,7 +159,7 @@ describe("JSON-LD no HTML do servidor: integridade", () => {
   });
 
   it("/portfolio/:slug (fixture de projeto)", { timeout: 60_000 }, async () => {
-    const head = await headOf("/portfolio/$slug", "/src/routes/portfolio.$slug.tsx", { seo: SEO, project: PROJETO, peers: [] }, { slug: PROJETO.slug });
+    const head = await headOf("/portfolio/$slug", "/src/routes/portfolio.$slug.tsx", { seo: SEO, project: PROJETO, peers: [], jsonLd: projectPageJsonLd(PROJETO as never) }, { slug: PROJETO.slug });
     const nodes = parse(ldScripts(head)) as Array<Record<string, unknown>>;
     expect(problemas(nodes)).toEqual([]);
     const work = nodes.find((n) => n["@type"] === "CreativeWork")!;
@@ -166,7 +169,7 @@ describe("JSON-LD no HTML do servidor: integridade", () => {
   });
 
   it("/conteudos/:slug (fixture de post)", { timeout: 60_000 }, async () => {
-    const head = await headOf("/conteudos/$slug", "/src/routes/conteudos.$slug.tsx", { seo: SEO, post: POST, bodyHtml: POST.body }, { slug: POST.slug });
+    const head = await headOf("/conteudos/$slug", "/src/routes/conteudos.$slug.tsx", { seo: SEO, post: POST, bodyHtml: POST.body, head: postHeadData(POST as never, POST.body) }, { slug: POST.slug });
     const nodes = parse(ldScripts(head)) as Array<Record<string, unknown>>;
     expect(problemas(nodes)).toEqual([]);
     const article = nodes.find((n) => n["@type"] === "Article")!;
@@ -179,7 +182,7 @@ describe("JSON-LD no HTML do servidor: integridade", () => {
 
   it("ItemList de /conteudos segue a ordem da tela (destaque primeiro)", async () => {
     const posts = [{ ...POST, id: "2", slug: "outro", featured: false }, POST];
-    const head = await headOf("/conteudos", fileFor("/conteudos"), { posts });
+    const head = await headOf("/conteudos", fileFor("/conteudos"), { posts, jsonLd: postListJsonLd(posts as never) });
     const list = parse(ldScripts(head)).find((n) => (n as Record<string, unknown>)["@type"] === "ItemList") as {
       itemListElement: Array<{ url: string }>;
     };

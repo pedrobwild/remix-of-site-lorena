@@ -15,8 +15,8 @@ export type PostHeadData = {
   isAuthor: boolean;
   keywords: string | undefined;
   extraMeta: Record<string, string>[] | null;
-  jsonLd: JsonLdNode | JsonLdNode[] | null;
-  pageJsonLd: JsonLdNode | JsonLdNode[] | null;
+  jsonLd: JsonLdNode[] | null;
+  pageJsonLd: JsonLdNode | null;
 };
 
 export function postHeadData(post: BewildPost, bodyHtml: string | null | undefined): PostHeadData {
