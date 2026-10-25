@@ -241,6 +241,8 @@ describe("trackers de terceiros (CORE-25 / CORE-18)", () => {
     render(<Page title="FAQ" canonicalPath="/faq" />);
     await waitFor(() => expect(script("gads-config")).not.toBeNull());
     expect(script("gads-config")!.text).toContain("gtag('config', 'AW-123456789')");
+    // O download do gtag.js espera o momento ocioso (whenIdle.ts).
+    await waitFor(() => expect(script("gads-loader")).not.toBeNull());
     expect(script("gads-loader")!.src).toBe("https://www.googletagmanager.com/gtag/js?id=AW-123456789");
     expect(getGoogleAdsConfig()).toEqual({ id: "AW-123456789", leadLabel: "LeadLabel1", contactLabel: null, applicationLabel: null });
     expect(hasThirdPartyTrackers()).toBe(true);

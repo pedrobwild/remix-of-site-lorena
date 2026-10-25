@@ -115,7 +115,9 @@ export const LIMITES =
 
 const brl = (v: number) => `R$ ${v.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
 
-export const INDICE_TITLE = `Índice Bewild de custo de reforma por m² em São Paulo (out/2026)`;
+// 25/10/2026: posição 6,6 com 69 impressões e 0 cliques. O número entra no
+// título (quem busca "custo de reforma por m²" quer o valor), sem mudar a base.
+export const INDICE_TITLE = `Custo de reforma por m² em São Paulo: ${brl(INDICE.m2Mediano)} (out/2026)`;
 export const INDICE_DESCRIPTION =
   `Custo de reforma por m² em São Paulo: mediana de ${brl(INDICE.m2Mediano)}/m² e orçamento mediano de ${brl(INDICE.orcamentoMediano)} em ${INDICE.contratos} contratos de reforma completa. Tabela por metragem e CSV.`;
 

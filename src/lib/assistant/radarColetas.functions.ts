@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
+import { inputBairro } from "@/lib/lightValidators";
 import type { RadarObservation } from "./radarData";
 
 export type RadarColetasPage = {
@@ -10,7 +10,7 @@ export type RadarColetasPage = {
 
 /** Leitura pública do Radar Bewild: lista de bairros + até 20 coletas do bairro escolhido. */
 export const getRadarColetas = createServerFn({ method: "GET" })
-  .inputValidator(z.object({ bairro: z.string().trim().max(100).optional() }))
+  .inputValidator(inputBairro)
   .handler(async ({ data }): Promise<RadarColetasPage> => {
     const { readRadar, readRadarCollections } = await import("./radarContexto.server");
     const rows = await readRadar();
