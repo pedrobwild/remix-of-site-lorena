@@ -3,8 +3,7 @@ import "./lib/error-capture";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { canonicalHostRedirect, lowercasePathRedirect } from "./lib/caseRedirect";
 import { renderErrorPage } from "./lib/error-page";
-import { serveWithEdgeCache, workerEnvFrom, type EdgeCacheContext } from "./lib/edgeHtmlCache";
-import { servePrerendered } from "./lib/prerenderedHtml";
+import { serveWithEdgeCache, type EdgeCacheContext } from "./lib/edgeHtmlCache";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -74,9 +73,6 @@ export default {
     if (canonicalRedirect) return canonicalRedirect;
     try {
       const render = async () => {
-        // Página pré-renderizada no build: sai o arquivo, sem montar nada.
-        const prerendered = await servePrerendered(request, workerEnvFrom(request, env));
-        if (prerendered) return withShortEdgeCache(request, prerendered);
         const handler = await getServerEntry();
         const response = await handler.fetch(request, env, ctx);
         return withShortEdgeCache(request, await normalizeCatastrophicSsrResponse(response));
