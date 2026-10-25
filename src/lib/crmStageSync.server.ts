@@ -170,6 +170,16 @@ export async function runCrmStageSync(
     summary.erros++;
   }
 
+  // Lista "Exclusao desqualificados" do Google Ads: segue a qualificação atual.
+  if (summary.ok) {
+    try {
+      const { syncDisqualifiedList } = await import("@/lib/googleAdsDisqualifiedList.server");
+      await syncDisqualifiedList(admin, env, opts.fetchImpl);
+    } catch {
+      /* a lista nunca derruba a sincronização */
+    }
+  }
+
   try {
     await admin.from("integration_log").insert({
       integration: "crm_stage_sync",
