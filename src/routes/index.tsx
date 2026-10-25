@@ -12,7 +12,8 @@ export const HERO_IMAGE =
  * usa até 760 px de largura, e o preload segue a mesma regra, para o celular
  * não baixar o JPEG de 1920 px (PERF-02, auditoria de 05/10/2026).
  */
-export const HERO_IMAGE_MOBILE = "/images/home/hero-studio-828.webp";
+import { HERO_IMAGE_MOBILE } from "@/content/homeHero";
+export { HERO_IMAGE_MOBILE };
 export const HERO_MOBILE_MEDIA = "(max-width: 760px)";
 
 function homeHead(seo?: HomeSeo) {

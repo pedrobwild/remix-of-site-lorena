@@ -3,6 +3,8 @@ import "./lib/error-capture";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { canonicalHostRedirect, lowercasePathRedirect } from "./lib/caseRedirect";
 import { renderErrorPage } from "./lib/error-page";
+import { serveWithEdgeCache, workerEnvFrom, type EdgeCacheContext } from "./lib/edgeHtmlCache";
+import { servePrerendered } from "./lib/prerenderedHtml";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -71,9 +73,17 @@ export default {
     const canonicalRedirect = canonicalHostRedirect(request) ?? lowercasePathRedirect(request);
     if (canonicalRedirect) return canonicalRedirect;
     try {
-      const handler = await getServerEntry();
-      const response = await handler.fetch(request, env, ctx);
-      return withShortEdgeCache(request, await normalizeCatastrophicSsrResponse(response));
+      const render = async () => {
+        // Página pré-renderizada no build: sai o arquivo, sem montar nada.
+        const prerendered = await servePrerendered(request, workerEnvFrom(request, env));
+        if (prerendered) return withShortEdgeCache(request, prerendered);
+        const handler = await getServerEntry();
+        const response = await handler.fetch(request, env, ctx);
+        return withShortEdgeCache(request, await normalizeCatastrophicSsrResponse(response));
+      };
+      // Páginas públicas saem do cache de borda do próprio worker (ver
+      // src/lib/edgeHtmlCache.ts): a hospedagem não guarda HTML.
+      return await serveWithEdgeCache(request, ctx as EdgeCacheContext, render, PUBLIC_HTML_CACHE_CONTROL);
     } catch (error) {
       console.error(error);
       return new Response(renderErrorPage(), {

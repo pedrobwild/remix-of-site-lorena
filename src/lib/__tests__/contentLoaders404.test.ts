@@ -69,3 +69,31 @@ describe("404 e 301 no servidor", () => {
     expect(lookup).not.toHaveBeenCalled();
   });
 });
+
+describe("endereço antigo de conteúdo sem prefixo (/<slug>)", () => {
+  it("artigo publicado com esse slug → 301 para /conteudos/<slug>", async () => {
+    lookup.mockResolvedValue(null);
+    state.data = { slug: "short-stay-ou-long-stay-studio-compacto" };
+    const e = (await caught(notFoundOrRedirect("/short-stay-ou-long-stay-studio-compacto"))) as {
+      options?: { href?: string; statusCode?: number };
+    };
+    expect(isRedirect(e)).toBe(true);
+    expect(e.options?.href).toBe("/conteudos/short-stay-ou-long-stay-studio-compacto");
+    expect(e.options?.statusCode).toBe(301);
+  });
+
+  it("slug que não é artigo nem projeto → 404; caminho com duas partes não consulta", async () => {
+    lookup.mockResolvedValue(null);
+    state.data = null;
+    expect(isNotFound(await caught(notFoundOrRedirect("/nada-aqui")))).toBe(true);
+    state.data = { slug: "x" };
+    expect(isNotFound(await caught(notFoundOrRedirect("/blog/x")))).toBe(true);
+  });
+
+  it("redirecionamento do painel vence o endereço antigo", async () => {
+    lookup.mockResolvedValue("/conteudos/destino-do-painel");
+    state.data = { slug: "antigo" };
+    const e = (await caught(notFoundOrRedirect("/antigo"))) as { options?: { href?: string } };
+    expect(e.options?.href).toBe("/conteudos/destino-do-painel");
+  });
+});

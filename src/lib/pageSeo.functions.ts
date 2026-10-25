@@ -2,24 +2,17 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { resolvePageSeo } from "@/lib/pageSeo";
 import type { PagesSeoMap } from "@/lib/publicPages";
+import { readPublicSiteSettings } from "@/lib/siteSettingsServer";
 
 /** Leitura pública sanitizada: nunca devolve outras configurações do site. */
 export const loadPageSeo = createServerFn({ method: "GET" })
   .inputValidator(z.enum(["/portfolio", "/conteudos", "/servicos", "/orcamento", "/contato"]))
   .handler(async ({ data: path }) => {
     try {
-      const url = process.env["SUPABASE_URL"];
-      const key = process.env["SUPABASE_PUBLISHABLE_KEY"];
-      if (!url || !key) return resolvePageSeo(path);
-      const response = await fetch(`${url}/rest/v1/rpc/get_public_site_settings`, {
-        method: "POST",
-        headers: { apikey: key, "Content-Type": "application/json" },
-        body: "{}",
-        signal: AbortSignal.timeout(2500),
-      });
-      if (!response.ok) return resolvePageSeo(path);
-      const settings = await response.json() as { pages_seo?: PagesSeoMap | null };
-      return resolvePageSeo(path, settings.pages_seo);
+      const settings = await readPublicSiteSettings();
+      if (!settings) return resolvePageSeo(path);
+      const typed = settings as { pages_seo?: PagesSeoMap | null };
+      return resolvePageSeo(path, typed.pages_seo);
     } catch {
       return resolvePageSeo(path);
     }
@@ -31,18 +24,10 @@ export const loadPageSeo = createServerFn({ method: "GET" })
  */
 export const loadBastidoresSeo = createServerFn({ method: "GET" }).handler(async () => {
   try {
-    const url = process.env["SUPABASE_URL"];
-    const key = process.env["SUPABASE_PUBLISHABLE_KEY"];
-    if (!url || !key) return {};
-    const response = await fetch(`${url}/rest/v1/rpc/get_public_site_settings`, {
-      method: "POST",
-      headers: { apikey: key, "Content-Type": "application/json" },
-      body: "{}",
-      signal: AbortSignal.timeout(2500),
-    });
-    if (!response.ok) return {};
-    const settings = (await response.json()) as { bastidores_seo?: unknown };
-    const raw = settings.bastidores_seo;
+    const settings = await readPublicSiteSettings();
+    if (!settings) return {};
+    const typed = settings as { bastidores_seo?: unknown };
+    const raw = typed.bastidores_seo;
     if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
     const out: Record<string, { title?: string; description?: string }> = {};
     for (const [code, v] of Object.entries(raw as Record<string, unknown>)) {
@@ -65,18 +50,10 @@ export const loadBastidoresSeo = createServerFn({ method: "GET" }).handler(async
  */
 export const loadPagesSeoMap = createServerFn({ method: "GET" }).handler(async () => {
   try {
-    const url = process.env["SUPABASE_URL"];
-    const key = process.env["SUPABASE_PUBLISHABLE_KEY"];
-    if (!url || !key) return {} as PagesSeoMap;
-    const response = await fetch(`${url}/rest/v1/rpc/get_public_site_settings`, {
-      method: "POST",
-      headers: { apikey: key, "Content-Type": "application/json" },
-      body: "{}",
-      signal: AbortSignal.timeout(2500),
-    });
-    if (!response.ok) return {} as PagesSeoMap;
-    const settings = (await response.json()) as { pages_seo?: unknown };
-    const raw = settings.pages_seo;
+    const settings = await readPublicSiteSettings();
+    if (!settings) return {} as PagesSeoMap;
+    const typed = settings as { pages_seo?: unknown };
+    const raw = typed.pages_seo;
     if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {} as PagesSeoMap;
     const out: PagesSeoMap = {};
     for (const [path, v] of Object.entries(raw as Record<string, unknown>)) {

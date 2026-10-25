@@ -58,11 +58,37 @@ async function renderBody(body: string | null | undefined): Promise<string | nul
  * ativo (se houver destino seguro) ou 404. Nunca chamado em falha de rede.
  */
 export async function notFoundOrRedirect(path: string): Promise<never> {
-  const target = await lookupActiveRedirect(path);
+  const target = (await lookupActiveRedirect(path)) ?? (await legacyContentPath(path));
   if (target && isSafeRedirectTarget(target) && target !== path) {
     throw redirect({ href: target, statusCode: 301 });
   }
   throw notFound();
+}
+
+/**
+ * Endereço antigo de conteúdo sem o prefixo da seção: `/<slug>` de um artigo
+ * publicado vai para `/conteudos/<slug>`, e o de um projeto para
+ * `/portfolio/<slug>`. Em 25/10/2026 o anúncio da campanha Demand Gen ainda
+ * mandava para `/short-stay-ou-long-stay-studio-compacto` (404 com 31 cliques
+ * pagos em 30 dias); o artigo existe em /conteudos. Só caminhos de um
+ * segmento; nada é consultado quando o caminho tem barra no meio ou ponto.
+ * Exportada para o teste.
+ */
+export async function legacyContentPath(path: string): Promise<string | null> {
+  const m = /^\/([a-z0-9][a-z0-9-]*)$/.exec(path);
+  if (!m) return null;
+  const slug = m[1];
+  try {
+    const [post, project] = await Promise.all([
+      supabase.from("bewild_posts" as never).select("slug").eq("slug", slug).eq("published", true).maybeSingle(),
+      supabase.from("projects").select("slug").eq("slug", slug).eq("published", true).maybeSingle(),
+    ]);
+    if (!post.error && post.data) return `/conteudos/${slug}`;
+    if (!project.error && project.data) return `/portfolio/${slug}`;
+  } catch {
+    /* falha de rede: fica o 404 */
+  }
+  return null;
 }
 
 // --- /conteudos/$slug -------------------------------------------------------
