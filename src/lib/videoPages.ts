@@ -11,7 +11,7 @@
  * Cadastro: src/content/videoPages.json (endereço, tipo, título e descrição da
  * página, artigo relacionado). Os dados do vídeo em si (nome, descrição,
  * miniatura, duração, data) vêm de src/content/videoMeta.json, a mesma fonte
- * do VideoObject dos artigos. O sitemap (scripts/generate-sitemap.mjs) lê os
+ * do VideoObject dos artigos. O sitemap (scripts/sitemap-build.mjs) lê os
  * mesmos dois arquivos; as funções de borda `sitemap` e `not-found-check`
  * repetem só a lista de endereços (conferida em videoPages.test.tsx).
  *

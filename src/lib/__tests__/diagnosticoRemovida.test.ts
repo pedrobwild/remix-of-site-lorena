@@ -52,7 +52,7 @@ describe("/diagnostico removida", () => {
   });
 
   it("sitemap, llms.txt e IndexNow não anunciam /diagnostico", () => {
-    for (const f of ["public/sitemap.xml", "public/llms.txt", "public/.well-known/llms.txt"]) {
+    for (const f of ["src/content/snapshots/sitemap.xml", "src/content/snapshots/llms.txt", "src/content/llms.txt", "scripts/sitemap-build.mjs"]) {
       expect(read(f), f).not.toMatch(/\/diagnostico\b/);
     }
     const ping = read("supabase/functions/ping-sitemap/index.ts");

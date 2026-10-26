@@ -54,7 +54,7 @@ página: responde 301 para `/orcamento` (`src/routes/diagnostico.tsx` e
 deixou de existir como oferta e só há o pedido de orçamento
 (`diagnosticoRemovida.test.ts`). A página pilar
 `/guia-do-investidor` entrou em 22/09/2026 e está nas duas listas, no
-sitemap (prioridade 0.8) e no `public/llms.txt` — não vai a nenhuma
+sitemap (prioridade 0.8) e no `llms.txt` — não vai a nenhuma
 allowlist.
 
 ## Quando usar cada allowlist
@@ -120,10 +120,12 @@ script só compara literais estáticos.
 | Pública **noindex** (ex.: `/buscar`, `/mapa`) | sim | sim | não — mas `noindex: true` no `seoHead` e em `NAO_INDEXAVEIS` do teste `sitemapParidade`; **fora** do sitemap |
 
 Também atualize, quando aplicável:
-- `public/sitemap.xml`, `scripts/generate-sitemap.mjs` e
+- `STATIC_PAGES` em `scripts/sitemap-build.mjs` (regra do `/sitemap.xml`
+  servido e do retrato `src/content/snapshots/sitemap.xml`) e
   `supabase/functions/sitemap/index.ts` (SÓ rotas públicas indexáveis — página
   `noindex` nunca entra no sitemap; o teste `sitemapParidade` quebra o CI se
-  entrar, como aconteceu com `/buscar` em 06/10/2026).
+  entrar, como aconteceu com `/buscar` em 06/10/2026). Nada em `public/`:
+  `sitemap.xml` e `llms.txt` são rotas de servidor desde 26/10/2026.
 - `src/router.tsx` (componente da página).
 - Página de vídeo nova (`/videos/<slug>`): `src/content/videoPages.json` e
   `src/content/videoMeta.json`, mais as listas de slugs em

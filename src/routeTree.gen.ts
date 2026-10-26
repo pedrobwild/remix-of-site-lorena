@@ -28,6 +28,7 @@ import { Route as IndiceDeCustoDeReformaRouteImport } from './routes/indice-de-c
 import { Route as IndiqueUmAmigoRouteImport } from './routes/indique-um-amigo'
 import { Route as LicencaCcBy40RouteImport } from './routes/licenca-cc-by-4-0'
 import { Route as LicencaCcBySa40RouteImport } from './routes/licenca-cc-by-sa-4-0'
+import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as MapaRouteImport } from './routes/mapa'
 import { Route as MapaDoSiteRouteImport } from './routes/mapa-do-site'
 import { Route as MarcasEParceriasRouteImport } from './routes/marcas-e-parcerias'
@@ -43,6 +44,7 @@ import { Route as ReformaDeApartamentoSaoPauloRouteImport } from './routes/refor
 import { Route as ReformaDeCoberturaSaoPauloRouteImport } from './routes/reforma-de-cobertura-sao-paulo'
 import { Route as ReformaDeStudioSaoPauloRouteImport } from './routes/reforma-de-studio-sao-paulo'
 import { Route as ServicosRouteImport } from './routes/servicos'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminCentralRouteImport } from './routes/admin.central'
@@ -196,6 +198,11 @@ const LicencaCcBySa40Route = LicencaCcBySa40RouteImport.update({
   path: '/licenca-cc-by-sa-4-0',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
+  id: '/llms.txt',
+  path: '/llms.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MapaRoute = MapaRouteImport.update({
   id: '/mapa',
   path: '/mapa',
@@ -271,6 +278,11 @@ const ReformaDeStudioSaoPauloRoute = ReformaDeStudioSaoPauloRouteImport.update({
 const ServicosRoute = ServicosRouteImport.update({
   id: '/servicos',
   path: '/servicos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -580,6 +592,7 @@ export interface FileRoutesByFullPath {
   '/indique-um-amigo': typeof IndiqueUmAmigoRoute
   '/licenca-cc-by-4-0': typeof LicencaCcBy40Route
   '/licenca-cc-by-sa-4-0': typeof LicencaCcBySa40Route
+  '/llms.txt': typeof LlmsDottxtRoute
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
   '/marcas-e-parcerias': typeof MarcasEParceriasRoute
@@ -595,6 +608,7 @@ export interface FileRoutesByFullPath {
   '/reforma-de-cobertura-sao-paulo': typeof ReformaDeCoberturaSaoPauloRoute
   '/reforma-de-studio-sao-paulo': typeof ReformaDeStudioSaoPauloRoute
   '/servicos': typeof ServicosRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
   '/admin/coletas-radar': typeof AdminColetasRadarRoute
@@ -673,6 +687,7 @@ export interface FileRoutesByTo {
   '/indique-um-amigo': typeof IndiqueUmAmigoRoute
   '/licenca-cc-by-4-0': typeof LicencaCcBy40Route
   '/licenca-cc-by-sa-4-0': typeof LicencaCcBySa40Route
+  '/llms.txt': typeof LlmsDottxtRoute
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
   '/marcas-e-parcerias': typeof MarcasEParceriasRoute
@@ -688,6 +703,7 @@ export interface FileRoutesByTo {
   '/reforma-de-cobertura-sao-paulo': typeof ReformaDeCoberturaSaoPauloRoute
   '/reforma-de-studio-sao-paulo': typeof ReformaDeStudioSaoPauloRoute
   '/servicos': typeof ServicosRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
   '/admin/coletas-radar': typeof AdminColetasRadarRoute
@@ -767,6 +783,7 @@ export interface FileRoutesById {
   '/indique-um-amigo': typeof IndiqueUmAmigoRoute
   '/licenca-cc-by-4-0': typeof LicencaCcBy40Route
   '/licenca-cc-by-sa-4-0': typeof LicencaCcBySa40Route
+  '/llms.txt': typeof LlmsDottxtRoute
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
   '/marcas-e-parcerias': typeof MarcasEParceriasRoute
@@ -782,6 +799,7 @@ export interface FileRoutesById {
   '/reforma-de-cobertura-sao-paulo': typeof ReformaDeCoberturaSaoPauloRoute
   '/reforma-de-studio-sao-paulo': typeof ReformaDeStudioSaoPauloRoute
   '/servicos': typeof ServicosRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/central': typeof AdminCentralRoute
   '/admin/coletas-radar': typeof AdminColetasRadarRoute
@@ -862,6 +880,7 @@ export interface FileRouteTypes {
     | '/indique-um-amigo'
     | '/licenca-cc-by-4-0'
     | '/licenca-cc-by-sa-4-0'
+    | '/llms.txt'
     | '/mapa'
     | '/mapa-do-site'
     | '/marcas-e-parcerias'
@@ -877,6 +896,7 @@ export interface FileRouteTypes {
     | '/reforma-de-cobertura-sao-paulo'
     | '/reforma-de-studio-sao-paulo'
     | '/servicos'
+    | '/sitemap.xml'
     | '/admin/analytics'
     | '/admin/central'
     | '/admin/coletas-radar'
@@ -955,6 +975,7 @@ export interface FileRouteTypes {
     | '/indique-um-amigo'
     | '/licenca-cc-by-4-0'
     | '/licenca-cc-by-sa-4-0'
+    | '/llms.txt'
     | '/mapa'
     | '/mapa-do-site'
     | '/marcas-e-parcerias'
@@ -970,6 +991,7 @@ export interface FileRouteTypes {
     | '/reforma-de-cobertura-sao-paulo'
     | '/reforma-de-studio-sao-paulo'
     | '/servicos'
+    | '/sitemap.xml'
     | '/admin/analytics'
     | '/admin/central'
     | '/admin/coletas-radar'
@@ -1048,6 +1070,7 @@ export interface FileRouteTypes {
     | '/indique-um-amigo'
     | '/licenca-cc-by-4-0'
     | '/licenca-cc-by-sa-4-0'
+    | '/llms.txt'
     | '/mapa'
     | '/mapa-do-site'
     | '/marcas-e-parcerias'
@@ -1063,6 +1086,7 @@ export interface FileRouteTypes {
     | '/reforma-de-cobertura-sao-paulo'
     | '/reforma-de-studio-sao-paulo'
     | '/servicos'
+    | '/sitemap.xml'
     | '/admin/analytics'
     | '/admin/central'
     | '/admin/coletas-radar'
@@ -1142,6 +1166,7 @@ export interface RootRouteChildren {
   IndiqueUmAmigoRoute: typeof IndiqueUmAmigoRoute
   LicencaCcBy40Route: typeof LicencaCcBy40Route
   LicencaCcBySa40Route: typeof LicencaCcBySa40Route
+  LlmsDottxtRoute: typeof LlmsDottxtRoute
   MapaRoute: typeof MapaRoute
   MapaDoSiteRoute: typeof MapaDoSiteRoute
   MarcasEParceriasRoute: typeof MarcasEParceriasRoute
@@ -1157,6 +1182,7 @@ export interface RootRouteChildren {
   ReformaDeCoberturaSaoPauloRoute: typeof ReformaDeCoberturaSaoPauloRoute
   ReformaDeStudioSaoPauloRoute: typeof ReformaDeStudioSaoPauloRoute
   ServicosRoute: typeof ServicosRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminCentralRoute: typeof AdminCentralRoute
   AdminColetasRadarRoute: typeof AdminColetasRadarRoute
@@ -1351,6 +1377,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LicencaCcBySa40RouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/llms.txt': {
+      id: '/llms.txt'
+      path: '/llms.txt'
+      fullPath: '/llms.txt'
+      preLoaderRoute: typeof LlmsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mapa': {
       id: '/mapa'
       path: '/mapa'
@@ -1454,6 +1487,13 @@ declare module '@tanstack/react-router' {
       path: '/servicos'
       fullPath: '/servicos'
       preLoaderRoute: typeof ServicosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -1878,6 +1918,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndiqueUmAmigoRoute: IndiqueUmAmigoRoute,
   LicencaCcBy40Route: LicencaCcBy40Route,
   LicencaCcBySa40Route: LicencaCcBySa40Route,
+  LlmsDottxtRoute: LlmsDottxtRoute,
   MapaRoute: MapaRoute,
   MapaDoSiteRoute: MapaDoSiteRoute,
   MarcasEParceriasRoute: MarcasEParceriasRoute,
@@ -1893,6 +1934,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReformaDeCoberturaSaoPauloRoute: ReformaDeCoberturaSaoPauloRoute,
   ReformaDeStudioSaoPauloRoute: ReformaDeStudioSaoPauloRoute,
   ServicosRoute: ServicosRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminCentralRoute: AdminCentralRoute,
   AdminColetasRadarRoute: AdminColetasRadarRoute,

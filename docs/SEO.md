@@ -156,12 +156,23 @@ Valide tudo em: https://search.google.com/test/rich-results
 
 ## Sitemap
 
-O sitemap oficial do site é o arquivo estático **`public/sitemap.xml`**, servido
-em `https://bewild.com.br/sitemap.xml` e declarado no `robots.txt`.
+O sitemap oficial é **gerado pelo servidor a cada pedido** em
+`https://bewild.com.br/sitemap.xml` (rota `src/routes/sitemap[.]xml.ts` →
+`src/lib/sitemapServer.ts`), declarado no `robots.txt`. O mesmo vale para
+`/llms.txt` (e `/.well-known/llms.txt`, reescrito em `src/server.ts`), montado
+a partir do modelo `src/content/llms.txt`.
 
-Ele é **regenerado automaticamente no `prebuild`** pelo script
-`scripts/generate-sitemap.mjs`, que consulta o banco via REST (chave pública) e
-inclui:
+Até 26/10/2026 os dois eram arquivos de `public/` gravados no `prebuild` por
+`scripts/generate-sitemap.mjs`. A hospedagem da Lovable não roda o `prebuild`
+(`bun run build` não executa scripts `pre*`), então o arquivo publicado era o
+último commitado à mão e o artigo de 22/10 ficou quatro dias fora do sitemap.
+Agora o conteúdo sai do banco na hora, com memo de 10 minutos
+(`serverMemo`), e uma publicação nova entra no sitemap em até 10 minutos, sem
+deploy. **Nunca recrie `public/sitemap.xml` ou `public/llms.txt`: o arquivo
+estático esconderia a rota** (`sitemapParidade.test.ts` falha se existirem).
+
+A regra de montagem é `scripts/sitemap-build.mjs` (módulo puro, compartilhado
+pela rota e pelo script). O sitemap inclui:
 
 - as rotas estáticas indexáveis (`/`, `/portfolio`,
   `/orcamento`, `/conteudos`, `/guia-do-investidor`, `/faq`,
@@ -171,20 +182,26 @@ inclui:
   22/09/2026;
 - um `<url>` por projeto com `published = true` e `visible = true` (prioridade 0.7);
 - um `<url>` por conteúdo com `published = true` (prioridade 0.6);
-- `lastmod` a partir da data mais recente disponível de cada registro.
+- `lastmod` a partir da data mais recente disponível de cada registro; nas
+  páginas fixas, a data do último commit que tocou os arquivos da página,
+  lida de `src/content/sitemapLastmod.json` (o servidor não tem git).
 
-O script nunca quebra o build: se faltar env, a rede falhar ou vierem menos de 6
-projetos, ele imprime um aviso e mantém o arquivo atual.
-
-Rodar manualmente: `npm run sitemap`.
+O script `scripts/generate-sitemap.mjs` continua existindo com dois papéis:
+gravar `src/content/sitemapLastmod.json` (datas do git) e o **retrato**
+`src/content/snapshots/sitemap.xml` + `llms.txt`, que é a fixture dos testes de
+links internos (`postInternalLinks`, `seoLinksInternos1610`, `bairroRedirects`…).
+Ele nunca quebra o build: sem env, rede ou com menos de 6 projetos, avisa e
+mantém o retrato. Rodar à mão, com a chave pública no `.env`: `npm run sitemap`
+(faça isso ao publicar artigo ou projeto novo, para os testes enxergarem a
+página; o sitemap do ar não depende disso).
 
 ### Por que existem duas fontes de sitemap (SEO-08)
 
 Além do script de build existe a edge function `supabase/functions/sitemap/`.
 **Ela não serve `/sitemap.xml`** — é o motor do botão *"gerar sitemap agora"*
 em `Admin › SEO › Sitemap & Robots`, que mostra as URLs e permite baixar o
-arquivo. Quem vai ao ar continua sendo o `public/sitemap.xml` commitado; o
-próprio painel avisa isso.
+arquivo. Quem vai ao ar é a rota de servidor (`scripts/sitemap-build.mjs`); o
+painel também lê `/sitemap.xml` publicado para o retrato.
 
 As duas fontes foram conferidas em 22/09/2026 e estão **alinhadas**: mesmas
 rotas estáticas (14, incluindo `/guia-do-investidor`), mesmas prioridades, mesmo filtro (`published = true AND

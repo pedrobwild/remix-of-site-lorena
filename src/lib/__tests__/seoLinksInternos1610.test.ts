@@ -15,7 +15,7 @@ import { bairroContent } from "@/content/bairros";
 import { internalLinksForPost } from "@/lib/postInternalLinks";
 
 const root = path.resolve(__dirname, "../../..");
-const sitemap = readFileSync(path.join(root, "public/sitemap.xml"), "utf8");
+const sitemap = readFileSync(path.join(root, "src/content/snapshots/sitemap.xml"), "utf8");
 const PRAZO = "/conteudos/quanto-tempo-demora-reforma-apartamento";
 
 const hrefsDaHome = (prefixo: string) =>
