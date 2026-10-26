@@ -25,7 +25,9 @@ const PRAZO_STUDIO = "A referência é cerca de 60 dias úteis de obra. A data e
 
 export const SEO_TITLE = "Reforma de studio e apartamento pequeno em SP | Bewild";
 export const SEO_DESCRIPTION =
-  "Reforma de studio em São Paulo e apartamento pequeno para alugar, Airbnb ou morar: projeto 3D, obra, marcenaria e mobília num contrato, com preço fechado.";
+  "Reforma de studio em São Paulo e apartamento compacto para alugar, Airbnb ou morar: projeto 3D, obra, marcenaria e mobília num contrato, com preço fechado.";
+export const SEO_KEYWORDS =
+  "reforma de studio em São Paulo, reforma de studio SP, reforma de apartamento compacto em São Paulo, reforma de apartamento pequeno em SP, reforma de kitnet em São Paulo, reforma de studio para Airbnb em SP";
 
 /** Seção "Reforma de studio para Airbnb e short stay" (rodada 3, 06/10/2026). */
 export const AIRBNB_CHECK: { n: string; t: string }[] = [

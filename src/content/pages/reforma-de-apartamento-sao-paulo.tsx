@@ -12,6 +12,13 @@ import { faqJsonLd } from "@/lib/useSeo";
 
 export const CANONICAL = "/reforma-de-apartamento-sao-paulo";
 
+/** Mesmos textos no HTML do servidor e após a navegação no site. */
+export const SEO_TITLE = "Reforma de apartamento em São Paulo: projeto e obra | Bewild";
+export const SEO_DESCRIPTION =
+  "Reforma completa de apartamento em São Paulo para alugar ou morar: projeto 3D, obra, marcenaria e mobília, com preço fechado, prazo e 5 anos de garantia.";
+export const SEO_KEYWORDS =
+  "reforma de apartamento em São Paulo, empresa de reforma de apartamento em SP, reforma completa de apartamento em São Paulo, projeto e obra de apartamento em SP, reforma de apartamento para alugar em São Paulo";
+
 export const FAQ: { q: string; a: string; node?: ReactNode }[] = [
   {
     q: "Vocês reformam apartamentos de qualquer tamanho?",

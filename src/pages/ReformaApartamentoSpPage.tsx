@@ -9,7 +9,7 @@ import { useSeo } from "@/lib/useSeo";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
 import { PILAR_CUSTO } from "@/content/pages/orcamento";
-import { CANONICAL, FAQ } from "@/content/pages/reforma-de-apartamento-sao-paulo";
+import { CANONICAL, FAQ, SEO_TITLE, SEO_DESCRIPTION, SEO_KEYWORDS } from "@/content/pages/reforma-de-apartamento-sao-paulo";
 
 /* ============================================================
  * ReformaApartamentoSpPage — /reforma-de-apartamento-sao-paulo
@@ -54,9 +54,9 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
   useCtaClickTracking("reforma-apartamento-sp");
 
   useSeo({
-    title: "Empresa de reforma de apartamento em São Paulo | Bewild",
-    description:
-      "Reforma de apartamento em SP com arquitetura e engenharia próprias: projeto 3D, obra, marcenaria e mobília num contrato, preço fechado e 5 anos de garantia.",
+    title: SEO_TITLE,
+    description: SEO_DESCRIPTION,
+    keywords: SEO_KEYWORDS,
     canonicalPath: CANONICAL,
     ogType: "website",
   });
