@@ -59,6 +59,9 @@ Páginas com os projetos entregues em cada bairro de São Paulo (só bairros com
 ## Conteúdos publicados
 
 <!-- posts:start -->
+- [Short stay no Brooklin: o que os dados mostram e o que ainda falta saber](/conteudos/short-stay-brooklin-ocupacao-diaria-airbnb)
+- [Studio para Airbnb em Pinheiros: o que os dados de 2026 mostram](/conteudos/studio-airbnb-pinheiros-quanto-rende)
+- [Quanto custa reformar um studio de 20 m² em São Paulo: 27 contratos de até 21 m² da Bewild](/conteudos/quanto-custa-reformar-studio-20-m2-sao-paulo)
 - [Reforma de apartamento para morar em SP: custo, prazo e o que muda, em 198 contratos](/conteudos/reforma-de-apartamento-para-morar-sao-paulo)
 - [Quanto custa box de banheiro, espelho e envidraçamento de sacada no studio](/conteudos/quanto-custa-box-espelho-envidracamento-studio)
 - [Quanto custa bancada de granito ou quartzo no studio, e quando vale trocar a da construtora](/conteudos/quanto-custa-bancada-granito-quartzo-studio)
