@@ -17,7 +17,7 @@
  * do "Aceitar".
  */
 import { isConsentAccepted } from "@/lib/cookieConsent";
-import { telemetryUrl, telemetryValue } from "@/../supabase/functions/_shared/telemetry-privacy";
+import { telemetryUrl, telemetryUrlWithCampaign, telemetryValue } from "@/../supabase/functions/_shared/telemetry-privacy";
 import { ensureGoogleTagScript } from "@/lib/whenIdle";
 import { googleAdsProfileVariables } from "@/lib/googleAdsProfileVariables";
 
@@ -68,7 +68,7 @@ export function initGa4(): void {
   // para evitar duplicidade / falsos negativos.
   gtag("config", GA4_MEASUREMENT_ID, {
     send_page_view: false,
-    page_location: telemetryUrl(window.location.href),
+    page_location: telemetryUrlWithCampaign(window.location.href),
     page_referrer: document.referrer ? telemetryUrl(document.referrer, true) : "",
   });
 
@@ -93,7 +93,7 @@ export function trackPageView(path: string): void {
   if (!isConsentAccepted()) return;
   if (isAdminPath()) return;
   if (path === lastPageViewKey) return;
-  const location = telemetryUrl(window.location.href);
+  const location = telemetryUrlWithCampaign(window.location.href);
   w.gtag("event", "page_view", {
     page_path: telemetryUrl(path),
     page_location: location,
@@ -103,7 +103,7 @@ export function trackPageView(path: string): void {
     page_referrer: lastPageLocation ?? (document.referrer ? telemetryUrl(document.referrer, true) : ""),
   });
   lastPageViewKey = path;
-  lastPageLocation = location;
+  lastPageLocation = telemetryUrl(window.location.href);
 }
 
 export function trackEvent(name: string, params?: Record<string, unknown>): void {
@@ -123,7 +123,7 @@ export function trackEvent(name: string, params?: Record<string, unknown>): void
     }) : {}),
     ...telemetryValue(params),
     ...(searchBairro ? { search_term: searchBairro, imovel_bairro: searchBairro } : {}),
-    page_location: telemetryUrl(window.location.href),
+    page_location: telemetryUrlWithCampaign(window.location.href),
     page_referrer: lastPageLocation ?? (document.referrer ? telemetryUrl(document.referrer, true) : ""),
   });
 }

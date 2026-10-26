@@ -16,6 +16,26 @@ export function telemetryUrl(value: string, originOnly = false): string {
   } catch { return ""; }
 }
 
+const CAMPAIGN_QUERY_KEYS = new Set([
+  "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id",
+  "gclid", "gbraid", "wbraid", "gad_source", "gad_campaignid", "fbclid",
+]);
+
+/** Só para page_location do GA4: preserva atribuição sem parâmetros privados. */
+export function telemetryUrlWithCampaign(value: string): string {
+  const base = telemetryUrl(value);
+  try {
+    const url = new URL(value, "https://bewild.com.br");
+    if (!/^https?:$/.test(url.protocol) || !base || base === "whatsapp:") return base;
+    const query = new URLSearchParams();
+    for (const [key, item] of url.searchParams) {
+      if (CAMPAIGN_QUERY_KEYS.has(key)) query.append(key, telemetryText(item));
+    }
+    const campaign = query.toString();
+    return campaign ? `${base}?${campaign}` : base;
+  } catch { return base; }
+}
+
 const PRIVATE_KEYS = /^(email|e_mail|phone|whatsapp|name|full_name|message|text|password|token|access_token|authorization|gclid|fbclid|fbp|fbc)$/i;
 const URL_KEYS = /^(href|url|link_url|page_location|page_referrer|path|page_path|landing_path|page|from|to|destination)$/i;
 // `name` neste espelho é uma categoria de anúncio, nunca nome de pessoa.
