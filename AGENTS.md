@@ -51,7 +51,7 @@
 - Home services preserve all 12 original inline SSR descriptions; enhance only at lg with a fine hover pointer, selecting the existing detail panel on hover, click or keyboard focus with synchronized aria-expanded. Touch and sub-lg layouts remain fully readable without controls; responsive cleanup restores titles to avoid duplicate blocks.
 
 - Article opening videos use the optional `bewild_posts.youtube_video_id` and shared metadata resolver; SSR emits VideoObject while playback loads only after a click.
-- Home title/description/Open Graph saved in /admin/seo are read by the `/` route loader (`src/lib/homeSeo.ts`, no module cache) so the raw SSR HTML carries them; the Páginas tab wins over the Home tab, same as `useSeo`.
+- Home title/description/Open Graph saved in /admin/seo are read by the `/` route loader (`src/lib/homeSeo.ts`, server-side `serverMemo` of 60 s like the other public loaders) so the raw SSR HTML carries them; the Páginas tab wins over the Home tab, same as `useSeo`.
 - The five main editable page routes read SEO overrides through a public, sanitized server function with per-field defaults, so panel edits appear in SSR without exposing other site settings.
 - Página /parceiros/leal-moreira: texto em `src/content/lealMoreira.ts` (reaproveita `INCORP_CASE`), projetos lidos no loader da rota (`lealMoreiraLoader.ts`, timeout 2,5 s) para as fotos saírem no HTML do servidor; nada de dado novo inventado — fatos e números só do case e de `partner_cases`.
 - Home related links remain inline in HOME_BWA_HTML in a single unnumbered navigation near FAQ; this preserves SSR discovery without duplicating mobile and desktop content.

@@ -9,6 +9,7 @@
  * loader da rota "/".
  */
 import { supabase } from "@/integrations/supabase/client";
+import { serverMemo } from "@/lib/serverMemo";
 import { pageSeoOverride, type PagesSeoMap } from "@/lib/publicPages";
 
 export const HOME_DEFAULT_TITLE = "Reforma de studios e apartamentos compactos em SP | Bewild";
@@ -52,15 +53,21 @@ const SERVER_TIMEOUT_MS = 2500;
 
 /**
  * Loader da home. Nunca rejeita: falha ou demora do banco devolve o texto
- * padrão e o `useSeo` do cliente corrige depois. Sem cache em módulo — o
- * isolate do servidor serviria o título antigo depois de uma edição no painel.
+ * padrão e o `useSeo` do cliente corrige depois. No servidor passa pelo
+ * `serverMemo` (60 s, só leitura bem-sucedida): teto de atraso de uma edição
+ * no painel aparecer no HTML, igual às demais páginas.
  */
 export async function loadHomeSeo(): Promise<HomeSeo> {
   try {
-    const read = supabase.rpc("get_public_site_settings").then(({ data, error }) => {
-      if (error) throw error;
-      return (data as HomeSeoSettings | null) ?? null;
-    });
+    const read = serverMemo(
+      "home:seo-settings",
+      async () => {
+        const { data, error } = await supabase.rpc("get_public_site_settings");
+        if (error) throw error;
+        return (data as HomeSeoSettings | null) ?? null;
+      },
+      { keep: (v) => v !== null },
+    );
     const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), SERVER_TIMEOUT_MS));
     return resolveHomeSeo(await Promise.race([read, timeout]));
   } catch {

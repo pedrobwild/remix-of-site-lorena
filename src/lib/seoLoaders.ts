@@ -7,6 +7,7 @@ import { optimizedImageUrl } from "./imageUrl";
  * fallback genérico e o `useSeo` do cliente corrige depois.
  */
 import { supabase } from "@/integrations/supabase/client";
+import { serverMemo } from "@/lib/serverMemo";
 import {
   projectMetaDescription,
   projectSeoTitleUnique,
@@ -36,13 +37,22 @@ const PEER_COLUMNS =
 export async function loadProjectSeo(slug: string): Promise<RouteSeoData> {
   try {
     const [projectRes, peersRes] = await Promise.all([
-      supabase
-        .from("projects")
-        .select(`${PEER_COLUMNS}, slug, seo_description, summary, og_image_url, cover_url`)
-        .eq("slug", slug)
-        .eq("published", true)
-        .maybeSingle(),
-      supabase.from("projects").select(PEER_COLUMNS).eq("published", true).limit(1000),
+      serverMemo(
+        `project-seo:${slug}`,
+        async () =>
+          await supabase
+            .from("projects")
+            .select(`${PEER_COLUMNS}, slug, seo_description, summary, og_image_url, cover_url`)
+            .eq("slug", slug)
+            .eq("published", true)
+            .maybeSingle(),
+        { keep: (r) => !r.error && !!r.data },
+      ),
+      serverMemo(
+        "projects:seo-peers",
+        async () => await supabase.from("projects").select(PEER_COLUMNS).eq("published", true).limit(1000),
+        { keep: (r) => !r.error && !!r.data },
+      ),
     ]);
     const p = projectRes.data as
       | (ProjectSeoPeer & {
@@ -82,12 +92,17 @@ type PostSeoRow = {
 
 export async function loadPostSeo(slug: string): Promise<RouteSeoData> {
   try {
-    const { data } = await supabase
-      .from("bewild_posts" as never)
-      .select("title, meta_title, meta_description, excerpt, cover_image, og_image")
-      .eq("slug", slug)
-      .eq("published", true)
-      .maybeSingle();
+    const { data } = await serverMemo(
+      `post-seo:${slug}`,
+      async () =>
+        await supabase
+          .from("bewild_posts" as never)
+          .select("title, meta_title, meta_description, excerpt, cover_image, og_image")
+          .eq("slug", slug)
+          .eq("published", true)
+          .maybeSingle(),
+      { keep: (r) => !r.error && !!r.data },
+    );
     const post = data as PostSeoRow | null;
     if (!post) return NOT_FOUND_SEO;
     return {
@@ -111,11 +126,11 @@ export async function loadPostSeo(slug: string): Promise<RouteSeoData> {
 
 export async function loadBairroSeo(slug: string): Promise<RouteSeoData> {
   try {
-    const { data } = await supabase
-      .from("projects")
-      .select("neighborhood, cover_url")
-      .eq("published", true)
-      .limit(1000);
+    const { data } = await serverMemo(
+      "projects:bairro-seo",
+      async () => await supabase.from("projects").select("neighborhood, cover_url").eq("published", true).limit(1000),
+      { keep: (r) => !r.error && !!r.data },
+    );
     const list = (data ?? []) as Array<{ neighborhood: string | null; cover_url: string | null }>;
     const page = neighborhoodPages(list).find((n) => n.slug === slug);
     if (!page) return NOT_FOUND_SEO;
