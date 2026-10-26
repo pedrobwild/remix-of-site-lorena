@@ -28,12 +28,12 @@ export function bairroTitle(label?: string | null): string {
 
 /** H1 comercial, com a grafia original do bairro, também usado no JSON-LD. */
 export function bairroHeading(label?: string | null): string {
-  return `Reforma de apartamento em ${(label ?? "").trim() || "São Paulo"}`;
+  return `Reforma de apartamento ${noBairro(label)}`;
 }
 
 /** Meta description da página de bairro: a mesma no HTML do servidor e no navegador. */
 export function bairroDescription(count: number, label: string, faixa: string | null): string {
-  return `Reforma completa de apartamento em ${label.trim() || "São Paulo"}. Orçamento com preço e prazo em contrato. ${count} apartamentos reformados${faixa ? ` (${faixa})` : ""}: veja fotos reais.`;
+  return `Reforma completa de apartamento ${noBairro(label)}. Orçamento com preço e prazo em contrato. ${count} apartamentos reformados${faixa ? ` (${faixa})` : ""}: veja fotos reais.`;
 }
 
 const foldBairro = (value: string) =>

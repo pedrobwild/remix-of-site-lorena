@@ -103,7 +103,7 @@ export default function BairroPage({
               <span className="bwh-mono">{label ? `${label} · São Paulo` : "São Paulo"}</span>
             </div>
             <h1 className="bwh-h2" style={{ marginBottom: 24 }}>
-              Reforma de apartamento em <em>{label || "São Paulo"}</em>
+              Reforma de apartamento {label ? bairroPreposicao(label) : "em"} <em>{label || "São Paulo"}</em>
             </h1>
             {page && (
               <p className="bwh-lead" style={{ margin: "0 0 32px" }}>
