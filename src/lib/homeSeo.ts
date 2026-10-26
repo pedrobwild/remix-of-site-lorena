@@ -61,11 +61,11 @@ export async function loadHomeSeo(): Promise<HomeSeo> {
   try {
     const read = serverMemo(
       "home:seo-settings",
-      () =>
-        supabase.rpc("get_public_site_settings").then(({ data, error }) => {
-          if (error) throw error;
-          return (data as HomeSeoSettings | null) ?? null;
-        }),
+      async () => {
+        const { data, error } = await supabase.rpc("get_public_site_settings");
+        if (error) throw error;
+        return (data as HomeSeoSettings | null) ?? null;
+      },
       { keep: (v) => v !== null },
     );
     const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), SERVER_TIMEOUT_MS));
