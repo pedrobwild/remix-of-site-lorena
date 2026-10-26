@@ -74,6 +74,44 @@
   text-underline-offset: 3px;
 }
 
+/* Referência de preço: tabela real, com quebra de linha também em 320 px. */
+.bwa-servico-price-table {
+  width: 100%;
+  max-width: 62ch;
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 15px;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+  color: var(--bwa-ink-soft);
+}
+
+.bwa-servico-price-table caption {
+  text-align: left;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: var(--bwa-ink);
+}
+
+.bwa-servico-price-table th,
+.bwa-servico-price-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--bwa-line);
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.bwa-servico-price-table th {
+  font-weight: 600;
+  color: var(--bwa-ink);
+}
+
+.bwa-servico-price-table th:first-child {
+  width: 55%;
+}
+
 /* Cartões "Para quem" */
 .bwa-servico-cards {
   display: grid;
