@@ -295,7 +295,7 @@ describe("MetaPixel", () => {
 });
 
 describe("GA4 (ga4.ts)", () => {
-  it("configuração e eventos não enviam query, fragmento ou dados de contato", async () => {
+  it("configuração e eventos preservam campanha sem fragmento ou dados de contato", async () => {
     const ga4 = await vi.importActual<typeof import("@/lib/ga4")>("@/lib/ga4");
     const w = window as Window & { gtag?: (...args: unknown[]) => void; __bewildGa4Inited?: boolean };
     delete w.__bewildGa4Inited;
@@ -308,9 +308,9 @@ describe("GA4 (ga4.ts)", () => {
     ga4.trackPageView(window.location.pathname + window.location.search);
     ga4.trackEvent("cta_click", { email: "ana@example.com", href: "mailto:ana@example.com", utm_campaign: "sea_investidor" });
     expect(gtag).toHaveBeenCalledWith("event", "cta_click", expect.objectContaining({
-      href: "mailto:", utm_campaign: "sea_investidor", page_location: "http://localhost:3000/orcamento",
+      href: "mailto:", utm_campaign: "sea_investidor", page_location: "http://localhost:3000/orcamento?utm_campaign=sea_investidor",
     }));
-    expect(JSON.stringify(gtag.mock.calls)).not.toMatch(/ana@example|#private|\?utm|email=/);
+    expect(JSON.stringify(gtag.mock.calls)).not.toMatch(/ana@example|#private|email=/);
     document.head.querySelectorAll('script[src*="googletagmanager"]').forEach((n) => n.remove());
     delete w.__bewildGa4Inited;
     delete w.gtag;
