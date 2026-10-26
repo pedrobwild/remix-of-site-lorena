@@ -1,5 +1,6 @@
 import { RadarLink } from "@/components/RadarLink";
 import { PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
+import { BASE_CUSTO, CUSTO_M2_MEDIANO, ORCAMENTO_MEDIANO, STUDIO_TABELA_VIGENTE, brl } from "@/content/baseCusto";
 import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
 import BwaNav from "@/components/BwaNav";
@@ -98,6 +99,51 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
                 <p className="bwa-servico-cta-note">Sem custo e sem compromisso</p>
               </div>
             </div>
+          </div>
+        </section>
+
+        <section className="bwa-servico-block" aria-labelledby="preco-studio">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="preco-studio">
+              Quanto custa reformar um studio em São Paulo?
+            </h2>
+            <p className="bwa-servico-text">
+              Na base de {BASE_CUSTO.contratos} contratos de reforma completa da Bewild em unidades de até 50 m²,
+              a mediana foi {ORCAMENTO_MEDIANO}, ou {CUSTO_M2_MEDIANO} por m². Metade dos contratos ficou
+              entre {brl(BASE_CUSTO.m2P25)} e {brl(BASE_CUSTO.m2P75)} por m².
+            </p>
+            <table className="bwa-servico-price-table">
+              <caption>Preço de referência da reforma completa</caption>
+              <thead>
+                <tr><th scope="col">Referência</th><th scope="col">Valor</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">Mediana de {BASE_CUSTO.contratos} contratos, até 50 m²</th>
+                  <td>{ORCAMENTO_MEDIANO} ({CUSTO_M2_MEDIANO} por m²)</td>
+                </tr>
+                {STUDIO_TABELA_VIGENTE.referencias.map((referencia) => (
+                  <tr key={referencia.areaM2}>
+                    <th scope="row">Tabela vigente, studio de {referencia.areaM2} m²</th>
+                    <td>cerca de R$ {referencia.valorMil} mil</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="bwa-servico-text">
+              O valor inclui projeto, obra, marcenaria sob medida, mobiliário e eletrodomésticos
+              (e enxoval, no short stay), num contrato de preço fechado. A obra de um studio de
+              até {STUDIO_TABELA_VIGENTE.prazo.areaMaxM2} m² sem integração da varanda leva
+              até {STUDIO_TABELA_VIGENTE.prazo.diasUteisMax} dias úteis, com a data escrita no contrato.
+            </p>
+            <p className="bwa-servico-text">
+              Os valores da base são de contratos já assinados; a tabela vigente é de {STUDIO_TABELA_VIGENTE.edicao}.
+              O seu orçamento sai da metragem e do escopo do seu imóvel. A análise completa,
+              com o que muda o preço, está em{" "}
+              <a href="/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2">
+                quanto custa reformar um apartamento ou studio de até 50 m²
+              </a>.
+            </p>
           </div>
         </section>
 

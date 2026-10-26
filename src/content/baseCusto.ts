@@ -27,6 +27,20 @@ export const BASE_CUSTO = {
 } as const;
 
 /**
+ * Origem: post quanto-custa-reformar-apartamento-studio-ate-50-m2,
+ * base de 188 contratos; tabela vigente out/2026. Referências aproximadas,
+ * distintas das medianas históricas de BASE_CUSTO; aprovadas em 26/10/2026.
+ */
+export const STUDIO_TABELA_VIGENTE = {
+  edicao: "outubro de 2026",
+  referencias: [
+    { areaM2: 25, valorMil: 73 },
+    { areaM2: 30, valorMil: 85 },
+  ],
+  prazo: { areaMaxM2: 30, diasUteisMax: 60, integracaoVaranda: false },
+} as const;
+
+/**
  * Reais sem centavos no formato do site ("R$ 2.744"). O separador de milhar é
  * montado aqui, sem `toLocaleString`, para o texto sair igual no servidor e no
  * navegador, qualquer que seja o ICU do runtime.

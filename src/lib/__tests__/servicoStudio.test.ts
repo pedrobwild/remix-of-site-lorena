@@ -1,8 +1,7 @@
 /**
  * /reforma-de-studio-sao-paulo (análise de palavras-chave de 11/10/2026).
  *
- *  - Título, descrição e H1 no singular: a busca que a página atende é
- *    "reforma de studio" (o plural fica com a home).
+ *  - Título no plural autorizado em 26/10/2026; H1 singular preservado.
  *  - Gestão de Airbnb: a página dizia, no mesmo texto, que a Bewild "não faz a
  *    gestão do anúncio" e, no FAQ, que faz. A Bewild faz; a frase certa é a do
  *    FAQ, do /faq e dos artigos.
@@ -26,12 +25,11 @@ import { FAQ, SEO_DESCRIPTION, SEO_TITLE, STUDIO_SP_JSONLD } from "@/content/pag
 const SRC = path.resolve(__dirname, "../..");
 const read = (p: string) => readFileSync(path.join(SRC, p), "utf8");
 
-describe("reforma de studio: palavra-chave no singular", () => {
+describe("reforma de studio: metadados aprovados e H1 preservado", () => {
   it("título e descrição", () => {
-    expect(SEO_TITLE).toBe("Reforma de studio e apartamento pequeno em SP | Bewild");
+    expect(SEO_TITLE).toBe("Reforma de studios em São Paulo: preço e prazo em contrato");
     expect(SEO_TITLE.length).toBeLessThanOrEqual(60);
-    expect(SEO_DESCRIPTION.startsWith("Reforma de studio em São Paulo")).toBe(true);
-    expect(`${SEO_TITLE} ${SEO_DESCRIPTION}`).not.toMatch(/reforma de studios/i);
+    expect(SEO_DESCRIPTION).toBe("Reforma completa de studios e apartamentos pequenos em SP: projeto, obra, marcenaria e mobília num contrato. Mediana de R$ 2.744/m² em 188 contratos.");
   });
 
   it("rota (servidor) e página (navegador) usam o mesmo título e a mesma descrição", () => {
