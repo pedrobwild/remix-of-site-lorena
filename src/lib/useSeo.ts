@@ -47,6 +47,7 @@ export type SeoInput = {
 
   ogType?: "website" | "article";
   noindex?: boolean;
+  noindexFollow?: boolean;
   /** Palavras-chave da rota. Sobrepõe `settings.seo_keywords` (global). */
   keywords?: string;
   /**
@@ -111,8 +112,8 @@ export const DEFAULT_OG_IMAGE = {
 /** Diretivas de pré-visualização do index.html, preservadas em páginas indexáveis. */
 const PREVIEW_DIRECTIVES = "max-image-preview:large, max-snippet:-1, max-video-preview:-1";
 
-export function robotsContent(noindex: boolean | undefined, settingsRobots?: string | null): string {
-  if (noindex) return "noindex, nofollow";
+export function robotsContent(noindex: boolean | undefined, settingsRobots?: string | null, noindexFollow = false): string {
+  if (noindex) return noindexFollow ? "noindex, follow" : "noindex, nofollow";
   const base = (settingsRobots || "index, follow").trim();
   if (/\b(noindex|none)\b/i.test(base) || /max-image-preview/i.test(base)) return base;
   return `${base}, ${PREVIEW_DIRECTIVES}`;
@@ -502,7 +503,7 @@ function applySeo(settings: SiteSettings, seoInput: SeoInput) {
   // Garante barra final apenas para a raiz
   const canonicalUrl = cleanPath === "/" ? `${base}/` : canonical;
 
-  const robots = robotsContent(seo.noindex, settings.seo_robots);
+  const robots = robotsContent(seo.noindex, settings.seo_robots, seo.noindexFollow);
   const ogType = seo.ogType || "website";
 
   document.title = title;
@@ -705,6 +706,7 @@ export function useSeo(seo: SeoInput) {
 
     ogType,
     noindex,
+    noindexFollow,
     jsonLd,
     keywords,
   } = seo;
@@ -726,6 +728,7 @@ export function useSeo(seo: SeoInput) {
 
       ogType,
       noindex,
+      noindexFollow,
       jsonLd,
       keywords,
     };
@@ -770,6 +773,7 @@ export function useSeo(seo: SeoInput) {
 
     ogType,
     noindex,
+    noindexFollow,
     jsonLdKey,
     keywords,
   ]);

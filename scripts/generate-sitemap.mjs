@@ -68,8 +68,6 @@ export function xmlEscape(s) {
     .replace(/'/g, "&apos;");
 }
 
-const CHART_SLUGS = ["reformar-apartamento-para-vender-ou-alugar-sp"];
-
 export function urlTag({ loc, lastmod, changefreq, priority, videos }) {
   const lm = lastmod ? `<lastmod>${xmlEscape(lastmod)}</lastmod>` : "";
   const vids = (videos ?? []).map(videoTag).join("");
@@ -394,17 +392,6 @@ async function main() {
       videos: postVideos(p),
     }));
 
-  // Páginas de gráficos (/graficos/<slug>): mantenha em sincronia com src/content/chartSets.ts.
-  const chartUrls = CHART_SLUGS.map((slug) => {
-    const post = posts.find((p) => p.slug === slug);
-    return {
-      loc: `${BASE_URL}/graficos/${slug}`,
-      lastmod: day(post?.content_updated_at, post?.published_at, post?.created_at),
-      changefreq: "monthly",
-      priority: "0.5",
-    };
-  });
-
   // Páginas de vídeo (/videos/<slug>): uma por vídeo, com a entrada <video:video>.
   // lastmod = último commit na página ou nos dois cadastros (o arquivo da rota tem "$"
   // no nome, que o shell do git log expandiria; por isso ele não entra na lista).
@@ -432,7 +419,7 @@ async function main() {
     }
   }
 
-  const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls, ...chartUrls, ...videoUrls];
+  const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls, ...videoUrls];
   const xml = [
     `<?xml version="1.0" encoding="UTF-8"?>`,
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">`,
@@ -494,7 +481,7 @@ function updateLlmsTxt(posts, hoodUrls = [], videoEntries = []) {
   // Páginas de bairro (/reforma/<bairro>): mesma lista do sitemap, com a contagem.
   // O rótulo acompanha o título da página (bairroTitle em src/lib/bairroSeo.ts).
   const hoodLines = hoodUrls.map(
-    (h) => `- [Reforma de apartamento e studio ${noBairro(h.label)}](${h.loc.replace(BASE_URL, "")}): ${h.count} projetos entregues`,
+    (h) => `- [Reforma de apartamento em ${h.label}](${h.loc.replace(BASE_URL, "")}): ${h.count} projetos entregues`,
   );
   let next = replaceBetween(txt, "<!-- posts:start -->", "<!-- posts:end -->", postLines, "posts:start/posts:end");
   next = replaceBetween(next, "<!-- bairros:start -->", "<!-- bairros:end -->", hoodLines, "bairros:start/bairros:end");

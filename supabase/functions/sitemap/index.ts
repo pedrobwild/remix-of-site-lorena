@@ -182,17 +182,6 @@ Deno.serve(async (req) => {
     lastmod: validDay(...postDays(b)),
   }));
 
-  // Páginas de gráficos (/graficos/<slug>): mantenha em sincronia com src/content/chartSets.ts.
-  const chartUrls: UrlEntry[] = ["reformar-apartamento-para-vender-ou-alugar-sp"].map((slug) => {
-    const post = postRows.find((b) => b.slug === slug);
-    return {
-      loc: `${base}/graficos/${slug}`,
-      priority: "0.5",
-      changefreq: "monthly",
-      lastmod: post ? validDay(...postDays(post)) : undefined,
-    };
-  });
-
   // Páginas de vídeo (/videos/<slug>): mantenha em sincronia com src/content/videoPages.json
   // (paridade conferida em src/lib/__tests__/videoPages.test.tsx). As entradas <video:video>
   // só saem no sitemap publicado (scripts/generate-sitemap.mjs).
@@ -203,7 +192,7 @@ Deno.serve(async (req) => {
     "depoimento-vivian",
   ].map((slug) => ({ loc: `${base}/videos/${slug}`, priority: "0.6", changefreq: "monthly" }));
 
-  const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls, ...chartUrls, ...videoUrls];
+  const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls, ...videoUrls];
 
   const urlsXml = all
     .map(

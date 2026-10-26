@@ -68,6 +68,8 @@ export type SeoHeadInput = {
   /** Caminho canônico, ex.: "/servicos". */
   path: string;
   noindex?: boolean;
+  /** Mantém o seguimento dos links em páginas auxiliares não indexáveis. */
+  noindexFollow?: boolean;
   keywords?: string;
   /** Textos salvos em /admin/seo (aba Páginas); vencem os da rota. */
   pagesSeo?: PagesSeoMap | null;
@@ -212,7 +214,7 @@ export function seoHead(rawInput: SeoHeadInput) {
     { name: "description", content: input.description },
     {
       name: "robots",
-      content: input.noindex ? "noindex, nofollow" : `index, follow, ${PREVIEW_DIRECTIVES}`,
+      content: input.noindex ? (input.noindexFollow ? "noindex, follow" : "noindex, nofollow") : `index, follow, ${PREVIEW_DIRECTIVES}`,
     },
     { property: "og:title", content: ogTitle },
     { property: "og:description", content: ogDescription },

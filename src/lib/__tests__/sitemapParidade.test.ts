@@ -70,6 +70,7 @@ const NAO_INDEXAVEIS: Record<string, string> = {
   "/preferencias-de-cookies": "src/pages/PreferenciasCookiesPage.tsx",
   // Resultado de busca: noindex, nunca entra no sitemap.
   "/buscar": "src/pages/BewildBuscaPage.tsx",
+  "/graficos/reformar-apartamento-para-vender-ou-alugar-sp": "src/routes/graficos.$slug.tsx",
   // O guia mudou para https://radarbewild.com.br (12/10/2026): produção responde
   // 301 pelo vercel.json; a rota antiga fica só como fallback noindex.
   "/guia-do-investidor": "src/routes/guia-do-investidor.tsx",
@@ -214,7 +215,7 @@ describe("public/sitemap.xml commitado", () => {
   });
 
   it("não expõe admin, LPs de anúncio, 404 nem mockups", () => {
-    for (const proibido of ["/admin", "/404", "/o", "/p", "/mockups", "/bakeoff", "/gpt-knowledge"]) {
+    for (const proibido of ["/admin", "/404", "/o", "/p", "/mockups", "/bakeoff", "/gpt-knowledge", "/graficos"]) {
       const vazando = locs.filter(
         (l) => l === `https://bewild.com.br${proibido}` || l.startsWith(`https://bewild.com.br${proibido}/`),
       );
