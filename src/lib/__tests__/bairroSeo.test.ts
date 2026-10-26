@@ -61,6 +61,18 @@ describe("bairroTitle", () => {
   });
 });
 
+describe("bairroHeading e descrição", () => {
+  it.each([
+    ["Brooklin", "no Brooklin"],
+    ["Pinheiros", "em Pinheiros"],
+    ["Vila Olímpia", "na Vila Olímpia"],
+    ["Jardins", "nos Jardins"],
+  ])("%s usa preposição natural também no H1/JSON-LD e descrição", (label, local) => {
+    expect(bairroHeading(label)).toBe(`Reforma de apartamento ${local}`);
+    expect(bairroDescription(3, label, null)).toBe(`Reforma completa de apartamento ${local}. Orçamento com preço e prazo em contrato. 3 apartamentos reformados: veja fotos reais.`);
+  });
+});
+
 describe("página de bairro: servidor e navegador dizem o mesmo", () => {
   const projetos = [
     { neighborhood: "Vila Olímpia", cover_url: "a.jpg", area_m2: 25 },
