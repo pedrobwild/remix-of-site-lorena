@@ -13,6 +13,7 @@ import {
   CANONICAL,
   FAQ,
   SEO_DESCRIPTION,
+  SEO_KEYWORDS,
   SEO_TITLE,
 } from "@/content/pages/reforma-de-studio-sao-paulo";
 
@@ -60,6 +61,7 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
   useSeo({
     title: SEO_TITLE,
     description: SEO_DESCRIPTION,
+    keywords: SEO_KEYWORDS,
     canonicalPath: CANONICAL,
     ogType: "website",
   });

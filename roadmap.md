@@ -1,3 +1,4 @@
+- [x] Ajustar SEO local de studio/compactos e apartamento: título aprovado de studio mantido, descrições e palavras-chave locais próprias, apartamento com projeto e obra no título; HTML inicial e navegador iguais, canonical próprio e visual preservado. 154 testes passam, compilação automática OK; sem publicar.
 - [x] Brief velocidade 25/10: CSS dividido confirmado no domínio real; regras movidas integralmente à raiz, três falhas corrigidas sem enfraquecer testes; llmsTxt/useLeadSubmit já passavam.
 - [x] Separar assistente e manutenção do código inicial público; banner mantido imediato para preservar preferências. Mesma imagem desktop em três WebP, preload/srcset alinhados, celular preservado.
 - [x] Suíte completa (1978 aprovados, 5 ignorados), compilação automática OK; navegador 414/1280 com fotos, cookies, menus e navegação sem erros. Publicação final solicitada; medições móveis e limitações registradas em docs/auditoria/velocidade-2026-10-25-brief.md.
