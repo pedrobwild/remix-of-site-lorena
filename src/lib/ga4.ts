@@ -19,6 +19,7 @@
 import { isConsentAccepted } from "@/lib/cookieConsent";
 import { telemetryUrl, telemetryValue } from "@/../supabase/functions/_shared/telemetry-privacy";
 import { ensureGoogleTagScript } from "@/lib/whenIdle";
+import { googleAdsProfileVariables } from "@/lib/googleAdsProfileVariables";
 
 export const GA4_MEASUREMENT_ID = "G-CE7GKKDG4L";
 
@@ -111,8 +112,17 @@ export function trackEvent(name: string, params?: Record<string, unknown>): void
   if (!w.__bewildGa4Inited || !w.gtag) return;
   if (!isConsentAccepted()) return;
   if (isAdminPath()) return;
+  // Busca por bairro aceita somente categorias conhecidas, nunca texto livre.
+  const searchBairro = name === "search" && params?.search_type === "bairro"
+    ? googleAdsProfileVariables({ bairro: typeof params.search_term === "string" ? params.search_term : null }).imovel_bairro
+    : null;
+  if (name === "search" && params?.search_type === "bairro" && !searchBairro) return;
   w.gtag("event", name, {
+    ...(name === "cta_click" ? googleAdsProfileVariables({
+      bairro: window.location.pathname.match(/^\/reforma\/([^/]+)$/)?.[1]?.replace(/-/g, " "),
+    }) : {}),
     ...telemetryValue(params),
+    ...(searchBairro ? { search_term: searchBairro, imovel_bairro: searchBairro } : {}),
     page_location: telemetryUrl(window.location.href),
     page_referrer: lastPageLocation ?? (document.referrer ? telemetryUrl(document.referrer, true) : ""),
   });

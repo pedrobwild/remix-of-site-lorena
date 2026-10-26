@@ -15,6 +15,7 @@ import { reportLead } from "@/lib/conversions";
 import { isConsentAccepted } from "@/lib/cookieConsent";
 import { currentAdConsentProof } from "@/lib/adConsentRecord";
 import { trackEvent } from "@/lib/ga4";
+import { googleAdsProfileVariables } from "@/lib/googleAdsProfileVariables";
 import type { LeadPayload, LeadTracking } from "@/lib/leadDelivery";
 import {
   deliveryParam,
@@ -181,11 +182,13 @@ export function useLeadSubmit({ method, timeoutMs }: { method: string; timeoutMs
         console.error("[notify-lead] lead não confirmado", { form: payload.form_path, outcome: next });
       }
 
-      const eventParams = { method, delivery: deliveryParam(next), ...opts.params };
+      // Bairro categorizado do pedido, nunca endereço livre nem bairro inferido da visita.
+      const { location: _location, ...safeParams } = opts.params ?? {};
+      const eventParams = { method, delivery: deliveryParam(next), ...safeParams };
       const counts = next !== "failed" || !!opts.handedToWhatsapp;
       if (counts && !counted.current) {
         counted.current = true;
-        trackEvent("generate_lead", eventParams);
+        trackEvent("generate_lead", { ...eventParams, ...googleAdsProfileVariables({ bairro: payload.location }) });
         reportLead({
           eventId,
           formPath: payload.form_path,

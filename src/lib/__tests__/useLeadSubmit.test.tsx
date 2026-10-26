@@ -63,6 +63,15 @@ beforeEach(() => {
 });
 
 describe("useLeadSubmit", () => {
+  it("bairro do pedido não envia endereço livre ao GA4", async () => {
+    sendLeadMock.mockResolvedValue({ delivered: true, timedOut: false });
+    const { result } = renderHook(() => useLeadSubmit({ method: "orcamento_form" }));
+    await act(async () => {
+      await result.current.submit({ ...payload, location: "Rua Exemplo, 123" }, { params: { location: "Rua Exemplo, 123" } });
+    });
+    expect(trackEventMock).toHaveBeenCalledWith("generate_lead", { method: "orcamento_form", delivery: "confirmed" });
+    expect(JSON.stringify(trackEventMock.mock.calls)).not.toContain("Rua Exemplo");
+  });
   it("trava envio duplo: o segundo submit no mesmo tick não envia nem abre popup", async () => {
     const d = deferred<SendLeadResult>();
     sendLeadMock.mockReturnValue(d.promise);
@@ -111,6 +120,7 @@ describe("useLeadSubmit", () => {
       method: "orcamento_form",
       delivery: "confirmed",
       objetivo: "Moradia",
+      imovel_bairro: "pinheiros",
     });
   });
 
@@ -161,6 +171,7 @@ describe("useLeadSubmit", () => {
     expect(trackEventMock).toHaveBeenCalledWith("generate_lead", {
       method: "lp_obra_gate",
       delivery: "timeout",
+      imovel_bairro: "pinheiros",
     });
   });
 
