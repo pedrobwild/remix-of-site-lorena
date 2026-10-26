@@ -184,13 +184,11 @@ export function useLeadSubmit({ method, timeoutMs }: { method: string; timeoutMs
 
       // Bairro categorizado do pedido, nunca endereço livre nem bairro inferido da visita.
       const { location: _location, ...safeParams } = opts.params ?? {};
-      const eventParams = { method, delivery: deliveryParam(next), ...safeParams,
-        ...googleAdsProfileVariables({ bairro: payload.location }),
-      };
+      const eventParams = { method, delivery: deliveryParam(next), ...safeParams };
       const counts = next !== "failed" || !!opts.handedToWhatsapp;
       if (counts && !counted.current) {
         counted.current = true;
-        trackEvent("generate_lead", eventParams);
+        trackEvent("generate_lead", { ...eventParams, ...googleAdsProfileVariables({ bairro: payload.location }) });
         reportLead({
           eventId,
           formPath: payload.form_path,
