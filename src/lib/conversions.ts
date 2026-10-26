@@ -31,7 +31,7 @@ import { trackGoogleAdsAudienceEvent, trackGoogleAdsConversion } from "@/lib/goo
 import { metaUserDataFrom, setMetaUserData, trackMetaCustomEvent, trackMetaEvent } from "@/lib/metaPixel";
 import { track } from "@/lib/analytics";
 import { trackEvent } from "@/lib/ga4";
-import { googleAdsLeadValue } from "@/lib/googleAdsLeadValue";
+import { googleAdsLeadValue, isGoogleAdsQualifiedObjetivo } from "@/lib/googleAdsLeadValue";
 import { googleAdsProfileVariables } from "@/lib/googleAdsProfileVariables";
 
 /**

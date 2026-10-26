@@ -98,3 +98,4 @@
 
 - The root keeps CookieBanner eager to preserve immediate preference events; SiteAssistant loads through a hydration-gated Suspense boundary and maintenance assets load only when maintenance renders, avoiding unrelated CSS in the initial public graph.
 - Desktop hero variants and their srcset/sizes are defined once in homeHero.ts and reused by picture and preload; this prevents duplicate image requests while preserving the original crop and mobile source.
+- Google Ads lead conversion fires only for investor objectives (`isGoogleAdsQualifiedObjetivo` in `src/lib/googleAdsLeadValue.ts`); other leads send the `lead_nao_investidor` audience event so bidding never learns non-investor leads (Meta, GA4, own tracker and offline export unchanged).
