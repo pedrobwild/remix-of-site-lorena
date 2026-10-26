@@ -19,6 +19,7 @@
 import { isConsentAccepted } from "@/lib/cookieConsent";
 import { telemetryUrl, telemetryValue } from "@/../supabase/functions/_shared/telemetry-privacy";
 import { ensureGoogleTagScript } from "@/lib/whenIdle";
+import { googleAdsProfileVariables } from "@/lib/googleAdsProfileVariables";
 
 export const GA4_MEASUREMENT_ID = "G-CE7GKKDG4L";
 
@@ -112,6 +113,9 @@ export function trackEvent(name: string, params?: Record<string, unknown>): void
   if (!isConsentAccepted()) return;
   if (isAdminPath()) return;
   w.gtag("event", name, {
+    ...(name === "cta_click" ? googleAdsProfileVariables({
+      bairro: window.location.pathname.match(/^\/reforma\/([^/]+)$/)?.[1]?.replace(/-/g, " "),
+    }) : {}),
     ...telemetryValue(params),
     page_location: telemetryUrl(window.location.href),
     page_referrer: lastPageLocation ?? (document.referrer ? telemetryUrl(document.referrer, true) : ""),

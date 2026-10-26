@@ -528,6 +528,7 @@ export function trackNeighborhoodInterest(bairro: string): void {
     if (recordedNeighborhoods.has(key)) return;
     recordedNeighborhoods.add(key);
     track("click_cta", { path, value: { action: "bairro_interesse", bairro_interesse: value } });
+    trackEvent("search", { search_term: value, search_type: "bairro", page: path });
   } catch { /* medição nunca interrompe o formulário */ }
 }
 
