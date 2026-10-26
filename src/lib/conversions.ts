@@ -160,7 +160,10 @@ export function reportLead(
     { content_name: input.method, content_category: formPath, ...signals },
     { eventId: input.eventId },
   );
-  trackGoogleAdsConversion("lead", {
+  if (!isGoogleAdsQualifiedObjetivo(input.objetivo)) {
+    // Não investidor: sem conversão (o lance não aprende moradia); só público/observação.
+    trackGoogleAdsAudienceEvent("lead_nao_investidor", { ...signals, content_category: formPath });
+  } else trackGoogleAdsConversion("lead", {
     transactionId: input.eventId,
     email: input.email,
     phoneDigits: input.phoneDigits,
