@@ -1,3 +1,4 @@
+- [ ] Corrigir canibalização: cronograma com 301 SSR para prazo, títulos/H1 comerciais de bairro, conferir gráficos e excluir auxiliares das listas indexáveis; validar testes e HTTP sem alterar posts nem publicar.
 - [x] Ajustar SEO local de studio/compactos e apartamento: título aprovado de studio mantido, descrições e palavras-chave locais próprias, apartamento com projeto e obra no título; HTML inicial e navegador iguais, canonical próprio e visual preservado. 154 testes passam, compilação automática OK; sem publicar.
 - [x] Brief velocidade 25/10: CSS dividido confirmado no domínio real; regras movidas integralmente à raiz, três falhas corrigidas sem enfraquecer testes; llmsTxt/useLeadSubmit já passavam.
 - [x] Separar assistente e manutenção do código inicial público; banner mantido imediato para preservar preferências. Mesma imagem desktop em três WebP, preload/srcset alinhados, celular preservado.
