@@ -5,7 +5,7 @@
  * servidor (`src/routes/conteudos.$slug.tsx`) e na navegação SPA
  * (`normalizeLegacyPath`). O post antigo fica despublicado no banco, então
  * some do sitemap dinâmico; aqui ele também não pode voltar para
- * `public/sitemap.xml` nem receber link interno.
+ * `src/content/snapshots/sitemap.xml` nem receber link interno.
  *
  *  - 09/10/2026: "Cronograma de uma reforma de studio: 60 dias úteis" entrou
  *    em "Quanto tempo demora uma reforma de apartamento" (cronograma data a

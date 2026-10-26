@@ -21,10 +21,10 @@ describe("indexação dos gráficos auxiliares", () => {
   });
 
   it.each(CHART_SETS)("$slug não entra em sitemap nem llms", (set) => {
-    for (const file of ["public/sitemap.xml", "public/llms.txt", "public/.well-known/llms.txt"]) {
+    for (const file of ["src/content/snapshots/sitemap.xml", "src/content/snapshots/llms.txt", "src/content/llms.txt"]) {
       expect(readFileSync(resolve(file), "utf8"), file).not.toContain(chartsPagePath(set.slug));
     }
-    for (const file of ["scripts/generate-sitemap.mjs", "supabase/functions/sitemap/index.ts"]) {
+    for (const file of ["scripts/sitemap-build.mjs", "scripts/generate-sitemap.mjs", "supabase/functions/sitemap/index.ts"]) {
       expect(readFileSync(resolve(file), "utf8"), file).not.toContain("/graficos/");
     }
   });

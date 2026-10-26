@@ -67,10 +67,24 @@ function withShortEdgeCache(request: Request, response: Response): Response {
   });
 }
 
+/**
+ * /.well-known/llms.txt é a cópia de /llms.txt que alguns robôs de IA procuram.
+ * As duas saem da mesma rota de servidor (src/routes/llms[.]txt.ts): aqui só
+ * o caminho é reescrito, sem redirecionar, para a resposta ser idêntica.
+ */
+export const WELL_KNOWN_LLMS = "/.well-known/llms.txt";
+export function rewriteWellKnownLlms(request: Request): Request {
+  const url = new URL(request.url);
+  if (url.pathname !== WELL_KNOWN_LLMS) return request;
+  url.pathname = "/llms.txt";
+  return new Request(url.toString(), request);
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     const canonicalRedirect = canonicalHostRedirect(request) ?? lowercasePathRedirect(request);
     if (canonicalRedirect) return canonicalRedirect;
+    request = rewriteWellKnownLlms(request);
     try {
       const render = async () => {
         const handler = await getServerEntry();

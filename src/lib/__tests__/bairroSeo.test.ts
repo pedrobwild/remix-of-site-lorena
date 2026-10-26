@@ -110,8 +110,8 @@ describe("página de bairro: servidor e navegador dizem o mesmo", () => {
   it("o llms.txt lista os bairros com o mesmo rótulo do título", () => {
     const read = (p: string) => readFileSync(path.resolve(__dirname, "../../..", p), "utf8");
     // O build regrava o trecho entre os marcadores a partir deste modelo.
-    expect(read("scripts/generate-sitemap.mjs")).toContain("- [Reforma de apartamento ${noBairro(h.label)}]");
-    const llms = read("public/llms.txt");
+    expect(read("scripts/sitemap-build.mjs")).toContain("- [Reforma de apartamento ${noBairro(h.label)}]");
+    const llms = read("src/content/snapshots/llms.txt");
     const bloco = llms.slice(llms.indexOf("<!-- bairros:start -->"), llms.indexOf("<!-- bairros:end -->"));
     const linhas = bloco.split("\n").filter((l) => l.startsWith("- ["));
     expect(linhas.length).toBeGreaterThan(0);
@@ -126,8 +126,8 @@ describe("página de bairro: servidor e navegador dizem o mesmo", () => {
   it("o sitemap data a página de bairro também pelo código dela", () => {
     // Título, H1 e descrição saem de BairroPage/bairroSeo: quando eles mudam, o
     // lastmod do bairro acompanha (antes só mudava com edição de projeto).
-    const gerador = readFileSync(path.resolve(__dirname, "../../..", "scripts/generate-sitemap.mjs"), "utf8");
-    expect(gerador).toContain('const hoodPageLastmod = page("src/pages/BairroPage.tsx", ["src/lib/bairroSeo.ts"]);');
+    const gerador = readFileSync(path.resolve(__dirname, "../../..", "scripts/sitemap-build.mjs"), "utf8");
+    expect(gerador).toContain('[LASTMOD_BAIRROS]: ["src/pages/BairroPage.tsx", "src/lib/bairroSeo.ts"],');
     expect(gerador).toContain('lastmod: day(newest(h.rows, "content_updated_at", "created_at"), hoodPageLastmod),');
   });
 });

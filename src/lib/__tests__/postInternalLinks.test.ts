@@ -94,7 +94,7 @@ describe("links internos dos artigos", () => {
   });
 
   it("todo destino é uma página que está no sitemap", () => {
-    const sitemap = readFileSync(path.resolve(__dirname, "../../../public/sitemap.xml"), "utf8");
+    const sitemap = readFileSync(path.resolve(__dirname, "../../../src/content/snapshots/sitemap.xml"), "utf8");
     const destinos = new Set<string>();
     for (const slug of Object.keys(POST_KEYWORDS)) {
       for (const category of ["reforma", "investimento", "mercado", "operacao", "fiscal"] as const) {

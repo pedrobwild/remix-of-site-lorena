@@ -46,7 +46,7 @@ describe("posts fundidos", () => {
   });
 
   it("nenhum link interno nem o sitemap apontam para o slug antigo", () => {
-    const fontes = [...arquivos("src"), ...arquivos("scripts"), "public/sitemap.xml", "public/llms.txt"].filter(
+    const fontes = [...arquivos("src"), ...arquivos("scripts"), "src/content/snapshots/sitemap.xml", "src/content/snapshots/llms.txt"].filter(
       (f) => !f.endsWith("postsFundidos.ts") && !f.includes("__tests__"),
     );
     for (const antigo of Object.keys(POSTS_FUNDIDOS)) {

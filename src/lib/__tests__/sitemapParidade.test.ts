@@ -1,17 +1,19 @@
 /**
  * SEO-08 — as duas fontes de sitemap precisam concordar.
  *
- * `scripts/generate-sitemap.mjs` gera o `public/sitemap.xml` que vai ao ar no
- * prebuild. `supabase/functions/sitemap/index.ts` alimenta o botão "gerar
- * sitemap agora" do admin. São implementações separadas da mesma regra —
- * quando divergem, o preview do painel mente sobre o arquivo publicado.
+ * `scripts/sitemap-build.mjs` é a regra do sitemap que vai ao ar (a rota de
+ * servidor /sitemap.xml a aplica a cada pedido, ver src/lib/sitemapServer.ts)
+ * e do retrato commitado em `src/content/snapshots/sitemap.xml`, gravado por
+ * `scripts/generate-sitemap.mjs`. `supabase/functions/sitemap/index.ts`
+ * alimenta o botão "gerar sitemap agora" do admin. São implementações
+ * separadas da mesma regra — quando divergem, o preview do painel mente sobre
+ * o sitemap publicado.
  *
- * Este teste lê os dois fontes como TEXTO (a edge function é Deno e não pode
- * ser importada aqui) e compara rota a rota: presença, prioridade e
- * changefreq. Também confere contra `useHashRoute.ts` e contra o
- * `public/sitemap.xml` commitado.
+ * Este teste lê os fontes como TEXTO (a edge function é Deno e não pode ser
+ * importada aqui) e compara rota a rota: presença, prioridade e changefreq.
+ * Também confere contra `useHashRoute.ts` e contra o retrato commitado.
  */
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -53,7 +55,9 @@ const ROTAS_INDEXAVEIS = [
   { path: "/autores", priority: "0.5", changefreq: "monthly" },
 ];
 
-const script = read("scripts/generate-sitemap.mjs");
+const script = read("scripts/sitemap-build.mjs");
+const gerador = read("scripts/generate-sitemap.mjs");
+const servidor = read("src/lib/sitemapServer.ts");
 const edge = read("supabase/functions/sitemap/index.ts");
 const router = read("src/lib/useHashRoute.ts");
 
@@ -152,8 +156,11 @@ describe("paridade entre as duas fontes de sitemap", () => {
   );
 
   it("as duas fontes usam o mesmo filtro de projetos e de conteúdos", () => {
-    expect(script).toContain("projects?published=eq.true&visible=eq.true");
-    expect(script).toContain("bewild_posts?published=eq.true");
+    // O retrato (script) consulta pela REST; o servidor, pelo cliente. Mesmo filtro.
+    expect(gerador).toContain("projects?published=eq.true&visible=eq.true");
+    expect(gerador).toContain("bewild_posts?published=eq.true");
+    expect(servidor).toMatch(/from\("projects"\)[\s\S]{0,300}?\.eq\("published", true\)[\s\S]{0,80}?\.eq\("visible", true\)/);
+    expect(servidor).toMatch(/from\("bewild_posts"\)[\s\S]{0,300}?\.eq\("published", true\)/);
 
     expect(edge).toMatch(/from\("projects"\)[\s\S]{0,200}?published["\s,:]+true/);
     expect(edge).toMatch(/from\("projects"\)[\s\S]{0,200}?visible["\s,:]+true/);
@@ -168,8 +175,8 @@ describe("paridade entre as duas fontes de sitemap", () => {
   });
 });
 
-describe("public/sitemap.xml commitado", () => {
-  const xml = read("public/sitemap.xml");
+describe("retrato commitado (src/content/snapshots/sitemap.xml)", () => {
+  const xml = read("src/content/snapshots/sitemap.xml");
   const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
 
   it("inclui o histórico público de coletas e permite indexação", () => {
@@ -203,15 +210,24 @@ describe("public/sitemap.xml commitado", () => {
     }
   });
 
-  it("arquivo gerado está em dia com o gerador (aviso — o prebuild regenera)", () => {
-    // O public/sitemap.xml é saída do prebuild (scripts/generate-sitemap.mjs,
-    // que precisa do banco). Rota nova no gerador só aparece no arquivo no
-    // próximo build com acesso ao banco — por isso aqui é aviso, não falha.
+  it("retrato está em dia com a regra (aviso — `npm run sitemap` regrava)", () => {
+    // O retrato é saída de scripts/generate-sitemap.mjs, que precisa do banco.
+    // Rota nova na regra só aparece nele na próxima rodada do script — por
+    // isso aqui é aviso, não falha. O sitemap publicado não depende disso.
     const faltando = rotasDoScript.filter((r) => !locs.includes(`https://bewild.com.br${r}`));
     if (faltando.length > 0) {
-      console.warn(`[sitemap] public/sitemap.xml desatualizado; faltam: ${faltando.join(", ")} — rode \`npm run sitemap\`.`);
+      console.warn(`[sitemap] src/content/snapshots/sitemap.xml desatualizado; faltam: ${faltando.join(", ")} — rode \`npm run sitemap\`.`);
     }
     expect(Array.isArray(faltando)).toBe(true);
+  });
+
+  it("nenhum sitemap ou llms.txt estático em public/ (esconderia a rota de servidor)", () => {
+    for (const f of ["public/sitemap.xml", "public/llms.txt", "public/.well-known/llms.txt"]) {
+      expect(existsSync(path.join(root, f)), `${f} voltou a existir`).toBe(false);
+    }
+    expect(read("src/routes/sitemap[.]xml.ts")).toContain('createFileRoute("/sitemap.xml")');
+    expect(read("src/routes/llms[.]txt.ts")).toContain('createFileRoute("/llms.txt")');
+    expect(read("public/robots.txt")).toContain("Sitemap: https://bewild.com.br/sitemap.xml");
   });
 
   it("não expõe admin, LPs de anúncio, 404 nem mockups", () => {

@@ -1,10 +1,10 @@
 // Envia as URLs do sitemap ao IndexNow (Bing, Yandex etc.).
 // A chave precisa estar acessível em https://bewild.com.br/<KEY>.txt (arquivo em public/).
 // Uso: node scripts/submit-indexnow.mjs   (ou: bun scripts/submit-indexnow.mjs)
-//   Lê public/sitemap.xml. Com INDEXNOW_SITEMAP_URL definido (ex.:
-//   https://bewild.com.br/sitemap.xml) baixa o sitemap publicado em vez do
-//   arquivo local — é o que o workflow .github/workflows/indexnow.yml usa,
-//   porque o sitemap servido vem da edge function e não do arquivo commitado.
+//   Lê o retrato src/content/snapshots/sitemap.xml. Com INDEXNOW_SITEMAP_URL
+//   definido (ex.: https://bewild.com.br/sitemap.xml) baixa o sitemap publicado
+//   em vez do arquivo local — é o que o workflow .github/workflows/indexnow.yml
+//   usa, porque o sitemap servido é gerado pelo servidor a partir do banco.
 //
 // Sai com código ≠ 0 se o IndexNow recusar o envio — assim uma chave inválida
 // (403), payload rejeitado (400/422) ou limite de taxa (429) não passa como
@@ -38,7 +38,7 @@ if (SITEMAP_URL) {
     process.exit(1);
   }
 } else {
-  xml = readFileSync(resolve("public/sitemap.xml"), "utf8");
+  xml = readFileSync(resolve("src/content/snapshots/sitemap.xml"), "utf8");
 }
 const urlList = [...new Set([...xml.matchAll(/<loc>(https:\/\/bewild\.com\.br[^<]*)<\/loc>/g)].map((m) => m[1]))];
 

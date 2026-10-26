@@ -323,8 +323,8 @@ describe("sitemap, rotas e links", () => {
     expect(xml).toMatch(/<video:publication_date>\d{4}-\d{2}-\d{2}T[\d:.]+Z<\/video:publication_date>/);
   });
 
-  it("public/sitemap.xml: cada vídeo aparece uma vez, na página do vídeo", () => {
-    const xml = read("public/sitemap.xml");
+  it("retrato do sitemap: cada vídeo aparece uma vez, na página do vídeo", () => {
+    const xml = read("src/content/snapshots/sitemap.xml");
     const urls = [...xml.matchAll(/<url>(.*?)<\/url>/gs)].map((m) => m[1]);
     const locDe = (u: string) => u.match(/<loc>([^<]+)<\/loc>/)?.[1] ?? "";
     for (const e of entries) {
@@ -370,7 +370,7 @@ describe("sitemap, rotas e links", () => {
   });
 
   it("o llms.txt lista as páginas de vídeo como o gerador escreve", () => {
-    const llms = read("public/llms.txt");
+    const llms = read("src/content/snapshots/llms.txt");
     const bloco = llms.slice(llms.indexOf("<!-- videos:start -->") + "<!-- videos:start -->".length, llms.indexOf("<!-- videos:end -->")).trim();
     expect(bloco.split("\n")).toEqual(videoLlmsLines());
     expect(llms).toContain("- [Vídeos](/videos):");
