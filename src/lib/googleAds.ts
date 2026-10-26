@@ -146,7 +146,7 @@ export function trackGoogleAdsConversion(
 }
 
 /** Eventos de público na tag AW- (espelho dos eventos do Meta Pixel). */
-export type GoogleAudienceEvent = "view_item" | "form_start" | "visitante_engajado" | "submit_application" | "contact";
+export type GoogleAudienceEvent = "view_item" | "form_start" | "visitante_engajado" | "submit_application" | "contact" | "lead_nao_investidor";
 
 /**
  * Evento de remarketing/público: vai à tag AW- sem rótulo de conversão.

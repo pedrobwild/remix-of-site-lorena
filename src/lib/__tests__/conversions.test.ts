@@ -221,22 +221,17 @@ describe("conversions", () => {
     expect(fbq).toHaveBeenCalledWith("track", "Lead", { content_name: "orcamento_form", content_category: "/orcamento", ...leadSignalParams({ objetivo }) }, { eventID: "ev-valor" });
   });
 
-  it.each(["Moradia", "Ainda avaliando"])("Google Ads: %s pesa 1000 BRL", (objetivo) => {
+  it.each(["Moradia", "Ainda avaliando", null])("Google Ads: %s não é conversão, vira lead_nao_investidor; Meta mantém Lead", (objetivo) => {
     accept();
     const gtag = vi.fn();
+    const fbq = vi.fn();
     w.gtag = gtag;
+    w.fbq = fbq;
     configureGoogleAds({ id: "AW-123456789", leadLabel: "LeadLabel1" });
-    reportLead({ eventId: "ev-moradia", formPath: "/orcamento", method: "orcamento_form", objetivo });
-    expect(gtag).toHaveBeenCalledWith("event", "conversion", expect.objectContaining({ transaction_id: "ev-moradia", value: 1000, currency: "BRL" }));
-  });
-
-  it("Google Ads: sem objetivo não envia value ou currency", () => {
-    accept();
-    const gtag = vi.fn();
-    w.gtag = gtag;
-    configureGoogleAds({ id: "AW-123456789", leadLabel: "LeadLabel1" });
-    reportLead({ eventId: "ev-sem-objetivo", formPath: "/orcamento", method: "orcamento_form" });
-    expect(gtag).toHaveBeenCalledWith("event", "conversion", { send_to: "AW-123456789/LeadLabel1", transaction_id: "ev-sem-objetivo" });
+    reportLead({ eventId: "ev-nao-inv", formPath: "/orcamento", method: "orcamento_form", objetivo });
+    expect(gtag.mock.calls.some((c) => c[1] === "conversion")).toBe(false);
+    expect(gtag).toHaveBeenCalledWith("event", "lead_nao_investidor", { send_to: "AW-123456789", ...leadSignalParams({ objetivo }), content_category: "/orcamento" });
+    expect(fbq).toHaveBeenCalledWith("track", "Lead", expect.objectContaining({ content_category: "/orcamento" }), { eventID: "ev-nao-inv" });
   });
 
   it("Lead só para formulários de cliente, com o mesmo id no Meta e no Google Ads", () => {
@@ -312,16 +307,20 @@ describe("conversions", () => {
     gtag.mockClear();
     configureGoogleAds({ id: "AW-123456789", leadLabel: "LeadLabel1" });
 
-    reportLead({ eventId: "ev-3", formPath: "/orcamento", method: "orcamento_form", email: "a@b.co", phoneDigits: "11912345678" });
+    reportLead({ eventId: "ev-3", formPath: "/orcamento", method: "orcamento_form", email: "a@b.co", phoneDigits: "11912345678", objetivo: "Uso misto" });
     expect(fbq).toHaveBeenCalledWith(
       "track",
       "Lead",
-      { content_name: "orcamento_form", content_category: "/orcamento" },
+      { content_name: "orcamento_form", content_category: "/orcamento", ...leadSignalParams({ objetivo: "Uso misto" }) },
       { eventID: "ev-3" },
     );
     expect(gtag).toHaveBeenLastCalledWith("event", "conversion", {
       send_to: "AW-123456789/LeadLabel1",
       transaction_id: "ev-3",
+      value: 5000,
+      currency: "BRL",
+      ...leadSignalParams({ objetivo: "Uso misto" }),
+      imovel_finalidade: "uso_misto",
     });
     expect(isAdLeadForm("/o")).toBe(true);
     expect(isAdLeadForm(null)).toBe(false);

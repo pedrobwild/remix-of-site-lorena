@@ -8,3 +8,9 @@ export function googleAdsLeadValue(objetivo: string | null | undefined): Record<
   }
   return {};
 }
+/** Tráfego pago do Google é só para investidor (Pedro, 26/10/2026): só estes objetivos viram conversão de lead. */
+export const GOOGLE_ADS_QUALIFIED_OBJETIVOS = ["Short stay", "Locação tradicional", "Uso misto"] as const;
+
+export function isGoogleAdsQualifiedObjetivo(objetivo: string | null | undefined): boolean {
+  return (GOOGLE_ADS_QUALIFIED_OBJETIVOS as readonly string[]).includes(objetivo ?? "");
+}
