@@ -16,15 +16,15 @@ export const CANONICAL = "/reforma-de-studio-sao-paulo";
 
 /**
  * Título e descrição da página, iguais no `head()` da rota (HTML do servidor)
- * e no `useSeo` da página. Pedro autorizou o título no plural e a referência
- * de preço em 26/10/2026; H1 e demais textos permanecem preservados.
+ * e no `useSeo` da página. Mantém a divisão de 11/10/2026: serviço no
+ * singular, plural com a home. Em 26/10/2026 ganhou referência de preço.
  */
 /** Resposta do prazo: mesmo texto na página e no FAQPage. */
 const PRAZO_STUDIO = "A referência é cerca de 60 dias úteis de obra. A data exata sai no contrato.";
 
-export const SEO_TITLE = "Reforma de studios em São Paulo: preço e prazo em contrato";
+export const SEO_TITLE = "Reforma de studio em São Paulo: preço e prazo em contrato";
 export const SEO_DESCRIPTION =
-  `Reforma completa de studios e apartamentos pequenos em SP: projeto, obra, marcenaria e mobília num contrato. Mediana de ${CUSTO_M2_MEDIANO}/m² em ${CONTRATOS_ANALISADOS} contratos.`;
+  `Reforma completa de studio e apartamento pequeno em SP: projeto, obra, marcenaria e mobília num contrato. Mediana de ${CUSTO_M2_MEDIANO}/m² em ${CONTRATOS_ANALISADOS} contratos.`;
 export const SEO_KEYWORDS =
   "reforma de studio em São Paulo, reforma de studio SP, reforma de apartamento compacto em São Paulo, reforma de apartamento pequeno em SP, reforma de kitnet em São Paulo, reforma de studio para Airbnb em SP";
 

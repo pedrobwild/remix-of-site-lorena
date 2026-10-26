@@ -1,7 +1,8 @@
 /**
  * /reforma-de-studio-sao-paulo (análise de palavras-chave de 11/10/2026).
  *
- *  - Título no plural autorizado em 26/10/2026; H1 singular preservado.
+ *  - Serviço no singular; plural "reforma de studios" fica com a home
+ *    (divisão de 11/10 preservada na correção de 26/10/2026).
  *  - Gestão de Airbnb: a página dizia, no mesmo texto, que a Bewild "não faz a
  *    gestão do anúncio" e, no FAQ, que faz. A Bewild faz; a frase certa é a do
  *    FAQ, do /faq e dos artigos.
@@ -27,9 +28,10 @@ const read = (p: string) => readFileSync(path.join(SRC, p), "utf8");
 
 describe("reforma de studio: metadados aprovados e H1 preservado", () => {
   it("título e descrição", () => {
-    expect(SEO_TITLE).toBe("Reforma de studios em São Paulo: preço e prazo em contrato");
+    expect(SEO_TITLE).toBe("Reforma de studio em São Paulo: preço e prazo em contrato");
     expect(SEO_TITLE.length).toBeLessThanOrEqual(60);
-    expect(SEO_DESCRIPTION).toBe("Reforma completa de studios e apartamentos pequenos em SP: projeto, obra, marcenaria e mobília num contrato. Mediana de R$ 2.744/m² em 188 contratos.");
+    expect(SEO_DESCRIPTION).toBe("Reforma completa de studio e apartamento pequeno em SP: projeto, obra, marcenaria e mobília num contrato. Mediana de R$ 2.744/m² em 188 contratos.");
+    expect(`${SEO_TITLE} ${SEO_DESCRIPTION}`).not.toMatch(/reforma de studios/i);
   });
 
   it("rota (servidor) e página (navegador) usam o mesmo título e a mesma descrição", () => {
