@@ -68,8 +68,6 @@ export function xmlEscape(s) {
     .replace(/'/g, "&apos;");
 }
 
-const CHART_SLUGS = ["reformar-apartamento-para-vender-ou-alugar-sp"];
-
 export function urlTag({ loc, lastmod, changefreq, priority, videos }) {
   const lm = lastmod ? `<lastmod>${xmlEscape(lastmod)}</lastmod>` : "";
   const vids = (videos ?? []).map(videoTag).join("");
@@ -212,21 +210,6 @@ function videoTag(v) {
   return `<video:video><video:thumbnail_loc>${xmlEscape(v.thumb)}</video:thumbnail_loc><video:title>${xmlEscape(v.title.slice(0, 100))}</video:title><video:description>${xmlEscape(v.desc)}</video:description>${loc}${dur}${pd}<video:family_friendly>yes</video:family_friendly></video:video>`;
 }
 
-
-// Cópia de noBairro/bairroPreposicao (src/lib/bairroSeo.ts): este script roda
-// em Node puro e não importa TypeScript. bairroSeo.test.ts confere que o
-// llms.txt gerado bate com o título de cada bairro.
-const foldBairro = (v) => v.toLocaleLowerCase("pt-BR").normalize("NFD").replace(/\p{M}/gu, "").trim();
-const BAIRROS_NO = new Set(["brooklin", "butanta", "campo belo", "itaim bibi", "itaim", "jardim paulista", "paraiso", "ibirapuera", "tatuape", "morumbi", "cambuci", "centro", "sumare", "ipiranga", "pacaembu", "bom retiro", "jabaquara", "panamby", "bras", "belem", "belenzinho", "jardim europa", "jardim america", "alto de pinheiros", "alto da boa vista", "real parque", "planalto paulista", "brooklin novo", "campo limpo"]);
-const BAIRROS_NOS = new Set(["jardins", "campos eliseos", "campos elisios"]);
-const BAIRROS_NA = new Set(["bela vista", "consolacao", "republica", "paulista", "liberdade", "lapa", "mooca", "aclimacao", "barra funda", "saude", "penha", "pompeia", "agua branca", "se", "luz", "casa verde", "granja julieta"]);
-function noBairro(label) {
-  const nome = String(label ?? "").trim();
-  if (!nome) return "em São Paulo";
-  const k = foldBairro(nome);
-  const prep = BAIRROS_NOS.has(k) ? "nos" : BAIRROS_NO.has(k) ? "no" : BAIRROS_NA.has(k) || /^(vila|chacara|cidade|granja|praca) /.test(k) ? "na" : "em";
-  return `${prep} ${nome}`;
-}
 
 async function main() {
   const env = loadEnv();
@@ -394,17 +377,6 @@ async function main() {
       videos: postVideos(p),
     }));
 
-  // Páginas de gráficos (/graficos/<slug>): mantenha em sincronia com src/content/chartSets.ts.
-  const chartUrls = CHART_SLUGS.map((slug) => {
-    const post = posts.find((p) => p.slug === slug);
-    return {
-      loc: `${BASE_URL}/graficos/${slug}`,
-      lastmod: day(post?.content_updated_at, post?.published_at, post?.created_at),
-      changefreq: "monthly",
-      priority: "0.5",
-    };
-  });
-
   // Páginas de vídeo (/videos/<slug>): uma por vídeo, com a entrada <video:video>.
   // lastmod = último commit na página ou nos dois cadastros (o arquivo da rota tem "$"
   // no nome, que o shell do git log expandiria; por isso ele não entra na lista).
@@ -432,7 +404,7 @@ async function main() {
     }
   }
 
-  const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls, ...chartUrls, ...videoUrls];
+  const all = [...staticUrls, ...hoodUrls, ...projectUrls, ...postUrls, ...videoUrls];
   const xml = [
     `<?xml version="1.0" encoding="UTF-8"?>`,
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">`,
@@ -494,7 +466,7 @@ function updateLlmsTxt(posts, hoodUrls = [], videoEntries = []) {
   // Páginas de bairro (/reforma/<bairro>): mesma lista do sitemap, com a contagem.
   // O rótulo acompanha o título da página (bairroTitle em src/lib/bairroSeo.ts).
   const hoodLines = hoodUrls.map(
-    (h) => `- [Reforma de apartamento e studio ${noBairro(h.label)}](${h.loc.replace(BASE_URL, "")}): ${h.count} projetos entregues`,
+    (h) => `- [Reforma de apartamento em ${h.label}](${h.loc.replace(BASE_URL, "")}): ${h.count} projetos entregues`,
   );
   let next = replaceBetween(txt, "<!-- posts:start -->", "<!-- posts:end -->", postLines, "posts:start/posts:end");
   next = replaceBetween(next, "<!-- bairros:start -->", "<!-- bairros:end -->", hoodLines, "bairros:start/bairros:end");

@@ -39,6 +39,7 @@ const INDEX_FILES: Record<string, string> = {
   "/conteudos": "conteudos.index",
   "/videos": "videos.index",
   "/parceiros": "parceiros.index",
+  "/graficos/reformar-apartamento-para-vender-ou-alugar-sp": "graficos.$slug",
 };
 const fileFor = (p: string) => `/src/routes/${INDEX_FILES[p] ?? p.slice(1).replace(/\//g, ".")}.tsx`;
 

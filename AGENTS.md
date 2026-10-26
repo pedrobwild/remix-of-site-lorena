@@ -8,6 +8,7 @@
 - Sitemap edits must also follow the sitemap and video registration rules below, because both generators must match the routes.
 
 <!-- LOVABLE:BEGIN -->
+- Merged-post redirects reuse POSTS_FUNDIDOS in route beforeLoad and normalizeLegacyPath, keeping HTTP 301 before loading; auxiliary charts share noindex/follow in SSR and client and stay outside both sitemap generators.
 - Ad-arrival conversions reuse the consent-gated Google tag with verified destination, click-scoped session deduplication and no customer matching; internal navigation is not another arrival.
 - Daily lead quality reads admin-authorized paginated qualification history, deduplicating each lead/status/day in São Paulo; automatic refresh and audience-ingestion logs never imply instantaneous offline-conversion receipt.
 - Offline Google Ads exports need the lead-linked cookie-banner acceptance record plus no later decline from the same device key (ad_consent_records); consent_marketing alone never authorizes, blocked events are not replayed.

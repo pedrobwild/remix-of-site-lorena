@@ -10,7 +10,8 @@ const contentLoaders = () => import("@/lib/contentLoaders");
 import { faqJsonLd } from "@/lib/useSeo";
 import { bairroContent } from "@/content/bairros";
 import { optimizedImageUrl } from "@/lib/imageUrl";
-import { bairroTitle } from "@/lib/bairroSeo";
+import { bairroHeading, bairroTitle } from "@/lib/bairroSeo";
+import { neighborhoodPages } from "@/lib/portfolioFilter";
 
 export const Route = createFileRoute("/reforma/$slug")({
   beforeLoad: ({ params }) => {
@@ -34,6 +35,9 @@ export const Route = createFileRoute("/reforma/$slug")({
         "Apartamentos reformados pela Bewild em São Paulo: fotos reais de cada obra e orçamento sem custo.",
       path: `/reforma/${params.slug}`,
       noindex: !ld || loaderData?.notFound,
+      pageJsonLd: ld?.projects
+        ? { name: bairroHeading(neighborhoodPages(ld.projects).find((p) => p.slug === params.slug)?.label) }
+        : null,
       // Capa do primeiro projeto entregue no bairro: imagem própria da página.
       ogImage: (() => {
         const cover = ld?.coverUrl;
@@ -43,7 +47,7 @@ export const Route = createFileRoute("/reforma/$slug")({
         ? [
             ...(ld.jsonLd ?? []),
             // FAQ do bairro (src/content/bairros.ts): só nos bairros com texto próprio.
-            ...(bairroContent(params.slug) ? [faqJsonLd(bairroContent(params.slug)!.faq)] : []),
+             ...(bairroContent(params.slug)?.faq ? [faqJsonLd(bairroContent(params.slug)?.faq ?? [])] : []),
           ]
         : null,
     });

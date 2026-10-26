@@ -19,21 +19,21 @@ export function bairroAreaRange(list: ReadonlyArray<{ area_m2?: number | null }>
 /**
  * <title> da página de bairro, o mesmo no HTML do servidor e no navegador.
  *
- * "Apartamento e studio" desde 11/10/2026: a maior parte das obras desses
- * bairros é em studio, e quem busca "reforma de studio em <bairro>" não achava
- * a palavra no título. "Orçamento" fica porque é como a busca chega ("orçamento
- * de reforma de apartamento em Pinheiros", Search Console de out/2026). Sem
- * bairro (falha de rede no loader), o título fala de São Paulo.
+ * Intenção comercial local: orçamento e prazo. A marca só entra quando cabe
+ * no limite de seoTitle. Sem bairro, o título fala de São Paulo.
  */
 export function bairroTitle(label?: string | null): string {
-  return brandTitle(`Reforma de apartamento e studio ${noBairro(label)}: orçamento`);
+  return brandTitle(`${bairroHeading(label)}, SP: orçamento e prazo`);
+}
+
+/** H1 comercial, com a grafia original do bairro, também usado no JSON-LD. */
+export function bairroHeading(label?: string | null): string {
+  return `Reforma de apartamento em ${(label ?? "").trim() || "São Paulo"}`;
 }
 
 /** Meta description da página de bairro: a mesma no HTML do servidor e no navegador. */
 export function bairroDescription(count: number, label: string, faixa: string | null): string {
-  return `${count} apartamentos reformados pela Bewild ${noBairro(label)}, São Paulo${
-    faixa ? ` (${faixa})` : ""
-  }: fotos reais de cada obra e orçamento sem custo para o seu imóvel no bairro.`;
+  return `Reforma completa de apartamento em ${label.trim() || "São Paulo"}. Orçamento com preço e prazo em contrato. ${count} apartamentos reformados${faixa ? ` (${faixa})` : ""}: veja fotos reais.`;
 }
 
 const foldBairro = (value: string) =>

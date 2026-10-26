@@ -18,9 +18,9 @@ export default function BewildChartsPage({ set }: { set: ChartSet }) {
     description: set.description,
     canonicalPath: chartsPagePath(set.slug),
     ogType: "website",
-    // Indexável: a rota está no sitemap e o seoHead do servidor já emite
-    // "index, follow". Um noindex aqui fazia o Googlebot (que renderiza o JS)
-    // recusar a indexação (Search Console, 07/10/2026).
+    // Gráficos auxiliares: o artigo é a página editorial indexável.
+    noindex: true,
+    noindexFollow: true,
   });
 
   const copy = async (id: string, path: string) => {

@@ -15,6 +15,8 @@ export const Route = createFileRoute("/graficos/$slug")({
       title: set ? `${set.title} | Bewild` : "Gráficos | Bewild",
       description: set?.description ?? "Gráficos dos guias da Bewild sobre reforma de apartamento em São Paulo.",
       path: chartsPagePath(params.slug),
+      noindex: true,
+      noindexFollow: true,
     });
   },
 });
