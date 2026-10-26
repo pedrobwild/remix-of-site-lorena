@@ -17,7 +17,7 @@ vi.mock("@/integrations/supabase/client", () => ({
   },
 }));
 
-import { bairroAreaRange, bairroDescription, bairroTitle, noBairro } from "@/lib/bairroSeo";
+import { bairroAreaRange, bairroDescription, bairroHeading, bairroTitle, noBairro } from "@/lib/bairroSeo";
 import { bairroSeoFrom } from "@/lib/seoLoaders";
 import { VISIBLE_TITLE_MAX } from "@/lib/seoTitle";
 
@@ -42,21 +42,34 @@ describe("noBairro", () => {
 describe("bairroTitle", () => {
   it("cita apartamento, o bairro, SP, orçamento e prazo", () => {
     expect(bairroTitle("Moema")).toBe("Reforma de apartamento em Moema, SP: orçamento e prazo");
-    expect(bairroTitle("Brooklin")).toBe("Reforma de apartamento em Brooklin, SP: orçamento e prazo");
+    expect(bairroTitle("Brooklin")).toBe("Reforma de apartamento no Brooklin, SP: orçamento e prazo");
     expect(bairroTitle("Pinheiros")).toBe("Reforma de apartamento em Pinheiros, SP: orçamento e prazo");
+    expect(bairroTitle("Vila Olímpia")).toBe("Reforma de apartamento na Vila Olímpia, SP: orçamento e prazo");
   });
 
   it("a marca só entra quando o título inteiro cabe no que o Google mostra", () => {
     for (const label of ["Moema", "Butantã", "Brooklin", "Vila Olímpia", "Vila Nova Conceição"]) {
       const title = bairroTitle(label);
       if (title.endsWith(" | Bewild")) expect(title.length, label).toBeLessThanOrEqual(VISIBLE_TITLE_MAX);
-      expect(title, label).toContain(`em ${label}`);
+      expect(title, label).toContain(noBairro(label));
     }
   });
 
   it("sem bairro, fala de São Paulo", () => {
     expect(bairroTitle()).toBe("Reforma de apartamento em São Paulo, SP: orçamento e prazo");
     expect(bairroTitle("  ")).toBe(bairroTitle(null));
+  });
+});
+
+describe("bairroHeading e descrição", () => {
+  it.each([
+    ["Brooklin", "no Brooklin"],
+    ["Pinheiros", "em Pinheiros"],
+    ["Vila Olímpia", "na Vila Olímpia"],
+    ["Jardins", "nos Jardins"],
+  ])("%s usa preposição natural também no H1/JSON-LD e descrição", (label, local) => {
+    expect(bairroHeading(label)).toBe(`Reforma de apartamento ${local}`);
+    expect(bairroDescription(3, label, null)).toBe(`Reforma completa de apartamento ${local}. Orçamento com preço e prazo em contrato. 3 apartamentos reformados: veja fotos reais.`);
   });
 });
 
@@ -91,18 +104,18 @@ describe("página de bairro: servidor e navegador dizem o mesmo", () => {
       expect(fonte, f).not.toMatch(/projetos e orçamento/);
     }
     // O H1 acompanha o título.
-    expect(read("src/pages/BairroPage.tsx")).toContain('Reforma de apartamento em <em>{label || "São Paulo"}</em>');
+    expect(read("src/pages/BairroPage.tsx")).toContain('Reforma de apartamento {label ? bairroPreposicao(label) : "em"} <em>{label || "São Paulo"}</em>');
   });
 
   it("o llms.txt lista os bairros com o mesmo rótulo do título", () => {
     const read = (p: string) => readFileSync(path.resolve(__dirname, "../../..", p), "utf8");
     // O build regrava o trecho entre os marcadores a partir deste modelo.
-    expect(read("scripts/generate-sitemap.mjs")).toContain("- [Reforma de apartamento em ${h.label}]");
+    expect(read("scripts/generate-sitemap.mjs")).toContain("- [Reforma de apartamento ${noBairro(h.label)}]");
     const llms = read("public/llms.txt");
     const bloco = llms.slice(llms.indexOf("<!-- bairros:start -->"), llms.indexOf("<!-- bairros:end -->"));
     const linhas = bloco.split("\n").filter((l) => l.startsWith("- ["));
     expect(linhas.length).toBeGreaterThan(0);
-    const prefixo = /^Reforma de apartamento em /;
+    const prefixo = /^Reforma de apartamento (?:no|na|nos|em) /;
     for (const linha of linhas) {
       const [, label = ""] = linha.match(/^- \[([^\]]+)\]\(\/reforma\//) ?? [];
       expect(prefixo.test(label), linha).toBe(true);

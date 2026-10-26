@@ -211,6 +211,21 @@ function videoTag(v) {
 }
 
 
+// Cópia de noBairro/bairroPreposicao (src/lib/bairroSeo.ts): este script roda
+// em Node puro e não importa TypeScript. bairroSeo.test.ts confere que o
+// llms.txt gerado bate com o título de cada bairro.
+const foldBairro = (v) => v.toLocaleLowerCase("pt-BR").normalize("NFD").replace(/\p{M}/gu, "").trim();
+const BAIRROS_NO = new Set(["brooklin", "butanta", "campo belo", "itaim bibi", "itaim", "jardim paulista", "paraiso", "ibirapuera", "tatuape", "morumbi", "cambuci", "centro", "sumare", "ipiranga", "pacaembu", "bom retiro", "jabaquara", "panamby", "bras", "belem", "belenzinho", "jardim europa", "jardim america", "alto de pinheiros", "alto da boa vista", "real parque", "planalto paulista", "brooklin novo", "campo limpo"]);
+const BAIRROS_NOS = new Set(["jardins", "campos eliseos", "campos elisios"]);
+const BAIRROS_NA = new Set(["bela vista", "consolacao", "republica", "paulista", "liberdade", "lapa", "mooca", "aclimacao", "barra funda", "saude", "penha", "pompeia", "agua branca", "se", "luz", "casa verde", "granja julieta"]);
+function noBairro(label) {
+  const nome = String(label ?? "").trim();
+  if (!nome) return "em São Paulo";
+  const k = foldBairro(nome);
+  const prep = BAIRROS_NOS.has(k) ? "nos" : BAIRROS_NO.has(k) ? "no" : BAIRROS_NA.has(k) || /^(vila|chacara|cidade|granja|praca) /.test(k) ? "na" : "em";
+  return `${prep} ${nome}`;
+}
+
 async function main() {
   const env = loadEnv();
   const supabaseUrl = env.VITE_SUPABASE_URL;
@@ -466,7 +481,7 @@ function updateLlmsTxt(posts, hoodUrls = [], videoEntries = []) {
   // Páginas de bairro (/reforma/<bairro>): mesma lista do sitemap, com a contagem.
   // O rótulo acompanha o título da página (bairroTitle em src/lib/bairroSeo.ts).
   const hoodLines = hoodUrls.map(
-    (h) => `- [Reforma de apartamento em ${h.label}](${h.loc.replace(BASE_URL, "")}): ${h.count} projetos entregues`,
+    (h) => `- [Reforma de apartamento ${noBairro(h.label)}](${h.loc.replace(BASE_URL, "")}): ${h.count} projetos entregues`,
   );
   let next = replaceBetween(txt, "<!-- posts:start -->", "<!-- posts:end -->", postLines, "posts:start/posts:end");
   next = replaceBetween(next, "<!-- bairros:start -->", "<!-- bairros:end -->", hoodLines, "bairros:start/bairros:end");
