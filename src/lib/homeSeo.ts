@@ -74,4 +74,3 @@ export async function loadHomeSeo(): Promise<HomeSeo> {
     return resolveHomeSeo(null);
   }
 }
-}
