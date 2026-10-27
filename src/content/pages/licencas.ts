@@ -85,7 +85,7 @@ Mais sobre os dados: [Índice Bewild de custo de reforma](${INDICE_CANONICAL}).
     seo: {
       title: "Licença CC BY 4.0 dos dados do Índice Bewild | Bewild",
       description:
-        "Os dados do Índice Bewild de custo de reforma estão sob a licença Creative Commons CC BY 4.0: use em reportagens e estudos citando a Bewild. Resumo oficial, texto legal e como citar.",
+        "Os dados do Índice Bewild de custo de reforma estão sob licença CC BY 4.0: use em reportagens e estudos citando a Bewild. Resumo, texto legal e como citar.",
       ogTitle: "Licença CC BY 4.0 | Bewild",
       ogDescription:
         "Use os dados do Índice Bewild de custo de reforma citando a fonte: resumo oficial da licença CC BY 4.0, texto legal e modelos de citação.",
