@@ -5,7 +5,7 @@ export const ATRIBUICAO_CANONICAL = "/atribuicao";
 export const ATRIBUICAO_SEO = {
   title: "Atribuição: como citar a Bewild | Bewild",
   description:
-    "Nome, endereço e link de licença da Bewild para reportagens e estudos: dados do Índice Bewild de custo de reforma sob CC BY 4.0, com linha de crédito pronta para copiar.",
+    "Como citar a Bewild em reportagens e estudos: nome, endereço e link da licença CC BY 4.0 do Índice Bewild de custo de reforma, com crédito pronto.",
   ogTitle: "Atribuição — como citar a Bewild",
   ogDescription:
     "Crédito pronto para reportagens: nome oficial da Bewild, endereço e a licença CC BY 4.0 dos dados do Índice Bewild de custo de reforma.",

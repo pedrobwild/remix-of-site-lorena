@@ -37,7 +37,7 @@ export default function EscopoPage() {
   useSeo({
     title: "Escopo da reforma e faixa de investimento por m² | Bewild",
     description:
-      "Responda 4 perguntas, monte o escopo da reforma do seu studio ou apartamento em São Paulo e veja a faixa de investimento por metragem, com base nos contratos da Bewild.",
+      "Responda 4 perguntas, monte o escopo da reforma do seu studio ou apartamento em SP e veja a faixa de investimento por metragem nos contratos Bewild.",
     canonicalPath: "/escopo",
     ogType: "website",
   });
