@@ -191,7 +191,11 @@ gravar `src/content/sitemapLastmod.json` (datas do git) e o **retrato**
 `src/content/snapshots/sitemap.xml` + `llms.txt`, que é a fixture dos testes de
 links internos (`postInternalLinks`, `seoLinksInternos1610`, `bairroRedirects`…).
 Ele nunca quebra o build: sem env, rede ou com menos de 6 projetos, avisa e
-mantém o retrato. Rodar à mão, com a chave pública no `.env`: `npm run sitemap`
+mantém o retrato. O JSON de datas só é regravado quando o git tem história de
+verdade: clone raso, repositório com menos de 50 commits ou todas as páginas
+saindo com a data do HEAD (o que acontece no build da hospedagem) mantêm o
+arquivo commitado — em 26/10/2026 o build publicou todas as páginas fixas com a
+data do deploy. Rodar à mão, com a chave pública no `.env`: `npm run sitemap`
 (faça isso ao publicar artigo ou projeto novo, para os testes enxergarem a
 página; o sitemap do ar não depende disso).
 
