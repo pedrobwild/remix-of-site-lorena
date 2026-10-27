@@ -122,6 +122,8 @@ export function trackEvent(name: string, params?: Record<string, unknown>): void
       bairro: window.location.pathname.match(/^\/reforma\/([^/]+)$/)?.[1]?.replace(/-/g, " "),
     }) : {}),
     ...telemetryValue(params),
+    // Peso de lead definido por Pedro; não representa receita de contrato.
+    ...(name === "generate_lead" ? { value: 10000, currency: "BRL" } : {}),
     ...(searchBairro ? { search_term: searchBairro, imovel_bairro: searchBairro } : {}),
     page_location: telemetryUrlWithCampaign(window.location.href),
     page_referrer: lastPageLocation ?? (document.referrer ? telemetryUrl(document.referrer, true) : ""),
