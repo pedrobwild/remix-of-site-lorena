@@ -438,6 +438,8 @@ export function toExportRecord(dataset: ExportDataset, row: ExportRecord): Expor
 // do lead. Leads de parceria comercial ficam fora.
 
 export const GOOGLE_ADS_QUALIFIED_CONVERSION = "Lead qualificado investidor";
+/** Pedro, 27/10/2026: peso de conversão, não receita nem valor do lead inicial. */
+export const GOOGLE_ADS_QUALIFIED_VALUE = 10_000;
 export const GOOGLE_ADS_WON_CONVERSION = "Contrato assinado";
 /** Secundária (fora dos lances, criada em 25/10/2026): o Google vê quem não serve sem passar a buscar mais desses. */
 export const GOOGLE_ADS_DISQUALIFIED_CONVERSION = "Lead desqualificado";
@@ -573,7 +575,7 @@ export async function buildGoogleAdsOfflineRows(input: GoogleAdsOfflineInput): P
     const conversions: { name: string; when: unknown; value?: number | null }[] = [];
     const objetivo = typeof lead.objetivo === "string" ? lead.objetivo.trim() : "";
     if (lead.status === "qualificado" && GOOGLE_ADS_INVESTOR_OBJETIVOS.includes(objetivo)) {
-      conversions.push({ name: GOOGLE_ADS_QUALIFIED_CONVERSION, when: input.qualifiedAt.get(String(lead.id)) ?? lead.updated_at });
+      conversions.push({ name: GOOGLE_ADS_QUALIFIED_CONVERSION, when: input.qualifiedAt.get(String(lead.id)) ?? lead.updated_at, value: GOOGLE_ADS_QUALIFIED_VALUE });
     }
     if (lead.status === "descartado" && !isTrue(lead.crm_won)) {
       conversions.push({ name: GOOGLE_ADS_DISQUALIFIED_CONVERSION, when: lead.manual_qualification_at ?? lead.updated_at });
