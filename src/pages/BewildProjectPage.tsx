@@ -7,11 +7,12 @@ import { formatAreaM2 } from "@/lib/formatArea";
  * conteúdo no admin — campo vazio simplesmente não aparece no site.
  * CSS isolado em .bw-detail (src/styles/portfolio-detail.css).
  */
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback, type PointerEvent as ReactPointerEvent } from "react";
 import { useSeo } from "@/lib/useSeo";
 import { projectPageJsonLd } from "@/lib/contentJsonLd";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
+import MobileQuoteBar from "@/components/MobileQuoteBar";
 import { whatsappHref } from "@/components/landing/content";
 import { useBewildProject, type BewildProjectFull } from "@/lib/useBewildProject";
 import { bewildTypeLabel } from "@/lib/useBewildProjects";
@@ -73,7 +74,9 @@ function IconCheck() {
  * Visualizador em tela cheia. Diálogo modal de verdade: o foco entra no
  * botão Fechar ao abrir, o Tab circula só entre os controles, Esc fecha,
  * ← → trocam a imagem (o contador é anunciado) e, ao fechar, o foco volta
- * para a miniatura que abriu.
+ * para a miniatura que abriu. No toque, deslizar para o lado troca a foto
+ * (setas, contador e Fechar continuam) e o pinch amplia detalhes
+ * (touch-action: pinch-zoom no CSS).
  */
 function Lightbox({
   images,
@@ -92,6 +95,11 @@ function Lightbox({
 }) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  // Deslizar para trocar de foto (celular, 27/10/2026): início do toque e se
+  // o gesto virou troca — nesse caso o clique que o navegador dispara em
+  // seguida não deve fechar o visualizador.
+  const swipe = useRef<{ id: number; x: number; y: number } | null>(null);
+  const swiped = useRef(false);
 
   // Pré-carrega a anterior e a próxima: as setas trocam de foto sem espera.
   useEffect(() => {
@@ -150,6 +158,33 @@ function Lightbox({
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose, onPrev, onNext]);
 
+  const onPointerDown = (e: ReactPointerEvent) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    swipe.current = { id: e.pointerId, x: e.clientX, y: e.clientY };
+  };
+  const onPointerUp = (e: ReactPointerEvent) => {
+    const start = swipe.current;
+    swipe.current = null;
+    if (!start || start.id !== e.pointerId || images.length < 2) return;
+    const dx = e.clientX - start.x;
+    const dy = e.clientY - start.y;
+    // Gesto horizontal claro: ao menos 48 px e mais largo que alto.
+    if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+    swiped.current = true;
+    if (dx < 0) onNext();
+    else onPrev();
+  };
+  const onPointerCancel = () => {
+    swipe.current = null;
+  };
+  const onBackdropClick = () => {
+    if (swiped.current) {
+      swiped.current = false;
+      return;
+    }
+    onClose();
+  };
+
   return (
     <div
       ref={dialogRef}
@@ -157,7 +192,10 @@ function Lightbox({
       role="dialog"
       aria-modal="true"
       aria-label="Visualizar imagem"
-      onClick={onClose}
+      onClick={onBackdropClick}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerCancel}
     >
       <img
         className="bw-lightbox__img"
@@ -521,6 +559,7 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
         </div>
       </section>
       </main>
+      <MobileQuoteBar cta="projeto-barra-mobile-orcamento" />
 
       <BwaFooter />
 

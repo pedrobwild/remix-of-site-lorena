@@ -153,9 +153,9 @@
 @keyframes bwPdPulse{0%,100%{opacity:.7}50%{opacity:.4}}
 
 /* lightbox (global, overlay full-screen) */
-.bw-lightbox{position:fixed;inset:0;z-index:1100;background:rgba(11,35,66,.93);display:flex;align-items:center;justify-content:center;padding:clamp(20px, 4.14vw, 46px);animation:bwLbIn .18s ease}
+.bw-lightbox{position:fixed;inset:0;z-index:1100;touch-action:pinch-zoom;user-select:none;-webkit-user-select:none;background:rgba(11,35,66,.93);display:flex;align-items:center;justify-content:center;padding:clamp(20px, 4.14vw, 46px);animation:bwLbIn .18s ease}
 @keyframes bwLbIn{from{opacity:0}to{opacity:1}}
-.bw-lightbox__img{max-width:100%;max-height:100%;object-fit:contain;border-radius:0;box-shadow:0 28px 80px rgba(11,35,66,.5)}
+.bw-lightbox__img{max-width:100%;max-height:100%;object-fit:contain;-webkit-user-drag:none;border-radius:0;box-shadow:0 28px 80px rgba(11,35,66,.5)}
 .bw-lightbox__btn{position:absolute;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:50%;width:46px;height:46px;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;transition:background .15s}
 .bw-lightbox__btn:hover{background:rgba(255,255,255,.22)}
 .bw-lightbox__close{top:18px;right:18px}

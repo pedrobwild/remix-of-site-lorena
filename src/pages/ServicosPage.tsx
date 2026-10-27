@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import BwaFooter from "@/components/BwaFooter";
+import MobileQuoteBar from "@/components/MobileQuoteBar";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { useSeo } from "@/lib/useSeo";
@@ -403,6 +404,7 @@ export default function ServicosPage() {
           </div>
         </section>
       </main>
+      <MobileQuoteBar cta="servicos-barra-mobile-orcamento" />
 
       <BwaFooter />
     </div>

@@ -27,7 +27,30 @@
 .bwh-pf-chip:hover{border-color:var(--dark)}
 .bwh-pf-chip.is-on{background:var(--dark);color:#fff;border-color:var(--dark)}
 /* ===== Controles de bairro + ordenação (mesma linguagem dos chips) ===== */
+.bwh-pf-bairros{display:flex;flex-wrap:wrap;gap:8px 16px;margin:0 0 24px}
 .bwh-pf-controls{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px;margin-top:14px}
+/* Topo do portfólio no celular (27/10/2026): contagem + "Filtrar projetos" +
+   "Por bairro"; filtros e links por bairro só aparecem quando abertos. No
+   desktop a barra some e os dois blocos ficam abertos (is-collapsed não vale). */
+.bwh-pf-mobilebar{display:none}
+.bwh-pf-toggle{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#fff;
+  display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:10px 16px;border:1px solid var(--dark);border-radius:0;background:var(--dark);cursor:pointer}
+.bwh-pf-toggle--ghost{color:var(--ink);background:transparent;border-color:var(--hair)}
+.bwh-pf-toggle[aria-expanded="true"]{box-shadow:inset 0 0 0 1px var(--navyacc)}
+.bwh-pf-toggle:focus-visible{outline:2px solid var(--dark);outline-offset:2px}
+.bwh-pf-toggle__n{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#fff;color:var(--dark);font-size:11px}
+.bwh-pf-toggle--ghost .bwh-pf-toggle__n{background:var(--dark);color:#fff}
+.bwh-pf-mobilebar__count{color:var(--ink2)}
+.bwh-pf-applied{flex-basis:100%;margin:0;color:var(--ink2);font-size:12px}
+@media (max-width:699px){
+  .bwh-pf-mobilebar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin:0 0 20px}
+  .bwh-pf-mobilebar__count{flex-basis:100%}
+  .bwh-pf-bairros.is-collapsed,.bwh-pf-controls.is-collapsed{display:none}
+  .bwh-pf-controls{padding:16px;border:1px solid var(--hair);background:var(--bg-alt)}
+  .bwh-pf-field{min-width:100%}
+  .bwh-pf-select{width:100%;min-height:44px;font-size:16px}
+  .bwh-pf-clear{min-height:44px}
+}
 .bwh-pf-field{display:flex;flex-direction:column;gap:6px;min-width:min(100%,240px)}
 .bwh-pf-field__label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
 .bwh-pf-select{font-family:var(--fm);font-size:12px;letter-spacing:.04em;color:var(--ink);

@@ -18,6 +18,7 @@ import {
   type LeadObjetivo,
 } from "@/lib/leadForm";
 import { formatBrPhone, isValidBrPhone, normalizeBrPhoneDigits } from "@/lib/phone";
+import { formatAreaM2 } from "@/lib/formatArea";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import { scrollBehavior } from "@/lib/reducedMotion";
 import {
@@ -85,6 +86,31 @@ function etapaInvalida(errors: FieldErrors<Campo>, de: number, ate: number): num
   return null;
 }
 
+/** Metragem aceita no campo digitado (m²): fora disso o valor é ignorado. */
+const AREA_DIGITADA = { min: 5, max: 2000 } as const;
+
+/**
+ * "28,21" / "28.21" / "28" → 28.21 (até 2 casas, como `projects.area_m2`).
+ * `null` quando o texto não é uma metragem plausível.
+ */
+function lerAreaDigitada(texto: string): number | null {
+  const limpo = texto.trim().replace(/\s*m²?$/i, "").replace(",", ".");
+  if (!/^\d+(\.\d{1,2})?$/.test(limpo)) return null;
+  const n = Number(limpo);
+  if (!Number.isFinite(n) || n < AREA_DIGITADA.min || n > AREA_DIGITADA.max) return null;
+  return n;
+}
+
+/** Texto do campo de metragem a partir do número: "28,21" / "40" (pt-BR). */
+function areaTexto(area: number): string {
+  return (formatAreaM2(area) ?? String(area)).replace(/\s*m²$/, "");
+}
+
+/** Posição do controle deslizante para a metragem (inteiro dentro da faixa). */
+function areaNoSlider(area: number): number {
+  return Math.min(AREA_SLIDER.max, Math.max(AREA_SLIDER.min, Math.round(area)));
+}
+
 
 /**
  * OrcamentoPage — /orcamento
@@ -105,7 +131,10 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
   const [vista, setVista] = useState(0); // etapa mais avançada já aberta
   const [bairro, setBairro] = useState("");
   const [bairroConfirmado, setBairroConfirmado] = useState<string | null>(null);
+  // Metragem: o número (pode ter 2 casas, ex.: 28,21) e o texto do campo
+  // digitado — separados para o visitante apagar e redigitar à vontade.
   const [area, setArea] = useState<number>(AREA_SLIDER.padrao);
+  const [areaDigitada, setAreaDigitada] = useState<string>(areaTexto(AREA_SLIDER.padrao));
   const [objetivo, setObjetivo] = useState<LeadObjetivo>("Short stay");
   const [chaves, setChaves] = useState<Chaves | "">("");
   const [estado, setEstado] = useState<EstadoImovel | "">("");
@@ -117,7 +146,7 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
   // Itens escolhidos em /escopo (vêm na URL; só os ids conhecidos passam).
   const [escopoItens, setEscopoItens] = useState<ItemEscopoId[]>([]);
   const [touched, setTouched] = useState<Partial<Record<Campo, boolean>>>({});
-  // Estado final mostrado no lugar das etapas ("Refazer simulação" limpa).
+  // Estado final mostrado no lugar das etapas ("Refazer pedido" volta à etapa 01).
   const [final, setFinal] = useState<"delivered" | "timedOut" | null>(null);
   // WhatsApp com os dados do pedido — saída quando a entrega não é confirmada.
   const [whatsLink, setWhatsLink] = useState<string | null>(null);
@@ -157,7 +186,11 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
       estados: ESTADOS_IMOVEL,
       objetivos: OBJETIVOS.map((o) => o.value),
     });
-    if (q.area !== undefined) setArea(Math.min(AREA_SLIDER.max, Math.max(AREA_SLIDER.min, Math.round(q.area))));
+    if (q.area !== undefined) {
+      const a = Math.min(AREA_DIGITADA.max, Math.max(AREA_DIGITADA.min, Math.round(q.area * 100) / 100));
+      setArea(a);
+      setAreaDigitada(areaTexto(a));
+    }
     if (q.estado) setEstado(q.estado as EstadoImovel);
     if (q.objetivo) setObjetivo(q.objetivo as LeadObjetivo);
     if (q.itens.length) setEscopoItens(q.itens);
@@ -213,7 +246,10 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
   }
 
   async function enviar() {
-    const area_txt = String(area);
+    const area_txt = areaTexto(area);
+    // `leads.area_m2` é inteiro (arredondado em leadDelivery): a metragem com
+    // casas decimais vai também na mensagem, para o time ver o valor exato.
+    const areaExata = Number.isInteger(area) ? "" : `Metragem exata: ${formatAreaM2(area)}`;
     setWhatsLink(
       whatsappHref(
         buildLeadMessage("Olá! Quero um orçamento de reforma para o meu apartamento.", [
@@ -240,6 +276,7 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
       message:
         [
           estado && `Estado: ${estado}`,
+          areaExata,
           escopoItens.length > 0 && `Escopo escolhido em /escopo: ${rotuloItens(escopoItens)}`,
           urgente && "Atendimento prioritário: tem urgência",
           ligacao && "Prefere atendimento por ligação",
@@ -327,7 +364,7 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
                     </div>
                     <div>
                       <dt>Metragem</dt>
-                      <dd>{area} m²</dd>
+                      <dd>{formatAreaM2(area)}</dd>
                     </div>
                     <div>
                       <dt>Objetivo</dt>
@@ -345,7 +382,7 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
                       Falar no WhatsApp <span aria-hidden="true">→</span>
                     </a>
                     <button className="bwa-orc-btn bwa-orc-btn--ghost" type="button" onClick={refazer}>
-                      Refazer simulação
+                      Refazer pedido
                     </button>
                   </div>
                 </div>
@@ -420,20 +457,48 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
                       </div>
 
                       <div className="bwa-orc-field">
-                        <label htmlFor="orc-area">Metragem privativa</label>
-                        <output className="bwa-orc-area-value" htmlFor="orc-area" aria-hidden="true">
-                          {area} m²
-                        </output>
+                        <label htmlFor="orc-area-num">Metragem privativa</label>
+                        {/* Digitação direta (teclado numérico, aceita 28,21) + o
+                            controle deslizante como alternativa; os dois movem o
+                            mesmo valor. */}
+                        <div className="bwa-orc-area-row">
+                          <input
+                            id="orc-area-num"
+                            className="bwa-orc-area-input"
+                            type="text"
+                            inputMode="decimal"
+                            autoComplete="off"
+                            enterKeyHint="next"
+                            maxLength={7}
+                            value={areaDigitada}
+                            aria-describedby="orc-area-dica"
+                            onChange={(e) => {
+                              setAreaDigitada(e.target.value);
+                              const n = lerAreaDigitada(e.target.value);
+                              if (n !== null) setArea(n);
+                            }}
+                            onBlur={() => setAreaDigitada(areaTexto(area))}
+                          />
+                          <span className="bwa-orc-area-unit" aria-hidden="true">m²</span>
+                        </div>
+                        <p className="bwa-orc-area-dica" id="orc-area-dica">
+                          Área privativa, com vírgula se precisar (ex.: 28,21). Ou ajuste no controle abaixo.
+                        </p>
                         <input
                           id="orc-area"
                           className="bwa-orc-range"
                           type="range"
+                          aria-label="Metragem privativa, ajuste aproximado"
                           min={AREA_SLIDER.min}
                           max={AREA_SLIDER.max}
                           step={1}
-                          value={area}
-                          aria-valuetext={`${area} m²`}
-                          onChange={(e) => setArea(Number(e.target.value))}
+                          value={areaNoSlider(area)}
+                          aria-valuetext={formatAreaM2(area) ?? `${area} m²`}
+                          onChange={(e) => {
+                            const n = Number(e.target.value);
+                            setArea(n);
+                            setAreaDigitada(areaTexto(n));
+                          }}
                         />
                         <div className="bwa-orc-range-legend" aria-hidden="true">
                           <span>{AREA_SLIDER.min} m²</span>

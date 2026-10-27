@@ -316,6 +316,47 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     expect(screen.getByRole("heading", { name: /Onde fica e qual o tamanho/ })).toBeInTheDocument();
   });
 
+  it("metragem digitada: aceita 28,21, move o slider para 28, envia 28,21 na mensagem e no WhatsApp", async () => {
+    sendLeadMock.mockResolvedValue(FAILED);
+    render(<OrcamentoPage />);
+    const num = byId("orc-area-num");
+    expect(num).toHaveAttribute("inputmode", "decimal");
+    fireEvent.change(num, { target: { value: "28,21" } });
+    expect(byId("orc-area").value).toBe("28");
+    expect(byId("orc-area")).toHaveAttribute("aria-valuetext", "28,21 m²");
+    // Texto inválido não mexe no valor; o blur devolve o último válido.
+    fireEvent.change(num, { target: { value: "abc" } });
+    expect(byId("orc-area")).toHaveAttribute("aria-valuetext", "28,21 m²");
+    fireEvent.blur(num);
+    expect(num.value).toBe("28,21");
+    // O slider também atualiza o campo digitado.
+    type("orc-area", "40");
+    expect(num.value).toBe("40");
+    fireEvent.change(num, { target: { value: "32.5" } });
+    expect(num.value).toBe("32.5");
+    expect(byId("orc-area").value).toBe("33");
+
+    preencher({ chaves: "", estado: "" });
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /Pedir orçamento/ })));
+    // `preencher` digita 32 no slider por cima; o valor exato do slider é inteiro.
+    expect(sendLeadMock.mock.calls[0][0]).toMatchObject({ area_m2: 32, message: null });
+  });
+
+  it("metragem com casas decimais vai na mensagem do lead (a coluna do CRM é inteira)", async () => {
+    sendLeadMock.mockResolvedValue(FAILED);
+    render(<OrcamentoPage />);
+    preencher({ chaves: "", estado: "" });
+    fireEvent.click(screen.getByRole("button", { name: /01\s*Imóvel/ }));
+    fireEvent.change(byId("orc-area-num"), { target: { value: "28,21" } });
+    continuar();
+    continuar();
+    continuar();
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /Pedir orçamento/ })));
+    expect(sendLeadMock.mock.calls[0][0]).toMatchObject({ area_m2: 28.21, message: "Metragem exata: 28,21 m²" });
+    const wa = screen.getByRole("link", { name: /Enviar pelo WhatsApp/ });
+    expect(decodeURIComponent(wa.getAttribute("href")!)).toContain("Metragem (m²): 28,21");
+  });
+
   it("payload canônico com chaves e estado; falha mostra WhatsApp e 'Tentar de novo' (PUB-03/08)", async () => {
     sendLeadMock.mockResolvedValue(FAILED);
     render(<OrcamentoPage />);
@@ -349,7 +390,7 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     expect(screen.getByRole("button", { name: /Tentar de novo/ })).not.toBeDisabled();
   });
 
-  it("entregue: agradece com o número e 'Refazer simulação' volta à etapa 01 com os dados", async () => {
+  it("entregue: agradece com o número e 'Refazer pedido' volta à etapa 01 com os dados", async () => {
     sendLeadMock.mockResolvedValue(DELIVERED);
     render(<OrcamentoPage />);
     preencher({ chaves: "", estado: "" });
@@ -361,7 +402,7 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     expect(screen.getByRole("status")).toHaveTextContent("(11) 91234-5678");
     expect(screen.queryByRole("button", { name: /Continuar/ })).toBeNull();
 
-    fireEvent.click(screen.getByRole("button", { name: "Refazer simulação" }));
+    fireEvent.click(screen.getByRole("button", { name: "Refazer pedido" }));
     expect(byId("orc-bairro").value).toBe("Moema");
   });
 

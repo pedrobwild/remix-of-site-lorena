@@ -1013,6 +1013,8 @@
       text-transform: uppercase;
     }
 
+    .bwa-mobile-cta { display: none; }
+
     @media (max-width: 1180px) {
       .bwa-nav-links {
         display: none;
@@ -1088,6 +1090,38 @@
 
       .bwa-footer-brand {
         grid-column: 1 / -1;
+      }
+
+      .bwa-mobile-cta {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        /* Banner de cookies aberto: sobe a altura dele (--cookie-banner-h,
+           publicada por CookieBanner.tsx; o banner já cobre a área segura).
+           Sem banner, a variável não existe e vale a área segura. */
+        bottom: calc(12px + var(--cookie-banner-h, env(safe-area-inset-bottom, 0px)));
+        transition: bottom .25s cubic-bezier(.22, 1, .36, 1);
+        z-index: 60;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 52px;
+        background: #0B2342;
+        color: #fff;
+        font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        text-decoration: none;
+        box-shadow: 0 12px 30px rgba(4, 14, 28, .35);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .bwa-mobile-cta {
+          transition: none;
+        }
       }
 
       .bwa-footer {
@@ -1429,6 +1463,18 @@ html[data-bwa-tour3d-open]{overflow:hidden}
 }
 
 @media (max-width: 900px) {
+  .bwa-mobile-cta {
+    font-size: 12px;
+    transition:
+      bottom .25s var(--bwa-ease),
+      transform .3s var(--bwa-ease),
+      opacity .3s var(--bwa-ease),
+      visibility .3s;
+  }
+
+  [data-bwas] .bwa-mobile-cta {
+    right: 72px;
+  }
 
   .bwa-mobile-cta.is-hidden,
   .bwa-menu-open .bwa-mobile-cta,
@@ -1479,6 +1525,12 @@ html[data-bwa-tour3d-open]{overflow:hidden}
 
   :root .bwa-tour3d-tag {
     font-size: 10px;
+  }
+}
+
+@media (max-width: 900px) and (prefers-reduced-motion: reduce) {
+  .bwa-mobile-cta {
+    transition: none;
   }
 }
 @media (pointer: coarse) {

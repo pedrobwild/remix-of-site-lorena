@@ -757,12 +757,26 @@
       text-wrap: pretty;
     }
 
-    /* Celular: o texto longo do herói cabe em menos linhas. */
+    /* Celular (27/10/2026): o subtítulo volta a 16 px — abaixo disso o iOS
+       trata como texto pequeno e a leitura da oferta na primeira tela sofre.
+       O texto foi encurtado no HTML em vez de reduzido no CSS. */
     @media (max-width: 699px) {
       .bwa-hero .bwa-hero-sub {
-        font-size: 14px;
-        line-height: 1.45;
+        font-size: 16px;
+        line-height: 1.5;
       }
+    }
+
+    /* Nota sob o botão do herói: tira a dúvida "o orçamento custa?" antes do
+       clique (relatório mobile de 27/10/2026). */
+    .bwa-hero-note {
+      margin: 0;
+      color: rgba(255, 255, 255, .72);
+      font-size: 13px;
+      line-height: 1.45;
+      letter-spacing: -.005em;
+      max-width: 24rem;
+      text-wrap: pretty;
     }
 
     .bwa-hero-visual {
@@ -3129,6 +3143,10 @@
       .bwa-map-frame {
         aspect-ratio: 1 / 1;
         max-height: none;
+        /* Com min-height 300 px o aspect-ratio transferia a altura para a
+           largura e o quadro passava da coluna em 320 px (2 px de rolagem
+           horizontal, 27/10/2026). Quadrado, a altura é a largura da coluna. */
+        min-height: 0;
       }
     }
 
@@ -3456,6 +3474,19 @@
         --bwa-sig-right: 36px;
         --bwa-sig-size: 84px;
         min-height: 50svh;
+      }
+
+      /* Celular em pé (27/10/2026): a foto do herói passa a ~4:3 (75vw) em
+         vez de metade da altura da tela — o botão e o início dos projetos
+         entram antes na primeira rolagem. O arquivo de 828 px (1,41:1) perde
+         só uma faixa lateral com object-fit: cover; os 320 px mínimos mantêm
+         espaço para o glifo, a lista de objetivos e a legenda. Sem
+         `aspect-ratio`: com min-height ele transferia a altura para a largura
+         e o bloco passava de 100 % em 320 px (overflow horizontal). */
+      @media (max-width: 699px) {
+        .bwa-hero-visual {
+          min-height: max(320px, 75vw);
+        }
       }
 
       .bwa-hero-frame {
@@ -4502,6 +4533,7 @@
       grid-template-columns: auto;
       justify-content: start;
       align-items: center;
+      row-gap: 14px;
     }
 
     .bwa-hero-caption strong {
@@ -4530,6 +4562,9 @@
     @media (max-width: 760px) {
       .bwa-hero-bottom-single {
         display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
       }
 
       .bwa-hero-caption strong {
@@ -4684,6 +4719,22 @@
   .bwa-pslider-track{animation:none}
   .bwa-pslider-track .bwa-pgrid-card{scroll-snap-align:start}
 }
+
+/* Carrossel manual do celular (hydrateHomeProjects, até 820 px, 27/10/2026):
+   arraste com encaixe de card, ~15 vw do próximo card à mostra e barra de
+   posição abaixo do trilho (um botão de 44 px por projeto). A máscara de
+   desvanecimento do loop sai: no celular ela escondia o início do próximo card. */
+.bwa-pgrid.bwa-pslider--manual{overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scroll-padding-inline:var(--bwa-gutter);-webkit-overflow-scrolling:touch;-webkit-mask-image:none;mask-image:none;scrollbar-width:none;width:100%;margin-bottom:0}
+.bwa-pgrid.bwa-pslider--manual::-webkit-scrollbar{display:none}
+.bwa-pslider--manual .bwa-pslider-track{animation:none;gap:16px;padding-inline:var(--bwa-gutter)}
+.bwa-pslider--manual .bwa-pslider-track .bwa-pgrid-card{scroll-snap-align:start;flex:0 0 78vw;max-width:360px}
+.bwa-pslider-nav{display:flex;justify-content:center;gap:4px;margin:14px auto clamp(32px, 3.5vw, 42px)}
+.bwa-pslider-dot{display:grid;place-items:center;width:44px;height:44px;margin:0;padding:0;background:none;border:0;cursor:pointer;color:rgba(255,255,255,.45)}
+.bwa-pslider-dot::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;transition:transform .2s var(--bwa-ease),color .2s var(--bwa-ease)}
+.bwa-pslider-dot[aria-current="true"]{color:#fff}
+.bwa-pslider-dot[aria-current="true"]::before{transform:scale(1.5)}
+.bwa-pslider-dot:focus-visible{outline:2px solid #fff;outline-offset:-6px;border-radius:50%}
+@media (prefers-reduced-motion:reduce){.bwa-pslider-dot::before{transition:none}}
 
 
 /* === Passe de densidade desktop — ritmo final entre seções (Parte 1) === */

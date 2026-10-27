@@ -14,6 +14,7 @@ import { useSeo } from "@/lib/useSeo";
 import { projectListJsonLd } from "@/lib/contentJsonLd";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
+import MobileQuoteBar from "@/components/MobileQuoteBar";
 import { CONTACT } from "../components/landing/content";
 import { useBewildProjects, bewildTypeLabel, type BewildProject } from "@/lib/useBewildProjects";
 import {
@@ -52,6 +53,11 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
   const [sort, setSort] = useState<PortfolioSort>("curadoria");
   const [area, setArea] = useState<string>(ALL_OPTION);
   const [budget, setBudget] = useState<string>(ALL_OPTION);
+  // Celular (27/10/2026): filtros e links por bairro ficam fechados no topo
+  // (botão "Filtrar projetos" + "Ver bairros"); no desktop os dois ficam
+  // abertos pelo CSS, então o estado não muda nada lá.
+  const [filtrosAbertos, setFiltrosAbertos] = useState(false);
+  const [bairrosAbertos, setBairrosAbertos] = useState(false);
   // Alt text descritivo das capas (gerado a partir da análise de cada foto).
 
   useSeo({
@@ -94,6 +100,15 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
     sort !== "curadoria" ||
     area !== ALL_OPTION ||
     budget !== ALL_OPTION;
+
+  // Escolhas aplicadas, para o resumo ao lado do botão "Filtrar projetos".
+  const filtrosAplicados = [
+    place !== ALL_NEIGHBORHOODS ? place : null,
+    filter !== "all" ? typeOptions.find((t) => t.value === filter)?.label ?? null : null,
+    area !== ALL_OPTION ? areaOptions.find((a) => a.value === area)?.label ?? null : null,
+    budget !== ALL_OPTION ? budgetOptions.find((b) => b.value === budget)?.label ?? null : null,
+    sort !== "curadoria" ? PORTFOLIO_SORTS.find((o) => o.value === sort)?.label ?? null : null,
+  ].filter((x): x is string => !!x);
 
   const waUrl = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
     "Olá! Vim pelo portfólio e quero um orçamento para a reforma do meu studio.",
@@ -151,14 +166,19 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
                 então a altura reservada é idêntica por construção. */}
             {loading && (
               <div aria-hidden="true">
-                <nav className="bwh-mono" style={{ margin: "0 0 24px", display: "flex", flexWrap: "wrap", gap: "8px 16px" }}>
+                <div className="bwh-pf-mobilebar">
+                  <span className="bwh-pf-mobilebar__count"><span className="bwh-pf-skel bwh-pf-skel--inline" /></span>
+                  <span className="bwh-pf-toggle">Filtrar projetos</span>
+                  <span className="bwh-pf-toggle bwh-pf-toggle--ghost">Por bairro</span>
+                </div>
+                <nav className="bwh-mono bwh-pf-bairros is-collapsed">
                   <span>Por bairro:</span>
                   {/* 16 itens: os bairros reais quebram em ~2 linhas nessa largura. */}
                   {Array.from({ length: 16 }, (_, i) => (
                     <span key={i} className="bwh-pf-skel bwh-pf-skel--inline" />
                   ))}
                 </nav>
-                <div className="bwh-pf-controls">
+                <div className="bwh-pf-controls is-collapsed">
                   {["Bairro", "Tipo", "Tamanho", "Ordenar por"].map((label) => (
                     <div key={label} className="bwh-pf-field">
                       <span className="bwh-mono bwh-pf-field__label">{label}</span>
@@ -169,8 +189,56 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
               </div>
             )}
 
+            {/* Celular: abertura curta — contagem e botões que abrem os filtros
+                e os links por bairro. Acima de 700 px o CSS esconde esta barra
+                e mostra os dois blocos abertos, como sempre. */}
+            {!loading && !error && (showChips || bairroPages.length > 0) && (
+              <div className="bwh-pf-mobilebar">
+                <span className="bwh-mono bwh-pf-mobilebar__count">
+                  {pad(total)} {total === 1 ? "projeto" : "projetos"}
+                </span>
+                {showChips && (
+                  <button
+                    type="button"
+                    className="bwh-pf-toggle"
+                    aria-expanded={filtrosAbertos}
+                    aria-controls="bwh-pf-filtros"
+                    onClick={() => setFiltrosAbertos((v) => !v)}
+                  >
+                    Filtrar projetos
+                    {filtrosAplicados.length > 0 && (
+                      <span className="bwh-pf-toggle__n">
+                        <span className="sr-only">, </span>
+                        {filtrosAplicados.length}
+                        <span className="sr-only"> {filtrosAplicados.length === 1 ? "aplicado" : "aplicados"}</span>
+                      </span>
+                    )}
+                  </button>
+                )}
+                {bairroPages.length > 0 && (
+                  <button
+                    type="button"
+                    className="bwh-pf-toggle bwh-pf-toggle--ghost"
+                    aria-expanded={bairrosAbertos}
+                    aria-controls="bwh-pf-bairros"
+                    onClick={() => setBairrosAbertos((v) => !v)}
+                  >
+                    Por bairro
+                  </button>
+                )}
+                {filtrosAplicados.length > 0 && !filtrosAbertos && (
+                  <p className="bwh-mono bwh-pf-applied">{filtrosAplicados.join(" · ")}</p>
+                )}
+              </div>
+            )}
+
             {bairroPages.length > 0 && (
-              <nav aria-label="Reformas por bairro" className="bwh-mono" style={{ margin: "0 0 24px", display: "flex", flexWrap: "wrap", gap: "8px 16px" }}>
+              <nav
+                id="bwh-pf-bairros"
+                aria-label="Reformas por bairro"
+                className={`bwh-mono bwh-pf-bairros${bairrosAbertos ? "" : " is-collapsed"}`}
+               
+              >
                 <span>Por bairro:</span>
                 {bairroPages.map((b) => (
                   <a key={b.slug} href={`/reforma/${b.slug}`} style={{ textDecoration: "underline" }}>
@@ -182,7 +250,7 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
 
 
             {showChips && (
-              <div className="bwh-pf-controls">
+              <div id="bwh-pf-filtros" className={`bwh-pf-controls${filtrosAbertos ? "" : " is-collapsed"}`}>
                 <label className="bwh-pf-field">
                   <span className="bwh-mono bwh-pf-field__label">Bairro</span>
                   <select
@@ -482,6 +550,7 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
           </div>
         </section>
       </main>
+      <MobileQuoteBar cta="portfolio-barra-mobile-orcamento" />
 
       <BwaFooter />
     </div>
