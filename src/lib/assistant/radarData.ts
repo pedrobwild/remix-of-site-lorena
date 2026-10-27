@@ -14,6 +14,18 @@ export const radarObservationSchema = z.object({
   fonte_nome: z.string(), amostra_n: z.number().nullable(), ativo: z.boolean(),
 });
 export type RadarObservation = z.infer<typeof radarObservationSchema>;
+export type RadarCollectionSummary = Pick<RadarObservation, "coletado_em" | "fonte_nome" | "amostra_n" | "ativo"> & { bairro: string };
+
+/** Uma coleta real mais recente por bairro, sem inferir status ou amostra. */
+export function latestRadarCollections(rows: (RadarObservation & { bairro: string })[]): RadarCollectionSummary[] {
+  const latest = new Map<string, RadarCollectionSummary>();
+  for (const row of rows) {
+    const previous = latest.get(row.bairro);
+    if (previous && previous.coletado_em >= row.coletado_em) continue;
+    latest.set(row.bairro, { bairro: row.bairro, coletado_em: row.coletado_em, fonte_nome: row.fonte_nome, amostra_n: row.amostra_n, ativo: row.ativo });
+  }
+  return [...latest.values()].sort((a, b) => a.bairro.localeCompare(b.bairro, "pt-BR"));
+}
 export function isCollectionQuestion(question: string): boolean {
   return /\b(coleta|coletas|historico)\b/.test(normalize(question));
 }

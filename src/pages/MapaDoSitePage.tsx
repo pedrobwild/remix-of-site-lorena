@@ -80,6 +80,7 @@ export default function MapaDoSitePage({
               {PUBLIC_PAGES.map((p) => (
                 <li key={p.path}><a href={p.path}>{p.label}</a></li>
               ))}
+              <li><a href="/coletas-por-bairro">Coletas do Radar Bewild por bairro</a></li>
             </ul>
           </div>
         </section>

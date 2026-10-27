@@ -64,6 +64,24 @@ export default function ColetasRadarPage({ data: initialData }: { data: RadarCol
                   {data.bairros.map((b) => <option key={b} value={b}>{b}</option>)}
                 </select>
               </label>
+              <p className="mb-6">As coletas registram as observações de diária média por bairro usadas pelo Radar Bewild, com a fonte, a data e a amostra consultada. Uma coleta ativa pode ser substituída por uma atualização; os dados não são uma promessa de resultado.</p>
+              {data.resumo && data.resumo.length > 0 && (
+                <div className="pt-body mb-8 max-w-full">
+                  <h2>Última coleta por bairro</h2>
+                  <table aria-label="Última coleta do Radar Bewild por bairro" className="!table table-fixed [&_th]:[overflow-wrap:anywhere] [&_td]:[overflow-wrap:anywhere]">
+                    <thead><tr>{["Bairro", "Última coleta", "Fonte", "Amostra", "Status"].map((label) => <th key={label} scope="col" className="break-words !px-1 !text-xs sm:!px-3 sm:!text-sm">{label}</th>)}</tr></thead>
+                    <tbody>{data.resumo.map((row) => (
+                      <tr key={row.bairro}>
+                        <th scope="row" className="break-words !px-1 !text-xs sm:!px-3 sm:!text-sm">{row.bairro}</th>
+                        <td className="break-words !px-1 !text-xs sm:!px-3 sm:!text-sm"><time dateTime={row.coletado_em.slice(0, 10)}>{row.coletado_em.slice(0, 10).split("-").reverse().join("/")}</time></td>
+                        <td className="break-words !px-1 !text-xs sm:!px-3 sm:!text-sm">{row.fonte_nome}</td>
+                        <td className="break-words !px-1 !text-xs sm:!px-3 sm:!text-sm">{row.amostra_n === null ? "Não informada" : `n=${row.amostra_n.toLocaleString("pt-BR")}`}</td>
+                        <td className="break-words !px-1 !text-xs sm:!px-3 sm:!text-sm">{row.ativo ? "Ativa" : "Substituída"}</td>
+                      </tr>
+                    ))}</tbody>
+                  </table>
+                </div>
+              )}
               {data.bairro && data.coletas === null && <p role="alert">O histórico de coletas está indisponível agora.</p>}
               {data.bairro && data.coletas && (
                 <div aria-live="polite">

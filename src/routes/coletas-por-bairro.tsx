@@ -7,7 +7,7 @@ import { seoHead } from "@/lib/routeHead";
 export const Route = createFileRoute("/coletas-por-bairro")({
   validateSearch: searchBairro,
   loaderDeps: ({ search }) => ({ bairro: search.bairro }),
-  loader: ({ deps }) => getRadarColetas({ data: { bairro: deps.bairro } }),
+  loader: ({ deps }) => getRadarColetas({ data: { bairro: deps.bairro } }).catch(() => ({ bairros: null, bairro: null, coletas: null, resumo: null })),
   head: () =>
     seoHead({
       title: "Coletas do Radar Bewild por bairro | Bewild",

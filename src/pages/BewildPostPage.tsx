@@ -37,6 +37,7 @@ import { postYouTubeVideo } from "@/lib/postYouTubeVideo";
 import { sanitizeBlogHtml } from "@/lib/sanitizeHtml";
 import { wrapArticleTables } from "@/lib/articleTables";
 import { linkServicePagesInHtml } from "@/lib/articleServiceLinks";
+import { linkRadarCollectionsInHtml } from "@/lib/radarCollectionLinks";
 import { whatsappHref } from "@/components/landing/content";
 import {
   bewildCategoryLabel,
@@ -195,11 +196,11 @@ export default function BewildPostPage({ slug, initial }: Props) {
     }
     try {
       const raw = marked.parse(post.body, { async: false }) as string;
-      return wrapArticleTables(linkServicePagesInHtml(rewriteGuiaLinksInHtml(sanitizeBlogHtml(raw))));
+      return wrapArticleTables(linkRadarCollectionsInHtml(linkServicePagesInHtml(rewriteGuiaLinksInHtml(sanitizeBlogHtml(raw))), slug));
     } catch {
       return "";
     }
-  }, [post?.body, initial]);
+  }, [post?.body, initial, slug]);
   // Linha "Autor/Revisão" sai do corpo (vira dado no cabeçalho) e H2/H3 ganham
   // âncora para o sumário. Função pura: servidor e cliente geram o mesmo HTML.
   const structured = useMemo(() => structurePostBody(sanitizedBody), [sanitizedBody]);

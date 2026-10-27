@@ -42,6 +42,7 @@
 - `/admin/coletas-radar` reuses the sanitized collection panel behind AdminChunk and ProtectedRoute, keeping admin access checks separate from the public Radar data boundary.
 - The SEO collection-history tab reuses getRadarColetas for fresh read-only neighborhood selection and manual refresh; it never stores copies or writes to the Radar.
 - `/coletas` permanently redirects to the canonical public collection-history page, preserving the neighborhood selection; reuse its sanitized live Radar read instead of duplicating content or storage.
+- The collection page SSR summary reads latest actual ADR observations per neighborhood through the existing public Radar boundary, paginating safe columns and omitting failed summaries; verified Radar ADR articles share an additive source-link transform in SSR and browser without editing stored bodies or cost-only posts.
 - Privacy-to-budget attribution stores only a nullable same-session visit flag, not visitor identifiers; consent gates browser collection and server persistence to minimize personal data and prevent historical inference.
 - License records are admin-only; public pages read only title, intro and body through `get_public_license`, and writes never retain editor email, preserving public content without exposing panel metadata.
 - Portfolio image descriptions are keyed by original URL in `image_alt_texts`; the public RPC supplies SSR loader data and client reuse so shared images have identical descriptions before hydration.
