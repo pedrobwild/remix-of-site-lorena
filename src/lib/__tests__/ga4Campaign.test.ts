@@ -21,6 +21,23 @@ afterEach(() => {
 });
 
 describe("Atribuição do GA4 com privacidade", () => {
+  it("generate_lead envia 10000 BRL sem alterar outros eventos ou o consentimento", () => {
+    trackEvent("generate_lead", { method: "orcamento_form" });
+    expect(gtag).not.toHaveBeenCalled();
+    localStorage.setItem("bewild_cookie_consent_v2", "accepted");
+    initGa4();
+    gtag.mockClear();
+    trackEvent("generate_lead", { method: "orcamento_form", delivery: "confirmed", value: 5000, currency: "USD" });
+    expect(gtag).toHaveBeenCalledWith("event", "generate_lead", expect.objectContaining({
+      method: "orcamento_form", delivery: "confirmed", value: 10000, currency: "BRL",
+    }));
+    trackEvent("cta_click", { value: 25, currency: "BRL" });
+    expect(gtag).toHaveBeenLastCalledWith("event", "cta_click", expect.objectContaining({ value: 25, currency: "BRL" }));
+    gtag.mockClear();
+    localStorage.setItem("bewild_cookie_consent_v2", "declined");
+    trackEvent("generate_lead");
+    expect(gtag).not.toHaveBeenCalled();
+  });
   it("preserva campanha no config, page_view e evento, mas não no caminho ou referrer", () => {
     localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     const origin = window.location.origin;

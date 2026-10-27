@@ -10,6 +10,7 @@
 <!-- LOVABLE:BEGIN -->
 - Studio price references reuse BASE_CUSTO for historical statistics and STUDIO_TABELA_VIGENTE for dated current examples and scoped deadlines; render them directly in the service page SSR to keep distinct sources without client-only content.
 - GA4 reuses the existing CTA and lead events with closed neighborhood categories; committed neighborhood choices emit search once per session/page/category, without free-text addresses or joining anonymous visits to lead records.
+- GA4 generate_lead applies its explicit BRL lead weight in trackEvent after sanitizing caller parameters, preserving consent and delivery deduplication; keep other events and platform qualification rules independent because this is not contract revenue.
 - Merged-post redirects reuse POSTS_FUNDIDOS in route beforeLoad and normalizeLegacyPath, keeping HTTP 301 before loading; auxiliary charts share noindex/follow in SSR and client and stay outside both sitemap generators.
 - Ad-arrival conversions reuse the consent-gated Google tag with verified destination, click-scoped session deduplication and no customer matching; internal navigation is not another arrival.
 - Daily lead quality reads admin-authorized paginated qualification history, deduplicating each lead/status/day in São Paulo; automatic refresh and audience-ingestion logs never imply instantaneous offline-conversion receipt.
