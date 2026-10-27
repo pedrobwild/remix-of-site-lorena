@@ -68,7 +68,7 @@ export default function ColetasRadarPage({ data: initialData }: { data: RadarCol
               {data.resumo && data.resumo.length > 0 && (
                 <div className="pt-body mb-8 max-w-full">
                   <h2>Última coleta por bairro</h2>
-                  <table aria-label="Última coleta do Radar Bewild por bairro" className="table-fixed">
+                  <table aria-label="Última coleta do Radar Bewild por bairro" className="!table table-fixed [&_th]:[overflow-wrap:anywhere] [&_td]:[overflow-wrap:anywhere]">
                     <thead><tr>{["Bairro", "Última coleta", "Fonte", "Amostra", "Status"].map((label) => <th key={label} scope="col" className="break-words !px-1 !text-xs sm:!px-3 sm:!text-sm">{label}</th>)}</tr></thead>
                     <tbody>{data.resumo.map((row) => (
                       <tr key={row.bairro}>
