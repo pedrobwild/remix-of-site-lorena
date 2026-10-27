@@ -88,6 +88,8 @@ describe("google_ads_offline — quem entra", () => {
   it.each(["Short stay", "Locação tradicional", "Uso misto"])("qualificado com objetivo %s vira Lead qualificado investidor", async (objetivo) => {
     const rows = await build([lead({ objetivo })]);
     expect(rows.map((r) => r["Conversion Name"])).toEqual([GOOGLE_ADS_QUALIFIED_CONVERSION]);
+    expect(rows[0]["Conversion Value"]).toBe(10000);
+    expect(rows[0]["Conversion Currency"]).toBe("BRL");
   });
 
   it.each(["Moradia", "Ainda avaliando", null])("objetivo %s não conta como investidor", async (objetivo) => {
@@ -156,13 +158,13 @@ describe("google_ads_offline — hash e formato", () => {
     expect(normalizePhoneForHash("98765")).toBeNull();
   });
 
-  it("e-mail e telefone saem só em hash SHA-256; gclid como está; BRL; valor vazio", async () => {
+  it("e-mail e telefone saem só em hash SHA-256; gclid como está; BRL; qualificado vale R$ 10.000", async () => {
     const [row] = await build([lead()]);
     expect(row.Email).toBe(await sha256Hex("ana@exemplo.com"));
     expect(row["Phone Number"]).toBe(await sha256Hex("+5511987654321"));
     expect(row["Google Click ID"]).toBe("Cj0KCQjw-abc");
     expect(row["Conversion Currency"]).toBe("BRL");
-    expect(row["Conversion Value"]).toBeNull();
+    expect(row["Conversion Value"]).toBe(10000);
 
     const csv = toCsv("google_ads_offline", [toExportRecord("google_ads_offline", row)], { sep: ",", dec: "." });
     expect(csv.split("\r\n")[0]).toBe(
@@ -207,7 +209,7 @@ describe("Contrato assinado com valor real do CRM", () => {
     expect(rows[0]["Conversion Value"]).toBe(71850);
     expect(rows[0]["Conversion Time"]).toBe(googleAdsConversionTime(daysAgo(3)));
   });
-  it("sem leitura do CRM o valor fica vazio, nunca R$ 5.000 ou R$ 1.000", async () => {
+  it("sem leitura do CRM o valor fica vazio, nunca o peso de R$ 10.000 do qualificado", async () => {
     const rows = await build([won]);
     expect(rows[0]["Conversion Value"]).toBeNull();
   });
