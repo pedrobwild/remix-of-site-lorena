@@ -68,7 +68,10 @@ export type SeoHeadInput = {
   /** Caminho canônico, ex.: "/servicos". */
   path: string;
   noindex?: boolean;
-  /** Mantém o seguimento dos links em páginas auxiliares não indexáveis. */
+  /**
+   * Sem efeito desde 27/10/2026: toda página `noindex` já sai `noindex, follow`.
+   * Mantido para não quebrar as rotas que ainda passam a flag.
+   */
   noindexFollow?: boolean;
   keywords?: string;
   /** Textos salvos em /admin/seo (aba Páginas); vencem os da rota. */
@@ -213,7 +216,11 @@ export function seoHead(rawInput: SeoHeadInput) {
     { name: "description", content: input.description },
     {
       name: "robots",
-      content: input.noindex ? (input.noindexFollow ? "noindex, follow" : "noindex, nofollow") : `index, follow, ${PREVIEW_DIRECTIVES}`,
+      // noindex sempre com follow (27/10/2026): estas páginas têm o menu e o
+      // rodapé globais, e "nofollow" fazia o Ahrefs contar os links delas como
+      // inlinks nofollow para todas as páginas do menu ("Page has nofollow and
+      // dofollow incoming internal links"). O /admin usa meta própria.
+      content: input.noindex ? "noindex, follow" : `index, follow, ${PREVIEW_DIRECTIVES}`,
     },
     { property: "og:title", content: ogTitle },
     { property: "og:description", content: ogDescription },

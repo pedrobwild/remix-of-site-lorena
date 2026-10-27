@@ -112,8 +112,13 @@ export const DEFAULT_OG_IMAGE = {
 /** Diretivas de pré-visualização do index.html, preservadas em páginas indexáveis. */
 const PREVIEW_DIRECTIVES = "max-image-preview:large, max-snippet:-1, max-video-preview:-1";
 
-export function robotsContent(noindex: boolean | undefined, settingsRobots?: string | null, noindexFollow = false): string {
-  if (noindex) return noindexFollow ? "noindex, follow" : "noindex, nofollow";
+/**
+ * Página não indexável sai sempre "noindex, follow" (27/10/2026): ela carrega o
+ * menu e o rodapé globais, e "nofollow" transformava esses links em inlinks
+ * nofollow para todas as páginas do menu. `_noindexFollow` ficou sem efeito.
+ */
+export function robotsContent(noindex: boolean | undefined, settingsRobots?: string | null, _noindexFollow = false): string {
+  if (noindex) return "noindex, follow";
   const base = (settingsRobots || "index, follow").trim();
   if (/\b(noindex|none)\b/i.test(base) || /max-image-preview/i.test(base)) return base;
   return `${base}, ${PREVIEW_DIRECTIVES}`;
