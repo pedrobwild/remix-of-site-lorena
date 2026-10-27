@@ -68,7 +68,6 @@ export default function BwaNav() {
           <nav className="bwa-nav-links" aria-label="Navegação principal">
             <a href="/">Início</a>
             <a href="/servicos">Serviços</a>
-            <a href="/#depoimentos">Depoimentos</a>
             <a href="/portfolio">Portfólio</a>
             <a href="/marcenaria">Marcenaria</a>
             <a href="/conteudos">Blog</a>
@@ -120,7 +119,6 @@ export default function BwaNav() {
         <nav aria-label="Navegação mobile">
           <a href="/">Início</a>
           <a href="/servicos">Serviços</a>
-          <a href="/#depoimentos">Depoimentos</a>
           <a href="/portfolio">Portfólio</a>
           <a href="/marcenaria">Marcenaria</a>
           <a href="/conteudos">Blog</a>
