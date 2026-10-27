@@ -7,10 +7,12 @@ project_id = "aamlnkmqvjcowixdgqii"
 #   - públicas (anônimas por natureza): track, report-crash, sitemap, robots,
 #     not-found-check, notify-lead, faq-answer e scope-plan (stubs 410), px (pixel 1×1 e
 #     links rastreados — carregados por <img> e cliques, sem cabeçalho), health
-#     (sonda do banco para monitor externo, sem cabeçalho; só devolve {ok}). `track` e
-#     `report-crash` são chamadas por fetch/sendBeacon SEM cabeçalho de
-#     autenticação — com verify_jwt=true um redeploy pelo CLI derrubaria
-#     analytics e crash reports em silêncio.
+#     (sonda do banco para monitor externo, sem cabeçalho; só devolve {ok}),
+#     meta-pageview (PageView/ViewContent de toda visita para a API de
+#     Conversões da Meta; validação estrita + filtro de bots + CORS por origem).
+#     `track`, `report-crash` e `meta-pageview` são chamadas por fetch/sendBeacon
+#     SEM cabeçalho de autenticação — com verify_jwt=true um redeploy pelo CLI
+#     derrubaria analytics, crash reports e a medição da Meta em silêncio.
 #   - admin (JWT do usuário + public.is_admin() no código): drive-import,
 #     index-tracker, meta-insights, meta-lead-quality, generate-alt-text, seo-audit,
 #     ping-sitemap, search-console-stats.
@@ -67,6 +69,9 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.meta-sync]
+verify_jwt = false
+
+[functions.meta-pageview]
 verify_jwt = false
 
 [functions.generate-alt-text]
