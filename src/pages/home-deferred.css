@@ -2454,6 +2454,10 @@
       .bwa-map-frame {
         aspect-ratio: 1 / 1;
         max-height: none;
+        /* Com min-height 300 px o aspect-ratio transferia a altura para a
+           largura e o quadro passava da coluna em 320 px (2 px de rolagem
+           horizontal, 27/10/2026). Quadrado, a altura é a largura da coluna. */
+        min-height: 0;
       }
     }
 
@@ -3760,6 +3764,17 @@
   .bwa-pslider-track{animation:none}
   .bwa-pslider-track .bwa-pgrid-card{scroll-snap-align:start}
 }
+.bwa-pgrid.bwa-pslider--manual{overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scroll-padding-inline:var(--bwa-gutter);-webkit-overflow-scrolling:touch;-webkit-mask-image:none;mask-image:none;scrollbar-width:none;width:100%;margin-bottom:0}
+.bwa-pgrid.bwa-pslider--manual::-webkit-scrollbar{display:none}
+.bwa-pslider--manual .bwa-pslider-track{animation:none;gap:16px;padding-inline:var(--bwa-gutter)}
+.bwa-pslider--manual .bwa-pslider-track .bwa-pgrid-card{scroll-snap-align:start;flex:0 0 78vw;max-width:360px}
+.bwa-pslider-nav{display:flex;justify-content:center;gap:4px;margin:14px auto clamp(32px, 3.5vw, 42px)}
+.bwa-pslider-dot{display:grid;place-items:center;width:44px;height:44px;margin:0;padding:0;background:none;border:0;cursor:pointer;color:rgba(255,255,255,.45)}
+.bwa-pslider-dot::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;transition:transform .2s var(--bwa-ease),color .2s var(--bwa-ease)}
+.bwa-pslider-dot[aria-current="true"]{color:#fff}
+.bwa-pslider-dot[aria-current="true"]::before{transform:scale(1.5)}
+.bwa-pslider-dot:focus-visible{outline:2px solid #fff;outline-offset:-6px;border-radius:50%}
+@media (prefers-reduced-motion:reduce){.bwa-pslider-dot::before{transition:none}}
 @media (min-width:821px){
   .bwa-audience,.bwa-story,.bwa-projects,.bwa-responsibility,.bwa-workflow,.bwa-proof,.bwa-objectives,.bwa-manifesto,.bwa-faq{padding-top:clamp(46px, 4.36vw, 64px) !important;padding-bottom:clamp(46px, 4.36vw, 64px) !important}
   .bwa-audience-head,.bwa-story-head,.bwa-projects-head,.bwa-proof-head,.bwa-objectives-head,.bwa-faq-head,.bwa-wf2-head{margin-bottom:clamp(32px, 3.5vw, 42px) !important;min-height:0 !important}

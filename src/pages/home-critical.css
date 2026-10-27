@@ -646,9 +646,18 @@
     }
     @media (max-width: 699px) {
       .bwa-hero .bwa-hero-sub {
-        font-size: 14px;
-        line-height: 1.45;
+        font-size: 16px;
+        line-height: 1.5;
       }
+    }
+    .bwa-hero-note {
+      margin: 0;
+      color: rgba(255, 255, 255, .72);
+      font-size: 13px;
+      line-height: 1.45;
+      letter-spacing: -.005em;
+      max-width: 24rem;
+      text-wrap: pretty;
     }
 
     .bwa-hero-visual {
@@ -971,6 +980,11 @@
         --bwa-sig-size: 84px;
         min-height: 50svh;
       }
+      @media (max-width: 699px) {
+        .bwa-hero-visual {
+          min-height: max(320px, 75vw);
+        }
+      }
 
       .bwa-hero-frame {
         inset: 20px;
@@ -1171,6 +1185,7 @@
       grid-template-columns: auto;
       justify-content: start;
       align-items: center;
+      row-gap: 14px;
     }
 
     .bwa-hero-caption strong {
@@ -1182,6 +1197,9 @@
     @media (max-width: 760px) {
       .bwa-hero-bottom-single {
         display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
       }
 
       .bwa-hero-caption strong {
