@@ -234,7 +234,7 @@ describe("dados estruturados", () => {
   it("endereço fora do cadastro (404) não publica VideoObject e sai noindex", () => {
     const head = headDoVideo("nao-existe", false);
     expect(head.scripts).toEqual([]);
-    expect(head.meta.find((m) => m.name === "robots")?.content).toBe("noindex, nofollow");
+    expect(head.meta.find((m) => m.name === "robots")?.content).toBe("noindex, follow");
   });
 
   it("no navegador a página pede o mesmo endereço e continua indexável", () => {

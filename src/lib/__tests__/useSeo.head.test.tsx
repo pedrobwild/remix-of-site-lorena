@@ -125,7 +125,7 @@ describe("head entre rotas (CORE-21)", () => {
   });
 
   it("robotsContent: noindex puro; valor do admin respeitado", () => {
-    expect(robotsContent(true, "index, follow")).toBe("noindex, nofollow");
+    expect(robotsContent(true, "index, follow")).toBe("noindex, follow");
     expect(robotsContent(false, "noindex")).toBe("noindex");
     expect(robotsContent(false, null)).toBe(
       "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",

@@ -115,10 +115,14 @@ describe("NotFoundPage — proteção contra soft-404", () => {
     });
   });
 
-  it("não marca a página como indexável (não emite 'index, follow')", async () => {
+  it("não marca a página como indexável (sem a diretiva 'index')", async () => {
     render(<NotFoundPage />);
     await waitFor(() => {
-      expect(getRobotsContent().toLowerCase()).not.toContain("index, follow");
+      // Compara por diretiva, não por substring: "noindex, follow" contém o
+      // texto "index, follow" e é exatamente o valor esperado aqui.
+      const tokens = getRobotsContent().toLowerCase().split(",").map((t) => t.trim());
+      expect(tokens).not.toContain("index");
+      expect(tokens).toContain("noindex");
     });
   });
 

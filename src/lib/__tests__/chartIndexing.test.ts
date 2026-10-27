@@ -15,9 +15,9 @@ describe("indexação dos gráficos auxiliares", () => {
     expect(head?.scripts).toEqual([]);
   });
 
-  it("o navegador preserva follow sem relaxar outras páginas noindex", () => {
+  it("toda página noindex sai com follow, com ou sem a flag", () => {
     expect(robotsContent(true, "index, follow", true)).toBe("noindex, follow");
-    expect(robotsContent(true)).toBe("noindex, nofollow");
+    expect(robotsContent(true)).toBe("noindex, follow");
   });
 
   it.each(CHART_SETS)("$slug não entra em sitemap nem llms", (set) => {

@@ -262,7 +262,7 @@ describe("NotFoundPage — canonical sobrevive a seo_canonical_base ausente", ()
   // --------------------
   // O contrato de "página 404 = noindex" é INDEPENDENTE de qualquer config
   // remota. `useSeo` recebe `noindex: true` da NotFoundPage e gera
-  // `meta robots="noindex, nofollow"` localmente — não consulta site_settings
+  // `meta robots="noindex, follow"` localmente — não consulta site_settings
   // para isso. Mas como `applySeo` lê várias chaves do settings (canonical,
   // OG image, GA id, etc.), uma exceção em qualquer dessas leituras
   // poderia abortar a função antes de chegar na linha do `setMeta(robots)`.
