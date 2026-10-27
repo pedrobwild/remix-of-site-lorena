@@ -23,9 +23,22 @@ type Settings = Record<string, unknown>;
 let memo: { at: number; value: Settings | null } | null = null;
 let inFlight: Promise<Settings | null> | null = null;
 
+/**
+ * URL e chave PÚBLICA do banco. Na Lovable chegam por `process.env`; na Vercel
+ * (para onde bewild.com.br vai, decisão de 27/10/2026) não há essas variáveis, então cai
+ * nas `VITE_*` que o build embute (as mesmas que o navegador já usa). Sem o
+ * fallback, o HTML do servidor na Vercel saía com o SEO padrão em vez do
+ * salvo em /admin/seo.
+ */
+export function publicSupabaseEnv(): { url: string | undefined; key: string | undefined } {
+  return {
+    url: process.env["SUPABASE_URL"] || import.meta.env.VITE_SUPABASE_URL || undefined,
+    key: process.env["SUPABASE_PUBLISHABLE_KEY"] || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || undefined,
+  };
+}
+
 async function fetchSettings(): Promise<Settings | null> {
-  const url = process.env["SUPABASE_URL"];
-  const key = process.env["SUPABASE_PUBLISHABLE_KEY"];
+  const { url, key } = publicSupabaseEnv();
   if (!url || !key) return null;
   try {
     const response = await fetch(`${url}/rest/v1/rpc/get_public_site_settings`, {

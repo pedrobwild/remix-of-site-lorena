@@ -48,4 +48,18 @@ describe("canonicalHostRedirect", () => {
     expect(lov.headers.get("location")).toBe("https://bewild.com.br/portfolio?x=1");
     expect(canonicalHostRedirect(new Request("https://id-preview--x.lovable.app/servicos"))).toBeNull();
   });
+  it("não redireciona em bewild.lovable.app o que a Vercel repassa para lá (evita laço)", () => {
+    for (const path of [
+      "/api/public/crm-stage-sync",
+      "/_serverFn/abc",
+      "/lovable/email/transactional/preview",
+      "/__l5e/assets-v1/x/logo.png",
+    ]) {
+      expect(canonicalHostRedirect(new Request(`https://bewild.lovable.app${path}`))).toBeNull();
+    }
+    // páginas continuam indo para o domínio próprio
+    expect(canonicalHostRedirect(new Request("https://bewild.lovable.app/servicos"))!.status).toBe(301);
+    // no www o 301 vale para tudo
+    expect(canonicalHostRedirect(new Request("https://www.bewild.com.br/api/public/x"))!.status).toBe(301);
+  });
 });

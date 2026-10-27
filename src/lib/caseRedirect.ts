@@ -36,10 +36,22 @@ export const CANONICAL_HOST = "bewild.com.br";
 // Os hosts de preview (id-preview--…) ficam de fora de propósito.
 const REDIRECTED_HOSTS = [`www.${CANONICAL_HOST}`, "bewild.lovable.app"];
 
+/**
+ * bewild.com.br vai para a Vercel (decisão de 27/10/2026) (HTML em cache na CDN),
+ * e a Vercel repassa para bewild.lovable.app o que depende dos segredos e
+ * arquivos da Lovable (ver `rewrites` no vercel.json): API, funções de
+ * servidor, rotas /lovable e imagens /__l5e. Esses caminhos NÃO podem voltar
+ * com 301 para bewild.com.br, senão a Vercel repassa de novo e vira laço.
+ */
+export const LOVABLE_PROXIED_PREFIXES = ["/api/", "/_serverFn", "/lovable/", "/__l5e/"];
+
 export function canonicalHostRedirect(request: Request): Response | null {
   if (request.method !== "GET" && request.method !== "HEAD") return null;
   const url = new URL(request.url);
   if (!REDIRECTED_HOSTS.includes(url.hostname)) return null;
+  if (url.hostname.endsWith(".lovable.app") && LOVABLE_PROXIED_PREFIXES.some((p) => url.pathname.startsWith(p))) {
+    return null;
+  }
   url.hostname = CANONICAL_HOST;
   return new Response(null, { status: 301, headers: { location: url.toString() } });
 }

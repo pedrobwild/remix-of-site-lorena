@@ -40,7 +40,20 @@ describe("readPublicSiteSettings (memo de 60 s no servidor)", () => {
 
   it("sem chaves devolve null sem consultar", async () => {
     delete process.env["SUPABASE_URL"];
+    vi.stubEnv("VITE_SUPABASE_URL", "");
     expect(await readPublicSiteSettings()).toBeNull();
     expect(fetchMock).not.toHaveBeenCalled();
+    vi.unstubAllEnvs();
+  });
+
+  it("sem SUPABASE_URL no servidor (Vercel) usa as VITE_* embutidas no build", async () => {
+    delete process.env["SUPABASE_URL"];
+    delete process.env["SUPABASE_PUBLISHABLE_KEY"];
+    vi.stubEnv("VITE_SUPABASE_URL", "https://v.supabase.co");
+    vi.stubEnv("VITE_SUPABASE_PUBLISHABLE_KEY", "pk");
+    fetchMock.mockImplementation(() => ok({ a: 1 }));
+    expect(await readPublicSiteSettings()).toEqual({ a: 1 });
+    expect(fetchMock.mock.calls[0][0]).toBe("https://v.supabase.co/rest/v1/rpc/get_public_site_settings");
+    vi.unstubAllEnvs();
   });
 });
