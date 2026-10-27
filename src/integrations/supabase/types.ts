@@ -206,6 +206,63 @@ export type Database = {
         }
         Relationships: []
       }
+      assistant_kb_backup_20261027: {
+        Row: {
+          acoes: Json | null
+          ativo: boolean | null
+          exemplos: string[] | null
+          gatilhos: string[] | null
+          id: string | null
+          mostrar_na_home: boolean | null
+          ordem: number | null
+          palavras: string[] | null
+          palavras_fortes: string[] | null
+          pergunta: string | null
+          relacionadas: string[] | null
+          resposta: string | null
+          status: string | null
+          sugerir_em: string[] | null
+          tema: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          acoes?: Json | null
+          ativo?: boolean | null
+          exemplos?: string[] | null
+          gatilhos?: string[] | null
+          id?: string | null
+          mostrar_na_home?: boolean | null
+          ordem?: number | null
+          palavras?: string[] | null
+          palavras_fortes?: string[] | null
+          pergunta?: string | null
+          relacionadas?: string[] | null
+          resposta?: string | null
+          status?: string | null
+          sugerir_em?: string[] | null
+          tema?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          acoes?: Json | null
+          ativo?: boolean | null
+          exemplos?: string[] | null
+          gatilhos?: string[] | null
+          id?: string | null
+          mostrar_na_home?: boolean | null
+          ordem?: number | null
+          palavras?: string[] | null
+          palavras_fortes?: string[] | null
+          pergunta?: string | null
+          relacionadas?: string[] | null
+          resposta?: string | null
+          status?: string | null
+          sugerir_em?: string[] | null
+          tema?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       assistant_unanswered: {
         Row: {
           created_at: string
@@ -300,6 +357,78 @@ export type Database = {
         Relationships: []
       }
       bewild_posts_backup_20261026: {
+        Row: {
+          author: string | null
+          body: string | null
+          category: string | null
+          content_updated_at: string | null
+          cover_image: string | null
+          created_at: string | null
+          excerpt: string | null
+          faq: Json | null
+          featured: boolean | null
+          focus_keyword: string | null
+          id: string | null
+          meta_description: string | null
+          meta_title: string | null
+          og_image: string | null
+          published: boolean | null
+          published_at: string | null
+          reading_time: number | null
+          slug: string | null
+          title: string | null
+          updated_at: string | null
+          youtube_video_id: string | null
+        }
+        Insert: {
+          author?: string | null
+          body?: string | null
+          category?: string | null
+          content_updated_at?: string | null
+          cover_image?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          faq?: Json | null
+          featured?: boolean | null
+          focus_keyword?: string | null
+          id?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          og_image?: string | null
+          published?: boolean | null
+          published_at?: string | null
+          reading_time?: number | null
+          slug?: string | null
+          title?: string | null
+          updated_at?: string | null
+          youtube_video_id?: string | null
+        }
+        Update: {
+          author?: string | null
+          body?: string | null
+          category?: string | null
+          content_updated_at?: string | null
+          cover_image?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          faq?: Json | null
+          featured?: boolean | null
+          focus_keyword?: string | null
+          id?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          og_image?: string | null
+          published?: boolean | null
+          published_at?: string | null
+          reading_time?: number | null
+          slug?: string | null
+          title?: string | null
+          updated_at?: string | null
+          youtube_video_id?: string | null
+        }
+        Relationships: []
+      }
+      bewild_posts_backup_20261027: {
         Row: {
           author: string | null
           body: string | null
