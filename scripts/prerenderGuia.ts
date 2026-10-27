@@ -425,7 +425,7 @@ const SECOES: Secao[] = [
         tipo: "links",
         itens: [
           { href: "/conteudos/piso-vinilico-ou-porcelanato-studio", label: "Piso vinílico ou porcelanato no studio para alugar: o que a conta diz" },
-          { href: "/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo", label: "Quanto custa reformar um studio em São Paulo em 2026" },
+          { href: "/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2", label: "Quanto custa reformar um apartamento ou studio de até 50 m²" },
           { href: "/conteudos/quanto-tempo-demora-reforma-apartamento", label: "Quanto tempo demora uma reforma: prazo por metragem e cronograma data a data" },
         ],
       },

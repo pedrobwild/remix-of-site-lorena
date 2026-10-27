@@ -101,9 +101,9 @@ export const FAQ: { q: string; a: string; node?: ReactNode }[] = [
       <>
         Nos {CONTRATOS_ANALISADOS} contratos de reforma completa de até 50 m² analisados pela Bewild, a mediana
         foi {ORCAMENTO_MEDIANO} ({CUSTO_M2_MEDIANO} por m²), com projeto, obra, marcenaria, mobiliário e
-        eletrodomésticos. A tabela por metragem está em{" "}
-        <a href="/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo">
-          quanto custa reformar um studio para short stay em São Paulo
+        eletrodomésticos. A análise completa está em{" "}
+        <a href="/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2">
+          quanto custa reformar um apartamento ou studio de até 50 m²
         </a>
         .
       </>

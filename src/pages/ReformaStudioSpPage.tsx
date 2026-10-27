@@ -177,11 +177,7 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
               <a href="/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2">
                 quanto custa reformar um apartamento ou studio de até 50 m²
               </a>{" "}
-              (e o{" "}
-              <a href="/conteudos/quanto-custa-reformar-studio-short-stay-sao-paulo">
-                custo por m² de um studio para short stay
-              </a>
-              ) e, para metragens maiores, a{" "}
+              e, para metragens maiores, a{" "}
               <a href="/reforma-de-apartamento-sao-paulo">
                 reforma de apartamento em São Paulo
               </a>
