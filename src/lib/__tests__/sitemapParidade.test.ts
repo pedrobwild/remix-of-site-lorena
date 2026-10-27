@@ -68,8 +68,6 @@ const router = read("src/lib/useHashRoute.ts");
 const NAO_INDEXAVEIS: Record<string, string> = {
   "/o": "src/pages/LpObraPage.tsx",
   "/p": "src/pages/LpPanfletoPage.tsx",
-  // Repete o endereço e o mapa de /contato (TEC-05, auditoria de 05/10/2026).
-  "/mapa": "src/pages/MapaPage.tsx",
   // Página de configuração de cookies: nada a indexar.
   "/preferencias-de-cookies": "src/pages/PreferenciasCookiesPage.tsx",
   // Resultado de busca: noindex, nunca entra no sitemap.

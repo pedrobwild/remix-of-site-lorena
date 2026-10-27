@@ -117,7 +117,7 @@ script só compara literais estáticos.
 | `/admin/*` | sim | **não** | sim, em `SPA_ONLY_ALLOWED` |
 | Canônica só da edge (raro) | não | sim | sim, em `EDGE_ONLY_ALLOWED` |
 | Pública por cadastro no código (ex.: `/videos/<slug>`) | sim (regex) | não — a edge tem a lista `VIDEO_SLUGS`, espelho de `src/content/videoPages.json` | não |
-| Pública **noindex** (ex.: `/buscar`, `/mapa`) | sim | sim | não — mas `noindex: true` no `seoHead` e em `NAO_INDEXAVEIS` do teste `sitemapParidade`; **fora** do sitemap |
+| Pública **noindex** (ex.: `/buscar`, `/preferencias-de-cookies`) | sim | sim | não — mas `noindex: true` no `seoHead` e em `NAO_INDEXAVEIS` do teste `sitemapParidade`; **fora** do sitemap |
 
 Também atualize, quando aplicável:
 - `STATIC_PAGES` em `scripts/sitemap-build.mjs` (regra do `/sitemap.xml`

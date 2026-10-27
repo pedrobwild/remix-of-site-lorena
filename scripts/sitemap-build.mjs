@@ -185,7 +185,7 @@ export function noBairro(label) {
  * lastmod. `files` são os arquivos cujo último commit data a página
  * (scripts/generate-sitemap.mjs grava essa data em src/content/sitemapLastmod.json);
  * `lastmod: "projects" | "posts" | "faq"` sai do banco; sem os dois, sem data.
- * Página noindex (busca, /mapa, preferências de cookies, LPs /o e /p, /admin/*)
+ * Página noindex (busca, preferências de cookies, LPs /o e /p, /admin/*)
  * NUNCA entra aqui; sitemapParidade.test.ts confere a lista contra o roteador.
  */
 export const STATIC_PAGES = [
@@ -200,7 +200,7 @@ export const STATIC_PAGES = [
   { loc: `${BASE_URL}/faq`, changefreq: "monthly", priority: "0.7", lastmod: "faq" },
   { loc: `${BASE_URL}/autorizacao-condominio`, changefreq: "monthly", priority: "0.7", files: ["src/routes/autorizacao-condominio.tsx", "src/pages/AutorizacaoCondominioPage.tsx"] },
   { loc: `${BASE_URL}/contato`, changefreq: "monthly", priority: "0.7", files: ["src/routes/contato.tsx", "src/pages/ContatoPage.tsx"], fallback: "2026-09-26" },
-  // /mapa repete o endereço e o mapa de /contato: noindex, fora do sitemap (TEC-05).
+  // /mapa responde 301 para /contato desde 27/10/2026 (as duas páginas viraram uma só).
   { loc: `${BASE_URL}/mapa-do-site`, changefreq: "weekly", priority: "0.5" },
   { loc: `${BASE_URL}/servicos`, changefreq: "monthly", priority: "0.9", files: ["src/routes/servicos.tsx", "src/pages/ServicosPage.tsx"], fallback: "2026-09-29" },
   { loc: `${BASE_URL}/como-funciona`, changefreq: "monthly", priority: "0.7", files: ["src/routes/como-funciona.tsx", "src/pages/ComoFuncionaPage.tsx", "src/content/etapas.ts"] },

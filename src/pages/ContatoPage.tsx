@@ -23,7 +23,6 @@ import {
   openWhatsapp,
   useLeadSubmit,
 } from "@/lib/useLeadSubmit";
-import { routes } from "@/lib/useHashRoute";
 import { useSeo } from "@/lib/useSeo";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import "./contato.css";
@@ -37,6 +36,7 @@ function mapUrls(address: string) {
   return {
     embed: `https://www.google.com/maps?q=${query}&output=embed`,
     link: `https://www.google.com/maps/search/?api=1&query=${query}`,
+    rota: `https://www.google.com/maps/dir/?api=1&destination=${query}`,
   };
 }
 
@@ -253,8 +253,16 @@ export default function ContatoPage() {
                   <h2>Brooklin</h2>
                   <address>{address}</address>
                   {phone && <p>Telefone: {phone}</p>}
-                  <a className="bwa-contact-link" href={routes.mapa}>
-                    Ver mapa e como chegar <span aria-hidden="true">→</span>
+                  {/* Antes ficava em /mapa, que desde 27/10/2026 redireciona para cá. */}
+                  <p>Seg–sex 9h às 19h · Sáb 9h às 17h. Visitas com hora marcada.</p>
+                  <a
+                    className="bwa-contact-link"
+                    href={mapUrls(address).rota}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-cta="contato-tracar-rota"
+                  >
+                    Traçar rota no Google Maps <span aria-hidden="true">↗</span>
                   </a>
                 </div>
               </article>

@@ -1,8 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import MapaPage from "@/pages/MapaPage";
-import { seoHead , rootPagesSeo } from "@/lib/routeHead";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
+// /mapa repetia o endereço e o mapa de /contato (TEC-05). Em 27/10/2026 as duas
+// páginas viraram uma só: /contato tem endereço, horários, rota e mapa, e /mapa
+// responde 301 (aqui e no vercel.json).
 export const Route = createFileRoute("/mapa")({
-  component: MapaPage,
-  head: ({ matches }) => seoHead({ pagesSeo: rootPagesSeo(matches), title: "Mapa e endereço: Rua Pitú, 72, Brooklin, São Paulo | Bewild", description: "Como chegar à Bewild: Rua Pitú, 72, Sala 115, Brooklin, São Paulo-SP. Mapa, horários (seg–sex 9h–19h, sáb 9h–17h) e rota pelo aplicativo.", path: "/mapa", noindex: true }),
+  beforeLoad: () => {
+    throw redirect({ to: "/contato", statusCode: 301 });
+  },
 });

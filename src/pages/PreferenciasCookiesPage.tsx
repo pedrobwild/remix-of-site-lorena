@@ -40,6 +40,8 @@ export default function PreferenciasCookiesPage() {
       "Veja e mude sua escolha sobre cookies de medição e publicidade do site da Bewild a qualquer momento.",
     canonicalPath: "/preferencias-de-cookies",
     noindex: true,
+    // Fora do Google, mas os links do menu e do rodapé seguem valendo.
+    noindexFollow: true,
     ogType: "website",
   });
 

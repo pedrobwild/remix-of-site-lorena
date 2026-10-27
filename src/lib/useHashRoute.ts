@@ -12,7 +12,6 @@ export type Route =
   | { name: "faq" }
   | { name: "autorizacao-condominio" }
   | { name: "contato" }
-  | { name: "mapa" }
   | { name: "mapa-do-site" }
   | { name: "buscar" }
   | { name: "coletas-por-bairro" }
@@ -97,6 +96,7 @@ export type Route =
  *  - `/blog*` → `/conteudos*` (blog legado removido; URL canônica nova)
  *  - `/diagnostico` → `/orcamento` (página removida; o pedido de orçamento
  *    é a única entrada de lead)
+ *  - `/mapa` → `/contato` (27/10/2026: as duas páginas viraram uma só)
  *  - `/escopo` volta a ser página própria (sem IA), em 12/10/2026
  *  - `/conteudos/<slug fundido>` → artigo que absorveu o conteúdo
  *    (`POSTS_FUNDIDOS`, em `postsFundidos.ts`)
@@ -106,6 +106,7 @@ export function normalizeLegacyPath(pathname: string): string {
   const blog = pathname.match(/^\/blog(\/.*)?$/);
   if (blog) return "/conteudos" + (blog[1] && blog[1] !== "/" ? blog[1] : "");
   if (pathname === "/diagnostico") return "/orcamento";
+  if (/^\/mapa\/?$/.test(pathname)) return "/contato";
   if (/^\/coletas\/?$/.test(pathname)) return "/coletas-por-bairro";
   const conteudo = pathname.match(/^\/conteudos\/([^/]+)\/?$/);
   if (conteudo) {
@@ -143,7 +144,6 @@ function parsePath(rawPath: string): Route {
   if (path === "/faq") return { name: "faq" };
   if (path === "/autorizacao-condominio") return { name: "autorizacao-condominio" };
   if (path === "/contato") return { name: "contato" };
-  if (path === "/mapa") return { name: "mapa" };
   if (path === "/mapa-do-site") return { name: "mapa-do-site" };
   if (path === "/buscar") return { name: "buscar" };
   if (path === "/coletas-por-bairro") return { name: "coletas-por-bairro" };
@@ -337,7 +337,6 @@ export const routes = {
   faq: "/faq",
   autorizacaoCondominio: "/autorizacao-condominio",
   contato: "/contato",
-  mapa: "/mapa",
   mapaDoSite: "/mapa-do-site",
   buscar: "/buscar",
   "coletas-por-bairro": "/coletas-por-bairro",

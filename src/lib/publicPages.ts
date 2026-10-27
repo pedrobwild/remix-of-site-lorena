@@ -19,7 +19,6 @@ export const PUBLIC_PAGES: PublicPage[] = [
   { path: "/orcamento", label: "Orçamento" },
   { path: "/escopo", label: "Escopo" },
   { path: "/contato", label: "Contato" },
-  { path: "/mapa", label: "Mapa e endereço" },
   { path: "/mapa-do-site", label: "Mapa do site" },
   { path: "/faq", label: "Perguntas frequentes" },
   { path: "/onde-atuamos", label: "Onde atuamos" },
