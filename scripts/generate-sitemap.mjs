@@ -115,10 +115,11 @@ function readLastmodJson() {
  */
 export function gitIsShallow() {
   try {
-    const out = execSync("git rev-parse --is-shallow-repository", { cwd: ROOT, stdio: ["ignore", "pipe", "ignore"] })
-      .toString()
-      .trim();
-    return out !== "false";
+    const run = (cmd) => execSync(cmd, { cwd: ROOT, stdio: ["ignore", "pipe", "ignore"] }).toString().trim();
+    if (run("git rev-parse --is-shallow-repository") !== "false") return true;
+    // Repositório recém-criado com um só commit (o build pode copiar os arquivos
+    // e fazer `git init`): não é "raso" para o git, mas também não tem história.
+    return Number(run("git rev-list --count HEAD")) < 50;
   } catch {
     return true;
   }
@@ -139,6 +140,15 @@ function updateLastmodJson() {
   }
   for (const [key, files] of Object.entries(LASTMOD_FILES)) {
     next[key] = gitLastmod(files, previous[key] ?? null);
+  }
+  // Última defesa, independente da forma do clone: dezenas de páginas não
+  // mudam todas no mesmo dia. Se todas saíram com a data do HEAD, o git não
+  // tinha histórico (aconteceu na hospedagem em 26/10/2026 mesmo com a
+  // verificação de clone raso) e a data gravada continua valendo.
+  const datas = new Set(Object.values(next).filter(Boolean));
+  if (datas.size === 1 && datas.has(gitLastmod([]))) {
+    warn("todas as páginas fixas sairiam com a data do HEAD (git sem histórico): src/content/sitemapLastmod.json mantido como está.");
+    return previous;
   }
   const text = `${JSON.stringify(next, null, 2)}\n`;
   if (!existsSync(LASTMOD_JSON) || readFileSync(LASTMOD_JSON, "utf8") !== text) {
