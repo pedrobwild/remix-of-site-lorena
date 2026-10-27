@@ -8,6 +8,8 @@ vi.mock("@/lib/crmAuth", () => ({ attachCrmAuth: {} }));
 vi.mock("@/integrations/supabase/client.server", () => ({ supabaseAdmin: {} }));
 const drain = vi.fn();
 vi.mock("@/lib/engineQualityOutbox.server", () => ({ drainEngineQualityOutbox: (...a: unknown[]) => drain(...a) }));
+const sendMeta = vi.fn();
+vi.mock("../../../supabase/functions/_shared/lead-quality.ts", () => ({ sendSiteLeadQuality: (...a: unknown[]) => sendMeta(...a) }));
 import { setManualLeadQualification } from "@/lib/manualLeadQualification.functions";
 const handler = setManualLeadQualification as unknown as (input: unknown) => Promise<unknown>;
 const leadId = "11111111-1111-4111-8111-111111111111";
@@ -15,14 +17,29 @@ describe("qualificação manual autorizada", () => {
   it.each(["qualificado", "descartado"])("salva %s pela operação atômica", async status => {
     const rpc = vi.fn().mockResolvedValue({ data: status, error: null });
     drain.mockResolvedValueOnce({ lidos: 1, enviados: 1, ignorados: 0, reenvio: 0, falhas: 0 });
-    await expect(handler({ data: { leadId, status }, context: { supabase: { rpc } } })).resolves.toEqual({ status, engine: "enviado" });
+    sendMeta.mockResolvedValueOnce({ ok: true, meta: "sent" });
+    await expect(handler({ data: { leadId, status }, context: { supabase: { rpc } } })).resolves.toEqual({ status, engine: "enviado", meta: "enviado" });
+    expect(sendMeta).toHaveBeenLastCalledWith({}, expect.any(Function), leadId, status, { eventSource: "Painel Bewild" });
     expect(drain).toHaveBeenLastCalledWith({}, expect.any(Function), { leadId });
     expect(rpc).toHaveBeenCalledWith("set_manual_lead_qualification", { p_lead_id: leadId, p_status: status });
   });
   it("Engine fora do ar: a marcação vale no site e fica na fila", async () => {
     const rpc = vi.fn().mockResolvedValue({ data: "descartado", error: null });
     drain.mockRejectedValueOnce(new Error("engine_unreachable"));
-    await expect(handler({ data: { leadId, status: "descartado" }, context: { supabase: { rpc } } })).resolves.toEqual({ status: "descartado", engine: "pendente" });
+    sendMeta.mockResolvedValueOnce({ ok: true, meta: "sent" });
+    await expect(handler({ data: { leadId, status: "descartado" }, context: { supabase: { rpc } } })).resolves.toEqual({ status: "descartado", engine: "pendente", meta: "enviado" });
+  });
+  it("Meta fora do ar: a marcação vale e a sincronização repõe", async () => {
+    const rpc = vi.fn().mockResolvedValue({ data: "qualificado", error: null });
+    drain.mockResolvedValueOnce({ lidos: 1, enviados: 1, ignorados: 0, reenvio: 0, falhas: 0 });
+    sendMeta.mockRejectedValueOnce(new Error("meta_down"));
+    await expect(handler({ data: { leadId, status: "qualificado" }, context: { supabase: { rpc } } })).resolves.toEqual({ status: "qualificado", engine: "enviado", meta: "pendente" });
+  });
+  it("lead que não é de formulário de anúncio não vai à Meta", async () => {
+    const rpc = vi.fn().mockResolvedValue({ data: "qualificado", error: null });
+    drain.mockResolvedValueOnce({ lidos: 1, enviados: 1, ignorados: 0, reenvio: 0, falhas: 0 });
+    sendMeta.mockResolvedValueOnce({ ok: true, meta: "skipped", reason: "not_ad_form" });
+    await expect(handler({ data: { leadId, status: "qualificado" }, context: { supabase: { rpc } } })).resolves.toEqual({ status: "qualificado", engine: "enviado", meta: "ignorado" });
   });
   it("não confirma sucesso quando a autorização do banco recusa", async () => {
     const rpc = vi.fn().mockResolvedValue({ data: null, error: { message: "Acesso restrito a administradores." } });

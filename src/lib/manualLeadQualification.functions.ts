@@ -21,5 +21,18 @@ export const setManualLeadQualification = createServerFn({ method: "POST" })
     } catch {
       /* a fila segura a pendência */
     }
-    return { status: data.status, engine };
+    // Leva a marcação à Meta (QualifiedLead/DisqualifiedLead). Sem isto, lead sem
+    // negócio no Engine nunca chegava à Meta: a sincronização só envia quando o
+    // estágio do Engine muda. Se falhar, a sincronização de hora em hora repõe
+    // os qualificados dos últimos 7 dias (`sendPendingManualQualified`).
+    let meta: "enviado" | "ignorado" | "pendente" = "pendente";
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { sendSiteLeadQuality } = await import("../../supabase/functions/_shared/lead-quality.ts");
+      const r = await sendSiteLeadQuality(supabaseAdmin, (n) => process.env[n], data.leadId, data.status, { eventSource: "Painel Bewild" });
+      if (r.ok) meta = r.meta === "sent" ? "enviado" : "ignorado";
+    } catch {
+      /* a sincronização repõe */
+    }
+    return { status: data.status, engine, meta };
   });
