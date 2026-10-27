@@ -70,6 +70,45 @@ export async function fetchEngineStages(
   return { leads: json.leads, stages: json.stages };
 }
 
+/** Janela da Meta para o evento de qualidade (mesma de `shouldSendMetaQuality`). */
+export const MANUAL_META_WINDOW_MS = 7 * 24 * 3_600_000;
+
+/**
+ * Qualificado marcado no painel nos últimos 7 dias que ainda não chegou à Meta
+ * (lead sem negócio no Engine, ou envio do painel que falhou). Idempotente:
+ * `sendSiteLeadQuality` grava `meta_qualified_sent_at` e não repete.
+ * Devolve quantos eventos saíram.
+ */
+export async function sendPendingManualQualified(admin: ServiceDb, env: Env, now: Date): Promise<number> {
+  const since = new Date(now.getTime() - MANUAL_META_WINDOW_MS).toISOString();
+  let data: unknown;
+  try {
+    const res = await admin
+      .from("leads")
+      .select("id")
+      .eq("status", "qualificado")
+      .eq("manual_qualification", "qualificado")
+      .is("meta_qualified_sent_at", null)
+      .gte("manual_qualification_at", since)
+      .limit(200);
+    if (res.error) return 0;
+    data = res.data;
+  } catch {
+    return 0;
+  }
+  if (!Array.isArray(data)) return 0;
+  let sent = 0;
+  for (const row of data as { id: string }[]) {
+    try {
+      const r = await sendSiteLeadQuality(admin, env, row.id, "qualificado", { eventSource: "Painel Bewild" });
+      if (r.ok && r.meta === "sent") sent++;
+    } catch {
+      /* um lead nunca derruba a sincronização */
+    }
+  }
+  return sent;
+}
+
 export async function runCrmStageSync(
   admin: ServiceDb,
   env: Env,
@@ -177,6 +216,7 @@ export async function runCrmStageSync(
         console.warn("[crm-stage-sync] lead falhou", err instanceof Error ? err.message : "erro");
       }
     }
+    summary.meta_enviados += await sendPendingManualQualified(admin, env, now);
     summary.ok = true;
   } catch (err) {
     summary.error = err instanceof Error ? err.message : "erro";
