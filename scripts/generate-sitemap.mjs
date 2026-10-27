@@ -1,9 +1,9 @@
 // Mantém em dia o que o servidor NÃO consegue calcular sozinho e o retrato
 // usado pelos testes. O sitemap.xml e o llms.txt que vão ao ar são gerados a
 // cada pedido pelas rotas de servidor (src/lib/sitemapServer.ts), lendo o
-// banco; antes eram arquivos de public/ gravados no prebuild, que a
-// hospedagem não rodava (bun não executa `prebuild`), e artigo novo ficava
-// dias fora do sitemap (26/10/2026).
+// banco; antes eram arquivos de public/ gravados no prebuild, que no build
+// da hospedagem rodava sem a chave do banco e saía sem gravar, e artigo novo
+// ficava dias fora do sitemap (26/10/2026).
 //
 // Este script grava:
 //  1. src/content/sitemapLastmod.json — lastmod das páginas fixas, pelo último
@@ -107,9 +107,30 @@ function readLastmodJson() {
   }
 }
 
-/** Passo 1: datas das páginas fixas pelo git (mantém a gravada quando o git não responde). */
+/**
+ * O clone do build da hospedagem é raso (depth 1): `git log -1 -- arquivo`
+ * devolve o único commit que existe para TODO arquivo e cada página fixa
+ * ganharia a data do deploy (aconteceu em 26/10/2026: todas as páginas
+ * saíram com lastmod do dia). Sem histórico, a data gravada é a verdade.
+ */
+export function gitIsShallow() {
+  try {
+    const out = execSync("git rev-parse --is-shallow-repository", { cwd: ROOT, stdio: ["ignore", "pipe", "ignore"] })
+      .toString()
+      .trim();
+    return out !== "false";
+  } catch {
+    return true;
+  }
+}
+
+/** Passo 1: datas das páginas fixas pelo git (mantém as gravadas sem git ou com clone raso). */
 function updateLastmodJson() {
   const previous = readLastmodJson();
+  if (gitIsShallow()) {
+    warn("clone sem histórico (raso) ou sem git: src/content/sitemapLastmod.json mantido como está.");
+    return previous;
+  }
   const next = {};
   for (const page of STATIC_PAGES) {
     if (!page.files) continue;

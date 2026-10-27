@@ -4,10 +4,10 @@
  * src/server.ts, /.well-known/llms.txt).
  *
  * Por que no servidor: até 26/10/2026 os dois eram arquivos de public/
- * gravados no prebuild por scripts/generate-sitemap.mjs. A hospedagem da
- * Lovable não roda o prebuild (bun não executa `prebuild`), então o arquivo
- * publicado era sempre o último commitado à mão — o artigo de 22/10 ficou
- * quatro dias fora do sitemap. Agora o conteúdo (projetos, bairros, artigos)
+ * gravados no prebuild por scripts/generate-sitemap.mjs. No build da
+ * hospedagem o script não tem a chave do banco e saía sem gravar, então o
+ * arquivo publicado era sempre o último commitado à mão — o artigo de 22/10
+ * ficou quatro dias fora do sitemap. Agora o conteúdo (projetos, bairros, artigos)
  * sai do banco na hora, com memo de 10 minutos; só o lastmod das páginas fixas
  * vem de src/content/sitemapLastmod.json, porque é data de commit e o servidor
  * não tem git (o script continua gravando esse arquivo).

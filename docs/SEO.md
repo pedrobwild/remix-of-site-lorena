@@ -163,9 +163,9 @@ O sitemap oficial é **gerado pelo servidor a cada pedido** em
 a partir do modelo `src/content/llms.txt`.
 
 Até 26/10/2026 os dois eram arquivos de `public/` gravados no `prebuild` por
-`scripts/generate-sitemap.mjs`. A hospedagem da Lovable não roda o `prebuild`
-(`bun run build` não executa scripts `pre*`), então o arquivo publicado era o
-último commitado à mão e o artigo de 22/10 ficou quatro dias fora do sitemap.
+`scripts/generate-sitemap.mjs`. No build da hospedagem o script não tem a chave
+do banco e saía sem gravar nada, então o arquivo publicado era o último
+commitado à mão e o artigo de 22/10 ficou quatro dias fora do sitemap.
 Agora o conteúdo sai do banco na hora, com memo de 10 minutos
 (`serverMemo`), e uma publicação nova entra no sitemap em até 10 minutos, sem
 deploy. **Nunca recrie `public/sitemap.xml` ou `public/llms.txt`: o arquivo
