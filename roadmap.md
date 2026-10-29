@@ -1,3 +1,4 @@
+- [ ] Envio automático de pedido e qualificação de investidor: plano preparado; ativação depende de evitar duplicidade da importação e validar consentimento/acesso.
 - [x] Painel de qualificados por objetivo em /admin/leads?aba=objetivos, período de criação e CSV canônico Google Ads; testes locais passam, build OK, sem publicar.
 - [ ] Conferência autenticada do painel com dados reais: sessão automática indisponível para Pedro; requer entrar na prévia.
 - [x] google_ads_offline usa aceite do formulário e data válida sem registro do aviso; lista de exclusão conserva prova anterior. 49 testes passam; compilação automática OK. Consulta somente leitura: 11 qualificações elegíveis, 9 linhas deduplicadas. Sem publicar/implantar.
