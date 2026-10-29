@@ -23,6 +23,8 @@ import { MessageCircle } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import AdminAlert from "@/components/admin/AdminAlert";
 import MetaLeadsPanel from "@/components/admin/MetaLeadsPanel";
+import QualifiedObjectivesPanel from "@/components/admin/QualifiedObjectivesPanel";
+import { Button } from "@/guia/components/ui/button";
 import { ManualLeadQualification } from "@/components/admin/ManualLeadQualification";
 import { LeadQualityDailyChart } from "@/components/admin/LeadQualityDailyChart";
 import { CrmProfileSummary } from "@/components/admin/CrmProfileSummary";
@@ -137,12 +139,13 @@ const ORIGEM_OPTIONS: { value: "all" | LeadOrigem; label: string }[] = [
   { value: "outro", label: "Não identificado" },
 ];
 
-type LeadsTab = "site" | "meta";
+type LeadsTab = "site" | "meta" | "objetivos";
 
 /** Aba inicial pela URL: `/admin/leads?aba=meta` abre os formulários da Meta. */
 function readTab(): LeadsTab {
   try {
-    return new URLSearchParams(window.location.search).get("aba") === "meta" ? "meta" : "site";
+    const value = new URLSearchParams(window.location.search).get("aba");
+    return value === "meta" || value === "objetivos" ? value : "site";
   } catch {
     return "site";
   }
@@ -152,7 +155,7 @@ function readTab(): LeadsTab {
 function writeTab(tab: LeadsTab) {
   try {
     const url = new URL(window.location.href);
-    if (tab === "meta") url.searchParams.set("aba", "meta");
+    if (tab !== "site") url.searchParams.set("aba", tab);
     else url.searchParams.delete("aba");
     window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
   } catch {
@@ -321,6 +324,8 @@ export default function BewildLeadsAdminPage() {
     description:
       "Tudo que chega em um lugar só: mensagens do /contato, pedidos de orçamento (/diagnostico, /orcamento e LPs /o e /p) e parceiros, com status de resposta e prazo de 24h — e, na outra aba, os formulários do Facebook e do Instagram.",
   } as const;
+
+  if (tab === "objetivos") return <BewildAdminShell {...shellProps}><LeadsTabs tab={tab} onChange={switchTab} /><QualifiedObjectivesPanel /></BewildAdminShell>;
 
   if (tab === "meta") {
     return (
@@ -667,6 +672,7 @@ function LeadsTabs({ tab, onChange }: { tab: LeadsTab; onChange: (t: LeadsTab) =
       >
         Formulários Meta
       </button>
+      <Button variant="ghost" role="tab" aria-selected={tab === "objetivos"} className={tab === "objetivos" ? "is-active min-h-11" : "min-h-11"} onClick={() => onChange("objetivos")}>Qualificados por objetivo</Button>
     </div>
   );
 }
