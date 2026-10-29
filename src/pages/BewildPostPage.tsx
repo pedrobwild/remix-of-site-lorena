@@ -33,6 +33,7 @@ import BwaFooter from "@/components/BwaFooter";
 import { chartSetForSlug, chartsPagePath } from "@/content/chartSets";
 import ReformaCalculadora from "@/components/ReformaCalculadora";
 import PostYouTubeVideo from "@/components/PostYouTubeVideo";
+import { BlogArticleBody } from "@/components/BlogHtmlCharts";
 import { postYouTubeVideo } from "@/lib/postYouTubeVideo";
 import { sanitizeBlogHtml } from "@/lib/sanitizeHtml";
 import { wrapArticleTables } from "@/lib/articleTables";
@@ -419,7 +420,7 @@ export default function BewildPostPage({ slug, initial }: Props) {
                 </ol>
               </nav>
             ) : null}
-            <div className="pt-body" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
+            <BlogArticleBody html={bodyHtml} slug={post.slug} />
           </div>
         </section>
 
