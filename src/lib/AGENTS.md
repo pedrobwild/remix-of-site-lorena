@@ -1,5 +1,7 @@
 # src/lib
 
+- Direct Google Ads delivery uses event-scoped private callback capabilities, a transactional queue and existing actions; activation requires disabled duplicate imports, current cookie proof and GCLID. Accepted ingestion is not attribution.
+
 - Qualified-objective reports use admin-authorized paginated reads and canonical offline row building; return aggregates and hashed CSV only, keeping dashboard counts distinct from exportable conversions.
 
 - Home search metadata and keywords share homeSeo exports between SSR and the client hook; preserve admin overrides to avoid divergent tags after hydration.

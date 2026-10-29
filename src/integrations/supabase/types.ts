@@ -874,6 +874,86 @@ export type Database = {
         }
         Relationships: []
       }
+      google_ads_delivery_queue: {
+        Row: {
+          attempts: number
+          callback_token: string
+          created_at: string
+          dedup_key: string
+          event_at: string
+          id: string
+          kind: string
+          lead_id: string
+          lease_until: string | null
+          next_attempt_at: string
+          outcome: string | null
+          request_id: string | null
+          state: string
+          transaction_id: string
+        }
+        Insert: {
+          attempts?: number
+          callback_token?: string
+          created_at?: string
+          dedup_key: string
+          event_at: string
+          id?: string
+          kind: string
+          lead_id: string
+          lease_until?: string | null
+          next_attempt_at?: string
+          outcome?: string | null
+          request_id?: string | null
+          state?: string
+          transaction_id: string
+        }
+        Update: {
+          attempts?: number
+          callback_token?: string
+          created_at?: string
+          dedup_key?: string
+          event_at?: string
+          id?: string
+          kind?: string
+          lead_id?: string
+          lease_until?: string | null
+          next_attempt_at?: string
+          outcome?: string | null
+          request_id?: string | null
+          state?: string
+          transaction_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "google_ads_delivery_queue_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      google_ads_delivery_settings: {
+        Row: {
+          activated_at: string | null
+          enabled: boolean
+          id: boolean
+          qualification_import_disabled: boolean
+        }
+        Insert: {
+          activated_at?: string | null
+          enabled?: boolean
+          id?: boolean
+          qualification_import_disabled?: boolean
+        }
+        Update: {
+          activated_at?: string | null
+          enabled?: boolean
+          id?: boolean
+          qualification_import_disabled?: boolean
+        }
+        Relationships: []
+      }
       image_alt_texts: {
         Row: {
           alt: string
@@ -2333,6 +2413,31 @@ export type Database = {
           views: number
         }[]
       }
+      claim_google_ads_delivery: {
+        Args: { p_id: string; p_token: string }
+        Returns: {
+          attempts: number
+          callback_token: string
+          created_at: string
+          dedup_key: string
+          event_at: string
+          id: string
+          kind: string
+          lead_id: string
+          lease_until: string | null
+          next_attempt_at: string
+          outcome: string | null
+          request_id: string | null
+          state: string
+          transaction_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "google_ads_delivery_queue"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       create_export_key: {
         Args: { p_datasets: string[]; p_name: string }
         Returns: {
@@ -2349,6 +2454,17 @@ export type Database = {
       export_tracking_daily: {
         Args: { p_since: string; p_until: string }
         Returns: Json
+      }
+      finish_google_ads_delivery: {
+        Args: {
+          p_id: string
+          p_next: string
+          p_outcome: string
+          p_request_id: string
+          p_state: string
+          p_token: string
+        }
+        Returns: undefined
       }
       get_image_alts: {
         Args: { p_urls: string[] }
@@ -2400,6 +2516,7 @@ export type Database = {
         Returns: string
       }
       resolve_404_redirect: { Args: { p_path: string }; Returns: string }
+      retry_google_ads_delivery: { Args: { p_id: string }; Returns: undefined }
       revoke_export_key: { Args: { p_id: string }; Returns: undefined }
       set_manual_lead_qualification: {
         Args: { p_lead_id: string; p_status: string }
