@@ -41,6 +41,7 @@ import ContatoPage from "@/pages/ContatoPage";
 import LpObraPage from "@/pages/LpObraPage";
 import LpPanfletoPage from "@/pages/LpPanfletoPage";
 import OrcamentoPage from "@/pages/OrcamentoPage";
+import EscopoPage from "@/pages/EscopoPage";
 import ParceirosPage from "@/pages/ParceirosPage";
 import { setConsent } from "../cookieConsent";
 
@@ -482,6 +483,19 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     preencher({ chaves: "Estou comprando o imóvel" });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: /Pedir orçamento/ })));
     expect(sendLeadMock.mock.calls[0][0]).toMatchObject({ form_path: "/orcamento", gclid: "Cj0KCQjw_abc-123" });
+  });
+});
+
+describe("/escopo — objetivo explícito antes do prefill", () => {
+  it("não transmite objetivo padrão ao orçamento; transmite só a escolha", () => {
+    render(<EscopoPage />);
+    const objetivo = screen.getByRole("combobox", { name: "3. Para que é a reforma?" });
+    expect(objetivo).toHaveValue("");
+    const link = () => document.querySelector<HTMLAnchorElement>('a[href^="/orcamento?"]');
+    expect(link()).not.toBeNull();
+    expect(link()?.getAttribute("href")).not.toContain("objetivo=");
+    fireEvent.change(objetivo, { target: { value: "Moradia" } });
+    expect(link()?.getAttribute("href")).toContain("objetivo=Moradia");
   });
 });
 
