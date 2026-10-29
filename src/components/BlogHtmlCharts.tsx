@@ -7,8 +7,7 @@ const number = (value: number) => value.toLocaleString("pt-BR", { maximumFractio
 const money = (value: number) => `R$ ${number(value)}`;
 const geometry = (values: Record<string, number>) => Object.fromEntries(Object.entries(values).map(([key, value]) => [`--${key}`, value])) as CSSProperties;
 const sum = (values: number[]) => values.reduce((total, value) => total + value, 0);
-// Mantém o arredondamento dos SVGs (12,5% → 12%) sem alterar as contagens reais.
-export const chartPercent = (count: number, total: number) => total ? Math.round((count / total * 100) - Number.EPSILON * 100) : 0;
+export const chartPercent = (count: number, total: number) => total ? Math.round(count / total * 100) : 0;
 
 function Frame({ chartKey, children, subtitle }: { chartKey: ChavesChartKey; children: ReactNode; subtitle: string }) {
   const chart = chavesCharts[chartKey];
