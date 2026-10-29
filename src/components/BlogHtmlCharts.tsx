@@ -2,6 +2,7 @@ import { type CSSProperties, type ReactNode } from "react";
 import parse, { domToReact, Element, type DOMNode, type HTMLReactParserOptions } from "html-react-parser";
 import { chavesCharts, CHAVES_SLUG, chavesChartKeyFromUrl, type ChavesChartKey } from "@/content/chavesCharts";
 import "@/styles/blog-charts.css";
+import { ChartInteraction } from "./ChartInteraction";
 
 const number = (value: number) => value.toLocaleString("pt-BR", { maximumFractionDigits: 2 });
 const money = (value: number) => `R$ ${number(value)}`;
@@ -13,13 +14,13 @@ function Frame({ chartKey, children, subtitle }: { chartKey: ChavesChartKey; chi
   const chart = chavesCharts[chartKey];
   return <figure className="blog-chart" data-chart={chart.id} aria-label={chart.title}>
     <header><h3>{chart.title}</h3><p>{subtitle}</p></header>
-    {children}<figcaption>{chart.source}</figcaption>
+    <ChartInteraction labels={chartKey === "objetivos" ? chavesCharts.objetivos.categories : chartKey === "tempo" ? chavesCharts.tempo.stages : chavesCharts[chartKey].rows.map((row) => row.label)}>{children}</ChartInteraction><figcaption>{chart.source}</figcaption>
   </figure>;
 }
 
 function RangePlot({ rows, max, monetary = false }: { rows: { label: string; median: number; count: number; q1?: number; q3?: number; above50?: number; bandTop?: number; bandHeight?: number }[]; max: number; monetary?: boolean }) {
   return <div className="blog-chart__ranges">
-    {rows.map((row) => <div className="blog-chart__range" key={row.label}>
+    {rows.map((row, index) => <div className="blog-chart__range" key={row.label} data-series={index} tabIndex={0} data-detail={`${row.label}: mediana ${monetary ? money(row.median) : `${number(row.median)} m²`} · ${row.count} ${monetary ? "contratos" : "pedidos"}${row.q1 !== undefined && row.q3 !== undefined ? ` · Q1–Q3: ${number(row.q1)}–${number(row.q3)} m²` : ""}`} aria-label={`${row.label}: ${monetary ? money(row.median) : `${number(row.median)} m²`}`}>
       <strong>{monetary ? money(row.median) : `${number(row.median)} m²`}</strong>
       <div className="blog-chart__plot" aria-hidden="true">
         <span className="blog-chart__band" style={geometry({ top: row.q3 !== undefined ? (1 - row.q3 / max) * 100 : ((row.bandTop ?? 70) - 70) / 2, height: row.q1 !== undefined && row.q3 !== undefined ? (row.q3 - row.q1) / max * 100 : (row.bandHeight ?? 0) / 2 })} />
@@ -35,7 +36,7 @@ export function BlogHtmlChart({ chartKey }: { chartKey: ChavesChartKey }) {
   if (chartKey === "pedidos") {
     const data = chavesCharts.pedidos; const total = sum(data.rows.map((row) => row.count));
     return <Frame chartKey={chartKey} subtitle={`${total} pedidos com resposta (${data.period})`}>
-      <div className="blog-chart__bars">{data.rows.map((row, index) => <div className="blog-chart__bar-row" key={row.label}>
+      <div className="blog-chart__bars">{data.rows.map((row, index) => <div className="blog-chart__bar-row" key={row.label} data-series={index} tabIndex={0} data-detail={`${row.label}: ${row.count} de ${total} pedidos (${chartPercent(row.count, total)}%)`} aria-label={`${row.label}: ${row.count} pedidos`}>
         <span>{row.label}</span><div className="blog-chart__track"><span className={`blog-chart__fill tone-${index === 0 ? 1 : 0}`} style={geometry({ width: row.count / total * 100 })} /></div><strong>{chartPercent(row.count, total)}% ({row.count})</strong>
       </div>)}</div><p>{data.missing} pedidos não informaram a situação.</p>
     </Frame>;
@@ -45,9 +46,9 @@ export function BlogHtmlChart({ chartKey }: { chartKey: ChavesChartKey }) {
     const data = chavesCharts.objetivos;
     return <Frame chartKey={chartKey} subtitle={`Objetivo declarado por situação das chaves (${sum(data.rows.map((row) => row.count))} pedidos)`}>
       <div className="blog-chart__bars">{data.rows.map((row) => <div className="blog-chart__stack-row" key={row.label}><span>{row.label}</span>
-        <div className="blog-chart__stack">{row.percentages.map((percent, index) => percent > 0 ? <span key={data.categories[index]} className={`tone-${index}`} style={geometry({ width: percent })} title={`${data.categories[index]}: ${percent}%`}>{percent >= 10 ? `${percent}%` : ""}</span> : null)}</div><strong>{row.count}</strong>
+        <div className="blog-chart__stack">{row.percentages.map((percent, index) => percent > 0 ? <span key={data.categories[index]} data-series={index} tabIndex={0} data-detail={`${row.label} · ${data.categories[index]}: ${percent}% · ${row.count} pedidos na situação`} aria-label={`${row.label}, ${data.categories[index]}: ${percent}%`} className={`tone-${index}`} style={geometry({ width: percent })}>{percent >= 10 ? `${percent}%` : ""}</span> : null)}</div><strong>{row.count}</strong>
         <ul className="blog-chart__details">{row.percentages.map((percent, index) => <li key={data.categories[index]}>{data.categories[index]}: {percent}%</li>)}</ul>
-      </div>)}</div><div className="blog-chart__legend">{data.categories.map((label, index) => <span key={label}><i className={`tone-${index}`} />{label}</span>)}</div>
+      </div>)}</div>
     </Frame>;
   }
   if (chartKey === "tempo") {
@@ -56,7 +57,7 @@ export function BlogHtmlChart({ chartKey }: { chartKey: ChavesChartKey }) {
       <div className="blog-chart__timelines">{data.rows.map((row) => {
         let start = row.start;
         return <div key={row.label}><strong>{row.label}</strong><div className="blog-chart__timeline"><span className="blog-chart__keys" aria-hidden="true" />
-          {row.durations.map((duration, index) => { const left = start; start += duration + (index === 1 ? row.gapAfterProject : 0); return <span key={data.stages[index]} className={`blog-chart__stage tone-${index === 1 ? 0 : index === 4 ? 1 : index === 2 ? 2 : 3}`} style={geometry({ left: (left + 10) / 42 * 100, width: duration / 42 * 100 })} title={`${data.stages[index]}: ${duration} semana(s)`}>{index === 1 || index === 4 ? data.stages[index] : ""}</span>; })}
+          {row.durations.map((duration, index) => { const left = start; start += duration + (index === 1 ? row.gapAfterProject : 0); return <span key={data.stages[index]} data-series={index} tabIndex={0} data-detail={`${row.label} · ${data.stages[index]}: ${duration} semana(s), da semana ${left} à ${left + duration}`} aria-label={`${data.stages[index]}: ${duration} semana(s)`} className={`blog-chart__stage tone-${index === 1 ? 0 : index === 4 ? 1 : index === 2 ? 2 : 3}`} style={geometry({ left: (left + 10) / 42 * 100, width: duration / 42 * 100 })}>{index === 1 || index === 4 ? data.stages[index] : ""}</span>; })}
         </div><p>Pronto: semana {row.ready} · faixa de {row.range[0]} a {row.range[1]} semanas após as chaves.</p></div>;
       })}<div className="blog-chart__axis"><span>−8 semanas</span><span>Chaves (0)</span><span>+16</span><span>+32</span></div></div><p>{data.note}</p>
     </Frame>;
@@ -64,7 +65,7 @@ export function BlogHtmlChart({ chartKey }: { chartKey: ChavesChartKey }) {
   if (chartKey === "espera") {
     const data = chavesCharts.espera; const max = Math.max(...data.rows.map((row) => row.max));
     return <Frame chartKey={chartKey} subtitle={`Cenário ilustrativo: ${data.area} m², contrato mediano de ${money(data.contract)}`}>
-      <div className="blog-chart__bars">{data.rows.map((row, index) => <div className="blog-chart__cost-row" key={row.label}><span>{row.label}</span><div className="blog-chart__track"><span className={`blog-chart__fill tone-${index === 0 ? 1 : index === 1 ? 0 : 2}`} style={geometry({ width: row.max / max * 100 })} /><span className="blog-chart__uncertainty" style={geometry({ left: row.min / max * 100, width: (row.max - row.min) / max * 100 })} /></div><strong>{money(row.min)}{row.max !== row.min ? ` a ${money(row.max)}` : ""}/mês</strong></div>)}</div><p>Para quem vai morar, troque o aluguel não recebido pelo aluguel que continua pagando.</p>
+      <div className="blog-chart__bars">{data.rows.map((row, index) => <div className="blog-chart__cost-row" key={row.label} data-series={index} tabIndex={0} data-detail={`${row.label}: ${money(row.min)}${row.max !== row.min ? ` a ${money(row.max)}` : ""}/mês · cenário de ${data.area} m²`} aria-label={row.label}><span>{row.label}</span><div className="blog-chart__track"><span className={`blog-chart__fill tone-${index === 0 ? 1 : index === 1 ? 0 : 2}`} style={geometry({ width: row.max / max * 100 })} /><span className="blog-chart__uncertainty" style={geometry({ left: row.min / max * 100, width: (row.max - row.min) / max * 100 })} /></div><strong>{money(row.min)}{row.max !== row.min ? ` a ${money(row.max)}` : ""}/mês</strong></div>)}</div><p>Para quem vai morar, troque o aluguel não recebido pelo aluguel que continua pagando.</p>
     </Frame>;
   }
   const data = chavesCharts.orcamento;
