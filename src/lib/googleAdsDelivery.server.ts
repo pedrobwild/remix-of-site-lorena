@@ -45,6 +45,6 @@ export async function processGoogleAdsDelivery(db: RpcDb, id: string, token: str
     }
   } catch { outcome = "tentativa_nao_confirmada"; }
   if (event.attempts >= 6 && state === "pending") { state = "failed"; outcome = "limite_de_tentativas"; }
-  const saved = await db.rpc("finish_google_ads_delivery", { p_id: id, p_token: token, p_state: state, p_outcome: outcome, p_request_id: requestId, p_next: deliveryRetryAt(Date.now(), event.attempts, retryAfter) });
+  const saved = await db.rpc("finish_google_ads_delivery", { p_id: id, p_token: token, p_state: state, p_outcome: outcome, p_request_id: requestId ?? "", p_next: deliveryRetryAt(Date.now(), event.attempts, retryAfter) });
   return { status: saved.error ? 503 : 200, outcome: saved.error ? "resultado_nao_persistido" : outcome };
 }

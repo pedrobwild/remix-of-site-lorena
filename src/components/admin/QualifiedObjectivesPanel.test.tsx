@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import QualifiedObjectivesPanel from "./QualifiedObjectivesPanel";
 
 vi.mock("@tanstack/react-start", () => ({ useServerFn: (fn: unknown) => fn }));
+vi.mock("./GoogleAdsDeliveryStatus", () => ({ default: () => null }));
 vi.mock("@/lib/qualifiedObjectives.functions", () => ({ getQualifiedObjectives: vi.fn(async ({ data }: { data: { from: string } }) => ({ groups: [{ objective: "Short stay", count: 3 }], total: data.from === "2026-10-01" ? 3 : 1, exportCount: 1, csv: "Conversion Name\r\nLead qualificado investidor" })) }));
 
 describe("período do painel de qualificados", () => {
