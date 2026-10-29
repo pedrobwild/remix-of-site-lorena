@@ -41,6 +41,7 @@ import ContatoPage from "@/pages/ContatoPage";
 import LpObraPage from "@/pages/LpObraPage";
 import LpPanfletoPage from "@/pages/LpPanfletoPage";
 import OrcamentoPage from "@/pages/OrcamentoPage";
+import EscopoPage from "@/pages/EscopoPage";
 import ParceirosPage from "@/pages/ParceirosPage";
 import { setConsent } from "../cookieConsent";
 
@@ -292,6 +293,48 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     expect(trackEventMock).not.toHaveBeenCalledWith("orcamento_step", { step: 4 });
   });
 
+  it("sem objetivo não avança nem envia; escolher permite avançar", () => {
+    render(<OrcamentoPage />);
+    type("orc-bairro", "Moema");
+    continuar();
+    expect(screen.getAllByRole("radio").every((radio) => !(radio as HTMLInputElement).checked)).toBe(true);
+    continuar();
+    const group = screen.getByRole("radiogroup");
+    expect(group).toContainElement(document.activeElement as HTMLElement);
+    expect(document.activeElement).toBe(screen.getByRole("radio", { name: /Short stay/ }));
+    expect(group).toHaveAttribute("aria-invalid", "true");
+    expect(group).toHaveAccessibleDescription("Escolha o objetivo do imóvel.");
+    expect(screen.queryByRole("heading", { name: /Em que pé está o imóvel/ })).toBeNull();
+    expect(screen.getByRole("button", { name: /03\s*Situação/ })).toBeDisabled();
+    expect(trackEventMock).not.toHaveBeenCalledWith("orcamento_step", { step: 2 });
+    expect(sendLeadMock).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("radio", { name: /Morar/ }));
+    continuar();
+    expect(screen.getByRole("heading", { name: /Em que pé está o imóvel/ })).toBeInTheDocument();
+    expect(trackEventMock).toHaveBeenCalledWith("orcamento_step", { step: 2 });
+  });
+
+  it("objetivo válido vindo de /escopo é marcado e permite avançar", () => {
+    window.history.replaceState({}, "", "/orcamento?objetivo=Loca%C3%A7%C3%A3o+tradicional&area=28&estado=No+contrapiso&itens=obra");
+    render(<OrcamentoPage />);
+    type("orc-bairro", "Moema");
+    continuar();
+    expect(screen.getByRole("radio", { name: /Locação tradicional/ })).toBeChecked();
+    continuar();
+    expect(screen.getByRole("heading", { name: /Em que pé está o imóvel/ })).toBeInTheDocument();
+  });
+
+  it("objetivo desconhecido na URL não marca investidor nem permite avançar", () => {
+    window.history.replaceState({}, "", "/orcamento?objetivo=inventado");
+    render(<OrcamentoPage />);
+    type("orc-bairro", "Moema");
+    continuar();
+    continuar();
+    expect(screen.getAllByRole("radio").every((radio) => !(radio as HTMLInputElement).checked)).toBe(true);
+    expect(screen.getByRole("radiogroup")).toContainElement(document.activeElement as HTMLElement);
+    expect(sendLeadMock).not.toHaveBeenCalled();
+  });
+
   it("troca de etapa foca o H2, Voltar preserva o preenchido e o progresso volta", () => {
     render(<OrcamentoPage />);
     type("orc-bairro", "Moema");
@@ -299,8 +342,7 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     continuar();
     expect(document.activeElement).toHaveTextContent("Para que é a reforma?");
     expect(trackEventMock).toHaveBeenCalledWith("orcamento_step", { step: 1 });
-    // Padrão: short stay.
-    expect(screen.getByRole("radio", { name: /Short stay/ })).toBeChecked();
+    expect(screen.getAllByRole("radio").every((radio) => !(radio as HTMLInputElement).checked)).toBe(true);
 
     fireEvent.click(screen.getByRole("button", { name: /Voltar/ }));
     expect(byId("orc-bairro").value).toBe("Moema");
@@ -308,6 +350,7 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     expect(byId("orc-area")).toHaveAttribute("aria-valuetext", "40 m²");
 
     continuar();
+    fireEvent.click(screen.getByRole("radio", { name: /Short stay/ }));
     continuar();
     expect(screen.getByRole("heading", { name: /Em que pé está o imóvel/ })).toBeInTheDocument();
     // Etapa 04 ainda não foi vista: não dá para pular para ela.
@@ -440,6 +483,19 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     preencher({ chaves: "Estou comprando o imóvel" });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: /Pedir orçamento/ })));
     expect(sendLeadMock.mock.calls[0][0]).toMatchObject({ form_path: "/orcamento", gclid: "Cj0KCQjw_abc-123" });
+  });
+});
+
+describe("/escopo — objetivo explícito antes do prefill", () => {
+  it("não transmite objetivo padrão ao orçamento; transmite só a escolha", () => {
+    render(<EscopoPage />);
+    const objetivo = screen.getByRole("combobox", { name: "3. Para que é a reforma?" });
+    expect(objetivo).toHaveValue("");
+    const link = () => document.querySelector<HTMLAnchorElement>('a[href^="/orcamento?"]');
+    expect(link()).not.toBeNull();
+    expect(link()?.getAttribute("href")).not.toContain("objetivo=");
+    fireEvent.change(objetivo, { target: { value: "Moradia" } });
+    expect(link()?.getAttribute("href")).toContain("objetivo=Moradia");
   });
 });
 

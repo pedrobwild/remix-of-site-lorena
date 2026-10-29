@@ -148,6 +148,40 @@ describe("google_ads_offline — janelas do Google", () => {
   });
 });
 
+describe("google_ads_offline — uma conversão por pessoa e nome", () => {
+  it("mesmos hashes com 19 minutos de diferença mantêm só a qualificação mais antiga", async () => {
+    const earlier = "2026-10-12T12:00:00Z";
+    const later = "2026-10-12T12:19:00Z";
+    const rows = await build([
+      lead({ id: "later", updated_at: later }),
+      lead({ id: "earlier", updated_at: earlier }),
+    ]);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({
+      Email: await sha256Hex("ana@exemplo.com"),
+      "Phone Number": await sha256Hex("+5511987654321"),
+      "Conversion Name": "Lead qualificado investidor",
+      "Conversion Time": "2026-10-12 09:00:00-03:00",
+      "Conversion Value": 10000,
+    });
+  });
+
+  it("prioriza e-mail mesmo com telefones e gclids diferentes", async () => {
+    expect(await build([lead(), lead({ id: "l2", email: "ana@exemplo.com", whatsapp: "11912345678", gclid: "other" })])).toHaveLength(1);
+  });
+
+  it("sem e-mail usa telefone normalizado; sem contatos usa gclid", async () => {
+    expect(await build([lead({ email: null }), lead({ id: "l2", email: null, whatsapp: "+55 (11) 98765-4321", gclid: "other" })])).toHaveLength(1);
+    expect(await build([lead({ email: null, whatsapp: null }), lead({ id: "l2", email: null, whatsapp: null })])).toHaveLength(1);
+  });
+
+  it("não une pessoas com e-mails distintos nem nomes de conversão diferentes", async () => {
+    const rows = await build([lead({ crm_won: true }), lead({ id: "l2", email: "outra@exemplo.com" })]);
+    expect(rows).toHaveLength(3);
+    expect(rows.map((r) => r["Conversion Name"])).toEqual(["Lead qualificado investidor", "Contrato assinado", "Lead qualificado investidor"]);
+  });
+});
+
 describe("google_ads_offline — hash e formato", () => {
   it("normaliza e-mail e telefone como o Google pede", () => {
     expect(normalizeEmailForHash("  Ana@Exemplo.COM ")).toBe("ana@exemplo.com");

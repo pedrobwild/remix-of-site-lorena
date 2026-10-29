@@ -31,7 +31,7 @@ export default function EscopoPage() {
   const uid = useId();
   const [area, setArea] = useState("28");
   const [estado, setEstado] = useState<string>(ESTADOS_IMOVEL[0]);
-  const [objetivo, setObjetivo] = useState<string>(OBJETIVOS[0].value);
+  const [objetivo, setObjetivo] = useState<string>("");
   const [itens, setItens] = useState<ItemEscopoId[]>([...IDS_ITENS]);
 
   useSeo({
@@ -107,6 +107,7 @@ export default function EscopoPage() {
               <div className="rc-field rc-field--wide">
                 <label htmlFor={`${uid}-objetivo`}>3. Para que é a reforma?</label>
                 <select id={`${uid}-objetivo`} value={objetivo} onChange={(e) => setObjetivo(e.target.value)}>
+                  <option value="" disabled />
                   {OBJETIVOS.map((o) => (
                     <option key={o.value} value={o.value}>
                       {o.label}{o.dica ? ` — ${o.dica}` : ""}
