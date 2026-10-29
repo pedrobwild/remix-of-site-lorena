@@ -299,7 +299,8 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     expect(screen.getAllByRole("radio").every((radio) => !(radio as HTMLInputElement).checked)).toBe(true);
     continuar();
     const group = screen.getByRole("radiogroup");
-    expect(document.activeElement).toBe(group);
+    expect(group).toContainElement(document.activeElement as HTMLElement);
+    expect(document.activeElement).toBe(screen.getByRole("radio", { name: /Short stay/ }));
     expect(group).toHaveAttribute("aria-invalid", "true");
     expect(group).toHaveAccessibleDescription("Escolha o objetivo do imóvel.");
     expect(screen.queryByRole("heading", { name: /Em que pé está o imóvel/ })).toBeNull();
@@ -329,7 +330,7 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     continuar();
     continuar();
     expect(screen.getAllByRole("radio").every((radio) => !(radio as HTMLInputElement).checked)).toBe(true);
-    expect(document.activeElement).toBe(screen.getByRole("radiogroup"));
+    expect(screen.getByRole("radiogroup")).toContainElement(document.activeElement as HTMLElement);
     expect(sendLeadMock).not.toHaveBeenCalled();
   });
 
