@@ -25,6 +25,7 @@ import {
   type ExportRecord,
   type ExportRequest,
   buildGoogleAdsOfflineRows,
+  pickQualifiedAt,
   buildConsentByLead,
   canExportGoogleAdsLead,
   exportFilename,
@@ -194,20 +195,20 @@ async function readGoogleAdsOffline(db: SupabaseClient, r: ExportRequest): Promi
   const consentedLeads = leads.rows.filter((lead) => canExportGoogleAdsLead(lead, consentByLead.get(String(lead.id)), Date.now()));
   if (!consentedLeads.length) return { rows: [], error: null };
 
-  const qualifiedAt = new Map<string, string>();
+  const qualifiedRows: { lead_id: string; created_at: string; note: string | null }[] = [];
   const ids = consentedLeads.filter((l) => l.status === "qualificado").map((l) => String(l.id));
   for (let i = 0; i < ids.length; i += 200) {
     const { data, error } = await db
       .from("lead_qualification_log")
-      .select("lead_id, created_at")
+      .select("lead_id, created_at, note")
       .in("lead_id", ids.slice(i, i + 200))
       .eq("to_status", "qualificado")
       .order("created_at", { ascending: true });
     if (error) return { rows: [], error: error.message };
-    for (const row of (data ?? []) as { lead_id: string; created_at: string }[]) {
-      if (!qualifiedAt.has(row.lead_id)) qualifiedAt.set(row.lead_id, row.created_at);
-    }
+    qualifiedRows.push(...((data ?? []) as { lead_id: string; created_at: string; note: string | null }[]));
   }
+  // Prefere a chegada a Lead (ou depois); sem ela, a 1ª linha `qualificado`.
+  const qualifiedAt = pickQualifiedAt(qualifiedRows);
   const wonIds = consentedLeads.filter((l) => l.crm_won === true).map((l) => String(l.id));
   const contracts = await readCrmContractValues(wonIds);
   return { rows: await buildGoogleAdsOfflineRows({ leads: consentedLeads, consentByLead, qualifiedAt, contracts: contracts ?? undefined }), error: null };
