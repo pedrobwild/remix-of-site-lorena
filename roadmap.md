@@ -1,4 +1,5 @@
-- [ ] Painel de qualificados por objetivo na central de leads, período e CSV canônico Google Ads; testar sem publicar.
+- [x] Painel de qualificados por objetivo em /admin/leads?aba=objetivos, período de criação e CSV canônico Google Ads; testes locais passam, build OK, sem publicar.
+- [ ] Conferência autenticada do painel com dados reais: sessão automática indisponível para Pedro; requer entrar na prévia.
 - [x] google_ads_offline usa aceite do formulário e data válida sem registro do aviso; lista de exclusão conserva prova anterior. 49 testes passam; compilação automática OK. Consulta somente leitura: 11 qualificações elegíveis, 9 linhas deduplicadas. Sem publicar/implantar.
 - [x] Adicionar detalhes por hover/foco/toque e legendas clicáveis aos seis gráficos; 6 testes passam, build OK. Verificação no navegador da rota real permanece indisponível; sem publicar.
 - [x] Converter os seis gráficos das chaves em HTML reutilizável com dados separados e substituição de mídias registradas; SVGs preservados. 11 testes passam e visual sem overflow em 320/414/1280. Artigo retorna 404 na prévia: integração testada com o mesmo renderizador e dados fornecidos, não no artigo publicado. Sem publicar.
