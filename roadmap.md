@@ -1,4 +1,5 @@
-- [ ] Envio automático de pedido e qualificação de investidor: plano preparado; ativação depende de evitar duplicidade da importação e validar consentimento/acesso.
+- [x] Preparar envio automático de pedido e qualificação: fila transacional, callback privado por evento, reenvio limitado e painel de estados; 47 testes passam e build OK. Fila vazia e envio desativado; sem publicar.
+- [ ] Ativar/publicar envio Google Ads: confirmar desativação da importação de qualificados e testar com sessão administrativa; sem conta correspondente para sessão automática. Sem envio real nem reenviar histórico.
 - [x] Painel de qualificados por objetivo em /admin/leads?aba=objetivos, período de criação e CSV canônico Google Ads; testes locais passam, build OK, sem publicar.
 - [ ] Conferência autenticada do painel com dados reais: sessão automática indisponível para Pedro; requer entrar na prévia.
 - [x] google_ads_offline usa aceite do formulário e data válida sem registro do aviso; lista de exclusão conserva prova anterior. 49 testes passam; compilação automática OK. Consulta somente leitura: 11 qualificações elegíveis, 9 linhas deduplicadas. Sem publicar/implantar.
