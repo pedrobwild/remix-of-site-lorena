@@ -9,6 +9,7 @@
 
 <!-- LOVABLE:BEGIN -->
 - Blog HTML charts use typed data separated from reusable React renderers and replace only registered image URLs after body sanitization; SSR and hydration share the same renderer, while original downloadable SVGs remain unchanged.
+- ChartInteraction owns local series emphasis and pointer/focus/touch detail state without recalculating source data or removing SSR content; legends use pressed-state controls for keyboard access.
 - Studio price references reuse BASE_CUSTO for historical statistics and STUDIO_TABELA_VIGENTE for dated current examples and scoped deadlines; render them directly in the service page SSR to keep distinct sources without client-only content.
 - GA4 reuses the existing CTA and lead events with closed neighborhood categories; committed neighborhood choices emit search once per session/page/category, without free-text addresses or joining anonymous visits to lead records.
 - GA4 generate_lead applies its explicit BRL lead weight in trackEvent after sanitizing caller parameters, preserving consent and delivery deduplication; keep other events and platform qualification rules independent because this is not contract revenue.

@@ -1,4 +1,4 @@
-- [ ] Adicionar detalhes por hover/foco/toque e legendas clicáveis aos seis gráficos; validar sem publicar.
+- [x] Adicionar detalhes por hover/foco/toque e legendas clicáveis aos seis gráficos; 6 testes passam, build OK. Verificação no navegador da rota real permanece indisponível; sem publicar.
 - [x] Converter os seis gráficos das chaves em HTML reutilizável com dados separados e substituição de mídias registradas; SVGs preservados. 11 testes passam e visual sem overflow em 320/414/1280. Artigo retorna 404 na prévia: integração testada com o mesmo renderizador e dados fornecidos, não no artigo publicado. Sem publicar.
 - [x] Exigir objetivo explícito no orçamento; /p já obrigatório e vazio, /contato e /o sem objetivo, /diagnostico redireciona. Escopo sem objetivo padrão para não contaminar prefill. Navegador conferiu bloqueio, foco no rádio, escolha e prefill explícito; sem envio real.
 - [x] Deduplicar google_ads_offline por conversão/pessoa mantendo a data mais antiga; testes de identidade, horários e nomes passam, valores e aceite preservados. Correção preparada, sem implantar exportador ou publicar site.
