@@ -114,3 +114,4 @@
 - [x] Conectar site-client-profiles no servidor: resumo administrativo e perfil individual com releitura automática a cada minuto, sem cópias. 18 testes e lint específico passam; compilação automática OK; painel autenticado confirmou resumo real de 355 conversas, perfil sem análise corretamente não classificado e releitura após um minuto, sem envio de leads ou overflow do resumo em 414 px. Sem publicar.
 - [ ] Complementar os perfis com novas fontes de visitas e interesses — aguarda identificação da fonte autorizada; não vincular visitas anônimas a leads.
 - [x] Conversão de lead do Google Ads só para investidor; demais viram `lead_nao_investidor` (26/10/2026, não publicado)
+- [x] Exportação Google Ads: deduplicar só qualificado/desqualificado (contratos um a um) e hora da qualificação pela chegada a Lead; status por ponto do funil no log do CRM. Sem publicar nem implantar.
