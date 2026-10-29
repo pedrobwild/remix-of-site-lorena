@@ -13,6 +13,14 @@
    ========================================================= */
 
 :root {
+  --blog-chart-ink: #1F2937;
+  --blog-chart-muted: #6B7280;
+  --blog-chart-main: #0F4C5C;
+  --blog-chart-accent: #E8702A;
+  --blog-chart-secondary: #7FA9B3;
+  --blog-chart-grid: #E5E7EB;
+  --blog-chart-band: rgba(15,76,92,.25);
+  --blog-chart-on-color: #FFFFFF;
   /* Palette — paleta legada (uso interno): Neutral Black / City Gray / Clear White */
   --ink: #0A0A0A;            /* Neutral Black */
   --ink-900: #121212;
@@ -51,6 +59,17 @@
   /* Motion */
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.dark {
+  --blog-chart-ink: #F3F4F6;
+  --blog-chart-muted: #A8B0BD;
+  --blog-chart-main: #216A7C;
+  --blog-chart-accent: #B94E14;
+  --blog-chart-secondary: #7FA9B3;
+  --blog-chart-grid: #343B46;
+  --blog-chart-band: rgba(127,169,179,.3);
+  --blog-chart-on-color: #FFFFFF;
 }
 
 html {

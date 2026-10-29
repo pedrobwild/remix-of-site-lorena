@@ -1,0 +1,37 @@
+.bw-post .blog-chart{margin:32px 0;padding:20px 0;border-block:1px solid var(--pt-hair);color:var(--blog-chart-ink);font-size:14px;line-height:1.5;letter-spacing:0;min-width:0}
+.bw-post .blog-chart h3{font-size:18px;line-height:1.35;letter-spacing:0;margin:0 0 8px;color:inherit}
+.bw-post .blog-chart p{font-size:13px;margin:8px 0 16px;color:var(--blog-chart-muted)}
+.bw-post .blog-chart figcaption{font-family:var(--font-body);font-size:12px;letter-spacing:0;text-transform:none;color:var(--blog-chart-muted);font-weight:400;margin-top:18px}
+.blog-chart__bars{display:grid;gap:22px;margin:24px 0}
+.blog-chart__bar-row,.blog-chart__stack-row{display:grid;grid-template-columns:145px minmax(0,1fr) auto;gap:12px;align-items:center}
+.blog-chart__track{height:34px;position:relative;background:var(--blog-chart-grid);min-width:0}
+.blog-chart__fill{position:absolute;inset:0 auto 0 0;width:calc(var(--width)*1%)}
+.blog-chart .tone-0{background:var(--blog-chart-main);color:var(--blog-chart-on-color)}
+.blog-chart .tone-1{background:var(--blog-chart-accent);color:var(--blog-chart-on-color)}
+.blog-chart .tone-2{background:var(--blog-chart-secondary);color:var(--blog-chart-ink)}
+.blog-chart .tone-3{background:var(--blog-chart-muted);color:var(--blog-chart-on-color)}
+.blog-chart .tone-4{background:var(--blog-chart-grid);color:var(--blog-chart-ink)}
+.blog-chart strong,.blog-chart small{font-variant-numeric:tabular-nums}
+.blog-chart__stack{display:flex;min-width:0;height:40px}
+.blog-chart__stack>span{width:calc(var(--width)*1%);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;overflow:hidden}
+.blog-chart__legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px}
+.blog-chart__legend>span{display:flex;align-items:center;gap:6px}
+.blog-chart__legend i{width:12px;height:12px}
+.bw-post .blog-chart__details{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 14px;list-style:none;padding:0;margin:0;font-size:12px;color:var(--blog-chart-muted)}
+.blog-chart__ranges{display:flex;gap:16px;justify-content:space-around;margin-top:24px}
+.blog-chart__range{flex:1;min-width:0;text-align:center;display:flex;flex-direction:column;gap:6px;font-size:12px}
+.blog-chart__range strong{font-size:14px}
+.blog-chart__range small{color:var(--blog-chart-muted)}
+.blog-chart__plot{position:relative;height:200px;border-block:1px solid var(--blog-chart-grid);background:repeating-linear-gradient(to top,transparent 0,transparent calc(25% - 1px),var(--blog-chart-grid) calc(25% - 1px),var(--blog-chart-grid) 25%)}
+.blog-chart__band{position:absolute;left:25%;width:50%;top:calc(var(--top)*1%);height:calc(var(--height)*1%);background:var(--blog-chart-band)}
+.blog-chart__median{position:absolute;left:25%;width:50%;top:calc(var(--top)*1%);border-top:4px solid var(--blog-chart-accent)}
+.blog-chart__timelines{margin:24px 0}
+.blog-chart__timeline{height:42px;position:relative;background:var(--blog-chart-grid);margin-top:10px}
+.blog-chart__stage{position:absolute;left:calc(var(--left)*1%);width:calc(var(--width)*1%);height:100%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.blog-chart__keys{position:absolute;left:23.81%;height:100%;border-left:2px dashed var(--blog-chart-accent);z-index:1}
+.blog-chart__axis{display:flex;justify-content:space-between;font-size:12px;color:var(--blog-chart-muted)}
+.blog-chart__cost-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 14px}
+.blog-chart__cost-row>span,.blog-chart__cost-row>strong{grid-column:1/-1}
+.blog-chart__cost-row .blog-chart__track{grid-column:1/-1}
+.blog-chart__uncertainty{position:absolute;left:calc(var(--left)*1%);width:calc(var(--width)*1%);height:100%;background:var(--blog-chart-band)}
+@media(max-width:600px){.blog-chart__bar-row,.blog-chart__stack-row{grid-template-columns:minmax(0,1fr) auto;gap:6px 10px}.blog-chart__bar-row>span,.blog-chart__stack-row>span{grid-column:1/-1}.blog-chart__ranges{gap:8px;flex-wrap:wrap}.blog-chart__range{flex:1 1 27%;max-width:48%;margin-bottom:16px}.blog-chart__plot{height:140px}.blog-chart__range strong{font-size:13px}.blog-chart__stage{font-size:11px}.bw-post .blog-chart{padding:18px 0}}
