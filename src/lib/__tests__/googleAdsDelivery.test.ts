@@ -9,7 +9,7 @@ describe("envio direto Google Ads", () => {
     const request = buildDeliveryEvent(event, lead, records, now);
     const quality = buildDeliveryEvent({ ...event, kind: "qualified", transaction_id: "quality" }, lead, records, now);
     expect(request).toMatchObject({ destination: "7805140492", event: { transactionId: "same-as-browser", conversionValue: 5000 } });
-    expect(quality).toMatchObject({ destination: "7851121159", event: { conversionValue: 10000, eventTimestamp: event.event_at } });
+    expect(quality).toMatchObject({ destination: "7851121159", event: { conversionValue: 10000, eventTimestamp: "2026-10-28T12:00:00.000Z" } });
   });
   it("recusa posterior, falta de registro e flag falso bloqueiam", () => {
     expect(buildDeliveryEvent(event, lead, [...records, { ...records[0], id: "r2", advertising: false, created_at: "2026-10-29T11:00:00Z" }], now)).toEqual({ blocked: "sem_autorizacao_atual" });

@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Download, RefreshCw } from "lucide-react";
 import { Button } from "@/guia/components/ui/button";
 import { getQualifiedObjectives } from "@/lib/qualifiedObjectives.functions";
+import GoogleAdsDeliveryStatus from "./GoogleAdsDeliveryStatus";
 
 const day = () => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
 export default function QualifiedObjectivesPanel() {
@@ -30,5 +31,6 @@ export default function QualifiedObjectivesPanel() {
       {!report.data.groups.length ? <p>Nenhum lead qualificado no período.</p> : <div className="divide-y divide-border">{report.data.groups.map(group => <div key={group.objective} className="flex items-center justify-between gap-4 py-4"><span className="break-words">{group.objective}</span><strong className="num">{group.count}</strong></div>)}</div>}
       <p className="text-sm text-muted-foreground">CSV de Lead qualificado investidor · consentimento do formulário · janelas de 90 dias com clique e 63 sem clique · deduplicado. Download não confirma recebimento pelo Google Ads.</p>
     </>}
+    <GoogleAdsDeliveryStatus />
   </section>;
 }

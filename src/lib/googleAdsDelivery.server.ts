@@ -1,8 +1,9 @@
-import type { ServiceDb } from "../../supabase/functions/_shared/lead-quality";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 import { buildDeliveryEvent, deliveryRetryAt, type DeliveryEvent, type DeliveryConsent } from "@/lib/googleAdsDelivery";
 import type { ExportRecord } from "../../supabase/functions/_shared/data-export";
 
-type RpcDb = ServiceDb & { rpc: (name: string, args?: Record<string, unknown>) => PromiseLike<{ data: unknown; error: unknown }> };
+type RpcDb = SupabaseClient<Database>;
 export async function processGoogleAdsDelivery(db: RpcDb, id: string, token: string, env: (key: string) => string | undefined, fetchImpl = fetch) {
   const claimed = await db.rpc("claim_google_ads_delivery", { p_id: id, p_token: token });
   if (claimed.error) return { status: 503, outcome: "fila_indisponivel" };
