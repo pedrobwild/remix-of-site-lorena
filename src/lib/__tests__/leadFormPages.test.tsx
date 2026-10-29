@@ -299,8 +299,7 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     continuar();
     expect(document.activeElement).toHaveTextContent("Para que é a reforma?");
     expect(trackEventMock).toHaveBeenCalledWith("orcamento_step", { step: 1 });
-    // Padrão: short stay.
-    expect(screen.getByRole("radio", { name: /Short stay/ })).toBeChecked();
+    expect(screen.getAllByRole("radio").every((radio) => !(radio as HTMLInputElement).checked)).toBe(true);
 
     fireEvent.click(screen.getByRole("button", { name: /Voltar/ }));
     expect(byId("orc-bairro").value).toBe("Moema");
@@ -308,6 +307,7 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     expect(byId("orc-area")).toHaveAttribute("aria-valuetext", "40 m²");
 
     continuar();
+    fireEvent.click(screen.getByRole("radio", { name: /Short stay/ }));
     continuar();
     expect(screen.getByRole("heading", { name: /Em que pé está o imóvel/ })).toBeInTheDocument();
     // Etapa 04 ainda não foi vista: não dá para pular para ela.

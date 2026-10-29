@@ -615,7 +615,15 @@ export async function buildGoogleAdsOfflineRows(input: GoogleAdsOfflineInput): P
     }
   }
   out.sort((a, b) => a.at - b.at);
-  return out.map((o) => o.row);
+  // Já ordenadas: a primeira conversão de cada pessoa é a mais antiga.
+  const seen = new Set<string>();
+  return out.filter(({ row }) => {
+    const person = row.Email ? ["email", row.Email] : row["Phone Number"] ? ["phone", row["Phone Number"]] : ["gclid", row["Google Click ID"]];
+    const key = JSON.stringify([row["Conversion Name"], ...person]);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).map(({ row }) => row);
 }
 
 /**

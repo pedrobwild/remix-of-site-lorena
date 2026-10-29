@@ -47,7 +47,7 @@ import {
   type EstadoImovel,
 } from "@/content/pages/orcamento";
 
-type Campo = "bairro" | "nome" | "whats" | "mail";
+type Campo = "bairro" | "objetivo" | "nome" | "whats" | "mail";
 type Chaves = (typeof LEAD_CHAVES)[number];
 
 /** O valor enviado é o canônico do CRM (LEAD_CHAVES); só o rótulo muda aqui. */
@@ -59,18 +59,20 @@ const ROTULO_CHAVES: Record<Chaves, string> = {
 
 const CAMPO_ID: Record<Campo, string> = {
   bairro: "orc-bairro",
+  objetivo: "orc-objetivo",
   nome: "orc-nome",
   whats: "orc-whats",
   mail: "orc-mail",
 };
 
-/** Campos validados em cada etapa (as etapas 02 e 03 não têm obrigatório). */
-const CAMPOS_DA_ETAPA: ReadonlyArray<readonly Campo[]> = [["bairro"], [], [], ["nome", "whats", "mail"]];
+/** Campos validados em cada etapa (só a etapa 03 não tem obrigatório). */
+const CAMPOS_DA_ETAPA: ReadonlyArray<readonly Campo[]> = [["bairro"], ["objetivo"], [], ["nome", "whats", "mail"]];
 const ULTIMA = ETAPAS.length - 1;
 
 function validar(v: Record<Campo, string>): FieldErrors<Campo> {
   const e: FieldErrors<Campo> = {};
   if (v.bairro.trim().length < 2) e.bairro = "Informe o bairro.";
+  if (!v.objetivo) e.objetivo = "Escolha o objetivo do imóvel.";
   if (v.nome.trim().length < 2) e.nome = "Informe seu nome.";
   if (!isValidBrPhone(v.whats)) e.whats = "Informe um número com DDD.";
   if (!v.mail.trim()) e.mail = "Informe seu e-mail.";
@@ -135,7 +137,7 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
   // digitado — separados para o visitante apagar e redigitar à vontade.
   const [area, setArea] = useState<number>(AREA_SLIDER.padrao);
   const [areaDigitada, setAreaDigitada] = useState<string>(areaTexto(AREA_SLIDER.padrao));
-  const [objetivo, setObjetivo] = useState<LeadObjetivo>("Short stay");
+  const [objetivo, setObjetivo] = useState<LeadObjetivo | "">("");
   const [chaves, setChaves] = useState<Chaves | "">("");
   const [estado, setEstado] = useState<EstadoImovel | "">("");
   const [nome, setNome] = useState("");
@@ -160,7 +162,7 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
 
   const { sending: enviando, outcome, submit, isMounted } = useLeadSubmit({ method: "orcamento_form" });
 
-  const errors = validar({ bairro, nome, whats, mail });
+  const errors = validar({ bairro, objetivo, nome, whats, mail });
   const erro = (k: Campo) => (touched[k] ? errors[k] : undefined);
   const touch = (k: Campo) => setTouched((t) => ({ ...t, [k]: true }));
   useNeighborhoodInterest(bairroConfirmado);
@@ -246,6 +248,10 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
   }
 
   async function enviar() {
+    if (!objetivo) {
+      conferir(1);
+      return;
+    }
     const area_txt = areaTexto(area);
     // `leads.area_m2` é inteiro (arredondado em leadDelivery): a metragem com
     // casas decimais vai também na mensagem, para o time ver o valor exato.
@@ -512,7 +518,7 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
                   )}
 
                   {step === 1 && (
-                    <div className="bwa-orc-radios" role="radiogroup" aria-labelledby="orc-pergunta">
+                    <div className="bwa-orc-radios" id="orc-objetivo" role="radiogroup" tabIndex={-1} aria-required="true" aria-labelledby="orc-pergunta" {...fieldErrorProps("orc-objetivo", erro("objetivo"))}>
                       {OBJETIVOS.map((o) => (
                         <label key={o.value} className="bwa-orc-radio">
                           <input
@@ -520,12 +526,15 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
                             name="orc-objetivo"
                             value={o.value}
                             checked={objetivo === o.value}
+                            required
                             onChange={() => setObjetivo(o.value)}
+                            {...fieldErrorProps("orc-objetivo", erro("objetivo"))}
                           />
                           <span>{o.label}</span>
                           {o.dica && <small>{o.dica}</small>}
                         </label>
                       ))}
+                      {erro("objetivo") && <em id={fieldErrorId("orc-objetivo")}>{erro("objetivo")}</em>}
                     </div>
                   )}
 
