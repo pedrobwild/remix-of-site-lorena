@@ -216,24 +216,52 @@ export function planCrmLeadUpdate(
   if (Object.keys(patch).length) patch.crm_synced_at = nowIso;
 
   const seen = new Set(existingLogs.map((l) => logKey(l.note, l.created_at)));
-  const fresh = [...(item?.transitions ?? [])]
+  const sorted = [...(item?.transitions ?? [])]
     .filter((t) => t && t.at)
-    .sort((a, b) => Date.parse(a.at) - Date.parse(b.at))
-    .filter((t) => {
-      const k = logKey(transitionNote(t), t.at);
-      if (seen.has(k)) return false;
-      seen.add(k);
-      return true;
-    });
+    .sort((a, b) => Date.parse(a.at) - Date.parse(b.at));
+
+  // Status NAQUELE ponto do funil: etapa máxima (não terminal) atingida até a
+  // transição. A última transição fica com o status efetivo atual (ganho,
+  // perda, marcação manual). Marcação manual vale para todas.
+  const atPoint = new Map<CrmTransition, LeadStatus>();
+  let runMax = -Infinity;
+  sorted.forEach((t, i) => {
+    const st = stages.find((s) => s.stage_key === t.to_stage_key);
+    const terminal = !!st?.stage_is_terminal;
+    if (st && !terminal && typeof st.stage_position === "number") runMax = Math.max(runMax, st.stage_position);
+    let s: LeadStatus;
+    if (i === sorted.length - 1 || lead.manual_qualification || eq) s = effectiveStatus as LeadStatus;
+    else s = crmLeadStatus({
+      ...(item as CrmLeadItem),
+      max_stage_position: Number.isFinite(runMax) ? runMax : null,
+      won: false,
+      all_closed_lost: terminal,
+      deal_count: 1,
+    }, stages).status;
+    atPoint.set(t, s);
+  });
+
+  const fresh = sorted.filter((t) => {
+    const k = logKey(transitionNote(t), t.at);
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
 
   const base = { lead_id: lead.id, changed_by: null, changed_by_email: CRM_ENGINE_AUTHOR } as const;
-  const logs: PlannedLog[] = fresh.map((t) => ({
-    ...base,
-    from_status: effectiveStatus,
-    to_status: effectiveStatus,
-    note: transitionNote(t),
-    created_at: new Date(Date.parse(t.at)).toISOString(),
-  }));
+  let prev: string = lead.status;
+  const logs: PlannedLog[] = fresh.map((t) => {
+    const to = atPoint.get(t) ?? effectiveStatus;
+    const log = {
+      ...base,
+      from_status: prev,
+      to_status: to,
+      note: transitionNote(t),
+      created_at: new Date(Date.parse(t.at)).toISOString(),
+    };
+    prev = to;
+    return log;
+  });
   if (eq) {
     const reason = eq.manual_qualification_reason ? ` (${ENGINE_REASON_LABEL[eq.manual_qualification_reason]})` : "";
     const note = eq.manual_qualification === "qualificado" ? "Engine: qualificado" : `Engine: desqualificado${reason}`;
@@ -244,7 +272,8 @@ export function planCrmLeadUpdate(
   if (statusChanged && !eq) {
     const last = logs[logs.length - 1];
     if (last) {
-      last.from_status = lead.status;
+      // Garante que a última linha feche no status gravado em `leads`.
+      last.to_status = effectiveStatus;
     } else {
       const where = item?.current_stage_name ?? (r.noDeal ? "sem negócio no CRM" : "?");
       logs.push({
