@@ -6,6 +6,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildGoogleAdsOfflineRows,
+  canExportGoogleAdsLead,
   pickQualifiedAt,
   type GoogleAdsExportConsent,
   DATASETS,
@@ -56,32 +57,37 @@ describe("google_ads_offline — autorização publicitária", () => {
   it.each([false, null, undefined, "true"])("bloqueia consent_marketing=%s mesmo com evidência", async (value) => {
     expect(await build([lead({ consent_marketing: value })])).toEqual([]);
   });
-  it("flag verdadeiro sem registros de aceite bloqueia qualificação e contrato, inclusive GCLID e hashes", async () => {
-    expect(await buildGoogleAdsOfflineRows({ leads: [lead({ crm_won: true })], qualifiedAt: new Map(), now: NOW })).toEqual([]);
+  it("flag verdadeiro sem registros de aceite exporta qualificação e contrato", async () => {
+    const rows = await buildGoogleAdsOfflineRows({ leads: [lead({ crm_won: true })], qualifiedAt: new Map(), now: NOW });
+    expect(rows.map((row) => row["Conversion Name"])).toEqual([GOOGLE_ADS_QUALIFIED_CONVERSION, GOOGLE_ADS_WON_CONVERSION]);
   });
-  it("retirada atual bloqueia mesmo preservando aceite na captura", async () => {
+  it("recusa no aviso não muda o aceite explícito do formulário no offline", async () => {
     const evidence = consent();
     evidence.current = { ...evidence.current, advertising: false };
     expect(await buildGoogleAdsOfflineRows({ leads: [lead()], qualifiedAt: new Map(), now: NOW,
-      consentByLead: new Map([["l1", evidence]]) })).toEqual([]);
+      consentByLead: new Map([["l1", evidence]]) })).toHaveLength(1);
   });
-  it("aceite posterior não autoriza retroativamente captura recusada", async () => {
+  it("captura recusada no aviso não bloqueia o aceite do formulário", async () => {
     const evidence = consent();
     evidence.event.advertising = false;
     expect(await buildGoogleAdsOfflineRows({ leads: [lead()], qualifiedAt: new Map(), now: NOW,
-      consentByLead: new Map([["l1", evidence]]) })).toEqual([]);
+      consentByLead: new Map([["l1", evidence]]) })).toHaveLength(1);
   });
-  it.each(["event", "current"] as const)("evidência %s sem versão do aviso bloqueia", async (key) => {
+  it.each(["event", "current"] as const)("versão do aviso %s não condiciona offline", async (key) => {
     const evidence = consent();
     evidence[key].noticeVersion = "";
     expect(await buildGoogleAdsOfflineRows({ leads: [lead()], qualifiedAt: new Map(), now: NOW,
-      consentByLead: new Map([["l1", evidence]]) })).toEqual([]);
+      consentByLead: new Map([["l1", evidence]]) })).toHaveLength(1);
   });
-  it("aceite na captura com data posterior ao formulário bloqueia", async () => {
+  it("data do aviso não condiciona offline", async () => {
     const evidence = consent();
     evidence.event.acceptedAt = daysAgo(1);
     expect(await buildGoogleAdsOfflineRows({ leads: [lead()], qualifiedAt: new Map(), now: NOW,
-      consentByLead: new Map([["l1", evidence]]) })).toEqual([]);
+      consentByLead: new Map([["l1", evidence]]) })).toHaveLength(1);
+  });
+  it.each([null, "", "inválida"])("created_at inválido %s bloqueia", async (created_at) => {
+    expect(canExportGoogleAdsLead(lead({ created_at }))).toBe(false);
+    expect(await build([lead({ created_at })])).toEqual([]);
   });
 });
 

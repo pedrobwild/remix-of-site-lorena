@@ -1,6 +1,6 @@
 /** Prova do aceite do aviso de cookies ligada ao lead (envio ao Google Ads). */
 import { describe, expect, it } from "vitest";
-import { buildConsentByLead, canExportGoogleAdsLead } from "../../../supabase/functions/_shared/data-export";
+import { buildConsentByLead, canExportGoogleAdsAudienceLead as canExportGoogleAdsLead } from "../../../supabase/functions/_shared/data-export";
 
 const KEY = "11111111-1111-1111-1111-111111111111";
 const lead = { id: "L1", created_at: "2026-10-20T12:00:00Z", consent_marketing: true, consent_record_id: "R1", consent_visitor_key: KEY };

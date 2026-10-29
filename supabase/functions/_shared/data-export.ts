@@ -483,7 +483,7 @@ export const GOOGLE_ADS_HASH_WINDOW_DAYS = 63;
 
 /** Colunas lidas do banco para este conjunto (só dentro da função; o CSV leva hash). */
 export const GOOGLE_ADS_OFFLINE_SELECT =
-  "id, created_at, updated_at, status, manual_qualification_at, objetivo, gclid, email, whatsapp, crm_won, crm_last_change_at, consent_marketing, consent_record_id, consent_visitor_key";
+  "id, created_at, updated_at, status, manual_qualification_at, objetivo, gclid, email, whatsapp, crm_won, crm_last_change_at, consent_marketing";
 
 type ConsentRow = { id: string; visitor_key: string; advertising: boolean; notice_version: string; created_at: string };
 
@@ -555,8 +555,15 @@ export type GoogleAdsExportConsent = {
   current: { recordId: string; noticeVersion: string; acceptedAt: string; advertising: boolean };
 };
 
-/** Ausência de autorização atual ou na captura bloqueia inclusive o GCLID. */
+/** Pedro, 29/10/2026 19h30: offline usa o aceite explícito do formulário. */
 export function canExportGoogleAdsLead(
+  lead: ExportRecord,
+): boolean {
+  return lead.consent_marketing === true && Number.isFinite(Date.parse(String(lead.created_at ?? "")));
+}
+
+/** Lista de exclusão: mantém a prova do aviso de cookies, sem mudar sua regra. */
+export function canExportGoogleAdsAudienceLead(
   lead: ExportRecord,
   consent: GoogleAdsExportConsent | undefined,
   now: number,
@@ -574,8 +581,7 @@ export function canExportGoogleAdsLead(
 
 export type GoogleAdsOfflineInput = {
   leads: readonly ExportRecord[];
-  /** Aceite na captura e escolha mais recente, resolvidos de registros persistidos.
-   * Sem essa fonte, a exportação fica bloqueada; não inferir do flag legado. */
+  /** Compatibilidade de chamadas antigas: não condiciona o conjunto offline. */
   consentByLead?: ReadonlyMap<string, GoogleAdsExportConsent>;
   /** Primeira passagem para `qualificado`, por lead (ISO). */
   qualifiedAt: ReadonlyMap<string, string>;
@@ -592,7 +598,7 @@ export async function buildGoogleAdsOfflineRows(input: GoogleAdsOfflineInput): P
   const now = (input.now ?? new Date()).getTime();
   const out: { at: number; row: ExportRecord }[] = [];
   for (const lead of input.leads) {
-    if (!canExportGoogleAdsLead(lead, input.consentByLead?.get(String(lead.id)), now)) continue;
+    if (!canExportGoogleAdsLead(lead)) continue;
     if (isPartnerLead(lead.objetivo)) continue;
     const created = Date.parse(String(lead.created_at ?? ""));
     if (Number.isNaN(created)) continue;
