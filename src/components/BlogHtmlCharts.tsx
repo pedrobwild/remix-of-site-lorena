@@ -1,5 +1,5 @@
 import { type CSSProperties, type ReactNode } from "react";
-import parse, { Element, type DOMNode, type HTMLReactParserOptions } from "html-react-parser";
+import parse, { domToReact, Element, type DOMNode, type HTMLReactParserOptions } from "html-react-parser";
 import { chavesCharts, CHAVES_SLUG, chavesChartKeyFromUrl, type ChavesChartKey } from "@/content/chavesCharts";
 import "@/styles/blog-charts.css";
 
@@ -72,7 +72,7 @@ export function BlogHtmlChart({ chartKey }: { chartKey: ChavesChartKey }) {
   return <Frame chartKey={chartKey} subtitle={`Mediana e metade central (Q1–Q3), ${sum(data.rows.map((row) => row.count))} contratos`}><RangePlot rows={data.rows} max={140000} monetary /><p>Reta ajustada: {money(data.fixed)} fixos + {money(data.perM2)} por m². Acima de 45 m² a base tem só {data.omitted} contratos. Eixo de R$ 0 a R$ 140 mil.</p></Frame>;
 }
 
-function imageKey(node: DOMNode): ChavesChartKey | undefined {
+function imageKey(node: unknown): ChavesChartKey | undefined {
   if (!(node instanceof Element)) return undefined;
   if (node.name === "img") return chavesChartKeyFromUrl(node.attribs.src ?? "");
   for (const child of node.children) { const key = imageKey(child); if (key) return key; }
@@ -87,7 +87,7 @@ export function BlogArticleBody({ html, slug }: { html: string; slug: string }) 
     if (["figure", "picture", "p"].includes(node.name)) {
       const key = imageKey(node);
       const mediaOnly = node.name !== "p" || node.children.every((child) => child.type === "text" ? !child.data.trim() : child instanceof Element && ["img", "picture", "a"].includes(child.name));
-      if (key && mediaOnly) return <><BlogHtmlChart chartKey={key} />{node.name === "figure" ? node.children.filter((child) => child instanceof Element && child.name === "figcaption").map((child, index) => <div key={index}>{parse((child as Element).children.map((part) => part.type === "text" ? part.data : "").join(""))}</div>) : null}</>;
+      if (key && mediaOnly) return <><BlogHtmlChart chartKey={key} />{node.name === "figure" ? node.children.filter((child) => child instanceof Element && child.name === "figcaption").map((child, index) => <div key={index}>{domToReact(child instanceof Element ? child.children.filter((part): part is DOMNode => part.type !== "cdata") : [])}</div>) : null}</>;
     }
     if (node.name === "img") { const key = chavesChartKeyFromUrl(node.attribs.src ?? ""); if (key) return <BlogHtmlChart chartKey={key} />; }
   } };
