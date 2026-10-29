@@ -25,9 +25,9 @@ export const chavesCharts = {
     source: "Fonte: formulário de orçamento bewild.com.br, 8/9 a 29/10/2026. Percentuais arredondados.",
     categories: ["Morar", "Short stay", "Locação", "Uso misto", "Outros"],
     rows: [
-      { label: "Ainda não recebi", counts: [30, 5, 3, 2, 0] },
-      { label: "Já recebi", counts: [15, 6, 4, 3, 1] },
-      { label: "Estou comprando", counts: [12, 0, 1, 2, 0] },
+      { label: "Ainda não recebi", count: 40, percentages: [75, 12, 8, 5, 0] },
+      { label: "Já recebi", count: 29, percentages: [52, 21, 14, 10, 3] },
+      { label: "Estou comprando", count: 15, percentages: [80, 0, 7, 13, 0] },
     ],
   },
   tempo: {

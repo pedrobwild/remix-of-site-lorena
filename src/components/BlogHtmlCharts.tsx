@@ -43,10 +43,10 @@ export function BlogHtmlChart({ chartKey }: { chartKey: ChavesChartKey }) {
   if (chartKey === "metragem") return <Frame chartKey={chartKey} subtitle={`Mediana e metade central (Q1–Q3), ${sum(chavesCharts.metragem.rows.map((row) => row.count))} pedidos com m²`}><RangePlot rows={chavesCharts.metragem.rows} max={80} /><p>Caixa = metade central; traço = mediana. Eixo de 0 a 80 m².</p></Frame>;
   if (chartKey === "objetivos") {
     const data = chavesCharts.objetivos;
-    return <Frame chartKey={chartKey} subtitle={`Objetivo declarado por situação das chaves (${sum(data.rows.map((row) => sum(row.counts)))} pedidos)`}>
+    return <Frame chartKey={chartKey} subtitle={`Objetivo declarado por situação das chaves (${sum(data.rows.map((row) => row.count))} pedidos)`}>
       <div className="blog-chart__bars">{data.rows.map((row) => <div className="blog-chart__stack-row" key={row.label}><span>{row.label}</span>
-        <div className="blog-chart__stack">{row.counts.map((count, index) => count > 0 ? <span key={data.categories[index]} className={`tone-${index}`} style={geometry({ width: count / sum(row.counts) * 100 })} title={`${data.categories[index]}: ${chartPercent(count, sum(row.counts))}% (${count})`}>{count / sum(row.counts) >= .1 ? `${chartPercent(count, sum(row.counts))}%` : ""}</span> : null)}</div><strong>{sum(row.counts)}</strong>
-        <ul className="blog-chart__details">{row.counts.map((count, index) => <li key={data.categories[index]}>{data.categories[index]}: {chartPercent(count, sum(row.counts))}% ({count})</li>)}</ul>
+        <div className="blog-chart__stack">{row.percentages.map((percent, index) => percent > 0 ? <span key={data.categories[index]} className={`tone-${index}`} style={geometry({ width: percent })} title={`${data.categories[index]}: ${percent}%`}>{percent >= 10 ? `${percent}%` : ""}</span> : null)}</div><strong>{row.count}</strong>
+        <ul className="blog-chart__details">{row.percentages.map((percent, index) => <li key={data.categories[index]}>{data.categories[index]}: {percent}%</li>)}</ul>
       </div>)}</div><div className="blog-chart__legend">{data.categories.map((label, index) => <span key={label}><i className={`tone-${index}`} />{label}</span>)}</div>
     </Frame>;
   }

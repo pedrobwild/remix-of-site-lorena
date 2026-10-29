@@ -7,7 +7,8 @@ describe("gráficos HTML do artigo das chaves", () => {
   it("preserva as contagens dos 84 pedidos e os percentuais fornecidos", () => {
     expect(chavesCharts.pedidos.rows.map((row) => row.count)).toEqual([40, 29, 15]);
     expect(chavesCharts.pedidos.rows.reduce((total, row) => total + row.count, 0)).toBe(84);
-    expect(chartPercent(5, 40)).toBe(12);
+    expect(chavesCharts.objetivos.rows[0].percentages).toEqual([75, 12, 8, 5, 0]);
+    expect(chartPercent(40, 84)).toBe(48);
     expect(chavesCharts.pedidos.missing).toBe(31);
   });
   it("identifica as duas versões dos seis gráficos sem substituir outras imagens", () => {
