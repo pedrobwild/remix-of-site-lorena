@@ -6,6 +6,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildGoogleAdsOfflineRows,
+  pickQualifiedAt,
   type GoogleAdsExportConsent,
   DATASETS,
   GOOGLE_ADS_QUALIFIED_CONVERSION,
@@ -176,9 +177,43 @@ describe("google_ads_offline — uma conversão por pessoa e nome", () => {
   });
 
   it("não une pessoas com e-mails distintos nem nomes de conversão diferentes", async () => {
-    const rows = await build([lead({ crm_won: true }), lead({ id: "l2", email: "outra@exemplo.com" })]);
-    expect(rows).toHaveLength(3);
-    expect(rows.map((r) => r["Conversion Name"])).toEqual(["Lead qualificado investidor", "Contrato assinado", "Lead qualificado investidor"]);
+    const rows = await build([
+      lead({ crm_won: true, crm_last_change_at: daysAgo(1) }),
+      lead({ id: "l2", email: "outra@exemplo.com" }),
+      lead({ id: "l3", crm_won: true, crm_last_change_at: daysAgo(1) }), // mesma pessoa de l1
+    ]);
+    const names = rows.map((r) => r["Conversion Name"]);
+    // Qualificação: uma por pessoa (l1 e l2). Contrato: um por lead, sem unir (l1 e l3).
+    expect(names.filter((n) => n === "Lead qualificado investidor")).toHaveLength(2);
+    expect(names.filter((n) => n === "Contrato assinado")).toHaveLength(2);
+  });
+
+  it("dois contratos da mesma pessoa saem em duas linhas", async () => {
+    const l = lead({ crm_won: true });
+    const rows = await buildGoogleAdsOfflineRows({
+      leads: [l], qualifiedAt: new Map(), now: NOW, consentByLead: consentByLead([l]),
+      contracts: new Map([["l1", [{ total: 60000, closed_at: daysAgo(3) }, { total: 70000, closed_at: daysAgo(1) }]]]),
+    });
+    const won = rows.filter((r) => r["Conversion Name"] === "Contrato assinado");
+    expect(won.map((r) => r["Conversion Value"])).toEqual([60000, 70000]);
+  });
+});
+
+describe("google_ads_offline — hora da qualificação pelo log", () => {
+  it("prefere a linha de chegada a Lead em vez da entrada no MQL", () => {
+    const m = pickQualifiedAt([
+      { lead_id: "l1", created_at: "2026-10-01T10:00:00Z", note: "CRM: entrou em MQL" },
+      { lead_id: "l1", created_at: "2026-10-02T10:00:00Z", note: "CRM: MQL → Qualificação" },
+      { lead_id: "l1", created_at: "2026-10-03T10:00:00Z", note: "CRM: Qualificação → Lead" },
+    ]);
+    expect(m.get("l1")).toBe("2026-10-03T10:00:00Z");
+  });
+  it("sem nota de Lead ou posterior, usa a primeira linha qualificado", () => {
+    const m = pickQualifiedAt([
+      { lead_id: "l1", created_at: "2026-10-01T10:00:00Z", note: "Qualificação manual" },
+      { lead_id: "l1", created_at: "2026-10-02T10:00:00Z", note: "CRM: entrou em MQL" },
+    ]);
+    expect(m.get("l1")).toBe("2026-10-01T10:00:00Z");
   });
 });
 

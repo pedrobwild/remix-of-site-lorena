@@ -443,6 +443,39 @@ export const GOOGLE_ADS_QUALIFIED_VALUE = 10_000;
 export const GOOGLE_ADS_WON_CONVERSION = "Contrato assinado";
 /** Secundária (fora dos lances, criada em 25/10/2026): o Google vê quem não serve sem passar a buscar mais desses. */
 export const GOOGLE_ADS_DISQUALIFIED_CONVERSION = "Lead desqualificado";
+/** Só estas saem uma vez por pessoa (a mais antiga). */
+export const GOOGLE_ADS_DEDUP_CONVERSIONS: readonly string[] = [GOOGLE_ADS_QUALIFIED_CONVERSION, GOOGLE_ADS_DISQUALIFIED_CONVERSION];
+
+/** Etapas do Engine ANTES de Lead ou terminais (não contam como chegada a Lead). */
+export const ENGINE_PRE_LEAD_OR_TERMINAL_STAGES: readonly string[] = ["MQL", "Qualificação", "Perdido", "Aquecer Futuramente"];
+
+/**
+ * Nota do log que indica chegada à etapa Lead ou posterior. Notas do Engine
+ * são "CRM: A → B" / "CRM: entrou em B"; vale o destino B.
+ */
+export function noteReachesLeadStage(note: unknown): boolean {
+  if (typeof note !== "string") return false;
+  const m = note.match(/^CRM: (?:.* → |entrou em )(.+)$/);
+  if (!m) return false;
+  const dest = m[1].trim().toLowerCase();
+  return !ENGINE_PRE_LEAD_OR_TERMINAL_STAGES.some((n) => n.toLowerCase() === dest);
+}
+
+/**
+ * Hora da qualificação por lead: 1ª linha `qualificado` cuja nota chega a
+ * Lead ou depois; sem ela, a 1ª linha `qualificado`. Linhas em ordem crescente.
+ * (Linhas antigas gravavam o status final em toda transição, até no MQL.)
+ */
+export function pickQualifiedAt(rows: readonly { lead_id: string; created_at: string; note: string | null }[]): Map<string, string> {
+  const first = new Map<string, string>();
+  const atLead = new Map<string, string>();
+  for (const r of rows) {
+    if (!first.has(r.lead_id)) first.set(r.lead_id, r.created_at);
+    if (!atLead.has(r.lead_id) && noteReachesLeadStage(r.note)) atLead.set(r.lead_id, r.created_at);
+  }
+  for (const [id, at] of atLead) first.set(id, at);
+  return first;
+}
 /** Objetivos que contam como investidor (locação). Valores de LEAD_OBJETIVOS. */
 export const GOOGLE_ADS_INVESTOR_OBJETIVOS: readonly string[] = ["Short stay", "Locação tradicional", "Uso misto"];
 export const GOOGLE_ADS_GCLID_WINDOW_DAYS = 90;
@@ -616,8 +649,10 @@ export async function buildGoogleAdsOfflineRows(input: GoogleAdsOfflineInput): P
   }
   out.sort((a, b) => a.at - b.at);
   // Já ordenadas: a primeira conversão de cada pessoa é a mais antiga.
+  // "Contrato assinado" não é unido: um cliente pode fechar vários contratos.
   const seen = new Set<string>();
   return out.filter(({ row }) => {
+    if (!GOOGLE_ADS_DEDUP_CONVERSIONS.includes(String(row["Conversion Name"]))) return true;
     const person = row.Email ? ["email", row.Email] : row["Phone Number"] ? ["phone", row["Phone Number"]] : ["gclid", row["Google Click ID"]];
     const key = JSON.stringify([row["Conversion Name"], ...person]);
     if (seen.has(key)) return false;

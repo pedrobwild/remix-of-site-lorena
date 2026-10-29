@@ -81,7 +81,21 @@ describe("plano de atualização e histórico", () => {
     expect(p.patch).toMatchObject({ status: "qualificado", crm_stage_name: "Negociação", crm_deal_count: 1 });
     expect(p.logs.map((l) => l.note)).toEqual(["CRM: Qualificação → Lead", "CRM: Lead → Negociação"]);
     expect(p.logs.every((l) => l.changed_by === null && l.changed_by_email === CRM_ENGINE_AUTHOR)).toBe(true);
-    expect(p.logs[1]).toMatchObject({ from_status: "novo", to_status: "qualificado" });
+    expect(p.logs[0]).toMatchObject({ from_status: "novo", to_status: "qualificado" });
+    expect(p.logs[1]).toMatchObject({ from_status: "qualificado", to_status: "qualificado" });
+  });
+
+  it("lead que chega já em Lead: MQL e Qualificação gravam o status daquele ponto", () => {
+    const p = planCrmLeadUpdate(row, item("lead", {
+      current_stage_name: "Lead",
+      transitions: [
+        { at: "2026-10-01T10:00:00Z", from_stage_key: null, from_stage_name: null, to_stage_key: "mql", to_stage_name: "MQL" },
+        { at: "2026-10-02T10:00:00Z", from_stage_key: "mql", from_stage_name: "MQL", to_stage_key: "qualificacao", to_stage_name: "Qualificação" },
+        { at: "2026-10-03T10:00:00Z", from_stage_key: "qualificacao", from_stage_name: "Qualificação", to_stage_key: "lead", to_stage_name: "Lead" },
+      ],
+    }), STAGES, [], "2026-10-13T00:00:00Z");
+    expect(p.logs.map((l) => l.to_status)).toEqual(["novo", "contatado", "qualificado"]);
+    expect(p.logs.find((l) => l.to_status === "qualificado")?.note).toBe("CRM: Qualificação → Lead");
   });
 
   it("idempotente: rodar de novo com o resultado aplicado não muda nada nem duplica log", () => {
