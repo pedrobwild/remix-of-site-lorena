@@ -2455,6 +2455,17 @@ export type Database = {
         Args: { p_since: string; p_until: string }
         Returns: Json
       }
+      finish_google_ads_delivery: {
+        Args: {
+          p_id: string
+          p_next: string
+          p_outcome: string
+          p_request_id: string
+          p_state: string
+          p_token: string
+        }
+        Returns: undefined
+      }
       get_image_alts: {
         Args: { p_urls: string[] }
         Returns: {
@@ -2505,6 +2516,7 @@ export type Database = {
         Returns: string
       }
       resolve_404_redirect: { Args: { p_path: string }; Returns: string }
+      retry_google_ads_delivery: { Args: { p_id: string }; Returns: undefined }
       revoke_export_key: { Args: { p_id: string }; Returns: undefined }
       set_manual_lead_qualification: {
         Args: { p_lead_id: string; p_status: string }
