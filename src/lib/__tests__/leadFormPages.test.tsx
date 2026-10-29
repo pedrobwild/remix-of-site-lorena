@@ -292,6 +292,47 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     expect(trackEventMock).not.toHaveBeenCalledWith("orcamento_step", { step: 4 });
   });
 
+  it("sem objetivo não avança nem envia; escolher permite avançar", () => {
+    render(<OrcamentoPage />);
+    type("orc-bairro", "Moema");
+    continuar();
+    expect(screen.getAllByRole("radio").every((radio) => !(radio as HTMLInputElement).checked)).toBe(true);
+    continuar();
+    const group = screen.getByRole("radiogroup");
+    expect(document.activeElement).toBe(group);
+    expect(group).toHaveAttribute("aria-invalid", "true");
+    expect(group).toHaveAccessibleDescription("Escolha o objetivo do imóvel.");
+    expect(screen.queryByRole("heading", { name: /Em que pé está o imóvel/ })).toBeNull();
+    expect(screen.getByRole("button", { name: /03\s*Situação/ })).toBeDisabled();
+    expect(trackEventMock).not.toHaveBeenCalledWith("orcamento_step", { step: 2 });
+    expect(sendLeadMock).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("radio", { name: /Morar/ }));
+    continuar();
+    expect(screen.getByRole("heading", { name: /Em que pé está o imóvel/ })).toBeInTheDocument();
+    expect(trackEventMock).toHaveBeenCalledWith("orcamento_step", { step: 2 });
+  });
+
+  it("objetivo válido vindo de /escopo é marcado e permite avançar", () => {
+    window.history.replaceState({}, "", "/orcamento?objetivo=Loca%C3%A7%C3%A3o+tradicional&area=28&estado=No+contrapiso&itens=obra");
+    render(<OrcamentoPage />);
+    type("orc-bairro", "Moema");
+    continuar();
+    expect(screen.getByRole("radio", { name: /Locação tradicional/ })).toBeChecked();
+    continuar();
+    expect(screen.getByRole("heading", { name: /Em que pé está o imóvel/ })).toBeInTheDocument();
+  });
+
+  it("objetivo desconhecido na URL não marca investidor nem permite avançar", () => {
+    window.history.replaceState({}, "", "/orcamento?objetivo=inventado");
+    render(<OrcamentoPage />);
+    type("orc-bairro", "Moema");
+    continuar();
+    continuar();
+    expect(screen.getAllByRole("radio").every((radio) => !(radio as HTMLInputElement).checked)).toBe(true);
+    expect(document.activeElement).toBe(screen.getByRole("radiogroup"));
+    expect(sendLeadMock).not.toHaveBeenCalled();
+  });
+
   it("troca de etapa foca o H2, Voltar preserva o preenchido e o progresso volta", () => {
     render(<OrcamentoPage />);
     type("orc-bairro", "Moema");
