@@ -1,3 +1,4 @@
+- [ ] Alterar somente a elegibilidade google_ads_offline para aceite do formulário; testar e contar linhas deduplicadas por consulta somente leitura, sem publicar/implantar.
 - [x] Adicionar detalhes por hover/foco/toque e legendas clicáveis aos seis gráficos; 6 testes passam, build OK. Verificação no navegador da rota real permanece indisponível; sem publicar.
 - [x] Converter os seis gráficos das chaves em HTML reutilizável com dados separados e substituição de mídias registradas; SVGs preservados. 11 testes passam e visual sem overflow em 320/414/1280. Artigo retorna 404 na prévia: integração testada com o mesmo renderizador e dados fornecidos, não no artigo publicado. Sem publicar.
 - [x] Exigir objetivo explícito no orçamento; /p já obrigatório e vazio, /contato e /o sem objetivo, /diagnostico redireciona. Escopo sem objetivo padrão para não contaminar prefill. Navegador conferiu bloqueio, foco no rádio, escolha e prefill explícito; sem envio real.

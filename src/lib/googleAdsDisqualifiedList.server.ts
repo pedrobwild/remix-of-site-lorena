@@ -11,7 +11,7 @@
  */
 import {
   buildConsentByLead,
-  canExportGoogleAdsLead,
+  canExportGoogleAdsAudienceLead,
   normalizeEmailForHash,
   normalizePhoneForHash,
   sha256Hex,
@@ -38,7 +38,7 @@ export async function buildDisqualifiedMembers(
   const out: DisqualifiedMember[] = [];
   for (const lead of leads) {
     if (lead.status !== "descartado") continue;
-    if (!canExportGoogleAdsLead(lead, consent.get(String(lead.id)), now)) continue;
+    if (!canExportGoogleAdsAudienceLead(lead, consent.get(String(lead.id)), now)) continue;
     const email = normalizeEmailForHash(lead.email);
     const phone = normalizePhoneForHash(lead.whatsapp);
     if (!email && !phone) continue;
