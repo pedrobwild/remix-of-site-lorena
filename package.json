@@ -79,6 +79,7 @@
     "dompurify": "^3.4.17",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^13.4.0",
+    "html-react-parser": "^6.1.9",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.575.0",
     "maplibre-gl": "^6.10.0",
