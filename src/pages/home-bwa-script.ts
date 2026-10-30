@@ -985,11 +985,17 @@ function installReveal(root: HTMLElement, reducedMotion: boolean): Cleanup {
     },
     { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
   );
+  // `disconnect()` não descarta notificações já enfileiradas: depois da
+  // limpeza, nada mais é escondido nem observado.
+  let disposed = false;
   const sort = new IntersectionObserver((entries) => {
+    if (disposed) return;
     entries.forEach((entry) => {
       const el = entry.target as HTMLElement;
       sort.unobserve(el);
-      // Na tela ou acima dela: fica visível, sem animação.
+      // Na tela ou acima dela: fica visível, sem animação. Elemento oculto na
+      // montagem (`hidden`, ex.: .bwa-services-detail) tem retângulo zerado e
+      // também fica de fora — aparece sem animação quando for aberto.
       if (entry.isIntersecting || entry.boundingClientRect.bottom <= 0) return;
       el.classList.add("bwa-reveal");
       reveal.observe(el);
@@ -997,6 +1003,7 @@ function installReveal(root: HTMLElement, reducedMotion: boolean): Cleanup {
   });
   elements.forEach((el) => sort.observe(el));
   return () => {
+    disposed = true;
     sort.disconnect();
     reveal.disconnect();
   };

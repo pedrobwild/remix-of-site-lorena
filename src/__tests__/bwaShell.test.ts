@@ -9,7 +9,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { buildBwaShell, buildHomeSplit, classesOf, homeTokens, isShellRule, HOME_CRITICAL_PATH, HOME_DEFERRED_PATH, SHELL_PATH } from "../../scripts/bwaShell";
 import { HOME_FOLD_MARKER, withDeferredStylesheet } from "../pages/home-bwa-body";
-import { HOME_DEFERRED_BLOCKING_MEDIA } from "../content/homeHero";
+import { HOME_DEFERRED_ASYNC_MEDIA, HOME_DEFERRED_BLOCKING_MEDIA } from "../content/homeHero";
 
 const ROOT = path.resolve(__dirname, "../..");
 const committed = readFileSync(path.join(ROOT, SHELL_PATH), "utf8");
@@ -112,7 +112,7 @@ describe("home-critical.css + home-deferred.css (dobra da home)", () => {
     const links = out.match(/<link [^>]*>/g) ?? [];
     expect(links).toEqual([
       `<link rel="stylesheet" href="/assets/home-deferred-abc.css" media="${HOME_DEFERRED_BLOCKING_MEDIA}">`,
-      `<link rel="stylesheet" href="/assets/home-deferred-abc.css" media="print" onload="this.media='all'">`,
+      `<link rel="stylesheet" href="/assets/home-deferred-abc.css" media="print" data-bwa-deferred onload="this.media='${HOME_DEFERRED_ASYNC_MEDIA}'">`,
       `<link rel="stylesheet" href="/assets/home-deferred-abc.css">`,
     ]);
     // O terceiro só vale sem JavaScript.
@@ -121,5 +121,7 @@ describe("home-critical.css + home-deferred.css (dobra da home)", () => {
     expect(out.replace(/<noscript>.*?<\/noscript>/g, "")).not.toMatch(/<link rel="stylesheet" href="[^"]*">/);
     // O hero ocupa a primeira tela abaixo desse limite (medido de 360×640 a 768×1024).
     expect(HOME_DEFERRED_BLOCKING_MEDIA).toBe("(min-width: 901px)");
+    // Depois do onload, as duas cópias nunca valem na mesma largura (regras aplicadas uma vez só).
+    expect(HOME_DEFERRED_ASYNC_MEDIA).toBe(`not all and ${HOME_DEFERRED_BLOCKING_MEDIA}`);
   });
 });

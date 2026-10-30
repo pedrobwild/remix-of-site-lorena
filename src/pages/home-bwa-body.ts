@@ -6,7 +6,7 @@ import LOGO_BLUE_240 from "@/assets/bewild-logo-blue-240.webp";
 import LOGO_BLUE_480 from "@/assets/bewild-logo-blue-480.webp";
 // Imagem principal do celular (LCP) empacotada pelo mesmo motivo: o arquivo
 // em /images/home/ saía sem cache. A rota "/" pré-carrega esta mesma URL.
-import { HERO_IMAGE_MOBILE, HERO_IMAGE_DESKTOP, HERO_DESKTOP_SRCSET, HERO_DESKTOP_SIZES, HOME_DEFERRED_BLOCKING_MEDIA } from "@/content/homeHero";
+import { HERO_IMAGE_MOBILE, HERO_IMAGE_DESKTOP, HERO_DESKTOP_SRCSET, HERO_DESKTOP_SIZES, HOME_DEFERRED_ASYNC_MEDIA, HOME_DEFERRED_BLOCKING_MEDIA } from "@/content/homeHero";
 // Fotos dos blocos da home: empacotadas com hash e 4 larguras (homeSlides.ts).
 // O `sizes` de cada <img> é a largura que o bloco ocupa de fato (medida em
 // 30/10/2026 de 320 a 1440 px): com "100vw" o celular baixava a de 960 px
@@ -57,7 +57,11 @@ export const HOME_FOLD_MARKER = '<section class="bwa-audience"';
  *   corpo e o PageSpeed (celular) o contava entre as solicitações que
  *   bloqueiam a renderização (800 ms) — e o leitor do HTML parava nele até a
  *   folha chegar, atrasando o resto da página e a hidratação. Agora ela é
- *   pedida com `media="print"` (não bloqueia) e vale para a tela no `onload`.
+ *   pedida com `media="print"` (não bloqueia) e, no `onload`, passa a valer
+ *   só abaixo de 901 px (HOME_DEFERRED_ASYNC_MEDIA) — no desktop a cópia
+ *   bloqueante já vale, e as mesmas regras não são aplicadas duas vezes. Se
+ *   o `onload` não rodar (CSP mais restrita no futuro), o HomePage aplica a
+ *   mesma troca ao montar (`activateDeferredStylesheet`).
  *   O primeiro `<link>` não casa no celular e também não bloqueia; o
  *   navegador baixa o arquivo uma vez só (mesma URL).
  * - Sem JavaScript, o `<noscript>` aplica a folha normalmente.
@@ -66,7 +70,7 @@ export function withDeferredStylesheet(html: string, href: string): string {
   if (!href || !html.includes(HOME_FOLD_MARKER)) return html;
   const links =
     `<link rel="stylesheet" href="${href}" media="${HOME_DEFERRED_BLOCKING_MEDIA}">` +
-    `<link rel="stylesheet" href="${href}" media="print" onload="this.media='all'">` +
+    `<link rel="stylesheet" href="${href}" media="print" data-bwa-deferred onload="this.media='${HOME_DEFERRED_ASYNC_MEDIA}'">` +
     `<noscript><link rel="stylesheet" href="${href}"></noscript>`;
   return html.replace(HOME_FOLD_MARKER, `${links}\n\n    ${HOME_FOLD_MARKER}`);
 }

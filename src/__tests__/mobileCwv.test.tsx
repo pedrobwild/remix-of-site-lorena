@@ -5,6 +5,7 @@
  *    folhas e dos `modulepreload`;
  *  - a folha da página 404 (post.css) não entra no CSS do root, que toda
  *    página baixa antes de pintar;
+ *  - o CSS adiado da home ganha `media` no HomePage se o `onload` não rodar;
  *  - o botão "Dúvidas" sobe por `transform`, não animando `bottom` (CLS).
  */
 import { readFileSync } from "node:fs";
@@ -64,10 +65,14 @@ describe("preload da foto do hero (LCP)", () => {
 });
 
 describe("CSS do root (baixado por toda página antes de pintar)", () => {
-  it("a página 404 carrega post.css por <link precedence> a partir de ?url, não por import de CSS", () => {
+  it("a página 404 carrega post.css por preinit a partir de ?url, não por import de CSS", () => {
     const notFound = read("src/pages/NotFoundPage.tsx");
     expect(notFound).not.toMatch(/^import\s+["'][^"']+\.css["'];?/m);
     expect(notFound).toMatch(/from "@\/styles\/post\.css\?url"/);
+    // `preinit`, não `<link precedence>`: no navegador o <link> suspende a troca
+    // esqueleto → 404 de /reforma/:slug e /portfolio/:slug (página em branco).
+    expect(notFound).toMatch(/preinit\(postCssUrl, \{ as: "style", precedence:/);
+    expect(notFound).not.toMatch(/<link[^>]*href=\{postCssUrl\}/);
     // O root importa a 404 de forma estática; ele próprio só referencia CSS por ?url.
     expect(read("src/routes/__root.tsx")).not.toMatch(/^import\s+["'][^"']+\.css["'];?/m);
   });
@@ -84,5 +89,13 @@ describe("botão Dúvidas (site-assistant.css)", () => {
       expect(rule).toMatch(/transform:\s*translateY\(/);
       expect(rule).not.toMatch(/bottom:[^;]*--bwas-offset/);
     }
+  });
+});
+
+describe("CSS adiado da home: rede de segurança sem o onload", () => {
+  it("o HomePage troca media=print pela faixa do celular ao montar", () => {
+    const page = read("src/pages/HomePage.tsx");
+    expect(page).toMatch(/link\[data-bwa-deferred\]\[media="print"\]/);
+    expect(page).toMatch(/link\.media = HOME_DEFERRED_ASYNC_MEDIA/);
   });
 });

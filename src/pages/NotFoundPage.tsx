@@ -5,40 +5,29 @@ import { logNotFound, lookupActiveRedirect } from "../lib/notFoundLog";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
 /*
- * Só post.css — ver nota em PrivacidadePage.tsx. Entra como
- * `<link rel="stylesheet" precedence>` a partir de um `?url` (mesmo padrão do
- * AdminChunk), e não por `import "x.css"`: esta página é importada pelo
- * __root.tsx (notFoundComponent), e o CSS importado por ela ia para a folha
- * do root — que toda página do site baixa ANTES de pintar. Medido em
- * 30/10/2026 (PageSpeed, celular): `index-*.css` (as regras .bw-post/.pt-*)
- * era uma das 4 folhas que bloqueavam a renderização da home. O React sobe o
- * link para o <head> do HTML do servidor quando a 404 é renderizada, não
- * duplica e segura a troca de página até a folha carregar.
+ * Só post.css — ver nota em PrivacidadePage.tsx. Entra por `preinit` do
+ * react-dom a partir de um `?url`, e não por `import "x.css"`: esta página é
+ * importada pelo __root.tsx (notFoundComponent), e o CSS importado por ela ia
+ * para a folha do root — que toda página do site baixa ANTES de pintar.
+ * Medido em 30/10/2026 (PageSpeed, celular): `index-*.css` (as regras
+ * .bw-post/.pt-*) era uma das 4 folhas que bloqueavam a renderização da home.
+ *
+ * `preinit`, e não `<link rel="stylesheet" precedence>`: no servidor os dois
+ * sobem a folha para o <head> (bloqueando, como deve ser numa 404). No
+ * navegador, porém, o `<link precedence>` SUSPENDE a renderização até a folha
+ * chegar — e /reforma/:slug e /portfolio/:slug trocam o esqueleto pela 404
+ * depois de uma busca, fora de transição: a página inteira ficava em branco
+ * (o Suspense do roteador não tem fallback). O `preinit` só insere a folha.
  */
+import { preinit } from "react-dom";
 import postCssUrl from "@/styles/post.css?url";
 
 /** Mesmo grupo das folhas de rota do TanStack (`data-precedence="default"`), antes das `.bwa`. */
 const POST_CSS_PRECEDENCE = "default";
 
-/** Nos testes o `?url` do Vite vem vazio, e o React reclama de `href=""`. */
-function PostStylesheet() {
-  return postCssUrl ? <link rel="stylesheet" href={postCssUrl} precedence={POST_CSS_PRECEDENCE} /> : null;
-}
-
-/**
- * Página 404 dedicada — design Bewild (.bw-home.bw-post).
- *
- * Como Lovable Hosting é SPA-fallback (toda URL inexistente recebe 200 + index.html),
- * o Search Console pode classificar páginas como "soft-404" se renderizarmos a home
- * em URLs inexistentes. Aqui:
- *  - <meta name="robots" content="noindex, follow"> impede indexação
- *  - <title> e H1 começam explicitamente com "404"
- *  - Conteúdo curto e sinalético — Googlebot detecta soft-404 pelo conteúdo
- *  - Links úteis (home, portfólio, blog) ajudam usuário e crawler a se reorientar
- *  - Registra a URL na tabela seo_404_log para curadoria no admin
- *  - Se o admin já configurou um redirect para este path, redireciona automaticamente
- */
 export default function NotFoundPage() {
+  // Nos testes o `?url` do Vite vem vazio.
+  if (postCssUrl) preinit(postCssUrl, { as: "style", precedence: POST_CSS_PRECEDENCE });
   const [redirecting, setRedirecting] = useState(false);
 
   useSeo({
@@ -78,7 +67,6 @@ export default function NotFoundPage() {
   if (redirecting) {
     return (
       <div className="bw-home bw-post">
-        <PostStylesheet />
         <BwaNav />
         <main id="main" tabIndex={-1} aria-live="polite">
           <section className="pt-hero">
@@ -96,7 +84,6 @@ export default function NotFoundPage() {
 
   return (
     <div className="bw-home bw-post">
-      <PostStylesheet />
       <BwaNav />
 
       <main id="main" tabIndex={-1}>

@@ -30,6 +30,9 @@ export const HERO_MOBILE_MEDIA = "(max-width: 760px)";
  */
 export const HOME_DEFERRED_BLOCKING_MEDIA = "(min-width: 901px)";
 
+/** Complemento exato do anterior: a cópia assíncrona do CSS adiado vale só aqui (nunca as duas juntas). */
+export const HOME_DEFERRED_ASYNC_MEDIA = `not all and ${HOME_DEFERRED_BLOCKING_MEDIA}`;
+
 /**
  * Pré-carrega a foto do hero (LCP) pelo React (`preload` do react-dom), e não
  * pelo `head` da rota. No HTML do servidor o React escreve esses preloads de

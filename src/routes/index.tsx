@@ -18,7 +18,7 @@ export { HERO_IMAGE_DESKTOP as HERO_IMAGE } from "@/content/homeHero";
 export { HERO_IMAGE_MOBILE, HERO_MOBILE_MEDIA } from "@/content/homeHero";
 // Daqui só a constante: home-bwa-body.ts (o HTML da home) não pode entrar no
 // pacote do `head` das rotas, que toda página baixa.
-import { HOME_DEFERRED_BLOCKING_MEDIA } from "@/content/homeHero";
+import { HOME_DEFERRED_ASYNC_MEDIA, HOME_DEFERRED_BLOCKING_MEDIA } from "@/content/homeHero";
 
 function homeHead(seo?: HomeSeo) {
   // Título/descrição/Open Graph salvos em /admin/seo (loader); sem eles, o texto padrão.
@@ -48,7 +48,7 @@ function homeHead(seo?: HomeSeo) {
               rel: "preload",
               as: "style",
               href: homeDeferredCssUrl,
-              media: `not all and ${HOME_DEFERRED_BLOCKING_MEDIA}`,
+              media: HOME_DEFERRED_ASYNC_MEDIA,
               fetchPriority: "low" as const,
             },
           ]
