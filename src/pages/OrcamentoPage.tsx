@@ -40,6 +40,7 @@ import {
   ESTADOS_IMOVEL,
   ETAPAS,
   FAQ,
+  NOTA_ATENDIMENTO,
   OBJETIVOS,
   PILAR_CUSTO,
   TOPO_VARIANTES,
@@ -339,7 +340,7 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
                   <p className="bwa-orc-kicker">Orçamento · São Paulo</p>
                   <h1 className="bwa-orc-h1">{topo.h1}</h1>
                   <p className="bwa-orc-sub">{topo.subtitulo}</p>
-                  <p className="bwa-orc-sub">São só as informações iniciais para conhecermos o seu imóvel: um especialista da Bewild responde pelo WhatsApp em até um dia útil.</p>
+                  <p className="bwa-orc-sub">{NOTA_ATENDIMENTO}</p>
                 </>
               )}
 

@@ -39,9 +39,23 @@ export const TOPO_VARIANTES = {
   },
   investidor: {
     h1: "Orçamento de reforma de studio para alugar ou Airbnb.",
-    subtitulo: "Projeto, obra, marcenaria, mobília e eletros: o studio sai pronto para fotografar e anunciar. A gestão do Airbnb também pode ficar com a Bewild, ou com quem você escolher.",
+    subtitulo: `Projeto, obra, marcenaria, mobília e eletros: o studio sai pronto para fotografar e anunciar. ${CLIENTES_SHORT_STAY_PCT}% dos clientes da Bewild reformam para short stay, e a gestão do Airbnb também pode ficar com a Bewild, ou com quem você escolher.`,
+  },
+  // Anúncios "Comprou Estúdio na Planta? / Do Contrapiso ao Inquilino" e
+  // palavras como "reforma apartamento novo" e "na planta".
+  planta: {
+    h1: "Comprou studio na planta? Orçamento da reforma, do contrapiso ao inquilino.",
+    subtitulo: "A Bewild reforma unidades recém-entregues, no contrapiso: projeto, obra, marcenaria, mobília e eletros em um contrato, com preço fechado e 5 anos de garantia. O prazo começa 5 dias úteis depois do projeto aprovado e da autorização do condomínio, e a data de entrega fica escrita no contrato.",
   },
 } as const;
+
+/**
+ * Linha fixa abaixo do subtítulo, em toda variante: diz logo quem a Bewild
+ * atende, para quem tem casa, apartamento antigo ou imóvel fora da capital
+ * não gastar o pedido (e o anúncio não pagar por esse lead).
+ */
+export const NOTA_ATENDIMENTO =
+  "Atendemos só a cidade de São Paulo, em apartamentos novos ou com até 15 anos de uso. São só as informações iniciais para conhecermos o seu imóvel: um especialista da Bewild responde pelo WhatsApp em até um dia útil.";
 
 /** Formulário em etapas: rótulo curto (barra de progresso) e pergunta (H2). */
 export const ETAPAS: ReadonlyArray<{ rotulo: string; pergunta: string }> = [

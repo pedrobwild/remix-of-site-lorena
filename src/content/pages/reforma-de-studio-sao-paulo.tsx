@@ -9,7 +9,7 @@
  */
 import type { ReactNode } from "react";
 import { faqJsonLd } from "@/lib/useSeo";
-import { CONTRATOS_ANALISADOS } from "@/content/provas";
+import { CLIENTES_SHORT_STAY_PCT, CONTRATOS_ANALISADOS } from "@/content/provas";
 import { CUSTO_M2_MEDIANO, ORCAMENTO_MEDIANO } from "@/content/baseCusto";
 
 export const CANONICAL = "/reforma-de-studio-sao-paulo";
@@ -140,3 +140,43 @@ export const STUDIO_SP_JSONLD: Array<Record<string, unknown>> = [
   },
   faqJsonLd(FAQ.map((f) => ({ q: f.q, a: f.a }))),
 ];
+
+/**
+ * Topo da página por intenção de busca (anúncios do Google). A variante sai
+ * de `topoVarianteDaBusca` (palavra-chave → anúncio → campanha), a mesma
+ * regra do /orcamento. Só muda o H1 e o primeiro parágrafo: título, descrição,
+ * canonical e o resto da página são iguais para todo visitante, e quem chega
+ * pela busca orgânica (sem utm_*) vê sempre o `padrao`.
+ */
+export type HeroStudio = { h1: string; destaque: string; lead: string };
+
+const LEAD_PADRAO =
+  "A Bewild é uma empresa de arquitetura e reforma especializada em studios e apartamentos pequenos em São Paulo, para locação (short stay e longa duração) ou para morar. Projeto, obra, marcenaria sob medida e mobília em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia.";
+
+export const HERO_STUDIO: Record<"padrao" | "investidor" | "planta" | "custo", HeroStudio> = {
+  padrao: {
+    h1: "Reforma de studio em São Paulo,",
+    destaque: "entregue pronto para alugar, anunciar no Airbnb ou morar.",
+    lead: LEAD_PADRAO,
+  },
+  investidor: {
+    h1: "Reforma de studio em São Paulo,",
+    destaque: "entregue pronto para alugar ou anunciar no Airbnb.",
+    lead: `Projeto, obra, marcenaria sob medida, mobília e eletros em um único contrato, com preço fechado, prazo em contrato e 5 anos de garantia. ${CLIENTES_SHORT_STAY_PCT}% dos clientes da Bewild reformam para short stay, e a gestão do Airbnb também pode ficar com a Bewild.`,
+  },
+  planta: {
+    h1: "Comprou studio na planta em São Paulo?",
+    destaque: "A reforma vai do contrapiso ao inquilino.",
+    lead: "A Bewild reforma unidades recém-entregues, no contrapiso: projeto, obra, marcenaria sob medida, mobília e eletros em um único contrato, com preço fechado e 5 anos de garantia. O prazo começa 5 dias úteis depois do projeto aprovado e da autorização do condomínio, e a data de entrega fica escrita no contrato.",
+  },
+  custo: {
+    h1: "Quanto custa a reforma de studio em São Paulo?",
+    destaque: `Mediana de ${CUSTO_M2_MEDIANO} por m².`,
+    lead: `É a mediana de ${CONTRATOS_ANALISADOS} contratos de reforma completa da Bewild em unidades de até 50 m² (${ORCAMENTO_MEDIANO} por reforma), com projeto, obra, marcenaria, mobília e eletros num contrato de preço fechado. A faixa por metragem está logo abaixo.`,
+  },
+};
+
+/** Variantes do /orcamento que não têm topo próprio aqui caem no padrão. */
+export function heroStudioDaVariante(variante: string): HeroStudio {
+  return variante in HERO_STUDIO ? HERO_STUDIO[variante as keyof typeof HERO_STUDIO] : HERO_STUDIO.padrao;
+}
