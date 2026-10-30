@@ -7,14 +7,18 @@ import homeDeferredCssUrl from "@/pages/home-deferred.css?url";
 
 /** Imagem principal da home, carregada antecipadamente para reduzir o tempo de exibição. */
 export { HERO_IMAGE_DESKTOP as HERO_IMAGE } from "@/content/homeHero";
-/**
+/*
  * Versão para celular (828 px, WebP) da mesma imagem: o <picture> da home a
- * usa até 760 px de largura, e o preload segue a mesma regra, para o celular
- * não baixar o JPEG de 1920 px (PERF-02, auditoria de 05/10/2026).
+ * usa até 760 px de largura (PERF-02, auditoria de 05/10/2026). O preload
+ * das duas versões saiu daqui em 30/10/2026 e foi para o HomePage
+ * (`preloadHomeHero`): no `head` da rota ele saía no FIM do <head>, depois
+ * dos ~40 `modulepreload` do JavaScript, e o PageSpeed (celular) media
+ * 1,75 s de "atraso no carregamento" da imagem do LCP.
  */
-import { HERO_IMAGE_MOBILE, HERO_IMAGE_DESKTOP, HERO_DESKTOP_SRCSET, HERO_DESKTOP_SIZES } from "@/content/homeHero";
-export { HERO_IMAGE_MOBILE };
-export const HERO_MOBILE_MEDIA = "(max-width: 760px)";
+export { HERO_IMAGE_MOBILE, HERO_MOBILE_MEDIA } from "@/content/homeHero";
+// Daqui só a constante: home-bwa-body.ts (o HTML da home) não pode entrar no
+// pacote do `head` das rotas, que toda página baixa.
+import { HOME_DEFERRED_BLOCKING_MEDIA } from "@/content/homeHero";
 
 function homeHead(seo?: HomeSeo) {
   // Título/descrição/Open Graph salvos em /admin/seo (loader); sem eles, o texto padrão.
@@ -33,25 +37,22 @@ function homeHead(seo?: HomeSeo) {
       // é só pré-carregado e entra como <link> no corpo, depois do hero
       // (home-bwa-body.ts) — ver scripts/bwaShell.ts.
       { rel: "stylesheet", href: homeCriticalCssUrl },
-      ...(homeDeferredCssUrl ? [{ rel: "preload", as: "style", href: homeDeferredCssUrl }] : []),
-      {
-        rel: "preload",
-        as: "image",
-        type: "image/webp",
-        href: HERO_IMAGE_MOBILE,
-        media: HERO_MOBILE_MEDIA,
-        fetchPriority: "high" as const,
-      },
-      {
-        rel: "preload",
-        as: "image",
-        type: "image/webp",
-        href: HERO_IMAGE_DESKTOP,
-        imageSrcSet: HERO_DESKTOP_SRCSET,
-        imageSizes: HERO_DESKTOP_SIZES,
-        media: "(min-width: 761px)",
-        fetchPriority: "high" as const,
-      },
+      // CSS adiado: no desktop ele segura o que vem depois do <link> no corpo
+      // (prioridade normal); no celular é baixado sem bloquear nada
+      // (withDeferredStylesheet) — prioridade baixa, para não disputar banda
+      // com a foto do hero (LCP).
+      ...(homeDeferredCssUrl
+        ? [
+            { rel: "preload", as: "style", href: homeDeferredCssUrl, media: HOME_DEFERRED_BLOCKING_MEDIA },
+            {
+              rel: "preload",
+              as: "style",
+              href: homeDeferredCssUrl,
+              media: `not all and ${HOME_DEFERRED_BLOCKING_MEDIA}`,
+              fetchPriority: "low" as const,
+            },
+          ]
+        : []),
     ],
   };
 }

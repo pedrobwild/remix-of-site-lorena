@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { createPortal, preload } from "react-dom";
 import { HOME_BWA_HTML } from "./home-bwa-body";
+import { preloadHomeHero } from "@/content/homeHero";
 import BwaFooter from "@/components/BwaFooter";
 import { useSeo } from "@/lib/useSeo";
 import { HOME_KEYWORDS, resolveHomeSeo } from "@/lib/homeSeo";
@@ -22,9 +23,9 @@ const THEME_COLOR = "#0B2342";
 // Fontes e preload do hero não ficam mais aqui:
 //  - o site inteiro usa só Manrope e JetBrains Mono, hospedadas no próprio
 //    site (src/fonts.css) com preload no <head> (src/lib/fonts.ts).
-//  - o preload do hero (LCP no desktop) sai do index.html, antes do bundle.
-//    Aqui ele chegava tarde: quando este efeito roda, o <img
-//    fetchpriority="high"> do HTML da home já está no DOM e já pediu a imagem.
+//  - o preload do hero (LCP) é pedido no render (`preloadHomeHero`, abaixo),
+//    não num efeito: no servidor o React o escreve no topo do <head>; num
+//    efeito chegaria tarde (o <img fetchpriority="high"> já teria pedido a foto).
 
 function ensureMeta(name: string, content: string, attr: "name" | "property" = "name") {
   let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${name}"]`);
@@ -86,6 +87,8 @@ function mountPortalWhenNear(target: HTMLElement | null, mount: () => void): () 
 }
 
 export default function HomePage() {
+  // Foto do hero (LCP): preload no topo do <head> do HTML do servidor.
+  preloadHomeHero(preload);
   const homeRef = useRef<HTMLDivElement>(null);
   const [workflowPortalRoot, setWorkflowPortalRoot] = useState<HTMLElement | null>(null);
 

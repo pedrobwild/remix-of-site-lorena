@@ -4,8 +4,26 @@ import { routes, navigate } from "../lib/useHashRoute";
 import { logNotFound, lookupActiveRedirect } from "../lib/notFoundLog";
 import BwaNav from "@/components/BwaNav";
 import BwaFooter from "@/components/BwaFooter";
-/* Só post.css — ver nota em PrivacidadePage.tsx. */
-import "@/styles/post.css";
+/*
+ * Só post.css — ver nota em PrivacidadePage.tsx. Entra como
+ * `<link rel="stylesheet" precedence>` a partir de um `?url` (mesmo padrão do
+ * AdminChunk), e não por `import "x.css"`: esta página é importada pelo
+ * __root.tsx (notFoundComponent), e o CSS importado por ela ia para a folha
+ * do root — que toda página do site baixa ANTES de pintar. Medido em
+ * 30/10/2026 (PageSpeed, celular): `index-*.css` (as regras .bw-post/.pt-*)
+ * era uma das 4 folhas que bloqueavam a renderização da home. O React sobe o
+ * link para o <head> do HTML do servidor quando a 404 é renderizada, não
+ * duplica e segura a troca de página até a folha carregar.
+ */
+import postCssUrl from "@/styles/post.css?url";
+
+/** Mesmo grupo das folhas de rota do TanStack (`data-precedence="default"`), antes das `.bwa`. */
+const POST_CSS_PRECEDENCE = "default";
+
+/** Nos testes o `?url` do Vite vem vazio, e o React reclama de `href=""`. */
+function PostStylesheet() {
+  return postCssUrl ? <link rel="stylesheet" href={postCssUrl} precedence={POST_CSS_PRECEDENCE} /> : null;
+}
 
 /**
  * Página 404 dedicada — design Bewild (.bw-home.bw-post).
@@ -60,6 +78,7 @@ export default function NotFoundPage() {
   if (redirecting) {
     return (
       <div className="bw-home bw-post">
+        <PostStylesheet />
         <BwaNav />
         <main id="main" tabIndex={-1} aria-live="polite">
           <section className="pt-hero">
@@ -77,6 +96,7 @@ export default function NotFoundPage() {
 
   return (
     <div className="bw-home bw-post">
+      <PostStylesheet />
       <BwaNav />
 
       <main id="main" tabIndex={-1}>

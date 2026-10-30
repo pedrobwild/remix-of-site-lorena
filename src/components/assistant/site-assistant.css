@@ -26,10 +26,18 @@ html[data-bwas] {
   scroll-padding-bottom: calc(96px + var(--cookie-banner-h, 0px));
 }
 
+/* Posição: o botão fica ancorado na base de repouso (--bwas-rest) e sobe
+   acima dos obstáculos do rodapé (banner de cookies...) por `transform`, não
+   mudando `bottom`. Animar `bottom` move o elemento no layout a cada quadro,
+   e o PageSpeed contava cada passo da subida, quando o banner de cookies
+   aparecia, como troca de layout (CLS, 30/10/2026). A posição final é a
+   mesma de antes: base + obstáculo. */
 .bwas-launcher {
+  --bwas-rest: calc(20px + env(safe-area-inset-bottom, 0px));
   position: fixed;
   right: 20px;
-  bottom: calc(var(--bwas-base, 20px) + var(--bwas-offset, 0px));
+  bottom: var(--bwas-rest);
+  transform: translateY(calc(var(--bwas-rest) - var(--bwas-base, var(--bwas-rest)) - var(--bwas-offset, 0px)));
   z-index: 85; /* acima do CTA fixo (60) e do banner (80); abaixo do menu (990) e do header (1000) */
   display: inline-flex;
   align-items: center;
@@ -51,7 +59,7 @@ html[data-bwas] {
   cursor: pointer;
   box-shadow: 0 18px 40px -20px rgba(11, 35, 66, 0.55);
   transition:
-    bottom 0.25s var(--bwas-ease),
+    transform 0.25s var(--bwas-ease),
     background-color 0.2s ease;
 }
 
@@ -112,8 +120,10 @@ html[data-bwas] {
    no link para leitores de tela. */
 @media (max-width: 900px) {
   .bwas-launcher {
+    --bwas-rest: calc(12px + env(safe-area-inset-bottom, 0px));
     right: 12px;
-    bottom: calc(var(--bwas-base-m, 12px) + var(--bwas-offset, 0px));
+    bottom: var(--bwas-rest);
+    transform: translateY(calc(var(--bwas-rest) - var(--bwas-base-m, var(--bwas-rest)) - var(--bwas-offset, 0px)));
     width: 52px;
     height: 52px;
     min-height: 52px;
@@ -121,7 +131,7 @@ html[data-bwas] {
     gap: 0;
     padding: 0;
     transition:
-      bottom 0.25s var(--bwas-ease),
+      transform 0.25s var(--bwas-ease),
       background-color 0.2s ease,
       opacity 0.2s ease,
       visibility 0.2s ease;

@@ -9,6 +9,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { buildBwaShell, buildHomeSplit, classesOf, homeTokens, isShellRule, HOME_CRITICAL_PATH, HOME_DEFERRED_PATH, SHELL_PATH } from "../../scripts/bwaShell";
 import { HOME_FOLD_MARKER, withDeferredStylesheet } from "../pages/home-bwa-body";
+import { HOME_DEFERRED_BLOCKING_MEDIA } from "../content/homeHero";
 
 const ROOT = path.resolve(__dirname, "../..");
 const committed = readFileSync(path.join(ROOT, SHELL_PATH), "utf8");
@@ -100,8 +101,25 @@ describe("home-critical.css + home-deferred.css (dobra da home)", () => {
     expect(below.has("bwa-faq-item")).toBe(true);
     const html = `<header class="bwa-nav"></header><section class="bwa-hero"></section>\n\n    ${HOME_FOLD_MARKER} id="para-quem"></section>`;
     const out = withDeferredStylesheet(html, "/assets/home-deferred-abc.css");
-    expect(out.indexOf('<link rel="stylesheet" href="/assets/home-deferred-abc.css">')).toBeGreaterThan(out.indexOf("</section>"));
-    expect(out.indexOf('<link rel="stylesheet"')).toBeLessThan(out.indexOf(HOME_FOLD_MARKER));
+    expect(out.indexOf('<link rel="stylesheet"')).toBeGreaterThan(out.indexOf("</section>"));
+    expect(out.lastIndexOf('<link rel="stylesheet"')).toBeLessThan(out.indexOf(HOME_FOLD_MARKER));
     expect(withDeferredStylesheet(html, "")).toBe(html);
+  });
+
+  it("o CSS adiado só bloqueia no desktop; no celular entra sem bloquear (media=print + onload) e há <noscript>", () => {
+    const html = `<section class="bwa-hero"></section>\n\n    ${HOME_FOLD_MARKER} id="para-quem"></section>`;
+    const out = withDeferredStylesheet(html, "/assets/home-deferred-abc.css");
+    const links = out.match(/<link [^>]*>/g) ?? [];
+    expect(links).toEqual([
+      `<link rel="stylesheet" href="/assets/home-deferred-abc.css" media="${HOME_DEFERRED_BLOCKING_MEDIA}">`,
+      `<link rel="stylesheet" href="/assets/home-deferred-abc.css" media="print" onload="this.media='all'">`,
+      `<link rel="stylesheet" href="/assets/home-deferred-abc.css">`,
+    ]);
+    // O terceiro só vale sem JavaScript.
+    expect(out).toContain(`<noscript><link rel="stylesheet" href="/assets/home-deferred-abc.css"></noscript>`);
+    // Nenhum <link> comum (sem media) fora do <noscript>: ele bloquearia a renderização no celular.
+    expect(out.replace(/<noscript>.*?<\/noscript>/g, "")).not.toMatch(/<link rel="stylesheet" href="[^"]*">/);
+    // O hero ocupa a primeira tela abaixo desse limite (medido de 360×640 a 768×1024).
+    expect(HOME_DEFERRED_BLOCKING_MEDIA).toBe("(min-width: 901px)");
   });
 });
