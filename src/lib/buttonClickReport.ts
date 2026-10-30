@@ -6,7 +6,7 @@ export type ServiceButtonRow = ButtonRow & { variant: TopoVariante | "sem-atribu
 
 export const SERVICE_VARIANT_LABELS: Record<ServiceButtonRow["variant"], string> = {
   padrao: "Padrão", studio: "Studio e apartamento pequeno", arquitetura: "Arquitetura e reforma",
-  custo: "Custo e orçamento", investidor: "Investidor / Airbnb", "sem-atribuicao": "Sem atribuição ao Google Ads",
+  custo: "Custo e orçamento", investidor: "Investidor / Airbnb", planta: "Comprou na planta", "sem-atribuicao": "Sem atribuição ao Google Ads",
 };
 
 const SERVICE_CTA_BY_PAGE: Record<string, string> = {

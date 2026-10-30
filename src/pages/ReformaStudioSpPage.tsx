@@ -9,10 +9,12 @@ import { BAIRROS, REMOTO_ITEMS, bairroHref, type BairroPageLink } from "@/lib/ba
 import { useSeo } from "@/lib/useSeo";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
+import type { TopoVariante } from "@/lib/googleAdsVariant";
 import {
   AIRBNB_CHECK,
   CANONICAL,
   FAQ,
+  heroStudioDaVariante,
   SEO_DESCRIPTION,
   SEO_KEYWORDS,
   SEO_TITLE,
@@ -54,10 +56,13 @@ const PASSOS: { n: string; t: string }[] = [
 type Props = {
   /** Páginas de bairro existentes (loader da rota); null = sem dados → links para /portfolio. */
   bairroPages?: BairroPageLink[] | null;
+  /** Topo pela intenção da busca paga (loader da rota); orgânico = "padrao". */
+  topoVariante?: TopoVariante;
 };
 
-export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) {
+export default function ReformaStudioSpPage({ bairroPages = null, topoVariante = "padrao" }: Props = {}) {
   useCtaClickTracking("reforma-studio-sp");
+  const hero = heroStudioDaVariante(topoVariante);
 
   useSeo({
     title: SEO_TITLE,
@@ -78,15 +83,11 @@ export default function ReformaStudioSpPage({ bairroPages = null }: Props = {}) 
             <div>
               {/* Singular de propósito: "reforma de studio" é a busca desta página. */}
               <h1 className="bwa-title">
-                Reforma de studio em São Paulo,{" "}
-                <em>entregue pronto para alugar, anunciar no Airbnb ou morar.</em>
+                {hero.h1}{" "}
+                <em>{hero.destaque}</em>
               </h1>
               <p className="bwa-servico-lead">
-                A Bewild é uma empresa de arquitetura e reforma especializada em
-                studios e apartamentos pequenos em São Paulo, para locação
-                (short stay e longa duração) ou para morar. Projeto, obra, marcenaria sob
-                medida e mobília em um único contrato, com preço fechado, prazo
-                em contrato e 5 anos de garantia. Mais de {REFORMAS_ENTREGUES} reformas
+                {hero.lead} Mais de {REFORMAS_ENTREGUES} reformas
                 entregues, a maioria em studios de 20 a 35 m².
               </p>
               <div className="bwa-servico-cta-actions bwa-servico-top-actions">

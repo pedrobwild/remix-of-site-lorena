@@ -21,7 +21,7 @@ vi.mock("@/integrations/supabase/client", () => ({
   },
 }));
 
-import { FAQ, SEO_DESCRIPTION, SEO_TITLE, STUDIO_SP_JSONLD } from "@/content/pages/reforma-de-studio-sao-paulo";
+import { FAQ, HERO_STUDIO, SEO_DESCRIPTION, SEO_TITLE, STUDIO_SP_JSONLD, heroStudioDaVariante } from "@/content/pages/reforma-de-studio-sao-paulo";
 
 const SRC = path.resolve(__dirname, "../..");
 const read = (p: string) => readFileSync(path.join(SRC, p), "utf8");
@@ -44,9 +44,13 @@ describe("reforma de studio: metadados aprovados e H1 preservado", () => {
   });
 
   it("H1 e dados estruturados", () => {
+    // H1 do visitante orgânico (sem utm_*): o padrão do módulo de conteúdo.
     const pagina = read("pages/ReformaStudioSpPage.tsx");
-    expect(pagina).toMatch(/Reforma de studio em São Paulo,\{" "\}/);
-    expect(pagina).not.toMatch(/Reforma de studios em São Paulo,/);
+    expect(pagina).toMatch(/\{hero\.h1\}\{" "\}/);
+    expect(HERO_STUDIO.padrao.h1).toBe("Reforma de studio em São Paulo,");
+    expect(HERO_STUDIO.padrao.destaque).toBe("entregue pronto para alugar, anunciar no Airbnb ou morar.");
+    expect(heroStudioDaVariante("arquitetura")).toBe(HERO_STUDIO.padrao);
+    for (const hero of Object.values(HERO_STUDIO)) expect(`${hero.h1} ${hero.destaque}`).not.toMatch(/reforma de studios/i);
     expect(STUDIO_SP_JSONLD[0]).toMatchObject({ "@type": "Service" });
     // name = H1 da página (palavra-chave no singular no começo).
     expect(String(STUDIO_SP_JSONLD[0].name)).toMatch(/^Reforma de studio em São Paulo,/);

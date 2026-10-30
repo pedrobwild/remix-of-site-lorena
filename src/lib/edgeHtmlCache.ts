@@ -7,9 +7,9 @@
  *
  * O que entra no cache: GET/HEAD de página pública (text/html, status 200,
  * sem set-cookie), fora de /admin, /api e funções de servidor. A chave ignora
- * marcas de clique (gclid, fbclid…) e guarda só os utm_* — o /orcamento muda o
- * H1 conforme utm_content (`topoVarianteDaBusca`), então cada combinação de
- * UTM tem a própria cópia; o resto da busca (q, bairro, página) desliga o
+ * marcas de clique (gclid, fbclid…) e guarda só os utm_* — o /orcamento e o
+ * /reforma-de-studio-sao-paulo mudam o topo conforme utm_term e utm_content
+ * (`topoVarianteDaBusca`), então cada combinação de UTM tem a própria cópia; o resto da busca (q, bairro, página) desliga o
  * cache daquela requisição. Visitante com sessão do painel (cookie sb-*)
  * também passa direto, para nunca guardar HTML gerado para alguém logado.
  *
