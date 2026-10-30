@@ -69,7 +69,7 @@ describe("Provas de clientes aprovadas em 17/10/2026", () => {
   it("short stay corresponde a 79% dos clientes", () => {
     expect(CLIENTES_SHORT_STAY_PCT).toBe(79);
   });
-  it("48% dos clientes moram fora da capital", () => {
-    expect(CLIENTES_FORA_DA_CAPITAL_PCT).toBe(48);
+  it("59% dos clientes moram fora da capital (base de 188 contratos, confirmado em 26/10/2026)", () => {
+    expect(CLIENTES_FORA_DA_CAPITAL_PCT).toBe(59);
   });
 });
