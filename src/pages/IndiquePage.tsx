@@ -16,6 +16,7 @@ import "./faq-page.css";
 import "./contato.css";
 import "./parceiros.css";
 import { FAQ_INDICADOR } from "@/content/pages/indique-um-amigo";
+import { CLIENTES_FORA_DA_CAPITAL_PCT } from "@/content/provas";
 
 /* ============================================================
  * IndiquePage — /indique-um-amigo
@@ -316,7 +317,7 @@ export default function IndiquePage() {
               <article className="bwa-parc-reason">
                 <h3>Mora fora de São Paulo</h3>
                 <p>
-                  Quase metade dos nossos clientes mora fora da capital e acompanha tudo à
+                  {CLIENTES_FORA_DA_CAPITAL_PCT}% dos nossos clientes moram fora da capital e acompanham tudo à
                   distância, com foto e registro de cada etapa no Bwild Workflow. Indicar alguém
                   de longe não é problema — é o nosso dia a dia.
                 </p>

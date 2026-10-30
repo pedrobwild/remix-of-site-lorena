@@ -1,4 +1,4 @@
-import { REFORMAS_ENTREGUES } from "@/content/provas";
+import { CLIENTES_FORA_DA_CAPITAL_PCT, REFORMAS_ENTREGUES } from "@/content/provas";
 import { useEffect, useRef, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
@@ -66,7 +66,7 @@ const RAZOES = [
   {
     n: "02",
     t: "O comprador mora longe e decide à distância",
-    d: "Quase metade dos nossos clientes mora fora da capital. Quem vende lançamento para investidor de outro estado precisa de um executante que o cliente acompanha de onde estiver — com foto, etapa e registro no Bwild Workflow.",
+    d: `${CLIENTES_FORA_DA_CAPITAL_PCT}% dos nossos clientes moram fora da capital. Quem vende lançamento para investidor de outro estado precisa de um executante que o cliente acompanha de onde estiver — com foto, etapa e registro no Bwild Workflow.`,
   },
   {
     n: "03",
@@ -397,7 +397,7 @@ export default function ParceirosPage() {
               <li><strong>20 a 35 m²</strong> studios como centro</li>
               <li><strong>~60 dias úteis</strong> da obra à entrega</li>
               <li><strong>5 anos</strong> de garantia</li>
-              <li><strong>30 de 62</strong> clientes fora da capital</li>
+              <li><strong>{CLIENTES_FORA_DA_CAPITAL_PCT}%</strong> dos clientes fora da capital</li>
             </ul>
           </div>
         </section>
@@ -542,7 +542,7 @@ export default function ParceirosPage() {
                 <h3>Bwild Workflow</h3>
                 <p>
                   O cliente acompanha cada etapa com foto e registro, de onde estiver. Para quem
-                  mora fora da capital — quase metade dos nossos clientes — é o que torna a obra
+                  mora fora da capital — {CLIENTES_FORA_DA_CAPITAL_PCT}% dos nossos clientes — é o que torna a obra
                   possível.
                 </p>
               </article>
@@ -599,7 +599,7 @@ export default function ParceirosPage() {
                 <article className="bwa-parc-card bwa-parc-card--dark">
                   <h3>Depois das chaves</h3>
                   <p>
-                    Quase metade dos clientes da Bewild mora fora da capital e precisa de quem
+                    {CLIENTES_FORA_DA_CAPITAL_PCT}% dos clientes da Bewild moram fora da capital e precisam de quem
                     entregue o apartamento pronto à distância. A Bewild executa a reforma dos
                     compradores do empreendimento com preço, prazo e garantia em contrato, sem
                     disputar a venda e sem falar em nome da incorporadora.

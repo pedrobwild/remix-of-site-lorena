@@ -29,8 +29,8 @@ export const BAIRROS_ATENDIDOS = 27;
 /** Clientes que reformam para short stay — base de clientes da Bewild, publicação aprovada pelo Pedro em 17/10/2026. */
 export const CLIENTES_SHORT_STAY_PCT = 79;
 
-/** Clientes que moram fora da capital — base de clientes da Bewild, publicação aprovada pelo Pedro em 17/10/2026. */
-export const CLIENTES_FORA_DA_CAPITAL_PCT = 48;
+/** Clientes que moram fora da capital — base de 188 contratos (estudo "quanto custa reformar até 50 m²"); Pedro confirmou 59% em 18/10 e 26/10/2026 (antes o site usava 48%). */
+export const CLIENTES_FORA_DA_CAPITAL_PCT = 59;
 
 /** Clientes que chegam por indicação — base de clientes da Bewild, publicação aprovada pelo Pedro em 17/10/2026 (o número já estava nos anúncios do Google). */
 export const CLIENTES_INDICACAO_PCT = 40;
