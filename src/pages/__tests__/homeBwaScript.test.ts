@@ -574,3 +574,58 @@ describe("data-bwa-typing — teclado aberto no celular", () => {
     expect(html).not.toHaveAttribute("data-bwa-typing");
   });
 });
+
+describe("initHomeBwa — entrada suave só para o que está abaixo da tela", () => {
+  it("o que já está na tela (ou acima dela) fica como veio do servidor; o resto entra ao aparecer", () => {
+    type Entry = Pick<IntersectionObserverEntry, "target" | "isIntersecting" | "boundingClientRect">;
+    const observers: { cb: (entries: Entry[]) => void; targets: Set<Element>; options?: IntersectionObserverInit }[] = [];
+    class ControlledIO {
+      targets = new Set<Element>();
+      constructor(public cb: (entries: Entry[]) => void, public options?: IntersectionObserverInit) {
+        observers.push(this);
+      }
+      observe(el: Element) { this.targets.add(el); }
+      unobserve(el: Element) { this.targets.delete(el); }
+      disconnect() { this.targets.clear(); }
+      takeRecords() { return []; }
+    }
+    const previous = window.IntersectionObserver;
+    window.IntersectionObserver = ControlledIO as unknown as typeof IntersectionObserver;
+    document.body.innerHTML = `
+      <div id="home">
+        <h2 class="bwa-title" id="na-tela">Na tela</h2>
+        <h2 class="bwa-title" id="acima">Acima da tela</h2>
+        <h2 class="bwa-title" id="abaixo">Abaixo da tela</h2>
+      </div>`;
+    const root = document.getElementById("home")!;
+    const [visible, above, below] = ["na-tela", "acima", "abaixo"].map((id) => document.getElementById(id)!);
+    const rect = (top: number) => ({ top, bottom: top + 40 }) as DOMRectReadOnly;
+    const cleanup = initHomeBwa(root);
+    try {
+      // Montagem: nada some antes de o observador responder (sem ler layout).
+      expect(root.querySelector(".bwa-reveal")).toBeNull();
+      // O que separa (sem margem) e o da entrada (margem de -8% embaixo).
+      const sort = observers.find((o) => !o.options)!;
+      const reveal = observers.find((o) => o.options?.rootMargin === "0px 0px -8% 0px")!;
+      expect(sort.targets.size).toBe(3);
+      expect(reveal.targets.size).toBe(0);
+      sort.cb([
+        { target: visible, isIntersecting: true, boundingClientRect: rect(200) },
+        { target: above, isIntersecting: false, boundingClientRect: rect(-500) },
+        { target: below, isIntersecting: false, boundingClientRect: rect(2000) },
+      ]);
+      expect(visible).not.toHaveClass("bwa-reveal");
+      expect(above).not.toHaveClass("bwa-reveal");
+      expect(below).toHaveClass("bwa-reveal");
+      expect(sort.targets.size).toBe(0);
+      expect([...reveal.targets]).toEqual([below]);
+      // Rolou até o bloco: aparece.
+      reveal.cb([{ target: below, isIntersecting: true, boundingClientRect: rect(500) }]);
+      expect(below).toHaveClass("bwa-reveal", "bwa-visible");
+      expect(reveal.targets.size).toBe(0);
+    } finally {
+      cleanup();
+      window.IntersectionObserver = previous;
+    }
+  });
+});

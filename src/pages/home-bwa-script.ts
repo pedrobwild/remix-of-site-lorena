@@ -586,7 +586,10 @@ function installGallery(root: HTMLElement, signal: AbortSignal, reducedMotion: b
     { capture: true, signal },
   );
   rail.addEventListener("scroll", requestStatus, { passive: true, signal });
-  updateStatus();
+  // Contador inicial no próximo quadro: ler offsetLeft aqui, no meio da
+  // montagem (que acabou de mexer no DOM), forçava um layout síncrono da
+  // página inteira ("reflow forçado" do PageSpeed, 30/10/2026).
+  requestStatus();
 
   return () => {
     stopMomentum();
@@ -864,7 +867,11 @@ function installMobileCta(root: HTMLElement, signal: AbortSignal): Cleanup {
 
   window.addEventListener("scroll", schedule, { passive: true, signal });
   window.addEventListener("resize", schedule, { signal });
-  update();
+  // Primeira leitura no próximo quadro, não aqui: getBoundingClientRect logo
+  // depois das escritas da montagem forçava um layout síncrono (reflow
+  // forçado, PageSpeed 30/10/2026). A barra nasce `is-hidden` no HTML, então
+  // esperar um quadro não mostra nada fora de hora.
+  schedule();
 
   return () => {
     if (pending) window.cancelAnimationFrame(frame);
@@ -947,31 +954,59 @@ function installVideoModal(root: HTMLElement, signal: AbortSignal): Cleanup {
 
 /* =========================================================================
  * Entrada suave dos blocos (desligada com prefers-reduced-motion).
+ *
+ * Só para o que ainda está ABAIXO da tela quando a página monta. O que o
+ * visitante já vê (ou já passou, numa volta com a rolagem restaurada) fica
+ * como veio do servidor. Até 30/10/2026 todos os blocos ganhavam
+ * `bwa-reveal` (opacity: 0) na hidratação: o que já estava pintado sumia e
+ * voltava em 0,8 s — no desktop, títulos e cards logo abaixo do hero; no
+ * PageSpeed isso pesava no Speed Index (4,7 s no celular).
+ *
+ * A separação usa um IntersectionObserver sem margem (a resposta é
+ * assíncrona, sem ler layout na montagem). Os blocos abaixo da tela ganham
+ * `bwa-reveal` e passam para o observador da entrada; transform/opacity não
+ * mexem no layout, então nada disso conta como CLS.
  * ========================================================================= */
 const REVEAL_SELECTOR =
   ".bwa-title, .bwa-lead, .bwa-project-card, .bwa-proof-card, .bwa-objective, .bwa-audience-card, .bwa-services-list, .bwa-services-detail";
 
 function installReveal(root: HTMLElement, reducedMotion: boolean): Cleanup {
+  if (reducedMotion || typeof IntersectionObserver === "undefined") return NOOP;
   const elements = Array.from(root.querySelectorAll<HTMLElement>(REVEAL_SELECTOR));
-  elements.forEach((el) => el.classList.add("bwa-reveal"));
+  if (!elements.length) return NOOP;
 
-  if (reducedMotion || typeof IntersectionObserver === "undefined") {
-    elements.forEach((el) => el.classList.add("bwa-visible"));
-    return NOOP;
-  }
-
-  const observer = new IntersectionObserver(
+  const reveal = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         entry.target.classList.add("bwa-visible");
-        observer.unobserve(entry.target);
+        reveal.unobserve(entry.target);
       });
     },
     { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
   );
-  elements.forEach((el) => observer.observe(el));
-  return () => observer.disconnect();
+  // `disconnect()` não descarta notificações já enfileiradas: depois da
+  // limpeza, nada mais é escondido nem observado.
+  let disposed = false;
+  const sort = new IntersectionObserver((entries) => {
+    if (disposed) return;
+    entries.forEach((entry) => {
+      const el = entry.target as HTMLElement;
+      sort.unobserve(el);
+      // Na tela ou acima dela: fica visível, sem animação. Elemento oculto na
+      // montagem (`hidden`, ex.: .bwa-services-detail) tem retângulo zerado e
+      // também fica de fora — aparece sem animação quando for aberto.
+      if (entry.isIntersecting || entry.boundingClientRect.bottom <= 0) return;
+      el.classList.add("bwa-reveal");
+      reveal.observe(el);
+    });
+  });
+  elements.forEach((el) => sort.observe(el));
+  return () => {
+    disposed = true;
+    sort.disconnect();
+    reveal.disconnect();
+  };
 }
 
 /* =========================================================================

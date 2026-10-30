@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { createPortal, preload } from "react-dom";
 import { HOME_BWA_HTML } from "./home-bwa-body";
+import { HOME_DEFERRED_ASYNC_MEDIA, preloadHomeHero } from "@/content/homeHero";
 import BwaFooter from "@/components/BwaFooter";
 import { useSeo } from "@/lib/useSeo";
 import { HOME_KEYWORDS, resolveHomeSeo } from "@/lib/homeSeo";
@@ -22,9 +23,9 @@ const THEME_COLOR = "#0B2342";
 // Fontes e preload do hero não ficam mais aqui:
 //  - o site inteiro usa só Manrope e JetBrains Mono, hospedadas no próprio
 //    site (src/fonts.css) com preload no <head> (src/lib/fonts.ts).
-//  - o preload do hero (LCP no desktop) sai do index.html, antes do bundle.
-//    Aqui ele chegava tarde: quando este efeito roda, o <img
-//    fetchpriority="high"> do HTML da home já está no DOM e já pediu a imagem.
+//  - o preload do hero (LCP) é pedido no render (`preloadHomeHero`, abaixo),
+//    não num efeito: no servidor o React o escreve no topo do <head>; num
+//    efeito chegaria tarde (o <img fetchpriority="high"> já teria pedido a foto).
 
 function ensureMeta(name: string, content: string, attr: "name" | "property" = "name") {
   let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${name}"]`);
@@ -63,6 +64,18 @@ function installFooterLinkedin(root: HTMLElement): () => void {
 }
 
 /**
+ * Rede de segurança do CSS adiado da home no celular (withDeferredStylesheet):
+ * se o `onload` inline não rodou (ex.: uma CSP futura sem `unsafe-inline`), a
+ * folha continuaria em `media="print"` e tudo abaixo do hero ficaria sem
+ * estilo. Aqui ela passa a valer na mesma faixa que o `onload` aplicaria.
+ */
+function activateDeferredStylesheet(root: HTMLElement): void {
+  root.querySelectorAll<HTMLLinkElement>('link[data-bwa-deferred][media="print"]').forEach((link) => {
+    link.media = HOME_DEFERRED_ASYNC_MEDIA;
+  });
+}
+
+/**
  * Chama `mount` quando a seção do portal está a ~600 px da tela (ou de
  * imediato onde não há IntersectionObserver). Devolve a limpeza.
  */
@@ -86,6 +99,8 @@ function mountPortalWhenNear(target: HTMLElement | null, mount: () => void): () 
 }
 
 export default function HomePage() {
+  // Foto do hero (LCP): preload no topo do <head> do HTML do servidor.
+  preloadHomeHero(preload);
   const homeRef = useRef<HTMLDivElement>(null);
   const [workflowPortalRoot, setWorkflowPortalRoot] = useState<HTMLElement | null>(null);
 
@@ -110,6 +125,7 @@ export default function HomePage() {
     ensureMeta("theme-color", THEME_COLOR);
 
     const root = homeRef.current;
+    if (root) activateDeferredStylesheet(root);
     // Comportamento do HTML aprovado (menu, galeria, FAQ, vídeo, reveals),
     // restrito a esta raiz. A limpeza fecha modal/menu abertos e devolve a
     // rolagem do <body> — sem ela o vídeo aberto + Voltar travava a rota
@@ -159,7 +175,9 @@ export default function HomePage() {
       {/* home-bwa.css vem pelo `head` da rota "/" (src/routes/index.tsx): no
           HTML do servidor na carga direta e, numa navegação interna, inserido
           pelo roteador antes de a home aparecer. Nada de criar <link> aqui. */}
-      <div ref={homeRef} dangerouslySetInnerHTML={{ __html: HOME_BWA_HTML }} />
+      {/* suppressHydrationWarning: o `onload` do CSS adiado troca o `media` de um
+          <link> deste HTML antes da hidratação (só aviso de desenvolvimento). */}
+      <div ref={homeRef} dangerouslySetInnerHTML={{ __html: HOME_BWA_HTML }} suppressHydrationWarning />
       {workflowPortalRoot
         ? createPortal(
             <Suspense fallback={null}>
