@@ -15,7 +15,11 @@
  *   - estágios do CRM (`initial_lead`, `contacted`, `qualified`,
  *     `disqualified`) para leads dos FORMULÁRIOS INSTANTÂNEOS da Meta, com
  *     `user_data.lead_id` = id do lead na Meta — é a "API de Conversões para
- *     CRM" (otimização Conversion Leads). Ver `crmStageEvent` e docs/META-CRM.md.
+ *     CRM" (otimização Conversion Leads). Ver `crmStageEvent` e docs/META-CRM.md;
+ *   - `PageView` / `ViewContent` (meta-pageview), de toda visita humana,
+ *     independentemente do aceite de cookies, com o MESMO `event_id` que o
+ *     Pixel usa quando há aceite — só IP + user-agent como identificadores
+ *     (`allowIpUaOnly`). Ver docs/META-CAPI.md.
  * Quem chama confere antes a regra de negócio: só formulários de cliente
  * (`AD_LEAD_FORMS`). O aceite de cookies (`leads.consent_marketing`) só é
  * exigido quando o segredo `META_CAPI_REQUIRE_CONSENT` está em `true`
@@ -81,7 +85,7 @@ export const CRM_STATUS_BY_STAGE: Record<MetaCrmStage, string> = {
 /** Nome do CRM que aparece em `custom_data.lead_event_source` (Events Manager). */
 export const LEAD_EVENT_SOURCE = "Bewild Admin";
 
-export type MetaEventName = "Lead" | "QualifiedLead" | "DisqualifiedLead" | MetaCrmStage;
+export type MetaEventName = "Lead" | "QualifiedLead" | "DisqualifiedLead" | "PageView" | "ViewContent" | MetaCrmStage;
 
 export type MetaActionSource = "website" | "system_generated";
 
@@ -115,7 +119,7 @@ export type MetaEventInput = {
   actionSource: MetaActionSource;
   eventSourceUrl?: string | null;
   user: MetaUserInput;
-  customData?: Record<string, string | number | boolean | null | undefined>;
+  customData?: Record<string, string | number | boolean | string[] | null | undefined>;
 };
 
 export type MetaCapiOutcome =
@@ -306,9 +310,20 @@ export async function buildUserData(user: MetaUserInput): Promise<HashedUserData
   return out;
 }
 
+export type MatchKeyOptions = {
+  /**
+   * Aceitar IP + user-agent como identificadores suficientes. Para eventos de
+   * lead a regra continua sendo exigir e-mail/telefone/fbp/fbc/external_id/
+   * lead_id; para `PageView`/`ViewContent` de visitante anônimo a Meta aceita
+   * `client_ip_address` + `client_user_agent` (é o que o próprio Pixel manda).
+   */
+  allowIpUaOnly?: boolean;
+};
+
 /** Há pelo menos um identificador que permite à Meta casar o evento? */
-export function hasMatchKeys(data: HashedUserData): boolean {
-  return Boolean(data.em || data.ph || data.fbp || data.fbc || data.external_id || data.lead_id);
+export function hasMatchKeys(data: HashedUserData, opts: MatchKeyOptions = {}): boolean {
+  if (data.em || data.ph || data.fbp || data.fbc || data.external_id || data.lead_id) return true;
+  return Boolean(opts.allowIpUaOnly && data.client_ip_address && data.client_user_agent);
 }
 
 // ---------------------------------------------------------------------------
@@ -322,7 +337,7 @@ export type MetaEventPayload = {
   action_source: MetaActionSource;
   event_source_url?: string;
   user_data: HashedUserData;
-  custom_data?: Record<string, string | number | boolean>;
+  custom_data?: Record<string, string | number | boolean | string[]>;
 };
 
 export async function buildEventPayload(input: MetaEventInput): Promise<MetaEventPayload> {
@@ -336,9 +351,10 @@ export async function buildEventPayload(input: MetaEventInput): Promise<MetaEven
   };
   if (input.eventSourceUrl) payload.event_source_url = input.eventSourceUrl.slice(0, 2048);
   if (input.customData) {
-    const custom: Record<string, string | number | boolean> = {};
+    const custom: Record<string, string | number | boolean | string[]> = {};
     for (const [k, v] of Object.entries(input.customData)) {
       if (v === null || v === undefined || v === "") continue;
+      if (Array.isArray(v) && !v.length) continue;
       custom[k] = v;
     }
     if (Object.keys(custom).length) payload.custom_data = custom;
@@ -373,13 +389,14 @@ function errorDetail(json: { error?: GraphError; fbtrace_id?: unknown } | null):
 export async function sendMetaEvents(
   config: MetaCapiConfig | null | undefined,
   events: MetaEventInput[],
+  opts: MatchKeyOptions = {},
 ): Promise<MetaCapiOutcome> {
   if (!config?.pixelId || !config.accessToken) return { status: "skipped", reason: "no_config" };
 
   const data: MetaEventPayload[] = [];
   for (const ev of events) {
     const payload = await buildEventPayload(ev);
-    if (hasMatchKeys(payload.user_data)) data.push(payload);
+    if (hasMatchKeys(payload.user_data, opts)) data.push(payload);
   }
   if (!data.length) return { status: "skipped", reason: "no_user_data" };
 

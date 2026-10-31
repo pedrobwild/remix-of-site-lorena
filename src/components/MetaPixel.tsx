@@ -1,9 +1,15 @@
 /**
  * MetaPixel — eventos do Pixel ligados à navegação e aos cliques:
- *  - `PageView` a cada troca de página na SPA;
+ *  - `PageView` na entrada e a cada troca de página na SPA — um `eventID` por
+ *    página vista (`beginMetaPageView`): o servidor recebe primeiro
+ *    (`sendMetaServerEvent`, edge function `meta-pageview`, com ou sem aceite)
+ *    e o Pixel, com aceite, dispara o mesmo evento com o mesmo id — a Meta
+ *    deduplica. Sem aceite o lado do Pixel fica pendente para a página atual
+ *    e sai em `flushMetaPixelQueue` se o aceite vier nela (o servidor NÃO é
+ *    avisado de novo);
  *  - `ViewContent` ao abrir projeto, conteúdo, guia, portfólio ou página de
  *    serviço (ver `pageContentFor` em src/lib/conversions.ts), inclusive na
- *    entrada direta pela página;
+ *    entrada direta pela página — mesma regra de `eventID` compartilhado;
  *  - `Contact` (Meta) + conversão de contato (Google Ads) no clique em link
  *    de WhatsApp/telefone/e-mail — ver src/lib/conversions.ts;
  *  - `IniciouFormulario` na primeira interação com um formulário de lead ou
@@ -11,11 +17,12 @@
  *  - `VisitanteEngajado` uma vez por sessão: 60 s de tela ativa ou 75% de
  *    rolagem numa página longa.
  *
- * O carregador base, o `fbq('init', ...)` e o primeiro PageView **não** estão
- * no index.html (CODE-05). Quem injeta tudo isso é `injectMetaPixel` em
- * src/lib/useSeo.ts, a partir de `site_settings.meta_pixel_id` e **só depois
- * do aceite de cookies** (LGPD) — com `fbq.disablePushState = true`, para o
- * fbevents não contar sozinho cada pushState (o PageView saía em dobro).
+ * O carregador base e o `fbq('init', ...)` **não** estão no index.html
+ * (CODE-05). Quem injeta isso é `injectMetaPixel` em src/lib/useSeo.ts, a
+ * partir de `site_settings.meta_pixel_id` e **só depois do aceite de cookies**
+ * (LGPD) — com `fbq.disablePushState = true`, para o fbevents não contar
+ * sozinho cada pushState (o PageView saía em dobro). O snippet não dispara
+ * PageView: o da página atual sai daqui, com o `eventID` compartilhado.
  *
  * Gates deste componente, conferidos a CADA navegação/evento (não só no mount):
  *  - consentimento aceito agora (quem retirou o aceite não gera mais nada,
@@ -28,6 +35,8 @@ import { useEffect, useRef } from "react";
 import { contactEventForHref } from "@/lib/analytics";
 import { formKeyForPath, pageContentFor, reportContact, reportEngaged, reportFormStart, reportPageContent } from "@/lib/conversions";
 import { isConsentAccepted } from "@/lib/cookieConsent";
+import { sendMetaServerEvent } from "@/lib/metaCapiBeacon";
+import { beginMetaPageView, trackMetaPageEvent } from "@/lib/metaPixel";
 import { closestElementFrom } from "@/lib/useHashRoute";
 
 declare global {
@@ -81,19 +90,31 @@ export default function MetaPixel() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    /**
+     * Página vista: exatamente uma vez por caminho+query. `beginMetaPageView`
+     * devolve o mesmo id para a mesma página e `fresh` diz se é a primeira
+     * vez (o StrictMode monta o efeito duas vezes; sem isso o servidor e o
+     * Pixel veriam a entrada em dobro). Fora do /admin nada sai — nem
+     * servidor, nem Pixel.
+     */
+    const viewPage = () => {
+      if (isAdminPath(window.location.pathname)) return;
+      const { eventId, fresh } = beginMetaPageView(pageKey());
+      if (!fresh) return;
+      sendMetaServerEvent("PageView", { eventId });
+      trackMetaPageEvent("PageView", {}, eventId);
+      reportPageContent(pageContentFor(window.location.pathname));
+    };
+
     lastUrlRef.current = pageKey();
-    reportPageContent(pageContentFor(window.location.pathname));
+    viewPage();
 
     const trackRouteChange = () => {
       const nextUrl = pageKey();
       if (nextUrl === lastUrlRef.current) return;
       lastUrlRef.current = nextUrl;
       formStartedRef.current = null;
-      if (!isConsentAccepted()) return;
-      if (isAdminPath(window.location.pathname)) return;
-      if (typeof window.fbq !== "function") return;
-      window.fbq("track", "PageView");
-      reportPageContent(pageContentFor(window.location.pathname));
+      viewPage();
     };
 
     // Captura: o link pode abrir outra aba ou sair do site logo em seguida.
