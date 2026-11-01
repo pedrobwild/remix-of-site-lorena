@@ -1,3 +1,4 @@
+- [ ] Melhorar título e descrição do artigo de etapas com as seis fases reais e revisar links dos artigos para o serviço; sem publicar.
 - [x] Preparar envio automático de pedido e qualificação: fila transacional, callback privado por evento, reenvio limitado e painel de estados; 47 testes passam e build OK. Fila vazia e envio desativado; sem publicar.
 - [ ] Ativar/publicar envio Google Ads: confirmar desativação da importação de qualificados e testar com sessão administrativa; sem conta correspondente para sessão automática. Sem envio real nem reenviar histórico.
 - [x] Painel de qualificados por objetivo em /admin/leads?aba=objetivos, período de criação e CSV canônico Google Ads; testes locais passam, build OK, sem publicar.
