@@ -76,7 +76,7 @@ const L = {
   reformaStudioSp: {
     href: "/reforma-de-studio-sao-paulo",
     label: "Reforma de studio em São Paulo",
-    description: "Studio entregue pronto para morar ou para anunciar.",
+    description: "Projeto, obra, marcenaria e mobília, com preço e prazo em contrato.",
   },
   reformaCoberturaSp: {
     href: "/reforma-de-cobertura-sao-paulo",
@@ -163,6 +163,13 @@ const TEMA = {
 
 const MAX_LINKS = 6;
 
+/** Artigos de decisão encaminham ao serviço, sem disputar sua busca principal. */
+const ARTIGOS_PARA_SERVICO_STUDIO = new Set([
+  "quanto-custa-reformar-apartamento-studio-ate-50-m2",
+  "quanto-tempo-demora-reforma-apartamento",
+  "reforma-de-studio-por-empreendimento-sao-paulo",
+]);
+
 /** Links internos priorizados para o post (o assunto do slug vem antes da categoria). */
 export function internalLinksForPost(
   slug: string,
@@ -182,6 +189,7 @@ export function internalLinksForPost(
   if (TEMA.condominio.test(slug)) lead.push(L.nbr16280, L.autorizacao);
   // Etapas e cronograma: o prazo da obra mora no artigo de prazo.
   if (TEMA.prazo.test(slug)) lead.push(L.prazo);
+  if (ARTIGOS_PARA_SERVICO_STUDIO.has(slug)) lead.push(L.reformaStudioSp);
   // A página de serviço do imóvel de que o artigo trata vem primeiro.
   if (studio && apartamento) {
     const [first, second] =
