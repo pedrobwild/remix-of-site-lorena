@@ -12,9 +12,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { serverMemo } from "@/lib/serverMemo";
 import { pageSeoOverride, type PagesSeoMap } from "@/lib/publicPages";
 
-export const HOME_DEFAULT_TITLE = "Reforma de studios e apartamentos compactos em SP | Bewild";
+export const HOME_DEFAULT_TITLE = "Reforma de studios em São Paulo: 6 fases reais | Bewild";
 export const HOME_DEFAULT_DESCRIPTION =
-  "Reforma de studios e apartamentos compactos em São Paulo para alugar ou morar. Projeto e obra em um só contrato, preço e prazo fechados. Peça seu orçamento.";
+  "Reforma de studios em SP: visita e escopo, projeto, autorização do condomínio, obra civil, marcenaria e instalações finais, mobiliário e entrega. Prazo conforme o imóvel.";
 export const HOME_KEYWORDS =
   "reforma de compactos, reforma de studio SP, reforma de studios em São Paulo, reforma de apartamento compacto, reforma de apartamento pequeno em SP, reforma para Airbnb, reforma para aluguel, empresa de reforma em São Paulo, Bewild";
 
