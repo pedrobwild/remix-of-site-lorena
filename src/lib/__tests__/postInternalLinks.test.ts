@@ -39,14 +39,26 @@ describe("links internos dos artigos", () => {
   });
 
   it("artigo de apartamento abre com a página de apartamento e também cita a de studio", () => {
-    const list = hrefs("quanto-tempo-demora-reforma-apartamento", "reforma");
+    const list = hrefs("como-pagar-reforma-apartamento-financiamento-sp", "reforma");
     expect(list[0]).toBe(APARTAMENTO);
     expect(list[1]).toBe(STUDIO);
   });
 
   it("artigo que trata dos dois imóveis segue a ordem do próprio slug", () => {
-    const list = hrefs("quanto-custa-reformar-apartamento-studio-ate-50-m2", "reforma");
+    const list = hrefs("comparar-reforma-apartamento-studio", "reforma");
     expect(list.slice(0, 2)).toEqual([APARTAMENTO, STUDIO]);
+  });
+
+  it.each([
+    "quanto-custa-reformar-apartamento-studio-ate-50-m2",
+    "quanto-tempo-demora-reforma-apartamento",
+    "reforma-de-studio-por-empreendimento-sao-paulo",
+  ])("prioriza o serviço de studio uma única vez no artigo %s", (slug) => {
+    const list = hrefs(slug, "reforma");
+    expect(list[0]).toBe(STUDIO);
+    expect(list.filter((href) => href === STUDIO)).toHaveLength(1);
+    expect(list).toContain(APARTAMENTO);
+    expect(list).toContain("/orcamento");
   });
 
   it("artigo só de apartamento usa os links de reforma mesmo com categoria de investimento", () => {
