@@ -11,7 +11,7 @@ import { useSeo } from "@/lib/useSeo";
 import { safeKbActions, type KbItem } from "@/lib/assistant/assistantEngine";
 import { isExternalHref } from "@/lib/safeUrl";
 import "./faq-page.css";
-import { FALLBACK_ITEMS, GUIA_ITEMS, INDICACAO_ITEMS, PORTFOLIO_ITEMS } from "@/content/faqPage";
+import { FALLBACK_ITEMS, GUIA_ITEMS, INDICACAO_ITEMS, PORTFOLIO_ITEMS, FAQ_SEO_TITLE, FAQ_SEO_DESCRIPTION } from "@/content/faqPage";
 import RadarAssistant from "@/components/assistant/RadarAssistant";
 
 /* ============================================================
@@ -82,9 +82,8 @@ export default function FaqPage({ initialKb = null }: { initialKb?: KbItem[] | n
   }, [kb]);
 
   useSeo({
-    title: "Perguntas frequentes sobre reforma em SP | Bewild",
-    description:
-      "Perguntas e respostas sobre reforma de apartamento em SP: quanto custa, prazo, contrato fechado, garantia, autorização do condomínio e etapas da obra.",
+    title: FAQ_SEO_TITLE,
+    description: FAQ_SEO_DESCRIPTION,
     keywords:
       "dúvidas sobre arquitetura e engenharia, projeto de arquitetura em São Paulo, dúvidas sobre reforma de apartamento em SP, reforma de apartamento em SP, custo de reforma, prazo de reforma, contrato fechado de reforma, garantia de reforma, comissão de indicação de imóvel, autorização de reforma condomínio, Bewild",
     canonicalPath: "/faq",
@@ -101,7 +100,7 @@ export default function FaqPage({ initialKb = null }: { initialKb?: KbItem[] | n
           <div className="bwa-shell bwa-faq-head bwa-faqpage-head">
             <p className="bwa-label">FAQ</p>
             <div>
-              <h1 className="bwa-title">Perguntas antes de entregar a chave.</h1>
+              <h1 className="bwa-title">Perguntas sobre reforma de studio e apartamento.</h1>
               <p className="bwa-faqpage-lead">
                 As dúvidas mais comuns de quem vai reformar um apartamento com a
                 Bewild: prazo, garantia, contrato e o que está incluso, da obra
@@ -256,7 +255,7 @@ export default function FaqPage({ initialKb = null }: { initialKb?: KbItem[] | n
             <p className="bwa-label">Como fazer uma reforma</p>
             <div>
               <h2 className="bwa-title" id="faq-guia-title">
-                Reforma de apartamento, <em>do começo ao fim.</em>
+                Reforma de studio e apartamento, <em>do começo ao fim.</em>
               </h2>
               <p className="bwa-faqpage-lead">
                 O passo a passo de quem vai reformar um apartamento em São
