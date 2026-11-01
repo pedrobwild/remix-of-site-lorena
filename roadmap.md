@@ -1,3 +1,4 @@
+- [ ] Ampliar /faq com perguntas sobre reforma de studios e as seis fases reais, links contextuais para serviço/artigo e metadados compartilhados; preservar perguntas existentes, conferir navegação sem publicar.
 - [x] Ajustar somente título e meta description da home para reforma de studios e seis fases reais, sem prazo universal; 8 testes passam, SSR/Open Graph e navegador iguais, sem erros; texto visível preservado, sem publicar.
 - [x] Melhorar título/descrição do artigo de etapas com as seis fases reais, sem prazo universal; link contextual para studio e prioridade do serviço nos artigos de custo/prazo/empreendimento sem duplicação. 127 testes passam, artigo e navegação conferidos no navegador sem erros; sem publicar.
 - [x] Preparar envio automático de pedido e qualificação: fila transacional, callback privado por evento, reenvio limitado e painel de estados; 47 testes passam e build OK. Fila vazia e envio desativado; sem publicar.

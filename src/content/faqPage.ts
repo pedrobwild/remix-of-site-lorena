@@ -9,6 +9,9 @@ import type { KbItem } from "@/lib/assistant/assistantEngine";
  */
 export type FaqItem = { q: string; a: string; href?: string; linkLabel?: string };
 
+export const FAQ_SEO_TITLE = "FAQ: reforma de studio, etapas e contrato em SP | Bewild";
+export const FAQ_SEO_DESCRIPTION = "Dúvidas sobre reforma de studio em São Paulo: as seis fases, projeto, autorização do condomínio e entrega. Conheça o serviço e o cronograma conforme o imóvel.";
+
 export const FAQ_ITEMS: FaqItem[] = [
   {
     q: "O que é uma reforma turnkey?",
@@ -97,6 +100,24 @@ export const GUIA_ITEMS: FaqItem[] = [
   {
     q: "Quais erros mais atrasam uma reforma de apartamento?",
     a: "Mudar de ideia depois que a obra começou, deixar elétrica e hidráulica para decidir na hora, comprar acabamento sem medida definida e contratar por orçamento aberto. Projeto aprovado em 3D antes de quebrar a primeira parede resolve quase todos eles.",
+  },
+  {
+    q: "Quais são as seis fases da reforma de um studio?",
+    a: "A sequência é: visita e escopo; projeto; autorização do condomínio; obra civil; marcenaria e instalações finais; mobiliário e entrega. O cronograma depende das condições do imóvel e do escopo aprovado, não de um prazo universal.",
+    href: "/conteudos/etapas-de-reforma-de-apartamento-cronograma",
+    linkLabel: "Entender as seis fases da reforma →",
+  },
+  {
+    q: "Por que definir o projeto do studio antes de começar a obra civil?",
+    a: "O projeto organiza layout, medidas e pontos de elétrica e hidráulica antes da execução. Essas decisões orientam a obra civil e a marcenaria, para que móveis, equipamentos e instalações finais sejam compatíveis com o uso do studio.",
+    href: "/reforma-de-studio-sao-paulo",
+    linkLabel: "Conhecer o serviço de reforma de studio em São Paulo →",
+  },
+  {
+    q: "O que vem depois da obra civil na reforma de studio?",
+    a: "Na sequência das seis fases, vêm a marcenaria e as instalações finais, seguidas do mobiliário e da entrega. O planejamento precisa coordenar medidas, compras e montagem; concluir a obra civil não significa que o studio já esteja pronto para usar.",
+    href: "/reforma-de-studio-sao-paulo",
+    linkLabel: "Ver a reforma de studio até a entrega →",
   },
 ];
 
