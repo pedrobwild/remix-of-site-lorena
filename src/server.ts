@@ -4,6 +4,7 @@ import { consumeLastCapturedError } from "./lib/error-capture";
 import { canonicalHostRedirect, lowercasePathRedirect } from "./lib/caseRedirect";
 import { renderErrorPage } from "./lib/error-page";
 import { serveWithEdgeCache, type EdgeCacheContext } from "./lib/edgeHtmlCache";
+import { withModulePreloadsInBody } from "./lib/modulePreloadPlacement";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -89,7 +90,9 @@ export default {
       const render = async () => {
         const handler = await getServerEntry();
         const response = await handler.fetch(request, env, ctx);
-        return withShortEdgeCache(request, await normalizeCatastrophicSsrResponse(response));
+        // modulepreload do <head> para junto do script de entrada (primeira pintura
+        // mais cedo; ver src/lib/modulePreloadPlacement.ts).
+        return withModulePreloadsInBody(withShortEdgeCache(request, await normalizeCatastrophicSsrResponse(response)));
       };
       // Páginas públicas saem do cache de borda do próprio worker (ver
       // src/lib/edgeHtmlCache.ts): a hospedagem não guarda HTML.

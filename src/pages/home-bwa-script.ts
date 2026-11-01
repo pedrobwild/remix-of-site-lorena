@@ -993,10 +993,13 @@ function installReveal(root: HTMLElement, reducedMotion: boolean): Cleanup {
     entries.forEach((entry) => {
       const el = entry.target as HTMLElement;
       sort.unobserve(el);
-      // Na tela ou acima dela: fica visível, sem animação. Elemento oculto na
-      // montagem (`hidden`, ex.: .bwa-services-detail) tem retângulo zerado e
-      // também fica de fora — aparece sem animação quando for aberto.
-      if (entry.isIntersecting || entry.boundingClientRect.bottom <= 0) return;
+      // Na tela ou acima dela: fica visível, sem animação. Retângulo vazio
+      // (bloco dentro de uma seção com `content-visibility: auto` ainda não
+      // desenhada, ou oculto com `hidden`) conta como "abaixo": entra com a
+      // animação quando aparecer, como antes.
+      const rect = entry.boundingClientRect;
+      const empty = rect.width === 0 && rect.height === 0;
+      if (entry.isIntersecting || (!empty && rect.bottom <= 0)) return;
       el.classList.add("bwa-reveal");
       reveal.observe(el);
     });

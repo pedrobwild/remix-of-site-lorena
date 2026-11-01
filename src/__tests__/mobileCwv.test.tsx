@@ -99,3 +99,34 @@ describe("CSS adiado da home: rede de segurança sem o onload", () => {
     expect(page).toMatch(/link\.media = HOME_DEFERRED_ASYNC_MEDIA/);
   });
 });
+
+describe("content-visibility nas seções abaixo do hero (primeira pintura)", () => {
+  it("toda seção de #conteudo, menos o hero, e o rodapé ficam em content-visibility: auto com altura estimada", async () => {
+    const { HOME_BWA_HTML, homeContentVisibilityCss } = await import("@/pages/home-bwa-body");
+    const css = homeContentVisibilityCss();
+    expect(HOME_BWA_HTML.startsWith("<style data-bwa-cv>")).toBe(true);
+    const doc = new DOMParser().parseFromString(HOME_BWA_HTML, "text/html");
+    const selectors = css.slice(0, css.indexOf("{content-visibility:auto}")).split(",").map((sel) => sel.trim());
+    // O rodapé é o componente comum, irmão da <div> que recebe o HTML da home.
+    expect(selectors).toContain("div:has(> #conteudo) + .bwa-footer");
+    const sectionSelectors = selectors.filter((sel) => sel.startsWith("#conteudo > "));
+    const cvRule = { selectorText: sectionSelectors.join(",") };
+    const sections = [...doc.querySelectorAll("#conteudo > section")];
+    expect(sections.length).toBeGreaterThan(5);
+    for (const s of sections) {
+      const label = s.id || s.className;
+      if (s.id === "inicio") expect(s.matches(cvRule.selectorText), label).toBe(false);
+      else expect(s.matches(cvRule.selectorText), `seção nova sem content-visibility: ${label}`).toBe(true);
+    }
+    // O hero (LCP) nunca entra.
+    expect(css).not.toMatch(/#inicio|bwa-hero/);
+    // Altura estimada para cada seleção, no celular e no desktop.
+    for (const sel of selectors) {
+      expect(css.split(`${sel}{contain-intrinsic-size:auto `).length - 1, sel).toBe(2);
+    }
+  });
+
+  it("os modulepreload saem do <head> no servidor (src/server.ts usa withModulePreloadsInBody)", () => {
+    expect(read("src/server.ts")).toMatch(/withModulePreloadsInBody\(/);
+  });
+});

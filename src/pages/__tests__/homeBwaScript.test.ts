@@ -596,10 +596,11 @@ describe("initHomeBwa — entrada suave só para o que está abaixo da tela", ()
         <h2 class="bwa-title" id="na-tela">Na tela</h2>
         <h2 class="bwa-title" id="acima">Acima da tela</h2>
         <h2 class="bwa-title" id="abaixo">Abaixo da tela</h2>
+        <h2 class="bwa-title" id="pulado">Numa seção ainda não desenhada</h2>
       </div>`;
     const root = document.getElementById("home")!;
-    const [visible, above, below] = ["na-tela", "acima", "abaixo"].map((id) => document.getElementById(id)!);
-    const rect = (top: number) => ({ top, bottom: top + 40 }) as DOMRectReadOnly;
+    const [visible, above, below, skipped] = ["na-tela", "acima", "abaixo", "pulado"].map((id) => document.getElementById(id)!);
+    const rect = (top: number) => ({ top, bottom: top + 40, width: 300, height: 40 }) as DOMRectReadOnly;
     const cleanup = initHomeBwa(root);
     try {
       // Montagem: nada some antes de o observador responder (sem ler layout).
@@ -607,22 +608,25 @@ describe("initHomeBwa — entrada suave só para o que está abaixo da tela", ()
       // O que separa (sem margem) e o da entrada (margem de -8% embaixo).
       const sort = observers.find((o) => !o.options)!;
       const reveal = observers.find((o) => o.options?.rootMargin === "0px 0px -8% 0px")!;
-      expect(sort.targets.size).toBe(3);
+      expect(sort.targets.size).toBe(4);
       expect(reveal.targets.size).toBe(0);
       sort.cb([
         { target: visible, isIntersecting: true, boundingClientRect: rect(200) },
         { target: above, isIntersecting: false, boundingClientRect: rect(-500) },
         { target: below, isIntersecting: false, boundingClientRect: rect(2000) },
+        // content-visibility: auto ainda não desenhou a seção: retângulo vazio.
+        { target: skipped, isIntersecting: false, boundingClientRect: { top: 0, bottom: 0, width: 0, height: 0 } as DOMRectReadOnly },
       ]);
       expect(visible).not.toHaveClass("bwa-reveal");
       expect(above).not.toHaveClass("bwa-reveal");
       expect(below).toHaveClass("bwa-reveal");
+      expect(skipped).toHaveClass("bwa-reveal");
       expect(sort.targets.size).toBe(0);
-      expect([...reveal.targets]).toEqual([below]);
+      expect([...reveal.targets]).toEqual([below, skipped]);
       // Rolou até o bloco: aparece.
       reveal.cb([{ target: below, isIntersecting: true, boundingClientRect: rect(500) }]);
       expect(below).toHaveClass("bwa-reveal", "bwa-visible");
-      expect(reveal.targets.size).toBe(0);
+      expect([...reveal.targets]).toEqual([skipped]);
     } finally {
       cleanup();
       window.IntersectionObserver = previous;
