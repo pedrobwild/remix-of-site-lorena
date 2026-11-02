@@ -12,7 +12,9 @@
  * - Contact: clique em WhatsApp/telefone/e-mail e o formulário rápido do
  *   rodapé que abre o WhatsApp.
  * - ViewContent: projeto (/portfolio/<slug>), conteúdo (/conteudos/<slug>),
- *   guia do investidor, portfólio e páginas de serviço.
+ *   guia do investidor, portfólio e páginas de serviço. Vai ao servidor
+ *   (`meta-pageview`, com ou sem aceite) e ao Pixel (só com aceite) com o
+ *   MESMO `eventID` — a Meta deduplica. Ver src/lib/metaCapiBeacon.ts.
  * - IniciouFormulario (próprio): primeira interação com um formulário —
  *   público de quem começou e não enviou.
  * - VisitanteEngajado (próprio): uma vez por sessão, com 60 s de tela ativa
@@ -28,7 +30,8 @@
  * em supabase/functions/_shared/meta-capi.ts (AD_LEAD_FORMS).
  */
 import { trackGoogleAdsAudienceEvent, trackGoogleAdsConversion } from "@/lib/googleAds";
-import { metaUserDataFrom, setMetaUserData, trackMetaCustomEvent, trackMetaEvent } from "@/lib/metaPixel";
+import { sendMetaServerEvent } from "@/lib/metaCapiBeacon";
+import { metaUserDataFrom, newEventId, setMetaUserData, trackMetaCustomEvent, trackMetaEvent, trackMetaPageEvent } from "@/lib/metaPixel";
 import { track } from "@/lib/analytics";
 import { trackEvent } from "@/lib/ga4";
 import { googleAdsLeadValue, isGoogleAdsQualifiedObjetivo } from "@/lib/googleAdsLeadValue";
@@ -237,13 +240,27 @@ export function reportProjectClick(slug: string, title: string, position: number
   logAdEvent("CliqueProjeto", { content_category: "projeto", project_slug: slug });
 }
 
+/**
+ * ViewContent da página: um `eventID` por chamada, o mesmo no servidor
+ * (`meta-pageview`, toda visita) e no Pixel (com aceite; sem aceite fica
+ * pendente para esta página — ver `trackMetaPageEvent`). O espelho interno
+ * (`ad_event`) e o Google continuam só com aceite.
+ */
 export function reportPageContent(content: PageContent | null): void {
   if (!content || !content.id) return;
-  trackMetaEvent("ViewContent", {
+  const eventId = newEventId();
+  const params = {
     content_type: "product",
     content_ids: [content.id],
     content_category: content.category,
+  };
+  sendMetaServerEvent("ViewContent", {
+    eventId,
+    contentType: params.content_type,
+    contentIds: params.content_ids,
+    contentCategory: params.content_category,
   });
+  trackMetaPageEvent("ViewContent", params, eventId);
   // Espelho no Google: view_item com o mesmo id e categoria (remarketing).
   trackGoogleAdsAudienceEvent("view_item", { items: [{ id: content.id }], content_category: content.category });
   logAdEvent("ViewContent", { content_category: content.category });

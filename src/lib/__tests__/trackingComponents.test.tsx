@@ -2,10 +2,12 @@
  * Rastreamento em componentes/hooks:
  *  - trackCta (CORE-17/23): não lança com target = document; clique no
  *    WhatsApp não gera evento interno em dobro (analytics.ts já captura).
- *  - MetaPixel (CORE-01/18): PageView só com aceite, fora do /admin, e por
- *    caminho+query (âncora não conta); ViewContent em projeto, conteúdo,
- *    portfólio e serviço; Contact no clique em WhatsApp/telefone;
- *    IniciouFormulario e VisitanteEngajado (sinais para públicos).
+ *  - MetaPixel (CORE-01/18): PageView no Pixel só com aceite, fora do /admin,
+ *    e por caminho+query (âncora não conta), sempre com `eventID` — o mesmo
+ *    que vai ao servidor (`meta-pageview`, ver metaCapiBeacon.test.ts);
+ *    ViewContent em projeto, conteúdo, portfólio e serviço; Contact no clique
+ *    em WhatsApp/telefone; IniciouFormulario e VisitanteEngajado (sinais para
+ *    públicos).
  *  - ga4 (CORE-06): init não manda page_view; page_view deduplicado.
  *  - CookieBanner (CORE-08/02): ESC só com foco no banner; auditoria sai do
  *    clique; "Recusar" e "Aceitar" com o mesmo peso e foco neutro; aceite de
@@ -34,7 +36,7 @@ vi.mock("@/lib/analytics", async () => {
 
 import { useCtaClickTracking } from "@/lib/trackCta";
 import MetaPixel from "@/components/MetaPixel";
-import { __resetMetaPixelQueue, flushMetaPixelQueue } from "@/lib/metaPixel";
+import { __resetMetaPixelQueue, currentMetaPageViewId, flushMetaPixelQueue } from "@/lib/metaPixel";
 import CookieBanner from "@/components/CookieBanner";
 import { setConsent, openCookiePreferences } from "@/lib/cookieConsent";
 import { installNavigateEventBridge } from "@/lib/useHashRoute";
@@ -98,7 +100,11 @@ describe("MetaPixel", () => {
     window.dispatchEvent(new Event(event));
   }
 
+  const PAGEVIEW = ["track", "PageView", {}, { eventID: expect.any(String) }];
+  const withId = (params: Record<string, unknown>) => [params, { eventID: expect.any(String) }];
+
   it("PageView por caminho+query, só com aceite e fora do /admin", () => {
+    __resetMetaPixelQueue();
     const fbq = vi.fn();
     (window as Window & { fbq?: unknown }).fbq = fbq;
     window.history.replaceState(null, "", "/");
@@ -110,7 +116,7 @@ describe("MetaPixel", () => {
     window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     go("/mapa");
     expect(fbq).toHaveBeenCalledTimes(1);
-    expect(fbq).toHaveBeenCalledWith("track", "PageView");
+    expect(fbq).toHaveBeenCalledWith(...PAGEVIEW);
 
     go("/mapa#bairros", "hashchange"); // âncora: não é página nova
     expect(fbq).toHaveBeenCalledTimes(1);
@@ -123,7 +129,7 @@ describe("MetaPixel", () => {
     expect(fbq).toHaveBeenCalledTimes(1);
   });
 
-  it("ViewContent: na entrada direta espera o Pixel; na navegação sai junto do PageView", () => {
+  it("entrada direta: PageView + ViewContent esperam o Pixel e saem na injeção com eventID; na navegação saem juntos", () => {
     __resetMetaPixelQueue();
     window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     window.history.replaceState(null, "", "/portfolio/studio-a");
@@ -131,45 +137,78 @@ describe("MetaPixel", () => {
 
     const fbq = vi.fn();
     (window as Window & { fbq?: unknown }).fbq = fbq;
-    flushMetaPixelQueue(); // o que useSeo faz ao injetar o Pixel
+    flushMetaPixelQueue(); // o que useSeo faz ao injetar o Pixel (o snippet não dispara PageView)
     expect(fbq.mock.calls).toEqual([
-      ["track", "ViewContent", { content_type: "product", content_ids: ["studio-a"], content_category: "projeto" }],
+      PAGEVIEW,
+      ["track", "ViewContent", ...withId({ content_type: "product", content_ids: ["studio-a"], content_category: "projeto" })],
     ]);
+    // Ids distintos por evento (a Meta deduplica pelo par nome + id).
+    expect(fbq.mock.calls[0][3]).not.toEqual(fbq.mock.calls[1][3]);
 
     go("/portfolio/studio-b");
-    expect(fbq.mock.calls.slice(1)).toEqual([
-      ["track", "PageView"],
-      ["track", "ViewContent", { content_type: "product", content_ids: ["studio-b"], content_category: "projeto" }],
+    expect(fbq.mock.calls.slice(2)).toEqual([
+      PAGEVIEW,
+      ["track", "ViewContent", ...withId({ content_type: "product", content_ids: ["studio-b"], content_category: "projeto" })],
     ]);
+    // Página nova = eventID novo.
+    expect(fbq.mock.calls[2][3]).not.toEqual(fbq.mock.calls[0][3]);
     go("/portfolio"); // a lista entra como "portfolio"
-    expect(fbq).toHaveBeenLastCalledWith("track", "ViewContent", {
-      content_type: "product",
-      content_ids: ["portfolio"],
-      content_category: "portfolio",
-    });
+    expect(fbq).toHaveBeenLastCalledWith(
+      "track",
+      "ViewContent",
+      ...withId({ content_type: "product", content_ids: ["portfolio"], content_category: "portfolio" }),
+    );
     go("/conteudos/quanto-custa-reformar");
-    expect(fbq).toHaveBeenLastCalledWith("track", "ViewContent", {
-      content_type: "product",
-      content_ids: ["quanto-custa-reformar"],
-      content_category: "conteudo",
-    });
+    expect(fbq).toHaveBeenLastCalledWith(
+      "track",
+      "ViewContent",
+      ...withId({ content_type: "product", content_ids: ["quanto-custa-reformar"], content_category: "conteudo" }),
+    );
     go("/reforma-de-studio-sao-paulo");
-    expect(fbq).toHaveBeenLastCalledWith("track", "ViewContent", {
-      content_type: "product",
-      content_ids: ["reforma-studio"],
-      content_category: "servico",
-    });
+    expect(fbq).toHaveBeenLastCalledWith(
+      "track",
+      "ViewContent",
+      ...withId({ content_type: "product", content_ids: ["reforma-studio"], content_category: "servico" }),
+    );
     go("/servicos");
-    expect(fbq).toHaveBeenLastCalledWith("track", "ViewContent", {
-      content_type: "product",
-      content_ids: ["servicos"],
-      content_category: "servico",
-    });
+    expect(fbq).toHaveBeenLastCalledWith(
+      "track",
+      "ViewContent",
+      ...withId({ content_type: "product", content_ids: ["servicos"], content_category: "servico" }),
+    );
     go("/faq"); // página sem ViewContent
-    expect(fbq).toHaveBeenLastCalledWith("track", "PageView");
+    expect(fbq).toHaveBeenLastCalledWith(...PAGEVIEW);
   });
 
-  it("navegação do TanStack Router (ponte do Root) vira PageView + ViewContent; carga inicial e âncora não", () => {
+  it("aceite dado na própria página: o PageView pendente sai na injeção com o MESMO eventID; em outra página, não", () => {
+    __resetMetaPixelQueue();
+    window.history.replaceState(null, "", "/faq");
+    render(<MetaPixel />); // sem aceite: servidor avisado, Pixel pendente
+    const eventId = currentMetaPageViewId();
+    expect(eventId).toEqual(expect.any(String));
+
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
+    const fbq = vi.fn();
+    (window as Window & { fbq?: unknown }).fbq = fbq;
+    flushMetaPixelQueue(); // injeção do Pixel após o aceite
+    expect(fbq.mock.calls).toEqual([["track", "PageView", {}, { eventID: eventId }]]);
+    flushMetaPixelQueue(); // não repete
+    expect(fbq).toHaveBeenCalledTimes(1);
+
+    // Pendente de uma página que a pessoa já deixou nunca sai.
+    __resetMetaPixelQueue();
+    window.localStorage.removeItem("bewild_cookie_consent_v2");
+    cleanup();
+    window.history.replaceState(null, "", "/portfolio/studio-a");
+    render(<MetaPixel />);
+    window.history.pushState(null, "", "/mapa"); // saiu da página sem evento de navegação
+    window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
+    fbq.mockClear();
+    flushMetaPixelQueue();
+    expect(fbq).not.toHaveBeenCalled();
+  });
+
+  it("navegação do TanStack Router (ponte do Root) vira PageView + ViewContent; hidratação e âncora não repetem", () => {
     __resetMetaPixelQueue();
     window.localStorage.setItem("bewild_cookie_consent_v2", "accepted");
     window.history.replaceState(null, "", "/");
@@ -186,18 +225,20 @@ describe("MetaPixel", () => {
       },
     });
     render(<MetaPixel />);
+    // A entrada é um PageView (o snippet do Pixel não dispara o dele).
+    expect(fbq.mock.calls).toEqual([PAGEVIEW]);
 
     bridge.resolve?.({ toLocation: { pathname: "/", searchStr: "" } }); // hidratação
     window.history.pushState(null, "", "/#faq");
     bridge.resolve?.({ fromLocation: { pathname: "/", searchStr: "" }, toLocation: { pathname: "/", searchStr: "" } });
-    expect(fbq).not.toHaveBeenCalled();
+    expect(fbq).toHaveBeenCalledTimes(1);
 
     // O roteador faz o pushState e emite onResolved — sem popstate.
     window.history.pushState(null, "", "/portfolio");
     bridge.resolve?.({ fromLocation: { pathname: "/", searchStr: "" }, toLocation: { pathname: "/portfolio", searchStr: "" } });
-    expect(fbq.mock.calls).toEqual([
-      ["track", "PageView"],
-      ["track", "ViewContent", { content_type: "product", content_ids: ["portfolio"], content_category: "portfolio" }],
+    expect(fbq.mock.calls.slice(1)).toEqual([
+      PAGEVIEW,
+      ["track", "ViewContent", ...withId({ content_type: "product", content_ids: ["portfolio"], content_category: "portfolio" })],
     ]);
 
     off();

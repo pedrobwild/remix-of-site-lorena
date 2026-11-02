@@ -357,11 +357,13 @@ describe("conversions", () => {
     w.gtag = gtag;
     configureGoogleAds({ id: "AW-123456789" });
     reportViewContent("studio-pinheiros");
-    expect(fbq).toHaveBeenCalledWith("track", "ViewContent", {
-      content_type: "product",
-      content_ids: ["studio-pinheiros"],
-      content_category: "projeto",
-    });
+    // Com `eventID`: o mesmo id vai ao servidor (meta-pageview) — a Meta deduplica.
+    expect(fbq).toHaveBeenCalledWith(
+      "track",
+      "ViewContent",
+      { content_type: "product", content_ids: ["studio-pinheiros"], content_category: "projeto" },
+      { eventID: expect.any(String) },
+    );
     expect(gtag).toHaveBeenCalledWith("event", "view_item", {
       send_to: "AW-123456789",
       items: [{ id: "studio-pinheiros" }],
