@@ -659,6 +659,12 @@
       max-width: 24rem;
       text-wrap: pretty;
     }
+    .bwa-hero-note.bwa-hero-proof {
+      margin-top: 10px;
+      color: rgba(255, 255, 255, .88);
+      font-weight: 600;
+      max-width: 30rem;
+    }
 
     .bwa-hero-visual {
       /* Glifo (.bwa-hero-signature) e lista "Morar / Alugar / Vender" no canto
