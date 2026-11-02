@@ -8,7 +8,6 @@
 - Sitemap edits must also follow the sitemap and video registration rules below, because both generators must match the routes.
 
 <!-- LOVABLE:BEGIN -->
-- The Interested leads tab reuses the existing protected lead page and paginated records; its read-only contact list uses shared safe contact links and São Paulo timestamps without duplicating storage or changing qualification workflows.
 - Blog HTML charts use typed data separated from reusable React renderers and replace only registered image URLs after body sanitization; SSR and hydration share the same renderer, while original downloadable SVGs remain unchanged.
 - ChartInteraction owns local series emphasis and pointer/focus/touch detail state without recalculating source data or removing SSR content; legends use pressed-state controls for keyboard access.
 - Studio price references reuse BASE_CUSTO for historical statistics and STUDIO_TABELA_VIGENTE for dated current examples and scoped deadlines; render them directly in the service page SSR to keep distinct sources without client-only content.
