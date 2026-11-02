@@ -1,3 +1,4 @@
+- [ ] Incluir lista de interessados em /admin/leads com nome, WhatsApp/e-mail e data, reutilizando os leads existentes e preservando as outras abas.
 - [x] Ampliar /faq com três perguntas sobre reforma de studios e as seis fases reais, links contextuais para serviço/artigo e metadados compartilhados; perguntas existentes preservadas, SSR/respostas/navegação conferidos sem erros, 28 testes passam e build OK; sem publicar.
 - [x] Ajustar somente título e meta description da home para reforma de studios e seis fases reais, sem prazo universal; 8 testes passam, SSR/Open Graph e navegador iguais, sem erros; texto visível preservado, sem publicar.
 - [x] Melhorar título/descrição do artigo de etapas com as seis fases reais, sem prazo universal; link contextual para studio e prioridade do serviço nos artigos de custo/prazo/empreendimento sem duplicação. 127 testes passam, artigo e navegação conferidos no navegador sem erros; sem publicar.
