@@ -779,6 +779,15 @@
       text-wrap: pretty;
     }
 
+    /* Prova dentro do herói (02/11/2026): quem chega do anúncio decide antes
+       de rolar até a faixa de números. */
+    .bwa-hero-note.bwa-hero-proof {
+      margin-top: 10px;
+      color: rgba(255, 255, 255, .88);
+      font-weight: 600;
+      max-width: 30rem;
+    }
+
     .bwa-hero-visual {
       /* Glifo (.bwa-hero-signature) e lista "Morar / Alugar / Vender" no canto
          superior direito: a lista vem logo abaixo do glifo. Antes as duas

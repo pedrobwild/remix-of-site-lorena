@@ -3,7 +3,7 @@
  *
  *  - O <h1> é a linha com a palavra-chave ("Reforma completa de studios e
  *    apartamentos · São Paulo"), com a aparência de rótulo de sempre. O slogan
- *    "Seu desejo é uma obra." continua igual na tela, como <p class="bwa-hero-title">:
+ *    (hoje "Comprou um studio em São Paulo? …", desde 02/11/2026) fica como <p class="bwa-hero-title">:
  *    antes ele era o <h1> e a palavra-chave ficava num <p> pequeno.
  *  - A home linka no texto as páginas de serviço e o pilar de short stay (antes
  *    só o rodapé e o menu levavam a elas).
@@ -32,7 +32,7 @@ describe("home: título principal", () => {
   it("o slogan segue no herói, logo depois do <h1>, sem ser título", () => {
     const slogan = doc.querySelector(".bwa-hero-copy .bwa-hero-title");
     expect(slogan?.tagName).toBe("P");
-    expect(texto(slogan)).toBe("Seu desejo é uma obra.");
+    expect(texto(slogan)).toBe("Comprou um studio em São Paulo? Receba ele pronto para alugar, sem virar gerente de obra.");
     expect(doc.querySelector(".bwa-hero-copy h1")?.nextElementSibling).toBe(slogan);
     // O subtítulo continua sendo o primeiro <h2> da página.
     expect(slogan?.nextElementSibling?.tagName).toBe("H2");
