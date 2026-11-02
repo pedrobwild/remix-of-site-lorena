@@ -23,6 +23,7 @@ import { MessageCircle } from "lucide-react";
 import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import AdminAlert from "@/components/admin/AdminAlert";
 import MetaLeadsPanel from "@/components/admin/MetaLeadsPanel";
+import InterestedLeadsList from "@/components/admin/InterestedLeadsList";
 import QualifiedObjectivesPanel from "@/components/admin/QualifiedObjectivesPanel";
 import { Button } from "@/guia/components/ui/button";
 import { ManualLeadQualification } from "@/components/admin/ManualLeadQualification";
@@ -139,15 +140,15 @@ const ORIGEM_OPTIONS: { value: "all" | LeadOrigem; label: string }[] = [
   { value: "outro", label: "Não identificado" },
 ];
 
-type LeadsTab = "site" | "meta" | "objetivos";
+type LeadsTab = "lista" | "site" | "meta" | "objetivos";
 
 /** Aba inicial pela URL: `/admin/leads?aba=meta` abre os formulários da Meta. */
 function readTab(): LeadsTab {
   try {
     const value = new URLSearchParams(window.location.search).get("aba");
-    return value === "meta" || value === "objetivos" ? value : "site";
+    return value === "site" || value === "meta" || value === "objetivos" ? value : "lista";
   } catch {
-    return "site";
+    return "lista";
   }
 }
 
@@ -155,7 +156,7 @@ function readTab(): LeadsTab {
 function writeTab(tab: LeadsTab) {
   try {
     const url = new URL(window.location.href);
-    if (tab !== "site") url.searchParams.set("aba", tab);
+    if (tab !== "lista") url.searchParams.set("aba", tab);
     else url.searchParams.delete("aba");
     window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
   } catch {
@@ -239,7 +240,7 @@ export default function BewildLeadsAdminPage() {
   }, []);
 
   useEffect(() => {
-    if (tab === "site") void load();
+    if (tab === "site" || tab === "lista") void load();
   }, [load, tab]);
 
   function switchTab(next: LeadsTab) {
@@ -324,6 +325,25 @@ export default function BewildLeadsAdminPage() {
     description:
       "Tudo que chega em um lugar só: mensagens do /contato, pedidos de orçamento (/diagnostico, /orcamento e LPs /o e /p) e parceiros, com status de resposta e prazo de 24h — e, na outra aba, os formulários do Facebook e do Instagram.",
   } as const;
+
+  if (tab === "lista") return (
+    <BewildAdminShell {...shellProps}>
+      <LeadsTabs tab={tab} onChange={switchTab} />
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
+        <h2 className="text-lg font-semibold">Interessados {!loading && !loadError && `(${totalCount})`}</h2>
+        <Button variant="outline" className="min-h-11" onClick={() => void load()} disabled={loading}>Atualizar</Button>
+      </div>
+      {actionMsg && <AdminAlert kind={actionMsg.kind} onClose={() => setActionMsg(null)}>{actionMsg.text}</AdminAlert>}
+      {loading ? <p className="bw-admin__empty" role="status">Carregando interessados…</p>
+        : loadError ? <div role="alert" className="py-6"><p>Não foi possível carregar os interessados.</p><Button variant="outline" className="mt-3 min-h-11" onClick={() => void load()}>Tentar novamente</Button></div>
+        : rows.length === 0 ? <p className="bw-admin__empty">Nenhum interessado recebido ainda.</p>
+        : <InterestedLeadsList rows={rows} />}
+      {!loading && !loadError && hasMore && <div className="flex flex-wrap items-center justify-between gap-3 py-4">
+        <p className="text-sm text-muted-foreground">Exibindo {rows.length} de {totalCount} interessados.</p>
+        <Button variant="outline" className="min-h-11" onClick={() => void loadMore()} disabled={loadingMore}>{loadingMore ? "Carregando…" : "Carregar mais"}</Button>
+      </div>}
+    </BewildAdminShell>
+  );
 
   if (tab === "objetivos") return <BewildAdminShell {...shellProps}><LeadsTabs tab={tab} onChange={switchTab} /><QualifiedObjectivesPanel /></BewildAdminShell>;
 
@@ -654,6 +674,7 @@ export default function BewildLeadsAdminPage() {
 function LeadsTabs({ tab, onChange }: { tab: LeadsTab; onChange: (t: LeadsTab) => void }) {
   return (
     <div className="bw-admin__period" style={{ marginBottom: 18 }} role="tablist" aria-label="Origem dos leads">
+      <Button variant="ghost" role="tab" aria-selected={tab === "lista"} className={tab === "lista" ? "is-active min-h-11" : "min-h-11"} onClick={() => onChange("lista")}>Interessados</Button>
       <button
         type="button"
         role="tab"
