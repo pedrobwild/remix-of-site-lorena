@@ -75,4 +75,59 @@ export function withDeferredStylesheet(html: string, href: string): string {
   return html.replace(HOME_FOLD_MARKER, `${links}\n\n    ${HOME_FOLD_MARKER}`);
 }
 
-export const HOME_BWA_HTML = withDeferredStylesheet(HOME_BWA_HTML_RAW, HOME_DEFERRED_CSS);
+/**
+ * Alturas estimadas de cada seção abaixo do hero (medidas em 01/11/2026 a 390 px
+ * e a 1350 px). Só valem até o navegador desenhar a seção pela primeira vez;
+ * depois o `auto` de `contain-intrinsic-size` guarda a altura real.
+ */
+const SECTION_HEIGHTS: ReadonlyArray<readonly [selector: string, mobile: number, desktop: number]> = [
+  ["#conteudo > #para-quem", 1750, 970],
+  ["#conteudo > #projetos", 1800, 880],
+  ["#conteudo > #certeza", 3050, 1100],
+  ["#conteudo > #workflow", 3060, 1930],
+  ["#conteudo > #depoimentos", 920, 880],
+  ["#conteudo > #marcenaria", 1070, 1090],
+  ["#conteudo > #prova", 2080, 1020],
+  ["#conteudo > .bwa-midcta", 210, 150],
+  ["#conteudo > #manifesto", 990, 540],
+  ["#conteudo > #parceria", 670, 390],
+  ["#conteudo > #faq", 1050, 860],
+  ["#conteudo > #mapa", 650, 750],
+  ["#conteudo > #contato", 610, 660],
+  // O rodapé (BwaFooter) é irmão da <div> que recebe o HTML da home.
+  ["div:has(> #conteudo) + .bwa-footer", 1910, 1000],
+];
+
+/**
+ * CSS de `content-visibility: auto` para as seções abaixo do hero e o rodapé.
+ *
+ * O navegador só faz layout e pintura de uma seção quando ela se aproxima da
+ * tela. No PageSpeed (celular, 01/11/2026) a primeira pintura da home saía só
+ * aos ~2,3 s, embora o HTML estivesse lido aos 0,3 s: o primeiro layout da
+ * página inteira (≈1.500 objetos, 230 ms) e a compilação dos módulos atrasavam
+ * o primeiro quadro, e a simulação do Lighthouse levava esse atraso ao LCP
+ * (4,1 s). Com as seções fora da tela puladas, o primeiro quadro sai junto
+ * com o hero. O conteúdo continua no HTML (busca no Google, Ctrl+F e leitores
+ * de tela não mudam).
+ *
+ * Vai num <style> no começo do HTML da home, e não em home-bwa.css: precisa
+ * valer já no primeiro layout (o CSS adiado chega depois no celular) e o
+ * rodapé é o componente comum de todas as páginas — aqui a regra só existe
+ * enquanto a home está na tela.
+ */
+export function homeContentVisibilityCss(): string {
+  const sizes = (i: 1 | 2) =>
+    SECTION_HEIGHTS.map((row) => `${row[0]}{contain-intrinsic-size:auto ${row[i]}px}`).join("");
+  return (
+    `${SECTION_HEIGHTS.map(([sel]) => sel).join(",")}{content-visibility:auto}` +
+    sizes(1) +
+    `@media (min-width: 901px){${sizes(2)}}`
+  );
+}
+
+/** Põe o <style> de content-visibility no começo do HTML da home. */
+export function withContentVisibility(html: string): string {
+  return `<style data-bwa-cv>${homeContentVisibilityCss()}</style>${html}`;
+}
+
+export const HOME_BWA_HTML = withContentVisibility(withDeferredStylesheet(HOME_BWA_HTML_RAW, HOME_DEFERRED_CSS));
