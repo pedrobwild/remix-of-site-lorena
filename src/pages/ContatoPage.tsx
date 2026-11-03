@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import FormPrivacyNote from "@/components/FormPrivacyNote";
@@ -292,6 +293,19 @@ export default function ContatoPage() {
               >
                 Falar no WhatsApp <span aria-hidden="true">↗</span>
               </a>
+              <nav aria-label="Reforma de studio e etapas">
+                <Link className="bwa-contact-link" to="/reforma-de-studio-sao-paulo">
+                  Reforma de studio em São Paulo <span aria-hidden="true">→</span>
+                </Link>
+                <br />
+                <Link
+                  className="bwa-contact-link"
+                  to="/conteudos/$slug"
+                  params={{ slug: "etapas-de-reforma-de-apartamento-cronograma" }}
+                >
+                  As seis etapas da reforma <span aria-hidden="true">→</span>
+                </Link>
+              </nav>
             </div>
 
             {outcome === "delivered" ? (
