@@ -24,6 +24,7 @@ import BewildAdminShell from "@/components/admin/BewildAdminShell";
 import AdminAlert from "@/components/admin/AdminAlert";
 import MetaLeadsPanel from "@/components/admin/MetaLeadsPanel";
 import InterestedLeadsList from "@/components/admin/InterestedLeadsList";
+import GoogleAdsLeadsPanel from "@/components/admin/GoogleAdsLeadsPanel";
 import QualifiedObjectivesPanel from "@/components/admin/QualifiedObjectivesPanel";
 import { Button } from "@/guia/components/ui/button";
 import { ManualLeadQualification } from "@/components/admin/ManualLeadQualification";
@@ -140,13 +141,13 @@ const ORIGEM_OPTIONS: { value: "all" | LeadOrigem; label: string }[] = [
   { value: "outro", label: "Não identificado" },
 ];
 
-type LeadsTab = "lista" | "site" | "meta" | "objetivos";
+type LeadsTab = "lista" | "site" | "meta" | "objetivos" | "ads";
 
 /** Aba inicial pela URL: `/admin/leads?aba=meta` abre os formulários da Meta. */
 function readTab(): LeadsTab {
   try {
     const value = new URLSearchParams(window.location.search).get("aba");
-    return value === "site" || value === "meta" || value === "objetivos" ? value : "lista";
+    return value === "site" || value === "meta" || value === "objetivos" || value === "ads" ? value : "lista";
   } catch {
     return "lista";
   }
@@ -346,6 +347,7 @@ export default function BewildLeadsAdminPage() {
   );
 
   if (tab === "objetivos") return <BewildAdminShell {...shellProps}><LeadsTabs tab={tab} onChange={switchTab} /><QualifiedObjectivesPanel /></BewildAdminShell>;
+  if (tab === "ads") return <BewildAdminShell {...shellProps}><LeadsTabs tab={tab} onChange={switchTab} /><GoogleAdsLeadsPanel /></BewildAdminShell>;
 
   if (tab === "meta") {
     return (
@@ -694,6 +696,7 @@ function LeadsTabs({ tab, onChange }: { tab: LeadsTab; onChange: (t: LeadsTab) =
         Formulários Meta
       </button>
       <Button variant="ghost" role="tab" aria-selected={tab === "objetivos"} className={tab === "objetivos" ? "is-active min-h-11" : "min-h-11"} onClick={() => onChange("objetivos")}>Qualificados por objetivo</Button>
+      <Button variant="ghost" role="tab" aria-selected={tab === "ads"} className={tab === "ads" ? "is-active min-h-11" : "min-h-11"} onClick={() => onChange("ads")}>Google Ads</Button>
     </div>
   );
 }
