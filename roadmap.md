@@ -1,3 +1,4 @@
+- [ ] Integrar Search Console ao painel existente: rastreio, sitemap e busca exata “reforma de studios”, com relatórios privados atualizados diariamente, horário da última atualização e conferência autenticada; sem prometer dados instantâneos nem publicar sem pedido.
 - [x] Adicionar aba Google Ads em /admin/leads com período, cliques, conversões, investimento e custo por pedido; 25 testes passam e compilação OK, conexão existente e métricas reais confirmadas em consulta somente leitura. Sem campanhas, envios ou publicação alterados.
 - [ ] Conferir a aba Google Ads com dados reais na prévia — sessão automática indisponível, nenhuma conta corresponde ao solicitante; depende de entrar no painel.
 - [x] Incluir lista de interessados em /admin/leads com nome, WhatsApp/e-mail e data de São Paulo, atualização e carregar mais; outras abas preservadas, 19 testes passam e compilação OK; sem publicar.
