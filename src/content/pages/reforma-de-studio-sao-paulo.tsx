@@ -121,6 +121,11 @@ export const FAQ: { q: string; a: string; node?: ReactNode }[] = [
     q: "A Bewild faz o projeto de arquitetura ou só a obra?",
     a: "As duas coisas, no mesmo contrato: arquitetura, engenharia e empreita sob a mesma responsabilidade. Quem projeta responde pela obra, e o preço fechado vale para os dois.",
   },
+  {
+    q: "Vocês reformam kitnet e apartamento pequeno?",
+    a: "Sim. Kitnet, studio e apartamento pequeno seguem o mesmo método: projeto, obra, marcenaria sob medida e mobília num único contrato. O valor depende da metragem, do estado do imóvel e do padrão de acabamento.",
+  },
+
 ];
 
 export const STUDIO_SP_JSONLD: Array<Record<string, unknown>> = [
