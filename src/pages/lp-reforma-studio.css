@@ -1,0 +1,305 @@
+/* /lp/reforma-de-studio-sao-paulo — LP dos anúncios do Google (opção 1a:
+   formulário no topo). Só tokens --bwa-* e as classes base de
+   home-bwa.css/bwa-internal.css/servico-reforma.css; nada de cor, fonte ou
+   raio novos. Mobile-first; grades com minmax(0, 1fr) e sem altura fixa. */
+
+/* ---------- Hero: texto + formulário + foto ---------- */
+.bwa-lp-hero {
+  padding: clamp(88px, 10vw, 132px) 0 clamp(40px, 4.5vw, 64px);
+}
+
+.bwa-lp-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(28px, 3.5vw, 48px);
+  align-items: start;
+}
+
+/* DOM: texto → formulário → foto (ordem do celular). No desktop a foto fica
+   sob o texto e o formulário ocupa as duas linhas da direita. */
+@media (min-width: 1000px) {
+  .bwa-lp-hero-grid {
+    grid-template-columns: minmax(0, 1.1fr) minmax(360px, 460px);
+    grid-template-rows: auto auto;
+    column-gap: clamp(40px, 5vw, 80px);
+  }
+  .bwa-lp-hero-copy { grid-column: 1; grid-row: 1; }
+  .bwa-lp-hero-foto { grid-column: 1; grid-row: 2; }
+  .bwa-lp-form-card { grid-column: 2; grid-row: 1 / span 2; }
+}
+
+.bwa-lp-hero-copy .bwa-title {
+  margin: 14px 0 0;
+  max-width: 18ch;
+}
+
+/* Grade de 4 números: 2 colunas no celular, 4 a partir de 820 px, com
+   1 px de linha entre as células (fundo = linha, gap = 1 px). */
+.bwa-lp-numeros {
+  list-style: none;
+  margin: clamp(24px, 3vw, 40px) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--bwa-line);
+  border: 1px solid var(--bwa-line);
+}
+
+@media (min-width: 820px) {
+  .bwa-lp-numeros {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.bwa-lp-numeros li {
+  display: grid;
+  gap: 6px;
+  padding: clamp(14px, 1.8vw, 22px) clamp(14px, 1.6vw, 20px);
+  background: var(--bwa-paper);
+}
+
+.bwa-lp-numeros strong {
+  font-size: clamp(24px, 2.4vw, 36px);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--bwa-navy);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.bwa-lp-numeros small {
+  font-size: 0.5em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.bwa-lp-numeros span {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--bwa-ink-soft);
+}
+
+/* Foto 16:9 com legenda sobreposta (mono, caixa alta) sobre gradiente navy. */
+.bwa-lp-hero-foto {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  background: var(--bwa-navy);
+}
+
+.bwa-lp-hero-foto img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.bwa-lp-hero-foto figcaption,
+.bwa-lp-fotos figcaption {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 28px 16px 14px;
+  font-family: var(--bwa-font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bwa-white);
+  background: linear-gradient(to top, color-mix(in srgb, var(--bwa-navy) 92%, transparent), transparent);
+}
+
+/* Cartão do formulário */
+.bwa-lp-form-card {
+  padding: clamp(22px, 2.6vw, 32px);
+  border: 1px solid var(--bwa-line);
+  background: var(--bwa-white);
+  /* Âncora #orcamento: o cabeçalho fixo não cobre o topo do cartão. */
+  scroll-margin-top: 88px;
+}
+
+.bwa-lp-form-promessa {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--bwa-ink);
+}
+
+.bwa-lp-form .bwa-form-field input {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  /* 16 px no celular: o iOS não dá zoom no foco. */
+  font-size: 16px;
+}
+
+.bwa-lp-fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.bwa-lp-fieldset legend {
+  padding: 0;
+  margin-bottom: 8px;
+}
+
+/* Alvo de toque ≥ 44 px (WCAG 2.2 AA); o estado escolhido também sai no
+   aria-pressed, não só na cor. */
+.bwa-lp-form .bwa-chip {
+  min-height: 44px;
+}
+
+.bwa-lp-form .bwa-chip:focus-visible {
+  outline: 2px solid var(--bwa-navy-2);
+  outline-offset: 2px;
+}
+
+.bwa-lp-form-submit {
+  width: 100%;
+}
+
+.bwa-lp-form-submit:disabled {
+  opacity: 0.6;
+  cursor: progress;
+  transform: none;
+}
+
+.bwa-lp-form-falha {
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.5;
+}
+
+.bwa-lp-form-falha a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.bwa-lp-form-privacidade {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--bwa-ink-soft);
+}
+
+.bwa-lp-form-privacidade a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.bwa-form-success p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+/* ---------- Fotos: 2 colunas no celular, 3 a partir de 820 px ---------- */
+.bwa-lp-fotos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 1.4vw, 20px);
+}
+
+@media (min-width: 820px) {
+  .bwa-lp-fotos {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.bwa-lp-fotos figure {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  background: var(--bwa-navy);
+}
+
+.bwa-lp-fotos img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.bwa-lp-fotos-link {
+  margin: clamp(20px, 2.4vw, 32px) 0 0;
+}
+
+.bwa-lp-fotos-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--bwa-ink);
+  font-size: 15px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.bwa-lp-fotos-link a:focus-visible {
+  outline: 2px solid var(--bwa-navy-2);
+  outline-offset: 4px;
+}
+
+/* ---------- Split 240px | 1fr (contrato e "antes das chaves") ---------- */
+.bwa-lp-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 40px);
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .bwa-lp-split {
+    grid-template-columns: 240px minmax(0, 1fr);
+  }
+  .bwa-lp-split > .bwa-servico-h2 {
+    margin-bottom: 0;
+  }
+}
+
+.bwa-lp-label-light {
+  color: color-mix(in srgb, var(--bwa-white) 72%, transparent);
+}
+
+.bwa-servico-remoto .bwa-lp-split .bwa-servico-h2 {
+  margin: 12px 0 0;
+}
+
+/* No bloco navy a lista é de 4 itens: 2 colunas a partir de 720 px já
+   vem de .bwa-servico-list. O texto introdutório ocupa a largura toda. */
+.bwa-servico-remoto .bwa-lp-split .bwa-servico-text {
+  max-width: 68ch;
+  margin-bottom: clamp(20px, 2.4vw, 28px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bwa-lp-form-submit {
+    transition: none;
+  }
+}
+
+/* Cartões de ~165 px no celular: legenda mais justa, sem quebrar em 3 linhas. */
+@media (max-width: 480px) {
+  .bwa-lp-fotos figcaption {
+    padding: 22px 10px 10px;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+  }
+}
+
+/* Link do WhatsApp no CTA final com alvo de 44 px também com ponteiro fino. */
+.bwa-lp-studio .bwa-servico-cta .bwa-servico-whats {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}

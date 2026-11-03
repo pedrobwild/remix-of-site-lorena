@@ -45,6 +45,7 @@ export type Route =
   | { name: "video"; slug: string }
   | { name: "lp-obra" }
   | { name: "lp-panfleto" }
+  | { name: "lp-reforma-studio" }
 
   | { name: "admin-login" }
   | { name: "admin-dashboard" }
@@ -137,6 +138,8 @@ function parsePath(rawPath: string): Route {
 
   if (path === "/o") return { name: "lp-obra" };
   if (path === "/p") return { name: "lp-panfleto" };
+  // LP dos anúncios do Google (noindex, fora do sitemap); a orgânica é /reforma-de-studio-sao-paulo.
+  if (path === "/lp/reforma-de-studio-sao-paulo") return { name: "lp-reforma-studio" };
   // Página de pedido de orçamento (entrega no mesmo canal do /contato).
   // /diagnostico foi removida e virou redirect legado para /orcamento.
   if (path === "/orcamento") return { name: "orcamento" };
@@ -392,6 +395,7 @@ export const routes = {
   adminDiagnostico: "/admin/diagnostico",
   lpObra: "/o",
   lpPanfleto: "/p",
+  lpReformaStudio: "/lp/reforma-de-studio-sao-paulo",
 };
 
 // ---------------------------------------------------------------------------

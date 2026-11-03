@@ -20,7 +20,22 @@ import { withUtm } from "@/lib/utm";
  * rolagem (um quadro por vez), não por IntersectionObserver: um salto direto
  * (âncora, Voltar) não cruza os limites e o observer não avisaria.
  */
-export default function MobileQuoteBar({ cta }: { cta: string }) {
+type Props = {
+  cta: string;
+  /**
+   * Destino do botão. Padrão: /orcamento com os utm_* da sessão. Nas LPs com
+   * formulário na própria página, a âncora do formulário ("#orcamento").
+   */
+  href?: string;
+  /**
+   * Seletor (dentro do <main>) do que esconde a barra enquanto está na tela.
+   * Padrão: os links da página para /orcamento. Nas LPs, o próprio
+   * formulário — a barra some enquanto ele está visível.
+   */
+  hideWhenVisible?: string;
+};
+
+export default function MobileQuoteBar({ cta, href, hideWhenVisible = 'a[href^="/orcamento"]' }: Props) {
   const ref = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
@@ -40,7 +55,7 @@ export default function MobileQuoteBar({ cta }: { cta: string }) {
       pending = false;
       const vh = window.innerHeight;
       // Links da página para o orçamento (fora do cabeçalho/menu e da própria barra).
-      const ctas = main ? Array.from(main.querySelectorAll<HTMLElement>('a[href^="/orcamento"]')) : [];
+      const ctas = main ? Array.from(main.querySelectorAll<HTMLElement>(hideWhenVisible)) : [];
       const ctaVisible = ctas.some((a) => a !== bar && visible(a, vh));
       const atEnd = !!footer && footer.getBoundingClientRect().top < vh;
       bar.classList.toggle("is-hidden", ctaVisible || atEnd);
@@ -59,10 +74,10 @@ export default function MobileQuoteBar({ cta }: { cta: string }) {
       window.removeEventListener("resize", schedule);
       if (frame) window.cancelAnimationFrame(frame);
     };
-  }, []);
+  }, [hideWhenVisible]);
 
   return (
-    <a ref={ref} className="bwa-mobile-cta is-hidden" href={withUtm("/orcamento")} data-cta={cta}>
+    <a ref={ref} className="bwa-mobile-cta is-hidden" href={href ?? withUtm("/orcamento")} data-cta={cta}>
       Solicitar orçamento <span aria-hidden="true">→</span>
     </a>
   );
