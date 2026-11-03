@@ -6,6 +6,14 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import type { LeadPayload } from "../leadDelivery";
 import type { SendLeadResult } from "../sendLead";
+import type { ReactNode } from "react";
+
+vi.mock("@tanstack/react-router", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@tanstack/react-router")>()),
+  Link: ({ to, params, children, ...props }: { to: string; params?: { slug: string }; children: ReactNode; className?: string }) => (
+    <a href={params ? to.replace("$slug", params.slug) : to} {...props}>{children}</a>
+  ),
+}));
 
 const sendLeadMock = vi.fn<(payload: LeadPayload) => Promise<SendLeadResult>>();
 const trackEventMock = vi.fn();
