@@ -1781,6 +1781,36 @@ export type Database = {
         }
         Relationships: []
       }
+      search_console_snapshots: {
+        Row: {
+          attempted_at: string | null
+          cache_key: string
+          error: string | null
+          payload: Json | null
+          refreshed_at: string | null
+          request: Json
+          site_url: string | null
+        }
+        Insert: {
+          attempted_at?: string | null
+          cache_key: string
+          error?: string | null
+          payload?: Json | null
+          refreshed_at?: string | null
+          request?: Json
+          site_url?: string | null
+        }
+        Update: {
+          attempted_at?: string | null
+          cache_key?: string
+          error?: string | null
+          payload?: Json | null
+          refreshed_at?: string | null
+          request?: Json
+          site_url?: string | null
+        }
+        Relationships: []
+      }
       seo_404_log: {
         Row: {
           created_at: string
