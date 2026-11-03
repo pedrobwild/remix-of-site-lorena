@@ -48,7 +48,7 @@ import type { DateRange } from "./types";
 import { useServerFn } from "@tanstack/react-start";
 import { getSearchConsoleSnapshot, refreshSearchConsoleSnapshot } from "@/lib/searchConsoleSnapshot.functions";
 import SearchConsoleFocus from "@/components/admin/analytics/SearchConsoleFocus";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/guia/components/ui/button";
 import type { SearchPanel, CrawlRow } from "@/lib/searchConsoleSnapshot";
 
 type Sitemap = {
