@@ -10,7 +10,7 @@ export const Route = createFileRoute("/api/public/search-console-refresh")({
     if (!secret || !given || !safeEqual(secret, given)) return json(401, { error: "não autorizado" });
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { refreshSnapshot } = await import("@/lib/searchConsoleSnapshot.server");
-    const records = await supabaseAdmin.from("search_console_snapshots").select("request,site_url,attempted_at").order("cache_key");
+    const records = await supabaseAdmin.from("search_console_snapshots").select("request,site_url,attempted_at").order("attempted_at", { ascending: false }).order("cache_key").limit(20);
     if (records.error) return json(502, { error: "Falha ao ler as atualizações pendentes." });
     const requests = (records.data ?? []).map(r => snapshotRequest.parse(r.request));
     const selected = records.data?.find(r => r.site_url)?.site_url;
@@ -27,7 +27,14 @@ export const Route = createFileRoute("/api/public/search-console-refresh")({
         const key = cacheKey(data);
         if (seen.has(key)) continue;
         seen.add(key);
-        const result = await refreshSnapshot(supabaseAdmin, data);
+        let result;
+        try {
+          result = await refreshSnapshot(supabaseAdmin, data);
+        } catch (error) {
+          const failed = await supabaseAdmin.from("search_console_snapshots").upsert({ cache_key: key, request: data, attempted_at: new Date().toISOString(), error: error instanceof Error ? error.message : "Falha ao atualizar o Google." });
+          if (failed.error) console.error("Não foi possível registrar falha de atualização Search Console.");
+          throw error;
+        }
         if (result.status === "selection_required") return json(409, { error: "Selecione a propriedade no painel." });
         updated++;
       }

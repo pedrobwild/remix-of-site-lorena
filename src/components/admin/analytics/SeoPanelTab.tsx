@@ -303,7 +303,7 @@ function metricCols<R>(get: (r: R) => Metrics, getPrev?: (r: R) => Metrics | nul
         <>
           {pos(get(r).position)}{" "}
           {getPrev && getPrev(r) && get(r).position > 0 && (
-            <Delta cur={get(r).position} prev={getPrev(r)!.position} lowerIsBetter kind="abs" />
+            <Delta cur={get(r).position} prev={getPrev(r)?.position} lowerIsBetter kind="abs" />
           )}
         </>
       ),
@@ -567,7 +567,7 @@ export function SeoPanelView({ data, loading, onReload }: { data: Data; loading:
       ),
     },
     ...metricCols<Compared<KeyRow>>(
-      (r) => (r.status === "perdida" ? r.prev! : r),
+      (r) => (r.status === "perdida" ? r.prev ?? r : r),
       (r) => (r.status === "perdida" ? null : r.prev),
     ),
   ];
