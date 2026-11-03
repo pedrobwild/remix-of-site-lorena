@@ -45,6 +45,11 @@ import {
   type SourceRow,
 } from "@/lib/seoPanel";
 import type { DateRange } from "./types";
+import { useServerFn } from "@tanstack/react-start";
+import { getSearchConsoleSnapshot, refreshSearchConsoleSnapshot } from "@/lib/searchConsoleSnapshot.functions";
+import SearchConsoleFocus from "@/components/admin/analytics/SearchConsoleFocus";
+import { Button } from "@/components/ui/button";
+import type { SearchPanel, CrawlRow } from "@/lib/searchConsoleSnapshot";
 
 type Sitemap = {
   path?: string;
@@ -76,7 +81,7 @@ type Panel = {
   sitemaps: Sitemap[];
 };
 
-type Data = { panel: Panel; posts: PostInfo[]; referrers: SourceRow[]; utm: SourceRow[] };
+type Data = { panel: Panel; posts: PostInfo[]; referrers: SourceRow[]; utm: SourceRow[]; snapshot?: { refreshed_at: string | null; error: string | null; crawls: CrawlRow[]; crawl_error: string | null } };
 
 const nf = new Intl.NumberFormat("pt-BR");
 const pct = (v: number) => `${(v * 100).toFixed(1).replace(".", ",")}%`;
@@ -307,10 +312,15 @@ function metricCols<R>(get: (r: R) => Metrics, getPrev?: (r: R) => Metrics | nul
 }
 
 export default function SeoPanelTab({ range }: { range: DateRange }) {
+  const readSnapshot = useServerFn(getSearchConsoleSnapshot);
+  const refreshSnapshot = useServerFn(refreshSearchConsoleSnapshot);
   const [data, setData] = useState<Data | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [outdated, setOutdated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [candidates, setCandidates] = useState<string[]>([]);
+  const [selected, setSelected] = useState("");
+  const [emptySnapshot, setEmptySnapshot] = useState(false);
 
   const today = new Date();
   const endDay = range.to.getTime() > today.getTime() ? today : range.to;
@@ -318,7 +328,7 @@ export default function SeoPanelTab({ range }: { range: DateRange }) {
   const end = fmtLocalDay(endDay);
   const prev = previousDays(start, end);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (refresh = false, property?: string) => {
     setLoading(true);
     setError(null);
     setOutdated(false);
@@ -326,9 +336,7 @@ export default function SeoPanelTab({ range }: { range: DateRange }) {
     const until = new Date(new Date(`${end}T00:00:00`).getTime() + 86_400_000).toISOString();
     try {
       const [gsc, posts, refs, utm] = await Promise.all([
-        supabase.functions.invoke("search-console-stats", {
-          body: { mode: "panel", start_date: start, end_date: end, prev_start_date: prev.start, prev_end_date: prev.end },
-        }),
+        (refresh ? refreshSnapshot : readSnapshot)({ data: { start_date: start, end_date: end, prev_start_date: prev.start, prev_end_date: prev.end, ...(property ? { site_url: property } : {}) } }),
         supabase
           .from("bewild_posts" as never)
           .select("slug,title,published_at,content_updated_at,focus_keyword")
@@ -336,8 +344,19 @@ export default function SeoPanelTab({ range }: { range: DateRange }) {
         supabase.rpc("analytics_breakdown" as never, { p_since: since, p_until: until, p_dim: "referrer_host", p_limit: 500 } as never),
         supabase.rpc("analytics_breakdown" as never, { p_since: since, p_until: until, p_dim: "utm_source", p_limit: 500 } as never),
       ]);
-      if (gsc.error) throw new Error("Não foi possível ler o Search Console.");
-      const panel = gsc.data as Panel;
+      if (gsc.status === "selection_required") {
+        setCandidates(gsc.candidates);
+        return;
+      }
+      setCandidates([]);
+      if (!gsc.panel) {
+        setEmptySnapshot(true);
+        setData(null);
+        if (gsc.error) setError(gsc.error);
+        return;
+      }
+      setEmptySnapshot(false);
+      const panel = gsc.panel as Panel;
       if (!panel || panel.version !== 2) {
         setOutdated(true);
         setData(null);
@@ -357,17 +376,27 @@ export default function SeoPanelTab({ range }: { range: DateRange }) {
         posts: postRows,
         referrers: ((refs as { data: SourceRow[] | null }).data ?? []) as SourceRow[],
         utm: ((utm as { data: SourceRow[] | null }).data ?? []) as SourceRow[],
+        snapshot: { refreshed_at: gsc.refreshed_at, error: gsc.error, crawls: gsc.crawls, crawl_error: gsc.crawl_error },
       });
     } catch (e) {
       setError((e as Error).message || "Falha ao carregar o painel de SEO.");
     } finally {
       setLoading(false);
     }
-  }, [start, end, prev.start, prev.end]);
+  }, [start, end, prev.start, prev.end, readSnapshot, refreshSnapshot]);
 
   useEffect(() => {
     void load();
   }, [load]);
+
+  if (candidates.length) return <div className="space-y-4">
+    <label className="block" htmlFor="gsc-property">Propriedade verificada do Search Console</label>
+    <select id="gsc-property" className="max-w-full border border-input bg-background p-3 text-foreground" value={selected} onChange={e => setSelected(e.target.value)}>
+      <option value="">Selecione uma propriedade</option>
+      {candidates.map(value => <option key={value} value={value}>{value}</option>)}
+    </select>
+    <Button disabled={!selected || loading} onClick={() => void load(true, selected)}>Confirmar propriedade</Button>
+  </div>;
 
   if (loading && !data) {
     return (
@@ -378,13 +407,19 @@ export default function SeoPanelTab({ range }: { range: DateRange }) {
       </div>
     );
   }
+  if (emptySnapshot) return <div className="space-y-4">
+    <h3 className="text-lg font-semibold">Google Search Console</h3>
+    <p className="text-muted-foreground">Nenhuma cópia disponível para este período. O Google fornece dados com atraso.</p>
+    {error && <p role="alert" className="text-destructive">{error}</p>}
+    <Button disabled={loading} onClick={() => void load(true)}>Obter relatório do Google</Button>
+  </div>;
   if (outdated) {
     return (
       <div className="aa-card">
         <div className="aa-empty">
           <span className="aa-empty__icon">!</span>
           A função de dados do Search Console ainda está na versão anterior. Publique o projeto para ativar o
-          painel de SEO. <button type="button" onClick={load}>tentar de novo</button>
+          painel de SEO. <Button onClick={() => void load()}>tentar de novo</Button>
         </div>
       </div>
     );
@@ -394,13 +429,13 @@ export default function SeoPanelTab({ range }: { range: DateRange }) {
       <div className="aa-card">
         <div className="aa-empty">
           <span className="aa-empty__icon">!</span>
-          {error ?? "sem dados"} <button type="button" onClick={load}>tentar de novo</button>
+          {error ?? "sem dados"} <Button onClick={() => void load()}>tentar de novo</Button>
         </div>
       </div>
     );
   }
 
-  return <SeoPanelView data={data} loading={loading} onReload={load} />;
+  return <div className="space-y-4"><Button variant="outline" disabled={loading} onClick={() => void load(true)}>Atualizar cópia diária</Button><SeoPanelView data={data} loading={loading} onReload={() => void load()} /></div>;
 }
 
 type QFilter = "todas" | "naomarca" | "marca" | "novas" | "perdidas";
@@ -541,12 +576,13 @@ export function SeoPanelView({ data, loading, onReload }: { data: Data; loading:
 
   return (
     <div style={{ display: "grid", gap: 16, gridTemplateColumns: "minmax(0, 1fr)" }}>
+      {data.snapshot && <SearchConsoleFocus panel={panel as SearchPanel} refreshedAt={data.snapshot.refreshed_at} crawls={data.snapshot.crawls} error={data.snapshot.error} crawlError={data.snapshot.crawl_error} />}
       <p className="aa-faint" style={{ fontSize: "var(--aa-text-xs)", margin: 0 }}>
         {fmtDay(panel.start_date)} a {fmtDay(panel.end_date)} · comparado com {fmtDay(panel.prev_start_date)} a{" "}
         {fmtDay(panel.prev_end_date)} · inclui dados preliminares dos últimos 2 a 3 dias ·{" "}
-        <button type="button" onClick={onReload} disabled={loading}>
-          {loading ? "atualizando…" : "atualizar"}
-        </button>{" "}
+        <Button variant="ghost" size="sm" onClick={onReload} disabled={loading}>
+          {loading ? "atualizando…" : "reler cópia"}
+        </Button>{" "}
         · <a href="/admin/indexacao">indexação</a> · <a href="/admin/seo">SEO das páginas</a>
       </p>
 
