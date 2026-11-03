@@ -32,8 +32,18 @@ const MENU_WHATSAPP_TEXT = "Olá, quero falar com a Bewild sobre meu apartamento
  * fecha — a classe `bwa-menu-open` (que trava a rolagem do body) nunca
  * vaza para a próxima rota.
  */
-export default function BwaNav() {
+type Props = {
+  /**
+   * Destino do botão "Solicitar orçamento" (cabeçalho e pé do menu mobile).
+   * Padrão: /orcamento com os utm_* da sessão. As LPs com formulário na própria
+   * página passam a âncora do formulário (ex.: "#orcamento").
+   */
+  ctaHref?: string;
+};
+
+export default function BwaNav({ ctaHref }: Props = {}) {
   const ref = useRef<HTMLDivElement>(null);
+  const orcamentoHref = ctaHref ?? withUtm("/orcamento");
   // "Incorporadoras" só entra no menu com a flag ligada ou em prévia interna.
   const incorporadorasOn = useIncorporadorasEnabled();
   const itensParceiros = NAV_PARCEIROS.items.filter((item) => !item.gated || incorporadorasOn);
@@ -97,7 +107,7 @@ export default function BwaNav() {
             <a href="/contato">Contato</a>
           </nav>
 
-          <a className="bwa-button" href={withUtm("/orcamento")}>
+          <a className="bwa-button" href={orcamentoHref}>
             Solicitar orçamento
             <span aria-hidden="true">→</span>
           </a>
@@ -135,7 +145,7 @@ export default function BwaNav() {
         {/* Pé do menu (fixo ao rolar): o orçamento em destaque e o atalho do
             WhatsApp, iguais aos do menu da home. */}
         <div className="bwa-menu-actions">
-          <a className="bwa-button bwa-button-light" href={withUtm("/orcamento")} data-cta="menu-orcamento">
+          <a className="bwa-button bwa-button-light" href={orcamentoHref} data-cta="menu-orcamento">
             Solicitar orçamento <span aria-hidden="true">→</span>
           </a>
           <a

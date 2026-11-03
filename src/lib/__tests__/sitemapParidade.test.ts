@@ -68,6 +68,8 @@ const router = read("src/lib/useHashRoute.ts");
 const NAO_INDEXAVEIS: Record<string, string> = {
   "/o": "src/pages/LpObraPage.tsx",
   "/p": "src/pages/LpPanfletoPage.tsx",
+  // LP dos anúncios do Google (02/11/2026): noindex, a orgânica continua indexável.
+  "/lp/reforma-de-studio-sao-paulo": "src/routes/lp.reforma-de-studio-sao-paulo.tsx",
   // Página de configuração de cookies: nada a indexar.
   "/preferencias-de-cookies": "src/pages/PreferenciasCookiesPage.tsx",
   // Resultado de busca: noindex, nunca entra no sitemap.

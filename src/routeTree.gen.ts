@@ -80,6 +80,7 @@ import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ConteudosIndexRouteImport } from './routes/conteudos.index'
 import { Route as ConteudosSlugRouteImport } from './routes/conteudos.$slug'
 import { Route as GraficosSlugRouteImport } from './routes/graficos.$slug'
+import { Route as LpReformaDeStudioSaoPauloRouteImport } from './routes/lp.reforma-de-studio-sao-paulo'
 import { Route as ParceirosIndexRouteImport } from './routes/parceiros.index'
 import { Route as ParceirosIncorporadorasRouteImport } from './routes/parceiros.incorporadoras'
 import { Route as ParceirosLealMoreiraRouteImport } from './routes/parceiros.leal-moreira'
@@ -461,6 +462,12 @@ const GraficosSlugRoute = GraficosSlugRouteImport.update({
   path: '/graficos/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LpReformaDeStudioSaoPauloRoute =
+  LpReformaDeStudioSaoPauloRouteImport.update({
+    id: '/lp/reforma-de-studio-sao-paulo',
+    path: '/lp/reforma-de-studio-sao-paulo',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ParceirosIndexRoute = ParceirosIndexRouteImport.update({
   id: '/parceiros/',
   path: '/parceiros/',
@@ -648,6 +655,7 @@ export interface FileRoutesByFullPath {
   '/blog/$slug': typeof BlogSlugRoute
   '/conteudos/$slug': typeof ConteudosSlugRoute
   '/graficos/$slug': typeof GraficosSlugRoute
+  '/lp/reforma-de-studio-sao-paulo': typeof LpReformaDeStudioSaoPauloRoute
   '/parceiros/incorporadoras': typeof ParceirosIncorporadorasRoute
   '/parceiros/leal-moreira': typeof ParceirosLealMoreiraRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
@@ -744,6 +752,7 @@ export interface FileRoutesByTo {
   '/blog/$slug': typeof BlogSlugRoute
   '/conteudos/$slug': typeof ConteudosSlugRoute
   '/graficos/$slug': typeof GraficosSlugRoute
+  '/lp/reforma-de-studio-sao-paulo': typeof LpReformaDeStudioSaoPauloRoute
   '/parceiros/incorporadoras': typeof ParceirosIncorporadorasRoute
   '/parceiros/leal-moreira': typeof ParceirosLealMoreiraRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
@@ -841,6 +850,7 @@ export interface FileRoutesById {
   '/blog/$slug': typeof BlogSlugRoute
   '/conteudos/$slug': typeof ConteudosSlugRoute
   '/graficos/$slug': typeof GraficosSlugRoute
+  '/lp/reforma-de-studio-sao-paulo': typeof LpReformaDeStudioSaoPauloRoute
   '/parceiros/incorporadoras': typeof ParceirosIncorporadorasRoute
   '/parceiros/leal-moreira': typeof ParceirosLealMoreiraRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
@@ -939,6 +949,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/conteudos/$slug'
     | '/graficos/$slug'
+    | '/lp/reforma-de-studio-sao-paulo'
     | '/parceiros/incorporadoras'
     | '/parceiros/leal-moreira'
     | '/portfolio/$slug'
@@ -1035,6 +1046,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/conteudos/$slug'
     | '/graficos/$slug'
+    | '/lp/reforma-de-studio-sao-paulo'
     | '/parceiros/incorporadoras'
     | '/parceiros/leal-moreira'
     | '/portfolio/$slug'
@@ -1131,6 +1143,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/conteudos/$slug'
     | '/graficos/$slug'
+    | '/lp/reforma-de-studio-sao-paulo'
     | '/parceiros/incorporadoras'
     | '/parceiros/leal-moreira'
     | '/portfolio/$slug'
@@ -1228,6 +1241,7 @@ export interface RootRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
   ConteudosSlugRoute: typeof ConteudosSlugRoute
   GraficosSlugRoute: typeof GraficosSlugRoute
+  LpReformaDeStudioSaoPauloRoute: typeof LpReformaDeStudioSaoPauloRoute
   ParceirosIncorporadorasRoute: typeof ParceirosIncorporadorasRoute
   ParceirosLealMoreiraRoute: typeof ParceirosLealMoreiraRoute
   PortfolioSlugRoute: typeof PortfolioSlugRoute
@@ -1755,6 +1769,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GraficosSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lp/reforma-de-studio-sao-paulo': {
+      id: '/lp/reforma-de-studio-sao-paulo'
+      path: '/lp/reforma-de-studio-sao-paulo'
+      fullPath: '/lp/reforma-de-studio-sao-paulo'
+      preLoaderRoute: typeof LpReformaDeStudioSaoPauloRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/parceiros/': {
       id: '/parceiros/'
       path: '/parceiros'
@@ -1988,6 +2009,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogSlugRoute: BlogSlugRoute,
   ConteudosSlugRoute: ConteudosSlugRoute,
   GraficosSlugRoute: GraficosSlugRoute,
+  LpReformaDeStudioSaoPauloRoute: LpReformaDeStudioSaoPauloRoute,
   ParceirosIncorporadorasRoute: ParceirosIncorporadorasRoute,
   ParceirosLealMoreiraRoute: ParceirosLealMoreiraRoute,
   PortfolioSlugRoute: PortfolioSlugRoute,

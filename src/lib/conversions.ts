@@ -265,6 +265,7 @@ export const FORM_PAGES: Readonly<Record<string, string>> = {
   "/contato": "contato",
   "/o": "lp-obra",
   "/p": "lp-panfleto",
+  "/lp/reforma-de-studio-sao-paulo": "lp-google-ads-studio",
   "/parceiros": "parceiros",
   "/parceiros/incorporadoras": "incorporadoras",
   "/indique-um-amigo": "indique",

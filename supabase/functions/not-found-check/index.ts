@@ -89,6 +89,7 @@ export const STATIC_ROUTES: ReadonlyArray<string> = [
   "/videos",
   "/o",
   "/p",
+  "/lp/reforma-de-studio-sao-paulo",
   "/404",
 ];
 
