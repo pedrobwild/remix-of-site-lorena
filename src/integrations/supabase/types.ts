@@ -2537,6 +2537,10 @@ export type Database = {
         Args: { p_path: string; p_reason?: string; p_referrer?: string }
         Returns: undefined
       }
+      prepare_search_console_daily_job: {
+        Args: { p_secret: string }
+        Returns: number
+      }
       record_ad_consent: {
         Args: {
           p_choice: string

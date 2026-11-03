@@ -10,7 +10,7 @@ const metric = (r: ApiRow): KeyRow => ({ key: r.keys?.[0] ?? "", clicks: r.click
 export async function refreshSnapshot(db: SupabaseClient<Database>, request: SnapshotRequest) {
   const key = process.env["LOVABLE_API_KEY"];
   const connection = process.env["GOOGLE_SEARCH_CONSOLE_API_KEY"];
-  if (!key || !connection) throw new Error("La connexion Search Console n’est pas configurée.".replace("La connexion Search Console n’est pas configurée.", "A conexão Search Console não está configurada."));
+  if (!key || !connection) throw new Error("A conexão Search Console não está configurada.");
   async function api<T>(path: string, body?: unknown): Promise<T> {
     const res = await fetch(`https://connector-gateway.lovable.dev/google_search_console${path}`, {
       method: body ? "POST" : "GET",
@@ -62,7 +62,7 @@ export async function refreshSnapshot(db: SupabaseClient<Database>, request: Sna
   const studio = (await run(["query"], cs, ce, true)).map(metric)[0] ?? null;
   const studio_pages = mapPages(await run(["query", "page"], cs, ce, true));
   const sitemaps = (await api<{ sitemap?: SearchPanel["sitemaps"] }>(`${root}/sitemaps`)).sitemap ?? [];
-  const panel: SearchPanel = { version: 2, site_url: site, ...request, totals, prev_totals, series, prev_series, queries, prev_queries, pages, prev_pages, query_pages, devices, countries, studio, studio_pages, sitemaps };
+  const panel: SearchPanel = { version: 2, ...request, site_url: site, totals, prev_totals, series, prev_series, queries, prev_queries, pages, prev_pages, query_pages, devices, countries, studio, studio_pages, sitemaps };
   const timestamp = new Date().toISOString();
   const saved = await db.from("search_console_snapshots").upsert({ cache_key: cacheKey(request), site_url: site, request: { ...request, site_url: site }, payload: JSON.parse(JSON.stringify(panel)), refreshed_at: timestamp, attempted_at: timestamp, error: null });
   if (saved.error) throw new Error("Não foi possível guardar o relatório do Google.");

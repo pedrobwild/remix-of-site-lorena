@@ -92,6 +92,13 @@
       "when": 1793679566553,
       "tag": "0012_search_console_private_snapshots",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793679671486,
+      "tag": "0013_prepare_search_console_daily_job",
+      "breakpoints": true
     }
   ]
 }
