@@ -1,3 +1,5 @@
+- [x] Adicionar aba Google Ads em /admin/leads com período, cliques, conversões, investimento e custo por pedido; 25 testes passam e compilação OK, conexão existente e métricas reais confirmadas em consulta somente leitura. Sem campanhas, envios ou publicação alterados.
+- [ ] Conferir a aba Google Ads com dados reais na prévia — sessão automática indisponível, nenhuma conta corresponde ao solicitante; depende de entrar no painel.
 - [x] Incluir lista de interessados em /admin/leads com nome, WhatsApp/e-mail e data de São Paulo, atualização e carregar mais; outras abas preservadas, 19 testes passam e compilação OK; sem publicar.
 - [ ] Conferir a nova lista com leads reais no painel — acesso automático recusado por ausência de conta correspondente; depende de entrar na prévia.
 - [x] Ampliar /faq com três perguntas sobre reforma de studios e as seis fases reais, links contextuais para serviço/artigo e metadados compartilhados; perguntas existentes preservadas, SSR/respostas/navegação conferidos sem erros, 28 testes passam e build OK; sem publicar.
