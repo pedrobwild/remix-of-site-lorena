@@ -15,6 +15,14 @@ globalThis.ResizeObserver ??= class {
 
 const invokes: { name: string; body: Record<string, unknown> }[] = [];
 let panelResponse: unknown = null;
+vi.mock("@tanstack/react-start", () => ({ useServerFn: (fn: unknown) => fn }));
+vi.mock("@/lib/searchConsoleSnapshot.functions", () => ({
+  getSearchConsoleSnapshot: (opts: { data: Record<string, unknown> }) => {
+    invokes.push({ name: "snapshot", body: opts.data });
+    return Promise.resolve({ status: "ready", panel: panelResponse, refreshed_at: "2026-11-03T07:00:00Z", error: null, crawls: [], crawl_error: null });
+  },
+  refreshSearchConsoleSnapshot: () => Promise.resolve({ status: "ready", panel: panelResponse, refreshed_at: "2026-11-03T07:00:00Z", error: null, crawls: [], crawl_error: null }),
+}));
 
 vi.mock("@/integrations/supabase/client", () => {
   const query = (data: unknown) => {
@@ -99,9 +107,8 @@ describe("SeoPanelTab", () => {
     render(<SeoPanelTab range={range} />);
     await screen.findByText("cliques na busca");
     expect(invokes[0]).toEqual({
-      name: "search-console-stats",
+      name: "snapshot",
       body: {
-        mode: "panel",
         start_date: "2026-09-08",
         end_date: "2026-10-05",
         prev_start_date: "2026-08-11",

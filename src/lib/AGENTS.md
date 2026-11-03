@@ -1,5 +1,7 @@
 # src/lib
 
+- Search Console reporting uses admin-authenticated TanStack functions and daily private snapshots, verified-property resolution and exact-query property totals separated from page rows; reuse the crawl tracker and keep the secret-protected callback schedule disabled until publication. Prepare the disabled daily job through the admin-only RPC after the first authorized refresh.
+
 - Article service links remain centralized in postInternalLinks; cost, duration and development decision articles prioritize the studio service once, while stages keep the duration article first to preserve separate search intent.
 
 - Direct Google Ads delivery uses event-scoped private callback capabilities, a transactional queue and existing actions; activation requires disabled duplicate imports, current cookie proof and GCLID. Accepted ingestion is not attribution.

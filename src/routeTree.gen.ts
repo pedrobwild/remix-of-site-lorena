@@ -103,6 +103,7 @@ import { Route as AdminSeo404RouteImport } from './routes/admin.seo.404'
 import { Route as ApiPublicCrmStageSyncRouteImport } from './routes/api/public/crm-stage-sync'
 import { Route as ApiPublicExportRouteImport } from './routes/api/public/export'
 import { Route as ApiPublicGoogleAdsDeliveryRouteImport } from './routes/api/public/google-ads-delivery'
+import { Route as ApiPublicSearchConsoleRefreshRouteImport } from './routes/api/public/search-console-refresh'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 
 const IndexRoute = IndexRouteImport.update({
@@ -579,6 +580,12 @@ const ApiPublicGoogleAdsDeliveryRoute =
     path: '/api/public/google-ads-delivery',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicSearchConsoleRefreshRoute =
+  ApiPublicSearchConsoleRefreshRouteImport.update({
+    id: '/api/public/search-console-refresh',
+    path: '/api/public/search-console-refresh',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
     id: '/lovable/email/transactional/preview',
@@ -677,6 +684,7 @@ export interface FileRoutesByFullPath {
   '/api/public/crm-stage-sync': typeof ApiPublicCrmStageSyncRoute
   '/api/public/export': typeof ApiPublicExportRoute
   '/api/public/google-ads-delivery': typeof ApiPublicGoogleAdsDeliveryRoute
+  '/api/public/search-console-refresh': typeof ApiPublicSearchConsoleRefreshRoute
   '/admin/bewild/': typeof AdminBewildIndexRoute
   '/admin/conteudos/': typeof AdminConteudosIndexRoute
   '/admin/projetos/': typeof AdminProjetosIndexRoute
@@ -774,6 +782,7 @@ export interface FileRoutesByTo {
   '/api/public/crm-stage-sync': typeof ApiPublicCrmStageSyncRoute
   '/api/public/export': typeof ApiPublicExportRoute
   '/api/public/google-ads-delivery': typeof ApiPublicGoogleAdsDeliveryRoute
+  '/api/public/search-console-refresh': typeof ApiPublicSearchConsoleRefreshRoute
   '/admin/bewild': typeof AdminBewildIndexRoute
   '/admin/conteudos': typeof AdminConteudosIndexRoute
   '/admin/projetos': typeof AdminProjetosIndexRoute
@@ -872,6 +881,7 @@ export interface FileRoutesById {
   '/api/public/crm-stage-sync': typeof ApiPublicCrmStageSyncRoute
   '/api/public/export': typeof ApiPublicExportRoute
   '/api/public/google-ads-delivery': typeof ApiPublicGoogleAdsDeliveryRoute
+  '/api/public/search-console-refresh': typeof ApiPublicSearchConsoleRefreshRoute
   '/admin/bewild/': typeof AdminBewildIndexRoute
   '/admin/conteudos/': typeof AdminConteudosIndexRoute
   '/admin/projetos/': typeof AdminProjetosIndexRoute
@@ -971,6 +981,7 @@ export interface FileRouteTypes {
     | '/api/public/crm-stage-sync'
     | '/api/public/export'
     | '/api/public/google-ads-delivery'
+    | '/api/public/search-console-refresh'
     | '/admin/bewild/'
     | '/admin/conteudos/'
     | '/admin/projetos/'
@@ -1068,6 +1079,7 @@ export interface FileRouteTypes {
     | '/api/public/crm-stage-sync'
     | '/api/public/export'
     | '/api/public/google-ads-delivery'
+    | '/api/public/search-console-refresh'
     | '/admin/bewild'
     | '/admin/conteudos'
     | '/admin/projetos'
@@ -1165,6 +1177,7 @@ export interface FileRouteTypes {
     | '/api/public/crm-stage-sync'
     | '/api/public/export'
     | '/api/public/google-ads-delivery'
+    | '/api/public/search-console-refresh'
     | '/admin/bewild/'
     | '/admin/conteudos/'
     | '/admin/projetos/'
@@ -1263,6 +1276,7 @@ export interface RootRouteChildren {
   ApiPublicCrmStageSyncRoute: typeof ApiPublicCrmStageSyncRoute
   ApiPublicExportRoute: typeof ApiPublicExportRoute
   ApiPublicGoogleAdsDeliveryRoute: typeof ApiPublicGoogleAdsDeliveryRoute
+  ApiPublicSearchConsoleRefreshRoute: typeof ApiPublicSearchConsoleRefreshRoute
   AdminBewildIndexRoute: typeof AdminBewildIndexRoute
   AdminConteudosIndexRoute: typeof AdminConteudosIndexRoute
   AdminProjetosIndexRoute: typeof AdminProjetosIndexRoute
@@ -1930,6 +1944,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicGoogleAdsDeliveryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/search-console-refresh': {
+      id: '/api/public/search-console-refresh'
+      path: '/api/public/search-console-refresh'
+      fullPath: '/api/public/search-console-refresh'
+      preLoaderRoute: typeof ApiPublicSearchConsoleRefreshRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
       path: '/lovable/email/transactional/preview'
@@ -2031,6 +2052,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCrmStageSyncRoute: ApiPublicCrmStageSyncRoute,
   ApiPublicExportRoute: ApiPublicExportRoute,
   ApiPublicGoogleAdsDeliveryRoute: ApiPublicGoogleAdsDeliveryRoute,
+  ApiPublicSearchConsoleRefreshRoute: ApiPublicSearchConsoleRefreshRoute,
   AdminBewildIndexRoute: AdminBewildIndexRoute,
   AdminConteudosIndexRoute: AdminConteudosIndexRoute,
   AdminProjetosIndexRoute: AdminProjetosIndexRoute,

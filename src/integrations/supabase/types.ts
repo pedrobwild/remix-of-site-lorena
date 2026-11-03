@@ -1781,6 +1781,36 @@ export type Database = {
         }
         Relationships: []
       }
+      search_console_snapshots: {
+        Row: {
+          attempted_at: string | null
+          cache_key: string
+          error: string | null
+          payload: Json | null
+          refreshed_at: string | null
+          request: Json
+          site_url: string | null
+        }
+        Insert: {
+          attempted_at?: string | null
+          cache_key: string
+          error?: string | null
+          payload?: Json | null
+          refreshed_at?: string | null
+          request?: Json
+          site_url?: string | null
+        }
+        Update: {
+          attempted_at?: string | null
+          cache_key?: string
+          error?: string | null
+          payload?: Json | null
+          refreshed_at?: string | null
+          request?: Json
+          site_url?: string | null
+        }
+        Relationships: []
+      }
       seo_404_log: {
         Row: {
           created_at: string
@@ -2506,6 +2536,10 @@ export type Database = {
       log_404: {
         Args: { p_path: string; p_reason?: string; p_referrer?: string }
         Returns: undefined
+      }
+      prepare_search_console_daily_job: {
+        Args: { p_secret: string }
+        Returns: number
       }
       record_ad_consent: {
         Args: {
