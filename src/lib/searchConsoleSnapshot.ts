@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { KeyRow, QueryPageRow } from "@/lib/seoPanel";
+import { previousDays } from "@/lib/seoPanel";
 
 export const STUDIO_QUERY = "reforma de studios";
 export const SNAPSHOT_TTL = 86_400_000;
@@ -24,6 +25,21 @@ export type SearchPanel = {
   sitemaps: SitemapRow[]; sitemap_error?: string | null; studio: KeyRow | null; studio_pages: QueryPageRow[];
 };
 export function cacheKey(v: SnapshotRequest) { return [v.start_date, v.end_date, v.prev_start_date, v.prev_end_date].join(":"); }
+export function saoPauloDay(now = new Date()) {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
+}
+export function rollingSnapshotRequest(days = 30, now = new Date()): SnapshotRequest {
+  const end = saoPauloDay(now);
+  const start = new Date(Date.parse(end) - (days - 1) * SNAPSHOT_TTL).toISOString().slice(0, 10);
+  const previous = previousDays(start, end);
+  return { start_date: start, end_date: end, prev_start_date: previous.start, prev_end_date: previous.end };
+}
+export function matchesRollingSnapshot(request: SnapshotRequest, panel: SearchPanel, now = new Date()) {
+  const shift = Date.parse(request.end_date) - Date.parse(panel.end_date);
+  return request.end_date === saoPauloDay(now) && panel.version === 2 && shift >= 0 && shift <= 7 * SNAPSHOT_TTL &&
+    (!request.site_url || request.site_url === panel.site_url) &&
+    (["start_date", "prev_start_date", "prev_end_date"] as const).every(field => Date.parse(request[field]) - Date.parse(panel[field]) === shift);
+}
 export function isFresh(timestamp: string | null, now = Date.now()) {
   if (!timestamp) return false;
   const age = now - new Date(timestamp).getTime();

@@ -3,6 +3,16 @@ import { refreshSnapshot } from "@/lib/searchConsoleSnapshot.server";
 const request = { start_date: "2026-10-03", end_date: "2026-10-30", prev_start_date: "2026-09-05", prev_end_date: "2026-10-02" };
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 describe("Leitura do Google para cópias privadas", () => {
+  it("revalida a escolha anterior quando muda o período sem pedir outra escolha", async () => {
+    vi.stubEnv("LOVABLE_API_KEY", "test-key"); vi.stubEnv("GOOGLE_SEARCH_CONSOLE_API_KEY", "test-connection");
+    const fetch = vi.fn(async (url: string) => url.endsWith("/sites") ? Response.json({ siteEntry: [{ siteUrl: "sc-domain:bewild.com.br" }, { siteUrl: "https://bewild.com.br/" }] }) : Response.json({ rows: [] }));
+    vi.stubGlobal("fetch", fetch);
+    const db = { from: () => ({ upsert: async () => ({ error: null }) }) } as unknown as Parameters<typeof refreshSnapshot>[0];
+    const result = await refreshSnapshot(db, { ...request, site_url: "https://bewild.com.br/" });
+    expect(result.status).toBe("ready");
+    expect(fetch.mock.calls[0]?.[0]).toMatch(/\/sites$/);
+    expect(fetch.mock.calls[1]?.[0]).toContain("https%3A%2F%2Fbewild.com.br%2F");
+  });
   it("consulta a busca exata independentemente dos principais resultados e preserva totais distintos", async () => {
     vi.stubEnv("LOVABLE_API_KEY", "test-key"); vi.stubEnv("GOOGLE_SEARCH_CONSOLE_API_KEY", "test-connection");
     const calls: Record<string, unknown>[] = [];

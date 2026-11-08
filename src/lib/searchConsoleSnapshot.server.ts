@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { cacheKey, resolveProperty, STUDIO_QUERY, TRACKED_PATHS, type SnapshotRequest, type SearchPanel } from "@/lib/searchConsoleSnapshot";
+import { cacheKey, matchesRollingSnapshot, resolveProperty, STUDIO_QUERY, TRACKED_PATHS, type SnapshotRequest, type SearchPanel } from "@/lib/searchConsoleSnapshot";
 import type { KeyRow, QueryPageRow } from "@/lib/seoPanel";
 
 const TARGET = "https://bewild.com.br/";
@@ -70,8 +70,24 @@ export async function refreshSnapshot(db: SupabaseClient<Database>, request: Sna
 }
 
 export async function readSnapshot(db: SupabaseClient<Database>, request: SnapshotRequest) {
-  const saved = await db.from("search_console_snapshots").select("payload,refreshed_at,error,site_url,attempted_at").eq("cache_key", cacheKey(request)).maybeSingle();
+  let query = db.from("search_console_snapshots").select("payload,refreshed_at,error,site_url,attempted_at").eq("cache_key", cacheKey(request));
+  if (request.site_url) query = query.eq("site_url", request.site_url);
+  const saved = await query.maybeSingle();
   if (saved.error) throw new Error("Não foi possível ler a cópia do Search Console.");
+  let report = saved.data;
+  if (!report?.payload) {
+    let recent = db.from("search_console_snapshots").select("payload,refreshed_at,error,site_url,attempted_at").not("payload", "is", null).order("refreshed_at", { ascending: false }).order("cache_key");
+    if (request.site_url) recent = recent.eq("site_url", request.site_url);
+    const copies = await recent.limit(100);
+    if (copies.error) throw new Error("Não foi possível ler a cópia do Search Console.");
+    report = copies.data?.find(row => matchesRollingSnapshot(request, row.payload as unknown as SearchPanel)) ?? report;
+  }
   const crawl = await db.from("seo_index_status").select("url,coverage_state,last_crawl_at,last_checked_at,error").in("url", TRACKED_PATHS.map(path => path === "/" ? TARGET : new URL(path, TARGET).href));
-  return { status: "ready" as const, panel: saved.data?.payload as unknown as SearchPanel | null, refreshed_at: saved.data?.refreshed_at ?? null, error: saved.data?.error ?? null, crawls: crawl.data ?? [], crawl_error: crawl.error ? "Não foi possível ler o rastreio de indexação." : null };
+  return { status: "ready" as const, panel: (report?.payload ?? null) as unknown as SearchPanel | null, refreshed_at: report?.refreshed_at ?? null, error: saved.data?.error ?? report?.error ?? null, crawls: crawl.data ?? [], crawl_error: crawl.error ? "Não foi possível ler o rastreio de indexação." : null };
+}
+
+export async function readSelectedProperty(db: SupabaseClient<Database>) {
+  const saved = await db.from("search_console_snapshots").select("site_url").not("payload", "is", null).not("site_url", "is", null).order("refreshed_at", { ascending: false }).order("cache_key").limit(1);
+  if (saved.error) throw new Error("Não foi possível ler a propriedade do Search Console.");
+  return saved.data?.[0]?.site_url ?? undefined;
 }
