@@ -26,9 +26,9 @@ export const refreshSearchConsoleSnapshot = createServerFn({ method: "POST" })
     }
     const existing = await context.supabase.from("search_console_snapshots").select("refreshed_at,attempted_at,site_url").eq("cache_key", cacheKey(data)).maybeSingle();
     if (existing.error) throw new Error("Não foi possível ler a cópia do Search Console.");
-    const { readSnapshot, refreshSnapshot } = await import("@/lib/searchConsoleSnapshot.server");
-    if (isFresh(existing.data?.attempted_at ?? null)) return readSnapshot(context.supabase, data);
-    const request = { ...data, site_url: data.site_url ?? existing.data?.site_url ?? undefined };
+    const { readSnapshot, refreshSnapshot, readSelectedProperty } = await import("@/lib/searchConsoleSnapshot.server");
+    if ((!data.site_url || data.site_url === existing.data?.site_url) && isFresh(existing.data?.attempted_at ?? null)) return readSnapshot(context.supabase, data);
+    const request = { ...data, site_url: data.site_url ?? await readSelectedProperty(context.supabase) ?? existing.data?.site_url ?? undefined };
     try {
       const refreshed = await refreshSnapshot(context.supabase, request);
       if (refreshed.status === "selection_required") return refreshed;

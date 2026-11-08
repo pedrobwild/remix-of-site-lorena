@@ -8,6 +8,7 @@
 - Sitemap edits must also follow the sitemap and video registration rules below, because both generators must match the routes.
 
 <!-- LOVABLE:BEGIN -->
+- Search Console page reads stay cache-only: daily refresh uses the panel's 30-day São Paulo window first; rolling cache misses may use a recent equal-length comparison with its actual dates, never substitute historical filters. Reuse the last successfully selected property across ranges and revalidate it against Google's verified list before refresh.
 - Google Ads lead reporting reuses the paginated pure Ads aggregator behind admin-authorized server functions and environment-selected account access; CPL uses the verified request action alone, never summed funnel stages or GA4 duplicates, so account spend is not misrepresented as per-action spend.
 - Blog HTML charts use typed data separated from reusable React renderers and replace only registered image URLs after body sanitization; SSR and hydration share the same renderer, while original downloadable SVGs remain unchanged.
 - ChartInteraction owns local series emphasis and pointer/focus/touch detail state without recalculating source data or removing SSR content; legends use pressed-state controls for keyboard access.
