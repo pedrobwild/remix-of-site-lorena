@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { readSnapshot } from "@/lib/searchConsoleSnapshot.server";
+import { readSnapshot, readSelectedProperty } from "@/lib/searchConsoleSnapshot.server";
 
 const current = { start_date: "2026-10-10", end_date: "2026-11-08", prev_start_date: "2026-09-10", prev_end_date: "2026-10-09" };
 const saved = { payload: { version: 2, site_url: "https://bewild.com.br/", start_date: "2026-10-09", end_date: "2026-11-07", prev_start_date: "2026-09-09", prev_end_date: "2026-10-08", totals: { clicks: 131, impressions: 6439 } }, refreshed_at: "2026-11-07T07:15:00Z", error: null, site_url: "https://bewild.com.br/", attempted_at: "2026-11-07T07:15:00Z" };
@@ -9,6 +9,20 @@ function database(exact: unknown = null, rows: unknown[] = [saved]) {
 }
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 describe("Cópia diária ao abrir SEO", () => {
+  it("recupera a escolha bem-sucedida independentemente do período solicitado", async () => {
+    expect(await readSelectedProperty(database())).toBe("https://bewild.com.br/");
+  });
+  it("não usa relatório de outra propriedade", async () => {
+    vi.useFakeTimers(); vi.setSystemTime(new Date("2026-11-08T03:23:00Z"));
+    const result = await readSnapshot(database(), { ...current, site_url: "sc-domain:bewild.com.br" });
+    expect(result.panel).toBeNull();
+  });
+  it("não usa cópia com duração diferente ou com mais de sete dias de defasagem", async () => {
+    vi.useFakeTimers(); vi.setSystemTime(new Date("2026-11-08T03:23:00Z"));
+    for (const payload of [{ ...saved.payload, start_date: "2026-10-11" }, { ...saved.payload, start_date: "2026-10-01", end_date: "2026-10-30", prev_start_date: "2026-09-01", prev_end_date: "2026-09-30" }]) {
+      expect((await readSnapshot(database(null, [{ ...saved, payload }]), current)).panel).toBeNull();
+    }
+  });
   it("mostra a última cópia de 30 dias na virada do dia sem consultar Google e sem trocar suas datas", async () => {
     vi.useFakeTimers(); vi.setSystemTime(new Date("2026-11-08T03:23:00Z"));
     const fetch = vi.fn(); vi.stubGlobal("fetch", fetch);

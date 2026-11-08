@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { resolveProperty, isFresh, SNAPSHOT_TTL, STUDIO_QUERY, snapshotRequest, safeEqual } from "@/lib/searchConsoleSnapshot";
+import { resolveProperty, isFresh, SNAPSHOT_TTL, STUDIO_QUERY, snapshotRequest, safeEqual, rollingSnapshotRequest } from "@/lib/searchConsoleSnapshot";
 describe("Snapshots Search Console", () => {
+  it("agenda os 30 dias do painel com comparação igual, usando o dia de São Paulo antes da meia-noite", () => {
+    expect(rollingSnapshotRequest(30, new Date("2026-11-08T02:59:00Z"))).toEqual({ start_date: "2026-10-09", end_date: "2026-11-07", prev_start_date: "2026-09-09", prev_end_date: "2026-10-08" });
+    expect(rollingSnapshotRequest(30, new Date("2026-11-08T03:00:00Z"))).toEqual({ start_date: "2026-10-10", end_date: "2026-11-08", prev_start_date: "2026-09-10", prev_end_date: "2026-10-09" });
+  });
   it("mantém a busca solicitada exata", () => expect(STUDIO_QUERY).toBe("reforma de studios"));
   it("requer escolha quando domínio e prefixo estão verificados", () => {
     const result = resolveProperty([{ siteUrl: "https://bewild.com.br/" }, { siteUrl: "sc-domain:bewild.com.br" }], "https://bewild.com.br/");
