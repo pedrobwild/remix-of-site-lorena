@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="616" viewBox="0 0 420 616" role="img" aria-labelledby="t d" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif">
+  <title id="t">Três prazos correm a partir do dia das chaves</title>
+  <desc id="d">Linha do tempo com três barras que começam no dia das chaves: vício aparente, 90 dias contados da entrega (CDC, art. 26); vício oculto, 90 dias contados de quando o defeito fica evidente (CDC, art. 26, § 3º); solidez e segurança, 5 anos de garantia com ação em até 180 dias do aparecimento (Código Civil, art. 618). A reclamação com protocolo interrompe a contagem dos 90 dias.</desc>
+  <rect width="420" height="616" fill="#FFFFFF"/>
+
+  <text x="20" y="32" font-size="17" font-weight="700" fill="#1A2332">Três prazos correm a partir</text>
+  <text x="20" y="54" font-size="17" font-weight="700" fill="#1A2332">do dia das chaves</text>
+  <text x="20" y="76" font-size="12" fill="#5A6472">Código de Defesa do Consumidor e Código Civil</text>
+
+  <!-- marco: dia das chaves -->
+  <circle cx="26" cy="108" r="5" fill="#1A2332"/>
+  <text x="38" y="112" font-size="12.5" font-weight="700" fill="#1A2332">Dia das chaves · termo de vistoria assinado</text>
+  <line x1="26" y1="113" x2="26" y2="492" stroke="#1A2332" stroke-width="1.5" stroke-dasharray="3 4"/>
+
+  <!-- bloco 1: vício aparente -->
+  <text x="40" y="150" font-size="13.5" font-weight="700" fill="#1A2332">Vício aparente</text>
+  <text x="40" y="167" font-size="12" fill="#5A6472">visível na entrega</text>
+  <rect x="40" y="178" width="110" height="16" rx="4" fill="#2F6FA8"/>
+  <text x="158" y="191" font-size="14" font-weight="700" fill="#1A2332">90 dias</text>
+  <text x="40" y="214" font-size="12" fill="#5A6472">contados da entrega · CDC, art. 26</text>
+
+  <!-- bloco 2: vício oculto -->
+  <text x="40" y="262" font-size="13.5" font-weight="700" fill="#1A2332">Vício oculto</text>
+  <text x="40" y="279" font-size="12" fill="#5A6472">aparece depois</text>
+  <line x1="40" y1="298" x2="112" y2="298" stroke="#9AA3AE" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <circle cx="120" cy="298" r="5" fill="#FFFFFF" stroke="#D07A3E" stroke-width="2.5"/>
+  <rect x="128" y="290" width="110" height="16" rx="4" fill="#D07A3E"/>
+  <text x="246" y="303" font-size="14" font-weight="700" fill="#1A2332">90 dias</text>
+  <text x="40" y="326" font-size="12" fill="#5A6472">contados de quando o defeito fica evidente</text>
+  <text x="40" y="343" font-size="12" fill="#5A6472">CDC, art. 26, § 3º</text>
+
+  <!-- bloco 3: solidez e segurança -->
+  <text x="40" y="391" font-size="13.5" font-weight="700" fill="#1A2332">Solidez e segurança</text>
+  <text x="40" y="408" font-size="12" fill="#5A6472">estrutura e fundação</text>
+  <rect x="40" y="419" width="290" height="16" rx="4" fill="#11355B"/>
+  <text x="338" y="432" font-size="14" font-weight="700" fill="#1A2332">5 anos</text>
+  <text x="40" y="455" font-size="12" fill="#5A6472">garantia legal · Código Civil, art. 618</text>
+  <text x="40" y="472" font-size="12" fill="#5A6472">ação em até 180 dias do aparecimento do vício</text>
+
+  <line x1="20" y1="512" x2="400" y2="512" stroke="#E5E8EC" stroke-width="1"/>
+  <text x="20" y="534" font-size="11.5" fill="#5A6472">Reclamação com protocolo na construtora interrompe</text>
+  <text x="20" y="550" font-size="11.5" fill="#5A6472">a contagem dos 90 dias (CDC, art. 26, § 2º).</text>
+  <text x="20" y="572" font-size="11.5" fill="#5A6472">Demais sistemas: prazo do manual do proprietário</text>
+  <text x="20" y="588" font-size="11.5" fill="#5A6472">(referência ABNT NBR 17170:2022). Barras fora de escala.</text>
+</svg>
