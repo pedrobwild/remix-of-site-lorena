@@ -134,8 +134,12 @@ que o Google espera:
     primeira transição para Lead ou depois em `lead_qualification_log`
     (notas `CRM: A → B`); sem ela, `crm_last_change_at`.
   - **Lead desqualificado** (ação secundária, fora dos lances): todos os
-    negócios perdidos ou em Aquecer Futuramente **sem** ter chegado a Lead.
-    Hora = a perda no histórico; sem ela, `crm_last_change_at`.
+    negócios perdidos ou em Aquecer Futuramente **sem** ter chegado a Lead,
+    e só quando a perda é **posterior à chegada do lead ao site**
+    (`crmLossTimeAfterLead`). O formulário não reabre negócio antigo, então
+    lead recente que herda um negócio perdido meses antes não sai como
+    desqualificado. Hora = a perda no histórico; sem ela,
+    `crm_last_change_at`; sem hora conhecida, não sai.
   - **Contrato assinado**: `crm_won = true`, qualquer objetivo. Uma linha por
     contrato do CRM, com valor (`total`) e hora (`closed_at`) reais. Sem
     leitura do CRM ou sem valor informado, o valor fica vazio — nunca peso

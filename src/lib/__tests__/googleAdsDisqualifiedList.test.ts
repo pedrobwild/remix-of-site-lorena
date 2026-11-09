@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { buildDisqualifiedMembers } from "@/lib/googleAdsDisqualifiedList.server";
 
 const rec = (id: string, at: string, advertising = true) => ({ id, visitor_key: "v1", advertising, notice_version: "1", created_at: at });
-const lead = (o: Record<string, unknown> = {}) => ({ id: "l1", created_at: "2026-10-20T12:00:00Z", status: "descartado", crm_lost: true, crm_max_stage_key: "qualificacao", crm_won: false, email: "A@x.com", whatsapp: "11999998888", consent_marketing: true, consent_record_id: "r1", consent_visitor_key: "v1", ...o });
+const lead = (o: Record<string, unknown> = {}) => ({ id: "l1", created_at: "2026-10-20T12:00:00Z", status: "descartado", crm_lost: true, crm_max_stage_key: "qualificacao", crm_won: false, crm_last_change_at: "2026-10-21T10:00:00Z", email: "A@x.com", whatsapp: "11999998888", consent_marketing: true, consent_record_id: "r1", consent_visitor_key: "v1", ...o });
 const now = Date.parse("2026-10-25T12:00:00Z");
 
 describe("lista de desqualificados do Google Ads", () => {
@@ -17,6 +17,10 @@ describe("lista de desqualificados do Google Ads", () => {
   });
   it("marcado não qualificado no site com negócio aberto no CRM não entra", async () => {
     expect(await buildDisqualifiedMembers([lead({ crm_lost: false })], [rec("r1", "2026-10-20T11:00:00Z")], now)).toEqual([]);
+  });
+  it("negócio perdido antes de o lead chegar ao site não entra", async () => {
+    expect(await buildDisqualifiedMembers([lead({ crm_last_change_at: "2026-07-10T20:37:03Z" })], [rec("r1", "2026-10-20T11:00:00Z")], now)).toEqual([]);
+    expect(await buildDisqualifiedMembers([lead({ crm_last_change_at: null })], [rec("r1", "2026-10-20T11:00:00Z")], now)).toEqual([]);
   });
   it("perdido no CRM antes de Lead entra sem marcação do site", async () => {
     expect(await buildDisqualifiedMembers([lead({ status: "novo" })], [rec("r1", "2026-10-20T11:00:00Z")], now)).toHaveLength(1);
