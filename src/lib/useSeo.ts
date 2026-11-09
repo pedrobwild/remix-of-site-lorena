@@ -357,6 +357,11 @@ function injectGTM(id: string) {
  * de microdados) — era ela que gerava um `Purchase` sem `value` no Events
  * Manager a partir de botões como "Contratar"/"Fechar", que o site nunca
  * envia; só os eventos explícitos de src/lib/conversions.ts saem daqui.
+ *
+ * O snippet NÃO dispara `fbq('track','PageView')` (27/10/2026): o PageView da
+ * página atual sai de `flushMetaPixelQueue` com o `eventID` que
+ * src/components/MetaPixel.tsx já mandou ao servidor (`meta-pageview`) — a
+ * Meta deduplica pelo id. Um PageView anônimo aqui contaria em dobro.
  */
 // O fbq provisório nasce na hora (PageView/Lead ficam na fila dele); só o
 // fbevents.js (~190 KiB) espera o `load` + um momento ocioso do navegador.
@@ -365,9 +370,10 @@ function injectMetaPixel(id: string) {
     "meta-pixel",
     "",
     `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];var L=function(){t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)};var I=function(){f.requestIdleCallback?f.requestIdleCallback(L,{timeout:3000}):setTimeout(L,1)};b.readyState==='complete'?I():f.addEventListener('load',I,{once:!0})}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-fbq.disablePushState=true;fbq.allowDuplicatePageViews=true;fbq('set','autoConfig',false,'${id}');fbq('init','${id}');fbq('track','PageView');`
+fbq.disablePushState=true;fbq.allowDuplicatePageViews=true;fbq('set','autoConfig',false,'${id}');fbq('init','${id}');`
   );
-  // Eventos pedidos antes de o Pixel existir (ex.: ViewContent na entrada) e
+  // O PageView da página atual (com o eventID já usado pelo servidor), os
+  // eventos pedidos antes de o Pixel existir (ex.: ViewContent na entrada) e
   // a correspondência avançada de um formulário enviado antes da injeção.
   registerMetaPixelId(id);
   flushMetaPixelQueue();

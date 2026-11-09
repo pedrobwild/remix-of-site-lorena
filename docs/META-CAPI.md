@@ -11,8 +11,8 @@ de formulário instantâneo ("Conecte seu CRM com a API de Conversões") estão 
 
 | Evento | Quando | De onde | `event_id` | `action_source` |
 | --- | --- | --- | --- | --- |
-| `PageView` | cada navegação (após aceite de cookies) | Pixel (browser) | — | website |
-| `ViewContent` | projeto (`/portfolio/<slug>`), conteúdo (`/conteudos/<slug>`), guia do investidor, portfólio e páginas de serviço — `content_category` diz qual | Pixel | — | website |
+| `PageView` | cada página vista (entrada e navegação na SPA) | CAPI (`meta-pageview`, **toda visita humana, com ou sem aceite**) **e** Pixel (só após aceite) | UUID gerado no browser por página vista, o mesmo nos dois | website |
+| `ViewContent` | projeto (`/portfolio/<slug>`), conteúdo (`/conteudos/<slug>`), guia do investidor, portfólio e páginas de serviço — `content_category` diz qual | CAPI (`meta-pageview`) **e** Pixel (só após aceite) | UUID por chamada, o mesmo nos dois | website |
 | `Contact` | clique em WhatsApp/telefone/e-mail e formulário rápido do rodapé | Pixel | — | website |
 | `IniciouFormulario` (próprio) | primeira interação com um formulário de lead ou cadastro, uma vez por página vista | Pixel | — | website |
 | `VisitanteEngajado` (próprio) | uma vez por sessão: 60 s de tela ativa ou 75% de rolagem numa página longa | Pixel | — | website |
@@ -43,8 +43,93 @@ Duas regras valem para todos os eventos de lead:
   formulários). O segredo `META_CAPI_REQUIRE_CONSENT=true` religa a exigência
   de `consent_marketing = true` para a CAPI.
 
-A Meta deduplica `Lead` pelo par (`event_name`, `event_id`): quando o Pixel e a
-CAPI mandam os dois, conta um.
+A Meta deduplica pelo par (`event_name`, `event_id`): quando o Pixel e a CAPI
+mandam os dois (`Lead`, `PageView`, `ViewContent`), conta um.
+
+### PageView e ViewContent pelo servidor (`meta-pageview`, 27/10/2026)
+
+**Por quê.** O Pixel só carrega após o aceite do banner, e o conjunto "Dados
+bwild" (Pixel 644216424824915) recebia cerca de **6%** dos PageViews. Sem o
+PageView a Meta não tem a base de visitantes para públicos, nem o denominador
+das taxas de conversão. Decisão do Pedro em 27/10/2026: mandar `PageView` e
+`ViewContent` **pelo servidor, para toda visita humana, independentemente do
+aceite**, e manter o Pixel (com aceite) deduplicado pelo mesmo `event_id`.
+
+**Como funciona.**
+
+1. `src/components/MetaPixel.tsx` chama `beginMetaPageView()` (src/lib/metaPixel.ts)
+   a cada página vista (caminho + query; âncora não conta; `/admin/*` nunca):
+   um `event_id` por página, estável para a mesma página (o StrictMode monta o
+   efeito duas vezes e não pode avisar o servidor em dobro).
+2. `sendMetaServerEvent("PageView", { eventId })` (src/lib/metaCapiBeacon.ts)
+   faz `POST ${VITE_SUPABASE_URL}/functions/v1/meta-pageview` com `fetch` +
+   `keepalive` e o `apikey` público. Sai **sempre** nas páginas públicas: sem
+   aceite, com aceite, antes de o Pixel carregar. Não sai no SSR, no `/admin`,
+   em iframe (auditoria de SEO) nem com `navigator.webdriver`. `_fbp`/`_fbc`
+   só vão se os cookies já existem (o Pixel os cria depois do aceite); o
+   módulo nunca cria cookie. Erros são engolidos.
+3. `trackMetaPageEvent("PageView", {}, eventId)` dispara `fbq('track',
+   'PageView', {}, { eventID })` **com aceite**. Sem aceite o evento fica
+   pendente **para a página atual**: se o aceite vier nela, `flushMetaPixelQueue`
+   (chamado por `injectMetaPixel` ao injetar o Pixel) dispara só o lado do Pixel
+   com o **mesmo** id — o servidor não é avisado de novo. Pendente de uma página
+   que a pessoa já deixou nunca sai. Por isso o snippet do Pixel em
+   `injectMetaPixel` (src/lib/useSeo.ts) **não** tem mais `fbq('track','PageView')`:
+   um PageView anônimo ali contaria em dobro.
+4. `reportPageContent` (src/lib/conversions.ts) faz o mesmo para `ViewContent`:
+   um `event_id` por chamada, servidor + Pixel, com `content_type`,
+   `content_ids` e `content_category` iguais nos dois.
+5. A edge function `meta-pageview` valida o corpo, filtra bots, resolve a
+   configuração (`resolveMetaCapiConfig`, memo de 60 s por instância) e envia
+   `sendMetaEvents(config, [evento], { allowIpUaOnly: true })`.
+
+**Payload** (`POST`, JSON, ≤ 4 KiB):
+
+| Campo | Regra |
+| --- | --- |
+| `event` | `"PageView"` ou `"ViewContent"`; qualquer outro → 400 `invalid_event` |
+| `event_id` | 1–64 caracteres `[A-Za-z0-9_.:-]` (UUID do browser) |
+| `url` | absoluta, `https://bewild.com.br/...` ou `https://www.bewild.com.br/...` (outro host, http ou relativa → 400 `invalid_url`). Vai à Meta sem fragmento e só com parâmetros de campanha (`utm_*`, `gclid`, `fbclid`…), via `telemetryUrlWithCampaign` |
+| `fbp`, `fbc` | opcionais; fora do formato `fb.1.<ts>.<...>` são ignorados (não invalidam) |
+| `content_name` | opcional, ≤ 200 |
+| `content_type` | opcional, `[a-z_]{1,50}` |
+| `content_category` | opcional, ≤ 100 |
+| `content_ids` | opcional, lista de até 10 ids `[A-Za-z0-9_.:/-]{1,100}` |
+
+Respostas: `204` enviado (ou ignorado de propósito: bot, chave desligada,
+`/admin`, sem configuração), `400` corpo inválido, `403` `Origin` de fora da
+lista, `413` grande demais, `429` mais de 60 por minuto do mesmo IP, `405`
+método errado. CORS só para
+`https://bewild.com.br`, `https://www.bewild.com.br`, `bwild.com.br`,
+`localhost`/`127.0.0.1` e previews `*.lovable.app` / `*.lovableproject.com` /
+`*.vercel.app` (`corsHeadersFor`); outra origem fica sem `Allow-Origin`.
+
+**Bots.** User-agent vazio ou que case com `BOT_UA_RE`
+(`bot|crawler|spider|facebookexternalhit|whatsapp|…|headless|lighthouse|…`)
+recebe `204` sem envio — a mesma lista do `track`, mais `headless`.
+
+**`user_data`.** Só `client_ip_address` (cabeçalhos da borda:
+`cf-connecting-ip` → `x-real-ip` → primeiro de `x-forwarded-for`) e
+`client_user_agent`, mais `fbp`/`fbc` quando vieram e `country` (hash) quando a
+borda informa. `hasMatchKeys` continua exigindo e-mail/telefone/fbp/fbc/
+external_id/lead_id para os eventos de lead; a opção `allowIpUaOnly` (só
+`meta-pageview`) aceita IP + UA, que é o que o próprio Pixel manda num
+PageView. Sem IP válido ou sem UA, nada é enviado (`no_user_data`).
+
+**Log.** Volume de ~1 mil eventos/dia: o `integration_log` recebe **só falhas**
+(`status = skipped|error`, `event_name = PageView|ViewContent`, `lead_id` nulo,
+sem IP nem UA); sucesso não é registrado. Conferir cobertura direto no Events
+Manager (eventos "Servidor" × "Navegador" e a coluna "Deduplicado").
+
+**Chave de desligamento.** Segredo `META_CAPI_PAGEVIEW_ENABLED`: ausente, `true`,
+`1`, `sim` → ligado; `false`, `0`, `nao`, `no`, `off` → a função responde `204`
+e não envia nada (o navegador continua chamando; o Pixel com aceite segue
+normal). Valor estranho conta como ligado.
+
+**Testes.** `src/lib/__tests__/metaCapiBeacon.test.ts` (beacon),
+`src/lib/__tests__/metaPageview.test.ts` (validação, bots, CORS, IP, evento
+montado e `allowIpUaOnly`), `metaCapi.test.ts` (`hasMatchKeys` com a opção) e
+`trackingComponents.test.tsx` (`eventID` no Pixel, pendente só na mesma página).
 
 `user_data` vai sempre com hash SHA-256 (e-mail, telefone com DDI 55, primeiro e
 último nome sem acento, cidade/UF só quando o formulário traz a UF, `external_id`
@@ -80,8 +165,12 @@ novo (landing page, subdomínio de outro domínio) → incluir na lista antes.
 ## Arquivos
 
 - `src/lib/metaPixel.ts` — `trackMetaEvent` (gate: aceite, fora do `/admin`; fila
-  curta até o Pixel ser injetado), `readMetaBrowserIds` (`_fbp`, `_fbc` ou
+  curta até o Pixel ser injetado), `beginMetaPageView`/`trackMetaPageEvent`
+  (PageView/ViewContent com `eventID` compartilhado com o servidor; sem aceite,
+  pendente só para a página atual), `readMetaBrowserIds` (`_fbp`, `_fbc` ou
   `fb.1.<ts>.<fbclid>`), `newEventId`.
+- `src/lib/metaCapiBeacon.ts` — `sendMetaServerEvent`: PageView/ViewContent para
+  a edge function `meta-pageview`, toda visita, com ou sem aceite.
 - `src/lib/conversions.ts` — `reportLead` (Lead/SubmitApplication + parâmetros),
   `reportContact`, `reportPageContent`/`pageContentFor` (ViewContent),
   `reportFormStart` e `reportEngaged` (Meta + Google Ads) e as listas de
@@ -104,6 +193,9 @@ novo (landing page, subdomínio de outro domínio) → incluir na lista antes.
 - `supabase/functions/meta-lead-quality` — recebe `{ lead_id, status }` do admin,
   lê o lead pela service role e envia o evento de qualidade. Idempotente por
   `meta_qualified_sent_at`; `force: true` reenvia.
+- `supabase/functions/meta-pageview` + `_shared/meta-pageview.ts` — PageView e
+  ViewContent de toda visita (regras puras no módulo compartilhado, testadas
+  pelo Vitest). `verify_jwt = false` em `supabase/config.toml`.
 - `src/lib/adminLeads.ts` — `updateLeadStatus` chama `notifyMetaLeadQuality` em
   segundo plano depois que o status foi gravado.
 - `supabase/functions/_shared/integration-log.ts` + tabela `integration_log` —
@@ -121,12 +213,13 @@ novo (landing page, subdomínio de outro domínio) → incluir na lista antes.
 | Segredo | `META_CAPI_ACCESS_TOKEN` | sim* | Token de usuário de sistema com acesso ao Pixel (Events Manager → Configurações → Conversions API → "Gerar token de acesso"). *Na falta, as funções usam `META_ADS_ACCESS_TOKEN` (o de `meta-insights`), se ele tiver acesso ao Pixel. |
 | Segredo | `META_PIXEL_ID` | não | Se ausente, usa o Pixel salvo em `/admin/seo › Analytics & Pixels` (`site_settings.meta_pixel_id`) — o mesmo que o site injeta. |
 | Admin | "Meta — código de teste da API de Conversões" | não | Código de "Testar eventos" do Events Manager. Preencher só na homologação e **apagar** depois: com ele os eventos do servidor não entram nas campanhas. O segredo `META_CAPI_TEST_EVENT_CODE` também funciona. |
-| Segredo | `META_CAPI_REQUIRE_CONSENT` | não | `true`/`1`/`sim` → a CAPI só envia `Lead`/`QualifiedLead`/`DisqualifiedLead` de quem aceitou os cookies (`consent_marketing`). Ausente ou `false` (padrão): envia para todo formulário de cliente. Só vale para leads do site; os leads de formulário da Meta não passam pelo banner. |
+| Segredo | `META_CAPI_REQUIRE_CONSENT` | não | `true`/`1`/`sim` → a CAPI só envia `Lead`/`QualifiedLead`/`DisqualifiedLead` de quem aceitou os cookies (`consent_marketing`). Ausente ou `false` (padrão): envia para todo formulário de cliente. Só vale para leads do site; os leads de formulário da Meta não passam pelo banner. Não afeta `meta-pageview`. |
+| Segredo | `META_CAPI_PAGEVIEW_ENABLED` | não | Chave de desligamento do `PageView`/`ViewContent` pelo servidor. Ausente/`true`/`1` = ligado; `false`/`0` = a função `meta-pageview` responde 204 e não envia nada. |
 
 ## Passo a passo de ativação
 
 1. Aplicar as migrations (a Lovable roda pela ferramenta de migration).
-2. Publicar as funções `notify-lead` e `meta-lead-quality`.
+2. Publicar as funções `notify-lead`, `meta-lead-quality` e `meta-pageview`.
 3. Gerar o token da CAPI no Events Manager e salvar como `META_CAPI_ACCESS_TOKEN`
    (segredos das edge functions).
 4. Homologar: preencher o código de teste no admin, enviar um lead de teste em
@@ -134,6 +227,11 @@ novo (landing page, subdomínio de outro domínio) → incluir na lista antes.
    `Lead` do navegador e do servidor com o **mesmo** `event_id` e "Deduplicado";
    depois marcar o lead como qualificado no painel e conferir `QualifiedLead`.
 5. Apagar o código de teste no admin.
+   Para o `meta-pageview`: com o código de teste no admin (a função relê a
+   configuração a cada 60 s), abrir `/portfolio/<slug>` numa aba anônima **sem**
+   aceitar os cookies e conferir em Testar eventos o `PageView` e o `ViewContent`
+   "Servidor"; aceitar os cookies na mesma página e conferir que o par
+   "Navegador" chega com o mesmo id e aparece como "Deduplicado".
 6. No Gerenciador de Anúncios: criar conversão personalizada a partir de
    `QualifiedLead` e otimizar para ela quando houver volume (≥ 50 eventos/semana);
    antes disso, otimizar para `Lead`.
@@ -162,6 +260,8 @@ group by 1 order by 1 desc;
 Em `integration_log.detail.reason`: `no_token` (segredo ausente), `no_pixel`,
 `no_user_agent`, `no_user_data`, `no_consent` (só com
 `META_CAPI_REQUIRE_CONSENT=true`); erros trazem `error_code` e `fbtrace_id` da Meta.
+`PageView`/`ViewContent` entram no log **só quando falham** (volume); o
+`lead_id` é nulo.
 
 ## LGPD
 
@@ -196,6 +296,16 @@ Em `integration_log.detail.reason`: `no_token` (segredo ausente), `no_pixel`,
   cookies, também para o Google"). O Pixel, o Google Ads e os `SubmitApplication`
   (parceiros/indicação, só Pixel) continuam condicionados ao aceite. Para
   voltar a exigir o aceite na CAPI: `META_CAPI_REQUIRE_CONSENT=true`.
+- **PageView/ViewContent pelo servidor sem aceite (27/10/2026).** IP e user-agent
+  do visitante vão à Meta a cada página vista, com ou sem aceite do banner (base
+  legal: legítimo interesse em medir as campanhas, mesma da CAPI do `Lead`).
+  Não vai e-mail, telefone, nome nem cookie novo: `_fbp`/`_fbc` só se o Pixel já
+  os criou (após aceite). A URL vai sem fragmento e só com parâmetros de
+  campanha. Nada é gravado no banco. **A `/privacidade` precisa dizer isso**
+  (pendência registrada no PR): que IP e user-agent são enviados à Meta para
+  medir visitas mesmo sem aceite, com direito de oposição pelo contato da
+  página e pelas Preferências de anúncios da Meta. Desligar: segredo
+  `META_CAPI_PAGEVIEW_ENABLED=false`.
 - Dados pessoais vão com hash, nunca em claro. O IP não é gravado no banco; só
   passa para a Meta no momento do evento.
 - Referências: [Meta — parâmetros de informação do cliente](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/customer-information-parameters)

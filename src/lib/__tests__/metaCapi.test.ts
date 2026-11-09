@@ -130,6 +130,19 @@ describe("buildUserData", () => {
     expect(data.client_ip_address).toBeUndefined();
     expect(hasMatchKeys(data)).toBe(false);
   });
+
+  it("hasMatchKeys: IP + user-agent só contam com allowIpUaOnly (PageView/ViewContent), nunca para leads", async () => {
+    const ipUa = await buildUserData({ clientIp: "200.1.2.3", clientUserAgent: "UA", countryCode: "" });
+    expect(ipUa).toEqual({ client_ip_address: "200.1.2.3", client_user_agent: "UA" });
+    expect(hasMatchKeys(ipUa)).toBe(false);
+    expect(hasMatchKeys(ipUa, {})).toBe(false);
+    expect(hasMatchKeys(ipUa, { allowIpUaOnly: true })).toBe(true);
+    // Um dos dois só não basta.
+    expect(hasMatchKeys({ client_ip_address: "200.1.2.3" }, { allowIpUaOnly: true })).toBe(false);
+    expect(hasMatchKeys({ client_user_agent: "UA" }, { allowIpUaOnly: true })).toBe(false);
+    // Com chave forte a opção é indiferente.
+    expect(hasMatchKeys({ fbp: "fb.1.1700000000000.1" }, { allowIpUaOnly: false })).toBe(true);
+  });
 });
 
 describe("sendMetaEvents", () => {
