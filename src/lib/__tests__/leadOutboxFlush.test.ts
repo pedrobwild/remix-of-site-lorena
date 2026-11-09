@@ -22,7 +22,7 @@ vi.mock("@/lib/conversions", () => ({
 }));
 
 import { __resetLeadOutboxLock, enqueueLead, LEAD_OUTBOX_RETRY_MS, listLeadOutbox } from "../leadOutbox";
-import { flushLeadOutboxNow, installLeadOutboxFlush, LEAD_OUTBOX_INTERVAL_MS } from "../leadOutboxFlush";
+import { flushLeadOutboxNow, installLeadOutboxFlush, LEAD_OUTBOX_INTERVAL_MS, withCurrentConsent } from "../leadOutboxFlush";
 
 const BODY: LeadOutboxBody = {
   submission_id: "00000000-0000-4000-8000-000000000001",
@@ -140,5 +140,45 @@ describe("installLeadOutboxFlush", () => {
     await vi.advanceTimersByTimeAsync(LEAD_OUTBOX_INTERVAL_MS * 2);
     await settle();
     expect(sendLeadBodyMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("withCurrentConsent", () => {
+  const COM_ACEITE: LeadOutboxBody = {
+    ...BODY,
+    consent_marketing: true,
+    fbp: "fb.1.1700000000000.123",
+    fbc: "fb.1.1700000000000.abc",
+    consent_record_id: "rec-1",
+    consent_visitor_key: "vis-1",
+  };
+
+  it("aceite retirado depois de entrar na fila: reenvio sai sem ids do Meta e sem prova do aceite", () => {
+    expect(withCurrentConsent(COM_ACEITE, false)).toEqual({
+      ...COM_ACEITE,
+      consent_marketing: false,
+      fbp: null,
+      fbc: null,
+      consent_record_id: null,
+      consent_visitor_key: null,
+    });
+  });
+
+  it("aceite mantido: corpo igual; sem aceite no envio, nada é acrescentado depois", () => {
+    expect(withCurrentConsent(COM_ACEITE, true)).toBe(COM_ACEITE);
+    const semAceite = { ...BODY, consent_marketing: false, fbp: null, fbc: null };
+    expect(withCurrentConsent(semAceite, true)).toBe(semAceite);
+    expect(withCurrentConsent(semAceite, false)).toBe(semAceite);
+  });
+
+  it("o reenvio da fila aplica o aceite atual (sem cookie de aceite → sem fbp)", async () => {
+    enqueueLead(COM_ACEITE, Date.now() - LEAD_OUTBOX_RETRY_MS);
+    sendLeadBodyMock.mockResolvedValue({ delivered: true, timedOut: false });
+    await flushLeadOutboxNow({ ignoreBackoff: true });
+    expect(sendLeadBodyMock).toHaveBeenCalledTimes(1);
+    const sent = sendLeadBodyMock.mock.calls[0][0];
+    expect(sent.consent_marketing).toBe(false);
+    expect(sent.fbp).toBeNull();
+    expect(sent.submission_id).toBe(BODY.submission_id);
   });
 });

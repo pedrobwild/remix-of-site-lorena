@@ -16,6 +16,7 @@
  * quando houve, já contou; o Lead do servidor sai pela API de Conversões
  * com o mesmo `event_id`, que o Meta deduplica).
  */
+import { isConsentAccepted } from "@/lib/cookieConsent";
 import { trackEvent } from "@/lib/ga4";
 import {
   flushLeadOutbox,
@@ -29,9 +30,28 @@ export const LEAD_OUTBOX_INTERVAL_MS = 3 * 60 * 1000;
 /** Reenvio em segundo plano tolera uma função lenta (o cliente não espera). */
 const BACKGROUND_TIMEOUT_MS = 15_000;
 
+/**
+ * Aceite de cookies retirado depois de o lead entrar na fila: o reenvio sai
+ * como sairia um envio novo sem aceite — sem `_fbp`/`_fbc` e sem a prova do
+ * aceite, e `consent_marketing: false` (o servidor então não manda os ids do
+ * navegador à API de Conversões). Aceite dado depois não é acrescentado: o
+ * lead vale como foi enviado.
+ */
+export function withCurrentConsent(body: LeadOutboxBody, accepted: boolean = isConsentAccepted()): LeadOutboxBody {
+  if (accepted || body.consent_marketing !== true) return body;
+  return {
+    ...body,
+    consent_marketing: false,
+    fbp: null,
+    fbc: null,
+    consent_record_id: null,
+    consent_visitor_key: null,
+  };
+}
+
 async function sendInBackground(body: LeadOutboxBody): Promise<{ delivered: boolean }> {
   const { sendLeadBody } = await import("@/lib/sendLead");
-  return sendLeadBody(body, { timeoutMs: BACKGROUND_TIMEOUT_MS });
+  return sendLeadBody(withCurrentConsent(body), { timeoutMs: BACKGROUND_TIMEOUT_MS });
 }
 
 function reportDelivered(entry: LeadOutboxEntry, now: number): void {
