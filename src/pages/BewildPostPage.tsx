@@ -46,12 +46,13 @@ import {
   type BewildPostCategory,
 } from "@/lib/useBewildPosts";
 import { useBewildPost, useBewildRelatedPosts } from "@/lib/useBewildPost";
-import { postAuthorByline, postAuthorHref, postDates, postTitleFromSlug } from "@/lib/postSeo";
+import { authorForPage, postAuthorByline, postAuthorHref, postDates, postTitleFromSlug } from "@/lib/postSeo";
 import { navigate } from "@/lib/useHashRoute";
 import { keywordsForPost } from "@/lib/postKeywords";
 import { internalLinksForPost } from "@/lib/postInternalLinks";
 import { videoPageForPost, videoPagePath } from "@/lib/videoPages";
 import { structurePostBody, TOC_MIN_SECTIONS } from "@/lib/postStructure";
+import { insertLeadCta, leadCtaHtml } from "@/lib/postLeadCta";
 import { logNotFound, lookupActiveRedirect } from "@/lib/notFoundLog";
 import "@/styles/post.css";
 import "@/styles/conteudos.css";
@@ -204,7 +205,17 @@ export default function BewildPostPage({ slug, initial }: Props) {
   // Linha "Autor/Revisão" sai do corpo (vira dado no cabeçalho) e H2/H3 ganham
   // âncora para o sumário. Função pura: servidor e cliente geram o mesmo HTML.
   const structured = useMemo(() => structurePostBody(sanitizedBody), [sanitizedBody]);
-  const bodyHtml = structured.html;
+  // Convite de orçamento logo depois da resposta direta (1º parágrafo): mesmo
+  // texto, rótulo e destino do bloco do fim do post, sem utm_*. Página de autor
+  // é perfil, não artigo: fica só com o bloco do fim.
+  const isAuthorPage = !!authorForPage(slug);
+  const bodyHtml = useMemo(
+    () =>
+      isAuthorPage
+        ? structured.html
+        : insertLeadCta(structured.html, leadCtaHtml({ text: cta.body, label: cta.buttonLabel, href: ctaHref })),
+    [structured.html, cta.body, cta.buttonLabel, ctaHref, isAuthorPage],
+  );
   const tocItems = structured.toc.filter((t) => t.level === 2);
   const reviewer = structured.credits.reviewer;
   const reviewerHref = reviewer ? postAuthorHref(reviewer) : null;

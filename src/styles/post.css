@@ -198,6 +198,13 @@
 
 /* Sumário "Neste artigo" (âncoras dos H2) e revisor no cabeçalho */
 .pt-meta .pt-reviewer a,.pt-meta>a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+/* Convite de orçamento no topo do artigo, depois do 1º parágrafo
+   (src/lib/postLeadCta.ts). Mesma moldura do sumário; botão do design system. */
+.pt-body .pt-lead-cta{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 24px;margin:4px 0 28px;padding:18px 22px;border:1px solid rgba(17,53,91,.18);background:#FBF8F3}
+.pt-body .pt-lead-cta p{flex:1 1 300px;margin:0;font-size:15px;line-height:1.5;color:#1A2332}
+.pt-body .pt-lead-cta .pt-btn{flex:0 0 auto;min-height:48px;padding:12px 18px;color:#fff;text-decoration:none}
+.pt-body .pt-lead-cta .pt-btn:hover,.pt-body .pt-lead-cta .pt-btn:focus-visible{color:#fff}
+@media (max-width:520px){.pt-body .pt-lead-cta .pt-btn{flex:1 1 100%}}
 .pt-toc{max-width:var(--pt-measure);margin:0 0 36px;padding:20px 22px;border:1px solid rgba(17,53,91,.18);background:#FBF8F3}
 .pt-toc__title{font-family:var(--pt-mono);font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:#11355B;margin:0 0 12px}
 .pt-toc ol{margin:0;padding-left:20px;display:grid;gap:8px;font-size:15px;line-height:1.45}

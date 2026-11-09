@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, cleanup, render, renderHook, screen, waitFor } from "@testing-library/react";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
-import { ORG_NODE } from "@/lib/orgJsonLd";
+import { ORG_NODE, PEDRO_NODE } from "@/lib/orgJsonLd";
 
 type Resp = { data: unknown; error: { message: string } | null };
 const pending = new Map<string, (r: Resp) => void>();
@@ -50,7 +50,9 @@ vi.mock("@/lib/devLog", () => ({ devWarn: vi.fn(), devError: vi.fn() }));
 vi.mock("@/components/BwaNav", () => ({ default: () => null }));
 vi.mock("@/components/BwaFooter", () => ({ default: () => null }));
 
+import { renderToString } from "react-dom/server";
 import { useBewildPost } from "@/lib/useBewildPost";
+import type { BewildPost } from "@/lib/useBewildPosts";
 import BewildPostPage from "@/pages/BewildPostPage";
 
 const postRow = (slug: string, title: string) => ({
@@ -134,8 +136,9 @@ describe("BewildPostPage", () => {
     render(<BewildPostPage slug="post-a" />);
     await act(async () => (await resposta("post-a"))({ data: postRow("post-a", "A"), error: null }));
 
-    const cta = screen.getByRole("link", { name: /Solicitar orçamento/ });
-    expect(cta.getAttribute("href")).toBe("/orcamento");
+    // Dois convites desde 09/11/2026: o do topo do artigo e o do fim.
+    const ctas = screen.getAllByRole("link", { name: /Solicitar orçamento/ });
+    expect(ctas.map((a) => a.getAttribute("href"))).toEqual(["/orcamento", "/orcamento"]);
 
     await waitFor(() => {
       const article = Array.from(document.head.querySelectorAll('script[type="application/ld+json"]'))
@@ -147,6 +150,53 @@ describe("BewildPostPage", () => {
       const logoPath = new URL(ORG_NODE.logo).pathname;
       expect(existsSync(resolve(process.cwd(), "public", `.${logoPath}`))).toBe(true);
     });
+  });
+
+  // Auditoria de SEO, rodada 4 (09/11/2026), ação 2: convite de orçamento no
+  // topo do artigo, logo depois da resposta direta (src/lib/postLeadCta.ts).
+  it("convite de orçamento entra depois do primeiro parágrafo do corpo, antes da primeira seção", async () => {
+    render(<BewildPostPage slug="post-a" />);
+    await act(async () =>
+      (await resposta("post-a"))({
+        data: { ...postRow("post-a", "A"), body: "Resposta direta.\n\n## Seção\n\nTexto da seção." },
+        error: null,
+      }),
+    );
+
+    const body = document.querySelector(".pt-body")!;
+    expect(Array.from(body.children).map((el) => el.tagName)).toEqual(["P", "ASIDE", "H2", "P"]);
+    expect(body.children[0].textContent).toBe("Resposta direta.");
+    const link = body.querySelector("aside a")!;
+    expect(link.getAttribute("href")).toBe("/orcamento");
+    expect(link.getAttribute("data-cta")).toBe("artigo-topo-orcamento");
+    // O botão do fim do post continua lá, fora do corpo.
+    expect(document.querySelector(".pt-cta a.pt-btn.cyan")?.getAttribute("href")).toBe("/orcamento");
+  });
+
+  it("página de autor (perfil, não artigo) não recebe o convite do topo", async () => {
+    const slug = new URL(PEDRO_NODE.url).pathname.split("/").pop()!;
+    render(<BewildPostPage slug={slug} />);
+    await act(async () =>
+      (await resposta(slug))({
+        data: { ...postRow(slug, "Pedro"), body: "Engenheiro e fundador.\n\n## Trajetória\n\nTexto." },
+        error: null,
+      }),
+    );
+    const body = document.querySelector(".pt-body")!;
+    expect(Array.from(body.children).map((el) => el.tagName)).toEqual(["P", "H2", "P"]);
+  });
+
+  it("o convite do topo já sai no HTML do servidor, uma única vez", () => {
+    const post = { ...postRow("post-a", "A"), body: "Resposta direta.\n\n## Seção" } as unknown as BewildPost;
+    const html = renderToString(
+      <BewildPostPage
+        slug="post-a"
+        initial={{ post, related: [], bodyHtml: "<p>Resposta direta.</p><h2>Seção</h2>" }}
+      />,
+    );
+    expect(html.match(/data-cta="artigo-topo-orcamento"/g)).toHaveLength(1);
+    expect(html.indexOf("Resposta direta.")).toBeLessThan(html.indexOf('data-cta="artigo-topo-orcamento"'));
+    expect(html.indexOf('data-cta="artigo-topo-orcamento"')).toBeLessThan(html.indexOf("Seção</h2>"));
   });
 
   it("data da publicação sai no dia de São Paulo", async () => {
