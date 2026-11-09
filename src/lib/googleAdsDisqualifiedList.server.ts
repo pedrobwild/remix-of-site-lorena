@@ -1,9 +1,11 @@
 /**
  * Lista "Exclusao desqualificados" do Google Ads (Customer Match, id 9232166736):
- * recebe e-mail e telefone (em hash SHA-256) dos leads marcados como não
- * qualificados — no painel do site ou pelo Engine.
+ * recebe e-mail e telefone (em hash SHA-256) dos leads desqualificados pela
+ * movimentação no funil do CRM — todos os negócios perdidos sem ter chegado à
+ * etapa Lead (`crmPipelineQuality`, a mesma regra das conversões offline). A
+ * marcação do painel do site não decide (Pedro, 09/11/2026).
  *
- * Mesma regra do envio de conversões: só entra quem aceitou anúncios no aviso
+ * Consentimento: só entra quem aceitou anúncios no aviso
  * de cookies na captura E mantém esse aceite hoje no mesmo aparelho. Nunca usa
  * o flag legado `consent_marketing` sozinho.
  * Envio idempotente (Data Manager trata como inclusão); roda depois de cada
@@ -12,6 +14,7 @@
 import {
   buildConsentByLead,
   canExportGoogleAdsAudienceLead,
+  crmPipelineQuality,
   normalizeEmailForHash,
   normalizePhoneForHash,
   sha256Hex,
@@ -37,7 +40,7 @@ export async function buildDisqualifiedMembers(
   const consent = buildConsentByLead(leads, records);
   const out: DisqualifiedMember[] = [];
   for (const lead of leads) {
-    if (lead.status !== "descartado") continue;
+    if (crmPipelineQuality(lead) !== "descartado") continue;
     if (!canExportGoogleAdsAudienceLead(lead, consent.get(String(lead.id)), now)) continue;
     const email = normalizeEmailForHash(lead.email);
     const phone = normalizePhoneForHash(lead.whatsapp);
@@ -62,8 +65,8 @@ export async function syncDisqualifiedList(
     for (let from = 0; ; from += PAGE) {
       const { data, error } = await admin
         .from("leads")
-        .select("id, created_at, status, email, whatsapp, consent_marketing, consent_record_id, consent_visitor_key")
-        .eq("status", "descartado")
+        .select("id, created_at, email, whatsapp, crm_won, crm_lost, crm_max_stage_key, consent_marketing, consent_record_id, consent_visitor_key")
+        .eq("crm_lost", true)
         .eq("consent_marketing", true)
         .order("created_at", { ascending: true })
         .order("id", { ascending: true })

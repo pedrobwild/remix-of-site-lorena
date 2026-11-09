@@ -1,13 +1,15 @@
 /**
  * Conversões offline do Google Ads (conjunto `google_ads_offline` da
- * edge function `data-export`): quem entra, hash de e-mail/telefone, hora com
- * fuso e as janelas de 63/90 dias do Google.
+ * edge function `data-export`): quem entra (pela movimentação no funil do
+ * CRM, nunca pela marcação do painel do site), hash de e-mail/telefone, hora
+ * com fuso e as janelas de 63/90 dias do Google.
  */
 import { describe, expect, it } from "vitest";
 import {
   buildGoogleAdsOfflineRows,
   canExportGoogleAdsLead,
-  pickQualifiedAt,
+  crmPipelineQuality,
+  pickPipelineTimes,
   type GoogleAdsExportConsent,
   DATASETS,
   GOOGLE_ADS_QUALIFIED_CONVERSION,
@@ -34,10 +36,14 @@ const lead = (over: Record<string, unknown> = {}) => ({
   email: "  Ana@Exemplo.com ",
   whatsapp: "11987654321",
   crm_won: false,
+  crm_lost: false,
+  crm_max_stage_key: "lead",
   crm_last_change_at: null,
   consent_marketing: true,
   ...over,
 });
+/** Perdido no CRM sem ter chegado a Lead. */
+const perdido = (over: Record<string, unknown> = {}) => lead({ crm_max_stage_key: "qualificacao", crm_lost: true, ...over });
 
 const consent = (): GoogleAdsExportConsent => ({
   event: { recordId: "acceptance-1", noticeVersion: "ads-v2", acceptedAt: daysAgo(12), advertising: true },
@@ -103,25 +109,73 @@ describe("google_ads_offline — quem entra", () => {
     expect(await build([lead({ objetivo })])).toEqual([]);
   });
 
-  it("novo e contatado ficam fora", async () => {
-    for (const status of ["novo", "contatado"]) expect(await build([lead({ status })])).toEqual([]);
+  it.each(["mql", "qualificacao", null])("etapa máxima %s com negócio aberto fica fora", async (crm_max_stage_key) => {
+    expect(await build([lead({ crm_max_stage_key })])).toEqual([]);
   });
 
-  it("não qualificado vai como \"Lead desqualificado\", na hora da marcação", async () => {
-    const rows = await build([lead({ status: "descartado", manual_qualification: "descartado", manual_qualification_at: "2026-10-14T14:00:00Z" })]);
+  it.each(["lead", "validacao_briefing", "entregue", "enviado", "negociacao"])("etapa máxima %s conta como chegada a Lead", async (crm_max_stage_key) => {
+    const rows = await build([lead({ crm_max_stage_key })]);
+    expect(rows.map((r) => r["Conversion Name"])).toEqual([GOOGLE_ADS_QUALIFIED_CONVERSION]);
+  });
+
+  it("perdido no CRM antes de Lead vai como \"Lead desqualificado\", na hora da perda", async () => {
+    const rows = await buildGoogleAdsOfflineRows({
+      leads: [perdido()], qualifiedAt: new Map(), lostAt: new Map([["l1", "2026-10-14T14:00:00Z"]]), now: NOW,
+    });
     expect(rows).toHaveLength(1);
     expect(rows[0]["Conversion Name"]).toBe("Lead desqualificado");
     expect(rows[0]["Conversion Time"]).toBe("2026-10-14 11:00:00-03:00");
+    expect(rows[0]["Conversion Value"]).toBeNull();
   });
 
-  it("qualificado manual entra com data registrada", async () => {
-    const at = "2026-10-14T14:00:00Z";
-    const rows = await build([lead({ manual_qualification: "qualificado" })], new Map([["l1", at]]));
-    expect(rows).toHaveLength(1);
-    expect(rows[0]["Conversion Name"]).toBe(GOOGLE_ADS_QUALIFIED_CONVERSION);
-    expect(rows[0]["Conversion Time"]).toBe("2026-10-14 11:00:00-03:00");
+  it("perda sem linha no histórico usa a última mudança no CRM", async () => {
+    const [row] = await build([perdido({ crm_last_change_at: "2026-10-13T15:00:00Z" })]);
+    expect(row["Conversion Time"]).toBe("2026-10-13 12:00:00-03:00");
   });
 
+  it("perdido depois de chegar a Lead continua qualificado e não vira desqualificado", async () => {
+    const rows = await build([lead({ crm_lost: true })]);
+    expect(rows.map((r) => r["Conversion Name"])).toEqual([GOOGLE_ADS_QUALIFIED_CONVERSION]);
+  });
+});
+
+describe("google_ads_offline — a marcação do painel do site não decide (Pedro, 09/11/2026)", () => {
+  it("marcado qualificado no site, ainda em MQL no CRM: não sai", async () => {
+    expect(await build([lead({ status: "qualificado", manual_qualification: "qualificado", crm_max_stage_key: "mql" })])).toEqual([]);
+  });
+
+  it("marcado não qualificado no site, negócio aberto no CRM: não sai", async () => {
+    expect(await build([lead({ status: "descartado", manual_qualification: "descartado", manual_qualification_at: "2026-10-14T14:00:00Z", crm_max_stage_key: "qualificacao" })])).toEqual([]);
+  });
+
+  it("marcado não qualificado no site, mas chegou a Lead no CRM: sai como qualificado", async () => {
+    const rows = await build([lead({ status: "descartado", manual_qualification: "descartado", crm_max_stage_key: "enviado" })]);
+    expect(rows.map((r) => r["Conversion Name"])).toEqual([GOOGLE_ADS_QUALIFIED_CONVERSION]);
+  });
+
+  it("sem marcação nenhuma, o funil basta: status novo que chegou a Lead sai; perdido antes de Lead sai como desqualificado", async () => {
+    const ok = await build([lead({ status: "novo" })]);
+    expect(ok.map((r) => r["Conversion Name"])).toEqual([GOOGLE_ADS_QUALIFIED_CONVERSION]);
+    const fora = await build([perdido({ status: "novo", crm_last_change_at: daysAgo(1) })]);
+    expect(fora.map((r) => r["Conversion Name"])).toEqual(["Lead desqualificado"]);
+  });
+
+  it.each([
+    [{ crm_won: true, crm_max_stage_key: null, crm_lost: false }, "qualificado"],
+    [{ crm_won: false, crm_max_stage_key: "lead", crm_lost: false }, "qualificado"],
+    [{ crm_won: false, crm_max_stage_key: "negociacao", crm_lost: true }, "qualificado"],
+    [{ crm_won: false, crm_max_stage_key: "mql", crm_lost: true }, "descartado"],
+    [{ crm_won: false, crm_max_stage_key: "qualificacao", crm_lost: true }, "descartado"],
+    [{ crm_won: false, crm_max_stage_key: null, crm_lost: true }, "descartado"],
+    [{ crm_won: false, crm_max_stage_key: "qualificacao", crm_lost: false }, null],
+    [{ crm_won: false, crm_max_stage_key: "mql", crm_lost: false }, null],
+    [{ crm_won: null, crm_max_stage_key: null, crm_lost: null }, null],
+  ] as const)("crmPipelineQuality(%j) = %s", (facts, expected) => {
+    expect(crmPipelineQuality({ status: "qualquer", manual_qualification: "qualificado", ...facts })).toBe(expected);
+  });
+});
+
+describe("google_ads_offline — contrato e identificadores", () => {
   it("contrato ganho entra com qualquer objetivo, e o lead investidor ganho gera as duas conversões", async () => {
     const moradia = await build([lead({ objetivo: "Moradia", status: "contatado", crm_won: true, crm_last_change_at: daysAgo(1) })]);
     expect(moradia.map((r) => r["Conversion Name"])).toEqual([GOOGLE_ADS_WON_CONVERSION]);
@@ -134,12 +188,14 @@ describe("google_ads_offline — quem entra", () => {
     expect(await build([lead({ gclid: null, email: null, whatsapp: "123" })])).toEqual([]);
   });
 
-  it("hora da qualificação vem do histórico; sem histórico, updated_at", async () => {
+  it("hora da qualificação é a chegada a Lead no histórico; sem ela, a última mudança no CRM; sem as duas, updated_at", async () => {
     const at = "2026-10-05T13:30:00Z";
-    const [comLog] = await build([lead()], new Map([["l1", at]]));
+    const [comLog] = await build([lead({ crm_last_change_at: daysAgo(1) })], new Map([["l1", at]]));
     expect(comLog["Conversion Time"]).toBe("2026-10-05 10:30:00-03:00");
-    const [semLog] = await build([lead()]);
-    expect(semLog["Conversion Time"]).toBe(googleAdsConversionTime(daysAgo(2)));
+    const [semLog] = await build([lead({ crm_last_change_at: "2026-10-07T13:30:00Z" })]);
+    expect(semLog["Conversion Time"]).toBe("2026-10-07 10:30:00-03:00");
+    const [semNada] = await build([lead()]);
+    expect(semNada["Conversion Time"]).toBe(googleAdsConversionTime(daysAgo(2)));
   });
 });
 
@@ -205,21 +261,35 @@ describe("google_ads_offline — uma conversão por pessoa e nome", () => {
   });
 });
 
-describe("google_ads_offline — hora da qualificação pelo log", () => {
-  it("prefere a linha de chegada a Lead em vez da entrada no MQL", () => {
-    const m = pickQualifiedAt([
+describe("google_ads_offline — horas pelo histórico do funil", () => {
+  it("chegada a Lead: primeira transição para Lead ou depois, nunca MQL nem Qualificação", () => {
+    const t = pickPipelineTimes([
       { lead_id: "l1", created_at: "2026-10-01T10:00:00Z", note: "CRM: entrou em MQL" },
       { lead_id: "l1", created_at: "2026-10-02T10:00:00Z", note: "CRM: MQL → Qualificação" },
       { lead_id: "l1", created_at: "2026-10-03T10:00:00Z", note: "CRM: Qualificação → Lead" },
+      { lead_id: "l1", created_at: "2026-10-04T10:00:00Z", note: "CRM: Lead → Solicitado" },
     ]);
-    expect(m.get("l1")).toBe("2026-10-03T10:00:00Z");
+    expect(t.reachedLeadAt.get("l1")).toBe("2026-10-03T10:00:00Z");
+    expect(t.lostAt.has("l1")).toBe(false);
   });
-  it("sem nota de Lead ou posterior, usa a primeira linha qualificado", () => {
-    const m = pickQualifiedAt([
-      { lead_id: "l1", created_at: "2026-10-01T10:00:00Z", note: "Qualificação manual" },
+  it("marcação manual e entrada no MQL não são chegada a Lead", () => {
+    const t = pickPipelineTimes([
+      { lead_id: "l1", created_at: "2026-10-01T10:00:00Z", note: "Qualificação manual: qualificado" },
       { lead_id: "l1", created_at: "2026-10-02T10:00:00Z", note: "CRM: entrou em MQL" },
     ]);
-    expect(m.get("l1")).toBe("2026-10-01T10:00:00Z");
+    expect(t.reachedLeadAt.has("l1")).toBe(false);
+  });
+  it("perda: a última transição para etapa terminal, e ela não conta como chegada a Lead", () => {
+    const t = pickPipelineTimes([
+      { lead_id: "l1", created_at: "2026-10-01T10:00:00Z", note: "CRM: entrou em MQL" },
+      { lead_id: "l1", created_at: "2026-10-02T10:00:00Z", note: "CRM: MQL → Perdido" },
+      { lead_id: "l1", created_at: "2026-10-05T10:00:00Z", note: "CRM: Perdido → MQL" },
+      { lead_id: "l1", created_at: "2026-10-06T10:00:00Z", note: "CRM: MQL → Aquecer Futuramente" },
+      { lead_id: "l2", created_at: "2026-10-03T10:00:00Z", note: "CRM: Qualificação → Desqualificado" },
+    ]);
+    expect(t.lostAt.get("l1")).toBe("2026-10-06T10:00:00Z");
+    expect(t.lostAt.get("l2")).toBe("2026-10-03T10:00:00Z");
+    expect(t.reachedLeadAt.size).toBe(0);
   });
 });
 
@@ -276,7 +346,8 @@ describe("google_ads_offline — acesso pela chave", () => {
 });
 
 describe("Contrato assinado com valor real do CRM", () => {
-  const won = lead({ status: "novo", crm_won: true, crm_last_change_at: daysAgo(1) });
+  // Moradia: só o contrato sai (o qualificado é só de investidor).
+  const won = lead({ objetivo: "Moradia", crm_won: true, crm_last_change_at: daysAgo(1) });
   it("usa o total e a data do contrato informados pelo CRM", async () => {
     const rows = await buildGoogleAdsOfflineRows({ leads: [won], qualifiedAt: new Map(), now: NOW, consentByLead: consentByLead([won]),
       contracts: new Map([["l1", [{ total: 71850, closed_at: daysAgo(3) }]]]) });

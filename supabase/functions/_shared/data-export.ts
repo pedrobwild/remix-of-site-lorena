@@ -168,7 +168,7 @@ export const DATASETS: Record<ExportDataset, DatasetInfo> = {
   google_ads_offline: {
     label: "Conversões offline do Google Ads",
     description:
-      "Lead qualificado investidor (Short stay, Locação tradicional ou Uso misto) e Contrato assinado, no formato do Data Manager. E-mail e telefone só em hash SHA-256.",
+      "Lead qualificado investidor (chegou a Lead no CRM; Short stay, Locação tradicional ou Uso misto), Lead desqualificado (perdido antes de Lead) e Contrato assinado, no formato do Data Manager. E-mail e telefone só em hash SHA-256.",
     period: "created_at",
     columns: [
       col("Google Click ID"),
@@ -425,14 +425,22 @@ export function toExportRecord(dataset: ExportDataset, row: ExportRecord): Expor
 // Conversões offline do Google Ads (google_ads_offline)
 // ---------------------------------------------------------------------------
 //
-// Duas conversões, com os nomes EXATOS das ações criadas no Google Ads:
-//   - "Lead qualificado investidor": status `qualificado` E objetivo de
-//     locação (Short stay, Locação tradicional ou Uso misto). Moradia e
-//     Ainda avaliando não entram. Hora = primeira passagem para `qualificado`
-//     em lead_qualification_log (sem registro, updated_at).
+// Conversões com os nomes EXATOS das ações criadas no Google Ads. Quem decide
+// é a MOVIMENTAÇÃO NO FUNIL DO CRM (Bwild Engine), lida das colunas `crm_*`
+// que a sincronização grava — nunca a marcação do painel do site nem o
+// `status` do lead, que essa marcação sobrepõe (Pedro, 09/11/2026):
+//   - "Lead qualificado investidor": o negócio chegou à etapa Lead ou depois
+//     (ou virou contrato) E o objetivo é de locação (Short stay, Locação
+//     tradicional ou Uso misto). Moradia e Ainda avaliando não entram. Hora =
+//     primeira transição para Lead ou depois em lead_qualification_log (sem
+//     ela, crm_last_change_at; sem as duas, updated_at).
+//   - "Lead desqualificado": todos os negócios perdidos (ou em Aquecer
+//     Futuramente) sem nunca ter chegado a Lead. Hora = a perda no histórico
+//     (sem ela, crm_last_change_at; sem as duas, updated_at).
 //   - "Contrato assinado": crm_won = true, qualquer objetivo. Hora =
-//     crm_last_change_at (sem ela, updated_at). Valor vazio por enquanto (o
-//     lead não guarda o valor do contrato).
+//     crm_last_change_at (sem ela, updated_at). Valor e data reais vêm do CRM.
+// MQL, Qualificação e lead sem negócio no CRM não geram nada: o sinal só sai
+// quando alguém move o card.
 // O Google só aceita conversão até 90 dias depois do clique (com gclid) e até
 // 63 dias quando o casamento é só por e-mail/telefone; conta-se do created_at
 // do lead. Leads de parceria comercial ficam fora.
@@ -446,35 +454,66 @@ export const GOOGLE_ADS_DISQUALIFIED_CONVERSION = "Lead desqualificado";
 /** Só estas saem uma vez por pessoa (a mais antiga). */
 export const GOOGLE_ADS_DEDUP_CONVERSIONS: readonly string[] = [GOOGLE_ADS_QUALIFIED_CONVERSION, GOOGLE_ADS_DISQUALIFIED_CONVERSION];
 
+/** Nomes das etapas do Engine ANTES de Lead. */
+export const ENGINE_PRE_LEAD_STAGES: readonly string[] = ["MQL", "Qualificação"];
+/** Nomes das etapas terminais do Engine (`stage_is_terminal` no CRM). */
+export const ENGINE_TERMINAL_STAGES: readonly string[] = ["Perdido", "Aquecer Futuramente", "Desqualificado", "Arquivado"];
 /** Etapas do Engine ANTES de Lead ou terminais (não contam como chegada a Lead). */
-export const ENGINE_PRE_LEAD_OR_TERMINAL_STAGES: readonly string[] = ["MQL", "Qualificação", "Perdido", "Aquecer Futuramente"];
+export const ENGINE_PRE_LEAD_OR_TERMINAL_STAGES: readonly string[] = [...ENGINE_PRE_LEAD_STAGES, ...ENGINE_TERMINAL_STAGES];
+/** Chaves (`crm_max_stage_key`) das etapas ANTES de Lead. Etapa nova antes de Lead no CRM entra aqui e em ENGINE_PRE_LEAD_STAGES. */
+export const CRM_PRE_LEAD_STAGE_KEYS: readonly string[] = ["mql", "qualificacao"];
 
-/**
- * Nota do log que indica chegada à etapa Lead ou posterior. Notas do Engine
- * são "CRM: A → B" / "CRM: entrou em B"; vale o destino B.
- */
-export function noteReachesLeadStage(note: unknown): boolean {
-  if (typeof note !== "string") return false;
+/** Destino de uma nota do Engine ("CRM: A → B" / "CRM: entrou em B"), em minúsculas. */
+function noteDestination(note: unknown): string | null {
+  if (typeof note !== "string") return null;
   const m = note.match(/^CRM: (?:.* → |entrou em )(.+)$/);
-  if (!m) return false;
-  const dest = m[1].trim().toLowerCase();
-  return !ENGINE_PRE_LEAD_OR_TERMINAL_STAGES.some((n) => n.toLowerCase() === dest);
+  return m ? m[1].trim().toLowerCase() : null;
+}
+const inStages = (list: readonly string[], dest: string) => list.some((n) => n.toLowerCase() === dest);
+
+/** Nota do log que indica chegada à etapa Lead ou posterior (vale o destino B). */
+export function noteReachesLeadStage(note: unknown): boolean {
+  const dest = noteDestination(note);
+  return dest !== null && !inStages(ENGINE_PRE_LEAD_OR_TERMINAL_STAGES, dest);
+}
+
+/** Nota do log que indica ida para uma etapa terminal (perda). */
+export function noteReachesTerminalStage(note: unknown): boolean {
+  const dest = noteDestination(note);
+  return dest !== null && inStages(ENGINE_TERMINAL_STAGES, dest);
 }
 
 /**
- * Hora da qualificação por lead: 1ª linha `qualificado` cuja nota chega a
- * Lead ou depois; sem ela, a 1ª linha `qualificado`. Linhas em ordem crescente.
- * (Linhas antigas gravavam o status final em toda transição, até no MQL.)
+ * Horas do funil por lead, lidas do histórico (linhas em ordem crescente):
+ *  - `reachedLeadAt`: 1ª transição para Lead ou depois;
+ *  - `lostAt`: última transição para etapa terminal.
+ * Só as notas do CRM contam; marcação manual do painel não é movimentação.
  */
-export function pickQualifiedAt(rows: readonly { lead_id: string; created_at: string; note: string | null }[]): Map<string, string> {
-  const first = new Map<string, string>();
-  const atLead = new Map<string, string>();
+export function pickPipelineTimes(
+  rows: readonly { lead_id: string; created_at: string; note: string | null }[],
+): { reachedLeadAt: Map<string, string>; lostAt: Map<string, string> } {
+  const reachedLeadAt = new Map<string, string>();
+  const lostAt = new Map<string, string>();
   for (const r of rows) {
-    if (!first.has(r.lead_id)) first.set(r.lead_id, r.created_at);
-    if (!atLead.has(r.lead_id) && noteReachesLeadStage(r.note)) atLead.set(r.lead_id, r.created_at);
+    if (!reachedLeadAt.has(r.lead_id) && noteReachesLeadStage(r.note)) reachedLeadAt.set(r.lead_id, r.created_at);
+    if (noteReachesTerminalStage(r.note)) lostAt.set(r.lead_id, r.created_at);
   }
-  for (const [id, at] of atLead) first.set(id, at);
-  return first;
+  return { reachedLeadAt, lostAt };
+}
+
+/**
+ * Qualidade do lead pela movimentação no funil do CRM (mesmos cortes de
+ * `crmLeadStatus`, sem a marcação manual por cima):
+ *  - contrato, ou etapa máxima em Lead ou depois → "qualificado" (mesmo que perdido depois);
+ *  - todos os negócios perdidos sem ter chegado a Lead → "descartado";
+ *  - MQL, Qualificação em aberto ou sem negócio → `null` (ainda sem sinal).
+ * `crm_max_stage_key` nunca é etapa terminal (o Engine não as conta na máxima).
+ */
+export function crmPipelineQuality(lead: ExportRecord): "qualificado" | "descartado" | null {
+  if (isTrue(lead.crm_won)) return "qualificado";
+  const max = typeof lead.crm_max_stage_key === "string" ? lead.crm_max_stage_key.trim().toLowerCase() : "";
+  if (max && !CRM_PRE_LEAD_STAGE_KEYS.includes(max)) return "qualificado";
+  return isTrue(lead.crm_lost) ? "descartado" : null;
 }
 /** Objetivos que contam como investidor (locação). Valores de LEAD_OBJETIVOS. */
 export const GOOGLE_ADS_INVESTOR_OBJETIVOS: readonly string[] = ["Short stay", "Locação tradicional", "Uso misto"];
@@ -483,7 +522,9 @@ export const GOOGLE_ADS_HASH_WINDOW_DAYS = 63;
 
 /** Colunas lidas do banco para este conjunto (só dentro da função; o CSV leva hash). */
 export const GOOGLE_ADS_OFFLINE_SELECT =
-  "id, created_at, updated_at, status, manual_qualification_at, objetivo, gclid, email, whatsapp, crm_won, crm_last_change_at, consent_marketing";
+  "id, created_at, updated_at, objetivo, gclid, email, whatsapp, crm_won, crm_lost, crm_max_stage_key, crm_last_change_at, consent_marketing";
+/** Filtro PostgREST (`.or`) dos leads com algum sinal do funil: contrato, perda ou etapa atingida. */
+export const GOOGLE_ADS_OFFLINE_PIPELINE_FILTER = "crm_won.eq.true,crm_lost.eq.true,crm_max_stage_key.not.is.null";
 
 type ConsentRow = { id: string; visitor_key: string; advertising: boolean; notice_version: string; created_at: string };
 
@@ -583,8 +624,10 @@ export type GoogleAdsOfflineInput = {
   leads: readonly ExportRecord[];
   /** Compatibilidade de chamadas antigas: não condiciona o conjunto offline. */
   consentByLead?: ReadonlyMap<string, GoogleAdsExportConsent>;
-  /** Primeira passagem para `qualificado`, por lead (ISO). */
+  /** Chegada do negócio à etapa Lead ou depois, por lead (ISO) — `pickPipelineTimes().reachedLeadAt`. */
   qualifiedAt: ReadonlyMap<string, string>;
+  /** Perda do negócio no CRM, por lead (ISO) — `pickPipelineTimes().lostAt`. */
+  lostAt?: ReadonlyMap<string, string>;
   /**
    * Contratos reais do CRM por lead (valor e data de fechamento). Ausente =
    * CRM não respondeu: valor vazio, nunca estimado nem trocado por peso de lance.
@@ -613,11 +656,14 @@ export async function buildGoogleAdsOfflineRows(input: GoogleAdsOfflineInput): P
 
     const conversions: { name: string; when: unknown; value?: number | null }[] = [];
     const objetivo = typeof lead.objetivo === "string" ? lead.objetivo.trim() : "";
-    if (lead.status === "qualificado" && GOOGLE_ADS_INVESTOR_OBJETIVOS.includes(objetivo)) {
-      conversions.push({ name: GOOGLE_ADS_QUALIFIED_CONVERSION, when: input.qualifiedAt.get(String(lead.id)) ?? lead.updated_at, value: GOOGLE_ADS_QUALIFIED_VALUE });
+    // Movimentação no funil do CRM; a marcação do painel do site não decide.
+    const quality = crmPipelineQuality(lead);
+    const lastCrmChange = lead.crm_last_change_at ?? lead.updated_at;
+    if (quality === "qualificado" && GOOGLE_ADS_INVESTOR_OBJETIVOS.includes(objetivo)) {
+      conversions.push({ name: GOOGLE_ADS_QUALIFIED_CONVERSION, when: input.qualifiedAt.get(String(lead.id)) ?? lastCrmChange, value: GOOGLE_ADS_QUALIFIED_VALUE });
     }
-    if (lead.status === "descartado" && !isTrue(lead.crm_won)) {
-      conversions.push({ name: GOOGLE_ADS_DISQUALIFIED_CONVERSION, when: lead.manual_qualification_at ?? lead.updated_at });
+    if (quality === "descartado") {
+      conversions.push({ name: GOOGLE_ADS_DISQUALIFIED_CONVERSION, when: input.lostAt?.get(String(lead.id)) ?? lastCrmChange });
     }
     if (isTrue(lead.crm_won)) {
       const real = input.contracts?.get(String(lead.id)) ?? [];

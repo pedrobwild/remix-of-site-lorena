@@ -121,16 +121,33 @@ que o Google espera:
   normalizar: e-mail sem espaços e em minúsculas; telefone em E.164
   (`+55DDDNÚMERO`). E-mail e telefone em texto puro nunca saem. O gclid sai
   como está (é o que liga a conversão ao clique).
-- `Conversion Name` é o nome exato da ação no Google Ads:
-  - **Lead qualificado investidor**: lead com status `qualificado` e objetivo
-    `Short stay`, `Locação tradicional` ou `Uso misto` (decisão do Pedro,
-    14/10/2026: investidor = locação, uso misto conta; `Moradia` e
-    `Ainda avaliando` não). Hora = primeira passagem para `qualificado` em
-    `lead_qualification_log`.
+- `Conversion Name` é o nome exato da ação no Google Ads. Quem decide é a
+  **movimentação do negócio no funil do CRM** (colunas `crm_*` gravadas pela
+  sincronização com o Bwild Engine), nunca a marcação do painel do site nem o
+  `status` do lead, que essa marcação sobrepõe (decisão do Pedro, 09/11/2026).
+  Regra em `crmPipelineQuality` (`supabase/functions/_shared/data-export.ts`):
+  - **Lead qualificado investidor**: o negócio chegou à etapa **Lead** ou
+    depois (ou virou contrato) e o objetivo é `Short stay`,
+    `Locação tradicional` ou `Uso misto` (decisão do Pedro, 14/10/2026:
+    investidor = locação, uso misto conta; `Moradia` e `Ainda avaliando`
+    não). Perder o negócio depois de Lead não desfaz a qualificação. Hora =
+    primeira transição para Lead ou depois em `lead_qualification_log`
+    (notas `CRM: A → B`); sem ela, `crm_last_change_at`.
+  - **Lead desqualificado** (ação secundária, fora dos lances): todos os
+    negócios perdidos ou em Aquecer Futuramente **sem** ter chegado a Lead.
+    Hora = a perda no histórico; sem ela, `crm_last_change_at`.
   - **Contrato assinado**: `crm_won = true`, qualquer objetivo. Uma linha por
     contrato do CRM, com valor (`total`) e hora (`closed_at`) reais. Sem
     leitura do CRM ou sem valor informado, o valor fica vazio — nunca peso
     de lance nem estimativa.
+  - MQL, Qualificação em aberto e lead sem negócio no CRM não geram linha:
+    o sinal só sai quando o card é movido no CRM. Marcar "Qualificado" ou
+    "Não qualificado" no painel do site continua valendo para o painel, a
+    Meta e o Engine (desqualificar lá leva o negócio aberto para Perdido, e
+    aí o funil gera o "Lead desqualificado"), mas sozinho não envia nada ao
+    Google.
+  - A lista de exclusão "Exclusao desqualificados" (Customer Match) segue a
+    mesma regra de desqualificado, com o consentimento próprio dela.
 - `Conversion Time` = `yyyy-MM-dd HH:mm:ss-03:00` (São Paulo, fuso explícito).
 - Só leads com gclid, e-mail ou telefone; até 90 dias do lead com gclid e 63
   dias sem (limites do Google). Parcerias comerciais ficam fora.
