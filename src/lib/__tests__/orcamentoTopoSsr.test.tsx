@@ -1,15 +1,16 @@
 /**
  * /orcamento por anúncio, montado como o servidor monta: a busca crua passa
- * pelo parser padrão do roteador (o mesmo do src/router.tsx), o loader da rota
- * escolhe a variante e o HTML do servidor (renderToString) sai com o H1 e o
- * subtítulo dela. O head() não muda com o anúncio: título, descrição e
- * canonical são os mesmos para todos (decisão de 17/10/2026).
+ * pelo parser do roteador (`parseSearch` de src/lib/routerSearch.ts, o mesmo
+ * do src/router.tsx), o loader da rota escolhe a variante e o HTML do
+ * servidor (renderToString) sai com o H1 e o subtítulo dela. O head() não
+ * muda com o anúncio: título, descrição e canonical são os mesmos para todos
+ * (decisão de 17/10/2026).
  *
  * As URLs abaixo imitam as reais do Google Ads: o utm_content do anúncio vem
  * primeiro e o Google acrescenta um segundo, com o ID do grupo.
  */
 import { renderToString } from "react-dom/server";
-import { defaultParseSearch } from "@tanstack/react-router";
+import { parseSearch } from "@/lib/routerSearch";
 import { describe, expect, it, vi } from "vitest";
 
 // Sem .env no CI: nada aqui pode instanciar o cliente do Supabase.
@@ -50,7 +51,7 @@ const head = Route.options.head as unknown as (ctx: { loaderData?: DadosDoLoader
 
 /** O que o servidor faz com a URL: parse do roteador → loader → HTML. */
 async function servidor(busca: string) {
-  const dados = await loader({ location: { search: defaultParseSearch(busca) } });
+  const dados = await loader({ location: { search: parseSearch(busca) } });
   // O React separa texto e expressões com <!-- -->; para comparar frases, some com eles.
   const html = renderToString(<OrcamentoPage topoVariante={dados.topoVariante} />).replace(/<!-- -->/g, "");
   return { dados, html };

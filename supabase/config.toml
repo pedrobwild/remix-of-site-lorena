@@ -6,7 +6,8 @@ project_id = "aamlnkmqvjcowixdgqii"
 # proteção porque a chave anon do site é um JWT público. O que importa:
 #   - públicas (anônimas por natureza): track, report-crash, sitemap, robots,
 #     not-found-check, notify-lead, faq-answer e scope-plan (stubs 410), px (pixel 1×1 e
-#     links rastreados — carregados por <img> e cliques, sem cabeçalho). `track` e
+#     links rastreados — carregados por <img> e cliques, sem cabeçalho), health
+#     (sonda do banco para monitor externo, sem cabeçalho; só devolve {ok}). `track` e
 #     `report-crash` são chamadas por fetch/sendBeacon SEM cabeçalho de
 #     autenticação — com verify_jwt=true um redeploy pelo CLI derrubaria
 #     analytics e crash reports em silêncio.
@@ -45,6 +46,9 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.px]
+verify_jwt = false
+
+[functions.health]
 verify_jwt = false
 
 [functions.data-export]

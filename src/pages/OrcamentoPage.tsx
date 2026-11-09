@@ -17,6 +17,7 @@ import {
   type FieldErrors,
   type LeadObjetivo,
 } from "@/lib/leadForm";
+import { LEAD_OUTBOX_SAVED_TEXT } from "@/lib/leadOutbox";
 import { formatBrPhone, isValidBrPhone, normalizeBrPhoneDigits } from "@/lib/phone";
 import { formatAreaM2 } from "@/lib/formatArea";
 import { useCtaClickTracking } from "@/lib/trackCta";
@@ -161,7 +162,7 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
   // Troca de etapa pedida pelo visitante: foco no H2 (ou no campo inválido).
   const focoPendente = useRef<"pergunta" | Campo | null>(null);
 
-  const { sending: enviando, outcome, submit, isMounted } = useLeadSubmit({ method: "orcamento_form" });
+  const { sending: enviando, outcome, queued, submit, isMounted } = useLeadSubmit({ method: "orcamento_form" });
 
   const errors = validar({ bairro, objetivo, nome, whats, mail });
   const erro = (k: Campo) => (touched[k] ? errors[k] : undefined);
@@ -402,6 +403,7 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
                     WhatsApp — a mensagem já vai com os seus dados. Se já tivermos recebido, é só
                     ignorar.
                   </p>
+                  {queued && <p>{LEAD_OUTBOX_SAVED_TEXT}</p>}
                   {whatsLink && (
                     <div className="bwa-orc-actions">
                       <a className="bwa-orc-btn" href={whatsLink} target="_blank" rel="noopener noreferrer">
@@ -666,6 +668,7 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
                         Não conseguimos enviar seu pedido agora. Tente de novo ou mande pelo WhatsApp —
                         a mensagem já vai com os seus dados.
                       </p>
+                      {queued && <p>{LEAD_OUTBOX_SAVED_TEXT}</p>}
                       {whatsLink && (
                         <a className="bwa-contact-link" href={whatsLink} target="_blank" rel="noopener noreferrer">
                           Enviar pelo WhatsApp <span aria-hidden="true">↗</span>

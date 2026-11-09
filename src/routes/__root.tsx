@@ -35,6 +35,7 @@ import {
 } from "@/lib/useSeo";
 import { HOME_DEFAULT_DESCRIPTION, HOME_DEFAULT_TITLE } from "@/lib/homeSeo";
 import { installCrashRecovery, markHealthy } from "@/lib/crashRecovery";
+import { installLeadOutboxFlush } from "@/lib/leadOutboxFlush";
 import {
   closestElementFrom,
   installLinkInterceptor,
@@ -232,11 +233,15 @@ function RootComponent() {
       }
     };
     document.addEventListener("click", onDocClick);
+    // Leads guardados no aparelho quando o backend não respondeu (backend
+    // pausado em 06–08/11/2026): reenvio agora, no `online` e a cada ~3 min.
+    const offLeadOutbox = installLeadOutboxFlush();
     return () => {
       cleanupAnalytics?.();
       offGa4();
       offWithdrawal();
       document.removeEventListener("click", onDocClick);
+      offLeadOutbox();
     };
   }, []);
 

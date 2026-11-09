@@ -6,7 +6,7 @@
  * orgânica /reforma-de-studio-sao-paulo continua intacta.
  */
 import { renderToString } from "react-dom/server";
-import { defaultParseSearch } from "@tanstack/react-router";
+import { parseSearch } from "@/lib/routerSearch";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/integrations/supabase/client", () => ({
@@ -39,7 +39,7 @@ const loader = Route.options.loader as unknown as (ctx: { location: { search: un
 const head = Route.options.head as unknown as () => { meta?: Array<Record<string, string>> };
 
 async function servidor(busca: string) {
-  const dados = await loader({ location: { search: defaultParseSearch(busca) } });
+  const dados = await loader({ location: { search: parseSearch(busca) } });
   const html = renderToString(<LpReformaStudioPage variante={dados.variante} />).replace(/<!-- -->/g, "");
   return { dados, html };
 }

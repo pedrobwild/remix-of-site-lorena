@@ -212,3 +212,16 @@ export function fitLeadPayload(payload: LeadPayload): LeadPayload {
   }
   return out;
 }
+
+/**
+ * Corpo exato enviado ao `notify-lead`: payload + `tracking`, ajustados aos
+ * limites do servidor, e o `submission_id` do envio. É o mesmo objeto que vai
+ * para a caixa de saída (`leadOutbox.ts`) quando a entrega não é confirmada.
+ */
+export function buildLeadBody(
+  payload: LeadPayload,
+  { tracking, submissionId }: { tracking?: LeadTracking; submissionId?: string | null } = {},
+): Record<string, unknown> & { submission_id?: string } {
+  const body: Record<string, unknown> = fitLeadPayload(tracking ? { ...payload, ...tracking } : payload);
+  return submissionId ? { ...body, submission_id: submissionId } : body;
+}

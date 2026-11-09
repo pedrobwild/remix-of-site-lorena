@@ -9,6 +9,7 @@ import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.4
 import { sendTemplateEmail } from "../_shared/transactional-email-templates/send-email.ts";
 import { logIntegration } from "../_shared/integration-log.ts";
 import { admitLead } from "./admission.ts";
+import { findLeadBySubmission, isMissingColumnError } from "./dedup.ts";
 import {
   AD_LEAD_FORMS,
   capiLogEntry,
@@ -18,14 +19,15 @@ import {
   SITE_URL,
 } from "../_shared/meta-capi.ts";
 import {
-  ATTRIBUTION_COLUMNS,
   BWILD_ENGINE_WEBHOOK_URL,
   buildCrmPayload,
   buildLeadEmail,
   buildSlackMessage,
   type CleanLead,
   DEFAULT_LEAD_NAME,
+  duplicateLeadResponse,
   formLabel,
+  INSERT_FALLBACK_DROPS,
   LEAD_EMAIL_TEMPLATE,
   LEAD_EMAIL_TO,
   leadSchema,
@@ -68,11 +70,6 @@ async function notifySlack(lead: CleanLead, leadId: string | null): Promise<Outc
   }
 }
 
-function isMissingColumnError(error: { code?: string; message?: string } | null): boolean {
-  if (!error) return false;
-  return error.code === "PGRST204" || error.code === "42703" || /form_path/.test(error.message ?? "");
-}
-
 function omitKeys(row: Record<string, unknown>, keys: readonly string[]): Record<string, unknown> {
   const out = { ...row };
   for (const k of keys) delete out[k];
@@ -99,20 +96,22 @@ async function verifiedConsentProof(admin: SupabaseClient, lead: CleanLead): Pro
   }
 }
 
-async function insertLead(admin: SupabaseClient, lead: CleanLead): Promise<StepResult> {
+async function insertLead(admin: SupabaseClient, lead: CleanLead): Promise<StepResult & { duplicate?: boolean }> {
   const row: Record<string, unknown> = { ...lead, ...(await verifiedConsentProof(admin, lead)), status: "novo" };
   try {
     let { data, error } = await admin.from("leads").insert(row).select("id").single();
-    // Colunas novas chegam por migration separada (atribuição/CAPI; antes,
-    // `form_path`). Se ainda não existirem no banco, grava sem elas em vez de
-    // perder o lead: primeiro sem as de atribuição, depois também sem form_path.
-    if (error && isMissingColumnError(error)) {
-      const withoutAttribution = omitKeys(row, ATTRIBUTION_COLUMNS);
-      ({ data, error } = await admin.from("leads").insert(withoutAttribution).select("id").single());
-      if (error && isMissingColumnError(error)) {
-        const legacy = omitKeys(withoutAttribution, ["form_path"]);
-        ({ data, error } = await admin.from("leads").insert(legacy).select("id").single());
-      }
+    // Colunas novas chegam por migration separada (submission_id; atribuição/
+    // CAPI; antes, `form_path`). Se ainda não existirem no banco, grava sem
+    // elas em vez de perder o lead (ordem em INSERT_FALLBACK_DROPS).
+    for (const drop of INSERT_FALLBACK_DROPS) {
+      if (!(error && isMissingColumnError(error))) break;
+      ({ data, error } = await admin.from("leads").insert(omitKeys(row, drop)).select("id").single());
+    }
+    if (error && error.code === "23505" && lead.submission_id) {
+      // Dois envios iguais ao mesmo tempo: o índice único de submission_id
+      // barrou o segundo. É o mesmo lead — não avisa de novo.
+      const existing = await findLeadBySubmission(admin, lead.submission_id);
+      if (existing) return { status: "sent", id: existing, duplicate: true };
     }
     if (error) {
       // Só o código vai para o log: a mensagem do Postgres pode repetir a
@@ -351,9 +350,17 @@ Deno.serve(async (req) => {
     if (!admitted) return json(429, { error: "rate_limited" });
   }
 
-  let lead_insert: StepResult;
+  // Reenvio de um envio já gravado: responde "entregue" sem repetir Slack,
+  // CRM, e-mail e API de Conversões.
+  if (admin && lead.submission_id) {
+    const existing = await findLeadBySubmission(admin, lead.submission_id);
+    if (existing) return json(200, duplicateLeadResponse(existing));
+  }
+
+  let lead_insert: StepResult & { duplicate?: boolean };
   if (admin) {
     lead_insert = await insertLead(admin, lead);
+    if (lead_insert.duplicate && lead_insert.id) return json(200, duplicateLeadResponse(lead_insert.id));
   } else {
     console.error("[notify-lead] backend service credentials are not available");
     lead_insert = { status: "error", error: "service_unavailable" };

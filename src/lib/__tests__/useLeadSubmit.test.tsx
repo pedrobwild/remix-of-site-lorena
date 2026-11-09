@@ -3,7 +3,7 @@ import { act, renderHook } from "@testing-library/react";
 import type { LeadPayload, LeadTracking } from "../leadDelivery";
 import type { SendLeadResult } from "../sendLead";
 
-type SendOpts = { timeoutMs?: number; tracking?: LeadTracking };
+type SendOpts = { timeoutMs?: number; tracking?: LeadTracking; submissionId?: string };
 const sendLeadMock = vi.fn<(payload: LeadPayload, opts?: SendOpts) => Promise<SendLeadResult>>();
 const trackEventMock = vi.fn();
 const reportLeadMock = vi.fn();
@@ -24,6 +24,7 @@ vi.mock("@/lib/adConsentRecord", () => ({
 }));
 
 import { useLeadSubmit } from "../useLeadSubmit";
+import { flushLeadOutbox, listLeadOutbox } from "../leadOutbox";
 
 const payload: LeadPayload = {
   name: "Ana",
@@ -247,5 +248,150 @@ describe("useLeadSubmit", () => {
       await result.current.submit(payload);
     });
     expect(reportLeadMock).not.toHaveBeenCalled();
+  });
+
+  describe("caixa de saída (backend fora em 06–08/11/2026)", () => {
+    const sentIds = () => sendLeadMock.mock.calls.map(([, opts]) => opts?.submissionId);
+
+    it("mesma pessoa/formulário: reenvio leva o mesmo submission_id até a entrega confirmada; depois, outro", async () => {
+      sendLeadMock.mockResolvedValueOnce({ delivered: false, timedOut: false });
+      sendLeadMock.mockResolvedValueOnce({ delivered: false, timedOut: true });
+      sendLeadMock.mockResolvedValueOnce({ delivered: true, timedOut: false });
+      sendLeadMock.mockResolvedValueOnce({ delivered: true, timedOut: false });
+      const { result } = renderHook(() => useLeadSubmit({ method: "orcamento_form" }));
+      for (const message of [null, "segunda tentativa", null]) {
+        await act(async () => {
+          await result.current.submit({ ...payload, message });
+        });
+      }
+      // "Refazer pedido" depois de entregue é outro pedido.
+      await act(async () => {
+        await result.current.submit(payload);
+      });
+      const [a, b, c, d] = sentIds();
+      expect(a).toMatch(/^[0-9a-f-]{36}$/i);
+      expect(b).toBe(a);
+      expect(c).toBe(a);
+      expect(d).toMatch(/^[0-9a-f-]{36}$/i);
+      expect(d).not.toBe(a);
+    });
+
+    it("fila entregou em segundo plano: 'Tentar de novo' reusa o id (o servidor responde duplicate, sem lead novo)", async () => {
+      sendLeadMock.mockResolvedValueOnce({ delivered: false, timedOut: false });
+      sendLeadMock.mockResolvedValueOnce({ delivered: true, timedOut: false });
+      const { result } = renderHook(() => useLeadSubmit({ method: "orcamento_form" }));
+      await act(async () => {
+        await result.current.submit(payload);
+      });
+      const [queuedEntry] = listLeadOutbox();
+      const background = vi.fn(async () => ({ delivered: true }));
+      await flushLeadOutbox(background, { ignoreBackoff: true });
+      expect(background).toHaveBeenCalledWith(expect.objectContaining({ submission_id: queuedEntry.submission_id }));
+      expect(listLeadOutbox()).toEqual([]);
+
+      await act(async () => {
+        await result.current.submit(payload);
+      });
+      expect(sentIds()).toEqual([queuedEntry.submission_id, queuedEntry.submission_id]);
+      expect(result.current.outcome).toBe("delivered");
+    });
+
+    it("outra pessoa no mesmo formulário (outro WhatsApp) ganha outro id", async () => {
+      sendLeadMock.mockResolvedValue({ delivered: false, timedOut: false });
+      const { result } = renderHook(() => useLeadSubmit({ method: "orcamento_form" }));
+      await act(async () => {
+        await result.current.submit(payload);
+      });
+      await act(async () => {
+        await result.current.submit({ ...payload, whatsapp: "11987654321" });
+      });
+      const [a, b] = sentIds();
+      expect(b).not.toBe(a);
+      expect(listLeadOutbox().map((e) => e.submission_id).sort()).toEqual([a, b].sort());
+    });
+
+    it("tela nova (página recarregada) reusa o id da pendência da mesma pessoa na fila", async () => {
+      sendLeadMock.mockResolvedValue({ delivered: false, timedOut: false });
+      const first = renderHook(() => useLeadSubmit({ method: "orcamento_form" }));
+      await act(async () => {
+        await first.result.current.submit(payload);
+      });
+      first.unmount();
+      const [queuedEntry] = listLeadOutbox();
+
+      const second = renderHook(() => useLeadSubmit({ method: "orcamento_form" }));
+      await act(async () => {
+        await second.result.current.submit({ ...payload, message: "de novo" });
+      });
+      expect(sentIds()[1]).toBe(queuedEntry.submission_id);
+      const entries = listLeadOutbox();
+      expect(entries).toHaveLength(1);
+      expect(entries[0]).toMatchObject({ submission_id: queuedEntry.submission_id, body: { message: "de novo" } });
+    });
+
+    it.each([
+      ["failed", { delivered: false, timedOut: false }],
+      ["timedOut", { delivered: false, timedOut: true }],
+    ] as const)("%s: o corpo completo fica no aparelho e a página sabe", async (_n, res) => {
+      sendLeadMock.mockResolvedValue(res);
+      const { result } = renderHook(() => useLeadSubmit({ method: "orcamento_form" }));
+      const p = { ...payload, form_path: "/orcamento" as const, utm_campaign: "120252065401790152" };
+      await act(async () => {
+        await result.current.submit(p);
+      });
+      const [entry] = listLeadOutbox();
+      expect(entry.submission_id).toBe(sendLeadMock.mock.calls[0][1]?.submissionId);
+      expect(entry.body).toMatchObject({
+        submission_id: entry.submission_id,
+        name: "Ana",
+        whatsapp: "11912345678",
+        form_path: "/orcamento",
+        utm_campaign: "120252065401790152",
+        area_m2: 33,
+        event_id: sendLeadMock.mock.calls[0][1]?.tracking?.event_id,
+        consent_marketing: false,
+      });
+      expect(result.current.queued).toBe(true);
+    });
+
+    it("reenvio que dá certo tira a pendência da mesma pessoa/formulário", async () => {
+      sendLeadMock.mockResolvedValueOnce({ delivered: false, timedOut: false });
+      sendLeadMock.mockResolvedValueOnce({ delivered: true, timedOut: false });
+      const { result } = renderHook(() => useLeadSubmit({ method: "orcamento_form" }));
+      await act(async () => {
+        await result.current.submit(payload);
+      });
+      expect(listLeadOutbox()).toHaveLength(1);
+      await act(async () => {
+        await result.current.submit(payload);
+      });
+      expect(listLeadOutbox()).toEqual([]);
+      expect(result.current.queued).toBe(false);
+    });
+
+    it("dois envios falhos da mesma pessoa: fica só o último", async () => {
+      sendLeadMock.mockResolvedValue({ delivered: false, timedOut: false });
+      const { result } = renderHook(() => useLeadSubmit({ method: "orcamento_form" }));
+      await act(async () => {
+        await result.current.submit(payload);
+      });
+      await act(async () => {
+        await result.current.submit({ ...payload, message: "segunda tentativa" });
+      });
+      const entries = listLeadOutbox();
+      expect(entries).toHaveLength(1);
+      expect(entries[0].submission_id).toBe(sendLeadMock.mock.calls[1][1]?.submissionId);
+      expect(entries[0].body.message).toBe("segunda tentativa");
+    });
+
+    it("guardar na fila não muda os eventos do envio interativo", async () => {
+      sendLeadMock.mockResolvedValue({ delivered: false, timedOut: true });
+      const { result } = renderHook(() => useLeadSubmit({ method: "lp_obra_gate" }));
+      await act(async () => {
+        await result.current.submit(payload);
+      });
+      expect(trackEventMock.mock.calls.map(([n]) => n)).toEqual(["generate_lead"]);
+      expect(reportLeadMock).toHaveBeenCalledTimes(1);
+    });
   });
 });

@@ -15,6 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import FormPrivacyNote from "@/components/FormPrivacyNote";
 import { whatsappHref } from "@/components/landing/content";
 import type { LeadPayload } from "@/lib/leadDelivery";
+import { LEAD_OUTBOX_SAVED_TEXT } from "@/lib/leadOutbox";
 import {
   buildLeadMessage,
   fieldErrorId,
@@ -70,7 +71,7 @@ export default function LpStudioLeadForm({ variante }: { variante: LpVariante })
   const [done, setDone] = useState<"delivered" | "timedOut" | null>(null);
   const [whatsLink, setWhatsLink] = useState<string | null>(null);
   const doneRef = useRef<HTMLDivElement | null>(null);
-  const { sending, outcome, submit, isMounted } = useLeadSubmit({ method: "lp_google_ads_studio" });
+  const { sending, outcome, queued, submit, isMounted } = useLeadSubmit({ method: "lp_google_ads_studio" });
 
   const errors = validar(v);
   const erro = (k: Campo) => (touched[k] ? errors[k] : undefined);
@@ -145,6 +146,7 @@ export default function LpStudioLeadForm({ variante }: { variante: LpVariante })
           A confirmação demorou mais que o normal. Para garantir, mande o pedido pelo WhatsApp — a mensagem já vai
           com os seus dados. Se já tivermos recebido, é só ignorar.
         </p>
+        {queued && <p>{LEAD_OUTBOX_SAVED_TEXT}</p>}
         {whatsLink && (
           <a className="bwa-button bwa-button-light bwa-lp-form-submit" href={whatsLink} target="_blank" rel="noopener noreferrer">
             Enviar pelo WhatsApp <span aria-hidden="true">→</span>
@@ -270,7 +272,7 @@ export default function LpStudioLeadForm({ variante }: { variante: LpVariante })
           <a href={whatsLink ?? whatsappHref("Olá! Quero um orçamento de reforma de studio em São Paulo.")} target="_blank" rel="noopener noreferrer">
             mande pelo WhatsApp
           </a>
-          .
+          .{queued && <> {LEAD_OUTBOX_SAVED_TEXT}</>}
         </p>
       )}
 

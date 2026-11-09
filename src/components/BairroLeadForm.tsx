@@ -6,6 +6,7 @@
  */
 import { useEffect, useRef, useState } from "react";
 import type { LeadPayload } from "@/lib/leadDelivery";
+import { LEAD_OUTBOX_SAVED_TEXT } from "@/lib/leadOutbox";
 import {
   fieldErrorId,
   fieldErrorProps,
@@ -41,7 +42,7 @@ export default function BairroLeadForm({ bairro }: { bairro: string }) {
   const [touched, setTouched] = useState<Partial<Record<Campo, boolean>>>({});
   const [done, setDone] = useState(false);
   const boxRef = useRef<HTMLDivElement | null>(null);
-  const { sending, outcome, submit, isMounted } = useLeadSubmit({ method: "pagina_bairro" });
+  const { sending, outcome, queued, submit, isMounted } = useLeadSubmit({ method: "pagina_bairro" });
 
   const errors = validar(v);
   const erro = (k: Campo) => (touched[k] ? errors[k] : undefined);
@@ -90,6 +91,7 @@ export default function BairroLeadForm({ bairro }: { bairro: string }) {
             ? "Em breve a equipe da Bewild fala com você pelo WhatsApp."
             : "Para garantir, mande seus dados pelo WhatsApp — se já tivermos recebido, é só ignorar."}
         </p>
+        {!ok && queued && <p className="bf-text">{LEAD_OUTBOX_SAVED_TEXT}</p>}
         {!ok && (
           <a
             className="bwh-btn bwh-btn--invert"

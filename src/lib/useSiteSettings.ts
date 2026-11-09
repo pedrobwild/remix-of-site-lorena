@@ -159,6 +159,51 @@ const DEFAULTS: SiteSettings = {
   pages_seo: {},
 };
 
+/**
+ * IDs reais dos trackers em produção (lidos de `site_settings` em 09/11/2026).
+ * Só entram quando o banco não responde ou a coluna vem vazia: de 06/11 a
+ * 08/11/2026 o backend da Lovable Cloud ficou pausado ~41 h e, como os IDs só
+ * vinham do banco, Pixel da Meta e Google Ads não carregaram em nenhuma
+ * página. Valor preenchido no banco sempre vence. Trocou um ID no painel?
+ * Atualize aqui também (para desligar um tracker é preciso tirá-lo daqui).
+ * O GA4 principal não depende disto: é fixo em `GA4_MEASUREMENT_ID` (ga4.ts);
+ * `google_analytics_id` é um GA4 extra e o GTM não é usado — ficam sem padrão.
+ */
+export const TRACKER_DEFAULTS = {
+  meta_pixel_id: "644216424824915",
+  google_ads_conversion_id: "AW-16893787587",
+  google_ads_lead_label: "NY8ECIz844kdEMP7yvc-",
+  google_ads_contact_label: "wMWECJmtp6AdEMP7yvc-",
+  google_ads_application_label: "1AYaCKflp6AdEMP7yvc-",
+} as const satisfies Partial<Record<keyof SiteSettings, string>>;
+
+type TrackerKey = keyof typeof TRACKER_DEFAULTS;
+const TRACKER_KEYS = Object.keys(TRACKER_DEFAULTS) as TrackerKey[];
+
+/**
+ * Linha do banco sobre os DEFAULTS; tracker vazio (null, ausente ou só
+ * espaços) cai no ID de produção.
+ */
+export function mergeSiteSettings(row: Record<string, unknown> | null | undefined): SiteSettings {
+  const merged = { ...DEFAULTS, ...(row ?? {}) } as SiteSettings;
+  for (const key of TRACKER_KEYS) {
+    const value = merged[key];
+    if (typeof value !== "string" || !value.trim()) merged[key] = TRACKER_DEFAULTS[key];
+  }
+  return merged;
+}
+
+/**
+ * Usado quando a leitura falha. Antes da primeira resposta,
+ * `getCachedSiteSettings` continua sem trackers: injetar o padrão já na
+ * montagem prenderia esse ID (o script não é trocado depois) mesmo que o
+ * banco tivesse outro.
+ */
+const OFFLINE_DEFAULTS: SiteSettings = mergeSiteSettings(null);
+
+/** Teto da leitura: backend pausado pode segurar a conexão sem responder. */
+export const SITE_SETTINGS_TIMEOUT_MS = 6000;
+
 let cache: SiteSettings | null = null;
 let inflight: Promise<SiteSettings> | null = null;
 
@@ -181,18 +226,25 @@ export async function fetchSiteSettings(force = false): Promise<SiteSettings> {
   if (cache && !force) return cache;
   if (inflight) return inflight;
   inflight = (async () => {
+    const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const timer = controller ? setTimeout(() => controller.abort(), SITE_SETTINGS_TIMEOUT_MS) : null;
     try {
-      const { data, error } = await publicRpc<Record<string, unknown>>("get_public_site_settings");
+      const { data, error } = await publicRpc<Record<string, unknown>>(
+        "get_public_site_settings",
+        {},
+        controller ? { signal: controller.signal } : undefined,
+      );
       if (error) {
         devWarn("[useSiteSettings] leitura falhou (não cacheado):", error);
-        return cache ?? DEFAULTS;
+        return cache ?? OFFLINE_DEFAULTS;
       }
-      cache = { ...DEFAULTS, ...((data as Record<string, unknown> | null) ?? {}) } as SiteSettings;
+      cache = mergeSiteSettings(data as Record<string, unknown> | null);
       return cache;
     } catch (err) {
       devWarn("[useSiteSettings] leitura lançou (não cacheado):", err);
-      return cache ?? DEFAULTS;
+      return cache ?? OFFLINE_DEFAULTS;
     } finally {
+      if (timer) clearTimeout(timer);
       inflight = null;
     }
   })();
@@ -214,7 +266,7 @@ export function useSiteSettings() {
       .catch(() => {
         // fetchSiteSettings não rejeita; guarda contra regressão futura.
         if (!mounted) return;
-        setSettings(DEFAULTS);
+        setSettings(OFFLINE_DEFAULTS);
         setLoading(false);
       });
     return () => {
