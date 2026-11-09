@@ -32,7 +32,7 @@ export default function PrivacidadePage() {
   const { settings } = useSiteSettings();
 
   const contactEmail = settings?.contact_email || "contato@bewild.com.br";
-  const lastUpdated = "12 de outubro de 2026";
+  const lastUpdated = "9 de novembro de 2026";
 
   useSeo({
     ...PRIVACIDADE_SEO,
@@ -464,6 +464,47 @@ export default function PrivacidadePage() {
                 fontes tipográficas do site são hospedadas pela própria Bewild,
                 sem solicitar fontes ao Google. O selo do Reclame Aqui, perto do
                 rodapé, carrega recursos a partir dos servidores desse serviço.
+              </p>
+
+              <h2>Radar Bewild (radarbewild.com.br)</h2>
+              <p>
+                O Radar Bewild é um site da Bewild com dados públicos de mercado
+                e simuladores para quem avalia um studio para short stay em São
+                Paulo. Nele, tratamos dados pessoais em três situações:
+              </p>
+              <ul>
+                <li>
+                  <strong>Pedido de material.</strong> Quando você pede um
+                  material (por exemplo, o checklist antes de comprar o
+                  studio), guardamos seu e-mail, o primeiro nome se você
+                  informar, o bairro e a etapa em que está, a data e a versão
+                  do texto de consentimento que você leu. Usamos o e-mail para
+                  disponibilizar o material. Só se você marcar as opções
+                  correspondentes, usamos também para enviar as próximas
+                  análises do Radar Bewild e para falar com você sobre a
+                  reforma do seu studio.
+                </li>
+                <li>
+                  <strong>Conta e simulações guardadas.</strong> Se você criar
+                  uma conta, guardamos e-mail, nome e as simulações que você
+                  escolher salvar (bairro, faixa de área e as premissas da
+                  conta). Esses dados servem só para você reabrir seus
+                  estudos.
+                </li>
+                <li>
+                  <strong>Medição de uso.</strong> Com sua autorização de
+                  cookies, medimos visitas, simulações concluídas e cliques em
+                  &ldquo;pedir orçamento&rdquo; com Google Analytics e Pixel da
+                  Meta, e registramos eventos de navegação em base própria. Sem
+                  a autorização, nada disso é medido. Nenhum e-mail ou nome é
+                  enviado às ferramentas de medição.
+                </li>
+              </ul>
+              <p>
+                Para cancelar o recebimento de comunicações, retirar um
+                consentimento ou exercer qualquer direito previsto na LGPD
+                sobre dados coletados no Radar, escreva para{" "}
+                <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.
               </p>
 
               <h2>Direitos do titular de dados pessoais</h2>
