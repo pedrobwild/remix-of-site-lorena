@@ -1,0 +1,80 @@
+{
+  "@type": "Organization",
+  "@id": "https://bewild.com.br/#org",
+  "name": "Bewild",
+  "legalName": "Bwild Reformas LTDA",
+  "alternateName": [
+    "Bwild",
+    "Bewild Reformas",
+    "Bewild Reformas e Arquitetura",
+    "Bwild Reformas",
+    "Be Wild"
+  ],
+  "url": "https://bewild.com.br/",
+  "logo": "https://bewild.com.br/brand/bewild-logo-512.png",
+  "description": "Reforma de apartamento em São Paulo, do projeto à entrega do apartamento pronto para morar, alugar ou vender.",
+  "areaServed": [
+    {
+      "@type": "City",
+      "name": "São Paulo"
+    }
+  ],
+  "knowsAbout": [
+    "Reformas de apartamentos",
+    "Apartamentos prontos",
+    "Reforma turn-key",
+    "Projeto de arquitetura personalizado",
+    "Reforma de studios",
+    "Reforma de escritórios",
+    "Short-stay",
+    "Marcenaria sob medida",
+    "Gestão de obra",
+    "Reforma de studio em São Paulo",
+    "Empresa de reforma de apartamento em São Paulo"
+  ],
+  "founder": [
+    {
+      "@id": "https://bewild.com.br/#pedro-henrique-alves"
+    },
+    {
+      "@id": "https://bewild.com.br/#thiago-dantas"
+    }
+  ],
+  "employee": [
+    {
+      "@type": "Person",
+      "@id": "https://bewild.com.br/#thiago-dantas",
+      "name": "Thiago Dantas do Amor",
+      "jobTitle": "Cofundador, VP e arquiteto responsável técnico",
+      "identifier": "CAU A162437-7",
+      "url": "https://bewild.com.br/conteudos/thiago-dantas-arquiteto-responsavel-tecnico-bewild",
+      "sameAs": [
+        "https://www.linkedin.com/in/thiago-dantas-do-amor-73817b134/"
+      ]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://bewild.com.br/#pedro-henrique-alves",
+      "name": "Pedro Henrique Alves",
+      "jobTitle": "Fundador e CEO",
+      "url": "https://bewild.com.br/conteudos/pedro-henrique-alves-ceo-bewild",
+      "sameAs": [
+        "https://www.linkedin.com/in/pedro-henrique-alves-872b0245"
+      ]
+    }
+  ],
+  "taxID": "47.350.338/0001-37",
+  "identifier": [
+    {
+      "@type": "PropertyValue",
+      "propertyID": "CNPJ",
+      "value": "47.350.338/0001-37"
+    }
+  ],
+  "sameAs": [
+    "https://instagram.com/bewild.oficial",
+    "https://www.linkedin.com/company/bwil-d/",
+    "https://maps.google.com/maps?cid=16329162499474686119",
+    "https://www.youtube.com/@bewild.oficial"
+  ]
+}

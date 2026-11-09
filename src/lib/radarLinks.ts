@@ -40,13 +40,17 @@ export function rewriteGuiaLinksInHtml(html: string): string {
  * aponta de volta para /reforma/<bairro> — sem disputar a mesma busca.
  *
  * Só entra aqui bairro com diária e ocupação publicadas no Radar (base curada de
- * 13/10/2026). Os demais vão para o comparador, que lista todos os bairros.
+ * 13/10/2026; Butantã e Campo Belo entraram na coleta de 18/10/2026 e aqui em
+ * 09/11/2026). Os demais vão para o comparador, que lista todos os bairros —
+ * inclusive Vila Nova Conceição, que tem página no Radar mas sem número publicado.
  */
 export const RADAR_RANKING_URL = `${RADAR_URL}ranking`;
 
 const RADAR_BAIRROS_COM_DADO = new Set([
   "bela-vista",
   "brooklin",
+  "butanta",
+  "campo-belo",
   "consolacao",
   "moema",
   "perdizes",
