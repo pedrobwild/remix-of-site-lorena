@@ -16,7 +16,7 @@ import {
   invalidateSiteSettings,
   type SiteSettings,
 } from "./useSiteSettings";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazyClient";
 import { isConsentAccepted, onConsentChange } from "./cookieConsent";
 import { GA4_MEASUREMENT_ID } from "./ga4";
 import { configureGoogleAds } from "./googleAds";
@@ -802,7 +802,7 @@ export async function refreshSeoEverywhere(opts?: { pingSearchEngines?: boolean 
   try {
     // `functions.invoke` envia o JWT do admin logado — a edge function
     // `ping-sitemap` exige admin (antes era um fetch anônimo, sem auth).
-    const { data, error } = await supabase.functions.invoke("ping-sitemap", { body: {} });
+    const { data, error } = await (await getSupabase()).functions.invoke("ping-sitemap", { body: {} });
     return { ok: true, ping: error ? { ok: false } : data };
   } catch {
     return { ok: true, ping: { ok: false } };

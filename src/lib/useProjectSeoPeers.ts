@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazyClient";
 import { devWarn } from "@/lib/devLog";
 import type { ProjectSeoPeer } from "@/lib/projectSeo";
 
@@ -17,13 +17,8 @@ export function useProjectSeoPeers(initial?: ProjectSeoPeer[] | null): ProjectSe
   useEffect(() => {
     if (initial) return; // dados do loader: não refaz a busca
     let mounted = true;
-    Promise.resolve(
-      supabase
-        .from("projects")
-        .select(PEER_COLUMNS)
-        .eq("published", true)
-        .limit(1000),
-    )
+    getSupabase()
+      .then((sb) => sb.from("projects").select(PEER_COLUMNS).eq("published", true).limit(1000))
       .then(({ data, error }) => {
         if (!mounted) return;
         if (error) {

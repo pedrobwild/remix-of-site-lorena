@@ -9,8 +9,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const rpcMock = vi.fn();
-vi.mock("@/integrations/supabase/client", () => ({
-  supabase: { rpc: (...args: unknown[]) => rpcMock(...args) },
+vi.mock("@/integrations/supabase/publicRest", () => ({
+  publicRpc: (...args: unknown[]) => rpcMock(...args),
 }));
 
 import { hydrateHomeProjects } from "@/lib/hydrateHomeProjects";

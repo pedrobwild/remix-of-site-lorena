@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazyClient";
 import { devWarn } from "./devLog";
 
 /* ============================================================
@@ -58,6 +58,7 @@ export function usePartnerCase(slug: string, enabled = true) {
     if (!enabled) return;
     let mounted = true;
     void (async () => {
+      const supabase = await getSupabase();
       const { data: row, error } = await supabase
         .rpc("get_partner_case", { p_slug: slug })
         .maybeSingle();

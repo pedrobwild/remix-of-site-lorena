@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazyClient";
 import { LEAL_CASE_SLUG } from "@/content/lealMoreira";
 
 /* Projetos do case Leal Moreira lidos no servidor (HTML inicial com as fotos
@@ -18,6 +18,7 @@ export type LealProject = {
 export type LealData = { published: boolean; projects: LealProject[] };
 
 async function fetchLeal(): Promise<LealData | null> {
+  const supabase = await getSupabase();
   const { data: row, error } = await supabase
     .rpc("get_partner_case", { p_slug: LEAL_CASE_SLUG })
     .maybeSingle();

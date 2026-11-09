@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import NotFoundPage from "@/pages/NotFoundPage";
 import { seoHead } from "@/lib/routeHead";
-import { NOT_FOUND_SEO } from "@/lib/seoLoaders";
+import { NOT_FOUND_SEO } from "@/lib/notFoundSeo";
 // Import tardio: o loader da rota entra no pacote de TODA página; assim os
 // carregadores de conteúdo (posts, projetos, vídeos…) só baixam quando usados.
 const contentLoaders = () => import("@/lib/contentLoaders");

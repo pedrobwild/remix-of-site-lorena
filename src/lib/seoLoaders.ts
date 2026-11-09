@@ -16,20 +16,11 @@ import {
 import { neighborhoodPages, neighborhoodSlug } from "@/lib/portfolioFilter";
 import { bairroAreaRange, bairroDescription, bairroTitle } from "@/lib/bairroSeo";
 
-export type RouteSeoData = {
-  title: string;
-  description: string;
-  ogImage?: string | null;
-  ogType?: "website" | "article";
-  notFound?: boolean;
-};
+import { NOT_FOUND_SEO, type RouteSeoData } from "@/lib/notFoundSeo";
 
-export const NOT_FOUND_SEO: RouteSeoData = {
-  title: "404 · Página não encontrada · Bewild",
-  description:
-    "A página solicitada não existe ou foi movida. Conheça o portfólio de reformas de apartamentos e imóveis prontos da Bewild em São Paulo.",
-  notFound: true,
-};
+// Reexportados para quem já importava daqui; as rotas devem importar de
+// `@/lib/notFoundSeo` (este módulo traz o cliente do Supabase junto).
+export { NOT_FOUND_SEO, type RouteSeoData };
 
 const PEER_COLUMNS =
   "id, title, neighborhood, location, area_m2, project_type, status, seo_title, created_at";

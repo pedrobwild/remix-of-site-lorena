@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 // não existe VITE_SUPABASE_URL ("supabaseUrl is required"). Mesmo padrão dos
 // demais testes que tocam em "@/integrations/supabase/client".
 const rpc = vi.fn();
-vi.mock("@/integrations/supabase/client", () => ({ supabase: { rpc: (...a: unknown[]) => rpc(...a) } }));
+vi.mock("@/integrations/supabase/publicRest", () => ({ publicRpc: (...a: unknown[]) => rpc(...a) }));
 
 import { HOME_DEFAULT_DESCRIPTION, HOME_DEFAULT_TITLE, loadHomeSeo, resolveHomeSeo } from "@/lib/homeSeo";
 

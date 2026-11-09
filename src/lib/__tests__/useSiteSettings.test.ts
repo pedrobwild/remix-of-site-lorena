@@ -7,11 +7,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const maybeSingle = vi.fn();
-vi.mock("@/integrations/supabase/client", () => ({
-  supabase: {
-    // Leitura pública via RPC get_public_site_settings (tabela é só admin).
-    rpc: () => maybeSingle(),
-  },
+// Leitura pública via RPC get_public_site_settings (tabela é só admin), direto
+// na API REST (publicRest), sem o SDK do Supabase.
+vi.mock("@/integrations/supabase/publicRest", () => ({
+  publicRpc: () => maybeSingle(),
 }));
 vi.mock("@/lib/devLog", () => ({ devWarn: vi.fn(), devError: vi.fn() }));
 

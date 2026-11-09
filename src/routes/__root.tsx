@@ -1,10 +1,8 @@
 /// <reference types="vite/client" />
 import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 import { loadPagesSeoMap } from "@/lib/pageSeo.functions";
-import type { QueryClient } from "@tanstack/react-query";
-import { QueryClientProvider } from "@tanstack/react-query";
 import {
-  createRootRouteWithContext,
+  createRootRoute,
   HeadContent,
   Outlet,
   Scripts,
@@ -69,7 +67,7 @@ const HOME_KEYWORDS =
   "escritório de arquitetura em São Paulo, arquitetura e engenharia, projeto arquitetônico, projeto de interiores, engenharia civil São Paulo, reforma de apartamento em SP, bastidores de obra, equipe em obra, custo de reforma, empresa de reforma de apartamento SP, reforma turnkey São Paulo, Bewild";
 const FAVICON_V = "?v=20260923";
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+export const Route = createRootRoute({
   // Textos da aba Páginas de /admin/seo: cada rota aplica no próprio head().
   loader: async () => ({ pagesSeo: await loadPagesSeoMap() }),
   staleTime: 5 * 60_000,
@@ -210,7 +208,6 @@ function schedulePageView(): () => void {
 const MAINTENANCE_EXEMPT = new Set(["/o", "/p"]);
 
 function RootComponent() {
-  const { queryClient } = Route.useRouteContext();
   const router = useRouter();
   const location = useLocation();
   const pathname = location.pathname.replace(/\/+$/, "") || "/";
@@ -287,8 +284,7 @@ function RootComponent() {
   useEffect(() => setHydrated(true), []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <RootErrorBoundary>
+    <RootErrorBoundary>
         {underMaintenance ? <Suspense fallback={null}><MaintenancePage /></Suspense> : <Outlet />}
         {hydrated && !adminMode && !underMaintenance && <CookieBanner />}
         {hydrated && !adminMode && !underMaintenance && (
@@ -297,8 +293,7 @@ function RootComponent() {
         {/* Montado sempre (inclusive /admin) para acompanhar a URL; o próprio
             componente não dispara nada em /admin nem sem consentimento. */}
         <MetaPixel />
-      </RootErrorBoundary>
-    </QueryClientProvider>
+    </RootErrorBoundary>
   );
 }
 

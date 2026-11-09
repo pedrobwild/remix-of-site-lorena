@@ -198,13 +198,22 @@ describe("dados estruturados", () => {
     scripts: Array<{ children: string }>;
   };
   // O head() de verdade de cada rota: é ele que escreve o HTML que o Google lê.
-  const headDoVideo = (slug: string, achou = true) =>
-    (VideoRoute.options.head as unknown as (ctx: unknown) => Head)({ params: { slug }, loaderData: achou ? { slug } : undefined });
-  const headDoIndice = () => (VideosIndexRoute.options.head as unknown as (ctx: unknown) => Head)({});
+  // Os dados estruturados saem do loader (import dinâmico do cadastro, para o
+  // head() não levar os vídeos ao pacote inicial de toda página): o teste roda
+  // o loader de verdade e passa o resultado ao head(), como o servidor faz.
+  const loaderDoVideo = VideoRoute.options.loader as unknown as (ctx: { params: { slug: string } }) => Promise<unknown>;
+  const loaderDoIndice = VideosIndexRoute.options.loader as unknown as (ctx: unknown) => Promise<unknown>;
+  const headDoVideo = async (slug: string, achou = true) =>
+    (VideoRoute.options.head as unknown as (ctx: unknown) => Head)({
+      params: { slug },
+      loaderData: achou ? await loaderDoVideo({ params: { slug } }) : undefined,
+    });
+  const headDoIndice = async () =>
+    (VideosIndexRoute.options.head as unknown as (ctx: unknown) => Head)({ loaderData: await loaderDoIndice({}), matches: [] });
   const types = (scripts: Array<{ children: string }>) => scripts.map((s) => JSON.parse(s.children)["@type"] as string);
 
-  it.each(VIDEO_PAGES.map((v) => [v.slug, v] as const))("%s: WebPage + VideoObject, com o vídeo como entidade principal", (_slug, v) => {
-    const head = headDoVideo(v.slug);
+  it.each(VIDEO_PAGES.map((v) => [v.slug, v] as const))("%s: WebPage + VideoObject, com o vídeo como entidade principal", async (_slug, v) => {
+    const head = await headDoVideo(v.slug);
     expect(head.meta.find((m) => "title" in m)?.title).toBe(brandTitle(v.title));
     expect(head.meta.find((m) => m.name === "description")?.content).toBe(v.description);
     expect(types(head.scripts)).toEqual(["WebPage", "VideoObject"]);
@@ -231,8 +240,8 @@ describe("dados estruturados", () => {
     expect(head.links.find((l) => l.rel === "canonical")?.href).toBe(`${BASE}${videoPagePath(v.slug)}`);
   });
 
-  it("endereço fora do cadastro (404) não publica VideoObject e sai noindex", () => {
-    const head = headDoVideo("nao-existe", false);
+  it("endereço fora do cadastro (404) não publica VideoObject e sai noindex", async () => {
+    const head = await headDoVideo("nao-existe", false);
     expect(head.scripts).toEqual([]);
     expect(head.meta.find((m) => m.name === "robots")?.content).toBe("noindex, follow");
   });
@@ -254,8 +263,8 @@ describe("dados estruturados", () => {
     expect(indice.noindex).toBeFalsy();
   });
 
-  it("o índice é CollectionPage + ItemList, sem VideoObject", () => {
-    const head = headDoIndice();
+  it("o índice é CollectionPage + ItemList, sem VideoObject", async () => {
+    const head = await headDoIndice();
     expect(head.meta.find((m) => "title" in m)?.title).toBe(brandTitle(VIDEOS_HUB_SEO.title));
     expect(head.meta.find((m) => m.name === "robots")?.content).toMatch(/^index, follow/);
     expect(head.links.find((l) => l.rel === "canonical")?.href).toBe(`${BASE}/videos`);

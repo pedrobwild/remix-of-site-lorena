@@ -8,7 +8,7 @@
  * fallback baseado nos dados do projeto.
  */
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { publicRpc } from "@/integrations/supabase/publicRest";
 
 export type AltMap = Record<string, string>;
 
@@ -25,7 +25,7 @@ export async function fetchAlts(urls: string[]): Promise<AltMap> {
   }
   for (let i = 0; i < missing.length; i += CHUNK) {
     const slice = missing.slice(i, i + CHUNK);
-    const { data, error } = await supabase.rpc("get_image_alts", { p_urls: slice });
+    const { data, error } = await publicRpc<Array<{ url: string | null; alt: string | null }>>("get_image_alts", { p_urls: slice });
     if (error) throw error;
     for (const row of data ?? []) {
       if (row.url && row.alt) {

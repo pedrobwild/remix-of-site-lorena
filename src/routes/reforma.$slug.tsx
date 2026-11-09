@@ -8,7 +8,6 @@ const contentLoaders = () => import("@/lib/contentLoaders");
 // Os dados estruturados são montados no loader (import tardio): o head() roda
 // no pacote de toda página, e o montador puxa vídeos, posts e projetos.
 import { faqJsonLd } from "@/lib/useSeo";
-import { bairroContent } from "@/content/bairros";
 import { optimizedImageUrl } from "@/lib/imageUrl";
 import { bairroHeading, bairroTitle } from "@/lib/bairroSeo";
 import { neighborhoodPages } from "@/lib/portfolioFilter";
@@ -20,10 +19,15 @@ export const Route = createFileRoute("/reforma/$slug")({
   },
   loader: async ({ params }) => {
     const data = await contentLoaders().then((m) => m.loadBairroContent(params.slug));
-    if (!data.projects) return { ...data, jsonLd: null, coverUrl: null };
+    // FAQ do bairro (src/content/bairros.ts, ~24 kB com todos os bairros): só
+    // nos bairros com texto próprio, e lido aqui para não entrar no pacote inicial.
+    const faq = data.projects
+      ? await import("@/content/bairros").then((m) => m.bairroContent(params.slug)?.faq ?? null)
+      : null;
+    if (!data.projects) return { ...data, jsonLd: null, coverUrl: null, faq };
     const { bairroProjects, projectListJsonLd } = await import("@/lib/routeHeadData");
     const doBairro = bairroProjects(data.projects, params.slug);
-    return { ...data, jsonLd: projectListJsonLd(doBairro), coverUrl: doBairro[0]?.cover_url ?? null };
+    return { ...data, jsonLd: projectListJsonLd(doBairro), coverUrl: doBairro[0]?.cover_url ?? null, faq };
   },
   component: RouteComponent,
   head: ({ loaderData: ld, params }) => {
@@ -43,13 +47,7 @@ export const Route = createFileRoute("/reforma/$slug")({
         const cover = ld?.coverUrl;
         return cover ? optimizedImageUrl(cover, 1200, 80) : null;
       })(),
-      jsonLd: ld?.projects
-        ? [
-            ...(ld.jsonLd ?? []),
-            // FAQ do bairro (src/content/bairros.ts): só nos bairros com texto próprio.
-             ...(bairroContent(params.slug)?.faq ? [faqJsonLd(bairroContent(params.slug)?.faq ?? [])] : []),
-          ]
-        : null,
+      jsonLd: ld?.projects ? [...(ld.jsonLd ?? []), ...(ld.faq ? [faqJsonLd(ld.faq)] : [])] : null,
     });
   },
 });

@@ -1,4 +1,5 @@
-import { Suspense, type ReactNode } from "react";
+import { Suspense, useState, type ReactNode } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useSeo } from "@/lib/useSeo";
 import adminLegacyCssUrl from "@/styles/admin-legacy.css?url";
 import adminFontScopeCssUrl from "@/styles/admin-font-scope.css?url";
@@ -26,12 +27,16 @@ const ADMIN_SHEETS = [adminLegacyCssUrl, adminFontScopeCssUrl].filter(Boolean);
  */
 export default function AdminChunk({ children }: { children: ReactNode }) {
   useSeo({ title: "Painel · Bewild", noindex: true });
+  // Um QueryClient por montagem do painel (antes ficava no contexto do
+  // roteador, e o react-query entrava no pacote inicial de toda página
+  // pública sem nenhum uso fora do /admin).
+  const [queryClient] = useState(() => new QueryClient());
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       {ADMIN_SHEETS.map((href) => (
         <link key={href} rel="stylesheet" href={href} precedence={ADMIN_CSS_PRECEDENCE} />
       ))}
       <Suspense fallback={null}>{children}</Suspense>
-    </>
+    </QueryClientProvider>
   );
 }

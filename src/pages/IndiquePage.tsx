@@ -4,7 +4,7 @@ import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import FormPrivacyNote from "@/components/FormPrivacyNote";
 import { CONTACT, whatsappHref } from "@/components/landing/content";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazyClient";
 import { isServerAcceptedEmail, type LeadPayload } from "@/lib/leadDelivery";
 import { buildLeadMessage } from "@/lib/leadForm";
 import { formatBrPhone, isValidBrPhone, normalizeBrPhoneDigits } from "@/lib/phone";
@@ -185,9 +185,8 @@ export default function IndiquePage() {
     // Os tetos seguem a policy de INSERT anônimo da tabela.
     if (ultimaIndicacao.current !== waLink) {
       ultimaIndicacao.current = waLink;
-      void supabase
-        .from("partner_referrals")
-        .insert({
+      void getSupabase()
+        .then((sb) => sb.from("partner_referrals").insert({
           partner_name: dados.nome.slice(0, 160),
           partner_type: "Cliente indicador",
           whatsapp: normalizeBrPhoneDigits(whats),
@@ -198,7 +197,7 @@ export default function IndiquePage() {
           landing_path: "/indique-um-amigo",
           referrer: typeof document !== "undefined" ? (document.referrer || "").slice(0, 500) || null : null,
           user_agent: browserUserAgent()?.slice(0, 500) ?? null,
-        })
+        }))
         .then(({ error }) => {
           if (error) {
             ultimaIndicacao.current = null;

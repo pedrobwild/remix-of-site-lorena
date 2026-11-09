@@ -16,7 +16,7 @@ import {
   type FieldErrors,
 } from "@/lib/leadForm";
 import { formatBrPhone, isValidBrPhone, normalizeBrPhoneDigits } from "@/lib/phone";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazyClient";
 import { PARCEIROS_WHEN_INCORP_ON } from "@/content/incorporadoras";
 import { isIncorporadorasPreview, useIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
 import { usePartnerCase } from "@/lib/usePartnerCase";
@@ -280,9 +280,8 @@ export default function ParceirosPage() {
     const assinatura = JSON.stringify([tipo, nome, whats, mail, regiao]);
     if (ultimaIndicacao.current !== assinatura) {
       ultimaIndicacao.current = assinatura;
-      void supabase
-        .from("partner_referrals")
-        .insert({
+      void getSupabase()
+        .then((sb) => sb.from("partner_referrals").insert({
           partner_name: nome.trim().slice(0, 160),
           partner_type: tipo.slice(0, 80),
           company: empresa.trim().slice(0, 160) || null,
@@ -296,7 +295,7 @@ export default function ParceirosPage() {
           landing_path: "/parceiros",
           referrer: typeof document !== "undefined" ? (document.referrer || "").slice(0, 500) || null : null,
           user_agent: browserUserAgent()?.slice(0, 500) ?? null,
-        })
+        }))
         .then(({ error }) => {
           if (error) {
             ultimaIndicacao.current = null;

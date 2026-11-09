@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazyClient";
 import {
   fitLeadPayload,
   isLeadDelivered,
@@ -27,7 +27,7 @@ async function invokeWithTimeout(
 ): Promise<InvokeResult | null> {
   try {
     return await Promise.race([
-      supabase.functions.invoke("notify-lead", { body }) as Promise<InvokeResult>,
+      getSupabase().then((sb) => sb.functions.invoke("notify-lead", { body }) as Promise<InvokeResult>),
       timeoutAfter(timeoutMs),
     ]);
   } catch (error) {

@@ -15,12 +15,7 @@ import { CLIENTES_FORA_DA_CAPITAL_PCT, CONTRATOS_ANALISADOS, PROVA_REFORMAS, REF
 import { CUSTO_M2_MEDIANO, ORCAMENTO_MEDIANO, STUDIO_TABELA_VIGENTE } from "@/content/baseCusto";
 import { HERO_STUDIO, type HeroStudio } from "@/content/pages/reforma-de-studio-sao-paulo";
 
-export const LP_PATH = "/lp/reforma-de-studio-sao-paulo";
-
-/** Mesmo título da página orgânica (handoff, seção 7). */
-export const LP_TITLE = "Reforma de studio em São Paulo | Bewild";
-export const LP_DESCRIPTION =
-  `Reforma completa de studio em São Paulo entregue pronta para alugar ou anunciar no Airbnb: projeto, obra, marcenaria, mobília e eletros num contrato de preço fechado. Mediana de ${CUSTO_M2_MEDIANO}/m² em ${CONTRATOS_ANALISADOS} contratos.`;
+export { LP_PATH, LP_TITLE, LP_DESCRIPTION } from "@/content/pages/lp-reforma-de-studio-sao-paulo.seo";
 
 /** Variantes com topo próprio na LP; qualquer outra cai em `investidor`. */
 export type LpVariante = "investidor" | "planta" | "custo";

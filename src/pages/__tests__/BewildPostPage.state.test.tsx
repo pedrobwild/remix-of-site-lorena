@@ -13,6 +13,15 @@ import { ORG_NODE } from "@/lib/orgJsonLd";
 type Resp = { data: unknown; error: { message: string } | null };
 const pending = new Map<string, (r: Resp) => void>();
 const responder = vi.fn<(slug: string) => Promise<Resp>>();
+/**
+ * Espera o hook pedir o post: desde 09/11/2026 o cliente do Supabase chega por
+ * import dinâmico (getSupabase), então a consulta sai um tique depois da
+ * montagem e o `pending` não está preenchido de imediato.
+ */
+async function resposta(slug: string): Promise<(r: Resp) => void> {
+  await waitFor(() => expect(pending.get(slug)).toBeTypeOf("function"));
+  return pending.get(slug)!;
+}
 const rpcMock = vi.fn();
 
 vi.mock("@/integrations/supabase/client", () => {
@@ -83,20 +92,20 @@ describe("useBewildPost", () => {
     const { result, rerender } = renderHook(({ slug }) => useBewildPost(slug), {
       initialProps: { slug: "post-a" },
     });
-    await act(async () => pending.get("post-a")!({ data: postRow("post-a", "A"), error: null }));
+    await act(async () => (await resposta("post-a"))({ data: postRow("post-a", "A"), error: null }));
     expect(result.current.post?.title).toBe("A");
 
     rerender({ slug: "post-b" });
     expect(result.current.post).toBeNull();
     expect(result.current.loading).toBe(true);
 
-    await act(async () => pending.get("post-b")!({ data: postRow("post-b", "B"), error: null }));
+    await act(async () => (await resposta("post-b"))({ data: postRow("post-b", "B"), error: null }));
     expect(result.current.post?.title).toBe("B");
   });
 
   it("erro zera o post e expõe `error`; retry() busca de novo", async () => {
     const { result } = renderHook(() => useBewildPost("post-a"));
-    await act(async () => pending.get("post-a")!({ data: null, error: { message: "timeout" } }));
+    await act(async () => (await resposta("post-a"))({ data: null, error: { message: "timeout" } }));
     expect(result.current.post).toBeNull();
     expect(result.current.loading).toBe(false);
     expect(result.current.error).toBe("timeout");
@@ -104,7 +113,7 @@ describe("useBewildPost", () => {
     act(() => result.current.retry());
     expect(result.current.error).toBeNull();
     expect(result.current.loading).toBe(true);
-    await act(async () => pending.get("post-a")!({ data: postRow("post-a", "A"), error: null }));
+    await act(async () => (await resposta("post-a"))({ data: postRow("post-a", "A"), error: null }));
     expect(result.current.post?.title).toBe("A");
     expect(responder).toHaveBeenCalledTimes(2);
   });
@@ -113,17 +122,17 @@ describe("useBewildPost", () => {
 describe("BewildPostPage", () => {
   it("erro mostra mensagem e 'Tentar novamente' (não skeleton eterno)", async () => {
     render(<BewildPostPage slug="quanto-custa" />);
-    await act(async () => pending.get("quanto-custa")!({ data: null, error: { message: "offline" } }));
+    await act(async () => (await resposta("quanto-custa"))({ data: null, error: { message: "offline" } }));
     expect(screen.getByRole("alert")).toHaveTextContent(/Não foi possível carregar/);
 
     act(() => screen.getByRole("button", { name: /Tentar novamente/ }).click());
-    await act(async () => pending.get("quanto-custa")!({ data: postRow("quanto-custa", "Quanto custa"), error: null }));
+    await act(async () => (await resposta("quanto-custa"))({ data: postRow("quanto-custa", "Quanto custa"), error: null }));
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Quanto custa");
   });
 
   it("CTA interno sem utm_* e publisher com logo existente + @id #org", async () => {
     render(<BewildPostPage slug="post-a" />);
-    await act(async () => pending.get("post-a")!({ data: postRow("post-a", "A"), error: null }));
+    await act(async () => (await resposta("post-a"))({ data: postRow("post-a", "A"), error: null }));
 
     const cta = screen.getByRole("link", { name: /Solicitar orçamento/ });
     expect(cta.getAttribute("href")).toBe("/orcamento");
@@ -142,7 +151,7 @@ describe("BewildPostPage", () => {
 
   it("data da publicação sai no dia de São Paulo", async () => {
     render(<BewildPostPage slug="post-a" />);
-    await act(async () => pending.get("post-a")!({ data: postRow("post-a", "A"), error: null }));
+    await act(async () => (await resposta("post-a"))({ data: postRow("post-a", "A"), error: null }));
     expect(document.querySelector("time")?.textContent).toMatch(/^22 de set/);
   });
 });
@@ -155,7 +164,7 @@ describe("BewildPostPage — post inexistente (ADM-04)", () => {
     );
     const lengthBefore = window.history.length;
     render(<BewildPostPage slug="slug-antigo" />);
-    await act(async () => pending.get("slug-antigo")!({ data: null, error: null }));
+    await act(async () => (await resposta("slug-antigo"))({ data: null, error: null }));
 
     await waitFor(() => expect(window.location.pathname).toBe("/conteudos/slug-novo"));
     expect(window.history.length).toBe(lengthBefore);
@@ -166,7 +175,7 @@ describe("BewildPostPage — post inexistente (ADM-04)", () => {
   it("sem redirect: fica a 404 do post, com noindex", async () => {
     window.history.replaceState(null, "", "/conteudos/nao-existe");
     render(<BewildPostPage slug="nao-existe" />);
-    await act(async () => pending.get("nao-existe")!({ data: null, error: null }));
+    await act(async () => (await resposta("nao-existe"))({ data: null, error: null }));
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/não encontrado/i);
     await waitFor(() =>

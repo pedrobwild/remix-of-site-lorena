@@ -15,7 +15,7 @@
  * Só substitui o markup se houver ao menos 3 itens válidos — caso contrário,
  * os cards estáticos permanecem como fallback.
  */
-import { supabase } from "@/integrations/supabase/client";
+import { publicRpc } from "@/integrations/supabase/publicRest";
 import { devWarn } from "@/lib/devLog";
 import { formatAreaM2 } from "@/lib/formatArea";
 import { optimizedImageUrl, optimizedSrcSet } from "@/lib/imageUrl";
@@ -217,7 +217,7 @@ export async function hydrateHomeProjects(): Promise<void> {
   }
 
   try {
-    const { data, error } = await supabase.rpc("top_projects", { p_limit: 6, p_days: 90 });
+    const { data, error } = await publicRpc<TopProject[]>("top_projects", { p_limit: 6, p_days: 90 });
     if (error) {
       devWarn("[hydrateHomeProjects] rpc falhou:", error);
       return;

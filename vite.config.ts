@@ -19,6 +19,25 @@ const SUPABASE_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbWxua21xdmpjb3dpeGRncWlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzNjY4MTgsImV4cCI6MjA5NTk0MjgxOH0.7qzXsHAz4qq66hTb65KI5kqcrHvWmw73WCZtf_IsT0E";
 const SUPABASE_PROJECT_ID = process.env.VITE_SUPABASE_PROJECT_ID || "aamlnkmqvjcowixdgqii";
 
+// Cabeçalhos de cache dos estáticos de public/ (fotos, vídeos, marca, ícones),
+// escritos no `_headers` que a hospedagem (Cloudflare) lê. Os arquivos de
+// /assets/ já saem com hash e `immutable` (padrão do nitro); estes não têm
+// hash, então 30 dias com revalidação em segundo plano — o PageSpeed apontava
+// "/images/… sem cache" (25/10/2026). HTML continua com o cache curto definido
+// em src/server.ts. O tipo do preset da Lovable só declara `preset/output/
+// cloudflare`, mas repassa todas as opções ao nitro (`...userNitroOpts`).
+const STATIC_CACHE = { headers: { "cache-control": "public, max-age=2592000, stale-while-revalidate=604800" } };
+const NITRO_OPTIONS = {
+  routeRules: {
+    "/images/**": STATIC_CACHE,
+    "/videos/**": STATIC_CACHE,
+    "/brand/**": STATIC_CACHE,
+    "/favicon-*.png": STATIC_CACHE,
+    "/favicon.ico": STATIC_CACHE,
+    "/og_final_v2.jpg": STATIC_CACHE,
+  },
+} as unknown as { preset?: string };
+
 export default defineConfig({
   // Deriva src/pages/bwa-shell.css (parte de home-bwa.css que as páginas
   // internas usam) no início de cada build/dev — ver scripts/bwaShell.ts.
@@ -28,6 +47,7 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  nitro: NITRO_OPTIONS,
   vite: {
     resolve: { alias: {
       "entities/lib/decode.js": path.resolve("node_modules/entities/lib/decode.js"),

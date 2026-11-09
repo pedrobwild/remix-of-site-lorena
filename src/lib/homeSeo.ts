@@ -8,7 +8,7 @@
  * "Páginas" vence a aba "Home", e campo vazio cai no texto padrão — roda no
  * loader da rota "/".
  */
-import { supabase } from "@/integrations/supabase/client";
+import { publicRpc } from "@/integrations/supabase/publicRest";
 import { serverMemo } from "@/lib/serverMemo";
 import { pageSeoOverride, type PagesSeoMap } from "@/lib/publicPages";
 
@@ -62,7 +62,7 @@ export async function loadHomeSeo(): Promise<HomeSeo> {
     const read = serverMemo(
       "home:seo-settings",
       async () => {
-        const { data, error } = await supabase.rpc("get_public_site_settings");
+        const { data, error } = await publicRpc<HomeSeoSettings>("get_public_site_settings");
         if (error) throw error;
         return (data as HomeSeoSettings | null) ?? null;
       },
