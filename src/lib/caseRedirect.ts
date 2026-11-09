@@ -6,8 +6,17 @@
 // final recebia o 307 do framework (TEC-07, auditoria de 05/10/2026).
 const CASE_SENSITIVE_PREFIXES = ["o", "p", "api", "admin", "_serverFn", "functions", "assets"];
 
+// Arquivos da raiz que são rotas de servidor (src/routes/sitemap[.]xml.ts e
+// llms[.]txt.ts). O roteador casa essas rotas sem diferenciar maiúsculas, então
+// /SITEMAP.XML e /Sitemap.xml respondiam 200 com o mesmo conteúdo, e a grafia
+// em maiúsculas chegou a ser enviada ao Search Console como um segundo sitemap
+// (auditoria de SEO, rodada 4, 09/11/2026). Só a grafia em minúsculas existe.
+const ROOT_SERVER_FILES = ["/sitemap.xml", "/llms.txt"];
+
 /** Caminho canônico (minúsculas, sem barra no fim) ou null quando já está certo. */
 export function canonicalPathname(pathname: string): string | null {
+  const lower = pathname.toLowerCase();
+  if (ROOT_SERVER_FILES.includes(lower)) return lower === pathname ? null : lower;
   const firstSegment = pathname.split("/")[1] ?? "";
   if (CASE_SENSITIVE_PREFIXES.includes(firstSegment)) return null;
   const lastSegment = pathname.replace(/\/+$/, "").split("/").pop() ?? "";
