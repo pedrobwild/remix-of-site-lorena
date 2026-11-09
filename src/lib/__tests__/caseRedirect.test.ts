@@ -33,6 +33,29 @@ describe("lowercasePathRedirect", () => {
   it("ignora métodos que não são GET/HEAD", () => {
     expect(lowercasePathRedirect(req("/Servicos", "POST"))).toBeNull();
   });
+  // Auditoria de SEO, rodada 4 (09/11/2026): /SITEMAP.XML e /Sitemap.xml
+  // respondiam 200 com o mesmo conteúdo de /sitemap.xml, e o Search Console
+  // tinha a grafia em maiúsculas enviada como um segundo sitemap, com erro.
+  it("redireciona /SITEMAP.XML e /Sitemap.xml para /sitemap.xml com 301", () => {
+    for (const path of ["/SITEMAP.XML", "/Sitemap.xml", "/sitemap.XML"]) {
+      const res = lowercasePathRedirect(req(path))!;
+      expect(res.status).toBe(301);
+      expect(res.headers.get("location")).toBe("https://bewild.com.br/sitemap.xml");
+    }
+  });
+  it("redireciona /LLMS.TXT para /llms.txt com 301 e preserva a query string", () => {
+    const res = lowercasePathRedirect(req("/LLMS.TXT?v=2"))!;
+    expect(res.status).toBe(301);
+    expect(res.headers.get("location")).toBe("https://bewild.com.br/llms.txt?v=2");
+  });
+  it("não mexe nas grafias canônicas das rotas de servidor nem em outros arquivos", () => {
+    expect(lowercasePathRedirect(req("/sitemap.xml"))).toBeNull();
+    expect(lowercasePathRedirect(req("/llms.txt"))).toBeNull();
+    expect(lowercasePathRedirect(req("/.well-known/llms.txt"))).toBeNull();
+    // Só a raiz: o mesmo nome dentro de uma pasta é um arquivo qualquer.
+    expect(lowercasePathRedirect(req("/images/SITEMAP.XML"))).toBeNull();
+    expect(lowercasePathRedirect(req("/Sitemap-bwild-antigo.xml"))).toBeNull();
+  });
 });
 
 describe("canonicalHostRedirect", () => {
