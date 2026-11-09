@@ -13,6 +13,12 @@
  * (conferido pelo dono em 12/10/2026). 2026-10-13: "Be Wild" vai para o
  * fim de ORG_ALTERNATE_NAMES e WebSite ganha alternateName próprio
  * (["Bewild Reformas", "Bwild"]); o canal do YouTube segue em ORG_SAME_AS.
+ *
+ * 2026-11-09: o Radar (radarbewild.com.br) publica este MESMO ORG_NODE, campo
+ * a campo. A cópia que viaja entre os repositórios é src/content/orgBewild.json;
+ * qualquer mudança no ORG_NODE (sameAs incluído) quebra
+ * `orgParidadeRadar.test.ts` até o arquivo e a impressão digital serem
+ * atualizados aqui E no Radar (passo a passo no cabeçalho do teste).
  */
 
 export const SITE_URL = "https://bewild.com.br";

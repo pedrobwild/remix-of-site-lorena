@@ -17,8 +17,14 @@ describe("páginas de bairro → Radar", () => {
     expect(l.label).toContain("Pinheiros");
   });
 
+  it("Butantã e Campo Belo têm diária e ocupação no Radar desde 18/10/2026: apontam para a página do bairro", () => {
+    expect(radarBairroLink("butanta", "Butantã").href).toBe(`${RADAR_URL}bairro/butanta`);
+    expect(radarBairroLink("campo-belo", "Campo Belo").href).toBe(`${RADAR_URL}bairro/campo-belo`);
+  });
+
   it("bairro sem dado no Radar aponta para o comparador", () => {
-    for (const slug of ["butanta", "higienopolis", "paulista", "vila-madalena", "vila-clementino", "santo-amaro", "campo-belo", "vila-nova-conceicao"]) {
+    // Vila Nova Conceição tem página no Radar, mas sem número publicado: segue no comparador.
+    for (const slug of ["higienopolis", "paulista", "vila-madalena", "vila-clementino", "santo-amaro", "vila-nova-conceicao"]) {
       expect(radarBairroLink(slug, slug).href, slug).toBe(RADAR_RANKING_URL);
     }
   });
