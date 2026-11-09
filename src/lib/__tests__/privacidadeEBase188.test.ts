@@ -27,6 +27,17 @@ describe("política de privacidade", () => {
     expect(page).not.toMatch(/página de escopo/);
     expect(page).not.toMatch(/recursos de inteligência\s+artificial/);
   });
+
+  it("descreve o tratamento de dados do Radar Bewild (09/11/2026)", () => {
+    // O consentimento do pedido de material no Radar diz "cancelar pelo canal
+    // indicado na política de privacidade"; esta seção fecha o laço.
+    const texto = page.replace(/\s+/g, " ");
+    expect(texto).toMatch(/<h2>Radar Bewild \(radarbewild\.com\.br\)<\/h2>/);
+    expect(texto).toMatch(/Pedido de material/);
+    expect(texto).toMatch(/Conta e simulações guardadas/);
+    expect(texto).toMatch(/Medição de uso/);
+    expect(texto).toMatch(/cancelar o recebimento de comunicações[^.]*escreva para/);
+  });
 });
 
 describe("imagens do blog", () => {
