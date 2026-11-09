@@ -2,12 +2,12 @@ import { RadarLink } from "@/components/RadarLink";
 import { useEffect, useRef } from "react";
 import BewildLogo from "@/components/BewildLogo";
 import { whatsappHref } from "@/components/landing/content";
-import { NAV_PARCEIROS } from "@/content/incorporadoras";
+import { NAV_PARCEIROS } from "@/content/navParceiros";
 import { useIncorporadorasEnabled } from "@/lib/incorporadorasFlag";
 import { withUtm } from "@/lib/utm";
 import { BwaInternalStylesheets } from "@/components/BwaStylesheets";
 import { keepBwaStylesheetsLast } from "@/lib/bwaStylesheetOrder";
-import { initBwaNav } from "../pages/home-bwa-script";
+import { initBwaNav } from "../pages/bwa-nav-script";
 
 /** Mesma mensagem do atalho do WhatsApp no menu da home (home-bwa-body.ts). */
 const MENU_WHATSAPP_TEXT = "Olá, quero falar com a Bewild sobre meu apartamento";

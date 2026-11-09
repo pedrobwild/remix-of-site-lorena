@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazyClient";
 import { devWarn } from "@/lib/devLog";
 import type { BewildProjectType } from "@/lib/useBewildProjects";
 
@@ -69,12 +69,8 @@ export function useBewildProject(
     setError(null);
     setProject(null);
 
-    supabase
-      .from("projects")
-      .select(PROJECT_COLUMNS)
-      .eq("slug", slug)
-      .eq("published", true)
-      .maybeSingle()
+    getSupabase()
+      .then((sb) => sb.from("projects").select(PROJECT_COLUMNS).eq("slug", slug).eq("published", true).maybeSingle())
       .then(({ data, error }) => {
         if (!mounted) return;
         if (error) {

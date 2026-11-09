@@ -1,13 +1,12 @@
-import { QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 
 export const getRouter = () => {
-  const queryClient = new QueryClient();
-
+  // O QueryClient do TanStack Query mora no AdminChunk (só o painel usa
+  // useQuery): fora do contexto do roteador, o react-query sai do pacote
+  // inicial das páginas públicas (velocidade, 09/11/2026).
   const router = createRouter({
     routeTree,
-    context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
   });

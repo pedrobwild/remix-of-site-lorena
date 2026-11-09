@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazyClient";
 import { devWarn } from "@/lib/devLog";
 
 export type BewildProjectType = "short_stay" | "turn_key" | "planta";
@@ -49,12 +49,15 @@ export function useBewildProjects(initial?: BewildProject[] | null) {
   useEffect(() => {
     if (initial) return; // dados do loader: não refaz a busca
     let mounted = true;
-    supabase
-      .from("projects")
-      .select(PROJECTS_LIST_COLUMNS)
-      .eq("published", true)
-      .order("sort_order", { ascending: true })
-      .order("created_at", { ascending: false })
+    getSupabase()
+      .then((sb) =>
+        sb
+          .from("projects")
+          .select(PROJECTS_LIST_COLUMNS)
+          .eq("published", true)
+          .order("sort_order", { ascending: true })
+          .order("created_at", { ascending: false }),
+      )
       .then(({ data, error }) => {
         if (!mounted) return;
         if (error) {

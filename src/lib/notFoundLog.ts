@@ -10,7 +10,7 @@
 //   (o visitante anônimo não tem SELECT em seo_404_log — por isso os
 //   redirecionamentos nunca funcionavam para quem não estava logado).
 
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazyClient";
 import { devWarn } from "@/lib/devLog";
 import { isFramed } from "@/lib/cookieConsent";
 
@@ -57,7 +57,7 @@ export async function logNotFound(path: string, referrer?: string | null): Promi
     // `p_referrer: ""` e não `undefined`: uma chave ausente some no
     // JSON.stringify e muda a assinatura enviada ao PostgREST. A função faz
     // `coalesce(p_referrer, '')`, então string vazia e NULL gravam o mesmo.
-    const { error } = await supabase.rpc("log_404", {
+    const { error } = await (await getSupabase()).rpc("log_404", {
       p_path: path,
       p_referrer: referrer || "",
       p_reason: DEFAULT_404_REASON,
@@ -120,7 +120,7 @@ export async function lookupActiveRedirect(path: string): Promise<string | null>
   if (!path) return null;
   try {
     // `resolve_404_redirect` ainda não está nos tipos gerados (types.ts).
-    const { data, error } = await (supabase as unknown as RpcClient).rpc("resolve_404_redirect", {
+    const { data, error } = await ((await getSupabase()) as unknown as RpcClient).rpc("resolve_404_redirect", {
       p_path: path,
     });
     if (!error) return safeRedirectTarget(data, path);
@@ -136,7 +136,7 @@ export async function lookupActiveRedirect(path: string): Promise<string | null>
   // Fallback enquanto a RPC não é publicada: leitura direta (só funciona para
   // quem tem SELECT na tabela — hoje, admin logado).
   try {
-    const { data, error } = await supabase
+    const { data, error } = await (await getSupabase())
       .from("seo_404_log")
       .select("redirect_to, status")
       .eq("path", path)

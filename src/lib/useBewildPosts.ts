@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazyClient";
 import { devWarn } from "@/lib/devLog";
 import { bewildCalendarDay } from "@/lib/postSeo";
 
@@ -106,12 +106,15 @@ export function useBewildPosts(initial?: BewildPost[] | null) {
   useEffect(() => {
     if (initial) return; // dados do loader: não refaz a busca
     let mounted = true;
-    supabase
-      .from("bewild_posts" as never)
-      .select(SELECT_COLS)
-      .eq("published", true)
-      .order("published_at", { ascending: false, nullsFirst: false })
-      .order("created_at", { ascending: false })
+    getSupabase()
+      .then((sb) =>
+        sb
+          .from("bewild_posts" as never)
+          .select(SELECT_COLS)
+          .eq("published", true)
+          .order("published_at", { ascending: false, nullsFirst: false })
+          .order("created_at", { ascending: false }),
+      )
       .then(({ data, error }) => {
         if (!mounted) return;
         if (error) {

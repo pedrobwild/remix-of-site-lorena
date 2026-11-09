@@ -257,46 +257,6 @@ export const INCORP_FORM = {
     "Não conseguimos enviar agora. Tente de novo ou mande pelo WhatsApp: a mensagem já vai com os seus dados.",
 };
 
-/* ---------------- Menu "Parceiros" (dropdown) ---------------- */
-
-export const NAV_PARCEIROS = {
-  label: "Parceiros",
-  items: [
-    {
-      href: "/parceiros",
-      title: "Clientes e corretores",
-      desc: "Indique quem vai reformar e receba pela indicação.",
-      cta: "nav-parceiros-clientes-corretores",
-      gated: false,
-    },
-    {
-      href: "/parceiros/incorporadoras",
-      title: "Incorporadoras",
-      desc: "Projeto e obra para os compradores do seu empreendimento.",
-      cta: "nav-parceiros-incorporadoras",
-      gated: true,
-    },
-  ],
-};
-
-/* ---------------- Textos usados na /parceiros quando a página de incorporadoras estiver ligada ---------------- */
-
-export const PARCEIROS_WHEN_INCORP_ON = {
-  heroLead:
-    "Corretores, imobiliárias, arquitetos e administradoras podem indicar clientes para uma entrega completa de projeto, obra, marcenaria e mobília. Quando o contrato indicado é pago, você recebe a comissão definida no seu termo.",
-  seoDescription:
-    "Indique clientes para a Bewild, acompanhe cada oportunidade e receba comissão conforme o termo. Programa para corretores, imobiliárias, arquitetos e administradoras.",
-  caminhoIncorporadorasLink: "Ver a página para incorporadoras",
-  bloco07: {
-    label: "07 · Para incorporadoras",
-    title: "Incorporadoras têm uma página própria.",
-    text: "Pacotes por tipologia antes das chaves, obra para os compradores depois delas e o case do LM Urban Flex Bela Cintra, da Leal Moreira.",
-    cta: "Ver a página para incorporadoras",
-  },
-  cardLealMoreira: {
-    text: "Programa de indicações vigente com a Leal Moreira, formalizado em termo de parceria. Compradores do LM Urban Flex Bela Cintra contratam com a Bewild projeto, obra, marcenaria e mobília.",
-    cta: "Ver o case completo",
-    href: "/parceiros/incorporadoras#leal-moreira",
-  },
-  marcasCta: "Ver o case Leal Moreira",
-};
+/* Menu "Parceiros" e textos da /parceiros: em src/content/navParceiros.ts
+ * (o header de toda página só precisa deles). Reexportados para quem já importava daqui. */
+export { NAV_PARCEIROS, PARCEIROS_WHEN_INCORP_ON } from "@/content/navParceiros";

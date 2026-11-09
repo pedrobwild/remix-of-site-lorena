@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { publicRpc } from "@/integrations/supabase/publicRest";
 import { devWarn } from "@/lib/devLog";
 import type { PagesSeoMap } from "@/lib/publicPages";
 
@@ -182,7 +182,7 @@ export async function fetchSiteSettings(force = false): Promise<SiteSettings> {
   if (inflight) return inflight;
   inflight = (async () => {
     try {
-      const { data, error } = await supabase.rpc("get_public_site_settings");
+      const { data, error } = await publicRpc<Record<string, unknown>>("get_public_site_settings");
       if (error) {
         devWarn("[useSiteSettings] leitura falhou (não cacheado):", error);
         return cache ?? DEFAULTS;

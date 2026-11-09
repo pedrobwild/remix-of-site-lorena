@@ -20,7 +20,10 @@
  */
 import { useSyncExternalStore } from "react";
 import type { Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+// Cliente sob demanda: este módulo é compartilhado por todas as rotas /admin e o
+// empacotador o põe no pacote inicial de toda página; com o import estático o SDK
+// do Supabase (~55 kB gzip) ia junto para o visitante do site público.
+import { getSupabase } from "@/integrations/supabase/lazyClient";
 
 export type AuthSnapshot = {
   user: User | null;
@@ -84,7 +87,7 @@ export function checkAdminStatus(userId: string, { force = false } = {}): Promis
 
   const p = (async (): Promise<AdminCheckResult> => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (await getSupabase())
         .from("admin_users")
         .select("user_id")
         .eq("user_id", userId)
@@ -165,12 +168,13 @@ function start() {
   if (started || typeof window === "undefined") return;
   started = true;
   // Listener do ciclo de vida da aba inteira (não é desinscrito).
-  supabase.auth.onAuthStateChange((_event, session) => {
-    applySession(session);
-  });
-  supabase.auth
-    .getSession()
-    .then(({ data }) => applySession(data.session))
+  getSupabase()
+    .then((supabase) => {
+      supabase.auth.onAuthStateChange((_event, session) => {
+        applySession(session);
+      });
+      return supabase.auth.getSession().then(({ data }) => applySession(data.session));
+    })
     .catch(() => {
       if (snapshot.loading && !snapshot.user) setSnapshot({ loading: false });
     });
@@ -198,12 +202,12 @@ export function retryAdminCheck() {
 }
 
 async function signIn(email: string, password: string) {
-  return await supabase.auth.signInWithPassword({ email, password });
+  return await (await getSupabase()).auth.signInWithPassword({ email, password });
 }
 
 async function signOut() {
   clearRetry();
-  const { error } = await supabase.auth.signOut();
+  const { error } = await (await getSupabase()).auth.signOut();
   // Mesmo com erro de rede o token local é descartado; garante o estado.
   applySession(null);
   return { error };

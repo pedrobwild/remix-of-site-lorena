@@ -68,3 +68,48 @@ describe("montadores pesados fora do pacote inicial", () => {
     expect(readFileSync(path.join(ROUTES_DIR, f), "utf8")).not.toMatch(PESADOS);
   });
 });
+
+/**
+ * Rodada 3 de velocidade (09/11/2026): o mesmo vale para o CONTEÚDO das
+ * páginas (FAQ, JSON-LD, textos por bairro, cadastro de vídeos) e para o
+ * cliente do Supabase. Medido no build: ~100 kB brutos de conteúdo de outras
+ * páginas e o SDK inteiro (~55 kB gzip) iam no pacote inicial de qualquer
+ * rota só por serem referenciados no head()/loader. O head() lê esses dados
+ * do `loaderData`, e o loader os traz com `import("…")`. Metadados pequenos
+ * (título/descrição) podem ficar num módulo `.seo.ts` próprio.
+ */
+describe("conteúdo das páginas e cliente do Supabase fora do pacote inicial", () => {
+  const PESADOS = new RegExp(
+    "^import\\s+(?!type\\s)[^;]*from\\s+[\"'](" +
+      [
+        "@/content/bairros",
+        "@/content/faqPage",
+        "@/content/incorporadoras",
+        "@/content/indiceCusto",
+        "@/content/lealMoreira",
+        "@/content/pages/(?!atribuicao|licenca|privacidade)[^\"'.]+(\\.tsx?)?",
+        "@/lib/videoPages",
+        "@/lib/seoLoaders",
+        "@/lib/lealMoreiraLoader",
+        "@/guia/data/guiaMeta",
+        "@/integrations/supabase/client",
+      ].join("|") +
+      ")[\"']",
+    "m",
+  );
+  const arquivos = readdirSync(ROUTES_DIR).filter((f) => f.endsWith(".tsx") && !f.startsWith("admin"));
+  it.each(arquivos)("%s não importa conteúdo pesado nem o cliente do Supabase de forma estática", (f) => {
+    expect(readFileSync(path.join(ROUTES_DIR, f), "utf8")).not.toMatch(PESADOS);
+  });
+
+  it("a checagem pega o import estático e libera o dinâmico e os módulos .seo", () => {
+    expect('import { bairroContent } from "@/content/bairros";').toMatch(PESADOS);
+    expect('import { STUDIO_SP_JSONLD } from "@/content/pages/reforma-de-studio-sao-paulo";').toMatch(PESADOS);
+    expect('import { supabase } from "@/integrations/supabase/client";').toMatch(PESADOS);
+    expect('const content = () => import("@/content/pages/reforma-de-studio-sao-paulo");').not.toMatch(PESADOS);
+    expect('import { LP_TITLE } from "@/content/pages/lp-reforma-de-studio-sao-paulo.seo";').not.toMatch(PESADOS);
+    expect('import { LEAL_SEO } from "@/content/lealMoreira.seo";').not.toMatch(PESADOS);
+    expect('import { PRIVACIDADE_SEO } from "@/content/pages/privacidade";').not.toMatch(PESADOS);
+    expect('import type { KbItem } from "@/content/faqPage";').not.toMatch(PESADOS);
+  });
+});

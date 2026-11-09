@@ -6,7 +6,7 @@
  * a `published = true` para anônimos.
  */
 import { useCallback, useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazyClient";
 import { devWarn } from "@/lib/devLog";
 import { normalizeBewildPost, type BewildPost, type BewildPostCategory } from "@/lib/useBewildPosts";
 
@@ -80,12 +80,9 @@ export function useBewildPost(slug: string | undefined, initial?: InitialPost | 
     setNotFound(false);
 
     withPostCols((cols) =>
-      supabase
-        .from("bewild_posts" as never)
-        .select(cols)
-        .eq("slug", slug)
-        .eq("published", true)
-        .maybeSingle(),
+      getSupabase().then((sb) =>
+        sb.from("bewild_posts" as never).select(cols).eq("slug", slug).eq("published", true).maybeSingle(),
+      ),
     )
       .then(
         ({ data, error }) => {
@@ -151,15 +148,17 @@ export function useBewildRelatedPosts(
     setLoading(true);
 
     withPostCols((cols) =>
-      supabase
-        .from("bewild_posts" as never)
-        .select(cols)
-        .eq("published", true)
-        .eq("category", category)
-        .neq("id", excludeId)
-        .order("published_at", { ascending: false, nullsFirst: false })
-        .order("created_at", { ascending: false })
-        .limit(limit),
+      getSupabase().then((sb) =>
+        sb
+          .from("bewild_posts" as never)
+          .select(cols)
+          .eq("published", true)
+          .eq("category", category)
+          .neq("id", excludeId)
+          .order("published_at", { ascending: false, nullsFirst: false })
+          .order("created_at", { ascending: false })
+          .limit(limit),
+      ),
     )
       .then(({ data, error }) => {
         if (!mounted) return;

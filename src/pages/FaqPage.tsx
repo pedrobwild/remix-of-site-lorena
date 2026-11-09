@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazyClient";
 import { track } from "@/lib/analytics";
 import { useSeo } from "@/lib/useSeo";
 import { safeKbActions, type KbItem } from "@/lib/assistant/assistantEngine";
@@ -47,11 +47,14 @@ export default function FaqPage({ initialKb = null }: { initialKb?: KbItem[] | n
   useEffect(() => {
     if (initialKb && initialKb.length > 0) return;
     let alive = true;
-    supabase
-      .from("assistant_kb")
-      .select("id, tema, pergunta, resposta, acoes, ordem")
-      .eq("ativo", true)
-      .order("ordem", { ascending: true })
+    getSupabase()
+      .then((sb) =>
+        sb
+          .from("assistant_kb")
+          .select("id, tema, pergunta, resposta, acoes, ordem")
+          .eq("ativo", true)
+          .order("ordem", { ascending: true }),
+      )
       .then(
         ({ data, error }) => {
           if (!alive) return;

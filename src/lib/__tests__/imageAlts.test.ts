@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const rpc = vi.hoisted(() => vi.fn());
-vi.mock("@/integrations/supabase/client", () => ({ supabase: { rpc } }));
+vi.mock("@/integrations/supabase/publicRest", () => ({ publicRpc: rpc }));
 import { fetchAlts } from "../useImageAlts";
 
 describe("descrições por URL das imagens", () => {

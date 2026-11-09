@@ -8,19 +8,8 @@ import { INCORP_CASE, INCORP_CASE_SLUG } from "@/content/incorporadoras";
  * sem nome de comprador.
  * ============================================================ */
 
-export const LEAL_PATH = "/parceiros/leal-moreira";
+export { LEAL_PATH, LEAL_HERO_IMAGE, LEAL_HERO_ALT, LEAL_SEO } from "@/content/lealMoreira.seo";
 export const LEAL_CASE_SLUG = INCORP_CASE_SLUG;
-export const LEAL_HERO_IMAGE = "/images/parceiros/leal-moreira-urban-flex.webp";
-export const LEAL_HERO_ALT =
-  "Projeto em 3D de um studio do LM Urban Flex Bela Cintra, com cozinha em linha, mesa de trabalho e cama junto à janela";
-
-export const LEAL_SEO = {
-  title: "Leal Moreira e Bewild: reforma dos studios do LM Urban Flex | Bewild",
-  description:
-    "Parceria com a Leal Moreira: os compradores do LM Urban Flex Bela Cintra contratam com a Bewild projeto, obra, marcenaria e mobília. Veja os projetos em 3D.",
-  keywords:
-    "Leal Moreira, LM Urban Flex Bela Cintra, parceria incorporadora, reforma de studio Bela Cintra, reforma pós-chaves São Paulo, Bewild",
-};
 
 export const LEAL_PAGE = {
   label: "Parceria · Leal Moreira",

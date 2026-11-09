@@ -4,7 +4,7 @@
  * Sem perguntas marcadas ou com erro de leitura, a lista fixa continua no ar.
  * Texto entra via textContent e URLs só depois de safeKbActions.
  */
-import { supabase } from "@/integrations/supabase/client";
+import { publicSelect } from "@/integrations/supabase/publicRest";
 import { whatsappHref } from "@/components/landing/content";
 import { safeKbActions } from "@/lib/assistant/assistantEngine";
 import { isExternalHref } from "@/lib/safeUrl";
@@ -14,12 +14,13 @@ type Linha = { id: string; pergunta: string; resposta: string; acoes: unknown };
 export function hydrateHomeFaq(root: HTMLElement): () => void {
   const ctrl = new AbortController();
   void (async () => {
-    const { data, error } = await supabase
-      .from("assistant_kb")
-      .select("id, pergunta, resposta, acoes")
-      .eq("ativo", true)
-      .eq("mostrar_na_home", true)
-      .order("ordem", { ascending: true });
+    // Leitura anônima direto na API REST: sem o SDK do Supabase no pacote da home.
+    const { data, error } = await publicSelect<Linha>("assistant_kb", {
+      select: "id, pergunta, resposta, acoes",
+      ativo: "eq.true",
+      mostrar_na_home: "eq.true",
+      order: "ordem.asc",
+    });
     if (ctrl.signal.aborted || error || !data || data.length === 0) return;
     const list = root.querySelector<HTMLElement>(".bwa-faq-list");
     if (!list) return;

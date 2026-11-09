@@ -17,7 +17,7 @@ import {
   INCORP_STEPS,
   INDICACAO_FORM_URL,
 } from "@/content/incorporadoras";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazyClient";
 import { isIncorporadorasPreview } from "@/lib/incorporadorasFlag";
 import { formatDate, usePartnerCase } from "@/lib/usePartnerCase";
 import { unidadeLabel } from "@/lib/unidadeLabel";
@@ -201,9 +201,8 @@ export default function IncorporadorasPage() {
     const assinatura = JSON.stringify([nome, incorporadora, whats, mail, empreendimento, fase]);
     if (ultimaIndicacao.current !== assinatura) {
       ultimaIndicacao.current = assinatura;
-      void supabase
-        .from("partner_referrals")
-        .insert({
+      void getSupabase()
+        .then((sb) => sb.from("partner_referrals").insert({
           partner_name: nome.trim().slice(0, 160),
           partner_type: "Incorporadora",
           company: incorporadora.trim().slice(0, 160),
@@ -217,7 +216,7 @@ export default function IncorporadorasPage() {
           referrer:
             typeof document !== "undefined" ? (document.referrer || "").slice(0, 500) || null : null,
           user_agent: browserUserAgent()?.slice(0, 500) ?? null,
-        })
+        }))
         .then(({ error }) => {
           if (error) {
             ultimaIndicacao.current = null;

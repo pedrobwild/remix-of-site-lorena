@@ -107,7 +107,11 @@ describe("/orcamento: o head não depende do anúncio", () => {
       const { dados } = await servidor(busca);
       expect(head({ loaderData: dados, matches: [] })).toEqual(padrao);
     }
-    // Sem dados do loader (falha na busca do SEO), o head cai no padrão da página.
-    expect(head({ matches: [] })).toEqual(padrao);
+    // Sem dados do loader (falha na busca do SEO), título, descrição e canonical
+    // caem no padrão da página. Só o JSON-LD do FAQ some: desde 09/11/2026 ele
+    // vem do loader (import dinâmico de src/content/pages/orcamento.ts), para o
+    // head() não levar o conteúdo da página ao pacote inicial de toda rota.
+    const semLoader = head({ matches: [] }) as { meta: unknown; links: unknown };
+    expect(semLoader).toMatchObject({ meta: (padrao as { meta: unknown }).meta, links: (padrao as { links: unknown }).links });
   });
 });
