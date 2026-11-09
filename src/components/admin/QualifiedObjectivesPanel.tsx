@@ -29,7 +29,7 @@ export default function QualifiedObjectivesPanel() {
     {!valid ? <p role="alert">Escolha um período válido.</p> : report.isPending ? <p role="status">Consultando qualificados…</p> : report.isError ? <p role="alert">Não foi possível carregar o painel. Tente atualizar.</p> : report.data && <>
       <dl className="grid grid-cols-2 gap-6 border-y border-border py-5 num"><div><dt className="text-sm text-muted-foreground">Qualificados</dt><dd className="text-2xl font-semibold">{report.data.total}</dd></div><div><dt className="text-sm text-muted-foreground">Conversões exportáveis</dt><dd className="text-2xl font-semibold">{report.data.exportCount}</dd></div></dl>
       {!report.data.groups.length ? <p>Nenhum lead qualificado no período.</p> : <div className="divide-y divide-border">{report.data.groups.map(group => <div key={group.objective} className="flex items-center justify-between gap-4 py-4"><span className="break-words">{group.objective}</span><strong className="num">{group.count}</strong></div>)}</div>}
-      <p className="text-sm text-muted-foreground">CSV de Lead qualificado investidor · consentimento do formulário · janelas de 90 dias com clique e 63 sem clique · deduplicado. Download não confirma recebimento pelo Google Ads.</p>
+      <p className="text-sm text-muted-foreground">Qualificado = negócio que chegou à etapa Lead no CRM (a marcação do painel não conta) · CSV de Lead qualificado investidor · consentimento do formulário · janelas de 90 dias com clique e 63 sem clique · deduplicado. Download não confirma recebimento pelo Google Ads.</p>
     </>}
     <GoogleAdsDeliveryStatus />
   </section>;

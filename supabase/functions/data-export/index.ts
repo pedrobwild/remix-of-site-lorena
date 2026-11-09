@@ -25,11 +25,13 @@ import {
   type ExportRecord,
   type ExportRequest,
   buildGoogleAdsOfflineRows,
-  pickQualifiedAt,
+  pickPipelineTimes,
   canExportGoogleAdsLead,
   exportFilename,
   GOOGLE_ADS_GCLID_WINDOW_DAYS,
+  GOOGLE_ADS_OFFLINE_PIPELINE_FILTER,
   GOOGLE_ADS_OFFLINE_SELECT,
+  crmPipelineQuality,
   keyAllowsDataset,
   LEADS_SELECT,
   MAX_ROWS,
@@ -153,9 +155,11 @@ async function readDataset(db: SupabaseClient, r: ExportRequest): Promise<{ rows
 }
 
 /**
- * Leads qualificados ou ganhos (até 90 dias, o máximo que o Google aceita e
- * dentro do período pedido) + a primeira passagem de cada um para
- * `qualificado`. O hash e as regras ficam em buildGoogleAdsOfflineRows.
+ * Leads com algum sinal do funil do CRM — contrato, perda ou etapa atingida —
+ * (até 90 dias, o máximo que o Google aceita e dentro do período pedido) + as
+ * horas da chegada a Lead e da perda no histórico. Quem entra, o hash e as
+ * regras ficam em buildGoogleAdsOfflineRows; a marcação do painel do site não
+ * participa (Pedro, 09/11/2026).
  */
 async function readGoogleAdsOffline(db: SupabaseClient, r: ExportRequest): Promise<{ rows: ExportRecord[]; error: string | null }> {
   const floor = new Date(Date.now() - GOOGLE_ADS_GCLID_WINDOW_DAYS * 86_400_000).toISOString();
@@ -165,7 +169,7 @@ async function readGoogleAdsOffline(db: SupabaseClient, r: ExportRequest): Promi
       .from("leads")
       .select(GOOGLE_ADS_OFFLINE_SELECT)
       .eq("consent_marketing", true)
-      .or("status.eq.qualificado,status.eq.descartado,crm_won.eq.true")
+      .or(GOOGLE_ADS_OFFLINE_PIPELINE_FILTER)
       .gte("created_at", since)
       .lt("created_at", r.until)
       .order("created_at", { ascending: true })
@@ -178,23 +182,32 @@ async function readGoogleAdsOffline(db: SupabaseClient, r: ExportRequest): Promi
   const consentedLeads = leads.rows.filter((lead) => canExportGoogleAdsLead(lead));
   if (!consentedLeads.length) return { rows: [], error: null };
 
-  const qualifiedRows: { lead_id: string; created_at: string; note: string | null }[] = [];
-  const ids = consentedLeads.filter((l) => l.status === "qualificado").map((l) => String(l.id));
+  // Histórico do funil (notas "CRM: A → B") de quem tem sinal de qualidade.
+  const historyRows: { lead_id: string; created_at: string; note: string | null }[] = [];
+  const ids = consentedLeads.filter((l) => crmPipelineQuality(l) !== null).map((l) => String(l.id));
   for (let i = 0; i < ids.length; i += 200) {
-    const { data, error } = await db
-      .from("lead_qualification_log")
-      .select("lead_id, created_at, note")
-      .in("lead_id", ids.slice(i, i + 200))
-      .eq("to_status", "qualificado")
-      .order("created_at", { ascending: true });
-    if (error) return { rows: [], error: error.message };
-    qualifiedRows.push(...((data ?? []) as { lead_id: string; created_at: string; note: string | null }[]));
+    const chunk = ids.slice(i, i + 200);
+    const page = await readPaged((a, b) =>
+      db
+        .from("lead_qualification_log")
+        .select("lead_id, created_at, note")
+        .in("lead_id", chunk)
+        .like("note", "CRM: %")
+        .order("created_at", { ascending: true })
+        .order("id", { ascending: true })
+        .range(a, b),
+    );
+    if (page.error) return { rows: [], error: page.error };
+    historyRows.push(...(page.rows as unknown as { lead_id: string; created_at: string; note: string | null }[]));
   }
-  // Prefere a chegada a Lead (ou depois); sem ela, a 1ª linha `qualificado`.
-  const qualifiedAt = pickQualifiedAt(qualifiedRows);
+  historyRows.sort((a, b) => Date.parse(a.created_at) - Date.parse(b.created_at));
+  const times = pickPipelineTimes(historyRows);
   const wonIds = consentedLeads.filter((l) => l.crm_won === true).map((l) => String(l.id));
   const contracts = await readCrmContractValues(wonIds);
-  return { rows: await buildGoogleAdsOfflineRows({ leads: consentedLeads, qualifiedAt, contracts: contracts ?? undefined }), error: null };
+  return {
+    rows: await buildGoogleAdsOfflineRows({ leads: consentedLeads, qualifiedAt: times.reachedLeadAt, lostAt: times.lostAt, contracts: contracts ?? undefined }),
+    error: null,
+  };
 }
 
 const ENGINE_STAGES_URL = "https://pieenhgjulsrjlioozsy.supabase.co/functions/v1/site-lead-stages";
