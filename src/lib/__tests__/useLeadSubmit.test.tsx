@@ -3,7 +3,7 @@ import { act, renderHook } from "@testing-library/react";
 import type { LeadPayload, LeadTracking } from "../leadDelivery";
 import type { SendLeadResult } from "../sendLead";
 
-type SendOpts = { timeoutMs?: number; tracking?: LeadTracking };
+type SendOpts = { timeoutMs?: number; tracking?: LeadTracking; submissionId?: string };
 const sendLeadMock = vi.fn<(payload: LeadPayload, opts?: SendOpts) => Promise<SendLeadResult>>();
 const trackEventMock = vi.fn();
 const reportLeadMock = vi.fn();
@@ -24,6 +24,7 @@ vi.mock("@/lib/adConsentRecord", () => ({
 }));
 
 import { useLeadSubmit } from "../useLeadSubmit";
+import { listLeadOutbox } from "../leadOutbox";
 
 const payload: LeadPayload = {
   name: "Ana",
@@ -247,5 +248,87 @@ describe("useLeadSubmit", () => {
       await result.current.submit(payload);
     });
     expect(reportLeadMock).not.toHaveBeenCalled();
+  });
+
+  describe("caixa de saída (backend fora em 06–08/11/2026)", () => {
+    it("cada envio leva um submission_id próprio no corpo", async () => {
+      sendLeadMock.mockResolvedValue({ delivered: false, timedOut: false });
+      const { result } = renderHook(() => useLeadSubmit({ method: "orcamento_form" }));
+      await act(async () => {
+        await result.current.submit(payload);
+      });
+      await act(async () => {
+        await result.current.submit(payload);
+      });
+      const [a, b] = sendLeadMock.mock.calls.map(([, opts]) => opts?.submissionId);
+      expect(a).toMatch(/^[0-9a-f-]{36}$/i);
+      expect(b).toMatch(/^[0-9a-f-]{36}$/i);
+      expect(a).not.toBe(b);
+    });
+
+    it.each([
+      ["failed", { delivered: false, timedOut: false }],
+      ["timedOut", { delivered: false, timedOut: true }],
+    ] as const)("%s: o corpo completo fica no aparelho e a página sabe", async (_n, res) => {
+      sendLeadMock.mockResolvedValue(res);
+      const { result } = renderHook(() => useLeadSubmit({ method: "orcamento_form" }));
+      const p = { ...payload, form_path: "/orcamento" as const, utm_campaign: "120252065401790152" };
+      await act(async () => {
+        await result.current.submit(p);
+      });
+      const [entry] = listLeadOutbox();
+      expect(entry.submission_id).toBe(sendLeadMock.mock.calls[0][1]?.submissionId);
+      expect(entry.body).toMatchObject({
+        submission_id: entry.submission_id,
+        name: "Ana",
+        whatsapp: "11912345678",
+        form_path: "/orcamento",
+        utm_campaign: "120252065401790152",
+        area_m2: 33,
+        event_id: sendLeadMock.mock.calls[0][1]?.tracking?.event_id,
+        consent_marketing: false,
+      });
+      expect(result.current.queued).toBe(true);
+    });
+
+    it("reenvio que dá certo tira a pendência da mesma pessoa/formulário", async () => {
+      sendLeadMock.mockResolvedValueOnce({ delivered: false, timedOut: false });
+      sendLeadMock.mockResolvedValueOnce({ delivered: true, timedOut: false });
+      const { result } = renderHook(() => useLeadSubmit({ method: "orcamento_form" }));
+      await act(async () => {
+        await result.current.submit(payload);
+      });
+      expect(listLeadOutbox()).toHaveLength(1);
+      await act(async () => {
+        await result.current.submit(payload);
+      });
+      expect(listLeadOutbox()).toEqual([]);
+      expect(result.current.queued).toBe(false);
+    });
+
+    it("dois envios falhos da mesma pessoa: fica só o último", async () => {
+      sendLeadMock.mockResolvedValue({ delivered: false, timedOut: false });
+      const { result } = renderHook(() => useLeadSubmit({ method: "orcamento_form" }));
+      await act(async () => {
+        await result.current.submit(payload);
+      });
+      await act(async () => {
+        await result.current.submit({ ...payload, message: "segunda tentativa" });
+      });
+      const entries = listLeadOutbox();
+      expect(entries).toHaveLength(1);
+      expect(entries[0].submission_id).toBe(sendLeadMock.mock.calls[1][1]?.submissionId);
+      expect(entries[0].body.message).toBe("segunda tentativa");
+    });
+
+    it("guardar na fila não muda os eventos do envio interativo", async () => {
+      sendLeadMock.mockResolvedValue({ delivered: false, timedOut: true });
+      const { result } = renderHook(() => useLeadSubmit({ method: "lp_obra_gate" }));
+      await act(async () => {
+        await result.current.submit(payload);
+      });
+      expect(trackEventMock.mock.calls.map(([n]) => n)).toEqual(["generate_lead"]);
+      expect(reportLeadMock).toHaveBeenCalledTimes(1);
+    });
   });
 });

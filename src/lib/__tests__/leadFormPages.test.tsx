@@ -433,6 +433,9 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
       expect(trackEventMock).toHaveBeenCalledWith("orcamento_step", { step });
     }
     expect(screen.getByRole("alert")).toHaveTextContent("Não conseguimos enviar seu pedido");
+    // Backend fora (06–08/11/2026): o pedido fica no aparelho e sai sozinho depois.
+    expect(screen.getByRole("alert")).toHaveTextContent("ficou salvo neste aparelho");
+    expect(JSON.parse(localStorage.getItem("bw:lead-outbox:v1") ?? "[]")).toHaveLength(1);
     const wa = screen.getByRole("link", { name: /Enviar pelo WhatsApp/ });
     expect(decodeURIComponent(wa.getAttribute("href")!)).toContain("Chaves: Ainda não");
     expect(decodeURIComponent(wa.getAttribute("href")!)).toContain("Estado: 9 a 15 anos de uso");

@@ -121,6 +121,9 @@ export const leadSchema = z.object({
   privacy_visited_before_submit: z.boolean().nullable().optional(),
   consent_record_id: looseText,
   consent_visitor_key: looseText,
+  // Id do envio gerado no navegador: a caixa de saída do site reenvia com o
+  // mesmo id e a função não grava nem avisa de novo (ver index.ts).
+  submission_id: looseText,
 });
 
 export type RawLead = z.infer<typeof leadSchema>;
@@ -162,6 +165,8 @@ export type CleanLead = {
   /** Registro do aceite no aviso de cookies; conferido antes de gravar. */
   consent_record_id: string | null;
   consent_visitor_key: string | null;
+  /** Id do envio (UUID do navegador) para deduplicar reenvios; minúsculas. */
+  submission_id: string | null;
 };
 
 /** Colunas que chegaram com a Fase 1 (atribuição/CAPI) — ver insertLead. */
@@ -180,9 +185,33 @@ export const ATTRIBUTION_COLUMNS = [
   "privacy_visited_before_submit",
   "consent_record_id",
   "consent_visitor_key",
+  // Chegou depois (caixa de saída, 09/11/2026); sem a coluna, grava sem ela.
+  "submission_id",
 ] as const;
 
+/**
+ * Ordem das tentativas de gravação quando falta coluna no banco (ver
+ * insertLead): primeiro só sem a coluna mais nova (`submission_id` — sem ela
+ * a atribuição continua sendo gravada), depois sem as de atribuição, por
+ * fim também sem `form_path`.
+ */
+export const INSERT_FALLBACK_DROPS: ReadonlyArray<readonly string[]> = [
+  ["submission_id"],
+  ATTRIBUTION_COLUMNS,
+  [...ATTRIBUTION_COLUMNS, "form_path"],
+];
+
 const UUID_RE = /^[0-9a-f-]{36}$/;
+export const SUBMISSION_ID_RE = /^[0-9a-f-]{36}$/i;
+
+/**
+ * Resposta para um `submission_id` já gravado: o mesmo formato de "entregue"
+ * (o site tira o pedido da caixa de saída), sem repetir Slack, CRM, e-mail
+ * nem API de Conversões.
+ */
+export function duplicateLeadResponse(leadId: string) {
+  return { ok: true, duplicate: true, lead_insert: { status: "sent" as const, id: leadId } };
+}
 
 function cut(value: unknown, max: number): string | null {
   if (typeof value !== "string" && typeof value !== "number") return null;
@@ -202,6 +231,13 @@ const CLICK_ID_RE = /^[A-Za-z0-9_.-]+$/;
 const FBP_RE = /^fb\.\d\.\d{10,13}\.\d{1,20}$/;
 const FBC_RE = /^fb\.\d\.\d{10,13}\.[A-Za-z0-9_.-]+$/;
 const EVENT_ID_RE = /^[A-Za-z0-9_-]{8,64}$/;
+
+/** Id do envio só no formato exato (sem cortar um texto maior até caber). */
+function submissionIdOf(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const v = value.trim();
+  return SUBMISSION_ID_RE.test(v) ? v.toLowerCase() : null;
+}
 
 /** Mesma regra de src/lib/phone.ts: remove DDI 55 e tronco 0 ANTES de cortar. */
 export function normalizeBrPhoneDigits(input: unknown): string {
@@ -272,6 +308,7 @@ export function sanitizeLead(raw: RawLead): CleanLead {
     privacy_visited_before_submit: consent === true && formPath === "/orcamento" && typeof raw.privacy_visited_before_submit === "boolean" ? raw.privacy_visited_before_submit : null,
     consent_record_id: consent === true ? matching(raw.consent_record_id, 36, UUID_RE) : null,
     consent_visitor_key: consent === true ? matching(raw.consent_visitor_key, 36, UUID_RE) : null,
+    submission_id: submissionIdOf(raw.submission_id),
   };
 }
 

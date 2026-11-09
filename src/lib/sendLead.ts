@@ -1,6 +1,6 @@
 import { getSupabase } from "@/integrations/supabase/lazyClient";
 import {
-  fitLeadPayload,
+  buildLeadBody,
   isLeadDelivered,
   timeoutAfter,
   type LeadPayload,
@@ -47,12 +47,25 @@ async function invokeWithTimeout(
  * - `tracking` (id do evento, aceite, `_fbp`/`_fbc`) vai junto no corpo:
  *   a função usa para a API de Conversões do Meta. Versões antigas da função
  *   ignoram chaves desconhecidas.
+ * - `submissionId` vai no corpo como `submission_id`: o reenvio pela caixa de
+ *   saída (`leadOutbox.ts`) usa o mesmo id e o servidor não duplica o lead.
  */
 export async function sendLead(
   payload: LeadPayload,
-  { timeoutMs = 8000, tracking }: { timeoutMs?: number; tracking?: LeadTracking } = {},
+  {
+    timeoutMs = 8000,
+    tracking,
+    submissionId,
+  }: { timeoutMs?: number; tracking?: LeadTracking; submissionId?: string } = {},
 ): Promise<SendLeadResult> {
-  const body = fitLeadPayload(tracking ? { ...payload, ...tracking } : payload);
+  return sendLeadBody(buildLeadBody(payload, { tracking, submissionId }), { timeoutMs });
+}
+
+/** Envio de um corpo já montado (`buildLeadBody`) — usado também pela caixa de saída. */
+export async function sendLeadBody(
+  body: Record<string, unknown>,
+  { timeoutMs = 8000 }: { timeoutMs?: number } = {},
+): Promise<SendLeadResult> {
   let result = await invokeWithTimeout(body, timeoutMs);
   if (result === null) return { delivered: false, timedOut: true };
 

@@ -2,11 +2,15 @@
 //   deno test --no-config supabase/functions/notify-lead/lead.test.ts
 
 import { assert, assertEquals } from "jsr:@std/assert@1";
+import { findLeadBySubmission, isMissingColumnError, type LeadLookupClient } from "./dedup.ts";
 import {
+  ATTRIBUTION_COLUMNS,
   buildCrmPayload,
   buildLeadEmail,
   buildSlackMessage,
+  duplicateLeadResponse,
   FIELD_LIMITS,
+  INSERT_FALLBACK_DROPS,
   leadSchema,
   normalizeBrPhoneDigits,
   sanitizeLead,
@@ -204,4 +208,87 @@ Deno.test("incorporadoras: formulário reconhecido e marcado como parceiro", () 
 Deno.test("e-mail: parceria mantém o rótulo próprio", () => {
   const lead = parse({ whatsapp: "11912345678", form_path: "/parceiros", objetivo: "Parceria comercial — Corretor" });
   assertEquals(buildLeadEmail(lead, null).templateData.formLabel, "Nova solicitação de parceria · /parceiros");
+});
+
+// Caixa de saída do site (backend pausado em 06–08/11/2026): reenvio com o
+// mesmo submission_id não pode virar lead duplicado nem avisar duas vezes.
+const SID = "8F0C2B1E-1111-4222-8333-944455556666";
+
+Deno.test("submission_id: só UUID exato, em minúsculas; resto vira null", () => {
+  assertEquals(parse({ whatsapp: "11912345678", submission_id: SID }).submission_id, SID.toLowerCase());
+  assertEquals(parse({ whatsapp: "11912345678", submission_id: ` ${SID} ` }).submission_id, SID.toLowerCase());
+  assertEquals(parse({ whatsapp: "11912345678", submission_id: `${SID}0` }).submission_id, null);
+  assertEquals(parse({ whatsapp: "11912345678", submission_id: "x".repeat(36) }).submission_id, null);
+  assertEquals(parse({ whatsapp: "11912345678", submission_id: 123 }).submission_id, null);
+  assertEquals(parse({ whatsapp: "11912345678" }).submission_id, null);
+});
+
+Deno.test("submission_id fica fora do CRM, do Slack e do e-mail (é só para deduplicar)", () => {
+  const lead = parse({ whatsapp: "11912345678", submission_id: SID });
+  const all = JSON.stringify([buildCrmPayload(lead, "db"), buildSlackMessage(lead, "db"), buildLeadEmail(lead, "db")]);
+  assert(!all.toLowerCase().includes(SID.toLowerCase()));
+});
+
+Deno.test("sem a coluna no banco: 1º tira só submission_id, depois a atribuição, depois form_path", () => {
+  assert((ATTRIBUTION_COLUMNS as readonly string[]).includes("submission_id"));
+  assertEquals(INSERT_FALLBACK_DROPS[0], ["submission_id"]);
+  assertEquals(INSERT_FALLBACK_DROPS[1], ATTRIBUTION_COLUMNS);
+  assertEquals(INSERT_FALLBACK_DROPS[2], [...ATTRIBUTION_COLUMNS, "form_path"]);
+});
+
+Deno.test("resposta de duplicado conta como entregue no site", () => {
+  assertEquals(duplicateLeadResponse("db-id"), { ok: true, duplicate: true, lead_insert: { status: "sent", id: "db-id" } });
+});
+
+function fakeClient(result: { data: unknown; error: { code?: string; message?: string } | null } | Error) {
+  const calls: unknown[][] = [];
+  const client: LeadLookupClient = {
+    from: (table) => {
+      calls.push(["from", table]);
+      return {
+        select: (cols) => {
+          calls.push(["select", cols]);
+          return {
+            eq: (col, value) => {
+              calls.push(["eq", col, value]);
+              return {
+                limit: (n) => {
+                  calls.push(["limit", n]);
+                  return {
+                    maybeSingle: () => (result instanceof Error ? Promise.reject(result) : Promise.resolve(result)),
+                  };
+                },
+              };
+            },
+          };
+        },
+      };
+    },
+  };
+  return { client, calls };
+}
+
+Deno.test("dedup: acha o lead pelo submission_id", async () => {
+  const { client, calls } = fakeClient({ data: { id: "db-id" }, error: null });
+  assertEquals(await findLeadBySubmission(client, SID.toLowerCase()), "db-id");
+  assertEquals(calls, [["from", "leads"], ["select", "id"], ["eq", "submission_id", SID.toLowerCase()], ["limit", 1]]);
+});
+
+Deno.test("dedup: coluna ainda não existe, erro ou exceção → segue sem deduplicar", async () => {
+  assert(isMissingColumnError({ code: "42703" }));
+  assert(isMissingColumnError({ code: "PGRST204" }));
+  assertEquals(await findLeadBySubmission(fakeClient({ data: null, error: { code: "42703" } }).client, SID), null);
+  const err = console.error;
+  console.error = () => {};
+  try {
+    assertEquals(await findLeadBySubmission(fakeClient({ data: null, error: { code: "57014" } }).client, SID), null);
+    assertEquals(await findLeadBySubmission(fakeClient(new Error("rede")).client, SID), null);
+  } finally {
+    console.error = err;
+  }
+  assertEquals(await findLeadBySubmission(fakeClient({ data: null, error: null }).client, SID), null);
+  // Sem id nem consulta.
+  const { client, calls } = fakeClient({ data: { id: "x" }, error: null });
+  assertEquals(await findLeadBySubmission(client, null), null);
+  assertEquals(calls, []);
 });

@@ -1,5 +1,6 @@
 import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
+import { parseSearch, stringifySearch } from "./lib/routerSearch";
 
 export const getRouter = () => {
   // O QueryClient do TanStack Query mora no AdminChunk (só o painel usa
@@ -9,6 +10,10 @@ export const getRouter = () => {
     routeTree,
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
+    // IDs numéricos grandes (campanhas do Meta) ficam como texto: o parser
+    // padrão (JSON.parse) arredondava na 1ª navegação SPA (08/11/2026).
+    parseSearch,
+    stringifySearch,
   });
 
   // A navegação legada (navigate() em useHashRoute.ts, chamada pelo

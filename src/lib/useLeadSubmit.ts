@@ -16,7 +16,8 @@ import { isConsentAccepted } from "@/lib/cookieConsent";
 import { currentAdConsentProof } from "@/lib/adConsentRecord";
 import { trackEvent } from "@/lib/ga4";
 import { googleAdsProfileVariables } from "@/lib/googleAdsProfileVariables";
-import type { LeadPayload, LeadTracking } from "@/lib/leadDelivery";
+import { buildLeadBody, type LeadPayload, type LeadTracking } from "@/lib/leadDelivery";
+import { enqueueLead, newSubmissionId, removeLeadFromOutbox } from "@/lib/leadOutbox";
 import {
   deliveryParam,
   leadOutcomeOf,
@@ -138,10 +139,16 @@ type SubmitOptions = {
  * correspondência avançada de quem enviou. Um id de evento por formulário:
  * reenvios usam o mesmo, e o servidor manda esse id à API de Conversões para
  * o Meta deduplicar.
+ *
+ * Caixa de saída (`leadOutbox.ts`, 09/11/2026): envio sem confirmação (falha
+ * ou tempo esgotado) fica guardado no aparelho e é reenviado sozinho com o
+ * mesmo `submission_id` — os eventos acima não mudam por isso.
  */
 export function useLeadSubmit({ method, timeoutMs }: { method: string; timeoutMs?: number }) {
   const [sending, setSending] = useState(false);
   const [outcome, setOutcome] = useState<LeadOutcome | null>(null);
+  /** O último envio não confirmado ficou na caixa de saída do aparelho. */
+  const [queued, setQueued] = useState(false);
   const inFlight = useRef(false);
   const counted = useRef(false);
   const mounted = useRef(false);
@@ -164,11 +171,22 @@ export function useLeadSubmit({ method, timeoutMs }: { method: string; timeoutMs
       opts.beforeSend?.();
 
       const eventId = eventIdRef.current ?? (eventIdRef.current = newEventId());
+      // Um id por envio: a caixa de saída reenvia com o mesmo id e o
+      // notify-lead não duplica o que já gravou.
+      const submissionId = newSubmissionId();
+      let body: Record<string, unknown> | null = null;
       let result: SendLeadResult;
       try {
-        result = await sendLead({ ...payload, privacy_visited_before_submit: payload.form_path === "/orcamento" ? readPrivacyVisitForLead() : null }, {
+        const leadPayload: LeadPayload = {
+          ...payload,
+          privacy_visited_before_submit: payload.form_path === "/orcamento" ? readPrivacyVisitForLead() : null,
+        };
+        const tracking = collectLeadTracking(eventId);
+        body = buildLeadBody(leadPayload, { tracking, submissionId });
+        result = await sendLead(leadPayload, {
           ...(timeoutMs ? { timeoutMs } : {}),
-          tracking: collectLeadTracking(eventId),
+          tracking,
+          submissionId,
         });
       } catch (err) {
         console.error("[notify-lead] envio falhou", err);
@@ -180,6 +198,14 @@ export function useLeadSubmit({ method, timeoutMs }: { method: string; timeoutMs
       const next = leadOutcomeOf(result);
       if (next !== "delivered") {
         console.error("[notify-lead] lead não confirmado", { form: payload.form_path, outcome: next });
+      }
+      // Sem confirmação (backend fora, rede caiu, tempo esgotado): o corpo fica
+      // no aparelho e sai sozinho depois (leadOutbox.ts). Entregue: some
+      // qualquer pendência anterior da mesma pessoa neste formulário.
+      let savedOnDevice = false;
+      if (body) {
+        if (next === "delivered") removeLeadFromOutbox(body);
+        else savedOnDevice = enqueueLead(body as Record<string, unknown> & { submission_id: string });
       }
 
       // Bairro categorizado do pedido, nunca endereço livre nem bairro inferido da visita.
@@ -208,6 +234,7 @@ export function useLeadSubmit({ method, timeoutMs }: { method: string; timeoutMs
 
       if (mounted.current) {
         setOutcome(next);
+        setQueued(savedOnDevice);
         setSending(false);
       }
       return next;
@@ -217,5 +244,5 @@ export function useLeadSubmit({ method, timeoutMs }: { method: string; timeoutMs
 
   const isMounted = useCallback(() => mounted.current, []);
 
-  return { sending, outcome, submit, isMounted };
+  return { sending, outcome, queued, submit, isMounted };
 }
