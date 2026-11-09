@@ -8,6 +8,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildGoogleAdsOfflineRows,
   canExportGoogleAdsLead,
+  crmLossTimeAfterLead,
   crmPipelineQuality,
   pickPipelineTimes,
   type GoogleAdsExportConsent,
@@ -42,8 +43,8 @@ const lead = (over: Record<string, unknown> = {}) => ({
   consent_marketing: true,
   ...over,
 });
-/** Perdido no CRM sem ter chegado a Lead. */
-const perdido = (over: Record<string, unknown> = {}) => lead({ crm_max_stage_key: "qualificacao", crm_lost: true, ...over });
+/** Perdido no CRM sem ter chegado a Lead, com a perda depois da chegada do lead ao site. */
+const perdido = (over: Record<string, unknown> = {}) => lead({ crm_max_stage_key: "qualificacao", crm_lost: true, crm_last_change_at: daysAgo(2), ...over });
 
 const consent = (): GoogleAdsExportConsent => ({
   event: { recordId: "acceptance-1", noticeVersion: "ads-v2", acceptedAt: daysAgo(12), advertising: true },
@@ -131,6 +132,40 @@ describe("google_ads_offline — quem entra", () => {
   it("perda sem linha no histórico usa a última mudança no CRM", async () => {
     const [row] = await build([perdido({ crm_last_change_at: "2026-10-13T15:00:00Z" })]);
     expect(row["Conversion Time"]).toBe("2026-10-13 12:00:00-03:00");
+  });
+
+  // Pedro, 09/11/2026: lead recente que herda um negócio antigo já perdido
+  // (o formulário do site não reabre negócio) não é desqualificado por isso.
+  it("perda anterior à chegada do lead não vira desqualificado", async () => {
+    const antigo = perdido({ created_at: "2026-10-10T12:00:00Z", crm_last_change_at: "2026-07-10T20:37:03Z" });
+    const pelaLinha = await buildGoogleAdsOfflineRows({
+      leads: [perdido({ created_at: "2026-10-10T12:00:00Z" })], qualifiedAt: new Map(), lostAt: new Map([["l1", "2026-07-10T20:37:03Z"]]), now: NOW,
+    });
+    expect(pelaLinha).toEqual([]);
+    expect(await build([antigo])).toEqual([]);
+  });
+
+  it("perda sem hora conhecida no CRM não vira desqualificado", async () => {
+    expect(await build([perdido({ crm_last_change_at: null })])).toEqual([]);
+  });
+
+  it("perdido antes, reaberto e perdido de novo depois do lead: vale a perda nova", async () => {
+    const rows = await buildGoogleAdsOfflineRows({
+      leads: [perdido({ created_at: "2026-10-10T12:00:00Z", crm_last_change_at: "2026-07-10T20:00:00Z" })],
+      qualifiedAt: new Map(), lostAt: new Map([["l1", "2026-10-12T15:00:00Z"]]), now: NOW,
+    });
+    expect(rows.map((r) => [r["Conversion Name"], r["Conversion Time"]])).toEqual([["Lead desqualificado", "2026-10-12 12:00:00-03:00"]]);
+  });
+
+  it.each([
+    [{ created_at: "2026-10-10T12:00:00Z", crm_last_change_at: "2026-10-10T12:00:00Z" }, undefined, "2026-10-10T12:00:00Z"],
+    [{ created_at: "2026-10-10T12:00:00Z", crm_last_change_at: "2026-10-09T12:00:00Z" }, undefined, null],
+    [{ created_at: "2026-10-10T12:00:00Z", crm_last_change_at: "2026-10-09T12:00:00Z" }, "2026-10-11T12:00:00Z", "2026-10-11T12:00:00Z"],
+    [{ created_at: "2026-10-10T12:00:00Z", crm_last_change_at: "2026-10-12T12:00:00Z" }, "2026-10-01T12:00:00Z", null],
+    [{ created_at: "2026-10-10T12:00:00Z", crm_last_change_at: null }, undefined, null],
+    [{ created_at: null, crm_last_change_at: "2026-10-12T12:00:00Z" }, undefined, null],
+  ] as const)("crmLossTimeAfterLead(%j, %s) = %s", (facts, lostAt, expected) => {
+    expect(crmLossTimeAfterLead(facts, lostAt)).toBe(expected);
   });
 
   it("perdido depois de chegar a Lead continua qualificado e não vira desqualificado", async () => {
