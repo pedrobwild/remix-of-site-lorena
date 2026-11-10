@@ -9,7 +9,8 @@ export const LEAL_HERO_ALT =
   "Projeto em 3D de um studio do LM Urban Flex Bela Cintra, com cozinha em linha, mesa de trabalho e cama junto à janela";
 
 export const LEAL_SEO = {
-  title: "Leal Moreira e Bewild: reforma dos studios do LM Urban Flex | Bewild",
+  // Sem " | Bewild" desde 10/11/2026: com a marca no fim eram 68 caracteres (rodada 4 de SEO).
+  title: "Leal Moreira e Bewild: reforma dos studios do LM Urban Flex",
   description:
     "Parceria com a Leal Moreira: os compradores do LM Urban Flex Bela Cintra contratam com a Bewild projeto, obra, marcenaria e mobília. Veja os projetos em 3D.",
   keywords:

@@ -23,9 +23,9 @@ export const FASES: FaseEtapas[] = [
     n: "02",
     nome: "Preparação",
     resumo:
-      "A obra só começa com a documentação entregue e o condomínio de acordo. A Bewild cuida da ART, do plano de reforma que a NBR 16280 pede e da liberação com o síndico; você não precisa estar em São Paulo.",
+      "A obra só começa com a documentação entregue e o condomínio de acordo. A Bewild cuida da RRT, do plano de reforma que a NBR 16280 pede e da liberação com o síndico; você não precisa estar em São Paulo.",
     etapas: [
-      { n: "05", nome: "Documentação técnica", detalhe: "ART no CREA e a documentação que o condomínio exige, no padrão da NBR 16280." },
+      { n: "05", nome: "Documentação técnica", detalhe: "RRT no CAU e a documentação que o condomínio exige, no padrão da NBR 16280." },
       { n: "06", nome: "Liberação da obra", detalhe: "Aprovações concluídas e autorização do condomínio para o início dos trabalhos." },
       { n: "07", nome: "Cronograma oficial", detalhe: "Cronograma definido por etapa antes de a obra começar, com a data de entrega em contrato." },
       { n: "08", nome: "Mobilização", detalhe: "Equipe própria mobilizada e canteiro preparado dentro das regras do prédio." },
