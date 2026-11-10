@@ -17,8 +17,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { wrapArticleTables } from "@/lib/articleTables";
 import { linkServicePagesInHtml } from "@/lib/articleServiceLinks";
 import { NOT_FOUND_SEO, postSeoFrom, projectSeoFrom, bairroSeoFrom, type RouteSeoData } from "@/lib/seoLoaders";
-import { normalizeBewildPost, type BewildPost } from "@/lib/useBewildPosts";
-import { withPostCols } from "@/lib/useBewildPost";
+import { normalizeBewildPost, POST_INDEX_COLS, type BewildPost } from "@/lib/useBewildPosts";
+import { paginarPosts, toPostIndexItem, type PaginaDeConteudos, type PostIndexItem } from "@/lib/conteudosPagination";
+import { RELATED_POST_COLS, withPostCols, type RelatedPost } from "@/lib/useBewildPost";
 import { PROJECT_COLUMNS, type BewildProjectFull } from "@/lib/useBewildProject";
 import { PROJECTS_LIST_COLUMNS, type BewildProject } from "@/lib/useBewildProjects";
 import { PEER_COLUMNS } from "@/lib/useProjectSeoPeers";
@@ -29,9 +30,12 @@ import { fetchAlts, type AltMap } from "@/lib/useImageAlts";
 import { readyPhotos, renderPhotos } from "@/lib/projectPhotos";
 import { serverMemo } from "@/lib/serverMemo";
 
-/** Lista de posts sem `body` (o índice /conteudos não usa o corpo). */
-const POST_LIST_COLS =
-  "id, slug, title, meta_title, meta_description, og_image, category, excerpt, cover_image, faq, reading_time, author, featured, published, published_at, created_at";
+/**
+ * Lista de posts: só o card + a meta description da busca (POST_INDEX_COLS).
+ * Até 09/11/2026 vinham também FAQ, og:image e meta de todos os posts, e tudo
+ * ia para o payload de /conteudos (auditoria de SEO, rodada 4, ação 12).
+ */
+const POST_LIST_COLS = POST_INDEX_COLS;
 
 /**
  * `null` = sanitizador falhou: a página sai só com título e resumo.
@@ -100,9 +104,24 @@ export type PostLoaderData = {
   seo: RouteSeoData;
   /** `undefined` = falha de rede (cliente busca); `null` = não existe. */
   post?: BewildPost | null;
-  related?: BewildPost[] | null;
+  /** Só as colunas do card (RELATED_POST_COLS), sem corpo. */
+  related?: RelatedPost[] | null;
   bodyHtml?: string | null;
 };
+
+/**
+ * O que o loader do artigo devolve vai inteiro para o payload de hidratação
+ * (`<script data-tsr-stream-part>`) do HTML. Com o `bodyHtml` já sanitizado no
+ * servidor, a página não usa o markdown cru (`post.body`): ele saía de novo no
+ * payload e o texto do artigo aparecia três vezes no HTML (auditoria de SEO,
+ * rodada 4, 09/11/2026). Chame DEPOIS de montar o head (o JSON-LD lê os
+ * vídeos do corpo cru). Sem `bodyHtml` (sanitizador falhou), o corpo fica:
+ * a página o converte no navegador como antes.
+ */
+export function withoutRawBody<T extends PostLoaderData>(data: T): T {
+  if (!data.post || typeof data.bodyHtml !== "string" || data.bodyHtml === "") return data;
+  return { ...data, post: { ...data.post, body: "" } };
+}
 
 export async function loadPostContent(slug: string): Promise<PostLoaderData> {
   // Memo de 60 s no servidor (src/lib/serverMemo.ts): só artigo encontrado.
@@ -120,23 +139,19 @@ async function fetchPostContent(slug: string): Promise<PostLoaderData> {
     if (!data) return { seo: NOT_FOUND_SEO, post: null, related: [] };
     const post = normalizeBewildPost(data as unknown as BewildPost) as BewildPost;
 
-    let related: BewildPost[] | null = null;
+    let related: RelatedPost[] | null = null;
     if (post.category) {
-      const category = post.category;
-      const rel = await withPostCols((cols) =>
-        supabase
-          .from("bewild_posts" as never)
-          .select(cols)
-          .eq("published", true)
-          .eq("category", category)
-          .neq("id", post.id)
-          .order("published_at", { ascending: false, nullsFirst: false })
-          .order("created_at", { ascending: false })
-          .limit(3),
-      );
-      if (!rel.error) {
-        related = ((rel.data ?? []) as unknown as BewildPost[]).map(normalizeBewildPost) as BewildPost[];
-      }
+      // Só o que o card "Continue lendo" mostra: sem corpo, FAQ e meta.
+      const rel = await supabase
+        .from("bewild_posts" as never)
+        .select(RELATED_POST_COLS)
+        .eq("published", true)
+        .eq("category", post.category)
+        .neq("id", post.id)
+        .order("published_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false })
+        .limit(3);
+      if (!rel.error) related = (rel.data ?? []) as unknown as RelatedPost[];
     } else {
       related = [];
     }
@@ -251,6 +266,23 @@ async function loadPostListUncached(): Promise<PostListLoaderData> {
   } catch {
     return { posts: null };
   }
+}
+
+/**
+ * /conteudos paginado: `pagina` = destaque (só na 1) + um lote de cards, sem
+ * corpo, FAQ e meta (src/lib/conteudosPagination.ts). `index` = índice
+ * completo para a busca, só quando a URL já chega com `?q=` (o filtro e a busca
+ * digitada buscam o índice no navegador, sob demanda). Página além da última
+ * com a lista carregada = 404; falha de rede = `pagina: null` (cliente busca).
+ */
+export type PostListPageLoaderData = { pagina: PaginaDeConteudos | null; index: PostIndexItem[] | null };
+
+export async function loadPostListPage(pagina: number, opts?: { busca?: boolean }): Promise<PostListPageLoaderData> {
+  const { posts } = await loadPostList();
+  if (!posts) return { pagina: null, index: null };
+  const page = paginarPosts(posts, pagina);
+  if (!page) throw notFound();
+  return { pagina: page, index: opts?.busca ? posts.map(toPostIndexItem) : null };
 }
 
 // --- /mapa-do-site ----------------------------------------------------------

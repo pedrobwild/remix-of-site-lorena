@@ -3,9 +3,15 @@
  * "Caderno de publicações" (prancha 04): lista de posts na linguagem de
  * prancheta. Destaque automático (featured), filtros por categoria, e cada
  * card abre o post em /conteudos/:slug. CSS isolado em .bw-conteudos.
+ *
+ * Paginada (auditoria de SEO, rodada 4, 09/11/2026, ação 12): o servidor manda
+ * só o destaque e o lote da página (`page`); o resto está em
+ * `/conteudos?pagina=N`, com links reais. Busca e filtro valem para todos os
+ * artigos: o índice completo (sem corpo) é pedido sob demanda.
  */
 import { PROVA_REFORMAS } from "@/content/provas";
 import { useMemo, useState } from "react";
+import { preload } from "react-dom";
 import { Search } from "lucide-react";
 import { searchPosts } from "@/lib/postSearch";
 import { useSeo } from "@/lib/useSeo";
@@ -21,12 +27,14 @@ import {
 } from "@/lib/imageUrl";
 import {
   useBewildPosts,
+  usePostIndex,
   bewildCategoryLabel,
   BEWILD_CATEGORIES,
   formatBewildDate,
   type BewildPost,
   type BewildPostCategory,
 } from "@/lib/useBewildPosts";
+import { conteudosPagePath, type PaginaDeConteudos, type PostCard, type PostIndexItem } from "@/lib/conteudosPagination";
 import "@/styles/conteudos.css";
 
 type FilterValue = "all" | BewildPostCategory;
@@ -47,7 +55,7 @@ function IconArrow() {
   );
 }
 
-function PostMeta({ post, long }: { post: BewildPost; long?: boolean }) {
+function PostMeta({ post, long }: { post: PostCard; long?: boolean }) {
   const date = formatBewildDate(post.published_at ?? post.created_at);
   const mins = post.reading_time && post.reading_time > 0 ? `${post.reading_time} min${long ? " de leitura" : ""}` : null;
   return (
@@ -59,28 +67,113 @@ function PostMeta({ post, long }: { post: BewildPost; long?: boolean }) {
   );
 }
 
-export default function BewildConteudosPage({ initialPosts, query = "", onQueryChange }: { initialPosts?: BewildPost[] | null; query?: string; onQueryChange?: (q: string) => void } = {}) {
-  const { featured, grid, posts, loading, error } = useBewildPosts(initialPosts);
+/** Links reais para cada página da lista (a 1 é /conteudos). */
+function Paginacao({ pagina, totalPaginas }: { pagina: number; totalPaginas: number }) {
+  if (totalPaginas <= 1) return null;
+  const numeros = Array.from({ length: totalPaginas }, (_, i) => i + 1);
+  return (
+    <nav className="ct-pager" aria-label="Páginas da lista de artigos">
+      {pagina > 1 ? (
+        <a className="ct-pager__step" href={conteudosPagePath(pagina - 1)} rel="prev">
+          <span aria-hidden="true">←</span> Página anterior
+        </a>
+      ) : null}
+      <ol className="ct-pager__list">
+        {numeros.map((n) => (
+          <li key={n}>
+            {n === pagina ? (
+              <span className="ct-pager__num is-current" aria-current="page">
+                <span className="sr-only">Página </span>
+                {n}
+              </span>
+            ) : (
+              <a className="ct-pager__num" href={conteudosPagePath(n)}>
+                <span className="sr-only">Página </span>
+                {n}
+              </a>
+            )}
+          </li>
+        ))}
+      </ol>
+      {pagina < totalPaginas ? (
+        <a className="ct-pager__step" href={conteudosPagePath(pagina + 1)} rel="next">
+          Próxima página <span aria-hidden="true">→</span>
+        </a>
+      ) : null}
+    </nav>
+  );
+}
+
+/** Sem dado do servidor (`page`), o hook não busca nada. */
+const SEM_BUSCA: BewildPost[] = [];
+
+type Props = {
+  /** Página da lista vinda do loader (SSR); `null` = falha de rede, busca no cliente. */
+  page?: PaginaDeConteudos | null;
+  /** Índice completo já enviado pelo servidor (URL com `?q=`). */
+  initialIndex?: PostIndexItem[] | null;
+  /** Páginas N ≥ 2: título, descrição e query do canonical, iguais aos do head() da rota. */
+  pagedSeo?: { title: string; description: string; ogImage?: string; canonicalSearch: string } | null;
+  query?: string;
+  onQueryChange?: (q: string) => void;
+};
+
+export default function BewildConteudosPage({ page = null, initialIndex = null, pagedSeo = null, query = "", onQueryChange }: Props = {}) {
+  // Fallback (loader falhou): lista inteira no cliente, como antes da paginação.
+  const fallback = useBewildPosts(page ? SEM_BUSCA : null);
   const [filter, setFilter] = useState<FilterValue>("all");
+  const [prefetch, setPrefetch] = useState(false);
+  const q = query.trim();
+  const indexMode = filter !== "all" || !!q;
+  const { index, loading: indexLoading } = usePostIndex(!!page && (indexMode || prefetch), initialIndex);
+
+  const loading = page ? false : fallback.loading;
+  const error = page ? null : fallback.error;
+  // Índice completo (busca/filtro), página do servidor ou fallback do cliente.
+  const { all, featured, grid } = useMemo((): { all: PostCard[]; featured: PostCard | null; grid: PostCard[] } => {
+    if (!page) return { all: fallback.posts, featured: fallback.featured, grid: fallback.grid };
+    if (indexMode && index) {
+      const f = index.find((p) => p.featured) ?? null;
+      return { all: index, featured: f, grid: index.filter((p) => p !== f) };
+    }
+    return { all: [...(page.featured ? [page.featured] : []), ...page.posts], featured: page.featured, grid: page.posts };
+  }, [page, indexMode, index, fallback.posts, fallback.featured, fallback.grid]);
+  const total = page ? page.total : fallback.posts.length;
+  const paginated = !!page && !indexMode && page.totalPaginas > 1;
 
   useSeo({
-    title: "Arquitetura, engenharia e custo de reforma em SP: guias | Bewild",
+    title: pagedSeo?.title ?? "Arquitetura, engenharia e custo de reforma em SP: guias | Bewild",
     description:
+      pagedSeo?.description ??
       "Guias práticos da Bewild sobre projeto de arquitetura, engenharia, custo, etapas e prazo de obra para reformar apartamento em São Paulo.",
     keywords:
       "projeto de arquitetura, arquitetura e engenharia, engenharia civil, custo de reforma, quanto custa reformar um apartamento, custo de reforma de apartamento em SP, etapas de uma reforma, prazo de reforma de apartamento, reforma de apartamento em SP, Bewild",
     canonicalPath: "/conteudos",
+    canonicalSearch: pagedSeo?.canonicalSearch,
     ogType: "website",
-    ogImage: featured?.cover_image ?? posts.find((p) => p.cover_image)?.cover_image ?? undefined,
+    ogImage: pagedSeo?.ogImage ?? featured?.cover_image ?? all.find((p) => p.cover_image)?.cover_image ?? undefined,
   });
 
   const filteredGrid = useMemo(() => {
-    const source = query.trim() ? searchPosts(posts, query) : grid;
+    const source = q ? searchPosts(all as PostIndexItem[], q) : grid;
     if (filter === "all") return source;
     return source.filter((p) => p.category === filter);
-  }, [grid, posts, filter, query]);
+  }, [grid, all, filter, q]);
 
   const showFeatured = featured && (filter === "all" || featured.category === filter);
+  // Capa do destaque = maior elemento da primeira tela no celular (LCP). Antes
+  // saía com loading="lazy" e só era pedida depois do layout; agora o preload
+  // sobe para o topo do <head> do HTML do servidor (mesmas URLs do <img>).
+  const featuredImg = featured?.cover_image
+    ? responsiveImageProps(featured.cover_image, CONTENT_FEATURED_WIDTHS, 960, CONTENT_FEATURED_SIZES)
+    : null;
+  if (featuredImg && showFeatured && !loading && !error) {
+    preload(featuredImg.src, {
+      as: "image",
+      fetchPriority: "high",
+      ...(featuredImg.srcSet ? { imageSrcSet: featuredImg.srcSet, imageSizes: featuredImg.sizes } : {}),
+    });
+  }
 
   return (
     <>
@@ -105,7 +198,7 @@ export default function BewildConteudosPage({ initialPosts, query = "", onQueryC
               <label htmlFor="ct-search-input" className="ct-search__label">Buscar artigos</label>
               <div className="ct-search__row">
                 <Search size={22} aria-hidden="true" />
-                <input id="ct-search-input" className="ct-search__input" type="search" name="q" value={query} onChange={(e) => onQueryChange?.(e.target.value)} placeholder="Buscar por título ou descrição" autoComplete="off" enterKeyHint="search" maxLength={120} />
+                <input id="ct-search-input" className="ct-search__input" type="search" name="q" value={query} onFocus={() => setPrefetch(true)} onChange={(e) => onQueryChange?.(e.target.value)} placeholder="Buscar por título ou descrição" autoComplete="off" enterKeyHint="search" maxLength={120} />
               </div>
             </form>
           </div>
@@ -121,12 +214,13 @@ export default function BewildConteudosPage({ initialPosts, query = "", onQueryC
                 <div className="ct-secmark"><span className="n">001</span><span className="t">Em destaque</span><span className="ln" /></div>
                 <a href={`/conteudos/${featured.slug}`} className="ct-featured" aria-label={`Ler: ${featured.title}`}>
                   <div className={"ct-featured__media" + (!featured.cover_image ? " is-empty" : "")}>
-                    {featured.cover_image ? (
+                    {featuredImg ? (
                       <img
-                        {...responsiveImageProps(featured.cover_image, CONTENT_FEATURED_WIDTHS, 960, CONTENT_FEATURED_SIZES)}
+                        {...featuredImg}
                         alt={featured.title}
-                        loading="lazy"
+                        loading="eager"
                         decoding="async"
+                        fetchPriority="high"
                       />
                     ) : (
                       <span className="ct-soon">Capa em breve</span>
@@ -161,7 +255,13 @@ export default function BewildConteudosPage({ initialPosts, query = "", onQueryC
                 ))}
               </div>
               {!loading && !error && (
-                <span className="ct-count" role="status" aria-live="polite">{pad(filteredGrid.length)} {query.trim() ? (filteredGrid.length === 1 ? "resultado" : "resultados") : `${filteredGrid.length === 1 ? "artigo" : "artigos"} no índice`}</span>
+                <span className="ct-count" role="status" aria-live="polite">
+                  {indexMode
+                    ? indexLoading
+                      ? "Buscando em todos os artigos…"
+                      : `${pad(filteredGrid.length)} ${q ? (filteredGrid.length === 1 ? "resultado" : "resultados") : filteredGrid.length === 1 ? "artigo" : "artigos"}`
+                    : `${pad(total)} ${total === 1 ? "artigo" : "artigos"} no índice${paginated && page ? ` · página ${page.pagina} de ${page.totalPaginas}` : ""}`}
+                </span>
               )}
             </div>
 
@@ -178,7 +278,7 @@ export default function BewildConteudosPage({ initialPosts, query = "", onQueryC
 
             {!loading && !error && filteredGrid.length === 0 && (
               <div className="ct-state">
-                {posts.length === 0 ? "Em breve, novos conteúdos publicados." : query.trim() ? `Nenhum artigo encontrado para “${query.trim()}” nessa seleção.` : "Nenhum conteúdo nessa categoria ainda."}
+                {total === 0 ? "Em breve, novos conteúdos publicados." : q ? `Nenhum artigo encontrado para “${q}” nessa seleção.` : "Nenhum conteúdo nessa categoria ainda."}
               </div>
             )}
 
@@ -209,6 +309,8 @@ export default function BewildConteudosPage({ initialPosts, query = "", onQueryC
                 ))}
               </div>
             )}
+
+            {paginated && page ? <Paginacao pagina={page.pagina} totalPaginas={page.totalPaginas} /> : null}
           </div>
         </section>
 

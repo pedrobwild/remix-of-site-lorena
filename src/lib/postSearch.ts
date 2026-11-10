@@ -18,10 +18,13 @@ export function searchTerms(query: string): string[] {
   return normalizeSearchText(query).split(" ").filter(Boolean);
 }
 
-export function searchPosts(posts: BewildPost[], query: string): BewildPost[] {
+/** O que a busca lê: título, resumo e meta descrição (o índice leve de /conteudos basta). */
+export type SearchablePost = Pick<BewildPost, "title" | "excerpt"> & { meta_description?: string | null };
+
+export function searchPosts<T extends SearchablePost>(posts: T[], query: string): T[] {
   const terms = searchTerms(query);
   if (terms.length === 0) return posts;
-  const scored: { post: BewildPost; score: number; idx: number }[] = [];
+  const scored: { post: T; score: number; idx: number }[] = [];
   posts.forEach((post, idx) => {
     const title = normalizeSearchText(post.title);
     const desc = normalizeSearchText(`${post.excerpt ?? ""} ${post.meta_description ?? ""}`);

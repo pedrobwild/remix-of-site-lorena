@@ -10,6 +10,17 @@ import { getSupabase } from "@/integrations/supabase/lazyClient";
 import { devWarn } from "@/lib/devLog";
 import { normalizeBewildPost, type BewildPost, type BewildPostCategory } from "@/lib/useBewildPosts";
 
+/**
+ * Colunas do card "Continue lendo" (RelatedCard). Sem `body`, `faq` e meta:
+ * os três relacionados vinham com o corpo inteiro e entravam no payload de
+ * hidratação do artigo (auditoria de SEO, rodada 4, 09/11/2026: 162 kB de
+ * script num HTML de 237 kB). O mesmo recorte vale para o servidor
+ * (contentLoaders) e para a busca no cliente.
+ */
+export const RELATED_POST_COLS = "id, slug, title, category, excerpt, cover_image, reading_time";
+
+export type RelatedPost = Pick<BewildPost, "id" | "slug" | "title" | "category" | "excerpt" | "cover_image" | "reading_time">;
+
 export const POST_SELECT_COLS =
   "id, slug, title, meta_title, meta_description, og_image, category, excerpt, cover_image, body, faq, reading_time, author, featured, published, published_at, created_at, updated_at";
 
@@ -126,10 +137,10 @@ export function useBewildRelatedPosts(
   category: BewildPostCategory | null | undefined,
   excludeId: string | undefined,
   limit = 3,
-  initial?: { excludeId: string; related: BewildPost[] } | null,
+  initial?: { excludeId: string; related: RelatedPost[] } | null,
 ) {
   const hasInitial = !!initial && initial.excludeId === excludeId;
-  const [related, setRelated] = useState<BewildPost[]>(hasInitial ? initial!.related : []);
+  const [related, setRelated] = useState<RelatedPost[]>(hasInitial ? initial!.related : []);
   const [loading, setLoading] = useState(!hasInitial);
 
   useEffect(() => {
@@ -147,19 +158,18 @@ export function useBewildRelatedPosts(
     let mounted = true;
     setLoading(true);
 
-    withPostCols((cols) =>
-      getSupabase().then((sb) =>
+    getSupabase()
+      .then((sb) =>
         sb
           .from("bewild_posts" as never)
-          .select(cols)
+          .select(RELATED_POST_COLS)
           .eq("published", true)
           .eq("category", category)
           .neq("id", excludeId)
           .order("published_at", { ascending: false, nullsFirst: false })
           .order("created_at", { ascending: false })
           .limit(limit),
-      ),
-    )
+      )
       .then(({ data, error }) => {
         if (!mounted) return;
         if (error) {
@@ -168,7 +178,7 @@ export function useBewildRelatedPosts(
           setLoading(false);
           return;
         }
-        setRelated(((data ?? []) as unknown as BewildPost[]).map(normalizeBewildPost) as BewildPost[]);
+        setRelated((data ?? []) as unknown as RelatedPost[]);
         setLoading(false);
       });
 

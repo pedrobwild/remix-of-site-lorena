@@ -15,10 +15,13 @@ export const Route = createFileRoute("/conteudos/$slug")({
     if (destino) throw redirect({ to: "/conteudos/$slug", params: { slug: destino }, statusCode: 301 });
   },
   loader: async ({ params }) => {
-    const ld = await contentLoaders().then((m) => m.loadPostContent(params.slug));
+    const m = await contentLoaders();
+    const ld = await m.loadPostContent(params.slug);
     if (!ld?.post) return { ...ld, head: null };
     const { postHeadData } = await import("@/lib/routeHeadData");
-    return { ...ld, head: postHeadData(ld.post, ld.bodyHtml) };
+    // O head lê o corpo cru (vídeos do JSON-LD); depois ele sai do retorno,
+    // que vai inteiro para o payload de hidratação: a página usa o bodyHtml.
+    return m.withoutRawBody({ ...ld, head: postHeadData(ld.post, ld.bodyHtml) });
   },
   component: RouteComponent,
   head: ({ loaderData: ld, params }) => {
