@@ -4,7 +4,9 @@
 //   Lê o retrato src/content/snapshots/sitemap.xml. Com INDEXNOW_SITEMAP_URL
 //   definido (ex.: https://bewild.com.br/sitemap.xml) baixa o sitemap publicado
 //   em vez do arquivo local — é o que o workflow .github/workflows/indexnow.yml
-//   usa, porque o sitemap servido é gerado pelo servidor a partir do banco.
+//   usa (a cada push na main e uma vez por dia), porque o sitemap servido é
+//   gerado pelo servidor a partir do banco. Post/projeto publicado pelo painel
+//   é avisado na hora, só com a URL dele (src/lib/indexNow.server.ts, mesma chave).
 //
 // Sai com código ≠ 0 se o IndexNow recusar o envio — assim uma chave inválida
 // (403), payload rejeitado (400/422) ou limite de taxa (429) não passa como
