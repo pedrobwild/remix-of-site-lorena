@@ -150,8 +150,9 @@ export default function ReformaStudioSpPage({ bairroPages = null, topoVariante =
 
         <section className="bwa-servico-block" aria-labelledby="para-quem">
           <div className="bwa-shell">
+            {/* Plural "reforma de studios": desta página desde 10/11/2026 (antes era da home). */}
             <h2 className="bwa-servico-h2" id="para-quem">
-              Para quem
+              Reforma de studios para alugar ou para morar
             </h2>
             <ul className="bwa-servico-cards">
               <li>

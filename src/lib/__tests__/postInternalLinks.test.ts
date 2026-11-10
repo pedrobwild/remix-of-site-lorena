@@ -61,6 +61,29 @@ describe("links internos dos artigos", () => {
     expect(list).toContain("/orcamento");
   });
 
+  // D1 (10/11/2026): o plural "reforma de studios" passou da home para a página
+  // de serviço; os artigos de custo e de prazo, que já a citavam em primeiro
+  // lugar com a âncora genérica, passam a dizer o que a página resolve.
+  it.each([
+    ["quanto-custa-reformar-apartamento-studio-ate-50-m2", /preço/],
+    ["quanto-tempo-demora-reforma-apartamento", /prazo/],
+  ])("o artigo %s aponta para o serviço de studio com âncora própria, no plural", (slug, assunto) => {
+    const [primeiro] = internalLinksForPost(slug, "reforma");
+    expect(primeiro.href).toBe(STUDIO);
+    expect(primeiro.label).toMatch(/^Reforma de studios em São Paulo/);
+    expect(primeiro.label).toMatch(assunto);
+    expect(primeiro.description.length).toBeGreaterThan(20);
+  });
+
+  it("as duas âncoras são diferentes entre si e diferentes da genérica", () => {
+    const rotulo = (slug: string) => internalLinksForPost(slug, "reforma")[0].label;
+    const custo = rotulo("quanto-custa-reformar-apartamento-studio-ate-50-m2");
+    const prazo = rotulo("quanto-tempo-demora-reforma-apartamento");
+    expect(new Set([custo, prazo, "Reforma de studio em São Paulo"]).size).toBe(3);
+    // O artigo por empreendimento e os demais artigos de studio seguem com a genérica.
+    expect(rotulo("reforma-de-studio-por-empreendimento-sao-paulo")).toBe("Reforma de studio em São Paulo");
+  });
+
   it("artigo só de apartamento usa os links de reforma mesmo com categoria de investimento", () => {
     const list = hrefs("como-pagar-reforma-apartamento-financiamento-sp", "investimento");
     expect(list[0]).toBe(APARTAMENTO);

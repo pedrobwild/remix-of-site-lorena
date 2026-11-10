@@ -11,12 +11,22 @@
 import { publicRpc } from "@/integrations/supabase/publicRest";
 import { serverMemo } from "@/lib/serverMemo";
 import { pageSeoOverride, type PagesSeoMap } from "@/lib/publicPages";
+import { PROVA_FRASE } from "@/content/provas";
 
-export const HOME_DEFAULT_TITLE = "Reforma de studios em São Paulo: 6 fases reais | Bewild";
-export const HOME_DEFAULT_DESCRIPTION =
-  "Reforma de studios em SP: visita e escopo, projeto, autorização do condomínio, obra civil, marcenaria e instalações finais, mobiliário e entrega. Prazo conforme o imóvel.";
+/*
+ * Uma intenção por página (decisão do Pedro, 10/11/2026; auditoria de SEO,
+ * rodada 4, ação 1). A busca "reforma de studio(s)" é da página de serviço
+ * /reforma-de-studio-sao-paulo; a home fica com a marca e a reforma turnkey.
+ * Até 10/11 o título era "Reforma de studios em São Paulo: 6 fases reais" e a
+ * descrição listava as fases (170 caracteres): "reforma de studios" caía na
+ * home na posição 37. As 6 fases ficam só em /como-funciona.
+ * O título salvo em /admin/seo para a home está vazio (10/11/2026), então este
+ * padrão é o que sai em produção; og:* e twitter:* derivam dele (seoHead).
+ */
+export const HOME_DEFAULT_TITLE = "Bewild | Reforma turnkey de studios e apartamentos em SP";
+export const HOME_DEFAULT_DESCRIPTION = `Reforma completa de studios e apartamentos compactos em SP: preço e prazo em contrato, 5 anos de garantia e ${PROVA_FRASE}. Peça orçamento.`;
 export const HOME_KEYWORDS =
-  "reforma de compactos, reforma de studio SP, reforma de studios em São Paulo, reforma de apartamento compacto, reforma de apartamento pequeno em SP, reforma para Airbnb, reforma para aluguel, empresa de reforma em São Paulo, Bewild";
+  "reforma turnkey em São Paulo, reforma de compactos, reforma de apartamento compacto, reforma de apartamento pequeno em SP, reforma para Airbnb, reforma para aluguel, empresa de reforma em São Paulo, Bewild";
 
 export type HomeSeoSettings = {
   home_seo_title?: string | null;

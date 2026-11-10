@@ -163,11 +163,33 @@ const TEMA = {
 
 const MAX_LINKS = 6;
 
-/** Artigos de decisão encaminham ao serviço, sem disputar sua busca principal. */
-const ARTIGOS_PARA_SERVICO_STUDIO = new Set([
-  "quanto-custa-reformar-apartamento-studio-ate-50-m2",
-  "quanto-tempo-demora-reforma-apartamento",
-  "reforma-de-studio-por-empreendimento-sao-paulo",
+/**
+ * Artigos de decisão encaminham ao serviço, sem disputar sua busca principal.
+ *
+ * Custo e prazo levam âncora própria, no plural (decisão D1 do Pedro,
+ * 10/11/2026; auditoria de SEO, rodada 4, ação 1): "reforma de studios" passou
+ * da home, onde caía na posição 37, para /reforma-de-studio-sao-paulo. A âncora
+ * diz o que o leitor do artigo vai encontrar lá (preço fechado, prazo em
+ * contrato), com os fatos que a página publica.
+ */
+const ARTIGOS_PARA_SERVICO_STUDIO = new Map<string, InternalLink>([
+  [
+    "quanto-custa-reformar-apartamento-studio-ate-50-m2",
+    {
+      href: L.reformaStudioSp.href,
+      label: "Reforma de studios em São Paulo com preço fechado",
+      description: "Projeto, obra, marcenaria e mobília num contrato: se a obra custar mais, a diferença é da Bewild.",
+    },
+  ],
+  [
+    "quanto-tempo-demora-reforma-apartamento",
+    {
+      href: L.reformaStudioSp.href,
+      label: "Reforma de studios em São Paulo com prazo em contrato",
+      description: "Cerca de 60 dias úteis de obra no studio, com a data de entrega escrita no contrato.",
+    },
+  ],
+  ["reforma-de-studio-por-empreendimento-sao-paulo", L.reformaStudioSp],
 ]);
 
 /** Links internos priorizados para o post (o assunto do slug vem antes da categoria). */
@@ -189,7 +211,8 @@ export function internalLinksForPost(
   if (TEMA.condominio.test(slug)) lead.push(L.nbr16280, L.autorizacao);
   // Etapas e cronograma: o prazo da obra mora no artigo de prazo.
   if (TEMA.prazo.test(slug)) lead.push(L.prazo);
-  if (ARTIGOS_PARA_SERVICO_STUDIO.has(slug)) lead.push(L.reformaStudioSp);
+  const servicoStudio = ARTIGOS_PARA_SERVICO_STUDIO.get(slug);
+  if (servicoStudio) lead.push(servicoStudio);
   // A página de serviço do imóvel de que o artigo trata vem primeiro.
   if (studio && apartamento) {
     const [first, second] =
