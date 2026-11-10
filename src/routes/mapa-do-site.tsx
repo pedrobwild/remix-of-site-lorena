@@ -8,7 +8,7 @@ const contentLoaders = () => import("@/lib/contentLoaders");
 export const Route = createFileRoute("/mapa-do-site")({
   loader: () => contentLoaders().then((m) => m.loadSiteMapContent()),
   component: RouteComponent,
-  head: ({ matches }) => seoHead({ pagesSeo: rootPagesSeo(matches), title: "Mapa do site: páginas, bairros, projetos e conteúdos | Bewild", description: "Índice com todas as páginas da Bewild, as páginas de reforma por bairro, os projetos de apartamentos e studios reformados em São Paulo e os guias de conteúdo.", path: "/mapa-do-site" }),
+  head: ({ matches }) => seoHead({ pagesSeo: rootPagesSeo(matches), title: "Mapa do site: páginas, bairros, projetos e conteúdos", description: "Índice com todas as páginas da Bewild, as páginas de reforma por bairro, os projetos de apartamentos e studios reformados em São Paulo e os guias de conteúdo.", path: "/mapa-do-site" }),
 });
 
 function RouteComponent() {

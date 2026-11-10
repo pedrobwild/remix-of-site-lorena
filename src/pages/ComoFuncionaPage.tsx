@@ -18,7 +18,8 @@ const ARQUITETURA: HowItem[] = [
   { glyph: "architecture", titulo: "Projeto 3D", detalhe: "maquete realista com revisões até a aprovação." },
   { glyph: "craft", titulo: "Personalização", detalhe: "cores, materiais e disposição guiados pelo arquiteto." },
   { glyph: "contract", titulo: "Projeto executivo", detalhe: "plantas detalhadas que eliminam improvisos." },
-  { glyph: "reports", titulo: "Documentação", detalhe: "ART, CREA e liberação do condomínio." },
+  // RRT no CAU: o responsável técnico da Bewild é arquiteto (Thiago Dantas, CAU A162437-7), não engenheiro.
+  { glyph: "reports", titulo: "Documentação", detalhe: "RRT no CAU e liberação do condomínio." },
   { glyph: "assurance", titulo: "Acompanhamento", detalhe: "arquiteto e engenheiro juntos durante toda a obra." },
 ];
 
@@ -74,7 +75,7 @@ export default function ComoFuncionaPage() {
   useSeo({
     title: "Como funciona a reforma turnkey: etapas e contrato | Bewild",
     description:
-      "Como funciona a reforma turnkey da Bewild: consultoria, projeto 3D e executivo, ART e liberação do condomínio, obra com equipe própria e apartamento pronto.",
+      "Como funciona a reforma turnkey da Bewild: consultoria, projeto 3D e executivo, RRT e liberação do condomínio, obra com equipe própria e apartamento pronto.",
     canonicalPath: "/como-funciona",
     ogType: "website",
   });

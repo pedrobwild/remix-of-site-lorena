@@ -11,7 +11,7 @@ export const Route = createFileRoute("/reforma-de-cobertura-sao-paulo")({
   head: ({ loaderData, matches }) =>
     seoHead({
       pagesSeo: rootPagesSeo(matches),
-      title: "Reforma de cobertura em São Paulo | Projeto, obra e mobília — Bewild",
+      title: "Reforma de cobertura em São Paulo: projeto, obra e mobília",
       description: "Reforma completa de cobertura em São Paulo: projeto 3D, obra, terraço, marcenaria e mobília em um contrato, com preço fechado, prazo e 5 anos de garantia.",
       path: "/reforma-de-cobertura-sao-paulo",
       jsonLd: loaderData?.jsonLd ?? null,
