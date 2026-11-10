@@ -11,3 +11,4 @@
 .es-cta:hover{background:#0c2744}
 .es-cta:focus-visible{outline:3px solid #2F86B8;outline-offset:2px}
 .rc-note a{color:#11355B;text-decoration:underline}
+.es-intro a{color:#11355B;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}

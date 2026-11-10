@@ -28,6 +28,8 @@ export default function ColetasRadarPage({ data: initialData }: { data: RadarCol
     title: "Coletas do Radar Bewild por bairro | Bewild",
     description: "Histórico público das coletas de diária média do Radar Bewild em cada bairro de São Paulo.",
     canonicalPath: "/coletas-por-bairro",
+    // Mesmo robots do HTML do servidor (src/routes/coletas-por-bairro.tsx).
+    noindex: true,
     ogType: "website",
   });
   const navigate = useNavigate();

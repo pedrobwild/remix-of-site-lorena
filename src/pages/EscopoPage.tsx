@@ -13,6 +13,16 @@ import {
 } from "@/lib/escopoCalc";
 import { LIMITES, parseNumeroBR } from "@/lib/reformaCalc";
 import { useSeo } from "@/lib/useSeo";
+import { ESCOPO_DESCRIPTION, ESCOPO_PATH, ESCOPO_TITLE } from "@/content/pages/escopo.seo";
+import {
+  ESCOPO_CONTRATO,
+  ESCOPO_ENTRA,
+  ESCOPO_FAIXAS,
+  ESCOPO_FAIXAS_FONTE,
+  ESCOPO_FAQ,
+  ESCOPO_NAO_ENTRA,
+  type EscopoItem,
+} from "@/content/pages/escopo";
 import "@/styles/post.css";
 import "@/styles/calculadora.css";
 import "@/styles/escopo.css";
@@ -26,7 +36,25 @@ const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL",
  * artigo, ver src/lib/escopoCalc.ts). Escopo parcial não tem faixa publicada.
  * O fim do fluxo leva a /orcamento com as respostas na URL (nada é enviado
  * daqui: o lead só nasce no pedido de orçamento).
+ *
+ * Conteúdo próprio no HTML do servidor (D4 do Pedro, auditoria de SEO rodada
+ * 4, 09/11/2026; antes eram 403 palavras sem FAQPage): o que entra e o que não
+ * entra, o que fica no contrato, faixas por metragem do Índice e FAQ, tudo de
+ * src/content/pages/escopo.ts. Papel da página: entender e montar o escopo;
+ * custo da base inteira é do Índice e o valor do imóvel, do orçamento.
  */
+
+function ListaEscopo({ itens }: { itens: EscopoItem[] }) {
+  return (
+    <ul>
+      {itens.map(({ item, detalhe }) => (
+        <li key={item}>
+          <strong>{item}.</strong> {detalhe}
+        </li>
+      ))}
+    </ul>
+  );
+}
 export default function EscopoPage() {
   const uid = useId();
   const [area, setArea] = useState("28");
@@ -35,10 +63,9 @@ export default function EscopoPage() {
   const [itens, setItens] = useState<ItemEscopoId[]>([...IDS_ITENS]);
 
   useSeo({
-    title: "Escopo da reforma e faixa de investimento por m² | Bewild",
-    description:
-      "Responda 4 perguntas, monte o escopo da reforma do seu studio ou apartamento em SP e veja a faixa de investimento por metragem nos contratos Bewild.",
-    canonicalPath: "/escopo",
+    title: ESCOPO_TITLE,
+    description: ESCOPO_DESCRIPTION,
+    canonicalPath: ESCOPO_PATH,
     ogType: "website",
   });
 
@@ -67,10 +94,13 @@ export default function EscopoPage() {
         <section className="pt-hero">
           <div className="container">
             <div className="pt-cat">Escopo · Bewild</div>
-            <h1 className="pt-title">Monte o escopo da sua reforma.</h1>
-            <p className="pt-excerpt">
-              Responda quatro perguntas e veja o que entra no projeto e quanto costuma custar por metragem. Depois, leve
-              o resumo para o pedido de orçamento.
+            <h1 className="pt-title">Escopo da reforma: o que entra e como montar o seu.</h1>
+            <p className="pt-excerpt es-intro">
+              Orçamento só se compara com o mesmo escopo: um preço sem marcenaria, mobília ou documentação do
+              condomínio é outro serviço. Aqui você vê o que entra e o que não entra na reforma completa da Bewild e
+              monta o seu escopo em quatro perguntas. O custo por m² da base inteira está no{" "}
+              <a href="/indice-de-custo-de-reforma">Índice Bewild de custo de reforma</a>; o valor do seu imóvel sai
+              no <a href="/orcamento">pedido de orçamento</a>.
             </p>
           </div>
         </section>
@@ -173,7 +203,7 @@ export default function EscopoPage() {
                       <p>Marque ao menos um item.</p>
                     )}
                     {objetivo === "Short stay" ? (
-                      <p>Para short stay, o enxoval e os eletrodomésticos entram no escopo.</p>
+                      <p>Para short stay, o imóvel sai pronto para anunciar: enxoval e utensílios entram na reforma completa.</p>
                     ) : null}
                     <p>
                       Imóvel: {estado.toLowerCase()}. O estado muda o que precisa ser refeito; o time confirma na visita
@@ -207,21 +237,81 @@ export default function EscopoPage() {
         <section className="pt-body-section">
           <div className="container">
             <div className="pt-body">
+              <h2>O que entra na reforma completa</h2>
+              <p>
+                Um contrato só, do contrapiso ao imóvel pronto. É o escopo que as faixas de preço desta página e do
+                Índice cobrem:
+              </p>
+              <ListaEscopo itens={ESCOPO_ENTRA} />
+
+              <h2>O que fica por escrito no contrato</h2>
+              <ListaEscopo itens={ESCOPO_CONTRATO} />
+
+              <h2>O que não entra</h2>
+              <ListaEscopo itens={ESCOPO_NAO_ENTRA} />
+
+              <h2>Quanto custa por faixa de metragem</h2>
+              <p>{ESCOPO_FAIXAS_FONTE}</p>
+              <div className="pt-table">
+                <div className="pt-table-wrap" tabIndex={0} role="region" aria-label="Orçamento por faixa de metragem">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th scope="col">Metragem</th>
+                        <th scope="col">Contratos</th>
+                        <th scope="col">Orçamento mediano</th>
+                        <th scope="col">Metade do meio</th>
+                        <th scope="col">Mediana por m²</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {ESCOPO_FAIXAS.map((f) => (
+                        <tr key={f.faixa}>
+                          <th scope="row">{f.faixa}</th>
+                          <td>{f.contratos}</td>
+                          <td>{f.orcamentoMediano}</td>
+                          <td>{f.metadeDoMeio}</td>
+                          <td>{f.m2Mediano}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <p>
+                Metade do meio: metade dos contratos de cada faixa ficou entre esses dois valores. Método, regra de
+                bolso e a tabela em CSV estão no{" "}
+                <a href="/indice-de-custo-de-reforma">Índice Bewild de custo de reforma</a>.
+              </p>
+
+              <h2>Escopo, Índice ou orçamento: qual página usar</h2>
+              <ul>
+                <li>
+                  <strong>Esta página.</strong> Entender o que entra na reforma completa e montar o seu escopo em
+                  quatro perguntas.
+                </li>
+                <li>
+                  <strong>
+                    <a href="/indice-de-custo-de-reforma">Índice Bewild de custo de reforma</a>.
+                  </strong>{" "}
+                  O custo por m² da base inteira, com tabela por metragem, método e CSV.
+                </li>
+                <li>
+                  <strong>
+                    <a href="/orcamento">Pedido de orçamento</a>.
+                  </strong>{" "}
+                  O valor do seu imóvel, fechado na proposta com memorial item a item antes de a obra começar. O
+                  orçamento é gratuito.
+                </li>
+              </ul>
+
               <h2>Perguntas frequentes</h2>
-              <h3>De onde vem a faixa?</h3>
-              <p>
-                Dos contratos de reforma completa da Bewild: projeto, obra, marcenaria, mobiliário e eletrodomésticos. A
-                faixa por m² é a metade central desses contratos.
-              </p>
-              <h3>Por que a metragem pesa tanto?</h3>
-              <p>
-                O preço é por m², mas cozinha e banheiro custam o mesmo em qualquer metragem. Em imóveis muito pequenos o
-                valor por m² tende a ficar acima da mediana.
-              </p>
-              <h3>E se eu quiser só parte do serviço?</h3>
-              <p>
-                Escolha os itens e peça o orçamento: ele calcula o seu escopo. Só publicamos faixa para a reforma completa.
-              </p>
+              {ESCOPO_FAQ.map(({ q, a }) => (
+                <div key={q}>
+                  <h3>{q}</h3>
+                  <p>{a}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>

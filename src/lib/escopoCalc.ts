@@ -14,7 +14,7 @@ export type ItemEscopoId = "projeto" | "obra" | "marcenaria" | "mobiliario" | "e
 /** Itens que a faixa por m² cobre. A ordem é a da jornada: projeto → obra → entrega. */
 export const ITENS_ESCOPO: ReadonlyArray<{ id: ItemEscopoId; nome: string; detalhe: string }> = [
   { id: "projeto", nome: "Projeto 3D e executivo", detalhe: "Maquete aprovada por você e plantas com cada material e acabamento." },
-  { id: "obra", nome: "Obra completa", detalhe: "Elétrica, hidráulica, revestimentos, pintura e a documentação do condomínio (ART e plano da NBR 16280)." },
+  { id: "obra", nome: "Obra completa", detalhe: "Elétrica, hidráulica, revestimentos, pintura e a documentação do condomínio (RRT e plano da NBR 16280)." },
   { id: "marcenaria", nome: "Marcenaria sob medida", detalhe: "Feita pela marcenaria da Bewild, a partir do projeto executivo." },
   { id: "mobiliario", nome: "Mobiliário", detalhe: "Móveis soltos e decoração definidos no projeto." },
   { id: "eletro", nome: "Eletrodomésticos", detalhe: "Os que o projeto prevê, comprados e instalados pela Bewild." },
