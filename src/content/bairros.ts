@@ -7,10 +7,22 @@
  * (GuestFavorites jan–set/2026 — Pinheiros, Moema e Vila Mariana conferidos em 13/10/2026; demais jan–ago/2026), o Índice Bewild de outubro de 2026 para custo e a geografia do
  * bairro. Bairro sem entrada aqui mostra só a lista de projetos.
  *
+ * Rodada 4 da auditoria de SEO (09/11/2026, ação 6): as buscas "orçamento de
+ * reforma completa de apartamento em <bairro>" caíam no artigo "por bairro".
+ * Cada página abre com a faixa de custo da cidade (FAIXA_CUSTO_SP) e o botão
+ * para /orcamento, e o FAQ passou de 3 para 6 perguntas de orçamento e
+ * decisão: custo (referência da cidade), uma pergunta própria do bairro, prazo,
+ * como pedir orçamento, quem a Bewild atende (só São Paulo capital, só
+ * apartamento com até 15 anos de uso) e dono que mora fora. Bela Vista ganhou
+ * entrada própria. Nenhuma contagem de projetos por bairro é escrita aqui.
+ *
  * As contagens de projetos vêm do banco na hora de renderizar; aqui ficam só
  * as frases que não mudam quando um projeto entra ou sai.
  */
-import { REFERENCIA_CUSTO_BAIRROS } from "@/content/baseCusto";
+import { BASE_CUSTO, CUSTO_M2_MEDIANO, REFERENCIA_CUSTO_BAIRROS, STUDIO_TABELA_VIGENTE, brl } from "@/content/baseCusto";
+import { INDICE_EDICAO } from "@/content/indiceCusto";
+import { CLIENTES_FORA_DA_CAPITAL_PCT } from "@/content/provas";
+import { noBairro } from "@/lib/bairroSeo";
 
 export type BairroFaq = { q: string; a: string };
 export type BairroPost = { href: string; label: string };
@@ -20,6 +32,17 @@ export type BairroContent = {
   faq: BairroFaq[];
   posts: BairroPost[];
 };
+
+/**
+ * Faixa de custo do topo de toda página de bairro: a metade do meio dos
+ * contratos do Índice (1º ao 3º quartil de BASE_CUSTO). É a referência da
+ * CIDADE, com base, edição e exclusões, nunca uma mediana do bairro.
+ */
+export const FAIXA_CUSTO_SP = {
+  rotulo: "Referência de São Paulo",
+  faixa: `${brl(BASE_CUSTO.m2P25)} a ${brl(BASE_CUSTO.m2P75)} por m²`,
+  texto: `Metade dos ${BASE_CUSTO.contratos} contratos de reforma completa de studios e apartamentos compactos do Índice Bewild de custo de reforma, edição de ${INDICE_EDICAO}, ficou nessa faixa; a mediana é ${CUSTO_M2_MEDIANO} por m², com projeto, obra, marcenaria, mobiliário e eletrodomésticos. São valores dos contratos na assinatura, sem aditivos. É a base da cidade, não uma mediana do bairro: o preço do seu apartamento sai fechado na proposta.`,
+} as const;
 
 const PILAR = {
   href: "/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2",
@@ -37,25 +60,62 @@ const FORA_SP = {
   label: "Reformar um studio em São Paulo morando em outra cidade",
 };
 
+const { prazo: PRAZO_VIGENTE } = STUDIO_TABELA_VIGENTE;
 const PRAZO_FAQ =
-  "Cerca de 60 dias úteis de obra para studios e apartamentos compactos de até 30 m², com a data de entrega em contrato e multa por dia de atraso. Metragens maiores ou integração de varanda levam mais; o cronograma por etapa é definido antes de a obra começar.";
+  `A data de entrega fica escrita no contrato, com multa por dia de atraso, e a contagem começa 5 dias úteis depois do projeto aprovado e da autorização do condomínio. Um studio de até ${PRAZO_VIGENTE.areaMaxM2} m² sem integração da varanda leva até ${PRAZO_VIGENTE.diasUteisMax} dias úteis de obra; metragens maiores ou integração de varanda levam mais, e o cronograma por etapa é definido antes de a obra começar.`;
 
 const CUSTO_FAQ_CIDADE =
   `${REFERENCIA_CUSTO_BAIRROS} O bairro pesa menos no preço do que a metragem e o padrão de acabamento; a tabela por metragem e a fórmula de bolso estão no guia de custo da Bewild.`;
 const CONDOMINIO_FAQ =
-  "Antes de a obra começar, a Bewild entrega ao síndico o plano de reforma exigido pela NBR 16280, com ART ou RRT do responsável técnico, cronograma e horários de trabalho dentro do que a convenção permite. Em prédio novo, também conferimos o padrão de envidraçamento da varanda e a infraestrutura de ar-condicionado prevista pela construtora.";
+  "Antes de a obra começar, a Bewild entrega ao síndico o plano de reforma exigido pela NBR 16280, com o RRT do responsável técnico, cronograma e horários de trabalho dentro do que a convenção permite. Em prédio novo, também conferimos o padrão de envidraçamento da varanda e a infraestrutura de ar-condicionado prevista pela construtora.";
 const HIS_HMP = { href: "/conteudos/studio-his-ou-hmp-o-que-fazer", label: "Studio HIS ou HMP: o que fazer" };
 const VARANDA = { href: "/conteudos/fechar-varanda-em-vidro-studio-condominio", label: "Fechar varanda com vidro: custo e regra do condomínio" };
 const COMPARAR = { href: "/conteudos/como-comparar-orcamentos-de-reforma", label: "Como comparar orçamentos de reforma" };
 const ANTIGO = { href: "/conteudos/reforma-de-apartamento-antigo-sao-paulo", label: "Reforma de apartamento antigo em São Paulo" };
 const APTO_SP = { href: "/reforma-de-apartamento-sao-paulo", label: "Reforma de apartamento em São Paulo" };
 
+/** Prazo: em contrato, contado a partir do projeto aprovado e da autorização do condomínio. */
+function prazoFaq(label: string): BairroFaq {
+  return { q: `Quanto tempo leva a reforma de um apartamento ${noBairro(label)}?`, a: PRAZO_FAQ };
+}
+
+/** Como pedir orçamento: as etapas do formulário de /orcamento e o que vem depois. */
+function orcamentoFaq(label: string): BairroFaq {
+  return {
+    q: `Como pedir orçamento de reforma completa de apartamento ${noBairro(label)}?`,
+    a: "Pelo formulário de orçamento do site, em quatro etapas: bairro e metragem, objetivo (short stay, locação, morar ou uso misto), situação do imóvel e contato. Um especialista da Bewild responde pelo WhatsApp em até um dia útil com a faixa de investimento do seu apartamento. A visita técnica e a proposta não têm custo nem compromisso. A proposta fechada, com projeto 3D e memorial item a item, depende da visita e das revisões do estudo de layout, em geral de uma a três semanas; se a obra custar mais do que o contrato, a diferença é da Bewild.",
+  };
+}
+
+/** Quem a Bewild atende: só São Paulo capital e só apartamento com até 15 anos de uso. */
+function atendeFaq(label: string, nota = ""): BairroFaq {
+  return {
+    q: `A Bewild atende qualquer apartamento ${noBairro(label)}?`,
+    a: `O bairro está na área: a Bewild executa obras só na cidade de São Paulo. Mas não qualquer imóvel: a Bewild reforma studios e apartamentos recém-entregues, ainda no contrapiso, ou com até 15 anos de uso. Apartamento com mais de 15 anos fica fora do atendimento, assim como obras na Grande São Paulo e no interior.${nota ? ` ${nota}` : ""}`,
+  };
+}
+
+/** Dono que mora fora da capital: a maioria dos clientes. */
+function foraFaq(label: string, depois = ""): BairroFaq {
+  return {
+    q: `Dá para reformar ${noBairro(label)} morando em outra cidade?`,
+    a: `Dá, e é o caso de ${CLIENTES_FORA_DA_CAPITAL_PCT}% dos clientes da Bewild, que moram fora da capital.${depois} Vistoria por procuração, ligação de energia, instalação de internet e atendimento de emergências ficam com a Bewild, e você acompanha projeto e obra pelo Bwild Workflow, com cronograma, fotos e relatórios semanais.`,
+  };
+}
+
+/** As quatro perguntas comuns, depois do custo e da pergunta própria do bairro. */
+function faqDecisao(label: string, opts: { atendeNota?: string; foraDepois?: string } = {}): BairroFaq[] {
+  return [prazoFaq(label), orcamentoFaq(label), atendeFaq(label, opts.atendeNota), foraFaq(label, opts.foraDepois)];
+}
+
+const SEDE = "Rua Pitu 72, sala 115";
+
 export const BAIRROS_CONTENT: Record<string, BairroContent> = {
   pinheiros: {
     intro: [
-      "Pinheiros é o bairro onde a Bewild mais reformou: são studios e apartamentos compactos de 21,43 a 41,14 m², em prédios como Do It Pinheiros, Highlights Pinheiros, My One Estação Fradique Coutinho, Spotlights Pinheiros e Pinheiros by Passarelli. Dos nove contratos de 2025 no bairro, sete foram para short stay, e cinco clientes moram fora da capital: acompanharam a obra pelo Bwild Workflow e receberam o apartamento pronto.",
+      "Pinheiros divide com o Brooklin o primeiro lugar em contratos Bewild de 2025: nove em cada bairro. Aqui são studios e apartamentos compactos de 21,43 a 41,14 m², em prédios como Do It Pinheiros, Highlights Pinheiros, My One Estação Fradique Coutinho, Spotlights Pinheiros e Pinheiros by Passarelli. Desses nove contratos, sete foram para short stay, e cinco clientes moram fora da capital: acompanharam a obra pelo Bwild Workflow e receberam o apartamento pronto.",
       "O bairro junta metrô (estações Faria Lima, Fradique Coutinho e Pinheiros, da Linha 4-Amarela, além da CPTM), os escritórios da Faria Lima e a gastronomia da Rua dos Pinheiros e da Vila Madalena, ao lado. No levantamento da GuestFavorites de 2026, Pinheiros tem 62% de ocupação mediana, diária média de R$ 300 e 2.424 anúncios ativos: a combinação mais equilibrada entre diária, ocupação e demanda o ano inteiro.",
-      `${REFERENCIA_CUSTO_BAIRROS} Em prédio novo, vale conferir na convenção duas coisas antes de fechar o escopo: o padrão de envidraçamento da varanda e a infraestrutura de ar-condicionado.`,
+      "O que muda o orçamento em Pinheiros é a metragem e o padrão de acabamento, não o endereço: cozinha, banheiro e marcenaria custam parecido em qualquer prédio do bairro, e por isso o studio de 21 m² paga mais por m² que o de 41 m². Em prédio novo, vale conferir na convenção duas coisas antes de fechar o escopo: o padrão de envidraçamento da varanda e a infraestrutura de ar-condicionado. A proposta sai com preço fechado e memorial item a item; se a obra custar mais do que o combinado, a diferença é da Bewild.",
     ],
     faq: [
       {
@@ -66,15 +126,33 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
         q: "Pinheiros vale para short stay?",
         a: "No levantamento da GuestFavorites (janeiro a setembro de 2026), o bairro tem 62% de ocupação mediana e diária média de R$ 300, com demanda de quem trabalha na Faria Lima durante a semana e de turistas no fim de semana. O que decide é o prédio: a convenção precisa permitir locação por temporada.",
       },
-      { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
+      ...faqDecisao("Pinheiros", { foraDepois: " Em Pinheiros, cinco dos nove clientes de 2025 moram fora da capital." }),
     ],
     posts: [BAIRROS_POST, PILAR, FORA_SP, { href: "/conteudos/fechar-varanda-em-vidro-studio-condominio", label: "Fechar varanda com vidro: custo e regra do condomínio" }],
+  },
+  "bela-vista": {
+    intro: [
+      "Na Bela Vista a Bewild tem projetos de 24,12 a 37 m² em prédios como Metro Casa 9 de Julho, Next One Arthur Prado e Citzy Paulista. O bairro fica entre a Avenida Paulista e o centro, cortado pela Avenida 9 de Julho, com o Bixiga e as cantinas da Rua Treze de Maio; a Linha 2-Verde do metrô passa pela Paulista, no limite do bairro, com as estações Brigadeiro e Trianon–Masp.",
+      "No levantamento da GuestFavorites de 2026, a Bela Vista tem 64% de ocupação mediana e diária média de R$ 237: a maior ocupação entre os bairros em volta da Paulista, com diária abaixo da de Jardim Paulista (R$ 319). A demanda vem de pacientes e acompanhantes do Hospital Sírio-Libanês e da Beneficência Portuguesa, de turistas da Paulista e do Bixiga e de quem trabalha na região durante a semana.",
+      "Nos studios de 24 a 30 m², o projeto resolve cozinha, trabalho e descanso numa planta só, com marcenaria sob medida; perto de 37 m², sobra espaço para separar o canto de dormir. O que mais pesa no orçamento é a metragem e o padrão de acabamento, não o bairro. Parte dos prédios da Bela Vista é antiga, e a Bewild reforma só unidades recém-entregues ou com até 15 anos de uso, que no bairro são os lançamentos compactos dos últimos anos. Antes de comprar, confira se a unidade não é HIS ou HMP e se a convenção permite locação por temporada.",
+    ],
+    faq: [
+      { q: "Quanto custa reformar um studio na Bela Vista?", a: CUSTO_FAQ_CIDADE },
+      {
+        q: "Bela Vista vale para short stay?",
+        a: "No levantamento da GuestFavorites (janeiro a agosto de 2026), o bairro tem 64% de ocupação mediana e diária média de R$ 237, com demanda dos hospitais, do turismo na Paulista e no Bixiga e de quem trabalha na região. O que decide é o prédio: a convenção precisa permitir locação por temporada, e unidades HIS ou HMP não podem operar.",
+      },
+      ...faqDecisao("Bela Vista", {
+        atendeNota: "No bairro, prédios antigos convivem com lançamentos compactos, e só os lançamentos entram.",
+      }),
+    ],
+    posts: [BAIRROS_POST, PILAR, HIS_HMP, SHORT_STAY],
   },
   butanta: {
     intro: [
       "No Butantã, a Bewild entregou studios de 23,61 a 29,35 m² em prédios como Ari Studios, Green View, Modern Estação Butantã e Now Butantã, quase todos a poucas quadras das estações Butantã e São Paulo–Morumbi, da Linha 4-Amarela.",
       "É o bairro com a demanda mais constante e a menor oferta entre os que a Bewild atende: 61% de ocupação mediana, diária média de R$ 276 e só 373 anúncios ativos no levantamento da GuestFavorites de 2026, puxados pela USP e pelo polo hospitalar da região. Foi aqui que um studio reformado pela Bewild fechou novembro com 70% de ocupação no Airbnb.",
-      `Antes de comprar ou reformar, confira a documentação: parte dos lançamentos da região é HIS ou HMP, classificações que não permitem locação por temporada. ${REFERENCIA_CUSTO_BAIRROS}`,
+      "Antes de comprar ou reformar, confira a documentação: parte dos lançamentos da região é HIS ou HMP, classificações que não permitem locação por temporada. Nos studios de 23 a 30 m² entregues aqui, o que mais pesa no orçamento é a metragem e o padrão de acabamento, não o bairro.",
     ],
     faq: [
       {
@@ -85,7 +163,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
         q: "Meu studio no Butantã pode operar short stay?",
         a: "Depende da classificação da unidade e da convenção do prédio. Unidades HIS e HMP, comuns na região, não podem ser alugadas por temporada; confira a documentação do imóvel e a convenção antes de comprar.",
       },
-      { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
+      ...faqDecisao("Butantã"),
     ],
     posts: [
       BAIRROS_POST,
@@ -96,9 +174,9 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
   },
   brooklin: {
     intro: [
-      "No Brooklin a Bewild entregou apartamentos de 21,59 a 37,38 m² em prédios como Hub Brooklin by EZ, Level Brooklin, My One Brooklin, Zip Brooklin e Brooklin Noventa. É também o bairro do escritório da Bewild, na Rua Pitú.",
+      `No Brooklin a Bewild entregou apartamentos de 21,59 a 37,38 m² em prédios como Hub Brooklin by EZ, Level Brooklin, My One Brooklin, Zip Brooklin e Brooklin Noventa. É também o bairro da sede da Bewild, na ${SEDE}.`,
       "A região da Berrini e da Chucri Zaidan é o eixo corporativo da zona sul, com a estação Brooklin da Linha 5-Lilás e a Berrini da CPTM; a demanda vem de quem trabalha ali durante a semana. O levantamento de mercado da GuestFavorites não tem página para o Brooklin, então o que a Bewild sabe vem dos próprios contratos: nove em 2025, todos para short stay, o mesmo número de Pinheiros.",
-      `${REFERENCIA_CUSTO_BAIRROS} Os prédios são novos e as plantas, parecidas entre si; o projeto de interiores é o que diferencia o anúncio.`,
+      "Os prédios são novos e as plantas, parecidas entre si: o projeto de interiores é o que diferencia o anúncio, e o que mais pesa no orçamento é a metragem e o padrão de acabamento, não o endereço. A proposta sai com preço fechado e memorial item a item, e a data de entrega fica escrita no contrato, com multa por dia de atraso.",
     ],
     faq: [
       {
@@ -106,10 +184,10 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
         a: CUSTO_FAQ_CIDADE,
       },
       {
-        q: "Dá para reformar no Brooklin morando em outra cidade?",
-        a: "Sim. Vistoria por procuração, ligação de energia, instalação de internet e atendimento de emergências ficam com a Bewild, e você acompanha a obra pelo Bwild Workflow, com relatórios semanais e fotos.",
+        q: "A Bewild tem escritório no Brooklin?",
+        a: `Tem: a sede da Bewild fica na ${SEDE}, no Brooklin. Foram nove contratos no bairro em 2025, todos para short stay, em prédios como Hub Brooklin by EZ, Level Brooklin, My One Brooklin e Zip Brooklin.`,
       },
-      { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
+      ...faqDecisao("Brooklin"),
     ],
     posts: [BAIRROS_POST, PILAR, FORA_SP, PRAZO],
   },
@@ -128,7 +206,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
         q: "Campo Belo vale para short stay?",
         a: "No levantamento da GuestFavorites (janeiro a agosto de 2026), o bairro tem 60% de ocupação mediana e diária média de R$ 233, com a demanda de quem chega ou sai por Congonhas. Os três contratos Bewild no bairro em 2025 foram para short stay.",
       },
-      { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
+      ...faqDecisao("Campo Belo"),
     ],
     posts: [
       BAIRROS_POST,
@@ -140,8 +218,8 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
   consolacao: {
     intro: [
       "Na Consolação a Bewild tem os menores apartamentos do portfólio, de 17,23 a 25 m², em prédios como Urban Flex, Maceió 88 by You Inc e Sergipe Boutique Apartments by You; parte deles ainda em fase de projeto.",
-      "É o centro expandido em torno da Avenida Paulista, com as estações Consolação (Linha 2-Verde), Paulista e Higienópolis–Mackenzie (Linha 4-Amarela) e o Mackenzie. No levantamento da GuestFavorites de 2026, o bairro tem a maior ocupação mediana entre os que a Bewild acompanha, 63%, com diária média de R$ 269 e 1.612 anúncios: muitas reservas curtas, de estudantes, pacientes e turistas.",
-      "Parte dos prédios é antiga, e nesses a convenção precisa ser lida com atenção antes da compra: nem todos permitem locação por temporada, e a parte elétrica e hidráulica pode pedir mais obra do que num lançamento. Nos lançamentos de 17 a 25 m², o projeto de interiores é o que faz a metragem render.",
+      "É o centro expandido em torno da Avenida Paulista, com as estações Consolação (Linha 2-Verde), Paulista e Higienópolis–Mackenzie (Linha 4-Amarela) e o Mackenzie. No levantamento da GuestFavorites de 2026, o bairro tem uma das maiores ocupações medianas entre os que a Bewild acompanha, 63%, com diária média de R$ 269 e 1.612 anúncios: muitas reservas curtas, de estudantes, pacientes e turistas.",
+      "Parte dos prédios do bairro é antiga, e a Bewild reforma só unidades recém-entregues ou com até 15 anos de uso: aqui, os lançamentos compactos de 17 a 25 m². Neles, o projeto de interiores é o que faz a metragem render, e a convenção precisa ser lida antes da compra, porque nem todo prédio permite locação por temporada.",
     ],
     faq: [
       {
@@ -149,26 +227,30 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
         a: `${REFERENCIA_CUSTO_BAIRROS} Em studios de 17 a 25 m² o valor por m² tende a ficar acima disso, porque cozinha e banheiro custam o mesmo em qualquer metragem.`,
       },
       {
-        q: "Prédio antigo na Consolação: dá para reformar para short stay?",
-        a: "Dá, desde que a convenção permita locação por temporada e a reforma siga a NBR 16280, com plano de reforma e ART ou RRT entregues ao síndico. Em prédio antigo, a parte elétrica e hidráulica costuma entrar no escopo, definido na medição técnica, antes de o preço fechar.",
+        q: "Consolação vale para short stay?",
+        a: "No levantamento da GuestFavorites (janeiro a agosto de 2026), o bairro tem 63% de ocupação mediana, diária média de R$ 269 e 1.612 anúncios, com muitas reservas curtas de estudantes, pacientes e turistas. O que decide é o prédio: a convenção precisa permitir locação por temporada.",
       },
-      { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
+      ...faqDecisao("Consolação", {
+        atendeNota: "No bairro, prédios antigos convivem com lançamentos compactos, e só os lançamentos entram.",
+      }),
     ],
     posts: [BAIRROS_POST, NBR, PILAR, SHORT_STAY],
   },
   higienopolis: {
     intro: [
       "Em Higienópolis a Bewild reformou studios e apartamentos de 23 a 31,67 m² em prédios como Maceió 88, Elements Higienópolis e Aria Higienópolis. É um dos bairros mais tradicionais de São Paulo, com o Mackenzie, o Pátio Higienópolis e a estação Higienópolis–Mackenzie, da Linha 4-Amarela, a poucas quadras.",
-      "O bairro mistura prédios antigos de apartamentos grandes com lançamentos compactos recentes. Nos compactos novos, a planta é parecida de um prédio para o outro, e é o projeto de interiores — marcenaria sob medida, iluminação e a escolha do que não mexer — que faz a metragem render. Nos antigos, a parte elétrica e hidráulica costuma entrar no escopo, definido na medição técnica antes de o preço fechar.",
+      "O bairro mistura prédios antigos de apartamentos grandes com lançamentos compactos recentes. Nos compactos novos, a planta é parecida de um prédio para o outro, e é o projeto de interiores — marcenaria sob medida, iluminação e a escolha do que não mexer — que faz a metragem render. Os antigos ficam fora: a Bewild reforma só unidades recém-entregues ou com até 15 anos de uso.",
       "A demanda vem de quem estuda ou trabalha na região e de quem busca morar em bairro arborizado e bem servido de comércio a pé. A convenção de cada prédio decide se a unidade pode ser alugada por temporada; é o primeiro documento que lemos antes de desenhar o projeto.",
     ],
     faq: [
       { q: "Quanto custa reformar um apartamento em Higienópolis?", a: CUSTO_FAQ_CIDADE },
       {
-        q: "Prédio antigo em Higienópolis: o que muda na reforma?",
-        a: "Em prédios antigos, a elétrica e a hidráulica costumam entrar no escopo, e a convenção e o regimento interno definem horários de obra e o que pode mudar na fachada. Tudo isso é levantado na medição técnica, antes do preço fechado, para a obra não ter aditivo.",
+        q: "O que o projeto resolve num compacto novo em Higienópolis?",
+        a: "Nos lançamentos de 23 a 31,67 m² do bairro, a planta é parecida de um prédio para o outro: marcenaria sob medida, iluminação e a escolha do que não mexer no que a construtora entregou fazem a metragem render. A convenção de cada prédio decide se a unidade pode ser alugada por temporada; é o primeiro documento que lemos antes de desenhar o projeto.",
       },
-      { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
+      ...faqDecisao("Higienópolis", {
+        atendeNota: "No bairro, prédios antigos convivem com lançamentos compactos, e só os lançamentos entram.",
+      }),
     ],
     posts: [ANTIGO, PILAR, NBR, COMPARAR],
   },
@@ -184,7 +266,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
         q: "Moema vale para short stay?",
         a: "No levantamento da GuestFavorites (janeiro a setembro de 2026), o bairro tem 61% de ocupação mediana, diária média de R$ 263 e 2.621 anúncios ativos. Há demanda o ano inteiro, mas também muita oferta: o anúncio precisa se destacar em foto, layout e avaliações. A convenção do prédio precisa permitir locação por temporada.",
       },
-      { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
+      ...faqDecisao("Moema"),
     ],
     posts: [BAIRROS_POST, PILAR, SHORT_STAY, { href: "/conteudos/o-que-move-reservas-studio-airbnb", label: "O que move as reservas de um studio no Airbnb" }],
   },
@@ -192,7 +274,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
     intro: [
       "No entorno da Avenida Paulista a Bewild reformou studios de 23,28 a 27 m² em prédios como Citzy Paulista, Nik Paulista e The Collection Paulista. A região é servida pelas estações Consolação, Trianon–Masp e Brigadeiro, da Linha 2-Verde, e pela Paulista, da Linha 4-Amarela, com o polo hospitalar, o MASP e os escritórios da avenida a pé.",
       "A Paulista é divisa entre bairros com perfis diferentes: no levantamento da GuestFavorites de 2026, Jardim Paulista tem 62% de ocupação mediana e diária média de R$ 319; Bela Vista, 64% e R$ 237; Consolação, 63% e R$ 269. Muitas reservas curtas, de pacientes, estudantes e turistas, e demanda de quem compra para morar perto do trabalho.",
-      "Nos studios de 23 a 27 m² entregues aqui, o projeto resolve cozinha, trabalho e descanso numa planta só, com marcenaria sob medida e acabamento pensado para a foto do anúncio ou para o dia a dia de quem mora. Em prédio antigo da região, a convenção e as instalações pedem leitura atenta antes do escopo.",
+      "Nos studios de 23 a 27 m² entregues aqui, o projeto resolve cozinha, trabalho e descanso numa planta só, com marcenaria sob medida e acabamento pensado para a foto do anúncio ou para o dia a dia de quem mora. Prédio antigo da região fica fora: a Bewild reforma só unidades recém-entregues ou com até 15 anos de uso.",
     ],
     faq: [
       { q: "Quanto custa reformar um studio perto da Paulista?", a: CUSTO_FAQ_CIDADE },
@@ -200,7 +282,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
         q: "Studio na Paulista vale para short stay?",
         a: "Os bairros em volta da avenida têm as maiores ocupações medianas do levantamento da GuestFavorites de 2026 (62% a 64%), com diárias entre R$ 237 e R$ 319 conforme o lado da avenida. O que decide é o prédio: a convenção precisa permitir locação por temporada, e unidades HIS ou HMP não podem operar.",
       },
-      { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
+      ...faqDecisao("Paulista"),
     ],
     posts: [BAIRROS_POST, PILAR, SHORT_STAY, NBR],
   },
@@ -208,7 +290,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
     intro: [
       "Em Perdizes a Bewild reformou studios de 24 a 29,73 m² em prédios como Cyrela by You Perdizes, Soma Perdizes, Think Tanabi, The Collection PUC e Nex One Estação Perdizes. O bairro tem a PUC-SP, o Allianz Parque e a Avenida Sumaré, e faz divisa com Pompeia, Vila Madalena e Pacaembu.",
       "No levantamento da GuestFavorites de 2026, Perdizes teve a menor ocupação mediana entre os bairros acompanhados, 53%, com diária média de R$ 254 e 1.752 anúncios ativos. Mesmo assim, foi o terceiro bairro em contratos Bewild em 2025: sete, seis deles para short stay. É um bairro em que a qualidade do anúncio separa quem reserva de quem não reserva.",
-      `${REFERENCIA_CUSTO_BAIRROS} Parte dos lançamentos da região é HIS ou HMP, classificações que não permitem locação por temporada; isso precisa ser conferido na documentação antes da compra.`,
+      "Nos studios de 24 a 30 m² entregues aqui, o que mais pesa no orçamento é a metragem e o padrão de acabamento, não o bairro. Parte dos lançamentos da região é HIS ou HMP, classificações que não permitem locação por temporada; isso precisa ser conferido na documentação antes da compra.",
     ],
     faq: [
       {
@@ -219,7 +301,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
         q: "Perdizes vale para short stay?",
         a: "A ocupação mediana do bairro no levantamento da GuestFavorites (53%) é a menor da lista, mas a diária média de R$ 254 e a demanda da PUC e do Allianz Parque sustentam os anúncios bem feitos: seis dos sete contratos Bewild no bairro em 2025 foram para short stay. Confira antes se a unidade não é HIS ou HMP.",
       },
-      { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
+      ...faqDecisao("Perdizes"),
     ],
     posts: [BAIRROS_POST, HIS_HMP, PILAR, { href: "/conteudos/o-que-move-reservas-studio-airbnb", label: "O que move as reservas de um studio no Airbnb" }],
   },
@@ -227,7 +309,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
     intro: [
       "Na República a Bewild reformou apartamentos de 17 a 38,58 m² em prédios como Metrocasa República, Galleria SP e Brasílio 177 — entre eles, um dos menores do portfólio, com 17 m². O bairro é o centro histórico de São Paulo, com a estação República (Linhas 3-Vermelha e 4-Amarela), o Theatro Municipal e a Praça da República.",
       "A região recebeu muitos lançamentos compactos nos últimos anos e tem demanda de quem trabalha no centro e de turistas, com diárias menores que as da Paulista e da zona oeste. Em plantas de 17 a 25 m², cada centímetro é decidido em projeto: cama, cozinha, trabalho e armazenamento precisam caber sem apertar.",
-      "Prédios antigos convivem com lançamentos: nos antigos, elétrica, hidráulica e convenção entram na leitura antes do escopo; nos novos, o que mais muda o orçamento é o padrão de acabamento e o que não precisa ser trocado do que a construtora entregou.",
+      "Prédios antigos convivem com lançamentos, e a Bewild reforma só os lançamentos: unidades recém-entregues ou com até 15 anos de uso. Neles, o que mais muda o orçamento é o padrão de acabamento e o que não precisa ser trocado do que a construtora entregou.",
     ],
     faq: [
       { q: "Quanto custa reformar um studio na República?", a: CUSTO_FAQ_CIDADE },
@@ -235,7 +317,9 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
         q: "Dá para fazer um studio de 17 m² funcionar?",
         a: "Dá, com projeto. A Bewild já reformou unidades de 17 m² no centro: a marcenaria sob medida resolve cama, armário, bancada de trabalho e cozinha numa planta só, e a iluminação e o acabamento fazem o espaço parecer maior na foto e no uso. O estudo de layout vem antes do orçamento.",
       },
-      { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
+      ...faqDecisao("República", {
+        atendeNota: "No bairro, prédios antigos convivem com lançamentos compactos, e só os lançamentos entram.",
+      }),
     ],
     posts: [{ href: "/conteudos/estudo-de-layout-studio-25-m2", label: "Estudo de layout de um studio de 25 m²" }, PILAR, ANTIGO, SHORT_STAY],
   },
@@ -248,10 +332,10 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
     faq: [
       { q: "Quanto custa reformar um studio em Santo Amaro?", a: CUSTO_FAQ_CIDADE },
       {
-        q: "Dá para reformar em Santo Amaro morando em outra cidade?",
-        a: "Sim. Vistoria por procuração, ligação de energia, instalação de internet e atendimento de emergências ficam com a Bewild, e você acompanha a obra pelo Bwild Workflow, com relatórios semanais e fotos. O escritório da Bewild fica no Brooklin, a poucos minutos.",
+        q: "O escritório da Bewild fica perto de Santo Amaro?",
+        a: `Fica: a sede da Bewild é no Brooklin, vizinho, na ${SEDE}.`,
       },
-      { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
+      ...faqDecisao("Santo Amaro"),
     ],
     posts: [PILAR, FORA_SP, PRAZO, SHORT_STAY],
   },
@@ -264,7 +348,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
     faq: [
       { q: "Quanto custa reformar um apartamento na Vila Clementino?", a: CUSTO_FAQ_CIDADE },
       { q: "O que o condomínio exige antes da obra?", a: CONDOMINIO_FAQ },
-      { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
+      ...faqDecisao("Vila Clementino"),
     ],
     posts: [PILAR, NBR, VARANDA, SHORT_STAY],
   },
@@ -280,7 +364,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
         q: "Vila Madalena vale para short stay?",
         a: "O bairro tem demanda de lazer e turismo no fim de semana e de quem trabalha em Pinheiros e na Faria Lima durante a semana; Pinheiros, ao lado, tem 62% de ocupação mediana e diária média de R$ 300 no levantamento da GuestFavorites de 2026. O que decide é o prédio: a convenção precisa permitir locação por temporada.",
       },
-      { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
+      ...faqDecisao("Vila Madalena"),
     ],
     posts: [
       { href: "/conteudos/antes-e-depois-studio-26-m2-vila-madalena", label: "Antes e depois: studio de 26 m² na Vila Madalena" },
@@ -301,7 +385,7 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
         q: "Vila Mariana vale para short stay?",
         a: "No levantamento da GuestFavorites (janeiro a setembro de 2026), o bairro tem 60% de ocupação mediana, diária média de R$ 226 e 2.238 anúncios ativos, com demanda de hospitais, metrô e Ibirapuera. Confira antes se a unidade não é HIS ou HMP e se a convenção permite locação por temporada.",
       },
-      { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
+      ...faqDecisao("Vila Mariana"),
     ],
     posts: [BAIRROS_POST, HIS_HMP, PILAR, APTO_SP],
   },
@@ -317,15 +401,15 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
         q: "Vila Nova Conceição vale para short stay?",
         a: "O bairro não tem página própria no levantamento da GuestFavorites de 2026, mas o Itaim Bibi, vizinho, lidera em receita anual mediana por anúncio (R$ 77.390) com diária média de R$ 359 e 59% de ocupação. A demanda é de executivos e de quem visita a região da Faria Lima. A convenção do prédio precisa permitir locação por temporada.",
       },
-      { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
+      ...faqDecisao("Vila Nova Conceição"),
     ],
     posts: [BAIRROS_POST, PILAR, COMPARAR, SHORT_STAY],
   },
   "vila-olimpia": {
     intro: [
       "Na Vila Olímpia a Bewild reformou studios de 25 a 28 m² em prédios como Do It Vila Olímpia, Vibe Vila Olímpia e Today Faria Lima. O bairro fica entre a Faria Lima e a Berrini, com a estação Vila Olímpia da Linha 9-Esmeralda da CPTM e o Shopping Vila Olímpia.",
-      "É, com o Brooklin, o bairro corporativo da zona sul: a demanda vem de quem trabalha nos escritórios da região durante a semana e procura um studio pronto, silencioso e com boa internet. O levantamento de mercado da GuestFavorites não tem página para a Vila Olímpia; o que a Bewild sabe vem dos próprios contratos: três em 2025, todos para short stay.",
-      `${REFERENCIA_CUSTO_BAIRROS} Os prédios são novos e as plantas, parecidas entre si; o projeto de interiores é o que diferencia o anúncio.`,
+      "É, com o Brooklin, o bairro corporativo da zona sul: a demanda vem de quem trabalha nos escritórios da região durante a semana e procura um studio pronto, silencioso e com boa internet. O levantamento de mercado da GuestFavorites não tem página para a Vila Olímpia; o que a Bewild sabe vem dos próprios contratos: três em 2025, todos para short stay. Um studio reformado pela Bewild no bairro teve 98% de ocupação em setembro, com o selo Preferido dos Hóspedes do Airbnb.",
+      "Em studios de 25 a 28 m², a conta do orçamento é a da metragem e do padrão de acabamento: cozinha, banheiro e marcenaria custam parecido em qualquer prédio do bairro. Os prédios são novos e as plantas, parecidas entre si; o projeto de interiores é o que diferencia o anúncio. A proposta sai com preço fechado e memorial item a item, e a data de entrega fica escrita no contrato.",
     ],
     faq: [
       {
@@ -334,9 +418,9 @@ export const BAIRROS_CONTENT: Record<string, BairroContent> = {
       },
       {
         q: "Vila Olímpia vale para short stay?",
-        a: "Os três contratos Bewild no bairro em 2025 foram para short stay, com demanda de quem trabalha na Faria Lima e na Berrini durante a semana. O levantamento da GuestFavorites não cobre o bairro; a conta de ocupação e diária precisa ser feita com dados do próprio prédio e da gestora. A convenção precisa permitir locação por temporada.",
+        a: "Os três contratos Bewild no bairro em 2025 foram para short stay, com demanda de quem trabalha na Faria Lima e na Berrini durante a semana, e um studio reformado pela Bewild na Vila Olímpia teve 98% de ocupação em setembro. O levantamento da GuestFavorites não cobre o bairro; a conta de ocupação e diária precisa ser feita com dados do próprio prédio e da gestora. A convenção precisa permitir locação por temporada.",
       },
-      { q: "Quanto tempo leva a obra?", a: PRAZO_FAQ },
+      ...faqDecisao("Vila Olímpia"),
     ],
     posts: [BAIRROS_POST, PILAR, FORA_SP, SHORT_STAY],
   },
