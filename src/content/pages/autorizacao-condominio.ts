@@ -17,6 +17,13 @@ import { faqJsonLd } from "@/lib/useSeo";
  */
 export type AutorizacaoItem = { q: string; a: string; href?: string; linkLabel?: string };
 
+/**
+ * Modelo de plano de reforma (Word) servido de `public/modelos/` — o mesmo arquivo
+ * que o artigo da NBR 16280 oferece para download (roadmap de SEO, rodada 4, PR-18).
+ * Caminho com extensão: o interceptador de links deixa o navegador baixar o arquivo.
+ */
+export const MODELO_PLANO_REFORMA_PATH = "/modelos/plano-de-reforma-nbr-16280-modelo.docx";
+
 export const ITENS: AutorizacaoItem[] = [
   {
     q: "Preciso de autorização do condomínio para reformar meu apartamento?",
@@ -27,6 +34,12 @@ export const ITENS: AutorizacaoItem[] = [
     a: "Os pedidos mais comuns são: comunicado prévio com datas de início e fim, ART ou RRT do responsável técnico, comprovante de seguro de responsabilidade civil, definição de horários de obra, uso do elevador de serviço com proteção e forma de retirada de entulho. Alguns prédios pedem também descrição do escopo, com o que será demolido e o que permanece.",
     href: "/conteudos/nbr-16280-reforma-studio-condominio",
     linkLabel: "NBR 16280: o que a norma exige do plano de reforma →",
+  },
+  {
+    q: "O que é o plano de reforma e quem faz?",
+    a: "É o documento que a NBR 16280 pede antes da obra: o que será feito em cada ambiente, quais sistemas do prédio a reforma afeta (estrutura, água, esgoto, elétrica, gás, impermeabilização), como cada risco será controlado, cronograma, equipe e destino do entulho. Quem elabora e assina é um engenheiro, com ART, ou um arquiteto, com RRT; o proprietário entrega ao síndico junto com a ART ou o RRT, antes de a obra começar.",
+    href: MODELO_PLANO_REFORMA_PATH,
+    linkLabel: "Baixar o modelo de plano de reforma (Word) →",
   },
   {
     q: "Como pedir a autorização de reforma ao condomínio?",
