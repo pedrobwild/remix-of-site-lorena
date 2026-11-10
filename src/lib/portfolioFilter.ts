@@ -197,6 +197,100 @@ export function neighborhoodSlug(value: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+/* ===================== Projetos relacionados ===================== */
+
+/**
+ * Bloco "Projetos no mesmo bairro" da página de projeto (auditoria de SEO,
+ * rodada 4, 09/11/2026, ação 14): o portfólio tem 158 URLs e 112 delas
+ * recebiam até 3 links internos; a página de projeto não listava nenhum outro.
+ *
+ * Regra (pura e determinística: a mesma lista, em qualquer ordem, dá sempre o
+ * mesmo resultado, para o bloco não mudar a cada visita):
+ * 1. vizinhos do mesmo bairro (mesma chave de `neighborhoodSlug`), em ANEL:
+ *    os que vêm depois do projeto na ordem alfabética do slug, voltando ao
+ *    começo. Assim cada projeto de um bairro com 5+ projetos recebe links dos
+ *    4 anteriores, em vez de os mesmos 4 levarem todos os links;
+ * 2. faltando vizinhos, completa com a metragem mais próxima (empate desfeito
+ *    pelo mesmo anel de slug, agora sobre a lista toda);
+ * 3. projeto sem metragem completa só pelo anel ("Outros projetos").
+ * Nunca lista o próprio projeto (id ou slug) nem repete um slug.
+ */
+export const RELATED_PROJECTS_MAX = 4;
+
+export type RelatedCriterio = "bairro" | "misto" | "metragem" | "outros";
+
+export const RELATED_PROJECTS_TITLE: Record<RelatedCriterio, string> = {
+  bairro: "Projetos no mesmo bairro",
+  misto: "Projetos no mesmo bairro e de metragem parecida",
+  metragem: "Projetos de metragem parecida",
+  outros: "Outros projetos da Bewild",
+};
+
+/** Card do bloco, montado no loader do servidor (src/lib/contentLoaders.ts). */
+export type RelatedProjectCard = {
+  slug: string;
+  /** Nome sem o código interno do cliente (`projectFriendlyName`). */
+  title: string;
+  /** Bairro exibido, mesma regra do grid do portfólio (`placeOf`). */
+  neighborhood: string;
+  area_m2: number | null;
+  cover_url: string | null;
+};
+
+export type RelatedProjects = {
+  criterio: RelatedCriterio;
+  /** Bairro do projeto da página, quando cadastrado. */
+  bairro: string | null;
+  items: RelatedProjectCard[];
+};
+
+type Relatable = { id: string; slug: string; neighborhood?: string | null; area_m2?: number | null };
+
+/** Comparação por código de caractere: não depende do ICU do runtime. */
+const bySlug = (a: { slug: string }, b: { slug: string }) => (a.slug < b.slug ? -1 : a.slug > b.slug ? 1 : 0);
+
+/** Lista ordenada pelo slug, começando no primeiro depois de `slug` e dando a volta. */
+function ringAfter<T extends { slug: string }>(sorted: T[], slug: string): T[] {
+  const start = sorted.findIndex((p) => p.slug > slug);
+  return start <= 0 ? sorted : [...sorted.slice(start), ...sorted.slice(0, start)];
+}
+
+export function selectRelatedProjects<T extends Relatable>(
+  self: Relatable,
+  list: readonly T[],
+  max = RELATED_PROJECTS_MAX,
+): { criterio: RelatedCriterio; items: T[] } {
+  const seen = new Set<string>([self.slug]);
+  const others: T[] = [];
+  for (const p of [...list].sort(bySlug)) {
+    if (p.id === self.id || seen.has(p.slug)) continue;
+    seen.add(p.slug);
+    others.push(p);
+  }
+  const ring = ringAfter(others, self.slug);
+
+  const hood = neighborhoodSlug(self.neighborhood ?? "");
+  const sameHood = hood ? ring.filter((p) => neighborhoodSlug(p.neighborhood ?? "") === hood) : [];
+  const items = sameHood.slice(0, max);
+
+  const area = typeof self.area_m2 === "number" && Number.isFinite(self.area_m2) ? self.area_m2 : null;
+  if (items.length < max) {
+    const rest = ring.filter((p) => !items.includes(p));
+    if (area !== null) {
+      const dist = (p: T) =>
+        typeof p.area_m2 === "number" && Number.isFinite(p.area_m2) ? Math.abs(p.area_m2 - area) : Number.POSITIVE_INFINITY;
+      const pos = new Map(rest.map((p, i) => [p, i]));
+      rest.sort((a, b) => dist(a) - dist(b) || pos.get(a)! - pos.get(b)!);
+    }
+    items.push(...rest.slice(0, max - items.length));
+  }
+
+  const fromHood = Math.min(sameHood.length, max);
+  const criterio: RelatedCriterio =
+    fromHood === items.length ? "bairro" : area === null ? "outros" : fromHood > 0 ? "misto" : "metragem";
+  return { criterio, items };
+}
+
 /** Bairros (só com `neighborhood` preenchido) com o mínimo de projetos. */
 export function neighborhoodPages<T extends { neighborhood?: string | null }>(
   list: T[],

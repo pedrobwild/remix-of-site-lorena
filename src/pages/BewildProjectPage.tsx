@@ -20,10 +20,18 @@ import { readyPhotos, renderPhotos } from "@/lib/projectPhotos";
 import { useImageAlts, type AltMap } from "@/lib/useImageAlts";
 import { projectFriendlyName, projectKeywords, projectMetaDescription, projectSeoTitleUnique, type ProjectSeoPeer } from "@/lib/projectSeo";
 import { useProjectSeoPeers } from "@/lib/useProjectSeoPeers";
-import { neighborhoodPages, neighborhoodSlug } from "@/lib/portfolioFilter";
+import {
+  neighborhoodPages,
+  neighborhoodSlug,
+  RELATED_PROJECTS_TITLE,
+  type RelatedProjects,
+} from "@/lib/portfolioFilter";
+import { noBairro } from "@/lib/bairroSeo";
 import {
   optimizedImageUrl,
   responsiveImage,
+  responsiveImageProps,
+  THUMB_WIDTHS,
   GALLERY_WIDTHS,
   GALLERY_SIZES,
   WIDE_WIDTHS,
@@ -43,7 +51,12 @@ interface Props {
   /** Dados do loader (SSR); ausente = busca no cliente como antes. */
   initial?: { project: BewildProjectFull | null; alts?: AltMap } | null;
   initialPeers?: ProjectSeoPeer[] | null;
+  /** Bloco "Projetos no mesmo bairro", montado no loader (HTML do servidor). */
+  initialRelated?: RelatedProjects | null;
 }
+
+/** `sizes` dos cards de relacionados: 4 colunas; 2 até 980 px (portfolio-detail.css). */
+const RELATED_SIZES = "(max-width: 980px) 50vw, min(25vw, 385px)";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -272,7 +285,74 @@ function GallerySection({
   );
 }
 
-export default function BewildProjectPage({ slug, initial, initialPeers }: Props) {
+/**
+ * "Projetos no mesmo bairro" (auditoria de SEO, rodada 4, ação 14): 3 ou 4
+ * outras fichas, escolhidas no loader do servidor (`selectRelatedProjects`),
+ * para o HTML bruto já trazer os links. Sem vizinhos suficientes no bairro, o
+ * título passa a dizer que entram projetos de metragem parecida.
+ */
+function RelatedProjectsSection({
+  related,
+  alts,
+  bairroHub,
+}: {
+  related: RelatedProjects;
+  alts: AltMap;
+  bairroHub: { slug: string; label: string } | null;
+}) {
+  const bairro = bairroHub?.label ?? related.bairro;
+  const note =
+    related.criterio === "bairro"
+      ? `Outras reformas da Bewild ${noBairro(bairro)}`
+      : related.criterio === "misto"
+        ? `Reformas da Bewild ${noBairro(bairro)} e com metragem próxima`
+        : related.criterio === "metragem"
+          ? "Reformas da Bewild com metragem próxima"
+          : "Outras reformas da Bewild em São Paulo";
+  return (
+    <section className="pd-sec pd-related" aria-labelledby="pd-related-title"><div className="pd-wrap">
+      <div className="pd-sechead">
+        <span className="n">{pad(related.items.length)}</span>
+        <h2 id="pd-related-title">{RELATED_PROJECTS_TITLE[related.criterio]}</h2>
+        <span className="ln" />
+      </div>
+      <p className="pd-secnote">{note}</p>
+      <ul className="pd-related__grid">
+        {related.items.map((p) => {
+          const area = formatAreaM2(p.area_m2);
+          return (
+            <li key={p.slug}>
+              <a className="pd-related__card" href={`/portfolio/${p.slug}`}>
+                <span className="pd-related__media">
+                  {p.cover_url && (
+                    <img
+                      {...responsiveImageProps(p.cover_url, THUMB_WIDTHS, 640, RELATED_SIZES)}
+                      alt={alts[p.cover_url] || `${p.title} — foto principal`}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  )}
+                </span>
+                <h3 className="pd-related__name">{p.title}</h3>
+                <span className="pd-related__meta">
+                  <span>{p.neighborhood}</span>
+                  {area && <span>{area}</span>}
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+      {bairroHub && (
+        <p className="pd-related__more">
+          <a href={`/reforma/${bairroHub.slug}`}>Ver todas as reformas {noBairro(bairroHub.label)} →</a>
+        </p>
+      )}
+    </div></section>
+  );
+}
+
+export default function BewildProjectPage({ slug, initial, initialPeers, initialRelated }: Props) {
   const { project, loading, error, notFound } = useBewildProject(
     slug,
     initial ? { slug, project: initial.project } : null,
@@ -301,8 +381,9 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
       project?.after_image_url,
       ...galleryAll,
       ...readyImgs,
+      ...(initialRelated?.items.map((r) => r.cover_url) ?? []),
     ],
-    [project, galleryAll, readyImgs],
+    [project, galleryAll, readyImgs, initialRelated],
   );
   const alts = useImageAlts(altUrls, initial?.alts);
 
@@ -542,6 +623,11 @@ export default function BewildProjectPage({ slug, initial, initialPeers }: Props
           <blockquote>{project.testimonial}</blockquote>
           {project.testimonial_author && <p className="pd-depo__src">{project.testimonial_author}</p>}
         </div></section>
+      )}
+
+      {/* PROJETOS NO MESMO BAIRRO (ou de metragem parecida) */}
+      {initialRelated && initialRelated.items.length > 0 && (
+        <RelatedProjectsSection related={initialRelated} alts={alts} bairroHub={bairroHub} />
       )}
 
       {/* CTA */}
