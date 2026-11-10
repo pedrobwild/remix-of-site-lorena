@@ -1,3 +1,7 @@
+// @vitest-environment node
+// Código de servidor: o teste usa o Request do Node. No jsdom, o Request de lá carrega
+// um AbortSignal de outro "realm", e o Node 24 (imagem ubuntu-26.04 do GitHub, desde
+// 10/11/2026) recusa: "RequestInit: Expected signal to be an instance of AbortSignal".
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
