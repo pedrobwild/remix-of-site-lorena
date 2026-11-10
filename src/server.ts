@@ -5,6 +5,7 @@ import { canonicalHostRedirect, lowercasePathRedirect } from "./lib/caseRedirect
 import { renderErrorPage } from "./lib/error-page";
 import { serveWithEdgeCache, type EdgeCacheContext } from "./lib/edgeHtmlCache";
 import { withModulePreloadsInBody } from "./lib/modulePreloadPlacement";
+import { withEntryAfterFirstPaint } from "./lib/entryAfterFirstPaint";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -91,8 +92,13 @@ export default {
         const handler = await getServerEntry();
         const response = await handler.fetch(request, env, ctx);
         // modulepreload do <head> para junto do script de entrada (primeira pintura
-        // mais cedo; ver src/lib/modulePreloadPlacement.ts).
-        return withModulePreloadsInBody(withShortEdgeCache(request, await normalizeCatastrophicSsrResponse(response)));
+        // mais cedo; ver src/lib/modulePreloadPlacement.ts). Na home, o
+        // JavaScript só é pedido depois da primeira pintura, que já mostra o
+        // texto do hero (LCP no celular; ver src/lib/entryAfterFirstPaint.ts).
+        return withEntryAfterFirstPaint(
+          request,
+          withModulePreloadsInBody(withShortEdgeCache(request, await normalizeCatastrophicSsrResponse(response))),
+        );
       };
       // Páginas públicas saem do cache de borda do próprio worker (ver
       // src/lib/edgeHtmlCache.ts): a hospedagem não guarda HTML.
