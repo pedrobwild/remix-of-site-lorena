@@ -26,7 +26,6 @@ const ROTAS_INDEXAVEIS = [
   { path: "/portfolio", priority: "0.9", changefreq: "weekly" },
   { path: "/conteudos", priority: "0.8", changefreq: "weekly" },
   { path: "/videos", priority: "0.7", changefreq: "monthly" },
-  { path: "/coletas-por-bairro", priority: "0.5", changefreq: "weekly" },
   { path: "/orcamento", priority: "1.0", changefreq: "monthly" },
   { path: "/escopo", priority: "0.8", changefreq: "monthly" },
   { path: "/faq", priority: "0.7", changefreq: "monthly" },
@@ -78,6 +77,9 @@ const NAO_INDEXAVEIS: Record<string, string> = {
   // O guia mudou para https://radarbewild.com.br (12/10/2026): produção responde
   // 301 pelo vercel.json; a rota antiga fica só como fallback noindex.
   "/guia-do-investidor": "src/routes/guia-do-investidor.tsx",
+  // Histórico de coletas do Radar (D5, auditoria de SEO rodada 4, 09/11/2026):
+  // 67 palavras e nenhum link interno; fica no ar, mas noindex e fora do sitemap.
+  "/coletas-por-bairro": "src/routes/coletas-por-bairro.tsx",
 };
 
 /**
@@ -179,10 +181,10 @@ describe("retrato commitado (src/content/snapshots/sitemap.xml)", () => {
   const xml = read("src/content/snapshots/sitemap.xml");
   const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
 
-  it("inclui o histórico público de coletas e permite indexação", () => {
-    expect(locs).toContain("https://bewild.com.br/coletas-por-bairro");
-    expect(read("src/routes/coletas-por-bairro.tsx")).not.toMatch(/noindex:\s*true/);
-    expect(read("src/pages/ColetasRadarPage.tsx")).not.toMatch(/noindex:\s*true/);
+  it("o histórico público de coletas é noindex e fica fora do retrato (D5, 09/11/2026)", () => {
+    expect(locs).not.toContain("https://bewild.com.br/coletas-por-bairro");
+    expect(read("src/routes/coletas-por-bairro.tsx")).toMatch(/noindex:\s*true/);
+    expect(read("src/pages/ColetasRadarPage.tsx")).toMatch(/noindex:\s*true/);
   });
 
   it("é XML bem formado e sem URL repetida", () => {

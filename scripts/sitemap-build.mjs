@@ -194,9 +194,8 @@ export const STATIC_PAGES = [
   { loc: `${BASE_URL}/conteudos`, changefreq: "weekly", priority: "0.8", lastmod: "posts" },
   // Índice dos vídeos; as páginas de cada vídeo saem mais abaixo, com <video:video>.
   { loc: `${BASE_URL}/videos`, changefreq: "monthly", priority: "0.7", files: ["src/routes/videos.index.tsx", "src/pages/VideosPage.tsx", "src/content/videoPages.json"] },
-  { loc: `${BASE_URL}/coletas-por-bairro`, changefreq: "weekly", priority: "0.5" },
   { loc: `${BASE_URL}/orcamento`, changefreq: "monthly", priority: "1.0", files: ["src/routes/orcamento.tsx", "src/pages/OrcamentoPage.tsx"] },
-  { loc: `${BASE_URL}/escopo`, changefreq: "monthly", priority: "0.8", files: ["src/routes/escopo.tsx", "src/pages/EscopoPage.tsx", "src/lib/escopoCalc.ts"] },
+  { loc: `${BASE_URL}/escopo`, changefreq: "monthly", priority: "0.8", files: ["src/routes/escopo.tsx", "src/pages/EscopoPage.tsx", "src/lib/escopoCalc.ts", "src/content/pages/escopo.ts", "src/content/pages/escopo.seo.ts"] },
   { loc: `${BASE_URL}/faq`, changefreq: "monthly", priority: "0.7", lastmod: "faq" },
   { loc: `${BASE_URL}/autorizacao-condominio`, changefreq: "monthly", priority: "0.7", files: ["src/routes/autorizacao-condominio.tsx", "src/pages/AutorizacaoCondominioPage.tsx"] },
   { loc: `${BASE_URL}/contato`, changefreq: "monthly", priority: "0.7", files: ["src/routes/contato.tsx", "src/pages/ContatoPage.tsx"], fallback: "2026-09-26" },
