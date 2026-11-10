@@ -26,8 +26,8 @@
 -- não existir.
 --
 -- Só recria a função: o gatilho, as colunas ignoradas e os dados ficam como
--- estão. Os 8 artigos de 08/11/2026 não são corrigidos aqui (a data anterior
--- de cada um não ficou registrada).
+-- estão. Os 8 artigos de 08/11/2026 já voltaram à data anterior em 10/11/2026,
+-- num SQL avulso que leu bewild_posts_backup_20261109 com os gatilhos desligados.
 
 create or replace function public.bewild_posts_set_content_updated_at()
 returns trigger

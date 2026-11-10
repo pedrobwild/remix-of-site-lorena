@@ -153,7 +153,7 @@ O Google só aproveita `dateModified`/`lastmod` que reflete a **última atualiza
 significativa** da página. Um update em lote carimba a mesma hora em todos os
 artigos que toca: em 06/10/2026 foram 43 posts no mesmo segundo (corrigido pela
 migration `20261006150000`) e em 08/11/2026 às 21:46:55, 8 artigos do cluster de
-short stay. Datas assim fazem o Google desconfiar do sinal no site todo.
+short stay (datas restauradas em 10/11/2026 a partir de `bewild_posts_backup_20261109`). Datas assim fazem o Google desconfiar do sinal no site todo.
 
 Desde a migration `20261110120000_bewild_posts_edicao_cosmetica`, o gatilho
 respeita uma chave de transação. Com ela, o update grava o texto novo e
