@@ -44,7 +44,7 @@ export default function AtribuicaoPage() {
               <a href="/indice-de-custo-de-reforma">Índice Bewild de custo de reforma</a>.
             </p>
             <div className="pt-meta">
-              <span>Última atualização: 14 de outubro de 2026</span>
+              <span>Última atualização: 10 de novembro de 2026</span>
             </div>
           </div>
         </section>
@@ -104,6 +104,12 @@ export default function AtribuicaoPage() {
                 fonte do seu material:
               </p>
               <pre className="pt-atribuicao-bloco">{ATRIBUICAO_LINHA}</pre>
+              <p>
+                Números prontos para citar, a frase de fonte do Índice, a
+                planilha e o código para incorporar os gráficos estão no bloco{" "}
+                <a href="/indice-de-custo-de-reforma#imprensa">Para imprensa</a>{" "}
+                do Índice.
+              </p>
               <p>
                 Em trabalhos acadêmicos, use o formato de citação da sua
                 instituição, incluindo o nome da fonte, o link do Índice e a

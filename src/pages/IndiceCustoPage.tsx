@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { PROVA_CURTA } from "@/content/provas";
 import { LICENCA_CANONICAL } from "@/content/pages/licenca";
 import BwaFooter from "@/components/BwaFooter";
@@ -16,6 +17,9 @@ import {
   EXCLUSOES,
   FAIXAS_METRAGEM,
   FAIXAS_VALOR,
+  graficoEmbedHtml,
+  IMPRENSA_GRAFICOS,
+  IMPRENSA_NUMEROS,
   INCC_12M,
   INDICE,
   INDICE_ATUALIZADO_EM,
@@ -24,6 +28,7 @@ import {
   INDICE_DESCRIPTION,
   INDICE_EDICAO,
   INDICE_FAQ,
+  INDICE_FRASE_FONTE,
   INDICE_LICENCA_NOME,
   INDICE_TITLE,
   LIMITES,
@@ -46,6 +51,32 @@ const CTA_HREF = "/orcamento";
 const brl = (v: number) => `R$ ${v.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
 const pct = (v: number) => `${v.toLocaleString("pt-BR", { maximumFractionDigits: 1 })}%`;
 const dataBR = (iso: string) => iso.split("-").reverse().join("/");
+
+/**
+ * Copia um texto da página (frase de fonte, código de incorporação). Só
+ * acrescenta: o texto já está no HTML do servidor, selecionável sem JS.
+ */
+function CopiarTexto({ texto, rotulo, cta }: { texto: string; rotulo: string; cta: string }) {
+  const [estado, setEstado] = useState<"" | "copiado" | "falhou">("");
+  async function copiar() {
+    try {
+      await navigator.clipboard.writeText(texto);
+      setEstado("copiado");
+    } catch {
+      setEstado("falhou");
+    }
+  }
+  return (
+    <p className="bwa-indice-copy-row">
+      <button type="button" className="bwa-indice-copy" data-cta={cta} onClick={() => void copiar()}>
+        {rotulo}
+      </button>
+      <span role="status" aria-live="polite" className="bwa-indice-copy-status">
+        {estado === "copiado" ? "Copiado." : estado === "falhou" ? "Não deu para copiar: selecione o texto e copie." : ""}
+      </span>
+    </p>
+  );
+}
 
 export default function IndiceCustoPage() {
   useCtaClickTracking("indice-custo");
@@ -74,7 +105,8 @@ export default function IndiceCustoPage() {
                 Atualizado em <time dateTime={INDICE_ATUALIZADO_EM}>{dataBR(INDICE_ATUALIZADO_EM)}</time> ·{" "}
                 <a href={INDICE_CSV_PATH} download>
                   Baixar os dados (CSV)
-                </a>
+                </a>{" "}
+                · <a href="#imprensa">Para imprensa</a>
               </p>
             </div>
           </div>
@@ -256,6 +288,83 @@ export default function IndiceCustoPage() {
               <a href={PILAR_CUSTO}>quanto custa reformar um apartamento ou studio de até 50 m²</a>. Para o seu imóvel,
               o <a href="/escopo">simulador de escopo</a> dá uma primeira estimativa.
             </p>
+          </div>
+        </section>
+
+        <section className="bwa-servico-block bwa-indice-imprensa" aria-labelledby="imprensa">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="imprensa">
+              Para imprensa
+            </h2>
+            <p className="bwa-servico-text">
+              Três números prontos para citar, a frase de fonte, a planilha e o código para incorporar os gráficos.
+              Uso livre com crédito à Bewild ({INDICE_LICENCA_NOME}).
+            </p>
+            <ol className="bwa-indice-press">
+              {IMPRENSA_NUMEROS.map((n) => (
+                <li key={n.id} data-imprensa-numero={n.id}>
+                  <p className="bwa-indice-press-valor" data-imprensa-valor>
+                    {n.valor}
+                  </p>
+                  <p className="bwa-indice-press-rotulo">{n.rotulo}.</p>
+                  <p className="bwa-indice-press-meta">
+                    Edição de {INDICE_EDICAO}, atualizada em{" "}
+                    <time dateTime={INDICE_ATUALIZADO_EM}>{dataBR(INDICE_ATUALIZADO_EM)}</time>.
+                  </p>
+                  <p className="bwa-indice-press-meta" data-imprensa-metodo>
+                    Método: {n.metodo}
+                  </p>
+                </li>
+              ))}
+            </ol>
+
+            <h3 className="bwa-servico-h3 bwa-indice-press-h3">Frase de fonte</h3>
+            <p className="bwa-indice-cite" id="imprensa-fonte">
+              {INDICE_FRASE_FONTE}
+            </p>
+            <CopiarTexto texto={INDICE_FRASE_FONTE} rotulo="Copiar a frase" cta="indice-imprensa-copiar-fonte" />
+            <p className="bwa-servico-text">
+              Nome oficial, endereço e regras de crédito da licença estão na página de{" "}
+              <a href="/atribuicao">atribuição da Bewild</a>.
+            </p>
+
+            <h3 className="bwa-servico-h3 bwa-indice-press-h3">Planilha</h3>
+            <p className="bwa-servico-text">
+              <a href={INDICE_CSV_PATH} download data-cta="indice-imprensa-planilha">
+                Baixar a planilha dos dados (CSV)
+              </a>
+              : números gerais e por faixa de metragem, com a fonte e a licença nas primeiras linhas. Abre no Excel,
+              no Google Planilhas e no LibreOffice.
+            </p>
+
+            <h3 className="bwa-servico-h3 bwa-indice-press-h3">Incorporar os gráficos</h3>
+            <p className="bwa-servico-text">
+              Cole o código no seu site: ele mostra o gráfico e o link de atribuição para esta página.
+            </p>
+            {IMPRENSA_GRAFICOS.map((g) => {
+              const codigo = graficoEmbedHtml(g);
+              return (
+                <div key={g.id} className="bwa-indice-embed">
+                  <label className="bwa-indice-embed-label" htmlFor={`embed-${g.id}`}>
+                    Código para incorporar: {g.titulo}
+                  </label>
+                  <textarea
+                    id={`embed-${g.id}`}
+                    className="bwa-indice-embed-code"
+                    readOnly
+                    rows={6}
+                    spellCheck={false}
+                    value={codigo}
+                  />
+                  <CopiarTexto texto={codigo} rotulo="Copiar o código" cta="indice-imprensa-copiar-embed" />
+                  <p className="bwa-indice-press-meta">
+                    <a href={g.src} target="_blank" rel="noopener noreferrer">
+                      Ver o gráfico (SVG, abre em nova aba)
+                    </a>
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </section>
 

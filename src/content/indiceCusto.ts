@@ -10,7 +10,7 @@
  * arquivo) e a data em INDICE_ATUALIZADO_EM. Nenhum número novo nasce aqui.
  * O total da base vem de CONTRATOS_ANALISADOS (src/content/provas.ts).
  */
-import { BASE_CUSTO } from "@/content/baseCusto";
+import { BASE_CUSTO, brl as brlBase, CUSTO_M2_MEDIANO, ORCAMENTO_MEDIANO } from "@/content/baseCusto";
 import { PILAR_CUSTO } from "@/content/pages/orcamento";
 import { faqJsonLd } from "@/lib/useSeo";
 
@@ -189,3 +189,131 @@ export const INDICE_JSONLD: Array<Record<string, unknown>> = [
   },
   faqJsonLd(INDICE_FAQ),
 ];
+
+// ---------------------------------------------------------------------------
+// Kit de imprensa (10/11/2026, auditoria de SEO rodada 4, PR-21): bloco
+// "Para imprensa" da página, para jornalistas e blogs citarem e linkarem.
+// Só números que já estão acima ou em baseCusto.ts; há uma edição só, então
+// nada de "variação" entre edições.
+// ---------------------------------------------------------------------------
+
+/** Nome do índice nas peças de imprensa (frase de fonte e link dos gráficos). */
+export const INDICE_NOME_IMPRENSA = "Índice Bewild de Custo de Reforma";
+
+/** Endereço absoluto da página (link de atribuição dos gráficos incorporados). */
+export const INDICE_URL_ABSOLUTA = `https://bewild.com.br${INDICE_CANONICAL}`;
+
+/** Frase de fonte pronta para copiar. */
+export const INDICE_FRASE_FONTE =
+  `Fonte: ${INDICE_NOME_IMPRENSA}, edição ${INDICE_EDICAO}, base de ${INDICE.contratos} contratos, ` +
+  `bewild.com.br${INDICE_CANONICAL}`;
+
+export type NumeroImprensa = {
+  id: string;
+  /** O número, como deve ser citado. */
+  valor: string;
+  /** O que o número é, em seguida ao valor. */
+  rotulo: string;
+  /** Método em uma frase (sem o prefixo "Método:"). */
+  metodo: string;
+};
+
+const FAIXA_M2_MAIS_CARA = FAIXAS_METRAGEM.reduce((a, b) => (b.m2Mediano > a.m2Mediano ? b : a));
+const FAIXA_M2_MAIS_BARATA = FAIXAS_METRAGEM.reduce((a, b) => (b.m2Mediano < a.m2Mediano ? b : a));
+const areaMedianaTexto = `${String(INDICE.areaMediana).replace(".", ",")} m²`;
+/** "Até 20 m²" → "até 20 m²" no meio da frase; "R$ 65 mil…" e siglas ficam como estão. */
+const faixaTexto = (faixa: string) =>
+  /^\p{Lu}\p{Ll}/u.test(faixa) ? faixa.charAt(0).toLowerCase() + faixa.slice(1) : faixa;
+
+/** Três números citáveis, cada um com o método em uma frase. */
+export const IMPRENSA_NUMEROS: NumeroImprensa[] = [
+  {
+    id: "custo-m2",
+    valor: `${CUSTO_M2_MEDIANO} por m²`,
+    rotulo: "é o custo mediano da reforma completa de studios e apartamentos compactos em São Paulo",
+    metodo:
+      `mediana do valor por m² de ${INDICE.contratos} contratos de reforma completa da Bewild, ` +
+      `pelo valor na assinatura e sem aditivos; metade ficou entre ${brlBase(INDICE.m2P25)} e ${brlBase(INDICE.m2P75)} por m².`,
+  },
+  {
+    id: "orcamento",
+    valor: ORCAMENTO_MEDIANO,
+    rotulo: `é o orçamento mediano de uma reforma completa, numa área mediana de ${areaMedianaTexto}`,
+    metodo:
+      `mediana do valor total dos mesmos ${INDICE.contratos} contratos, com projeto, obra, marcenaria, mobiliário ` +
+      `e eletrodomésticos no mesmo contrato.`,
+  },
+  {
+    id: "faixa-metragem",
+    valor: `${brlBase(FAIXA_M2_MAIS_CARA.m2Mediano)} por m²`,
+    rotulo:
+      `é o custo mediano na faixa de ${faixaTexto(FAIXA_M2_MAIS_CARA.faixa)}, a mais cara por m²; ` +
+      `a mais barata, de ${faixaTexto(FAIXA_M2_MAIS_BARATA.faixa)}, ficou em ${brlBase(FAIXA_M2_MAIS_BARATA.m2Mediano)} por m²`,
+    metodo:
+      `mediana do valor por m² dentro de cada faixa de área, com ${FAIXA_M2_MAIS_CARA.contratos} contratos ` +
+      `na faixa de ${faixaTexto(FAIXA_M2_MAIS_CARA.faixa)} e ${FAIXA_M2_MAIS_BARATA.contratos} contratos na de ` +
+      `${faixaTexto(FAIXA_M2_MAIS_BARATA.faixa)}.`,
+  },
+];
+
+export type GraficoImprensa = {
+  id: string;
+  /** Título do gráfico na página (o mesmo da seção que ele ilustra). */
+  titulo: string;
+  /** SVG estático já publicado em public/ (mesmos números desta página). */
+  src: string;
+  largura: number;
+  altura: number;
+  alt: string;
+  /** De onde vêm os números do gráfico, na legenda do código de incorporação. */
+  base: string;
+};
+
+const SVG_PILAR = "/images/blog/quanto-custa-reformar-apartamento-studio-ate-50-m2";
+/** Rótulo do item como está no SVG da proposta ("Projeto 3D, executivo e ART/RRT"). */
+const ITEM_NO_GRAFICO: Record<string, string> = { "Projeto e ART": "Projeto e responsabilidade técnica (ART/RRT)" };
+const pctTexto = (v: number) => `${String(v).replace(".", ",")}%`;
+
+/**
+ * Gráficos para incorporar: os da página são só React, então o código usa os
+ * SVG estáticos do artigo pilar (mesmo estudo), que mostram os mesmos números
+ * de FAIXAS_VALOR e COMPOSICAO (conferido em indiceImprensa.test.tsx).
+ */
+export const IMPRENSA_GRAFICOS: GraficoImprensa[] = [
+  {
+    id: "distribuicao",
+    titulo: "Como os orçamentos se distribuem",
+    src: `${SVG_PILAR}/07-faixas-de-investimento.svg`,
+    largura: 720,
+    altura: 616,
+    alt:
+      `Distribuição dos ${INDICE.contratos} contratos de reforma completa por faixa de valor total: ` +
+      FAIXAS_VALOR.map((f) => `${faixaTexto(f.faixa)}, ${pctTexto(f.pct)}`).join("; "),
+    base: `base de ${INDICE.contratos} contratos`,
+  },
+  {
+    id: "composicao",
+    titulo: "Para onde vai o dinheiro",
+    src: `${SVG_PILAR}/06-anatomia-orcamento-turnkey.svg`,
+    largura: 720,
+    altura: 864,
+    alt:
+      `Composição de uma proposta real de reforma completa de ${brlBase(PROPOSTA_REAL_VALOR)}, setembro de 2026: ` +
+      COMPOSICAO.map((c) => `${faixaTexto(ITEM_NO_GRAFICO[c.item] ?? c.item)}, ${pctTexto(c.pct)}`).join("; "),
+    base: "composição de uma proposta real de setembro de 2026",
+  },
+];
+
+const escapeHtml = (v: string) =>
+  v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+/** HTML para colar num site: a imagem do gráfico e a legenda com o link de atribuição. */
+export function graficoEmbedHtml(g: GraficoImprensa): string {
+  return [
+    `<figure style="margin:0;max-width:${g.largura}px">`,
+    `  <img src="https://bewild.com.br${g.src}" alt="${escapeHtml(g.alt)}" width="${g.largura}" height="${g.altura}" style="width:100%;height:auto" loading="lazy">`,
+    `  <figcaption>Fonte: <a href="${INDICE_URL_ABSOLUTA}">${INDICE_NOME_IMPRENSA}</a>, edição ${INDICE_EDICAO}, ${escapeHtml(g.base)}. ` +
+      `Licença <a href="${INDICE_LICENCA_URL}" rel="license">${INDICE_LICENCA_NOME}</a>.</figcaption>`,
+    `</figure>`,
+  ].join("\n");
+}
