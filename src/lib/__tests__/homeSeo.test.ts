@@ -15,7 +15,7 @@ vi.mock("@/integrations/supabase/client", () => ({
 }));
 
 import { HOME_DEFAULT_DESCRIPTION, HOME_DEFAULT_TITLE, HOME_KEYWORDS, loadHomeSeo, resolveHomeSeo } from "@/lib/homeSeo";
-import { CONTRATOS_ANALISADOS } from "@/content/provas";
+import { PROVA_FRASE } from "@/content/provas";
 
 describe("resolveHomeSeo", () => {
   it("sem configuração usa o texto padrão", () => {
@@ -93,9 +93,9 @@ describe("home: título e descrição padrão (D1, 10/11/2026)", () => {
     expect(HOME_DEFAULT_TITLE.length).toBeLessThanOrEqual(60);
   });
 
-  it("descrição com preço, prazo, garantia e a base de contratos, em até 155 caracteres", () => {
+  it("descrição com preço, prazo, garantia e reformas entregues, em até 155 caracteres", () => {
     expect(HOME_DEFAULT_DESCRIPTION).toBe(
-      `Reforma completa de studios e apartamentos compactos em SP: preço e prazo em contrato, 5 anos de garantia e base de ${CONTRATOS_ANALISADOS} contratos. Peça seu orçamento.`,
+      `Reforma completa de studios e apartamentos compactos em SP: preço e prazo em contrato, 5 anos de garantia e ${PROVA_FRASE}. Peça orçamento.`,
     );
     expect(HOME_DEFAULT_DESCRIPTION.length).toBeLessThanOrEqual(155);
   });

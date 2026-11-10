@@ -11,7 +11,7 @@
 import { publicRpc } from "@/integrations/supabase/publicRest";
 import { serverMemo } from "@/lib/serverMemo";
 import { pageSeoOverride, type PagesSeoMap } from "@/lib/publicPages";
-import { CONTRATOS_ANALISADOS } from "@/content/provas";
+import { PROVA_FRASE } from "@/content/provas";
 
 /*
  * Uma intenção por página (decisão do Pedro, 10/11/2026; auditoria de SEO,
@@ -24,7 +24,7 @@ import { CONTRATOS_ANALISADOS } from "@/content/provas";
  * padrão é o que sai em produção; og:* e twitter:* derivam dele (seoHead).
  */
 export const HOME_DEFAULT_TITLE = "Bewild | Reforma turnkey de studios e apartamentos em SP";
-export const HOME_DEFAULT_DESCRIPTION = `Reforma completa de studios e apartamentos compactos em SP: preço e prazo em contrato, 5 anos de garantia e base de ${CONTRATOS_ANALISADOS} contratos. Peça seu orçamento.`;
+export const HOME_DEFAULT_DESCRIPTION = `Reforma completa de studios e apartamentos compactos em SP: preço e prazo em contrato, 5 anos de garantia e ${PROVA_FRASE}. Peça orçamento.`;
 export const HOME_KEYWORDS =
   "reforma turnkey em São Paulo, reforma de compactos, reforma de apartamento compacto, reforma de apartamento pequeno em SP, reforma para Airbnb, reforma para aluguel, empresa de reforma em São Paulo, Bewild";
 
