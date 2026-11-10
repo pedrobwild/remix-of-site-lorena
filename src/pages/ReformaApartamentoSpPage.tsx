@@ -9,7 +9,16 @@ import { useSeo } from "@/lib/useSeo";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
 import { PILAR_CUSTO } from "@/content/pages/orcamento";
-import { CANONICAL, FAQ, SEO_TITLE, SEO_DESCRIPTION, SEO_KEYWORDS } from "@/content/pages/reforma-de-apartamento-sao-paulo";
+import {
+  APARTAMENTO_PEQUENO,
+  CANONICAL,
+  EMPRESA_REFORMA,
+  FAQ,
+  SEO_TITLE,
+  SEO_DESCRIPTION,
+  SEO_KEYWORDS,
+  type ProjetoPequeno,
+} from "@/content/pages/reforma-de-apartamento-sao-paulo";
 
 /* ============================================================
  * ReformaApartamentoSpPage — /reforma-de-apartamento-sao-paulo
@@ -48,9 +57,11 @@ const PASSOS: { n: string; t: string }[] = [
 type Props = {
   /** Páginas de bairro existentes (loader da rota); null = sem dados → links para /portfolio. */
   bairroPages?: BairroPageLink[] | null;
+  /** Projetos de até 50 m² (loader da rota); null = sem dados → só o link do portfólio. */
+  projetosPequenos?: ProjetoPequeno[] | null;
 };
 
-export default function ReformaApartamentoSpPage({ bairroPages = null }: Props = {}) {
+export default function ReformaApartamentoSpPage({ bairroPages = null, projetosPequenos = null }: Props = {}) {
   useCtaClickTracking("reforma-apartamento-sp");
 
   useSeo({
@@ -136,6 +147,37 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
           </div>
         </section>
 
+        <section className="bwa-servico-block" aria-labelledby="apartamento-pequeno">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="apartamento-pequeno">{APARTAMENTO_PEQUENO.titulo}</h2>
+            {APARTAMENTO_PEQUENO.paragrafos.map((t) => (
+              <p className="bwa-servico-text" key={t}>
+                {t}
+              </p>
+            ))}
+            <p className="bwa-servico-text">
+              {APARTAMENTO_PEQUENO.studio}{" "}
+              <a href="/reforma-de-studio-sao-paulo">{APARTAMENTO_PEQUENO.studioLink}</a>.
+            </p>
+            {projetosPequenos && projetosPequenos.length > 0 && (
+              <>
+                <p className="bwa-servico-text">{APARTAMENTO_PEQUENO.projetos}</p>
+                <ul className="bwa-servico-text">
+                  {projetosPequenos.map((p) => (
+                    <li key={p.slug}>
+                      <a href={`/portfolio/${p.slug}`}>{p.nome}</a>
+                      {[p.area, p.bairro].filter(Boolean).map((x) => ` · ${x}`).join("")}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            <p className="bwa-servico-text">
+              Todas as obras, com filtro por metragem, estão no <a href="/portfolio">portfólio</a>.
+            </p>
+          </div>
+        </section>
+
         <section className="bwa-servico-block" aria-labelledby="contrato">
           <div className="bwa-shell">
             <h2 className="bwa-servico-h2" id="contrato">
@@ -153,6 +195,20 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
               A marcenaria é desenhada no projeto executivo e produzida em fábrica própria: materiais,
               ferragens e modelos estão em <a href="/marcenaria">marcenaria sob medida</a>.
             </p>
+          </div>
+        </section>
+
+        <section className="bwa-servico-block" aria-labelledby="empresa-de-reforma">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="empresa-de-reforma">{EMPRESA_REFORMA.titulo}</h2>
+            <p className="bwa-servico-text">{EMPRESA_REFORMA.intro}</p>
+            <ul className="bwa-servico-text">
+              {EMPRESA_REFORMA.itens.map((item) => (
+                <li key={item.t}>
+                  <strong>{item.t}.</strong> {item.d}
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 
@@ -187,7 +243,7 @@ export default function ReformaApartamentoSpPage({ bairroPages = null }: Props =
               <a href="/como-funciona">como funciona a reforma turnkey da Bewild</a>.
             </p>
             <p className="bwa-servico-text" style={{ marginTop: 16 }}>
-              Antes da obra, o condomínio recebe o plano de reforma e a ART que a{" "}
+              Antes da obra, o condomínio recebe o plano de reforma e o RRT que a{" "}
               <a href="/conteudos/nbr-16280-reforma-studio-condominio">NBR 16280</a> exige; o que entra
               nessa documentação e quanto custa cada etapa estão em{" "}
               <a href="/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2">

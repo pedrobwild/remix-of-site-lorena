@@ -52,3 +52,43 @@ describe.each(paginas)("SEO de $rota", ({ pagina, titulo, descricao }) => {
     expect(fonte).toContain(`"${descricao}"`);
   });
 });
+
+/**
+ * /reforma-de-apartamento-sao-paulo (auditoria de SEO, rodada 4, 09/11/2026,
+ * ação 9): título com a busca ("empresa de reforma de apartamento") e uma
+ * prova que o site já publica, até 60 caracteres; descrição até 155. O texto
+ * mora em `reforma-de-apartamento-sao-paulo.seo.ts`, lido pela rota (HTML do
+ * servidor) e pela página (useSeo). Lido como texto: o módulo de conteúdo
+ * traz o cliente do banco para o teste.
+ */
+describe("SEO de /reforma-de-apartamento-sao-paulo", () => {
+  const seo = read("src/content/pages/reforma-de-apartamento-sao-paulo.seo.ts");
+  const titulo = /SEO_TITLE = "([^"]+)"/.exec(seo)?.[1] ?? "";
+  const descricao = /SEO_DESCRIPTION =\s*"([^"]+)"/.exec(seo)?.[1] ?? "";
+
+  it("título até 60 caracteres, com reforma de apartamento, São Paulo/SP e a prova dos 5 anos de garantia", () => {
+    expect(titulo.length).toBeGreaterThan(0);
+    expect(titulo.length).toBeLessThanOrEqual(60);
+    expect(titulo.toLowerCase()).toContain("reforma de apartamento");
+    expect(titulo).toMatch(/São Paulo|\bSP\b/);
+    expect(titulo).toContain("5 anos de garantia");
+  });
+
+  it("descrição de 110 a 155 caracteres", () => {
+    expect(descricao.length).toBeGreaterThanOrEqual(110);
+    expect(descricao.length).toBeLessThanOrEqual(155);
+  });
+
+  it("rota, página e conteúdo usam as mesmas constantes", () => {
+    const rota = read("src/routes/reforma-de-apartamento-sao-paulo.tsx");
+    expect(rota).toContain('from "@/content/pages/reforma-de-apartamento-sao-paulo.seo"');
+    expect(rota).toMatch(/title: loaderData\?\.seo\.title \?\? SEO_TITLE\b/);
+    expect(rota).toMatch(/description: loaderData\?\.seo\.description \?\? SEO_DESCRIPTION\b/);
+    const pagina = read("src/pages/ReformaApartamentoSpPage.tsx");
+    expect(pagina).toMatch(/title: SEO_TITLE\b/);
+    expect(pagina).toMatch(/description: SEO_DESCRIPTION\b/);
+    expect(read("src/content/pages/reforma-de-apartamento-sao-paulo.tsx")).toContain(
+      'export { SEO_TITLE, SEO_DESCRIPTION } from "./reforma-de-apartamento-sao-paulo.seo";',
+    );
+  });
+});
