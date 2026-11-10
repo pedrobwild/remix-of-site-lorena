@@ -142,7 +142,6 @@ export default function BairroPage({
                     key={p.id}
                     href={`/portfolio/${p.slug}`}
                     className="bwh-proj"
-                    aria-label={`Ver projeto ${projectFriendlyName(p) || p.title}`}
                     onClick={() => reportProjectClick(p.slug, p.title, i + 1)}
                   >
                     <div className="bwh-proj__media">

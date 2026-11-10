@@ -144,7 +144,7 @@ function getCtaContent(category: BewildPostCategory | null | undefined): CtaCont
 
 function RelatedCard({ p }: { p: BewildPost }) {
   return (
-    <a href={`/conteudos/${p.slug}`} className="ct-card" aria-label={`Ler: ${p.title}`}>
+    <a href={`/conteudos/${p.slug}`} className="ct-card">
       <div className={"ct-card__media" + (!p.cover_image ? " ct-card__media--empty" : "")}>
         {p.cover_image ? (
           <img
@@ -498,9 +498,11 @@ export default function BewildPostPage({ slug, initial }: Props) {
             <ul className="pt-links__grid">
               {internalLinksForPost(post.slug, post.category).map((l) => (
                 <li key={l.href}>
-                  <a href={l.href} {...(l.href === RADAR_URL ? { ...RADAR_LINK_ATTRS, "aria-label": `${l.label}${NEW_TAB_SUFFIX}` } : {})}>
+                  <a href={l.href} {...(l.href === RADAR_URL ? RADAR_LINK_ATTRS : {})}>
                     <strong>{l.label}</strong>
                     <span>{l.description}</span>
+                    {/* Aviso de nova aba no fim do nome, depois do texto visível (WCAG 2.5.3). */}
+                    {l.href === RADAR_URL ? <span className="sr-only">{NEW_TAB_SUFFIX}</span> : null}
                   </a>
                 </li>
               ))}
