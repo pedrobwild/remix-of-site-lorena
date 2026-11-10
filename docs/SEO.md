@@ -130,9 +130,15 @@ o Bing e os robôs de IA leem (eles não executam JavaScript):
   conhecido ganham cargo, registro e `@id` (Pedro e Thiago, dados em
   `src/lib/orgJsonLd.ts`). Para acrescentar alguém, edite `KNOWN_AUTHORS` com
   uma fonte verificável — nada de número de registro de memória.
-- **Datas.** `datePublished` = `published_at`; `dateModified` = `updated_at`
-  quando é posterior. A linha "Atualizado em" aparece só quando a alteração foi
-  em outro dia. Editar o post no admin já atualiza tudo (trigger `set_updated_at`).
+- **Datas.** `datePublished` = `published_at`; `dateModified` =
+  `content_updated_at` quando é posterior (`postDates` em `src/lib/postSeo.ts`;
+  o sitemap usa a mesma coluna no `lastmod`). `content_updated_at` é carimbado
+  pelo gatilho `bewild_posts_set_content_updated_at` só quando uma coluna de
+  conteúdo muda (destacar, publicar e despublicar não contam); `updated_at`
+  (gatilho `set_updated_at`) muda em qualquer update e só vale enquanto a coluna
+  nova não existir. A linha "Atualizado em" aparece só quando a alteração foi em
+  outro dia. Editar o post no admin já atualiza tudo. Update em lote que não
+  muda o conteúdo principal: ver "Edição em lote sem mexer na data", abaixo.
 - **FAQ.** Editado no admin (pergunta + resposta) e emitido como `FAQPage`.
   Padrão do plano SEO + IA: 4–6 perguntas, respostas de 40–70 palavras, tiradas
   do que o leitor pergunta ao Google.
@@ -140,6 +146,50 @@ o Bing e os robôs de IA leem (eles não executam JavaScript):
   `BreadcrumbList` é estático (SEO-14).
 - **llms.txt.** A seção "Conteúdos publicados" é reescrita por
   `scripts/generate-sitemap.mjs` entre os marcadores `posts:start`/`posts:end`.
+
+### Edição em lote sem mexer na data
+
+O Google só aproveita `dateModified`/`lastmod` que reflete a **última atualização
+significativa** da página. Um update em lote carimba a mesma hora em todos os
+artigos que toca: em 06/10/2026 foram 43 posts no mesmo segundo (corrigido pela
+migration `20261006150000`) e em 08/11/2026 às 21:46:55, 8 artigos do cluster de
+short stay. Datas assim fazem o Google desconfiar do sinal no site todo.
+
+Desde a migration `20261110120000_bewild_posts_edicao_cosmetica`, o gatilho
+respeita uma chave de transação. Com ela, o update grava o texto novo e
+**preserva** o `content_updated_at` de cada post (o `updated_at` técnico continua
+andando):
+
+```sql
+begin;
+set local bewild.edicao_cosmetica = 'on';
+update public.bewild_posts
+   set body = replace(body, 'texto antigo do link', 'texto novo do link')
+ where slug in ('slug-1', 'slug-2');
+commit;
+```
+
+- Sempre `set local`, dentro de `begin … commit`: vale só para aquela transação
+  e some no `commit` ou no `rollback`. Nunca `set` de sessão (no pool de
+  conexões do Supabase ele vazaria para os updates seguintes).
+- Só funciona em SQL (editor do Supabase, `psql`, migration). Edição pelo painel
+  ou pela API REST não leva a chave e segue carimbando a data, como deve.
+
+**Use a chave** quando a mudança não altera o que o artigo diz:
+
+- inserção ou troca de links internos em lote;
+- troca de CTA em massa (texto do botão, destino, bloco de convite);
+- correção ortográfica ou de formatação em massa (acento, espaço, marcação).
+
+**Não use a chave** quando o leitor encontra informação nova ou diferente:
+
+- mudança no conteúdo principal (seção nova, resposta reescrita, conclusão);
+- dados (preço, prazo, base de contratos, números de mercado, tabelas);
+- FAQ (pergunta ou resposta nova ou alterada, que também vai para o `FAQPage`);
+- título, resumo ou meta description que mudam o assunto anunciado.
+
+Na dúvida, não use: uma data real de atualização nunca é problema; o problema é
+a mesma data em dezenas de artigos sem mudança de conteúdo.
 
 ### Padrão de post citável (resumo do plano de 21/09/2026)
 
@@ -245,6 +295,12 @@ Cada execução é registrada na tabela `seo_audit_log`.
 - `20260420030718` — adiciona campos SEO básicos
 - `20260421203500_seo_advanced_fields.sql` — adiciona verificações, analytics,
   pixels, local business e tabela `seo_audit_log`
+- `20261006150000_bewild_posts_content_updated_at.sql` — coluna
+  `bewild_posts.content_updated_at` e o gatilho que só a carimba quando o
+  conteúdo muda
+- `20261110120000_bewild_posts_edicao_cosmetica.sql` — o mesmo gatilho respeita
+  `set local bewild.edicao_cosmetica = 'on'` (edição cosmética em lote preserva
+  a data; ver "Edição em lote sem mexer na data")
 
 > Os valores efetivos de SEO vêm da linha única em `site_settings` e dos
 > fallbacks das edge functions — todos já apontando para `bewild.com.br`.
