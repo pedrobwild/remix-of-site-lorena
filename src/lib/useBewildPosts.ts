@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { getSupabase } from "@/integrations/supabase/lazyClient";
+import { publicSelect } from "@/integrations/supabase/publicRest";
 import { devWarn } from "@/lib/devLog";
 import { bewildCalendarDay } from "@/lib/postSeo";
+import { toPostIndexItem, type PostIndexItem } from "@/lib/conteudosPagination";
 
 export type BewildPostCategory =
   | "mercado"
@@ -91,8 +93,18 @@ export const BEWILD_CATEGORIES: BewildPostCategory[] = [
   "fiscal",
 ];
 
-const SELECT_COLS =
-  "id, slug, title, meta_title, meta_description, category, excerpt, cover_image, body, faq, reading_time, author, featured, published, published_at, created_at";
+/** Colunas do card da lista de /conteudos (sem corpo, FAQ, og:image e meta). */
+export const POST_CARD_COLS =
+  "id, slug, title, category, excerpt, cover_image, reading_time, featured, published_at, created_at";
+
+/** Card + meta description: a busca de /conteudos e /buscar procura no título e na descrição. */
+export const POST_INDEX_COLS = `${POST_CARD_COLS}, meta_description`;
+
+/**
+ * Listas do cliente (fallback de /conteudos, /mapa-do-site e /buscar sem dado
+ * do servidor): mesmo recorte do índice. Antes vinha o corpo de todos os posts.
+ */
+const SELECT_COLS = POST_INDEX_COLS;
 
 /**
  * useBewildPosts — lê posts do blog Bewild (`bewild_posts.published = true`).
@@ -138,6 +150,62 @@ export function useBewildPosts(initial?: BewildPost[] | null) {
   const grid = featured ? posts.filter((p) => p.id !== featured.id) : posts;
 
   return { posts, featured, grid, loading, error };
+}
+
+let indexPromise: Promise<PostIndexItem[]> | null = null;
+
+/**
+ * Índice completo para a busca e os filtros de /conteudos (que valem para todos
+ * os artigos, não só a página na tela). Pedido uma vez só, sob demanda, direto
+ * na API REST (sem o SDK do Supabase); falha libera nova tentativa.
+ */
+export function fetchPostIndex(): Promise<PostIndexItem[]> {
+  if (!indexPromise) {
+    indexPromise = publicSelect<PostIndexItem>("bewild_posts", {
+      select: POST_INDEX_COLS,
+      published: "eq.true",
+      order: "published_at.desc.nullslast,created_at.desc",
+    }).then(({ data, error }) => {
+      if (error || !data) {
+        indexPromise = null;
+        throw new Error(error?.message || "Falha ao carregar os artigos.");
+      }
+      return data.map(toPostIndexItem);
+    });
+  }
+  return indexPromise;
+}
+
+/** Só para testes. */
+export function resetPostIndex(): void {
+  indexPromise = null;
+}
+
+/**
+ * `usePostIndex(enabled, initial)`: o índice completo, buscado só quando
+ * `enabled` (busca digitada, filtro de categoria ou foco no campo de busca).
+ * `initial` = índice que o servidor já mandou (URL com `?q=`).
+ */
+export function usePostIndex(enabled: boolean, initial?: PostIndexItem[] | null) {
+  const [index, setIndex] = useState<PostIndexItem[] | null>(initial ?? null);
+  const [error, setError] = useState(false);
+  useEffect(() => {
+    if (!enabled || index) return;
+    let mounted = true;
+    fetchPostIndex().then(
+      (rows) => {
+        if (mounted) setIndex(rows);
+      },
+      (err: unknown) => {
+        devWarn("[usePostIndex] fetch falhou:", err);
+        if (mounted) setError(true);
+      },
+    );
+    return () => {
+      mounted = false;
+    };
+  }, [enabled, index]);
+  return { index, loading: enabled && !index && !error, error };
 }
 
 /**
