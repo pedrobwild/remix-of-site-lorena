@@ -100,7 +100,7 @@ export default function BewildBuscaPage({ initialPosts, query, onQueryChange }: 
               {!loading && !error && results.length > 0 && (
                 <div className="ct-grid">
                   {results.map((p) => (
-                    <a key={p.id} href={`/conteudos/${p.slug}`} className="ct-card" aria-label={`Ler: ${p.title}`}>
+                    <a key={p.id} href={`/conteudos/${p.slug}`} className="ct-card">
                       <div className={"ct-card__media" + (!p.cover_image ? " is-empty" : "")}>
                         {p.cover_image ? (
                           // Mesma grade de /conteudos: capa na largura do card, não o
