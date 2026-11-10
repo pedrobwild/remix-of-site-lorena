@@ -18,7 +18,7 @@ import { wrapArticleTables } from "@/lib/articleTables";
 import { linkServicePagesInHtml } from "@/lib/articleServiceLinks";
 import { NOT_FOUND_SEO, postSeoFrom, projectSeoFrom, bairroSeoFrom, type RouteSeoData } from "@/lib/seoLoaders";
 import { normalizeBewildPost, type BewildPost } from "@/lib/useBewildPosts";
-import { withPostCols } from "@/lib/useBewildPost";
+import { RELATED_POST_COLS, withPostCols, type RelatedPost } from "@/lib/useBewildPost";
 import { PROJECT_COLUMNS, type BewildProjectFull } from "@/lib/useBewildProject";
 import { PROJECTS_LIST_COLUMNS, type BewildProject } from "@/lib/useBewildProjects";
 import { PEER_COLUMNS } from "@/lib/useProjectSeoPeers";
@@ -100,9 +100,24 @@ export type PostLoaderData = {
   seo: RouteSeoData;
   /** `undefined` = falha de rede (cliente busca); `null` = não existe. */
   post?: BewildPost | null;
-  related?: BewildPost[] | null;
+  /** Só as colunas do card (RELATED_POST_COLS), sem corpo. */
+  related?: RelatedPost[] | null;
   bodyHtml?: string | null;
 };
+
+/**
+ * O que o loader do artigo devolve vai inteiro para o payload de hidratação
+ * (`<script data-tsr-stream-part>`) do HTML. Com o `bodyHtml` já sanitizado no
+ * servidor, a página não usa o markdown cru (`post.body`): ele saía de novo no
+ * payload e o texto do artigo aparecia três vezes no HTML (auditoria de SEO,
+ * rodada 4, 09/11/2026). Chame DEPOIS de montar o head (o JSON-LD lê os
+ * vídeos do corpo cru). Sem `bodyHtml` (sanitizador falhou), o corpo fica:
+ * a página o converte no navegador como antes.
+ */
+export function withoutRawBody<T extends PostLoaderData>(data: T): T {
+  if (!data.post || typeof data.bodyHtml !== "string" || data.bodyHtml === "") return data;
+  return { ...data, post: { ...data.post, body: "" } };
+}
 
 export async function loadPostContent(slug: string): Promise<PostLoaderData> {
   // Memo de 60 s no servidor (src/lib/serverMemo.ts): só artigo encontrado.
@@ -120,23 +135,19 @@ async function fetchPostContent(slug: string): Promise<PostLoaderData> {
     if (!data) return { seo: NOT_FOUND_SEO, post: null, related: [] };
     const post = normalizeBewildPost(data as unknown as BewildPost) as BewildPost;
 
-    let related: BewildPost[] | null = null;
+    let related: RelatedPost[] | null = null;
     if (post.category) {
-      const category = post.category;
-      const rel = await withPostCols((cols) =>
-        supabase
-          .from("bewild_posts" as never)
-          .select(cols)
-          .eq("published", true)
-          .eq("category", category)
-          .neq("id", post.id)
-          .order("published_at", { ascending: false, nullsFirst: false })
-          .order("created_at", { ascending: false })
-          .limit(3),
-      );
-      if (!rel.error) {
-        related = ((rel.data ?? []) as unknown as BewildPost[]).map(normalizeBewildPost) as BewildPost[];
-      }
+      // Só o que o card "Continue lendo" mostra: sem corpo, FAQ e meta.
+      const rel = await supabase
+        .from("bewild_posts" as never)
+        .select(RELATED_POST_COLS)
+        .eq("published", true)
+        .eq("category", post.category)
+        .neq("id", post.id)
+        .order("published_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false })
+        .limit(3);
+      if (!rel.error) related = (rel.data ?? []) as unknown as RelatedPost[];
     } else {
       related = [];
     }
