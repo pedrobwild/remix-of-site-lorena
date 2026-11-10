@@ -16,7 +16,8 @@ import { CONTACT, whatsappHref } from "@/components/landing/content";
 import { useCtaClickTracking } from "@/lib/trackCta";
 import "./servico-reforma.css";
 import "./marcenaria.css";
-import { CANONICAL, FAQ } from "@/content/pages/marcenaria";
+import { CANONICAL, FAQ, MARCENARIA_INCORPORADORAS as B2B } from "@/content/pages/marcenaria";
+import { MARCENARIA_SEO } from "@/content/pages/marcenaria.seo";
 
 /* ============================================================
  * MarcenariaPage — /marcenaria
@@ -149,12 +150,11 @@ function RoomGallery() {
 export default function MarcenariaPage() {
   useCtaClickTracking("marcenaria");
 
+  // Mesmos textos do head() da rota (HTML do servidor): marcenaria.seo.ts.
   useSeo({
-    title: "Marcenaria sob medida em São Paulo | Fábrica própria — Bewild",
-    description:
-      "Marcenaria planejada sob medida em São Paulo, com fábrica própria: MDF certificado, mais de 40 modelos e cores e 5 anos de garantia, no contrato da reforma.",
-    keywords:
-      "marcenaria sob medida São Paulo, marcenaria planejada SP, móveis planejados apartamento, armário sob medida, cozinha planejada São Paulo, Bewild",
+    title: MARCENARIA_SEO.title,
+    description: MARCENARIA_SEO.description,
+    keywords: MARCENARIA_SEO.keywords,
     canonicalPath: CANONICAL,
     ogType: "website",
   });
@@ -246,6 +246,40 @@ export default function MarcenariaPage() {
               <a href="/portfolio">portfólio</a> ou entenda o contrato completo
               em <a href="/conteudos/o-que-esta-incluso-orcamento-reforma-studio">o que está incluso</a>.
             </p>
+          </div>
+        </section>
+
+        {/* Para incorporadoras (rodada 4 de SEO, 09/11/2026): só fatos do case e do programa. */}
+        <section className="bwa-servico-block" aria-labelledby={B2B.id}>
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id={B2B.id}>
+              {B2B.titulo}
+            </h2>
+            <p className="bwa-servico-text">{B2B.abertura}</p>
+            <p className="bwa-servico-text" style={{ marginTop: 16, marginBottom: 24 }}>
+              {B2B.texto}
+            </p>
+            <ul className="bwa-servico-cards">
+              {B2B.itens.map((item) => (
+                <li key={item.t}>
+                  <h3>{item.t}</h3>
+                  <p>{item.d}</p>
+                </li>
+              ))}
+            </ul>
+            <h3 className="bwa-marc-b2b-case">{B2B.caso.titulo}</h3>
+            <p className="bwa-servico-text">
+              {B2B.caso.texto}{" "}
+              <a href={B2B.caso.link.href} data-cta="marcenaria-incorporadoras-case">
+                {B2B.caso.link.label}
+              </a>
+              .
+            </p>
+            <div className="bwa-servico-cta-actions bwa-servico-top-actions">
+              <a className="bwa-button" href={B2B.cta.href} data-cta={B2B.cta.dataCta}>
+                {B2B.cta.label} <span aria-hidden="true">→</span>
+              </a>
+            </div>
           </div>
         </section>
 
