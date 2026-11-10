@@ -57,6 +57,37 @@ export const TOPO_VARIANTES = {
 export const NOTA_ATENDIMENTO =
   "Atendemos só a cidade de São Paulo, em apartamentos novos ou com até 15 anos de uso. São só as informações iniciais para conhecermos o seu imóvel: um especialista da Bewild responde pelo WhatsApp em até um dia útil.";
 
+/**
+ * Rodada 4 da auditoria de SEO (09/11/2026, ação 6): as buscas "orçamento de
+ * reforma completa de apartamento em <bairro>" caíam no artigo "por bairro".
+ * O /orcamento linka as 16 páginas /reforma/<bairro> publicadas (as mesmas do
+ * sitemap; conferido em bairrosOrcamento.test.tsx). Pinheiros, Brooklin e
+ * Vila Olímpia, que têm mais buscas, vêm primeiro.
+ */
+export const BAIRROS_TURNKEY = {
+  titulo: "Orçamento de reforma turnkey por bairro de São Paulo",
+  texto: "A Bewild executa obras só na cidade de São Paulo. Cada página de bairro mostra os projetos da Bewild ali, a faixa de custo de referência da cidade e as respostas sobre prazo, orçamento e quem a Bewild atende.",
+} as const;
+
+export const BAIRROS_ORCAMENTO: ReadonlyArray<{ slug: string; label: string }> = [
+  { slug: "pinheiros", label: "Pinheiros" },
+  { slug: "brooklin", label: "Brooklin" },
+  { slug: "vila-olimpia", label: "Vila Olímpia" },
+  { slug: "bela-vista", label: "Bela Vista" },
+  { slug: "butanta", label: "Butantã" },
+  { slug: "campo-belo", label: "Campo Belo" },
+  { slug: "consolacao", label: "Consolação" },
+  { slug: "higienopolis", label: "Higienópolis" },
+  { slug: "moema", label: "Moema" },
+  { slug: "paulista", label: "Paulista" },
+  { slug: "perdizes", label: "Perdizes" },
+  { slug: "republica", label: "República" },
+  { slug: "vila-clementino", label: "Vila Clementino" },
+  { slug: "vila-madalena", label: "Vila Madalena" },
+  { slug: "vila-mariana", label: "Vila Mariana" },
+  { slug: "vila-nova-conceicao", label: "Vila Nova Conceição" },
+];
+
 /** Formulário em etapas: rótulo curto (barra de progresso) e pergunta (H2). */
 export const ETAPAS: ReadonlyArray<{ rotulo: string; pergunta: string }> = [
   { rotulo: "Imóvel", pergunta: "Onde fica e qual o tamanho?" },
@@ -118,8 +149,8 @@ export const FAQ: { q: string; a: string }[] = [
     a: "Sim. Layout, marcenaria, iluminação, acabamentos e mobília saem de um projeto da Bewild, com arquiteto como responsável técnico, aprovado em 3D antes da obra. Projeto e obra ficam no mesmo contrato.",
   },
   {
-    q: "Quem cuida da ART e do plano de reforma para o condomínio?",
-    a: "A Bewild. Antes de a obra começar, entregamos ao síndico o plano de reforma exigido pela NBR 16280, com a ART ou RRT do responsável técnico, o cronograma e os horários de trabalho.",
+    q: "Quem cuida do RRT e do plano de reforma para o condomínio?",
+    a: "A Bewild. Antes de a obra começar, entregamos ao síndico o plano de reforma exigido pela NBR 16280, com o RRT do responsável técnico, o cronograma e os horários de trabalho.",
   },
 ];
 
