@@ -36,8 +36,11 @@ import "./orcamento.css";
 import fotoObra from "@/assets/orcamento/obra-bewild.webp";
 import { BAIRROS_ATENDIDOS, CLIENTES_FORA_DA_CAPITAL_PCT, CLIENTES_INDICACAO_PCT, CLIENTES_SHORT_STAY_PCT, CONTRATOS_ANALISADOS, PROVA_REFORMAS } from "@/content/provas";
 import { CUSTO_M2_MEDIANO } from "@/content/baseCusto";
+import { noBairro } from "@/lib/bairroSeo";
 import {
   AREA_SLIDER,
+  BAIRROS_ORCAMENTO,
+  BAIRROS_TURNKEY,
   ESTADOS_IMOVEL,
   ETAPAS,
   FAQ,
@@ -725,7 +728,7 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
               <li>Projeto de reforma em 3D, aprovado antes da obra.</li>
               <li>Preço fechado: se a obra custar mais do que o combinado, a diferença é da Bewild.</li>
               <li>Prazo em contrato, com multa por dia de atraso. Studio simples: cerca de 60 dias úteis de obra.</li>
-              <li>Plano de reforma da NBR 16280, com ART ou RRT do responsável técnico, entregue ao síndico antes da obra.</li>
+              <li>Plano de reforma da NBR 16280, com RRT do responsável técnico, entregue ao síndico antes da obra.</li>
               <li>Obra acompanhada de qualquer cidade no Bwild Workflow: cronograma, fotos e decisões.</li>
               <li>5 anos de garantia, em contrato.</li>
             </ul>
@@ -735,6 +738,20 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
             <h3 className="bwa-servico-h3">Quanto custa</h3>
             <p className="bwa-servico-text">A mediana dos {CONTRATOS_ANALISADOS} contratos de reforma completa de até 50 m² analisados pela Bewild é {CUSTO_M2_MEDIANO} por m², com projeto, obra, marcenaria, mobília e eletros.</p>
             <p className="bwa-servico-text">A tabela por metragem está no <a href={PILAR_CUSTO}>guia de custo</a>.</p>
+          </div>
+        </section>
+
+        <section className="bwa-servico-block" aria-labelledby="bairros-orcamento">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="bairros-orcamento">{BAIRROS_TURNKEY.titulo}</h2>
+            <p className="bwa-servico-text">{BAIRROS_TURNKEY.texto}</p>
+            <ul className="bwa-servico-text" style={{ columns: "3 220px", columnGap: 32 }}>
+              {BAIRROS_ORCAMENTO.map((b) => (
+                <li key={b.slug}>
+                  <a href={`/reforma/${b.slug}`}>Reforma {noBairro(b.label)}</a>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 

@@ -47,7 +47,7 @@ export default function ReformaCoberturaSpPage() {
   useCtaClickTracking("reforma-cobertura-sp");
 
   useSeo({
-    title: "Reforma de cobertura em São Paulo | Projeto, obra e mobília — Bewild",
+    title: "Reforma de cobertura em São Paulo: projeto, obra e mobília",
     description:
       "Reforma completa de cobertura em São Paulo: projeto 3D, obra, terraço, marcenaria e mobília em um contrato, com preço fechado, prazo e 5 anos de garantia.",
     canonicalPath: CANONICAL,

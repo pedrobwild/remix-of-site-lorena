@@ -1,6 +1,6 @@
 import { formatAreaM2 } from "@/lib/formatArea";
 import { bairroAreaRange, bairroDescription, bairroPreposicao, bairroTitle, noBairro } from "@/lib/bairroSeo";
-import { bairroContent } from "@/content/bairros";
+import { FAIXA_CUSTO_SP, bairroContent } from "@/content/bairros";
 import { radarBairroLink } from "@/lib/radarLinks";
 import { NEW_TAB_SUFFIX, RADAR_LINK_ATTRS } from "@/config/site";
 /**
@@ -113,6 +113,28 @@ export default function BairroPage({
                 <a href="#orcamento" style={{ textDecoration: "underline" }}>Pedir orçamento {noBairro(label)}</a>.
               </p>
             )}
+            {/* Faixa de custo da CIDADE (BASE_CUSTO), nunca mediana do bairro; sai no HTML do servidor, acima da dobra. */}
+            <div
+              className="bwh-bairro-custo"
+              style={{ margin: "0 0 40px", maxWidth: 820, padding: "24px 0", borderTop: "1px solid var(--hair)", borderBottom: "1px solid var(--hair)" }}
+            >
+              <p className="bwh-mono bwh-label" style={{ margin: "0 0 8px" }}>
+                {FAIXA_CUSTO_SP.rotulo} · custo por m²
+              </p>
+              <p style={{ margin: "0 0 12px", fontSize: 28, fontWeight: 600, lineHeight: 1.2, color: "var(--num)" }}>
+                {FAIXA_CUSTO_SP.faixa}
+              </p>
+              <p style={{ margin: "0 0 20px", fontSize: 16, lineHeight: 1.6 }}>
+                {FAIXA_CUSTO_SP.texto}{" "}
+                <a href="/indice-de-custo-de-reforma" style={{ textDecoration: "underline" }}>
+                  Ver o Índice Bewild
+                </a>
+                .
+              </p>
+              <a className="bwh-btn bwh-btn--fill" href="/orcamento" data-cta="bairro-topo-orcamento">
+                Solicitar orçamento <span className="bwh-ar" aria-hidden="true">→</span>
+              </a>
+            </div>
           </div>
         </section>
 

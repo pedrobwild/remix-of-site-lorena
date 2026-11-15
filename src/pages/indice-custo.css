@@ -183,3 +183,113 @@
 .bwa-indice-nowrap {
   white-space: nowrap;
 }
+
+/* Para imprensa (10/11/2026): números citáveis, frase de fonte, planilha e
+   código de incorporação dos gráficos. */
+.bwa-indice-press {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  margin: 0 0 clamp(28px, 3vw, 40px);
+  padding: 0;
+  list-style: none;
+  background: var(--bwa-line);
+  border: 1px solid var(--bwa-line);
+}
+
+@media (min-width: 900px) {
+  .bwa-indice-press {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.bwa-indice-press > li {
+  padding: clamp(18px, 2vw, 26px);
+  background: var(--bwa-paper);
+}
+
+.bwa-indice-press-valor {
+  margin: 0;
+  font-family: var(--bwa-font-display);
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 600;
+  color: var(--bwa-navy);
+}
+
+.bwa-indice-press-rotulo {
+  margin: 8px 0 0;
+  line-height: 1.5;
+}
+
+.bwa-indice-press-meta {
+  margin: 10px 0 0;
+  color: var(--bwa-ink-soft);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.bwa-indice-press-h3 {
+  margin-top: clamp(28px, 3vw, 40px);
+  margin-bottom: 12px;
+}
+
+.bwa-indice-copy-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin: 0 0 16px;
+}
+
+.bwa-indice-copy {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--bwa-navy);
+  background: transparent;
+  color: var(--bwa-navy);
+  font-family: var(--bwa-font-mono);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.bwa-indice-copy:hover {
+  background: var(--bwa-white);
+}
+
+.bwa-indice-copy:focus-visible,
+.bwa-indice-embed-code:focus-visible {
+  outline: 2px solid var(--bwa-navy);
+  outline-offset: 2px;
+}
+
+.bwa-indice-copy-status {
+  color: var(--bwa-ink-soft);
+  font-size: 14px;
+}
+
+.bwa-indice-embed {
+  max-width: 72ch;
+  margin: 0 0 24px;
+}
+
+.bwa-indice-embed-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.bwa-indice-embed-code {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0 0 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--bwa-line);
+  background: var(--bwa-white);
+  color: var(--bwa-ink);
+  font-family: var(--bwa-font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  resize: vertical;
+}
