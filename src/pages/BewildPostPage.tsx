@@ -45,7 +45,7 @@ import {
   type BewildPost,
   type BewildPostCategory,
 } from "@/lib/useBewildPosts";
-import { useBewildPost, useBewildRelatedPosts } from "@/lib/useBewildPost";
+import { useBewildPost, useBewildRelatedPosts, type RelatedPost } from "@/lib/useBewildPost";
 import { authorForPage, postAuthorByline, postAuthorHref, postDates, postTitleFromSlug } from "@/lib/postSeo";
 import { navigate } from "@/lib/useHashRoute";
 import { keywordsForPost } from "@/lib/postKeywords";
@@ -60,7 +60,7 @@ import "@/styles/conteudos.css";
 type Props = {
   slug: string;
   /** Dados do loader (SSR); ausente = busca no cliente como antes. */
-  initial?: { post: BewildPost | null; related: BewildPost[] | null; bodyHtml: string | null } | null;
+  initial?: { post: BewildPost | null; related: RelatedPost[] | null; bodyHtml: string | null } | null;
 };
 
 // Configuração estável do marked (sem opções deprecadas em v18).
@@ -142,7 +142,7 @@ function getCtaContent(category: BewildPostCategory | null | undefined): CtaCont
   return CTA_BY_CATEGORY[category] ?? CTA_FALLBACK;
 }
 
-function RelatedCard({ p }: { p: BewildPost }) {
+function RelatedCard({ p }: { p: RelatedPost }) {
   return (
     <a href={`/conteudos/${p.slug}`} className="ct-card" aria-label={`Ler: ${p.title}`}>
       <div className={"ct-card__media" + (!p.cover_image ? " ct-card__media--empty" : "")}>
@@ -190,18 +190,21 @@ export default function BewildPostPage({ slug, initial }: Props) {
   const ctaWhatsHref = post ? whatsappHref(`Vim do artigo "${post.title}" no site.`) : whatsappHref();
 
   const sanitizedBody = useMemo(() => {
-    if (!post?.body) return "";
+    if (!post) return "";
     // 1º render: HTML já sanitizado pelo loader (evita diferença de hidratação).
-    if (initial?.post && initial.bodyHtml != null && initial.post.body === post.body) {
+    // Com ele, o loader não manda o markdown cru (`body` vazio, withoutRawBody):
+    // o texto do artigo sai uma vez só no payload de hidratação.
+    if (initial?.post && initial.bodyHtml != null && initial.post.id === post.id && initial.post.body === post.body) {
       return initial.bodyHtml;
     }
+    if (!post.body) return "";
     try {
       const raw = marked.parse(post.body, { async: false }) as string;
       return wrapArticleTables(linkServicePagesInHtml(rewriteGuiaLinksInHtml(sanitizeBlogHtml(raw))));
     } catch {
       return "";
     }
-  }, [post?.body, initial]);
+  }, [post, initial]);
   // Linha "Autor/Revisão" sai do corpo (vira dado no cabeçalho) e H2/H3 ganham
   // âncora para o sumário. Função pura: servidor e cliente geram o mesmo HTML.
   const structured = useMemo(() => structurePostBody(sanitizedBody), [sanitizedBody]);

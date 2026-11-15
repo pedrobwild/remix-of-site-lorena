@@ -80,6 +80,11 @@ export default function BwaFooter() {
               <a href="/privacidade">Política de privacidade</a>
               <a href="/politica-de-cookies">Política de cookies</a>
               <a href="/mapa-do-site">Mapa do site</a>
+              {/* Autoria e reuso (auditoria de SEO, rodada 4, 09/11/2026): as três
+                  páginas tinham um link interno cada, só no mapa do site. */}
+              <a href="/autores">Autores</a>
+              <a href="/atribuicao">Como citar a Bewild</a>
+              <a href="/licenca-cc-by-sa-4-0">Licença CC BY-SA 4.0</a>
               <a href="/acessibilidade" className="bwa-footer-a11y">
                 <Accessibility size={16} aria-hidden="true" />
                 Acessibilidade

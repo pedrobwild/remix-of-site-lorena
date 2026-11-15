@@ -15,6 +15,7 @@ import {
   upsertSlugRedirect,
 } from "@/lib/seoRedirects";
 import { useUnsavedChangesGuard } from "@/lib/useUnsavedChangesGuard";
+import { avisarIndexNow } from "@/lib/indexNowAviso";
 import { devWarn } from "@/lib/devLog";
 
 interface Props {
@@ -459,6 +460,9 @@ export default function BewildProjectFormPage({ slug }: Props) {
 
       // A partir daqui o projeto está salvo.
       setForm((f) => ({ ...f, id: projectId, published: payload.published }));
+      // Projeto no ar: avisa o IndexNow em segundo plano (não espera nem
+      // bloqueia nada; ver src/lib/indexNowAviso.ts).
+      avisarIndexNow("project", newSlug, payload.published);
 
       if (redirect) {
         const { error: redirectError } = await upsertSlugRedirect(oldPath, newPath);

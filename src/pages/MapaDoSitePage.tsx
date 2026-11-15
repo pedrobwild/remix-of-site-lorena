@@ -49,7 +49,7 @@ export default function MapaDoSitePage({
   }, [projects]);
 
   useSeo({
-    title: "Mapa do site: páginas, bairros, projetos e conteúdos | Bewild",
+    title: "Mapa do site: páginas, bairros, projetos e conteúdos",
     description:
       "Índice com todas as páginas da Bewild, as páginas de reforma por bairro, os projetos de apartamentos e studios reformados em São Paulo e os guias de conteúdo.",
     canonicalPath: "/mapa-do-site",

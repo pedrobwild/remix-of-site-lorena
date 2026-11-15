@@ -1,4 +1,4 @@
-import { brandTitle } from "@/lib/seoTitle";
+import { brandTitle, VISIBLE_TITLE_MAX } from "@/lib/seoTitle";
 import { formatAreaM2 } from "./formatArea";
 import { noBairro } from "@/lib/bairroSeo";
 /**
@@ -97,6 +97,14 @@ const titleWhat = (p: ProjectSeoInput, area: string) => {
   return p.status === "em_obra" ? `${base} em obra` : base;
 };
 
+/**
+ * Forma curta, a primeira coisa a sair quando o título não cabe em 60:
+ * "projeto de interiores de 21,3 m²" → "projeto de 21,3 m²". O resto
+ * (reforma, metragem, "em obra") fica como está.
+ */
+const titleWhatShort = (p: ProjectSeoInput, area: string) =>
+  p.status === "em_projeto" && area ? `projeto de ${area}` : titleWhat(p, area);
+
 /** Conectivo ou traço que sobra no fim do nome depois de tirar o bairro ou cortar. */
 const TRAILING_FILLER = /(?:\s+(?:de|da|do|das|dos|e|em|no|na|nos|nas)|\s*[-–—·,:;&/|])+$/;
 const tidyName = (value: string) => value.replace(TRAILING_FILLER, "").trim();
@@ -118,8 +126,12 @@ const fold = (value: string) =>
 const nameHasPlace = (name: string, place: string) =>
   new RegExp(`(^|[^a-z0-9])${escapeRx(fold(place))}([^a-z0-9]|$)`).test(fold(name));
 
-/** Teto do título gerado (o Google exibe uns 60 caracteres e corta o resto). */
-const TITLE_MAX = 78;
+/**
+ * Teto do título gerado: o que o Google mostra inteiro (60). Até 10/11/2026
+ * era 78, e 18 projetos passavam de 60 no Ahrefs (auditoria de SEO, rodada 4,
+ * 09/11/2026, ação 16). A marca entra só quando ainda cabe (`brandTitle`).
+ */
+const TITLE_MAX = VISIBLE_TITLE_MAX;
 
 /** Google corta em ~160 caracteres: fecha em frase ou palavra inteira. */
 const DESCRIPTION_MAX = 160;
@@ -140,7 +152,7 @@ const placeLabel = (p: ProjectSeoInput) =>
 /**
  * Título do Google: o nome do prédio primeiro, depois o bairro e o que foi
  * feito — "The Collection em Moema: reforma de 28,21 m² | Bewild". Nunca o
- * código interno do negócio.
+ * código interno do negócio. Até 60 caracteres; a marca só quando cabe.
  *
  * O nome vem na frente porque a busca que esta página atende é a do prédio
  * ("the collection moema"). "Reforma de apartamento em <bairro>" é da página
@@ -149,24 +161,32 @@ const placeLabel = (p: ProjectSeoInput) =>
  * auditoria de 05/10/2026).
  */
 export function projectSeoTitle(p: ProjectSeoInput | null | undefined): string {
-  return brandTitle(projectSeoTitleFull(p));
+  return brandTitle(projectTitleBase(p));
 }
 
 /**
- * Título completo, sempre com " | Bewild" (teto `TITLE_MAX`). `projectSeoTitle`
- * aplica `brandTitle` por cima: a marca sai quando o conjunto passa de 60.
+ * Título sem a marca, com até `TITLE_MAX` caracteres contando o `extra` (o
+ * que separa projetos do mesmo prédio, ver `projectSeoTitleUnique`). Quando
+ * não cabe, sai nesta ordem: "interiores de" (forma curta do que foi feito),
+ * "em São Paulo" (só quando o cadastro não tem bairro), o fim do nome do
+ * prédio (em palavra inteira) e, por último, o fim do conjunto. Bairro,
+ * metragem e `extra` ficam.
  */
-function projectSeoTitleFull(p: ProjectSeoInput | null | undefined): string {
-  if (!p) return "Reforma de apartamento em São Paulo | Bewild";
+function projectTitleBase(p: ProjectSeoInput | null | undefined, extra = ""): string {
+  if (!p) return "Reforma de apartamento em São Paulo";
 
   const explicit = stripProjectCode((p.seo_title || "").trim());
   // Título escrito à mão (sem o código gerado) e já com contexto de busca: respeita.
-  if (explicit && explicit === (p.seo_title || "").trim() && hasSearchContext(explicit)) return explicit;
+  if (explicit && explicit === (p.seo_title || "").trim() && hasSearchContext(explicit)) {
+    return explicit.replace(/\s*\|\s*Bewild\s*$/, "") + extra;
+  }
 
-  const suffix = " | Bewild";
+  const max = TITLE_MAX - extra.length;
   const area = areaLabel(p);
+  const hasPlace = !!placeLabel(p);
   const place = placeLabel(p) || "São Paulo";
   const what = titleWhat(p, area);
+  const whatShort = titleWhatShort(p, area);
   let name = projectFriendlyName(p);
   // "Latitude Campo Belo" em Campo Belo → "Latitude em Campo Belo": o bairro não
   // se repete. Só sai como palavra inteira ("Solapa" em Lapa fica) e nunca de
@@ -177,26 +197,28 @@ function projectSeoTitleFull(p: ProjectSeoInput | null | undefined): string {
     if (rest !== name && !PLACE_GLUE.test(rest)) name = tidyName(rest) || name;
   }
   if (!name) {
-    const head = `${what.charAt(0).toUpperCase()}${what.slice(1)} ${noBairro(place)}`;
-    return `${truncateTitleBase(head, TITLE_MAX - suffix.length)}${suffix}`;
+    const head = (w: string) => `${w.charAt(0).toUpperCase()}${w.slice(1)} ${noBairro(place)}`;
+    const fit = [head(what), head(whatShort)].find((t) => t.length <= max);
+    return `${fit ?? truncateTitleBase(head(whatShort), max)}${extra}`;
   }
 
   // "no Brooklin", "na Vila Olímpia", "em Pinheiros" (bairroSeo.ts), não "em Brooklin".
-  const build = (n: string) => `${n}${nameHasPlace(n, place) ? "" : ` ${noBairro(place)}`}: ${what}${suffix}`;
-  const full = build(name);
-  if (full.length <= TITLE_MAX) return full;
+  const build = (n: string, w: string, withPlace = true) =>
+    `${n}${withPlace && !nameHasPlace(n, place) ? ` ${noBairro(place)}` : ""}: ${w}`;
+  const candidates = [build(name, what), build(name, whatShort)];
   // Sem bairro no cadastro, "em São Paulo" sai antes de cortar o nome do prédio.
-  const noPlace = `${name}: ${what}${suffix}`;
-  if (!placeLabel(p) && noPlace.length <= TITLE_MAX) return noPlace;
+  if (!hasPlace) candidates.push(build(name, what, false), build(name, whatShort, false));
+  const fit = candidates.find((t) => t.length <= max);
+  if (fit) return `${fit}${extra}`;
   // Nome longo é cortado em palavra inteira; bairro e metragem ficam inteiros.
-  const room = TITLE_MAX - build("").length;
+  const room = max - build("", whatShort, hasPlace).length;
   if (room >= 8 && /\s/.test(name.slice(1, room + 1))) {
     const cut = truncateTitleBase(name, room);
-    return build(tidyName(cut) || cut);
+    return `${build(tidyName(cut) || cut, whatShort, hasPlace)}${extra}`;
   }
   // Sem espaço para isso: corta o conjunto no fim, em palavra inteira.
-  const cut = truncateTitleBase(full.slice(0, -suffix.length), TITLE_MAX - suffix.length);
-  return `${tidyName(cut) || cut}${suffix}`;
+  const cut = truncateTitleBase(build(name, whatShort, hasPlace), max);
+  return `${tidyName(cut) || cut}${extra}`;
 }
 
 export function projectMetaDescription(
@@ -252,34 +274,59 @@ export function projectRegistrationDate(value?: string | null): string {
   }).format(d);
 }
 
-/** Título com data cabe em ~100 caracteres; o essencial vem no começo. */
-const DATED_TITLE_MAX = 100;
+/** O que o cadastro diz do uso do imóvel, para separar irmãs do mesmo prédio. */
+const TYPE_TAG: Record<string, string> = {
+  short_stay: "para short stay",
+  turn_key: "turn-key",
+  planta: "na planta",
+};
 
 /**
- * Título único entre projetos do mesmo prédio. Quando outra página gera o
- * mesmo título, acrescenta "cadastro dd/mm/aaaa" (dado real do cadastro) — mas
- * só se a data realmente separa esta página das irmãs. Se duas irmãs têm a
- * mesma data, o título fica como está: data repetida não ajuda o Google.
+ * Título único entre projetos do mesmo prédio, sempre com até 60 caracteres.
+ *
+ * Quando outra página gera o mesmo título, entra o primeiro dado real do
+ * cadastro que separa esta página das irmãs: a metragem (se o título não a
+ * trouxe) ou o uso do imóvel ("para short stay"). Só quando as irmãs têm
+ * nome, bairro, metragem, fase e uso iguais, e não há dado que as separe,
+ * elas são numeradas em ordem de cadastro: "(2)". Até 10/11/2026 o número
+ * vinha como "(projeto 2)" e levava o título a 78 caracteres (auditoria de
+ * SEO, rodada 4, ação 16). A data de cadastro, usada antes disso, não diz
+ * nada a quem busca o prédio.
  */
 export function projectSeoTitleUnique(
   p: ProjectSeoPeer | null | undefined,
   peers: ProjectSeoPeer[],
 ): string {
-  const full = projectSeoTitleFull(p);
-  if (!p) return brandTitle(full);
+  const base = projectTitleBase(p);
+  if (!p) return brandTitle(base);
 
-  const group = peers.filter((o) => o.id !== p.id && projectSeoTitleFull(o) === full);
-  if (group.length === 0) return brandTitle(full);
+  const group = peers.filter((o) => o.id !== p.id && projectTitleBase(o) === base);
+  if (group.length === 0) return brandTitle(base);
+  const siblings = [p, ...group];
 
-  const suffix = " | Bewild";
-  if (!full.endsWith(suffix)) return brandTitle(full);
-  // Numera as irmãs em ordem estável (cadastro, depois id): "(projeto 2)".
-  // A data de cadastro, usada antes, não diz nada a quem busca o prédio e
-  // levava o título a 80 caracteres (auditoria de 06/10/2026).
+  // Cada marca devolve o trecho que vai no fim do título, ou "" se não houver dado.
+  const tags: Array<(o: ProjectSeoPeer) => string> = [
+    (o) => {
+      const area = areaLabel(o);
+      return area && !base.includes(area) ? `, ${area}` : "";
+    },
+    (o) => (o.project_type && TYPE_TAG[o.project_type] ? ` ${TYPE_TAG[o.project_type]}` : ""),
+  ];
+  // Dado que só esta página tem entre as irmãs.
+  const own = (tag: (o: ProjectSeoPeer) => string, o: ProjectSeoPeer) => {
+    const value = tag(o);
+    return value && siblings.filter((s) => tag(s) === value).length === 1 ? value : "";
+  };
+  const ownTag = (o: ProjectSeoPeer) => tags.map((tag) => own(tag, o)).find(Boolean) ?? "";
+
+  const mine = ownTag(p);
+  if (mine) return brandTitle(projectTitleBase(p, mine));
+  // Sem dado que separe: numera, em ordem estável (cadastro, depois id), só as
+  // irmãs que também não têm dado próprio.
   const key = (o: ProjectSeoPeer) => `${o.created_at ?? ""}|${o.id}`;
-  const n = [p, ...group].map(key).sort().indexOf(key(p)) + 1;
-  const numbered = `${full.slice(0, -suffix.length)} (projeto ${n})`;
-  return numbered.length <= DATED_TITLE_MAX ? brandTitle(numbered) : brandTitle(full);
+  const rest = siblings.filter((o) => o === p || !ownTag(o)).map(key).sort();
+  if (rest.length === 1) return brandTitle(base);
+  return brandTitle(projectTitleBase(p, ` (${rest.indexOf(key(p)) + 1})`));
 }
 
 /**
