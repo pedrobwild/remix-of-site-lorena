@@ -418,7 +418,6 @@ export default function BewildPortfolioPage({ initialProjects }: { initialProjec
                       key={p.id}
                       href={`/portfolio/${p.slug}`}
                       className="bwh-proj"
-                      aria-label={`Ver projeto ${name}`}
                       onClick={() => reportProjectClick(p.slug, p.title, i + 1)}
                     >
                       <div className="bwh-proj__media">

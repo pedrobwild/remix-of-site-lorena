@@ -212,7 +212,7 @@ export default function BewildConteudosPage({ page = null, initialIndex = null, 
             {!loading && !error && showFeatured && featured && (
               <>
                 <div className="ct-secmark"><span className="n">001</span><span className="t">Em destaque</span><span className="ln" /></div>
-                <a href={`/conteudos/${featured.slug}`} className="ct-featured" aria-label={`Ler: ${featured.title}`}>
+                <a href={`/conteudos/${featured.slug}`} className="ct-featured">
                   <div className={"ct-featured__media" + (!featured.cover_image ? " is-empty" : "")}>
                     {featuredImg ? (
                       <img
@@ -285,7 +285,7 @@ export default function BewildConteudosPage({ page = null, initialIndex = null, 
             {!loading && !error && filteredGrid.length > 0 && (
               <div className="ct-grid">
                 {filteredGrid.map((p) => (
-                  <a key={p.id} href={`/conteudos/${p.slug}`} className="ct-card" aria-label={`Ler: ${p.title}`}>
+                  <a key={p.id} href={`/conteudos/${p.slug}`} className="ct-card">
                     <div className={"ct-card__media" + (!p.cover_image ? " is-empty" : "")}>
                       {p.cover_image ? (
                         <img
