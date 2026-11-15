@@ -13,7 +13,8 @@ import { BAIRROS_ATENDIDOS } from "@/content/provas";
 /** Título e descrição de /onde-atuamos: os mesmos no head() da rota (HTML do servidor) e no useSeo da página. */
 // 25/10/2026: posição 4,8 no Google com CTR de 0,8% (124 impressões, 1 clique em
 // 28 dias). O título passa a dizer o que a página mostra: os bairros com obra.
-export const ONDE_ATUAMOS_TITLE = `Onde a Bewild reforma em São Paulo: ${BAIRROS_ATENDIDOS} bairros com obra entregue`;
+// 10/11/2026: "SP" no lugar de "São Paulo" para caber em 60 (tinha 64; rodada 4 de SEO).
+export const ONDE_ATUAMOS_TITLE = `Onde a Bewild reforma em SP: ${BAIRROS_ATENDIDOS} bairros com obra entregue`;
 export const ONDE_ATUAMOS_DESCRIPTION = `Obras entregues em ${BAIRROS_ATENDIDOS} bairros de São Paulo. Veja a lista, abra as fotos reais das obras de cada bairro e peça o orçamento, mesmo morando em outra cidade.`;
 
 export const ONDE_ATUAMOS_JSONLD: Array<Record<string, unknown>> = [
