@@ -10,7 +10,13 @@
  *
  * `eventID`: o Lead do navegador leva o mesmo id que a edge function
  * `notify-lead` manda pela API de Conversões — o Meta junta os dois e conta
- * o lead uma vez só.
+ * o lead uma vez só. PageView e ViewContent seguem a mesma regra desde
+ * 27/10/2026: `beginMetaPageView` gera um id por página vista, o servidor
+ * recebe esse id primeiro (src/lib/metaCapiBeacon.ts, com ou sem aceite) e o
+ * Pixel, quando há aceite, dispara o mesmo evento com o mesmo `eventID`
+ * (`trackMetaPageEvent`). Sem aceite o evento do Pixel fica PENDENTE para a
+ * página atual: se o aceite vier nesta mesma página, `flushMetaPixelQueue`
+ * dispara só o lado do Pixel (o servidor já recebeu o seu).
  *
  * Correspondência avançada manual (`setMetaUserData`): no envio de um
  * formulário, o e-mail, o telefone e o nome que a própria pessoa digitou
@@ -23,7 +29,7 @@
  * Meta sobre informações proibidas): sem valores, renda, CPF, saúde,
  * endereço ou texto livre digitado pela pessoa.
  */
-import { isConsentAccepted } from "@/lib/cookieConsent";
+import { isConsentAccepted, isFramed } from "@/lib/cookieConsent";
 import { normalizeEmail, normalizeName, normalizePhone } from "../../supabase/functions/_shared/meta-capi";
 
 type Fbq = (...args: unknown[]) => void;
@@ -36,6 +42,23 @@ export type MetaCustomEvent = "IniciouFormulario" | "VisitanteEngajado" | "Cliqu
 /** Teto da fila de espera: eventos antigos demais não fazem sentido. */
 const MAX_QUEUE = 20;
 let queue: unknown[][] = [];
+
+/** Eventos de página que o Pixel dispara com `eventID` compartilhado com o servidor. */
+export type MetaPageEvent = "PageView" | "ViewContent";
+
+type PageViewState = {
+  /** caminho + query da página vista (âncora não é página nova). */
+  key: string;
+  /** `eventID` do PageView desta página (servidor e Pixel). */
+  eventId: string;
+  /**
+   * Eventos de página (`PageView`/`ViewContent`) pedidos SEM aceite: saem no
+   * `flushMetaPixelQueue` se o aceite vier ainda nesta página — com o mesmo
+   * `eventID` já enviado ao servidor, para a Meta deduplicar.
+   */
+  pixelPending: unknown[][];
+};
+let pageView: PageViewState | null = null;
 /** Id do Pixel injetado (useSeo) — a correspondência avançada reinicia o mesmo id. */
 let pixelId: string | null = null;
 /** Dados de correspondência pedidos antes de o Pixel existir: saem antes da fila. */
@@ -119,6 +142,13 @@ export function flushMetaPixelQueue(): void {
     if (!allowed()) return;
     // Os dados de correspondência valem para os eventos que estavam na fila.
     if (userData && pixelId) fbq("init", pixelId, userData);
+    // Aceite dado nesta página: o PageView/ViewContent dela sai agora, com o
+    // eventID que o servidor já recebeu (antes dos demais eventos da fila).
+    if (pageView && pageView.key === currentPageKey() && pageView.pixelPending.length) {
+      const page = pageView.pixelPending;
+      pageView.pixelPending = [];
+      for (const args of page) fbq(...args);
+    }
     for (const args of pending) fbq(...args);
   } catch {
     /* nunca quebra a página */
@@ -130,6 +160,66 @@ export function __resetMetaPixelQueue(): void {
   queue = [];
   pendingUserData = null;
   pixelId = null;
+  pageView = null;
+}
+
+// ---------------------------------------------------------------------------
+// Página vista: um eventID por página, compartilhado com o servidor
+// ---------------------------------------------------------------------------
+
+/** Página = caminho + query (âncora não é página nova), como em MetaPixel.tsx. */
+export function currentPageKey(): string {
+  try {
+    return window.location.pathname + window.location.search;
+  } catch {
+    return "";
+  }
+}
+
+/**
+ * Começa a página vista atual (ou devolve a que já começou, para a mesma
+ * chave): `fresh` diz se é a primeira vez — só então o servidor é avisado.
+ * Trocar de página descarta o que ficou pendente da anterior: o Pixel nunca
+ * dispara PageView de uma página que a pessoa já deixou.
+ */
+export function beginMetaPageView(key: string = currentPageKey()): { eventId: string; fresh: boolean } {
+  if (pageView && pageView.key === key) return { eventId: pageView.eventId, fresh: false };
+  pageView = { key, eventId: newEventId(), pixelPending: [] };
+  return { eventId: pageView.eventId, fresh: true };
+}
+
+/** `eventID` do PageView da página atual (ou `null` antes de `beginMetaPageView`). */
+export function currentMetaPageViewId(): string | null {
+  return pageView && pageView.key === currentPageKey() ? pageView.eventId : null;
+}
+
+/**
+ * PageView/ViewContent no Pixel com o `eventID` já enviado ao servidor.
+ * Com aceite: sai (ou espera o Pixel na fila). Sem aceite: fica pendente
+ * para a página atual e sai em `flushMetaPixelQueue` se o aceite vier nela
+ * — nunca em outra página. No /admin ou em iframe: nada.
+ */
+export function trackMetaPageEvent(
+  name: MetaPageEvent,
+  params: Record<string, unknown>,
+  eventId: string,
+): "sent" | "queued" | "pending" | "blocked" {
+  try {
+    if (typeof window === "undefined" || !eventId || isAdminPath() || isFramed()) return "blocked";
+    const args: unknown[] = ["track", name, params, { eventID: eventId }];
+    if (isConsentAccepted()) return send(args);
+    // Sem aceite: pendente só para a página atual (quem chama já passou por
+    // `beginMetaPageView`; se não passou, a página começa aqui).
+    const key = currentPageKey();
+    if (!pageView || pageView.key !== key) {
+      pageView = { key, eventId: name === "PageView" ? eventId : newEventId(), pixelPending: [] };
+    }
+    if (pageView.pixelPending.length >= MAX_QUEUE) pageView.pixelPending.shift();
+    pageView.pixelPending.push(args);
+    return "pending";
+  } catch {
+    return "blocked";
+  }
 }
 
 // ---------------------------------------------------------------------------

@@ -962,8 +962,9 @@ function AnalyticsTab({
           />
           <FieldHint>
             Além do PageView: Lead (formulários de cliente), Contact (WhatsApp/telefone) e
-            ViewContent (páginas de projeto). O lead também vai pela API de Conversões, com o mesmo
-            id — o Meta conta uma vez só.
+            ViewContent (páginas de projeto). PageView, ViewContent e Lead também vão pela API de
+            Conversões (toda visita, mesmo sem aceite de cookies), com o mesmo id — o Meta conta
+            uma vez só.
           </FieldHint>
         </Field>
         <Field label="Meta — código de teste da API de Conversões (opcional)">

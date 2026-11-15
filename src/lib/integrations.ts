@@ -58,7 +58,7 @@ export function pixelStatus(s: IntegrationSettings): IntegrationStatus {
         label: "Meta — Pixel (navegador)",
         tone: "ok",
         value: "Ativo",
-        detail: `Pixel ${s.meta_pixel_id}: PageView, ViewContent, Contact e Lead, só após o aceite de cookies (o Lead do servidor sai pela API de Conversões independentemente do aceite).`,
+        detail: `Pixel ${s.meta_pixel_id}: PageView, ViewContent, Contact e Lead, só após o aceite de cookies (PageView, ViewContent e Lead também saem do servidor pela API de Conversões, independentemente do aceite, com o mesmo id — a Meta conta uma vez).`,
         href: SEO_PIXELS,
         hrefLabel: "configurar",
       }
