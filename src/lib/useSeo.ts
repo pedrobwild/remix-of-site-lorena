@@ -34,6 +34,14 @@ export type SeoInput = {
   title?: string;
   description?: string;
   canonicalPath?: string; // ex: "/portfolio" ou "/projeto/casa-paineira"
+  /**
+   * Query que faz parte do endereço canônico — só a paginação de /conteudos
+   * (`?pagina=2`, src/lib/conteudosPagination.ts). Entra no canonical, no
+   * hreflang e no og:url. Com ela, o texto da aba Páginas de /admin/seo NÃO é
+   * reaplicado: a rota já resolveu o override no loader e mandou o título
+   * final com o número da página (o mesmo do head() do servidor).
+   */
+  canonicalSearch?: string;
   ogImage?: string;
   /** Título só do Open Graph/Twitter (senão usa `title`). */
   ogTitle?: string;
@@ -485,8 +493,10 @@ function applySeo(settings: SiteSettings, seoInput: SeoInput) {
   const rawPath = seoInput.canonicalPath || "/";
   const cleanPath = rawPath.split("#")[0].split("?")[0] || "/";
 
-  // Textos editados em /admin/seo (aba "Páginas") vencem os da rota.
-  const ov = pageSeoOverride(settings.pages_seo, cleanPath);
+  // Textos editados em /admin/seo (aba "Páginas") vencem os da rota — menos
+  // nas páginas N ≥ 2 de uma lista paginada, que já chegam com o texto final.
+  const search = /^\?[\w=&-]+$/.test(seoInput.canonicalSearch ?? "") ? seoInput.canonicalSearch! : "";
+  const ov = search ? pageSeoOverride(null, cleanPath) : pageSeoOverride(settings.pages_seo, cleanPath);
   const seo: SeoInput = {
     ...seoInput,
     title: ov.title || seoInput.title,
@@ -506,7 +516,7 @@ function applySeo(settings: SiteSettings, seoInput: SeoInput) {
     "$1"
   ) || `${base}/`;
   // Garante barra final apenas para a raiz
-  const canonicalUrl = cleanPath === "/" ? `${base}/` : canonical;
+  const canonicalUrl = (cleanPath === "/" ? `${base}/` : canonical) + search;
 
   const robots = robotsContent(seo.noindex, settings.seo_robots, seo.noindexFollow);
   const ogType = seo.ogType || "website";
@@ -702,6 +712,7 @@ export function useSeo(seo: SeoInput) {
     title,
     description,
     canonicalPath,
+    canonicalSearch,
     ogImage,
     ogTitle,
     ogDescription,
@@ -724,6 +735,7 @@ export function useSeo(seo: SeoInput) {
       title,
       description,
       canonicalPath,
+      canonicalSearch,
       ogImage,
       ogTitle,
       ogDescription,
@@ -768,6 +780,7 @@ export function useSeo(seo: SeoInput) {
     title,
     description,
     canonicalPath,
+    canonicalSearch,
     ogImage,
     ogTitle,
     ogDescription,

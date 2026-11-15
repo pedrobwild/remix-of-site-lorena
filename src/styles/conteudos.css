@@ -119,3 +119,10 @@
 .ct-search__input:focus-visible{outline:2px solid #11355B;outline-offset:2px;border-color:#0B2342}
 .ct-search__row .ct-chip{min-height:52px}
 a.ct-chip{display:inline-flex;align-items:center;text-decoration:none}
+
+/* Paginação da lista (/conteudos?pagina=N): links reais, alvo de toque de 44 px */
+.ct-pager{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;margin:44px 0 0}
+.ct-pager__list{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.ct-pager__num,.ct-pager__step{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:44px;min-height:44px;padding:0 14px;border:1px solid var(--ct-hair);font-family:var(--ct-mono);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#1A2332;text-decoration:none;transition:border-color .35s cubic-bezier(.22,1,.36,1)}
+.ct-pager a:hover{border-color:#0B2342}
+.ct-pager__num.is-current{background:#0B2342;border-color:#0B2342;color:#fff}
