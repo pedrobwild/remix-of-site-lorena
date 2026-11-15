@@ -57,6 +57,7 @@ function RouteComponent() {
       slug={slug}
       initial={data.project === undefined ? null : { project: data.project, alts: data.alts }}
       initialPeers={data.peers ?? null}
+      initialRelated={data.related ?? null}
     />
   );
 }
