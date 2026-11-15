@@ -63,7 +63,7 @@ export const ITENS: AutorizacaoItem[] = [
   },
   {
     q: "Quem cuida da burocracia com o condomínio na reforma?",
-    a: "Na Bewild, essa parte é conduzida pela nossa equipe, não por você: preparamos o protocolo com ART do responsável técnico, seguro, cronograma e escopo descrito, acompanhamos a aprovação e cumprimos as condições acordadas durante toda a obra. Você assina o que for preciso e acompanha o resto pelo Bwild Workflow.",
+    a: "Na Bewild, essa parte é conduzida pela nossa equipe, não por você: preparamos o protocolo com RRT do responsável técnico, seguro, cronograma e escopo descrito, acompanhamos a aprovação e cumprimos as condições acordadas durante toda a obra. Você assina o que for preciso e acompanha o resto pelo Bwild Workflow.",
   },
 ];
 

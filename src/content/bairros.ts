@@ -108,7 +108,7 @@ function faqDecisao(label: string, opts: { atendeNota?: string; foraDepois?: str
   return [prazoFaq(label), orcamentoFaq(label), atendeFaq(label, opts.atendeNota), foraFaq(label, opts.foraDepois)];
 }
 
-const SEDE = "Rua Pitu 72, sala 115";
+const SEDE = "Rua Pitú 72, sala 115";
 
 export const BAIRROS_CONTENT: Record<string, BairroContent> = {
   pinheiros: {
