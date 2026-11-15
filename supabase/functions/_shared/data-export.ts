@@ -435,8 +435,9 @@ export function toExportRecord(dataset: ExportDataset, row: ExportRecord): Expor
 //     primeira transição para Lead ou depois em lead_qualification_log (sem
 //     ela, crm_last_change_at; sem as duas, updated_at).
 //   - "Lead desqualificado": todos os negócios perdidos (ou em Aquecer
-//     Futuramente) sem nunca ter chegado a Lead. Hora = a perda no histórico
-//     (sem ela, crm_last_change_at; sem as duas, updated_at).
+//     Futuramente) sem nunca ter chegado a Lead, com a perda DEPOIS da chegada
+//     do lead ao site (negócio antigo herdado não conta). Hora = a perda no
+//     histórico (sem ela, crm_last_change_at; sem hora conhecida, não sai).
 //   - "Contrato assinado": crm_won = true, qualquer objetivo. Hora =
 //     crm_last_change_at (sem ela, updated_at). Valor e data reais vêm do CRM.
 // MQL, Qualificação e lead sem negócio no CRM não geram nada: o sinal só sai
@@ -514,6 +515,22 @@ export function crmPipelineQuality(lead: ExportRecord): "qualificado" | "descart
   const max = typeof lead.crm_max_stage_key === "string" ? lead.crm_max_stage_key.trim().toLowerCase() : "";
   if (max && !CRM_PRE_LEAD_STAGE_KEYS.includes(max)) return "qualificado";
   return isTrue(lead.crm_lost) ? "descartado" : null;
+}
+
+/**
+ * Hora da perda no CRM, só quando ela aconteceu DEPOIS da chegada do lead ao
+ * site (`created_at`); senão `null`. O formulário do site não reabre negócio
+ * antigo, então um lead recente pode herdar um negócio perdido meses antes —
+ * isso não é desqualificação do contato novo (Pedro, 09/11/2026). Vale a hora
+ * do histórico (`lostAt`); sem ela, `crm_last_change_at`. Sem hora conhecida,
+ * não há como afirmar que a perda é posterior: `null`.
+ */
+export function crmLossTimeAfterLead(lead: ExportRecord, lostAt?: string | null): string | null {
+  const when = lostAt ?? lead.crm_last_change_at;
+  if (typeof when !== "string" || typeof lead.created_at !== "string") return null;
+  const lost = Date.parse(when);
+  const arrived = Date.parse(lead.created_at);
+  return Number.isFinite(lost) && Number.isFinite(arrived) && lost >= arrived ? when : null;
 }
 /** Objetivos que contam como investidor (locação). Valores de LEAD_OBJETIVOS. */
 export const GOOGLE_ADS_INVESTOR_OBJETIVOS: readonly string[] = ["Short stay", "Locação tradicional", "Uso misto"];
@@ -663,7 +680,9 @@ export async function buildGoogleAdsOfflineRows(input: GoogleAdsOfflineInput): P
       conversions.push({ name: GOOGLE_ADS_QUALIFIED_CONVERSION, when: input.qualifiedAt.get(String(lead.id)) ?? lastCrmChange, value: GOOGLE_ADS_QUALIFIED_VALUE });
     }
     if (quality === "descartado") {
-      conversions.push({ name: GOOGLE_ADS_DISQUALIFIED_CONVERSION, when: input.lostAt?.get(String(lead.id)) ?? lastCrmChange });
+      // Só perda posterior à chegada do lead (negócio antigo herdado não conta).
+      const lostWhen = crmLossTimeAfterLead(lead, input.lostAt?.get(String(lead.id)));
+      if (lostWhen) conversions.push({ name: GOOGLE_ADS_DISQUALIFIED_CONVERSION, when: lostWhen });
     }
     if (isTrue(lead.crm_won)) {
       const real = input.contracts?.get(String(lead.id)) ?? [];

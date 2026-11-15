@@ -2,7 +2,8 @@
  * Lista "Exclusao desqualificados" do Google Ads (Customer Match, id 9232166736):
  * recebe e-mail e telefone (em hash SHA-256) dos leads desqualificados pela
  * movimentação no funil do CRM — todos os negócios perdidos sem ter chegado à
- * etapa Lead (`crmPipelineQuality`, a mesma regra das conversões offline). A
+ * etapa Lead (`crmPipelineQuality`, a mesma regra das conversões offline), com
+ * a perda depois da chegada do lead ao site (`crmLossTimeAfterLead`). A
  * marcação do painel do site não decide (Pedro, 09/11/2026).
  *
  * Consentimento: só entra quem aceitou anúncios no aviso
@@ -14,6 +15,7 @@
 import {
   buildConsentByLead,
   canExportGoogleAdsAudienceLead,
+  crmLossTimeAfterLead,
   crmPipelineQuality,
   normalizeEmailForHash,
   normalizePhoneForHash,
@@ -40,7 +42,8 @@ export async function buildDisqualifiedMembers(
   const consent = buildConsentByLead(leads, records);
   const out: DisqualifiedMember[] = [];
   for (const lead of leads) {
-    if (crmPipelineQuality(lead) !== "descartado") continue;
+    // Perda posterior à chegada do lead: negócio antigo herdado não desqualifica.
+    if (crmPipelineQuality(lead) !== "descartado" || !crmLossTimeAfterLead(lead)) continue;
     if (!canExportGoogleAdsAudienceLead(lead, consent.get(String(lead.id)), now)) continue;
     const email = normalizeEmailForHash(lead.email);
     const phone = normalizePhoneForHash(lead.whatsapp);
@@ -65,7 +68,7 @@ export async function syncDisqualifiedList(
     for (let from = 0; ; from += PAGE) {
       const { data, error } = await admin
         .from("leads")
-        .select("id, created_at, email, whatsapp, crm_won, crm_lost, crm_max_stage_key, consent_marketing, consent_record_id, consent_visitor_key")
+        .select("id, created_at, email, whatsapp, crm_won, crm_lost, crm_max_stage_key, crm_last_change_at, consent_marketing, consent_record_id, consent_visitor_key")
         .eq("crm_lost", true)
         .eq("consent_marketing", true)
         .order("created_at", { ascending: true })
