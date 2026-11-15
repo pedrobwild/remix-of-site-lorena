@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="470" viewBox="0 0 720 470" role="img" aria-labelledby="t d" font-family="system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif">
+  <title id="t">Radar Bewild: um estudo para três momentos do investidor</title>
+  <desc id="d">Diagrama com as três etapas do Radar Bewild. Vou comprar: responde se o bairro paga o preço pedido, com ranking, mapa, comparador, simulador de resultado e simulador de financiamento. Vou reformar: responde quanto reservar e por quanto tempo, com estimativa de custo por área e prazo de obra. Já opero: responde se o anúncio está acima ou abaixo do bairro, com comparação de diária e ocupação. Duas bases: dados públicos de mercado de 28 bairros de São Paulo (GuestFavorites) e 188 contratos de reforma da Bewild.</desc>
+  <rect width="720" height="470" fill="#FFFFFF"/>
+  <text x="24" y="34" font-size="19" font-weight="700" fill="#1A2332">Radar Bewild: um estudo para três momentos do investidor</text>
+  <text x="24" y="56" font-size="13" fill="#5A6472">A pergunta que cada etapa responde e as ferramentas que estão em radarbewild.com.br</text>
+  <rect x="24" y="78" width="212" height="204" rx="8" fill="#F5F7FA" stroke="#E5E8EC"/>
+  <rect x="24" y="78" width="212" height="6" rx="3" fill="#2F6FA8"/>
+  <circle cx="50" cy="114" r="12" fill="#2F6FA8"/>
+  <text x="50" y="119" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">1</text>
+  <text x="70" y="120" font-size="17" font-weight="700" fill="#1A2332">Vou comprar</text>
+  <text x="40" y="152" font-size="14" font-weight="600" fill="#1A2332">Este bairro paga</text>
+  <text x="40" y="171" font-size="14" font-weight="600" fill="#1A2332">o preço pedido?</text>
+  <line x1="40" y1="188" x2="220" y2="188" stroke="#E5E8EC"/>
+  <text x="40" y="208" font-size="12.5" fill="#5A6472">Ranking, mapa e comparador</text>
+  <text x="40" y="226" font-size="12.5" fill="#5A6472">Simulador de resultado</text>
+  <text x="40" y="244" font-size="12.5" fill="#5A6472">Simulador de financiamento</text>
+  <rect x="254" y="78" width="212" height="204" rx="8" fill="#F5F7FA" stroke="#E5E8EC"/>
+  <rect x="254" y="78" width="212" height="6" rx="3" fill="#D07A3E"/>
+  <circle cx="280" cy="114" r="12" fill="#D07A3E"/>
+  <text x="280" y="119" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">2</text>
+  <text x="300" y="120" font-size="17" font-weight="700" fill="#1A2332">Vou reformar</text>
+  <text x="270" y="152" font-size="14" font-weight="600" fill="#1A2332">Quanto reservar e por</text>
+  <text x="270" y="171" font-size="14" font-weight="600" fill="#1A2332">quanto tempo?</text>
+  <line x1="270" y1="188" x2="450" y2="188" stroke="#E5E8EC"/>
+  <text x="270" y="208" font-size="12.5" fill="#5A6472">Estimativa de custo por área</text>
+  <text x="270" y="226" font-size="12.5" fill="#5A6472">Prazo de obra</text>
+  <rect x="484" y="78" width="212" height="204" rx="8" fill="#F5F7FA" stroke="#E5E8EC"/>
+  <rect x="484" y="78" width="212" height="6" rx="3" fill="#11355B"/>
+  <circle cx="510" cy="114" r="12" fill="#11355B"/>
+  <text x="510" y="119" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">3</text>
+  <text x="530" y="120" font-size="17" font-weight="700" fill="#1A2332">Já opero</text>
+  <text x="500" y="152" font-size="14" font-weight="600" fill="#1A2332">Estou acima ou abaixo</text>
+  <text x="500" y="171" font-size="14" font-weight="600" fill="#1A2332">do bairro?</text>
+  <line x1="500" y1="188" x2="680" y2="188" stroke="#E5E8EC"/>
+  <text x="500" y="208" font-size="12.5" fill="#5A6472">Comparação de diária</text>
+  <text x="500" y="226" font-size="12.5" fill="#5A6472">e ocupação com o bairro</text>
+  <rect x="24" y="300" width="672" height="84" rx="8" fill="#FFFFFF" stroke="#E5E8EC"/>
+  <text x="40" y="324" font-size="12" font-weight="700" fill="#1A2332">DUAS BASES DE DADOS</text>
+  <text x="40" y="346" font-size="12.5" fill="#5A6472">Mercado: diária e ocupação de 28 bairros de São Paulo (GuestFavorites)</text>
+  <text x="40" y="366" font-size="12.5" fill="#5A6472">Reforma: custo e prazo de 188 contratos de reforma completa da Bewild</text>
+  <line x1="24" y1="404" x2="696" y2="404" stroke="#E5E8EC"/>
+  <text x="24" y="424" font-size="11.5" fill="#5A6472">Fonte: Radar Bewild (radarbewild.com.br), consulta em 15/11/2026.</text>
+  <text x="24" y="441" font-size="11.5" fill="#5A6472">Médias de bairro; simulações são hipóteses, sem garantia de resultado.  ·  bewild.com.br</text>
+</svg>
