@@ -75,7 +75,7 @@ function cardHtml(p: TopProject): string {
     .join(" · ");
 
   return `<article class="bwa-pgrid-card">
-      <a href="/portfolio/${esc(p.slug)}" aria-label="Ver projeto ${esc(name)}">
+      <a href="/portfolio/${esc(p.slug)}">
         <span class="bwa-pgrid-media"><img src="${esc(cover ? optimizedImageUrl(cover, 640) : "")}"${srcsetAttrs} alt="${esc(name)} — ${esc(where)}" loading="lazy" decoding="async"></span>
         <span class="bwa-pgrid-meta">
           <strong>${esc(name)}</strong>

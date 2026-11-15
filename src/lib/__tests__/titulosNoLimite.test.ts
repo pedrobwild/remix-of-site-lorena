@@ -133,27 +133,14 @@ async function textosDa(
   };
 }
 
-/*
- * Textos que ainda passam do limite no main de 10/11/2026 e já têm correção
- * em PR aberto da mesma rodada. A exceção vale só para ESTE texto exato:
- * quando o PR entra, o texto muda e a página passa a ser conferida como as
- * outras. Depois que os dois PRs entrarem, estas linhas podem sair.
- */
-const CORRIGIDO_EM_OUTRO_PR = new Set([
-  // Home, descrição de 170 (PR "home e página de studio com uma intenção cada", seo/home-intencao).
-  "Reforma de studios em SP: visita e escopo, projeto, autorização do condomínio, obra civil, marcenaria e instalações finais, mobiliário e entrega. Prazo conforme o imóvel.",
-  // /marcenaria, título de 61 (PR "/marcenaria com seção para incorporadoras", seo/marcenaria-b2b).
-  "Marcenaria sob medida em São Paulo | Fábrica própria — Bewild",
-]);
-
 /** Problemas de tamanho, um por linha, para o erro dizer o que encurtar. */
 function excessos(rotulo: string, t: { title: string; description: string }): string[] {
   const out: string[] = [];
   if (!t.title) out.push(`${rotulo}: sem título`);
-  if (t.title.length > TITULO_MAX && !CORRIGIDO_EM_OUTRO_PR.has(t.title)) {
+  if (t.title.length > TITULO_MAX) {
     out.push(`${rotulo}: título com ${t.title.length} (> ${TITULO_MAX}): "${t.title}"`);
   }
-  if (t.description.length > DESCRICAO_MAX && !CORRIGIDO_EM_OUTRO_PR.has(t.description)) {
+  if (t.description.length > DESCRICAO_MAX) {
     out.push(
       `${rotulo}: descrição com ${t.description.length} (> ${DESCRICAO_MAX}): "${t.description}"`
     );
