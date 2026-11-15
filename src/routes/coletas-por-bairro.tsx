@@ -13,6 +13,11 @@ export const Route = createFileRoute("/coletas-por-bairro")({
       title: "Coletas do Radar Bewild por bairro | Bewild",
       description: "Histórico público das coletas de diária média do Radar Bewild em cada bairro de São Paulo: data, período, fonte, amostra e status.",
       path: "/coletas-por-bairro",
+      // D5 do Pedro (auditoria de SEO, rodada 4, 09/11/2026): 67 palavras e
+      // nenhum link interno. A página segue no ar (e /coletas continua
+      // redirecionando para ela), mas sai do índice e dos dois geradores de
+      // sitemap: noindex, follow.
+      noindex: true,
       ogType: "website",
       extraMeta: [{ name: "twitter:card", content: "summary" }],
     }),
