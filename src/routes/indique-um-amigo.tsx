@@ -11,7 +11,7 @@ export const Route = createFileRoute("/indique-um-amigo")({
   head: ({ loaderData, matches }) =>
     seoHead({
       pagesSeo: rootPagesSeo(matches),
-      title: "Indique um amigo e ganhe no Pix | Programa de indicações Bewild",
+      title: "Indique e ganhe no Pix: programa de indicações da Bewild",
       description: "Indique quem vai reformar apartamento, studio ou cobertura em São Paulo. Se o contrato fechar, você recebe a recompensa em Pix. Registro em 2 minutos.",
       path: "/indique-um-amigo",
       keywords: "indique e ganhe reforma, programa de indicação reforma São Paulo, recompensa por indicação apartamento, reforma de studio São Paulo, reforma de apartamento SP, Bewild indicações",

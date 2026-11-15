@@ -18,12 +18,12 @@ import { wrapArticleTables } from "@/lib/articleTables";
 import { linkServicePagesInHtml } from "@/lib/articleServiceLinks";
 import { NOT_FOUND_SEO, postSeoFrom, projectSeoFrom, bairroSeoFrom, type RouteSeoData } from "@/lib/seoLoaders";
 import { normalizeBewildPost, type BewildPost } from "@/lib/useBewildPosts";
-import { withPostCols } from "@/lib/useBewildPost";
+import { RELATED_POST_COLS, withPostCols, type RelatedPost } from "@/lib/useBewildPost";
 import { PROJECT_COLUMNS, type BewildProjectFull } from "@/lib/useBewildProject";
 import { PROJECTS_LIST_COLUMNS, type BewildProject } from "@/lib/useBewildProjects";
 import { PEER_COLUMNS } from "@/lib/useProjectSeoPeers";
-import type { ProjectSeoPeer } from "@/lib/projectSeo";
-import { neighborhoodPages } from "@/lib/portfolioFilter";
+import { projectFriendlyName, type ProjectSeoPeer } from "@/lib/projectSeo";
+import { neighborhoodPages, placeOf, selectRelatedProjects, type RelatedProjects } from "@/lib/portfolioFilter";
 import type { BairroPageLink } from "@/lib/bairrosSp";
 import { fetchAlts, type AltMap } from "@/lib/useImageAlts";
 import { readyPhotos, renderPhotos } from "@/lib/projectPhotos";
@@ -100,9 +100,24 @@ export type PostLoaderData = {
   seo: RouteSeoData;
   /** `undefined` = falha de rede (cliente busca); `null` = não existe. */
   post?: BewildPost | null;
-  related?: BewildPost[] | null;
+  /** Só as colunas do card (RELATED_POST_COLS), sem corpo. */
+  related?: RelatedPost[] | null;
   bodyHtml?: string | null;
 };
+
+/**
+ * O que o loader do artigo devolve vai inteiro para o payload de hidratação
+ * (`<script data-tsr-stream-part>`) do HTML. Com o `bodyHtml` já sanitizado no
+ * servidor, a página não usa o markdown cru (`post.body`): ele saía de novo no
+ * payload e o texto do artigo aparecia três vezes no HTML (auditoria de SEO,
+ * rodada 4, 09/11/2026). Chame DEPOIS de montar o head (o JSON-LD lê os
+ * vídeos do corpo cru). Sem `bodyHtml` (sanitizador falhou), o corpo fica:
+ * a página o converte no navegador como antes.
+ */
+export function withoutRawBody<T extends PostLoaderData>(data: T): T {
+  if (!data.post || typeof data.bodyHtml !== "string" || data.bodyHtml === "") return data;
+  return { ...data, post: { ...data.post, body: "" } };
+}
 
 export async function loadPostContent(slug: string): Promise<PostLoaderData> {
   // Memo de 60 s no servidor (src/lib/serverMemo.ts): só artigo encontrado.
@@ -120,23 +135,19 @@ async function fetchPostContent(slug: string): Promise<PostLoaderData> {
     if (!data) return { seo: NOT_FOUND_SEO, post: null, related: [] };
     const post = normalizeBewildPost(data as unknown as BewildPost) as BewildPost;
 
-    let related: BewildPost[] | null = null;
+    let related: RelatedPost[] | null = null;
     if (post.category) {
-      const category = post.category;
-      const rel = await withPostCols((cols) =>
-        supabase
-          .from("bewild_posts" as never)
-          .select(cols)
-          .eq("published", true)
-          .eq("category", category)
-          .neq("id", post.id)
-          .order("published_at", { ascending: false, nullsFirst: false })
-          .order("created_at", { ascending: false })
-          .limit(3),
-      );
-      if (!rel.error) {
-        related = ((rel.data ?? []) as unknown as BewildPost[]).map(normalizeBewildPost) as BewildPost[];
-      }
+      // Só o que o card "Continue lendo" mostra: sem corpo, FAQ e meta.
+      const rel = await supabase
+        .from("bewild_posts" as never)
+        .select(RELATED_POST_COLS)
+        .eq("published", true)
+        .eq("category", post.category)
+        .neq("id", post.id)
+        .order("published_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false })
+        .limit(3);
+      if (!rel.error) related = (rel.data ?? []) as unknown as RelatedPost[];
     } else {
       related = [];
     }
@@ -154,7 +165,27 @@ export type ProjectLoaderData = {
   project?: BewildProjectFull | null;
   peers?: ProjectSeoPeer[] | null;
   alts?: AltMap;
+  /** Bloco "Projetos no mesmo bairro"; `null` = lista de projetos indisponível. */
+  related?: RelatedProjects | null;
 };
+
+/** Cards do bloco de relacionados a partir da lista do portfólio (já em memo). */
+function relatedFrom(project: BewildProjectFull, list: BewildProject[] | null): RelatedProjects | null {
+  if (!list) return null;
+  const { criterio, items } = selectRelatedProjects(project, list);
+  if (!items.length) return null;
+  return {
+    criterio,
+    bairro: project.neighborhood?.trim().replace(/\s+/g, " ") || null,
+    items: items.map((p) => ({
+      slug: p.slug,
+      title: projectFriendlyName(p) || p.title,
+      neighborhood: placeOf(p),
+      area_m2: p.area_m2,
+      cover_url: p.cover_url,
+    })),
+  };
+}
 
 export async function loadProjectContent(slug: string): Promise<ProjectLoaderData> {
   const res = await serverMemo(`project:${slug}`, () => fetchProjectContent(slug), { keep: (r) => !!r.project });
@@ -164,9 +195,11 @@ export async function loadProjectContent(slug: string): Promise<ProjectLoaderDat
 
 async function fetchProjectContent(slug: string): Promise<ProjectLoaderData> {
   try {
-    const [projectRes, peersRes] = await Promise.all([
+    const [projectRes, peersRes, list] = await Promise.all([
       supabase.from("projects").select(PROJECT_COLUMNS).eq("slug", slug).eq("published", true).maybeSingle(),
       supabase.from("projects").select(PEER_COLUMNS).eq("published", true).limit(1000),
+      // Lista do portfólio (memo de 60 s compartilhado com /portfolio e /reforma/*).
+      fetchProjectList(),
     ]);
     if (projectRes.error) throw projectRes.error;
     const peers = peersRes.error ? null : ((peersRes.data ?? []) as unknown as ProjectSeoPeer[]);
@@ -176,8 +209,10 @@ async function fetchProjectContent(slug: string): Promise<ProjectLoaderData> {
     // página, para o <title> do servidor sair com a mesma data do navegador.
     const self = peers?.find((o) => o.id === project.id);
     const seoRow = self ? { ...project, created_at: self.created_at } : project;
+    const related = relatedFrom(project, list);
     const urls = [project.cover_url, project.before_image_url, project.after_image_url,
-      ...renderPhotos(project), ...readyPhotos(project)].filter((url): url is string => !!url);
+      ...renderPhotos(project), ...readyPhotos(project),
+      ...(related?.items.map((r) => r.cover_url) ?? [])].filter((url): url is string => !!url);
     // A mesma descrição por URL já sai no HTML inicial; falha de alt não oculta o projeto.
     // Uma segunda tentativa cobre falha passageira da consulta: sem ela a
     // página sairia do servidor com o texto numerado até o navegador reabrir.
@@ -185,7 +220,7 @@ async function fetchProjectContent(slug: string): Promise<ProjectLoaderData> {
     const alts = await fetchAlts(altUrls)
       .catch(() => fetchAlts(altUrls))
       .catch(() => ({}));
-    return { seo: projectSeoFrom(seoRow, peers ?? []), project, peers, alts };
+    return { seo: projectSeoFrom(seoRow, peers ?? []), project, peers, alts, related };
   } catch {
     return { seo: projectSeoFrom(null, [], true) };
   }

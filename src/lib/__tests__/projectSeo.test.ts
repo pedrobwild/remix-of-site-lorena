@@ -85,7 +85,7 @@ describe("projectSeoTitle", () => {
       title: "Apartamento completo no empreendimento mais desejado da Vila Olímpia",
       neighborhood: "Vila Olímpia",
     });
-    expect(title.length).toBeLessThanOrEqual(78);
+    expect(title.length).toBeLessThanOrEqual(60);
     expect(title).toBe("Apartamento completo na Vila Olímpia: reforma de apartamento");
   });
 
@@ -110,21 +110,26 @@ describe("projectSeoTitle", () => {
     );
   });
 
-  it("nunca passa de 78 caracteres nem corta palavra no meio", () => {
+  // Teto de 60 desde 10/11/2026 (era 78): auditoria de SEO, rodada 4, ação 16.
+  it("nunca passa de 60 caracteres nem corta palavra no meio; bairro e metragem ficam", () => {
     const title = projectSeoTitle({
       title: "LC - HIGHLIGHTS PINHEIROS",
       neighborhood: "Avenida Salgado Filho",
       status: "em_projeto",
       area_m2: 23.61,
     });
-    expect(title).toBe("Highlights Pinheiros em Avenida Salgado Filho: projeto de interiores");
-    expect(title.length).toBeLessThanOrEqual(78);
+    expect(title).toBe("Highlights em Avenida Salgado Filho: projeto de 23,61 m²");
+    expect(title.length).toBeLessThanOrEqual(60);
   });
 
-  it("sem bairro, o nome longo fica inteiro e 'em São Paulo' sai", () => {
+  it("'projeto de interiores de' é o primeiro a encurtar; sem bairro, 'em São Paulo' sai e o nome fica inteiro", () => {
     expect(
       projectSeoTitle({ title: "LM - LM URBAN FLEX FLATS BELA CINTRA", status: "em_projeto", area_m2: 21.3 }),
-    ).toBe("Urban Flex Flats Bela Cintra: projeto de interiores de 21,3 m²");
+    ).toBe("Urban Flex Flats Bela Cintra: projeto de 21,3 m² | Bewild");
+    // Quando cabe, a forma longa continua.
+    expect(projectSeoTitle({ title: "BM - URBAN FLEX", neighborhood: "Consolação", status: "em_projeto", area_m2: 17.23 })).toBe(
+      "Urban Flex na Consolação: projeto de interiores de 17,23 m²",
+    );
   });
 
   it("ignora bairro sem letras (erro de cadastro) no título e na descrição", () => {
@@ -167,7 +172,7 @@ describe("fase do projeto e tamanho da descrição", () => {
   });
 });
 
-describe("projectSeoTitleUnique (irmãs numeradas, nunca data de cadastro)", () => {
+describe("projectSeoTitleUnique (irmãs do mesmo prédio, até 60 caracteres)", () => {
   const mk = (id: string, created_at: string) => ({
     id,
     title: "ZP - ZIP",
@@ -182,15 +187,42 @@ describe("projectSeoTitleUnique (irmãs numeradas, nunca data de cadastro)", () 
     expect(projectSeoTitleUnique(a, [a, b])).toBe(projectSeoTitle(a));
   });
 
-  it("repetido com datas diferentes é numerado em ordem de cadastro (sem data no título)", () => {
+  it("irmãs sem dado que as separe são numeradas em ordem de cadastro, sem data e sem 'projeto N'", () => {
     const a = mk("a", "2026-08-25T00:51:00Z");
     const b = mk("b", "2026-09-25T21:20:00Z");
-    expect(projectSeoTitleUnique(a, [a, b])).toBe("Zip no Brooklin: reforma de 25 m² (projeto 1) | Bewild");
-    expect(projectSeoTitleUnique(b, [a, b])).toBe("Zip no Brooklin: reforma de 25 m² (projeto 2) | Bewild");
+    expect(projectSeoTitleUnique(a, [a, b])).toBe("Zip no Brooklin: reforma de 25 m² (1) | Bewild");
+    expect(projectSeoTitleUnique(b, [a, b])).toBe("Zip no Brooklin: reforma de 25 m² (2) | Bewild");
     expect(projectSeoTitleUnique(b, [a, b])).not.toContain("cadastro");
+    expect(projectSeoTitleUnique(b, [a, b])).not.toContain("projeto 2");
   });
 
-  it("título longo numerado sai sem a marca, mas cabe em 60 + numeração", () => {
+  it("o uso do imóvel no cadastro separa as irmãs antes de qualquer número", () => {
+    const a = { ...mk("a", "2026-08-25T00:51:00Z"), project_type: "short_stay" };
+    const b = { ...mk("b", "2026-09-25T21:20:00Z"), project_type: "turn_key" };
+    expect(projectSeoTitleUnique(a, [a, b])).toBe("Zip no Brooklin: reforma de 25 m² para short stay | Bewild");
+    expect(projectSeoTitleUnique(b, [a, b])).toBe("Zip no Brooklin: reforma de 25 m² turn-key | Bewild");
+  });
+
+  it("só as irmãs que não têm dado próprio são numeradas", () => {
+    const a = { ...mk("a", "2026-08-25T00:51:00Z"), project_type: "short_stay" };
+    const b = { ...mk("b", "2026-09-25T21:20:00Z"), project_type: "turn_key" };
+    const c = { ...mk("c", "2026-09-26T21:20:00Z"), project_type: "turn_key" };
+    const todos = [a, b, c];
+    expect(todos.map((p) => projectSeoTitleUnique(p, todos))).toEqual([
+      "Zip no Brooklin: reforma de 25 m² para short stay | Bewild",
+      "Zip no Brooklin: reforma de 25 m² (1) | Bewild",
+      "Zip no Brooklin: reforma de 25 m² (2) | Bewild",
+    ]);
+  });
+
+  it("metragem diferente já separa: o título não muda", () => {
+    const a = mk("a", "2026-08-25T00:51:00Z");
+    const b = { ...mk("b", "2026-09-25T21:20:00Z"), area_m2: 28.21 };
+    expect(projectSeoTitleUnique(a, [a, b])).toBe("Zip no Brooklin: reforma de 25 m² | Bewild");
+    expect(projectSeoTitleUnique(b, [a, b])).toBe("Zip no Brooklin: reforma de 28,21 m² | Bewild");
+  });
+
+  it("título longo numerado corta o nome para caber em 60 com o número", () => {
     const long = (id: string, created_at: string) => ({
       id,
       title: "SB - SERGIPE BOUTIQUE APARTMENTS BY YOU",
@@ -201,15 +233,16 @@ describe("projectSeoTitleUnique (irmãs numeradas, nunca data de cadastro)", () 
     const a = long("a", "2026-09-05T12:00:00Z");
     const b = long("b", "2026-09-06T12:00:00Z");
     const t = projectSeoTitleUnique(a, [a, b]);
-    expect(t).toBe("Sergipe Boutique Apartments By You na Consolação: reforma de 25 m² (projeto 1)");
-    expect(t.endsWith("| Bewild")).toBe(false);
+    expect(t).toBe("Sergipe Boutique na Consolação: reforma de 25 m² (1)");
+    expect(t.length).toBeLessThanOrEqual(60);
+    expect(projectSeoTitleUnique(b, [a, b])).toBe("Sergipe Boutique na Consolação: reforma de 25 m² (2)");
   });
 
   it("irmãs com a mesma data são numeradas em ordem de cadastro", () => {
     const a = mk("a", "2026-09-05T12:00:00Z");
     const b = mk("b", "2026-09-05T15:00:00Z");
-    expect(projectSeoTitleUnique(a, [a, b])).toBe("Zip no Brooklin: reforma de 25 m² (projeto 1) | Bewild");
-    expect(projectSeoTitleUnique(b, [a, b])).toBe("Zip no Brooklin: reforma de 25 m² (projeto 2) | Bewild");
+    expect(projectSeoTitleUnique(a, [a, b])).toBe("Zip no Brooklin: reforma de 25 m² (1) | Bewild");
+    expect(projectSeoTitleUnique(b, [a, b])).toBe("Zip no Brooklin: reforma de 25 m² (2) | Bewild");
   });
 
   it("sem data de cadastro numera em vez de repetir o título", () => {
@@ -240,6 +273,7 @@ describe("brandTitle (marca só quando cabe em 60)", () => {
       "Península na Vila Madalena: reforma de 23 m² | Bewild",
     );
     const t = projectSeoTitle({ title: "PS - EDIFÍCIO FORTUNE RESIDENCE", neighborhood: "Cerqueira César", area_m2: 44.57 });
-    expect(t).toBe("Edifício Fortune Residence em Cerqueira César: reforma de 44,57 m²");
+    expect(t).toBe("Edifício Fortune em Cerqueira César: reforma de 44,57 m²");
+    expect(t.length).toBeLessThanOrEqual(60);
   });
 });
