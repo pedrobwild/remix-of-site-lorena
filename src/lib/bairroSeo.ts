@@ -1,5 +1,5 @@
 import { formatAreaM2 } from "./formatArea";
-import { brandTitle } from "./seoTitle";
+import { brandTitle, VISIBLE_TITLE_MAX } from "./seoTitle";
 
 /**
  * Faixa de metragem dos projetos de um bairro, em pt-BR: "24,5 a 35,12 m²"
@@ -21,9 +21,16 @@ export function bairroAreaRange(list: ReadonlyArray<{ area_m2?: number | null }>
  *
  * Intenção comercial local: orçamento e prazo. A marca só entra quando cabe
  * no limite de seoTitle. Sem bairro, o título fala de São Paulo.
+ *
+ * Até 60 caracteres (auditoria de SEO, rodada 4, 09/11/2026, ação 16: seis
+ * bairros passavam). Quando não cabe, sai primeiro ", SP" e depois "e prazo"
+ * (só a Vila Nova Conceição chega nesse ponto); "Reforma de apartamento" e o
+ * bairro ficam sempre.
  */
 export function bairroTitle(label?: string | null): string {
-  return brandTitle(`${bairroHeading(label)}, SP: orçamento e prazo`);
+  const local = bairroHeading(label);
+  const opcoes = [`${local}, SP: orçamento e prazo`, `${local}: orçamento e prazo`, `${local}: orçamento`];
+  return brandTitle(opcoes.find((t) => t.length <= VISIBLE_TITLE_MAX) ?? local);
 }
 
 /** H1 comercial, com a grafia original do bairro, também usado no JSON-LD. */

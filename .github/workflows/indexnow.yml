@@ -4,6 +4,11 @@ name: IndexNow
 # push na main. Antes o script scripts/submit-indexnow.mjs existia mas nada o
 # executava; o envio era manual (checklist de 30/09/2026).
 #
+# Post ou projeto publicado pelo /admin não gera push: o próprio painel avisa
+# o IndexNow da página salva (função de servidor notifyIndexNow,
+# src/lib/indexNow.functions.ts). O agendamento diário abaixo é a rede de
+# segurança: reenvia o sitemap inteiro uma vez por dia, mesmo sem push.
+#
 # O site oficial (bewild.com.br) é publicado pelo hosting do Lovable alguns
 # minutos depois do push, por isso o job espera antes de baixar o sitemap —
 # senão enviaria a lista anterior. A chave fica em public/<KEY>.txt, servida
@@ -13,14 +18,19 @@ name: IndexNow
 on:
   push:
     branches: [main]
+  schedule:
+    # Todo dia às 09:17 UTC (06:17 em São Paulo), fora do minuto cheio.
+    - cron: "17 9 * * *"
   workflow_dispatch:
 
 permissions:
   contents: read
 
+# Push novo cancela o envio anterior em andamento; o diário espera na fila
+# (não derruba um push que ainda aguarda a publicação do site).
 concurrency:
   group: indexnow-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 
 jobs:
   submit:

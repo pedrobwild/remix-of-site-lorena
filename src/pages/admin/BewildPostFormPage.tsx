@@ -24,6 +24,7 @@ import {
   upsertSlugRedirect,
 } from "@/lib/seoRedirects";
 import { useUnsavedChangesGuard } from "@/lib/useUnsavedChangesGuard";
+import { avisarIndexNow } from "@/lib/indexNowAviso";
 
 type Props = { slug?: string };
 
@@ -496,6 +497,9 @@ export default function BewildPostFormPage({ slug }: Props) {
       setError(saveErrorText(result.error));
       return;
     }
+    // Post salvo: se está no ar, avisa o IndexNow em segundo plano (não espera
+    // nem bloqueia nada; ver src/lib/indexNowAviso.ts).
+    avisarIndexNow("post", newSlug, published);
 
     if (redirect) {
       const { error: redirectError } = await upsertSlugRedirect(oldPath, newPath);

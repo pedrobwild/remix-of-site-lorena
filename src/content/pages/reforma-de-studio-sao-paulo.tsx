@@ -16,8 +16,10 @@ export const CANONICAL = "/reforma-de-studio-sao-paulo";
 
 /**
  * Título e descrição da página, iguais no `head()` da rota (HTML do servidor)
- * e no `useSeo` da página. Mantém a divisão de 11/10/2026: serviço no
- * singular, plural com a home. Em 26/10/2026 ganhou referência de preço.
+ * e no `useSeo` da página. Título e H1 no singular ("reforma de studio"); em
+ * 26/10/2026 ganhou referência de preço. Desde 10/11/2026 (decisão D1 do
+ * Pedro) o plural "reforma de studios" também é desta página, num H2, e não
+ * mais da home.
  */
 /** Resposta do prazo: mesmo texto na página e no FAQPage. */
 const PRAZO_STUDIO = "A referência é cerca de 60 dias úteis de obra. A data exata sai no contrato.";

@@ -44,7 +44,20 @@ describe("bairroTitle", () => {
     expect(bairroTitle("Moema")).toBe("Reforma de apartamento em Moema, SP: orçamento e prazo");
     expect(bairroTitle("Brooklin")).toBe("Reforma de apartamento no Brooklin, SP: orçamento e prazo");
     expect(bairroTitle("Pinheiros")).toBe("Reforma de apartamento em Pinheiros, SP: orçamento e prazo");
-    expect(bairroTitle("Vila Olímpia")).toBe("Reforma de apartamento na Vila Olímpia, SP: orçamento e prazo");
+    expect(bairroTitle("Vila Olímpia")).toBe("Reforma de apartamento na Vila Olímpia: orçamento e prazo");
+  });
+
+  it("passou de 60: sai ', SP' e, se ainda não couber, 'e prazo' (rodada 4, 09/11/2026)", () => {
+    expect(bairroTitle("Higienópolis")).toBe("Reforma de apartamento em Higienópolis: orçamento e prazo");
+    expect(bairroTitle("Vila Madalena")).toBe("Reforma de apartamento na Vila Madalena: orçamento e prazo");
+    expect(bairroTitle("Vila Mariana")).toBe("Reforma de apartamento na Vila Mariana: orçamento e prazo");
+    expect(bairroTitle("Vila Clementino")).toBe("Reforma de apartamento na Vila Clementino: orçamento e prazo");
+    expect(bairroTitle("Vila Nova Conceição")).toBe("Reforma de apartamento na Vila Nova Conceição: orçamento");
+    for (const label of ["Higienópolis", "Vila Madalena", "Vila Mariana", "Vila Clementino", "Vila Nova Conceição", "Vila Olímpia", "Alto da Boa Vista", "Cerqueira César", "Chácara Klabin"]) {
+      const title = bairroTitle(label);
+      expect(title.length, label).toBeLessThanOrEqual(VISIBLE_TITLE_MAX);
+      expect(title, label).toContain(`Reforma de apartamento ${noBairro(label)}`);
+    }
   });
 
   it("a marca só entra quando o título inteiro cabe no que o Google mostra", () => {
