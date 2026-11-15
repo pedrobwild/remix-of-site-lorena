@@ -52,7 +52,7 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Quem cuida da documentação e da liberação no condomínio?",
-    a: "A Bewild. ART, CREA e liberação no condomínio ficam por nossa conta, para você não virar despachante.",
+    a: "A Bewild. RRT no CAU e liberação no condomínio ficam por nossa conta, para você não virar despachante.",
   },
   {
     q: "Posso contratar só a marcenaria?",

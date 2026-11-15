@@ -85,7 +85,7 @@ export const FALLBACK_ITEMS: FaqItem[] = [...FAQ_ITEMS, ...FAQ_ITEMS_SEM_BANCO];
 export const GUIA_ITEMS: FaqItem[] = [
   {
     q: "Como fazer uma reforma de apartamento, passo a passo?",
-    a: "Na ordem: pedido de orçamento com a planta e o objetivo do imóvel (morar, alugar ou vender); proposta com preço, prazo e memorial item a item; projeto 3D revisado até a sua aprovação; projeto executivo, ART e liberação no condomínio; obra com equipe e marcenaria próprias, acompanhada pelo Bwild Workflow; e entrega com vistoria final. Na Bewild, tudo isso cabe num contrato só, com um único responsável.",
+    a: "Na ordem: pedido de orçamento com a planta e o objetivo do imóvel (morar, alugar ou vender); proposta com preço, prazo e memorial item a item; projeto 3D revisado até a sua aprovação; projeto executivo, RRT e liberação no condomínio; obra com equipe e marcenaria próprias, acompanhada pelo Bwild Workflow; e entrega com vistoria final. Na Bewild, tudo isso cabe num contrato só, com um único responsável.",
     href: "/como-funciona",
     linkLabel: "Ver como funciona, etapa por etapa →",
   },

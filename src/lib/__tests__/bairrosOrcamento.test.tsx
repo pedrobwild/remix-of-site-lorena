@@ -9,7 +9,7 @@
  *    /orcamento, sem utm;
  *  - tem 6 perguntas no FAQ, as mesmas no HTML e no FAQPage do head();
  *  - Bela Vista ganha texto próprio (passa de 350 palavras);
- *  - Brooklin cita a sede (Rua Pitu 72, sala 115).
+ *  - Brooklin cita a sede (Rua Pitú 72, sala 115).
  * E /orcamento ganha um H2 com "reforma turnkey" e links para as 16 páginas.
  *
  * A lista de bairros vem do retrato do sitemap e do llms.txt publicados
@@ -243,7 +243,7 @@ describe("HTML do servidor de /reforma/<bairro>", () => {
   });
 
   it("Brooklin cita a sede da Bewild no bairro", () => {
-    expect(decode(html("brooklin"))).toContain("Rua Pitu 72, sala 115");
+    expect(decode(html("brooklin"))).toContain("Rua Pitú 72, sala 115");
   });
 });
 

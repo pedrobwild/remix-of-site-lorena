@@ -103,7 +103,7 @@ export const COMPOSICAO: { item: string; pct: number }[] = [
   { item: "Vidraçaria", pct: 7 },
   { item: "Mobiliário", pct: 6.5 },
   { item: "Iluminação", pct: 3.6 },
-  { item: "Projeto e ART", pct: 3.4 },
+  { item: "Projeto e RRT", pct: 3.4 },
   { item: "Enxoval", pct: 3.1 },
 ];
 
@@ -271,7 +271,7 @@ export type GraficoImprensa = {
 
 const SVG_PILAR = "/images/blog/quanto-custa-reformar-apartamento-studio-ate-50-m2";
 /** Rótulo do item como está no SVG da proposta ("Projeto 3D, executivo e ART/RRT"). */
-const ITEM_NO_GRAFICO: Record<string, string> = { "Projeto e ART": "Projeto e responsabilidade técnica (ART/RRT)" };
+const ITEM_NO_GRAFICO: Record<string, string> = { "Projeto e RRT": "Projeto e responsabilidade técnica (ART/RRT)" };
 const pctTexto = (v: number) => `${String(v).replace(".", ",")}%`;
 
 /**

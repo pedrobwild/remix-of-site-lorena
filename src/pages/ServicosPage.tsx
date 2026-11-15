@@ -104,7 +104,7 @@ const ARQUITETURA: { n: string; titulo: string; t: string }[] = [
   {
     n: "05",
     titulo: "Documentação",
-    t: "ART, CREA e liberação no condomínio por nossa conta.",
+    t: "RRT no CAU e liberação no condomínio por nossa conta.",
   },
   {
     n: "06",

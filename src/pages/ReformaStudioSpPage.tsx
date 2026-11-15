@@ -250,8 +250,8 @@ export default function ReformaStudioSpPage({ bairroPages = null, topoVariante =
               O projeto é da equipe de arquitetura da Bewild, com o arquiteto Thiago
               Dantas (CAU A162437-7) como responsável técnico, e a obra é executada por
               time próprio. O projeto aprovado em 3D vira o escopo do contrato, e o que
-              está nele tem preço fechado. O plano de reforma da NBR 16280, com ART ou
-              RRT, vai ao síndico antes da obra.
+              está nele tem preço fechado. O plano de reforma da NBR 16280, com RRT,
+              vai ao síndico antes da obra.
             </p>
           </div>
         </section>
