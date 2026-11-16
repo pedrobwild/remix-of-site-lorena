@@ -41,11 +41,9 @@ guardado em `src/content/estudoContratos2026.ts`.
 - Regra de bolso (Theil-Sen, 446 orçamentos de 21 a 35 m²): R$ 32.950 +
   R$ 1.514/m²; erro mediano 12,0%, percentil 75 do erro 19,7%.
 - Três terços por data de criação: R$ 2.688, R$ 3.002 e R$ 2.851 por m².
-- Regiões (Kruskal-Wallis, H = 12,86, 2 g.l., p ≈ 0,002): Centro 107
-  orçamentos, R$ 3.038/m²; Zona Oeste 131, R$ 2.856; Zona Sul 242, R$ 2.770.
-  Outros bairros (55) e 50 registros sem bairro ficaram fora. Revisão de
-  16/11: seis orçamentos da amostra tiveram o bairro identificado depois do
-  primeiro cálculo (antes: Oeste 128, R$ 2.857; Sul 239, R$ 2.762).
+- Regiões (Kruskal-Wallis, H = 12,66, 2 g.l., p ≈ 0,002): Centro 107
+  orçamentos, R$ 3.038/m²; Zona Oeste 128, R$ 2.857; Zona Sul 239, R$ 2.762.
+  Zona Leste (7) e 111 registros sem bairro reconhecido ficaram fora.
   Agrupamento: Oeste = Pinheiros, Alto de Pinheiros, Vila Madalena, Perdizes,
   Barra Funda, Butantã, Pompeia, Vila Romana, Lapa, Água Branca; Centro =
   Consolação, Bela Vista, República, Santa Cecília, Higienópolis, Campos
@@ -64,17 +62,3 @@ guardado em `src/content/estudoContratos2026.ts`.
 O artigo `/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2`
 (banco do site) e os gráficos em
 `public/images/blog/quanto-custa-reformar-apartamento-studio-ate-50-m2/`.
-
-## Retrato da amostra (16/11/2026)
-
-O banco do Engine mudou depois do cálculo: em 16/11, das 02h19 às 02h28, um
-preenchimento por IA (`budget_events.event_type = 'ai_data_enrichment'`, lote
-`backfill-2026-11-16`) gravou metragem em 254 registros e bairro em 444. Pela
-mesma regra, a amostra passaria de 585 para 619 orçamentos (mediana de
-R$ 2.828/m²). A edição de novembro fica nos 585: para refazer qualquer recorte,
-use o valor anterior de cada campo (`metadata.previous` do evento) e descarte
-três negócios que não estavam no retrato (33 m² e R$ 103.454; 36 m² e
-R$ 214.250; 42 m² e R$ 82.675). Os recortes por região e faixa de metragem
-usados nos artigos saem desse retrato: na mesma faixa de metragem, a diferença
-entre regiões não é significativa (24 a 28 m²: 3,5%, p = 0,59), exceto abaixo
-de 24 m² (25%, p = 0,001), onde o Centro concentra studios de até 20 m².

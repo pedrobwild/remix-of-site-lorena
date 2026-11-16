@@ -218,9 +218,8 @@ export default function IndiceCustoPage() {
               Custo de reforma por região e bairro
             </h2>
             <p className="bwa-servico-text">
-              O orçamento total quase não muda de uma região para outra: a mediana fica entre{" "}
-              {brl(Math.min(...REGIOES_CUSTO.map((r) => r.orcamentoMediano)))} e{" "}
-              {brl(Math.max(...REGIOES_CUSTO.map((r) => r.orcamentoMediano)))} nas três. O que muda é o custo por m²,
+              O orçamento total quase não muda de uma região para outra: a mediana fica perto de{" "}
+              {brl(REGIOES_CUSTO[REGIOES_CUSTO.length - 1].orcamentoMediano)} nas três. O que muda é o custo por m²,
               mais alto no Centro, onde os imóveis da amostra são menores.
             </p>
             <div className="bwa-indice-table-wrap" role="region" aria-labelledby="regiao" tabIndex={0}>

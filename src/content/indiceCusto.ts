@@ -106,11 +106,11 @@ export const INCC_12M = 6.56;
  */
 export type RegiaoCusto = { regiao: string; orcamentos: number; m2Mediano: number; orcamentoMediano: number; areaMediana: number };
 export const REGIOES_CUSTO: RegiaoCusto[] = [
-  { regiao: "Centro", orcamentos: 107, m2Mediano: 3_038, orcamentoMediano: 73_661, areaMediana: 25 },
-  { regiao: "Zona Oeste", orcamentos: 131, m2Mediano: 2_856, orcamentoMediano: 73_627, areaMediana: 26 },
-  { regiao: "Zona Sul", orcamentos: 242, m2Mediano: 2_770, orcamentoMediano: 72_189, areaMediana: 26 },
+  { regiao: "Centro", orcamentos: 107, m2Mediano: 3_038, orcamentoMediano: 73_939, areaMediana: 25 },
+  { regiao: "Zona Oeste", orcamentos: 128, m2Mediano: 2_857, orcamentoMediano: 73_879, areaMediana: 26 },
+  { regiao: "Zona Sul", orcamentos: 239, m2Mediano: 2_762, orcamentoMediano: 73_000, areaMediana: 26 },
 ];
-/** Diferença por m² entre as três regiões (teste de Kruskal-Wallis, H = 12,9, 2 graus de liberdade). */
+/** Diferença por m² entre as três regiões (teste de Kruskal-Wallis, H = 12,7, 2 graus de liberdade). */
 export const REGIAO_P_VALOR = 0.002;
 
 /** Bairros com 15 orçamentos ou mais, do maior para o menor custo mediano por m². */
@@ -118,14 +118,14 @@ export type BairroCusto = { bairro: string; orcamentos: number; m2Mediano: numbe
 export const BAIRROS_CUSTO: BairroCusto[] = [
   { bairro: "Consolação", orcamentos: 38, m2Mediano: 3_117, orcamentoMediano: 95_865 },
   { bairro: "Bela Vista", orcamentos: 39, m2Mediano: 3_019, orcamentoMediano: 73_661 },
-  { bairro: "Pinheiros", orcamentos: 46, m2Mediano: 2_973, orcamentoMediano: 75_129 },
+  { bairro: "Pinheiros", orcamentos: 45, m2Mediano: 2_971, orcamentoMediano: 75_004 },
   { bairro: "Vila Mariana", orcamentos: 27, m2Mediano: 2_914, orcamentoMediano: 72_054 },
   { bairro: "Vila Clementino", orcamentos: 19, m2Mediano: 2_914, orcamentoMediano: 75_763 },
-  { bairro: "Perdizes", orcamentos: 23, m2Mediano: 2_867, orcamentoMediano: 70_896 },
   { bairro: "Moema", orcamentos: 33, m2Mediano: 2_863, orcamentoMediano: 76_726 },
+  { bairro: "Perdizes", orcamentos: 21, m2Mediano: 2_844, orcamentoMediano: 74_178 },
   { bairro: "Vila Olímpia", orcamentos: 27, m2Mediano: 2_795, orcamentoMediano: 69_886 },
-  { bairro: "Brooklin", orcamentos: 28, m2Mediano: 2_726, orcamentoMediano: 67_615 },
-  { bairro: "Pompeia", orcamentos: 16, m2Mediano: 2_639, orcamentoMediano: 75_214 },
+  { bairro: "Brooklin", orcamentos: 26, m2Mediano: 2_715, orcamentoMediano: 67_615 },
+  { bairro: "Pompeia", orcamentos: 15, m2Mediano: 2_643, orcamentoMediano: 75_127 },
   { bairro: "Butantã", orcamentos: 20, m2Mediano: 2_638, orcamentoMediano: 70_327 },
   { bairro: "Vila Nova Conceição", orcamentos: 26, m2Mediano: 2_556, orcamentoMediano: 68_909 },
 ];
