@@ -148,3 +148,33 @@ if __name__ == "__main__":
     g.OUT = BAIRRO_DIR
     for f in (b_resumo, b_contagem, b_custo, b_faixas, b_peso, b_tercos):
         for W in (600, 420): print(*f(W))
+
+
+# Artigo "melhor bairro para investir em studio": reforma em meses de aluguel.
+INVESTIR_DIR = os.path.join(BASE, "melhor-bairro-investir-studio-sao-paulo")
+MESES = [("Vila Olímpia", 2795, 116.50), ("Brooklin", 2715, 109.30), ("Pinheiros", 2971, 105.40)]
+
+
+def i_meses(W):
+    s = Svg(W, "Meses de aluguel bruto que pagam a reforma do studio",
+            "; ".join(f"{b}: {round(c / a)} meses ({brl(c)} ÷ R$ {num(a, 2)} por m²)" for b, c, a in MESES)
+            + ". Bela Vista e Perdizes não têm índice público de aluguel e não foram calculados.")
+    y = s.cabecalho("REFORMA EM MESES DE ALUGUEL", "De 24 a 28 meses de aluguel bruto pagam a reforma",
+                    "Mediana da reforma por m² no bairro dividida pelo aluguel mensal por m². Sem vacância, administração nem imposto.")
+    larg = W - 64 - 90
+    y += 10
+    for b, c, a in MESES:
+        m = c / a
+        s.t(32, y, b, 15, "s", TINTA, 700)
+        s.t(W - 32, y, f"{brl(c)} ÷ R$ {num(a, 2)}", 12, "m", CINZA, anchor="end")
+        w = larg * m / 30
+        s.rect(32, y + 10, w, 22, LARANJA if b == "Pinheiros" else AZUL, 4)
+        s.t(32 + w + 8, y + 27, f"{round(m)} meses", 15, "s", TINTA, 700)
+        y += 66
+    s.t(32, y, "Bela Vista e Perdizes: sem índice público de aluguel.", 12.5, "s", CINZA)
+    return s.salvar("01-reforma-em-meses-de-aluguel-nov26", s.rodape(y + 20, "Fontes: Índice Bewild; QuintoAndar jul/2026"))
+
+
+if __name__ == "__main__":
+    g.OUT = INVESTIR_DIR
+    for W in (600, 420): print(*i_meses(W))
