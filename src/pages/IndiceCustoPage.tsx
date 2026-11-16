@@ -10,8 +10,11 @@ import { PILAR_CUSTO } from "@/content/pages/orcamento";
 import "./servico-reforma.css";
 import "./indice-custo.css";
 import {
+  BAIRROS_CUSTO,
   COMO_CITAR,
   COMPOSICAO,
+  DESFECHO,
+  EDICAO_ANTERIOR,
   ESCOPO_INCLUIDO,
   ESTABILIDADE_M2,
   EXCLUSOES,
@@ -34,6 +37,7 @@ import {
   LIMITES,
   PROPOSTA_REAL_VALOR,
   REGIAO_P_VALOR,
+  REGIOES_CUSTO,
   REGISTROS_INICIAIS,
   REGRA_DE_BOLSO,
   RESUMO,
@@ -123,7 +127,7 @@ export default function IndiceCustoPage() {
                 <dd>{brl(INDICE.m2Mediano)}</dd>
               </div>
               <div>
-                <dt>Metade dos contratos, por m²</dt>
+                <dt>Metade dos orçamentos, por m²</dt>
                 <dd>
                   <span className="bwa-indice-nowrap">{brl(INDICE.m2P25)}</span> a{" "}
                   <span className="bwa-indice-nowrap">{brl(INDICE.m2P75)}</span>
@@ -140,7 +144,8 @@ export default function IndiceCustoPage() {
             </dl>
             <p className="bwa-servico-text">
               A média ficou em {brl(INDICE.orcamentoMedio)}, puxada pelos imóveis maiores; por isso o índice usa a
-              mediana. Nenhum contrato da base ficou abaixo de {brl(INDICE.orcamentoMinimo)}.
+              mediana. A amostra reúne orçamentos a partir de {brl(INDICE.orcamentoMinimo)}, em imóveis de até{" "}
+              {INDICE.areaMaxima} m².
             </p>
           </div>
         </section>
@@ -158,7 +163,7 @@ export default function IndiceCustoPage() {
                 <thead>
                   <tr>
                     <th scope="col">Área</th>
-                    <th scope="col">Contratos</th>
+                    <th scope="col">Orçamentos</th>
                     <th scope="col">Orçamento mediano</th>
                     <th scope="col">Metade do meio</th>
                     <th scope="col">Mediana por m²</th>
@@ -168,7 +173,7 @@ export default function IndiceCustoPage() {
                   {FAIXAS_METRAGEM.map((f) => (
                     <tr key={f.faixa}>
                       <th scope="row">{f.faixa}</th>
-                      <td>{f.contratos}</td>
+                      <td>{f.orcamentos}</td>
                       <td>{brl(f.orcamentoMediano)}</td>
                       <td>
                         R$ {f.metadeDoMeioMil[0]} mil a R$ {f.metadeDoMeioMil[1]} mil
@@ -181,8 +186,8 @@ export default function IndiceCustoPage() {
             </div>
             <p className="bwa-servico-text" style={{ marginTop: 24 }}>
               O custo por m² cai até perto de 32 m² e depois se estabiliza: cozinha, banheiro e marcenaria custam
-              quase o mesmo num studio de 20 m² e num de 28 m², então pesam mais por metro nos menores. Acima de 40 m²
-              a amostra é pequena ({FAIXAS_METRAGEM[FAIXAS_METRAGEM.length - 1].contratos} contratos); use como
+              quase o mesmo num studio de 20 m² e num de 28 m², então pesam mais por metro nos menores. De 40 a 45 m²
+              a amostra é pequena ({FAIXAS_METRAGEM[FAIXAS_METRAGEM.length - 1].orcamentos} orçamentos); use como
               ordem de grandeza.
             </p>
           </div>
@@ -200,10 +205,113 @@ export default function IndiceCustoPage() {
                   <span className="bwa-indice-bar" aria-hidden="true">
                     <span style={{ width: `${f.pct}%` }} />
                   </span>
-                  <span className="bwa-indice-bar-value">{pct(f.pct)} dos contratos</span>
+                  <span className="bwa-indice-bar-value">{pct(f.pct)} dos orçamentos</span>
                 </li>
               ))}
             </ul>
+          </div>
+        </section>
+
+        <section className="bwa-servico-block" aria-labelledby="regiao">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="regiao">
+              Custo de reforma por região e bairro
+            </h2>
+            <p className="bwa-servico-text">
+              O orçamento total quase não muda de uma região para outra: a mediana fica perto de{" "}
+              {brl(REGIOES_CUSTO[REGIOES_CUSTO.length - 1].orcamentoMediano)} nas três. O que muda é o custo por m²,
+              mais alto no Centro, onde os imóveis da amostra são menores.
+            </p>
+            <div className="bwa-indice-table-wrap" role="region" aria-labelledby="regiao" tabIndex={0}>
+              <table className="bwa-indice-table">
+                <caption className="sr-only">Orçamento de reforma completa por região de São Paulo, {INDICE_EDICAO}</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Região</th>
+                    <th scope="col">Orçamentos</th>
+                    <th scope="col">Orçamento mediano</th>
+                    <th scope="col">Área mediana</th>
+                    <th scope="col">Mediana por m²</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {REGIOES_CUSTO.map((r) => (
+                    <tr key={r.regiao}>
+                      <th scope="row">{r.regiao}</th>
+                      <td>{r.orcamentos}</td>
+                      <td>{brl(r.orcamentoMediano)}</td>
+                      <td>{r.areaMediana.toLocaleString("pt-BR")} m²</td>
+                      <td>{brl(r.m2Mediano)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <h3 className="bwa-servico-h3" id="bairros" style={{ marginTop: 32 }}>
+              Bairros com 15 orçamentos ou mais
+            </h3>
+            <div className="bwa-indice-table-wrap" role="region" aria-labelledby="bairros" tabIndex={0}>
+              <table className="bwa-indice-table">
+                <caption className="sr-only">Orçamento de reforma completa por bairro de São Paulo, {INDICE_EDICAO}</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Bairro</th>
+                    <th scope="col">Orçamentos</th>
+                    <th scope="col">Orçamento mediano</th>
+                    <th scope="col">Mediana por m²</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {BAIRROS_CUSTO.map((b) => (
+                    <tr key={b.bairro}>
+                      <th scope="row">{b.bairro}</th>
+                      <td>{b.orcamentos}</td>
+                      <td>{brl(b.orcamentoMediano)}</td>
+                      <td>{brl(b.m2Mediano)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="bwa-servico-text" style={{ marginTop: 24 }}>
+              Com menos de 50 orçamentos por bairro, leia a ordem como indicação, não como ranking: a metragem e o
+              escopo de cada imóvel pesam mais do que o endereço.
+            </p>
+          </div>
+        </section>
+
+        <section className="bwa-servico-block" aria-labelledby="situacao">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="situacao">
+              Orçado e fechado
+            </h2>
+            <p className="bwa-servico-text">
+              O índice mede o valor orçado. Dos {INDICE.orcamentos} negócios, {DESFECHO[0].orcamentos} tinham contrato
+              fechado em {dataBR(INDICE_ATUALIZADO_EM)}, e neles a mediana foi menor.
+            </p>
+            <div className="bwa-indice-table-wrap" role="region" aria-labelledby="situacao" tabIndex={0}>
+              <table className="bwa-indice-table">
+                <caption className="sr-only">Orçamentos por situação do negócio, {INDICE_EDICAO}</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Situação do negócio</th>
+                    <th scope="col">Orçamentos</th>
+                    <th scope="col">Orçamento mediano</th>
+                    <th scope="col">Mediana por m²</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {DESFECHO.map((d) => (
+                    <tr key={d.situacao}>
+                      <th scope="row">{d.situacao}</th>
+                      <td>{d.orcamentos}</td>
+                      <td>{brl(d.orcamentoMediano)}</td>
+                      <td>{brl(d.m2Mediano)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
 
@@ -216,7 +324,7 @@ export default function IndiceCustoPage() {
               Orçamento ≈ {brl(REGRA_DE_BOLSO.fixo)} + {brl(REGRA_DE_BOLSO.porM2)} × área em m²
             </p>
             <p className="bwa-servico-text">
-              Ajustada em {REGRA_DE_BOLSO.contratos} contratos de {REGRA_DE_BOLSO.faixaAreas}. Em metade dos casos o
+              Ajustada em {REGRA_DE_BOLSO.orcamentos} orçamentos de {REGRA_DE_BOLSO.faixaAreas}. Em metade dos casos o
               valor real ficou a até {REGRA_DE_BOLSO.erroMediano}% da fórmula, e em cerca de três a cada quatro, a até{" "}
               {REGRA_DE_BOLSO.erroTresQuartos}%. A parte fixa é o que todo studio tem (cozinha, banheiro, projeto,
               gestão); a parte por m² é o que cresce com a área.
@@ -253,8 +361,9 @@ export default function IndiceCustoPage() {
             </h2>
             <ul className="bwa-indice-notes">
               <li>
-                <strong>Base:</strong> {INDICE.contratos} contratos de reforma completa da Bewild em imóveis compactos de
-                São Paulo, de {REGISTROS_INICIAIS} registros iniciais. Saíram da análise{" "}
+                <strong>Base:</strong> {INDICE.orcamentos} orçamentos de reforma completa da Bewild em imóveis compactos
+                de São Paulo, um por negócio, de {REGISTROS_INICIAIS} negócios com orçamento publicado entre março e
+                novembro de 2026. Saíram da análise{" "}
                 {EXCLUSOES.map((e, i) => (
                   <span key={e.motivo}>
                     {e.n} {e.motivo}
@@ -263,28 +372,37 @@ export default function IndiceCustoPage() {
                 ))}
               </li>
               <li>
-                <strong>Valor:</strong> o do contrato na assinatura, sem aditivos posteriores. Inclui {ESCOPO_INCLUIDO}.
+                <strong>Valor:</strong> o total do orçamento apresentado ao cliente, na última versão publicada de cada
+                negócio. Inclui {ESCOPO_INCLUIDO}.
               </li>
               <li>
                 <strong>Estatística:</strong> mediana e quartis (resistem a valores extremos). A regra de bolso usa
                 regressão robusta de Theil-Sen.
               </li>
               <li>
-                <strong>Região:</strong> não houve diferença estatística de custo entre regiões da cidade (teste de
-                Kruskal-Wallis, p = {REGIAO_P_VALOR.toLocaleString("pt-BR")}).
+                <strong>Região:</strong> o custo por m² difere entre Centro, Zona Oeste e Zona Sul (teste de
+                Kruskal-Wallis, p = {REGIAO_P_VALOR.toLocaleString("pt-BR")}). Os bairros foram agrupados pelo campo
+                de bairro do negócio; orçamentos sem bairro reconhecido e a Zona Leste, com poucos casos, ficaram fora
+                dessa comparação.
               </li>
               <li>
-                <strong>Estabilidade no tempo:</strong> separando os contratos em três grupos pela data de assinatura, a
+                <strong>Estabilidade no tempo:</strong> separando os orçamentos em três grupos pela data de criação, a
                 mediana por m² ficou entre {brl(ESTABILIDADE_M2[0])} e {brl(ESTABILIDADE_M2[1])}. Para comparar com a
                 inflação da construção, o INCC-M subiu {pct(INCC_12M)} em 12 meses até agosto de 2026.
               </li>
               <li>
                 <strong>Limites:</strong> {LIMITES}
               </li>
+              <li>
+                <strong>Edição anterior:</strong> a edição de {EDICAO_ANTERIOR.edicao} analisou{" "}
+                {EDICAO_ANTERIOR.contratos} contratos fechados, pelo valor na assinatura, e teve mediana de{" "}
+                {brl(EDICAO_ANTERIOR.m2Mediano)} por m² e de {brl(EDICAO_ANTERIOR.orcamentoMediano)} por reforma. As
+                bases são diferentes, então os números das duas edições não formam uma série.
+              </li>
             </ul>
             <p className="bwa-servico-text" style={{ marginTop: 24 }}>
-              A análise completa, com gráficos, exemplos por empreendimento e o efeito no retorno do investimento, está
-              em{" "}
+              O estudo anterior, de contratos fechados, com gráficos, exemplos por empreendimento e o efeito no retorno
+              do investimento, está em{" "}
               <a href={PILAR_CUSTO}>quanto custa reformar um apartamento ou studio de até 50 m²</a>. Para o seu imóvel,
               o <a href="/escopo">simulador de escopo</a> dá uma primeira estimativa.
             </p>

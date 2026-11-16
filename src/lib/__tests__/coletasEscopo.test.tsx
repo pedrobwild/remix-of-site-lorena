@@ -172,9 +172,9 @@ describe("/escopo com conteúdo próprio no HTML do servidor (D4)", () => {
     expect(visivel).not.toMatch(/\bART\b/);
   });
 
-  it("faixas por metragem só do Índice (base de 188 contratos)", () => {
-    expect(FAIXAS_METRAGEM.reduce((s, f) => s + f.contratos, 0)).toBe(BASE_CUSTO.contratos);
-    expect(visivel).toContain(`${BASE_CUSTO.contratos} contratos`);
+  it("faixas por metragem só do Índice (base de 585 orçamentos)", () => {
+    expect(FAIXAS_METRAGEM.reduce((s, f) => s + f.orcamentos, 0)).toBe(BASE_CUSTO.orcamentos);
+    expect(visivel).toContain(`${BASE_CUSTO.orcamentos} orçamentos`);
     for (const f of FAIXAS_METRAGEM) {
       expect(visivel).toContain(f.faixa);
       expect(visivel).toContain(brl(f.orcamentoMediano));

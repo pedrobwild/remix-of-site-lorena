@@ -109,8 +109,8 @@ export default function ReformaStudioSpPage({ bairroPages = null, topoVariante =
               Quanto custa reformar um studio em São Paulo?
             </h2>
             <p className="bwa-servico-text">
-              Na base de {BASE_CUSTO.contratos} contratos de reforma completa da Bewild em unidades de até 50 m²,
-              a mediana foi {ORCAMENTO_MEDIANO}, ou {CUSTO_M2_MEDIANO} por m². Metade dos contratos ficou
+              Na base de {BASE_CUSTO.orcamentos} orçamentos de reforma completa da Bewild em unidades de até 45 m²,
+              a mediana foi {ORCAMENTO_MEDIANO}, ou {CUSTO_M2_MEDIANO} por m². Metade dos orçamentos ficou
               entre {brl(BASE_CUSTO.m2P25)} e {brl(BASE_CUSTO.m2P75)} por m².
             </p>
             <table className="bwa-servico-price-table">
@@ -120,7 +120,7 @@ export default function ReformaStudioSpPage({ bairroPages = null, topoVariante =
               </thead>
               <tbody>
                 <tr>
-                  <th scope="row">Mediana de {BASE_CUSTO.contratos} contratos, até 50 m²</th>
+                  <th scope="row">Mediana de {BASE_CUSTO.orcamentos} orçamentos, até 45 m²</th>
                   <td>{ORCAMENTO_MEDIANO} ({CUSTO_M2_MEDIANO} por m²)</td>
                 </tr>
                 {STUDIO_TABELA_VIGENTE.referencias.map((referencia) => (
@@ -138,7 +138,7 @@ export default function ReformaStudioSpPage({ bairroPages = null, topoVariante =
               até {STUDIO_TABELA_VIGENTE.prazo.diasUteisMax} dias úteis, com a data escrita no contrato.
             </p>
             <p className="bwa-servico-text">
-              Os valores da base são de contratos já assinados; a tabela vigente é de {STUDIO_TABELA_VIGENTE.edicao}.
+              Os valores da base são de orçamentos apresentados aos clientes; a tabela vigente é de {STUDIO_TABELA_VIGENTE.edicao}.
               O seu orçamento sai da metragem e do escopo do seu imóvel. A análise completa,
               com o que muda o preço, está em{" "}
               <a href="/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2">

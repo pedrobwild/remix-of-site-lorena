@@ -8,7 +8,7 @@
  * Nada novo nasce aqui. Escopo, garantia, prazo e área de atuação repetem o
  * que o site já publica (/faq, /orcamento, /reforma-de-studio-sao-paulo,
  * escopoCalc.ts); números de custo só de baseCusto.ts e indiceCusto.ts (base
- * de 188 contratos). O papel da página é entender e montar o escopo: custo da
+ * de 585 orçamentos). O papel da página é entender e montar o escopo: custo da
  * base inteira é do Índice, valor do imóvel é do pedido de orçamento.
  */
 import { BASE_CUSTO, CUSTO_M2_MEDIANO, STUDIO_TABELA_VIGENTE, brl } from "@/content/baseCusto";
@@ -96,20 +96,20 @@ export const ESCOPO_NAO_ENTRA: EscopoItem[] = [
   {
     item: "Aditivos nas faixas de preço",
     detalhe:
-      "As faixas usam o valor do contrato na assinatura; aditivos assinados depois não entram na conta.",
+      "As faixas usam o valor do orçamento apresentado ao cliente, na última versão publicada; aditivos não entram na conta.",
   },
 ];
 
 /** Faixas por metragem do Índice (mesma tabela, mesmos números), já formatadas. */
 export const ESCOPO_FAIXAS = FAIXAS_METRAGEM.map((f) => ({
   faixa: f.faixa,
-  contratos: f.contratos,
+  orcamentos: f.orcamentos,
   orcamentoMediano: brl(f.orcamentoMediano),
   metadeDoMeio: `${brl(f.metadeDoMeioMil[0] * 1000)} a ${brl(f.metadeDoMeioMil[1] * 1000)}`,
   m2Mediano: brl(f.m2Mediano),
 }));
 
-export const ESCOPO_FAIXAS_FONTE = `Orçamento da reforma completa nos ${BASE_CUSTO.contratos} contratos do Índice Bewild de custo de reforma, edição de ${INDICE_EDICAO}: valor do contrato na assinatura, sem aditivos.`;
+export const ESCOPO_FAIXAS_FONTE = `Orçamento da reforma completa nos ${BASE_CUSTO.orcamentos} orçamentos do Índice Bewild de custo de reforma, edição de ${INDICE_EDICAO}: valor da última versão publicada de cada negócio.`;
 
 const faixa = (rotulo: string) => {
   const f = FAIXAS_METRAGEM.find((x) => x.faixa === rotulo);
@@ -131,7 +131,7 @@ export const ESCOPO_FAQ: { q: string; a: string }[] = [
   },
   {
     q: "De onde vêm as faixas de preço desta página?",
-    a: `Dos ${BASE_CUSTO.contratos} contratos de reforma completa do Índice Bewild de custo de reforma, edição de ${INDICE_EDICAO}, com o valor do contrato na assinatura, sem aditivos. A faixa da calculadora é a metade central desses contratos: de ${brl(BASE_CUSTO.m2P25)} a ${brl(BASE_CUSTO.m2P75)} por m², com mediana de ${CUSTO_M2_MEDIANO} por m².`,
+    a: `Dos ${BASE_CUSTO.orcamentos} orçamentos de reforma completa do Índice Bewild de custo de reforma, edição de ${INDICE_EDICAO}, com o valor da última versão publicada de cada negócio. A faixa da calculadora é a metade central desses orçamentos: de ${brl(BASE_CUSTO.m2P25)} a ${brl(BASE_CUSTO.m2P75)} por m², com mediana de ${CUSTO_M2_MEDIANO} por m².`,
   },
   {
     q: "Por que imóveis pequenos custam mais por m²?",

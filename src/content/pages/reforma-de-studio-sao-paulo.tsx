@@ -9,7 +9,7 @@
  */
 import type { ReactNode } from "react";
 import { faqJsonLd } from "@/lib/useSeo";
-import { CLIENTES_SHORT_STAY_PCT, CONTRATOS_ANALISADOS } from "@/content/provas";
+import { CLIENTES_SHORT_STAY_PCT, ORCAMENTOS_ANALISADOS } from "@/content/provas";
 import { CUSTO_M2_MEDIANO, ORCAMENTO_MEDIANO } from "@/content/baseCusto";
 
 export const CANONICAL = "/reforma-de-studio-sao-paulo";
@@ -26,7 +26,7 @@ const PRAZO_STUDIO = "A referência é cerca de 60 dias úteis de obra. A data e
 
 export const SEO_TITLE = "Reforma de studio em São Paulo: preço e prazo em contrato";
 export const SEO_DESCRIPTION =
-  `Reforma completa de studio e apartamento pequeno em SP: projeto, obra, marcenaria e mobília num contrato. Mediana de ${CUSTO_M2_MEDIANO}/m² em ${CONTRATOS_ANALISADOS} contratos.`;
+  `Reforma completa de studio e apartamento pequeno em SP: projeto, obra, marcenaria e mobília num contrato. Mediana de ${CUSTO_M2_MEDIANO}/m² em ${ORCAMENTOS_ANALISADOS} orçamentos.`;
 export const SEO_KEYWORDS =
   "reforma de studio em São Paulo, reforma de studio SP, reforma de apartamento compacto em São Paulo, reforma de apartamento pequeno em SP, reforma de kitnet em São Paulo, reforma de studio para Airbnb em SP";
 
@@ -98,10 +98,10 @@ export const FAQ: { q: string; a: string; node?: ReactNode }[] = [
   },
   {
     q: "Quanto custa a reforma de um studio para Airbnb?",
-    a: `Nos ${CONTRATOS_ANALISADOS} contratos de reforma completa de até 50 m² analisados pela Bewild, a mediana foi ${ORCAMENTO_MEDIANO} (${CUSTO_M2_MEDIANO} por m²), com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Para short stay, o enxoval e os eletros entram no escopo; o que mais muda o valor é a metragem e o padrão de acabamento.`,
+    a: `Nos ${ORCAMENTOS_ANALISADOS} orçamentos de reforma completa de até 45 m² analisados pela Bewild, a mediana foi ${ORCAMENTO_MEDIANO} (${CUSTO_M2_MEDIANO} por m²), com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Para short stay, o enxoval e os eletros entram no escopo; o que mais muda o valor é a metragem e o padrão de acabamento.`,
     node: (
       <>
-        Nos {CONTRATOS_ANALISADOS} contratos de reforma completa de até 50 m² analisados pela Bewild, a mediana
+        Nos {ORCAMENTOS_ANALISADOS} orçamentos de reforma completa de até 45 m² analisados pela Bewild, a mediana
         foi {ORCAMENTO_MEDIANO} ({CUSTO_M2_MEDIANO} por m²), com projeto, obra, marcenaria, mobiliário e
         eletrodomésticos. A análise completa está em{" "}
         <a href="/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2">
@@ -179,7 +179,7 @@ export const HERO_STUDIO: Record<"padrao" | "investidor" | "planta" | "custo", H
   custo: {
     h1: "Quanto custa a reforma de studio em São Paulo?",
     destaque: `Mediana de ${CUSTO_M2_MEDIANO} por m².`,
-    lead: `É a mediana de ${CONTRATOS_ANALISADOS} contratos de reforma completa da Bewild em unidades de até 50 m² (${ORCAMENTO_MEDIANO} por reforma), com projeto, obra, marcenaria, mobília e eletros num contrato de preço fechado. A faixa por metragem está logo abaixo.`,
+    lead: `É a mediana de ${ORCAMENTOS_ANALISADOS} orçamentos de reforma completa da Bewild em unidades de até 45 m² (${ORCAMENTO_MEDIANO} por reforma), com projeto, obra, marcenaria, mobília e eletros num contrato de preço fechado. A faixa por metragem está logo abaixo.`,
   },
 };
 

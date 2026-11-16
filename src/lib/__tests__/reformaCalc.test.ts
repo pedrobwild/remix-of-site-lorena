@@ -16,7 +16,7 @@ describe("reformaCalc", () => {
   });
 
   it("custo = mediana × metragem", () => {
-    expect(calcular({ bairro: "itaim-bibi", areaM2: 30, precoCompra: 1, precoVenda: 1 }).custo.mediano).toBe(82_320);
+    expect(calcular({ bairro: "itaim-bibi", areaM2: 30, precoCompra: 1, precoVenda: 1 }).custo.mediano).toBe(84_930);
   });
 
   it("alíquotas progressivas por faixa", () => {

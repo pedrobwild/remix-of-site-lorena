@@ -11,7 +11,7 @@
  */
 import type { TopoVariante } from "@/lib/googleAdsVariant";
 import { HOME_SLIDES, type HomeSlideName } from "@/content/homeSlides";
-import { CLIENTES_FORA_DA_CAPITAL_PCT, CONTRATOS_ANALISADOS, PROVA_REFORMAS, REFORMAS_ENTREGUES } from "@/content/provas";
+import { CLIENTES_FORA_DA_CAPITAL_PCT, ORCAMENTOS_ANALISADOS, PROVA_REFORMAS, REFORMAS_ENTREGUES } from "@/content/provas";
 import { CUSTO_M2_MEDIANO, ORCAMENTO_MEDIANO, STUDIO_TABELA_VIGENTE } from "@/content/baseCusto";
 import { HERO_STUDIO, type HeroStudio } from "@/content/pages/reforma-de-studio-sao-paulo";
 
@@ -31,7 +31,7 @@ export const LP_HERO: Record<LpVariante, HeroStudio> = {
   custo: {
     h1: HERO_STUDIO.custo.h1,
     destaque: HERO_STUDIO.custo.destaque,
-    lead: `É a mediana de ${CONTRATOS_ANALISADOS} contratos de reforma completa da Bewild em unidades de até 50 m² (${ORCAMENTO_MEDIANO} por reforma), com projeto, obra, marcenaria, mobília e eletros num contrato de preço fechado.`,
+    lead: `É a mediana de ${ORCAMENTOS_ANALISADOS} orçamentos de reforma completa da Bewild em unidades de até 45 m² (${ORCAMENTO_MEDIANO} por reforma), com projeto, obra, marcenaria, mobília e eletros num contrato de preço fechado.`,
   },
 };
 
@@ -43,7 +43,7 @@ export function lpVarianteDaBusca(variante: TopoVariante): LpVariante {
 /** Grade de 4 números do hero (provas do handoff, seção 1). `sufixo` sai menor. */
 export const LP_NUMEROS: ReadonlyArray<{ valor: string; sufixo?: string; legenda: string }> = [
   { valor: `+${REFORMAS_ENTREGUES}`, legenda: "reformas entregues em São Paulo" },
-  { valor: CUSTO_M2_MEDIANO, sufixo: "/m²", legenda: `mediana de ${CONTRATOS_ANALISADOS} contratos de reforma completa` },
+  { valor: CUSTO_M2_MEDIANO, sufixo: "/m²", legenda: `mediana de ${ORCAMENTOS_ANALISADOS} orçamentos de reforma completa` },
   { valor: `${CLIENTES_FORA_DA_CAPITAL_PCT}%`, legenda: "dos clientes moram fora da capital" },
   { valor: String(STUDIO_TABELA_VIGENTE.prazo.diasUteisMax), sufixo: " dias úteis", legenda: `de obra para studio de até ${STUDIO_TABELA_VIGENTE.prazo.areaMaxM2} m², com a data no contrato` },
 ];

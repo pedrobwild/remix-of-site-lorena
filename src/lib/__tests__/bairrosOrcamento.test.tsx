@@ -4,7 +4,7 @@
  * apartamento em <bairro>" mostravam o artigo "por bairro" no lugar da página
  * do bairro. Cada /reforma/<bairro> agora:
  *  - abre, no HTML do servidor e antes da lista de projetos, com a faixa de
- *    custo por m² da CIDADE (BASE_CUSTO: base de contratos, edição e
+ *    custo por m² da CIDADE (BASE_CUSTO: base de orçamentos, edição e
  *    exclusões; nunca mediana do bairro) e o botão "Solicitar orçamento" para
  *    /orcamento, sem utm;
  *  - tem 6 perguntas no FAQ, as mesmas no HTML e no FAQPage do head();
@@ -161,7 +161,7 @@ describe("FAQ das páginas de bairro: 6 perguntas de orçamento e decisão", () 
       const faq = BAIRROS_CONTENT[slug].faq;
       const achar = (re: RegExp) => faq.find((f) => re.test(f.q));
       const custo = achar(/^Quanto custa/);
-      expect(custo?.a, slug).toContain(`${BASE_CUSTO.contratos} contratos`);
+      expect(custo?.a, slug).toContain(`${BASE_CUSTO.orcamentos} orçamentos`);
       expect(custo?.a, slug).toContain("não uma mediana específica do bairro");
       const prazo = achar(/^Quanto tempo/);
       expect(prazo?.a, slug).toMatch(/contrato/);
@@ -205,10 +205,10 @@ describe("HTML do servidor de /reforma/<bairro>", () => {
       // Referência de São Paulo: base, edição, o que entra e o que não entra; nunca mediana do bairro.
       const topo = decode(h.slice(h.indexOf("bwh-bairro-custo"), iProjetos));
       expect(topo).toContain("Referência de São Paulo");
-      expect(topo).toContain(`${BASE_CUSTO.contratos} contratos`);
+      expect(topo).toContain(`${BASE_CUSTO.orcamentos} orçamentos`);
       expect(topo).toContain(`edição de ${INDICE_EDICAO}`);
       expect(topo).toContain(CUSTO_M2_MEDIANO);
-      expect(topo).toContain("sem aditivos");
+      expect(topo).toContain("última versão publicada");
       expect(topo).toContain("não uma mediana do bairro");
       expect(h).not.toMatch(/href="\/orcamento\?[^"]*utm_/);
     }

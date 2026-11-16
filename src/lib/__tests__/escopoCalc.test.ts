@@ -9,10 +9,10 @@ import {
 } from "@/lib/escopoCalc";
 
 describe("escopo: faixa de investimento", () => {
-  it("escopo completo de 28 m² usa R$ 2.457 / 2.744 / 3.125 por m² (base de 188 contratos)", () => {
+  it("escopo completo de 28 m² usa R$ 2.499 / 2.831 / 3.283 por m² (base de 585 orçamentos)", () => {
     const r = montarEscopo({ areaM2: 28, itens: [...IDS_ITENS] });
     expect(r.completo).toBe(true);
-    expect(r.faixa).toEqual({ baixo: 68796, mediano: 76832, alto: 87500 });
+    expect(r.faixa).toEqual({ baixo: 69972, mediano: 79268, alto: 91924 });
   });
 
   it("escopo parcial não publica faixa (a base não tem preço por item)", () => {

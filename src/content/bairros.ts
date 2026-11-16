@@ -4,7 +4,7 @@
  * 06/10/2026, os outros 11 bairros do sitemap. Só
  * fatos publicados: contagens e metragens do portfólio, os números de
  * mercado e de contrato citados no post "melhores bairros para short stay"
- * (GuestFavorites jan–set/2026 — Pinheiros, Moema e Vila Mariana conferidos em 13/10/2026; demais jan–ago/2026), o Índice Bewild de outubro de 2026 para custo e a geografia do
+ * (GuestFavorites jan–set/2026 — Pinheiros, Moema e Vila Mariana conferidos em 13/10/2026; demais jan–ago/2026), o Índice Bewild de novembro de 2026 para custo e a geografia do
  * bairro. Bairro sem entrada aqui mostra só a lista de projetos.
  *
  * Rodada 4 da auditoria de SEO (09/11/2026, ação 6): as buscas "orçamento de
@@ -35,13 +35,13 @@ export type BairroContent = {
 
 /**
  * Faixa de custo do topo de toda página de bairro: a metade do meio dos
- * contratos do Índice (1º ao 3º quartil de BASE_CUSTO). É a referência da
+ * orçamentos do Índice (1º ao 3º quartil de BASE_CUSTO). É a referência da
  * CIDADE, com base, edição e exclusões, nunca uma mediana do bairro.
  */
 export const FAIXA_CUSTO_SP = {
   rotulo: "Referência de São Paulo",
   faixa: `${brl(BASE_CUSTO.m2P25)} a ${brl(BASE_CUSTO.m2P75)} por m²`,
-  texto: `Metade dos ${BASE_CUSTO.contratos} contratos de reforma completa de studios e apartamentos compactos do Índice Bewild de custo de reforma, edição de ${INDICE_EDICAO}, ficou nessa faixa; a mediana é ${CUSTO_M2_MEDIANO} por m², com projeto, obra, marcenaria, mobiliário e eletrodomésticos. São valores dos contratos na assinatura, sem aditivos. É a base da cidade, não uma mediana do bairro: o preço do seu apartamento sai fechado na proposta.`,
+  texto: `Metade dos ${BASE_CUSTO.orcamentos} orçamentos de reforma completa de studios e apartamentos compactos do Índice Bewild de custo de reforma, edição de ${INDICE_EDICAO}, ficou nessa faixa; a mediana é ${CUSTO_M2_MEDIANO} por m², com projeto, obra, marcenaria, mobiliário e eletrodomésticos. São valores orçados, na última versão publicada de cada negócio. É a base da cidade, não uma mediana do bairro: o preço do seu apartamento sai fechado na proposta.`,
 } as const;
 
 const PILAR = {

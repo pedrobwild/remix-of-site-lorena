@@ -180,7 +180,7 @@ export default function EscopoPage() {
                         <p>
                           Mediana de {brl.format(resultado.faixa.mediano)} para {area.trim()} m². São{" "}
                           {brl.format(resultado.porM2.baixo)} a {brl.format(resultado.porM2.alto)} por m² (mediana de{" "}
-                          {brl.format(resultado.porM2.mediano)}), a metade central dos contratos de reforma completa da Bewild.
+                          {brl.format(resultado.porM2.mediano)}), a metade central dos orçamentos de reforma completa da Bewild.
                         </p>
                       </>
                     ) : (
@@ -226,7 +226,7 @@ export default function EscopoPage() {
             </div>
 
             <p className="rc-note">
-              Estimativa, não é orçamento: usa a mediana por m² dos {BASE_CUSTO.contratos} contratos de reforma completa da Bewild (out/2026), a mesma
+              Estimativa, não é orçamento: usa a mediana por m² dos {BASE_CUSTO.orcamentos} orçamentos de reforma completa da Bewild (nov/2026), a mesma
               do <a href="/indice-de-custo-de-reforma">Índice Bewild de custo de reforma</a> e da{" "}
               <a href="/conteudos/reformar-apartamento-para-vender-ou-alugar-sp">calculadora do artigo</a>. O valor final
               fecha no contrato, com preço e prazo por escrito.
@@ -258,7 +258,7 @@ export default function EscopoPage() {
                     <thead>
                       <tr>
                         <th scope="col">Metragem</th>
-                        <th scope="col">Contratos</th>
+                        <th scope="col">Orçamentos</th>
                         <th scope="col">Orçamento mediano</th>
                         <th scope="col">Metade do meio</th>
                         <th scope="col">Mediana por m²</th>
@@ -268,7 +268,7 @@ export default function EscopoPage() {
                       {ESCOPO_FAIXAS.map((f) => (
                         <tr key={f.faixa}>
                           <th scope="row">{f.faixa}</th>
-                          <td>{f.contratos}</td>
+                          <td>{f.orcamentos}</td>
                           <td>{f.orcamentoMediano}</td>
                           <td>{f.metadeDoMeio}</td>
                           <td>{f.m2Mediano}</td>
@@ -279,7 +279,7 @@ export default function EscopoPage() {
                 </div>
               </div>
               <p>
-                Metade do meio: metade dos contratos de cada faixa ficou entre esses dois valores. Método, regra de
+                Metade do meio: metade dos orçamentos de cada faixa ficou entre esses dois valores. Método, regra de
                 bolso e a tabela em CSV estão no{" "}
                 <a href="/indice-de-custo-de-reforma">Índice Bewild de custo de reforma</a>.
               </p>
