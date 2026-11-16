@@ -86,6 +86,19 @@ function withShortEdgeCache(request: Request, response: Response): Response {
   });
 }
 
+// Diagnóstico (16/11/2026): a Vercel consome `s-maxage` e `stale-while-revalidate` e
+// entrega ao navegador outro `cache-control`, então não dá para ver de fora qual
+// política este servidor escreveu. Este cabeçalho repete o valor escrito aqui. Se ele
+// não aparecer na resposta, ela não passou por este arquivo; se aparecer com um valor
+// e o `cache-control` final for outro, quem trocou foi a hospedagem. Sem dado pessoal.
+export const CACHE_POLICY_ECHO_HEADER = "x-bw-cache-policy";
+
+export function withCachePolicyEcho(response: Response): Response {
+  const headers = new Headers(response.headers);
+  headers.set(CACHE_POLICY_ECHO_HEADER, `${response.status}; ${headers.get("cache-control") ?? "sem cache-control"}`);
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
+
 /**
  * /.well-known/llms.txt é a cópia de /llms.txt que alguns robôs de IA procuram.
  * As duas saem da mesma rota de servidor (src/routes/llms[.]txt.ts): aqui só
@@ -112,11 +125,13 @@ export default {
         // mais cedo; ver src/lib/modulePreloadPlacement.ts). Na home, o
         // JavaScript só é pedido depois da primeira pintura, que já mostra o
         // texto do hero (LCP no celular; ver src/lib/entryAfterFirstPaint.ts).
-        return withNoCacheOnMissingFile(
-          request,
-          withEntryAfterFirstPaint(
+        return withCachePolicyEcho(
+          withNoCacheOnMissingFile(
             request,
-            withModulePreloadsInBody(withShortEdgeCache(request, await normalizeCatastrophicSsrResponse(response))),
+            withEntryAfterFirstPaint(
+              request,
+              withModulePreloadsInBody(withShortEdgeCache(request, await normalizeCatastrophicSsrResponse(response))),
+            ),
           ),
         );
       };

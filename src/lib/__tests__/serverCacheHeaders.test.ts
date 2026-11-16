@@ -1,6 +1,12 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
-import { MISSING_FILE_CACHE_CONTROL, PUBLIC_HTML_CACHE_CONTROL, withNoCacheOnMissingFile } from "../../server";
+import {
+  CACHE_POLICY_ECHO_HEADER,
+  MISSING_FILE_CACHE_CONTROL,
+  PUBLIC_HTML_CACHE_CONTROL,
+  withCachePolicyEcho,
+  withNoCacheOnMissingFile,
+} from "../../server";
 
 const STATIC_30_DIAS = "public, max-age=2592000, stale-while-revalidate=604800";
 
@@ -34,5 +40,18 @@ describe("arquivo estático que não existe", () => {
   it("página 404 (caminho sem extensão) não é alterada", () => {
     const original = resposta(404);
     expect(withNoCacheOnMissingFile(new Request("https://bewild.com.br/nao-existe"), original)).toBe(original);
+  });
+});
+
+describe("cabeçalho de diagnóstico da política de cache", () => {
+  it("repete o status e o cache-control escritos pelo servidor", () => {
+    const r = withCachePolicyEcho(new Response("x", { status: 200, headers: { "cache-control": PUBLIC_HTML_CACHE_CONTROL } }));
+    expect(r.headers.get(CACHE_POLICY_ECHO_HEADER)).toBe(`200; ${PUBLIC_HTML_CACHE_CONTROL}`);
+    expect(r.headers.get("cache-control")).toBe(PUBLIC_HTML_CACHE_CONTROL);
+  });
+
+  it("diz quando a resposta saiu sem cache-control", () => {
+    const r = withCachePolicyEcho(new Response("x", { status: 404 }));
+    expect(r.headers.get(CACHE_POLICY_ECHO_HEADER)).toBe("404; sem cache-control");
   });
 });
