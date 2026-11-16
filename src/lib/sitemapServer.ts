@@ -34,8 +34,8 @@ import {
 /** Validade do memo: uma publicação nova aparece em até 10 minutos. */
 export const SITEMAP_MEMO_MS = 10 * 60_000;
 
-/** Cabeçalho das duas respostas: o navegador revalida, a borda guarda 10 min e serve a cópia velha por um dia. */
-export const SITEMAP_CACHE_CONTROL = "public, max-age=0, s-maxage=600, stale-while-revalidate=86400";
+/** Cabeçalho das duas respostas: o navegador revalida, a borda guarda 10 min e serve a cópia guardada por mais 10 (eram 24 h até 16/11/2026; ver src/server.ts). */
+export const SITEMAP_CACHE_CONTROL = "public, max-age=0, s-maxage=600, stale-while-revalidate=600";
 
 const ctx = videoContext(videoMeta, videoPages);
 
