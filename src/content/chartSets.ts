@@ -25,12 +25,12 @@ export const CHART_SETS: ChartSet[] = [
     description:
       "Os seis gráficos do artigo sobre reformar apartamento para vender ou alugar em São Paulo, em versão larga e para celular, prontos para baixar e reutilizar.",
     charts: [
-      { id: "resumo-numeros", file: "01-resumo-numeros", title: "Reformar apartamento para vender ou alugar em SP: os números" },
-      { id: "reforma-percentual-do-valor", file: "02-reforma-percentual-do-valor", title: "Quanto a reforma completa pesa no preço do apartamento, por bairro" },
-      { id: "meses-de-aluguel", file: "03-meses-de-aluguel", title: "Quantos meses de aluguel bruto cobrem a reforma completa" },
+      { id: "resumo-numeros", file: "01-resumo-numeros-nov26", title: "Reformar apartamento para vender ou alugar em SP: os números" },
+      { id: "reforma-percentual-do-valor", file: "02-reforma-percentual-do-valor-nov26", title: "Quanto a reforma completa pesa no preço do apartamento, por bairro" },
+      { id: "meses-de-aluguel", file: "03-meses-de-aluguel-nov26", title: "Quantos meses de aluguel bruto cobrem a reforma completa" },
       { id: "indices-12-meses", file: "04-indices-12-meses", title: "Em 12 meses: preço do imóvel, aluguel, custo de obra e juros" },
       { id: "ir-ganho-de-capital", file: "05-ir-ganho-de-capital", title: "Imposto sobre ganho de capital: a reforma comprovada muda a conta" },
-      { id: "valor-por-metragem", file: "06-valor-por-metragem", title: "Valor do contrato de reforma completa por faixa de metragem" },
+      { id: "valor-por-metragem", file: "06-valor-por-metragem-nov26", title: "Valor do orçamento de reforma completa por faixa de metragem" },
     ],
   },
 ];
