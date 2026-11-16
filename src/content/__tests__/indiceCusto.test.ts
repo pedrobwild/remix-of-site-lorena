@@ -1,7 +1,7 @@
 /**
  * Índice Bewild de custo de reforma: a página, o CSV para download e o
- * JSON-LD têm de contar a mesma história do artigo pilar (base de 188
- * contratos). Quebrou aqui? Atualize src/content/indiceCusto.ts e o CSV juntos.
+ * JSON-LD têm de contar a mesma história (base de 585 orçamentos do Bwild
+ * Engine, edição de novembro de 2026). Quebrou aqui? Atualize src/content/indiceCusto.ts e o CSV juntos.
  */
 import { readFileSync } from "node:fs";
 import path from "node:path";
@@ -16,7 +16,7 @@ vi.mock("@/components/BwaFooter", () => ({ default: () => null }));
 vi.mock("@/lib/trackCta", () => ({ useCtaClickTracking: () => {} }));
 vi.mock("@/lib/useSeo", async (importOriginal) => ({ ...await importOriginal<typeof import("@/lib/useSeo")>(), useSeo: () => {} }));
 import IndiceCustoPage from "@/pages/IndiceCustoPage";
-import { CONTRATOS_ANALISADOS } from "@/content/provas";
+import { ORCAMENTOS_ANALISADOS } from "@/content/provas";
 import {
   FAIXAS_METRAGEM,
   FAIXAS_VALOR,
@@ -40,41 +40,42 @@ const linhas = csv.filter((l) => !l.startsWith("#")).slice(1).map((l) => l.split
 const html = renderToStaticMarkup(createElement(IndiceCustoPage));
 
 describe("Índice Bewild de custo de reforma", () => {
-  it("usa a base de contratos de provas.ts", () => {
-    expect(INDICE.contratos).toBe(CONTRATOS_ANALISADOS);
-    expect(REGISTROS_INICIAIS - EXCLUSOES.reduce((s, e) => s + e.n, 0)).toBe(CONTRATOS_ANALISADOS);
+  it("usa a base de orçamentos de provas.ts", () => {
+    expect(INDICE.orcamentos).toBe(ORCAMENTOS_ANALISADOS);
+    expect(REGISTROS_INICIAIS - EXCLUSOES.reduce((s, e) => s + e.n, 0)).toBe(ORCAMENTOS_ANALISADOS);
   });
 
   it("as faixas de metragem somam a base inteira", () => {
-    expect(FAIXAS_METRAGEM.reduce((s, f) => s + f.contratos, 0)).toBe(CONTRATOS_ANALISADOS);
+    expect(FAIXAS_METRAGEM.reduce((s, f) => s + f.orcamentos, 0)).toBe(ORCAMENTOS_ANALISADOS);
   });
 
   it("a distribuição dos valores soma 100%", () => {
-    expect(FAIXAS_VALOR.reduce((s, f) => s + f.pct, 0)).toBe(100);
+    // Percentuais com uma casa: a soma pode ficar a um décimo de 100.
+    expect(Math.abs(FAIXAS_VALOR.reduce((s, f) => s + f.pct, 0) - 100)).toBeLessThanOrEqual(0.2);
   });
 
   it("o CSV para download tem os mesmos números da página", () => {
     const geral = linhas.find((l) => l[0] === "geral");
     expect(geral).toBeDefined();
     if (!geral) throw new Error("Linha geral ausente no CSV");
-    expect(Number(geral[2])).toBe(INDICE.contratos);
+    expect(Number(geral[2])).toBe(INDICE.orcamentos);
     expect(Number(geral[3])).toBe(INDICE.orcamentoMediano);
     expect(Number(geral[6])).toBe(INDICE.m2Mediano);
     expect(Number(geral[7])).toBe(INDICE.m2P25);
     expect(Number(geral[8])).toBe(INDICE.m2P75);
     const faixas = linhas.filter((l) => l[0] === "faixa_metragem");
     expect(faixas.map((l) => [Number(l[2]), Number(l[3]), Number(l[6])])).toEqual(
-      FAIXAS_METRAGEM.map((f) => [f.contratos, f.orcamentoMediano, f.m2Mediano]),
+      FAIXAS_METRAGEM.map((f) => [f.orcamentos, f.orcamentoMediano, f.m2Mediano]),
     );
   });
 
   it("título, descrição e resumo citam os números do índice", () => {
-    expect(INDICE_DESCRIPTION).toContain("R$ 2.744");
-    expect(INDICE_DESCRIPTION).toContain("R$ 71.850");
+    expect(INDICE_DESCRIPTION).toContain("R$ 2.831");
+    expect(INDICE_DESCRIPTION).toContain("R$ 74.132");
     expect(INDICE_DESCRIPTION.length).toBeLessThanOrEqual(160);
     expect(INDICE_TITLE.length).toBeLessThanOrEqual(70);
-    expect(RESUMO).toContain("R$ 2.457");
-    expect(RESUMO).toContain("R$ 3.125");
+    expect(RESUMO).toContain("R$ 2.499");
+    expect(RESUMO).toContain("R$ 3.283");
   });
 
   it("o Dataset aponta para o CSV e para o artigo de origem", () => {
@@ -87,7 +88,7 @@ describe("Índice Bewild de custo de reforma", () => {
     const ds = INDICE_JSONLD.find((n) => n["@type"] === "Dataset");
     expect(INDICE_LICENCA_URL).toBe("https://creativecommons.org/licenses/by/4.0/");
     expect(ds?.license).toBe(INDICE_LICENCA_URL);
-    expect(INDICE_PERIODO).toBe("../2026-10");
+    expect(INDICE_PERIODO).toBe("2026-03/2026-11");
     expect(ds?.temporalCoverage).toBe(INDICE_PERIODO);
   });
   it("expõe a licença e a atribuição no HTML do servidor", () => {
@@ -98,11 +99,11 @@ describe("Índice Bewild de custo de reforma", () => {
     // mesmo site; o deed oficial fica dentro dela.
     expect(link?.getAttribute("href")).toBe("/licenca-cc-by-4-0");
     expect(link?.getAttribute("target")).toBeNull();
-    expect(doc.body.textContent).toContain(INDICE.contratos.toString());
-    expect(doc.body.textContent).toContain("R$ 2.744");
+    expect(doc.body.textContent).toContain(INDICE.orcamentos.toString());
+    expect(doc.body.textContent).toContain("R$ 2.831");
   });
   it("preserva a fonte e licença nos comentários do CSV", () => {
-    expect(csv[0]).toBe("# Fonte: Bewild, Índice Bewild de custo de reforma, outubro de 2026, https://bewild.com.br/indice-de-custo-de-reforma");
+    expect(csv[0]).toBe("# Fonte: Bewild, Índice Bewild de custo de reforma, novembro de 2026, https://bewild.com.br/indice-de-custo-de-reforma");
     expect(csv[1]).toBe(`# Licença ${INDICE_LICENCA_NOME} — ${INDICE_LICENCA_URL} — use à vontade citando a Bewild`);
     const ds = INDICE_JSONLD.find((n) => n["@type"] === "Dataset");
     expect(ds?.variableMeasured).toEqual([

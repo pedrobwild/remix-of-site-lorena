@@ -34,6 +34,15 @@ describe("provas numéricas", () => {
     expect(achados).toEqual([]);
   });
 
+  // 585 é o número de ORÇAMENTOS da base de custo (Bwild Engine, nov/2026):
+  // a maior parte não virou contrato nem obra.
+  it("585 só aparece como orçamentos, nunca como contratos, reformas ou entregas", () => {
+    const achados = FONTES.filter((f) => /585\s+(contratos|reformas|obras)|\+585\b/i.test(readFileSync(f, "utf8"))).map((f) =>
+      relative(SRC, f),
+    );
+    expect(achados).toEqual([]);
+  });
+
   it("188 só aparece como contratos, nunca como entregas", () => {
     const achados = FONTES.filter((f) => /188\s+(reformas|obras)|\+188\b/i.test(readFileSync(f, "utf8"))).map((f) =>
       relative(SRC, f),
@@ -54,13 +63,13 @@ describe("provas numéricas", () => {
   // dos anúncios, do /orcamento e das páginas de serviço. Ele vive em
   // src/content/baseCusto.ts; trocar o número é mudar uma linha lá.
   it("custo mediano (por m² e por reforma) só sai de baseCusto.ts", () => {
-    const proibido = /R\$\s*2\.744|R\$\s*71\.850/;
+    const proibido = /R\$\s*2\.(744|831)|R\$\s*(71\.850|74\.132)/;
     const achados = FONTES.filter((f) => !f.endsWith(join("content", "baseCusto.ts")))
       .filter((f) => proibido.test(readFileSync(f, "utf8")))
       .map((f) => relative(SRC, f));
     expect(achados).toEqual([]);
-    expect(CUSTO_M2_MEDIANO).toBe("R$ 2.744");
-    expect(ORCAMENTO_MEDIANO).toBe("R$ 71.850");
+    expect(CUSTO_M2_MEDIANO).toBe("R$ 2.831");
+    expect(ORCAMENTO_MEDIANO).toBe("R$ 74.132");
     expect(brl(1_234_567)).toBe("R$ 1.234.567");
     expect(brl(950)).toBe("R$ 950");
   });

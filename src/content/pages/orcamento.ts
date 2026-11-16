@@ -4,13 +4,13 @@
  *
  * Rodada 3 da auditoria de SEO de 06/10/2026: a página tinha 341 palavras e
  * aparecia na posição 38 para "reforma turnkey orçamento". Os números abaixo
- * são os publicados nos posts da Bewild (188 contratos analisados) — se os
+ * são os da base de custo (585 orçamentos do Bwild Engine, nov/2026) — se os
  * posts mudarem, mude aqui também.
  */
 import { faqJsonLd } from "@/lib/useSeo";
 import type { LeadObjetivo } from "@/lib/leadForm";
 import { CONTACT } from "@/components/landing/content";
-import { CLIENTES_SHORT_STAY_PCT, CONTRATOS_ANALISADOS } from "@/content/provas";
+import { CLIENTES_SHORT_STAY_PCT, ORCAMENTOS_ANALISADOS } from "@/content/provas";
 import { CUSTO_M2_MEDIANO, ORCAMENTO_MEDIANO } from "@/content/baseCusto";
 export { topoVarianteDaBusca, type TopoVariante } from "@/lib/googleAdsVariant";
 
@@ -35,7 +35,7 @@ export const TOPO_VARIANTES = {
   },
   custo: {
     h1: "Quanto custa reformar seu apartamento em SP?",
-    subtitulo: `A mediana dos ${CONTRATOS_ANALISADOS} contratos de reforma completa de até 50 m² da Bewild é ${CUSTO_M2_MEDIANO} por m², com projeto, obra, marcenaria, mobília e eletros, e o studio sai pronto para alugar. Informe bairro e metragem e receba a faixa do seu imóvel em até um dia útil.`,
+    subtitulo: `A mediana dos ${ORCAMENTOS_ANALISADOS} orçamentos de reforma completa de até 45 m² da Bewild é ${CUSTO_M2_MEDIANO} por m², com projeto, obra, marcenaria, mobília e eletros, e o studio sai pronto para alugar. Informe bairro e metragem e receba a faixa do seu imóvel em até um dia útil.`,
   },
   investidor: {
     h1: "Orçamento de reforma de studio para alugar ou Airbnb.",
@@ -118,7 +118,7 @@ export const AREA_SLIDER = { min: 15, max: 120, padrao: 28 } as const;
 export const FAQ: { q: string; a: string }[] = [
   {
     q: "Quanto custa uma reforma turnkey em São Paulo?",
-    a: `Nos ${CONTRATOS_ANALISADOS} contratos de reforma completa de até 50 m² analisados pela Bewild, a mediana foi ${ORCAMENTO_MEDIANO}, ou ${CUSTO_M2_MEDIANO} por m², com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Quatro em cada dez contratos ficaram entre R$ 65 mil e R$ 75 mil, e nenhum abaixo de R$ 55 mil. A tabela por metragem está no guia de custo da Bewild.`,
+    a: `Nos ${ORCAMENTOS_ANALISADOS} orçamentos de reforma completa de até 45 m² analisados pela Bewild, a mediana foi ${ORCAMENTO_MEDIANO}, ou ${CUSTO_M2_MEDIANO} por m², com projeto, obra, marcenaria, mobiliário e eletrodomésticos. Três em cada dez orçamentos ficaram entre R$ 65 mil e R$ 75 mil, e nenhum abaixo de R$ 55 mil. A tabela por metragem está no guia de custo da Bewild.`,
   },
   {
     q: "O orçamento é gratuito?",

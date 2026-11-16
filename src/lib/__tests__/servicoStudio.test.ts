@@ -48,7 +48,7 @@ describe("reforma de studio: metadados aprovados e H1 preservado", () => {
   it("título e descrição", () => {
     expect(SEO_TITLE).toBe("Reforma de studio em São Paulo: preço e prazo em contrato");
     expect(SEO_TITLE.length).toBeLessThanOrEqual(60);
-    expect(SEO_DESCRIPTION).toBe("Reforma completa de studio e apartamento pequeno em SP: projeto, obra, marcenaria e mobília num contrato. Mediana de R$ 2.744/m² em 188 contratos.");
+    expect(SEO_DESCRIPTION).toBe("Reforma completa de studio e apartamento pequeno em SP: projeto, obra, marcenaria e mobília num contrato. Mediana de R$ 2.831/m² em 585 orçamentos.");
     // O título continua no singular: é a busca em que a página já está em 3,5.
     expect(SEO_TITLE).toMatch(/^Reforma de studio em São Paulo/);
   });

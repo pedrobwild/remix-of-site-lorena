@@ -77,15 +77,15 @@ describe("Para imprensa no HTML do servidor", () => {
     expect(t).toContain(`${brl(INDICE.m2P25)} e ${brl(INDICE.m2P75)}`);
     expect(t).toContain(`${INDICE.areaMediana.toLocaleString("pt-BR")} m²`);
     expect(t).toContain(brl(maisBarata.m2Mediano));
-    expect(t).toContain(`${maisCara.contratos} contratos`);
-    expect(t).toContain(`${maisBarata.contratos} contratos`);
-    expect(t).toContain(`${INDICE.contratos} contratos`);
+    expect(t).toContain(`${maisCara.orcamentos} orçamentos`);
+    expect(t).toContain(`${maisBarata.orcamentos} orçamentos`);
+    expect(t).toContain(`${INDICE.orcamentos} orçamentos`);
     // Só há uma edição no arquivo: nenhuma comparação no tempo.
     expect(t).not.toMatch(/varia(ção|ou)|edição anterior|em relação a setembro/i);
   });
 
   it("frase de fonte pronta para copiar e link para /atribuicao", () => {
-    const frase = `Fonte: Índice Bewild de Custo de Reforma, edição ${INDICE_EDICAO}, base de ${INDICE.contratos} contratos, bewild.com.br/indice-de-custo-de-reforma`;
+    const frase = `Fonte: Índice Bewild de Custo de Reforma, edição ${INDICE_EDICAO}, base de ${INDICE.orcamentos} orçamentos, bewild.com.br/indice-de-custo-de-reforma`;
     expect(texto(bloco?.querySelector("#imprensa-fonte"))).toBe(frase);
     expect(bloco?.querySelector('button[data-cta="indice-imprensa-copiar-fonte"]')).toBeTruthy();
     expect(bloco?.querySelector('a[href="/atribuicao"]')).toBeTruthy();
@@ -138,18 +138,19 @@ describe("Para imprensa no HTML do servidor", () => {
       return readFileSync(path.join(raiz, "public", new URL(String(src)).pathname), "utf8");
     });
     const [distribuicao, composicao] = fontes;
-    for (const f of FAIXAS_VALOR) expect(distribuicao).toContain(`>${f.pct}%<`);
-    expect(distribuicao).toContain(`${INDICE.contratos} contratos`);
+    for (const f of FAIXAS_VALOR) expect(distribuicao).toContain(`>${String(f.pct).replace(".", ",")}%<`);
+    expect(distribuicao).toContain(`${INDICE.orcamentos} orçamentos`);
     for (const c of COMPOSICAO)
       expect(composicao).toContain(`R$ ${c.pct.toFixed(1).replace(".", ",")}<`);
   });
 
-  it("o gráfico da proposta real não é atribuído à base de contratos", () => {
+  it("o gráfico da proposta real não é atribuído à base de orçamentos", () => {
     const [, composicao] = [...(bloco?.querySelectorAll("textarea") ?? [])].map(
       (a) => new DOMParser().parseFromString(a.value, "text/html").body.textContent ?? ""
     );
     expect(composicao).toContain("proposta real");
     expect(composicao).not.toContain("contratos");
+    expect(composicao).not.toContain("orçamentos");
   });
 });
 

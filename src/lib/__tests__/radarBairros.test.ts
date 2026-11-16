@@ -49,12 +49,12 @@ describe("links do Radar dentro dos artigos", () => {
 });
 
 describe("custo nas páginas de bairro", () => {
-  it.each(Object.entries(BAIRROS_CONTENT))("%s usa apenas os valores da base única de contratos", (slug, content) => {
+  it.each(Object.entries(BAIRROS_CONTENT))("%s usa apenas os valores da base única de orçamentos", (slug, content) => {
     const custo = content.faq.find(faq => faq.q.startsWith("Quanto custa"))?.a ?? "";
     const reais = [...custo.matchAll(/R\$\s*([\d.]+)/g)].map(match => Number(match[1].replaceAll(".", "")));
     expect(reais, slug).toEqual([BASE_CUSTO.m2Mediano, BASE_CUSTO.orcamentoMediano]);
-    const contratos = custo.match(/analisa (\d+) contratos/);
-    expect(Number(contratos?.[1]), slug).toBe(BASE_CUSTO.contratos);
+    const orcamentos = custo.match(/analisa (\d+) orçamentos/);
+    expect(Number(orcamentos?.[1]), slug).toBe(BASE_CUSTO.orcamentos);
     const valoresIntro = [...content.intro.join(" ").matchAll(/R\$\s*([\d.]+) por m²/g)].map(match => Number(match[1].replaceAll(".", "")));
     for (const valor of valoresIntro) expect(valor, slug).toBe(BASE_CUSTO.m2Mediano);
   });

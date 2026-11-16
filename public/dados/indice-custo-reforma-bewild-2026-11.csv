@@ -1,0 +1,28 @@
+# Fonte: Bewild, Índice Bewild de custo de reforma, novembro de 2026, https://bewild.com.br/indice-de-custo-de-reforma
+# Licença CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/ — use à vontade citando a Bewild
+indicador,recorte,orcamentos,orcamento_mediano_brl,orcamento_metade_do_meio_min_brl,orcamento_metade_do_meio_max_brl,custo_m2_mediano_brl,custo_m2_p25_brl,custo_m2_p75_brl,area_mediana_m2
+geral,todos,585,74132,,,2831,2499,3283,26
+faixa_metragem,ate_20_m2,42,66969,60000,75000,3825,,,
+faixa_metragem,20_a_24_m2,64,69160,63000,76000,3056,,,
+faixa_metragem,24_a_28_m2,241,70537,64000,78000,2802,,,
+faixa_metragem,28_a_32_m2,107,75656,67000,91000,2594,,,
+faixa_metragem,32_a_40_m2,109,95459,80000,111000,2550,,,
+faixa_metragem,40_a_45_m2,22,109938,95000,130000,2649,,,
+regiao,centro,107,73939,,,3038,,,25
+regiao,zona_oeste,128,73879,,,2857,,,26
+regiao,zona_sul,239,73000,,,2762,,,26
+bairro,consolacao,38,95865,,,3117,,,
+bairro,bela_vista,39,73661,,,3019,,,
+bairro,pinheiros,45,75004,,,2971,,,
+bairro,vila_mariana,27,72054,,,2914,,,
+bairro,vila_clementino,19,75763,,,2914,,,
+bairro,moema,33,76726,,,2863,,,
+bairro,perdizes,21,74178,,,2844,,,
+bairro,vila_olimpia,27,69886,,,2795,,,
+bairro,brooklin,26,67615,,,2715,,,
+bairro,pompeia,15,75127,,,2643,,,
+bairro,butanta,20,70327,,,2638,,,
+bairro,vila_nova_conceicao,26,68909,,,2556,,,
+situacao_do_negocio,contrato_fechado,56,69000,,,2581,,,
+situacao_do_negocio,perdido_ou_arquivado,170,70967,,,2732,,,
+situacao_do_negocio,em_aberto,359,76471,,,2909,,,
