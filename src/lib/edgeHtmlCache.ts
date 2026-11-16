@@ -13,15 +13,16 @@
  * cache daquela requisição. Visitante com sessão do painel (cookie sb-*)
  * também passa direto, para nunca guardar HTML gerado para alguém logado.
  *
- * Validade: 10 minutos "fresco"; até 24 h a cópia velha ainda sai na hora e
- * uma nova é gerada em segundo plano (stale-while-revalidate feito à mão,
- * porque a Cache API não implementa). Uma publicação nova aparece em até
- * 10 minutos em cada PoP. Fora do Cloudflare (sem `caches.default`) tudo
+ * Validade: 10 minutos "fresco"; até 20 min a cópia guardada ainda sai na
+ * hora e uma nova é gerada em segundo plano (stale-while-revalidate feito à
+ * mão, porque a Cache API não implementa); depois disso a página é montada
+ * antes de responder. Eram 24 h até 16/11/2026: o primeiro robô a chegar num
+ * PoP parado recebia o texto de horas antes. Fora do Cloudflare (sem `caches.default`) tudo
  * segue sem cache, como antes.
  */
 
 export const FRESH_SECONDS = 600;
-export const STALE_SECONDS = 86_400;
+export const STALE_SECONDS = 1_200;
 
 const CACHED_AT_HEADER = "x-bw-edge-cached-at";
 const EDGE_HEADER = "x-bw-edge";

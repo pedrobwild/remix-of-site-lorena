@@ -86,7 +86,21 @@ describe("serveWithEdgeCache", () => {
     expect(render).toHaveBeenCalledTimes(1);
   });
 
-  it("entre 10 min e 24 h serve a cópia velha e renderiza de novo em segundo plano", async () => {
+  it("depois de 20 min a cópia guardada não sai mais: a página é montada antes de responder", async () => {
+    g.caches = fakeCaches;
+    let t = 1_000_000;
+    const now = () => t;
+    let n = 0;
+    const render = vi.fn(async () => html(`render-${++n}`));
+    await serveWithEdgeCache(req(), undefined, render, browser, now);
+    expect(STALE_SECONDS).toBe(1_200);
+    t += (STALE_SECONDS + 1) * 1000;
+    const late = await serveWithEdgeCache(req(), undefined, render, browser, now);
+    expect(late.headers.get("x-bw-edge")).toBe("MISS");
+    expect(await late.text()).toBe("render-2");
+  });
+
+  it("entre 10 e 20 min serve a cópia guardada e renderiza de novo em segundo plano", async () => {
     g.caches = fakeCaches;
     let t = 1_000_000;
     const now = () => t;

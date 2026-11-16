@@ -160,7 +160,7 @@ describe("loadSitemapSaida e responderSitemap", () => {
     const xml = await responderSitemap("xml");
     expect(xml.status).toBe(200);
     expect(xml.headers.get("content-type")).toBe("application/xml; charset=utf-8");
-    expect(xml.headers.get("cache-control")).toBe("public, max-age=0, s-maxage=600, stale-while-revalidate=86400");
+    expect(xml.headers.get("cache-control")).toBe("public, max-age=0, s-maxage=600, stale-while-revalidate=600");
     expect((await xml.text()).startsWith('<?xml version="1.0" encoding="UTF-8"?>')).toBe(true);
     const llms = await responderSitemap("llms");
     expect(llms.headers.get("content-type")).toBe("text/plain; charset=utf-8");

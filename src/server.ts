@@ -48,10 +48,27 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
-// HTML público sai com cache de borda curto: o CDN guarda no máximo 60s (mais 5 min
-// servindo a cópia velha enquanto revalida), então uma publicação nova aparece em todos
-// os PoPs em poucos minutos. O navegador sempre revalida (max-age=0).
-const PUBLIC_HTML_CACHE_CONTROL = "public, max-age=0, s-maxage=600, stale-while-revalidate=86400";
+// HTML público sai com cache de borda curto: 10 min "fresco" e mais 10 min em que a
+// CDN ainda entrega a cópia guardada enquanto gera outra em segundo plano. Passados
+// 20 min, a página é montada de novo antes de responder. Até 16/11/2026 a janela da
+// cópia velha era de 24 h: numa região com pouca visita (de onde chegam os robôs de
+// busca e de IA), a primeira requisição depois de uma edição no banco recebia o texto
+// de horas antes. O navegador sempre revalida (max-age=0).
+export const PUBLIC_HTML_CACHE_CONTROL = "public, max-age=0, s-maxage=600, stale-while-revalidate=600";
+
+// Arquivo estático que não existe: as regras de `/images/**` (vite.config.ts) colam
+// 30 dias de cache em qualquer resposta do caminho, inclusive no 404. Quem pedia um
+// gráfico antes de o arquivo ser publicado guardava o erro por um mês.
+export const MISSING_FILE_CACHE_CONTROL = "no-store";
+
+export function withNoCacheOnMissingFile(request: Request, response: Response): Response {
+  if (response.status < 400) return response;
+  const last = new URL(request.url).pathname.split("/").pop() ?? "";
+  if (!last.includes(".")) return response;
+  const headers = new Headers(response.headers);
+  headers.set("cache-control", MISSING_FILE_CACHE_CONTROL);
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
 
 function withShortEdgeCache(request: Request, response: Response): Response {
   if (request.method !== "GET" && request.method !== "HEAD") return response;
@@ -95,9 +112,12 @@ export default {
         // mais cedo; ver src/lib/modulePreloadPlacement.ts). Na home, o
         // JavaScript só é pedido depois da primeira pintura, que já mostra o
         // texto do hero (LCP no celular; ver src/lib/entryAfterFirstPaint.ts).
-        return withEntryAfterFirstPaint(
+        return withNoCacheOnMissingFile(
           request,
-          withModulePreloadsInBody(withShortEdgeCache(request, await normalizeCatastrophicSsrResponse(response))),
+          withEntryAfterFirstPaint(
+            request,
+            withModulePreloadsInBody(withShortEdgeCache(request, await normalizeCatastrophicSsrResponse(response))),
+          ),
         );
       };
       // Páginas públicas saem do cache de borda do próprio worker (ver
