@@ -120,6 +120,13 @@
       "when": 1794782527432,
       "tag": "0016_lock_bewild_posts_backup_20261110_nbr",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1794884313332,
+      "tag": "0017_analytics_functions_static_sql",
+      "breakpoints": true
     }
   ]
 }
