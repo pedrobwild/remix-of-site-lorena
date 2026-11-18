@@ -15,6 +15,7 @@ import { LIMITES, parseNumeroBR } from "@/lib/reformaCalc";
 import { useSeo } from "@/lib/useSeo";
 import { ESCOPO_DESCRIPTION, ESCOPO_PATH, ESCOPO_TITLE } from "@/content/pages/escopo.seo";
 import {
+  ESCOPO_FRASE,
   ESCOPO_CONTRATO,
   ESCOPO_ENTRA,
   ESCOPO_FAIXAS,
@@ -95,6 +96,7 @@ export default function EscopoPage() {
           <div className="container">
             <div className="pt-cat">Escopo · Bewild</div>
             <h1 className="pt-title">Escopo da reforma: o que entra e como montar o seu.</h1>
+            <p className="pt-excerpt es-intro">{ESCOPO_FRASE}</p>
             <p className="pt-excerpt es-intro">
               Orçamento só se compara com o mesmo escopo: um preço sem marcenaria, mobília ou documentação do
               condomínio é outro serviço. Aqui você vê o que entra e o que não entra na reforma completa da Bewild e

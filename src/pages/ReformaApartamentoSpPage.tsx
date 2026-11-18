@@ -1,3 +1,4 @@
+import { ESCOPO_FRASE } from "@/content/escopoOficial";
 import { BAIRROS_ATENDIDOS, CLIENTES_INDICACAO_PCT, ORCAMENTOS_ANALISADOS, PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
 import { CUSTO_M2_MEDIANO } from "@/content/baseCusto";
 import BwaFooter from "@/components/BwaFooter";
@@ -135,8 +136,7 @@ export default function ReformaApartamentoSpPage({ bairroPages = null, projetosP
               </li>
             </ul>
             <p className="bwa-servico-text" style={{ marginTop: 24 }}>
-              Atendemos studios e apartamentos de qualquer metragem em São Paulo
-              capital. Também reformamos escritórios e salas comerciais. Veja
+              {ESCOPO_FRASE} Veja
               obras entregues no{" "}
               <a href="/portfolio">portfólio</a> e o passo a passo do processo em{" "}
               <a href="/conteudos/reforma-de-apartamento-em-sao-paulo-guia">

@@ -1,3 +1,4 @@
+import { ESCOPO_FRASE } from "@/content/escopoOficial";
 /**
  * JSON-LD sitewide (Organization, ProfessionalService, WebSite e Service) —
  * FONTE ÚNICA. O __root publica ORG_JSONLD (derivado destes nós) no HTML do
@@ -107,21 +108,17 @@ export const ORG_NODE = {
   alternateName: ORG_ALTERNATE_NAMES,
   url: `${SITE_URL}/`,
   logo: ORG_LOGO,
-  description:
-    "Reforma de apartamento em São Paulo, do projeto à entrega do apartamento pronto para morar, alugar ou vender.",
+  description: ESCOPO_FRASE,
   areaServed: [SAO_PAULO],
   knowsAbout: [
-    "Reformas de apartamentos",
-    "Apartamentos prontos",
-    "Reforma turn-key",
-    "Projeto de arquitetura personalizado",
-    "Reforma de studios",
-    "Reforma de escritórios",
-    "Short-stay",
-    "Marcenaria sob medida",
-    "Gestão de obra",
-    "Reforma de studio em São Paulo",
-    "Empresa de reforma de apartamento em São Paulo",
+      "Reforma completa de studio",
+      "Reforma de apartamento pequeno",
+      "Reforma de apartamento novo recém-entregue",
+      "Reforma de apartamento para Airbnb e short stay",
+      "Marcenaria planejada para imóveis compactos",
+      "Reforma turnkey em São Paulo",
+      "Empresa de reforma de apartamento em São Paulo",
+      "Gestão de obra a distância"
   ],
   founder: [{ "@id": PEDRO_ID }, { "@id": THIAGO_ID }],
   employee: [THIAGO_NODE, PEDRO_NODE],
@@ -139,8 +136,7 @@ export const LOCAL_NODE = {
   image: [LOCAL_PHOTO, ORG_LOGO],
   // Pino do Perfil da Empresa no Google (cid 16329162499474686119), conferido pelo dono.
   geo: { "@type": "GeoCoordinates", latitude: -23.6147497, longitude: -46.6886285 },
-  description:
-    "Escritório de arquitetura e engenharia em São Paulo: reforma completa de apartamentos e studios, do projeto à entrega pronta para morar, alugar ou vender.",
+  description: ESCOPO_FRASE,
   telephone: ORG_TELEPHONE,
   email: ORG_EMAIL,
   priceRange: "$$",

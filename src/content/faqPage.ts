@@ -1,3 +1,4 @@
+import { ESCOPO_FRASE } from "@/content/escopoOficial";
 import { BAIRROS_ATENDIDOS, PROVA_FRASE } from "@/content/provas";
 import { BASE_2025, CUSTO_M2_MEDIANO_2025, brl } from "@/content/baseCusto";
 import { faqJsonLd } from "@/lib/useSeo";
@@ -35,7 +36,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     q: "Onde vocês atuam?",
-    a: `Só em São Paulo capital, com obras entregues em ${BAIRROS_ATENDIDOS} bairros. Não atendemos a Grande São Paulo nem o interior, mas o dono do imóvel pode morar em qualquer cidade: o acompanhamento é todo à distância.`,
+    a: `${ESCOPO_FRASE} O dono do imóvel pode morar em qualquer cidade: o acompanhamento é todo à distância.`,
   },
 ];
 
@@ -78,6 +79,16 @@ export const FAQ_ITEMS_SEM_BANCO: FaqItem[] = [
 
 /** Lista principal quando o banco não está disponível. */
 export const FALLBACK_ITEMS: FaqItem[] = [...FAQ_ITEMS, ...FAQ_ITEMS_SEM_BANCO];
+
+/** A resposta de atendimento é oficial também quando a lista vem do painel. */
+export function comEscopoOficial(kb: KbItem[] | null): KbItem[] | null {
+  return kb?.map((item) => {
+    if (/escritório|escritorio|sede|endereço/i.test(item.pergunta)) return item;
+    const atendimento = item.tema === "regiao" || /onde .*atu|área de atendimento|região de atendimento|qualquer (tamanho|metragem)/i.test(item.pergunta);
+    if (!atendimento) return item;
+    return { ...item, resposta: `${ESCOPO_FRASE} O dono do imóvel pode morar em qualquer cidade: o acompanhamento é todo à distância.` };
+  }) ?? null;
+}
 
 /* Bloco de conteúdo (não é copy travada da home): responde a buscas do tipo
  * "como fazer uma reforma de apartamento" e "por onde começar uma reforma".
@@ -174,7 +185,7 @@ export const PORTFOLIO_ITEMS: FaqItem[] = [
  */
 export function faqPageJsonLd(kb: KbItem[] | null) {
   return faqJsonLd([
-    ...(kb ? kb.map((i) => ({ q: i.pergunta, a: i.resposta })) : FALLBACK_ITEMS.map((i) => ({ q: i.q, a: i.a }))),
+    ...(kb ? comEscopoOficial(kb)?.map((i) => ({ q: i.pergunta, a: i.resposta })) ?? [] : FALLBACK_ITEMS.map((i) => ({ q: i.q, a: i.a }))),
     ...PORTFOLIO_ITEMS.map((i) => ({ q: i.q, a: i.a })),
     ...GUIA_ITEMS.map((i) => ({ q: i.q, a: i.a })),
     ...INDICACAO_ITEMS.map((i) => ({ q: i.q, a: i.a })),

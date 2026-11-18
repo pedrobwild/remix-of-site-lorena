@@ -8,6 +8,9 @@
 - Sitemap edits must also follow the sitemap and video registration rules below, because both generators must match the routes.
 
 <!-- LOVABLE:BEGIN -->
+## Decisões técnicas — D3
+- Frase oficial de escopo (D3, Pedro, 18/11/2026): ESCOPO_FRASE em src/content/escopoOficial.ts é a única descrição de escopo; escritórios fora; limite 140 m²; nunca como meta description; guardado por escopoOficial.test.ts e orgParidadeRadar.test.ts.
+- Normalize the scope FAQ from panel data through the shared pure content helper in both SSR markup and FAQPage; this preserves parity without editing stored answers.
 - Search Console page reads stay cache-only: daily refresh uses the panel's 30-day São Paulo window first; rolling cache misses may use a recent equal-length comparison with its actual dates, never substitute historical filters. Reuse the last successfully selected property across ranges and revalidate it against Google's verified list before refresh.
 - Google Ads lead reporting reuses the paginated pure Ads aggregator behind admin-authorized server functions and environment-selected account access; CPL uses the verified request action alone, never summed funnel stages or GA4 duplicates, so account spend is not misrepresented as per-action spend.
 - Blog HTML charts use typed data separated from reusable React renderers and replace only registered image URLs after body sanitization; SSR and hydration share the same renderer, while original downloadable SVGs remain unchanged.

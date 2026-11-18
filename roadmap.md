@@ -1,3 +1,4 @@
+- [x] D3: escopo oficial nas páginas SSR, Organization e llms.txt; JSON/impressão Radar sincronizados. 2706 testes passam, 5 ignorados; lint sem erros, prévia build OK e seis páginas conferidas em 320/1280 px. Verificação manual de tipos vedada pelo ambiente; sem publicar. Retrato llms regenerado pela função do projeto preservando listas, pois o comando de rede retornou 401 no rascunho.
 - [x] Criar XML de imagens dos 66 artigos publicados: 336 referências, 172 gráficos únicos com HTTP 200; 6 testes passam e XML válido na prévia.
 - [x] Publicar /sitemap-imagens-blog.xml e enviar à propriedade https://bewild.com.br/ — XML público HTTP 200, 66 artigos e 336 referências; Google aceitou com HTTP 204 em 18/11/2026.
 - [x] Corrigir aba SEO vazia na virada do dia: atualização diária prioriza 30 dias em São Paulo, cópia recente de mesma duração mantém datas reais e propriedade é reutilizada/revalidada; 21 testes passam, lint e compilação OK; sem publicar.

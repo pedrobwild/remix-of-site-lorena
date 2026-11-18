@@ -20,7 +20,7 @@ import orgBewild from "@/content/orgBewild.json";
 import { ORG_JSONLD, ORG_NODE, ORG_SAME_AS } from "@/lib/orgJsonLd";
 
 /** O mesmo valor travado no Radar (shortstay-guide, src/lib/__tests__/orgParidade.test.ts). */
-const IMPRESSAO_OFICIAL = "cf1213cd207f7449c9a06797a23c4f0a525d296aa4837e9b8609e45d233c1568";
+const IMPRESSAO_OFICIAL = "d15814e7c691230f790a888490738a0244ac0146d040fc1dfbba0118f411fa33";
 
 /** Chaves em ordem alfabética; a ordem das listas é mantida (ela conta). Igual ao scripts/lib/orgParidade.mjs do Radar. */
 const ordenar = (v: unknown): unknown =>

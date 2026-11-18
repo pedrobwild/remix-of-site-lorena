@@ -11,7 +11,7 @@ import { useSeo } from "@/lib/useSeo";
 import { safeKbActions, type KbItem } from "@/lib/assistant/assistantEngine";
 import { isExternalHref } from "@/lib/safeUrl";
 import "./faq-page.css";
-import { FALLBACK_ITEMS, GUIA_ITEMS, INDICACAO_ITEMS, PORTFOLIO_ITEMS, FAQ_SEO_TITLE, FAQ_SEO_DESCRIPTION } from "@/content/faqPage";
+import { comEscopoOficial, FALLBACK_ITEMS, GUIA_ITEMS, INDICACAO_ITEMS, PORTFOLIO_ITEMS, FAQ_SEO_TITLE, FAQ_SEO_DESCRIPTION } from "@/content/faqPage";
 import RadarAssistant from "@/components/assistant/RadarAssistant";
 
 /* ============================================================
@@ -76,7 +76,7 @@ export default function FaqPage({ initialKb = null }: { initialKb?: KbItem[] | n
   const kbGrupos = useMemo(() => {
     if (!kb) return null;
     const mapa = new Map<string, KbItem[]>();
-    for (const item of kb) {
+    for (const item of comEscopoOficial(kb) ?? []) {
       const grupo = mapa.get(item.tema) ?? [];
       grupo.push(item);
       mapa.set(item.tema, grupo);

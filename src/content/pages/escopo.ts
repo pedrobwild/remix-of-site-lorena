@@ -1,3 +1,5 @@
+export { ESCOPO_FRASE } from "@/content/escopoOficial";
+
 /**
  * Conteúdo de /escopo (D4 do Pedro, auditoria de SEO rodada 4, 09/11/2026):
  * o que entra e o que não entra na reforma completa da Bewild, faixas por

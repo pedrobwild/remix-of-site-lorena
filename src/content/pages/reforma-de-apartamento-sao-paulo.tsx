@@ -1,3 +1,4 @@
+import { ESCOPO_FRASE } from "@/content/escopoOficial";
 /**
  * Dados e JSON-LD de /reforma-de-apartamento-sao-paulo — módulo sem componentes nem CSS.
  *
@@ -106,7 +107,7 @@ export const EMPRESA_REFORMA = {
 export const FAQ: { q: string; a: string; node?: ReactNode }[] = [
   {
     q: "Vocês reformam apartamentos de qualquer tamanho?",
-    a: "Sim: studios, apartamentos pequenos e maiores, de qualquer metragem, em São Paulo capital, e também escritórios, desde que recém-entregues ou com até 15 anos de uso. O prazo de obra vai assinado em contrato para apartamentos de até 140 m². O escopo e a proposta são definidos após a leitura do imóvel.",
+    a: ESCOPO_FRASE,
   },
   {
     q: "Quanto tempo demora?",

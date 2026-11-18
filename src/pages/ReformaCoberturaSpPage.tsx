@@ -1,3 +1,4 @@
+import { ESCOPO_FRASE } from "@/content/escopoOficial";
 import { PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
 import BwaFooter from "@/components/BwaFooter";
 import BwaImprensa from "@/components/BwaImprensa";
@@ -102,7 +103,7 @@ export default function ReformaCoberturaSpPage() {
               </li>
             </ul>
             <p className="bwa-servico-text" style={{ marginTop: 24 }}>
-              Atendemos coberturas e apartamentos de qualquer metragem em São
+              Atendemos coberturas e apartamentos de até 140 m², recém-entregues ou com até 15 anos de uso em São
               Paulo capital — para metragens menores, veja a{" "}
               <a href="/reforma-de-apartamento-sao-paulo">
                 reforma de apartamento em São Paulo
@@ -113,6 +114,7 @@ export default function ReformaCoberturaSpPage() {
               </a>
               .
             </p>
+            <p className="bwa-servico-text">{ESCOPO_FRASE}</p>
           </div>
         </section>
 

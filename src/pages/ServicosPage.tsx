@@ -1,3 +1,4 @@
+import { ESCOPO_FRASE } from "@/content/escopoOficial";
 import { useEffect, useRef } from "react";
 import BwaFooter from "@/components/BwaFooter";
 import MobileQuoteBar from "@/components/MobileQuoteBar";
@@ -225,6 +226,7 @@ export default function ServicosPage() {
                 registrado em contrato antes de a obra começar: uma
                 responsabilidade só, para morar, alugar ou vender.
               </p>
+              <p className="bwa-svcs-hero-lead">{ESCOPO_FRASE}</p>
               <div className="bwa-svcs-hero-actions">
                 <a className="bwa-button" href={CTA_HREF} data-cta="servicos-hero-orcamento">
                   Solicitar orçamento <span aria-hidden="true">→</span>

@@ -1,3 +1,4 @@
+import { ESCOPO_FRASE } from "@/content/escopoOficial";
 import { RadarLink } from "@/components/RadarLink";
 import { PROVA_CURTA, REFORMAS_ENTREGUES } from "@/content/provas";
 import { BASE_CUSTO, CUSTO_M2_MEDIANO, ORCAMENTO_MEDIANO, STUDIO_TABELA_VIGENTE, brl } from "@/content/baseCusto";
@@ -173,8 +174,7 @@ export default function ReformaStudioSpPage({ bairroPages = null, topoVariante =
               </li>
             </ul>
             <p className="bwa-servico-text" style={{ marginTop: 24 }}>
-              Atendemos studios e apartamentos de qualquer metragem em São Paulo
-              capital — veja obras entregues no{" "}
+              {ESCOPO_FRASE} Veja obras entregues no{" "}
               <a href="/portfolio">portfólio</a>, o detalhamento de custo em{" "}
               <a href="/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2">
                 quanto custa reformar um apartamento ou studio de até 45 m²

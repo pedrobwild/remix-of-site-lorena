@@ -1,0 +1,2 @@
+/** Descrição oficial de atendimento aprovada por Pedro (D3, 18/11/2026). Não usar em metadados. */
+export const ESCOPO_FRASE = "A Bewild é uma empresa de reforma completa de studios e apartamentos pequenos na cidade de São Paulo, para morar ou para alugar (inclusive no Airbnb), com projeto, obra e marcenaria próprios e acompanhamento da obra a distância. A especialidade são imóveis novos, recém-entregues pela construtora; também atende apartamentos com até 15 anos de uso e até 140 m². Não atende imóveis com mais de 15 anos nem obras fora da capital.";

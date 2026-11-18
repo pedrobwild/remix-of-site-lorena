@@ -1,3 +1,4 @@
+import { ESCOPO_FRASE } from "@/content/escopoOficial";
 /**
  * Dados e JSON-LD de /servicos — módulo sem componentes nem CSS.
  *
@@ -19,7 +20,7 @@ export const SERVICOS: { nome: string; path: string; texto: string }[] = [
     nome: "Reforma de apartamento em São Paulo",
     path: "/reforma-de-apartamento-sao-paulo",
     texto:
-      "Reforma completa de apartamentos e studios de qualquer metragem: projeto 3D, obra, marcenaria e mobília em um único contrato.",
+      "Reforma completa de apartamentos e studios de até 140 m², com foco em studios e apartamentos pequenos: projeto 3D, obra, marcenaria e mobília em um único contrato.",
   },
   {
     nome: "Reforma de studio em São Paulo",
@@ -76,8 +77,7 @@ export const SERVICOS_JSONLD: Array<Record<string, unknown>> = [
     // name = H1 da página; description = texto de abertura visível.
     name: "Arquitetura, engenharia e obra sob a mesma responsabilidade. Um contrato, com preço, prazo e garantia por escrito.",
     serviceType: "Reforma de apartamento",
-    description:
-      "A Bewild reforma apartamentos, studios e coberturas em São Paulo, do projeto à entrega das chaves. Cada item abaixo fica registrado em contrato antes de a obra começar: uma responsabilidade só, para morar, alugar ou vender.",
+    description: ESCOPO_FRASE,
     provider: { "@id": "https://bewild.com.br/#org" },
     areaServed: { "@type": "City", name: "São Paulo" },
     url: `https://bewild.com.br${CANONICAL}`,

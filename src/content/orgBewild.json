@@ -12,7 +12,7 @@
   ],
   "url": "https://bewild.com.br/",
   "logo": "https://bewild.com.br/brand/bewild-logo-512.png",
-  "description": "Reforma de apartamento em São Paulo, do projeto à entrega do apartamento pronto para morar, alugar ou vender.",
+  "description": "A Bewild é uma empresa de reforma completa de studios e apartamentos pequenos na cidade de São Paulo, para morar ou para alugar (inclusive no Airbnb), com projeto, obra e marcenaria próprios e acompanhamento da obra a distância. A especialidade são imóveis novos, recém-entregues pela construtora; também atende apartamentos com até 15 anos de uso e até 140 m². Não atende imóveis com mais de 15 anos nem obras fora da capital.",
   "areaServed": [
     {
       "@type": "City",
@@ -20,17 +20,14 @@
     }
   ],
   "knowsAbout": [
-    "Reformas de apartamentos",
-    "Apartamentos prontos",
-    "Reforma turn-key",
-    "Projeto de arquitetura personalizado",
-    "Reforma de studios",
-    "Reforma de escritórios",
-    "Short-stay",
-    "Marcenaria sob medida",
-    "Gestão de obra",
-    "Reforma de studio em São Paulo",
-    "Empresa de reforma de apartamento em São Paulo"
+    "Reforma completa de studio",
+    "Reforma de apartamento pequeno",
+    "Reforma de apartamento novo recém-entregue",
+    "Reforma de apartamento para Airbnb e short stay",
+    "Marcenaria planejada para imóveis compactos",
+    "Reforma turnkey em São Paulo",
+    "Empresa de reforma de apartamento em São Paulo",
+    "Gestão de obra a distância"
   ],
   "founder": [
     {
