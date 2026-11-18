@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   CRM_ENGINE_AUTHOR,
   crmLeadStatus,
+  pipelineMetaStatus,
   planCrmLeadUpdate,
   shouldSendMetaQuality,
   type CrmLeadItem,
@@ -64,7 +65,7 @@ describe("regra de status pelo funil do CRM", () => {
 
 describe("plano de atualização e histórico", () => {
   const row: CrmLeadRow = {
-    id: "l-1", status: "novo", crm_stage_key: null, crm_stage_name: null, crm_max_stage_key: null,
+    id: "l-1", status: "novo", created_at: "2026-10-01T12:00:00Z", crm_stage_key: null, crm_stage_name: null, crm_max_stage_key: null,
     crm_won: null, crm_lost: null, crm_deal_count: null, crm_last_change_at: null,
   };
   const it1 = item("negociacao", {
@@ -127,16 +128,62 @@ describe("plano de atualização e histórico", () => {
     expect(p.to).toBe("descartado");
     expect(p.patch).not.toHaveProperty("status");
     expect(p.patch.crm_won).toBe(true);
-    expect(shouldSendMetaQuality(p, "2026-10-20T09:00:00Z", Date.parse("2026-10-20T09:42:00Z"))).toBe(false);
+    // Meta pelo pipeline (18/11/2026): a marcação "descartado" do painel não impede o QualifiedLead do contrato.
+    const after = { ...row, status: "descartado", manual_qualification: "descartado", ...p.patch } as CrmLeadRow;
+    expect(shouldSendMetaQuality({ ...row, status: "descartado", manual_qualification: "descartado" }, after, "2026-10-20T09:00:00Z", Date.parse("2026-10-20T09:42:00Z"))).toBe("qualificado");
+  });
+});
+
+describe("Meta pelo pipeline do CRM (Pedro, 18/11/2026)", () => {
+  const base: CrmLeadRow = {
+    id: "l-1", status: "novo", created_at: "2026-10-01T12:00:00Z", crm_stage_key: null, crm_stage_name: null, crm_max_stage_key: null,
+    crm_won: null, crm_lost: null, crm_deal_count: null, crm_last_change_at: null,
+  };
+  const now = Date.parse("2026-10-13T00:00:00Z");
+  const after = (patch: Partial<CrmLeadRow>): CrmLeadRow => ({ ...base, ...patch });
+
+  it.each([
+    ["sem negócio", {}, null],
+    ["MQL", { crm_max_stage_key: "mql" }, null],
+    ["Qualificação em aberto", { crm_max_stage_key: "qualificacao" }, null],
+    ["chegou a Lead", { crm_max_stage_key: "lead" }, "qualificado"],
+    ["contrato", { crm_won: true }, "qualificado"],
+    ["perdido antes de Lead, depois da chegada", { crm_max_stage_key: "qualificacao", crm_lost: true, crm_last_change_at: "2026-10-10T12:00:00Z" }, "descartado"],
+    ["perdido antes de Lead, perda herdada (antes da chegada)", { crm_max_stage_key: "mql", crm_lost: true, crm_last_change_at: "2026-07-10T20:37:03Z" }, null],
+    ["perdido sem hora conhecida", { crm_max_stage_key: "mql", crm_lost: true, crm_last_change_at: null }, null],
+    ["chegou a Lead e perdeu depois", { crm_max_stage_key: "solicitado", crm_lost: true, crm_last_change_at: "2026-10-10T12:00:00Z" }, "qualificado"],
+  ])("pipelineMetaStatus: %s", (_n, patch, expected) => {
+    expect(pipelineMetaStatus(after(patch as Partial<CrmLeadRow>))).toBe(expected);
   });
 
-  it("Meta só para qualificado/descartado com mudança nos últimos 7 dias", () => {
-    const p = planCrmLeadUpdate(row, it1, STAGES, [], "2026-10-13T00:00:00Z");
-    const now = Date.parse("2026-10-13T00:00:00Z");
-    expect(shouldSendMetaQuality(p, "2026-10-10T12:00:00Z", now)).toBe(true);
-    expect(shouldSendMetaQuality(p, "2026-10-01T12:00:00Z", now)).toBe(false);
-    const c = planCrmLeadUpdate(row, item("qualificacao"), STAGES, [], "2026-10-13T00:00:00Z");
-    expect(shouldSendMetaQuality(c, "2026-10-12T12:00:00Z", now)).toBe(false);
+  it("manda QualifiedLead quando o lead passa a qualificado no funil, dentro de 7 dias", () => {
+    const next = after({ crm_max_stage_key: "lead", crm_last_change_at: "2026-10-10T12:00:00Z" });
+    expect(shouldSendMetaQuality(base, next, "2026-10-10T12:00:00Z", now)).toBe("qualificado");
+  });
+
+  it("manda DisqualifiedLead só com perda posterior à chegada do lead", () => {
+    const perdido = after({ crm_max_stage_key: "qualificacao", crm_lost: true, crm_last_change_at: "2026-10-10T12:00:00Z" });
+    expect(shouldSendMetaQuality(base, perdido, "2026-10-10T12:00:00Z", now)).toBe("descartado");
+    const herdado = after({ crm_max_stage_key: "mql", crm_lost: true, crm_last_change_at: "2026-07-10T20:37:03Z" });
+    expect(shouldSendMetaQuality(base, herdado, "2026-10-10T12:00:00Z", now)).toBe(null);
+  });
+
+  it("primeira sincronização depois do deploy: lead já qualificado sem mudança não dispara nada", () => {
+    const already = after({ crm_max_stage_key: "enviado", crm_last_change_at: "2026-10-10T12:00:00Z" });
+    expect(shouldSendMetaQuality(already, already, "2026-10-10T12:00:00Z", now)).toBe(null);
+    expect(shouldSendMetaQuality(already, { ...already, crm_max_stage_key: "negociacao" }, "2026-10-12T12:00:00Z", now)).toBe(null);
+  });
+
+  it("mudança com mais de 7 dias no CRM não vai para a Meta", () => {
+    const next = after({ crm_max_stage_key: "lead", crm_last_change_at: "2026-10-01T12:00:00Z" });
+    expect(shouldSendMetaQuality(base, next, "2026-10-01T12:00:00Z", now)).toBe(null);
+    expect(shouldSendMetaQuality(base, next, null, now)).toBe(null);
+  });
+
+  it("marcação do painel e do Engine não contam: só as colunas crm_*", () => {
+    const marcado = { ...base, status: "qualificado", manual_qualification: "qualificado" as const };
+    expect(shouldSendMetaQuality(base, marcado, "2026-10-12T12:00:00Z", now)).toBe(null);
+    expect(pipelineMetaStatus({ ...base, status: "descartado", manual_qualification: "descartado", crm_max_stage_key: "lead" })).toBe("qualificado");
   });
 });
 
@@ -146,13 +193,13 @@ describe("qualificação vinda do Engine", () => {
     { stage_key: "qualificacao", stage_name: "Qualificação", stage_position: 2, stage_is_terminal: false },
     { stage_key: "lead", stage_name: "Lead", stage_position: 3, stage_is_terminal: false },
   ];
-  const lead = { id: "l1", status: "novo", manual_qualification: null, manual_qualification_at: null, crm_stage_key: "mql", crm_stage_name: "MQL", crm_max_stage_key: "mql", crm_won: false, crm_lost: false, crm_deal_count: 1, crm_last_change_at: null };
+  const lead = { id: "l1", status: "novo", created_at: "2026-10-20T12:00:00Z", manual_qualification: null, manual_qualification_at: null, crm_stage_key: "mql", crm_stage_name: "MQL", crm_max_stage_key: "mql", crm_won: false, crm_lost: false, crm_deal_count: 1, crm_last_change_at: null };
   const item = (qualification: unknown) => ({ lead_id: "l1", current_stage_key: "mql", current_stage_name: "MQL", current_stage_position: 1, max_stage_key: "mql", max_stage_position: 1, won: false, all_closed_lost: false, deal_count: 1, last_change_at: null, qualification }) as never;
   it("desqualificado vira descartado com origem engine e motivo, sem Meta", () => {
     const p = planCrmLeadUpdate(lead, item({ decision: "desqualificado", marked_at: "2026-10-25T14:00:00Z", reason_category: "fora_regiao" }), STG, [], "2026-10-25T15:00:00Z");
     expect(p.patch).toMatchObject({ status: "descartado", manual_qualification: "descartado", manual_qualification_source: "engine", manual_qualification_reason: "fora_regiao" });
     expect(p.patch.crm_stage_key).toBeUndefined();
-    expect(shouldSendMetaQuality(p, new Date().toISOString(), Date.now())).toBe(false);
+    expect(shouldSendMetaQuality(lead, { ...lead, ...p.patch } as CrmLeadRow, new Date().toISOString(), Date.now())).toBe(null);
   });
   it("null não desqualifica", () => {
     const p = planCrmLeadUpdate(lead, item(null), STG, [], "2026-10-25T15:00:00Z");

@@ -6,8 +6,10 @@
  * - Lê `site-lead-stages` do Engine (header x-integration-key).
  * - Aplica `planCrmLeadUpdate` (regra pura em src/lib/crmStage.ts).
  * - Grava colunas `crm_*`/`status` e o histórico em `lead_qualification_log`.
- * - Dispara QualifiedLead/DisqualifiedLead na Meta só para mudanças dos
- *   últimos 7 dias (`shouldSendMetaQuality`), reaproveitando `sendSiteLeadQuality`.
+ * - Dispara QualifiedLead/DisqualifiedLead na Meta pela movimentação no funil
+ *   (`shouldSendMetaQuality`: mesma regra do Google Ads, só colunas crm_*),
+ *   para mudanças dos últimos 7 dias, reaproveitando `sendSiteLeadQuality`.
+ *   A marcação do painel não dispara evento na Meta (Pedro, 18/11/2026).
  * - Idempotente: sem mudança, nada é gravado (nem `crm_synced_at`).
  * - Uma linha por execução em `integration_log` (só contagens, sem PII).
  */
@@ -70,45 +72,6 @@ export async function fetchEngineStages(
   return { leads: json.leads, stages: json.stages };
 }
 
-/** Janela da Meta para o evento de qualidade (mesma de `shouldSendMetaQuality`). */
-export const MANUAL_META_WINDOW_MS = 7 * 24 * 3_600_000;
-
-/**
- * Qualificado marcado no painel nos últimos 7 dias que ainda não chegou à Meta
- * (lead sem negócio no Engine, ou envio do painel que falhou). Idempotente:
- * `sendSiteLeadQuality` grava `meta_qualified_sent_at` e não repete.
- * Devolve quantos eventos saíram.
- */
-export async function sendPendingManualQualified(admin: ServiceDb, env: Env, now: Date): Promise<number> {
-  const since = new Date(now.getTime() - MANUAL_META_WINDOW_MS).toISOString();
-  let data: unknown;
-  try {
-    const res = await admin
-      .from("leads")
-      .select("id")
-      .eq("status", "qualificado")
-      .eq("manual_qualification", "qualificado")
-      .is("meta_qualified_sent_at", null)
-      .gte("manual_qualification_at", since)
-      .limit(200);
-    if (res.error) return 0;
-    data = res.data;
-  } catch {
-    return 0;
-  }
-  if (!Array.isArray(data)) return 0;
-  let sent = 0;
-  for (const row of data as { id: string }[]) {
-    try {
-      const r = await sendSiteLeadQuality(admin, env, row.id, "qualificado", { eventSource: "Painel Bewild" });
-      if (r.ok && r.meta === "sent") sent++;
-    } catch {
-      /* um lead nunca derruba a sincronização */
-    }
-  }
-  return sent;
-}
-
 export async function runCrmStageSync(
   admin: ServiceDb,
   env: Env,
@@ -168,7 +131,7 @@ export async function runCrmStageSync(
     const rows = await fetchAll<CrmLeadRow>((from, to) =>
       admin
         .from("leads")
-        .select("id, status, manual_qualification, manual_qualification_source, manual_qualification_at, manual_qualification_reason, crm_stage_key, crm_stage_name, crm_max_stage_key, crm_won, crm_lost, crm_deal_count, crm_last_change_at")
+        .select("id, status, created_at, manual_qualification, manual_qualification_source, manual_qualification_at, manual_qualification_reason, crm_stage_key, crm_stage_name, crm_max_stage_key, crm_won, crm_lost, crm_deal_count, crm_last_change_at")
         .order("created_at", { ascending: true })
         .order("id", { ascending: true })
         .range(from, to),
@@ -207,8 +170,10 @@ export async function runCrmStageSync(
           summary.logs_novos += plan.logs.length;
         }
         if (plan.statusChanged) summary.alterados++;
-        if (shouldSendMetaQuality(plan, item?.last_change_at ?? null, now.getTime())) {
-          const r = await sendSiteLeadQuality(admin, env, row.id, plan.to, { eventSource: "Bwild Engine" });
+        // Meta pelo pipeline (Pedro, 18/11/2026): só as colunas crm_* antes e depois do patch.
+        const metaEvent = shouldSendMetaQuality(row, { ...row, ...plan.patch } as CrmLeadRow, item?.last_change_at ?? null, now.getTime());
+        if (metaEvent) {
+          const r = await sendSiteLeadQuality(admin, env, row.id, metaEvent, { eventSource: "Bwild Engine" });
           if (r.ok && r.meta === "sent") summary.meta_enviados++;
         }
       } catch (err) {
@@ -216,7 +181,6 @@ export async function runCrmStageSync(
         console.warn("[crm-stage-sync] lead falhou", err instanceof Error ? err.message : "erro");
       }
     }
-    summary.meta_enviados += await sendPendingManualQualified(admin, env, now);
     summary.ok = true;
   } catch (err) {
     summary.error = err instanceof Error ? err.message : "erro";

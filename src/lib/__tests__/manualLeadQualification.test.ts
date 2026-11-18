@@ -17,29 +17,23 @@ describe("qualificação manual autorizada", () => {
   it.each(["qualificado", "descartado"])("salva %s pela operação atômica", async status => {
     const rpc = vi.fn().mockResolvedValue({ data: status, error: null });
     drain.mockResolvedValueOnce({ lidos: 1, enviados: 1, ignorados: 0, reenvio: 0, falhas: 0 });
-    sendMeta.mockResolvedValueOnce({ ok: true, meta: "sent" });
-    await expect(handler({ data: { leadId, status }, context: { supabase: { rpc } } })).resolves.toEqual({ status, engine: "enviado", meta: "enviado" });
-    expect(sendMeta).toHaveBeenLastCalledWith({}, expect.any(Function), leadId, status, { eventSource: "Painel Bewild" });
+    await expect(handler({ data: { leadId, status }, context: { supabase: { rpc } } })).resolves.toEqual({ status, engine: "enviado", meta: "pipeline" });
+    // Meta pelo pipeline do CRM (Pedro, 18/11/2026): marcar no painel não dispara evento na Meta.
+    expect(sendMeta).not.toHaveBeenCalled();
     expect(drain).toHaveBeenLastCalledWith({}, expect.any(Function), { leadId });
     expect(rpc).toHaveBeenCalledWith("set_manual_lead_qualification", { p_lead_id: leadId, p_status: status });
   });
   it("Engine fora do ar: a marcação vale no site e fica na fila", async () => {
     const rpc = vi.fn().mockResolvedValue({ data: "descartado", error: null });
     drain.mockRejectedValueOnce(new Error("engine_unreachable"));
-    sendMeta.mockResolvedValueOnce({ ok: true, meta: "sent" });
-    await expect(handler({ data: { leadId, status: "descartado" }, context: { supabase: { rpc } } })).resolves.toEqual({ status: "descartado", engine: "pendente", meta: "enviado" });
+    await expect(handler({ data: { leadId, status: "descartado" }, context: { supabase: { rpc } } })).resolves.toEqual({ status: "descartado", engine: "pendente", meta: "pipeline" });
   });
-  it("Meta fora do ar: a marcação vale e a sincronização repõe", async () => {
+  it("a Meta nunca é chamada pela marcação, nem para qualificado nem para descartado", async () => {
     const rpc = vi.fn().mockResolvedValue({ data: "qualificado", error: null });
     drain.mockResolvedValueOnce({ lidos: 1, enviados: 1, ignorados: 0, reenvio: 0, falhas: 0 });
     sendMeta.mockRejectedValueOnce(new Error("meta_down"));
-    await expect(handler({ data: { leadId, status: "qualificado" }, context: { supabase: { rpc } } })).resolves.toEqual({ status: "qualificado", engine: "enviado", meta: "pendente" });
-  });
-  it("lead que não é de formulário de anúncio não vai à Meta", async () => {
-    const rpc = vi.fn().mockResolvedValue({ data: "qualificado", error: null });
-    drain.mockResolvedValueOnce({ lidos: 1, enviados: 1, ignorados: 0, reenvio: 0, falhas: 0 });
-    sendMeta.mockResolvedValueOnce({ ok: true, meta: "skipped", reason: "not_ad_form" });
-    await expect(handler({ data: { leadId, status: "qualificado" }, context: { supabase: { rpc } } })).resolves.toEqual({ status: "qualificado", engine: "enviado", meta: "ignorado" });
+    await expect(handler({ data: { leadId, status: "qualificado" }, context: { supabase: { rpc } } })).resolves.toEqual({ status: "qualificado", engine: "enviado", meta: "pipeline" });
+    expect(sendMeta).not.toHaveBeenCalled();
   });
   it("não confirma sucesso quando a autorização do banco recusa", async () => {
     const rpc = vi.fn().mockResolvedValue({ data: null, error: { message: "Acesso restrito a administradores." } });
