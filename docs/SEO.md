@@ -74,7 +74,7 @@ o Bing e os robôs de IA leem (eles não executam JavaScript):
 
 | Rota | Blocos de página (além do grafo global) |
 |---|---|
-| `/` | — (só o grafo global) |
+| `/` | `WebSite` do Radar Bewild (`https://radarbewild.com.br/#website`, `publisher` = `#org`), cópia fiel do nó que o Radar publica — `RADAR_WEBSITE_NODE` em `src/lib/orgJsonLd.ts` (18/11/2026) |
 | `/servicos` | `WebPage`, `Service #service`, `FAQPage`, `ItemList` (bastidores) |
 | `/reforma-de-studio-sao-paulo`, `/reforma-de-apartamento-sao-paulo`, `/reforma-de-cobertura-sao-paulo`, `/marcenaria` | `WebPage`, `Service #service` (nome = H1, descrição = texto de abertura), `FAQPage` |
 | `/orcamento` | `ContactPage` (com `ContactPoint` e `QuoteAction`), `FAQPage` |

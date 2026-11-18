@@ -96,6 +96,12 @@ async function headOf(routePath: string, file: string, loaderData: unknown, para
 
 const ldScripts = (h: Head) => (h.scripts ?? []).filter((s) => s.type === "application/ld+json");
 
+/**
+ * @id de outro domínio só quando o nó é a cópia fiel do que ESSE domínio
+ * publica: o WebSite do Radar Bewild na home (RADAR_WEBSITE_NODE, 18/11/2026).
+ */
+const ID_EXTERNOS = new Set(["https://radarbewild.com.br/#website"]);
+
 const URL_KEYS = new Set(["url", "image", "logo", "item", "thumbnailUrl", "contentUrl", "embedUrl"]);
 const DATE_KEYS = new Set(["datePublished", "dateModified", "uploadDate"]);
 const TZ = /(Z|[+-]\d{2}:\d{2})$/;
@@ -106,7 +112,7 @@ function problemas(nodes: unknown[]): string[] {
     if (Array.isArray(v)) return v.forEach((x) => visit(x, key));
     if (typeof v === "string") {
       if (URL_KEYS.has(key) && !/^https:\/\//.test(v)) out.push(`${key} relativa: "${v}"`);
-      if (key === "@id" && !v.startsWith("https://bewild.com.br")) out.push(`@id fora do domínio: ${v}`);
+      if (key === "@id" && !v.startsWith("https://bewild.com.br") && !ID_EXTERNOS.has(v)) out.push(`@id fora do domínio: ${v}`);
       if (DATE_KEYS.has(key) && !TZ.test(v)) out.push(`${key} sem fuso: ${v}`);
       return;
     }
