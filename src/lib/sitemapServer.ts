@@ -94,6 +94,19 @@ export function loadSitemapSaida(): Promise<SitemapSaida> {
   });
 }
 
+/**
+ * Texto publicado do llms.txt: tira as linhas de marcador (`<!-- x:start -->`,
+ * `<!-- x:end -->`), que só servem para a montagem, sem deixar duas linhas em
+ * branco seguidas. O modelo e o retrato continuam com os marcadores.
+ */
+export function llmsPublicado(texto: string): string {
+  return texto
+    .split("\n")
+    .filter((linha) => !/^\s*<!--\s*[\w-]+:(start|end)\s*-->\s*$/.test(linha))
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n");
+}
+
 /** Resposta da rota: o texto com os cabeçalhos certos, ou 503 quando o banco não respondeu. */
 export async function responderSitemap(tipo: "xml" | "llms"): Promise<Response> {
   let saida: SitemapSaida;
@@ -106,7 +119,7 @@ export async function responderSitemap(tipo: "xml" | "llms"): Promise<Response> 
       headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store", "retry-after": "60" },
     });
   }
-  return new Response(tipo === "xml" ? saida.xml : saida.llms, {
+  return new Response(tipo === "xml" ? saida.xml : llmsPublicado(saida.llms), {
     status: 200,
     headers: {
       "content-type": tipo === "xml" ? "application/xml; charset=utf-8" : "text/plain; charset=utf-8",

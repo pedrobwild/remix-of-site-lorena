@@ -164,7 +164,12 @@ describe("loadSitemapSaida e responderSitemap", () => {
     expect((await xml.text()).startsWith('<?xml version="1.0" encoding="UTF-8"?>')).toBe(true);
     const llms = await responderSitemap("llms");
     expect(llms.headers.get("content-type")).toBe("text/plain; charset=utf-8");
-    expect(await llms.text()).toContain("<!-- posts:start -->\n- [");
+    const texto = await llms.text();
+    expect(texto).not.toContain("<!--");
+    expect(texto).not.toMatch(/\n\n\n/);
+    expect(texto).toContain("- [Studio para Airbnb em Pinheiros](/conteudos/studio-airbnb-pinheiros-quanto-rende)");
+    expect(texto).toContain("- [Reforma de apartamento em Pinheiros](/reforma/pinheiros)");
+    for (const v of VIDEO_PAGES) expect(texto).toContain(`](/videos/${v.slug}): ${v.kind}`);
   });
 
   it("banco fora do ar: 503 sem cache, nunca um sitemap vazio", async () => {
