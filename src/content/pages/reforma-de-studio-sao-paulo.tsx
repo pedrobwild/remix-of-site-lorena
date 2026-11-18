@@ -105,7 +105,7 @@ export const FAQ: { q: string; a: string; node?: ReactNode }[] = [
         foi {ORCAMENTO_MEDIANO} ({CUSTO_M2_MEDIANO} por m²), com projeto, obra, marcenaria, mobiliário e
         eletrodomésticos. A análise completa está em{" "}
         <a href="/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2">
-          quanto custa reformar um apartamento ou studio de até 50 m²
+          quanto custa reformar um apartamento ou studio de até 45 m²
         </a>
         .
       </>

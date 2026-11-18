@@ -31,7 +31,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     q: "Quanto tempo leva uma reforma?",
-    a: "Cerca de 60 dias úteis de obra para studios e apartamentos compactos de até 30 m²; imóveis maiores ou com integração de varanda levam mais. A sua data exata fica escrita no contrato, antes de a obra começar.",
+    a: "60 dias úteis de obra até 30 m², 70 de 31 a 40 m² e 80 de 41 a 60 m², sem integração de varanda; com integração, 65 e 75 dias úteis até 40 m². A sua data exata fica escrita no contrato, antes de a obra começar.",
   },
   {
     q: "Onde vocês atuam?",

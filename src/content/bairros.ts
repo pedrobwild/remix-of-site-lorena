@@ -46,7 +46,7 @@ export const FAIXA_CUSTO_SP = {
 
 const PILAR = {
   href: "/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2",
-  label: "Quanto custa reformar um apartamento ou studio de até 50 m²",
+  label: "Quanto custa reformar um apartamento ou studio de até 45 m²",
 };
 const BAIRROS_POST = {
   href: "/conteudos/melhores-bairros-short-stay-sao-paulo",

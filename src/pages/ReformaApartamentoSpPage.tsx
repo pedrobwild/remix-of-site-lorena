@@ -218,9 +218,9 @@ export default function ReformaApartamentoSpPage({ bairroPages = null, projetosP
             <p className="bwa-servico-text">
               A mediana dos {ORCAMENTOS_ANALISADOS} orçamentos de reforma completa de até
               45 m² analisados pela Bewild é {CUSTO_M2_MEDIANO} por m², com projeto, obra,
-              marcenaria, mobília e eletros. Acima de 50 m², o valor sai da visita
+              marcenaria, mobília e eletros. Acima de 45 m², o valor sai da visita
               técnica e do projeto. A tabela por metragem está em{" "}
-              <a href={PILAR_CUSTO}>quanto custa reformar um apartamento ou studio de até 50 m²</a>.
+              <a href={PILAR_CUSTO}>quanto custa reformar um apartamento ou studio de até 45 m²</a>.
             </p>
           </div>
         </section>
@@ -247,7 +247,7 @@ export default function ReformaApartamentoSpPage({ bairroPages = null, projetosP
               <a href="/conteudos/nbr-16280-reforma-studio-condominio">NBR 16280</a> exige; o que entra
               nessa documentação e quanto custa cada etapa estão em{" "}
               <a href="/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2">
-                quanto custa reformar um apartamento ou studio de até 50 m²
+                quanto custa reformar um apartamento ou studio de até 45 m²
               </a>
               .
             </p>

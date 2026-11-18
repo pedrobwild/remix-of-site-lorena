@@ -142,7 +142,7 @@ export default function ReformaStudioSpPage({ bairroPages = null, topoVariante =
               O seu orçamento sai da metragem e do escopo do seu imóvel. A análise completa,
               com o que muda o preço, está em{" "}
               <a href="/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2">
-                quanto custa reformar um apartamento ou studio de até 50 m²
+                quanto custa reformar um apartamento ou studio de até 45 m²
               </a>.
             </p>
           </div>
@@ -177,7 +177,7 @@ export default function ReformaStudioSpPage({ bairroPages = null, topoVariante =
               capital — veja obras entregues no{" "}
               <a href="/portfolio">portfólio</a>, o detalhamento de custo em{" "}
               <a href="/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2">
-                quanto custa reformar um apartamento ou studio de até 50 m²
+                quanto custa reformar um apartamento ou studio de até 45 m²
               </a>{" "}
               e, para metragens maiores, a{" "}
               <a href="/reforma-de-apartamento-sao-paulo">

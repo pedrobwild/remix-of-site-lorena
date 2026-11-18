@@ -220,7 +220,7 @@ export default function ComoFuncionaPage() {
             <p className="bwa-how-steps-foot">
               O que cada etapa custa está em{" "}
               <a href="/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2">
-                quanto custa reformar um apartamento ou studio de até 50 m²
+                quanto custa reformar um apartamento ou studio de até 45 m²
               </a>
               ; o que o condomínio pede antes da obra, em{" "}
               <a href="/conteudos/nbr-16280-reforma-studio-condominio">NBR 16280: o que é e o que exige</a>; e o
