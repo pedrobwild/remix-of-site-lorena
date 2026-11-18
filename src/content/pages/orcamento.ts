@@ -19,6 +19,8 @@ export const CANONICAL = "/orcamento";
 const BASE = "https://bewild.com.br";
 
 export const PILAR_CUSTO = "/conteudos/quanto-custa-reformar-apartamento-studio-ate-50-m2";
+/** Artigo "Tabela de preço de reforma" (18/11/2026): os números do Índice organizados para consulta. */
+export const ARTIGO_TABELA_PRECO = "/conteudos/tabela-de-preco-de-reforma-sao-paulo";
 
 export const TOPO_VARIANTES = {
   padrao: {
