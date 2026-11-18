@@ -9,19 +9,21 @@
  * tabela, sem segmentos) e o que aparece na tela.
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 
 type RpcCall = { name: string; args: Record<string, unknown> };
 const rpcCalls: RpcCall[] = [];
 let respond: (call: RpcCall) => unknown = () => [];
+/** Linhas devolvidas pela leitura de `leads` (card "pedidos" e "leads por origem"). */
+let leadRows: Record<string, unknown>[] = [];
 
 vi.mock("@/integrations/supabase/client", () => {
   // `LeadsBySourceCard` lê `leads` por `from().select().gte().lte().order().range()`:
   // uma cadeia encadeável que resolve vazio, para o cartão montar sem rede.
   const emptyQuery = () => {
     const q: Record<string, unknown> = {};
-    for (const m of ["select", "gte", "lte", "order", "range", "eq", "is", "limit"]) q[m] = () => q;
-    q.then = (resolve: (v: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(resolve);
+    for (const m of ["select", "gte", "lte", "lt", "order", "range", "eq", "is", "limit"]) q[m] = () => q;
+    q.then = (resolve: (v: unknown) => unknown) => Promise.resolve({ data: leadRows, error: null }).then(resolve);
     return q;
   };
   return {
@@ -62,6 +64,7 @@ beforeEach(() => {
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(NOW);
   rpcCalls.length = 0;
+  leadRows = [];
 });
 afterEach(() => {
   vi.useRealTimers();
@@ -563,5 +566,69 @@ describe("OverviewTab — período longo (por semana)", () => {
     expect(within(r0608!).getAllByRole("cell")[2]).toHaveTextContent("—");
     // semana cheia seguinte compara normalmente: 0 vs 40 → -100.0%
     expect(within(r1506!).getAllByRole("cell")[2]).toHaveTextContent("-100.0%");
+  });
+});
+
+describe("OverviewTab — auditoria 18/11/2026", () => {
+  // Semana encerrada 14/09 – 20/09 (hoje é 24/09), sem comparação.
+  const range = { from: startOfDay(new Date(2026, 8, 14)), to: endOfDay(new Date(2026, 8, 20)) };
+  const SESSIONS: Record<number, number> = { 7: 31, 8: 33, 9: 35, 10: 37, 11: 39, 12: 41, 13: 43, 14: 30, 15: 32, 16: 2, 17: 0, 18: 34, 19: 36, 20: 38 };
+
+  beforeEach(() => {
+    respond = ({ name, args }) => {
+      if (name === "analytics_overview_kpis") return kpiRow(200, 400, 12);
+      if (name === "analytics_timeseries_v2" && args.p_grain === "day") {
+        const since = new Date(String(args.p_since));
+        return Object.entries(SESSIONS)
+          .map(([d, n]) => ({ d: Number(d), n }))
+          .filter(({ d }) => new Date(2026, 8, d) >= since)
+          .map(({ d, n }) => v2Row(localIso(2026, 9, d), n, n, n * 2));
+      }
+      return [];
+    };
+    leadRows = [
+      { id: "1", gclid: "g" },
+      { id: "2", fbclid: "f", utm_source: "fb", utm_medium: "paid_social" },
+      { id: "3", utm_campaign: "teste-qualificacao" },
+    ];
+  });
+
+  it("card de pedidos lê a tabela de leads (sem testes) e os rótulos dizem o que medem", async () => {
+    render(<OverviewTab range={range} segments={[]} comparePrev={false} />);
+    await screen.findByTestId("daily-table");
+    const pedidos = kpiCard("pedidos (formulários)");
+    expect(await within(pedidos).findByText("2")).toBeInTheDocument();
+    expect(within(pedidos).getByText("todos os visitantes · sem segmento")).toBeInTheDocument();
+    const contatos = screen.getByText("contatos", { selector: ".aa-kpi__label" }).closest(".aa-kpi") as HTMLElement;
+    expect(within(contatos).getByText("12")).toBeInTheDocument();
+    expect(within(kpiCard("tempo engajado")).getByText("média das sessões com interação")).toBeInTheDocument();
+    expect(screen.getByText(/contam só quem aceitou cookies/)).toBeInTheDocument();
+    // "leads por origem": total e aviso dos testes fora da conta
+    expect(await screen.findByText(/1 de teste fora da conta/)).toBeInTheDocument();
+  });
+
+  it("marca os dias de coleta anormalmente baixa e tira o Δ do dia seguinte", async () => {
+    render(<OverviewTab range={range} segments={[]} comparePrev={false} />);
+    const table = await screen.findByTestId("daily-table");
+    expect(screen.getByTestId("low-capture-note")).toHaveTextContent("16/09, 17/09");
+    const rows = within(table).getAllByRole("row").slice(1);
+    const day18 = rows.find((r) => /18\/09/.test(r.textContent ?? ""))!;
+    // 18/09 compara com 17/09 (0 sessões, falha de coleta): sem Δ, nada de "novo"
+    expect(within(day18).getAllByRole("cell")[2]).toHaveTextContent("—");
+    expect(rows.find((r) => /17\/09/.test(r.textContent ?? ""))).toHaveAttribute("data-low-capture", "true");
+  });
+
+  it("Δ vs. semana passada pede 7 dias de lead-in e compara com o mesmo dia da semana", async () => {
+    render(<OverviewTab range={range} segments={[]} comparePrev={false} />);
+    await screen.findByTestId("daily-table");
+    fireEvent.click(screen.getByRole("button", { name: "Δ vs. semana passada" }));
+    await screen.findByText(/Δ vs\. mesmo dia da semana passada/);
+    expect(
+      findCall("analytics_timeseries_v2", (a) => a.p_grain === "day" && a.p_since === localIso(2026, 9, 7))
+    ).toBeTruthy();
+    const rows = within(await screen.findByTestId("daily-table")).getAllByRole("row").slice(1);
+    const day20 = rows.find((r) => /20\/09/.test(r.textContent ?? ""))!;
+    // 20/09 (38) × 13/09 (43) = -11.6%
+    expect(within(day20).getAllByRole("cell")[2]).toHaveTextContent("-11.6%");
   });
 });

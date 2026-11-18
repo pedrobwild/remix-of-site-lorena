@@ -9,7 +9,7 @@
  * mesmo sem entrega, `setState` depois de sair da página).
  */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { readPersistedAttribution, readPrivacyVisitForLead } from "@/lib/analytics";
+import { readPersistedAttribution, readPrivacyVisitForLead, track } from "@/lib/analytics";
 import { resolveLeadAttribution, type LeadAttribution } from "@/lib/campaignParams";
 import { reportLead } from "@/lib/conversions";
 import { isConsentAccepted } from "@/lib/cookieConsent";
@@ -239,6 +239,15 @@ export function useLeadSubmit({ method, timeoutMs }: { method: string; timeoutMs
       if (counts && !counted.current) {
         counted.current = true;
         trackEvent("generate_lead", { ...eventParams, ...googleAdsProfileVariables({ bairro: payload.location }) });
+        // Tracker próprio (/admin/analytics): até 18/11/2026 nenhum formulário
+        // emitia `form_submit`, e as "conversões" do painel eram só cliques de
+        // WhatsApp/e-mail. Mesmo gate de aceite do resto do tracker; uma vez
+        // por formulário, como o `generate_lead`.
+        try {
+          track("form_submit", { value: { form: payload.form_path, method, delivery: deliveryParam(next) } });
+        } catch {
+          /* medição nunca interrompe o formulário */
+        }
         reportLead({
           eventId,
           formPath: payload.form_path,

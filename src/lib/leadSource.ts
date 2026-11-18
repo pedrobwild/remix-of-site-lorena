@@ -42,10 +42,18 @@ function hostOf(ref: string | null | undefined): string {
 
 export function leadCanal(lead: LeadSourceInput): LeadCanal {
   if (lead.gclid) return "google_ads";
-  if (lead.fbclid) return "meta";
 
   const src = (lead.utm_source || lead.first_utm_source || "").toLowerCase().trim();
   const med = (lead.utm_medium || lead.first_utm_medium || "").toLowerCase().trim();
+
+  // fbclid sozinho não prova anúncio: o Facebook/Instagram também o põe em
+  // link de post e de bio. Os anúncios da Meta da Bewild levam UTM paga
+  // (fb/ig/an + paid_social/paid — conferido nos leads de 20/10 a 18/11/2026),
+  // então fbclid sem nenhuma UTM é rede social orgânica.
+  if (lead.fbclid) {
+    if (!src && !med) return "social";
+    if (PAID_MEDIUM.test(med)) return "meta";
+  }
 
   if (src) {
     const paid = PAID_MEDIUM.test(med);
@@ -61,4 +69,26 @@ export function leadCanal(lead: LeadSourceInput): LeadCanal {
     if (SOCIAL_HOST.test(host)) return "social";
   }
   return "direto";
+}
+
+export type TestLeadInput = {
+  name?: string | null;
+  utm_source?: string | null;
+  utm_campaign?: string | null;
+  lead_source?: string | null;
+};
+
+/** "teste"/"test" como palavra inteira (separada por início, fim, espaço, - ou _). */
+const TEST_TOKEN = /(^|[\s_-])(teste?s?|test)([\s_-]|$)/i;
+
+/**
+ * Lead de teste do time (ex.: campanha "teste-qualificacao" de 25/10/2026),
+ * para ficar fora das contagens do painel. Regra conservadora: só a palavra
+ * "teste"/"test" inteira na campanha, na origem ou no `lead_source`, ou o nome
+ * exatamente "teste"/"test". Não apaga nada do banco.
+ */
+export function isTestLead(lead: TestLeadInput): boolean {
+  if ([lead.utm_campaign, lead.utm_source, lead.lead_source].some((v) => !!v && TEST_TOKEN.test(v.trim()))) return true;
+  const name = (lead.name ?? "").trim().toLowerCase();
+  return name === "teste" || name === "test";
 }

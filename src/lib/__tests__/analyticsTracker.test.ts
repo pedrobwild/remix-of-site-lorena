@@ -353,3 +353,44 @@ describe("contactEventForHref", () => {
     expect(contactEventForHref(href)).toBeNull();
   });
 });
+
+describe("tráfego interno — aparelho do time fora da medição (auditoria 18/11/2026)", () => {
+  it("abrir o /admin marca o aparelho; depois o site público não gera eventos", () => {
+    setConsent("accepted");
+    window.history.replaceState({}, "", "/admin/analytics");
+    cleanup = initAnalytics();
+    vi.advanceTimersByTime(300);
+    expect(window.localStorage.getItem("bw:interno")).toBe("1");
+
+    window.history.replaceState({}, "", "/portfolio");
+    window.dispatchEvent(new PopStateEvent("popstate"));
+    vi.advanceTimersByTime(300);
+    document.body.innerHTML = '<a href="https://wa.me/5511911906183">Fale</a>';
+    document.querySelector("a")!.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("?bw_interno=1 marca e ?bw_interno=0 desmarca", () => {
+    setConsent("accepted");
+    window.history.replaceState({}, "", "/?bw_interno=1");
+    cleanup = initAnalytics();
+    vi.advanceTimersByTime(300);
+    expect(window.localStorage.getItem("bw:interno")).toBe("1");
+    expect(fetchMock).not.toHaveBeenCalled();
+    cleanup();
+
+    window.history.replaceState({}, "", "/faq?bw_interno=0");
+    cleanup = initAnalytics();
+    vi.advanceTimersByTime(300);
+    expect(window.localStorage.getItem("bw:interno")).toBeNull();
+    expect(fetchRows().map((r) => r.event_type)).toContain("pageview");
+  });
+
+  it("aparelho do time continua registrando a decisão do banner (prova LGPD)", async () => {
+    window.localStorage.setItem("bw:interno", "1");
+    window.history.replaceState({}, "", "/faq");
+    logConsentAudit("accepted");
+    const rows = await beaconRows();
+    expect(rows.map((r) => r.event_type)).toEqual(["consent_accept"]);
+  });
+});

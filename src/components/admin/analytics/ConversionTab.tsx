@@ -1,9 +1,14 @@
 /**
  * ConversionTab — aba "Conversão".
  *
- * Funil sequencial: pageview → portfolio_view → project_view → click_contact
- * usando RPC analytics_funnel. Mostra:
- *  - Cards de totais por tipo de conversão
+ * Funil sequencial por página vista (RPC analytics_funnel_v2, 18/11/2026):
+ * visita → portfólio (/portfolio ou /portfolio/<slug>) → projeto
+ * (/portfolio/<slug>) → contato (WhatsApp, telefone, e-mail ou formulário).
+ * Cada passo só conta a sessão que fez o anterior antes, então nunca sobe.
+ * O funil antigo (analytics_funnel) pedia `portfolio_view`/`project_view`,
+ * que nenhuma página emite, e o contato era só `mailto:`; ele fica como
+ * reserva enquanto a migration 0018 não roda no banco. Mostra:
+ *  - Cards de totais por etapa
  *  - Visualização do funil com barras proporcionais e taxa de passagem
  *  - Com "comparar" ativo, Δ de cada etapa vs. o período anterior alinhado
  *    (em curso: cortado no mesmo horário — lib/analyticsCompare.ts)
@@ -36,10 +41,10 @@ type Props = {
 };
 
 const FUNNEL_STEPS = [
-  { key: "pageview", label: "visita", description: "qualquer página" },
-  { key: "portfolio_view", label: "portfólio", description: "viu a lista" },
-  { key: "project_view", label: "projeto", description: "abriu um projeto" },
-  { key: "click_contact", label: "contato", description: "clicou contato" },
+  { key: "visita", legacy: "pageview", label: "visita", description: "sessões com página vista" },
+  { key: "portfolio", legacy: "portfolio_view", label: "portfólio", description: "abriu /portfolio ou um projeto" },
+  { key: "projeto", legacy: "project_view", label: "projeto", description: "abriu um projeto" },
+  { key: "contato", legacy: "click_contact", label: "contato", description: "WhatsApp, telefone, e-mail ou formulário" },
 ] as const;
 
 function fmtNum(n: number): string {
@@ -69,24 +74,36 @@ function ExistingConversionFunnel({ range, segments, comparePrev }: Props) {
     const now = new Date();
     const cur = effectiveWindow(range, now);
     const prev = comparePrev ? alignedPreviousWindow(range, now) : null;
-    const steps = FUNNEL_STEPS.map((s) => s.key);
-    type RpcRes = { data: FunnelRow[] | null; error: { message: string } | null };
+    type RpcRes = { data: Record<string, unknown>[] | null; error: { message: string } | null };
+    const rows = (res: unknown, keyField: "step_key" | "event_type"): FunnelRow[] => {
+      const r = res as RpcRes;
+      if (r.error) throw new Error(r.error.message);
+      return (r.data ?? []).map((row) => {
+        const raw = String(row[keyField] ?? "");
+        // Reserva (funil antigo): traduz o tipo de evento para a chave da etapa.
+        const key = keyField === "step_key" ? raw : (FUNNEL_STEPS.find((d) => d.legacy === raw)?.key ?? raw);
+        return { step: Number(row.step), event_type: key, sessions: Number(row.sessions ?? 0) };
+      });
+    };
     const funnel = (win: Window) =>
       Promise.resolve(
-        supabase.rpc("analytics_funnel", {
+        supabase.rpc("analytics_funnel_v2" as never, {
           p_since: win.from.toISOString(),
           p_until: win.until.toISOString(),
-          p_steps: steps,
-        })
-      ).then((res) => {
-        const r = res as unknown as RpcRes;
-        if (r.error) throw new Error(r.error.message);
-        return (r.data ?? []).map((row) => ({
-          step: Number(row.step),
-          event_type: String(row.event_type),
-          sessions: Number(row.sessions ?? 0),
-        }));
-      });
+        } as never)
+      )
+        .then((res) => rows(res, "step_key"))
+        .catch((err: unknown) => {
+          // Migration 0018 ainda não aplicada: usa o funil antigo.
+          devError("[conversion] analytics_funnel_v2 indisponível, usando analytics_funnel", err);
+          return Promise.resolve(
+            supabase.rpc("analytics_funnel", {
+              p_since: win.from.toISOString(),
+              p_until: win.until.toISOString(),
+              p_steps: FUNNEL_STEPS.map((d) => d.legacy),
+            })
+          ).then((res) => rows(res, "event_type"));
+        });
 
     Promise.all([
       funnel(cur),
@@ -217,7 +234,7 @@ function ExistingConversionFunnel({ range, segments, comparePrev }: Props) {
         <div className="aa-card__head">
           <h3 className="aa-card__title">funil de conversão</h3>
           <span className="aa-card__action aa-faint">
-            sessões únicas · ordem cronológica respeitada
+            sessões únicas · cada etapa só conta quem fez a anterior antes
           </span>
         </div>
         <FunnelChart steps={stepData} />
@@ -254,8 +271,10 @@ function FunnelChart({ steps }: { steps: StepView[] }) {
       {steps.map((s, i) => {
         const prev = i > 0 ? steps[i - 1].sessions : s.sessions;
         const widthPct = top > 0 ? (s.sessions / top) * 100 : 0;
-        const stepRate = prev > 0 ? (s.sessions / prev) * 100 : 0;
-        const dropoff = prev - s.sessions;
+        const stepRate = prev > 0 ? Math.min(100, (s.sessions / prev) * 100) : 0;
+        // Funil antigo (reserva) contava cada etapa por conta própria: uma
+        // etapa podia passar da anterior. Perda negativa não existe.
+        const dropoff = Math.max(0, prev - s.sessions);
         const isDropHeavy = i > 0 && stepRate < 25;
 
         return (
