@@ -130,9 +130,21 @@ que o Google espera:
     depois (ou virou contrato) e o objetivo é `Short stay`,
     `Locação tradicional` ou `Uso misto` (decisão do Pedro, 14/10/2026:
     investidor = locação, uso misto conta; `Moradia` e `Ainda avaliando`
-    não). Perder o negócio depois de Lead não desfaz a qualificação. Hora =
-    primeira transição para Lead ou depois em `lead_qualification_log`
+    não). Perder o negócio depois de Lead não desfaz a qualificação
+    (decisão do Pedro, 18/11/2026: qualificado = mereceu ser trabalhado;
+    venda perdida é outro sinal, e nada retrata conversão já importada).
+    Hora = primeira transição para Lead ou depois em `lead_qualification_log`
     (notas `CRM: A → B`); sem ela, `crm_last_change_at`.
+  - **Orçamento enviado investidor** (R$ 20.000) e **Negociação investidor**
+    (R$ 40.000), ações secundárias criadas em 18/11/2026 (decisão do Pedro):
+    só objetivo de investidor; saem quando o negócio chega a
+    **Enviado para o Cliente** (`enviado`) e a **Negociação** (`negociacao`)
+    ou qualquer etapa posterior (`CRM_QUOTE_SENT_STAGE_KEYS`,
+    `CRM_NEGOTIATION_STAGE_KEYS`); contrato ganho implica as duas. Hora =
+    primeira chegada à etapa no histórico (`pickPipelineTimes().quoteSentAt`
+    / `negotiationAt`); sem ela, `crm_last_change_at`. Uma por pessoa. Etapa
+    nova depois de "Enviado para o Cliente" no CRM entra nas duas listas de
+    chaves e nas de nomes (`ENGINE_QUOTE_SENT_STAGES`, `ENGINE_NEGOTIATION_STAGES`).
   - **Lead desqualificado** (ação secundária, fora dos lances): todos os
     negócios perdidos ou em Aquecer Futuramente **sem** ter chegado a Lead,
     e só quando a perda é **posterior à chegada do lead ao site**
@@ -146,10 +158,15 @@ que o Google espera:
     de lance nem estimativa.
   - MQL, Qualificação em aberto e lead sem negócio no CRM não geram linha:
     o sinal só sai quando o card é movido no CRM. Marcar "Qualificado" ou
-    "Não qualificado" no painel do site continua valendo para o painel, a
-    Meta e o Engine (desqualificar lá leva o negócio aberto para Perdido, e
-    aí o funil gera o "Lead desqualificado"), mas sozinho não envia nada ao
-    Google.
+    "Não qualificado" no painel do site continua valendo para o painel e o
+    Engine (desqualificar lá leva o negócio aberto para Perdido, e aí o funil
+    gera o "Lead desqualificado"), mas sozinho não envia nada ao Google nem
+    à Meta.
+  - **Meta (CAPI)** segue a mesma regra desde 18/11/2026: `QualifiedLead` e
+    `DisqualifiedLead` saem da sincronização horária quando o status pelo
+    funil (`pipelineMetaStatus` em `src/lib/crmStage.ts`, só colunas
+    `crm_*`, com a perda posterior à chegada) muda, com mudança no CRM de
+    até 7 dias. A marcação do painel não dispara evento na Meta.
   - A lista de exclusão "Exclusao desqualificados" (Customer Match) segue a
     mesma regra de desqualificado, com o consentimento próprio dela.
 - `Conversion Time` = `yyyy-MM-dd HH:mm:ss-03:00` (São Paulo, fuso explícito).
