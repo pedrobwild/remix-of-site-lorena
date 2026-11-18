@@ -1076,7 +1076,151 @@ export type Database = {
         }
         Relationships: []
       }
+      bewild_posts_backup_20261118_modelos: {
+        Row: {
+          author: string | null
+          body: string | null
+          category: string | null
+          content_updated_at: string | null
+          cover_image: string | null
+          created_at: string | null
+          excerpt: string | null
+          faq: Json | null
+          featured: boolean | null
+          focus_keyword: string | null
+          id: string | null
+          meta_description: string | null
+          meta_title: string | null
+          og_image: string | null
+          published: boolean | null
+          published_at: string | null
+          reading_time: number | null
+          slug: string | null
+          title: string | null
+          updated_at: string | null
+          youtube_video_id: string | null
+        }
+        Insert: {
+          author?: string | null
+          body?: string | null
+          category?: string | null
+          content_updated_at?: string | null
+          cover_image?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          faq?: Json | null
+          featured?: boolean | null
+          focus_keyword?: string | null
+          id?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          og_image?: string | null
+          published?: boolean | null
+          published_at?: string | null
+          reading_time?: number | null
+          slug?: string | null
+          title?: string | null
+          updated_at?: string | null
+          youtube_video_id?: string | null
+        }
+        Update: {
+          author?: string | null
+          body?: string | null
+          category?: string | null
+          content_updated_at?: string | null
+          cover_image?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          faq?: Json | null
+          featured?: boolean | null
+          focus_keyword?: string | null
+          id?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          og_image?: string | null
+          published?: boolean | null
+          published_at?: string | null
+          reading_time?: number | null
+          slug?: string | null
+          title?: string | null
+          updated_at?: string | null
+          youtube_video_id?: string | null
+        }
+        Relationships: []
+      }
       bewild_posts_backup_20261118_prazo: {
+        Row: {
+          author: string | null
+          body: string | null
+          category: string | null
+          content_updated_at: string | null
+          cover_image: string | null
+          created_at: string | null
+          excerpt: string | null
+          faq: Json | null
+          featured: boolean | null
+          focus_keyword: string | null
+          id: string | null
+          meta_description: string | null
+          meta_title: string | null
+          og_image: string | null
+          published: boolean | null
+          published_at: string | null
+          reading_time: number | null
+          slug: string | null
+          title: string | null
+          updated_at: string | null
+          youtube_video_id: string | null
+        }
+        Insert: {
+          author?: string | null
+          body?: string | null
+          category?: string | null
+          content_updated_at?: string | null
+          cover_image?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          faq?: Json | null
+          featured?: boolean | null
+          focus_keyword?: string | null
+          id?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          og_image?: string | null
+          published?: boolean | null
+          published_at?: string | null
+          reading_time?: number | null
+          slug?: string | null
+          title?: string | null
+          updated_at?: string | null
+          youtube_video_id?: string | null
+        }
+        Update: {
+          author?: string | null
+          body?: string | null
+          category?: string | null
+          content_updated_at?: string | null
+          cover_image?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          faq?: Json | null
+          featured?: boolean | null
+          focus_keyword?: string | null
+          id?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          og_image?: string | null
+          published?: boolean | null
+          published_at?: string | null
+          reading_time?: number | null
+          slug?: string | null
+          title?: string | null
+          updated_at?: string | null
+          youtube_video_id?: string | null
+        }
+        Relationships: []
+      }
+      bewild_posts_backup_20261118_revisor: {
         Row: {
           author: string | null
           body: string | null
@@ -2450,6 +2594,171 @@ export type Database = {
           testimonial?: string | null
           testimonial_author?: string | null
           title?: string
+          updated_at?: string | null
+          visible?: boolean | null
+          year?: string | null
+        }
+        Relationships: []
+      }
+      projects_backup_20261118: {
+        Row: {
+          after_image_url: string | null
+          area: string | null
+          area_m2: number | null
+          before_image_url: string | null
+          before_text: string | null
+          budget_range: string | null
+          challenge: string | null
+          content_updated_at: string | null
+          cover_alt: string | null
+          cover_blur_data_url: string | null
+          cover_url: string | null
+          cover_url_md: string | null
+          cover_url_sm: string | null
+          created_at: string | null
+          duration: string | null
+          em: string | null
+          featured: boolean | null
+          featured_order: number | null
+          gallery_urls: string[] | null
+          id: string | null
+          intro: string | null
+          location: string | null
+          materials: string[] | null
+          neighborhood: string | null
+          number: string | null
+          og_image_url: string | null
+          order_index: number | null
+          photographer: string | null
+          portfolio_tags: string[] | null
+          program: string | null
+          project_type: string | null
+          published: boolean | null
+          ready_gallery_urls: string[] | null
+          ready_image_url: string | null
+          ready_items: string[] | null
+          result_text: string | null
+          scope: string[] | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string | null
+          solution: string | null
+          sort_order: number | null
+          status: string | null
+          summary: string | null
+          tag: string | null
+          team: string | null
+          testimonial: string | null
+          testimonial_author: string | null
+          title: string | null
+          updated_at: string | null
+          visible: boolean | null
+          year: string | null
+        }
+        Insert: {
+          after_image_url?: string | null
+          area?: string | null
+          area_m2?: number | null
+          before_image_url?: string | null
+          before_text?: string | null
+          budget_range?: string | null
+          challenge?: string | null
+          content_updated_at?: string | null
+          cover_alt?: string | null
+          cover_blur_data_url?: string | null
+          cover_url?: string | null
+          cover_url_md?: string | null
+          cover_url_sm?: string | null
+          created_at?: string | null
+          duration?: string | null
+          em?: string | null
+          featured?: boolean | null
+          featured_order?: number | null
+          gallery_urls?: string[] | null
+          id?: string | null
+          intro?: string | null
+          location?: string | null
+          materials?: string[] | null
+          neighborhood?: string | null
+          number?: string | null
+          og_image_url?: string | null
+          order_index?: number | null
+          photographer?: string | null
+          portfolio_tags?: string[] | null
+          program?: string | null
+          project_type?: string | null
+          published?: boolean | null
+          ready_gallery_urls?: string[] | null
+          ready_image_url?: string | null
+          ready_items?: string[] | null
+          result_text?: string | null
+          scope?: string[] | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string | null
+          solution?: string | null
+          sort_order?: number | null
+          status?: string | null
+          summary?: string | null
+          tag?: string | null
+          team?: string | null
+          testimonial?: string | null
+          testimonial_author?: string | null
+          title?: string | null
+          updated_at?: string | null
+          visible?: boolean | null
+          year?: string | null
+        }
+        Update: {
+          after_image_url?: string | null
+          area?: string | null
+          area_m2?: number | null
+          before_image_url?: string | null
+          before_text?: string | null
+          budget_range?: string | null
+          challenge?: string | null
+          content_updated_at?: string | null
+          cover_alt?: string | null
+          cover_blur_data_url?: string | null
+          cover_url?: string | null
+          cover_url_md?: string | null
+          cover_url_sm?: string | null
+          created_at?: string | null
+          duration?: string | null
+          em?: string | null
+          featured?: boolean | null
+          featured_order?: number | null
+          gallery_urls?: string[] | null
+          id?: string | null
+          intro?: string | null
+          location?: string | null
+          materials?: string[] | null
+          neighborhood?: string | null
+          number?: string | null
+          og_image_url?: string | null
+          order_index?: number | null
+          photographer?: string | null
+          portfolio_tags?: string[] | null
+          program?: string | null
+          project_type?: string | null
+          published?: boolean | null
+          ready_gallery_urls?: string[] | null
+          ready_image_url?: string | null
+          ready_items?: string[] | null
+          result_text?: string | null
+          scope?: string[] | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string | null
+          solution?: string | null
+          sort_order?: number | null
+          status?: string | null
+          summary?: string | null
+          tag?: string | null
+          team?: string | null
+          testimonial?: string | null
+          testimonial_author?: string | null
+          title?: string | null
           updated_at?: string | null
           visible?: boolean | null
           year?: string | null
