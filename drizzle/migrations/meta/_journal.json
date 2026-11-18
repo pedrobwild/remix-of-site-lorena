@@ -127,6 +127,13 @@
       "when": 1794884313332,
       "tag": "0017_analytics_functions_static_sql",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1794981275543,
+      "tag": "0018_analytics_contatos_e_funil",
+      "breakpoints": true
     }
   ]
 }

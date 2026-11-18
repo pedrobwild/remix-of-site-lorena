@@ -12,7 +12,9 @@ import {
   formatWindowLabel,
   fullPreviousWindow,
   invertDir,
+  lastWeekSameTimeWindow,
   localBucketGrid,
+  lowCaptureDays,
   formatAbsDiff,
   previousRange,
   rangeLengthMs,
@@ -455,6 +457,26 @@ describe("tabela por dia", () => {
     expect(rows[2].base).toBeNull();
   });
 
+  it("lagDays 7: cada dia compara com o mesmo dia da semana passada", () => {
+    const points = [15, 16, 17, 18, 19, 20, 21, 22, 23, 24].map((d) => point(d, d));
+    const rows = buildDayTable(points, {
+      from,
+      now,
+      lagDays: 7,
+      todayBase: { sessions: 5, visitors: 3, pageviews: 10, conversions: 0 },
+    });
+    expect(rows.map((r) => r.day)).toEqual(["2026-09-22", "2026-09-23", "2026-09-24"]);
+    expect(rows[0].base?.sessions).toBe(15); // 22/09 × 15/09
+    expect(rows[1].base?.sessions).toBe(16); // 23/09 × 16/09
+    expect(rows[2].base?.sessions).toBe(5); // hoje × mesmo dia até o mesmo horário
+  });
+
+  it("janela de base de hoje na comparação semanal: 7 dias atrás até o mesmo horário", () => {
+    const w = lastWeekSameTimeWindow(now);
+    expect(w.from).toEqual(new Date(2026, 8, 17, 0, 0, 0, 0));
+    expect(w.until).toEqual(new Date(2026, 8, 17, 15, 42, 10));
+  });
+
   it("período encerrado ('Ontem') não marca nada como parcial", () => {
     const yFrom = new Date(2026, 8, 23, 0, 0, 0, 0);
     const points = [point(22, 68), point(23, 62)];
@@ -463,5 +485,21 @@ describe("tabela por dia", () => {
     expect(rows[0].day).toBe("2026-09-23");
     expect(rows[0].partial).toBe(false);
     expect(rows[0].base?.sessions).toBe(68);
+  });
+});
+
+describe("lowCaptureDays — dias de coleta anormalmente baixa", () => {
+  const row = (day: string, sessions: number, partial = false) => ({ day, sessions, partial });
+  it("marca dia encerrado abaixo de 20% da mediana (06–07/11/2026: 2 e 0 sessões)", () => {
+    const rows = [
+      row("2026-11-03", 30), row("2026-11-04", 42), row("2026-11-05", 36),
+      row("2026-11-06", 2), row("2026-11-07", 0), row("2026-11-08", 32),
+      row("2026-11-09", 23), row("2026-11-10", 1, true),
+    ];
+    expect([...lowCaptureDays(rows)].sort()).toEqual(["2026-11-06", "2026-11-07"]);
+  });
+  it("não marca com volume baixo (mediana < 10) nem com poucos dias", () => {
+    expect(lowCaptureDays([row("a", 4), row("b", 0), row("c", 5), row("d", 6), row("e", 3)]).size).toBe(0);
+    expect(lowCaptureDays([row("a", 40), row("b", 0)]).size).toBe(0);
   });
 });

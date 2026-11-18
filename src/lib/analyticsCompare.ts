@@ -479,24 +479,29 @@ export type DayTableRow = LocalPoint & {
 
 /**
  * Monta as linhas da tabela por dia a partir da série diária. `points` deve
- * começar UM dia antes do período (lead-in), usado só como base do 1º dia. O
- * dia em curso usa `todayBase` (ontem até o mesmo horário) em vez do dia
- * anterior inteiro.
+ * começar `lagDays` dias antes do período (lead-in), usados só como base. O
+ * dia em curso usa `todayBase` (o dia de base até o mesmo horário) em vez do
+ * dia de base inteiro.
+ *
+ * `lagDays` (padrão 1): 1 = dia anterior; 7 = mesmo dia da semana passada —
+ * com 15–40 sessões por dia, a variação contra a véspera oscila ±100% só pelo
+ * dia da semana (auditoria do painel, 18/11/2026).
  */
 export function buildDayTable(
   points: readonly LocalPoint[],
-  opts: { from: Date; now: Date; todayBase?: Counts | null }
+  opts: { from: Date; now: Date; todayBase?: Counts | null; lagDays?: number }
 ): DayTableRow[] {
   const fromKey = fmtLocalDay(opts.from);
   const todayKey = fmtLocalDay(opts.now);
+  const lag = Math.max(1, Math.round(opts.lagDays ?? 1));
+  const byDay = new Map(points.map((p) => [fmtLocalDay(new Date(p.t)), p] as const));
   const out: DayTableRow[] = [];
-  for (let i = 0; i < points.length; i++) {
-    const p = points[i];
+  for (const p of points) {
     const day = fmtLocalDay(new Date(p.t));
     if (day < fromKey) continue; // lead-in: só serve de base
     if (day > todayKey) continue; // futuro: sem dados
     const partial = day === todayKey;
-    const prev = i > 0 ? points[i - 1] : null;
+    const prev = byDay.get(fmtLocalDay(addLocalDays(new Date(p.t), -lag))) ?? null;
     const base: Counts | null = partial
       ? (opts.todayBase ?? null)
       : prev
@@ -510,4 +515,26 @@ export function buildDayTable(
     out.push({ ...p, day, partial, base });
   }
   return out;
+}
+
+/** Mesmo dia da semana passada, das 00:00 até o mesmo horário de `now`. */
+export function lastWeekSameTimeWindow(now: Date = new Date()): Window {
+  return { from: startOfLocalDay(addLocalDays(now, -7)), until: addLocalDays(now, -7) };
+}
+
+/**
+ * Dias com registro anormalmente baixo — provável falha de coleta (backend
+ * fora do ar, script bloqueado), não queda de visitas. Ex.: 06–07/11/2026,
+ * com a Lovable Cloud pausada, o painel teve 2 e 0 sessões. Regra: dia
+ * encerrado com sessões abaixo de 20% da mediana do período, quando a
+ * mediana é de pelo menos 10 sessões por dia. Devolve as chaves "YYYY-MM-DD".
+ */
+export function lowCaptureDays(rows: readonly { day: string; sessions: number; partial: boolean }[]): Set<string> {
+  const closed = rows.filter((r) => !r.partial);
+  if (closed.length < 5) return new Set();
+  const sorted = closed.map((r) => r.sessions).sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  const median = sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+  if (median < 10) return new Set();
+  return new Set(closed.filter((r) => r.sessions < median * 0.2).map((r) => r.day));
 }

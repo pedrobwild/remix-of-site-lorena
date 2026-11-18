@@ -22,6 +22,19 @@
  * tabela compara cada dia com o anterior — o dia em curso, com ontem até o
  * mesmo horário.
  *
+ * Auditoria de 18/11/2026 (ver docs do projeto, "auditoria-admin-analytics"):
+ *   - sessões, visitantes e contatos vêm do tracker próprio, que só mede
+ *     quem ACEITA cookies (~3% das visitas em out–nov/2026); o card
+ *     "pedidos" lê a tabela `leads`, que conta todo mundo — a nota da faixa
+ *     diz isso;
+ *   - "contatos" = canais de contato por sessão (WhatsApp, telefone, e-mail,
+ *     formulário), sem repetição (view `analytics_sessions`, migration 0018);
+ *     "sessões com contato" = % de sessões com pelo menos um;
+ *   - o tooltip do Δ formata o "antes" como o valor do card (tempo, %, 2 casas);
+ *   - a tabela por dia compara com o dia anterior ou com o mesmo dia da
+ *     semana passada (seletor), e marca dias de coleta anormalmente baixa
+ *     (`lowCaptureDays`) — o dia seguinte a um desses fica sem Δ.
+ *
  * Granularidade pela duração (pickGrain): hora até 2 dias, dia até 90,
  * semana até 1 ano, mês acima. A tabela é por dia sempre que o gráfico é por
  * hora ou por dia; por semana/mês nos períodos longos.
@@ -43,6 +56,8 @@ import {
   formatWindowLabel,
   fullPreviousWindow,
   invertDir,
+  lastWeekSameTimeWindow,
+  lowCaptureDays,
   sumCounts,
   trend,
   truncLocal,
@@ -67,6 +82,7 @@ import {
 } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 import { devError } from "@/lib/devLog";
+import { fetchLeadCounts } from "@/lib/leadsInRange";
 import type { DateRange, Segment, SegmentDim } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -154,6 +170,8 @@ type KpiCard = {
   invert?: boolean;
   /** Contagem (não taxa): o Δ mostra também a diferença absoluta. */
   count?: boolean;
+  /** Formata o "antes" do tooltip como o valor do card (tempo, %, decimais). */
+  fmt?: (n: number) => string;
 };
 
 // ---------------------------------------------------------------------------
@@ -277,10 +295,13 @@ function Delta({
   prev,
   invert = false,
   showAbs = false,
+  fmt = fmtNum,
 }: {
   cur: number;
   prev: number | null;
   invert?: boolean;
+  /** Formato do "antes" e da diferença no tooltip (padrão: inteiro). */
+  fmt?: (n: number) => string;
   /** Mostra também a diferença absoluta: com volumes baixos o % sozinho engana (3 → 12 = +300%). */
   showAbs?: boolean;
 }) {
@@ -297,7 +318,11 @@ function Delta({
     <span
       className="aa-kpi__delta"
       data-dir={dir}
-      title={`antes: ${fmtNum(prev)} · diferença: ${formatAbsDiff(cur, prev, Number.isInteger(cur) && Number.isInteger(prev) ? 0 : 2)}`}
+      title={
+        fmt === fmtNum
+          ? `antes: ${fmtNum(prev)} · diferença: ${formatAbsDiff(cur, prev, Number.isInteger(cur) && Number.isInteger(prev) ? 0 : 2)}`
+          : `antes: ${fmt(prev)} · agora: ${fmt(cur)}`
+      }
     >
       {t.dir === "up" ? "↑" : t.dir === "down" ? "↓" : "·"} {t.label}
       {showAbs && t.pct !== null && ` · ${formatAbsDiff(cur, prev)}`}
@@ -329,6 +354,11 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
   const [meta, setMeta] = useState<Meta | null>(null);
   const [metric, setMetric] = useState<Metric>("sessions");
   const [refreshKey, setRefreshKey] = useState(0);
+  /** Base do Δ da tabela por dia: 1 = dia anterior, 7 = mesmo dia da semana passada. */
+  const [dayLag, setDayLag] = useState<1 | 7>(1);
+  /** Pedidos (tabela `leads`, todos os visitantes); `null` = leitura falhou. */
+  const [leadsNow, setLeadsNow] = useState<number | null>(null);
+  const [leadsPrev, setLeadsPrev] = useState<number | null>(null);
   const grain = useMemo<LocalGrain>(() => pickGrain(range.from, range.to), [range]);
   /** A semana do rótulo não passa do período: a última termina no dia final escolhido. */
   const labelBounds = useMemo(
@@ -350,14 +380,15 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
     // longos, por semana/mês. No modo dia a série da tabela começa 1 dia
     // antes: base da variação do 1º dia.
     const tableGrain: LocalGrain = grain === "hour" ? "day" : grain;
-    const tableFrom = tableGrain === "day" ? addLocalDays(range.from, -1) : range.from;
+    const lag = tableGrain === "day" ? dayLag : 1;
+    const tableFrom = tableGrain === "day" ? addLocalDays(range.from, -lag) : range.from;
     // Mesma granularidade no gráfico e na tabela: uma só consulta serve aos dois.
     const chartNeedsOwnSeries = grain !== tableGrain;
     const includesToday =
       tableGrain === "day" && cur.partial && range.from.getTime() <= now.getTime();
     // Base do dia em curso: ontem até o mesmo horário. Em "Hoje" é exatamente
     // a janela do período anterior — reaproveita a consulta dos KPIs.
-    const yesterdayWin = includesToday ? yesterdaySameTimeWindow(now) : null;
+    const yesterdayWin = includesToday ? (lag === 7 ? lastWeekSameTimeWindow(now) : yesterdaySameTimeWindow(now)) : null;
     const todayBaseIsPrev =
       !!yesterdayWin &&
       !!prevAligned &&
@@ -429,6 +460,12 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
             ...segArgs,
           })
         : Promise.resolve(null),
+      // Pedidos (tabela `leads`): não dependem de cookies nem de segmentos.
+      // Falha na leitura não derruba a aba — o card mostra "—".
+      fetchLeadCounts(cur.from, cur.until).catch((err: unknown) => (devError("[analytics overview] leads", err), null)),
+      prevAligned
+        ? fetchLeadCounts(prevAligned.from, prevAligned.until).catch(() => null)
+        : Promise.resolve(null),
     ];
 
     Promise.all(calls)
@@ -477,6 +514,10 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
 
         setKpis(k);
         setPrevKpis(pk);
+        const leadsCur = results[9] as { total: number } | null;
+        const leadsBase = results[10] as { total: number } | null;
+        setLeadsNow(leadsCur ? leadsCur.total : null);
+        setLeadsPrev(leadsBase ? leadsBase.total : null);
         setConsent(curConsent);
         setPrevConsent(prevConsentTotals);
         setConsentSpark(spark);
@@ -498,7 +539,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
           const days = fillLocalSeries(tableRowsRaw, tableFrom, cur.until, "day");
           const todayKey = fmtLocalDay(now);
           const yesterdayKey = fmtLocalDay(addLocalDays(now, -1));
-          nextRows = buildDayTable(days, { from: range.from, now, todayBase }).map((r) => ({
+          nextRows = buildDayTable(days, { from: range.from, now, todayBase, lagDays: lag }).map((r) => ({
             key: r.day,
             label:
               r.day === todayKey
@@ -570,7 +611,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [range, segments, grain, comparePrev, refreshKey, labelBounds]);
+  }, [range, segments, grain, comparePrev, refreshKey, labelBounds, dayLag]);
 
   // ----- render -----
   if (loading) {
@@ -605,16 +646,31 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
 
   const rate = consentRate(consent);
   const prevRate = prevConsent ? consentRate(prevConsent) : null;
+  const fmtPv = (n: number) => n.toFixed(2);
   const kpiList: KpiCard[] = [
     { label: "sessões",            value: fmtNum(kpis.sessions),           cur: kpis.sessions,           prev: prevKpis.sessions,           spark: kpiSpark, sparkKey: "sessions", count: true },
     { label: "visitantes únicos",  value: fmtNum(kpis.unique_visitors),    cur: kpis.unique_visitors,    prev: prevKpis.unique_visitors,    spark: kpiSpark, sparkKey: "visitors", count: true },
     { label: "pageviews",          value: fmtNum(kpis.pageviews),          cur: kpis.pageviews,          prev: prevKpis.pageviews,          spark: kpiSpark, sparkKey: "pageviews", count: true },
-    { label: "pv / sessão",        value: kpis.pages_per_session.toFixed(2), cur: kpis.pages_per_session, prev: prevKpis.pages_per_session, spark: kpiSpark, sparkKey: "pageviews" },
-    { label: "tempo engajado",     value: fmtMs(kpis.avg_engagement_ms),   cur: kpis.avg_engagement_ms,  prev: prevKpis.avg_engagement_ms,  spark: kpiSpark, sparkKey: "sessions" },
+    { label: "pv / sessão",        value: fmtPv(kpis.pages_per_session),   cur: kpis.pages_per_session,  prev: prevKpis.pages_per_session,  spark: kpiSpark, sparkKey: "pageviews", fmt: fmtPv },
+    // Média só das sessões com tempo de engajamento registrado (> 0): quem sai
+    // antes do 1º envio não entra — o rótulo diz isso.
+    { label: "tempo engajado",     value: fmtMs(kpis.avg_engagement_ms),   hint: "média das sessões com interação", cur: kpis.avg_engagement_ms,  prev: prevKpis.avg_engagement_ms,  spark: kpiSpark, sparkKey: "sessions", fmt: fmtMs },
     // bounce rate: cair é bom — inverte a cor do delta
-    { label: "bounce rate",        value: fmtPct(kpis.bounce_rate),        cur: kpis.bounce_rate,        prev: prevKpis.bounce_rate,        spark: kpiSpark, sparkKey: "sessions", invert: true },
-    { label: "conversões",         value: fmtNum(kpis.conversions),        cur: kpis.conversions,        prev: prevKpis.conversions,        spark: kpiSpark, sparkKey: "conversions", count: true },
-    { label: "taxa de conversão",  value: fmtPct(kpis.conversion_rate),    cur: kpis.conversion_rate,    prev: prevKpis.conversion_rate,    spark: kpiSpark, sparkKey: "sessions" },
+    { label: "bounce rate",        value: fmtPct(kpis.bounce_rate),        cur: kpis.bounce_rate,        prev: prevKpis.bounce_rate,        spark: kpiSpark, sparkKey: "sessions", invert: true, fmt: fmtPct },
+    // Pedidos: tabela `leads` (todos os visitantes, sem segmento, sem testes).
+    {
+      label: "pedidos (formulários)",
+      value: leadsNow === null ? "—" : fmtNum(leadsNow),
+      hint: "todos os visitantes · sem segmento",
+      cur: leadsNow ?? 0,
+      prev: leadsNow === null ? null : leadsPrev,
+      spark: [],
+      sparkKey: "sessions",
+      count: true,
+    },
+    // Contatos: canais por sessão (WhatsApp, telefone, e-mail, formulário), sem repetição.
+    { label: "contatos",           value: fmtNum(kpis.conversions),        hint: "WhatsApp, telefone, e-mail ou formulário · por sessão", cur: kpis.conversions,        prev: prevKpis.conversions,        spark: kpiSpark, sparkKey: "conversions", count: true },
+    { label: "sessões com contato", value: fmtPct(kpis.conversion_rate),   cur: kpis.conversion_rate,    prev: prevKpis.conversion_rate,    spark: kpiSpark, sparkKey: "sessions", fmt: fmtPct },
     // aceite de cookies: decisões do banner (aceites ÷ decisões), sem segmento
     {
       label: "aceite de cookies",
@@ -624,13 +680,30 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
       prev: prevRate,
       spark: consentSpark,
       sparkKey: "accepts",
+      fmt: fmtPct,
     },
   ];
 
   const tableGrain = meta?.tableGrain ?? "day";
   const tableTitle = tableGrain === "day" ? "por dia" : tableGrain === "week" ? "por semana" : "por mês";
   const unitLabel = tableGrain === "day" ? "dia" : tableGrain === "week" ? "semana" : "mês";
-  const tableRows = [...rows].reverse(); // mais recente primeiro
+  // Dias de coleta anormalmente baixa (provável falha, não queda de visitas):
+  // marcados na tabela, e o dia seguinte a um deles fica sem Δ (a base é falsa).
+  const lowDays = tableGrain === "day" ? lowCaptureDays(rows.map((r) => ({ day: r.key, sessions: r.sessions, partial: r.partial }))) : new Set<string>();
+  const baseKeyOf = (key: string): string | null => {
+    const d = parseLocalDay(key);
+    return d ? fmtLocalDay(addLocalDays(d, -dayLag)) : null;
+  };
+  const tableRows = [...rows]
+    .map((r) => {
+      const baseKey = tableGrain === "day" ? baseKeyOf(r.key) : null;
+      return baseKey && lowDays.has(baseKey) ? { ...r, base: null } : r;
+    })
+    .reverse(); // mais recente primeiro
+  const lowDayLabels = rows.filter((r) => lowDays.has(r.key)).map((r) => {
+    const d = parseLocalDay(r.key);
+    return d ? d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }) : r.key;
+  });
   const prevKey: Record<Metric, keyof ChartPoint> = {
     sessions: "prevSessions",
     visitors: "prevVisitors",
@@ -664,7 +737,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
                 {k.hint}
               </span>
             )}
-            {comparePrev && <Delta cur={k.cur} prev={k.prev} invert={k.invert} showAbs={k.count} />}
+            {comparePrev && <Delta cur={k.cur} prev={k.prev} invert={k.invert} showAbs={k.count} fmt={k.fmt} />}
             <div className="aa-kpi__spark">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={k.spark}>
@@ -714,6 +787,10 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
           )}
           {segments.length > 0 && <span>· segmentos aplicados aos indicadores, ao gráfico e à tabela</span>}
           <span>· aceite de cookies = aceites ÷ (aceites + recusas), sem segmento; quem sai sem decidir não conta</span>
+          <span>
+            · sessões, visitantes, pageviews e contatos contam só quem aceitou cookies (uma fração das visitas);
+            pedidos contam todos os formulários enviados
+          </span>
           <button
             type="button"
             className="admin-analytics__btn"
@@ -831,13 +908,45 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
         <div className="aa-card__head">
           <h3 className="aa-card__title" style={{ whiteSpace: "nowrap" }}>{tableTitle}</h3>
           <span className="aa-faint aa-mono" style={{ fontSize: "var(--aa-text-xs)", textAlign: "right" }}>
-            Δ vs. {unitLabel} anterior
-            {tableGrain === "day"
-              ? " · hoje vs. ontem até o mesmo horário"
-              : ` · ${unitLabel} em curso vs. ${unitLabel} anterior até o mesmo ponto`}
+            {tableGrain === "day" && dayLag === 7
+              ? "Δ vs. mesmo dia da semana passada · hoje vs. o mesmo dia até o mesmo horário"
+              : tableGrain === "day"
+                ? "Δ vs. dia anterior · hoje vs. ontem até o mesmo horário"
+                : `Δ vs. ${unitLabel} anterior · ${unitLabel} em curso vs. ${unitLabel} anterior até o mesmo ponto`}
             {" · cookies = aceites / recusas / taxa de aceite"}
           </span>
+          {tableGrain === "day" && (
+            <div className="aa-row" role="group" aria-label="base da variação por dia" style={{ gap: 4 }}>
+              {([
+                [1, "dia anterior"],
+                [7, "semana passada"],
+              ] as const).map(([lag, label]) => (
+                <button
+                  key={lag}
+                  type="button"
+                  className="admin-analytics__btn"
+                  data-variant="ghost"
+                  aria-pressed={dayLag === lag}
+                  onClick={() => setDayLag(lag)}
+                  style={{ fontSize: "var(--aa-text-xs)", padding: "3px 8px" }}
+                >
+                  Δ vs. {label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
+        {lowDayLabels.length > 0 && (
+          <div
+            className="aa-mono"
+            role="note"
+            data-testid="low-capture-note"
+            style={{ fontSize: "var(--aa-text-xs)", color: "var(--aa-accent-goal)", padding: "0 0 8px" }}
+          >
+            ⚠ coleta anormalmente baixa em {lowDayLabels.join(", ")}: provável falha de registro (ex.: backend fora do ar),
+            não queda de visitas. O dia seguinte fica sem Δ.
+          </div>
+        )}
         {tableRows.length === 0 ? (
           <div className="aa-empty">
             <span className="aa-empty__icon">∅</span>
@@ -855,7 +964,7 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
                   <th className="num">Δ</th>
                   <th className="num">pageviews</th>
                   <th className="num">Δ</th>
-                  <th className="num">conversões</th>
+                  <th className="num">contatos</th>
                   <th className="num">Δ</th>
                   <th className="num">pv / sessão</th>
                   <th className="num">aceites</th>
@@ -865,9 +974,14 @@ export default function OverviewTab({ range, segments, comparePrev }: Props) {
               </thead>
               <tbody>
                 {tableRows.map((r) => (
-                  <tr key={r.key} data-partial={r.partial || undefined}>
+                  <tr key={r.key} data-partial={r.partial || undefined} data-low-capture={lowDays.has(r.key) || undefined}>
                     <td style={{ whiteSpace: "nowrap" }}>
                       <span style={{ fontWeight: r.partial ? "var(--aa-fw-semibold)" : undefined }}>{r.label}</span>
+                      {lowDays.has(r.key) && (
+                        <span className="aa-mono" title="coleta anormalmente baixa: provável falha de registro" style={{ marginLeft: 4 }}>
+                          ⚠<span className="sr-only"> coleta anormalmente baixa</span>
+                        </span>
+                      )}
                       {r.partial && meta && (
                         <>
                           {" "}

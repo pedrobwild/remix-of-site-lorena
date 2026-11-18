@@ -14,7 +14,9 @@
  *   (WhatsApp → click_whatsapp, tel: → click_phone, mailto: → click_contact,
  *   resto → outbound_click). É a fonte ÚNICA desses eventos (trackCta.ts não
  *   os repete).
- * - Privacidade: só com aceite do banner; respeita DNT; ignora rotas /admin.
+ * - Privacidade: só com aceite do banner; respeita DNT; ignora rotas /admin
+ *   e aparelhos do time (`internalTraffic.ts`: quem abre o /admin ou usa
+ *   `?bw_interno=1` fica fora da medição).
  *   Dentro de iframe (auditoria de SEO do admin) `isConsentAccepted()` é
  *   falso, então nada sai; a auditoria de consentimento checa `isFramed()`.
  *   Nada (nem ids no storage) é gravado sem aceite; recusar apaga o que existir.
@@ -26,6 +28,7 @@ import { PRIVACY_VISIT_KEY, privacyVisitState } from "@/lib/privacyMeasurement";
 import { interestNeighborhood, VISIT_PATHS } from "@/lib/neighborhoodVisits";
 import { BUTTON_CLICK_SELECTOR, buttonClickDetails, claimButtonClick } from "@/lib/buttonClicks";
 import { trackEvent } from "@/lib/ga4";
+import { isInternalTraffic, setInternalTraffic, syncInternalTrafficFromSearch } from "@/lib/internalTraffic";
 import { telemetryUrl, telemetryValue, telemetryText } from "@/../supabase/functions/_shared/telemetry-privacy";
 
 type EventType =
@@ -317,9 +320,18 @@ function isAdminPath(path: string | null | undefined): boolean {
   return !!path && (path === "/admin" || path.startsWith("/admin/"));
 }
 
+/**
+ * Contexto que não deve ser medido: rota /admin ou aparelho marcado como do
+ * time. Abrir o /admin marca o aparelho (`internalTraffic.ts`), então o time
+ * navegando depois no site público também fica fora.
+ */
 function isAdminContext(): boolean {
   try {
-    return isAdminPath(window.location.pathname);
+    if (isAdminPath(window.location.pathname)) {
+      setInternalTraffic(true);
+      return true;
+    }
+    return isInternalTraffic();
   } catch {
     return false;
   }
@@ -391,6 +403,7 @@ function engagementFlush(useBeacon: boolean) {
       engagementMs >= 1000 &&
       currentPageForEngagement &&
       !isAdminPath(currentPageForEngagement) &&
+      !isInternalTraffic() &&
       !isDntEnabled() &&
       isConsentAccepted()
     ) {
@@ -576,7 +589,9 @@ export function logConsentAudit(
   source: string = "banner"
 ): void {
   try {
-    if (isAdminContext() || isFramed()) return;
+    // Só a rota /admin: aparelho do time continua registrando a decisão do
+    // banner (prova LGPD), mesmo fora da medição.
+    if (isAdminPath(window.location.pathname) || isFramed()) return;
     const row = {
       event_type: (action === "accepted" ? "consent_accept" : "consent_decline") satisfies EventType,
       path: window.location.pathname || "/",
@@ -834,6 +849,9 @@ export function initAnalytics(): () => void {
   if (typeof window === "undefined") return () => undefined;
   if (initialized) return () => undefined;
   initialized = true;
+  // `?bw_interno=1|0` marca ou desmarca o aparelho do time antes de qualquer
+  // evento (a marca não é tracking: não sai do aparelho).
+  syncInternalTrafficFromSearch(window.location.search);
 
   // Gate LGPD: se o usuário já aceitou, anexa listeners agora; senão,
   // anexa só quando o consentimento mudar para "accepted". Recusa ou
