@@ -65,6 +65,6 @@ describe("migration 0018 — contatos e funil", () => {
   });
 
   it("está registrada no journal do drizzle", () => {
-    expect(JOURNAL.entries.at(-1)).toMatchObject({ idx: 18, tag: "0018_analytics_contatos_e_funil" });
+    expect(JOURNAL.entries.find((entry) => entry.idx === 18)).toMatchObject({ idx: 18, tag: "0018_analytics_contatos_e_funil" });
   });
 });

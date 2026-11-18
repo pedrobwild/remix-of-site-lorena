@@ -134,6 +134,13 @@
       "when": 1794981275543,
       "tag": "0018_analytics_contatos_e_funil",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1794991068785,
+      "tag": "0019_analytics_timeseries_consulta_fixa",
+      "breakpoints": true
     }
   ]
 }
