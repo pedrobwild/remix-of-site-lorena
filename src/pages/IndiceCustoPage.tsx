@@ -401,7 +401,7 @@ export default function IndiceCustoPage() {
               </li>
             </ul>
             <p className="bwa-servico-text" style={{ marginTop: 24 }}>
-              O estudo anterior, de contratos fechados, com gráficos, exemplos por empreendimento e o efeito no retorno
+              A análise desta edição, com a regra de bolso, exemplos por empreendimento, prazos e o efeito no retorno
               do investimento, está em{" "}
               <a href={PILAR_CUSTO}>quanto custa reformar um apartamento ou studio de até 45 m²</a>. Para o seu imóvel,
               o <a href="/escopo">simulador de escopo</a> dá uma primeira estimativa.
