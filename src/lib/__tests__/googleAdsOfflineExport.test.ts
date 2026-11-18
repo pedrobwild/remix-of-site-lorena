@@ -13,8 +13,15 @@ import {
   pickPipelineTimes,
   type GoogleAdsExportConsent,
   DATASETS,
+  GOOGLE_ADS_DISQUALIFIED_CONVERSION,
+  GOOGLE_ADS_NEGOTIATION_CONVERSION,
+  GOOGLE_ADS_NEGOTIATION_VALUE,
   GOOGLE_ADS_QUALIFIED_CONVERSION,
+  GOOGLE_ADS_QUOTE_SENT_CONVERSION,
+  GOOGLE_ADS_QUOTE_SENT_VALUE,
   GOOGLE_ADS_WON_CONVERSION,
+  crmReachedNegotiation,
+  crmReachedQuoteSent,
   googleAdsConversionTime,
   keyAllowsDataset,
   normalizeEmailForHash,
@@ -66,7 +73,7 @@ describe("google_ads_offline — autorização publicitária", () => {
   });
   it("flag verdadeiro sem registros de aceite exporta qualificação e contrato", async () => {
     const rows = await buildGoogleAdsOfflineRows({ leads: [lead({ crm_won: true })], qualifiedAt: new Map(), now: NOW });
-    expect(rows.map((row) => row["Conversion Name"])).toEqual([GOOGLE_ADS_QUALIFIED_CONVERSION, GOOGLE_ADS_WON_CONVERSION]);
+    expect(rows.map((row) => row["Conversion Name"])).toEqual([GOOGLE_ADS_QUALIFIED_CONVERSION, GOOGLE_ADS_QUOTE_SENT_CONVERSION, GOOGLE_ADS_NEGOTIATION_CONVERSION, GOOGLE_ADS_WON_CONVERSION]);
   });
   it("recusa no aviso não muda o aceite explícito do formulário no offline", async () => {
     const evidence = consent();
@@ -116,7 +123,8 @@ describe("google_ads_offline — quem entra", () => {
 
   it.each(["lead", "validacao_briefing", "entregue", "enviado", "negociacao"])("etapa máxima %s conta como chegada a Lead", async (crm_max_stage_key) => {
     const rows = await build([lead({ crm_max_stage_key })]);
-    expect(rows.map((r) => r["Conversion Name"])).toEqual([GOOGLE_ADS_QUALIFIED_CONVERSION]);
+    expect(rows.map((r) => r["Conversion Name"])).toContain(GOOGLE_ADS_QUALIFIED_CONVERSION);
+    expect(rows.map((r) => r["Conversion Name"])).not.toContain(GOOGLE_ADS_DISQUALIFIED_CONVERSION);
   });
 
   it("perdido no CRM antes de Lead vai como \"Lead desqualificado\", na hora da perda", async () => {
@@ -185,7 +193,7 @@ describe("google_ads_offline — a marcação do painel do site não decide (Ped
 
   it("marcado não qualificado no site, mas chegou a Lead no CRM: sai como qualificado", async () => {
     const rows = await build([lead({ status: "descartado", manual_qualification: "descartado", crm_max_stage_key: "enviado" })]);
-    expect(rows.map((r) => r["Conversion Name"])).toEqual([GOOGLE_ADS_QUALIFIED_CONVERSION]);
+    expect(rows.map((r) => r["Conversion Name"])).toEqual([GOOGLE_ADS_QUALIFIED_CONVERSION, GOOGLE_ADS_QUOTE_SENT_CONVERSION]);
   });
 
   it("sem marcação nenhuma, o funil basta: status novo que chegou a Lead sai; perdido antes de Lead sai como desqualificado", async () => {
@@ -215,7 +223,7 @@ describe("google_ads_offline — contrato e identificadores", () => {
     const moradia = await build([lead({ objetivo: "Moradia", status: "contatado", crm_won: true, crm_last_change_at: daysAgo(1) })]);
     expect(moradia.map((r) => r["Conversion Name"])).toEqual([GOOGLE_ADS_WON_CONVERSION]);
     const ambos = await build([lead({ crm_won: true, crm_last_change_at: daysAgo(1) })]);
-    expect(ambos.map((r) => r["Conversion Name"])).toEqual([GOOGLE_ADS_QUALIFIED_CONVERSION, GOOGLE_ADS_WON_CONVERSION]);
+    expect(ambos.map((r) => r["Conversion Name"])).toEqual([GOOGLE_ADS_QUALIFIED_CONVERSION, GOOGLE_ADS_QUOTE_SENT_CONVERSION, GOOGLE_ADS_NEGOTIATION_CONVERSION, GOOGLE_ADS_WON_CONVERSION]);
   });
 
   it("parceria comercial e lead sem gclid, e-mail ou telefone ficam fora", async () => {
@@ -398,5 +406,92 @@ describe("Contrato assinado com valor real do CRM", () => {
     const rows = await buildGoogleAdsOfflineRows({ leads: [won], qualifiedAt: new Map(), now: NOW, consentByLead: consentByLead([won]),
       contracts: new Map([["l1", [{ total: null, closed_at: null }]]]) });
     expect(rows[0]["Conversion Value"]).toBeNull();
+  });
+});
+
+describe("Conversões de etapa: orçamento enviado e negociação (Pedro, 18/11/2026)", () => {
+  const names = (rows: Record<string, unknown>[]) => rows.map((r) => r["Conversion Name"]);
+  const rowOf = (rows: Record<string, unknown>[], name: string) => rows.find((r) => r["Conversion Name"] === name);
+
+  it("nomes e valores exatos das ações criadas no Google Ads", () => {
+    expect(GOOGLE_ADS_QUOTE_SENT_CONVERSION).toBe("Orçamento enviado investidor");
+    expect(GOOGLE_ADS_QUOTE_SENT_VALUE).toBe(20_000);
+    expect(GOOGLE_ADS_NEGOTIATION_CONVERSION).toBe("Negociação investidor");
+    expect(GOOGLE_ADS_NEGOTIATION_VALUE).toBe(40_000);
+  });
+
+  it.each([
+    ["lead", false, false],
+    ["entregue", false, false],
+    ["em_revisao", false, false],
+    ["enviado", true, false],
+    ["negociacao", true, true],
+    ["minuta", true, true],
+    ["enviado_assinatura", true, true],
+    ["fechado", true, true],
+    ["ENVIADO ", true, false],
+  ])("etapa máxima %s → orçamento %s, negociação %s", (max, quote, nego) => {
+    expect(crmReachedQuoteSent(lead({ crm_max_stage_key: max }))).toBe(quote);
+    expect(crmReachedNegotiation(lead({ crm_max_stage_key: max }))).toBe(nego);
+  });
+
+  it("contrato ganho implica orçamento e negociação mesmo sem etapa máxima registrada", async () => {
+    const won = lead({ crm_won: true, crm_max_stage_key: null, crm_last_change_at: daysAgo(1) });
+    expect(crmReachedQuoteSent(won)).toBe(true);
+    expect(crmReachedNegotiation(won)).toBe(true);
+    const rows = await build([won]);
+    expect(names(rows)).toEqual(expect.arrayContaining([GOOGLE_ADS_QUOTE_SENT_CONVERSION, GOOGLE_ADS_NEGOTIATION_CONVERSION, GOOGLE_ADS_WON_CONVERSION]));
+  });
+
+  it("orçamento enviado sai com valor R$ 20.000 e negociação com R$ 40.000, além da qualificada", async () => {
+    const rows = await build([lead({ crm_max_stage_key: "negociacao", crm_last_change_at: daysAgo(1) })]);
+    expect(names(rows)).toEqual([GOOGLE_ADS_QUALIFIED_CONVERSION, GOOGLE_ADS_QUOTE_SENT_CONVERSION, GOOGLE_ADS_NEGOTIATION_CONVERSION]);
+    expect(rowOf(rows, GOOGLE_ADS_QUOTE_SENT_CONVERSION)?.["Conversion Value"]).toBe(20_000);
+    expect(rowOf(rows, GOOGLE_ADS_NEGOTIATION_CONVERSION)?.["Conversion Value"]).toBe(40_000);
+  });
+
+  it("só orçamento enviado quando ainda não há negociação", async () => {
+    const rows = await build([lead({ crm_max_stage_key: "enviado", crm_last_change_at: daysAgo(1) })]);
+    expect(names(rows)).toEqual([GOOGLE_ADS_QUALIFIED_CONVERSION, GOOGLE_ADS_QUOTE_SENT_CONVERSION]);
+  });
+
+  it("moradia em negociação não gera as conversões de etapa", async () => {
+    const rows = await build([lead({ objetivo: "Moradia", crm_max_stage_key: "negociacao", crm_last_change_at: daysAgo(1) })]);
+    expect(rows).toEqual([]);
+  });
+
+  it("hora pelo histórico: primeira chegada a cada etapa; sem histórico, crm_last_change_at", async () => {
+    const reached = new Map([["l1", "2026-10-20T13:00:00.000Z"]]);
+    const quoteSentAt = new Map([["l1", "2026-10-25T14:00:00.000Z"]]);
+    const negotiationAt = new Map([["l1", "2026-10-28T15:00:00.000Z"]]);
+    const row = lead({ crm_max_stage_key: "negociacao", crm_last_change_at: daysAgo(1) });
+    const withHistory = await buildGoogleAdsOfflineRows({ leads: [row], qualifiedAt: reached, quoteSentAt, negotiationAt, now: NOW });
+    expect(rowOf(withHistory, GOOGLE_ADS_QUOTE_SENT_CONVERSION)?.["Conversion Time"]).toBe(googleAdsConversionTime("2026-10-25T14:00:00.000Z"));
+    expect(rowOf(withHistory, GOOGLE_ADS_NEGOTIATION_CONVERSION)?.["Conversion Time"]).toBe(googleAdsConversionTime("2026-10-28T15:00:00.000Z"));
+    const noHistory = await buildGoogleAdsOfflineRows({ leads: [row], qualifiedAt: reached, now: NOW });
+    expect(rowOf(noHistory, GOOGLE_ADS_QUOTE_SENT_CONVERSION)?.["Conversion Time"]).toBe(googleAdsConversionTime(daysAgo(1)));
+    expect(rowOf(noHistory, GOOGLE_ADS_NEGOTIATION_CONVERSION)?.["Conversion Time"]).toBe(googleAdsConversionTime(daysAgo(1)));
+  });
+
+  it("pickPipelineTimes: pulou direto para Negociação → orçamento e negociação na mesma hora", () => {
+    const t = pickPipelineTimes([
+      { lead_id: "l1", created_at: "2026-10-03T10:00:00Z", note: "CRM: Qualificação → Lead" },
+      { lead_id: "l1", created_at: "2026-10-08T10:00:00Z", note: "CRM: Lead → Negociação" },
+      { lead_id: "l1", created_at: "2026-10-09T10:00:00Z", note: "CRM: Negociação → Enviado para o Cliente" },
+      { lead_id: "l2", created_at: "2026-10-05T10:00:00Z", note: "CRM: Entregue → Enviado para o Cliente" },
+      { lead_id: "l2", created_at: "2026-10-07T10:00:00Z", note: "CRM: Enviado para o Cliente → Minuta Solicitada" },
+    ]);
+    expect(t.quoteSentAt.get("l1")).toBe("2026-10-08T10:00:00Z");
+    expect(t.negotiationAt.get("l1")).toBe("2026-10-08T10:00:00Z");
+    expect(t.quoteSentAt.get("l2")).toBe("2026-10-05T10:00:00Z");
+    expect(t.negotiationAt.get("l2")).toBe("2026-10-07T10:00:00Z");
+  });
+
+  it("uma conversão de etapa por pessoa (a mais antiga), como a qualificada", async () => {
+    const a = lead({ id: "a", crm_max_stage_key: "enviado", crm_last_change_at: daysAgo(3) });
+    const b = lead({ id: "b", created_at: daysAgo(5), crm_max_stage_key: "enviado", crm_last_change_at: daysAgo(1) });
+    const rows = await build([a, b]);
+    expect(rows.filter((r) => r["Conversion Name"] === GOOGLE_ADS_QUOTE_SENT_CONVERSION)).toHaveLength(1);
+    expect(rowOf(rows, GOOGLE_ADS_QUOTE_SENT_CONVERSION)?.["Conversion Time"]).toBe(googleAdsConversionTime(daysAgo(3)));
   });
 });

@@ -438,6 +438,11 @@ export function toExportRecord(dataset: ExportDataset, row: ExportRecord): Expor
 //     Futuramente) sem nunca ter chegado a Lead, com a perda DEPOIS da chegada
 //     do lead ao site (negócio antigo herdado não conta). Hora = a perda no
 //     histórico (sem ela, crm_last_change_at; sem hora conhecida, não sai).
+//   - "Orçamento enviado investidor" (R$ 20.000) e "Negociação investidor"
+//     (R$ 40.000): secundárias, só investidor, quando o negócio chega a
+//     "Enviado para o Cliente" e a "Negociação" ou depois (contrato ganho
+//     implica as duas). Hora = 1ª chegada no histórico (sem ela,
+//     crm_last_change_at; sem as duas, updated_at). Pedro, 18/11/2026.
 //   - "Contrato assinado": crm_won = true, qualquer objetivo. Hora =
 //     crm_last_change_at (sem ela, updated_at). Valor e data reais vêm do CRM.
 // MQL, Qualificação e lead sem negócio no CRM não geram nada: o sinal só sai
@@ -452,8 +457,22 @@ export const GOOGLE_ADS_QUALIFIED_VALUE = 10_000;
 export const GOOGLE_ADS_WON_CONVERSION = "Contrato assinado";
 /** Secundária (fora dos lances, criada em 25/10/2026): o Google vê quem não serve sem passar a buscar mais desses. */
 export const GOOGLE_ADS_DISQUALIFIED_CONVERSION = "Lead desqualificado";
+/**
+ * Conversões de etapa (Pedro, 18/11/2026): secundárias, só investidor. Saem
+ * quando o negócio chega a "Enviado para o Cliente" e a "Negociação" (ou
+ * qualquer etapa posterior). Valores = peso de lance, não receita.
+ */
+export const GOOGLE_ADS_QUOTE_SENT_CONVERSION = "Orçamento enviado investidor";
+export const GOOGLE_ADS_QUOTE_SENT_VALUE = 20_000;
+export const GOOGLE_ADS_NEGOTIATION_CONVERSION = "Negociação investidor";
+export const GOOGLE_ADS_NEGOTIATION_VALUE = 40_000;
 /** Só estas saem uma vez por pessoa (a mais antiga). */
-export const GOOGLE_ADS_DEDUP_CONVERSIONS: readonly string[] = [GOOGLE_ADS_QUALIFIED_CONVERSION, GOOGLE_ADS_DISQUALIFIED_CONVERSION];
+export const GOOGLE_ADS_DEDUP_CONVERSIONS: readonly string[] = [
+  GOOGLE_ADS_QUALIFIED_CONVERSION,
+  GOOGLE_ADS_DISQUALIFIED_CONVERSION,
+  GOOGLE_ADS_QUOTE_SENT_CONVERSION,
+  GOOGLE_ADS_NEGOTIATION_CONVERSION,
+];
 
 /** Nomes das etapas do Engine ANTES de Lead. */
 export const ENGINE_PRE_LEAD_STAGES: readonly string[] = ["MQL", "Qualificação"];
@@ -463,6 +482,14 @@ export const ENGINE_TERMINAL_STAGES: readonly string[] = ["Perdido", "Aquecer Fu
 export const ENGINE_PRE_LEAD_OR_TERMINAL_STAGES: readonly string[] = [...ENGINE_PRE_LEAD_STAGES, ...ENGINE_TERMINAL_STAGES];
 /** Chaves (`crm_max_stage_key`) das etapas ANTES de Lead. Etapa nova antes de Lead no CRM entra aqui e em ENGINE_PRE_LEAD_STAGES. */
 export const CRM_PRE_LEAD_STAGE_KEYS: readonly string[] = ["mql", "qualificacao"];
+/** Chaves das etapas a partir de "Enviado para o Cliente" (orçamento enviado). Etapa nova depois dela no CRM entra aqui e em ENGINE_QUOTE_SENT_STAGES. */
+export const CRM_QUOTE_SENT_STAGE_KEYS: readonly string[] = ["enviado", "negociacao", "minuta", "enviado_assinatura", "fechado"];
+/** Chaves das etapas a partir de "Negociação". */
+export const CRM_NEGOTIATION_STAGE_KEYS: readonly string[] = ["negociacao", "minuta", "enviado_assinatura", "fechado"];
+/** Nomes das etapas do Engine a partir de "Enviado para o Cliente" (mesma ordem das chaves). */
+export const ENGINE_QUOTE_SENT_STAGES: readonly string[] = ["Enviado para o Cliente", "Negociação", "Minuta Solicitada", "Enviado para Assinatura", "Contrato Fechado"];
+/** Nomes das etapas do Engine a partir de "Negociação". */
+export const ENGINE_NEGOTIATION_STAGES: readonly string[] = ["Negociação", "Minuta Solicitada", "Enviado para Assinatura", "Contrato Fechado"];
 
 /** Destino de uma nota do Engine ("CRM: A → B" / "CRM: entrou em B"), em minúsculas. */
 function noteDestination(note: unknown): string | null {
@@ -484,22 +511,54 @@ export function noteReachesTerminalStage(note: unknown): boolean {
   return dest !== null && inStages(ENGINE_TERMINAL_STAGES, dest);
 }
 
+/** Nota do log que indica chegada a "Enviado para o Cliente" ou depois. */
+export function noteReachesQuoteSentStage(note: unknown): boolean {
+  const dest = noteDestination(note);
+  return dest !== null && inStages(ENGINE_QUOTE_SENT_STAGES, dest);
+}
+
+/** Nota do log que indica chegada a "Negociação" ou depois. */
+export function noteReachesNegotiationStage(note: unknown): boolean {
+  const dest = noteDestination(note);
+  return dest !== null && inStages(ENGINE_NEGOTIATION_STAGES, dest);
+}
+
 /**
  * Horas do funil por lead, lidas do histórico (linhas em ordem crescente):
  *  - `reachedLeadAt`: 1ª transição para Lead ou depois;
+ *  - `quoteSentAt`: 1ª transição para "Enviado para o Cliente" ou depois;
+ *  - `negotiationAt`: 1ª transição para "Negociação" ou depois;
  *  - `lostAt`: última transição para etapa terminal.
  * Só as notas do CRM contam; marcação manual do painel não é movimentação.
  */
 export function pickPipelineTimes(
   rows: readonly { lead_id: string; created_at: string; note: string | null }[],
-): { reachedLeadAt: Map<string, string>; lostAt: Map<string, string> } {
+): { reachedLeadAt: Map<string, string>; quoteSentAt: Map<string, string>; negotiationAt: Map<string, string>; lostAt: Map<string, string> } {
   const reachedLeadAt = new Map<string, string>();
+  const quoteSentAt = new Map<string, string>();
+  const negotiationAt = new Map<string, string>();
   const lostAt = new Map<string, string>();
   for (const r of rows) {
     if (!reachedLeadAt.has(r.lead_id) && noteReachesLeadStage(r.note)) reachedLeadAt.set(r.lead_id, r.created_at);
+    if (!quoteSentAt.has(r.lead_id) && noteReachesQuoteSentStage(r.note)) quoteSentAt.set(r.lead_id, r.created_at);
+    if (!negotiationAt.has(r.lead_id) && noteReachesNegotiationStage(r.note)) negotiationAt.set(r.lead_id, r.created_at);
     if (noteReachesTerminalStage(r.note)) lostAt.set(r.lead_id, r.created_at);
   }
-  return { reachedLeadAt, lostAt };
+  return { reachedLeadAt, quoteSentAt, negotiationAt, lostAt };
+}
+
+function crmMaxStageKey(lead: ExportRecord): string {
+  return typeof lead.crm_max_stage_key === "string" ? lead.crm_max_stage_key.trim().toLowerCase() : "";
+}
+
+/** O negócio chegou a "Enviado para o Cliente" ou depois (contrato ganho implica). */
+export function crmReachedQuoteSent(lead: ExportRecord): boolean {
+  return isTrue(lead.crm_won) || CRM_QUOTE_SENT_STAGE_KEYS.includes(crmMaxStageKey(lead));
+}
+
+/** O negócio chegou a "Negociação" ou depois (contrato ganho implica). */
+export function crmReachedNegotiation(lead: ExportRecord): boolean {
+  return isTrue(lead.crm_won) || CRM_NEGOTIATION_STAGE_KEYS.includes(crmMaxStageKey(lead));
 }
 
 /**
@@ -512,7 +571,7 @@ export function pickPipelineTimes(
  */
 export function crmPipelineQuality(lead: ExportRecord): "qualificado" | "descartado" | null {
   if (isTrue(lead.crm_won)) return "qualificado";
-  const max = typeof lead.crm_max_stage_key === "string" ? lead.crm_max_stage_key.trim().toLowerCase() : "";
+  const max = crmMaxStageKey(lead);
   if (max && !CRM_PRE_LEAD_STAGE_KEYS.includes(max)) return "qualificado";
   return isTrue(lead.crm_lost) ? "descartado" : null;
 }
@@ -645,6 +704,10 @@ export type GoogleAdsOfflineInput = {
   qualifiedAt: ReadonlyMap<string, string>;
   /** Perda do negócio no CRM, por lead (ISO) — `pickPipelineTimes().lostAt`. */
   lostAt?: ReadonlyMap<string, string>;
+  /** Chegada a "Enviado para o Cliente" ou depois — `pickPipelineTimes().quoteSentAt`. */
+  quoteSentAt?: ReadonlyMap<string, string>;
+  /** Chegada a "Negociação" ou depois — `pickPipelineTimes().negotiationAt`. */
+  negotiationAt?: ReadonlyMap<string, string>;
   /**
    * Contratos reais do CRM por lead (valor e data de fechamento). Ausente =
    * CRM não respondeu: valor vazio, nunca estimado nem trocado por peso de lance.
@@ -678,6 +741,13 @@ export async function buildGoogleAdsOfflineRows(input: GoogleAdsOfflineInput): P
     const lastCrmChange = lead.crm_last_change_at ?? lead.updated_at;
     if (quality === "qualificado" && GOOGLE_ADS_INVESTOR_OBJETIVOS.includes(objetivo)) {
       conversions.push({ name: GOOGLE_ADS_QUALIFIED_CONVERSION, when: input.qualifiedAt.get(String(lead.id)) ?? lastCrmChange, value: GOOGLE_ADS_QUALIFIED_VALUE });
+      // Etapas depois de Lead (18/11/2026): hora da 1ª chegada no histórico; sem ela, a última mudança no CRM.
+      if (crmReachedQuoteSent(lead)) {
+        conversions.push({ name: GOOGLE_ADS_QUOTE_SENT_CONVERSION, when: input.quoteSentAt?.get(String(lead.id)) ?? lastCrmChange, value: GOOGLE_ADS_QUOTE_SENT_VALUE });
+      }
+      if (crmReachedNegotiation(lead)) {
+        conversions.push({ name: GOOGLE_ADS_NEGOTIATION_CONVERSION, when: input.negotiationAt?.get(String(lead.id)) ?? lastCrmChange, value: GOOGLE_ADS_NEGOTIATION_VALUE });
+      }
     }
     if (quality === "descartado") {
       // Só perda posterior à chegada do lead (negócio antigo herdado não conta).
