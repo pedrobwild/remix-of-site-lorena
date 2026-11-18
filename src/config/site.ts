@@ -23,4 +23,11 @@ export const RADAR_LINK_ATTRS = {
   rel: "noopener",
   "data-outbound": "radarbewild",
 } as const;
+/**
+ * Rótulo do link para o Radar no menu e no rodapé (decisão do Pedro,
+ * 18/11/2026): o nome visível é o mesmo do JSON-LD da home e do llms.txt.
+ * Antes era "Guia do Investidor". O HTML da home (home-bwa-body.ts) repete o
+ * texto à mão; radarRotulo.test.ts trava os dois.
+ */
+export const RADAR_NAV_LABEL = "Radar Bewild";
 export const NEW_TAB_SUFFIX = " (abre em nova aba)";

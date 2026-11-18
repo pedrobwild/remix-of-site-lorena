@@ -1,4 +1,5 @@
 import { RadarLink } from "@/components/RadarLink";
+import { RADAR_NAV_LABEL } from "@/config/site";
 import { useEffect, useRef } from "react";
 import { Accessibility } from "lucide-react";
 import { openCookiePreferences } from "@/lib/cookieConsent";
@@ -53,7 +54,7 @@ export default function BwaFooter() {
               <a href="/conteudos">Conteúdos</a>
               <a href="/videos">Vídeos</a>
               <a href="/indice-de-custo-de-reforma">Índice de custo de reforma</a>
-              <RadarLink label="Guia do investidor" />
+              <RadarLink label={RADAR_NAV_LABEL} />
               <a href="/faq">FAQ</a>
               <a href="/contato">Contato</a>
               <a href="/orcamento">Orçamento</a>
