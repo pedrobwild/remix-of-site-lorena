@@ -205,7 +205,7 @@ async function readGoogleAdsOffline(db: SupabaseClient, r: ExportRequest): Promi
   const wonIds = consentedLeads.filter((l) => l.crm_won === true).map((l) => String(l.id));
   const contracts = await readCrmContractValues(wonIds);
   return {
-    rows: await buildGoogleAdsOfflineRows({ leads: consentedLeads, qualifiedAt: times.reachedLeadAt, lostAt: times.lostAt, contracts: contracts ?? undefined }),
+    rows: await buildGoogleAdsOfflineRows({ leads: consentedLeads, qualifiedAt: times.reachedLeadAt, lostAt: times.lostAt, quoteSentAt: times.quoteSentAt, negotiationAt: times.negotiationAt, contracts: contracts ?? undefined }),
     error: null,
   };
 }

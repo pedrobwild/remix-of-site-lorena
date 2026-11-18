@@ -9,8 +9,10 @@
  * - Linhas antigas têm `form_path` nulo; para elas só dá para ADIVINHAR o
  *   formulário pelo `landing_path` (que na época era a página do envio).
  * - Toda mudança de status passa por `updateLeadStatus`, que grava também o
- *   histórico em `lead_qualification_log` e avisa a Meta (Conversions API)
- *   quando o lead vira `qualificado`/`descartado` — ver `notifyMetaLeadQuality`.
+ *   histórico em `lead_qualification_log`. Lead DO SITE não avisa a Meta por
+ *   aqui: QualifiedLead/DisqualifiedLead saem só da movimentação no funil do
+ *   CRM, na sincronização horária (Pedro, 18/11/2026). `notifyMetaLeadQuality`
+ *   fica para os leads de formulário instantâneo da Meta (`source: "meta"`).
  */
 import { supabase } from "@/integrations/supabase/client";
 
@@ -322,8 +324,8 @@ export async function updateLeadStatus(
         error: "O lead não foi atualizado (não encontrado ou sem permissão). Recarregue a página.",
       };
     }
-    // Status gravado: a Meta recebe QualifiedLead/DisqualifiedLead em segundo plano.
-    void notifyMetaLeadQuality(leadId, to);
+    // Status gravado. A Meta NÃO é avisada daqui: o evento de qualidade do
+    // lead do site sai só pelo pipeline do CRM (src/lib/crmStageSync.server.ts).
   } else if (!observacao) {
     return { ok: false, error: "Nada a registrar: o status é o mesmo e não há observação." };
   }

@@ -18,8 +18,8 @@ de formulário instantâneo ("Conecte seu CRM com a API de Conversões") estão 
 | `VisitanteEngajado` (próprio) | uma vez por sessão: 60 s de tela ativa ou 75% de rolagem numa página longa | Pixel | — | website |
 | `Lead` | formulário de cliente enviado e contado como `generate_lead` | Pixel **e** CAPI (`notify-lead`) | UUID gerado no browser, o mesmo nos dois (reenvio do mesmo formulário repete o id) | website |
 | `SubmitApplication` | cadastro de parceiro, de incorporadora e indicação | Pixel | UUID do envio | website |
-| `QualifiedLead` | admin marca o lead como **qualificado** em `/admin/leads` | CAPI (`meta-lead-quality`) | `<lead_id>:qualifiedlead` | system_generated |
-| `DisqualifiedLead` | admin marca o lead como **descartado** | CAPI (`meta-lead-quality`) | `<lead_id>:disqualifiedlead` | system_generated |
+| `QualifiedLead` | o negócio do lead chega à etapa **Lead** ou depois no CRM (ou vira contrato) — sincronização horária, regra `pipelineMetaStatus` em `src/lib/crmStage.ts`; a marcação do painel não dispara (Pedro, 18/11/2026) | CAPI (`crmStageSync`; `meta-lead-quality` só por chamada manual com `force`) | `<lead_id>:qualifiedlead` | system_generated |
+| `DisqualifiedLead` | todos os negócios perdidos **antes** de Lead, com a perda depois da chegada do lead ao site | CAPI (`crmStageSync`) | `<lead_id>:disqualifiedlead` | system_generated |
 | `initial_lead`, `contacted`, `qualified`, `disqualified` | leads dos **formulários instantâneos** da Meta: entrada no painel e mudanças de status | CAPI (`meta-sync`, `meta-lead-quality`) com `user_data.lead_id` | `<meta_leads.id>:<estágio>` | system_generated — ver [META-CRM.md](META-CRM.md) |
 
 O `Lead` do Pixel leva, além de `content_name`/`content_category`, parâmetros sem
@@ -225,7 +225,8 @@ novo (landing page, subdomínio de outro domínio) → incluir na lista antes.
 4. Homologar: preencher o código de teste no admin, enviar um lead de teste em
    `/orcamento` com cookies aceitos e conferir em Events Manager → Testar eventos:
    `Lead` do navegador e do servidor com o **mesmo** `event_id` e "Deduplicado";
-   depois marcar o lead como qualificado no painel e conferir `QualifiedLead`.
+   depois mover o negócio do lead para a etapa Lead no Bwild Engine e, na
+   sincronização seguinte (minuto 17), conferir `QualifiedLead`.
 5. Apagar o código de teste no admin.
    Para o `meta-pageview`: com o código de teste no admin (a função relê a
    configuração a cada 60 s), abrir `/portfolio/<slug>` numa aba anônima **sem**

@@ -128,24 +128,11 @@ describe("contagens por status", () => {
 });
 
 describe("updateLeadStatus", () => {
-  it("qualificado: avisa a Meta (meta-lead-quality) depois de gravar, só com lead_id e status", async () => {
+  it("lead do site: gravar qualificado/descartado NÃO chama a Meta (Pedro, 18/11/2026: só pelo pipeline do CRM)", async () => {
     setResponder((call) => (call.table === "leads" ? { data: [{ id: "l-1" }] } : { data: { id: "log-1" } }));
     const res = await updateLeadStatus("l-1", "contatado", "qualificado");
     expect(res.ok).toBe(true);
-    expect(functionsInvoke).toHaveBeenCalledTimes(1);
-    expect(functionsInvoke).toHaveBeenCalledWith("meta-lead-quality", {
-      body: { lead_id: "l-1", status: "qualificado" },
-    });
-  });
-
-  it("descartado também gera evento; contatado e falha no update não", async () => {
-    setResponder((call) => (call.table === "leads" ? { data: [{ id: "l-1" }] } : { data: { id: "log-1" } }));
     await updateLeadStatus("l-1", "novo", "descartado", "sem orçamento");
-    expect(functionsInvoke).toHaveBeenCalledWith("meta-lead-quality", {
-      body: { lead_id: "l-1", status: "descartado" },
-    });
-    functionsInvoke.mockClear();
-
     await updateLeadStatus("l-1", "novo", "contatado");
     expect(functionsInvoke).not.toHaveBeenCalled();
   });

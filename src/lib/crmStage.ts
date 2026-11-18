@@ -14,6 +14,7 @@
  * Módulo puro: usado pela sincronização no servidor e testado no Vitest.
  */
 import type { LeadStatus } from "@/lib/adminLeads";
+import { crmLossTimeAfterLead, crmPipelineQuality } from "../../supabase/functions/_shared/data-export.ts";
 
 export const CRM_ENGINE_AUTHOR = "Bwild Engine (automático)";
 
@@ -110,6 +111,8 @@ export function crmLeadStatus(item: CrmLeadItem | null | undefined, stages: CrmS
 export type CrmLeadRow = {
   id: string;
   status: string;
+  /** Chegada do lead ao site: a perda no CRM só conta se for posterior. */
+  created_at?: string | null;
   manual_qualification?: "qualificado" | "descartado" | null;
   manual_qualification_source?: string | null;
   manual_qualification_at?: string | null;
@@ -143,7 +146,7 @@ export type CrmLeadPlan = {
   from: string;
   to: LeadStatus;
   noDeal: boolean;
-  /** A mudança de status veio da marcação do Engine: não dispara Meta nem volta ao Engine. */
+  /** A mudança de status veio da marcação do Engine: não volta ao Engine. */
   byEngineQualification: boolean;
 };
 
@@ -291,11 +294,34 @@ export function planCrmLeadUpdate(
 /** A Meta recusa eventos com mais de 7 dias. */
 export const META_EVENT_MAX_AGE_MS = 7 * 24 * 3_600_000;
 
-export function shouldSendMetaQuality(plan: CrmLeadPlan, lastChangeAt: string | null, now: number): boolean {
-  if (!plan.statusChanged || plan.byEngineQualification) return false;
-  if (plan.to !== "qualificado" && plan.to !== "descartado") return false;
+/** Só as colunas do funil: a marcação do painel/Engine não entra. */
+export type PipelineLead = Pick<CrmLeadRow, "created_at" | "crm_won" | "crm_lost" | "crm_max_stage_key" | "crm_last_change_at">;
+
+/**
+ * Qualidade do lead para a Meta pela movimentação no funil do CRM (Pedro,
+ * 18/11/2026) — a mesma regra do Google Ads (`crmPipelineQuality` +
+ * `crmLossTimeAfterLead`): chegou a Lead ou contrato → "qualificado"; tudo
+ * perdido antes de Lead, com a perda depois da chegada → "descartado"; o
+ * resto (MQL, Qualificação, sem negócio, perda herdada) → `null`.
+ */
+export function pipelineMetaStatus(lead: PipelineLead, lostAt?: string | null): "qualificado" | "descartado" | null {
+  const q = crmPipelineQuality(lead);
+  // `lostAt` = hora real da nota "→ Perdido" no histórico (como no Google);
+  // `crm_last_change_at` anda com qualquer edição do negócio e é só reserva.
+  if (q === "descartado") return crmLossTimeAfterLead(lead, lostAt) ? "descartado" : null;
+  return q;
+}
+
+/**
+ * Evento da Meta a enviar na sincronização: o status pelo funil mudou entre
+ * a linha antes e depois do patch, para um valor com evento, e a última
+ * mudança no CRM tem até 7 dias. Marcação manual nunca dispara.
+ */
+export function shouldSendMetaQuality(before: PipelineLead, after: PipelineLead, lastChangeAt: string | null, now: number, lostAt?: string | null): "qualificado" | "descartado" | null {
+  const next = pipelineMetaStatus(after, lostAt);
+  if (next === null || next === pipelineMetaStatus(before, lostAt)) return null;
   const t = lastChangeAt ? Date.parse(lastChangeAt) : NaN;
-  return !Number.isNaN(t) && now - t <= META_EVENT_MAX_AGE_MS;
+  return !Number.isNaN(t) && now - t <= META_EVENT_MAX_AGE_MS ? next : null;
 }
 
 // ---------------------------------------------------------------------------
