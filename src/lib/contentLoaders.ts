@@ -15,7 +15,6 @@ import { lookupActiveRedirect } from "@/lib/notFoundLog";
 import { isSafeRedirectTarget } from "@/lib/seoRedirects";
 import { supabase } from "@/integrations/supabase/client";
 import { wrapArticleTables } from "@/lib/articleTables";
-import { addHeadingIds } from "@/lib/articleHeadingIds";
 import { linkServicePagesInHtml } from "@/lib/articleServiceLinks";
 import { NOT_FOUND_SEO, postSeoFrom, projectSeoFrom, bairroSeoFrom, type RouteSeoData } from "@/lib/seoLoaders";
 import { normalizeBewildPost, POST_INDEX_COLS, type BewildPost } from "@/lib/useBewildPosts";
@@ -55,7 +54,7 @@ async function renderBody(body: string | null | undefined, serviceLinks = false)
     ]);
     const raw = marked.parse(body, { async: false, gfm: true, breaks: false }) as string;
     const clean = rewriteGuiaLinksInHtml(sanitizeBlogHtml(raw));
-    return wrapArticleTables(addHeadingIds(serviceLinks ? linkServicePagesInHtml(clean) : clean));
+    return wrapArticleTables(serviceLinks ? linkServicePagesInHtml(clean) : clean);
   } catch {
     return null;
   }

@@ -37,7 +37,6 @@ import { BlogArticleBody } from "@/components/BlogHtmlCharts";
 import { postYouTubeVideo } from "@/lib/postYouTubeVideo";
 import { sanitizeBlogHtml } from "@/lib/sanitizeHtml";
 import { wrapArticleTables } from "@/lib/articleTables";
-import { addHeadingIds } from "@/lib/articleHeadingIds";
 import { linkServicePagesInHtml } from "@/lib/articleServiceLinks";
 import { whatsappHref } from "@/components/landing/content";
 import {
@@ -201,24 +200,14 @@ export default function BewildPostPage({ slug, initial }: Props) {
     if (!post.body) return "";
     try {
       const raw = marked.parse(post.body, { async: false }) as string;
-      return wrapArticleTables(addHeadingIds(linkServicePagesInHtml(rewriteGuiaLinksInHtml(sanitizeBlogHtml(raw)))));
+      return wrapArticleTables(linkServicePagesInHtml(rewriteGuiaLinksInHtml(sanitizeBlogHtml(raw))));
     } catch {
       return "";
     }
   }, [post, initial]);
   // Linha "Autor/Revisão" sai do corpo (vira dado no cabeçalho) e H2/H3 ganham
   // âncora para o sumário. Função pura: servidor e cliente geram o mesmo HTML.
-  const structured = useMemo(() => {
-    const result = structurePostBody(sanitizedBody);
-    // As âncoras já vêm do loader; mantém o sumário existente sem gerar outros ids.
-    const entities: Record<string, string> = { "&amp;": "&", "&quot;": '"', "&#39;": "'", "&lt;": "<", "&gt;": ">", "&nbsp;": " " };
-    result.toc = Array.from(result.html.matchAll(/<h([23])\b[^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/h\1>/gi), (match) => ({
-      id: match[2],
-      text: match[3].replace(/<[^>]+>/g, "").replace(/&amp;|&quot;|&#39;|&lt;|&gt;|&nbsp;/g, (entity) => entities[entity]).replace(/\s+/g, " ").trim(),
-      level: match[1] === "2" ? 2 as const : 3 as const,
-    }));
-    return result;
-  }, [sanitizedBody]);
+  const structured = useMemo(() => structurePostBody(sanitizedBody), [sanitizedBody]);
   // Convite de orçamento logo depois da resposta direta (1º parágrafo): mesmo
   // texto, rótulo e destino do bloco do fim do post, sem utm_*. Página de autor
   // é perfil, não artigo: fica só com o bloco do fim.

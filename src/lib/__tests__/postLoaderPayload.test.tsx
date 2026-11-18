@@ -9,7 +9,6 @@
  */
 import { describe, expect, it, vi } from "vitest";
 import { renderToString } from "react-dom/server";
-import { cleanup, render, waitFor } from "@testing-library/react";
 
 const TRECHO = "Prazo de obra começa cinco dias úteis depois do projeto aprovado";
 const VIDEO = "dQw4w9WgXcQ";
@@ -197,21 +196,5 @@ describe("loader de /conteudos/$slug: payload sem texto repetido", () => {
       PRINCIPAL.body
     );
     expect(withoutRawBody({ seo, post, related: [], bodyHtml: "<p>x</p>" }).post?.body).toBe("");
-  });
-
-  it("loader e reserva no cliente mantêm o mesmo corpo e links do sumário", async () => {
-    const dados = await loader({ params: { slug: PRINCIPAL.slug } });
-    const ssr = new DOMParser().parseFromString(renderToString(
-      <BewildPostPage slug={PRINCIPAL.slug} initial={{ post: dados.post, related: dados.related, bodyHtml: dados.bodyHtml }} />
-    ), "text/html");
-    expect(dados.bodyHtml).toContain('<h2 id="etapa-um">');
-    expect(ssr.querySelector('a[href="#etapa-um"]')).not.toBeNull();
-    try {
-      render(<BewildPostPage slug={PRINCIPAL.slug} />);
-      await waitFor(() => expect(document.querySelector(".pt-body")?.innerHTML).toBe(ssr.querySelector(".pt-body")?.innerHTML));
-      expect(document.querySelector('a[href="#etapa-um"]')).not.toBeNull();
-    } finally {
-      cleanup();
-    }
   });
 });
