@@ -1,3 +1,5 @@
+- [x] Criar XML de imagens dos 66 artigos publicados: 336 referências, 172 gráficos únicos com HTTP 200; 6 testes passam e XML válido na prévia.
+- [ ] Publicar /sitemap-imagens-blog.xml e enviar à propriedade https://bewild.com.br/ — aguarda aprovação de publicação.
 - [x] Corrigir aba SEO vazia na virada do dia: atualização diária prioriza 30 dias em São Paulo, cópia recente de mesma duração mantém datas reais e propriedade é reutilizada/revalidada; 21 testes passam, lint e compilação OK; sem publicar.
 - [ ] Conferir correção SEO com dados reais na prévia: sessão automática não corresponde ao solicitante; depende de entrar no painel.
 - [x] Completar /contato com links para serviço e artigo de etapas, preservando mapa, WhatsApp, e-mail e formulário existentes; 32 testes passam, build OK e navegação real conferida sem rolagem horizontal a 320 px. Mapa ao vivo não verificado; sem publicar.
