@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import HomePage from "@/pages/HomePage";
 import { seoHead } from "@/lib/routeHead";
+import { RADAR_JSONLD } from "@/lib/orgJsonLd";
 import { HOME_DEFAULT_DESCRIPTION, HOME_DEFAULT_TITLE, HOME_KEYWORDS, loadHomeSeo, type HomeSeo } from "@/lib/homeSeo";
 import homeCriticalCssUrl from "@/pages/home-critical.css?url";
 import homeDeferredCssUrl from "@/pages/home-deferred.css?url";
@@ -25,6 +26,9 @@ function homeHead(seo?: HomeSeo) {
   const head = seoHead({ bwaCss: false, title: seo?.title ?? HOME_DEFAULT_TITLE, description: seo?.description ?? HOME_DEFAULT_DESCRIPTION, ogTitle: seo?.ogTitle, ogDescription: seo?.ogDescription, ogImage: seo?.ogImage, path: "/", keywords: HOME_KEYWORDS });
   return {
     ...head,
+    // Grafo global (Organization, WebSite…) vem do __root; aqui só o WebSite
+    // do Radar Bewild, publicado pela #org (ver RADAR_WEBSITE_NODE).
+    scripts: [...(head.scripts ?? []), { type: "application/ld+json", children: RADAR_JSONLD }],
     links: [
       ...head.links,
       // Folha da home no HTML do servidor. Antes ela só entrava pelo JS,

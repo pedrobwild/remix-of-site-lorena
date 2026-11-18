@@ -21,6 +21,8 @@
  * atualizados aqui E no Radar (passo a passo no cabeçalho do teste).
  */
 
+import { RADAR_URL } from "@/config/site";
+
 export const SITE_URL = "https://bewild.com.br";
 export const ORG_ID = `${SITE_URL}/#org`;
 export const LOCAL_ID = `${SITE_URL}/#local`;
@@ -179,3 +181,32 @@ export const ORG_JSONLD = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [ORG_NODE, LOCAL_NODE, WEBSITE_NODE, SERVICE_NODE],
 });
+
+/**
+ * Radar Bewild (radarbewild.com.br) no JSON-LD da HOME — pedido do Pedro em
+ * 18/11/2026. O nó é o MESMO `WebSite` que o próprio Radar publica em toda
+ * página (`WEBSITE_JSONLD` em src/lib/seoJsonLd.ts do repositório
+ * shortstay-guide): mesmo @id, nome, alternateName, descrição e publisher.
+ * Assim o grafo do bewild.com.br declara que o Radar é um site publicado pela
+ * Organization #org, e os dois domínios descrevem a mesma entidade com os
+ * mesmos campos. Mudou o WebSite no Radar? Copie aqui (e vice-versa).
+ *
+ * Não entra no ORG_NODE (isso quebraria a paridade da Organization com o
+ * Radar, travada por orgParidadeRadar.test.ts) nem no grafo do __root (o
+ * pedido é só a home). Sai no head() de `/` (src/routes/index.tsx).
+ */
+export const RADAR_WEBSITE_ID = `${RADAR_URL}#website`;
+
+export const RADAR_WEBSITE_NODE = {
+  "@type": "WebSite",
+  "@id": RADAR_WEBSITE_ID,
+  name: "Radar Bewild",
+  alternateName: ["Radar Bewild — guia do investidor em studios para short stay"],
+  description:
+    "Dados de diária e ocupação por bairro, comparador, mapa e simulador de receita para studios no Airbnb em São Paulo.",
+  url: RADAR_URL,
+  inLanguage: "pt-BR",
+  publisher: { "@id": ORG_ID },
+};
+
+export const RADAR_JSONLD = JSON.stringify({ "@context": "https://schema.org", ...RADAR_WEBSITE_NODE });
