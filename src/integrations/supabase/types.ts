@@ -1004,6 +1004,78 @@ export type Database = {
         }
         Relationships: []
       }
+      bewild_posts_backup_20261118: {
+        Row: {
+          author: string
+          body: string
+          category: string | null
+          content_updated_at: string | null
+          cover_image: string | null
+          created_at: string
+          excerpt: string | null
+          faq: Json
+          featured: boolean
+          focus_keyword: string | null
+          id: string
+          meta_description: string | null
+          meta_title: string | null
+          og_image: string | null
+          published: boolean
+          published_at: string | null
+          reading_time: number
+          slug: string
+          title: string
+          updated_at: string
+          youtube_video_id: string | null
+        }
+        Insert: {
+          author?: string
+          body?: string
+          category?: string | null
+          content_updated_at?: string | null
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          faq?: Json
+          featured?: boolean
+          focus_keyword?: string | null
+          id?: string
+          meta_description?: string | null
+          meta_title?: string | null
+          og_image?: string | null
+          published?: boolean
+          published_at?: string | null
+          reading_time?: number
+          slug: string
+          title: string
+          updated_at?: string
+          youtube_video_id?: string | null
+        }
+        Update: {
+          author?: string
+          body?: string
+          category?: string | null
+          content_updated_at?: string | null
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          faq?: Json
+          featured?: boolean
+          focus_keyword?: string | null
+          id?: string
+          meta_description?: string | null
+          meta_title?: string | null
+          og_image?: string | null
+          published?: boolean
+          published_at?: string | null
+          reading_time?: number
+          slug?: string
+          title?: string
+          updated_at?: string
+          youtube_video_id?: string | null
+        }
+        Relationships: []
+      }
       bewild_posts_stage_pilar_20261116: {
         Row: {
           body: string | null
