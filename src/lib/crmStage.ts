@@ -146,7 +146,7 @@ export type CrmLeadPlan = {
   from: string;
   to: LeadStatus;
   noDeal: boolean;
-  /** A mudança de status veio da marcação do Engine: não dispara Meta nem volta ao Engine. */
+  /** A mudança de status veio da marcação do Engine: não volta ao Engine. */
   byEngineQualification: boolean;
 };
 
@@ -304,9 +304,11 @@ export type PipelineLead = Pick<CrmLeadRow, "created_at" | "crm_won" | "crm_lost
  * perdido antes de Lead, com a perda depois da chegada → "descartado"; o
  * resto (MQL, Qualificação, sem negócio, perda herdada) → `null`.
  */
-export function pipelineMetaStatus(lead: PipelineLead): "qualificado" | "descartado" | null {
+export function pipelineMetaStatus(lead: PipelineLead, lostAt?: string | null): "qualificado" | "descartado" | null {
   const q = crmPipelineQuality(lead);
-  if (q === "descartado") return crmLossTimeAfterLead(lead) ? "descartado" : null;
+  // `lostAt` = hora real da nota "→ Perdido" no histórico (como no Google);
+  // `crm_last_change_at` anda com qualquer edição do negócio e é só reserva.
+  if (q === "descartado") return crmLossTimeAfterLead(lead, lostAt) ? "descartado" : null;
   return q;
 }
 
@@ -315,9 +317,9 @@ export function pipelineMetaStatus(lead: PipelineLead): "qualificado" | "descart
  * a linha antes e depois do patch, para um valor com evento, e a última
  * mudança no CRM tem até 7 dias. Marcação manual nunca dispara.
  */
-export function shouldSendMetaQuality(before: PipelineLead, after: PipelineLead, lastChangeAt: string | null, now: number): "qualificado" | "descartado" | null {
-  const next = pipelineMetaStatus(after);
-  if (next === null || next === pipelineMetaStatus(before)) return null;
+export function shouldSendMetaQuality(before: PipelineLead, after: PipelineLead, lastChangeAt: string | null, now: number, lostAt?: string | null): "qualificado" | "descartado" | null {
+  const next = pipelineMetaStatus(after, lostAt);
+  if (next === null || next === pipelineMetaStatus(before, lostAt)) return null;
   const t = lastChangeAt ? Date.parse(lastChangeAt) : NaN;
   return !Number.isNaN(t) && now - t <= META_EVENT_MAX_AGE_MS ? next : null;
 }

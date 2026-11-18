@@ -168,6 +168,14 @@ describe("Meta pelo pipeline do CRM (Pedro, 18/11/2026)", () => {
     expect(shouldSendMetaQuality(base, herdado, "2026-10-10T12:00:00Z", now)).toBe(null);
   });
 
+  it("perda herdada com edição recente no CRM: a hora da perda vem do histórico, como no Google", () => {
+    // crm_last_change_at anda com qualquer edição do negócio; a nota "→ Perdido" guarda a hora real da perda.
+    const editado = after({ crm_max_stage_key: "mql", crm_lost: true, crm_last_change_at: "2026-10-12T12:00:00Z" });
+    expect(pipelineMetaStatus(editado, "2026-07-10T20:37:03Z")).toBe(null);
+    expect(shouldSendMetaQuality(base, editado, "2026-10-12T12:00:00Z", now, "2026-07-10T20:37:03Z")).toBe(null);
+    expect(shouldSendMetaQuality(base, editado, "2026-10-12T12:00:00Z", now, "2026-10-11T12:00:00Z")).toBe("descartado");
+  });
+
   it("primeira sincronização depois do deploy: lead já qualificado sem mudança não dispara nada", () => {
     const already = after({ crm_max_stage_key: "enviado", crm_last_change_at: "2026-10-10T12:00:00Z" });
     expect(shouldSendMetaQuality(already, already, "2026-10-10T12:00:00Z", now)).toBe(null);

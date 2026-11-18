@@ -166,7 +166,10 @@ que o Google espera:
     `DisqualifiedLead` saem da sincronização horária quando o status pelo
     funil (`pipelineMetaStatus` em `src/lib/crmStage.ts`, só colunas
     `crm_*`, com a perda posterior à chegada) muda, com mudança no CRM de
-    até 7 dias. A marcação do painel não dispara evento na Meta.
+    até 7 dias; a hora da perda vem da nota "→ Perdido" do histórico, como
+    no Google. Reposição a cada sincronização para qualificado sem envio
+    (`sendPendingPipelineQualified`). A marcação do painel (qualificação
+    manual ou mudança de status em /admin/central) não dispara evento na Meta.
   - A lista de exclusão "Exclusao desqualificados" (Customer Match) segue a
     mesma regra de desqualificado, com o consentimento próprio dela.
 - `Conversion Time` = `yyyy-MM-dd HH:mm:ss-03:00` (São Paulo, fuso explícito).
