@@ -6,7 +6,7 @@ import BwaNav from "@/components/BwaNav";
 import { whatsappHref } from "@/components/landing/content";
 import { useSeo } from "@/lib/useSeo";
 import { useCtaClickTracking } from "@/lib/trackCta";
-import { PILAR_CUSTO } from "@/content/pages/orcamento";
+import { ARTIGO_TABELA_PRECO, PILAR_CUSTO } from "@/content/pages/orcamento";
 import "./servico-reforma.css";
 import "./indice-custo.css";
 import {
@@ -405,6 +405,10 @@ export default function IndiceCustoPage() {
               do investimento, está em{" "}
               <a href={PILAR_CUSTO}>quanto custa reformar um apartamento ou studio de até 45 m²</a>. Para o seu imóvel,
               o <a href="/escopo">simulador de escopo</a> dá uma primeira estimativa.
+            </p>
+            <p className="bwa-servico-text">
+              Os números desta edição organizados para consulta, com o preço por metragem, por bairro e por item
+              instalado, estão na <a href={ARTIGO_TABELA_PRECO}>tabela de preço de reforma</a>.
             </p>
           </div>
         </section>
