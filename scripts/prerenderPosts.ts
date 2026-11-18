@@ -23,6 +23,8 @@ import { resolve, dirname } from "node:path";
 import type { Plugin } from "vite";
 import { marked } from "marked";
 import { keywordsForPost } from "../src/lib/postKeywords";
+import { addHeadingIds } from "../src/lib/articleHeadingIds";
+import { wrapArticleTables } from "../src/lib/articleTables";
 
 const BASE_URL = "https://bewild.com.br";
 const DEFAULT_IMAGE = `${BASE_URL}/og_final_v2.jpg`;
@@ -126,7 +128,7 @@ function bodyFor(post: Post, html: string, sanitizar: Sanitizador | null): strin
   let article = "";
   if (sanitizar) {
     try {
-      article = sanitizar(marked.parse(post.body || "", { async: false, gfm: true }) as string);
+      article = wrapArticleTables(addHeadingIds(sanitizar(marked.parse(post.body || "", { async: false, gfm: true }) as string)));
     } catch {
       article = "";
     }

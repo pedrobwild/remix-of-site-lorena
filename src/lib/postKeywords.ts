@@ -64,7 +64,7 @@ export const POST_KEYWORDS: Record<string, string> = {
   "orcamento-reforma-studio-25-m2-item-a-item": `orçamento de reforma de studio de 24 m², orçamento item a item, orçamento de reforma de studio para Airbnb, custo de reforma de studio, ${REFORMA_STUDIO}`,
   "estudo-de-layout-studio-25-m2": `estudo de layout de studio, layout de studio de 25 m², projeto de interiores de studio, ${REFORMA_STUDIO}`,
   "reforma-de-apartamento-antigo-sao-paulo": `reforma de apartamento antigo em SP, o que verificar antes de reformar apartamento antigo, instalações antigas, ${REFORMA}`,
-  "como-escolher-empresa-de-reforma-sao-paulo": `como escolher empresa de reforma em SP, empresa de reforma de apartamento em São Paulo, o que verificar antes de contratar reforma, ${REFORMA}`,
+  "como-escolher-empresa-de-reforma-sao-paulo": `como escolher empresa de reforma, como escolher empresa de reforma em SP, modelos de contratação de reforma, reforma turnkey ou empreiteiro, reforma por administração ou empreitada, o que verificar antes de contratar reforma, ${REFORMA}`,
   "reformar-apartamento-morando-nele": `reformar apartamento morando nele, ficar ou sair durante a obra, reforma com morador no apartamento, ${REFORMA}`,
   "antes-e-depois-studio-26-m2-vila-madalena": `antes e depois de reforma de studio, reforma de studio de 26 m² na Vila Madalena, ${REFORMA_STUDIO}`,
   "quanto-custa-reformar-apartamento-studio-ate-50-m2": `quanto custa reformar apartamento de até 50 m², custo de reforma de studio, custo de reforma por m², ${REFORMA}`,
