@@ -1076,6 +1076,78 @@ export type Database = {
         }
         Relationships: []
       }
+      bewild_posts_backup_20261118_prazo: {
+        Row: {
+          author: string | null
+          body: string | null
+          category: string | null
+          content_updated_at: string | null
+          cover_image: string | null
+          created_at: string | null
+          excerpt: string | null
+          faq: Json | null
+          featured: boolean | null
+          focus_keyword: string | null
+          id: string | null
+          meta_description: string | null
+          meta_title: string | null
+          og_image: string | null
+          published: boolean | null
+          published_at: string | null
+          reading_time: number | null
+          slug: string | null
+          title: string | null
+          updated_at: string | null
+          youtube_video_id: string | null
+        }
+        Insert: {
+          author?: string | null
+          body?: string | null
+          category?: string | null
+          content_updated_at?: string | null
+          cover_image?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          faq?: Json | null
+          featured?: boolean | null
+          focus_keyword?: string | null
+          id?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          og_image?: string | null
+          published?: boolean | null
+          published_at?: string | null
+          reading_time?: number | null
+          slug?: string | null
+          title?: string | null
+          updated_at?: string | null
+          youtube_video_id?: string | null
+        }
+        Update: {
+          author?: string | null
+          body?: string | null
+          category?: string | null
+          content_updated_at?: string | null
+          cover_image?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          faq?: Json | null
+          featured?: boolean | null
+          focus_keyword?: string | null
+          id?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          og_image?: string | null
+          published?: boolean | null
+          published_at?: string | null
+          reading_time?: number | null
+          slug?: string | null
+          title?: string | null
+          updated_at?: string | null
+          youtube_video_id?: string | null
+        }
+        Relationships: []
+      }
       bewild_posts_stage_pilar_20261116: {
         Row: {
           body: string | null
@@ -2916,6 +2988,14 @@ export type Database = {
           event_type: string
           sessions: number
           step: number
+        }[]
+      }
+      analytics_funnel_v2: {
+        Args: { p_since: string; p_until: string }
+        Returns: {
+          sessions: number
+          step: number
+          step_key: string
         }[]
       }
       analytics_hours_dow: {
