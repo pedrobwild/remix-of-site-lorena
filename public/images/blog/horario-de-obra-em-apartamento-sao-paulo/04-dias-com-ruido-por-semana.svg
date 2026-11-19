@@ -1,0 +1,64 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='720' height='313' viewBox='0 0 720 313' role='img' font-family='-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif'>
+<rect width='720' height='313' fill='#FFFFFF'/>
+<text x='16' y='26' font-size='16' font-weight='700' fill='#1F2933'>Em 60 dias úteis, 27 têm serviço ruidoso</text>
+<text x='16' y='46' font-size='12' fill='#5B6670'>Dias úteis por semana com furação, remoção, corte ou montagem no cronograma de um studio de 27 m²</text>
+<rect x='16' y='74' width='12' height='12' rx='2' fill='#0A7FA0'/>
+<text x='32' y='84' font-size='12' fill='#5B6670'>Dias com ruído alto</text>
+<rect x='179' y='74' width='12' height='12' rx='2' fill='#D6DADF'/>
+<text x='195' y='84' font-size='12' fill='#5B6670'>Dias sem ruído alto</text>
+<line x1='44' y1='244' x2='704' y2='244' stroke='#D6DADF'/>
+<text x='38' y='248' font-size='11' text-anchor='end' fill='#5B6670'>0</text>
+<line x1='44' y1='214' x2='704' y2='214' stroke='#D6DADF'/>
+<text x='38' y='218' font-size='11' text-anchor='end' fill='#5B6670'>1</text>
+<line x1='44' y1='183' x2='704' y2='183' stroke='#D6DADF'/>
+<text x='38' y='187' font-size='11' text-anchor='end' fill='#5B6670'>2</text>
+<line x1='44' y1='153' x2='704' y2='153' stroke='#D6DADF'/>
+<text x='38' y='157' font-size='11' text-anchor='end' fill='#5B6670'>3</text>
+<line x1='44' y1='122' x2='704' y2='122' stroke='#D6DADF'/>
+<text x='38' y='126' font-size='11' text-anchor='end' fill='#5B6670'>4</text>
+<line x1='44' y1='92' x2='704' y2='92' stroke='#D6DADF'/>
+<text x='38' y='96' font-size='11' text-anchor='end' fill='#5B6670'>5</text>
+<rect x='48.0' y='213.6' width='39.1' height='30.4' rx='3' fill='#D6DADF'/>
+<text x='67.6' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>S1</text>
+<rect x='95.1' y='92.0' width='39.1' height='152.0' rx='3' fill='#D6DADF'/>
+<rect x='95.1' y='92.0' width='39.1' height='152.0' rx='3' fill='#0A7FA0'/>
+<text x='114.7' y='106.0' font-size='11' text-anchor='middle' fill='#FFFFFF' font-weight='600'>5</text>
+<text x='114.7' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>S2</text>
+<rect x='142.3' y='92.0' width='39.1' height='152.0' rx='3' fill='#D6DADF'/>
+<rect x='142.3' y='92.0' width='39.1' height='152.0' rx='3' fill='#0A7FA0'/>
+<text x='161.9' y='106.0' font-size='11' text-anchor='middle' fill='#FFFFFF' font-weight='600'>5</text>
+<text x='161.9' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>S3</text>
+<rect x='189.4' y='122.4' width='39.1' height='121.6' rx='3' fill='#D6DADF'/>
+<rect x='189.4' y='122.4' width='39.1' height='121.6' rx='3' fill='#0A7FA0'/>
+<text x='209.0' y='136.4' font-size='11' text-anchor='middle' fill='#FFFFFF' font-weight='600'>4</text>
+<text x='209.0' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>S4</text>
+<rect x='236.6' y='92.0' width='39.1' height='152.0' rx='3' fill='#D6DADF'/>
+<text x='256.1' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>S5</text>
+<rect x='283.7' y='92.0' width='39.1' height='152.0' rx='3' fill='#D6DADF'/>
+<rect x='283.7' y='122.4' width='39.1' height='121.6' rx='3' fill='#0A7FA0'/>
+<text x='303.3' y='136.4' font-size='11' text-anchor='middle' fill='#FFFFFF' font-weight='600'>4</text>
+<text x='303.3' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>S6</text>
+<rect x='330.9' y='92.0' width='39.1' height='152.0' rx='3' fill='#D6DADF'/>
+<rect x='330.9' y='122.4' width='39.1' height='121.6' rx='3' fill='#0A7FA0'/>
+<text x='350.4' y='136.4' font-size='11' text-anchor='middle' fill='#FFFFFF' font-weight='600'>4</text>
+<text x='350.4' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>S7</text>
+<rect x='378.0' y='92.0' width='39.1' height='152.0' rx='3' fill='#D6DADF'/>
+<text x='397.6' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>S8</text>
+<rect x='425.1' y='122.4' width='39.1' height='121.6' rx='3' fill='#D6DADF'/>
+<text x='444.7' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>S9</text>
+<rect x='472.3' y='92.0' width='39.1' height='152.0' rx='3' fill='#D6DADF'/>
+<text x='491.9' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>S10</text>
+<rect x='519.4' y='92.0' width='39.1' height='152.0' rx='3' fill='#D6DADF'/>
+<rect x='519.4' y='92.0' width='39.1' height='152.0' rx='3' fill='#0A7FA0'/>
+<text x='539.0' y='106.0' font-size='11' text-anchor='middle' fill='#FFFFFF' font-weight='600'>5</text>
+<text x='539.0' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>S11</text>
+<rect x='566.6' y='92.0' width='39.1' height='152.0' rx='3' fill='#D6DADF'/>
+<text x='586.1' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>S12</text>
+<rect x='613.7' y='92.0' width='39.1' height='152.0' rx='3' fill='#D6DADF'/>
+<text x='633.3' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>S13</text>
+<rect x='660.9' y='92.0' width='39.1' height='152.0' rx='3' fill='#D6DADF'/>
+<text x='680.4' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>S14</text>
+<text x='44' y='276' font-size='11' fill='#5B6670'>Semanas 10 (folga) e 12–14 (acabamento, mobília, entrega) sem serviço ruidoso. 15/05 a 10/08/2026.</text>
+<text x='16' y='290' font-size='11' fill='#5B6670'>Fonte: cronograma planejado da Bewild (2026); classificação de ruído por atividade feita pela</text>
+<text x='16' y='303' font-size='11' fill='#5B6670'>Bewild.</text>
+</svg>

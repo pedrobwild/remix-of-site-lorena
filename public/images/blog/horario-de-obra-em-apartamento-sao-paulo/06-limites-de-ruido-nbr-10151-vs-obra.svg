@@ -1,0 +1,46 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='720' height='313' viewBox='0 0 720 313' role='img' font-family='-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif'>
+<rect width='720' height='313' fill='#FFFFFF'/>
+<text x='16' y='26' font-size='16' font-weight='700' fill='#1F2933'>Limite de ruído: o que a norma admite e o que uma obra emite</text>
+<text x='16' y='46' font-size='12' fill='#5B6670'>Nível de pressão sonora em dB(A), ambiente externo, período diurno × noturno</text>
+<rect x='16' y='74' width='12' height='12' rx='2' fill='#0A7FA0'/>
+<text x='32' y='84' font-size='12' fill='#5B6670'>Diurno (7h–22h)</text>
+<rect x='151' y='74' width='12' height='12' rx='2' fill='#D4691A'/>
+<text x='167' y='84' font-size='12' fill='#5B6670'>Noturno (22h–7h)</text>
+<line x1='44' y1='244' x2='704' y2='244' stroke='#D6DADF' stroke-width='1'/>
+<text x='38' y='248' font-size='11' text-anchor='end' fill='#5B6670'>0</text>
+<line x1='44' y1='206' x2='704' y2='206' stroke='#D6DADF' stroke-width='1'/>
+<text x='38' y='210' font-size='11' text-anchor='end' fill='#5B6670'>25</text>
+<line x1='44' y1='168' x2='704' y2='168' stroke='#D6DADF' stroke-width='1'/>
+<text x='38' y='172' font-size='11' text-anchor='end' fill='#5B6670'>50</text>
+<line x1='44' y1='130' x2='704' y2='130' stroke='#D6DADF' stroke-width='1'/>
+<text x='38' y='134' font-size='11' text-anchor='end' fill='#5B6670'>75</text>
+<line x1='44' y1='92' x2='704' y2='92' stroke='#D6DADF' stroke-width='1'/>
+<text x='38' y='96' font-size='11' text-anchor='end' fill='#5B6670'>100</text>
+<rect x='75.0' y='168.0' width='34.0' height='76.0' rx='3' fill='#0A7FA0'/>
+<text x='92.0' y='164.0' font-size='11' text-anchor='middle' fill='#1F2933'>50</text>
+<rect x='111.0' y='175.6' width='34.0' height='68.4' rx='3' fill='#D4691A'/>
+<text x='128.0' y='171.6' font-size='11' text-anchor='middle' fill='#1F2933'>45</text>
+<text x='110.0' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>Residencial</text><text x='110.0' y='273.0' font-size='11' text-anchor='middle' fill='#1F2933'>(NBR 10151)</text>
+<rect x='207.0' y='160.4' width='34.0' height='83.6' rx='3' fill='#0A7FA0'/>
+<text x='224.0' y='156.4' font-size='11' text-anchor='middle' fill='#1F2933'>55</text>
+<rect x='243.0' y='168.0' width='34.0' height='76.0' rx='3' fill='#D4691A'/>
+<text x='260.0' y='164.0' font-size='11' text-anchor='middle' fill='#1F2933'>50</text>
+<text x='242.0' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>Mista resid.</text><text x='242.0' y='273.0' font-size='11' text-anchor='middle' fill='#1F2933'>(NBR 10151)</text>
+<rect x='339.0' y='152.8' width='34.0' height='91.2' rx='3' fill='#0A7FA0'/>
+<text x='356.0' y='148.8' font-size='11' text-anchor='middle' fill='#1F2933'>60</text>
+<rect x='375.0' y='160.4' width='34.0' height='83.6' rx='3' fill='#D4691A'/>
+<text x='392.0' y='156.4' font-size='11' text-anchor='middle' fill='#1F2933'>55</text>
+<text x='374.0' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>Mista comercial</text><text x='374.0' y='273.0' font-size='11' text-anchor='middle' fill='#1F2933'>(NBR 10151)</text>
+<rect x='471.0' y='137.6' width='34.0' height='106.4' rx='3' fill='#0A7FA0'/>
+<text x='488.0' y='133.6' font-size='11' text-anchor='middle' fill='#1F2933'>70</text>
+<rect x='507.0' y='152.8' width='34.0' height='91.2' rx='3' fill='#D4691A'/>
+<text x='524.0' y='148.8' font-size='11' text-anchor='middle' fill='#1F2933'>60</text>
+<text x='506.0' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>Industrial</text><text x='506.0' y='273.0' font-size='11' text-anchor='middle' fill='#1F2933'>(NBR 10151)</text>
+<rect x='603.0' y='114.8' width='34.0' height='129.2' rx='3' fill='#0A7FA0'/>
+<text x='620.0' y='110.8' font-size='11' text-anchor='middle' fill='#1F2933'>85</text>
+<rect x='639.0' y='154.3' width='34.0' height='89.7' rx='3' fill='#D4691A'/>
+<text x='656.0' y='150.3' font-size='11' text-anchor='middle' fill='#1F2933'>59</text>
+<text x='638.0' y='260' font-size='11' text-anchor='middle' fill='#1F2933'>Obra com alvará</text><text x='638.0' y='273.0' font-size='11' text-anchor='middle' fill='#1F2933'>(PL 403/2026)</text>
+<text x='16' y='290' font-size='11' fill='#5B6670'>Fontes: ABNT NBR 10151:2019, Tabela 3; PL 403/2026 (Quadro 4B.1), mesmos valores do Decreto</text>
+<text x='16' y='303' font-size='11' fill='#5B6670'>60.581/2021 julgado inconstitucional pelo TJSP em jun/2026.</text>
+</svg>
