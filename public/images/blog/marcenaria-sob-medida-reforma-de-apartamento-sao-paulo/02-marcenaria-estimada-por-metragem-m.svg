@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="568" viewBox="0 0 420 568" role="img" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
+<rect width="420" height="568" fill="#FFFFFF"/>
+<text x="24" y="34" font-size="16" font-weight="700" fill="#1F4E5F">Quanto da reforma vai para a</text>
+<text x="24" y="56" font-size="16" font-weight="700" fill="#1F4E5F">marcenaria, por metragem</text>
+<text x="24" y="80" font-size="13" fill="#5C6B74">Estimativa: orçamento mediano do Índice Bewild (585</text>
+<text x="24" y="98" font-size="13" fill="#5C6B74">orçamentos, nov/2026) × 28% a 34%</text>
+<text x="24" y="116" font-size="13" fill="#5C6B74">É ordem de grandeza, não preço de tabela: o valor sai</text>
+<text x="24" y="134" font-size="13" fill="#5C6B74">do projeto.</text>
+<line x1="172" y1="168" x2="172" y2="466" stroke="#E3E8EB"/>
+<text x="172" y="164" font-size="12" fill="#5C6B74" text-anchor="middle">R$ 10 mil</text>
+<line x1="230" y1="168" x2="230" y2="466" stroke="#E3E8EB"/>
+<text x="230" y="164" font-size="12" fill="#5C6B74" text-anchor="middle">R$ 20 mil</text>
+<line x1="288" y1="168" x2="288" y2="466" stroke="#E3E8EB"/>
+<text x="288" y="164" font-size="12" fill="#5C6B74" text-anchor="middle">R$ 30 mil</text>
+<line x1="346" y1="168" x2="346" y2="466" stroke="#E3E8EB"/>
+<text x="346" y="164" font-size="12" fill="#5C6B74" text-anchor="middle">R$ 40 mil</text>
+<text x="102" y="206.0" font-size="13" fill="#1E2A30" text-anchor="end">Até 20 m²</text>
+<rect x="222.8" y="194.0" width="23.3" height="16" rx="4" fill="#0F7FA3" opacity="0.35"/>
+<rect x="232.5" y="191.0" width="4" height="22" rx="2" fill="#E06A1E"/>
+<text x="254.1" y="206.0" font-size="12" font-weight="600" fill="#1E2A30">19–23 mil</text>
+<text x="102" y="254.0" font-size="13" fill="#1E2A30" text-anchor="end">20 a 24 m²</text>
+<rect x="226.4" y="242.0" width="24.1" height="16" rx="4" fill="#0F7FA3" opacity="0.35"/>
+<rect x="236.4" y="239.0" width="4" height="22" rx="2" fill="#E06A1E"/>
+<text x="258.5" y="254.0" font-size="12" font-weight="600" fill="#1E2A30">19–24 mil</text>
+<text x="102" y="302.0" font-size="13" fill="#1E2A30" text-anchor="end">24 a 28 m²</text>
+<rect x="228.6" y="290.0" width="24.6" height="16" rx="4" fill="#0F7FA3" opacity="0.35"/>
+<rect x="238.9" y="287.0" width="4" height="22" rx="2" fill="#E06A1E"/>
+<text x="261.2" y="302.0" font-size="12" font-weight="600" fill="#1E2A30">20–24 mil</text>
+<text x="102" y="350.0" font-size="13" fill="#1E2A30" text-anchor="end">28 a 32 m²</text>
+<rect x="236.9" y="338.0" width="26.3" height="16" rx="4" fill="#0F7FA3" opacity="0.35"/>
+<rect x="248.1" y="335.0" width="4" height="22" rx="2" fill="#E06A1E"/>
+<text x="271.3" y="350.0" font-size="12" font-weight="600" fill="#1E2A30">21–26 mil</text>
+<text x="102" y="398.0" font-size="13" fill="#1E2A30" text-anchor="end">32 a 40 m²</text>
+<rect x="269.1" y="386.0" width="33.2" height="16" rx="4" fill="#0F7FA3" opacity="0.35"/>
+<rect x="283.7" y="383.0" width="4" height="22" rx="2" fill="#E06A1E"/>
+<text x="310.4" y="398.0" font-size="12" font-weight="600" fill="#1E2A30">27–32 mil</text>
+<text x="102" y="446.0" font-size="13" fill="#1E2A30" text-anchor="end">40 a 45 m²</text>
+<rect x="292.6" y="434.0" width="38.3" height="16" rx="4" fill="#0F7FA3" opacity="0.35"/>
+<rect x="309.8" y="431.0" width="4" height="22" rx="2" fill="#E06A1E"/>
+<text x="338.9" y="446.0" font-size="12" font-weight="600" fill="#1E2A30">31–37 mil</text>
+<rect x="24" y="480" width="14" height="10" rx="3" fill="#0F7FA3" opacity="0.35"/><text x="42" y="489" font-size="12" fill="#5C6B74">faixa 28%–34% do orçamento mediano</text>
+<rect x="24" y="496" width="4" height="12" rx="2" fill="#E06A1E"/><text x="34" y="506" font-size="12" fill="#5C6B74">ponto a 31%</text>
+<text x="24" y="538" font-size="12" fill="#5C6B74">Fonte: Índice Bewild nov/2026 (orçamento mediano por faixa)</text>
+<text x="24" y="554" font-size="12" fill="#5C6B74">× peso da marcenaria em 2 orçamentos reais (28% e 33,9%).</text>
+</svg>
