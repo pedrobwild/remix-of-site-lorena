@@ -102,7 +102,26 @@ export const RENDA_MORAR_PCT = temaPct(RENDA).morar;
 
 // --- Textos de cabeçalho ----------------------------------------------------
 
-export const PERFIL_TITLE = `Quem reforma studio em São Paulo: ${ALUGAR_PCT}% para alugar (nov/2026)`;
+/**
+ * O título leva o nome do estudo: a consulta "quem reforma studio em São Paulo" é do
+ * artigo do blog (PERFIL_ARTIGO), que traz a leitura comentada; esta página é a fonte
+ * dos dados. Dois títulos iguais faziam as duas URLs disputarem a mesma busca.
+ */
+export const PERFIL_TITLE = `${PERFIL_NOME}: dados de nov/2026`;
+/** Imagem de compartilhamento (1200×630), gerada por scripts/graficos/perfil_quem_reforma_2026_11.py --og. */
+export const PERFIL_OG_IMAGE =
+  "https://bewild.com.br/images/blog/quem-reforma-studio-sao-paulo-perfil/og-perfil-quem-reforma-studio.png";
+export const PERFIL_OG_ALT =
+  `${PERFIL_NOME}: ${ALUGAR_PCT}% vão alugar o imóvel, em gráfico de barras com a finalidade declarada por ${num(fin.base)} pessoas.`;
+
+/** Autoria e revisão técnica (Pedro, 24/11/2026: o Thiago revisou o estudo). */
+export const PERFIL_AUTOR = { nome: "Pedro Alves", cargo: "engenheiro e CEO da Bewild", href: "/conteudos/pedro-henrique-alves-ceo-bewild" };
+export const PERFIL_REVISOR = {
+  nome: "Thiago Dantas",
+  cargo: "arquiteto e urbanista (CAU A162437-7), responsável técnico da Bewild",
+  href: "/conteudos/thiago-dantas-arquiteto-responsavel-tecnico-bewild",
+};
+export const PERFIL_REVISADO_EM = comFuso(PERFIL_ATUALIZADO_EM);
 export const PERFIL_DESCRIPTION =
   `Quem reforma studio em São Paulo: ${ALUGAR_PCT}% vão alugar, ${FORA_PCT}% têm telefone de fora e a mediana é de ` +
   `${M2_MEDIANA}. Base de ${num(dados.base.pedidos)} orçamentos da Bewild, com CSV.`;

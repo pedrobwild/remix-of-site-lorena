@@ -293,3 +293,28 @@
   line-height: 1.5;
   resize: vertical;
 }
+
+/* Perfil Bewild: gráfico estático do estudo (SVG com versão de celular). */
+.bwa-perfil-fig {
+  margin: 28px 0 24px;
+  max-width: 720px;
+}
+.bwa-perfil-fig img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--bwa-line);
+  border-radius: 10px;
+  background: var(--bwa-white);
+}
+.bwa-perfil-fig figcaption {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--bwa-ink-soft);
+}
+@media (max-width: 640px) {
+  .bwa-perfil-fig {
+    max-width: 420px;
+  }
+}

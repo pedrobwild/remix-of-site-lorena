@@ -25,6 +25,7 @@ import {
   PERFIL,
   PERFIL_ARTIGO,
   PERFIL_ATUALIZADO_EM,
+  PERFIL_AUTOR,
   PERFIL_AVISO,
   PERFIL_CANONICAL,
   PERFIL_COMO_CITAR,
@@ -39,7 +40,10 @@ import {
   PERFIL_LICENCA_NOME,
   PERFIL_LIMITES,
   PERFIL_METODO,
+  PERFIL_OG_ALT,
+  PERFIL_OG_IMAGE,
   PERFIL_RESUMO,
+  PERFIL_REVISOR,
   PERFIL_TITLE,
   RENDA_ALUGAR_PCT,
   RENDA_MORAR_PCT,
@@ -50,6 +54,14 @@ import {
   TRES_BAIRROS_PEDIDOS,
   TRES_REGIOES_PCT,
 } from "@/content/perfilReforma";
+import {
+  perfilGrafico,
+  perfilGraficoEmbedHtml,
+  perfilGraficoSrc,
+  PERFIL_GRAFICOS,
+  PERFIL_GRAFICOS_IMPRENSA,
+  PERFIL_GRAFICOS_PAGINA,
+} from "@/content/perfilGraficos";
 
 /* ============================================================
  * PerfilReformaPage — /perfil-de-quem-reforma-studio
@@ -83,6 +95,32 @@ function CopiarTexto({ texto, rotulo, cta }: { texto: string; rotulo: string; ct
   );
 }
 
+/**
+ * Gráfico do estudo (SVG estático, versão de celular por `media`). A tabela ou as
+ * barras da seção continuam sendo a versão acessível dos mesmos números.
+ */
+function Figura({ id }: { id: string }) {
+  const g = perfilGrafico(id);
+  return (
+    <figure className="bwa-perfil-fig" data-perfil-grafico={g.id}>
+      <picture>
+        <source media="(max-width: 640px)" srcSet={perfilGraficoSrc(g, "mobile")} width={420} height={g.alturaM} />
+        <img
+          src={perfilGraficoSrc(g, "desktop")}
+          alt={g.alt}
+          width={g.largura}
+          height={g.altura}
+          loading="lazy"
+          decoding="async"
+        />
+      </picture>
+      <figcaption>
+        {g.legenda} Fonte: Perfil Bewild, edição de {PERFIL_EDICAO}, {g.base}.
+      </figcaption>
+    </figure>
+  );
+}
+
 export default function PerfilReformaPage() {
   useCtaClickTracking("perfil-reforma");
 
@@ -91,6 +129,10 @@ export default function PerfilReformaPage() {
     description: PERFIL_DESCRIPTION,
     canonicalPath: PERFIL_CANONICAL,
     ogType: "website",
+    ogImage: PERFIL_OG_IMAGE,
+    ogImageWidth: 1200,
+    ogImageHeight: 630,
+    ogImageAlt: PERFIL_OG_ALT,
   });
 
   const d = PERFIL;
@@ -116,6 +158,10 @@ export default function PerfilReformaPage() {
                   Baixar os dados (CSV)
                 </a>{" "}
                 · <a href="#imprensa">Para imprensa</a>
+              </p>
+              <p className="bwa-indice-meta" data-perfil-creditos>
+                Elaboração: <a href={PERFIL_AUTOR.href}>{PERFIL_AUTOR.nome}</a>, {PERFIL_AUTOR.cargo} · Revisão técnica:{" "}
+                <a href={PERFIL_REVISOR.href}>{PERFIL_REVISOR.nome}</a>, {PERFIL_REVISOR.cargo}
               </p>
             </div>
           </div>
@@ -163,6 +209,7 @@ export default function PerfilReformaPage() {
               {num(d.perfis.base)} pessoas se dividem em seis grupos, e os dois de investidores de temporada somam{" "}
               {pctDe(d.perfis.itens[0].pessoas + d.perfis.itens[1].pessoas, d.perfis.base)}%.
             </p>
+            <Figura id="perfis" />
             <div className="bwa-indice-table-wrap" role="region" aria-labelledby="perfis" tabIndex={0}>
               <table className="bwa-indice-table">
                 <caption className="sr-only">Perfis de quem recebeu orçamento de reforma, {PERFIL_EDICAO}</caption>
@@ -256,6 +303,7 @@ export default function PerfilReformaPage() {
               Quase metade das pessoas tem telefone de fora da capital e da Grande São Paulo: {num(FORA)} de{" "}
               {num(d.origem.base)} com telefone identificado.
             </p>
+            <Figura id="origem" />
             <div className="bwa-indice-table-wrap" role="region" aria-labelledby="origem" tabIndex={0}>
               <table className="bwa-indice-table">
                 <caption className="sr-only">Origem do telefone de quem pede orçamento, {PERFIL_EDICAO}</caption>
@@ -309,6 +357,7 @@ export default function PerfilReformaPage() {
               Zona Sul, Zona Oeste e Centro somam {TRES_REGIOES_PCT}% dos {num(d.regioes.base)} orçamentos com bairro
               informado.
             </p>
+            <Figura id="regioes" />
             <div className="bwa-indice-table-wrap" role="region" aria-labelledby="regioes" tabIndex={0}>
               <table className="bwa-indice-table">
                 <caption className="sr-only">Orçamentos de reforma por região de São Paulo, {PERFIL_EDICAO}</caption>
@@ -355,6 +404,7 @@ export default function PerfilReformaPage() {
               {d.bairros.itens.length} bairros da tabela somam {num(BAIRROS_PEDIDOS)} (
               {pctDe(BAIRROS_PEDIDOS, d.bairros.base)}%).
             </p>
+            <Figura id="bairros" />
             <div className="bwa-indice-table-wrap" role="region" aria-labelledby="bairros" tabIndex={0}>
               <table className="bwa-indice-table">
                 <caption className="sr-only">Orçamentos de reforma por bairro de São Paulo, {PERFIL_EDICAO}</caption>
@@ -457,6 +507,7 @@ export default function PerfilReformaPage() {
               Renda aparece em {RENDA_ALUGAR_PCT}% das conversas de quem vai alugar e em {RENDA_MORAR_PCT}% das de quem
               vai morar.
             </p>
+            <Figura id="temas" />
             <div className="bwa-indice-table-wrap" role="region" aria-labelledby="conversas" tabIndex={0}>
               <table className="bwa-indice-table">
                 <caption className="sr-only">
@@ -558,6 +609,7 @@ export default function PerfilReformaPage() {
               que reuniu {num(d.base.indiceOrcamentos)} orçamentos na edição de novembro, consultada em{" "}
               {dataBR(d.base.indiceConsulta)}.
             </p>
+            <Figura id="metodo" />
             <div className="bwa-indice-table-wrap" role="region" aria-label="Quanto da amostra tem cada dado" tabIndex={0}>
               <table className="bwa-indice-table">
                 <caption className="sr-only">Quanto da amostra tem cada dado, {PERFIL_EDICAO}</caption>
@@ -666,6 +718,42 @@ export default function PerfilReformaPage() {
               </a>
               : as expressões que definem cada tema.
             </p>
+
+            <h3 className="bwa-servico-h3 bwa-indice-press-h3" id="graficos">
+              Gráficos e infográficos
+            </h3>
+            <p className="bwa-servico-text">
+              Os {PERFIL_GRAFICOS.length} gráficos do estudo, em versão larga e para celular, estão na{" "}
+              <a href={PERFIL_GRAFICOS_PAGINA} data-cta="perfil-imprensa-graficos">
+                página de gráficos para baixar
+              </a>
+              . Para incorporar, cole o código no seu site: ele mostra o gráfico e o link de atribuição para esta página.
+            </p>
+            <Figura id="resumo" />
+            {PERFIL_GRAFICOS_IMPRENSA.map((g) => {
+              const codigo = perfilGraficoEmbedHtml(g);
+              return (
+                <div key={g.id} className="bwa-indice-embed">
+                  <label className="bwa-indice-embed-label" htmlFor={`embed-${g.id}`}>
+                    Código para incorporar: {g.titulo}
+                  </label>
+                  <textarea
+                    id={`embed-${g.id}`}
+                    className="bwa-indice-embed-code"
+                    readOnly
+                    rows={6}
+                    spellCheck={false}
+                    value={codigo}
+                  />
+                  <CopiarTexto texto={codigo} rotulo="Copiar o código" cta="perfil-imprensa-copiar-embed" />
+                  <p className="bwa-indice-press-meta">
+                    <a href={perfilGraficoSrc(g, "desktop")} target="_blank" rel="noopener noreferrer">
+                      Ver o gráfico (SVG, abre em nova aba)
+                    </a>
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </section>
 

@@ -1,7 +1,7 @@
 /**
  * Perfil Bewild de Quem Reforma Studio: a página, os CSV para download e o
- * JSON-LD têm de contar a mesma história (2.395 pedidos de orçamento do
- * Bwild Engine, edição de novembro de 2026). Quebrou aqui? Atualize
+ * JSON-LD têm de contar a mesma história (584 orçamentos de reforma completa,
+ * pela regra de amostra do Índice Bewild, edição de novembro de 2026). Quebrou aqui? Atualize
  * src/content/perfilReforma.dados.json e os CSV de public/dados juntos.
  */
 import { readFileSync } from "node:fs";

@@ -33,6 +33,24 @@ export const CHART_SETS: ChartSet[] = [
       { id: "valor-por-metragem", file: "06-valor-por-metragem-nov26", title: "Valor do orçamento de reforma completa por faixa de metragem" },
     ],
   },
+  {
+    slug: "quem-reforma-studio-sao-paulo-perfil",
+    title: "Quem reforma studio em São Paulo: os gráficos do estudo",
+    description:
+      "Os nove gráficos e infográficos do Perfil Bewild de Quem Reforma Studio, em versão larga e para celular, prontos para baixar e reutilizar com crédito à Bewild.",
+    // Títulos e arquivos iguais aos de src/content/perfilGraficos.ts (conferido em perfilGraficos.test.ts).
+    charts: [
+      { id: "resumo", file: "01-perfil-em-seis-numeros", title: "Quem reforma studio em São Paulo, em seis números" },
+      { id: "finalidade", file: "02-finalidade-do-imovel", title: "Finalidade do imóvel de quem recebe orçamento de reforma de studio" },
+      { id: "origem", file: "03-origem-do-telefone", title: "Origem do telefone de quem recebe orçamento de reforma de studio em São Paulo" },
+      { id: "chaves", file: "04-momento-das-chaves", title: "Momento das chaves de quem pede orçamento de reforma de studio" },
+      { id: "temas", file: "05-temas-das-conversas", title: "Temas das conversas antes do contrato, por finalidade do imóvel" },
+      { id: "regioes", file: "06-regioes-de-sao-paulo", title: "Orçamentos de reforma por região de São Paulo e parcela para aluguel por temporada" },
+      { id: "bairros", file: "07-bairros-com-mais-orcamentos", title: "Bairros de São Paulo com 15 orçamentos de reforma ou mais" },
+      { id: "perfis", file: "08-seis-perfis", title: "Seis perfis de quem recebe orçamento de reforma de studio em São Paulo" },
+      { id: "metodo", file: "09-como-o-estudo-foi-montado", title: "Como o Perfil Bewild foi montado: de 793 negócios a 584 orçamentos" },
+    ],
+  },
 ];
 
 export function chartSetForSlug(slug: string): ChartSet | null {
