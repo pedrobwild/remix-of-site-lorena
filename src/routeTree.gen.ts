@@ -37,6 +37,7 @@ import { Route as ORouteImport } from './routes/o'
 import { Route as OndeAtuamosRouteImport } from './routes/onde-atuamos'
 import { Route as OrcamentoRouteImport } from './routes/orcamento'
 import { Route as PRouteImport } from './routes/p'
+import { Route as PerfilDeQuemReformaStudioRouteImport } from './routes/perfil-de-quem-reforma-studio'
 import { Route as PoliticaDeCookiesRouteImport } from './routes/politica-de-cookies'
 import { Route as PreferenciasDeCookiesRouteImport } from './routes/preferencias-de-cookies'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
@@ -246,6 +247,12 @@ const PRoute = PRouteImport.update({
   path: '/p',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PerfilDeQuemReformaStudioRoute =
+  PerfilDeQuemReformaStudioRouteImport.update({
+    id: '/perfil-de-quem-reforma-studio',
+    path: '/perfil-de-quem-reforma-studio',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const PoliticaDeCookiesRoute = PoliticaDeCookiesRouteImport.update({
   id: '/politica-de-cookies',
   path: '/politica-de-cookies',
@@ -622,6 +629,7 @@ export interface FileRoutesByFullPath {
   '/onde-atuamos': typeof OndeAtuamosRoute
   '/orcamento': typeof OrcamentoRoute
   '/p': typeof PRoute
+  '/perfil-de-quem-reforma-studio': typeof PerfilDeQuemReformaStudioRoute
   '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/preferencias-de-cookies': typeof PreferenciasDeCookiesRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -720,6 +728,7 @@ export interface FileRoutesByTo {
   '/onde-atuamos': typeof OndeAtuamosRoute
   '/orcamento': typeof OrcamentoRoute
   '/p': typeof PRoute
+  '/perfil-de-quem-reforma-studio': typeof PerfilDeQuemReformaStudioRoute
   '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/preferencias-de-cookies': typeof PreferenciasDeCookiesRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -819,6 +828,7 @@ export interface FileRoutesById {
   '/onde-atuamos': typeof OndeAtuamosRoute
   '/orcamento': typeof OrcamentoRoute
   '/p': typeof PRoute
+  '/perfil-de-quem-reforma-studio': typeof PerfilDeQuemReformaStudioRoute
   '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/preferencias-de-cookies': typeof PreferenciasDeCookiesRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -919,6 +929,7 @@ export interface FileRouteTypes {
     | '/onde-atuamos'
     | '/orcamento'
     | '/p'
+    | '/perfil-de-quem-reforma-studio'
     | '/politica-de-cookies'
     | '/preferencias-de-cookies'
     | '/privacidade'
@@ -1017,6 +1028,7 @@ export interface FileRouteTypes {
     | '/onde-atuamos'
     | '/orcamento'
     | '/p'
+    | '/perfil-de-quem-reforma-studio'
     | '/politica-de-cookies'
     | '/preferencias-de-cookies'
     | '/privacidade'
@@ -1115,6 +1127,7 @@ export interface FileRouteTypes {
     | '/onde-atuamos'
     | '/orcamento'
     | '/p'
+    | '/perfil-de-quem-reforma-studio'
     | '/politica-de-cookies'
     | '/preferencias-de-cookies'
     | '/privacidade'
@@ -1214,6 +1227,7 @@ export interface RootRouteChildren {
   OndeAtuamosRoute: typeof OndeAtuamosRoute
   OrcamentoRoute: typeof OrcamentoRoute
   PRoute: typeof PRoute
+  PerfilDeQuemReformaStudioRoute: typeof PerfilDeQuemReformaStudioRoute
   PoliticaDeCookiesRoute: typeof PoliticaDeCookiesRoute
   PreferenciasDeCookiesRoute: typeof PreferenciasDeCookiesRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
@@ -1480,6 +1494,13 @@ declare module '@tanstack/react-router' {
       path: '/p'
       fullPath: '/p'
       preLoaderRoute: typeof PRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil-de-quem-reforma-studio': {
+      id: '/perfil-de-quem-reforma-studio'
+      path: '/perfil-de-quem-reforma-studio'
+      fullPath: '/perfil-de-quem-reforma-studio'
+      preLoaderRoute: typeof PerfilDeQuemReformaStudioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/politica-de-cookies': {
@@ -1990,6 +2011,7 @@ const rootRouteChildren: RootRouteChildren = {
   OndeAtuamosRoute: OndeAtuamosRoute,
   OrcamentoRoute: OrcamentoRoute,
   PRoute: PRoute,
+  PerfilDeQuemReformaStudioRoute: PerfilDeQuemReformaStudioRoute,
   PoliticaDeCookiesRoute: PoliticaDeCookiesRoute,
   PreferenciasDeCookiesRoute: PreferenciasDeCookiesRoute,
   PrivacidadeRoute: PrivacidadeRoute,
