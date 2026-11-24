@@ -1,52 +1,52 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="420" height="676" viewBox="0 0 420 676" role="img" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="388" height="676" viewBox="16 0 388 676" role="img" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
 <rect width="420" height="676" fill="#FFFFFF"/>
 <text x="24" y="34" font-size="16" font-weight="700" fill="#1F4E5F">Quanto a marcenaria pesa em dois</text>
 <text x="24" y="56" font-size="16" font-weight="700" fill="#1F4E5F">orçamentos reais</text>
 <text x="24" y="80" font-size="13" fill="#5C6B74">% do total · proposta set/2026 (R$ 87,7 mil)</text>
 <text x="24" y="98" font-size="13" fill="#5C6B74">e orçamento mai/2026 (R$ 67,2 mil)</text>
-<rect x="24" y="120" width="12" height="12" rx="2" fill="#0F7FA3"/><text x="40" y="131" font-size="12" fill="#5C6B74">Proposta set/2026</text>
-<rect x="160" y="120" width="12" height="12" rx="2" fill="#E06A1E"/><text x="176" y="131" font-size="12" fill="#5C6B74">Orçamento mai/2026</text>
-<text x="24" y="157" font-size="12" fill="#1E2A30">Marcenaria sob medida</text>
+<rect x="24" y="120" width="12" height="12" rx="2" fill="#0F7FA3"/><text x="40" y="131" font-size="13" fill="#5C6B74">Proposta set/2026</text>
+<rect x="160" y="120" width="12" height="12" rx="2" fill="#E06A1E"/><text x="176" y="131" font-size="13" fill="#5C6B74">Orçamento mai/2026</text>
+<text x="24" y="157" font-size="13" fill="#1E2A30">Marcenaria sob medida</text>
 <rect x="24" y="161" width="242.7" height="11" fill="#0F7FA3"/><rect x="263.7" y="161" width="3" height="11" rx="2" fill="#0F7FA3"/>
-<text x="271.7" y="171" font-size="12" font-weight="600" fill="#1E2A30">28,0%</text>
+<text x="271.7" y="171" font-size="13" font-weight="600" fill="#1E2A30">28,0%</text>
 <rect x="24" y="175" width="293.8" height="11" fill="#E06A1E"/><rect x="314.8" y="175" width="3" height="11" rx="2" fill="#E06A1E"/>
-<text x="322.8" y="185" font-size="12" font-weight="600" fill="#1E2A30">33,9%</text>
-<text x="24" y="213" font-size="12" fill="#1E2A30">Obra civil e acabamentos</text>
+<text x="322.8" y="185" font-size="13" font-weight="600" fill="#1E2A30">33,9%</text>
+<text x="24" y="213" font-size="13" fill="#1E2A30">Obra civil e acabamentos</text>
 <rect x="24" y="217" width="235.7" height="11" fill="#0F7FA3"/><rect x="256.7" y="217" width="3" height="11" rx="2" fill="#0F7FA3"/>
-<text x="264.7" y="227" font-size="12" font-weight="600" fill="#1E2A30">27,2%</text>
+<text x="264.7" y="227" font-size="13" font-weight="600" fill="#1E2A30">27,2%</text>
 <rect x="24" y="231" width="156.0" height="11" fill="#E06A1E"/><rect x="177.0" y="231" width="3" height="11" rx="2" fill="#E06A1E"/>
-<text x="185.0" y="241" font-size="12" font-weight="600" fill="#1E2A30">18,0%</text>
-<text x="24" y="269" font-size="12" fill="#1E2A30">Gestão, encargos, logística, seguro</text>
+<text x="185.0" y="241" font-size="13" font-weight="600" fill="#1E2A30">18,0%</text>
+<text x="24" y="269" font-size="13" fill="#1E2A30">Gestão, encargos, logística, seguro</text>
 <rect x="24" y="273" width="118.7" height="11" fill="#0F7FA3"/><rect x="139.7" y="273" width="3" height="11" rx="2" fill="#0F7FA3"/>
-<text x="147.7" y="283" font-size="12" font-weight="600" fill="#1E2A30">13,7%</text>
+<text x="147.7" y="283" font-size="13" font-weight="600" fill="#1E2A30">13,7%</text>
 <rect x="24" y="287" width="161.2" height="11" fill="#E06A1E"/><rect x="182.2" y="287" width="3" height="11" rx="2" fill="#E06A1E"/>
-<text x="190.2" y="297" font-size="12" font-weight="600" fill="#1E2A30">18,6%</text>
-<text x="24" y="325" font-size="12" fill="#1E2A30">Eletrodomésticos</text>
+<text x="190.2" y="297" font-size="13" font-weight="600" fill="#1E2A30">18,6%</text>
+<text x="24" y="325" font-size="13" fill="#1E2A30">Eletrodomésticos</text>
 <rect x="24" y="329" width="64.1" height="11" fill="#0F7FA3"/><rect x="85.1" y="329" width="3" height="11" rx="2" fill="#0F7FA3"/>
-<text x="93.1" y="339" font-size="12" font-weight="600" fill="#1E2A30">7,4%</text>
+<text x="93.1" y="339" font-size="13" font-weight="600" fill="#1E2A30">7,4%</text>
 <rect x="24" y="343" width="117.0" height="11" fill="#E06A1E"/><rect x="138.0" y="343" width="3" height="11" rx="2" fill="#E06A1E"/>
-<text x="146.0" y="353" font-size="12" font-weight="600" fill="#1E2A30">13,5%</text>
-<text x="24" y="381" font-size="12" fill="#1E2A30">Mobiliário</text>
+<text x="146.0" y="353" font-size="13" font-weight="600" fill="#1E2A30">13,5%</text>
+<text x="24" y="381" font-size="13" fill="#1E2A30">Mobiliário</text>
 <rect x="24" y="385" width="56.3" height="11" fill="#0F7FA3"/><rect x="77.3" y="385" width="3" height="11" rx="2" fill="#0F7FA3"/>
-<text x="85.3" y="395" font-size="12" font-weight="600" fill="#1E2A30">6,5%</text>
+<text x="85.3" y="395" font-size="13" font-weight="600" fill="#1E2A30">6,5%</text>
 <rect x="24" y="399" width="45.1" height="11" fill="#E06A1E"/><rect x="66.1" y="399" width="3" height="11" rx="2" fill="#E06A1E"/>
-<text x="74.1" y="409" font-size="12" font-weight="600" fill="#1E2A30">5,2%</text>
-<text x="24" y="437" font-size="12" fill="#1E2A30">Vidraçaria</text>
+<text x="74.1" y="409" font-size="13" font-weight="600" fill="#1E2A30">5,2%</text>
+<text x="24" y="437" font-size="13" fill="#1E2A30">Vidraçaria</text>
 <rect x="24" y="441" width="60.7" height="11" fill="#0F7FA3"/><rect x="81.7" y="441" width="3" height="11" rx="2" fill="#0F7FA3"/>
-<text x="89.7" y="451" font-size="12" font-weight="600" fill="#1E2A30">7,0%</text>
+<text x="89.7" y="451" font-size="13" font-weight="600" fill="#1E2A30">7,0%</text>
 <rect x="24" y="455" width="23.4" height="11" fill="#E06A1E"/><rect x="44.4" y="455" width="3" height="11" rx="2" fill="#E06A1E"/>
-<text x="52.4" y="465" font-size="12" font-weight="600" fill="#1E2A30">2,7%</text>
-<text x="24" y="493" font-size="12" fill="#1E2A30">Iluminação e acessórios</text>
+<text x="52.4" y="465" font-size="13" font-weight="600" fill="#1E2A30">2,7%</text>
+<text x="24" y="493" font-size="13" fill="#1E2A30">Iluminação e acessórios</text>
 <rect x="24" y="497" width="31.2" height="11" fill="#0F7FA3"/><rect x="52.2" y="497" width="3" height="11" rx="2" fill="#0F7FA3"/>
-<text x="60.2" y="507" font-size="12" font-weight="600" fill="#1E2A30">3,6%</text>
+<text x="60.2" y="507" font-size="13" font-weight="600" fill="#1E2A30">3,6%</text>
 <rect x="24" y="511" width="32.1" height="11" fill="#E06A1E"/><rect x="53.1" y="511" width="3" height="11" rx="2" fill="#E06A1E"/>
-<text x="61.1" y="521" font-size="12" font-weight="600" fill="#1E2A30">3,7%</text>
-<text x="24" y="549" font-size="12" fill="#1E2A30">Projeto e RRT</text>
+<text x="61.1" y="521" font-size="13" font-weight="600" fill="#1E2A30">3,7%</text>
+<text x="24" y="549" font-size="13" fill="#1E2A30">Projeto e RRT</text>
 <rect x="24" y="553" width="29.5" height="11" fill="#0F7FA3"/><rect x="50.5" y="553" width="3" height="11" rx="2" fill="#0F7FA3"/>
-<text x="58.5" y="563" font-size="12" font-weight="600" fill="#1E2A30">3,4%</text>
+<text x="58.5" y="563" font-size="13" font-weight="600" fill="#1E2A30">3,4%</text>
 <rect x="24" y="567" width="38.1" height="11" fill="#E06A1E"/><rect x="59.1" y="567" width="3" height="11" rx="2" fill="#E06A1E"/>
-<text x="67.1" y="577" font-size="12" font-weight="600" fill="#1E2A30">4,4%</text>
+<text x="67.1" y="577" font-size="13" font-weight="600" fill="#1E2A30">4,4%</text>
 <text x="24" y="630" font-size="12" fill="#5C6B74">Fonte: Bewild, dois orçamentos de reforma completa</text>
-<text x="24" y="646" font-size="12" fill="#5C6B74">(set/2026 e mai/2026). Enxoval (3,1%) omitido na proposta</text>
-<text x="24" y="662" font-size="12" fill="#5C6B74">de set/2026.</text>
+<text x="24" y="646" font-size="13" fill="#5C6B74">(set/2026 e mai/2026). Enxoval (3,1%) omitido na proposta</text>
+<text x="24" y="662" font-size="13" fill="#5C6B74">de set/2026.</text>
 </svg>

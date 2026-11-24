@@ -1,43 +1,43 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="420" height="510" viewBox="0 0 420 510" role="img" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="388" height="510" viewBox="16 0 388 510" role="img" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
 <rect width="420" height="510" fill="#FFFFFF"/>
 <text x="24" y="34" font-size="16" font-weight="700" fill="#1F4E5F">Preço por m² de móvel planejado, por</text>
 <text x="24" y="56" font-size="16" font-weight="700" fill="#1F4E5F">padrão</text>
 <text x="24" y="80" font-size="13" fill="#5C6B74">Piso de cada faixa, duas fontes de 2026 (R$ por m² de</text>
 <text x="24" y="98" font-size="13" fill="#5C6B74">móvel, não de imóvel)</text>
 <rect x="24" y="122" width="12" height="12" rx="2" fill="#0F7FA3"/>
-<text x="40" y="133" font-size="12" fill="#5C6B74">Lar Pontual (out/2026)</text>
+<text x="40" y="133" font-size="12.5" fill="#5C6B74">Lar Pontual (out/2026)</text>
 <rect x="24" y="140" width="12" height="12" rx="2" fill="#E06A1E"/>
-<text x="40" y="151" font-size="12" fill="#5C6B74">Projefacil via QuintoAndar (jun/2026)</text>
+<text x="40" y="151" font-size="12.5" fill="#5C6B74">Projefacil via QuintoAndar (jun/2026)</text>
 <line x1="24" y1="329" x2="396" y2="329" stroke="#E3E8EB" stroke-width="1"/>
 <line x1="24" y1="274" x2="396" y2="274" stroke="#E3E8EB" stroke-width="1"/>
 <line x1="24" y1="219" x2="396" y2="219" stroke="#E3E8EB" stroke-width="1"/>
 <line x1="24" y1="384" x2="396" y2="384" stroke="#B8C2C9" stroke-width="1"/>
 <rect x="40.0" y="345.7" width="44.0" height="38.3" fill="#0F7FA3"/>
 <rect x="40.0" y="345.7" width="44.0" height="4" rx="2" fill="#0F7FA3"/>
-<text x="62.0" y="339.7" font-size="12" font-weight="600" fill="#1E2A30" text-anchor="middle">R$ 900</text>
+<text x="62.0" y="339.7" font-size="12.5" font-weight="600" fill="#1E2A30" text-anchor="middle">R$ 900</text>
 <rect x="88.0" y="307.5" width="44.0" height="76.5" fill="#E06A1E"/>
 <rect x="88.0" y="307.5" width="44.0" height="4" rx="2" fill="#E06A1E"/>
-<text x="110.0" y="301.5" font-size="12" font-weight="600" fill="#1E2A30" text-anchor="middle">R$ 1.800</text>
-<text x="86.0" y="402" font-size="12" fill="#5C6B74" text-anchor="middle">Básico</text>
-<text x="86.0" y="417" font-size="12" fill="#5C6B74" text-anchor="middle">econômico</text>
+<text x="110.0" y="301.5" font-size="12.5" font-weight="600" fill="#1E2A30" text-anchor="middle">R$ 1.800</text>
+<text x="86.0" y="402" font-size="12.5" fill="#5C6B74" text-anchor="middle">Básico</text>
+<text x="86.0" y="417" font-size="12.5" fill="#5C6B74" text-anchor="middle">econômico</text>
 <rect x="164.0" y="320.2" width="44.0" height="63.8" fill="#0F7FA3"/>
 <rect x="164.0" y="320.2" width="44.0" height="4" rx="2" fill="#0F7FA3"/>
-<text x="186.0" y="314.2" font-size="12" font-weight="600" fill="#1E2A30" text-anchor="middle">R$ 1.500</text>
+<text x="186.0" y="314.2" font-size="12.5" font-weight="600" fill="#1E2A30" text-anchor="middle">R$ 1.500</text>
 <rect x="212.0" y="265.0" width="44.0" height="119.0" fill="#E06A1E"/>
 <rect x="212.0" y="265.0" width="44.0" height="4" rx="2" fill="#E06A1E"/>
-<text x="234.0" y="259.0" font-size="12" font-weight="600" fill="#1E2A30" text-anchor="middle">R$ 2.800</text>
-<text x="210.0" y="402" font-size="12" fill="#5C6B74" text-anchor="middle">Intermediário</text>
-<text x="210.0" y="417" font-size="12" fill="#5C6B74" text-anchor="middle">médio</text>
+<text x="234.0" y="259.0" font-size="12.5" font-weight="600" fill="#1E2A30" text-anchor="middle">R$ 2.800</text>
+<text x="210.0" y="402" font-size="12.5" fill="#5C6B74" text-anchor="middle">Intermediário</text>
+<text x="210.0" y="417" font-size="12.5" fill="#5C6B74" text-anchor="middle">médio</text>
 <rect x="288.0" y="277.7" width="44.0" height="106.3" fill="#0F7FA3"/>
 <rect x="288.0" y="277.7" width="44.0" height="4" rx="2" fill="#0F7FA3"/>
-<text x="310.0" y="271.7" font-size="12" font-weight="600" fill="#1E2A30" text-anchor="middle">R$ 2.500</text>
+<text x="310.0" y="271.7" font-size="12.5" font-weight="600" fill="#1E2A30" text-anchor="middle">R$ 2.500</text>
 <rect x="336.0" y="192.7" width="44.0" height="191.3" fill="#E06A1E"/>
 <rect x="336.0" y="192.7" width="44.0" height="4" rx="2" fill="#E06A1E"/>
-<text x="358.0" y="186.7" font-size="12" font-weight="600" fill="#1E2A30" text-anchor="middle">R$ 4.500</text>
-<text x="334.0" y="402" font-size="12" fill="#5C6B74" text-anchor="middle">Premium</text>
-<text x="334.0" y="417" font-size="12" fill="#5C6B74" text-anchor="middle">alto</text>
+<text x="358.0" y="186.7" font-size="12.5" font-weight="600" fill="#1E2A30" text-anchor="middle">R$ 4.500</text>
+<text x="334.0" y="402" font-size="12.5" fill="#5C6B74" text-anchor="middle">Premium</text>
+<text x="334.0" y="417" font-size="12.5" fill="#5C6B74" text-anchor="middle">alto</text>
 <text x="24" y="448" font-size="12" fill="#5C6B74">Fonte: Lar Pontual (29/10/2026), faixas R$ 900–1.500,</text>
-<text x="24" y="464" font-size="12" fill="#5C6B74">1.500–2.400, 2.500–4.500/m²; QuintoAndar Guias (19/06/2026,</text>
-<text x="24" y="480" font-size="12" fill="#5C6B74">dados Projefacil), R$ 1.800–2.500, 2.800–4.200,</text>
-<text x="24" y="496" font-size="12" fill="#5C6B74">4.500–7.500/m².</text>
+<text x="24" y="464" font-size="12.5" fill="#5C6B74">1.500–2.400, 2.500–4.500/m²; QuintoAndar Guias (19/06/2026,</text>
+<text x="24" y="480" font-size="12.5" fill="#5C6B74">dados Projefacil), R$ 1.800–2.500, 2.800–4.200,</text>
+<text x="24" y="496" font-size="12.5" fill="#5C6B74">4.500–7.500/m².</text>
 </svg>
