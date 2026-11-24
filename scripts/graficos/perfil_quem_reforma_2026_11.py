@@ -6,7 +6,7 @@ o mesmo arquivo que alimenta a página /perfil-de-quem-reforma-studio. Refez o
 estudo? Rode o script de novo e os gráficos acompanham.
 
 Uso: python3 scripts/graficos/perfil_quem_reforma_2026_11.py
-Gera a versão larga (viewBox 600) e a de celular (viewBox 420, sufixo -m) em
+Gera a versão larga (viewBox 600) e a de celular (380 de largura, sufixo -m) em
 public/images/blog/quem-reforma-studio-sao-paulo-perfil/ e imprime, por arquivo,
 nome, largura e altura (usados no <img> do artigo e em perfilGraficos.ts).
 """
@@ -21,6 +21,39 @@ D = json.load(open(os.path.join(RAIZ, "src", "content", "perfilReforma.dados.jso
 N = D["base"]["pedidos"]
 FONTE = f"Fonte: Perfil Bewild, nov/2026, {N} orçamentos"
 NEUTRO = "#C9CED6"
+
+# Leitura no celular (conferida em 24/11/2026 num navegador a 375 px): a coluna do
+# artigo mostra a versão "-m" com 331 px. Com viewBox de 420 o texto encolhia para 79%
+# e as notas ficavam abaixo de 10 px. Por isso a versão de celular (1) corta 20 unidades
+# de margem de cada lado, já que a página tem a própria margem, e (2) não usa texto
+# menor que 13 unidades, o que dá cerca de 11 px na tela. A linha de fonte fica em 12.
+CELULAR_MIN = 13
+CELULAR_CORTE = 20
+CELULAR_LARGURA = 420 - 2 * CELULAR_CORTE
+
+_t, _salvar = Svg.t, Svg.salvar
+
+
+def _t_celular(self, x, y, txt, size=13, cls="s", fill=CINZA, weight=None, anchor=None, extra=""):
+    if self.W == 420 and size < CELULAR_MIN and not txt.startswith("Fonte:"):
+        size = CELULAR_MIN
+    return _t(self, x, y, txt, size, cls, fill, weight, anchor, extra)
+
+
+def _salvar_celular(self, nome, H):
+    arq, wpx, hpx = _salvar(self, nome, H)
+    if self.W != 420:
+        return arq, wpx, hpx
+    caminho = os.path.join(g.OUT, arq)
+    svg = open(caminho, encoding="utf8").read()
+    de = f'viewBox="0 0 420 {round(H)}" width="420" height="{hpx}"'
+    assert svg.count(de) == 1, arq
+    svg = svg.replace(de, f'viewBox="{CELULAR_CORTE} 0 {CELULAR_LARGURA} {round(H)}" width="{CELULAR_LARGURA}" height="{hpx}"')
+    open(caminho, "w", encoding="utf8").write(svg)
+    return arq, CELULAR_LARGURA, hpx
+
+
+Svg.t, Svg.salvar = _t_celular, _salvar_celular
 
 
 def pct(n, base):
@@ -39,7 +72,7 @@ def mil(v):
 def barras(s, y, itens, vmax, destaque=(), passo=50, alt=16):
     """itens: (rótulo, nota à direita, valor numérico, texto do valor). Rótulo acima da barra."""
     larg = s.W - 64 - 74
-    fn = 12.5 if s.W == 600 else 11.5
+    fn = 12.5 if s.W == 600 else CELULAR_MIN
     # sem espaço para rótulo e nota na mesma linha: a nota desce para a linha de baixo
     abaixo = any(len(r) * 7.9 + len(n) * fn * 0.62 > s.W - 64 - 12 for r, n, _, _ in itens if n)
     for rot, nota, v, txt in itens:
@@ -64,7 +97,7 @@ def legenda(s, y, itens):
 
 
 def nota(s, y, txt, larg=None):
-    for l in textwrap.wrap(txt, larg or (84 if s.W == 600 else 56)):
+    for l in textwrap.wrap(txt, larg or (84 if s.W == 600 else 52)):
         s.t(32, y, l, 12.5, "s", CINZA); y += 17
     return y
 
@@ -224,7 +257,7 @@ def p_bairros(W):
     y = s.cabecalho("BAIRROS COM MAIS ORÇAMENTOS", f"{nomes} somam {soma} dos {base} orçamentos",
                     f"Os {len(itens)} bairros com {bai['minimo']} orçamentos ou mais, entre os {base} com bairro informado.")
     larga = W == 600
-    x0 = 190 if larga else 172
+    x0 = 190 if larga else 180
     larg = W - 32 - x0 - 40
     vmax = itens[0]["pedidos"] * 1.05
     y += 6

@@ -2,7 +2,7 @@
  * Gráficos e infográficos do Perfil Bewild de Quem Reforma Studio.
  *
  * Os arquivos ficam em public/images/blog/quem-reforma-studio-sao-paulo-perfil/
- * (versão larga e versão "-m" para celular) e saem de
+ * (versão larga de 720 px e versão "-m" de 380 px para celular) e saem de
  * scripts/graficos/perfil_quem_reforma_2026_11.py, que lê os mesmos números de
  * perfilReforma.dados.json. Refez o estudo? Rode o script e atualize as alturas
  * abaixo (perfilGraficos.test.ts compara com os arquivos e com os percentuais).
@@ -30,6 +30,9 @@ import {
 export const PERFIL_GRAFICOS_SLUG = "quem-reforma-studio-sao-paulo-perfil";
 export const PERFIL_GRAFICOS_DIR = `/images/blog/${PERFIL_GRAFICOS_SLUG}`;
 export const PERFIL_GRAFICOS_PAGINA = `/graficos/${PERFIL_GRAFICOS_SLUG}`;
+
+/** Largura em pixels da versão de celular (a larga tem 720). */
+export const PERFIL_GRAFICO_LARGURA_CELULAR = 380;
 
 export type PerfilGrafico = {
   id: string;
@@ -123,7 +126,7 @@ export const PERFIL_GRAFICOS: PerfilGrafico[] = [
     base: `base de ${num(d.conversas.alugar)} pessoas que vão alugar e ${num(d.conversas.morar)} que vão morar`,
     largura: 720,
     altura: 871,
-    alturaM: 1020,
+    alturaM: 1037,
     alt:
       `Parcela das conversas em que cada tema aparece, entre ${num(d.conversas.alugar)} pessoas que vão alugar e ` +
       `${num(d.conversas.morar)} que vão morar: ` +

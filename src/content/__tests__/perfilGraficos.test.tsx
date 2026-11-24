@@ -22,6 +22,7 @@ import {
   perfilGrafico,
   perfilGraficoEmbedHtml,
   perfilGraficoSrc,
+  PERFIL_GRAFICO_LARGURA_CELULAR,
   PERFIL_GRAFICOS,
   PERFIL_GRAFICOS_IMPRENSA,
   PERFIL_GRAFICOS_PAGINA,
@@ -50,7 +51,11 @@ describe("Perfil Bewild: gráficos e infográficos", () => {
     const largo = ler(perfilGraficoSrc(g, "desktop"));
     const celular = ler(perfilGraficoSrc(g, "mobile"));
     expect(largo).toContain(`width="${g.largura}" height="${g.altura}"`);
-    expect(celular).toContain(`width="420" height="${g.alturaM}"`);
+    expect(celular).toContain(`width="${PERFIL_GRAFICO_LARGURA_CELULAR}" height="${g.alturaM}"`);
+    // Leitura no celular: sem margem interna larga e sem texto menor que 12 unidades.
+    expect(celular).toContain(`viewBox="20 0 ${PERFIL_GRAFICO_LARGURA_CELULAR} `);
+    const tamanhos = [...celular.matchAll(/font-size="([\d.]+)"/g)].map((m) => Number(m[1]));
+    expect(Math.min(...tamanhos)).toBeGreaterThanOrEqual(12);
     for (const svg of [largo, celular]) {
       expect(semEntidades(svg)).toContain(`<title id="t">${g.titulo}</title>`);
       expect(svg).toContain("<desc id=\"d\">");
@@ -102,7 +107,7 @@ describe("Perfil Bewild: gráficos e infográficos", () => {
     for (const id of figuras) {
       const g = perfilGrafico(id);
       expect(html).toContain(`src="${perfilGraficoSrc(g, "desktop")}"`);
-      expect(html).toContain(`srcSet="${perfilGraficoSrc(g, "mobile")}"`);
+      expect(html).toContain(`srcSet="${perfilGraficoSrc(g, "mobile")}" width="${PERFIL_GRAFICO_LARGURA_CELULAR}" height="${g.alturaM}"`);
     }
     expect(html).toContain("Revisão técnica:");
     expect(html).toContain(PERFIL_REVISOR.nome);

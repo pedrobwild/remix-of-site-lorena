@@ -318,3 +318,14 @@
     max-width: 420px;
   }
 }
+
+/* Linha de elaboração e revisão: os links ficam dentro de uma frase, então não
+   levam a área de toque de 44 px dos links soltos de .bwa-indice-meta, que
+   deixava as linhas com espaçamento desigual (conferido no celular em 24/11/2026). */
+.bwa-indice-meta.bwa-perfil-creditos {
+  line-height: 1.6;
+}
+.bwa-indice-meta.bwa-perfil-creditos a {
+  display: inline;
+  min-height: 0;
+}
