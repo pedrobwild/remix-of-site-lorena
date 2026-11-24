@@ -3,7 +3,9 @@
  * /perfil-de-quem-reforma-studio (módulo sem componentes nem CSS, para o
  * `head()` da rota não puxar a página inteira para o grafo de todas as rotas).
  *
- * ORIGEM ÚNICA (edição de novembro de 2026): pedidos de orçamento registrados
+ * ORIGEM ÚNICA (edição de novembro de 2026, base trocada em 24/11/2026 por
+ * decisão do Pedro): orçamentos de reforma completa enviados, pela regra de
+ * amostra do Índice Bewild (584 negócios). Antes: pedidos de orçamento registrados
  * no Bwild Engine de 01/03/2026 a 23/11/2026, consulta somente de leitura em
  * 24/11/2026. Os números ficam em perfilReforma.dados.json e a regra da
  * amostra em docs/internal/perfil-bewild-quem-reforma-studio-2026-11.md.
@@ -102,26 +104,27 @@ export const RENDA_MORAR_PCT = temaPct(RENDA).morar;
 
 export const PERFIL_TITLE = `Quem reforma studio em São Paulo: ${ALUGAR_PCT}% para alugar (nov/2026)`;
 export const PERFIL_DESCRIPTION =
-  `Quem pede orçamento de reforma de studio em São Paulo: ${ALUGAR_PCT}% vão alugar, ${FORA_PCT}% têm telefone de fora ` +
-  `e a mediana é de ${M2_MEDIANA}. Base de ${num(dados.base.pedidos)} pedidos e CSV.`;
+  `Quem reforma studio em São Paulo: ${ALUGAR_PCT}% vão alugar, ${FORA_PCT}% têm telefone de fora e a mediana é de ` +
+  `${M2_MEDIANA}. Base de ${num(dados.base.pedidos)} orçamentos da Bewild, com CSV.`;
 
 /** Resumo citável (é o primeiro parágrafo da página e a descrição do Dataset). */
 export const PERFIL_RESUMO =
-  `Entre ${num(fin.base)} pessoas que pediram orçamento de reforma de studio ou apartamento compacto à Bewild, em São Paulo, ` +
-  `${PERFIL_PERIODO_TEXTO}, e disseram a finalidade, ${ALUGAR_PCT}% vão alugar o imóvel: ${TEMPORADA_PCT}% por temporada e ` +
+  `Entre ${num(fin.base)} pessoas que receberam da Bewild um orçamento de reforma completa de studio ou apartamento compacto, ` +
+  `em São Paulo, e disseram a finalidade, ${ALUGAR_PCT}% vão alugar o imóvel: ${TEMPORADA_PCT}% por temporada e ` +
   `${TRADICIONAL_PCT}% com contrato tradicional. Outros ${MORAR_PCT}% vão morar. A base reúne ${num(dados.base.pedidos)} ` +
-  `pedidos de ${num(dados.base.pessoas)} pessoas.`;
+  `orçamentos de ${num(dados.base.pessoas)} pessoas, criados ${PERFIL_PERIODO_TEXTO}, pela mesma regra de amostra do ` +
+  `Índice Bewild de custo de reforma.`;
 
 export const PERFIL_AVISO =
-  "São pedidos recebidos por uma empresa, a Bewild. Os números não representam o mercado paulistano.";
+  "São orçamentos enviados por uma empresa, a Bewild. Os números não representam o mercado paulistano.";
 
 export const PERFIL_COMO_CITAR =
-  `Bewild. ${PERFIL_NOME}, ${PERFIL_EDICAO}: análise de ${num(dados.base.pedidos)} pedidos de orçamento de reforma em São Paulo. ` +
+  `Bewild. ${PERFIL_NOME}, ${PERFIL_EDICAO}: análise de ${num(dados.base.pedidos)} orçamentos de reforma em São Paulo. ` +
   `Disponível em: ${PERFIL_URL_ABSOLUTA}.`;
 
 /** Frase de fonte pronta para copiar. */
 export const PERFIL_FRASE_FONTE =
-  `Fonte: ${PERFIL_NOME}, edição ${PERFIL_EDICAO}, base de ${num(dados.base.pedidos)} pedidos de orçamento, ` +
+  `Fonte: ${PERFIL_NOME}, edição ${PERFIL_EDICAO}, base de ${num(dados.base.pedidos)} orçamentos de reforma, ` +
   `bewild.com.br${PERFIL_CANONICAL}`;
 
 export type NumeroImprensa = { id: string; valor: string; rotulo: string; metodo: string };
@@ -133,8 +136,8 @@ export const PERFIL_IMPRENSA_NUMEROS: NumeroImprensa[] = [
     valor: `${ALUGAR_PCT}%`,
     rotulo: `vão alugar o imóvel: ${TEMPORADA_PCT}% por temporada e ${TRADICIONAL_PCT}% com contrato tradicional`,
     metodo:
-      `parcela das ${num(fin.base)} pessoas que pediram orçamento de reforma à Bewild de ${dataBR(dados.base.de)} a ` +
-      `${dataBR(dados.base.ate)} e declararam a finalidade no formulário ou no cadastro.`,
+      `parcela das ${num(fin.base)} pessoas que receberam orçamento de reforma completa da Bewild, criado de ` +
+      `${dataBR(dados.base.de)} a ${dataBR(dados.base.ate)}, e declararam a finalidade no formulário ou no cadastro.`,
   },
   {
     id: "telefone-de-fora",
@@ -148,8 +151,8 @@ export const PERFIL_IMPRENSA_NUMEROS: NumeroImprensa[] = [
   {
     id: "metragem",
     valor: M2_MEDIANA,
-    rotulo: `é a metragem mediana do imóvel; metade dos pedidos fica entre ${M2_METADE}`,
-    metodo: `mediana da área informada em ${num(m2.base)} pedidos, no cadastro ou no formulário.`,
+    rotulo: `é a metragem mediana do imóvel; metade dos orçamentos fica entre ${M2_METADE}`,
+    metodo: `mediana da área de ${num(m2.base)} orçamentos, todos de até 45 m², como no Índice Bewild.`,
   },
 ];
 
@@ -159,7 +162,7 @@ export const PERFIL_FAQ: { q: string; a: string }[] = [
     a:
       `No ${PERFIL_NOME} de ${PERFIL_EDICAO}, ${ALUGAR_PCT}% das ${num(fin.base)} pessoas que disseram a finalidade vão alugar o imóvel ` +
       `(${TEMPORADA_PCT}% por temporada e ${TRADICIONAL_PCT}% com contrato tradicional), ${MORAR_PCT}% vão morar e ` +
-      `${INDECISO_OU_MISTO_PCT}% ainda decidem ou farão uso misto. São pedidos de orçamento recebidos pela Bewild, não uma amostra do mercado.`,
+      `${INDECISO_OU_MISTO_PCT}% ainda decidem ou farão uso misto. São orçamentos enviados pela Bewild, não uma amostra do mercado.`,
   },
   {
     q: "De onde são as pessoas que pedem reforma de studio em São Paulo?",
@@ -171,7 +174,7 @@ export const PERFIL_FAQ: { q: string; a: string }[] = [
   {
     q: "Qual é o tamanho dos imóveis reformados?",
     a:
-      `A metragem mediana é de ${M2_MEDIANA} nos ${num(m2.base)} pedidos com área informada, e metade fica entre ${M2_METADE}. ` +
+      `A metragem mediana é de ${M2_MEDIANA} nos ${num(m2.base)} orçamentos, todos de até 45 m², e metade fica entre ${M2_METADE}. ` +
       `Quem vai alugar tem mediana de ${m2.porFinalidade[0].mediana} m²; quem vai morar, de ${m2.porFinalidade[2].mediana} m².`,
   },
   {
@@ -186,10 +189,10 @@ export const PERFIL_FAQ: { q: string; a: string }[] = [
 
 export const PERFIL_FONTES: { fonte: string; mede: string; periodo: string; tamanho: string }[] = [
   {
-    fonte: "Cadastro dos pedidos de orçamento",
-    mede: "Imóvel, bairro, prédio, metragem e finalidade",
+    fonte: "Orçamentos enviados",
+    mede: "Imóvel, bairro, prédio, metragem, valor e finalidade",
     periodo: `${dataBR(dados.base.de)} a ${dataBR(dados.base.ate)}`,
-    tamanho: `${num(dados.base.pedidos)} pedidos de ${num(dados.base.pessoas)} pessoas`,
+    tamanho: `${num(dados.base.pedidos)} orçamentos de ${num(dados.base.pessoas)} pessoas`,
   },
   {
     fonte: "Formulários de entrada",
@@ -221,24 +224,18 @@ export const PERFIL_FONTES: { fonte: string; mede: string; periodo: string; tama
     periodo: "Até novembro de 2026",
     tamanho: `${dados.contratos.profissao.base} com profissão; ${dados.ddd.contratos} com endereço e telefone`,
   },
-  {
-    fonte: "Plataforma de anúncios em redes sociais",
-    mede: "Faixa etária e sexo de quem se cadastrou por anúncio",
-    periodo: `${dataBR(dados.base.de)} a ${dataBR(dados.base.ate)}`,
-    tamanho: "Cadastros gerados por anúncio no período",
-  },
 ];
 
 export const PERFIL_METODO: { titulo: string; texto: string }[] = [
   {
-    titulo: "Pedido e pessoa",
+    titulo: "Orçamento e pessoa",
     texto:
-      "Um pedido é um imóvel orçado, contado uma vez, pela data em que foi criado; aditivos de contrato não entram. Uma pessoa pode ter mais de um pedido e é identificada pelo telefone ou, na falta dele, pelo cadastro de cliente. Todo pedido conta, tenha ou não virado contrato.",
+      `Entra o negócio que recebeu um orçamento de reforma completa, contado uma vez, pela data em que foi criado; aditivos de contrato não entram. A regra é a do Índice Bewild de custo de reforma: orçamento a partir de R$ 50 mil, imóvel de até 45 m², em São Paulo. A edição de novembro do Índice, consultada em ${dataBR(dados.base.indiceConsulta)}, reuniu ${num(dados.base.indiceOrcamentos)} orçamentos; refeita em ${dataBR(dados.base.consulta)}, a mesma regra reúne ${num(dados.base.pedidos)}. Uma pessoa pode ter mais de um orçamento e é identificada pelo telefone ou, na falta dele, pelo cadastro de cliente.`,
   },
   {
     titulo: "Finalidade",
     texto:
-      `Vale o cadastro do pedido; na falta dele, a resposta do formulário. Uso misto vem sempre do formulário, porque o cadastro não tem essa opção. Quando os dois existem, coincidem em ${dec1(dados.formularioCadastro.concordanciaPct)}% dos casos (${num(dados.formularioCadastro.pedidos)} pedidos).`,
+      `Vale o cadastro do negócio; na falta dele, a resposta do formulário. Uso misto vem sempre do formulário, porque o cadastro não tem essa opção. Quando os dois existem, coincidem em ${dec1(dados.formularioCadastro.concordanciaPct)}% dos casos (${num(dados.formularioCadastro.pedidos)} orçamentos).`,
   },
   {
     titulo: "Origem do telefone",
@@ -248,12 +245,11 @@ export const PERFIL_METODO: { titulo: string; texto: string }[] = [
   {
     titulo: "Bairros e regiões",
     texto:
-      `O bairro é escrito livremente no cadastro e no formulário e foi padronizado. As regiões seguem o agrupamento do Índice Bewild de custo de reforma, que põe os Jardins na Zona Sul. Em ${dados.bairrosHerdados} pedidos sem bairro, mas com o nome do prédio, usamos o bairro mais citado para aquele prédio.`,
+      `O bairro é escrito livremente no cadastro e no formulário e foi padronizado. As regiões seguem o agrupamento do Índice Bewild de custo de reforma, que põe os Jardins na Zona Sul. Em ${dados.bairrosHerdados} orçamentos sem bairro, mas com o nome do prédio, usamos o bairro mais citado para aquele prédio.`,
   },
   {
     titulo: "Metragem",
-    texto:
-      "Área informada no cadastro ou no formulário, de 10 a 400 m². Respostas em faixas não entram na mediana. Cada faixa da tabela inclui o limite inferior.",
+    texto: "Área do orçamento, a mesma usada no Índice Bewild. Todos os imóveis têm até 45 m².",
   },
   {
     titulo: "Perfis",
@@ -263,7 +259,7 @@ export const PERFIL_METODO: { titulo: string; texto: string }[] = [
   {
     titulo: "Mais de uma unidade",
     texto:
-      "Pessoas com pedidos de unidades diferentes (outro prédio, outro número ou diferença de 2 m² ou mais) ou que citaram duas ou mais unidades na conversa. É uma estimativa mínima.",
+      "Pessoas com orçamentos de unidades diferentes (outro prédio, outro número ou diferença de 2 m² ou mais) ou que citaram duas ou mais unidades na conversa. É uma estimativa mínima.",
   },
   {
     titulo: "Conversas",
@@ -273,17 +269,17 @@ export const PERFIL_METODO: { titulo: string; texto: string }[] = [
   {
     titulo: "Reuniões",
     texto:
-      "Reuniões de apresentação gravadas, anteriores ao contrato. Contam só as perguntas feitas pelo cliente, extraídas por inteligência artificial e agrupadas pelo assunto.",
+      "Reuniões de apresentação do orçamento gravadas, anteriores ao contrato. Contam só as perguntas feitas pelo cliente, extraídas por inteligência artificial e agrupadas pelo assunto. Nem todas são de negócios da amostra.",
   },
   {
     titulo: "Testes",
     texto:
-      "Fisher e qui-quadrado para proporções, Mann-Whitney para metragem, Cochran-Armitage para tendência mensal e correção de Benjamini-Hochberg nos temas de conversa. Quando um teste não mostra diferença, o texto diz que não houve diferença nesta base, o que não prova que ela não exista.",
+      "Fisher e qui-quadrado para proporções, Mann-Whitney para metragem e correção de Benjamini-Hochberg nos temas de conversa. Quando um teste não mostra diferença, o texto diz que não houve diferença nesta base, o que não prova que ela não exista.",
   },
   {
     titulo: "Regra de publicação",
     texto:
-      `Percentuais só aparecem com base de 25 ou mais; bairros, com ${dados.bairros.minimo} pedidos ou mais. O estudo não publica volumes por canal de captação.`,
+      `Percentuais só aparecem com base de 25 ou mais; bairros, com ${dados.bairros.minimo} orçamentos ou mais. O estudo não publica volumes por canal de captação.`,
   },
   {
     titulo: "Privacidade",
@@ -291,23 +287,27 @@ export const PERFIL_METODO: { titulo: string; texto: string }[] = [
       "Os dados são agregados e anônimos. Nenhuma pessoa ou empreendimento é identificado, e nenhuma mensagem é reproduzida.",
   },
 ];
-
 const terco = dados.estabilidade.tercos;
 export const PERFIL_LIMITES: { titulo: string; texto: string }[] = [
   {
-    titulo: "Pedido não é contrato",
+    titulo: "Só entra quem recebeu orçamento",
     texto:
-      "A base reúne pedidos de orçamento. Parte virou contrato com a Bewild, parte foi para outras empresas e parte não reformou.",
+      "A base reúne quem chegou a receber um orçamento de reforma completa. Quem pediu e não recebeu orçamento fica fora, e nesse grupo mais amplo a parcela que vai morar é maior.",
+  },
+  {
+    titulo: "Orçamento não é contrato",
+    texto:
+      "Parte dos orçamentos virou contrato com a Bewild, parte foi para outras empresas e parte não reformou.",
   },
   {
     titulo: "A captação pesa no perfil",
     texto:
-      `A maior parte dos pedidos chega por anúncios em redes sociais, e o retrato reflete também para quem esses anúncios foram exibidos. A ordem das finalidades se repete nas origens: vão alugar ${dados.estabilidade.porOrigem.anunciosRedesPct}% de quem chegou por anúncio em redes sociais e ${dados.estabilidade.porOrigem.outrasPct}% de quem chegou por indicação, site, redes e parceiros.`,
+      `O retrato reflete também de onde vêm os clientes da Bewild. A ordem das finalidades se repete nas origens: vão alugar ${dados.estabilidade.porOrigem.anunciosRedesPct}% de quem chegou por anúncio em redes sociais e ${dados.estabilidade.porOrigem.outrasPct}% de quem chegou por indicação, site, redes e parceiros.`,
   },
   {
-    titulo: "A composição mudou no período",
+    titulo: "A composição oscila no período",
     texto:
-      `Dividindo as pessoas em três grupos iguais pela data do pedido, a parcela que vai alugar foi de ${terco[0].alugarPct}% para ${terco[1].alugarPct}% e ${terco[2].alugarPct}%, e a que vai morar, de ${terco[0].morarPct}% para ${terco[1].morarPct}% e ${terco[2].morarPct}%. Dentro de um mesmo canal, o de anúncios em redes sociais, quem vai morar ficou entre ${dados.estabilidade.mesmoCanal.min}% e ${dados.estabilidade.mesmoCanal.max}% de junho a novembro, sem tendência (Cochran-Armitage, p = ${String(dados.estabilidade.mesmoCanal.p).replace(".", ",")}). A mudança acompanha a entrada de novos canais de captação, e o estudo não a trata como tendência de mercado. Os percentuais valem para o período inteiro, não para um mês.`,
+      `Dividindo as pessoas em três grupos iguais pela data do orçamento, a parcela que vai alugar foi de ${terco[0].alugarPct}% para ${terco[1].alugarPct}% e ${terco[2].alugarPct}%, e a que vai morar, de ${terco[0].morarPct}% para ${terco[1].morarPct}% e ${terco[2].morarPct}%, com ${terco[0].base}, ${terco[1].base} e ${terco[2].base} pessoas com finalidade em cada grupo. O estudo não trata a variação como tendência de mercado.`,
   },
   {
     titulo: "Telefone não é endereço",
@@ -315,22 +315,21 @@ export const PERFIL_LIMITES: { titulo: string; texto: string }[] = [
       "O DDD indica onde o número foi habilitado. Quem se mudou e manteve o número conta como de fora.",
   },
   {
-    titulo: "Nem todo pedido tem todo dado",
+    titulo: "Nem todo orçamento tem todo dado",
     texto:
-      `A metragem existe em ${pctDe(m2.base, dados.base.pedidos)}% dos pedidos e o bairro em ${pctDe(dados.regioes.base, dados.base.pedidos)}%. Quem não informou pode ser diferente de quem informou.`,
+      `A finalidade existe para ${pctDe(fin.base, dados.base.pessoas)}% das pessoas, e o momento das chaves, para ${pctDe(dados.chaves.base, dados.base.pessoas)}%. Quem não informou pode ser diferente de quem informou.`,
   },
   {
     titulo: "Finalidade e chaves são declaradas",
-    texto: "Vêm do formulário e do cadastro, no momento do pedido, e podem mudar depois.",
+    texto: "Vêm do formulário e do cadastro, no momento do pedido de orçamento, e podem mudar depois.",
   },
   {
     titulo: "Tema de conversa é menção, não intenção",
     texto: "Um tema conta quando a pessoa escreve uma das expressões do dicionário. Áudios não entram.",
   },
   {
-    titulo: "Profissão, estado civil, idade e sexo têm outras bases",
-    texto:
-      "Os dois primeiros valem para quem assinou contrato; os dois últimos são estimativas da plataforma de anúncios para quem se cadastrou por anúncio.",
+    titulo: "Profissão e estado civil têm outra base",
+    texto: "Valem para quem assinou contrato com a Bewild, e não só para os negócios desta amostra.",
   },
 ];
 
@@ -365,7 +364,7 @@ export const PERFIL_JSONLD: Array<Record<string, unknown>> = [
     dateModified: comFuso(PERFIL_ATUALIZADO_EM),
     spatialCoverage: { "@type": "Place", name: "São Paulo, SP, Brasil" },
     measurementTechnique:
-      "Proporções sobre quem tem cada dado; mediana e quartis da metragem; testes de Fisher, qui-quadrado, Mann-Whitney e Cochran-Armitage",
+      "Proporções sobre quem tem cada dado; mediana e quartis da metragem; testes de Fisher, qui-quadrado e Mann-Whitney",
     variableMeasured: [
       { "@type": "PropertyValue", name: "Pessoas que vão alugar o imóvel", value: ALUGAR_PCT, unitText: "PERCENT" },
       {

@@ -54,7 +54,7 @@ describe("Perfil Bewild de Quem Reforma Studio", () => {
   it("cada distribuição soma a própria base", () => {
     expect(soma(PERFIL.finalidade.itens, (i) => i.pessoas)).toBe(PERFIL.finalidade.base);
     expect(soma(PERFIL.origem.itens, (i) => i.pessoas)).toBe(PERFIL.origem.base);
-    expect(soma(PERFIL.metragem.faixas, (i) => i.pedidos)).toBe(PERFIL.metragem.base);
+    expect(PERFIL.metragem.ate30).toBeLessThanOrEqual(PERFIL.metragem.base);
     expect(soma(PERFIL.chaves.itens, (i) => i.pessoas)).toBe(PERFIL.chaves.base);
     expect(soma(PERFIL.regioes.itens, (i) => i.pedidos)).toBe(PERFIL.regioes.base);
     expect(soma(PERFIL.perfis.itens, (i) => i.pessoas)).toBe(PERFIL.perfis.base);
@@ -70,11 +70,11 @@ describe("Perfil Bewild de Quem Reforma Studio", () => {
   });
 
   it("os números de cabeçalho saem dos dados", () => {
-    expect(ALUGAR_PCT).toBe(61);
-    expect(FORA_PCT).toBe(41);
-    expect(SEM_CHAVE_PCT).toBe(56);
-    expect(PERFIL_RESUMO).toContain("2.395 pedidos de 2.232 pessoas");
-    expect(PERFIL_RESUMO).toContain("61% vão alugar");
+    expect(ALUGAR_PCT).toBe(79);
+    expect(FORA_PCT).toBe(49);
+    expect(SEM_CHAVE_PCT).toBe(62);
+    expect(PERFIL_RESUMO).toContain("584 orçamentos de 507 pessoas");
+    expect(PERFIL_RESUMO).toContain("79% vão alugar");
   });
 
   it("título e descrição cabem no resultado de busca", () => {
@@ -98,8 +98,7 @@ describe("Perfil Bewild de Quem Reforma Studio", () => {
     }
     expect(Math.round(linha("Finalidade declarada", "Alugar (temporada + tradicional)").pct)).toBe(ALUGAR_PCT);
     expect(Math.round(linha("Telefone de fora da capital e da Grande SP", "Todos").pct)).toBe(FORA_PCT);
-    for (const f of PERFIL.metragem.faixas) expect(linha("Pedidos por faixa de área", f.faixa).casos).toBe(f.pedidos);
-    for (const b of PERFIL.bairros.itens) expect(linha("Pedidos por bairro (30 ou mais)", b.bairro).casos).toBe(b.pedidos);
+    for (const b of PERFIL.bairros.itens) expect(linha("Orçamentos por bairro (15 ou mais)", b.bairro).casos).toBe(b.pedidos);
   });
 
   it("não publica volume por canal de captação", () => {
@@ -127,7 +126,7 @@ describe("Perfil Bewild de Quem Reforma Studio", () => {
 
   it("os percentuais desenhados em barra ficam entre 0 e 100", () => {
     const larguras = [...html.matchAll(/style="width:(\d+(?:\.\d+)?)%"/g)].map((m) => Number(m[1]));
-    expect(larguras.length).toBe(PERFIL.finalidade.itens.length + PERFIL.metragem.faixas.length + PERFIL.chaves.itens.length);
+    expect(larguras.length).toBe(PERFIL.finalidade.itens.length + PERFIL.chaves.itens.length);
     expect(larguras.every((w) => w >= 0 && w <= 100)).toBe(true);
   });
 
