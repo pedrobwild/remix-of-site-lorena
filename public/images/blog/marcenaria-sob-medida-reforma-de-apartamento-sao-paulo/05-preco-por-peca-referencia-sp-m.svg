@@ -1,34 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="420" height="448" viewBox="0 0 420 448" role="img" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="388" height="448" viewBox="16 0 388 448" role="img" font-family="system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
 <rect width="420" height="448" fill="#FFFFFF"/>
 <text x="24" y="34" font-size="16" font-weight="700" fill="#1F4E5F">Preço de referência por peça em São</text>
 <text x="24" y="56" font-size="16" font-weight="700" fill="#1F4E5F">Paulo</text>
 <text x="24" y="80" font-size="13" fill="#5C6B74">Lar Pontual, data-base out/2026, custo sem BDI (padrão</text>
 <text x="24" y="98" font-size="13" fill="#5C6B74">básico) · caso Bewild com preço final, 5 peças</text>
-<text x="24" y="138" font-size="12" fill="#1E2A30">Cozinha reta até 3 m</text>
+<text x="24" y="138" font-size="13" fill="#1E2A30">Cozinha reta até 3 m</text>
 <rect x="24" y="143" width="46.8" height="14" rx="0" fill="#0F7FA3"/>
 <rect x="66.8" y="143" width="4" height="14" rx="3" fill="#0F7FA3"/>
-<text x="76.8" y="155" font-size="12" font-weight="600" fill="#1E2A30">R$ 7.500</text>
-<text x="24" y="178" font-size="12" fill="#1E2A30">Guarda-roupa</text>
+<text x="76.8" y="155" font-size="13" font-weight="600" fill="#1E2A30">R$ 7.500</text>
+<text x="24" y="178" font-size="13" fill="#1E2A30">Guarda-roupa</text>
 <rect x="24" y="183" width="28.08" height="14" rx="0" fill="#0F7FA3"/>
 <rect x="48.08" y="183" width="4" height="14" rx="3" fill="#0F7FA3"/>
-<text x="58.08" y="195" font-size="12" font-weight="600" fill="#1E2A30">R$ 4.500</text>
-<text x="24" y="218" font-size="12" fill="#1E2A30">Painel de TV</text>
+<text x="58.08" y="195" font-size="13" font-weight="600" fill="#1E2A30">R$ 4.500</text>
+<text x="24" y="218" font-size="13" fill="#1E2A30">Painel de TV</text>
 <rect x="24" y="223" width="18.72" height="14" rx="0" fill="#0F7FA3"/>
 <rect x="38.72" y="223" width="4" height="14" rx="3" fill="#0F7FA3"/>
-<text x="48.72" y="235" font-size="12" font-weight="600" fill="#1E2A30">R$ 3.000</text>
-<text x="24" y="258" font-size="12" fill="#1E2A30">Gabinete de banheiro</text>
+<text x="48.72" y="235" font-size="13" font-weight="600" fill="#1E2A30">R$ 3.000</text>
+<text x="24" y="258" font-size="13" fill="#1E2A30">Gabinete de banheiro</text>
 <rect x="24" y="263" width="7.488" height="14" rx="0" fill="#0F7FA3"/>
 <rect x="27.488" y="263" width="4" height="14" rx="3" fill="#0F7FA3"/>
-<text x="37.488" y="275" font-size="12" font-weight="600" fill="#1E2A30">R$ 1.200</text>
-<text x="24" y="298" font-size="12" fill="#1E2A30">Soma das 4 peças</text>
+<text x="37.488" y="275" font-size="13" font-weight="600" fill="#1E2A30">R$ 1.200</text>
+<text x="24" y="298" font-size="13" fill="#1E2A30">Soma das 4 peças</text>
 <rect x="24" y="303" width="101.088" height="14" rx="0" fill="#0F7FA3"/>
 <rect x="121.088" y="303" width="4" height="14" rx="3" fill="#0F7FA3"/>
-<text x="131.088" y="315" font-size="12" font-weight="600" fill="#1E2A30">R$ 16.200</text>
-<text x="24" y="338" font-size="12" fill="#1E2A30">Caso Bewild, 5 peças, 24 m²</text>
+<text x="131.088" y="315" font-size="13" font-weight="600" fill="#1E2A30">R$ 16.200</text>
+<text x="24" y="338" font-size="13" fill="#1E2A30">Caso Bewild, 5 peças, 24 m²</text>
 <rect x="24" y="343" width="142.2096" height="14" rx="0" fill="#E06A1E"/>
 <rect x="162.2096" y="343" width="4" height="14" rx="3" fill="#E06A1E"/>
-<text x="172.2096" y="355" font-size="12" font-weight="600" fill="#1E2A30">R$ 22.790</text>
+<text x="172.2096" y="355" font-size="13" font-weight="600" fill="#1E2A30">R$ 22.790</text>
 <text x="24" y="402" font-size="12" fill="#5C6B74">Fonte: Lar Pontual, Tabela de preços de marceneiro 2026</text>
-<text x="24" y="418" font-size="12" fill="#5C6B74">(29/10/2026), valores SP, custo sem BDI; Bewild, orçamento</text>
-<text x="24" y="434" font-size="12" fill="#5C6B74">de mai/2026 (R$ 22.790 em 5 peças).</text>
+<text x="24" y="418" font-size="13" fill="#5C6B74">(29/10/2026), valores SP, custo sem BDI; Bewild, orçamento</text>
+<text x="24" y="434" font-size="13" fill="#5C6B74">de mai/2026 (R$ 22.790 em 5 peças).</text>
 </svg>

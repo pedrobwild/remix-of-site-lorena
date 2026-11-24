@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="420" height="752" viewBox="0 0 420 752" role="img" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="396" height="752" viewBox="12 0 396 752" role="img" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif">
 <rect width="420" height="752" fill="#FFFFFF"/>
 <text x="20" y="34" font-size="19" font-weight="700" fill="#1F2937">Quanto a reforma completa pesa</text>
 <text x="20" y="58" font-size="19" font-weight="700" fill="#1F2937">no preço do apartamento, por bairro</text>
@@ -49,5 +49,5 @@
 <path d="M251 655H314M251 650v10M314 650v10" stroke="#1F2937" stroke-width="1.5" fill="none"/>
 <text x="320" y="660" font-size="13" font-weight="600" fill="#1F2937">32,8%</text>
 <text x="20" y="720" font-size="12" fill="#9CA3AF">Fontes: base Bewild, 188 contratos;</text>
-<text x="20" y="738" font-size="12" fill="#9CA3AF">FipeZap venda residencial, set/2026.</text>
+<text x="20" y="738" font-size="13" fill="#9CA3AF">FipeZap venda residencial, set/2026.</text>
 </svg>
