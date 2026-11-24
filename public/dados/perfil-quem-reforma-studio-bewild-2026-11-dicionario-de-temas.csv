@@ -1,0 +1,22 @@
+# Fonte: Bewild, Perfil Bewild de Quem Reforma Studio, novembro de 2026, https://bewild.com.br/perfil-de-quem-reforma-studio
+# Licença CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/ — use à vontade citando a Bewild
+# Um tema conta uma vez por pessoa quando ao menos uma mensagem de texto do cliente, anterior ao contrato, contém uma das expressões (sem distinguir maiúsculas, minúsculas ou acentos)
+tema,expressoes
+O que está incluído (itens e marcenaria),"inclui/incluso/incluído; marcenaria; móveis; mobília; eletrodomésticos; enxoval; armário; planejados; ar-condicionado; piso; box; bancada; iluminação; cortina; ""o que entra"", ""o que vem"", ""o que está incluso"""
+Aluguel e renda,Airbnb; Booking; short stay; temporada; diária; ocupação; aluguel; alugar; locação; inquilino; rentabilidade; renda
+Projeto e personalização,"projeto; 3D; render; layout; arquiteto/arquitetura; personalizar/personalização; planta baixa; planta do apartamento, do studio ou do imóvel"
+Chaves e vistoria,chave/chaves; vistoria; habite-se
+Preço,"preço; ""quanto custa"", ""quanto fica"", ""quanto sai"", ""quanto seria""; ""qual o valor""; valor médio, aproximado, total, estimado ou por m²; faixa de preço ou de valor; média de preço; custo"
+"Cônjuge, família ou sócio",meu marido; minha esposa; meu esposo; minha mulher; namorado(a); noivo(a); sócio(a); meu pai; minha mãe; meu filho; minha filha; meu irmão; minha irmã; companheiro(a)
+Pagamento,"pagamento; parcela/parcelar/parcelamento; financiamento/financiar; cartão; boleto; PIX; à vista; sem entrada; valor de entrada; ""entrada de"""
+Distância do imóvel,"""não moro""; ""moro fora""; ""moro em/no/na"" seguido de lugar que não seja São Paulo; a distância; remoto/remotamente; procuração; outro estado; outra cidade; exterior; de longe"
+Comparação com outras propostas,"outra(s) empresa(s), orçamento(s), proposta(s), construtora(s), arquiteto(s) ou opções; comparar/comparando; cotação/cotando; concorrente/concorrência"
+Prazo,"prazo; quanto tempo; dias úteis; cronograma; tempo de obra; ""em quantos dias/meses""; ""quando fica/termina/começa/inicia""; ""quanto demora"""
+Contrato,contrato; cláusula; multa
+Condomínio,condomínio; síndico(a); administradora; plano de reforma; NBR
+Preço alto,caro; caríssimo; salgado; acima ou fora do orçamento; muito alto; alto demais; mais barato; mais em conta
+Gestão do aluguel,"gestão; gestora; anfitrião; co-host; ""quem cuida""; ""quem administra"""
+Garantia,garantia
+Atraso de obra ou de entrega,"atraso/atrasar ligado a obra, entrega, reforma, prazo, cronograma, construtora, incorporadora ou chaves; ""medo de atraso""; ""se atrasar""; ""caso atrase""; ""multa por atraso"""
+Golpe ou experiência ruim anterior,"golpe; calote; trauma; dor de cabeça; experiência ruim, péssima ou negativa; problema com pedreiro, empreiteiro, arquiteto, construtora ou outra empresa"
+Mais de uma unidade (usado na seção de perfis),"""duas/dois/três/quatro/cinco/várias/alguns"" + unidades, studios, apartamentos ou imóveis; ""outra/segunda"" unidade, studio, apartamento ou imóvel"

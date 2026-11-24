@@ -21,6 +21,7 @@ export type Route =
   | { name: "reforma-studio-sp" }
   | { name: "reforma-cobertura-sp" }
   | { name: "indice-custo" }
+  | { name: "perfil-reforma" }
   | { name: "marcenaria" }
   | { name: "parceiros" }
   | { name: "incorporadoras" }
@@ -156,6 +157,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/reforma-de-studio-sao-paulo") return { name: "reforma-studio-sp" };
   if (path === "/reforma-de-cobertura-sao-paulo") return { name: "reforma-cobertura-sp" };
   if (path === "/indice-de-custo-de-reforma") return { name: "indice-custo" };
+  if (path === "/perfil-de-quem-reforma-studio") return { name: "perfil-reforma" };
   if (path === "/marcenaria") return { name: "marcenaria" };
   if (path === "/parceiros") return { name: "parceiros" };
   // Página atrás de flag (INCORPORADORAS_PAGE_ENABLED): o router decide entre
@@ -349,6 +351,7 @@ export const routes = {
   reformaStudioSp: "/reforma-de-studio-sao-paulo",
   reformaCoberturaSp: "/reforma-de-cobertura-sao-paulo",
   indiceCusto: "/indice-de-custo-de-reforma",
+  perfilReforma: "/perfil-de-quem-reforma-studio",
   marcenaria: "/marcenaria",
   parceiros: "/parceiros",
   incorporadoras: "/parceiros/incorporadoras",

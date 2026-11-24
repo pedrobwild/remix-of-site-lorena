@@ -54,6 +54,7 @@ export default function BwaFooter() {
               <a href="/conteudos">Conteúdos</a>
               <a href="/videos">Vídeos</a>
               <a href="/indice-de-custo-de-reforma">Índice de custo de reforma</a>
+              <a href="/perfil-de-quem-reforma-studio">Perfil de quem reforma studio</a>
               <RadarLink label={RADAR_NAV_LABEL} />
               <a href="/faq">FAQ</a>
               <a href="/contato">Contato</a>

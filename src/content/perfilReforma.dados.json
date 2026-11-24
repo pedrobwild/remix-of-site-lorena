@@ -1,0 +1,780 @@
+{
+  "base": {
+    "negociosIniciais": 2585,
+    "pedidos": 2395,
+    "pessoas": 2232,
+    "de": "2026-03-01",
+    "ate": "2026-11-23",
+    "consulta": "2026-11-24"
+  },
+  "exclusoes": [
+    {
+      "n": 8,
+      "motivo": "criados depois de 23/11/2026"
+    },
+    {
+      "n": 111,
+      "motivo": "criados antes de 01/03/2026, de contratos antigos lançados no sistema"
+    },
+    {
+      "n": 45,
+      "motivo": "de teste"
+    },
+    {
+      "n": 3,
+      "motivo": "de pedido de parceria de corretor"
+    },
+    {
+      "n": 3,
+      "motivo": "de casa ou imóvel comercial"
+    },
+    {
+      "n": 20,
+      "motivo": "de imóvel fora da Grande São Paulo"
+    }
+  ],
+  "finalidade": {
+    "base": 1659,
+    "itens": [
+      {
+        "id": "temporada",
+        "rotulo": "Alugar por temporada",
+        "pessoas": 716,
+        "alugar": true
+      },
+      {
+        "id": "morar",
+        "rotulo": "Morar",
+        "pessoas": 502,
+        "alugar": false
+      },
+      {
+        "id": "tradicional",
+        "rotulo": "Alugar com contrato tradicional",
+        "pessoas": 292,
+        "alugar": true
+      },
+      {
+        "id": "indeciso",
+        "rotulo": "Ainda decide",
+        "pessoas": 117,
+        "alugar": false
+      },
+      {
+        "id": "misto",
+        "rotulo": "Morar e alugar (uso misto)",
+        "pessoas": 32,
+        "alugar": false
+      }
+    ]
+  },
+  "origem": {
+    "base": 1961,
+    "itens": [
+      {
+        "rotulo": "Capital e Grande São Paulo (DDD 11)",
+        "pessoas": 1164,
+        "fora": false
+      },
+      {
+        "rotulo": "Outros estados",
+        "pessoas": 510,
+        "fora": true
+      },
+      {
+        "rotulo": "Interior e litoral de São Paulo",
+        "pessoas": 272,
+        "fora": true
+      },
+      {
+        "rotulo": "Exterior",
+        "pessoas": 15,
+        "fora": true
+      }
+    ]
+  },
+  "foraPorFinalidade": [
+    {
+      "rotulo": "alugar por temporada",
+      "fora": 352,
+      "base": 675
+    },
+    {
+      "rotulo": "alugar com contrato tradicional",
+      "fora": 100,
+      "base": 289
+    },
+    {
+      "rotulo": "morar",
+      "fora": 143,
+      "base": 498
+    }
+  ],
+  "estados": {
+    "base": 1946,
+    "ufs": 27,
+    "itens": [
+      {
+        "uf": "MG",
+        "nome": "Minas Gerais",
+        "pessoas": 110
+      },
+      {
+        "uf": "RJ",
+        "nome": "Rio de Janeiro",
+        "pessoas": 72
+      },
+      {
+        "uf": "PA",
+        "nome": "Pará",
+        "pessoas": 39
+      },
+      {
+        "uf": "BA",
+        "nome": "Bahia",
+        "pessoas": 35
+      },
+      {
+        "uf": "PR",
+        "nome": "Paraná",
+        "pessoas": 27
+      }
+    ]
+  },
+  "metragem": {
+    "base": 1124,
+    "mediana": 27.0,
+    "p25": 24.5,
+    "p75": 35.0,
+    "ate30": 730,
+    "de45": 108,
+    "faixas": [
+      {
+        "faixa": "Até 20 m²",
+        "pedidos": 55
+      },
+      {
+        "faixa": "20 a 24 m²",
+        "pedidos": 108
+      },
+      {
+        "faixa": "24 a 28 m²",
+        "pedidos": 410
+      },
+      {
+        "faixa": "28 a 32 m²",
+        "pedidos": 195
+      },
+      {
+        "faixa": "32 a 40 m²",
+        "pedidos": 186
+      },
+      {
+        "faixa": "40 a 45 m²",
+        "pedidos": 62
+      },
+      {
+        "faixa": "45 a 60 m²",
+        "pedidos": 45
+      },
+      {
+        "faixa": "60 m² ou mais",
+        "pedidos": 63
+      }
+    ],
+    "porFinalidade": [
+      {
+        "rotulo": "Alugar por temporada",
+        "pedidos": 443,
+        "mediana": 26
+      },
+      {
+        "rotulo": "Alugar com contrato tradicional",
+        "pedidos": 156,
+        "mediana": 26
+      },
+      {
+        "rotulo": "Morar",
+        "pedidos": 256,
+        "mediana": 36
+      }
+    ],
+    "morarAcima40Pct": 32
+  },
+  "chaves": {
+    "base": 757,
+    "itens": [
+      {
+        "rotulo": "Já tem a chave",
+        "pessoas": 331,
+        "temChave": true
+      },
+      {
+        "rotulo": "Recebe em até 6 meses",
+        "pessoas": 220,
+        "temChave": false
+      },
+      {
+        "rotulo": "Recebe em mais de 6 meses",
+        "pessoas": 108,
+        "temChave": false
+      },
+      {
+        "rotulo": "Ainda não tem (sem prazo informado)",
+        "pessoas": 68,
+        "temChave": false
+      },
+      {
+        "rotulo": "Ainda está comprando",
+        "pessoas": 30,
+        "temChave": false
+      }
+    ]
+  },
+  "predios": {
+    "pedidos": 792,
+    "predios": 447,
+    "com5": 29,
+    "pedidosCom5": 225,
+    "maior": 38,
+    "maiorPessoas": 34,
+    "maiorMes": 18
+  },
+  "multi": {
+    "pessoas": 74,
+    "alugar": {
+      "casos": 48,
+      "base": 1008
+    },
+    "morar": {
+      "casos": 8,
+      "base": 502
+    },
+    "p": 0.001
+  },
+  "contratos": {
+    "profissao": {
+      "base": 177,
+      "itens": [
+        {
+          "grupo": "empresários",
+          "n": 27
+        },
+        {
+          "grupo": "advogados",
+          "n": 24
+        },
+        {
+          "grupo": "administradores",
+          "n": 21
+        },
+        {
+          "grupo": "engenheiros",
+          "n": 17
+        },
+        {
+          "grupo": "médicos",
+          "n": 16
+        }
+      ]
+    },
+    "estadoCivil": {
+      "base": 175,
+      "itens": [
+        {
+          "grupo": "casados ou vivem em união estável",
+          "n": 102
+        },
+        {
+          "grupo": "solteiros",
+          "n": 55
+        },
+        {
+          "grupo": "divorciados",
+          "n": 18
+        }
+      ]
+    }
+  },
+  "idadeSexo": {
+    "faixas": [
+      {
+        "faixa": "25 a 34 anos",
+        "pct": 9
+      },
+      {
+        "faixa": "35 a 44 anos",
+        "pct": 22
+      },
+      {
+        "faixa": "45 a 54 anos",
+        "pct": 30
+      },
+      {
+        "faixa": "55 a 64 anos",
+        "pct": 25
+      },
+      {
+        "faixa": "65 anos ou mais",
+        "pct": 14
+      }
+    ],
+    "mais45Pct": 68,
+    "homensPct": 62
+  },
+  "conversas": {
+    "base": 993,
+    "mensagens": 19653,
+    "alugar": 570,
+    "morar": 256,
+    "gerais": [
+      {
+        "tema": "o que está incluído",
+        "pessoas": 456
+      },
+      {
+        "tema": "aluguel e renda",
+        "pessoas": 461
+      },
+      {
+        "tema": "projeto e personalização",
+        "pessoas": 385
+      },
+      {
+        "tema": "chaves e vistoria",
+        "pessoas": 324
+      }
+    ],
+    "temas": [
+      {
+        "tema": "Aluguel e renda",
+        "alugar": 375,
+        "morar": 27,
+        "difere": true
+      },
+      {
+        "tema": "O que está incluído",
+        "alugar": 266,
+        "morar": 116,
+        "difere": false
+      },
+      {
+        "tema": "Projeto e personalização",
+        "alugar": 230,
+        "morar": 93,
+        "difere": false
+      },
+      {
+        "tema": "Chaves e vistoria",
+        "alugar": 212,
+        "morar": 71,
+        "difere": true
+      },
+      {
+        "tema": "Preço",
+        "alugar": 134,
+        "morar": 33,
+        "difere": true
+      },
+      {
+        "tema": "Cônjuge, família ou sócio",
+        "alugar": 80,
+        "morar": 38,
+        "difere": false
+      },
+      {
+        "tema": "Distância do imóvel",
+        "alugar": 82,
+        "morar": 18,
+        "difere": true
+      },
+      {
+        "tema": "Pagamento",
+        "alugar": 71,
+        "morar": 28,
+        "difere": false
+      },
+      {
+        "tema": "Prazo",
+        "alugar": 70,
+        "morar": 15,
+        "difere": true
+      },
+      {
+        "tema": "Comparação com outras propostas",
+        "alugar": 68,
+        "morar": 25,
+        "difere": false
+      },
+      {
+        "tema": "Contrato",
+        "alugar": 57,
+        "morar": 12,
+        "difere": true
+      },
+      {
+        "tema": "Preço alto",
+        "alugar": 33,
+        "morar": 7,
+        "difere": false
+      },
+      {
+        "tema": "Condomínio",
+        "alugar": 26,
+        "morar": 13,
+        "difere": false
+      }
+    ],
+    "raros": [
+      {
+        "tema": "garantia",
+        "pessoas": 22
+      },
+      {
+        "tema": "atraso de obra ou de entrega",
+        "pessoas": 13
+      },
+      {
+        "tema": "golpe ou experiência ruim anterior",
+        "pessoas": 3
+      }
+    ]
+  },
+  "reunioes": {
+    "reunioes": 70,
+    "negociosComReuniao": 68,
+    "negocios": 61,
+    "perguntas": 347,
+    "de": "2026-07-23",
+    "ate": "2026-11-19",
+    "itens": [
+      {
+        "tema": "projeto e acabamentos",
+        "negocios": 44
+      },
+      {
+        "tema": "o que está incluído",
+        "negocios": 44
+      },
+      {
+        "tema": "como a contratação funciona",
+        "negocios": 25
+      },
+      {
+        "tema": "pagamento",
+        "negocios": 24
+      },
+      {
+        "tema": "prazo",
+        "negocios": 23
+      },
+      {
+        "tema": "preço",
+        "negocios": 14
+      },
+      {
+        "tema": "gestão do aluguel",
+        "negocios": 12
+      },
+      {
+        "tema": "garantia",
+        "negocios": 10
+      }
+    ]
+  },
+  "estabilidade": {
+    "tercos": [
+      {
+        "alugarPct": 69,
+        "morarPct": 22,
+        "foraPct": 44,
+        "m2": 26.7
+      },
+      {
+        "alugarPct": 62,
+        "morarPct": 29,
+        "foraPct": 44,
+        "m2": 26.9
+      },
+      {
+        "alugarPct": 54,
+        "morarPct": 37,
+        "foraPct": 34,
+        "m2": 29.0
+      }
+    ],
+    "mesmoCanal": {
+      "min": 28,
+      "max": 36,
+      "p": 0.81
+    },
+    "porOrigem": {
+      "anunciosRedesPct": 59,
+      "outrasPct": 68
+    }
+  },
+  "formularioCadastro": {
+    "pedidos": 1120,
+    "concordanciaPct": 98.6
+  },
+  "ddd": {
+    "contratos": 52,
+    "coincidem": 43,
+    "conversaFora": {
+      "pct": 19,
+      "base": 422
+    },
+    "conversaDdd11": {
+      "pct": 6,
+      "base": 570
+    }
+  },
+  "regioes": {
+    "base": 1474,
+    "itens": [
+      {
+        "regiao": "Zona Sul",
+        "pedidos": 701,
+        "temporadaPct": 49,
+        "morarPct": 23,
+        "foraPct": 47,
+        "m2": 27
+      },
+      {
+        "regiao": "Zona Oeste",
+        "pedidos": 385,
+        "temporadaPct": 50,
+        "morarPct": 26,
+        "foraPct": 41,
+        "m2": 26
+      },
+      {
+        "regiao": "Centro",
+        "pedidos": 245,
+        "temporadaPct": 55,
+        "morarPct": 25,
+        "foraPct": 55,
+        "m2": 27
+      },
+      {
+        "regiao": "Zona Leste",
+        "pedidos": 88,
+        "temporadaPct": 17,
+        "morarPct": 57,
+        "foraPct": 5,
+        "m2": 33
+      },
+      {
+        "regiao": "Zona Norte e Grande São Paulo",
+        "pedidos": 55,
+        "temporadaPct": 11,
+        "morarPct": 66,
+        "foraPct": 6,
+        "m2": 38
+      }
+    ]
+  },
+  "bairros": {
+    "base": 1474,
+    "minimo": 30,
+    "itens": [
+      {
+        "bairro": "Pinheiros",
+        "pedidos": 132,
+        "temporadaPct": 45
+      },
+      {
+        "bairro": "Brooklin",
+        "pedidos": 101,
+        "temporadaPct": 58
+      },
+      {
+        "bairro": "Moema",
+        "pedidos": 82,
+        "temporadaPct": 61
+      },
+      {
+        "bairro": "Vila Mariana",
+        "pedidos": 76,
+        "temporadaPct": 52
+      },
+      {
+        "bairro": "Bela Vista",
+        "pedidos": 74,
+        "temporadaPct": 65
+      },
+      {
+        "bairro": "Perdizes",
+        "pedidos": 72,
+        "temporadaPct": 69
+      },
+      {
+        "bairro": "Butantã",
+        "pedidos": 59,
+        "temporadaPct": 42
+      },
+      {
+        "bairro": "Vila Olímpia",
+        "pedidos": 56,
+        "temporadaPct": 40
+      },
+      {
+        "bairro": "Consolação",
+        "pedidos": 55,
+        "temporadaPct": 75
+      },
+      {
+        "bairro": "Vila Nova Conceição",
+        "pedidos": 47,
+        "temporadaPct": 38
+      },
+      {
+        "bairro": "República",
+        "pedidos": 46,
+        "temporadaPct": 59
+      },
+      {
+        "bairro": "Vila Clementino",
+        "pedidos": 45,
+        "temporadaPct": 48
+      },
+      {
+        "bairro": "Jardins",
+        "pedidos": 42,
+        "temporadaPct": 54
+      },
+      {
+        "bairro": "Itaim Bibi",
+        "pedidos": 36,
+        "temporadaPct": 50
+      },
+      {
+        "bairro": "Campo Belo",
+        "pedidos": 34,
+        "temporadaPct": 59
+      },
+      {
+        "bairro": "Pompeia",
+        "pedidos": 32,
+        "temporadaPct": 55
+      },
+      {
+        "bairro": "Jabaquara e Conceição",
+        "pedidos": 31,
+        "temporadaPct": 52
+      },
+      {
+        "bairro": "Santo Amaro",
+        "pedidos": 31,
+        "temporadaPct": 46
+      }
+    ]
+  },
+  "perfis": {
+    "base": 1614,
+    "semFinalidade": 573,
+    "semTelefone": 45,
+    "menorBase": 37,
+    "itens": [
+      {
+        "nome": "Investidor de temporada com telefone de fora",
+        "pessoas": 352,
+        "m2": 26,
+        "ate30Pct": 81,
+        "chavePct": 45,
+        "onde": "Zona Sul 49%, Zona Oeste 30%, Centro 21%",
+        "conversa": "Renda em 66%; distância em 24%, o maior índice"
+      },
+      {
+        "nome": "Investidor de temporada da Grande SP",
+        "pessoas": 323,
+        "m2": 26,
+        "ate30Pct": 76,
+        "chavePct": 47,
+        "onde": "Zona Sul 51%, Zona Oeste 29%, Centro 12%",
+        "conversa": "Renda em 67%; projeto em 44%"
+      },
+      {
+        "nome": "Investidor de aluguel tradicional",
+        "pessoas": 292,
+        "m2": 26,
+        "ate30Pct": 72,
+        "chavePct": 50,
+        "onde": "Zona Sul 52%, Zona Oeste 28%, Centro 11%",
+        "conversa": "Renda em 65%; 41% marcaram o padrão econômico"
+      },
+      {
+        "nome": "Morador da Grande SP",
+        "pessoas": 355,
+        "m2": 35,
+        "ate30Pct": 33,
+        "chavePct": 40,
+        "onde": "Zona Sul 33%, Zona Leste, Zona Norte e Grande São Paulo 30%, Zona Oeste 26%",
+        "conversa": "Renda em 8%; projeto em 37%"
+      },
+      {
+        "nome": "Morador com telefone de fora",
+        "pessoas": 143,
+        "m2": 37,
+        "ate30Pct": 33,
+        "chavePct": 34,
+        "onde": "Zona Sul 54%, Zona Oeste 24%, Centro 17%",
+        "conversa": "Cônjuge ou família em 24%; 25% marcaram alto padrão ou premium"
+      },
+      {
+        "nome": "Em dúvida ou uso misto",
+        "pessoas": 149,
+        "m2": 28,
+        "ate30Pct": 62,
+        "chavePct": 41,
+        "onde": "Zona Sul 47%, Zona Oeste 22%, Zona Leste, Zona Norte e Grande São Paulo 19%",
+        "conversa": "Renda em 43%"
+      }
+    ]
+  },
+  "cobertura": [
+    {
+      "dado": "Telefone identificado",
+      "com": 1961,
+      "total": 2232,
+      "unidade": "pessoas"
+    },
+    {
+      "dado": "Finalidade",
+      "com": 1659,
+      "total": 2232,
+      "unidade": "pessoas"
+    },
+    {
+      "dado": "Conversa com 3 ou mais mensagens do cliente",
+      "com": 993,
+      "total": 2232,
+      "unidade": "pessoas"
+    },
+    {
+      "dado": "Momento das chaves",
+      "com": 757,
+      "total": 2232,
+      "unidade": "pessoas"
+    },
+    {
+      "dado": "Bairro",
+      "com": 1474,
+      "total": 2395,
+      "unidade": "pedidos"
+    },
+    {
+      "dado": "Metragem",
+      "com": 1124,
+      "total": 2395,
+      "unidade": "pedidos"
+    },
+    {
+      "dado": "Nome do prédio",
+      "com": 792,
+      "total": 2395,
+      "unidade": "pedidos"
+    }
+  ],
+  "bairrosHerdados": 29
+}

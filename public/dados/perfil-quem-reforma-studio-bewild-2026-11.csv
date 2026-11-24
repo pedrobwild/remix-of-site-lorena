@@ -1,0 +1,154 @@
+# Fonte: Bewild, Perfil Bewild de Quem Reforma Studio, novembro de 2026, https://bewild.com.br/perfil-de-quem-reforma-studio
+# Licença CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/ — use à vontade citando a Bewild
+# Pedidos de orçamento recebidos pela Bewild de 01/03/2026 a 23/11/2026; não é amostra do mercado. percentual = casos / base
+secao,indicador,grupo,casos,base,percentual,descricao_da_base
+Finalidade,Finalidade declarada,Alugar por temporada,716,1659,43.2,pessoas com finalidade declarada
+Finalidade,Finalidade declarada,Alugar com contrato tradicional,292,1659,17.6,pessoas com finalidade declarada
+Finalidade,Finalidade declarada,Morar,502,1659,30.3,pessoas com finalidade declarada
+Finalidade,Finalidade declarada,Ainda decide,117,1659,7.1,pessoas com finalidade declarada
+Finalidade,Finalidade declarada,Morar e alugar (uso misto),32,1659,1.9,pessoas com finalidade declarada
+Finalidade,Finalidade declarada,Alugar (temporada + tradicional),1008,1659,60.8,pessoas com finalidade declarada
+Telefone,Origem do telefone (DDD),Capital e Grande SP,1164,1961,59.4,pessoas com telefone identificado
+Telefone,Origem do telefone (DDD),Interior e litoral de SP,272,1961,13.9,pessoas com telefone identificado
+Telefone,Origem do telefone (DDD),Outros estados,510,1961,26.0,pessoas com telefone identificado
+Telefone,Origem do telefone (DDD),Exterior,15,1961,0.8,pessoas com telefone identificado
+Telefone,Telefone de fora da capital e da Grande SP,Todos,797,1961,40.6,pessoas com telefone identificado
+Telefone,Telefone de fora da capital e da Grande SP,Alugar por temporada,352,675,52.1,pessoas com finalidade e telefone
+Telefone,Telefone de fora da capital e da Grande SP,Alugar com contrato tradicional,100,289,34.6,pessoas com finalidade e telefone
+Telefone,Telefone de fora da capital e da Grande SP,Morar,143,498,28.7,pessoas com finalidade e telefone
+Telefone,Telefone de fora da capital e da Grande SP,Ainda decide,38,116,32.8,pessoas com finalidade e telefone
+Telefone,Telefone de fora da capital e da Grande SP,Morar e alugar (uso misto),15,32,46.9,pessoas com finalidade e telefone
+Telefone,Estado do DDD,SP,1436,1946,73.8,pessoas com DDD brasileiro
+Telefone,Estado do DDD,MG,110,1946,5.7,pessoas com DDD brasileiro
+Telefone,Estado do DDD,RJ,72,1946,3.7,pessoas com DDD brasileiro
+Telefone,Estado do DDD,PA,39,1946,2.0,pessoas com DDD brasileiro
+Telefone,Estado do DDD,BA,35,1946,1.8,pessoas com DDD brasileiro
+Telefone,Estado do DDD,PR,27,1946,1.4,pessoas com DDD brasileiro
+Telefone,Estado do DDD,ES,22,1946,1.1,pessoas com DDD brasileiro
+Telefone,Estado do DDD,CE,22,1946,1.1,pessoas com DDD brasileiro
+Telefone,Estado do DDD,SC,21,1946,1.1,pessoas com DDD brasileiro
+Telefone,Estado do DDD,DF,19,1946,1.0,pessoas com DDD brasileiro
+Telefone,Estado do DDD,MA,16,1946,0.8,pessoas com DDD brasileiro
+Telefone,Estado do DDD,RS,15,1946,0.8,pessoas com DDD brasileiro
+Telefone,Estado do DDD,PE,15,1946,0.8,pessoas com DDD brasileiro
+Telefone,Estado do DDD,AM,14,1946,0.7,pessoas com DDD brasileiro
+Telefone,Estado do DDD,MS,13,1946,0.7,pessoas com DDD brasileiro
+Telefone,Estado do DDD,GO,13,1946,0.7,pessoas com DDD brasileiro
+Telefone,Estado do DDD,MT,13,1946,0.7,pessoas com DDD brasileiro
+Telefone,Estado do DDD,PB,10,1946,0.5,pessoas com DDD brasileiro
+Região,Pedidos por região,Zona Sul,701,1474,47.6,pedidos com bairro
+Região,Finalidade temporada na região,Zona Sul,292,592,49.3,pedidos da região com finalidade
+Região,Finalidade morar na região,Zona Sul,138,592,23.3,pedidos da região com finalidade
+Região,Telefone de fora na região,Zona Sul,284,609,46.6,pedidos da região com telefone
+Região,Pedidos por região,Zona Oeste,385,1474,26.1,pedidos com bairro
+Região,Finalidade temporada na região,Zona Oeste,167,337,49.6,pedidos da região com finalidade
+Região,Finalidade morar na região,Zona Oeste,88,337,26.1,pedidos da região com finalidade
+Região,Telefone de fora na região,Zona Oeste,142,348,40.8,pedidos da região com telefone
+Região,Pedidos por região,Centro,245,1474,16.6,pedidos com bairro
+Região,Finalidade temporada na região,Centro,97,175,55.4,pedidos da região com finalidade
+Região,Finalidade morar na região,Centro,43,175,24.6,pedidos da região com finalidade
+Região,Telefone de fora na região,Centro,110,200,55.0,pedidos da região com telefone
+Região,Pedidos por região,Zona Leste,88,1474,6.0,pedidos com bairro
+Região,Finalidade temporada na região,Zona Leste,14,81,17.3,pedidos da região com finalidade
+Região,Finalidade morar na região,Zona Leste,46,81,56.8,pedidos da região com finalidade
+Região,Telefone de fora na região,Zona Leste,4,82,4.9,pedidos da região com telefone
+Região,Pedidos por região,Zona Norte,33,1474,2.2,pedidos com bairro
+Região,Finalidade temporada na região,Zona Norte,3,29,10.3,pedidos da região com finalidade
+Região,Finalidade morar na região,Zona Norte,17,29,58.6,pedidos da região com finalidade
+Região,Telefone de fora na região,Zona Norte,1,29,3.4,pedidos da região com telefone
+Região,Pedidos por região,Grande SP,22,1474,1.5,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),Pinheiros,132,1474,9.0,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),Brooklin,101,1474,6.9,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),Moema,82,1474,5.6,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),Vila Mariana,76,1474,5.2,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),Bela Vista,74,1474,5.0,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),Perdizes,72,1474,4.9,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),Butantã,59,1474,4.0,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),Vila Olímpia,56,1474,3.8,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),Consolação,55,1474,3.7,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),Vila Nova Conceição,47,1474,3.2,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),República,46,1474,3.1,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),Vila Clementino,45,1474,3.1,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),Jardins,42,1474,2.8,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),Itaim Bibi,36,1474,2.4,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),Campo Belo,34,1474,2.3,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),Pompeia,32,1474,2.2,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),Jabaquara e Conceição,31,1474,2.1,pedidos com bairro
+Bairro,Pedidos por bairro (30 ou mais),Santo Amaro,31,1474,2.1,pedidos com bairro
+Metragem,Pedidos por faixa de área,Até 20 m²,55,1124,4.9,pedidos com metragem
+Metragem,Pedidos por faixa de área,20 a 24 m²,108,1124,9.6,pedidos com metragem
+Metragem,Pedidos por faixa de área,24 a 28 m²,410,1124,36.5,pedidos com metragem
+Metragem,Pedidos por faixa de área,28 a 32 m²,195,1124,17.3,pedidos com metragem
+Metragem,Pedidos por faixa de área,32 a 40 m²,186,1124,16.5,pedidos com metragem
+Metragem,Pedidos por faixa de área,40 a 45 m²,62,1124,5.5,pedidos com metragem
+Metragem,Pedidos por faixa de área,45 a 60 m²,45,1124,4.0,pedidos com metragem
+Metragem,Pedidos por faixa de área,60 m² ou mais,63,1124,5.6,pedidos com metragem
+Chaves,Momento das chaves,Já tem a chave,331,757,43.7,pessoas que responderam sobre as chaves
+Chaves,Momento das chaves,Recebe em até 6 meses,220,757,29.1,pessoas que responderam sobre as chaves
+Chaves,Momento das chaves,Recebe em mais de 6 meses,108,757,14.3,pessoas que responderam sobre as chaves
+Chaves,Momento das chaves,Ainda não tem (sem prazo informado),68,757,9.0,pessoas que responderam sobre as chaves
+Chaves,Momento das chaves,Ainda está comprando,30,757,4.0,pessoas que responderam sobre as chaves
+Padrão,Padrão de investimento declarado,econômico,139,525,26.5,pessoas que responderam ao formulário com essa pergunta
+Padrão,Padrão de investimento declarado,intermediário,305,525,58.1,pessoas que responderam ao formulário com essa pergunta
+Padrão,Padrão de investimento declarado,alto padrão,64,525,12.2,pessoas que responderam ao formulário com essa pergunta
+Padrão,Padrão de investimento declarado,premium,17,525,3.2,pessoas que responderam ao formulário com essa pergunta
+Conversas,Tema citado na conversa,O que está incluído (itens e marcenaria) — todos,456,993,45.9,pessoas com 3 ou mais mensagens
+Conversas,Tema citado na conversa,O que está incluído (itens e marcenaria) — vai alugar,266,570,46.7,pessoas com 3 ou mais mensagens que vão alugar
+Conversas,Tema citado na conversa,O que está incluído (itens e marcenaria) — vai morar,116,256,45.3,pessoas com 3 ou mais mensagens que vão morar
+Conversas,Tema citado na conversa,Aluguel e renda — todos,461,993,46.4,pessoas com 3 ou mais mensagens
+Conversas,Tema citado na conversa,Aluguel e renda — vai alugar,375,570,65.8,pessoas com 3 ou mais mensagens que vão alugar
+Conversas,Tema citado na conversa,Aluguel e renda — vai morar,27,256,10.5,pessoas com 3 ou mais mensagens que vão morar
+Conversas,Tema citado na conversa,Projeto e personalização — todos,385,993,38.8,pessoas com 3 ou mais mensagens
+Conversas,Tema citado na conversa,Projeto e personalização — vai alugar,230,570,40.4,pessoas com 3 ou mais mensagens que vão alugar
+Conversas,Tema citado na conversa,Projeto e personalização — vai morar,93,256,36.3,pessoas com 3 ou mais mensagens que vão morar
+Conversas,Tema citado na conversa,Chaves e vistoria — todos,324,993,32.6,pessoas com 3 ou mais mensagens
+Conversas,Tema citado na conversa,Chaves e vistoria — vai alugar,212,570,37.2,pessoas com 3 ou mais mensagens que vão alugar
+Conversas,Tema citado na conversa,Chaves e vistoria — vai morar,71,256,27.7,pessoas com 3 ou mais mensagens que vão morar
+Conversas,Tema citado na conversa,Preço — todos,193,993,19.4,pessoas com 3 ou mais mensagens
+Conversas,Tema citado na conversa,Preço — vai alugar,134,570,23.5,pessoas com 3 ou mais mensagens que vão alugar
+Conversas,Tema citado na conversa,Preço — vai morar,33,256,12.9,pessoas com 3 ou mais mensagens que vão morar
+Conversas,Tema citado na conversa,Cônjuge - família ou sócio — todos,139,993,14.0,pessoas com 3 ou mais mensagens
+Conversas,Tema citado na conversa,Cônjuge - família ou sócio — vai alugar,80,570,14.0,pessoas com 3 ou mais mensagens que vão alugar
+Conversas,Tema citado na conversa,Cônjuge - família ou sócio — vai morar,38,256,14.8,pessoas com 3 ou mais mensagens que vão morar
+Conversas,Tema citado na conversa,Pagamento — todos,125,993,12.6,pessoas com 3 ou mais mensagens
+Conversas,Tema citado na conversa,Pagamento — vai alugar,71,570,12.5,pessoas com 3 ou mais mensagens que vão alugar
+Conversas,Tema citado na conversa,Pagamento — vai morar,28,256,10.9,pessoas com 3 ou mais mensagens que vão morar
+Conversas,Tema citado na conversa,Distância do imóvel — todos,112,993,11.3,pessoas com 3 ou mais mensagens
+Conversas,Tema citado na conversa,Distância do imóvel — vai alugar,82,570,14.4,pessoas com 3 ou mais mensagens que vão alugar
+Conversas,Tema citado na conversa,Distância do imóvel — vai morar,18,256,7.0,pessoas com 3 ou mais mensagens que vão morar
+Conversas,Tema citado na conversa,Comparação com outras propostas — todos,110,993,11.1,pessoas com 3 ou mais mensagens
+Conversas,Tema citado na conversa,Comparação com outras propostas — vai alugar,68,570,11.9,pessoas com 3 ou mais mensagens que vão alugar
+Conversas,Tema citado na conversa,Comparação com outras propostas — vai morar,25,256,9.8,pessoas com 3 ou mais mensagens que vão morar
+Conversas,Tema citado na conversa,Prazo — todos,108,993,10.9,pessoas com 3 ou mais mensagens
+Conversas,Tema citado na conversa,Prazo — vai alugar,70,570,12.3,pessoas com 3 ou mais mensagens que vão alugar
+Conversas,Tema citado na conversa,Prazo — vai morar,15,256,5.9,pessoas com 3 ou mais mensagens que vão morar
+Conversas,Tema citado na conversa,Contrato — todos,83,993,8.4,pessoas com 3 ou mais mensagens
+Conversas,Tema citado na conversa,Contrato — vai alugar,57,570,10.0,pessoas com 3 ou mais mensagens que vão alugar
+Conversas,Tema citado na conversa,Contrato — vai morar,12,256,4.7,pessoas com 3 ou mais mensagens que vão morar
+Conversas,Tema citado na conversa,Condomínio — todos,47,993,4.7,pessoas com 3 ou mais mensagens
+Conversas,Tema citado na conversa,Condomínio — vai alugar,26,570,4.6,pessoas com 3 ou mais mensagens que vão alugar
+Conversas,Tema citado na conversa,Condomínio — vai morar,13,256,5.1,pessoas com 3 ou mais mensagens que vão morar
+Conversas,Tema citado na conversa,Preço alto — todos,45,993,4.5,pessoas com 3 ou mais mensagens
+Conversas,Tema citado na conversa,Preço alto — vai alugar,33,570,5.8,pessoas com 3 ou mais mensagens que vão alugar
+Conversas,Tema citado na conversa,Preço alto — vai morar,7,256,2.7,pessoas com 3 ou mais mensagens que vão morar
+Conversas,Tema citado na conversa,Gestão do aluguel — todos,26,993,2.6,pessoas com 3 ou mais mensagens
+Conversas,Tema citado na conversa,Gestão do aluguel — vai alugar,18,570,3.2,pessoas com 3 ou mais mensagens que vão alugar
+Conversas,Tema citado na conversa,Gestão do aluguel — vai morar,3,256,1.2,pessoas com 3 ou mais mensagens que vão morar
+Conversas,Tema citado na conversa,Garantia — todos,22,993,2.2,pessoas com 3 ou mais mensagens
+Conversas,Tema citado na conversa,Garantia — vai alugar,12,570,2.1,pessoas com 3 ou mais mensagens que vão alugar
+Conversas,Tema citado na conversa,Garantia — vai morar,5,256,2.0,pessoas com 3 ou mais mensagens que vão morar
+Conversas,Tema citado na conversa,Atraso de obra ou de entrega — todos,13,993,1.3,pessoas com 3 ou mais mensagens
+Conversas,Tema citado na conversa,Atraso de obra ou de entrega — vai alugar,10,570,1.8,pessoas com 3 ou mais mensagens que vão alugar
+Conversas,Tema citado na conversa,Atraso de obra ou de entrega — vai morar,0,256,0.0,pessoas com 3 ou mais mensagens que vão morar
+Conversas,Tema citado na conversa,Golpe ou experiência ruim anterior — todos,3,993,0.3,pessoas com 3 ou mais mensagens
+Conversas,Tema citado na conversa,Golpe ou experiência ruim anterior — vai alugar,2,570,0.4,pessoas com 3 ou mais mensagens que vão alugar
+Conversas,Tema citado na conversa,Golpe ou experiência ruim anterior — vai morar,0,256,0.0,pessoas com 3 ou mais mensagens que vão morar
+Unidades,Mais de uma unidade,Todos,74,2232,3.3,pessoas
+Unidades,Mais de uma unidade,Vai alugar,48,1008,4.8,pessoas que vão alugar
+Unidades,Mais de uma unidade,Vai morar,8,502,1.6,pessoas que vão morar
+Perfis,Participação do perfil,Investidor de temporada com telefone de fora,352,1614,21.8,pessoas com finalidade e - para temporada e morar - telefone identificado
+Perfis,Participação do perfil,Investidor de temporada da Grande SP,323,1614,20.0,pessoas com finalidade e - para temporada e morar - telefone identificado
+Perfis,Participação do perfil,Investidor de aluguel tradicional,292,1614,18.1,pessoas com finalidade e - para temporada e morar - telefone identificado
+Perfis,Participação do perfil,Morador da Grande SP,355,1614,22.0,pessoas com finalidade e - para temporada e morar - telefone identificado
+Perfis,Participação do perfil,Morador com telefone de fora,143,1614,8.9,pessoas com finalidade e - para temporada e morar - telefone identificado
+Perfis,Participação do perfil,Em dúvida ou uso misto,149,1614,9.2,pessoas com finalidade e - para temporada e morar - telefone identificado

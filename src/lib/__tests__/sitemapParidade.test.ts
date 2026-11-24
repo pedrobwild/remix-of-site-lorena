@@ -39,6 +39,7 @@ const ROTAS_INDEXAVEIS = [
   { path: "/reforma-de-studio-sao-paulo", priority: "0.9", changefreq: "monthly" },
   { path: "/reforma-de-cobertura-sao-paulo", priority: "0.9", changefreq: "monthly" },
   { path: "/indice-de-custo-de-reforma", priority: "0.8", changefreq: "monthly" },
+  { path: "/perfil-de-quem-reforma-studio", priority: "0.8", changefreq: "monthly" },
   { path: "/licenca-cc-by-4-0", priority: "0.4", changefreq: "monthly" },
   { path: "/licenca-cc-by-sa-4-0", priority: "0.4", changefreq: "monthly" },
   { path: "/atribuicao", priority: "0.4", changefreq: "monthly" },

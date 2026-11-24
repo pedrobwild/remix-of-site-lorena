@@ -26,6 +26,7 @@ export const PUBLIC_PAGES: PublicPage[] = [
   { path: "/reforma-de-studio-sao-paulo", label: "Reforma de studio em SP" },
   { path: "/reforma-de-cobertura-sao-paulo", label: "Reforma de cobertura em SP" },
   { path: "/indice-de-custo-de-reforma", label: "Índice Bewild de custo de reforma" },
+  { path: "/perfil-de-quem-reforma-studio", label: "Perfil Bewild de quem reforma studio" },
   { path: "/licenca-cc-by-4-0", label: "Licença CC BY 4.0" },
   { path: "/licenca-cc-by-sa-4-0", label: "Licença CC BY-SA 4.0" },
   { path: "/atribuicao", label: "Atribuição" },
