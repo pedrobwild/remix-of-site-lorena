@@ -71,3 +71,20 @@ distribuição por faixa de metragem não é republicada aqui: fica só no Índi
 Refaça a seleção com a regra acima, atualize o JSON, a planilha e
 `PERFIL_ATUALIZADO_EM` juntos e rode
 `bunx vitest run src/content/__tests__/perfilReforma.test.tsx`.
+
+## Gráficos, imagem de compartilhamento e revisão técnica (24/11/2026)
+
+- Pedro confirmou em 24/11/2026 que o Thiago Dantas revisou o estudo. A página traz a linha
+  "Elaboração … · Revisão técnica …" e o nó WebPage publica `reviewedBy` e `lastReviewed`
+  (rota `perfil-de-quem-reforma-studio.tsx`).
+- Nove gráficos e infográficos em `public/images/blog/quem-reforma-studio-sao-paulo-perfil/`
+  (versão larga e `-m` para celular) e a imagem de compartilhamento `og-perfil-quem-reforma-studio.png`.
+  Saem de `scripts/graficos/perfil_quem_reforma_2026_11.py`, que lê `perfilReforma.dados.json`:
+  refez o estudo, rode `python3 scripts/graficos/perfil_quem_reforma_2026_11.py --og` e atualize as
+  alturas em `src/content/perfilGraficos.ts` (`perfilGraficos.test.tsx` compara).
+- Os mesmos arquivos servem o artigo `/conteudos/quem-reforma-studio-sao-paulo-perfil` (corpo no banco),
+  a página do estudo e `/graficos/quem-reforma-studio-sao-paulo-perfil` (noindex, follow).
+- Avaliados e não desenhados: metragem por finalidade (três números, dois iguais), composição por
+  terço do período (barras quase iguais), profissão e estado civil dos contratos (outra base; a tabela resolve).
+- Título da página passou a levar o nome do estudo (`PERFIL_TITLE`): a consulta "quem reforma studio em
+  São Paulo" fica com o artigo do blog, para as duas URLs não disputarem a mesma busca.
