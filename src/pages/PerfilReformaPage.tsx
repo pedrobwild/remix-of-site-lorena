@@ -147,7 +147,7 @@ export default function PerfilReformaPage() {
             <p className="bwa-servico-text">
               Cada número usa como base quem tem aquele dado: {num(d.finalidade.base)} pessoas com finalidade
               declarada, {num(d.origem.base)} com telefone identificado ({num(FORA)} de fora), {num(d.metragem.base)}{" "}
-              pedidos com metragem e {num(d.chaves.base)} pessoas que responderam sobre as chaves ({num(SEM_CHAVE)}{" "}
+              orçamentos com metragem e {num(d.chaves.base)} pessoas que responderam sobre as chaves ({num(SEM_CHAVE)}{" "}
               ainda sem ela). Metade dos imóveis fica entre {M2_METADE}.
             </p>
           </div>
@@ -156,23 +156,22 @@ export default function PerfilReformaPage() {
         <section className="bwa-servico-block" aria-labelledby="perfis">
           <div className="bwa-shell">
             <h2 className="bwa-servico-h2" id="perfis">
-              Seis perfis de quem reforma
+              Perfis de quem reforma
             </h2>
             <p className="bwa-servico-text">
-              Duas respostas separam os perfis: para que é o imóvel e de onde é o telefone de quem pede. Com elas,{" "}
-              {num(d.perfis.base)} pessoas se dividem em seis grupos, e nenhum passa de 22%.
+              Duas respostas separam os perfis: para que é o imóvel e de onde é o telefone. Com elas,{" "}
+              {num(d.perfis.base)} pessoas se dividem em seis grupos, e os dois de investidores de temporada somam{" "}
+              {pctDe(d.perfis.itens[0].pessoas + d.perfis.itens[1].pessoas, d.perfis.base)}%.
             </p>
             <div className="bwa-indice-table-wrap" role="region" aria-labelledby="perfis" tabIndex={0}>
               <table className="bwa-indice-table">
-                <caption className="sr-only">Perfis de quem pede orçamento de reforma, {PERFIL_EDICAO}</caption>
+                <caption className="sr-only">Perfis de quem recebeu orçamento de reforma, {PERFIL_EDICAO}</caption>
                 <thead>
                   <tr>
                     <th scope="col">Perfil</th>
                     <th scope="col">Participação</th>
-                    <th scope="col">Imóvel (mediana)</th>
-                    <th scope="col">Já tem a chave</th>
-                    <th scope="col">Onde fica o imóvel</th>
-                    <th scope="col">Nas conversas</th>
+                    <th scope="col">Metragem mediana</th>
+                    <th scope="col">Imóveis de até 30 m²</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -182,29 +181,25 @@ export default function PerfilReformaPage() {
                       <td>
                         {pctDe(p.pessoas, d.perfis.base)}% ({num(p.pessoas)})
                       </td>
-                      <td>
-                        {p.m2} m²; {p.ate30Pct}% até 30 m²
-                      </td>
-                      <td>{p.chavePct}%</td>
-                      <td>{p.onde}</td>
-                      <td>{p.conversa}</td>
+                      <td>{p.m2 === null ? "—" : `${p.m2} m²`}</td>
+                      <td>{p.ate30Pct === null ? "—" : `${p.ate30Pct}%`}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
             <p className="bwa-servico-text" style={{ marginTop: 24 }}>
-              Cada célula usa quem tem aquele dado; a menor base é de {d.perfis.menorBase} pessoas, na metragem do
-              perfil em dúvida. Ficaram fora {num(d.perfis.semFinalidade)} pessoas sem finalidade declarada e{" "}
-              {d.perfis.semTelefone} sem telefone identificado.
+              Metragem e parcela de até 30 m² só aparecem para perfis com 25 pessoas ou mais. Ficaram fora{" "}
+              {num(d.perfis.semFinalidade)} pessoas sem finalidade declarada e {d.perfis.semTelefone} sem telefone
+              identificado.
             </p>
             <p className="bwa-servico-text">
               <strong>Mais de uma unidade.</strong> {d.multi.pessoas} das {num(d.base.pessoas)} pessoas ({MULTI_PCT}%)
               orçaram ou citaram duas ou mais unidades: {multiPct(d.multi.alugar)}% entre quem vai alugar (
               {d.multi.alugar.casos} de {num(d.multi.alugar.base)}) e {multiPct(d.multi.morar)}% entre quem vai morar (
-              {d.multi.morar.casos} de {d.multi.morar.base}). A diferença tem significância estatística (teste exato de
-              Fisher, p = 0,001). É uma estimativa mínima, porque só entram unidades registradas como diferentes ou
-              citadas na conversa.
+              {d.multi.morar.casos} de {d.multi.morar.base}), sem diferença estatística nesta base (teste exato de
+              Fisher, p = {String(d.multi.p).replace(".", ",")}). É uma estimativa mínima, porque só entram unidades
+              registradas como diferentes ou citadas na conversa.
             </p>
             <p className="bwa-servico-text">
               <strong>Profissão e estado civil.</strong> Esses dados só existem para quem assinou contrato. Entre{" "}
@@ -223,16 +218,6 @@ export default function PerfilReformaPage() {
                   {i < a.length - 2 ? ", " : i === a.length - 2 ? " e " : "."}
                 </span>
               ))}
-            </p>
-            <p className="bwa-servico-text">
-              <strong>Idade e sexo.</strong> Esses dados vêm da plataforma de anúncios e valem só para quem se
-              cadastrou por anúncio em redes sociais no período: {d.idadeSexo.mais45Pct}% têm 45 anos ou mais. Por faixa:{" "}
-              {d.idadeSexo.faixas.map((f, i, a) => (
-                <span key={f.faixa}>
-                  {f.faixa}, {f.pct}%{i < a.length - 1 ? "; " : "."}
-                </span>
-              ))}{" "}
-              Homens são {d.idadeSexo.homensPct}% dos cadastros com sexo identificado.
             </p>
           </div>
         </section>
@@ -268,7 +253,7 @@ export default function PerfilReformaPage() {
               De onde são
             </h2>
             <p className="bwa-servico-text">
-              Quatro em cada dez pessoas têm telefone de fora da capital e da Grande São Paulo: {num(FORA)} de{" "}
+              Quase metade das pessoas tem telefone de fora da capital e da Grande São Paulo: {num(FORA)} de{" "}
               {num(d.origem.base)} com telefone identificado.
             </p>
             <div className="bwa-indice-table-wrap" role="region" aria-labelledby="origem" tabIndex={0}>
@@ -310,7 +295,7 @@ export default function PerfilReformaPage() {
                   {i < a.length - 2 ? ", " : i === a.length - 2 ? " e " : "."}
                 </span>
               ))}{" "}
-              A diferença tem significância estatística (qui-quadrado, p &lt; 0,001).
+              A diferença tem significância estatística (qui-quadrado, p = 0,02).
             </p>
           </div>
         </section>
@@ -321,16 +306,16 @@ export default function PerfilReformaPage() {
               Onde ficam os imóveis
             </h2>
             <p className="bwa-servico-text">
-              Zona Sul, Zona Oeste e Centro somam {TRES_REGIOES_PCT}% dos {num(d.regioes.base)} pedidos com bairro
-              informado, e o perfil muda de uma região para outra.
+              Zona Sul, Zona Oeste e Centro somam {TRES_REGIOES_PCT}% dos {num(d.regioes.base)} orçamentos com bairro
+              informado.
             </p>
             <div className="bwa-indice-table-wrap" role="region" aria-labelledby="regioes" tabIndex={0}>
               <table className="bwa-indice-table">
-                <caption className="sr-only">Pedidos de orçamento por região de São Paulo, {PERFIL_EDICAO}</caption>
+                <caption className="sr-only">Orçamentos de reforma por região de São Paulo, {PERFIL_EDICAO}</caption>
                 <thead>
                   <tr>
                     <th scope="col">Região</th>
-                    <th scope="col">Pedidos</th>
+                    <th scope="col">Orçamentos</th>
                     <th scope="col">Alugar por temporada</th>
                     <th scope="col">Para morar</th>
                     <th scope="col">Telefone de fora</th>
@@ -342,10 +327,10 @@ export default function PerfilReformaPage() {
                     <tr key={r.regiao}>
                       <th scope="row">{r.regiao}</th>
                       <td>{num(r.pedidos)}</td>
-                      <td>{r.temporadaPct}%</td>
-                      <td>{r.morarPct}%</td>
-                      <td>{r.foraPct}%</td>
-                      <td>{r.m2} m²</td>
+                      <td>{r.temporadaPct === null ? "—" : `${r.temporadaPct}%`}</td>
+                      <td>{r.morarPct === null ? "—" : `${r.morarPct}%`}</td>
+                      <td>{r.foraPct === null ? "—" : `${r.foraPct}%`}</td>
+                      <td>{r.m2 === null ? "—" : `${r.m2} m²`}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -353,13 +338,12 @@ export default function PerfilReformaPage() {
             </div>
             <p className="bwa-servico-text" style={{ marginTop: 24 }}>
               Temporada e moradia são percentuais de quem declarou a finalidade em cada região; telefone de fora usa
-              quem tem telefone identificado. No Centro, na Zona Sul e na Zona Oeste, cerca de metade vai alugar por
-              temporada. Na Zona Leste, na Zona Norte e na Grande São Paulo, a maioria vai morar e quase todos têm
-              telefone da região.
+              quem tem telefone identificado. O Centro tem a maior parcela de aluguel por temporada e de telefones de
+              fora. Zona Leste e Zona Norte somam menos de 25 orçamentos e, por isso, aparecem sem percentuais.
             </p>
 
             <h3 className="bwa-servico-h3" id="bairros" style={{ marginTop: 32 }}>
-              Bairros com {d.bairros.minimo} pedidos ou mais
+              Bairros com {d.bairros.minimo} orçamentos ou mais
             </h3>
             <p className="bwa-servico-text">
               {d.bairros.itens
@@ -367,17 +351,17 @@ export default function PerfilReformaPage() {
                 .map((b) => b.bairro)
                 .join(", ")
                 .replace(/, ([^,]*)$/, " e $1")}{" "}
-              somam {TRES_BAIRROS_PEDIDOS} dos {num(d.bairros.base)} pedidos com bairro ({TRES_BAIRROS_PCT}%). Os{" "}
+              somam {TRES_BAIRROS_PEDIDOS} dos {num(d.bairros.base)} orçamentos com bairro ({TRES_BAIRROS_PCT}%). Os{" "}
               {d.bairros.itens.length} bairros da tabela somam {num(BAIRROS_PEDIDOS)} (
               {pctDe(BAIRROS_PEDIDOS, d.bairros.base)}%).
             </p>
             <div className="bwa-indice-table-wrap" role="region" aria-labelledby="bairros" tabIndex={0}>
               <table className="bwa-indice-table">
-                <caption className="sr-only">Pedidos de orçamento por bairro de São Paulo, {PERFIL_EDICAO}</caption>
+                <caption className="sr-only">Orçamentos de reforma por bairro de São Paulo, {PERFIL_EDICAO}</caption>
                 <thead>
                   <tr>
                     <th scope="col">Bairro</th>
-                    <th scope="col">Pedidos</th>
+                    <th scope="col">Orçamentos</th>
                     <th scope="col">Vão alugar por temporada</th>
                   </tr>
                 </thead>
@@ -386,7 +370,7 @@ export default function PerfilReformaPage() {
                     <tr key={b.bairro}>
                       <th scope="row">{b.bairro}</th>
                       <td>{b.pedidos}</td>
-                      <td>{b.temporadaPct}%</td>
+                      <td>{b.temporadaPct === null ? "—" : `${b.temporadaPct}%`}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -394,12 +378,12 @@ export default function PerfilReformaPage() {
             </div>
             <p className="bwa-servico-text" style={{ marginTop: 24 }}>
               Jardins inclui Jardim Paulista e Cerqueira César; Moema, Indianópolis; Brooklin, Berrini e Monções. A
-              parcela de temporada é de quem declarou a finalidade em cada bairro.
+              parcela de temporada é de quem declarou a finalidade em cada bairro e só aparece com base de 25 ou mais.
             </p>
             <p className="bwa-servico-text">
-              <strong>Pedidos chegam em ondas por prédio.</strong> Dos {d.predios.pedidos} pedidos com o empreendimento
+              <strong>Orçamentos chegam em ondas por prédio.</strong> Dos {d.predios.pedidos} orçamentos com o empreendimento
               identificado, {d.predios.pedidosCom5} ({pctDe(d.predios.pedidosCom5, d.predios.pedidos)}%) vieram de{" "}
-              {d.predios.com5} prédios com 5 ou mais pedidos cada. O maior reuniu {d.predios.maior} pedidos de{" "}
+              {d.predios.com5} prédios com 5 ou mais orçamentos cada. O maior reuniu {d.predios.maior} orçamentos de{" "}
               {d.predios.maiorPessoas} pessoas, {d.predios.maiorMes} deles em um único mês. A entrega das chaves de um
               prédio de unidades compactas leva vários donos a orçar a reforma ao mesmo tempo.
             </p>
@@ -412,33 +396,20 @@ export default function PerfilReformaPage() {
               Tamanho dos imóveis
             </h2>
             <p className="bwa-servico-text">
-              A metragem mediana é de {M2_MEDIANA}, e metade dos {num(d.metragem.base)} pedidos com área informada fica
-              entre {M2_METADE}.
+              A metragem mediana é de {M2_MEDIANA}, e metade dos {num(d.metragem.base)} orçamentos fica entre{" "}
+              {M2_METADE}.
             </p>
-            <ul className="bwa-indice-bars">
-              {d.metragem.faixas.map((f) => (
-                <li key={f.faixa}>
-                  <span className="bwa-indice-bar-label">{f.faixa}</span>
-                  <span className="bwa-indice-bar" aria-hidden="true">
-                    <span style={{ width: `${pctDe(f.pedidos, d.metragem.base)}%` }} />
-                  </span>
-                  <span className="bwa-indice-bar-value">
-                    {pctDe(f.pedidos, d.metragem.base)}% ({f.pedidos} pedidos)
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <p className="bwa-servico-text" style={{ marginTop: 24 }}>
-              Dois em cada três imóveis têm até 30 m² ({d.metragem.ate30} de {num(d.metragem.base)}), e 1 em cada 10
-              tem 45 m² ou mais ({d.metragem.de45}). Até 45 m², as faixas são as mesmas do{" "}
-              <a href={INDICE_CANONICAL}>Índice Bewild de custo de reforma</a>, que traz o orçamento mediano de cada
-              uma, calculado sobre {num(INDICE_ORCAMENTOS)} orçamentos.
+            <p className="bwa-servico-text">
+              {pctDe(d.metragem.ate30, d.metragem.base)}% dos imóveis têm até 30 m² ({d.metragem.ate30} de{" "}
+              {num(d.metragem.base)}), e todos têm até 45 m², o limite da amostra. O orçamento mediano de cada faixa
+              de área está no <a href={INDICE_CANONICAL}>Índice Bewild de custo de reforma</a>, que usa a mesma regra
+              de amostra e reuniu {num(INDICE_ORCAMENTOS)} orçamentos na edição de novembro.
             </p>
             <p className="bwa-servico-text">
               <strong>Por finalidade.</strong> A mediana é de {d.metragem.porFinalidade[0].mediana} m² para quem vai
-              alugar, por temporada ({d.metragem.porFinalidade[0].pedidos} pedidos) ou com contrato tradicional (
+              alugar, por temporada ({d.metragem.porFinalidade[0].pedidos} orçamentos) ou com contrato tradicional (
               {d.metragem.porFinalidade[1].pedidos}), e de {d.metragem.porFinalidade[2].mediana} m² para quem vai morar
-              ({d.metragem.porFinalidade[2].pedidos}). Um em cada três imóveis de quem vai morar passa de 40 m². A
+              ({d.metragem.porFinalidade[2].pedidos}). Entre os imóveis de quem vai morar, {d.metragem.morarAcima40Pct}% passam de 40 m². A
               diferença entre morar e alugar tem significância estatística (teste de Mann-Whitney, p &lt; 0,001).
             </p>
           </div>
@@ -475,7 +446,7 @@ export default function PerfilReformaPage() {
               O que perguntam e o que temem
             </h2>
             <p className="bwa-servico-text">
-              A conversa antes do contrato gira em torno do que se está comprando. Entre {num(d.conversas.base)}{" "}
+              A conversa antes do contrato gira em torno da renda e do que se está comprando. Entre {num(d.conversas.base)}{" "}
               pessoas com 3 ou mais mensagens ({num(d.conversas.mensagens)} mensagens),{" "}
               {d.conversas.gerais.map((g, i, a) => (
                 <span key={g.tema}>
@@ -574,16 +545,18 @@ export default function PerfilReformaPage() {
             </div>
             <p className="bwa-servico-text" style={{ marginTop: 24 }}>
               <strong>Como a amostra foi formada.</strong> Partimos de {num(d.base.negociosIniciais)} negócios
-              registrados no sistema comercial da Bewild em {dataBR(d.base.consulta)}, contados uma vez por imóvel
-              orçado e sem aditivos de contrato. Saíram, nesta ordem,{" "}
+              com orçamento enviado ao cliente, criados até 15/11/2026 e consultados em {dataBR(d.base.consulta)},
+              contados uma vez e sem aditivos de contrato. Saíram, nesta ordem,{" "}
               {exclusoes.map((e, i) => (
                 <span key={e.motivo}>
                   {e.n} {e.motivo}
                   {i < exclusoes.length - 2 ? "; " : i === exclusoes.length - 2 ? "; e " : "."}
                 </span>
               ))}{" "}
-              Ficaram {num(d.base.pedidos)} pedidos de {num(d.base.pessoas)} pessoas, de {dataBR(d.base.de)} a{" "}
-              {dataBR(d.base.ate)}.
+              Ficaram {num(d.base.pedidos)} orçamentos de {num(d.base.pessoas)} pessoas, criados de {dataBR(d.base.de)} a{" "}
+              {dataBR(d.base.ate)}. É a regra de amostra do <a href={INDICE_CANONICAL}>Índice Bewild de custo de reforma</a>,
+              que reuniu {num(d.base.indiceOrcamentos)} orçamentos na edição de novembro, consultada em{" "}
+              {dataBR(d.base.indiceConsulta)}.
             </p>
             <div className="bwa-indice-table-wrap" role="region" aria-label="Quanto da amostra tem cada dado" tabIndex={0}>
               <table className="bwa-indice-table">
@@ -632,8 +605,8 @@ export default function PerfilReformaPage() {
               O que os números medem e o que não medem
             </h2>
             <p className="bwa-servico-text">
-              O estudo descreve quem pediu orçamento de reforma a uma empresa, a Bewild, que atende studios e
-              apartamentos compactos em São Paulo. Não é uma amostra do mercado.
+              O estudo descreve quem recebeu um orçamento de reforma completa de uma empresa, a Bewild, que atende
+              studios e apartamentos compactos em São Paulo. Não é uma amostra do mercado.
             </p>
             <ul className="bwa-indice-notes">
               {PERFIL_LIMITES.map((l) => (
