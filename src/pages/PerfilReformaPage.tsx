@@ -58,6 +58,7 @@ import {
   perfilGrafico,
   perfilGraficoEmbedHtml,
   perfilGraficoSrc,
+  PERFIL_GRAFICO_LARGURA_CELULAR,
   PERFIL_GRAFICOS,
   PERFIL_GRAFICOS_IMPRENSA,
   PERFIL_GRAFICOS_PAGINA,
@@ -104,7 +105,7 @@ function Figura({ id }: { id: string }) {
   return (
     <figure className="bwa-perfil-fig" data-perfil-grafico={g.id}>
       <picture>
-        <source media="(max-width: 640px)" srcSet={perfilGraficoSrc(g, "mobile")} width={420} height={g.alturaM} />
+        <source media="(max-width: 640px)" srcSet={perfilGraficoSrc(g, "mobile")} width={PERFIL_GRAFICO_LARGURA_CELULAR} height={g.alturaM} />
         <img
           src={perfilGraficoSrc(g, "desktop")}
           alt={g.alt}
@@ -159,7 +160,7 @@ export default function PerfilReformaPage() {
                 </a>{" "}
                 · <a href="#imprensa">Para imprensa</a>
               </p>
-              <p className="bwa-indice-meta" data-perfil-creditos>
+              <p className="bwa-indice-meta bwa-perfil-creditos" data-perfil-creditos>
                 Elaboração: <a href={PERFIL_AUTOR.href}>{PERFIL_AUTOR.nome}</a>, {PERFIL_AUTOR.cargo} · Revisão técnica:{" "}
                 <a href={PERFIL_REVISOR.href}>{PERFIL_REVISOR.nome}</a>, {PERFIL_REVISOR.cargo}
               </p>
