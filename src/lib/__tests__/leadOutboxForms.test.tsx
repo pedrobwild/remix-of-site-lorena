@@ -4,7 +4,7 @@
  * e continua com a opção do WhatsApp.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import type { LeadPayload } from "../leadDelivery";
 import type { SendLeadResult } from "../sendLead";
 
@@ -21,6 +21,7 @@ vi.mock("@/lib/adConsentRecord", () => ({
 import BairroLeadForm from "@/components/BairroLeadForm";
 import LpStudioLeadForm from "@/components/LpStudioLeadForm";
 import { LEAD_OUTBOX_SAVED_TEXT, listLeadOutbox } from "../leadOutbox";
+import { LP_ATALHOS } from "@/content/pages/lp-reforma-de-studio-sao-paulo";
 
 const type = (id: string, value: string) =>
   fireEvent.change(document.getElementById(id) as HTMLInputElement, { target: { value } });
@@ -73,6 +74,20 @@ describe("LpStudioLeadForm", () => {
     await act(async () => fireEvent.click(screen.getByRole("button", { name: /Receber orçamento/ })));
     expect(screen.getByRole("status")).toHaveTextContent(LEAD_OUTBOX_SAVED_TEXT);
     expect(screen.getByRole("link", { name: /Enviar pelo WhatsApp/ })).toBeInTheDocument();
+  });
+
+  it("entregue: a confirmação traz os atalhos para o site", async () => {
+    sendLeadMock.mockResolvedValue({ delivered: true, timedOut: false });
+    render(<LpStudioLeadForm variante="investidor" />);
+    preencher();
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /Receber orçamento/ })));
+    const status = screen.getByRole("status");
+    expect(status).toHaveTextContent("Pedido recebido.");
+    for (const atalho of LP_ATALHOS) {
+      const link = within(status).getByRole("link", { name: new RegExp(atalho.titulo) });
+      expect(link).toHaveAttribute("href", atalho.href);
+      expect(link).toHaveAttribute("data-cta", `lp-studio-pos-envio-${atalho.cta}`);
+    }
   });
 
   it("falha: o aviso vai junto do convite para tentar de novo", async () => {
