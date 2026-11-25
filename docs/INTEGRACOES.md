@@ -179,6 +179,35 @@ que o Google espera:
   da migração `20261014040000_export_keys_google_ads_offline.sql`, que libera
   marcar o conjunto ao criar a chave).
 
+### Envio direto ao Google Ads (fila, desativado)
+
+Caminho preparado para mandar a conversão pelo servidor, sem depender da
+etiqueta do navegador (que só carrega depois do aceite no aviso de cookies).
+Código em `src/lib/googleAdsDelivery.ts` e `googleAdsDelivery.server.ts`; fila e
+gatilhos em `drizzle/migrations/0010_google_ads_delivery_queue.sql` e `0011`.
+
+- **O que envia**: o pedido (`request`, ação `7805140492`, com o mesmo
+  `transaction_id` da etiqueta do navegador, então o Google conta uma vez só) e
+  a qualificação (`qualified`, ação `7851121159`).
+- **Quem entra**: objetivo de investidor, formulário de cliente, gclid gravado
+  no lead e pedido dentro da janela de 90 dias. O gatilho do banco
+  (`queue_google_ads_delivery`) aplica o mesmo filtro; incluir `Moradia` e
+  `Ainda avaliando` exige migration nova no gatilho e ajuste em
+  `buildDeliveryEvent`.
+- **Autorização** (Pedro, 25/11/2026): o aceite de marketing do formulário
+  (`consent_marketing`), a mesma regra da exportação offline desde 29/10/2026.
+  Não exige mais resposta ao aviso de cookies. Se o aparelho do pedido aceitou
+  o aviso e depois recusou, o envio é bloqueado (`aceite_retirado_no_aviso`).
+  Quem recusou o aviso antes de enviar o formulário não deixa a chave do
+  aparelho no lead; nesse caso vale só o aceite do formulário. A lista de
+  exclusão (Customer Match) continua exigindo a prova do aviso de cookies.
+- **Ativação**: a fila só anda quando `google_ads_delivery_settings` tem
+  `enabled` e `qualification_import_disabled` verdadeiros (o bloco
+  "Envio automático Google Ads", em `/admin/leads` → "Qualificados por objetivo", mostra o estado). Antes de ligar,
+  tirar "Lead qualificado investidor" da importação pela planilha, senão a
+  qualificação entra duas vezes. Só eventos posteriores a `activated_at` entram.
+- "Recebido pelo Google" é aceite do envio, não conversão atribuída.
+
 ### Endereço e parâmetros
 
 ```

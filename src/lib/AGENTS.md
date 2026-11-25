@@ -4,7 +4,7 @@
 
 - Article service links remain centralized in postInternalLinks; cost, duration and development decision articles prioritize the studio service once, while stages keep the duration article first to preserve separate search intent.
 
-- Direct Google Ads delivery uses event-scoped private callback capabilities, a transactional queue and existing actions; activation requires disabled duplicate imports, current cookie proof and GCLID. Accepted ingestion is not attribution.
+- Direct Google Ads delivery uses event-scoped private callback capabilities, a transactional queue and existing actions; activation requires disabled duplicate imports and GCLID. Authorization is the form marketing consent (`canExportGoogleAdsLead`, same as the offline export; Pedro, 25/11/2026), no longer the cookie-notice proof; a later refusal on the same device still blocks, and Customer Match keeps the cookie proof. Accepted ingestion is not attribution.
 
 - Qualified-objective reports use admin-authorized paginated reads and canonical offline row building; return aggregates and hashed CSV only, keeping dashboard counts distinct from exportable conversions.
 
