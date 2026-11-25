@@ -34,7 +34,7 @@ import { sendMetaServerEvent } from "@/lib/metaCapiBeacon";
 import { metaUserDataFrom, newEventId, setMetaUserData, trackMetaCustomEvent, trackMetaEvent, trackMetaPageEvent } from "@/lib/metaPixel";
 import { track } from "@/lib/analytics";
 import { trackEvent } from "@/lib/ga4";
-import { googleAdsLeadValue, isGoogleAdsQualifiedObjetivo } from "@/lib/googleAdsLeadValue";
+import { googleAdsLeadValue, isGoogleAdsLeadConversionObjetivo, isGoogleAdsQualifiedObjetivo } from "@/lib/googleAdsLeadValue";
 import { googleAdsProfileVariables } from "@/lib/googleAdsProfileVariables";
 
 /**
@@ -163,20 +163,25 @@ export function reportLead(
     { content_name: input.method, content_category: formPath, ...signals },
     { eventId: input.eventId },
   );
+  // Não investidor segue no público/observação, com ou sem conversão.
   if (!isGoogleAdsQualifiedObjetivo(input.objetivo)) {
-    // Não investidor: sem conversão (o lance não aprende moradia); só público/observação.
     trackGoogleAdsAudienceEvent("lead_nao_investidor", { ...signals, content_category: formPath });
-  } else trackGoogleAdsConversion("lead", {
-    transactionId: input.eventId,
-    email: input.email,
-    phoneDigits: input.phoneDigits,
-    name: input.name,
-    params: {
-      ...signals,
-      ...googleAdsLeadValue(input.objetivo),
-      ...(formPath === "/orcamento" ? googleAdsProfileVariables(input) : {}),
-    },
-  });
+  }
+  // Conversão para todo objetivo com peso (investidor 5000, moradia 1000);
+  // sem objetivo conhecido não há peso e o lead não vira conversão.
+  if (isGoogleAdsLeadConversionObjetivo(input.objetivo)) {
+    trackGoogleAdsConversion("lead", {
+      transactionId: input.eventId,
+      email: input.email,
+      phoneDigits: input.phoneDigits,
+      name: input.name,
+      params: {
+        ...signals,
+        ...googleAdsLeadValue(input.objetivo),
+        ...(formPath === "/orcamento" ? googleAdsProfileVariables(input) : {}),
+      },
+    });
+  }
   logAdEvent("Lead", { content_category: formPath, ...signals });
 }
 
