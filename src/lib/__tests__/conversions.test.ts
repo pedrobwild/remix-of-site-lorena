@@ -221,17 +221,42 @@ describe("conversions", () => {
     expect(fbq).toHaveBeenCalledWith("track", "Lead", { content_name: "orcamento_form", content_category: "/orcamento", ...leadSignalParams({ objetivo }) }, { eventID: "ev-valor" });
   });
 
-  it.each(["Moradia", "Ainda avaliando", null])("Google Ads: %s não é conversão, vira lead_nao_investidor; Meta mantém Lead", (objetivo) => {
+  // Pedro, 25/11/2026: o lead de moradia volta a contar, com o peso menor.
+  it.each(["Moradia", "Ainda avaliando"])("Google Ads: %s é conversão com peso de 1000 BRL e segue no público lead_nao_investidor; Meta mantém Lead", (objetivo) => {
     accept();
     const gtag = vi.fn();
     const fbq = vi.fn();
     w.gtag = gtag;
     w.fbq = fbq;
     configureGoogleAds({ id: "AW-123456789", leadLabel: "LeadLabel1" });
-    reportLead({ eventId: "ev-nao-inv", formPath: "/orcamento", method: "orcamento_form", objetivo });
+    reportLead({ eventId: "ev-moradia", formPath: "/orcamento", method: "orcamento_form", objetivo });
+    expect(gtag).toHaveBeenCalledWith("event", "conversion", expect.objectContaining({ send_to: "AW-123456789/LeadLabel1", transaction_id: "ev-moradia", value: 1000, currency: "BRL" }));
+    expect(gtag.mock.calls.filter((c) => c[1] === "conversion")).toHaveLength(1);
+    expect(gtag).toHaveBeenCalledWith("event", "lead_nao_investidor", { send_to: "AW-123456789", ...leadSignalParams({ objetivo }), content_category: "/orcamento" });
+    expect(fbq).toHaveBeenCalledWith("track", "Lead", expect.objectContaining({ content_category: "/orcamento" }), { eventID: "ev-moradia" });
+  });
+
+  it.each([null, undefined, "", "Parceria comercial"])("Google Ads: objetivo %s (sem peso definido) não é conversão, só lead_nao_investidor; Meta mantém Lead", (objetivo) => {
+    accept();
+    const gtag = vi.fn();
+    const fbq = vi.fn();
+    w.gtag = gtag;
+    w.fbq = fbq;
+    configureGoogleAds({ id: "AW-123456789", leadLabel: "LeadLabel1" });
+    reportLead({ eventId: "ev-sem-objetivo", formPath: "/orcamento", method: "orcamento_form", objetivo });
     expect(gtag.mock.calls.some((c) => c[1] === "conversion")).toBe(false);
     expect(gtag).toHaveBeenCalledWith("event", "lead_nao_investidor", { send_to: "AW-123456789", ...leadSignalParams({ objetivo }), content_category: "/orcamento" });
-    expect(fbq).toHaveBeenCalledWith("track", "Lead", expect.objectContaining({ content_category: "/orcamento" }), { eventID: "ev-nao-inv" });
+    expect(fbq).toHaveBeenCalledWith("track", "Lead", expect.objectContaining({ content_category: "/orcamento" }), { eventID: "ev-sem-objetivo" });
+  });
+
+  it("Google Ads: investidor não entra no público lead_nao_investidor", () => {
+    accept();
+    const gtag = vi.fn();
+    w.gtag = gtag;
+    configureGoogleAds({ id: "AW-123456789", leadLabel: "LeadLabel1" });
+    reportLead({ eventId: "ev-inv", formPath: "/orcamento", method: "orcamento_form", objetivo: "Short stay" });
+    expect(gtag.mock.calls.some((c) => c[1] === "lead_nao_investidor")).toBe(false);
+    expect(gtag.mock.calls.filter((c) => c[1] === "conversion")).toHaveLength(1);
   });
 
   it("Lead só para formulários de cliente, com o mesmo id no Meta e no Google Ads", () => {
