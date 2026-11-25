@@ -17,7 +17,7 @@ import { TABLE_REGION_CLASS } from "@/lib/articleTables";
  * em src/lib/cookieConsent.ts e a tabela de cookies de /privacidade e
  * /preferencias-de-cookies (mesmos nomes e prazos).
  */
-const COOKIE_POLICY_UPDATED = "12 de outubro de 2026";
+const COOKIE_POLICY_UPDATED = "25 de novembro de 2026";
 
 export default function PoliticaCookiesPage() {
   useSeo({
@@ -121,6 +121,18 @@ export default function PoliticaCookiesPage() {
                 </table>
               </div>
 
+              <h2>Contagem de visitas sem cookies</h2>
+              <p>
+                Para saber quantas pessoas visitam o site, usamos também a
+                contagem de páginas vistas da Vercel, o serviço que hospeda o
+                site. Ela funciona sem gravar cookies no seu navegador e não
+                serve para reconhecer você em outro dia nem em outros sites;
+                usamos os números só de forma agregada. Por não usar cookies,
+                essa contagem não depende da sua escolha no aviso. O que ela
+                registra está na{" "}
+                <a href={routes.privacidade}>Política de privacidade</a>.
+              </p>
+
               <h2>Como aceitar, recusar ou mudar a escolha</h2>
               <p>
                 Na primeira visita, o aviso na parte de baixo da tela traz os
@@ -131,7 +143,8 @@ export default function PoliticaCookiesPage() {
                 aceite apaga os cookies de medição deste site, a página recarrega
                 sem nenhum rastreador e nada mais é enviado à Meta nem ao
                 Google. O que já foi enviado segue as ferramentas e os prazos
-                dessas empresas.
+                dessas empresas. A contagem de visitas sem cookies, descrita
+                acima, continua.
               </p>
               <p>
                 Você também pode bloquear ou apagar cookies pelas configurações

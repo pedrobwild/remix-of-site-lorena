@@ -36,6 +36,7 @@ import {
 import { HOME_DEFAULT_DESCRIPTION, HOME_DEFAULT_TITLE } from "@/lib/homeSeo";
 import { installCrashRecovery, markHealthy } from "@/lib/crashRecovery";
 import { installLeadOutboxFlush } from "@/lib/leadOutboxFlush";
+import { installVercelAnalytics } from "@/lib/vercelAnalytics";
 import {
   closestElementFrom,
   installLinkInterceptor,
@@ -219,6 +220,10 @@ function RootComponent() {
   useEffect(() => {
     markHealthy();
     const cleanupAnalytics = initAnalytics();
+    // Contador completo de visitas (Vercel Web Analytics): sem cookies, por
+    // isso não espera o aceite. Vem depois do `initAnalytics`, que lê o
+    // `?bw_interno=1|0` — aparelho do time não entra na contagem.
+    installVercelAnalytics();
     if (isConsentAccepted()) initGa4();
     const offGa4 = onConsentChange((v) => {
       if (v !== "accepted") return;
