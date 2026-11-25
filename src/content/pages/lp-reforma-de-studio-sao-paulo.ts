@@ -14,6 +14,7 @@ import { HOME_SLIDES, type HomeSlideName } from "@/content/homeSlides";
 import { CLIENTES_FORA_DA_CAPITAL_PCT, ORCAMENTOS_ANALISADOS, PROVA_REFORMAS, REFORMAS_ENTREGUES } from "@/content/provas";
 import { CUSTO_M2_MEDIANO, ORCAMENTO_MEDIANO, STUDIO_TABELA_VIGENTE } from "@/content/baseCusto";
 import { HERO_STUDIO, type HeroStudio } from "@/content/pages/reforma-de-studio-sao-paulo";
+import { ARTIGO_TABELA_PRECO } from "@/content/pages/orcamento";
 
 export { LP_PATH, LP_TITLE, LP_DESCRIPTION } from "@/content/pages/lp-reforma-de-studio-sao-paulo.seo";
 
@@ -102,3 +103,39 @@ export const LP_PLANTA_ITENS: ReadonlyArray<{ n: string; t: string }> = [
 /** Promessa acima do formulário e microcopy de sucesso (handoff, seção 2). */
 export const LP_FORM_PROMESSA = "Retorno em até 1 dia útil, pelo WhatsApp. Sem visita obrigatória para a primeira conversa.";
 export const LP_FORM_SUCESSO = "Um arquiteto da Bewild chama você no WhatsApp em até 1 dia útil com as primeiras perguntas sobre o studio.";
+
+/**
+ * Atalhos para o resto do site (25/11/2026, pedido do Pedro): quem cai na LP
+ * pelo anúncio também circula pelo site. Aparecem em dois lugares, com
+ * `data-cta` próprios para medir cada um no relatório de botões:
+ * a faixa "Ainda pesquisando?" depois do último convite
+ * (`lp-studio-atalho-<cta>`) e a confirmação do envio
+ * (`lp-studio-pos-envio-<cta>`). Nunca apontam para o /orcamento: a conversão
+ * da LP é o formulário da própria página.
+ */
+export type LpAtalho = { cta: string; href: string; titulo: string; texto: string };
+
+export const LP_ATALHOS: readonly LpAtalho[] = [
+  {
+    cta: "portfolio",
+    href: "/portfolio",
+    titulo: "Studios entregues",
+    texto: "Veja os projetos que a Bewild já entregou, com as fotos de cada um.",
+  },
+  {
+    cta: "como-funciona",
+    href: "/como-funciona",
+    titulo: "Como funciona a reforma",
+    texto: "Entenda as etapas, do projeto à entrega da obra.",
+  },
+  {
+    cta: "tabela-de-preco",
+    href: ARTIGO_TABELA_PRECO,
+    titulo: "Tabela de preço de reforma",
+    texto: "Consulte os valores de referência de reforma em São Paulo.",
+  },
+];
+
+export const LP_ATALHOS_TITULO = "Ainda pesquisando?";
+export const LP_ATALHOS_LEAD = "Conheça melhor a Bewild antes de pedir o orçamento.";
+export const LP_ATALHOS_POS_ENVIO = "Enquanto isso, conheça melhor a Bewild:";

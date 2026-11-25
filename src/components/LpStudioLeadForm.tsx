@@ -31,7 +31,14 @@ import {
 } from "@/lib/leadForm";
 import { formatBrPhone, isValidBrPhone, normalizeBrPhoneDigits } from "@/lib/phone";
 import { browserUserAgent, collectLeadAttribution, focusField, useLeadSubmit } from "@/lib/useLeadSubmit";
-import { LP_FORM_PROMESSA, LP_FORM_SUCESSO, LP_PATH, type LpVariante } from "@/content/pages/lp-reforma-de-studio-sao-paulo";
+import {
+  LP_ATALHOS_POS_ENVIO,
+  LP_FORM_PROMESSA,
+  LP_FORM_SUCESSO,
+  LP_PATH,
+  type LpVariante,
+} from "@/content/pages/lp-reforma-de-studio-sao-paulo";
+import LpAtalhos from "@/components/LpAtalhos";
 
 type Campo = "nome" | "whats" | "mail" | "bairro" | "area" | "objetivo";
 /** Ordem visual: é a ordem em que o primeiro erro recebe o foco. */
@@ -134,6 +141,8 @@ export default function LpStudioLeadForm({ variante }: { variante: LpVariante })
       <div className="bwa-form-success" role="status" tabIndex={-1} ref={doneRef}>
         <strong>Pedido recebido.</strong>
         <p>{LP_FORM_SUCESSO}</p>
+        <p className="bwa-lp-atalhos-chamada">{LP_ATALHOS_POS_ENVIO}</p>
+        <LpAtalhos origem="pos-envio" compacto />
       </div>
     );
   }
