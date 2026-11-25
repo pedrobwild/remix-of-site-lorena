@@ -25,6 +25,15 @@ const PROD = { hostname: VERCEL_ANALYTICS_HOST };
 const CAMINHO_UNICO = JSON.stringify({
   analytics: { scriptSrc: "/a1b2c3/script.js", viewEndpoint: "/a1b2c3/view", eventEndpoint: "/a1b2c3/event" },
 });
+/**
+ * Formato REAL que a Vercel pôs no build de produção de 25/11/2026 (lido do
+ * pacote publicado): caminhos SEM barra inicial e uma chave `speedInsights`
+ * ao lado. O `@vercel/analytics` trata esse caso com `makeAbsolute`.
+ */
+const CONFIG_REAL =
+  '{"analytics":{"scriptSrc":"9ad84bcd3a88df0f/script.js","viewEndpoint":"9ad84bcd3a88df0f/view",' +
+  '"eventEndpoint":"9ad84bcd3a88df0f/event","sessionEndpoint":"9ad84bcd3a88df0f/session"},' +
+  '"speedInsights":{"scriptSrc":"a891009944b23852/script.js","endpoint":"a891009944b23852/vitals"}}';
 
 beforeEach(() => {
   window.localStorage.clear();
@@ -95,8 +104,27 @@ describe("vercelAnalyticsConfig", () => {
     });
   });
 
+  it("aceita o formato real da Vercel, sem barra inicial, e devolve caminhos a partir da raiz do site", () => {
+    expect(vercelAnalyticsConfig(CONFIG_REAL)).toEqual({
+      scriptSrc: "/9ad84bcd3a88df0f/script.js",
+      viewEndpoint: "/9ad84bcd3a88df0f/view",
+      eventEndpoint: "/9ad84bcd3a88df0f/event",
+      sessionEndpoint: "/9ad84bcd3a88df0f/session",
+    });
+  });
+
   it("só aceita caminho do próprio site: endereço de outro domínio é ignorado", () => {
-    for (const scriptSrc of ["https://outro.example/script.js", "//outro.example/script.js", "script.js", 42]) {
+    for (const scriptSrc of [
+      "https://outro.example/script.js",
+      "http://outro.example/script.js",
+      "//outro.example/script.js",
+      "javascript:alert(1)",
+      "data:text/javascript,1",
+      "\\\\outro.example\\script.js",
+      "a b/script.js",
+      "",
+      42,
+    ]) {
       const conf = JSON.stringify({ analytics: { scriptSrc, viewEndpoint: "https://outro.example/view" } });
       expect(vercelAnalyticsConfig(conf)).toEqual({ scriptSrc: VERCEL_ANALYTICS_DEFAULT_SRC });
     }
@@ -158,6 +186,15 @@ describe("installVercelAnalytics", () => {
     expect(script.getAttribute("src")).toBe("/a1b2c3/script.js");
     expect(script.dataset.viewEndpoint).toBe("/a1b2c3/view");
     expect(script.dataset.eventEndpoint).toBe("/a1b2c3/event");
+  });
+
+  it("com a configuração real da Vercel, o script sai do caminho único do projeto", () => {
+    expect(installVercelAnalytics({ ...PROD, confString: CONFIG_REAL })).toBe("installed");
+    const [script] = scripts();
+    expect(script.getAttribute("src")).toBe("/9ad84bcd3a88df0f/script.js");
+    expect(script.dataset.viewEndpoint).toBe("/9ad84bcd3a88df0f/view");
+    expect(script.dataset.eventEndpoint).toBe("/9ad84bcd3a88df0f/event");
+    expect(script.dataset.sessionEndpoint).toBe("/9ad84bcd3a88df0f/session");
   });
 
   it("não instala no /admin nem em aparelho do time", () => {
