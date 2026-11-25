@@ -15,6 +15,8 @@
 - [x] Ajustar somente título e meta description da home para reforma de studios e seis fases reais, sem prazo universal; 8 testes passam, SSR/Open Graph e navegador iguais, sem erros; texto visível preservado, sem publicar.
 - [x] Melhorar título/descrição do artigo de etapas com as seis fases reais, sem prazo universal; link contextual para studio e prioridade do serviço nos artigos de custo/prazo/empreendimento sem duplicação. 127 testes passam, artigo e navegação conferidos no navegador sem erros; sem publicar.
 - [x] Preparar envio automático de pedido e qualificação: fila transacional, callback privado por evento, reenvio limitado e painel de estados; 47 testes passam e build OK. Fila vazia e envio desativado; sem publicar.
+- [x] Envio automático Google Ads: autorizar pelo aceite de marketing do formulário (mesma regra da exportação offline), sem exigir resposta ao aviso de cookies; retirada posterior segue bloqueando (25/11/2026, aguarda merge). Envio segue desativado no banco.
+- [ ] Ativar o envio automático Google Ads: desligar a importação de "Lead qualificado investidor" pela planilha, ligar `google_ads_delivery_settings` e conferir um pedido de teste — aguarda decisão do Pedro.
 - [ ] Ativar/publicar envio Google Ads: confirmar desativação da importação de qualificados e testar com sessão administrativa; sem conta correspondente para sessão automática. Sem envio real nem reenviar histórico.
 - [x] Painel de qualificados por objetivo em /admin/leads?aba=objetivos, período de criação e CSV canônico Google Ads; testes locais passam, build OK, sem publicar.
 - [ ] Conferência autenticada do painel com dados reais: sessão automática indisponível para Pedro; requer entrar na prévia.

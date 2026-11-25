@@ -11,10 +11,24 @@ describe("envio direto Google Ads", () => {
     expect(request).toMatchObject({ destination: "7805140492", event: { transactionId: "same-as-browser", conversionValue: 5000 } });
     expect(quality).toMatchObject({ destination: "7851121159", event: { conversionValue: 10000, eventTimestamp: "2026-10-28T12:00:00.000Z" } });
   });
-  it("recusa posterior, falta de registro e flag falso bloqueiam", () => {
-    expect(buildDeliveryEvent(event, lead, [...records, { ...records[0], id: "r2", advertising: false, created_at: "2026-10-29T11:00:00Z" }], now)).toEqual({ blocked: "sem_autorizacao_atual" });
-    expect(buildDeliveryEvent(event, lead, [], now)).toEqual({ blocked: "sem_autorizacao_atual" });
-    expect(buildDeliveryEvent(event, { ...lead, consent_marketing: false }, records, now)).toEqual({ blocked: "sem_autorizacao_atual" });
+  // Pedro, 29/10/2026 19h30 (offline) e 25/11/2026 (envio direto): vale o aceite do formulário.
+  it("aceite do formulário autoriza mesmo sem resposta ao aviso de cookies", () => {
+    const semAviso = { ...lead, consent_record_id: null, consent_visitor_key: null };
+    expect(buildDeliveryEvent(event, semAviso, [], now)).toMatchObject({ destination: "7805140492", event: { transactionId: "same-as-browser", adIdentifiers: { gclid: "click" }, conversionValue: 5000 } });
+    expect(buildDeliveryEvent(event, lead, [], now)).toMatchObject({ destination: "7805140492" });
+  });
+  it("formulário sem aceite de marketing bloqueia, com ou sem aceite no aviso", () => {
+    expect(buildDeliveryEvent(event, { ...lead, consent_marketing: false }, records, now)).toEqual({ blocked: "sem_aceite_no_formulario" });
+    expect(buildDeliveryEvent(event, { ...lead, consent_marketing: null }, records, now)).toEqual({ blocked: "sem_aceite_no_formulario" });
+  });
+  it("retirada posterior no aviso de cookies do mesmo aparelho bloqueia", () => {
+    const recusa = { ...records[0], id: "r2", advertising: false, created_at: "2026-10-29T11:00:00Z" };
+    expect(buildDeliveryEvent(event, lead, [...records, recusa], now)).toEqual({ blocked: "aceite_retirado_no_aviso" });
+    expect(buildDeliveryEvent(event, lead, [recusa, records[0]], now)).toEqual({ blocked: "aceite_retirado_no_aviso" });
+    // Recusa de outro aparelho não vale para este pedido.
+    expect(buildDeliveryEvent(event, lead, [...records, { ...recusa, visitor_key: "outro" }], now)).toMatchObject({ destination: "7805140492" });
+    // Recusa seguida de novo aceite: vale a escolha mais recente.
+    expect(buildDeliveryEvent(event, lead, [...records, recusa, { ...records[0], id: "r3", created_at: "2026-10-29T11:30:00Z" }], now)).toMatchObject({ destination: "7805140492" });
   });
   it("não investidor e ausência de clique não enviam", () => {
     expect(buildDeliveryEvent(event, { ...lead, objetivo: "Moradia" }, records, now)).toEqual({ blocked: "objetivo_nao_investidor" });
