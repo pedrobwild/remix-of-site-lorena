@@ -30,7 +30,13 @@ vi.mock("@/lib/useLeadSubmit", () => ({
 
 import { Route } from "@/routes/lp.reforma-de-studio-sao-paulo";
 import LpReformaStudioPage from "@/pages/LpReformaStudioPage";
-import { LP_HERO, LP_TITLE, type LpVariante } from "@/content/pages/lp-reforma-de-studio-sao-paulo";
+import {
+  LP_ATALHOS,
+  LP_ATALHOS_TITULO,
+  LP_HERO,
+  LP_TITLE,
+  type LpVariante,
+} from "@/content/pages/lp-reforma-de-studio-sao-paulo";
 import { CUSTO_M2_MEDIANO } from "@/content/baseCusto";
 import { CLIENTES_FORA_DA_CAPITAL_PCT, REFORMAS_ENTREGUES } from "@/content/provas";
 
@@ -84,6 +90,24 @@ describe("/lp/reforma-de-studio-sao-paulo: topo do anúncio no HTML do servidor"
     expect(html).not.toContain("<details");
     expect(html).not.toContain("bwa-servico-price-table");
     expect(html).not.toContain("bwa-servico-bairros");
+  });
+
+  it('depois do último botão vem a faixa "Ainda pesquisando?" com os atalhos para o site', async () => {
+    const { html } = await servidor("");
+    const ctaFinal = html.indexOf('data-cta="lp-studio-cta-final"');
+    const faixa = html.indexOf('id="lp-atalhos"');
+    expect(ctaFinal).toBeGreaterThan(-1);
+    // Depois do convite final: quem ainda não quer pedir orçamento segue para o site.
+    expect(faixa).toBeGreaterThan(ctaFinal);
+    expect(html).toContain(LP_ATALHOS_TITULO);
+    expect(LP_ATALHOS).toHaveLength(3);
+    for (const atalho of LP_ATALHOS) {
+      expect(html).toContain(`href="${atalho.href}"`);
+      expect(html).toContain(`data-cta="lp-studio-atalho-${atalho.cta}"`);
+      // Página do próprio site, sem UTM e sem o /orcamento (a conversão é o formulário da LP).
+      expect(atalho.href).toMatch(/^\/(?!orcamento)[a-z0-9/-]+$/);
+    }
+    expect(html.match(/<h1\b/g)).toHaveLength(1);
   });
 
   it("o head é noindex e tem o título da página orgânica", () => {

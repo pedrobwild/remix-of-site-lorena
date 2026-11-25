@@ -1,5 +1,6 @@
 import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
+import LpAtalhos from "@/components/LpAtalhos";
 import LpStudioLeadForm from "@/components/LpStudioLeadForm";
 import MobileQuoteBar from "@/components/MobileQuoteBar";
 import { whatsappHref } from "@/components/landing/content";
@@ -9,6 +10,8 @@ import { useLpView } from "@/lib/lpView";
 import "./servico-reforma.css";
 import "./lp-reforma-studio.css";
 import {
+  LP_ATALHOS_LEAD,
+  LP_ATALHOS_TITULO,
   LP_CONTRATO,
   LP_DESCRIPTION,
   LP_FOTO_HERO,
@@ -31,6 +34,10 @@ import {
  * Cinco blocos: hero com formulário · fotos · o que entra no preço fechado ·
  * a reforma começa antes das chaves (navy) · CTA final. Sem FAQ, tabela de
  * preço, bairros nem imprensa, de propósito.
+ *
+ * Depois do CTA final vem a faixa "Ainda pesquisando?" (25/11/2026): três
+ * atalhos para o site, para quem ainda não quer pedir orçamento. Fica por
+ * último de propósito, para não disputar com o formulário.
  *
  * Ordem no DOM = ordem no celular: texto → formulário → foto. No desktop a
  * grade coloca a foto sob o texto e o formulário à direita (sem `order`: a
@@ -186,6 +193,13 @@ export default function LpReformaStudioPage({ variante = "investidor" }: Props =
               </a>
               <p className="bwa-servico-cta-note">Sem custo e sem compromisso · retorno em até 1 dia útil</p>
             </div>
+          </div>
+        </section>
+        <section className="bwa-servico-block bwa-lp-atalhos-bloco" aria-labelledby="lp-atalhos">
+          <div className="bwa-shell">
+            <h2 className="bwa-servico-h2" id="lp-atalhos">{LP_ATALHOS_TITULO}</h2>
+            <p className="bwa-servico-text">{LP_ATALHOS_LEAD}</p>
+            <LpAtalhos origem="atalho" />
           </div>
         </section>
       </main>

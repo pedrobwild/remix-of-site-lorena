@@ -250,6 +250,120 @@
   outline-offset: 4px;
 }
 
+/* ---------- Atalhos para o site (faixa do fim e confirmação do envio) ----------
+ * Uma coluna no celular, três a partir de 820 px. Cada atalho é um link de
+ * área inteira (alvo ≥ 44 px), com a seta no fim da linha do título. */
+.bwa-lp-atalhos {
+  list-style: none;
+  margin: clamp(20px, 2.4vw, 32px) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(10px, 1.4vw, 20px);
+}
+
+@media (min-width: 820px) {
+  .bwa-lp-atalhos:not(.bwa-lp-atalhos-compacto) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.bwa-lp-atalhos a {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  height: 100%;
+  min-height: 44px;
+  padding: clamp(18px, 2vw, 26px);
+  padding-right: clamp(44px, 4vw, 56px);
+  border: 1px solid var(--bwa-line);
+  background: var(--bwa-white);
+  color: var(--bwa-ink);
+  text-decoration: none;
+  transition: border-color 0.2s var(--bwa-ease), background-color 0.2s var(--bwa-ease);
+}
+
+.bwa-lp-atalhos a:hover {
+  border-color: var(--bwa-navy-2);
+  background: var(--bwa-paper);
+}
+
+.bwa-lp-atalhos a:focus-visible {
+  outline: 2px solid var(--bwa-navy-2);
+  outline-offset: 4px;
+}
+
+.bwa-lp-atalhos strong {
+  font-family: var(--bwa-font-display);
+  font-size: clamp(16px, 1.3vw, 18px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.bwa-lp-atalho-texto {
+  color: var(--bwa-ink-soft);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.bwa-lp-atalho-seta {
+  position: absolute;
+  top: clamp(18px, 2vw, 26px);
+  right: clamp(16px, 1.8vw, 22px);
+  line-height: 1.3;
+}
+
+/* Na confirmação do envio (cartão navy): lista enxuta, só os títulos. */
+.bwa-form-success .bwa-lp-atalhos-chamada {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--bwa-white-line);
+}
+
+.bwa-lp-atalhos-compacto {
+  margin-top: 4px;
+  gap: 0;
+}
+
+.bwa-lp-atalhos-compacto a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border: 0;
+  border-bottom: 1px solid var(--bwa-white-line);
+  background: transparent;
+  color: inherit;
+}
+
+.bwa-lp-atalhos-compacto a:hover {
+  background: transparent;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.bwa-lp-atalhos-compacto a:focus-visible {
+  outline-color: var(--bwa-paper);
+}
+
+.bwa-lp-atalhos-compacto strong {
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.bwa-lp-atalhos-compacto .bwa-lp-atalho-seta {
+  position: static;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bwa-lp-atalhos a {
+    transition: none;
+  }
+}
+
 /* ---------- Split 240px | 1fr (contrato e "antes das chaves") ---------- */
 .bwa-lp-split {
   display: grid;
