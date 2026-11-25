@@ -56,14 +56,22 @@ function isAdminPath(pathname: string): boolean {
   return pathname === "/admin" || pathname.startsWith("/admin/");
 }
 
-/** Caminho do próprio site (`/abc/script.js`); nunca outro domínio (`https://…`, `//…`). */
+/**
+ * Caminho do próprio site, sempre a partir da raiz. A Vercel entrega os
+ * caminhos SEM barra inicial (`9ad84bcd3a88df0f/script.js`, visto no build de
+ * 25/11/2026), e o `@vercel/analytics` põe a barra (`makeAbsolute`); aqui é
+ * igual. Nunca outro domínio nem outro esquema: `https://…`, `//…`,
+ * `javascript:…`, barra invertida ou espaço caem fora.
+ */
 function sameSitePath(value: unknown): string | null {
-  return typeof value === "string" && /^\/(?!\/)\S*$/.test(value) ? value : null;
+  if (typeof value !== "string" || !value || /[\s\\]/.test(value)) return null;
+  if (value.startsWith("//") || /^[a-z][a-z0-9+.-]*:/i.test(value)) return null;
+  return value.startsWith("/") ? value : `/${value}`;
 }
 
 /**
  * Lê a configuração que a Vercel entrega no build
- * (`{"analytics":{"scriptSrc":"/<caminho único>/script.js",…}}`). Qualquer
+ * (`{"analytics":{"scriptSrc":"<caminho único>/script.js",…}}`). Qualquer
  * coisa fora do formato — ausente, JSON quebrado, endereço de outro domínio —
  * cai no caminho fixo, sem destinos próprios.
  */
