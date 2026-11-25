@@ -24,6 +24,10 @@ import { PRIVACIDADE_SEO } from "@/content/pages/privacidade";
  *    src/lib/metaPixel.ts, src/lib/googleAds.ts e
  *    supabase/functions/_shared/meta-capi.ts;
  *  - prazos da medição própria: src/lib/analytics.ts;
+ *  - contagem de visitas sem cookies (Vercel Web Analytics, roda sem aceite):
+ *    src/lib/vercelAnalytics.ts — o que ela registra está em "Dados
+ *    coletados", a base legal em "Base legal" e a Vercel em
+ *    "Compartilhamento com terceiros";
  *  - vídeos do YouTube: as páginas /videos/<slug> e os vídeos no corpo dos
  *    artigos carregam o player com a página (src/pages/VideoWatchPage.tsx);
  *    o vídeo de abertura dos artigos só carrega com clique.
@@ -32,7 +36,7 @@ export default function PrivacidadePage() {
   const { settings } = useSiteSettings();
 
   const contactEmail = settings?.contact_email || "contato@bewild.com.br";
-  const lastUpdated = "9 de novembro de 2026";
+  const lastUpdated = "25 de novembro de 2026";
 
   useSeo({
     ...PRIVACIDADE_SEO,
@@ -124,6 +128,19 @@ export default function PrivacidadePage() {
                   aleatórios de visitante e de sessão guardados no seu navegador
                   — coletados somente depois que você aceita os cookies. Esses
                   dados não permitem sua identificação pessoal direta.
+                </li>
+                <li>
+                  <strong>Contagem de visitas sem cookies:</strong> a Vercel,
+                  serviço que hospeda o site, conta as páginas vistas sem
+                  gravar cookies no seu navegador. Cada registro traz a página
+                  vista, o site de origem, os parâmetros de campanha (utm), o
+                  país, o estado e a cidade aproximados, o tipo de aparelho, o
+                  sistema e o navegador. Para não contar a mesma visita duas
+                  vezes, a Vercel calcula um código a partir de dados técnicos
+                  do acesso, descartado em até 24 horas, que não serve para
+                  reconhecer você em outro dia nem em outros sites. Usamos
+                  esses números só de forma agregada. Por não usar cookies,
+                  essa contagem não depende do aceite.
                 </li>
                 <li>
                   <strong>Dados coletados pelo Pixel da Meta e pela tag do
@@ -286,7 +303,9 @@ export default function PrivacidadePage() {
                   navegador são interrompidos. O envio pelo servidor descrito em
                   &ldquo;Para onde vão os dados dos formulários&rdquo; independe
                   dessa escolha; para se opor a ele, use o contato em
-                  &ldquo;Seus direitos&rdquo;.
+                  &ldquo;Seus direitos&rdquo;. A contagem de visitas sem
+                  cookies, descrita em &ldquo;Dados coletados&rdquo;, também
+                  independe dessa escolha.
                 </li>
                 <li>
                   <strong>Na Meta:</strong> em{" "}
@@ -337,7 +356,8 @@ export default function PrivacidadePage() {
                 </li>
                 <li>
                   <strong>Legítimo interesse</strong> (art. 7º, IX), para
-                  manutenção e segurança do site e para medir o resultado das
+                  manutenção e segurança do site, para a contagem agregada de
+                  visitas sem cookies e para medir o resultado das
                   nossas campanhas na Meta a partir dos formulários de cliente
                   (envio do contato criptografado por hash pelo servidor e do
                   andamento do atendimento, como descrito em &ldquo;Para onde
@@ -354,7 +374,7 @@ export default function PrivacidadePage() {
               <p>
                 Não comercializamos dados pessoais. Compartilhamos dados apenas
                 com operadores contratados para hospedagem, infraestrutura e
-                banco de dados (Lovable Cloud), comunicação interna da equipe
+                banco de dados (Vercel e Lovable Cloud), comunicação interna da equipe
                 (Slack e serviço de envio de e-mails), gestão do atendimento
                 (CRM) e relatórios internos,
                 sempre sob obrigação contratual de confidencialidade e

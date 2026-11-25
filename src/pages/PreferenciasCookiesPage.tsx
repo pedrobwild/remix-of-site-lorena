@@ -72,7 +72,7 @@ export default function PreferenciasCookiesPage() {
               cookies de medição e publicidade deste site.
             </p>
             <div className="pt-meta">
-              <span>Última atualização: 27 de setembro de 2026</span>
+              <span>Última atualização: 25 de novembro de 2026</span>
             </div>
           </div>
         </section>
@@ -108,7 +108,8 @@ export default function PreferenciasCookiesPage() {
                 cookies de medição deste site são apagados, a página recarrega
                 sem nenhum rastreador e nada mais é enviado à Meta nem ao
                 Google; o que já foi enviado segue as ferramentas e os prazos
-                dessas empresas.
+                dessas empresas. A contagem de visitas sem cookies feita pela
+                Vercel, que hospeda o site, não depende desta escolha.
               </p>
 
               <h2>O que cada opção autoriza</h2>
