@@ -189,6 +189,7 @@ export function noBairro(label) {
  * NUNCA entra aqui; sitemapParidade.test.ts confere a lista contra o roteador.
  */
 export const STATIC_PAGES = [
+  { loc: `${BASE_URL}/reformas-sao-paulo`, changefreq: "monthly", priority: "0.8", files: ["src/routes/reformas-sao-paulo.tsx", "src/pages/ReformasSaoPauloPage.tsx", "src/content/pages/reformas-sao-paulo.seo.ts"], fallback: "2026-11-26" },
   { loc: `${BASE_URL}/`, changefreq: "weekly", priority: "1.0", files: ["src/routes/index.tsx", "src/pages/HomePage.tsx", "src/pages/home-bwa-body.ts"], fallback: "2026-10-02" },
   { loc: `${BASE_URL}/portfolio`, changefreq: "weekly", priority: "0.9", lastmod: "projects" },
   { loc: `${BASE_URL}/conteudos`, changefreq: "weekly", priority: "0.8", lastmod: "posts" },

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="429" viewBox="0 0 720 429" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif" font-size="13" fill="#222">
+<rect width="720" height="429" fill="#fff"/>
+<text x="16" y="26" font-size="17" font-weight="700" fill="#1f4e5f">Para onde vai o dinheiro e quem garante cada parte</text>
+<text x="16" y="46" font-size="12" fill="#8a8f94">Proposta real de reforma completa, R$ 87.692,80, setembro de 2026</text>
+<text x="216" y="81" text-anchor="end" font-size="12">Marcenaria sob medida</text>
+<rect x="224" y="64" width="398" height="24" fill="#e8712b" rx="2"/>
+<text x="628" y="81" font-size="12" font-weight="600">28,0%</text>
+<text x="216" y="114" text-anchor="end" font-size="12">Obra civil e acabamentos</text>
+<rect x="224" y="97" width="386" height="24" fill="#e8712b" rx="2"/>
+<text x="616" y="114" font-size="12" font-weight="600">27,2%</text>
+<text x="216" y="147" text-anchor="end" font-size="12">Gestão, impostos, logística e seguro</text>
+<rect x="224" y="130" width="195" height="24" fill="#8a8f94" rx="2"/>
+<text x="425" y="147" font-size="12" font-weight="600">13,7%</text>
+<text x="216" y="180" text-anchor="end" font-size="12">Eletrodomésticos</text>
+<rect x="224" y="163" width="105" height="24" fill="#4f7d8c" rx="2"/>
+<text x="335" y="180" font-size="12" font-weight="600">7,4%</text>
+<text x="216" y="213" text-anchor="end" font-size="12">Vidraçaria</text>
+<rect x="224" y="196" width="99" height="24" fill="#4f7d8c" rx="2"/>
+<text x="329" y="213" font-size="12" font-weight="600">7,0%</text>
+<text x="216" y="246" text-anchor="end" font-size="12">Mobiliário</text>
+<rect x="224" y="229" width="92" height="24" fill="#4f7d8c" rx="2"/>
+<text x="322" y="246" font-size="12" font-weight="600">6,5%</text>
+<text x="216" y="279" text-anchor="end" font-size="12">Iluminação</text>
+<rect x="224" y="262" width="51" height="24" fill="#4f7d8c" rx="2"/>
+<text x="281" y="279" font-size="12" font-weight="600">3,6%</text>
+<text x="216" y="312" text-anchor="end" font-size="12">Projeto e RRT</text>
+<rect x="224" y="295" width="48" height="24" fill="#8a8f94" rx="2"/>
+<text x="278" y="312" font-size="12" font-weight="600">3,4%</text>
+<text x="216" y="345" text-anchor="end" font-size="12">Enxoval</text>
+<rect x="224" y="328" width="44" height="24" fill="#8a8f94" rx="2"/>
+<text x="274" y="345" font-size="12" font-weight="600">3,1%</text>
+<rect x="16" y="359" width="12" height="12" fill="#e8712b"/><text x="34" y="369" font-size="12">Garantia Bewild de 5 anos: 55,2%</text>
+<rect x="16" y="377" width="12" height="12" fill="#4f7d8c"/><text x="34" y="387" font-size="12">Garantia do fabricante: 24,5%</text>
+<rect x="16" y="395" width="12" height="12" fill="#8a8f94"/><text x="34" y="405" font-size="12">Serviço ou consumível: 20,2%</text>
+</svg>

@@ -1,0 +1,19 @@
+.bwa-reformas-intro { padding: 112px 0 48px; }
+.bwa-reformas-intro h1 { font-size: 48px; line-height: 1.12; letter-spacing: 0; max-width: 24ch; margin: 20px 0; }
+.bwa-reformas-intro p { max-width: 64ch; }
+.bwa-reformas-media { margin: 0 auto 40px; }
+.bwa-reformas-media img { display: block; width: 100%; height: auto; max-height: 480px; object-fit: cover; }
+.bwa-reformas-media figcaption { padding: 12px 0; color: var(--bwa-ink-soft); font-size: 13px; }
+.bwa-reformas-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+.bwa-reformas-grid article { border-top: 1px solid var(--bwa-line); padding-top: 24px; }
+.bwa-reformas-grid h3 { font-size: 22px; letter-spacing: 0; margin: 0 0 16px; }
+.bwa-reformas-page .bwa-servico-h2 { font-size: 28px; letter-spacing: 0; }
+.bwa-reformas-page .bwa-servico-text, .bwa-reformas-page .bwa-servico-lead { font-size: 17px; }
+.bwa-reformas-page main a { min-height: 44px; display: inline-flex; align-items: center; }
+@media (max-width: 699px) {
+  .bwa-reformas-intro { padding-top: 96px; padding-bottom: 32px; }
+  .bwa-reformas-intro h1 { font-size: 34px; }
+  .bwa-reformas-grid { grid-template-columns: minmax(0, 1fr); }
+  .bwa-reformas-page .bwa-servico-h2 { font-size: 24px; }
+  .bwa-reformas-page .bwa-servico-text, .bwa-reformas-page .bwa-servico-lead { font-size: 16px; }
+}

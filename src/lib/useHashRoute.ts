@@ -7,6 +7,7 @@ export type Route =
   | { name: "home"; anchor?: string }
   | { name: "servicos" }
   | { name: "manutencao-preventiva" }
+  | { name: "reformas-sp" }
   | { name: "portfolio" }
   | { name: "orcamento" }
   | { name: "escopo" }
@@ -139,6 +140,7 @@ function parsePath(rawPath: string): Route {
   // O link antigo /#certeza continua rolando até a seção da home.
   if (path === "/servicos") return { name: "servicos" };
   if (path === "/manutencao-preventiva-sao-paulo") return { name: "manutencao-preventiva" };
+  if (path === "/reformas-sao-paulo") return { name: "reformas-sp" };
   if (path === "/portfolio") return { name: "portfolio" };
 
   if (path === "/o") return { name: "lp-obra" };
@@ -343,6 +345,7 @@ export const routes = {
   home: "/",
   servicos: "/servicos",
   manutencaoPreventiva: "/manutencao-preventiva-sao-paulo",
+  reformasSp: "/reformas-sao-paulo",
   portfolio: "/portfolio",
   orcamento: "/orcamento",
   escopo: "/escopo",
