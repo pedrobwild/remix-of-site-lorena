@@ -45,6 +45,7 @@ import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as ReformaDeApartamentoSaoPauloRouteImport } from './routes/reforma-de-apartamento-sao-paulo'
 import { Route as ReformaDeCoberturaSaoPauloRouteImport } from './routes/reforma-de-cobertura-sao-paulo'
 import { Route as ReformaDeStudioSaoPauloRouteImport } from './routes/reforma-de-studio-sao-paulo'
+import { Route as ReformasSaoPauloRouteImport } from './routes/reformas-sao-paulo'
 import { Route as ServicosRouteImport } from './routes/servicos'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
@@ -290,6 +291,11 @@ const ReformaDeCoberturaSaoPauloRoute =
 const ReformaDeStudioSaoPauloRoute = ReformaDeStudioSaoPauloRouteImport.update({
   id: '/reforma-de-studio-sao-paulo',
   path: '/reforma-de-studio-sao-paulo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReformasSaoPauloRoute = ReformasSaoPauloRouteImport.update({
+  id: '/reformas-sao-paulo',
+  path: '/reformas-sao-paulo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServicosRoute = ServicosRouteImport.update({
@@ -644,6 +650,7 @@ export interface FileRoutesByFullPath {
   '/reforma-de-apartamento-sao-paulo': typeof ReformaDeApartamentoSaoPauloRoute
   '/reforma-de-cobertura-sao-paulo': typeof ReformaDeCoberturaSaoPauloRoute
   '/reforma-de-studio-sao-paulo': typeof ReformaDeStudioSaoPauloRoute
+  '/reformas-sao-paulo': typeof ReformasSaoPauloRoute
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -744,6 +751,7 @@ export interface FileRoutesByTo {
   '/reforma-de-apartamento-sao-paulo': typeof ReformaDeApartamentoSaoPauloRoute
   '/reforma-de-cobertura-sao-paulo': typeof ReformaDeCoberturaSaoPauloRoute
   '/reforma-de-studio-sao-paulo': typeof ReformaDeStudioSaoPauloRoute
+  '/reformas-sao-paulo': typeof ReformasSaoPauloRoute
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -845,6 +853,7 @@ export interface FileRoutesById {
   '/reforma-de-apartamento-sao-paulo': typeof ReformaDeApartamentoSaoPauloRoute
   '/reforma-de-cobertura-sao-paulo': typeof ReformaDeCoberturaSaoPauloRoute
   '/reforma-de-studio-sao-paulo': typeof ReformaDeStudioSaoPauloRoute
+  '/reformas-sao-paulo': typeof ReformasSaoPauloRoute
   '/servicos': typeof ServicosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -947,6 +956,7 @@ export interface FileRouteTypes {
     | '/reforma-de-apartamento-sao-paulo'
     | '/reforma-de-cobertura-sao-paulo'
     | '/reforma-de-studio-sao-paulo'
+    | '/reformas-sao-paulo'
     | '/servicos'
     | '/sitemap.xml'
     | '/admin/analytics'
@@ -1047,6 +1057,7 @@ export interface FileRouteTypes {
     | '/reforma-de-apartamento-sao-paulo'
     | '/reforma-de-cobertura-sao-paulo'
     | '/reforma-de-studio-sao-paulo'
+    | '/reformas-sao-paulo'
     | '/servicos'
     | '/sitemap.xml'
     | '/admin/analytics'
@@ -1147,6 +1158,7 @@ export interface FileRouteTypes {
     | '/reforma-de-apartamento-sao-paulo'
     | '/reforma-de-cobertura-sao-paulo'
     | '/reforma-de-studio-sao-paulo'
+    | '/reformas-sao-paulo'
     | '/servicos'
     | '/sitemap.xml'
     | '/admin/analytics'
@@ -1248,6 +1260,7 @@ export interface RootRouteChildren {
   ReformaDeApartamentoSaoPauloRoute: typeof ReformaDeApartamentoSaoPauloRoute
   ReformaDeCoberturaSaoPauloRoute: typeof ReformaDeCoberturaSaoPauloRoute
   ReformaDeStudioSaoPauloRoute: typeof ReformaDeStudioSaoPauloRoute
+  ReformasSaoPauloRoute: typeof ReformasSaoPauloRoute
   ServicosRoute: typeof ServicosRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
@@ -1564,6 +1577,13 @@ declare module '@tanstack/react-router' {
       path: '/reforma-de-studio-sao-paulo'
       fullPath: '/reforma-de-studio-sao-paulo'
       preLoaderRoute: typeof ReformaDeStudioSaoPauloRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reformas-sao-paulo': {
+      id: '/reformas-sao-paulo'
+      path: '/reformas-sao-paulo'
+      fullPath: '/reformas-sao-paulo'
+      preLoaderRoute: typeof ReformasSaoPauloRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/servicos': {
@@ -2040,6 +2060,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReformaDeApartamentoSaoPauloRoute: ReformaDeApartamentoSaoPauloRoute,
   ReformaDeCoberturaSaoPauloRoute: ReformaDeCoberturaSaoPauloRoute,
   ReformaDeStudioSaoPauloRoute: ReformaDeStudioSaoPauloRoute,
+  ReformasSaoPauloRoute: ReformasSaoPauloRoute,
   ServicosRoute: ServicosRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,

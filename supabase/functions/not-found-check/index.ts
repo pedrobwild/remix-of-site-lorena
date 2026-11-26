@@ -52,6 +52,7 @@ const corsHeaders = {
  * lista individualmente para evitar regressões silenciosas.
  */
 export const STATIC_ROUTES: ReadonlyArray<string> = [
+  "/reformas-sao-paulo",
   "/",
   "/portfolio",
   "/orcamento",

@@ -116,6 +116,7 @@ Deno.serve(async (req) => {
   const postLastmod = validDay(...postRows.flatMap(postDays));
 
   const staticUrls: UrlEntry[] = [
+    { loc: `${base}/reformas-sao-paulo`, priority: "0.8", changefreq: "monthly", lastmod: "2026-11-26" },
     { loc: `${base}/`, priority: "1.0", changefreq: "weekly", lastmod: "2026-09-26" },
     { loc: `${base}/portfolio`, priority: "0.9", changefreq: "weekly", lastmod: projectLastmod },
     { loc: `${base}/conteudos`, priority: "0.8", changefreq: "weekly", lastmod: postLastmod },

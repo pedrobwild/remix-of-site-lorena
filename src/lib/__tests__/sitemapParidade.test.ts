@@ -22,6 +22,7 @@ const read = (p: string) => readFileSync(path.join(root, p), "utf8");
 
 /** Rotas estáticas indexáveis. `/o` e `/p` são LPs de anúncio: fora do sitemap. */
 const ROTAS_INDEXAVEIS = [
+  { path: "/reformas-sao-paulo", priority: "0.8", changefreq: "monthly" },
   { path: "/", priority: "1.0", changefreq: "weekly" },
   { path: "/portfolio", priority: "0.9", changefreq: "weekly" },
   { path: "/conteudos", priority: "0.8", changefreq: "weekly" },
