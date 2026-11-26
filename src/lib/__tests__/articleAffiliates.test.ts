@@ -132,3 +132,29 @@ describe("affiliateCardHtml", () => {
     expect(affiliateCardHtml(tv)).toContain('Ver no Mercado Livre<span class="sr-only"> (abre em nova aba)</span>');
   });
 });
+
+describe("ordem com o sanitizador (o rel de afiliado não pode ser trocado)", () => {
+  const md = '<p>Texto.</p>\n<p>[[produto:smart-tv-43]]</p>\n<p>Veja <a href="https://meli.la/abc" target="_blank">este</a>.</p>';
+
+  it("navegador (DOMPurify): marcação sobrevive e o cartão entra depois", async () => {
+    const { sanitizeBlogHtml } = await import("@/lib/sanitizeHtml");
+    const clean = sanitizeBlogHtml(md);
+    expect(clean).toContain("[[produto:smart-tv-43]]");
+    const out = applyAffiliates(clean, [tv]);
+    expect(out).toContain("<aside");
+    expect(out.match(/rel="sponsored nofollow noopener"/g)?.length).toBe(2);
+    expect(out).not.toContain("noreferrer");
+  });
+
+  it("servidor (js-xss): mesma coisa", async () => {
+    const { sanitizeBlogHtmlServer } = await import("@/lib/sanitizeHtml");
+    const out = applyAffiliates(sanitizeBlogHtmlServer(md), [tv]);
+    expect(out).toContain("<aside");
+    expect(out.match(/rel="sponsored nofollow noopener"/g)?.length).toBe(2);
+  });
+
+  it("sanitizar DEPOIS do cartão estragaria o rel: por isso a ordem é fixa", async () => {
+    const { sanitizeBlogHtmlServer } = await import("@/lib/sanitizeHtml");
+    expect(sanitizeBlogHtmlServer(affiliateCardHtml(tv))).not.toContain('rel="sponsored nofollow noopener"');
+  });
+});

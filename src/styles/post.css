@@ -221,3 +221,26 @@
 .bw-post .pt-leading-video__play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--ink);color:var(--bone)}
 .bw-post .pt-leading-video__play svg{width:28px;height:28px;fill:currentColor}
 .bw-post .pt-leading-video__preview:focus-visible{outline:3px solid var(--bone);outline-offset:-5px}
+
+/* Produto afiliado (src/lib/articleAffiliates.ts): cartão dentro do artigo e na
+   página /produtos-recomendados. Sem título no cartão; o botão tem 48 px de
+   altura e o aviso de comissão fica sempre visível. */
+.bw-afiliado{display:flex;align-items:flex-start;gap:16px 20px;max-width:var(--pt-measure);margin:8px 0 28px;padding:18px 20px;border:1px solid rgba(17,53,91,.18);background:#FBF8F3}
+.bw-afiliado__img{flex:0 0 auto;width:120px;height:120px;object-fit:cover;border-radius:2px}
+.bw-afiliado__txt{flex:1 1 0;min-width:0}
+.bw-afiliado p,.pt-body .bw-afiliado p{margin:0}
+.bw-afiliado .bw-afiliado__nome{font-size:17px;font-weight:700;line-height:1.35;color:#11355B}
+.bw-afiliado .bw-afiliado__motivo{margin-top:6px;font-size:15px;line-height:1.5;color:#1A2332}
+.bw-afiliado .bw-afiliado__projeto{margin-top:6px;font-size:14px;line-height:1.45}
+.bw-afiliado .bw-afiliado__acao{margin-top:14px}
+.bw-afiliado .bw-afiliado__link,.pt-body .bw-afiliado .bw-afiliado__link{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 18px;background:#11355B;color:#fff;font-size:14px;font-weight:600;line-height:1.2;text-decoration:none}
+.bw-afiliado .bw-afiliado__link:hover{background:#0C2743;color:#fff}
+.bw-afiliado .bw-afiliado__link:focus-visible{outline:3px solid #2F86B8;outline-offset:2px;color:#fff}
+.bw-afiliado .bw-afiliado__aviso,.pt-body>.bw-afiliado__aviso{font-size:13px;line-height:1.45;color:#4A5568}
+.bw-afiliado .bw-afiliado__aviso{margin-top:12px}
+.pt-body>.bw-afiliado__aviso{max-width:var(--pt-measure);margin:24px 0 0}
+@media (max-width:520px){
+  .bw-afiliado{flex-direction:column}
+  .bw-afiliado__img{width:100%;height:auto;aspect-ratio:16/9}
+  .bw-afiliado .bw-afiliado__link{width:100%}
+}
