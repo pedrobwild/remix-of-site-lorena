@@ -26,6 +26,7 @@ import {
   browserUserAgent,
   collectLeadAttribution,
   focusField,
+  openWhatsapp,
   useLeadSubmit,
 } from "@/lib/useLeadSubmit";
 import { useSeo } from "@/lib/useSeo";
@@ -160,6 +161,7 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
   const [final, setFinal] = useState<"delivered" | "timedOut" | null>(null);
   // WhatsApp com os dados do pedido — saída quando a entrega não é confirmada.
   const [whatsLink, setWhatsLink] = useState<string | null>(null);
+  const ultimoAberto = useRef<string | null>(null);
 
   const topoRef = useRef<HTMLDivElement | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -264,8 +266,7 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
     // `leads.area_m2` é inteiro (arredondado em leadDelivery): a metragem com
     // casas decimais vai também na mensagem, para o time ver o valor exato.
     const areaExata = Number.isInteger(area) ? "" : `Metragem exata: ${formatAreaM2(area)}`;
-    setWhatsLink(
-      whatsappHref(
+    const waLink = whatsappHref(
         buildLeadMessage("Olá! Quero um orçamento de reforma para o meu apartamento.", [
           ["Nome", nome],
           ["WhatsApp", whats],
@@ -279,8 +280,8 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
           ["Atendimento prioritário", urgente ? "sim, tenho urgência" : ""],
           ["Prefere ligação", ligacao ? "sim" : ""],
         ]),
-      ),
     );
+    setWhatsLink(waLink);
 
     const payload: LeadPayload = {
       name: nome.trim(),
@@ -308,12 +309,19 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
     };
 
     const resultado = await submit(payload, {
+      // Abre no gesto de envio, antes da espera, sem repetir a aba no reenvio.
+      beforeSend: () => {
+        if (ultimoAberto.current === waLink) return;
+        ultimoAberto.current = waLink;
+        openWhatsapp(waLink);
+      },
       params: { objetivo, location: bairro.trim() || undefined },
     });
     if (isMounted() && (resultado === "delivered" || resultado === "timedOut")) setFinal(resultado);
   }
 
   function refazer() {
+    ultimoAberto.current = null;
     setFinal(null);
     irPara(0);
   }
@@ -388,7 +396,7 @@ export default function OrcamentoPage({ topoVariante = "padrao" }: { topoVariant
                   <div className="bwa-orc-actions">
                     <a
                       className="bwa-orc-btn"
-                      href={whatsappHref("Olá, acabei de pedir um orçamento pelo site da Bewild")}
+                      href={whatsLink ?? whatsappHref("Olá, acabei de pedir um orçamento pelo site da Bewild")}
                       target="_blank"
                       rel="noopener noreferrer"
                       data-cta="orcamento-whatsapp-obrigado"

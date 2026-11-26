@@ -417,7 +417,11 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     fireEvent.click(screen.getByRole("checkbox", { name: "Gosto de atendimento por ligação" }));
     await act(async () => fireEvent.click(screen.getByRole("button", { name: /Pedir orçamento/ })));
 
-    expect(openSpy).not.toHaveBeenCalled();
+    expect(openSpy).toHaveBeenCalledTimes(1);
+    const abertura = openSpy.mock.invocationCallOrder[0];
+    const envio = sendLeadMock.mock.invocationCallOrder[0];
+    if (abertura === undefined || envio === undefined) throw new Error("Envio não executado");
+    expect(abertura).toBeLessThan(envio);
     expect(sendLeadMock.mock.calls[0][0]).toMatchObject({
       objetivo: "Moradia",
       area_m2: 32,
@@ -442,6 +446,8 @@ describe("/orcamento — formulário em 4 etapas (modelo 1b)", () => {
     expect(decodeURIComponent(wa.getAttribute("href")!)).toContain("Atendimento prioritário: sim, tenho urgência");
     expect(decodeURIComponent(wa.getAttribute("href")!)).toContain("Prefere ligação: sim");
     expect(screen.getByRole("button", { name: /Tentar de novo/ })).not.toBeDisabled();
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /Tentar de novo/ })));
+    expect(openSpy).toHaveBeenCalledTimes(1);
   });
 
   it("entregue: agradece com o número e 'Refazer pedido' volta à etapa 01 com os dados", async () => {
