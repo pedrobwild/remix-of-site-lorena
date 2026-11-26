@@ -39,6 +39,7 @@ export type Route =
   | { name: "licenca-sa" }
   | { name: "atribuicao" }
   | { name: "admin-licencas" }
+  | { name: "admin-afiliados" }
   | { name: "bewild-project"; slug: string }
   | { name: "bairro"; slug: string }
   | { name: "conteudos" }
@@ -212,6 +213,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/admin/settings") return { name: "admin-settings" };
   if (path === "/admin/faq") return { name: "admin-faq" };
   if (path === "/admin/licencas") return { name: "admin-licencas" };
+  if (path === "/admin/afiliados") return { name: "admin-afiliados" };
   if (path === "/admin/bewild") return { name: "admin-bewild" };
   if (path === "/admin/bewild/new") return { name: "admin-bewild-new" };
   const adminBewildEdit = path.match(/^\/admin\/bewild\/([a-z0-9-]+)$/);
