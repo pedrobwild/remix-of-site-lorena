@@ -9,6 +9,14 @@ export { lerPerfil, type PerfilFiltro };
 
 export type GrupoDeProdutos = { categoria: string; produtos: ProdutoAfiliado[] };
 
+const semAcento = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+const chave = (categoria: string) => semAcento(categoria).toLowerCase();
+
+/** Âncora da seção: "Móveis e decoração" → `cat-moveis-e-decoracao`. */
+export function idDaCategoria(categoria: string): string {
+  return "cat-" + chave(categoria).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
 /**
  * Produtos ligados, na ordem do painel, agrupados por categoria (categoria na
  * ordem em que aparece pela primeira vez). Com filtro, produto marcado "ambos"
@@ -19,8 +27,9 @@ export function agruparProdutos(produtos: readonly ProdutoAfiliado[], perfil: Pe
   for (const p of produtos) {
     if (!p.ativo || !isAffiliateUrl(p.link_afiliado)) continue;
     if (perfil && p.perfil !== "ambos" && p.perfil !== perfil) continue;
-    const categoria = p.categoria.trim() || "Outros";
-    let grupo = grupos.find((g) => g.categoria === categoria);
+    const categoria = p.categoria.trim().replace(/\s+/g, " ") || "Outros";
+    // "Eletros" e "eletros " são a mesma seção; vale o nome do primeiro produto.
+    let grupo = grupos.find((g) => chave(g.categoria) === chave(categoria));
     if (!grupo) grupos.push((grupo = { categoria, produtos: [] }));
     grupo.produtos.push(p);
   }

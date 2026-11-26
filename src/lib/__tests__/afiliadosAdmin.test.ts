@@ -38,4 +38,19 @@ describe("validarProduto (/admin/afiliados)", () => {
     expect(validarProduto({ ...ok, projeto_slug: "/portfolio/studio" })).toMatch(/portfolio/);
     expect(validarProduto({ ...ok, imagem_url: "https://bewild.com.br/a.webp", projeto_slug: "studio-pinheiros" })).toBeNull();
   });
+  it("recusa foto hospedada no Mercado Livre (foto de anúncio)", () => {
+    expect(validarProduto({ ...ok, imagem_url: "https://http2.mlstatic.com/D_NQ_NP_1.webp" })).toMatch(/anúncio/);
+    expect(validarProduto({ ...ok, imagem_url: "https://www.mercadolivre.com.br/a.jpg" })).toMatch(/anúncio/);
+  });
+});
+
+describe("mensagemDeErroAoSalvar", () => {
+  it("explica cada recusa do banco em vez de culpar o login", async () => {
+    const { mensagemDeErroAoSalvar } = await import("@/lib/afiliadosAdmin");
+    expect(mensagemDeErroAoSalvar("23505")).toMatch(/identificador/);
+    expect(mensagemDeErroAoSalvar("23514")).toMatch(/link|identificador/i);
+    expect(mensagemDeErroAoSalvar("23514")).not.toMatch(/logado/);
+    expect(mensagemDeErroAoSalvar("42501")).toMatch(/administrador/);
+    expect(mensagemDeErroAoSalvar(undefined)).toMatch(/administrador/);
+  });
 });

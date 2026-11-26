@@ -232,7 +232,8 @@
 .bw-afiliado p{margin:0}
 .bw-afiliado .bw-afiliado__nome{font-size:17px;font-weight:700;line-height:1.35;color:#11355B}
 .bw-afiliado .bw-afiliado__motivo{margin-top:6px;font-size:15px;line-height:1.5;color:#1A2332}
-.bw-afiliado .bw-afiliado__projeto{margin-top:6px;font-size:14px;line-height:1.45}
+.bw-afiliado .bw-afiliado__projeto{margin-top:2px;font-size:14px;line-height:1.45}
+.bw-afiliado .bw-afiliado__projeto a{display:inline-flex;align-items:center;min-height:44px}
 .bw-afiliado .bw-afiliado__acao{margin-top:14px}
 .bw-afiliado .bw-afiliado__link,.pt-body .bw-afiliado .bw-afiliado__link{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 18px;background:#11355B;color:#fff;font-size:14px;font-weight:600;line-height:1.2;text-decoration:none}
 .bw-afiliado .bw-afiliado__link:hover{background:#0C2743;color:#fff}

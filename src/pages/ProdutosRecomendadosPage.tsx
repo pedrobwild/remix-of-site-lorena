@@ -2,7 +2,7 @@ import BwaFooter from "@/components/BwaFooter";
 import BwaNav from "@/components/BwaNav";
 import { AVISO_AFILIADO, type ProdutoAfiliado } from "@/lib/afiliados";
 import { affiliateCardHtml } from "@/lib/articleAffiliates";
-import { agruparProdutos, type PerfilFiltro } from "@/lib/produtosRecomendados";
+import { agruparProdutos, idDaCategoria, type PerfilFiltro } from "@/lib/produtosRecomendados";
 import { useSeo } from "@/lib/useSeo";
 import { PRODUTOS_DESCRIPTION, PRODUTOS_H1, PRODUTOS_PATH, PRODUTOS_TITLE } from "@/content/pages/produtosRecomendados.seo";
 import "@/styles/post.css";
@@ -22,9 +22,6 @@ const FILTROS: { perfil: PerfilFiltro | null; label: string; href: string }[] = 
   { perfil: "investidor", label: "Para alugar", href: `${PRODUTOS_PATH}?perfil=investidor` },
   { perfil: "moradia", label: "Para morar", href: `${PRODUTOS_PATH}?perfil=moradia` },
 ];
-
-const idDe = (categoria: string) =>
-  "cat-" + categoria.toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 export default function ProdutosRecomendadosPage({
   produtos,
@@ -82,8 +79,8 @@ export default function ProdutosRecomendadosPage({
                     <p>Nenhum produto para este filtro. <a href={PRODUTOS_PATH}>Ver todos</a>.</p>
                   ) : (
                     grupos.map((g) => (
-                      <section key={g.categoria} aria-labelledby={idDe(g.categoria)}>
-                        <h2 id={idDe(g.categoria)}>{g.categoria}</h2>
+                      <section key={g.categoria} aria-labelledby={idDaCategoria(g.categoria)}>
+                        <h2 id={idDaCategoria(g.categoria)}>{g.categoria}</h2>
                         <div
                           className="bw-afiliado-grade"
                           dangerouslySetInnerHTML={{ __html: g.produtos.map(affiliateCardHtml).join("") }}

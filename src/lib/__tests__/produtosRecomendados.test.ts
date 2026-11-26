@@ -80,3 +80,20 @@ describe("revisão final: página sem lista não é indexável", () => {
     expect(semProdutos(lista)).toBe(false);
   });
 });
+
+describe("pontos menores da revisão", () => {
+  it("categorias com grafia diferente ficam na mesma seção, com o primeiro nome", async () => {
+    const g = agruparProdutos(
+      [p({ slug: "a", categoria: "Eletros grandes" }), p({ slug: "b", categoria: " eletros  Grandes " }), p({ slug: "c", categoria: "Móveis" })],
+      null,
+    );
+    expect(g.map((x) => x.categoria)).toEqual(["Eletros grandes", "Móveis"]);
+    expect(g[0].produtos.map((x) => x.slug)).toEqual(["a", "b"]);
+  });
+
+  it("id da seção sem acento quebrado", async () => {
+    const { idDaCategoria } = await import("@/lib/produtosRecomendados");
+    expect(idDaCategoria("Móveis e decoração")).toBe("cat-moveis-e-decoracao");
+    expect(idDaCategoria("Acesso e segurança")).toBe("cat-acesso-e-seguranca");
+  });
+});

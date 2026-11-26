@@ -32,15 +32,20 @@ export type ProdutoAfiliado = {
 /** Texto aprovado pelo Pedro em 26/11/2026; aparece junto de todo link de afiliado. */
 export const AVISO_AFILIADO = "Link de afiliado: a Bewild pode receber comissão. O preço para você não muda.";
 
-/** `meli.la` é o encurtador que a Central de Afiliados entrega (conferido em 26/11/2026). */
-const HOSTS_AFILIADO = new Set(["meli.la", "mercadolivre.com.br", "www.mercadolivre.com.br", "mercadolivre.com"]);
+/**
+ * `meli.la` é o encurtador que a Central de Afiliados entrega (conferido em
+ * 26/11/2026). MESMA expressão do CHECK de `link_afiliado` em
+ * drizzle/migrations/0021: o que o painel aceita, o banco aceita, e vice-versa.
+ */
+const LINK_AFILIADO = /^https:\/\/(meli\.la|(www\.)?mercadolivre\.com(\.br)?)\//;
+const HOSTS_AFILIADO = new Set(["meli.la", "mercadolivre.com.br", "www.mercadolivre.com.br", "mercadolivre.com", "www.mercadolivre.com"]);
 
 /** Só `https:` e só os domínios do Mercado Livre; qualquer outra coisa é recusada. */
 export function isAffiliateUrl(url: string): boolean {
-  if (!url) return false;
+  if (!url || !LINK_AFILIADO.test(url)) return false;
   try {
     const u = new URL(url);
-    return u.protocol === "https:" && !u.username && !u.password && HOSTS_AFILIADO.has(u.hostname.toLowerCase());
+    return u.protocol === "https:" && !u.username && !u.password && !u.port && HOSTS_AFILIADO.has(u.hostname);
   } catch {
     return false;
   }

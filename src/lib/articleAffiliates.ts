@@ -33,6 +33,8 @@ const MARCA_QUALQUER = new RegExp(MARCA, "g");
 const RASTRO = "@@bw-afiliado-removido@@";
 const VAZIO_INLINE = new RegExp(`<(strong|em|b|i|u|span)>(?:\\s|&nbsp;|<br\\s*/?>|${RASTRO})*${RASTRO}(?:\\s|&nbsp;|<br\\s*/?>|${RASTRO})*</\\1>`, "g");
 const VAZIO_BLOCO = new RegExp(`<(p|li|h[1-6])(?:\\s[^>]*)?>(?:\\s|&nbsp;|<br\\s*/?>|${RASTRO})*${RASTRO}(?:\\s|&nbsp;|<br\\s*/?>|${RASTRO})*</\\1>`, "g");
+/** Marcação que o autor não fechou (`[[produto:tv`, `[[produto:tv]`): some, sem levar o resto da frase. */
+const MARCA_ABERTA = /\s?\[\[produto:?[a-z0-9-]*\]?/gi;
 const AVISO_SOLTO = `<p class="bw-afiliado__aviso" data-afiliado-aviso>${AVISO_AFILIADO}</p>`;
 
 const esc = (s: string) =>
@@ -52,6 +54,7 @@ const imagemValida = (url: string | null): url is string => {
 /** Cartão de um produto. Sem título (h1–h6): não muda a hierarquia do artigo nem o sumário. */
 export function affiliateCardHtml(p: ProdutoAfiliado): string {
   const slug = esc(p.slug);
+  const nome = esc(p.nome);
   const img = imagemValida(p.imagem_url)
     ? `<img class="bw-afiliado__img" src="${esc(p.imagem_url)}" alt="${esc(p.imagem_alt?.trim() || p.nome)}" loading="lazy" decoding="async" width="160" height="160">`
     : "";
@@ -61,10 +64,10 @@ export function affiliateCardHtml(p: ProdutoAfiliado): string {
       ? `<p class="bw-afiliado__projeto"><a href="/portfolio/${p.projeto_slug}">Veja em um projeto da Bewild</a></p>`
       : "";
   return (
-    `<aside class="bw-afiliado" data-afiliado-card="${slug}" aria-label="Produto recomendado">${img}` +
-    `<div class="bw-afiliado__txt"><p class="bw-afiliado__nome">${esc(p.nome)}</p>${motivo}${projeto}` +
+    `<aside class="bw-afiliado" data-afiliado-card="${slug}" aria-label="Produto recomendado: ${nome}">${img}` +
+    `<div class="bw-afiliado__txt"><p class="bw-afiliado__nome">${nome}</p>${motivo}${projeto}` +
     `<p class="bw-afiliado__acao"><a class="bw-afiliado__link" href="${esc(p.link_afiliado)}" rel="${REL_AFILIADO}" target="_blank" data-afiliado="${slug}" data-cta="afiliado-${slug}">` +
-    `Ver no Mercado Livre<span class="sr-only"> (abre em nova aba)</span></a></p>` +
+    `Ver no Mercado Livre<span class="sr-only">: ${nome} (abre em nova aba)</span></a></p>` +
     `<p class="bw-afiliado__aviso">${AVISO_AFILIADO}</p></div></aside>`
   );
 }
@@ -105,7 +108,7 @@ function marcarLinks(html: string): { html: string; soltos: number } {
  */
 export function applyAffiliates(html: string, produtos: readonly ProdutoAfiliado[]): string {
   if (!html) return html;
-  if (!html.includes("[[produto:") && !/meli\.la|mercadolivre\.com/i.test(html)) return html;
+  if (!html.includes("[[produto") && !/meli\.la|mercadolivre\.com/i.test(html)) return html;
 
   const porSlug = new Map<string, ProdutoAfiliado>();
   for (const p of produtos) if (p.ativo && isAffiliateUrl(p.link_afiliado)) porSlug.set(p.slug, p);
@@ -130,6 +133,8 @@ export function applyAffiliates(html: string, produtos: readonly ProdutoAfiliado
       .replace(VAZIO_BLOCO, "")
       .replace(new RegExp(`\\s?${RASTRO}`, "g"), "");
   }
+
+  if (comCartoes.includes("[[produto")) comCartoes = comCartoes.replace(MARCA_ABERTA, "");
 
   const { html: marcado, soltos } = marcarLinks(comCartoes);
   if (soltos > 0 && !marcado.includes("data-afiliado-aviso")) return marcado + AVISO_SOLTO;

@@ -129,7 +129,7 @@ describe("affiliateCardHtml", () => {
   });
 
   it("avisa que abre em nova aba depois do texto visível", () => {
-    expect(affiliateCardHtml(tv)).toContain('Ver no Mercado Livre<span class="sr-only"> (abre em nova aba)</span>');
+    expect(affiliateCardHtml(tv)).toContain('Ver no Mercado Livre<span class="sr-only">: Smart TV 43&quot; (abre em nova aba)</span>');
   });
 });
 
@@ -234,4 +234,21 @@ describe("revisão final: espaçamento do cartão não pode ser anulado por espe
     expect(css).not.toContain(".pt-body .bw-afiliado p{");
     expect(css).toContain(".bw-afiliado p{margin:0}");
   });
+});
+
+describe("pontos menores da revisão", () => {
+  it("leitor de tela ouve o nome do produto no cartão e no link", () => {
+    const out = affiliateCardHtml(tv);
+    expect(out).toContain('aria-label="Produto recomendado: Smart TV 43&quot;"');
+    expect(out).toContain('<span class="sr-only">: Smart TV 43&quot; (abre em nova aba)</span>');
+  });
+
+  it.each(["<p>Veja [[produto:tv fim.</p>", "<p>Veja [[produto: aqui.</p>", "<p>Veja [[produto:smart-tv-43] aqui.</p>"])(
+    "marcação sem fechar não aparece crua: %s",
+    (html) => {
+      const out = applyAffiliates(html, [tv]);
+      expect(out).not.toContain("[[produto");
+      expect(out).toContain("Veja");
+    },
+  );
 });

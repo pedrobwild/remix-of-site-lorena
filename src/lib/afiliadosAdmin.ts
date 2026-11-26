@@ -23,9 +23,28 @@ export function validarProduto(d: ProdutoDraft): string | null {
   if (!SLUG_OK.test(d.slug)) return "O identificador aceita só letras minúsculas, números e hífen.";
   if (!d.categoria.trim()) return "Informe a categoria.";
   if (!isAffiliateUrl(d.link_afiliado.trim())) return LINK_AFILIADO_INVALIDO;
-  if (d.imagem_url.trim() && !/^https:\/\//.test(d.imagem_url.trim())) return "A foto precisa ser um endereço https.";
+  const foto = d.imagem_url.trim();
+  if (foto && !/^https:\/\//.test(foto)) return "A foto precisa ser um endereço https.";
+  if (foto && fotoDeAnuncio(foto)) return "Essa é a foto do anúncio do Mercado Livre. Use uma foto da Bewild em que o item aparece.";
   if (d.projeto_slug.trim() && !SLUG_OK.test(d.projeto_slug.trim())) {
     return "O projeto é o final do endereço em /portfolio/ (só letras minúsculas, números e hífen).";
   }
   return null;
+}
+
+/** Foto hospedada pelo Mercado Livre (mlstatic.com é o servidor de imagens dos anúncios). */
+function fotoDeAnuncio(url: string): boolean {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return /(^|\.)(mlstatic\.com|mercadolivre\.com(\.br)?|mercadolibre\.com|meli\.la)$/.test(host);
+  } catch {
+    return false;
+  }
+}
+
+/** Texto para o erro que o banco devolveu ao salvar (código do Postgres). */
+export function mensagemDeErroAoSalvar(code: string | undefined): string {
+  if (code === "23505") return "Já existe um produto com esse identificador. Escolha outro.";
+  if (code === "23514") return "O banco recusou um dos campos. Confira o link de afiliado (meli.la ou mercadolivre.com.br) e o identificador.";
+  return "Não foi possível salvar. Confira se você está logado como administrador.";
 }

@@ -3,7 +3,7 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { slugify } from "@/lib/bewildAdmin";
 import { PRODUTO_AFILIADO_COLS, type PerfilAfiliado, type ProdutoAfiliado } from "@/lib/afiliados";
-import { validarProduto, type ProdutoDraft as Draft } from "@/lib/afiliadosAdmin";
+import { mensagemDeErroAoSalvar, validarProduto, type ProdutoDraft as Draft } from "@/lib/afiliadosAdmin";
 
 /**
  * /admin/afiliados — catálogo de produtos afiliados do Mercado Livre.
@@ -11,7 +11,7 @@ import { validarProduto, type ProdutoDraft as Draft } from "@/lib/afiliadosAdmin
  * no texto) e a página /produtos-recomendados. Desligar um produto tira o
  * cartão dele de todos os artigos; o site reflete em cerca de um minuto.
  */
-type Uso = { slug: string; title: string };
+type Uso = { slug: string; title: string; published: boolean };
 
 const EMPTY: Draft = {
   nome: "",
@@ -52,7 +52,8 @@ function paraBanco(d: Draft) {
 
 export default function AfiliadosAdminPage() {
   const [rows, setRows] = useState<ProdutoAfiliado[] | null>(null);
-  const [usos, setUsos] = useState<Record<string, Uso[]>>({});
+  /** `null` = a consulta dos artigos falhou: não dá para saber onde cada produto aparece. */
+  const [usos, setUsos] = useState<Map<string, Uso[]> | null>(new Map());
   const [search, setSearch] = useState("");
   const [loadError, setLoadError] = useState<string | null>(null);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
@@ -71,13 +72,17 @@ export default function AfiliadosAdminPage() {
     setLoadError(null);
     setRows((data ?? []) as unknown as ProdutoAfiliado[]);
     // Em quais artigos cada produto aparece (linha [[produto:slug]] no texto).
-    const posts = await supabase.from("bewild_posts" as never).select("slug,title,body").ilike("body", "%[[produto:%");
-    if (posts.error) return;
-    const mapa: Record<string, Uso[]> = {};
-    for (const p of (posts.data ?? []) as unknown as { slug: string; title: string; body: string | null }[]) {
+    const posts = await supabase.from("bewild_posts" as never).select("slug,title,body,published").ilike("body", "%[[produto:%");
+    if (posts.error) {
+      setUsos(null);
+      return;
+    }
+    const mapa = new Map<string, Uso[]>();
+    for (const p of (posts.data ?? []) as unknown as { slug: string; title: string; body: string | null; published: boolean | null }[]) {
       for (const m of (p.body ?? "").matchAll(/\[\[produto:([a-z0-9-]+)\]\]/g)) {
-        const lista = (mapa[m[1]] ??= []);
-        if (!lista.some((u) => u.slug === p.slug)) lista.push({ slug: p.slug, title: p.title });
+        const lista = mapa.get(m[1]) ?? [];
+        if (!lista.some((u) => u.slug === p.slug)) lista.push({ slug: p.slug, title: p.title, published: p.published === true });
+        mapa.set(m[1], lista);
       }
     }
     setUsos(mapa);
@@ -125,6 +130,18 @@ export default function AfiliadosAdminPage() {
       setMsg({ kind: "err", text: erro });
       return;
     }
+    // Trocar o identificador de um produto já usado tira o cartão dos artigos.
+    const original = editing !== "novo" ? rows?.find((r) => r.id === editing) : undefined;
+    if (original && original.slug !== draft.slug) {
+      const artigos = usos === null ? null : (usos.get(original.slug)?.length ?? 0);
+      const aviso =
+        artigos === null
+          ? `Não foi possível verificar se "${original.slug}" aparece em algum artigo. Trocar o identificador tira o cartão de onde ele estiver. Continuar?`
+          : artigos > 0
+            ? `"${original.slug}" aparece em ${artigos} artigo(s). Trocar o identificador tira o cartão deles até o texto ser corrigido. Continuar?`
+            : null;
+      if (aviso && !confirm(aviso)) return;
+    }
     setBusy("form");
     setMsg(null);
     const valores = paraBanco(draft);
@@ -134,13 +151,7 @@ export default function AfiliadosAdminPage() {
         : await tabela().update(valores as never).eq("id", editing as string).select("id");
     setBusy(null);
     if (res.error || !res.data || (res.data as unknown[]).length === 0) {
-      const duplicado = res.error?.code === "23505";
-      setMsg({
-        kind: "err",
-        text: duplicado
-          ? "Já existe um produto com esse identificador. Escolha outro."
-          : "Não foi possível salvar. Confira se você está logado como administrador.",
-      });
+      setMsg({ kind: "err", text: mensagemDeErroAoSalvar(res.error?.code) });
       return;
     }
     setEditing(null);
@@ -149,8 +160,16 @@ export default function AfiliadosAdminPage() {
   }
 
   async function alternar(r: ProdutoAfiliado) {
-    const artigos = usos[r.slug]?.length ?? 0;
-    if (r.ativo && artigos > 0 && !confirm(`"${r.nome}" aparece em ${artigos} artigo(s). Desligar tira o cartão deles. Continuar?`)) return;
+    if (r.ativo) {
+      const artigos = usos === null ? null : (usos.get(r.slug)?.length ?? 0);
+      const aviso =
+        artigos === null
+          ? `Não foi possível verificar em quais artigos "${r.nome}" aparece. Desligar tira o cartão de todos. Continuar?`
+          : artigos > 0
+            ? `"${r.nome}" aparece em ${artigos} artigo(s). Desligar tira o cartão deles. Continuar?`
+            : null;
+      if (aviso && !confirm(aviso)) return;
+    }
     setBusy(r.id);
     setMsg(null);
     const { data, error } = await tabela().update({ ativo: !r.ativo } as never).eq("id", r.id).select("id");
@@ -303,14 +322,20 @@ export default function AfiliadosAdminPage() {
                   <td>{r.categoria}</td>
                   <td>{PERFIS.find((p) => p.value === r.perfil)?.label ?? r.perfil}</td>
                   <td>
-                    {(usos[r.slug] ?? []).length === 0 ? (
+                    {usos === null ? (
+                      <span className="mono admin-hint">não foi possível verificar</span>
+                    ) : (usos.get(r.slug) ?? []).length === 0 ? (
                       <span className="mono admin-hint">só na página</span>
                     ) : (
-                      (usos[r.slug] ?? []).map((u) => (
+                      (usos.get(r.slug) ?? []).map((u) => (
                         <div key={u.slug}>
-                          <a className="admin-link" href={`/conteudos/${u.slug}`} target="_blank" rel="noopener noreferrer">
-                            {u.title}
-                          </a>
+                          {u.published ? (
+                            <a className="admin-link" href={`/conteudos/${u.slug}`} target="_blank" rel="noopener noreferrer">
+                              {u.title}
+                            </a>
+                          ) : (
+                            <span>{u.title} (rascunho)</span>
+                          )}
                         </div>
                       ))
                     )}
