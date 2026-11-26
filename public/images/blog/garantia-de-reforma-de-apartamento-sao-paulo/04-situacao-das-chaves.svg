@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="238" viewBox="0 0 720 238" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif" font-size="13" fill="#222">
+<rect width="720" height="238" fill="#fff"/>
+<text x="16" y="26" font-size="17" font-weight="700" fill="#1f4e5f">Quando o cliente procura a reforma em relação às chaves</text>
+<text x="16" y="46" font-size="12" fill="#8a8f94">219 pedidos de orçamento pelo site, 8/9 a 26/11/2026</text>
+<text x="158" y="81.68" text-anchor="end" font-size="12">Já tem as chaves</text>
+<rect x="166" y="64" width="412" height="26" fill="#e8712b" rx="2"/>
+<text x="584" y="81.68" font-size="12" font-weight="600">71 (32%)</text>
+<text x="158" y="117.68" text-anchor="end" font-size="12">Ainda não recebeu</text>
+<rect x="166" y="100" width="423" height="26" fill="#e8712b" rx="2"/>
+<text x="595" y="117.68" font-size="12" font-weight="600">73 (33%)</text>
+<text x="158" y="153.68" text-anchor="end" font-size="12">Está comprando</text>
+<rect x="166" y="136" width="209" height="26" fill="#e8712b" rx="2"/>
+<text x="381" y="153.68" font-size="12" font-weight="600">36 (16%)</text>
+<text x="158" y="189.68" text-anchor="end" font-size="12">Não informou</text>
+<rect x="166" y="172" width="226" height="26" fill="#1f4e5f" rx="2"/>
+<text x="398" y="189.68" font-size="12" font-weight="600">39 (18%)</text>
+<text x="16" y="222" font-size="11" fill="#8a8f94">Quem reforma antes das chaves ou logo depois entra com a garantia da construtora ativa.</text>
+</svg>

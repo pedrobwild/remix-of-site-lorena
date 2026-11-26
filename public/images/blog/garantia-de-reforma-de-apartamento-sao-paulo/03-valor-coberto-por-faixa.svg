@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="336" viewBox="0 0 720 336" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif" font-size="13" fill="#222">
+<rect width="720" height="336" fill="#fff"/>
+<text x="16" y="26" font-size="17" font-weight="700" fill="#1f4e5f">Quanto do orçamento fica sob garantia de 5 anos</text>
+<text x="16" y="46" font-size="12" fill="#8a8f94">585 orçamentos de reforma completa, mediana por faixa de metragem</text>
+<text x="106" y="82" text-anchor="end" font-size="12">Até 20 m²</text>
+<rect x="114" y="64" width="251" height="26" fill="#d9dcdf" rx="2"/>
+<rect x="114" y="64" width="139" height="26" fill="#e8712b" rx="2"/>
+<text x="371" y="82" font-size="11" font-weight="600">R$ 36.967 de R$ 66.969</text>
+<text x="106" y="118" text-anchor="end" font-size="12">20 a 24 m²</text>
+<rect x="114" y="100" width="259" height="26" fill="#d9dcdf" rx="2"/>
+<rect x="114" y="100" width="143" height="26" fill="#e8712b" rx="2"/>
+<text x="379" y="118" font-size="11" font-weight="600">R$ 38.176 de R$ 69.160</text>
+<text x="106" y="154" text-anchor="end" font-size="12">24 a 28 m²</text>
+<rect x="114" y="136" width="264" height="26" fill="#d9dcdf" rx="2"/>
+<rect x="114" y="136" width="146" height="26" fill="#e8712b" rx="2"/>
+<text x="384" y="154" font-size="11" font-weight="600">R$ 38.936 de R$ 70.537</text>
+<text x="106" y="190" text-anchor="end" font-size="12">28 a 32 m²</text>
+<rect x="114" y="172" width="284" height="26" fill="#d9dcdf" rx="2"/>
+<rect x="114" y="172" width="157" height="26" fill="#e8712b" rx="2"/>
+<text x="404" y="190" font-size="11" font-weight="600">R$ 41.762 de R$ 75.656</text>
+<text x="106" y="226" text-anchor="end" font-size="12">32 a 40 m²</text>
+<rect x="114" y="208" width="358" height="26" fill="#d9dcdf" rx="2"/>
+<rect x="114" y="208" width="197" height="26" fill="#e8712b" rx="2"/>
+<text x="478" y="226" font-size="11" font-weight="600">R$ 52.693 de R$ 95.459</text>
+<text x="106" y="262" text-anchor="end" font-size="12">40 a 45 m²</text>
+<rect x="114" y="244" width="412" height="26" fill="#d9dcdf" rx="2"/>
+<rect x="114" y="244" width="227" height="26" fill="#e8712b" rx="2"/>
+<text x="532" y="262" font-size="11" font-weight="600">R$ 60.686 de R$ 109.938</text>
+<rect x="16" y="286" width="12" height="12" fill="#e8712b"/><text x="34" y="296" font-size="12">Obra civil + marcenaria (55,2%), cobertos por 5 anos</text>
+<rect x="16" y="306" width="12" height="12" fill="#d9dcdf"/><text x="34" y="316" font-size="12">Orçamento mediano da faixa (Índice Bewild, nov/2026)</text>
+</svg>

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="336" viewBox="0 0 420 336" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif" font-size="13" fill="#222">
+<rect width="420" height="336" fill="#fff"/>
+<text x="16" y="26" font-size="17" font-weight="700" fill="#1f4e5f">Valor sob garantia de 5 anos</text>
+<text x="16" y="46" font-size="12" fill="#8a8f94">585 orçamentos, mediana por faixa</text>
+<text x="86" y="82" text-anchor="end" font-size="12">Até 20 m²</text>
+<rect x="94" y="64" width="135" height="26" fill="#d9dcdf" rx="2"/>
+<rect x="94" y="64" width="74" height="26" fill="#e8712b" rx="2"/>
+<text x="235" y="82" font-size="11" font-weight="600">R$ 36.967</text>
+<text x="86" y="118" text-anchor="end" font-size="12">20 a 24 m²</text>
+<rect x="94" y="100" width="139" height="26" fill="#d9dcdf" rx="2"/>
+<rect x="94" y="100" width="77" height="26" fill="#e8712b" rx="2"/>
+<text x="239" y="118" font-size="11" font-weight="600">R$ 38.176</text>
+<text x="86" y="154" text-anchor="end" font-size="12">24 a 28 m²</text>
+<rect x="94" y="136" width="142" height="26" fill="#d9dcdf" rx="2"/>
+<rect x="94" y="136" width="78" height="26" fill="#e8712b" rx="2"/>
+<text x="242" y="154" font-size="11" font-weight="600">R$ 38.936</text>
+<text x="86" y="190" text-anchor="end" font-size="12">28 a 32 m²</text>
+<rect x="94" y="172" width="152" height="26" fill="#d9dcdf" rx="2"/>
+<rect x="94" y="172" width="84" height="26" fill="#e8712b" rx="2"/>
+<text x="252" y="190" font-size="11" font-weight="600">R$ 41.762</text>
+<text x="86" y="226" text-anchor="end" font-size="12">32 a 40 m²</text>
+<rect x="94" y="208" width="192" height="26" fill="#d9dcdf" rx="2"/>
+<rect x="94" y="208" width="106" height="26" fill="#e8712b" rx="2"/>
+<text x="292" y="226" font-size="11" font-weight="600">R$ 52.693</text>
+<text x="86" y="262" text-anchor="end" font-size="12">40 a 45 m²</text>
+<rect x="94" y="244" width="221" height="26" fill="#d9dcdf" rx="2"/>
+<rect x="94" y="244" width="122" height="26" fill="#e8712b" rx="2"/>
+<text x="321" y="262" font-size="11" font-weight="600">R$ 60.686</text>
+<rect x="16" y="286" width="12" height="12" fill="#e8712b"/><text x="34" y="296" font-size="12">Obra civil + marcenaria (55,2%), cobertos por 5 anos</text>
+<rect x="16" y="306" width="12" height="12" fill="#d9dcdf"/><text x="34" y="316" font-size="12">Orçamento mediano da faixa (Índice Bewild, nov/2026)</text>
+</svg>
