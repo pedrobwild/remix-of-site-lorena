@@ -148,6 +148,13 @@
       "when": 1794995536705,
       "tag": "0020_proteger_backups_artigos_20261118",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1795679899359,
+      "tag": "0021_produtos_afiliados",
+      "breakpoints": true
     }
   ]
 }

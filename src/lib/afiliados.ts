@@ -1,0 +1,69 @@
+/**
+ * Catálogo de produtos afiliados do Mercado Livre (26/11/2026, pedido do Pedro).
+ *
+ * Uma lista única, mantida em /admin/afiliados (tabela `produtos_afiliados`),
+ * alimenta o cartão de produto dentro dos artigos (`articleAffiliates.ts`) e a
+ * página /produtos-recomendados. Link de afiliado só aparece nesses dois
+ * lugares: nunca na home, no /orcamento, nas LPs ou nas páginas de serviço.
+ *
+ * Leitura pública sem o SDK do Supabase (`publicSelect`): este módulo é
+ * importado pelo loader do artigo, que entra no pacote inicial.
+ */
+import { publicSelect } from "@/integrations/supabase/publicRest";
+import { serverMemo } from "@/lib/serverMemo";
+
+export type PerfilAfiliado = "investidor" | "moradia" | "ambos";
+
+export type ProdutoAfiliado = {
+  id: string;
+  slug: string;
+  nome: string;
+  motivo: string;
+  categoria: string;
+  perfil: PerfilAfiliado;
+  link_afiliado: string;
+  imagem_url: string | null;
+  imagem_alt: string | null;
+  projeto_slug: string | null;
+  ativo: boolean;
+  sort_order: number;
+};
+
+/** Texto aprovado pelo Pedro em 26/11/2026; aparece junto de todo link de afiliado. */
+export const AVISO_AFILIADO = "Link de afiliado: a Bewild pode receber comissão. O preço para você não muda.";
+
+/** `meli.la` é o encurtador que a Central de Afiliados entrega (conferido em 26/11/2026). */
+const HOSTS_AFILIADO = new Set(["meli.la", "mercadolivre.com.br", "www.mercadolivre.com.br", "mercadolivre.com"]);
+
+/** Só `https:` e só os domínios do Mercado Livre; qualquer outra coisa é recusada. */
+export function isAffiliateUrl(url: string): boolean {
+  if (!url) return false;
+  try {
+    const u = new URL(url);
+    return u.protocol === "https:" && !u.username && !u.password && HOSTS_AFILIADO.has(u.hostname.toLowerCase());
+  } catch {
+    return false;
+  }
+}
+
+export const PRODUTO_AFILIADO_COLS =
+  "id,slug,nome,motivo,categoria,perfil,link_afiliado,imagem_url,imagem_alt,projeto_slug,ativo,sort_order";
+
+/**
+ * Produtos ligados, na ordem do painel. `null` = falha de rede (quem chama
+ * segue sem cartões). Linha com link fora dos domínios aceitos é descartada
+ * aqui também, mesmo que tenha passado pelo banco.
+ */
+export function fetchProdutosAtivos(): Promise<ProdutoAfiliado[] | null> {
+  return serverMemo("afiliados:ativos", fetchProdutosAtivosUncached, { keep: (v) => v !== null });
+}
+
+async function fetchProdutosAtivosUncached(): Promise<ProdutoAfiliado[] | null> {
+  const { data, error } = await publicSelect<ProdutoAfiliado>("produtos_afiliados", {
+    select: PRODUTO_AFILIADO_COLS,
+    ativo: "eq.true",
+    order: "sort_order.asc,nome.asc",
+  });
+  if (error || !data) return null;
+  return data.filter((p) => p && typeof p.slug === "string" && isAffiliateUrl(p.link_afiliado));
+}
