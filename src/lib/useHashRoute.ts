@@ -14,6 +14,7 @@ export type Route =
   | { name: "autorizacao-condominio" }
   | { name: "contato" }
   | { name: "mapa-do-site" }
+  | { name: "produtos-recomendados" }
   | { name: "buscar" }
   | { name: "coletas-por-bairro" }
   | { name: "como-funciona" }
@@ -152,6 +153,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/autorizacao-condominio") return { name: "autorizacao-condominio" };
   if (path === "/contato") return { name: "contato" };
   if (path === "/mapa-do-site") return { name: "mapa-do-site" };
+  if (path === "/produtos-recomendados") return { name: "produtos-recomendados" };
   if (path === "/buscar") return { name: "buscar" };
   if (path === "/coletas-por-bairro") return { name: "coletas-por-bairro" };
   if (path === "/como-funciona") return { name: "como-funciona" };
@@ -348,6 +350,7 @@ export const routes = {
   autorizacaoCondominio: "/autorizacao-condominio",
   contato: "/contato",
   mapaDoSite: "/mapa-do-site",
+  produtosRecomendados: "/produtos-recomendados",
   buscar: "/buscar",
   "coletas-por-bairro": "/coletas-por-bairro",
   comoFunciona: "/como-funciona",

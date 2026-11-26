@@ -201,6 +201,8 @@ export const STATIC_PAGES = [
   { loc: `${BASE_URL}/contato`, changefreq: "monthly", priority: "0.7", files: ["src/routes/contato.tsx", "src/pages/ContatoPage.tsx"], fallback: "2026-09-26" },
   // /mapa responde 301 para /contato desde 27/10/2026 (as duas páginas viraram uma só).
   { loc: `${BASE_URL}/mapa-do-site`, changefreq: "weekly", priority: "0.5" },
+  // Catálogo de afiliados (/admin/afiliados): muda no banco, sem data de arquivo.
+  { loc: `${BASE_URL}/produtos-recomendados`, changefreq: "weekly", priority: "0.5" },
   { loc: `${BASE_URL}/servicos`, changefreq: "monthly", priority: "0.9", files: ["src/routes/servicos.tsx", "src/pages/ServicosPage.tsx"], fallback: "2026-09-29" },
   { loc: `${BASE_URL}/manutencao-preventiva-sao-paulo`, changefreq: "monthly", priority: "0.8", files: ["src/routes/manutencao-preventiva-sao-paulo.tsx", "src/pages/ManutencaoPreventivaPage.tsx", "src/content/pages/servicos.ts", "src/content/pages/manutencao.seo.ts"], fallback: "2026-11-26" },
   { loc: `${BASE_URL}/como-funciona`, changefreq: "monthly", priority: "0.7", files: ["src/routes/como-funciona.tsx", "src/pages/ComoFuncionaPage.tsx", "src/content/etapas.ts"] },

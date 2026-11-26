@@ -32,6 +32,7 @@ const ROTAS_INDEXAVEIS = [
   { path: "/autorizacao-condominio", priority: "0.7", changefreq: "monthly" },
   { path: "/contato", priority: "0.7", changefreq: "monthly" },
   { path: "/mapa-do-site", priority: "0.5", changefreq: "weekly" },
+  { path: "/produtos-recomendados", priority: "0.5", changefreq: "weekly" },
   { path: "/servicos", priority: "0.9", changefreq: "monthly" },
   { path: "/manutencao-preventiva-sao-paulo", priority: "0.8", changefreq: "monthly" },
   { path: "/como-funciona", priority: "0.7", changefreq: "monthly" },

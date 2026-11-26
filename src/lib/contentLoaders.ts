@@ -375,3 +375,24 @@ export async function loadLicenca(slug: import("@/content/pages/licencas").Licen
   const merged = mergeLicenca(slug, row);
   return { title: merged.title, intro: merged.intro, bodyHtml: await renderBody(merged.body), citationModel: merged.citationModel };
 }
+
+// --- /produtos-recomendados (catálogo de /admin/afiliados) -------------------
+
+export type ProdutosRecomendadosLoaderData = {
+  /** `null` = leitura falhou (a página avisa e oferece tentar de novo). */
+  produtos: ProdutoAfiliado[] | null;
+  jsonLd: Record<string, unknown> | null;
+};
+
+export async function loadProdutosRecomendados(): Promise<ProdutosRecomendadosLoaderData> {
+  try {
+    const [{ fetchProdutosAtivos }, { produtosItemListJsonLd }] = await Promise.all([
+      import("@/lib/afiliados"),
+      import("@/lib/produtosRecomendados"),
+    ]);
+    const produtos = await fetchProdutosAtivos();
+    return { produtos, jsonLd: produtos ? produtosItemListJsonLd(produtos) : null };
+  } catch {
+    return { produtos: null, jsonLd: null };
+  }
+}

@@ -244,3 +244,12 @@
   .bw-afiliado__img{width:100%;height:auto;aspect-ratio:16/9}
   .bw-afiliado .bw-afiliado__link{width:100%}
 }
+
+/* /produtos-recomendados: filtro por objetivo e grade de cartões. */
+.bw-afiliado-pagina__aviso{font-size:14px;color:#4A5568}
+.bw-afiliado-filtros{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 24px}
+.pt-body .bw-afiliado-filtros a{display:inline-flex;align-items:center;min-height:44px;padding:8px 16px;border:1px solid rgba(17,53,91,.35);color:#11355B;font-size:14px;font-weight:600;text-decoration:none}
+.pt-body .bw-afiliado-filtros a[aria-current="page"]{background:#11355B;border-color:#11355B;color:#fff}
+.pt-body .bw-afiliado-filtros a:focus-visible{outline:3px solid #2F86B8;outline-offset:2px}
+.bw-afiliado-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:16px;margin:0 0 12px}
+.bw-afiliado-grade .bw-afiliado{max-width:none;margin:0}

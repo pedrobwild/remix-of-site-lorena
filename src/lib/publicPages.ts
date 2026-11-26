@@ -20,6 +20,7 @@ export const PUBLIC_PAGES: PublicPage[] = [
   { path: "/escopo", label: "Escopo" },
   { path: "/contato", label: "Contato" },
   { path: "/mapa-do-site", label: "Mapa do site" },
+  { path: "/produtos-recomendados", label: "Produtos recomendados" },
   { path: "/faq", label: "Perguntas frequentes" },
   { path: "/onde-atuamos", label: "Onde atuamos" },
   { path: "/reforma-de-apartamento-sao-paulo", label: "Reforma de apartamento em SP" },
