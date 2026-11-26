@@ -432,6 +432,38 @@
   line-height: 1.6;
 }
 
+/* ---------- Manutenção preventiva (Plano Studio Protegido) ---------- */
+/* Reaproveita a grade numerada e a faixa de provas; aqui a faixa mostra
+   condições em texto (não números), então o valor é menor e pode quebrar. */
+.bwa-svcs-manut-condicoes {
+  margin-top: clamp(20px, 2.4vw, 32px);
+}
+
+.bwa-svcs-manut-condicoes dt {
+  font-size: clamp(19px, 1.7vw, 24px);
+  line-height: 1.1;
+  letter-spacing: -.03em;
+}
+
+.bwa-svcs-manut-condicoes dd {
+  line-height: 1.5;
+}
+
+.bwa-svcs-manut-cta {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+  margin-top: clamp(22px, 2.6vw, 32px);
+}
+
+.bwa-svcs-manut-regras {
+  max-width: 72ch;
+  margin: 0;
+  color: var(--bwa-ink-soft);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
 /* ---------- Blocos vindos da home ---------- */
 /* Na home, Bastidores vinha depois de um bloco escuro e não precisava de
    respiro em cima; aqui vem depois dos cards, sobre papel. */
