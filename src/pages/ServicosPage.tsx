@@ -73,7 +73,7 @@ const SERVICO_IMAGEM: Record<string, { nome: string; alt: string }> = {
     nome: "quarto-remos",
     alt: "Quarto com parede de tijolos claros, remos decorativos, roupa de cama branca e guarda-roupa azul-marinho",
   },
-  "/reforma-de-cobertura-sao-paulo": {
+  "/servicos#manutencao": {
     nome: "varanda-barril",
     alt: "Studio com poltronas de couro caramelo, barril de madeira, parede de tijolinhos e varanda envidraçada",
   },
@@ -308,7 +308,7 @@ export default function ServicosPage() {
                         <h3>{s.nome}</h3>
                         <p>{s.texto}</p>
                         <span className="bwa-svcs-card-link">
-                          Ver a página do serviço <span aria-hidden="true">→</span>
+                          {s.path === "/servicos#manutencao" ? "Conhecer o plano" : "Ver a página do serviço"} <span aria-hidden="true">→</span>
                         </span>
                       </div>
                     </a>

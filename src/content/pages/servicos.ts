@@ -15,32 +15,6 @@ export const CANONICAL = "/servicos";
 export const DESCRIPTION =
   "Arquitetura, engenharia e obra num contrato só: projeto 3D, reforma de apartamento, studio e cobertura, marcenaria própria, preço fechado e 5 anos de garantia.";
 
-export const SERVICOS: { nome: string; path: string; texto: string }[] = [
-  {
-    nome: "Reforma de apartamento em São Paulo",
-    path: "/reforma-de-apartamento-sao-paulo",
-    texto:
-      "Reforma completa de apartamentos e studios de até 140 m², com foco em studios e apartamentos pequenos: projeto 3D, obra, marcenaria e mobília em um único contrato.",
-  },
-  {
-    nome: "Reforma de studio em São Paulo",
-    path: "/reforma-de-studio-sao-paulo",
-    texto:
-      "Studio entregue pronto para morar ou anunciar, para locação por temporada (short stay) ou de longa duração.",
-  },
-  {
-    nome: "Reforma de cobertura em São Paulo",
-    path: "/reforma-de-cobertura-sao-paulo",
-    texto:
-      "Reforma de cobertura com terraço e área externa, marcenaria sob medida e mobília, entregue pronta para morar.",
-  },
-  {
-    nome: "Marcenaria sob medida",
-    path: "/marcenaria",
-    texto:
-      "Móveis planejados desenhados no projeto e fabricados pela Bewild: MDF certificado, estruturas em 25 mm e 5 anos de garantia.",
-  },
-];
 
 /**
  * Plano Studio Protegido — manutenção preventiva de ar-condicionado, elétrica
@@ -109,6 +83,33 @@ export const MANUTENCAO = {
   whatsappTexto:
     "Olá! Quero saber mais sobre o Plano Studio Protegido, a manutenção preventiva do meu studio.",
 } as const;
+
+export const SERVICOS: { nome: string; path: string; texto: string }[] = [
+  {
+    nome: "Reforma de apartamento em São Paulo",
+    path: "/reforma-de-apartamento-sao-paulo",
+    texto:
+      "Reforma completa de apartamentos e studios de até 140 m², com foco em studios e apartamentos pequenos: projeto 3D, obra, marcenaria e mobília em um único contrato.",
+  },
+  {
+    nome: "Reforma de studio em São Paulo",
+    path: "/reforma-de-studio-sao-paulo",
+    texto:
+      "Studio entregue pronto para morar ou anunciar, para locação por temporada (short stay) ou de longa duração.",
+  },
+  {
+    nome: "Manutenção preventiva em São Paulo",
+    path: "/servicos#manutencao",
+    texto: MANUTENCAO.resumo,
+  },
+  {
+    nome: "Marcenaria sob medida",
+    path: "/marcenaria",
+    texto:
+      "Móveis planejados desenhados no projeto e fabricados pela Bewild: MDF certificado, estruturas em 25 mm e 5 anos de garantia.",
+  },
+];
+
 
 export const FAQ: { q: string; a: string }[] = [
   {
