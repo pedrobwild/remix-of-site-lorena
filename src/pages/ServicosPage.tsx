@@ -15,7 +15,7 @@ import { initBwaGallery } from "./home-bwa-script";
 import { BASTIDORES_HTML, GALERIA_HTML, SERVICOS_SVG_LIBRARY, TOUR3D_HTML } from "./servicos-bwa-sections";
 import "./servico-reforma.css";
 import "./servicos.css";
-import { CANONICAL, DESCRIPTION, SERVICOS, FAQ } from "@/content/pages/servicos";
+import { CANONICAL, DESCRIPTION, SERVICOS, FAQ, MANUTENCAO } from "@/content/pages/servicos";
 
 /* ============================================================
  * ServicosPage — /servicos
@@ -29,7 +29,8 @@ import { CANONICAL, DESCRIPTION, SERVICOS, FAQ } from "@/content/pages/servicos"
  * "Atmosferas Bewild" e Tour virtual 3D — HTML em servicos-bwa-sections.ts,
  * comportamento nos mesmos instaladores da home. A ordem alterna texto e
  * prova: o que fazemos → quem faz (Bastidores) → arquitetura → o projeto
- * em 3D → engenharia → o resultado (galeria) → perguntas → orçamento.
+ * em 3D → engenharia → manutenção preventiva (Plano Studio Protegido,
+ * 26/11/2026) → o resultado (galeria) → perguntas → orçamento.
  * ============================================================ */
 
 // Link interno SEM utm_* (ver ReformaStudioSpPage): o clique é medido por
@@ -46,6 +47,7 @@ const NAV: { href: string; label: string }[] = [
   { href: "#arquitetura", label: "Arquitetura" },
   { href: "#tour-3d", label: "Tour 3D" },
   { href: "#engenharia", label: "Engenharia e gestão" },
+  { href: "#manutencao", label: "Manutenção" },
   { href: "#galeria", label: "Galeria" },
   { href: "#faq", label: "Perguntas" },
 ];
@@ -159,7 +161,7 @@ function imagem(nome: string) {
   };
 }
 
-function ItensGrid({ itens, tom }: { itens: typeof ARQUITETURA; tom: "claro" | "escuro" }) {
+function ItensGrid({ itens, tom }: { itens: ReadonlyArray<{ n: string; titulo: string; t: string }>; tom: "claro" | "escuro" }) {
   return (
     <ol className={`bwa-svcs-itens bwa-svcs-itens--${tom}`}>
       {itens.map((item) => (
@@ -349,6 +351,57 @@ export default function ServicosPage() {
               </h2>
             </div>
             <ItensGrid itens={ENGENHARIA} tom="claro" />
+          </div>
+        </section>
+
+        {/* Manutenção preventiva: Plano Studio Protegido (26/11/2026). Texto,
+            preço e regras só de MANUTENCAO (src/content/pages/servicos.ts).
+            O convite vai ao WhatsApp, não ao /orcamento (formulário de reforma). */}
+        <section className="bwa-servico-block bwa-svcs-block" aria-labelledby="manutencao-titulo" id="manutencao">
+          <div className="bwa-shell">
+            <div className="bwa-svcs-block-head">
+              <p className="bwa-label bwa-label-accent">Manutenção preventiva · {MANUTENCAO.nome}</p>
+              <h2 className="bwa-servico-h2 bwa-svcs-h2" id="manutencao-titulo">
+                Manutenção preventiva de ar-condicionado, elétrica e hidráulica
+                do seu studio, por {MANUTENCAO.precoTexto}
+              </h2>
+              <p className="bwa-servico-text">{MANUTENCAO.resumo}</p>
+            </div>
+            <ItensGrid itens={MANUTENCAO.frentes} tom="claro" />
+            <dl className="bwa-svcs-provas bwa-svcs-manut-condicoes" aria-label="Condições do plano">
+              {MANUTENCAO.condicoes.map((c) => (
+                <div key={c.valor}>
+                  <dt>{c.valor}</dt>
+                  <dd>{c.rotulo}</dd>
+                </div>
+              ))}
+            </dl>
+            <div className="bwa-svcs-manut-conta" role="group" aria-labelledby="manutencao-conta-titulo">
+              <h3 id="manutencao-conta-titulo">{MANUTENCAO.simulacao.titulo}</h3>
+              <dl>
+                {MANUTENCAO.simulacao.itens.map((i) => (
+                  <div key={i.valor}>
+                    <dt>{i.valor}</dt>
+                    <dd>{i.rotulo}</dd>
+                  </div>
+                ))}
+              </dl>
+              <p className="bwa-svcs-manut-regras">{MANUTENCAO.simulacao.nota}</p>
+            </div>
+            <p className="bwa-servico-text bwa-svcs-after">{MANUTENCAO.apoio}</p>
+            <div className="bwa-svcs-manut-cta">
+              <a
+                className="bwa-button"
+                href={whatsappHref(MANUTENCAO.whatsappTexto)}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cta="servicos-manutencao-whatsapp"
+              >
+                Proteger meu studio <span aria-hidden="true">→</span>
+                <span className="sr-only"> (abre o WhatsApp em nova aba)</span>
+              </a>
+              <p className="bwa-svcs-manut-regras">{MANUTENCAO.regras}</p>
+            </div>
           </div>
         </section>
 
