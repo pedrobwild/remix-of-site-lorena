@@ -29,11 +29,14 @@ const idDe = (categoria: string) =>
 export default function ProdutosRecomendadosPage({
   produtos,
   perfil,
+  vazio,
 }: {
   produtos: ProdutoAfiliado[] | null;
   perfil: PerfilFiltro | null;
+  /** Mesmo valor que o `head()` da rota usou para o `noindex`. */
+  vazio: boolean;
 }) {
-  useSeo({ title: PRODUTOS_TITLE, description: PRODUTOS_DESCRIPTION, canonicalPath: PRODUTOS_PATH, ogType: "website" });
+  useSeo({ title: PRODUTOS_TITLE, description: PRODUTOS_DESCRIPTION, canonicalPath: PRODUTOS_PATH, ogType: "website", noindex: vazio });
 
   const grupos = produtos ? agruparProdutos(produtos, perfil) : [];
   const total = produtos ? agruparProdutos(produtos, null).length : 0;

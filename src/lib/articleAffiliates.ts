@@ -21,10 +21,18 @@ import { AVISO_AFILIADO, isAffiliateUrl, type ProdutoAfiliado } from "@/lib/afil
 export const REL_AFILIADO = "sponsored nofollow noopener";
 
 const SLUG = "[a-z0-9]+(?:-[a-z0-9]+)*";
-/** Parágrafo inteiro com a marcação (é assim que o `marked` devolve uma linha sozinha). */
-const MARCA_PARAGRAFO = new RegExp(`<p>\\s*\\[\\[produto:(${SLUG})\\]\\]\\s*</p>`, "g");
-/** Marcação solta (no meio de uma frase, com slug inválido etc.): só é removida. */
-const MARCA_SOLTA = /\s?\[\[produto:[^\]\n]*\]\]/g;
+/** Qualquer marcação, mesmo com identificador errado (maiúscula, espaço, sublinhado). */
+const MARCA = "\\[\\[produto:[^\\]\\n<]*\\]\\]";
+/** O que pode cercar a marcação num parágrafo "só dela": o editor do painel grava `<br>`, `&nbsp;` e negrito. */
+const RECHEIO = "(?:\\s|&nbsp;|<br\\s*/?>|</?(?:strong|em|b|i|u|span)>)";
+/** Parágrafo que só tem marcações (uma ou mais): vira os cartões dos produtos ligados. */
+const PARAGRAFO_DE_MARCAS = new RegExp(`<p>((?:${RECHEIO}|${MARCA})*${MARCA}(?:${RECHEIO}|${MARCA})*)</p>`, "g");
+const MARCA_VALIDA = new RegExp(`\\[\\[produto:(${SLUG})\\]\\]`, "g");
+const MARCA_QUALQUER = new RegExp(MARCA, "g");
+/** Fica no lugar da marcação removida, para apagar só o elemento que ELA deixou vazio. */
+const RASTRO = "@@bw-afiliado-removido@@";
+const VAZIO_INLINE = new RegExp(`<(strong|em|b|i|u|span)>(?:\\s|&nbsp;|<br\\s*/?>|${RASTRO})*${RASTRO}(?:\\s|&nbsp;|<br\\s*/?>|${RASTRO})*</\\1>`, "g");
+const VAZIO_BLOCO = new RegExp(`<(p|li|h[1-6])(?:\\s[^>]*)?>(?:\\s|&nbsp;|<br\\s*/?>|${RASTRO})*${RASTRO}(?:\\s|&nbsp;|<br\\s*/?>|${RASTRO})*</\\1>`, "g");
 const AVISO_SOLTO = `<p class="bw-afiliado__aviso" data-afiliado-aviso>${AVISO_AFILIADO}</p>`;
 
 const esc = (s: string) =>
@@ -61,12 +69,28 @@ export function affiliateCardHtml(p: ProdutoAfiliado): string {
   );
 }
 
+/**
+ * Link colado à mão: qualquer endereço do Mercado Livre conta (produto.,
+ * lista., www., http ou https), não só os que o catálogo aceita. É critério de
+ * marcação e aviso, nunca de validação de cadastro.
+ */
+export function isMercadoLivreUrl(url: string): boolean {
+  try {
+    const u = new URL(url);
+    if (u.protocol !== "https:" && u.protocol !== "http:") return false;
+    const host = u.hostname.toLowerCase();
+    return host === "meli.la" || /(^|\.)mercadolivre\.com(\.br)?$/.test(host);
+  } catch {
+    return false;
+  }
+}
+
 /** `rel` e `target` certos em todo `<a>` que aponta para o Mercado Livre. Devolve se achou algum fora de cartão. */
 function marcarLinks(html: string): { html: string; soltos: number } {
   let soltos = 0;
   const out = html.replace(/<a\b[^>]*>/gi, (tag) => {
     const href = /\shref\s*=\s*"([^"]*)"/i.exec(tag)?.[1];
-    if (!href || !isAffiliateUrl(unescAttr(href))) return tag;
+    if (!href || !isMercadoLivreUrl(unescAttr(href))) return tag;
     if (!/\sdata-afiliado="/.test(tag)) soltos++;
     const limpo = tag.replace(/\s(?:rel|target)\s*=\s*"[^"]*"/gi, "");
     return limpo.replace(/>$/, ` rel="${REL_AFILIADO}" target="_blank">`);
@@ -86,12 +110,26 @@ export function applyAffiliates(html: string, produtos: readonly ProdutoAfiliado
   const porSlug = new Map<string, ProdutoAfiliado>();
   for (const p of produtos) if (p.ativo && isAffiliateUrl(p.link_afiliado)) porSlug.set(p.slug, p);
 
-  const comCartoes = html
-    .replace(MARCA_PARAGRAFO, (_m, slug: string) => {
-      const p = porSlug.get(slug);
-      return p ? affiliateCardHtml(p) : "";
+  // 1. Parágrafo só de marcações: cartões dos produtos ligados (ou nada).
+  // 2. Marcação em qualquer outro lugar: some; o elemento que ela deixou vazio
+  //    (item de lista, título, negrito) some junto. Parágrafo vazio que já
+  //    existia no artigo não é tocado.
+  let comCartoes = html
+    .replace(PARAGRAFO_DE_MARCAS, (_m, dentro: string) => {
+      let cards = "";
+      for (const m of dentro.matchAll(MARCA_VALIDA)) {
+        const p = porSlug.get(m[1]);
+        if (p) cards += affiliateCardHtml(p);
+      }
+      return cards;
     })
-    .replace(MARCA_SOLTA, "");
+    .replace(MARCA_QUALQUER, RASTRO);
+  if (comCartoes.includes(RASTRO)) {
+    comCartoes = comCartoes
+      .replace(VAZIO_INLINE, RASTRO)
+      .replace(VAZIO_BLOCO, "")
+      .replace(new RegExp(`\\s?${RASTRO}`, "g"), "");
+  }
 
   const { html: marcado, soltos } = marcarLinks(comCartoes);
   if (soltos > 0 && !marcado.includes("data-afiliado-aviso")) return marcado + AVISO_SOLTO;

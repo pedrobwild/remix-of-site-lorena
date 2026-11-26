@@ -23,3 +23,18 @@ describe("isAffiliateUrl", () => {
 it("aviso com o texto aprovado", () => {
   expect(AVISO_AFILIADO).toBe("Link de afiliado: a Bewild pode receber comissão. O preço para você não muda.");
 });
+
+describe("revisão final: leitura do catálogo com teto de tempo", () => {
+  it("passa um AbortSignal ao fetch e devolve null quando a leitura falha", async () => {
+    const { vi } = await import("vitest");
+    const { fetchProdutosAtivos } = await import("@/lib/afiliados");
+    const spy = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("tempo esgotado"));
+    try {
+      await expect(fetchProdutosAtivos()).resolves.toBeNull();
+      const init = spy.mock.calls[0]?.[1] as RequestInit | undefined;
+      expect(init?.signal).toBeInstanceOf(AbortSignal);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+});

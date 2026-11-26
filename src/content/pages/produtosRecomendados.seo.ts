@@ -10,3 +10,10 @@ export const PRODUTOS_TITLE = "Produtos recomendados para studio | Bewild";
 export const PRODUTOS_DESCRIPTION =
   "Eletros, móveis e itens que a Bewild recomenda para studios e apartamentos compactos em São Paulo, com links para comprar.";
 export const PRODUTOS_H1 = "Produtos que recomendamos para studios";
+
+export type PerfilFiltro = "investidor" | "moradia";
+
+/** `?perfil=` da URL: só os dois valores conhecidos; qualquer outra coisa mostra tudo. Fica aqui (módulo sem imports) porque a rota usa no `validateSearch`, que entra no pacote inicial. */
+export function lerPerfil(value: unknown): PerfilFiltro | null {
+  return value === "investidor" || value === "moradia" ? value : null;
+}

@@ -228,7 +228,8 @@
 .bw-afiliado{display:flex;align-items:flex-start;gap:16px 20px;max-width:var(--pt-measure);margin:8px 0 28px;padding:18px 20px;border:1px solid rgba(17,53,91,.18);background:#FBF8F3}
 .bw-afiliado__img{flex:0 0 auto;width:120px;height:120px;object-fit:cover;border-radius:2px}
 .bw-afiliado__txt{flex:1 1 0;min-width:0}
-.bw-afiliado p,.pt-body .bw-afiliado p{margin:0}
+/* (0,1,1), igual a `.pt-body p` e depois dele: zera a margem sem vencer as regras de margin-top abaixo, que são (0,2,0). */
+.bw-afiliado p{margin:0}
 .bw-afiliado .bw-afiliado__nome{font-size:17px;font-weight:700;line-height:1.35;color:#11355B}
 .bw-afiliado .bw-afiliado__motivo{margin-top:6px;font-size:15px;line-height:1.5;color:#1A2332}
 .bw-afiliado .bw-afiliado__projeto{margin-top:6px;font-size:14px;line-height:1.45}

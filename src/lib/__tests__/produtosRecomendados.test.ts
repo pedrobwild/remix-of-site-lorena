@@ -70,3 +70,13 @@ describe("produtosItemListJsonLd", () => {
     expect(produtosItemListJsonLd([])).toBeNull();
   });
 });
+
+describe("revisão final: página sem lista não é indexável", () => {
+  it("semProdutos: null, vazio e só desligados contam como sem lista", async () => {
+    const { semProdutos } = await import("@/lib/produtosRecomendados");
+    expect(semProdutos(null)).toBe(true);
+    expect(semProdutos([])).toBe(true);
+    expect(semProdutos([p({ ativo: false })])).toBe(true);
+    expect(semProdutos(lista)).toBe(false);
+  });
+});

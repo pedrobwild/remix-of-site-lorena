@@ -58,12 +58,15 @@ export function fetchProdutosAtivos(): Promise<ProdutoAfiliado[] | null> {
   return serverMemo("afiliados:ativos", fetchProdutosAtivosUncached, { keep: (v) => v !== null });
 }
 
+/** Teto da leitura: catálogo lento não pode segurar o HTML do artigo (mesmo teto do loader da Leal Moreira). */
+export const CATALOGO_TIMEOUT_MS = 2500;
+
 async function fetchProdutosAtivosUncached(): Promise<ProdutoAfiliado[] | null> {
-  const { data, error } = await publicSelect<ProdutoAfiliado>("produtos_afiliados", {
-    select: PRODUTO_AFILIADO_COLS,
-    ativo: "eq.true",
-    order: "sort_order.asc,nome.asc",
-  });
+  const { data, error } = await publicSelect<ProdutoAfiliado>(
+    "produtos_afiliados",
+    { select: PRODUTO_AFILIADO_COLS, ativo: "eq.true", order: "sort_order.asc,nome.asc" },
+    { signal: AbortSignal.timeout(CATALOGO_TIMEOUT_MS) },
+  );
   if (error || !data) return null;
   return data.filter((p) => p && typeof p.slug === "string" && isAffiliateUrl(p.link_afiliado));
 }

@@ -382,17 +382,19 @@ export type ProdutosRecomendadosLoaderData = {
   /** `null` = leitura falhou (a página avisa e oferece tentar de novo). */
   produtos: ProdutoAfiliado[] | null;
   jsonLd: Record<string, unknown> | null;
+  /** Sem produto para mostrar (falha, catálogo vazio, tudo desligado): a rota sai `noindex`. */
+  vazio: boolean;
 };
 
 export async function loadProdutosRecomendados(): Promise<ProdutosRecomendadosLoaderData> {
   try {
-    const [{ fetchProdutosAtivos }, { produtosItemListJsonLd }] = await Promise.all([
+    const [{ fetchProdutosAtivos }, { produtosItemListJsonLd, semProdutos }] = await Promise.all([
       import("@/lib/afiliados"),
       import("@/lib/produtosRecomendados"),
     ]);
     const produtos = await fetchProdutosAtivos();
-    return { produtos, jsonLd: produtos ? produtosItemListJsonLd(produtos) : null };
+    return { produtos, jsonLd: produtos ? produtosItemListJsonLd(produtos) : null, vazio: semProdutos(produtos) };
   } catch {
-    return { produtos: null, jsonLd: null };
+    return { produtos: null, jsonLd: null, vazio: true };
   }
 }

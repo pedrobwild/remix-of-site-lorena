@@ -3,14 +3,11 @@
  * e dados estruturados. Funções puras, usadas pelo loader e pela página.
  */
 import { isAffiliateUrl, type ProdutoAfiliado } from "@/lib/afiliados";
+import { lerPerfil, type PerfilFiltro } from "@/content/pages/produtosRecomendados.seo";
 
-export type PerfilFiltro = "investidor" | "moradia";
+export { lerPerfil, type PerfilFiltro };
+
 export type GrupoDeProdutos = { categoria: string; produtos: ProdutoAfiliado[] };
-
-/** `?perfil=` da URL: só os dois valores conhecidos; qualquer outra coisa mostra tudo. */
-export function lerPerfil(value: unknown): PerfilFiltro | null {
-  return value === "investidor" || value === "moradia" ? value : null;
-}
 
 /**
  * Produtos ligados, na ordem do painel, agrupados por categoria (categoria na
@@ -44,4 +41,9 @@ export function produtosItemListJsonLd(produtos: readonly ProdutoAfiliado[]): Re
     numberOfItems: itens.length,
     itemListElement: itens.map((p, i) => ({ "@type": "ListItem", position: i + 1, name: p.nome })),
   };
+}
+
+/** Sem nenhum produto para mostrar (leitura falhou, catálogo vazio ou tudo desligado): a página sai `noindex`. */
+export function semProdutos(produtos: readonly ProdutoAfiliado[] | null | undefined): boolean {
+  return !produtos || agruparProdutos(produtos, null).length === 0;
 }

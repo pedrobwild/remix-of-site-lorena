@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ProdutosRecomendadosPage from "@/pages/ProdutosRecomendadosPage";
 import { seoHead, rootPagesSeo } from "@/lib/routeHead";
-import { lerPerfil } from "@/lib/produtosRecomendados";
-import { PRODUTOS_DESCRIPTION, PRODUTOS_PATH, PRODUTOS_TITLE } from "@/content/pages/produtosRecomendados.seo";
+import { lerPerfil, PRODUTOS_DESCRIPTION, PRODUTOS_PATH, PRODUTOS_TITLE } from "@/content/pages/produtosRecomendados.seo";
 
 // /produtos-recomendados: produtos do Mercado Livre com link de afiliado, do
 // catálogo de /admin/afiliados. O loader lê o catálogo no servidor (import
@@ -25,6 +24,9 @@ export const Route = createFileRoute("/produtos-recomendados")({
       description: PRODUTOS_DESCRIPTION,
       path: PRODUTOS_PATH,
       jsonLd: loaderData?.jsonLd ? [loaderData.jsonLd] : null,
+      // Página sem lista (leitura falhou, catálogo vazio, banco ainda sem a
+      // tabela) não pode ser indexada com a mensagem de erro no lugar do conteúdo.
+      noindex: loaderData?.vazio ?? true,
     });
     // Sem capa absoluta de compartilhamento: não usar a imagem genérica da marca.
     return {
@@ -39,5 +41,5 @@ export const Route = createFileRoute("/produtos-recomendados")({
 function RouteComponent() {
   const data = Route.useLoaderData();
   const search = Route.useSearch();
-  return <ProdutosRecomendadosPage produtos={data?.produtos ?? null} perfil={lerPerfil(search.perfil)} />;
+  return <ProdutosRecomendadosPage produtos={data?.produtos ?? null} perfil={lerPerfil(search.perfil)} vazio={data?.vazio ?? true} />;
 }
