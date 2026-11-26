@@ -24,7 +24,7 @@ export const Route = createFileRoute("/produtos-recomendados")({
       title: PRODUTOS_TITLE,
       description: PRODUTOS_DESCRIPTION,
       path: PRODUTOS_PATH,
-      jsonLd: loaderData?.jsonLd ?? null,
+      jsonLd: loaderData?.jsonLd ? [loaderData.jsonLd] : null,
     });
     // Sem capa absoluta de compartilhamento: não usar a imagem genérica da marca.
     return {
