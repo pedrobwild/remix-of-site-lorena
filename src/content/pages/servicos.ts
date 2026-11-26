@@ -48,9 +48,12 @@ export const SERVICOS: { nome: string; path: string; texto: string }[] = [
  * confirmados pelo Pedro em 26/11/2026 (campanha "A conta do studio que
  * ninguém fez", versão 4). Fonte única: a página, o FAQ e o JSON-LD leem daqui.
  *
- * Ficam FORA do site até decisão do Pedro: os números da simulação de custo
- * (premissas de modelo), limite de chamados por mês e a janela do prazo de
- * atendimento (24 h ou horário comercial). Não é a garantia de obra: os
+ * Os números da simulação de custo entraram a pedido do Pedro (26/11/2026) e
+ * aparecem SEMPRE com a nota de que são estimativa (`simulacao.nota`): vêm de
+ * um modelo com preços de mercado e premissas de frequência, não de chamados
+ * reais. Quando houver 3 meses de chamados, trocar pelos números próprios.
+ * Ficam FORA do site até decisão do Pedro: limite de chamados por mês e a
+ * janela do prazo de atendimento (24 h ou horário comercial). Não é a garantia de obra: os
  * chamados de emergência da garantia seguem no FAQ "Qual é a garantia?".
  */
 export const MANUTENCAO = {
@@ -88,6 +91,21 @@ export const MANUTENCAO = {
     "Peças e material são cobrados à parte, sempre com orçamento antes. Carência de 30 dias para chamados de conserto; a visita preventiva vale desde o primeiro dia. Problema que já existia na data da assinatura é orçado à parte.",
   apoio:
     "O plano também cobre pequenos reparos, como fechadura, dobradiça e silicone. Para quem reformou com a Bewild, quem atende é o mesmo time que conhece cada instalação da obra.",
+  /**
+   * Simulação da campanha (cenário central: média de R$ 2.823 por ano; em 1 a
+   * cada 10 anos, mais de R$ 4.745), arredondada para baixo como no material
+   * aprovado. O valor do plano por ano é precoMensal × 12.
+   */
+  simulacao: {
+    titulo: "A conta do studio sem plano, e com ele",
+    itens: [
+      { valor: "R$ 2.800", rotulo: "por ano, em média, é o que um studio de temporada gasta com manutenção sem plano" },
+      { valor: "R$ 4.700", rotulo: "é o que a conta passa em 1 a cada 10 anos, sem plano" },
+      { valor: "R$ 2.400", rotulo: "por ano com o plano: R$ 200 por mês, fixos" },
+    ],
+    nota:
+      "Estimativa da Bewild para um studio de temporada em São Paulo, feita por simulação com preços de mercado de 2026 e premissas de frequência de defeitos, incluindo diárias perdidas. Não é dado de chamados reais: o custo de cada studio varia com a idade e o uso.",
+  },
   whatsappTexto:
     "Olá! Quero saber mais sobre o Plano Studio Protegido, a manutenção preventiva do meu studio.",
 } as const;

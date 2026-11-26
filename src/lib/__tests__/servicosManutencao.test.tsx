@@ -48,8 +48,17 @@ describe("/servicos — manutenção preventiva (Plano Studio Protegido)", () =>
     ]) expect(texto).toContain(trecho);
   });
 
-  it("não publica os números da simulação de custo nem promessas ainda sem decisão", () => {
-    expect(texto).not.toMatch(/2\.8\d\d|4\.7\d\d|2\.400|economi|24 horas|ilimitad|reembols/i);
+  it("mostra a conta da simulação sempre com a nota de que é estimativa", () => {
+    expect(MANUTENCAO.simulacao.itens.map((i) => i.valor)).toEqual(["R$ 2.800", "R$ 4.700", "R$ 2.400"]);
+    // O valor anual do plano é o preço mensal vezes 12.
+    expect(MANUTENCAO.precoMensal * 12).toBe(2400);
+    for (const trecho of ["R$ 2.800", "em média", "R$ 4.700", "1 a cada 10 anos", "R$ 2.400"]) expect(texto).toContain(trecho);
+    expect(texto).toContain("Estimativa da Bewild");
+    expect(texto).toContain("Não é dado de chamados reais");
+  });
+
+  it("não publica promessas ainda sem decisão", () => {
+    expect(texto).not.toMatch(/24 horas|ilimitad|reembols|economiz/i);
   });
 
   it("convida pelo WhatsApp, não pelo formulário de reforma", () => {

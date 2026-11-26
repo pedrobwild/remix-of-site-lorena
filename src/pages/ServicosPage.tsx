@@ -376,6 +376,18 @@ export default function ServicosPage() {
                 </div>
               ))}
             </dl>
+            <div className="bwa-svcs-manut-conta" role="group" aria-labelledby="manutencao-conta-titulo">
+              <h3 id="manutencao-conta-titulo">{MANUTENCAO.simulacao.titulo}</h3>
+              <dl>
+                {MANUTENCAO.simulacao.itens.map((i) => (
+                  <div key={i.valor}>
+                    <dt>{i.valor}</dt>
+                    <dd>{i.rotulo}</dd>
+                  </div>
+                ))}
+              </dl>
+              <p className="bwa-svcs-manut-regras">{MANUTENCAO.simulacao.nota}</p>
+            </div>
             <p className="bwa-servico-text bwa-svcs-after">{MANUTENCAO.apoio}</p>
             <div className="bwa-svcs-manut-cta">
               <a
