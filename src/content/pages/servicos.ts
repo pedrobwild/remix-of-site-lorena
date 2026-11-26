@@ -99,7 +99,7 @@ export const SERVICOS: { nome: string; path: string; texto: string }[] = [
   },
   {
     nome: "Manutenção preventiva em São Paulo",
-    path: "/servicos#manutencao",
+    path: "/manutencao-preventiva-sao-paulo",
     texto: MANUTENCAO.resumo,
   },
   {

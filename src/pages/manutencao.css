@@ -1,0 +1,20 @@
+/* Página do plano: os mesmos tokens e faixas abertas das páginas públicas. */
+.bwa-manut-intro { padding: 120px 0 40px; }
+.bwa-manut-intro .bwa-title { max-width: 22ch; font-size: 48px; letter-spacing: 0; }
+.bwa-manut-intro .bwa-label { margin-bottom: 20px; }
+.bwa-manut-intro .bwa-button { margin-top: 12px; }
+.bwa-manut-price { margin: 24px 0 12px; font-size: 28px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.bwa-manut-media { margin: 0; padding: 0 0 40px; }
+.bwa-manut-media img { display: block; width: 100%; height: auto; max-height: 480px; aspect-ratio: 16 / 9; object-fit: cover; }
+.bwa-manut-media figcaption { margin-top: 12px; color: var(--bwa-ink-soft); font-size: 13px; }
+.bwa-manut-frentes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+.bwa-manut-frentes h3 { margin: 16px 0; font-size: 20px; }
+.bwa-manut-frentes .bwa-label { color: var(--bwa-accent); }
+.bwa-manut-faq summary { min-height: 44px; }
+.bwa-manut-footer-links { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 24px; }
+.bwa-manut-footer-links a { display: inline-flex; align-items: center; min-height: 44px; }
+@media (max-width: 600px) {
+  .bwa-manut-intro { padding-top: 104px; }
+  .bwa-manut-intro .bwa-title { font-size: 32px; }
+  .bwa-manut-frentes { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+}

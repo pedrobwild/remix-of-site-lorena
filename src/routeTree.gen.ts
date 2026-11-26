@@ -29,6 +29,7 @@ import { Route as IndiqueUmAmigoRouteImport } from './routes/indique-um-amigo'
 import { Route as LicencaCcBy40RouteImport } from './routes/licenca-cc-by-4-0'
 import { Route as LicencaCcBySa40RouteImport } from './routes/licenca-cc-by-sa-4-0'
 import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
+import { Route as ManutencaoPreventivaSaoPauloRouteImport } from './routes/manutencao-preventiva-sao-paulo'
 import { Route as MapaRouteImport } from './routes/mapa'
 import { Route as MapaDoSiteRouteImport } from './routes/mapa-do-site'
 import { Route as MarcasEParceriasRouteImport } from './routes/marcas-e-parcerias'
@@ -207,6 +208,12 @@ const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
   path: '/llms.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ManutencaoPreventivaSaoPauloRoute =
+  ManutencaoPreventivaSaoPauloRouteImport.update({
+    id: '/manutencao-preventiva-sao-paulo',
+    path: '/manutencao-preventiva-sao-paulo',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const MapaRoute = MapaRouteImport.update({
   id: '/mapa',
   path: '/mapa',
@@ -621,6 +628,7 @@ export interface FileRoutesByFullPath {
   '/licenca-cc-by-4-0': typeof LicencaCcBy40Route
   '/licenca-cc-by-sa-4-0': typeof LicencaCcBySa40Route
   '/llms.txt': typeof LlmsDottxtRoute
+  '/manutencao-preventiva-sao-paulo': typeof ManutencaoPreventivaSaoPauloRoute
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
   '/marcas-e-parcerias': typeof MarcasEParceriasRoute
@@ -720,6 +728,7 @@ export interface FileRoutesByTo {
   '/licenca-cc-by-4-0': typeof LicencaCcBy40Route
   '/licenca-cc-by-sa-4-0': typeof LicencaCcBySa40Route
   '/llms.txt': typeof LlmsDottxtRoute
+  '/manutencao-preventiva-sao-paulo': typeof ManutencaoPreventivaSaoPauloRoute
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
   '/marcas-e-parcerias': typeof MarcasEParceriasRoute
@@ -820,6 +829,7 @@ export interface FileRoutesById {
   '/licenca-cc-by-4-0': typeof LicencaCcBy40Route
   '/licenca-cc-by-sa-4-0': typeof LicencaCcBySa40Route
   '/llms.txt': typeof LlmsDottxtRoute
+  '/manutencao-preventiva-sao-paulo': typeof ManutencaoPreventivaSaoPauloRoute
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
   '/marcas-e-parcerias': typeof MarcasEParceriasRoute
@@ -921,6 +931,7 @@ export interface FileRouteTypes {
     | '/licenca-cc-by-4-0'
     | '/licenca-cc-by-sa-4-0'
     | '/llms.txt'
+    | '/manutencao-preventiva-sao-paulo'
     | '/mapa'
     | '/mapa-do-site'
     | '/marcas-e-parcerias'
@@ -1020,6 +1031,7 @@ export interface FileRouteTypes {
     | '/licenca-cc-by-4-0'
     | '/licenca-cc-by-sa-4-0'
     | '/llms.txt'
+    | '/manutencao-preventiva-sao-paulo'
     | '/mapa'
     | '/mapa-do-site'
     | '/marcas-e-parcerias'
@@ -1119,6 +1131,7 @@ export interface FileRouteTypes {
     | '/licenca-cc-by-4-0'
     | '/licenca-cc-by-sa-4-0'
     | '/llms.txt'
+    | '/manutencao-preventiva-sao-paulo'
     | '/mapa'
     | '/mapa-do-site'
     | '/marcas-e-parcerias'
@@ -1219,6 +1232,7 @@ export interface RootRouteChildren {
   LicencaCcBy40Route: typeof LicencaCcBy40Route
   LicencaCcBySa40Route: typeof LicencaCcBySa40Route
   LlmsDottxtRoute: typeof LlmsDottxtRoute
+  ManutencaoPreventivaSaoPauloRoute: typeof ManutencaoPreventivaSaoPauloRoute
   MapaRoute: typeof MapaRoute
   MapaDoSiteRoute: typeof MapaDoSiteRoute
   MarcasEParceriasRoute: typeof MarcasEParceriasRoute
@@ -1438,6 +1452,13 @@ declare module '@tanstack/react-router' {
       path: '/llms.txt'
       fullPath: '/llms.txt'
       preLoaderRoute: typeof LlmsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manutencao-preventiva-sao-paulo': {
+      id: '/manutencao-preventiva-sao-paulo'
+      path: '/manutencao-preventiva-sao-paulo'
+      fullPath: '/manutencao-preventiva-sao-paulo'
+      preLoaderRoute: typeof ManutencaoPreventivaSaoPauloRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mapa': {
@@ -2003,6 +2024,7 @@ const rootRouteChildren: RootRouteChildren = {
   LicencaCcBy40Route: LicencaCcBy40Route,
   LicencaCcBySa40Route: LicencaCcBySa40Route,
   LlmsDottxtRoute: LlmsDottxtRoute,
+  ManutencaoPreventivaSaoPauloRoute: ManutencaoPreventivaSaoPauloRoute,
   MapaRoute: MapaRoute,
   MapaDoSiteRoute: MapaDoSiteRoute,
   MarcasEParceriasRoute: MarcasEParceriasRoute,

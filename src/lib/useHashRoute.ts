@@ -6,6 +6,7 @@ import { destinoDoPostFundido } from "./postsFundidos";
 export type Route =
   | { name: "home"; anchor?: string }
   | { name: "servicos" }
+  | { name: "manutencao-preventiva" }
   | { name: "portfolio" }
   | { name: "orcamento" }
   | { name: "escopo" }
@@ -135,6 +136,7 @@ function parsePath(rawPath: string): Route {
   // /servicos: página própria de serviços (canonical próprio, indexável).
   // O link antigo /#certeza continua rolando até a seção da home.
   if (path === "/servicos") return { name: "servicos" };
+  if (path === "/manutencao-preventiva-sao-paulo") return { name: "manutencao-preventiva" };
   if (path === "/portfolio") return { name: "portfolio" };
 
   if (path === "/o") return { name: "lp-obra" };
@@ -336,6 +338,7 @@ export function useHashRoute(): Route {
 export const routes = {
   home: "/",
   servicos: "/servicos",
+  manutencaoPreventiva: "/manutencao-preventiva-sao-paulo",
   portfolio: "/portfolio",
   orcamento: "/orcamento",
   escopo: "/escopo",
