@@ -14,7 +14,8 @@ import "@/styles/post.css";
  * (`produtos: null` = leitura falhou). Os cartões são os mesmos dos artigos
  * (`affiliateCardHtml`): link com `rel="sponsored nofollow noopener"`, aviso de
  * comissão em cada um e clique contado pelo delegate global (`data-cta`).
- * Sem preço (muda todo dia) e sem foto de anúncio. O fim da página leva ao
+ * Desde 27/11/2026 o cartão mostra a foto do anúncio e o preço com a data da
+ * consulta (pedido do Pedro). O fim da página leva ao
  * pedido de orçamento, sem `utm_*`.
  */
 const FILTROS: { perfil: PerfilFiltro | null; label: string; href: string }[] = [
@@ -49,7 +50,8 @@ export default function ProdutosRecomendadosPage({
             <h1 className="pt-title">{PRODUTOS_H1}</h1>
             <p className="pt-excerpt">
               Eletros, móveis e itens que cabem em studio e apartamento compacto, separados por tipo. A compra é feita
-              no Mercado Livre; confira medidas e tensão (127 V ou 220 V) na página do produto antes de fechar.
+              no Mercado Livre. O preço é o do dia indicado em cada cartão e pode ter mudado; confira também medidas e
+              tensão (127 V ou 220 V) na página do produto antes de fechar.
             </p>
             <p className="pt-excerpt bw-afiliado-pagina__aviso">{AVISO_AFILIADO}</p>
           </div>

@@ -3,7 +3,7 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { slugify } from "@/lib/bewildAdmin";
 import { PRODUTO_AFILIADO_COLS, type PerfilAfiliado, type ProdutoAfiliado } from "@/lib/afiliados";
-import { mensagemDeErroAoSalvar, validarProduto, type ProdutoDraft as Draft } from "@/lib/afiliadosAdmin";
+import { mensagemDeErroAoSalvar, parsePrecoBR, validarProduto, type ProdutoDraft as Draft } from "@/lib/afiliadosAdmin";
 
 /**
  * /admin/afiliados — catálogo de produtos afiliados do Mercado Livre.
@@ -23,6 +23,7 @@ const EMPTY: Draft = {
   imagem_url: "",
   imagem_alt: "",
   projeto_slug: "",
+  preco: "",
   ativo: true,
 };
 
@@ -35,8 +36,16 @@ const PERFIS: { value: PerfilAfiliado; label: string }[] = [
 // A tabela é nova e ainda não está nos tipos gerados do banco.
 const tabela = () => supabase.from("produtos_afiliados" as never);
 
-function paraBanco(d: Draft) {
+/** Dia de hoje em São Paulo (`AAAA-MM-DD`), para a data da consulta do preço. */
+const hojeSP = () => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(new Date());
+
+function paraBanco(d: Draft, anterior?: ProdutoAfiliado) {
+  const preco = d.preco.trim() ? parsePrecoBR(d.preco) : null;
+  // A data só muda quando o preço muda: salvar outro campo não "atualiza" um preço velho.
+  const mesmoPreco = anterior && preco !== null && Number(anterior.preco) === preco;
   return {
+    preco,
+    preco_em: preco === null ? null : mesmoPreco ? (anterior?.preco_em ?? hojeSP()) : hojeSP(),
     nome: d.nome.trim(),
     slug: d.slug,
     motivo: d.motivo.trim(),
@@ -120,6 +129,7 @@ export default function AfiliadosAdminPage() {
       imagem_url: r.imagem_url ?? "",
       imagem_alt: r.imagem_alt ?? "",
       projeto_slug: r.projeto_slug ?? "",
+      preco: r.preco === null || r.preco === undefined ? "" : Number(r.preco).toFixed(2).replace(".", ","),
       ativo: r.ativo,
     });
   }
@@ -144,7 +154,7 @@ export default function AfiliadosAdminPage() {
     }
     setBusy("form");
     setMsg(null);
-    const valores = paraBanco(draft);
+    const valores = paraBanco(draft, original);
     const res =
       editing === "novo"
         ? await tabela().insert({ ...valores, sort_order: ((rows?.[rows.length - 1]?.sort_order ?? 0) as number) + 10 } as never).select("id")
@@ -275,8 +285,9 @@ export default function AfiliadosAdminPage() {
               ))}
             </select>
           </div>
-          {campo("motivo", "Por que a Bewild recomenda", { rows: 3, maxLength: 280, hint: "Uma ou duas frases. Não escreva preço: ele muda todo dia." })}
-          {campo("imagem_url", "Foto (opcional)", { placeholder: "https://…", hint: "Use foto de um projeto da Bewild em que o item aparece, não a foto do anúncio." })}
+          {campo("preco", "Preço no Mercado Livre", { placeholder: "1.399,00", hint: "Como está no anúncio hoje. O cartão mostra a data em que você salvou o preço; vazio = cartão sem preço." })}
+          {campo("imagem_url", "Foto", { placeholder: "https://…", hint: "Endereço da foto do anúncio (botão direito na foto → copiar endereço da imagem) ou de uma foto da Bewild." })}
+          {campo("motivo", "Por que a Bewild recomenda (opcional)", { rows: 3, maxLength: 280, hint: "Uma ou duas frases." })}
           {campo("imagem_alt", "Descrição da foto (opcional)", { maxLength: 160 })}
           {campo("projeto_slug", "Projeto do portfólio (opcional)", { placeholder: "final do endereço em /portfolio/" })}
           <label className="admin-field" style={{ display: "flex", alignItems: "center", gap: 10 }}>

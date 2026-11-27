@@ -155,6 +155,13 @@
       "when": 1795679899359,
       "tag": "0021_produtos_afiliados",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1795752294293,
+      "tag": "0022_produtos_afiliados_preco",
+      "breakpoints": true
     }
   ]
 }

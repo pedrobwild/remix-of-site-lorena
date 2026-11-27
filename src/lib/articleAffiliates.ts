@@ -16,7 +16,7 @@
  * O clique é contado pelo delegate global de botões (`data-cta`), que já
  * respeita o aceite de cookies; nenhum script novo entra no artigo.
  */
-import { AVISO_AFILIADO, isAffiliateUrl, type ProdutoAfiliado } from "@/lib/afiliados";
+import { AVISO_AFILIADO, formatDataBR, formatPrecoBRL, isAffiliateUrl, type ProdutoAfiliado } from "@/lib/afiliados";
 
 export const REL_AFILIADO = "sponsored nofollow noopener";
 
@@ -35,6 +35,8 @@ const VAZIO_INLINE = new RegExp(`<(strong|em|b|i|u|span)>(?:\\s|&nbsp;|<br\\s*/?
 const VAZIO_BLOCO = new RegExp(`<(p|li|h[1-6])(?:\\s[^>]*)?>(?:\\s|&nbsp;|<br\\s*/?>|${RASTRO})*${RASTRO}(?:\\s|&nbsp;|<br\\s*/?>|${RASTRO})*</\\1>`, "g");
 /** Marcação que o autor não fechou (`[[produto:tv`, `[[produto:tv]`): some, sem levar o resto da frase. */
 const MARCA_ABERTA = /\s?\[\[produto:?[a-z0-9-]*\]?/gi;
+/** Dois ou mais cartões separados só por espaço ou quebra de linha. */
+const CARTOES_SEGUIDOS = /(?:<aside class="bw-afiliado"[\s\S]*?<\/aside>\s*){2,}/g;
 const AVISO_SOLTO = `<p class="bw-afiliado__aviso" data-afiliado-aviso>${AVISO_AFILIADO}</p>`;
 
 const esc = (s: string) =>
@@ -51,12 +53,25 @@ const imagemValida = (url: string | null): url is string => {
   }
 };
 
-/** Cartão de um produto. Sem título (h1–h6): não muda a hierarquia do artigo nem o sumário. */
+/**
+ * Cartão de um produto, com cara de anúncio (pedido do Pedro, 27/11/2026): foto
+ * do anúncio, nome, preço com a data da consulta e botão. A foto também é link
+ * (fora da leitura de tela e do Tab, para não repetir o botão). Sem título
+ * (h1–h6): não muda a hierarquia do artigo nem o sumário.
+ */
 export function affiliateCardHtml(p: ProdutoAfiliado): string {
   const slug = esc(p.slug);
   const nome = esc(p.nome);
+  const href = esc(p.link_afiliado);
   const img = imagemValida(p.imagem_url)
-    ? `<img class="bw-afiliado__img" src="${esc(p.imagem_url)}" alt="${esc(p.imagem_alt?.trim() || p.nome)}" loading="lazy" decoding="async" width="160" height="160">`
+    ? `<a class="bw-afiliado__foto" href="${href}" rel="${REL_AFILIADO}" target="_blank" tabindex="-1" aria-hidden="true" data-afiliado="${slug}" data-cta="afiliado-${slug}-foto">` +
+      `<img class="bw-afiliado__img" src="${esc(p.imagem_url)}" alt="${esc(p.imagem_alt?.trim() || p.nome)}" loading="lazy" decoding="async" width="400" height="400"></a>`
+    : "";
+  const precoTxt = formatPrecoBRL(p.preco);
+  const dataTxt = formatDataBR(p.preco_em);
+  const preco = precoTxt
+    ? `<p class="bw-afiliado__preco">${precoTxt}</p>` +
+      `<p class="bw-afiliado__preco-nota">${dataTxt ? `Preço em ${dataTxt}. ` : ""}Confira o valor atual no Mercado Livre.</p>`
     : "";
   const motivo = p.motivo?.trim() ? `<p class="bw-afiliado__motivo">${esc(p.motivo.trim())}</p>` : "";
   const projeto =
@@ -65,8 +80,8 @@ export function affiliateCardHtml(p: ProdutoAfiliado): string {
       : "";
   return (
     `<aside class="bw-afiliado" data-afiliado-card="${slug}" aria-label="Produto recomendado: ${nome}">${img}` +
-    `<div class="bw-afiliado__txt"><p class="bw-afiliado__nome">${nome}</p>${motivo}${projeto}` +
-    `<p class="bw-afiliado__acao"><a class="bw-afiliado__link" href="${esc(p.link_afiliado)}" rel="${REL_AFILIADO}" target="_blank" data-afiliado="${slug}" data-cta="afiliado-${slug}">` +
+    `<div class="bw-afiliado__txt"><p class="bw-afiliado__nome">${nome}</p>${preco}${motivo}${projeto}` +
+    `<p class="bw-afiliado__acao"><a class="bw-afiliado__link" href="${href}" rel="${REL_AFILIADO}" target="_blank" data-afiliado="${slug}" data-cta="afiliado-${slug}">` +
     `Ver no Mercado Livre<span class="sr-only">: ${nome} (abre em nova aba)</span></a></p>` +
     `<p class="bw-afiliado__aviso">${AVISO_AFILIADO}</p></div></aside>`
   );
@@ -117,6 +132,7 @@ export function applyAffiliates(html: string, produtos: readonly ProdutoAfiliado
   // 2. Marcação em qualquer outro lugar: some; o elemento que ela deixou vazio
   //    (item de lista, título, negrito) some junto. Parágrafo vazio que já
   //    existia no artigo não é tocado.
+  let criouCartao = false;
   let comCartoes = html
     .replace(PARAGRAFO_DE_MARCAS, (_m, dentro: string) => {
       let cards = "";
@@ -124,6 +140,7 @@ export function applyAffiliates(html: string, produtos: readonly ProdutoAfiliado
         const p = porSlug.get(m[1]);
         if (p) cards += affiliateCardHtml(p);
       }
+      if (cards) criouCartao = true;
       return cards;
     })
     .replace(MARCA_QUALQUER, RASTRO);
@@ -135,6 +152,9 @@ export function applyAffiliates(html: string, produtos: readonly ProdutoAfiliado
   }
 
   if (comCartoes.includes("[[produto")) comCartoes = comCartoes.replace(MARCA_ABERTA, "");
+  // Cartões seguidos (um por linha no texto) ficam lado a lado numa grade. Só
+  // quando esta passada criou cartões: reaplicar não põe grade dentro de grade.
+  if (criouCartao) comCartoes = comCartoes.replace(CARTOES_SEGUIDOS, (m) => `<div class="bw-afiliado-grade">${m.replace(/>\s+</g, "><").trim()}</div>`);
 
   const { html: marcado, soltos } = marcarLinks(comCartoes);
   if (soltos > 0 && !marcado.includes("data-afiliado-aviso")) return marcado + AVISO_SOLTO;

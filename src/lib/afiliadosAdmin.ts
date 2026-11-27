@@ -11,6 +11,8 @@ export type ProdutoDraft = {
   imagem_url: string;
   imagem_alt: string;
   projeto_slug: string;
+  /** Texto digitado no painel ("1.399,00"); vazio = cartão sem preço. */
+  preco: string;
   ativo: boolean;
 };
 
@@ -25,21 +27,27 @@ export function validarProduto(d: ProdutoDraft): string | null {
   if (!isAffiliateUrl(d.link_afiliado.trim())) return LINK_AFILIADO_INVALIDO;
   const foto = d.imagem_url.trim();
   if (foto && !/^https:\/\//.test(foto)) return "A foto precisa ser um endereço https.";
-  if (foto && fotoDeAnuncio(foto)) return "Essa é a foto do anúncio do Mercado Livre. Use uma foto da Bewild em que o item aparece.";
+  if (d.preco.trim() && parsePrecoBR(d.preco) === null) return "Preço inválido. Escreva como no anúncio, por exemplo 1.399,00.";
   if (d.projeto_slug.trim() && !SLUG_OK.test(d.projeto_slug.trim())) {
     return "O projeto é o final do endereço em /portfolio/ (só letras minúsculas, números e hífen).";
   }
   return null;
 }
 
-/** Foto hospedada pelo Mercado Livre (mlstatic.com é o servidor de imagens dos anúncios). */
-function fotoDeAnuncio(url: string): boolean {
-  try {
-    const host = new URL(url).hostname.toLowerCase();
-    return /(^|\.)(mlstatic\.com|mercadolivre\.com(\.br)?|mercadolibre\.com|meli\.la)$/.test(host);
-  } catch {
-    return false;
-  }
+/**
+ * Preço digitado no painel → número. Aceita "1.399,00", "R$ 88,90", "3859" e
+ * "1399.00" (ponto seguido de 1 ou 2 dígitos no fim é decimal; senão é milhar).
+ */
+export function parsePrecoBR(texto: string): number | null {
+  const t = texto.replace(/R\$/i, "").replace(/\s/g, "");
+  if (!/^\d[\d.,]*$/.test(t) || (t.match(/,/g)?.length ?? 0) > 1) return null;
+  const normal = t.includes(",")
+    ? t.replace(/\./g, "").replace(",", ".")
+    : /\.\d{1,2}$/.test(t) && (t.match(/\./g)?.length ?? 0) === 1
+      ? t
+      : t.replace(/\./g, "");
+  const n = Number(normal);
+  return Number.isFinite(n) && n > 0 ? Math.round(n * 100) / 100 : null;
 }
 
 /** Texto para o erro que o banco devolveu ao salvar (código do Postgres). */
