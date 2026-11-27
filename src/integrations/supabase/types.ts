@@ -2039,6 +2039,78 @@ export type Database = {
         }
         Relationships: []
       }
+      bewild_posts_backup_20261127_afiliados: {
+        Row: {
+          author: string | null
+          body: string | null
+          category: string | null
+          content_updated_at: string | null
+          cover_image: string | null
+          created_at: string | null
+          excerpt: string | null
+          faq: Json | null
+          featured: boolean | null
+          focus_keyword: string | null
+          id: string | null
+          meta_description: string | null
+          meta_title: string | null
+          og_image: string | null
+          published: boolean | null
+          published_at: string | null
+          reading_time: number | null
+          slug: string | null
+          title: string | null
+          updated_at: string | null
+          youtube_video_id: string | null
+        }
+        Insert: {
+          author?: string | null
+          body?: string | null
+          category?: string | null
+          content_updated_at?: string | null
+          cover_image?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          faq?: Json | null
+          featured?: boolean | null
+          focus_keyword?: string | null
+          id?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          og_image?: string | null
+          published?: boolean | null
+          published_at?: string | null
+          reading_time?: number | null
+          slug?: string | null
+          title?: string | null
+          updated_at?: string | null
+          youtube_video_id?: string | null
+        }
+        Update: {
+          author?: string | null
+          body?: string | null
+          category?: string | null
+          content_updated_at?: string | null
+          cover_image?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          faq?: Json | null
+          featured?: boolean | null
+          focus_keyword?: string | null
+          id?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          og_image?: string | null
+          published?: boolean | null
+          published_at?: string | null
+          reading_time?: number | null
+          slug?: string | null
+          title?: string | null
+          updated_at?: string | null
+          youtube_video_id?: string | null
+        }
+        Relationships: []
+      }
       bewild_posts_stage_pilar_20261116: {
         Row: {
           body: string | null
@@ -3129,6 +3201,57 @@ export type Database = {
           updated_at?: string
           user_agent?: string | null
           whatsapp?: string
+        }
+        Relationships: []
+      }
+      produtos_afiliados: {
+        Row: {
+          ativo: boolean
+          categoria: string
+          created_at: string
+          id: string
+          imagem_alt: string | null
+          imagem_url: string | null
+          link_afiliado: string
+          motivo: string
+          nome: string
+          perfil: string
+          projeto_slug: string | null
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          categoria: string
+          created_at?: string
+          id?: string
+          imagem_alt?: string | null
+          imagem_url?: string | null
+          link_afiliado: string
+          motivo?: string
+          nome: string
+          perfil?: string
+          projeto_slug?: string | null
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          categoria?: string
+          created_at?: string
+          id?: string
+          imagem_alt?: string | null
+          imagem_url?: string | null
+          link_afiliado?: string
+          motivo?: string
+          nome?: string
+          perfil?: string
+          projeto_slug?: string | null
+          slug?: string
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }
