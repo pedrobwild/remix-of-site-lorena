@@ -11,6 +11,7 @@ const ok: ProdutoDraft = {
   imagem_url: "",
   imagem_alt: "",
   projeto_slug: "",
+  preco: "",
   ativo: true,
 };
 
@@ -38,9 +39,35 @@ describe("validarProduto (/admin/afiliados)", () => {
     expect(validarProduto({ ...ok, projeto_slug: "/portfolio/studio" })).toMatch(/portfolio/);
     expect(validarProduto({ ...ok, imagem_url: "https://bewild.com.br/a.webp", projeto_slug: "studio-pinheiros" })).toBeNull();
   });
-  it("recusa foto hospedada no Mercado Livre (foto de anúncio)", () => {
-    expect(validarProduto({ ...ok, imagem_url: "https://http2.mlstatic.com/D_NQ_NP_1.webp" })).toMatch(/anúncio/);
-    expect(validarProduto({ ...ok, imagem_url: "https://www.mercadolivre.com.br/a.jpg" })).toMatch(/anúncio/);
+  it("aceita a foto do anúncio do Mercado Livre (decisão do Pedro, 27/11/2026)", () => {
+    expect(validarProduto({ ...ok, imagem_url: "https://http2.mlstatic.com/D_NQ_NP_1.webp" })).toBeNull();
+  });
+
+  it("preço: vazio é aceito; valor em reais é aceito; texto solto é recusado", () => {
+    expect(validarProduto({ ...ok, preco: "" })).toBeNull();
+    expect(validarProduto({ ...ok, preco: "1.399,00" })).toBeNull();
+    expect(validarProduto({ ...ok, preco: "R$ 88,90" })).toBeNull();
+    expect(validarProduto({ ...ok, preco: "barato" })).toMatch(/preço/i);
+    expect(validarProduto({ ...ok, preco: "0" })).toMatch(/preço/i);
+  });
+});
+
+describe("parsePrecoBR", () => {
+  it.each([
+    ["1.399,00", 1399],
+    ["R$ 88,90", 88.9],
+    ["529,76", 529.76],
+    ["3859", 3859],
+    ["1399.00", 1399],
+    [" 2.659 ", 2659],
+    ["1.234.567,5", 1234567.5],
+  ])("%s → %s", async (texto, valor) => {
+    const { parsePrecoBR } = await import("@/lib/afiliadosAdmin");
+    expect(parsePrecoBR(texto)).toBe(valor);
+  });
+  it.each(["", "abc", "0", "-5", "1,2,3"])("%s não é preço", async (texto) => {
+    const { parsePrecoBR } = await import("@/lib/afiliadosAdmin");
+    expect(parsePrecoBR(texto)).toBeNull();
   });
 });
 

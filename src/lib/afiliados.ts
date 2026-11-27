@@ -5,6 +5,8 @@
  * alimenta o cartão de produto dentro dos artigos (`articleAffiliates.ts`) e a
  * página /produtos-recomendados. Link de afiliado só aparece nesses dois
  * lugares: nunca na home, no /orcamento, nas LPs ou nas páginas de serviço.
+ * Desde 27/11/2026 (pedido do Pedro) o cartão tem cara de anúncio: foto do
+ * próprio anúncio do Mercado Livre e preço com a data da consulta.
  *
  * Leitura pública sem o SDK do Supabase (`publicSelect`): este módulo é
  * importado pelo loader do artigo, que entra no pacote inicial.
@@ -25,6 +27,9 @@ export type ProdutoAfiliado = {
   imagem_url: string | null;
   imagem_alt: string | null;
   projeto_slug: string | null;
+  /** Preço consultado no Mercado Livre (reais) e o dia da consulta (`AAAA-MM-DD`). O banco pode devolver o número como texto. */
+  preco: number | string | null;
+  preco_em: string | null;
   ativo: boolean;
   sort_order: number;
 };
@@ -52,7 +57,7 @@ export function isAffiliateUrl(url: string): boolean {
 }
 
 export const PRODUTO_AFILIADO_COLS =
-  "id,slug,nome,motivo,categoria,perfil,link_afiliado,imagem_url,imagem_alt,projeto_slug,ativo,sort_order";
+  "id,slug,nome,motivo,categoria,perfil,link_afiliado,imagem_url,imagem_alt,projeto_slug,preco,preco_em,ativo,sort_order";
 
 /**
  * Produtos ligados, na ordem do painel. `null` = falha de rede (quem chama
@@ -74,4 +79,18 @@ async function fetchProdutosAtivosUncached(): Promise<ProdutoAfiliado[] | null> 
   );
   if (error || !data) return null;
   return data.filter((p) => p && typeof p.slug === "string" && isAffiliateUrl(p.link_afiliado));
+}
+
+/** "R$ 1.399,00" montado à mão (sem `Intl`): servidor e navegador têm de gerar a mesma string. `null` = sem preço válido. */
+export function formatPrecoBRL(preco: number | string | null | undefined): string | null {
+  const n = typeof preco === "string" ? Number(preco) : preco;
+  if (typeof n !== "number" || !Number.isFinite(n) || n <= 0) return null;
+  const [inteiro, centavos] = n.toFixed(2).split(".");
+  return `R$ ${inteiro.replace(/\B(?=(\d{3})+(?!\d))/g, ".")},${centavos}`;
+}
+
+/** `2026-11-27` → `27/11/2026`; qualquer outra coisa → `null`. */
+export function formatDataBR(iso: string | null | undefined): string | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? "");
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : null;
 }

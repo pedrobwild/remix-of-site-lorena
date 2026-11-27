@@ -13,6 +13,8 @@ const tv: ProdutoAfiliado = {
   imagem_url: null,
   imagem_alt: null,
   projeto_slug: null,
+  preco: null,
+  preco_em: null,
   ativo: true,
   sort_order: 0,
 };
@@ -251,4 +253,61 @@ describe("pontos menores da revisão", () => {
       expect(out).toContain("Veja");
     },
   );
+});
+
+describe("cartão com cara de anúncio (pedido do Pedro, 27/11/2026)", () => {
+  const completo = { ...tv, imagem_url: "https://http2.mlstatic.com/D_NQ_NP_600093-O.webp", preco: 1399, preco_em: "2026-11-27" };
+
+  it("mostra o preço em reais e a data em que foi consultado", () => {
+    const out = affiliateCardHtml(completo);
+    expect(out).toContain('<p class="bw-afiliado__preco">R$ 1.399,00</p>');
+    expect(out).toContain("Preço em 27/11/2026. Confira o valor atual no Mercado Livre.");
+  });
+
+  it.each([
+    [88.9, "R$ 88,90"],
+    [3859, "R$ 3.859,00"],
+    [529.76, "R$ 529,76"],
+    ["1399.00", "R$ 1.399,00"],
+    [1234567.5, "R$ 1.234.567,50"],
+  ])("formata %s como %s", (preco, texto) => {
+    expect(affiliateCardHtml({ ...completo, preco: preco as number })).toContain(`>${texto}</p>`);
+  });
+
+  it.each([null, 0, -5, Number.NaN, "abc"])("preço %s não aparece", (preco) => {
+    const out = affiliateCardHtml({ ...completo, preco: preco as number | null });
+    expect(out).not.toContain("bw-afiliado__preco");
+  });
+
+  it("preço sem data aparece sem inventar data", () => {
+    const out = affiliateCardHtml({ ...completo, preco_em: null });
+    expect(out).toContain("R$ 1.399,00");
+    expect(out).toContain("Confira o valor atual no Mercado Livre.");
+    expect(out).not.toContain("Preço em");
+  });
+
+  it("a foto também leva ao Mercado Livre, marcada como patrocinada e fora da leitura de tela", () => {
+    const out = affiliateCardHtml(completo);
+    expect(out).toMatch(/<a class="bw-afiliado__foto" href="https:\/\/meli\.la\/1VF4Tbq" rel="sponsored nofollow noopener" target="_blank" tabindex="-1" aria-hidden="true" data-afiliado="smart-tv-43"/);
+    expect(out).toContain('src="https://http2.mlstatic.com/D_NQ_NP_600093-O.webp"');
+  });
+
+  it("no artigo, cartões seguidos ficam lado a lado numa grade; um cartão sozinho não ganha grade", () => {
+    const dois = applyAffiliates("<p>A</p><p>[[produto:smart-tv-43]]</p>\n<p>[[produto:smart-tv-43]]</p><p>B</p>", [completo]);
+    expect(dois).toMatch(/<p>A<\/p><div class="bw-afiliado-grade"><aside[\s\S]*<\/aside><\/div><p>B<\/p>/);
+    expect(dois.match(/<aside/g)?.length).toBe(2);
+    const um = applyAffiliates("<p>A</p><p>[[produto:smart-tv-43]]</p><p>B</p>", [completo]);
+    expect(um).not.toContain("bw-afiliado-grade");
+  });
+
+  it("aplicar duas vezes não cria grade dentro de grade", () => {
+    const once = applyAffiliates("<p>[[produto:smart-tv-43]] [[produto:smart-tv-43]]</p>", [completo]);
+    expect(once.match(/bw-afiliado-grade/g)?.length).toBe(1);
+    expect(applyAffiliates(once, [completo])).toBe(once);
+  });
+
+  it("link de foto não conta como link colado à mão (sem aviso duplicado no fim)", () => {
+    const out = applyAffiliates("<p>[[produto:smart-tv-43]]</p>", [completo]);
+    expect(out).not.toContain("data-afiliado-aviso");
+  });
 });

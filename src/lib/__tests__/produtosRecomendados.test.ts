@@ -13,6 +13,8 @@ const p = (over: Partial<ProdutoAfiliado>): ProdutoAfiliado => ({
   imagem_url: null,
   imagem_alt: null,
   projeto_slug: null,
+  preco: null,
+  preco_em: null,
   ativo: true,
   sort_order: 0,
   ...over,
