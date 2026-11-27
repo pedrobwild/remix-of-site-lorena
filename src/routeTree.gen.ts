@@ -32,6 +32,7 @@ import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as ManutencaoPreventivaSaoPauloRouteImport } from './routes/manutencao-preventiva-sao-paulo'
 import { Route as MapaRouteImport } from './routes/mapa'
 import { Route as MapaDoSiteRouteImport } from './routes/mapa-do-site'
+import { Route as ProdutosRecomendadosRouteImport } from './routes/produtos-recomendados'
 import { Route as MarcasEParceriasRouteImport } from './routes/marcas-e-parcerias'
 import { Route as MarcenariaRouteImport } from './routes/marcenaria'
 import { Route as ORouteImport } from './routes/o'
@@ -66,6 +67,7 @@ import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLeadsFormularioRouteImport } from './routes/admin.leads-formulario'
 import { Route as AdminLgpdRouteImport } from './routes/admin.lgpd'
 import { Route as AdminLicencasRouteImport } from './routes/admin.licencas'
+import { Route as AdminAfiliadosRouteImport } from './routes/admin.afiliados'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminMensagensRouteImport } from './routes/admin.mensagens'
 import { Route as AdminOrcamentosRouteImport } from './routes/admin.orcamentos'
@@ -223,6 +225,11 @@ const MapaRoute = MapaRouteImport.update({
 const MapaDoSiteRoute = MapaDoSiteRouteImport.update({
   id: '/mapa-do-site',
   path: '/mapa-do-site',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProdutosRecomendadosRoute = ProdutosRecomendadosRouteImport.update({
+  id: '/produtos-recomendados',
+  path: '/produtos-recomendados',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarcasEParceriasRoute = MarcasEParceriasRouteImport.update({
@@ -396,6 +403,11 @@ const AdminLgpdRoute = AdminLgpdRouteImport.update({
 const AdminLicencasRoute = AdminLicencasRouteImport.update({
   id: '/admin/licencas',
   path: '/admin/licencas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAfiliadosRoute = AdminAfiliadosRouteImport.update({
+  id: '/admin/afiliados',
+  path: '/admin/afiliados',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
@@ -637,6 +649,7 @@ export interface FileRoutesByFullPath {
   '/manutencao-preventiva-sao-paulo': typeof ManutencaoPreventivaSaoPauloRoute
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
+  '/produtos-recomendados': typeof ProdutosRecomendadosRoute
   '/marcas-e-parcerias': typeof MarcasEParceriasRoute
   '/marcenaria': typeof MarcenariaRoute
   '/o': typeof ORoute
@@ -670,6 +683,7 @@ export interface FileRoutesByFullPath {
   '/admin/leads-formulario': typeof AdminLeadsFormularioRoute
   '/admin/lgpd': typeof AdminLgpdRoute
   '/admin/licencas': typeof AdminLicencasRoute
+  '/admin/afiliados': typeof AdminAfiliadosRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
@@ -738,6 +752,7 @@ export interface FileRoutesByTo {
   '/manutencao-preventiva-sao-paulo': typeof ManutencaoPreventivaSaoPauloRoute
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
+  '/produtos-recomendados': typeof ProdutosRecomendadosRoute
   '/marcas-e-parcerias': typeof MarcasEParceriasRoute
   '/marcenaria': typeof MarcenariaRoute
   '/o': typeof ORoute
@@ -771,6 +786,7 @@ export interface FileRoutesByTo {
   '/admin/leads-formulario': typeof AdminLeadsFormularioRoute
   '/admin/lgpd': typeof AdminLgpdRoute
   '/admin/licencas': typeof AdminLicencasRoute
+  '/admin/afiliados': typeof AdminAfiliadosRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
@@ -840,6 +856,7 @@ export interface FileRoutesById {
   '/manutencao-preventiva-sao-paulo': typeof ManutencaoPreventivaSaoPauloRoute
   '/mapa': typeof MapaRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
+  '/produtos-recomendados': typeof ProdutosRecomendadosRoute
   '/marcas-e-parcerias': typeof MarcasEParceriasRoute
   '/marcenaria': typeof MarcenariaRoute
   '/o': typeof ORoute
@@ -873,6 +890,7 @@ export interface FileRoutesById {
   '/admin/leads-formulario': typeof AdminLeadsFormularioRoute
   '/admin/lgpd': typeof AdminLgpdRoute
   '/admin/licencas': typeof AdminLicencasRoute
+  '/admin/afiliados': typeof AdminAfiliadosRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/mensagens': typeof AdminMensagensRoute
   '/admin/orcamentos': typeof AdminOrcamentosRoute
@@ -943,6 +961,7 @@ export interface FileRouteTypes {
     | '/manutencao-preventiva-sao-paulo'
     | '/mapa'
     | '/mapa-do-site'
+    | '/produtos-recomendados'
     | '/marcas-e-parcerias'
     | '/marcenaria'
     | '/o'
@@ -976,6 +995,7 @@ export interface FileRouteTypes {
     | '/admin/leads-formulario'
     | '/admin/lgpd'
     | '/admin/licencas'
+    | '/admin/afiliados'
     | '/admin/login'
     | '/admin/mensagens'
     | '/admin/orcamentos'
@@ -1044,6 +1064,7 @@ export interface FileRouteTypes {
     | '/manutencao-preventiva-sao-paulo'
     | '/mapa'
     | '/mapa-do-site'
+    | '/produtos-recomendados'
     | '/marcas-e-parcerias'
     | '/marcenaria'
     | '/o'
@@ -1077,6 +1098,7 @@ export interface FileRouteTypes {
     | '/admin/leads-formulario'
     | '/admin/lgpd'
     | '/admin/licencas'
+    | '/admin/afiliados'
     | '/admin/login'
     | '/admin/mensagens'
     | '/admin/orcamentos'
@@ -1145,6 +1167,7 @@ export interface FileRouteTypes {
     | '/manutencao-preventiva-sao-paulo'
     | '/mapa'
     | '/mapa-do-site'
+    | '/produtos-recomendados'
     | '/marcas-e-parcerias'
     | '/marcenaria'
     | '/o'
@@ -1178,6 +1201,7 @@ export interface FileRouteTypes {
     | '/admin/leads-formulario'
     | '/admin/lgpd'
     | '/admin/licencas'
+    | '/admin/afiliados'
     | '/admin/login'
     | '/admin/mensagens'
     | '/admin/orcamentos'
@@ -1247,6 +1271,7 @@ export interface RootRouteChildren {
   ManutencaoPreventivaSaoPauloRoute: typeof ManutencaoPreventivaSaoPauloRoute
   MapaRoute: typeof MapaRoute
   MapaDoSiteRoute: typeof MapaDoSiteRoute
+  ProdutosRecomendadosRoute: typeof ProdutosRecomendadosRoute
   MarcasEParceriasRoute: typeof MarcasEParceriasRoute
   MarcenariaRoute: typeof MarcenariaRoute
   ORoute: typeof ORoute
@@ -1280,6 +1305,7 @@ export interface RootRouteChildren {
   AdminLeadsFormularioRoute: typeof AdminLeadsFormularioRoute
   AdminLgpdRoute: typeof AdminLgpdRoute
   AdminLicencasRoute: typeof AdminLicencasRoute
+  AdminAfiliadosRoute: typeof AdminAfiliadosRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMensagensRoute: typeof AdminMensagensRoute
   AdminOrcamentosRoute: typeof AdminOrcamentosRoute
@@ -1486,6 +1512,13 @@ declare module '@tanstack/react-router' {
       path: '/mapa-do-site'
       fullPath: '/mapa-do-site'
       preLoaderRoute: typeof MapaDoSiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produtos-recomendados': {
+      id: '/produtos-recomendados'
+      path: '/produtos-recomendados'
+      fullPath: '/produtos-recomendados'
+      preLoaderRoute: typeof ProdutosRecomendadosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/marcas-e-parcerias': {
@@ -1724,6 +1757,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/licencas'
       fullPath: '/admin/licencas'
       preLoaderRoute: typeof AdminLicencasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/afiliados': {
+      id: '/admin/afiliados'
+      path: '/admin/afiliados'
+      fullPath: '/admin/afiliados'
+      preLoaderRoute: typeof AdminAfiliadosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/login': {
@@ -2047,6 +2087,7 @@ const rootRouteChildren: RootRouteChildren = {
   ManutencaoPreventivaSaoPauloRoute: ManutencaoPreventivaSaoPauloRoute,
   MapaRoute: MapaRoute,
   MapaDoSiteRoute: MapaDoSiteRoute,
+  ProdutosRecomendadosRoute: ProdutosRecomendadosRoute,
   MarcasEParceriasRoute: MarcasEParceriasRoute,
   MarcenariaRoute: MarcenariaRoute,
   ORoute: ORoute,
@@ -2080,6 +2121,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLeadsFormularioRoute: AdminLeadsFormularioRoute,
   AdminLgpdRoute: AdminLgpdRoute,
   AdminLicencasRoute: AdminLicencasRoute,
+  AdminAfiliadosRoute: AdminAfiliadosRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMensagensRoute: AdminMensagensRoute,
   AdminOrcamentosRoute: AdminOrcamentosRoute,

@@ -127,6 +127,7 @@ Deno.serve(async (req) => {
     { loc: `${base}/autorizacao-condominio`, priority: "0.7", changefreq: "monthly" },
     { loc: `${base}/contato`, priority: "0.7", changefreq: "monthly", lastmod: "2026-09-26" },
     { loc: `${base}/mapa-do-site`, priority: "0.5", changefreq: "weekly" },
+    { loc: `${base}/produtos-recomendados`, priority: "0.5", changefreq: "weekly" },
     { loc: `${base}/servicos`, priority: "0.9", changefreq: "monthly" },
     { loc: `${base}/manutencao-preventiva-sao-paulo`, priority: "0.8", changefreq: "monthly", lastmod: "2026-11-26" },
     { loc: `${base}/como-funciona`, priority: "0.7", changefreq: "monthly" },

@@ -54,6 +54,7 @@ type ActiveKey =
   | "settings"
   | "faq"
   | "licencas"
+  | "afiliados"
   | "coletas-radar"
   | "integracoes"
   | "typography";
@@ -89,6 +90,7 @@ const NAV: { key: ActiveKey; label: string; href: string; icon: typeof LayoutDas
   { key: "conteudos", label: "Conteúdos", href: "/admin/conteudos", icon: Newspaper },
   { key: "faq", label: "FAQ", href: routes.adminFaq, icon: HelpCircle },
   { key: "licencas", label: "Licenças", href: routes.adminLicencas, icon: Scale },
+  { key: "afiliados", label: "Afiliados", href: "/admin/afiliados", icon: ClipboardList },
   { key: "seo", label: "SEO", href: routes.adminSeo, icon: Search },
   { key: "coletas-radar", label: "Coletas do Radar", href: routes.adminColetasRadar, icon: Activity },
   { key: "integracoes", label: "Integrações", href: routes.adminIntegracoes, icon: Settings },

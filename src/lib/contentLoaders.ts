@@ -29,6 +29,7 @@ import type { BairroPageLink } from "@/lib/bairrosSp";
 import { fetchAlts, type AltMap } from "@/lib/useImageAlts";
 import { readyPhotos, renderPhotos } from "@/lib/projectPhotos";
 import { serverMemo } from "@/lib/serverMemo";
+import type { ProdutoAfiliado } from "@/lib/afiliados";
 
 /**
  * Lista de posts: só o card + a meta description da busca (POST_INDEX_COLS).
@@ -45,7 +46,11 @@ const POST_LIST_COLS = POST_INDEX_COLS;
  * estático levava os dois para o pacote inicial de TODAS as páginas — a home
  * no celular incluída —, quando só o artigo usa.
  */
-async function renderBody(body: string | null | undefined, serviceLinks = false): Promise<string | null> {
+async function renderBody(
+  body: string | null | undefined,
+  serviceLinks = false,
+  afiliados?: readonly ProdutoAfiliado[] | null,
+): Promise<string | null> {
   if (!body) return "";
   try {
     const [{ marked }, { sanitizeBlogHtml }] = await Promise.all([
@@ -54,9 +59,30 @@ async function renderBody(body: string | null | undefined, serviceLinks = false)
     ]);
     const raw = marked.parse(body, { async: false, gfm: true, breaks: false }) as string;
     const clean = rewriteGuiaLinksInHtml(sanitizeBlogHtml(raw));
-    return wrapArticleTables(serviceLinks ? linkServicePagesInHtml(clean) : clean);
+    const linked = serviceLinks ? linkServicePagesInHtml(clean) : clean;
+    // Produtos afiliados: sempre DEPOIS de sanitizar (o sanitizador troca o
+    // `rel` dos links em nova aba). `undefined` = página que não usa (licenças).
+    if (afiliados === undefined) return wrapArticleTables(linked);
+    // Import dinâmico, como o `marked`: este arquivo entra no pacote de toda rota.
+    const { applyAffiliates } = await import("@/lib/articleAffiliates");
+    return wrapArticleTables(applyAffiliates(linked, afiliados ?? []));
   } catch {
     return null;
+  }
+}
+
+/**
+ * Catálogo de afiliados só é lido quando o artigo tem a marcação
+ * `[[produto:slug]]`; falha de leitura vira lista vazia (o artigo sai sem
+ * cartões e sem marcação crua, nunca cai).
+ */
+async function produtosDoArtigo(body: string | null | undefined): Promise<readonly ProdutoAfiliado[]> {
+  if (!body || !body.includes("[[produto:")) return [];
+  try {
+    const { fetchProdutosAtivos } = await import("@/lib/afiliados");
+    return (await fetchProdutosAtivos()) ?? [];
+  } catch {
+    return [];
   }
 }
 
@@ -156,7 +182,7 @@ async function fetchPostContent(slug: string): Promise<PostLoaderData> {
       related = [];
     }
 
-    return { seo: postSeoFrom(post), post, related, bodyHtml: await renderBody(post.body, true) };
+    return { seo: postSeoFrom(post), post, related, bodyHtml: await renderBody(post.body, true, await produtosDoArtigo(post.body)) };
   } catch {
     return { seo: postSeoFrom(null, true) };
   }
@@ -348,4 +374,27 @@ export async function loadLicenca(slug: import("@/content/pages/licencas").Licen
   }
   const merged = mergeLicenca(slug, row);
   return { title: merged.title, intro: merged.intro, bodyHtml: await renderBody(merged.body), citationModel: merged.citationModel };
+}
+
+// --- /produtos-recomendados (catálogo de /admin/afiliados) -------------------
+
+export type ProdutosRecomendadosLoaderData = {
+  /** `null` = leitura falhou (a página avisa e oferece tentar de novo). */
+  produtos: ProdutoAfiliado[] | null;
+  jsonLd: Record<string, unknown> | null;
+  /** Sem produto para mostrar (falha, catálogo vazio, tudo desligado): a rota sai `noindex`. */
+  vazio: boolean;
+};
+
+export async function loadProdutosRecomendados(): Promise<ProdutosRecomendadosLoaderData> {
+  try {
+    const [{ fetchProdutosAtivos }, { produtosItemListJsonLd, semProdutos }] = await Promise.all([
+      import("@/lib/afiliados"),
+      import("@/lib/produtosRecomendados"),
+    ]);
+    const produtos = await fetchProdutosAtivos();
+    return { produtos, jsonLd: produtos ? produtosItemListJsonLd(produtos) : null, vazio: semProdutos(produtos) };
+  } catch {
+    return { produtos: null, jsonLd: null, vazio: true };
+  }
 }

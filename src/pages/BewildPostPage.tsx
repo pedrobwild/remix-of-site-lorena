@@ -38,6 +38,7 @@ import { postYouTubeVideo } from "@/lib/postYouTubeVideo";
 import { sanitizeBlogHtml } from "@/lib/sanitizeHtml";
 import { wrapArticleTables } from "@/lib/articleTables";
 import { linkServicePagesInHtml } from "@/lib/articleServiceLinks";
+import { applyAffiliates } from "@/lib/articleAffiliates";
 import { whatsappHref } from "@/components/landing/content";
 import {
   bewildCategoryLabel,
@@ -200,7 +201,9 @@ export default function BewildPostPage({ slug, initial }: Props) {
     if (!post.body) return "";
     try {
       const raw = marked.parse(post.body, { async: false }) as string;
-      return wrapArticleTables(linkServicePagesInHtml(rewriteGuiaLinksInHtml(sanitizeBlogHtml(raw))));
+      // Reserva sem o loader: sem catálogo aqui, as marcações [[produto:…]] só
+      // são removidas e os links do Mercado Livre saem marcados como patrocinados.
+      return wrapArticleTables(applyAffiliates(linkServicePagesInHtml(rewriteGuiaLinksInHtml(sanitizeBlogHtml(raw))), []));
     } catch {
       return "";
     }

@@ -15,6 +15,7 @@ export type Route =
   | { name: "autorizacao-condominio" }
   | { name: "contato" }
   | { name: "mapa-do-site" }
+  | { name: "produtos-recomendados" }
   | { name: "buscar" }
   | { name: "coletas-por-bairro" }
   | { name: "como-funciona" }
@@ -40,6 +41,7 @@ export type Route =
   | { name: "licenca-sa" }
   | { name: "atribuicao" }
   | { name: "admin-licencas" }
+  | { name: "admin-afiliados" }
   | { name: "bewild-project"; slug: string }
   | { name: "bairro"; slug: string }
   | { name: "conteudos" }
@@ -153,6 +155,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/autorizacao-condominio") return { name: "autorizacao-condominio" };
   if (path === "/contato") return { name: "contato" };
   if (path === "/mapa-do-site") return { name: "mapa-do-site" };
+  if (path === "/produtos-recomendados") return { name: "produtos-recomendados" };
   if (path === "/buscar") return { name: "buscar" };
   if (path === "/coletas-por-bairro") return { name: "coletas-por-bairro" };
   if (path === "/como-funciona") return { name: "como-funciona" };
@@ -214,6 +217,7 @@ function parsePath(rawPath: string): Route {
   if (path === "/admin/settings") return { name: "admin-settings" };
   if (path === "/admin/faq") return { name: "admin-faq" };
   if (path === "/admin/licencas") return { name: "admin-licencas" };
+  if (path === "/admin/afiliados") return { name: "admin-afiliados" };
   if (path === "/admin/bewild") return { name: "admin-bewild" };
   if (path === "/admin/bewild/new") return { name: "admin-bewild-new" };
   const adminBewildEdit = path.match(/^\/admin\/bewild\/([a-z0-9-]+)$/);
@@ -349,6 +353,7 @@ export const routes = {
   autorizacaoCondominio: "/autorizacao-condominio",
   contato: "/contato",
   mapaDoSite: "/mapa-do-site",
+  produtosRecomendados: "/produtos-recomendados",
   buscar: "/buscar",
   "coletas-por-bairro": "/coletas-por-bairro",
   comoFunciona: "/como-funciona",
